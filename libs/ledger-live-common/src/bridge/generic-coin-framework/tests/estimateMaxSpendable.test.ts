@@ -77,6 +77,23 @@ describe("genericEstimateMaxSpendable", () => {
     expect(result.toString()).toBe("49990000");
   });
 
+  it("floors max spendable at zero when fee exceeds balance", async () => {
+    mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
+      estimateFees: estimateFeesMock.mockResolvedValue({ value: 100_000_000n }),
+    });
+
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const result = await estimate({
+      account: dummyAccount,
+      parentAccount: null,
+      transaction: {} as any,
+    });
+
+    expect(result.toString()).toBe("0");
+    expect(estimateFeesMock).toHaveBeenCalledTimes(1);
+  });
+
   it("prices the send-max against the family's own intent data", async () => {
     const buildIntentData = jest.fn().mockReturnValue({ type: "familyx" });
     getBridgeApiMock.mockResolvedValueOnce({ buildIntentData });

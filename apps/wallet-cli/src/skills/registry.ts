@@ -44,7 +44,37 @@ export type Sidecar = {
   installedAt: string;
 };
 
-/** Summary list of every embedded skill. */
+/**
+ * Names older wallet-cli versions shipped, mapped to the name shipped today.
+ *
+ * The embedded skill was renamed `ledger-wallet-cli` -> `wallet-cli-usage` so the
+ * binary, the copy published to LedgerHQ/agent-skills and the skill's own
+ * frontmatter agree. `wallet-cli skill retrieve ledger-wallet-cli` was documented
+ * in the README and is baked into the context of agents that already read the old
+ * skill, so it has to keep working.
+ *
+ * Aliases resolve on lookup ONLY. `listSkills()` never surfaces them, and
+ * `writeSkill`/`writeSidecar` key off `skill.name`, so a legacy lookup returns the
+ * canonical skill and can never materialize a second copy on disk under the old
+ * name. A Map (not an object) so `getSkill("__proto__")` can't reach a prototype
+ * value — same reasoning as the `Object.hasOwn` guard in `resolveInstallRoot`.
+ */
+const LEGACY_SKILL_NAMES: ReadonlyMap<string, string> = new Map([
+  ["ledger-wallet-cli", "wallet-cli-usage"],
+]);
+
+/** Legacy directory names `doctor` should recognize for a canonical skill. */
+function legacyNamesFor(canonicalName: string): string[] {
+  return [...LEGACY_SKILL_NAMES.entries()]
+    .filter(([, canonical]) => canonical === canonicalName)
+    .map(([legacy]) => legacy);
+}
+
+/**
+ * Summary list of every embedded skill. Canonical names only — legacy aliases are
+ * deliberately absent so `skill list` shows one entry per skill, not a duplicate
+ * pair pointing at the same content.
+ */
 export function listSkills(): { name: string; description: string }[] {
   return SKILLS.map(({ name, description }) => ({ name, description }));
 }
@@ -54,9 +84,14 @@ export function getAllSkills(): SkillManifest[] {
   return SKILLS;
 }
 
-/** Look up a skill by exact name. */
+/**
+ * Look up a skill by name, accepting the legacy names in `LEGACY_SKILL_NAMES`.
+ * Always returns the canonical manifest, so callers that write to disk (`install`,
+ * `doctor --fix`) use the canonical name regardless of what the user typed.
+ */
 export function getSkill(name: string): SkillManifest | undefined {
-  return SKILLS.find(skill => skill.name === name);
+  const canonicalName = LEGACY_SKILL_NAMES.get(name) ?? name;
+  return SKILLS.find(skill => skill.name === canonicalName);
 }
 
 /** True when exactly one skill is embedded (lets `retrieve`/`install` default it). */
@@ -233,6 +268,13 @@ export type SkillDiagnosis = {
   diskHash?: string;
   shippedVersion: string;
   shippedHash: string;
+  /**
+   * Directories under `root` holding an install of this skill under a name it no
+   * longer uses (see `LEGACY_SKILL_NAMES`), as attested by their sidecar. Reported
+   * so a pre-rename install is visible rather than silently orphaned; never
+   * written to or deleted.
+   */
+  supersededRoots?: string[];
 };
 
 export type ScanOptions = {
@@ -319,10 +361,32 @@ export async function diagnoseSkill(skill: SkillManifest, root: string): Promise
 }
 
 /**
+ * Find installs of `skill` under `root` under a name it no longer ships.
+ *
+ * Identified by provenance, not directory name: the sidecar must record that
+ * legacy name. So the canonical source at `.agents/skills/ledger-wallet-cli` (a
+ * scanned root) isn't reported as a stale install of itself, and an unrelated
+ * directory can't be reported or decide where `--fix` installs.
+ */
+async function findSupersededRoots(skill: SkillManifest, root: string): Promise<string[]> {
+  const found: string[] = [];
+  for (const legacyName of legacyNamesFor(skill.name)) {
+    const legacyRoot = path.join(root, legacyName);
+    if (!(await isDirectory(legacyRoot))) continue;
+    const sidecar = await readSidecar(legacyRoot);
+    if (sidecar?.name !== legacyName) continue;
+    found.push(legacyRoot);
+  }
+  return found;
+}
+
+/**
  * Scan the resolved roots for every shipped skill. Produces one diagnosis per
- * (root, skill) where the skill directory exists, plus a single `missing`
- * diagnosis for any shipped skill found in no scanned root (targeting the first
- * root so `--fix` has a concrete destination).
+ * (root, skill) where the skill directory exists — or where only a pre-rename
+ * install of it does, so `--fix` installs the canonical skill there rather than
+ * leaving the old copy as the only one on disk — plus a single `missing` diagnosis
+ * for any shipped skill found in no scanned root (targeting the first root so
+ * `--fix` has a concrete destination).
  */
 export async function scanInstalledSkills(options: ScanOptions): Promise<SkillDiagnosis[]> {
   const roots = resolveScanRoots(options);
@@ -331,12 +395,28 @@ export async function scanInstalledSkills(options: ScanOptions): Promise<SkillDi
   for (const skill of SKILLS) {
     let foundAnywhere = false;
     for (const root of roots) {
+      const supersededRoots = await findSupersededRoots(skill, root);
       const skillRoot = path.join(root, skill.name);
       // A regular file at this path is not an installed skill; `pathExists`
       // (access-based) would treat it as one, so require an actual directory.
-      if (!(await isDirectory(skillRoot))) continue;
-      foundAnywhere = true;
-      results.push(await diagnoseSkill(skill, root));
+      if (await isDirectory(skillRoot)) {
+        foundAnywhere = true;
+        const diagnosis = await diagnoseSkill(skill, root);
+        results.push(supersededRoots.length > 0 ? { ...diagnosis, supersededRoots } : diagnosis);
+      } else if (supersededRoots.length > 0) {
+        // Only a pre-rename install here. Report `missing` at this root (not the
+        // fallback root below) so `--fix` heals the user's actual install location.
+        foundAnywhere = true;
+        results.push({
+          name: skill.name,
+          root,
+          skillRoot,
+          status: "missing",
+          supersededRoots,
+          shippedVersion: CLI_VERSION,
+          shippedHash: skill.contentHash,
+        });
+      }
     }
     if (!foundAnywhere) {
       const root = roots[0] ?? process.cwd();

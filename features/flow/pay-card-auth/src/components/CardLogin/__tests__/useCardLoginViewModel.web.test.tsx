@@ -25,7 +25,7 @@ describe("mapSnapshotToViewModel", () => {
   });
 
   it("offers nothing once the card holder is signed in", () => {
-    // `CardLogout` holds the screen from here, and it reads the same flag to know it.
+    // `CardMore` holds the screen from here, and it reads the same flag to know it.
     expect(mapSnapshotToViewModel("ready", null, onLoginPress)).toBeNull();
   });
 

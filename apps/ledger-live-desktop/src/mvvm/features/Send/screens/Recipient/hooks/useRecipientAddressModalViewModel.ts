@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
@@ -8,23 +8,35 @@ import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipi
 import { pickContactAddressForCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/pickContactAddressForCurrency";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { Contact } from "@domain/entity-contact";
+import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import {
+  SEND_FLOW_STEP,
+  type Memo,
+  type SendFlowStep,
+} from "@ledgerhq/live-common/flows/send/types";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useAddressValidation } from "./useAddressValidation";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
-import { track } from "~/renderer/analytics/segment";
+import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
+import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { getRecipientResolution } from "../../../utils/contactTracking";
 
 type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   currency: CryptoCurrency | TokenCurrency;
-  onAddressSelected: (address: string, ensName?: string, goToNextStep?: boolean) => void;
+  onAddressSelected: (
+    address: string,
+    ensName?: string,
+    goToNextStep?: boolean,
+    memo?: Memo,
+  ) => void;
   recipientSupportsDomain: boolean;
 }>;
 
@@ -37,9 +49,11 @@ export function useRecipientAddressModalViewModel({
 }: UseRecipientAddressModalViewModelProps) {
   const { recipientSearch, state } = useSendFlowData();
   const contacts = useContacts();
+  const [doNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
   const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
     useContactsFeature("desktop");
   const { selectedContact, selectContact, clearSelectedContact } = useRecipientContactSelection();
+  const { inputMethod, setRecipientResolution } = useSendFlowTracking();
   const { navigation } = useFlowWizard<SendFlowStep>();
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -94,7 +108,54 @@ export function useRecipientAddressModalViewModel({
     return contactsOnNetwork.length === 0;
   }, [contactsOnNetwork.length, hasAddressBook, isContactsFeatureEnabled, showInitialState]);
 
-  const hasMemo = sendFeatures.hasMemo(currency);
+  const recipientResolution = useMemo(
+    () => getRecipientResolution(recipientSearch.value, result, showContactSearchResult),
+    [recipientSearch.value, result, showContactSearchResult],
+  );
+  const trackedResolutionRef = useRef("");
+  useEffect(() => {
+    const hasSettledResult =
+      showContactSearchResult ||
+      (!isLoading && result.status !== "idle" && result.status !== "loading");
+    if (!hasSearchValue || !hasSettledResult || selectedContact !== undefined) {
+      return;
+    }
+
+    const trackingKey = [
+      recipientSearch.value,
+      recipientResolution.queryType,
+      recipientResolution.resultType,
+      inputMethod,
+      recipientResolution.addressAlreadyUsed,
+    ].join(":");
+    if (trackedResolutionRef.current === trackingKey) {
+      return;
+    }
+    trackedResolutionRef.current = trackingKey;
+
+    trackPage("Modal send - recipient result", null, {
+      ...sendFlowTrackingProperties,
+      queryType: recipientResolution.queryType,
+      resultType: recipientResolution.resultType,
+      inputMethod,
+      queryLength: recipientSearch.value.length,
+      addressAlreadyUsed: recipientResolution.addressAlreadyUsed,
+    });
+    setRecipientResolution(recipientResolution.resultType, recipientResolution.recipientType);
+  }, [
+    hasSearchValue,
+    inputMethod,
+    isLoading,
+    recipientResolution,
+    recipientSearch.value,
+    result.status,
+    selectedContact,
+    sendFlowTrackingProperties,
+    setRecipientResolution,
+    showContactSearchResult,
+  ]);
+
+  const hasMemo = sendFeatures.hasMemoForRecipient(currency, recipientSearch.value);
   const memoType = sendFeatures.getMemoType(currency);
   const memoTypeOptions = sendFeatures.getMemoOptions(currency);
   const memoDefaultOption = sendFeatures.getMemoDefaultOption(currency);
@@ -113,42 +174,134 @@ export function useRecipientAddressModalViewModel({
     return memo.value.length > 0;
   }, [hasMemo, state.recipient?.memo]);
 
+  // Coming back to this step remounts the screen, which restarts the sanction and
+  // bridge validations from scratch. Trust the recipient already stored in the flow
+  // so dependent UI (memo field) doesn't blink while it revalidates.
+  const isAlreadyValidatedRecipient = useMemo(() => {
+    const searchedValue = recipientSearch.value.trim().toLowerCase();
+    if (!searchedValue) return false;
+    const validatedAddress = state.recipient?.address?.trim().toLowerCase();
+    const validatedEnsName = state.recipient?.ensName?.trim().toLowerCase();
+    return searchedValue === validatedAddress || searchedValue === validatedEnsName;
+  }, [recipientSearch.value, state.recipient?.address, state.recipient?.ensName]);
+
+  const continueWithAddress = useCallback(
+    (address: string, ensName?: string) => {
+      if (hasMemo && !hasFilledMemo) {
+        if (doNotAskAgainSkipMemo) {
+          onAddressSelected(address, ensName, true, { value: "", type: "NO_MEMO" });
+          return;
+        }
+
+        onAddressSelected(address, ensName);
+        navigation.goToStep(SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION);
+        return;
+      }
+
+      onAddressSelected(address, ensName, true);
+    },
+    [doNotAskAgainSkipMemo, hasFilledMemo, hasMemo, navigation, onAddressSelected],
+  );
+
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
       track("button_clicked", {
-        button: "address matched",
+        button: "send",
         page: "step recipient",
+        resultType: recipientResolution.resultType,
+        recipientType: recipientResolution.recipientType,
         ...sendFlowTrackingProperties,
       });
-      onAddressSelected(address, ensName, true);
+      setRecipientResolution(recipientResolution.resultType, recipientResolution.recipientType);
+      continueWithAddress(address, ensName);
     },
-    [onAddressSelected, sendFlowTrackingProperties],
+    [continueWithAddress, recipientResolution, sendFlowTrackingProperties, setRecipientResolution],
   );
 
   const handleContactSelect = useCallback(
     (contact: Contact) => {
+      track("button_clicked", {
+        button: "contact",
+        page: "step recipient",
+        myContact: contact.isMe,
+        addressCount: contact.addresses.length,
+        ...sendFlowTrackingProperties,
+      });
       const address = pickContactAddressForCurrency(contact.addresses, currency.id);
       if (address) {
-        handleAddressSelect(address.address);
+        setRecipientResolution(
+          contact.isMe ? "my account" : "contact name match",
+          contact.isMe ? "my account" : "contact",
+        );
+        continueWithAddress(address.address);
         return;
       }
 
       selectContact(contact);
+      trackPage("Modal send - select contact address", null, {
+        ...sendFlowTrackingProperties,
+        addressCount: contact.addresses.length,
+        myContact: contact.isMe,
+      });
     },
-    [currency.id, handleAddressSelect, selectContact],
+    [
+      continueWithAddress,
+      currency.id,
+      selectContact,
+      sendFlowTrackingProperties,
+      setRecipientResolution,
+    ],
   );
 
   const handleContactAddressSelect = useCallback(
-    (address: string) => {
+    (address: ContactAddress, addressRank: number) => {
+      track("button_clicked", {
+        button: "contact address",
+        page: "select contact address",
+        network: mainAccount.currency.id,
+        asset: address.currencyId,
+        addressRank,
+        ...sendFlowTrackingProperties,
+      });
       clearSelectedContact();
-      handleAddressSelect(address);
+      setRecipientResolution(
+        selectedContact?.isMe ? "my account" : "contact address match",
+        selectedContact?.isMe ? "my account" : "contact",
+      );
+      continueWithAddress(address.address);
     },
-    [clearSelectedContact, handleAddressSelect],
+    [
+      clearSelectedContact,
+      continueWithAddress,
+      mainAccount.currency.id,
+      selectedContact?.isMe,
+      sendFlowTrackingProperties,
+      setRecipientResolution,
+    ],
   );
 
   const handleAddContact = useCallback(() => {
+    track("button_clicked", {
+      button: "add contact",
+      page: "step recipient",
+      addressAlreadyUsed: recipientResolution.addressAlreadyUsed,
+      ...sendFlowTrackingProperties,
+    });
     navigation.goToStep(SEND_FLOW_STEP.ADD_CONTACT);
-  }, [navigation]);
+  }, [navigation, recipientResolution.addressAlreadyUsed, sendFlowTrackingProperties]);
+
+  const handleUnsupportedNetwork = useCallback(() => {
+    track("button_clicked", {
+      button: "disabled network tooltip",
+      page: "step recipient",
+      network: mainAccount.currency.id,
+      ...sendFlowTrackingProperties,
+    });
+    trackPage("Modal send - network not supported", null, {
+      ...sendFlowTrackingProperties,
+      network: mainAccount.currency.id,
+    });
+  }, [mainAccount.currency.id, sendFlowTrackingProperties]);
 
   const featureIntroduction = useContactsFeatureIntroductionViewModel({
     isContactsEntryAvailable: isContactsFeatureEnabled && hasAddressBook,
@@ -167,6 +320,7 @@ export function useRecipientAddressModalViewModel({
     searchValue: recipientSearch.value,
     onSelect: handleAddressSelect,
     onAddContact: handleAddContact,
+    onUnsupportedNetwork: handleUnsupportedNetwork,
     isSanctioned: searchState.isSanctioned,
     isAddressComplete: searchState.isAddressComplete,
     hasBridgeError: searchState.showBridgeRecipientError,
@@ -212,6 +366,7 @@ export function useRecipientAddressModalViewModel({
     showBridgeRecipientWarning:
       !shouldHideRegularSearchState && searchState.showBridgeRecipientWarning,
     isAddressComplete: !shouldHideRegularSearchState && searchState.isAddressComplete,
-    isAddressValid: !shouldHideRegularSearchState && searchState.isAddressValid,
+    isAddressValid:
+      isAlreadyValidatedRecipient || (!shouldHideRegularSearchState && searchState.isAddressValid),
   };
 }

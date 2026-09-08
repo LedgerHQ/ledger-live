@@ -101,4 +101,12 @@ describe("Contacts (Native)", () => {
     expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Alice");
     expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Bob");
   });
+
+  it("should resolve its copy from the mounted i18n provider, not from props", () => {
+    renderWithContacts([mockMeContact()], <Contacts {...makeContactsProps()} />, undefined, {
+      en: { translation: { payTab: { contacts: { pay: "Envoyer" } } } },
+    });
+
+    expect(screen.getByTestId("pay-contacts-pay-tile").props.accessibilityLabel).toBe("Envoyer");
+  });
 });

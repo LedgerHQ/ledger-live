@@ -17,7 +17,6 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
-import expect from "expect";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
 import { sendEVM, approveToken, signTypedMessage } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
@@ -38,7 +37,7 @@ import { delegateMultiversX } from "./families/multiversX";
 import { Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
-import { delegateOsmosis } from "./families/osmosis";
+import { delegateOsmosis, sendOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 import { sendSui, delegateSui } from "./families/sui";
@@ -566,6 +565,26 @@ export function drainSpeculosScreenshots(port: number): Buffer[] {
   return screenshots;
 }
 
+function isTransactionCheckPrompt(screenTexts: string): boolean {
+  const texts = screenTexts.toLowerCase();
+  return (
+    texts.includes(DeviceLabels.ENABLE_TRANSACTION_CHECK.toLowerCase()) &&
+    texts.includes(DeviceLabels.YES_ENABLE.toLowerCase())
+  );
+}
+
+async function acceptTransactionCheckPrompt(screenTexts: string): Promise<boolean> {
+  if (!isTouchDevice() || !isTransactionCheckPrompt(screenTexts)) return false;
+
+  try {
+    await pressAndRelease(DeviceLabels.YES_ENABLE);
+    return true;
+  } catch (err) {
+    console.warn(`[waitFor] failed to accept the Transaction Check prompt: ${sanitizeError(err)}`);
+    return false;
+  }
+}
+
 export async function waitFor(
   text: string,
   maxAttempts = 60,
@@ -573,11 +592,16 @@ export async function waitFor(
 ): Promise<string> {
   const port = getEnv("SPECULOS_API_PORT");
   let texts = "";
+  let transactionCheckAccepted = false;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     texts = await fetchCurrentScreenTexts(port);
 
     if (texts.toLowerCase().includes(text.toLowerCase())) {
       return texts;
+    }
+
+    if (!transactionCheckAccepted) {
+      transactionCheckAccepted = await acceptTransactionCheckPrompt(texts);
     }
 
     await sleep(SCREEN_POLL_INTERVAL_MS);
@@ -615,35 +639,14 @@ export async function waitForReviewTransaction(
   maxAttempts = 60,
   { matchFullEvents = false }: { matchFullEvents?: boolean } = {},
 ): Promise<void> {
-  if (!isTouchDevice()) {
-    try {
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts, { matchFullEvents });
-    } catch (error) {
-      if (error instanceof Error && isExchangeAppReadyStall(error.message)) {
-        error.message += SWAP_INIT_STALL_HINT;
-      }
-      throw error;
+  try {
+    await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts, { matchFullEvents });
+  } catch (error) {
+    if (error instanceof Error && isExchangeAppReadyStall(error.message)) {
+      error.message += SWAP_INIT_STALL_HINT;
     }
-    return;
+    throw error;
   }
-
-  const port = getEnv("SPECULOS_API_PORT");
-  let texts = "";
-  let enabled = false;
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    texts = await fetchCurrentScreenTexts(port);
-    if (texts.includes(DeviceLabels.REVIEW_TRANSACTION)) {
-      return;
-    }
-    if (!enabled && texts.includes(DeviceLabels.YES_ENABLE)) {
-      await pressAndRelease(DeviceLabels.YES_ENABLE);
-      enabled = true; // press once, then keep polling for review within the same budget
-    }
-    await sleep(SCREEN_POLL_INTERVAL_MS);
-  }
-
-  const base = `Text "${DeviceLabels.REVIEW_TRANSACTION}" not found on device screen after ${maxAttempts} attempts. Last screen text: "${texts}"`;
-  throw new Error(isExchangeAppReadyStall(texts) ? base + SWAP_INIT_STALL_HINT : base);
 }
 
 export async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
@@ -740,12 +743,29 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   return result;
 }
 
+export function expectSpeculosEventsContain(
+  substring: string,
+  events: string[],
+  message = "Speculos events validation failed",
+) {
+  if (containsSubstringInEvent(substring, events) !== true) {
+    let formattedEvents = events.join("\n  ");
+    const maxLength = 1000;
+    if (formattedEvents.length > maxLength) {
+      formattedEvents = `${formattedEvents.slice(0, maxLength)}...\n  (truncated, ${events.length} total events)`;
+    }
+    throw new Error(
+      `${message}. Expected events to contain "${substring}". Events:\n\n  ${formattedEvents}`,
+    );
+  }
+}
+
 /** Asserts memo/tag appears on Speculos screens when the tx includes one. */
 export function expectMemoTagInEvents(tx: Transaction, events: string[]) {
   if (!tx.memoTag || tx.memoTag === "noTag") {
     return;
   }
-  expect(containsSubstringInEvent(tx.memoTag, events)).toBeTruthy();
+  expectSpeculosEventsContain(tx.memoTag, events);
 }
 
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
@@ -924,13 +944,11 @@ export const expectValidAddressDevice = withDeviceController(
 
       if (isTouchDevice()) {
         const events = await pressUntilTextFound(receiveConfirmLabel);
-        const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
-        expect(isAddressCorrect).toBeTruthy();
+        expectSpeculosEventsContain(addressDisplayed, events);
         await pressAndRelease(DeviceLabels.CONFIRM);
       } else {
         const events = await pressUntilTextFound(receiveConfirmLabel);
-        const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
-        expect(isAddressCorrect).toBeTruthy();
+        expectSpeculosEventsContain(addressDisplayed, events);
         await buttons.both();
       }
     },
@@ -973,8 +991,10 @@ export async function signSendTransaction(tx: Transaction) {
       await sendStellar(tx);
       break;
     case Currency.ATOM.id:
-    case Currency.OSMO.id:
       await sendCosmos(tx);
+      break;
+    case Currency.OSMO.id:
+      await sendOsmosis(tx);
       break;
     case Currency.ADA.id:
       await sendCardano(tx);
@@ -1012,14 +1032,20 @@ export async function signSendTransaction(tx: Transaction) {
   }
 }
 
+export async function waitForSendReviewTransaction(
+  tx: Transaction,
+  maxAttempts: number = SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS,
+): Promise<string> {
+  const { sendVerifyLabel } = getDeviceLabels(tx.accountToDebit.currency.speculosApp);
+  return await waitFor(sendVerifyLabel, maxAttempts);
+}
+
 export async function getSendEvents(
   tx: Transaction,
   verifyMaxAttempts: number = SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS,
 ): Promise<string[]> {
-  const { sendVerifyLabel, sendConfirmLabel } = getDeviceLabels(
-    tx.accountToDebit.currency.speculosApp,
-  );
-  await waitFor(sendVerifyLabel, verifyMaxAttempts);
+  const { sendConfirmLabel } = getDeviceLabels(tx.accountToDebit.currency.speculosApp);
+  await waitForSendReviewTransaction(tx, verifyMaxAttempts);
   return await pressUntilTextFound(sendConfirmLabel);
 }
 
@@ -1146,25 +1172,16 @@ function verifySwapData(swap: Swap, events: string[], amount: string) {
 
   if (getSpeculosModel() !== DeviceModelId.nanoS) {
     if (swap.provider && swap.provider.app && swap.provider.app !== AppInfos.EXCHANGE) {
-      expectDeviceScreenContains(
+      expectSpeculosEventsContain(
         swap.provider.uiName,
         events,
         "Provider not found on the device screen",
       );
     } else {
-      expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
+      expectSpeculosEventsContain(swapPair, events, "Swap pair not found on the device screen");
     }
   }
-  expectDeviceScreenContains(amount, events, `Amount ${amount} not found on the device screen`);
-}
-
-function expectDeviceScreenContains(substring: string, events: string[], message: string) {
-  const found = containsSubstringInEvent(substring, events);
-  if (!found) {
-    throw new Error(
-      `${message}. Expected events to contain "${substring}". Got: ${JSON.stringify(events)}`,
-    );
-  }
+  expectSpeculosEventsContain(amount, events, `Amount ${amount} not found on the device screen`);
 }
 
 export const exportUfvk = withDeviceController(

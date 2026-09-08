@@ -86,7 +86,7 @@ type NavigationProp = BaseNavigationComposite<
 
 export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel {
   const dispatch = useDispatch();
-  const hasCompletedMockConfirmation = useRef(false);
+  const isCompletingAddressConfirmation = useRef(false);
   const trackedContactDetailId = useRef<string | undefined>(undefined);
   const trackedAddressDetailId = useRef<string | undefined>(undefined);
   const analytics = useContactsAnalytics();
@@ -127,89 +127,71 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     updateAddressLabel,
     confirmAddress,
     continueFromName,
-    completeMockConfirmation,
+    completeConfirmation,
     goBack: goBackAddAddress,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({
     addressValidation,
     manualValidationDebounceMs: MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS,
   });
-  const completeMockAddressConfirmation = useCallback(async () => {
-    if (addAddressFlowState.status !== "confirmationRequired") {
-      hasCompletedMockConfirmation.current = false;
-      return;
-    }
-
-    if (hasCompletedMockConfirmation.current) {
-      return;
-    }
-
-    if (contact === undefined) {
-      return;
-    }
-
-    hasCompletedMockConfirmation.current = true;
-
-    try {
-      const signedAddress = await deviceIntents.registerExternalAddress({
-        contact,
-        currencyId: addAddressFlowState.selectedCurrencyId,
-        label: addAddressFlowState.addressLabel.label,
-        address: addAddressFlowState.addressEntry.resolvedAddress,
-      });
-      const address = contactAddress({
-        id: `address-${uuid()}`,
-        currencyId: addAddressFlowState.selectedCurrencyId,
-        label: addAddressFlowState.addressLabel.label,
-        address: addAddressFlowState.addressEntry.resolvedAddress,
-        device: signedAddress.addressDeviceContext,
-      });
-
-      dispatch(
-        addAddress({
-          contactId: addAddressFlowState.selectedContactId,
-          address,
-          deviceCredentials: signedAddress.deviceCredentials,
-        }),
-      );
-      completeMockConfirmation();
-      closeAddAddress();
-
-      try {
-        const { network, asset } = await resolveContactsCurrencyAnalytics(
-          addAddressFlowState.selectedCurrencyId,
-          contactsCurrencyAnalyticsDependencies,
-        );
-        const inputMethod = addAddressFlowState.addressEntry.inputMethod ?? "manual";
-
-        analytics.trackEvent(CONTACTS_TRACK_EVENTS.ADDRESS_ADDED, {
-          source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
-          network,
-          asset,
-          inputMethod,
-          isEns: inputMethod === "ens",
-          flow: CONTACTS_FLOW.CONTACTS,
-        });
-      } catch {
-        // Analytics enrichment is best-effort and must not affect the user flow.
+  const completeAddressConfirmation = useCallback(
+    async (flowState: Extract<AddAddressFlowState, { status: "confirmationRequired" }>) => {
+      if (contact === undefined || isCompletingAddressConfirmation.current) {
+        return;
       }
-    } catch (error) {
-      hasCompletedMockConfirmation.current = false;
-      console.warn("Failed to complete add-address confirmation", error);
-      closeAddAddress();
-    }
-  }, [
-    addAddressFlowState,
-    analytics,
-    closeAddAddress,
-    completeMockConfirmation,
-    contact,
-    deviceIntents,
-    dispatch,
-  ]);
-  useEffect(() => {
-    void completeMockAddressConfirmation();
-  }, [completeMockAddressConfirmation]);
+
+      isCompletingAddressConfirmation.current = true;
+      try {
+        const signedAddress = await deviceIntents.registerExternalAddress({
+          contact,
+          currencyId: flowState.selectedCurrencyId,
+          label: flowState.addressLabel.label,
+          address: flowState.addressEntry.resolvedAddress,
+        });
+        const address = contactAddress({
+          id: `address-${uuid()}`,
+          currencyId: flowState.selectedCurrencyId,
+          label: flowState.addressLabel.label,
+          address: flowState.addressEntry.resolvedAddress,
+          device: signedAddress.addressDeviceContext,
+        });
+
+        dispatch(
+          addAddress({
+            contactId: flowState.selectedContactId,
+            address,
+            deviceCredentials: signedAddress.deviceCredentials,
+          }),
+        );
+
+        try {
+          const { network, asset } = await resolveContactsCurrencyAnalytics(
+            flowState.selectedCurrencyId,
+            contactsCurrencyAnalyticsDependencies,
+          );
+          const inputMethod = flowState.addressEntry.inputMethod ?? "manual";
+
+          analytics.trackEvent(CONTACTS_TRACK_EVENTS.ADDRESS_ADDED, {
+            source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+            network,
+            asset,
+            inputMethod,
+            isEns: inputMethod === "ens",
+            flow: CONTACTS_FLOW.CONTACTS,
+          });
+        } catch {
+          // Analytics enrichment is best-effort and must not affect the user flow.
+        }
+        completeConfirmation();
+      } catch (error) {
+        closeAddAddress();
+        console.warn("Failed to complete add-address confirmation", error);
+      } finally {
+        isCompletingAddressConfirmation.current = false;
+      }
+    },
+    [analytics, closeAddAddress, completeConfirmation, contact, deviceIntents, dispatch],
+  );
   const startAddAddressForContact = useCallback(() => {
     if (!contact || eligibleNetworkIds.length === 0) return;
 
@@ -305,7 +287,19 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     }
 
     continueFromName();
-  }, [addAddressFlowState, analytics, continueFromName]);
+    if (
+      addAddressFlowState.status === "namingAddress" &&
+      addAddressFlowState.entryMode === "mad" &&
+      addAddressFlowState.addressLabel.status === "valid"
+    ) {
+      void completeAddressConfirmation({
+        ...addAddressFlowState,
+        addressEntry: addAddressFlowState.addressEntry,
+        addressLabel: addAddressFlowState.addressLabel,
+        status: "confirmationRequired",
+      });
+    }
+  }, [addAddressFlowState, analytics, completeAddressConfirmation, continueFromName]);
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
@@ -360,7 +354,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const isAddressDetailActionSheetOpen =
     addressDetailActions.deleteSheet.isOpen ||
     addressDetailActions.renameSheet.isOpen ||
-    addressDetailActions.signerSheet.isOpen ||
     addressDetailActions.signerMismatchSheet.isOpen;
   const onCloseAddressDetailSheet = useCallback(() => {
     if (isAddressDetailActionSheetOpen) {

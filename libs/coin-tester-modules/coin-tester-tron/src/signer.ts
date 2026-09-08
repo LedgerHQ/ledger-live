@@ -2,7 +2,7 @@ import { secp256k1 } from "@noble/curves/secp256k1";
 import { keccak_256 } from "@noble/hashes/sha3";
 import { sha256 } from "@noble/hashes/sha2";
 import bs58 from "bs58";
-import type { TronSigner } from "@ledgerhq/coin-tron/types/signer";
+import type { TronSigner } from "@ledgerhq/live-common/families/tron/types";
 
 function deriveAddress(publicKeyUncompressed: Uint8Array): string {
   const addr20 = keccak_256(publicKeyUncompressed.slice(1)).slice(-20);

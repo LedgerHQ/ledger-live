@@ -141,4 +141,24 @@ describe("applyBrazeConsentTransition", () => {
     expect(mockedChangeUser).not.toHaveBeenCalled();
     expect(mockedRequestContentCardsRefresh).not.toHaveBeenCalled();
   });
+
+  it("should route consent refreshes through the lifecycle owner", async () => {
+    const prepareForIdentityTransition = jest.fn();
+    const refreshContentCards = jest.fn().mockResolvedValue(undefined);
+
+    await applyBrazeConsentTransition(
+      { isTrackedUser: true, userId: REAL_USER_ID },
+      { prepareForIdentityTransition, refreshContentCards },
+    );
+
+    expect(prepareForIdentityTransition).toHaveBeenCalledTimes(1);
+    expect(refreshContentCards).toHaveBeenCalledTimes(1);
+    expect(mockedRequestContentCardsRefresh).not.toHaveBeenCalled();
+    expect(prepareForIdentityTransition.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedWipeData.mock.invocationCallOrder[0],
+    );
+    expect(mockedChangeUser.mock.invocationCallOrder[0]).toBeLessThan(
+      refreshContentCards.mock.invocationCallOrder[0],
+    );
+  });
 });

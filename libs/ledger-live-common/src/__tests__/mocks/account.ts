@@ -1,6 +1,6 @@
 import "../test-helpers/staticTime";
 import { genAccount } from "../../mock/account";
-import { getBalanceHistory } from "@ledgerhq/live-countervalues/portfolio";
+import { getBalanceHistory } from "../../portfolio/portfolio";
 import { getEnv, setEnv } from "@shared/env";
 
 test("generate an account from seed", () => {

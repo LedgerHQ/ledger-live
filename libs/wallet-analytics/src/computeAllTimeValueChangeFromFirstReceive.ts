@@ -4,8 +4,8 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getOperationAmountNumber } from "@ledgerhq/ledger-wallet-framework/operation";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
-import { meaningfulPercentage } from "@ledgerhq/live-countervalues/portfolio";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { meaningfulPercentage } from "./meaningfulPercentage";
 import type { Currency } from "@domain/entity-currency";
 import type { AccountLike, ValueChange } from "@ledgerhq/types-live";
 

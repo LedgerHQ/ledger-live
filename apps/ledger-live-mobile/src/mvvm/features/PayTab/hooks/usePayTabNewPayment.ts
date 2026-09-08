@@ -1,21 +1,49 @@
 import { useCallback } from "react";
-import { AssetCategory } from "@domain/api-aggregated-assets";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { Contact, ContactAddress } from "@domain/entity-contact";
+import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
+import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
-
-const PAY_PAGE = "Pay";
-const PAY_CATEGORIES: AssetCategory[] = [AssetCategory.Stablecoins];
+import { ScreenName } from "~/const";
+import type { PayTabNavigatorParamList } from "../types";
 
 export type UsePayTabNewPayment = Readonly<{
-  open: () => void;
+  open: (contact?: Contact) => void;
+  contactAddressPicker: ContactAddressPickerProps;
 }>;
 
 export function usePayTabNewPayment(): UsePayTabNewPayment {
+  const navigation = useNavigation<NativeStackNavigationProp<PayTabNavigatorParamList>>();
   const { handleOpenSendFlow } = useOpenSendFlow({
-    sourceScreenName: PAY_PAGE,
-    categories: PAY_CATEGORIES,
+    sourceScreenName: "Pay",
   });
 
-  const open = useCallback(() => handleOpenSendFlow(), [handleOpenSendFlow]);
+  const payFromAddress = useCallback(
+    (address: ContactAddress) => {
+      handleOpenSendFlow({
+        currencyIds: [address.currencyId],
+        recipient: address.address,
+        skipRecipientStep: true,
+      });
+    },
+    [handleOpenSendFlow],
+  );
+  const { open: openPicker, contactAddressPicker } = useContactAddressPicker({
+    onSelectAddress: payFromAddress,
+  });
 
-  return { open };
+  const open = useCallback(
+    (nextContact?: Contact) => {
+      if (!nextContact) {
+        navigation.navigate(ScreenName.PayTabSelectContact);
+        return;
+      }
+
+      openPicker(nextContact);
+    },
+    [openPicker, navigation],
+  );
+
+  return { open, contactAddressPicker };
 }

@@ -1,7 +1,6 @@
 import { loadConfig, setFeatureFlags } from "@e2e/bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
-import { allure } from "jest-allure2-reporter/api";
 import { SpeculosAppType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { getMergedFeatureFlags } from "@e2e/utils/featureFlagUtils";
 import { isSpeculosRemote } from "@e2e/helpers/commonHelpers";
@@ -15,7 +14,7 @@ import {
 import { waitForSpeculosReady } from "@ledgerhq/live-e2e-shared/speculosCI";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
-import type { Features, OptionalFeatureMap } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 function checkTestFailed(): void {
   if (globalThis.IS_FAILED) {
@@ -41,7 +40,7 @@ export type InitOptions = {
   }[];
   userdata?: string;
   testedCurrencies?: string[];
-  featureFlags?: OptionalFeatureMap;
+  featureFlags?: PartialFeatures;
   speculosForSetupOnly?: boolean;
 };
 
@@ -109,7 +108,7 @@ async function launchSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record
     );
     throw new Error(
       `Failed to launch ${failures.length}/${toStart.length} Speculos device(s): ${failures
-        .map(sanitizeError)
+        .map(err => sanitizeError(err))
         .join("; ")}`,
     );
   }
@@ -376,16 +375,13 @@ export class InitializationManager {
     await loadConfig(userdataSpeculos, true);
   }
 
-  static async setFeatureFlags(featureFlags: OptionalFeatureMap) {
+  static async setFeatureFlags(featureFlags: PartialFeatures) {
     const mergedFeatureFlags = getMergedFeatureFlags({ testFlags: featureFlags });
-    const wallet40 = mergedFeatureFlags.lwmWallet40 as Features["lwmWallet40"];
+    const wallet40 = mergedFeatureFlags.lwmWallet40;
     isMyWalletEnabled = Boolean(wallet40?.enabled && wallet40?.params?.myWallet);
 
-    await allure.attachment(
-      "Merged Feature Flags",
-      JSON.stringify(mergedFeatureFlags, null, 2),
-      "application/json",
-    );
+    globalThis.mergedFeatureFlags = mergedFeatureFlags;
+
     await setFeatureFlags(mergedFeatureFlags);
   }
 }

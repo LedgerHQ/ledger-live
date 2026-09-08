@@ -28,7 +28,9 @@
     "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card-details/knip.web.config.mjs -W features/flow/pay-card-details --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card-details/knip.native.config.mjs -W features/flow/pay-card-details --tsConfig tsconfig.native.json"
   },
   "dependencies": {
-    "@ledgerhq/lumen-utils-shared": "catalog:"
+    "@domain/api-card-management": "workspace:*",
+    "@ledgerhq/lumen-utils-shared": "catalog:",
+    "@shared/i18n": "workspace:*"
   },
   "devDependencies": {
     "@features/platform-style": "workspace:*",

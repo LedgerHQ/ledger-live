@@ -2,10 +2,20 @@ import { Button, Divider, Tag } from "@ledgerhq/lumen-ui-react";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
-import { EnvVarRow } from "../components/EnvVarRow/EnvVarRow";
 
 export function PayCard(props: Readonly<PayCardToolProps>) {
-  const { flags, onboarding, hasSeenFeatureTour, resetPayCardFeatureTourSeen, env } = props;
+  const {
+    flags,
+    onboarding,
+    hasSeenFeatureTour,
+    resetPayCardFeatureTourSeen,
+    hasSeenReceiveVerifyHint,
+    resetReceiveVerifyHintSeen,
+    hasCompletedCardOnboarding,
+    resetCardOnboarding,
+    onNavigateToPortfolio,
+    onNavigateToPayTab,
+  } = props;
 
   return (
     <div className="flex flex-col overflow-y-auto">
@@ -49,40 +59,87 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
 
       <Section title="Reset onboarding">
         <div className="flex flex-wrap gap-8">
+          <Button appearance="gray" size="sm" onClick={() => onboarding.setStepDone("all", true)}>
+            Set all done
+          </Button>
           <Button appearance="gray" size="sm" onClick={() => onboarding.setStepDone("all", false)}>
-            Reset onboarding widget
+            Reset all
           </Button>
         </div>
       </Section>
 
       <Divider />
 
-      <Section title="Feature tour">
-        <div>
-          <Tag
-            size="sm"
-            appearance={hasSeenFeatureTour ? "success" : "gray"}
-            label={hasSeenFeatureTour ? "Seen" : "Not seen"}
-          />
-        </div>
-        <div className="flex flex-wrap gap-8">
-          <Button appearance="gray" size="sm" onClick={resetPayCardFeatureTourSeen}>
-            Reset feature tour
-          </Button>
-        </div>
-      </Section>
+      <SeenReset
+        title="Feature tour"
+        seen={hasSeenFeatureTour}
+        resetLabel="Reset feature tour"
+        onReset={resetPayCardFeatureTourSeen}
+      />
 
       <Divider />
 
-      <Section title="Env vars">
-        <p className="body-4 text-muted">
-          Applied at once, and not saved: a restart brings the build's values back.
-        </p>
-        {env.vars.map(envVar => (
-          <EnvVarRow key={envVar.key} envVar={envVar} onSet={env.setVar} />
-        ))}
-      </Section>
+      <SeenReset
+        title="Request verify hint"
+        seen={hasSeenReceiveVerifyHint}
+        resetLabel="Reset verify hint"
+        onReset={resetReceiveVerifyHintSeen}
+      />
+
+      <Divider />
+
+      <SeenReset
+        title="Onboarding completed"
+        seen={hasCompletedCardOnboarding}
+        resetLabel="Reset onboarding completion"
+        onReset={resetCardOnboarding}
+      />
+
+      {onNavigateToPortfolio || onNavigateToPayTab ? (
+        <>
+          <Divider />
+          <Section title="Quick actions">
+            <div className="flex flex-wrap gap-8">
+              {onNavigateToPortfolio ? (
+                <Button appearance="gray" size="sm" onClick={onNavigateToPortfolio}>
+                  Go to Portfolio
+                </Button>
+              ) : null}
+              {onNavigateToPayTab ? (
+                <Button appearance="gray" size="sm" onClick={onNavigateToPayTab}>
+                  Go to Pay tab
+                </Button>
+              ) : null}
+            </div>
+          </Section>
+        </>
+      ) : null}
     </div>
+  );
+}
+
+function SeenReset({
+  title,
+  seen,
+  resetLabel,
+  onReset,
+}: Readonly<{
+  title: string;
+  seen: boolean;
+  resetLabel: string;
+  onReset: () => void;
+}>) {
+  return (
+    <Section title={title}>
+      <div>
+        <Tag size="sm" appearance={seen ? "success" : "gray"} label={seen ? "Seen" : "Not seen"} />
+      </div>
+      <div className="flex flex-wrap gap-8">
+        <Button appearance="gray" size="sm" onClick={onReset}>
+          {resetLabel}
+        </Button>
+      </div>
+    </Section>
   );
 }
 

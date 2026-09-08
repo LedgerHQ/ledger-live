@@ -39,7 +39,11 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
       await app.account.tapEarn();
 
       await app.stake.dismissDelegationStart(currencyId);
-      if (delegation.account.currency.name === Currency.MULTIVERS_X.name) {
+      // Osmosis, like MultiversX, has no pre-selected validator: pick it after the amount.
+      if (
+        delegation.account.currency.name === Currency.MULTIVERS_X.name ||
+        delegation.account.currency.name === Currency.OSMO.name
+      ) {
         await app.stake.setAmount(currencyId, delegation.amount);
         await app.stake.validateAmount(currencyId);
         await app.stake.selectValidator(currencyId, delegation.provider);

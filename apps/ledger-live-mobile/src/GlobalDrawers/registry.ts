@@ -5,7 +5,6 @@ import RebornBuyDeviceDrawer from "LLM/features/Reborn/drawers/RebornBuyDeviceDr
 import { DeeplinkInstallAppDrawer } from "LLM/features/DeeplinkInstallApp";
 import { NotificationsPromptWrapper } from "LLM/features/NotificationsPrompt";
 import { SwapTransactionStatusDrawerWrapper } from "LLM/features/SwapTransactionStatus";
-import { PrefillAddAddressFlowRoot } from "LLM/features/Contacts";
 
 /**
  * Registry of all global drawers in the application.
@@ -37,9 +36,6 @@ export const DRAWER_REGISTRY = {
   },
   swapTransactionStatus: {
     component: SwapTransactionStatusDrawerWrapper,
-  },
-  prefillAddAddress: {
-    component: PrefillAddAddressFlowRoot,
   },
 } as const satisfies Record<string, DrawerRegistryEntry>;
 

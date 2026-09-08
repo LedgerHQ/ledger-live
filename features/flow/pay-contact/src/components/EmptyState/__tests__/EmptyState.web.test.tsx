@@ -1,12 +1,8 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
-import { StyleProvider } from "@features/platform-style";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithStyle } from "../../../__tests__/renderWithStyle.web";
 import { EmptyState } from "../EmptyState.web";
 import type { EmptyStateProps } from "../../../types";
-
-function renderWithStyle(ui: React.ReactElement) {
-  return render(<StyleProvider colorScheme="dark">{ui}</StyleProvider>);
-}
 
 const defaultProps: EmptyStateProps = {
   info: "No contacts yet",

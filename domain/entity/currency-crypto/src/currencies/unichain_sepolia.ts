@@ -7,7 +7,6 @@ export const unichain_sepolia = currency({
   name: "Unichain Sepolia",
   managerAppName: "Ethereum",
   ticker: "ETH",
-  deviceTicker: "ETH",
   scheme: "unichain_sepolia",
   color: "#f50fb4",
   family: "evm",
@@ -39,7 +38,6 @@ export const unichain_sepolia = currency({
     },
   ],
   isTestnetFor: "unichain",
-  disableCountervalue: true,
   ethereumLikeInfo: {
     chainId: 1301,
   },

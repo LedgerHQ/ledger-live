@@ -1,23 +1,6 @@
 import React from "react";
-import { View } from "react-native";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
 import { DepositOptionsView } from "../DepositOptionsView.native";
-
-jest.mock("@shared/ui-queued-bottom-sheet", () => ({
-  QueuedBottomSheet: ({
-    children,
-    isRequestingToBeOpened,
-    testID,
-  }: {
-    children: React.ReactNode;
-    isRequestingToBeOpened?: boolean;
-    testID?: string;
-  }) => (
-    <View testID={testID} accessibilityState={{ expanded: !!isRequestingToBeOpened }}>
-      {children}
-    </View>
-  ),
-}));
 
 const defaultProps: React.ComponentProps<typeof DepositOptionsView> = {
   isOpen: true,

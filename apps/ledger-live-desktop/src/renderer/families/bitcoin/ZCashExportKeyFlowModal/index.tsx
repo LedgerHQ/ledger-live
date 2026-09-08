@@ -5,13 +5,14 @@ import {
   ZCASH_ACTIVATION_DATE,
   ZCASH_ACTIVATION_DATE_STRING,
 } from "@ledgerhq/coin-zcash/constants";
-import type { ZcashSyncState, ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
+import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import Modal from "~/renderer/components/Modal";
 import logger from "~/renderer/logger";
 import Body from "./Body";
 import { StepId } from "./types";
 import { syncStateUpdater } from "./sync";
+import { useZcashShieldedSync } from "../useZcashShieldedSync";
 
 const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
   const [stepId, setStepId] = useState<StepId>("birthday");
@@ -29,6 +30,7 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
   const [syncFromZero, setSyncFromZero] = useState(false);
 
   const dispatch = useDispatch();
+  const { startShieldedSync } = useZcashShieldedSync(account);
 
   const saveSyncState = (info: Partial<ZcashPrivateInfo>) => {
     dispatch(
@@ -84,13 +86,21 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
     setShieldedAddress(shieldedAddr ?? null);
   };
 
-  const handleEnableShieldedBalance = (nextSyncState: ZcashSyncState) => {
+  // Persisting the viewing key is what enables private balance, and "ready" is the
+  // only honest state to persist it with: nothing is syncing yet. Starting is
+  // delegated to startShieldedSync, the one place that both registers the rxjs
+  // subscription and flips syncState to "running". Writing "running" here instead
+  // would leave the UI on a 0% spinner no subscription ever advances, and would
+  // then be refused by startShieldedSync's own "already running" guard.
+  const handleEnableShieldedBalance = ({ startSyncNow }: { startSyncNow: boolean }) => {
     saveSyncState({
-      syncState: nextSyncState,
+      syncState: "ready",
       ufvk,
       birthday,
       shieldedAddress,
     });
+
+    if (startSyncNow) startShieldedSync();
   };
 
   const isModalLocked = ["device", "confirmation"].includes(stepId);

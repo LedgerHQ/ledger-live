@@ -1,17 +1,38 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import {
+  cardManagementApi,
+  useGetCardLinkedWalletsQuery,
+  useGetInternalWalletsQuery,
+  useLazyGetCardStatusQuery,
+  useCreateCardDetailsTokenMutation,
+} from "@domain/api-card-management";
+import {
+  useCardLinkedWallets,
+  type ResolveWalletCounterValue,
+} from "@features/flow-pay-card-wallets";
 import { useDispatch, useSelector } from "react-redux";
 import { setOverride } from "@shared/feature-flags";
-import { changes, getEnv, setEnvUnsafe, type EnvName } from "@shared/env";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   resetPayCardFeatureTourSeen,
   selectPayCardHasSeenFeatureTour,
 } from "@features/flow-pay-feature-tour/state";
+import {
+  resetReceiveVerifyHintSeen,
+  selectHasSeenReceiveVerifyHint,
+} from "@features/flow-pay-request/state";
+import type { PayCardDetailsCss } from "@domain/api-card-management";
+import {
+  resetCardOnboardingCompleted,
+  selectHasCompletedCardOnboarding,
+} from "@features/flow-pay-card-widget/state";
+import { setMockOnboardingStepDone } from "@domain/api-card-management/mock";
 import type { DevToolsConfig } from "@devtools/registry";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
 type OnboardingStep = PayCardToolProps["onboarding"]["steps"][number];
-type PayCardEnvVar = PayCardToolProps["env"]["vars"][number];
+
+type PayCardProbe = PayCardToolProps["interaction"]["probes"][number];
 
 export type UsePayCardToolPropsOptions = {
   /** Pass `"native"` on mobile to include the `walletPay` onboarding step. */
@@ -19,43 +40,40 @@ export type UsePayCardToolPropsOptions = {
 };
 
 const LEADING_ONBOARDING_STEPS: readonly OnboardingStep[] = [
-  { id: "kyc", label: "Kyc", done: false },
-  { id: "claim", label: "Claim card", done: false },
-  { id: "topup", label: "Top up", done: false },
+  { id: "create-account", label: "Create account", done: true },
+  { id: "choose-card-type", label: "Choose card type", done: false },
+  { id: "top-up-card", label: "Top up card", done: false },
 ];
 
 // Mobile-only, injected just before the final purchase step.
 const NATIVE_ONLY_STEP: OnboardingStep = {
-  id: "walletPay",
+  id: "apple-google-pay",
   label: "Apple/Google Pay",
   done: false,
 };
 
-const PURCHASE_STEP: OnboardingStep = { id: "purchase", label: "First Purchase", done: false };
-
-/**
- * The two Card env vars the tool shows, each with the value of the Baanx development tenant.
- *
- * A release build carries neither, so it starts on the definition defaults: the production URL and
- * an empty client key. The suggestions put the development tenant one press away.
- */
-const CARD_ENV_VARS: readonly { key: EnvName; suggestedValue: string }[] = [
-  { key: "CARD_API_URL", suggestedValue: "https://dev.api.baanx.com" },
-  { key: "CARD_BAANX_CLIENT_KEY", suggestedValue: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6" },
-];
-
-function readCardEnvVars(): readonly PayCardEnvVar[] {
-  return CARD_ENV_VARS.map(({ key, suggestedValue }) => ({
-    key,
-    value: String(getEnv(key)),
-    suggestedValue,
-  }));
-}
+const PURCHASE_STEP: OnboardingStep = {
+  id: "first-purchase",
+  label: "First purchase",
+  done: false,
+};
 
 function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
   return platform === "native"
     ? [...LEADING_ONBOARDING_STEPS, NATIVE_ONLY_STEP, PURCHASE_STEP]
     : [...LEADING_ONBOARDING_STEPS, PURCHASE_STEP];
+}
+
+/**
+ * The join needs a resolver, and this tool prices nothing. It is called for every wallet with a
+ * balance and answers `null`, which the screen reports as unpriced.
+ */
+const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
+
+/** Reads what an endpoint answered, whatever shape the failure arrives in. */
+function describeError(error: unknown): string {
+  if (error === undefined || error === null) return "";
+  return typeof error === "string" ? error : JSON.stringify(error, null, 2);
 }
 
 /**
@@ -100,19 +118,36 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   );
 
   const hasSeenFeatureTour = useSelector(selectPayCardHasSeenFeatureTour);
+  const hasSeenReceiveVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
+  const hasCompletedCardOnboarding = useSelector(selectHasCompletedCardOnboarding);
 
   const resetFeatureTour = useCallback(() => {
     dispatch(resetPayCardFeatureTourSeen());
   }, [dispatch]);
 
-  const setStepDone = useCallback((id: string, done: boolean) => {
-    setSteps(current => {
-      if (id === "all") {
-        return current.map(step => (step.done === done ? step : { ...step, done }));
-      }
-      return current.map(step => (step.id === id && step.done !== done ? { ...step, done } : step));
-    });
-  }, []);
+  const resetVerifyHint = useCallback(() => {
+    dispatch(resetReceiveVerifyHintSeen());
+  }, [dispatch]);
+
+  const resetCardOnboarding = useCallback(() => {
+    dispatch(resetCardOnboardingCompleted());
+  }, [dispatch]);
+
+  const setStepDone = useCallback(
+    (id: string, done: boolean) => {
+      setSteps(current => {
+        if (id === "all") {
+          return current.map(step => (step.done === done ? step : { ...step, done }));
+        }
+        return current.map(step =>
+          step.id === id && step.done !== done ? { ...step, done } : step,
+        );
+      });
+      setMockOnboardingStepDone(id, done);
+      dispatch(cardManagementApi.util.invalidateTags(["CardOnboardingStatus"]));
+    },
+    [dispatch],
+  );
 
   const flags = useMemo(
     () => ({
@@ -128,31 +163,137 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const onboarding = useMemo(() => ({ steps, setStepDone }), [steps, setStepDone]);
 
-  const [envVars, setEnvVars] = useState<readonly PayCardEnvVar[]>(readCardEnvVars);
+  const [runCardStatus, cardStatus] = useLazyGetCardStatusQuery();
 
-  useEffect(() => {
-    // Read again on mount, because a change can land between the first render and this subscription.
-    setEnvVars(readCardEnvVars());
-    const sub = changes.subscribe(({ name }) => {
-      if (CARD_ENV_VARS.some(candidate => candidate.key === name)) setEnvVars(readCardEnvVars());
-    });
-    return () => sub.unsubscribe();
-  }, []);
+  const cardStatusProbe = useMemo<PayCardProbe>(
+    () => ({
+      id: "card-status",
+      label: "Card Status",
+      isFetching: cardStatus.isFetching,
+      result: cardStatus.data === undefined ? undefined : JSON.stringify(cardStatus.data, null, 2),
+      error: cardStatus.error === undefined ? undefined : describeError(cardStatus.error),
+      run: () => {
+        runCardStatus();
+      },
+    }),
+    [cardStatus.isFetching, cardStatus.data, cardStatus.error, runCardStatus],
+  );
 
-  const setEnvVar = useCallback((key: string, value: string) => {
-    setEnvUnsafe(key, value);
-  }, []);
+  const [requestCardDetails, cardDetails] = useCreateCardDetailsTokenMutation();
 
-  const env = useMemo(() => ({ vars: envVars, setVar: setEnvVar }), [envVars, setEnvVar]);
+  const { reset: resetCardDetails } = cardDetails;
+  const details = useMemo(
+    () => ({
+      // A live, single-use credential. RTK holds it in mutation state while this hook is mounted,
+      // so what the tool guarantees is narrower: it is never handed over as text, and `clear`
+      // resets it on the way out.
+      imageUrl: cardDetails.data?.imageUrl,
+      isFetching: cardDetails.isLoading,
+      error: cardDetails.error === undefined ? undefined : describeError(cardDetails.error),
+      request: (customCss?: PayCardDetailsCss) => {
+        requestCardDetails(customCss);
+      },
+      clear: resetCardDetails,
+    }),
+    [
+      cardDetails.data,
+      cardDetails.isLoading,
+      cardDetails.error,
+      requestCardDetails,
+      resetCardDetails,
+    ],
+  );
+
+  const interaction = useMemo(
+    () => ({ probes: [cardStatusProbe], details }),
+    [cardStatusProbe, details],
+  );
+
+  // The wallets are read when the balance screen opens, not when the tool mounts.
+  const [walletsRequested, setWalletsRequested] = useState(false);
+  const skipWallets = !walletsRequested;
+
+  const linkedWallets = useCardLinkedWallets({
+    resolveCounterValue: NO_COUNTER_VALUE,
+    skip: skipWallets,
+  });
+
+  const loadWallets = useCallback(() => setWalletsRequested(true), []);
+
+  const { refetch: refetchWallets } = linkedWallets;
+  const refreshWallets = useCallback(() => {
+    setWalletsRequested(true);
+    refetchWallets();
+  }, [refetchWallets]);
+
+  // `useCardLinkedWallets` hands back only the join, and reports no more than that something
+  // failed. Reading the same cache entries again costs no request and gives the tool both
+  // responses as they arrived, which is what the screen is for.
+  const { data: linked, error: linkedError } = useGetCardLinkedWalletsQuery(undefined, {
+    skip: skipWallets,
+  });
+  const { data: internal, error: internalError } = useGetInternalWalletsQuery(undefined, {
+    skip: skipWallets,
+  });
+
+  const errors = useMemo(
+    () =>
+      [
+        { endpoint: "GET /v1/wallet/internal/card_linked", error: linkedError },
+        { endpoint: "GET /v1/wallet/internal", error: internalError },
+      ]
+        .filter(({ error }) => error !== undefined)
+        .map(({ endpoint, error }) => ({ endpoint, detail: describeError(error) })),
+    [linkedError, internalError],
+  );
+
+  const balance = useMemo(
+    () => ({
+      baanxWallets: internal ?? [],
+      linkedWallets: linked ?? [],
+      // Without the counter value, which this tool does not price.
+      combinedWallets: linkedWallets.wallets.map(
+        ({ id, address, currency, network, priority, balance: walletBalance }) => ({
+          id,
+          address,
+          currency,
+          network,
+          priority,
+          balance: walletBalance,
+        }),
+      ),
+      isFetching: linkedWallets.isFetching,
+      errors,
+      load: loadWallets,
+      refresh: refreshWallets,
+    }),
+    [internal, linked, linkedWallets, errors, loadWallets, refreshWallets],
+  );
 
   return useMemo(
     () => ({
       flags,
       onboarding,
+      interaction,
+      balance,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
-      env,
+      hasSeenReceiveVerifyHint,
+      resetReceiveVerifyHintSeen: resetVerifyHint,
+      hasCompletedCardOnboarding,
+      resetCardOnboarding,
     }),
-    [flags, onboarding, hasSeenFeatureTour, resetFeatureTour, env],
+    [
+      flags,
+      onboarding,
+      interaction,
+      balance,
+      hasSeenFeatureTour,
+      resetFeatureTour,
+      hasSeenReceiveVerifyHint,
+      resetVerifyHint,
+      hasCompletedCardOnboarding,
+      resetCardOnboarding,
+    ],
   );
 }

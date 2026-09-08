@@ -39,8 +39,6 @@ export type UseContactDetailEditDeleteFlowViewModelResult = ReturnType<
     onEditPress: () => void;
     onDeletePress: () => void;
     requestSaveApproval: () => Promise<boolean>;
-    onSignerConfirm: () => Promise<void>;
-    onSignerCancel: () => void;
     onSignerMismatchCancel: () => void;
     onConnectDifferentDevice: () => void;
     onEditClose: () => void;
@@ -66,11 +64,8 @@ export function useContactDetailEditDeleteFlowViewModel({
   const {
     editUiState,
     isEditSessionActive,
-    requestSignerApproval,
-    grantSignerApproval,
     openSignerMismatchDialog,
     openEditDialog,
-    onSignerCancel: closeSignerOnCancel,
     onSignerMismatchCancel,
     onConnectDifferentDevice,
     onEditClose: closeEditUiState,
@@ -84,17 +79,11 @@ export function useContactDetailEditDeleteFlowViewModel({
     openEditDialog();
   }, [openEditDialog]);
 
-  const requestSaveApproval = useCallback(
-    () => (isSignerRequiredForEdit ? requestSignerApproval() : Promise.resolve(true)),
-    [isSignerRequiredForEdit, requestSignerApproval],
-  );
-
-  const onSignerConfirm = useCallback(async () => {
+  const requestSaveApproval = useCallback(async () => {
     const validationLookup = editIntent?.signerValidationLookup;
 
-    if (validationLookup === undefined) {
-      grantSignerApproval();
-      return;
+    if (!isSignerRequiredForEdit || validationLookup === undefined) {
+      return true;
     }
 
     const [expectedSignerId, currentSignerId] = await Promise.all([
@@ -105,20 +94,16 @@ export function useContactDetailEditDeleteFlowViewModel({
 
     if (status === CONTACT_SIGNER_MISMATCH_ERROR) {
       openSignerMismatchDialog();
-      return;
+      return false;
     }
 
-    grantSignerApproval();
+    return true;
   }, [
     editIntent?.signerValidationLookup,
-    grantSignerApproval,
+    isSignerRequiredForEdit,
     openSignerMismatchDialog,
     ports.signerValidation,
   ]);
-
-  const onSignerCancel = useCallback(() => {
-    closeSignerOnCancel();
-  }, [closeSignerOnCancel]);
 
   const onEditClose = useCallback(() => {
     closeEditUiState();
@@ -153,8 +138,6 @@ export function useContactDetailEditDeleteFlowViewModel({
     onEditPress,
     onDeletePress,
     requestSaveApproval,
-    onSignerConfirm,
-    onSignerCancel,
     onSignerMismatchCancel,
     onConnectDifferentDevice,
     onEditClose,

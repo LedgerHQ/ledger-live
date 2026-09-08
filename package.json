@@ -110,7 +110,6 @@
     "coin:celo": "pnpm --filter coin-celo",
     "coin:concordium": "pnpm --filter coin-concordium",
     "coin:cosmos": "pnpm --filter coin-cosmos",
-    "coin:evm": "pnpm --filter coin-evm",
     "coin:filecoin": "pnpm --filter coin-filecoin",
     "coin:kaspa": "pnpm --filter coin-kaspa",
     "coin:tester": "pnpm --filter coin-tester",
@@ -148,6 +147,7 @@
     "coin:tester:vechain": "pnpm --filter coin-tester-vechain",
     "coin:tester:kaspa": "pnpm --filter coin-tester-kaspa",
     "coin:tester:xrp": "pnpm --filter coin-tester-xrp",
+    "coin:tester:zcash": "pnpm --filter coin-tester-zcash",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",
@@ -230,14 +230,14 @@
   "devDependencies": {
     "@changesets/changelog-github": "0.5.0",
     "@changesets/cli": "2.27.7",
-    "@commitlint/cli": "17.8.1",
-    "@commitlint/config-conventional": "17.8.1",
-    "@commitlint/prompt-cli": "17.8.1",
-    "@datadog/datadog-ci": "3.11.0",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "@commitlint/prompt-cli": "catalog:",
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/pnpm-utils": "workspace:*",
-    "@nx/s3-cache": "5.0.2",
+    "@nx/nx-linux-x64-gnu": "catalog:",
+    "@nx/s3-cache": "catalog:",
     "@react-native/babel-plugin-codegen": "catalog:",
     "@ton/crypto": "^3.3.0",
     "@typescript-eslint/parser": "catalog:",
@@ -245,7 +245,7 @@
     "eslint": "8.57.0",
     "jest-sonar": "0.2.16",
     "knip": "6.32.2",
-    "nx": "22.5.1",
+    "nx": "catalog:",
     "nyc": "15.1.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
@@ -313,7 +313,6 @@
       "react-native-bundle-visualizer@3.1.3": "patches/react-native-bundle-visualizer@3.1.3.patch",
       "@ton/core": "patches/@ton__core.patch",
       "detox@20.51.3": "patches/detox@20.51.3.patch",
-      "@datadog/datadog-ci@3.11.0": "patches/@datadog__datadog-ci@3.11.0.patch",
       "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch",
       "@taquito/http-utils": "patches/@taquito__http-utils.patch",
       "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
@@ -328,6 +327,11 @@
       "@hiero-ledger/proto@2.25.0": "patches/@hiero-ledger__proto@2.25.0.patch"
     },
     "packageExtensions": {
+      "@ledgerhq/device-transport-kit-mockserver": {
+        "dependencies": {
+          "@ledgerhq/device-mockserver-client": "1.3.0"
+        }
+      },
       "detox-allure2-adapter": {
         "dependencies": {
           "tslib": "*"

@@ -26,6 +26,7 @@ export type UseContactAddressDetailActionsFlowViewModelResult = Readonly<{
   canSend: boolean;
   canEdit: boolean;
   canDelete: boolean;
+  isSignerRequiredForEdit: boolean;
   editUiState: ReturnType<typeof useContactEditSignerUiState>["editUiState"];
   isEditSessionActive: boolean;
   isDeleting: boolean;
@@ -34,8 +35,6 @@ export type UseContactAddressDetailActionsFlowViewModelResult = Readonly<{
   onEditPress: () => void;
   onDeletePress: () => void;
   requestSaveApproval: () => Promise<boolean>;
-  onSignerConfirm: () => Promise<void>;
-  onSignerCancel: () => void;
   onSignerMismatchCancel: () => void;
   onConnectDifferentDevice: () => void;
   onEditClose: () => void;
@@ -64,11 +63,8 @@ export function useContactAddressDetailActionsFlowViewModel({
   const {
     editUiState,
     isEditSessionActive,
-    requestSignerApproval,
-    grantSignerApproval,
     openSignerMismatchDialog,
     openEditDialog,
-    onSignerCancel: closeSignerOnCancel,
     onSignerMismatchCancel,
     onConnectDifferentDevice,
     onEditClose: closeEditUiState,
@@ -96,14 +92,9 @@ export function useContactAddressDetailActionsFlowViewModel({
     openEditDialog();
   }, [editIntent, openEditDialog]);
 
-  const requestSaveApproval = useCallback(
-    () => (isSignerRequiredForEdit ? requestSignerApproval() : Promise.resolve(true)),
-    [isSignerRequiredForEdit, requestSignerApproval],
-  );
-
-  const onSignerConfirm = useCallback(async () => {
-    if (editIntent === undefined) {
-      return;
+  const requestSaveApproval = useCallback(async () => {
+    if (!isSignerRequiredForEdit || editIntent === undefined) {
+      return true;
     }
 
     const [expectedSignerId, currentSignerId] = await Promise.all([
@@ -117,15 +108,11 @@ export function useContactAddressDetailActionsFlowViewModel({
 
     if (status === CONTACT_SIGNER_MISMATCH_ERROR) {
       openSignerMismatchDialog();
-      return;
+      return false;
     }
 
-    grantSignerApproval();
-  }, [editIntent, grantSignerApproval, openSignerMismatchDialog, ports.signerValidation]);
-
-  const onSignerCancel = useCallback(() => {
-    closeSignerOnCancel();
-  }, [closeSignerOnCancel]);
+    return true;
+  }, [editIntent, isSignerRequiredForEdit, openSignerMismatchDialog, ports.signerValidation]);
 
   const onEditClose = useCallback(() => {
     closeEditUiState();
@@ -174,6 +161,7 @@ export function useContactAddressDetailActionsFlowViewModel({
     canSend,
     canEdit,
     canDelete,
+    isSignerRequiredForEdit,
     editUiState,
     isEditSessionActive,
     isDeleting,
@@ -182,8 +170,6 @@ export function useContactAddressDetailActionsFlowViewModel({
     onEditPress,
     onDeletePress,
     requestSaveApproval,
-    onSignerConfirm,
-    onSignerCancel,
     onSignerMismatchCancel,
     onConnectDifferentDevice,
     onEditClose,

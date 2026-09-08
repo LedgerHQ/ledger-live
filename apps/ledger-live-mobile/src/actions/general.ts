@@ -11,7 +11,7 @@ import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues-react";
-import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-countervalues-react/portfolio";
+import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-common/portfolio/portfolioReact";
 import {
   useAssetDistribution,
   type DistributionOpts,

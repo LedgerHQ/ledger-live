@@ -7,7 +7,6 @@ export const assethub_westend = currency({
   name: "Assethub Westend",
   managerAppName: "Polkadot",
   ticker: "WND",
-  deviceTicker: "DOT",
   scheme: "assethub_westend",
   color: "#00ff00",
   units: [

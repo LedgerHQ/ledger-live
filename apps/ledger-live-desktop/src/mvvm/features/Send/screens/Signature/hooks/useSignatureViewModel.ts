@@ -5,6 +5,12 @@ import type { Account, Operation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useSendFlowSignatureCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
+import {
+  SEND_FLOW_COMPLETION,
+  SEND_FLOW_SOURCE,
+  SEND_FLOW_STEP,
+  type SendFlowCompletion,
+} from "@ledgerhq/live-common/flows/send/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
@@ -17,7 +23,7 @@ import { broadcastLogger } from "~/datadog/logs";
 export function useSignatureViewModel() {
   const { navigation } = useFlowWizard();
   const { operation, status, close } = useSendFlowActions();
-  const { state } = useSendFlowData();
+  const { state, source } = useSendFlowData();
   const reduxDispatch = useDispatch();
 
   const wasBuyDeviceOpenRef = useRef(false);
@@ -72,6 +78,17 @@ export function useSignatureViewModel() {
     [reduxDispatch],
   );
 
+  const onFinish = useCallback(
+    (completion: SendFlowCompletion) => {
+      if (completion === SEND_FLOW_COMPLETION.SUCCESS && source === SEND_FLOW_SOURCE.PAY) {
+        navigation.goToStep(SEND_FLOW_STEP.PAY_SUCCESS);
+        return;
+      }
+      navigation.goToNextStep();
+    },
+    [navigation, source],
+  );
+
   const { request, finishWithError, onDeviceActionResult } = useSendFlowSignatureCore({
     account,
     parentAccount,
@@ -81,7 +98,7 @@ export function useSignatureViewModel() {
     broadcast,
     operation,
     statusActions: status,
-    onFinish: navigation.goToNextStep,
+    onFinish,
     registerPendingOperation,
     recipientEnsName: state.recipient?.ensName,
   });

@@ -75,6 +75,14 @@ export async function mapTransparentInputs(
   );
 }
 
+/**
+ * Always exactly one requested output. The native builder adds at most one
+ * change output on top (craft.rs) -- coin-zcash itself never requests more
+ * than one, so the transparent/shielded output count this module can produce
+ * is capped at 2 regardless of account size, comfortably under either pool's
+ * device output ceiling. This is why input/spend selection is bounded but
+ * outputs are not: there is nothing to bound on the output side.
+ */
 export function mapOutputs(tx: Transaction): OutputRequestJs[] {
   return [
     {

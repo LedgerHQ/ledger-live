@@ -9,7 +9,6 @@ export const cosmos_testnet = currency({
   ticker: "MUON",
   scheme: "cosmos_testnet",
   isTestnetFor: "cosmos",
-  disableCountervalue: true,
   color: "#16192f",
   family: "cosmos",
   units: [

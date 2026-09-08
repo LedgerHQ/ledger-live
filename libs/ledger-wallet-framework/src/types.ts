@@ -31,7 +31,6 @@ export interface CryptoCurrency {
   id: CryptoCurrencyId;
   name: string;
   ticker: string;
-  deviceTicker?: string;
   color: string;
   coinType: number;
   family: string;
@@ -51,8 +50,6 @@ export interface CryptoCurrency {
     XPUBVersion?: number;
   };
   symbol?: string;
-  disableCountervalue?: boolean;
-  delisted?: boolean;
   keywords?: string[];
   explorerId?: string;
   tokenTypes?: string[];

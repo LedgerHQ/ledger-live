@@ -18,14 +18,14 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
   color and Unicode initial. Import it from the package root; the consumer's platform
   configuration resolves the target implementation.
 - `ContactDeviceIntentsPort`: defines the typed boundary for Contacts device interactions.
-- `createMockContactDeviceIntentsPort()`: returns temporary typed device results for Contacts flows.
+- `@features/platform-contacts/test`: exposes deterministic device intent results for tests.
 - Contacts analytics building blocks: `ContactsGlobalProperties`,
   `buildContactsGlobalProperties()`, and `resolveContactsCurrencyAnalytics()` for shared global
   event properties and currency resolution.
 - `useContactsFeature()` and related resolvers: expose the Contacts feature configuration for both
   applications and Contacts leaf flows.
 - `resolveEligibleAddressCurrencyIds()`: resolves configured Contacts families to production
-  network identifiers.
+  network identifiers, keeping only the networks the device can register an address on.
 - `ContactEditPort` and `createContactEditPort()`: define and implement the shared Contact rename
   operation, including device credentials for external contacts.
 - `ContactAddressEditPort` and `createContactAddressEditPort()`: define and implement the shared

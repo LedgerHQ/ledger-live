@@ -87,16 +87,41 @@ describe("genericSignOperation", () => {
       },
     });
 
+    expect(mockSigner.signTransaction).toHaveBeenCalledTimes(1);
     expect(mockSigner.signTransaction).toHaveBeenCalledWith("44'/144'/0'/0/0", "unsignedTx", {
       domain: "recipient.gen",
       address: "recipient-address",
       derivationMode: undefined,
     });
+    expect(craftTransaction).toHaveBeenCalledTimes(1);
     expect(craftTransaction).toHaveBeenCalledWith(
       expect.anything(), // context (framework v6)
       expect.objectContaining({
         memo: { type: "map", memos: new Map([["destinationTag", "1234"]]) },
       }),
+      expect.anything(),
+    );
+  });
+
+  it("maps the coin-declared memoType to the craftTransaction memo shape", async () => {
+    const txWithTransferId = {
+      amount: new BigNumber(2_500_000_000),
+      fees: new BigNumber(100_000_000),
+      recipient: "rRecipient",
+      family: "family",
+      memoType: "transferId",
+      memoValue: "42",
+    } as any;
+
+    const signOperation = genericSignOperation("mainnet", "family")(mockSignerContext);
+    await lastValueFrom(
+      signOperation({ account, transaction: txWithTransferId, deviceId: "" }).pipe(toArray()),
+    );
+
+    expect(craftTransaction).toHaveBeenCalledTimes(1);
+    expect(craftTransaction).toHaveBeenCalledWith(
+      expect.anything(), // context (framework v6)
+      expect.objectContaining({ memo: { type: "string", kind: "transferId", value: "42" } }),
       expect.anything(),
     );
   });
@@ -122,6 +147,7 @@ describe("genericSignOperation", () => {
     await lastValueFrom(observable.pipe(toArray()));
 
     expect(validateIntent).not.toHaveBeenCalled();
+    expect(craftTransaction).toHaveBeenCalledTimes(1);
     expect(craftTransaction).toHaveBeenCalledWith(
       expect.anything(), // context (framework v6)
       expect.objectContaining({ amount: 100000n }),
@@ -140,6 +166,7 @@ describe("genericSignOperation", () => {
 
     await lastValueFrom(observable.pipe(toArray()));
 
+    expect(mockSigner.signTransaction).toHaveBeenCalledTimes(1);
     expect(mockSigner.signTransaction).toHaveBeenCalledWith(
       expect.any(String),
       expect.anything(),
@@ -160,6 +187,7 @@ describe("genericSignOperation", () => {
 
     await lastValueFrom(observable.pipe(toArray()));
 
+    expect(mockSigner.signTransaction).toHaveBeenCalledTimes(1);
     expect(mockSigner.signTransaction).toHaveBeenCalledWith(
       expect.any(String),
       expect.anything(),
@@ -174,7 +202,9 @@ describe("genericSignOperation", () => {
     const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
     await lastValueFrom(signOperation({ account, transaction, deviceId: "" }).pipe(toArray()));
 
+    expect(buildIntentData).toHaveBeenCalledTimes(1);
     expect(buildIntentData).toHaveBeenCalledWith(transaction);
+    expect(craftTransaction).toHaveBeenCalledTimes(1);
     expect(craftTransaction).toHaveBeenCalledWith(
       expect.anything(), // context
       expect.objectContaining({ data: { type: "familyx" } }),
@@ -189,6 +219,7 @@ describe("genericSignOperation", () => {
     const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
     await lastValueFrom(signOperation({ account, transaction, deviceId: "" }).pipe(toArray()));
 
+    expect(buildOptimisticOperation).toHaveBeenCalledTimes(1);
     expect(buildOptimisticOperation).toHaveBeenCalledWith(
       account,
       transaction,
@@ -205,5 +236,44 @@ describe("genericSignOperation", () => {
     const observable = signOperation({ account, transaction: txWithoutFees, deviceId: "" });
 
     await expect(lastValueFrom(observable)).rejects.toThrow(FeeNotLoaded);
+  });
+
+  it("forwards an explicit fee-override marker to craftTransaction, and undefined on the auto path", async () => {
+    // LIVE-36865: `transaction.fees` is the auto-resolved display fee, forwarded as customFees.value on
+    // every send. Only a deliberate user override carries customFees.parameters.fees, and the framework
+    // must relay it so a coin module (TRON's TRC20 fee_limit) can tell an override from the auto value.
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+
+    // Auto path: no override on the transaction → the module sees no fee marker.
+    await lastValueFrom(signOperation({ account, transaction, deviceId: "" }).pipe(toArray()));
+    const autoArgs = craftTransaction.mock.calls.at(-1);
+    expect(autoArgs[2].customFees.parameters.fees).toBeUndefined();
+
+    // Override path: the marker is forwarded verbatim (deeply converted to bigint).
+    await lastValueFrom(
+      signOperation({
+        account,
+        transaction: {
+          ...transaction,
+          customFees: { parameters: { fees: new BigNumber(30_000_000) } },
+        },
+        deviceId: "",
+      }).pipe(toArray()),
+    );
+    const overrideArgs = craftTransaction.mock.calls.at(-1);
+    expect(overrideArgs[2].customFees.parameters.fees).toBe(30_000_000n);
+
+    // A deliberate 0 override survives the bigint conversion (bigNumberToBigIntDeep drops only undefined,
+    // not 0), so it reaches the module as a real override and a 0 fee cap still reaches the chain
+    // (VSD-5287/LIVE-36391) rather than falling back to the default ceiling.
+    await lastValueFrom(
+      signOperation({
+        account,
+        transaction: { ...transaction, customFees: { parameters: { fees: new BigNumber(0) } } },
+        deviceId: "",
+      }).pipe(toArray()),
+    );
+    const zeroOverrideArgs = craftTransaction.mock.calls.at(-1);
+    expect(zeroOverrideArgs[2].customFees.parameters.fees).toBe(0n);
   });
 });

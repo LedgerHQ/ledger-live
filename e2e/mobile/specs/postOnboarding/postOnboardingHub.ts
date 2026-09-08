@@ -2,7 +2,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
 import type { ApplicationOptions } from "@e2e/page/index";
-import type { OptionalFeatureMap } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 /** Must stay in sync with `postOnboarding.actionsToComplete` in userdata/post-onboarding-hub-flow.json. */
 export const MOCK_ACTIONS = [
@@ -12,7 +12,7 @@ export const MOCK_ACTIONS = [
 ] as const;
 
 // Wallet 4.0 + onboardingWidget come from E2E defaults; only pin flags that would block the widget.
-export const POST_ONBOARDING_FLAGS: OptionalFeatureMap = {
+export const POST_ONBOARDING_FLAGS: PartialFeatures = {
   protectServicesMobile: { enabled: false },
   lwmProductTour: { enabled: false },
   llmLedgerSyncEntryPoints: { enabled: false },

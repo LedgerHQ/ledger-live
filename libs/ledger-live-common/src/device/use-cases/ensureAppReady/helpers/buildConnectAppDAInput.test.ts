@@ -82,7 +82,7 @@ describe("buildConnectAppDeviceActionInput", () => {
         name: "Ethereum",
         constraints: [
           {
-            minVersion: "1.2.3",
+            minVersion: "1.2.3-0",
             applicableModels: [DeviceModelId.NANO_X],
           },
         ],
@@ -92,7 +92,7 @@ describe("buildConnectAppDeviceActionInput", () => {
           name: "1inch",
           constraints: [
             {
-              minVersion: "4.5.6",
+              minVersion: "4.5.6-0",
               applicableModels: [DeviceModelId.NANO_S],
             },
           ],

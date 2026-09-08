@@ -7,11 +7,7 @@ import {
   type ContactAddressLabelValidationErrorName,
   type ContactId,
 } from "@domain/entity-contact";
-import type {
-  AddAddressCompletionLabels,
-  AddAddressEntryLabels,
-  AddAddressFlowState,
-} from "../../state/types";
+import type { AddAddressEntryLabels, AddAddressFlowState } from "../../state/types";
 import {
   ContactsAddAddressFlowContent,
   type ContactsAddAddressFlowContentProps,
@@ -56,12 +52,6 @@ const reviewLabels: ContactsAddAddressReviewLabels = {
   nameLabel: "Address name",
   continue: "Confirm address",
 };
-const completionLabels: AddAddressCompletionLabels = {
-  title: "Confirm on device",
-  continue: "Continue",
-  successTitle: "Address added",
-  close: "Close",
-};
 const address = ContactAddressValueSchema.parse("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
 const label = ContactAddressLabelSchema.parse("Ethereum");
 
@@ -103,14 +93,11 @@ function createContentProps(
     entryLabels,
     nameLabels,
     reviewLabels,
-    completionLabels,
     onAddressChange: jest.fn(),
     onContinueFromAddressDetails: jest.fn(),
     onAddressLabelChange: jest.fn(),
     onContinueFromName: jest.fn(),
     onContinueFromReview: jest.fn(),
-    onCompleteMockConfirmation: jest.fn(),
-    onClose: jest.fn(),
   };
 }
 
@@ -148,14 +135,12 @@ describe("ContactsAddAddressFlowContent", () => {
     const confirmationProps = createContentProps(createContentState("confirmationRequired"));
     rerender(<ContactsAddAddressFlowContent {...confirmationProps} />);
 
-    fireEvent.click(screen.getByTestId("contacts-add-address-confirmation-continue"));
-    expect(confirmationProps.onCompleteMockConfirmation).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
 
     const reviewProps = createContentProps(createContentState("reviewingAddress"));
     rerender(<ContactsAddAddressFlowContent {...reviewProps} />);
 
-    fireEvent.click(screen.getByTestId("contacts-add-address-review-continue"));
-    expect(reviewProps.onContinueFromReview).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
 
     const prefilledReviewState = {
       ...createContentState("reviewingAddress"),
@@ -184,7 +169,6 @@ describe("ContactsAddAddressFlowContent", () => {
     const successProps = createContentProps(createContentState("success"));
     rerender(<ContactsAddAddressFlowContent {...successProps} />);
 
-    fireEvent.click(screen.getByTestId("contacts-add-address-success-continue"));
-    expect(successProps.onClose).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 });

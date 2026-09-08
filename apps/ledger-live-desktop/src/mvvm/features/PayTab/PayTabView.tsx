@@ -1,6 +1,6 @@
 import React from "react";
 import { Balance } from "@features/flow-pay-balance";
-import { Contacts } from "@features/flow-pay-contact";
+import { Contacts, ContactAddressPicker } from "@features/flow-pay-contact";
 import { ContactsLedgerSyncIntroductionDialog } from "@features/flow-contacts-introduction";
 import { DepositOptions } from "@features/flow-pay-deposit";
 import { BankTransferIntro } from "@features/flow-pay-bank-transfer";
@@ -23,6 +23,7 @@ export function PayTabView({
   deviceIntent,
   contacts,
   ledgerSyncIntroduction,
+  contactAddressPicker,
   isContactsEnabled,
 }: Readonly<PayTabViewModel>) {
   return (
@@ -35,6 +36,7 @@ export function PayTabView({
       {isContactsEnabled && (
         <>
           <Contacts {...contacts} />
+          <ContactAddressPicker {...contactAddressPicker} />
           <ContactsLedgerSyncIntroductionDialog {...ledgerSyncIntroduction} />
         </>
       )}

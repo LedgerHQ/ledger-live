@@ -12,6 +12,8 @@ import {
   installConsoleCapture,
   uninstallConsoleCapture,
 } from "@e2e/utils/loggingUtils";
+import { allure } from "jest-allure2-reporter/api";
+import type { OptionalFeatureMap } from "@shared/feature-flags";
 import { getLogs } from "@e2e/bridge/server";
 import { Circus } from "@jest/types";
 import {
@@ -73,7 +75,7 @@ const skipToRetrySet = (
   return kept;
 };
 
-async function captureFailureDiagnostics(): Promise<void> {
+async function captureFailureDiagnostics(mergedFeatureFlags?: OptionalFeatureMap): Promise<void> {
   await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
   await withTimeout(
     attachSpeculinhoLogsToAllure(),
@@ -95,6 +97,17 @@ async function captureFailureDiagnostics(): Promise<void> {
     FAST_DIAGNOSTIC_TIMEOUT_MS,
     "attachSpeculosStartupErrorToAllure",
   );
+  if (mergedFeatureFlags) {
+    await withTimeout(
+      allure.attachment(
+        "Merged Feature Flags",
+        JSON.stringify(mergedFeatureFlags, null, 2),
+        "application/json",
+      ),
+      FAST_DIAGNOSTIC_TIMEOUT_MS,
+      "attachMergedFeatureFlags",
+    );
+  }
   // getLogs has its own 10s RESPONSE_TIMEOUT inside the bridge; this outer bound
   // is just defense-in-depth in case the inner timer is starved on a wedged worker.
   let logs = await withTimeout(getLogs(), 12_000, "getLogs");
@@ -173,6 +186,7 @@ export default class TestEnvironment extends DetoxEnvironment {
 
     this.global.app = appInstance;
     this.global.IS_FAILED = false;
+    this.global.mergedFeatureFlags = undefined;
     this.global.speculosDevices = speculosDevicesMap;
     this.global.webSocket = webSocketObj;
     this.global.pendingCallbacks = pendingCallbacksMap;
@@ -326,14 +340,14 @@ export default class TestEnvironment extends DetoxEnvironment {
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
     if (event.name === "hook_failure") {
       this.global.IS_FAILED = true;
-      await captureFailureDiagnostics();
+      await captureFailureDiagnostics(this.global.mergedFeatureFlags);
     }
 
     await super.handleTestEvent(event, state);
 
     if (event.name === "test_fn_failure") {
       this.global.IS_FAILED = true;
-      await captureFailureDiagnostics();
+      await captureFailureDiagnostics(this.global.mergedFeatureFlags);
     }
 
     if (event.name === "run_start") {

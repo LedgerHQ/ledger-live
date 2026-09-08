@@ -9,6 +9,7 @@ import {
   DialogHeader,
   TextInput,
 } from "@ledgerhq/lumen-ui-react";
+import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import type { ContactsRenameAddressDialogProps } from "./types";
 import { useEditAddressDialogPresentation } from "./useEditAddressDialogPresentation.web";
@@ -20,6 +21,7 @@ export function ContactsRenameAddressDialog({
   draftLabel,
   invalidLabelError,
   addressEntry,
+  isDeviceRequired,
   labels,
   onClose,
   onDraftLabelChange,
@@ -86,6 +88,7 @@ export function ContactsRenameAddressDialog({
             size="lg"
             className="w-full"
             disabled={!isConfirmEnabled}
+            icon={isDeviceRequired ? LedgerLogo : undefined}
             loading={isSaving}
             onClick={() => void onConfirm()}
             data-testid="contacts-rename-address-confirm"

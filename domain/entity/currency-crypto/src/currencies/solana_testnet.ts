@@ -11,7 +11,6 @@ export const solana_testnet = currency({
   color: "#000",
   family: "solana",
   isTestnetFor: "solana",
-  disableCountervalue: true,
   units: [
     {
       name: "SOL",

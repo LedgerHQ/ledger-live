@@ -26,7 +26,8 @@ import {
   loadBridgeExtensionsForFamily,
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
-import { isZcashShieldedEnabled } from "./zcashRouting";
+import { resolveFamily } from "./zcashRouting";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
@@ -40,19 +41,20 @@ import {
   TransactionPathway,
   TransactionStage,
 } from "@ledgerhq/transaction-observability";
-
-// The family owning a currency's bridge is `currency.family`, except zcash:
-// `zcashShielded` routes it to the standalone "zcash" family
-// (@ledgerhq/coin-zcash) instead of coin-bitcoin's chain-adapter. The flag is
-// read from the mirror the host app feeds (`setZcashShieldedEnabled`), so a
-// developer-drawer override moves the routing with it; the two families keep
-// separate cache entries, so a flip mid-session resolves the other bridge.
-function resolveFamily(currency: CryptoCurrency): string {
-  return currency.id === "zcash" && isZcashShieldedEnabled() ? "zcash" : currency.family;
-}
-
 // Rejections stay cached: evicting would hand React.use() a fresh Promise per render and re-suspend forever.
 // Callers that want to retry a transient failure must invalidate via clearBridgeCache(family).
+
+// config_casper_generic_bridge=false falls back to the legacy bridge for incident recovery (takes effect after app restart or clearBridgeCache("casper")).
+// Casper shipped on the old bridge before LIVE-35912; seedIdentifier format changed
+// (raw pubkey → tagged address). sameAccountIdentity's freshAddress fallback handles
+// re-scans, but id-keyed settings (account name, etc.) reset on the first rescan.
+function shouldUseGenericCoinFrameworkBridge(family: string) {
+  return (
+    isGenericCoinFrameworkFamily(family) &&
+    (family !== "casper" || LiveConfig.getValueByKey("config_casper_generic_bridge"))
+  );
+}
+
 const currencyBridgePromiseCache: Record<string, Promise<CurrencyBridge>> = {};
 const accountBridgePromiseCache: Record<string, Promise<ResolvedAccountBridge<any>>> = {};
 const mockBridgePromiseCache: Record<string, Promise<ResolvedAccountBridge<any>> | undefined> = {};
@@ -104,7 +106,7 @@ async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBr
     });
   }
 
-  if (isGenericCoinFrameworkFamily(family)) {
+  if (shouldUseGenericCoinFrameworkBridge(family)) {
     return getCoinFrameworkCurrencyBridge(family, "local");
   }
 
@@ -127,7 +129,7 @@ export const getCurrencyBridge = (currency: CryptoCurrency): Promise<CurrencyBri
 
 async function buildAccountBridgeForFamily(family: string): Promise<ResolvedAccountBridge<any>> {
   let rawBridge: AccountBridge<any>;
-  if (isGenericCoinFrameworkFamily(family)) {
+  if (shouldUseGenericCoinFrameworkBridge(family)) {
     rawBridge = await getCoinFrameworkAccountBridge(family, "local");
   } else {
     const setup = await loadSetupForFamily(family);

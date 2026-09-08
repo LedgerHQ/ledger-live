@@ -14,6 +14,7 @@ import {
   InvalidMinimumAmountError,
 } from "../constants";
 import { CasperInvalidTransferId } from "../errors";
+import { getEstimatedFees } from "../logic/estimateFees";
 import { validateMemo } from "../logic/validateMemo";
 import { CasperAccount, Transaction, TransactionStatus } from "../types";
 import { getAddress, isAddressValid } from "../logic/validateAddress";
@@ -55,7 +56,7 @@ export const getTransactionStatus: AccountBridge<
     });
   }
 
-  const estimatedFees = transaction.fees;
+  const estimatedFees = transaction.fees ?? getEstimatedFees();
 
   let totalSpent = new BigNumber(0);
 

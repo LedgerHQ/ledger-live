@@ -22,19 +22,31 @@ function buildProps(): PayCardToolProps {
       ],
       setStepDone: jest.fn(),
     },
+    interaction: {
+      probes: [],
+      details: {
+        imageUrl: undefined,
+        isFetching: false,
+        error: undefined,
+        request: jest.fn(),
+        clear: jest.fn(),
+      },
+    },
+    balance: {
+      baanxWallets: [],
+      linkedWallets: [],
+      combinedWallets: [],
+      isFetching: false,
+      errors: [],
+      load: jest.fn(),
+      refresh: jest.fn(),
+    },
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
-    env: {
-      vars: [
-        {
-          key: "CARD_API_URL",
-          value: "https://card.api.live.ledger.com",
-          suggestedValue: "https://dev.api.baanx.com",
-        },
-        { key: "CARD_BAANX_CLIENT_KEY", value: "", suggestedValue: "dev-client-key" },
-      ],
-      setVar: jest.fn(),
-    },
+    hasSeenReceiveVerifyHint: false,
+    resetReceiveVerifyHintSeen: jest.fn(),
+    hasCompletedCardOnboarding: false,
+    resetCardOnboarding: jest.fn(),
   };
 }
 
@@ -44,6 +56,7 @@ describe("PayCard (web)", () => {
     expect(screen.getByText("Feature flags")).toBeDefined();
     expect(screen.getByText("Onboarding")).toBeDefined();
     expect(screen.getByText("Feature tour")).toBeDefined();
+    expect(screen.getByText("Request verify hint")).toBeDefined();
   });
 
   it("resets the feature tour", () => {
@@ -54,39 +67,35 @@ describe("PayCard (web)", () => {
     expect(props.resetPayCardFeatureTourSeen).toHaveBeenCalledTimes(1);
   });
 
-  it("shows both Card env vars, and the value the app reads now", () => {
+  it("resets the request verify hint", () => {
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    fireEvent.click(screen.getByText("Reset verify hint"));
+    expect(props.resetReceiveVerifyHintSeen).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides quick actions when the host does not pass navigation", () => {
     render(<PayCard {...buildProps()} />);
-
-    expect(screen.getByText("Env vars")).toBeDefined();
-    expect(screen.getByText("CARD_API_URL=https://card.api.live.ledger.com")).toBeDefined();
-    // An empty client key must read as empty, and not as a missing row.
-    expect(screen.getByText("CARD_BAANX_CLIENT_KEY=(empty)")).toBeDefined();
+    expect(screen.queryByText("Quick actions")).toBeNull();
   });
 
-  it("fills each input with the suggested value, so one click changes the tenant", () => {
-    const props = buildProps();
-    render(<PayCard {...props} />);
-
-    const input = screen.getByLabelText("CARD_API_URL") as HTMLInputElement;
-    expect(input.value).toBe("https://dev.api.baanx.com");
-
-    fireEvent.click(screen.getAllByText("Set")[0]!);
-    expect(props.env.setVar).toHaveBeenCalledWith("CARD_API_URL", "https://dev.api.baanx.com");
-  });
-
-  it("sets what the tester typed", () => {
-    const props = buildProps();
-    render(<PayCard {...props} />);
-
-    fireEvent.change(screen.getByLabelText("CARD_API_URL"), {
-      target: { value: "https://card.api.live.ledger.com" },
-    });
-    fireEvent.click(screen.getAllByText("Set")[0]!);
-
-    expect(props.env.setVar).toHaveBeenCalledWith(
-      "CARD_API_URL",
-      "https://card.api.live.ledger.com",
+  it("navigates to Portfolio and Pay when the host wires the actions", () => {
+    const onNavigateToPortfolio = jest.fn();
+    const onNavigateToPayTab = jest.fn();
+    render(
+      <PayCard
+        {...buildProps()}
+        onNavigateToPortfolio={onNavigateToPortfolio}
+        onNavigateToPayTab={onNavigateToPayTab}
+      />,
     );
+
+    expect(screen.getByText("Quick actions")).toBeDefined();
+    fireEvent.click(screen.getByText("Go to Portfolio"));
+    fireEvent.click(screen.getByText("Go to Pay tab"));
+    expect(onNavigateToPortfolio).toHaveBeenCalledTimes(1);
+    expect(onNavigateToPayTab).toHaveBeenCalledTimes(1);
   });
 
   it("wires onboarding actions", () => {

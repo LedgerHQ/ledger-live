@@ -31,8 +31,9 @@ const StyleProvider = ({ children, selectedPalette }: Props) => {
     }),
     [v3SelectedPalette, selectedPalette],
   );
+  // No `colorScheme`: Lumen writes its scheme as a global `<html>` class, owned solely by `App.tsx`.
   return (
-    <PlatformStyleProvider theme={theme} colorScheme={selectedPalette}>
+    <PlatformStyleProvider theme={theme}>
       <GlobalStyle />
       {children}
     </PlatformStyleProvider>

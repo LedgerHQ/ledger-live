@@ -13,12 +13,15 @@ import {
 } from "@features/flow-large-screen-upsell";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
+import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
+import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import i18n from "~/renderer/i18n/init";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
+import { bootstrapMockServerTransport } from "~/renderer/mockServerTransport";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
@@ -347,8 +350,13 @@ async function init() {
   const payCardState = await getKey("app", "payCard");
   if (payCardState !== undefined) {
     store.dispatch(restorePayCardFeatureTour(payCardState));
+    store.dispatch(restoreReceiveVerifyHint(payCardState));
     store.dispatch(restorePayCardBalanceFilter(payCardState));
+    store.dispatch(restorePayCardOnboardingWidget(payCardState));
   }
+
+  // Seed the mock server session/device before the DMK is built (if enabled).
+  await bootstrapMockServerTransport();
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 

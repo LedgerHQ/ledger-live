@@ -1,20 +1,46 @@
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 
-import type { OptionalFeatureMap } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 /**
  * Every suite that boots into a pre-seeded trustchain needs this flag on: the app reads the
  * environment from it to build its trustchain SDK, and Ledger Sync stays unavailable without it.
  */
-export const LEDGER_SYNC_FEATURE_FLAGS: OptionalFeatureMap = {
+export const LEDGER_SYNC_FEATURE_FLAGS: PartialFeatures = {
   llmWalletSync: {
     enabled: true,
     params: {
       environment: ledgerSyncEnvironment,
-      watchConfig: {},
+      watchConfig: {
+        pollingInterval: 2_000,
+        initialTimeout: 500,
+      },
       learnMoreLink: "",
     },
   },
+  llmLedgerSyncEntryPoints: { enabled: true },
+};
+
+/**
+ * `lwmLedgerSyncOptimisation` swaps the activation screen for the one that routes through
+ * choose-sync-method, so the suites that drive the activation UI have to opt into it explicitly.
+ */
+export const LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS: PartialFeatures = {
+  ...LEDGER_SYNC_FEATURE_FLAGS,
+  // Every param spelled out to match the desktop suite: the override replaces `params` wholesale
+  // rather than merging, so anything left out reads as off.
+  llmLedgerSyncEntryPoints: {
+    enabled: true,
+    params: {
+      manager: true,
+      accounts: true,
+      settings: true,
+      onboarding: true,
+      postOnboarding: true,
+      sendFlow: false,
+    },
+  },
+  lwmLedgerSyncOptimisation: { enabled: true },
 };
 
 /**

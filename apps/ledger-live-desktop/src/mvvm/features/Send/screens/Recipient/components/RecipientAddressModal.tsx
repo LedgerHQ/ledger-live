@@ -1,5 +1,6 @@
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import React, { useEffect } from "react";
 import { useSendFlowActions } from "../../../context/SendFlowContext";
 import { useRecipientAddressModalViewModel } from "../hooks/useRecipientAddressModalViewModel";
@@ -11,7 +12,12 @@ type RecipientAddressModalProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   currency: CryptoOrTokenCurrency;
-  onAddressSelected: (address: string, ensName?: string, goToNextStep?: boolean) => void;
+  onAddressSelected: (
+    address: string,
+    ensName?: string,
+    goToNextStep?: boolean,
+    memo?: Memo,
+  ) => void;
   recipientSupportsDomain: boolean;
 }>;
 

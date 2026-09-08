@@ -202,7 +202,7 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    "0.0.10310433",
+    "0.0.10837606",
   );
   static readonly HEDERA_2 = new Account(
     Currency.HBAR,
@@ -213,7 +213,7 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    "0.0.10337251",
+    "0.0.10837630",
   );
 
   static readonly INJ_1 = new Account(Currency.INJ, "Injective 1", 0, "44'/60'/0'/0/0");

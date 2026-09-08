@@ -80,6 +80,7 @@ export function ContactsListView({
           renderSectionHeader={({ section }) => (
             <ContactsSectionHeader title={section.title} surface={surface} />
           )}
+          ItemSeparatorComponent={() => <Box lx={{ height: "s8" }} />}
           ListHeaderComponent={listHeader}
           onViewableItemsChanged={onViewableItemsChanged}
           viewabilityConfig={viewabilityConfig}

@@ -28,7 +28,7 @@ describe("createTransaction", () => {
 
   it("should create a transaction with default fees set to zero", () => {
     const transaction = createTransaction({} as AccountLike<Account>);
-    expect(transaction.fees.isEqualTo(new BigNumber(0))).toBe(true);
+    expect(transaction.fees).toEqual(new BigNumber(0));
   });
 
   it("should create a transaction with empty recipient", () => {

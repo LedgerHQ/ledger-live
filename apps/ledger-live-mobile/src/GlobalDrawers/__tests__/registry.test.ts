@@ -3,7 +3,6 @@ import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
 import ReceiveDrawerWrapper from "LLM/features/Receive/drawers/ReceiveFundsOptionsDrawer";
 import { NotificationsPromptWrapper } from "LLM/features/NotificationsPrompt";
 import { SwapTransactionStatusDrawerWrapper } from "LLM/features/SwapTransactionStatus";
-import { PrefillAddAddressFlowRoot } from "LLM/features/Contacts";
 
 describe("GlobalDrawers Registry", () => {
   it("should contain all expected drawer entries with correct components", () => {
@@ -20,9 +19,6 @@ describe("GlobalDrawers Registry", () => {
     expect(DRAWER_REGISTRY.swapTransactionStatus.component).toBe(
       SwapTransactionStatusDrawerWrapper,
     );
-
-    expect(DRAWER_REGISTRY.prefillAddAddress).toBeDefined();
-    expect(DRAWER_REGISTRY.prefillAddAddress.component).toBe(PrefillAddAddressFlowRoot);
   });
 
   it("should have all entries with valid structure", () => {

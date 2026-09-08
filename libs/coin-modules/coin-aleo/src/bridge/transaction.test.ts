@@ -109,4 +109,44 @@ describe("transaction", () => {
       expect("properties" in result).toBe(false);
     },
   );
+
+  // `withdrawal` is the address unbonded funds are later released to. It is the one field a
+  // bond carries beyond the common shape, so dropping it here would silently unpin the
+  // withdrawal on any transaction that round-trips through storage.
+  describe("bond_public", () => {
+    const WITHDRAWAL = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
+
+    it("should preserve the withdrawal address when deserializing from raw", () => {
+      const raw = getMockedTransactionRaw({
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: WITHDRAWAL,
+      });
+
+      const result = fromTransactionRaw(raw);
+
+      expect(result.mode).toBe(TRANSACTION_TYPE.BOND_PUBLIC);
+      expect(result).toHaveProperty("withdrawal", WITHDRAWAL);
+    });
+
+    it("should preserve the withdrawal address when serializing to raw", () => {
+      const transaction = getMockedTransaction({
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: WITHDRAWAL,
+      });
+
+      const result = toTransactionRaw(transaction);
+
+      expect(result.mode).toBe(TRANSACTION_TYPE.BOND_PUBLIC);
+      expect(result).toHaveProperty("withdrawal", WITHDRAWAL);
+    });
+
+    it("should not include properties", () => {
+      const transaction = getMockedTransaction({
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: WITHDRAWAL,
+      });
+
+      expect("properties" in toTransactionRaw(transaction)).toBe(false);
+    });
+  });
 });

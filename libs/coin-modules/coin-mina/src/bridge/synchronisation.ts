@@ -1,3 +1,4 @@
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import {
   type GetAccountShape,
@@ -6,7 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
-import type { Operation } from "@ledgerhq/types-live";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { MINA_BLOCK_INFO_CONCURRENCY, MINA_BLOCK_INFO_TIMEOUT } from "../consts";
@@ -16,25 +17,6 @@ import { getBlockInfo } from "../logic/history/getBlockInfo";
 import { getTransactions } from "../logic/history/getTransactions";
 import { fetchValidators, getEpochInfo, RosettaTransaction } from "../network";
 import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
-
-/**
- * Runs `worker` over `items` with at most `limit` concurrent executions, avoiding the
- * unbounded `Promise.all` burst that overwhelms the node on accounts with many transactions.
- */
-async function runWithConcurrency<T>(
-  limit: number,
-  items: T[],
-  worker: (item: T) => Promise<void>,
-): Promise<void> {
-  let cursor = 0;
-  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
-    while (cursor < items.length) {
-      const index = cursor++;
-      await worker(items[index]);
-    }
-  });
-  await Promise.all(runners);
-}
 
 export const mapRosettaTxnToOperation = async (
   accountId: string,
@@ -141,8 +123,10 @@ export const mapRosettaTxnToOperation = async (
         id: encodeOperationId(accountId, hash, type),
       });
     } else if (redelegateTransaction) {
-      // delegate change — if sender delegates to themselves, it's an undelegate
-      const type = fromAccount === toAccount ? "UNDELEGATE" : "REDELEGATE";
+      // delegate change — if sender delegates to themselves, it's an undelegate. Otherwise the
+      // chain only says the account now delegates; whether that starts or switches a delegation
+      // is settled by refineDelegationTypes, which sees the whole history.
+      const type = fromAccount === toAccount ? "UNDELEGATE" : "DELEGATE";
       ops.push({
         ...op,
         value: new BigNumber(0),
@@ -168,6 +152,67 @@ export const mapRosettaTxnToOperation = async (
     return [];
   }
 };
+
+const DELEGATION_TYPES: ReadonlySet<OperationType> = new Set([
+  "DELEGATE",
+  "REDELEGATE",
+  "UNDELEGATE",
+]);
+
+const sequenceNumber = (op: MinaOperation) => op.transactionSequenceNumber?.toNumber() ?? 0;
+
+/**
+ * A `delegate_change` tells who the account delegates to, never whether it already delegated,
+ * so only the delegation state at that block separates a first delegation from a validator
+ * switch. Rosetta history is always fetched in full, so replaying the delegation operations
+ * oldest-first rebuilds that state and promotes the switches to REDELEGATE.
+ */
+export function refineDelegationTypes(operations: MinaOperation[]): MinaOperation[] {
+  const delegations = operations
+    .filter(op => DELEGATION_TYPES.has(op.type))
+    .sort((a, b) => {
+      const byDate = a.date.valueOf() - b.date.valueOf();
+      if (byDate !== 0) return byDate;
+      // Same block: the nonce is what orders two delegation changes of the same account.
+      return sequenceNumber(a) - sequenceNumber(b);
+    });
+
+  let delegating = false;
+  const refined = new Map<string, MinaOperation>();
+
+  for (const op of delegations) {
+    if (op.type === "UNDELEGATE") {
+      // A failed change leaves the delegation untouched.
+      if (!op.hasFailed) delegating = false;
+      continue;
+    }
+    const type: OperationType = delegating ? "REDELEGATE" : "DELEGATE";
+    if (!op.hasFailed) delegating = true;
+    if (type !== op.type) {
+      refined.set(op.id, { ...op, type, id: encodeOperationId(op.accountId, op.hash, type) });
+    }
+  }
+
+  if (refined.size === 0) return operations;
+  return operations.map(op => refined.get(op.id) ?? op);
+}
+
+/**
+ * An operation id encodes its type, so refining a delegation type re-ids the operation. `mergeOps`
+ * dedupes on the id alone, so an account synchronised before the refinement would keep its stored
+ * operation next to the refined one and list the same transaction twice. Rosetta returns the whole
+ * history on every sync, so a stored operation whose transaction came back under other ids only
+ * exists under a stale id.
+ */
+export function dropSupersededOperations<T extends Operation>(
+  storedOperations: T[],
+  fetchedOperations: Operation[],
+): T[] {
+  const fetchedIds = new Set(fetchedOperations.map(op => op.id));
+  const fetchedHashes = new Set(fetchedOperations.map(op => op.hash));
+
+  return storedOperations.filter(op => fetchedIds.has(op.id) || !fetchedHashes.has(op.hash));
+}
 
 // Staking data is not on the critical path: an upstream failure must degrade it, not fail the
 // whole account synchronisation (balance and operations).
@@ -229,7 +274,7 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   // unbounded /block request per transaction (which overwhelms the node on busy accounts).
   const uniqueBlockHeights = [...new Set(rosettaTxns.map(t => t.block_identifier.index))];
   const blockTimestamps = new Map<number, number>();
-  await runWithConcurrency(MINA_BLOCK_INFO_CONCURRENCY, uniqueBlockHeights, async height => {
+  await promiseAllBatched(MINA_BLOCK_INFO_CONCURRENCY, uniqueBlockHeights, async height => {
     try {
       const info = await getBlockInfo(height, MINA_BLOCK_INFO_TIMEOUT);
       blockTimestamps.set(height, info.block.timestamp);
@@ -250,7 +295,11 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
     ),
   );
 
-  const operations = mergeOps(oldOperations, newOperations.flat());
+  const fetchedOperations = refineDelegationTypes(newOperations.flat());
+  const operations = mergeOps(
+    dropSupersededOperations(oldOperations, fetchedOperations),
+    fetchedOperations,
+  );
 
   const resources = await getStakingResources(address, operations, initialAccount?.resources);
 

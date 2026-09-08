@@ -7,6 +7,7 @@ import {
   PartialFeatures,
 } from "@shared/feature-flags";
 import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
+import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -196,11 +197,13 @@ function Providers({
 function EnhancedProviders({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
     <DrawerProvider>
-      <StyleProvider selectedPalette="dark">
-        <LiveStyleSheetManager>
-          <ContextMenuWrapper>{children}</ContextMenuWrapper>
-        </LiveStyleSheetManager>
-      </StyleProvider>
+      <ThemeProvider colorScheme="dark">
+        <StyleProvider selectedPalette="dark">
+          <LiveStyleSheetManager>
+            <ContextMenuWrapper>{children}</ContextMenuWrapper>
+          </LiveStyleSheetManager>
+        </StyleProvider>
+      </ThemeProvider>
     </DrawerProvider>
   );
 }

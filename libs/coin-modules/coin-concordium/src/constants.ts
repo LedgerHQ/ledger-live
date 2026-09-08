@@ -31,3 +31,15 @@ export const CONCORDIUM_ENERGY = {
   /** Default fallback cost in microCCD when estimation fails */
   DEFAULT_COST: BigInt(1000000),
 } as const;
+
+/**
+ * Buffer added to a PLT fee estimate, as a percentage of the proxy's figure.
+ *
+ * Energy is a ceiling, not a charge: the chain bills actual execution, so the
+ * buffer costs the user nothing while absorbing any drift between preparing the
+ * transaction and submitting it.
+ *
+ * A percentage rather than a float multiplier because energy and cost are both
+ * bigints, and a float would need rounding rules of its own.
+ */
+export const PLT_ENERGY_BUFFER_PERCENT = BigInt(20);

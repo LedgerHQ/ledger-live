@@ -8,6 +8,7 @@ import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/t
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
 import { openPerpsSign } from "../screens/PerpsSign/PerpsSignDialog";
+import { openPerpsDeposit } from "../screens/PerpsDeposit/PerpsDepositDialog";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
   const uiSigningExecute = useCallback(
@@ -35,7 +36,9 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
     [],
   );
 
-  const uiDepositExecute = useCallback((_params: PerpsDepositUiParams) => undefined, []);
+  const uiDepositExecute = useCallback((params: PerpsDepositUiParams) => {
+    openPerpsDeposit(params);
+  }, []);
 
   return useMemo<WalletAPICustomHandlers>(() => {
     return perpsHandlers({

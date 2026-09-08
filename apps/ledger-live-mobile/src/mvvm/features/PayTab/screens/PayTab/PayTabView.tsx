@@ -4,7 +4,12 @@ import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-feature-t
 import { Balance, type ActionTilesProps, type BalanceData } from "@features/flow-pay-balance";
 import { BankTransferIntro, type BankTransferIntroProps } from "@features/flow-pay-bank-transfer";
 import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
-import { Contacts, type ContactsNativeProps } from "@features/flow-pay-contact";
+import {
+  ContactAddressPicker,
+  Contacts,
+  type ContactAddressPickerProps,
+  type ContactsNativeProps,
+} from "@features/flow-pay-contact";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Wallet40Background } from "LLM/components/Wallet40Background";
 import { TrackScreen } from "~/analytics";
@@ -18,6 +23,7 @@ type PayTabViewProps = {
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
   readonly contacts: ContactsNativeProps;
+  readonly contactAddressPicker: ContactAddressPickerProps;
   readonly isContactsEnabled: boolean;
   readonly depositOptions: DepositOptionsProps;
   readonly bankTransferIntro: BankTransferIntroProps;
@@ -32,6 +38,7 @@ export function PayTabView({
   balance,
   actionTiles,
   contacts,
+  contactAddressPicker,
   isContactsEnabled,
   depositOptions,
   bankTransferIntro,
@@ -43,6 +50,7 @@ export function PayTabView({
         <TrackScreen category="Pay" balance_filter={balance.filter} />
         <Balance {...balance} actionTiles={actionTiles} />
         {isContactsEnabled && <Contacts {...contacts} />}
+        <ContactAddressPicker {...contactAddressPicker} />
         <Card title={cardTitle} oauthConfig={oauthConfig} callback={callback} />
         <FeatureTour {...featureTour} />
         <DepositOptions {...depositOptions} />

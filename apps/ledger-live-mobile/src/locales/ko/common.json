@@ -199,6 +199,10 @@
     "CeloAllFundsWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
     },
+    "CeloEpochProcessingActive" : {
+      "title" : "이 작업을 일시적으로 실행할 수 없습니다.",
+      "description" : "현재 셀로에서 에포크 업데이트를 처리하고 있습니다. 온체인 처리가 진행되는 짧은 시간 동안 네트워크 시스템에 의해 투표, 활성화, 철회, 잠금 및 잠금 해제 등의 스테이킹 작업이 일시적으로 제한됩니다. 에포크 처리가 완료된 후 다시 시도해 주세요."
+    },
     "CeloGroupNotVotable" : {
       "title" : "이 검증인 그룹에는 투표할 수 없습니다. 위임 한도가 초과되었거나 자격이 없는 상태일 수 있습니다."
     },
@@ -3830,6 +3834,23 @@
           "entriesLabel" : "항목({{count}})",
           "untitledEntry" : "제목 없는 항목"
         }
+      },
+      "deviceSimulationDevTool" : {
+        "title" : "장치 시뮬레이션(QA)",
+        "description" : "실제 장치 없이 Nano 사용자 대상 업셀링 화면 테스트를 위해 장치 기록을 시뮬레이션합니다.",
+        "currentHistory" : "활성 QA 장치: {{devices}}",
+        "resetWarning" : "리셋하면 6개의 QA 장치 토글만 지워집니다. 다른 장치 기록 항목은 변경되지 않으며, 시뮬레이션 엔진 없이는 실제 기록을 복구할 수 없습니다.",
+        "reset" : "장치 기록 초기화",
+        "none" : "없음",
+        "deviceDesc" : "QA 테스트를 위해 이 장치를 이전에 연결된 장치로 표시합니다.",
+        "devices" : {
+          "nanoS" : "Nano S",
+          "nanoSP" : "Nano S Plus",
+          "nanoX" : "Nano X",
+          "stax" : "Ledger Stax",
+          "europa" : "Ledger Flex",
+          "apex" : "Ledger Flex Plus"
+        }
       }
     }
   },
@@ -4539,6 +4560,7 @@
   "send" : {
     "newSendFlow" : {
       "title" : "{{currency}} 전송",
+      "selectAddress" : "주소 선택",
       "available" : "가용 수량: {{amount}}",
       "to" : "받는 사람:",
       "addressDisclaimer" : {
@@ -4548,13 +4570,22 @@
       },
       "placeholder" : "주소 또는 ENS를 입력하세요",
       "placeholderNoENS" : "주소 입력",
-      "placeholderWithContacts" : "주소, ENS 또는 연락처를 입력하세요",
-      "placeholderNoEnsWithContacts" : "주소 또는 연락처를 입력하세요",
+      "placeholderWithContacts" : "주소, ENS 또는 연락처 정보를 입력하세요",
+      "placeholderNoEnsWithContacts" : "주소 또는 연락처 정보를 입력하세요",
       "pasteFromClipboard" : {
         "title" : "클립보드에서 붙여넣기",
         "cta" : "붙여넣기"
       },
-      "contactsWillAppear" : "연락처가 여기에 표시됩니다",
+      "addContact" : {
+        "newContact" : "주소록에 추가",
+        "existingContact" : "기존 항목에 추가",
+        "selectContact" : "주소록 선택",
+        "syncWallet" : {
+          "title" : "주소록에 추가하려면 지갑을 동기화하세요",
+          "description" : "주소록은 종단간 암호화되어 모든 휴대폰과 컴퓨터의 Ledger Wallet에서 동기화됩니다."
+        }
+      },
+      "contactsWillAppear" : "주소록이 여기에 표시됩니다",
       "editRecipientAccessibilityLabel" : "수령인 변경",
       "sendTo" : "{{address}}로 보내기",
       "addressMatched" : "주소 일치함",
@@ -4564,7 +4595,7 @@
       "notInRecentHistory" : "최근 거래 내역에 없음",
       "addressBookUnsupported" : {
         "title" : "{{family}} 주소는 아직 지원되지 않습니다",
-        "description" : "아직 연락처에 {{family}} 주소를 추가할 수 없습니다. 지속적으로 지원 자산을 추가해 나갈 예정입니다."
+        "description" : "{{family}} 주소는 아직 주소록에 추가할 수 없습니다. 지속적으로 지원 자산을 추가해 나갈 예정입니다."
       },
       "relativeDate" : {
         "justNow" : "방금 전",
@@ -5174,6 +5205,10 @@
         "deviceOutOfStorageSpace" : {
           "title" : "일부 앱을 제거하여 Ledger 장치 메모리를 확보하세요",
           "description" : "장치에 사용 가능한 메모리가 부족합니다."
+        },
+        "invalidProvider" : {
+          "title" : "유효하지 않은 서비스 제공업체",
+          "description" : "\"My Ledger 서비스 제공업체\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다."
         }
       },
       "cta" : {
@@ -5182,7 +5217,8 @@
         "setupDevice" : "Ledger 장치 설정",
         "updateLedgerOs" : "Ledger OS 업데이트",
         "cancelOperation" : "작업 취소",
-        "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요"
+        "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요",
+        "goToSettings" : "설정으로 이동"
       }
     },
     "connectDevice" : {
@@ -9207,6 +9243,10 @@
         "title" : "Ledger 동기화",
         "description" : "휴대폰 교체 시 계정을 자동으로 동기화하세요.",
         "cta" : "Ledger 동기화 켜기"
+      },
+      "sendFlow" : {
+        "title" : "지갑 동기화",
+        "later" : "나중에 하기"
       }
     },
     "activation" : {
@@ -9692,6 +9732,14 @@
     "accountCount_other" : "{{count}}개 계정",
     "emptyAccounts" : "아직 {{network}} 계정이 없습니다. 계속하려면 계정을 추가하세요",
     "addAccount" : "계정 추가",
+    "unsupportedAssetExplanation" : {
+      "title" : "{{asset}} 미지원",
+      "description" : "{{asset}} 주소는 아직 주소록에 추가할 수 없습니다. 지속적으로 지원 자산을 추가해 나갈 예정입니다."
+    },
+    "unsupportedNetworkExplanation" : {
+      "title" : "{{network}} 네트워크는 아직 지원되지 않습니다",
+      "description" : "{{asset}} 경우 {{network}} 네트워크 선택이 불가능합니다. 더 많은 네트워크가 순차적으로 추가될 예정입니다."
+    },
     "errors" : {
       "title" : "연결에 실패했습니다",
       "backend" : "문제가 발생했습니다. 나중에 다시 시도해 주세요",
@@ -10080,9 +10128,43 @@
         "confirm" : "확인"
       }
     },
+    "card" : {
+      "title" : "크립토 카드"
+    },
     "actions" : {
       "deposit" : "스테이블코인 추가",
       "request" : "요청"
+    },
+    "request" : {
+      "title" : "{{asset}} 요청",
+      "networkLabel" : "{{network}} 네트워크",
+      "actions" : {
+        "share" : "공유",
+        "copy" : "복사",
+        "copied" : "복사됨",
+        "save" : "저장",
+        "verify" : "확인"
+      },
+      "verifyAddress" : {
+        "introTitle" : "주소를 확인하세요",
+        "introDescription" : "주소 변조 공격을 막기 위해, Ledger 장치의 보안 화면에서 주소를 확인해 주세요.",
+        "verifyCta" : "주소 확인",
+        "successTitle" : "장치의 보안 스크린에 표시된 주소",
+        "nextStepsLabel" : "다음 단계",
+        "nextStepShare" : "원하는 앱으로 주소를 공유하세요.",
+        "nextStepMatch" : "공유된 주소가 사용 중인 Ledger 장치의 주소와 일치하는지 확인하세요.",
+        "gotItCta" : "확인",
+        "device" : {
+          "cancelledTitle" : "주소 확인 취소됨",
+          "cancelledDescription" : "장치에서 주소 확인을 거부했습니다. 다시 표시하여 확인할 수 있습니다.",
+          "mismatchTitle" : "주소가 일치하지 않습니다",
+          "mismatchDescription" : "장치에 표시된 주소가 요청된 주소와 다릅니다. 이 주소를 공유하지 마세요.",
+          "unsupportedTitle" : "주소 확인 불가",
+          "unsupportedDescription" : "이 장치 앱은 주소 확인을 위한 화면 표시 기능을 지원하지 않습니다.",
+          "retryCta" : "주소 다시 보기",
+          "closeCta" : "닫기"
+        }
+      }
     },
     "deposit" : {
       "title" : "스테이블코인 추가",
@@ -10104,6 +10186,11 @@
           "description" : "신용카드로 스테이블코인을 구매합니다."
         }
       }
+    },
+    "contacts" : {
+      "title" : "결제",
+      "pay" : "New",
+      "seeAllTitle" : "저장된 주소로 보내기"
     }
   },
   "syncIndicator" : {
@@ -10153,8 +10240,8 @@
       "referral" : "친구 추천"
     },
     "contacts" : {
-      "title" : "연락처",
-      "description" : "연락처 관리"
+      "title" : "주소록",
+      "description" : "주소록 관리"
     },
     "backupHub" : {
       "title" : "비밀 복구 문구 백업",
@@ -10325,18 +10412,39 @@
     }
   },
   "contacts" : {
-    "title" : "연락처",
-    "addContact" : "연락처 추가",
+    "deviceIntents" : {
+      "registerExternalAddress" : {
+        "pending" : {
+          "title" : "Ledger 장치 준비 중"
+        }
+      },
+      "errors" : {
+        "wrongDevice" : {
+          "title" : "주소록 추가 시 사용한 것과 동일한 Ledger 장치를 사용하세요.",
+          "description" : "연결된 장치가 일치하지 않습니다."
+        },
+        "invalidData" : {
+          "title" : "저장할 수 없는 주소입니다",
+          "description" : "Ledger 장치에서 주소록 정보를 거부했습니다. 다시 시도하세요. 문제가 계속되면 Ledger 지원팀으로 문의하세요."
+        },
+        "appVersionTooLow" : {
+          "title" : "앱 업데이트가 필요합니다",
+          "description" : "주소록에 저장하려면 Ledger 장치에서 앱을 업데이트하고 다시 시도하세요."
+        }
+      }
+    },
+    "title" : "주소록",
+    "addContact" : "주소록 추가",
     "addAddress" : "주소 추가",
     "addYourAddress" : "주소 추가",
-    "searchPlaceholder" : "연락처 검색",
-    "searchNoResults" : "검색된 연락처가 없습니다",
+    "searchPlaceholder" : "주소록 검색",
+    "searchNoResults" : "검색 결과가 없습니다",
     "addContactDrawer" : {
-      "namePlaceholder" : "연락처명",
+      "namePlaceholder" : "이름",
       "namingDisclaimer" : "개인 정보 보호를 위해 성과 이름을 모두 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
       "confirmName" : "이름 확인",
       "invalidNameError" : "특수 문자는 허용되지 않습니다.",
-      "duplicateNameError" : "이미 사용 중인 연락처명입니다."
+      "duplicateNameError" : "이미 주소록에 등록된 이름입니다."
     },
     "addAddressEntry" : {
       "title" : "주소 입력",
@@ -10403,19 +10511,19 @@
     },
     "detailActions" : {
       "editName" : "이름 편집",
-      "deleteContact" : "연락처 삭제",
-      "menuAccessibilityLabel" : "연락처 옵션"
+      "deleteContact" : "주소록 삭제",
+      "menuAccessibilityLabel" : "주소록 옵션"
     },
     "editContact" : {
-      "title" : "연락처 수정",
-      "namePlaceholder" : "연락처명",
+      "title" : "주소록 수정",
+      "namePlaceholder" : "이름",
       "namingDisclaimer" : "개인 정보 보호를 위해 성과 이름을 모두 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
       "confirmName" : "이름 확인",
       "applyChanges" : "변경 사항 적용",
       "invalidNameError" : "특수 문자는 허용되지 않습니다."
     },
     "deleteContact" : {
-      "title" : "연락처를 삭제하시겠습니까?",
+      "title" : "주소록에서 삭제하시겠습니까?",
       "description" : "이 연락처를 삭제하면 연결된 모든 주소가 삭제됩니다.",
       "mobileDescription" : "이 연락처를 삭제하면 연결된 모든 주소가 삭제됩니다.",
       "confirm" : "삭제",
@@ -10423,7 +10531,7 @@
     },
     "deleteAddress" : {
       "title" : "주소를 삭제하시겠습니까?",
-      "description" : "이 주소가 연락처에서 삭제됩니다.",
+      "description" : "이 주소가 주소록에서 삭제됩니다.",
       "confirm" : "삭제",
       "cancel" : "취소"
     },
@@ -10453,20 +10561,19 @@
       "checkingAccessibilityLabel" : "Ledger Sync 상태 확인 중"
     },
     "featureIntroduction" : {
-      "title" : "연락처 기능 소개",
-      "description" : "암호화폐 주소록 — 자주 송금하는 지갑 주소를 한 곳에 저장해 보세요.",
-      "primaryAction" : "연락처 기능 사용해 보기",
+      "title" : "주소록 기능을 소개합니다",
+      "primaryAction" : "지금 살펴보기",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "한 번의 주소 저장",
-          "description" : "모든 송금 주소를 한 곳에 보관하세요."
+          "title" : "원하는 이름으로 주소 저장",
+          "description" : "거래소, 친구, 나의 외부 계정까지 모두 저장할 수 있습니다."
         },
         "sendToRightAddress" : {
           "title" : "정확한 주소로 안전하게 송금",
-          "description" : "자산이 매번 올바른 지갑으로 전송됩니다."
+          "description" : "복잡한 주소 대신 신뢰하는 내가 아는 이름이 표시됩니다."
         },
         "privateAcrossDevices" : {
-          "title" : "모든 장치에서 프라이버시 유지",
+          "title" : "Ledger Wallet™으로 안전하게 충전",
           "description" : "Ledger Sync를 통해 엔드투엔드로 암호화를 지원합니다."
         }
       }

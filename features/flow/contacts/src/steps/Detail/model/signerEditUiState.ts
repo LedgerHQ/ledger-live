@@ -1,4 +1,4 @@
-export type SignerEditUiState = "closed" | "signer-open" | "signer-mismatch" | "edit-open";
+export type SignerEditUiState = "closed" | "signer-mismatch" | "edit-open";
 
 export function resolveEditUiStateOnSignerMismatch(): SignerEditUiState {
   return "signer-mismatch";
@@ -9,5 +9,5 @@ export function resolveEditUiStateOnSignerMismatchCancel(): SignerEditUiState {
 }
 
 export function resolveEditUiStateOnConnectDifferentDevice(): SignerEditUiState {
-  return "signer-open";
+  return "edit-open";
 }

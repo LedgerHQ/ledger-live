@@ -36,3 +36,11 @@ export class NotEnoughBalance extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class InvalidXpub extends Error {
+  override name = "InvalidXpub";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InvalidXpub");
+    if (fields) Object.assign(this, fields);
+  }
+}

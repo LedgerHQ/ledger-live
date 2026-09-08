@@ -68,14 +68,6 @@ async function expectDeviceIntentExecutor() {
   });
 }
 
-async function confirmSigner(user: Awaited<ReturnType<typeof render>>["user"]) {
-  await waitFor(() => {
-    expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
-  });
-
-  await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
-}
-
 describe("Contacts device intents integration", () => {
   beforeEach(() => {
     jest.mocked(useActivationDrawer).mockReturnValue({
@@ -101,8 +93,6 @@ describe("Contacts device intents integration", () => {
     });
     await user.click(screen.getByTestId("contacts-rename-address-confirm"));
 
-    await confirmSigner(user);
-
     await expectDeviceIntentExecutor();
     expect(screen.queryByTestId("contacts-rename-address-dialog")).not.toBeInTheDocument();
     expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
@@ -127,10 +117,9 @@ describe("Contacts device intents integration", () => {
       expect(screen.getByTestId("contacts-add-address-confirm")).toBeEnabled();
     });
     await user.click(screen.getByTestId("contacts-add-address-confirm"));
-    await user.click(screen.getByTestId("contacts-add-address-review-continue"));
 
     await expectDeviceIntentExecutor();
-    expect(screen.queryByTestId("contacts-add-address-review")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-add-address-confirm")).not.toBeInTheDocument();
   });
 
   it("should open the device intent executor alone when renaming a contact", async () => {
@@ -142,8 +131,6 @@ describe("Contacts device intents integration", () => {
     await user.clear(nameInput);
     await user.type(nameInput, "Benjamin");
     await user.click(screen.getByTestId("contacts-rename-contact-confirm"));
-
-    await confirmSigner(user);
 
     await expectDeviceIntentExecutor();
     expect(screen.queryByTestId("contacts-rename-contact-dialog")).not.toBeInTheDocument();
@@ -158,8 +145,6 @@ describe("Contacts device intents integration", () => {
     await user.clear(nameInput);
     await user.type(nameInput, "Benjamin");
     await user.click(screen.getByTestId("contacts-rename-contact-confirm"));
-
-    await confirmSigner(user);
     await expectDeviceIntentExecutor();
 
     await user.click(screen.getByRole("button", { name: "Close" }));

@@ -1,12 +1,28 @@
 import { add, sub } from "date-fns";
+import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import type { Features } from "@shared/feature-flags";
+import {
+  evaluateAfterActionTrigger,
+  evaluateInactivityTrigger,
+} from "LLM/features/NotificationsPrompt";
 import {
   buildInactiveUserData,
+  buildNotificationsQaScenarioUserData,
   buildRepromptableUserData,
   buildTruncatedDismissalsUserData,
   formatDismissalTimestamp,
+  formatPermissionStatus,
   getAfterActionRepromptLabel,
+  getForceOpenDrawerLabel,
   getGlobalPushNotificationsDismissals,
   getInactivityRepromptLabel,
+  getNotificationsQaHeadline,
+  mapNotificationsDecisionToQaExpectation,
+  NOTIFICATIONS_PROMPT_REASON_LABEL,
+  NOTIFICATIONS_QA_SCENARIOS,
+  formatDelay,
+  buildDecisionInspectorFields,
+  buildFeatureInspectorFields,
 } from "../utils";
 
 describe("NotificationsPromptQA utils", () => {
@@ -17,7 +33,13 @@ describe("NotificationsPromptQA utils", () => {
     expect(
       getInactivityRepromptLabel({
         lastActionAt: now,
-        inactivityReprompt: { months: 0, days: 3, hours: 0, minutes: 0, seconds: 0 },
+        inactivityReprompt: {
+          months: 0,
+          days: 3,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        },
         inactivityEnabled: true,
         now,
       }),
@@ -25,7 +47,13 @@ describe("NotificationsPromptQA utils", () => {
     expect(
       getInactivityRepromptLabel({
         lastActionAt: now,
-        inactivityReprompt: { months: 0, days: 1, hours: 0, minutes: 0, seconds: 0 },
+        inactivityReprompt: {
+          months: 0,
+          days: 1,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        },
         inactivityEnabled: true,
         now,
       }),
@@ -33,7 +61,13 @@ describe("NotificationsPromptQA utils", () => {
     expect(
       getInactivityRepromptLabel({
         lastActionAt: now - 1,
-        inactivityReprompt: { months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 },
+        inactivityReprompt: {
+          months: 0,
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        },
         inactivityEnabled: true,
         now,
       }),
@@ -54,7 +88,13 @@ describe("NotificationsPromptQA utils", () => {
     expect(
       getInactivityRepromptLabel({
         lastActionAt: evening,
-        inactivityReprompt: { months: 0, days: 0, hours: 0, minutes: 30, seconds: 0 },
+        inactivityReprompt: {
+          months: 0,
+          days: 0,
+          hours: 0,
+          minutes: 30,
+          seconds: 0,
+        },
         inactivityEnabled: true,
         now: evening,
       }),
@@ -107,7 +147,13 @@ describe("NotificationsPromptQA utils", () => {
     expect(
       getInactivityRepromptLabel({
         lastActionAt: add(now, { days: -1 }).getTime(),
-        inactivityReprompt: { months: 0, days: 2, hours: 0, minutes: 0, seconds: 0 },
+        inactivityReprompt: {
+          months: 0,
+          days: 2,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        },
         inactivityEnabled: true,
         now,
       }),
@@ -119,7 +165,9 @@ describe("NotificationsPromptQA utils", () => {
     const legacyDismissals = [add(now, { days: -30 }).getTime()];
     const userData = {
       dismissedOptInDrawerAtList: legacyDismissals,
-      dismissedPromptAtListByTarget: { globalPushNotifications: migratedDismissals },
+      dismissedPromptAtListByTarget: {
+        globalPushNotifications: migratedDismissals,
+      },
     };
 
     expect(getGlobalPushNotificationsDismissals(userData)).toEqual(migratedDismissals);
@@ -266,7 +314,9 @@ describe("NotificationsPromptQA utils", () => {
       const result = buildTruncatedDismissalsUserData(
         {
           dismissedOptInDrawerAtList: legacyDismissals,
-          dismissedPromptAtListByTarget: { globalPushNotifications: migratedDismissals },
+          dismissedPromptAtListByTarget: {
+            globalPushNotifications: migratedDismissals,
+          },
         },
         2,
       );
@@ -308,7 +358,13 @@ describe("NotificationsPromptQA utils", () => {
   });
 
   it("should build inactive user data that satisfies checkIsInactive", () => {
-    const inactivityReprompt = { months: 0, days: 2, hours: 0, minutes: 0, seconds: 0 };
+    const inactivityReprompt = {
+      months: 0,
+      days: 2,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    };
     const result = buildInactiveUserData(undefined, inactivityReprompt, now);
 
     expect(result.lastActionAt).toBe(sub(now, inactivityReprompt).getTime());
@@ -323,5 +379,187 @@ describe("NotificationsPromptQA utils", () => {
         now,
       }),
     ).toBe("now (eligible)");
+  });
+
+  describe("QA scenarios", () => {
+    type BrazePushNotifications = Features["brazePushNotifications"];
+
+    const brazePushNotifications = {
+      enabled: true,
+      params: {
+        reprompt_schedule: repromptSchedule,
+        action_events: {
+          complete_onboarding: { enabled: true, timer: 100 },
+          send: { enabled: true, timer: 200 },
+          dapp_complete: { enabled: true, timer: 200 },
+          receive: { enabled: true, timer: 300 },
+          buy: { enabled: true, timer: 400 },
+          swap: { enabled: true, timer: 500 },
+          stake: { enabled: true, timer: 600 },
+          add_favorite_coin: { enabled: true, timer: 700 },
+        },
+        inactivity_enabled: true,
+        inactivity_reprompt: {
+          months: 6,
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        },
+        notificationsCategories: [],
+      },
+    } as BrazePushNotifications;
+
+    it.each(NOTIFICATIONS_QA_SCENARIOS)("should resolve $name to $expected", scenario => {
+      const pushNotificationsDataOfUser = buildNotificationsQaScenarioUserData(scenario, {
+        repromptSchedule,
+        inactivityReprompt: brazePushNotifications.params?.inactivity_reprompt,
+        now,
+      });
+      const context = {
+        brazePushNotifications,
+        isRatingsModalOpen: false,
+        isDrawerPending: false,
+        now,
+      };
+      const decision =
+        scenario.source === "inactivity"
+          ? evaluateInactivityTrigger(
+              {
+                permissionStatus: scenario.permissionStatus,
+                areNotificationsAllowed: scenario.areNotificationsAllowed,
+                pushNotificationsDataOfUser,
+                hasCompletedOnboarding: scenario.hasCompletedOnboarding,
+              },
+              context,
+            )
+          : evaluateAfterActionTrigger(
+              {
+                source: scenario.source,
+                permissionStatus: scenario.permissionStatus,
+                areNotificationsAllowed: scenario.areNotificationsAllowed,
+                transactionsAlertsCategory: scenario.transactionsAlertsCategory,
+                pushNotificationsDataOfUser,
+              },
+              context,
+            );
+
+      expect(mapNotificationsDecisionToQaExpectation(decision)).toBe(scenario.expected);
+    });
+
+    it("should map runtime and configuration gates to Blocked", () => {
+      const decision = evaluateAfterActionTrigger(
+        {
+          source: "send",
+          permissionStatus: AuthorizationStatus.DENIED,
+          areNotificationsAllowed: false,
+          transactionsAlertsCategory: false,
+          pushNotificationsDataOfUser: {},
+        },
+        {
+          brazePushNotifications: { ...brazePushNotifications, enabled: false },
+          isRatingsModalOpen: false,
+          isDrawerPending: false,
+          now,
+        },
+      );
+
+      expect(mapNotificationsDecisionToQaExpectation(decision)).toBe("Blocked");
+      expect(decision).toMatchObject({
+        kind: "skip",
+        reason: "feature_disabled",
+      });
+    });
+
+    it("should expose a readable label for every skip reason", () => {
+      expect(Object.values(NOTIFICATIONS_PROMPT_REASON_LABEL)).toHaveLength(11);
+      Object.values(NOTIFICATIONS_PROMPT_REASON_LABEL).forEach(label => {
+        expect(label).not.toMatch(/^[a-z]+(?:_[a-z]+)+$/);
+      });
+    });
+
+    it("should format OS permission statuses with human labels", () => {
+      expect(formatPermissionStatus(AuthorizationStatus.AUTHORIZED)).toBe("Authorized");
+      expect(formatPermissionStatus(AuthorizationStatus.DENIED)).toBe("Denied");
+      expect(formatPermissionStatus(AuthorizationStatus.NOT_DETERMINED)).toBe("Not determined");
+      expect(formatPermissionStatus(undefined)).toBe("Unknown");
+    });
+
+    it("should format delay maps for QA", () => {
+      expect(formatDelay(undefined)).toBe("Not configured");
+      expect(formatDelay({ days: 0, hours: 0, minutes: 0, months: 0, seconds: 0 })).toBe(
+        "Immediately",
+      );
+      expect(formatDelay({ days: 7, hours: 0, minutes: 0, months: 0, seconds: 0 })).toBe("7 days");
+    });
+
+    it("should label force-open with the resolved prompt target", () => {
+      expect(getForceOpenDrawerLabel("globalPushNotifications")).toBe(
+        "Force open globalPushNotifications drawer — bypass rules",
+      );
+      expect(getForceOpenDrawerLabel("transactionsAlertsCategory")).toBe(
+        "Force open transactionsAlertsCategory drawer — bypass rules",
+      );
+    });
+
+    it("should map a show decision to Eligible now", () => {
+      expect(
+        getNotificationsQaHeadline({
+          kind: "show",
+          source: "send",
+          delayMs: 200,
+          drawerPromptTarget: "globalPushNotifications",
+          dismissedCount: 1,
+          nextRepromptDelay: null,
+        }),
+      ).toEqual({
+        verdict: "Show drawer",
+        reason: "Eligible now",
+        rawReason: "kind: show",
+      });
+    });
+
+    it("should put the resolved target in the drawer-target inspector raw line", () => {
+      const [triggerField, targetField] = buildDecisionInspectorFields({
+        selectedSource: "send",
+        decision: {
+          kind: "skip",
+          source: "send",
+          reason: "reprompt_delay_not_reached",
+          dismissedCount: 2,
+          nextRepromptDelay: null,
+        },
+        resolvedPromptTarget: "transactionsAlertsCategory",
+        verdictTone: "warning",
+      });
+
+      expect(triggerField).toMatchObject({
+        label: "Selected trigger",
+        value: "Send",
+        raw: "source: send",
+      });
+      expect(targetField).toMatchObject({
+        label: "Drawer target",
+        value: "transactionsAlertsCategory",
+        raw: "drawerPromptTarget: transactionsAlertsCategory · dismissedCount: 2",
+      });
+    });
+
+    it("should inspect the inactivity config when the source is inactivity", () => {
+      const fields = buildFeatureInspectorFields({
+        selectedSource: "inactivity",
+        brazePushNotifications,
+        afterActionRepromptLabel: "now (eligible)",
+        inactivityRepromptLabel: "in 6 days",
+      });
+
+      expect(fields.map(field => field.label)).toEqual([
+        "Braze notifications prompt",
+        "Inactivity prompt",
+        "After-action reprompt",
+        "Inactivity reprompt",
+      ]);
+      expect(fields[1]?.raw).toContain("inactivity_reprompt:");
+    });
   });
 });

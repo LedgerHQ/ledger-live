@@ -18,12 +18,15 @@ export function RequestReceiveView({
   onCopy,
   onSave,
   onVerify,
+  verifyHint,
 }: RequestReceiveViewProps) {
-  const { hasCopied, handleOpenChange, handleCopy } = useRequestReceiveView({
-    isOpen,
-    onClose,
-    onCopy,
-  });
+  const { hasCopied, hint, handleOpenChange, handleCopy, handleInteractOutside } =
+    useRequestReceiveView({
+      isOpen,
+      onClose,
+      onCopy,
+      verifyHint,
+    });
 
   if (!isOpen) {
     return null;
@@ -31,9 +34,23 @@ export function RequestReceiveView({
 
   return (
     <Dialog open onOpenChange={handleOpenChange} height="fit">
-      <DialogContent className="max-h-[90vh]">
-        <DialogHeader onClose={onClose} />
-        <DialogBody className="flex flex-col gap-12" data-testid="pay-request-receive">
+      <DialogContent
+        className="max-h-[90vh]"
+        onPointerDownOutside={handleInteractOutside}
+        onInteractOutside={handleInteractOutside}
+      >
+        {hint?.open ? (
+          <div
+            aria-hidden
+            data-testid="pay-request-receive-verify-hint-overlay"
+            className="absolute inset-0 z-table-header bg-canvas-overlay"
+          />
+        ) : null}
+        <DialogHeader onClose={() => handleOpenChange(false)} />
+        <DialogBody
+          className="relative flex flex-col gap-12 overflow-visible"
+          data-testid="pay-request-receive"
+        >
           <RequestReceiveSummary
             title={labels.title}
             networkLabel={labels.networkLabel}
@@ -50,6 +67,7 @@ export function RequestReceiveView({
             onCopy={handleCopy}
             onSave={onSave}
             onVerify={onVerify}
+            verifyHint={hint}
           />
         </DialogBody>
       </DialogContent>

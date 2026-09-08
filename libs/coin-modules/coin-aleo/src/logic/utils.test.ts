@@ -37,6 +37,7 @@ import {
   getMockedTransaction,
   mockTxIntentFeePrivate,
   mockTxIntentFeePublic,
+  mockTxIntentBondPublic,
   mockTxIntentSelfTransferToPrivate,
   mockTxIntentSelfTransferToPublic,
   mockTxIntentSelfTransferToPublic2,
@@ -53,6 +54,7 @@ import {
 import type {
   AleoContext,
   AleoOperationExtra,
+  AleoTransactionIntent,
   AleoPublicTransaction,
   AleoTokenType,
   ProvableApi,
@@ -99,6 +101,7 @@ import {
   getRecordByCommitment,
   getFunctionNameFromTransactionType,
   getNextSequenceNumber,
+  getValidatorNonEarningReason,
   extractViewKey,
   findBestRecordForFee,
   selectPrivateRecordsForAmount,
@@ -1177,6 +1180,32 @@ describe("mapTransactionIntentToSdkIntent", () => {
     });
   });
 
+  // The validator arrives as the intent's `recipient` but the program argument is named
+  // `validator`, and `withdrawal` is a third argument with no equivalent on a transfer.
+  it("should map bond_public intent to the validator/withdrawal SDK argument names", () => {
+    const intent = mockTxIntentBondPublic;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "bond_public",
+      amount: intent.amount.toString(),
+      validator: intent.recipient,
+      withdrawal: "aleo1sender",
+    });
+  });
+
+  it("should throw when a bond_public intent carries no withdrawal address", () => {
+    // The key has to be absent, not undefined: `hasSpecificIntentData` guards with `in`.
+    const { data: _data, ...withoutData } = mockTxIntentBondPublic as AleoTransactionIntent & {
+      data: unknown;
+    };
+
+    expect(() => mapTransactionIntentToSdkIntent(withoutData as AleoTransactionIntent)).toThrow(
+      "aleo: intent data is required for bond_public",
+    );
+  });
+
   it("should map convert_public_to_private intent to SDK intent with correct fields", () => {
     const intent = mockTxIntentSelfTransferToPrivate;
 
@@ -1571,6 +1600,8 @@ describe("getAvailableBalance", () => {
   it.each([
     [TRANSACTION_TYPE.TRANSFER_PUBLIC, mockTransparentBalance],
     [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE, mockTransparentBalance],
+    // Only public ALEO can be bonded, so a bond spends the transparent balance.
+    [TRANSACTION_TYPE.BOND_PUBLIC, mockTransparentBalance],
     [TRANSACTION_TYPE.TRANSFER_PRIVATE, expectedPrivateSpendableBalance],
     [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, expectedPrivateSpendableBalance],
   ])("should return correct balance for %s", (mode, expected) => {
@@ -1745,6 +1776,32 @@ describe("createTransactionIntent", () => {
       });
     },
   );
+
+  // A bond carries the withdrawal address that unbonded funds are later released to, so
+  // unlike every other public mode its intent is not the bare base.
+  it("should carry the withdrawal address on a bond_public intent", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.BOND_PUBLIC,
+      amount: new BigNumber(1_000_000),
+      recipient: "aleo1validator",
+      withdrawal: mockAccount.freshAddress,
+    });
+
+    const result = createTransactionIntent({ account: mockAccount, transaction });
+
+    expect(result).toEqual({
+      intentType: "transaction",
+      asset: { type: "native" },
+      type: TRANSACTION_TYPE.BOND_PUBLIC,
+      amount: 1_000_000n,
+      recipient: "aleo1validator",
+      sender: mockAccount.freshAddress,
+      data: {
+        type: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: mockAccount.freshAddress,
+      },
+    });
+  });
 
   it.each(supportedPublicTransactionModes)(
     "should keep the native asset for %s even with a stale subAccountId from a previous token selection",
@@ -2297,6 +2354,7 @@ describe("getFunctionNameFromTransactionType", () => {
     ["transfer_token_private", TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE],
     ["transfer_token_public_to_private", TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
     ["transfer_token_private_to_public", TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC],
+    ["bond_public", TRANSACTION_TYPE.BOND_PUBLIC],
   ])("should return '%s' for transaction type '%s'", (expected, transactionType) => {
     expect(getFunctionNameFromTransactionType(transactionType)).toBe(expected);
   });
@@ -2884,6 +2942,77 @@ describe("staking rates", () => {
       ["a non-finite total stake", new BigNumber(100), new BigNumber(NaN)],
     ])("returns null for %s", (_label, supply, stake) => {
       expect(estimateGrossRate(supply, stake)).toBeNull();
+    });
+  });
+
+  describe("getValidatorNonEarningReason", () => {
+    const baseParams = {
+      totalStakeMicrocredits: toMicrocredits(MAINNET_TOTAL_STAKE_CREDITS),
+      // Comfortably under the 25% concentration cap.
+      validatorStakeMicrocredits: toMicrocredits(10_000_000),
+      commissionPercent: new BigNumber(10),
+    };
+
+    it("returns null for a validator that pays its delegators", () => {
+      expect(getValidatorNonEarningReason(baseParams)).toBeNull();
+    });
+
+    it("reports overConcentrated above the 25% cap", () => {
+      expect(
+        getValidatorNonEarningReason({
+          ...baseParams,
+          validatorStakeMicrocredits: toMicrocredits(MAINNET_TOTAL_STAKE_CREDITS * 0.26),
+        }),
+      ).toBe("overConcentrated");
+    });
+
+    it("still pays a validator sitting exactly at the cap", () => {
+      expect(
+        getValidatorNonEarningReason({
+          ...baseParams,
+          validatorStakeMicrocredits: toMicrocredits(MAINNET_TOTAL_STAKE_CREDITS * 0.25),
+        }),
+      ).toBeNull();
+    });
+
+    it("reports fullCommission at exactly 100%", () => {
+      expect(
+        getValidatorNonEarningReason({ ...baseParams, commissionPercent: new BigNumber(100) }),
+      ).toBe("fullCommission");
+    });
+
+    it("still pays at 99% commission", () => {
+      expect(
+        getValidatorNonEarningReason({ ...baseParams, commissionPercent: new BigNumber(99) }),
+      ).toBeNull();
+    });
+
+    // Concentration is checked first: it is the reason the protocol pays nothing at all,
+    // so it outranks a commission split of something that was never earned.
+    it("prefers overConcentrated when both rules apply", () => {
+      expect(
+        getValidatorNonEarningReason({
+          ...baseParams,
+          validatorStakeMicrocredits: toMicrocredits(MAINNET_TOTAL_STAKE_CREDITS * 0.26),
+          commissionPercent: new BigNumber(100),
+        }),
+      ).toBe("overConcentrated");
+    });
+
+    // estimateNetRate collapses every reason to exactly 0, so the two must not disagree.
+    it.each([
+      ["overConcentrated", { validatorStakeMicrocredits: toMicrocredits(1_000_000_000) }],
+      ["fullCommission", { commissionPercent: new BigNumber(100) }],
+    ])("agrees with a zero net rate for %s", (_label, override) => {
+      const params = { ...baseParams, ...override };
+
+      expect(getValidatorNonEarningReason(params)).not.toBeNull();
+      expect(
+        estimateNetRate({
+          ...params,
+          totalSupplyCredits: MAINNET_TOTAL_SUPPLY_CREDITS,
+        })?.toNumber(),
+      ).toBe(0);
     });
   });
 
