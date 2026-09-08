@@ -39,10 +39,14 @@ export function useDevToolsScreenViewModel() {
   }, [tabNavigation]);
   const onNavigateToPayTab = useCallback(() => navigateToPayTab(tabNavigation), [tabNavigation]);
   const onNavigateToPaySuccess = useCallback(() => {
-    navigation.navigate(ScreenName.DebugPayContactSuccess);
+    navigation.navigate(NavigatorName.Settings, {
+      screen: ScreenName.DebugPayContactSuccess,
+    });
   }, [navigation]);
   const onNavigateToSendSuccess = useCallback(() => {
-    navigation.navigate(ScreenName.DebugSendSuccess);
+    navigation.navigate(NavigatorName.Settings, {
+      screen: ScreenName.DebugSendSuccess,
+    });
   }, [navigation]);
   const payCardToolProps = useMemo(
     () => ({
