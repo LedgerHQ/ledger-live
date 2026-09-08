@@ -28,6 +28,7 @@ export type SendFlowStackParamList = {
   [ScreenName.SendFlowCoinControl]: undefined;
   [ScreenName.SendFlowSignature]: undefined;
   [ScreenName.SendFlowConfirmation]: undefined;
+  [ScreenName.SendFlowPaySuccess]: undefined;
 };
 
 export type SendFlowNavigationProp = NativeStackNavigationProp<SendFlowStackParamList>;

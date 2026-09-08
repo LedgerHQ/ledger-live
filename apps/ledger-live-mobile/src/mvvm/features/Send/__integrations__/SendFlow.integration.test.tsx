@@ -26,6 +26,7 @@ import { CustomFeesScreen } from "../screens/CustomFees";
 import { CoinControlScreen } from "../screens/CoinControl";
 import { SignatureScreen } from "../screens/Signature";
 import { ConfirmationScreen } from "../screens/Confirmation";
+import { PaySuccessScreen } from "../screens/PaySuccess";
 import {
   SEND_FLOW_STEP,
   type SendFlowStep,
@@ -56,6 +57,7 @@ const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.COIN_CONTROL]: CoinControlScreen,
   [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
   [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
+  [SEND_FLOW_STEP.PAY_SUCCESS]: PaySuccessScreen,
 };
 
 const HostStack = createNativeStackNavigator();
