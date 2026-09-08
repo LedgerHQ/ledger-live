@@ -13,4 +13,5 @@ export type PayTabNavigatorParamList = {
     currency: CryptoOrTokenCurrency;
   };
   [ScreenName.PayTabSelectContact]: undefined;
+  [ScreenName.PayTabPayContact]: undefined;
 };

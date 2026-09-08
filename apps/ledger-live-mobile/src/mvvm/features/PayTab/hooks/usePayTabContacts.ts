@@ -12,7 +12,7 @@ export function usePayTabContacts(open: (contact?: Contact) => void): ContactsNa
   const outgoingOperations = usePayTabOutgoingOperations();
 
   const openPayContactList = useCallback(() => {
-    navigation.navigate(ScreenName.PayTabSelectContact);
+    navigation.navigate(ScreenName.PayTabPayContact);
   }, [navigation]);
   const onPay = useCallback(() => open(), [open]);
   const onContactPress = useCallback((contact: Contact) => open(contact), [open]);

@@ -1,6 +1,7 @@
 import React, { useCallback, useLayoutEffect } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { Contact } from "@domain/entity-contact";
 import { isContactsSearchNoResultsViewModel } from "@features/flow-contacts";
 import { useContactsFeature } from "@features/platform-contacts";
 import { ScreenName } from "~/const";
@@ -22,8 +23,13 @@ function ContactsScreenRedirect() {
   return null;
 }
 
-function ContactsScreenBody({ title }: Readonly<{ title?: string }>) {
-  const pageViewModel = useContactsPageViewModel();
+type ContactsPageProps = Readonly<{
+  title?: string;
+  onSelectContact?: (contact: Contact) => void;
+}>;
+
+export function ContactsPage({ title, onSelectContact }: ContactsPageProps) {
+  const pageViewModel = useContactsPageViewModel(onSelectContact);
   const { onSearchQueryChange } = pageViewModel;
   const onSaveSuccess = useCallback(() => {
     onSearchQueryChange("");
@@ -52,7 +58,7 @@ function ContactsScreenContent() {
   const { params } =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWalletContacts>>();
 
-  return <ContactsScreenBody title={params?.title} />;
+  return <ContactsPage title={params?.title} />;
 }
 
 export function ContactsScreen() {
