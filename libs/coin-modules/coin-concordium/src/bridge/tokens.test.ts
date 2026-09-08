@@ -665,4 +665,23 @@ describe("token operations on sub-accounts", () => {
     if (result.kind !== "resolved") throw new Error("expected resolved");
     expect(result.subAccounts).toHaveLength(0);
   });
+
+  it("asks for no re-read when the token is merely uncurated", async () => {
+    // The CAL hash already covers curation, so asking would re-read the whole
+    // history on every sync for as long as the account holds the token.
+    useStore({});
+
+    const result = await resolve({ pltOperations: [makeRawOp()] });
+
+    expect(result).not.toHaveProperty("unattributedOperations");
+  });
+
+  it("asks for a re-read when an entry is too malformed to name its token", async () => {
+    const result = await resolve({
+      accountTokens: [{} as unknown as PltAccountToken, makeEntry()],
+      pltOperations: [makeRawOp()],
+    });
+
+    expect(result).toMatchObject({ unattributedOperations: true });
+  });
 });

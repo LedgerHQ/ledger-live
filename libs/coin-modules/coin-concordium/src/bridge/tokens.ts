@@ -505,11 +505,12 @@ export async function resolveTokenSubAccounts({
     initialAccount,
   });
 
-  // Only for an entry too malformed to name its token. Every other reason a
-  // transfer is dropped here — uncurated, blacklisted, denomination disagreeing
-  // with the CAL — already moves `getSyncHash` when it is put right, so asking
-  // for a re-read would buy a wasted walk rather than a recovery.
-  const unreadableEntry = resolved.some(item => item === undefined);
+  // Asked of the entries rather than of `resolved`, which reports the same
+  // `undefined` for an uncurated or blacklisted token. Those are ordinary and
+  // are already covered by the CAL and blacklist inputs to `getSyncHash`, so
+  // treating them as unattributed would re-read the whole history every sync
+  // for as long as the account holds one.
+  const unreadableEntry = accountTokens.some(entry => !isUsableEntry(entry));
 
   return {
     kind: "resolved",
