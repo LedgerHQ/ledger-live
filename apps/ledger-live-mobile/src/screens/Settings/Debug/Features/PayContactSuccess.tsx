@@ -73,6 +73,9 @@ export default function DebugPayContactSuccess() {
         recipient={recipient}
         recipientLabel={recipient.name}
         amountFormatted="10 USDC"
+        fromAccountName="Ethereum 1"
+        networkIcon={{ ledgerId: "ethereum", ticker: "ETH" }}
+        estimatedTime="~12s"
         canViewTransaction
         onViewTransaction={onViewTransaction}
         onClose={onClose}

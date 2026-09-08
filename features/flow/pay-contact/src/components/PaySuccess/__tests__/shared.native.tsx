@@ -9,6 +9,9 @@ export const PAY_SUCCESS_RESOURCES: I18nTestProviderProps["resources"] = {
         contacts: {
           paySuccess: {
             title: "You paid ({{recipient}})",
+            amount: "Amount",
+            estimatedTime: "Est. time",
+            from: "From",
             viewTransaction: "View transaction",
             close: "Close",
           },

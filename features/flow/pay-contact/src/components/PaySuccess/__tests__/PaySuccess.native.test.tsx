@@ -26,6 +26,22 @@ describe("PaySuccess (Native)", () => {
     expect(screen.getByText("100 USDC")).toBeVisible();
   });
 
+  it("should render amount, estimated time and from when the debug summary is provided", () => {
+    renderStep({
+      fromAccountName: "Ethereum 1",
+      networkIcon: { ledgerId: "ethereum", ticker: "ETH" },
+      estimatedTime: "~12s",
+    });
+
+    expect(screen.getByText("Amount")).toBeVisible();
+    expect(screen.getAllByText("100 USDC")).toHaveLength(2);
+    expect(screen.getByText("Est. time")).toBeVisible();
+    expect(screen.getByText("~12s")).toBeVisible();
+    expect(screen.getByText("From")).toBeVisible();
+    expect(screen.getByText("Ethereum 1")).toBeVisible();
+    expect(screen.getByTestId("pay-success-summary-icon")).toBeVisible();
+  });
+
   it("should fall back to a generic avatar when no contact is matched", () => {
     renderStep({ recipient: undefined, recipientLabel: "0x1ad2...c53034" });
 
