@@ -2,8 +2,8 @@ import invariant from "invariant";
 import { AccountId, TransactionId } from "@hashgraph/sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
+import { getCountervaluesApiBaseUrl } from "../countervaluesBaseUrl";
 import { makeLRUCache, minutes, seconds } from "@ledgerhq/live-network/cache";
 import type { FiatCurrency, Currency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
@@ -209,13 +209,15 @@ export const enrichERC20Transfers = async ({
 export const getCurrencyToUSDRate = makeLRUCache(
   async (currency: Currency) => {
     try {
-      // Fiat API id is the ticker ("USD"); crypto/token API id is currency.id ("hedera").
-      // The two global remaps (assethub_polkadot, concordium_testnet) are not hedera currencies,
-      // so currency.id is the correct API id for every hedera currency passed here.
+      // All callers pass the hedera CryptoCurrency (id = "hedera"), never a TokenCurrency
+      // (token ids include the token path, e.g. "hedera/hts/…").
+      // For the fiat (USD_FIAT) side of the Currency union the API id is the ticker.
+      // The two global remaps (assethub_polkadot, concordium_testnet) don't apply to hedera.
       const fromId = currency.type !== "FiatCurrency" ? currency.id : currency.ticker;
+      const params = new URLSearchParams({ to: USD_FIAT.ticker, froms: fromId });
       const { data } = await network<Record<string, number>>({
         method: "GET",
-        url: `${getEnv("LEDGER_COUNTERVALUES_API")}/v3/spot/simple?to=${USD_FIAT.ticker}&froms=${fromId}`,
+        url: `${getCountervaluesApiBaseUrl()}/v3/spot/simple?${params.toString()}`,
       });
       const rate = data[fromId];
       invariant(rate, "no value returned from cvs api");
