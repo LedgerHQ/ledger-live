@@ -17,7 +17,15 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPayTab,
     hasSeenLoginIntro,
     resetPayCardLoginIntroSeen,
+    onNavigateToPaySuccess,
+    onNavigateToSendSuccess,
   } = props;
+  const hasQuickActions = Boolean(
+    onNavigateToPortfolio ||
+    onNavigateToPayTab ||
+    onNavigateToPaySuccess ||
+    onNavigateToSendSuccess,
+  );
 
   return (
     <div className="flex flex-col overflow-y-auto">
@@ -97,7 +105,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
         onReset={resetCardOnboarding}
       />
 
-      {onNavigateToPortfolio || onNavigateToPayTab ? (
+      {hasQuickActions ? (
         <>
           <Divider />
           <Section title="Quick actions">
@@ -110,6 +118,16 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
               {onNavigateToPayTab ? (
                 <Button appearance="gray" size="sm" onClick={onNavigateToPayTab}>
                   Go to Pay tab
+                </Button>
+              ) : null}
+              {onNavigateToPaySuccess ? (
+                <Button appearance="gray" size="sm" onClick={onNavigateToPaySuccess}>
+                  Pay contact success
+                </Button>
+              ) : null}
+              {onNavigateToSendSuccess ? (
+                <Button appearance="gray" size="sm" onClick={onNavigateToSendSuccess}>
+                  Send success
                 </Button>
               ) : null}
             </div>

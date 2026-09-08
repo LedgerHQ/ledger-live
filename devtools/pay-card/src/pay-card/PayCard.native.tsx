@@ -37,7 +37,15 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPayTab,
     hasSeenLoginIntro,
     resetPayCardLoginIntroSeen,
+    onNavigateToPaySuccess,
+    onNavigateToSendSuccess,
   } = props;
+  const hasQuickActions = Boolean(
+    onNavigateToPortfolio ||
+    onNavigateToPayTab ||
+    onNavigateToPaySuccess ||
+    onNavigateToSendSuccess,
+  );
   const [screen, setScreen] = useState<"tool" | "interaction" | "balance">("tool");
 
   if (screen === "interaction") {
@@ -159,7 +167,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
         onReset={resetCardOnboarding}
       />
 
-      {onNavigateToPortfolio || onNavigateToPayTab ? (
+      {hasQuickActions ? (
         <>
           <Divider />
           <Section title="Quick actions">
@@ -172,6 +180,16 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
               {onNavigateToPayTab ? (
                 <Button appearance="gray" size="sm" onPress={onNavigateToPayTab}>
                   Go to Pay tab
+                </Button>
+              ) : null}
+              {onNavigateToPaySuccess ? (
+                <Button appearance="gray" size="sm" onPress={onNavigateToPaySuccess}>
+                  Pay contact success
+                </Button>
+              ) : null}
+              {onNavigateToSendSuccess ? (
+                <Button appearance="gray" size="sm" onPress={onNavigateToSendSuccess}>
+                  Send success
                 </Button>
               ) : null}
             </Box>

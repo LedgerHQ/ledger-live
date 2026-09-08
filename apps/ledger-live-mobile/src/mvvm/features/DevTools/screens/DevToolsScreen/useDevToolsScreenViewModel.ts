@@ -38,9 +38,27 @@ export function useDevToolsScreenViewModel() {
     );
   }, [tabNavigation]);
   const onNavigateToPayTab = useCallback(() => navigateToPayTab(tabNavigation), [tabNavigation]);
+  const onNavigateToPaySuccess = useCallback(() => {
+    navigation.navigate(ScreenName.DebugPayContactSuccess);
+  }, [navigation]);
+  const onNavigateToSendSuccess = useCallback(() => {
+    navigation.navigate(ScreenName.DebugSendSuccess);
+  }, [navigation]);
   const payCardToolProps = useMemo(
-    () => ({ ...boundPayCard, onNavigateToPortfolio, onNavigateToPayTab }),
-    [boundPayCard, onNavigateToPortfolio, onNavigateToPayTab],
+    () => ({
+      ...boundPayCard,
+      onNavigateToPortfolio,
+      onNavigateToPayTab,
+      onNavigateToPaySuccess,
+      onNavigateToSendSuccess,
+    }),
+    [
+      boundPayCard,
+      onNavigateToPortfolio,
+      onNavigateToPayTab,
+      onNavigateToPaySuccess,
+      onNavigateToSendSuccess,
+    ],
   );
   const envToolProps = useEnvDevToolProps();
   const { theme } = useTheme();
