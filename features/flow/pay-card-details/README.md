@@ -6,7 +6,8 @@
 Dual-platform flow package for the Pay tab **card visual** for Ledger Wallet: the physical card
 face (dark gradient + halftone artwork + network logo) and, on top of it, the card balance overlay.
 
-Props-only and i18n-agnostic — the host owns data fetching, currency formatting and labels.
+The host owns currency formatting and the balance label, and hands both over as props. Card state
+(status, freeze/unfreeze) is the package's own business: it reads it from the card API itself.
 
 ## Usage
 
@@ -18,6 +19,10 @@ import { CardVisual } from "@features/flow-pay-card-details";
 
 `CardVisual` composes the `CardArtwork` (card face) with the balance overlay. `CardArtwork` is also
 exported on its own for consumers that only need the card face.
+
+The frozen state is not a host prop: `useCardVisualViewModel` reads the same `CardStatus` query the
+freeze tile uses, so the card face and the tile can never disagree. A frozen card fades out and
+takes a centered snow `Spot`.
 
 ## Platform resolution
 
@@ -46,7 +51,8 @@ pay-card-details/
     │   │   └── CardArtwork.native.test.tsx
     │   └── CardVisual/
     │       ├── CardVisual.tsx
-    │       ├── CardVisualView.web.tsx         # Artwork + balance overlay
+    │       ├── useCardVisualViewModel.ts      # Frozen state, read from the card status
+    │       ├── CardVisualView.web.tsx         # Artwork + balance overlay + frozen marker
     │       ├── CardVisualView.native.tsx      # Empty stub until LWM design
     │       ├── CardVisual.web.test.tsx
     │       ├── CardVisual.native.test.tsx

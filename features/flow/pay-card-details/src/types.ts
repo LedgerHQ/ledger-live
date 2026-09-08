@@ -14,7 +14,11 @@ export type CardVisualProps = Readonly<{
   isLoading?: boolean;
 }>;
 
-export type CardVisualViewProps = CardVisualProps;
+export type CardVisualViewProps = CardVisualProps &
+  Readonly<{
+    /** Dims the card face and overlays the frozen marker. */
+    isFrozen: boolean;
+  }>;
 
 export type FreezeCardViewProps = Readonly<{
   isFrozen: boolean;
