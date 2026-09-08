@@ -22,6 +22,7 @@ import { OperationDrawer } from "tests/page/drawer/operation.drawer";
 import { PageHolder } from "tests/page/abstractClasses";
 import { PasswordlockModal } from "tests/page/modal/passwordlock.modal";
 import { PortfolioPage } from "tests/page/portfolio.page";
+import { PostOnboardingPage } from "tests/page/postOnboarding.page";
 import { ReceiveModal } from "tests/page/modal/receive.modal";
 import { Redux } from "tests/utils/redux";
 import { SendDrawer } from "tests/page/drawer/send.drawer";
@@ -77,6 +78,7 @@ export class Application extends PageHolder {
   public operationDrawer = new OperationDrawer(this.page);
   public password = new PasswordlockModal(this.page);
   public portfolio = new PortfolioPage(this.page);
+  public postOnboarding = new PostOnboardingPage(this.page);
   public receive = new ReceiveModal(this.page);
   public privateBalance = new PrivateBalanceModal(this.page);
   public redux = new Redux(this.page);
