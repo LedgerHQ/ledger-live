@@ -1,5 +1,3 @@
-import { NEVER, fromEvent, lastValueFrom, race, throwError, type Observable } from "rxjs";
-import { mergeMap, reduce } from "rxjs/operators";
 import type { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
 import {
   AccountBalanceSchema,
@@ -7,6 +5,7 @@ import {
   type AccountBalance,
 } from "@domain/entity-account-balance";
 import { toAccountBalances } from "../../legacy-mapping/accountBalance";
+import { syncAccountOnce } from "../../account-data/fullSync";
 import {
   decodeAccountId,
   encodeTokenAccountId,
@@ -145,17 +144,5 @@ export async function syncAccountBalanceRows({
   blacklistedTokenIds?: string[];
   signal?: AbortSignal;
 }): Promise<AccountBalance[]> {
-  if (signal?.aborted) throw new DOMException("aborted before the sync started", "AbortError");
-
-  const synced$ = bridge
-    .sync(account, { paginationConfig: {}, blacklistedTokenIds })
-    .pipe(reduce((acc: Account, updater: (a: Account) => Account) => updater(acc), account));
-
-  const aborted$: Observable<Account> = signal
-    ? fromEvent(signal, "abort").pipe(
-        mergeMap(() => throwError(() => new DOMException("sync aborted", "AbortError"))),
-      )
-    : NEVER;
-
-  return toAccountBalances(await lastValueFrom(race(synced$, aborted$)));
+  return toAccountBalances(await syncAccountOnce({ account, bridge, blacklistedTokenIds, signal }));
 }

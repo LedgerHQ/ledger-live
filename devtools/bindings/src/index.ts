@@ -10,3 +10,5 @@ export { usePayCardAuthProps } from "./usePayCardAuthProps";
 export type { UsePayCardAuthPropsOptions } from "./usePayCardAuthProps";
 export { useAccountBalancesToolProps } from "./useAccountBalancesToolProps";
 export type { AccountBalancesInput } from "./useAccountBalancesToolProps";
+export { useAccountOperationsToolProps } from "./useAccountOperationsToolProps";
+export type { AccountOperationsInput } from "./useAccountOperationsToolProps";
