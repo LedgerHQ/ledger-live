@@ -1,14 +1,19 @@
-import { Operation, AccountLike } from "@ledgerhq/types-live";
+import React from "react";
+import { XrpOperation } from "@ledgerhq/live-common/families/xrp/types";
+import { useTranslation } from "~/context/Locale";
+import Section from "~/screens/OperationDetails/Section";
 
 type Props = {
-  operation: Operation;
-  type: string;
-  account: AccountLike;
+  operation: XrpOperation;
 };
 
-function OperationDetailsExtra(_props: Props) {
-  // Return nothing - no extra fields should be displayed for XRP
-  return null;
+function OperationDetailsExtra({ operation: { extra } }: Props) {
+  const { t } = useTranslation();
+  const memo = extra?.memo;
+
+  if (!memo) return null;
+
+  return <Section title={t("operationDetails.extra.memo")} value={memo} />;
 }
 
 export default {
