@@ -72,4 +72,6 @@ export function useDeviceScreenButtonsViewModel(onPress: DeviceScreenButtonPress
   };
 }
 
-export type DeviceScreenButtonsViewModel = ReturnType<typeof useDeviceScreenButtonsViewModel>;
+export type DeviceScreenButtonsViewModel = Readonly<
+  ReturnType<typeof useDeviceScreenButtonsViewModel>
+>;

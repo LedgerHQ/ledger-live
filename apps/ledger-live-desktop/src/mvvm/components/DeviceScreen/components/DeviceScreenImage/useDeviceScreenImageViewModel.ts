@@ -116,4 +116,4 @@ export function useDeviceScreenImageViewModel(src: string, onTouch?: DeviceScree
   };
 }
 
-export type DeviceScreenImageViewModel = ReturnType<typeof useDeviceScreenImageViewModel>;
+export type DeviceScreenImageViewModel = Readonly<ReturnType<typeof useDeviceScreenImageViewModel>>;
