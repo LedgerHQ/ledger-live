@@ -879,6 +879,9 @@ importers:
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../../domain/entity/account
       '@domain/entity-account-alias':
         specifier: workspace:^
         version: link:../../domain/entity/account-alias
@@ -1706,6 +1709,9 @@ importers:
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../../domain/entity/account
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
@@ -2856,6 +2862,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:*
         version: link:../../domain/api/currency-token
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../../domain/entity/account
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
@@ -4630,8 +4639,39 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  domain/entity/account:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   domain/entity/account-alias:
     dependencies:
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../account
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
@@ -4666,6 +4706,9 @@ importers:
 
   domain/entity/account-name:
     dependencies:
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../account
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
@@ -5118,6 +5161,9 @@ importers:
 
   domain/entity/starred-account:
     dependencies:
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../account
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
@@ -13343,6 +13389,9 @@ importers:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../../domain/entity/account
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -16428,6 +16477,9 @@ importers:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../../domain/entity/account
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-mocker
@@ -23050,6 +23102,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}

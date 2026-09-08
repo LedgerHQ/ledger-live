@@ -6,7 +6,7 @@
 
 RTK slice for starred (pinned) accounts.
 
-State shape: `Set<string>` (the slice state IS the Set directly). Local-only state (not synced). Exports `starredAccountsSlice`, actions (`setAccountStarred`, `initStarredFromIds`) and selector `isStarredAccountSelector`.
+State shape: `Set<AnyAccountId>` (the slice state IS the Set directly). Local-only state (not synced). Exports `starredAccountsSlice`, actions (`setAccountStarred`, `initStarredFromIds`) and selector `isStarredAccountSelector`.
 
 ## Related documentation
 

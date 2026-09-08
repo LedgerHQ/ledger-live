@@ -67,6 +67,14 @@ describe("starredAccountsSlice", () => {
     expect(store.isStarred("old")).toBe(false);
   });
 
+  it("initStarredFromIds drops an id storage cannot have produced, keeping the rest", () => {
+    // Rehydration reads whatever was persisted — by an older build, or from an imported wallet
+    // state. A throw here would take the whole import down over one bad star.
+    const store = makeStore();
+    store.dispatch(initStarredFromIds(["a1", "", "a+b+c", "trailing+", "a2"]));
+    expect([...store.starred()]).toEqual(["a1", "a2"]);
+  });
+
   it("initStarredFromIds with an empty list clears everything", () => {
     const store = makeStore();
     store.dispatch(initStarredFromIds(["a1"]));

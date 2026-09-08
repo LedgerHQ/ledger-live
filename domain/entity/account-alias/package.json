@@ -18,6 +18,7 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-alias"
   },
   "dependencies": {
+    "@domain/entity-account": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "uuid": "^9.0.0",
     "zod": "catalog:"
