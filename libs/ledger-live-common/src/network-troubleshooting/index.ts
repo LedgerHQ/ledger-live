@@ -4,6 +4,7 @@ import WS from "isomorphic-ws";
 import { Observable } from "rxjs";
 import { getEnv } from "@shared/env";
 import serviceStatusApi from "../notifications/ServiceStatusProvider/api/api";
+import { redactSecureChannelToken } from "../socket";
 
 export type TroubleshootStatus = {
   title: string;
@@ -84,7 +85,10 @@ function websocketConnects(url) {
     };
   });
   return {
-    technicalDescription: "connecting to " + url,
+    // A scriptrunner url can carry a session token — `BASE_SOCKET_URL` is
+    // overridden with the mock server's secure channel in mock transport mode —
+    // and this description is rendered in the troubleshooting UI.
+    technicalDescription: "connecting to " + redactSecureChannelToken(url),
     job,
   };
 }

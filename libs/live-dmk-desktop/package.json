@@ -33,6 +33,8 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-mockserver-client": "catalog:",
+    "@ledgerhq/device-transport-kit-mockserver": "catalog:",
     "@ledgerhq/device-transport-kit-web-hid": "catalog:",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-common": "workspace:^",
