@@ -7,6 +7,7 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import SelectDevice2, { type SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { track, usePageNameFromRoute } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
 import { SigningBody } from "./components/SigningBody";
 
 type SignatureDeviceActionViewModel = ReturnType<
@@ -41,6 +42,7 @@ export function SignatureDeviceActionView({
   onUserCancel,
 }: SignatureDeviceActionViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const { recipientType } = useSendFlowTracking();
 
   const trackingProperties = useMemo(
     () => getSendFlowTrackingProperties(account, parentAccount ?? undefined),
@@ -75,6 +77,8 @@ export function SignatureDeviceActionView({
               request={request}
               onResult={onDeviceActionResultCompleted}
               onClose={onUserCancel}
+              trackingProperties={trackingProperties}
+              recipientType={recipientType}
             />
           ) : (
             <SelectDevice2
