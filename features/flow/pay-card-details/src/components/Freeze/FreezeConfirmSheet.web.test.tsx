@@ -26,7 +26,9 @@ function renderSheet(props: Partial<FreezeConfirmSheetProps> = {}) {
 
 describe("FreezeConfirmSheet (web)", () => {
   it("renders nothing when closed", () => {
-    expect(renderSheet({ isOpen: false }).container).toBeNull();
+    renderSheet({ isOpen: false });
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("shows the freeze confirmation copy", () => {
