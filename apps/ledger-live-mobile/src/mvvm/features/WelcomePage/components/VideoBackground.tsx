@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useTranslation } from "~/context/Locale";
 import Video, { OnLoadData, ReactVideoSource, VideoRef } from "react-native-video";
@@ -8,9 +8,6 @@ import { VideoTitleText } from "./WelcomePage.styles";
 
 // Stories crossfade rather than cut, so a revealed player never flashes its first frame in.
 const CROSSFADE_DURATION_MS = 250;
-
-// DIAGNOSTIC (LIVE-36099): one color per story so the crossfade is visible without the video.
-const DIAGNOSTIC_COLORS = ["#E11D48", "#2563EB", "#16A34A"];
 
 type VideoBackgroundProps = {
   videoSource: ReactVideoSource;
@@ -95,20 +92,6 @@ export function VideoBackground({
           paused={!isOnStage}
         />
       )}
-      {/* DIAGNOSTIC (LIVE-36099): colored overlay on top of the video, driven by the same
-          crossfade opacity. If you see these colors fading between stories, the crossfade
-          layer renders fine and the black is react-native-video on the simulator. If it stays
-          black, the opacity change is at fault. REVERT before merge. */}
-      <View
-        pointerEvents="none"
-        style={[
-          StyleSheet.absoluteFill,
-          {
-            backgroundColor:
-              DIAGNOSTIC_COLORS[Number(titleKey.slice(-1)) % DIAGNOSTIC_COLORS.length],
-          },
-        ]}
-      />
       <VideoTitleText>{t(titleKey)}</VideoTitleText>
     </Animated.View>
   );
