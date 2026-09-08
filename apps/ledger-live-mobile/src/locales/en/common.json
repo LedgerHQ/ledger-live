@@ -10211,6 +10211,9 @@
     "card": {
       "title": "Crypto card"
     },
+    "selectContact": {
+      "placeholder": "Enter contact"
+    },
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request"
