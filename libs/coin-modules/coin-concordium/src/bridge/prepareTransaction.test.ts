@@ -1,5 +1,9 @@
 import BigNumber from "bignumber.js";
-import { AccountAddress, encodePltTransferOperations } from "@ledgerhq/concordium-core";
+import {
+  AccountAddress,
+  encodePltTransferOperations,
+  PLT_MAX_MEMO_SIZE,
+} from "@ledgerhq/concordium-core";
 import {
   createFixtureAccount,
   createFixtureConfig,
@@ -23,11 +27,12 @@ const { estimateFees, estimateTokenFees } = jest.requireMock("../logic");
 const config = createFixtureConfig();
 
 /** The real encoder, so the expected size is derived rather than asserted as a magic number. */
-const blobSize = (recipient: string, amount: number, decimals = 6) =>
+const blobSize = (recipient: string, amount: number | bigint, decimals = 6, memo?: string) =>
   encodePltTransferOperations({
     recipient: AccountAddress.fromBase58(recipient),
     amount: BigInt(amount),
     decimals,
+    ...(memo ? { memo: Buffer.from(memo, "utf-8") } : {}),
   }).length;
 
 const tokenAccountFor = (account: ReturnType<typeof createFixtureAccount>) =>
@@ -277,6 +282,62 @@ describe("prepareTransaction", () => {
 
       expect(result).not.toBe(tx);
       expect(result).not.toHaveProperty("energy");
+    });
+
+    // 200 bytes of memo, which the second assertion shows the size must grow by.
+    it("counts the memo toward the priced size", async () => {
+      const { account, subAccount } = withTokenSubAccount();
+      const memo = "x".repeat(200);
+      const tx = createFixtureTransaction({
+        subAccountId: subAccount.id,
+        recipient: VALID_ADDRESS_2,
+        amount: new BigNumber(1500000),
+        memo,
+      });
+
+      await prepareTransaction(account, tx);
+
+      const [, , params] = estimateTokenFees.mock.calls[0];
+      expect(params.listOperationsSize).toBe(blobSize(VALID_ADDRESS_2, 1500000, 6, memo));
+      expect(params.listOperationsSize).toBeGreaterThan(blobSize(VALID_ADDRESS_2, 1500000));
+    });
+
+    // The transaction carries amount 0, so pricing it would encode the wrong size.
+    it("prices the balance that useAllAmount will send", async () => {
+      const { account, subAccount } = withTokenSubAccount();
+      const tx = createFixtureTransaction({
+        subAccountId: subAccount.id,
+        recipient: VALID_ADDRESS_2,
+        useAllAmount: true,
+        amount: new BigNumber(0),
+      });
+
+      await prepareTransaction(account, tx);
+
+      const [, , params] = estimateTokenFees.mock.calls[0];
+      expect(params.listOperationsSize).toBe(
+        blobSize(VALID_ADDRESS_2, BigInt(subAccount.spendableBalance.toFixed(0))),
+      );
+    });
+
+    it("prices nothing when the memo is past the chain's limit", async () => {
+      const { account, subAccount } = withTokenSubAccount();
+      const tx = createFixtureTransaction({
+        subAccountId: subAccount.id,
+        memo: "x".repeat(PLT_MAX_MEMO_SIZE + 1),
+      });
+
+      expect(await prepareTransaction(account, tx)).toBe(tx);
+      expect(estimateTokenFees).not.toHaveBeenCalled();
+    });
+
+    it("prices nothing when the subAccountId no longer resolves", async () => {
+      const account = createFixtureAccount();
+      const tx = createFixtureTransaction({ subAccountId: "js:2:concordium_testnet:gone:+plt" });
+
+      expect(await prepareTransaction(account, tx)).toBe(tx);
+      expect(estimateFees).not.toHaveBeenCalled();
+      expect(estimateTokenFees).not.toHaveBeenCalled();
     });
 
     it("stays on the native path when no sub-account is selected", async () => {
