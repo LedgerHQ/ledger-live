@@ -9,7 +9,7 @@ const mustBeAFunction = (name: string) => ({
 export const CardApiExtraSchema = z.object({
   /**
    * The two Card values are read on every request, and not once at store creation: a tester sets
-   * `CARD_API_URL` and `CARD_BAANX_CLIENT_KEY` in the debug settings, and the next request carries
+   * `CARD_BAANX_API_URL` and `CARD_BAANX_CLIENT_KEY` in the debug settings, and the next request carries
    * the new value without a restart of the app.
    */
   getCardApiBaseUrl: z.custom<() => string>(isFunction, mustBeAFunction("getCardApiBaseUrl")),

@@ -32,7 +32,7 @@ export function usePayTabViewModel() {
 
   // Read with `useEnv`, and not with `getEnv`: a tester sets these in the debug settings, and the
   // login must take the new values without a restart of the app.
-  const apiUrl = useEnv("CARD_API_URL");
+  const apiUrl = useEnv("CARD_BAANX_API_URL");
   const clientId = useEnv("CARD_BAANX_CLIENT_KEY");
   const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
 

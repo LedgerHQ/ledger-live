@@ -44,7 +44,6 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
     resetReceiveVerifyHintSeen: overrides.resetReceiveVerifyHintSeen ?? jest.fn(),
     hasCompletedCardOnboarding: overrides.hasCompletedCardOnboarding ?? false,
     resetCardOnboarding: overrides.resetCardOnboarding ?? jest.fn(),
-    env: overrides.env ?? { vars: [], setVar: jest.fn() },
   };
 }
 
