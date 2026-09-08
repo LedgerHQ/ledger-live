@@ -47,6 +47,14 @@ function request(spy: jest.SpyInstance): Request {
   return spy.mock.calls[0][0] as Request;
 }
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>(resolvePromise => {
+    resolve = resolvePromise;
+  });
+  return { promise, resolve };
+}
+
 // The provider's own example response.
 const cardStatus = {
   id: "000000000050277836",
@@ -499,6 +507,38 @@ describe("cardManagementApi requests", () => {
       });
     });
 
+    it("optimistically shares FROZEN through the status cache and rolls back on failure", async () => {
+      const freezeResponse = deferred<Response>();
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async (input: RequestInfo | URL) => {
+          if (new URL((input as Request).url).pathname === "/v1/card/freeze") {
+            return freezeResponse.promise;
+          }
+          return jsonResponse(cardStatus);
+        });
+
+      const store = makeStore("session-token");
+      const subscription = store.dispatch(
+        cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
+      );
+      await subscription;
+
+      const mutation = store.dispatch(cardManagementApi.endpoints.freezeCard.initiate());
+
+      expect(
+        cardManagementApi.endpoints.getCardStatus.select()(store.getState()).data?.status,
+      ).toBe("FROZEN");
+
+      freezeResponse.resolve(errorResponse(500, "Freeze failed"));
+      await mutation;
+      expect(
+        cardManagementApi.endpoints.getCardStatus.select()(store.getState()).data?.status,
+      ).toBe("ACTIVE");
+
+      subscription.unsubscribe();
+    });
+
     it("refetches the card status, because freezing moves it to FROZEN", async () => {
       let cardState = "ACTIVE";
       fetchSpy = jest
@@ -555,6 +595,38 @@ describe("cardManagementApi requests", () => {
 
       expect(result.data).toBeUndefined();
       expect(result.error).toMatchObject({ status: 400, data: { message: "Card is not frozen" } });
+    });
+
+    it("optimistically shares ACTIVE through the status cache and rolls back on failure", async () => {
+      const unfreezeResponse = deferred<Response>();
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(async (input: RequestInfo | URL) => {
+          if (new URL((input as Request).url).pathname === "/v1/card/unfreeze") {
+            return unfreezeResponse.promise;
+          }
+          return jsonResponse({ ...cardStatus, status: "FROZEN" });
+        });
+
+      const store = makeStore("session-token");
+      const subscription = store.dispatch(
+        cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
+      );
+      await subscription;
+
+      const mutation = store.dispatch(cardManagementApi.endpoints.unfreezeCard.initiate());
+
+      expect(
+        cardManagementApi.endpoints.getCardStatus.select()(store.getState()).data?.status,
+      ).toBe("ACTIVE");
+
+      unfreezeResponse.resolve(errorResponse(500, "Unfreeze failed"));
+      await mutation;
+      expect(
+        cardManagementApi.endpoints.getCardStatus.select()(store.getState()).data?.status,
+      ).toBe("FROZEN");
+
+      subscription.unsubscribe();
     });
 
     it("refetches the card status, because unfreezing moves it back to ACTIVE", async () => {

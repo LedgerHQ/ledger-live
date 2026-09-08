@@ -86,20 +86,6 @@ describe("useFreezeCardViewModel", () => {
     });
   });
 
-  it("shows the card frozen as soon as the freeze starts", () => {
-    // The provider only answers FROZEN on the next status refetch, and the tile must not keep
-    // offering "Freeze" until then.
-    expect(renderWith({ status: "ACTIVE", isFreezeLoading: true }).result.current.isFrozen).toBe(
-      true,
-    );
-  });
-
-  it("shows the card unfrozen as soon as the unfreeze starts", () => {
-    expect(renderWith({ status: "FROZEN", isUnfreezeLoading: true }).result.current.isFrozen).toBe(
-      false,
-    );
-  });
-
   it("surfaces a freeze that failed", () => {
     expect(renderWith({ isFreezeError: true }).result.current.isFreezeError).toBe(true);
   });

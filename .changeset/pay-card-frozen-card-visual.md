@@ -1,5 +1,6 @@
 ---
 "@features/flow-pay-card-details": minor
+"@domain/api-card-management": minor
 "@support/jest-features-flow": minor
 "ledger-live-desktop": minor
 "live-mobile": minor

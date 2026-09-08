@@ -3,6 +3,12 @@ import { render, screen } from "@testing-library/react-native";
 import { CardVisual } from "./CardVisual";
 import type { FormattedValue } from "../../types";
 
+jest.mock("@domain/api-card-management", () => ({
+  useGetCardStatusQuery: jest.fn(),
+}));
+
+import { useGetCardStatusQuery } from "@domain/api-card-management";
+
 const formatCountervalue = (value: number): FormattedValue => ({
   integerPart: String(Math.trunc(value)),
   decimalPart: "00",
@@ -13,6 +19,10 @@ const formatCountervalue = (value: number): FormattedValue => ({
 
 describe("CardVisual (native)", () => {
   it("renders nothing until the native card visual ships", () => {
+    jest.mocked(useGetCardStatusQuery).mockReturnValue({
+      data: undefined,
+    } as unknown as ReturnType<typeof useGetCardStatusQuery>);
+
     render(
       <CardVisual balance={100} formatCountervalue={formatCountervalue} balanceLabel="Balance" />,
     );
