@@ -1,11 +1,11 @@
-import SpeculosTransportHttp, { SpeculosButton } from "@ledgerhq/hw-transport-node-speculos-http";
+import { DeviceManagementKitTransportSpeculos, SpeculosButton } from "@ledgerhq/live-dmk-speculos";
 import Canton from "./Canton";
 
 describe("AppCanton", () => {
-  let transport: SpeculosTransportHttp;
+  let transport: DeviceManagementKitTransportSpeculos;
 
   beforeAll(async () => {
-    transport = await SpeculosTransportHttp.open({});
+    transport = await DeviceManagementKitTransportSpeculos.open({});
   });
   afterAll(async () => {
     transport.close();
