@@ -51,10 +51,7 @@ const seedZcashPrivateInfo = (account: Account) => {
   return cmd;
 };
 
-const accounts = [
-  // TODO(LIVE-36495): replace with a real Xray ticket before merge.
-  { account: Account.ZEC_1, xrayTicket: "B2CQA-TODO" },
-];
+const accounts = [{ account: Account.ZEC_1, xrayTicket: "B2CQA-6606" }];
 
 for (const account of accounts) {
   test.describe("Receive private address", () => {
