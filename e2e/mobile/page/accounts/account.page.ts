@@ -9,9 +9,6 @@ export default class AccountPage {
   accountListTitleId = "accounts-list-title";
   accountsListId = "accounts-list";
   accountScreenScrollView = "account-screen-scrollView";
-  // The Button wrapper prefixes an explicit testID with "enabled-"/"disabled-"
-  // (src/components/Button.tsx getTestID).
-  subAccountsToggleId = "enabled-subAccounts-toggle";
   accountAdvancedLogsId = "account-advanced-logs";
   earnButtonId = "account-quick-action-button-earn";
   accountRenameTextInputId = "account-rename-text-input";
@@ -137,34 +134,9 @@ export default class AccountPage {
     await scrollToId(this.operationRowRegexp, this.accountScreenScrollView, 300, "down");
   }
 
-  @Step("Expand the sub-account list if {{{0}}} is not reachable")
-  async expandSubAccountsIfNeeded(subAccountId: string) {
-    // Only the first 3 sub-accounts are rendered; the rest sit behind a toggle, so a token
-    // outside that set is not in the view tree at all. A present row means nothing to do; an
-    // absent one proves nothing, since off-screen rows are unmounted either way.
-    if (await IsIdPresent(subAccountId)) return;
-    if (!(await IsIdPresent(this.subAccountsToggleId))) return;
-    await revealForTap(this.subAccountsToggleId, { container: this.accountScreenScrollView });
-    if (!(await this.isSubAccountsListCollapsed())) return;
-    await tapById(this.subAccountsToggleId);
-  }
-
-  /** Every expand wording contains "more"; every collapse wording uses "fewer" or "less". */
-  private async isSubAccountsListCollapsed(): Promise<boolean> {
-    try {
-      await detoxExpect(
-        getElementByIdWithDescendantTexts(this.subAccountsToggleId, /\bmore\b/i),
-      ).toExist();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
   @Step("Scroll to a Specific SubAccount Row {{{0}}}")
   async scrollToSubAccount(subAccountId: string) {
     await waitForElementById(this.accountScreenScrollView);
-    await this.expandSubAccountsIfNeeded(subAccountId);
     await scrollToId(subAccountId, this.accountScreenScrollView);
   }
 
