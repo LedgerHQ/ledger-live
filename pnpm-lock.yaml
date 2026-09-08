@@ -9583,9 +9583,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
