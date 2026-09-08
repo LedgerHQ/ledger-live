@@ -51,10 +51,10 @@ export type CardLoginOauthConfig = Readonly<{
    * Android polyfill matches the incoming link against the whole of it. Only a custom scheme can end a
    * session, so the redirect URI above cannot serve here.
    *
-   * Optional, because only the OS browser can act on it. Desktop opens the page in the user's own
-   * browser, which reports nothing back, so it passes none. Leave it out on a platform that has a
-   * session to end and the login still completes through the app's deep link, but nothing closes the
-   * browser and it stays on top of the app.
+   * Optional, because only a secure browser session can act on it. Desktop opens the page in a
+   * window that has no session to close, so it passes none. Leave it out on a platform that does have
+   * one and the login still completes through the app's deep link, but nothing closes the browser and
+   * it stays on top of the app.
    */
   deepLink?: string;
 }>;
@@ -62,12 +62,14 @@ export type CardLoginOauthConfig = Readonly<{
 /* --- What the machine needs from the outside world ------------------------------------------- */
 
 /**
- * What the OS browser reports when it closes. `success` carries the URL the session stopped on, which
- * is the redirect; `dismissed` covers every way the user left without one.
+ * What the hosted login reports back. `success` carries the URL the session stopped on, which is the
+ * redirect; `dismissed` covers every way the user left without one; `pending` says the page is open
+ * in a context that reports nothing, so the redirect reaches the app by its own deep link instead.
  */
 export type HostedLoginResult =
   | Readonly<{ type: "success"; url: string }>
-  | Readonly<{ type: "dismissed" }>;
+  | Readonly<{ type: "dismissed" }>
+  | Readonly<{ type: "pending" }>;
 
 export type OpenHostedLogin = (loginUrl: string, deepLink?: string) => Promise<HostedLoginResult>;
 

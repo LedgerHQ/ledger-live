@@ -4,9 +4,9 @@ import { StyleProvider } from "@features/platform-style";
 import { CardLoginView } from "../CardLoginView.web";
 
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
-  title: "Ledger Card",
-  description: "Log in to manage your Ledger Card",
-  loginLabel: "Login",
+  title: "Log in to access your Card",
+  description: "You’ve been logged out for security",
+  loginLabel: "Log in",
   isLoading: false,
   errorMessage: null,
   onLoginPress: jest.fn(),
@@ -24,7 +24,14 @@ describe("CardLoginView (Web)", () => {
   it("should render the login action", () => {
     renderCardLoginView();
 
-    expect(screen.getByRole("button", { name: "Login" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Log in" })).toBeVisible();
+  });
+
+  it("should render the title and the description", () => {
+    renderCardLoginView();
+
+    expect(screen.getByText("Log in to access your Card")).toBeVisible();
+    expect(screen.getByText("You’ve been logged out for security")).toBeVisible();
   });
 
   it("should render a login error when provided", () => {

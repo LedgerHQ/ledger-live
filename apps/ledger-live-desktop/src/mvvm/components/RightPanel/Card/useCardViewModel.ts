@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import type { FormattedValue } from "@features/flow-pay-card-details";
 import useEnv from "@features/platform-env";
@@ -8,8 +9,20 @@ import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import type { CardViewModel } from "./types";
 
+/** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
+function readCallbackCode(state: unknown): string | undefined {
+  if (typeof state !== "object" || state === null) {
+    return undefined;
+  }
+
+  const code = (state as { code?: unknown }).code;
+
+  return typeof code === "string" && code !== "" ? code : undefined;
+}
+
 export function useCardViewModel(): CardViewModel {
   const { t } = useTranslation();
+  const { state } = useLocation();
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const unit = counterValueCurrency.units[0];
@@ -31,16 +44,25 @@ export function useCardViewModel(): CardViewModel {
     () => ({
       apiUrl,
       clientId,
-      // No `deepLink`: the user's own browser opens the page, and it reports nothing back (LIVE-34740).
+      // No `deepLink`: only a mobile secure browser session closes on one. The window this login opens
+      // reports nothing back, so `ledgerlive://paytab?code=…` is the whole of the answer here.
       redirectUri,
     }),
     [apiUrl, clientId, redirectUri],
   );
+
+  // The code is the whole of the redirect: PKCE ties it to the verifier the attempt store still holds.
+  const callback: CardViewModel["callback"] = useMemo(() => {
+    const code = readCallbackCode(state);
+
+    return code ? { code } : null;
+  }, [state]);
 
   return {
     title: t("payTab.card.title"),
     balanceLabel: t("payTab.card.balanceLabel"),
     formatCountervalue,
     oauthConfig,
+    callback,
   };
 }

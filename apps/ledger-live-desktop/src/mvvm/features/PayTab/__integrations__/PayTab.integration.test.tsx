@@ -209,7 +209,7 @@ describe("PayTab integration", () => {
     });
 
     expect(await screen.findByText(EMPTY_TITLE)).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Login" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Log in" })).not.toBeInTheDocument();
   });
 
   it("should open the balance filter dialog from the hero pill and track the interaction", async () => {

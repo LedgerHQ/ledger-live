@@ -896,6 +896,19 @@
         }
       }
     },
+    "cardLogin": {
+      "title": "Log in to access your Card",
+      "description": "You’ve been logged out for security",
+      "login": "Log in",
+      "errors": {
+        "pkceFailed": "Login could not start. Please try again.",
+        "browserOpenFailed": "The login page could not open. Please try again.",
+        "missingAttempt": "This login is no longer valid. Please log in again.",
+        "exchangeFailed": "Login could not be completed. Please try again.",
+        "persistFailed": "Your session could not be saved. Please try again.",
+        "fetchUserFailed": "Your card could not be loaded. Please try again."
+      }
+    },
     "cardMore": {
       "tile": "More",
       "title": "More",
