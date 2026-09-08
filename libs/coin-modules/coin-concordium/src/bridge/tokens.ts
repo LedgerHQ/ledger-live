@@ -76,6 +76,25 @@ export function subAccountsPatch(resolved: ResolvedTokens): { subAccounts?: Toke
 }
 
 /**
+ * The sub-accounts the account ends up holding, which {@link subAccountsPatch}
+ * cannot answer: it omits the key on `unchanged` precisely so the stored list
+ * survives, and the stored list is what anything reading the result needs.
+ */
+export function effectiveSubAccounts(
+  resolved: ResolvedTokens,
+  previous: TokenAccount[] | undefined,
+): TokenAccount[] {
+  switch (resolved.kind) {
+    case "resolved":
+      return resolved.subAccounts;
+    case "cleared":
+      return [];
+    case "unchanged":
+      return previous ?? [];
+  }
+}
+
+/**
  * Applies a {@link ResolvedTokens} to the account's resources.
  *
  * Clearing removes the key rather than setting it to `undefined`, matching

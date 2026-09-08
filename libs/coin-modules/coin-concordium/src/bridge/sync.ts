@@ -22,6 +22,7 @@ import { mapRawOperationToBridgeOperation } from "./serialization";
 import {
   applyTokensToResources,
   buildParentOperation,
+  effectiveSubAccounts,
   resolveTokenSubAccounts,
   subAccountsPatch,
 } from "./tokens";
@@ -276,14 +277,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async (info, 
     const unattributed =
       resolvedTokens.kind !== "cleared" && resolvedTokens.unattributedOperations === true;
 
-    // What the account ends up holding: `unchanged` keeps the stored list, and
-    // `cleared` has none, so neither can be read off `resolvedTokens` alone.
-    const subAccounts =
-      resolvedTokens.kind === "resolved"
-        ? resolvedTokens.subAccounts
-        : resolvedTokens.kind === "unchanged"
-          ? (initialAccount?.subAccounts ?? [])
-          : [];
+    const subAccounts = effectiveSubAccounts(resolvedTokens, initialAccount?.subAccounts);
 
     return {
       balance,
