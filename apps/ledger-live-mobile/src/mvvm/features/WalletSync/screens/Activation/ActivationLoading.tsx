@@ -4,7 +4,7 @@ import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { useLoadingStep } from "../../hooks/useLoadingStep";
 import { TrackScreen } from "~/analytics";
-import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
+import { AnalyticsPage, useWalletSyncTrackingFlow } from "../../hooks/useLedgerSyncAnalytics";
 import GradientContainer from "~/components/GradientContainer";
 import Animation from "~/components/Animation";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -33,6 +33,7 @@ export function ActivationLoading({ route }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const trackingFlow = useWalletSyncTrackingFlow();
   const title = "walletSync.loading.title";
   const subtitle = created ? "walletSync.loading.activation" : "walletSync.loading.synch";
   useLoadingStep(created);
@@ -52,7 +53,7 @@ export function ActivationLoading({ route }: Props) {
   return (
     <>
       <PreventNativeBack />
-      <TrackScreen category={AnalyticsPage.Loading} />
+      <TrackScreen category={AnalyticsPage.Loading} flow={trackingFlow} />
       <GradientContainer
         color={colors.background.main}
         startOpacity={1}

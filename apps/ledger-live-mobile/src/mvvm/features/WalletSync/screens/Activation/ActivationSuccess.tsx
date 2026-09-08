@@ -4,7 +4,11 @@ import { useTranslation } from "~/context/Locale";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";
-import { AnalyticsButton, AnalyticsFlow, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
+import {
+  AnalyticsButton,
+  AnalyticsPage,
+  useWalletSyncTrackingFlow,
+} from "../../hooks/useLedgerSyncAnalytics";
 import { track } from "~/analytics";
 import { useClose } from "../../hooks/useClose";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
@@ -33,6 +37,7 @@ export function ActivationSuccess({ route }: Props) {
   const page = created ? AnalyticsPage.BackupCreationSuccess : AnalyticsPage.SyncSuccess;
 
   const close = useClose();
+  const trackingFlow = useWalletSyncTrackingFlow();
 
   const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
 
@@ -40,7 +45,7 @@ export function ActivationSuccess({ route }: Props) {
     track("button_clicked", {
       button: AnalyticsButton.Close,
       page,
-      flow: AnalyticsFlow.LedgerSync,
+      flow: trackingFlow,
     });
     close();
 

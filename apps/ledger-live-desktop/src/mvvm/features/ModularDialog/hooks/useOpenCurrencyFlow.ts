@@ -6,6 +6,8 @@ import { useDispatch, useStore } from "LLD/hooks/redux";
 import {
   closeDialog,
   openDialog,
+  setFlowValue,
+  setSourceValue,
   type ModularDialogPresentation,
 } from "~/renderer/reducers/modularDialog";
 
@@ -22,6 +24,8 @@ export type OpenCurrencyFlow = (
   options?: Readonly<{
     dialogConfiguration?: EnhancedModularDrawerConfiguration;
     presentation?: ModularDialogPresentation;
+    flow?: string;
+    source?: string;
   }>,
 ) => Promise<CryptoOrTokenCurrency | null>;
 
@@ -65,6 +69,12 @@ export function useOpenCurrencyFlow(): Readonly<{
 
         pendingSelectionRef.current = { requestId, onAssetSelected, settle };
 
+        if (options?.flow !== undefined) {
+          dispatch(setFlowValue(options.flow));
+        }
+        if (options?.source !== undefined) {
+          dispatch(setSourceValue(options.source));
+        }
         dispatch(
           openDialog({
             dialogConfiguration: options?.dialogConfiguration,

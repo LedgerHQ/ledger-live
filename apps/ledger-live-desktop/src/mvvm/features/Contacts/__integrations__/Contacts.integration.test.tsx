@@ -342,7 +342,10 @@ describe("Contacts integration", () => {
 
     await user.click(screen.getByRole("button", { name: "Sync my wallet" }));
 
-    expect(mockOpenActivationDrawer).toHaveBeenCalledWith({ startOnSyncMethod: true });
+    expect(mockOpenActivationDrawer).toHaveBeenCalledWith({
+      startOnSyncMethod: true,
+      analyticsFlow: "contacts",
+    });
     expect(
       screen.queryByTestId("contacts-ledger-sync-introduction-dialog"),
     ).not.toBeInTheDocument();

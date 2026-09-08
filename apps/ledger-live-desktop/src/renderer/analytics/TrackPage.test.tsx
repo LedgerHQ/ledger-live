@@ -87,6 +87,23 @@ describe("TrackPage", () => {
           optInPersonalRecommendations: false,
         }),
       );
+
+      rerender(
+        <TrackPage category="Analytics Consent" name="Mandatory" flow="test-flow" mandatory />,
+      );
+      await waitFor(() => expect(events).toHaveLength(1));
+
+      rerender(<TrackPage category="Analytics Consent" name="Mandatory" flow="send" mandatory />);
+
+      await waitFor(() => expect(events).toHaveLength(2));
+      expect(events[1]).toEqual(
+        expect.objectContaining({
+          eventName: "Page Analytics Consent Mandatory",
+          eventPropertiesWithoutExtra: expect.objectContaining({
+            flow: "send",
+          }),
+        }),
+      );
     } finally {
       subscription.unsubscribe();
     }

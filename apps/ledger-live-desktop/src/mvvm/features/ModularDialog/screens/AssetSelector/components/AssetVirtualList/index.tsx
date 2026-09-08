@@ -12,6 +12,7 @@ import {
 type AssetVirtualListProps = {
   assets: AssetType[];
   onClick: (asset: AssetType) => void;
+  onDisabledClick?: (asset: AssetType) => void;
   onVisibleItemsScrollEnd?: () => void;
   scrollToTop?: boolean;
   hasNextPage?: boolean;
@@ -24,6 +25,7 @@ const isUnavailableAsset = (asset: AssetType) => !!asset.disabled;
 export const AssetVirtualList = ({
   assets,
   onClick,
+  onDisabledClick,
   onVisibleItemsScrollEnd,
   scrollToTop,
   hasNextPage,
@@ -37,9 +39,14 @@ export const AssetVirtualList = ({
       row.kind === "unavailableSectionHeader" ? (
         <UnavailableSectionHeader testId="asset-selector-unavailable-assets-header" />
       ) : (
-        <AssetListItem {...row.item} shouldDisplayId={isDebuggingDuplicates} onClick={onClick} />
+        <AssetListItem
+          {...row.item}
+          shouldDisplayId={isDebuggingDuplicates}
+          onClick={onClick}
+          onDisabledClick={onDisabledClick}
+        />
       ),
-    [onClick, isDebuggingDuplicates],
+    [isDebuggingDuplicates, onClick, onDisabledClick],
   );
 
   const getItemHeight = useCallback(

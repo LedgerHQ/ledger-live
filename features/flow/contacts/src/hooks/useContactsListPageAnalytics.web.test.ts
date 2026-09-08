@@ -69,7 +69,6 @@ describe("useContactsListPageAnalytics", () => {
     expect(analytics.trackEvent).toHaveBeenCalledWith(CONTACTS_TRACK_EVENTS.SEARCH_QUERY, {
       source: CONTACTS_EVENT_SOURCE.SEARCH,
       page: CONTACTS_PAGE_PROPERTY.CONTACTS,
-      queryLength: 3,
       hasResults: true,
     });
   });

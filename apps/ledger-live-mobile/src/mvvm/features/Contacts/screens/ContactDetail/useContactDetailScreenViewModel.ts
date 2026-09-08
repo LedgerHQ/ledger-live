@@ -21,6 +21,8 @@ import {
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
   trackContactsAddAddressClick,
+  trackContactsLedgerSyncActivate,
+  trackContactsLedgerSyncDismiss,
 } from "@features/flow-contacts";
 import {
   isContactsLedgerSyncActivationRequired,
@@ -233,14 +235,16 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     });
   }, [navigation]);
   const onActivateLedgerSync = useCallback(() => {
+    trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
     setIsLedgerSyncIntroductionOpen(false);
     openLedgerSyncActivationDrawer();
-  }, [dismissPendingIntent, openLedgerSyncActivationDrawer]);
+  }, [analytics, dismissPendingIntent, openLedgerSyncActivationDrawer]);
   const onDismissLedgerSyncIntroduction = useCallback(() => {
+    trackContactsLedgerSyncDismiss(analytics);
     dismissPendingIntent();
     setIsLedgerSyncIntroductionOpen(false);
-  }, [dismissPendingIntent]);
+  }, [analytics, dismissPendingIntent]);
   useEffect(() => {
     if (!isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
       dismissPendingIntent();

@@ -59,6 +59,8 @@ export type ModularDialogEventParams = {
   [EVENTS_NAME.BUTTON_CLICKED]: {
     page: string;
     button: string;
+    asset?: string;
+    network?: string;
   };
 };
 

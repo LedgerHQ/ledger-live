@@ -35,6 +35,14 @@ type Props = {
   [key: string]: unknown;
 };
 
+function getPagePropertiesKey(properties: Record<string, unknown>): string {
+  try {
+    return JSON.stringify(properties);
+  } catch {
+    return "";
+  }
+}
+
 /**
  * On mount, this component will track an event which will have the name
  * `Page ${category}${name ? " " + name : ""}`.
@@ -46,9 +54,18 @@ const TrackPage: React.FC<Props> = ({
   mandatory = false,
   ...properties
 }) => {
+  const propertiesKey = getPagePropertiesKey(properties);
+
   useEffect(() => {
-    trackPage(category, name, properties, true, refreshSource, mandatory);
-  }, [category, name, properties, refreshSource, mandatory]);
+    trackPage(
+      category,
+      name,
+      propertiesKey ? JSON.parse(propertiesKey) : undefined,
+      true,
+      refreshSource,
+      mandatory,
+    );
+  }, [category, name, propertiesKey, refreshSource, mandatory]);
   return null;
 };
 

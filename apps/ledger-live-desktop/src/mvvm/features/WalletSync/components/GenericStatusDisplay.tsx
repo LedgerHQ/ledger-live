@@ -2,7 +2,11 @@ import { Box, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
-import { AnalyticsFlow, AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
+import {
+  AnalyticsFlow,
+  AnalyticsPage,
+  walletSyncEntryFlowProperties,
+} from "../hooks/useLedgerSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 
@@ -71,6 +75,10 @@ export const GenericStatusDisplay = ({
     </>
   );
 
+  const trackPage = (
+    <TrackPage category={String(analyticsPage)} {...walletSyncEntryFlowProperties(AnalyticsFlow)} />
+  );
+
   const buttons = (withClose || withCta) && (
     <BottomContainer
       mb={fullHeight ? undefined : 3}
@@ -96,7 +104,7 @@ export const GenericStatusDisplay = ({
   if (fullHeight) {
     return (
       <Flex flexDirection="column" alignItems="center" height="80%">
-        <TrackPage category={String(analyticsPage)} flow={AnalyticsFlow} />
+        {trackPage}
         <Flex
           flexDirection="column"
           alignItems="center"
@@ -113,7 +121,7 @@ export const GenericStatusDisplay = ({
 
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap="24px">
-      <TrackPage category={String(analyticsPage)} flow={AnalyticsFlow} />
+      {trackPage}
       {content}
       {buttons}
     </Flex>

@@ -12,6 +12,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { track } from "~/analytics";
+import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -30,16 +31,17 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
+  const trackingFlow = useWalletSyncTrackingFlow();
 
   const transitionToNextScreen = useCallback(
     (trustchainResult: TrustchainResult) => {
       dispatch(setTrustchain(trustchainResult.trustchain));
-      track(AnalyticsEvents.LedgerSyncActivated);
+      track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
       navigation.navigate(ScreenName.WalletSyncLoading, {
         created: trustchainResult.type === TrustchainResultType.created,
       });
     },
-    [dispatch, navigation],
+    [dispatch, navigation, trackingFlow],
   );
 
   return useFollowInstructionDrawer(

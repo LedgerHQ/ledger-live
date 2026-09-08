@@ -1,4 +1,4 @@
-import React, { useCallback, useState, type KeyboardEvent } from "react";
+import React, { useCallback, useState } from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import {
   ListItem,
@@ -22,6 +22,7 @@ const copyToClipboard = async (text: string) => {
 
 type AssetListItemProps = AssetType & {
   onClick: (asset: AssetType) => void;
+  onDisabledClick?: (asset: AssetType) => void;
 };
 
 const renderDescriptionTag = ({
@@ -57,6 +58,7 @@ export const AssetListItem = ({
   ticker,
   id,
   onClick,
+  onDisabledClick,
   leftElement,
   rightElement,
   numberOfNetworks,
@@ -68,17 +70,9 @@ export const AssetListItem = ({
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const handleDisabledItemClick = useCallback(() => {
+    onDisabledClick?.({ name, ticker, id });
     setIsTooltipOpen(true);
-  }, []);
-
-  const handleDisabledItemKeyDown = useCallback((event: KeyboardEvent<HTMLSpanElement>) => {
-    if (event.key !== "Enter" && event.key !== " ") {
-      return;
-    }
-
-    event.preventDefault();
-    setIsTooltipOpen(true);
-  }, []);
+  }, [id, name, onDisabledClick, ticker]);
 
   const handleClick = () => {
     if (disabled) return;
@@ -119,16 +113,14 @@ export const AssetListItem = ({
   return (
     <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
       <TooltipTrigger asChild>
-        <span
-          className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-          tabIndex={0}
-          role="button"
+        <button
+          type="button"
+          className="block w-full border-0 bg-transparent p-0 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           aria-disabled
           onClick={handleDisabledItemClick}
-          onKeyDown={handleDisabledItemKeyDown}
         >
           {listItem}
-        </span>
+        </button>
       </TooltipTrigger>
       <TooltipContent>
         {t("modularAssetDrawer.unsupportedAssetTooltip", { asset: name })}
