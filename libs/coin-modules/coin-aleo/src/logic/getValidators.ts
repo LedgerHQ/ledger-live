@@ -2,7 +2,14 @@ import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { apiClient } from "../network/api";
-import { estimateNetRate, isRecord, parseTotalSupply, resolveConfig } from "./utils";
+import { getUnbondingValidators } from "../network/utils";
+import {
+  estimateNetRate,
+  getValidatorNonEarningReason,
+  isRecord,
+  parseTotalSupply,
+  resolveConfig,
+} from "./utils";
 import type {
   AleoCommitteeMember,
   AleoCommitteeResponse,
@@ -44,11 +51,16 @@ function isValidValidatorMetadataResponse(value: unknown): value is AleoValidato
   return Object.values(value).every(entry => typeof entry === "string");
 }
 
+function isAcceptingNewStakes(validator: Pick<AleoValidator, "isOpen" | "isUnbonding">) {
+  return validator.isOpen && !validator.isUnbonding;
+}
+
 /**
  * The validator committee for `currencyId`'s configured network, ordered for a picker.
  *
- * Only the committee is required. Names and total supply are best-effort, so losing
- * either degrades a field rather than failing the list the bond flow depends on.
+ * Only the committee is required. Names, total supply and unbonding state are best-effort,
+ * so losing any of them degrades a field rather than failing the list the bond flow
+ * depends on.
  */
 export const getValidators = makeLRUCache(
   async (currencyId: string): Promise<AleoValidator[]> => {
@@ -65,10 +77,15 @@ export const getValidators = makeLRUCache(
     }
 
     const safeMetadata = metadata && isValidValidatorMetadataResponse(metadata) ? metadata : {};
+    const unbonding = await getUnbondingValidators(config, Object.keys(committee.members));
 
     const totalSupplyCredits = parseTotalSupply(totalSupply);
-    const totalStakeMicrocredits =
+    // A zero or unparseable total is treated as absent rather than divided by: it would make
+    // every validator's stake share infinite, flagging the whole list as non-earning.
+    const parsedTotalStake =
       committee.total_stake === undefined ? null : new BigNumber(committee.total_stake);
+    const totalStakeMicrocredits =
+      parsedTotalStake?.isFinite() && parsedTotalStake.isGreaterThan(0) ? parsedTotalStake : null;
 
     if (totalSupplyCredits === null || totalStakeMicrocredits === null) {
       log("aleo/getValidators", "no estimated rate: missing total supply or total stake", {
@@ -79,28 +96,37 @@ export const getValidators = makeLRUCache(
 
     return Object.entries(committee.members)
       .map(([address, [stakeMicrocredits, isOpen, commissionPercent]]) => {
+        const shared = {
+          totalStakeMicrocredits,
+          validatorStakeMicrocredits: new BigNumber(stakeMicrocredits),
+          commissionPercent: new BigNumber(commissionPercent),
+        };
+        // Total stake alone decides whether a validator earns; the rate additionally
+        // needs the supply, so a missing supply drops the rate but keeps the reason.
+        const nonEarningReason =
+          totalStakeMicrocredits === null
+            ? null
+            : getValidatorNonEarningReason({ ...shared, totalStakeMicrocredits });
         const rate =
           totalSupplyCredits === null || totalStakeMicrocredits === null
             ? null
-            : estimateNetRate({
-                totalSupplyCredits,
-                totalStakeMicrocredits,
-                validatorStakeMicrocredits: new BigNumber(stakeMicrocredits),
-                commissionPercent: new BigNumber(commissionPercent),
-              });
+            : estimateNetRate({ ...shared, totalStakeMicrocredits, totalSupplyCredits });
 
         return {
           address,
           name: safeMetadata[address],
           stakeMicrocredits,
           isOpen,
+          isUnbonding: unbonding.has(address),
           commissionPercent,
           ...(rate !== null && { estimatedYearlyRewardsRate: rate.toNumber() }),
+          ...(nonEarningReason !== null && { nonEarningReason }),
         };
       })
       .sort((left, right) => {
-        if (left.isOpen !== right.isOpen) {
-          return left.isOpen ? -1 : 1;
+        const leftBondable = isAcceptingNewStakes(left);
+        if (leftBondable !== isAcceptingNewStakes(right)) {
+          return leftBondable ? -1 : 1;
         }
 
         return right.stakeMicrocredits - left.stakeMicrocredits;
