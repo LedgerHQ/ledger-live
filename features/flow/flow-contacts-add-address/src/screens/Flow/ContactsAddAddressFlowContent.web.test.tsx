@@ -35,6 +35,7 @@ const entryLabels: AddAddressEntryLabels = {
   sanctionedAddress: "Address is sanctioned",
   validationUnavailable: "Address validation is unavailable",
   ensDisclaimer: "ENS disclaimer",
+  ensDisclaimerDescription: "ENS names can change over time.",
 };
 const nameLabels: ContactsAddAddressNameLabels = {
   inputLabel: "Address name",

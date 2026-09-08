@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

@@ -1,6 +1,6 @@
 // import Transport from "@ledgerhq/hw-transport-node-hid";
 import Transport from "@ledgerhq/hw-transport";
-import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { getXpubComponents } from "../src/bip32";
 import Btc from "../src/Btc";
 import BtcNew from "../src/BtcNew";
@@ -148,8 +148,8 @@ test("getWalletPublicKey BtcNew", async () => {
   await runGetWalletPublicKey("new");
 });
 
-async function transport(): Promise<SpeculosTransport> {
-  return await SpeculosTransport.open({ apduPort: 9999, buttonPort: 9998 });
+async function transport(): Promise<DeviceManagementKitTransportSpeculos> {
+  return await DeviceManagementKitTransportSpeculos.open({ apiPort: "5000" });
 }
 
 async function impl(

@@ -274,22 +274,22 @@ async function executeCliCommands(
     } catch (err) {
       lastError = err;
 
-      if (speculosApp && entryMap) {
-        checkTestFailed();
-
-        const main = entryMap[speculosApp.name];
-
-        await removeSpeculosAndDeregisterKnownSpeculos(main.deviceId);
-        const device = await launchSpeculos(speculosApp.name);
-        entryMap[speculosApp.name] = {
-          name: speculosApp.name,
-          speculosPort: device.port,
-          deviceId: device.id,
-        };
-        await setupMainSpeculosApp(speculosApp, entryMap);
-      }
-
       if (attempt < maxRetries) {
+        if (speculosApp && entryMap) {
+          checkTestFailed();
+
+          const main = entryMap[speculosApp.name];
+
+          await removeSpeculosAndDeregisterKnownSpeculos(main.deviceId);
+          const device = await launchSpeculos(speculosApp.name);
+          entryMap[speculosApp.name] = {
+            name: speculosApp.name,
+            speculosPort: device.port,
+            deviceId: device.id,
+          };
+          await setupMainSpeculosApp(speculosApp, entryMap);
+        }
+
         log.info(`[Global CLI] Retrying full command run (attempt ${attempt + 1}/${maxRetries})`);
       }
     }

@@ -12,6 +12,7 @@ const labels = {
   sanctionedAddress: "Sanctioned",
   validationUnavailable: "Unavailable",
   ensDisclaimer: "ENS disclaimer",
+  ensDisclaimerDescription: "ENS names can change over time.",
 };
 
 describe("useEditAddressAddressEntryPresentation", () => {
