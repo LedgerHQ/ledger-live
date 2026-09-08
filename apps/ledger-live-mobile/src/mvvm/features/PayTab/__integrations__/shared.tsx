@@ -89,7 +89,6 @@ type TestStackParamList = {
     | undefined;
 };
 
-const RootStack = createNativeStackNavigator<{ [NavigatorName.Base]: undefined }>();
 const Stack = createNativeStackNavigator<TestStackParamList>();
 const RequestStack = createNativeStackNavigator<PayTabNavigatorParamList>();
 
@@ -131,18 +130,6 @@ function SendFundsScreen({
     <Text testID="send-funds-screen">
       {route.params?.screen}:{route.params?.params?.currencyIds?.join(",") ?? ""}
     </Text>
-  );
-}
-
-function AppBase() {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-      <Stack.Screen name="PayTabTest" component={PayTabNavigator} />
-      <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsScreen} />
-      <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletContactsScreen} />
-      <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsScreen} />
-      <Stack.Screen name={NavigatorName.SendFlow} component={SendWorkflow} />
-    </Stack.Navigator>
   );
 }
 
@@ -259,9 +246,13 @@ export function renderPayTab({
 }: RenderPayTabOptions = {}) {
   return renderWithReactQuery(
     <>
-      <RootStack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-        <RootStack.Screen name={NavigatorName.Base} component={AppBase} />
-      </RootStack.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+        <Stack.Screen name="PayTabTest" component={PayTabNavigator} />
+        <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsScreen} />
+        <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletContactsScreen} />
+        <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsScreen} />
+        <Stack.Screen name={NavigatorName.SendFlow} component={SendWorkflow} />
+      </Stack.Navigator>
       <ModularDrawerWrapper />
     </>,
     {

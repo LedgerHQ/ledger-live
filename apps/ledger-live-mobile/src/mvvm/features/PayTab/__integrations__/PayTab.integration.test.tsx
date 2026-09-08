@@ -35,10 +35,6 @@ jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
   track: jest.fn(),
 }));
-jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus", () => ({
-  useContactsLedgerSyncStatus: () => "ready",
-}));
-
 jest.mock("@features/flow-pay-card", () => ({
   Card: () => (
     <>
@@ -608,10 +604,10 @@ describe("PayTab integration", () => {
       expect(store.getState().modularDrawer.isOpen).toBe(false);
     });
 
-    it("should open Send after picking an account from see-all", async () => {
+    it("should open the address sheet then MAD from see-all", async () => {
       const yana = mockContactWithAddress({ id: "contact-yana", name: "Yana" });
       const address = yana.addresses[0];
-      const { user } = renderPayTab({
+      const { user, store } = renderPayTab({
         contacts: [
           mockMeContact(),
           yana,
@@ -620,20 +616,22 @@ describe("PayTab integration", () => {
           ),
         ],
         contactsEnabled: true,
-        cryptoOnly: true,
       });
 
       await user.press(await screen.findByTestId("pay-contacts-see-all"));
-      expect(await screen.findByTestId("contacts-screen")).toBeVisible();
-      await user.press(screen.getByTestId(`contacts-saved-contact-${yana.id}`));
+      expect(await screen.findByTestId("pay-select-contact")).toBeVisible();
+      await user.press(screen.getByText("Yana"));
       await user.press(await screen.findByLabelText(`${address.label}, ${address.address}`));
-      await user.press(await screen.findByTestId("asset-item-ETH"));
-      await user.press(await screen.findByTestId("account-item"));
 
-      expect(await screen.findByText(`send:${payTabEthAccount.id}`)).toBeVisible();
+      expect(store.getState().modularDrawer).toMatchObject({
+        isOpen: true,
+        flow: "send",
+        source: "Pay",
+        preselectedCurrencies: [address.currencyId],
+      });
     });
 
-    it("should cap the strip at 8 and open the contacts list with a Pay title via see-all", async () => {
+    it("should cap the strip at 8 and open the Pay contact list via see-all", async () => {
       const { user } = renderPayTab({ contacts: seedContacts(9), contactsEnabled: true });
 
       expect(await screen.findByRole("button", { name: "New" })).toBeVisible();
@@ -641,7 +639,7 @@ describe("PayTab integration", () => {
 
       await user.press(screen.getByText("Pay"));
 
-      expect(await screen.findByTestId("contacts-screen")).toBeVisible();
+      expect(await screen.findByTestId("pay-select-contact")).toBeVisible();
     });
 
     it("should pick a contact address before opening MAD", async () => {

@@ -1,32 +1,16 @@
-import React, { useMemo } from "react";
-import { Platform } from "react-native";
-import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ScreenName } from "~/const";
-import { useTranslation } from "~/context/Locale";
-import {
-  createLumenNativeStackNavigator,
-  getStackNavigationConfigV4,
-} from "LLM/components/Navigation";
 import { PayTabScreen } from "./screens/PayTab";
 import { PayTabRequestReceiveScreen } from "./screens/RequestReceive";
-import { PaySelectContactScreen } from "./screens/PaySelectContact";
+import { PayTabSelectContactScreen } from "./screens/SelectContact";
 import type { PayTabNavigatorParamList } from "./types";
 
-const TabStack = createLumenNativeStackNavigator<PayTabNavigatorParamList>();
+const TabStack = createNativeStackNavigator<PayTabNavigatorParamList>();
 
 export default function PayTabNavigator() {
-  const { t } = useTranslation();
-  const { theme } = useLumenTheme();
-  const stackNavigationConfig = useMemo(() => getStackNavigationConfigV4(theme), [theme]);
-
   return (
-    <TabStack.Navigator
-      screenOptions={{
-        ...stackNavigationConfig,
-        headerShown: false,
-        gestureEnabled: Platform.OS === "ios",
-      }}
-    >
+    <TabStack.Navigator screenOptions={{ headerShown: false }}>
       <TabStack.Screen name={ScreenName.PayTab} component={PayTabScreen} />
       <TabStack.Screen
         name={ScreenName.PayTabRequestReceive}
@@ -34,12 +18,7 @@ export default function PayTabNavigator() {
       />
       <TabStack.Screen
         name={ScreenName.PayTabSelectContact}
-        component={PaySelectContactScreen}
-        options={{
-          headerShown: true,
-          title: t("payTab.contacts.seeAllTitle"),
-          ...stackNavigationConfig,
-        }}
+        component={PayTabSelectContactScreen}
       />
     </TabStack.Navigator>
   );
