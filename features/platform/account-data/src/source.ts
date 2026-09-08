@@ -1,0 +1,43 @@
+import type { AccountBalance } from "@domain/entity-account-balance";
+import type { AccountId } from "@domain/entity-account";
+import { NoAccountBalanceSourceError } from "./errors";
+
+export type AccountRef = {
+  accountId: AccountId;
+  currencyId: string;
+  address: string;
+  derivationMode: string;
+};
+
+/** Identity of a ref: two refs with the same key ask the same question of the same source. */
+export const refKeyOf = (ref: AccountRef): string =>
+  [ref.accountId, ref.currencyId, ref.address, ref.derivationMode].join("|");
+
+export type AccountBalanceSource = {
+  readonly id: string;
+  readonly priority: number;
+  supports(ref: AccountRef): boolean;
+  getBalances(ref: AccountRef, signal?: AbortSignal): Promise<AccountBalance[]>;
+};
+
+export function pickSource(
+  ref: AccountRef,
+  sources: readonly AccountBalanceSource[],
+): AccountBalanceSource | undefined {
+  let best: AccountBalanceSource | undefined;
+  for (const source of sources) {
+    if (!source.supports(ref)) continue;
+    if (!best || source.priority > best.priority) best = source;
+  }
+  return best;
+}
+
+export async function readAccountBalances(
+  ref: AccountRef,
+  sources: readonly AccountBalanceSource[],
+  signal?: AbortSignal,
+): Promise<{ balances: AccountBalance[]; sourceId: string }> {
+  const source = pickSource(ref, sources);
+  if (!source) throw new NoAccountBalanceSourceError(ref.accountId);
+  return { balances: await source.getBalances(ref, signal), sourceId: source.id };
+}

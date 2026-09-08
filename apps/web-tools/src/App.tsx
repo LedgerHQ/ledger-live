@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { StyleProvider } from "@features/platform-style";
 import { AppRoutes } from "./routes";
 import { store } from "./store";
+import "./logic/accountData";
 import "./globals.css";
 
 export const App = () => (
