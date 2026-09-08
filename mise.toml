@@ -18,8 +18,8 @@ lockfile_platforms = [
 ]
 
 [plugins]
-bundler = "jonathanmorley/asdf-bundler"
-cocoapods = "mise-plugins/mise-cocoapods"
+bundler = "https://github.com/jonathanmorley/asdf-bundler.git#a461ac46039620aed0a4f8478ff028ea890c5cda"
+cocoapods = "https://github.com/mise-plugins/mise-cocoapods.git#63cb1acce2c2581b374ce5e11724bd2081f494b3"
 
 
 [tools]
