@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-env";
 
-BigNumber.set({ DECIMAL_PLACES: getEnv("BIG_NUMBER_DECIMAL_PLACES") });
+const BIG_NUMBER_DECIMAL_PLACES = 40;
+
+BigNumber.set({ DECIMAL_PLACES: BIG_NUMBER_DECIMAL_PLACES });

@@ -61,11 +61,6 @@ const teamWalletXp = {
     parser: intParser,
     desc: "maximum size of account names",
   },
-  BIG_NUMBER_DECIMAL_PLACES: {
-    def: 40,
-    parser: intParser,
-    desc: "bignumber.js decimal places configuration",
-  },
   CRYPTO_ASSET_SEARCH_KEYS: {
     def: ["ticker", "name", "keywords"],
     parser: stringArrayParser,

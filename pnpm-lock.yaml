@@ -15316,9 +15316,6 @@ importers:
 
   libs/live-currency-format:
     dependencies:
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
