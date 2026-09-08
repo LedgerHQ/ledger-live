@@ -55,6 +55,12 @@ const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
 /**
  * Mark every test that is not in `names` (so passed in the previous attempt) as skipped.
  * Skipped tests write no Allure result, so the previous attempt's verdict remains.
+ *
+ * A describe block that keeps nothing is skipped as a block rather than only through its
+ * children, because jest-circus gates beforeAll/afterAll on the block's own mode: marking just
+ * the tests still runs the hooks of every unrelated block. That is the difference between a
+ * retry costing one test and a retry re-running its file's whole setup — for the on-chain specs,
+ * real mainnet transactions for tests that are not going to run.
  */
 const skipToRetrySet = (
   block: Circus.DescribeBlock,
@@ -64,7 +70,9 @@ const skipToRetrySet = (
   let kept = 0;
   for (const child of block.children) {
     if (child.type === "describeBlock") {
-      kept += skipToRetrySet(child, names, [...path, child.name]);
+      const keptInBlock = skipToRetrySet(child, names, [...path, child.name]);
+      if (keptInBlock === 0) child.mode = "skip";
+      kept += keptInBlock;
       // Mirrors jest-circus getTestID: the names path minus the root block, space-joined.
     } else if (names.has([...path, child.name].join(" "))) {
       kept++;
