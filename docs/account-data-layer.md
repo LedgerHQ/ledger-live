@@ -33,6 +33,10 @@ Three consequences fall out of that, and they are the three things this layer ex
 | **A read needs the answer to ask the question.** | You cannot get an account's balance until something else has already synced that account into the store. |
 | **Freshness is per account, not per datum.** | A balance and a two-year-old operation page share one `lastSyncDate`, so neither can be refreshed on its own cadence. |
 
+> [!NOTE]
+> Two slices exist today: `balance` and `operations`. The second was built specifically to falsify
+> the first's design — [what survived and what broke](#the-second-slice-what-survived-and-what-broke).
+
 The second one is the one that actually hurts, and it is why this is an architecture problem rather
 than a performance problem. Because a read needs a synced `Account`, every consumer becomes a
 consumer of *the whole account store*, and the whole account store becomes a thing that must be
@@ -176,11 +180,17 @@ Running both is genuinely more calls, not fewer, for as long as the old screens 
 ```mermaid
 flowchart LR
     bs["BridgeSync<br/>every 8 min, all accounts"] -->|"full sync"| acc["state.accounts<br/><i>legacy Account[]</i>"]
-    hook["useAccountBalance(ref)<br/>on mount, on demand"] --> src["source"]
-    src -->|"getBalance"| tbl["state.accountBalances<br/><i>balance table</i>"]
-    acc -.->|"no bridge"| tbl
     acc --> old["~250 legacy read sites"]
-    tbl --> new["new consumers"]
+
+    hb["useAccountBalance(ref)<br/>on mount, on demand"] --> sb["balance source"]
+    ho["useAccountOperations(ref)<br/>on mount, then per page"] --> so["operations source"]
+    sb -->|"getBalance"| tb["state.accountBalances<br/><i>rows + status</i>"]
+    so -->|"listOperations / bridge.sync"| to["state.accountOperations<br/><i>window + cursor + status</i>"]
+
+    acc -.->|"no bridge"| tb
+    acc -.->|"no bridge"| to
+    tb --> new["new consumers"]
+    to --> new
 ```
 
 An account visible on an old screen *and* on a new one is read twice, and the two tables' freshness
@@ -233,15 +243,39 @@ After the 2026-09-04 review, deliberately small. Two concepts, not seven.
 
 ```mermaid
 flowchart TD
-    hook["useAccountBalance(ref)"] -->|"dispatch"| thunk["fetchAccountBalance<br/><i>a plain thunk</i>"]
-    thunk -->|"already fresh?<br/>already pending?"| skip["no network"]
-    thunk --> pick["pickSource — highest priority<br/>whose supports(ref) is true"]
-    pick --> g["granular source<br/><i>coin module getBalance</i>"]
-    pick --> f["full-sync source<br/><i>bridge.sync, projected</i>"]
-    g --> slice["accountBalancesSlice<br/><i>rows + per-account status</i>"]
-    f --> slice
-    slice -->|"slice.selectors"| hook
+    subgraph bal["balance — one verb"]
+        direction TB
+        hb["useAccountBalance(ref)"] -->|"dispatch"| tb["fetchAccountBalance"]
+        tb -->|"fresh? pending?"| sb["no network"]
+    end
+
+    subgraph ops["operations — two verbs"]
+        direction TB
+        ho["useAccountOperations(ref)"] -->|"dispatch"| th["fetchAccountOperations<br/><i>the head</i>"]
+        ho -->|"loadMore()"| tm["fetchMoreAccountOperations<br/><i>the next page</i>"]
+        th -->|"fresh? pending?"| sh["no network"]
+        tm -->|"pending? no cursor?"| sm["no network"]
+    end
+
+    tb --> pick["pickSource&lt;S&gt; — highest priority<br/>whose supports(ref) is true"]
+    th --> pick
+    tm --> pick
+
+    pick --> gb["granular<br/><i>coin module</i>"]
+    pick --> fb["full-sync<br/><i>bridge.sync, projected</i>"]
+
+    gb --> slb["accountBalancesSlice<br/><i>rows + status</i>"]
+    fb --> slb
+    gb --> slo["accountOperationsSlice<br/><i>window + cursor + status</i>"]
+    fb --> slo
+
+    slb -->|"slice.selectors"| hb
+    slo -->|"slice.selectors"| ho
 ```
+
+One selection function, two data. `pickSource` is generic and reads only `supports` and `priority`,
+so it did not change when the second datum arrived — [the second slice](#the-second-slice-what-survived-and-what-broke)
+says which parts did.
 
 | Concept | What it is |
 | --- | --- |
@@ -261,18 +295,23 @@ when available*, full-sync otherwise. There is no plan, no cover, no pruning.
 ```mermaid
 flowchart TD
     apps["apps/{desktop, mobile, web-tools, wallet-cli}<br/><i>composition root — builds and registers sources</i>"]
-    lc["libs/ledger-live-common<br/><i>account-data/sources · getAccountBalanceRows · legacy-mapping</i>"]
-    plat["features/platform/account-data<br/><i>source type · pickSource · thunk · hook</i>"]
-    ent["domain/entity/account-balance<br/><i>slice: rows + status + selectors</i>"]
+    lc["libs/ledger-live-common<br/><i>account-data/{sources, operations, fullSync}</i><br/><i>getAccountBalanceRows · legacy-mapping/{accountBalance, accountOperation}</i>"]
+    plat["features/platform/account-data<br/><i>AccountSource · pickSource</i><br/><i>balance: source, thunk, hook</i><br/><i>operations: source, 2 thunks, hook</i>"]
+    entb["domain/entity/account-balance<br/><i>rows + status + selectors</i>"]
+    ento["domain/entity/account-operations<br/><i>window + cursor + status + selectors</i>"]
     acct["domain/entity/account<br/><i>AccountId · TokenAccountId</i>"]
     prim["shared/schema-primitives<br/><i>BigNumberStr · DateTimeIso</i>"]
 
     lc --> apps
-    apps -->|"registers concrete sources<br/>(features/ must not import libs/)"| plat
-    plat -->|"dispatch"| ent
-    ent --> acct
-    ent --> prim
-    ent -->|"slice.selectors"| apps
+    apps -->|"registers concrete sources, per datum<br/>(features/ must not import libs/)"| plat
+    plat -->|"dispatch"| entb
+    plat -->|"dispatch"| ento
+    entb --> acct
+    ento --> acct
+    entb --> prim
+    ento --> prim
+    entb -->|"slice.selectors"| apps
+    ento -->|"slice.selectors"| apps
 ```
 
 Two placements follow from review decisions:
@@ -285,6 +324,147 @@ Two placements follow from review decisions:
 - **The two concrete sources live in live-common too** (`account-data/sources`), for the same
   reason and one more: they are built from the coin layer, and three hand-written copies of the same
   twenty lines is how the family gate diverges. A host passes only its store accessors.
+
+---
+
+## The second slice: what survived, and what broke
+
+[LIVE-36923](https://ledgerhq.atlassian.net/browse/LIVE-36923) asked for a second datum
+specifically to break the design if the design was wrong, and picked `operations` because it is the
+one with real unknowns. Its deliverable was: *either the shape survives a non-cheap slice unchanged,
+or the place it breaks.* Both happened. Here is the split.
+
+### What survived unchanged
+
+| | |
+| --- | --- |
+| `AccountRef` | The same four fields. A history read needs no more identity than a balance read. |
+| `pickSource` | One generic type parameter, zero logic change — selection reads `supports` and `priority`, neither of which knows what is being read. |
+| Registration | A second module-level list. Same call shape, same composition-root ownership. |
+| Entity per datum | Slice owns rows, status and selectors; `getSelectors()` still lets wallet-cli run it over a local variable. |
+| Plain function + plain thunk | `readAccountOperations` works with no store, exactly as `readAccountBalances` does. |
+| Legacy mappers in live-common | A second mapper, same folder, same argument. |
+
+### Where it broke
+
+**1. One source type does not generalize.** `getBalances(ref)` and `getOperations(ref, query)` differ
+in arity, in return shape and in whether a cursor means anything. Widening one type to cover both is
+the `capabilities` set this exploration deleted. Two source types and two registries is the smaller
+price.
+
+**2. Freshness moved off the data.** A balance row's `at` *is* its freshness. An operation's `date`
+is when it happened, which says nothing about when we last looked for newer ones. So the operations
+entry carries `at` on the **account**, not on the row — the balance slice's rule does not transfer.
+
+**3. One `maxAge` guard is not enough.** "Is the head stale?" and "is there more below?" are
+different questions. A user scrolling to the bottom of a history is always inside any sensible
+max-age window, so a freshness-guarded "load more" would return a page it already has. Two thunks:
+`fetchAccountOperations` (freshness-guarded) and `fetchMoreAccountOperations` (cursor-guarded, and
+deliberately not freshness-guarded).
+
+**4. Replace and merge are both needed.** The balance reducer replaces an account's rows atomically,
+which is the only correct thing for a set a chain reports by omission. A history needs both: a head
+read **replaces** the window (a merge would keep operations a reorg has since dropped), a page read
+**appends** and deduplicates (a paginated source can repeat a boundary operation).
+
+**5. The two sources stopped being interchangeable.** A bridge sync has no notion of a page: it
+returns the whole history or nothing. The source declares `paginated: false`, and the layer must not
+hand it a cursor another source issued. "Load more" on a full-sync family is not slow — it does not
+exist, because the first read already returned everything.
+
+**6. `operationsCount` is not knowable from a page.** The full sync can report a total because it
+holds everything; a paginated read cannot, and reporting the page size would turn every
+"N transactions" label into a lie. `selectAccountOperationsTotal` returns `undefined` on a partial
+window, and every consumer has to handle it. **This is a real behaviour change from
+`account.operationsCount`, which ~88 call sites read today.**
+
+**7. A per-datum entity leaks.** An operation row needs `assetId` to render its amount. The balance
+entity already holds one per account, but deriving it would mean either decoding a token account id —
+which cannot be decoded — or joining against the balance table, which makes a history unrenderable
+until a balance has been read. The field is duplicated onto the row, deliberately: independent
+loadability is the point of the slicing, and a mandatory cross-slice dependency would defeat it.
+
+**8. The granular path has to fan token operations out by hand.** A module's `listOperations` reports
+against the *address*, token transfers included, while the full sync gets the split from
+`inferSubOperations`. Without `encodeTokenAccountId` in the granular reader, every token account's
+history comes back empty on one source and full on the other. Fixed here — and it is the concrete
+shape of the parity risk that made wallet-cli disable the granular path in the first place.
+
+### 9. Two slices falling back to the same full sync would have paid twice
+
+The one the simplification genuinely lost, and the one worth remembering. On a family with no
+granular coin module **both** data fall back to `AccountBridge.sync()`. Their thunks guard on their
+own slice's pending flag, so they cannot see each other — a screen mounting both hooks was paying for
+two whole account syncs to read two slices of the one result.
+
+That collapsing is exactly what the deleted `deliveries` set and its set-cover router used to do. It
+did **not** need to come back as routing:
+
+```mermaid
+flowchart LR
+    hb["useAccountBalance"] --> tb["fetchAccountBalance"]
+    ho["useAccountOperations"] --> to["fetchAccountOperations"]
+    tb --> fb["full-sync source<br/><i>getBalances</i>"]
+    to --> fo["full-sync source<br/><i>getOperations</i>"]
+    fb --> once["syncAccountOnce<br/><i>in-flight, keyed by account + blacklist</i>"]
+    fo --> once
+    once -->|"one bridge.sync"| acc["synced Account"]
+    acc -->|"toAccountBalances"| slb["accountBalancesSlice"]
+    acc -->|"toAccountOperations"| slo["accountOperationsSlice"]
+```
+
+The duplication is a property of the **legacy path**, not a routing decision, so it is collapsed
+where the legacy path lives: an in-flight map in `syncAccountOnce`. No consumer knows, no contract
+changed, and the layer stayed at two concepts.
+
+Three deliberate limits on it:
+
+- **In flight only.** A settled sync is not reused — freshness is each slice's own business, and a
+  lifetime here would be a second, invisible freshness policy.
+- **Keyed on the account *and* the token blacklist.** Sharing across two blacklists would hand one
+  caller a result filtered by the other's settings.
+- **A caller's abort does not cancel the shared run.** Same rule as the hooks': a read is not *for*
+  one consumer.
+
+The general lesson for the next slice: **whenever two data share a source, the sharing belongs to
+that source, not to a planner above it.**
+
+### Parity is still unproven, and the gate says so
+
+`granularOperationFamilies` defaults to **empty**: every family reads its history through the full
+sync, in both wallets and in wallet-cli. A balance is one number that is either right or wrong; a
+history is a set, and a source that silently omits from it is worse than one that is slow. web-tools
+turns the granular path on — it is a developer playground whose job is to make the difference
+observable.
+
+So the two data have different gates, read from different places, and **a family being granular for
+`balance` says nothing about `operations`**. That per-datum, per-family asymmetry is the strongest
+argument this exercise has produced for slicing at all.
+
+### The graph, and why it is a third slice
+
+The open question was: the portfolio graph is derived client-side from the full history, so
+*"don't load operations"* and *"show the graph"* pull opposite ways. Reading
+`generateHistoryFromOperationsG` settles it, and the answer is better than expected.
+
+The derivation walks **backwards from the current balance**, subtracting each operation's amount, and
+stops at `maxDatapoints`:
+
+| Granularity | Datapoints | Operations it actually needs |
+| --- | --- | --- |
+| `HOUR` | 8 × 24 | the last **week** |
+| `DAY` | 400 | the last **~13 months** |
+| `WEEK` | 1000 | ~19 years — effectively everything |
+
+So the graph does not need "all operations". It needs operations back to a **horizon set by the
+granularity**, which is exactly expressible as *page until the oldest loaded operation is older than
+X* — a loop over `fetchMoreAccountOperations` with a stop condition, not a new capability. Only the
+`WEEK` series genuinely needs the whole history, and it is also the one whose oldest points move
+least.
+
+That makes `balanceHistory` a **derived** slice whose input is bounded, rather than a reason to keep
+loading everything. It takes the current balance (slice one) and a bounded window of operations
+(slice two) — which is the first time in this exploration that two slices compose into a third.
 
 ---
 
@@ -318,10 +498,11 @@ Settled in review — recorded here so they are not relitigated.
 
 - **No product screen consumes the table yet.** The devtool and web-tools `/sync` are the only
   readers. Until a real surface does, the win is architectural, not measured.
-- **Operations parity is unproven.** wallet-cli disabled coin-framework `getOperations` for every
-  family. This is precisely the argument for per-datum capability: take the balance win now, leave
-  operations on the full sync, same family, no contradiction. Tracked as
-  [LIVE-36923](https://ledgerhq.atlassian.net/browse/LIVE-36923).
+- **Operations parity is still unproven**, and the gate reflects it: every family reads its history
+  through the full sync in both wallets. See
+  [the second slice](#the-second-slice-what-survived-and-what-broke).
+- **`operationsCount` has ~88 read sites** that assume a number always exists. A paginated history
+  cannot always give one, so those sites need a decision before any of them moves over.
 - **A token account's balance is not independently readable.** One chain call returns every asset at
   an *address*, so a token row arrives with its parent's read. Sources take the main-account ref.
 - **`AccountId` is an unbranded string outside this branch.** Branding it repo-wide needs Coin team

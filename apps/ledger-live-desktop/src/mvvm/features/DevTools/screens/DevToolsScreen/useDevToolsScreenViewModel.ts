@@ -17,6 +17,7 @@ import {
   useTrustchainDevToolProps,
   useCloudSyncDevToolProps,
   useAccountBalancesToolProps,
+  useAccountOperationsToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
@@ -32,7 +33,9 @@ export function useDevToolsScreenViewModel() {
   const envToolProps = useEnvDevToolProps();
   const prodToggle = useProdToggle();
   const { wire, wireState } = useDevToolsRelay();
-  const accountBalancesToolProps = useAccountBalancesToolProps(useAccountBalancesInputs());
+  const accountInputs = useAccountBalancesInputs();
+  const accountBalancesToolProps = useAccountBalancesToolProps(accountInputs);
+  const accountOperationsToolProps = useAccountOperationsToolProps(accountInputs);
 
   const createTrustchainSdk = useCallback<Parameters<typeof useTrustchainDevToolProps>[0]>(
     ({ trustchainApiBaseUrl }) =>
@@ -92,6 +95,7 @@ export function useDevToolsScreenViewModel() {
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
       { id: "account-balances", config: accountBalancesToolProps },
+      { id: "account-operations", config: accountOperationsToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -100,6 +104,7 @@ export function useDevToolsScreenViewModel() {
       trustchainToolProps,
       cloudSyncToolProps,
       accountBalancesToolProps,
+      accountOperationsToolProps,
     ],
   );
 

@@ -7,7 +7,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/f
 import type { Account } from "@ledgerhq/types-live";
 import { Button, Spinner, TextInput } from "@ledgerhq/lumen-ui-react";
 import type { AccountBalanceStatus } from "@domain/entity-account-balance";
-import { useAccountBalance } from "@features/platform-account-data/react";
+import { useAccountBalance, useAccountOperations } from "@features/platform-account-data/react";
 import { ToolPage } from "../components/ToolPage";
 import { inferAccount, syncAccount } from "../logic/syncAccount";
 import { accountRefOf } from "../logic/accountData";
@@ -87,6 +87,7 @@ function App() {
       />
 
       {validAccountId ? <BalancePanel accountId={validAccountId} /> : null}
+      {validAccountId ? <OperationsPanel accountId={validAccountId} /> : null}
 
       <div className="flex flex-col gap-8">
         <div>
@@ -171,6 +172,72 @@ function BalancePanel({ accountId }: Readonly<{ accountId: string }>) {
         </ul>
       ) : null}
       <span className="body-4 text-muted">{sourceLine(status, 1 + subAccountBalances.length)}</span>
+    </div>
+  );
+}
+
+function windowLine({
+  total,
+  hasMore,
+  status,
+}: {
+  total: number | undefined;
+  hasMore: boolean;
+  status: { sourceId?: string };
+}): string {
+  if (!status.sourceId) return "not read yet";
+  const count = total === undefined ? "total unknown — the window is partial" : `${total} in total`;
+  const rest = hasMore ? "" : " · history complete";
+  return `${count} · served by ${status.sourceId}${rest}`;
+}
+
+function OperationsPanel({ accountId }: Readonly<{ accountId: string }>) {
+  const account = useMemo(() => {
+    try {
+      return inferAccount(accountId);
+    } catch {
+      return undefined;
+    }
+  }, [accountId]);
+  const ref = useMemo(() => (account ? accountRefOf(account) : undefined), [account]);
+  const { operations, hasMore, total, status, loadMore, refresh } = useAccountOperations(ref);
+  const unit = account?.currency.units[0];
+
+  if (!account || !unit) return null;
+
+  return (
+    <div className="flex flex-col gap-6 rounded-lg border border-base p-16">
+      <div className="flex items-baseline gap-8">
+        <span className="body-1-semi-bold">
+          {operations.length} operation{operations.length === 1 ? "" : "s"} loaded
+        </span>
+        {status.pending ? <Spinner size={12} /> : null}
+        <Button size="sm" appearance="transparent" onClick={() => void refresh()}>
+          Refresh
+        </Button>
+        {hasMore ? (
+          <Button size="sm" appearance="transparent" onClick={() => void loadMore()}>
+            Load more
+          </Button>
+        ) : null}
+      </div>
+
+      <span className="body-4 text-muted">{windowLine({ total, hasMore, status })}</span>
+
+      {status.error ? <p className="body-3 text-error m-0">{status.error}</p> : null}
+
+      <ul className="list-none p-0 m-0 flex flex-col gap-2">
+        {operations.slice(0, 10).map(operation => (
+          <li key={operation.id} className="body-3 text-muted">
+            {operation.type}{" "}
+            {operation.assetId === account.currency.id
+              ? formatCurrencyUnit(unit, new BigNumber(operation.value))
+              : `${operation.value} ${operation.assetId}`}{" "}
+            · {operation.date.slice(0, 10)}
+            {operation.parentOperationId ? " · nested" : ""}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

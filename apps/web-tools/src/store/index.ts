@@ -4,6 +4,7 @@ import { withCopyStoreHydration } from "@devtools/protocols/copyStore";
 import { sleepingListener } from "./sleepingListener";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { accountBalancesSlice } from "@domain/entity-account-balance";
+import { accountOperationsSlice } from "@domain/entity-account-operations";
 import { calApiExtra } from "@shared/api-services";
 import { getEnv } from "@shared/env";
 import {
@@ -23,6 +24,7 @@ function trustchainReducer(
 
 const rootReducer = combineReducers({
   accountBalances: accountBalancesSlice.reducer,
+  accountOperations: accountOperationsSlice.reducer,
   featureFlags: featureFlagsReducer,
   trustchain: trustchainReducer,
   [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer,

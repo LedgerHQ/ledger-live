@@ -24,7 +24,8 @@
     "@devtools/trustchain": "workspace:*",
     "@devtools/cloud-sync": "workspace:*",
     "@devtools/device-onboarding": "workspace:*",
-    "@devtools/account-balances": "workspace:*"
+    "@devtools/account-balances": "workspace:*",
+    "@devtools/account-operations": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"
