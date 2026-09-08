@@ -6892,6 +6892,9 @@ importers:
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.11(react@19.1.4)
+      '@shared/i18n':
+        specifier: workspace:*
+        version: link:../../../shared/i18n
     devDependencies:
       '@features/platform-style':
         specifier: workspace:*
@@ -23050,7 +23053,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -65323,9 +65325,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:

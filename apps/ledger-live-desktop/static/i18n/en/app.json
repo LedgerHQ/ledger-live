@@ -919,7 +919,9 @@
     },
     "card": {
       "title": "Crypto card",
-      "balanceLabel": "Balance"
+      "balanceLabel": "Balance",
+      "freeze": "Freeze",
+      "unfreeze": "Unfreeze"
     },
     "cardOnboarding": {
       "widget": {
