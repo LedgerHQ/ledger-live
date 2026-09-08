@@ -3,7 +3,6 @@ import { AccountId, TransactionId } from "@hashgraph/sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import network from "@ledgerhq/live-network";
-import { getCountervaluesApiBaseUrl } from "../countervaluesBaseUrl";
 import { makeLRUCache, minutes, seconds } from "@ledgerhq/live-network/cache";
 import type { FiatCurrency, Currency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
@@ -32,6 +31,9 @@ import type {
 import { apiClient } from "./api";
 import { hgraphClient } from "./hgraph";
 import { rpcClient } from "./rpc";
+
+const COUNTERVALUES_API =
+  process.env.LEDGER_COUNTERVALUES_API ?? "https://countervalues.live.ledger.com";
 
 const USD_FIAT: FiatCurrency = {
   type: "FiatCurrency",
@@ -217,7 +219,7 @@ export const getCurrencyToUSDRate = makeLRUCache(
       const params = new URLSearchParams({ to: USD_FIAT.ticker, froms: fromId });
       const { data } = await network<Record<string, number>>({
         method: "GET",
-        url: `${getCountervaluesApiBaseUrl()}/v3/spot/simple?${params.toString()}`,
+        url: `${COUNTERVALUES_API}/v3/spot/simple?${params.toString()}`,
       });
       const rate = data[fromId];
       invariant(rate, "no value returned from cvs api");
