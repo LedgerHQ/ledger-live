@@ -40,6 +40,10 @@ export function getRecipientDisplayValue(
 ): string {
   if (!recipient?.address) return "";
 
+  if (recipient.displayLabel?.trim()) {
+    return recipient.displayLabel.trim();
+  }
+
   const formattedAddress = formatAddress(recipient.address, {
     prefixLength: options?.prefixLength ?? SEND_ADDRESS_FORMAT_OPTIONS.prefixLength,
     suffixLength: options?.suffixLength ?? SEND_ADDRESS_FORMAT_OPTIONS.suffixLength,

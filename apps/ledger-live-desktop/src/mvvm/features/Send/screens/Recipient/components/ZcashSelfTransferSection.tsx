@@ -36,22 +36,30 @@ export function ZcashSelfTransferSection() {
       ? (zcashAccount?.privateInfo?.shieldedAddress ?? null)
       : (zcashAccount?.freshAddress ?? null);
 
+  const labelKey =
+    sender === "public"
+      ? "newSendFlow.recipient.selfTransfer.toPrivate"
+      : "newSendFlow.recipient.selfTransfer.toPublic";
+
+  const displayLabel = t(
+    sender === "public"
+      ? "newSendFlow.recipient.selfTransfer.privateBalance"
+      : "newSendFlow.recipient.selfTransfer.publicBalance",
+  );
+
   const onSelfTransfer = useCallback(() => {
     if (!targetAddress) return;
     transaction.setRecipient({
       ...state.recipient,
       address: targetAddress,
+      displayLabel,
     });
     navigation.goToNextStep();
-  }, [targetAddress, transaction, state.recipient, navigation]);
+  }, [targetAddress, transaction, state.recipient, navigation, displayLabel]);
 
   if (!uiConfig.hasBalanceTypeStep || !account || !targetAddress) return null;
 
   const IconComponent = sender === "public" ? Lock : Unlock;
-  const labelKey =
-    sender === "public"
-      ? "newSendFlow.recipient.selfTransfer.toPrivate"
-      : "newSendFlow.recipient.selfTransfer.toPublic";
 
   return (
     <div className="mb-12" data-testid="zcash-self-transfer-section">

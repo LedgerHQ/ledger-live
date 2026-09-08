@@ -88,6 +88,16 @@ describe("getRecipientDisplayValue", () => {
       "vitalik.eth (0x123456...12345678)",
     );
   });
+
+  it("should return displayLabel alone when set, ignoring address and ensName", () => {
+    expect(
+      getRecipientDisplayValue({
+        address: ADDRESS,
+        ensName: "vitalik.eth",
+        displayLabel: "Private balance",
+      }),
+    ).toBe("Private balance");
+  });
 });
 
 describe("getRecipientSearchPrefillValue", () => {

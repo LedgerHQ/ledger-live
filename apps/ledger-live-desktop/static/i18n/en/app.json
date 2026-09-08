@@ -2832,7 +2832,9 @@
       "selfTransfer": {
         "title": "Self transfer",
         "toPrivate": "Send to private balance",
-        "toPublic": "Send to public balance"
+        "toPublic": "Send to public balance",
+        "privateBalance": "Private balance",
+        "publicBalance": "Public balance"
       }
     },
     "balanceType": {
