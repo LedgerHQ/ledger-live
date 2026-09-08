@@ -86,7 +86,7 @@ export const FF_POST_ONBOARDING_DESKTOP = {
   protectServicesDesktop: { enabled: false },
   lwdProductTour: { enabled: false },
   lldLedgerSyncEntryPoints: { enabled: false },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_BORROW_DESKTOP = {
   ptxBorrowLiveApp: {
