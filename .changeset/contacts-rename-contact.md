@@ -1,7 +1,7 @@
 ---
-"ledger-live-desktop": patch
-"live-mobile": patch
-"@features/platform-contacts": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@features/platform-contacts": minor
 ---
 
 Rename a contact on the device from Contacts. The device intent now calls `@ledgerhq/device-contacts-kit`'s `ContactsManager.renameContact()`, which returns the rotated name proof to persist, and both apps render the confirmation step and one `InfoState` per failure. A rejection keeps the job open so the user can retry on the same device.

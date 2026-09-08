@@ -1,5 +1,5 @@
 ---
-"ledger-live-mobile-e2e-tests": patch
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 Wait for the portfolio balance to resolve before reading it (QAA-1523)

@@ -1,6 +1,6 @@
 ---
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Tell the two Hyperliquid account-picker states apart.

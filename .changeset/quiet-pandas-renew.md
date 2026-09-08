@@ -3,8 +3,8 @@
 "@domain/api-card-management": minor
 "@features/platform-card": minor
 "@features/flow-pay-card-auth": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Refresh Baanx Pay Card sessions after a 401, and keep the credentials out of every reader of redux.

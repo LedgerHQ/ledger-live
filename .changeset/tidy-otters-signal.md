@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 fix(send): stop reading the send-flow contexts from `SigningBody`

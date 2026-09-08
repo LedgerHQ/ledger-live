@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/live-common": patch
-"@domain/entity-currency-crypto": patch
+"@ledgerhq/live-common": minor
+"@domain/entity-currency-crypto": minor
 ---
 
 Stop calling the decommissioned Fantom explorer. Fantom Opera migrated to Sonic and its explorer infrastructure is gone: ftmscout.com returns HTTP 522 and ftmscan.com no longer resolves, which made adding a Fantom account fail with "Invalid Response from Fantom explorer".

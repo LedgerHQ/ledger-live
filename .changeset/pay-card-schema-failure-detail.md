@@ -1,6 +1,6 @@
 ---
-"@shared/api-services": patch
-"@domain/api-card-management": patch
+"@shared/api-services": minor
+"@domain/api-card-management": minor
 ---
 
 Name the fields a Card response was rejected on.

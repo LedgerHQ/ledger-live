@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/coin-tester-tron": patch
+"@ledgerhq/coin-tester-tron": minor
 "@ledgerhq/coin-tron": major
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 chore(coin-tron): outsource wallet types

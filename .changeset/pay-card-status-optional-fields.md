@@ -1,5 +1,5 @@
 ---
-"@domain/api-card-management": patch
+"@domain/api-card-management": minor
 ---
 
 Accept a card status with no holder name or expiry date.

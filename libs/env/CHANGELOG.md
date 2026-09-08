@@ -302,20 +302,4 @@
 
 - [#17517](https://github.com/LedgerHQ/ledger-live/pull/17517) [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove debug Asset Detail FAB and its `DEBUG_ASSET_DETAIL_FAB` env toggle. Asset/market detail is now reachable from regular navigation entry points.
 
-## 2.35.0
-
-### Minor Changes
-
-- [#17096](https://github.com/LedgerHQ/ledger-live/pull/17096) [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb) Thanks [@ishaba](https://github.com/ishaba)! - Add GraphQL read-side transport for Sui (balances, stakes, lastBlock, checkpoint) behind the `suiGraphqlTransport` feature flag.
-
-- [#17236](https://github.com/LedgerHQ/ledger-live/pull/17236) [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c) Thanks [@deepyjr](https://github.com/deepyjr)! - Add debug FAB toggle to quickly open Asset Detail screen
-
-## 2.35.0-next.0
-
-### Minor Changes
-
-- [#17096](https://github.com/LedgerHQ/ledger-live/pull/17096) [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb) Thanks [@ishaba](https://github.com/ishaba)! - Add GraphQL read-side transport for Sui (balances, stakes, lastBlock, checkpoint) behind the `suiGraphqlTransport` feature flag.
-
-- [#17236](https://github.com/LedgerHQ/ledger-live/pull/17236) [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c) Thanks [@deepyjr](https://github.com/deepyjr)! - Add debug FAB toggle to quickly open Asset Detail screen
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

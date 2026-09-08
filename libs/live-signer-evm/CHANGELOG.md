@@ -210,26 +210,4 @@
   - @ledgerhq/errors@6.37.0
   - @ledgerhq/hw-app-eth@7.8.8
 
-## 0.20.0-next.0
-
-### Minor Changes
-
-- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
-
-### Patch Changes
-
-- Updated dependencies [[`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6), [`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292)]:
-  - @ledgerhq/live-dmk-shared@0.27.0-next.0
-  - @ledgerhq/coin-evm@4.4.0-next.0
-  - @ledgerhq/errors@6.37.0-next.0
-  - @ledgerhq/hw-app-eth@7.8.8-next.0
-
-## 0.19.1
-
-### Patch Changes
-
-- Updated dependencies [[`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`05d8db8`](https://github.com/LedgerHQ/ledger-live/commit/05d8db8489e8338b50a7faa2b7a6db64b80aa516), [`16b9bbc`](https://github.com/LedgerHQ/ledger-live/commit/16b9bbcf1df6546a8894acf22b58fb6e35576ed4), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`21c7211`](https://github.com/LedgerHQ/ledger-live/commit/21c72111bd99680eca39f97b908d9df0de41e041), [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9)]:
-  - @ledgerhq/coin-evm@4.3.0
-  - @ledgerhq/hw-app-eth@7.8.7
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

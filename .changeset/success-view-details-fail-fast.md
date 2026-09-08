@@ -1,5 +1,5 @@
 ---
-"ledger-live-mobile-e2e-tests": patch
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full

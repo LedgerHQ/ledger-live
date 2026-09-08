@@ -1,7 +1,7 @@
 ---
-"ledger-live-desktop": patch
-"live-mobile": patch
-"@features/platform-contacts": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@features/platform-contacts": minor
 ---
 
 Edit an external address on the device from Contacts. The device intent now calls `@ledgerhq/device-contacts-kit`'s `ContactsManager.editExternalAddressIdentifier()` and `ContactsManager.editExternalAddressScope()`, each returning the rotated address proof to persist while the group's name proof passes through untouched, and both apps render the confirmation step and one `InfoState` per failure.

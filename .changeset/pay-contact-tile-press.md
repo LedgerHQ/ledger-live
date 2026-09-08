@@ -1,6 +1,6 @@
 ---
 "@features/flow-pay-contact": minor
-"@support/jest-features-flow": patch
+"@support/jest-features-flow": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---

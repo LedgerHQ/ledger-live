@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-countervalues-react": patch
+"@ledgerhq/live-countervalues-react": minor
 ---
 
 Don't arm the countervalues polling loop while refreshRate is 0

@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-mina": patch
+"@ledgerhq/coin-mina": minor
 ---
 
 Report a first mina delegation as DELEGATE instead of REDELEGATE

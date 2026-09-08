@@ -1,5 +1,5 @@
 ---
-"ledger-live-mobile-e2e-tests": patch
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 Trim the portfolio page object comments to one line each

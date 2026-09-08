@@ -1,10 +1,10 @@
 ---
-"@shared/env": patch
-"@shared/api-services": patch
-"@devtools/pay-card": patch
-"@devtools/bindings": patch
-"live-mobile": patch
-"ledger-live-desktop": patch
+"@shared/env": minor
+"@shared/api-services": minor
+"@devtools/pay-card": minor
+"@devtools/bindings": minor
+"live-mobile": minor
+"ledger-live-desktop": minor
 ---
 
 Rename `CARD_API_URL` to `CARD_BAANX_API_URL`, keep the production defaults, and drop the Env vars section from the Card / Pay DevTool.

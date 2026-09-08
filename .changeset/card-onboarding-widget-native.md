@@ -1,6 +1,6 @@
 ---
 "@features/flow-pay-card-widget": minor
-"@features/flow-pay-card": patch
+"@features/flow-pay-card": minor
 "live-mobile": minor
 ---
 

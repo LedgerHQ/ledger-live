@@ -1,5 +1,5 @@
 ---
-"ledger-live-mobile-e2e-tests": patch
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 Wait for the transfer bottom sheet to settle before tapping it (QAA-1522)

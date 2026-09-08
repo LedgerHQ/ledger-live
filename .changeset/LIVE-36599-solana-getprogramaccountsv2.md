@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-solana": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-solana": minor
+"@ledgerhq/live-common": minor
 ---
 
 Fix Solana account synchronization failing when the RPC provider deprioritizes stake

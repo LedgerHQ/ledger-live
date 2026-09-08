@@ -1,5 +1,5 @@
 ---
-"ledger-live-mobile-e2e-tests": patch
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 Wait for the portfolio quick-action row to settle before tapping it (QAA-1524)

@@ -1,6 +1,6 @@
 ---
 "@ledgerhq/transaction-observability": minor
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 Report `earn_transaction_*` for ETH dApp and live-app staking.
