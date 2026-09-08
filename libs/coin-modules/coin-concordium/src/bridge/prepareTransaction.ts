@@ -1,11 +1,17 @@
 import type { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { AccountAddress, encodePltTransferOperations } from "@ledgerhq/concordium-core";
+import {
+  AccountAddress,
+  encodePltTransferOperations,
+  PLT_MAX_DECIMALS,
+  PLT_MAX_MEMO_SIZE,
+} from "@ledgerhq/concordium-core";
 import type { ConcordiumCoinConfig, Transaction } from "../types";
 import { estimateFees, estimateTokenFees } from "../logic";
 import type { FeeEstimation } from "../logic/transaction/estimateFees";
 import { CONCORDIUM_DUMMY_ADDRESS } from "../constants";
+import { effectivePltAmount } from "./tokens";
 import coinConfig from "../config";
 
 /**
@@ -30,10 +36,19 @@ function recipientForEstimation(recipient: string): AccountAddress {
  * The order is the reverse of the CCD path's because `listOperationsSize` is the
  * blob's byte length, so the payload has to exist before it can be priced.
  *
- * Resolves to `undefined` when the token's magnitude is missing. Sync only
- * builds a sub-account whose CAL magnitude matches the chain's decimals, so
- * this should not occur; leaving the fee unset is still preferable to pricing a
- * blob encoded with a guessed exponent, which the chain would reject outright.
+ * The memo counts toward `listOperationsSize`, so omitting it underprices the
+ * transfer — a 256-byte memo is worth more energy than the buffer absorbs.
+ *
+ * Resolves to `undefined` when the transfer cannot be priced at all: a missing
+ * magnitude, more decimals than the device will sign, or a memo past the chain's
+ * limit. Sync only builds a sub-account whose CAL magnitude matches the chain's
+ * decimals, so the first should not occur.
+ *
+ * The decimals check has to happen here rather than being left to the encoder.
+ * `encodePltTransferOperations` throws above {@link PLT_MAX_DECIMALS}, and a
+ * throw from this function rejects `prepareTransaction`, which the send flow
+ * reports as a generic failure and retries. Returning `undefined` leaves the
+ * fee unset instead, so `getTransactionStatus` runs and names the real problem.
  */
 async function estimatePltFees(
   config: ConcordiumCoinConfig,
@@ -42,12 +57,16 @@ async function estimatePltFees(
   transaction: Transaction,
 ): Promise<FeeEstimation | undefined> {
   const decimals = subAccount.token.units[0]?.magnitude;
-  if (decimals === undefined) return undefined;
+  if (decimals === undefined || decimals > PLT_MAX_DECIMALS) return undefined;
+
+  const memo = transaction.memo ? Buffer.from(transaction.memo, "utf-8") : undefined;
+  if (memo && memo.length > PLT_MAX_MEMO_SIZE) return undefined;
 
   const operations = encodePltTransferOperations({
     recipient: recipientForEstimation(transaction.recipient),
-    amount: BigInt(transaction.amount.toFixed(0)),
+    amount: effectivePltAmount(subAccount, transaction),
     decimals,
+    ...(memo ? { memo } : {}),
   });
 
   return estimateTokenFees(config, currencyId, {
@@ -62,6 +81,11 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 ) => {
   const config = coinConfig.getCoinConfig(account.currency.id);
   const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+
+  // Leaving the fee unset is what lets status report the stale reference.
+  if (subAccount?.type !== "TokenAccount" && transaction.subAccountId) {
+    return transaction;
+  }
 
   if (subAccount?.type === "TokenAccount") {
     const estimation = await estimatePltFees(config, account.currency.id, subAccount, transaction);

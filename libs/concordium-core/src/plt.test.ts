@@ -37,18 +37,17 @@ describe("plt/encodePltAmount", () => {
     expect(() => encodePltAmount(amount, decimals)).toThrow();
   });
 
-  it.each([-1, 129, 256, 1.5])("rejects decimals of %s", decimals => {
+  it.each([-1, 19, 129, 256, 1.5])("rejects decimals of %s", decimals => {
     expect(() => encodePltAmount(1n, decimals)).toThrow();
   });
 
-  // The device holds the exponent in an int8_t and rejects a raw negative
-  // argument above 127, capping decimals at 128 — tighter than the chain's 255.
-  it("accepts 128 decimals, the device's ceiling", () => {
-    expect(encodePltAmount(1n, 128).toString("hex")).toBe("c482387f01");
+  // 128 is the int8_t exponent width, not the binding limit. See PLT_MAX_DECIMALS.
+  it("accepts 18 decimals, the device's ceiling", () => {
+    expect(encodePltAmount(1n, 18).toString("hex")).toBe("c4823101");
   });
 
-  it("rejects 129 decimals, which the chain allows but the device does not", () => {
-    expect(() => encodePltAmount(1n, 129)).toThrow(/0\.\.128/);
+  it("rejects 19 decimals, which the chain allows but the device does not", () => {
+    expect(() => encodePltAmount(1n, 19)).toThrow(/0\.\.18/);
   });
 });
 

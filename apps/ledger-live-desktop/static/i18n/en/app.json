@@ -7833,6 +7833,34 @@
     "ConcordiumAddressVerificationFailedError": {
       "title": "Address verification failed"
     },
+    "ConcordiumInsufficientCcdForFee": {
+      "title": "Not enough CCD for the network fee",
+      "description": "The network fee is paid in CCD, not in the token you are sending. Add CCD to this account and try again."
+    },
+    "ConcordiumTokenPaused": {
+      "title": "Transfers are paused for this token",
+      "description": "The token issuer has paused all transfers. You can try again once transfers resume."
+    },
+    "ConcordiumTokenTransferNotPermitted": {
+      "title": "This account cannot send this token",
+      "description": "The token issuer restricts who may send it, and this account is not permitted. Contact the token issuer for access."
+    },
+    "ConcordiumTokenRestrictionsUnverified": {
+      "title": "Token restrictions could not be verified",
+      "description": "This token's transfer rules could not be read, so the transfer cannot be confirmed as allowed. Please resync your account and try again."
+    },
+    "ConcordiumUnsupportedTokenDecimals": {
+      "title": "This token cannot be signed on your Ledger device",
+      "description": "The token uses {{decimals}} decimal places, and your device supports at most {{maxDecimals}}. Receiving and holding it are unaffected."
+    },
+    "ConcordiumTokenAccountUnavailable": {
+      "title": "This token is no longer in your account",
+      "description": "The token you selected is not available any more. Please start the transaction again."
+    },
+    "ConcordiumInvalidPltPayloadError": {
+      "title": "This transaction cannot be prepared",
+      "description": "The token's details are outside what your Ledger device accepts, so the transaction cannot be built. Please contact Ledger Support."
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },

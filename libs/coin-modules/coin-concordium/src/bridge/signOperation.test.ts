@@ -1,4 +1,5 @@
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ConcordiumTokenAccountUnavailable } from "../types/errors";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountAddress } from "@ledgerhq/concordium-core";
@@ -488,7 +489,7 @@ describe("signOperation", () => {
     it("does not re-estimate when preparation persisted the energy", async () => {
       const { account, transaction } = tokenTransaction();
 
-      await expect(sign(transaction, account)).rejects.toThrow();
+      await expect(sign(transaction, account)).rejects.toThrow(/not supported yet/);
 
       expect(estimateFees).not.toHaveBeenCalled();
     });
@@ -524,16 +525,17 @@ describe("signOperation", () => {
       );
     });
 
-    it("ignores a stale energy when the sub-account is not a token account", async () => {
-      await sign(
-        createFixtureTransaction({
-          subAccountId: "js:2:concordium_testnet:nope:",
-          fee: new BigNumber(1000),
-          energy: 1080,
-        }),
-      );
+    // The second assertion is the point: nothing reaches the crafting step.
+    it("refuses a subAccountId that no longer resolves", async () => {
+      const transaction = createFixtureTransaction({
+        subAccountId: "js:2:concordium_testnet:gone:+plt",
+        fee: new BigNumber(1000),
+      });
 
-      expect(estimateFees).toHaveBeenCalled();
+      // Asserted by instance, not by message: a regex would have passed against
+      // the invariant this replaced.
+      await expect(sign(transaction)).rejects.toBeInstanceOf(ConcordiumTokenAccountUnavailable);
+      expect(craftTransaction).not.toHaveBeenCalled();
     });
 
     // The energy half of the pair is missing, so the fee on screen has no
