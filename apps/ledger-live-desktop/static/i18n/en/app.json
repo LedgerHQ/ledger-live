@@ -7226,6 +7226,10 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "UnexpectedGetBalanceError": {
+      "title": "Your balance could not be retrieved",
+      "description": "Please check your internet connection and try again."
+    },
     "NotEnoughTransferAmount": {
       "title": "A minimum of 1 ICP is required to stake into a neuron."
     },
