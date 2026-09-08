@@ -37,11 +37,11 @@ export function RequestReceiveSummary({
       lx={{
         alignItems: "center",
         alignSelf: "stretch",
-        backgroundColor: "surface",
-        borderRadius: "2xl",
         gap: "s32",
         padding: "s24",
         width: "full",
+        backgroundColor: "surface",
+        borderRadius: "md",
       }}
       testID="pay-request-receive-summary"
     >
@@ -67,18 +67,32 @@ export function RequestReceiveSummary({
           </Text>
         </Box>
       </Box>
-      <QrCode
-        value={qrPayload}
-        testID="pay-request-receive-qr-code"
-        centerContent={
-          <CryptoIcon
-            ledgerId={assetIcon.ledgerId}
-            ticker={assetIcon.ticker}
-            size={QR_CENTER_ICON_SIZE}
-            shape="circle"
-          />
-        }
-      />
+      <Box
+        lx={{
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "s24",
+          backgroundColor: "white",
+          borderRadius: "2xl",
+          borderWidth: "s1",
+          borderColor: "mutedSubtle",
+          boxShadow: "lg",
+        }}
+      >
+        <QrCode
+          value={qrPayload}
+          foregroundColor="#000000"
+          testID="pay-request-receive-qr-code"
+          centerContent={
+            <CryptoIcon
+              ledgerId={assetIcon.ledgerId}
+              ticker={assetIcon.ticker}
+              size={QR_CENTER_ICON_SIZE}
+              shape="circle"
+            />
+          }
+        />
+      </Box>
       <RequestReceiveAddress addressParts={addressParts} />
     </Box>
   );
