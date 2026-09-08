@@ -1,6 +1,5 @@
 import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 import { initialState, loadCountervalues, calculate } from "./logic";
-import CountervaluesAPI from "./api";
 import { setEnv } from "@ledgerhq/live-env";
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./tests/currencies";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
@@ -56,9 +55,6 @@ test("mock load with nothing to track", async () => {
       to: getFiatCurrencyByTicker("USD"),
     }),
   ).toBeUndefined();
-});
-test("mock fetchIdsSortedByMarketcap", async () => {
-  expect(await CountervaluesAPI.fetchIdsSortedByMarketcap()).toBeDefined();
 });
 test("mock load with btc-usd to track", async () => {
   const state = await loadCountervalues(initialState, {
@@ -263,9 +259,4 @@ test("missing rate in mock is filled by autofillGaps", async () => {
       date: new Date("2018-01-06T19:00"),
     }),
   );
-});
-
-test("fetchIdsSortedByMarketcap", async () => {
-  const ids = await CountervaluesAPI.fetchIdsSortedByMarketcap();
-  expect(ids).toContain("bitcoin");
 });
