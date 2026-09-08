@@ -128,6 +128,7 @@ describe("cardManagementApi configuration", () => {
       "getCardTransactions",
       "getInternalWallets",
       "getUser",
+      "getWalletHistory",
       "logout",
       "orderCard",
       "refreshSession",
@@ -507,6 +508,114 @@ describe("cardManagementApi requests", () => {
       const store = makeStore("session-token");
       const result = await store.dispatch(
         cardManagementApi.endpoints.getCardTransactions.initiate(undefined),
+      );
+
+      expect(result.data).toEqual([]);
+      expect(result.error).toBeUndefined();
+    });
+  });
+
+  describe("getWalletHistory", () => {
+    const HISTORY_PATH = "/v1/wallet/history";
+
+    const entry = {
+      name: "Credit withdrawal",
+      amount: "10.00",
+      currency: "usdc",
+      sign: "debit",
+      date: "2024-02-02T15:01:09.091Z",
+    };
+
+    it("reads one wallet's history with the bearer token and the client key", async () => {
+      provider.get(HISTORY_PATH, () => jsonResponse([entry]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-usdc",
+          walletType: "INTERNAL",
+          walletCurrency: "usdc",
+        }),
+      );
+
+      const sent = provider.sent();
+      expect(new URL(sent.url).pathname).toBe(HISTORY_PATH);
+      expect(sent.method).toBe("GET");
+      expect(sent.headers.get("authorization")).toBe("Bearer session-token");
+      expect(sent.headers.get("x-client-key")).toBe("client-key");
+      expect(result.data).toEqual([entry]);
+    });
+
+    it("names the wallet, its type and its currency in the query", async () => {
+      provider.get(HISTORY_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      await store.dispatch(
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-usdc",
+          walletType: "INTERNAL",
+          walletCurrency: "usdc",
+          page: 2,
+        }),
+      );
+
+      const { searchParams } = new URL(provider.sent().url);
+      expect(searchParams.get("walletId")).toBe("w-usdc");
+      expect(searchParams.get("walletType")).toBe("INTERNAL");
+      expect(searchParams.get("walletCurrency")).toBe("usdc");
+      expect(searchParams.get("page")).toBe("2");
+    });
+
+    it("refuses an internal wallet with no currency before the request goes out", async () => {
+      provider.get(HISTORY_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        // The requirement is part of the request type, so this also asserts the type refuses it.
+        // @ts-expect-error an internal wallet without its currency is not a request
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-usdc",
+          walletType: "INTERNAL",
+        }),
+      );
+
+      expect(result.error).toBeDefined();
+      // The provider errors on this one, and the request never leaves the app.
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("caches each wallet separately, so one does not answer for another", async () => {
+      provider.get(HISTORY_PATH, () => jsonResponse([entry]));
+
+      const store = makeStore("session-token");
+      await store.dispatch(
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-usdc",
+          walletType: "INTERNAL",
+          walletCurrency: "usdc",
+        }),
+      );
+      await store.dispatch(
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-usdt",
+          walletType: "INTERNAL",
+          walletCurrency: "usdt",
+        }),
+      );
+
+      // Two wallets, two reads: a card has several linked and each has its own history.
+      expect(provider.sentTo(HISTORY_PATH)).toHaveLength(2);
+    });
+
+    it("reads an empty history as an empty list, not as a failure", async () => {
+      provider.get(HISTORY_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-credit",
+          walletType: "CREDIT",
+        }),
       );
 
       expect(result.data).toEqual([]);

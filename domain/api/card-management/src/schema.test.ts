@@ -12,6 +12,8 @@ import {
   PayCardStatusResponseSchema,
   PayCardTransactionSchema,
   PayCardTransactionsRequestSchema,
+  PayCardWalletHistoryEntrySchema,
+  PayCardWalletHistoryRequestSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 
@@ -457,5 +459,79 @@ describe("PayCardTransactionsRequestSchema", () => {
 
   it("rejects a negative page", () => {
     expect(() => PayCardTransactionsRequestSchema.parse({ page: -1 })).toThrow();
+  });
+});
+
+describe("PayCardWalletHistoryEntrySchema", () => {
+  // The provider's own documented example.
+  const withdrawal = {
+    name: "Credit withdrawal",
+    amount: "10.00",
+    currency: "usdc",
+    sign: "debit",
+    date: "2024-02-02T15:01:09.091Z",
+  };
+
+  it("reads the entry the provider documents", () => {
+    expect(PayCardWalletHistoryEntrySchema.parse(withdrawal)).toEqual(withdrawal);
+  });
+
+  it.each(["debit", "credit"])("reads a %s movement", sign => {
+    expect(PayCardWalletHistoryEntrySchema.parse({ ...withdrawal, sign }).sign).toBe(sign);
+  });
+
+  it("rejects the uppercase sign a card transaction uses", () => {
+    // The two endpoints disagree on case. Accepting both here would hide that from the caller
+    // that has to reconcile them.
+    expect(() => PayCardWalletHistoryEntrySchema.parse({ ...withdrawal, sign: "DEBIT" })).toThrow();
+  });
+
+  it("keeps the amount as the string the provider sent", () => {
+    expect(
+      PayCardWalletHistoryEntrySchema.parse({ ...withdrawal, amount: "0.104201" }).amount,
+    ).toBe("0.104201");
+  });
+
+  it("keeps the provider's own description, which is all it says about the movement", () => {
+    const purchase = { ...withdrawal, name: "Card purchase - Starbucks" };
+
+    expect(PayCardWalletHistoryEntrySchema.parse(purchase).name).toBe("Card purchase - Starbucks");
+  });
+});
+
+describe("PayCardWalletHistoryRequestSchema", () => {
+  it("reads a credit wallet without a currency", () => {
+    const request = { walletId: "w-1", walletType: "CREDIT" as const };
+
+    expect(PayCardWalletHistoryRequestSchema.parse(request)).toEqual(request);
+  });
+
+  it("requires the currency for an internal wallet", () => {
+    // The provider errors on an internal wallet asked for without one.
+    expect(() =>
+      PayCardWalletHistoryRequestSchema.parse({ walletId: "w-1", walletType: "INTERNAL" }),
+    ).toThrow();
+  });
+
+  it("reads an internal wallet with its currency", () => {
+    const request = { walletId: "w-1", walletType: "INTERNAL" as const, walletCurrency: "usdc" };
+
+    expect(PayCardWalletHistoryRequestSchema.parse(request)).toEqual(request);
+  });
+
+  it("takes a page", () => {
+    const request = { walletId: "w-1", walletType: "REWARD" as const, page: 3 };
+
+    expect(PayCardWalletHistoryRequestSchema.parse(request).page).toBe(3);
+  });
+
+  it("rejects a wallet type the provider does not serve", () => {
+    expect(() =>
+      PayCardWalletHistoryRequestSchema.parse({ walletId: "w-1", walletType: "SAVINGS" }),
+    ).toThrow();
+  });
+
+  it("rejects a request with no wallet to read", () => {
+    expect(() => PayCardWalletHistoryRequestSchema.parse({ walletType: "CREDIT" })).toThrow();
   });
 });

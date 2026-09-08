@@ -135,6 +135,54 @@ export const PayCardTransactionsRequestSchema = z
   )
   .optional();
 
+/**
+ * One entry of a wallet's own history.
+ *
+ * Narrower than a card transaction: the movement arrives as one `name`, so whatever a card
+ * transaction carries in its own fields has to be read out of that string here.
+ *
+ * `sign` is lowercase on this endpoint and uppercase on card transactions. Each schema keeps the
+ * case its own endpoint answers with and rejects the other, so the difference stays visible to a
+ * caller that reads both rather than being smoothed over here.
+ */
+export const PayCardWalletHistoryEntrySchema = z.object({
+  /** The provider's own description, e.g. `Credit withdrawal` or `Card purchase - Starbucks`. */
+  name: z.string().min(1),
+  amount: z.string().min(1),
+  currency: z.string().min(1),
+  sign: z.enum(["debit", "credit"]),
+  /** ISO 8601, as the provider formats it. */
+  date: z.string().min(1),
+});
+
+export const PayCardWalletHistoryResponseSchema = z.array(PayCardWalletHistoryEntrySchema);
+
+/**
+ * A wallet's history is asked for one wallet at a time.
+ *
+ * `walletCurrency` is required for an internal wallet and meaningless for the others, so the pair
+ * is checked here rather than left to a 400.
+ */
+const PayCardWalletHistoryBaseSchema = z.object({
+  walletId: z.string().min(1),
+  page: z.number().int().nonnegative().optional(),
+});
+
+/**
+ * Keyed on the wallet type, so the currency requirement is in the inferred type as well: asking for
+ * an internal wallet without naming its currency does not compile, let alone reach the provider.
+ */
+export const PayCardWalletHistoryRequestSchema = z.discriminatedUnion("walletType", [
+  PayCardWalletHistoryBaseSchema.extend({
+    walletType: z.literal("INTERNAL"),
+    walletCurrency: z.string().min(1),
+  }),
+  PayCardWalletHistoryBaseSchema.extend({
+    walletType: z.enum(["CREDIT", "REWARD"]),
+    walletCurrency: z.string().min(1).optional(),
+  }),
+]);
+
 export const PayCardInternalWalletSchema = z.object({
   id: z.string().min(1),
   balance: z.string().min(1),
