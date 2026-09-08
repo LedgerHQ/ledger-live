@@ -13,6 +13,9 @@ jest.mock("electron", () => ({
       webRequest: {
         onHeadersReceived: jest.fn(),
       },
+      setPermissionRequestHandler: jest.fn(),
+      setPermissionCheckHandler: jest.fn(),
+      setDisplayMediaRequestHandler: jest.fn(),
     },
   },
   webContents: {
@@ -444,5 +447,124 @@ describe("guest DevTools tracking", () => {
     expect(devtools.close).toHaveBeenCalledTimes(1);
 
     cleanup(devtools);
+  });
+});
+
+describe("session permission policy (DONJON-1404)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    delete (globalThis as typeof globalThis & { __ledgerLiveWebviewHandlersSetup__?: boolean })
+      .__ledgerLiveWebviewHandlersSetup__;
+  });
+
+  const makeCaller = (type: string) => ({ getType: jest.fn(() => type) });
+
+  const getRequestHandler = () => {
+    setupWebviewHandlers(["ledgerlive"]);
+    return jest.mocked(session.defaultSession.setPermissionRequestHandler).mock
+      .calls[0][0] as NonNullable<Parameters<Electron.Session["setPermissionRequestHandler"]>[0]>;
+  };
+
+  it("installs the permission and display-media handlers on the default session", () => {
+    setupWebviewHandlers(["ledgerlive"]);
+
+    expect(jest.mocked(session.defaultSession.setPermissionRequestHandler)).toHaveBeenCalledWith(
+      expect.any(Function),
+    );
+    expect(jest.mocked(session.defaultSession.setPermissionCheckHandler)).toHaveBeenCalledWith(
+      expect.any(Function),
+    );
+    expect(jest.mocked(session.defaultSession.setDisplayMediaRequestHandler)).toHaveBeenCalledWith(
+      expect.any(Function),
+    );
+  });
+
+  it("denies a guest's desktop capture but allows its camera", () => {
+    const handler = getRequestHandler();
+    const guest = makeCaller("webview") as unknown as Electron.WebContents;
+
+    const desktop = jest.fn();
+    handler(guest, "media", desktop, {
+      mediaTypes: [],
+      isMainFrame: true,
+      requestingUrl: "https://evil.example.com",
+    } as Electron.MediaAccessPermissionRequest);
+    expect(desktop).toHaveBeenCalledWith(false);
+
+    const camera = jest.fn();
+    handler(guest, "media", camera, {
+      mediaTypes: ["video"],
+      isMainFrame: true,
+      requestingUrl: "https://buy.moonpay.com",
+    } as Electron.MediaAccessPermissionRequest);
+    expect(camera).toHaveBeenCalledWith(true);
+  });
+
+  it("denies a guest a permission the host is allowed", () => {
+    const handler = getRequestHandler();
+
+    const guestCallback = jest.fn();
+    handler(
+      makeCaller("webview") as unknown as Electron.WebContents,
+      "clipboard-read",
+      guestCallback,
+      {
+        isMainFrame: true,
+        requestingUrl: "https://evil.example.com",
+      } as Electron.PermissionRequest,
+    );
+    expect(guestCallback).toHaveBeenCalledWith(false);
+
+    const hostCallback = jest.fn();
+    handler(
+      makeCaller("window") as unknown as Electron.WebContents,
+      "clipboard-read",
+      hostCallback,
+      { isMainFrame: true, requestingUrl: "file:///index.html" } as Electron.PermissionRequest,
+    );
+    expect(hostCallback).toHaveBeenCalledWith(true);
+  });
+
+  it("denies the hid permission check to a guest while the host keeps it", () => {
+    setupWebviewHandlers(["ledgerlive"]);
+
+    const checkHandler = jest.mocked(session.defaultSession.setPermissionCheckHandler).mock
+      .calls[0][0] as NonNullable<Parameters<Electron.Session["setPermissionCheckHandler"]>[0]>;
+
+    const details = {} as Electron.PermissionCheckHandlerHandlerDetails;
+    expect(
+      checkHandler(
+        makeCaller("webview") as unknown as Electron.WebContents,
+        "hid",
+        "https://evil.example.com",
+        details,
+      ),
+    ).toBe(false);
+    expect(
+      checkHandler(
+        makeCaller("window") as unknown as Electron.WebContents,
+        "hid",
+        "file:///index.html",
+        details,
+      ),
+    ).toBe(true);
+  });
+
+  it("denies getDisplayMedia with an empty Streams object", () => {
+    setupWebviewHandlers(["ledgerlive"]);
+
+    const handler = jest.mocked(session.defaultSession.setDisplayMediaRequestHandler).mock
+      .calls[0][0] as NonNullable<Parameters<Electron.Session["setDisplayMediaRequestHandler"]>[0]>;
+    const callback = jest.fn();
+    handler(
+      {
+        frame: null,
+        securityOrigin: "https://evil.example.com",
+        videoRequested: true,
+      } as unknown as Electron.DisplayMediaRequestHandlerHandlerRequest,
+      callback,
+    );
+
+    expect(callback).toHaveBeenCalledWith({});
   });
 });

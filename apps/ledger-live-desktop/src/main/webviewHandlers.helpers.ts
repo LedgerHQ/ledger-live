@@ -80,3 +80,53 @@ export const WEBVIEW_GUEST_CSP =
   "child-src 'self' http: https: blob:; " +
   "worker-src 'self' http: https: blob: data:; " +
   "form-action 'self' http: https:;";
+
+export const GUEST_ALLOWED_PERMISSIONS = new Set(["fullscreen", "clipboard-sanitized-write"]);
+
+export const HOST_ALLOWED_PERMISSIONS = new Set([
+  "fullscreen",
+  "clipboard-sanitized-write",
+  "clipboard-read",
+]);
+
+/**
+ * Electron fills `mediaTypes` from Chromium's *device* capture types only, so a
+ * screen capture requested through `getUserMedia` arrives with an empty list
+ * (measured on Electron 43.1.1, DONJON-1404).
+ */
+export function isDeviceCaptureRequest(mediaTypes: Array<"video" | "audio"> | undefined): boolean {
+  return !!mediaTypes?.length;
+}
+
+export function resolvePermissionRequest({
+  isGuest,
+  permission,
+  mediaTypes,
+}: {
+  isGuest: boolean;
+  permission: string;
+  mediaTypes?: Array<"video" | "audio">;
+}): boolean {
+  if (permission === "display-capture") return false;
+  if (permission === "media") return isDeviceCaptureRequest(mediaTypes);
+  return (isGuest ? GUEST_ALLOWED_PERMISSIONS : HOST_ALLOWED_PERMISSIONS).has(permission);
+}
+
+/**
+ * `media` stays denied for everyone: Chromium reaches the request handler only
+ * when the check denies, and that is where screen capture is filtered out.
+ * `hid` is decided here alone - Electron has no `hid` permission request.
+ */
+export function resolvePermissionCheck({
+  isGuest,
+  permission,
+}: {
+  isGuest: boolean;
+  permission: string;
+}): boolean {
+  if (permission === "media") return false;
+  if (isGuest) return GUEST_ALLOWED_PERMISSIONS.has(permission);
+  return permission === "hid";
+}
+
+export const WEBVIEW_GUEST_PERMISSIONS_POLICY = "display-capture=()";
