@@ -56,8 +56,16 @@ export function mergeOperations(existing: Operation[], incoming: Operation[]): O
   const merged = mergeOps(existing, incoming);
 
   const emitted = new Set(merged.map(op => op.id));
-  const dropped = incoming.filter(op => !emitted.has(op.id));
-  if (dropped.length === 0) return merged;
 
-  return [...merged, ...dropped].sort((a, b) => b.date.valueOf() - a.date.valueOf());
+  // Keyed rather than filtered, because a page that repeats a transaction would
+  // otherwise put every copy back: `mergeOps` guarantees the result holds no
+  // duplicate id, and restoring what it dropped must not cost that. Last wins,
+  // as it does there.
+  const dropped = new Map<string, Operation>();
+  for (const op of incoming) {
+    if (!emitted.has(op.id)) dropped.set(op.id, op);
+  }
+  if (dropped.size === 0) return merged;
+
+  return [...merged, ...dropped.values()].sort((a, b) => b.date.valueOf() - a.date.valueOf());
 }

@@ -349,6 +349,20 @@ describe("syncOperations", () => {
       expect(result.pltOperations).toEqual([older]);
     });
 
+    it("stores one operation when the page repeats a transaction", async () => {
+      const stored = createFixtureOperation({ id: "newest-stored", date: new Date("2024-06-01") });
+      const older = { ...pltOp, date: new Date("2020-01-01") };
+      listOperations.mockResolvedValue({ items: [older, older], next: undefined });
+
+      const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [stored], {
+        enableTokens: true,
+        refetchAll: true,
+      });
+
+      const ids = result.operations.map(op => op.id);
+      expect(new Set(ids).size).toBe(ids.length);
+    });
+
     it("discards PLT transfers entirely when tokens are off", async () => {
       listOperations.mockResolvedValue({ items: [pltOp], next: undefined });
 
