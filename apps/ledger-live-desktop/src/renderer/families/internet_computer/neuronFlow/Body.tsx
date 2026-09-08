@@ -81,7 +81,7 @@ const Body = ({
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
   const { account } = params;
-  invariant(account?.type === "Account", "MODAL_ICP_LIST_NEURONS: an ICP main account is required");
+  invariant(account?.type === "Account", "internet_computer: an ICP main account is required");
 
   const bridge = useAccountBridge<Transaction>(account);
   const {
