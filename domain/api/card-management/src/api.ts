@@ -11,6 +11,7 @@ import {
   PayCardSessionSchema,
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
+  PayCardLinkedWalletMutationResponseSchema,
   PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
@@ -26,6 +27,8 @@ import type {
   PayCardRefreshSessionRequest,
   PayCardSession,
   PayCardDetailsCss,
+  PayCardLinkedWalletMutationResult,
+  PayCardLinkedWalletRequest,
   PayCardDetailsToken,
   PayCardStatus,
   PayCardUser,
@@ -142,6 +145,36 @@ export const cardManagementApi = cardApi
         invalidatesTags: ["CardStatus"],
       }),
 
+      /**
+       * Both take the wallet's `addressId`, not its `id`, and both invalidate the linked list so the
+       * charging order reloads itself. Neither touches `getInternalWallets`: unlinking a wallet
+       * leaves it and its funds alone.
+       */
+      linkCardWallet: build.mutation<PayCardLinkedWalletMutationResult, PayCardLinkedWalletRequest>(
+        {
+          query: ({ addressId }) => ({
+            url: "/v1/wallet/internal/card_linked",
+            method: "POST",
+            body: { addressId },
+          }),
+          responseSchema: PayCardLinkedWalletMutationResponseSchema,
+          invalidatesTags: ["CardLinkedWallets"],
+        },
+      ),
+
+      unlinkCardWallet: build.mutation<
+        PayCardLinkedWalletMutationResult,
+        PayCardLinkedWalletRequest
+      >({
+        query: ({ addressId }) => ({
+          url: "/v1/wallet/internal/card_linked",
+          method: "DELETE",
+          body: { addressId },
+        }),
+        responseSchema: PayCardLinkedWalletMutationResponseSchema,
+        invalidatesTags: ["CardLinkedWallets"],
+      }),
+
       getInternalWallets: build.query<PayCardInternalWallet[], void>({
         query: () => ({
           url: "/v1/wallet/internal",
@@ -155,6 +188,7 @@ export const cardManagementApi = cardApi
           url: "/v1/wallet/internal/card_linked",
           method: "GET",
         }),
+        providesTags: ["CardLinkedWallets"],
         responseSchema: PayCardLinkedWalletsResponseSchema,
       }),
 
@@ -183,4 +217,6 @@ export const {
   useGetInternalWalletsQuery,
   useGetCardLinkedWalletsQuery,
   useGetCardOnboardingStatusQuery,
+  useLinkCardWalletMutation,
+  useUnlinkCardWalletMutation,
 } = cardManagementApi;
