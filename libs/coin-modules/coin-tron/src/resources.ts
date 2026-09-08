@@ -1,4 +1,4 @@
-import type { TronAccount } from "./types";
+import type { TronResources } from "./types";
 
 export {
   defaultTronResources,
@@ -6,11 +6,7 @@ export {
   fetchTronResources,
 } from "./logic/tronResources";
 
-export function isAccountEmpty({
-  tronResources,
-}: {
-  tronResources?: TronAccount["tronResources"];
-}): boolean {
+export function isAccountEmpty({ tronResources }: { tronResources?: TronResources }): boolean {
   // tronResources may be absent on accounts synced via the generic coin framework before the
   // chain-specific enrichment has run. Treat as non-empty so the account is not silently dropped
   // from scan results.

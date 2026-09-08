@@ -1,5 +1,17 @@
-import type { TronOperationMode, TronResource, Vote } from "@ledgerhq/coin-tron/types/index";
 import type {
+  TronOperationMode,
+  TronResource,
+  TronResources,
+  TronResourcesRaw,
+  Vote,
+  TrongridExtraTxInfo,
+  TrongridExtraTxInfoRaw,
+} from "@ledgerhq/coin-tron/types/index";
+import type {
+  Account,
+  AccountRaw,
+  Operation,
+  OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -10,6 +22,23 @@ import type { JsonSafeRecord } from "../../bridge/generic-coin-framework/types";
 
 // Encapsulate for LLD et LLM
 export * from "@ledgerhq/coin-tron/types/index";
+
+// Signer types (moved from coin-tron/src/types/signer.ts)
+export type TronAddress = { publicKey: string; address: string };
+export type TronSignature = string;
+export interface TronSigner {
+  getAddress(path: string, boolDisplay?: boolean): Promise<TronAddress>;
+  sign(path: string, rawTxHex: string, tokenSignatures: string[]): Promise<TronSignature>;
+}
+
+// Wallet types (moved from coin-tron/src/types/bridge.ts)
+export type TronOperation = Operation<TrongridExtraTxInfo>;
+export type TronOperationRaw = OperationRaw<TrongridExtraTxInfoRaw>;
+export function isTronAccount(account: Account): account is TronAccount {
+  return "tronResources" in account;
+}
+export type TronAccount = Account & { tronResources: TronResources };
+export type TronAccountRaw = AccountRaw & { tronResources: TronResourcesRaw };
 
 /**
  * Compile-time guard that `T` survives the JSON round-trip `TransactionRaw` performs verbatim.

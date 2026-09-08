@@ -1,4 +1,4 @@
-import type { Vote } from "@ledgerhq/coin-tron/types/index";
+import type { Vote } from "./types";
 import type { Account } from "@ledgerhq/types-live";
 
 /**
