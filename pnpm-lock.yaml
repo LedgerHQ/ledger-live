@@ -12830,21 +12830,24 @@ importers:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-transport-kit-speculos':
+        specifier: 'catalog:'
+        version: 1.2.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport-mocker
-      '@ledgerhq/speculos-transport':
-        specifier: workspace:*
-        version: link:../speculos-transport
+      '@ledgerhq/speculos-device-controller':
+        specifier: 'catalog:'
+        version: 0.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
-      '@shared/env':
-        specifier: workspace:*
-        version: link:../../shared/env
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -35427,10 +35430,6 @@ packages:
   minipass-fetch@2.1.2:
     resolution: {integrity: sha512-LT49Zi2/WMROHYoqGgdlQIZh8mLPZmOrN2NdJjMXxYe4nkN6FUyuPuOAOedNJDrx0IRGg9+4guZewtp8hE6TxA==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
-
-  minipass-flush@1.0.5:
-    resolution: {integrity: sha512-JmQSYYpPUqX5Jyn1mXaRwOda1uQ8HP5KAT/oDSLCzt1BYRhQU0/hDtsB1ufZfEEzMZ9aAVmsBw8+FWsIXlClWw==}
-    engines: {node: '>= 8'}
 
   minipass-flush@1.0.7:
     resolution: {integrity: sha512-TbqTz9cUwWyHS2Dy89P3ocAGUGxKjjLuR9z8w4WUTGAVgEj17/4nhgo2Du56i0Fm3Pm30g4iA8Lcqctc76jCzA==}
@@ -64801,7 +64800,7 @@ snapshots:
       minipass: 3.3.6
       minipass-collect: 1.0.2
       minipass-fetch: 1.4.1
-      minipass-flush: 1.0.5
+      minipass-flush: 1.0.7
       minipass-pipeline: 1.2.4
       negotiator: 0.6.4
       promise-retry: 2.0.1
@@ -66079,11 +66078,6 @@ snapshots:
       minizlib: 2.1.2
     optionalDependencies:
       encoding: 0.1.13
-
-  minipass-flush@1.0.5:
-    dependencies:
-      minipass: 3.3.6
-    optional: true
 
   minipass-flush@1.0.7:
     dependencies:

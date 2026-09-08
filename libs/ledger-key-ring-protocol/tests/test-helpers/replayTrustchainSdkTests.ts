@@ -2,13 +2,12 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
-import { getEnv, setEnv } from "@shared/env";
 import { setNetworkState } from "@ledgerhq/live-network";
+import { TRUSTCHAIN_API_STAGING } from "./config";
 import { ScenarioOptions } from "./types";
 import { getSdk } from "../../src";
 import { WithDevice } from "../../src/types";
 
-setEnv("GET_CALLS_RETRY", 0);
 setNetworkState({ getCallsRetry: 0 });
 
 /**
@@ -125,11 +124,11 @@ export async function replayTrustchainSdkTests<Json extends JsonShape>(
       withDevice,
       sdkForName: (name, opts) =>
         getSdk(
-          !!getEnv("MOCK"),
+          false,
           {
             applicationId: opts?.applicationId ?? 16,
             name,
-            apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+            apiBaseUrl: TRUSTCHAIN_API_STAGING,
           },
           withDevice,
         ),
