@@ -3,8 +3,11 @@ import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/
 import { openURL } from "./openURL";
 import {
   WEBVIEW_GUEST_CSP,
+  WEBVIEW_GUEST_PERMISSIONS_POLICY,
   createLiveAppSchemeChecker,
   mergeCspHeaders,
+  resolvePermissionCheck,
+  resolvePermissionRequest,
 } from "./webviewHandlers.helpers";
 
 type WebviewHandlersGlobal = typeof globalThis & {
@@ -164,6 +167,27 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
     if (hardenedSessions.has(s)) return;
     hardenedSessions.add(s);
 
+    // Electron grants permission requests when no handler is installed. Guests
+    // share the default session with the host renderer, so the caller is told
+    // apart by `getType()`, not by which session the request arrives on.
+    s.setPermissionRequestHandler((contents, permission, callback, requestDetails) => {
+      const { mediaTypes } = requestDetails as Electron.MediaAccessPermissionRequest;
+      callback(
+        resolvePermissionRequest({
+          isGuest: contents?.getType() === "webview",
+          permission,
+          mediaTypes,
+        }),
+      );
+    });
+
+    s.setPermissionCheckHandler((contents, permission) =>
+      resolvePermissionCheck({ isGuest: contents?.getType() === "webview", permission }),
+    );
+
+    // Denied explicitly rather than left to fail on an Electron default.
+    s.setDisplayMediaRequestHandler((_request, callback) => callback({}));
+
     s.webRequest.onHeadersReceived((details, callback) => {
       // Only harden responses loaded by a guest <webview> to avoid affecting
       // the host renderer or unrelated BrowserViews. `getType()` returns
@@ -176,9 +200,9 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
         return;
       }
 
-      callback({
-        responseHeaders: mergeCspHeaders(details.responseHeaders, WEBVIEW_GUEST_CSP),
-      });
+      const responseHeaders = mergeCspHeaders(details.responseHeaders, WEBVIEW_GUEST_CSP);
+      responseHeaders["Permissions-Policy"] = [WEBVIEW_GUEST_PERMISSIONS_POLICY];
+      callback({ responseHeaders });
     });
   };
 

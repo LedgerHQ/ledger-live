@@ -2,7 +2,10 @@ import { describe, expect, it } from "@jest/globals";
 import {
   WEBVIEW_GUEST_CSP,
   createLiveAppSchemeChecker,
+  isDeviceCaptureRequest,
   mergeCspHeaders,
+  resolvePermissionCheck,
+  resolvePermissionRequest,
 } from "./webviewHandlers.helpers";
 
 describe("createLiveAppSchemeChecker", () => {
@@ -185,5 +188,95 @@ describe("WEBVIEW_GUEST_CSP", () => {
     expect(directives["frame-src"]).not.toContain("data:");
     expect(directives["child-src"]).not.toContain("data:");
     expect(directives["form-action"]).not.toContain("data:");
+  });
+});
+
+describe("isDeviceCaptureRequest", () => {
+  it("treats an empty mediaTypes list as a non-device capture", () => {
+    // What a chromeMediaSource:"desktop" getUserMedia arrives as (DONJON-1404).
+    expect(isDeviceCaptureRequest([])).toBe(false);
+  });
+
+  it("treats a missing mediaTypes list as a non-device capture", () => {
+    expect(isDeviceCaptureRequest(undefined)).toBe(false);
+  });
+
+  it.each([[["video"]], [["audio"]], [["video", "audio"]]] as Array<[Array<"video" | "audio">]>)(
+    "recognises %j as a device capture",
+    mediaTypes => {
+      expect(isDeviceCaptureRequest(mediaTypes)).toBe(true);
+    },
+  );
+});
+
+describe("resolvePermissionRequest", () => {
+  describe("Live App guests", () => {
+    it("denies whole-desktop capture requested through the media permission", () => {
+      expect(resolvePermissionRequest({ isGuest: true, permission: "media", mediaTypes: [] })).toBe(
+        false,
+      );
+    });
+
+    it("allows the camera, which live apps use for QR scanning and KYC", () => {
+      expect(
+        resolvePermissionRequest({ isGuest: true, permission: "media", mediaTypes: ["video"] }),
+      ).toBe(true);
+    });
+
+    it("denies display-capture outright", () => {
+      expect(resolvePermissionRequest({ isGuest: true, permission: "display-capture" })).toBe(
+        false,
+      );
+    });
+
+    it.each([["geolocation"], ["notifications"], ["midi"], ["openExternal"], ["unknown"]])(
+      "denies %s",
+      permission => {
+        expect(resolvePermissionRequest({ isGuest: true, permission })).toBe(false);
+      },
+    );
+
+    it.each([["fullscreen"], ["clipboard-sanitized-write"]])("allows %s", permission => {
+      expect(resolvePermissionRequest({ isGuest: true, permission })).toBe(true);
+    });
+  });
+
+  describe("host renderer", () => {
+    it("allows the camera for the Send flow QR scanner", () => {
+      expect(
+        resolvePermissionRequest({ isGuest: false, permission: "media", mediaTypes: ["video"] }),
+      ).toBe(true);
+    });
+
+    it("denies desktop capture even to the host, which never needs it", () => {
+      expect(
+        resolvePermissionRequest({ isGuest: false, permission: "media", mediaTypes: [] }),
+      ).toBe(false);
+    });
+
+    it("denies geolocation", () => {
+      expect(resolvePermissionRequest({ isGuest: false, permission: "geolocation" })).toBe(false);
+    });
+  });
+});
+
+describe("resolvePermissionCheck", () => {
+  // Chromium only falls through to the request handler when the check denies, so
+  // a `media` check that returned true would skip the capture discriminator.
+  it.each([[true], [false]])("denies media for isGuest=%s so the request handler runs", isGuest => {
+    expect(resolvePermissionCheck({ isGuest, permission: "media" })).toBe(false);
+  });
+
+  it("keeps hid available to the host renderer", () => {
+    expect(resolvePermissionCheck({ isGuest: false, permission: "hid" })).toBe(true);
+  });
+
+  it("denies hid to a guest", () => {
+    expect(resolvePermissionCheck({ isGuest: true, permission: "hid" })).toBe(false);
+  });
+
+  it("denies everything else for the host, as before DONJON-1404", () => {
+    expect(resolvePermissionCheck({ isGuest: false, permission: "geolocation" })).toBe(false);
+    expect(resolvePermissionCheck({ isGuest: false, permission: "fullscreen" })).toBe(false);
   });
 });

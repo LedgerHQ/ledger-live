@@ -1,4 +1,4 @@
-import { BrowserWindow, screen, app, WebPreferences } from "electron";
+import { BrowserWindow, screen, app, webContents, WebPreferences } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL, pathToFileURL } from "url";
@@ -173,8 +173,19 @@ export function createEarlyMainWindow() {
 function setupMainWindowHandlers() {
   if (!mainWindow) return;
 
+  // Live App guests share this session, so a device must never be selected for
+  // one (DONJON-1404).
   mainWindow.webContents.session.on("select-hid-device", (event, details, callback) => {
     event.preventDefault();
+
+    const requestingContents = details.frame ? webContents.fromFrame(details.frame) : null;
+    const isHostRequest = !!requestingContents && requestingContents.getType() !== "webview";
+    if (!isHostRequest) {
+      console.warn("Ignoring HID device selection not attributable to the host renderer.");
+      callback(null);
+      return;
+    }
+
     const ledgerDevices = details.deviceList.filter(
       device => device.vendorId === ledgerUSBVendorId,
     );
@@ -185,13 +196,11 @@ function setupMainWindowHandlers() {
     }
   });
 
-  mainWindow.webContents.session.setPermissionCheckHandler((_, permission) => {
-    if (permission === "hid") return true;
-    return false;
-  });
-
+  // Not scoped to an origin: `details` carries no WebContents and the packaged
+  // renderer's `file:` origin string is unconfirmed. Guests are already stopped by
+  // the `hid` permission check and by the guard above.
   mainWindow.webContents.session.setDevicePermissionHandler(details => {
-    if (details.deviceType === "hid" && details.device.vendorId === 0x2c97) {
+    if (details.deviceType === "hid" && details.device.vendorId === ledgerUSBVendorId) {
       return true;
     }
     return false;
