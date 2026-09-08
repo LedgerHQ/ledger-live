@@ -26,5 +26,6 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
 
 export default {
   stakingSupported: true,
+  usesStakingPositions: true,
   computeIntentType,
 } satisfies BridgeApi;
