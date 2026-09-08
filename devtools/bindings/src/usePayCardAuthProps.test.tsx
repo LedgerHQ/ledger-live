@@ -126,6 +126,7 @@ describe("usePayCardAuthProps", () => {
 
   describe("the secure storage actions", () => {
     it("should say the tokens came from the keychain", async () => {
+      mockedGet.mockResolvedValue(SESSION);
       const { result } = await renderSettledAuth();
 
       const lastResult = await runAndReadResult(() => result.current.readTokens(), result);
@@ -134,6 +135,26 @@ describe("usePayCardAuthProps", () => {
         id: 1,
         message: "get auth tokens → read from the keychain",
         failed: false,
+      });
+    });
+
+    it("should not claim a read when the keychain holds no session", async () => {
+      const { result } = await renderSettledAuth();
+
+      const lastResult = await runAndReadResult(() => result.current.readTokens(), result);
+
+      expect(lastResult).toMatchObject({ message: "get auth tokens → no session", failed: false });
+    });
+
+    it("should report a read the secure store refused, and not a success", async () => {
+      mockedGet.mockRejectedValue(new Error("the keychain is locked"));
+      const { result } = await renderSettledAuth();
+
+      const lastResult = await runAndReadResult(() => result.current.readTokens(), result);
+
+      expect(lastResult).toMatchObject({
+        message: "get auth tokens failed: the keychain is locked",
+        failed: true,
       });
     });
 

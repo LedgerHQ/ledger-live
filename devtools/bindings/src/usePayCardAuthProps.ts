@@ -128,7 +128,10 @@ export function usePayCardAuthProps(options: UsePayCardAuthPropsOptions = {}): P
   }, [readSession]);
 
   const readTokens = useCallback(() => {
-    run("get auth tokens", async () => "read from the keychain");
+    run("get auth tokens", async () => {
+      const current = await cardSession.get();
+      return current ? "read from the keychain" : "no session";
+    });
   }, [run]);
 
   const renewNow = useCallback(() => {

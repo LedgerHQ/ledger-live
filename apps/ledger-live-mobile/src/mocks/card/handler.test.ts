@@ -13,19 +13,13 @@ const REAL_TOKEN = "Bearer at_from_baanx";
 
 const PASSTHROUGH_STATUS = 302;
 
-function handlerFor(url: string): HttpHandler {
-  const match = (handlers as HttpHandler[]).find(candidate =>
-    url.endsWith(String(candidate.info.path).replace("*", "")),
-  );
-  if (!match) throw new Error(`no handler registered for ${url}`);
-  return match;
-}
-
 async function callHandler(url: string, init?: RequestInit): Promise<Response> {
   const request = new Request(url, init);
-  const result = await handlerFor(url).run({ request, requestId: "test-request" });
-  if (!result?.response) throw new Error(`the handler for ${url} answered nothing`);
-  return result.response;
+  for (const handler of handlers as HttpHandler[]) {
+    const result = await handler.run({ request, requestId: "test-request" });
+    if (result?.response) return result.response;
+  }
+  throw new Error(`no handler answered ${url}`);
 }
 
 function isPassthrough(response: Response): boolean {
