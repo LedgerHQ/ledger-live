@@ -1,11 +1,11 @@
 import fs from "fs";
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
-import { buildTags } from "tests/utils/tagsUtils";
+import {
+  zcashPrivateBalanceTestUse,
+  zcashPrivateBalanceTestOptions,
+  openZcashAccountUnderTest,
+} from "tests/utils/zcashPrivateBalanceUtils";
 
 // Enabling private balance (UFVK export) and then opening Receive in the SAME
 // device session reproduces a device-reconnect bug: the Zcash DMK signer-kit
@@ -58,33 +58,13 @@ const accounts = [
 
 for (const account of accounts) {
   test.describe("Receive private address", () => {
-    test.use({
-      teamOwner: Team.BST,
-      userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: account.account.currency.speculosApp,
-      cliCommands: [liveDataCommand(account.account), seedZcashPrivateInfo(account.account)],
-      featureFlags: {
-        zcashShielded: {
-          enabled: true,
-        },
-      },
-    });
+    test.use(zcashPrivateBalanceTestUse(account.account, [seedZcashPrivateInfo(account.account)]));
 
     test(
       `[${account.account.currency.testLabel}] - Verify private address displayed`,
-      {
-        tag: buildTags({ currencyId: account.account.currency.id }),
-        annotation: {
-          type: "TMS",
-          description: account.xrayTicket,
-        },
-      },
+      zcashPrivateBalanceTestOptions(account.account, account.xrayTicket),
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(account.account.accountName);
-        await app.account.expectAccountVisibility(account.account.accountName);
-
+        await openZcashAccountUnderTest(app, account.account);
         await app.account.clickReceive();
         await app.receive.continue();
         // Proves the UI renders the private address block from the persisted
