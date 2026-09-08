@@ -26,7 +26,6 @@ import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
 import MODAL_CONFIRM from "./ConfirmModal";
 import MODAL_ERROR from "./ErrorModal";
-import MODAL_VAULT_SIGNER from "./VaultSigner";
 import MODAL_WALLET_SYNC_DEBUGGER from "./WalletSyncDebugger";
 import MODAL_BRAZE_TOOLS from "../screens/settings/sections/Developer/BrazeTools/Modal";
 
@@ -61,9 +60,6 @@ const globalModals: GlobalModals = {
   MODAL_PLATFORM_EXCHANGE_START,
   MODAL_PLATFORM_EXCHANGE_COMPLETE,
   MODAL_CONNECT_DEVICE,
-
-  // Vault,
-  MODAL_VAULT_SIGNER,
 
   // NB We have dettached modals such as the repair modal,
   // in the meantime, we can rely on this to add the backdrop
