@@ -3,7 +3,7 @@ import invariant from "invariant";
 import { TronCoinConfig } from "@ledgerhq/coin-tron/config";
 import { ONE_TRX } from "@ledgerhq/coin-tron/logic/constants";
 import { accountNamesCache, getTronSuperRepresentatives } from "@ledgerhq/coin-tron/network";
-import type { SuperRepresentative, TronAccount, Vote } from "@ledgerhq/coin-tron/types/index";
+import type { SuperRepresentative, TronAccount, Vote } from "./types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useBridgeSync } from "../../bridge/react";
 import { getCurrencyConfiguration } from "../../config";

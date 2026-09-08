@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-name",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "AccountName entity: naming utilities, account-names store, and wallet-sync module",
   "main": "src/index.ts",
@@ -20,6 +20,7 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-name"
   },
   "dependencies": {
+    "@domain/entity-account": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "@shared/cloud-sync-module": "workspace:^",
     "immer": "^11.0.0",

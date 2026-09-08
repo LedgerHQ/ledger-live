@@ -3,7 +3,8 @@ import { fetchTronAccount } from "@ledgerhq/coin-tron/network";
 import { defaultTronResources, fetchTronResources } from "@ledgerhq/coin-tron/resources";
 import { RESOURCE_STAKING_OPERATION_TYPES, SUPPORTED_MODES } from "@ledgerhq/coin-tron/logic/modes";
 import type { TronCoinConfig } from "@ledgerhq/coin-tron/config";
-import type { TronAccount, TronTxData } from "@ledgerhq/coin-tron/types/index";
+import type { TronAccount, Transaction } from "../types";
+import type { TronTxData } from "@ledgerhq/coin-tron/types/assets";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type {
   BridgeApi,
@@ -15,7 +16,6 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { BigNumber } from "bignumber.js";
 import { getCurrencyConfiguration } from "../../../config";
-import type { Transaction } from "../types";
 
 /**
  * Attaches `tronResources` (frozen/unfrozen amounts, votes, unwithdrawn reward) to the account

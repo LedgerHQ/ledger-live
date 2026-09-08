@@ -38,14 +38,14 @@ function renderViewModel(params?: PayTabNavigatorParamList[typeof ScreenName.Pay
 
 describe("usePayTabViewModel", () => {
   afterEach(() => {
-    setEnv("CARD_API_URL", getEnvDefault("CARD_API_URL"));
+    setEnv("CARD_BAANX_API_URL", getEnvDefault("CARD_BAANX_API_URL"));
     setEnv("CARD_BAANX_CLIENT_KEY", getEnvDefault("CARD_BAANX_CLIENT_KEY"));
   });
 
   it("should expose the OAuth client configuration", () => {
     renderViewModel();
 
-    expect(screen.getByTestId("oauth-api-url")).toHaveTextContent(getEnv("CARD_API_URL"));
+    expect(screen.getByTestId("oauth-api-url")).toHaveTextContent(getEnv("CARD_BAANX_API_URL"));
     expect(screen.getByTestId("oauth-client-id")).toHaveTextContent(
       getEnv("CARD_BAANX_CLIENT_KEY"),
     );
@@ -60,7 +60,7 @@ describe("usePayTabViewModel", () => {
     renderViewModel();
 
     act(() => {
-      setEnv("CARD_API_URL", "https://card.staging.test");
+      setEnv("CARD_BAANX_API_URL", "https://card.staging.test");
       setEnv("CARD_BAANX_CLIENT_KEY", "staging-client-key");
     });
 

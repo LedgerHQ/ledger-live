@@ -4,7 +4,7 @@ import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
-import { render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { render, renderWithReactQuery, screen, withFlagOverrides } from "@tests/test-renderer";
 import { server, http, HttpResponse, delay } from "@tests/server";
 import { mockData } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stablecoins";
@@ -21,6 +21,7 @@ import type { Contact } from "@domain/entity-contact";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import PayTabNavigator from "LLM/features/PayTab";
 import { PayTabRequestReceiveScreen } from "LLM/features/PayTab/screens/RequestReceive";
+import SendWorkflow from "LLM/features/Send";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
 
@@ -64,7 +65,7 @@ type TestStackParamList = {
   [NavigatorName.MyWallet]:
     | {
         screen: typeof ScreenName.MyWalletContacts;
-        params?: { title?: string; selectContactToPay?: boolean };
+        params?: { title?: string };
       }
     | {
         screen: typeof ScreenName.MyWalletContactDetail;
@@ -75,6 +76,15 @@ type TestStackParamList = {
     | {
         screen: ScreenName.SendCoin;
         params?: { currencyIds?: string[] };
+      }
+    | undefined;
+  [NavigatorName.SendFlow]:
+    | {
+        params?: {
+          account?: { id: string };
+          recipient?: string;
+          skipRecipientStep?: boolean;
+        };
       }
     | undefined;
 };
@@ -99,10 +109,6 @@ function MyWalletContactsScreen({
   const params = route.params?.params;
   const detail = params && "contactId" in params ? params.contactId : undefined;
   const title = params && "title" in params ? params.title : undefined;
-  const selectContactToPay =
-    params && "selectContactToPay" in params && params.selectContactToPay
-      ? "selectContactToPay"
-      : undefined;
 
   return (
     <Text
@@ -112,7 +118,7 @@ function MyWalletContactsScreen({
           : "my-wallet-contacts-screen"
       }
     >
-      {[screenName, title ?? detail, selectContactToPay].filter(Boolean).join(":")}
+      {[screenName, title ?? detail].filter(Boolean).join(":")}
     </Text>
   );
 }
@@ -238,13 +244,14 @@ export function renderPayTab({
   contacts,
   contactsEnabled = false,
 }: RenderPayTabOptions = {}) {
-  return render(
+  return renderWithReactQuery(
     <>
       <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
         <Stack.Screen name="PayTabTest" component={PayTabNavigator} />
         <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsScreen} />
         <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletContactsScreen} />
         <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsScreen} />
+        <Stack.Screen name={NavigatorName.SendFlow} component={SendWorkflow} />
       </Stack.Navigator>
       <ModularDrawerWrapper />
     </>,
@@ -254,6 +261,10 @@ export function renderPayTab({
           llmModularDrawer: {
             enabled: true,
             params: { enableModularization: true, searchDebounceTime: 0 },
+          },
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["evm"], excludedCurrencyIds: [] },
           },
           ...(contactsEnabled
             ? { lwmContacts: { enabled: true, params: { newBadge: false } } }

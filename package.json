@@ -327,6 +327,11 @@
       "@hiero-ledger/proto@2.25.0": "patches/@hiero-ledger__proto@2.25.0.patch"
     },
     "packageExtensions": {
+      "@ledgerhq/device-transport-kit-mockserver": {
+        "dependencies": {
+          "@ledgerhq/device-mockserver-client": "1.3.0"
+        }
+      },
       "detox-allure2-adapter": {
         "dependencies": {
           "tslib": "*"

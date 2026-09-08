@@ -4,6 +4,8 @@
  * Also stores WebView load errors when the live app fails to load (for debugging).
  */
 
+import { shouldKeepNetworkLog } from "./appNetworkLogStore";
+
 export interface WebviewNetworkLog {
   timestamp: string;
   method: string;
@@ -36,6 +38,7 @@ const loadErrors: WebviewLoadError[] = [];
 
 export const webviewLogStore = {
   addNetworkLog(entry: WebviewNetworkLog) {
+    if (!shouldKeepNetworkLog(entry)) return;
     networkLogs.unshift(entry);
     while (networkLogs.length > MAX_NETWORK_LOGS) {
       networkLogs.pop();

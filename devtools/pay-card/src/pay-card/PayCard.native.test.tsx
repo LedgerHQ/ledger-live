@@ -22,7 +22,16 @@ function buildProps(): PayCardToolProps {
       ],
       setStepDone: jest.fn(),
     },
-    interaction: { probes: [] },
+    interaction: {
+      probes: [],
+      details: {
+        imageUrl: undefined,
+        isFetching: false,
+        error: undefined,
+        request: jest.fn(),
+        clear: jest.fn(),
+      },
+    },
     balance: {
       baanxWallets: [],
       linkedWallets: [],
@@ -38,17 +47,6 @@ function buildProps(): PayCardToolProps {
     resetReceiveVerifyHintSeen: jest.fn(),
     hasCompletedCardOnboarding: false,
     resetCardOnboarding: jest.fn(),
-    env: {
-      vars: [
-        {
-          key: "CARD_API_URL",
-          value: "https://card.api.live.ledger.com",
-          suggestedValue: "https://dev.api.baanx.com",
-        },
-        { key: "CARD_BAANX_CLIENT_KEY", value: "", suggestedValue: "dev-client-key" },
-      ],
-      setVar: jest.fn(),
-    },
   };
 }
 
@@ -106,44 +104,6 @@ describe("PayCard (native)", () => {
     expect(onNavigateToPayTab).toHaveBeenCalledTimes(1);
   });
 
-  it("shows both Card env vars, and the value the app reads now", () => {
-    render(<PayCard {...buildProps()} />);
-
-    expect(screen.getByText("Env vars")).toBeTruthy();
-    expect(screen.getByText("CARD_API_URL=https://card.api.live.ledger.com")).toBeTruthy();
-    // An empty client key must read as empty, and not as a missing row.
-    expect(screen.getByText("CARD_BAANX_CLIENT_KEY=(empty)")).toBeTruthy();
-  });
-
-  it("fills each input with the suggested value, so one press changes the tenant", async () => {
-    const user = userEvent.setup();
-    const props = buildProps();
-    render(<PayCard {...props} />);
-
-    expect(screen.getByTestId("pay-card-env-input-CARD_API_URL").props.value).toBe(
-      "https://dev.api.baanx.com",
-    );
-
-    await user.press(screen.getAllByText("Set")[0]!);
-    expect(props.env.setVar).toHaveBeenCalledWith("CARD_API_URL", "https://dev.api.baanx.com");
-  });
-
-  it("sets what the tester typed", async () => {
-    const user = userEvent.setup();
-    const props = buildProps();
-    render(<PayCard {...props} />);
-
-    const input = screen.getByTestId("pay-card-env-input-CARD_API_URL");
-    await user.clear(input);
-    await user.type(input, "https://card.api.live.ledger.com");
-    await user.press(screen.getAllByText("Set")[0]!);
-
-    expect(props.env.setVar).toHaveBeenCalledWith(
-      "CARD_API_URL",
-      "https://card.api.live.ledger.com",
-    );
-  });
-
   it("hides the secure browser section on a host that has no browser", () => {
     render(<PayCard {...buildProps()} />);
     expect(screen.queryByText("Secure browser")).toBeNull();
@@ -162,6 +122,7 @@ describe("PayCard (native)", () => {
       <PayCard
         {...props}
         interaction={{
+          ...props.interaction,
           probes: [
             {
               id: "card-status",
@@ -190,10 +151,12 @@ describe("PayCard (native)", () => {
 
   it("shows what a probe came back with", async () => {
     const user = userEvent.setup();
+    const props = buildProps();
     render(
       <PayCard
-        {...buildProps()}
+        {...props}
         interaction={{
+          ...props.interaction,
           probes: [
             {
               id: "card-status",
@@ -382,6 +345,65 @@ describe("PayCard (native)", () => {
     await user.press(screen.getByLabelText("Refresh"));
 
     expect(refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it("stands in for the card details until asked, then shows the image", async () => {
+    const user = userEvent.setup();
+    const request = jest.fn();
+    const props = buildProps();
+    const { rerender } = render(
+      <PayCard
+        {...props}
+        interaction={{ ...props.interaction, details: { ...props.interaction.details, request } }}
+      />,
+    );
+
+    await user.press(screen.getByText("Card interaction"));
+    await user.press(screen.getByLabelText("Request Card Details"));
+    // The colours are baked into the image, so they go out with the request. The stubbed theme
+    // reports no scheme, which is the light branch.
+    expect(request).toHaveBeenCalledWith({
+      cardBackgroundColor: "#f1f1f1",
+      cardTextColor: "#000000",
+      panBackgroundColor: "#ffffff",
+      panTextColor: "#000000",
+    });
+
+    rerender(
+      <PayCard
+        {...props}
+        interaction={{
+          ...props.interaction,
+          details: {
+            ...props.interaction.details,
+            imageUrl: "https://card.test/details-image?token=x",
+          },
+        }}
+      />,
+    );
+
+    // The placeholder gives way to the image, and the url is never shown as text.
+    expect(screen.queryByText("Request Card Details")).toBeNull();
+    expect(screen.getByLabelText("Card details")).toBeTruthy();
+    expect(screen.queryByText("https://card.test/details-image?token=x")).toBeNull();
+  });
+
+  it("drops the minted url on the way back, so returning asks for a fresh one", async () => {
+    const user = userEvent.setup();
+    const clear = jest.fn();
+    const props = buildProps();
+    render(
+      <PayCard
+        {...props}
+        interaction={{ ...props.interaction, details: { ...props.interaction.details, clear } }}
+      />,
+    );
+
+    await user.press(screen.getByText("Card interaction"));
+    await user.press(screen.getByText("Back"));
+
+    expect(clear).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Feature flags")).toBeTruthy();
   });
 
   it("wires onboarding actions", async () => {

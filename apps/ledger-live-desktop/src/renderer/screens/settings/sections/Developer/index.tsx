@@ -16,6 +16,7 @@ import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import CoinConfigSettings from "./CoinConfigSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import EnableCountervaluesStagingToggle from "./EnableCountervaluesStagingToggle";
+import EnableMockServerTransportToggle from "./EnableMockServerTransportToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
@@ -127,6 +128,12 @@ const Default = () => {
         desc={t("settings.developer.enableCountervaluesStagingDesc")}
       >
         <EnableCountervaluesStagingToggle />
+      </Row>
+      <Row
+        title={t("settings.developer.enableMockServerTransport")}
+        desc={t("settings.developer.enableMockServerTransportDesc")}
+      >
+        <EnableMockServerTransportToggle />
       </Row>
       <RecoverUpsellRow />
 

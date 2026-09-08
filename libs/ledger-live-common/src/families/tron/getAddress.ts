@@ -1,7 +1,7 @@
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { TronSigner } from "@ledgerhq/coin-tron/types/index";
+import type { TronSigner } from "./types";
 
 const getAddress = (signerContext: SignerContext<TronSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {

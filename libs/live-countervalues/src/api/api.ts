@@ -118,14 +118,6 @@ const api: CounterValuesAPI = {
 
     return data;
   },
-
-  fetchIdsSortedByMarketcap: async () => {
-    const { data } = await network<string[]>({
-      method: "GET",
-      url: `${baseURL()}/v3/supported/crypto`,
-    });
-    return data;
-  },
 };
 
 export default api;

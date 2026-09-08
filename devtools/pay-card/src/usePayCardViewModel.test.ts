@@ -26,7 +26,17 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
       setStepDone: jest.fn(),
       ...overrides.onboarding,
     },
-    interaction: { probes: [], ...overrides.interaction },
+    interaction: {
+      probes: [],
+      details: {
+        imageUrl: undefined,
+        isFetching: false,
+        error: undefined,
+        request: jest.fn(),
+        clear: jest.fn(),
+      },
+      ...overrides.interaction,
+    },
     balance: {
       baanxWallets: [],
       linkedWallets: [],
@@ -43,7 +53,6 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
     resetReceiveVerifyHintSeen: overrides.resetReceiveVerifyHintSeen ?? jest.fn(),
     hasCompletedCardOnboarding: overrides.hasCompletedCardOnboarding ?? false,
     resetCardOnboarding: overrides.resetCardOnboarding ?? jest.fn(),
-    env: overrides.env ?? { vars: [], setVar: jest.fn() },
   };
 }
 

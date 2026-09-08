@@ -273,6 +273,22 @@ describe("Send flow integration tests", () => {
     expect(screen.queryByPlaceholderText("Enter address, ENS or contact")).not.toBeVisible();
   });
 
+  it("should pop back to the recipient under amount instead of stacking another recipient", async () => {
+    const { user } = renderForAccount(accountEthereum);
+
+    await driveToAmount(user, { recipient: VALID_ETHEREUM_RECIPIENT });
+
+    expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+    expect(screen.getByLabelText("Back")).toBeVisible();
+
+    await user.press(screen.getByLabelText("Edit recipient"));
+
+    expect(await screen.findByDisplayValue(VALID_ETHEREUM_RECIPIENT)).toBeVisible();
+    expect(screen.getByTestId("recipient-input")).toBeVisible();
+    expect(screen.queryByLabelText("Edit recipient")).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText("Back")).not.toBeOnTheScreen();
+  });
+
   it("should show a truncated address on amount when the recipient is not a contact", async () => {
     const { user } = renderForAccount(
       accountEthereum,
@@ -444,6 +460,34 @@ describe("Send flow integration tests", () => {
     await user.press(screen.getByLabelText("Ethereum Main, " + VALID_ETHEREUM_RECIPIENT));
 
     expect(await screen.findByText("Review")).toBeVisible();
+  });
+
+  it("should keep the send title when the address sheet is open", async () => {
+    const vincent = mockContact({
+      id: "contact-vincent-header",
+      name: "Vincent",
+      addresses: [
+        mockContactAddress({
+          id: "address-vincent-header-eth",
+          currencyId: "ethereum",
+          label: "Ethereum Main",
+          address: VALID_ETHEREUM_RECIPIENT,
+        }),
+      ],
+    });
+    const { user } = renderForAccount(
+      accountEthereum,
+      {},
+      { contactsEnabled: true, contacts: [vincent] },
+    );
+
+    expect(await screen.findByText("Send ETH")).toBeVisible();
+
+    await user.press(screen.getByTestId("contacts-compact-row-contact-vincent-header"));
+
+    expect(await screen.findByText("Select Vincent's address")).toBeVisible();
+    expect(screen.getByText("Send ETH")).toBeVisible();
+    expect(screen.queryByText("Select address")).not.toBeOnTheScreen();
   });
 
   it("should open the address sheet when a contact has several network addresses", async () => {

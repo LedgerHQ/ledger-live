@@ -2,9 +2,8 @@
 
 The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place.
 
-The shared panel has five sections: **Feature flags**, **Onboarding** (toggle each step done or
-not-done), **Reset onboarding**, **Feature tour** (seen state plus a reset) and **Env vars** (the
-Card backend values, with the development tenant ready in each input).
+The shared panel has four sections: **Feature flags**, **Onboarding** (toggle each step done or
+not-done), **Reset onboarding** and **Feature tour** (seen state plus a reset).
 
 The native panel adds **Request verify hint** (seen state plus a reset) and, when the host supplies
 navigation, **Quick actions** (Portfolio / Pay tab). It also adds a **Secure browser** section: a
@@ -29,8 +28,7 @@ import PayCard, { type PayCardToolProps } from "@devtools/pay-card";
 
 - `PayCard` (default export) — the React component rendered by the shell.
 - `PayCardToolProps` — the props contract the host (via bindings) must satisfy, with its parts
-  `PayCardFlagsProps`, `PayCardOnboardingProps`, `OnboardingStep`, `PayCardEnvProps` and
-  `PayCardEnvVar`.
+  `PayCardFlagsProps`, `PayCardOnboardingProps` and `OnboardingStep`.
 - `usePayCardViewModel` / `PayCardViewModel` — onboarding progress derived from those props, plus
   `toggleStep` and `setAllSteps`.
 - `formatId` — turns a step id into a label: `"kyc-check"` → `"Kyc check"`.
@@ -62,18 +60,6 @@ interface PayCardToolProps {
   resetReceiveVerifyHintSeen: () => void;
   onNavigateToPortfolio?: () => void;
   onNavigateToPayTab?: () => void;
-  env: {
-    // The app reads these values on every request, so `setVar` applies without a restart. Nothing
-    // saves them: after a restart the app reads the build's values again.
-    vars: readonly {
-      key: string;
-      // The value the app reads right now.
-      value: string;
-      // What the input starts with, so one press is enough to change the tenant.
-      suggestedValue: string;
-    }[];
-    setVar: (key: string, value: string) => void;
-  };
   // Native only, and optional: absent on a host that does not build the Card session controls,
   // which hides the four auth sections. `PayCardAuthProps` in `src/types.ts` gives the full shape:
   // the session, the action handlers and the mock controls.

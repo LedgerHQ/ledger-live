@@ -5,7 +5,7 @@
 
 RTK slice and WalletSync module for user-defined account names.
 
-State shape: `accountNames: Map<string, string>` (accountId → name). Exports `accountNamesSlice`, actions (`setAccountName`, `bulkSetAccountNames`, `setNamesForAccounts`, `initFromUserData`), selectors (`accountNameSelector`, `accountNameWithDefaultSelector`) and `accountNamesSyncModule` — a `CloudSyncDataManager` that syncs account names across devices via `@shared/cloud-sync-module`.
+State shape: `accountNames: Map<AnyAccountId, string>` (accountId → name; keys are branded ids from `@domain/entity-account`, not plain strings). Exports `accountNamesSlice`, actions (`setAccountName`, `bulkSetAccountNames`, `setNamesForAccounts`, `initFromUserData`), selectors (`accountNameSelector`, `accountNameWithDefaultSelector`) and `accountNamesSyncModule` — a `CloudSyncDataManager` that syncs account names across devices via `@shared/cloud-sync-module`.
 
 ## Related documentation
 

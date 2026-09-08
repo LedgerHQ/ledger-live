@@ -10209,7 +10209,12 @@
       }
     },
     "card": {
-      "title": "Crypto card"
+      "title": "Crypto card",
+      "freeze": "Freeze",
+      "unfreeze": "Unfreeze"
+    },
+    "selectContact": {
+      "placeholder": "Enter contact"
     },
     "actions": {
       "deposit": "Add stablecoin",

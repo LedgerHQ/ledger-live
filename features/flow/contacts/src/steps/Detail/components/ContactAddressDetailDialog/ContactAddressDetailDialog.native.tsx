@@ -36,15 +36,14 @@ export function ContactAddressDetailDialog({
       {hasSelection && row !== undefined && network !== undefined ? (
         <>
           <BottomSheetHeader title={contactName} />
-          <Box
-            testID="contacts-address-detail-dialog"
-            lx={{ paddingHorizontal: "s24", alignItems: "center" }}
-          >
-            <ContactAddressDetailSummary
-              row={row}
-              network={network}
-              formatNetworkTag={labels.formatNetworkTag}
-            />
+          <Box testID="contacts-address-detail-dialog" lx={{ alignItems: "center" }}>
+            <Box lx={{ paddingHorizontal: "s24" }}>
+              <ContactAddressDetailSummary
+                row={row}
+                network={network}
+                formatNetworkTag={labels.formatNetworkTag}
+              />
+            </Box>
             <ContactAddressDetailActions
               labels={labels}
               hasCopied={hasCopied}

@@ -242,7 +242,7 @@ function CountervaluesProviders({
       setState: () => {},
       setStateError: () => {},
       setStatePending: () => {},
-      useMarketcapIds: () => [],
+      useSupportedCryptoIds: () => [],
       usePollingIsPolling: () => false,
       usePollingTriggerLoad: () => false,
       useState: () => state.countervalues.countervalues.state,
