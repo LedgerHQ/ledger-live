@@ -1,55 +1,11 @@
 import { describe, expect, it } from "@jest/globals";
+import { AccountIdSchema, TokenAccountIdSchema, type TokenAccountId } from "./schema";
 import {
-  AccountIdSchema,
-  TokenAccountIdSchema,
   encodeTokenAccountId,
   getParentId,
   parseAnyAccountId,
   safeParseAnyAccountId,
-  type TokenAccountId,
-} from "./account-id";
-
-describe("AccountIdSchema", () => {
-  it("parses a valid account id string", () => {
-    const id = AccountIdSchema.parse("js:2:bitcoin:xpub123:native_segwit");
-    expect(id).toBe("js:2:bitcoin:xpub123:native_segwit");
-  });
-
-  it("rejects an empty string", () => {
-    expect(() => AccountIdSchema.parse("")).toThrow();
-  });
-
-  it("rejects a string containing '+'", () => {
-    expect(() => AccountIdSchema.parse("js:2:ethereum:0xABC:ethm+some-token")).toThrow();
-  });
-});
-
-describe("TokenAccountIdSchema", () => {
-  it("parses a valid token-account id string", () => {
-    const id = TokenAccountIdSchema.parse("js:2:ethereum:0xABC:ethm+ethereum%2Ferc20%2Fusd-tether");
-    expect(id).toBe("js:2:ethereum:0xABC:ethm+ethereum%2Ferc20%2Fusd-tether");
-  });
-
-  it("rejects an empty string", () => {
-    expect(() => TokenAccountIdSchema.parse("")).toThrow();
-  });
-
-  it("rejects a string without '+'", () => {
-    expect(() => TokenAccountIdSchema.parse("js:2:bitcoin:xpub123:native_segwit")).toThrow();
-  });
-
-  it("rejects a string with '+' at the start", () => {
-    expect(() => TokenAccountIdSchema.parse("+some-token")).toThrow();
-  });
-
-  it("rejects a string with '+' at the end", () => {
-    expect(() => TokenAccountIdSchema.parse("js:2:ethereum:0xABC:ethm+")).toThrow();
-  });
-
-  it("rejects a string with multiple '+' characters", () => {
-    expect(() => TokenAccountIdSchema.parse("parent+token+extra")).toThrow();
-  });
-});
+} from "./utils";
 
 describe("encodeTokenAccountId", () => {
   it("joins the parent id and encoded token id with a '+'", () => {

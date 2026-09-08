@@ -9,7 +9,7 @@ The account **identity**: the branded id every `@domain/entity-account-*` packag
 
 - `AccountId` — a top-level account's id. Must not contain `+`.
 - `TokenAccountId` — `<parentAccountId>+<encodedTokenId>`, exactly one `+`.
-- `AnyAccountId` — the union, for the many places that hold either.
+- `AnyAccountId` / `AnyAccountIdSchema` — either kind, for the many places that hold both.
 - `parseAnyAccountId` / `safeParseAnyAccountId` — parse a raw string, throwing or missing.
 - `encodeTokenAccountId` / `getParentId` — move between an account and its token accounts.
 
