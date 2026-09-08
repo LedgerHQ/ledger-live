@@ -41,9 +41,8 @@ export function useAddToExistingContactViewModel() {
       searchPlaceholder: t("contacts.searchPlaceholder"),
       searchNoResults: t("contacts.searchNoResults"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: createMeDisplayNameFormatter(
-        t("contacts.me.myAddresses"),
-        name => t("contacts.detail.meDisplayName", { name }),
+      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
+        t("contacts.detail.meDisplayName", { name }),
       ),
     }),
     [t],

@@ -10632,10 +10632,7 @@
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",
     "me": {
-      "myAddresses": "My addresses",
-      "addressCount_zero": "0 address",
-      "addressCount_one": "{{count}} address",
-      "addressCount_other": "{{count}} addresses"
+      "myAddresses": "My addresses"
     },
     "detail": {
       "meDisplayName": "{{name}} (Me)",

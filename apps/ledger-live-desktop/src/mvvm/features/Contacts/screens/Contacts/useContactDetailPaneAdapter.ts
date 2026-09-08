@@ -103,9 +103,8 @@ export function useContactDetailPaneAdapter(
       emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
       emptyContactDescription: () => t("contacts.detail.emptyState.contactDescription"),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
-      formatMeDisplayName: createMeDisplayNameFormatter(
-        t("contacts.me.myAddresses"),
-        name => t("contacts.detail.meDisplayName", { name }),
+      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
+        t("contacts.detail.meDisplayName", { name }),
       ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
