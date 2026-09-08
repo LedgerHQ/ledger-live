@@ -13,17 +13,17 @@ export function RequestReceiveAddress({ addressParts }: RequestReceiveAddressPro
 
   return (
     <Text
-      typography="body2"
+      typography="body1"
       lx={{ color: "muted", textAlign: "center" }}
       testID="pay-request-receive-address"
     >
-      <Text typography="body2SemiBold" lx={{ color: "base" }}>
+      <Text typography="body1" lx={{ color: "base" }}>
         {start}
       </Text>
       {middleFirstLine}
       {middle ? "\n" : null}
       {middleSecondLine}
-      <Text typography="body2SemiBold" lx={{ color: "base" }}>
+      <Text typography="body1" lx={{ color: "base" }}>
         {end}
       </Text>
     </Text>

@@ -6,9 +6,21 @@ import { createRequestReceiveViewProps, REQUEST_RECEIVE_LABELS } from "./fixture
 const VERIFY_HINT_COPY = "Verify your address on your Ledger device before sharing";
 
 jest.mock("@shared/ui-qr-code", () => ({
-  QrCode: ({ value, testID }: { value: string; testID?: string }) => {
+  QrCode: ({
+    value,
+    testID,
+    foregroundColor,
+  }: {
+    value: string;
+    testID?: string;
+    foregroundColor?: string;
+  }) => {
     const React = require("react");
-    return React.createElement("View", { testID }, React.createElement("Text", null, value));
+    return React.createElement(
+      "View",
+      { testID, foregroundColor },
+      React.createElement("Text", null, value),
+    );
   },
 }));
 
@@ -25,6 +37,10 @@ describe("RequestReceiveView (Native)", () => {
     expect(screen.getByTestId("pay-request-receive-summary")).toBeVisible();
     expect(screen.getByText(REQUEST_RECEIVE_LABELS.title)).toBeVisible();
     expect(screen.getByTestId("pay-request-receive-qr-code")).toBeVisible();
+    expect(screen.getByTestId("pay-request-receive-qr-code")).toHaveProp(
+      "foregroundColor",
+      "#000000",
+    );
     expect(screen.getByTestId("pay-request-receive-address")).toBeVisible();
     expect(screen.getByText(REQUEST_RECEIVE_LABELS.actions.share)).toBeVisible();
     expect(screen.getByText(REQUEST_RECEIVE_LABELS.actions.copy)).toBeVisible();
