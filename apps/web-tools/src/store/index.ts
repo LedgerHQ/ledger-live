@@ -3,6 +3,7 @@ import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/featu
 import { withCopyStoreHydration } from "@devtools/protocols/copyStore";
 import { sleepingListener } from "./sleepingListener";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
+import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { calApiExtra } from "@shared/api-services";
 import { getEnv } from "@shared/env";
 import {
@@ -21,6 +22,7 @@ function trustchainReducer(
 }
 
 const rootReducer = combineReducers({
+  accountBalances: accountBalancesSlice.reducer,
   featureFlags: featureFlagsReducer,
   trustchain: trustchainReducer,
   [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer,
