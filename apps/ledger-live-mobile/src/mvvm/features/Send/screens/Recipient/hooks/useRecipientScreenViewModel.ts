@@ -2,8 +2,11 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { useContacts, useContactsFeature } from "@features/platform-contacts";
-import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
+import {
+  isEligibleAddressCurrency,
+  useContacts,
+  useContactsFeature,
+} from "@features/platform-contacts";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useRef } from "react";

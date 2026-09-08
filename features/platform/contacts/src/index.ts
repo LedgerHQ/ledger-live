@@ -9,6 +9,7 @@ export * from "./contactDeviceIntentsPort";
 export * from "./device/addressBook/toEvmAddressBook";
 export * from "./featureFlags";
 export * from "./utils/resolveEligibleAddressCurrencyIds";
+export * from "./utils/isEligibleAddressCurrency";
 export * from "./components/ContactAvatar";
 export * from "./addressEntry/types";
 export * from "./addressEntry/validation";
