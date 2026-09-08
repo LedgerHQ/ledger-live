@@ -29,12 +29,7 @@ const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({
       ? "MODAL_NO_FUNDS_STAKE"
       : AleoCustomModal.MANAGE;
 
-    dispatch(
-      openModal(modalKey, {
-        account: mainAccount,
-        parentAccount: parentAccount ?? undefined,
-      }),
-    );
+    dispatch(openModal(modalKey, { account: mainAccount }));
   };
 
   return [

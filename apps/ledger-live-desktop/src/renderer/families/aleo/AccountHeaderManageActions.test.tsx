@@ -167,7 +167,7 @@ describe("AccountHeaderManageActions", () => {
 
       expect(store.getState().modals.MODAL_NO_FUNDS_STAKE).toEqual({
         isOpened: true,
-        data: { account: NEW_ALEO_ACCOUNT, parentAccount: undefined },
+        data: { account: NEW_ALEO_ACCOUNT },
       });
       expect(store.getState().modals[AleoCustomModal.MANAGE]?.isOpened).toBeFalsy();
     });
@@ -197,8 +197,10 @@ describe("AccountHeaderManageActions", () => {
     });
 
     // The manage modal drives the bond flow off the main account, so a token account must
-    // not reach it as the `account` — the bond spends native ALEO.
-    it("opens the manage modal on the main account, even from a token account", () => {
+    // not reach it as the `account` — the bond spends native ALEO. And once the account has
+    // been switched, no parent goes with it: forwarding the original would land the same
+    // account in both fields, which NoFundsStake passes on to its receive and buy flows.
+    it("opens the manage modal on the main account alone, even from a token account", () => {
       mockGetAleoCurrencyConfig.mockReturnValue({ ...mockAleoCoinConfig, enableStaking: true });
 
       const { result, store } = renderHook(() =>
@@ -212,7 +214,7 @@ describe("AccountHeaderManageActions", () => {
 
       expect(store.getState().modals[AleoCustomModal.MANAGE]).toEqual({
         isOpened: true,
-        data: { account: ALEO_MAIN_ACCOUNT, parentAccount: ALEO_MAIN_ACCOUNT },
+        data: { account: ALEO_MAIN_ACCOUNT },
       });
     });
   });
