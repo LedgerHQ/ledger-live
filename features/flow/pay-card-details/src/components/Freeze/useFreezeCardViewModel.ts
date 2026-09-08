@@ -4,18 +4,19 @@ import {
   useGetCardStatusQuery,
   useUnfreezeCardMutation,
 } from "@domain/api-card-management";
-import type { FreezeCardViewProps } from "../../types";
+import type { FreezeViewProps } from "../../types";
 
-export function useFreezeCardViewModel(): FreezeCardViewProps {
+export function useFreezeCardViewModel(): FreezeViewProps {
   const { data: cardStatus, isLoading: isStatusLoading } = useGetCardStatusQuery();
-  const [freeze, { isLoading: isFreezeLoading, isError: isFreezeError }] = useFreezeCardMutation();
-  const [unfreeze, { isLoading: isUnfreezeLoading, isError: isUnfreezeError }] =
-    useUnfreezeCardMutation();
+  const [freeze, { isLoading: isFreezeLoading }] = useFreezeCardMutation();
+  const [unfreeze, { isLoading: isUnfreezeLoading }] = useUnfreezeCardMutation();
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const statusFromApi = cardStatus?.status;
   const isFrozen = statusFromApi === "FROZEN";
+  const isBlocked = statusFromApi === "BLOCKED";
+  const isUpdating = isFreezeLoading || isUnfreezeLoading;
 
   const onOpenConfirm = useCallback(() => setIsConfirmOpen(true), []);
   const onCloseConfirm = useCallback(() => setIsConfirmOpen(false), []);
@@ -31,12 +32,8 @@ export function useFreezeCardViewModel(): FreezeCardViewProps {
   return useMemo(
     () => ({
       isFrozen,
-      isBlocked: statusFromApi === "BLOCKED",
-      isStatusLoading,
-      isFreezeLoading,
-      isUnfreezeLoading,
-      isFreezeError,
-      isUnfreezeError,
+      isUpdating,
+      isActionDisabled: isBlocked || isStatusLoading || isUpdating,
       isConfirmOpen,
       onOpenConfirm,
       onCloseConfirm,
@@ -44,12 +41,9 @@ export function useFreezeCardViewModel(): FreezeCardViewProps {
     }),
     [
       isFrozen,
-      statusFromApi,
+      isUpdating,
+      isBlocked,
       isStatusLoading,
-      isFreezeLoading,
-      isUnfreezeLoading,
-      isFreezeError,
-      isUnfreezeError,
       isConfirmOpen,
       onOpenConfirm,
       onCloseConfirm,

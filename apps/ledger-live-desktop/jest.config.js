@@ -62,6 +62,7 @@ const transformIncludePatterns = [
   "ky",
   "@ledgerhq\\+lumen-ui-react",
   "@ledgerhq\\+lumen-design-core",
+  "@ledgerhq\\+lumen-utils-shared",
   "@ledgerhq\\+crypto-icons",
   "@mysten\\+",
   "@scure\\+",

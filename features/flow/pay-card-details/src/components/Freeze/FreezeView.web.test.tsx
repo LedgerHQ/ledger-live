@@ -13,10 +13,8 @@ function renderFreeze(props: Partial<FreezeViewProps> = {}) {
   const view = render(
     <FreezeView
       isFrozen={false}
-      isBlocked={false}
-      isStatusLoading={false}
-      isFreezeLoading={false}
-      isUnfreezeLoading={false}
+      isUpdating={false}
+      isActionDisabled={false}
       isConfirmOpen={false}
       onOpenConfirm={onOpenConfirm}
       onCloseConfirm={onCloseConfirm}
@@ -51,31 +49,26 @@ describe("FreezeView (web)", () => {
     expect(onConfirm).not.toHaveBeenCalled();
   });
 
-  it("keeps the confirmation closed until isConfirmOpen is true", () => {
+  it("hides the confirmation until it is opened", () => {
     renderFreeze();
 
     expect(screen.queryByText(CARD_COPY.freezeTitle)).not.toBeInTheDocument();
   });
 
-  it("shows the unfreeze confirmation when the sheet is open", () => {
+  it("asks to confirm the unfreeze of a frozen card", () => {
     renderFreeze({ isConfirmOpen: true, isFrozen: true });
 
     expect(screen.getByText(CARD_COPY.unfreezeTitle)).toBeVisible();
   });
 
-  it("disables the confirm button while freeze is loading", () => {
-    renderFreeze({ isConfirmOpen: true, isFreezeLoading: true });
+  it("disables the confirm button while the card is updating", () => {
+    renderFreeze({ isConfirmOpen: true, isUpdating: true });
 
     expect(screen.getByRole("button", { name: CARD_COPY.freezeConfirm })).toBeDisabled();
   });
 
-  it.each([
-    ["the card is blocked", { isBlocked: true }],
-    ["card status is loading", { isStatusLoading: true }],
-    ["freeze is loading", { isFreezeLoading: true }],
-    ["unfreeze is loading", { isUnfreezeLoading: true }],
-  ])("disables the tile while %s", (_reason, props) => {
-    renderFreeze(props);
+  it("disables the tile when the action is unavailable", () => {
+    renderFreeze({ isActionDisabled: true });
 
     expect(screen.getByRole("button", { name: CARD_COPY.freeze })).toBeDisabled();
   });
