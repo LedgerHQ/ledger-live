@@ -18,6 +18,7 @@ export const WALLET_40_PARAMS = [
   { key: "earnUpselling", label: "Earn Upselling" },
   { key: "earnSimulator", label: "Earn Simulator" },
   { key: "q2Tour", label: "Q2 Tour" },
+  { key: "q3Tour", label: "Q3 Tour" },
 ] as const;
 
 type WalletFeatureParamKey = (typeof WALLET_40_PARAMS)[number]["key"];
