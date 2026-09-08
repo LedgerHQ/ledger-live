@@ -35,7 +35,9 @@ jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
   track: jest.fn(),
 }));
-
+jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus", () => ({
+  useContactsLedgerSyncStatus: () => "ready",
+}));
 jest.mock("@features/flow-pay-card", () => ({
   Card: () => (
     <>
@@ -605,17 +607,46 @@ describe("PayTab integration", () => {
       expect(store.getState().modularDrawer.isOpen).toBe(false);
     });
 
-    it("should cap the strip at 8 and open the contacts list with a Pay title via see-all", async () => {
-      const { user } = renderPayTab({ contacts: seedContacts(9), contactsEnabled: true });
+    it("should open the address sheet then MAD from see-all", async () => {
+      const yana = mockContactWithAddress({ id: "contact-yana", name: "Yana" });
+      const address = yana.addresses[0];
+      const { user, store } = renderPayTab({
+        contacts: [
+          mockMeContact(),
+          yana,
+          ...Array.from({ length: 8 }, (_, index) =>
+            mockContact({ id: `contact-extra-${index}`, name: `Zed ${index}` }),
+          ),
+        ],
+        contactsEnabled: true,
+      });
+
+      await user.press(await screen.findByTestId("pay-contacts-see-all"));
+      expect(await screen.findByTestId("contacts-screen")).toBeVisible();
+      expect(screen.getByText("Me")).toBeVisible();
+      await user.press(screen.getByTestId(`contacts-saved-contact-${yana.id}`));
+      await user.press(await screen.findByLabelText(`${address.label}, ${address.address}`));
+
+      expect(store.getState().modularDrawer).toMatchObject({
+        isOpen: true,
+        flow: "send",
+        source: "Pay",
+        preselectedCurrencies: [address.currencyId],
+      });
+    });
+
+    it("should cap the strip at 8 and open Pay contact via see-all", async () => {
+      const { user, store } = renderPayTab({ contacts: seedContacts(9), contactsEnabled: true });
 
       expect(await screen.findByRole("button", { name: "New" })).toBeVisible();
       expect(screen.getAllByRole("button", { name: /^Contact / })).toHaveLength(8);
 
       await user.press(screen.getByText("Pay"));
 
-      expect(await screen.findByTestId("my-wallet-contacts-screen")).toHaveTextContent(
-        `${ScreenName.MyWalletContacts}:Pay contact:selectContactToPay`,
-      );
+      expect(await screen.findByTestId("contacts-screen")).toBeVisible();
+      expect(screen.getByText("Me")).toBeVisible();
+      expect(screen.queryByTestId("pay-select-contact")).not.toBeOnTheScreen();
+      expect(store.getState().appstate.isMainNavigatorVisible).toBe(false);
     });
 
     it("should pick a contact address before opening MAD", async () => {

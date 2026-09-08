@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import {
   ListItem,
   ListItemContent,
@@ -13,7 +13,7 @@ import {
   getDisplayedCompactContacts,
 } from "./utils/ContactsCompactList.utils";
 
-export const ContactsCompactRow = memo(function ContactsCompactRow({
+export function ContactsCompactRow({
   contact,
   labels,
   onContactSelect,
@@ -36,7 +36,7 @@ export const ContactsCompactRow = memo(function ContactsCompactRow({
       </ListItemLeading>
     </ListItem>
   );
-});
+}
 
 export function ContactsCompactList({
   contacts,

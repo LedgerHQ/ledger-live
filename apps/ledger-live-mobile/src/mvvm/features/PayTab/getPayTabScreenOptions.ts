@@ -5,6 +5,7 @@ import { ScreenName } from "~/const";
 const PAY_TAB_FULL_SCREEN_ROUTES = new Set<string>([
   ScreenName.PayTabRequestReceive,
   ScreenName.PayTabSelectContact,
+  ScreenName.PayTabPayContact,
 ]);
 
 export function getPayTabScreenOptions({ route }: { route: Route<string> }) {
