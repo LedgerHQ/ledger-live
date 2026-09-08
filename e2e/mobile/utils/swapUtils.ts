@@ -5,6 +5,7 @@ import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import { getEnv } from "@shared/env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "@e2e/utils/speculosUtils";
+import { revokeAllowance } from "@e2e/utils/allowanceUtils";
 
 /**
  * Mirrors swap-live-app's remote-config decimal cap (currently defaults to 8, see
@@ -112,25 +113,5 @@ export async function revokeTokenApproval(
 ) {
   if (!provider.contractAddress || !fromAccount.parentAccount) return;
 
-  let allowance = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
-  if (allowance !== "0") {
-    const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
-    const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
-    await registerSpeculos(speculos.port);
-    try {
-      const result = await revokeTokenCommand(fromAccount, provider.contractAddress);
-      allure.description(`Token revoke result for ${provider.uiName}:\n\n ${result}`);
-    } finally {
-      await deleteSpeculos(speculos.id);
-      if (previousSpeculosPort > 0) {
-        await registerSpeculos(previousSpeculosPort);
-      }
-    }
-    allowance = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
-  }
-  if (allowance !== "0") {
-    throw new Error(
-      `Token allowance revoke did not settle for ${provider.uiName}: expected "0", got "${allowance}"`,
-    );
-  }
+  await revokeAllowance(fromAccount, provider.contractAddress, provider.uiName);
 }
