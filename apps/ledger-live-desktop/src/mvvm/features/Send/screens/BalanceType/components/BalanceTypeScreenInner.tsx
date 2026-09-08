@@ -79,7 +79,7 @@ export function BalanceTypeScreenInner({ viewModel }: Props) {
   };
 
   return (
-    <Box flow={3} data-testid="balance-type-screen">
+    <Box flow={3} className="p-24" data-testid="balance-type-screen">
       <Box horizontal flow={3}>
         <Card
           as="button"

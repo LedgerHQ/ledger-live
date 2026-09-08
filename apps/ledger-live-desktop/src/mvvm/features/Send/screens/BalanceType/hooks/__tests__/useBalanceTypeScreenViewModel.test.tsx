@@ -194,8 +194,21 @@ describe("useBalanceTypeScreenViewModel", () => {
     }
   });
 
-  test("selectedSender defaults to 'public' when tx.sender is undefined", () => {
+  test("selectedSender is null when tx.sender is undefined", () => {
     mockState.transaction.transaction = { id: "tx1", sender: undefined };
+
+    const ref = React.createRef<HookApi>();
+    render(<Harness ref={ref} />);
+
+    const vm = ref.current;
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      expect(vm.selectedSender).toBeNull();
+    }
+  });
+
+  test("selectedSender is 'public' when tx.sender is 'public'", () => {
+    mockState.transaction.transaction = { id: "tx1", sender: "public" };
 
     const ref = React.createRef<HookApi>();
     render(<Harness ref={ref} />);
@@ -258,26 +271,12 @@ describe("useBalanceTypeScreenViewModel", () => {
     expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
   });
 
-  test("useEffect initialises tx.sender to 'public' when undefined", () => {
+  test("does not set tx.sender before the user selects an option", () => {
     mockState.transaction.transaction = { id: "tx1", sender: undefined };
 
     const ref = React.createRef<HookApi>();
     render(<Harness ref={ref} />);
 
-    // The useEffect fires and calls setTransaction initialising sender to "public"
-    expect(mockUpdateTransaction).toHaveBeenCalledWith(expect.objectContaining({ id: "tx1" }), {
-      sender: "public",
-    });
-    expect(mockSetTransaction).toHaveBeenCalled();
-  });
-
-  test("useEffect does not override tx.sender when already set", () => {
-    mockState.transaction.transaction = { id: "tx1", sender: "private" };
-
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
-
-    // useEffect should not call setTransaction since sender is already defined
     expect(mockSetTransaction).not.toHaveBeenCalled();
   });
 });

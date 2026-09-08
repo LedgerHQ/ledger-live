@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import {
   SEND_FLOW_STEP,
   type SendFlowTransactionActions,
@@ -32,7 +32,7 @@ export type BalanceTypeScreenViewModel =
       ready: true;
       account: AccountLike;
       parentAccount: Account | null;
-      selectedSender: BalanceSender;
+      selectedSender: BalanceSender | null;
       transparentOption: BalanceTypeOption;
       shieldedOption: BalanceTypeOption;
       transactionActions: SendFlowTransactionActions;
@@ -50,17 +50,6 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
   // account is guaranteed non-null by the early return below; the hook must be
   // called unconditionally per the Rules of Hooks.
   const bridge = useAccountBridge<ZcashTransaction>(account!);
-
-  // Initialise tx.sender to "public" when undefined, matching the existing
-  // ZcashTransferFromSelector pattern so the Amount step always has a sender set.
-  useEffect(() => {
-    if (!account || !transaction) return;
-    const tx = transaction as unknown as ZcashTransaction;
-    if (tx.sender !== undefined) return;
-    transactionActions.setTransaction(
-      bridge.updateTransaction(tx, { sender: "public" }) as unknown as Transaction,
-    );
-  }, [account, transaction, bridge, transactionActions]);
 
   const onSelect = useCallback(
     (sender: BalanceSender) => {
@@ -80,7 +69,7 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
 
   const zcashAccount = account as ZcashAccount;
   const tx = transaction as unknown as ZcashTransaction;
-  const selectedSender: BalanceSender = tx.sender === "private" ? "private" : "public";
+  const selectedSender: BalanceSender | null = tx.sender ?? null;
 
   const reserved = getReservedNullifiers(zcashAccount);
   const shieldedBalance = getSpendableIronwoodBalance(zcashAccount, reserved);
