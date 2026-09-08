@@ -18,7 +18,12 @@ import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
-import { sendEVM, approveToken, signTypedMessage } from "./families/evm";
+import {
+  sendEVM,
+  approveToken,
+  approveContractTransaction,
+  signTypedMessage,
+} from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -890,6 +895,36 @@ export const activateContractData = withDeviceController(({ getButtonsController
   await buttons.both();
 });
 
+/**
+ * Turns on the Ethereum app's "Blind signing" setting, which arbitrary contract calldata needs:
+ * the app answers `6a80` while it is off, and the review never renders — the borrow flows sign
+ * Morpho calls that carry no clear-signing descriptor, so every one of them stalls without this.
+ *
+ * Speculos NVRAM lives and dies with its container, so this runs once per device, and it reads
+ * the toggle before pressing it rather than blind-toggling an already-enabled setting off again.
+ * Ends back on the app's idle screen, where a review can arrive.
+ *
+ * Verified against Ethereum 1.22.3 on nanos+ 1.6.1, whose menu is
+ * `<app> is ready → App settings → Blind signing → … → Back`.
+ */
+export const enableBlindSigning = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+
+  await pressUntilTextFound(DeviceLabels.APP_SETTINGS);
+  await buttons.both();
+  await waitFor(DeviceLabels.BLIND_SIGNING);
+
+  if (!/Enabled/.test(await fetchCurrentScreenTexts(speculosApiPort))) {
+    await buttons.both();
+  }
+
+  await pressUntilTextFound(DeviceLabels.BACK);
+  await buttons.both();
+  // "Back" lands on the App settings entry of the top-level menu, one step short of idle.
+  await buttons.left();
+});
+
 export const goToSettings = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
 
@@ -1271,4 +1306,42 @@ export const acceptEnableTransactionCheck = withDeviceController(
     },
 );
 
-export { approveToken, signTypedMessage };
+/**
+ * Clears the "Blind signing ahead / To accept risk, press both buttons" warning the Ethereum app
+ * raises for calldata it cannot describe. It only appears once blind signing is *enabled* — with
+ * the setting off the app refuses outright instead — so this is the second half of
+ * [[enableBlindSigning]], and it blocks the review the same way the Transaction Check opt-in does.
+ *
+ * Returns without pressing anything when the warning is not the current screen, so it is safe on
+ * a transaction the app can clear-sign.
+ */
+export const acceptBlindSigningWarning = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      const buttons = getButtonsController();
+      const port = getEnv("SPECULOS_API_PORT");
+      const warningLabel = DeviceLabels.BLIND_SIGNING_AHEAD.toLowerCase();
+      const reviewLabel = DeviceLabels.REVIEW_TRANSACTION.toLowerCase();
+
+      let isWarningDisplayed = false;
+      for (let attempt = 0; attempt < 60; attempt++) {
+        const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
+        if (texts.includes(warningLabel)) {
+          isWarningDisplayed = true;
+          break;
+        }
+        if (texts.includes(reviewLabel)) break;
+        await sleep(500);
+      }
+
+      if (!isWarningDisplayed) return;
+
+      if (isTouchDevice()) {
+        await pressAndRelease(DeviceLabels.CONFIRM);
+        return;
+      }
+      await buttons.both();
+    },
+);
+
+export { approveToken, approveContractTransaction, signTypedMessage };

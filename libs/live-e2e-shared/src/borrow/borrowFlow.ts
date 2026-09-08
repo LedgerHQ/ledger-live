@@ -1,7 +1,13 @@
 import { getEnv, setEnv } from "@shared/env";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { Account } from "../enum/Account";
-import { specs, startSpeculos, stopSpeculos, type SpeculosDevice } from "../speculos";
+import {
+  enableBlindSigning,
+  specs,
+  startSpeculos,
+  stopSpeculos,
+  type SpeculosDevice,
+} from "../speculos";
 import {
   DEFAULT_MARKET_ID,
   ETHEREUM_CHAIN_ID,
@@ -254,6 +260,11 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<string | vo
     // The shared device helpers resolve the device from this env, not from a parameter.
     setEnv("SPECULOS_API_PORT", apiPort);
     process.env.SPECULOS_API_PORT = String(apiPort);
+
+    // Morpho's supply/borrow calldata carries no clear-signing descriptor, so the app answers
+    // 6a80 until this is on. Only for a device we booted: a caller that passed its own port
+    // owns its device's settings.
+    if (ownSpeculos) await enableBlindSigning();
 
     const transport = await DeviceManagementKitTransportSpeculos.open({ apiPort: String(apiPort) });
     const executor = new EvmSpeculosExecutor(transport, {

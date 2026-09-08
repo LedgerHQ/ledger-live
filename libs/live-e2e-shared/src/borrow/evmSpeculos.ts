@@ -6,6 +6,7 @@ import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculo
 import { DmkSignerEth } from "@ledgerhq/live-signer-evm";
 import type { EvmSignature } from "@ledgerhq/live-signer-evm";
 import {
+  acceptBlindSigningWarning,
   acceptEnableTransactionCheck,
   fetchCurrentScreenTexts,
   pressUntilTextFound,
@@ -69,6 +70,9 @@ const approveOnButtonDevice = withDeviceController(
 async function approveOnDevice(apiPort: number): Promise<void> {
   if (process.env.BORROW_MANUAL_APPROVE) return;
   await acceptEnableTransactionCheck();
+  // Enabling blind signing trades the outright refusal for a risk warning in front of the
+  // review; no-ops on calldata the app can describe.
+  await acceptBlindSigningWarning();
   await waitForDeviceReview(apiPort);
   if (isTouchDevice()) return approveOnTouchDevice();
   if (getSpeculosModel() === DeviceModelId.nanoS) {

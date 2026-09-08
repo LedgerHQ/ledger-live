@@ -158,6 +158,32 @@ export async function approveToken() {
   return approveTokenButtonDevice();
 }
 
+/**
+ * Walks an arbitrary contract-call review to the signature.
+ *
+ * Waits on "Review transaction" rather than "Review transaction to": the app names the contract
+ * in the header only when it can describe the calldata, and titles a blind-signed review with
+ * the bare phrase. The shorter string is a prefix of the longer one and the match is a substring
+ * test against the current screen, so this covers both.
+ */
+export const approveContractTransactionButtonDevice = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION, SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS, {
+        matchFullEvents: true,
+      });
+      await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+      await getButtonsController().both();
+    },
+);
+
+export async function approveContractTransaction() {
+  if (isTouchDevice()) {
+    return approveTokenTouchDevices();
+  }
+  return approveContractTransactionButtonDevice();
+}
+
 export async function signTypedMessageTouchDevices() {
   await waitFor(DeviceLabels.REVIEW_TYPED_MESSAGE);
   await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
