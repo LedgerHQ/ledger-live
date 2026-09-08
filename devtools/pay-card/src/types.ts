@@ -152,6 +152,8 @@ export interface PayCardToolProps {
   readonly hasSeenReceiveVerifyHint: boolean;
   /** Resets the Request Verify hint so it shows again on the next Request. */
   readonly resetReceiveVerifyHintSeen: () => void;
+  readonly hasSeenLoginIntro: boolean;
+  readonly resetPayCardLoginIntroSeen: () => void;
   /** Whether the card onboarding widget has been permanently dismissed (all steps done + Got it). */
   readonly hasCompletedCardOnboarding: boolean;
   /** Resets the onboarding completion flag so the widget reappears. */

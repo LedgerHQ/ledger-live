@@ -10,7 +10,7 @@ Cross-platform Pay Card authentication flow for Ledger Wallet.
 ```tsx
 import { CardLogin, CardMore } from "@features/flow-pay-card-auth";
 
-<CardLogin oauthConfig={oauthConfig} callback={callback} />
+<CardLogin oauthConfig={oauthConfig} callback={callback} onTrackEvent={track} />
 <CardMore />;
 ```
 
@@ -74,10 +74,35 @@ wins and the second is ignored.
 Renewal and the desktop redirect are later work (LIVE-34741, LIVE-34740).
 
 App composition and DevTools consume shared Pay Card entity state through
-`@domain/entity-pay-card`. Auth-only runtime state (`hasCard`) lives in this flow's
-`payCardAuth` slice, exposed through `@features/flow-pay-card-auth/state`. Other Pay Card UI state is
-owned by the flow it belongs to: the balance filter by `@features/flow-pay-balance` and the
-feature-tour flag by `@features/flow-pay-feature-tour`.
+`@domain/entity-pay-card`. This flow owns two slices, and both are exposed through
+`@features/flow-pay-card-auth/state`:
+
+| Slice | Holds | Persisted? |
+| --- | --- | --- |
+| `payCardAuth` | `hasCard` and `isSignedIn` | **No.** It is runtime state, so it stays out of every persisted blob. |
+| `payCardLoginIntro` | `hasSeenLoginIntro` | **Yes**, in the shared `payCard` blob, beside the balance filter and the feature-tour flag. |
+
+`hasSeenLoginIntro` says whether the card holder has already seen the login intro sheet. The flag
+goes up only when a login this session started reaches `ready`, so neither a hydrated session nor a
+reset from the Pay Card devtool raises it. Other Pay Card UI state is owned by the flow it belongs
+to: the balance filter by `@features/flow-pay-balance` and the feature-tour flag by
+`@features/flow-pay-feature-tour`.
+
+The flag also picks what the login block says, from the app's `payTab.cardLogin.*` keys. The title
+is `Crypto Card` either way, and on mobile it is a Lumen `Subheader` under the card face — the Pay
+Card flow no longer draws a section title of its own there:
+
+| `hasSeenLoginIntro` | Subtitle | Button | The press |
+| --- | --- | --- | --- |
+| Down | Get 1% cashback every time you spend | `Get card` | Opens the intro sheet |
+| Up | Log in to access your card | `Login` | Starts the login |
+
+One press, one handler: `onLoginPress` reads the flag and either opens the sheet or sends `LOGIN`,
+and the sheet's own buttons send the same `LOGIN` afterwards.
+
+Hosts may pass `onTrackEvent`. The login block fires `button_clicked` for `Get card`, `Login`, the
+intro CTAs and close, and a `Page card login intro` event when the sheet opens. The app injects
+`track`, the same way FeatureTour and BankTransferIntro do.
 
 ## Card API
 
@@ -119,12 +144,15 @@ pay-card-auth/
     ├── components/                         # Components shared by several screens
     │   ├── CardLogin/
     │   │   ├── __tests__/                   # View, opener and ViewModel tests
+    │   │   ├── CardLoginIntroView.native.tsx # Native login intro bottom sheet
+    │   │   ├── CardLoginIntroView.web.tsx   # Web login intro dialog
     │   │   ├── CardLoginView.native.tsx     # Native login UI
     │   │   ├── CardLoginView.web.tsx        # Web login UI
     │   │   ├── index.native.tsx             # Native component container
     │   │   ├── index.web.tsx                # Web component container
     │   │   ├── openHostedLogin.native.ts    # Native secure-browser opener
     │   │   ├── openHostedLogin.web.ts       # Desktop browsing-context opener
+    │   │   ├── payCardLoginIntro.webp       # The login intro hero image
     │   │   ├── types.ts                     # Component contracts
     │   │   └── useCardLoginViewModel.ts     # Shared state and orchestration
     │   └── CardMore/
@@ -156,12 +184,15 @@ pay-card-auth/
     │   ├── crypto.native.ts                # CSPRNG and SHA-256 through expo-crypto
     │   ├── crypto.web.ts                   # CSPRNG and SHA-256 through WebCrypto
     │   ├── errors.ts                       # Error kinds, and the 401 test
+    │   ├── loginIntroSelectors.ts          # Login intro selectors, and its persistence lens
+    │   ├── loginIntroSlice.ts              # The persisted `payCardLoginIntro` flag
     │   ├── machine.ts                      # States, guards and transitions
     │   ├── selectors.ts                    # Auth selectors
     │   ├── slice.ts                        # Auth-only runtime state (`hasCard`, `isSignedIn`)
     │   ├── store.ts                        # Public state subpath
     │   └── types.ts                        # Flow types, ports, machine types, Redux state
     ├── utils/                              # Flow-local helpers
+    ├── assets.d.ts                         # Declares the `*.webp` module
     ├── index.native.ts                     # Native public API
     └── index.ts                            # Default/web public API
 ```

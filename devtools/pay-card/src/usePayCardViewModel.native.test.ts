@@ -52,6 +52,8 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
     resetPayCardFeatureTourSeen: overrides.resetPayCardFeatureTourSeen ?? jest.fn(),
     hasSeenReceiveVerifyHint: overrides.hasSeenReceiveVerifyHint ?? false,
     resetReceiveVerifyHintSeen: overrides.resetReceiveVerifyHintSeen ?? jest.fn(),
+    hasSeenLoginIntro: overrides.hasSeenLoginIntro ?? false,
+    resetPayCardLoginIntroSeen: overrides.resetPayCardLoginIntroSeen ?? jest.fn(),
     hasCompletedCardOnboarding: overrides.hasCompletedCardOnboarding ?? false,
     resetCardOnboarding: overrides.resetCardOnboarding ?? jest.fn(),
   };

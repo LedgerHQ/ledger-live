@@ -5,7 +5,13 @@ import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import type { CardViewProps } from "./Card.types";
 
-export function CardView({ title, oauthConfig, callback, cardVisual }: CardViewProps) {
+export function CardView({
+  title,
+  oauthConfig,
+  callback,
+  onTrackEvent,
+  cardVisual,
+}: CardViewProps) {
   return (
     <div className="flex flex-col gap-16">
       <p className="heading-5-semi-bold text-base">{title}</p>
@@ -16,7 +22,12 @@ export function CardView({ title, oauthConfig, callback, cardVisual }: CardViewP
       {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
       <Freeze />
       <Divider />
-      <CardLogin key={`${oauthConfig.apiUrl}`} oauthConfig={oauthConfig} callback={callback} />
+      <CardLogin
+        key={`${oauthConfig.apiUrl}`}
+        oauthConfig={oauthConfig}
+        callback={callback}
+        onTrackEvent={onTrackEvent}
+      />
       <CardMore />
     </div>
   );

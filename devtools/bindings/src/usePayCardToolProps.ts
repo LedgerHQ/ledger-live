@@ -23,6 +23,10 @@ import {
 } from "@features/flow-pay-request/state";
 import type { PayCardDetailsCss } from "@domain/api-card-management";
 import {
+  resetPayCardLoginIntroSeen,
+  selectPayCardHasSeenLoginIntro,
+} from "@features/flow-pay-card-auth/state";
+import {
   resetCardOnboardingCompleted,
   selectHasCompletedCardOnboarding,
 } from "@features/flow-pay-card-widget/state";
@@ -127,6 +131,12 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const resetVerifyHint = useCallback(() => {
     dispatch(resetReceiveVerifyHintSeen());
+  }, [dispatch]);
+
+  const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
+
+  const resetLoginIntro = useCallback(() => {
+    dispatch(resetPayCardLoginIntroSeen());
   }, [dispatch]);
 
   const resetCardOnboarding = useCallback(() => {
@@ -280,6 +290,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetPayCardFeatureTourSeen: resetFeatureTour,
       hasSeenReceiveVerifyHint,
       resetReceiveVerifyHintSeen: resetVerifyHint,
+      hasSeenLoginIntro,
+      resetPayCardLoginIntroSeen: resetLoginIntro,
       hasCompletedCardOnboarding,
       resetCardOnboarding,
     }),
@@ -292,6 +304,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetFeatureTour,
       hasSeenReceiveVerifyHint,
       resetVerifyHint,
+      hasSeenLoginIntro,
+      resetLoginIntro,
       hasCompletedCardOnboarding,
       resetCardOnboarding,
     ],
