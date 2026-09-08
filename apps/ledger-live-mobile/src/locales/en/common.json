@@ -705,6 +705,10 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "UnexpectedGetBalanceError": {
+      "title": "Your balance could not be retrieved",
+      "description": "Please check your internet connection and try again."
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked",
       "description": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked"
