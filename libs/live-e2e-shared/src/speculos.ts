@@ -402,6 +402,7 @@ export const specs: Specs = {
       appName: "Zcash",
       // Manager API provider 1's catalog is still on 3.0.2 (no GET_VK support);
       // pin to 3.9.3, present in LedgerHQ/coin-apps, to test shielded flows.
+      // Remove once LIVE-37063 (catalog update) lands.
       appVersion: "3.9.3",
     },
     dependencies: [],
