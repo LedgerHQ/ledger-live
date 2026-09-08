@@ -57,6 +57,19 @@ function validateAmount(
   }
 }
 
+/**
+ * Reported under `amount`, not `fee`.
+ *
+ * No file under the desktop `modals/Send/` tree reads `errors.fee`, so a fee
+ * error filed there disables Continue with nothing on screen to explain it.
+ * `amount` is rendered by `AmountField`, and mobile shows the first error under
+ * any key either way. `coin-algorand` files `NotEnoughBalanceInParentAccount`
+ * under `amount` for the same reason. See LIVE-37061.
+ *
+ * The `isNaN` branch is a fail-closed guard, not dead code: `fromTransactionRaw`
+ * builds the fee with `new BigNumber(tr.fee)`, and a `BigNumber` holding NaN is
+ * a truthy object, so it survives the `transaction.fee || 0` default.
+ */
 function validateFee(estimatedFees: BigNumber): Error | undefined {
   if (estimatedFees.isNaN()) {
     return new FeeNotLoaded();
@@ -236,17 +249,24 @@ function getTokenTransactionStatus(
       ? undefined
       : validatePayloadSize(subAccount, transaction, decimals);
 
+  // An over-long memo leaves the fee unset and is filed under `memo`, not in
+  // the `amount` chain, so checking the fee here would add a bare "fee missing"
+  // beside the message that names the real cause. `sizeError` is skipped alike.
+  const feeError = memoError ? undefined : validateFee(estimatedFees);
+
   Object.assign(errors, {
     sender: validateTokenPolicy(tokenState),
+    // The other two states that leave the fee unset — an absent magnitude, too
+    // many decimals — have their own error above, so a bare "fee missing" only
+    // surfaces once neither applies. It precedes `validateCcdForFee`, which
+    // cannot judge coverage of an unset fee.
     amount:
       validateTokenDecimals(decimals) ??
       validateTokenId(tokenId) ??
       validateTokenAmount(transaction, subAccount, amount) ??
+      feeError ??
       validateCcdForFee(account, estimatedFees, reserveAmount) ??
       sizeError,
-    // Filed under `fee` to match the native path. It does not render in the
-    // desktop send flow — see LIVE-37061, which covers both paths.
-    fee: validateFee(estimatedFees),
     recipient: recipientError,
   });
 
@@ -353,8 +373,9 @@ export const getTransactionStatus: AccountBridge<
   }
 
   Object.assign(errors, {
-    amount: validateAmount(transaction, account, amount, totalSpent, reserveAmount),
-    fee: validateFee(estimatedFees),
+    amount:
+      validateAmount(transaction, account, amount, totalSpent, reserveAmount) ??
+      validateFee(estimatedFees),
     recipient: validateRecipient(transaction, account),
   });
 
