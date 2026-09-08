@@ -2,6 +2,12 @@ import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
 
+// For currencies whose backend is slow to answer: mina's rosetta node takes 35s or so on
+// /search/transactions, well past the default expect timeout.
+const SLOW_SYNC_TIMEOUT = 120_000;
+
+export type SyncWaitOptions = { slowSync?: boolean };
+
 export class Layout extends Component {
   readonly renderError = this.page.getByTestId("render-error");
   readonly appVersion = this.page.getByTestId("app-version");
@@ -44,7 +50,9 @@ export class Layout extends Component {
   }
 
   @step("Wait for accounts sync to be finished")
-  async waitForSyncButtonToBeEnabled(timeout?: number) {
-    await expect(this.topbarSynchronizeButton).not.toHaveAttribute("disabled", { timeout });
+  async waitForSyncButtonToBeEnabled(options?: SyncWaitOptions) {
+    await expect(this.topbarSynchronizeButton).not.toHaveAttribute("disabled", {
+      timeout: options?.slowSync ? SLOW_SYNC_TIMEOUT : undefined,
+    });
   }
 }

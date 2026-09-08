@@ -4,7 +4,10 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
 import { addTmsLink, getDescription } from "tests/utils/allureUtils";
-import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import {
+  liveDataCommand,
+  liveDataWithAddressCommand,
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
 const suiAccount = new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG");
@@ -53,22 +56,21 @@ test.describe("Undelegate", () => {
   );
 });
 
-test.describe("Undelegate", () => {
+test.describe("Undelegate - MINA", () => {
   test.use({
     teamOwner: delegateTeamOwner(minaAccount.account.currency.id),
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: minaAccount.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(minaAccount.account)],
-    // Broadcasting would clear the delegation this spec depends on, leaving the next run with no
-    // position to open.
+    // The device review renders the account's own address, which the speculos helper asserts.
+    cliCommands: [liveDataWithAddressCommand(minaAccount.account)],
+    // Broadcasting would clear the delegation this spec depends on.
     env: { DISABLE_TRANSACTION_BROADCAST: "1" },
   });
 
   test(
     `[${minaAccount.account.currency.testLabel}] - Undelegate`,
     {
-      // The Nano S build of the Mina app stops at 1.4.2 while the other devices ship 1.6.9, the
-      // version the delegation flow was validated against.
+      // The Nano S build of the Mina app stops at 1.4.2, before the delegation flow.
       tag: buildTags({ currencyId: minaAccount.account.currency.id, skipLNS: true }),
       annotation: { type: "TMS", description: "B2CQA-387" },
     },
@@ -78,8 +80,7 @@ test.describe("Undelegate", () => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(minaAccount.account.accountName);
 
-      // Mina holds a single delegation, so its row is not indexed, and undelegating returns the
-      // whole balance: the manage menu goes straight to the device, with no amount step.
+      // Mina holds a single delegation, so its row is not indexed.
       await app.undelegate.openFromManageMenu(minaAccount.account.currency.id);
 
       await app.speculos.signDelegationTransaction(minaAccount);
@@ -90,6 +91,9 @@ test.describe("Undelegate", () => {
       await app.drawer.waitForDrawerToBeVisible();
       await app.delegateDrawer.verifyTxTypeIsVisible();
       await app.delegateDrawer.verifyTxTypeIs("Undelegated");
+      await app.delegateDrawer.verifyAccountName(minaAccount.account.accountName);
+      // Undelegating moves no value either: the drawer amount is the fee.
+      await app.delegateDrawer.amountValueIsVisible(minaAccount.account.currency.ticker);
       await app.drawer.closeDrawer();
     },
   );

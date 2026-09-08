@@ -95,6 +95,7 @@ export default class StakePage {
   async selectValidatorFromList(provider: string) {
     await waitForElementById(this.searchPoolInput);
     await typeTextById(this.searchPoolInput, provider);
+    await waitForElementById(this.providerRow(provider));
     await tapById(this.providerRow(provider));
   }
 

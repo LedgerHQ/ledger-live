@@ -18,7 +18,7 @@ export class UndelegateModal extends Modal {
   private successMessageLabel = this.page.getByTestId("success-message-label");
   private viewDetailsButton = this.page.getByTestId("sui-unstake-view-details-button");
 
-  @step("Open the unstake flow from the staking-section manage menu")
+  @step("Open the $0 unstake flow from the staking-section manage menu")
   async openFromManageMenu(currencyId: string, rowIndex?: number) {
     await this.manageButton(currencyId, rowIndex).click();
     await this.unstakeMenuItem(currencyId, rowIndex).click();

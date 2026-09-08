@@ -1,4 +1,13 @@
 import { Step } from "jest-allure2-reporter/api";
+import invariant from "invariant";
+
+// The delegation drawer's action ids are not namespaced per currency: sui exposes
+// `StakingActionUnstake`, while `DelegationActionUndelegate` is shared by cosmos, cardano, EVM,
+// MultiversX and mina. Resolve them per currency here rather than letting specs pass raw ids.
+const DELEGATION_ACTION_IDS: Record<string, { unstake: string; redelegate?: string }> = {
+  sui: { unstake: "StakingActionUnstake" },
+  mina: { unstake: "DelegationActionUndelegate", redelegate: "DelegationActionRedelegate" },
+};
 
 export default class UndelegatePage {
   private accountScrollViewId = "account-screen-scrollView";
@@ -17,8 +26,19 @@ export default class UndelegatePage {
     await tapById(id);
   }
 
-  @Step("Tap unstake action {{{0}}} in delegation drawer")
-  async tapUnstakeAction(actionId: string) {
+  @Step("Tap unstake action for {{{0}}} in delegation drawer")
+  async tapUnstakeAction(currencyId: string) {
+    await this.tapDelegationAction(currencyId, "unstake");
+  }
+
+  @Step("Tap redelegate action for {{{0}}} in delegation drawer")
+  async tapRedelegateAction(currencyId: string) {
+    await this.tapDelegationAction(currencyId, "redelegate");
+  }
+
+  private async tapDelegationAction(currencyId: string, action: "unstake" | "redelegate") {
+    const actionId = DELEGATION_ACTION_IDS[currencyId]?.[action];
+    invariant(actionId, `No ${action} action id mapped for currency "${currencyId}"`);
     await waitForElementById(actionId);
     await tapById(actionId);
   }

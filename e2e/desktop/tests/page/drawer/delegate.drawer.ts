@@ -9,6 +9,7 @@ export class DelegateDrawer extends Drawer {
   private amountValue = this.page.getByTestId("amountReceived-drawer").first();
   private transactionType = this.page.getByTestId("transaction-type").first();
   private operationType = this.page.getByTestId("operation-type");
+  private accountName = this.page.getByTestId("account-name");
 
   @step("Verify provider is visible")
   async providerIsVisible(account: Delegate) {
@@ -27,6 +28,11 @@ export class DelegateDrawer extends Drawer {
     await expect(this.amountValue).toBeVisible();
     const displayedAmount = await this.amountValue.innerText();
     expect(displayedAmount).toEqual(expect.stringContaining(ticker));
+  }
+
+  @step("Verify the operation belongs to account $0")
+  async verifyAccountName(accountName: string) {
+    await expect(this.accountName).toHaveText(accountName);
   }
 
   @step("Verify transaction type is correct")

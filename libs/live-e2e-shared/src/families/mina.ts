@@ -32,12 +32,20 @@ export const delegateMina = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getDelegateEvents(delegatingAccount);
-      // The Mina app only ever renders the raw B62 recipient address on device (never a
-      // human-readable provider name), so a provider-substring check here would only pass
-      // by coincidence (the fuzzy fallback regex matching base58/hex noise across the
-      // concatenated screens). Skip it for Mina; getDelegateEvents already asserts that the
-      // review flow reached the sign/approve screens.
-      if (delegatingAccount.account.currency.name !== Currency.MINA.name) {
+      // The Mina app renders the raw B62 recipient address, never the provider name: the
+      // destination validator's for a delegation, the account's own for an undelegation.
+      if (delegatingAccount.account.currency.id === Currency.MINA.id) {
+        const expectedAddress =
+          delegatingAccount.validatorAddress ?? delegatingAccount.account.address;
+        if (!expectedAddress) {
+          throw new Error(
+            "Mina delegation target address is not set: pass Delegate.validatorAddress for a " +
+              "new delegation, or populate Delegate.account.address (liveDataWithAddressCommand) " +
+              "for an undelegation.",
+          );
+        }
+        expectSpeculosEventsContain(expectedAddress, events);
+      } else {
         expectSpeculosEventsContain(delegatingAccount.provider, events);
       }
 
