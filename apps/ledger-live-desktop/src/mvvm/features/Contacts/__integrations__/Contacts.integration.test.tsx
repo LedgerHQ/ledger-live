@@ -259,12 +259,12 @@ describe("Contacts integration", () => {
     expect(screen.queryByTestId("contacts-ledger-sync-detail-loading")).not.toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Contacts" })).toBeVisible();
-    expect(screen.getByPlaceholderText("Search contact")).toBeVisible();
+    expect(screen.getByPlaceholderText("Search by name")).toBeVisible();
     expect(screen.getByTestId("contacts-add-contact")).toBeVisible();
     expect(screen.getByTestId("contacts-add-contact-header")).toBeVisible();
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("Me");
+      expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("My addresses");
       expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("0 address");
     });
   });
@@ -273,7 +273,7 @@ describe("Contacts integration", () => {
     renderContactsScreen({ contacts: { contacts: [] } });
 
     expect(screen.getByTestId("contacts-page")).toBeVisible();
-    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("Me");
+    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("My addresses");
   });
 
   it("should render saved contacts in alphabetical order when contacts exist", () => {
@@ -288,7 +288,7 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-section-D")).toBeVisible();
     expect(screen.getByTestId("contacts-section-O")).toBeVisible();
 
-    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("Me");
+    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("My addresses");
     expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("3 addresses");
     expect(screen.getByTestId("contacts-saved-row-contact-ada")).toHaveTextContent("Ada");
     expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Ben");
@@ -434,7 +434,7 @@ describe("Contacts integration", () => {
   it("should render populated Me detail on load when populated contacts are persisted", () => {
     renderContactsScreen(populatedContactsPageState);
 
-    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Me");
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses");
     expect(
       within(screen.getByTestId("contacts-detail-screen")).getByText("3 addresses"),
     ).toBeVisible();
@@ -453,9 +453,9 @@ describe("Contacts integration", () => {
 
     expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
-    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Me");
-    expect(screen.getByText("Add external address")).toBeVisible();
-    expect(screen.getByText("No saved addresses for you")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses");
+    expect(screen.getByText("Add your address")).toBeVisible();
+    expect(screen.getByText("Save your own addresses")).toBeVisible();
   });
 
   it("should render the Me empty detail state when Me is selected after another contact", async () => {
@@ -464,7 +464,7 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
     await user.click(screen.getByTestId("contacts-me-row"));
 
-    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Me");
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses");
     expect(screen.queryByText("No saved addresses for Ada")).not.toBeInTheDocument();
   });
 
@@ -965,7 +965,7 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-delete-contact-dialog")).not.toBeInTheDocument();
       expect(screen.queryByTestId("contacts-saved-row-contact-ada")).not.toBeInTheDocument();
-      expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Me");
+      expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses");
     });
   });
 

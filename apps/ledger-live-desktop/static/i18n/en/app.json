@@ -9720,7 +9720,7 @@
     },
     "contacts": {
       "title": "Contacts",
-      "description": "Manage your contacts"
+      "description": "Save and manage external wallet addresses."
     },
     "explore": "Explore all Ledger devices"
   },
@@ -9763,7 +9763,7 @@
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
-    "addExternalAddress": "Add external address",
+    "addYourAddress": "Add your address",
     "addAddressEntry": {
       "title": "Enter address",
       "addressPlaceholder": "Address or ENS",
@@ -9778,7 +9778,8 @@
         "learnMore": "Learn more"
       },
       "validationUnavailable": "Address validation is temporarily unavailable.",
-      "ensDisclaimer": "This ENS name resolves to the address shown above."
+      "ensDisclaimer": "ENS names can change",
+      "ensDisclaimerDescription": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify."
     },
     "addAddressName": {
       "inputLabel": "Address name",
@@ -9795,9 +9796,7 @@
       "currencyLabel": "Currency",
       "networkLabel": "Network",
       "nameLabel": "Address name",
-      "continue": "Confirm address",
-      "successTitle": "Address saved",
-      "close": "Close"
+      "continue": "Confirm address"
     },
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
@@ -9805,21 +9804,21 @@
       "invalidNameError": "Special characters are not allowed.",
       "duplicateNameError": "This contact name is already in use."
     },
-    "searchPlaceholder": "Search contact",
+    "searchPlaceholder": "Search by name",
     "searchNoResults": "No contact found",
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",
     "me": {
-      "name": "Me"
+      "myAddresses": "My addresses"
     },
     "detail": {
       "meDisplayName": "{{name}} (Me)",
       "ledgerWalletAddresses": "Ledger Wallet addresses",
       "emptyState": {
-        "meTitle": "No saved addresses for you",
+        "meTitle": "Save your own addresses",
         "contactTitle": "No saved addresses for {{name}}",
-        "meDescription": "Save your wallet addresses to receive crypto by name next time.",
+        "meDescription": "Save the external addresses you own on exchanges or other wallets. Next time you send to yourself, your Ledger device will show the name you chose.",
         "contactDescription": "Save their wallet addresses to send to them by name next time"
       }
     },
@@ -9875,7 +9874,7 @@
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
-      "primaryAction": "Explore now",
+      "primaryAction": "Try now",
       "highlights": {
         "saveAddresses": {
           "title": "Save addresses by a name you choose",
@@ -9886,7 +9885,7 @@
           "description": "See a name you trust, not an address."
         },
         "privateAcrossDevices": {
-          "title": "Securely top up via Ledger Wallet™",
+          "title": "Private across your Ledger devices",
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }

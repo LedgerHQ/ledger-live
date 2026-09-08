@@ -19,7 +19,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact } from "@domain/entity-contact";
-import { useContacts } from "@features/platform-contacts";
+import { createMeDisplayNameFormatter, useContacts } from "@features/platform-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
@@ -53,7 +53,9 @@ export function useContactsPageViewModel(
         "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
       ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
+      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
+        t("contacts.detail.meDisplayName", { name }),
+      ),
     }),
     [t],
   );
