@@ -1900,6 +1900,29 @@
       "subTitle": "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins."
     }
   },
+  "q3WalletV4Tour": {
+    "cta": {
+      "start": "Take a look",
+      "next": "Next",
+      "done": "All caught up"
+    },
+    "intro": {
+      "title": "A quick tour of the latest",
+      "subTitle": "New ways to send, spend, earn, and more."
+    },
+    "contact": {
+      "title": "Say goodbye to long addresses",
+      "subTitle": "Introducing Contacts. Save wallet addresses with names. Easy to find, easy to send."
+    },
+    "pay": {
+      "title": "Say hello to Pay",
+      "subTitle": "Pay contacts, request money, and get cashback with crypto card. Now, all via one tab."
+    },
+    "yield": {
+      "title": "Keep your crypto, finance your projects",
+      "subTitle": "Borrow stablecoins using wrapped BTC as collateral via Yield.xyz powered by Morpho."
+    }
+  },
   "q2WalletV4Tour": {
     "cta": {
       "start": "See what's new",
