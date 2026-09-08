@@ -9448,6 +9448,23 @@
         "errorTitle": "Private sync failed",
         "errorDesc": "Something went wrong, please try again"
       }
+    },
+    "manage": {
+      "headerAction": "Earn",
+      "title": "Manage staking",
+      "comingSoonTooltip": "Coming soon.",
+      "bond": {
+        "title": "Bond",
+        "description": "Bond your ALEO to a validator to earn rewards."
+      },
+      "unbond": {
+        "title": "Unbond",
+        "description": "Unbond your bonded ALEO. Funds will be available after the unbonding period."
+      },
+      "claim": {
+        "title": "Claim",
+        "description": "Claim your unbonded ALEO back to your available balance."
+      }
     }
   },
   "updater": {

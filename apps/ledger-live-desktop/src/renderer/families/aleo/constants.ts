@@ -1,3 +1,4 @@
 export enum AleoCustomModal {
   SELF_TRANSFER = "MODAL_ALEO_SELF_TRANSFER",
+  MANAGE = "MODAL_ALEO_MANAGE",
 }
