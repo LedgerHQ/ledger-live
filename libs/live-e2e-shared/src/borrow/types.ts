@@ -1,4 +1,8 @@
-export type BorrowAction = "supply" | "borrow" | "repay" | "withdraw";
+/**
+ * `supplyAndBorrow` is the bundled route the borrow live app posts; the driver opens a loan
+ * with separate `supply` + `borrow` calls instead, and the two approve different spenders.
+ */
+export type BorrowAction = "supply" | "supplyAndBorrow" | "borrow" | "repay" | "withdraw";
 
 export interface PartnerActionStep {
   transactionId: string;
