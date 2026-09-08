@@ -17,6 +17,7 @@ import { RecipientIntroCard } from "./RecipientIntroCard";
 import { ValidationBanner } from "./ValidationBanner";
 import { RecipientContactsList } from "./RecipientContactsList";
 import { RecipientContactAddressSelection } from "./RecipientContactAddressSelection";
+import { ZcashSelfTransferSection } from "./ZcashSelfTransferSection";
 
 type RecipientAddressModalViewProps = Readonly<{
   isLoading: boolean;
@@ -86,6 +87,7 @@ export function RecipientAddressModalView({
 
   return (
     <DialogBody className="flex min-h-[156px] flex-col py-16">
+      <ZcashSelfTransferSection />
       <ContactsFeatureIntroductionDialog {...featureIntroduction} />
 
       {isLoading && !showMatched && <LoadingState />}

@@ -2828,6 +2828,13 @@
       "amountToSendInCurrency": "Amount to send in {{ticker}}",
       "amountInputLabel": "Amount to send"
     },
+    "recipient": {
+      "selfTransfer": {
+        "title": "Self transfer",
+        "toPrivate": "Send to private balance",
+        "toPublic": "Send to public balance"
+      }
+    },
     "balanceType": {
       "title": "Select balance type",
       "transparent": {
