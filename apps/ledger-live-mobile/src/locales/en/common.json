@@ -10215,7 +10215,17 @@
     "card": {
       "title": "Crypto card",
       "freeze": "Freeze",
-      "unfreeze": "Unfreeze"
+      "unfreeze": "Unfreeze",
+      "goBack": "Go back",
+      "freezeConfirm": {
+        "title": "Freezing means you cannot use the card anymore",
+        "description": "You can unfreeze your card at any time.",
+        "confirm": "Freeze now"
+      },
+      "unfreezeConfirm": {
+        "title": "Unfreeze your card?",
+        "confirm": "Unfreeze now"
+      }
     },
     "selectContact": {
       "placeholder": "Enter contact"
