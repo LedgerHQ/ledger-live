@@ -77,21 +77,18 @@ export function PaySuccess({
           testID="pay-success-header-close"
         />
       </Box>
-      <Box
-        lx={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "s32",
-        }}
-      >
+      <Box lx={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <PaySuccessHero
           recipient={recipient}
           recipientLabel={recipientLabel}
           amountFormatted={amountFormatted}
         />
-        {rows.length > 0 ? <PaySuccessSummary rows={rows} /> : null}
       </Box>
+      {rows.length > 0 ? (
+        <Box lx={{ width: "full", paddingBottom: "s24" }}>
+          <PaySuccessSummary rows={rows} />
+        </Box>
+      ) : null}
       <Box lx={{ gap: "s16" }}>
         {canViewTransaction ? (
           <Button
