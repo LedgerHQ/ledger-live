@@ -117,18 +117,7 @@ export class ResolvedCommandStream {
 }
 
 function exists(list: Uint8Array[], obj: Uint8Array): boolean {
-  for (const item of list) {
-    if (obj.length !== item.length) {
-      continue;
-    }
-    for (let i = 0; i < item.length; i++) {
-      if (item[i] !== obj[i]) {
-        continue;
-      }
-    }
-    return true;
-  }
-  return false;
+  return list.some(item => item.length === obj.length && item.every((byte, i) => byte === obj[i]));
 }
 
 export default class CommandStreamResolver {
@@ -139,25 +128,12 @@ export default class CommandStreamResolver {
     if (!exists(internals.members, issuer)) {
       throw new Error("Issuer is not a member of the group at height " + internals.height);
     }
-    if ((internals.permission.get(crypto.to_hex(issuer))! & 0x02) === Permissions.KEY_READER) {
-      throw new Error(
-        "Issuer does not have permission to publish keys at height " + internals.height,
-      );
-    }
     if (
       internals.keys.get(crypto.to_hex(issuer)) === undefined &&
       (internals.permission.get(crypto.to_hex(issuer))! & Permissions.KEY_CREATOR) !=
         Permissions.KEY_CREATOR
     ) {
       throw new Error("Issuer does not have a key to publish at height " + internals.height);
-    }
-    if (
-      !internals.keys.has(crypto.to_hex(issuer)) &&
-      (internals.permission.get(crypto.to_hex(issuer))! & Permissions.KEY_CREATOR) !==
-        Permissions.KEY_CREATOR &&
-      internals.keys.keys.length > 0
-    ) {
-      throw new Error("Issuer is trying to publish a new key at height " + internals.height);
     }
   }
 
@@ -178,6 +154,19 @@ export default class CommandStreamResolver {
     }
   }
 
+  private static assertIssuerCanCreateStream(
+    issuer: Uint8Array,
+    internals: ResolvedCommandStreamInternals,
+    action: "seed" | "derive",
+  ): void {
+    if (!internals.isCreated) return;
+    if (internals.permission.get(crypto.to_hex(issuer)) !== Permissions.OWNER) {
+      throw new Error(
+        `Issuer is not allowed to ${action} an existing stream at height ${internals.height}`,
+      );
+    }
+  }
+
   private static assertStreamIsCreated(internals: ResolvedCommandStreamInternals): void {
     if (internals.isCreated === false) {
       throw new Error("The stream is not created at height " + internals.height);
@@ -193,6 +182,7 @@ export default class CommandStreamResolver {
   ): ResolvedCommandStreamInternals {
     switch (command.getType()) {
       case CommandType.Seed:
+        this.assertIssuerCanCreateStream(block.issuer, internals, "seed");
         internals.isCreated = true;
         internals.topic = (command as Seed).topic;
         internals.members.push(block.issuer);
@@ -207,6 +197,7 @@ export default class CommandStreamResolver {
         internals.groupPublicKey = (command as Seed).groupKey;
         break;
       case CommandType.Derive:
+        this.assertIssuerCanCreateStream(block.issuer, internals, "derive");
         internals.isCreated = true;
         internals.members.push(block.issuer);
         internals.permission.set(crypto.to_hex(block.issuer), Permissions.OWNER);
