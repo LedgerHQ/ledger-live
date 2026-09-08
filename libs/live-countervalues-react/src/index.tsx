@@ -6,6 +6,7 @@ import {
   inferTrackingPairForAccounts,
   loadCountervalues,
 } from "@ledgerhq/live-countervalues/logic";
+import { inferCurrencyAPIID } from "@ledgerhq/live-countervalues/helpers";
 import type {
   CounterValuesState,
   CounterValuesStateRaw,
@@ -129,7 +130,7 @@ function Effect({
     () => ({
       shouldBatchCurrencyFrom: (currency: Currency) => {
         if (currency.type === "FiatCurrency") return false;
-        const i = supportedCryptoIds.indexOf(currency.id);
+        const i = supportedCryptoIds.indexOf(inferCurrencyAPIID(currency));
         return i === -1 || i > marketCapBatchingAfterRank;
       },
     }),
