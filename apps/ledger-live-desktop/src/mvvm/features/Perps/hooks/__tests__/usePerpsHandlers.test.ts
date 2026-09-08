@@ -11,6 +11,11 @@ jest.mock("../../screens/PerpsSign/PerpsSignDialog", () => ({
   openPerpsSign: (...args: unknown[]) => mockOpenPerpsSign(...args),
 }));
 
+const mockOpenPerpsDeposit = jest.fn();
+jest.mock("../../screens/PerpsDeposit/PerpsDepositDialog", () => ({
+  openPerpsDeposit: (...args: unknown[]) => mockOpenPerpsDeposit(...args),
+}));
+
 const mockedPerpsHandlers = jest.mocked(perpsHandlers);
 
 describe("usePerpsHandlers", () => {
@@ -47,5 +52,19 @@ describe("usePerpsHandlers", () => {
     signingExecute(params);
 
     expect(mockOpenPerpsSign).toHaveBeenCalledWith(params);
+  });
+
+  it("should call openPerpsDeposit with the receiver account when deposit.execute is called", () => {
+    const accounts = [{ id: "acc-1" }] as never[];
+    const receiverAccount = { id: "receiver-1", name: "HL Account" } as never;
+
+    renderHook(() => usePerpsHandlers(accounts));
+
+    const depositExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["deposit.execute"];
+    const params = { receiverAccount };
+
+    depositExecute?.(params);
+
+    expect(mockOpenPerpsDeposit).toHaveBeenCalledWith(params);
   });
 });

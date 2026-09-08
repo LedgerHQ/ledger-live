@@ -104,6 +104,33 @@ describe("SwapTransactionStatusDialog Integration", () => {
     expect(screen.getByRole("button", { name: "View in explorer" })).toBeVisible();
   });
 
+  it("should title the dialog when perps opens it", async () => {
+    const { store } = render(<SwapTransactionStatusDialog />);
+
+    act(() => {
+      store.dispatch(
+        openSwapTransactionStatusDialog({ swapId: "swap-1", provider: "lifi", origin: "perps" }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("dialog")).toHaveAccessibleName("Transaction detail");
+    });
+  });
+
+  it("should leave the dialog untitled when swap opens it", async () => {
+    const { store } = render(<SwapTransactionStatusDialog />);
+
+    act(() => {
+      store.dispatch(openSwapTransactionStatusDialog({ swapId: "swap-1", provider: "lifi" }));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("dialog")).toBeVisible();
+    });
+    expect(screen.getByRole("dialog")).toHaveAccessibleName("");
+  });
+
   it("should remount transaction content when opening another swap while already open", async () => {
     mockedUseSwapTransactionStatusViewModel.mockImplementation(useViewModelWithMountedSwapId);
     const { store } = render(<SwapTransactionStatusDialog />);

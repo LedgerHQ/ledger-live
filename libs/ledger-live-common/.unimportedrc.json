@@ -340,6 +340,7 @@
     "src/wallet-api/LiveAppModal/slice.ts",
     "src/wallet-api/LiveAppModal/types.ts",
     "src/wallet-api/LiveAppModal/url.ts",
+    "src/wallet-api/Perps/depositQuote.ts",
     "src/wallet-api/Perps/server.ts",
     "src/wallet-api/Perps/types.ts",
     "src/wallet-api/helpers.ts",
