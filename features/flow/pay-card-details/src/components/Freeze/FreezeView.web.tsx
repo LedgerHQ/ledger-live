@@ -7,10 +7,8 @@ import type { FreezeViewProps } from "../../types";
 
 export function FreezeView({
   isFrozen,
-  isBlocked,
-  isStatusLoading,
-  isFreezeLoading,
-  isUnfreezeLoading,
+  isUpdating,
+  isActionDisabled,
   isConfirmOpen,
   onOpenConfirm,
   onCloseConfirm,
@@ -20,19 +18,14 @@ export function FreezeView({
 
   return (
     <>
-      <TileButton
-        icon={Snow}
-        onClick={onOpenConfirm}
-        disabled={isBlocked || isStatusLoading || isFreezeLoading || isUnfreezeLoading}
-        isFull
-      >
+      <TileButton icon={Snow} onClick={onOpenConfirm} disabled={isActionDisabled} isFull>
         {isFrozen ? t("payTab.card.unfreeze") : t("payTab.card.freeze")}
       </TileButton>
 
       <FreezeConfirmSheet
         isOpen={isConfirmOpen}
         isFrozen={isFrozen}
-        isLoading={isFreezeLoading || isUnfreezeLoading}
+        isLoading={isUpdating}
         onConfirm={onConfirm}
         onClose={onCloseConfirm}
       />

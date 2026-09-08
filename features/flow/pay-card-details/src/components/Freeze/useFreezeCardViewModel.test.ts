@@ -18,18 +18,14 @@ type Setup = {
   status?: PayCardStatus["status"] | null;
   isStatusLoading?: boolean;
   isFreezeLoading?: boolean;
-  isFreezeError?: boolean;
   isUnfreezeLoading?: boolean;
-  isUnfreezeError?: boolean;
 };
 
 function renderWith({
   status = "ACTIVE",
   isStatusLoading = false,
   isFreezeLoading = false,
-  isFreezeError = false,
   isUnfreezeLoading = false,
-  isUnfreezeError = false,
 }: Setup = {}) {
   const freeze = jest.fn();
   const unfreeze = jest.fn();
@@ -43,17 +39,15 @@ function renderWith({
 
   jest
     .mocked(useFreezeCardMutation)
-    .mockReturnValue([
-      freeze,
-      { isLoading: isFreezeLoading, isError: isFreezeError },
-    ] as unknown as ReturnType<typeof useFreezeCardMutation>);
+    .mockReturnValue([freeze, { isLoading: isFreezeLoading }] as unknown as ReturnType<
+      typeof useFreezeCardMutation
+    >);
 
   jest
     .mocked(useUnfreezeCardMutation)
-    .mockReturnValue([
-      unfreeze,
-      { isLoading: isUnfreezeLoading, isError: isUnfreezeError },
-    ] as unknown as ReturnType<typeof useUnfreezeCardMutation>);
+    .mockReturnValue([unfreeze, { isLoading: isUnfreezeLoading }] as unknown as ReturnType<
+      typeof useUnfreezeCardMutation
+    >);
 
   return { freeze, unfreeze, ...renderHook(() => useFreezeCardViewModel()) };
 }
@@ -63,56 +57,43 @@ describe("useFreezeCardViewModel", () => {
     jest.clearAllMocks();
   });
 
+  it("reads a FROZEN card as frozen", () => {
+    expect(renderWith({ status: "FROZEN" }).result.current.isFrozen).toBe(true);
+  });
+
+  it.each(["ACTIVE", "BLOCKED"] as const)("does not read a %s card as frozen", status => {
+    expect(renderWith({ status }).result.current.isFrozen).toBe(false);
+  });
+
+  it.each(["ACTIVE", "FROZEN"] as const)("keeps the action available on a %s card", status => {
+    expect(renderWith({ status }).result.current.isActionDisabled).toBe(false);
+  });
+
   it.each([
-    ["ACTIVE", false],
-    ["FROZEN", true],
-    ["BLOCKED", false],
-  ] as const)("reads a %s card as frozen: %s", (status, isFrozen) => {
-    expect(renderWith({ status }).result.current.isFrozen).toBe(isFrozen);
+    ["the card is blocked", { status: "BLOCKED" }],
+    ["the card status has not arrived yet", { status: null, isStatusLoading: true }],
+    ["a freeze is in flight", { isFreezeLoading: true }],
+    ["an unfreeze is in flight", { isUnfreezeLoading: true }],
+  ] as const)("makes the action unavailable when %s", (_reason, setup) => {
+    expect(renderWith(setup).result.current.isActionDisabled).toBe(true);
   });
 
-  it("locks the actions only on a BLOCKED card", () => {
-    expect(renderWith({ status: "BLOCKED" }).result.current.isBlocked).toBe(true);
-    expect(renderWith({ status: "FROZEN" }).result.current.isBlocked).toBe(false);
+  it.each([
+    ["freeze", { isFreezeLoading: true }],
+    ["unfreeze", { isUnfreezeLoading: true }],
+  ] as const)("marks the card as updating while the %s request is in flight", (_request, setup) => {
+    expect(renderWith(setup).result.current.isUpdating).toBe(true);
   });
 
-  it("offers the freeze action while the status is still on its way", () => {
-    const { result } = renderWith({ status: null, isStatusLoading: true });
-
-    expect(result.current).toMatchObject({
-      isFrozen: false,
-      isBlocked: false,
-      isStatusLoading: true,
-    });
-  });
-
-  it("shows the card frozen as soon as the freeze starts", () => {
-    // The provider only answers FROZEN on the next status refetch, and the tile must not keep
-    // offering "Freeze" until then.
-    expect(renderWith({ status: "ACTIVE", isFreezeLoading: true }).result.current.isFrozen).toBe(
-      true,
-    );
-  });
-
-  it("shows the card unfrozen as soon as the unfreeze starts", () => {
-    expect(renderWith({ status: "FROZEN", isUnfreezeLoading: true }).result.current.isFrozen).toBe(
-      false,
-    );
-  });
-
-  it("surfaces a freeze that failed", () => {
-    expect(renderWith({ isFreezeError: true }).result.current.isFreezeError).toBe(true);
-  });
-
-  it("surfaces an unfreeze that failed", () => {
-    expect(renderWith({ isUnfreezeError: true }).result.current.isUnfreezeError).toBe(true);
+  it("marks an idle card as not updating", () => {
+    expect(renderWith().result.current.isUpdating).toBe(false);
   });
 
   it("keeps the confirmation closed until the tile is pressed", () => {
     expect(renderWith().result.current.isConfirmOpen).toBe(false);
   });
 
-  it("opens the confirmation from the tile", () => {
+  it("opens the confirmation on request", () => {
     const { result } = renderWith();
 
     act(() => result.current.onOpenConfirm());
@@ -129,7 +110,7 @@ describe("useFreezeCardViewModel", () => {
     expect(result.current.isConfirmOpen).toBe(false);
   });
 
-  it("freezes a card that is not frozen, and closes the confirmation", () => {
+  it("freezes an unfrozen card and closes the confirmation", () => {
     const { freeze, unfreeze, result } = renderWith({ status: "ACTIVE" });
 
     act(() => result.current.onOpenConfirm());
@@ -140,7 +121,7 @@ describe("useFreezeCardViewModel", () => {
     expect(result.current.isConfirmOpen).toBe(false);
   });
 
-  it("unfreezes a frozen card, and closes the confirmation", () => {
+  it("unfreezes a frozen card and closes the confirmation", () => {
     const { freeze, unfreeze, result } = renderWith({ status: "FROZEN" });
 
     act(() => result.current.onOpenConfirm());

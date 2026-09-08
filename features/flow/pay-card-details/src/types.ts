@@ -14,35 +14,21 @@ export type CardVisualProps = Readonly<{
   isLoading?: boolean;
 }>;
 
-export type CardVisualViewProps = CardVisualProps;
+export type CardVisualViewProps = CardVisualProps &
+  Readonly<{
+    /** Dims the card face and overlays the frozen marker. */
+    isFrozen: boolean;
+  }>;
 
-export type FreezeCardViewProps = Readonly<{
+export type FreezeViewProps = Readonly<{
   isFrozen: boolean;
-  /** `true` when card status is BLOCKED — disables all freeze/unfreeze actions. */
-  isBlocked: boolean;
-  isStatusLoading: boolean;
-  isFreezeLoading: boolean;
-  isUnfreezeLoading: boolean;
-  isFreezeError: boolean;
-  isUnfreezeError: boolean;
+  isUpdating: boolean;
+  isActionDisabled: boolean;
   isConfirmOpen: boolean;
   onOpenConfirm: () => void;
   onCloseConfirm: () => void;
   onConfirm: () => void;
 }>;
-
-export type FreezeViewProps = Pick<
-  FreezeCardViewProps,
-  | "isFrozen"
-  | "isBlocked"
-  | "isStatusLoading"
-  | "isFreezeLoading"
-  | "isUnfreezeLoading"
-  | "isConfirmOpen"
-  | "onOpenConfirm"
-  | "onCloseConfirm"
-  | "onConfirm"
->;
 
 export type FreezeConfirmSheetProps = Readonly<{
   isOpen: boolean;
