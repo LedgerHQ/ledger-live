@@ -4,6 +4,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import tronCoinConfig from "@ledgerhq/coin-tron/config";
+import { DEFAULT_TRC20_FEES_LIMIT } from "@ledgerhq/coin-tron/network";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
@@ -28,6 +29,7 @@ import {
   initMswHandlers,
   registerTrc20Contract,
   resetIndexer,
+  setEnergyLimitOverride,
   waitForOperationInclusion,
 } from "../indexer";
 import { deployTrc20, issueTrc10 } from "../tokenFixtures";
@@ -63,6 +65,12 @@ const CUSTOM_FEE_LIMIT_SUN = 100_000_000; // 100 TRX
 const BELOW_DEFAULT_FEE_LIMIT_SUN = 30_000_000; // 30 TRX
 /** tx hash → on-chain `fee_limit`, recorded by `mockIndexer` for the guard row to assert against. */
 const onChainFeeLimitByHash = new Map<string, number | undefined>();
+/**
+ * Energy the indexer mock reports for the energy-covered row — large enough to dwarf a TRC-20
+ * transfer's cost, so `estimateFees` nets the fee to 0. Reproduces the mainnet USDT-holder state the
+ * devnet can't credit on-chain (see `setEnergyLimitOverride`).
+ */
+const COVERED_ENERGY = 1_000_000_000; // 1e9 energy
 
 /**
  * The transaction the wallet hands the bridge for Tron: the generic shape with `mode` widened to
@@ -171,6 +179,9 @@ function makeTransactions(): Tx[] {
       expect(latestOp.recipients).toContain(recipient.address);
       // No frozen energy → TVM call burns TRX for energy.
       expect(latestOp.fee.gt(0)).toBe(true);
+      // LIVE-36865: with no fee override the crafted `fee_limit` is the DEFAULT ceiling, never the
+      // display estimate — which the migration wrongly piped into it.
+      expect(onChainFeeLimitByHash.get(latestOp.hash)).toBe(DEFAULT_TRC20_FEES_LIMIT);
     },
   };
 
@@ -220,6 +231,55 @@ function makeTransactions(): Tx[] {
       expect(latestOp.type).toBe("OUT");
       expect(latestOp.recipients).toContain(recipient.address);
       expect(onChainFeeLimitByHash.get(latestOp.hash)).toBe(BELOW_DEFAULT_FEE_LIMIT_SUN);
+    },
+  };
+
+  const freezeEnergy: Tx = {
+    name: "Freeze 50 TRX for ENERGY",
+    mode: "freeze",
+    amount: new BigNumber(FROZEN_SUN),
+    recipient: funder.address,
+    familySpecificData: { resource: "ENERGY" } satisfies TronFamilySpecificData,
+    expect: (prev, curr) => {
+      // From here on the account holds staked energy. The devnet meters energy differently from mainnet,
+      // so make the wallet see it as fully covered for the next row — reproducing the mainnet USDT-holder
+      // state on-chain devnet data alone can't provide. Set first so it survives an expect retry.
+      setEnergyLimitOverride(COVERED_ENERGY);
+
+      const prevFrozen =
+        (prev as TronAccount).tronResources?.frozen.energy?.amount ?? new BigNumber(0);
+      const currFrozen =
+        (curr as TronAccount).tronResources?.frozen.energy?.amount ?? new BigNumber(0);
+      expect(currFrozen.minus(prevFrozen)).toStrictEqual(new BigNumber(FROZEN_SUN));
+
+      const [latestOp] = curr.operations;
+      expect(latestOp.type).toBe("FREEZE");
+      expect(latestOp.value).toStrictEqual(latestOp.fee);
+    },
+  };
+
+  const sendTrc20FromEnergyCovered: Tx = {
+    name: `Send 1 ${trc20.symbol} (TRC20) from an energy-covered account`,
+    amount: new BigNumber(1_000_000),
+    recipient: recipient.address,
+    subAccountId: trc20SubAccountId,
+    // LIVE-36865 regression guard. With energy mocked as covered, `estimateFees` nets the display fee to
+    // 0 — the exact state the generic-adapter migration crafted `fee_limit: 0` from, reverting
+    // OUT_OF_ENERGY on-chain. With no fee override the crafted `fee_limit` must instead be the DEFAULT
+    // ceiling (the on-chain readback proves it), and the transfer must still land.
+    expect: (prev, curr) => {
+      // Restore real energy reporting for the remaining rows. Set first so it survives an expect retry.
+      setEnergyLimitOverride(null);
+
+      const sub = curr.subAccounts?.find(s => s.id === trc20SubAccountId);
+      const prevSub = prev.subAccounts?.find(s => s.id === trc20SubAccountId);
+      expect(sub).toBeDefined();
+      expect(sub!.balance).toStrictEqual((prevSub?.balance ?? new BigNumber(0)).minus(1_000_000));
+
+      const [latestOp] = sub!.operations;
+      expect(latestOp.type).toBe("OUT");
+      expect(latestOp.recipients).toContain(recipient.address);
+      expect(onChainFeeLimitByHash.get(latestOp.hash)).toBe(DEFAULT_TRC20_FEES_LIMIT);
     },
   };
 
@@ -324,6 +384,9 @@ function makeTransactions(): Tx[] {
 
   // Ordering is load-bearing:
   //  - `vote` needs tron power, so it must follow `freeze`.
+  //  - `freezeEnergy` flips the indexer's energy-covered mock on, so `sendTrc20FromEnergyCovered` must
+  //    directly follow it; that row flips the mock back off. Both must precede `sendMaxTrc20`, which
+  //    empties the TRC20 balance they spend from.
   //  - TRC20 sends burn energy (= TRX), so `sendMaxTrx` must stay last; otherwise the funder no
   //    longer has enough TRX to cover TRC20 fees. `freeze` also locks TRX, which `sendMaxTrx`'s
   //    spendable-balance assertion tolerates.
@@ -335,6 +398,8 @@ function makeTransactions(): Tx[] {
     sendTrc20,
     sendTrc20WithCustomFees,
     sendTrc20WithBelowDefaultFee,
+    freezeEnergy,
+    sendTrc20FromEnergyCovered,
     sendMaxTrc20,
     freeze,
     vote,
