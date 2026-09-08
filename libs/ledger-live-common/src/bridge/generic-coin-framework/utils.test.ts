@@ -1588,6 +1588,30 @@ describe("coin-framework utils", () => {
       const result = adaptCoreOperationToLiveOperation(accountId, baseOp);
       expect("transferId" in (result.extra as Record<string, unknown>)).toBe(false);
     });
+
+    it("maps details.destinationTag to extra.memo", () => {
+      const op = { ...baseOp, details: { destinationTag: 42 } };
+      const result = adaptCoreOperationToLiveOperation(accountId, op);
+      expect((result.extra as Record<string, unknown>).memo).toBe("42");
+    });
+
+    it("maps a zero details.destinationTag to extra.memo", () => {
+      const op = { ...baseOp, details: { destinationTag: 0 } };
+      const result = adaptCoreOperationToLiveOperation(accountId, op);
+      expect((result.extra as Record<string, unknown>).memo).toBe("0");
+    });
+
+    it("prefers details.memo over details.destinationTag when both are present", () => {
+      const op = { ...baseOp, details: { memo: "a-memo", destinationTag: 42 } };
+      const result = adaptCoreOperationToLiveOperation(accountId, op);
+      expect((result.extra as Record<string, unknown>).memo).toBe("a-memo");
+    });
+
+    it("does not set extra.memo when neither memo nor destinationTag is present", () => {
+      const op = { ...baseOp, details: {} };
+      const result = adaptCoreOperationToLiveOperation(accountId, op);
+      expect("memo" in (result.extra as Record<string, unknown>)).toBe(false);
+    });
   });
 
   describe("nextSequenceWithPending", () => {

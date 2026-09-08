@@ -663,6 +663,10 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
     extra.memo = op.details.memo as string;
   }
 
+  if (extra.memo === undefined && typeof op.details?.destinationTag === "number") {
+    extra.memo = op.details.destinationTag.toString();
+  }
+
   if (op.details?.internal === true) {
     extra.internal = op.details?.internal;
   }
