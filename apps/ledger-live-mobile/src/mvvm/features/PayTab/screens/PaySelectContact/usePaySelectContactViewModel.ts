@@ -5,9 +5,11 @@ import type { Contact } from "@domain/entity-contact";
 import { useTranslation } from "@shared/i18n";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useHideTabBar } from "LLM/hooks/useTabBarVisibility";
 import { usePayTabNewPayment } from "../../hooks/usePayTabNewPayment";
 
 export function usePaySelectContactViewModel() {
+  useHideTabBar();
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { open, contactAddressPicker } = usePayTabNewPayment();

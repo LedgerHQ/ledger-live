@@ -636,7 +636,7 @@ describe("PayTab integration", () => {
     });
 
     it("should cap the strip at 8 and open Pay contact via see-all", async () => {
-      const { user } = renderPayTab({ contacts: seedContacts(9), contactsEnabled: true });
+      const { user, store } = renderPayTab({ contacts: seedContacts(9), contactsEnabled: true });
 
       expect(await screen.findByRole("button", { name: "New" })).toBeVisible();
       expect(screen.getAllByRole("button", { name: /^Contact / })).toHaveLength(8);
@@ -646,6 +646,7 @@ describe("PayTab integration", () => {
       expect(await screen.findByTestId("contacts-screen")).toBeVisible();
       expect(screen.getByText("Me")).toBeVisible();
       expect(screen.queryByTestId("pay-select-contact")).not.toBeOnTheScreen();
+      expect(store.getState().appstate.isMainNavigatorVisible).toBe(false);
     });
 
     it("should pick a contact address before opening MAD", async () => {
