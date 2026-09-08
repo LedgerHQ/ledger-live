@@ -1,5 +1,46 @@
 # @shared/env
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#21418](https://github.com/LedgerHQ/ledger-live/pull/21418) [`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Rename `CARD_API_URL` to `CARD_BAANX_API_URL`, keep the production defaults, and drop the Env vars section from the Card / Pay DevTool.
+
+- [#21616](https://github.com/LedgerHQ/ledger-live/pull/21616) [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate `BIG_NUMBER_DECIMAL_PLACES` off `@ledgerhq/live-env`: every call site now inlines the constant and the definition is removed. `@ledgerhq/live-currency-format` drops its `@ledgerhq/live-env` dependency altogether.
+
+- [#21544](https://github.com/LedgerHQ/ledger-live/pull/21544) [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mark the whole public API deprecated and ship the migration guide. `getEnv`, `setEnv`, `setEnvUnsafe`, `getEnvDefault`, `getAllEnvs`, `injectDefinitions`, `changes`, the registry introspection helpers, the exported types and the `useEnv` hook now carry `@deprecated`. `libs/env/MIGRATION.md` documents the four exits every variable takes; `shared/env/MIGRATION.md` covers what that means inside ledger-live. No behaviour change.
+
+- [#21428](https://github.com/LedgerHQ/ledger-live/pull/21428) [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show a Card login intro sheet on the first press of the card's action (LIVE-36793). The sheet has two
+  buttons. "Log in to Baanx" runs the OAuth2 hosted login. "Create an account" opens the provider's
+  own signup page, `/onboarding/signup` on the new `CARD_BAANX_HOSTED_UI` host, in the same browser. The
+  intro shows once: a new persisted `payCardLoginIntro` flag goes up when a login the card holder just
+  started reaches `ready`, and it survives an app restart inside the shared `payCard` blob. A hydrated
+  session raises nothing. A tester resets the flag from the Pay Card devtool, and the intro shows again
+  on the next press.
+
+  The same flag now picks what the login block says, from the app's new `payTab.cardLogin.*` keys. It
+  sells the card while the flag is down — "Get 1% cashback every time you spend" under a `Get card`
+  button that opens the intro — and offers a login once the flag is up: "Log in to access your card"
+  under a `Login` button that starts one. Its title is `Crypto Card`, and on mobile it is a Lumen
+  `Subheader` under the card face, so the Pay Card flow no longer draws a section title above it there.
+  Desktop keeps its host-provided title.
+
+  The virtual card row names one wallet only: Apple Pay on iOS, Google Pay on Android. Desktop cannot
+  see the phone the card will be added to, so it keeps naming both. Each row wraps its title and its
+  description over as many lines as the copy needs, instead of cutting both off at the first.
+
+  Hosts inject `onTrackEvent`. Get card, Login, the intro buttons and close fire `button_clicked`;
+  opening the intro also fires `Page card login intro`.
+
+  `CARD_BAANX_HOSTED_UI` defaults to `https://ledger-ew1uat.baanxapi.com`. Both apps read it with
+  `useEnv` and hand it to the flow as `oauthConfig.hostedUiUrl`, so a new value moves the signup page
+  to another tenant without a restart.
+
+### Patch Changes
+
+- Updated dependencies [[`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225)]:
+  - @ledgerhq/live-env@4.0.0-next.0
+
 ## 0.5.0
 
 ### Minor Changes

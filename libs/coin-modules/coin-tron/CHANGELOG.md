@@ -1,5 +1,30 @@
 # @ledgerhq/coin-tron
 
+## 8.0.0-next.0
+
+### Major Changes
+
+- [#21611](https://github.com/LedgerHQ/ledger-live/pull/21611) [`dd134e9`](https://github.com/LedgerHQ/ledger-live/commit/dd134e9c126773d47cd8dfb6aaf677534f2e7b23) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-tron): outsource wallet types
+
+- [#21480](https://github.com/LedgerHQ/ledger-live/pull/21480) [`ebeb266`](https://github.com/LedgerHQ/ledger-live/commit/ebeb266bb8091b86a4393497677088b1aa51dee5) Thanks [@henri-ly](https://github.com/henri-ly)! - Move the Tron `getAddress` signer out of coin-tron into `families/tron/`, so coin-tron no
+  longer depends on the ledger-wallet-framework signer, derivation and bridge entry points.
+  The `@ledgerhq/coin-tron/signer` sub-path export is removed.
+
+### Minor Changes
+
+- [#21579](https://github.com/LedgerHQ/ledger-live/pull/21579) [`dee33d1`](https://github.com/LedgerHQ/ledger-live/commit/dee33d173c7d10b1145b8dbba95b31d044100559) Thanks [@shazzzam](https://github.com/shazzzam)! - Add Tronify `listFeeOptions` fee-option discovery (ADR-050 Option 3).
+
+  `listFeeOptions(intent)` is the lightweight first step of the two-call fee flow: it returns availability metadata only (no amounts). It advertises `[tronify, standard]` only when the intent is a TRC-20 transfer, a recipient is set, the Tronify provider is activated in remote coin-config (`energyRent` present), and the standard path would actually burn TRX; it returns `[standard]` otherwise. It never throws — any failure degrades to the standard-only list so the default path always works. The priced quote per option is fetched later by `estimateFees(intent, "tronify")`.
+
+- [#20928](https://github.com/LedgerHQ/ledger-live/pull/20928) [`dea88f1`](https://github.com/LedgerHQ/ledger-live/commit/dea88f1874017d5b3d32a376a8bc8eb2e0eb75ba) Thanks [@shazzzam](https://github.com/shazzzam)! - Add Tronify energy-rent fee option to `estimateFees`.
+
+  When `feeOptionId: "tronify"` is passed via `EstimateFeesOptions`, the CoinModule API's `estimateFees` dispatches to a dedicated `estimateTronifyFees` path that still computes the standard on-chain burn for comparison and prices the Tronify energy-rental option against it. The returned `FeeEstimation` carries `value` (Tronify rental cost in SUN), `originalValue` (standard burn cost for comparison), and `savings` (non-negative difference, `0n` when Tronify is not cheaper). Errors from the Tronify API propagate without fallback, per ADR-050 Option 3.
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215)]:
+  - @ledgerhq/ledger-wallet-framework@3.3.0-next.0
+
 ## 7.2.0
 
 ### Minor Changes

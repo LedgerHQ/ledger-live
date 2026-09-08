@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-zcash",
-  "version": "0.1.0",
+  "version": "0.1.1-next.0",
   "private": true,
   "sideEffects": false,
   "description": "Ledger Zcash Coin Tester",

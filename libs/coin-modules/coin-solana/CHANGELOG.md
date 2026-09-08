@@ -1,5 +1,25 @@
 # @ledgerhq/coin-solana
 
+## 2.1.0-next.0
+
+### Minor Changes
+
+- [#21318](https://github.com/LedgerHQ/ledger-live/pull/21318) [`e1e7cb2`](https://github.com/LedgerHQ/ledger-live/commit/e1e7cb2fa32ef3b413f8e598687f05780ad1c0e8) Thanks [@henri-ly](https://github.com/henri-ly)! - Fix Solana account synchronization failing when the RPC provider deprioritizes stake
+  account discovery. Stake accounts are now enumerated with the paginated
+  getProgramAccountsV2, falling back to getProgramAccounts on endpoints that do not
+  implement it (devnet, testnet and the local test validator run vanilla agave).
+
+- [#21454](https://github.com/LedgerHQ/ledger-live/pull/21454) [`0dc37f4`](https://github.com/LedgerHQ/ledger-live/commit/0dc37f464793d07436854e14bd358fd0bb7a9225) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-solana): support v1 transactions
+
+- [#21417](https://github.com/LedgerHQ/ledger-live/pull/21417) [`0c46f58`](https://github.com/LedgerHQ/ledger-live/commit/0c46f58fe1aab809579e5639d9c754ea223e2b51) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-solana): prevent withdraw while activating
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
+  - @ledgerhq/types-live@6.123.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.3.0-next.0
+  - @ledgerhq/live-env@4.0.0-next.0
+
 ## 2.0.0
 
 ### Major Changes

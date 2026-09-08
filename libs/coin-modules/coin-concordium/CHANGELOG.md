@@ -1,5 +1,33 @@
 # @ledgerhq/coin-concordium
 
+## 1.2.0-next.0
+
+### Minor Changes
+
+- [#21475](https://github.com/LedgerHQ/ledger-live/pull/21475) [`47a1cd0`](https://github.com/LedgerHQ/ledger-live/commit/47a1cd082cc30cd7cc539a8eb0e0fe5466128533) Thanks [@amaslakov](https://github.com/amaslakov)! - Extend the transaction and account types with the PLT token id, the persisted fee-estimation energy, and per-token state
+
+- [#21204](https://github.com/LedgerHQ/ledger-live/pull/21204) [`3a78322`](https://github.com/LedgerHQ/ledger-live/commit/3a783224b6016fce08fa8cb3254057b75882e2c5) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Adopt the PLT-capable Concordium signer and map the PLT status words to typed errors
+
+- [#21591](https://github.com/LedgerHQ/ledger-live/pull/21591) [`2b8a4e4`](https://github.com/LedgerHQ/ledger-live/commit/2b8a4e4240a414cbb1bda31b97b70837cb6ac3fe) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Estimate PLT transfer fees through the wallet-proxy `tokenUpdate` cost endpoint
+
+  `getTransactionCost` is parameterized on transaction type instead of hardcoding
+  `simpleTransfer`. PLT preparation encodes the CBOR operations blob first, since
+  its byte length is a required cost parameter, then applies a 20% energy buffer
+  and persists the result. Signing reads that persisted pair rather than
+  re-estimating, so the fee shown in the wallet and the energy in the signed
+  header cannot disagree. Native CCD estimation is unchanged.
+
+- [#21504](https://github.com/LedgerHQ/ledger-live/pull/21504) [`92b90a6`](https://github.com/LedgerHQ/ledger-live/commit/92b90a6eebca959abe0b04aa83c5799d34f9f10a) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Build PLT token sub-accounts during Concordium account sync, behind the new `enableTokens` coin config flag (off by default). Tokens are resolved from the CAL by on-chain address, per-token pause and allow/deny state is cached on the account, and PLT balances are reported on the `api/` surface.
+
+- [#21429](https://github.com/LedgerHQ/ledger-live/pull/21429) [`30619aa`](https://github.com/LedgerHQ/ledger-live/commit/30619aaa2af784fd917214bb0e4bbd092f883e11) Thanks [@amaslakov](https://github.com/amaslakov)! - Add PLT error classes and map chain reject reasons onto them
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
+  - @ledgerhq/types-live@6.123.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.3.0-next.0
+  - @ledgerhq/live-env@4.0.0-next.0
+
 ## 1.1.0
 
 ### Minor Changes

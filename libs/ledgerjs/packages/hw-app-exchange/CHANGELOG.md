@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.27.0-next.0
+
+### Minor Changes
+
+- [#21544](https://github.com/LedgerHQ/ledger-live/pull/21544) [`34767ef`](https://github.com/LedgerHQ/ledger-live/commit/34767ef352530bb832c95e10c63b8688648d6a5f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Format the generated protobuf files in `prebuild`. `pbjs`/`pbts` emit their own style while the committed `generate-protocol.js`/`.d.ts` are oxfmt-formatted, so regenerating them always dirtied the tree and failed the CLI job's `git diff` check. Only visible on an nx cache miss, which is why it went unnoticed.
+
 ## 0.26.0
 
 ### Minor Changes

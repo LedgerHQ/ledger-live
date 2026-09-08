@@ -1,5 +1,15 @@
 # @support/jest-features-flow
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#21408](https://github.com/LedgerHQ/ledger-live/pull/21408) [`c270975`](https://github.com/LedgerHQ/ledger-live/commit/c2709750e007b758fa13f0f717efa897fcc6235d) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add a first-time Popover on desktop Pay Request Verify.
+
+- [#21397](https://github.com/LedgerHQ/ledger-live/pull/21397) [`2fe4ef6`](https://github.com/LedgerHQ/ledger-live/commit/2fe4ef6fabb69dbbb38f4bf8517e7d52f9b35b43) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Wire Pay contact tile press to send (prefill a single-address contact), add a desktop View contact overflow action, and render Lumen `MenuTrigger` `render` props in the shared web passthrough stub.
+
+- [#21577](https://github.com/LedgerHQ/ledger-live/pull/21577) [`3ea6abc`](https://github.com/LedgerHQ/ledger-live/commit/3ea6abc7a12a27650caf47551e328ab38c9308d6) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Ship a QueuedBottomSheet test double from `@shared/ui-queued-bottom-sheet/testing` and map it by default in the features/flow native jest project, so sheet-hosting views no longer hand-roll a mock per test.
+
 ## 0.3.0
 
 ### Minor Changes
