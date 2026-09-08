@@ -10344,6 +10344,14 @@
       "addressPicker": {
         "title": "Select {{name}}'s address",
         "addAddress": "Add address"
+      },
+      "paySuccess": {
+        "title": "You paid ({{recipient}})",
+        "amount": "Amount",
+        "estimatedTime": "Est. time",
+        "from": "From",
+        "viewTransaction": "View transaction",
+        "close": "Close"
       }
     },
     "cardOnboarding": {

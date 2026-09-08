@@ -7,6 +7,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
+import { getSendSuccessScreenName } from "../../../utils/getSendSuccessScreenName";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendSignature } from "../../../context/SendSignatureContext";
 import type { SendFlowNavigationProp } from "../../../types";
@@ -28,7 +29,7 @@ export type CoinControlScreenViewModel =
     };
 
 export function useCoinControlScreen(): CoinControlScreenViewModel {
-  const { state, uiConfig } = useSendFlowData();
+  const { state, uiConfig, source } = useSendFlowData();
   const { transaction: transactionActions, close } = useSendFlowActions();
   const { startSigning } = useSendSignature();
   const navigation = useNavigation<SendFlowNavigationProp>();
@@ -37,8 +38,8 @@ export function useCoinControlScreen(): CoinControlScreenViewModel {
   const { bridgePending, status, transaction } = state.transaction;
 
   const onReview = useCallback(() => {
-    startSigning(() => navigation.navigate(ScreenName.SendFlowConfirmation));
-  }, [startSigning, navigation]);
+    startSigning(() => navigation.navigate(getSendSuccessScreenName(source)));
+  }, [startSigning, navigation, source]);
 
   const onGetFunds = useCallback(() => {
     close();
