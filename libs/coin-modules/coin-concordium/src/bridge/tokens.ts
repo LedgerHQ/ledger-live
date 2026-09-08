@@ -1,12 +1,13 @@
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { log } from "@ledgerhq/logs";
 import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getAccountListStatus, isDecodedPltState } from "../network/plt";
-import { baseOperation, mergeOperations, toOperation } from "./operations";
+import { baseOperation, toOperation } from "./operations";
 import type {
   ConcordiumAccount,
   ConcordiumResources,
@@ -214,6 +215,7 @@ export function mergeSubAccounts(
   previous: TokenAccount[] | undefined,
   newSubAccounts: TokenAccount[],
   keepIds: ReadonlySet<string> = new Set(),
+  refetchAll = false,
 ): TokenAccount[] {
   if (!previous?.length) return newSubAccounts;
 
@@ -223,7 +225,9 @@ export function mergeSubAccounts(
     const old = previousById.get(newSubAccount.id);
     if (!old) return newSubAccount;
 
-    const operations = mergeOperations(old.operations, newSubAccount.operations);
+    // Discarded on a re-read for the same reason the parent's history is: the
+    // walk covered every block, so it already holds everything stored here.
+    const operations = mergeOps(refetchAll ? [] : old.operations, newSubAccount.operations);
 
     return {
       ...old,
@@ -361,6 +365,77 @@ function resolveEntries({
 }
 
 /**
+ * Turns the resolved entries into the sub-accounts and per-token state one sync
+ * produces, plus the ids `mergeSubAccounts` must keep despite building none.
+ */
+function absorbEntries({
+  resolved,
+  accountId,
+  pltOperations,
+  initialAccount,
+}: {
+  resolved: ResolvedEntry[];
+  accountId: string;
+  pltOperations: RawOperation[];
+  initialAccount: ConcordiumAccount | undefined;
+}): {
+  newSubAccounts: TokenAccount[];
+  tokens: Record<string, ConcordiumTokenResources>;
+  keepIds: Set<string>;
+} {
+  const newSubAccounts: TokenAccount[] = [];
+  const tokens: Record<string, ConcordiumTokenResources> = {};
+  const keepIds = new Set<string>();
+  const seenIds = new Set<string>();
+
+  for (const item of resolved) {
+    if (!item) continue;
+
+    if ("untrusted" in item) {
+      keepIds.add(item.untrusted);
+
+      // The sub-account survives through `keepIds`, but the resources map is
+      // rebuilt wholesale, so its prior entry has to be carried over with it.
+      // Otherwise the send path sees a visible token with no transferStatus.
+      const priorState = initialAccount?.concordiumResources?.tokens?.[item.tokenId];
+      if (priorState) tokens[item.tokenId] = priorState;
+      continue;
+    }
+
+    const { entry, token, tokenId, balance } = item;
+    const subAccountId = encodeTokenAccountId(accountId, token);
+
+    // A duplicate id would otherwise produce two sub-accounts for one token,
+    // which the merge cannot reconcile. Only a malformed snapshot can cause it.
+    if (seenIds.has(subAccountId)) {
+      log("concordium-sync", `PLT ${tokenId} appears more than once, ignoring the repeat`);
+      continue;
+    }
+    seenIds.add(subAccountId);
+
+    newSubAccounts.push(
+      buildTokenAccount(
+        subAccountId,
+        accountId,
+        token,
+        balance,
+        // Through `mergeOps` so a fresh sub-account is deduped and ordered the
+        // same way an existing one is when this sync's operations reach it.
+        mergeOps([], operationsForToken(pltOperations, tokenId, token, subAccountId)),
+      ),
+    );
+
+    const paused = readPaused(entry);
+    tokens[tokenId] = {
+      transferStatus: resolveTransferStatus(entry),
+      ...(paused === undefined ? {} : { paused }),
+    };
+  }
+
+  return { newSubAccounts, tokens, keepIds };
+}
+
+/**
  * Reports that this sync fetched PLT transfers it could not place on a
  * sub-account. The caller invalidates the stored `syncHash` on it, because the
  * parent fee operations are kept either way: the watermark moves past those
@@ -388,6 +463,7 @@ export async function resolveTokenSubAccounts({
   initialAccount,
   pltOperations = [],
   blacklistedTokenIds = [],
+  refetchAll = false,
 }: {
   enableTokens: boolean;
   currencyId: string;
@@ -396,6 +472,7 @@ export async function resolveTokenSubAccounts({
   initialAccount: ConcordiumAccount | undefined;
   pltOperations?: RawOperation[];
   blacklistedTokenIds?: string[];
+  refetchAll?: boolean;
 }): Promise<ResolvedTokens> {
   if (!enableTokens) {
     return { kind: "cleared" };
@@ -421,60 +498,24 @@ export async function resolveTokenSubAccounts({
     return { kind: "unchanged", ...unattributed(pltOperations) };
   }
 
-  const newSubAccounts: TokenAccount[] = [];
-  const tokens: Record<string, ConcordiumTokenResources> = {};
-  const untrustedIds = new Set<string>();
-  const untrustedTokenIds = new Set<string>();
-  const seenIds = new Set<string>();
+  const { newSubAccounts, tokens, keepIds } = absorbEntries({
+    resolved,
+    accountId,
+    pltOperations,
+    initialAccount,
+  });
 
-  for (const item of resolved) {
-    if (!item) continue;
-
-    if ("untrusted" in item) {
-      untrustedIds.add(item.untrusted);
-      untrustedTokenIds.add(item.tokenId);
-
-      // The sub-account survives through `keepIds`, but the resources map is
-      // rebuilt wholesale, so its prior entry has to be carried over with it.
-      // Otherwise the send path sees a visible token with no transferStatus.
-      const priorState = initialAccount?.concordiumResources?.tokens?.[item.tokenId];
-      if (priorState) tokens[item.tokenId] = priorState;
-      continue;
-    }
-
-    const { entry, token, tokenId, balance } = item;
-    const subAccountId = encodeTokenAccountId(accountId, token);
-
-    // A duplicate id would otherwise produce two sub-accounts for one token,
-    // which the merge cannot reconcile. Only a malformed snapshot can cause it.
-    if (seenIds.has(subAccountId)) {
-      log("concordium-sync", `PLT ${tokenId} appears more than once, ignoring the repeat`);
-      continue;
-    }
-    seenIds.add(subAccountId);
-
-    newSubAccounts.push(
-      buildTokenAccount(
-        subAccountId,
-        accountId,
-        token,
-        balance,
-        operationsForToken(pltOperations, tokenId, token, subAccountId),
-      ),
-    );
-
-    const paused = readPaused(entry);
-    tokens[tokenId] = {
-      transferStatus: resolveTransferStatus(entry),
-      ...(paused === undefined ? {} : { paused }),
-    };
-  }
+  // Only for an entry too malformed to name its token. Every other reason a
+  // transfer is dropped here — uncurated, blacklisted, denomination disagreeing
+  // with the CAL — already moves `getSyncHash` when it is put right, so asking
+  // for a re-read would buy a wasted walk rather than a recovery.
+  const unreadableEntry = resolved.some(item => item === undefined);
 
   return {
     kind: "resolved",
-    subAccounts: mergeSubAccounts(initialAccount?.subAccounts, newSubAccounts, untrustedIds),
+    subAccounts: mergeSubAccounts(initialAccount?.subAccounts, newSubAccounts, keepIds, refetchAll),
     tokens,
-    ...unattributed(pltOperations.filter(op => untrustedTokenIds.has(op.tokenId ?? ""))),
+    ...(unreadableEntry ? unattributed(pltOperations) : {}),
   };
 }
 

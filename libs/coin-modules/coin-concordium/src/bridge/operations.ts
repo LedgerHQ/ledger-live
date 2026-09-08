@@ -1,13 +1,13 @@
 import BigNumber from "bignumber.js";
-import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
+import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization/index";
+import type { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import type { RawOperation } from "../types";
 
 /**
- * The fields every operation this family builds shares, whatever account it
- * lands on. `type` and `value` are the caller's to decide: a PLT transfer moves
- * a token amount on the sub-account and a CCD fee on the parent.
+ * The fields every operation this family builds shares. `type` and `value` are
+ * the caller's: one PLT transfer moves a token on the sub-account and a CCD fee
+ * on the parent.
  */
 export function baseOperation(
   op: RawOperation,
@@ -34,7 +34,6 @@ export function baseOperation(
   };
 }
 
-/** Maps a transfer onto the account that holds it, parent or sub-account alike. */
 export function toOperation(op: RawOperation, accountId: string): Operation {
   return {
     ...baseOperation(op, accountId, op.type, new BigNumber(op.value)),
@@ -43,29 +42,24 @@ export function toOperation(op: RawOperation, accountId: string): Operation {
 }
 
 /**
- * `mergeOps` with the operations it drops put back.
+ * Hangs each PLT transfer under the CCD operation that paid its fee. Done here
+ * because a parent is built before the sub-accounts it points at exist.
  *
- * It walks `existing` and pushes an incoming operation only while that
- * operation is at least as recent as the one it is looking at, so anything
- * older than the oldest stored operation is still in its queue when the walk
- * ends, and is never emitted. That is invisible in an incremental sync, which
- * only ever fetches newer blocks, but it silently defeats a re-read from height
- * zero: the older history it went back for is exactly what gets dropped.
+ * Gated on the parent types so the scan costs the PLT slice of the history
+ * rather than all of it; a native transfer never shares a hash with a token
+ * operation. Skipping it only affects this sync — `fromOperationRaw` infers the
+ * same links when the account is read back.
  */
-export function mergeOperations(existing: Operation[], incoming: Operation[]): Operation[] {
-  const merged = mergeOps(existing, incoming);
+export function attachSubOperations(
+  operations: Operation[],
+  subAccounts: TokenAccount[],
+): Operation[] {
+  if (subAccounts.length === 0) return operations;
 
-  const emitted = new Set(merged.map(op => op.id));
+  return operations.map(op => {
+    if (op.type !== "FEES" && op.type !== "NONE") return op;
 
-  // Keyed rather than filtered, because a page that repeats a transaction would
-  // otherwise put every copy back: `mergeOps` guarantees the result holds no
-  // duplicate id, and restoring what it dropped must not cost that. Last wins,
-  // as it does there.
-  const dropped = new Map<string, Operation>();
-  for (const op of incoming) {
-    if (!emitted.has(op.id)) dropped.set(op.id, op);
-  }
-  if (dropped.size === 0) return merged;
-
-  return [...merged, ...dropped.values()].sort((a, b) => b.date.valueOf() - a.date.valueOf());
+    const subOperations = inferSubOperations(op.hash, subAccounts);
+    return subOperations.length > 0 ? { ...op, subOperations } : op;
+  });
 }

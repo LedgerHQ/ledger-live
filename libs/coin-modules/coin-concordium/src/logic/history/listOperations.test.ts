@@ -98,56 +98,33 @@ describe("parseTransaction", () => {
     expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
   });
 
-  it("should mark failed transactions", () => {
-    const tx: WalletProxyTransaction = {
-      ...baseTx,
-      details: {
-        type: "transfer",
-        outcome: "reject",
-        transferSource: VALID_ADDRESS,
-        transferDestination: VALID_ADDRESS_2,
-        transferAmount: "500000",
-      },
-    };
-
-    const result = parseTransaction(tx, VALID_ADDRESS);
-    expect(result!.failed).toBe(true);
-  });
-
-  it("should compute value as fee only for failed outgoing transfers", () => {
-    const tx: WalletProxyTransaction = {
+  // A rejection is reported without any of the transfer fields, and only to the
+  // account that paid: there is no counterparty row to parse.
+  const rejectedTx = (overrides?: Partial<WalletProxyTransaction>): WalletProxyTransaction =>
+    ({
       ...baseTx,
       cost: 300,
-      details: {
-        type: "transfer",
-        outcome: "reject",
-        transferSource: VALID_ADDRESS,
-        transferDestination: VALID_ADDRESS_2,
-        transferAmount: "500000",
-      },
-    };
+      details: { type: "transfer", outcome: "reject", rejectReason: "InvalidNonce" },
+      ...overrides,
+    }) as WalletProxyTransaction;
 
-    const result = parseTransaction(tx, VALID_ADDRESS);
-    expect(result!.value).toBe("300");
-    expect(result!.amount).toBe("500000");
-    expect(result!.fee).toBe("300");
+  it("charges the sender for a rejected transfer, which reports no counterparty", () => {
+    const result = parseTransaction(rejectedTx(), VALID_ADDRESS);
+
+    expect(result).toMatchObject({
+      type: "OUT",
+      failed: true,
+      value: "300",
+      fee: "300",
+      amount: "0",
+      recipient: "",
+    });
   });
 
-  it("should compute value as 0 for failed incoming transfers", () => {
-    const tx: WalletProxyTransaction = {
-      ...baseTx,
-      cost: 300,
-      details: {
-        type: "transfer",
-        outcome: "reject",
-        transferSource: VALID_ADDRESS_2,
-        transferDestination: VALID_ADDRESS,
-        transferAmount: "500000",
-      },
-    };
+  it("returns null for a rejected transfer the account did not pay for", () => {
+    const paidByAnother = rejectedTx({ origin: { type: "account", address: VALID_ADDRESS_2 } });
 
-    const result = parseTransaction(tx, VALID_ADDRESS);
-    expect(result!.value).toBe("0");
+    expect(parseTransaction(paidByAnother, VALID_ADDRESS)).toBeNull();
   });
 
   it("should return memo as undefined when CBOR decoding fails", () => {
@@ -413,6 +390,7 @@ describe("listOperations", () => {
       limit: 100,
       order: "d",
       includeRawRejectReason: true,
+      includeRewards: "none",
     });
     expect(result.items).toHaveLength(1);
     expect(result.items[0]).toMatchObject({
@@ -456,6 +434,7 @@ describe("listOperations", () => {
       limit: 100,
       order: "d",
       includeRawRejectReason: true,
+      includeRewards: "none",
       blockHeightFrom: 500,
     });
   });
@@ -479,6 +458,7 @@ describe("listOperations", () => {
       limit: 100,
       order: "d",
       includeRawRejectReason: true,
+      includeRewards: "none",
       from: "42",
     });
   });
@@ -548,16 +528,19 @@ describe("listOperations", () => {
     expect(result.items).toHaveLength(0);
   });
 
-  it("should return empty array on error", async () => {
+  it("reports a fetch failure rather than an empty page, which reads as the end", async () => {
     getTransactionsMock.mockRejectedValue(new Error("network error"));
 
-    const result = await listOperations(
-      config,
-      VALID_ADDRESS,
-      { minHeight: 0 },
-      "concordium_testnet",
-    );
+    await expect(
+      listOperations(config, VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet"),
+    ).rejects.toThrow("network error");
+  });
 
-    expect(result).toEqual({ items: [], next: undefined });
+  it("excludes rewards, which the parser drops and which dominate a staking account", async () => {
+    getTransactionsMock.mockResolvedValue({ transactions: [], count: 0, limit: 100 });
+
+    await listOperations(config, VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
+
+    expect(getTransactionsMock.mock.calls[0][3]).toMatchObject({ includeRewards: "none" });
   });
 });

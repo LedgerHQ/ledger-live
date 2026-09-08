@@ -643,7 +643,7 @@ describe("token operations on sub-accounts", () => {
     expect(ids).toHaveLength(2);
   });
 
-  it("keeps a transfer older than everything the sub-account already holds", async () => {
+  it("replaces the sub-account's operations on a re-read, as the parent account does", async () => {
     const stored = makeRawOp({ date: new Date("2024-06-01T00:00:00Z") });
     const first = await resolve({ pltOperations: [stored] });
     if (first.kind !== "resolved") throw new Error("expected resolved");
@@ -651,10 +651,10 @@ describe("token operations on sub-accounts", () => {
     const initialAccount = { subAccounts: first.subAccounts } as unknown as ConcordiumAccount;
     const older = makeRawOp({ hash: "ee".repeat(32), id: 2, date: new Date("2020-01-01") });
 
-    const second = await resolve({ initialAccount, pltOperations: [older] });
+    const second = await resolve({ initialAccount, pltOperations: [older], refetchAll: true });
 
     if (second.kind !== "resolved") throw new Error("expected resolved");
-    expect(second.subAccounts[0].operations.map(op => op.hash)).toContain("ee".repeat(32));
+    expect(second.subAccounts[0].operations.map(op => op.hash)).toEqual(["ee".repeat(32)]);
   });
 
   it("publishes no operations for a token the CAL does not curate", async () => {

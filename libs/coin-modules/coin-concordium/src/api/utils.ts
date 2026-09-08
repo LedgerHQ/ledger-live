@@ -2,10 +2,9 @@ import type { AssetInfo, Operation } from "@ledgerhq/coin-module-framework/api/i
 import type { RawOperation } from "../types";
 
 /**
- * All three fields match what `getBalance` reports for the same token, because
- * the two are paired on them: a consumer matching an operation to a balance
- * reads `assetReference` and `assetOwner` together. No unit is published — the
- * CAL owns a token's name and ticker, and this surface resolves no CAL.
+ * Matches what `getBalance` reports for the same token: a consumer pairing an
+ * operation with a balance reads `assetReference` and `assetOwner` together. No
+ * unit is published, since the CAL owns a token's name and ticker.
  */
 function toAssetInfo(op: RawOperation, address: string): AssetInfo {
   if (op.tokenId === undefined) {

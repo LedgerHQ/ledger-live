@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
-import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { type GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Operation } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import coinConfig from "../config";
@@ -10,13 +10,14 @@ import {
   getConsensusInfo,
 } from "../network/proxyClient";
 import { listOperations } from "../logic/history/listOperations";
+import { paginateOperations } from "../logic/history/paginate";
 import type {
   ConcordiumAccount,
   ConcordiumResources,
   PltAccountToken,
   RawOperation,
 } from "../types";
-import { mergeOperations } from "./operations";
+import { attachSubOperations } from "./operations";
 import { mapRawOperationToBridgeOperation } from "./serialization";
 import {
   applyTokensToResources,
@@ -87,30 +88,30 @@ export async function getBalance(
   };
 }
 
+/** The proxy's documented ceiling; anything larger is silently clamped to it. */
+const PAGE_SIZE = 1000;
+
 const TOKENS_OFF_SYNC_HASH = "tokens=off";
 
 /**
- * Stored in place of the computed hash by a sync that fetched PLT transfers it
- * could not attribute, so that the next sync mismatches and re-reads from
- * height zero.
+ * Stored by a sync that fetched PLT transfers it could not attribute, so the
+ * next one mismatches and re-reads from height zero.
  *
- * A CAL outage is the one case that echoes this value back rather than
- * mismatching, deferring the re-read. That costs nothing: attributing those
- * transfers needs the CAL that is down, and the first healthy sync computes a
- * real hash, mismatches, and picks them up.
+ * It stays set for as long as the cause lasts. The causes are transient by
+ * construction — a balance response without its token list, a CAL that will not
+ * answer — so the re-read repeats while the fault does and stops when it lifts.
+ * Anything permanent is kept out of this marker at the `tokens.ts` end.
  */
 const REFETCH_SYNC_HASH = "refetch-pending";
 
 /**
- * Names the assumptions the stored history was built under. Operations are the
- * one thing a sync does not re-derive, so PLT transfers dropped while the flag
- * was off would stay behind the watermark once it went on. Both flag states are
- * represented; preserving the stored hash through the off state, as coin-aleo
- * does, would let the round trip go unnoticed.
+ * Names the assumptions the stored history was built under. Both flag states
+ * are represented, because preserving the stored hash through the off state (as
+ * coin-aleo does) would let a round trip go unnoticed.
  *
  * The off state is a constant so the CAL is never consulted while the feature
- * is off, and a CAL failure while it is on keeps the stored hash rather than
- * invalidating on a transient outage.
+ * is off, and a failure while it is on keeps the stored hash rather than
+ * invalidating on an outage.
  */
 async function computeSyncHash(
   currencyId: string,
@@ -133,6 +134,9 @@ async function computeSyncHash(
  * The token half is returned unmapped: attributing it needs the sub-account id,
  * and that needs a CAL lookup this layer does not perform.
  *
+ * Every page is walked, incrementally as well as on a re-read: stopping at the
+ * first would strand anything older behind the watermark.
+ *
  * With tokens off, PLT transfers are discarded outright rather than reduced to
  * their fee; `syncHash` covers the flag, so turning it on re-reads from zero.
  */
@@ -144,25 +148,25 @@ export async function syncOperations(
   { enableTokens, refetchAll = false }: { enableTokens: boolean; refetchAll?: boolean },
 ): Promise<{ operations: Operation[]; pltOperations: RawOperation[] }> {
   const lastBlockHeight = oldOperations[0]?.blockHeight ?? 0;
-  const minHeight = refetchAll || lastBlockHeight === 0 ? 0 : lastBlockHeight + 1;
+  // Reading from zero and discarding are one decision: the walk is a superset of
+  // what was stored only when it started at the bottom.
+  const fromScratch = refetchAll || lastBlockHeight === 0;
+  const minHeight = fromScratch ? 0 : lastBlockHeight + 1;
 
   const config = coinConfig.getCoinConfig(currencyId);
-  const result = await listOperations(
-    config,
-    address,
-    { minHeight, limit: 100, order: "desc" },
-    currencyId,
-  ).catch(error => {
-    log("concordium-sync", `Error fetching operations for account with address ${address}`, {
-      error,
-    });
-    return { items: [] as RawOperation[], next: undefined };
-  });
+  const items = await paginateOperations(cursor =>
+    listOperations(
+      config,
+      address,
+      { minHeight, limit: PAGE_SIZE, order: "desc", ...(cursor ? { cursor } : {}) },
+      currencyId,
+    ),
+  );
 
   const nativeItems: RawOperation[] = [];
   const pltOperations: RawOperation[] = [];
 
-  for (const op of result.items) {
+  for (const op of items) {
     if (op.tokenId === undefined) {
       nativeItems.push(op);
     } else if (enableTokens) {
@@ -175,7 +179,9 @@ export async function syncOperations(
     ...pltOperations.map(op => buildParentOperation(op, accountId)),
   ];
 
-  return { operations: mergeOperations(oldOperations, newOperations), pltOperations };
+  // Keeping the old copies would resurrect operations this parser no longer
+  // produces, and `sameOp` ignores `hasFailed`, so a stale one would win.
+  return { operations: mergeOps(fromScratch ? [] : oldOperations, newOperations), pltOperations };
 }
 
 export const getAccountShape: GetAccountShape<ConcordiumAccount> = async (info, syncConfig) => {
@@ -199,6 +205,12 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async (info, 
     if (!accountsResponse?.length) {
       // An account that does not exist on chain holds no tokens, so this is
       // authoritative: clear rather than preserve.
+      //
+      // Its operations are not: nothing removes a transaction from the chain, so
+      // an empty list here is a fault rather than news, and `shouldMergeOps` is
+      // off, meaning whatever this returns is what the account keeps.
+      const storedOperations = initialAccount?.operations ?? [];
+
       return {
         balance: new BigNumber(0),
         blockHeight: 0,
@@ -214,8 +226,8 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async (info, 
         derivationPath,
         id: accountId,
         index,
-        operations: [],
-        operationsCount: 0,
+        operations: storedOperations,
+        operationsCount: storedOperations.length,
         spendableBalance: new BigNumber(0),
         used: false,
         xpub: publicKey,
@@ -231,8 +243,6 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async (info, 
       initialAccount?.syncHash,
     );
 
-    // Lowers the watermark rather than dropping what is stored: a fetch returns
-    // one page, so discarding first would truncate a longer history to it.
     const refetchAll = initialAccount !== undefined && initialAccount.syncHash !== syncHash;
 
     const [
@@ -257,6 +267,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async (info, 
       accountTokens,
       initialAccount,
       pltOperations,
+      refetchAll,
       ...(syncConfig?.blacklistedTokenIds
         ? { blacklistedTokenIds: syncConfig.blacklistedTokenIds }
         : {}),
@@ -264,6 +275,15 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async (info, 
 
     const unattributed =
       resolvedTokens.kind !== "cleared" && resolvedTokens.unattributedOperations === true;
+
+    // What the account ends up holding: `unchanged` keeps the stored list, and
+    // `cleared` has none, so neither can be read off `resolvedTokens` alone.
+    const subAccounts =
+      resolvedTokens.kind === "resolved"
+        ? resolvedTokens.subAccounts
+        : resolvedTokens.kind === "unchanged"
+          ? (initialAccount?.subAccounts ?? [])
+          : [];
 
     return {
       balance,
@@ -282,7 +302,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async (info, 
       derivationPath,
       id: accountId,
       index,
-      operations,
+      operations: attachSubOperations(operations, subAccounts),
       operationsCount: operations.length,
       spendableBalance,
       syncHash: unattributed ? REFETCH_SYNC_HASH : syncHash,

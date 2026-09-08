@@ -1,5 +1,4 @@
 import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/index";
-import { log } from "@ledgerhq/logs";
 import { isPltRejectReason } from "../../network/plt";
 import { getTransactions } from "../../network/proxyClient";
 import type {
@@ -13,10 +12,8 @@ import { decodeMemo } from "./memo";
 const DEFAULT_PAGE_SIZE = 100;
 
 /**
- * The `details.type` a PLT transaction carries in the `/v3/accTransactions`
- * response. Shares a spelling with the `type` sent to `/v0/transactionCost`
- * (`logic/transaction/estimateFees.ts`), but that is a request parameter in a
- * different wire namespace: deliberately not one constant.
+ * Shares a spelling with the `type` sent to `/v0/transactionCost`, which is a
+ * request parameter in another namespace: deliberately not one constant.
  */
 const TOKEN_UPDATE_DETAILS_TYPE = "tokenUpdate";
 
@@ -43,6 +40,13 @@ function isFeePayer(tx: WalletProxyTransaction): boolean {
 }
 
 function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOperation | null {
+  // A rejection carries none of the transfer fields, so neither party can be
+  // read off it and only the payer's row exists at all. Without this the
+  // transaction disappears and the CCD it cost with it.
+  if (tx.details.outcome === "reject") {
+    return isFeePayer(tx) ? feeOnlyOperation(tx, address, true) : null;
+  }
+
   const sender = tx.details.transferSource || "";
   const recipient = tx.details.transferDestination || "";
 
@@ -53,16 +57,8 @@ function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOp
     return null;
   }
 
-  const failed = tx.details.outcome === "reject";
   const amount = tx.details.transferAmount || "0";
   const fee = String(tx.cost || 0);
-
-  let value: string;
-  if (isOutgoing) {
-    value = failed ? fee : String(BigInt(amount) + BigInt(fee));
-  } else {
-    value = failed ? "0" : amount;
-  }
 
   return {
     ...transactionFields(tx),
@@ -71,9 +67,9 @@ function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOp
     recipient,
     amount,
     fee,
-    value,
+    value: isOutgoing ? String(BigInt(amount) + BigInt(fee)) : amount,
     memo: tx.details.memo ? decodeMemo(tx.details.memo, tx.transactionHash) : undefined,
-    failed,
+    failed: false,
   };
 }
 
@@ -88,10 +84,8 @@ function rejectedTokenId(tx: WalletProxyTransaction): string | undefined {
 }
 
 /**
- * The CCD an unreadable `tokenUpdate` cost, for a transaction whose token
- * movement cannot be recovered. With a token named it stays a token operation
- * worth nothing; without one the fee is real regardless, so it degrades to a
- * plain CCD cost.
+ * The CCD an unreadable `tokenUpdate` cost. Naming a token keeps it a token
+ * operation worth nothing; without one it degrades to a plain CCD cost.
  */
 function feeOnlyOperation(
   tx: WalletProxyTransaction,
@@ -135,8 +129,7 @@ function isTokenDecimals(decimals: unknown): decimals is number {
 /**
  * The proxy renders the transfer fields only for a summary holding exactly one
  * account-to-account `TokenTransfer`; a mint, burn, list update, pause or batch
- * falls through to details carrying only the type and outcome. Every field is
- * therefore required rather than defaulted.
+ * carries only the type and outcome, so none of them are defaulted here.
  */
 function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOperation | null {
   if (tx.details.outcome === "reject") {
@@ -179,7 +172,6 @@ function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOpera
   };
 }
 
-/** Parses a wallet-proxy transaction into a RawOperation, or null if it moved nothing for this address. */
 export function parseTransaction(tx: WalletProxyTransaction, address: string): RawOperation | null {
   if (tx.details.type === TOKEN_UPDATE_DETAILS_TYPE) {
     return parseTokenUpdate(tx, address);
@@ -193,7 +185,11 @@ export function parseTransaction(tx: WalletProxyTransaction, address: string): R
 }
 
 /**
- * Returns list of raw operations associated to an account.
+ * Fetches one page of this account's operations.
+ *
+ * A fetch failure propagates: the caller walks pages newest first, so reporting
+ * a failed page as the end of history would truncate what gets stored and move
+ * the sync watermark past the gap for good.
  */
 export async function listOperations(
   config: ConcordiumCoinConfig,
@@ -209,6 +205,10 @@ export async function listOperations(
     // The proxy tests this parameter for presence, not value, so it must be
     // omitted rather than set to false to disable it.
     includeRawRejectReason: true,
+    // `parseTransaction` drops every reward entry, and on a delegator or
+    // validator account they outnumber the transfers by orders of magnitude.
+    // Excluding them server-side is what keeps a full walk to a few requests.
+    includeRewards: "none",
   };
 
   if (options.minHeight > 0) {
@@ -219,27 +219,28 @@ export async function listOperations(
     params.from = options.cursor;
   }
 
-  try {
-    const response = await getTransactions(config, currencyId, address, params);
+  const response = await getTransactions(config, currencyId, address, params);
 
-    if (!("transactions" in response) || !Array.isArray(response.transactions)) {
-      return { items: [], next: undefined };
-    }
-
-    const items = response.transactions
-      .map(tx => parseTransaction(tx, address))
-      .filter((op): op is RawOperation => op !== null);
-
-    const hasMore = response.count >= limit;
-    let next: string | undefined;
-    if (hasMore && response.transactions.length > 0) {
-      const lastTx = response.transactions[response.transactions.length - 1];
-      next = String(lastTx.id);
-    }
-
-    return { items, next };
-  } catch (error) {
-    log("concordium", `Error fetching transactions for ${address}`, { error });
-    return { items: [], next: undefined };
+  if (!("transactions" in response) || !Array.isArray(response.transactions)) {
+    // Reporting this as an empty page would read as the end of the history, and
+    // the caller stores that as the whole of it.
+    throw new Error("concordium: transaction response carried no transactions array");
   }
+
+  const items = response.transactions
+    .map(tx => parseTransaction(tx, address))
+    .filter((op): op is RawOperation => op !== null);
+
+  // A short page proves the end. Counted from the rows themselves rather than
+  // `count`, which a malformed response can omit, ending the walk silently.
+  const hasMore = response.transactions.length >= (response.limit ?? limit);
+  let next: string | undefined;
+  if (hasMore && response.transactions.length > 0) {
+    const lastTx = response.transactions[response.transactions.length - 1];
+    // The cursor is exclusive and ids are not contiguous per account, so it has
+    // to be the last id seen rather than one past it.
+    next = String(lastTx.id);
+  }
+
+  return { items, next };
 }

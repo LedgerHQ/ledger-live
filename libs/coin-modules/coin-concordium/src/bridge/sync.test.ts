@@ -3,12 +3,14 @@ import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account"
 import {
   createFixtureCurrency,
   createFixtureOperation,
+  createFixtureTokenAccount,
   createFixtureTokenCurrency,
   PLT_TOKEN_ID,
   VALID_ADDRESS,
   VALID_ADDRESS_2,
   PUBLIC_KEY,
 } from "../test/fixtures";
+import type { Operation } from "@ledgerhq/types-live";
 import { createTestConcordiumAccount } from "../test/testHelpers";
 import type { ConcordiumAccount } from "../types";
 import { getAccountShape as getAccountShapeOriginal, getBalance, syncOperations } from "./sync";
@@ -24,12 +26,15 @@ jest.mock("../logic/history/listOperations", () => ({
   listOperations: jest.fn(),
 }));
 
-// Throwing by default is what lets a tokens-off test prove it never reached the
-// CAL. A tokens-on test installs a store for the span it needs one.
+// Recorded as well as throwing: a tokens-off test asserts the store was never
+// reached, which resolving successfully cannot show. A tokens-on test installs a
+// store for the span it needs one.
 let mockCryptoAssetsStore: unknown = null;
+const mockStoreAccess = jest.fn();
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   getCryptoAssetsStore: () => {
+    mockStoreAccess();
     if (!mockCryptoAssetsStore) {
       throw new Error("the CAL must not be consulted while tokens are off");
     }
@@ -201,7 +206,7 @@ describe("syncOperations", () => {
     expect(listOperations).toHaveBeenCalledWith(
       config,
       VALID_ADDRESS,
-      { minHeight: 0, limit: 100, order: "desc" },
+      { minHeight: 0, limit: 1000, order: "desc" },
       CURRENCY_ID,
     );
     expect(result.operations).toEqual([]);
@@ -215,7 +220,7 @@ describe("syncOperations", () => {
     expect(listOperations).toHaveBeenCalledWith(
       config,
       VALID_ADDRESS,
-      { minHeight: 501, limit: 100, order: "desc" },
+      { minHeight: 501, limit: 1000, order: "desc" },
       CURRENCY_ID,
     );
   });
@@ -228,7 +233,7 @@ describe("syncOperations", () => {
     expect(listOperations).toHaveBeenCalledWith(
       config,
       VALID_ADDRESS,
-      { minHeight: 0, limit: 100, order: "desc" },
+      { minHeight: 0, limit: 1000, order: "desc" },
       CURRENCY_ID,
     );
   });
@@ -247,14 +252,72 @@ describe("syncOperations", () => {
     expect(result.operations.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("should return empty operations on listOperations failure", async () => {
+  it("fails the sync when a page cannot be fetched, leaving the stored history alone", async () => {
+    // Reporting an empty page would read as the end of history, so the
+    // watermark would advance past whatever the failed page held.
     listOperations.mockRejectedValue(new Error("network error"));
+
+    await expect(
+      syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [], { enableTokens: false }),
+    ).rejects.toThrow("network error");
+  });
+
+  it("walks every page the proxy offers, not just the first", async () => {
+    const older = createRawOpFixture({ hash: "ab".repeat(32), id: 7, blockHeight: 10 });
+    listOperations
+      .mockResolvedValueOnce({ items: [createRawOpFixture()], next: "101" })
+      .mockResolvedValueOnce({ items: [older], next: undefined });
 
     const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [], {
       enableTokens: false,
     });
 
-    expect(result.operations).toEqual([]);
+    expect(listOperations).toHaveBeenCalledTimes(2);
+    expect(listOperations.mock.calls[1][2]).toMatchObject({ cursor: "101" });
+    expect(result.operations).toHaveLength(2);
+  });
+
+  it("fails rather than looping when the proxy replays a cursor it already gave", async () => {
+    // A `from` the proxy cannot parse is ignored, so a bad cursor serves the
+    // same page again instead of failing.
+    listOperations.mockResolvedValue({ items: [createRawOpFixture()], next: "101" });
+
+    await expect(
+      syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [], { enableTokens: false }),
+    ).rejects.toThrow("was served twice");
+  });
+
+  it("carries the height floor onto every page of an incremental walk", async () => {
+    const stored = createFixtureOperation({ blockHeight: 500 });
+    listOperations
+      .mockResolvedValueOnce({ items: [createRawOpFixture()], next: "9" })
+      .mockResolvedValueOnce({ items: [], next: undefined });
+
+    await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [stored], {
+      enableTokens: false,
+    });
+
+    expect(listOperations).toHaveBeenNthCalledWith(
+      2,
+      config,
+      VALID_ADDRESS,
+      { minHeight: 501, limit: 1000, order: "desc", cursor: "9" },
+      CURRENCY_ID,
+    );
+  });
+
+  it("keeps walking past a page whose rows all parsed away", async () => {
+    const older = createRawOpFixture({ hash: "ab".repeat(32), id: 7, blockHeight: 10 });
+    listOperations
+      .mockResolvedValueOnce({ items: [], next: "101" })
+      .mockResolvedValueOnce({ items: [older], next: undefined });
+
+    const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [], {
+      enableTokens: false,
+    });
+
+    expect(listOperations).toHaveBeenCalledTimes(2);
+    expect(result.operations).toHaveLength(1);
   });
 
   describe("splitting PLT transfers from CCD ones", () => {
@@ -315,26 +378,24 @@ describe("syncOperations", () => {
       expect(listOperations).toHaveBeenCalledWith(
         config,
         VALID_ADDRESS,
-        { minHeight: 0, limit: 100, order: "desc" },
+        { minHeight: 0, limit: 1000, order: "desc" },
         CURRENCY_ID,
       );
     });
 
-    it("keeps what is already stored when re-reading, rather than replacing it", async () => {
-      // A fetch returns one page, so discarding first would truncate a longer
-      // history to its newest page.
-      const oldOp = createFixtureOperation({ id: "kept-op", blockHeight: 10 });
+    it("replaces the stored history when re-reading, since the walk covers every block", async () => {
+      const stale = createFixtureOperation({ id: "stale-op", blockHeight: 10 });
       listOperations.mockResolvedValue({ items: [], next: undefined });
 
-      const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
+      const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [stale], {
         enableTokens: true,
         refetchAll: true,
       });
 
-      expect(result.operations.map(op => op.id)).toContain("kept-op");
+      expect(result.operations).toEqual([]);
     });
 
-    it("keeps transfers older than everything stored, which is the point of re-reading", async () => {
+    it("recovers transfers older than everything stored, which is the point of re-reading", async () => {
       const stored = createFixtureOperation({ id: "newest-stored", date: new Date("2024-06-01") });
       const older = { ...pltOp, date: new Date("2020-01-01") };
       listOperations.mockResolvedValue({ items: [older], next: undefined });
@@ -344,9 +405,19 @@ describe("syncOperations", () => {
         refetchAll: true,
       });
 
-      expect(result.operations.map(op => op.id)).toContain("newest-stored");
       expect(result.operations.filter(op => op.type === "FEES")).toHaveLength(1);
       expect(result.pltOperations).toEqual([older]);
+    });
+
+    it("keeps the stored history on an incremental sync", async () => {
+      const stored = createFixtureOperation({ id: "kept-op", blockHeight: 10 });
+      listOperations.mockResolvedValue({ items: [], next: undefined });
+
+      const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [stored], {
+        enableTokens: true,
+      });
+
+      expect(result.operations.map(op => op.id)).toContain("kept-op");
     });
 
     it("stores one operation when the page repeats a transaction", async () => {
@@ -456,6 +527,28 @@ describe("getAccountShape", () => {
     expect(result.concordiumResources?.isOnboarded).toBe(false);
     expect(result.used).toBe(false);
     expect(result.operations).toEqual([]);
+  });
+
+  it("keeps the stored history when the chain reports no such account", async () => {
+    // Nothing removes a transaction from a chain, so an empty account list is a
+    // fault. `shouldMergeOps` is off, so returning [] here would erase history.
+    getAccountsByPublicKey.mockResolvedValue([]);
+    const initialAccount = {
+      operations: [createFixtureOperation({ id: "kept-op" })],
+      concordiumResources: { publicKey: PUBLIC_KEY },
+    } as unknown as ConcordiumAccount;
+
+    const result = await getAccountShape({
+      currency: createFixtureCurrency(),
+      derivationMode: "",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
+      index: 0,
+      initialAccount,
+      rest: { publicKey: PUBLIC_KEY },
+    });
+
+    expect(result.operations.map((op: { id: string }) => op.id)).toEqual(["kept-op"]);
+    expect(result.operationsCount).toBe(1);
   });
 
   it("should throw on network error when fetching accounts", async () => {
@@ -612,8 +705,9 @@ describe("getAccountShape with tokens disabled", () => {
   });
 
   it("never consults the CAL, so a CAL outage cannot affect a tokens-off sync", async () => {
-    // The store mock throws on access; reaching it would fail this test.
-    await expect(shape()).resolves.toBeDefined();
+    await shape();
+
+    expect(mockStoreAccess).not.toHaveBeenCalled();
   });
 
   it("stores no per-token state", async () => {
@@ -632,6 +726,28 @@ describe("getAccountShape with tokens disabled", () => {
   it("records a syncHash that names the off state", async () => {
     const result = await shape();
 
+    expect(result.syncHash).toBe("tokens=off");
+  });
+
+  it("drops PLT transfers entirely when the flag is switched back off", async () => {
+    // The rollback path: the stored hash names the on state, so the sync
+    // re-reads, and every PLT transfer must fall out of both accounts.
+    listOperations.mockResolvedValue({
+      items: [createRawOpFixture({ tokenId: PLT_TOKEN_ID, decimals: 6, fee: "595400" })],
+      next: undefined,
+    });
+
+    const result = await getAccountShape({
+      currency: createFixtureCurrency(),
+      derivationMode: "",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
+      index: 0,
+      initialAccount: storedAccount({ syncHash: "0xabc:tokens=on" }),
+      rest: { publicKey: PUBLIC_KEY },
+    });
+
+    expect(result.operations).toEqual([]);
+    expect(result.subAccounts).toEqual([]);
     expect(result.syncHash).toBe("tokens=off");
   });
 
@@ -654,7 +770,27 @@ describe("getAccountShape with tokens disabled", () => {
     expect(listOperations).toHaveBeenCalledWith(
       config,
       VALID_ADDRESS,
-      { minHeight: 0, limit: 100, order: "desc" },
+      { minHeight: 0, limit: 1000, order: "desc" },
+      CURRENCY_ID,
+    );
+  });
+
+  it("re-reads once for an account stored before this family had a syncHash", async () => {
+    // What carries the corrected parsing onto history already on disk: nothing
+    // else revisits a stored operation, since `sameOp` ignores `hasFailed`.
+    await getAccountShape({
+      currency: createFixtureCurrency(),
+      derivationMode: "",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
+      index: 0,
+      initialAccount: storedAccount(),
+      rest: { publicKey: PUBLIC_KEY },
+    });
+
+    expect(listOperations).toHaveBeenCalledWith(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 0, limit: 1000, order: "desc" },
       CURRENCY_ID,
     );
   });
@@ -678,7 +814,7 @@ describe("getAccountShape with tokens disabled", () => {
     expect(listOperations).toHaveBeenCalledWith(
       config,
       VALID_ADDRESS,
-      { minHeight: 501, limit: 100, order: "desc" },
+      { minHeight: 501, limit: 1000, order: "desc" },
       CURRENCY_ID,
     );
   });
@@ -756,6 +892,25 @@ describe("getAccountShape with tokens enabled", () => {
     expect(subAccount?.operations[0].value).toEqual(new BigNumber("3000000"));
   });
 
+  it("hangs the token transfer under the CCD operation that paid for it", async () => {
+    listOperations.mockResolvedValue({ items: [pltRawOp()], next: undefined });
+
+    const result = await shape();
+
+    const parent = result.operations?.[0];
+    expect(parent.type).toBe("FEES");
+    expect(parent.subOperations).toHaveLength(1);
+    expect(parent.subOperations[0].accountId).toBe(SUB_ACCOUNT_ID);
+  });
+
+  it("leaves a plain CCD transfer without sub-operations", async () => {
+    listOperations.mockResolvedValue({ items: [createRawOpFixture()], next: undefined });
+
+    const result = await shape();
+
+    expect(result.operations?.[0]).not.toHaveProperty("subOperations");
+  });
+
   it("leaves only the CCD fee for that transfer on the parent account", async () => {
     listOperations.mockResolvedValue({ items: [pltRawOp()], next: undefined });
 
@@ -785,7 +940,7 @@ describe("getAccountShape with tokens enabled", () => {
     expect(listOperations).toHaveBeenCalledWith(
       tokensOnConfig,
       VALID_ADDRESS,
-      { minHeight: 0, limit: 100, order: "desc" },
+      { minHeight: 0, limit: 1000, order: "desc" },
       CURRENCY_ID,
     );
   });
@@ -802,7 +957,7 @@ describe("getAccountShape with tokens enabled", () => {
     expect(listOperations).toHaveBeenLastCalledWith(
       tokensOnConfig,
       VALID_ADDRESS,
-      { minHeight: 501, limit: 100, order: "desc" },
+      { minHeight: 501, limit: 1000, order: "desc" },
       CURRENCY_ID,
     );
   });
@@ -832,9 +987,20 @@ describe("getAccountShape with tokens enabled", () => {
     expect(listOperations).toHaveBeenLastCalledWith(
       tokensOnConfig,
       VALID_ADDRESS,
-      { minHeight: 0, limit: 100, order: "desc" },
+      { minHeight: 0, limit: 1000, order: "desc" },
       CURRENCY_ID,
     );
+  });
+
+  it("keeps asking for a re-read while the token list stays absent", async () => {
+    // The fault is the balance response, not the CAL, so nothing else re-arms:
+    // giving up after one attempt would strand these transfers for good.
+    getAccountBalance.mockRejectedValue(new Error("balance endpoint down"));
+    listOperations.mockResolvedValue({ items: [pltRawOp()], next: undefined });
+
+    const result = await shape(storedAccount({ syncHash: "refetch-pending" }));
+
+    expect(result.syncHash).toBe("refetch-pending");
   });
 
   it("defers that re-read while the CAL is still down, rather than losing it", async () => {
@@ -848,9 +1014,32 @@ describe("getAccountShape with tokens enabled", () => {
     expect(listOperations).toHaveBeenLastCalledWith(
       tokensOnConfig,
       VALID_ADDRESS,
-      { minHeight: 501, limit: 100, order: "desc" },
+      { minHeight: 501, limit: 1000, order: "desc" },
       CURRENCY_ID,
     );
+  });
+
+  it("fails the shape when a page cannot be fetched, rather than storing a fragment", async () => {
+    listOperations.mockRejectedValue(new Error("network error"));
+
+    await expect(shape()).rejects.toThrow("network error");
+  });
+
+  it("links sub-operations from the stored sub-accounts when the token list is absent", async () => {
+    // The `unchanged` arm: the account keeps the sub-accounts it had, so the
+    // links must come from those rather than from a resolution that did not run.
+    getAccountBalance.mockRejectedValue(new Error("balance endpoint down"));
+    const raw = pltRawOp();
+    listOperations.mockResolvedValue({ items: [raw], next: undefined });
+
+    const stored = createFixtureTokenAccount({
+      token: TOKEN,
+      operations: [{ hash: raw.hash, accountId: SUB_ACCOUNT_ID }] as unknown as Operation[],
+    });
+
+    const result = await shape(storedAccount({ subAccounts: [stored] }));
+
+    expect(result.operations?.[0].subOperations).toHaveLength(1);
   });
 
   it("keeps the computed syncHash when a balance failure cost it no transfers", async () => {
