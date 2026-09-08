@@ -4,6 +4,7 @@ import type { CardLoginOauthConfig } from "../types";
 const oauthConfig: CardLoginOauthConfig = {
   apiUrl: "https://dev.api.baanx.com",
   clientId: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6",
+  hostedUiUrl: "https://ledger-ew1uat.baanxapi.com",
   redirectUri: "https://go.ledger.com/ledger/card-baanx",
   // Never reaches the authorize URL: the browser session ends on it, the provider never sees it.
   deepLink: "ledgerlive://paytab",

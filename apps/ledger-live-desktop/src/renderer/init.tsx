@@ -14,6 +14,7 @@ import {
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
 import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
+import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import i18n from "~/renderer/i18n/init";
 import { webFrame, ipcRenderer } from "electron";
@@ -348,6 +349,7 @@ async function init() {
     store.dispatch(restorePayCardFeatureTour(payCardState));
     store.dispatch(restoreReceiveVerifyHint(payCardState));
     store.dispatch(restorePayCardBalanceFilter(payCardState));
+    store.dispatch(restorePayCardLoginIntro(payCardState));
     store.dispatch(restorePayCardOnboardingWidget(payCardState));
   }
 

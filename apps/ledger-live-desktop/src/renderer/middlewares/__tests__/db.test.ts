@@ -57,6 +57,13 @@ jest.mock("@features/flow-pay-feature-tour/state", () => ({
   }),
 }));
 
+jest.mock("@features/flow-pay-card-auth/state", () => ({
+  ...jest.requireActual("@features/flow-pay-card-auth/state"),
+  payCardLoginIntroPersistedSelector: (state: FakeState) => ({
+    hasSeenLoginIntro: state.payCardLoginIntro.hasSeenLoginIntro,
+  }),
+}));
+
 jest.mock("@ledgerhq/live-common/account/index", () => ({
   accountsPersistedStateChanged: jest.fn(() => false),
 }));
@@ -83,6 +90,9 @@ type FakeState = {
   payRequestVerifyHint: {
     hasSeenReceiveVerifyHint: boolean;
   };
+  payCardLoginIntro: {
+    hasSeenLoginIntro: boolean;
+  };
   payCardOnboardingWidget: {
     hasCompletedOnboarding: boolean;
   };
@@ -103,6 +113,7 @@ const baseState = (): FakeState => ({
   payCardBalance: { balanceFilter: "all" },
   payCardFeatureTour: { hasSeenFeatureTour: false },
   payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
+  payCardLoginIntro: { hasSeenLoginIntro: false },
   payCardOnboardingWidget: { hasCompletedOnboarding: false },
 });
 
@@ -252,6 +263,7 @@ describe("DBMiddleware - payCard branch", () => {
     payCardFeatureTour: { hasSeenFeatureTour: true },
     payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
     payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
+    payCardLoginIntro: { hasSeenLoginIntro: true },
     payCardOnboardingWidget: { hasCompletedOnboarding: true },
   };
 
@@ -259,6 +271,7 @@ describe("DBMiddleware - payCard branch", () => {
     hasSeenFeatureTour: true,
     hasSeenReceiveVerifyHint: true,
     balanceFilter: "ethereum/erc20/usd__coin",
+    hasSeenLoginIntro: true,
     hasCompletedOnboarding: true,
   };
 
@@ -266,6 +279,7 @@ describe("DBMiddleware - payCard branch", () => {
     "payCardFeatureTour/markPayCardFeatureTourSeen",
     "payRequestVerifyHint/markReceiveVerifyHintSeen",
     "payCardBalance/setPayCardBalanceFilter",
+    "payCardLoginIntro/markPayCardLoginIntroSeen",
     "payCardOnboardingWidget/markCardOnboardingCompleted",
   ])("persists the composed payCard blob on %s", actionType => {
     runMiddleware([payCardState, payCardState], { type: actionType });

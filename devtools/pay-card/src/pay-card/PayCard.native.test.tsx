@@ -45,6 +45,8 @@ function buildProps(): PayCardToolProps {
     resetPayCardFeatureTourSeen: jest.fn(),
     hasSeenReceiveVerifyHint: false,
     resetReceiveVerifyHintSeen: jest.fn(),
+    hasSeenLoginIntro: false,
+    resetPayCardLoginIntroSeen: jest.fn(),
     hasCompletedCardOnboarding: false,
     resetCardOnboarding: jest.fn(),
   };
@@ -60,6 +62,7 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("Onboarding")).toBeTruthy();
     expect(screen.getByText("Feature tour")).toBeTruthy();
     expect(screen.getByText("Request verify hint")).toBeTruthy();
+    expect(screen.getByText("Card login intro")).toBeTruthy();
   });
 
   it("resets the feature tour", async () => {
@@ -78,6 +81,16 @@ describe("PayCard (native)", () => {
 
     await user.press(screen.getByText("Reset verify hint"));
     expect(props.resetReceiveVerifyHintSeen).toHaveBeenCalledTimes(1);
+  });
+
+  it("resets the card login intro", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    await user.press(screen.getByText("Reset card login intro"));
+    expect(props.resetPayCardLoginIntroSeen).toHaveBeenCalledTimes(1);
+    expect(props.resetPayCardFeatureTourSeen).not.toHaveBeenCalled();
   });
 
   it("hides quick actions when the host does not pass navigation", () => {
