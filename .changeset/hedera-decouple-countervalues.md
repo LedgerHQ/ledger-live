@@ -2,4 +2,4 @@
 "@ledgerhq/coin-hedera": minor
 ---
 
-feat(coin-hedera): inline countervalues spot fetch, drop live-countervalues dependency
+Fetch the HBAR/USD spot rate directly from the countervalues service instead of through `@ledgerhq/live-countervalues`, removing that runtime dependency. Rate values, caching, and the fallback to the default fee estimate are unchanged.

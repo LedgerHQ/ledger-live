@@ -344,7 +344,8 @@ describe("getEstimatedFees", () => {
     const rate = await getCurrencyToUSDRate(mockedAccount.currency);
     expect(rate).toBeNull();
 
-    // Now confirm estimateFees selects the safe-default path when rate is null
+    // Clear the LRU cache so the second fetch actually runs (not served from the cached null above)
+    getCurrencyToUSDRate.clear(mockedAccount.currency.ticker);
     (network as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
     const result = await estimateFees({
       currencyId: mockedAccount.currency.id,
