@@ -148,6 +148,7 @@ export type AddAddressEntryLabels = Readonly<{
   domainNotFound: string;
   sanctionedAddress: string;
   validationUnavailable: string;
+  ensDisclaimerTitle: string;
   ensDisclaimer: string;
 }>;
 

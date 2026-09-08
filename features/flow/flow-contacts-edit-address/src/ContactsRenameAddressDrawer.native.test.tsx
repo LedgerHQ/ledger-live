@@ -44,6 +44,7 @@ function createViewModel(
         domainNotFound: "Domain not found",
         sanctionedAddress: "Sanctioned address",
         validationUnavailable: "Validation unavailable",
+        ensDisclaimerTitle: "ENS names can change",
         ensDisclaimer: "ENS addresses are supported.",
       },
     },

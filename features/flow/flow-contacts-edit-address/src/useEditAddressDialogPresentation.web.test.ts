@@ -12,6 +12,7 @@ const labels = {
   domainNotFound: "Domain not found",
   sanctionedAddress: "Sanctioned",
   validationUnavailable: "Unavailable",
+  ensDisclaimerTitle: "ENS disclaimer title",
   ensDisclaimer: "ENS disclaimer",
 };
 

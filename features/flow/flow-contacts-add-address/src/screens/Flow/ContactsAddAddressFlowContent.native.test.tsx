@@ -24,6 +24,7 @@ const entryLabels: AddAddressEntryLabels = {
   domainNotFound: "Domain not found",
   sanctionedAddress: "Address is sanctioned",
   validationUnavailable: "Address validation is unavailable",
+  ensDisclaimerTitle: "ENS disclaimer title",
   ensDisclaimer: "ENS disclaimer",
 };
 const nameLabels: AddAddressNameLabels = {

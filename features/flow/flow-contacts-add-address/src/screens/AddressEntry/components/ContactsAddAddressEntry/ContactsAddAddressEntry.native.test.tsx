@@ -14,6 +14,7 @@ const labels: AddAddressEntryLabels = {
   domainNotFound: "No address found for this domain",
   sanctionedAddress: "This address is sanctioned and cannot be used.",
   validationUnavailable: "Address validation is unavailable",
+  ensDisclaimerTitle: "ENS names can change",
   ensDisclaimer: "ENS names resolve to wallet addresses.",
 };
 

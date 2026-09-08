@@ -9681,7 +9681,8 @@
         "learnMore": "Learn more"
       },
       "validationUnavailable": "Address validation is temporarily unavailable.",
-      "ensDisclaimer": "This ENS name resolves to the address shown above."
+      "ensDisclaimerTitle": "ENS names can change",
+      "ensDisclaimer": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify."
     },
     "addAddressName": {
       "inputLabel": "Address name",

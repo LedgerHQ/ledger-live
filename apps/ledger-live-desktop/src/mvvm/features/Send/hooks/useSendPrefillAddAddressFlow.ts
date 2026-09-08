@@ -298,6 +298,7 @@ export function useSendPrefillAddAddressFlow({
       domainNotFound: t("contacts.addAddressEntry.domainNotFound"),
       sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
       validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
+      ensDisclaimerTitle: t("contacts.addAddressEntry.ensDisclaimerTitle"),
       ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
     }),
     [t],

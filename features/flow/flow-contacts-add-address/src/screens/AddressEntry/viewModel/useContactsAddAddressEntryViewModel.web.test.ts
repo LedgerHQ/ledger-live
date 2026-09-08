@@ -19,6 +19,7 @@ const labels: AddAddressEntryLabels = {
   domainNotFound: "Domain not found",
   sanctionedAddress: "This address is sanctioned and cannot be used.",
   validationUnavailable: "Address validation is temporarily unavailable.",
+  ensDisclaimerTitle: "ENS disclaimer title",
   ensDisclaimer: "ENS disclaimer",
 };
 const RESOLVED_ADDRESS = ContactAddressValueSchema.parse(

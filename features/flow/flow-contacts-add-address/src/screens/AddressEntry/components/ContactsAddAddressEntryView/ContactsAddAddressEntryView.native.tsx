@@ -66,6 +66,7 @@ export function ContactsAddAddressEntryView({
             <Banner
               testID="contacts-add-address-ens-disclaimer"
               appearance="info"
+              title={labels.ensDisclaimerTitle}
               description={labels.ensDisclaimer}
             />
           ) : null}
