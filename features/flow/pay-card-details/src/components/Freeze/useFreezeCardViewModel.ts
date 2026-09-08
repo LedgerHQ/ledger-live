@@ -4,50 +4,37 @@ import {
   useGetCardStatusQuery,
   useUnfreezeCardMutation,
 } from "@domain/api-card-management";
-import type { FreezeViewProps } from "../../types";
+import type { ConfirmState, TileProps } from "../../types";
 
-export function useFreezeCardViewModel(): FreezeViewProps {
+export function useFreezeCardViewModel(): TileProps {
   const { data: cardStatus, isLoading: isStatusLoading } = useGetCardStatusQuery();
-  const [freeze, { isLoading: isFreezeLoading }] = useFreezeCardMutation();
-  const [unfreeze, { isLoading: isUnfreezeLoading }] = useUnfreezeCardMutation();
+  const [freeze] = useFreezeCardMutation();
+  const [unfreeze] = useUnfreezeCardMutation();
+  const [confirmState, setConfirmState] = useState<ConfirmState>("closed");
 
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const status = cardStatus?.status;
 
-  const statusFromApi = cardStatus?.status;
-  const isFrozen = statusFromApi === "FROZEN";
-  const isBlocked = statusFromApi === "BLOCKED";
-  const isUpdating = isFreezeLoading || isUnfreezeLoading;
-
-  const onOpenConfirm = useCallback(() => setIsConfirmOpen(true), []);
-  const onCloseConfirm = useCallback(() => setIsConfirmOpen(false), []);
-  const onConfirm = useCallback(() => {
-    setIsConfirmOpen(false);
-    if (isFrozen) {
-      unfreeze();
-    } else {
-      freeze();
+  const onOpenConfirm = useCallback(() => setConfirmState("idle"), []);
+  const onClose = useCallback(() => setConfirmState("closed"), []);
+  const onConfirm = useCallback(async () => {
+    setConfirmState("pending");
+    try {
+      await (status === "FROZEN" ? unfreeze() : freeze()).unwrap();
+      setConfirmState("closed");
+    } catch {
+      setConfirmState("error");
     }
-  }, [isFrozen, freeze, unfreeze]);
+  }, [status, freeze, unfreeze]);
 
   return useMemo(
     () => ({
-      isFrozen,
-      isUpdating,
-      isActionDisabled: isBlocked || isStatusLoading || isUpdating,
-      isConfirmOpen,
+      status,
+      isActionDisabled: status === "BLOCKED" || isStatusLoading || confirmState === "pending",
+      confirmState,
       onOpenConfirm,
-      onCloseConfirm,
+      onClose,
       onConfirm,
     }),
-    [
-      isFrozen,
-      isUpdating,
-      isBlocked,
-      isStatusLoading,
-      isConfirmOpen,
-      onOpenConfirm,
-      onCloseConfirm,
-      onConfirm,
-    ],
+    [status, isStatusLoading, confirmState, onOpenConfirm, onClose, onConfirm],
   );
 }

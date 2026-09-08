@@ -49,15 +49,30 @@ pay-card-details/
     │   │   ├── assets/                        # Figma-exported SVGs
     │   │   ├── CardArtwork.web.test.tsx
     │   │   └── CardArtwork.native.test.tsx
-    │   └── CardVisual/
-    │       ├── CardVisual.tsx
-    │       ├── useCardVisualViewModel.ts      # Frozen state, read from the card status
-    │       ├── CardVisualView.web.tsx         # Artwork + balance overlay + frozen marker
-    │       ├── CardVisualView.native.tsx      # Empty stub until LWM design
-    │       ├── CardVisual.web.test.tsx
-    │       ├── CardVisual.native.test.tsx
-    │       ├── CardVisualView.web.test.tsx
-    │       └── CardVisualView.native.test.tsx
+    │   ├── CardVisual/
+    │   │   ├── CardVisual.tsx
+    │   │   ├── useCardVisualViewModel.ts      # Frozen state, read from the card status
+    │   │   ├── CardVisualView.web.tsx         # Artwork + balance overlay + frozen marker
+    │   │   ├── CardVisualView.native.tsx      # Empty stub until LWM design
+    │   │   ├── CardVisual.web.test.tsx
+    │   │   ├── CardVisual.native.test.tsx
+    │   │   ├── CardVisualView.web.test.tsx
+    │   │   └── CardVisualView.native.test.tsx
+    │   └── Freeze/
+    │       ├── Freeze.web.tsx                 # Tile + confirmation, wired to the view model
+    │       ├── Freeze.native.tsx
+    │       ├── useFreezeCardViewModel.ts      # Card status, freeze/unfreeze, confirmation state
+    │       ├── freezeCopy.ts                  # Freeze vs unfreeze i18n keys, keyed by card status
+    │       ├── Tile/                          # Freeze / unfreeze control, and the sheet it opens
+    │       │   ├── Tile.web.tsx
+    │       │   └── Tile.native.tsx
+    │       └── Confirm/                       # The one confirmation: freeze, or unfreeze
+    │           ├── ConfirmSheet.web.tsx       # Dialog shell, picks prompt or error
+    │           ├── ConfirmSheet.native.tsx    # Bottom sheet shell, same choice
+    │           ├── ConfirmPrompt.tsx          # "Freeze?" state, platform-agnostic
+    │           ├── ConfirmError.tsx           # "It failed" state, platform-agnostic
+    │           ├── ConfirmBody.web.tsx        # Spot + title + description + the two buttons
+    │           └── ConfirmBody.native.tsx     # Same body, and it tints the sheet
     ├── types.ts                               # Public props / view-model types
     ├── exports.ts                             # Public surface
     ├── index.ts                              # Public API barrel → ./exports
