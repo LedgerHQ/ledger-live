@@ -10,6 +10,7 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
   CardVisual: () => <div data-testid="card-visual" />,
+  Freeze: () => <div data-testid="card-freeze" />,
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({

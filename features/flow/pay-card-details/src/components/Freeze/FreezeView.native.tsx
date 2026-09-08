@@ -1,6 +1,7 @@
 import React from "react";
 import { TileButton } from "@ledgerhq/lumen-ui-rnative";
 import { Snow } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useTranslation } from "@shared/i18n";
 import type { FreezeViewProps } from "../../types";
 
 export function FreezeView({
@@ -12,6 +13,8 @@ export function FreezeView({
   onFreeze,
   onUnfreeze,
 }: FreezeViewProps) {
+  const { t } = useTranslation();
+
   return (
     <TileButton
       icon={Snow}
@@ -19,7 +22,7 @@ export function FreezeView({
       disabled={isBlocked || isStatusLoading || isFreezeLoading || isUnfreezeLoading}
       isFull
     >
-      {isFrozen ? "Unfreeze" : "Freeze"}
+      {isFrozen ? t("payTab.card.unfreeze") : t("payTab.card.freeze")}
     </TileButton>
   );
 }
