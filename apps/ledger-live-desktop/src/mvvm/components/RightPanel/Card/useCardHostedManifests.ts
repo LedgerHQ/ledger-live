@@ -24,3 +24,15 @@ export function useCardHostedManifests(): CardHostedManifests {
 
   return useMemo(() => ({ login, hosted }), [login, hosted]);
 }
+
+export function manifestOrigin(manifest: ResolvedManifest): string | null {
+  if (!manifest) {
+    return null;
+  }
+
+  try {
+    return new URL(String(manifest.url)).origin;
+  } catch {
+    return null;
+  }
+}
