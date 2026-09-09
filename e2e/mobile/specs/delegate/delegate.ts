@@ -176,7 +176,8 @@ export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: 
 
       await app.celoManageAssets.checkManagePage();
       await app.celoManageAssets.clickVote();
-      await app.stake.selectValidator(delegation.account.currency.id, delegation.provider);
+      const provider = await app.stake.selectFirstValidator(delegation.account.currency.id);
+      const votedDelegation = { ...delegation, provider };
 
       await app.stake.openCeloVoteAmount();
       await app.stake.setCeloVoteAmount(delegation.amount);
@@ -184,12 +185,12 @@ export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: 
       await app.stake.validateCeloVoteAmount();
       await app.stake.celoVoteSummaryContinue();
 
-      await verifyAppValidationStakeInfo(delegation, amountWithCode);
-      await app.speculos.signDelegationTransaction(delegation);
+      await verifyAppValidationStakeInfo(votedDelegation, amountWithCode);
+      await app.speculos.signDelegationTransaction(votedDelegation);
 
       await app.common.successViewDetails();
 
-      await verifyStakeOperationDetailsInfo(delegation, amountWithCode, undefined, "VOTE");
+      await verifyStakeOperationDetailsInfo(votedDelegation, amountWithCode, undefined, "VOTE");
     });
   });
 }
