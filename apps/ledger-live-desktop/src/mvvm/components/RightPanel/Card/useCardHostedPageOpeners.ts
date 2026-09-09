@@ -1,0 +1,60 @@
+import { useCallback, useMemo } from "react";
+import { useNavigate } from "react-router";
+import {
+  buildHostedPageUrl,
+  buildHostedUrl,
+  type OpenCardHostedPage,
+  type OpenHostedLogin,
+} from "@features/flow-pay-card-auth";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useCardHostedManifests } from "./useCardHostedManifests";
+
+const PAY_TAB_PATH = "/paytab";
+
+export type CardHostedPageOpeners = {
+  readonly openHostedLogin: OpenHostedLogin;
+  readonly openHostedPage: OpenCardHostedPage;
+};
+
+function manifestRoute(manifest: LiveAppManifest): string {
+  return `/platform/${manifest.id}?returnTo=${encodeURIComponent(PAY_TAB_PATH)}`;
+}
+
+function requireManifest(manifest: LiveAppManifest | null | undefined): LiveAppManifest {
+  if (!manifest) {
+    throw new Error("useCardHostedPageOpeners: the catalog holds no Card manifest");
+  }
+
+  return manifest;
+}
+
+export function useCardHostedPageOpeners(): CardHostedPageOpeners {
+  const navigate = useNavigate();
+  const { login, hosted } = useCardHostedManifests();
+
+  const openHostedLogin = useCallback<OpenHostedLogin>(
+    async loginUrl => {
+      const manifest = requireManifest(login);
+
+      navigate(manifestRoute(manifest), {
+        state: { goToURL: buildHostedPageUrl(String(manifest.url), loginUrl) },
+      });
+
+      return { type: "pending" };
+    },
+    [navigate, login],
+  );
+
+  const openHostedPage = useCallback<OpenCardHostedPage>(
+    async path => {
+      const manifest = requireManifest(hosted);
+
+      navigate(manifestRoute(manifest), {
+        state: { goToURL: buildHostedUrl(String(manifest.url), path) },
+      });
+    },
+    [navigate, hosted],
+  );
+
+  return useMemo(() => ({ openHostedLogin, openHostedPage }), [openHostedLogin, openHostedPage]);
+}

@@ -8,5 +8,6 @@ export interface CardViewModel {
   readonly oauthConfig: PayCardProps["oauthConfig"];
   readonly callback: PayCardProps["callback"];
   readonly openHostedLogin: PayCardProps["openHostedLogin"];
+  readonly openHostedPage: PayCardProps["openHostedPage"];
   readonly onTrackEvent: PayCardProps["onTrackEvent"];
 }

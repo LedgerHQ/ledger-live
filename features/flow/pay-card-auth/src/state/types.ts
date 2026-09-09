@@ -41,7 +41,7 @@ export type CardLoginOauthConfig = Readonly<{
   apiUrl: string;
   clientId: string;
   /** Base of the provider's hosted UI, which carries the signup page the intro opens. */
-  hostedUiUrl: string;
+  hostedUiUrl?: string;
   /**
    * Sent to the provider on authorize. The token exchange does not repeat it. The provider whitelists
    * an `https` URL only, so this one cannot be the app's own link. It redirects to `deepLink`.
@@ -74,6 +74,8 @@ export type HostedLoginResult =
   | Readonly<{ type: "pending" }>;
 
 export type OpenHostedLogin = (loginUrl: string, deepLink?: string) => Promise<HostedLoginResult>;
+
+export type OpenCardHostedPage = (path: string) => Promise<void>;
 
 /**
  * Everything the login machine needs from the outside world. The machine itself holds no React, no

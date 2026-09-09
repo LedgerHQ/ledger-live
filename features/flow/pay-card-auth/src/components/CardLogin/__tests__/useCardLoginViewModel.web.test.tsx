@@ -155,11 +155,13 @@ async function renderIdleLogin(
   store: ReturnType<typeof buildStore>,
   mobileWallet: MobileWallet = "both",
   onTrackEvent?: jest.Mock,
+  openHostedPage?: jest.Mock,
 ) {
   const rendered = renderHook(
     () =>
       useCardLoginViewModel({
         openHostedLogin: mockPorts.openHostedLogin,
+        openHostedPage,
         mobileWallet,
         oauthConfig,
         onTrackEvent,
@@ -293,6 +295,27 @@ describe("useCardLoginViewModel intro", () => {
     );
     expect(result.current?.intro.isOpen).toBe(false);
     expect(mockPorts.createAttempt).not.toHaveBeenCalled();
+  });
+
+  it("asks the host for the signup page when the host owns those pages", async () => {
+    const openHostedPage = jest.fn().mockResolvedValue(undefined);
+    const { result } = await renderIdleLogin(store, "both", undefined, openHostedPage);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+
+    await waitFor(() => expect(openHostedPage).toHaveBeenCalledWith("/onboarding/signup"));
+    expect(mockPorts.openHostedLogin).not.toHaveBeenCalled();
+  });
+
+  it("reports a host that refuses the signup page", async () => {
+    const openHostedPage = jest.fn().mockRejectedValue(new Error("no manifest"));
+    const { result } = await renderIdleLogin(store, "both", undefined, openHostedPage);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+
+    await waitFor(() => expect(result.current?.errorMessage).not.toBeNull());
   });
 
   it("reports a browser that refuses the signup page", async () => {

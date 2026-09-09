@@ -20,6 +20,7 @@ export const CardView = ({ viewModel }: CardViewProps) => {
     oauthConfig,
     callback,
     openHostedLogin,
+    openHostedPage,
     onTrackEvent,
   } = viewModel;
 
@@ -32,6 +33,7 @@ export const CardView = ({ viewModel }: CardViewProps) => {
             oauthConfig={oauthConfig}
             callback={callback}
             openHostedLogin={openHostedLogin}
+            openHostedPage={openHostedPage}
             formatCountervalue={formatCountervalue}
             balanceLabel={balanceLabel}
             onTrackEvent={onTrackEvent}

@@ -9,10 +9,12 @@ export function CardLogin({
   oauthConfig,
   callback,
   openHostedLogin,
+  openHostedPage,
   onTrackEvent,
 }: CardLoginProps) {
   const login = useCardLoginViewModel({
     openHostedLogin: openHostedLogin ?? openHostedLoginInSecureBrowser,
+    openHostedPage,
     mobileWallet,
     oauthConfig,
     callback,

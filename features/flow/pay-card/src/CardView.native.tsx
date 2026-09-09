@@ -10,6 +10,7 @@ export function CardView({
   oauthConfig,
   callback,
   openHostedLogin,
+  openHostedPage,
   onTrackEvent,
   isSignedIn,
   cardVisual,
@@ -34,6 +35,7 @@ export function CardView({
         oauthConfig={oauthConfig}
         callback={callback}
         openHostedLogin={openHostedLogin}
+        openHostedPage={openHostedPage}
         onTrackEvent={onTrackEvent}
       />
       <CardMore />

@@ -27,6 +27,8 @@ describe("buildHostedPageUrl", () => {
   });
 
   it("refuses a page that is not a URL", () => {
-    expect(() => buildHostedPageUrl("https://provider.test", "/onboarding/signup")).toThrow();
+    expect(() => buildHostedPageUrl("https://provider.test", "/onboarding/signup")).toThrow(
+      /Invalid URL/,
+    );
   });
 });

@@ -8,7 +8,7 @@ import useEnv from "@features/platform-env";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
-import { useOpenCardHostedPage } from "./useOpenCardHostedPage";
+import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { useWipeHostedSessionOnSignInChange } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
 
@@ -40,7 +40,6 @@ export function useCardViewModel(): CardViewModel {
   // login must take the new values without a restart of the app.
   const apiUrl = useEnv("CARD_BAANX_API_URL");
   const clientId = useEnv("CARD_BAANX_CLIENT_KEY");
-  const hostedUiUrl = useEnv("CARD_BAANX_HOSTED_UI");
   const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
@@ -48,11 +47,11 @@ export function useCardViewModel(): CardViewModel {
     () => ({
       apiUrl,
       clientId,
-      hostedUiUrl,
+      // No `hostedUiUrl`: the manifest of the live app carries the base of every hosted page.
       // No `deepLink`: the Discover webview has no session to close, so nothing acts on it.
       redirectUri,
     }),
-    [apiUrl, clientId, hostedUiUrl, redirectUri],
+    [apiUrl, clientId, redirectUri],
   );
 
   // The code is the whole of the redirect: PKCE ties it to the verifier the attempt store still holds.
@@ -62,7 +61,7 @@ export function useCardViewModel(): CardViewModel {
     return code ? { code } : null;
   }, [state]);
 
-  const openHostedLogin = useOpenCardHostedPage();
+  const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
 
   useWipeHostedSessionOnSignInChange();
 
@@ -77,6 +76,7 @@ export function useCardViewModel(): CardViewModel {
     oauthConfig,
     callback,
     openHostedLogin,
+    openHostedPage,
     onTrackEvent,
   };
 }
