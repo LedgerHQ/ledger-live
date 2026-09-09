@@ -136,6 +136,7 @@ export interface AleoResources {
   lastPrivateSyncDate: Date | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  bondedValidator?: string | null;
 }
 
 export interface AleoResourcesRaw {
@@ -146,6 +147,7 @@ export interface AleoResourcesRaw {
   lastPrivateSyncDate: string | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  bondedValidator?: string | null;
 }
 
 export type AleoAccount = Account & {

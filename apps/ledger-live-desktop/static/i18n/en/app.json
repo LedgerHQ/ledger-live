@@ -2690,7 +2690,7 @@
     "addressMatched": "Address matched",
     "addressNotFound": "Address not found",
     "alreadyUsed": "Already used · {{date}}",
-    "addressBookUnsupported": "{{family}} isn't supported yet",
+    "addressBookUnsupported": "{{family}} is not supported yet",
     "recentSendWillAppear": "Your recent send will appear here",
     "contactsWillAppear": "Contacts will appear here",
     "selectAddress": "Select address",
@@ -9052,8 +9052,8 @@
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
-    "unsupportedAssetTooltip": "{{asset}} isn't supported yet.",
-    "unsupportedNetworkTooltip": "{{network}} network isn't supported yet.",
+    "unsupportedAssetTooltip": "{{asset}} is not supported yet",
+    "unsupportedNetworkTooltip": "{{network}} network is not supported yet",
     "notAvailableYet": "Not available yet",
     "selectAccount": "Select account",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
@@ -9511,6 +9511,46 @@
         "errorDesc": "Something went wrong, please try again"
       }
     },
+    "bond": {
+      "flow": {
+        "title": "Bond ALEO",
+        "steps": {
+          "validator": {
+            "title": "Validator",
+            "fetchError": "The validator list could not be loaded.",
+            "totalStake": "Total stake",
+            "rateAndCommission": "{{rate}}% est. · {{commission}}% commission",
+            "commissionOnly": "{{commission}}% commission",
+            "rowSubtitleClosed": "Validator is closed to new stake",
+            "rowSubtitleUnbonding": "Validator is unbonding",
+            "unbondingTooltip": "This validator is withdrawing its own stake. The network rejects every new stake to it until that withdrawal is claimed.",
+            "rowSubtitleEarnsNothing": "Validator earns no rewards",
+            "nonEarning": {
+              "fullCommission": "This validator takes 100% commission, so delegators keep nothing.",
+              "overConcentrated": "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so delegators earn nothing."
+            },
+            "topUpOnly": "Aleo allows one validator per account. You can add to your stake with this validator, or unstake first to choose a different one."
+          },
+          "amount": {
+            "title": "Amount",
+            "minimum": "Your total stake with this validator must reach at least 10,000 ALEO to earn rewards. Only public ALEO can be staked - convert your private balance to public first if you want to stake it."
+          },
+          "connectDevice": {
+            "title": "Device",
+            "validatorLabel": "Validator"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "broadcastError": "Your bond could not be sent.",
+            "success": {
+              "title": "Bond sent",
+              "text": "Your bond is being processed.",
+              "cta": "View details"
+            }
+          }
+        }
+      }
+    },
     "manage": {
       "headerAction": "Earn",
       "title": "Manage staking",
@@ -9702,7 +9742,7 @@
     },
     "contacts": {
       "title": "Contacts",
-      "description": "Save and manage external wallet addresses."
+      "description": "Manage your contacts"
     },
     "explore": "Explore all Ledger devices"
   },
@@ -9782,7 +9822,7 @@
     },
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
-      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
+      "namingDisclaimer": "For privacy, avoid full names. Use a nickname or just a first name + initial, e.g. 'John S.'",
       "invalidNameError": "Special characters are not allowed.",
       "duplicateNameError": "This contact name is already in use."
     },

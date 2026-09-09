@@ -53,14 +53,21 @@ export function useRecipientAddressModalViewModel({
   const { recipientSearch, state } = useSendFlowData();
   const contacts = useContacts();
   const [doNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
-  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
-    useContactsFeature("desktop");
+  const {
+    isEnabled: isContactsFeatureEnabled,
+    eligibleAddressFamilies,
+    excludedCurrencyIds,
+  } = useContactsFeature("desktop");
   const { selectedContact, selectContact, clearSelectedContact } = useRecipientContactSelection();
   const { inputMethod, setRecipientResolution } = useSendFlowTracking();
   const { navigation } = useFlowWizard<SendFlowStep>();
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const hasAddressBook = isEligibleAddressCurrency(eligibleAddressFamilies, currency);
+  const hasAddressBook = isEligibleAddressCurrency(
+    eligibleAddressFamilies,
+    currency,
+    excludedCurrencyIds,
+  );
   const sendFlowTrackingProperties = useMemo(
     () => getSendFlowTrackingProperties(account, parentAccount),
     [account, parentAccount],

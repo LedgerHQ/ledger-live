@@ -135,4 +135,13 @@ describe("EarnScreen canvas background wiring", () => {
 
     expect(capturedProps.current?.inputs?.stableSavings).toBe(JSON.stringify({ enabled: false }));
   });
+
+  it("should pass the device-intent sign flag state", () => {
+    renderEarnScreen("deposit", {
+      lwmWallet40: { enabled: true },
+      llmWalletApiDeviceIntentSign: { enabled: true },
+    });
+
+    expect(capturedProps.current?.inputs?.llmWalletApiDeviceIntentSignEnabled).toBe("true");
+  });
 });
