@@ -3199,9 +3199,15 @@ importers:
       '@features/flow-pay-request':
         specifier: workspace:*
         version: link:../../features/flow/pay-request
+      '@features/platform-card':
+        specifier: workspace:*
+        version: link:../../features/platform/card
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../shared/api-services
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -3215,9 +3221,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      '@shared/api-services':
-        specifier: workspace:*
-        version: link:../../shared/api-services
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -9546,6 +9549,9 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -10672,9 +10678,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 8.4.0(@ledgerhq/live-network@libs+live-network)
-      '@ledgerhq/ledger-wallet-framework':
-        specifier: workspace:^
-        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -12361,6 +12364,46 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.79.0
+
+  libs/device-onboarding:
+    dependencies:
+      xstate:
+        specifier: 'catalog:'
+        version: 5.19.2
+    devDependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.64.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.79.0
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/device-react:
     dependencies:
@@ -22946,6 +22989,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -28418,7 +28462,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:

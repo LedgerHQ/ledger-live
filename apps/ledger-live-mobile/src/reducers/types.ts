@@ -319,6 +319,7 @@ export type SettingsState = {
   hasDismissedContactsFeatureIntroduction: boolean;
   productTourCompleted: boolean;
   hasSeenQ2WalletV4Tour: boolean;
+  hasSeenQ3WalletV4Tour: boolean;
   doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
   analyticsConsentInfo: AnalyticsConsentInfo;

@@ -8,8 +8,8 @@ import {
 } from "./plt";
 
 // The expected byte strings below were derived independently of this
-// implementation, from the device and chain CBOR encoders, so they catch an
-// encoder that is merely self-consistent.
+// implementation — from the device and chain CBOR encoders, or by hand from
+// RFC 8949 — so they catch an encoder that is merely self-consistent.
 const ZERO_ADDRESS = AccountAddress.fromBuffer(Buffer.alloc(32));
 const SEQ_ADDRESS = AccountAddress.fromBuffer(Buffer.from(Array.from({ length: 32 }, (_, i) => i)));
 
@@ -22,6 +22,12 @@ describe("plt/encodePltAmount", () => {
 
   it("encodes a zero amount with zero decimals", () => {
     expect(encodePltAmount(0n, 0).toString("hex")).toBe("c4820000");
+  });
+
+  // Every live PLT declares 6 decimals except the two the Concordium team funded
+  // for testing, which declare 2. 60000 is one account's real balance: 600.00.
+  it("encodes a 2-decimal amount, the width the test tokens use", () => {
+    expect(encodePltAmount(60_000n, 2).toString("hex")).toBe("c4822119ea60");
   });
 
   it("encodes the maximum unsigned 64-bit significand", () => {
@@ -122,6 +128,18 @@ describe("plt/encodePltTransferOperations", () => {
 
     expect(encoded.toString("hex")).toBe(
       "81a1687472616e73666572a266616d6f756e74c482251a000f424069726563697069656e74d99d73a10358200000000000000000000000000000000000000000000000000000000000000000",
+    );
+  });
+
+  it("matches the reference encoding for a 2-decimal transfer", () => {
+    const encoded = encodePltTransferOperations({
+      recipient: ZERO_ADDRESS,
+      amount: 60_000n,
+      decimals: 2,
+    });
+
+    expect(encoded.toString("hex")).toBe(
+      "81a1687472616e73666572a266616d6f756e74c4822119ea6069726563697069656e74d99d73a10358200000000000000000000000000000000000000000000000000000000000000000",
     );
   });
 

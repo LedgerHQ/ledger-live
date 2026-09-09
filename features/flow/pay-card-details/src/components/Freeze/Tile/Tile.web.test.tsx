@@ -1,33 +1,32 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { CARD_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
-import { FreezeView } from "./FreezeView";
-import type { FreezeViewProps } from "../../types";
+import { CARD_COPY, I18nWrapper } from "../../../__tests__/i18nWrapper";
+import { Tile } from "./Tile";
+import type { TileProps } from "../../../types";
 
-function renderFreeze(props: Partial<FreezeViewProps> = {}) {
+function renderFreeze(props: Partial<TileProps> = {}) {
   const onOpenConfirm = jest.fn();
-  const onCloseConfirm = jest.fn();
+  const onClose = jest.fn();
   const onConfirm = jest.fn();
 
   const view = render(
-    <FreezeView
-      isFrozen={false}
-      isUpdating={false}
+    <Tile
+      status="ACTIVE"
       isActionDisabled={false}
-      isConfirmOpen={false}
+      confirmState="closed"
       onOpenConfirm={onOpenConfirm}
-      onCloseConfirm={onCloseConfirm}
+      onClose={onClose}
       onConfirm={onConfirm}
       {...props}
     />,
     { wrapper: I18nWrapper },
   );
 
-  return { onOpenConfirm, onCloseConfirm, onConfirm, ...view };
+  return { onOpenConfirm, onClose, onConfirm, ...view };
 }
 
-describe("FreezeView (web)", () => {
+describe("Tile (web)", () => {
   it("renders the freeze tile on an active card", () => {
     renderFreeze();
 
@@ -35,7 +34,7 @@ describe("FreezeView (web)", () => {
   });
 
   it("renders the unfreeze tile on a frozen card", () => {
-    renderFreeze({ isFrozen: true });
+    renderFreeze({ status: "FROZEN" });
 
     expect(screen.getByRole("button", { name: CARD_COPY.unfreeze })).toBeVisible();
   });
@@ -49,22 +48,37 @@ describe("FreezeView (web)", () => {
     expect(onConfirm).not.toHaveBeenCalled();
   });
 
-  it("hides the confirmation until it is opened", () => {
+  it("hides the confirmation while it is closed", () => {
     renderFreeze();
 
     expect(screen.queryByText(CARD_COPY.freezeTitle)).not.toBeInTheDocument();
   });
 
   it("asks to confirm the unfreeze of a frozen card", () => {
-    renderFreeze({ isConfirmOpen: true, isFrozen: true });
+    renderFreeze({ confirmState: "idle", status: "FROZEN" });
 
     expect(screen.getByText(CARD_COPY.unfreezeTitle)).toBeVisible();
   });
 
-  it("disables the confirm button while the card is updating", () => {
-    renderFreeze({ isConfirmOpen: true, isUpdating: true });
+  it("disables the confirm button while the request is in flight", () => {
+    renderFreeze({ confirmState: "pending" });
 
     expect(screen.getByRole("button", { name: CARD_COPY.freezeConfirm })).toBeDisabled();
+  });
+
+  it("reports a failed freeze inside the confirmation", () => {
+    renderFreeze({ confirmState: "error" });
+
+    expect(screen.getByText(CARD_COPY.freezeErrorTitle)).toBeVisible();
+    expect(screen.getByText(CARD_COPY.errorDescription)).toBeVisible();
+  });
+
+  it("retries from the error state", async () => {
+    const { onConfirm } = renderFreeze({ confirmState: "error" });
+
+    await userEvent.click(screen.getByRole("button", { name: CARD_COPY.retry }));
+
+    expect(onConfirm).toHaveBeenCalledTimes(1);
   });
 
   it("disables the tile when the action is unavailable", () => {

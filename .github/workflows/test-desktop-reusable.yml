@@ -151,9 +151,6 @@ jobs:
           shard_total: 1
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          XRAY: false
-          TEST_EXECUTION: ""
-          PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SPECULOS_IMAGE_TAG: ${{ env.SMOKE_SPECULOS_IMAGE_TAG }}
           SPECULOS_FIRMWARE_VERSION: ${{ env.SMOKE_SPECULOS_FIRMWARE_VERSION }}

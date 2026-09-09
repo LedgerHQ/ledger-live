@@ -1,7 +1,6 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 test.describe("Main navigation", () => {

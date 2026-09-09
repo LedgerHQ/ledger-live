@@ -287,20 +287,29 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
         });
     }
 
-    continueFromName();
     if (
       addAddressFlowState.status === "namingAddress" &&
       addAddressFlowState.entryMode === "mad" &&
       addAddressFlowState.addressLabel.status === "valid"
     ) {
+      closeAddAddress();
       void completeAddressConfirmation({
         ...addAddressFlowState,
         addressEntry: addAddressFlowState.addressEntry,
         addressLabel: addAddressFlowState.addressLabel,
         status: "confirmationRequired",
       });
+      return;
     }
-  }, [addAddressFlowState, analytics, completeAddressConfirmation, continueFromName]);
+
+    continueFromName();
+  }, [
+    addAddressFlowState,
+    analytics,
+    closeAddAddress,
+    completeAddressConfirmation,
+    continueFromName,
+  ]);
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
