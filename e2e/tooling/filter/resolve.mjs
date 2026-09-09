@@ -14,6 +14,10 @@ import { TEAM_SLUGS, createTeamExpander } from "./teamSpecs.mjs";
 const currentFile = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFile);
 const repoRoot = path.resolve(currentDir, "../../..");
+
+function useRepoRootCwd() {
+  if (process.cwd() !== repoRoot) process.chdir(repoRoot);
+}
 const genericCoinFrameworkFamiliesPath = path.join(
   repoRoot,
   "libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json",
@@ -120,7 +124,10 @@ function warnZeroMatches(checkDir, files, baseFilter, expandedTags, runner) {
   const isDetox = runner === "detox";
 
   if (files.length === 0) {
-    console.warn(`::warning title=E2E filter check skipped::No test files found in ${checkDir}`);
+    console.warn(
+      `::warning title=E2E filter check skipped::No test files found in ` +
+        `${path.resolve(repoRoot, checkDir)} (--check-dir "${checkDir}")`,
+    );
     return;
   }
 
@@ -182,7 +189,8 @@ export function resolveE2eSelection({
   invertFilter = false,
 } = {}) {
   const isDetox = runner === "detox";
-  const specRoot = checkDir ? path.resolve(repoRoot, checkDir) : "";
+  useRepoRootCwd();
+  const specRoot = checkDir;
   const specFiles = specRoot ? findSpecFiles(specRoot) : []; // scanned ONCE, reused below
 
   const selectedTeam = String(team ?? "")
@@ -210,11 +218,12 @@ export function resolveE2eSelection({
     ok = false;
   }
 
-  if (hasTeam && invertFilter) {
-    // The composite applies --grep-invert to the whole pattern, team conjunct included, so this
-    // would run every OTHER team's specs — the exact opposite of what the dropdown promises.
+  if (invertFilter && (hasTeam || smokeTests)) {
+    const conflicting = [hasTeam && `team=${selectedTeam}`, smokeTests && "smoke_tests"]
+      .filter(Boolean)
+      .join(" and ");
     console.warn(
-      `::error title=E2E team filter cannot be inverted::team=${selectedTeam} with invert_filter=true would run every other team's specs; drop one of the two`,
+      `::error title=E2E filter cannot be inverted::invert_filter applies to the whole pattern, so ${conflicting} would be inverted too — drop invert_filter, or drop ${conflicting}`,
     );
     ok = false;
   }
@@ -333,26 +342,55 @@ function parseArgs(args) {
     listTeams: false,
   };
 
+  const seen = new Set();
+  let positional = false;
+  const value = i => {
+    const next = args[i + 1];
+    if (next === undefined || next.startsWith("-")) {
+      console.error(`${args[i]} requires a value`);
+      process.exit(1);
+    }
+    return next;
+  };
+  const once = flag => {
+    if (seen.has(flag)) {
+      console.error(`${flag} given more than once`);
+      process.exit(1);
+    }
+    seen.add(flag);
+  };
+
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
+    if (arg.startsWith("-")) once(arg);
     switch (arg) {
       case "--input":
-        parsed.input = args[++i] ?? "";
+        if (positional) {
+          console.error(`--input conflicts with the filter already given as a positional argument`);
+          process.exit(1);
+        }
+        parsed.input = value(i);
+        i += 1;
         break;
       case "--smoke-tests":
-        parsed.smokeTests = args[++i] === "true";
+        parsed.smokeTests = value(i) === "true";
+        i += 1;
         break;
       case "--check-dir":
-        parsed.checkDir = args[++i] ?? "";
+        parsed.checkDir = value(i);
+        i += 1;
         break;
       case "--runner":
-        parsed.runner = args[++i] ?? "playwright";
+        parsed.runner = value(i);
+        i += 1;
         break;
       case "--team":
-        parsed.team = args[++i] ?? "";
+        parsed.team = value(i);
+        i += 1;
         break;
       case "--invert-filter":
-        parsed.invertFilter = args[++i] === "true";
+        parsed.invertFilter = value(i) === "true";
+        i += 1;
         break;
       case "--github-output":
         parsed.githubOutput = true;
@@ -361,7 +399,18 @@ function parseArgs(args) {
         parsed.listTeams = true;
         break;
       default:
-        if (!parsed.input) parsed.input = arg;
+        if (arg.startsWith("-")) {
+          console.error(
+            `Unknown option ${arg}. Valid: --input --smoke-tests --check-dir --runner --team --invert-filter --github-output --list-teams`,
+          );
+          process.exit(1);
+        }
+        if (positional || seen.has("--input")) {
+          console.error(`Unexpected extra argument ${arg} — the filter was already given`);
+          process.exit(1);
+        }
+        positional = true;
+        parsed.input = arg;
         break;
     }
   }
@@ -379,6 +428,7 @@ function formatGithubOutput(values) {
 }
 
 if (process.argv[1] === currentFile) {
+  useRepoRootCwd();
   const options = parseArgs(process.argv.slice(2));
 
   if (options.listTeams) {
@@ -390,12 +440,13 @@ if (process.argv[1] === currentFile) {
       );
       process.exit(1);
     }
-    const specRoot = path.resolve(repoRoot, options.checkDir);
+    const specRoot = options.checkDir;
     const files = findSpecFiles(specRoot);
     if (files.length === 0) {
       // Distinguish a typo from a real but empty tree: both are useless to report counts for.
       console.error(
-        `No .spec.ts files under ${options.checkDir} (resolved to ${specRoot}) — check the path.`,
+        `No .spec.ts files under ${path.resolve(repoRoot, options.checkDir)} ` +
+          `(--check-dir "${options.checkDir}") — check the path.`,
       );
       process.exit(1);
     }
