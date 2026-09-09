@@ -4639,7 +4639,7 @@
       "alreadyUsed": "Already used · {{date}}",
       "notInRecentHistory": "Not in your recent history",
       "addressBookUnsupported": {
-        "title": "{{family}} isn't supported yet",
+        "title": "{{family}} is not supported yet",
         "description": "You can't add a {{family}} address to your contacts yet. We're adding more cryptos over time."
       },
       "relativeDate": {
@@ -9835,11 +9835,11 @@
     "emptyAccounts": "You don't have {{network}} accounts yet. Please add one to continue",
     "addAccount": "Add account",
     "unsupportedAssetExplanation": {
-      "title": "{{asset}} isn't supported yet",
+      "title": "{{asset}} is not supported yet",
       "description": "You can't add a {{asset}} address to your contacts yet. We're adding more cryptos over time."
     },
     "unsupportedNetworkExplanation": {
-      "title": "{{network}} Network isn't supported yet",
+      "title": "{{network}} Network is not supported yet",
       "description": "You can't select {{network}} network for {{asset}}. We're adding more networks over time."
     },
     "errors": {
@@ -10456,7 +10456,7 @@
     },
     "contacts": {
       "title": "Contacts",
-      "description": "Save and manage external wallet addresses."
+      "description": "Manage your contacts"
     },
     "backupHub": {
       "title": "Backups of your Secret Recovery Phrase",
@@ -10675,7 +10675,7 @@
     "searchNoResults": "No contact found",
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
-      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
+      "namingDisclaimer": "For privacy, avoid full names. Use a nickname or just a first name + initial, e.g. 'John S.'",
       "confirmName": "Confirm name",
       "invalidNameError": "Special characters are not allowed.",
       "duplicateNameError": "This contact name is already in use."
@@ -10700,7 +10700,7 @@
     "addAddressName": {
       "title": "Name address",
       "inputLabel": "Address name",
-      "namingDisclaimer": "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
+      "namingDisclaimer": "This name appears on your Ledger device when you send to this address. Give it a name that makes it easy to find.",
       "continueToReview": "Continue to review",
       "invalidLabel": "Special characters are not allowed.",
       "duplicateLabel": "This address name is already used for this contact.",
@@ -10749,7 +10749,7 @@
     "editContact": {
       "title": "Edit contact",
       "namePlaceholder": "Contact name",
-      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'",
+      "namingDisclaimer": "For privacy, avoid full names. Use a nickname or just a first name + initial, e.g. 'John S.'",
       "confirmName": "Confirm name",
       "applyChanges": "Apply changes",
       "invalidNameError": "Special characters are not allowed."
