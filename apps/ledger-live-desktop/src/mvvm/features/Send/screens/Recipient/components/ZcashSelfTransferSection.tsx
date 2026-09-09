@@ -11,7 +11,7 @@ import {
   SubheaderRow,
   SubheaderTitle,
 } from "@ledgerhq/lumen-ui-react";
-import { ChevronRight, Lock, Unlock } from "@ledgerhq/lumen-ui-react/symbols";
+import { ChevronRight, Eye, ShieldCheck } from "@ledgerhq/lumen-ui-react/symbols";
 import type { ZcashAccount, Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
 import { useSendFlowData, useSendFlowActions } from "../../../context/SendFlowContext";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
@@ -59,7 +59,7 @@ export function ZcashSelfTransferSection() {
 
   if (!uiConfig.hasBalanceTypeStep || !account || !targetAddress) return null;
 
-  const IconComponent = sender === "public" ? Lock : Unlock;
+  const IconComponent = sender === "public" ? ShieldCheck : Eye;
 
   return (
     <div className="mb-12" data-testid="zcash-self-transfer-section">
