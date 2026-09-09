@@ -70,7 +70,7 @@ Mobile **requires** `tests_type` (`Android Only`|`iOS Only`|`iOS & Android`) and
 A filter that matches 0 specs is wasted, and the failure mode depends on whether a team is set:
 
 - **No team** — `resolve.mjs` warns "filter has no matches"; on **Mobile** the test jobs are then skipped and the run still reports success, on **Desktop** it **fails** ("No tests executed").
-- **With a team** — an empty selection, an unknown team, or a team that owns nothing on that app is a **hard error in the first minute**, before any build. Look for `E2E selection is empty` or `Unknown E2E team`. A team that owns nothing on the app you dispatched is the easy way to hit this — check with `--list-teams` first.
+- **With a team** — unknown teams and teams that own nothing fail in the first minute (look for `Unknown E2E team` / `E2E selection is empty`). On **Mobile**, an empty team ∩ filter is also a hard error (`E2E selection is empty`). On **Desktop**, the resolver can only warn when the team ∩ filter looks empty; the run may still proceed and fail later with "No tests executed".
 
 Fix the filter and re-dispatch.
 
