@@ -10672,9 +10672,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 8.4.0(@ledgerhq/live-network@libs+live-network)
-      '@ledgerhq/ledger-wallet-framework':
-        specifier: workspace:^
-        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
