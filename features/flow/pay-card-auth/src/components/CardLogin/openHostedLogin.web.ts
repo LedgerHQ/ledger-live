@@ -1,13 +1,12 @@
 import type { HostedLoginResult } from "../../state/types";
 
 /**
- * Desktop opens the hosted page in a separate window, which reports nothing back. `ledgerlive://paytab`
- * carries the redirect instead: the app's deep link handler hands the code to the Pay tab, which sends
- * it to the machine. This answers `pending` to say so, and the machine keeps the attempt while it
- * waits.
+ * The fallback for a web host that hands the flow no `openHostedLogin` of its own. It opens the hosted
+ * page in a separate window, which reports nothing back. `ledgerlive://paytab` carries the redirect
+ * instead: the app's deep link handler hands the code to the Pay tab, which sends it to the machine.
+ * This answers `pending` to say so, and the machine keeps the attempt while it waits.
  *
- * Opening the page in an isolated Discover dapp WebView is the end of this work (LIVE-34740). It waits
- * on the Baanx manifest, and the flow above it does not change when the window does.
+ * Ledger Live Desktop hands over its own, which opens the page in the Discover webview.
  *
  * `noopener` keeps the hosted page away from `window.opener`, and it also makes `window.open` answer
  * `null` every time, by specification. The answer therefore says nothing about the new context, so a

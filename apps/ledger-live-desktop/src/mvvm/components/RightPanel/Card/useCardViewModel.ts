@@ -8,6 +8,7 @@ import useEnv from "@features/platform-env";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
+import { useOpenCardHostedPage } from "./useOpenCardHostedPage";
 import type { CardViewModel } from "./types";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
@@ -47,7 +48,7 @@ export function useCardViewModel(): CardViewModel {
       apiUrl,
       clientId,
       hostedUiUrl,
-      // No `deepLink`: the user's own browser opens the page, and it reports nothing back (LIVE-34740).
+      // No `deepLink`: the Discover webview has no session to close, so nothing acts on it.
       redirectUri,
     }),
     [apiUrl, clientId, hostedUiUrl, redirectUri],
@@ -60,6 +61,8 @@ export function useCardViewModel(): CardViewModel {
     return code ? { code } : null;
   }, [state]);
 
+  const openHostedLogin = useOpenCardHostedPage();
+
   const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
     track(event, params);
   }, []);
@@ -70,6 +73,7 @@ export function useCardViewModel(): CardViewModel {
     formatCountervalue,
     oauthConfig,
     callback,
+    openHostedLogin,
     onTrackEvent,
   };
 }

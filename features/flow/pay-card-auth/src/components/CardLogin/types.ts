@@ -9,6 +9,7 @@ export type CardLoginProps = {
    * the flow the `code` and `state` it already parsed.
    */
   readonly callback?: PayCardAuthCallback | null;
+  readonly openHostedLogin?: OpenHostedLogin;
   readonly onTrackEvent?: PayCardLoginTrackEvent;
 };
 
