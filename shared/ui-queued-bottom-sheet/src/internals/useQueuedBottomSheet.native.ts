@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Keyboard } from "react-native";
 import { BottomSheetProps, useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
 import {
@@ -7,6 +7,10 @@ import {
 } from "../contexts/QueuedBottomSheetsContext";
 import { useQueuedBottomSheetAdapters } from "./adaptersContext";
 import { useBottomSheetBackgroundToneRequests } from "./useBottomSheetBackgroundToneRequests";
+import {
+  isBottomSheetKeyboardOwnedByAnother,
+  releaseBottomSheetKeyboard,
+} from "./bottomSheetKeyboardOwnership";
 
 interface UseQueuedBottomSheetProps {
   isRequestingToBeOpened?: boolean;
@@ -33,6 +37,7 @@ export function useQueuedBottomSheet({
   onModalHide,
   preventBackdropClick,
 }: UseQueuedBottomSheetProps) {
+  const sheetId = useId();
   const adapters = useQueuedBottomSheetAdapters();
   const logRef = useRef(adapters.log);
   logRef.current = adapters.log;
@@ -95,8 +100,9 @@ export function useQueuedBottomSheet({
   const settleClosed = useCallback(() => {
     clearDismissFallback();
     stateRef.current = "idle";
+    releaseBottomSheetKeyboard(sheetId);
     cleanupQueue();
-  }, [clearDismissFallback, cleanupQueue]);
+  }, [clearDismissFallback, cleanupQueue, sheetId]);
 
   const beginDismissing = useCallback(() => {
     stateRef.current = "dismissing";
@@ -117,11 +123,20 @@ export function useQueuedBottomSheet({
   // out makes the underlying bottom sheet re-evaluate its position mid-close, which can leave it
   // mounted at the closed position. Retracting the keyboard as soon as a close begins keeps the
   // closing layout stable.
+  //
+  // `Keyboard.dismiss()` is global though: on a hand-off the sheet taking over has already focused
+  // its field by the time this one finishes closing, so skip the dismiss unless we raised the
+  // keyboard ourselves.
   const dismissKeyboard = useCallback(() => {
-    if (Keyboard.isVisible()) {
-      Keyboard.dismiss();
+    if (!Keyboard.isVisible()) return;
+
+    if (isBottomSheetKeyboardOwnedByAnother(sheetId)) {
+      logBottomSheet("Keyboard was raised by another sheet - leaving it up");
+      return;
     }
-  }, []);
+
+    Keyboard.dismiss();
+  }, [logBottomSheet, sheetId]);
 
   // Closing a sheet often also clears the reason the sheet queued behind it wanted to be open, so
   // by the time the queue promotes us our consumer may no longer want us. Presenting anyway leaves
@@ -276,11 +291,13 @@ export function useQueuedBottomSheet({
     return () => {
       logBottomSheet("Component unmounting - cleaning up");
       clearDismissFallback();
+      releaseBottomSheetKeyboard(sheetId);
       cleanupQueue();
     };
-  }, [cleanupQueue, clearDismissFallback, logBottomSheet]);
+  }, [cleanupQueue, clearDismissFallback, logBottomSheet, sheetId]);
 
   return {
+    sheetId,
     bottomSheetRef,
     areBottomSheetsLocked,
     handleUserClose,
