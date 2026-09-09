@@ -62,7 +62,7 @@ export type Memo = { value: string; type?: string };
 export type RecipientData = Readonly<{
   address?: string;
   ensName?: string;
-  /** When set, used as the sole display label for the recipient (overrides address/ensName display). */
+  /** Overrides address/ensName display. Clear when address or ensName changes unless setting a new label. */
   displayLabel?: string;
   memo?: Memo;
   destinationTag?: string;

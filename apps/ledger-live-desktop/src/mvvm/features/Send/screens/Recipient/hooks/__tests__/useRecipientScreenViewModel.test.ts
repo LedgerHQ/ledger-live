@@ -47,6 +47,7 @@ describe("useRecipientScreenViewModel", () => {
         recipient: {
           address: "previous-address",
           memo: { type: "MEMO", value: "123" },
+          displayLabel: "Private balance",
         },
       } as never,
       uiConfig: { recipientSupportsDomain: true } as never,
@@ -103,6 +104,7 @@ describe("useRecipientScreenViewModel", () => {
       address: "next-address",
       ensName: "name.eth",
       memo: { type: "MEMO", value: "123" },
+      displayLabel: undefined,
     });
     expect(goToNextStep).not.toHaveBeenCalled();
 
@@ -117,6 +119,7 @@ describe("useRecipientScreenViewModel", () => {
       address: "next-address",
       ensName: "name.eth",
       memo: { value: "", type: "NO_MEMO" },
+      displayLabel: undefined,
     });
   });
 

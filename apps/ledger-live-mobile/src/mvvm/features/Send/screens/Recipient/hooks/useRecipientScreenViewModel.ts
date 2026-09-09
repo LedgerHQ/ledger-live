@@ -97,7 +97,12 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
 
   const onAddressSelected = useCallback(
     (address: string, ensName?: string) => {
-      transaction.setRecipient({ address, ensName, memo: state.recipient?.memo });
+      transaction.setRecipient({
+        address,
+        ensName,
+        memo: state.recipient?.memo,
+        displayLabel: undefined,
+      });
       recipientSearch.clear();
       goToAmount();
     },

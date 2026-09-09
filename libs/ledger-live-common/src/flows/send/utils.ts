@@ -83,6 +83,7 @@ export function buildRecipientForMemoChange(
     return {
       address: previousAddress ?? searchValue,
       ensName: previousEnsName,
+      displayLabel: previousRecipient?.displayLabel,
       memo,
     };
   }
@@ -90,6 +91,7 @@ export function buildRecipientForMemoChange(
   return {
     address: searchValue,
     ensName: undefined,
+    displayLabel: undefined,
     memo,
   };
 }

@@ -52,6 +52,17 @@ export function useOpenSendFlow() {
     (params?: WorkflowParams) => {
       setOriginFlow(HOOKS_TRACKING_LOCATIONS.sendModal);
 
+      const resolveShouldUseNewFlow = (account: AccountLike, parentAccount?: Account) => {
+        const family = getFamilyFromAccount(account, parentAccount ?? null);
+        const currencyId = getCurrencyIdFromAccount(account, parentAccount ?? null);
+        const currency = getCurrencyFromAccount(account, parentAccount ?? null);
+        const uiConfig = currency ? getSendUiConfig(currency) : null;
+        return (
+          isEnabledForFamily(family, currencyId) ||
+          (isEnabledForFamily() && (uiConfig?.hasBalanceTypeStep ?? false))
+        );
+      };
+
       const openSendFlowImpl = (nextParams?: WorkflowParams) => {
         const { currencyIds, categories, ...flowParams } = nextParams ?? {};
 
@@ -71,13 +82,7 @@ export function useOpenSendFlow() {
                 dialogConfiguration: SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION,
                 onAccountSelected: (account: AccountLike, parentAccount?: Account) => {
                   dispatch(closeDialog());
-                  const family = getFamilyFromAccount(account, parentAccount ?? null);
-                  const currencyId = getCurrencyIdFromAccount(account, parentAccount ?? null);
-                  const currency = getCurrencyFromAccount(account, parentAccount ?? null);
-                  const uiConfig = currency ? getSendUiConfig(currency) : null;
-                  const shouldUseNewFlow =
-                    isEnabledForFamily(family, currencyId) ||
-                    (uiConfig?.hasBalanceTypeStep ?? false);
+                  const shouldUseNewFlow = resolveShouldUseNewFlow(account, parentAccount);
                   track("button_clicked", {
                     button: "send",
                     buttonLocation: "quick_action",
@@ -109,18 +114,10 @@ export function useOpenSendFlow() {
           return;
         }
 
-        const family = getFamilyFromAccount(flowParams.account, flowParams.parentAccount ?? null);
-        const currencyId = getCurrencyIdFromAccount(
+        const shouldUseNewFlow = resolveShouldUseNewFlow(
           flowParams.account,
-          flowParams.parentAccount ?? null,
+          flowParams.parentAccount,
         );
-        const currency = getCurrencyFromAccount(
-          flowParams.account,
-          flowParams.parentAccount ?? null,
-        );
-        const uiConfig = currency ? getSendUiConfig(currency) : null;
-        const shouldUseNewFlow =
-          isEnabledForFamily(family, currencyId) || (uiConfig?.hasBalanceTypeStep ?? false);
 
         if (shouldUseNewFlow) {
           let normalizedAmount: string | undefined;

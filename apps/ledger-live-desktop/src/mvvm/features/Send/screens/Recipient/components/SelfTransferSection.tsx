@@ -50,6 +50,7 @@ export function SelfTransferSection() {
       ...state.recipient,
       address: target.address,
       displayLabel,
+      ensName: undefined,
     });
     navigation.goToNextStep();
   }, [target, transaction, state.recipient, navigation, displayLabel]);

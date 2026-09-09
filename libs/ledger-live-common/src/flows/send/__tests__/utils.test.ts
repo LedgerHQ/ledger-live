@@ -125,6 +125,7 @@ describe("buildRecipientForMemoChange", () => {
     expect(buildRecipientForMemoChange("rNewRecipient", null, memo)).toEqual({
       address: "rNewRecipient",
       ensName: undefined,
+      displayLabel: undefined,
       memo,
     });
   });
@@ -139,6 +140,7 @@ describe("buildRecipientForMemoChange", () => {
     ).toEqual({
       address: "rNewRecipient",
       ensName: undefined,
+      displayLabel: undefined,
       memo,
     });
   });
@@ -147,12 +149,13 @@ describe("buildRecipientForMemoChange", () => {
     expect(
       buildRecipientForMemoChange(
         "vitalik.eth",
-        { address: ADDRESS, ensName: "vitalik.eth" },
+        { address: ADDRESS, ensName: "vitalik.eth", displayLabel: "Private balance" },
         memo,
       ),
     ).toEqual({
       address: ADDRESS,
       ensName: "vitalik.eth",
+      displayLabel: "Private balance",
       memo,
     });
   });
@@ -161,12 +164,13 @@ describe("buildRecipientForMemoChange", () => {
     expect(
       buildRecipientForMemoChange(
         "rNewRecipient",
-        { address: ADDRESS, ensName: "vitalik.eth" },
+        { address: ADDRESS, ensName: "vitalik.eth", displayLabel: "Private balance" },
         memo,
       ),
     ).toEqual({
       address: "rNewRecipient",
       ensName: undefined,
+      displayLabel: undefined,
       memo,
     });
   });
