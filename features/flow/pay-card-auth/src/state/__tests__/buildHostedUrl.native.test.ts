@@ -28,4 +28,18 @@ describe("buildHostedUrl", () => {
   it.each([undefined, ""])("refuses the base %p", base => {
     expect(() => buildHostedUrl(base, "/onboarding/signup")).toThrow(/no base URL/);
   });
+
+  it.each([
+    "https://attacker.test/onboarding/signup",
+    "//attacker.test/onboarding/signup",
+    "https://provider.test.attacker.test/onboarding/signup",
+  ])("refuses the path %p, which leaves the base origin", path => {
+    expect(() => buildHostedUrl("https://provider.test", path)).toThrow(/must stay on/);
+  });
+
+  it("takes a path that names the base origin in full", () => {
+    expect(buildHostedUrl("https://provider.test", "https://provider.test/kyc")).toBe(
+      "https://provider.test/kyc",
+    );
+  });
 });
