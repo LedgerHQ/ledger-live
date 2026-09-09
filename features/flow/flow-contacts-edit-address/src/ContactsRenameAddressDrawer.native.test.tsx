@@ -9,6 +9,28 @@ import {
 import { ContactsRenameAddressDialog } from ".";
 import type { ContactsRenameAddressDrawerProps } from "./types";
 
+const mockFocus = jest.fn();
+
+// The Lumen passthrough renders host elements whose refs stay null, so the focus call is
+// unobservable. Override just TextInput to expose a controllable imperative handle.
+jest.mock("@ledgerhq/lumen-ui-rnative", () => {
+  const actual = jest.requireActual<Record<string, unknown>>("@ledgerhq/lumen-ui-rnative");
+  const ReactActual = jest.requireActual<typeof import("react")>("react");
+
+  return new Proxy(actual, {
+    get(target, prop) {
+      if (prop !== "TextInput") {
+        return target[prop as string];
+      }
+
+      return ({ ref, ...props }: { ref?: React.Ref<{ focus: () => void }> }) => {
+        ReactActual.useImperativeHandle(ref, () => ({ focus: mockFocus }));
+        return ReactActual.createElement("TextInput", props);
+      };
+    },
+  });
+});
+
 function createViewModel(
   overrides: Partial<ContactsRenameAddressDrawerProps> = {},
 ): ContactsRenameAddressDrawerProps {
@@ -58,6 +80,10 @@ function createViewModel(
 }
 
 describe("ContactsRenameAddressDrawer", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should render the validation state while open", () => {
     render(
       <ContactsRenameAddressDialog
@@ -99,11 +125,32 @@ describe("ContactsRenameAddressDrawer", () => {
     expect(screen.queryByText("Edit address")).not.toBeOnTheScreen();
   });
 
-  it("should reserve room for the keyboard so the form stays above it", () => {
+  it("should clear the on-screen navigation area below the form", () => {
     const { toJSON } = render(
-      <ContactsRenameAddressDialog {...createViewModel({ bottomInset: 8, keyboardInset: 300 })} />,
+      <ContactsRenameAddressDialog {...createViewModel({ bottomInset: 8 })} />,
     );
 
-    expect(toJSON()).toMatchObject({ props: { style: { paddingBottom: 332 } } });
+    expect(toJSON()).toMatchObject({ props: { style: { paddingBottom: 32 } } });
+  });
+
+  it("should raise the keyboard on the address field when the host asks for focus", () => {
+    render(<ContactsRenameAddressDialog {...createViewModel({ autoFocus: true })} />);
+
+    expect(mockFocus).toHaveBeenCalledTimes(1);
+  });
+
+  it("should leave the field unfocused unless the host asks for focus", () => {
+    render(<ContactsRenameAddressDialog {...createViewModel()} />);
+
+    expect(mockFocus).not.toHaveBeenCalled();
+  });
+
+  // Without this the enclosing sheet never learns it raised the keyboard, and the sheet closing
+  // behind it retracts it again.
+  it("should register both fields with the enclosing sheet", () => {
+    render(<ContactsRenameAddressDialog {...createViewModel()} />);
+
+    expect(screen.getByTestId("contacts-edit-address-input")).toHaveProp("onFocus");
+    expect(screen.getByTestId("contacts-rename-address-input")).toHaveProp("onFocus");
   });
 });

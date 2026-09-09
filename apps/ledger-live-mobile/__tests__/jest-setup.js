@@ -40,6 +40,10 @@ import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/asy
 import mockLocalize from "react-native-localize/mock";
 import { EventEmitter } from "events";
 
+function mockBottomSheetFooter({ children }) {
+  return children;
+}
+
 // Disable max listeners warning for MSW (known issue with multiple tests)
 EventEmitter.defaultMaxListeners = 0;
 
@@ -254,14 +258,37 @@ jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
 // queued-bottom-sheet cleanup that relies on it. Patched locally until the fix is merged:
 // https://github.com/gorhom/react-native-bottom-sheet/pull/2714
 // TODO: remove this override once @gorhom/bottom-sheet ships the fix.
+// The upstream mock also renders children only, so it drops the footerComponent slot and omits
+// BottomSheetFooter: a sheet's primary action would be missing from every test. Both are restored
+// here, rendering the footer inline after the content.
 jest.mock("@gorhom/bottom-sheet", () => {
+  const React = require("react");
+
   class BottomSheetModal extends mockGorhomBottomSheet.BottomSheetModal {
     dismiss() {
       super.dismiss();
       this.props?.onDismiss?.();
     }
+
+    render() {
+      const FooterComponent = this.props?.footerComponent;
+      if (!FooterComponent) return super.render();
+
+      return React.createElement(
+        React.Fragment,
+        null,
+        super.render(),
+        React.createElement(FooterComponent, { animatedFooterPosition: {} }),
+      );
+    }
   }
-  return { ...mockGorhomBottomSheet, BottomSheetModal };
+
+  return {
+    ...mockGorhomBottomSheet,
+    BottomSheetModal,
+    BottomSheetFooter: mockBottomSheetFooter,
+    useBottomSheetInternal: () => null,
+  };
 });
 
 jest.mock("react-native-version-number", () => ({

@@ -1,25 +1,8 @@
 import React, { useState } from "react";
-import { Platform } from "react-native";
-import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import type { AddContactAppAdapterResult } from "@features/flow-contacts";
 import { ContactsAddContactContent } from "@features/flow-contacts-add-contact";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { act, fireEvent, render, screen } from "@tests/test-renderer";
+import { fireEvent, render, screen, within } from "@tests/test-renderer";
 import { ContactsAddContactDrawerSheet } from ".";
-
-const mockUseKeyboardVisible = jest.fn();
-const originalPlatform = Platform.OS;
-const originalVersion = Object.getOwnPropertyDescriptor(Platform, "Version");
-
-jest.mock("~/logic/keyboardVisible", () => {
-  const actual =
-    jest.requireActual<typeof import("~/logic/keyboardVisible")>("~/logic/keyboardVisible");
-
-  return {
-    ...actual,
-    useKeyboardVisible: (...args: unknown[]) => mockUseKeyboardVisible(...args),
-  };
-});
 
 function createViewModel(
   overrides: Partial<AddContactAppAdapterResult> = {},
@@ -68,14 +51,6 @@ function ControlledAddContactDrawerSheet() {
 describe("ContactsAddContactDrawerSheet", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: false, keyboardHeight: 0 });
-  });
-
-  afterEach(() => {
-    Platform.OS = originalPlatform;
-    if (originalVersion) {
-      Object.defineProperty(Platform, "Version", originalVersion);
-    }
   });
 
   it("should render the name form with the Figma copy and character limit", () => {
@@ -87,12 +62,8 @@ describe("ContactsAddContactDrawerSheet", () => {
     expect(screen.getByRole("button", { name: "Confirm name" })).toBeDisabled();
   });
 
-  it("should hold the name field focus back until the drawer has finished opening", () => {
+  it("should focus the name field as soon as the drawer content mounts", () => {
     render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
-
-    expect(screen.UNSAFE_getByType(ContactsAddContactContent).props.autoFocus).toBe(false);
-
-    act(() => screen.UNSAFE_getByType(QueuedBottomSheet).props.onOpened());
 
     expect(screen.UNSAFE_getByType(ContactsAddContactContent).props.autoFocus).toBe(true);
   });
@@ -169,56 +140,20 @@ describe("ContactsAddContactDrawerSheet", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("should clear the keyboard by the same gap the other contact drawers leave on iOS", () => {
-    Platform.OS = "ios";
-    mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: true, keyboardHeight: 300 });
-
+  it("should pin the confirm action to the sheet footer so the keyboard cannot cover it", () => {
     render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
 
-    expect(screen.UNSAFE_getByType(BottomSheetView).props.style).toEqual({ paddingBottom: 356 });
+    expect(screen.getByRole("button", { name: "Confirm name" })).toBeVisible();
+    expect(
+      within(screen.UNSAFE_getByType(ContactsAddContactContent)).queryByRole("button", {
+        name: "Confirm name",
+      }),
+    ).toBeNull();
   });
 
-  it("should pass the shared keyboard inset without the iOS gap on Android", () => {
-    Platform.OS = "android";
-    Object.defineProperty(Platform, "Version", { value: 35 });
-    mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: true, keyboardHeight: 300 });
+  it("should render no footer while the drawer is closed", () => {
+    render(<ContactsAddContactDrawerSheet {...createViewModel({ isOpen: false })} />);
 
-    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
-
-    expect(screen.UNSAFE_getByType(BottomSheetView).props.style).toEqual({ paddingBottom: 324 });
-  });
-
-  it("should reserve no keyboard room while the keyboard is hidden", () => {
-    mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: false, keyboardHeight: 0 });
-
-    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
-
-    expect(screen.UNSAFE_getByType(BottomSheetView).props.style).toEqual({ paddingBottom: 24 });
-  });
-
-  it("should omit the keyboard inset when native resize handles the keyboard", () => {
-    Platform.OS = "android";
-    Object.defineProperty(Platform, "Version", { value: 34 });
-    mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: true, keyboardHeight: 300 });
-
-    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
-
-    expect(screen.UNSAFE_getByType(BottomSheetView).props.style).toEqual({ paddingBottom: 24 });
-  });
-
-  it("should use will events on iOS", () => {
-    Platform.OS = "ios";
-
-    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
-
-    expect(mockUseKeyboardVisible).toHaveBeenCalledWith({ eventTiming: "will" });
-  });
-
-  it("should use did events on Android", () => {
-    Platform.OS = "android";
-
-    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
-
-    expect(mockUseKeyboardVisible).toHaveBeenCalledWith({ eventTiming: "did" });
+    expect(screen.queryByRole("button", { name: "Confirm name" })).toBeNull();
   });
 });

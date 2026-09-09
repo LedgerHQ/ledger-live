@@ -10,6 +10,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
+import { CONTACTS_NATIVE_NAME_INPUT_PROPS } from "@features/platform-contacts";
 import type { AddAddressLabelState, AddAddressNameLabels } from "../../state/types";
 
 export type ContactsAddAddressNameProps = Readonly<{
@@ -43,13 +44,13 @@ export function ContactsAddAddressName({
             <TextInput
               testID="contacts-add-address-name-input"
               autoFocus
-              autoCorrect={false}
               label={labels.inputLabel}
               value={addressLabel.value}
               helperText={validationMessage}
               maxLength={CONTACT_ADDRESS_LABEL_MAX_LENGTH}
               status={addressLabel.status === "invalid" ? "error" : undefined}
               onChangeText={onChangeText}
+              {...CONTACTS_NATIVE_NAME_INPUT_PROPS}
             />
             <Box lx={{ flexDirection: "row", justifyContent: "flex-end" }}>
               <Text

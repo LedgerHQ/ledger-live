@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, View } from "react-native";
 import type { QueuedBottomSheetProps } from "../components/QueuedBottomSheet/types";
+import { BottomSheetInstanceContext } from "../internals/BottomSheetInstanceContext";
 
 export const QUEUED_BOTTOM_SHEET_MOCK_TEST_ID = "queued-bottom-sheet";
 
@@ -20,6 +21,9 @@ export const QUEUED_BOTTOM_SHEET_MOCK_TEST_ID = "queued-bottom-sheet";
  *
  * `onOpened` fires when the sheet becomes open. Sheets that pass no `testID` fall back to
  * {@link QUEUED_BOTTOM_SHEET_MOCK_TEST_ID}.
+ *
+ * A `footer` renders after the children, so a test can find the primary action by its own test id
+ * without knowing that the real sheet pins it outside the content.
  */
 export function QueuedBottomSheetMock({
   children,
@@ -30,6 +34,7 @@ export function QueuedBottomSheetMock({
   onBackdropPress,
   onBack,
   onOpened,
+  footer,
   testID = QUEUED_BOTTOM_SHEET_MOCK_TEST_ID,
 }: QueuedBottomSheetProps) {
   const isOpen = isRequestingToBeOpened || isForcingToBeOpened;
@@ -43,15 +48,18 @@ export function QueuedBottomSheetMock({
 
   return (
     <View testID={testID} accessibilityState={{ expanded: isOpen }}>
-      {onClose ? <Pressable testID={`${testID}-dismiss`} onPress={onClose} /> : null}
-      {onHeaderClosePressed ? (
+      {isOpen && onClose ? <Pressable testID={`${testID}-dismiss`} onPress={onClose} /> : null}
+      {isOpen && onHeaderClosePressed ? (
         <Pressable testID={`${testID}-header-close`} onPress={onHeaderClosePressed} />
       ) : null}
-      {onBackdropPress ? (
+      {isOpen && onBackdropPress ? (
         <Pressable testID={`${testID}-backdrop`} onPress={onBackdropPress} />
       ) : null}
-      {onBack ? <Pressable testID={`${testID}-back`} onPress={onBack} /> : null}
-      {children}
+      {isOpen && onBack ? <Pressable testID={`${testID}-back`} onPress={onBack} /> : null}
+      <BottomSheetInstanceContext.Provider value={testID}>
+        {children}
+      </BottomSheetInstanceContext.Provider>
+      {footer}
     </View>
   );
 }

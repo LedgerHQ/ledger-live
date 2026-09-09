@@ -16,6 +16,8 @@ module.exports = createSharedUiJestConfig({
       "^react-native-safe-area-context$":
         require.resolve("@support/jest-shared/mocks/safe-area-context"),
       "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "jest/mocks/lumen-ui-rnative.js"),
+      "^@shared/ui-queued-bottom-sheet$":
+        "@shared/ui-queued-bottom-sheet/testing/module-mock",
     },
   },
 });

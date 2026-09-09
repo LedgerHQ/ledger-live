@@ -165,6 +165,11 @@ module.exports = {
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^react-native-gesture-handler$": "<rootDir>/node_modules/react-native-gesture-handler",
     "^react-native-gesture-handler/(.*)$": "<rootDir>/node_modules/react-native-gesture-handler/$1",
+    // Pin to a single instance so the jest-setup mock covers workspace packages too
+    // (e.g. @shared/ui-queued-bottom-sheet, which resolves its own pnpm copy otherwise and
+    // would then reach the real useBottomSheetInternal from inside a mocked sheet).
+    "^@gorhom/bottom-sheet$": "<rootDir>/node_modules/@gorhom/bottom-sheet",
+    "^@gorhom/bottom-sheet/(.*)$": "<rootDir>/node_modules/@gorhom/bottom-sheet/$1",
     // Pin to a single instance so components rendered from workspace packages
     // (e.g. @shared/ui-queued-bottom-sheet) share the app's SafeAreaProvider context
     // instead of resolving a second pnpm copy (duplicate context = "No safe

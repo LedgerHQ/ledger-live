@@ -99,8 +99,8 @@ export type ContactsRenameAddressDialogProps = RenameAddressDialogViewModel &
 
 export type ContactsRenameAddressDrawerProps = ContactsRenameAddressDialogProps &
   Readonly<{
+    autoFocus?: boolean;
     bottomInset?: number;
-    keyboardInset?: number;
   }>;
 
 export type RenameAddressController = Readonly<{
