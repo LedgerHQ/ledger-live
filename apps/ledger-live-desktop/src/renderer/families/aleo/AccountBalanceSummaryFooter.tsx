@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
-import type { formatCurrencyUnitOptions } from "@ledgerhq/live-common/currencies/index";
+import { type formatCurrencyUnitOptions } from "@ledgerhq/live-common/currencies/index";
 import type { AleoAccount, AleoTokenAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";

@@ -131,7 +131,6 @@ export function createStakingFlowBody<StepId extends string>({
       }
       setTransactionError(error);
     }, []);
-
     const handleOperationBroadcasted = useCallback(
       (optimisticOperation: Operation) => {
         if (!account) return;

@@ -53,3 +53,51 @@ export class AleoAmountTooLargeForTransaction extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class AleoBondAmountTooLow extends Error {
+  override name = "AleoBondAmountTooLow";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "AleoBondAmountTooLow");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class AleoStakeAmountTooLow extends Error {
+  override name = "AleoStakeAmountTooLow";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "AleoStakeAmountTooLow");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class AleoNoClaimableAmount extends Error {
+  override name = "AleoNoClaimableAmount";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "AleoNoClaimableAmount");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class AleoClosedValidator extends Error {
+  override name = "AleoClosedValidator";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "AleoClosedValidator");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class AleoUnbondingValidator extends Error {
+  override name = "AleoUnbondingValidator";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "AleoUnbondingValidator");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class AleoAlreadyBondedElsewhere extends Error {
+  override name = "AleoAlreadyBondedElsewhere";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "AleoAlreadyBondedElsewhere");
+    if (fields) Object.assign(this, fields);
+  }
+}

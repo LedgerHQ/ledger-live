@@ -92,6 +92,7 @@ describe("listOperations", () => {
       mockTx,
       mockAddress,
       false,
+      undefined,
     );
     expect(mockGetCalTokens).not.toHaveBeenCalled();
   });
@@ -195,6 +196,7 @@ describe("listOperations", () => {
         unknownTokenTx,
         mockAddress,
         false,
+        undefined,
       );
       expect(result.operations).toEqual([mockOp]);
       expect(result.tokenOperations).toEqual([]);
@@ -240,6 +242,7 @@ describe("listOperations", () => {
         tx1,
         mockAddress,
         true,
+        undefined,
       );
       expect(mockToBridgeOperation).toHaveBeenNthCalledWith(
         2,
@@ -247,6 +250,7 @@ describe("listOperations", () => {
         tx2,
         mockAddress,
         true,
+        undefined,
       );
       expect(result.tokenOperations).toEqual([op1, op2]);
     });

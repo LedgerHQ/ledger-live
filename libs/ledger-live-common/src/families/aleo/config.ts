@@ -53,7 +53,7 @@ const ENABLE_TOKENS = false;
 /**
  * Controls whether Aleo staking features (bond/unbond/claim) are enabled.
  */
-const ENABLE_STAKING = false;
+const ENABLE_STAKING = true;
 
 export const aleoConfig: Record<string, ConfigInfo> = {
   config_currency_aleo: {

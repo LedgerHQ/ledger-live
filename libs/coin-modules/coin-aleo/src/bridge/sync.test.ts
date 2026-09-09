@@ -27,7 +27,12 @@ import { AleoApiConfigurationResetError } from "../errors";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedRecord, MOCK_ALEO_ADDRESS } from "../__tests__/fixtures/api.fixture";
 import coinConfig from "../config";
-import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
+import {
+  accessProvableApi,
+  fetchAllOwnedRecords,
+  getStakingPosition,
+  patchPublicOperations,
+} from "../network/utils";
 import { listPrivateOperations } from "./listPrivateOperations";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import {
@@ -49,6 +54,7 @@ jest.mock("../network/utils", () => ({
   ...jest.requireActual("../network/utils"),
   accessProvableApi: jest.fn(),
   fetchAllOwnedRecords: jest.fn(),
+  getStakingPosition: jest.fn(),
   patchPublicOperations: jest.fn(),
 }));
 jest.mock("./listOperations");
@@ -65,6 +71,7 @@ jest.mock("@ledgerhq/logs", () => ({
 const mockGetSyncHash = jest.mocked(getSyncHash);
 const mockGetPublicBalance = jest.mocked(getPublicBalance);
 const mockLastBlock = jest.mocked(lastBlock);
+const mockGetStakingPosition = jest.mocked(getStakingPosition);
 const mockListOperations = jest.mocked(listOperations);
 const mockAccessProvableApi = jest.mocked(accessProvableApi);
 const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
@@ -124,6 +131,15 @@ describe("sync.ts", () => {
       height: 100,
       hash: "mock-block-hash",
       time: new Date("2024-01-01"),
+    });
+
+    // Nothing bonded by default: staking-specific expectations override this per test.
+    mockGetStakingPosition.mockResolvedValue({
+      bondedBalance: new BigNumber(0),
+      bondedValidator: null,
+      unbondingBalance: new BigNumber(0),
+      unbondingHeight: null,
+      withdrawalAddress: null,
     });
 
     mockListOperations.mockResolvedValue({
