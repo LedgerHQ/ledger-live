@@ -3,14 +3,19 @@ import {
   AwarenessModalClampedText,
   CAROUSEL_SLIDE_TEXT_LINE_LIMITS,
 } from "LLD/features/GenericAwarenessModal/components/clampedText";
-import { useQ2TourSlideItemViewModel } from "../hooks/useQ2TourSlideItemViewModel";
+import { useQuarterlyTourSlideItemViewModel } from "./useQuarterlyTourSlideItemViewModel";
+import type { QuarterlyTourSlide } from "./types";
 
-interface SlideItemProps {
+interface QuarterlyTourSlideItemProps {
   readonly slideIndex: number;
+  readonly slides: readonly QuarterlyTourSlide[];
 }
 
-export function SlideItem({ slideIndex }: SlideItemProps) {
-  const { title, description, imageSrc } = useQ2TourSlideItemViewModel({ slideIndex });
+export function QuarterlyTourSlideItem({ slideIndex, slides }: QuarterlyTourSlideItemProps) {
+  const { title, description, imageSrc } = useQuarterlyTourSlideItemViewModel({
+    slideIndex,
+    slides,
+  });
 
   return (
     <div className="flex size-full flex-col">

@@ -2,7 +2,7 @@ import React from "react";
 import { PageIndicator } from "@ledgerhq/lumen-ui-react";
 import { useSlidesContext } from "LLD/components/Slides";
 
-export function TourProgressIndicator() {
+export function QuarterlyTourProgressIndicator() {
   const { displayedIndex, totalSlides } = useSlidesContext();
 
   return (

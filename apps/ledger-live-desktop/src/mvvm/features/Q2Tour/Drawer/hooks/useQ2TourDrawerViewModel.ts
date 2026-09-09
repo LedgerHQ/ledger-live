@@ -1,7 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
+import {
+  useQuarterlyTourDrawerViewModel,
+  type QuarterlyTourAnalytics,
+  type QuarterlyTourDrawerViewModel,
+} from "LLD/components/QuarterlyTour";
 import {
   hasCompletedOnboardingSelector,
   hasSeenQ2TourSelector,
@@ -24,148 +28,37 @@ export interface UseQ2TourDrawerViewModelOptions {
   isOnPortfolioPage?: boolean;
 }
 
-export interface Q2TourDrawerViewModel {
-  readonly isDialogOpen: boolean;
-  readonly hasSeenTour: boolean;
-  readonly handleOpenDialog: () => void;
-  readonly handleCloseDialog: () => void;
-  readonly closeDrawer: () => void;
-  readonly dismissDrawer: () => void;
-  readonly completeDrawer: () => void;
-  readonly onSlideChange: (index: number) => void;
-  readonly onContinueClick: (slideIndex: number, isLastSlide: boolean) => void;
-}
+export type Q2TourDrawerViewModel = QuarterlyTourDrawerViewModel;
+
+const Q2_TOUR_ANALYTICS: QuarterlyTourAnalytics = {
+  getContext: getQ2TourAnalyticsContext,
+  trackCloseClick: trackQ2TourCloseClick,
+  trackContinueClick: trackQ2TourContinueClick,
+  trackDismissed: trackQ2TourDismissed,
+  trackCompleted: trackQ2TourCompleted,
+  trackInitialStep: trackQ2TourInitialStep,
+  trackStepNavigation: trackQ2TourStepNavigation,
+};
 
 export const useQ2TourDrawerViewModel = (
   options: UseQ2TourDrawerViewModelOptions = {},
 ): Q2TourDrawerViewModel => {
   const { isOnPortfolioPage = false } = options;
-  const { t } = useTranslation();
   const dispatch = useDispatch();
-  const currentIndexRef = useRef(0);
-  const isClosingRef = useRef(false);
-  const hasTrackedOpenRef = useRef(false);
-
   const hasSeenTour = useSelector(hasSeenQ2TourSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const isTourEnabled = isQ2ReleaseTourEnabled(useFeature("releaseTour"));
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const getContext = useCallback(
-    (slideIndex: number) => {
-      const slide = Q2_TOUR_SLIDES[slideIndex];
-      if (!slide) {
-        return undefined;
-      }
-      return getQ2TourAnalyticsContext(slideIndex, t(slide.titleKey));
-    },
-    [t],
-  );
-
-  const handleCloseDialog = useCallback(() => {
-    setIsDialogOpen(false);
+  const markTourAsSeen = useCallback(() => {
     dispatch(setHasSeenQ2Tour(true));
   }, [dispatch]);
 
-  const closeDrawer = useCallback(() => {
-    if (isClosingRef.current) return;
-    isClosingRef.current = true;
-    const context = getContext(currentIndexRef.current);
-    if (context) {
-      trackQ2TourCloseClick(context);
-    }
-    handleCloseDialog();
-  }, [getContext, handleCloseDialog]);
-
-  const dismissDrawer = useCallback(() => {
-    if (isClosingRef.current) return;
-    isClosingRef.current = true;
-    const context = getContext(currentIndexRef.current);
-    if (context) {
-      trackQ2TourDismissed(context);
-    }
-    handleCloseDialog();
-  }, [getContext, handleCloseDialog]);
-
-  const completeDrawer = useCallback(() => {
-    isClosingRef.current = true;
-    handleCloseDialog();
-  }, [handleCloseDialog]);
-
-  const onSlideChange = useCallback(
-    (index: number) => {
-      currentIndexRef.current = index;
-      const context = getContext(index);
-      if (context) {
-        trackQ2TourStepNavigation(context);
-      }
-    },
-    [getContext],
-  );
-
-  const onContinueClick = useCallback(
-    (slideIndex: number, isLastSlide: boolean) => {
-      currentIndexRef.current = slideIndex;
-      const context = getContext(slideIndex);
-      if (!context) {
-        return;
-      }
-
-      if (isLastSlide) {
-        trackQ2TourCompleted(context);
-        return;
-      }
-
-      trackQ2TourContinueClick(context);
-    },
-    [getContext],
-  );
-
-  const openDrawer = useCallback(() => {
-    isClosingRef.current = false;
-    currentIndexRef.current = 0;
-    setIsDialogOpen(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isDialogOpen) {
-      hasTrackedOpenRef.current = false;
-      return;
-    }
-
-    if (hasTrackedOpenRef.current) {
-      return;
-    }
-
-    hasTrackedOpenRef.current = true;
-    currentIndexRef.current = 0;
-    const context = getContext(0);
-    if (context) {
-      trackQ2TourInitialStep(context);
-    }
-  }, [getContext, isDialogOpen]);
-
-  useEffect(() => {
-    if (isOnPortfolioPage && isTourEnabled && hasCompletedOnboarding && !hasSeenTour) {
-      openDrawer();
-    }
-  }, [isOnPortfolioPage, isTourEnabled, hasCompletedOnboarding, hasSeenTour, openDrawer]);
-
-  const handleOpenDialog = useCallback(() => {
-    if (!isTourEnabled || hasSeenTour) return;
-    openDrawer();
-  }, [isTourEnabled, hasSeenTour, openDrawer]);
-
-  return {
-    isDialogOpen,
+  return useQuarterlyTourDrawerViewModel({
+    isTourEnabled,
     hasSeenTour,
-    handleOpenDialog,
-    handleCloseDialog,
-    closeDrawer,
-    dismissDrawer,
-    completeDrawer,
-    onSlideChange,
-    onContinueClick,
-  };
+    markTourAsSeen,
+    shouldAutoOpen: isOnPortfolioPage && hasCompletedOnboarding,
+    slides: Q2_TOUR_SLIDES,
+    analytics: Q2_TOUR_ANALYTICS,
+  });
 };
