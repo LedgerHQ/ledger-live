@@ -150,9 +150,6 @@ export async function resolveWalletApiSpendableBalance(
 ): Promise<BigNumber> {
   try {
     const bridge = await getAccountBridge(account, parentAccount);
-    // A family extension can return undefined for an account shape it did not expect (e.g. an
-    // empty token account built on the fly by the asset drawer). Undefined would reach the
-    // wallet-api serializer, which calls .toString() on it unguarded.
     return bridge.getWalletApiSpendableBalance(account) ?? account.spendableBalance;
   } catch (error) {
     log(

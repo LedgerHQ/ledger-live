@@ -8,8 +8,6 @@ const extensions: AccountBridgeExtensions = {
     invariant(isAleoAccount(account), "aleo: invalid account in bridgeExtensions");
 
     if (account.type === "TokenAccount") {
-      // transparentBalance is only set by the sync; an empty token account built by the asset
-      // drawer has none, so mirror the main-account fallback instead of returning undefined.
       return account.transparentBalance ?? new BigNumber(0);
     }
 
