@@ -12,7 +12,7 @@ concurrency:
   # overlapping — they would otherwise race on the same on-chain accounts across machines, which no
   # per-run mechanism can prevent. Non-broadcast runs keep the original per-ref/tests_type group.
   group: >-
-    ${{ (inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' || github.event.schedule == '0 0 * * 5') && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, inputs.test_filter && 'filtered' || 'all') }}
+    ${{ (inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' || github.event.schedule == '0 0 * * 5') && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, (inputs.test_filter || (inputs.team && inputs.team != 'all')) && 'filtered' || 'all') }}
   cancel-in-progress: false
 
 on:
@@ -33,6 +33,12 @@ on:
         description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
+      team:
+        description: "Run only one team's tests. ANDed with test_filter, Smoke and the device."
+        required: false
+        type: choice
+        options: [all, bst, buy-and-sell, coin-integration, earn, engagement, swap, wallet-xp]
+        default: all
       tests_type:
         description: "Which tests to run"
         required: true
@@ -108,6 +114,11 @@ on:
         description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
+      team:
+        description: "Team slug whose specs to run. One of: all, bst, buy-and-sell, coin-integration, earn, engagement, swap, wallet-xp."
+        required: false
+        type: string
+        default: all
       tests_type:
         description: "Which tests to run"
         required: false
@@ -422,32 +433,36 @@ jobs:
       - name: Prepare test filter
         id: test-filter
         run: |
-          RESOLVED_FILTER="$(node e2e/tooling/filter/resolve.mjs \
+          node e2e/tooling/filter/resolve.mjs \
             --input "$TEST_FILTER_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
+            --team "$TEAM_INPUT" \
             --check-dir "e2e/mobile/specs" \
-            --runner detox)"
-          echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
+            --runner detox \
+            --github-output >> "$GITHUB_OUTPUT"
         shell: bash
         env:
           TEST_FILTER_INPUT: ${{ inputs.test_filter }}
           SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
+          TEAM_INPUT: ${{ inputs.team || 'all' }}
 
       - name: Write resolved filter to GitHub Summary
         run: |
-          FILTER_PATTERN="${{ steps.test-filter.outputs.filter }}"
-          if [ -z "$FILTER_PATTERN" ]; then
-            FILTER_PATTERN="(none)"
-          fi
-          echo "- **Resolved filtered pattern:** $FILTER_PATTERN" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "- **Team:** ${TEAM_INPUT}"
+            node e2e/tooling/filter/format-summary.mjs "${FILTER_PATTERN:-}" "- **Resolved filtered pattern:**"
+          } >> "$GITHUB_STEP_SUMMARY"
         shell: bash
+        env:
+          FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
+          TEAM_INPUT: ${{ inputs.team || 'all' }}
 
       - name: Generate shards matrix and test files
         id: generate-shards
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
         with:
           test_directory: e2e/mobile
-          test_filter: ${{ steps.test-filter.outputs.filter }}
+          test_filter: ${{ steps.test-filter.outputs.runner_filter }}
           event_name: ${{ github.event_name }}
           ref: ${{ inputs.ref || github.ref_name }}
           ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
