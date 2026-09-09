@@ -49,7 +49,7 @@ describe("live app session clearing", () => {
   it("always clears the shared Live App partition, even before any app was opened", async () => {
     await clearLiveAppSessionsStorage();
 
-    expect(mockedFromPartition).toHaveBeenCalledWith("persist:live-apps");
+    expect(mockedFromPartition).toHaveBeenCalledWith("persist:live-app-shared");
     expect(sharedSession.clearStorageData).toHaveBeenCalled();
   });
 
@@ -72,9 +72,9 @@ describe("live app session clearing", () => {
 
   it("clears partitions persisted by a previous run that was never reopened", async () => {
     const persisted = makeSession();
-    mockedReaddir.mockResolvedValue(asDirents(["someapp-3"]) as never);
+    mockedReaddir.mockResolvedValue(asDirents(["live-app-someapp-3"]) as never);
     mockedFromPartition.mockImplementation(partition =>
-      partition === "persist:someapp-3"
+      partition === "persist:live-app-someapp-3"
         ? (persisted as unknown as Electron.Session)
         : (sharedSession as unknown as Electron.Session),
     );
@@ -87,9 +87,9 @@ describe("live app session clearing", () => {
   it("deduplicates a partition that is both attached and on disk", async () => {
     const guestSession = makeSession();
     trackLiveAppSession(guestSession as unknown as Electron.Session);
-    mockedReaddir.mockResolvedValue(asDirents(["dupe"]) as never);
+    mockedReaddir.mockResolvedValue(asDirents(["live-app-dupe"]) as never);
     mockedFromPartition.mockImplementation(partition =>
-      partition === "persist:dupe"
+      partition === "persist:live-app-dupe"
         ? (guestSession as unknown as Electron.Session)
         : (sharedSession as unknown as Electron.Session),
     );
@@ -97,6 +97,16 @@ describe("live app session clearing", () => {
     await clearLiveAppSessionsStorage();
 
     expect(guestSession.clearStorageData).toHaveBeenCalledTimes(1);
+  });
+
+  it("ignores partitions that are not a Live App's", async () => {
+    // `fromPartition` also creates the session it names, and another feature's
+    // storage is not ours to wipe.
+    mockedReaddir.mockResolvedValue(asDirents(["some-other-feature"]) as never);
+
+    await clearLiveAppSessionsStorage();
+
+    expect(mockedFromPartition).not.toHaveBeenCalledWith("persist:some-other-feature");
   });
 
   it("still clears the other partitions when one of them throws", async () => {
