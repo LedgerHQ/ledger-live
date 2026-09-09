@@ -12,6 +12,7 @@ import {
 import {
   CONTACTS_FEATURE_FLAG_KEYS,
   DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
+  isContactsEnabledForCurrency,
   parseEligibleAddressFamiliesInput,
   resolveContactsFeatureConfig,
   resolveContactsFeatureParams,
@@ -27,6 +28,7 @@ const DEFAULT_CONFIG: ContactsFeatureConfig = {
   isEnabled: false,
   showNewBadge: false,
   eligibleAddressFamilies: DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
+  excludedCurrencyIds: [],
 };
 
 function makeContactsFeatureValue(enabled: boolean, newBadge: boolean): ContactsFeatureValue {
@@ -78,6 +80,7 @@ describe("resolveContactsFeatureConfig", () => {
       isEnabled: true,
       showNewBadge: true,
       eligibleAddressFamilies: DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
+      excludedCurrencyIds: [],
     });
   });
 
@@ -91,6 +94,25 @@ describe("resolveContactsFeatureConfig", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm", "bitcoin"],
+      excludedCurrencyIds: [],
+    });
+  });
+
+  it("passes through excludedCurrencyIds from the feature value", () => {
+    expect(
+      resolveContactsFeatureConfig({
+        enabled: true,
+        params: {
+          newBadge: false,
+          eligibleAddressFamilies: ["evm"],
+          excludedCurrencyIds: ["ethereum", "bitcoin"],
+        },
+      }),
+    ).toEqual({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
+      excludedCurrencyIds: ["ethereum", "bitcoin"],
     });
   });
 });
@@ -100,6 +122,7 @@ describe("resolveContactsFeatureParams", () => {
     expect(resolveContactsFeatureParams({ eligibleAddressFamilies: ["evm", 1] })).toEqual({
       newBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
   });
 
@@ -107,7 +130,47 @@ describe("resolveContactsFeatureParams", () => {
     expect(resolveContactsFeatureParams({ eligibleAddressFamilies: [] })).toEqual({
       newBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
+  });
+
+  it("normalizes excludedCurrencyIds, deduplicating entries", () => {
+    expect(
+      resolveContactsFeatureParams({ excludedCurrencyIds: ["ethereum", "ethereum", "bitcoin"] }),
+    ).toEqual({
+      newBadge: false,
+      eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: ["ethereum", "bitcoin"],
+    });
+  });
+
+  it("falls back to an empty array when excludedCurrencyIds contains non-strings", () => {
+    expect(resolveContactsFeatureParams({ excludedCurrencyIds: ["ethereum", 42] })).toEqual({
+      newBadge: false,
+      eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
+    });
+  });
+});
+
+describe("isContactsEnabledForCurrency", () => {
+  const enabledConfig: ContactsFeatureConfig = {
+    isEnabled: true,
+    showNewBadge: false,
+    eligibleAddressFamilies: DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
+    excludedCurrencyIds: ["ethereum"],
+  };
+
+  it("returns true when the feature is enabled and the currency is not excluded", () => {
+    expect(isContactsEnabledForCurrency(enabledConfig, "bitcoin")).toBe(true);
+  });
+
+  it("returns false when the currency is in excludedCurrencyIds", () => {
+    expect(isContactsEnabledForCurrency(enabledConfig, "ethereum")).toBe(false);
+  });
+
+  it("returns false when the feature is disabled, even if the currency is not excluded", () => {
+    expect(isContactsEnabledForCurrency(DEFAULT_CONFIG, "bitcoin")).toBe(false);
   });
 });
 
@@ -136,7 +199,7 @@ describe("updateContactsFeatureValue", () => {
       enabled: true,
       desktop_version: "1.0.0",
       languages_whitelisted: ["fr"],
-      params: { newBadge: true, eligibleAddressFamilies: ["evm"] },
+      params: { newBadge: true, eligibleAddressFamilies: ["evm"], excludedCurrencyIds: [] },
     });
   });
 
@@ -147,7 +210,7 @@ describe("updateContactsFeatureValue", () => {
       }),
     ).toEqual({
       enabled: true,
-      params: { newBadge: true, eligibleAddressFamilies: ["evm"] },
+      params: { newBadge: true, eligibleAddressFamilies: ["evm"], excludedCurrencyIds: [] },
     });
   });
 
@@ -158,7 +221,11 @@ describe("updateContactsFeatureValue", () => {
       }),
     ).toEqual({
       enabled: true,
-      params: { newBadge: false, eligibleAddressFamilies: ["evm", "bitcoin"] },
+      params: {
+        newBadge: false,
+        eligibleAddressFamilies: ["evm", "bitcoin"],
+        excludedCurrencyIds: [],
+      },
     });
   });
 
@@ -170,7 +237,7 @@ describe("updateContactsFeatureValue", () => {
       ),
     ).toEqual({
       enabled: true,
-      params: { newBadge: true, eligibleAddressFamilies: ["evm"] },
+      params: { newBadge: true, eligibleAddressFamilies: ["evm"], excludedCurrencyIds: [] },
     });
   });
 });
@@ -195,6 +262,7 @@ describe("useContactsFeature", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
+      excludedCurrencyIds: [],
     });
   });
 
@@ -205,6 +273,7 @@ describe("useContactsFeature", () => {
       isEnabled: true,
       showNewBadge: true,
       eligibleAddressFamilies: DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
+      excludedCurrencyIds: [],
     });
   });
 

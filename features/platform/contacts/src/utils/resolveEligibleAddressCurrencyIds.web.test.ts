@@ -51,6 +51,16 @@ describe("resolveEligibleAddressCurrencyIds", () => {
     expect(resolveEligibleAddressCurrencyIds(["unknown"], NETWORKS)).toEqual([]);
   });
 
+  it("omits explicitly excluded currency ids from the result", () => {
+    expect(
+      resolveEligibleAddressCurrencyIds(["evm", "tron"], NETWORKS, ["ethereum", "tron"]),
+    ).toEqual(["base"]);
+  });
+
+  it("returns an empty array when all eligible networks are excluded", () => {
+    expect(resolveEligibleAddressCurrencyIds(["evm"], NETWORKS, ["ethereum", "base"])).toEqual([]);
+  });
+
   it("deduplicates network ids while preserving their first occurrence", () => {
     expect(
       resolveEligibleAddressCurrencyIds(

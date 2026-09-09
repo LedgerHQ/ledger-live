@@ -30,10 +30,11 @@ export function useAddAddressCurrencySelectionViewModel({
   platform,
   currencySelection,
 }: UseAddAddressCurrencySelectionViewModelOptions): AddAddressCurrencySelectionViewModel {
-  const { eligibleAddressFamilies } = useContactsFeature(platform);
+  const { eligibleAddressFamilies, excludedCurrencyIds } = useContactsFeature(platform);
   const eligibleNetworkIds = useMemo(
-    () => resolveEligibleAddressCurrencyIds(eligibleAddressFamilies),
-    [eligibleAddressFamilies],
+    () =>
+      resolveEligibleAddressCurrencyIds(eligibleAddressFamilies, undefined, excludedCurrencyIds),
+    [eligibleAddressFamilies, excludedCurrencyIds],
   );
   const isSelectingRef = useRef(false);
   const [selectedCurrency, setSelectedCurrency] = useState<AddAddressCurrencySelection | null>(

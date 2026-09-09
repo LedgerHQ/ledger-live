@@ -133,6 +133,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: false,
       showNewBadge: false,
       eligibleAddressFamilies: [],
+      excludedCurrencyIds: [],
     });
     mockedUseRecipientContactSelection.mockReturnValue({
       selectedContact: undefined,
@@ -187,6 +188,7 @@ describe("useRecipientAddressModalViewModel", () => {
         isEnabled,
         showNewBadge: false,
         eligibleAddressFamilies: families,
+        excludedCurrencyIds: [],
       });
 
       renderHook(() =>
@@ -264,6 +266,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([
       mockContact({
@@ -301,6 +304,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
 
     const { result } = renderHook(() =>
@@ -325,6 +329,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([
       mockContact({
@@ -360,6 +365,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([
       mockContact({
@@ -456,6 +462,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([contact]);
     mockedUseRecipientContactSelection.mockReturnValue({
