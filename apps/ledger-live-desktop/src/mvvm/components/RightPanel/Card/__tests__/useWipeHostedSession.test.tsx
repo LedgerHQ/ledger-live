@@ -46,14 +46,14 @@ describe("useWipeHostedSessionOnSignInChange", () => {
     manifestsFrom(CATALOG);
   });
 
-  it("ends the provider session on the hosts the manifests name", () => {
+  it("ends the provider session on the origins the manifests name", () => {
     const { store } = renderHook(() => useWipeHostedSessionOnSignInChange());
 
     signIn(store, true);
 
     expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [
-      "dev.api.baanx.test",
-      "ledger.baanxapi.test",
+      "https://dev.api.baanx.test",
+      "https://ledger.baanxapi.test",
     ]);
   });
 

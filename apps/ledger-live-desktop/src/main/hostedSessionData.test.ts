@@ -46,7 +46,7 @@ describe("clearHostedSessionData", () => {
       { domain: ".ledger.com", name: "ledger_session", path: "/", secure: true },
     ]);
 
-    await clearHostedSessionData(session, ["dev.api.baanx.com"]);
+    await clearHostedSessionData(session, ["https://dev.api.baanx.com"]);
 
     expect(get).toHaveBeenCalledWith({ domain: "dev.api.baanx.com" });
     expect(remove).toHaveBeenCalledWith("https://baanx.com/", "sso");
@@ -57,7 +57,7 @@ describe("clearHostedSessionData", () => {
   it("clears the origin storages that can hold a session as well", async () => {
     const { session, clearStorageData } = fakeSession([]);
 
-    await clearHostedSessionData(session, ["dev.api.baanx.com"]);
+    await clearHostedSessionData(session, ["https://dev.api.baanx.com"]);
 
     expect(clearStorageData).toHaveBeenCalledWith({
       origin: "https://dev.api.baanx.com",
@@ -65,12 +65,24 @@ describe("clearHostedSessionData", () => {
     });
   });
 
-  it.each([[undefined], ["dev.api.baanx.com"], [[""]], [[42]]])(
-    "does nothing for the host list %p",
-    async hosts => {
+  it("looks the cookies up on the hostname, and clears the storages on the whole origin", async () => {
+    const { session, get, clearStorageData } = fakeSession([]);
+
+    await clearHostedSessionData(session, ["https://provider.test:8443"]);
+
+    expect(get).toHaveBeenCalledWith({ domain: "provider.test" });
+    expect(clearStorageData).toHaveBeenCalledWith({
+      origin: "https://provider.test:8443",
+      storages: ["localstorage", "indexdb", "serviceworkers", "cachestorage"],
+    });
+  });
+
+  it.each([[undefined], ["https://dev.api.baanx.com"], [[""]], [[42]], [["dev.api.baanx.com"]]])(
+    "does nothing for the origin list %p",
+    async origins => {
       const { session, get, clearStorageData } = fakeSession([]);
 
-      await clearHostedSessionData(session, hosts);
+      await clearHostedSessionData(session, origins);
 
       expect(get).not.toHaveBeenCalled();
       expect(clearStorageData).not.toHaveBeenCalled();

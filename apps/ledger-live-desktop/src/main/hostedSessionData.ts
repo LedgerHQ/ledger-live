@@ -29,29 +29,39 @@ function cookieUrl(cookie: Cookie): string {
   return `${scheme}://${host}${cookie.path ?? "/"}`;
 }
 
-function readHosts(hosts: unknown): string[] {
-  if (!Array.isArray(hosts)) {
+function readOrigins(origins: unknown): URL[] {
+  if (!Array.isArray(origins)) {
     return [];
   }
 
-  return hosts.filter((host): host is string => typeof host === "string" && host !== "");
+  return origins.flatMap(origin => {
+    if (typeof origin !== "string" || origin === "") {
+      return [];
+    }
+
+    try {
+      return [new URL(origin)];
+    } catch {
+      return [];
+    }
+  });
 }
 
 export async function clearHostedSessionData(
   targetSession: Session,
-  hosts: unknown,
+  origins: unknown,
 ): Promise<void> {
-  for (const host of readHosts(hosts)) {
-    const stored = await targetSession.cookies.get({ domain: host });
+  for (const { origin, hostname } of readOrigins(origins)) {
+    const stored = await targetSession.cookies.get({ domain: hostname });
 
     await Promise.all(
       stored
-        .filter(cookie => isProviderCookieForHost(cookie.domain ?? "", host))
+        .filter(cookie => isProviderCookieForHost(cookie.domain ?? "", hostname))
         .map(cookie => targetSession.cookies.remove(cookieUrl(cookie), cookie.name)),
     );
 
     await targetSession.clearStorageData({
-      origin: `https://${host}`,
+      origin,
       storages: [...CLEARED_STORAGES],
     });
   }

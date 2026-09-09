@@ -131,8 +131,8 @@ app.on("ready", async () => {
     const defaultSession = session.defaultSession;
     return defaultSession.clearStorageData();
   });
-  ipcMain.handle("clearCardHostedSessionData", (_event, hosts) =>
-    clearHostedSessionData(session.defaultSession, hosts),
+  ipcMain.handle("clearCardHostedSessionData", (_event, origins) =>
+    clearHostedSessionData(session.defaultSession, origins),
   );
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
     return db.getKey(ns, keyPath, defaultValue);
