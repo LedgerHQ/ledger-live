@@ -31,6 +31,7 @@ describe("cryptoFactory test", () => {
       "xion",
       "zenrock",
       "babylon",
+      "gonka",
     ];
     currencies.forEach(currency => {
       expect(cryptoFactory(currency)).not.toBeNull();
@@ -41,6 +42,14 @@ describe("cryptoFactory test", () => {
     const chain = cryptoFactory("crypto_org_croeseid");
     expect(chain.prefix).toBe("cro");
     expect(chain.unbondingPeriod).toBe(28);
+  });
+
+  it("should resolve gonka with its parameters", () => {
+    const chain = cryptoFactory("gonka");
+    expect(chain.prefix).toBe("gonka");
+    expect(chain.validatorPrefix).toBe("gonkavaloper");
+    expect(chain.minGasPrice).toBe(0);
+    expect(chain.ledgerValidator).toBeUndefined();
   });
 
   it("should throw an error when currency id is unknown", () => {
