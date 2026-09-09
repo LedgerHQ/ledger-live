@@ -178,19 +178,22 @@ function setupMainWindowHandlers() {
   mainWindow.webContents.session.on("select-hid-device", (event, details, callback) => {
     event.preventDefault();
 
-    // `fromFrame` throws on a frame disposed while `requestDevice()` was
-    // pending; letting that escape would leave `callback` uncalled and the
-    // renderer's promise hanging, so it becomes an explicit deny.
-    let requestingContents: Electron.WebContents | undefined;
+    // `fromFrame` and `getType()` both throw on contents disposed while
+    // `requestDevice()` was pending; escaping here would leave `callback`
+    // uncalled and the renderer hanging, so a throw is an explicit deny.
+    let isHostRequest = false;
     try {
-      requestingContents = details.frame ? webContents.fromFrame(details.frame) : undefined;
+      const requestingContents = details.frame ? webContents.fromFrame(details.frame) : undefined;
+      isHostRequest =
+        !!requestingContents &&
+        !requestingContents.isDestroyed() &&
+        requestingContents.getType() !== "webview";
     } catch (error) {
       console.warn("Could not resolve the frame requesting a HID device.", error);
       callback(null);
       return;
     }
 
-    const isHostRequest = !!requestingContents && requestingContents.getType() !== "webview";
     if (!isHostRequest) {
       console.warn("Ignoring HID device selection not attributable to the host renderer.");
       callback(null);

@@ -43,8 +43,8 @@ type SelectHidListener = (
 const ledgerDevice = { deviceId: "ledger-1", vendorId: ledgerUSBVendorId };
 const otherDevice = { deviceId: "mouse-1", vendorId: 0x1234 };
 
-const hostContents = { getType: jest.fn(() => "window") };
-const guestContents = { getType: jest.fn(() => "webview") };
+const hostContents = { getType: jest.fn(() => "window"), isDestroyed: jest.fn(() => false) };
+const guestContents = { getType: jest.fn(() => "webview"), isDestroyed: jest.fn(() => false) };
 
 /** Builds the window so the handlers register, then hands them back. */
 const setup = () => {
@@ -124,6 +124,21 @@ describe("select-hid-device (DONJON-1404)", () => {
     // leave the callback uncalled.
     jest.mocked(webContents.fromFrame).mockImplementation(() => {
       throw new Error("frame destroyed");
+    });
+    const { selectHidDevice } = setup();
+
+    expect(() => request(selectHidDevice, [ledgerDevice])).not.toThrow();
+    expect(request(selectHidDevice, [ledgerDevice])).toHaveBeenCalledWith(null);
+  });
+
+  it("denies rather than throwing when the contents die between resolve and probe", () => {
+    // `getType()` raises on a WebContents destroyed just after `fromFrame`
+    // returned it, which would hang the pick the same way.
+    jest.mocked(webContents.fromFrame).mockReturnValue({
+      isDestroyed: jest.fn(() => false),
+      getType: jest.fn(() => {
+        throw new TypeError("Object has been destroyed");
+      }),
     });
     const { selectHidDevice } = setup();
 
