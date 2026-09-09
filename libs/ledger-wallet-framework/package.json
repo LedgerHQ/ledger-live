@@ -120,7 +120,6 @@
   },
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

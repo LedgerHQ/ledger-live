@@ -1,7 +1,7 @@
 import React from "react";
 import { useFreezeCardViewModel } from "./useFreezeCardViewModel";
-import { FreezeView } from "./FreezeView";
+import { Tile } from "./Tile/Tile";
 
 export function Freeze() {
-  return <FreezeView {...useFreezeCardViewModel()} />;
+  return <Tile {...useFreezeCardViewModel()} />;
 }

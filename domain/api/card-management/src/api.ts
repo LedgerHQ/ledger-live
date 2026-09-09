@@ -129,6 +129,9 @@ export const cardManagementApi = cardApi
           url: "/v1/card/freeze",
           method: "POST",
         }),
+        async onQueryStarted(_, { dispatch, queryFulfilled }) {
+          await patchCardStatus(dispatch, queryFulfilled, "FROZEN");
+        },
         responseSchema: PayCardFreezeStateResponseSchema,
         invalidatesTags: ["CardStatus"],
       }),
@@ -138,6 +141,9 @@ export const cardManagementApi = cardApi
           url: "/v1/card/unfreeze",
           method: "POST",
         }),
+        async onQueryStarted(_, { dispatch, queryFulfilled }) {
+          await patchCardStatus(dispatch, queryFulfilled, "ACTIVE");
+        },
         responseSchema: PayCardFreezeStateResponseSchema,
         invalidatesTags: ["CardStatus"],
       }),
@@ -184,3 +190,25 @@ export const {
   useGetCardLinkedWalletsQuery,
   useGetCardOnboardingStatusQuery,
 } = cardManagementApi;
+
+async function patchCardStatus(
+  dispatch: (action: ReturnType<(typeof cardManagementApi.util)["updateQueryData"]>) => {
+    undo: () => void;
+  },
+  queryFulfilled: Promise<unknown>,
+  status: PayCardStatus["status"],
+) {
+  const patch = dispatch(
+    cardManagementApi.util.updateQueryData("getCardStatus", undefined, draft => {
+      if (!draft) return;
+
+      draft.status = status;
+    }),
+  );
+
+  try {
+    await queryFulfilled;
+  } catch {
+    patch.undo();
+  }
+}

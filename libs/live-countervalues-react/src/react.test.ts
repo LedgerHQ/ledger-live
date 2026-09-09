@@ -201,7 +201,12 @@ describe("CountervaluesProvider", () => {
   it("should use the same API-ID lookup in filter and batching for remapped currencies", async () => {
     // assethub_polkadot maps to "polkadot" via inferCurrencyAPIID.
     // supportedCryptoIds contains API IDs, so the correct key is "polkadot", not "assethub_polkadot".
-    const assethubPolkadot = { type: "CryptoCurrency", id: "assethub_polkadot" } as unknown as Currency;
+    const assethubPolkadot: Currency = {
+      ...bitcoin,
+      id: CryptoCurrencyIdSchema.parse("assethub_polkadot"),
+      name: "Asset Hub Polkadot",
+      ticker: "DOT",
+    };
     const bridge = createBridge({
       supportedCryptoIds: ["polkadot"],
       trackingPairs: [trackingPair(assethubPolkadot)],
@@ -213,10 +218,7 @@ describe("CountervaluesProvider", () => {
     // filterSupportedTrackingPairs resolves assethub_polkadot → polkadot, so the pair is kept
     expect(mockLoadCountervalues.mock.calls[0][1].trackingPairs).toHaveLength(1);
     // shouldBatchCurrencyFrom must also resolve to "polkadot" (rank 0, ≤ marketCapBatchingAfterRank 20) → not batched
-    const solver = mockLoadCountervalues.mock.calls[0][2] as {
-      shouldBatchCurrencyFrom: (c: typeof assethubPolkadot) => boolean;
-    };
-    expect(solver.shouldBatchCurrencyFrom(assethubPolkadot)).toBe(false);
+    expect(mockLoadCountervalues.mock.calls[0][2]?.shouldBatchCurrencyFrom(assethubPolkadot)).toBe(false);
   });
 });
 

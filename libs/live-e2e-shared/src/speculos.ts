@@ -508,6 +508,8 @@ export async function startSpeculos(
     seed: SEED,
     coinapps: COINAPPS ?? "",
     dependencies,
+    // e2e suites need the Speculos production PKI flag (`-p`).
+    pki: true,
     onSpeculosDeviceCreated,
   };
 

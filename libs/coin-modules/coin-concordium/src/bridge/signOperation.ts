@@ -7,6 +7,7 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { Observable } from "rxjs";
 import type { ConcordiumSigner, Transaction } from "../types";
+import { ConcordiumTokenAccountUnavailable } from "../types/errors";
 import { combine, craftTransaction, estimateFees, getNextValidSequence } from "../logic";
 import { getTransactionStatus } from "./getTransactionStatus";
 import coinConfig from "../config";
@@ -42,6 +43,15 @@ export const buildSignOperation =
         const isTokenTransfer =
           findSubAccountById(account, transaction.subAccountId ?? "")?.type === "TokenAccount";
 
+        // Fails closed: the alternative is a signed CCD transfer. Typed rather
+        // than an invariant because a user can reach this, so it needs to reach
+        // them translated.
+        if (!isTokenTransfer && transaction.subAccountId) {
+          throw new ConcordiumTokenAccountUnavailable(
+            "concordium: transaction references a token sub-account that no longer exists",
+          );
+        }
+
         if (isTokenTransfer && transaction.energy === undefined) throw new FeeNotLoaded();
 
         const estimation =
@@ -55,6 +65,9 @@ export const buildSignOperation =
         // a PLT intent for this reason (`assertNativeAsset`); the bridge had no
         // equivalent. Removed by LIVE-28337, which crafts the `TokenUpdate`
         // payload.
+        //
+        // An invariant, not a typed error: unreachable unless the token UI ships
+        // before PLT crafting does.
         invariant(!isTokenTransfer, "concordium: signing a PLT transfer is not supported yet");
 
         const signature = await signerContext(deviceId, async signer => {

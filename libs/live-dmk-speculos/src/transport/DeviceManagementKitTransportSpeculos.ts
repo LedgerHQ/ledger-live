@@ -12,7 +12,6 @@ import {
   HttpSpeculosDatasource,
   speculosTransportFactory,
 } from "@ledgerhq/device-transport-kit-speculos";
-import { getEnv } from "@shared/env";
 import { ButtonKey, deviceControllerClientFactory } from "@ledgerhq/speculos-device-controller";
 import { withTransientHttpRetries } from "./speculosTransientHttpRetry";
 
@@ -126,20 +125,8 @@ export default class SpeculosHttpTransport extends Transport {
       return baseUrlWithExplicitPort;
     }
 
-    const getEnvIfDefinedAndNonEmpty = (key: string): string | undefined => {
-      try {
-        const value = getEnv(key as any);
-        return value != null && String(value).trim() !== "" ? String(value) : undefined;
-      } catch {
-        return undefined;
-      }
-    };
-
-    const resolvedApiPort =
-      options.apiPort ??
-      getEnvIfDefinedAndNonEmpty("SPECULOS_API_PORT") ??
-      process?.env?.SPECULOS_API_PORT ??
-      "5000";
+    const apiPortFromEnv = process?.env?.SPECULOS_API_PORT?.trim();
+    const resolvedApiPort = options.apiPort ?? (apiPortFromEnv || "5000");
 
     const resolvedBaseUrl = `${normalizedHost}:${resolvedApiPort}`;
     log("speculos-transport", `using base=${resolvedBaseUrl}`);

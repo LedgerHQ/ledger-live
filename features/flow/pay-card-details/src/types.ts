@@ -1,41 +1,53 @@
+import type { PayCardStatus } from "@domain/api-card-management";
 import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
 
-// Shared with the host (`AmountDisplay` formatter contract).
 export type { FormattedValue };
 
-/** Host props for the card visual (artwork + balance overlay). Props-only, i18n-agnostic. */
 export type CardVisualProps = Readonly<{
-  /** Raw countervalue amount (e.g. 100). Formatting is delegated to {@link formatCountervalue}. */
   balance: number;
-  /** Turns a raw number into a {@link FormattedValue} for `AmountDisplay`. */
   formatCountervalue: (value: number) => FormattedValue;
-
   balanceLabel: string;
   isLoading?: boolean;
 }>;
 
-export type CardVisualViewProps = CardVisualProps;
+export type CardVisualViewProps = CardVisualProps &
+  Readonly<{
+    isFrozen: boolean;
+  }>;
 
-export type FreezeCardViewProps = Readonly<{
-  isFrozen: boolean;
-  /** `true` when card status is BLOCKED — disables all freeze/unfreeze actions. */
-  isBlocked: boolean;
-  isStatusLoading: boolean;
-  isFreezeLoading: boolean;
-  isUnfreezeLoading: boolean;
-  isFreezeError: boolean;
-  isUnfreezeError: boolean;
-  onFreeze: () => void;
-  onUnfreeze: () => void;
+export type ConfirmState = "closed" | "idle" | "pending" | "error";
+
+type ConfirmProps = Readonly<{
+  status: PayCardStatus["status"] | undefined;
+  onConfirm: () => void;
+  onClose: () => void;
 }>;
 
-export type FreezeViewProps = Pick<
-  FreezeCardViewProps,
-  | "isFrozen"
-  | "isBlocked"
-  | "isStatusLoading"
-  | "isFreezeLoading"
-  | "isUnfreezeLoading"
-  | "onFreeze"
-  | "onUnfreeze"
->;
+export type ConfirmErrorProps = ConfirmProps;
+
+export type ConfirmPromptProps = ConfirmProps &
+  Readonly<{
+    isPending: boolean;
+  }>;
+
+export type ConfirmBodyProps = Readonly<{
+  appearance: "error" | "info";
+  titleKey: string;
+  descriptionKey?: string;
+  descriptionTestID?: string;
+  confirmLabelKey: string;
+  isPending?: boolean;
+  onConfirm: () => void;
+  onClose: () => void;
+}>;
+
+export type ConfirmSheetProps = ConfirmProps &
+  Readonly<{
+    confirmState: ConfirmState;
+  }>;
+
+export type TileProps = ConfirmSheetProps &
+  Readonly<{
+    isActionDisabled: boolean;
+    onOpenConfirm: () => void;
+  }>;

@@ -234,6 +234,34 @@
       "title": "Session expired",
       "description": "The Concordium ID App session is no longer active. Please pair again."
     },
+    "ConcordiumInsufficientCcdForFee": {
+      "title": "Not enough CCD for the network fee",
+      "description": "The network fee is paid in CCD, not in the token you are sending. Add CCD to this account and try again."
+    },
+    "ConcordiumTokenPaused": {
+      "title": "Transfers are paused for this token",
+      "description": "The token issuer has paused all transfers. You can try again once transfers resume."
+    },
+    "ConcordiumTokenTransferNotPermitted": {
+      "title": "This account cannot send this token",
+      "description": "The token issuer restricts who may send it, and this account is not permitted. Contact the token issuer for access."
+    },
+    "ConcordiumTokenRestrictionsUnverified": {
+      "title": "Token restrictions could not be verified",
+      "description": "This token's transfer rules could not be read, so the transfer cannot be confirmed as allowed. Please resync your account and try again."
+    },
+    "ConcordiumUnsupportedTokenDecimals": {
+      "title": "This token cannot be signed on your Ledger device",
+      "description": "The token uses {{decimals}} decimal places, and your device supports at most {{maxDecimals}}. Receiving and holding it are unaffected."
+    },
+    "ConcordiumTokenAccountUnavailable": {
+      "title": "This token is no longer in your account",
+      "description": "The token you selected is not available any more. Please start the transaction again."
+    },
+    "ConcordiumInvalidPltPayloadError": {
+      "title": "This transaction cannot be prepared",
+      "description": "The token's details are outside what your Ledger device accepts, so the transaction cannot be built. Please contact Ledger Support."
+    },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",
       "description": "Please save your logs using the button below and provide them to Ledger Support."
@@ -10215,7 +10243,23 @@
     "card": {
       "title": "Crypto card",
       "freeze": "Freeze",
-      "unfreeze": "Unfreeze"
+      "unfreeze": "Unfreeze",
+      "goBack": "Go back",
+      "freezeConfirm": {
+        "title": "Freezing means you cannot use the card anymore",
+        "description": "You can unfreeze your card at any time.",
+        "confirm": "Freeze now",
+        "errorTitle": "Freeze failed"
+      },
+      "unfreezeConfirm": {
+        "title": "Unfreeze your card?",
+        "confirm": "Unfreeze now",
+        "errorTitle": "Unfreeze failed"
+      },
+      "confirmError": {
+        "description": "Something went wrong. Please try again.",
+        "retry": "Try again"
+      }
     },
     "selectContact": {
       "placeholder": "Enter contact"
@@ -10344,6 +10388,14 @@
       "addressPicker": {
         "title": "Select {{name}}'s address",
         "addAddress": "Add address"
+      },
+      "paySuccess": {
+        "title": "You paid ({{recipient}})",
+        "amount": "Amount",
+        "estimatedTime": "Est. time",
+        "from": "From",
+        "viewTransaction": "View transaction",
+        "close": "Close"
       }
     },
     "cardOnboarding": {
@@ -10410,7 +10462,7 @@
     },
     "contacts": {
       "title": "Contacts",
-      "description": "Manage your contacts"
+      "description": "Save and manage external wallet addresses."
     },
     "backupHub": {
       "title": "Backups of your Secret Recovery Phrase",
@@ -10625,7 +10677,7 @@
     "addContact": "Add contact",
     "addAddress": "Add address",
     "addYourAddress": "Add your address",
-    "searchPlaceholder": "Search contact",
+    "searchPlaceholder": "Search by name",
     "searchNoResults": "No contact found",
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
@@ -10644,7 +10696,8 @@
       "domainNotFound": "No address found for this domain",
       "sanctionedAddress": "This address is sanctioned and cannot be used.",
       "validationUnavailable": "Address validation is temporarily unavailable",
-      "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing.",
+      "ensDisclaimer": "ENS names can change",
+      "ensDisclaimerDescription": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify.",
       "sanctioned": {
         "description": "This address has been flagged and Ledger doesn't allow sending to it",
         "learnMore": "Learn more"
@@ -10671,10 +10724,7 @@
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",
     "me": {
-      "name": "Me",
-      "addressCount_zero": "0 address",
-      "addressCount_one": "{{count}} address",
-      "addressCount_other": "{{count}} addresses"
+      "myAddresses": "My addresses"
     },
     "detail": {
       "meDisplayName": "{{name}} (Me)",
@@ -10744,7 +10794,7 @@
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
-      "primaryAction": "Explore now",
+      "primaryAction": "Try now",
       "highlights": {
         "saveAddresses": {
           "title": "Save addresses by a name you choose",
@@ -10755,7 +10805,7 @@
           "description": "See a name you trust, not an address."
         },
         "privateAcrossDevices": {
-          "title": "Securely top up via Ledger Wallet™",
+          "title": "Private across your Ledger devices",
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }

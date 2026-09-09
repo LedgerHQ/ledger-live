@@ -13,6 +13,7 @@ import type {
   ConcordiumTokenResources,
   PltAccountToken,
   PltTransferStatus,
+  Transaction,
 } from "../types";
 
 const CAL_LOOKUP_CONCURRENCY = 4;
@@ -381,4 +382,15 @@ export async function resolveTokenSubAccounts({
     subAccounts: mergeSubAccounts(initialAccount?.subAccounts, newSubAccounts, untrustedIds),
     tokens,
   };
+}
+
+/**
+ * The amount a PLT transfer will carry. Under `useAllAmount` that is the
+ * sub-account's balance, since `transaction.amount` is zero in that case.
+ *
+ * Shared by pricing and validation so the two cannot encode different payloads.
+ */
+export function effectivePltAmount(subAccount: TokenAccount, transaction: Transaction): bigint {
+  const amount = transaction.useAllAmount ? subAccount.spendableBalance : transaction.amount;
+  return BigInt(amount.toFixed(0));
 }

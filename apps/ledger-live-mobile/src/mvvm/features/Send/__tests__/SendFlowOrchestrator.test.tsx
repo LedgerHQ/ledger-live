@@ -61,6 +61,7 @@ function createStepRegistry(): StepRegistry<SendFlowStep> {
     [SEND_FLOW_STEP.COIN_CONTROL]: () => null,
     [SEND_FLOW_STEP.SIGNATURE]: () => null,
     [SEND_FLOW_STEP.CONFIRMATION]: () => null,
+    [SEND_FLOW_STEP.PAY_SUCCESS]: () => null,
   };
 }
 

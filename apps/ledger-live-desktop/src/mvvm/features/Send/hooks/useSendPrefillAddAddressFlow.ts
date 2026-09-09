@@ -299,6 +299,7 @@ export function useSendPrefillAddAddressFlow({
       sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
       validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
       ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
+      ensDisclaimerDescription: t("contacts.addAddressEntry.ensDisclaimerDescription"),
     }),
     [t],
   );

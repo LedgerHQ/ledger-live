@@ -16,8 +16,19 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 // Net value of a quote as shown on screen: amount received minus network fees (both in fiat).
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
+// swap-live-app renders two quote card markups behind its own `ptxLumenQuoteCard` flag, which
+// e2e can neither read nor force. Only the provider-name testid prefix and the CTA label differ.
+type QuoteCardVariant = "legacy" | "lumen";
+
 export default class SwapLiveAppPage {
-  private static readonly PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
+  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX: Record<QuoteCardVariant, string> = {
+    legacy: "compact-quote-card-provider-name-",
+    lumen: "lumen-quote-card-provider-name-",
+  };
+  // Common to both prefixes above, so it matches whichever variant is live.
+  private static readonly QUOTE_CARD_PROVIDER_NAME_SUFFIX = "quote-card-provider-name-";
+
+  private quoteCardVariant: QuoteCardVariant | null = null;
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -139,11 +150,12 @@ export default class SwapLiveAppPage {
     const providersList = (await this.getProviderList()).filter(
       name => name !== SwapProvider.LIFI.uiName,
     );
+    const prefix = await this.resolveProviderNamePrefix();
 
     for (const providerName of providersList) {
       const provider = SwapProvider.getByUiName(providerName);
       if (provider && !provider.kyc && !provider.app) {
-        const providerTestId = `${SwapLiveAppPage.PROVIDER_NAME_PREFIX}${provider.name}`;
+        const providerTestId = `${prefix}${provider.name}`;
         await waitWebElementByTestId(providerTestId);
         await tapWebElementByTestId(providerTestId);
 
@@ -151,6 +163,32 @@ export default class SwapLiveAppPage {
       }
     }
     throw new Error("No single-app exchange providers found");
+  }
+
+  // Throws while no card is rendered rather than latching onto "legacy": no Lumen cards is
+  // indistinguishable from no cards at all. Callers retry or have already waited for a card.
+  @Step("Resolve active quote card variant")
+  private async resolveQuoteCardVariant(): Promise<QuoteCardVariant> {
+    if (!this.quoteCardVariant) {
+      const renderedCards = await getWebElementsText(
+        this.swapMainContainerWebElement,
+        `[data-testid*='${SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_SUFFIX}']`,
+      );
+      if (renderedCards.length === 0) {
+        throw new Error("No quote card rendered yet: cannot resolve the quote card variant");
+      }
+      const lumenCards = await getWebElementsText(
+        this.swapMainContainerWebElement,
+        `[data-testid^='${SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX.lumen}']`,
+      );
+      this.quoteCardVariant = lumenCards.length > 0 ? "lumen" : "legacy";
+    }
+    return this.quoteCardVariant;
+  }
+
+  @Step("Resolve active quote card provider-name testid prefix")
+  private async resolveProviderNamePrefix(): Promise<string> {
+    return SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX[await this.resolveQuoteCardVariant()];
   }
 
   @Step("Wait for quotes countdown to be stable")
@@ -212,9 +250,10 @@ export default class SwapLiveAppPage {
 
     return await retryUntilTimeout(async () => {
       const numberOfQuotesText = await getWebElementText(this.numberOfQuotes);
+      const prefix = await this.resolveProviderNamePrefix();
       const providerList = await getWebElementsText(
         this.swapMainContainerWebElement,
-        `[data-testid^='${SwapLiveAppPage.PROVIDER_NAME_PREFIX}']`,
+        `[data-testid^='${prefix}']`,
       );
 
       // "N quotes found" is translated per language, so only the leading count is checked.
@@ -303,9 +342,16 @@ export default class SwapLiveAppPage {
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
 
-    // CTA is a fixed "Review"/"Continue" — never interpolates the provider name.
-    const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
-    jestExpect(actualButtonText).toMatch(expected);
+    if ((await this.resolveQuoteCardVariant()) === "lumen") {
+      // The Lumen CTA is a fixed "Review"/"Continue" — it never interpolates the provider name.
+      const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
+      jestExpect(actualButtonText).toMatch(expected);
+    } else {
+      const ctaVerbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
+      jestExpect(actualButtonText).toMatch(
+        new RegExp(`^(${ctaVerbs}) with ${escapeRegExp(provider)}$`, "i"),
+      );
+    }
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
@@ -528,7 +574,7 @@ export default class SwapLiveAppPage {
     if (!providerName) {
       throw new Error(`Unknown provider UI name: "${provider}"`);
     }
-    const providerTestId = `${SwapLiveAppPage.PROVIDER_NAME_PREFIX}${providerName}`;
+    const providerTestId = `${await this.resolveProviderNamePrefix()}${providerName}`;
     await waitWebElementByTestId(providerTestId);
     await tapWebElementByTestId(providerTestId);
   }

@@ -15,6 +15,8 @@ const labels: AddAddressEntryLabels = {
   sanctionedAddress: "This address is sanctioned and cannot be used.",
   validationUnavailable: "Address validation is unavailable",
   ensDisclaimer: "ENS names resolve to wallet addresses.",
+  ensDisclaimerDescription:
+    "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify.",
 };
 
 const VALID_ADDRESS = ContactAddressValueSchema.parse("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
@@ -230,8 +232,11 @@ describe("ContactsAddAddressEntry", () => {
       inputMethod: "ens",
     });
 
-    expect(screen.getByTestId("contacts-add-address-ens-disclaimer").props.description).toBe(
+    expect(screen.getByTestId("contacts-add-address-ens-disclaimer").props.title).toBe(
       "ENS names resolve to wallet addresses.",
+    );
+    expect(screen.getByTestId("contacts-add-address-ens-disclaimer").props.description).toBe(
+      "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify.",
     );
   });
 });
