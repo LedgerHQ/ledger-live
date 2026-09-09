@@ -1,6 +1,5 @@
-import expect from "expect";
 import { Transaction } from "../models/Transaction";
-import { pressUntilTextFound, containsSubstringInEvent, waitFor } from "../speculos";
+import { pressUntilTextFound, expectSpeculosEventsContain, waitFor } from "../speculos";
 import { getSpeculosModel, isTouchDevice } from "../speculosAppVersion";
 import {
   pressAndRelease,
@@ -17,10 +16,8 @@ function validateTransactionData(tx: Transaction, events: string[]) {
   if (!tx.accountToCredit.address) {
     throw new Error("Recipient address is not set");
   }
-  const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-  expect(isAddressCorrect).toBeTruthy();
-  const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-  expect(isAmountCorrect).toBeTruthy();
+  expectSpeculosEventsContain(tx.accountToCredit.address, events);
+  expectSpeculosEventsContain(tx.amount, events);
 }
 
 async function sendCardanoTouchDevices(tx: Transaction) {

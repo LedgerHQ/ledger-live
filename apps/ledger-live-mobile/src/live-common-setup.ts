@@ -1,7 +1,7 @@
 import Config from "react-native-config";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { listen } from "@ledgerhq/logs";
-import { setEnv, getEnv } from "@shared/env";
+import { setEnv } from "@shared/env";
 import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
@@ -68,4 +68,6 @@ bridgeEnvToNetworkState();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));
 
-BigNumber.set({ DECIMAL_PLACES: getEnv("BIG_NUMBER_DECIMAL_PLACES") });
+const BIG_NUMBER_DECIMAL_PLACES = 40;
+
+BigNumber.set({ DECIMAL_PLACES: BIG_NUMBER_DECIMAL_PLACES });

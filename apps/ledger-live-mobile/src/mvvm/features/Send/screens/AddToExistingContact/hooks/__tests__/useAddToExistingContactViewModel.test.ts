@@ -12,6 +12,16 @@ jest.mock("@features/platform-contacts", () => ({
   useContactsMeContact: () => me,
 }));
 
+jest.mock("LLM/features/Send/context/SendFlowContext", () => ({
+  useSendFlowData: () => ({
+    state: { account: { account: null, parentAccount: null } },
+  }),
+}));
+
+jest.mock("~/analytics", () => ({
+  track: jest.fn(),
+}));
+
 describe("useAddToExistingContactViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();

@@ -6,6 +6,12 @@ export type ConcordiumConfig = {
   networkType: ConcordiumNetwork;
   proxyUrl: string;
   minReserve: number;
+  /**
+   * Gates PLT token sub-accounts. Off means the wallet syncs exactly as it did
+   * before tokens existed, so history and send validation can land behind it
+   * without a user ever seeing a balance they cannot spend.
+   */
+  enableTokens: boolean;
 };
 
 export type ConcordiumCoinConfig = CurrencyConfig & ConcordiumConfig;

@@ -19,6 +19,7 @@ describe("CardVisualView (native)", () => {
         formatCountervalue={formatCountervalue}
         balanceLabel="Balance"
         isLoading={false}
+        isFrozen={false}
       />,
     );
 

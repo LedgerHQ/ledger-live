@@ -152,7 +152,8 @@
     "memoTag" : {
       "learnMore" : "详细了解“标签/备忘标签”"
     },
-    "memo" : "备忘标签"
+    "memo" : "备忘标签",
+    "stake" : "质押"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -901,6 +902,30 @@
         "confirm" : "确认"
       }
     },
+    "card" : {
+      "title" : "加密货币卡",
+      "balanceLabel" : "余额"
+    },
+    "contacts" : {
+      "title" : "向联系人付款",
+      "empty" : {
+        "info" : "您还没有联系人",
+        "addContact" : "添加联系人"
+      },
+      "table" : {
+        "name" : "名称",
+        "addresses" : "地址",
+        "transactions" : "交易",
+        "transactionCount_zero" : "无交易",
+        "transactionCount_one" : "{{count}} 笔交易",
+        "transactionCount_other" : "{{count}} 笔交易"
+      },
+      "actions" : {
+        "pay" : "发送给联系人",
+        "more" : "更多选项",
+        "viewTransactions" : "查看交易"
+      }
+    },
     "actions" : {
       "deposit" : "添加稳定币",
       "request" : "请求",
@@ -924,6 +949,38 @@
         "buy" : {
           "title" : "买入",
           "description" : "使用信用卡买入稳定币。"
+        }
+      }
+    },
+    "request" : {
+      "title" : "请求 {{asset}}",
+      "networkLabel" : "{{network}} 网络",
+      "saveDialogTitle" : "保存请求卡",
+      "actions" : {
+        "share" : "分享",
+        "copy" : "复制",
+        "copied" : "已复制",
+        "save" : "保存",
+        "verify" : "验证"
+      },
+      "verifyAddress" : {
+        "introTitle" : "核实您的地址",
+        "introDescription" : "为防范地址替换攻击，请在您的 Ledger 设备的安全屏幕上验证您的地址。",
+        "verifyCta" : "核实地址",
+        "successTitle" : "设备安全屏幕上显示的地址",
+        "nextStepsLabel" : "后续步骤",
+        "nextStepShare" : "通过您所需的应用程序共享您的地址",
+        "nextStepMatch" : "请确保共享地址与您的 Ledger 设备上的地址一致。",
+        "gotItCta" : "知道了",
+        "device" : {
+          "cancelledTitle" : "地址验证已取消",
+          "cancelledDescription" : "您拒绝了设备上的地址。您可以在显示屏上再次显示该地址以进行验证。",
+          "mismatchTitle" : "地址不一致",
+          "mismatchDescription" : "您设备上显示的地址与请求的地址不一致。请勿共享此地址。",
+          "unsupportedTitle" : "验证功能不可用",
+          "unsupportedDescription" : "此设备应用程序无法显示用于设备上验证的地址。",
+          "retryCta" : "再次显示地址",
+          "closeCta" : "关闭"
         }
       }
     }
@@ -2530,6 +2587,8 @@
     },
     "placeholder" : "请输入地址或 ENS",
     "placeholderNoENS" : "输入地址",
+    "placeholderWithContacts" : "输入地址、ENS 或联系人",
+    "placeholderNoEnsWithContacts" : "输入地址或联系人",
     "recent" : "最近",
     "myAccounts" : "我的账户",
     "sendTo" : "发送到 {{address}}",
@@ -2539,6 +2598,7 @@
     "addressBookUnsupported" : "暂不支持 {{family}}",
     "recentSendWillAppear" : "您最近的发送会显示在此处",
     "contactsWillAppear" : "联系人将在此处显示",
+    "selectAddress" : "选择地址",
     "securityInfo" : {
       "title" : "如何安全发送？",
       "items" : {
@@ -2559,7 +2619,12 @@
     },
     "addContact" : {
       "newContact" : "添加新联系人",
-      "existingContact" : "添加到现有联系人"
+      "existingContact" : "添加到现有联系人",
+      "selectContact" : "选择联系人",
+      "syncWallet" : {
+        "title" : "同步您的钱包以添加联系人",
+        "description" : "联系人已进行端到端加密，并可在您所有手机和电脑上的 Ledger Wallet 之间同步"
+      }
     },
     "relativeDate" : {
       "justNow" : "刚刚",
@@ -5252,6 +5317,7 @@
         "applyFamilies" : "应用",
         "contactsData" : "联系人数据",
         "loadPopulatedContacts" : "加载现有联系人",
+        "loadFromSendHistory" : "从发送历史记录加载联系人",
         "resetContacts" : "重置联系人",
         "resetOverride" : "重置覆盖",
         "featureIntroduction" : {
@@ -5259,6 +5325,22 @@
           "label" : "显示联系人功能介绍",
           "dismissed" : "已忽略 — 开启后将在联系人页面再次显示介绍。",
           "willShow" : "将在联系人页面持续显示，直到您关闭为止。"
+        }
+      },
+      "deviceSimulationDevTool" : {
+        "title" : "设备模拟 (QA)",
+        "description" : "在没有物理设备的情况下模拟设备历史，以测试 Nano 用户的追加销售界面。",
+        "currentHistory" : "活跃的 QA 设备：{{devices}}",
+        "resetWarning" : "重置仅清除模拟 QA 设备列表。若无模拟引擎，无法恢复真实设备历史记录。",
+        "reset" : "重置设备历史",
+        "none" : "无",
+        "devices" : {
+          "nanoS" : "Nano S",
+          "nanoSP" : "Nano S Plus",
+          "nanoX" : "Nano X",
+          "stax" : "Ledger Stax",
+          "europa" : "Ledger Flex",
+          "apex" : "Ledger Flex Plus"
         }
       },
       "cryptoAssetsList" : {
@@ -6748,6 +6830,10 @@
     "CeloAllFundsWarning" : {
       "title" : "确保您留有足够的余额，以便缴纳未来的交易费"
     },
+    "CeloEpochProcessingActive" : {
+      "title" : "此操作暂时不可用。",
+      "description" : "Celo 当前正在处理 Epoch 更新。在此短暂的链上窗口期内，投票、激活、撤销、锁定和解锁等质押操作将被网络暂时阻止。请在 Epoch 处理完成后重试。"
+    },
     "CeloGroupNotVotable" : {
       "title" : "该验证者组无法接收投票。可能已满或不再符合条件。"
     },
@@ -7226,6 +7312,9 @@
     },
     "ZcashSaplingRecipientNotSupported" : {
       "title" : "不支持发送至 Sapling 地址"
+    },
+    "ZcashAmountBelowDustThreshold" : {
+      "title" : "数额过小，无法广播（最少 {{minimumZatoshis}} zatoshis）"
     },
     "InvalidNonce" : {
       "title" : "需要 Nonce"
@@ -7866,10 +7955,20 @@
       "title" : "最低数额为 1 SUI"
     },
     "OneSuiMinForUnstakeToBeLeft" : {
-      "title" : "应保留至少 1 SUI 的质押余额"
+      "title" : "解除质押全部数额，或保留至少 1 SUI 处于质押状态"
+    },
+    "SuiStakeNotFound" : {
+      "title" : "质押详情不可用。请重新同步您的账户并重试"
+    },
+    "SuiUnstakeExceedsStake" : {
+      "title" : "数额超过所选质押"
     },
     "SomeSuiForUnstake" : {
       "title" : "请确保您的钱包中至少保留 0.1 SUI，用于支付未来的网络费用和解除委托质押所需费用"
+    },
+    "SuiAddressBalanceAppUpdateRequired" : {
+      "title" : "更新您的 Sui 应用程序",
+      "description" : "您的 Ledger Sui 应用程序无法签署来自您 SUI 地址余额的转账。在您的 Ledger 设备上更新 Sui 应用程序并重试。"
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "您目前的可用（非质押）余额为 {{currentBalance}}，不足以支付解除质押 {{assetName}} 的网络费用。",
@@ -8018,6 +8117,56 @@
     "memo" : "Memo",
     "memoPlaceholder" : "输入标签/备忘标签",
     "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的信息。"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "费用",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "重新委托",
+      "earn" : "赚取"
+    },
+    "stakeBanner" : {
+      "title" : "使用 MINA 赚取奖励",
+      "altTitle" : "管理您的 MINA 委托",
+      "description" : "将您的 MINA 委托给区块生产者，从区块生产中赚取奖励。奖励将根据您的委托数额进行分配。",
+      "altDescription" : "更改您的委托设置或解除委托您的 MINA 代币。",
+      "changeCTA" : "重新委托"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "已委托给",
+      "stakedBalance" : "委托余额",
+      "producerAddress" : "生产者地址",
+      "delegatedToTooltip" : "您要委托的区块生产者名称",
+      "stakedBalanceTooltip" : "目前已委托给该验证者的 MINA 总数额",
+      "producerAddressTooltip" : "您要委托的区块生产者的公开地址"
+    },
+    "delegators" : "委托者",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "选择验证者",
+        "connectDevice" : "连接设备",
+        "confirmation" : "确认"
+      },
+      "title" : "委托 MINA",
+      "help" : "从下方列表中选择一个您要委托 MINA 代币的验证者。",
+      "success" : {
+        "title" : "交易已成功广播",
+        "description" : "您的委托变更请求已广播。",
+        "viewDetails" : "查看详情"
+      },
+      "error" : {
+        "title" : "广播交易时发生错误"
+      },
+      "undelegateTitle" : "解除委托 MINA"
+    },
+    "delegation" : {
+      "listHeader" : "委托",
+      "amount" : "数额",
+      "redelegate" : "重新委托",
+      "undelegate" : "解除委托",
+      "totalStake" : "质押总额",
+      "commission" : "佣金"
+    }
   },
   "hedera" : {
     "name" : "hedera",
@@ -8476,6 +8625,10 @@
       },
       "onboarding" : {
         "title" : "与另一个 Ledger Wallet 钱包应用程序同步"
+      },
+      "sendFlow" : {
+        "title" : "同步我的钱包",
+        "later" : "以后再说"
       }
     },
     "manage" : {
@@ -8632,6 +8785,11 @@
       "title" : "更加安全。更强掌控",
       "description" : "详细了解安全功能。",
       "cta" : "了解更多"
+    },
+    "profile" : {
+      "title" : "升级您的设备",
+      "description" : "屏幕更大，安全性更高。享 {{discount}}% 折扣。",
+      "cta" : "探索"
     }
   },
   "largeScreenUpsellModal" : {
@@ -8644,6 +8802,12 @@
       "title" : "签署之前，识破骗局",
       "subtitle" : "详细了解支持实时威胁检测的高级安全功能。",
       "cta" : "了解更多"
+    },
+    "recoverTrigger" : {
+      "title" : "想要安心无忧的恢复服务吗？",
+      "subtitle" : "虽然您的 Nano S 非常安全，但该设备与 Ledger Recover 不兼容。升级至较新机型，解锁安全且基于身份的钱包备份。",
+      "cta" : "了解更多",
+      "dismiss" : "以后再说"
     }
   },
   "modularAssetDrawer" : {
@@ -8710,6 +8874,8 @@
     "emptyAssetList" : "未找到资产",
     "selectAsset" : "选择资产",
     "selectNetwork" : "选择网络",
+    "unsupportedAssetTooltip" : "暂不支持 {{asset}}",
+    "unsupportedNetworkTooltip" : "暂不支持 {{network}} 网络。",
     "selectAccount" : "选择账户",
     "selectAccountPerpsTitle" : "选择 Hyperliquid 账户",
     "selectAccountPerpsDescription" : "若要为您的永续合约 (Perps) 提供资金，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
@@ -8747,7 +8913,8 @@
     "title" : "首页",
     "today" : "今天",
     "carousel" : {
-      "title" : "为您而设"
+      "title" : "为您而设",
+      "closeAll" : "全部关闭"
     },
     "addAccountCta" : "添加加密货币账户",
     "noBalanceTitle" : "首先为您的钱包充值",
@@ -8930,7 +9097,7 @@
       "privateBalance" : "私密余额",
       "privateBalanceTooltip" : "对外隐藏的余额",
       "privateBalanceWarning" : "私密余额不包括 Sapling 和 Orchard 屏蔽资金",
-      "privateBalanceMaturing" : "{{spendable}} 可支出 · {{maturing}} 成熟中"
+      "privateBalanceMaturing" : "私密余额：{{spendable}} 可支出 · {{maturing}} 成熟中"
     },
     "shielded" : {
       "send" : {
@@ -8963,6 +9130,10 @@
             "message" : "私密余额未同步",
             "cta" : "恢复同步"
           },
+          "failed" : {
+            "message" : "私密余额同步失败",
+            "cta" : "恢复同步"
+          },
           "running" : {
             "message" : "私密余额正在同步 ({{progress}}%)",
             "timeRemaining" : "预计剩余时间：{{hours}}:{{minutes}}"
@@ -8985,7 +9156,8 @@
         "stopSync" : "停止同步",
         "upToDate" : "最新",
         "lastSync" : "上次同步：{{date}}",
-        "estimatedTimeRemaining" : "预计剩余时间：{{hours}}:{{minutes}}"
+        "estimatedTimeRemaining" : "预计剩余时间：{{hours}}:{{minutes}}",
+        "syncFailed" : "私密余额同步失败"
       },
       "datepicker" : {
         "label" : "起始高度",
@@ -9042,7 +9214,8 @@
       "transparentTx" : "透明",
       "shieldedSaplingTx" : "🛡 私密 (Sapling) ",
       "shieldedOrchardTx" : "🛡 私密 (Orchard) ",
-      "shieldedIronwoodTx" : "🛡 私密 (Ironwood) "
+      "shieldedIronwoodTx" : "🛡 私密 (Ironwood) ",
+      "memo" : "备注"
     }
   },
   "aleo" : {
@@ -9332,6 +9505,27 @@
     "explore" : "探索所有 Ledger 设备"
   },
   "contacts" : {
+    "deviceIntents" : {
+      "registerExternalAddress" : {
+        "pending" : {
+          "title" : "正在准备您的 Ledger 设备"
+        }
+      },
+      "errors" : {
+        "wrongDevice" : {
+          "title" : "需使用添加此联系人时的同一 Ledger 设备",
+          "description" : "已连接的设备不一致。"
+        },
+        "invalidData" : {
+          "title" : "无法保存此地址",
+          "description" : "您的 Ledger 设备拒绝了联系人详细信息。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+        },
+        "appVersionTooLow" : {
+          "title" : "需要更新应用程序",
+          "description" : "在您的 Ledger 设备上更新应用程序以保存联系人，然后重试。"
+        }
+      }
+    },
     "title" : "联系人",
     "addContact" : "添加联系人",
     "addAddress" : "添加地址",
@@ -9363,6 +9557,10 @@
     },
     "addAddressReview" : {
       "title" : "核对地址",
+      "addressLabel" : "地址",
+      "currencyLabel" : "货币",
+      "networkLabel" : "网络",
+      "nameLabel" : "地址名称",
       "continue" : "确认地址",
       "successTitle" : "地址已保存",
       "close" : "关闭"
@@ -9388,7 +9586,7 @@
         "meTitle" : "您还没有已保存的地址",
         "contactTitle" : "{{name}} 还没有已保存的地址",
         "meDescription" : "保存您的钱包地址，下次即可按名称接收加密货币。",
-        "contactDescription" : "保存对方的钱包地址，下次即可按名称向其发送。"
+        "contactDescription" : "保存对方的钱包地址，下次即可按名称向其发送"
       }
     },
     "addressDetail" : {
@@ -9443,23 +9641,23 @@
     },
     "ledgerSyncIntroduction" : {
       "description" : "您的联系人信息通过您的 Ledger 进行端到端加密，并在您的设备之间进行同步，只有您自己可以解锁。",
+      "activate" : "开启 Ledger Sync",
       "dismiss" : "知道了"
     },
     "featureIntroduction" : {
       "title" : "认识「联系人」功能",
-      "description" : "您的加密货币地址簿——将常用的转账钱包地址集中保存在一处。",
-      "primaryAction" : "试用联系人",
+      "primaryAction" : "立即探索",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "地址只需保存一次",
-          "description" : "将常用转账地址集中保存在一处。"
+          "title" : "使用您选择的名称保存地址",
+          "description" : "兑换、朋友，以及您自己的外部账户。"
         },
         "sendToRightAddress" : {
           "title" : "转账至正确地址",
-          "description" : "资金每次都能到达正确的钱包。"
+          "description" : "显示您信任的名称，而非地址。"
         },
         "privateAcrossDevices" : {
-          "title" : "跨设备私密同步",
+          "title" : "通过 Ledger Wallet™ 安全充值",
           "description" : "通过 Ledger Sync 账户同步功能进行端到端加密。"
         }
       }
@@ -9532,8 +9730,7 @@
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
-        "title" : "设备已锁定",
-        "description" : "解锁您的设备以继续。"
+        "title" : "解锁您的 Ledger 设备，然后选择下方的“重试”"
       },
       "unlockDevice" : {
         "title" : "解锁您的 {{productName}}"
@@ -9545,16 +9742,16 @@
     },
     "errors" : {
       "connectionError" : {
-        "title" : "设备已断开",
-        "description" : "您的 Ledger 设备已断开连接。请确保设备已开机，并已通过数据线连接。"
+        "title" : "Ledger 设备已断开",
+        "description" : "请确保设备已开机，并已通过数据线连接。"
       },
       "intentError" : {
         "title" : "未知错误",
-        "description" : "发生了错误。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+        "description" : "请重试，如果问题仍然存在，请联系 Ledger 客服。"
       },
       "invalidOperation" : {
-        "title" : "无效状态",
-        "description" : "发生了错误。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+        "title" : "发生了错误",
+        "description" : "请重试，如果问题仍然存在，请联系 Ledger 客服。"
       }
     },
     "initialization" : {
@@ -9570,46 +9767,51 @@
       },
       "retryable" : {
         "userRefused" : {
-          "title" : "设备拒绝了操作"
+          "title" : "Ledger 设备拒绝了操作"
         },
         "deviceBusy" : {
-          "title" : "您的 Ledger 设备上有待处理的操作",
-          "description" : "完成此操作，然后选择重试。"
+          "title" : "请在您的 Ledger 设备上完成操作",
+          "description" : "在您的设备上完成该操作，然后选择下面的“重试”。"
         }
       },
       "blocking" : {
         "deviceNotOnboarded" : {
-          "title" : "您的 Ledger 设备尚未准备就绪",
-          "description" : "您需要先设置 {{productName}}。我们将引导您完成设备设置流程"
+          "title" : "您的 Ledger 设备需要进行设置",
+          "description" : "请进行设置以继续。"
         },
         "unsupportedFirmwareVersion" : {
           "title" : "Ledger OS 需要更新"
         },
         "unsupportedApplication" : {
           "title" : "功能不受支持",
-          "description" : "您的 Ledger 设备上目前没有执行此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
+          "description" : "您的 Ledger 设备不支持此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
         },
         "unsupportedFeature" : {
           "title" : "功能不受支持",
-          "description" : "您的 Ledger 设备上目前没有执行此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
+          "description" : "您的 Ledger 设备不支持此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
         },
         "wrongDeviceForAccount" : {
-          "title" : "秘密恢复短语错误",
-          "description" : "此 Ledger 设备未设置与所选账户关联的恢复短语。检查您是否使用了正确的设备。"
+          "title" : "请使用您最初设置此账户时所用的 Ledger 设备",
+          "description" : "此 Ledger 设备未设置与所选加密货币账户关联的秘密恢复短语。"
         },
         "deviceOutOfStorageSpace" : {
-          "title" : "设备内存不足",
-          "description" : "您的设备内存不足。请卸载应用程序并重试。",
+          "title" : "卸载一些应用程序以释放 Ledger 设备内存",
+          "description" : "您的设备内存不足。",
           "apps" : "要管理的应用程序：{{appNames}}"
+        },
+        "invalidProvider" : {
+          "title" : "提供商无效",
+          "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Wallet “设置”，选择“实验性功能”，然后选择其他提供商。"
         }
       },
       "cta" : {
         "openMyLedger" : "打开“我的 Ledger”",
         "goToMyLedger" : "前往 My Ledger（我的 Ledger）",
-        "setupDevice" : "设置设备",
+        "setupDevice" : "设置 Ledger 设备",
         "updateLedgerOs" : "更新 Ledger OS",
         "cancelOperation" : "取消操作",
-        "contactLedgerSupport" : "联系 Ledger 客服"
+        "contactLedgerSupport" : "联系 Ledger 客服",
+        "goToSettings" : "前往设置选项"
       }
     },
     "connectDevice" : {
@@ -9623,7 +9825,7 @@
           "title" : "Loading（加载中）"
         },
         "connecting" : {
-          "title" : "Loading（加载中）"
+          "title" : "正在连接您的 Ledger 设备"
         },
         "connectionError" : {
           "errors" : {
@@ -9655,7 +9857,7 @@
         },
         "noKnownDevice" : {
           "title" : "需要 Ledger 设备",
-          "description" : "要继续，请设置或连接您的签署设备。",
+          "description" : "要继续，请设置或连接您的 Ledger 设备。",
           "connectLedgerDevice" : "连接 Ledger 设备",
           "noLedgerDevice" : "我没有 Ledger 设备"
         },

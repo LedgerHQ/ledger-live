@@ -246,5 +246,6 @@ describe("AddressMatchedSection", () => {
     expect(
       screen.getByText('send.newSendFlow.addressBookUnsupported.description {"family":"Solana"}'),
     ).toBeVisible();
+    expect(screen.getByText("common.gotit")).toBeVisible();
   });
 });

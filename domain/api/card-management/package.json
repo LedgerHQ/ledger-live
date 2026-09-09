@@ -1,12 +1,13 @@
 {
   "name": "@domain/api-card-management",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Domain API client for Card Management: RTK Query endpoints injected into the shared cardApi service",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./mock": "./src/onboardingStatus.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -34,6 +35,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
+    "msw": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
     "typescript": "catalog:"

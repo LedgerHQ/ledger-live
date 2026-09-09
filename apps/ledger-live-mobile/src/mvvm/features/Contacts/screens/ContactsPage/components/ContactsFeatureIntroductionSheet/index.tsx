@@ -16,7 +16,8 @@ export function ContactsFeatureIntroductionSheet({
   onClose: onCloseCallback,
   ...contentProps
 }: ContactsFeatureIntroductionSheetProps): React.JSX.Element {
-  const { bottom: bottomInset } = useSafeAreaInsets();
+  const { bottom } = useSafeAreaInsets();
+  const bottomInset = Platform.OS === "ios" ? bottom : 0;
   const { complete, onClose } = useContactsFeatureIntroductionActions({
     isOpen,
     onComplete,
@@ -30,9 +31,7 @@ export function ContactsFeatureIntroductionSheet({
       onHeaderClosePressed={onClose}
       onBackdropPress={onClose}
       testID="contacts-feature-introduction-drawer"
-      enableDynamicSizing
-      // iOS: allow the sheet to grow with content; uncapped on Android to avoid excess empty space.
-      maxDynamicContentSize={Platform.OS === "ios" ? "fullWithOffset" : undefined}
+      snapPoints="fullWithOffset"
     >
       <ContactsFeatureIntroductionContent
         isOpen={isOpen}

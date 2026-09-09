@@ -64,7 +64,8 @@ export function ContactsAddAddressEntryView({
         <Banner
           appearance="info"
           data-testid="contacts-add-address-ens-disclaimer"
-          description={labels.ensDisclaimer}
+          title={labels.ensDisclaimer}
+          description={labels.ensDisclaimerDescription}
         />
       ) : null}
       {sanctionedAddressBanner ? <SanctionedAddressBanner {...sanctionedAddressBanner} /> : null}

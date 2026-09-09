@@ -595,6 +595,36 @@ describe("coin-framework utils", () => {
       expect(operation.type).toBe("STAKE");
       expect(operation.value).toEqual(new BigNumber(100));
     });
+
+    it("writes extra.transferId for a coin-specific memoType (MEMO_TYPE_TO_EXTRA_KEY hit)", () => {
+      const operation = buildOptimisticOperation(
+        { id: "acc", freshAddress: "sender" } as Account,
+        {
+          family: "casper",
+          amount: new BigNumber(100),
+          recipient: "recipient",
+          memoType: "transferId",
+          memoValue: "42",
+        } as GenericTransaction,
+        1n,
+      );
+      expect((operation.extra as Record<string, unknown>).transferId).toBe("42");
+    });
+
+    it("writes extra.memo for a generic memoType (MEMO_TYPE_TO_EXTRA_KEY fallback)", () => {
+      const operation = buildOptimisticOperation(
+        { id: "acc", freshAddress: "sender" } as Account,
+        {
+          family: "evm",
+          amount: new BigNumber(100),
+          recipient: "recipient",
+          memoType: "memo-text",
+          memoValue: "hello",
+        } as GenericTransaction,
+        1n,
+      );
+      expect((operation.extra as Record<string, unknown>).memo).toBe("hello");
+    });
   });
 
   describe("cleanedOperation", () => {

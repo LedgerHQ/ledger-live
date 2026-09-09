@@ -180,6 +180,10 @@ module.exports = {
     // expo-keep-awake resolves to its ESM TS source under the react-native
     // export condition, which Jest can't parse; redirect to a stub.
     "^expo-keep-awake$": "<rootDir>/__mocks__/expo-keep-awake.ts",
+    // expo-crypto needs a native runtime, and pnpm gives the app and the workspace
+    // packages it renders separate copies; map both to one stub.
+    "^expo-crypto$": "<rootDir>/__mocks__/expo-crypto.ts",
+    "^expo-web-browser$": "<rootDir>/__mocks__/expo-web-browser.ts",
     // Redirect to mock for pre-compiled dependencies (like @ledgerhq/native-ui)
     "^react-native-worklets$": "<rootDir>/__mocks__/react-native-worklets.js",
     // Global mock for .lottie (dotLottie) files

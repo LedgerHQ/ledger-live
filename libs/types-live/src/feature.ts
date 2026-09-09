@@ -891,6 +891,7 @@ type Feature_Wallet40_Params = {
   earnUpselling?: boolean;
   earnSimulator?: boolean;
   q2Tour?: boolean;
+  q3Tour?: boolean;
 };
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmWallet40"]` from `@shared/feature-flags` instead. */

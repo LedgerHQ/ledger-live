@@ -4,10 +4,8 @@ import {
   mockContactWithAddress,
 } from "@domain/entity-contact/schema.mock";
 import { ContactAddressLabelSchema, ContactNameSchema } from "@domain/entity-contact";
-import {
-  createMockContactDeviceIntentsPort,
-  type ContactDeviceIntentsPort,
-} from "./contactDeviceIntentsPort";
+import type { ContactDeviceIntentsPort } from "./contactDeviceIntentsPort";
+import { createMockContactDeviceIntentsPort } from "./contactDeviceIntentsPort.mock";
 
 describe("createMockContactDeviceIntentsPort", () => {
   let port: ContactDeviceIntentsPort;

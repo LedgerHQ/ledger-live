@@ -32,13 +32,14 @@ import { getCachedUtxoAddress } from "./utxoAddressCache";
 export type LiveDataCommandOptions = {
   readonly useScheme?: boolean;
   readonly currency?: string;
+  readonly postSeedHook?: (userdataPath?: string) => Promise<void>;
 };
 
 /**
  * Tag a CLI command with a stable, human-readable name so Allure attachment titles read
  * `CLI liveDataCommand — result` instead of `CLI cmd` / `CLI anonymous` (QAA-1433).
  */
-function named<T extends (...args: never[]) => unknown>(name: string, cmd: T): T {
+export function named<T extends (...args: never[]) => unknown>(name: string, cmd: T): T {
   Object.defineProperty(cmd, "name", { value: name, configurable: true });
   return cmd;
 }
@@ -84,16 +85,19 @@ export const liveDataCommand = (
   options?: LiveDataCommandOptions,
 ) => {
   const cmd = async (userdataPath?: string) => {
-    if (applyGeneratedUserdata(account, userdataPath)) return;
-    await runCliLiveData({
-      currency: options?.currency ?? account.currency.speculosApp.name,
-      index: account.index,
-      ...(options?.useScheme && account.derivationMode ? { scheme: account.derivationMode } : {}),
-      add: true,
-      appjson: userdataPath,
-    });
+    if (!applyGeneratedUserdata(account, userdataPath)) {
+      await runCliLiveData({
+        currency: options?.currency ?? account.currency.speculosApp.name,
+        index: account.index,
+        ...(options?.useScheme && account.derivationMode ? { scheme: account.derivationMode } : {}),
+        add: true,
+        appjson: userdataPath,
+      });
+    }
+
+    await options?.postSeedHook?.(userdataPath);
   };
-  cmd.canUseGeneratedUserdata = () => hasGeneratedUserdata(account);
+  cmd.canUseGeneratedUserdata = () => !options?.postSeedHook && hasGeneratedUserdata(account);
   return named("liveDataCommand", cmd);
 };
 
@@ -234,7 +238,9 @@ export const liveDataWithAddressCommand = (
     return address;
   };
   cmd.canUseGeneratedUserdata = () =>
-    hasGeneratedUserdata(account) && !isUtxoBasedCurrency(account.currency.id);
+    !options?.postSeedHook &&
+    hasGeneratedUserdata(account) &&
+    !isUtxoBasedCurrency(account.currency.id);
   return named("liveDataWithAddressCommand", cmd);
 };
 
@@ -285,6 +291,8 @@ export const liveDataWithRecipientAddressCommand = (
         appjson: userdataPath,
       });
     }
+
+    await options?.postSeedHook?.(userdataPath);
 
     const address = await getAccountAddress(tx.accountToCredit);
 

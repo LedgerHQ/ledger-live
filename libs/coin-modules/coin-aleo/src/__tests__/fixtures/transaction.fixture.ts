@@ -63,6 +63,16 @@ export const mockTxIntentTransferPublic: AleoTransactionIntent = {
   type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
 };
 
+export const mockTxIntentBondPublic: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 1_000_000n,
+  type: TRANSACTION_TYPE.BOND_PUBLIC,
+  data: {
+    type: TRANSACTION_TYPE.BOND_PUBLIC,
+    withdrawal: "aleo1sender",
+  },
+};
+
 export const mockTxIntentTransferPrivate: AleoTransactionIntent = {
   ...baseTxIntentFields,
   amount: 200n,

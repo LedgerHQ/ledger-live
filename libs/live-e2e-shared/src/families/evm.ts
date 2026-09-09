@@ -1,6 +1,6 @@
 import { Transaction } from "../models/Transaction";
 import {
-  containsSubstringInEvent,
+  expectSpeculosEventsContain,
   fetchCurrentScreenTexts,
   waitForReviewTransaction,
   pressUntilTextFound,
@@ -21,14 +21,6 @@ import { withDeviceController } from "../deviceInteraction/DeviceController";
 import { getEnv } from "@shared/env";
 import { getDeviceCoordinates } from "../deviceCoordinates";
 
-function formatEventsForError(events: string[], maxLength = 1000): string {
-  const formatted = events.map((e, i) => `  [${i}] ${e}`).join("\n");
-  if (formatted.length <= maxLength) {
-    return formatted;
-  }
-  return `${formatted.slice(0, maxLength)}...\n  (truncated, ${events.length} total events)`;
-}
-
 // TODO: remove once LIVE-28070 is fixed
 function shouldSkipRecipientDisplayValidation(tx: Transaction): boolean {
   return (
@@ -38,35 +30,31 @@ function shouldSkipRecipientDisplayValidation(tx: Transaction): boolean {
 }
 
 function validateTransactionData(tx: Transaction, events: string[]) {
-  const formattedEvents = formatEventsForError(events);
-  const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-  if (!isAmountCorrect) {
-    throw new Error(
-      `Expected amount "${tx.amount}" to be displayed on Speculos device, but it was not found.\nEvents:\n${formattedEvents}`,
-    );
-  }
+  expectSpeculosEventsContain(
+    tx.amount,
+    events,
+    "Expected amount to be displayed on Speculos device",
+  );
 
   if (shouldSkipRecipientDisplayValidation(tx)) {
     return;
   }
 
   if (tx.accountToCredit.ensName && process.env.SPECULOS_DEVICE !== Device.LNS.name) {
-    const isENSNameCorrect = containsSubstringInEvent(tx.accountToCredit.ensName, events);
-    if (!isENSNameCorrect) {
-      throw new Error(
-        `Expected ENS name "${tx.accountToCredit.ensName}" to be displayed on Speculos device, but it was not found.\nEvents:\n${formattedEvents}`,
-      );
-    }
+    expectSpeculosEventsContain(
+      tx.accountToCredit.ensName,
+      events,
+      "Expected ENS name to be displayed on Speculos device",
+    );
   } else {
     if (!tx.accountToCredit.address) {
       throw new Error("Recipient address is not set");
     }
-    const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-    if (!isAddressCorrect) {
-      throw new Error(
-        `Expected recipient address "${tx.accountToCredit.address}" to be displayed on Speculos device, but it was not found.\nEvents:\n${formattedEvents}`,
-      );
-    }
+    expectSpeculosEventsContain(
+      tx.accountToCredit.address,
+      events,
+      "Expected recipient address to be displayed on Speculos device",
+    );
   }
 }
 

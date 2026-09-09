@@ -41,7 +41,16 @@ import {
   payRequestVerifyHintSlice,
   type PayRequestVerifyHintState,
 } from "@features/flow-pay-request/state";
-import { payCardAuthSlice, type PayCardAuthState } from "@features/flow-pay-card-auth/state";
+import {
+  payCardAuthSlice,
+  payCardLoginIntroSlice,
+  type PayCardAuthState,
+  type PayCardLoginIntroState,
+} from "@features/flow-pay-card-auth/state";
+import {
+  payCardOnboardingWidgetSlice,
+  type PayCardOnboardingWidgetState,
+} from "@features/flow-pay-card-widget/state";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
 import dialogsWithData, { DialogsWithDataState } from "./dialogsWithData";
@@ -103,7 +112,9 @@ export type State = LLDRTKApiState & {
   payCardBalance: PayCardBalanceState;
   payCardFeatureTour: PayCardFeatureTourState;
   payRequestVerifyHint: PayRequestVerifyHintState;
+  payCardOnboardingWidget: PayCardOnboardingWidgetState;
   payCardAuth: PayCardAuthState;
+  payCardLoginIntro: PayCardLoginIntroState;
 };
 
 const appReducer = combineReducers({
@@ -147,7 +158,9 @@ const appReducer = combineReducers({
   payCardBalance: payCardBalanceSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
   payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
+  payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
+  payCardLoginIntro: payCardLoginIntroSlice.reducer,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && {
     lastAction: (_: unknown, action: PayloadAction) => action,

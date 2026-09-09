@@ -266,6 +266,8 @@ jest.mock("@features/platform-contacts", () => ({
   }),
 }));
 
+jest.mock("@features/platform-contacts/device");
+
 jest.mock("@ledgerhq/live-common/account/index", () => {
   const actual = jest.requireActual("@ledgerhq/live-common/account/index");
   return {

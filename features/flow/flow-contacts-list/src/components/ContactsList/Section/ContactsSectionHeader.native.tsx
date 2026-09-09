@@ -14,7 +14,7 @@ export function ContactsSectionHeader({
   return (
     <Box
       testID={`contacts-section-${title}-background`}
-      lx={{ width: "full", marginTop: "s8", backgroundColor: surface }}
+      lx={{ width: "full", marginVertical: "s8", backgroundColor: surface }}
     >
       <SectionHeader appearance="plain" testID={`contacts-section-${title}`} lx={{ width: "full" }}>
         <SectionHeaderTitle>{title}</SectionHeaderTitle>

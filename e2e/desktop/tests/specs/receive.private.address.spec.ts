@@ -1,6 +1,7 @@
 import fs from "fs";
 import { test } from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { named } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import {
   zcashPrivateBalanceTestUse,
   zcashPrivateBalanceTestOptions,
@@ -9,10 +10,14 @@ import {
 
 // Enabling private balance (UFVK export) and then opening Receive in the SAME
 // device session reproduces a device-reconnect bug: the Zcash DMK signer-kit
-// hangs on any second device call within one session (tracked separately,
+// hangs on any second device call within one session (tracked as LIVE-37178,
 // see activate.private.balance.spec.ts). This spec sidesteps it by seeding
 // privateInfo directly into the userdata file -- a fresh session, so Receive's
 // own device-connect check is the only Zcash device call this test makes.
+// NOTE: the seeded ufvk/shieldedAddress below are fabricated and won't match
+// what a real device derives -- once LIVE-37178 is fixed, this fixture must be
+// updated (or removed in favor of the live flow) or the test will start
+// failing on a device mismatch, which would look like a regression in the fix.
 const seedZcashPrivateInfo = (account: Account) => {
   const cmd = async (userdataPath?: string) => {
     if (!userdataPath) return;
@@ -48,7 +53,7 @@ const seedZcashPrivateInfo = (account: Account) => {
     fs.writeFileSync(userdataPath, JSON.stringify(raw));
   };
   cmd.canUseGeneratedUserdata = () => false;
-  return cmd;
+  return named("seedZcashPrivateInfo", cmd);
 };
 
 const accounts = [{ account: Account.ZEC_1, xrayTicket: "B2CQA-6606" }];

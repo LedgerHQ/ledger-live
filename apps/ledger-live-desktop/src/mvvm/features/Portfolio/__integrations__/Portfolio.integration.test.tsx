@@ -6,7 +6,12 @@ import i18next from "~/renderer/i18n/init";
 import PortfolioPage from "../index";
 import type { Portfolio as PortfolioType } from "@ledgerhq/types-live";
 import { PortfolioView } from "../PortfolioView";
-import * as portfolioReact from "@ledgerhq/live-countervalues-react/portfolio";
+import * as portfolioReact from "@ledgerhq/live-common/portfolio/portfolioReact";
+
+jest.mock("@ledgerhq/live-common/portfolio/portfolioReact", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/portfolio/portfolioReact"),
+  usePortfolioThrottled: jest.fn(),
+}));
 import * as countervaluesReact from "@ledgerhq/live-countervalues-react";
 import { useNavigate } from "react-router";
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
@@ -86,12 +91,7 @@ jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index", () => ({
   }),
 }));
 
-// Spies are created per-test in `beforeEach` so the global `restoreMocks: true`
-// from jest config can restore them between tests cleanly.
-let mockUsePortfolioThrottled: jest.SpyInstance<
-  ReturnType<typeof portfolioReact.usePortfolioThrottled>,
-  Parameters<typeof portfolioReact.usePortfolioThrottled>
->;
+let mockUsePortfolioThrottled: jest.MockedFunction<typeof portfolioReact.usePortfolioThrottled>;
 let mockUseCountervaluesPolling: jest.SpyInstance<
   ReturnType<typeof countervaluesReact.useCountervaluesPolling>,
   Parameters<typeof countervaluesReact.useCountervaluesPolling>
@@ -177,7 +177,7 @@ describe("PortfolioView", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUsePortfolioThrottled = jest.spyOn(portfolioReact, "usePortfolioThrottled");
+    mockUsePortfolioThrottled = jest.mocked(portfolioReact.usePortfolioThrottled);
     mockUseCountervaluesPolling = jest.spyOn(countervaluesReact, "useCountervaluesPolling");
     mockUsePortfolioThrottled.mockReturnValue(defaultPortfolioMock);
     mockUseCountervaluesPolling.mockReturnValue(defaultPollingMock);
@@ -646,7 +646,7 @@ const walletV4TourFlagOverrides = withFlagOverrides({
 describe("Portfolio (Wallet V4 Tour)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUsePortfolioThrottled = jest.spyOn(portfolioReact, "usePortfolioThrottled");
+    mockUsePortfolioThrottled = jest.mocked(portfolioReact.usePortfolioThrottled);
     mockUseCountervaluesPolling = jest.spyOn(countervaluesReact, "useCountervaluesPolling");
     mockUsePortfolioThrottled.mockReturnValue(defaultPortfolioMock);
     mockUseCountervaluesPolling.mockReturnValue(defaultPollingMock);

@@ -4,14 +4,14 @@ import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   ensureTokenApproval,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { shareViewKeyCommand } from "@ledgerhq/live-e2e-shared/families/aleo";
 import { DEVICE_TAGS, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 const exchangeApp: AppInfos = AppInfos.EXCHANGE;
@@ -169,10 +169,21 @@ const swaps = [
   //     "@family-celo",
   //   ],
   // },
+  {
+    fromAccount: Account.ALEO_1,
+    toAccount: Account.ETH_1,
+    xrayTicket: "B2CQA-6592",
+    tag: [...deviceTagsWithoutLNS(), "@aleo", "@family-aleo", "@ethereum", "@family-evm"],
+    postSeedHook: shareViewKeyCommand(Account.ALEO_1),
+    // TODO: remove once NEAR quotes are stable or Changelly is re-enabled
+    skipReason: "For now NEAR is the only available provider and its quotes are flaky",
+  },
 ];
 
-for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
+for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason } of swaps) {
   test.describe("Swap - accepted", () => {
+    test.skip(!!skipReason, skipReason);
+
     setupEnv(true);
 
     const accPair: string[] = [fromAccount, toAccount].map(acc =>
@@ -196,7 +207,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         [
           {
             app: fromAccount.currency.speculosApp,
-            cmd: liveDataWithAddressCommand(fromAccount),
+            cmd: liveDataWithAddressCommand(fromAccount, { postSeedHook }),
           },
           {
             app: toAccount.currency.speculosApp,

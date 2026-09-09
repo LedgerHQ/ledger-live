@@ -1,5 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { enableMapSet } from "immer";
+import {
+  parseAnyAccountId,
+  safeParseAnyAccountId,
+  type AnyAccountId,
+} from "@domain/entity-account";
 import { getDefaultAccountName, type AccountForName } from "./accountName";
 import { initialAccountNamesState, type AccountNamesState } from "./schema";
 
@@ -15,13 +20,14 @@ export const accountNamesSlice = createSlice({
       { payload }: PayloadAction<{ accountId: string; name: string }>,
     ): AccountNamesState => {
       const next = new Map(state);
-      if (!payload.name) next.delete(payload.accountId);
-      else next.set(payload.accountId, payload.name);
+      const id = parseAnyAccountId(payload.accountId);
+      if (!payload.name) next.delete(id);
+      else next.set(id, payload.name);
       return next;
     },
     bulkSetAccountNames: (
       state,
-      { payload }: PayloadAction<Map<string, string>>,
+      { payload }: PayloadAction<ReadonlyMap<AnyAccountId, string>>,
     ): AccountNamesState => {
       const next = new Map(state);
       for (const [id, name] of payload) next.set(id, name);
@@ -33,8 +39,9 @@ export const accountNamesSlice = createSlice({
     ): AccountNamesState => {
       const next = new Map(state);
       for (const account of payload.accounts) {
-        const name = payload.editedNames.get(account.id) || state.get(account.id);
-        if (name && name !== getDefaultAccountName(account)) next.set(account.id, name);
+        const id = parseAnyAccountId(account.id);
+        const name = payload.editedNames.get(account.id) || state.get(id);
+        if (name && name !== getDefaultAccountName(account)) next.set(id, name);
       }
       return next;
     },
@@ -42,9 +49,10 @@ export const accountNamesSlice = createSlice({
       _state,
       { payload }: PayloadAction<{ id: string; name: string }[]>,
     ): AccountNamesState => {
-      const next = new Map<string, string>();
+      const next: AccountNamesState = new Map();
       for (const { id, name } of payload) {
-        if (name) next.set(id, name);
+        const accountId = safeParseAnyAccountId(id);
+        if (name && accountId) next.set(accountId, name);
       }
       return next;
     },
@@ -61,8 +69,9 @@ export const accountNamesSlice = createSlice({
       (state, { payload }): AccountNamesState => {
         const next = new Map(state);
         for (const account of payload.allAccounts) {
-          const name = payload.editedNames.get(account.id) || state.get(account.id);
-          if (name && name !== getDefaultAccountName(account)) next.set(account.id, name);
+          const id = parseAnyAccountId(account.id);
+          const name = payload.editedNames.get(account.id) || state.get(id);
+          if (name && name !== getDefaultAccountName(account)) next.set(id, name);
         }
         return next;
       },

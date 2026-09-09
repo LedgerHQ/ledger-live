@@ -122,7 +122,7 @@ export type NewSendMemoTestOptions = {
 };
 
 /**
- * Memo coverage for the new send flow, one describe per Xray TC (e.g. XRP = B2CQA-6037).
+ * Memo coverage for the new send flow, one describe per test case (e.g. XRP = B2CQA-6037).
  * `transaction.memoTag` must be a valid memo for the family under test. Verifies:
  *  - numeric-only input enforcement when `invalidMemoInput` is provided (numeric "tag" families),
  *  - the memo-type dropdown shows the expected options when `memoTypeOptions` is provided,

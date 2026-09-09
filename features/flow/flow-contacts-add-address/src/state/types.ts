@@ -133,7 +133,7 @@ export type AddAddressFlowViewModel = Readonly<{
   continueFromAddressDetails: () => void;
   continueFromName: () => void;
   continueFromReview: () => void;
-  completeMockConfirmation: () => void;
+  completeConfirmation: () => void;
   goBack: () => void;
   close: () => void;
 }>;
@@ -149,6 +149,7 @@ export type AddAddressEntryLabels = Readonly<{
   sanctionedAddress: string;
   validationUnavailable: string;
   ensDisclaimer: string;
+  ensDisclaimerDescription: string;
 }>;
 
 export type AddAddressNameLabels = Readonly<{
@@ -157,17 +158,4 @@ export type AddAddressNameLabels = Readonly<{
   namingDisclaimer: string;
   continueToReview: string;
   validationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
-}>;
-export type AddAddressCompletionLabels = Readonly<{
-  title: string;
-  continue: string;
-  successTitle: string;
-  close: string;
-}>;
-
-export type AddAddressPlaceholderViewProps = Readonly<{
-  title: string;
-  buttonLabel: string;
-  testID: string;
-  onContinue: () => void;
 }>;

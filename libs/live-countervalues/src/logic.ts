@@ -593,6 +593,7 @@ export function resolveTrackingPairs(pairs: TrackingPair[]): TrackingPair[] {
     .map(id => trackingPairs[id]);
 }
 
+// supportedCryptoIds holds API IDs from /v3/supported/crypto; an empty list disables the filter.
 export function filterSupportedTrackingPairs(
   pairs: TrackingPair[],
   supportedCryptoIds?: string[],

@@ -441,9 +441,7 @@ export const startAnalytics = async (store: ReduxStore) => {
     braze_external_id: id, // Needed for braze with this exact name
   };
   logger.analyticsStart(id, allProperties);
-  analytics.identify(id, allProperties, {
-    context: getContext(),
-  });
+  identifyAndLogOverlay(analytics, id, allProperties);
 };
 type Properties = Error | Record<string, unknown> | null;
 export type LoggableEvent = {
@@ -453,6 +451,34 @@ export type LoggableEvent = {
   date: Date;
 };
 export const trackSubject = new ReplaySubject<LoggableEvent>(30);
+
+const publishIdentifyOverlay = (userIdPresent: boolean, failed: boolean) => {
+  const overlayProperties = failed ? { userIdPresent, failed: true } : { userIdPresent };
+  trackSubject.next({
+    eventName: "[Identify]",
+    eventProperties: overlayProperties,
+    eventPropertiesWithoutExtra: overlayProperties,
+    date: new Date(),
+  });
+};
+
+const identifyAndLogOverlay = (
+  analytics: AnalyticsBrowser,
+  id: string | undefined,
+  allProperties: Record<string, unknown>,
+) => {
+  void Promise.resolve()
+    .then(() =>
+      analytics.identify(id, allProperties, {
+        context: getContext(),
+      }),
+    )
+    .then(
+      () => publishIdentifyOverlay(Boolean(id), false),
+      () => publishIdentifyOverlay(Boolean(id), true),
+    );
+};
+
 function sendTrack(event: string, properties: object | undefined | null) {
   const analytics = getAnalytics();
   if (!analytics) return;
@@ -527,9 +553,7 @@ export const updateIdentify = async ({ force }: UpdateIdentifyOptions = { force:
     ...extraProperties(storeInstance),
     ...(id ? { userId: id, braze_external_id: id } : {}),
   };
-  analytics.identify(id, allProperties, {
-    context: getContext(),
-  });
+  identifyAndLogOverlay(analytics, id, allProperties);
 };
 /** Ensure PTX flag attributes are set as soon as feature flags load */
 runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), updateIdentify);

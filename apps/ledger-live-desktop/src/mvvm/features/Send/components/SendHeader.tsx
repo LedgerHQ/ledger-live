@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
-import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
+import { useSendFlowData } from "../context/SendFlowContext";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import {
   SEND_FLOW_STEP,
@@ -22,7 +22,6 @@ import type { SendStepConfig } from "../types";
 export function SendHeader() {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state, uiConfig, recipientSearch } = useSendFlowData();
-  const { close } = useSendFlowActions();
   const { displayMode } = useSendAmountDisplayMode();
   const { t } = useTranslation();
   const { currentStep } = wizard;
@@ -45,8 +44,10 @@ export function SendHeader() {
     addressInputValue,
     descriptionText,
     handleBack,
+    handleClose,
     handleRecipientInputClick,
     handleRecipientInputChange,
+    handleRecipientPaste,
     handleQrCodeClick,
     handleScanPicked,
     isScannerOpen,
@@ -104,6 +105,7 @@ export function SendHeader() {
           prefix={t("newSendFlow.to")}
           value={addressInputValue}
           onChange={e => handleRecipientInputChange(e.target.value)}
+          onPaste={handleRecipientPaste}
           onClear={recipientSearch.clear}
           onQrCodeClick={handleQrCodeClick}
           placeholder={recipientPlaceholder}
@@ -162,6 +164,7 @@ export function SendHeader() {
     onMemoValueChange,
     handleRecipientInputClick,
     handleRecipientInputChange,
+    handleRecipientPaste,
     handleQrCodeClick,
     handleScanPicked,
     isScannerOpen,
@@ -175,7 +178,7 @@ export function SendHeader() {
           title={title}
           description={descriptionText || undefined}
           onBack={showBackButton ? handleBack : undefined}
-          onClose={close}
+          onClose={handleClose}
         />
       </div>
       {recipientInputContent}

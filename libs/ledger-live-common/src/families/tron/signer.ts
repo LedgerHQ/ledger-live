@@ -1,5 +1,5 @@
 import tronGetAddress from "./getAddress";
-import type { TronSignature, TronSigner } from "@ledgerhq/coin-tron/types/index";
+import type { TronSignature, TronSigner } from "./types";
 import Trx from "@ledgerhq/hw-app-trx";
 import Transport from "@ledgerhq/hw-transport";
 import type { CoinFrameworkSigner } from "../../bridge/generic-coin-framework/types";

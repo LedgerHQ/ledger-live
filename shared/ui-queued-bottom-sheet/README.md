@@ -15,11 +15,13 @@ src/
   contexts/                   ← public React contexts
   hooks/                      ← public hooks
   internals/                  ← package-private (not re-exported)
+  testing/                    ← test double, exposed as `./testing` (see Testing)
   index.ts                    ← default stub (QueuedBottomSheet throws outside RN)
   index.native.ts             ← RN entry (unsuffixed imports; resolved via moduleSuffixes)
 ```
 
-- `package.json` `exports` expose only `"."` (`react-native` → `index.native.ts`).
+- `package.json` `exports` expose `"."` (`react-native` → `index.native.ts`), `"./testing"` and
+  `"./testing/module-mock"`.
 - RN-only package: `tsconfig.json` is platform-agnostic and `tsconfig.native.json` adds
   `moduleSuffixes: [".native", ""]`. There are no `.web` files or a web tsconfig.
 - Barrels import unsuffixed paths (`./QueuedBottomSheet/QueuedBottomSheet`); `moduleSuffixes`
@@ -69,3 +71,34 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 ```
 
 This package is React Native only. The default (non-`react-native`) export stub throws if `QueuedBottomSheet` is imported outside RN.
+
+## Testing
+
+The real sheet needs the queue and the adapters the app injects at its composition root, so a view
+test can't render it. This package ships the double instead of each consumer hand-rolling one:
+
+| Export                                      | Use                                                                     |
+| ------------------------------------------- | ----------------------------------------------------------------------- |
+| `./testing`                                 | `QueuedBottomSheetMock`, `QUEUED_BOTTOM_SHEET_MOCK_TEST_ID`             |
+| `./testing/module-mock`                     | Drop-in module replacement for a jest `moduleNameMapper`                 |
+
+`features/flow/*` packages get it for free: `@support/jest-features-flow` maps the package to
+`./testing/module-mock` in its native project, so their tests just render the view.
+
+The double renders its children unconditionally — whether content shows while closed is the
+consumer's decision, and the test should be able to assert it. It exposes open state through
+`accessibilityState.expanded` (either `isRequestingToBeOpened` or `isForcingToBeOpened`), fires
+`onOpened` when the sheet becomes open, and wires each close/back callback to a pressable derived
+from the sheet `testID`: `-dismiss` → `onClose`, `-header-close` → `onHeaderClosePressed`,
+`-backdrop` → `onBackdropPress`, `-back` → `onBack`. Sheets that pass no `testID` fall back to
+`QUEUED_BOTTOM_SHEET_MOCK_TEST_ID`.
+
+```tsx
+render(<CardMoreSheet isSheetOpen onClose={onClose} />);
+
+expect(screen.getByTestId("card-more-sheet").props.accessibilityState.expanded).toBe(true);
+fireEvent.press(screen.getByTestId("card-more-sheet-dismiss"));
+```
+
+Only the sheet is replaced. A test that needs `QueuedBottomSheetsProvider`, the adapters or the
+queue hooks — an app-level concern — should `jest.mock` the module itself.

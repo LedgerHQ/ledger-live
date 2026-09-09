@@ -75,6 +75,35 @@ describe("genericPrepareTransaction", () => {
     );
   });
 
+  it("estimates fees and forwards memoType and memoValue fields to transactionToIntent", async () => {
+    const fee = new BigNumber(100_000_000);
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: fee }),
+    });
+
+    const txWithMemo = {
+      amount: new BigNumber(2_500_000_000),
+      fees: new BigNumber(1),
+      recipient: "0xrecipient",
+      family: "family",
+      memoType: "transferId",
+      memoValue: "42",
+    };
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, txWithMemo as any);
+
+    expect((result as any).fees.toString()).toBe(fee.toString());
+    expect(transactionToIntent).toHaveBeenCalledTimes(1);
+    expect(transactionToIntent).toHaveBeenCalledWith(
+      account,
+      expect.objectContaining({ memoType: "transferId", memoValue: "42" }),
+      undefined,
+      expect.any(Function),
+      undefined,
+    );
+  });
+
   it("returns original transaction if fees are the same", async () => {
     const sameFee = baseTransaction.fees;
 

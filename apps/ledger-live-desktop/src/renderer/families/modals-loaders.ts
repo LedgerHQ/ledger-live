@@ -1,6 +1,8 @@
 import React, { use } from "react";
 
 import type { Data as AleoSendData } from "./aleo/modals/send/types";
+import type { Data as AleoBondPublicData } from "./aleo/BondPublicFlowModal/Body";
+import type { Data as AleoManageData } from "./aleo/ManageModal/ManageModal";
 import type { Data as AlgorandOptInData } from "./algorand/OptInFlowModal/Body";
 import type { Data as AlgorandClaimRewardsData } from "./algorand/Rewards/ClaimRewardsFlowModal/Body";
 import type { Props as AlgorandEarnRewardsInfoProps } from "./algorand/Rewards/EarnRewardsInfoModal";
@@ -81,6 +83,8 @@ import type { Data as TezosUnstakeRequiredData } from "./tezos/UnstakeRequiredMo
 
 export type CoinModalsData = {
   MODAL_ALEO_SELF_TRANSFER: AleoSendData;
+  MODAL_ALEO_BOND_PUBLIC: AleoBondPublicData;
+  MODAL_ALEO_MANAGE: AleoManageData;
   MODAL_ALGORAND_OPT_IN: AlgorandOptInData;
   MODAL_ALGORAND_CLAIM_REWARDS: AlgorandClaimRewardsData;
   MODAL_ALGORAND_EARN_REWARDS_INFO: AlgorandEarnRewardsInfoProps;
@@ -170,6 +174,8 @@ type CoinModalImport = () => Promise<{ default: React.ComponentType<any> }>;
 // preloadCoinModals() (the bundler dedupes, so React.lazy then resolves instantly).
 export const coinModalImports: Record<CoinModalKey, CoinModalImport> = {
   MODAL_ALEO_SELF_TRANSFER: () => import("./aleo/SelfTransferModal"),
+  MODAL_ALEO_BOND_PUBLIC: () => import("./aleo/BondPublicFlowModal"),
+  MODAL_ALEO_MANAGE: () => import("./aleo/ManageModal/ManageModal"),
   MODAL_ALGORAND_OPT_IN: () => import("./algorand/OptInFlowModal"),
   MODAL_ALGORAND_CLAIM_REWARDS: () => import("./algorand/Rewards/ClaimRewardsFlowModal"),
   MODAL_ALGORAND_EARN_REWARDS_INFO: () => import("./algorand/Rewards/EarnRewardsInfoModal"),

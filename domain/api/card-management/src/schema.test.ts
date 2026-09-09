@@ -1,10 +1,14 @@
 import {
   PayCardErrorResponseSchema,
+  PayCardFreezeStateResponseSchema,
   PayCardInternalWalletSchema,
   PayCardLinkedWalletSchema,
   PayCardLogoutResponseSchema,
+  PayCardOnboardingStatusResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
+  PayCardDetailsCssSchema,
+  PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
@@ -73,6 +77,17 @@ describe("PayCardOrderResponseSchema", () => {
   });
 });
 
+describe("PayCardFreezeStateResponseSchema", () => {
+  it("reads the documented response, which freeze and unfreeze share", () => {
+    expect(PayCardFreezeStateResponseSchema.parse({ success: true })).toEqual({ success: true });
+    expect(PayCardFreezeStateResponseSchema.parse({ success: false })).toEqual({ success: false });
+  });
+
+  it("rejects a success the provider sent as anything but a boolean", () => {
+    expect(() => PayCardFreezeStateResponseSchema.parse({ success: "yes" })).toThrow();
+  });
+});
+
 describe("PayCardStatusResponseSchema", () => {
   // The provider's own example response.
   const cardStatus = {
@@ -93,6 +108,18 @@ describe("PayCardStatusResponseSchema", () => {
     expect(PayCardStatusResponseSchema.parse(cardStatus).id).toBe("000000000050277836");
   });
 
+  it("reads a card that answered without a holder name or expiry date", () => {
+    const { holderName: _holderName, expiryDate: _expiryDate, ...withoutPreview } = cardStatus;
+
+    expect(PayCardStatusResponseSchema.parse(withoutPreview)).toEqual(withoutPreview);
+  });
+
+  it("still requires the fields a card always answers with", () => {
+    const { panLast4: _panLast4, ...withoutPanLast4 } = cardStatus;
+
+    expect(() => PayCardStatusResponseSchema.parse(withoutPanLast4)).toThrow();
+  });
+
   it("rejects a status the wire contract does not name", () => {
     expect(() =>
       PayCardStatusResponseSchema.parse({ ...cardStatus, status: "SOMETHING_ELSE" }),
@@ -103,6 +130,44 @@ describe("PayCardStatusResponseSchema", () => {
     expect(() =>
       PayCardStatusResponseSchema.parse({ ...cardStatus, type: "SOMETHING_ELSE" }),
     ).toThrow();
+  });
+});
+
+describe("PayCardDetailsTokenResponseSchema", () => {
+  // The provider's example, with an all-zero token: a real-looking one trips secret scanning.
+  const detailsToken = {
+    token: "00000000-0000-4000-8000-000000000000",
+    imageUrl:
+      "https://card.api.live.ledger.com/details-image?token=00000000-0000-4000-8000-000000000000",
+  };
+
+  it("reads the documented token response", () => {
+    expect(PayCardDetailsTokenResponseSchema.parse(detailsToken)).toEqual(detailsToken);
+  });
+
+  it("rejects an empty image url, which would render nothing at all", () => {
+    expect(() =>
+      PayCardDetailsTokenResponseSchema.parse({ ...detailsToken, imageUrl: "" }),
+    ).toThrow();
+  });
+});
+
+describe("PayCardDetailsCssSchema", () => {
+  it("takes the documented colours, and takes none at all", () => {
+    const css = {
+      cardBackgroundColor: "#000000",
+      cardTextColor: "#FFFFFF",
+      panBackgroundColor: "#EFEFEF",
+      panTextColor: "#000000",
+    };
+
+    expect(PayCardDetailsCssSchema.parse(css)).toEqual(css);
+    expect(PayCardDetailsCssSchema.parse({})).toEqual({});
+  });
+
+  it("rejects a colour the provider would answer 422 for", () => {
+    expect(() => PayCardDetailsCssSchema.parse({ cardTextColor: "white" })).toThrow();
+    expect(() => PayCardDetailsCssSchema.parse({ cardTextColor: "#GGGGGG" })).toThrow();
   });
 });
 
@@ -179,6 +244,12 @@ describe("PayCardInternalWalletSchema", () => {
     expect(() => PayCardInternalWalletSchema.parse({ ...wallet, addressMemo: "" })).toThrow();
   });
 
+  it("reads a wallet that answered with no address memo at all", () => {
+    const { addressMemo: _addressMemo, ...withoutMemo } = documentedWallets[0]!;
+
+    expect(PayCardInternalWalletSchema.parse(withoutMemo).addressMemo).toBeUndefined();
+  });
+
   it("rejects a balance sent as a number, which would already have lost precision", () => {
     expect(() => PayCardInternalWalletSchema.parse({ ...wallet, balance: 125.4 })).toThrow();
   });
@@ -225,5 +296,56 @@ describe("PayCardLinkedWalletSchema", () => {
 
   it("rejects a linked wallet with no network, which would not identify the asset", () => {
     expect(() => PayCardLinkedWalletSchema.parse({ ...linked, network: "" })).toThrow();
+  });
+});
+
+describe("PayCardOnboardingStatusResponseSchema", () => {
+  const response = {
+    steps: [
+      {
+        id: "kyc",
+        title: "Verify your identity",
+        description: "Complete KYC verification to activate your card.",
+        isDone: true,
+      },
+      {
+        id: "address",
+        title: "Add shipping address",
+        description: "Tell us where to send your physical card.",
+        isDone: false,
+      },
+    ],
+  };
+
+  it("reads a status made of onboarding steps", () => {
+    expect(PayCardOnboardingStatusResponseSchema.parse(response)).toEqual(response);
+  });
+
+  it("accepts a status with no remaining steps as an empty list", () => {
+    expect(PayCardOnboardingStatusResponseSchema.parse({ steps: [] })).toEqual({ steps: [] });
+  });
+
+  it("drops the keys the wire contract does not declare on a step", () => {
+    const parsed = PayCardOnboardingStatusResponseSchema.parse({
+      steps: [{ ...response.steps[0], cta: "https://ledger.com" }],
+    });
+
+    expect(parsed.steps[0]).not.toHaveProperty("cta");
+  });
+
+  it("rejects a step whose done flag is not a boolean", () => {
+    expect(() =>
+      PayCardOnboardingStatusResponseSchema.parse({
+        steps: [{ ...response.steps[0], isDone: "yes" }],
+      }),
+    ).toThrow();
+  });
+
+  it("rejects a step with an empty title", () => {
+    expect(() =>
+      PayCardOnboardingStatusResponseSchema.parse({
+        steps: [{ ...response.steps[0], title: "" }],
+      }),
+    ).toThrow();
   });
 });

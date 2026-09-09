@@ -26,15 +26,20 @@ const teamWalletXp = {
     parser: stringParser,
     desc: "CoinMarketCap API",
   },
-  CARD_API_URL: {
+  CARD_BAANX_API_URL: {
     def: "https://card.api.live.ledger.com",
     parser: stringParser,
-    desc: "Ledger Card backend API (management use cases; auth migrates onto it under LIVE-33829)",
+    desc: "Baanx Ledger Card backend API (management use cases; auth migrates onto it under LIVE-33829)",
   },
   CARD_BAANX_CLIENT_KEY: {
     def: "",
     parser: stringParser,
     desc: "Baanx public client key sent as x-client-key on every Card API request (tenant routing)",
+  },
+  CARD_BAANX_HOSTED_UI: {
+    def: "https://ledger-ew1uat.baanxapi.com",
+    parser: stringParser,
+    desc: "Baanx hosted UI base URL; the intro opens its signup page in the secure browser",
   },
   CARD_OAUTH_REDIRECT_URI: {
     def: "https://go.ledger.com/ledger/card-baanx",
@@ -55,11 +60,6 @@ const teamWalletXp = {
     def: 50,
     parser: intParser,
     desc: "maximum size of account names",
-  },
-  BIG_NUMBER_DECIMAL_PLACES: {
-    def: 40,
-    parser: intParser,
-    desc: "bignumber.js decimal places configuration",
   },
   CRYPTO_ASSET_SEARCH_KEYS: {
     def: ["ticker", "name", "keywords"],

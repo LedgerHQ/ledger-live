@@ -1,10 +1,20 @@
 # @devtools/pay-card
 
-The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place:
-**Feature flags**, **Onboarding** (toggle each step done or not-done), **Reset onboarding**,
-**Feature tour** (seen state plus a reset), **Request verify hint** (seen state plus a reset),
-**Env vars** (the Card backend values, with the development tenant ready in each input), and
-optional **Quick actions** (Portfolio / Pay) when the host passes navigation callbacks.
+The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place.
+
+The shared panel has four sections: **Feature flags**, **Onboarding** (toggle each step done or
+not-done), **Reset onboarding** and **Feature tour** (seen state plus a reset).
+
+The native panel adds **Request verify hint** (seen state plus a reset) and, when the host supplies
+navigation, **Quick actions** (Portfolio / Pay tab). It also adds a **Secure browser** section: a
+URL field and one button, which opens that URL in the secure browser the hosted login uses. The
+host supplies the action, so a host without such a browser shows no section.
+
+When the host builds the `auth` prop, the native panel adds four more sections at the top:
+**Auth session** (the stored tokens, or why the secure store refused a read), **Device secure
+storage** (read the tokens, damage one, or clear the session), **Send API requests** (renew the
+session, or get the user) and **MSW Auth Renewal Mock** (what the mocked
+token endpoint answers, plus a count of the renewals). A toast reports what each action answered.
 
 ## Import boundary
 
@@ -18,8 +28,7 @@ import PayCard, { type PayCardToolProps } from "@devtools/pay-card";
 
 - `PayCard` (default export) — the React component rendered by the shell.
 - `PayCardToolProps` — the props contract the host (via bindings) must satisfy, with its parts
-  `PayCardFlagsProps`, `PayCardOnboardingProps`, `OnboardingStep`, `PayCardEnvProps` and
-  `PayCardEnvVar`.
+  `PayCardFlagsProps`, `PayCardOnboardingProps` and `OnboardingStep`.
 - `usePayCardViewModel` / `PayCardViewModel` — onboarding progress derived from those props, plus
   `toggleStep` and `setAllSteps`.
 - `formatId` — turns a step id into a label: `"kyc-check"` → `"Kyc check"`.
@@ -51,18 +60,13 @@ interface PayCardToolProps {
   resetReceiveVerifyHintSeen: () => void;
   onNavigateToPortfolio?: () => void;
   onNavigateToPayTab?: () => void;
-  env: {
-    // The app reads these values on every request, so `setVar` applies without a restart. Nothing
-    // saves them: after a restart the app reads the build's values again.
-    vars: readonly {
-      key: string;
-      // The value the app reads right now.
-      value: string;
-      // What the input starts with, so one press is enough to change the tenant.
-      suggestedValue: string;
-    }[];
-    setVar: (key: string, value: string) => void;
-  };
+  // Native only, and optional: absent on a host that does not build the Card session controls,
+  // which hides the four auth sections. `PayCardAuthProps` in `src/types.ts` gives the full shape:
+  // the session, the action handlers and the mock controls.
+  auth?: PayCardAuthProps;
+  // Native only, and optional: absent on a host with no secure browser, which hides the section.
+  // Answers one line about what came back, and the panel prints it under the button.
+  openSecureBrowser?: (url: string) => Promise<string>;
 }
 ```
 

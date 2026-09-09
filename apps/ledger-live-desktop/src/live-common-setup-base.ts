@@ -1,5 +1,5 @@
 import os from "os";
-import { setEnv, getEnv } from "@shared/env";
+import { setEnv } from "@shared/env";
 import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import {
@@ -39,4 +39,6 @@ liveBlindSigningReporter.setContext({
   platformVersion: os.release(),
 });
 
-BigNumber.set({ DECIMAL_PLACES: getEnv("BIG_NUMBER_DECIMAL_PLACES") });
+const BIG_NUMBER_DECIMAL_PLACES = 40;
+
+BigNumber.set({ DECIMAL_PLACES: BIG_NUMBER_DECIMAL_PLACES });

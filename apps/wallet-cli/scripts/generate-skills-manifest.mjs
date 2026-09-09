@@ -5,6 +5,14 @@
 // Content is inlined as string literals (not `with { type: "file" }`) so it
 // behaves identically in `bun run` (dev/tests) and in the standalone binary.
 //
+// Skill files are rewritten for standalone use before embedding — the source in
+// .agents/skills/ is authored for monorepo contributors (it is named after its
+// directory and says `pnpm --silent wallet-cli start ...`), but this manifest
+// ships inside a globally-installed binary invoked as plain `wallet-cli ...`.
+// The transform lives in scripts/standalone-skill-transform.mjs, shared with
+// scripts/export-standalone-skill.mjs so the embedded copy and the copy
+// published to LedgerHQ/agent-skills cannot drift apart.
+//
 // The generated file (src/skills/manifest.gen.ts) is NOT committed — it is
 // gitignored (same convention as .bunli/commands.gen.ts) and regenerated before
 // typecheck / test / build via the pre* npm scripts.
@@ -14,9 +22,11 @@
 //   node ./scripts/generate-skills-manifest.mjs --check   # validate generation succeeds (no write)
 
 import { createHash } from "node:crypto";
-import { lstat, readFile, readdir, realpath, writeFile } from "node:fs/promises";
+import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { collectSkillFiles } from "./collect-skill-files.mjs";
+import { parseFrontmatterField, rewriteSkillFile } from "./standalone-skill-transform.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -28,47 +38,35 @@ const root = path.resolve(__dirname, "..");
 const skillsSourceDir = path.resolve(root, "../../.agents/skills");
 const outFile = path.resolve(root, "src/skills/manifest.gen.ts");
 
-// Symlink-resolved skills root, used as the boundary for the guard in collectFiles.
-// (Resolved so a symlinked parent — e.g. a git worktree path — compares correctly.)
-const skillsSourceDirReal = await realpath(skillsSourceDir).catch(() => skillsSourceDir);
-
 const CHECK = process.argv.includes("--check");
 
-// Only these skills ship inside the published wallet-cli binary. The source
-// directories hold ~40 internal repo dev/process skills (CI, e2e, MVVM, release
-// tooling…) that must not leak into a public npm package. The collection
-// machinery below is fully generic, so shipping another skill is a one-line
-// addition here.
-const SHIPPED_SKILLS = new Set(["ledger-wallet-cli"]);
+// Only these skill *source directories* ship inside the published wallet-cli
+// binary. The source tree holds ~40 internal repo dev/process skills (CI, e2e,
+// MVVM, release tooling…) that must not leak into a public npm package. The
+// collection machinery below is fully generic, so shipping another skill is a
+// one-line addition here.
+//
+// These are directory names under .agents/skills/, NOT the names the manifest
+// exposes: the standalone transform renames the skill (ledger-wallet-cli ->
+// wallet-cli-usage), and the manifest name is read back from the rewritten
+// frontmatter so frontmatter, manifest identity, install directory and sidecar
+// can never disagree.
+const SHIPPED_SKILL_DIRS = new Set(["ledger-wallet-cli"]);
 
 /**
- * Recursively collect files (relative paths) under `dir`. Uses `lstat` so symlinks
- * are not transparently followed: symlinked files (e.g. `references/safety.md` →
- * shared copy) are included as leaves after checking they resolve inside the skills
- * tree, and symlinked directories are never descended into — so a stray symlink can't
- * pull arbitrary files into the published binary.
+ * Collect a skill's files. The shared walker refuses any symlink resolving outside
+ * the skills tree, so a stray symlink can't pull arbitrary repo content into the
+ * published binary. The boundary is the whole skills tree (not one skill dir)
+ * because skills are allowed to symlink shared references to each other.
+ *
+ * @param {string} skillDir
+ * @returns {Promise<string[]>}
  */
-async function collectFiles(dir, base = dir) {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const files = [];
-  for (const entry of entries) {
-    const abs = path.join(dir, entry.name);
-    const info = await lstat(abs);
-    if (info.isSymbolicLink()) {
-      const real = await realpath(abs);
-      if (real !== skillsSourceDirReal && !real.startsWith(skillsSourceDirReal + path.sep)) {
-        throw new Error(
-          `Refusing to embed "${path.relative(root, abs)}": symlink resolves outside the skills tree (${real}).`,
-        );
-      }
-      files.push(path.relative(base, abs));
-    } else if (info.isDirectory()) {
-      files.push(...(await collectFiles(abs, base)));
-    } else if (info.isFile()) {
-      files.push(path.relative(base, abs));
-    }
-  }
-  return files;
+async function collectFiles(skillDir) {
+  return collectSkillFiles(skillDir, {
+    boundary: skillsSourceDir,
+    label: path.relative(root, skillDir),
+  });
 }
 
 /**
@@ -99,16 +97,6 @@ function hashSkillFiles(files) {
   return combined.digest("hex");
 }
 
-/** Extract the `description:` field from a SKILL.md YAML frontmatter block. */
-function parseDescription(skillMd) {
-  // Tolerate CRLF checkouts (Windows core.autocrlf) so the frontmatter regex matches.
-  const frontmatter = skillMd.replace(/\r\n/g, "\n").match(/^---\n([\s\S]*?)\n---/);
-  if (!frontmatter) return "";
-  const line = frontmatter[1].match(/^description:\s*(.*)$/m);
-  if (!line) return "";
-  return line[1].trim().replace(/^["']|["']$/g, "");
-}
-
 /** Order files with SKILL.md first, then the rest alphabetically (posix). */
 function orderFiles(files) {
   return [...files].sort((a, b) => {
@@ -131,30 +119,31 @@ async function buildManifest() {
     // Use the Dirent's isDirectory() (does NOT follow symlinks) so a symlinked
     // entry can't be treated as a real skill dir and bypass collectFiles' guard.
     if (!entry.isDirectory()) continue;
-    if (!SHIPPED_SKILLS.has(entry.name)) continue;
+    if (!SHIPPED_SKILL_DIRS.has(entry.name)) continue;
 
     const skillDir = path.join(skillsSourceDir, entry.name);
-    const skillMdPath = path.join(skillDir, "SKILL.md");
-    let skillMd;
-    try {
-      skillMd = await readSkillFile(skillMdPath);
-    } catch {
-      // Not a skill directory (no SKILL.md) — skip so this scales to N skills.
-      continue;
-    }
-
     const relFiles = orderFiles(await collectFiles(skillDir));
+    // Not a skill directory (no SKILL.md) — skip so this scales to N skills. The
+    // `missing` check at the bottom of this file still fails the build, so a
+    // renamed or gutted shipped skill can't silently vanish from the binary.
+    if (!relFiles.includes("SKILL.md")) continue;
+
     const files = [];
     for (const rel of relFiles) {
-      // Normalize to posix so the generated manifest is stable across OSes.
-      const posixRel = rel.split(path.sep).join("/");
+      // `rel` is already posix-separated, so the generated manifest is stable across OSes.
       const content = await readSkillFile(path.join(skillDir, rel));
-      files.push({ path: posixRel, content });
+      files.push({ path: rel, content: rewriteSkillFile(rel, content) });
     }
 
+    // Identity and description come from the REWRITTEN SKILL.md, not the source:
+    // the embedded artifact is the renamed standalone skill, so its manifest name
+    // must be what its own frontmatter says (and what install/sidecar/doctor use).
+    const rewrittenSkillMd = files.find(file => file.path === "SKILL.md").content;
+
     skills.push({
-      name: entry.name,
-      description: parseDescription(skillMd),
+      sourceDir: entry.name,
+      name: parseFrontmatterField(rewrittenSkillMd, "name"),
+      description: parseFrontmatterField(rewrittenSkillMd, "description"),
       contentHash: hashSkillFiles(files),
       files,
     });
@@ -229,8 +218,10 @@ const total = skills.reduce((n, s) => n + s.files.length, 0);
 // Every shipped skill must be found in the sources with a SKILL.md. Enforce this
 // in BOTH modes: otherwise a renamed/missing skill would silently produce a
 // binary with skills missing, and only an explicit `--check` run would catch it.
-const found = new Set(skills.map(s => s.name));
-const missing = [...SHIPPED_SKILLS].filter(name => !found.has(name));
+// Compared on the source directory name, since the manifest name is the renamed
+// standalone one.
+const found = new Set(skills.map(s => s.sourceDir));
+const missing = [...SHIPPED_SKILL_DIRS].filter(name => !found.has(name));
 if (missing.length > 0) {
   console.error(
     `Skill generation failed — shipped skill(s) not found in sources: ${missing.join(", ")}.`,

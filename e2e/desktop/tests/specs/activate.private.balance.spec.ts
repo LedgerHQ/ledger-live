@@ -28,8 +28,9 @@ for (const account of accounts) {
         await app.privateBalance.confirmUfvkExportedFromDevice();
         await app.privateBalance.close();
 
-        // TODO: extend to shielded-address receive coverage once the device-reconnect
-        // stall on reopening the Receive modal right after this one is fixed.
+        // TODO(LIVE-37178): extend to shielded-address receive coverage once the
+        // device-reconnect stall on reopening the Receive modal right after this
+        // one is fixed.
       },
     );
   });

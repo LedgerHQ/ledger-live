@@ -1,4 +1,4 @@
-import { EnvName, setEnv, setEnvUnsafe, getEnv } from "@shared/env";
+import { EnvName, setEnv, setEnvUnsafe } from "@shared/env";
 import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { listen } from "@ledgerhq/logs";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
@@ -65,4 +65,6 @@ const value = "cli/0.0.0";
 setEnv("LEDGER_CLIENT_VERSION", value);
 bridgeEnvToNetworkState();
 
-BigNumber.set({ DECIMAL_PLACES: getEnv("BIG_NUMBER_DECIMAL_PLACES") });
+const BIG_NUMBER_DECIMAL_PLACES = 40;
+
+BigNumber.set({ DECIMAL_PLACES: BIG_NUMBER_DECIMAL_PLACES });

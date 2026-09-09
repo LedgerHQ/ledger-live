@@ -2,7 +2,7 @@ import React from "react";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { Contact } from "@domain/entity-contact";
+import type { Contact, ContactAddress } from "@domain/entity-contact";
 import {
   ContactsFeatureIntroductionDialog,
   type ContactsFeatureIntroduction,
@@ -29,7 +29,7 @@ type RecipientAddressModalViewProps = Readonly<{
   selectedContact: Contact | undefined;
   network: CryptoCurrency;
   handleContactSelect: (contact: Contact) => void;
-  handleContactAddressSelect: (address: string) => void;
+  handleContactAddressSelect: (address: ContactAddress, addressRank: number) => void;
   showMatchedAddress: boolean;
   showAddressValidationError: boolean;
   showEmptyState: boolean;

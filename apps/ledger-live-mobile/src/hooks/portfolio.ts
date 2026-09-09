@@ -4,8 +4,8 @@ import type { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import {
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueCommon,
   usePortfolioThrottled,
-} from "@ledgerhq/live-countervalues-react/portfolio";
-import { GetPortfolioOptionsType } from "@ledgerhq/live-countervalues/portfolio";
+} from "@ledgerhq/live-common/portfolio/portfolioReact";
+import { GetPortfolioOptionsType } from "@ledgerhq/live-common/portfolio/portfolio";
 import { filterAccountsExcludingBlacklisted } from "@ledgerhq/live-common/account/filterAccountsExcludingBlacklisted";
 import {
   blacklistedTokenIdsSelector,

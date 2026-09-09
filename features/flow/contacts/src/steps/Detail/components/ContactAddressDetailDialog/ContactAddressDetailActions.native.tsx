@@ -46,6 +46,7 @@ export function ContactAddressDetailActions({
           onPress={onSend}
           isFull
           lx={{ flex: 1 }}
+          numberOfLines={1}
         >
           {labels.send}
         </TileButton>
@@ -56,6 +57,7 @@ export function ContactAddressDetailActions({
           isFull
           lx={{ flex: 1 }}
           testID="contacts-address-detail-edit"
+          numberOfLines={1}
         >
           {labels.edit}
         </TileButton>
@@ -66,6 +68,7 @@ export function ContactAddressDetailActions({
           isFull
           lx={{ flex: 1 }}
           testID="contacts-address-detail-share"
+          numberOfLines={1}
         >
           {labels.share}
         </TileButton>
@@ -77,6 +80,7 @@ export function ContactAddressDetailActions({
           isFull
           lx={{ flex: 1 }}
           testID="contacts-address-detail-delete"
+          numberOfLines={1}
         >
           {labels.delete}
         </TileButton>

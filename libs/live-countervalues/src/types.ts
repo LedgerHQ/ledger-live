@@ -59,7 +59,6 @@ export type CounterValuesAPI = {
     pairs: TrackingPair[],
     batchStrategySolver?: BatchStrategySolver,
   ) => Promise<Array<number | null | undefined>>;
-  fetchIdsSortedByMarketcap: () => Promise<string[]>;
 };
 export type CounterValuesStatus = Record<
   string,

@@ -12,7 +12,7 @@ concurrency:
   # overlapping — they would otherwise race on the same on-chain accounts across machines, which no
   # per-run mechanism can prevent. Non-broadcast runs keep the original per-ref/tests_type group.
   group: >-
-    ${{ (inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' || github.event.schedule == '0 0 * * 5') && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, inputs.test_filter && 'filtered' || 'all') }}
+    ${{ (inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' || github.event.schedule == '0 0 * * 5') && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, (inputs.test_filter || (inputs.team && inputs.team != 'all')) && 'filtered' || 'all') }}
   cancel-in-progress: false
 
 on:
@@ -33,6 +33,12 @@ on:
         description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
+      team:
+        description: "Run only one team's tests. ANDed with test_filter, Smoke and the device."
+        required: false
+        type: choice
+        options: [all, bst, buy-and-sell, coin-integration, earn, engagement, swap, wallet-xp]
+        default: all
       tests_type:
         description: "Which tests to run"
         required: true
@@ -69,19 +75,6 @@ on:
         required: false
         type: boolean
         default: false
-      export_to_xray:
-        description: "Send results to Xray"
-        required: false
-        type: boolean
-        default: false
-      test_execution_android:
-        description: "Xray execution key for Android (optional)"
-        required: false
-        type: string
-      test_execution_ios:
-        description: "Xray execution key for iOS (optional)"
-        required: false
-        type: string
       smoke_tests:
         description: "Run smoke tests"
         required: false
@@ -121,6 +114,11 @@ on:
         description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
+      team:
+        description: "Team slug whose specs to run. One of: all, bst, buy-and-sell, coin-integration, earn, engagement, swap, wallet-xp."
+        required: false
+        type: string
+        default: all
       tests_type:
         description: "Which tests to run"
         required: false
@@ -185,6 +183,14 @@ on:
         required: false
       AWS_CACHE_ROLE_NAME:
         required: false
+      CARD_BAANX_API_URL:
+        required: false
+      CARD_BAANX_CLIENT_KEY:
+        required: false
+      CARD_BAANX_HOSTED_UI:
+        required: false
+      CARD_OAUTH_REDIRECT_URI:
+        required: false
       GH_BOT_CLIENT_ID:
         required: false
       GH_BOT_PRIVATE_KEY:
@@ -204,10 +210,6 @@ on:
       SEED_QAA_B2C:
         required: false
       SLACK_BOT_USER_OAUTH_ACCESS_TOKEN:
-        required: false
-      XRAY_CLIENT_ID:
-        required: false
-      XRAY_CLIENT_SECRET:
         required: false
 
 permissions:
@@ -354,8 +356,6 @@ jobs:
           ANDROID_DEVICE: ${{ steps.devices.outputs.android_device }}
           BUILD_TYPE: ${{ inputs.production_firebase && 'production' || 'testing' }}
           SMOKE_TESTS: ${{ inputs.smoke_tests }}
-          TEST_EXECUTION_ANDROID: ${{ inputs.test_execution_android || '(not provided)' }}
-          TEST_EXECUTION_IOS: ${{ inputs.test_execution_ios || '(not provided)' }}
           WORKFLOW_REF: ${{ github.ref_name }}
           TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
           COMMIT_SHA: ${{ github.sha }}
@@ -381,8 +381,6 @@ jobs:
           echo "- **Android device:** $ANDROID_DEVICE"
           echo "$FILTER_SUMMARY"
           echo "- **Smoke tests:** $SMOKE_TESTS"
-          echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
-          echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled (iOS):** $IOS_BROADCAST_ENABLED"
           echo "- **Broadcast enabled (Android):** $ANDROID_BROADCAST_ENABLED"
@@ -435,32 +433,36 @@ jobs:
       - name: Prepare test filter
         id: test-filter
         run: |
-          RESOLVED_FILTER="$(node e2e/tooling/filter/resolve.mjs \
+          node e2e/tooling/filter/resolve.mjs \
             --input "$TEST_FILTER_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
+            --team "$TEAM_INPUT" \
             --check-dir "e2e/mobile/specs" \
-            --runner detox)"
-          echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
+            --runner detox \
+            --github-output >> "$GITHUB_OUTPUT"
         shell: bash
         env:
           TEST_FILTER_INPUT: ${{ inputs.test_filter }}
           SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
+          TEAM_INPUT: ${{ inputs.team || 'all' }}
 
       - name: Write resolved filter to GitHub Summary
         run: |
-          FILTER_PATTERN="${{ steps.test-filter.outputs.filter }}"
-          if [ -z "$FILTER_PATTERN" ]; then
-            FILTER_PATTERN="(none)"
-          fi
-          echo "- **Resolved filtered pattern:** $FILTER_PATTERN" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "- **Team:** ${TEAM_INPUT}"
+            node e2e/tooling/filter/format-summary.mjs "${FILTER_PATTERN:-}" "- **Resolved filtered pattern:**"
+          } >> "$GITHUB_STEP_SUMMARY"
         shell: bash
+        env:
+          FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
+          TEAM_INPUT: ${{ inputs.team || 'all' }}
 
       - name: Generate shards matrix and test files
         id: generate-shards
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
         with:
           test_directory: e2e/mobile
-          test_filter: ${{ steps.test-filter.outputs.filter }}
+          test_filter: ${{ steps.test-filter.outputs.runner_filter }}
           event_name: ${{ github.event_name }}
           ref: ${{ inputs.ref || github.ref_name }}
           ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
@@ -562,6 +564,10 @@ jobs:
       AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      CARD_BAANX_API_URL: ${{ secrets.CARD_BAANX_API_URL }}
+      CARD_BAANX_CLIENT_KEY: ${{ secrets.CARD_BAANX_CLIENT_KEY }}
+      CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
+      CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
       NX_KEY: ${{ secrets.NX_KEY }}
       S3_DIRECTCONNECT_ENDPOINT: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
 
@@ -587,6 +593,10 @@ jobs:
       AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      CARD_BAANX_API_URL: ${{ secrets.CARD_BAANX_API_URL }}
+      CARD_BAANX_CLIENT_KEY: ${{ secrets.CARD_BAANX_CLIENT_KEY }}
+      CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
+      CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
       NX_KEY: ${{ secrets.NX_KEY }}
 
   setup-android-avd:
@@ -1429,74 +1439,6 @@ jobs:
           branch: ${{ inputs.ref || github.ref_name }}
           report_attachments: report-attachments
 
-  upload-to-xray:
-    name: "Test Mobile E2E > XRAY Report"
-    runs-on: [ledger-live-medium]
-    strategy:
-      matrix:
-        platform:
-          - android
-          - ios
-        exclude:
-          - platform: ${{ github.event.inputs.tests_type == 'Android Only' && 'ios' }}
-
-      fail-fast: false
-    env:
-      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
-      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
-      XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
-      JIRA_URL: https://ledgerhq.atlassian.net/browse
-      TEST_EXECUTION: ${{ matrix.platform == 'android' && inputs.test_execution_android || inputs.test_execution_ios }}
-    needs: [detox-tests-android, detox-tests-ios]
-    if: ${{ !cancelled() && inputs.export_to_xray }}
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-
-      - name: Download Allure Results
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          path: "artifacts-${{ matrix.platform }}"
-          pattern: ${{ matrix.platform }}-test-artifacts-*
-          merge-multiple: true
-
-      - name: Format Xray results
-        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ env.TEST_EXECUTION}}
-
-      - name: Upload aggregated xray results
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          retention-days: 1
-          name: xray-reports-${{ matrix.platform }}
-          path: "artifacts-${{ matrix.platform }}/xray_report.json"
-
-      - name: Authenticate to Xray
-        id: authenticate
-        run: |
-          response=$(curl -H "Content-Type: application/json" -X POST \
-                    --data '{"client_id": "${{ env.XRAY_CLIENT_ID }}", "client_secret": "${{ env.XRAY_CLIENT_SECRET }}"}' \
-                    ${{ env.XRAY_API_URL }}/authenticate)
-          echo "Xray Authentication Response: $response"
-          echo "xray_token=$response" >> $GITHUB_OUTPUT
-      - name: Publish report on Xray
-        id: publish-xray
-        run: |
-          response=$(curl -H "Content-Type: application/json" \
-                    -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
-                    -X POST \
-                    --data @artifacts-${{ matrix.platform }}/xray_report.json \
-                    ${{ env.XRAY_API_URL }}/import/execution)
-          echo "Xray Report Response: $response"
-          key=$(echo $response | jq -r '.key')
-          echo "xray_key=$key" >> $GITHUB_OUTPUT
-      - name: Write Xray report link in summary
-        shell: bash
-        env:
-          XRAY_URL: ${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}
-        run: echo "[Open report](${XRAY_URL})" >> "$GITHUB_STEP_SUMMARY"
-
   report-on-slack:
     name: "Test Mobile E2E > Slack Report"
     runs-on: ubuntu-22.04
@@ -1505,7 +1447,12 @@ jobs:
     env:
       REF: ${{ inputs.ref || github.ref_name }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      HEADER_DEVICES: "iOS:${{ needs.determine-builds.outputs.ios_device }} / Android:${{ needs.determine-builds.outputs.android_device }}"
+      HEADER_DEVICES: >-
+        ${{ inputs.tests_type == 'Android Only'
+          && format('Android:{0}', needs.determine-builds.outputs.android_device)
+          || (inputs.tests_type == 'iOS Only'
+            && format('iOS:{0}', needs.determine-builds.outputs.ios_device)
+            || format('iOS:{0} / Android:{1}', needs.determine-builds.outputs.ios_device, needs.determine-builds.outputs.android_device)) }}
       # A platform's label is blanked out when tests_type excludes it; the e2e-slack-report
       # composite then drops that row entirely (and its status stops driving the color).
       IOS_LABEL: ${{ inputs.tests_type != 'Android Only' && 'iOS' || '' }}

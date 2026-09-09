@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { renderHook } from "@testing-library/react-native";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { useMaybeAccountName } from "~/reducers/wallet";
 
@@ -11,12 +11,13 @@ import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amoun
 import { useAvailableBalance } from "../useAvailableBalance";
 import { useCurrentSendFlowStep } from "../useCurrentSendFlowStep";
 import { useSendHeaderViewModel } from "../useSendHeaderViewModel";
-import { useSelector } from "~/context/hooks";
-import { useContactsFeature } from "@features/platform-contacts";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
+import { useSendFlowTracking } from "../../context/SendFlowTrackingContext";
+import { track } from "~/analytics";
 
 jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
   useNavigation: jest.fn(),
 }));
 jest.mock("~/context/Locale", () => ({
@@ -25,15 +26,23 @@ jest.mock("~/context/Locale", () => ({
       key === "send.newSendFlow.title" ? `Send ${params?.currency}` : key,
   }),
 }));
-jest.mock("~/reducers/wallet");
+jest.mock("~/reducers/wallet", () => {
+  const actual = jest.requireActual<typeof import("~/reducers/wallet")>("~/reducers/wallet");
+  return {
+    __esModule: true,
+    ...actual,
+    useMaybeAccountName: jest.fn(),
+  };
+});
 jest.mock("../../context/SendFlowContext");
 jest.mock("../../context/RecipientContactSelectionContext");
+jest.mock("../../context/SendFlowTrackingContext");
 jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext");
 jest.mock("../useAvailableBalance");
 jest.mock("../useCurrentSendFlowStep");
-jest.mock("~/context/hooks");
-jest.mock("@features/platform-contacts", () => ({
-  useContactsFeature: jest.fn(() => ({ isEnabled: false, eligibleAddressFamilies: ["evm"] })),
+jest.mock("~/analytics", () => ({
+  track: jest.fn(),
+  screen: jest.fn(),
 }));
 const mockedUseNavigation = jest.mocked(useNavigation);
 const mockedUseMaybeAccountName = jest.mocked(useMaybeAccountName);
@@ -43,6 +52,9 @@ const mockedUseSendAmountDisplayMode = jest.mocked(useSendAmountDisplayMode);
 const mockedUseAvailableBalance = jest.mocked(useAvailableBalance);
 const mockedUseCurrentSendFlowStep = jest.mocked(useCurrentSendFlowStep);
 const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelection);
+const mockedUseSendFlowTracking = jest.mocked(useSendFlowTracking);
+const mockedTrack = jest.mocked(track);
+const setInputMethod = jest.fn();
 
 const mockAccount = {
   type: "Account",
@@ -67,9 +79,14 @@ describe("useSendHeaderViewModel", () => {
   const mockNavigate = jest.fn();
   const mockGoBack = jest.fn();
   const mockCanGoBack = jest.fn(() => false);
+  const mockGetState = jest.fn((): { routes: { name: string }[]; index: number } => ({
+    routes: [{ name: ScreenName.SendFlowAmount }],
+    index: 0,
+  }));
   const mockAddListener = jest.fn(() => jest.fn());
   const mockClearRecipientSearch = jest.fn();
   const mockSetRecipientSearchValue = jest.fn();
+  const mockClose = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -77,6 +94,7 @@ describe("useSendHeaderViewModel", () => {
     mockedUseNavigation.mockReturnValue({
       canGoBack: mockCanGoBack,
       goBack: mockGoBack,
+      getState: mockGetState,
       navigate: mockNavigate,
       addListener: mockAddListener,
     } as never);
@@ -100,6 +118,17 @@ describe("useSendHeaderViewModel", () => {
       selectedContact: undefined,
       selectContact: jest.fn(),
       clearSelectedContact: jest.fn(),
+    });
+    mockRecipientSearch.value = "";
+    mockedUseSendFlowTracking.mockReturnValue({
+      inputMethod: "manual",
+      resultType: null,
+      recipientType: "external address",
+      savedContactDuringFlow: false,
+      setInputMethod,
+      setRecipientResolution: jest.fn(),
+      resetRecipientResolution: jest.fn(),
+      markContactSaved: jest.fn(),
     });
     mockedUseSendFlowData.mockReturnValue({
       uiConfig: {
@@ -129,7 +158,7 @@ describe("useSendHeaderViewModel", () => {
       },
     } as never);
     mockedUseSendFlowActions.mockReturnValue({
-      close: jest.fn(),
+      close: mockClose,
       transaction: {
         updateTransaction: jest.fn(),
       },
@@ -165,6 +194,10 @@ describe("useSendHeaderViewModel", () => {
 
     result.current.handleBackPress();
 
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "back", page: "select contact address" }),
+    );
     expect(clearSelectedContact).toHaveBeenCalledTimes(1);
     expect(mockGoBack).not.toHaveBeenCalled();
   });
@@ -207,6 +240,10 @@ describe("useSendHeaderViewModel", () => {
 
     result.current.handleQrCodeClick();
 
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "scan qr code", page: "step recipient" }),
+    );
     expect(mockClearRecipientSearch).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith(
       ScreenName.ScanRecipient,
@@ -223,7 +260,44 @@ describe("useSendHeaderViewModel", () => {
     };
     onScannedURI({ address: "0xscanned" });
 
+    expect(setInputMethod).toHaveBeenCalledWith("qr_code");
     expect(mockSetRecipientSearchValue).toHaveBeenCalledWith("0xscanned");
+  });
+
+  it("tracks close with the current send page and recipient type", () => {
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    result.current.handleClose();
+
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "close",
+        page: "step recipient",
+        recipientType: "external address",
+      }),
+    );
+    expect(mockClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("treats a multi-character recipient change as a paste", () => {
+    mockRecipientSearch.value = "";
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    result.current.handleRecipientInputChange("0xabcdef");
+
+    expect(setInputMethod).toHaveBeenCalledWith("paste");
+    expect(mockRecipientSearch.setValue).toHaveBeenCalledWith("0xabcdef");
+  });
+
+  it("treats a single-character recipient change as manual typing", () => {
+    mockRecipientSearch.value = "";
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    result.current.handleRecipientInputChange("0");
+
+    expect(setInputMethod).toHaveBeenCalledWith("manual");
+    expect(mockRecipientSearch.setValue).toHaveBeenCalledWith("0");
   });
 
   it("prefills the transaction amount from a scanned EIP681 URI while staying on recipient", () => {
@@ -294,18 +368,7 @@ describe("useSendHeaderViewModel", () => {
   });
 
   describe("recipient input placeholder", () => {
-    const mockRecipientStep = ({
-      supportsDomain,
-      isContactsFeatureEnabled,
-      eligibleAddressFamilies = ["evm"],
-    }: {
-      supportsDomain: boolean;
-      isContactsFeatureEnabled: boolean;
-      eligibleAddressFamilies?: string[];
-    }) => {
-      jest
-        .mocked(useContactsFeature)
-        .mockReturnValue({ isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } as never);
+    const mockRecipientStep = ({ supportsDomain }: { supportsDomain: boolean }) => {
       mockedUseSendFlowData.mockReturnValue({
         uiConfig: { recipientSupportsDomain: supportsDomain },
         recipientSearch: mockRecipientSearch,
@@ -321,24 +384,30 @@ describe("useSendHeaderViewModel", () => {
       } as never);
     };
 
-    it("mentions contacts and ENS when the network supports both", () => {
-      mockRecipientStep({
-        supportsDomain: true,
-        isContactsFeatureEnabled: true,
+    const withContactsFlag = (enabled: boolean, eligibleAddressFamilies: string[] = ["evm"]) =>
+      withFlagOverrides({
+        lwmContacts: {
+          enabled,
+          params: { newBadge: false, eligibleAddressFamilies },
+        },
       });
 
-      const { result } = renderHook(() => useSendHeaderViewModel());
+    it("mentions contacts and ENS when the network supports both", () => {
+      mockRecipientStep({ supportsDomain: true });
+
+      const { result } = renderHook(() => useSendHeaderViewModel(), {
+        overrideInitialState: withContactsFlag(true),
+      });
 
       expect(result.current.recipientPlaceholder).toBe("send.newSendFlow.placeholderWithContacts");
     });
 
     it("mentions contacts only when the network has no ENS support", () => {
-      mockRecipientStep({
-        supportsDomain: false,
-        isContactsFeatureEnabled: true,
-      });
+      mockRecipientStep({ supportsDomain: false });
 
-      const { result } = renderHook(() => useSendHeaderViewModel());
+      const { result } = renderHook(() => useSendHeaderViewModel(), {
+        overrideInitialState: withContactsFlag(true),
+      });
 
       expect(result.current.recipientPlaceholder).toBe(
         "send.newSendFlow.placeholderNoEnsWithContacts",
@@ -346,117 +415,23 @@ describe("useSendHeaderViewModel", () => {
     });
 
     it("keeps the default placeholder when the currency family is not eligible", () => {
-      mockRecipientStep({
-        supportsDomain: true,
-        isContactsFeatureEnabled: true,
-        eligibleAddressFamilies: ["bitcoin"],
-      });
+      mockRecipientStep({ supportsDomain: true });
 
-      const { result } = renderHook(() => useSendHeaderViewModel());
+      const { result } = renderHook(() => useSendHeaderViewModel(), {
+        overrideInitialState: withContactsFlag(true, ["bitcoin"]),
+      });
 
       expect(result.current.recipientPlaceholder).toBe("send.newSendFlow.placeholder");
     });
 
     it("keeps the default placeholder when the contacts feature is disabled", () => {
-      mockRecipientStep({
-        supportsDomain: false,
-        isContactsFeatureEnabled: false,
-      });
+      mockRecipientStep({ supportsDomain: false });
 
-      const { result } = renderHook(() => useSendHeaderViewModel());
+      const { result } = renderHook(() => useSendHeaderViewModel(), {
+        overrideInitialState: withContactsFlag(false),
+      });
 
       expect(result.current.recipientPlaceholder).toBe("send.newSendFlow.placeholderNoENS");
-    });
-  });
-
-  describe("recipient display on the amount step", () => {
-    const ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";
-    const CONTACT = {
-      id: "contact-benoit",
-      isMe: false,
-      name: "Benoit Jean",
-      addresses: [{ id: "address-1", currencyId: "ethereum", label: "Eth main", address: ADDRESS }],
-    };
-
-    const mockAmountStep = () => {
-      mockedUseCurrentSendFlowStep.mockReturnValue([
-        SEND_FLOW_STEP.AMOUNT,
-        {
-          id: SEND_FLOW_STEP.AMOUNT,
-          addressInput: true,
-          canGoBack: true,
-          showTitle: true,
-          showHeaderRight: true,
-        },
-      ]);
-      mockedUseSendFlowData.mockReturnValue({
-        uiConfig: { recipientSupportsDomain: true },
-        recipientSearch: mockRecipientSearch,
-        state: {
-          account: {
-            account: mockAccount,
-            parentAccount: null,
-            currency: { ...mockAccount.currency, id: "ethereum" },
-          },
-          transaction: { transaction: { recipient: ADDRESS }, status: {} },
-          recipient: { address: ADDRESS },
-        },
-      } as never);
-    };
-
-    it("shows the contact name when the recipient is a contact", () => {
-      jest
-        .mocked(useContactsFeature)
-        .mockReturnValue({ isEnabled: true, eligibleAddressFamilies: ["evm"] } as never);
-      jest.mocked(useSelector).mockReturnValue([CONTACT] as never);
-      mockAmountStep();
-
-      const { result } = renderHook(() => useSendHeaderViewModel());
-
-      expect(result.current.recipientContact).toEqual({
-        id: "contact-benoit",
-        name: "Benoit Jean",
-      });
-      expect(result.current.formattedAddress).toBe("Benoit Jean");
-    });
-
-    it("shows the formatted address when the recipient is not a contact", () => {
-      jest
-        .mocked(useContactsFeature)
-        .mockReturnValue({ isEnabled: true, eligibleAddressFamilies: ["evm"] } as never);
-      jest.mocked(useSelector).mockReturnValue([] as never);
-      mockAmountStep();
-
-      const { result } = renderHook(() => useSendHeaderViewModel());
-
-      expect(result.current.recipientContact).toBeUndefined();
-      expect(result.current.formattedAddress).toBe("0x123456...12345678");
-    });
-
-    it("shows the formatted address when the contacts feature is disabled", () => {
-      jest
-        .mocked(useContactsFeature)
-        .mockReturnValue({ isEnabled: false, eligibleAddressFamilies: ["evm"] } as never);
-      jest.mocked(useSelector).mockReturnValue([CONTACT] as never);
-      mockAmountStep();
-
-      const { result } = renderHook(() => useSendHeaderViewModel());
-
-      expect(result.current.recipientContact).toBeUndefined();
-      expect(result.current.formattedAddress).toBe("0x123456...12345678");
-    });
-
-    it("opens Recipient when Amount is the first screen in the flow", () => {
-      mockAmountStep();
-      mockCanGoBack.mockReturnValue(false);
-
-      const { result } = renderHook(() => useSendHeaderViewModel());
-
-      result.current.handleRecipientInputPress();
-
-      expect(mockSetRecipientSearchValue).toHaveBeenCalledWith(ADDRESS);
-      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SendFlowRecipient);
-      expect(mockGoBack).not.toHaveBeenCalled();
     });
   });
 });

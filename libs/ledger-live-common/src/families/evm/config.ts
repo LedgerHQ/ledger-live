@@ -511,8 +511,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         uri: "https://fantom.coin.ledger.com",
       },
       explorer: {
-        type: "blockscout",
-        uri: "https://ftmscout.com/api",
+        type: "none",
       },
     },
   },
