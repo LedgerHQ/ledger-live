@@ -17,18 +17,18 @@ import {
 type Setup = {
   status?: PayCardStatus["status"] | null;
   isStatusLoading?: boolean;
-  isFreezeLoading?: boolean;
-  isUnfreezeLoading?: boolean;
+  rejects?: boolean;
 };
 
-function renderWith({
-  status = "ACTIVE",
-  isStatusLoading = false,
-  isFreezeLoading = false,
-  isUnfreezeLoading = false,
-}: Setup = {}) {
-  const freeze = jest.fn();
-  const unfreeze = jest.fn();
+function mutationTrigger(rejects: boolean) {
+  return jest.fn(() => ({
+    unwrap: () => (rejects ? Promise.reject(new Error("nope")) : Promise.resolve(undefined)),
+  }));
+}
+
+function renderWith({ status = "ACTIVE", isStatusLoading = false, rejects = false }: Setup = {}) {
+  const freeze = mutationTrigger(rejects);
+  const unfreeze = mutationTrigger(rejects);
 
   jest.mocked(useGetCardStatusQuery).mockReturnValue({
     data: status
@@ -39,15 +39,11 @@ function renderWith({
 
   jest
     .mocked(useFreezeCardMutation)
-    .mockReturnValue([freeze, { isLoading: isFreezeLoading }] as unknown as ReturnType<
-      typeof useFreezeCardMutation
-    >);
+    .mockReturnValue([freeze] as unknown as ReturnType<typeof useFreezeCardMutation>);
 
   jest
     .mocked(useUnfreezeCardMutation)
-    .mockReturnValue([unfreeze, { isLoading: isUnfreezeLoading }] as unknown as ReturnType<
-      typeof useUnfreezeCardMutation
-    >);
+    .mockReturnValue([unfreeze] as unknown as ReturnType<typeof useUnfreezeCardMutation>);
 
   return { freeze, unfreeze, ...renderHook(() => useFreezeCardViewModel()) };
 }
@@ -57,13 +53,12 @@ describe("useFreezeCardViewModel", () => {
     jest.clearAllMocks();
   });
 
-  it("reads a FROZEN card as frozen", () => {
-    expect(renderWith({ status: "FROZEN" }).result.current.isFrozen).toBe(true);
-  });
-
-  it.each(["ACTIVE", "BLOCKED"] as const)("does not read a %s card as frozen", status => {
-    expect(renderWith({ status }).result.current.isFrozen).toBe(false);
-  });
+  it.each(["ACTIVE", "FROZEN", "BLOCKED", "INACTIVE"] as const)(
+    "exposes the %s card status",
+    status => {
+      expect(renderWith({ status }).result.current.status).toBe(status);
+    },
+  );
 
   it.each(["ACTIVE", "FROZEN"] as const)("keeps the action available on a %s card", status => {
     expect(renderWith({ status }).result.current.isActionDisabled).toBe(false);
@@ -72,25 +67,12 @@ describe("useFreezeCardViewModel", () => {
   it.each([
     ["the card is blocked", { status: "BLOCKED" }],
     ["the card status has not arrived yet", { status: null, isStatusLoading: true }],
-    ["a freeze is in flight", { isFreezeLoading: true }],
-    ["an unfreeze is in flight", { isUnfreezeLoading: true }],
   ] as const)("makes the action unavailable when %s", (_reason, setup) => {
     expect(renderWith(setup).result.current.isActionDisabled).toBe(true);
   });
 
-  it.each([
-    ["freeze", { isFreezeLoading: true }],
-    ["unfreeze", { isUnfreezeLoading: true }],
-  ] as const)("marks the card as updating while the %s request is in flight", (_request, setup) => {
-    expect(renderWith(setup).result.current.isUpdating).toBe(true);
-  });
-
-  it("marks an idle card as not updating", () => {
-    expect(renderWith().result.current.isUpdating).toBe(false);
-  });
-
-  it("keeps the confirmation closed until the tile is pressed", () => {
-    expect(renderWith().result.current.isConfirmOpen).toBe(false);
+  it("starts with the confirmation closed", () => {
+    expect(renderWith().result.current.confirmState).toBe("closed");
   });
 
   it("opens the confirmation on request", () => {
@@ -98,37 +80,73 @@ describe("useFreezeCardViewModel", () => {
 
     act(() => result.current.onOpenConfirm());
 
-    expect(result.current.isConfirmOpen).toBe(true);
+    expect(result.current.confirmState).toBe("idle");
   });
 
   it("closes the confirmation when it is dismissed", () => {
     const { result } = renderWith();
 
     act(() => result.current.onOpenConfirm());
-    act(() => result.current.onCloseConfirm());
+    act(() => result.current.onClose());
 
-    expect(result.current.isConfirmOpen).toBe(false);
+    expect(result.current.confirmState).toBe("closed");
   });
 
-  it("freezes an unfrozen card and closes the confirmation", () => {
+  it("freezes an unfrozen card and closes the confirmation", async () => {
     const { freeze, unfreeze, result } = renderWith({ status: "ACTIVE" });
 
     act(() => result.current.onOpenConfirm());
-    act(() => result.current.onConfirm());
+    await act(async () => result.current.onConfirm());
 
     expect(freeze).toHaveBeenCalledTimes(1);
     expect(unfreeze).not.toHaveBeenCalled();
-    expect(result.current.isConfirmOpen).toBe(false);
+    expect(result.current.confirmState).toBe("closed");
   });
 
-  it("unfreezes a frozen card and closes the confirmation", () => {
+  it("unfreezes a frozen card and closes the confirmation", async () => {
     const { freeze, unfreeze, result } = renderWith({ status: "FROZEN" });
 
     act(() => result.current.onOpenConfirm());
-    act(() => result.current.onConfirm());
+    await act(async () => result.current.onConfirm());
 
     expect(unfreeze).toHaveBeenCalledTimes(1);
     expect(freeze).not.toHaveBeenCalled();
-    expect(result.current.isConfirmOpen).toBe(false);
+    expect(result.current.confirmState).toBe("closed");
+  });
+
+  it("keeps the confirmation open on a failed request so it can report the error", async () => {
+    const { result } = renderWith({ rejects: true });
+
+    act(() => result.current.onOpenConfirm());
+    await act(async () => result.current.onConfirm());
+
+    expect(result.current.confirmState).toBe("error");
+  });
+
+  it("retries from the error state", async () => {
+    const { freeze, result } = renderWith({ rejects: true });
+
+    act(() => result.current.onOpenConfirm());
+    await act(async () => result.current.onConfirm());
+    await act(async () => result.current.onConfirm());
+
+    expect(freeze).toHaveBeenCalledTimes(2);
+    expect(result.current.confirmState).toBe("error");
+  });
+
+  it("locks the tile while the request is in flight", async () => {
+    const { result } = renderWith();
+
+    act(() => result.current.onOpenConfirm());
+
+    let confirming: Promise<void>;
+    act(() => {
+      confirming = result.current.onConfirm() as unknown as Promise<void>;
+    });
+
+    expect(result.current.confirmState).toBe("pending");
+    expect(result.current.isActionDisabled).toBe(true);
+
+    await act(async () => confirming);
   });
 });

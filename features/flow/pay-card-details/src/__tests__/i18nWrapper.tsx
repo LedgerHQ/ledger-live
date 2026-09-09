@@ -8,8 +8,12 @@ export const CARD_COPY = {
   freezeTitle: "Freezing means you cannot use the card anymore",
   freezeDescription: "You can unfreeze your card at any time.",
   freezeConfirm: "Freeze now",
+  freezeErrorTitle: "Freeze failed",
   unfreezeTitle: "Unfreeze your card?",
   unfreezeConfirm: "Unfreeze now",
+  unfreezeErrorTitle: "Unfreeze failed",
+  errorDescription: "Something went wrong. Please try again.",
+  retry: "Try again",
 } as const;
 
 export const CARD_RESOURCES = {
@@ -24,10 +28,16 @@ export const CARD_RESOURCES = {
             title: CARD_COPY.freezeTitle,
             description: CARD_COPY.freezeDescription,
             confirm: CARD_COPY.freezeConfirm,
+            errorTitle: CARD_COPY.freezeErrorTitle,
           },
           unfreezeConfirm: {
             title: CARD_COPY.unfreezeTitle,
             confirm: CARD_COPY.unfreezeConfirm,
+            errorTitle: CARD_COPY.unfreezeErrorTitle,
+          },
+          confirmError: {
+            description: CARD_COPY.errorDescription,
+            retry: CARD_COPY.retry,
           },
         },
       },

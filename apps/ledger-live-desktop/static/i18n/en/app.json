@@ -906,11 +906,17 @@
       "freezeConfirm": {
         "title": "Freezing means you cannot use the card anymore",
         "description": "You can unfreeze your card at any time.",
-        "confirm": "Freeze now"
+        "confirm": "Freeze now",
+        "errorTitle": "Freeze failed"
       },
       "unfreezeConfirm": {
         "title": "Unfreeze your card?",
-        "confirm": "Unfreeze now"
+        "confirm": "Unfreeze now",
+        "errorTitle": "Unfreeze failed"
+      },
+      "confirmError": {
+        "description": "Something went wrong. Please try again.",
+        "retry": "Try again"
       }
     },
     "cardOnboarding": {

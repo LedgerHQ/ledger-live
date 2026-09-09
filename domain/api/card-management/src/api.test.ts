@@ -485,6 +485,30 @@ describe("cardManagementApi requests", () => {
       subscription.unsubscribe();
     });
 
+    it("freezes without patching a status cache entry that holds no value", async () => {
+      provider.get("/v1/card/status", () => jsonResponse(cardStatus));
+      provider.post("/v1/card/freeze", () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      const subscription = store.dispatch(
+        cardManagementApi.endpoints.getCardStatus.initiate(undefined, { subscribe: true }),
+      );
+      await subscription;
+      // An emptied entry is handed to the optimistic recipe as-is, where a populated one arrives as
+      // a draft: patching it would read a status off nothing.
+      store.dispatch(
+        cardManagementApi.util.patchQueryData("getCardStatus", undefined, [
+          { op: "replace", path: [], value: undefined },
+        ]),
+      );
+
+      const result = await store.dispatch(cardManagementApi.endpoints.freezeCard.initiate());
+
+      expect(result.data).toEqual({ success: true });
+
+      subscription.unsubscribe();
+    });
+
     it("refetches the card status, which then reads FROZEN", async () => {
       let cardState = "ACTIVE";
       provider.get("/v1/card/status", () => jsonResponse({ ...cardStatus, status: cardState }));

@@ -200,6 +200,8 @@ async function patchCardStatus(
 ) {
   const patch = dispatch(
     cardManagementApi.util.updateQueryData("getCardStatus", undefined, draft => {
+      if (!draft) return;
+
       draft.status = status;
     }),
   );
