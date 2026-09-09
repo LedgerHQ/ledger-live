@@ -39,6 +39,11 @@ const updateTransaction = jest.fn();
 const SEND_TRANSACTION = { family: "internet_computer", type: "send", amount: new BigNumber(0) };
 let currentTransaction: Record<string, unknown> = SEND_TRANSACTION;
 
+// Mutable for the same reason: a validation that changes mid-flow is the case the device step guards
+// against, and the bridge is mocked out here. Reset in beforeEach.
+const NO_ERRORS = { errors: {}, warnings: {}, estimatedFees: new BigNumber(0) };
+let currentStatus: Record<string, unknown> = NO_ERRORS;
+
 jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   __esModule: true,
   default: () => ({
@@ -46,7 +51,7 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
     setTransaction: jest.fn(),
     updateTransaction,
     updateAccount,
-    status: { errors: {}, warnings: {}, estimatedFees: new BigNumber(0) },
+    status: currentStatus,
     bridgeError: null,
     bridgePending: false,
   }),
@@ -138,14 +143,27 @@ const account = makeICPAccount({
   spendableBalance: new BigNumber(500_000_000),
 });
 
-const ControlledBody = ({ initialStep = "listNeuron" as StepId }) => {
+// The account above deliberately controls nothing, so the manage card offers no controller action.
+// One test needs to start such an action, and that is the only reason this exists.
+const controlledAccount = makeICPAccount({
+  neurons: [makeHealthyNeuron({ id: 1n, controller: CONTROLLER })],
+  spendableBalance: new BigNumber(500_000_000),
+});
+
+const ControlledBody = ({
+  initialStep = "listNeuron" as StepId,
+  from = account,
+}: {
+  initialStep?: StepId;
+  from?: ICPAccount;
+}) => {
   const [stepId, setStepId] = useState<StepId>(initialStep);
   return (
     <Body
       stepId={stepId}
       onClose={jest.fn()}
       onChangeStepId={setStepId}
-      params={{ account }}
+      params={{ account: from }}
       steps={steps}
       title="Manage neurons"
       trackEvent="CloseModalIcpManageNeurons"
@@ -157,6 +175,7 @@ const ControlledBody = ({ initialStep = "listNeuron" as StepId }) => {
 beforeEach(() => {
   jest.clearAllMocks();
   currentTransaction = SEND_TRANSACTION;
+  currentStatus = NO_ERRORS;
 });
 
 describe("manage neuron flow (integration)", () => {
@@ -295,6 +314,37 @@ describe("manage neuron flow (integration)", () => {
     const { account: sent } = sendModal.data as unknown as { account: ICPAccount };
     // The payload held neurons 1 and 2; only the refreshed snapshot holds 9.
     expect(sent.neurons.fullNeurons.map(n => n.id)).toEqual([9n]);
+  });
+
+  // An action with no input step retries at the device step itself, so the check the device step now
+  // makes is the only thing between a snapshot that moved during the first attempt and a second
+  // signature the canister would refuse just as it refused the first.
+  it("reports the refusal on retry instead of asking for the signature again", async () => {
+    const { user } = render(<ControlledBody from={controlledAccount} />);
+
+    await act(async () => {
+      await user.click(screen.getAllByTestId("icp-neuron-row")[0]);
+    });
+    await act(async () => {
+      await user.click(screen.getByText("Start dissolving"));
+    });
+    await act(async () => {
+      await user.click(screen.getByTestId("device-fail"));
+    });
+
+    currentStatus = {
+      ...NO_ERRORS,
+      errors: {
+        transaction: Object.assign(new Error("ICPNeuronNotFound"), { name: "ICPNeuronNotFound" }),
+      },
+    };
+
+    await act(async () => {
+      await user.click(screen.getByText("Retry"));
+    });
+
+    expect(screen.queryByTestId("step-device")).not.toBeInTheDocument();
+    expect(screen.getByText("Neuron not found")).toBeInTheDocument();
   });
 
   it("reports a signing failure on the confirmation step", async () => {

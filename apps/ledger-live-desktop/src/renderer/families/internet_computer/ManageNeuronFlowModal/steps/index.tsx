@@ -10,11 +10,15 @@ import StepSelectFollowees, { StepSelectFolloweesFooter } from "./StepSelectFoll
 import StepSetDissolveDelay, { StepSetDissolveDelayFooter } from "./StepSetDissolveDelay";
 import StepSplitNeuron, { StepSplitNeuronFooter } from "./StepSplitNeuron";
 import StepStakeMaturity, { StepStakeMaturityFooter } from "./StepStakeMaturity";
+import StepManageAction from "../../neuronFlow/StepManageAction";
 import type { Step, StepProps } from "../../neuronFlow/types";
 
 // GenericStepConnectDevice is typed against the generated union of every family's Transaction; the
 // flow narrows it to the ICP one, which the union does not track.
 const ConnectDevice = GenericStepConnectDevice as unknown as React.ComponentType<StepProps>;
+
+// `list_neurons` names no neuron and has nothing for the bridge to refuse, so it signs unguarded.
+const ManageActionDevice = (props: StepProps) => <StepManageAction {...props} backTo="manage" />;
 
 const backToManage = ({ transitionTo }: StepProps) => transitionTo("manage");
 
@@ -99,7 +103,7 @@ export const steps: Step[] = [
   {
     id: "manageAction",
     label: <Trans i18nKey="internetComputer.manageNeuronFlow.device.title" />,
-    component: ConnectDevice,
+    component: ManageActionDevice,
     onBack: backToManage,
     noScroll: true,
   },

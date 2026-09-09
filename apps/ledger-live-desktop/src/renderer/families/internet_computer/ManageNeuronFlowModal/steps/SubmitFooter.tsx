@@ -3,6 +3,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
+import { bridgeObjection, cannotSign } from "../../neuronFlow/submitGate";
 import type { StepProps } from "../../neuronFlow/types";
 
 type Props = Pick<
@@ -34,17 +35,14 @@ const SubmitFooter = ({
   canContinue = true,
   hasInput = true,
 }: Props) => {
-  const errors = Object.values(status.errors);
-  const blocking = errors.length > 0;
-  // Every step this footer serves signs against one neuron, so a neuron that has left the snapshot
-  // makes Continue a dead end: the transaction still names it and the canister would refuse. The
-  // step body explains the state; withholding Continue here is what stops the signature. Checked in
-  // one place so a step added later cannot forget it.
-  const missingNeuron = !neurons.some(neuron => neuron.id?.toString() === selectedNeuronId);
+  // The step body explains the state; withholding Continue here is what stops the signature. The
+  // rule lives in submitGate so the device step cannot come to a different conclusion about the same
+  // transaction, and so a step added later cannot forget it.
+  const objection = bridgeObjection({ status });
 
   return (
     <Box grow>
-      {blocking && hasInput ? <ErrorBanner error={errors[0]} /> : null}
+      {objection && hasInput ? <ErrorBanner error={objection} /> : null}
       <Box horizontal justifyContent="flex-end">
         <Button onClick={onClose}>
           <Trans i18nKey="common.cancel" />
@@ -52,7 +50,9 @@ const SubmitFooter = ({
         <Button
           primary
           ml={2}
-          disabled={bridgePending || blocking || !canContinue || missingNeuron}
+          disabled={
+            bridgePending || !canContinue || cannotSign({ status, neurons, selectedNeuronId })
+          }
           onClick={() => transitionTo("manageAction")}
           data-testid="icp-continue-button"
         >
