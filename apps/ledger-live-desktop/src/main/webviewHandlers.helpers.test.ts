@@ -3,6 +3,7 @@ import {
   WEBVIEW_GUEST_CSP,
   createLiveAppSchemeChecker,
   isDeviceCaptureRequest,
+  isParsablePermissionsPolicy,
   mergeCspHeaders,
   mergePermissionsPolicyHeaders,
   resolvePermissionCheck,
@@ -218,6 +219,47 @@ describe("mergePermissionsPolicyHeaders", () => {
 
     expect(input).toEqual(snapshot);
   });
+
+  it("drops an unparsable policy instead of letting it take ours down", () => {
+    // Chromium comma-joins every instance and discards the whole dictionary on a
+    // parse error, so merging a malformed value would neutralise our own member.
+    const merged = mergePermissionsPolicyHeaders({ "Permissions-Policy": ["camera=(("] }, INJECTED);
+
+    expect(merged["Permissions-Policy"]).toEqual([INJECTED]);
+  });
+
+  it("drops every value when only one of them is unparsable", () => {
+    const merged = mergePermissionsPolicyHeaders(
+      { "Permissions-Policy": ["geolocation=()", "camera=(("] },
+      INJECTED,
+    );
+
+    expect(merged["Permissions-Policy"]).toEqual([INJECTED]);
+  });
+});
+
+describe("isParsablePermissionsPolicy", () => {
+  it.each([
+    ["display-capture=()"],
+    ["geolocation=*"],
+    ["fullscreen=self"],
+    ['camera=(self "https://kyc.example")'],
+    ['camera=(self "https://a.example" "https://b.example"), geolocation=()'],
+    ["autoplay=(), camera=*"],
+    ["ch-ua-platform=*"],
+    // An empty dictionary is a valid structured field.
+    [""],
+    ["   "],
+  ])("accepts %s", value => {
+    expect(isParsablePermissionsPolicy(value)).toBe(true);
+  });
+
+  it.each([["camera=(("], ["camera=)"], ['camera=self"'], ["=()"], ["camera=(self"]])(
+    "rejects %s",
+    value => {
+      expect(isParsablePermissionsPolicy(value)).toBe(false);
+    },
+  );
 });
 
 describe("WEBVIEW_GUEST_CSP", () => {
@@ -297,7 +339,15 @@ describe("resolvePermissionRequest", () => {
       },
     );
 
-    it.each([["fullscreen"], ["clipboard-sanitized-write"]])("allows %s", permission => {
+    it.each([
+      ["fullscreen"],
+      ["clipboard-sanitized-write"],
+      // Granted before the allowlist existed and still needed: a cross-site KYC
+      // iframe calling requestStorageAccess, and "paste a WalletConnect URI".
+      ["storage-access"],
+      ["top-level-storage-access"],
+      ["clipboard-read"],
+    ])("allows %s", permission => {
       expect(resolvePermissionRequest({ isGuest: true, permission })).toBe(true);
     });
   });
