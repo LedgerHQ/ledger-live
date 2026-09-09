@@ -3,7 +3,6 @@ import {
   calculate,
   filterSupportedTrackingPairs,
   importCountervalues,
-  inferTrackingPairForAccounts,
   loadCountervalues,
 } from "@ledgerhq/live-countervalues/logic";
 import { inferCurrencyAPIID } from "@ledgerhq/live-countervalues/helpers";
@@ -11,11 +10,10 @@ import type {
   CounterValuesState,
   CounterValuesStateRaw,
   CountervaluesSettings,
-  TrackingPair,
 } from "@ledgerhq/live-countervalues/types";
 import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
 import type { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, {
   ReactElement,
@@ -95,13 +93,6 @@ function useCountervaluesBridgeContext() {
     );
   }
   return bridge;
-}
-
-function trackingPairsHash(a: TrackingPair[]) {
-  return a
-    .map(p => `${p.from.ticker}:${p.to.ticker}:${p.startDate.toISOString().slice(0, 10) || ""}`)
-    .sort()
-    .join("|");
 }
 
 /**
@@ -312,19 +303,4 @@ export function useSendAmount({
     [state, cryptoCurrency, fiatCurrency],
   );
   return { fiatAmount, fiatUnit, calculateCryptoAmount };
-}
-
-export function useTrackingPairForAccounts(
-  accounts: Account[],
-  countervalue: Currency,
-): TrackingPair[] {
-  // first we cache the tracking pairs with its hash
-  const c = useMemo(() => {
-    const pairs = inferTrackingPairForAccounts(accounts, countervalue);
-    return { pairs, hash: trackingPairsHash(pairs) };
-  }, [accounts, countervalue]);
-  // we only want to return the pairs when the hash changes
-  // to not recalculate pairs as fast as accounts resynchronizes
-  // oxlint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => c.pairs, [c.hash]);
 }

@@ -27,7 +27,6 @@ Everything is exported from the package root (`@ledgerhq/live-countervalues-reac
 | `useCalculate` | Converts a crypto amount to fiat using current rates |
 | `useCalculateCountervalueCallback` | Memoised callback version of `useCalculate` |
 | `useSendAmount` | Converts send amounts between crypto and fiat |
-| `useTrackingPairForAccounts` | Derives tracking pairs from a list of accounts |
 
 ## Usage context
 

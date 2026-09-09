@@ -20,7 +20,7 @@
 | Subpath | Contents |
 |---------|----------|
 | `@ledgerhq/live-countervalues/types` | `CountervaluesSettings`, `CounterValuesState`, `CounterValuesStateRaw`, `TrackingPair`, `CounterValuesAPI`, `CounterValuesStatus`, and related types |
-| `@ledgerhq/live-countervalues/logic` | `calculate`, `calculateMany`, `loadCountervalues`, `importCountervalues`, `exportCountervalues`, `initialState`, `inferTrackingPairForAccounts`, `filterSupportedTrackingPairs`, and related functions |
+| `@ledgerhq/live-countervalues/logic` | `calculate`, `calculateMany`, `loadCountervalues`, `importCountervalues`, `exportCountervalues`, `initialState`, `filterSupportedTrackingPairs`, and related functions |
 | `@ledgerhq/live-countervalues/helpers` | `pairId`, `inferCurrencyAPIID`, `formatCounterValueDay`, `formatCounterValueHour`, and related utilities |
 | `@ledgerhq/live-countervalues/mock` | `getBTCValues`, `TICKER_TO_ID_AND_VALUE` — test fixtures |
 | `@ledgerhq/live-countervalues/api` | Default export: the `CounterValuesAPI` implementation (switches between prod and mock via `MOCK_COUNTERVALUES` env var) |
