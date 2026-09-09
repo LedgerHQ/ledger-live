@@ -17,6 +17,7 @@ export const sendMina = withDeviceController(
         throw new Error("Recipient address is not set");
       }
       expectSpeculosEventsContain(tx.accountToCredit.address, events);
+      expectSpeculosEventsContain(tx.amount, events);
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
