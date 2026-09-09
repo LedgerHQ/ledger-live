@@ -1,7 +1,5 @@
 import React from "react";
-import { useFeature } from "@features/platform-feature-flags";
 import { AnalyticsConsentDialog } from "LLD/features/AnalyticsConsentDialog";
-import { ProductTourDialog, useProductTourDialogViewModel } from "LLD/features/ProductTour/Drawer";
 import { Q2TourDialog, useQ2TourDrawerViewModel } from "LLD/features/Q2Tour";
 import {
   useWalletV4TourDrawerViewModel,
@@ -13,7 +11,6 @@ import { PortfolioView } from "./PortfolioView";
 
 const Portfolio = () => {
   const viewModel = usePortfolioViewModel();
-  const lwdProductTour = useFeature("lwdProductTour");
   const {
     isDialogOpen: isWalletV4TourOpen,
     closeDrawer: handleCloseWalletV4Tour,
@@ -29,14 +26,12 @@ const Portfolio = () => {
     onSlideChange: onQ2TourSlideChange,
     onContinueClick: onQ2TourContinueClick,
   } = useQ2TourDrawerViewModel({ isOnPortfolioPage: true });
-  const productTourDialogViewModel = useProductTourDialogViewModel();
 
   return (
     <>
       <PortfolioView {...viewModel} />
       <LargeScreenUpsellModalMount />
       <AnalyticsConsentDialog />
-      {lwdProductTour?.enabled ? <ProductTourDialog {...productTourDialogViewModel} /> : null}
       <Q2TourDialog
         isOpen={isQ2TourOpen}
         onHeaderClose={handleCloseQ2Tour}

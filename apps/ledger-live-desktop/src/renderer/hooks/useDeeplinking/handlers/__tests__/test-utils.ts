@@ -17,7 +17,6 @@ export const createMockContext = (
   currentLocationState: undefined,
   accountsPath: "/accounts",
   assetsPath: "/market",
-  isProductTourEnabled: true,
   isGenericAwarenessModalEnabled: true,
   isPayTabEnabled: false,
   ...overrides,

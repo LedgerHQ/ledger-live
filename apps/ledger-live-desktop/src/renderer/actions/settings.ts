@@ -21,7 +21,6 @@ import { Language, Locale } from "~/config/languages";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
   SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION,
-  SET_PRODUCT_TOUR_COMPLETED,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
@@ -400,11 +399,6 @@ export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
 export const setHasSeenQ2Tour = (hasSeenQ2Tour: boolean) => ({
   type: "SET_HAS_SEEN_Q2_TOUR",
   payload: hasSeenQ2Tour,
-});
-
-export const setProductTourCompleted = (productTourCompleted: boolean) => ({
-  type: SET_PRODUCT_TOUR_COMPLETED,
-  payload: productTourCompleted,
 });
 
 export const setHasDismissedContactsFeatureIntroduction = (

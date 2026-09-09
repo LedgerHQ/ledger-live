@@ -67,7 +67,6 @@ const isOptionalStepComplete = (
   !!item.getIsAlreadyCompletedByState?.({
     isLedgerSyncActive: context.isLedgerSyncActive,
     accounts: context.accounts,
-    productTourCompleted: context.productTourCompleted,
   });
 
 /**

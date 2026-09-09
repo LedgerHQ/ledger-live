@@ -363,12 +363,12 @@ describe("parseDeepLink", () => {
       });
     });
 
-    it("creates product tour route", () => {
+    it("falls through to the default route for product-tour", () => {
       const parsed = parseDeepLink("ledgerlive://product-tour");
       const route = createRoute(parsed);
 
       expect(route).toEqual({
-        type: "product-tour",
+        type: "default",
       });
     });
 

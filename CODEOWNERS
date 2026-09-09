@@ -505,7 +505,6 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/Generi
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/LargeScreenUpsellDevTool/  @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/Q2Tour/                                      @ledgerhq/engagement
-apps/ledger-live-desktop/src/mvvm/features/ProductTour/                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BackupHub/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BuyDevice/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/FinishOnboardingWidget/                             @ledgerhq/engagement

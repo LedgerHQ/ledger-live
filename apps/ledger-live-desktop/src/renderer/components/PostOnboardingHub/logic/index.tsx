@@ -9,7 +9,6 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import PostOnboardingMockAction from "~/renderer/components/PostOnboardingHub/PostOnboardingMockAction";
 import { getStoreValue } from "~/renderer/store";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
-import { openProductTour } from "LLD/features/ProductTour/Drawer/productTourDialog";
 
 const assetsTransfer: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
@@ -76,21 +75,6 @@ const recover: PostOnboardingAction = {
     navigationCallback?.(
       `/recover/${protectId}?redirectTo=upsell&source=lld-post-onboarding-banner`,
     ),
-};
-
-const discoverWallet: PostOnboardingAction = {
-  id: PostOnboardingActionId.discoverWallet,
-  featureFlagId: "lwdProductTour",
-  Icon: Icons.PictureImage,
-  title: "postOnboarding.actions.discoverWallet.title",
-  titleCompleted: "postOnboarding.actions.discoverWallet.titleCompleted",
-  description: "postOnboarding.actions.discoverWallet.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.discoverWallet.actionCompletedPopupLabel",
-  buttonLabelForAnalyticsEvent: "Discover what your wallet can do",
-  startAction: ({ dispatch }: StartActionArgs) => {
-    dispatch?.(openProductTour());
-  },
-  getIsAlreadyCompletedByState: ({ productTourCompleted }) => !!productTourCompleted,
 };
 
 const claimMock: PostOnboardingAction = {
@@ -166,7 +150,6 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
   assetsTransfer,
   buyCrypto,
   syncAccounts,
-  discoverWallet,
   recover,
   // Mocks for desktop development and tests
   assetsTransferMock,
@@ -206,19 +189,19 @@ export function getPostOnboardingActionsForDevice(
   switch (deviceModelId) {
     case DeviceModelId.stax:
       if (mock) return staxPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet, recover];
+      return [assetsTransfer, buyCrypto, syncAccounts, recover];
     case DeviceModelId.europa:
       if (mock) return europaPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet, recover];
+      return [assetsTransfer, buyCrypto, syncAccounts, recover];
     case DeviceModelId.apex:
       if (mock) return apexPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet, recover];
+      return [assetsTransfer, buyCrypto, syncAccounts, recover];
     case DeviceModelId.nanoS:
       return [assetsTransfer, buyCrypto];
     case DeviceModelId.nanoSP:
-      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet];
+      return [assetsTransfer, buyCrypto, syncAccounts];
     case DeviceModelId.nanoX:
-      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet];
+      return [assetsTransfer, buyCrypto, syncAccounts];
     default:
       return [];
   }

@@ -6,7 +6,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { track } from "~/renderer/analytics/segment";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import { AllModalNames } from "~/renderer/modals/types";
 import { useNavigate } from "react-router";
@@ -16,7 +16,6 @@ import { useFeature } from "@features/platform-feature-flags";
 import { Dispatch } from "redux";
 import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
-import { productTourCompletedSelector } from "~/renderer/reducers/settings";
 
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & {
@@ -50,7 +49,6 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const navigate = useNavigate();
   const recoverServices = useFeature("protectServicesDesktop");
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
-  const productTourCompleted = useSelector(productTourCompletedSelector);
 
   const { openDrawer: openActivationDrawer } = useLedgerSyncEntryPointViewModel({
     entryPoint: EntryPoint.postOnboarding,
@@ -64,7 +62,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     let cancelled = false;
     isPostOnboardingHubActionFulfilled(
       { completed, getIsAlreadyCompletedByState, getIsAlreadyCompleted },
-      { isLedgerSyncActive: !!isLedgerSyncActive, accounts, protectId, productTourCompleted },
+      { isLedgerSyncActive: !!isLedgerSyncActive, accounts, protectId },
     ).then(result => {
       if (!cancelled) setIsActionCompleted(result);
     });
@@ -78,7 +76,6 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     isLedgerSyncActive,
     accounts,
     protectId,
-    productTourCompleted,
   ]);
 
   const handleStartAction = useCallback(() => {

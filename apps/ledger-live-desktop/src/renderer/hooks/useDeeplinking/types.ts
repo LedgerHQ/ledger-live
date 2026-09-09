@@ -52,8 +52,6 @@ export interface DeeplinkHandlerContext {
   assetsPath: "/asset" | "/market";
   /** Default Ledger Recover app id (from feature flag) for recover deeplink when no path is given */
   recoverAppId?: string;
-  /** `lwdProductTour` — Product Tour dialog is only mounted on Portfolio when enabled; avoid opening dialog Redux state when false. */
-  isProductTourEnabled: boolean;
   /** `lwdGenericAwarenessModal` — deeplink opens the modal only when this flag is enabled. */
   isGenericAwarenessModalEnabled: boolean;
   /** `lwdPayTab` — deeplink navigates to `/paytab` only when this flag is enabled; otherwise falls back to the default handler. */
@@ -227,10 +225,6 @@ export interface LedgerSyncRoute {
   type: "ledgersync";
 }
 
-export interface ProductTourRoute {
-  type: "product-tour";
-}
-
 export interface GenericAwarenessModalRoute {
   type: "generic-awareness-modal";
   id?: string;
@@ -265,7 +259,6 @@ export type DeeplinkRoute =
   | PayTabRoute
   | PostOnboardingRoute
   | LedgerSyncRoute
-  | ProductTourRoute
   | GenericAwarenessModalRoute
   | DefaultRoute;
 

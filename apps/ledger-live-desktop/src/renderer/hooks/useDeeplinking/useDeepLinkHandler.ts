@@ -42,8 +42,6 @@ export function useDeepLinkHandler() {
   const openSendFlow = useOpenSendFlow();
   const recoverFF = useFeature("protectServicesDesktop");
   const recoverAppId = recoverFF?.params?.protectId;
-  const lwdProductTour = useFeature("lwdProductTour");
-  const isProductTourEnabled = lwdProductTour?.enabled === true;
   const lwdGenericAwarenessModal = useFeature("lwdGenericAwarenessModal");
   const isGenericAwarenessModalEnabled = lwdGenericAwarenessModal?.enabled === true;
   const lwdPayTab = useFeature("lwdPayTab");
@@ -88,7 +86,6 @@ export function useDeepLinkHandler() {
       accountsPath,
       assetsPath,
       recoverAppId,
-      isProductTourEnabled,
       isGenericAwarenessModalEnabled,
       isPayTabEnabled,
     }),
@@ -108,7 +105,6 @@ export function useDeepLinkHandler() {
       accountsPath,
       assetsPath,
       recoverAppId,
-      isProductTourEnabled,
       isGenericAwarenessModalEnabled,
       isPayTabEnabled,
     ],

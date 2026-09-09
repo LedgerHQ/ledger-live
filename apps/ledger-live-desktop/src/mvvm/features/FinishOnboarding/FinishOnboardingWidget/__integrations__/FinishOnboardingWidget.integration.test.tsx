@@ -3,13 +3,11 @@ import { useNavigate } from "react-router";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId, type PostOnboardingState } from "@ledgerhq/types-live";
 import { initialState as postOnboardingInitialState } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
+import { render, screen, waitFor } from "tests/testSetup";
 import { track } from "~/renderer/analytics/segment";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
-import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import FinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboardingDialog";
 import FinishOnboardingWidget from "LLD/features/FinishOnboarding/FinishOnboardingWidget";
-import { ProductTourDialog, useProductTourDialogViewModel } from "LLD/features/ProductTour/Drawer";
 
 const mockNavigate = jest.fn();
 
@@ -25,12 +23,6 @@ jest.mock("~/renderer/store", () => ({
 }));
 
 const mockedUseNavigate = jest.mocked(useNavigate);
-
-function ProductTourDialogHarness() {
-  const productTourDialogViewModel = useProductTourDialogViewModel();
-
-  return <ProductTourDialog {...productTourDialogViewModel} />;
-}
 
 function postOnboardingActiveState(
   overrides: Partial<PostOnboardingState> = {},
@@ -59,40 +51,6 @@ function renderWithPostOnboarding(initialState: { postOnboarding: PostOnboarding
       <FinishOnboardingDialog />
     </PostOnboardingProviderWrapped>,
     { initialState },
-  );
-}
-
-function renderDiscoverWalletPostOnboarding() {
-  return render(
-    <PostOnboardingProviderWrapped>
-      <FinishOnboardingWidget />
-      <FinishOnboardingDialog />
-      <ProductTourDialogHarness />
-    </PostOnboardingProviderWrapped>,
-    {
-      initialState: {
-        postOnboarding: postOnboardingActiveState({
-          actionsToComplete: [PostOnboardingActionId.discoverWallet],
-          actionsCompleted: {
-            [PostOnboardingActionId.discoverWallet]: false,
-          },
-          lastActionCompleted: null,
-        }),
-        settings: {
-          ...AFTER_ONBOARDING_STATE,
-          hasSeenWalletV4Tour: true,
-          productTourCompleted: false,
-        },
-        ...withFlagOverrides({
-          analyticsOptIn: {
-            enabled: false,
-          },
-          lwdProductTour: {
-            enabled: true,
-          },
-        }),
-      },
-    },
   );
 }
 
@@ -149,16 +107,5 @@ describe("FinishOnboardingWidget integration", () => {
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
-  });
-
-  it("opens the Product Tour dialog when the discover wallet row is activated from the finish-onboarding dialog", async () => {
-    const { user } = renderDiscoverWalletPostOnboarding();
-
-    await user.click(screen.getByRole("button", { name: /Next, finish wallet setup/i }));
-    expect(await screen.findByRole("dialog")).toBeVisible();
-
-    await user.click(screen.getByRole("button", { name: /Discover what your wallet can do/i }));
-
-    expect(await screen.findByRole("button", { name: "Fund your wallet" })).toBeVisible();
   });
 });
