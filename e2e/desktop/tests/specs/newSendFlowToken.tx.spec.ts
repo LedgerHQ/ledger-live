@@ -11,6 +11,7 @@ const tokenSendTransactions: NewSendFlowEntry[] = [
       "0.000001",
     ),
     xrayTicket: "B2CQA-6111",
+    verifyOperationAmount: true,
   },
   {
     transaction: new Transaction(TokenAccount.ALGO_USDT_1, TokenAccount.ALGO_USDT_2, "0.01"),
@@ -32,11 +33,13 @@ const tokenSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01"),
     xrayTicket: "B2CQA-6111",
+    verifyOperationAmount: true,
   },
   {
     transaction: new Transaction(TokenAccount.ETH_WGNK_1, TokenAccount.ETH_WGNK_3, "0.123456789"),
     xrayTicket: "B2CQA-6111",
     verifyAmountPrecision: true,
+    verifyOperationAmount: true,
   },
 ];
 

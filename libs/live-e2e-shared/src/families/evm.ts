@@ -39,6 +39,10 @@ function validateTransactionData(tx: Transaction, events: string[]) {
   );
 
   if (tx.accountToDebit instanceof TokenAccount) {
+    // The ticker, not the currency name: the ERC-20 descriptor sent to the device carries no
+    // name — it is { contractAddress, ticker, decimals, chainId, signature } (see hw-app-eth
+    // services/ledger/erc20.ts, provided via provideERC20TokenInformation) — so the ticker is
+    // the only token identity the device can render.
     expectSpeculosEventsContainExactly(
       tx.accountToDebit.currency.ticker,
       events,

@@ -70,9 +70,17 @@ export type NewSendFlowEntry = {
    * When set, the amount input is asserted to pin the currency's decimal magnitude: an exact
    * round-trip, plus one decimal deeper rejected. Only meaningful when the amount already
    * fills the currency's magnitude — otherwise the deeper value is legitimately accepted.
-   * The operation-details amount is asserted for every entry regardless.
    */
   verifyAmountPrecision?: boolean;
+  /**
+   * When set, the operation-details amount is asserted to equal `tx.amount` exactly.
+   *
+   * Not valid for families whose operation value is `amount + fee` — bitcoin, polkadot,
+   * cardano, internet_computer, zcash, sui, aptos all build their optimistic operation that
+   * way, and with broadcast disabled the drawer renders that optimistic value. Enable it per
+   * entry, on entries that have actually been run.
+   */
+  verifyOperationAmount?: boolean;
 };
 
 export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
@@ -162,7 +170,9 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
 
           await app.newSendFlow.clickViewDetails();
           await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
-          await app.sendDrawer.expectAmountVisible(tx.amount);
+          if (entry.verifyOperationAmount) {
+            await app.sendDrawer.expectAmountVisible(tx.amount);
+          }
           if (validMemoTag && tx.accountToDebit.currency.id === Currency.SOL.id) {
             await app.sendDrawer.expectMemoVisible(validMemoTag);
           }
