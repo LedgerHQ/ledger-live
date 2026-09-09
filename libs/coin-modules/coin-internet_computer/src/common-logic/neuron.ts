@@ -6,6 +6,7 @@ import {
   MAINNET_GOVERNANCE_CANISTER_ID,
   MAX_AGE_BONUS,
   MAX_DISSOLVE_DELAY_BONUS,
+  MAX_HOT_KEYS_PER_NEURON,
   MAX_NEURON_AGE_FOR_AGE_BONUS,
   MIN_NEURON_STAKE,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
@@ -646,6 +647,33 @@ export const minAllowedSplitAmount = (feeE8s: bigint): bigint => BigInt(MIN_NEUR
 export const maxAllowedSplitAmount = (neuron: ICPNeuron): bigint => {
   const max = neuronStake(neuron) - BigInt(MIN_NEURON_STAKE);
   return max > 0n ? max : 0n;
+};
+
+/**
+ * Dissolved is what `disburse_neuron` checks. The fee floor is the ledger's: the canister moves the
+ * minted stake less the fee, with the fee on top, so a stake at or under the fee cannot fund the
+ * transfer and is refused after the signature. Such a neuron stays listed while it holds maturity.
+ */
+export const neuronCanDisburse = (
+  neuron: ICPNeuron,
+  feeE8s: bigint,
+  nowSeconds?: number,
+): boolean =>
+  neuronState(neuron, nowSeconds) === NeuronState.Dissolved && neuronStake(neuron) > feeE8s;
+
+/** `add_hot_key` answers ResourceExhausted once the neuron holds MAX_HOT_KEYS_PER_NEURON. */
+export const neuronCanAddHotKey = (neuron: ICPNeuron): boolean =>
+  neuron.hotKeys.length < MAX_HOT_KEYS_PER_NEURON;
+
+/**
+ * The least a top-up may add. `refresh_neuron` reads the neuron's ledger balance once the transfer
+ * has settled and refuses it under `neuron_minimum_stake_e8s`, with the ICP already in the neuron's
+ * account. That balance is the cached stake as of the last read — rejection fees are burned only at
+ * disburse — so the shortfall is what the cached stake is short of the minimum.
+ */
+export const minTopUpAmount = (neuron: ICPNeuron): bigint => {
+  const missing = BigInt(MIN_NEURON_STAKE) - neuron.cachedNeuronStakeE8s;
+  return missing > 0n ? missing : 0n;
 };
 
 export const hasEnoughMaturityToStake = (neuron: ICPNeuron): boolean =>

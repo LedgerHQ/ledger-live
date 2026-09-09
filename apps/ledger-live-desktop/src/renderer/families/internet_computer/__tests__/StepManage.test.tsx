@@ -1,6 +1,7 @@
 import {
   E8S_PER_ICP,
   ICP_FEES,
+  MAX_HOT_KEYS_PER_NEURON,
   MIN_NEURON_STAKE,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
@@ -77,6 +78,7 @@ const dissolved = (overrides = {}) =>
     state: NeuronState.Dissolved,
     dissolveDelaySeconds: 0n,
     dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - SECONDS_IN_DAY) },
+    cachedNeuronStakeE8s: BigInt(MIN_NEURON_STAKE),
     ...overrides,
   });
 
@@ -221,12 +223,35 @@ describe("StepManage", () => {
   // of what the snapshot's state would offer.
   it("offers Disburse instead of Stop dissolving once a dissolving neuron's unlock time has passed", () => {
     renderManage(
-      dissolving({ dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - 1) } }),
+      dissolving({
+        dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - 1) },
+        cachedNeuronStakeE8s: BigInt(MIN_NEURON_STAKE),
+      }),
     );
 
     expect(screen.getByText("Disburse")).toBeInTheDocument();
     expect(screen.queryByText("Stop dissolving")).not.toBeInTheDocument();
     expect(screen.getByText("Dissolved")).toBeInTheDocument();
+  });
+
+  // disburse moves the stake less the ledger fee, with the fee on top, so at or under the fee the
+  // ledger refuses it after the signature. Such a neuron stays listed while it holds maturity.
+  it("withholds Disburse from a dissolved neuron whose stake would not cover the fee", () => {
+    renderManage(dissolved({ cachedNeuronStakeE8s: BigInt(ICP_FEES) }));
+
+    expect(screen.queryByText("Disburse")).not.toBeInTheDocument();
+  });
+
+  // The canister refuses the eleventh with ResourceExhausted; the row keeps its Remove actions.
+  it("withholds Add hot key once the neuron holds the canister's ten", () => {
+    renderManage(
+      controlled({
+        hotKeys: Array.from({ length: MAX_HOT_KEYS_PER_NEURON }, (_, i) => `key-${i}`),
+      }),
+    );
+
+    expect(screen.queryByText("Add hot key")).not.toBeInTheDocument();
+    expect(screen.getAllByText("Remove")).toHaveLength(MAX_HOT_KEYS_PER_NEURON);
   });
 
   // The modal stays open across actions and used to keep the previous one's outcome, so a refusal on

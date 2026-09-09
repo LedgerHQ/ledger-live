@@ -12,7 +12,9 @@ import {
   getSecondsTillVotingPowerExpires,
   isDeviceControlledNeuron,
   isNeuronDissolved,
+  neuronCanAddHotKey,
   neuronCanBeSplit,
+  neuronCanDisburse,
   neuronCanSpawn,
   neuronCanStakeMaturity,
   neuronCanVote,
@@ -234,7 +236,9 @@ const StepManage = ({
           value={t(`internetComputer.neuronState.${getNeuronState(neuron)}`)}
           actions={[
             ...controlledActions(
-              permissions.canDisburse,
+              // Dissolved, and a stake the ledger fee leaves something of: disburse moves the stake
+              // less the fee with the fee on top, so at or under it the ledger refuses the transfer.
+              neuronCanDisburse(neuron, BigInt(ICP_FEES)),
               actions.onClickDisburse,
               t("internetComputer.common.disburse"),
             ),
@@ -397,7 +401,7 @@ const StepManage = ({
         <NeuronDetailRow
           label={t("internetComputer.manageNeuronFlow.manage.hotKeys.add")}
           actions={controlledActions(
-            true,
+            neuronCanAddHotKey(neuron),
             actions.onClickAddHotKey,
             t("internetComputer.manageNeuronFlow.manage.hotKeys.addAction"),
           )}

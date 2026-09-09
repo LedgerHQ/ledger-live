@@ -8336,6 +8336,22 @@
       "title": "This topic cannot be followed",
       "description": "The Internet Computer has retired this topic, or the Ledger Internet Computer app cannot yet sign following on it. Choose another topic."
     },
+    "ICPDisburseNotAllowed": {
+      "title": "Cannot disburse this neuron",
+      "description": "A neuron can be disbursed once it has fully dissolved and its stake is more than the network fee. Sync your neurons to see their current state."
+    },
+    "ICPTooManyHotKeys": {
+      "title": "Hot key limit reached",
+      "description": "A neuron can hold at most {{max}} hot keys. Remove one to add another."
+    },
+    "ICPTopUpBelowMinimumStake": {
+      "title": "Top-up too small",
+      "description": "A neuron's balance has to reach 1 ICP after a top-up, so add at least {{missing}} ICP. A smaller transfer settles in the neuron's account but is not counted until a later top-up reaches the minimum."
+    },
+    "ICPStakeNotRefreshed": {
+      "title": "Stake transferred, neuron not updated",
+      "description": "The ICP was transferred to the neuron's account, but Internet Computer governance refused to update the neuron from it. {{reason}} Nothing is lost: the amount stays in the neuron's account and is counted by the next top-up that brings the balance to at least 1 ICP."
+    },
     "ICPStakeMemoNotRecoverable": {
       "title": "Cannot top up this neuron",
       "description": "Topping up a neuron needs the memo from the transaction that created it, and it is not in this account's history. Top it up from the account that created the neuron."

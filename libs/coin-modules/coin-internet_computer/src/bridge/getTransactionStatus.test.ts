@@ -1,14 +1,17 @@
+import { AmountRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Account } from "@ledgerhq/types-live";
 import { validateAddress } from "../logic/validation";
 import BigNumber from "bignumber.js";
 import {
   ICP_FEES,
+  MAX_HOT_KEYS_PER_NEURON,
   MIN_NEURON_STAKE,
   NNS_MAXIMUM_DISSOLVE_DELAY,
   NNS_MINIMUM_DISSOLVE_DELAY,
 } from "../consts";
 import {
   ICPCreateNeuronWarning,
+  ICPDisburseNotAllowed,
   ICPDissolveDelayGTMax,
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
@@ -23,6 +26,8 @@ import {
   ICPSplitNotAllowed,
   ICPStakeMaturityNotAllowed,
   ICPStakeMemoNotRecoverable,
+  ICPTooManyHotKeys,
+  ICPTopUpBelowMinimumStake,
   InvalidMemoICP,
   NotEnoughTransferAmount,
 } from "../errors";
@@ -250,6 +255,44 @@ describe("getTransactionStatus", () => {
       expect(status.errors.transaction).toBeInstanceOf(ICPHotKeyIsController);
     });
 
+    // The canister refuses the eleventh hot key with ResourceExhausted. The screen withholds Add at
+    // the cap, so this is for a snapshot that changed in between.
+    it("rejects a hot key past the canister's cap of ten", async () => {
+      const holding = (count: number) =>
+        neuron({ hotKeys: Array.from({ length: count }, (_, i) => `key-${i}`) });
+      const add = (n: ICPNeuron) =>
+        getTransactionStatus(
+          accountWith(n),
+          tx({ type: "add_hot_key", neuronId: "7", hotKeyToAdd: "2vxsx-fae" }),
+        );
+
+      expect((await add(holding(MAX_HOT_KEYS_PER_NEURON - 1))).errors.transaction).toBeUndefined();
+      const full = await add(holding(MAX_HOT_KEYS_PER_NEURON));
+      expect(full.errors.transaction).toBeInstanceOf(ICPTooManyHotKeys);
+      expect(full.errors.transaction).toMatchObject({ max: MAX_HOT_KEYS_PER_NEURON });
+    });
+
+    // Dissolved is the canister's own check. The fee floor is the ledger's: disburse moves the stake
+    // less the fee with the fee on top, so a stake at or under the fee is refused after signing.
+    it("rejects a disburse unless the neuron is dissolved and its stake covers the fee", async () => {
+      const disburse = (n: ICPNeuron) =>
+        getTransactionStatus(accountWith(n), tx({ type: "disburse", neuronId: "7" }));
+      const dissolvedWith = (stake: bigint) =>
+        neuron({
+          state: NeuronState.Dissolved,
+          dissolveState: unlockAt(NeuronState.Dissolved),
+          cachedNeuronStakeE8s: stake,
+        });
+
+      expect((await disburse(neuron())).errors.transaction).toBeInstanceOf(ICPDisburseNotAllowed);
+      expect((await disburse(dissolvedWith(BigInt(ICP_FEES)))).errors.transaction).toBeInstanceOf(
+        ICPDisburseNotAllowed,
+      );
+      expect(
+        (await disburse(dissolvedWith(BigInt(ICP_FEES) + 1n))).errors.transaction,
+      ).toBeUndefined();
+    });
+
     // The picker offers FOLLOWABLE_TOPICS only; this is the gate for a transaction built any other
     // way. Topic 11 is retired on the canister (refused after signing) and 15–18 are past the Ledger
     // ICP app's cap (refused on the device) — a signature spent either way.
@@ -447,6 +490,55 @@ describe("getTransactionStatus", () => {
         }),
       );
       expect(status.errors.transaction).not.toBeInstanceOf(ICPStakeMemoNotRecoverable);
+    });
+
+    // refresh_neuron refuses a balance under the minimum stake once the transfer has settled, so the
+    // floor is the neuron's balance plus the amount — read from the spend, since "send max" leaves
+    // the transaction's own amount at zero.
+    describe("increase_stake floor", () => {
+      const halfFunded = () =>
+        accountWith(neuron({ cachedNeuronStakeE8s: BigInt(MIN_NEURON_STAKE / 2) }));
+      const topUp = (over: Partial<Transaction>) =>
+        tx({
+          type: "increase_stake",
+          neuronId: "7",
+          recipient: "cd".repeat(32),
+          stakeNonce: "42",
+          ...over,
+        });
+
+      it("refuses a top-up that leaves the neuron under the minimum, naming the shortfall", async () => {
+        const status = await getTransactionStatus(
+          halfFunded(),
+          topUp({ amount: new BigNumber(MIN_NEURON_STAKE / 2 - 1) }),
+        );
+        expect(status.errors.amount).toBeInstanceOf(ICPTopUpBelowMinimumStake);
+        expect(status.errors.amount).toMatchObject({ missing: "0.5" });
+      });
+
+      it("accepts a top-up that reaches the minimum exactly", async () => {
+        const status = await getTransactionStatus(
+          halfFunded(),
+          topUp({ amount: new BigNumber(MIN_NEURON_STAKE / 2) }),
+        );
+        expect(status.errors.amount).toBeUndefined();
+      });
+
+      it("judges a send-max top-up on the amount that will actually move", async () => {
+        const status = await getTransactionStatus(
+          halfFunded(),
+          topUp({ amount: new BigNumber(0), useAllAmount: true }),
+        );
+        expect(status.errors.amount).toBeUndefined();
+      });
+
+      it("leaves an empty amount to AmountRequired", async () => {
+        const status = await getTransactionStatus(
+          halfFunded(),
+          topUp({ amount: new BigNumber(0) }),
+        );
+        expect(status.errors.amount).toBeInstanceOf(AmountRequired);
+      });
     });
 
     it("rejects a governance op with no neuronId", async () => {

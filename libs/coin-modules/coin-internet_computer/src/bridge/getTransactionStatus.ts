@@ -10,14 +10,19 @@ import { Principal } from "@dfinity/principal";
 import BigNumber from "bignumber.js";
 import {
   getNeuronDissolveDurationSeconds,
+  minTopUpAmount,
+  neuronCanAddHotKey,
   neuronCanBeSplit,
+  neuronCanDisburse,
   neuronCanSpawn,
   neuronCanStakeMaturity,
   neuronStake,
 } from "../common-logic/neuron";
 import {
+  E8S_PER_ICP,
   FOLLOWABLE_TOPICS,
   ICP_FEES,
+  MAX_HOT_KEYS_PER_NEURON,
   MIN_NEURON_STAKE,
   NNS_MAXIMUM_DISSOLVE_DELAY,
   NNS_MINIMUM_DISSOLVE_DELAY,
@@ -25,6 +30,7 @@ import {
 } from "../consts";
 import {
   ICPCreateNeuronWarning,
+  ICPDisburseNotAllowed,
   ICPDissolveDelayGTMax,
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
@@ -40,6 +46,8 @@ import {
   ICPSplitNotAllowed,
   ICPStakeMaturityNotAllowed,
   ICPStakeMemoNotRecoverable,
+  ICPTooManyHotKeys,
+  ICPTopUpBelowMinimumStake,
   InvalidMemoICP,
   NotEnoughTransferAmount,
 } from "../errors";
@@ -153,6 +161,9 @@ const validateAddHotKey = (neuron: ICPNeuron | undefined, hotKey?: string): Erro
   // Compared against the neuron's own controller rather than the account's derived principal: the
   // controller is what the permission actually duplicates, and it is already on the neuron.
   if (hotKey === neuron.controller) return new ICPHotKeyIsController();
+  if (!neuronCanAddHotKey(neuron)) {
+    return new ICPTooManyHotKeys("", { max: MAX_HOT_KEYS_PER_NEURON });
+  }
   return undefined;
 };
 
@@ -178,6 +189,26 @@ const validateFollow = (
     return new ICPFollowTopicNotAllowed("", { topic: followTopic });
   }
   return undefined;
+};
+
+// Dissolved is the canister's check; the fee floor is where the ledger refuses the transfer the
+// canister then makes. The screen withholds Disburse on both, so this catches a snapshot that changed
+// after the action was offered — a refusal on device costs a signature to discover.
+const validateDisburse = (neuron: ICPNeuron | undefined): Error | undefined => {
+  if (!neuron) return new ICPNeuronNotFound();
+  return neuronCanDisburse(neuron, BigInt(ICP_FEES)) ? undefined : new ICPDisburseNotAllowed();
+};
+
+// refresh_neuron refuses a balance under the minimum stake once the transfer has settled, leaving
+// the ICP in the neuron's account until a later top-up reaches it. The shortfall is quoted in ICP,
+// the unit the amount field takes.
+const validateTopUpAmount = (neuron: ICPNeuron, amount: BigNumber): Error | undefined => {
+  const missing = minTopUpAmount(neuron);
+  if (!amount.isInteger() || BigInt(amount.toFixed(0)) >= missing) return undefined;
+  return new ICPTopUpBelowMinimumStake("", {
+    missingE8s: missing.toString(),
+    missing: new BigNumber(missing.toString()).div(E8S_PER_ICP).toString(),
+  });
 };
 
 type NeuronOpResult = { transaction?: Error; amount?: Error; warning?: Error };
@@ -282,6 +313,8 @@ const validateNeuronOp = (transaction: Transaction, neuron?: ICPNeuron): NeuronO
       return validateStakeMaturity(neuron, transaction.percentageToStake);
     case "follow":
       return opResult(validateFollow(neuron, transaction.followTopic));
+    case "disburse":
+      return opResult(validateDisburse(neuron));
     default:
       return NEURON_REQUIRED_OPS.has(transaction.type) && !neuron
         ? opResult(new ICPNeuronNotFound())
@@ -350,6 +383,12 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
 
   const spend = computeSpend(account, transaction, isTransfer);
   if (spend.error && !errors.amount) errors.amount = spend.error;
+  // Judged on the amount that will actually move, which for "send max" only computeSpend knows. An
+  // empty entry is AmountRequired's to report.
+  if (type === "increase_stake" && neuron && !errors.amount && spend.amount.gt(0)) {
+    const floor = validateTopUpAmount(neuron, spend.amount);
+    if (floor) errors.amount = floor;
+  }
 
   return {
     errors,

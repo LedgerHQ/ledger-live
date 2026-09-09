@@ -1,7 +1,7 @@
 import en from "../../../../../static/i18n/en/app.json";
 
 /**
- * Every error the ICP bridge can put on a transaction status, plus the one broadcast throws.
+ * Every error the ICP bridge can put on a transaction status, plus the ones broadcast throws.
  *
  * TranslatedError falls back to `errors.generic`, whose title is `"{{message}}"` — so a missing key
  * does not fail loudly, it shows the class name to the user. Mirrors `coin-internet_computer/errors.ts`.
@@ -21,6 +21,10 @@ const REACHABLE_ERRORS = [
   "ICPSpawnNotAllowed",
   "ICPStakeMaturityNotAllowed",
   "ICPFollowTopicNotAllowed",
+  "ICPDisburseNotAllowed",
+  "ICPTooManyHotKeys",
+  "ICPTopUpBelowMinimumStake",
+  "ICPStakeNotRefreshed",
   "ICPStakeMemoNotRecoverable",
   "ICPCallUnconfirmed",
   "ICPNeuronsNotRead",
@@ -79,6 +83,8 @@ describe("internet_computer error translations", () => {
     "ICPInvalidPercentage",
     "ICPInvalidDissolveDelayIncrease",
     "ICPHotKeyIsController",
+    "ICPTooManyHotKeys",
+    "ICPTopUpBelowMinimumStake",
   ])("%s explains how to correct the value", name => {
     expect(describes(name)).toBeTruthy();
   });
@@ -88,6 +94,19 @@ describe("internet_computer error translations", () => {
     ["ICPDissolveDelayGTMax", "{{maxDays}}"],
   ])("%s quotes the bound in days, the unit the input uses", (name, placeholder) => {
     expect(describes(name)).toContain(placeholder);
+  });
+
+  it.each([
+    ["ICPTooManyHotKeys", "{{max}}"],
+    ["ICPTopUpBelowMinimumStake", "{{missing}}"],
+  ])("%s quotes the figure the bridge computed", (name, placeholder) => {
+    expect(describes(name)).toContain(placeholder);
+  });
+
+  // The transfer has settled by the time governance refuses the refresh, so copy that reads as a
+  // failed transaction would tell the user their ICP is gone.
+  it("says the ICP is still there when a stake refresh is refused", () => {
+    expect(errors.ICPStakeNotRefreshed?.description).toMatch(/Nothing is lost/);
   });
 
   // i18next picks the form off `count`, so both forms have to exist or a bound reads "1 days".
@@ -102,7 +121,7 @@ describe("internet_computer error translations", () => {
 
   // Both are thrown with the network's own text in `reason`. Dropping the placeholder would lose the
   // only part of the message that says what actually went wrong.
-  it.each(["ICPGovernanceRejected", "ICPCallRejected"])(
+  it.each(["ICPGovernanceRejected", "ICPCallRejected", "ICPStakeNotRefreshed"])(
     "%s passes the network's own wording through",
     name => {
       expect(errors[name]?.description).toContain("{{reason}}");

@@ -144,6 +144,49 @@ export class ICPFollowTopicNotAllowed extends Error {
   }
 }
 
+// The neuron is not dissolved, or its stake is at or under the ledger fee, so the transfer disburse
+// makes cannot be funded: the ledger refuses it after the signature.
+export class ICPDisburseNotAllowed extends Error {
+  override name = "ICPDisburseNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPDisburseNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The neuron already holds the canister's maximum of hot keys (passed as { max } at throw time).
+export class ICPTooManyHotKeys extends Error {
+  override name = "ICPTooManyHotKeys";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPTooManyHotKeys");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The top-up would leave the neuron's balance under the minimum stake, which refresh_neuron refuses
+// once the transfer has settled ({ missing } is the shortfall in ICP, { missingE8s } in e8s).
+export class ICPTopUpBelowMinimumStake extends Error {
+  override name = "ICPTopUpBelowMinimumStake";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPTopUpBelowMinimumStake");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The stake transfer settled, but governance refused to claim or refresh the neuron from it: the
+// ICP sits in the neuron's account, unclaimed. `reason` carries the canister's own text.
+export class ICPStakeNotRefreshed extends Error {
+  override name = "ICPStakeNotRefreshed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPStakeNotRefreshed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 // Top-up cannot auto-refresh: the neuron's stake nonce is not recoverable from this account's history.
 export class ICPStakeMemoNotRecoverable extends Error {
   override name = "ICPStakeMemoNotRecoverable";

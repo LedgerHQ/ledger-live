@@ -1,4 +1,5 @@
 import { Cbor, Certificate } from "@dfinity/agent";
+import { ICPStakeNotRefreshed } from "../errors";
 import { IDL } from "@dfinity/candid";
 import { Principal } from "@dfinity/principal";
 import {
@@ -199,15 +200,17 @@ describe("claimOrRefreshNeuronFromAccount", () => {
     expect(id).toBe(123n);
   });
 
-  it("throws the governance error message when the claim is rejected", async () => {
+  // The transfer has settled by the time governance answers, so the refusal is its own class rather
+  // than a bare Error, with the canister's wording carried for the copy.
+  it("throws ICPStakeNotRefreshed with the governance wording when the claim is refused", async () => {
     driveWith(
       encodeReply("claim_or_refresh_neuron_from_account", {
         result: [{ Error: { error_type: 0, error_message: "denied" } }],
       }),
     );
-    await expect(claimOrRefreshNeuronFromAccount(Principal.anonymous(), 5n)).rejects.toThrow(
-      "denied",
-    );
+    const attempt = claimOrRefreshNeuronFromAccount(Principal.anonymous(), 5n);
+    await expect(attempt).rejects.toThrow(ICPStakeNotRefreshed);
+    await expect(attempt).rejects.toMatchObject({ reason: "denied" });
   });
 
   it("returns undefined when the result is indeterminate (polling exhausted)", async () => {

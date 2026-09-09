@@ -4,6 +4,7 @@ import {
   ICP_FEES,
   KNOWN_TOPICS,
   LAST_SYNC_THRESHOLD_IN_DAYS,
+  MAX_HOT_KEYS_PER_NEURON,
   MIN_NEURON_STAKE,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
@@ -41,7 +42,10 @@ import {
   maxAllowedSplitAmount,
   minAllowedSplitAmount,
   minNeuronSplittable,
+  minTopUpAmount,
+  neuronCanAddHotKey,
   neuronCanBeSplit,
+  neuronCanDisburse,
   neuronCanSpawn,
   neuronCanStakeMaturity,
   neuronCanVote,
@@ -384,6 +388,36 @@ describe("stake & split", () => {
 
   it("maxAllowedSplitAmount clamps to zero below the minimum stake", () => {
     expect(maxAllowedSplitAmount(baseNeuron({ cachedNeuronStakeE8s: 1n }))).toBe(0n);
+  });
+
+  // disburse moves the stake less the ledger fee with the fee on top: at or under the fee there is
+  // nothing to move and the ledger refuses the transfer after the signature.
+  it("lets a dissolved neuron disburse only a stake above the fee", () => {
+    const fee = BigInt(ICP_FEES);
+    const dissolved = (stake: bigint) =>
+      inState(NeuronState.Dissolved, { cachedNeuronStakeE8s: stake });
+
+    expect(neuronCanDisburse(dissolved(fee + 1n), fee, NOW_SECONDS)).toBe(true);
+    expect(neuronCanDisburse(dissolved(fee), fee, NOW_SECONDS)).toBe(false);
+    expect(neuronCanDisburse(inState(NeuronState.Locked), fee, NOW_SECONDS)).toBe(false);
+  });
+
+  it("caps hot keys at the canister's ten", () => {
+    const holding = (count: number) =>
+      baseNeuron({ hotKeys: Array.from({ length: count }, (_, i) => `key-${i}`) });
+
+    expect(neuronCanAddHotKey(holding(MAX_HOT_KEYS_PER_NEURON - 1))).toBe(true);
+    expect(neuronCanAddHotKey(holding(MAX_HOT_KEYS_PER_NEURON))).toBe(false);
+  });
+
+  // refresh_neuron reads the ledger balance after the transfer and refuses it under the minimum
+  // stake, so what a top-up has to add is whatever the cached stake is short of it.
+  it("asks a top-up for at least what the neuron is short of the minimum stake", () => {
+    const withStake = (stake: number) => baseNeuron({ cachedNeuronStakeE8s: BigInt(stake) });
+
+    expect(minTopUpAmount(withStake(MIN_NEURON_STAKE))).toBe(0n);
+    expect(minTopUpAmount(withStake(MIN_NEURON_STAKE / 2))).toBe(BigInt(MIN_NEURON_STAKE / 2));
+    expect(minTopUpAmount(withStake(0))).toBe(BigInt(MIN_NEURON_STAKE));
   });
 });
 

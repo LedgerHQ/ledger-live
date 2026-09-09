@@ -25,7 +25,7 @@ import {
   MAINNET_LEDGER_CANISTER_ID,
 } from "../consts";
 import { redactPrincipals } from "../common-logic/redact";
-import { ICPCallRejected, ICPGovernanceRejected } from "../errors";
+import { ICPCallRejected, ICPGovernanceRejected, ICPStakeNotRefreshed } from "../errors";
 import { getAgent } from "../network/agent";
 import {
   decodeCanisterIdlFunc,
@@ -352,7 +352,12 @@ export const claimOrRefreshNeuronFromAccount = async (
     [{ result: [] | [{ NeuronId?: { id: bigint }; Error?: { error_message: string } }] }]
   >(func, reply);
   const result = fromNullable(decoded[0].result);
-  if (result && "Error" in result && result.Error) throw new Error(result.Error.error_message);
+  if (result && "Error" in result && result.Error) {
+    // The transfer has settled by now, so this is not a failed transaction: the ICP sits in the
+    // neuron's account, and the reason says what stopped the claim or refresh.
+    const reason = redactPrincipals(result.Error.error_message ?? "");
+    throw new ICPStakeNotRefreshed(reason || "ICPStakeNotRefreshed", { reason });
+  }
   return result && "NeuronId" in result ? result.NeuronId?.id : undefined;
 };
 

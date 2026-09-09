@@ -85,6 +85,10 @@ export const MAX_NEURON_AGE_FOR_AGE_BONUS = SECONDS_IN_FOUR_YEARS;
 // (dfinity/ic governance.rs:213 MAX_FOLLOWEES_PER_TOPIC).
 export const MAX_FOLLOWEES_PER_TOPIC = 15;
 
+// Hot keys one neuron may hold; at the cap the canister refuses add_hot_key with ResourceExhausted
+// (dfinity/ic governance.rs:258 MAX_NUM_HOT_KEYS_PER_NEURON, checked in neuron/types.rs add_hot_key).
+export const MAX_HOT_KEYS_PER_NEURON = 10;
+
 // Governance follow topics — id ↔ name mapping (dfinity/ic NNS Topic enum; @dfinity/nns
 // governance.enums.ts). The `follow` command's candid `topic` field is this Int32 id. Every id a
 // neuron's existing followees can sit on is here, including the ones a new follow can no longer
