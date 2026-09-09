@@ -167,7 +167,7 @@ const defaultHookResult = {
   webviewRef: { current: null },
   setWebviewRef: jest.fn(),
   webviewProps: { src: "https://example.com" },
-  webviewPartition: {},
+  webviewPartition: { partition: "persist:live-apps" },
   handleRefresh: jest.fn(),
 };
 

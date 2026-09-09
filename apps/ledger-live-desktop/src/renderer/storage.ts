@@ -214,6 +214,8 @@ export const reload = () => ipcRenderer.invoke("reload");
 
 export const cleanCache = () => ipcRenderer.invoke("cleanCache");
 
+export const clearStorageData = () => ipcRenderer.invoke("clearStorageData");
+
 function identitySelector<V>(state: V): V {
   return state;
 }

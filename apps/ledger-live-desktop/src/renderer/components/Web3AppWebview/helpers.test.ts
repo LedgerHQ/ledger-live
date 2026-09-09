@@ -149,12 +149,13 @@ describe("useWebviewState", () => {
   });
 
   describe("webviewPartition", () => {
-    it("is empty when manifest has no cacheBustingId", () => {
+    it("falls back to the shared Live App partition when manifest has no cacheBustingId", () => {
+      // Never `{}`: that would put the guest in the host's default session.
       mockGetInitialURL.mockReturnValue("https://example.com/");
 
       const { result } = renderHook(() => useWebviewState({ manifest: mockManifest }, null));
 
-      expect(result.current.webviewPartition).toEqual({});
+      expect(result.current.webviewPartition).toEqual({ partition: "persist:live-apps" });
     });
 
     it("sets a persist partition keyed to manifest id and cacheBustingId", () => {

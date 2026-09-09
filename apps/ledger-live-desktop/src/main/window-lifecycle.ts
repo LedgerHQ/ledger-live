@@ -173,12 +173,23 @@ export function createEarlyMainWindow() {
 function setupMainWindowHandlers() {
   if (!mainWindow) return;
 
-  // Live App guests share this session, so a device must never be selected for
-  // one (DONJON-1404).
+  // Guests have their own partitions and never reach this session; the check
+  // below is a second line of defence (DONJON-1404).
   mainWindow.webContents.session.on("select-hid-device", (event, details, callback) => {
     event.preventDefault();
 
-    const requestingContents = details.frame ? webContents.fromFrame(details.frame) : null;
+    // `fromFrame` throws on a frame disposed while `requestDevice()` was
+    // pending; letting that escape would leave `callback` uncalled and the
+    // renderer's promise hanging, so it becomes an explicit deny.
+    let requestingContents: Electron.WebContents | undefined;
+    try {
+      requestingContents = details.frame ? webContents.fromFrame(details.frame) : undefined;
+    } catch (error) {
+      console.warn("Could not resolve the frame requesting a HID device.", error);
+      callback(null);
+      return;
+    }
+
     const isHostRequest = !!requestingContents && requestingContents.getType() !== "webview";
     if (!isHostRequest) {
       console.warn("Ignoring HID device selection not attributable to the host renderer.");
@@ -196,9 +207,11 @@ function setupMainWindowHandlers() {
     }
   });
 
-  // Not scoped to an origin: `details` carries no WebContents and the packaged
-  // renderer's `file:` origin string is unconfirmed. Guests are already stopped by
-  // the `hid` permission check and by the guard above.
+  // What `navigator.hid.getDevices()` and `HIDDevice.open()` consult - neither
+  // goes through the `hid` check or through `select-hid-device` above. Guests
+  // are kept out by session isolation, not by an origin check: their partitions
+  // have no device permission handler at all, and with none set Electron grants
+  // only what `select-hid-device` picked (DONJON-1404).
   mainWindow.webContents.session.setDevicePermissionHandler(details => {
     if (details.deviceType === "hid" && details.device.vendorId === ledgerUSBVendorId) {
       return true;
