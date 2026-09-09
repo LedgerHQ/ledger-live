@@ -1,7 +1,6 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import { loadBaker } from "@ledgerhq/coin-tezos/network/bakers";
-import type { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
-import { getCurrencyConfiguration } from "../../config";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import type { Delegation } from "./types";
 
 export function getAccountDelegationSync(account: AccountLike): Delegation | null | undefined {
@@ -42,9 +41,6 @@ export async function loadAccountDelegation(
 ): Promise<Delegation | null | undefined> {
   const delegation = getAccountDelegationSync(account);
   if (!delegation) return null;
-  const baker = await loadBaker(
-    getCurrencyConfiguration<TezosCoinConfig>("tezos"),
-    delegation.address,
-  );
+  const baker = await loadBaker(buildContext("tezos"), delegation.address);
   return { ...delegation, baker };
 }
