@@ -95,14 +95,14 @@ export type CardLoginPorts = Readonly<{
   getUser: () => Promise<PayCardUser>;
   /**
    * Publishes "the card holder is signed in" for the components the machine does not render.
-   * `CardMore` reads that flag to decide whether it belongs on screen.
+   * `More` reads that flag to decide whether it belongs on screen.
    */
   setSignedIn: (isSignedIn: boolean) => void;
   openHostedLogin: OpenHostedLogin;
 }>;
 
 /**
- * What the logout needs from the outside world. It is a separate list, because `CardMore` is a
+ * What the logout needs from the outside world. It is a separate list, because `More` is a
  * separate component with no machine: it ends one session and says so, and it never logs anybody in.
  */
 export type CardLogoutPorts = Readonly<{

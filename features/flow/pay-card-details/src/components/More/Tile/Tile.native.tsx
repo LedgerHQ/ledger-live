@@ -1,17 +1,17 @@
 import React from "react";
 import { TileButton } from "@ledgerhq/lumen-ui-rnative";
 import { MoreHorizontal } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { CardMoreSheet } from "./CardMoreSheet";
-import type { CardMoreViewProps } from "./types";
+import { MoreSheet } from "../Sheet/MoreSheet";
+import type { MoreViewProps } from "../types";
 
-export function CardMoreView({
+export function Tile({
   moreLabel,
   sheetTitle,
   rows,
   isSheetOpen,
   onMorePress,
   onSheetClose,
-}: CardMoreViewProps) {
+}: MoreViewProps) {
   return (
     <>
       <TileButton
@@ -19,12 +19,12 @@ export function CardMoreView({
         isFull
         onPress={onMorePress}
         accessibilityLabel={moreLabel}
-        testID="card-more-tile"
+        testID="more-tile"
       >
         {moreLabel}
       </TileButton>
 
-      <CardMoreSheet isOpen={isSheetOpen} title={sheetTitle} rows={rows} onClose={onSheetClose} />
+      <MoreSheet isOpen={isSheetOpen} title={sheetTitle} rows={rows} onClose={onSheetClose} />
     </>
   );
 }

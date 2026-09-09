@@ -1,36 +1,5 @@
-import { mapUserToViewModel, runLogout, startLogout } from "../useCardMoreViewModel";
-import type { CardMoreLabels } from "../useCardMoreViewModel";
-import type { CardLogoutPorts } from "../../../state/types";
-
-const user = { id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301", verificationState: "VERIFIED" } as const;
-
-const onLogoutPress = jest.fn();
-const onMorePress = jest.fn();
-const onSheetClose = jest.fn();
-
-const labels: CardMoreLabels = {
-  more: "More",
-  sheetTitle: "More",
-  rows: {
-    managePin: "Manage PIN Code",
-    accessBaanx: "Access to Baanx",
-    help: "Help",
-    logout: "Logout",
-  },
-};
-
-function mapWith(overrides: Partial<Parameters<typeof mapUserToViewModel>[0]> = {}) {
-  return mapUserToViewModel({
-    isSignedIn: true,
-    user,
-    labels,
-    isSheetOpen: false,
-    onMorePress,
-    onSheetClose,
-    handlers: { logout: onLogoutPress },
-    ...overrides,
-  });
-}
+import { runLogout, startLogout } from "./cardLogout";
+import type { CardLogoutPorts } from "./types";
 
 type Ports = { [K in keyof CardLogoutPorts]: jest.Mock };
 
@@ -123,54 +92,5 @@ describe("startLogout", () => {
     await settle();
 
     expect(ports.logout).toHaveBeenCalledTimes(2);
-  });
-});
-
-describe("mapUserToViewModel", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it("shows the More tile and the sheet it opens", () => {
-    expect(mapWith()).toMatchObject({
-      moreLabel: "More",
-      sheetTitle: "More",
-      isSheetOpen: false,
-      onMorePress,
-      onSheetClose,
-    });
-  });
-
-  it("returns the four rows in the design order with their ids and titles", () => {
-    const rows = mapWith()?.rows ?? [];
-
-    expect(rows.map(row => row.id)).toEqual(["managePin", "accessBaanx", "help", "logout"]);
-    expect(rows.map(row => row.title)).toEqual([
-      "Manage PIN Code",
-      "Access to Baanx",
-      "Help",
-      "Logout",
-    ]);
-  });
-
-  it("gives a real handler only to the logout row", () => {
-    const rows = mapWith()?.rows ?? [];
-
-    for (const row of rows) {
-      row.onPress();
-    }
-
-    expect(rows.find(row => row.id === "logout")?.onPress).toBe(onLogoutPress);
-    expect(onLogoutPress).toHaveBeenCalledTimes(1);
-  });
-
-  it("shows nothing while nobody is signed in", () => {
-    // `CardLogin` holds the screen then, and it reads the same flag to know it.
-    expect(mapWith({ isSignedIn: false })).toBeNull();
-  });
-
-  it("shows nothing while the signed-in user is still on its way", () => {
-    // An empty cache would otherwise show a tile that opens a sheet with no session behind it.
-    expect(mapWith({ user: undefined })).toBeNull();
   });
 });
