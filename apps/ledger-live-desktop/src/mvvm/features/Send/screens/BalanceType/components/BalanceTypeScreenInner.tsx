@@ -56,9 +56,13 @@ function BalanceTypeOptionCard({
       <CardHeader>
         <CardLeading>
           <CardContent>
-            <CardContentTitle>{title}</CardContentTitle>
-            <CardContentDescription>{subtitle}</CardContentDescription>
-            <CardContentDescription>{option.formattedBalance}</CardContentDescription>
+            <CardContentTitle className="whitespace-normal">{title}</CardContentTitle>
+            <CardContentDescription className="whitespace-normal">
+              {subtitle}
+            </CardContentDescription>
+            <CardContentDescription className="whitespace-normal break-words">
+              {option.formattedBalance}
+            </CardContentDescription>
             {option.isZero ? (
               <Tag appearance="warning" label={zeroWarning} data-testid={zeroWarningTestId} />
             ) : null}
