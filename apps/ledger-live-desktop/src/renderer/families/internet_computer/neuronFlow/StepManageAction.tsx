@@ -5,7 +5,7 @@ import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import MissingNeuron from "../ManageNeuronFlowModal/steps/MissingNeuron";
-import { bridgeObjection, neuronHasGone } from "./submitGate";
+import { neuronHasGone, reportableObjection } from "./submitGate";
 import type { StepId, StepProps } from "./types";
 
 // GenericStepConnectDevice is typed against the generated union of every family's Transaction; the
@@ -26,9 +26,7 @@ type Props = StepProps & {
  * canister, one device confirmation later.
  */
 const StepManageAction = ({ backTo, ...props }: Props) => {
-  // While the bridge recomputes, `status` still describes the previous transaction, and reporting it
-  // would flash a verdict that is about to be replaced.
-  const objection = props.bridgePending ? undefined : bridgeObjection(props);
+  const objection = reportableObjection(props);
 
   if (neuronHasGone(props)) return <MissingNeuron {...props} />;
   if (!objection) return <ConnectDevice {...props} />;

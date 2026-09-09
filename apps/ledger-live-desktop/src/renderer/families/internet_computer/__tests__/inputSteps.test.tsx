@@ -856,6 +856,16 @@ describe("SubmitFooter error banner", () => {
     expect(screen.getByText("nope")).toBeInTheDocument();
   });
 
+  // The status still describes the previous transaction while the bridge recomputes, and the
+  // recompute is debounced, so the banner would sit there long enough to read about a value the user
+  // has already changed. Continue is withheld either way.
+  it("stays quiet while the bridge is still recomputing", () => {
+    render(<SubmitFooter {...withBridgeError()} hasInput bridgePending />);
+
+    expect(screen.queryByText("nope")).not.toBeInTheDocument();
+    expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
+  });
+
   // An entry that is present but out of range is where hasInput and canContinue diverge: Continue
   // stays disabled, and the reason has to be on screen or nothing explains why.
   it("explains an out-of-range entry while still blocking continue", () => {

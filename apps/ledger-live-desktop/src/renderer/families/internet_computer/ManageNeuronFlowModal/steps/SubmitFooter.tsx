@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { bridgeObjection, cannotSign } from "../../neuronFlow/submitGate";
+import { cannotSign, reportableObjection } from "../../neuronFlow/submitGate";
 import type { StepProps } from "../../neuronFlow/types";
 
 type Props = Pick<
@@ -38,7 +38,7 @@ const SubmitFooter = ({
   // The step body explains the state; withholding Continue here is what stops the signature. The
   // rule lives in submitGate so the device step cannot come to a different conclusion about the same
   // transaction, and so a step added later cannot forget it.
-  const objection = bridgeObjection({ status });
+  const objection = reportableObjection({ status, bridgePending });
 
   return (
     <Box grow>
