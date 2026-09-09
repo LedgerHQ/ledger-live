@@ -39,9 +39,10 @@ describe("CardLoginView (Web)", () => {
     expect(screen.getByRole("button", { name: "Login" })).toBeVisible();
   });
 
-  it("should render the login subtitle when copy is provided", () => {
+  it("should render the title and the description", () => {
     renderCardLoginView();
 
+    expect(screen.getByText("Crypto Card")).toBeVisible();
     expect(screen.getByText("Log in to access your card")).toBeVisible();
   });
 
