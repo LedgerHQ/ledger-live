@@ -3,9 +3,9 @@ import type { Currency } from "@domain/entity-currency";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import {
   initialState as countervaluesInitialState,
-  inferTrackingPairForAccounts,
   loadCountervalues,
 } from "@ledgerhq/live-countervalues/logic";
+import { inferTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/trackingPairs";
 
 /** Mirrors the bot/CLI settings (autofillGaps + market-cap batching). */
 export async function loadPortfolioCountervalues(
