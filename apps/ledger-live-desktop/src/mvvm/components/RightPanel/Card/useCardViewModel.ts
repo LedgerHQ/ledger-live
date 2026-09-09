@@ -9,7 +9,6 @@ import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
-import { useWipeHostedSessionOnSignInChange } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
@@ -62,8 +61,6 @@ export function useCardViewModel(): CardViewModel {
   }, [state]);
 
   const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
-
-  useWipeHostedSessionOnSignInChange();
 
   const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
     track(event, params);
