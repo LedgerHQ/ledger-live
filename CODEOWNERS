@@ -43,6 +43,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/                                                 @ledgerhq/platform
 
 # Platform — shared (explicit overrides)
+/shared/analytics/                                       @ledgerhq/platform
 /shared/feature-flags                                    @ledgerhq/platform
 /shared/schema-primitives                                @ledgerhq/platform
 /shared/qr-code                                          @ledgerhq/platform
