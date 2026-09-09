@@ -98,6 +98,14 @@ describe("getRecipientDisplayValue", () => {
       }),
     ).toBe("Private balance");
   });
+
+  it("should return displayLabel when address is missing", () => {
+    expect(getRecipientDisplayValue({ displayLabel: "Private balance" })).toBe("Private balance");
+  });
+
+  it("should return empty when neither displayLabel nor address is set", () => {
+    expect(getRecipientDisplayValue({ ensName: "vitalik.eth" })).toBe("");
+  });
 });
 
 describe("getRecipientSearchPrefillValue", () => {

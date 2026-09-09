@@ -32,17 +32,19 @@ export function saveRecentSendRecipient(
 export const SEND_ADDRESS_FORMAT_OPTIONS = { prefixLength: 8, suffixLength: 8 } as const;
 
 /**
- * Get the display value for a recipient (formatted address with optional ENS name).
+ * Get the display value for a recipient (displayLabel, or formatted address with optional ENS name).
  */
 export function getRecipientDisplayValue(
   recipient: RecipientData | null,
   options?: { prefixLength?: number; suffixLength?: number },
 ): string {
-  if (!recipient?.address) return "";
+  if (!recipient) return "";
 
   if (recipient.displayLabel?.trim()) {
     return recipient.displayLabel.trim();
   }
+
+  if (!recipient.address) return "";
 
   const formattedAddress = formatAddress(recipient.address, {
     prefixLength: options?.prefixLength ?? SEND_ADDRESS_FORMAT_OPTIONS.prefixLength,
