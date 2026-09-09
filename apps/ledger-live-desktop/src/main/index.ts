@@ -199,21 +199,30 @@ app.on("ready", async () => {
   if (__DEV__ || process.env.PLAYWRIGHT_RUN) {
     // Catch ledgerlive:// deep-link requests in dev mode from the app or live-apps
     // We cannot get deep-links from outside the app, from the browser for example
-    SUPPORTED_SCHEMES.forEach(scheme => {
-      protocol.handle(scheme, request => {
-        const url = request.url;
-        getMainWindowAsync()
-          .then(w => {
-            if (w) {
-              show(w);
-              sendDeepLink(w, url);
-            }
-          })
-          .catch((err: unknown) => console.log(err));
+    const handleDeepLink = (request: Request) => {
+      const url = request.url;
+      getMainWindowAsync()
+        .then(w => {
+          if (w) {
+            show(w);
+            sendDeepLink(w, url);
+          }
+        })
+        .catch((err: unknown) => console.log(err));
 
-        return new Response();
+      return new Response();
+    };
+
+    // Registration is per-session, and Live Apps run in their own partitions:
+    // the global `protocol` only covers the host's default session.
+    const registerDeepLinkSchemes = (target: Electron.Protocol) => {
+      SUPPORTED_SCHEMES.forEach(scheme => {
+        if (!target.isProtocolHandled(scheme)) target.handle(scheme, handleDeepLink);
       });
-    });
+    };
+
+    registerDeepLinkSchemes(protocol);
+    app.on("session-created", s => registerDeepLinkSchemes(s.protocol));
   }
 
   await clearSessionCache(window.webContents.session);
