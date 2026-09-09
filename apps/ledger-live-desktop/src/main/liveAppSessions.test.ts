@@ -84,6 +84,22 @@ describe("live app session clearing", () => {
     expect(persisted.clearStorageData).toHaveBeenCalled();
   });
 
+  it("clears a partition left on disk by a version predating the shared one", async () => {
+    // The pinned `<idSlug>-<cacheBustingId>` naming is unchanged for exactly
+    // this reason: every existing install still gets its tokens dropped.
+    const legacy = makeSession();
+    mockedReaddir.mockResolvedValue(asDirents(["1inch-1"]) as never);
+    mockedFromPartition.mockImplementation(partition =>
+      partition === "persist:1inch-1"
+        ? (legacy as unknown as Electron.Session)
+        : (sharedSession as unknown as Electron.Session),
+    );
+
+    await clearLiveAppSessionsStorage();
+
+    expect(legacy.clearStorageData).toHaveBeenCalled();
+  });
+
   it("deduplicates a partition that is both attached and on disk", async () => {
     const guestSession = makeSession();
     trackLiveAppSession(guestSession as unknown as Electron.Session);

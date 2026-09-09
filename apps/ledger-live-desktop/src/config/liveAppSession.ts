@@ -6,10 +6,17 @@
  * resets their storage); the rest share `LIVE_APP_PARTITION`, which is the
  * sharing they already have today by all sitting in the default session.
  */
-/** Shared by every Live App partition so Settings can tell ours apart on disk. */
-export const LIVE_APP_PARTITION_PREFIX = "live-app-";
+/** Only the shared partition is prefixed; the pinned ones predate this module. */
+const LIVE_APP_PARTITION_PREFIX = "live-app-";
 
 export const LIVE_APP_PARTITION = `persist:${LIVE_APP_PARTITION_PREFIX}shared`;
+
+/**
+ * `<idSlug>-<cacheBustingId>`, the naming used before DONJON-1404. Renaming
+ * these would orphan every partition already on disk: Settings would stop
+ * finding them, so the third-party tokens they hold would survive a Reset.
+ */
+const PINNED_PARTITION_NAME = /^[a-zA-Z0-9]+-\d+$/;
 
 export type LiveAppSessionManifest = {
   id: string;
@@ -19,5 +26,10 @@ export type LiveAppSessionManifest = {
 export function getLiveAppPartition({ id, cacheBustingId }: LiveAppSessionManifest): string {
   if (cacheBustingId === undefined) return LIVE_APP_PARTITION;
   const sanitizedId = id.replace(/[^a-zA-Z0-9]/g, "");
-  return `persist:${LIVE_APP_PARTITION_PREFIX}${sanitizedId}-${cacheBustingId}`;
+  return `persist:${sanitizedId}-${cacheBustingId}`;
+}
+
+/** `name` is a directory under userData/Partitions, i.e. a partition minus `persist:`. */
+export function isLiveAppPartitionName(name: string): boolean {
+  return name.startsWith(LIVE_APP_PARTITION_PREFIX) || PINNED_PARTITION_NAME.test(name);
 }
