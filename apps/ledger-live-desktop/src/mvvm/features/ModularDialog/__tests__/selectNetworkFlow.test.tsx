@@ -113,7 +113,7 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     await user.click(bitcoinAsset);
 
     expect(mockOnAssetSelected).not.toHaveBeenCalled();
-    expect(await screen.findByRole("tooltip")).toHaveTextContent("Bitcoin isn't supported yet.");
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("Bitcoin is not supported yet");
 
     bitcoinAsset.parentElement?.focus();
 
@@ -142,7 +142,7 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
 
     expect(mockOnAssetSelected).not.toHaveBeenCalled();
     expect(await screen.findByRole("tooltip")).toHaveTextContent(
-      "Arbitrum network isn't supported yet.",
+      "Arbitrum network is not supported yet",
     );
 
     arbitrumNetwork.parentElement?.focus();
