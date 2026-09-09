@@ -78,9 +78,6 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
-      // The app builds its trustchain SDK on first render and keeps it in a module singleton, so a
-      // flag pushed over the bridge afterwards moves the flag but not the SDK. Launch args are read
-      // before that first render, which is the only window where this value can still land.
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
     },

@@ -46,9 +46,6 @@ function ledgerSyncSuite(
       cleanupLedgerSyncAfterAll();
     }
 
-    // Verified here rather than in `setupLedgerSyncSeed` so the suites that skip the seed hook are
-    // covered too. The app is already up — `setup.ts` launches it in a file-level hook — and the
-    // check has to happen before `init` pushes the suite's own flags, or it just reads those back.
     beforeAll(async () => {
       await verifyLedgerSyncEnvironment();
       await init();

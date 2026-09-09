@@ -46,14 +46,6 @@ async function disconnectAllSpeculosSessions() {
   await DeviceManagementKitTransportSpeculos.disconnectAll();
 }
 
-/**
- * `useTrustchainSdk` builds the trustchain SDK on its first render and keeps it in a module
- * singleton, so the environment it reads then is the only one the SDK will ever use. `init()` runs
- * from `onInitFinished`, in the same tick as `setReady(true)` and therefore before the app tree
- * mounts — the last point where the environment can still be pinned. A local override also outranks
- * Firebase for the rest of the session, which keeps the reactive cloud-sync SDK on the same backend:
- * a trustchain and a cloud-sync from different environments produce a token the other rejects.
- */
 function overrideLedgerSyncEnvironment() {
   const launchArg = LaunchArguments.value()["ledger_sync_environment"];
   const environment =
@@ -64,8 +56,6 @@ function overrideLedgerSyncEnvironment() {
   store.dispatch(
     setOverride({
       key: "llmWalletSync",
-      // Left disabled, like the shipped default: this pins the backend without turning Ledger Sync
-      // on for suites that never asked for it. The suites that do send their own override later.
       value: {
         enabled: false,
         params: { environment, watchConfig: {}, learnMoreLink: "" },

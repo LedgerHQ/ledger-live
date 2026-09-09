@@ -45,12 +45,7 @@ export const LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS: PartialFeatures = {
   lwmLedgerSyncOptimisation: { enabled: true },
 };
 
-/**
- * `getFlags` resolves to an empty string when the bridge does not answer in time, and this is the
- * first round-trip of the run: on Android the app only reaches the server once `setup.ts` has
- * reverse-forwarded the port, so the client can still be in its connection backoff here. Retry
- * rather than read that silence as a wrong environment.
- */
+/** `getFlags` returns "" when the bridge has not connected yet, so retry before believing it. */
 async function readAppLedgerSyncEnvironment() {
   for (let attempt = 1; ; attempt++) {
     const rawFlags = await getFlags();
@@ -66,16 +61,7 @@ async function readAppLedgerSyncEnvironment() {
   }
 }
 
-/**
- * The environment reaches the app as the `ledger_sync_environment` launch arg, which the e2e bridge
- * turns into a flag override before the app tree mounts — the only window that works, since the app
- * builds its trustchain SDK on first render and keeps it in a module singleton.
- *
- * Call this *before* `app.init`: once a suite has pushed its own flags the read is circular, and it
- * is the value the app booted with that the SDK is holding. A launch arg that stopped arriving then
- * fails here, by name, rather than as the `400 Invalid value for: header Authorization` that a
- * trustchain and a cloud-sync on different backends produce.
- */
+/** Call before `app.init`: once a suite has pushed its own flags, this reads them back to itself. */
 export async function verifyLedgerSyncEnvironment() {
   const appEnvironment = await readAppLedgerSyncEnvironment();
 
