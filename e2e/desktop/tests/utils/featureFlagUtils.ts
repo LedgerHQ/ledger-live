@@ -166,6 +166,13 @@ export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies PartialFeatures;
 
+export const FF_LWD_CONTACTS_ENABLED = {
+  lwdContacts: {
+    enabled: true,
+    params: { newBadge: false, eligibleAddressFamilies: ["evm", "tron"] },
+  },
+} satisfies PartialFeatures;
+
 export const getMergedFeatureFlags = ({
   testFlags,
 }: { testFlags?: PartialFeatures } = {}): PartialFeatures => {
