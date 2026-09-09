@@ -74,7 +74,6 @@ export enum AppStateActionTypes {
   UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
   SET_BLOCK_PASSWORD_LOCK = "SET_BLOCK_PASSWORD_LOCK",
   INCREMENT_REBOOT_ID = "INCREMENT_REBOOT_ID",
-  TICK_PRODUCT_TOUR_DEEPLINK = "TICK_PRODUCT_TOUR_DEEPLINK",
 }
 
 export type AppStateSetHasConnectedDevicePayload = AppState["hasConnectedDevice"];
@@ -314,7 +313,6 @@ export enum SettingsActionTypes {
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_HAS_SEEN_WALLET_V4_TOUR = "SET_HAS_SEEN_WALLET_V4_TOUR",
   SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION = "SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION",
-  SET_PRODUCT_TOUR_COMPLETED = "SET_PRODUCT_TOUR_COMPLETED",
   SET_HAS_SEEN_Q2_WALLET_V4_TOUR = "SET_HAS_SEEN_Q2_WALLET_V4_TOUR",
   SET_HAS_SEEN_Q3_WALLET_V4_TOUR = "SET_HAS_SEEN_Q3_WALLET_V4_TOUR",
   SET_DO_NOT_ASK_AGAIN_SKIP_MEMO = "SET_DO_NOT_ASK_AGAIN_SKIP_MEMO",
@@ -404,7 +402,6 @@ export type SettingsSetHasSeenWalletV4TourPayload = SettingsState["hasSeenWallet
 export type SettingsSetHasDismissedContactsFeatureIntroductionPayload =
   SettingsState["hasDismissedContactsFeatureIntroduction"];
 export type SettingsSetDoNotAskAgainSkipMemoPayload = SettingsState["doNotAskAgainSkipMemo"];
-export type SettingsSetProductTourCompletedPayload = SettingsState["productTourCompleted"];
 export type SettingsSetHasSeenQ2WalletV4TourPayload = SettingsState["hasSeenQ2WalletV4Tour"];
 export type SettingsSetHasSeenQ3WalletV4TourPayload = SettingsState["hasSeenQ3WalletV4Tour"];
 export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
@@ -476,7 +473,6 @@ export type SettingsPayload =
   | SettingsSetHasSeenWalletV4TourPayload
   | SettingsSetHasDismissedContactsFeatureIntroductionPayload
   | SettingsSetDoNotAskAgainSkipMemoPayload
-  | SettingsSetProductTourCompletedPayload
   | SettingsSetHasSeenQ2WalletV4TourPayload
   | SettingsSetHasSeenQ3WalletV4TourPayload
   | SettingsSetHasClickedRecoverPayload;

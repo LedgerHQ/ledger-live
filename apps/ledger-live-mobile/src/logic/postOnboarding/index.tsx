@@ -12,7 +12,6 @@ import {
   buyCryptoAction,
   syncAccountsAction,
   recoverAction,
-  discoverWalletAction,
 } from "./actions";
 
 /**
@@ -28,7 +27,6 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
   buyCrypto: buyCryptoAction,
   syncAccounts: syncAccountsAction,
   recover: recoverAction,
-  discoverWallet: discoverWalletAction,
 };
 
 /**
@@ -44,7 +42,6 @@ const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
 const staxPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
   syncAccountsAction,
-  discoverWalletAction,
   recoverAction,
 ];
 
@@ -61,7 +58,6 @@ const europaPostOnboardingActionsMock: PostOnboardingAction[] = [
 const europaPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
   syncAccountsAction,
-  discoverWalletAction,
   recoverAction,
 ];
 
@@ -78,7 +74,6 @@ const apexPostOnboardingActionsMock: PostOnboardingAction[] = [
 const apexPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
   syncAccountsAction,
-  discoverWalletAction,
   recoverAction,
 ];
 
@@ -100,11 +95,11 @@ export function getPostOnboardingActionsForDevice(
   switch (deviceModelId) {
     case DeviceModelId.nanoS:
       // Post-onboarding actions for Nano S (no sync step).
-      return [assetsTransferAction, discoverWalletAction];
+      return [assetsTransferAction];
     case DeviceModelId.nanoSP:
-      return [assetsTransferAction, syncAccountsAction, discoverWalletAction];
+      return [assetsTransferAction, syncAccountsAction];
     case DeviceModelId.nanoX:
-      return [assetsTransferAction, syncAccountsAction, discoverWalletAction];
+      return [assetsTransferAction, syncAccountsAction];
     case DeviceModelId.stax:
       if (mock) return staxPostOnboardingActionsMock;
       return staxPostOnboardingActions;

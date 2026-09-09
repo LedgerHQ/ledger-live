@@ -544,7 +544,6 @@ apps/ledger-live-mobile/src/mvvm/features/LandingPages/                         
 apps/ledger-live-mobile/src/mvvm/features/NotificationsPrompt/                                 @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/AnalyticsConsentDrawer/                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/WalletV4Tour/                                        @ledgerhq/engagement
-apps/ledger-live-mobile/src/mvvm/features/ProductTour/                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Q2WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Q3WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/BackupHub/                                           @ledgerhq/engagement

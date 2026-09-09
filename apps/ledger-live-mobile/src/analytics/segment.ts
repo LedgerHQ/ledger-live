@@ -299,14 +299,6 @@ const getBackupHubAttributes = () => {
   };
 };
 
-const getProductTourAttributes = () => {
-  if (!analyticsFeatureFlagMethod) return { lwmProductTour: false };
-  const flag = analyticsFeatureFlagMethod("lwmProductTour");
-  return {
-    lwmProductTour: !!flag?.enabled,
-  };
-};
-
 const getLazyOnboardingBannerAttributes = () => {
   if (!analyticsFeatureFlagMethod) {
     return { lazyOnboardingBanner: false, lazyOnboardingBannerMode: null };
@@ -467,7 +459,6 @@ const extraProperties = async (store: AppStore) => {
   )?.time;
 
   const backupHubAttributes = getBackupHubAttributes();
-  const productTourAttributes = getProductTourAttributes();
   const lazyOnboardingBannerAttributes = getLazyOnboardingBannerAttributes();
   const payTabAttributes = getPayTabAttributes();
 
@@ -506,7 +497,6 @@ const extraProperties = async (store: AppStore) => {
     ...rebornAttributes,
     ...mevProtectionAttributes,
     ...backupHubAttributes,
-    ...productTourAttributes,
     ...lazyOnboardingBannerAttributes,
     migrationToMMKV,
     tokenWithFunds,

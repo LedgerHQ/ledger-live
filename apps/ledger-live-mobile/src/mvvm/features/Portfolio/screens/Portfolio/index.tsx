@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
-import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
 import { useQ2WalletV4TourDrawer, Q2WalletV4TourDrawer } from "LLM/features/Q2WalletV4Tour/Drawer";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
@@ -205,7 +204,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         closeDrawer={closeQ2Drawer}
         onSlideChange={onQ2SlideChange}
       />
-      <ProductTourPortfolioMount />
       <AnalyticsConsentDrawer />
       <GenericAwarenessModalDrawer />
       <RecoverIntroPortfolioMount />

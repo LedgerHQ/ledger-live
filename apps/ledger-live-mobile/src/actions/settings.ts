@@ -64,7 +64,6 @@ import {
   SettingsSetHasSeenWalletV4TourPayload,
   SettingsSetHasDismissedContactsFeatureIntroductionPayload,
   SettingsSetDoNotAskAgainSkipMemoPayload,
-  SettingsSetProductTourCompletedPayload,
   SettingsSetHasSeenQ2WalletV4TourPayload,
   SettingsSetHasSeenQ3WalletV4TourPayload,
   SettingsSetAnalyticsConsentInfoPayload,
@@ -292,10 +291,6 @@ export const setHasDismissedContactsFeatureIntroduction =
 
 export const setDoNotAskAgainSkipMemo = createAction<SettingsSetDoNotAskAgainSkipMemoPayload>(
   SettingsActionTypes.SET_DO_NOT_ASK_AGAIN_SKIP_MEMO,
-);
-
-export const setProductTourCompleted = createAction<SettingsSetProductTourCompletedPayload>(
-  SettingsActionTypes.SET_PRODUCT_TOUR_COMPLETED,
 );
 
 export const setHasSeenQ2WalletV4Tour = createAction<SettingsSetHasSeenQ2WalletV4TourPayload>(

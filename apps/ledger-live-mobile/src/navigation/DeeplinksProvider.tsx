@@ -50,7 +50,6 @@ import { resolveMarketOrAssetDeeplinkIntent } from "./deeplinks/resolveMarketOrA
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
 import { handleAssetDetailDeeplink } from "./deeplinks/handleAssetDetailDeeplink";
 import { handleGenericAwarenessModalDeeplink } from "./deeplinks/handleGenericAwarenessModalDeeplink";
-import { handleProductTourDeeplink } from "./deeplinks/handleProductTourDeeplink";
 import { handleBackupHubDeeplink } from "./deeplinks/handleBackupHubDeeplink";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
@@ -360,7 +359,6 @@ export const DeeplinksProvider = ({
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
-  const lwmProductTourFlag = useFeature("lwmProductTour");
   const lwmBackupHubFlag = useFeature("lwmBackupHub");
   const lwmPayTabFlag = useFeature("lwmPayTab");
 
@@ -826,16 +824,6 @@ export const DeeplinksProvider = ({
             return getStateFromPath(pathWithParams, config);
           }
 
-          if (hostname === "product-tour") {
-            const productTourState = handleProductTourDeeplink({
-              isLwmProductTourEnabled: lwmProductTourFlag?.enabled ?? false,
-              hasCompletedOnboarding,
-              dispatch,
-              config,
-            });
-            if (productTourState) return productTourState;
-          }
-
           if (hostname === "backup-hub") {
             const backupHubState = handleBackupHubDeeplink({
               isLwmBackupHubEnabled: lwmBackupHubFlag?.enabled ?? false,
@@ -914,7 +902,6 @@ export const DeeplinksProvider = ({
     manifests,
     web3hubFlag?.enabled,
     genericAwarenessModalFlag?.enabled,
-    lwmProductTourFlag?.enabled,
     lwmBackupHubFlag?.enabled,
     lwmPayTabFlag?.enabled,
   ]);

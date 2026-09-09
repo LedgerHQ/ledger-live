@@ -4,24 +4,24 @@ import { getPostOnboardingAction, getPostOnboardingActionsForDevice } from "../i
 
 describe("getPostOnboardingActionsForDevice", () => {
   it.each([DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.nanoX])(
-    "should include discoverWallet for %s",
+    "should not include discoverWallet for %s",
     deviceModelId => {
       const actions = getPostOnboardingActionsForDevice(deviceModelId);
 
       expect(actions.some(action => action.id === PostOnboardingActionId.discoverWallet)).toBe(
-        true,
+        false,
       );
     },
   );
 
   it.each([DeviceModelId.stax, DeviceModelId.europa, DeviceModelId.apex])(
-    "should include discover wallet actions for %s in real and mock lists",
+    "should not include discoverWallet in real lists and should keep the mock for %s",
     deviceModelId => {
       const actions = getPostOnboardingActionsForDevice(deviceModelId);
       const mockActions = getPostOnboardingActionsForDevice(deviceModelId, true);
 
       expect(actions.some(action => action.id === PostOnboardingActionId.discoverWallet)).toBe(
-        true,
+        false,
       );
       expect(
         mockActions.some(action => action.id === PostOnboardingActionId.discoverWalletMock),
@@ -42,10 +42,8 @@ describe("getPostOnboardingActionsForDevice", () => {
     },
   );
 
-  it("should return discoverWallet from getPostOnboardingAction", () => {
-    expect(getPostOnboardingAction(PostOnboardingActionId.discoverWallet)?.id).toBe(
-      PostOnboardingActionId.discoverWallet,
-    );
+  it("should not return discoverWallet from getPostOnboardingAction", () => {
+    expect(getPostOnboardingAction(PostOnboardingActionId.discoverWallet)).toBeUndefined();
   });
 
   it("should not return customImage from getPostOnboardingAction", () => {

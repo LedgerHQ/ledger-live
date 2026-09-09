@@ -3,7 +3,6 @@ import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
-import { productTourCompletedSelector } from "~/reducers/settings";
 import type { PostOnboardingHubActionCompletionContext } from "~/logic/postOnboarding/postOnboardingHubCompletion";
 
 export type PostOnboardingHubCompletionContext = Readonly<PostOnboardingHubActionCompletionContext>;
@@ -11,7 +10,6 @@ export type PostOnboardingHubCompletionContext = Readonly<PostOnboardingHubActio
 export function usePostOnboardingHubCompletionContext(): PostOnboardingHubCompletionContext {
   const trustchain = useSelector(trustchainSelector);
   const accounts = useSelector(accountsSelector);
-  const productTourCompleted = useSelector(productTourCompletedSelector);
 
   const recoverServices = useFeature("protectServicesMobile");
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
@@ -21,8 +19,7 @@ export function usePostOnboardingHubCompletionContext(): PostOnboardingHubComple
       isLedgerSyncActive: Boolean(trustchain?.rootId),
       accounts,
       protectId,
-      productTourCompleted,
     }),
-    [trustchain, accounts, protectId, productTourCompleted],
+    [trustchain, accounts, protectId],
   );
 }

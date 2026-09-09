@@ -56,7 +56,6 @@ import type { LiveAppModalState } from "./liveAppModal";
 import type { KnownDevicesState } from "./knownDevices";
 import type { GenericAwarenessModalState } from "./genericAwarenessModal";
 import type { BackupHubFeatureIntroState } from "./backupHubFeatureIntro";
-import type { ProductTourDrawerState } from "./productTourDrawer";
 
 // === ACCOUNT STATE ===
 
@@ -106,8 +105,6 @@ export type AppState = {
   isPasswordLockBlocked: boolean;
   /** Reboot ID for triggering app remount */
   rebootId: number;
-  /** Incremented when `ledgerlive://product-tour` is handled so the Product Tour subtree can open after navigation to Portfolio. */
-  productTourDeeplinkNonce: number;
 };
 
 // === AUTH STATE ===
@@ -317,7 +314,6 @@ export type SettingsState = {
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
   hasDismissedContactsFeatureIntroduction: boolean;
-  productTourCompleted: boolean;
   hasSeenQ2WalletV4Tour: boolean;
   hasSeenQ3WalletV4Tour: boolean;
   doNotAskAgainSkipMemo: boolean;
@@ -460,7 +456,6 @@ export type State = LLMRTKApiState & {
   featureFlags: FeatureFlagsState;
   genericAwarenessModal: GenericAwarenessModalState;
   backupHubFeatureIntro: BackupHubFeatureIntroState;
-  productTourDrawer: ProductTourDrawerState;
   history: HistoryState;
   identities: IdentitiesState;
   inView: InViewState;

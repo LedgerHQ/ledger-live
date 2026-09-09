@@ -11,7 +11,6 @@ export type PostOnboardingHubActionCompletionContext = {
   isLedgerSyncActive: boolean;
   accounts?: Account[];
   protectId: string;
-  productTourCompleted: boolean;
 };
 
 export async function isPostOnboardingHubActionFulfilled(
@@ -34,7 +33,6 @@ export async function isPostOnboardingHubActionFulfilled(
     action.getIsAlreadyCompletedByState?.({
       isLedgerSyncActive: !!context.isLedgerSyncActive,
       accounts: context.accounts,
-      productTourCompleted: context.productTourCompleted,
     }),
   );
 }
