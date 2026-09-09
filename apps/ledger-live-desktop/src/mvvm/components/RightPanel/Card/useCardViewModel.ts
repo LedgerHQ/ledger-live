@@ -7,6 +7,7 @@ import type { FormattedValue } from "@features/flow-pay-card-details";
 import useEnv from "@features/platform-env";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import { track } from "~/renderer/analytics/segment";
 import type { CardViewModel } from "./types";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
@@ -35,8 +36,9 @@ export function useCardViewModel(): CardViewModel {
 
   // Read with `useEnv`, and not with `getEnv`: a tester sets these in the debug settings, and the
   // login must take the new values without a restart of the app.
-  const apiUrl = useEnv("CARD_API_URL");
+  const apiUrl = useEnv("CARD_BAANX_API_URL");
   const clientId = useEnv("CARD_BAANX_CLIENT_KEY");
+  const hostedUiUrl = useEnv("CARD_BAANX_HOSTED_UI");
   const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
@@ -44,11 +46,11 @@ export function useCardViewModel(): CardViewModel {
     () => ({
       apiUrl,
       clientId,
-      // No `deepLink`: only a mobile secure browser session closes on one. The window this login opens
-      // reports nothing back, so `ledgerlive://paytab?code=…` is the whole of the answer here.
+      hostedUiUrl,
+      // No `deepLink`: the user's own browser opens the page, and it reports nothing back (LIVE-34740).
       redirectUri,
     }),
-    [apiUrl, clientId, redirectUri],
+    [apiUrl, clientId, hostedUiUrl, redirectUri],
   );
 
   // The code is the whole of the redirect: PKCE ties it to the verifier the attempt store still holds.
@@ -58,11 +60,16 @@ export function useCardViewModel(): CardViewModel {
     return code ? { code } : null;
   }, [state]);
 
+  const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
+    track(event, params);
+  }, []);
+
   return {
     title: t("payTab.card.title"),
     balanceLabel: t("payTab.card.balanceLabel"),
     formatCountervalue,
     oauthConfig,
     callback,
+    onTrackEvent,
   };
 }

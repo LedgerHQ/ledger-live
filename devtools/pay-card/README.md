@@ -3,8 +3,7 @@
 The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place:
 **Feature flags**, **Onboarding** (toggle each step done or not-done), **Reset onboarding**,
 **Feature tour** (seen state plus a reset), **Request verify hint** (seen state plus a reset),
-**Env vars** (the Card backend values, with the development tenant ready in each input), and
-optional **Quick actions** (Portfolio / Pay) when the host passes navigation callbacks.
+and optional **Quick actions** (Portfolio / Pay) when the host passes navigation callbacks.
 
 ## Import boundary
 
@@ -18,8 +17,7 @@ import PayCard, { type PayCardToolProps } from "@devtools/pay-card";
 
 - `PayCard` (default export) — the React component rendered by the shell.
 - `PayCardToolProps` — the props contract the host (via bindings) must satisfy, with its parts
-  `PayCardFlagsProps`, `PayCardOnboardingProps`, `OnboardingStep`, `PayCardEnvProps` and
-  `PayCardEnvVar`.
+  `PayCardFlagsProps`, `PayCardOnboardingProps` and `OnboardingStep`.
 - `usePayCardViewModel` / `PayCardViewModel` — onboarding progress derived from those props, plus
   `toggleStep` and `setAllSteps`.
 - `formatId` — turns a step id into a label: `"kyc-check"` → `"Kyc check"`.
@@ -51,18 +49,6 @@ interface PayCardToolProps {
   resetReceiveVerifyHintSeen: () => void;
   onNavigateToPortfolio?: () => void;
   onNavigateToPayTab?: () => void;
-  env: {
-    // The app reads these values on every request, so `setVar` applies without a restart. Nothing
-    // saves them: after a restart the app reads the build's values again.
-    vars: readonly {
-      key: string;
-      // The value the app reads right now.
-      value: string;
-      // What the input starts with, so one press is enough to change the tenant.
-      suggestedValue: string;
-    }[];
-    setVar: (key: string, value: string) => void;
-  };
 }
 ```
 

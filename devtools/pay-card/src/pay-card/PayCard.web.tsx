@@ -2,7 +2,6 @@ import { Button, Divider, Tag } from "@ledgerhq/lumen-ui-react";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
-import { EnvVarRow } from "../components/EnvVarRow/EnvVarRow";
 
 export function PayCard(props: Readonly<PayCardToolProps>) {
   const {
@@ -16,7 +15,8 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     resetCardOnboarding,
     onNavigateToPortfolio,
     onNavigateToPayTab,
-    env,
+    hasSeenLoginIntro,
+    resetPayCardLoginIntroSeen,
   } = props;
 
   return (
@@ -119,14 +119,12 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
 
       <Divider />
 
-      <Section title="Env vars">
-        <p className="body-4 text-muted">
-          Applied at once, and not saved: a restart brings the build's values back.
-        </p>
-        {env.vars.map(envVar => (
-          <EnvVarRow key={envVar.key} envVar={envVar} onSet={env.setVar} />
-        ))}
-      </Section>
+      <SeenReset
+        title="Card login intro"
+        seen={hasSeenLoginIntro}
+        resetLabel="Reset card login intro"
+        onReset={resetPayCardLoginIntroSeen}
+      />
     </div>
   );
 }

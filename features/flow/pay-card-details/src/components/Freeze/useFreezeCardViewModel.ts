@@ -1,51 +1,53 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   useFreezeCardMutation,
   useGetCardStatusQuery,
   useUnfreezeCardMutation,
-  type PayCardStatus,
 } from "@domain/api-card-management";
-import type { FreezeCardViewProps } from "../../types";
+import type { FreezeViewProps } from "../../types";
 
-function resolveOptimisticFrozen(
-  statusFromApi: PayCardStatus["status"] | undefined,
-  isFreezeLoading: boolean,
-  isUnfreezeLoading: boolean,
-): boolean {
-  if (isFreezeLoading) return true;
-  if (isUnfreezeLoading) return false;
-  return statusFromApi === "FROZEN";
-}
-
-export function useFreezeCardViewModel(): FreezeCardViewProps {
+export function useFreezeCardViewModel(): FreezeViewProps {
   const { data: cardStatus, isLoading: isStatusLoading } = useGetCardStatusQuery();
-  const [freeze, { isLoading: isFreezeLoading, isError: isFreezeError }] = useFreezeCardMutation();
-  const [unfreeze, { isLoading: isUnfreezeLoading, isError: isUnfreezeError }] =
-    useUnfreezeCardMutation();
+  const [freeze, { isLoading: isFreezeLoading }] = useFreezeCardMutation();
+  const [unfreeze, { isLoading: isUnfreezeLoading }] = useUnfreezeCardMutation();
 
-  return useMemo(() => {
-    const statusFromApi = cardStatus?.status;
-    const isFrozen = resolveOptimisticFrozen(statusFromApi, isFreezeLoading, isUnfreezeLoading);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-    return {
+  const statusFromApi = cardStatus?.status;
+  const isFrozen = statusFromApi === "FROZEN";
+  const isBlocked = statusFromApi === "BLOCKED";
+  const isUpdating = isFreezeLoading || isUnfreezeLoading;
+
+  const onOpenConfirm = useCallback(() => setIsConfirmOpen(true), []);
+  const onCloseConfirm = useCallback(() => setIsConfirmOpen(false), []);
+  const onConfirm = useCallback(() => {
+    setIsConfirmOpen(false);
+    if (isFrozen) {
+      unfreeze();
+    } else {
+      freeze();
+    }
+  }, [isFrozen, freeze, unfreeze]);
+
+  return useMemo(
+    () => ({
       isFrozen,
-      isBlocked: statusFromApi === "BLOCKED",
+      isUpdating,
+      isActionDisabled: isBlocked || isStatusLoading || isUpdating,
+      isConfirmOpen,
+      onOpenConfirm,
+      onCloseConfirm,
+      onConfirm,
+    }),
+    [
+      isFrozen,
+      isUpdating,
+      isBlocked,
       isStatusLoading,
-      isFreezeLoading,
-      isUnfreezeLoading,
-      isFreezeError,
-      isUnfreezeError,
-      onFreeze: () => void freeze(),
-      onUnfreeze: () => void unfreeze(),
-    };
-  }, [
-    cardStatus,
-    isStatusLoading,
-    isFreezeLoading,
-    isUnfreezeLoading,
-    isFreezeError,
-    isUnfreezeError,
-    freeze,
-    unfreeze,
-  ]);
+      isConfirmOpen,
+      onOpenConfirm,
+      onCloseConfirm,
+      onConfirm,
+    ],
+  );
 }

@@ -23,6 +23,9 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 jest.mock("LLD/hooks/redux");
 jest.mock("@features/platform-contacts", () => ({
+  isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).isEligibleAddressCurrency,
   useContactsFeature: jest.fn(() => ({
     isEnabled: false,
     eligibleAddressFamilies: ["evm"],

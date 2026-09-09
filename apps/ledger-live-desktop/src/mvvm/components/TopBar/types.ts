@@ -2,6 +2,7 @@ import {
   Bell,
   BellNotification,
   Clock,
+  Devices,
   Eye,
   EyeCross,
   Experiment,
@@ -15,6 +16,7 @@ type IconComponent =
   | typeof Bell
   | typeof BellNotification
   | typeof Clock
+  | typeof Devices
   | typeof Eye
   | typeof EyeCross
   | typeof Experiment
@@ -33,10 +35,14 @@ type TopBarAction = {
   icon: IconComponent;
   /** Visual appearance of the button. Defaults to "gray". */
   appearance?: TopBarActionAppearance;
+  /** Extra CSS class applied to the button (e.g. to override the background color for a status indicator). */
+  className?: string;
   /** Extra CSS class applied to the TooltipContent (e.g. `"max-w-sm"` for multi-line wrapping). */
   tooltipClassName?: string;
   /** Called when the tooltip is shown (e.g. on hover). Used for analytics when showing error tooltip. */
   onTooltipShow?: () => void;
+  /** When set, right-clicking the button calls this instead of opening the native context menu. */
+  onContextMenu?: () => void;
   /** When set, renders a Button (icon + text label) instead of an IconButton. */
   cta?: string;
 };

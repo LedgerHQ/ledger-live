@@ -33,6 +33,7 @@ import {
 } from "@features/flow-contacts-add-address";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
+  createMeDisplayNameFormatter,
   resolveEligibleAddressCurrencyIds,
   useContactsFeature,
   useContactsMeContact,
@@ -310,7 +311,9 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
       myAddresses: t("contacts.detail.myAddresses"),
-      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
+      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
+        t("contacts.detail.meDisplayName", { name }),
+      ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],

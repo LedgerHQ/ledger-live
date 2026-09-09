@@ -478,7 +478,7 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.getByTestId("contacts-screen")).toBeVisible();
       expect(screen.getByTestId("contacts-add-contact-header")).toBeEnabled();
-      expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/Me/);
+      expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/My addresses/);
       expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/0 address/);
       expect(screen.getByTestId("contacts-add-contact-row")).toBeVisible();
     });
@@ -548,7 +548,7 @@ describe("Contacts integration", () => {
     await user.type(input, "Me");
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/Me/);
+      expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/My addresses/);
       expect(screen.queryByTestId("contacts-search-no-results")).toBeNull();
     });
   });
@@ -565,7 +565,7 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
-      expect(screen.getByText("Me")).toBeVisible();
+      expect(screen.getByText("My addresses")).toBeVisible();
       expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent(
         "Add your address",
       );

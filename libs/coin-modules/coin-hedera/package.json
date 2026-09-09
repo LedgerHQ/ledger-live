@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-hedera",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Ledger Hedera Coin integration",
   "keywords": [
     "Ledger",
@@ -92,8 +92,6 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-countervalues": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",

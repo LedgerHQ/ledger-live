@@ -11,13 +11,11 @@ import {
   ListItemTrailing,
   Spot,
   Tag,
-  Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronRight, CoinsCrypto, CreditCard } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
-import { EnvVarRow } from "../components/EnvVarRow/EnvVarRow";
 import { Interaction } from "../components/Interaction/Interaction";
 import { BalanceScreen } from "../components/Balance/Balance";
 
@@ -37,7 +35,8 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     resetCardOnboarding,
     onNavigateToPortfolio,
     onNavigateToPayTab,
-    env,
+    hasSeenLoginIntro,
+    resetPayCardLoginIntroSeen,
   } = props;
   const [screen, setScreen] = useState<"tool" | "interaction" | "balance">("tool");
 
@@ -182,14 +181,12 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
 
       <Divider />
 
-      <Section title="Env vars">
-        <Text typography="body4" lx={{ color: "muted" }}>
-          Applied at once, and not saved: a restart brings the build's values back.
-        </Text>
-        {env.vars.map(envVar => (
-          <EnvVarRow key={envVar.key} envVar={envVar} onSet={env.setVar} />
-        ))}
-      </Section>
+      <SeenReset
+        title="Card login intro"
+        seen={hasSeenLoginIntro}
+        resetLabel="Reset card login intro"
+        onReset={resetPayCardLoginIntroSeen}
+      />
     </ScrollView>
   );
 }

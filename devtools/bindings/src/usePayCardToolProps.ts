@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   cardManagementApi,
   useGetCardLinkedWalletsQuery,
   useGetInternalWalletsQuery,
   useLazyGetCardStatusQuery,
+  useCreateCardDetailsTokenMutation,
 } from "@domain/api-card-management";
 import {
   useCardLinkedWallets,
@@ -11,7 +12,6 @@ import {
 } from "@features/flow-pay-card-wallets";
 import { useDispatch, useSelector } from "react-redux";
 import { setOverride } from "@shared/feature-flags";
-import { changes, getEnv, setEnvUnsafe, type EnvName } from "@shared/env";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   resetPayCardFeatureTourSeen,
@@ -21,6 +21,11 @@ import {
   resetReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
 } from "@features/flow-pay-request/state";
+import type { PayCardDetailsCss } from "@domain/api-card-management";
+import {
+  resetPayCardLoginIntroSeen,
+  selectPayCardHasSeenLoginIntro,
+} from "@features/flow-pay-card-auth/state";
 import {
   resetCardOnboardingCompleted,
   selectHasCompletedCardOnboarding,
@@ -30,7 +35,6 @@ import type { DevToolsConfig } from "@devtools/registry";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
 type OnboardingStep = PayCardToolProps["onboarding"]["steps"][number];
-type PayCardEnvVar = PayCardToolProps["env"]["vars"][number];
 
 type PayCardProbe = PayCardToolProps["interaction"]["probes"][number];
 
@@ -57,25 +61,6 @@ const PURCHASE_STEP: OnboardingStep = {
   label: "First purchase",
   done: false,
 };
-
-/**
- * The two Card env vars the tool shows, each with the value of the Baanx development tenant.
- *
- * A release build carries neither, so it starts on the definition defaults: the production URL and
- * an empty client key. The suggestions put the development tenant one press away.
- */
-const CARD_ENV_VARS: readonly { key: EnvName; suggestedValue: string }[] = [
-  { key: "CARD_API_URL", suggestedValue: "https://dev.api.baanx.com" },
-  { key: "CARD_BAANX_CLIENT_KEY", suggestedValue: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6" },
-];
-
-function readCardEnvVars(): readonly PayCardEnvVar[] {
-  return CARD_ENV_VARS.map(({ key, suggestedValue }) => ({
-    key,
-    value: String(getEnv(key)),
-    suggestedValue,
-  }));
-}
 
 function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
   return platform === "native"
@@ -148,6 +133,12 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     dispatch(resetReceiveVerifyHintSeen());
   }, [dispatch]);
 
+  const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
+
+  const resetLoginIntro = useCallback(() => {
+    dispatch(resetPayCardLoginIntroSeen());
+  }, [dispatch]);
+
   const resetCardOnboarding = useCallback(() => {
     dispatch(resetCardOnboardingCompleted());
   }, [dispatch]);
@@ -182,23 +173,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const onboarding = useMemo(() => ({ steps, setStepDone }), [steps, setStepDone]);
 
-  const [envVars, setEnvVars] = useState<readonly PayCardEnvVar[]>(readCardEnvVars);
-
-  useEffect(() => {
-    // Read again on mount, because a change can land between the first render and this subscription.
-    setEnvVars(readCardEnvVars());
-    const sub = changes.subscribe(({ name }) => {
-      if (CARD_ENV_VARS.some(candidate => candidate.key === name)) setEnvVars(readCardEnvVars());
-    });
-    return () => sub.unsubscribe();
-  }, []);
-
-  const setEnvVar = useCallback((key: string, value: string) => {
-    setEnvUnsafe(key, value);
-  }, []);
-
-  const env = useMemo(() => ({ vars: envVars, setVar: setEnvVar }), [envVars, setEnvVar]);
-
   const [runCardStatus, cardStatus] = useLazyGetCardStatusQuery();
 
   const cardStatusProbe = useMemo<PayCardProbe>(
@@ -215,7 +189,35 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     [cardStatus.isFetching, cardStatus.data, cardStatus.error, runCardStatus],
   );
 
-  const interaction = useMemo(() => ({ probes: [cardStatusProbe] }), [cardStatusProbe]);
+  const [requestCardDetails, cardDetails] = useCreateCardDetailsTokenMutation();
+
+  const { reset: resetCardDetails } = cardDetails;
+  const details = useMemo(
+    () => ({
+      // A live, single-use credential. RTK holds it in mutation state while this hook is mounted,
+      // so what the tool guarantees is narrower: it is never handed over as text, and `clear`
+      // resets it on the way out.
+      imageUrl: cardDetails.data?.imageUrl,
+      isFetching: cardDetails.isLoading,
+      error: cardDetails.error === undefined ? undefined : describeError(cardDetails.error),
+      request: (customCss?: PayCardDetailsCss) => {
+        requestCardDetails(customCss);
+      },
+      clear: resetCardDetails,
+    }),
+    [
+      cardDetails.data,
+      cardDetails.isLoading,
+      cardDetails.error,
+      requestCardDetails,
+      resetCardDetails,
+    ],
+  );
+
+  const interaction = useMemo(
+    () => ({ probes: [cardStatusProbe], details }),
+    [cardStatusProbe, details],
+  );
 
   // The wallets are read when the balance screen opens, not when the tool mounts.
   const [walletsRequested, setWalletsRequested] = useState(false);
@@ -288,9 +290,10 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetPayCardFeatureTourSeen: resetFeatureTour,
       hasSeenReceiveVerifyHint,
       resetReceiveVerifyHintSeen: resetVerifyHint,
+      hasSeenLoginIntro,
+      resetPayCardLoginIntroSeen: resetLoginIntro,
       hasCompletedCardOnboarding,
       resetCardOnboarding,
-      env,
     }),
     [
       flags,
@@ -301,9 +304,10 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetFeatureTour,
       hasSeenReceiveVerifyHint,
       resetVerifyHint,
+      hasSeenLoginIntro,
+      resetLoginIntro,
       hasCompletedCardOnboarding,
       resetCardOnboarding,
-      env,
     ],
   );
 }

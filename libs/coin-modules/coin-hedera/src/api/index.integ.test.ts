@@ -11,7 +11,6 @@ import {
 } from "@hashgraph/sdk";
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { NotEnoughBalance, RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
 import { createApi } from "../api";
 import {
@@ -33,13 +32,17 @@ import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 import { getMockedConfig, getMockedContext } from "../test/fixtures/config.fixture";
 
+const HEDERA_MIRROR = process.env.API_HEDERA_MIRROR ?? "https://hedera.coin.ledger.com";
+const HEDERA_HGRAPH =
+  process.env.API_HEDERA_HGRAPH ?? "https://hedera-indexer-mainnet.coin.ledger.com/v1/graphql";
+
 describe("createApi", () => {
   const apiConfig = {
     ...getMockedConfig(),
     useNetworkTimestamp: true,
     apiUrls: {
-      mirrorNode: getEnv("API_HEDERA_MIRROR"),
-      hgraph: getEnv("API_HEDERA_HGRAPH"),
+      mirrorNode: HEDERA_MIRROR,
+      hgraph: HEDERA_HGRAPH,
     },
   };
   const api = createApi("hedera");

@@ -21,13 +21,13 @@ const ETHEREUM_SELECTION = {
   assetDisplayName: "Ethereum",
 } as const;
 
-const CONTACTS_DEVICE_APP_NAMES = new Set(["Ethereum", "Tron"]);
-
 function eligibleNetworkIdsOf(families: readonly string[]) {
   return listCryptoCurrencies()
     .filter(
       network =>
-        families.includes(network.family) && CONTACTS_DEVICE_APP_NAMES.has(network.managerAppName),
+        families.includes(network.family) &&
+        ((network.family === "evm" && network.ethereumLikeInfo !== undefined) ||
+          network.family === "tron"),
     )
     .map(network => network.id);
 }

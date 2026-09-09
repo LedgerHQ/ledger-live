@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "37.4.0",
+  "version": "37.5.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -428,6 +428,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@domain/entity-account": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/device-react": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",

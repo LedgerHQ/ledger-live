@@ -12,6 +12,7 @@ export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
   SEND_FLOW_STEP.CUSTOM_FEES,
   SEND_FLOW_STEP.COIN_CONTROL,
   SEND_FLOW_STEP.CONFIRMATION,
+  SEND_FLOW_STEP.PAY_SUCCESS,
 ];
 
 export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
@@ -123,6 +124,11 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     canGoBack: false,
     showHeaderRight: false,
     showTitle: false,
+    screenName: ScreenName.SendFlowPaySuccess,
+    screenOptions: {
+      ...TransparentHeaderNavigationOptions,
+      title: "",
+    },
   },
 };
 

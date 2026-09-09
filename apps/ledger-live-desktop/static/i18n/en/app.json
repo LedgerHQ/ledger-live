@@ -687,26 +687,6 @@
   "postOnboardingDebugger": {
     "buttonTitle": "Test"
   },
-  "vaultSigner": {
-    "modal": {
-      "title": "Connect Vault",
-      "info": "Link your Ledger Vault workspace accounts and create transactions from Ledger Wallet by completing fields below. Locate info at Settings > External wallet signer.",
-      "info_link": "Learn more",
-      "host": {
-        "title": "URL Endpoint",
-        "placeholder": "ws://localhost:3030"
-      },
-      "workspace": {
-        "title": "Workspace name",
-        "placeholder": "workspace"
-      },
-      "token": {
-        "title": "Operator API Token",
-        "placeholder": "Token"
-      },
-      "submit": "Connect"
-    }
-  },
   "account": {
     "subHeader": {
       "moreInfo": "More info",
@@ -932,7 +912,19 @@
     },
     "card": {
       "title": "Crypto card",
-      "balanceLabel": "Balance"
+      "balanceLabel": "Balance",
+      "freeze": "Freeze",
+      "unfreeze": "Unfreeze",
+      "goBack": "Go back",
+      "freezeConfirm": {
+        "title": "Freezing means you cannot use the card anymore",
+        "description": "You can unfreeze your card at any time.",
+        "confirm": "Freeze now"
+      },
+      "unfreezeConfirm": {
+        "title": "Unfreeze your card?",
+        "confirm": "Unfreeze now"
+      }
     },
     "cardOnboarding": {
       "widget": {
@@ -1022,6 +1014,42 @@
         "earn": {
           "title": "Put your money to work right away",
           "description": "You can swap or earn with your stablecoin."
+        }
+      }
+    },
+    "cardLogin": {
+      "title": "Crypto Card",
+      "beforeIntro": {
+        "description": "Get 1% cashback every time you spend",
+        "action": "Get card"
+      },
+      "afterIntro": {
+        "description": "Log in to access your card",
+        "action": "Login"
+      }
+    },
+    "cardLoginIntro": {
+      "title": "Spend crypto, earn cashback",
+      "providedBy": "Card provided by Baanx",
+      "createAccount": "Create an account",
+      "logIn": "Log in to Baanx",
+      "wallets": {
+        "applePay": "Apple Pay",
+        "googlePay": "Google Pay",
+        "both": "Apple Pay or Google Pay"
+      },
+      "rows": {
+        "cashback": {
+          "title": "Uncapped 1% crypto cashback",
+          "description": "On all crypto card purchases with USDC, USDT, or BTC."
+        },
+        "virtualCard": {
+          "title": "Free virtual card",
+          "description": "Add to {{wallet}}, ready instantly."
+        },
+        "topUp": {
+          "title": "Securely top up via Ledger Wallet",
+          "description": "Every transfer approved with your Ledger signer."
         }
       }
     },
@@ -1679,10 +1707,6 @@
     "referralProgram": {
       "title": "Refer and earn $10",
       "description": "Successfully refer a friend and you both earn $10 worth of Bitcoin."
-    },
-    "vaultSigner": {
-      "title": "Vault signer mode",
-      "link": "Vault Help Center"
     }
   },
   "signmessage": {
@@ -5563,6 +5587,12 @@
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
       "enableCountervaluesStaging": "Countervalues API staging",
       "enableCountervaluesStagingDesc": "Use the staging countervalues API instead of production.",
+      "enableMockServerTransport": "Mock server transport",
+      "enableMockServerTransportDesc": "Enable the Device Management Kit mock server transport to connect to a device mock server instead of a physical device. Uses the shared mock server unless MOCK_SERVER_TRANSPORT_URL points elsewhere. Requires an app restart to take effect.",
+      "mockServerStatus": {
+        "connected": "Mock server connected · click to copy the session token, right-click to open the configuration UI",
+        "disconnected": "Mock server unreachable"
+      },
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
       "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
@@ -5665,10 +5695,6 @@
         "1559DeactivateGate": {
           "title": "Deactivate EIP1559 minimum priority fee gate",
           "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
-        },
-        "vaultSigner": {
-          "title": "Vault Signer",
-          "description": "Use Ledger Vault as a signer with your operator API token"
         },
         "1559CustomPriorityLowerGate": {
           "title": "Custom priority fee gate",
@@ -7231,6 +7257,10 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "UnexpectedGetBalanceError": {
+      "title": "Your balance could not be retrieved",
+      "description": "Please check your internet connection and try again."
+    },
     "NotEnoughTransferAmount": {
       "title": "A minimum of 1 ICP is required to stake into a neuron."
     },
@@ -7833,6 +7863,34 @@
     },
     "ConcordiumAddressVerificationFailedError": {
       "title": "Address verification failed"
+    },
+    "ConcordiumInsufficientCcdForFee": {
+      "title": "Not enough CCD for the network fee",
+      "description": "The network fee is paid in CCD, not in the token you are sending. Add CCD to this account and try again."
+    },
+    "ConcordiumTokenPaused": {
+      "title": "Transfers are paused for this token",
+      "description": "The token issuer has paused all transfers. You can try again once transfers resume."
+    },
+    "ConcordiumTokenTransferNotPermitted": {
+      "title": "This account cannot send this token",
+      "description": "The token issuer restricts who may send it, and this account is not permitted. Contact the token issuer for access."
+    },
+    "ConcordiumTokenRestrictionsUnverified": {
+      "title": "Token restrictions could not be verified",
+      "description": "This token's transfer rules could not be read, so the transfer cannot be confirmed as allowed. Please resync your account and try again."
+    },
+    "ConcordiumUnsupportedTokenDecimals": {
+      "title": "This token cannot be signed on your Ledger device",
+      "description": "The token uses {{decimals}} decimal places, and your device supports at most {{maxDecimals}}. Receiving and holding it are unaffected."
+    },
+    "ConcordiumTokenAccountUnavailable": {
+      "title": "This token is no longer in your account",
+      "description": "The token you selected is not available any more. Please start the transaction again."
+    },
+    "ConcordiumInvalidPltPayloadError": {
+      "title": "This transaction cannot be prepared",
+      "description": "The token's details are outside what your Ledger device accepts, so the transaction cannot be built. Please contact Ledger Support."
     },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
@@ -9455,6 +9513,23 @@
         "errorTitle": "Private sync failed",
         "errorDesc": "Something went wrong, please try again"
       }
+    },
+    "manage": {
+      "headerAction": "Earn",
+      "title": "Manage staking",
+      "comingSoonTooltip": "Coming soon.",
+      "bond": {
+        "title": "Bond",
+        "description": "Bond your ALEO to a validator to earn rewards."
+      },
+      "unbond": {
+        "title": "Unbond",
+        "description": "Unbond your bonded ALEO. Funds will be available after the unbonding period."
+      },
+      "claim": {
+        "title": "Claim",
+        "description": "Claim your unbonded ALEO back to your available balance."
+      }
     }
   },
   "updater": {
@@ -9630,7 +9705,7 @@
     },
     "contacts": {
       "title": "Contacts",
-      "description": "Manage your contacts"
+      "description": "Save and manage external wallet addresses."
     },
     "explore": "Explore all Ledger devices"
   },
@@ -9673,7 +9748,7 @@
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
-    "addExternalAddress": "Add external address",
+    "addYourAddress": "Add your address",
     "addAddressEntry": {
       "title": "Enter address",
       "addressPlaceholder": "Address or ENS",
@@ -9688,7 +9763,8 @@
         "learnMore": "Learn more"
       },
       "validationUnavailable": "Address validation is temporarily unavailable.",
-      "ensDisclaimer": "This ENS name resolves to the address shown above."
+      "ensDisclaimer": "ENS names can change",
+      "ensDisclaimerDescription": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify."
     },
     "addAddressName": {
       "inputLabel": "Address name",
@@ -9705,9 +9781,7 @@
       "currencyLabel": "Currency",
       "networkLabel": "Network",
       "nameLabel": "Address name",
-      "continue": "Confirm address",
-      "successTitle": "Address saved",
-      "close": "Close"
+      "continue": "Confirm address"
     },
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
@@ -9715,21 +9789,21 @@
       "invalidNameError": "Special characters are not allowed.",
       "duplicateNameError": "This contact name is already in use."
     },
-    "searchPlaceholder": "Search contact",
+    "searchPlaceholder": "Search by name",
     "searchNoResults": "No contact found",
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",
     "me": {
-      "name": "Me"
+      "myAddresses": "My addresses"
     },
     "detail": {
       "meDisplayName": "{{name}} (Me)",
       "ledgerWalletAddresses": "Ledger Wallet addresses",
       "emptyState": {
-        "meTitle": "No saved addresses for you",
+        "meTitle": "Save your own addresses",
         "contactTitle": "No saved addresses for {{name}}",
-        "meDescription": "Save your wallet addresses to receive crypto by name next time.",
+        "meDescription": "Save the external addresses you own on exchanges or other wallets. Next time you send to yourself, your Ledger device will show the name you chose.",
         "contactDescription": "Save their wallet addresses to send to them by name next time"
       }
     },
@@ -9785,7 +9859,7 @@
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
-      "primaryAction": "Explore now",
+      "primaryAction": "Try now",
       "highlights": {
         "saveAddresses": {
           "title": "Save addresses by a name you choose",
@@ -9796,7 +9870,7 @@
           "description": "See a name you trust, not an address."
         },
         "privateAcrossDevices": {
-          "title": "Securely top up via Ledger Wallet™",
+          "title": "Private across your Ledger devices",
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }
@@ -10086,5 +10160,44 @@
       "totalMaturity": "Total Maturity",
       "totalMaturityTooltip": "The total accumulated rewards from staking, including both staked and liquid maturity. These rewards can be either staked again or claimed as liquid ICP."
     }
+  },
+  "perpsReview": {
+    "depositTitle": "Deposit via SwapKit",
+    "depositSubtitle": "Our partner SwapKit manages your swap and deposit in one transaction - all secured by your Ledger device.",
+    "swapDetailTitle": "Swap details",
+    "amountSendLabel": "Amount send",
+    "amountReceiveLabel": "Amount receive",
+    "approximateValue": "~{{value}}",
+    "depositDetailTitle": "Deposit details",
+    "depositAmountLabel": "Deposit amount",
+    "depositReceiveLabel": "Receiver account",
+    "depositCTA": "Deposit"
+  },
+  "perpsDeposit": {
+    "title": "Deposit",
+    "inputDepositAmount": "Deposit ~{{value}}",
+    "inputSubText": "Swap and deposit via {{provider}}",
+    "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount": "No account",
+    "review": "Review",
+    "formErrors": {
+      "amountExceedsBalance": "Insufficient balance",
+      "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
+    }
+  },
+  "perpsDepositSign": {
+    "a11yTitle": "Deposit signing",
+    "terms": "By signing this transaction, I accept <termsLink>SwapKit by NEAR Intents T&C</termsLink>"
+  },
+  "perpsTransactionSigned": {
+    "title": "Transaction signed",
+    "description": "You'll receive your {{currency}} once confirmed on the blockchain",
+    "viewTransaction": "View transaction"
+  },
+  "perpsTransactionStatus": {
+    "dialogTitle": "Transaction detail",
+    "title": "Fund Perpetuals",
+    "currencies": "{{sendTicker}} → {{receiveTicker}}"
   }
 }

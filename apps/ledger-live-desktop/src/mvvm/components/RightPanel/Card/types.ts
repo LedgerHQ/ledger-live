@@ -7,4 +7,5 @@ export interface CardViewModel {
   readonly balanceLabel: string;
   readonly oauthConfig: PayCardProps["oauthConfig"];
   readonly callback: PayCardProps["callback"];
+  readonly onTrackEvent: PayCardProps["onTrackEvent"];
 }

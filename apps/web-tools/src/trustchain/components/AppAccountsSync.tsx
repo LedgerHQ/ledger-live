@@ -1,3 +1,4 @@
+import { parseAnyAccountId, safeParseAnyAccountId } from "@domain/entity-account";
 import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Observable, concat, defer, find, from, ignoreElements, mergeMap, tap } from "rxjs";
 import { Button } from "@ledgerhq/lumen-ui-react";
@@ -141,7 +142,8 @@ export default function AppAccountsSync({
         if (newLocalState) {
           const mergedAccountNames = new Map(walletState.accountNames);
           for (const [id, name] of newLocalState.accountNames) {
-            mergedAccountNames.set(id, name);
+            const accountId = safeParseAnyAccountId(id);
+            if (accountId) mergedAccountNames.set(accountId, name);
           }
           contactsRef.current = newLocalState.contacts;
           walletState = {
@@ -269,9 +271,9 @@ export default function AppAccountsSync({
       setState(s => {
         const accountNames = new Map(s.walletState.accountNames);
         if (!name) {
-          accountNames.delete(id);
+          accountNames.delete(parseAnyAccountId(id));
         } else {
-          accountNames.set(id, name);
+          accountNames.set(parseAnyAccountId(id), name);
         }
         return { ...s, walletState: { ...s.walletState, accountNames } };
       });

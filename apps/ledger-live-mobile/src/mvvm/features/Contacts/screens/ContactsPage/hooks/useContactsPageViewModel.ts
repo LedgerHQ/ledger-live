@@ -19,7 +19,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Contact } from "@domain/entity-contact";
-import { useContacts } from "@features/platform-contacts";
+import { createMeDisplayNameFormatter, useContacts } from "@features/platform-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
@@ -53,7 +53,9 @@ export function useContactsPageViewModel(
         "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
       ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
+      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
+        t("contacts.detail.meDisplayName", { name }),
+      ),
     }),
     [t],
   );
@@ -85,7 +87,7 @@ export function useContactsPageViewModel(
       trackContactsListContactOpen(analytics, contactId, meContact.id);
       if (onSelectContact) {
         const contact = contacts.find(candidate => candidate.id === contactId);
-        if (contact && !contact.isMe) {
+        if (contact) {
           onSelectContact(contact);
           return;
         }
@@ -125,9 +127,6 @@ export function useContactsPageViewModel(
   }, [dismissPendingIntent, ledgerSyncStatus]);
 
   const showFeatureIntroduction = !onSelectContact && isFeatureIntroductionRequested;
-  // Pay never shows Introducing Contacts. Until you have seen that sheet on Contacts,
-  // Add contact here would open nothing if Ledger Sync is off. Pass the intro you
-  // actually see so you still get Sync your wallet.
   const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
     isFeatureIntroductionRequested: showFeatureIntroduction,
     ledgerSyncStatus,

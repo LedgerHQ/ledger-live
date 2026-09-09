@@ -240,14 +240,6 @@ url = "https://nodejs.org/dist/v24.14.0/node-v24.14.0-win-x64.zip"
 checksum = "sha256:313fa40c0d7b18575821de8cb17483031fe07d95de5994f6f435f3b345f85c66"
 url = "https://nodejs.org/dist/v24.14.0/node-v24.14.0-win-x64.zip"
 
-[[tools.npm]]
-version = "10.3.0"
-backend = "npm:npm"
-
-[tools.npm."platforms.linux-x64"]
-checksum = "blake3:1b6d9935349ad07cbdc69e3a3d1ba0ea32411a2583e5b7d4f23105b6e7e79d61"
-url = "https://registry.npmjs.org/npm/-/npm-10.3.0.tgz"
-
 [[tools.pkl]]
 version = "0.31.1"
 backend = "aqua:apple/pkl"

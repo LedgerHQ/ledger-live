@@ -4,8 +4,14 @@ on:
   push:
     branches:
       - develop
+    # The published copy is a function of the source AND the transform, so watch
+    # both — a transform-only change must sync too.
     paths:
       - ".agents/skills/ledger-wallet-cli/**"
+      - "apps/wallet-cli/scripts/standalone-skill-transform.mjs"
+      - "apps/wallet-cli/scripts/export-standalone-skill.mjs"
+      - "apps/wallet-cli/scripts/collect-skill-files.mjs"
+      - ".github/workflows/sync-wallet-cli-skill.yml"
   workflow_dispatch:
     inputs:
       source_ref:
@@ -70,43 +76,17 @@ jobs:
           path: ledger-live
           persist-credentials: false
 
+      # The transform lives in the wallet-cli scripts so this workflow and the copy
+      # embedded in the binary run the same code — as a `sed` pipeline here it
+      # drifted. The script asserts its own output, so no bash checks are needed.
+      # Keep it stdlib-only: the runner has node, but no pnpm install runs here.
       - name: Export wallet-cli skill
         run: |
           set -euo pipefail
 
-          source_skill_dir="$GITHUB_WORKSPACE/ledger-live/$SOURCE_SKILL_DIR"
-          target_skill_dir="$GITHUB_WORKSPACE/$TARGET_SKILL_DIR"
-
-          rm -rf "$target_skill_dir"
-          mkdir -p "$target_skill_dir"
-
-          cp -R "$source_skill_dir/references" "$target_skill_dir/references"
-
-          sed -E \
-            -e 's|^name: ledger-wallet-cli$|name: wallet-cli-usage|' \
-            -e 's|Run from repo root: `pnpm --silent wallet-cli start <command> \[flags\]`|Install globally with a user-preferred package manager — `npm i -g @ledgerhq/wallet-cli`, `pnpm add -g @ledgerhq/wallet-cli`, `yarn global add @ledgerhq/wallet-cli`, or `bun add -g @ledgerhq/wallet-cli`. Run: `wallet-cli [flags]`.|' \
-            -e 's|pnpm --silent wallet-cli start ?|wallet-cli |g' \
-            "$source_skill_dir/SKILL.md" > "$target_skill_dir/SKILL.md"
-
-          if grep -Fq "pnpm --silent wallet-cli start" "$target_skill_dir/SKILL.md"; then
-            echo "Exported skill still contains monorepo-only wallet-cli commands."
-            exit 1
-          fi
-
-          if grep -Fq "Run from repo root" "$target_skill_dir/SKILL.md"; then
-            echo "Exported skill still contains monorepo-only run instructions."
-            exit 1
-          fi
-
-          if ! grep -Fq "name: wallet-cli-usage" "$target_skill_dir/SKILL.md"; then
-            echo "Exported skill frontmatter does not match the agent-skills skill name."
-            exit 1
-          fi
-
-          if [ ! -f "$target_skill_dir/references/business-logic.md" ]; then
-            echo "Exported skill is missing references/business-logic.md."
-            exit 1
-          fi
+          node "$GITHUB_WORKSPACE/ledger-live/apps/wallet-cli/scripts/export-standalone-skill.mjs" \
+            "$GITHUB_WORKSPACE/ledger-live/$SOURCE_SKILL_DIR" \
+            "$GITHUB_WORKSPACE/$TARGET_SKILL_DIR"
 
       # ghcommit-action (below) creates the commit through GitHub's API so it is
       # signed server-side — agent-skills' `main` ruleset requires signed commits.

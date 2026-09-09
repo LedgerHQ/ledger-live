@@ -2,6 +2,7 @@ import { apiClient } from "../network/api";
 import type { AleoCommitteeResponse } from "../types/api";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import coinConfig from "../config";
+import { MICROCREDITS_PER_CREDIT } from "../constants";
 import { getValidators } from "./getValidators";
 
 jest.mock("../network/api");
@@ -10,16 +11,19 @@ const OPEN_HIGH_STAKE = "aleo1open_high";
 const OPEN_LOW_STAKE = "aleo1open_low";
 const CLOSED_HIGH_STAKE = "aleo1closed_high";
 
-// Supply equal to the staked total makes the gross rate exactly the inflation rate
-// (0.05 * S / S), so each expectation below stays readable.
-const TOTAL_SUPPLY_CREDITS = 100;
+const UNBONDING_RAW = "{\n  microcredits: 10000000000u64,\n  height: 7862785u32\n}";
+
+const microcredits = (credits: number) => credits * MICROCREDITS_PER_CREDIT;
+
+const TOTAL_STAKE_CREDITS = 200_000_000;
+const TOTAL_SUPPLY_CREDITS = TOTAL_STAKE_CREDITS;
 const GROSS_RATE = 0.05;
 const committee: AleoCommitteeResponse = {
-  total_stake: 100 * 1_000_000,
+  total_stake: microcredits(TOTAL_STAKE_CREDITS),
   members: {
-    [CLOSED_HIGH_STAKE]: [50 * 1_000_000, false, 0],
-    [OPEN_LOW_STAKE]: [10 * 1_000_000, true, 50],
-    [OPEN_HIGH_STAKE]: [20 * 1_000_000, true, 0],
+    [CLOSED_HIGH_STAKE]: [microcredits(100_000_000), false, 0],
+    [OPEN_LOW_STAKE]: [microcredits(20_000_000), true, 50],
+    [OPEN_HIGH_STAKE]: [microcredits(40_000_000), true, 0],
   },
 };
 
@@ -36,6 +40,7 @@ describe("getValidators", () => {
       [OPEN_HIGH_STAKE]: "High Stake Validator",
     });
     jest.mocked(apiClient.getTotalSupply).mockResolvedValue(TOTAL_SUPPLY_CREDITS);
+    jest.mocked(apiClient.getUnbondingMapping).mockResolvedValue(null);
   });
 
   it("orders open validators first, then by descending stake", async () => {
@@ -82,7 +87,65 @@ describe("getValidators", () => {
     expect(apiClient.getTotalSupply).toHaveBeenCalledTimes(1);
   });
 
+  describe("unbonding validators", () => {
+    const unbondingOnly = (unbonding: string[]) =>
+      jest
+        .mocked(apiClient.getUnbondingMapping)
+        .mockImplementation(async (_config, address) =>
+          unbonding.includes(address) ? UNBONDING_RAW : null,
+        );
+
+    it("flags a validator that has an unbonding entry of its own", async () => {
+      unbondingOnly([OPEN_HIGH_STAKE]);
+
+      const validators = await getValidators(CURRENCY_ID);
+
+      expect(validators.find(v => v.address === OPEN_HIGH_STAKE)?.isUnbonding).toBe(true);
+      expect(validators.find(v => v.address === OPEN_LOW_STAKE)?.isUnbonding).toBe(false);
+    });
+
+    it("demotes an unbonding validator below the open ones, despite the higher stake", async () => {
+      unbondingOnly([OPEN_HIGH_STAKE]);
+
+      const validators = await getValidators(CURRENCY_ID);
+
+      // Behind the one validator still taking stake, then among the rest by descending stake.
+      expect(validators.map(v => v.address)).toEqual([
+        OPEN_LOW_STAKE,
+        CLOSED_HIGH_STAKE,
+        OPEN_HIGH_STAKE,
+      ]);
+    });
+
+    it("reports no unbonding rather than failing the list when the lookup errors", async () => {
+      jest.mocked(apiClient.getUnbondingMapping).mockRejectedValue(new Error("boom"));
+
+      const validators = await getValidators(CURRENCY_ID);
+
+      expect(validators).toHaveLength(3);
+      expect(validators.every(v => v.isUnbonding === false)).toBe(true);
+    });
+  });
+
   describe("degraded responses", () => {
+    // Dividing by it would make every stake share infinite, so the whole list would come
+    // back flagged as earning nothing.
+    it.each([
+      ["zero", 0],
+      ["a non-numeric", "not-a-number"],
+    ])("reports no non-earning reason when the total stake is %s", async (_label, totalStake) => {
+      jest.mocked(apiClient.getCommittee).mockResolvedValue({
+        ...committee,
+        total_stake: totalStake as number,
+      });
+
+      const validators = await getValidators(CURRENCY_ID);
+
+      expect(validators).toHaveLength(3);
+      expect(validators.every(v => v.nonEarningReason === undefined)).toBe(true);
+      expect(validators.every(v => v.estimatedYearlyRewardsRate === undefined)).toBe(true);
+    });
+
     it("still returns a usable list when the names fetch fails", async () => {
       jest.mocked(apiClient.getValidatorMetadata).mockRejectedValue(new Error("boom"));
 

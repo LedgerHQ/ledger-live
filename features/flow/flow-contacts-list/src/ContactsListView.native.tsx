@@ -1,7 +1,13 @@
-import React, { useCallback, useRef, useState } from "react";
-import { SectionList, type LayoutChangeEvent, type SectionListRenderItemInfo } from "react-native";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import {
+  SectionList,
+  type LayoutChangeEvent,
+  type SectionListData,
+  type SectionListRenderItemInfo,
+} from "react-native";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactsListItem, ContactsListSection, ContactsListViewNativeProps } from "./types";
+import { createContactsListRowLayouts } from "./utils";
 import { ContactsListHeader } from "./components/ListHeader/ContactsListHeader.native";
 import { ContactsSearchNoResults } from "./components/ContactsList/Search/ContactsSearchNoResults.native";
 import { ContactsSearchInput } from "./components/ContactsList/Search/ContactsSearchInput.native";
@@ -28,25 +34,59 @@ export function ContactsListView({
   const me = "me" in viewModel ? viewModel.me : undefined;
   const listRef = useRef<SectionList<ContactsListItem, ContactsListSection> | null>(null);
   const [listHeight, setListHeight] = useState(0);
+  const [sectionHeaderHeight, setSectionHeaderHeight] = useState(0);
+  const [contactRowHeight, setContactRowHeight] = useState(0);
+  const sections = isPopulated ? viewModel.sections : noContactsListSections;
   const {
     activeSectionTitle,
     sectionIndexEntries,
     onSelectSection,
+    onScrollToIndexFailed,
     onViewableItemsChanged,
     viewabilityConfig,
-  } = useContactsSectionIndex({
-    sections: isPopulated ? viewModel.sections : noContactsListSections,
-    listRef,
-  });
+  } = useContactsSectionIndex({ sections, listRef });
+  const onSectionHeaderLayout = useCallback((event: LayoutChangeEvent) => {
+    const nextHeight = event.nativeEvent.layout.height;
+
+    setSectionHeaderHeight(current => (current > 0 ? current : nextHeight));
+  }, []);
+  const onContactRowLayout = useCallback((event: LayoutChangeEvent) => {
+    const nextHeight = event.nativeEvent.layout.height;
+
+    setContactRowHeight(current => (current > 0 ? current : nextHeight));
+  }, []);
   const renderContact = useCallback(
     ({ item }: SectionListRenderItemInfo<ContactsListItem, ContactsListSection>) => (
-      <ContactsSavedContactListItem
-        contact={item}
-        addressCountLabel={labels.formatAddressCount(item.addressCount)}
-        onOpen={onOpenContact}
-      />
+      <Box onLayout={onContactRowLayout}>
+        <ContactsSavedContactListItem
+          contact={item}
+          addressCountLabel={labels.formatAddressCount(item.addressCount)}
+          onOpen={onOpenContact}
+        />
+      </Box>
     ),
-    [labels, onOpenContact],
+    [labels, onContactRowLayout, onOpenContact],
+  );
+  const rowLayouts = useMemo(
+    () => createContactsListRowLayouts(sections, sectionHeaderHeight, contactRowHeight),
+    [contactRowHeight, sectionHeaderHeight, sections],
+  );
+  // Until the first header and row report their height the table would be all zeros, which is worse
+  // than letting the list measure cells itself.
+  const hasMeasuredRows = sectionHeaderHeight > 0 && contactRowHeight > 0;
+  const getItemLayout = useMemo(
+    () =>
+      hasMeasuredRows
+        ? (
+            _data: SectionListData<ContactsListItem, ContactsListSection>[] | null,
+            index: number,
+          ) => ({
+            length: rowLayouts[index]?.length ?? contactRowHeight,
+            offset: rowLayouts[index]?.offset ?? 0,
+            index,
+          })
+        : undefined,
+    [contactRowHeight, hasMeasuredRows, rowLayouts],
   );
 
   const listHeader = (
@@ -74,15 +114,19 @@ export function ContactsListView({
         <SectionList
           ref={listRef}
           testID="contacts-list"
-          sections={viewModel.sections}
+          sections={sections}
           keyExtractor={contact => contact.contactId}
           renderItem={renderContact}
           renderSectionHeader={({ section }) => (
-            <ContactsSectionHeader title={section.title} surface={surface} />
+            <Box onLayout={onSectionHeaderLayout}>
+              <ContactsSectionHeader title={section.title} surface={surface} />
+            </Box>
           )}
           ItemSeparatorComponent={() => <Box lx={{ height: "s8" }} />}
           ListHeaderComponent={listHeader}
+          getItemLayout={getItemLayout}
           onViewableItemsChanged={onViewableItemsChanged}
+          onScrollToIndexFailed={onScrollToIndexFailed}
           viewabilityConfig={viewabilityConfig}
           contentContainerStyle={{
             paddingHorizontal: 16,

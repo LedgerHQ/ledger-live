@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-auth",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Shared Pay Card authentication flow for Ledger Wallet",
   "main": "src/index.ts",
@@ -87,6 +87,7 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
+    "react-native-svg": "catalog:",
     "react-redux": "catalog:"
   },
   "peerDependenciesMeta": {
@@ -100,6 +101,9 @@
       "optional": true
     },
     "@ledgerhq/lumen-design-core": {
+      "optional": true
+    },
+    "react-native-svg": {
       "optional": true
     }
   }

@@ -122,6 +122,13 @@ type TransferTokenPrivateToPublicIntent =
       program_id: string;
     };
 
+interface BondPublicIntent {
+  type: "bond_public";
+  amount: string;
+  validator: string;
+  withdrawal: string;
+}
+
 export type Intent =
   | TransferPrivateIntent
   | TransferPublicIntent
@@ -132,7 +139,8 @@ export type Intent =
   | TransferTokenPrivateIntent
   | TransferTokenPrivateToPublicIntent
   | FeePrivateIntent
-  | FeePublicIntent;
+  | FeePublicIntent
+  | BondPublicIntent;
 
 export interface FeeConfiguration {
   function_name: "fee_private" | "fee_public";

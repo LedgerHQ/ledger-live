@@ -43,11 +43,19 @@ const sections: readonly ContactsListSection[] = [
 
 function createListRef() {
   const scrollToLocation = jest.fn();
+  const scrollTo = jest.fn();
+  const getScrollResponder = jest.fn(() => ({ scrollTo }));
   const listRef = {
-    current: { scrollToLocation },
+    current: { scrollToLocation, getScrollResponder },
   } as unknown as RefObject<SectionList<ContactsListItem, ContactsListSection> | null>;
 
-  return { listRef, scrollToLocation };
+  return { listRef, scrollToLocation, scrollTo };
+}
+
+function flushAnimationFrame() {
+  return act(async () => {
+    await new Promise(resolve => requestAnimationFrame(resolve));
+  });
 }
 
 describe("useContactsSectionIndex", () => {
@@ -113,5 +121,90 @@ describe("useContactsSectionIndex", () => {
       viewOffset: 8,
     });
     expect(result.current.activeSectionTitle).toBe("ع");
+  });
+
+  it("jumps without animating while the index is being dragged", () => {
+    const { listRef, scrollToLocation } = createListRef();
+    const { result } = renderHook(() => useContactsSectionIndex({ sections, listRef }));
+
+    act(() => result.current.onSelectSection("З", { animated: false }));
+
+    expect(scrollToLocation).toHaveBeenCalledWith({
+      animated: false,
+      itemIndex: 0,
+      sectionIndex: 1,
+      viewOffset: 8,
+    });
+  });
+
+  it("recovers when the target section has not been measured yet", async () => {
+    const { listRef, scrollToLocation, scrollTo } = createListRef();
+    const { result } = renderHook(() => useContactsSectionIndex({ sections, listRef }));
+
+    act(() => result.current.onSelectSection("ع"));
+    act(() =>
+      result.current.onScrollToIndexFailed({
+        index: 8,
+        highestMeasuredFrameIndex: 3,
+        averageItemLength: 64,
+      }),
+    );
+
+    expect(scrollTo).toHaveBeenCalledWith({ y: 512, animated: false });
+
+    await flushAnimationFrame();
+
+    expect(scrollToLocation).toHaveBeenLastCalledWith({
+      animated: false,
+      itemIndex: 0,
+      sectionIndex: 2,
+      viewOffset: 8,
+    });
+  });
+
+  it("stops retrying once the recovery attempts are exhausted", async () => {
+    const { listRef, scrollTo } = createListRef();
+    const { result } = renderHook(() => useContactsSectionIndex({ sections, listRef }));
+    const failure = { index: 8, highestMeasuredFrameIndex: 3, averageItemLength: 64 };
+
+    act(() => result.current.onSelectSection("ع"));
+
+    for (let attempt = 0; attempt < 8; attempt++) {
+      act(() => result.current.onScrollToIndexFailed(failure));
+      await flushAnimationFrame();
+    }
+
+    expect(scrollTo).toHaveBeenCalledTimes(5);
+  });
+
+  it("stays put rather than jumping to the top when there is no usable estimate", () => {
+    const { listRef, scrollTo } = createListRef();
+    const { result } = renderHook(() => useContactsSectionIndex({ sections, listRef }));
+
+    act(() => result.current.onSelectSection("ع"));
+    act(() =>
+      result.current.onScrollToIndexFailed({
+        index: 8,
+        highestMeasuredFrameIndex: 3,
+        averageItemLength: 0,
+      }),
+    );
+
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it("ignores a failure that no letter selection asked for", () => {
+    const { listRef, scrollTo } = createListRef();
+    const { result } = renderHook(() => useContactsSectionIndex({ sections, listRef }));
+
+    act(() =>
+      result.current.onScrollToIndexFailed({
+        index: 8,
+        highestMeasuredFrameIndex: 3,
+        averageItemLength: 64,
+      }),
+    );
+
+    expect(scrollTo).not.toHaveBeenCalled();
   });
 });

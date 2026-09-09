@@ -6,8 +6,6 @@ import { isContactsSearchNoResultsViewModel } from "@features/flow-contacts";
 import { useContactsFeature } from "@features/platform-contacts";
 import { ScreenName } from "~/const";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
-import { ContactAddressPicker } from "@features/flow-pay-contact";
-import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { TrackScreen } from "~/analytics";
 import { ContactsPageContent } from "./components/ContactsPageContent";
 import { useContactsAddContactDrawerAdapter } from "./hooks/useContactsAddContactDrawerAdapter";
@@ -25,12 +23,12 @@ function ContactsScreenRedirect() {
   return null;
 }
 
-type ContactsScreenBodyProps = Readonly<{
+type ContactsPageProps = Readonly<{
   title?: string;
   onSelectContact?: (contact: Contact) => void;
 }>;
 
-function ContactsScreenBody({ title, onSelectContact }: ContactsScreenBodyProps) {
+export function ContactsPage({ title, onSelectContact }: ContactsPageProps) {
   const pageViewModel = useContactsPageViewModel(onSelectContact);
   const { onSearchQueryChange } = pageViewModel;
   const onSaveSuccess = useCallback(() => {
@@ -56,26 +54,11 @@ function ContactsScreenBody({ title, onSelectContact }: ContactsScreenBodyProps)
   return <ContactsPageContent {...viewModel} />;
 }
 
-function ContactsPaySelectContent({ title }: Readonly<{ title?: string }>) {
-  const payment = usePayTabNewPayment();
-
-  return (
-    <>
-      <ContactsScreenBody title={title} onSelectContact={payment.open} />
-      <ContactAddressPicker {...payment.contactAddressPicker} />
-    </>
-  );
-}
-
 function ContactsScreenContent() {
   const { params } =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWalletContacts>>();
 
-  if (params?.selectContactToPay) {
-    return <ContactsPaySelectContent title={params.title} />;
-  }
-
-  return <ContactsScreenBody title={params?.title} />;
+  return <ContactsPage title={params?.title} />;
 }
 
 export function ContactsScreen() {

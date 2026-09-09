@@ -1,7 +1,7 @@
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { TronSigner } from "@ledgerhq/coin-tron/types/index";
+import type { TronSigner } from "@ledgerhq/live-common/families/tron/types";
 import { getCoinFrameworkCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-coin-framework/currencyBridge";
 import { getCoinFrameworkAccountBridge } from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBridge";
 import type {

@@ -54,7 +54,7 @@ describe("useContactsPageViewModel", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("should still open me from the Pay contact list", () => {
+  it("should hand Me to onSelectContact when the list is selecting", () => {
     const me = mockMeContact();
     const onSelectContact = jest.fn();
     const { result } = renderHook(() => useContactsPageViewModel(onSelectContact), {
@@ -68,10 +68,8 @@ describe("useContactsPageViewModel", () => {
       result.current.onOpenContact(me.id);
     });
 
-    expect(onSelectContact).not.toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.MyWalletContactDetail, {
-      contactId: me.id,
-    });
+    expect(onSelectContact).toHaveBeenCalledWith(me);
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it("should navigate to the contact detail screen when a contact is opened", () => {

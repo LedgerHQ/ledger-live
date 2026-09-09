@@ -7,6 +7,7 @@ import type { CardLoginOauthConfig, CardLoginPorts, PayCardAuthCallback } from "
 const oauthConfig: CardLoginOauthConfig = {
   apiUrl: "https://card.test",
   clientId: "client-key",
+  hostedUiUrl: "https://hosted.test",
   redirectUri: "https://go.test/ledger/card",
   deepLink: "ledgerlive://paytab",
 };

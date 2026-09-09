@@ -1,5 +1,12 @@
-import type { OperationType } from "@ledgerhq/types-live";
-import type { TronOperationMode } from "../types/bridge";
+import type { TronOperationMode } from "../types/model";
+
+type OperationType =
+  | "FREEZE"
+  | "UNFREEZE"
+  | "VOTE"
+  | "WITHDRAW_EXPIRE_UNFREEZE"
+  | "UNDELEGATE_RESOURCE"
+  | "LEGACY_UNFREEZE";
 
 export type TronModeTraits = {
   /** The intent amount leaves the spendable balance. */

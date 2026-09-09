@@ -1,10 +1,15 @@
 import React from "react";
 import type { SwapTransactionStatusViewModel } from "../hooks/useSwapTransactionStatusViewModel";
+import type { SwapTransactionStatusOrigin } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import { TransactionHeader } from "./TransactionHeader";
 import { StatusSection } from "./Status/StatusSection";
 import { EarnBanner } from "./EarnBanner/EarnBanner";
 import { DetailsSection } from "./Details/DetailsSection";
 import { FooterSection } from "./Footer/FooterSection";
+
+type SwapTransactionStatusViewProps = Readonly<
+  SwapTransactionStatusViewModel & { origin?: SwapTransactionStatusOrigin }
+>;
 
 export function SwapTransactionStatusView({
   sendCurrency,
@@ -24,7 +29,8 @@ export function SwapTransactionStatusView({
   explorerUrl,
   isStatusSectionLoading,
   isFooterLoading,
-}: Readonly<SwapTransactionStatusViewModel>) {
+  origin,
+}: SwapTransactionStatusViewProps) {
   return (
     <>
       <TransactionHeader
@@ -32,6 +38,7 @@ export function SwapTransactionStatusView({
         receiveCurrency={receiveCurrency}
         createdAt={createdAt}
         locale={locale}
+        origin={origin}
       />
 
       <StatusSection

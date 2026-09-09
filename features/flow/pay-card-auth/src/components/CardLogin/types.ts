@@ -1,5 +1,7 @@
 import type { CardLoginOauthConfig, OpenHostedLogin, PayCardAuthCallback } from "../../state/types";
 
+export type PayCardLoginTrackEvent = (event: string, params: Record<string, unknown>) => void;
+
 export type CardLoginProps = {
   readonly oauthConfig: CardLoginOauthConfig;
   /**
@@ -7,20 +9,54 @@ export type CardLoginProps = {
    * the flow the `code` and `state` it already parsed.
    */
   readonly callback?: PayCardAuthCallback | null;
+  readonly onTrackEvent?: PayCardLoginTrackEvent;
 };
+
+export type MobileWallet = "applePay" | "googlePay" | "both";
 
 export type CardLoginViewModelParams = CardLoginProps & {
   readonly openHostedLogin: OpenHostedLogin;
+  readonly mobileWallet: MobileWallet;
 };
 
-export type CardLoginViewProps = {
-  readonly title: string;
-  readonly description: string;
-  readonly loginLabel: string;
+export type CardLoginIntroRowIcon = "CoinsAddPlus" | "CreditCard" | "LedgerLogo";
+
+export type CardLoginIntroRow = Readonly<{
+  icon: CardLoginIntroRowIcon;
+  title: string;
+  description: string;
+}>;
+
+export type CardLoginIntroActionId = "createAccount" | "logIn";
+
+export type CardLoginIntroAction = Readonly<{
+  id: CardLoginIntroActionId;
+  label: string;
+  appearance: "base" | "gray";
+}>;
+
+export type CardLoginIntroViewProps = Readonly<{
+  isOpen: boolean;
+  title: string;
+  providedBy: string;
+  rows: readonly CardLoginIntroRow[];
+  actions: readonly CardLoginIntroAction[];
+  onActionPress: (id: CardLoginIntroActionId) => void;
+  onClose: () => void;
+}>;
+
+export type CardLoginCopy = Readonly<{
+  title: string;
+  description: string;
+  loginLabel: string;
+}>;
+
+export type CardLoginViewProps = CardLoginCopy & {
   /** True while the machine works. The login action is not pressable then. */
   readonly isLoading: boolean;
   readonly errorMessage: string | null;
   readonly onLoginPress: () => void;
+  readonly intro: CardLoginIntroViewProps;
 };
 
 /**

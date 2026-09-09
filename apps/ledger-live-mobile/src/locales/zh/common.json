@@ -199,6 +199,10 @@
     "CeloAllFundsWarning" : {
       "title" : "确保您留有足够的余额，以便缴纳未来的交易费"
     },
+    "CeloEpochProcessingActive" : {
+      "title" : "此操作暂时不可用。",
+      "description" : "Celo 当前正在处理 Epoch 更新。在此短暂的链上窗口期内，投票、激活、撤销、锁定和解锁等质押操作将被网络暂时阻止。请在 Epoch 处理完成后重试。"
+    },
     "CeloGroupNotVotable" : {
       "title" : "该验证者组无法接收投票。可能已满或不再符合条件。"
     },
@@ -3830,6 +3834,23 @@
           "entriesLabel" : "条目 ({{count}})",
           "untitledEntry" : "未命名条目"
         }
+      },
+      "deviceSimulationDevTool" : {
+        "title" : "设备模拟 (QA)",
+        "description" : "模拟设备历史记录，无需实体设备即可测试 Nano 用户的追加销售界面。",
+        "currentHistory" : "活跃的 QA 设备：{{devices}}",
+        "resetWarning" : "重置仅清除 6 个 QA 设备切换。其他设备历史记录条目保持不变；在没有模拟引擎的情况下，真实的设备历史记录无法恢复。",
+        "reset" : "重置设备历史记录",
+        "none" : "无",
+        "deviceDesc" : "将该设备标记为此前已连接，以便进行 QA 测试。",
+        "devices" : {
+          "nanoS" : "Nano S",
+          "nanoSP" : "Nano S Plus",
+          "nanoX" : "Nano X",
+          "stax" : "Ledger Stax",
+          "europa" : "Ledger Flex",
+          "apex" : "Ledger Flex Plus"
+        }
       }
     }
   },
@@ -4539,6 +4560,7 @@
   "send" : {
     "newSendFlow" : {
       "title" : "发送 {{currency}}",
+      "selectAddress" : "选择地址",
       "available" : "可用 {{amount}}",
       "to" : "至：",
       "addressDisclaimer" : {
@@ -4553,6 +4575,15 @@
       "pasteFromClipboard" : {
         "title" : "从剪贴板粘贴",
         "cta" : "粘贴"
+      },
+      "addContact" : {
+        "newContact" : "添加新联系人",
+        "existingContact" : "添加到现有联系人",
+        "selectContact" : "选择联系人",
+        "syncWallet" : {
+          "title" : "同步您的钱包以添加联系人",
+          "description" : "联系人已进行端到端加密，并可在您所有手机和电脑上的 Ledger Wallet 之间同步。"
+        }
       },
       "contactsWillAppear" : "联系人将在此处显示",
       "editRecipientAccessibilityLabel" : "编辑接收方",
@@ -5174,6 +5205,10 @@
         "deviceOutOfStorageSpace" : {
           "title" : "卸载一些应用程序以释放 Ledger 设备内存",
           "description" : "您的设备内存不足。"
+        },
+        "invalidProvider" : {
+          "title" : "提供商无效",
+          "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Wallet “设置”，选择“实验性功能”，然后选择其他提供商。"
         }
       },
       "cta" : {
@@ -5182,7 +5217,8 @@
         "setupDevice" : "设置 Ledger 设备",
         "updateLedgerOs" : "更新 Ledger OS",
         "cancelOperation" : "取消操作",
-        "contactLedgerSupport" : "联系 Ledger 客服"
+        "contactLedgerSupport" : "联系 Ledger 客服",
+        "goToSettings" : "前往设置选项"
       }
     },
     "connectDevice" : {
@@ -9207,6 +9243,10 @@
         "title" : "Ledger Sync",
         "description" : "即使换用新手机，也能自动同步您的账户。",
         "cta" : "开启 Ledger Sync"
+      },
+      "sendFlow" : {
+        "title" : "同步我的钱包",
+        "later" : "以后再说"
       }
     },
     "activation" : {
@@ -9692,6 +9732,14 @@
     "accountCount_other" : "{{count}} 个账户",
     "emptyAccounts" : "您还没有 {{network}} 账户。请添加一个账户后继续",
     "addAccount" : "添加账户",
+    "unsupportedAssetExplanation" : {
+      "title" : "暂不支持 {{asset}}",
+      "description" : "您目前还无法将 {{asset}} 地址添加到您的联系人中。我们将不断添加更多加密货币。"
+    },
+    "unsupportedNetworkExplanation" : {
+      "title" : "暂不支持 {{network}} 网络。",
+      "description" : "您无法为 {{asset}} 选择 {{network}} 网络。我们将不断添加更多网络。"
+    },
     "errors" : {
       "title" : "连接失败",
       "backend" : "我们这边出错了。请稍后重试",
@@ -10080,9 +10128,43 @@
         "confirm" : "确认"
       }
     },
+    "card" : {
+      "title" : "加密货币卡"
+    },
     "actions" : {
       "deposit" : "添加稳定币",
       "request" : "请求"
+    },
+    "request" : {
+      "title" : "请求 {{asset}}",
+      "networkLabel" : "{{network}} 网络",
+      "actions" : {
+        "share" : "分享",
+        "copy" : "复制",
+        "copied" : "已复制",
+        "save" : "保存",
+        "verify" : "验证"
+      },
+      "verifyAddress" : {
+        "introTitle" : "核实您的地址",
+        "introDescription" : "为防范地址替换攻击，请在您的 Ledger 设备的安全屏幕上验证您的地址。",
+        "verifyCta" : "核实地址",
+        "successTitle" : "设备安全屏幕上显示的地址",
+        "nextStepsLabel" : "后续步骤",
+        "nextStepShare" : "通过您所需的应用程序共享您的地址",
+        "nextStepMatch" : "请确保共享地址与您的 Ledger 设备上的地址一致。",
+        "gotItCta" : "知道了",
+        "device" : {
+          "cancelledTitle" : "地址验证已取消",
+          "cancelledDescription" : "您拒绝了设备上的地址。您可以在显示屏上再次显示该地址以进行验证。",
+          "mismatchTitle" : "地址不一致",
+          "mismatchDescription" : "您设备上显示的地址与请求的地址不一致。请勿共享此地址。",
+          "unsupportedTitle" : "验证功能不可用",
+          "unsupportedDescription" : "此设备应用程序无法显示用于设备上验证的地址。",
+          "retryCta" : "再次显示地址",
+          "closeCta" : "关闭"
+        }
+      }
     },
     "deposit" : {
       "title" : "添加稳定币",
@@ -10104,6 +10186,11 @@
           "description" : "使用信用卡买入稳定币。"
         }
       }
+    },
+    "contacts" : {
+      "title" : "付款",
+      "pay" : "新",
+      "seeAllTitle" : "向联系人付款"
     }
   },
   "syncIndicator" : {
@@ -10325,6 +10412,27 @@
     }
   },
   "contacts" : {
+    "deviceIntents" : {
+      "registerExternalAddress" : {
+        "pending" : {
+          "title" : "正在准备您的 Ledger 设备"
+        }
+      },
+      "errors" : {
+        "wrongDevice" : {
+          "title" : "需使用添加此联系人时的同一 Ledger 设备",
+          "description" : "已连接的设备不一致。"
+        },
+        "invalidData" : {
+          "title" : "无法保存此地址",
+          "description" : "您的 Ledger 设备拒绝了联系人信息。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+        },
+        "appVersionTooLow" : {
+          "title" : "需要更新应用程序",
+          "description" : "在您的 Ledger 设备上更新应用程序以保存联系人，然后重试。"
+        }
+      }
+    },
     "title" : "联系人",
     "addContact" : "添加联系人",
     "addAddress" : "添加地址",
@@ -10454,19 +10562,18 @@
     },
     "featureIntroduction" : {
       "title" : "推出「联系人」功能",
-      "description" : "您的加密货币地址簿——将常用的转账钱包地址集中保存在一处。",
-      "primaryAction" : "试用联系人",
+      "primaryAction" : "立即探索",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "地址只需保存一次",
-          "description" : "将常用转账地址集中保存在一处。"
+          "title" : "使用您选择的名称保存地址",
+          "description" : "兑换、朋友，以及您自己的外部账户。"
         },
         "sendToRightAddress" : {
           "title" : "转账至正确地址",
-          "description" : "资金每次都能到达正确的钱包。"
+          "description" : "显示您信任的名称，而非地址。"
         },
         "privateAcrossDevices" : {
-          "title" : "跨设备私密同步",
+          "title" : "通过 Ledger Wallet™ 安全充值",
           "description" : "通过 Ledger Sync 账户同步功能进行端到端加密。"
         }
       }

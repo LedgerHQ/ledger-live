@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { screen } from "~/analytics";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
-import { useSendFlowData } from "../../../../../context/SendFlowContext";
-import { useSendFlowTracking } from "../../../../../context/SendFlowTrackingContext";
+import type { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import type { RecipientType } from "../../../../../utils/contactTracking";
 import { SimplifiedTransactionConfirm } from "../../SimplifiedTransactionConfirm";
 import { SignatureCancelledState } from "./SignatureCancelledState";
 import { SignatureErrorState } from "./SignatureErrorState";
@@ -19,11 +18,19 @@ type SigningBodyProps = Readonly<{
   request: NonNullable<SignatureDeviceActionViewModel["request"]>;
   onResult: SignatureDeviceActionViewModel["onDeviceActionResultCompleted"];
   onClose: () => void;
+  trackingProperties: ReturnType<typeof getSendFlowTrackingProperties>;
+  recipientType: RecipientType | null;
 }>;
 
-export function SigningBody({ device, action, request, onResult, onClose }: SigningBodyProps) {
-  const { state } = useSendFlowData();
-  const { recipientType } = useSendFlowTracking();
+export function SigningBody({
+  device,
+  action,
+  request,
+  onResult,
+  onClose,
+  trackingProperties,
+  recipientType,
+}: SigningBodyProps) {
   const status = action.useHook(device, request);
   const payload = action.mapResult(status);
 
@@ -45,10 +52,10 @@ export function SigningBody({ device, action, request, onResult, onClose }: Sign
       return;
     }
     void screen("Modal send - action rejected", undefined, {
-      ...getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+      ...trackingProperties,
       recipientType,
     });
-  }, [isUserRefused, recipientType, state.account.account, state.account.parentAccount]);
+  }, [isUserRefused, recipientType, trackingProperties]);
 
   if (signError) {
     return isUserRefused ? (

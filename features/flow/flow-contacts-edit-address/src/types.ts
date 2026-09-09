@@ -72,6 +72,7 @@ export type ContactsEditAddressValidationLabels = Readonly<{
   sanctionedAddress: string;
   validationUnavailable: string;
   ensDisclaimer: string;
+  ensDisclaimerDescription: string;
 }>;
 
 export type EditAddressAddressEntryPresentation = Readonly<{

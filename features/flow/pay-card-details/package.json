@@ -29,7 +29,9 @@
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:*",
-    "@ledgerhq/lumen-utils-shared": "catalog:"
+    "@ledgerhq/lumen-utils-shared": "catalog:",
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
     "@features/platform-style": "workspace:*",

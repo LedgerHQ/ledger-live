@@ -12,4 +12,6 @@ export type PayTabNavigatorParamList = {
     parentId?: string;
     currency: CryptoOrTokenCurrency;
   };
+  [ScreenName.PayTabSelectContact]: undefined;
+  [ScreenName.PayTabPayContact]: undefined;
 };

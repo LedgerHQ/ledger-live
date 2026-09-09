@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-key-ring-protocol",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "private": true,
   "description": "Ledger Key Ring Protocol layer",
   "keywords": [
@@ -57,13 +57,11 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/hw-transport-mocker": "workspace:*",
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:*",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/ledger-auth": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/logs": "catalog:",
-    "@ledgerhq/speculos-transport": "workspace:*",
     "@ledgerhq/types-devices": "workspace:^",
     "base64-js": "1",
     "isomorphic-ws": "catalog:",
@@ -72,9 +70,13 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:*",
+    "@ledgerhq/speculos-transport": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/env": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "bip39": "^3.0.4",
@@ -84,8 +86,6 @@
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "ts-node": "^10.9.2"
   },
   "scripts": {
