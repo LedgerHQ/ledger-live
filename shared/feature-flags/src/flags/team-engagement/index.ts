@@ -21,5 +21,6 @@ export * from "./lwmNotificationsOptIn";
 export * from "./lwmProductTour";
 export * from "./onboardingWidget";
 export * from "./ratingsPrompt";
+export * from "./releaseTour";
 export * from "./referralProgramDesktopSidebar";
 export * from "./transactionsAlerts";
