@@ -44,6 +44,7 @@ import type { EvmUndelegationFlowParamList } from "../../../families/evm/Undeleg
 import type { EvmClaimRewardsFlowParamList } from "../../../families/evm/ClaimRewardsFlow/types";
 import type { EvmWithdrawFlowParamList } from "../../../families/evm/WithdrawFlow/types";
 import type { BitcoinEditTransactionParamList } from "../../../families/bitcoin/EditTransactionFlow/EditTransactionParamList";
+import type { BondPublicFlowParamList as AleoBondPublicFlowParamList } from "../../../families/aleo/BondPublicFlow/types";
 import type { PolkadotBondFlowParamList } from "../../../families/polkadot/BondFlow/types";
 import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
 import type { PolkadotRebondFlowParamList } from "../../../families/polkadot/RebondFlow/type";
@@ -266,6 +267,9 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CustomImage]: NavigatorScreenParams<CustomImageNavigatorParamList>;
   [NavigatorName.PostOnboarding]: NavigatorScreenParams<PostOnboardingNavigatorParamList>;
   [NavigatorName.CustomError]: NavigatorScreenParams<CustomErrorNavigatorParamList>;
+  // Aleo
+  [NavigatorName.AleoBondPublicFlow]: NavigatorScreenParams<AleoBondPublicFlowParamList>;
+
   // Polkadot
   [NavigatorName.PolkadotSimpleOperationFlow]: NavigatorScreenParams<PolkadotSimpleOperationFlowParamList>;
   [NavigatorName.PolkadotNominateFlow]: NavigatorScreenParams<PolkadotNominateFlowParamList>;
