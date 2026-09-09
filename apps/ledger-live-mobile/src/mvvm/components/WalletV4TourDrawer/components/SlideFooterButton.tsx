@@ -3,12 +3,15 @@ import { StyleSheet } from "react-native";
 import Animated from "react-native-reanimated";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { useSlideFooterButtonViewModel } from "../hooks/useSlideFooterButtonViewModel";
+import type { WalletV4Tour } from "../types";
 
-interface SlideFooterButtonProps {
-  readonly onComplete: () => void;
-}
+type SlideFooterButtonProps = Readonly<{
+  onComplete: () => void;
+  copy: WalletV4Tour["copy"];
+  page: string;
+}>;
 
-export const SlideFooterButton = ({ onComplete }: SlideFooterButtonProps) => {
+export const SlideFooterButton = ({ onComplete, copy, page }: SlideFooterButtonProps) => {
   const {
     primaryLabel,
     doneLabel,
@@ -18,7 +21,7 @@ export const SlideFooterButton = ({ onComplete }: SlideFooterButtonProps) => {
     isDoneButtonInteractive,
     goNext,
     complete,
-  } = useSlideFooterButtonViewModel(onComplete);
+  } = useSlideFooterButtonViewModel(onComplete, { copy, page });
 
   return (
     <Animated.View style={styles.container}>
