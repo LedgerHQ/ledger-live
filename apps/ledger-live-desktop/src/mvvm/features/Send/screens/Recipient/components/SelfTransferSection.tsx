@@ -47,7 +47,7 @@ export function SelfTransferSection() {
   const onSelfTransfer = useCallback(() => {
     if (!target) return;
     transaction.setRecipient({
-      ...state.recipient,
+      ...(state.recipient ?? {}),
       address: target.address,
       displayLabel,
       ensName: undefined,

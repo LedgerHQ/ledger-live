@@ -15,9 +15,10 @@ jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
 const mockSetRecipient = jest.fn();
 const mockAccount = createMockAccount({ id: "zcash-acc" });
 
-let mockRecipient: { address?: string; ensName?: string } | null = {
+let mockRecipient: { address?: string; ensName?: string; memo?: { value: string } } | null = {
   address: "0xresolved",
   ensName: "alice.eth",
+  memo: { value: "keep-me" },
 };
 
 jest.mock("../../../../context/SendFlowContext", () => ({
@@ -42,7 +43,7 @@ const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig
 describe("SelfTransferSection", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockRecipient = { address: "0xresolved", ensName: "alice.eth" };
+    mockRecipient = { address: "0xresolved", ensName: "alice.eth", memo: { value: "keep-me" } };
     mockedGetBalanceTypeConfig.mockReturnValue({
       getOptions: jest.fn(),
       getSelectedOptionId: jest.fn(),
@@ -56,6 +57,21 @@ describe("SelfTransferSection", () => {
   });
 
   it("should clear ensName when prefilling the self-transfer recipient", async () => {
+    const { user } = render(<SelfTransferSection />);
+
+    await user.click(screen.getByTestId("self-transfer-button"));
+
+    expect(mockSetRecipient).toHaveBeenCalledWith({
+      address: "zs1pooladdress",
+      ensName: undefined,
+      displayLabel: "Private balance",
+      memo: { value: "keep-me" },
+    });
+    expect(mockGoToNextStep).toHaveBeenCalled();
+  });
+
+  it("should prefill the self-transfer recipient when existing recipient is null", async () => {
+    mockRecipient = null;
     const { user } = render(<SelfTransferSection />);
 
     await user.click(screen.getByTestId("self-transfer-button"));
