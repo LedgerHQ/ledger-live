@@ -18,6 +18,10 @@ const mapTransactionModeToMethod: Record<TransactionType, string> = {
   [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC]: "Claim Unbond Public",
 };
 
+// credits.aleo `claim_unbond_public` takes only the staker — the chain decides how much is
+// released, so the signed payload carries no amount and the device's review screen shows none.
+const MODES_WITHOUT_AMOUNT_ROW = new Set<TransactionType>([TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC]);
+
 async function getDeviceTransactionConfig({
   account,
   parentAccount,
@@ -37,8 +41,11 @@ async function getDeviceTransactionConfig({
     { type: "text", label: "Method", value: method },
     { type: "address", label: "From", address: mainAccount.freshAddress },
     { type: "address", label: "To", address: transaction.recipient },
-    { type: "amount", label: "Amount" },
   );
+
+  if (!MODES_WITHOUT_AMOUNT_ROW.has(transaction.mode)) {
+    fields.push({ type: "amount", label: "Amount" });
+  }
 
   // TODO: restore config.isFeeSponsored check
   // https://ledgerhq.atlassian.net/browse/LIVE-29092
