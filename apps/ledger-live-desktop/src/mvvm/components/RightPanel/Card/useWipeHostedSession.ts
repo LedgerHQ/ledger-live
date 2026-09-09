@@ -1,27 +1,21 @@
 import { useEffect, useMemo, useRef } from "react";
 import { ipcRenderer } from "electron";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
-import useEnv from "@features/platform-env";
 import logger from "~/renderer/logger";
-
-function hostOf(url: string): string | null {
-  try {
-    return new URL(url).host;
-  } catch {
-    return null;
-  }
-}
+import { manifestOrigin, useCardHostedManifests } from "./useCardHostedManifests";
 
 export function useWipeHostedSessionOnSignInChange(): void {
   const isSignedIn = useIsCardSignedIn();
-  const apiUrl = useEnv("CARD_BAANX_API_URL");
-  const hostedUiUrl = useEnv("CARD_BAANX_HOSTED_UI");
+  const { login, hosted } = useCardHostedManifests();
   const lastSignedIn = useRef(isSignedIn);
 
-  const hosts = useMemo(
-    () => [hostOf(apiUrl), hostOf(hostedUiUrl)].filter(host => host !== null),
-    [apiUrl, hostedUiUrl],
-  );
+  const hosts = useMemo(() => {
+    const origins = [manifestOrigin(login), manifestOrigin(hosted)];
+
+    return [
+      ...new Set(origins.filter(origin => origin !== null).map(origin => new URL(origin).host)),
+    ];
+  }, [login, hosted]);
 
   useEffect(() => {
     if (lastSignedIn.current === isSignedIn) {
