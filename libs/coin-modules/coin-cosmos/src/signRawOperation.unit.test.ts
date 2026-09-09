@@ -11,12 +11,18 @@ const SUCCESS = 0x9000; // 36864
 
 const privkey = sha256(Buffer.from("coin-cosmos signRawOperation test seed"));
 
-function makeAccount(freshAddressPath = "44'/118'/0'/0/0"): CosmosAccount {
+function makeAccount(
+  freshAddressPath = "44'/118'/0'/0/0",
+  currency: { id: string; units: { code: string }[] } = {
+    id: "cosmos",
+    units: [{ code: "ATOM" }, { code: "uatom" }],
+  },
+): CosmosAccount {
   return {
     id: "js:2:cosmos:cosmos1xxx:",
     freshAddress: "cosmos1xxx",
     freshAddressPath,
-    currency: { id: "cosmos", units: [{ code: "ATOM" }, { code: "uatom" }] },
+    currency,
   } as unknown as CosmosAccount;
 }
 
@@ -85,8 +91,9 @@ describe("buildSignRawOperation", () => {
     // The device signs the canonical serialized signDoc, verbatim.
     const expectedBytes = Buffer.from(serializeSignDoc(JSON.parse(transaction)));
     expect(Buffer.from(signer.sign.mock.calls[0][1])).toEqual(expectedBytes);
-    // coin type 118 → HRP is not passed (only ethermint/60 needs it).
-    expect(signer.sign.mock.calls[0][2]).toBeUndefined();
+    // The device validates the (coin type, HRP) pair on every coin type, not only ethermint/60 —
+    // coin type 118 now receives the chain prefix too.
+    expect(signer.sign.mock.calls[0][2]).toBe("cosmos");
 
     const signedEvt = events.find(e => e.type === "signed");
     if (signedEvt?.type !== "signed") throw new Error("no signed event");
@@ -194,7 +201,7 @@ describe("buildSignRawOperation", () => {
     expect(signer.sign).toHaveBeenCalledTimes(1);
   });
 
-  it("passes the HRP as the 3rd sign arg for ethermint chains (coin type 60)", async () => {
+  it("passes the HRP as the 3rd sign arg for coin type 60", async () => {
     const signer = makeRealSigner();
     const signRawOperation = buildSignRawOperation(signerContextOf(signer));
 
@@ -206,8 +213,27 @@ describe("buildSignRawOperation", () => {
       }).pipe(toArray()),
     );
 
-    // ethermint/60 → HRP (the cosmos chain prefix) is passed as the 3rd arg.
+    // The chain prefix is passed as the 3rd arg, same as every other coin type.
     expect(signer.sign.mock.calls[0][2]).toBe("cosmos");
+  });
+
+  it("passes the chain prefix for coin type 1200", async () => {
+    const signer = makeRealSigner();
+    const signRawOperation = buildSignRawOperation(signerContextOf(signer));
+
+    await firstValueFrom(
+      signRawOperation({
+        account: makeAccount("44'/1200'/0'/0/0", {
+          id: "gonka",
+          units: [{ code: "GNK" }, { code: "ngonka" }],
+        }),
+        deviceId: "mock",
+        transaction: makeSignDocJson(MSG_SEND),
+      }).pipe(toArray()),
+    );
+
+    // Coin type 1200 is neither 60 nor 118 — the chain prefix still reaches the device.
+    expect(signer.sign.mock.calls[0][2]).toBe("gonka");
   });
 
   it("rejects a malformed derivation path before any device interaction", async () => {

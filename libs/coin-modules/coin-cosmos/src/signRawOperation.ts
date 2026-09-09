@@ -51,12 +51,10 @@ function signTransaction(
   deviceId: string,
   path: number[],
   tx: Buffer,
-  prefix: string,
+  hrp: string,
 ): Promise<CosmosSignature> {
-  return signerContext(deviceId, signer =>
-    // HRP is only needed when signing for ethermint chains.
-    path[1] === 60 ? signer.sign(path, tx, prefix) : signer.sign(path, tx),
-  );
+  // The device validates the (coin type, HRP) pair; the chain prefix goes on every request.
+  return signerContext(deviceId, signer => signer.sign(path, tx, hrp));
 }
 
 async function performSignRawOperation(

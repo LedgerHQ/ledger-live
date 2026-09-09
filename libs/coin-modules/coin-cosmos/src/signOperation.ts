@@ -67,16 +67,10 @@ export const buildSignOperation =
 
         const { signature: resSignature, return_code } = (await signerContext(
           deviceId,
-          async signer => {
-            let res;
-            // HRP is only needed when signing for ethermint chains
-            if (path[1] === 60) {
-              res = await signer.sign(path, tx, chainInstance.prefix);
-            } else {
-              res = await signer.sign(path, tx);
-            }
-            return res;
-          },
+          // The device validates the (coin type, HRP) pair, so the chain's own prefix goes on every
+          // signing request. Gating it on coin type 60 only worked while 118 — which the device
+          // exempts — was the sole alternative.
+          async signer => signer.sign(path, tx, chainInstance.prefix),
         )) as CosmosSignatureSdk;
 
         switch (return_code) {
