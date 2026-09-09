@@ -70,11 +70,12 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/hw-transport-mocker": "workspace:*",
-    "@ledgerhq/speculos-transport": "workspace:*",
+    "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
-    "@shared/env": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
