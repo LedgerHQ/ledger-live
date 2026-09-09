@@ -10,6 +10,7 @@ describe("useContactsDevToolViewModel", () => {
     expect(result.current.params).toEqual({
       newBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     expect(result.current.customFamiliesInput).toBe("evm");
   });
@@ -30,7 +31,7 @@ describe("useContactsDevToolViewModel", () => {
 
     expect(store.getState().featureFlags.overrides.lwdContacts).toEqual({
       enabled: true,
-      params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+      params: { newBadge: false, eligibleAddressFamilies: ["evm"], excludedCurrencyIds: [] },
     });
   });
 
@@ -50,7 +51,7 @@ describe("useContactsDevToolViewModel", () => {
 
     expect(store.getState().featureFlags.overrides.lwdContacts).toEqual({
       enabled: true,
-      params: { newBadge: true, eligibleAddressFamilies: ["evm"] },
+      params: { newBadge: true, eligibleAddressFamilies: ["evm"], excludedCurrencyIds: [] },
     });
   });
 
@@ -74,7 +75,11 @@ describe("useContactsDevToolViewModel", () => {
 
     expect(store.getState().featureFlags.overrides.lwdContacts).toEqual({
       enabled: true,
-      params: { newBadge: false, eligibleAddressFamilies: ["evm", "stellar", "aptos"] },
+      params: {
+        newBadge: false,
+        eligibleAddressFamilies: ["evm", "stellar", "aptos"],
+        excludedCurrencyIds: [],
+      },
     });
     expect(result.current.customFamiliesInput).toBe("evm, stellar, aptos");
   });
@@ -99,7 +104,39 @@ describe("useContactsDevToolViewModel", () => {
 
     expect(store.getState().featureFlags.overrides.lwdContacts).toEqual({
       enabled: true,
-      params: { newBadge: false, eligibleAddressFamilies: ["evm", "stellar"] },
+      params: {
+        newBadge: false,
+        eligibleAddressFamilies: ["evm", "stellar"],
+        excludedCurrencyIds: [],
+      },
+    });
+  });
+
+  it("should apply excludedCurrencyIds, deduplicating entries", () => {
+    const { result, store } = renderHook(() => useContactsDevToolViewModel(), {
+      initialState: withFlagOverrides({
+        lwdContacts: {
+          enabled: true,
+          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+        },
+      }),
+    });
+
+    act(() => {
+      result.current.setExcludedCurrencyIdsInput("ethereum, bitcoin, ethereum");
+    });
+
+    act(() => {
+      result.current.handleApplyExcludedCurrencyIds();
+    });
+
+    expect(store.getState().featureFlags.overrides.lwdContacts).toEqual({
+      enabled: true,
+      params: {
+        newBadge: false,
+        eligibleAddressFamilies: ["evm"],
+        excludedCurrencyIds: ["ethereum", "bitcoin"],
+      },
     });
   });
 

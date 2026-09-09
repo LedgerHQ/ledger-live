@@ -18,6 +18,12 @@ on:
       test_filter:
         description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
+      team:
+        description: "Run only one team's tests. ANDed with test_filter, Smoke and the device."
+        required: false
+        type: choice
+        options: [all, bst, buy-and-sell, coin-integration, earn, engagement, swap, wallet-xp]
+        default: all
       invert_filter:
         description: Ignore test having name pattern (entered in the previous field)
         type: boolean
@@ -87,6 +93,11 @@ on:
         description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
         type: string
+      team:
+        description: "Team slug whose specs to run. One of: all, bst, buy-and-sell, coin-integration, earn, engagement, swap, wallet-xp."
+        required: false
+        type: string
+        default: all
       invert_filter:
         description: Ignore test having name pattern (entered in the previous field)
         type: boolean
@@ -262,6 +273,24 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: Build Playwright grep filter from inputs
+        id: test-filter
+        shell: bash
+        env:
+          TEST_FILTER_INPUT: ${{ inputs.test_filter }}
+          SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
+          TEAM_INPUT: ${{ inputs.team || 'all' }}
+          INVERT_FILTER_INPUT: ${{ inputs.invert_filter || false }}
+        run: |
+          node e2e/tooling/filter/resolve.mjs \
+            --input "$TEST_FILTER_INPUT" \
+            --smoke-tests "$SMOKE_TESTS_INPUT" \
+            --team "$TEAM_INPUT" \
+            --invert-filter "$INVERT_FILTER_INPUT" \
+            --check-dir "e2e/desktop/tests" \
+            --runner playwright \
+            --github-output >> "$GITHUB_OUTPUT"
+
       - name: Pull Speculos docker image
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
@@ -293,20 +322,6 @@ jobs:
           enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
           build_type: ${{ inputs.build_type }}
 
-      - name: Build Playwright grep filter from inputs
-        id: test-filter
-        run: |
-          RESOLVED_FILTER="$(node e2e/tooling/filter/resolve.mjs \
-            --input "$TEST_FILTER_INPUT" \
-            --smoke-tests "$SMOKE_TESTS_INPUT" \
-            --check-dir "e2e/desktop/tests" \
-            --runner playwright)"
-          echo "filter=$RESOLVED_FILTER" >> "$GITHUB_OUTPUT"
-        shell: bash
-        env:
-          TEST_FILTER_INPUT: ${{ inputs.test_filter }}
-          SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
-
       - name: Write workflow context to GitHub Summary
         env:
           FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
@@ -317,6 +332,7 @@ jobs:
           TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
           COMMIT_SHA: ${{ github.sha }}
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
+          TEAM_INPUT: ${{ inputs.team || 'all' }}
         run: |
           DEVICE="$SPECULOS_DEVICE"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
@@ -336,6 +352,7 @@ jobs:
             echo "- **Triggered branch:** $TRIGGERED_BRANCH"
             echo "- **Commit SHA:** $COMMIT_SHA"
             echo "- **Device selected:** $DEVICE"
+            echo "- **Team:** $TEAM_INPUT"
             echo "$FILTER_SUMMARY"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
@@ -389,7 +406,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
-          test_filter: ${{ steps.test-filter.outputs.filter }}
+          test_filter: ${{ steps.test-filter.outputs.runner_filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
           repeat_each: ${{ inputs.repeat_each }}
           feature_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}

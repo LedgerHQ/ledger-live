@@ -18,7 +18,7 @@ import {
   hashCommandBlock,
   signCommandBlock,
 } from "@ledgerhq/hw-ledger-key-ring-protocol/CommandBlock";
-import { getEnv } from "@shared/env";
+import { TRUSTCHAIN_API_STAGING } from "../../../tests/test-helpers/config";
 import { PutCommandsRequest } from "../../api";
 import { HWDeviceProvider } from "../../HWDeviceProvider";
 import { SDK } from "../../sdk";
@@ -68,7 +68,7 @@ describe("Trustchain SDK", () => {
     mswServer.close();
   });
 
-  const apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING");
+  const apiBaseUrl = TRUSTCHAIN_API_STAGING;
   const sdkContext = { applicationId: 16, name: "alice", apiBaseUrl };
 
   beforeEach(() => {

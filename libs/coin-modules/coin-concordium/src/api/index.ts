@@ -179,7 +179,7 @@ async function listOperations(
   const { items, next } = await listOperationsLogic(config, address, options, currencyId);
 
   return {
-    items: items.map(mapRawOperationToApiOperation),
+    items: items.map(op => mapRawOperationToApiOperation(op, address)),
     next,
   };
 }

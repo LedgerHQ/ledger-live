@@ -30,21 +30,27 @@ afterEach(() => {
 });
 
 describe("Aleo ManageModal", () => {
-  // The rows are shown so the modal describes the whole staking lifecycle, but none of the
-  // flows are built. A row that looked clickable would open nothing at all.
-  it.each(["aleo-bond-button", "aleo-unbond-button", "aleo-claim-button"])(
-    "leaves %s disabled",
-    async testId => {
-      setup();
-
-      expect(await screen.findByTestId(testId)).toBeDisabled();
-    },
-  );
-
-  it("does not open any flow from the rows", async () => {
+  it("hands over to the bond flow when the bond row is clicked", async () => {
     const { store } = setup();
 
     await userEvent.click(await screen.findByTestId("aleo-bond-button"));
+
+    expect(store.getState().modals[AleoCustomModal.BOND_PUBLIC]).toEqual({
+      isOpened: true,
+      data: { account: ALEO_MAIN_ACCOUNT },
+    });
+    expect(store.getState().modals[AleoCustomModal.MANAGE]?.isOpened).toBeFalsy();
+  });
+
+  it.each(["aleo-unbond-button", "aleo-claim-button"])("leaves %s disabled", async testId => {
+    setup();
+
+    expect(await screen.findByTestId(testId)).toBeDisabled();
+  });
+
+  it("opens no flow from the unbond or claim rows", async () => {
+    const { store } = setup();
+
     await userEvent.click(await screen.findByTestId("aleo-unbond-button"));
     await userEvent.click(await screen.findByTestId("aleo-claim-button"));
 

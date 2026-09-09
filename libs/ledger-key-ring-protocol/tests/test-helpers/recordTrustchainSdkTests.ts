@@ -2,16 +2,15 @@ import fsPromises from "fs/promises";
 import zlib from "zlib";
 import { setupServer } from "msw/node";
 import { RecordStore } from "@ledgerhq/hw-transport-mocker";
-import { createSpeculosDevice, releaseSpeculosDevice } from "@ledgerhq/speculos-transport";
+import { createSpeculosDevice, releaseSpeculosDevice } from "./speculos";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { crypto, TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
-import { getEnv, setEnv } from "@shared/env";
 import { setNetworkState } from "@ledgerhq/live-network";
+import { TRUSTCHAIN_API_STAGING } from "./config";
 import { RecorderConfig, ScenarioOptions, genSeed, recorderConfigDefaults } from "./types";
 import { getSdk } from "../../src";
 import { WithDevice } from "../../src/types";
 
-setEnv("GET_CALLS_RETRY", 0);
 setNetworkState({ getCallsRetry: 0 });
 
 export async function recordTestTrustchainSdk(
@@ -147,11 +146,11 @@ export async function recordTestTrustchainSdk(
     withDevice,
     sdkForName: (name, opts) =>
       getSdk(
-        !!getEnv("MOCK"),
+        false,
         {
           applicationId: opts?.applicationId ?? 16,
           name,
-          apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+          apiBaseUrl: TRUSTCHAIN_API_STAGING,
         },
         withDevice,
       ),

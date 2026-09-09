@@ -38,8 +38,11 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
   const { transaction } = useSendFlowActions();
   const navigation = useNavigation<SendFlowNavigationProp>();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
-    useContactsFeature("mobile");
+  const {
+    isEnabled: isContactsFeatureEnabled,
+    eligibleAddressFamilies,
+    excludedCurrencyIds,
+  } = useContactsFeature("mobile");
 
   const account = state.account.account;
   const parentAccount = state.account.parentAccount ?? null;
@@ -50,7 +53,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
   const trackingProperties = useMemo(() => {
     const contactsOnNetwork =
       isContactsFeatureEnabled &&
-      isEligibleAddressCurrency(eligibleAddressFamilies, currency ?? undefined)
+      isEligibleAddressCurrency(eligibleAddressFamilies, currency ?? undefined, excludedCurrencyIds)
         ? filterContactsByNetwork(contacts, currency?.id ?? "")
         : [];
 
@@ -64,6 +67,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     contacts,
     currency,
     eligibleAddressFamilies,
+    excludedCurrencyIds,
     isContactsFeatureEnabled,
     parentAccount,
   ]);

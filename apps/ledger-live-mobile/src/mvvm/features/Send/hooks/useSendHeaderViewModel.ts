@@ -77,8 +77,11 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
   const { displayMode } = useSendAmountDisplayMode();
-  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
-    useContactsFeature("mobile");
+  const {
+    isEnabled: isContactsFeatureEnabled,
+    eligibleAddressFamilies,
+    excludedCurrencyIds,
+  } = useContactsFeature("mobile");
   const contacts = useSelector(selectContacts);
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
   const { recipientType, setInputMethod } = useSendFlowTracking();
@@ -292,7 +295,11 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
   const canSearchContacts =
     isContactsFeatureEnabled &&
-    isEligibleAddressCurrency(eligibleAddressFamilies, state.account.currency ?? undefined);
+    isEligibleAddressCurrency(
+      eligibleAddressFamilies,
+      state.account.currency ?? undefined,
+      excludedCurrencyIds,
+    );
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({
       supportsDomain: uiConfig.recipientSupportsDomain,

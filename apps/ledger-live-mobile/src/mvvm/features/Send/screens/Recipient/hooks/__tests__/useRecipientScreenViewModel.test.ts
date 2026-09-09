@@ -21,7 +21,11 @@ jest.mock("@features/platform-contacts", () => ({
     "@features/platform-contacts",
   ).isEligibleAddressCurrency,
   useContacts: jest.fn(() => []),
-  useContactsFeature: jest.fn(() => ({ isEnabled: false, eligibleAddressFamilies: [] })),
+  useContactsFeature: jest.fn(() => ({
+    isEnabled: false,
+    eligibleAddressFamilies: [],
+    excludedCurrencyIds: [],
+  })),
 }));
 
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
@@ -92,6 +96,7 @@ describe("useRecipientScreenViewModel", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     jest.mocked(useContacts).mockReturnValue([
       mockContact({

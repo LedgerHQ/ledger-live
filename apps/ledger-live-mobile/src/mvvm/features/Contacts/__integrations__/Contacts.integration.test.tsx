@@ -853,7 +853,7 @@ describe("Contacts integration", () => {
     expect(screen.getByText("Name address")).toBeVisible();
     expect(
       screen.getByText(
-        "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
+        "This name appears on your Ledger device when you send to this address. Give it a name that makes it easy to find.",
       ),
     ).toBeVisible();
     expect(screen.getByTestId("contacts-add-address-name-continue")).toBeEnabled();
@@ -944,7 +944,7 @@ describe("Contacts integration", () => {
     await user.press(bitcoinAsset);
 
     await waitFor(() => {
-      expect(screen.getByText("Bitcoin isn't supported yet")).toBeVisible();
+      expect(screen.getByText("Bitcoin is not supported yet")).toBeVisible();
       expect(
         screen.getByText(
           "You can't add a Bitcoin address to your contacts yet. We're adding more cryptos over time.",
@@ -956,10 +956,10 @@ describe("Contacts integration", () => {
     await user.press(screen.getByRole("button", { name: "Got it" }));
 
     await waitFor(() => {
-      expect(screen.queryByText("Bitcoin isn't supported yet")).toBeNull();
+      expect(screen.queryByText("Bitcoin is not supported yet")).toBeNull();
     });
     expect(
-      screen.getByLabelText("Bitcoin isn't supported yet", {
+      screen.getByLabelText("Bitcoin is not supported yet", {
         exact: true,
       }),
     ).toBeVisible();
@@ -974,7 +974,7 @@ describe("Contacts integration", () => {
     await user.press(solanaNetwork);
 
     await waitFor(() => {
-      expect(screen.getByText("Solana Network isn't supported yet")).toBeVisible();
+      expect(screen.getByText("Solana Network is not supported yet")).toBeVisible();
       expect(
         screen.getByText(
           "You can't select Solana network for Tether USD. We're adding more networks over time.",
@@ -986,7 +986,7 @@ describe("Contacts integration", () => {
     await user.press(screen.getByRole("button", { name: "Got it" }));
 
     await waitFor(() => {
-      expect(screen.queryByText("Solana Network isn't supported yet")).toBeNull();
+      expect(screen.queryByText("Solana Network is not supported yet")).toBeNull();
     });
 
     await user.press(ethereumNetwork);
