@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { useDispatch } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
+import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import ToolTip from "~/renderer/components/Tooltip";
@@ -8,6 +10,7 @@ import UnbondIcon from "~/renderer/icons/Undelegate";
 import ClaimRewardIcon from "~/renderer/icons/ClaimReward";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { Account } from "@ledgerhq/types-live";
+import { ModalData } from "~/renderer/modals/types";
 import * as S from "./ManageModal.styles";
 
 export type Data = {
@@ -16,14 +19,17 @@ export type Data = {
   source?: string;
 };
 
-const ManageModal = ({
-  account: _account,
-  parentAccount: _parentAccount,
-  source: _source,
-  ...rest
-}: Data) => {
+const ManageModal = ({ account, parentAccount, source, ...rest }: Data) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
+  const onSelectAction = useCallback(
+    (onClose: () => void, name: keyof ModalData) => {
+      onClose();
+      dispatch(openModal(name, { account, parentAccount, source }));
+    },
+    [dispatch, account, parentAccount, source],
+  );
   return (
     <Modal
       {...rest}
@@ -36,24 +42,23 @@ const ManageModal = ({
           title={<Trans i18nKey="aleo.manage.title" />}
           render={() => (
             <Box>
-              <ToolTip
-                content={t("aleo.manage.comingSoonTooltip")}
-                containerStyle={{ width: "100%" }}
+              <S.ManageButton
+                data-testid="aleo-bond-button"
+                onClick={() => onSelectAction(onClose, "MODAL_ALEO_BOND_PUBLIC")}
               >
-                <S.ManageButton data-testid="aleo-bond-button" disabled>
-                  <S.IconWrapper>
-                    <IconCoins size={16} />
-                  </S.IconWrapper>
-                  <S.InfoWrapper>
-                    <S.Title>
-                      <Trans i18nKey="aleo.manage.bond.title" />
-                    </S.Title>
-                    <S.Description>
-                      <Trans i18nKey="aleo.manage.bond.description" />
-                    </S.Description>
-                  </S.InfoWrapper>
-                </S.ManageButton>
-              </ToolTip>
+                <S.IconWrapper>
+                  <IconCoins size={16} />
+                </S.IconWrapper>
+                <S.InfoWrapper>
+                  <S.Title>
+                    <Trans i18nKey="aleo.manage.bond.title" />
+                  </S.Title>
+                  <S.Description>
+                    <Trans i18nKey="aleo.manage.bond.description" />
+                  </S.Description>
+                </S.InfoWrapper>
+              </S.ManageButton>
+              {/* Listed so the modal shows the whole staking lifecycle; the flows are not built yet. */}
               <ToolTip
                 content={t("aleo.manage.comingSoonTooltip")}
                 containerStyle={{ width: "100%" }}
