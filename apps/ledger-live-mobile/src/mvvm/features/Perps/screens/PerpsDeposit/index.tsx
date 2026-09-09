@@ -84,7 +84,6 @@ function DepositForm({
   depositAccountName,
   depositAccountCounterValue,
   maxAmount,
-  selectMax,
   statusError,
   canReview,
   exceedsBalance,
@@ -134,7 +133,6 @@ function DepositForm({
           value={depositAmount}
           decimalPlaces={maxDecimalLength}
           onChange={selectAmountRatio}
-          onMax={selectMax}
           testIDPrefix="perps-deposit-ratio"
         />
 

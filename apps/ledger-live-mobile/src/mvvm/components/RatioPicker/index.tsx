@@ -9,7 +9,6 @@ type RatioPickerProps = Readonly<{
   maxValue: number;
   decimalPlaces: number;
   onChange: (value: number) => void;
-  onMax: () => void;
   testIDPrefix: string;
   disabled?: boolean;
 }>;
@@ -31,7 +30,6 @@ export function RatioPicker({
   maxValue,
   decimalPlaces,
   onChange,
-  onMax,
   testIDPrefix,
   disabled,
 }: RatioPickerProps) {
@@ -60,7 +58,7 @@ export function RatioPicker({
         size="sm"
         lx={{ flex: 1 }}
         disabled={disabled || maxValue === 0 || value === maxOption}
-        onPress={onMax}
+        onPress={() => onChange(maxOption)}
         testID={`${testIDPrefix}-${MAX_LABEL}`}
       >
         {MAX_LABEL}

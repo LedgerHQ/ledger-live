@@ -4,19 +4,17 @@ import { RatioPicker } from "../index";
 
 const renderPicker = (props: Partial<React.ComponentProps<typeof RatioPicker>> = {}) => {
   const onChange = jest.fn();
-  const onMax = jest.fn();
   const { user } = render(
     <RatioPicker
       value={0}
       maxValue={100}
       decimalPlaces={2}
       onChange={onChange}
-      onMax={onMax}
       testIDPrefix="ratio"
       {...props}
     />,
   );
-  return { onChange, onMax, user };
+  return { onChange, user };
 };
 
 describe("RatioPicker", () => {
@@ -36,13 +34,12 @@ describe("RatioPicker", () => {
     expect(onChange).toHaveBeenCalledWith(5);
   });
 
-  it("delegates the max pill to its own handler", async () => {
-    const { onMax, onChange, user } = renderPicker();
+  it("fills the field with the whole balance from the max pill", async () => {
+    const { onChange, user } = renderPicker({ maxValue: 10.005, decimalPlaces: 2 });
 
     await user.press(screen.getByTestId("ratio-MAX"));
 
-    expect(onMax).toHaveBeenCalled();
-    expect(onChange).not.toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledWith(10);
   });
 
   it("disables the pill whose value the field already holds", async () => {
@@ -54,20 +51,19 @@ describe("RatioPicker", () => {
   });
 
   it("disables the max pill once the field holds the whole balance", async () => {
-    const { onMax, user } = renderPicker({ value: 100 });
+    const { onChange, user } = renderPicker({ value: 100 });
 
     await user.press(screen.getByTestId("ratio-MAX"));
 
-    expect(onMax).not.toHaveBeenCalled();
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it("disables every pill when there is nothing to spend", async () => {
-    const { onChange, onMax, user } = renderPicker({ maxValue: 0 });
+    const { onChange, user } = renderPicker({ maxValue: 0 });
 
     await user.press(screen.getByTestId("ratio-25%"));
     await user.press(screen.getByTestId("ratio-MAX"));
 
     expect(onChange).not.toHaveBeenCalled();
-    expect(onMax).not.toHaveBeenCalled();
   });
 });
