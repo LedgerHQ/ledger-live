@@ -1432,7 +1432,12 @@ jobs:
     env:
       REF: ${{ inputs.ref || github.ref_name }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      HEADER_DEVICES: "iOS:${{ needs.determine-builds.outputs.ios_device }} / Android:${{ needs.determine-builds.outputs.android_device }}"
+      HEADER_DEVICES: >-
+        ${{ inputs.tests_type == 'Android Only'
+          && format('Android:{0}', needs.determine-builds.outputs.android_device)
+          || (inputs.tests_type == 'iOS Only'
+            && format('iOS:{0}', needs.determine-builds.outputs.ios_device)
+            || format('iOS:{0} / Android:{1}', needs.determine-builds.outputs.ios_device, needs.determine-builds.outputs.android_device)) }}
       # A platform's label is blanked out when tests_type excludes it; the e2e-slack-report
       # composite then drops that row entirely (and its status stops driving the color).
       IOS_LABEL: ${{ inputs.tests_type != 'Android Only' && 'iOS' || '' }}
