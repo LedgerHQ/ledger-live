@@ -19,9 +19,12 @@ export async function hardReset() {
   log("clear-cache", "hardReset()");
   disableDBMiddleware();
   await resetAll();
-  // `resetAll` only removes the app DB, not any session storage.
+  // `resetAll` only removes the app DB, not any session storage. Best-effort:
+  // the DB is already gone, so a failure here must not abort the rest.
   log("clear-cache", "clearStorageData()");
-  await clearStorageData();
+  await clearStorageData().catch(error =>
+    log("clear-cache", `clearStorageData() failed: ${String(error)}`),
+  );
   resetStore();
   window.localStorage.clear();
 }
