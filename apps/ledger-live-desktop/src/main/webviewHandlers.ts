@@ -1,11 +1,13 @@
 import { app, ipcMain, session, webContents } from "electron";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import { openURL } from "./openURL";
+import { trackLiveAppSession } from "./liveAppSessions";
 import {
   WEBVIEW_GUEST_CSP,
   WEBVIEW_GUEST_PERMISSIONS_POLICY,
   createLiveAppSchemeChecker,
   mergeCspHeaders,
+  mergePermissionsPolicyHeaders,
   resolvePermissionCheck,
   resolvePermissionRequest,
 } from "./webviewHandlers.helpers";
@@ -167,18 +169,25 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
     if (hardenedSessions.has(s)) return;
     hardenedSessions.add(s);
 
-    // Electron grants permission requests when no handler is installed. Guests
-    // share the default session with the host renderer, so the caller is told
-    // apart by `getType()`, not by which session the request arrives on.
+    // Electron grants every request when no handler is installed, so one goes on
+    // every session - including the default one, in case a <webview> is ever
+    // created without a partition. Callers are told apart by `getType()`.
     s.setPermissionRequestHandler((contents, permission, callback, requestDetails) => {
       const { mediaTypes } = requestDetails as Electron.MediaAccessPermissionRequest;
-      callback(
-        resolvePermissionRequest({
-          isGuest: contents?.getType() === "webview",
-          permission,
-          mediaTypes,
-        }),
-      );
+      const isGuest = contents?.getType() === "webview";
+      const granted = resolvePermissionRequest({ isGuest, permission, mediaTypes });
+
+      // Electron granted everything before this allowlist existed, and a denial
+      // is otherwise invisible - the web API just rejects inside the Live App.
+      if (!granted) {
+        console.warn(
+          `Denied "${permission}" permission requested by ${
+            isGuest ? "a Live App guest" : "the host renderer"
+          } at ${requestDetails.requestingUrl || "an unknown URL"}.`,
+        );
+      }
+
+      callback(granted);
     });
 
     s.setPermissionCheckHandler((contents, permission) =>
@@ -200,8 +209,10 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
         return;
       }
 
-      const responseHeaders = mergeCspHeaders(details.responseHeaders, WEBVIEW_GUEST_CSP);
-      responseHeaders["Permissions-Policy"] = [WEBVIEW_GUEST_PERMISSIONS_POLICY];
+      const responseHeaders = mergePermissionsPolicyHeaders(
+        mergeCspHeaders(details.responseHeaders, WEBVIEW_GUEST_CSP),
+        WEBVIEW_GUEST_PERMISSIONS_POLICY,
+      );
       callback({ responseHeaders });
     });
   };
@@ -234,6 +245,9 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
     }
 
     if (contentsType !== "webview") return;
+
+    // So Settings can clear this partition later.
+    trackLiveAppSession(contents.session);
 
     // Route same-tab `window.open` attempts: http(s) goes to the user's
     // default browser via `openURL`; everything else (including

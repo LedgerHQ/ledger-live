@@ -4,6 +4,7 @@ import {
   createLiveAppSchemeChecker,
   isDeviceCaptureRequest,
   mergeCspHeaders,
+  mergePermissionsPolicyHeaders,
   resolvePermissionCheck,
   resolvePermissionRequest,
 } from "./webviewHandlers.helpers";
@@ -154,6 +155,66 @@ describe("mergeCspHeaders", () => {
     const snapshot = JSON.parse(JSON.stringify(input));
 
     mergeCspHeaders(input, INJECTED);
+
+    expect(input).toEqual(snapshot);
+  });
+});
+
+describe("mergePermissionsPolicyHeaders", () => {
+  const INJECTED = "display-capture=()";
+
+  it("sets our policy when no Permissions-Policy header exists", () => {
+    const merged = mergePermissionsPolicyHeaders({ "Content-Type": ["text/html"] }, INJECTED);
+
+    expect(merged["Permissions-Policy"]).toEqual([INJECTED]);
+    expect(merged["Content-Type"]).toEqual(["text/html"]);
+  });
+
+  it("handles an undefined responseHeaders argument", () => {
+    expect(mergePermissionsPolicyHeaders(undefined, INJECTED)["Permissions-Policy"]).toEqual([
+      INJECTED,
+    ]);
+  });
+
+  it("keeps a Live App's own cross-origin delegation instead of replacing it", () => {
+    // A fiat ramp delegating camera into its cross-origin KYC iframe: dropping
+    // this header would fall back to the `self` default and break getUserMedia.
+    const original = 'camera=(self "https://kyc.example")';
+    const merged = mergePermissionsPolicyHeaders({ "Permissions-Policy": [original] }, INJECTED);
+
+    expect(merged["Permissions-Policy"]).toEqual([INJECTED, original]);
+  });
+
+  it("orders our policy first so it wins a conflict on the same feature", () => {
+    const original = "display-capture=*";
+    const merged = mergePermissionsPolicyHeaders({ "Permissions-Policy": [original] }, INJECTED);
+
+    // Chromium keeps the first declaration of a duplicated feature.
+    expect(merged["Permissions-Policy"]?.[0]).toBe(INJECTED);
+  });
+
+  it("normalises a lowercase permissions-policy header to the canonical key", () => {
+    // How the header always arrives over HTTP/2; a plain assignment would emit two.
+    const original = "geolocation=()";
+    const merged = mergePermissionsPolicyHeaders({ "permissions-policy": [original] }, INJECTED);
+
+    expect(merged["Permissions-Policy"]).toEqual([INJECTED, original]);
+    expect(merged["permissions-policy"]).toBeUndefined();
+  });
+
+  it("normalises mixed-case PeRmIsSiOnS-PoLiCy to the canonical key", () => {
+    const original = "geolocation=()";
+    const merged = mergePermissionsPolicyHeaders({ "PeRmIsSiOnS-PoLiCy": [original] }, INJECTED);
+
+    expect(merged["Permissions-Policy"]).toEqual([INJECTED, original]);
+    expect(merged["PeRmIsSiOnS-PoLiCy"]).toBeUndefined();
+  });
+
+  it("does not mutate the input headers", () => {
+    const input = { "Permissions-Policy": ["geolocation=()"] };
+    const snapshot = JSON.parse(JSON.stringify(input));
+
+    mergePermissionsPolicyHeaders(input, INJECTED);
 
     expect(input).toEqual(snapshot);
   });

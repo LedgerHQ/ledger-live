@@ -65,6 +65,29 @@ export function mergeCspHeaders(
 }
 
 /**
+ * Merges our policy into the one the Live App returned, rather than replacing
+ * it: overwriting a `camera=(self "https://kyc.example")` delegation would fall
+ * back to the `self` default and break getUserMedia in the KYC iframe.
+ *
+ * Chromium keeps the FIRST declaration of a duplicated feature, so ours goes
+ * first to win a direct conflict. Normalised to the canonical key so the guest
+ * never gets two headers (HTTP/2 always lowercases it).
+ */
+export function mergePermissionsPolicyHeaders(
+  responseHeaders: Record<string, string[]> | undefined,
+  permissionsPolicyValue: string,
+): Record<string, string[]> {
+  const headers: Record<string, string[]> = { ...responseHeaders };
+
+  const existingKey = Object.keys(headers).find(k => k.toLowerCase() === "permissions-policy");
+  const existingPolicy = existingKey ? (headers[existingKey] ?? []) : [];
+  if (existingKey) delete headers[existingKey];
+  headers["Permissions-Policy"] = [permissionsPolicyValue, ...existingPolicy];
+
+  return headers;
+}
+
+/**
  * The CSP value injected on every guest <webview> document response.
  *
  * Scoped narrowly to the attack surface we care about (external-protocol
