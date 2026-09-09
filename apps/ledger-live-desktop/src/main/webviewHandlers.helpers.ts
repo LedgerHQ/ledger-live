@@ -64,14 +64,36 @@ export function mergeCspHeaders(
   return headers;
 }
 
+// A `Permissions-Policy` value is a structured-fields dictionary: comma-separated
+// `feature=allowlist` members, where an allowlist is a token (`*`, `self`), a
+// quoted origin, or a parenthesised list of either.
+const SF_ITEM = String.raw`(?:[a-zA-Z*][a-zA-Z0-9_.:*/-]*|"(?:[^"\\]|\\.)*")`;
+const PERMISSIONS_POLICY_MEMBER = new RegExp(
+  String.raw`^[a-z*][a-z0-9_.*-]*` +
+    String.raw`(?:=(?:${SF_ITEM}|\(\s*(?:${SF_ITEM}(?:\s+${SF_ITEM})*\s*)?\)))?` +
+    String.raw`(?:;[^,]*)?$`,
+);
+
+/**
+ * Chromium discards the WHOLE dictionary on a parse error, so a Live App
+ * returning a deliberately malformed policy would take our injected member down
+ * with it. Deliberately lenient: dropping a policy that was in fact valid would
+ * cost the app a real delegation.
+ */
+export function isParsablePermissionsPolicy(value: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed) return true;
+  return trimmed.split(",").every(member => PERMISSIONS_POLICY_MEMBER.test(member.trim()));
+}
+
 /**
  * Merges our policy into the one the Live App returned, rather than replacing
  * it: overwriting a `camera=(self "https://kyc.example")` delegation would fall
  * back to the `self` default and break getUserMedia in the KYC iframe.
  *
  * Chromium keeps the FIRST declaration of a duplicated feature, so ours goes
- * first to win a direct conflict. Normalised to the canonical key so the guest
- * never gets two headers (HTTP/2 always lowercases it).
+ * first to win a direct conflict, and an unparsable value is dropped rather
+ * than merged. Normalised to the canonical key (HTTP/2 always lowercases it).
  */
 export function mergePermissionsPolicyHeaders(
   responseHeaders: Record<string, string[]> | undefined,
@@ -82,7 +104,8 @@ export function mergePermissionsPolicyHeaders(
   const existingKey = Object.keys(headers).find(k => k.toLowerCase() === "permissions-policy");
   const existingPolicy = existingKey ? (headers[existingKey] ?? []) : [];
   if (existingKey) delete headers[existingKey];
-  headers["Permissions-Policy"] = [permissionsPolicyValue, ...existingPolicy];
+  const preserved = existingPolicy.every(isParsablePermissionsPolicy) ? existingPolicy : [];
+  headers["Permissions-Policy"] = [permissionsPolicyValue, ...preserved];
 
   return headers;
 }
@@ -104,7 +127,19 @@ export const WEBVIEW_GUEST_CSP =
   "worker-src 'self' http: https: blob: data:; " +
   "form-action 'self' http: https:;";
 
-export const GUEST_ALLOWED_PERMISSIONS = new Set(["fullscreen", "clipboard-sanitized-write"]);
+/**
+ * Guests were granted everything before this allowlist existed, so anything
+ * left out is a behaviour change. `storage-access` keeps a cross-site KYC
+ * iframe's cookies working under partitioned storage; `clipboard-read` backs
+ * "paste a WalletConnect URI" style affordances.
+ */
+export const GUEST_ALLOWED_PERMISSIONS = new Set([
+  "fullscreen",
+  "clipboard-sanitized-write",
+  "clipboard-read",
+  "storage-access",
+  "top-level-storage-access",
+]);
 
 export const HOST_ALLOWED_PERMISSIONS = new Set([
   "fullscreen",
