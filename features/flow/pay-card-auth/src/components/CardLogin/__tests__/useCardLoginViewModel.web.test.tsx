@@ -39,12 +39,15 @@ const intro: CardLoginIntroViewProps = {
 };
 
 describe("mapSnapshotToViewModel", () => {
-  it.each(["idle", "error", "awaitingCallback"] as const)("offers the login action in %s", value => {
-    const login = mapSnapshotToViewModel(value, null, copy, onLoginPress, intro);
+  it.each(["idle", "error", "awaitingCallback"] as const)(
+    "offers the login action in %s",
+    value => {
+      const login = mapSnapshotToViewModel(value, null, copy, onLoginPress, intro);
 
-    expect(login?.isLoading).toBe(false);
-    expect(login?.loginLabel).toBe("Login");
-  });
+      expect(login?.isLoading).toBe(false);
+      expect(login?.loginLabel).toBe("Login");
+    },
+  );
 
   it("shows the copy it was handed", () => {
     const login = mapSnapshotToViewModel("idle", null, copy, onLoginPress, intro);
