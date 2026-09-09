@@ -5,8 +5,13 @@ import {
   queryPreorderInfo,
   uploadHash,
 } from "../../network/tronify";
-import { EnergyRentProviderNotConfigured } from "../../types/errors";
 import {
+  EnergyDelegationTimeoutError,
+  EnergyRentProviderNotConfigured,
+  TronifyApiError,
+} from "../../types/errors";
+import {
+  awaitEnergyDeliveryWith,
   broadcastEnergyRentTransaction,
   craftEnergyRentTransaction,
   getEnergyProvider,
@@ -257,5 +262,40 @@ describe("energyRent provider switch", () => {
     it("returns 'unknown' for an unrecognised orderStatus", async () => {
       expect(await statusOf("some_new_status")).toBe("unknown");
     });
+  });
+});
+
+describe("awaitEnergyDeliveryWith", () => {
+  beforeEach(() => jest.useFakeTimers());
+  afterEach(() => jest.useRealTimers());
+
+  test("resolves once status becomes delivered", async () => {
+    const statuses = ["pending", "paid", "delivered"] as const;
+    let i = 0;
+    const p = awaitEnergyDeliveryWith(() => Promise.resolve(statuses[i++]), {
+      intervalMs: 10,
+      timeoutMs: 1000,
+    });
+    await jest.advanceTimersByTimeAsync(30);
+    await expect(p).resolves.toBeUndefined();
+  });
+
+  test("throws EnergyDelegationTimeoutError past the deadline", async () => {
+    const p = awaitEnergyDeliveryWith(() => Promise.resolve("pending"), {
+      intervalMs: 10,
+      timeoutMs: 50,
+      paymentTxId: "tx",
+    });
+    const assertion = expect(p).rejects.toBeInstanceOf(EnergyDelegationTimeoutError);
+    await jest.advanceTimersByTimeAsync(80);
+    await assertion;
+  });
+
+  test("throws TronifyApiError when the order fails", async () => {
+    const p = awaitEnergyDeliveryWith(() => Promise.resolve("failed"), {
+      intervalMs: 10,
+      timeoutMs: 1000,
+    });
+    await expect(p).rejects.toBeInstanceOf(TronifyApiError);
   });
 });

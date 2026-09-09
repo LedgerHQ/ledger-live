@@ -10,6 +10,7 @@ import type { TronMemo, TronTxData } from "../types";
 import {
   broadcast,
   combine,
+  craftRawTransaction,
   craftTransaction,
   estimateFees,
   estimateTronifyFees,
@@ -24,6 +25,7 @@ import { TRONIFY_FEE_OPTION_ID } from ".";
 jest.mock("../logic", () => ({
   broadcast: jest.fn(),
   combine: jest.fn(),
+  craftRawTransaction: jest.fn((rawDataHex: string) => ({ transaction: rawDataHex })),
   craftTransaction: jest.fn(),
   estimateFees: jest.fn(),
   estimateTronifyFees: jest.fn(),
@@ -48,11 +50,21 @@ describe("createApi", () => {
     const impl = createApi();
 
     // Kept out rather than stubbed: Tron contract reads are unsupported, withdrawals already show
-    // up in listOperations, the chain takes no externally-built transaction, and there is no
-    // enrollment step. The consumer resolver answers "not supported" for each.
-    for (const method of ["call", "register", "craftRawTransaction", "getRewards"] as const) {
+    // up in listOperations, and there is no enrollment step. The consumer resolver answers "not
+    // supported" for each. (craftRawTransaction IS implemented — see the sponsored-flow test below.)
+    for (const method of ["call", "register", "getRewards"] as const) {
       expect(impl).not.toHaveProperty(method);
     }
+  });
+
+  it("craftRawTransaction delegates the pre-built Tronify payment tx through to the logic layer", async () => {
+    const impl = createApi();
+    const rawDataHex = "0a02abcd220812345678";
+
+    await expect(
+      impl.craftRawTransaction(context, rawDataHex, "TSender", "pubkey", 0n),
+    ).resolves.toEqual({ transaction: rawDataHex });
+    expect(craftRawTransaction).toHaveBeenCalledWith(rawDataHex);
   });
 
   const mockTronConfig: TronCoinConfig = {
@@ -217,4 +229,14 @@ describe("createApi", () => {
       ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });
+});
+
+test("createApi exposes the energy-rent seam methods", () => {
+  const api = createApi() as unknown as Record<string, unknown>;
+  expect(typeof api.craftEnergyRentTransaction).toBe("function");
+  expect(typeof api.submitEnergyRentPayment).toBe("function");
+  expect(typeof api.getEnergyRentStatus).toBe("function");
+  expect(typeof api.awaitEnergyDelivery).toBe("function");
+  expect(typeof api.estimateSponsoredFeeQuote).toBe("function");
+  expect(typeof api.buildEnergyRentRequest).toBe("function");
 });
