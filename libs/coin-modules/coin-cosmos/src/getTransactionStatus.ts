@@ -228,7 +228,9 @@ export class CosmosTransactionStatusManager {
     }
 
     const estimatedFees = transaction.fees || new BigNumber(0);
-    if (!transaction.fees || !transaction.fees.gt(0)) {
+    // A zero fee is a loaded fee. `createTransaction` initialises `fees: null`, which is the
+    // only genuine "not yet computed" state.
+    if (!transaction.fees) {
       errors.fees = new FeeNotLoaded();
     }
 

@@ -3,6 +3,7 @@ import * as bech32 from "bech32";
 import BigNumber from "bignumber.js";
 import getTransactionStatus from "./getTransactionStatus";
 import { CosmosAccount, Transaction } from "./types";
+import { getMaxEstimatedBalance } from "./logic";
 
 // Status-level negative cases for getTransactionStatus. This is pure in-memory
 // logic — no network call, no signer — so it lives here as a coin-cosmos unit
@@ -10,6 +11,7 @@ import { CosmosAccount, Transaction } from "./types";
 // happy path). They guard the rejections a user can hit before signing: bad
 // amount, bad recipient, not enough balance.
 const babylon = getCryptoCurrencyById("babylon");
+const gonka = getCryptoCurrencyById("gonka");
 
 // 1 BABY = 1e6 ubbn (the base unit getTransactionStatus works in). Accept a
 // string so non-integer amounts parse exactly (no JS float rounding).
@@ -21,13 +23,16 @@ const BABY = (n: string | number): BigNumber => new BigNumber(n).times(1e6);
 // bytes are arbitrary.
 const validRecipient = bech32.encode("bbn", bech32.toWords(Buffer.alloc(20, 1)));
 
-const makeAccount = (spendableBalance: BigNumber): CosmosAccount =>
+const makeAccount = (spendableBalance: BigNumber, currency = babylon): CosmosAccount =>
   ({
     type: "Account",
-    currency: babylon,
+    currency,
     // Distinct from validRecipient so the send checks reach the amount/balance
     // branch instead of short-circuiting on destination-is-source.
-    freshAddress: bech32.encode("bbn", bech32.toWords(Buffer.alloc(20, 2))),
+    freshAddress: bech32.encode(
+      currency.id === "gonka" ? "gonka" : "bbn",
+      bech32.toWords(Buffer.alloc(20, 2)),
+    ),
     balance: spendableBalance,
     spendableBalance,
     cosmosResources: {
@@ -41,6 +46,9 @@ const makeAccount = (spendableBalance: BigNumber): CosmosAccount =>
       sequence: 0,
     },
   }) as unknown as CosmosAccount;
+
+// A well-formed gonka1… recipient, built the same way as validRecipient above.
+const validGonkaRecipient = bech32.encode("gonka", bech32.toWords(Buffer.alloc(20, 1)));
 
 describe("getTransactionStatus negative cases", () => {
   it("rejects a send above the spendable balance with NotEnoughBalance", async () => {
@@ -96,5 +104,44 @@ describe("getTransactionStatus negative cases", () => {
     } as unknown as Transaction;
     const status = await getTransactionStatus(account, transaction);
     expect(status.errors.recipient?.name).toBe("InvalidAddress");
+  });
+});
+
+describe("getTransactionStatus zero-fee chain (gonka)", () => {
+  it("treats a zero fee as loaded and spends the full balance with useAllAmount", async () => {
+    const spendableBalance = BABY(10);
+    const account = makeAccount(spendableBalance, gonka);
+    const transaction = {
+      mode: "send",
+      recipient: validGonkaRecipient,
+      amount: new BigNumber(0),
+      fees: new BigNumber(0),
+      gas: new BigNumber(80000),
+      validators: [],
+      useAllAmount: true,
+    } as unknown as Transaction;
+
+    const status = await getTransactionStatus(account, transaction);
+
+    expect(status.errors.fees).toBeUndefined();
+    expect(status.amount).toEqual(getMaxEstimatedBalance(account, new BigNumber(0)));
+    expect(status.amount).toEqual(spendableBalance);
+  });
+
+  it("still flags FeeNotLoaded when fees have not been computed yet", async () => {
+    const account = makeAccount(BABY(10), gonka);
+    const transaction = {
+      mode: "send",
+      recipient: validGonkaRecipient,
+      amount: BABY(1),
+      fees: null,
+      gas: new BigNumber(80000),
+      validators: [],
+      useAllAmount: false,
+    } as unknown as Transaction;
+
+    const status = await getTransactionStatus(account, transaction);
+
+    expect(status.errors.fees?.name).toBe("FeeNotLoaded");
   });
 });
