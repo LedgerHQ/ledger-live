@@ -10,6 +10,7 @@ import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducer
 import { track } from "~/renderer/analytics/segment";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
+import { useWipeHostedSessionOnSignInChange } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
@@ -90,6 +91,8 @@ export function useCardViewModel(): CardViewModel {
   }, [callback, navigate, pathname]);
 
   const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
+
+  useWipeHostedSessionOnSignInChange();
 
   const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
     track(event, params);
