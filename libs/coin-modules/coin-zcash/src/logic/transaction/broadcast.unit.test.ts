@@ -7,6 +7,7 @@ import { log } from "@ledgerhq/logs";
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import { broadcast, assertTransparentInputsUnspent, type TransparentInputs } from "./broadcast";
 import { getZCashClient } from "../engineClient";
+import { setZainoGrpcUrl } from "../../constants";
 
 jest.mock("../engineClient");
 jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
@@ -33,6 +34,8 @@ function explorer(
     return { outputs };
   });
 }
+
+afterEach(() => setZainoGrpcUrl(null));
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -214,6 +217,34 @@ describe("broadcast", () => {
     broadcastTransaction.mockRejectedValueOnce(new Error("gRPC rejected"));
 
     await expect(broadcast(TX_HEX)).rejects.toMatchObject({ endpoint: expect.any(String) });
+  });
+
+  // setZainoGrpcUrl lets a caller point this at a custom or local node, so
+  // nothing guarantees the endpoint never carries userinfo or a query token --
+  // every log line and the error context must only ever see the sanitized form.
+  it("sanitizes the endpoint everywhere it's logged or attached, on success and failure", async () => {
+    setZainoGrpcUrl("https://user:secret@my-node.example/broadcast?token=abc123");
+
+    await broadcast(TX_HEX);
+    for (const call of mockLog.mock.calls) {
+      expect(JSON.stringify(call)).not.toContain("secret");
+      expect(JSON.stringify(call)).not.toContain("token=abc123");
+    }
+    expect(mockLog).toHaveBeenCalledWith(
+      "zcash",
+      "broadcast succeeded",
+      expect.objectContaining({ endpoint: "https://my-node.example/broadcast" }),
+    );
+
+    mockLog.mockClear();
+    broadcastTransaction.mockRejectedValueOnce(new Error("gRPC rejected"));
+    await expect(broadcast(TX_HEX)).rejects.toMatchObject({
+      endpoint: "https://my-node.example/broadcast",
+    });
+    for (const call of mockLog.mock.calls) {
+      expect(JSON.stringify(call)).not.toContain("secret");
+      expect(JSON.stringify(call)).not.toContain("token=abc123");
+    }
   });
 
   // Merge gate: the broadcast path must never log the transaction hex (or a

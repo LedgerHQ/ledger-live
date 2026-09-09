@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
-import { ZCASH_LOG_TYPE, getZainoEndpoint } from "../../constants";
+import { ZCASH_LOG_TYPE, getZainoEndpoint, sanitizeEndpointForLog } from "../../constants";
 import { getZCashClient } from "../engineClient";
 
 /**
@@ -81,14 +81,20 @@ export async function broadcast(
     throw new Error("Shielded Zcash transactions are not supported in this environment");
   }
 
+  // The endpoint is overridable (setZainoGrpcUrl, e.g. to point at a custom or
+  // local node), so nothing guarantees it never carries userinfo or a token in
+  // its query string. Everywhere it's logged or attached to error context
+  // (which can reach Datadog), use the sanitized form; only the actual client
+  // call gets the real URL.
+  const sanitizedEndpoint = sanitizeEndpointForLog(grpcUrl);
   const sizeBytes = txHex.length / 2;
-  log(ZCASH_LOG_TYPE, "broadcasting transaction", { endpoint: grpcUrl, sizeBytes });
+  log(ZCASH_LOG_TYPE, "broadcasting transaction", { endpoint: sanitizedEndpoint, sizeBytes });
   const startedAt = Date.now();
 
   try {
     const txid = await client.broadcastTransaction(grpcUrl, txHex);
     log(ZCASH_LOG_TYPE, "broadcast succeeded", {
-      endpoint: grpcUrl,
+      endpoint: sanitizedEndpoint,
       txid,
       durationMs: Date.now() - startedAt,
     });
@@ -96,7 +102,7 @@ export async function broadcast(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     log(ZCASH_LOG_TYPE, "broadcast failed", {
-      endpoint: grpcUrl,
+      endpoint: sanitizedEndpoint,
       durationMs: Date.now() - startedAt,
       // The reason is the most actionable field in an exported log, so it is
       // kept -- but the remote endpoint controls this string, so any hex run
@@ -112,7 +118,7 @@ export async function broadcast(
     // This is the last hop before extractErrorContext reads the error, so it's
     // the only place that can still make `endpoint` visible to it.
     throw error instanceof Error
-      ? Object.assign(error, { endpoint: grpcUrl })
-      : Object.assign(new Error(String(error)), { endpoint: grpcUrl });
+      ? Object.assign(error, { endpoint: sanitizedEndpoint })
+      : Object.assign(new Error(String(error)), { endpoint: sanitizedEndpoint });
   }
 }

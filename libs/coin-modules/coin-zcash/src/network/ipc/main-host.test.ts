@@ -318,7 +318,31 @@ describe("one-shot transaction handlers", () => {
       endpoint: "https://grpc.example.com",
     });
 
-    await expect(promise).rejects.toMatchObject({ endpoint: "https://grpc.example.com" });
+    // Sanitized (origin + pathname), not the raw string -- see the next test.
+    await expect(promise).rejects.toMatchObject({ endpoint: "https://grpc.example.com/" });
+  });
+
+  // extractErrorContext copies this onto Datadog's error context, unlike
+  // @ledgerhq/logs -- and msg.endpoint is overridable (setZainoGrpcUrl) to a
+  // custom or local node, so nothing guarantees it's free of credentials or a
+  // query-string token.
+  it("strips credentials and query params from the endpoint before attaching it", async () => {
+    setupZcashNativeHost();
+    const args = { requestId: "req-cast", grpcUrl: "u", txHex: "abcd" };
+    const promise = getHandler(ZCASH_IPC.broadcastTransaction)(event(), args) as Promise<unknown>;
+    emitSpawn();
+    await flush();
+
+    emitUtilityMessage({
+      type: "broadcast-transaction-error",
+      requestId: "req-cast",
+      message: "gRPC rejected",
+      endpoint: "https://user:secret@grpc.example.com/broadcast?token=abc123",
+    });
+
+    await expect(promise).rejects.toMatchObject({
+      endpoint: "https://grpc.example.com/broadcast",
+    });
   });
 
   it("deriveShieldedAddress forwards to the utility and resolves with the address", async () => {

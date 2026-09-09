@@ -2,6 +2,7 @@ import {
   getZainoEndpoint,
   getZainoGrpcUrl,
   getZainoNetwork,
+  sanitizeEndpointForLog,
   setZainoGrpcUrl,
   ZCASH_GRPC_URL_MAINNET,
   ZCASH_GRPC_URL_TESTNET,
@@ -44,5 +45,23 @@ describe("zaino endpoint", () => {
 
     expect(getZainoGrpcUrl()).toBe(ZCASH_GRPC_URL_MAINNET);
     expect(getZainoNetwork()).toBe("mainnet");
+  });
+});
+
+describe("sanitizeEndpointForLog", () => {
+  it("keeps a plain origin + pathname unchanged in substance", () => {
+    expect(sanitizeEndpointForLog("https://my-node.example/broadcast")).toBe(
+      "https://my-node.example/broadcast",
+    );
+  });
+
+  it("strips userinfo, query params and hash", () => {
+    expect(
+      sanitizeEndpointForLog("https://user:secret@my-node.example:8443/broadcast?token=abc#frag"),
+    ).toBe("https://my-node.example:8443/broadcast");
+  });
+
+  it("falls back to a placeholder for an unparsable URL", () => {
+    expect(sanitizeEndpointForLog("not a url")).toBe("[unparsable endpoint]");
   });
 });
