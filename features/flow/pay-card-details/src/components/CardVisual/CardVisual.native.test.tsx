@@ -34,8 +34,8 @@ describe("CardVisual (native)", () => {
     mockStatus("ACTIVE");
     renderVisual();
 
-    expect(screen.getByTestId("card-visual")).toBeTruthy();
-    expect(screen.getByText("Balance")).toBeTruthy();
+    expect(screen.getByTestId("card-visual")).toBeVisible();
+    expect(screen.getByText("Balance")).toBeVisible();
     expect(screen.queryByTestId("card-visual-frozen")).toBeNull();
   });
 
@@ -43,6 +43,6 @@ describe("CardVisual (native)", () => {
     mockStatus("FROZEN");
     renderVisual();
 
-    expect(screen.getByTestId("card-visual-frozen")).toBeTruthy();
+    expect(screen.getByTestId("card-visual-frozen")).toBeVisible();
   });
 });

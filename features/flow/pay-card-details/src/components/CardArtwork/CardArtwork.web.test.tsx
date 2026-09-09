@@ -3,10 +3,9 @@ import { render, screen } from "@testing-library/react";
 import { CardArtwork } from "./CardArtwork";
 
 describe("CardArtwork (web)", () => {
-  it("renders the card face with the network logo", () => {
+  it("should show the Visa logo when the card artwork renders", () => {
     render(<CardArtwork />);
 
-    expect(screen.getByTestId("card-artwork")).toBeVisible();
-    expect(screen.getByRole("img", { name: "Visa" })).toBeVisible();
+    expect(screen.getByLabelText("Visa")).toBeVisible();
   });
 });

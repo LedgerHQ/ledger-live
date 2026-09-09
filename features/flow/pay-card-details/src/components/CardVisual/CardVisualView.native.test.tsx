@@ -11,15 +11,14 @@ const formatCountervalue = (value: number): FormattedValue => ({
   currencyPosition: "start",
 });
 
-function renderView(props: Partial<React.ComponentProps<typeof CardVisualView>> = {}) {
+function renderView({ isFrozen = false }: { isFrozen?: boolean } = {}) {
   return render(
     <CardVisualView
       balance={100}
       formatCountervalue={formatCountervalue}
       balanceLabel="Balance"
       isLoading={false}
-      isFrozen={false}
-      {...props}
+      isFrozen={isFrozen}
     />,
   );
 }
@@ -28,10 +27,10 @@ describe("CardVisualView (native)", () => {
   it("renders the card face, the balance label and the amount", () => {
     renderView();
 
-    expect(screen.getByTestId("card-visual")).toBeTruthy();
-    expect(screen.getByTestId("card-artwork")).toBeTruthy();
-    expect(screen.getByText("Balance")).toBeTruthy();
-    expect(screen.getByTestId("card-visual-amount")).toBeTruthy();
+    expect(screen.getByTestId("card-visual")).toBeVisible();
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
+    expect(screen.getByText("Balance")).toBeVisible();
+    expect(screen.getByTestId("card-visual-amount")).toBeVisible();
   });
 
   it("does not show the frozen marker while the card is active", () => {
@@ -43,6 +42,6 @@ describe("CardVisualView (native)", () => {
   it("shows the frozen marker once the card is frozen", () => {
     renderView({ isFrozen: true });
 
-    expect(screen.getByTestId("card-visual-frozen")).toBeTruthy();
+    expect(screen.getByTestId("card-visual-frozen")).toBeVisible();
   });
 });

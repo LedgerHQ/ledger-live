@@ -1,7 +1,7 @@
 import React from "react";
 import { CardArtwork } from "../CardArtwork/CardArtwork";
 import { CardVisual } from "../CardVisual/CardVisual";
-import { CardActions } from "../CardActions/CardActions.web";
+import { CardActions } from "../CardActions/CardActions";
 import type { CardDetailsProps } from "../../types";
 
 /**

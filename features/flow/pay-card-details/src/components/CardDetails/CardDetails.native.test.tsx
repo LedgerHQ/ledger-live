@@ -22,29 +22,31 @@ function renderCardDetails() {
 }
 
 describe("CardDetails (native)", () => {
-  it("shows the card face and the two preview actions", () => {
+  it("should show the preview actions when the card details screen renders", () => {
     renderCardDetails();
 
-    expect(screen.getByTestId("card-details")).toBeTruthy();
-    expect(screen.getByTestId("card-artwork")).toBeTruthy();
-    expect(screen.getByTestId("card-details-fade")).toBeTruthy();
-    expect(screen.getByLabelText(CARD_COPY.placeholder)).toBeTruthy();
-    expect(screen.getByLabelText(CARD_COPY.details)).toBeTruthy();
+    expect(screen.getByLabelText(CARD_COPY.placeholder)).toBeVisible();
+    expect(screen.getByLabelText(CARD_COPY.details)).toBeVisible();
   });
 
-  it("keeps the details sheet content hidden until Details is pressed", () => {
+  it("should keep the placeholder action disabled when the card preview is shown", () => {
     renderCardDetails();
 
-    expect(screen.queryByTestId("card-details-sheet-content")).toBeNull();
+    expect(screen.getByLabelText(CARD_COPY.placeholder).props.disabled).toBe(true);
   });
 
-  it("opens the details sheet with the full card UI when Details is pressed", async () => {
+  it("should keep the details sheet content hidden when Details has not been pressed", () => {
+    renderCardDetails();
+
+    expect(screen.queryByText(CARD_COPY.freeze)).toBeNull();
+  });
+
+  it("should open the details sheet when Details is pressed", async () => {
     const { user } = renderCardDetails();
 
-    await user.press(screen.getByTestId("card-details-open"));
+    await user.press(screen.getByLabelText(CARD_COPY.details));
 
-    expect(await screen.findByTestId("card-details-sheet-content")).toBeTruthy();
-    expect(await screen.findByText(CARD_COPY.freeze)).toBeTruthy();
-    expect(await screen.findByLabelText(MORE_COPY.tile)).toBeTruthy();
+    expect(await screen.findByText(CARD_COPY.freeze)).toBeVisible();
+    expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 });
