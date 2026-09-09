@@ -7,6 +7,7 @@ import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
+import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -77,6 +78,10 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
+      // The app builds its trustchain SDK on first render and keeps it in a module singleton, so a
+      // flag pushed over the bridge afterwards moves the flag but not the SDK. Launch args are read
+      // before that first render, which is the only window where this value can still land.
+      ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
     },
     languageAndLocale: {

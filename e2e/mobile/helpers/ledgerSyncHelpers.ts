@@ -1,4 +1,6 @@
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
+import { getFlags } from "@e2e/bridge/server";
 
 import type { PartialFeatures } from "@shared/feature-flags";
 
@@ -44,16 +46,43 @@ export const LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS: PartialFeatures = {
 };
 
 /**
- * The app builds its trustchain SDK on first render and keeps it in a module singleton, so the
- * environment it boots with is the only one it will ever use — an override sent to a running app
- * moves the flag but not the SDK. Pointing the CLI elsewhere would leave the two on different
- * backends and surface as an empty trustchain rather than an error, so refuse it up front.
+ * `getFlags` resolves to an empty string when the bridge does not answer in time, and this is the
+ * first round-trip of the run: on Android the app only reaches the server once `setup.ts` has
+ * reverse-forwarded the port, so the client can still be in its connection backoff here. Retry
+ * rather than read that silence as a wrong environment.
  */
-function assertSupportedEnvironment() {
-  if (ledgerSyncEnvironment !== "STAGING") {
+async function readAppLedgerSyncEnvironment() {
+  for (let attempt = 1; ; attempt++) {
+    const rawFlags = await getFlags();
+    if (rawFlags) {
+      return parseExtraFeatureFlags<PartialFeatures>(rawFlags).llmWalletSync?.params?.environment;
+    }
+    if (attempt === 3) {
+      throw new Error(
+        "Ledger Sync: the app never answered `getFlags`, so its environment could not be checked. " +
+          "The bridge is down — look for a launch or connection failure above.",
+      );
+    }
+  }
+}
+
+/**
+ * The environment reaches the app as the `ledger_sync_environment` launch arg, which the e2e bridge
+ * turns into a flag override before the app tree mounts — the only window that works, since the app
+ * builds its trustchain SDK on first render and keeps it in a module singleton.
+ *
+ * Call this *before* `app.init`: once a suite has pushed its own flags the read is circular, and it
+ * is the value the app booted with that the SDK is holding. A launch arg that stopped arriving then
+ * fails here, by name, rather than as the `400 Invalid value for: header Authorization` that a
+ * trustchain and a cloud-sync on different backends produce.
+ */
+export async function verifyLedgerSyncEnvironment() {
+  const appEnvironment = await readAppLedgerSyncEnvironment();
+
+  if (appEnvironment !== ledgerSyncEnvironment) {
     throw new Error(
-      `Ledger Sync: mobile can only run against STAGING, got ${ledgerSyncEnvironment}. ` +
-        "The app pins its trustchain SDK at boot, so LEDGER_SYNC_ENVIRONMENT cannot move it.",
+      `Ledger Sync: the app booted on ${appEnvironment}, the e2e CLI targets ${ledgerSyncEnvironment}. ` +
+        "Both sides must share a backend: the trustchain mints the JWT cloud-sync validates.",
     );
   }
 }
@@ -65,7 +94,6 @@ function assertSupportedEnvironment() {
 export function setupLedgerSyncSeed() {
   let previousSeed: string | undefined;
   beforeAll(() => {
-    assertSupportedEnvironment();
     previousSeed = app.ledgerSync.useGeneratedSeed();
   });
   afterAll(() => {

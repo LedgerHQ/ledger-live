@@ -150,6 +150,9 @@ for (const argName in argv) {
       break;
     case "production":
       target = "prerelease";
+      // The prerelease build ships the production Firebase project, so Ledger Sync follows it to
+      // PROD. CI already derives this in setup-e2e-env; this covers a local --production run.
+      process.env.LEDGER_SYNC_ENVIRONMENT ??= "PROD";
       break;
     case "filter":
       filter = argv[argName];

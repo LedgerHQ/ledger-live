@@ -7,6 +7,7 @@ import {
   LEDGER_SYNC_FEATURE_FLAGS,
   cleanupLedgerSyncAfterAll,
   setupLedgerSyncSeed,
+  verifyLedgerSyncEnvironment,
 } from "@e2e/helpers/ledgerSyncHelpers";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import {
@@ -45,7 +46,13 @@ function ledgerSyncSuite(
       cleanupLedgerSyncAfterAll();
     }
 
-    beforeAll(init);
+    // Verified here rather than in `setupLedgerSyncSeed` so the suites that skip the seed hook are
+    // covered too. The app is already up — `setup.ts` launches it in a file-level hook — and the
+    // check has to happen before `init` pushes the suite's own flags, or it just reads those back.
+    beforeAll(async () => {
+      await verifyLedgerSyncEnvironment();
+      await init();
+    });
 
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
