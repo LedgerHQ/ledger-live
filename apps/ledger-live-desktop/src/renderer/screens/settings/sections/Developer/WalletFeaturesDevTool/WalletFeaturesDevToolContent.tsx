@@ -18,6 +18,7 @@ import {
   WalletV4TourDialog,
 } from "LLD/features/WalletV4Tour/Drawer";
 import { Q2TourDialog, useQ2TourDrawerViewModel } from "LLD/features/Q2Tour";
+import { Q3TourDialog, useQ3TourDrawerViewModel } from "LLD/features/Q3Tour";
 
 export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevToolContentProps) => {
   const { t } = useTranslation();
@@ -51,6 +52,15 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
     onSlideChange: onQ2TourSlideChange,
     onContinueClick: onQ2TourContinueClick,
   } = useQ2TourDrawerViewModel();
+  const {
+    isDialogOpen: isQ3TourOpen,
+    handleOpenDialog: handleOpenQ3Tour,
+    closeDrawer: closeQ3Tour,
+    dismissDrawer: dismissQ3Tour,
+    completeDrawer: completeQ3Tour,
+    onSlideChange: onQ3TourSlideChange,
+    onContinueClick: onQ3TourContinueClick,
+  } = useQ3TourDrawerViewModel();
 
   return (
     <div className="flex flex-col gap-2 pt-2">
@@ -104,6 +114,7 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
             isEnabled={isQ3TourEnabled}
             onToggleHasSeen={handleToggleQ3TourHasSeen}
             onToggleEnabled={handleToggleQ3TourEnabled}
+            onOpenDrawer={handleOpenQ3Tour}
           />
 
           <TourSection
@@ -126,6 +137,15 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
             onContinueClick={onQ2TourContinueClick}
             onComplete={completeQ2Tour}
             onSlideChange={onQ2TourSlideChange}
+          />
+
+          <Q3TourDialog
+            isOpen={isQ3TourOpen}
+            onHeaderClose={closeQ3Tour}
+            onDismiss={dismissQ3Tour}
+            onContinueClick={onQ3TourContinueClick}
+            onComplete={completeQ3Tour}
+            onSlideChange={onQ3TourSlideChange}
           />
 
           <div className="flex gap-4">

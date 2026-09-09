@@ -19,6 +19,7 @@ function Q3TourSetupHarness() {
       isEnabled={isQ3TourEnabled}
       onToggleHasSeen={handleToggleQ3TourHasSeen}
       onToggleEnabled={handleToggleQ3TourEnabled}
+      onOpenDrawer={jest.fn()}
     />
   );
 }
@@ -50,13 +51,13 @@ describe("Q3 Tour setup", () => {
     expect(hasSeenWalletV4TourSelector(store.getState())).toBe(false);
   });
 
-  it("should keep Open Drawer disabled", () => {
+  it("should enable Open Drawer when the tour has not been seen", () => {
     render(<Q3TourSetupHarness />, {
       initialState: withFlagOverrides({
         releaseTour: { enabled: true, params: { variant: "q3_a" } },
       }),
     });
 
-    expect(screen.getByRole("button", { name: /open drawer/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /open drawer/i })).toBeEnabled();
   });
 });

@@ -8,6 +8,7 @@ interface Q3TourSectionProps {
   readonly isEnabled: boolean;
   readonly onToggleHasSeen: () => void;
   readonly onToggleEnabled: () => void;
+  readonly onOpenDrawer: () => void;
 }
 
 export const Q3TourSection = ({
@@ -15,6 +16,7 @@ export const Q3TourSection = ({
   isEnabled,
   onToggleHasSeen,
   onToggleEnabled,
+  onOpenDrawer,
 }: Q3TourSectionProps) => {
   const { t } = useTranslation();
 
@@ -40,7 +42,7 @@ export const Q3TourSection = ({
             : "User has not seen the tour yet."
         }
       />
-      <Button appearance="accent" size="sm" disabled>
+      <Button appearance="accent" size="sm" onClick={onOpenDrawer} disabled={hasSeen || !isEnabled}>
         {t("settings.developer.walletFeaturesDevTool.openDrawer")}
       </Button>
     </div>
