@@ -2,7 +2,7 @@ import { app, session } from "electron";
 import { log } from "@ledgerhq/logs";
 import * as fsPromises from "node:fs/promises";
 import * as path from "node:path";
-import { LIVE_APP_PARTITION, LIVE_APP_PARTITION_PREFIX } from "~/config/liveAppSession";
+import { LIVE_APP_PARTITION, isLiveAppPartitionName } from "~/config/liveAppSession";
 
 /**
  * Live Apps keep their data in their own partitions, so clearing the default
@@ -21,8 +21,9 @@ export function trackLiveAppSession(guestSession: Electron.Session): void {
 /**
  * An app not opened during this run has no `Session` object yet, so the on-disk
  * partitions are what make clearing cover every Live App and not just the
- * visited ones. Restricted to our own prefix: `fromPartition` also *creates*
- * the sessions it names, and any other feature's partition is not ours to wipe.
+ * visited ones. Restricted to the names a Live App can produce: `fromPartition`
+ * also *creates* the sessions it names, and any other feature's partition is
+ * not ours to wipe.
  */
 async function persistedLiveAppSessions(): Promise<Electron.Session[]> {
   try {
@@ -30,7 +31,7 @@ async function persistedLiveAppSessions(): Promise<Electron.Session[]> {
       withFileTypes: true,
     });
     return entries
-      .filter(entry => entry.isDirectory() && entry.name.startsWith(LIVE_APP_PARTITION_PREFIX))
+      .filter(entry => entry.isDirectory() && isLiveAppPartitionName(entry.name))
       .map(entry => session.fromPartition(`persist:${entry.name}`));
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") {

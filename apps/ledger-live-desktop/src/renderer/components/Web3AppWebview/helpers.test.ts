@@ -155,7 +155,7 @@ describe("useWebviewState", () => {
 
       const { result } = renderHook(() => useWebviewState({ manifest: mockManifest }, null));
 
-      expect(result.current.webviewPartition).toEqual({ partition: "persist:live-apps" });
+      expect(result.current.webviewPartition).toEqual({ partition: "persist:live-app-shared" });
     });
 
     it("sets a persist partition keyed to manifest id and cacheBustingId", () => {
