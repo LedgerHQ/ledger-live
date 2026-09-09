@@ -1,12 +1,8 @@
-const React = require("react");
-
 // react-native-svg's entry reads RN internals (`Touchable`) that mocks/react-native.js does not
-// stub, so importing the real package throws. Every export becomes a host element named after
-// the SVG tag (Path -> "Path"), keeping RNTL queries on testID and accessibility props working.
-const svgElement = name =>
-  function SvgElement({ children, ...props }) {
-    return React.createElement(name, props, children);
-  };
+// stub, so importing the real package throws. Every export is a string host named after the SVG
+// tag (Path -> "Path"), matching mocks/react-native.js (View: "View") so RNTL queries on
+// testID and accessibility props keep working and the element type stays stable across renders.
+const svgElement = name => name;
 
 const Svg = svgElement("Svg");
 

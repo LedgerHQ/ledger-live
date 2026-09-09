@@ -47,7 +47,6 @@ export function CardArtwork() {
           className="block size-full max-w-none overflow-visible"
           fill="none"
           preserveAspectRatio="none"
-          role="img"
           viewBox="0 0 53.49 17.2803"
         >
           <path d={VISA_LOGO_PATH} fill="white" />

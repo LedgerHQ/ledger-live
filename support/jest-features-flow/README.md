@@ -55,6 +55,11 @@ Node), so a package reading `TextEncoder` at module-eval time — `@ledgerhq/dev
 does — throws `ReferenceError` the moment a web test imports it, even transitively.
 It also mocks `window.matchMedia`.
 
+The same file installs the fetch primitives (`fetch`, `Response`, `Request`, streams,
+`BroadcastChannel`) from `undici`, which MSW reads on import. Without them a web test throws
+`ReferenceError: Response is not defined` before a single assertion runs. The native project
+needs none of this: it runs on node, which has them already.
+
 ## Usage
 
 ```js

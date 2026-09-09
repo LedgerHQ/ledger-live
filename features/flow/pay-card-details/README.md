@@ -65,7 +65,7 @@ Every `index.*` is a pure barrel (`export *` only).
 pay-card-details/
 ├── package.json
 └── src/
-    ├── assets.d.ts                            # `*.svg` module declarations
+    ├── assets.d.ts                            # `*.svg` / `*.webp` module declarations
     ├── components/
     │   ├── CardArtwork/
     │   │   ├── CardArtwork.web.tsx            # Card face + halftone artwork + Visa logo
@@ -89,7 +89,7 @@ pay-card-details/
     │   │   ├── CardDetails.web.tsx            # Visual + CardActions
     │   │   ├── CardDetails.native.tsx         # View-model + view
     │   │   ├── useCardDetailsViewModel.ts     # Labels + sheet open state
-    │   │   ├── CardDetailsView.native.tsx     # Card face + placeholder + Details buttons
+    │   │   ├── CardDetailsView.native.tsx     # Overlay actions on the card face + fade
     │   │   ├── CardDetailsSheet.native.tsx    # Bottom sheet: card face + Freeze + More
     │   │   ├── CardDetails.web.test.tsx
     │   │   ├── CardDetails.native.test.tsx

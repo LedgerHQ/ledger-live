@@ -26,28 +26,28 @@ describe("CardDetailsSheet (native)", () => {
     jest.clearAllMocks();
   });
 
-  it("keeps the sheet mounted but hides its content while closed", () => {
+  it("should keep the sheet content hidden when the sheet is closed", () => {
     renderSheet({ isOpen: false });
 
-    expect(screen.getByTestId("card-details-sheet")).toBeTruthy();
-    expect(screen.queryByTestId("card-details-sheet-content")).toBeNull();
+    expect(screen.getByTestId("card-details-sheet")).toBeVisible();
+    expect(screen.queryByText(CARD_COPY.freeze)).toBeNull();
   });
 
-  it("reports its open flag to the sheet shell", () => {
+  it("should report the open flag when the sheet is open", () => {
     renderSheet();
 
     expect(screen.getByTestId("card-details-sheet").props.accessibilityState.expanded).toBe(true);
   });
 
-  it("renders the card face, freeze and more inside the open sheet", async () => {
+  it("should show freeze and more when the sheet is open", async () => {
     renderSheet();
 
-    expect(screen.getByTestId("card-artwork")).toBeTruthy();
-    expect(await screen.findByText(CARD_COPY.freeze)).toBeTruthy();
-    expect(await screen.findByLabelText(MORE_COPY.tile)).toBeTruthy();
+    expect(await screen.findByLabelText("Visa")).toBeVisible();
+    expect(await screen.findByText(CARD_COPY.freeze)).toBeVisible();
+    expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 
-  it("closes once, whatever the number of dismissals", () => {
+  it("should close once when dismiss is pressed twice", () => {
     const onClose = jest.fn();
     renderSheet({ onClose });
 

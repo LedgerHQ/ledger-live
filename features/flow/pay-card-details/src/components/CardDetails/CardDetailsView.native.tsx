@@ -6,10 +6,11 @@ import { CardDetailsSheet } from "./CardDetailsSheet";
 import type { CardDetailsViewProps } from "../../types";
 
 const CARD_FADE_HEIGHT = "55%";
+const CARD_FADE_COLOR = "#000000";
 
 const CARD_FADE_STOPS = [
-  { color: "#000000", offset: 0, opacity: 0 },
-  { color: "#000000", offset: 1, opacity: 1 },
+  { color: CARD_FADE_COLOR, offset: 0, opacity: 0 },
+  { color: CARD_FADE_COLOR, offset: 1, opacity: 1 },
 ];
 
 export function CardDetailsView({
@@ -21,36 +22,33 @@ export function CardDetailsView({
   onSheetClose,
 }: CardDetailsViewProps) {
   return (
-    <Box testID="card-details">
-      <Box style={{ position: "relative" }}>
+    <Box>
+      <Box lx={{ position: "relative" }}>
         {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
 
         <LinearGradient
           direction="to-bottom"
           stops={CARD_FADE_STOPS}
           pointerEvents="none"
-          testID="card-details-fade"
-          lx={{ borderBottomLeftRadius: "lg", borderBottomRightRadius: "lg" }}
-          style={{
+          lx={{
             position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: CARD_FADE_HEIGHT,
+            borderBottomLeftRadius: "lg",
+            borderBottomRightRadius: "lg",
           }}
+          style={{ bottom: 0, left: 0, right: 0, height: CARD_FADE_HEIGHT }}
         />
 
         <Box
-          lx={{ flexDirection: "row", gap: "s8", padding: "s16" }}
-          style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
+          lx={{ flexDirection: "row", gap: "s8", padding: "s16", position: "absolute" }}
+          style={{ bottom: 0, left: 0, right: 0 }}
         >
           <Button
             appearance="base"
             size="lg"
             isFull
+            disabled
             lx={{ flex: 1 }}
             accessibilityLabel={placeholderLabel}
-            testID="card-details-placeholder"
           >
             {placeholderLabel}
           </Button>
@@ -61,7 +59,6 @@ export function CardDetailsView({
             lx={{ flex: 1 }}
             onPress={onDetailsPress}
             accessibilityLabel={detailsLabel}
-            testID="card-details-open"
           >
             {detailsLabel}
           </Button>

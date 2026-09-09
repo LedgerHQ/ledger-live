@@ -32,7 +32,7 @@ export function CardDetailsSheet({ isOpen, cardVisual, onClose }: CardDetailsShe
       testID="card-details-sheet"
     >
       {isOpen ? (
-        <BottomSheetView style={{ paddingBottom: 24 }} testID="card-details-sheet-content">
+        <BottomSheetView style={{ paddingBottom: 24 }}>
           <BottomSheetHeader density="compact" spacing />
 
           <Box lx={{ gap: "s16" }}>
