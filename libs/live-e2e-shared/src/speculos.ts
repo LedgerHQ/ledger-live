@@ -1281,12 +1281,15 @@ export const acceptEnableTransactionCheck = withDeviceController(
     async () => {
       const buttons = getButtonsController();
 
-      // Wait for loading to finish: poll until either the Transaction Check prompt
-      // or the next (review transaction) screen is displayed. If the prompt never
-      // shows up, skip this step instead of waiting for it to appear.
+      // Wait for loading to finish: poll until the Transaction Check prompt or one of the screens
+      // that only come after it is displayed. If the prompt never shows up, skip this step instead
+      // of waiting for it to appear — spending the whole budget here holds the signing APDU open,
+      // and the iOS HTTP stack drops a request pending for 30s.
       const port = getEnv("SPECULOS_API_PORT");
       const enableLabel = DeviceLabels.ENABLE_TRANSACTION_CHECK.toLowerCase();
-      const reviewLabel = DeviceLabels.REVIEW_TRANSACTION.toLowerCase();
+      const laterLabels = [DeviceLabels.REVIEW_TRANSACTION, DeviceLabels.BLIND_SIGNING_AHEAD].map(
+        label => label.toLowerCase(),
+      );
       let isTransactionCheckDisplayed = false;
       for (let attempt = 0; attempt < 60; attempt++) {
         const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
@@ -1294,7 +1297,7 @@ export const acceptEnableTransactionCheck = withDeviceController(
           isTransactionCheckDisplayed = true;
           break;
         }
-        if (texts.includes(reviewLabel)) {
+        if (laterLabels.some(label => texts.includes(label))) {
           break;
         }
         await sleep(500);
