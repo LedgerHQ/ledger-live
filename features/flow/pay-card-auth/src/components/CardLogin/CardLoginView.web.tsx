@@ -7,9 +7,11 @@ export function CardLoginView({
   title,
   description,
   loginLabel,
+  alreadyHaveCardLabel,
   isLoading,
   errorMessage,
   onLoginPress,
+  onAlreadyHaveCardPress,
   intro,
 }: CardLoginViewProps) {
   return (
@@ -19,10 +21,10 @@ export function CardLoginView({
           <p className="heading-2-semi-bold text-base">{title}</p>
           <p className="body-2 text-muted">{description}</p>
         </div>
-        <div className="flex flex-col items-center gap-8">
+        <div className="flex flex-col items-center gap-16">
           <Button
             appearance="base"
-            size="lg"
+            size="md"
             loading={isLoading}
             disabled={isLoading}
             onClick={onLoginPress}
@@ -30,6 +32,17 @@ export function CardLoginView({
           >
             {loginLabel}
           </Button>
+          {alreadyHaveCardLabel ? (
+            <Button
+              appearance="no-background"
+              size="md"
+              disabled={isLoading}
+              onClick={onAlreadyHaveCardPress}
+              aria-label={alreadyHaveCardLabel}
+            >
+              {alreadyHaveCardLabel}
+            </Button>
+          ) : null}
           {errorMessage ? <span className="body-3 text-error">{errorMessage}</span> : null}
         </div>
       </div>

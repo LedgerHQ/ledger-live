@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { StyleProvider } from "@features/platform-style";
 import { CardLoginView } from "../CardLoginView.web";
 import type { CardLoginIntroViewProps } from "../types";
@@ -18,9 +18,11 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   title: "Crypto Card",
   description: "Log in to access your card",
   loginLabel: "Login",
+  alreadyHaveCardLabel: null,
   isLoading: false,
   errorMessage: null,
   onLoginPress: jest.fn(),
+  onAlreadyHaveCardPress: jest.fn(),
   intro,
 };
 
@@ -44,6 +46,25 @@ describe("CardLoginView (Web)", () => {
 
     expect(screen.getByText("Crypto Card")).toBeVisible();
     expect(screen.getByText("Log in to access your card")).toBeVisible();
+  });
+
+  it("should render the login link when the copy carries one", () => {
+    const onAlreadyHaveCardPress = jest.fn();
+    renderCardLoginView({
+      alreadyHaveCardLabel: "I already have a card",
+      onAlreadyHaveCardPress,
+    });
+
+    const link = screen.getByRole("button", { name: "I already have a card" });
+    fireEvent.click(link);
+
+    expect(onAlreadyHaveCardPress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should render no login link when the copy carries none", () => {
+    renderCardLoginView();
+
+    expect(screen.queryByRole("button", { name: "I already have a card" })).toBeNull();
   });
 
   it("should render a login error when provided", () => {

@@ -52,6 +52,7 @@ export const CARD_LOGIN_INTRO_FLOW = "card";
 
 const TRACK_BUTTON = {
   getCard: "get card",
+  alreadyHaveCard: "i already have a card",
   login: "login",
   createAccount: "create an account",
   logIn: "log in to baanx",
@@ -67,6 +68,7 @@ export function mapSnapshotToViewModel(
   errorKind: PayCardLoginErrorKind | null,
   copy: CardLoginCopy,
   onLoginPress: () => void,
+  onAlreadyHaveCardPress: () => void,
   intro: CardLoginIntroViewProps,
 ): CardLoginViewModel {
   // The card holder is signed in, so there is no login left to offer. `CardMore` holds the screen.
@@ -80,6 +82,7 @@ export function mapSnapshotToViewModel(
     isLoading: value !== "idle" && value !== "error" && value !== "awaitingCallback",
     errorMessage: errorKind ? ERROR_MESSAGES[errorKind] : null,
     onLoginPress,
+    onAlreadyHaveCardPress,
     intro,
   };
 }
@@ -177,6 +180,11 @@ export function useCardLoginViewModel({
     setIsIntroRequested(true);
   }, [hasSeenLoginIntro, onTrackEvent, startLogin, trackCta]);
 
+  const onAlreadyHaveCardPress = useCallback(() => {
+    trackCta(TRACK_BUTTON.alreadyHaveCard);
+    startLogin();
+  }, [startLogin, trackCta]);
+
   const onIntroActionPress = useCallback(
     (id: CardLoginIntroActionId) => {
       if (!isIntroOpen) {
@@ -230,6 +238,9 @@ export function useCardLoginViewModel({
       title: t(`${LOGIN_KEY_PREFIX}.title`),
       description: t(`${LOGIN_KEY_PREFIX}.${stage}.description`),
       loginLabel: t(`${LOGIN_KEY_PREFIX}.${stage}.action`),
+      alreadyHaveCardLabel: hasSeenLoginIntro
+        ? null
+        : t(`${LOGIN_KEY_PREFIX}.beforeIntro.alreadyHaveCard`),
     };
   }, [t, hasSeenLoginIntro]);
 
@@ -251,6 +262,7 @@ export function useCardLoginViewModel({
     hasSignupFailed ? "browser_open_failed" : snapshot.context.errorKind,
     copy,
     onLoginPress,
+    onAlreadyHaveCardPress,
     intro,
   );
 }

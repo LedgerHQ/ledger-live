@@ -7,6 +7,7 @@ export const CARD_LOGIN_INTRO_RESOURCES = {
           beforeIntro: {
             description: "Get 1% cashback every time you spend",
             action: "Get card",
+            alreadyHaveCard: "I already have a card",
           },
           afterIntro: {
             description: "Log in to access your card",
