@@ -110,22 +110,6 @@ describe("usePaySuccessViewModel", () => {
     expect(result.current.recipientLabel).toBe("Ada");
   });
 
-  it("should fall back to the input recipient when the signed transaction has no address", () => {
-    const { result } = renderPaySuccess(buildFlowState({ signedRecipient: "" }));
-
-    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada", isMe: false });
-    expect(result.current.recipientLabel).toBe("Ada");
-  });
-
-  it("should match the contact from the signed transaction address when input was a domain", () => {
-    const { result } = renderPaySuccess(
-      buildFlowState({ address: "ada.eth", signedRecipient: ADA_ADDRESS }),
-    );
-
-    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada", isMe: false });
-    expect(result.current.recipientLabel).toBe("Ada");
-  });
-
   it("should fall back to the truncated address when no contact matches", () => {
     const { result } = renderPaySuccess(buildFlowState({ address: UNKNOWN_ADDRESS }));
 

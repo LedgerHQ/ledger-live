@@ -3,26 +3,31 @@
 > [!CAUTION]
 > **Status: UNSTABLE** — In active development; API may change.
 
-Dual-platform flow package for the Pay tab **card visual** for Ledger Wallet: the physical card
-face (dark gradient + halftone artwork + network logo) and, on top of it, the card balance overlay.
+Dual-platform flow package for the Pay tab **card details** for Ledger Wallet: the physical card
+face, the freeze control, and the signed-in More menu.
 
 The host owns currency formatting and the balance label, and hands both over as props. Card state
 (status, freeze/unfreeze) is the package's own business: it reads it from the card API itself.
+Session teardown uses `useCardLogout` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md).
 
 ## Usage
 
 ```tsx
-import { CardVisual } from "@features/flow-pay-card-details";
+import { CardVisual, CardActions, Freeze, More } from "@features/flow-pay-card-details";
 
-<CardVisual balance={100} formatCountervalue={format} balanceLabel="Balance" />;
+<CardVisual balance={100} formatCountervalue={format} balanceLabel="Balance" />
+<CardActions />
 ```
 
 `CardVisual` composes the `CardArtwork` (card face) with the balance overlay. `CardArtwork` is also
-exported on its own for consumers that only need the card face.
+exported on its own for consumers that only need the card face. Web hosts place freeze and More
+together with `CardActions`; native hosts mount `Freeze` and `More` separately.
 
 The frozen state is not a host prop: `useCardVisualViewModel` reads the same `CardStatus` query the
 freeze tile uses, so the card face and the tile can never disagree. A frozen card fades out and
 takes a centered snow `Spot`.
+
+`More` shows nothing until a Card session is live. Its Logout row calls `useCardLogout`.
 
 ## Platform resolution
 
@@ -49,15 +54,39 @@ pay-card-details/
     │   │   ├── assets/                        # Figma-exported SVGs
     │   │   ├── CardArtwork.web.test.tsx
     │   │   └── CardArtwork.native.test.tsx
-    │   └── CardVisual/
-    │       ├── CardVisual.tsx
-    │       ├── useCardVisualViewModel.ts      # Frozen state, read from the card status
-    │       ├── CardVisualView.web.tsx         # Artwork + balance overlay + frozen marker
-    │       ├── CardVisualView.native.tsx      # Empty stub until LWM design
-    │       ├── CardVisual.web.test.tsx
-    │       ├── CardVisual.native.test.tsx
-    │       ├── CardVisualView.web.test.tsx
-    │       └── CardVisualView.native.test.tsx
+    │   ├── CardVisual/
+    │   │   ├── CardVisual.tsx
+    │   │   ├── useCardVisualViewModel.ts      # Frozen state, read from the card status
+    │   │   ├── CardVisualView.web.tsx         # Artwork + balance overlay + frozen marker
+    │   │   ├── CardVisualView.native.tsx      # Empty stub until LWM design
+    │   │   ├── CardVisual.web.test.tsx
+    │   │   ├── CardVisual.native.test.tsx
+    │   │   ├── CardVisualView.web.test.tsx
+    │   │   └── CardVisualView.native.test.tsx
+    │   ├── CardActions/
+    │   │   ├── CardActions.web.tsx            # Freeze + More in one row (web)
+    │   │   └── CardActions.native.tsx         # Null: native hosts mount Freeze and More separately
+    │   ├── Freeze/
+    │   │   ├── Freeze.web.tsx                 # Tile + confirmation, wired to the view model
+    │   │   ├── Freeze.native.tsx
+    │   │   ├── useFreezeCardViewModel.ts      # Card status, freeze/unfreeze, confirmation state
+    │   │   ├── freezeCopy.ts                  # Freeze vs unfreeze i18n keys, keyed by card status
+    │   │   ├── Tile/                          # Freeze / unfreeze control, and the sheet it opens
+    │   │   │   ├── Tile.web.tsx
+    │   │   │   └── Tile.native.tsx
+    │   │   └── Confirm/                       # The one confirmation: freeze, or unfreeze
+    │   │       ├── ConfirmSheet.web.tsx       # Dialog shell, picks prompt or error
+    │   │       ├── ConfirmSheet.native.tsx    # Bottom sheet shell, same choice
+    │   │       ├── ConfirmPrompt.tsx          # "Freeze?" state, platform-agnostic
+    │   │       ├── ConfirmError.tsx           # "It failed" state, platform-agnostic
+    │   │       ├── ConfirmBody.web.tsx        # Spot + title + description + the two buttons
+    │   │       └── ConfirmBody.native.tsx     # Same body, and it tints the sheet
+    │   └── More/
+    │       ├── More.web.tsx                   # Tile + sheet, wired to the view model
+    │       ├── More.native.tsx
+    │       ├── useMoreViewModel.ts            # Signed-in user, sheet, logout
+    │       ├── Tile/
+    │       └── Sheet/
     ├── types.ts                               # Public props / view-model types
     ├── exports.ts                             # Public surface
     ├── index.ts                              # Public API barrel → ./exports

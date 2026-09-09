@@ -1,4 +1,4 @@
-import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
+import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import coinConfig, { type TronCoinConfig } from "../config";

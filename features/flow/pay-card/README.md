@@ -22,10 +22,11 @@ import { Card } from "@features/flow-pay-card";
 `Card` mounts the card visual and the authentication controls together:
 
 - The card face from [`@features/flow-pay-card-details`](../pay-card-details/README.md): `CardVisual`
-  once the host provides a countervalue formatter and a balance label, the bare `CardArtwork` otherwise.
-- `CardLogin` / `CardMore` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md) — each
-  decides on its own whether it belongs on screen: the login while nobody is signed in, and the
-  More menu once somebody is.
+  once the host provides a countervalue formatter and a balance label, the bare `CardArtwork`
+  otherwise. Freeze and More also come from that package (`CardActions` on web; `Freeze` and `More`
+  side by side on native).
+- `CardLogin` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md) — it shows while
+  nobody is signed in, and `useCardLogout` ends the session from the More menu.
 
 The flow owns the (currently mocked) card balance, so hosts no longer assemble the visual themselves.
 They pass only the two things the flow cannot know: `formatCountervalue` (needs the app's locale and

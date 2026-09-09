@@ -28,6 +28,7 @@ export default function DelegationRow({ account, currency, unit, onPress }: Prop
     <TouchableOpacity
       style={[styles.row, styles.wrapper, { backgroundColor: colors.card }]}
       onPress={() => onPress(account)}
+      testID="mina-staking-row"
     >
       <View style={styles.icon}>
         <ValidatorImage name={validatorName} size={32} />

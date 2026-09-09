@@ -1,7 +1,7 @@
 import React from "react";
 import { Subheader, SubheaderRow, SubheaderTitle, Box } from "@ledgerhq/lumen-ui-rnative";
-import { CardLogin, CardMore } from "@features/flow-pay-card-auth";
-import { CardArtwork, CardVisual, Freeze } from "@features/flow-pay-card-details";
+import { CardLogin } from "@features/flow-pay-card-auth";
+import { CardArtwork, CardVisual, Freeze, More } from "@features/flow-pay-card-details";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import type { CardViewProps } from "./Card.types";
 
@@ -34,7 +34,7 @@ export function CardView({
         callback={callback}
         onTrackEvent={onTrackEvent}
       />
-      <CardMore />
+      <More />
     </Box>
   );
 }

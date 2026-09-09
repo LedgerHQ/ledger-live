@@ -15,6 +15,7 @@ export const lwmWallet40 = flagWith(
     earnUpselling: z.boolean().optional(),
     earnSimulator: z.boolean().optional(),
     q2Tour: z.boolean().optional(),
+    q3Tour: z.boolean().optional(),
   },
   {
     enabled: true,
@@ -30,6 +31,7 @@ export const lwmWallet40 = flagWith(
       earnUpselling: false,
       earnSimulator: false,
       q2Tour: false,
+      q3Tour: false,
     },
   },
 );

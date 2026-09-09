@@ -3,8 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addBugLink, addTmsLink, getDescription } from "tests/utils/allureUtils";
 import {
   getAccountAddress,
   liveDataWithRecipientAddressCommand,
@@ -304,6 +303,12 @@ const transactionE2E = [
     xrayTicket: "B2CQA-6267",
     teamOwner: Team.BST,
     postSeedHook: shareViewKeyCommand(Account.ALEO_1),
+  },
+  {
+    transaction: new Transaction(Account.MINA_1, Account.MINA_2, "0.01"),
+    xrayTicket: "B2CQA-4778",
+    disableBroadcast: true,
+    teamOwner: Team.BST,
   },
 ];
 

@@ -55,7 +55,7 @@ export const PayCardStatusResponseSchema = z.object({
   /** `YYYY/MM`, as the provider formats it. */
   expiryDate: z.string().min(1).optional(),
   panLast4: z.string().min(1),
-  status: z.enum(["ACTIVE", "FROZEN", "BLOCKED"]),
+  status: z.enum(["ACTIVE", "FROZEN", "BLOCKED", "INACTIVE"]),
   type: z.enum(["VIRTUAL", "PHYSICAL", "METAL"]),
   orderedAt: z.string().min(1),
 });

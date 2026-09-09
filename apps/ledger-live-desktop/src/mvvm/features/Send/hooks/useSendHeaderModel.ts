@@ -112,8 +112,11 @@ export function useSendHeaderModel({
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
   const { recipientType, setInputMethod } = useSendFlowTracking();
   const addNewContactHeader = useAddNewContactHeaderState();
-  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
-    useContactsFeature("desktop");
+  const {
+    isEnabled: isContactsFeatureEnabled,
+    eligibleAddressFamilies,
+    excludedCurrencyIds,
+  } = useContactsFeature("desktop");
   const contacts = useSelector(selectContacts);
 
   const currencyName = state.account.currency?.ticker ?? "";
@@ -357,7 +360,11 @@ export function useSendHeaderModel({
 
   const canSearchContacts =
     isContactsFeatureEnabled &&
-    isEligibleAddressCurrency(eligibleAddressFamilies, state.account.currency ?? undefined);
+    isEligibleAddressCurrency(
+      eligibleAddressFamilies,
+      state.account.currency ?? undefined,
+      excludedCurrencyIds,
+    );
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({
       supportsDomain: uiConfig.recipientSupportsDomain,

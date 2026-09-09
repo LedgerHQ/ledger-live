@@ -49,8 +49,12 @@ Both carry credentials in both directions, so three rules hold them:
    `redactCardApiAction` from `@shared/api-services` before the desktop logger, the desktop DevTools
    or the mobile DevTools relay reads one. `redactCardApiState` does the same for the state.
 
-`CARD_GRANT_ENDPOINTS` in `@shared/api-services` names both grants for the state redaction. A test
-in `api.test.ts` holds that list and these endpoints together.
+`CARD_GRANT_ENDPOINTS` in `@shared/api-services` names both grants for state redaction. A test in
+`api.test.ts` holds that list and these endpoints together.
+
+`initiatePayCardLogout(accessToken)` owns the logout details. It keeps the token outside the Redux
+action, dispatches the endpoint untracked, opts out of session lookup and detaches the fetch from API
+cache resets. Callers only capture the token and dispatch the returned thunk.
 
 `cardManagementApi` **is** `cardApi` after injection: importing this package is a module-level side
 effect that adds its endpoints to the shared service. The app registers `cardApi` (not this package)

@@ -178,6 +178,8 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     },
     sendVerify: {
       [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION_TO,
+      // The mina app opens a payment on the same screen as a delegation.
+      [AppInfos.MINA.name]: DeviceLabels.SIGN_TRANSACTION,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     sendConfirm: {

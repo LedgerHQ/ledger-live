@@ -79,6 +79,15 @@ describe("createBridges token visibility wiring", () => {
     expect(scan).toEqual(expect.any(Function));
   });
 
+  it("merges operations in the shape only, since makeSync's merge drops the oldest", () => {
+    // Not visible from `getAccountShape`: the outer `mergeOps` would re-merge
+    // against the stored account, discarding every refetched operation older
+    // than the oldest stored one and reinstating stale copies.
+    build(false);
+
+    expect(makeSync.mock.calls[0][0].shouldMergeOps).toBe(false);
+  });
+
   it.each([
     ["sync", (b: { sync: PostSync; scan: PostSync }) => b.sync],
     ["scan", (b: { sync: PostSync; scan: PostSync }) => b.scan],

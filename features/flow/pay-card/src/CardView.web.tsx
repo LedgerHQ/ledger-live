@@ -1,6 +1,6 @@
 import React from "react";
-import { CardLogin, CardMore } from "@features/flow-pay-card-auth";
-import { CardArtwork, CardVisual, Freeze } from "@features/flow-pay-card-details";
+import { CardLogin } from "@features/flow-pay-card-auth";
+import { CardArtwork, CardVisual, CardActions } from "@features/flow-pay-card-details";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import type { CardViewProps } from "./Card.types";
@@ -20,7 +20,7 @@ export function CardView({
           face shows once the holder is signed in and has a card, while the login shows only while
           nobody is signed in. Right now each child decides on its own, so they can overlap. */}
       {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
-      <Freeze />
+      <CardActions />
       <Divider />
       <CardLogin
         key={`${oauthConfig.apiUrl}`}
@@ -28,7 +28,6 @@ export function CardView({
         callback={callback}
         onTrackEvent={onTrackEvent}
       />
-      <CardMore />
     </div>
   );
 }
