@@ -35,6 +35,7 @@ import {
   PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
+  STAKING_OPERATION_TYPE,
   TOKEN_RECORD_NAME,
   TRANSACTION_TYPE,
 } from "../constants";
@@ -548,6 +549,12 @@ export function getOperationTransactionType(transactionType: TransactionType): A
   }
 }
 
+export function getStakingOperationType(functionName: string): OperationType | undefined {
+  return Object.hasOwn(STAKING_OPERATION_TYPE, functionName)
+    ? STAKING_OPERATION_TYPE[functionName as AleoStakingMode]
+    : undefined;
+}
+
 export function isPublicTokenTransaction(transaction: Pick<Transaction, "mode">): boolean {
   return (
     transaction.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC ||
@@ -868,6 +875,19 @@ export function mapTransactionIntentToSdkIntent(
         validator: to,
         withdrawal: txIntent.data.withdrawal,
       };
+    }
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC: {
+      // The intent carries a single address: for a bond it is the validator, for an unbond or a
+      // claim it is the staker — and the program only accepts the signing account as its own staker.
+      invariant(
+        to === txIntent.sender,
+        `aleo: ${type} staker must be the sender (recipient ${to}, sender ${txIntent.sender})`,
+      );
+
+      return type === TRANSACTION_TYPE.UNBOND_PUBLIC
+        ? { type: "unbond_public", amount, staker: to }
+        : { type: "claim_unbond_public", staker: to };
     }
     default: {
       throw new Error(`aleo: unsupported intent type: ${type}`);
@@ -1223,6 +1243,10 @@ export function getFunctionNameFromTransactionType(transactionType: TransactionT
       return "transfer_token_private_to_public";
     case TRANSACTION_TYPE.BOND_PUBLIC:
       return "bond_public";
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+      return "unbond_public";
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return "claim_unbond_public";
     default:
       throw new Error(`aleo: unsupported transaction type: ${transactionType}`);
   }

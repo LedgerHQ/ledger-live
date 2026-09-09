@@ -5,6 +5,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { TRANSACTION_TYPE } from "../../constants";
 import type {
+  AleoStakingMode,
   AleoTransactionIntent,
   AleoTransactionIntentData,
   Transaction,
@@ -30,6 +31,16 @@ export const getMockedTransaction = (overrides?: Partial<Transaction>): Transact
     ...overrides,
   } as Transaction;
 };
+
+/**
+ * Unbond and claim are not yet members of the bridge `Transaction` union, so a staking transaction
+ * can only be built by widening. One cast here rather than one per test; it disappears when the
+ * union gains the two modes.
+ */
+export const getMockedStakingTransaction = (
+  mode: AleoStakingMode,
+  overrides?: Partial<Omit<Transaction, "mode">>,
+): Transaction => getMockedTransaction({ mode, ...overrides } as unknown as Partial<Transaction>);
 
 export const getMockedTransactionRaw = (overrides?: Partial<TransactionRaw>): TransactionRaw => {
   return {
@@ -71,6 +82,21 @@ export const mockTxIntentBondPublic: AleoTransactionIntent = {
     type: TRANSACTION_TYPE.BOND_PUBLIC,
     withdrawal: "aleo1sender",
   },
+};
+
+// The staker of an unbond or a claim is the account itself, so recipient and sender are one address.
+export const mockTxIntentUnbondPublic: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  recipient: baseTxIntentFields.sender,
+  amount: 1_000_000n,
+  type: TRANSACTION_TYPE.UNBOND_PUBLIC,
+};
+
+export const mockTxIntentClaimUnbondPublic: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  recipient: baseTxIntentFields.sender,
+  amount: 0n,
+  type: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
 };
 
 export const mockTxIntentTransferPrivate: AleoTransactionIntent = {

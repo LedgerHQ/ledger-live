@@ -38,6 +38,8 @@ import {
   mockTxIntentFeePrivate,
   mockTxIntentFeePublic,
   mockTxIntentBondPublic,
+  mockTxIntentUnbondPublic,
+  mockTxIntentClaimUnbondPublic,
   mockTxIntentSelfTransferToPrivate,
   mockTxIntentSelfTransferToPublic,
   mockTxIntentSelfTransferToPublic2,
@@ -82,6 +84,7 @@ import {
   isProvableApiConfigured,
   isRecordScannerReady,
   getOperationTransactionType,
+  getStakingOperationType,
   splitPrivateAndPublicOperations,
   toHex,
   fromHex,
@@ -1203,6 +1206,49 @@ describe("mapTransactionIntentToSdkIntent", () => {
 
     expect(() => mapTransactionIntentToSdkIntent(withoutData as AleoTransactionIntent)).toThrow(
       "aleo: intent data is required for bond_public",
+    );
+  });
+
+  // The staker arrives as the intent's `recipient` but the program argument is named `staker`.
+  it("should map unbond_public intent to the staker SDK argument name", () => {
+    const intent = mockTxIntentUnbondPublic;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "unbond_public",
+      amount: intent.amount.toString(),
+      staker: intent.recipient,
+    });
+  });
+
+  it("should map claim_unbond_public intent without an amount key", () => {
+    const intent = mockTxIntentClaimUnbondPublic;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "claim_unbond_public",
+      staker: intent.recipient,
+    });
+    // toEqual alone would pass on `amount: undefined`, which the backend's deny_unknown_fields
+    // would still see as a key.
+    expect(result).not.toHaveProperty("amount");
+  });
+
+  it("should throw when the staker is not the sender for unbond_public", () => {
+    const intent = { ...mockTxIntentUnbondPublic, recipient: "aleo1someoneelse" };
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      "aleo: unbond_public staker must be the sender (recipient aleo1someoneelse, sender aleo1sender)",
+    );
+  });
+
+  it("should throw when the staker is not the sender for claim_unbond_public", () => {
+    const intent = { ...mockTxIntentClaimUnbondPublic, recipient: "aleo1someoneelse" };
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      "aleo: claim_unbond_public staker must be the sender (recipient aleo1someoneelse, sender aleo1sender)",
     );
   });
 
@@ -2355,6 +2401,8 @@ describe("getFunctionNameFromTransactionType", () => {
     ["transfer_token_public_to_private", TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
     ["transfer_token_private_to_public", TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC],
     ["bond_public", TRANSACTION_TYPE.BOND_PUBLIC],
+    ["unbond_public", TRANSACTION_TYPE.UNBOND_PUBLIC],
+    ["claim_unbond_public", TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC],
   ])("should return '%s' for transaction type '%s'", (expected, transactionType) => {
     expect(getFunctionNameFromTransactionType(transactionType)).toBe(expected);
   });
@@ -2364,6 +2412,24 @@ describe("getFunctionNameFromTransactionType", () => {
     expect(() => getFunctionNameFromTransactionType("unknown_type")).toThrow(
       "aleo: unsupported transaction type: unknown_type",
     );
+  });
+});
+
+describe("getStakingOperationType", () => {
+  it.each([
+    ["BOND", TRANSACTION_TYPE.BOND_PUBLIC],
+    ["UNBOND", TRANSACTION_TYPE.UNBOND_PUBLIC],
+    ["WITHDRAW_UNBONDED", TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC],
+  ])("should return '%s' for staking mode '%s'", (expected, mode) => {
+    expect(getStakingOperationType(mode)).toBe(expected);
+  });
+
+  it("should return undefined for a non-staking transaction type", () => {
+    expect(getStakingOperationType(TRANSACTION_TYPE.TRANSFER_PUBLIC)).toBeUndefined();
+  });
+
+  it("should return undefined for a prototype member", () => {
+    expect(getStakingOperationType("constructor")).toBeUndefined();
   });
 });
 
