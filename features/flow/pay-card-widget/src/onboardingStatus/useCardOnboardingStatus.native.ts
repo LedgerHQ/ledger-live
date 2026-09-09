@@ -18,7 +18,7 @@ import {
 export function useCardOnboardingStatus(
   params: CardOnboardingSourcesParams = {},
 ): UseCardOnboardingStatusResult {
-  const { signals, isLoading, isError } = useCardOnboardingSources(params);
+  const { signals, isLoading, isError, refresh } = useCardOnboardingSources(params);
   const hasAddedCardToWallet = useSelector(selectHasAddedCardToWallet);
 
   const data = useMemo(
@@ -30,5 +30,5 @@ export function useCardOnboardingStatus(
     [signals, hasAddedCardToWallet],
   );
 
-  return { data, isLoading, isError };
+  return { data, isLoading, isError, refresh };
 }

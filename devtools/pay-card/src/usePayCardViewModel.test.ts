@@ -26,6 +26,18 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
       setStepDone: jest.fn(),
       ...overrides.onboarding,
     },
+    cardOnboarding: {
+      steps: [],
+      completedCount: 0,
+      isFetching: false,
+      error: undefined,
+      raw: "{}",
+      refresh: jest.fn(),
+      setStepDone: jest.fn(),
+      clearMocks: jest.fn(),
+      isMockingEnabled: true,
+      ...overrides.cardOnboarding,
+    },
     interaction: {
       probes: [],
       details: {

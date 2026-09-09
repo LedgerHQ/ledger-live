@@ -15,6 +15,10 @@ import { useCardOnboardingStatus } from "./useCardOnboardingStatus";
 
 type Verification = "UNVERIFIED" | "PENDING" | "VERIFIED" | "REJECTED";
 
+const refetchUser = jest.fn();
+const refetchCardStatus = jest.fn();
+const refetchWallets = jest.fn();
+
 function setupMocks({
   // `null` is "not read yet": an explicit `undefined` would fall back to the default.
   verificationState = "VERIFIED" as Verification | null,
@@ -28,18 +32,21 @@ function setupMocks({
   areWalletsError = false,
 } = {}) {
   jest.mocked(useGetUserQuery).mockReturnValue({
+    refetch: refetchUser,
     data: verificationState === null ? undefined : { verificationState },
     isFetching: isUserFetching,
     isError: isUserError,
   } as unknown as ReturnType<typeof useGetUserQuery>);
 
   jest.mocked(useGetCardStatusQuery).mockReturnValue({
+    refetch: refetchCardStatus,
     data: hasCard ? { status: cardStatus } : undefined,
     isFetching: isCardStatusFetching,
     isError: false,
   } as unknown as ReturnType<typeof useGetCardStatusQuery>);
 
   jest.mocked(useCardLinkedWallets).mockReturnValue({
+    refetch: refetchWallets,
     wallets: balances.map((balance, index) => ({ id: `w${index}`, balance })),
     isFetching: areWalletsFetching,
     isError: areWalletsError,
@@ -131,6 +138,30 @@ describe("useCardOnboardingStatus", () => {
     setupMocks({ verificationState: "PENDING", hasCard: false, balances: [] });
 
     expect(stepsById().completedCount).toBe(0);
+  });
+
+  describe("re-asking", () => {
+    it("re-asks all three sources", () => {
+      setupMocks();
+      const { result } = renderHook(() => useCardOnboardingStatus());
+
+      result.current.refresh();
+
+      expect(refetchUser).toHaveBeenCalledTimes(1);
+      expect(refetchCardStatus).toHaveBeenCalledTimes(1);
+      expect(refetchWallets).toHaveBeenCalledTimes(1);
+    });
+
+    it("asks nothing while skipped, because a query that never started cannot refetch", () => {
+      setupMocks();
+      const { result } = renderHook(() => useCardOnboardingStatus({ skip: true }));
+
+      result.current.refresh();
+
+      expect(refetchUser).not.toHaveBeenCalled();
+      expect(refetchCardStatus).not.toHaveBeenCalled();
+      expect(refetchWallets).not.toHaveBeenCalled();
+    });
   });
 
   describe("when the host holds the reads", () => {

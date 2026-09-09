@@ -27,9 +27,17 @@ import {
   selectPayCardHasSeenLoginIntro,
 } from "@features/flow-pay-card-auth/state";
 import {
+  markCardAddedToWallet,
+  resetCardAddedToWallet,
   resetCardOnboardingCompleted,
   selectHasCompletedCardOnboarding,
 } from "@features/flow-pay-card-widget/state";
+import { useCardOnboardingStatus } from "@features/flow-pay-card-widget/onboarding-status";
+import {
+  clearCardOnboardingStatusMock,
+  setCardOnboardingStatusMock,
+  type CardOnboardingStatusMock,
+} from "@domain/api-card-management/mock/card-onboarding-status";
 import { setMockOnboardingStepDone } from "@domain/api-card-management/mock";
 import type { DevToolsConfig } from "@devtools/registry";
 import { usePayCardAuthProps } from "./usePayCardAuthProps";
@@ -76,6 +84,30 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
  * balance and answers `null`, which the screen reports as unpriced.
  */
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
+
+/**
+ * The endpoint answer each derived step is decided by, for the steps a request decides.
+ *
+ * `apple-google-pay` is missing on purpose: nothing is asked for it, the holder says so and the
+ * answer is kept on the device. `first-purchase` is missing because nothing answers it yet.
+ */
+const STEP_ANSWERS: Readonly<Partial<Record<string, keyof CardOnboardingStatusMock>>> = {
+  "create-account": "accountVerified",
+  "choose-card-type": "hasCard",
+  "top-up-card": "walletFunded",
+};
+
+const WALLET_STEP_ID = "apple-google-pay";
+
+/**
+ * Whether the host intercepts the requests these answers are read from.
+ *
+ * Only the mobile handlers read the store, and mobile starts its worker from `MSW_ENABLED`. Desktop
+ * has its own flag, and answering to it here would report mocking a desktop request never sees.
+ */
+function isRequestMockingEnabled(): boolean {
+  return process.env.MSW_ENABLED === "true";
+}
 
 /** Reads what an endpoint answered, whatever shape the failure arrives in. */
 function describeError(error: unknown): string {
@@ -177,6 +209,59 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const onboarding = useMemo(() => ({ steps, setStepDone }), [steps, setStepDone]);
 
   const auth = usePayCardAuthProps({ openPayTab: options.openPayTab });
+  // Only the native tool renders this screen, so desktop asks the three endpoints for nothing.
+  const onboardingStatus = useCardOnboardingStatus({ skip: platform !== "native" });
+  const { data: derivedOnboarding, refresh: refreshCardOnboarding } = onboardingStatus;
+
+  const setDerivedStepDone = useCallback(
+    (id: string, done: boolean) => {
+      if (id === WALLET_STEP_ID) {
+        // Not an endpoint answer: the step is what the holder said, so the store is the source.
+        dispatch(done ? markCardAddedToWallet() : resetCardAddedToWallet());
+        return;
+      }
+
+      const answer = STEP_ANSWERS[id];
+      if (answer === undefined) return;
+
+      setCardOnboardingStatusMock(answer, done);
+      refreshCardOnboarding();
+    },
+    [dispatch, refreshCardOnboarding],
+  );
+
+  const clearCardOnboardingMocks = useCallback(() => {
+    clearCardOnboardingStatusMock();
+    refreshCardOnboarding();
+  }, [refreshCardOnboarding]);
+
+  const cardOnboarding = useMemo(() => {
+    const isMockingEnabled = isRequestMockingEnabled();
+
+    return {
+      steps: derivedOnboarding.steps.map(step => ({
+        id: step.id,
+        isDone: step.isDone,
+        canToggle: step.id === WALLET_STEP_ID || (isMockingEnabled && step.id in STEP_ANSWERS),
+      })),
+      completedCount: derivedOnboarding.completedCount,
+      isFetching: onboardingStatus.isLoading,
+      // Only the account read is surfaced as an error: a step nothing can answer reads as not done.
+      error: onboardingStatus.isError ? "the account could not be read" : undefined,
+      raw: JSON.stringify(derivedOnboarding, null, 2),
+      refresh: refreshCardOnboarding,
+      setStepDone: setDerivedStepDone,
+      clearMocks: clearCardOnboardingMocks,
+      isMockingEnabled,
+    };
+  }, [
+    derivedOnboarding,
+    onboardingStatus.isLoading,
+    onboardingStatus.isError,
+    refreshCardOnboarding,
+    setDerivedStepDone,
+    clearCardOnboardingMocks,
+  ]);
 
   const [runCardStatus, cardStatus] = useLazyGetCardStatusQuery();
 
@@ -289,6 +374,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     () => ({
       flags,
       onboarding,
+      cardOnboarding,
       interaction,
       balance,
       hasSeenFeatureTour,
@@ -305,6 +391,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     [
       flags,
       onboarding,
+      cardOnboarding,
       interaction,
       balance,
       hasSeenFeatureTour,

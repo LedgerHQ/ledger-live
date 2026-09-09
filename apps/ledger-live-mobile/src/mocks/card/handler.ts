@@ -1,5 +1,12 @@
 import { http, HttpResponse, passthrough, delay } from "msw";
 import { getMockCardOnboardingStatus } from "@domain/api-card-management/mock";
+import {
+  mockPayCardInternalWallets,
+  mockPayCardLinkedWallets,
+  mockPayCardStatus,
+  mockPayCardUser,
+  readCardOnboardingStatusMock,
+} from "@domain/api-card-management/mock/card-onboarding-status";
 import { createCardMockState } from "./state";
 
 const state = createCardMockState();
@@ -101,6 +108,12 @@ const handlers = [
       return HttpResponse.json({ message: "unauthorized" }, { status: 401 });
     }
 
+    // Set by the card onboarding screen, and unset until a step is toggled there.
+    const { accountVerified } = readCardOnboardingStatusMock();
+    if (accountVerified !== undefined) {
+      return HttpResponse.json(mockPayCardUser(accountVerified));
+    }
+
     if (!usesMockToken(request)) {
       return passthrough();
     }
@@ -109,6 +122,15 @@ const handlers = [
   }),
 
   http.get("*/v1/card/status", ({ request }) => {
+    const { hasCard } = readCardOnboardingStatusMock();
+    if (hasCard !== undefined) {
+      // No card is an absent one, not an empty one: the step reads "has the provider answered with
+      // a card at all", and a 404 is how it answers that it has not.
+      return hasCard
+        ? HttpResponse.json(mockPayCardStatus())
+        : HttpResponse.json({ message: "No card ordered" }, { status: 404 });
+    }
+
     if (!usesMockToken(request)) {
       return passthrough();
     }
@@ -117,6 +139,26 @@ const handlers = [
 
   http.get("*/v1/card/onboarding-status", () => {
     return HttpResponse.json(getMockCardOnboardingStatus());
+  }),
+  http.get("*/v1/wallet/internal", ({ request }) => {
+    const { walletFunded } = readCardOnboardingStatusMock();
+    if (walletFunded !== undefined) {
+      return HttpResponse.json(mockPayCardInternalWallets(walletFunded));
+    }
+
+    // A mock session has no provider behind it, so answer as an empty wallet rather than send a
+    // mock bearer token to Baanx and collect a 401.
+    return usesMockToken(request)
+      ? HttpResponse.json(mockPayCardInternalWallets(false))
+      : passthrough();
+  }),
+
+  http.get("*/v1/wallet/internal/card_linked", ({ request }) => {
+    const { walletFunded } = readCardOnboardingStatusMock();
+
+    return walletFunded === undefined && !usesMockToken(request)
+      ? passthrough()
+      : HttpResponse.json(mockPayCardLinkedWallets());
   }),
 ];
 

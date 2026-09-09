@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useGetCardStatusQuery, useGetUserQuery } from "@domain/api-card-management";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
 import { hasPositiveBalance, type CardOnboardingSignals } from "./deriveCardOnboardingStatus";
@@ -16,6 +16,7 @@ export type CardOnboardingSources = {
   readonly signals: CardOnboardingSignals<CardOnboardingProviderStepId>;
   readonly isLoading: boolean;
   readonly isError: boolean;
+  readonly refresh: () => void;
 };
 
 const NO_COUNTER_VALUE = () => null;
@@ -47,8 +48,24 @@ export function useCardOnboardingSources({
     [user.data, cardStatus.data, linkedWallets.wallets],
   );
 
+  const { refetch: refetchUser } = user;
+  const { refetch: refetchCardStatus } = cardStatus;
+  const { refetch: refetchWallets } = linkedWallets;
+
+  const refresh = useCallback(() => {
+    // Nothing was started while skipped, and RTK throws when asked to refetch that.
+    if (skip) {
+      return;
+    }
+
+    refetchUser();
+    refetchCardStatus();
+    refetchWallets();
+  }, [skip, refetchUser, refetchCardStatus, refetchWallets]);
+
   return {
     signals,
+    refresh,
     // `isFetching` on all three, not `isLoading`: a query reports `isLoading` only while it has no
     // data, so after the first read a refetch would have looked idle.
     isLoading: user.isFetching || cardStatus.isFetching || linkedWallets.isFetching,
