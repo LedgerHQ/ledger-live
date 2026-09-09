@@ -207,7 +207,6 @@
     "ljs:hw-bolos": "pnpm --filter hw-bolos",
     "ljs:hw-transport": "pnpm --filter hw-transport",
     "ljs:hw-transport-mocker": "pnpm --filter hw-transport-mocker",
-    "ljs:hw-transport-vault": "pnpm --filter hw-transport-vault",
     "service:cal": "pnpm --filter ledger-cal-service",
     "service:trust": "pnpm --filter ledger-trust-service",
     "speculos-transport": "pnpm --filter speculos-transport",

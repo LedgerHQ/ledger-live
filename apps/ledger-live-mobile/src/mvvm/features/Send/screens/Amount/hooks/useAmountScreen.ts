@@ -8,6 +8,7 @@ import type {
   SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
 import { ScreenName } from "~/const";
+import { getSendSuccessScreenName } from "../../../utils/getSendSuccessScreenName";
 import type { SendFlowNavigationProp } from "../../../types";
 import { useSendSignature } from "../../../context/SendSignatureContext";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
@@ -37,7 +38,7 @@ export type AmountScreenViewModel =
       }>);
 
 export function useAmountScreen(): AmountScreenViewModel {
-  const { state, uiConfig } = useSendFlowData();
+  const { state, uiConfig, source } = useSendFlowData();
   const { transaction: transactionActions, close } = useSendFlowActions();
   const navigation = useNavigation<SendFlowNavigationProp>();
   const { startSigning } = useSendSignature();
@@ -61,8 +62,8 @@ export function useAmountScreen(): AmountScreenViewModel {
       page: "step amount",
       input_mode: inputMode,
     });
-    startSigning(() => navigation.navigate(ScreenName.SendFlowConfirmation));
-  }, [startSigning, navigation, trackingProperties, inputMode]);
+    startSigning(() => navigation.navigate(getSendSuccessScreenName(source)));
+  }, [startSigning, navigation, trackingProperties, inputMode, source]);
 
   const onSelectCoinControl = useCallback(() => {
     navigation.navigate(ScreenName.SendFlowCoinControl);

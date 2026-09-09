@@ -69,6 +69,7 @@ describe("useOpenSendFlow", () => {
         account,
         parentAccount: undefined,
         fromMAD: true,
+        source: "Asset Detail",
       },
     });
   });
@@ -104,6 +105,7 @@ describe("useOpenSendFlow", () => {
         parentAccount: undefined,
         fromMAD: true,
         recipient,
+        source: "Contact Detail",
       },
     });
   });
@@ -147,6 +149,7 @@ describe("useOpenSendFlow", () => {
         fromMAD: true,
         recipient,
         skipRecipientStep: true,
+        source: "Contact Detail",
       },
     });
   });

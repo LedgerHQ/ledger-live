@@ -1,5 +1,6 @@
 import {
   AmountRequired,
+  FeeNotLoaded,
   FeeRequired,
   FeeTooHigh,
   InvalidAddress,
@@ -7,7 +8,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
-import { MAX_MEMO_LENGTH, PLT_MAX_MEMO_SIZE } from "@ledgerhq/concordium-core";
+import { MAX_MEMO_LENGTH, PLT_MAX_DECIMALS, PLT_MAX_MEMO_SIZE } from "@ledgerhq/concordium-core";
 import {
   createFixtureAccount,
   createFixtureTokenAccount,
@@ -99,7 +100,7 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(account, transaction);
 
       // THEN
-      expect(result.errors.fee).toBeInstanceOf(FeeRequired);
+      expect(result.errors.amount).toBeInstanceOf(FeeRequired);
     });
 
     it("should return FeeRequired error when fee is zero", async () => {
@@ -111,7 +112,47 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(account, transaction);
 
       // THEN
-      expect(result.errors.fee).toBeInstanceOf(FeeRequired);
+      expect(result.errors.amount).toBeInstanceOf(FeeRequired);
+    });
+
+    // The key matters as much as the error: nothing under the desktop
+    // `modals/Send/` tree reads `errors.fee`, so filing it there greys out
+    // Continue with no message. See LIVE-37061.
+    it("files the fee error under a key the desktop send flow renders", async () => {
+      // GIVEN
+      const account = createFixtureAccount();
+      const transaction = createFixtureTransaction({ fee: null });
+
+      // WHEN
+      const result = await getTransactionStatus(account, transaction);
+
+      // THEN
+      expect(result.errors.fee).toBeUndefined();
+      expect(result.errors.amount).toBeInstanceOf(FeeRequired);
+    });
+
+    it("reports a NaN fee as not loaded", async () => {
+      // GIVEN - `fromTransactionRaw` yields NaN for a corrupt persisted fee
+      const account = createFixtureAccount();
+      const transaction = createFixtureTransaction({ fee: new BigNumber(NaN) });
+
+      // WHEN
+      const result = await getTransactionStatus(account, transaction);
+
+      // THEN
+      expect(result.errors.amount).toBeInstanceOf(FeeNotLoaded);
+    });
+
+    it("prefers the amount error over the missing fee", async () => {
+      // GIVEN - both would fire; the amount is the one the user can act on
+      const account = createFixtureAccount();
+      const transaction = createFixtureTransaction({ amount: new BigNumber(0), fee: null });
+
+      // WHEN
+      const result = await getTransactionStatus(account, transaction);
+
+      // THEN
+      expect(result.errors.amount).toBeInstanceOf(AmountRequired);
     });
 
     it("should return FeeTooHigh warning when fee exceeds 10x the amount", async () => {
@@ -710,12 +751,35 @@ describe("getTransactionStatus", () => {
       expect(status.errors.recipient).toBeInstanceOf(InvalidAddress);
     });
 
-    it("reports a missing fee, as the native path does", async () => {
+    it("reports a missing fee under `amount`, as the native path does", async () => {
       const { account, subAccount } = withToken();
 
       const status = await getTransactionStatus(account, tokenTx(subAccount.id, { fee: null }));
 
-      expect(status.errors.fee).toBeInstanceOf(FeeRequired);
+      expect(status.errors.fee).toBeUndefined();
+      expect(status.errors.amount).toBeInstanceOf(FeeRequired);
+    });
+
+    // Each state that leaves the fee unset has its own error, so the bare
+    // "fee missing" must not mask the reason the fee could not be priced.
+    it("prefers the unsupported-decimals error over the missing fee it caused", async () => {
+      const { account, subAccount } = withToken({ magnitude: PLT_MAX_DECIMALS + 1 });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id, { fee: null }));
+
+      expect(status.errors.amount).toBeInstanceOf(ConcordiumUnsupportedTokenDecimals);
+    });
+
+    it("prefers the over-long memo over the missing fee it caused", async () => {
+      const { account, subAccount } = withToken();
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { fee: null, memo: "a".repeat(PLT_MAX_MEMO_SIZE + 1) }),
+      );
+
+      expect(status.errors.memo).toBeInstanceOf(ConcordiumMemoTooLong);
+      expect(status.errors.amount).toBeUndefined();
     });
 
     it("requires a non-zero amount", async () => {
