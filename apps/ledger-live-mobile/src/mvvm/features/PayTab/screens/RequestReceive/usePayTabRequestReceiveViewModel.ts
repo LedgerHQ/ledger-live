@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from "react";
-import type { View } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { PayRequestTrackEvent, RequestReceiveProps } from "@features/flow-pay-request";
+import type {
+  PayRequestTrackEvent,
+  RequestReceiveCardHandle,
+  RequestReceiveProps,
+} from "@features/flow-pay-request";
 import {
   markReceiveVerifyHintSeen,
   selectHasSeenReceiveVerifyHint,
@@ -40,7 +43,7 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const route = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTabRequestReceive>>();
   const { account } = useAccountScreen(route);
   const currency = route.params.currency;
-  const cardRef = useRef<ComponentRef<typeof View>>(null);
+  const cardRef = useRef<RequestReceiveCardHandle>(null);
   const { openIntro, verifyAddress, dieActive, onReady, onExit } = usePayTabVerifyAddress(
     onTrackEvent,
     goBack,
@@ -59,7 +62,10 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
 
   const onShare = useCallback(async (address: string) => {
     try {
-      const imageUrl = await captureRef(cardRef, { format: "png" });
+      const imageUrl = await cardRef.current?.withFlatSnapshot(node =>
+        captureRef(node, { format: "png" }),
+      );
+      if (!imageUrl) return;
       await Share.open({ url: imageUrl, message: address, failOnCancel: false });
     } catch {
       // TODO: handle share/capture errors

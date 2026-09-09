@@ -145,6 +145,11 @@ export type RequestReceiveIconProps = Readonly<{
   network?: string;
 }>;
 
+/** Drops corner radius for one paint so the shared PNG has no transparent halo. */
+export type RequestReceiveCardHandle = {
+  withFlatSnapshot: <T>(run: (node: unknown) => Promise<T>) => Promise<T>;
+};
+
 /** Presentation inputs shared by the container props and the view props. */
 type RequestReceiveShell = Readonly<{
   isOpen: boolean;
@@ -154,10 +159,9 @@ type RequestReceiveShell = Readonly<{
   /** Actions rendered, in order. Desktop uses `["save", "copy", "verify"]`. */
   visibleActions: readonly RequestReceiveActionId[];
   /**
-   * Native only: attached to the shareable card so the host can capture it as an image. Left
-   * opaque here because the web build must not depend on `react-native` types.
+   * Native only: host captures the shareable card through this handle. Left opaque for web.
    */
-  cardRef?: RefObject<unknown>;
+  cardRef?: RefObject<RequestReceiveCardHandle | null>;
   onClose: () => void;
   verifyHint?: RequestReceiveVerifyHint;
 }>;

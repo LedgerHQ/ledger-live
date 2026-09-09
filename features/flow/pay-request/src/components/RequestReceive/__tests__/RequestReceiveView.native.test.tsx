@@ -39,7 +39,7 @@ describe("RequestReceiveView (Native)", () => {
     expect(screen.getByTestId("pay-request-receive-qr-code")).toBeVisible();
     expect(screen.getByTestId("pay-request-receive-qr-code")).toHaveProp(
       "foregroundColor",
-      "#000000",
+      "#FFFFFF",
     );
     expect(screen.getByTestId("pay-request-receive-address")).toBeVisible();
     expect(screen.getByText(REQUEST_RECEIVE_LABELS.actions.share)).toBeVisible();
