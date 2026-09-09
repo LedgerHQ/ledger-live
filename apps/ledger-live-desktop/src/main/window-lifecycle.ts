@@ -203,7 +203,10 @@ function setupMainWindowHandlers() {
     if (ledgerDevices.length > 0) {
       callback(ledgerDevices[0].deviceId);
     } else {
+      // Cancel rather than leave the pick open: resolving it later would need a
+      // `hid-device-added` listener, and there is none.
       console.warn("No Ledger HID devices found.");
+      callback(null);
     }
   });
 
