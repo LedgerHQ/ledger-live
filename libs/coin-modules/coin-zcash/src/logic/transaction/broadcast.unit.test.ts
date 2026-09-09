@@ -220,30 +220,31 @@ describe("broadcast", () => {
   });
 
   // setZainoGrpcUrl lets a caller point this at a custom or local node, so
-  // nothing guarantees the endpoint never carries userinfo or a query token --
-  // every log line and the error context must only ever see the sanitized form.
+  // nothing guarantees the endpoint never carries userinfo or a query/path
+  // token -- every log line and the error context must only ever see the
+  // sanitized (origin-only) form.
   it("sanitizes the endpoint everywhere it's logged or attached, on success and failure", async () => {
-    setZainoGrpcUrl("https://user:secret@my-node.example/broadcast?token=abc123");
+    setZainoGrpcUrl("https://user:secret@my-node.example/token/abc123?token=abc123");
 
     await broadcast(TX_HEX);
     for (const call of mockLog.mock.calls) {
       expect(JSON.stringify(call)).not.toContain("secret");
-      expect(JSON.stringify(call)).not.toContain("token=abc123");
+      expect(JSON.stringify(call)).not.toContain("abc123");
     }
     expect(mockLog).toHaveBeenCalledWith(
       "zcash",
       "broadcast succeeded",
-      expect.objectContaining({ endpoint: "https://my-node.example/broadcast" }),
+      expect.objectContaining({ endpoint: "https://my-node.example" }),
     );
 
     mockLog.mockClear();
     broadcastTransaction.mockRejectedValueOnce(new Error("gRPC rejected"));
     await expect(broadcast(TX_HEX)).rejects.toMatchObject({
-      endpoint: "https://my-node.example/broadcast",
+      endpoint: "https://my-node.example",
     });
     for (const call of mockLog.mock.calls) {
       expect(JSON.stringify(call)).not.toContain("secret");
-      expect(JSON.stringify(call)).not.toContain("token=abc123");
+      expect(JSON.stringify(call)).not.toContain("abc123");
     }
   });
 

@@ -49,16 +49,18 @@ describe("zaino endpoint", () => {
 });
 
 describe("sanitizeEndpointForLog", () => {
-  it("keeps a plain origin + pathname unchanged in substance", () => {
-    expect(sanitizeEndpointForLog("https://my-node.example/broadcast")).toBe(
-      "https://my-node.example/broadcast",
+  it("keeps only the origin for a plain URL", () => {
+    expect(sanitizeEndpointForLog("https://my-node.example:8443")).toBe(
+      "https://my-node.example:8443",
     );
   });
 
-  it("strips userinfo, query params and hash", () => {
+  it("strips userinfo, path, query params and hash", () => {
     expect(
-      sanitizeEndpointForLog("https://user:secret@my-node.example:8443/broadcast?token=abc#frag"),
-    ).toBe("https://my-node.example:8443/broadcast");
+      sanitizeEndpointForLog(
+        "https://user:secret@my-node.example:8443/token/abc123?token=abc#frag",
+      ),
+    ).toBe("https://my-node.example:8443");
   });
 
   it("falls back to a placeholder for an unparsable URL", () => {
