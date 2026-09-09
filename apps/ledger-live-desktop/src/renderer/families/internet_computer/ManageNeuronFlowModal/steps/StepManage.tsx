@@ -10,11 +10,11 @@ import {
   getNeuronActionPermissions,
   getNeuronDissolveDurationSeconds,
   getSecondsTillVotingPowerExpires,
-  hasEnoughMaturityToStake,
   isDeviceControlledNeuron,
-  isEnoughMaturityToSpawn,
   isNeuronDissolved,
   neuronCanBeSplit,
+  neuronCanSpawn,
+  neuronCanStakeMaturity,
   neuronCanVote,
   neuronDecidingVotingPower,
   neuronStake,
@@ -306,13 +306,13 @@ const StepManage = ({
           }
           actions={[
             ...controlledActions(
-              hasEnoughMaturityToStake(neuron),
+              neuronCanStakeMaturity(neuron),
               actions.onClickStakeMaturity,
               t("internetComputer.manageNeuronFlow.manage.maturity.stake"),
             ),
             ...controlledActions(
               // Spawning the whole balance is the best case; below that nothing can be spawned.
-              isEnoughMaturityToSpawn(neuron, 100),
+              neuronCanSpawn(neuron),
               actions.onClickSpawnNeuron,
               t("internetComputer.manageNeuronFlow.manage.maturity.spawn"),
             ),

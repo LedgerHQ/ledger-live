@@ -496,6 +496,50 @@ describe("StepManage", () => {
     expect(screen.getByText("2 ICP")).toBeInTheDocument();
     expect(screen.queryByText("10 ICP")).not.toBeInTheDocument();
   });
+
+  const withMaturity = (overrides = {}) =>
+    controlled({ maturityE8sEquivalent: BigInt(2 * MIN_NEURON_STAKE), ...overrides });
+
+  // A spawn leaves a child holding maturity and no stake for seven days, under the same controller,
+  // so it arrives in the list looking like a neuron with maturity to do something with. The canister
+  // refuses both commands on it, and each refusal costs a device signature to discover.
+  it("offers neither maturity action on a neuron that is spawning", () => {
+    renderManage(
+      withMaturity({
+        state: NeuronState.Spawning,
+        cachedNeuronStakeE8s: 0n,
+        dissolveState: {
+          WhenDissolvedTimestampSeconds: BigInt(
+            Math.floor(FIXED_NOW_MSECS / 1000) + SECONDS_IN_7_DAYS,
+          ),
+        },
+      }),
+    );
+
+    expect(screen.queryByText("Stake maturity")).not.toBeInTheDocument();
+    expect(screen.queryByText("Spawn neuron")).not.toBeInTheDocument();
+  });
+
+  // Dissolved rules out staking maturity but not spawning it, so the two gates cannot share a rule.
+  it("keeps the spawn on a dissolved neuron while withholding the stake", () => {
+    renderManage(
+      withMaturity({
+        state: NeuronState.Dissolved,
+        dissolveDelaySeconds: 0n,
+        dissolveState: undefined,
+      }),
+    );
+
+    expect(screen.getByText("Spawn neuron")).toBeInTheDocument();
+    expect(screen.queryByText("Stake maturity")).not.toBeInTheDocument();
+  });
+
+  it("offers both to a locked neuron holding enough maturity", () => {
+    renderManage(withMaturity());
+
+    expect(screen.getByText("Stake maturity")).toBeInTheDocument();
+    expect(screen.getByText("Spawn neuron")).toBeInTheDocument();
+  });
 });
 
 /*
