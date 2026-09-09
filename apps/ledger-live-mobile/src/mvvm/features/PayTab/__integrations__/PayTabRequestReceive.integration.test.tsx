@@ -260,7 +260,6 @@ describe("PayTab RequestReceive integration", () => {
       expect(captureRef).toHaveBeenCalledWith(expect.anything(), { format: "png" });
       expect(Share.open).toHaveBeenCalledWith({
         url: "file://mock.png",
-        message: payTabEthAccount.freshAddress,
         failOnCancel: false,
       });
     });

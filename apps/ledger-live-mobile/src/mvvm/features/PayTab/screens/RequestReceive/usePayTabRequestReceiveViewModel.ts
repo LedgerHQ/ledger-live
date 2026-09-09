@@ -60,13 +60,13 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
     Clipboard.setString(address);
   }, []);
 
-  const onShare = useCallback(async (address: string) => {
+  const onShare = useCallback(async () => {
     try {
       const imageUrl = await cardRef.current?.withFlatSnapshot(node =>
         captureRef(node, { format: "png" }),
       );
       if (!imageUrl) return;
-      await Share.open({ url: imageUrl, message: address, failOnCancel: false });
+      await Share.open({ url: imageUrl, failOnCancel: false });
     } catch {
       // TODO: handle share/capture errors
     }
