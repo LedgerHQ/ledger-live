@@ -40,6 +40,8 @@ import {
   minAllowedSplitAmount,
   minNeuronSplittable,
   neuronCanBeSplit,
+  neuronCanSpawn,
+  neuronCanStakeMaturity,
   neuronCanVote,
   neuronDecidingVotingPower,
   neuronPotentialVotingPower,
@@ -300,6 +302,38 @@ describe("maturity", () => {
     const twice = 210_526_316n;
     expect(isEnoughMaturityToSpawn(baseNeuron({ maturityE8sEquivalent: twice }), 50)).toBe(true);
     expect(isEnoughMaturityToSpawn(baseNeuron({ maturityE8sEquivalent: twice }), 49)).toBe(false);
+  });
+
+  // A spawn leaves a child holding maturity and no stake for seven days, under the same controller,
+  // so it reaches the wallet looking like somewhere to stake maturity from — which the canister
+  // refuses, as it does on a dissolved neuron.
+  const SPAWN_FLOOR = 105_263_158n;
+  const spawnable = (state: NeuronState) =>
+    baseNeuron({ state, maturityE8sEquivalent: SPAWN_FLOOR });
+
+  it("withholds staking maturity in the two states the canister refuses", () => {
+    expect(neuronCanStakeMaturity(spawnable(NeuronState.Locked))).toBe(true);
+    expect(neuronCanStakeMaturity(spawnable(NeuronState.Dissolving))).toBe(true);
+    expect(neuronCanStakeMaturity(spawnable(NeuronState.Spawning))).toBe(false);
+    expect(neuronCanStakeMaturity(spawnable(NeuronState.Dissolved))).toBe(false);
+    expect(neuronCanStakeMaturity(baseNeuron({ maturityE8sEquivalent: 0n }))).toBe(false);
+  });
+
+  // Only the spawning state is refused here: a dissolved neuron spawns fine, so the two predicates
+  // cannot share one state rule.
+  it("withholds spawning only from a neuron that is already spawning", () => {
+    expect(neuronCanSpawn(spawnable(NeuronState.Spawning))).toBe(false);
+    expect(neuronCanSpawn(spawnable(NeuronState.Dissolved))).toBe(true);
+    expect(neuronCanSpawn(baseNeuron({ maturityE8sEquivalent: SPAWN_FLOOR - 1n }))).toBe(false);
+    expect(neuronCanSpawn(spawnable(NeuronState.Locked), 50)).toBe(false);
+  });
+
+  // Unspecified is the absence of a NeuronInfo, not a state the canister named.
+  it("withholds nothing from a neuron whose state never arrived", () => {
+    const unknown = spawnable(NeuronState.Unspecified);
+
+    expect(neuronCanStakeMaturity(unknown)).toBe(true);
+    expect(neuronCanSpawn(unknown)).toBe(true);
   });
 });
 

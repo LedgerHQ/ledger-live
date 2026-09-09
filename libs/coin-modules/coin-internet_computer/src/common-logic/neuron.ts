@@ -607,3 +607,20 @@ export const isEnoughMaturityToSpawn = (neuron: ICPNeuron, percentage: number): 
   );
   return selected >= minSelected;
 };
+
+// The two predicates below fold in the states the canister refuses outright. `Unspecified` is not one
+// of them: it means the snapshot carried no `NeuronInfo`, so failing closed would hide legal actions.
+
+/**
+ * `stake_maturity_of_neuron` refuses a spawning neuron and a dissolved one. The maturity floor is
+ * ours rather than the canister's — it accepts a request against zero maturity, stakes nothing, and
+ * still costs a device signature.
+ */
+export const neuronCanStakeMaturity = (neuron: ICPNeuron): boolean =>
+  neuron.state !== NeuronState.Spawning &&
+  neuron.state !== NeuronState.Dissolved &&
+  hasEnoughMaturityToStake(neuron);
+
+/** A neuron that is itself spawning cannot spawn again (`governance.rs` `spawn_neuron`). */
+export const neuronCanSpawn = (neuron: ICPNeuron, percentage = 100): boolean =>
+  neuron.state !== NeuronState.Spawning && isEnoughMaturityToSpawn(neuron, percentage);
