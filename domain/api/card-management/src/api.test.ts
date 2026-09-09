@@ -8,6 +8,7 @@ import {
 import * as apiModule from "./api";
 import {
   cardManagementApi,
+  initiatePayCardLogout,
   useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
   useGetCardOnboardingStatusQuery,
@@ -143,9 +144,10 @@ describe("cardManagementApi configuration", () => {
     }
   });
 
-  it("exports no hook for either grant", () => {
+  it("exports no hook for credential-bearing endpoints", () => {
     expect(Object.keys(apiModule)).not.toContain("useExchangeAuthorizationCodeMutation");
     expect(Object.keys(apiModule)).not.toContain("useRefreshSessionMutation");
+    expect(Object.keys(apiModule)).not.toContain("useLogoutMutation");
   });
 
   it("exposes orderCard and its hook", () => {
@@ -300,23 +302,72 @@ describe("cardManagementApi requests", () => {
   });
 
   describe("logout", () => {
-    it("ends the session", async () => {
+    it("omits the bearer token when no session is open", async () => {
+      provider.post("/v1/auth/logout", () => jsonResponse({ success: true }));
+
+      const store = makeStore();
+      const result = await store.dispatch(cardManagementApi.endpoints.logout.initiate({}));
+
+      expect(provider.sent().headers.get("authorization")).toBeNull();
+      expect(result.data).toEqual({ success: true });
+    });
+
+    it("sends the captured bearer token alongside the client key", async () => {
       provider.post("/v1/auth/logout", () => jsonResponse({ success: true }));
 
       const store = makeStore("session-token");
-      const result = await store.dispatch(cardManagementApi.endpoints.logout.initiate());
+      const result = await store.dispatch(initiatePayCardLogout("session-token"));
 
       expectSessionRequest("POST", "/v1/auth/logout");
       expect(result.data).toEqual({ success: true });
     });
 
-    it("omits the bearer token when no session is open", async () => {
+    it("omits the bearer token when none was captured", async () => {
       provider.post("/v1/auth/logout", () => jsonResponse({ success: true }));
 
       const store = makeStore();
-      await store.dispatch(cardManagementApi.endpoints.logout.initiate());
+      await store.dispatch(initiatePayCardLogout(null));
 
       expect(provider.sent().headers.get("authorization")).toBeNull();
+    });
+
+    it("does not start another renewal when logout answers 401", async () => {
+      provider.post("/v1/auth/logout", () => errorResponse(401, "unauthorized"));
+      const refreshCardSession = jest.fn(async () => ({ kind: "session-ended" as const }));
+      const store = makeStore("session-token", { refreshCardSession });
+
+      await store.dispatch(initiatePayCardLogout("session-token"));
+
+      expect(refreshCardSession).not.toHaveBeenCalled();
+      expect(provider.requests()).toHaveLength(1);
+    });
+
+    it("sends a captured bearer after the local session has ended", async () => {
+      provider.post("/v1/auth/logout", () => jsonResponse({ success: true }));
+      const readCardSession = jest.fn(async () => ({ token: null, sessionId: 2 }));
+      const store = makeStore(null, { readCardSession });
+
+      const logout = store.dispatch(initiatePayCardLogout("captured-token"));
+      await logout;
+
+      expect(provider.sent().headers.get("authorization")).toBe("Bearer captured-token");
+      expect(readCardSession).not.toHaveBeenCalled();
+      expect(JSON.stringify(logout.arg.originalArgs)).not.toContain("captured-token");
+    });
+
+    it("survives an API cache reset after the POST starts", async () => {
+      const answer = deferred<Response>();
+      provider.post("/v1/auth/logout", () => answer.promise);
+      const store = makeStore();
+      const logout = store.dispatch(initiatePayCardLogout("captured-token"));
+      await flushPendingRequests();
+
+      store.dispatch(cardManagementApi.util.resetApiState());
+
+      expect(provider.requests()).toHaveLength(1);
+      await expect(logout.unwrap()).rejects.toMatchObject({ name: "AbortError" });
+      answer.resolve(jsonResponse({ success: true }));
+      await flushPendingRequests();
     });
   });
 
@@ -781,9 +832,7 @@ describe("cardManagementApi requests", () => {
     });
 
     it("keeps a priority of zero, which is the first wallet charged", async () => {
-      provider.get(LINKED_WALLETS_PATH, () =>
-        jsonResponse([{ ...linkedWallets[0], priority: 0 }]),
-      );
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse([{ ...linkedWallets[0], priority: 0 }]));
 
       const result = await readLinkedWallets();
 

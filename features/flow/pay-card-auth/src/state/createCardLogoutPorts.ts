@@ -1,5 +1,5 @@
-import { cardManagementApi } from "@domain/api-card-management";
-import { cardSession } from "@features/platform-card";
+import { cardManagementApi, initiatePayCardLogout } from "@domain/api-card-management";
+import { cardSession, getCardSessionToken } from "@features/platform-card";
 import { clearAttempt } from "./attemptStore";
 import { setSignedIn } from "./slice";
 import type { CardLoginDispatch } from "./createCardLoginPorts";
@@ -12,7 +12,8 @@ import type { CardLogoutPorts } from "./types";
 export function createCardLogoutPorts(dispatch: CardLoginDispatch): CardLogoutPorts {
   return {
     logout: async () => {
-      await dispatch(cardManagementApi.endpoints.logout.initiate()).unwrap();
+      const accessToken = await getCardSessionToken();
+      await dispatch(initiatePayCardLogout(accessToken)).unwrap();
     },
     clearSession: () => cardSession.clear(),
     clearAttempt,

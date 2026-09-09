@@ -52,6 +52,30 @@ function buildProps(): PayCardToolProps {
   };
 }
 
+function buildAuth(): NonNullable<PayCardToolProps["auth"]> {
+  return {
+    session: { accessToken: "at_fake_access_token", refreshToken: "rt_fake_refresh_token" },
+    sessionError: null,
+    busy: false,
+    lastResult: { id: 1, message: "clear → cleared", failed: false },
+    readTokens: jest.fn(),
+    renewNow: jest.fn(),
+    breakAccessToken: jest.fn(),
+    breakRefreshToken: jest.fn(),
+    clearSession: jest.fn(),
+    fetchUser: jest.fn(),
+    mock: {
+      available: false,
+      response: "pass",
+      responses: [],
+      setResponse: jest.fn(),
+      renewals: 0,
+      resetRenewals: jest.fn(),
+      armUnauthorized: jest.fn(),
+    },
+  };
+}
+
 describe("PayCard (native)", () => {
   it("renders every section", () => {
     render(<PayCard {...buildProps()} />);
@@ -115,6 +139,16 @@ describe("PayCard (native)", () => {
     await user.press(screen.getByText("Go to Pay tab"));
     expect(onNavigateToPortfolio).toHaveBeenCalledTimes(1);
     expect(onNavigateToPayTab).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides the secure browser section on a host that has no browser", () => {
+    render(<PayCard {...buildProps()} />);
+    expect(screen.queryByText("Secure browser")).toBeNull();
+  });
+
+  it("shows the secure browser section when the host built one", () => {
+    render(<PayCard {...buildProps()} openSecureBrowser={jest.fn()} />);
+    expect(screen.getByText("Secure browser")).toBeTruthy();
   });
 
   it("opens the interaction screen and runs a probe", async () => {
@@ -418,5 +452,34 @@ describe("PayCard (native)", () => {
     const switches = screen.getAllByRole("switch");
     await user.press(switches[switches.length - 1]!);
     expect(props.onboarding.setStepDone).toHaveBeenCalledWith("step1", true);
+  });
+
+  it("sets every onboarding step at once, and resets them all", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    await user.press(screen.getByText("Set all done"));
+    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("all", true);
+
+    await user.press(screen.getByText("Reset all"));
+    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("all", false);
+  });
+
+  it("hides the auth sections and the toast on a host that builds no session controls", () => {
+    render(<PayCard {...buildProps()} />);
+
+    expect(screen.queryByText("Auth session")).toBeNull();
+    expect(screen.queryByText("Device secure storage")).toBeNull();
+  });
+
+  it("shows the auth sections and the last result when the host builds them", () => {
+    render(<PayCard {...buildProps()} auth={buildAuth()} />);
+
+    expect(screen.getByText("Auth session")).toBeTruthy();
+    expect(screen.getByText("Device secure storage")).toBeTruthy();
+    expect(screen.getByText("Send API requests")).toBeTruthy();
+    expect(screen.getByText("MSW Auth Renewal Mock")).toBeTruthy();
+    expect(screen.getByText("clear → cleared")).toBeTruthy();
   });
 });
