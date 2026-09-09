@@ -39,6 +39,7 @@
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
+    "watch": "tsc --noEmit --watch --customConditions node",
     "test": "jest",
     "coverage": "jest --coverage"
   },
