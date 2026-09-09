@@ -624,6 +624,22 @@ describe("getTransactionStatus", () => {
       expect(status.errors.sender).toBeInstanceOf(ConcordiumTokenTransferNotPermitted);
     });
 
+    // The funded testnet tokens declare 2 decimals, not the usual 6.
+    // `validatePayloadSize` encodes with the token's own magnitude, so this runs
+    // the PLT path at that width.
+    it("accepts a 2-decimal token transfer", async () => {
+      const { account, subAccount } = withToken({ magnitude: 2, balance: new BigNumber(60000) });
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { amount: new BigNumber(30000) }),
+      );
+
+      expect(status.errors).toEqual({});
+      expect(status.amount).toEqual(new BigNumber(30000));
+      expect(status.totalSpent).toEqual(new BigNumber(30000));
+    });
+
     it("rejects a token declaring more decimals than the device signs", async () => {
       const { account, subAccount } = withToken({ magnitude: 19 });
 

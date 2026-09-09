@@ -128,6 +128,19 @@ describe("resolveTokenSubAccounts", () => {
     expect(result).toEqual({ kind: "resolved", subAccounts: [], tokens: {} });
   });
 
+  // `Token1` and `tokmet` on testnet declare 2 decimals, not the 6 every other
+  // PLT uses, so this covers the agreeing-magnitude path at the second width.
+  it("builds a sub-account for a 2-decimal token", async () => {
+    useStore({ [TOKEN_ID]: makeToken(TOKEN_ID, 2) });
+
+    const result = await resolve({ accountTokens: [makeEntry({ balance: "60000", decimals: 2 })] });
+
+    if (result.kind !== "resolved") throw new Error("expected resolved");
+    const [sub] = result.subAccounts;
+    expect(sub.token.units[0].magnitude).toBe(2);
+    expect(sub.balance).toEqual(new BigNumber("60000"));
+  });
+
   it("publishes no balance for a token whose CAL magnitude disagrees with the chain", async () => {
     useStore({ [TOKEN_ID]: makeToken(TOKEN_ID, 8) });
 
