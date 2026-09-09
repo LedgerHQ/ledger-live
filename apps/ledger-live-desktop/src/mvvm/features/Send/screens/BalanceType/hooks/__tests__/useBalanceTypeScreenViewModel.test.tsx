@@ -52,7 +52,14 @@ const mockUpdateTransaction = jest.fn(
   (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({ ...tx, ...patch }),
 );
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  useAccountBridge: jest.fn(() => ({ updateTransaction: mockUpdateTransaction })),
+  useAccountBridgeOrNull: jest.fn((account: { id: string } | null) =>
+    account ? { updateTransaction: mockUpdateTransaction } : null,
+  ),
+}));
+
+jest.mock("@ledgerhq/live-countervalues-react", () => ({
+  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+  CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 // Coin-zcash balance helpers — use jest.fn() directly to avoid spread type errors
@@ -67,6 +74,10 @@ jest.mock("@ledgerhq/coin-zcash/logic/account/spendability", () => ({
 
 jest.mock("@ledgerhq/coin-zcash/bridge/note-reservation", () => ({
   getReservedNullifiers: jest.fn(),
+}));
+
+jest.mock("~/renderer/hooks/useAccountUnit", () => ({
+  useMaybeAccountUnit: jest.fn(() => ({ code: "ZEC", name: "ZEC", magnitude: 8 })),
 }));
 
 // Harness to expose hook API
@@ -278,5 +289,19 @@ describe("useBalanceTypeScreenViewModel", () => {
     render(<Harness ref={ref} />);
 
     expect(mockSetTransaction).not.toHaveBeenCalled();
+  });
+
+  test("formats transparent and shielded balances with locale and discreet settings", () => {
+    const ref = React.createRef<HookApi>();
+    render(<Harness ref={ref} />);
+
+    const vm = ref.current;
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      expect(vm.transparentOption.formattedBalance).toBeTruthy();
+      expect(vm.shieldedOption.formattedBalance).toBeTruthy();
+      expect(vm.transparentOption.isZero).toBe(false);
+      expect(vm.shieldedOption.isZero).toBe(false);
+    }
   });
 });
