@@ -1,4 +1,5 @@
 import type { RefObject } from "react";
+import type { View } from "react-native";
 import type { AddressParts } from "./utils/splitAddress";
 
 export type PayRequestTrackEvent = (event: string, params: Record<string, unknown>) => void;
@@ -145,11 +146,6 @@ export type RequestReceiveIconProps = Readonly<{
   network?: string;
 }>;
 
-/** Drops corner radius for one paint so the shared PNG has no transparent halo. */
-export type RequestReceiveCardHandle = {
-  withFlatSnapshot: <T>(run: (node: unknown) => Promise<T>) => Promise<T>;
-};
-
 /** Presentation inputs shared by the container props and the view props. */
 type RequestReceiveShell = Readonly<{
   isOpen: boolean;
@@ -158,10 +154,7 @@ type RequestReceiveShell = Readonly<{
   networkIcon?: RequestReceiveIconProps;
   /** Actions rendered, in order. Desktop uses `["save", "copy", "verify"]`. */
   visibleActions: readonly RequestReceiveActionId[];
-  /**
-   * Native only: host captures the shareable card through this handle. Left opaque for web.
-   */
-  cardRef?: RefObject<RequestReceiveCardHandle | null>;
+  cardRef?: RefObject<View | null>;
   onClose: () => void;
   verifyHint?: RequestReceiveVerifyHint;
 }>;
