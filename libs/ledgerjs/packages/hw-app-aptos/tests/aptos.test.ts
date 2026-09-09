@@ -62,5 +62,5 @@ test("signTransaction", async () => {
 test("should throw on invalid derivation path", async () => {
   const transport = await openTransportReplayer(new RecordStore());
   const aptos = new Aptos(transport);
-  return expect(aptos.getAddress("some invalid derivation path", false)).rejects.toThrow("input");
+  return expect(aptos.getAddress("some invalid derivation path", false)).rejects.toThrow("Invalid BIP32 path segment");
 });

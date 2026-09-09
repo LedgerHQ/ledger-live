@@ -1,5 +1,5 @@
 import type Transport from "@ledgerhq/hw-transport";
-import BIPPath from "bip32-path";
+import { resolveBip32Path } from "./bip32Path";
 /**
  * XRP API
  *
@@ -81,7 +81,7 @@ export default class Xrp {
     address: string;
     chainCode?: string;
   }> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    const bipPath = resolveBip32Path(path);
     const curveMask = ed25519 ? 0x80 : 0x40;
     const cla = 0xe0;
     const ins = 0x02;
@@ -128,7 +128,7 @@ export default class Xrp {
    * const signature = await xrp.signTransaction("44'/144'/0'/0/0", "12000022800000002400000002614000000001315D3468400000000000000C73210324E5F600B52BB3D9246D49C4AB1722BA7F32B7A3E4F9F2B8A1A28B9118CC36C48114F31B152151B6F42C1D61FE4139D34B424C8647D183142ECFC1831F6E979C6DA907E88B1CAD602DB59E2F");
    */
   async signTransaction(path: string, rawTxHex: string, ed25519?: boolean): Promise<string> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    const bipPath = resolveBip32Path(path);
     const rawTx = Buffer.from(rawTxHex, "hex");
     const curveMask = ed25519 ? 0x80 : 0x40;
     const apdus: {

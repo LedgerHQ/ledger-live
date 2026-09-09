@@ -22,23 +22,25 @@ export const padHexString = (str: string) => {
 };
 
 export function splitPath(path: string): number[] {
-  const splittedPath: number[] = [];
-
-  const paths = path.split("/");
-  paths.forEach(path => {
-    let value = parseInt(path, 10);
-    if (isNaN(value)) {
-      return; // FIXME shouldn't it throws instead?
+  const result: number[] = [];
+  const components = path.split("/");
+  for (const element of components) {
+    // Fail closed: reject empty/non-numeric/truncated segments (e.g. "NOTAINDEX", "12abc'").
+    if (!/^\d+'?$/.test(element)) {
+      throw new Error(`Invalid BIP32 path segment: ${element}`);
     }
-    // Detect hardened paths
-    if (path.length > 1 && path[path.length - 1] === "'") {
-      value += 0x80000000;
+    if (parseInt(element, 10) > 0x7fffffff) {
+      throw new Error(`Invalid BIP32 path segment: ${element}`);
     }
-    splittedPath.push(value);
-  });
-
-  return splittedPath;
+    let number = parseInt(element, 10);
+    if (element[element.length - 1] === "'") {
+      number += 0x80000000;
+    }
+    result.push(number);
+  }
+  return result;
 }
+
 
 export function hexBuffer(str: string): Buffer {
   if (!str) return Buffer.alloc(0);

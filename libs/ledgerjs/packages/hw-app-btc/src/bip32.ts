@@ -36,7 +36,22 @@ export function pathArrayToString(pathElements: number[]): string {
   return bippath.fromPathArray(pathElements).toString();
 }
 
+/**
+ * Parse a BIP32 path with bip32-path, failing closed on truncated/garbage segments
+ * that bip32-path would silently shorten (e.g. "12abc'" → 12).
+ * Optional leading "m" master prefix is allowed.
+ */
 export function pathStringToArray(path: string): number[] {
+  const segments = path.split("/");
+  const start = segments[0] === "m" ? 1 : 0;
+  for (let i = start; i < segments.length; i++) {
+    if (!/^\d+[hH']?$/.test(segments[i])) {
+      throw new Error(`Invalid BIP32 path segment: ${segments[i]}`);
+    }
+    if (parseInt(segments[i], 10) > 0x7fffffff) {
+      throw new Error(`Invalid BIP32 path segment: ${segments[i]}`);
+    }
+  }
   return bippath.fromString(path).toPathArray();
 }
 

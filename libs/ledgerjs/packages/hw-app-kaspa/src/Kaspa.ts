@@ -4,7 +4,7 @@ import { StatusCodes } from "@ledgerhq/hw-transport/errors";
 import { publicKeyToAddress } from "./kaspa-util";
 import { KaspaHwTransaction } from "./kaspaHwTransaction";
 
-import BIP32Path from "bip32-path";
+import { resolveBip32Path } from "./bip32Path";
 
 // Get Address
 const P1_NON_CONFIRM = 0x00;
@@ -29,8 +29,7 @@ const INS = {
 };
 
 function pathToBuffer(originalPath) {
-  const pathNums = BIP32Path.fromString(originalPath).toPathArray();
-  return serializePath(pathNums);
+  return serializePath(resolveBip32Path(originalPath));
 }
 
 function serializePath(path) {

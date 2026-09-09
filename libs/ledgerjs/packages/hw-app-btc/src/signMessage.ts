@@ -1,5 +1,5 @@
 import type Transport from "@ledgerhq/hw-transport";
-import bippath from "bip32-path";
+import { pathStringToArray } from "./bip32";
 import { MAX_SCRIPT_BLOCK } from "./constants";
 export async function signMessage(
   transport: Transport,
@@ -15,7 +15,7 @@ export async function signMessage(
   r: string;
   s: string;
 }> {
-  const paths = bippath.fromString(path).toPathArray();
+  const paths = pathStringToArray(path);
   const message = Buffer.from(messageHex, "hex");
   let offset = 0;
 

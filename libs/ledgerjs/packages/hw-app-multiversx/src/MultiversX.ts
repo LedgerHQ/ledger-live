@@ -1,6 +1,6 @@
 import type Transport from "@ledgerhq/hw-transport";
 import { Address } from "@multiversx/sdk-core";
-import BIPPath from "bip32-path";
+import { resolveBip32Path } from "./bip32Path";
 
 const CHUNK_SIZE = 150;
 const CURVE_MASK = 0x80;
@@ -83,7 +83,7 @@ export default class MultiversX {
     publicKey: string;
     address: string;
   }> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    const bipPath = resolveBip32Path(path);
     const data = this.serializePath(bipPath);
     const response = await this.transport.send(
       CLA,
@@ -114,7 +114,7 @@ export default class MultiversX {
    * result : Buffer;
    */
   async setAddress(path: string, display?: boolean) {
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    const bipPath = resolveBip32Path(path);
     const data = this.serializePath(bipPath);
     await this.transport.send(CLA, INS.SET_ADDRESS, display ? 0x01 : 0x00, 0x00, data, [
       SW_OK,
