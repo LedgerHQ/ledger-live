@@ -92,6 +92,7 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",

@@ -1,5 +1,6 @@
 import invariant from "invariant";
 import { AccountId, TransactionId } from "@hashgraph/sdk";
+import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import network from "@ledgerhq/live-network";
@@ -31,9 +32,6 @@ import type {
 import { apiClient } from "./api";
 import { hgraphClient } from "./hgraph";
 import { rpcClient } from "./rpc";
-
-const COUNTERVALUES_API =
-  process.env.LEDGER_COUNTERVALUES_API ?? "https://countervalues.live.ledger.com";
 
 const USD_FIAT: FiatCurrency = {
   type: "FiatCurrency",
@@ -207,6 +205,14 @@ export const enrichERC20Transfers = async ({
   return enrichedTransfers;
 };
 
+// getEnv("LEDGER_COUNTERVALUES_API") must be read lazily, per call — not cached in a
+// module-level const. The mobile debug toggle calls setEnv("LEDGER_COUNTERVALUES_API", ...)
+// at runtime; a const or process.env read at import time pins hedera to whatever was
+// configured at startup and ignores the toggle.
+//
+// Dropping @ledgerhq/live-env from this package is blocked: the intended replacement
+// (shared/api-services/countervalues/) is unreachable from a published package as a runtime
+// dep. Unblock shared/* access first, then migrate the endpoint.
 // note: this is currently called frequently by getTransactionStatus; LRU cache prevents duplicated requests
 export const getCurrencyToUSDRate = makeLRUCache(
   async (currency: Currency) => {
@@ -219,7 +225,7 @@ export const getCurrencyToUSDRate = makeLRUCache(
       const params = new URLSearchParams({ to: USD_FIAT.ticker, froms: fromId });
       const { data } = await network<Record<string, number>>({
         method: "GET",
-        url: `${COUNTERVALUES_API}/v3/spot/simple?${params.toString()}`,
+        url: `${getEnv("LEDGER_COUNTERVALUES_API")}/v3/spot/simple?${params.toString()}`,
       });
       const rate = data[fromId];
       invariant(rate, "no value returned from cvs api");
