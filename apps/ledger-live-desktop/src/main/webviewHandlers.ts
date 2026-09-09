@@ -22,6 +22,18 @@ const webviewHandlersGlobal = globalThis as WebviewHandlersGlobal;
 // app-wide and ownership is re-derived when a Live App <webview> is destroyed.
 const trackedDevToolsContents = new Set<Electron.WebContents>();
 
+// `getType()` throws on a destroyed WebContents; callers must still answer, so
+// an unresolvable type comes back as `undefined` rather than as an exception.
+const resolveContentsType = (
+  contents: Electron.WebContents | null | undefined,
+): string | undefined => {
+  try {
+    return contents && !contents.isDestroyed() ? contents.getType() : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 const isDevToolsContents = (contents: Electron.WebContents) => {
   try {
     return (
@@ -169,12 +181,22 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
     if (hardenedSessions.has(s)) return;
     hardenedSessions.add(s);
 
+    // The host renderer only ever runs in the default session, so a partitioned
+    // session is a guest by construction. On the default session `getType()` is
+    // the only signal, and a caller it can't resolve (null, or destroyed, which
+    // throws) must not inherit the host's `hid` grant.
+    const isGuestCaller = (contents: Electron.WebContents | null): boolean => {
+      if (s !== session.defaultSession) return true;
+      const type = resolveContentsType(contents);
+      return type === undefined || type === "webview";
+    };
+
     // Electron grants every request when no handler is installed, so one goes on
     // every session - including the default one, in case a <webview> is ever
-    // created without a partition. Callers are told apart by `getType()`.
+    // created without a partition.
     s.setPermissionRequestHandler((contents, permission, callback, requestDetails) => {
       const { mediaTypes } = requestDetails as Electron.MediaAccessPermissionRequest;
-      const isGuest = contents?.getType() === "webview";
+      const isGuest = isGuestCaller(contents);
       const granted = resolvePermissionRequest({ isGuest, permission, mediaTypes });
 
       // Electron granted everything before this allowlist existed, and a denial
@@ -191,7 +213,7 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
     });
 
     s.setPermissionCheckHandler((contents, permission) =>
-      resolvePermissionCheck({ isGuest: contents?.getType() === "webview", permission }),
+      resolvePermissionCheck({ isGuest: isGuestCaller(contents), permission }),
     );
 
     // Denied explicitly rather than left to fail on an Electron default.
@@ -201,7 +223,7 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
       // Only harden responses loaded by a guest <webview> to avoid affecting
       // the host renderer or unrelated BrowserViews. `getType()` returns
       // "webview" for guest WebContents.
-      const isWebviewGuest = details.webContents?.getType() === "webview";
+      const isWebviewGuest = resolveContentsType(details.webContents) === "webview";
       const isFrameDocument =
         details.resourceType === "mainFrame" || details.resourceType === "subFrame";
       if (!isWebviewGuest || !isFrameDocument) {
