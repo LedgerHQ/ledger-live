@@ -42,8 +42,11 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
   const { navigation } = useFlowWizard();
   const { isScannerOpen } = useRecipientScanner();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
-    useContactsFeature("desktop");
+  const {
+    isEnabled: isContactsFeatureEnabled,
+    eligibleAddressFamilies,
+    excludedCurrencyIds,
+  } = useContactsFeature("desktop");
 
   const account = state.account.account;
   const parentAccount = state.account.parentAccount ?? undefined;
@@ -54,7 +57,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
   const trackingProperties = useMemo(() => {
     const contactsOnNetwork =
       isContactsFeatureEnabled &&
-      isEligibleAddressCurrency(eligibleAddressFamilies, currency ?? undefined)
+      isEligibleAddressCurrency(eligibleAddressFamilies, currency ?? undefined, excludedCurrencyIds)
         ? filterContactsByNetwork(contacts, currency?.id ?? "")
         : [];
 
@@ -68,6 +71,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     contacts,
     currency,
     eligibleAddressFamilies,
+    excludedCurrencyIds,
     isContactsFeatureEnabled,
     state.account.parentAccount,
   ]);

@@ -2689,7 +2689,7 @@
     "addressMatched": "Address matched",
     "addressNotFound": "Address not found",
     "alreadyUsed": "Already used · {{date}}",
-    "addressBookUnsupported": "{{family}} isn't supported yet",
+    "addressBookUnsupported": "{{family}} is not supported yet",
     "recentSendWillAppear": "Your recent send will appear here",
     "contactsWillAppear": "Contacts will appear here",
     "selectAddress": "Select address",
@@ -7888,6 +7888,14 @@
       "title": "This transaction cannot be prepared",
       "description": "The token's details are outside what your Ledger device accepts, so the transaction cannot be built. Please contact Ledger Support."
     },
+    "ConcordiumAppOutdatedError": {
+      "title": "App update required",
+      "description": "The Concordium app on your Ledger device does not support token transfers. Update it in My Ledger and try again."
+    },
+    "ConcordiumSignerProtocolError": {
+      "title": "Something went wrong. Please reconnect your device",
+      "description": "The Concordium app could not process the transaction. If the problem continues, please contact Ledger Support."
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
@@ -9051,8 +9059,8 @@
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
-    "unsupportedAssetTooltip": "{{asset}} isn't supported yet.",
-    "unsupportedNetworkTooltip": "{{network}} network isn't supported yet.",
+    "unsupportedAssetTooltip": "{{asset}} is not supported yet",
+    "unsupportedNetworkTooltip": "{{network}} network is not supported yet",
     "notAvailableYet": "Not available yet",
     "selectAccount": "Select account",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
@@ -9741,7 +9749,7 @@
     },
     "contacts": {
       "title": "Contacts",
-      "description": "Save and manage external wallet addresses."
+      "description": "Manage your contacts"
     },
     "explore": "Explore all Ledger devices"
   },
@@ -9821,7 +9829,7 @@
     },
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
-      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
+      "namingDisclaimer": "For privacy, avoid full names. Use a nickname or just a first name + initial, e.g. 'John S.'",
       "invalidNameError": "Special characters are not allowed.",
       "duplicateNameError": "This contact name is already in use."
     },

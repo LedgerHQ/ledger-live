@@ -9,12 +9,14 @@ export const lwmContacts = flagWith(
     eligibleAddressFamilies: z
       .array(z.string())
       .default(() => [...DEFAULT_ELIGIBLE_ADDRESS_FAMILIES]),
+    excludedCurrencyIds: z.array(z.string()).optional(),
   },
   {
     enabled: false,
     params: {
       newBadge: false,
       eligibleAddressFamilies: [...DEFAULT_ELIGIBLE_ADDRESS_FAMILIES],
+      excludedCurrencyIds: [],
     },
   },
 );

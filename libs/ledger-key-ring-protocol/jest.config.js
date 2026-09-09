@@ -1,5 +1,5 @@
 module.exports = {
-  setupFilesAfterEnv: ["./jest.setup.js", "@ledgerhq/test-quarantine/jest-retries"],
+  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",

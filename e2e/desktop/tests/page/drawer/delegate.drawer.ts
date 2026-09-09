@@ -5,8 +5,7 @@ import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { expect } from "@playwright/test";
 
 export class DelegateDrawer extends Drawer {
-  private provider = (provider: string) =>
-    this.page.getByTestId("drawer-content").locator(`text=${provider}`).first();
+  private provider = (provider: string) => this.content.getByText(provider).first();
   private amountValue = this.page.getByTestId("amountReceived-drawer").first();
   private transactionType = this.page.getByTestId("transaction-type").first();
   private operationType = this.page.getByTestId("operation-type");
@@ -16,6 +15,11 @@ export class DelegateDrawer extends Drawer {
     if (account.account.currency === Currency.ATOM) {
       await expect(this.provider(account.provider)).toBeVisible();
     }
+  }
+
+  @step("Verify validator group is $0")
+  async validatorGroupIsVisible(validatorGroup: string) {
+    await expect(this.provider(validatorGroup)).toBeVisible();
   }
 
   @step("Verify amount is visible")

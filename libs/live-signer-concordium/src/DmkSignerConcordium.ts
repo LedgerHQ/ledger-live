@@ -7,7 +7,7 @@ import {
   encodeWord64,
   type Address,
   type CredentialDeploymentTransaction,
-  type Transaction,
+  type AnyTransaction,
   type SigningResult,
 } from "@ledgerhq/concordium-core";
 import {
@@ -74,7 +74,7 @@ export class DmkSignerConcordium implements ConcordiumSigner {
     return { address: publicKey, publicKey };
   }
 
-  async signTransaction(tx: Transaction, path: string, maxFee: bigint): Promise<SigningResult> {
+  async signTransaction(tx: AnyTransaction, path: string, maxFee: bigint): Promise<SigningResult> {
     const serialized = serializeTransaction(tx);
 
     const { observable } = this.signer.signTransaction(path, new Uint8Array(serialized), maxFee, {
