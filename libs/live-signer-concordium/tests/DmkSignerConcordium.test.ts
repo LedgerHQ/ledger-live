@@ -10,8 +10,17 @@ import {
 import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
 import { UserRefusedOnDevice } from "../src/errors";
 import { SignerConcordiumBuilder } from "@ledgerhq/device-signer-kit-concordium";
-import { TransactionType, AccountAddress } from "@ledgerhq/concordium-core";
-import type { Transaction, CredentialDeploymentTransaction } from "@ledgerhq/concordium-core";
+import {
+  TransactionType,
+  AccountAddress,
+  serializeTokenUpdate,
+  encodePltTransferOperations,
+} from "@ledgerhq/concordium-core";
+import type {
+  Transaction,
+  TokenUpdateTransaction,
+  CredentialDeploymentTransaction,
+} from "@ledgerhq/concordium-core";
 import { of } from "rxjs";
 import { DmkSignerConcordium } from "../src/DmkSignerConcordium";
 
@@ -213,6 +222,46 @@ describe("DmkSignerConcordium", () => {
       expect(mockSignerConcordium.signTransaction).toHaveBeenCalledWith(
         mockPath,
         expect.any(Uint8Array),
+        mockMaxFee,
+        { skipOpenApp: true },
+      );
+    });
+
+    // The PLT path relies on `serializeTransaction` dispatching on the
+    // TokenUpdate discriminator. Nothing else in either package pushes real PLT
+    // bytes through the signer, so an edit to the dispatch or the framing would
+    // otherwise break PLT signing with a green suite.
+    it("serializes a TokenUpdate through the PLT serializer", async () => {
+      const recipient = AccountAddress.fromBase58(
+        "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G",
+      );
+      const pltTx: TokenUpdateTransaction = {
+        header: {
+          sender: AccountAddress.fromBase58("3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G"),
+          nonce: 1n,
+          expiry: 1000n,
+          energyAmount: 1080n,
+        },
+        type: TransactionType.TokenUpdate,
+        payload: {
+          tokenId: Buffer.from("Token1", "utf-8"),
+          operations: encodePltTransferOperations({ recipient, amount: 60000n, decimals: 2 }),
+        },
+      };
+      const expected = serializeTokenUpdate(pltTx);
+      mockSignerConcordium.signTransaction.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Completed,
+          output: new Uint8Array(64).fill(0xcc),
+        }),
+      });
+
+      const result = await signer.signTransaction(pltTx, mockPath, mockMaxFee);
+
+      expect(result.serialized).toBe(expected.toString("hex"));
+      expect(mockSignerConcordium.signTransaction).toHaveBeenCalledWith(
+        mockPath,
+        new Uint8Array(expected),
         mockMaxFee,
         { skipOpenApp: true },
       );
