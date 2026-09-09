@@ -112,21 +112,12 @@ export class DmkSignerCosmos implements CosmosSigner {
     });
   }
 
-  public async sign(
-    path: number[],
-    buffer: Buffer,
-    transactionType?: string,
-  ): Promise<CosmosSignature> {
+  public async sign(path: number[], buffer: Buffer, hrp?: string): Promise<CosmosSignature> {
     const derivationPath = path.join("/");
 
-    const { observable } = this.signer.signTransaction(
-      derivationPath,
-      transactionType ?? DEFAULT_HRP,
-      buffer,
-      {
-        skipOpenApp: true,
-      },
-    );
+    const { observable } = this.signer.signTransaction(derivationPath, hrp ?? DEFAULT_HRP, buffer, {
+      skipOpenApp: true,
+    });
 
     return new Promise<CosmosSignature>((resolve, reject) => {
       observable.subscribe({

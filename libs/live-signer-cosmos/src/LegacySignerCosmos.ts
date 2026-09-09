@@ -25,8 +25,8 @@ export class LegacySignerCosmos implements CosmosSigner {
     return this.signer.getAddressAndPubKey(path, hrp, boolDisplay);
   }
 
-  async sign(path: number[], buffer: Buffer, transactionType?: string): Promise<CosmosSignature> {
-    return this.signer.sign(path, buffer, transactionType);
+  async sign(path: number[], buffer: Buffer, hrp?: string): Promise<CosmosSignature> {
+    return this.signer.sign(path, buffer, hrp);
   }
 
   async getAddress(path: string, hrp: string, boolDisplay?: boolean): Promise<CosmosAddress> {
