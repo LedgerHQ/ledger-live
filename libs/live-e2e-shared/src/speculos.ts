@@ -907,6 +907,9 @@ export const activateContractData = withDeviceController(({ getButtonsController
  * Verified against Ethereum 1.22.3 on nanos+ 1.6.1, whose menu is
  * `<app> is ready → App settings → Blind signing → … → Back`.
  */
+/** Every app's idle screen reads "<app> is ready", so this matches without naming the app. */
+const IDLE_SCREEN_LABEL = "is ready";
+
 export const enableBlindSigning = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
@@ -923,6 +926,10 @@ export const enableBlindSigning = withDeviceController(({ getButtonsController }
   await buttons.both();
   // "Back" lands on the App settings entry of the top-level menu, one step short of idle.
   await buttons.left();
+  // Leaving the device parked in the menu is not a visible failure: the app simply stops
+  // answering sign APDUs, which surfaces much later as an opaque transport error. Assert we are
+  // back on the idle screen so a navigation that drifted is reported here instead.
+  await waitFor(IDLE_SCREEN_LABEL);
 });
 
 export const goToSettings = withDeviceController(({ getButtonsController }) => async () => {
