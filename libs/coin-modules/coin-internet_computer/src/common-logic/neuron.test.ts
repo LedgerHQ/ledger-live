@@ -843,17 +843,32 @@ describe("applyNeuronCommand", () => {
     expect(patched?.followees).toEqual([]);
   });
 
-  it("restores the decayed voting power when following is confirmed", () => {
-    const decayed = locked({
+  const decayed = () =>
+    locked({
       votingPowerRefreshedTimestampSeconds: 1n,
       decidingVotingPower: 0n,
       potentialVotingPower: 500n,
     });
 
-    const patched = applyTo(decayed, command({ type: "refresh_voting_power" }));
+  it("restores the decayed voting power when following is confirmed", () => {
+    const patched = applyTo(decayed(), command({ type: "refresh_voting_power" }));
 
     expect(patched?.votingPowerRefreshedTimestampSeconds).toBe(BigInt(NOW));
     expect(patched?.decidingVotingPower).toBe(500n);
+  });
+
+  // The canister restarts the periodic-confirmation clock on a successful follow, exactly as on
+  // refresh_voting_power (governance.rs, `follow`). Leaving the snapshot's clock alone kept the
+  // countdown and the banner asking for a confirmation that setting following had just given.
+  it("restarts the voting-power clock when following is set", () => {
+    const patched = applyTo(
+      decayed(),
+      command({ type: "follow", followTopic: "Governance", followeesIds: ["3"] }),
+    );
+
+    expect(patched?.votingPowerRefreshedTimestampSeconds).toBe(BigInt(NOW));
+    expect(patched?.decidingVotingPower).toBe(500n);
+    expect(patched?.followees).toEqual([{ topic: KNOWN_TOPICS.Governance, followeeIds: [3n] }]);
   });
 
   it("carries the auto-stake setting over", () => {

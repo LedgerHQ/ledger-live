@@ -438,6 +438,21 @@ const patchDissolveState = (
 };
 
 /**
+ * The neuron with its periodic-confirmation clock restarted. Restarting the clock is what restores
+ * the power: neuronDecidingVotingPower derives the figure from this timestamp, so the decoded
+ * snapshot field is brought along only to keep the two from disagreeing. `refresh_voting_power` does
+ * exactly this, and the canister does the same on the way out of a successful `follow`
+ * (governance.rs, `follow` → `refresh_voting_power`), which is what keeps the countdown and the
+ * banner from asking for a confirmation that setting following just gave.
+ */
+const withRefreshedVotingPower = (neuron: ICPNeuron, nowSeconds: number): ICPNeuron => ({
+  ...neuron,
+  votingPowerRefreshedTimestampSeconds: BigInt(nowSeconds),
+  decidingVotingPower:
+    neuron.potentialVotingPower ?? neuronPotentialVotingPower(neuron, nowSeconds),
+});
+
+/**
  * The neuron as it stands after a `manage_neuron` command the canister has already accepted, or
  * `undefined` when the result cannot be reproduced locally.
  *
@@ -481,7 +496,7 @@ const patchNeuron = (
       // The command replaces the whole list for the topic, so an empty one clears it rather than
       // leaving an entry with no followees.
       return {
-        ...neuron,
+        ...withRefreshedVotingPower(neuron, nowSeconds),
         followees: followeeIds.length === 0 ? others : [...others, { topic, followeeIds }],
       };
     }
@@ -499,15 +514,7 @@ const patchNeuron = (
       };
     }
     case "refresh_voting_power":
-      return {
-        ...neuron,
-        // Restarting the clock is what restores the power: neuronDecidingVotingPower derives the
-        // figure from this timestamp, so the decoded snapshot field is brought along only to keep
-        // the two from disagreeing.
-        votingPowerRefreshedTimestampSeconds: BigInt(nowSeconds),
-        decidingVotingPower:
-          neuron.potentialVotingPower ?? neuronPotentialVotingPower(neuron, nowSeconds),
-      };
+      return withRefreshedVotingPower(neuron, nowSeconds);
     default:
       return undefined;
   }
