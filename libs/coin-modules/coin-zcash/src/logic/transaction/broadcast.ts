@@ -41,7 +41,12 @@ export async function assertTransparentInputsUnspent({
 
   for (const txHash of uniqueHashes) {
     const tx = await fetchUtxoTx(txHash).catch(() => {
-      log(ZCASH_LOG_TYPE, "broadcast guard: source transaction not found", { hash: txHash });
+      // Any fetchUtxoTx failure lands here, not just a genuine "not found"
+      // (a network error or timeout looks the same) -- the message reflects
+      // that broader failure mode rather than asserting a specific cause.
+      log(ZCASH_LOG_TYPE, "broadcast guard: failed to fetch source transaction", {
+        hash: txHash,
+      });
       throw new InvalidTransactionError("tx not found");
     });
 

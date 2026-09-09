@@ -131,9 +131,11 @@ describe("assertTransparentInputsUnspent", () => {
       }),
     ).rejects.toThrow("tx not found");
 
-    expect(mockLog).toHaveBeenCalledWith("zcash", "broadcast guard: source transaction not found", {
-      hash: PREVOUT_HASH,
-    });
+    expect(mockLog).toHaveBeenCalledWith(
+      "zcash",
+      "broadcast guard: failed to fetch source transaction",
+      { hash: PREVOUT_HASH },
+    );
   });
 });
 
