@@ -996,6 +996,9 @@
     "TezosStakeBlockedByPendingUnstake": {
       "title": "Unstaking from your previous validator must finish first"
     },
+    "TezosStakeAmountTooSmall": {
+      "title": "This amount is too small to stake"
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
