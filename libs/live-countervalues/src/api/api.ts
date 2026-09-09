@@ -1,5 +1,4 @@
 import network from "@ledgerhq/live-network";
-import URL from "url";
 import { getEnv } from "@ledgerhq/live-env";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { formatPerGranularity, inferCurrencyAPIID, pairId } from "../helpers";
@@ -44,15 +43,12 @@ const api: CounterValuesAPI = {
       new Date(Math.ceil(end_date_ms_since_epoch / granularity_ms) * granularity_ms),
     );
 
-    const url = URL.format({
-      pathname: `${baseURL()}/v3/historical/${granularity}/simple`,
-      query: {
-        from: inferCurrencyAPIID(from),
-        to: inferCurrencyAPIID(to),
-        start: corrected_start_date,
-        end: corrected_end_date,
-      },
-    });
+    const url = `${baseURL()}/v3/historical/${granularity}/simple?${new URLSearchParams({
+      from: inferCurrencyAPIID(from),
+      to: inferCurrencyAPIID(to),
+      start: corrected_start_date,
+      end: corrected_end_date,
+    }).toString()}`;
     const { data } = await network<Record<string, number>>({ method: "GET", url });
     return data;
   },
@@ -95,13 +91,10 @@ const api: CounterValuesAPI = {
     const map = new Map();
     await promiseAllBatched(4, allBatches, async ([froms, to]) => {
       const fromIds = froms.map(inferCurrencyAPIID);
-      const url = URL.format({
-        pathname: `${baseURL()}/v3/spot/simple`,
-        query: {
-          to: inferCurrencyAPIID(to),
-          froms: fromIds.join(","),
-        },
-      });
+      const url = `${baseURL()}/v3/spot/simple?${new URLSearchParams({
+        to: inferCurrencyAPIID(to),
+        froms: fromIds.join(","),
+      }).toString()}`;
 
       const { data } = await network<Record<string, number>>({ method: "GET", url });
 

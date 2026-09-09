@@ -13,12 +13,9 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/env",
-  "publishConfig": {
-    "access": "public"
-  },
-  "main": "lib/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
+  "private": true,
+  "main": "src/types.ts",
+  "types": "src/types.ts",
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/types-live": "workspace:*",
@@ -39,49 +36,18 @@
     "prando": "6"
   },
   "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "pnpm knip --directory ../.. -W libs/live-countervalues",
     "test": "jest",
     "coverage": "jest --coverage"
   },
-  "typesVersions": {
-    "*": {
-      "*.json": [
-        "*.json"
-      ],
-      "*": [
-        "lib/*"
-      ],
-      "lib/*": [
-        "lib/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
-      ]
-    }
-  },
   "exports": {
-    "./lib/*": "./lib/*.js",
-    "./lib/*.js": "./lib/*.js",
-    "./lib-es/*": "./lib-es/*.js",
-    "./lib-es/*.js": "./lib-es/*.js",
-    "./*": {
-      "@ledgerhq/source": "./src/*.ts",
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    "./*.js": {
-      "@ledgerhq/source": "./src/*.ts",
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
+    "./types": "./src/types.ts",
+    "./logic": "./src/logic.ts",
+    "./helpers": "./src/helpers.ts",
+    "./mock": "./src/mock.ts",
+    "./api": "./src/api/index.ts",
     "./package.json": "./package.json"
   }
 }
