@@ -103,7 +103,6 @@ export const toNeuronsData = (
 // ---- state / dissolve --------------------------------------------------------------------------
 
 export type NeuronActionPermissions = {
-  canDisburse: boolean;
   canStartDissolving: boolean;
   canStopDissolving: boolean;
 };
@@ -119,7 +118,10 @@ export type NeuronActionPermissions = {
  *
  * The snapshot verdict stands in two cases. Spawning is decided by `spawn_at_timestamp_seconds`,
  * which the wallet does not decode, and a spawning child's dissolve state is an unlock time seven
- * days out — read on its own that is Dissolving, which would re-offer Stake maturity. And with no
+ * days out — read on its own that is Dissolving, which would re-offer Stake maturity. It stands past
+ * the seven days too: the mint clears `spawn_at` and leaves the child dissolved on-chain, which the
+ * snapshot cannot see, so the card keeps saying Spawning and offers nothing until a device-signed
+ * read — the safe direction, and the one place this helper chooses not to be live. And with no
  * dissolve state there is nothing to derive from.
  */
 export const neuronState = (
@@ -138,22 +140,20 @@ export const neuronState = (
     : NeuronState.Dissolved;
 };
 
-/** Which lifecycle actions the neuron's current state allows. */
+/**
+ * Which dissolve transitions the neuron's current state allows. Disburse is not among them: it has
+ * a fee floor as well as a state, so it is neuronCanDisburse, beside split, spawn and stake
+ * maturity — a state-only answer here reads as "may disburse", and once was.
+ */
 export const getNeuronActionPermissions = (
   neuron: ICPNeuron,
   nowSeconds?: number,
 ): NeuronActionPermissions => {
-  const base = { canDisburse: false, canStartDissolving: false, canStopDissolving: false };
-  switch (neuronState(neuron, nowSeconds)) {
-    case NeuronState.Locked:
-      return { ...base, canStartDissolving: true };
-    case NeuronState.Dissolving:
-      return { ...base, canStopDissolving: true };
-    case NeuronState.Dissolved:
-      return { ...base, canDisburse: true };
-    default:
-      return base;
-  }
+  const state = neuronState(neuron, nowSeconds);
+  return {
+    canStartDissolving: state === NeuronState.Locked,
+    canStopDissolving: state === NeuronState.Dissolving,
+  };
 };
 
 /** A dissolved neuron sets (not increases) its dissolve delay when re-locking. */
@@ -675,8 +675,12 @@ export const neuronCanAddHotKey = (neuron: ICPNeuron): boolean =>
 /**
  * The least a top-up may add. `refresh_neuron` reads the neuron's ledger balance once the transfer
  * has settled and refuses it under `neuron_minimum_stake_e8s`, with the ICP already in the neuron's
- * account. That balance is the cached stake as of the last read — rejection fees are burned only at
- * disburse — so the shortfall is what the cached stake is short of the minimum.
+ * account. That balance is at least the cached stake as of the last read (rejection fees are burned
+ * only at disburse), and more when an earlier top-up settled but its refresh was refused
+ * (ICPStakeNotRefreshed): that ICP counts on-chain but is invisible here, and a `list_neurons` read
+ * does not surface it either — only a successful refresh moves the cached stake. So this asks for
+ * the whole shortfall the cached stake shows: never less than the ledger accepts, sometimes more.
+ * Reading the account's live balance would make it exact.
  */
 export const minTopUpAmount = (neuron: ICPNeuron): bigint => {
   const missing = BigInt(MIN_NEURON_STAKE) - neuron.cachedNeuronStakeE8s;

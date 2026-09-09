@@ -186,7 +186,7 @@ const validateFollow = (
   if (!neuron) return new ICPNeuronNotFound();
   // Absent is Unspecified, the default the builder applies.
   if (followTopic !== undefined && !(followTopic in FOLLOWABLE_TOPICS)) {
-    return new ICPFollowTopicNotAllowed("", { topic: followTopic });
+    return new ICPFollowTopicNotAllowed();
   }
   return undefined;
 };
@@ -201,12 +201,11 @@ const validateDisburse = (neuron: ICPNeuron | undefined): Error | undefined => {
 
 // refresh_neuron refuses a balance under the minimum stake once the transfer has settled, leaving
 // the ICP in the neuron's account until a later top-up reaches it. The shortfall is quoted in ICP,
-// the unit the amount field takes.
+// the unit the amount field takes, and is the one the last read shows — see minTopUpAmount.
 const validateTopUpAmount = (neuron: ICPNeuron, amount: BigNumber): Error | undefined => {
   const missing = minTopUpAmount(neuron);
   if (!amount.isInteger() || BigInt(amount.toFixed(0)) >= missing) return undefined;
   return new ICPTopUpBelowMinimumStake("", {
-    missingE8s: missing.toString(),
     missing: new BigNumber(missing.toString()).div(E8S_PER_ICP).toString(),
   });
 };

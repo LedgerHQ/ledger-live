@@ -8346,11 +8346,11 @@
     },
     "ICPTopUpBelowMinimumStake": {
       "title": "Top-up too small",
-      "description": "A neuron's balance has to reach 1 ICP after a top-up, so add at least {{missing}} ICP. A smaller transfer settles in the neuron's account but is not counted until a later top-up reaches the minimum."
+      "description": "A neuron's balance has to reach 1 ICP after a top-up. As of the last sync this neuron needs at least {{missing}} ICP more. A smaller transfer settles in the neuron's account but is not counted until a later top-up reaches the minimum."
     },
     "ICPStakeNotRefreshed": {
       "title": "Stake transferred, neuron not updated",
-      "description": "The ICP was transferred to the neuron's account, but Internet Computer governance refused to update the neuron from it. {{reason}} Nothing is lost: the amount stays in the neuron's account and is counted by the next top-up that brings the balance to at least 1 ICP."
+      "description": "The ICP was transferred to the neuron's account, but Internet Computer governance refused to update the neuron from it. {{reason}} Nothing is lost: the amount stays in the neuron's account and counts toward the next top-up that brings the balance to at least 1 ICP. Ledger Live cannot see it there yet, so the amount field still asks for the full shortfall the last sync shows."
     },
     "ICPStakeMemoNotRecoverable": {
       "title": "Cannot top up this neuron",

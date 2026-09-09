@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import { useMemo } from "react";
-import { neuronState } from "@ledgerhq/coin-internet_computer/common-logic/neuron";
 import {
   derivePrincipalFromPubkey,
   neuronStake,
+  neuronState,
   recoverStakeMemo,
 } from "@ledgerhq/coin-internet_computer/logic";
 import { ICP_FEES, MIN_NEURON_STAKE } from "./consts";

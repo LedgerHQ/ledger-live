@@ -166,7 +166,7 @@ export class ICPTooManyHotKeys extends Error {
 }
 
 // The top-up would leave the neuron's balance under the minimum stake, which refresh_neuron refuses
-// once the transfer has settled ({ missing } is the shortfall in ICP, { missingE8s } in e8s).
+// once the transfer has settled ({ missing } is the shortfall in ICP, as of the last read).
 export class ICPTopUpBelowMinimumStake extends Error {
   override name = "ICPTopUpBelowMinimumStake";
   [key: string]: unknown;

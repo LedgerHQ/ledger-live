@@ -321,31 +321,34 @@ describe("neuronState", () => {
 });
 
 describe("state permissions & dissolve duration", () => {
-  it("maps state to the allowed lifecycle action", () => {
-    expect(getNeuronActionPermissions(inState(NeuronState.Locked), NOW_SECONDS)).toMatchObject({
+  it("maps state to the allowed dissolve transition", () => {
+    expect(getNeuronActionPermissions(inState(NeuronState.Locked), NOW_SECONDS)).toEqual({
       canStartDissolving: true,
+      canStopDissolving: false,
     });
-    expect(getNeuronActionPermissions(inState(NeuronState.Dissolving), NOW_SECONDS)).toMatchObject({
+    expect(getNeuronActionPermissions(inState(NeuronState.Dissolving), NOW_SECONDS)).toEqual({
+      canStartDissolving: false,
       canStopDissolving: true,
     });
-    expect(getNeuronActionPermissions(inState(NeuronState.Dissolved), NOW_SECONDS)).toMatchObject({
-      canDisburse: true,
+    expect(getNeuronActionPermissions(inState(NeuronState.Dissolved), NOW_SECONDS)).toEqual({
+      canStartDissolving: false,
+      canStopDissolving: false,
     });
   });
 
   // Stop dissolving on a dissolved neuron is refused with RequiresDissolving; Disburse is the one
   // action it has, and the delay it sets from there starts at zero.
-  it("offers Disburse, not Stop dissolving, once a dissolving neuron's unlock time has passed", () => {
+  it("withholds Stop dissolving once a dissolving neuron's unlock time has passed", () => {
     const stale = inState(NeuronState.Dissolving, {
       dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - 1) },
     });
 
     expect(getNeuronActionPermissions(stale, NOW_SECONDS)).toEqual({
-      canDisburse: true,
       canStartDissolving: false,
       canStopDissolving: false,
     });
     expect(isNeuronDissolved(stale, NOW_SECONDS)).toBe(true);
+    expect(neuronCanDisburse(stale, BigInt(ICP_FEES), NOW_SECONDS)).toBe(true);
   });
 
   it("returns the fixed delay when locked and the countdown when dissolving", () => {
