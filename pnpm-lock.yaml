@@ -274,8 +274,8 @@ catalogs:
       specifier: ^0.4.14
       version: 0.4.14
     '@solana/web3.js':
-      specifier: ^1.99.0-beta.0
-      version: 1.99.0-beta.0
+      specifier: ^1.99.0
+      version: 1.99.0
     '@swc/core':
       specifier: 1.15.11
       version: 1.15.11
@@ -10424,10 +10424,10 @@ importers:
         version: link:../../types-live
       '@solana/spl-token':
         specifier: 'catalog:'
-        version: 0.4.14(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
+        version: 0.4.14(@solana/web3.js@1.99.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
       '@solana/web3.js':
         specifier: 'catalog:'
-        version: 1.99.0-beta.0(@typescript/typescript6@6.0.2)
+        version: 1.99.0(@typescript/typescript6@6.0.2)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11752,10 +11752,10 @@ importers:
         version: link:../../../shared/env
       '@solana/spl-token':
         specifier: 'catalog:'
-        version: 0.4.14(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
+        version: 0.4.14(@solana/web3.js@1.99.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
       '@solana/web3.js':
         specifier: 'catalog:'
-        version: 1.99.0-beta.0(@typescript/typescript6@6.0.2)
+        version: 1.99.0(@typescript/typescript6@6.0.2)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -13554,7 +13554,7 @@ importers:
         version: link:../../shared/api-services
       '@solana/web3.js':
         specifier: 'catalog:'
-        version: 1.99.0-beta.0(@typescript/typescript6@6.0.2)
+        version: 1.99.0(@typescript/typescript6@6.0.2)
       '@svgr/core':
         specifier: ^5.5.0
         version: 5.5.0
@@ -18227,7 +18227,7 @@ importers:
         version: 2.3.3(@ton/crypto@3.3.0)
       '@solana/web3.js':
         specifier: 'catalog:'
-        version: 1.99.0-beta.0(@typescript/typescript6@6.0.2)
+        version: 1.99.0(@typescript/typescript6@6.0.2)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -25961,8 +25961,8 @@ packages:
   '@solana/web3.js@1.98.4':
     resolution: {integrity: sha512-vv9lfnvjUsRiq//+j5pBdXig0IQdtzA0BRZ3bXEP4KaIyF1CcaydWqgyzQgfZMNIsWNWmG+AUHwPy4AHOD6gpw==}
 
-  '@solana/web3.js@1.99.0-beta.0':
-    resolution: {integrity: sha512-hvDoGOocYkrg0YXLHmZe8TOtG2ojJYWJRUCaiQWFH9wmRXLdkALqukqhVRfhN/WFhsLi6Yj+7qPhn/iMipN5vw==}
+  '@solana/web3.js@1.99.0':
+    resolution: {integrity: sha512-QZYQ2T1z6xWisoyALPq25i/QZTsRlM02BABtAsfaQ1p8wX4SdTfxrKTRue/ZZqrhNVh5oL7T/DUFiTS9DRgxow==}
 
   '@stablelib/binary@1.0.1':
     resolution: {integrity: sha512-ClJWvmL6UBM/wjkvv/7m5VP3GMr9t0osr4yVgLZsLCOz4hGN9gIAFEqnJ0TsSMAN+n840nf2cHZnA5/KFqHC7Q==}
@@ -45374,7 +45374,7 @@ snapshots:
     dependencies:
       '@ethersproject/bytes': 5.8.0
       '@ethersproject/logger': 5.8.0
-      bn.js: 5.2.2
+      bn.js: 5.2.5
 
   '@ethersproject/bytes@5.7.0':
     dependencies:
@@ -45459,7 +45459,7 @@ snapshots:
       '@ethersproject/bytes': 5.8.0
       '@ethersproject/logger': 5.8.0
       '@ethersproject/properties': 5.8.0
-      bn.js: 5.2.2
+      bn.js: 5.2.5
       elliptic: 6.6.1
       hash.js: 1.1.7
 
@@ -53199,7 +53199,7 @@ snapshots:
   '@solana/buffer-layout-utils@0.2.0(@typescript/typescript6@6.0.2)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
-      '@solana/web3.js': 1.98.4(@typescript/typescript6@6.0.2)
+      '@solana/web3.js': 1.99.0(@typescript/typescript6@6.0.2)
       bigint-buffer: 1.1.5(patch_hash=8b68e3a6ff85b08428e730e15c185b6ef716497a858ca1f30f6e628828bac536)
       bignumber.js: 9.1.2
     transitivePeerDependencies:
@@ -53302,29 +53302,29 @@ snapshots:
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
 
-  '@solana/spl-token-group@0.0.7(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
+  '@solana/spl-token-group@0.0.7(@solana/web3.js@1.99.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
     dependencies:
       '@solana/codecs': 2.0.0-rc.1(@typescript/typescript6@6.0.2)
-      '@solana/web3.js': 1.99.0-beta.0(@typescript/typescript6@6.0.2)
+      '@solana/web3.js': 1.99.0(@typescript/typescript6@6.0.2)
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
       - typescript
 
-  '@solana/spl-token-metadata@0.1.6(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
+  '@solana/spl-token-metadata@0.1.6(@solana/web3.js@1.99.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
     dependencies:
       '@solana/codecs': 2.0.0-rc.1(@typescript/typescript6@6.0.2)
-      '@solana/web3.js': 1.99.0-beta.0(@typescript/typescript6@6.0.2)
+      '@solana/web3.js': 1.99.0(@typescript/typescript6@6.0.2)
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
       - typescript
 
-  '@solana/spl-token@0.4.14(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
+  '@solana/spl-token@0.4.14(@solana/web3.js@1.99.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
       '@solana/buffer-layout-utils': 0.2.0(@typescript/typescript6@6.0.2)
-      '@solana/spl-token-group': 0.0.7(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
-      '@solana/spl-token-metadata': 0.1.6(@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
-      '@solana/web3.js': 1.99.0-beta.0(@typescript/typescript6@6.0.2)
+      '@solana/spl-token-group': 0.0.7(@solana/web3.js@1.99.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
+      '@solana/spl-token-metadata': 0.1.6(@solana/web3.js@1.99.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
+      '@solana/web3.js': 1.99.0(@typescript/typescript6@6.0.2)
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
     transitivePeerDependencies:
       - bufferutil
@@ -53356,7 +53356,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@solana/web3.js@1.99.0-beta.0(@typescript/typescript6@6.0.2)':
+  '@solana/web3.js@1.99.0(@typescript/typescript6@6.0.2)':
     dependencies:
       '@babel/runtime': 7.29.7
       '@noble/curves': 1.9.7
