@@ -59,7 +59,7 @@ export function useOpenSendFlow() {
         const uiConfig = currency ? getSendUiConfig(currency) : null;
         return (
           isEnabledForFamily(family, currencyId) ||
-          (isEnabledForFamily() && (uiConfig?.hasBalanceTypeStep ?? false))
+          (isEnabledForFamily(family) && (uiConfig?.hasBalanceTypeStep ?? false))
         );
       };
 
