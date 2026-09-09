@@ -1,5 +1,9 @@
 import { describe, expect, it } from "@jest/globals";
-import { LIVE_APP_PARTITION, getLiveAppPartition } from "./liveAppSession";
+import {
+  LIVE_APP_PARTITION,
+  LIVE_APP_PARTITION_PREFIX,
+  getLiveAppPartition,
+} from "./liveAppSession";
 
 describe("getLiveAppPartition", () => {
   it("never returns an empty partition, which would mean the host's default session", () => {
@@ -9,11 +13,15 @@ describe("getLiveAppPartition", () => {
   });
 
   it("keys the partition to the manifest id and cacheBustingId when one is pinned", () => {
-    expect(getLiveAppPartition({ id: "my-app", cacheBustingId: 2 })).toBe("persist:myapp-2");
+    expect(getLiveAppPartition({ id: "my-app", cacheBustingId: 2 })).toBe(
+      "persist:live-app-myapp-2",
+    );
   });
 
   it("strips non-alphanumeric characters from the manifest id", () => {
-    expect(getLiveAppPartition({ id: "my.app_v2!", cacheBustingId: 1 })).toBe("persist:myappv2-1");
+    expect(getLiveAppPartition({ id: "my.app_v2!", cacheBustingId: 1 })).toBe(
+      "persist:live-app-myappv2-1",
+    );
   });
 
   it("changes partition when cacheBustingId is bumped, resetting the app's storage", () => {
@@ -23,7 +31,18 @@ describe("getLiveAppPartition", () => {
   });
 
   it("treats cacheBustingId 0 as a pinned partition rather than a missing one", () => {
-    expect(getLiveAppPartition({ id: "app", cacheBustingId: 0 })).toBe("persist:app-0");
+    expect(getLiveAppPartition({ id: "app", cacheBustingId: 0 })).toBe("persist:live-app-app-0");
+  });
+
+  it("prefixes every partition so Settings can find them on disk", () => {
+    // `liveAppSessions` clears by scanning userData/Partitions; an unprefixed
+    // name is indistinguishable from any other feature's partition.
+    expect(LIVE_APP_PARTITION).toBe(`persist:${LIVE_APP_PARTITION_PREFIX}shared`);
+    expect(
+      getLiveAppPartition({ id: "app", cacheBustingId: 3 }).startsWith(
+        `persist:${LIVE_APP_PARTITION_PREFIX}`,
+      ),
+    ).toBe(true);
   });
 
   it("only ever produces persistent partitions", () => {
