@@ -3,7 +3,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setHasSeenQ2WalletV4Tour } from "~/actions/settings";
 import { hasCompletedOnboardingSelector, hasSeenQ2WalletV4TourSelector } from "~/reducers/settings";
-import { isQ2ReleaseTourEnabled } from "../releaseTourGate";
+import { isQ2ReleaseTourEnabled } from "LLM/utils/releaseTourGate";
 
 /**
  * The Q2 tour is only meant for users who were already onboarded when they got the

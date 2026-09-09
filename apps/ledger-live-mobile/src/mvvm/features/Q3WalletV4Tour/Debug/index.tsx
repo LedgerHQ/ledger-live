@@ -6,7 +6,7 @@ import { setOverride } from "@shared/feature-flags";
 import { setHasSeenQ3WalletV4Tour } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { hasSeenQ3WalletV4TourSelector } from "~/reducers/settings";
-import { isQ3ReleaseTourEnabled } from "../../Q2WalletV4Tour/releaseTourGate";
+import { isQ3ReleaseTourEnabled } from "LLM/utils/releaseTourGate";
 
 const RELEASE_TOUR_FLAG = "releaseTour";
 

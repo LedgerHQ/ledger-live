@@ -8,7 +8,7 @@ import { setHasSeenQ2WalletV4Tour } from "~/actions/settings";
 import { hasSeenQ2WalletV4TourSelector } from "~/reducers/settings";
 import { Q2WalletV4TourDrawer } from "../Drawer";
 import { useQ2WalletV4TourDrawerViewModel } from "../Drawer/hooks/useQ2WalletV4TourDrawerViewModel";
-import { isQ2ReleaseTourEnabled } from "../releaseTourGate";
+import { isQ2ReleaseTourEnabled } from "LLM/utils/releaseTourGate";
 
 const RELEASE_TOUR_FLAG = "releaseTour";
 
