@@ -37,23 +37,23 @@ catalogs:
       specifier: 30.5.0
       version: 30.5.0
     '@ledgerhq/coin-evm':
-      specifier: 5.2.1
-      version: 5.2.1
+      specifier: 5.3.1
+      version: 5.3.1
     '@ledgerhq/coin-hypercore':
       specifier: 2.0.1
       version: 2.0.1
     '@ledgerhq/coin-module-framework':
-      specifier: 8.4.0
-      version: 8.4.0
+      specifier: 8.5.0
+      version: 8.5.0
     '@ledgerhq/coin-stellar':
-      specifier: 9.6.0
-      version: 9.6.0
+      specifier: 9.6.1
+      version: 9.6.1
     '@ledgerhq/coin-tezos':
       specifier: 10.2.4
       version: 10.2.4
     '@ledgerhq/coin-xrp':
-      specifier: 10.1.0
-      version: 10.1.0
+      specifier: 10.1.1
+      version: 10.1.1
     '@ledgerhq/crypto-icons':
       specifier: 2.0.4
       version: 2.0.4
@@ -1046,13 +1046,13 @@ importers:
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.2.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-zcash
@@ -1879,13 +1879,13 @@ importers:
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.2.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
+        version: 5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-multiversx
@@ -2678,10 +2678,10 @@ importers:
         version: link:../../libs/coin-modules/coin-bitcoin
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.2.1(@ledgerhq/logs@6.19.0)
+        version: 5.3.1(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0
+        version: 8.5.0
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-solana
@@ -2894,7 +2894,7 @@ importers:
         version: link:../../features/platform/wallet-sync
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0
+        version: 8.5.0
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.27)(@ledgerhq/lumen-ui-react@0.1.56(@ledgerhq/lumen-design-core@0.1.27)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -8478,7 +8478,7 @@ importers:
     devDependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
@@ -8523,7 +8523,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -8596,7 +8596,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -8675,7 +8675,7 @@ importers:
         version: 3.1.3(got@11.8.5)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -8766,7 +8766,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -8914,7 +8914,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -8996,7 +8996,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -9081,7 +9081,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -9160,10 +9160,10 @@ importers:
         version: 14.0.1
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.2.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -9266,7 +9266,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/concordium-core':
         specifier: workspace:^
         version: link:../../concordium-core
@@ -9363,7 +9363,7 @@ importers:
         version: 0.12.306
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -9454,7 +9454,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -9545,7 +9545,7 @@ importers:
         version: 2.78.0
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -9627,7 +9627,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -9712,7 +9712,7 @@ importers:
         version: 2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0
+        version: 8.5.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -9788,7 +9788,7 @@ importers:
         version: 1.2.0
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -9891,7 +9891,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -9970,7 +9970,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -10043,7 +10043,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -10134,7 +10134,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -10198,7 +10198,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -10304,7 +10304,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -10410,7 +10410,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -10510,7 +10510,7 @@ importers:
         version: 1.0.11(graphql@16.13.2)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/hw-app-sui':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-sui
@@ -10601,7 +10601,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -10680,7 +10680,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -10747,7 +10747,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -10829,7 +10829,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0
+        version: 8.5.0
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -11155,7 +11155,7 @@ importers:
     devDependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0
+        version: 8.5.0
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -11203,7 +11203,7 @@ importers:
         version: link:../../coin-modules/coin-cosmos
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0
+        version: 8.5.0
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -11270,7 +11270,7 @@ importers:
         version: link:../../../features/platform/currencies
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.2.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -11559,7 +11559,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0
+        version: 8.5.0
       '@ledgerhq/coin-polkadot':
         specifier: workspace:^
         version: link:../../coin-modules/coin-polkadot
@@ -11778,7 +11778,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 9.6.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 9.6.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -12088,7 +12088,7 @@ importers:
         version: link:../../coin-tester
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 10.1.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -13022,7 +13022,7 @@ importers:
         version: link:../coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.2.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
+        version: 5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../coin-modules/coin-filecoin
@@ -13046,7 +13046,7 @@ importers:
         version: link:../coin-modules/coin-mina
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../coin-modules/coin-multiversx
@@ -13064,7 +13064,7 @@ importers:
         version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 9.6.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 9.6.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-sui':
         specifier: workspace:^
         version: link:../coin-modules/coin-sui
@@ -13082,7 +13082,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 10.1.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -13689,7 +13689,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -16542,7 +16542,7 @@ importers:
     devDependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0
+        version: 8.5.0
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -17198,7 +17198,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 8.4.0(@ledgerhq/live-network@libs+live-network)
+        version: 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../live-network
@@ -22229,8 +22229,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/coin-evm@5.2.1':
-    resolution: {integrity: sha512-A+QGlHkYcDIa8+zjzEwVkCi65VLvfaXRRPZaAyygguY5qD5Q5qwwQLJa8C8fwhaWKVxqO5ndEVPzmQQ4sKIGSA==}
+  '@ledgerhq/coin-evm@5.3.1':
+    resolution: {integrity: sha512-+Blns1bVDjlB5J+GlMY8vAVGyLY+59FZRk+dPhpy8xeCsVVROzQHljjTBs7nP+Om0T6S5v0ypawQXMtvGU0BSw==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
@@ -22241,18 +22241,13 @@ packages:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/coin-module-framework@8.4.0':
-    resolution: {integrity: sha512-dHt1kPdVyQPpMKCiY3Or0rcl1XvcIFrqN9/asZ5lKleNdDKw0ea1AiJwWe9rBH+QSfNQBNWO8H8Ai9ksfKFjFA==}
-    peerDependencies:
-      '@ledgerhq/live-network': ^3.0.0
-
   '@ledgerhq/coin-module-framework@8.5.0':
     resolution: {integrity: sha512-wIEcjk0BZAsDTEIgYEyiTsoeP0J6GXkVVUHfzzIZ8/n+mWCIhu2K0JDoKHNi2sovteCd6Mxw+aoLk/9kmI6e4w==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
-  '@ledgerhq/coin-stellar@9.6.0':
-    resolution: {integrity: sha512-r1Pi5nZ/bvNDbHvMkJVq5PnSoA05wv5+mS8TryCTVNh5BKfPlr4MnFVKDjTV7NWxPYGCHcrChAO9IA1Ri8uA5w==}
+  '@ledgerhq/coin-stellar@9.6.1':
+    resolution: {integrity: sha512-9ySQqPIU9JTizOKZwtOJ3mLL0trkGvKyNfI/WAx8QI99QoNEqUdg3qL3f0TEyhY4z/uQqQ8FxwM+8y5W9Uptvg==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
@@ -22262,8 +22257,8 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
-  '@ledgerhq/coin-xrp@10.1.0':
-    resolution: {integrity: sha512-qkKVgvmJEdGhkIs3Om8X9IQCNGa9w73vdN2CSMT6J/4Je/i8+S/RYEIBiFLe9+0J8wNcEUYr9oxIfIUztQ5XLw==}
+  '@ledgerhq/coin-xrp@10.1.1':
+    resolution: {integrity: sha512-Lv/tIVPb0rCyhgPlJeIXvXYhr9By9GHyUmZlJWy93bgbhqYcF32ZLt/mNFYwzrSzG37yUb6geh0lQmhuLHjJEQ==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
@@ -22999,7 +22994,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -28472,7 +28466,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -47601,10 +47595,10 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/coin-evm@5.2.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-evm@5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.5
@@ -47617,10 +47611,10 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@5.2.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))':
+  '@ledgerhq/coin-evm@5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.5
@@ -47633,10 +47627,10 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@5.2.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))':
+  '@ledgerhq/coin-evm@5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.5
@@ -47649,10 +47643,10 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@5.2.1(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-evm@5.3.1(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 8.4.0
+      '@ledgerhq/coin-module-framework': 8.5.0
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.5
       bignumber.js: 9.1.2
@@ -47666,18 +47660,9 @@ snapshots:
 
   '@ledgerhq/coin-hypercore@2.0.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
-
-  '@ledgerhq/coin-module-framework@8.4.0':
-    dependencies:
-      bignumber.js: 9.1.2
-
-  '@ledgerhq/coin-module-framework@8.4.0(@ledgerhq/live-network@libs+live-network)':
-    dependencies:
-      '@ledgerhq/live-network': link:libs/live-network
-      bignumber.js: 9.1.2
 
   '@ledgerhq/coin-module-framework@8.5.0':
     dependencies:
@@ -47688,10 +47673,10 @@ snapshots:
       '@ledgerhq/live-network': link:libs/live-network
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-stellar@9.6.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-stellar@9.6.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
-      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
       '@stellar/stellar-sdk': 14.0.0
@@ -47720,9 +47705,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-xrp@10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-xrp@10.1.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
       bignumber.js: 9.1.2
@@ -65273,9 +65258,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
