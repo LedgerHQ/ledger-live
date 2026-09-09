@@ -247,6 +247,22 @@ describe("neuronPotentialVotingPower", () => {
     ).toBe(0n);
   });
 
+  // The canister's potential_and_deciding_voting_power reads dissolve_delay_seconds(now), so a
+  // dissolving neuron's bonus follows its countdown and the snapshot's figure is stale from the
+  // moment it is read. Its age is zero on-chain as well, which makes this figure exact.
+  it("counts a dissolving neuron's delay bonus from where the countdown stands (1 ICP → 1.5 ICP)", () => {
+    const dissolving = baseNeuron({
+      state: NeuronState.Dissolving,
+      ageSeconds: 0n,
+      dissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY),
+      dissolveState: {
+        WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS + NNS_MAXIMUM_DISSOLVE_DELAY / 2),
+      },
+    });
+
+    expect(neuronPotentialVotingPower(dissolving, NOW_SECONDS)).toBe(BigInt(1.5 * E8S_PER_ICP));
+  });
+
   // The canister's stake_e8s subtracts neuron_fees_e8s before applying the bonuses, so a neuron
   // penalised for a rejected proposal votes on less than its cached stake. Omitting the subtraction
   // overstated its power by the fee times the full bonus.
@@ -361,6 +377,14 @@ describe("state permissions & dissolve duration", () => {
     expect(getNeuronDissolveDurationSeconds(dissolving, 500)).toBe(1_500n);
     // Past the dissolve timestamp clamps to zero.
     expect(getNeuronDissolveDurationSeconds(dissolving, 3_000)).toBe(0n);
+  });
+
+  // NeuronInfo.dissolve_delay_seconds is the same figure at the last read; with nothing to count
+  // from, it is the best there is — and zero would read as dissolved.
+  it("reads the snapshot figure when there is no dissolve state to count from", () => {
+    const bare = baseNeuron({ dissolveDelaySeconds: 1_234n, dissolveState: undefined });
+
+    expect(getNeuronDissolveDurationSeconds(bare, NOW_SECONDS)).toBe(1_234n);
   });
 });
 
@@ -767,7 +791,11 @@ describe("applyNeuronCommand", () => {
   // The canister's own comment: "This neuron is dissolved. Set it to non-dissolving." Its remaining
   // delay is zero, so the whole requested delay is the delta, and aging restarts.
   it("re-locks a dissolved neuron at the delay it was given", () => {
-    const dissolved = locked({ state: NeuronState.Dissolved, dissolveState: undefined });
+    const dissolved = locked({
+      state: NeuronState.Dissolved,
+      dissolveDelaySeconds: 0n,
+      dissolveState: undefined,
+    });
 
     const patched = applyTo(
       dissolved,

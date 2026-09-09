@@ -53,8 +53,8 @@ import type { StepProps } from "../../neuronFlow/types";
  * whole band a freshly locked neuron sits in — while the voting power beside it visibly disagreed.
  * It also lost exact values further up, rendering the +12.5% of a six-month delay as +13%.
  *
- * Two decimals is as far as the figure means anything: it is a ratio derived from a
- * `dissolveDelaySeconds` snapshot, not a unit-exact amount like the e8s voting power above it.
+ * Two decimals is as far as the figure means anything: it is a ratio derived from the dissolve
+ * delay, not a unit-exact amount like the e8s voting power above it.
  * Trailing zeros are dropped so the round values still read as +50% and +200%.
  */
 const bonusPercent = (multiplier: number) => String(Number(((multiplier - 1) * 100).toFixed(2)));
@@ -263,7 +263,8 @@ const StepManage = ({
         />
         <NeuronDetailRow
           label={t("internetComputer.manageNeuronFlow.manage.votingPower.dissolveDelayBonus", {
-            percent: bonusPercent(dissolveDelayMultiplier(neuron.dissolveDelaySeconds)),
+            // Live, like the figure it explains: a dissolving neuron's bonus follows its countdown.
+            percent: bonusPercent(dissolveDelayMultiplier(dissolveDelay)),
           })}
           tooltip={t(
             "internetComputer.manageNeuronFlow.manage.votingPower.dissolveDelayBonusTooltip",

@@ -332,6 +332,25 @@ describe("StepManage", () => {
     expect(screen.queryByText("Set dissolve delay")).not.toBeInTheDocument();
   });
 
+  // The canister computes the delay bonus from the countdown as it stands, and the row has to agree
+  // with the figure above it: a snapshot bonus beside a live figure is the mismatch bonusPercent's
+  // rounding fix was about. The snapshot here still says the full two years, which would read
+  // +200% beside 3 ICP: `ageSeconds` is zero because a dissolving neuron's age is zero on-chain.
+  it("counts a dissolving neuron's delay bonus from where the countdown stands", () => {
+    const { container } = renderManage(
+      fullyBonused({
+        state: NeuronState.Dissolving,
+        ageSeconds: 0n,
+        dissolveState: {
+          WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS + NNS_MAXIMUM_DISSOLVE_DELAY / 2),
+        },
+      }),
+    );
+
+    expect(screen.getByText(/Dissolve delay bonus: \+50%/)).toBeInTheDocument();
+    expect(bodyText(container)).toContain("1.5");
+  });
+
   // The canister judges eligibility from where the countdown stands now, not from the figure the
   // snapshot froze, so the power reads None from the moment it drops under the voting minimum.
   it("reads no voting power once a dissolving neuron's countdown drops under the voting minimum", () => {

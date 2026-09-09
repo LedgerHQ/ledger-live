@@ -162,27 +162,21 @@ export const isNeuronDissolved = (neuron: ICPNeuron, nowSeconds?: number): boole
 
 export const hasFollowees = (neuron: ICPNeuron): boolean => neuron.followees.length > 0;
 
-/** Remaining dissolve delay in seconds: the fixed delay when locked, the countdown when dissolving. */
+/**
+ * The dissolve delay as it stands now: the fixed delay when locked, the countdown when dissolving.
+ * `dissolveDelaySeconds` is the same figure at the last read, and serves only when there is no
+ * dissolve state to count from.
+ */
 export const getNeuronDissolveDurationSeconds = (
   neuron: ICPNeuron,
   nowSeconds: number = Math.floor(Date.now() / 1000),
 ): bigint => {
   const { dissolveState } = neuron;
-  if (!dissolveState) return 0n;
+  if (!dissolveState) return neuron.dissolveDelaySeconds;
   if ("DissolveDelaySeconds" in dissolveState) return dissolveState.DissolveDelaySeconds;
   const remaining = dissolveState.WhenDissolvedTimestampSeconds - BigInt(nowSeconds);
   return remaining > 0n ? remaining : 0n;
 };
-
-/**
- * The dissolve delay as it stands now. `dissolveDelaySeconds` is the canister's figure at the last
- * read, and for a dissolving neuron it has been counting down since; the snapshot figure serves only
- * when there is no dissolve state to count from.
- */
-const currentDissolveDelaySeconds = (neuron: ICPNeuron, nowSeconds?: number): bigint =>
-  neuron.dissolveState === undefined
-    ? neuron.dissolveDelaySeconds
-    : getNeuronDissolveDurationSeconds(neuron, nowSeconds);
 
 // ---- voting power (Mission 70) ------------------------------------------------------------------
 
@@ -194,7 +188,8 @@ const currentDissolveDelaySeconds = (neuron: ICPNeuron, nowSeconds?: number): bi
  * its own, between reads.
  */
 export const neuronCanVote = (neuron: ICPNeuron, nowSeconds?: number): boolean =>
-  currentDissolveDelaySeconds(neuron, nowSeconds) >= BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE);
+  getNeuronDissolveDurationSeconds(neuron, nowSeconds) >=
+  BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE);
 
 /**
  * Bonus multiplier for a scalar (dissolve delay or age): 1 + maxBonus·(min(amount, cap)/cap)^convexity.
@@ -236,9 +231,12 @@ export const ageMultiplier = (ageSeconds: bigint): number =>
 const VOTING_POWER_SCALE = 1_000_000_000_000_000n;
 
 /**
- * Potential voting power: what the neuron is worth ignoring periodic-confirmation decay. Eligibility
- * is judged live; the two bonuses still multiply the snapshot's `dissolveDelaySeconds` and
- * `ageSeconds`, which only a fresh read moves.
+ * Potential voting power: what the neuron is worth ignoring periodic-confirmation decay. The
+ * canister's `potential_and_deciding_voting_power` reads `dissolve_delay_seconds(now)` and
+ * `age_seconds(now)`. The delay is read the same way here, so a dissolving neuron's figure follows
+ * its countdown. The age bonus still multiplies the snapshot's `ageSeconds`, which needs
+ * `aging_since_timestamp_seconds` to move: exact for a dissolving neuron, whose age is zero, and
+ * understated for a locked one until the next read.
  */
 export const neuronPotentialVotingPower = (neuron: ICPNeuron, nowSeconds?: number): bigint => {
   if (!neuronCanVote(neuron, nowSeconds)) return 0n;
@@ -249,7 +247,7 @@ export const neuronPotentialVotingPower = (neuron: ICPNeuron, nowSeconds?: numbe
   // Number() precision loss above 2^53 that would skew high-balance neurons.
   const scaledBonus = BigInt(
     Math.round(
-      dissolveDelayMultiplier(neuron.dissolveDelaySeconds) *
+      dissolveDelayMultiplier(getNeuronDissolveDurationSeconds(neuron, nowSeconds)) *
         ageMultiplier(neuron.ageSeconds) *
         Number(VOTING_POWER_SCALE),
     ),
