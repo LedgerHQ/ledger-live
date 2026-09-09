@@ -17,6 +17,7 @@ jest.mock("../../bridge/descriptor/send/features", () => ({
     hasCustomFees: jest.fn(),
     hasCoinControl: jest.fn(),
     hasDefaultStrategy: jest.fn(),
+    hasBalanceTypeStep: jest.fn(),
   },
 }));
 
@@ -84,6 +85,7 @@ describe("getSendUiConfig", () => {
       mockedSendFeatures.hasCustomFees.mockReturnValue(true);
       mockedSendFeatures.hasCoinControl.mockReturnValue(true);
       mockedSendFeatures.hasDefaultStrategy.mockReturnValue(false);
+      mockedSendFeatures.hasBalanceTypeStep.mockReturnValue(false);
 
       const result = getSendUiConfig(mockBitcoinCurrency);
 
@@ -98,6 +100,7 @@ describe("getSendUiConfig", () => {
         hasCustomFees: true,
         hasCoinControl: true,
         hasDefaultStrategy: false,
+        hasBalanceTypeStep: false,
       });
     });
   });
@@ -117,6 +120,7 @@ describe("getSendUiConfig", () => {
       mockedSendFeatures.hasCustomFees.mockReturnValue(true);
       mockedSendFeatures.hasCoinControl.mockReturnValue(false);
       mockedSendFeatures.hasDefaultStrategy.mockReturnValue(false);
+      mockedSendFeatures.hasBalanceTypeStep.mockReturnValue(false);
 
       const result = getSendUiConfig(mockEthereumCurrency);
 
@@ -131,6 +135,7 @@ describe("getSendUiConfig", () => {
         hasCustomFees: true,
         hasCoinControl: false,
         hasDefaultStrategy: false,
+        hasBalanceTypeStep: false,
       });
     });
   });
@@ -152,6 +157,7 @@ describe("getSendUiConfig", () => {
       mockedSendFeatures.hasCustomFees.mockReturnValue(true);
       mockedSendFeatures.hasCoinControl.mockReturnValue(false);
       mockedSendFeatures.hasDefaultStrategy.mockReturnValue(true);
+      mockedSendFeatures.hasBalanceTypeStep.mockReturnValue(false);
 
       const result = getSendUiConfig(mockSolanaCurrency);
 
@@ -166,6 +172,7 @@ describe("getSendUiConfig", () => {
         hasCustomFees: true,
         hasCoinControl: false,
         hasDefaultStrategy: true,
+        hasBalanceTypeStep: false,
       });
     });
   });
@@ -183,6 +190,7 @@ describe("getSendUiConfig", () => {
         hasCustomFees: false,
         hasCoinControl: false,
         hasDefaultStrategy: false,
+        hasBalanceTypeStep: false,
       });
     });
   });

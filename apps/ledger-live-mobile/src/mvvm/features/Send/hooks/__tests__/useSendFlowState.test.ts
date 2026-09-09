@@ -46,6 +46,7 @@ const mockBusinessLogicResult = {
     hasCustomFees: false,
     hasCoinControl: false,
     hasDefaultStrategy: false,
+    hasBalanceTypeStep: false,
   },
   recipientSearch: { value: "", setValue: jest.fn(), clear: jest.fn() },
   recipient: null,
