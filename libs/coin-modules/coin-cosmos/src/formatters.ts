@@ -5,7 +5,7 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { mapDelegations, mapRedelegations, mapUnbondings } from "./logic";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
-import { CosmosAccount, CosmosOperation } from "./types";
+import { CosmosAccount, CosmosOperation, getCosmosResources } from "./types";
 
 function formatOperationSpecifics(op: CosmosOperation, unit: Unit | null | undefined): string {
   const { validators } = op.extra;
@@ -25,7 +25,7 @@ function formatOperationSpecifics(op: CosmosOperation, unit: Unit | null | undef
 }
 
 export function formatAccountSpecifics(account: CosmosAccount): string {
-  const { cosmosResources } = account;
+  const cosmosResources = getCosmosResources(account);
   invariant(cosmosResources, "cosmos account expected");
   const { validators } = getCurrentCosmosPreloadData()[account.currency.id] ?? {
     validators: [],

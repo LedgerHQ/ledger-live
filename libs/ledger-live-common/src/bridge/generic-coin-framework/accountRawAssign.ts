@@ -1,6 +1,11 @@
 import { loadAccountRawAssignForFamily } from "../../coin-modules/registry";
 import type { AccountRawAssignHooks } from "./types";
 import { frameworkExtraFromRaw, frameworkExtraToRaw, mergeExtra } from "./utils";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import {
+  assignStakingResourcesFromAccountRaw,
+  assignStakingResourcesToAccountRaw,
+} from "@ledgerhq/ledger-wallet-framework/serialization";
 
 export async function getAccountRawAssignHooks(network: string): Promise<AccountRawAssignHooks> {
   const hooks = (await loadAccountRawAssignForFamily(network)) ?? {};
@@ -24,3 +29,13 @@ export async function getAccountRawAssignHooks(network: string): Promise<Account
       mergeExtra(extra, familyToRaw?.(extra), frameworkExtraToRaw(extra)),
   };
 }
+
+function assignToAccountRaw(account: Account, accountRaw: AccountRaw): void {
+  assignStakingResourcesToAccountRaw(account, accountRaw);
+}
+
+function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
+  assignStakingResourcesFromAccountRaw(accountRaw, account);
+}
+
+export default { assignFromAccountRaw, assignToAccountRaw };
