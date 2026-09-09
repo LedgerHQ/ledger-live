@@ -8,6 +8,7 @@ import {
   stopSpeculos,
   type SpeculosDevice,
 } from "../speculos";
+import { waitForSpeculosReady } from "../speculosCI";
 import {
   DEFAULT_MARKET_ID,
   ETHEREUM_CHAIN_ID,
@@ -254,6 +255,11 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<string | vo
       if (!spec) throw new Error(`No Speculos spec for "${specKey}"`);
       device = await startSpeculos(`borrow-${options.flow}`, spec);
       if (!device) throw new Error("Speculos not started");
+      // A remote device is acquired asynchronously: /acquire returns 202 before the pod exists,
+      // hands back a sentinel port, and it is the readiness poll that publishes SPECULOS_ADDRESS.
+      // Skip it and every screen read and the DMK transport resolve against the default localhost
+      // instead, i.e. 127.0.0.1:443. Mirrors what initUtil does for the app's own device.
+      if (process.env.REMOTE_SPECULOS === "true") await waitForSpeculosReady(device.id);
       apiPort = device.port;
     }
     if (apiPort === undefined) throw new Error("Speculos API port unavailable");
