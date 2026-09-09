@@ -70,6 +70,7 @@ import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConne
 import PerpsSign from "LLM/features/Perps/screens/PerpsSign/PerpsSignScreen";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
+import * as AleoBondPublicFlowNavigator from "~/families/aleo/BondPublicFlow";
 import { RecoverPlayer } from "~/screens/Protect/Player";
 import { RedirectToOnboardingRecoverFlowScreen } from "~/screens/Protect/RedirectToOnboardingRecoverFlow";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
@@ -619,6 +620,11 @@ export default function BaseNavigator() {
             headerRight: FlowHeaderCloseButton,
             headerLeft: renderNullHeader,
           }}
+        />
+        <Stack.Screen
+          name={NavigatorName.AleoBondPublicFlow}
+          component={AleoBondPublicFlowNavigator.component}
+          options={AleoBondPublicFlowNavigator.options}
         />
         <Stack.Screen
           name={NavigatorName.EvmEditTransaction}

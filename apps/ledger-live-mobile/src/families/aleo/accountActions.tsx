@@ -14,30 +14,52 @@ const getMainActions = ({
 }: {
   account: AleoAccount;
   parentAccount?: Account;
-}): ActionButtonEvent[] => [
-  {
-    id: "public_to_private",
-    label: i18n.t("aleo.accountActions.publicToPrivate"),
-    Icon: IconsLegacy.TransferMedium,
-    event: "button_clicked",
-    eventProperties: {
-      button: "public_to_private",
-      currency: "ALEO",
-      page: "Account Page",
+}): ActionButtonEvent[] => {
+  const transparentBalance = account.aleoResources?.transparentBalance;
+  const hasNoPublicFunds = !transparentBalance || transparentBalance.isZero();
+
+  return [
+    {
+      id: "stake",
+      label: i18n.t("account.stake"),
+      Icon: IconsLegacy.CoinsMedium,
+      event: "button_clicked",
+      eventProperties: { button: "stake", currency: "ALEO", page: "Account Page" },
+      disabled: hasNoPublicFunds,
+      modalOnDisabledClick: { component: ZeroBalanceDisabledModalContent },
+      // TODO(LIVE-32811): navigate to ManageDrawer when already bonded
+      navigationParams: [
+        NavigatorName.AleoBondPublicFlow,
+        {
+          screen: ScreenName.AleoBondPublicSelectValidator,
+          params: { accountId: account.id, parentId: parentAccount?.id },
+        },
+      ],
     },
-    disabled: !account.balance.gt(0),
-    modalOnDisabledClick: {
-      component: ZeroBalanceDisabledModalContent,
-    },
-    navigationParams: [
-      NavigatorName.SendFunds,
-      {
-        screen: ScreenName.AleoSendBalanceSelection,
-        params: { account, parentAccount, isSelfTransfer: true },
+    {
+      id: "public_to_private",
+      label: i18n.t("aleo.accountActions.publicToPrivate"),
+      Icon: IconsLegacy.TransferMedium,
+      event: "button_clicked",
+      eventProperties: {
+        button: "public_to_private",
+        currency: "ALEO",
+        page: "Account Page",
       },
-    ],
-  },
-];
+      disabled: !account.balance.gt(0),
+      modalOnDisabledClick: {
+        component: ZeroBalanceDisabledModalContent,
+      },
+      navigationParams: [
+        NavigatorName.SendFunds,
+        {
+          screen: ScreenName.AleoSendBalanceSelection,
+          params: { account, parentAccount, isSelfTransfer: true },
+        },
+      ],
+    },
+  ];
+};
 
 const getExtraSendActionParams = ({
   account,

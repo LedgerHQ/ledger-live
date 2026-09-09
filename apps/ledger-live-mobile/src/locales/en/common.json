@@ -36,6 +36,7 @@
     "no": "No",
     "gotit": "Got it",
     "continue": "Continue",
+    "max": "Max",
     "retry": "Retry",
     "backTo": "Back to {{to}}",
     "done": "Done",
@@ -129,6 +130,14 @@
     "ldmkEnabled": "LDMK transport enabled"
   },
   "errors": {
+    "AleoBondAmountTooLow": {
+      "title": "Amount too low to stake",
+      "description": "The minimum staking amount is {{minAmount}}."
+    },
+    "AleoStakeAmountTooLow": {
+      "title": "Amount too low to stake",
+      "description": "You must have at least {{minAmount}} staked in total."
+    },
     "ZcashMemoTooLong": {
       "title": "Memo must not exceed {{maxBytes}} bytes"
     },
@@ -10568,6 +10577,47 @@
     },
     "accountActions": {
       "publicToPrivate": "Convert"
+    },
+    "bond": {
+      "stepperHeader": {
+        "validator": "Validator",
+        "stepRange": "{{currentStep}} of {{totalSteps}}",
+        "amount": "Amount",
+        "summary": "Summary",
+        "selectDevice": "Select Device",
+        "connectDevice": "Connect Device"
+      },
+      "selectValidator": {
+        "fetchError": "Failed to load validators. Please try again.",
+        "lockedHint": "You are already bonded to this validator. Unbond first to switch validators.",
+        "closed": "Validator is closed to new stake",
+        "unbonding": "Validator is unbonding",
+        "totalStake": "Total stake",
+        "rateAndCommission": "{{rate}}% est. · {{commission}}% commission",
+        "commissionOnly": "{{commission}}% commission",
+        "nonEarning": {
+          "fullCommission": "Validator earns no rewards",
+          "overConcentrated": "Validator earns no rewards"
+        }
+      },
+      "amount": {
+        "available": "Available:",
+        "minimum": "Minimum bond amount: {{amount}} ALEO",
+        "privateAlert": "Only public (transparent) balance can be bonded. Convert private ALEO to public first."
+      },
+      "summary": {
+        "validator": "Validator",
+        "amount": "Amount",
+        "bondWord": "Bond",
+        "toWord": "to",
+        "alert": "Bonded ALEO earns staking rewards distributed automatically. You can unbond at any time."
+      },
+      "validation": {
+        "success": {
+          "title": "Bond Submitted",
+          "description": "Your bond transaction is being processed on the Aleo network."
+        }
+      }
     },
     "send": {
       "balanceSelection": {
