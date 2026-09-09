@@ -79,6 +79,14 @@ export const buildSignOperation =
           case RETURN_CODES.REFUSED_OPERATION:
             throw new UserRefusedOnDevice();
         }
+        if (!resSignature) {
+          // Defensive: an unhandled non-success return_code can still carry a null signature;
+          // fail clearly instead of letting Secp256k1Signature.fromDer throw on null. Mirrors
+          // the same guard in signRawOperation.
+          throw new Error(
+            `signOperation: device returned no signature (return_code ${return_code})`,
+          );
+        }
 
         const signature = Buffer.from(Secp256k1Signature.fromDer(resSignature).toFixedLength());
 

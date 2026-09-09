@@ -185,6 +185,30 @@ describe("buildSignOperation", () => {
     ).rejects.toBeInstanceOf(ExpertModeRequired);
   });
 
+  it("throws a clear error when the device returns no signature on an unhandled return_code", async () => {
+    const signer = makeRealSigner();
+    // 0x698C is APDU_CODE_CHAIN_CONFIG_NOT_SUPPORTED — the status word the device answers for an
+    // unrecognised (coin type, HRP) pair. It is mapped nowhere in the monorepo, so without this
+    // guard it would surface as a DER parse failure on a null signature.
+    signer.sign.mockResolvedValue({ signature: null, return_code: 0x698c });
+    const signOperation = buildSignOperation(signerContextOf(signer));
+    const account = makeAccount("44'/1200'/0'/0/0", {
+      id: "gonka",
+      units: [{ code: "GNK" }, { code: "ngonka" }],
+    });
+
+    await expect(
+      firstValueFrom(
+        signOperation({
+          account,
+          deviceId: "mock",
+          transaction: makeTransaction("gonka1yyy"),
+        }).pipe(toArray()),
+      ),
+    ).rejects.toThrow("device returned no signature");
+    expect(signer.sign).toHaveBeenCalledTimes(1);
+  });
+
   it("throws UserRefusedOnDevice when the user rejects on device", async () => {
     const signer = makeRealSigner();
     signer.sign.mockResolvedValue({ signature: null, return_code: RETURN_CODES.REFUSED_OPERATION });
