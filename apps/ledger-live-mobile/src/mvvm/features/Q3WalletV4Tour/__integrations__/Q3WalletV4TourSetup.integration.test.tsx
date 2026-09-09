@@ -8,12 +8,12 @@ describe("Q3WalletV4Tour setup", () => {
   it("should toggle the Q3 tour flag independently", () => {
     const { store } = render(<Q3WalletV4TourScreenDebug />);
 
-    expect(selectFeature(store.getState(), "lwmWallet40")?.params?.q3Tour).toBe(false);
+    expect(selectFeature(store.getState(), "releaseTour")?.enabled).toBe(false);
 
     fireEvent(screen.getByTestId("debug-q3-tour-enabled-switch"), "onCheckedChange", true);
 
-    expect(selectFeature(store.getState(), "lwmWallet40")?.params?.q3Tour).toBe(true);
-    expect(selectFeature(store.getState(), "lwmWallet40")?.params?.q2Tour).toBe(false);
+    expect(selectFeature(store.getState(), "releaseTour")?.enabled).toBe(true);
+    expect(selectFeature(store.getState(), "releaseTour")?.params?.variant).toBe("q3_a");
   });
 
   it("should toggle the persisted Q3 tour seen state independently", () => {

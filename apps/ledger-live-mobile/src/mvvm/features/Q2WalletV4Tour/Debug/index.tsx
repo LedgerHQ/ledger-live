@@ -8,14 +8,15 @@ import { setHasSeenQ2WalletV4Tour } from "~/actions/settings";
 import { hasSeenQ2WalletV4TourSelector } from "~/reducers/settings";
 import { Q2WalletV4TourDrawer } from "../Drawer";
 import { useQ2WalletV4TourDrawerViewModel } from "../Drawer/hooks/useQ2WalletV4TourDrawerViewModel";
+import { isQ2ReleaseTourEnabled } from "../releaseTourGate";
 
-const WALLET_40_FLAG = "lwmWallet40";
+const RELEASE_TOUR_FLAG = "releaseTour";
 
 function Q2WalletV4TourScreenDebug() {
   const dispatch = useDispatch();
   const hasSeenQ2WalletV4Tour = useSelector(hasSeenQ2WalletV4TourSelector);
-  const lwmWallet40 = useFeature(WALLET_40_FLAG);
-  const isQ2TourEnabled = (lwmWallet40?.enabled && lwmWallet40?.params?.q2Tour) ?? false;
+  const releaseTour = useFeature(RELEASE_TOUR_FLAG);
+  const isQ2TourEnabled = isQ2ReleaseTourEnabled(releaseTour);
   const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer, closeDrawer, onSlideChange } =
     useQ2WalletV4TourDrawerViewModel();
   const canOpenDrawer = isQ2TourEnabled && !hasSeenQ2WalletV4Tour;
@@ -24,21 +25,21 @@ function Q2WalletV4TourScreenDebug() {
     const next = !isQ2TourEnabled;
     dispatch(
       setOverride({
-        key: WALLET_40_FLAG,
+        key: RELEASE_TOUR_FLAG,
         value: {
-          ...lwmWallet40,
-          enabled: next ? true : (lwmWallet40?.enabled ?? false),
-          params: { ...lwmWallet40?.params, q2Tour: next },
+          ...releaseTour,
+          enabled: next,
+          params: { variant: next ? "q2" : releaseTour?.params?.variant },
         },
       }),
     );
-  }, [lwmWallet40, isQ2TourEnabled, dispatch]);
+  }, [releaseTour, isQ2TourEnabled, dispatch]);
 
   const handleToggleHasSeenQ2WalletV4Tour = useCallback(() => {
     dispatch(setHasSeenQ2WalletV4Tour(!hasSeenQ2WalletV4Tour));
   }, [dispatch, hasSeenQ2WalletV4Tour]);
 
-  let openDrawerLabel = "Open Drawer (enable q2Tour)";
+  let openDrawerLabel = "Open Drawer (enable Q2 release tour)";
   if (canOpenDrawer) {
     openDrawerLabel = "Open Drawer";
   } else if (isQ2TourEnabled) {
@@ -50,7 +51,7 @@ function Q2WalletV4TourScreenDebug() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <Box lx={{ padding: "s16", rowGap: "s24" }}>
           <Text typography="body2" lx={{ color: "muted" }}>
-            Test the Q2 Wallet V4 Tour, gated by the lwmWallet40 q2Tour parameter.
+            Test the Q2 Wallet V4 Tour, gated by releaseTour variant q2.
           </Text>
 
           <Box
@@ -63,10 +64,10 @@ function Q2WalletV4TourScreenDebug() {
           >
             <Box lx={{ flexShrink: 1 }}>
               <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                q2Tour enabled
+                Q2 release tour
               </Text>
               <Text typography="body3" lx={{ color: "muted" }}>
-                Toggles lwmWallet40.params.q2Tour (also enables lwmWallet40).
+                Toggles releaseTour enabled with variant q2.
               </Text>
             </Box>
             <Switch checked={isQ2TourEnabled} onCheckedChange={handleToggleQ2TourEnabled} />

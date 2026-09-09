@@ -1,4 +1,3 @@
-import type { Features } from "@shared/feature-flags";
 import type { AnalyticsFeatureFlagMethod, Platform } from "../types";
 
 const FEATURE_FLAG_KEYS = {
@@ -15,14 +14,10 @@ export const getWallet40Attributes = (
   const featureFlagKey = FEATURE_FLAG_KEYS[platform];
   const wallet40FeatureFlag = analyticsFeatureFlagMethod(featureFlagKey);
   const isEnabled = wallet40FeatureFlag?.enabled ?? false;
-  const params: Partial<Features["lwmWallet40"]["params"]> | undefined =
-    wallet40FeatureFlag?.params;
 
   return {
     isEnabled,
     tour: wallet40FeatureFlag?.params?.tour ?? false,
-    q2Tour: wallet40FeatureFlag?.params?.q2Tour ?? false,
-    q3Tour: params?.q3Tour ?? false,
     lazyOnboarding: wallet40FeatureFlag?.params?.lazyOnboarding ?? false,
     assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,
     brazePlacement: wallet40FeatureFlag?.params?.brazePlacement ?? false,

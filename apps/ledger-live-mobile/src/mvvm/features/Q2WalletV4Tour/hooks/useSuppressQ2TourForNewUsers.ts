@@ -3,6 +3,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setHasSeenQ2WalletV4Tour } from "~/actions/settings";
 import { hasCompletedOnboardingSelector, hasSeenQ2WalletV4TourSelector } from "~/reducers/settings";
+import { isQ2ReleaseTourEnabled } from "../releaseTourGate";
 
 /**
  * The Q2 tour is only meant for users who were already onboarded when they got the
@@ -14,8 +15,7 @@ export const useSuppressQ2TourForNewUsers = (): void => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const hasSeenTour = useSelector(hasSeenQ2WalletV4TourSelector);
-  const lwmWallet40 = useFeature("lwmWallet40");
-  const isTourEnabled = (lwmWallet40?.enabled && lwmWallet40?.params?.q2Tour) ?? false;
+  const isTourEnabled = isQ2ReleaseTourEnabled(useFeature("releaseTour"));
 
   // Snapshot onboarding state at app open (first render; the store is already hydrated).
   // The tour flag can toggle on after mount, so we react to it — but decide against the
