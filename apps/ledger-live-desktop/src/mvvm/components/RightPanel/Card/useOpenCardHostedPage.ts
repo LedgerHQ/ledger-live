@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
 import useEnv from "@features/platform-env";
-import type { OpenHostedLogin } from "@features/flow-pay-card-auth";
-import { manifestOrigin, useCardHostedManifests } from "./useCardHostedManifests";
+import { buildHostedPageUrl, type OpenHostedLogin } from "@features/flow-pay-card-auth";
+import { useCardHostedManifests } from "./useCardHostedManifests";
 
 const PAY_TAB_PATH = "/paytab";
 
@@ -23,14 +23,12 @@ export function useOpenCardHostedPage(): OpenHostedLogin {
     async (pageUrl: string) => {
       const isAuthorizePage = originOf(pageUrl) === originOf(apiUrl);
       const manifest = isAuthorizePage ? login : hosted;
-      const origin = manifestOrigin(manifest);
 
-      if (!manifest || !origin) {
-        throw new Error("useOpenCardHostedPage: the Card manifest carries no usable URL");
+      if (!manifest) {
+        throw new Error("useOpenCardHostedPage: the catalog holds no Card manifest");
       }
 
-      const target = new URL(pageUrl);
-      const goToURL = `${origin}${target.pathname}${target.search}`;
+      const goToURL = buildHostedPageUrl(String(manifest.url), pageUrl);
 
       navigate(`/platform/${manifest.id}?returnTo=${encodeURIComponent(PAY_TAB_PATH)}`, {
         state: { goToURL },
