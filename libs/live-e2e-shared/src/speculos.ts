@@ -923,6 +923,9 @@ const IDLE_SCREEN_LABEL = "is ready";
  *
  * Menu verified against Ethereum 1.22.3 on nanos+ 1.6.1.
  */
+/** Every app's idle screen reads "<app> is ready", so this matches without naming the app. */
+const IDLE_SCREEN_LABEL = "is ready";
+
 export const enableBlindSigning = withDeviceController(({ getButtonsController }) => async () => {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
   const isEnabled = async () => /Enabled/.test(await fetchCurrentScreenTexts(speculosApiPort));
