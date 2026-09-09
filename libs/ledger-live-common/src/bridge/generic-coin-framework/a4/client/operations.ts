@@ -4,9 +4,14 @@ import {
   encodeSubOperationId,
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+import type {
+  AssetInfo,
+  ListOperationsOptions,
+  Page,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { isOperationType, isStringArray, readFamilyExtra } from "../../utils";
 import type { A4OperationView } from "./types";
+import type { A4Client } from "./index";
 
 export function parseA4Asset(assetPath: string, owner: string): AssetInfo {
   if (assetPath === "native") {
@@ -247,4 +252,23 @@ export function adaptA4OperationToLiveOperation(
   }
 
   return buildOpsFromAssets(a4Op.assets, ledgerOpType, bnFees, a4Op.failed, makeOp);
+}
+
+export async function listA4OperationsPage(
+  client: A4Client,
+  accountId: string,
+  address: string,
+  { minHeight, cursor }: ListOperationsOptions,
+): Promise<Page<Operation>> {
+  const result = await client.listOperations(accountId, {
+    blocks: [minHeight, "latest"],
+    order: "DESC",
+    token: cursor,
+  });
+
+  const items = (result.data?.items ?? []).flatMap(a4Op =>
+    adaptA4OperationToLiveOperation(accountId, address, a4Op),
+  );
+
+  return { items, next: result.data?.nextToken };
 }

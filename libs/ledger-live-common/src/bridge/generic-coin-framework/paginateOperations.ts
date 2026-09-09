@@ -1,15 +1,15 @@
 import { log } from "@ledgerhq/logs";
-import type { Operation, Page } from "@ledgerhq/coin-module-framework/api/types";
+import type { Page } from "@ledgerhq/coin-module-framework/api/types";
 
 /**
  * Walks a module's `listOperations` cursor chain within one sync. End of stream is a *falsy* `next`:
  * several modules send `""` rather than omitting it. Errors are not caught on purpose - we walk
  * newest-first, so a persisted partial history would never be completed by a later sync.
  */
-export async function paginateOperations(
-  fetchPage: (cursor: string | undefined) => Promise<Page<Operation>>,
-): Promise<Operation[]> {
-  const items: Operation[] = [];
+export async function paginateOperations<T>(
+  fetchPage: (cursor: string | undefined) => Promise<Page<T>>,
+): Promise<T[]> {
+  const items: T[] = [];
   const followed = new Set<string>();
   let cursor: string | undefined;
 
