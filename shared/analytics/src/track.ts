@@ -1,0 +1,28 @@
+/**
+ * @module analytics/track
+ * @description
+ * This module exports the track function.
+ *
+ * @example
+ * ```ts
+ * import { track } from "@shared/analytics";
+ *
+ * track("myEvent", { prop: "value" });
+ * track("myEvent", { prop: "value" }, { mandatory: true });
+ * ```
+ */
+
+import { normalizeProps } from "./internals/normalizeProps";
+import { isEnabled } from "./registry";
+import { trackEvent } from "./internals/trackEvent";
+import type { Props, TrackOptions } from "./types";
+
+export function track(
+  event: string,
+  props?: Error | Props | null,
+  { mandatory = false }: TrackOptions = {},
+): void {
+  if (isEnabled() || mandatory) {
+    void trackEvent("track", event, normalizeProps(props), { mandatory });
+  }
+}
