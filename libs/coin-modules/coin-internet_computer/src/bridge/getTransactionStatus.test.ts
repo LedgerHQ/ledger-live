@@ -12,6 +12,7 @@ import {
   ICPDissolveDelayGTMax,
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
+  ICPFollowTopicNotAllowed,
   ICPHotKeyAlreadyExists,
   ICPHotKeyIsController,
   ICPInvalidDissolveDelayIncrease,
@@ -238,6 +239,27 @@ describe("getTransactionStatus", () => {
         tx({ type: "add_hot_key", neuronId: "7", hotKeyToAdd: "2vxsx-fae" }),
       );
       expect(status.errors.transaction).toBeInstanceOf(ICPHotKeyIsController);
+    });
+
+    // The picker offers FOLLOWABLE_TOPICS only; this is the gate for a transaction built any other
+    // way. Topic 11 is retired on the canister (refused after signing) and 15–18 are past the Ledger
+    // ICP app's cap (refused on the device) — a signature spent either way.
+    it("rejects a follow on a topic the canister retired or the device cannot sign", async () => {
+      const on = (followTopic: Transaction["followTopic"]) =>
+        getTransactionStatus(
+          accountWith(neuron()),
+          tx({ type: "follow", neuronId: "7", followTopic, followeesIds: ["1"] }),
+        );
+
+      expect((await on("SnsDecentralizationSale")).errors.transaction).toBeInstanceOf(
+        ICPFollowTopicNotAllowed,
+      );
+      expect((await on("ApiBoundaryNodeManagement")).errors.transaction).toBeInstanceOf(
+        ICPFollowTopicNotAllowed,
+      );
+      expect((await on("SnsAndCommunityFund")).errors.transaction).toBeUndefined();
+      // Absent means Unspecified, which the builder substitutes.
+      expect((await on(undefined)).errors.transaction).toBeUndefined();
     });
 
     it("rejects an out-of-range spawn percentage", async () => {

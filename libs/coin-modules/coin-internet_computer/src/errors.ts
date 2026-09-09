@@ -132,6 +132,18 @@ export class ICPStakeMaturityNotAllowed extends Error {
   }
 }
 
+// The topic is outside FOLLOWABLE_TOPICS: one the canister has retired, or one the Ledger ICP app
+// refuses to sign a follow on. The pickers never offer these, so this catches a transaction
+// assembled some other way before it costs a signature.
+export class ICPFollowTopicNotAllowed extends Error {
+  override name = "ICPFollowTopicNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPFollowTopicNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 // Top-up cannot auto-refresh: the neuron's stake nonce is not recoverable from this account's history.
 export class ICPStakeMemoNotRecoverable extends Error {
   override name = "ICPStakeMemoNotRecoverable";

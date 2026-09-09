@@ -86,7 +86,11 @@ export const MAX_NEURON_AGE_FOR_AGE_BONUS = SECONDS_IN_FOUR_YEARS;
 export const MAX_FOLLOWEES_PER_TOPIC = 15;
 
 // Governance follow topics — id ↔ name mapping (dfinity/ic NNS Topic enum; @dfinity/nns
-// governance.enums.ts). The `follow` command's candid `topic` field is this Int32 id.
+// governance.enums.ts). The `follow` command's candid `topic` field is this Int32 id. Every id a
+// neuron's existing followees can sit on is here, including the ones a new follow can no longer
+// target — those are FOLLOWABLE_TOPICS. The proto has since renamed 8 to
+// ApplicationCanisterManagement; the key is what the labels and the wire type hang off, so only its
+// label followed.
 export const KNOWN_TOPICS = {
   Unspecified: 0,
   NeuronManagement: 1,
@@ -108,3 +112,26 @@ export const KNOWN_TOPICS = {
   ProtocolCanisterManagement: 17,
   ServiceNervousSystemManagement: 18,
 } as const;
+
+// The topics a follow can be signed and accepted on today: the pickers offer these and the bridge
+// refuses the rest. Two gaps against KNOWN_TOPICS:
+//  - 11 (SnsDecentralizationSale) is `reserved` in the governance proto — the enum has no variant,
+//    so `follow` answers "Not a known topic number" — while the Ledger ICP app still signs it.
+//  - 15–18 the app refuses before signing: `readCommandFollow` (ledger-icp nns_parser.c) rejects any
+//    topic above FOLLOW_TOPIC_SNS_AND_NEURONS_FUND = 14 (candid_types.h).
+export const FOLLOWABLE_TOPICS = {
+  Unspecified: 0,
+  NeuronManagement: 1,
+  ExchangeRate: 2,
+  NetworkEconomics: 3,
+  Governance: 4,
+  NodeAdmin: 5,
+  ParticipantManagement: 6,
+  SubnetManagement: 7,
+  NetworkCanisterManagement: 8,
+  Kyc: 9,
+  NodeProviderRewards: 10,
+  IcOsVersionDeployment: 12,
+  IcOsVersionElection: 13,
+  SnsAndCommunityFund: 14,
+} as const satisfies Partial<typeof KNOWN_TOPICS>;

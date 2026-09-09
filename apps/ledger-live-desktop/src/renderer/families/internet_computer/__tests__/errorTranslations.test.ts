@@ -20,6 +20,7 @@ const REACHABLE_ERRORS = [
   "ICPSplitNotAllowed",
   "ICPSpawnNotAllowed",
   "ICPStakeMaturityNotAllowed",
+  "ICPFollowTopicNotAllowed",
   "ICPStakeMemoNotRecoverable",
   "ICPCallUnconfirmed",
   "ICPNeuronsNotRead",

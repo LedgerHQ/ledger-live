@@ -16,6 +16,7 @@ import {
   neuronStake,
 } from "../common-logic/neuron";
 import {
+  FOLLOWABLE_TOPICS,
   ICP_FEES,
   MIN_NEURON_STAKE,
   NNS_MAXIMUM_DISSOLVE_DELAY,
@@ -27,6 +28,7 @@ import {
   ICPDissolveDelayGTMax,
   ICPDissolveDelayLTCurrent,
   ICPDissolveDelayLTMin,
+  ICPFollowTopicNotAllowed,
   ICPHotKeyAlreadyExists,
   ICPHotKeyIsController,
   ICPIncreaseStakeWarning,
@@ -163,6 +165,21 @@ const validateRemoveHotKey = (
   return undefined;
 };
 
+// The pickers offer FOLLOWABLE_TOPICS only, so what this refuses is a transaction assembled some
+// other way. Either kind of excluded topic spends the signature for nothing: a retired one is refused
+// by the canister after signing, one past the Ledger ICP app's cap is refused on the device.
+const validateFollow = (
+  neuron: ICPNeuron | undefined,
+  followTopic: Transaction["followTopic"],
+): Error | undefined => {
+  if (!neuron) return new ICPNeuronNotFound();
+  // Absent is Unspecified, the default the builder applies.
+  if (followTopic !== undefined && !(followTopic in FOLLOWABLE_TOPICS)) {
+    return new ICPFollowTopicNotAllowed("", { topic: followTopic });
+  }
+  return undefined;
+};
+
 type NeuronOpResult = { transaction?: Error; amount?: Error; warning?: Error };
 
 // Build a result omitting undefined slots (keeps the optional props exactly-optional).
@@ -263,6 +280,8 @@ const validateNeuronOp = (transaction: Transaction, neuron?: ICPNeuron): NeuronO
       return validateSpawn(neuron, transaction.percentageToSpawn);
     case "stake_maturity":
       return validateStakeMaturity(neuron, transaction.percentageToStake);
+    case "follow":
+      return opResult(validateFollow(neuron, transaction.followTopic));
     default:
       return NEURON_REQUIRED_OPS.has(transaction.type) && !neuron
         ? opResult(new ICPNeuronNotFound())

@@ -402,6 +402,33 @@ describe("StepFollowTopic", () => {
     expect(screen.queryByText("IcOsVersionDeployment")).not.toBeInTheDocument();
   });
 
+  // Topic 11 is retired on the canister and 15–18 are past what the Ledger ICP app signs, so a
+  // follow on any of them spends a signature and gets nowhere. KNOWN_TOPICS keeps them because a
+  // neuron's existing followees may still sit on one.
+  it("offers only the topics a follow can be signed and accepted on", () => {
+    render(<StepFollowTopic {...stepProps()} />);
+
+    expect(screen.getByTestId("icp-follow-topic-SnsAndCommunityFund")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("icp-follow-topic-SnsDecentralizationSale"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("icp-follow-topic-ApiBoundaryNodeManagement"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("icp-follow-topic-ServiceNervousSystemManagement"),
+    ).not.toBeInTheDocument();
+  });
+
+  // The governance proto renamed topic 8; the key is a wire identifier, so only the label follows.
+  it("labels topic 8 by the name governance now gives it", () => {
+    render(<StepFollowTopic {...stepProps()} />);
+
+    expect(screen.getByTestId("icp-follow-topic-NetworkCanisterManagement")).toHaveTextContent(
+      "Application canister management",
+    );
+  });
+
   // The topic lives on the transaction and nowhere else: anything the step held separately could
   // disagree with what the device is handed.
   it("records the chosen topic on the transaction and moves on to its followees", async () => {

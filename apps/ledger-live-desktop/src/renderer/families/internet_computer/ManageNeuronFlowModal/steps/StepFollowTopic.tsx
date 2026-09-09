@@ -1,4 +1,7 @@
-import { KNOWN_TOPICS } from "@ledgerhq/live-common/families/internet_computer/consts";
+import {
+  FOLLOWABLE_TOPICS,
+  KNOWN_TOPICS,
+} from "@ledgerhq/live-common/families/internet_computer/consts";
 import { isDeviceControlledNeuron } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import { useICPPrincipal } from "@ledgerhq/live-common/families/internet_computer/react";
 import React, { useCallback } from "react";
@@ -11,8 +14,10 @@ import { useGovernanceTopicLabel } from "../../useGovernanceTopicLabel";
 import type { FollowTopic, StepProps } from "../../neuronFlow/types";
 
 // "Unspecified" is the catch-all default the canister applies when no topic-specific followees are
-// set; the others are the concrete governance topics a neuron can follow on.
-const TOPICS = Object.keys(KNOWN_TOPICS) as FollowTopic[];
+// set; the others are the concrete governance topics a neuron can follow on. Not KNOWN_TOPICS: that
+// also carries the topics the canister has retired or the device cannot sign a follow on, which a
+// neuron's existing followees may still name.
+const TOPICS = Object.keys(FOLLOWABLE_TOPICS) as FollowTopic[];
 
 /** Picks the governance topic whose followees the next step edits. */
 const StepFollowTopic = ({

@@ -8332,6 +8332,10 @@
       "title": "Cannot stake this neuron's maturity",
       "description": "Maturity cannot be staked while the neuron is spawning, once it has fully dissolved, or when the neuron has none. Sync your neurons to see their current state."
     },
+    "ICPFollowTopicNotAllowed": {
+      "title": "This topic cannot be followed",
+      "description": "The Internet Computer has retired this topic, or the Ledger Internet Computer app cannot yet sign following on it. Choose another topic."
+    },
     "ICPStakeMemoNotRecoverable": {
       "title": "Cannot top up this neuron",
       "description": "Topping up a neuron needs the memo from the transaction that created it, and it is not in this account's history. Top it up from the account that created the neuron."
@@ -10475,7 +10479,7 @@
       "NodeAdmin": "Node admin",
       "ParticipantManagement": "Participant management",
       "SubnetManagement": "Subnet management",
-      "NetworkCanisterManagement": "Network canister management",
+      "NetworkCanisterManagement": "Application canister management",
       "Kyc": "KYC",
       "NodeProviderRewards": "Node provider rewards",
       "SnsDecentralizationSale": "SNS decentralization sale",
