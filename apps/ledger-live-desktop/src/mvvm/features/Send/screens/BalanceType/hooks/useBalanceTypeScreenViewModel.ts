@@ -1,47 +1,33 @@
-import { useCallback } from "react";
-import BigNumber from "bignumber.js";
-import {
-  SEND_FLOW_STEP,
-  type SendFlowTransactionActions,
-} from "@ledgerhq/live-common/flows/send/types";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getTransparentBalance } from "@ledgerhq/coin-zcash/logic/account/balance";
-import {
-  getSpendableIronwoodBalance,
-  hasMaturingIronwoodNotes,
-} from "@ledgerhq/coin-zcash/logic/account/spendability";
-import { getReservedNullifiers } from "@ledgerhq/coin-zcash/bridge/note-reservation";
+import { useCallback, useMemo } from "react";
+import { SEND_FLOW_STEP, type SendFlowState } from "@ledgerhq/live-common/flows/send/types";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useSelector } from "LLD/hooks/redux";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
-import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 
-export type BalanceSender = "public" | "private";
+type FlowTransaction = NonNullable<SendFlowState["transaction"]["transaction"]>;
 
 export type BalanceTypeOption = {
-  sender: BalanceSender;
-  balance: BigNumber;
+  id: string;
+  /** i18n key suffix under `newSendFlow.`, owned by the currency's send descriptor. */
+  translationKey: string;
   formattedBalance: string;
   isZero: boolean;
-  hasMaturingNotes: boolean;
+  hasPendingBalance: boolean;
 };
 
 export type BalanceTypeScreenViewModel =
   | { ready: false }
   | {
       ready: true;
-      account: AccountLike;
-      parentAccount: Account | null;
-      selectedSender: BalanceSender | null;
-      transparentOption: BalanceTypeOption;
-      shieldedOption: BalanceTypeOption;
-      transactionActions: SendFlowTransactionActions;
-      onSelect: (sender: BalanceSender) => void;
+      selectedOptionId: string | null;
+      options: readonly BalanceTypeOption[];
+      onSelect: (optionId: string) => void;
     };
 
 export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
@@ -51,68 +37,49 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
 
-  const { account, parentAccount } = state.account;
+  const { account } = state.account;
   const { transaction } = state.transaction;
 
-  const bridge = useAccountBridgeOrNull<ZcashTransaction>(account);
+  const bridge = useAccountBridgeOrNull<FlowTransaction>(account);
   const unit = useMaybeAccountUnit(account ?? undefined);
 
+  const balanceTypeConfig = useMemo(
+    () => (account ? sendFeatures.getBalanceTypeConfig(getAccountCurrency(account)) : null),
+    [account],
+  );
+
   const onSelect = useCallback(
-    (sender: BalanceSender) => {
-      if (!transaction || !account || !bridge) return;
-      const tx = transaction as unknown as ZcashTransaction;
+    (optionId: string) => {
+      if (!transaction || !bridge || !balanceTypeConfig) return;
       transactionActions.setTransaction(
-        bridge.updateTransaction(tx, { sender }) as unknown as Transaction,
+        bridge.updateTransaction(
+          transaction,
+          balanceTypeConfig.buildSelectionPatch(optionId) as Partial<FlowTransaction>,
+        ),
       );
       navigation.goToStep(SEND_FLOW_STEP.RECIPIENT);
     },
-    [transaction, account, transactionActions, bridge, navigation],
+    [transaction, transactionActions, bridge, balanceTypeConfig, navigation],
   );
 
-  if (!account || !transaction || !bridge) {
+  if (!account || !transaction || !bridge || !balanceTypeConfig) {
     return { ready: false };
   }
 
-  const zcashAccount = account as ZcashAccount;
-  const tx = transaction as unknown as ZcashTransaction;
-  const selectedSender: BalanceSender | null = tx.sender ?? null;
-
-  const reserved = getReservedNullifiers(zcashAccount);
-  const shieldedBalance = getSpendableIronwoodBalance(zcashAccount, reserved);
-  const transparentBalance = getTransparentBalance(zcashAccount.bitcoinResources?.utxos);
+  const options = balanceTypeConfig.getOptions({ account }).map(option => ({
+    id: option.id,
+    translationKey: option.translationKey,
+    formattedBalance: unit
+      ? formatCurrencyUnit(unit, option.balance, { showCode: true, locale, discreet })
+      : "",
+    isZero: option.balance.isZero(),
+    hasPendingBalance: option.hasPendingBalance,
+  }));
 
   return {
     ready: true,
-    account,
-    parentAccount,
-    selectedSender,
-    transparentOption: {
-      sender: "public",
-      balance: transparentBalance,
-      formattedBalance: unit
-        ? formatCurrencyUnit(unit, transparentBalance, {
-            showCode: true,
-            locale,
-            discreet,
-          })
-        : "",
-      isZero: transparentBalance.isZero(),
-      hasMaturingNotes: false,
-    },
-    shieldedOption: {
-      sender: "private",
-      balance: shieldedBalance,
-      formattedBalance: unit
-        ? formatCurrencyUnit(unit, shieldedBalance, {
-            showCode: true,
-            locale,
-            discreet,
-          })
-        : "",
-      isZero: shieldedBalance.isZero(),
-      hasMaturingNotes: hasMaturingIronwoodNotes(zcashAccount),
-    },
-    transactionActions,
+    selectedOptionId: balanceTypeConfig.getSelectedOptionId(transaction),
+    options,
     onSelect,
   };
 }

@@ -2831,10 +2831,14 @@
     "recipient": {
       "selfTransfer": {
         "title": "Self transfer",
-        "toPrivate": "Send to private balance",
-        "toPublic": "Send to public balance",
-        "privateBalance": "Private balance",
-        "publicBalance": "Public balance"
+        "toPrivate": {
+          "action": "Send to private balance",
+          "label": "Private balance"
+        },
+        "toPublic": {
+          "action": "Send to public balance",
+          "label": "Public balance"
+        }
       }
     },
     "balanceType": {
@@ -2846,7 +2850,7 @@
       "shielded": {
         "title": "Shielded",
         "subtitle": "Privacy-preserving balance",
-        "maturingNotice": "Some shielded notes are still maturing and may not be spendable yet"
+        "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
       },
       "zeroBalance": {
         "warning": "No available balance"

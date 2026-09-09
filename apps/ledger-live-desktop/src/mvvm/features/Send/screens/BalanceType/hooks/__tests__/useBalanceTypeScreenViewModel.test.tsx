@@ -2,6 +2,8 @@ import React, { forwardRef, useImperativeHandle } from "react";
 import { render, cleanup } from "tests/testSetup";
 import BigNumber from "bignumber.js";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import type { BalanceTypeOption } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { useBalanceTypeScreenViewModel } from "../useBalanceTypeScreenViewModel";
 
 // Navigation mock
@@ -15,31 +17,13 @@ const mockSetTransaction = jest.fn();
 const mockTransactionActions = { setTransaction: mockSetTransaction };
 
 type MockState = {
-  account: {
-    account: { id: string; bitcoinResources?: { utxos?: unknown[] } } | null;
-    parentAccount: null;
-    currency: null;
-  };
-  transaction: {
-    transaction: { id: string; sender?: string } | null;
-    status: Record<string, unknown>;
-    bridgeError: null;
-    bridgePending: false;
-  };
+  account: { account: { id: string; type: string; currency: unknown } | null };
+  transaction: { transaction: { id: string; sender?: string } | null };
 };
 
 let mockState: MockState = {
-  account: {
-    account: { id: "zcash-acc", bitcoinResources: { utxos: [] } },
-    parentAccount: null,
-    currency: null,
-  },
-  transaction: {
-    transaction: { id: "tx1", sender: undefined },
-    status: {},
-    bridgeError: null,
-    bridgePending: false,
-  },
+  account: { account: null },
+  transaction: { transaction: null },
 };
 
 jest.mock("../../../../context/SendFlowContext", () => ({
@@ -57,28 +41,47 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   ),
 }));
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
-  CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
-}));
-
-// Coin-zcash balance helpers — use jest.fn() directly to avoid spread type errors
-jest.mock("@ledgerhq/coin-zcash/logic/account/balance", () => ({
-  getTransparentBalance: jest.fn(),
-}));
-
-jest.mock("@ledgerhq/coin-zcash/logic/account/spendability", () => ({
-  getSpendableIronwoodBalance: jest.fn(),
-  hasMaturingIronwoodNotes: jest.fn(),
-}));
-
-jest.mock("@ledgerhq/coin-zcash/bridge/note-reservation", () => ({
-  getReservedNullifiers: jest.fn(),
+// The send descriptor is the only source of balance pools: the view model must read the
+// pools, the selection and its patch from it, and never from a coin-module.
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
+  sendFeatures: { getBalanceTypeConfig: jest.fn() },
 }));
 
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
   useMaybeAccountUnit: jest.fn(() => ({ code: "ZEC", name: "ZEC", magnitude: 8 })),
 }));
+
+jest.mock("@ledgerhq/live-countervalues-react", () => ({
+  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+  CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
+
+const PUBLIC_POOL: BalanceTypeOption = {
+  id: "public",
+  translationKey: "balanceType.transparent",
+  balance: new BigNumber(1000),
+  hasPendingBalance: false,
+};
+
+const PRIVATE_POOL: BalanceTypeOption = {
+  id: "private",
+  translationKey: "balanceType.shielded",
+  balance: new BigNumber(2000),
+  hasPendingBalance: false,
+};
+
+function stubBalanceTypeConfig(options: readonly BalanceTypeOption[]) {
+  const config = {
+    getOptions: jest.fn(() => options),
+    getSelectedOptionId: jest.fn((tx: unknown) => (tx as { sender?: string })?.sender ?? null),
+    buildSelectionPatch: jest.fn((optionId: string) => ({ sender: optionId })),
+    getSelfTransferTarget: jest.fn(() => null),
+  };
+  mockedGetBalanceTypeConfig.mockReturnValue(config);
+  return config;
+}
 
 // Harness to expose hook API
 type HookApi = ReturnType<typeof useBalanceTypeScreenViewModel>;
@@ -88,44 +91,21 @@ const Harness = forwardRef<HookApi>(function Harness(_props, ref) {
   return null;
 });
 
+function renderViewModel(): HookApi | null {
+  const ref = React.createRef<HookApi>();
+  render(<Harness ref={ref} />);
+  return ref.current;
+}
+
 describe("useBalanceTypeScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUpdateTransaction.mockImplementation((tx, patch) => ({ ...tx, ...patch }));
-
-    // Configure coin-zcash module mocks via requireMock
-    const balanceMock = jest.requireMock("@ledgerhq/coin-zcash/logic/account/balance") as {
-      getTransparentBalance: jest.Mock;
-    };
-    const spendabilityMock = jest.requireMock(
-      "@ledgerhq/coin-zcash/logic/account/spendability",
-    ) as {
-      getSpendableIronwoodBalance: jest.Mock;
-      hasMaturingIronwoodNotes: jest.Mock;
-    };
-    const noteReservationMock = jest.requireMock(
-      "@ledgerhq/coin-zcash/bridge/note-reservation",
-    ) as {
-      getReservedNullifiers: jest.Mock;
-    };
-
-    balanceMock.getTransparentBalance.mockReturnValue(new BigNumber(1000));
-    spendabilityMock.getSpendableIronwoodBalance.mockReturnValue(new BigNumber(2000));
-    spendabilityMock.hasMaturingIronwoodNotes.mockReturnValue(false);
-    noteReservationMock.getReservedNullifiers.mockReturnValue(new Set());
+    stubBalanceTypeConfig([PUBLIC_POOL, PRIVATE_POOL]);
 
     mockState = {
-      account: {
-        account: { id: "zcash-acc", bitcoinResources: { utxos: [] } },
-        parentAccount: null,
-        currency: null,
-      },
-      transaction: {
-        transaction: { id: "tx1", sender: undefined },
-        status: {},
-        bridgeError: null,
-        bridgePending: false,
-      },
+      account: { account: { id: "zcash-acc", type: "Account", currency: { id: "zcash" } } },
+      transaction: { transaction: { id: "tx1", sender: undefined } },
     };
   });
 
@@ -136,172 +116,98 @@ describe("useBalanceTypeScreenViewModel", () => {
   test("returns { ready: false } when account is null", () => {
     mockState.account.account = null;
 
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
-
-    expect(ref.current?.ready).toBe(false);
+    expect(renderViewModel()?.ready).toBe(false);
   });
 
   test("returns { ready: false } when transaction is null", () => {
     mockState.transaction.transaction = null;
 
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
-
-    expect(ref.current?.ready).toBe(false);
+    expect(renderViewModel()?.ready).toBe(false);
   });
 
-  test("returns correct transparentOption.balance from getTransparentBalance", () => {
-    const balanceMock = jest.requireMock("@ledgerhq/coin-zcash/logic/account/balance") as {
-      getTransparentBalance: jest.Mock;
-    };
-    balanceMock.getTransparentBalance.mockReturnValue(new BigNumber(5000));
+  test("returns { ready: false } when the currency declares no balance pools", () => {
+    mockedGetBalanceTypeConfig.mockReturnValue(null);
 
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
+    expect(renderViewModel()?.ready).toBe(false);
+  });
 
-    const vm = ref.current;
+  test("exposes one option per pool declared by the descriptor, in order", () => {
+    const vm = renderViewModel();
+
     expect(vm?.ready).toBe(true);
     if (vm?.ready) {
-      expect(vm.transparentOption.balance.toNumber()).toBe(5000);
+      expect(vm.options.map(option => option.id)).toEqual(["public", "private"]);
+      expect(vm.options.map(option => option.translationKey)).toEqual([
+        "balanceType.transparent",
+        "balanceType.shielded",
+      ]);
     }
   });
 
-  test("returns correct shieldedOption.balance from getSpendableIronwoodBalance", () => {
-    const spendabilityMock = jest.requireMock(
-      "@ledgerhq/coin-zcash/logic/account/spendability",
-    ) as {
-      getSpendableIronwoodBalance: jest.Mock;
-      hasMaturingIronwoodNotes: jest.Mock;
-    };
-    spendabilityMock.getSpendableIronwoodBalance.mockReturnValue(new BigNumber(9999));
+  test("formats each pool balance and flags the empty ones", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, balance: new BigNumber(0) }]);
 
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
+    const vm = renderViewModel();
 
-    const vm = ref.current;
     expect(vm?.ready).toBe(true);
     if (vm?.ready) {
-      expect(vm.shieldedOption.balance.toNumber()).toBe(9999);
+      expect(vm.options[0].formattedBalance).toBeTruthy();
+      expect(vm.options[0].isZero).toBe(false);
+      expect(vm.options[1].isZero).toBe(true);
     }
   });
 
-  test("shieldedOption.hasMaturingNotes is true when hasMaturingIronwoodNotes returns true", () => {
-    const spendabilityMock = jest.requireMock(
-      "@ledgerhq/coin-zcash/logic/account/spendability",
-    ) as {
-      getSpendableIronwoodBalance: jest.Mock;
-      hasMaturingIronwoodNotes: jest.Mock;
-    };
-    spendabilityMock.hasMaturingIronwoodNotes.mockReturnValue(true);
+  test("propagates the pending-balance flag of a pool", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, hasPendingBalance: true }]);
 
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
+    const vm = renderViewModel();
 
-    const vm = ref.current;
     expect(vm?.ready).toBe(true);
     if (vm?.ready) {
-      expect(vm.shieldedOption.hasMaturingNotes).toBe(true);
+      expect(vm.options[0].hasPendingBalance).toBe(false);
+      expect(vm.options[1].hasPendingBalance).toBe(true);
     }
   });
 
-  test("selectedSender is null when tx.sender is undefined", () => {
-    mockState.transaction.transaction = { id: "tx1", sender: undefined };
+  test.each([
+    ["no pool is selected yet", undefined, null],
+    ["the first pool is selected", "public", "public"],
+    ["the second pool is selected", "private", "private"],
+  ])("reads the selected pool from the descriptor when %s", (_label, sender, expected) => {
+    mockState.transaction.transaction = { id: "tx1", sender };
 
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
+    const vm = renderViewModel();
 
-    const vm = ref.current;
     expect(vm?.ready).toBe(true);
     if (vm?.ready) {
-      expect(vm.selectedSender).toBeNull();
+      expect(vm.selectedOptionId).toBe(expected);
     }
   });
 
-  test("selectedSender is 'public' when tx.sender is 'public'", () => {
-    mockState.transaction.transaction = { id: "tx1", sender: "public" };
+  test.each(["public", "private"])(
+    "onSelect(%s) applies the descriptor patch and moves to the recipient step",
+    optionId => {
+      const config = stubBalanceTypeConfig([PUBLIC_POOL, PRIVATE_POOL]);
 
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
+      const vm = renderViewModel();
 
-    const vm = ref.current;
-    expect(vm?.ready).toBe(true);
-    if (vm?.ready) {
-      expect(vm.selectedSender).toBe("public");
-    }
-  });
+      expect(vm?.ready).toBe(true);
+      if (vm?.ready) {
+        vm.onSelect(optionId);
+      }
 
-  test("selectedSender is 'private' when tx.sender is 'private'", () => {
-    mockState.transaction.transaction = { id: "tx1", sender: "private" };
+      expect(config.buildSelectionPatch).toHaveBeenCalledWith(optionId);
+      expect(mockUpdateTransaction).toHaveBeenCalledWith(expect.objectContaining({ id: "tx1" }), {
+        sender: optionId,
+      });
+      expect(mockSetTransaction).toHaveBeenCalledTimes(1);
+      expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
+    },
+  );
 
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
-
-    const vm = ref.current;
-    expect(vm?.ready).toBe(true);
-    if (vm?.ready) {
-      expect(vm.selectedSender).toBe("private");
-    }
-  });
-
-  test("onSelect('public') calls setTransaction with sender: 'public' and navigates to RECIPIENT", () => {
-    mockState.transaction.transaction = { id: "tx1", sender: "private" };
-
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
-
-    const vm = ref.current;
-    expect(vm?.ready).toBe(true);
-    if (vm?.ready) {
-      vm.onSelect("public");
-    }
-
-    expect(mockUpdateTransaction).toHaveBeenCalledWith(expect.objectContaining({ id: "tx1" }), {
-      sender: "public",
-    });
-    expect(mockSetTransaction).toHaveBeenCalledTimes(1);
-    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
-  });
-
-  test("onSelect('private') calls setTransaction with sender: 'private' and navigates to RECIPIENT", () => {
-    mockState.transaction.transaction = { id: "tx1", sender: "public" };
-
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
-
-    const vm = ref.current;
-    expect(vm?.ready).toBe(true);
-    if (vm?.ready) {
-      vm.onSelect("private");
-    }
-
-    expect(mockUpdateTransaction).toHaveBeenCalledWith(expect.objectContaining({ id: "tx1" }), {
-      sender: "private",
-    });
-    expect(mockSetTransaction).toHaveBeenCalledTimes(1);
-    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
-  });
-
-  test("does not set tx.sender before the user selects an option", () => {
-    mockState.transaction.transaction = { id: "tx1", sender: undefined };
-
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
+  test("does not touch the transaction before the user selects a pool", () => {
+    renderViewModel();
 
     expect(mockSetTransaction).not.toHaveBeenCalled();
-  });
-
-  test("formats transparent and shielded balances with locale and discreet settings", () => {
-    const ref = React.createRef<HookApi>();
-    render(<Harness ref={ref} />);
-
-    const vm = ref.current;
-    expect(vm?.ready).toBe(true);
-    if (vm?.ready) {
-      expect(vm.transparentOption.formattedBalance).toBeTruthy();
-      expect(vm.shieldedOption.formattedBalance).toBeTruthy();
-      expect(vm.transparentOption.isZero).toBe(false);
-      expect(vm.shieldedOption.isZero).toBe(false);
-    }
   });
 });

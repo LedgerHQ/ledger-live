@@ -1,6 +1,7 @@
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getSendDescriptor } from "../registry";
 import type {
+  BalanceTypeConfig,
   CoinControlConfig,
   CustomFeeConfig,
   FeeAssetsConfig,
@@ -38,6 +39,7 @@ function fromDescriptor<T>(
 const noCustomFeeConfig: CustomFeeConfig | null = null;
 const noFeeAssetsConfig: FeeAssetsConfig | null = null;
 const noCoinControlConfig: CoinControlConfig | null = null;
+const noBalanceTypeConfig: BalanceTypeConfig | null = null;
 const noAmountEffects: readonly FlowEffect[] = [];
 const defaultSelfTransferPolicy: SelfTransferPolicy = "impossible";
 
@@ -119,7 +121,8 @@ export const sendFeatures = {
     return d?.fees.getNetworkFeesInfo?.(ctx) ?? null;
   },
   hasDefaultStrategy: fromDescriptor(d => d.fees.defaultStrategy != null, false),
-  hasBalanceTypeStep: fromDescriptor(d => d.hasBalanceTypeStep, false),
+  hasBalanceTypeStep: fromDescriptor(d => d.balanceType != null, false),
+  getBalanceTypeConfig: fromDescriptor(d => d.balanceType, noBalanceTypeConfig),
   getDefaultStrategyPatch: (
     currency: CryptoOrTokenCurrency | undefined,
   ): TransactionPatch | null => {
