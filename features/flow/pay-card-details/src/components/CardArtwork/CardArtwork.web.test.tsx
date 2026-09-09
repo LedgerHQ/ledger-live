@@ -7,6 +7,6 @@ describe("CardArtwork (web)", () => {
     render(<CardArtwork />);
 
     expect(screen.getByTestId("card-artwork")).toBeVisible();
-    expect(screen.getByAltText("Visa")).toBeVisible();
+    expect(screen.getByRole("img", { name: "Visa" })).toBeVisible();
   });
 });
