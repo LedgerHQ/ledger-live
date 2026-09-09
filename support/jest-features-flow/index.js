@@ -15,15 +15,22 @@ const webMocks = {
   "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),
 };
 
+// Lumen's shared utils (`cn`, the amount formatters) ship as ESM and are real logic the views
+// call, so SWC has to compile them instead of a stub standing in — unlike the component barrels
+// above, which only need to render a DOM node. Entries match the pnpm store directory names.
+const transformAllowlist = ["@ledgerhq\\+lumen-utils-shared"];
+
 const nativeMocks = {
   // Stub react-native itself (Flow-typed ESM) so native tests run in a plain node env.
   // Mapped here (not jest.mock in a setup file) so it also intercepts react-native imports
   // from inside @testing-library/react-native.
   "^react-native$": path.join(__dirname, "mocks/react-native.js"),
   "^react-native-reanimated$": path.join(__dirname, "mocks/reanimated.js"),
+  "^react-native-safe-area-context$": path.join(__dirname, "mocks/safe-area-context.js"),
   "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "mocks/passthrough-native.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-native.js"),
   "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),
+  "^@shared/ui-queued-bottom-sheet$": "@shared/ui-queued-bottom-sheet/testing/module-mock",
 };
 
 /**
@@ -45,6 +52,7 @@ function createFlowJestConfig(overrides = {}) {
   const base = {
     testPathIgnorePatterns,
     transform: swcTransform,
+    transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformAllowlist.join("|")}))`],
     coverageReporters,
   };
 

@@ -1,9 +1,8 @@
 import { useCallback } from "react";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import type { Contact } from "@domain/entity-contact";
+import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
-
-const PAY_PAGE = "Pay";
 
 // Card payments only spend stablecoins; filter the account picker by category so the
 // user still picks any supported network without listing every currency id.
@@ -26,7 +25,7 @@ export function usePayTabNewPayment(): UsePayTabNewPayment {
         // same network, then skip to the amount step where the header resolves the prefilled
         // address back to the contact and shows the "To <contact>" header.
         openSendFlow({
-          source: PAY_PAGE,
+          source: SEND_FLOW_SOURCE.PAY,
           currencyIds: [contactAddress.currencyId],
           recipient: contactAddress.address,
           skipRecipientStep: true,
@@ -34,7 +33,7 @@ export function usePayTabNewPayment(): UsePayTabNewPayment {
         return;
       }
 
-      openSendFlow({ source: PAY_PAGE, categories: PAY_CATEGORIES });
+      openSendFlow({ source: SEND_FLOW_SOURCE.PAY, categories: PAY_CATEGORIES });
     },
     [openSendFlow],
   );

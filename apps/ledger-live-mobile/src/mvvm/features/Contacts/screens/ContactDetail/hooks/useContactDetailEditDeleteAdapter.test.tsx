@@ -4,7 +4,7 @@ import { act, renderHook } from "@testing-library/react-native";
 import { Provider } from "react-redux";
 import { contactsSlice } from "@domain/entity-contact";
 import { mockContactWithAddress } from "@domain/entity-contact/schema.mock";
-import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
+import { createMockContactDeviceIntentsPort } from "@features/platform-contacts/test";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 
 const deviceIntents = createMockContactDeviceIntentsPort();

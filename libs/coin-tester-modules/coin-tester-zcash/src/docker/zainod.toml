@@ -1,0 +1,7 @@
+# zainod's config loader requires this file to exist (`config::File::required(true)`,
+# packages/zainod/src/config.rs's `load_config_with_env`) even though `ZainodConfig`
+# derives `#[serde(default)]` at the struct level -- so every field this file omits
+# falls back to `ZainodConfig::default()`, and the docker-compose.yml `ZAINO_*`
+# environment variables (layered on top of this file by the same loader) supply
+# everything this stack actually needs. Empirically confirmed: an empty file here
+# is sufficient, deliberately left content-free rather than duplicating the env vars.

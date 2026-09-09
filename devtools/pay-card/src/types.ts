@@ -32,25 +32,150 @@ export interface PayCardOnboardingProps {
   readonly setStepDone: (id: string, done: boolean) => void;
 }
 
-/**
- * One env var the tool shows, with the value a tester most often wants next.
- *
- * The app reads the two Card env vars on every request, so a value set here applies without a
- * restart. Nothing saves it: after a restart the app reads the build's value again.
- */
-export interface PayCardEnvVar {
-  readonly key: string;
-  /** The value the app reads right now. */
-  readonly value: string;
-  /** What the input starts with, so one press is enough to change the tenant. */
-  readonly suggestedValue: string;
+export interface PayCardSessionSnapshot {
+  readonly accessToken: string;
+  readonly refreshToken: string;
 }
 
-/** The Card env vars the tool reads, and the one way it changes them. */
-export interface PayCardEnvProps {
-  readonly vars: readonly PayCardEnvVar[];
-  readonly setVar: (key: string, value: string) => void;
+export interface PayCardMockResponse {
+  readonly id: string;
+  readonly label: string;
+  readonly hint: string;
 }
+
+export interface PayCardRenewalMockProps {
+  readonly available: boolean;
+  readonly response: string;
+  readonly responses: readonly PayCardMockResponse[];
+  readonly setResponse: (id: string) => void;
+  readonly renewals: number;
+  readonly resetRenewals: () => void;
+  readonly armUnauthorized: () => void;
+}
+
+export interface PayCardActionResult {
+  readonly id: number;
+  readonly message: string;
+  readonly failed: boolean;
+}
+
+export interface PayCardAuthProps {
+  readonly session: PayCardSessionSnapshot | null;
+  readonly sessionError: string | null;
+  readonly busy: boolean;
+  readonly lastResult: PayCardActionResult | null;
+  readonly readTokens: () => void;
+  readonly renewNow: () => void;
+  readonly breakAccessToken: () => void;
+  readonly breakRefreshToken: () => void;
+  readonly clearSession: () => void;
+  readonly fetchUser: () => void;
+  readonly openPayTab?: () => void;
+  readonly mock: PayCardRenewalMockProps;
+}
+
+/** One Card endpoint the tool can call on demand, with the last thing it returned. */
+export interface PayCardProbe {
+  readonly id: string;
+  readonly label: string;
+  readonly isFetching: boolean;
+  /** The last response, pretty-printed. `undefined` until the probe has been run. */
+  readonly result: string | undefined;
+  readonly error: string | undefined;
+  readonly run: () => void;
+}
+
+/** The four colours the provider paints the details image with. Hex, `#RGB` or `#RRGGBB`. */
+export interface PayCardDetailsCssProps {
+  readonly cardBackgroundColor?: string;
+  readonly cardTextColor?: string;
+  /** PAN is the card number: the provider draws it on its own strip. */
+  readonly panBackgroundColor?: string;
+  readonly panTextColor?: string;
+}
+
+/**
+ * The secure card details image.
+ *
+ * The provider renders PAN, CVV and expiry itself and hands back a URL whose token is the whole
+ * credential, so the image loads with no headers. The URL is single-use and short-lived: it is
+ * never rendered as text, never logged, and dropped when the screen is left.
+ */
+export interface PayCardDetailsImageProps {
+  readonly imageUrl: string | undefined;
+  readonly isFetching: boolean;
+  readonly error: string | undefined;
+  readonly request: (customCss?: PayCardDetailsCssProps) => void;
+  /** Drops the minted URL, so coming back to the screen mints a fresh one. */
+  readonly clear: () => void;
+}
+
+/**
+ * Card interaction controls: call the signed-in cardholder's endpoints and read back what they
+ * answer, so the data can be checked without a screen to render it.
+ */
+export interface PayCardInteractionProps {
+  readonly probes: readonly PayCardProbe[];
+  readonly details: PayCardDetailsImageProps;
+}
+
+/** One wallet exactly as `GET /v1/wallet/internal` answered. */
+export interface PayCardBaanxWallet {
+  readonly id: string;
+  readonly balance: string;
+  readonly currency: string;
+  readonly address: string;
+  /** Absent when the provider sent no key at all, `null` when it sent one: the tool shows which. */
+  readonly addressMemo?: string | null;
+}
+
+/** One wallet exactly as `GET /v1/wallet/internal/card_linked` answered. */
+export interface PayCardLinkedWallet {
+  readonly id: string;
+  readonly address: string;
+  readonly currency: string;
+  readonly network: string;
+  /** Charging order. The wallets are listed in it. */
+  readonly priority: number;
+}
+
+/** One item of the join the app builds from the two responses above. */
+export interface PayCardCombinedWallet {
+  readonly id: string;
+  readonly address: string;
+  readonly currency: string;
+  readonly network: string;
+  readonly priority: number;
+  /** `null` when no Baanx wallet matched this link, and while they are still being read. */
+  readonly balance: string | null;
+}
+
+export interface PayCardBalanceError {
+  readonly endpoint: string;
+  readonly detail: string;
+}
+
+/**
+ * What the two wallet endpoints answered, and the join the app builds from them.
+ *
+ * All three are shown side by side and unformatted: the screen exists to compare what the provider
+ * sent with what the app made of it.
+ */
+export interface PayCardBalanceProps {
+  /** Raw `GET /v1/wallet/internal`. */
+  readonly baanxWallets: readonly PayCardBaanxWallet[];
+  /** Raw `GET /v1/wallet/internal/card_linked`. */
+  readonly linkedWallets: readonly PayCardLinkedWallet[];
+  /** What the app joins the two into. */
+  readonly combinedWallets: readonly PayCardCombinedWallet[];
+  readonly isFetching: boolean;
+  readonly errors: readonly PayCardBalanceError[];
+  /** Starts the wallet queries. The screen calls this when it opens. */
+  readonly load: () => void;
+  readonly refresh: () => void;
+}
+
+export type PayCardOpenSecureBrowser = (url: string) => Promise<string>;
 
 /**
  * Props contract for the Card / Pay DevTool.
@@ -61,6 +186,8 @@ export interface PayCardEnvProps {
 export interface PayCardToolProps {
   readonly flags: PayCardFlagsProps;
   readonly onboarding: PayCardOnboardingProps;
+  readonly interaction: PayCardInteractionProps;
+  readonly balance: PayCardBalanceProps;
   /** Whether the user has already seen the Pay feature tour. */
   readonly hasSeenFeatureTour: boolean;
   /** Resets the feature tour so it plays again on the next Pay visit. */
@@ -69,10 +196,16 @@ export interface PayCardToolProps {
   readonly hasSeenReceiveVerifyHint: boolean;
   /** Resets the Request Verify hint so it shows again on the next Request. */
   readonly resetReceiveVerifyHintSeen: () => void;
+  readonly hasSeenLoginIntro: boolean;
+  readonly resetPayCardLoginIntroSeen: () => void;
+  /** Whether the card onboarding widget has been permanently dismissed (all steps done + Got it). */
+  readonly hasCompletedCardOnboarding: boolean;
+  /** Resets the onboarding completion flag so the widget reappears. */
+  readonly resetCardOnboarding: () => void;
   /** Host-only: jump to Portfolio. Omitted when the host cannot navigate. */
   readonly onNavigateToPortfolio?: () => void;
   /** Host-only: jump to the Pay tab. Omitted when the host cannot navigate. */
   readonly onNavigateToPayTab?: () => void;
-  /** The Card backend env vars, read live and set from the tool. */
-  readonly env: PayCardEnvProps;
+  readonly auth?: PayCardAuthProps;
+  readonly openSecureBrowser?: PayCardOpenSecureBrowser;
 }

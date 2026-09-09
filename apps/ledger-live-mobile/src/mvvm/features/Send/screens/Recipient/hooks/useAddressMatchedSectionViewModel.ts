@@ -22,6 +22,8 @@ type UseAddressMatchedSectionViewModelProps = Readonly<{
   hasAddressBook?: boolean;
   addressBookFamilyName?: string;
   onAddContact?: () => void;
+  onUnsupportedNetwork?: () => void;
+  onDismissUnsupportedNetwork?: () => void;
 }>;
 
 type AddressListItemSuggestion = Readonly<{
@@ -58,6 +60,8 @@ type RecipientCardSuggestion = Readonly<{
   sendLabel: string;
   onAddContact: () => void;
   onSend: () => void;
+  onUnsupportedNetwork: () => void;
+  onDismissUnsupportedNetwork: () => void;
 }>;
 
 export type AddressMatchedSectionViewModel = Readonly<{
@@ -83,6 +87,8 @@ export function useAddressMatchedSectionViewModel({
   hasAddressBook = false,
   addressBookFamilyName = "",
   onAddContact = () => undefined,
+  onUnsupportedNetwork = () => undefined,
+  onDismissUnsupportedNetwork = () => undefined,
 }: UseAddressMatchedSectionViewModelProps): AddressMatchedSectionViewModel {
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
@@ -116,6 +122,8 @@ export function useAddressMatchedSectionViewModel({
         sendLabel: t("contacts.addressDetail.send"),
         onAddContact,
         onSend: () => onSelect(recipientAddress, searchResult.ensName),
+        onUnsupportedNetwork,
+        onDismissUnsupportedNetwork,
       },
       showFirstInteractionWarning: false,
     };
@@ -188,6 +196,8 @@ export function useAddressMatchedSectionViewModel({
           sendLabel: t("contacts.addressDetail.send"),
           onAddContact,
           onSend: () => onSelect(presentation.recipientAddress, presentation.ensName),
+          onUnsupportedNetwork,
+          onDismissUnsupportedNetwork,
         },
         showFirstInteractionWarning,
       };

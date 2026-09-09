@@ -25,6 +25,7 @@ import { Fee as FeeType } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { AppInfos as AppInfosType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Swap as SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { CLI as CLIType } from "@e2e/utils/cliUtils";
+import type { OptionalFeatureMap } from "@shared/feature-flags";
 
 declare global {
   var IS_FAILED: boolean;
@@ -32,6 +33,7 @@ declare global {
   var speculosStartupErrorMessage: string | undefined;
   var speculosFailureStderr: string | undefined;
   var speculosFailedRunIds: Set<string> | undefined;
+  var mergedFeatureFlags: OptionalFeatureMap | undefined;
   var webSocket: {
     wss: Server | undefined;
     ws: WebSocket | undefined;

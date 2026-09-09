@@ -198,6 +198,18 @@
         "env": "ANALYTICS_TOKEN"
       },
       {
+        "env": "CARD_BAANX_API_URL"
+      },
+      {
+        "env": "CARD_BAANX_CLIENT_KEY"
+      },
+      {
+        "env": "CARD_BAANX_HOSTED_UI"
+      },
+      {
+        "env": "CARD_OAUTH_REDIRECT_URI"
+      },
+      {
         "env": "DISABLE_TRANSACTION_BROADCAST"
       },
       {

@@ -1,8 +1,7 @@
-import expect from "expect";
 import { Transaction } from "../models/Transaction";
 import {
   waitFor,
-  containsSubstringInEvent,
+  expectSpeculosEventsContain,
   pressUntilTextFound,
   getSendEvents,
   waitForSendReviewTransaction,
@@ -37,19 +36,15 @@ export const sendBTCBasedCoin = withDeviceController(
 
       if (isTouchDevice()) {
         const events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
-        const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-        expect(isAmountCorrect).toBeTruthy();
-        const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-        expect(isAddressCorrect).toBeTruthy();
+        expectSpeculosEventsContain(tx.amount, events);
+        expectSpeculosEventsContain(tx.accountToCredit.address, events);
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
       } else {
         const amountStep = await pressUntilTextFound(DeviceLabels.AMOUNT);
-        const isAmountCorrect = containsSubstringInEvent(tx.amount, amountStep);
-        expect(isAmountCorrect).toBeTruthy();
+        expectSpeculosEventsContain(tx.amount, amountStep);
 
         const addressStep = await pressUntilTextFound(DeviceLabels.ADDRESS);
-        const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, addressStep);
-        expect(isAddressCorrect).toBeTruthy();
+        expectSpeculosEventsContain(tx.accountToCredit.address, addressStep);
 
         await pressUntilTextFound(getSignTransactionLabel(currencyId));
         if (currencyId !== Currency.ZEC.id) {
@@ -70,14 +65,12 @@ export const sendBTC = withDeviceController(
 
       try {
         const events = await getSendEvents(tx);
-        const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-        expect(isAmountCorrect).toBeTruthy();
+        expectSpeculosEventsContain(tx.amount, events);
 
         if (!tx.accountToCredit.address) {
           throw new Error("Recipient address is not set");
         }
-        const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-        expect(isAddressCorrect).toBeTruthy();
+        expectSpeculosEventsContain(tx.accountToCredit.address, events);
 
         if (isTouchDevice()) {
           await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);

@@ -11,38 +11,13 @@ import {
   payRequestVerifyHintSlice,
   markReceiveVerifyHintSeen,
 } from "@features/flow-pay-request/state";
+import { cardApi } from "@shared/api-services";
+import {
+  payCardLoginIntroSlice,
+  markPayCardLoginIntroSeen,
+} from "@features/flow-pay-card-auth/state";
+import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
 import { usePayCardToolProps } from "./usePayCardToolProps";
-
-/**
- * `@shared/env` is mocked, as in `useEnvDevToolProps.test.ts`. The real module reads its definitions
- * from `@ledgerhq/live-env`, which this package does not depend on, so CI cannot resolve it.
- */
-const DEFAULT_ENV_VALUES: Record<string, string> = {
-  CARD_API_URL: "https://card.api.live.ledger.com",
-  CARD_BAANX_CLIENT_KEY: "",
-};
-let envValues: Record<string, string> = { ...DEFAULT_ENV_VALUES };
-let envListener: ((change: { name: string }) => void) | undefined;
-
-const mockSetEnvUnsafe = jest.fn((key: string, value: string) => {
-  envValues[key] = value;
-  envListener?.({ name: key });
-});
-
-jest.mock("@shared/env", () => ({
-  getEnv: (key: string) => envValues[key],
-  setEnvUnsafe: (key: string, value: string) => mockSetEnvUnsafe(key, value),
-  changes: {
-    subscribe: (listener: (change: { name: string }) => void) => {
-      envListener = listener;
-      return {
-        unsubscribe: () => {
-          envListener = undefined;
-        },
-      };
-    },
-  },
-}));
 
 function buildStore() {
   return configureStore({
@@ -50,8 +25,15 @@ function buildStore() {
       featureFlags: featureFlagsReducer,
       payCardFeatureTour: payCardFeatureTourSlice.reducer,
       payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
+      payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
+      // The tool reads the Card endpoints, so its api has to be part of the store under test.
+      [cardApi.reducerPath]: cardApi.reducer,
+      payCardLoginIntro: payCardLoginIntroSlice.reducer,
     },
-    middleware: gdm => gdm().concat(createFeatureFlagsMiddleware({ resolutionConfig: {} })),
+    middleware: gdm =>
+      gdm()
+        .concat(createFeatureFlagsMiddleware({ resolutionConfig: {} }))
+        .concat(cardApi.middleware),
   });
 }
 
@@ -64,34 +46,32 @@ describe("usePayCardToolProps", () => {
 
   beforeEach(() => {
     store = buildStore();
-    envValues = { ...DEFAULT_ENV_VALUES };
-    mockSetEnvUnsafe.mockClear();
   });
 
   it("exposes desktop onboarding steps and default flag values", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
     expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "kyc",
-      "claim",
-      "topup",
-      "purchase",
+      "create-account",
+      "choose-card-type",
+      "top-up-card",
+      "first-purchase",
     ]);
     expect(result.current.flags.payTabEnabled).toBe(false);
     expect(result.current.flags.ptxCardEnabled).toBe(false);
   });
 
-  it("includes walletPay when platform is native", () => {
+  it("includes apple-google-pay step when platform is native", () => {
     const { result } = renderHook(() => usePayCardToolProps({ platform: "native" }), {
       wrapper: withStore(store),
     });
 
     expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "kyc",
-      "claim",
-      "topup",
-      "walletPay",
-      "purchase",
+      "create-account",
+      "choose-card-type",
+      "top-up-card",
+      "apple-google-pay",
+      "first-purchase",
     ]);
   });
 
@@ -168,14 +148,49 @@ describe("usePayCardToolProps", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
     act(() => {
-      result.current.onboarding.setStepDone("kyc", true);
+      result.current.onboarding.setStepDone("choose-card-type", true);
     });
-    expect(result.current.onboarding.steps.find(step => step.id === "kyc")?.done).toBe(true);
+    expect(result.current.onboarding.steps.find(step => step.id === "choose-card-type")?.done).toBe(
+      true,
+    );
 
     act(() => {
       result.current.onboarding.setStepDone("all", false);
     });
     expect(result.current.onboarding.steps.every(step => !step.done)).toBe(true);
+  });
+
+  it("reports no balance until the screen asks for one", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    expect(result.current.balance).toMatchObject({
+      baanxWallets: [],
+      linkedWallets: [],
+      combinedWallets: [],
+      isFetching: false,
+      errors: [],
+    });
+  });
+
+  it("starts reading the wallets when the screen opens", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => result.current.balance.load());
+
+    expect(result.current.balance.isFetching).toBe(true);
+  });
+
+  it("reads the wallets on a refresh, even as the first thing the screen does", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    // Refresh both requests them and refetches, so it stands on its own: pressing it before the
+    // first read has landed must not leave the screen with nothing.
+    act(() => result.current.balance.refresh());
+
+    expect(result.current.balance.isFetching).toBe(true);
   });
 
   it("exposes hasSeenFeatureTour from the payCard slice", () => {
@@ -186,47 +201,12 @@ describe("usePayCardToolProps", () => {
     expect(result.current.hasSeenFeatureTour).toBe(true);
   });
 
-  it("exposes the two Card env vars, with the development tenant as the suggestion", () => {
+  it("exposes hasSeenLoginIntro from the payCard slice", () => {
+    store.dispatch(markPayCardLoginIntroSeen());
+
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
-    expect(result.current.env.vars).toEqual([
-      {
-        key: "CARD_API_URL",
-        value: "https://card.api.live.ledger.com",
-        suggestedValue: "https://dev.api.baanx.com",
-      },
-      {
-        key: "CARD_BAANX_CLIENT_KEY",
-        value: "",
-        suggestedValue: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6",
-      },
-    ]);
-  });
-
-  it("setVar changes the env, and the value it reports follows", () => {
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
-
-    act(() => {
-      result.current.env.setVar("CARD_API_URL", "https://card.staging.test");
-    });
-
-    expect(mockSetEnvUnsafe).toHaveBeenCalledWith("CARD_API_URL", "https://card.staging.test");
-    expect(result.current.env.vars[0]?.value).toBe("https://card.staging.test");
-  });
-
-  it("follows a change made outside the tool, and ignores every other env", () => {
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
-
-    act(() => {
-      envValues.CARD_BAANX_CLIENT_KEY = "another-tenant-key";
-      envListener?.({ name: "SOME_OTHER_ENV" });
-    });
-    expect(result.current.env.vars[1]?.value).toBe("");
-
-    act(() => {
-      envListener?.({ name: "CARD_BAANX_CLIENT_KEY" });
-    });
-    expect(result.current.env.vars[1]?.value).toBe("another-tenant-key");
+    expect(result.current.hasSeenLoginIntro).toBe(true);
   });
 
   it("resetPayCardFeatureTourSeen clears the seen flag", () => {
@@ -261,5 +241,32 @@ describe("usePayCardToolProps", () => {
 
     expect(store.getState().payRequestVerifyHint.hasSeenReceiveVerifyHint).toBe(false);
     expect(result.current.hasSeenReceiveVerifyHint).toBe(false);
+  });
+
+  it("resetPayCardLoginIntroSeen clears the seen flag", () => {
+    store.dispatch(markPayCardLoginIntroSeen());
+
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => {
+      result.current.resetPayCardLoginIntroSeen();
+    });
+
+    expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(false);
+    expect(result.current.hasSeenLoginIntro).toBe(false);
+  });
+
+  it("keeps the two reset actions apart", () => {
+    store.dispatch(markPayCardFeatureTourSeen());
+    store.dispatch(markPayCardLoginIntroSeen());
+
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => {
+      result.current.resetPayCardLoginIntroSeen();
+    });
+
+    expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(false);
+    expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
   });
 });

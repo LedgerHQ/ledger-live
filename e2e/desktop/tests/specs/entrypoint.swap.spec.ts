@@ -8,8 +8,7 @@ import {
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { getEnv } from "@shared/env";

@@ -5,27 +5,94 @@ import {
   LogLevel,
 } from "@ledgerhq/device-management-kit";
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
+import { mockserverTransportFactory } from "@ledgerhq/device-transport-kit-mockserver";
 import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
 import { getEnv } from "@shared/env";
 import { LocalTracer } from "@ledgerhq/logs";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManagementKit" });
 
+/**
+ * Base URL of the device mock server used when the mock server transport is
+ * enabled. Defaults to the shared deployment, so the transport works without
+ * running a pod locally; point `MOCK_SERVER_TRANSPORT_URL` at a local instance
+ * (e.g. http://localhost:9752) to use one.
+ *
+ * Read through a function rather than captured in a constant because the flag
+ * is pushed to all threads at boot, after this module is first imported.
+ */
+// Scanned rather than matched with /\/+$/, whose backtracking CodeQL flags as
+// polynomial on attacker-influenced input.
+// See: https://github.com/LedgerHQ/ledger-live/security/code-scanning/358
+const stripTrailingSlashes = (value: string): string => {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === "/") end--;
+  return value.slice(0, end);
+};
+
+export const getMockServerTransportUrl = (): string =>
+  stripTrailingSlashes(getEnv("MOCK_SERVER_TRANSPORT_URL"));
+
 let instance: DeviceManagementKit | null = null;
+
+/**
+ * Mock server session token shared with the transport. Set at boot (after a
+ * device is seeded) via {@link setMockServerSessionToken}, before the DMK is
+ * built. Kept as a module variable (not a live-env var) so it works without
+ * rebuilding @ledgerhq/live-env.
+ */
+let mockServerSessionToken: string | undefined;
+export const setMockServerSessionToken = (token: string): void => {
+  mockServerSessionToken = token;
+};
+export const getMockServerSessionToken = (): string | undefined => mockServerSessionToken;
+
+/**
+ * Compute the mock server's secure-channel (ScriptRunner) WebSocket base URL.
+ * The session token is carried in the path because the secure-channel WebSocket
+ * has no bearer header. Shared by the DMK secure-channel config and the legacy
+ * `createDeviceSocket` flows (via a `BASE_SOCKET_URL` override at boot), so both
+ * hit the same mock endpoint. Returns `undefined` when no token is available.
+ */
+export const getMockScriptRunnerBaseUrl = (
+  mockServerUrl: string,
+  sessionToken?: string,
+): string | undefined => {
+  if (!sessionToken) return undefined;
+  const wsBase = stripTrailingSlashes(mockServerUrl)
+    .replace(/^https:/, "wss:")
+    .replace(/^http:/, "ws:");
+  return `${wsBase}/secure-channel/${sessionToken}`;
+};
 
 export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {
     const userId = getEnv("USER_ID");
     const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
+    const mockServerTransportEnabled = getEnv("MOCK_SERVER_TRANSPORT");
+    const mockServerUrl = getMockServerTransportUrl();
     tracer.trace("Initialize DeviceManagementKit", {
       firmwareDistributionSalt,
+      mockServerTransportEnabled,
     });
 
-    instance = new DeviceManagementKitBuilder()
+    const builder = new DeviceManagementKitBuilder()
       .addTransport(webHidTransportFactory)
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
-      .addConfig({ firmwareDistributionSalt })
-      .build();
+      .addConfig({ firmwareDistributionSalt });
+
+    if (mockServerTransportEnabled) {
+      // Point the secure channel (genuine check, listApps, install…) at the mock
+      // server's ScriptRunner WebSocket. The session token is in the path because
+      // the secure-channel WebSocket carries no bearer header. Without this the
+      // secure-channel APDUs go unanswered (6d00) and the connect flow stalls.
+      const webSocketUrl = getMockScriptRunnerBaseUrl(mockServerUrl, mockServerSessionToken);
+      builder
+        .addTransport(mockserverTransportFactory(mockServerUrl, mockServerSessionToken))
+        .addConfig({ mockUrl: mockServerUrl, ...(webSocketUrl ? { webSocketUrl } : {}) });
+    }
+
+    instance = builder.build();
   }
 
   return instance;

@@ -1,4 +1,17 @@
-import { intParser, floatParser, boolParser, stringParser } from "@ledgerhq/live-env";
+import { intParser, floatParser, boolParser, stringParser, jsonParser } from "@ledgerhq/live-env";
+
+// Firmware 1.9.1 leaves an OS update available, so the firmware-update flow can be exercised.
+const DEFAULT_MOCK_SERVER_SESSION = {
+  devices: [
+    {
+      name: "Ledger Stax",
+      device_type: "stax",
+      connectivity_type: "USB",
+      firmware_version: "1.9.1",
+      apps: [{ name: "BOLOS", version: "1.4.0" }],
+    },
+  ],
+};
 
 const teamLiveDevices = {
   MANAGER_API_BASE: {
@@ -81,28 +94,6 @@ const teamLiveDevices = {
     parser: stringParser,
     desc: "Device model id for speculos",
   },
-  SPECULOS_FIRMWARE_VERSION: {
-    def: "",
-    parser: stringParser,
-    desc: "Firmware version for speculos",
-  },
-  SPECULOS_PID_OFFSET: {
-    def: 0,
-    parser: intParser,
-    desc: "offset to be added to the speculos pid and avoid collision with other instances",
-  },
-  /**
-   * It's just here as a backup, the REST API is supposed to be the right mode
-   * We can always fallback on the previous method if we need to.
-   * The websocket option is harmless, we can remove it at some point but let's
-   * keep it for a while just in case.
-   * Introduced on June 27th 2023 by https://github.com/LedgerHQ/ledger-live/pull/3824
-   */
-  SPECULOS_USE_WEBSOCKET: {
-    def: false,
-    parser: boolParser,
-    desc: "Use speculos websocket interface instead of Rest API",
-  },
   EXPERIMENTAL_BLE: {
     def: false,
     parser: boolParser,
@@ -127,6 +118,26 @@ const teamLiveDevices = {
     def: 1,
     parser: intParser,
     desc: "use a different provider for app store (for developers only)",
+  },
+  MOCK_SERVER_TRANSPORT: {
+    def: false,
+    parser: boolParser,
+    desc: "enable the Device Management Kit mock server transport (connects to a device mock server instead of a physical device)",
+  },
+  MOCK_SERVER_TRANSPORT_URL: {
+    def: "https://device-mock-server.aws.ldg-ps-default.ldg-tech.com",
+    parser: stringParser,
+    desc: "base URL of the device mock server backing the mock server transport. Defaults to the shared deployment; override to point at a local instance (e.g. http://localhost:9752)",
+  },
+  MOCK_SERVER_SEED: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) BIP39 mnemonic pushed to the mock server session at boot; the server forwards it to Speculos on every app open. Empty (default) keeps the mock server's own seed",
+  },
+  MOCK_SERVER_SESSION: {
+    def: DEFAULT_MOCK_SERVER_SESSION,
+    parser: jsonParser,
+    desc: '(dev feature) JSON session imported into the mock server at boot: {"devices":[{name,device_type,connectivity_type,firmware_version,apps,mocks,catalog}]}. Defaults to a single USB Stax on firmware 1.9.1',
   },
 };
 

@@ -32,14 +32,16 @@ export function NotificationsPromptDrawerView({ promptTarget, onAllow, onLater }
       >
         {t(allowKey)}
       </Button>
-      <Link
-        appearance="base"
-        underline={false}
-        onPress={onLater}
-        testID="notifications-prompt-later"
-      >
-        {t(laterKey)}
-      </Link>
+      <Box lx={{ alignItems: "center", justifyContent: "center" }}>
+        <Link
+          appearance="base"
+          underline={false}
+          onPress={onLater}
+          testID="notifications-prompt-later"
+        >
+          {t(laterKey)}
+        </Link>
+      </Box>
     </Box>
   );
 }

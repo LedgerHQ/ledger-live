@@ -1,17 +1,25 @@
-import { useContacts, useContactsFeature } from "@features/platform-contacts";
+import {
+  isEligibleAddressCurrency,
+  useContacts,
+  useContactsFeature,
+} from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
-import { pickContactAddressForCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/pickContactAddressForCurrency";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { Contact } from "@domain/entity-contact";
+import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { screen, track } from "~/analytics";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
+import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
+import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { getRecipientResolution } from "../../../utils/contactTracking";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 import { useAddressValidation } from "./useAddressValidation";
 import { useClipboardRecipient } from "./useClipboardRecipient";
@@ -35,12 +43,25 @@ export function useRecipientScreenView({
 }: UseRecipientScreenViewProps) {
   const { recipientSearch } = useSendFlowData();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
-    useContactsFeature("mobile");
-  const { selectedContact, selectContact, clearSelectedContact } = useRecipientContactSelection();
+  const {
+    isEnabled: isContactsFeatureEnabled,
+    eligibleAddressFamilies,
+    excludedCurrencyIds,
+  } = useContactsFeature("mobile");
+  const { selectedContact } = useRecipientContactSelection();
+  const { inputMethod, setInputMethod, setRecipientResolution, resetRecipientResolution } =
+    useSendFlowTracking();
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const hasAddressBook = isEligibleAddressCurrency(eligibleAddressFamilies, currency);
+  const hasAddressBook = isEligibleAddressCurrency(
+    eligibleAddressFamilies,
+    currency,
+    excludedCurrencyIds,
+  );
+  const sendFlowTrackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(account, parentAccount),
+    [account, parentAccount],
+  );
 
   const { result, isLoading } = useAddressValidation({
     searchValue: recipientSearch.value,
@@ -96,39 +117,166 @@ export function useRecipientScreenView({
     recipientSupportsDomain,
   });
 
+  const recipientResolution = useMemo(
+    () => getRecipientResolution(recipientSearch.value, result, showContactSearchResult),
+    [recipientSearch.value, result, showContactSearchResult],
+  );
+  const trackedResolutionRef = useRef("");
+  useEffect(() => {
+    const hasSettledResult =
+      showContactSearchResult ||
+      (!isLoading && result.status !== "idle" && result.status !== "loading");
+    if (!hasSearchValue || !hasSettledResult || selectedContact !== undefined) {
+      return;
+    }
+
+    const trackingKey = [
+      recipientSearch.value,
+      recipientResolution.queryType,
+      recipientResolution.resultType,
+      inputMethod,
+      recipientResolution.addressAlreadyUsed,
+    ].join(":");
+    if (trackedResolutionRef.current === trackingKey) {
+      return;
+    }
+    trackedResolutionRef.current = trackingKey;
+
+    void screen("Modal send - recipient result", undefined, {
+      ...sendFlowTrackingProperties,
+      queryType: recipientResolution.queryType,
+      resultType: recipientResolution.resultType,
+      inputMethod,
+      queryLength: recipientSearch.value.length,
+      addressAlreadyUsed: recipientResolution.addressAlreadyUsed,
+    });
+    setRecipientResolution(recipientResolution.resultType, recipientResolution.recipientType);
+  }, [
+    hasSearchValue,
+    inputMethod,
+    isLoading,
+    recipientResolution,
+    recipientSearch.value,
+    result.status,
+    selectedContact,
+    sendFlowTrackingProperties,
+    setRecipientResolution,
+    showContactSearchResult,
+  ]);
+
+  // Handing the recipient to the amount step clears the search (mobile only), which must
+  // not read as the user emptying the field to start a new lookup and drop the resolution.
+  const committedRecipientRef = useRef(false);
+  useEffect(() => {
+    if (hasSearchValue) {
+      committedRecipientRef.current = false;
+      return;
+    }
+    if (committedRecipientRef.current) {
+      return;
+    }
+
+    trackedResolutionRef.current = "";
+    resetRecipientResolution();
+  }, [hasSearchValue, resetRecipientResolution]);
+
   const handlePasteFromClipboard = useCallback(() => {
     if (clipboardAddress) {
+      setInputMethod("paste");
+      track("button_clicked", {
+        button: "paste",
+        page: "step recipient",
+        ...sendFlowTrackingProperties,
+      });
       recipientSearch.setValue(clipboardAddress);
     }
-  }, [clipboardAddress, recipientSearch]);
+  }, [clipboardAddress, recipientSearch, sendFlowTrackingProperties, setInputMethod]);
 
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
+      committedRecipientRef.current = true;
       onAddressSelected(address, ensName);
     },
     [onAddressSelected],
   );
 
-  const handleContactSelect = useCallback(
-    (contact: Contact) => {
-      const address = pickContactAddressForCurrency(contact.addresses, currency.id);
-      if (address) {
-        handleAddressSelect(address.address);
-        return;
-      }
-
-      selectContact(contact);
-    },
-    [currency.id, handleAddressSelect, selectContact],
-  );
+  // The picker owns the contact being shown and the row order the user actually sees,
+  // so the tracked rank is read back from it rather than from `contact.addresses`.
+  const pickerRef = useRef<ContactAddressPickerProps | undefined>(undefined);
 
   const handleContactAddressSelect = useCallback(
-    (address: string) => {
-      clearSelectedContact();
-      handleAddressSelect(address);
+    (address: ContactAddress) => {
+      const pickedContact = pickerRef.current?.contact;
+      const rowIndex = (pickerRef.current?.groups ?? [])
+        .flatMap(group => group.rows)
+        .findIndex(row => row.addressId === address.id);
+      track("button_clicked", {
+        button: "contact address",
+        page: "select contact address",
+        network: mainAccount.currency.id,
+        asset: address.currencyId,
+        // 1-based, to stay consistent with the rest of the send-flow ranks.
+        addressRank: rowIndex + 1,
+        ...sendFlowTrackingProperties,
+      });
+      setRecipientResolution(
+        pickedContact?.isMe ? "my account" : "contact address match",
+        pickedContact?.isMe ? "my account" : "contact",
+      );
+      handleAddressSelect(address.address);
     },
-    [clearSelectedContact, handleAddressSelect],
+    [
+      handleAddressSelect,
+      mainAccount.currency.id,
+      sendFlowTrackingProperties,
+      setRecipientResolution,
+    ],
   );
+  const { open: openPicker, contactAddressPicker } = useContactAddressPicker({
+    onSelectAddress: handleContactAddressSelect,
+  });
+  pickerRef.current = contactAddressPicker;
+
+  const handleContactSelect = useCallback(
+    (contact: Contact) => {
+      track("button_clicked", {
+        button: "contact",
+        page: "step recipient",
+        myContact: contact.isMe,
+        addressCount: contact.addresses.length,
+        ...sendFlowTrackingProperties,
+      });
+      openPicker(contact);
+      void screen("Modal send - select contact address", undefined, {
+        ...sendFlowTrackingProperties,
+        addressCount: contact.addresses.length,
+        myContact: contact.isMe,
+      });
+    },
+    [openPicker, sendFlowTrackingProperties],
+  );
+
+  const handleUnsupportedNetwork = useCallback(() => {
+    track("button_clicked", {
+      button: "disabled network tooltip",
+      page: "step recipient",
+      network: mainAccount.currency.id,
+      ...sendFlowTrackingProperties,
+    });
+    void screen("Modal send - network not supported", undefined, {
+      ...sendFlowTrackingProperties,
+      network: mainAccount.currency.id,
+    });
+  }, [mainAccount.currency.id, sendFlowTrackingProperties]);
+
+  const handleDismissUnsupportedNetwork = useCallback(() => {
+    track("button_clicked", {
+      button: "got it",
+      page: "network not supported",
+      network: mainAccount.currency.id,
+      ...sendFlowTrackingProperties,
+    });
+  }, [mainAccount.currency.id, sendFlowTrackingProperties]);
 
   const featureIntroduction = useContactsFeatureIntroductionViewModel({
     isContactsEntryAvailable: isContactsFeatureEnabled && hasAddressBook,
@@ -161,7 +309,10 @@ export function useRecipientScreenView({
     handlePasteFromClipboard,
     handleAddressSelect,
     handleContactSelect,
-    handleContactAddressSelect,
+    contactAddressPicker,
+    handleUnsupportedNetwork,
+    handleDismissUnsupportedNetwork,
+    recipientResolution,
     isContactsFeatureEnabled,
     featureIntroduction,
     ...searchState,

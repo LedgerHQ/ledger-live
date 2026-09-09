@@ -45,6 +45,7 @@ function createViewModel(
         sanctionedAddress: "Sanctioned address",
         validationUnavailable: "Validation unavailable",
         ensDisclaimer: "ENS addresses are supported.",
+        ensDisclaimerDescription: "ENS names can change over time.",
       },
     },
     onOpen: jest.fn(),

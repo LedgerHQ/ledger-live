@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/speculos-transport",
-  "version": "0.10.12",
+  "version": "0.10.13",
   "private": true,
   "description": "Ledger Live speculos transport test helper",
   "keywords": [
@@ -20,9 +20,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/hw-transport-node-speculos": "workspace:*",
     "@ledgerhq/live-dmk-speculos": "workspace:*",
-    "@shared/env": "workspace:*",
     "@ledgerhq/live-promise": "workspace:*",
     "@ledgerhq/logs": "catalog:"
   },

@@ -5,6 +5,7 @@ import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
 import { useExperimentalFeatures } from "./useExperimentalFeatures";
 import { useFeatureFlags } from "./useFeatureFlags";
+import { useMockServerTransport } from "./useMockServerTransport";
 import { useMyLedger } from "./useMyLedger";
 import { useSettings } from "./useSettings";
 import { useInformationCenter } from "./useInformationCenter";
@@ -41,6 +42,14 @@ const useTopBarViewModel = () => {
     icon: featureFlagsIcon,
     tooltip: featureFlagsTooltip,
   } = useFeatureFlags();
+  const {
+    isVisible: isMockServerVisible,
+    handleMockServer,
+    handleOpenConfigurationUi: handleMockServerConfigurationUi,
+    icon: mockServerIcon,
+    tooltip: mockServerTooltip,
+    className: mockServerClassName,
+  } = useMockServerTransport();
 
   const location = useLocation();
   const inManager = location.pathname === "/manager";
@@ -72,6 +81,24 @@ const useTopBarViewModel = () => {
               isInteractive: true,
               onClick: handleFeatureFlags,
               appearance: "accent" as const,
+            },
+          },
+        ]
+      : []),
+    ...(isMockServerVisible
+      ? [
+          {
+            type: "action" as const,
+            action: {
+              label: "mock server",
+              tooltip: mockServerTooltip,
+              tooltipClassName: "max-w-sm text-wrap",
+              icon: mockServerIcon,
+              isInteractive: true,
+              onClick: handleMockServer,
+              onContextMenu: handleMockServerConfigurationUi,
+              appearance: "accent" as const,
+              className: mockServerClassName,
             },
           },
         ]

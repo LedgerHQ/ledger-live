@@ -61,6 +61,7 @@ function createStepRegistry(): StepRegistry<SendFlowStep> {
     [SEND_FLOW_STEP.COIN_CONTROL]: () => null,
     [SEND_FLOW_STEP.SIGNATURE]: () => null,
     [SEND_FLOW_STEP.CONFIRMATION]: () => null,
+    [SEND_FLOW_STEP.PAY_SUCCESS]: () => null,
   };
 }
 
@@ -101,6 +102,7 @@ function createFlowConfig(overrides?: Partial<SendFlowConfig>): SendFlowConfig {
         screenOptions: { title: "Sign" },
       },
       [SEND_FLOW_STEP.CONFIRMATION]: { id: SEND_FLOW_STEP.CONFIRMATION, canGoBack: true },
+      [SEND_FLOW_STEP.PAY_SUCCESS]: { id: SEND_FLOW_STEP.PAY_SUCCESS, canGoBack: false },
     },
     ...overrides,
   };

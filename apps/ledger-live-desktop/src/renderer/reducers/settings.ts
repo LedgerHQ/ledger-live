@@ -57,13 +57,6 @@ export type { AnalyticsConsentInfo };
 
 /* Initial state */
 
-export type VaultSigner = {
-  enabled: boolean;
-  host: string;
-  workspace: string;
-  token: string;
-};
-
 export type SettingsState = {
   loaded: boolean;
   // is the settings loaded from db (if not we don't save them)
@@ -126,7 +119,6 @@ export type SettingsState = {
     selectableCurrencies: string[];
     acceptedProviders: string[];
   };
-  vaultSigner: VaultSigner;
   hasSeenAnalyticsOptInPrompt: boolean;
   dismissedContentCards: { [key: string]: number };
   anonymousBrazeId: string | null;
@@ -232,8 +224,6 @@ export const INITIAL_STATE: SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
   },
-  // Vault
-  vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   dismissedContentCards: {} as Record<string, number>,
   anonymousBrazeId: null,
@@ -290,7 +280,6 @@ type HandlersPayloads = {
     imageSize: number;
     imageHash: string;
   };
-  SET_VAULT_SIGNER: VaultSigner;
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: boolean;
   SET_DISMISSED_CONTENT_CARDS: {
     id: string;
@@ -439,10 +428,6 @@ const handlers: SettingsHandlers = {
       ...state.currenciesSettings,
       [payload.key]: payload.value,
     },
-  }),
-  SET_VAULT_SIGNER: (state: SettingsState, { payload }) => ({
-    ...state,
-    vaultSigner: payload,
   }),
   DEPRECATION_DO_NOT_REMIND: (state: SettingsState, { payload }) => {
     return {
@@ -867,7 +852,6 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
 export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
 export const featureFlagsButtonVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
-export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
 export const supportedCounterValuesSelector = createSelector(
   selectSupportedFiats,
   getsupportedCountervalues,

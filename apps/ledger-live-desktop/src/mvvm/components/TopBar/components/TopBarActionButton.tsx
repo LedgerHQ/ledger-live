@@ -18,7 +18,9 @@ export function TopBarActionButton({
   onClick,
   icon,
   appearance = "gray",
+  className,
   onTooltipShow,
+  onContextMenu,
   cta,
 }: TopBarActionButtonProps) {
   const testId = `topbar-action-button-${label.replace(/\s+/g, "-").toLowerCase()}`;
@@ -30,15 +32,25 @@ export function TopBarActionButton({
     [onTooltipShow],
   );
 
+  const handleContextMenu = useCallback(
+    (event: React.MouseEvent) => {
+      if (!onContextMenu) return;
+      event.preventDefault();
+      onContextMenu();
+    },
+    [onContextMenu],
+  );
+
   const button = cta ? (
     <Button
       appearance={appearance}
       size="sm"
       icon={icon}
       onClick={onClick}
+      onContextMenu={handleContextMenu}
       data-testid={testId}
       disabled={!isInteractive}
-      className="rounded-full"
+      className={`rounded-full${className ? ` ${className}` : ""}`}
     >
       {cta}
     </Button>
@@ -49,8 +61,10 @@ export function TopBarActionButton({
       aria-label={label}
       icon={icon}
       onClick={onClick}
+      onContextMenu={handleContextMenu}
       data-testid={testId}
       disabled={!isInteractive}
+      className={className}
     />
   );
 

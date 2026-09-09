@@ -38,6 +38,7 @@ export function WalletSyncManageInstanceDeletionSuccess({ navigation, route }: P
         onPress: close,
       }}
       analyticsPage={AnalyticsPage.RemoveInstanceSuccess}
+      testID="walletsync-remove-instance-success-title"
     />
   );
 }

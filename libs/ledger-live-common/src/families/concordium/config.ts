@@ -9,6 +9,7 @@ export const concordiumConfig: Record<string, ConfigInfo> = {
       networkType: "mainnet",
       proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
       minReserve: 0,
+      enableTokens: false,
     } satisfies ConcordiumCoinConfig,
   },
   config_currency_concordium_testnet: {
@@ -18,6 +19,7 @@ export const concordiumConfig: Record<string, ConfigInfo> = {
       networkType: "testnet",
       proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
       minReserve: 0,
+      enableTokens: false,
     } satisfies ConcordiumCoinConfig,
   },
 };

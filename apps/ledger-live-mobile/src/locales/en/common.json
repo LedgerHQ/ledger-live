@@ -132,6 +132,9 @@
     "ZcashMemoTooLong": {
       "title": "Memo must not exceed {{maxBytes}} bytes"
     },
+    "ZcashSendTooLarge": {
+      "title": "This amount is too large to send in one transaction: try sending it in smaller amounts"
+    },
     "ReplacementTransactionUnderpriced": {
       "title": "Replacement transaction underpriced",
       "description": "The network fee might be too low. Please increase"
@@ -230,6 +233,42 @@
     "ConcordiumSessionExpiredError": {
       "title": "Session expired",
       "description": "The Concordium ID App session is no longer active. Please pair again."
+    },
+    "ConcordiumInsufficientCcdForFee": {
+      "title": "Not enough CCD for the network fee",
+      "description": "The network fee is paid in CCD, not in the token you are sending. Add CCD to this account and try again."
+    },
+    "ConcordiumTokenPaused": {
+      "title": "Transfers are paused for this token",
+      "description": "The token issuer has paused all transfers. You can try again once transfers resume."
+    },
+    "ConcordiumTokenTransferNotPermitted": {
+      "title": "This account cannot send this token",
+      "description": "The token issuer restricts who may send it, and this account is not permitted. Contact the token issuer for access."
+    },
+    "ConcordiumTokenRestrictionsUnverified": {
+      "title": "Token restrictions could not be verified",
+      "description": "This token's transfer rules could not be read, so the transfer cannot be confirmed as allowed. Please resync your account and try again."
+    },
+    "ConcordiumUnsupportedTokenDecimals": {
+      "title": "This token cannot be signed on your Ledger device",
+      "description": "The token uses {{decimals}} decimal places, and your device supports at most {{maxDecimals}}. Receiving and holding it are unaffected."
+    },
+    "ConcordiumTokenAccountUnavailable": {
+      "title": "This token is no longer in your account",
+      "description": "The token you selected is not available any more. Please start the transaction again."
+    },
+    "ConcordiumInvalidPltPayloadError": {
+      "title": "This transaction cannot be prepared",
+      "description": "The token's details are outside what your Ledger device accepts, so the transaction cannot be built. Please contact Ledger Support."
+    },
+    "ConcordiumAppOutdatedError": {
+      "title": "App update required",
+      "description": "The Concordium app on your Ledger device does not support token transfers. Update it in My Ledger and try again."
+    },
+    "ConcordiumSignerProtocolError": {
+      "title": "Something went wrong. Please reconnect your device",
+      "description": "The Concordium app could not process the transaction. If the problem continues, please contact Ledger Support."
     },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",
@@ -702,6 +741,10 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "UnexpectedGetBalanceError": {
+      "title": "Your balance could not be retrieved",
+      "description": "Please check your internet connection and try again."
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked",
       "description": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked"
@@ -960,6 +1003,9 @@
     },
     "TezosStakeBlockedByPendingUnstake": {
       "title": "Unstaking from your previous validator must finish first"
+    },
+    "TezosStakeAmountTooSmall": {
+      "title": "This amount is too small to stake"
     },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
@@ -1543,6 +1589,7 @@
       "title": "Confirm password",
       "description": "You'll need this password each time you open the app. If you lose it, reinstall the app and restore your wallet.",
       "mismatch": "Passwords don't match",
+      "saveFailed": "We couldn't save your password. Please try again.",
       "cta": "Confirm"
     }
   },
@@ -4603,7 +4650,7 @@
       "alreadyUsed": "Already used · {{date}}",
       "notInRecentHistory": "Not in your recent history",
       "addressBookUnsupported": {
-        "title": "{{family}} isn't supported yet",
+        "title": "{{family}} is not supported yet",
         "description": "You can't add a {{family}} address to your contacts yet. We're adding more cryptos over time."
       },
       "relativeDate": {
@@ -9785,6 +9832,7 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
+    "selectAccountToPayFrom": "Select account to pay from",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
     "selectAccountPerpsDescription": "Select an account you want to deposit funds into to place your trades",
     "selectAccountPerpsEmptyDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
@@ -9792,16 +9840,17 @@
     "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
     "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
+    "notAvailableYet": "Not available yet",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
     "emptyAccounts": "You don't have {{network}} accounts yet. Please add one to continue",
     "addAccount": "Add account",
     "unsupportedAssetExplanation": {
-      "title": "{{asset}} isn't supported yet",
+      "title": "{{asset}} is not supported yet",
       "description": "You can't add a {{asset}} address to your contacts yet. We're adding more cryptos over time."
     },
     "unsupportedNetworkExplanation": {
-      "title": "{{network}} Network isn't supported yet",
+      "title": "{{network}} Network is not supported yet",
       "description": "You can't select {{network}} network for {{asset}}. We're adding more networks over time."
     },
     "errors": {
@@ -10181,6 +10230,16 @@
         }
       }
     },
+    "cardMore": {
+      "tile": "More",
+      "title": "More",
+      "rows": {
+        "managePin": "Manage PIN Code",
+        "accessBaanx": "Access to Baanx",
+        "help": "Help",
+        "logout": "Logout"
+      }
+    },
     "balance": {
       "emptyTitle": "Pay and get paid",
       "emptyDescription": "Start by depositing stablecoin to your wallet",
@@ -10193,7 +10252,28 @@
       }
     },
     "card": {
-      "title": "Crypto card"
+      "title": "Crypto card",
+      "freeze": "Freeze",
+      "unfreeze": "Unfreeze",
+      "goBack": "Go back",
+      "freezeConfirm": {
+        "title": "Freezing means you cannot use the card anymore",
+        "description": "You can unfreeze your card at any time.",
+        "confirm": "Freeze now",
+        "errorTitle": "Freeze failed"
+      },
+      "unfreezeConfirm": {
+        "title": "Unfreeze your card?",
+        "confirm": "Unfreeze now",
+        "errorTitle": "Unfreeze failed"
+      },
+      "confirmError": {
+        "description": "Something went wrong. Please try again.",
+        "retry": "Try again"
+      }
+    },
+    "selectContact": {
+      "placeholder": "Enter contact"
     },
     "actions": {
       "deposit": "Add stablecoin",
@@ -10276,10 +10356,73 @@
         }
       }
     },
+    "cardLogin": {
+      "title": "Crypto Card",
+      "beforeIntro": {
+        "description": "Get 1% cashback every time you spend",
+        "action": "Get card"
+      },
+      "afterIntro": {
+        "description": "Log in to access your card",
+        "action": "Login"
+      }
+    },
+    "cardLoginIntro": {
+      "title": "Spend crypto, earn cashback",
+      "providedBy": "Card provided by Baanx",
+      "createAccount": "Create an account",
+      "logIn": "Log in to Baanx",
+      "wallets": {
+        "applePay": "Apple Pay",
+        "googlePay": "Google Pay",
+        "both": "Apple Pay or Google Pay"
+      },
+      "rows": {
+        "cashback": {
+          "title": "Uncapped 1% crypto cashback",
+          "description": "On all crypto card purchases with USDC, USDT, or BTC."
+        },
+        "virtualCard": {
+          "title": "Free virtual card",
+          "description": "Add to {{wallet}}, ready instantly."
+        },
+        "topUp": {
+          "title": "Securely top up via Ledger Wallet",
+          "description": "Every transfer approved with your Ledger signer."
+        }
+      }
+    },
     "contacts": {
       "title": "Pay",
       "pay": "New",
-      "seeAllTitle": "Pay contact"
+      "seeAllTitle": "Pay contact",
+      "addressPicker": {
+        "title": "Select {{name}}'s address",
+        "addAddress": "Add address"
+      },
+      "paySuccess": {
+        "title": "You paid ({{recipient}})",
+        "amount": "Amount",
+        "estimatedTime": "Est. time",
+        "from": "From",
+        "viewTransaction": "View transaction",
+        "close": "Close"
+      }
+    },
+    "cardOnboarding": {
+      "widget": {
+        "title": "Set up your card",
+        "allDone": "You're all set"
+      },
+      "dialog": {
+        "title": "Set up your card",
+        "stepComplete": "Complete",
+        "gotIt": "Got it"
+      },
+      "walletStep": {
+        "title": "Add to Apple/Google Pay",
+        "description": "Pay with your phone in store"
+      }
     }
   },
   "syncIndicator": {
@@ -10545,11 +10688,11 @@
     "addContact": "Add contact",
     "addAddress": "Add address",
     "addYourAddress": "Add your address",
-    "searchPlaceholder": "Search contact",
+    "searchPlaceholder": "Search by name",
     "searchNoResults": "No contact found",
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
-      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
+      "namingDisclaimer": "For privacy, avoid full names. Use a nickname or just a first name + initial, e.g. 'John S.'",
       "confirmName": "Confirm name",
       "invalidNameError": "Special characters are not allowed.",
       "duplicateNameError": "This contact name is already in use."
@@ -10564,7 +10707,8 @@
       "domainNotFound": "No address found for this domain",
       "sanctionedAddress": "This address is sanctioned and cannot be used.",
       "validationUnavailable": "Address validation is temporarily unavailable",
-      "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing.",
+      "ensDisclaimer": "ENS names can change",
+      "ensDisclaimerDescription": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify.",
       "sanctioned": {
         "description": "This address has been flagged and Ledger doesn't allow sending to it",
         "learnMore": "Learn more"
@@ -10573,7 +10717,7 @@
     "addAddressName": {
       "title": "Name address",
       "inputLabel": "Address name",
-      "namingDisclaimer": "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
+      "namingDisclaimer": "This name appears on your Ledger device when you send to this address. Give it a name that makes it easy to find.",
       "continueToReview": "Continue to review",
       "invalidLabel": "Special characters are not allowed.",
       "duplicateLabel": "This address name is already used for this contact.",
@@ -10591,10 +10735,7 @@
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",
     "me": {
-      "name": "Me",
-      "addressCount_zero": "0 address",
-      "addressCount_one": "{{count}} address",
-      "addressCount_other": "{{count}} addresses"
+      "myAddresses": "My addresses"
     },
     "detail": {
       "meDisplayName": "{{name}} (Me)",
@@ -10625,7 +10766,7 @@
     "editContact": {
       "title": "Edit contact",
       "namePlaceholder": "Contact name",
-      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'",
+      "namingDisclaimer": "For privacy, avoid full names. Use a nickname or just a first name + initial, e.g. 'John S.'",
       "confirmName": "Confirm name",
       "applyChanges": "Apply changes",
       "invalidNameError": "Special characters are not allowed."
@@ -10664,7 +10805,7 @@
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
-      "primaryAction": "Explore now",
+      "primaryAction": "Try now",
       "highlights": {
         "saveAddresses": {
           "title": "Save addresses by a name you choose",
@@ -10675,7 +10816,7 @@
           "description": "See a name you trust, not an address."
         },
         "privateAcrossDevices": {
-          "title": "Securely top up via Ledger Wallet™",
+          "title": "Private across your Ledger devices",
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }

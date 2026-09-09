@@ -29,6 +29,7 @@ type RecipientCardProps = Readonly<{
   sendLabel: string;
   onSend: () => void;
   onAddContact: () => void;
+  onUnsupportedNetwork: () => void;
 }>;
 
 export function RecipientCard({
@@ -43,6 +44,7 @@ export function RecipientCard({
   sendLabel,
   onSend,
   onAddContact,
+  onUnsupportedNetwork,
 }: RecipientCardProps) {
   const addContactButton = (
     <Button
@@ -93,7 +95,9 @@ export function RecipientCard({
             ) : (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="flex flex-1">{addContactButton}</span>
+                  <span className="flex flex-1" onPointerDown={onUnsupportedNetwork}>
+                    {addContactButton}
+                  </span>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">{addressBookUnsupportedLabel}</TooltipContent>
               </Tooltip>

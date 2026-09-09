@@ -2,8 +2,7 @@ import { Account, type AccountType, TokenAccount } from "@ledgerhq/live-e2e-shar
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import test from "tests/fixtures/common";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { setupEnv } from "tests/utils/swapUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 

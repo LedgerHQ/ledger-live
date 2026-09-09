@@ -1,8 +1,9 @@
 import invariant from "invariant";
 import { AccountId, TransactionId } from "@hashgraph/sdk";
+import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
-import cvsApi from "@ledgerhq/live-countervalues/api/index";
+import network from "@ledgerhq/live-network";
 import { makeLRUCache, minutes, seconds } from "@ledgerhq/live-network/cache";
 import type { FiatCurrency, Currency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
@@ -204,20 +205,30 @@ export const enrichERC20Transfers = async ({
   return enrichedTransfers;
 };
 
+// getEnv("LEDGER_COUNTERVALUES_API") must be read lazily, per call — not cached in a
+// module-level const. The mobile debug toggle calls setEnv("LEDGER_COUNTERVALUES_API", ...)
+// at runtime; a const or process.env read at import time pins hedera to whatever was
+// configured at startup and ignores the toggle.
+//
+// Dropping @ledgerhq/live-env from this package is blocked: the intended replacement
+// (shared/api-services/countervalues/) is unreachable from a published package as a runtime
+// dep. Unblock shared/* access first, then migrate the endpoint.
 // note: this is currently called frequently by getTransactionStatus; LRU cache prevents duplicated requests
 export const getCurrencyToUSDRate = makeLRUCache(
   async (currency: Currency) => {
     try {
-      const [rate] = await cvsApi.fetchLatest([
-        {
-          from: currency,
-          to: USD_FIAT,
-          startDate: new Date(),
-        },
-      ]);
-
+      // All callers pass the hedera CryptoCurrency (id = "hedera"), never a TokenCurrency
+      // (token ids include the token path, e.g. "hedera/hts/…").
+      // For the fiat (USD_FIAT) side of the Currency union the API id is the ticker.
+      // The two global remaps (assethub_polkadot, concordium_testnet) don't apply to hedera.
+      const fromId = currency.type !== "FiatCurrency" ? currency.id : currency.ticker;
+      const params = new URLSearchParams({ to: USD_FIAT.ticker, froms: fromId });
+      const { data } = await network<Record<string, number>>({
+        method: "GET",
+        url: `${getEnv("LEDGER_COUNTERVALUES_API")}/v3/spot/simple?${params.toString()}`,
+      });
+      const rate = data[fromId];
       invariant(rate, "no value returned from cvs api");
-
       return new BigNumber(rate);
     } catch {
       return null;

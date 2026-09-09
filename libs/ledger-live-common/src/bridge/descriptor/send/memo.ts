@@ -27,7 +27,11 @@ const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
       },
     };
   },
-  casper: memo => ({ transferId: memo, memoType: "transferId", memoValue: memo }),
+  // Authoritative Casper memo patch — all Casper UI sites must produce the same cleared state.
+  casper: memo =>
+    memo !== undefined
+      ? { transferId: memo, memoType: "transferId", memoValue: memo }
+      : { transferId: undefined, memoType: "transferId", memoValue: undefined },
   xrp: memo => {
     if (typeof memo === "number") return { tag: memo };
     if (typeof memo === "string") return { tag: Number(memo) };

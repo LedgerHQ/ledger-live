@@ -18,6 +18,8 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { Contact } from "@domain/entity-contact";
+import { createMeDisplayNameFormatter, useContacts } from "@features/platform-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
@@ -33,11 +35,14 @@ type NavigationProp = BaseNavigationComposite<
   NativeStackNavigationProp<MyWalletNavigatorStackParamList>
 >;
 
-export function useContactsPageViewModel(): ContactsPageViewModel {
+export function useContactsPageViewModel(
+  onSelectContact?: (contact: Contact) => void,
+): ContactsPageViewModel {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
+  const contacts = useContacts();
   const labels = useMemo<ContactsListViewLabels>(
     () => ({
       title: t("contacts.title"),
@@ -48,15 +53,18 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
         "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
       ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
+      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
+        t("contacts.detail.meDisplayName", { name }),
+      ),
     }),
     [t],
   );
   const preference = useContactsFeatureIntroductionPreference();
-  const featureIntroductionState = useContactsFeatureIntroductionState({
-    isContactsEntryAvailable: true,
-    preference,
-  });
+  const { isRequested: isFeatureIntroductionRequested, dismiss: dismissFeatureIntroduction } =
+    useContactsFeatureIntroductionState({
+      isContactsEntryAvailable: true,
+      preference,
+    });
   const featureIntroductionHighlights = useMemo(
     () =>
       CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS.map(({ icon, translationKey }) => ({
@@ -77,9 +85,16 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
   const onOpenContact = useCallback<ContactsViewNativeProps["onOpenContact"]>(
     contactId => {
       trackContactsListContactOpen(analytics, contactId, meContact.id);
+      if (onSelectContact) {
+        const contact = contacts.find(candidate => candidate.id === contactId);
+        if (contact) {
+          onSelectContact(contact);
+          return;
+        }
+      }
       navigation.navigate(ScreenName.MyWalletContactDetail, { contactId });
     },
-    [analytics, meContact.id, navigation],
+    [analytics, contacts, meContact.id, navigation, onSelectContact],
   );
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncDismiss(analytics);
@@ -103,12 +118,6 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
     },
     [ledgerSyncStatus, requestMutation],
   );
-  const onCompleteFeatureIntroduction = useCallback(() => {
-    featureIntroductionState.dismiss();
-  }, [featureIntroductionState]);
-  const onCloseFeatureIntroduction = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
 
   useEffect(() => {
     if (!isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
@@ -117,8 +126,9 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
     }
   }, [dismissPendingIntent, ledgerSyncStatus]);
 
+  const showFeatureIntroduction = !onSelectContact && isFeatureIntroductionRequested;
   const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
-    isFeatureIntroductionRequested: featureIntroductionState.isRequested,
+    isFeatureIntroductionRequested: showFeatureIntroduction,
     ledgerSyncStatus,
     isLedgerSyncIntroductionRequested,
   });
@@ -140,12 +150,12 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
     onOpenContact,
     ledgerSyncStatus,
     featureIntroduction: {
-      isOpen: featureIntroductionState.isRequested,
+      isOpen: showFeatureIntroduction,
       title: t("contacts.featureIntroduction.title"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
-      onComplete: onCompleteFeatureIntroduction,
-      onClose: onCloseFeatureIntroduction,
+      onComplete: dismissFeatureIntroduction,
+      onClose: dismissFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,

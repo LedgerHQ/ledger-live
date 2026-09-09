@@ -206,3 +206,67 @@ export class ConcordiumAppOutdatedError extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/**
+ * The sender may not transfer this token, and the stored state cannot say which
+ * rule refused them.
+ *
+ * Deliberately not {@link ConcordiumAccountNotAllowed} or
+ * {@link ConcordiumAccountDenied}: `getAccountListStatus` folds "absent from an
+ * allow list" and "present on a deny list" into one verdict, and only that
+ * verdict is persisted, so naming either cause would assert something unproven.
+ */
+export class ConcordiumTokenTransferNotPermitted extends Error {
+  override name = "ConcordiumTokenTransferNotPermitted";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ConcordiumTokenTransferNotPermitted");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/**
+ * The token's restrictions could not be read, so nothing can be concluded about
+ * whether the sender may transfer it.
+ *
+ * Distinct from {@link ConcordiumTokenTransferNotPermitted}: the policy did not
+ * refuse the account, it failed to decode. Telling a permitted user they are
+ * denied is its own defect.
+ */
+export class ConcordiumTokenRestrictionsUnverified extends Error {
+  override name = "ConcordiumTokenRestrictionsUnverified";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ConcordiumTokenRestrictionsUnverified");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/**
+ * The token declares more decimals than the device can sign.
+ *
+ * Such a token syncs and shows a balance and can never be sent, so this is
+ * reported in status rather than left to the device. See `PLT_MAX_DECIMALS`.
+ */
+export class ConcordiumUnsupportedTokenDecimals extends Error {
+  override name = "ConcordiumUnsupportedTokenDecimals";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ConcordiumUnsupportedTokenDecimals");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/**
+ * The transaction names a token sub-account the account no longer has.
+ *
+ * `subAccountId` survives a raw round-trip independently of the sub-account it
+ * names, so a draft outlives its token: sync can drop one when it is delisted
+ * or blacklisted, and the `enableTokens` kill switch strips them all. Every
+ * layer classifies a transfer by resolving that id, so an unresolved one would
+ * otherwise reclassify the send as native and move CCD at the token's amount.
+ */
+export class ConcordiumTokenAccountUnavailable extends Error {
+  override name = "ConcordiumTokenAccountUnavailable";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ConcordiumTokenAccountUnavailable");
+    if (fields) Object.assign(this, fields);
+  }
+}

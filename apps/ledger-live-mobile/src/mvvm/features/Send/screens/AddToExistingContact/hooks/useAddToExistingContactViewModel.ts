@@ -1,11 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Contact, ContactId } from "@domain/entity-contact";
-import { useContacts, useContactsMeContact } from "@features/platform-contacts";
+import {
+  createMeDisplayNameFormatter,
+  useContacts,
+  useContactsMeContact,
+} from "@features/platform-contacts";
 import {
   useContactsSearchViewModel,
   type ContactsListViewLabels,
 } from "@features/flow-contacts-list";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
+import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 
 export type UseAddToExistingContactViewModelOptions = Readonly<{
@@ -18,7 +25,12 @@ export function useAddToExistingContactViewModel({
   const { t } = useTranslation();
   const contacts = useContacts();
   const meContact = useContactsMeContact();
+  const { state } = useSendFlowData();
   const [searchQuery, setSearchQuery] = useState("");
+  const trackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+    [state.account.account, state.account.parentAccount],
+  );
 
   const labels = useMemo(
     (): ContactsListViewLabels => ({
@@ -27,7 +39,9 @@ export function useAddToExistingContactViewModel({
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
+      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
+        t("contacts.detail.meDisplayName", { name }),
+      ),
     }),
     [t],
   );
@@ -48,9 +62,14 @@ export function useAddToExistingContactViewModel({
         return;
       }
 
+      track("button_clicked", {
+        button: "contact",
+        page: "select existing contact",
+        ...trackingProperties,
+      });
       void startForContact(selectedContact);
     },
-    [contacts, meContact, startForContact],
+    [contacts, meContact, startForContact, trackingProperties],
   );
 
   const resetSearch = useCallback(() => {

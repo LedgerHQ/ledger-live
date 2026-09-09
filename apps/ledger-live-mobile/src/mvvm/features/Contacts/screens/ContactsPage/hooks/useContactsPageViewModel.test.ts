@@ -1,4 +1,4 @@
-import { mockMeContact } from "@domain/entity-contact/schema.mock";
+import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { useContactsLedgerSyncStatus } from "../../../hooks/useContactsLedgerSyncStatus";
@@ -35,6 +35,43 @@ describe("useContactsPageViewModel", () => {
     mockedContactsLedgerSyncStatus.mockReturnValue("ready");
   });
 
+  it("should select a contact for Pay instead of opening detail", () => {
+    const me = mockMeContact();
+    const contact = mockContact({ name: "Rosa" });
+    const onSelectContact = jest.fn();
+    const { result } = renderHook(() => useContactsPageViewModel(onSelectContact), {
+      overrideInitialState: withFlagOverrides({}, state => ({
+        ...state,
+        contacts: { contacts: [me, contact] },
+      })),
+    });
+
+    act(() => {
+      result.current.onOpenContact(contact.id);
+    });
+
+    expect(onSelectContact).toHaveBeenCalledWith(contact);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("should hand Me to onSelectContact when the list is selecting", () => {
+    const me = mockMeContact();
+    const onSelectContact = jest.fn();
+    const { result } = renderHook(() => useContactsPageViewModel(onSelectContact), {
+      overrideInitialState: withFlagOverrides({}, state => ({
+        ...state,
+        contacts: { contacts: [me] },
+      })),
+    });
+
+    act(() => {
+      result.current.onOpenContact(me.id);
+    });
+
+    expect(onSelectContact).toHaveBeenCalledWith(me);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
   it("should navigate to the contact detail screen when a contact is opened", () => {
     const me = mockMeContact();
     const { result } = renderViewModel(state => ({
@@ -51,14 +88,27 @@ describe("useContactsPageViewModel", () => {
     });
   });
 
-  it("should close the feature introduction by going back", () => {
-    const { result } = renderViewModel();
+  it("should count closing the feature introduction as seen and stay on Contacts", () => {
+    const { result, store } = renderViewModel();
 
     act(() => {
       result.current.featureIntroduction.onClose();
     });
 
-    expect(mockGoBack).toHaveBeenCalledTimes(1);
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(true);
+    expect(result.current.featureIntroduction.isOpen).toBe(false);
+    expect(mockGoBack).not.toHaveBeenCalled();
+  });
+
+  it("should count completing the feature introduction as seen", () => {
+    const { result, store } = renderViewModel();
+
+    act(() => {
+      result.current.featureIntroduction.onComplete();
+    });
+
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(true);
+    expect(result.current.featureIntroduction.isOpen).toBe(false);
   });
 
   it("should keep the Ledger Sync introduction closed while no contact is being added", () => {

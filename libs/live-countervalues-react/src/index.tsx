@@ -6,6 +6,7 @@ import {
   inferTrackingPairForAccounts,
   loadCountervalues,
 } from "@ledgerhq/live-countervalues/logic";
+import { inferCurrencyAPIID } from "@ledgerhq/live-countervalues/helpers";
 import type {
   CounterValuesState,
   CounterValuesStateRaw,
@@ -40,7 +41,7 @@ export interface CountervaluesBridge {
   setState(state: CounterValuesState): void;
   setStateError(error: Error): void;
   setStatePending(pending: boolean): void;
-  useMarketcapIds(): string[];
+  useSupportedCryptoIds(): string[];
   usePollingIsPolling(): boolean;
   usePollingTriggerLoad(): boolean;
   useStateError(): Error | null;
@@ -115,13 +116,13 @@ function Effect({
   const userSettings = bridge.useUserSettings();
   const { refreshRate, marketCapBatchingAfterRank } = userSettings;
 
-  const marketcapIds = bridge.useMarketcapIds();
+  const supportedCryptoIds = bridge.useSupportedCryptoIds();
   const filteredUserSettings = useMemo(
     () => ({
       ...userSettings,
-      trackingPairs: filterSupportedTrackingPairs(userSettings.trackingPairs, marketcapIds),
+      trackingPairs: filterSupportedTrackingPairs(userSettings.trackingPairs, supportedCryptoIds),
     }),
-    [marketcapIds, userSettings],
+    [supportedCryptoIds, userSettings],
   );
   const debouncedUserSettings = useDebounce(filteredUserSettings, debounceDelay);
 
@@ -129,11 +130,11 @@ function Effect({
     () => ({
       shouldBatchCurrencyFrom: (currency: Currency) => {
         if (currency.type === "FiatCurrency") return false;
-        const i = marketcapIds.indexOf(currency.id);
+        const i = supportedCryptoIds.indexOf(inferCurrencyAPIID(currency));
         return i === -1 || i > marketCapBatchingAfterRank;
       },
     }),
-    [marketCapBatchingAfterRank, marketcapIds],
+    [marketCapBatchingAfterRank, supportedCryptoIds],
   );
 
   // flag used to trigger a loadCountervalues
@@ -181,7 +182,10 @@ function Effect({
   // manage the auto polling loop
   const isPolling = bridge.usePollingIsPolling();
   useEffect(() => {
-    if (!isPolling) return;
+    // Both apps initialise refreshRate to 0 and overwrite it from LiveConfig once it resolves.
+    // Re-arming at 0 is a zero-delay self-rescheduling loop, so wait for a real rate; the effect
+    // re-runs when one arrives.
+    if (!isPolling || refreshRate <= 0) return;
     let pollingTimeout: ReturnType<typeof setTimeout>;
     function pollingLoop() {
       bridge.setPollingTriggerLoad(true);

@@ -189,7 +189,10 @@ describe("proxyClient", () => {
   describe("getTransactionCost", () => {
     it("should return cost estimation for simple transfer", async () => {
       const numSignatures = 1;
-      const result = await getTransactionCost(config, currencyId, { numSignatures });
+      const result = await getTransactionCost(config, currencyId, {
+        type: "simpleTransfer",
+        numSignatures,
+      });
 
       expect(result).toHaveProperty("cost");
       expect(result).toHaveProperty("energy");
@@ -206,8 +209,12 @@ describe("proxyClient", () => {
       const numSignatures = 1;
       const memoSize = 50;
 
-      const resultWithoutMemo = await getTransactionCost(config, currencyId, { numSignatures });
+      const resultWithoutMemo = await getTransactionCost(config, currencyId, {
+        type: "simpleTransfer",
+        numSignatures,
+      });
       const resultWithMemo = await getTransactionCost(config, currencyId, {
+        type: "simpleTransfer",
         numSignatures,
         memoSize,
       });
@@ -222,10 +229,12 @@ describe("proxyClient", () => {
       const numSignatures = 1;
 
       const resultSmallMemo = await getTransactionCost(config, currencyId, {
+        type: "simpleTransfer",
         numSignatures,
         memoSize: 10,
       });
       const resultLargeMemo = await getTransactionCost(config, currencyId, {
+        type: "simpleTransfer",
         numSignatures,
         memoSize: 100,
       });
@@ -239,26 +248,95 @@ describe("proxyClient", () => {
     it("should return consistent results for same parameters", async () => {
       const numSignatures = 1;
 
-      const result1 = await getTransactionCost(config, currencyId, { numSignatures });
-      const result2 = await getTransactionCost(config, currencyId, { numSignatures });
+      const result1 = await getTransactionCost(config, currencyId, {
+        type: "simpleTransfer",
+        numSignatures,
+      });
+      const result2 = await getTransactionCost(config, currencyId, {
+        type: "simpleTransfer",
+        numSignatures,
+      });
 
       expect(result1.cost).toBe(result2.cost);
       expect(result1.energy).toBe(result2.energy);
+    });
+
+    // These four assert the live contract rather than our encoding of it, since
+    // a silent change to it would surface only as a wrong fee.
+    it("should price a tokenUpdate", async () => {
+      const result = await getTransactionCost(config, currencyId, {
+        type: "tokenUpdate",
+        numSignatures: 1,
+        tokenId: "tUSDT",
+        listOperationsSize: 42,
+        tokenOperationTypeCount: { transfer: 1 },
+      });
+
+      expect(BigInt(result.cost)).toBeGreaterThan(BigInt(0));
+      expect(BigInt(result.energy)).toBeGreaterThan(BigInt(0));
+    });
+
+    it("should charge more for a larger operations blob", async () => {
+      const base = { type: "tokenUpdate" as const, numSignatures: 1, tokenId: "tUSDT" };
+      const count = { transfer: 1 };
+
+      const small = await getTransactionCost(config, currencyId, {
+        ...base,
+        listOperationsSize: 10,
+        tokenOperationTypeCount: count,
+      });
+      const large = await getTransactionCost(config, currencyId, {
+        ...base,
+        listOperationsSize: 200,
+        tokenOperationTypeCount: count,
+      });
+
+      expect(BigInt(large.cost)).toBeGreaterThan(BigInt(small.cost));
+    });
+
+    it("should charge more for a longer token id", async () => {
+      const base = {
+        type: "tokenUpdate" as const,
+        numSignatures: 1,
+        listOperationsSize: 42,
+        tokenOperationTypeCount: { transfer: 1 },
+      };
+
+      const short = await getTransactionCost(config, currencyId, { ...base, tokenId: "a" });
+      const long = await getTransactionCost(config, currencyId, {
+        ...base,
+        tokenId: "a".repeat(64),
+      });
+
+      expect(BigInt(long.cost)).toBeGreaterThan(BigInt(short.cost));
+    });
+
+    it("should reject an operation name it cannot price", async () => {
+      await expect(
+        getTransactionCost(config, currencyId, {
+          type: "tokenUpdate",
+          numSignatures: 1,
+          tokenId: "tUSDT",
+          listOperationsSize: 42,
+          // Not in the proxy's known-cost map, so this is a 400.
+          tokenOperationTypeCount: { transfer: 1, notAnOperation: 1 } as never,
+        }),
+      ).rejects.toThrow();
     });
   });
 
   describe("Network connectivity", () => {
     it("should successfully connect to proxy endpoint", async () => {
       await expect(
-        getTransactionCost(config, currencyId, { numSignatures: 1 }),
+        getTransactionCost(config, currencyId, { type: "simpleTransfer", numSignatures: 1 }),
       ).resolves.toHaveProperty("cost");
     });
 
     it("should handle multiple concurrent requests", async () => {
       const promises = [
-        getTransactionCost(config, currencyId, { numSignatures: 1 }),
-        getTransactionCost(config, currencyId, { numSignatures: 1 }),
-        getTransactionCost(config, currencyId, { numSignatures: 1 }),
+        getTransactionCost(config, currencyId, { type: "simpleTransfer", numSignatures: 1 }),
+        getTransactionCost(config, currencyId, { type: "simpleTransfer", numSignatures: 1 }),
+        getTransactionCost(config, currencyId, { type: "simpleTransfer", numSignatures: 1 }),
       ];
 
       const results = await Promise.all(promises);

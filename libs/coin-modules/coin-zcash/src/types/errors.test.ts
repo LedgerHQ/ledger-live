@@ -2,6 +2,7 @@ import {
   ZcashAmountBelowDustThreshold,
   ZcashNotesNotYetSpendable,
   ZcashSaplingRecipientNotSupported,
+  ZcashSendTooLarge,
   ZcashShieldedKeyMissing,
   ZcashSignerNotSupported,
   ZcashSigningCancelled,
@@ -24,6 +25,10 @@ describe("zcash errors", () => {
     [
       ZcashAmountBelowDustThreshold,
       `Amount is too small to be broadcast (minimum ${TRANSPARENT_OUTPUT_DUST_THRESHOLD} zatoshis)`,
+    ],
+    [
+      ZcashSendTooLarge,
+      "This amount is too large to send in one transaction: try sending it in smaller amounts",
     ],
   ])("names %p and gives it a readable default message", (Err, message) => {
     const error = new Err();

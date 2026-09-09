@@ -65,6 +65,8 @@ import type {
   AleoTokenType,
   EnrichedPrivateRecord,
   AleoStakingPosition,
+  AleoStakingMode,
+  AleoValidatorNonEarningReason,
 } from "../types";
 
 const MICROCREDITS_REGEX = /^(\d+)u\d+$/;
@@ -579,6 +581,7 @@ export function isPublicTransaction(transaction: Transaction): transaction is Tr
   return (
     transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
     transaction.mode === TRANSACTION_TYPE.TRANSFER_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC ||
     isPublicTokenTransaction(transaction)
   );
 }
@@ -610,7 +613,7 @@ export function derivePublicTransactionMode({
 }: {
   isTokenTx: boolean;
   isSelfTransfer: boolean;
-}): TransactionPublic["mode"] {
+}): Exclude<TransactionPublic["mode"], AleoStakingMode> {
   if (isTokenTx) {
     return isSelfTransfer
       ? TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
@@ -857,6 +860,15 @@ export function mapTransactionIntentToSdkIntent(
         program_id: txIntent.data.programId,
       };
     }
+    case TRANSACTION_TYPE.BOND_PUBLIC: {
+      invariant(hasSpecificIntentData(txIntent, type), `aleo: intent data is required for ${type}`);
+      return {
+        type: "bond_public",
+        amount,
+        validator: to,
+        withdrawal: txIntent.data.withdrawal,
+      };
+    }
     default: {
       throw new Error(`aleo: unsupported intent type: ${type}`);
     }
@@ -891,6 +903,7 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
     // spending public native balance
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
+    case TRANSACTION_TYPE.BOND_PUBLIC:
       return account.aleoResources?.transparentBalance ?? new BigNumber(0);
     // spending private native balance
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
@@ -1011,6 +1024,15 @@ export function createTransactionIntent({
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
       return base;
+
+    case TRANSACTION_TYPE.BOND_PUBLIC:
+      return {
+        ...base,
+        data: {
+          type: TRANSACTION_TYPE.BOND_PUBLIC,
+          withdrawal: transaction.withdrawal,
+        },
+      };
 
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC:
@@ -1199,6 +1221,8 @@ export function getFunctionNameFromTransactionType(transactionType: TransactionT
       return "transfer_token_public_to_private";
     case TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC:
       return "transfer_token_private_to_public";
+    case TRANSACTION_TYPE.BOND_PUBLIC:
+      return "bond_public";
     default:
       throw new Error(`aleo: unsupported transaction type: ${transactionType}`);
   }
@@ -1394,6 +1418,32 @@ export function estimateGrossRate(
 }
 
 /**
+ * Why a validator pays its delegators nothing, or null when it pays. The single source
+ * of truth for these rules: {@link estimateNetRate} collapses all of them to a rate of
+ * exactly 0, so anything wanting to say *which* must ask here rather than infer.
+ */
+export function getValidatorNonEarningReason({
+  totalStakeMicrocredits,
+  validatorStakeMicrocredits,
+  commissionPercent,
+}: {
+  totalStakeMicrocredits: BigNumber;
+  validatorStakeMicrocredits: BigNumber;
+  commissionPercent: BigNumber;
+}): AleoValidatorNonEarningReason | null {
+  if (
+    validatorStakeMicrocredits
+      .dividedBy(totalStakeMicrocredits)
+      .isGreaterThan(MAX_VALIDATOR_STAKE_SHARE)
+  ) {
+    return "overConcentrated";
+  }
+  if (commissionPercent.isGreaterThanOrEqualTo(100)) return "fullCommission";
+
+  return null;
+}
+
+/**
  * What a delegator can expect from one validator: the gross network rate less that
  * validator's commission, as a fraction (0.07 = 7%). A **lower bound** — every surface
  * showing it must label it an estimate.
@@ -1419,15 +1469,17 @@ export function estimateNetRate({
 
   if (!commissionPercent.isFinite() || commissionPercent.isLessThan(0)) return null;
 
-  const validatorOverConcentrated = validatorStakeMicrocredits
-    .dividedBy(totalStakeMicrocredits)
-    .isGreaterThan(MAX_VALIDATOR_STAKE_SHARE);
   const delegatorBelowMinimum =
     delegatorStakeMicrocredits !== undefined &&
     delegatorStakeMicrocredits.isLessThan(MIN_DELEGATOR_STAKE_MICROCREDITS);
-  if (validatorOverConcentrated || delegatorBelowMinimum) return new BigNumber(0);
+  const nonEarningReason = getValidatorNonEarningReason({
+    totalStakeMicrocredits,
+    validatorStakeMicrocredits,
+    commissionPercent,
+  });
+  if (delegatorBelowMinimum || nonEarningReason !== null) return new BigNumber(0);
 
-  const keptShare = BigNumber.maximum(new BigNumber(1).minus(commissionPercent.dividedBy(100)), 0);
+  const keptShare = new BigNumber(1).minus(commissionPercent.dividedBy(100));
 
   return grossRate.multipliedBy(keptShare);
 }

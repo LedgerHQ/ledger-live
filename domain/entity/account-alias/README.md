@@ -42,10 +42,12 @@ account list changes, before any alias can be resolved.
 | `computeAccountAlias(accountId)` | id → alias, pure |
 | `registerAccountAliases(accountIds)` | feeds the reverse map |
 | `accountIdFromAliasSelector(state, alias)` | alias → id, `undefined` when unknown |
-| `resolveAccountIdSelector(state, segment)` | alias → id, falls back to the segment itself |
+| `resolveAccountIdSelector(state, segment)` | alias → id, falls back to the segment when it parses as an account id, `undefined` otherwise |
 
 `resolveAccountIdSelector` is the one to use at a route boundary: a link created before this
-package existed still carries a raw account id, and must keep working.
+package existed still carries a raw account id, and must keep working. A segment that is neither a
+known alias nor a well-formed `AccountId`/`TokenAccountId` resolves to `undefined` rather than
+throwing — callers must handle the miss, the same way they handle an id that matches no account.
 
 ## Related
 

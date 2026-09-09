@@ -35,14 +35,8 @@ const writeOptions: SetOptions = {
 
 export const secureStore: CardSessionStore = {
   async read(key) {
-    try {
-      const entry = await getGenericPassword({ service: key });
-      // `false` covers both an empty slot and a read the OS refused. Neither is a session.
-      return entry ? entry.password : null;
-    } catch {
-      // A value the OS can no longer decrypt reads as absent. It must never reject a Card request.
-      return null;
-    }
+    const entry = await getGenericPassword({ service: key });
+    return entry ? entry.password : null;
   },
   async write(key, value) {
     const stored = await setGenericPassword(KEYCHAIN_USERNAME, value, {

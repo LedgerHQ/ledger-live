@@ -26,16 +26,12 @@ const sendIntent: TransactionIntent<CasperMemo> = {
 const balances: Balance[] = [{ value: BALANCE, asset: { type: "native" }, locked: 0n }];
 
 describe("createApi", () => {
-  it("implements every method the contract requires", () => {
+  it("returns an object with all CoinModuleApi methods", () => {
     for (const method of requiredApiKeys) {
       expect(typeof api[method]).toBe("function");
     }
   });
 
-  // The capabilities Casper does not expose are omitted now rather than stubbed one by one,
-  // and the resolver's `withDefaults` supplies them — which is also what makes them
-  // reportable: a consumer can ask, where a throwing placeholder used to be
-  // indistinguishable from an implementation.
   it("omits the capabilities Casper does not expose", () => {
     const resolved = withDefaults(api);
     for (const capability of [

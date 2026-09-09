@@ -1,8 +1,9 @@
 export { broadcast } from "./transaction/broadcast";
 export { combine } from "./transaction/combine";
 export { craftTransaction } from "./transaction/craftTransaction";
+export { craftPltTransaction } from "./transaction/craftPltTransaction";
 export { craftRawTransaction } from "./transaction/craftRawTransaction";
-export { estimateFees } from "./transaction/estimateFees";
+export { estimateFees, estimateTokenFees } from "./transaction/estimateFees";
 export { getBalance } from "./account/getBalance";
 export { lastBlock } from "./history/lastBlock";
 export { getBlock } from "./history/getBlock";

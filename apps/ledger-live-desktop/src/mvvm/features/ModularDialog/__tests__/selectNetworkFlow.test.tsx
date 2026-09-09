@@ -9,15 +9,20 @@ import {
 } from "../../__mocks__/useSelectAssetFlow.mock";
 import { currencies, mockDomMeasurements, mockOnAssetSelected } from "../../__tests__/shared";
 import ModularDialogFlowManager from "../ModularDialogFlowManager";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
 }));
 
-const mockUseAcceptedCurrency = jest.fn(() => () => true);
+type CurrencyPredicate = (currency: CryptoOrTokenCurrency) => boolean;
+
+const acceptAllCurrencies: CurrencyPredicate = () => true;
+const mockUseAcceptedCurrency = jest.fn((): CurrencyPredicate => acceptAllCurrencies);
 
 beforeEach(() => {
   mockDomMeasurements();
+  mockUseAcceptedCurrency.mockImplementation(() => acceptAllCurrencies);
 });
 
 const dialogParamsMockCurrencies = {
@@ -90,11 +95,17 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
   });
 
   it("should render ineligible assets as disabled and prevent their selection", async () => {
+    // Narrow the catalog so the ineligible group stays within the virtualized window.
+    const displayedIds = new Set<string>([ethereumCurrency.id, bitcoinCurrency.id]);
+    mockUseAcceptedCurrency.mockImplementation(() => currency => displayedIds.has(currency.id));
+
     const { user } = render(<ModularDialogFlowManager />, {
       initialState: { modularDialog: dialogParamsWithSelectableNetworks },
     });
 
     await waitForSkeletonToBeRemoved();
+
+    expect(screen.getByTestId("asset-selector-unavailable-assets-header")).toBeInTheDocument();
 
     const bitcoinAsset = screen.getByTestId("asset-item-ticker-btc");
     expect(bitcoinAsset).toHaveAttribute("aria-disabled", "true");
@@ -102,7 +113,7 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     await user.click(bitcoinAsset);
 
     expect(mockOnAssetSelected).not.toHaveBeenCalled();
-    expect(await screen.findByRole("tooltip")).toHaveTextContent("Bitcoin isn't supported yet.");
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("Bitcoin is not supported yet");
 
     bitcoinAsset.parentElement?.focus();
 
@@ -131,7 +142,7 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
 
     expect(mockOnAssetSelected).not.toHaveBeenCalled();
     expect(await screen.findByRole("tooltip")).toHaveTextContent(
-      "Arbitrum network isn't supported yet.",
+      "Arbitrum network is not supported yet",
     );
 
     arbitrumNetwork.parentElement?.focus();

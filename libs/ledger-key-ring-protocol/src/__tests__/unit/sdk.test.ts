@@ -2,14 +2,23 @@ import { DefaultBodyType, http, HttpResponse, PathParams, StrictRequest } from "
 import { setupServer } from "msw/node";
 import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
 import {
+  AddMember,
   CommandBlock,
+  CommandStreamEncoder,
   crypto,
+  DerivationPath,
+  Derive,
   Device,
   Permissions,
   SoftwareDevice,
   StreamTree,
 } from "@ledgerhq/hw-ledger-key-ring-protocol";
-import { getEnv } from "@shared/env";
+import {
+  createCommandBlock,
+  hashCommandBlock,
+  signCommandBlock,
+} from "@ledgerhq/hw-ledger-key-ring-protocol/CommandBlock";
+import { TRUSTCHAIN_API_STAGING } from "../../../tests/test-helpers/config";
 import { PutCommandsRequest } from "../../api";
 import { HWDeviceProvider } from "../../HWDeviceProvider";
 import { SDK } from "../../sdk";
@@ -59,7 +68,7 @@ describe("Trustchain SDK", () => {
     mswServer.close();
   });
 
-  const apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING");
+  const apiBaseUrl = TRUSTCHAIN_API_STAGING;
   const sdkContext = { applicationId: 16, name: "alice", apiBaseUrl };
 
   beforeEach(() => {
@@ -198,6 +207,67 @@ describe("Trustchain SDK", () => {
 
     expect(onTrustchainRotation).toHaveBeenCalledWith(sdk, trustchain, alice);
     expect(afterRotation).toHaveBeenCalledWith(newTrustchain);
+  });
+
+  it("rejects an application stream in which the backend injected a member", async () => {
+    const { alice } = MOCK_DATA.members;
+
+    // Mock trustchain states:
+    const device = new SoftwareDevice(convertLiveCredentialsToKeyPair(alice));
+    const tree = await createTrustChain(device).then(addMember(device, "m/0'/16'/0'", "alice"));
+
+    // Derive first: it grants OWNER to its issuer, which is what lets the AddMember through
+    const attacker = crypto.randomKeypair();
+    const applicationStream = tree.getChild("m/0'/16'/0'")!;
+    const forgedBlock = signCommandBlock(
+      createCommandBlock(
+        attacker.publicKey,
+        [
+          new Derive(
+            DerivationPath.toIndexArray("m/0'/16'/0'"),
+            crypto.randomKeypair().publicKey,
+            crypto.randomBytes(16),
+            crypto.randomBytes(64),
+            crypto.randomKeypair().publicKey,
+          ),
+          new AddMember("mallory", attacker.publicKey, Permissions.OWNER),
+        ],
+        new Uint8Array(),
+        hashCommandBlock(applicationStream.blocks[applicationStream.blocks.length - 1]),
+      ),
+      attacker.publicKey,
+      attacker.privateKey,
+    );
+    const tamperedTrustchain = {
+      ...tree.serialize(),
+      "m/0'/16'/0'": crypto.to_hex(
+        CommandStreamEncoder.encode(applicationStream.blocks.concat([forgedBlock])),
+      ),
+    };
+
+    // Mock API calls:
+    apiMocks.getChalenge.mockReturnValue({ json: {}, tlv: MOCK_DATA.challengeTlv });
+    apiMocks.postAuthenticate.mockReturnValue({
+      accessToken: "BACKEND JWT",
+      permissions: { ROOTID: { "m/0'/16'/0'": ["owner"] } },
+    });
+    HWDeviceProviderMethodsMocks.withJwt.mockImplementation(async (_deviceId, job) =>
+      job({ accessToken: "ACCESS TOKEN" }),
+    );
+
+    // Run the test:
+    const sdk = new SDK(sdkContext, hwDeviceProviderMock);
+    const trustchain = {
+      applicationPath: "m/0'/16'/0'",
+      rootId: "ROOTID",
+      walletSyncEncryptionKey: "",
+    };
+
+    apiMocks.getTrustchainByIdMock.mockReturnValueOnce(tree.serialize());
+    expect((await sdk.getMembers(trustchain, alice)).map(m => m.id)).toEqual([alice.pubkey]);
+
+    apiMocks.getTrustchainByIdMock.mockReturnValueOnce(tamperedTrustchain);
+    await expect(sdk.getMembers(trustchain, alice)).rejects.toThrow(/not part of the group/);
   });
 
   it("should recover from any 4xx indirectly caused by wrong JWT", async () => {

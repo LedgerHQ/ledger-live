@@ -53,7 +53,10 @@ function isMeContactMatching(
   const formatName = formatMeDisplayName ?? identityFormatMeDisplayName;
   const displayName = resolveMeContactDisplayName(me, formatName);
 
-  return displayName.toLowerCase().includes(normalizedQuery);
+  return (
+    displayName.toLowerCase().includes(normalizedQuery) ||
+    me.name.toLowerCase().includes(normalizedQuery)
+  );
 }
 
 export function createEmptyContactsListViewModel(

@@ -2,8 +2,7 @@ import { type CliCommand, test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
@@ -128,7 +127,7 @@ test.describe("Ledger Sync - rename account", () => {
   test.use(preSeededTrustchain([pushAccountsToTrustchain([ethAccount])]));
 
   test(
-    "[Live Hub][Ledger Sync] Renaming Account (Online)",
+    "[WXP][Ledger Sync] Renaming Account (Online)",
     {
       tag: deviceTagsWithoutLNS(),
       annotation: {
@@ -168,7 +167,7 @@ test.describe("Ledger Sync - delete account", () => {
   test.use(preSeededTrustchain([pushAccountsToTrustchain([ethAccount, secondEthAccount])]));
 
   test(
-    "[Live Hub][Ledger Sync] Deleting Account (Online)",
+    "[WXP][Ledger Sync] Deleting Account (Online)",
     {
       tag: deviceTagsWithoutLNS(),
       annotation: {
@@ -208,7 +207,7 @@ test.describe("Ledger Sync - delete instance", () => {
   test.use(preSeededTrustchain([addTrustchainMember(APP_INSTANCE_NAME)]));
 
   test(
-    "[Live Hub][Ledger Sync] Delete instance",
+    "[WXP][Ledger Sync] Delete instance",
     {
       tag: deviceTagsWithoutLNS(),
       annotation: {
@@ -246,7 +245,7 @@ test.describe("Ledger Sync - delete backup", () => {
   test.use(preSeededTrustchain([pushAccountsToTrustchain([ethAccount])]));
 
   test(
-    "[Live Hub][Ledger Sync] Delete backup",
+    "[WXP][Ledger Sync] Delete backup",
     {
       tag: deviceTagsWithoutLNS(),
       annotation: {

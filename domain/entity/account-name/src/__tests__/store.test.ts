@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { parseAnyAccountId } from "@domain/entity-account";
 import {
   accountNamesSlice,
   bulkSetAccountNames,
@@ -35,8 +36,8 @@ describe("accountNamesSlice", () => {
 
   it("bulkSetAccountNames merges names", () => {
     const store = makeStore();
-    store.dispatch(bulkSetAccountNames(new Map([["a1", "First"]])));
-    store.dispatch(bulkSetAccountNames(new Map([["a2", "Second"]])));
+    store.dispatch(bulkSetAccountNames(new Map([[parseAnyAccountId("a1"), "First"]])));
+    store.dispatch(bulkSetAccountNames(new Map([[parseAnyAccountId("a2"), "Second"]])));
     expect(accountNameSelector(store.getState().accountNames, { accountId: "a1" })).toBe("First");
     expect(accountNameSelector(store.getState().accountNames, { accountId: "a2" })).toBe("Second");
   });
@@ -55,6 +56,24 @@ describe("accountNamesSlice", () => {
     const store = makeStore();
     store.dispatch(initFromUserData([{ id: "a1", name: "" }]));
     expect(accountNameSelector(store.getState().accountNames, { accountId: "a1" })).toBeUndefined();
+  });
+
+  it("initFromUserData drops an id storage cannot have produced, keeping the rest", () => {
+    // User data is whatever was persisted — by an older build, or by an imported wallet state. A
+    // throw here would take the whole import down over one bad name.
+    const store = makeStore();
+    store.dispatch(
+      initFromUserData([
+        { id: "a1", name: "First" },
+        { id: "a+b+c", name: "Broken" },
+        { id: "", name: "Empty" },
+        { id: "a2", name: "Second" },
+      ]),
+    );
+    const state = store.getState().accountNames;
+    expect(accountNameSelector(state, { accountId: "a1" })).toBe("First");
+    expect(accountNameSelector(state, { accountId: "a2" })).toBe("Second");
+    expect(state.size).toBe(2);
   });
 
   it("ADD_ACCOUNTS stores edited names that differ from the default", () => {

@@ -1,5 +1,9 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount } from "../test/fixtures";
+import {
+  createFixtureAccount,
+  createFixtureTokenAccount,
+  createFixtureTransaction,
+} from "../test/fixtures";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 
 jest.mock("./prepareTransaction", () => ({
@@ -176,5 +180,68 @@ describe("estimateMaxSpendable", () => {
 
     // THEN
     expect(result).toEqual(new BigNumber(0));
+  });
+
+  describe("a PLT sub-account", () => {
+    // No estimate is needed at all, which is what the second assertion pins.
+    it("returns the whole token balance, unreduced by CCD fees", async () => {
+      const { prepareTransaction } = jest.requireMock("./prepareTransaction");
+      const parent = createFixtureAccount();
+      const subAccount = createFixtureTokenAccount({ parentId: parent.id });
+
+      const result = await estimateMaxSpendable({
+        account: subAccount,
+        parentAccount: parent,
+        transaction: null,
+      });
+
+      expect(result).toEqual(subAccount.spendableBalance);
+      expect(prepareTransaction).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("an unresolved sub-account reference", () => {
+    // Signing is already blocked, so any figure here is one for a send that
+    // cannot happen.
+    it("reports zero rather than the parent's CCD balance", async () => {
+      const parent = createFixtureAccount();
+
+      const result = await estimateMaxSpendable({
+        account: parent,
+        transaction: createFixtureTransaction({
+          subAccountId: "js:2:concordium_testnet:gone:+plt",
+        }),
+      });
+
+      expect(result).toEqual(new BigNumber(0));
+    });
+  });
+
+  describe("a failed preparation", () => {
+    // A rejection reaches the consumers as an unhandled one, so resolving is the
+    // contract, not a convenience.
+    it("resolves to zero rather than rejecting", async () => {
+      const { prepareTransaction } = jest.requireMock("./prepareTransaction");
+      prepareTransaction.mockRejectedValueOnce(new Error("proxy down"));
+
+      const result = await estimateMaxSpendable({
+        account: createFixtureAccount(),
+        transaction: null,
+      });
+
+      expect(result).toEqual(new BigNumber(0));
+    });
+
+    it("resolves to zero when the status lookup fails", async () => {
+      const { getTransactionStatus } = jest.requireMock("./getTransactionStatus");
+      getTransactionStatus.mockRejectedValueOnce(new Error("proxy down"));
+
+      const result = await estimateMaxSpendable({
+        account: createFixtureAccount(),
+        transaction: null,
+      });
+
+      expect(result).toEqual(new BigNumber(0));
+    });
   });
 });

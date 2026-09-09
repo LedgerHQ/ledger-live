@@ -33,9 +33,17 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   return {
     ...common,
     family: tr.family,
-    fees: new BigNumber(tr.fees),
+    fees: tr.fees ? new BigNumber(tr.fees) : null,
     amount: new BigNumber(tr.amount),
-    ...(tr.transferId !== undefined && { transferId: tr.transferId }),
+    ...(tr.transferId !== undefined
+      ? { transferId: tr.transferId }
+      : tr.memoType === "transferId" && typeof tr.memoValue === "string"
+        ? { transferId: tr.memoValue }
+        : {}),
+    ...(tr.memoType !== undefined && { memoType: tr.memoType }),
+    ...(tr.memoValue !== undefined && { memoValue: tr.memoValue }),
+    ...(tr.mode !== undefined && { mode: tr.mode }),
+    ...(tr.nonce !== undefined && tr.nonce !== null && { nonce: new BigNumber(tr.nonce) }),
   };
 };
 
@@ -46,8 +54,12 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     ...common,
     family: t.family,
     amount: t.amount.toFixed(),
-    fees: t.fees.toString(),
+    fees: t.fees ? t.fees.toString() : null,
     ...(t.transferId !== undefined && { transferId: t.transferId }),
+    ...(t.memoType !== undefined && { memoType: t.memoType }),
+    ...(t.memoValue !== undefined && { memoValue: t.memoValue }),
+    ...(t.mode !== undefined && { mode: t.mode }),
+    ...(t.nonce !== undefined && t.nonce !== null && { nonce: t.nonce.toFixed() }),
   };
 };
 

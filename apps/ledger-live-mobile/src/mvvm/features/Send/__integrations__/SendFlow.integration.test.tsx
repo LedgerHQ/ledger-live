@@ -7,6 +7,8 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import {
   act,
   fireEvent,
@@ -24,6 +26,7 @@ import { CustomFeesScreen } from "../screens/CustomFees";
 import { CoinControlScreen } from "../screens/CoinControl";
 import { SignatureScreen } from "../screens/Signature";
 import { ConfirmationScreen } from "../screens/Confirmation";
+import { PaySuccessScreen } from "../screens/PaySuccess";
 import {
   SEND_FLOW_STEP,
   type SendFlowStep,
@@ -54,6 +57,7 @@ const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.COIN_CONTROL]: CoinControlScreen,
   [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
   [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
+  [SEND_FLOW_STEP.PAY_SUCCESS]: PaySuccessScreen,
 };
 
 const HostStack = createNativeStackNavigator();
@@ -77,6 +81,39 @@ jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () 
     }),
   }),
 }));
+
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
+  const React = jest.requireActual<typeof import("react")>("react");
+  const { QueuedBottomSheet } = actual;
+
+  function MockQueuedBottomSheet({
+    isRequestingToBeOpened,
+    isForcingToBeOpened,
+    onOpened,
+    ...props
+  }: import("@shared/ui-queued-bottom-sheet").QueuedBottomSheetProps) {
+    const shouldOpen = !!(isRequestingToBeOpened || isForcingToBeOpened);
+    React.useEffect(() => {
+      if (shouldOpen) {
+        onOpened?.();
+      }
+    }, [onOpened, shouldOpen]);
+    return (
+      <QueuedBottomSheet
+        isRequestingToBeOpened={isRequestingToBeOpened}
+        isForcingToBeOpened={isForcingToBeOpened}
+        onOpened={onOpened}
+        {...props}
+      />
+    );
+  }
+
+  return {
+    ...actual,
+    QueuedBottomSheet: MockQueuedBottomSheet,
+  };
+});
 
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
   const actual = jest.requireActual("LLM/components/DeviceIntentExecutor");
@@ -197,6 +234,111 @@ describe("Send flow integration tests", () => {
     expect(await screen.findByText("Review")).toBeOnTheScreen();
   });
 
+  it("should open recipient from amount without stacking a second amount", async () => {
+    const benoit = mockContact({
+      id: "contact-benoit",
+      name: "Benoit",
+      addresses: [
+        mockContactAddress({
+          id: "address-benoit-eth",
+          currencyId: "ethereum",
+          label: "Ethereum",
+          address: VALID_ETHEREUM_RECIPIENT,
+        }),
+        mockContactAddress({
+          id: "address-benoit-coinbase",
+          currencyId: "ethereum",
+          label: "Ethereum Coinbase",
+          address: "0x1234567890123456789012345678901234567890",
+        }),
+      ],
+    });
+    const { user } = renderForAccount(
+      accountEthereum,
+      { recipient: VALID_ETHEREUM_RECIPIENT, skipRecipientStep: true },
+      { contactsEnabled: true, contacts: [mockMeContact(), benoit] },
+    );
+
+    expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+    expect(screen.getByText("Benoit")).toBeVisible();
+
+    await user.press(screen.getByLabelText("Edit recipient"));
+
+    expect(await screen.findByDisplayValue("Benoit")).toBeVisible();
+
+    await user.press(await screen.findByTestId("contacts-compact-row-contact-benoit"));
+    expect(await screen.findByText("Select Benoit's address")).toBeVisible();
+    await user.press(screen.getByLabelText(`Ethereum, ${VALID_ETHEREUM_RECIPIENT}`));
+
+    expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+    expect(screen.queryByLabelText("Back")).not.toBeVisible();
+    expect(screen.queryByPlaceholderText("Enter address, ENS or contact")).not.toBeVisible();
+  });
+
+  it("should pop back to the recipient under amount instead of stacking another recipient", async () => {
+    const { user } = renderForAccount(accountEthereum);
+
+    await driveToAmount(user, { recipient: VALID_ETHEREUM_RECIPIENT });
+
+    expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+    expect(screen.getByLabelText("Back")).toBeVisible();
+
+    await user.press(screen.getByLabelText("Edit recipient"));
+
+    expect(await screen.findByDisplayValue(VALID_ETHEREUM_RECIPIENT)).toBeVisible();
+    expect(screen.getByTestId("recipient-input")).toBeVisible();
+    expect(screen.queryByLabelText("Edit recipient")).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText("Back")).not.toBeOnTheScreen();
+  });
+
+  it("should show a truncated address on amount when the recipient is not a contact", async () => {
+    const { user } = renderForAccount(
+      accountEthereum,
+      { recipient: VALID_ETHEREUM_RECIPIENT, skipRecipientStep: true },
+      { contactsEnabled: true },
+    );
+
+    expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+    expect(
+      screen.getByDisplayValue(
+        formatAddress(VALID_ETHEREUM_RECIPIENT, SEND_ADDRESS_FORMAT_OPTIONS),
+      ),
+    ).toBeVisible();
+    expect(screen.queryByText("Benoit")).not.toBeOnTheScreen();
+
+    await user.press(screen.getByLabelText("Edit recipient"));
+
+    expect(await screen.findByDisplayValue(VALID_ETHEREUM_RECIPIENT)).toBeVisible();
+  });
+
+  it("should show a truncated address on amount when contacts are off", async () => {
+    const benoit = mockContact({
+      id: "contact-benoit",
+      name: "Benoit",
+      addresses: [
+        mockContactAddress({
+          id: "address-benoit-eth",
+          currencyId: "ethereum",
+          label: "Ethereum",
+          address: VALID_ETHEREUM_RECIPIENT,
+        }),
+      ],
+    });
+    renderForAccount(
+      accountEthereum,
+      { recipient: VALID_ETHEREUM_RECIPIENT, skipRecipientStep: true },
+      { contactsEnabled: false, contacts: [mockMeContact(), benoit] },
+    );
+
+    expect(await screen.findByLabelText("Edit recipient")).toBeVisible();
+    expect(
+      screen.getByDisplayValue(
+        formatAddress(VALID_ETHEREUM_RECIPIENT, SEND_ADDRESS_FORMAT_OPTIONS),
+      ),
+    ).toBeVisible();
+    expect(screen.queryByText("Benoit")).not.toBeOnTheScreen();
+  });
+
   it("should keep add contact enabled when the network supports the address book", async () => {
     const { user } = renderForAccount(accountEthereum, {}, { contactsEnabled: true });
 
@@ -282,7 +424,7 @@ describe("Send flow integration tests", () => {
     expect(screen.queryByTestId("send-add-to-existing-contact-step")).toBeNull();
   });
 
-  it("should show network contacts and advance when selecting a contact with one address", async () => {
+  it("should show network contacts and open the address sheet for a contact with one address", async () => {
     const contacts = [
       mockContact({
         id: "contact-vincent",
@@ -316,10 +458,41 @@ describe("Send flow integration tests", () => {
 
     await user.press(screen.getByTestId("contacts-compact-row-contact-vincent"));
 
+    expect(await screen.findByText("Select Vincent's address")).toBeVisible();
+    await user.press(screen.getByLabelText("Ethereum Main, " + VALID_ETHEREUM_RECIPIENT));
+
     expect(await screen.findByText("Review")).toBeVisible();
   });
 
-  it("should ask which address to use when a contact has several network addresses", async () => {
+  it("should keep the send title when the address sheet is open", async () => {
+    const vincent = mockContact({
+      id: "contact-vincent-header",
+      name: "Vincent",
+      addresses: [
+        mockContactAddress({
+          id: "address-vincent-header-eth",
+          currencyId: "ethereum",
+          label: "Ethereum Main",
+          address: VALID_ETHEREUM_RECIPIENT,
+        }),
+      ],
+    });
+    const { user } = renderForAccount(
+      accountEthereum,
+      {},
+      { contactsEnabled: true, contacts: [vincent] },
+    );
+
+    expect(await screen.findByText("Send ETH")).toBeVisible();
+
+    await user.press(screen.getByTestId("contacts-compact-row-contact-vincent-header"));
+
+    expect(await screen.findByText("Select Vincent's address")).toBeVisible();
+    expect(screen.getByText("Send ETH")).toBeVisible();
+    expect(screen.queryByText("Select address")).not.toBeOnTheScreen();
+  });
+
+  it("should open the address sheet when a contact has several network addresses", async () => {
     const contacts = [
       mockContact({
         id: "contact-benoit",
@@ -344,11 +517,11 @@ describe("Send flow integration tests", () => {
 
     await user.press(await screen.findByTestId("contacts-compact-row-contact-benoit"));
 
-    expect(await screen.findByText("Select address")).toBeVisible();
-    expect(screen.getByText("Benoit")).toBeVisible();
-    expect(screen.queryByTestId("recipient-input")).toBeNull();
+    expect(await screen.findByText("Select Benoit's address")).toBeVisible();
 
-    await user.press(screen.getByTestId("send-recipient-contact-address-address-benoit-coinbase"));
+    await user.press(
+      screen.getByLabelText("Ethereum Coinbase, 0x1234567890123456789012345678901234567890"),
+    );
 
     expect(await screen.findByText("Review")).toBeVisible();
   });
@@ -361,7 +534,7 @@ describe("Send flow integration tests", () => {
 
     await user.press(await screen.findByRole("button", { name: "Add contact" }));
 
-    expect(await screen.findByText("Bitcoin isn't supported yet")).toBeVisible();
+    expect(await screen.findByText("Bitcoin is not supported yet")).toBeVisible();
     expect(
       screen.getByText(
         "You can't add a Bitcoin address to your contacts yet. We're adding more cryptos over time.",

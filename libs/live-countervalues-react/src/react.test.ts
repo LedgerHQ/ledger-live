@@ -176,9 +176,9 @@ describe("CountervaluesProvider", () => {
     mockLoadCountervalues.mockResolvedValue(initialState);
   });
 
-  it("should filter unsupported tracking pairs before polling when marketcap ids are loaded", async () => {
+  it("should filter unsupported tracking pairs before polling when supported crypto ids are loaded", async () => {
     const bridge = createBridge({
-      marketcapIds: [bitcoin.id],
+      supportedCryptoIds: [bitcoin.id],
       trackingPairs: [supportedPair, unsupportedPair],
     });
 
@@ -188,14 +188,39 @@ describe("CountervaluesProvider", () => {
     expect(mockLoadCountervalues.mock.calls[0][1].trackingPairs).toEqual([supportedPair]);
   });
 
-  it("should keep tracking pairs unchanged before marketcap ids are loaded", async () => {
+  it("should keep tracking pairs unchanged before supported crypto ids are loaded", async () => {
     const trackingPairs = [supportedPair, unsupportedPair];
-    const bridge = createBridge({ marketcapIds: [], trackingPairs });
+    const bridge = createBridge({ supportedCryptoIds: [], trackingPairs });
 
     render(React.createElement(CountervaluesProvider, { bridge, children: null }));
 
     await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(1));
     expect(mockLoadCountervalues.mock.calls[0][1].trackingPairs).toBe(trackingPairs);
+  });
+
+  it("should use the same API-ID lookup in filter and batching for remapped currencies", async () => {
+    // assethub_polkadot maps to "polkadot" via inferCurrencyAPIID.
+    // supportedCryptoIds contains API IDs, so the correct key is "polkadot", not "assethub_polkadot".
+    const assethubPolkadot: Currency = {
+      ...bitcoin,
+      id: CryptoCurrencyIdSchema.parse("assethub_polkadot"),
+      name: "Asset Hub Polkadot",
+      ticker: "DOT",
+    };
+    const bridge = createBridge({
+      supportedCryptoIds: ["polkadot"],
+      trackingPairs: [trackingPair(assethubPolkadot)],
+    });
+
+    render(React.createElement(CountervaluesProvider, { bridge, children: null }));
+
+    await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(1));
+    // filterSupportedTrackingPairs resolves assethub_polkadot → polkadot, so the pair is kept
+    expect(mockLoadCountervalues.mock.calls[0][1].trackingPairs).toHaveLength(1);
+    // shouldBatchCurrencyFrom must also resolve to "polkadot" (rank 0, ≤ marketCapBatchingAfterRank 20) → not batched
+    expect(mockLoadCountervalues.mock.calls[0][2]?.shouldBatchCurrencyFrom(assethubPolkadot)).toBe(
+      false,
+    );
   });
 });
 
@@ -204,10 +229,10 @@ function trackingPair(from: Currency): TrackingPair {
 }
 
 function createBridge({
-  marketcapIds,
+  supportedCryptoIds,
   trackingPairs,
 }: {
-  marketcapIds: string[];
+  supportedCryptoIds: string[];
   trackingPairs: TrackingPair[];
 }): CountervaluesBridge {
   const settings: CountervaluesSettings = {
@@ -224,7 +249,7 @@ function createBridge({
     setState: jest.fn(),
     setStateError: jest.fn(),
     setStatePending: jest.fn(),
-    useMarketcapIds: () => marketcapIds,
+    useSupportedCryptoIds: () => supportedCryptoIds,
     usePollingIsPolling: () => false,
     usePollingTriggerLoad: () => true,
     useStateError: () => null,

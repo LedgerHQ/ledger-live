@@ -228,6 +228,13 @@ export default function DebugWallet40() {
           arrowRight
           onPress={() => navigation.navigate(ScreenName.DebugQ2WalletV4Tour)}
         />
+        <SettingsRow
+          title="Q3 Wallet V4 Tour"
+          desc="Test Q3 Wallet V4 tour setup"
+          iconLeft={<IconsLegacy.NewsMedium size={24} color="black" />}
+          arrowRight
+          onPress={() => navigation.navigate(ScreenName.DebugQ3WalletV4Tour)}
+        />
       </Box>
     </ScrollView>
   );

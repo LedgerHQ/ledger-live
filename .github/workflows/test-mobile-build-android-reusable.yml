@@ -53,6 +53,14 @@ on:
         required: true
       AWS_CACHE_ROLE_NAME:
         required: true
+      CARD_BAANX_API_URL:
+        required: false
+      CARD_BAANX_CLIENT_KEY:
+        required: false
+      CARD_BAANX_HOSTED_UI:
+        required: false
+      CARD_OAUTH_REDIRECT_URI:
+        required: false
       NX_KEY:
         required: true
   workflow_dispatch:
@@ -163,6 +171,10 @@ jobs:
         env:
           PRODUCTION: ${{ inputs.production_firebase }}
           SKIP_JS_BUNDLING: true
+          CARD_BAANX_API_URL: ${{ secrets.CARD_BAANX_API_URL }}
+          CARD_BAANX_CLIENT_KEY: ${{ secrets.CARD_BAANX_CLIENT_KEY }}
+          CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
+          CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
           disable_cache: ${{ inputs.disable-nx-cache || false }}
@@ -235,6 +247,11 @@ jobs:
 
       - name: Build JS bundle and minify for size analysis
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        env:
+          CARD_BAANX_API_URL: ${{ secrets.CARD_BAANX_API_URL }}
+          CARD_BAANX_CLIENT_KEY: ${{ secrets.CARD_BAANX_CLIENT_KEY }}
+          CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
+          CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle --bundle-size
           disable_cache: ${{ inputs.disable-nx-cache || false }}

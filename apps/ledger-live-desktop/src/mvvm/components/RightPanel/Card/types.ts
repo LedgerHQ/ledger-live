@@ -6,4 +6,5 @@ export interface CardViewModel {
   readonly formatCountervalue: (value: number) => FormattedValue;
   readonly balanceLabel: string;
   readonly oauthConfig: PayCardProps["oauthConfig"];
+  readonly onTrackEvent: PayCardProps["onTrackEvent"];
 }

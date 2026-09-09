@@ -20,7 +20,6 @@ jest.mock("react-router", () => ({
 
 const defaultSettings = {
   discreetMode: false,
-  vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   devicesModelList: [],
   anonymousUserNotifications: {},
 };

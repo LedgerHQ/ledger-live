@@ -127,13 +127,21 @@ It is fully best-effort: it never throws and never changes a command's exit code
 The skill also **ships inside the compiled binary**, so it is available even from an installed npm package with no repo checkout, via the `skill` command group:
 
 ```bash
-wallet-cli skill list                       # list embedded skills
-wallet-cli skill retrieve ledger-wallet-cli # print SKILL.md (or --file references/business-logic.md)
-wallet-cli skill install --agent claude     # write into ./.claude/skills (also: cursor, codex, agents)
-wallet-cli skill install --dir ./my-skills  # write into an explicit directory
-wallet-cli skill doctor                     # check installed skills against this binary
-wallet-cli skill doctor --fix               # reinstall outdated / missing skills
+wallet-cli skill list                      # list embedded skills
+wallet-cli skill retrieve wallet-cli-usage # print SKILL.md (or --file references/business-logic.md)
+wallet-cli skill install --agent claude    # write into ./.claude/skills (also: cursor, codex, agents)
+wallet-cli skill install --dir ./my-skills # write into an explicit directory
+wallet-cli skill doctor                    # check installed skills against this binary
+wallet-cli skill doctor --fix              # reinstall outdated / missing skills
 ```
+
+### Standalone vs monorepo form of the skill
+
+The canonical source at [`.agents/skills/ledger-wallet-cli/`](../../.agents/skills/ledger-wallet-cli) is written for **monorepo contributors**: it is named after its directory and its examples run `pnpm --silent wallet-cli start <command>` from the repo root. Neither holds for someone who installed the npm package, so both standalone artifacts — the copy embedded in the binary and the copy published to [`LedgerHQ/agent-skills`](https://github.com/LedgerHQ/agent-skills) — are derived by a transform that renames the skill to **`wallet-cli-usage`** and rewrites the examples to plain `wallet-cli <command>`.
+
+That transform lives in [`scripts/standalone-skill-transform.mjs`](./scripts/standalone-skill-transform.mjs) and is the single implementation behind both artifacts (`scripts/generate-skills-manifest.mjs` for the binary, `scripts/export-standalone-skill.mjs` for the sync workflow), so the two cannot drift apart. It fails the build if the source stops carrying an expected marker or if anything monorepo-only survives — do not add a second copy of these rules.
+
+`wallet-cli-usage` is therefore the name used everywhere on the standalone side: `skill list`, the manifest, install directories, and the `.wallet-cli-skill.json` sidecar. The pre-rename name **`ledger-wallet-cli` still resolves** in `skill retrieve` and `skill install` as a lookup alias, so older documented commands keep working; it always returns the canonical skill, and never installs a second copy under the old name. `skill doctor` reports any pre-rename install directory it finds as *superseded* (it never deletes it — that's your call).
 
 `skill install` maps `--agent` (`claude`, `cursor`, `codex`, `agents`) to the matching `.<agent>/skills` directory (`agents` → `.agents/skills`) under the current working directory, or the user home directory with `--global`. `--dir` overrides both. Existing files are preserved unless `--force` is passed.
 

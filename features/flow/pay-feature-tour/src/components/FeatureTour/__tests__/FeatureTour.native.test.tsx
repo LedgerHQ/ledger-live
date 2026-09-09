@@ -8,10 +8,6 @@ import { I18nTestProvider } from "@shared/i18n/testing";
 import type { FeatureTourProps } from "../types";
 import { FEATURE_TOUR_RESOURCES } from "./fixtures";
 
-jest.mock("@shared/ui-queued-bottom-sheet", () => ({
-  QueuedBottomSheet: ({ children }: { children: React.ReactNode }) => children,
-}));
-
 function makeStore() {
   return configureStore({ reducer: { payCardFeatureTour: payCardFeatureTourSlice.reducer } });
 }
