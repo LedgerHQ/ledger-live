@@ -3,6 +3,10 @@ import { Modal } from "tests/component/modal.component";
 import { step } from "tests/misc/reporters/step";
 
 export class DelegateModal extends Modal {
+  private manageButton = (currencyId: string) =>
+    this.page.getByTestId(`${currencyId}-staking-manage-button`);
+  private redelegateMenuItem = (currencyId: string) =>
+    this.page.getByTestId(`${currencyId}-staking-redelegate-item`);
   private titleProvider = this.page.getByTestId("modal-provider-title");
   private rowProvider = this.page.getByTestId("modal-provider-row");
   private searchOpenButton = this.page.getByText("Show all");
@@ -32,6 +36,12 @@ export class DelegateModal extends Modal {
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
+
+  @step("Open the $0 redelegate flow from the staking-section manage menu")
+  async openRedelegateFromManageMenu(currencyId: string) {
+    await this.manageButton(currencyId).click();
+    await this.redelegateMenuItem(currencyId).click();
+  }
 
   @step("Get title provider on row $0")
   async getTitleProvider(row: number): Promise<string> {

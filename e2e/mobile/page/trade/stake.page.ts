@@ -90,6 +90,15 @@ export default class StakePage {
     return rowId.slice(PROVIDER_ROW_PREFIX.length);
   }
 
+  // Families whose flow opens on the validator list have no summary row to tap first.
+  @Step("Select provider {{{0}}} from the validator list")
+  async selectValidatorFromList(provider: string) {
+    await waitForElementById(this.searchPoolInput);
+    await typeTextById(this.searchPoolInput, provider);
+    await waitForElementById(this.providerRow(provider));
+    await tapById(this.providerRow(provider));
+  }
+
   @Step("Verify fees visible in summary {{{0}}}")
   async verifyFeesVisible(currencyId: string) {
     await detoxExpect(getElementById(this.delegationFees(currencyId))).toBeVisible();
