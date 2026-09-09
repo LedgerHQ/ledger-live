@@ -9,13 +9,10 @@ export function useWipeHostedSessionOnSignInChange(): void {
   const { login, hosted } = useCardHostedManifests();
   const lastSignedIn = useRef(isSignedIn);
 
-  const hosts = useMemo(() => {
-    const origins = [manifestOrigin(login), manifestOrigin(hosted)];
-
-    return [
-      ...new Set(origins.filter(origin => origin !== null).map(origin => new URL(origin).host)),
-    ];
-  }, [login, hosted]);
+  const origins = useMemo(
+    () => [...new Set([manifestOrigin(login), manifestOrigin(hosted)].filter(o => o !== null))],
+    [login, hosted],
+  );
 
   useEffect(() => {
     if (lastSignedIn.current === isSignedIn) {
@@ -24,10 +21,10 @@ export function useWipeHostedSessionOnSignInChange(): void {
 
     lastSignedIn.current = isSignedIn;
 
-    if (hosts.length === 0) {
+    if (origins.length === 0) {
       return;
     }
 
-    ipcRenderer.invoke("clearCardHostedSessionData", hosts).catch(logger.error);
-  }, [isSignedIn, hosts]);
+    ipcRenderer.invoke("clearCardHostedSessionData", origins).catch(logger.error);
+  }, [isSignedIn, origins]);
 }
