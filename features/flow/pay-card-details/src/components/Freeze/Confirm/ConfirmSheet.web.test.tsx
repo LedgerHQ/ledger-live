@@ -1,7 +1,8 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { CARD_COPY, I18nWrapper } from "../../../__tests__/i18nWrapper";
+import { CARD_COPY } from "../../../__tests__/i18nWrapper";
+import { WebTestWrapper } from "../../../__tests__/webTestWrapper";
 import { ConfirmSheet } from "./ConfirmSheet";
 import type { ConfirmSheetProps } from "../../../types";
 
@@ -17,7 +18,7 @@ function renderSheet(props: Partial<ConfirmSheetProps> = {}) {
       onClose={onClose}
       {...props}
     />,
-    { wrapper: I18nWrapper },
+    { wrapper: WebTestWrapper },
   );
 
   return { onConfirm, onClose, ...view };

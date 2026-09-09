@@ -7,7 +7,6 @@ let mockIsSignedIn = false;
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <View testID="card-login" />,
-  CardMore: () => <View testID="card-more" />,
   useIsCardSignedIn: () => mockIsSignedIn,
 }));
 
@@ -15,6 +14,7 @@ jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <View testID="card-artwork" />,
   CardVisual: () => <View testID="card-visual" />,
   Freeze: () => <View testID="card-freeze" />,
+  More: () => <View testID="card-more" />,
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
@@ -45,11 +45,12 @@ describe("Card (native)", () => {
     mockIsSignedIn = false;
   });
 
-  it("composes the bare artwork with the auth login and More menu", () => {
+  it("composes the bare artwork with the auth login, freeze, and More", () => {
     render(<Card title={title} oauthConfig={oauthConfig} />);
 
     expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.getByTestId("card-login")).toBeVisible();
+    expect(screen.getByTestId("card-freeze")).toBeVisible();
     expect(screen.getByTestId("card-more")).toBeVisible();
   });
 
@@ -86,6 +87,7 @@ describe("Card (native)", () => {
     expect(screen.getByTestId("card-visual")).toBeVisible();
     expect(screen.queryByTestId("card-artwork")).toBeNull();
     expect(screen.getByTestId("card-login")).toBeVisible();
+    expect(screen.getByTestId("card-freeze")).toBeVisible();
     expect(screen.getByTestId("card-more")).toBeVisible();
   });
 });

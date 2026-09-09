@@ -1,15 +1,15 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { Asterisk, ExitLogout, Question, Settings } from "@ledgerhq/lumen-ui-react/symbols";
-import { CardMoreIcon, CardMoreListItem } from "../CardMoreRowParts.web";
+import { MoreIcon, MoreListItem } from "./MoreRowParts";
 
 type SpotIcon = typeof Asterisk;
 
-function iconOf(rowId: React.ComponentProps<typeof CardMoreIcon>["rowId"]): SpotIcon {
-  return (CardMoreIcon({ rowId }) as React.ReactElement<{ icon: SpotIcon }>).props.icon;
+function iconOf(rowId: React.ComponentProps<typeof MoreIcon>["rowId"]): SpotIcon {
+  return (MoreIcon({ rowId }) as React.ReactElement<{ icon: SpotIcon }>).props.icon;
 }
 
-describe("CardMoreRowParts (Web)", () => {
+describe("MoreRowParts (Web)", () => {
   afterEach(() => {
     cleanup();
   });
@@ -17,12 +17,12 @@ describe("CardMoreRowParts (Web)", () => {
   it("calls the row handler when the list item is clicked", () => {
     const onPress = jest.fn();
     render(
-      <CardMoreListItem rowId="logout" onPress={onPress}>
-        <CardMoreIcon rowId="logout" />
-      </CardMoreListItem>,
+      <MoreListItem rowId="logout" onPress={onPress}>
+        <MoreIcon rowId="logout" />
+      </MoreListItem>,
     );
 
-    fireEvent.click(screen.getByTestId("card-more-row-logout"));
+    fireEvent.click(screen.getByTestId("more-row-logout"));
 
     expect(onPress).toHaveBeenCalledTimes(1);
   });
