@@ -94,17 +94,16 @@ export async function broadcast(
     });
     return txid;
   } catch (error) {
-    // Not the raw message: it comes from the remote gRPC endpoint, which is
-    // untrusted input that could itself echo back a chunk of what was
-    // submitted -- exactly what this feature must never log. Name and length
-    // are safe, content-free signals, same spirit as logging the transaction
-    // itself only by size.
     const message = error instanceof Error ? error.message : String(error);
     log(ZCASH_LOG_TYPE, "broadcast failed", {
       endpoint: grpcUrl,
       durationMs: Date.now() - startedAt,
-      errorName: error instanceof Error ? error.name : typeof error,
-      errorMessageLength: message.length,
+      // The reason is the most actionable field in an exported log, so it is
+      // kept -- but the remote endpoint controls this string, so any hex run
+      // long enough to be the transaction or a digest of it is stripped first.
+      // 64 is the threshold because a digest is 32 bytes, and the transaction
+      // may only ever appear by size.
+      error: message.replace(/[0-9a-f]{64,}/gi, "[hex redacted]"),
     });
     // Re-attach `endpoint` here, on the renderer side: any own property set by
     // main-host.ts's rejectOneShot is lost crossing Electron's ipcMain.handle /

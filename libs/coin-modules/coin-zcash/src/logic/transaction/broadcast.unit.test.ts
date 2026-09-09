@@ -193,7 +193,20 @@ describe("broadcast", () => {
     expect(mockLog).toHaveBeenCalledWith(
       "zcash",
       "broadcast failed",
-      expect.objectContaining({ errorName: "Error", errorMessageLength: "gRPC rejected".length }),
+      expect.objectContaining({ error: "gRPC rejected" }),
+    );
+  });
+
+  it("keeps the reason but strips a digest-length hex run from it", async () => {
+    mockLog.mockClear();
+    broadcastTransaction.mockRejectedValueOnce(new Error(`rejected ${TXID}: fee too low`));
+
+    await expect(broadcast(TX_HEX)).rejects.toThrow();
+
+    expect(mockLog).toHaveBeenCalledWith(
+      "zcash",
+      "broadcast failed",
+      expect.objectContaining({ error: "rejected [hex redacted]: fee too low" }),
     );
   });
 
