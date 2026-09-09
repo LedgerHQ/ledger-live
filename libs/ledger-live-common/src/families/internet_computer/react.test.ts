@@ -151,6 +151,18 @@ describe("getNeuronState", () => {
   it("falls back to Unknown for a state outside the known enum", () => {
     expect(getNeuronState(makeNeuron({ state: 99 as NeuronState }))).toBe("Unknown");
   });
+
+  // The snapshot's state is fixed at the last device-signed read; the label follows the dissolve
+  // state as it stands now, as the canister would report it.
+  it("reads Dissolved for a dissolving neuron whose unlock time has passed", () => {
+    const passed = BigInt(Math.floor(Date.now() / 1000) - 60);
+    const stale = makeNeuron({
+      state: NeuronState.Dissolving,
+      dissolveState: { WhenDissolvedTimestampSeconds: passed },
+    });
+
+    expect(getNeuronState(stale)).toBe("Dissolved");
+  });
 });
 
 describe("useTotalStaked", () => {

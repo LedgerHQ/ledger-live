@@ -20,6 +20,7 @@ import {
   ICPNeuron,
   ListNeuronsResponse,
   NeuronCommandOutcome,
+  NeuronDissolveState,
   NeuronsData,
   NeuronState,
   RawNeuron,
@@ -36,6 +37,7 @@ import {
   hasEnoughMaturityToStake,
   isDeviceControlledNeuron,
   isEnoughMaturityToSpawn,
+  isNeuronDissolved,
   maxAllowedSplitAmount,
   minAllowedSplitAmount,
   minNeuronSplittable,
@@ -47,6 +49,7 @@ import {
   neuronPotentialVotingPower,
   neuronsNeedSync,
   neuronStake,
+  neuronState,
   secondsToDuration,
   toNeuronsData,
   votingPowerNeedsRefresh,
@@ -69,6 +72,27 @@ const baseNeuron = (overrides: Partial<ICPNeuron> = {}): ICPNeuron => ({
   autoStakeMaturity: false,
   ...overrides,
 });
+
+// The dissolve state each NeuronState comes with on the wire: a fixed delay when locked, an unlock
+// time otherwise — two years out while dissolving, seven days out for a spawning child, already
+// passed once dissolved. None for Unspecified, a snapshot that carried no NeuronInfo.
+const NOW_SECONDS = 1_800_000_000;
+const wireDissolveState = (state: NeuronState): NeuronDissolveState | undefined => {
+  switch (state) {
+    case NeuronState.Locked:
+      return { DissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) };
+    case NeuronState.Dissolving:
+      return { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS + NNS_MAXIMUM_DISSOLVE_DELAY) };
+    case NeuronState.Dissolved:
+      return { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - 1) };
+    case NeuronState.Spawning:
+      return { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS + SECONDS_IN_7_DAYS) };
+    default:
+      return undefined;
+  }
+};
+const inState = (state: NeuronState, overrides: Partial<ICPNeuron> = {}): ICPNeuron =>
+  baseNeuron({ state, dissolveState: wireDissolveState(state), ...overrides });
 
 // The voting-power fields are deliberately different on the two records so the tests can tell which
 // one the decode read.
@@ -162,7 +186,12 @@ describe("bonus multipliers (Mission 70)", () => {
 
 describe("neuronCanVote", () => {
   const withDelay = (seconds: number) =>
-    neuronCanVote(baseNeuron({ dissolveDelaySeconds: BigInt(seconds) }));
+    neuronCanVote(
+      baseNeuron({
+        dissolveDelaySeconds: BigInt(seconds),
+        dissolveState: { DissolveDelaySeconds: BigInt(seconds) },
+      }),
+    );
 
   it("turns on exactly at the two-week threshold", () => {
     expect(withDelay(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE - 1)).toBe(false);
@@ -171,6 +200,30 @@ describe("neuronCanVote", () => {
 
   it("excludes the delay a freshly staked neuron gets by default", () => {
     expect(withDelay(SECONDS_IN_7_DAYS)).toBe(false);
+  });
+
+  // NeuronInfo.dissolve_delay_seconds is the countdown at the last read; the canister judges
+  // eligibility from where the countdown stands now.
+  it("reads a dissolving neuron's countdown as it stands now, not as the snapshot froze it", () => {
+    const dissolving = baseNeuron({
+      state: NeuronState.Dissolving,
+      dissolveDelaySeconds: BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE),
+      dissolveState: {
+        WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS + NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE),
+      },
+    });
+
+    expect(neuronCanVote(dissolving, NOW_SECONDS)).toBe(true);
+    expect(neuronCanVote(dissolving, NOW_SECONDS + 1)).toBe(false);
+  });
+
+  it("falls back to the snapshot figure when there is no dissolve state", () => {
+    const bare = baseNeuron({
+      dissolveDelaySeconds: BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE),
+      dissolveState: undefined,
+    });
+
+    expect(neuronCanVote(bare, NOW_SECONDS)).toBe(true);
   });
 });
 
@@ -181,7 +234,12 @@ describe("neuronPotentialVotingPower", () => {
 
   it("is zero below the vote-eligibility dissolve delay", () => {
     expect(
-      neuronPotentialVotingPower(baseNeuron({ dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) })),
+      neuronPotentialVotingPower(
+        baseNeuron({
+          dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS),
+          dissolveState: { DissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) },
+        }),
+      ),
     ).toBe(0n);
   });
 
@@ -217,19 +275,73 @@ describe("neuronPotentialVotingPower", () => {
   });
 });
 
+describe("neuronState", () => {
+  it("derives the state from the dissolve state, as the canister does", () => {
+    expect(neuronState(inState(NeuronState.Locked), NOW_SECONDS)).toBe(NeuronState.Locked);
+    expect(neuronState(inState(NeuronState.Dissolving), NOW_SECONDS)).toBe(NeuronState.Dissolving);
+    expect(neuronState(inState(NeuronState.Dissolved), NOW_SECONDS)).toBe(NeuronState.Dissolved);
+  });
+
+  // The snapshot only changes on a device-signed read, but the unlock time passes on its own; the
+  // canister's current_state reads Dissolved from the moment now >= when_dissolved.
+  it("reads Dissolved once a neuron the snapshot shows dissolving reaches its unlock time", () => {
+    const dissolving = inState(NeuronState.Dissolving, {
+      dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS) },
+    });
+
+    expect(neuronState(dissolving, NOW_SECONDS - 1)).toBe(NeuronState.Dissolving);
+    expect(neuronState(dissolving, NOW_SECONDS)).toBe(NeuronState.Dissolved);
+  });
+
+  // A spawning child's dissolve state is an unlock time seven days out, which on its own reads as
+  // Dissolving — a state the maturity actions are offered in.
+  it("keeps the snapshot's Spawning verdict over a dissolve state that reads as dissolving", () => {
+    expect(neuronState(inState(NeuronState.Spawning), NOW_SECONDS)).toBe(NeuronState.Spawning);
+  });
+
+  // The duration helper answers 0n without a dissolve state, which read naively is Dissolved.
+  it("keeps the snapshot state when there is no dissolve state to derive from", () => {
+    const bare = inState(NeuronState.Locked, { dissolveState: undefined });
+
+    expect(neuronState(bare, NOW_SECONDS)).toBe(NeuronState.Locked);
+    expect(neuronState(inState(NeuronState.Unspecified), NOW_SECONDS)).toBe(
+      NeuronState.Unspecified,
+    );
+  });
+
+  it("reads a zero fixed delay as dissolved, as the canister does", () => {
+    const zero = inState(NeuronState.Locked, { dissolveState: { DissolveDelaySeconds: 0n } });
+
+    expect(neuronState(zero, NOW_SECONDS)).toBe(NeuronState.Dissolved);
+  });
+});
+
 describe("state permissions & dissolve duration", () => {
   it("maps state to the allowed lifecycle action", () => {
-    expect(getNeuronActionPermissions(baseNeuron({ state: NeuronState.Locked }))).toMatchObject({
+    expect(getNeuronActionPermissions(inState(NeuronState.Locked), NOW_SECONDS)).toMatchObject({
       canStartDissolving: true,
     });
-    expect(getNeuronActionPermissions(baseNeuron({ state: NeuronState.Dissolving }))).toMatchObject(
-      {
-        canStopDissolving: true,
-      },
-    );
-    expect(getNeuronActionPermissions(baseNeuron({ state: NeuronState.Dissolved }))).toMatchObject({
+    expect(getNeuronActionPermissions(inState(NeuronState.Dissolving), NOW_SECONDS)).toMatchObject({
+      canStopDissolving: true,
+    });
+    expect(getNeuronActionPermissions(inState(NeuronState.Dissolved), NOW_SECONDS)).toMatchObject({
       canDisburse: true,
     });
+  });
+
+  // Stop dissolving on a dissolved neuron is refused with RequiresDissolving; Disburse is the one
+  // action it has, and the delay it sets from there starts at zero.
+  it("offers Disburse, not Stop dissolving, once a dissolving neuron's unlock time has passed", () => {
+    const stale = inState(NeuronState.Dissolving, {
+      dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - 1) },
+    });
+
+    expect(getNeuronActionPermissions(stale, NOW_SECONDS)).toEqual({
+      canDisburse: true,
+      canStartDissolving: false,
+      canStopDissolving: false,
+    });
+    expect(isNeuronDissolved(stale, NOW_SECONDS)).toBe(true);
   });
 
   it("returns the fixed delay when locked and the countdown when dissolving", () => {
@@ -308,32 +420,46 @@ describe("maturity", () => {
   // so it reaches the wallet looking like somewhere to stake maturity from — which the canister
   // refuses, as it does on a dissolved neuron.
   const SPAWN_FLOOR = 105_263_158n;
-  const spawnable = (state: NeuronState) =>
-    baseNeuron({ state, maturityE8sEquivalent: SPAWN_FLOOR });
+  const spawnable = (state: NeuronState) => inState(state, { maturityE8sEquivalent: SPAWN_FLOOR });
+  const canStake = (neuron: ICPNeuron) => neuronCanStakeMaturity(neuron, NOW_SECONDS);
+  const canSpawn = (neuron: ICPNeuron, percentage = 100) =>
+    neuronCanSpawn(neuron, percentage, NOW_SECONDS);
 
   it("withholds staking maturity in the two states the canister refuses", () => {
-    expect(neuronCanStakeMaturity(spawnable(NeuronState.Locked))).toBe(true);
-    expect(neuronCanStakeMaturity(spawnable(NeuronState.Dissolving))).toBe(true);
-    expect(neuronCanStakeMaturity(spawnable(NeuronState.Spawning))).toBe(false);
-    expect(neuronCanStakeMaturity(spawnable(NeuronState.Dissolved))).toBe(false);
-    expect(neuronCanStakeMaturity(baseNeuron({ maturityE8sEquivalent: 0n }))).toBe(false);
+    expect(canStake(spawnable(NeuronState.Locked))).toBe(true);
+    expect(canStake(spawnable(NeuronState.Dissolving))).toBe(true);
+    expect(canStake(spawnable(NeuronState.Spawning))).toBe(false);
+    expect(canStake(spawnable(NeuronState.Dissolved))).toBe(false);
+    expect(canStake(baseNeuron({ maturityE8sEquivalent: 0n }))).toBe(false);
   });
 
   // Only the spawning state is refused here: a dissolved neuron spawns fine, so the two predicates
   // cannot share one state rule.
   it("withholds spawning only from a neuron that is already spawning", () => {
-    expect(neuronCanSpawn(spawnable(NeuronState.Spawning))).toBe(false);
-    expect(neuronCanSpawn(spawnable(NeuronState.Dissolved))).toBe(true);
-    expect(neuronCanSpawn(baseNeuron({ maturityE8sEquivalent: SPAWN_FLOOR - 1n }))).toBe(false);
-    expect(neuronCanSpawn(spawnable(NeuronState.Locked), 50)).toBe(false);
+    expect(canSpawn(spawnable(NeuronState.Spawning))).toBe(false);
+    expect(canSpawn(spawnable(NeuronState.Dissolved))).toBe(true);
+    expect(canSpawn(baseNeuron({ maturityE8sEquivalent: SPAWN_FLOOR - 1n }))).toBe(false);
+    expect(canSpawn(spawnable(NeuronState.Locked), 50)).toBe(false);
+  });
+
+  // The state is judged live: a neuron the snapshot still shows dissolving has dissolved once its
+  // unlock time passes, and the canister refuses to stake its maturity from then on.
+  it("withholds staking maturity once a dissolving neuron's unlock time has passed", () => {
+    const stale = inState(NeuronState.Dissolving, {
+      maturityE8sEquivalent: SPAWN_FLOOR,
+      dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - 1) },
+    });
+
+    expect(canStake(stale)).toBe(false);
+    expect(canSpawn(stale)).toBe(true);
   });
 
   // Unspecified is the absence of a NeuronInfo, not a state the canister named.
   it("withholds nothing from a neuron whose state never arrived", () => {
     const unknown = spawnable(NeuronState.Unspecified);
 
-    expect(neuronCanStakeMaturity(unknown)).toBe(true);
-    expect(neuronCanSpawn(unknown)).toBe(true);
+    expect(canStake(unknown)).toBe(true);
+    expect(canSpawn(unknown)).toBe(true);
   });
 });
 
@@ -360,9 +486,14 @@ describe("periodic confirmation", () => {
     expect(votingPowerNeedsRefresh([decaying()], decayStart)).toBe(true);
   });
 
+  const ineligible = () =>
+    decaying({
+      dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS),
+      dissolveState: { DissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) },
+    });
+
   it("ignores neurons whose dissolve delay is too short to vote", () => {
-    const ineligible = decaying({ dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) });
-    expect(votingPowerNeedsRefresh([ineligible], clearedAt)).toBe(false);
+    expect(votingPowerNeedsRefresh([ineligible()], clearedAt)).toBe(false);
   });
 
   describe("neuronDecidingVotingPower", () => {
@@ -389,8 +520,7 @@ describe("periodic confirmation", () => {
     });
 
     it("is zero for a neuron that cannot vote, however recently it was refreshed", () => {
-      const ineligible = decaying({ dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) });
-      expect(neuronDecidingVotingPower(ineligible, Number(REFRESHED))).toBe(0n);
+      expect(neuronDecidingVotingPower(ineligible(), Number(REFRESHED))).toBe(0n);
     });
   });
 
@@ -449,9 +579,12 @@ describe("getBannerState", () => {
   });
 
   it("asks to raise a dissolve delay that is too short to vote", () => {
-    expect(state([votingNeuron({ dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) })])).toBe(
-      "lockNeurons",
-    );
+    const short = votingNeuron({
+      dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS),
+      dissolveState: { DissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) },
+    });
+
+    expect(state([short])).toBe("lockNeurons");
   });
 
   it("asks for followees once the neuron can vote but follows nobody", () => {
@@ -491,6 +624,13 @@ describe("applyNeuronCommand", () => {
       ...overrides,
     });
 
+  const dissolving = (overrides: Partial<ICPNeuron> = {}): ICPNeuron =>
+    locked({
+      state: NeuronState.Dissolving,
+      dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW) + DELAY },
+      ...overrides,
+    });
+
   const command = (overrides: Record<string, unknown>) =>
     ({ neuronId: "7", ...overrides }) as unknown as Transaction;
 
@@ -518,12 +658,7 @@ describe("applyNeuronCommand", () => {
   });
 
   it("turns the remaining countdown back into a fixed delay when dissolving stops", () => {
-    const dissolving = locked({
-      state: NeuronState.Dissolving,
-      dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW) + DELAY },
-    });
-
-    const patched = applyTo(dissolving, command({ type: "stop_dissolving" }));
+    const patched = applyTo(dissolving(), command({ type: "stop_dissolving" }));
 
     expect(patched?.state).toBe(NeuronState.Locked);
     expect(patched?.dissolveState).toEqual({ DissolveDelaySeconds: DELAY });
@@ -533,12 +668,28 @@ describe("applyNeuronCommand", () => {
   // Guards against replaying a command the canister would have refused: the local state says the
   // neuron is not in the state the command requires, so the snapshot must not be edited.
   it.each([
-    ["start_dissolving", NeuronState.Dissolving],
-    ["stop_dissolving", NeuronState.Locked],
-  ])("declines to apply %s from the wrong state", (type, state) => {
-    expect(
-      applyNeuronCommand([locked({ state })], command({ type }), { nowSeconds: NOW }),
-    ).toBeUndefined();
+    ["start_dissolving", dissolving()],
+    ["stop_dissolving", locked()],
+  ])("declines to apply %s from the wrong state", (type, neuron) => {
+    expect(applyNeuronCommand([neuron], command({ type }), { nowSeconds: NOW })).toBeUndefined();
+  });
+
+  // The snapshot still says Dissolving, but the unlock time has passed: the canister sees a
+  // dissolved neuron, refuses stop_dissolving, and re-locks it from a delay of zero on
+  // set_dissolve_delay rather than pushing an unlock time out.
+  it("judges a dissolve command from the live state, not the snapshot's", () => {
+    const stale = dissolving({
+      dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW - 1) },
+    });
+
+    expect(applyTo(stale, command({ type: "stop_dissolving" }))).toBeUndefined();
+
+    const relocked = applyTo(
+      stale,
+      command({ type: "set_dissolve_delay", dissolveDelay: String(SECONDS_IN_YEAR) }),
+    );
+    expect(relocked?.state).toBe(NeuronState.Locked);
+    expect(relocked?.dissolveState).toEqual({ DissolveDelaySeconds: BigInt(SECONDS_IN_YEAR) });
   });
 
   it("adds the requested seconds to the current dissolve delay", () => {
@@ -565,13 +716,8 @@ describe("applyNeuronCommand", () => {
   // Verified against dfinity/ic `neuron/dissolve_state_and_age.rs`: while the neuron is still
   // dissolving the unlock timestamp moves out and it does not re-lock, so the state must not change.
   it("pushes out the unlock timestamp of a neuron that is still dissolving", () => {
-    const dissolving = locked({
-      state: NeuronState.Dissolving,
-      dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW) + DELAY },
-    });
-
     const patched = applyTo(
-      dissolving,
+      dissolving(),
       command({ type: "increase_dissolve_delay", additionalDissolveDelay: String(SECONDS_IN_DAY) }),
     );
 

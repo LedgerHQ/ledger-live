@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { useMemo } from "react";
+import { neuronState } from "@ledgerhq/coin-internet_computer/common-logic/neuron";
 import {
   derivePrincipalFromPubkey,
   neuronStake,
@@ -100,7 +101,9 @@ export function useCanTopUpNeuron(account: ICPAccount, neuron: ICPNeuron | undef
   }, [account.operations, account.xpub, neuron]);
 }
 
+// Judged live rather than from the snapshot's `state`, which is fixed at the last device-signed read
+// while a dissolving neuron's unlock time passes on its own.
 export function getNeuronState(neuron: ICPNeuron): ICPNeuronStateLabel {
   // `state` is decoded with `as NeuronState` from a raw canister number, so it can be out of range.
-  return NEURON_STATE_LABELS[neuron.state] ?? "Unknown";
+  return NEURON_STATE_LABELS[neuronState(neuron)] ?? "Unknown";
 }

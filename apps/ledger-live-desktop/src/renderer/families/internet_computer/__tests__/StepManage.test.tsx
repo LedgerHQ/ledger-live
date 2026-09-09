@@ -4,6 +4,7 @@ import {
   MIN_NEURON_STAKE,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
+  NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE,
   NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS,
   SECONDS_IN_7_DAYS,
   SECONDS_IN_DAY,
@@ -59,6 +60,33 @@ const FIXED_NOW_MSECS = 1_800_000_000_000;
 
 const refreshedSecondsAgo = (seconds: number) =>
   BigInt(Math.floor(FIXED_NOW_MSECS / 1000) - Math.floor(seconds));
+
+const NOW_SECONDS = Math.floor(FIXED_NOW_MSECS / 1000);
+
+// The dissolve state a neuron in each state carries on the wire. The step judges the state from it,
+// not from the snapshot's `state`, so a fixture has to carry the matching one.
+const dissolving = (overrides = {}) =>
+  controlled({
+    state: NeuronState.Dissolving,
+    dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS + SECONDS_IN_MONTH) },
+    ...overrides,
+  });
+
+const dissolved = (overrides = {}) =>
+  controlled({
+    state: NeuronState.Dissolved,
+    dissolveDelaySeconds: 0n,
+    dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - SECONDS_IN_DAY) },
+    ...overrides,
+  });
+
+const spawning = (overrides = {}) =>
+  controlled({
+    state: NeuronState.Spawning,
+    cachedNeuronStakeE8s: 0n,
+    dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS + SECONDS_IN_7_DAYS) },
+    ...overrides,
+  });
 
 // FormattedVal separates a value from its code with a non-breaking space.
 const bodyText = (container: HTMLElement) => container.textContent?.replace(/\u00a0/g, " ") ?? "";
@@ -179,13 +207,26 @@ describe("StepManage", () => {
   });
 
   it.each([
-    [NeuronState.Locked, "Start dissolving"],
-    [NeuronState.Dissolving, "Stop dissolving"],
-    [NeuronState.Dissolved, "Disburse"],
-  ])("offers the lifecycle action allowed in state %s", (state, label) => {
-    renderManage(controlled({ state }));
+    ["locked", () => controlled(), "Start dissolving"],
+    ["dissolving", () => dissolving(), "Stop dissolving"],
+    ["dissolved", () => dissolved(), "Disburse"],
+  ])("offers the lifecycle action allowed to a %s neuron", (_state, neuron, label) => {
+    renderManage(neuron());
 
     expect(screen.getByText(label)).toBeInTheDocument();
+  });
+
+  // The snapshot is fixed at the last device-signed read, but the unlock time passes on its own. The
+  // canister then refuses Stop dissolving (RequiresDissolving) and accepts Disburse — the opposite
+  // of what the snapshot's state would offer.
+  it("offers Disburse instead of Stop dissolving once a dissolving neuron's unlock time has passed", () => {
+    renderManage(
+      dissolving({ dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - 1) } }),
+    );
+
+    expect(screen.getByText("Disburse")).toBeInTheDocument();
+    expect(screen.queryByText("Stop dissolving")).not.toBeInTheDocument();
+    expect(screen.getByText("Dissolved")).toBeInTheDocument();
   });
 
   // The modal stays open across actions and used to keep the previous one's outcome, so a refusal on
@@ -201,7 +242,7 @@ describe("StepManage", () => {
   // The reference compared dissolveState to the string "Dissolving", which no variant can equal, so
   // it always sent start_dissolving.
   it("sends stop_dissolving for a neuron that is already dissolving", async () => {
-    const { props, user } = renderManage(controlled({ state: NeuronState.Dissolving }));
+    const { props, user } = renderManage(dissolving());
 
     await user.click(screen.getByText("Stop dissolving"));
 
@@ -240,6 +281,48 @@ describe("StepManage", () => {
       expect.anything(),
       expect.objectContaining({ type: "set_dissolve_delay" }),
     );
+  });
+
+  // increase_dissolve_delay on a dissolved neuron is accepted, but the delay it lands on is the
+  // whole entry: the canister re-locks from zero. The label and the command have to say so.
+  it("sets rather than increases the delay once a dissolving neuron has dissolved", async () => {
+    const { user } = renderManage(
+      dissolving({ dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - 1) } }),
+    );
+
+    await user.click(screen.getByText("Set dissolve delay"));
+
+    expect(bridgeMock.updateTransaction).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ type: "set_dissolve_delay" }),
+    );
+  });
+
+  // Legal, but the mint still lands at spawn time and the minted ICP then dissolves for that much
+  // longer; there is nothing to gain from it while the neuron is spawning.
+  it("withholds the dissolve-delay change while the neuron is spawning", () => {
+    renderManage(spawning());
+
+    expect(screen.queryByText("Increase dissolve delay")).not.toBeInTheDocument();
+    expect(screen.queryByText("Set dissolve delay")).not.toBeInTheDocument();
+  });
+
+  // The canister judges eligibility from where the countdown stands now, not from the figure the
+  // snapshot froze, so the power reads None from the moment it drops under the voting minimum.
+  it("reads no voting power once a dissolving neuron's countdown drops under the voting minimum", () => {
+    const { container } = renderManage(
+      fullyBonused({
+        state: NeuronState.Dissolving,
+        dissolveState: {
+          WhenDissolvedTimestampSeconds: BigInt(
+            NOW_SECONDS + NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE - 1,
+          ),
+        },
+      }),
+    );
+
+    expect(screen.getByText("None")).toBeInTheDocument();
+    expect(bodyText(container)).not.toContain("3.75");
   });
 
   // The bridge rejects any addition that overshoots the two-year cap, so a neuron already there has
@@ -504,17 +587,7 @@ describe("StepManage", () => {
   // so it arrives in the list looking like a neuron with maturity to do something with. The canister
   // refuses both commands on it, and each refusal costs a device signature to discover.
   it("offers neither maturity action on a neuron that is spawning", () => {
-    renderManage(
-      withMaturity({
-        state: NeuronState.Spawning,
-        cachedNeuronStakeE8s: 0n,
-        dissolveState: {
-          WhenDissolvedTimestampSeconds: BigInt(
-            Math.floor(FIXED_NOW_MSECS / 1000) + SECONDS_IN_7_DAYS,
-          ),
-        },
-      }),
-    );
+    renderManage(spawning({ maturityE8sEquivalent: BigInt(2 * MIN_NEURON_STAKE) }));
 
     expect(screen.queryByText("Stake maturity")).not.toBeInTheDocument();
     expect(screen.queryByText("Spawn neuron")).not.toBeInTheDocument();

@@ -107,10 +107,43 @@ export type NeuronActionPermissions = {
   canStopDissolving: boolean;
 };
 
+/**
+ * The neuron's state as the canister would report it now, not as the snapshot did.
+ *
+ * `state` is `NeuronInfo.state` at the last device-signed read, but a dissolving neuron passes its
+ * unlock time on its own and is then Dissolved on-chain, where a gate keyed on the snapshot still
+ * offers Stop dissolving (refused with RequiresDissolving), withholds Disburse and counts the neuron
+ * as a voter. `dissolveState` is the live anchor: the canister's own `Neuron::state(now)` derives
+ * Locked / Dissolving / Dissolved from it the same way (`dissolve_state_and_age.rs`, `current_state`).
+ *
+ * The snapshot verdict stands in two cases. Spawning is decided by `spawn_at_timestamp_seconds`,
+ * which the wallet does not decode, and a spawning child's dissolve state is an unlock time seven
+ * days out — read on its own that is Dissolving, which would re-offer Stake maturity. And with no
+ * dissolve state there is nothing to derive from.
+ */
+export const neuronState = (
+  neuron: ICPNeuron,
+  nowSeconds: number = Math.floor(Date.now() / 1000),
+): NeuronState => {
+  const { dissolveState, state } = neuron;
+  if (state === NeuronState.Spawning || dissolveState === undefined) return state;
+  if ("DissolveDelaySeconds" in dissolveState) {
+    // A zero fixed delay is dissolved, as the canister reads it (`neuron/types.rs`,
+    // dissolved_at_timestamp_seconds).
+    return dissolveState.DissolveDelaySeconds > 0n ? NeuronState.Locked : NeuronState.Dissolved;
+  }
+  return dissolveState.WhenDissolvedTimestampSeconds > BigInt(nowSeconds)
+    ? NeuronState.Dissolving
+    : NeuronState.Dissolved;
+};
+
 /** Which lifecycle actions the neuron's current state allows. */
-export const getNeuronActionPermissions = (neuron: ICPNeuron): NeuronActionPermissions => {
+export const getNeuronActionPermissions = (
+  neuron: ICPNeuron,
+  nowSeconds?: number,
+): NeuronActionPermissions => {
   const base = { canDisburse: false, canStartDissolving: false, canStopDissolving: false };
-  switch (neuron.state) {
+  switch (neuronState(neuron, nowSeconds)) {
     case NeuronState.Locked:
       return { ...base, canStartDissolving: true };
     case NeuronState.Dissolving:
@@ -123,8 +156,8 @@ export const getNeuronActionPermissions = (neuron: ICPNeuron): NeuronActionPermi
 };
 
 /** A dissolved neuron sets (not increases) its dissolve delay when re-locking. */
-export const isNeuronDissolved = (neuron: ICPNeuron): boolean =>
-  neuron.state === NeuronState.Dissolved;
+export const isNeuronDissolved = (neuron: ICPNeuron, nowSeconds?: number): boolean =>
+  neuronState(neuron, nowSeconds) === NeuronState.Dissolved;
 
 export const hasFollowees = (neuron: ICPNeuron): boolean => neuron.followees.length > 0;
 
@@ -140,15 +173,27 @@ export const getNeuronDissolveDurationSeconds = (
   return remaining > 0n ? remaining : 0n;
 };
 
+/**
+ * The dissolve delay as it stands now. `dissolveDelaySeconds` is the canister's figure at the last
+ * read, and for a dissolving neuron it has been counting down since; the snapshot figure serves only
+ * when there is no dissolve state to count from.
+ */
+const currentDissolveDelaySeconds = (neuron: ICPNeuron, nowSeconds?: number): bigint =>
+  neuron.dissolveState === undefined
+    ? neuron.dissolveDelaySeconds
+    : getNeuronDissolveDurationSeconds(neuron, nowSeconds);
+
 // ---- voting power (Mission 70) ------------------------------------------------------------------
 
 /**
  * Whether the dissolve delay is long enough for the canister to count the neuron's vote. Everything
  * downstream of voting hangs off this — voting power, periodic confirmation, the decay countdown —
- * so it is one predicate rather than the same comparison repeated at each site.
+ * so it is one predicate rather than the same comparison repeated at each site. Judged from the
+ * delay as it stands now: the canister does the same, so a dissolving neuron drops out of voting on
+ * its own, between reads.
  */
-export const neuronCanVote = (neuron: ICPNeuron): boolean =>
-  neuron.dissolveDelaySeconds >= BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE);
+export const neuronCanVote = (neuron: ICPNeuron, nowSeconds?: number): boolean =>
+  currentDissolveDelaySeconds(neuron, nowSeconds) >= BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE);
 
 /**
  * Bonus multiplier for a scalar (dissolve delay or age): 1 + maxBonus·(min(amount, cap)/cap)^convexity.
@@ -189,9 +234,13 @@ export const ageMultiplier = (ageSeconds: bigint): number =>
 // 2^53 (bonus <= 3x), so it stays an exact integer while preserving full double precision.
 const VOTING_POWER_SCALE = 1_000_000_000_000_000n;
 
-/** Potential voting power: what the neuron is worth ignoring periodic-confirmation decay. */
-export const neuronPotentialVotingPower = (neuron: ICPNeuron): bigint => {
-  if (!neuronCanVote(neuron)) return 0n;
+/**
+ * Potential voting power: what the neuron is worth ignoring periodic-confirmation decay. Eligibility
+ * is judged live; the two bonuses still multiply the snapshot's `dissolveDelaySeconds` and
+ * `ageSeconds`, which only a fresh read moves.
+ */
+export const neuronPotentialVotingPower = (neuron: ICPNeuron, nowSeconds?: number): bigint => {
+  if (!neuronCanVote(neuron, nowSeconds)) return 0n;
   // The rewards-only "8-year gang" bonus is intentionally omitted: it depends on a snapshotted base
   // the wallet does not carry and does not affect potential voting power for post-migration neurons.
   const stakeE8s = neuronVotingStake(neuron);
@@ -240,7 +289,7 @@ export const neuronDecidingVotingPower = (
   neuron: ICPNeuron,
   nowSeconds: number = Math.floor(Date.now() / 1000),
 ): bigint => {
-  const potential = neuronPotentialVotingPower(neuron);
+  const potential = neuronPotentialVotingPower(neuron, nowSeconds);
   const remaining = getSecondsTillVotingPowerExpires(neuron, nowSeconds);
   if (remaining === undefined || remaining >= NNS_CLEAR_FOLLOWING_AFTER_SECONDS) return potential;
   return (potential * BigInt(remaining)) / BigInt(NNS_CLEAR_FOLLOWING_AFTER_SECONDS);
@@ -259,7 +308,7 @@ export const votingPowerNeedsRefresh = (
     const refreshed = neuron.votingPowerRefreshedTimestampSeconds;
     // Only neurons eligible to vote are subject to periodic confirmation.
     if (refreshed === undefined) return false;
-    if (!neuronCanVote(neuron)) return false;
+    if (!neuronCanVote(neuron, nowSeconds)) return false;
     return BigInt(nowSeconds) >= refreshed + BigInt(NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS);
   });
 
@@ -285,7 +334,9 @@ export const isDeviceControlledNeuron = (neuron: ICPNeuron, principal: string): 
  * on: `neuron/types.rs` validates `SetDissolveTimestamp` against the current delay and applies the
  * difference through the same function. Shaped after its three arms
  * (`neuron/dissolve_state_and_age.rs`), because which one runs decides whether the neuron ends up
- * locked or dissolving — the difference the card reports.
+ * locked or dissolving — the difference the card reports. Judged from the live state, as the
+ * canister does: a neuron the snapshot still shows dissolving may have dissolved since, and then
+ * re-locks instead of pushing its unlock time out.
  */
 const withIncreasedDissolveDelay = (
   neuron: ICPNeuron,
@@ -298,7 +349,7 @@ const withIncreasedDissolveDelay = (
   const capped = (seconds: bigint) => (seconds > maximum ? maximum : seconds);
   const next = capped(getNeuronDissolveDurationSeconds(neuron, nowSeconds) + additional);
 
-  switch (neuron.state) {
+  switch (neuronState(neuron, nowSeconds)) {
     case NeuronState.Locked:
       // Aging is deliberately left alone: the canister carries `aging_since_timestamp_seconds` over.
       return {
@@ -340,7 +391,7 @@ const patchDissolveState = (
 ): ICPNeuron | undefined => {
   switch (transaction.type) {
     case "start_dissolving": {
-      if (neuron.state !== NeuronState.Locked) return undefined;
+      if (neuronState(neuron, nowSeconds) !== NeuronState.Locked) return undefined;
       const remaining = getNeuronDissolveDurationSeconds(neuron, nowSeconds);
       return {
         ...neuron,
@@ -353,7 +404,7 @@ const patchDissolveState = (
       };
     }
     case "stop_dissolving": {
-      if (neuron.state !== NeuronState.Dissolving) return undefined;
+      if (neuronState(neuron, nowSeconds) !== NeuronState.Dissolving) return undefined;
       const remaining = getNeuronDissolveDurationSeconds(neuron, nowSeconds);
       return {
         ...neuron,
@@ -453,7 +504,8 @@ const patchNeuron = (
         // figure from this timestamp, so the decoded snapshot field is brought along only to keep
         // the two from disagreeing.
         votingPowerRefreshedTimestampSeconds: BigInt(nowSeconds),
-        decidingVotingPower: neuron.potentialVotingPower ?? neuronPotentialVotingPower(neuron),
+        decidingVotingPower:
+          neuron.potentialVotingPower ?? neuronPotentialVotingPower(neuron, nowSeconds),
       };
     default:
       return undefined;
@@ -515,10 +567,11 @@ export const getBannerState = ({
   nowMSecs?: number;
 }): ICPBannerState => {
   const { fullNeurons } = neurons;
+  const nowSeconds = Math.floor(nowMSecs / 1000);
   if (fullNeurons.length === 0) return canStake ? "stakeICP" : "none";
   if (neuronsNeedSync(neurons, nowMSecs)) return "syncNeurons";
-  if (votingPowerNeedsRefresh(fullNeurons, Math.floor(nowMSecs / 1000))) return "confirmFollowing";
-  if (fullNeurons.some(n => !neuronCanVote(n))) return "lockNeurons";
+  if (votingPowerNeedsRefresh(fullNeurons, nowSeconds)) return "confirmFollowing";
+  if (fullNeurons.some(n => !neuronCanVote(n, nowSeconds))) return "lockNeurons";
   if (fullNeurons.some(n => !hasFollowees(n))) return "addFollowees";
   return "none";
 };
@@ -616,11 +669,16 @@ export const isEnoughMaturityToSpawn = (neuron: ICPNeuron, percentage: number): 
  * ours rather than the canister's — it accepts a request against zero maturity, stakes nothing, and
  * still costs a device signature.
  */
-export const neuronCanStakeMaturity = (neuron: ICPNeuron): boolean =>
-  neuron.state !== NeuronState.Spawning &&
-  neuron.state !== NeuronState.Dissolved &&
-  hasEnoughMaturityToStake(neuron);
+export const neuronCanStakeMaturity = (neuron: ICPNeuron, nowSeconds?: number): boolean => {
+  const state = neuronState(neuron, nowSeconds);
+  return (
+    state !== NeuronState.Spawning &&
+    state !== NeuronState.Dissolved &&
+    hasEnoughMaturityToStake(neuron)
+  );
+};
 
 /** A neuron that is itself spawning cannot spawn again (`governance.rs` `spawn_neuron`). */
-export const neuronCanSpawn = (neuron: ICPNeuron, percentage = 100): boolean =>
-  neuron.state !== NeuronState.Spawning && isEnoughMaturityToSpawn(neuron, percentage);
+export const neuronCanSpawn = (neuron: ICPNeuron, percentage = 100, nowSeconds?: number): boolean =>
+  neuronState(neuron, nowSeconds) !== NeuronState.Spawning &&
+  isEnoughMaturityToSpawn(neuron, percentage);

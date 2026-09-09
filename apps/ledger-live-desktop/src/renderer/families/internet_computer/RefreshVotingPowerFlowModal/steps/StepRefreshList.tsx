@@ -68,7 +68,7 @@ const StepRefreshList = ({
   const { expiring, stateFor } = useMemo(() => {
     const nowSeconds = Math.floor(Date.now() / 1000);
     const entries = neurons
-      .filter(neuronCanVote)
+      .filter(neuron => neuronCanVote(neuron, nowSeconds))
       .map(neuron => ({ neuron, seconds: getSecondsTillVotingPowerExpires(neuron, nowSeconds) }))
       .filter(
         (entry): entry is { neuron: ICPNeuron; seconds: number } => entry.seconds !== undefined,

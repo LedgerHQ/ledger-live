@@ -119,6 +119,15 @@ describe("getTransactionStatus", () => {
     const tx = (over: Partial<Transaction>): Transaction =>
       ({ amount: new BigNumber(0), fees: new BigNumber(10000), ...over }) as Transaction;
 
+    // The state is judged from the dissolve state, so a fixture carries the one its state has on the
+    // wire: an unlock time already passed once dissolved, still ahead while dissolving.
+    const unlockAt = (state: NeuronState) => ({
+      WhenDissolvedTimestampSeconds:
+        state === NeuronState.Dissolved
+          ? 0n
+          : BigInt(Math.floor(Date.now() / 1000) + NNS_MAXIMUM_DISSOLVE_DELAY),
+    });
+
     beforeEach(() => spiedValidateMemo.mockReturnValue(true));
 
     it("warns and rejects a create_neuron below the minimum stake", async () => {
@@ -298,7 +307,13 @@ describe("getTransactionStatus", () => {
     it("rejects staking maturity in the two states the canister refuses", async () => {
       const inState = (state: NeuronState) =>
         getTransactionStatus(
-          accountWith(neuron({ state, maturityE8sEquivalent: BigInt(MIN_NEURON_STAKE) })),
+          accountWith(
+            neuron({
+              state,
+              dissolveState: unlockAt(state),
+              maturityE8sEquivalent: BigInt(MIN_NEURON_STAKE),
+            }),
+          ),
           tx({ type: "stake_maturity", neuronId: "7" }),
         );
 
@@ -309,6 +324,22 @@ describe("getTransactionStatus", () => {
         ICPStakeMaturityNotAllowed,
       );
       expect((await inState(NeuronState.Dissolving)).errors.transaction).toBeUndefined();
+    });
+
+    // The snapshot still says Dissolving, but the unlock time has passed, and the canister judges
+    // the command from where it stands now. This is what keeps the direct-to-device gate honest.
+    it("rejects staking maturity once a dissolving neuron's unlock time has passed", async () => {
+      const status = await getTransactionStatus(
+        accountWith(
+          neuron({
+            state: NeuronState.Dissolving,
+            dissolveState: unlockAt(NeuronState.Dissolved),
+            maturityE8sEquivalent: BigInt(MIN_NEURON_STAKE),
+          }),
+        ),
+        tx({ type: "stake_maturity", neuronId: "7" }),
+      );
+      expect(status.errors.transaction).toBeInstanceOf(ICPStakeMaturityNotAllowed);
     });
 
     // Not a canister rule: staking nothing succeeds there, and reports zero. Refused here because
@@ -339,7 +370,13 @@ describe("getTransactionStatus", () => {
     // Dissolved stops a stake_maturity but not a spawn, and the share is applied before the floor.
     it("accepts a spawn of half the maturity of a dissolved neuron holding twice the floor", async () => {
       const status = await getTransactionStatus(
-        accountWith(neuron({ state: NeuronState.Dissolved, maturityE8sEquivalent: 210_526_316n })),
+        accountWith(
+          neuron({
+            state: NeuronState.Dissolved,
+            dissolveState: unlockAt(NeuronState.Dissolved),
+            maturityE8sEquivalent: 210_526_316n,
+          }),
+        ),
         tx({ type: "spawn_neuron", neuronId: "7", percentageToSpawn: "50" }),
       );
       expect(status.errors.transaction).toBeUndefined();

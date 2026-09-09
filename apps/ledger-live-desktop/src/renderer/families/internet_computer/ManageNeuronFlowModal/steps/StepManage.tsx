@@ -18,12 +18,14 @@ import {
   neuronCanVote,
   neuronDecidingVotingPower,
   neuronStake,
+  neuronState,
 } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import {
   getNeuronState,
   useCanTopUpNeuron,
   useICPPrincipal,
 } from "@ledgerhq/live-common/families/internet_computer/react";
+import { NeuronState } from "@ledgerhq/live-common/families/internet_computer/types";
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -104,7 +106,10 @@ const StepManage = ({
   // less than a day is no headroom: the entry floors to zero and cannot be submitted. Comparing
   // seconds instead let a neuron at 730 days — twelve hours short of the two-year maximum — open a
   // screen with nothing enterable on it.
+  // Withheld while spawning: legal, but the mint still lands at spawn time and the minted ICP then
+  // dissolves for that much longer, so there is nothing to gain from it yet.
   const canExtendDissolveDelay =
+    neuronState(neuron) !== NeuronState.Spawning &&
     BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) - dissolveDelay >= BigInt(SECONDS_IN_DAY);
   const secondsTillExpiry = neuronCanVote(neuron)
     ? getSecondsTillVotingPowerExpires(neuron)

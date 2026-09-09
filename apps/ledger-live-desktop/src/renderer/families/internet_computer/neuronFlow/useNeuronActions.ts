@@ -1,4 +1,5 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { neuronState } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import { NeuronState } from "@ledgerhq/live-common/families/internet_computer/types";
 import type {
   ICPNeuron,
@@ -39,6 +40,9 @@ export function useNeuronActions({
   const dispatch = useDispatch();
   const bridge = useAccountBridge<Transaction>(account);
   const neuronId = neuron?.id?.toString();
+  // Judged from the dissolve state as it stands now: the snapshot's own `state` is fixed at the last
+  // device-signed read, and a dissolving neuron's unlock time passes on its own.
+  const state = neuron ? neuronState(neuron) : undefined;
   const startAction = useStartNeuronAction({
     account,
     onChangeTransaction,
@@ -91,7 +95,7 @@ export function useNeuronActions({
       onClickConfirmFollowing: () => submit("refresh_voting_power"),
       // The canister has no toggle: which call ends the dissolve depends on the current state.
       onClickStartStopDissolving: () =>
-        submit(neuron?.state === NeuronState.Dissolving ? "stop_dissolving" : "start_dissolving"),
+        submit(state === NeuronState.Dissolving ? "stop_dissolving" : "start_dissolving"),
       onClickAutoStakeMaturity: (autoStakeMaturity: boolean) =>
         submit("auto_stake_maturity", { autoStakeMaturity }),
       onClickRemoveHotKey: (hotKeyToRemove: string) => submit("remove_hot_key", { hotKeyToRemove }),
@@ -102,9 +106,9 @@ export function useNeuronActions({
       // A dissolved neuron sets its delay from zero; a locked one may only increase it.
       onClickSetDissolveDelay: goTo(
         "setDissolveDelay",
-        neuron?.state === NeuronState.Dissolved ? "set_dissolve_delay" : "increase_dissolve_delay",
+        state === NeuronState.Dissolved ? "set_dissolve_delay" : "increase_dissolve_delay",
       ),
     }),
-    [goTo, neuron?.state, onClickIncreaseStake, submit],
+    [goTo, state, onClickIncreaseStake, submit],
   );
 }
