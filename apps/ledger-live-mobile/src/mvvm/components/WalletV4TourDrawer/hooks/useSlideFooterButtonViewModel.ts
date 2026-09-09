@@ -3,9 +3,14 @@ import { useSlidesContext } from "@ledgerhq/native-ui";
 import { interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { useTranslation } from "~/context/Locale";
 import { track } from "~/analytics";
-import { PAGE_TRACKING_Q3_WALLET_V4_TOUR } from "../const";
+import type { WalletV4Tour } from "../types";
 
-export const useSlideFooterButtonViewModel = (onComplete: () => void) => {
+type UseSlideFooterButtonViewModelParams = Pick<WalletV4Tour, "copy" | "page">;
+
+export const useSlideFooterButtonViewModel = (
+  onComplete: () => void,
+  { copy, page }: UseSlideFooterButtonViewModelParams,
+) => {
   const { t } = useTranslation();
   const { totalSlides, currentIndex, goToNext, scrollProgressSharedValue } = useSlidesContext();
 
@@ -15,25 +20,25 @@ export const useSlideFooterButtonViewModel = (onComplete: () => void) => {
   const fadeStart = lastIndex - 0.5;
   const isInTest = process.env.NODE_ENV === "test";
 
-  const primaryLabel = isFirstSlide ? t("q3WalletV4Tour.cta.start") : t("q3WalletV4Tour.cta.next");
-  const doneLabel = t("q3WalletV4Tour.cta.done");
+  const primaryLabel = isFirstSlide ? t(copy.startKey) : t(copy.nextKey);
+  const doneLabel = t(copy.doneKey);
 
   const goNext = useCallback(() => {
     goToNext();
     track("button_clicked", {
       button: "Next",
-      page: PAGE_TRACKING_Q3_WALLET_V4_TOUR,
+      page,
       card: currentIndex + 1,
     });
-  }, [currentIndex, goToNext]);
+  }, [currentIndex, goToNext, page]);
 
   const complete = useCallback(() => {
     onComplete();
     track("button_clicked", {
       button: "Got it",
-      page: PAGE_TRACKING_Q3_WALLET_V4_TOUR,
+      page,
     });
-  }, [onComplete]);
+  }, [onComplete, page]);
 
   const continueStyle = useAnimatedStyle(
     () => ({

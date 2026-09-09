@@ -9,14 +9,13 @@ import {
 } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
-import { Q3_WALLET_V4_TOUR_SLIDES } from "../const";
+import type { WalletV4TourSlide } from "../types";
 
-export const useSlideItemViewModel = (index: number) => {
+export const useSlideItemViewModel = (index: number, slide: WalletV4TourSlide) => {
   const { scrollProgressSharedValue, currentIndex } = useSlidesContext();
   const { theme } = useTheme();
   const { t } = useTranslation();
 
-  const slide = Q3_WALLET_V4_TOUR_SLIDES[index];
   const title = t(slide.titleKey);
   const subtitle = slide.subTitleKey ? t(slide.subTitleKey) : "";
   const source = theme === "dark" ? slide.imageSrc.dark : slide.imageSrc.light;

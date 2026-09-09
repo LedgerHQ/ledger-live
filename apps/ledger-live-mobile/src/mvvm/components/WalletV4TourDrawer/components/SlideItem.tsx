@@ -3,14 +3,32 @@ import { Image, StyleSheet } from "react-native";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import Animated from "react-native-reanimated";
 import { useSlideItemViewModel } from "../hooks/useSlideItemViewModel";
+import type { WalletV4TourSlide, WalletV4TourTitleLayout } from "../types";
 
 type SlideItemProps = Readonly<{
   index: number;
+  slide: WalletV4TourSlide;
+  titleLayout: WalletV4TourTitleLayout;
 }>;
 
-export function SlideItem({ index }: SlideItemProps) {
+export function SlideItem({ index, slide, titleLayout }: SlideItemProps) {
   const { title, subtitle, source, shouldRender, animatedStyle, textAnimatedStyle, handleLayout } =
-    useSlideItemViewModel(index);
+    useSlideItemViewModel(index, slide);
+
+  const titleText = (
+    <Text
+      typography={titleLayout.typography}
+      lx={{
+        textAlign: "center",
+        color: "base",
+        marginTop: titleLayout.marginTop,
+        marginBottom: "s8",
+      }}
+      numberOfLines={2}
+    >
+      {title}
+    </Text>
+  );
 
   return (
     <Animated.View onLayout={handleLayout} style={[styles.container, animatedStyle]}>
@@ -19,18 +37,11 @@ export function SlideItem({ index }: SlideItemProps) {
       </Box>
 
       <Animated.View style={textAnimatedStyle} pointerEvents="none">
-        <Text
-          typography="heading4SemiBold"
-          lx={{
-            textAlign: "center",
-            color: "base",
-            marginTop: "s24",
-            marginBottom: "s8",
-          }}
-          numberOfLines={2}
-        >
-          {title}
-        </Text>
+        {titleLayout.minHeight ? (
+          <Box lx={{ justifyContent: "center", minHeight: titleLayout.minHeight }}>{titleText}</Box>
+        ) : (
+          titleText
+        )}
 
         {subtitle ? (
           <Text
