@@ -18,6 +18,8 @@ const REACHABLE_ERRORS = [
   "ICPHotKeyAlreadyExists",
   "ICPHotKeyIsController",
   "ICPSplitNotAllowed",
+  "ICPSpawnNotAllowed",
+  "ICPStakeMaturityNotAllowed",
   "ICPStakeMemoNotRecoverable",
   "ICPCallUnconfirmed",
   "ICPNeuronsNotRead",

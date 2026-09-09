@@ -8324,6 +8324,14 @@
       "title": "Amount outside the range this neuron can split",
       "description": "Both the original neuron and the new one must keep at least 1 ICP staked, plus the network fee on the amount moved."
     },
+    "ICPSpawnNotAllowed": {
+      "title": "Cannot spawn from this neuron",
+      "description": "A neuron that is already spawning cannot spawn again, and the maturity spawned has to leave at least 1 ICP after the network's maturity adjustment. Sync your neurons to see their current state."
+    },
+    "ICPStakeMaturityNotAllowed": {
+      "title": "Cannot stake this neuron's maturity",
+      "description": "Maturity cannot be staked while the neuron is spawning, once it has fully dissolved, or when the neuron has none. Sync your neurons to see their current state."
+    },
     "ICPStakeMemoNotRecoverable": {
       "title": "Cannot top up this neuron",
       "description": "Topping up a neuron needs the memo from the transaction that created it, and it is not in this account's history. Top it up from the account that created the neuron."

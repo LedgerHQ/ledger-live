@@ -110,6 +110,28 @@ export class ICPSplitNotAllowed extends Error {
   }
 }
 
+// The neuron is spawning, so the canister refuses to spawn from it, or its maturity would not clear
+// the minimum stake after modulation.
+export class ICPSpawnNotAllowed extends Error {
+  override name = "ICPSpawnNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPSpawnNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The canister refuses stake_maturity on a spawning or a dissolved neuron, and there is nothing to
+// stake without maturity.
+export class ICPStakeMaturityNotAllowed extends Error {
+  override name = "ICPStakeMaturityNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPStakeMaturityNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 // Top-up cannot auto-refresh: the neuron's stake nonce is not recoverable from this account's history.
 export class ICPStakeMemoNotRecoverable extends Error {
   override name = "ICPStakeMemoNotRecoverable";

@@ -18,7 +18,9 @@ import {
   ICPInvalidHotKey,
   ICPInvalidPercentage,
   ICPNeuronNotFound,
+  ICPSpawnNotAllowed,
   ICPSplitNotAllowed,
+  ICPStakeMaturityNotAllowed,
   ICPStakeMemoNotRecoverable,
   InvalidMemoICP,
   NotEnoughTransferAmount,
@@ -255,17 +257,76 @@ describe("getTransactionStatus", () => {
     });
 
     it("accepts a valid maturity percentage (and an absent one)", async () => {
+      const holder = accountWith(neuron({ maturityE8sEquivalent: BigInt(MIN_NEURON_STAKE) }));
       const valid = await getTransactionStatus(
-        accountWith(neuron()),
+        holder,
         tx({ type: "stake_maturity", neuronId: "7", percentageToStake: "50" }),
       );
       expect(valid.errors.transaction).toBeUndefined();
 
       const absent = await getTransactionStatus(
-        accountWith(neuron()),
+        holder,
         tx({ type: "stake_maturity", neuronId: "7" }),
       );
       expect(absent.errors.transaction).toBeUndefined();
+    });
+
+    // The screens withhold both commands in these states, so what this catches is a snapshot that
+    // changed after the action was offered — a refusal on device costs a signature to discover.
+    it("rejects staking maturity in the two states the canister refuses", async () => {
+      const inState = (state: NeuronState) =>
+        getTransactionStatus(
+          accountWith(neuron({ state, maturityE8sEquivalent: BigInt(MIN_NEURON_STAKE) })),
+          tx({ type: "stake_maturity", neuronId: "7" }),
+        );
+
+      expect((await inState(NeuronState.Spawning)).errors.transaction).toBeInstanceOf(
+        ICPStakeMaturityNotAllowed,
+      );
+      expect((await inState(NeuronState.Dissolved)).errors.transaction).toBeInstanceOf(
+        ICPStakeMaturityNotAllowed,
+      );
+      expect((await inState(NeuronState.Dissolving)).errors.transaction).toBeUndefined();
+    });
+
+    // Not a canister rule: staking nothing succeeds there, and reports zero. Refused here because
+    // the signature it costs buys nothing.
+    it("rejects staking maturity a neuron does not have", async () => {
+      const status = await getTransactionStatus(
+        accountWith(neuron()),
+        tx({ type: "stake_maturity", neuronId: "7" }),
+      );
+      expect(status.errors.transaction).toBeInstanceOf(ICPStakeMaturityNotAllowed);
+    });
+
+    it("rejects a spawn from a spawning neuron and one below the modulation floor", async () => {
+      const floor = 105_263_158n; // ceil(MIN_NEURON_STAKE / 0.95)
+      const spawning = await getTransactionStatus(
+        accountWith(neuron({ state: NeuronState.Spawning, maturityE8sEquivalent: floor })),
+        tx({ type: "spawn_neuron", neuronId: "7" }),
+      );
+      expect(spawning.errors.transaction).toBeInstanceOf(ICPSpawnNotAllowed);
+
+      const belowFloor = await getTransactionStatus(
+        accountWith(neuron({ maturityE8sEquivalent: floor - 1n })),
+        tx({ type: "spawn_neuron", neuronId: "7" }),
+      );
+      expect(belowFloor.errors.transaction).toBeInstanceOf(ICPSpawnNotAllowed);
+    });
+
+    // Dissolved stops a stake_maturity but not a spawn, and the share is applied before the floor.
+    it("accepts a spawn of half the maturity of a dissolved neuron holding twice the floor", async () => {
+      const status = await getTransactionStatus(
+        accountWith(neuron({ state: NeuronState.Dissolved, maturityE8sEquivalent: 210_526_316n })),
+        tx({ type: "spawn_neuron", neuronId: "7", percentageToSpawn: "50" }),
+      );
+      expect(status.errors.transaction).toBeUndefined();
+
+      const tooSmallShare = await getTransactionStatus(
+        accountWith(neuron({ maturityE8sEquivalent: 210_526_316n })),
+        tx({ type: "spawn_neuron", neuronId: "7", percentageToSpawn: "49" }),
+      );
+      expect(tooSmallShare.errors.transaction).toBeInstanceOf(ICPSpawnNotAllowed);
     });
 
     it("rejects a numeric 0 percentage (0 is out of range, not 'absent')", async () => {

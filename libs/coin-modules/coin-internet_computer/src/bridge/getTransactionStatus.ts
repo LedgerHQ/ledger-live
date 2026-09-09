@@ -11,6 +11,8 @@ import BigNumber from "bignumber.js";
 import {
   getNeuronDissolveDurationSeconds,
   neuronCanBeSplit,
+  neuronCanSpawn,
+  neuronCanStakeMaturity,
   neuronStake,
 } from "../common-logic/neuron";
 import {
@@ -32,7 +34,9 @@ import {
   ICPInvalidHotKey,
   ICPInvalidPercentage,
   ICPNeuronNotFound,
+  ICPSpawnNotAllowed,
   ICPSplitNotAllowed,
+  ICPStakeMaturityNotAllowed,
   ICPStakeMemoNotRecoverable,
   InvalidMemoICP,
   NotEnoughTransferAmount,
@@ -197,6 +201,37 @@ const validatePercentage = (percentage?: string | number): Error | undefined => 
     : new ICPInvalidPercentage();
 };
 
+/** Absent percentage means the whole maturity, the same default the canister applies. */
+const percentageOrAll = (percentage?: string | number): number =>
+  percentage === undefined || percentage === "" ? 100 : Number(percentage);
+
+// The neuron's own state decides both maturity commands, and the screens gate on the same two
+// predicates — this is what stops a snapshot that changed between screens reaching the device.
+// Reported after the percentage so the field the user typed answers first, as the split validator does.
+const validateSpawn = (
+  neuron: ICPNeuron | undefined,
+  percentage?: string | number,
+): NeuronOpResult => {
+  if (!neuron) return opResult(new ICPNeuronNotFound());
+  const invalid = validatePercentage(percentage);
+  if (invalid) return opResult(invalid);
+  return opResult(
+    neuronCanSpawn(neuron, percentageOrAll(percentage)) ? undefined : new ICPSpawnNotAllowed(),
+  );
+};
+
+const validateStakeMaturity = (
+  neuron: ICPNeuron | undefined,
+  percentage?: string | number,
+): NeuronOpResult => {
+  if (!neuron) return opResult(new ICPNeuronNotFound());
+  const invalid = validatePercentage(percentage);
+  if (invalid) return opResult(invalid);
+  // The percentage is not part of this one: the canister has no maturity floor for staking, it just
+  // stakes whatever share is there.
+  return opResult(neuronCanStakeMaturity(neuron) ? undefined : new ICPStakeMaturityNotAllowed());
+};
+
 // Op-specific validation. Governance ops that target a neuron report ICPNeuronNotFound when it is
 // unresolved (which also covers a missing neuronId).
 const validateNeuronOp = (transaction: Transaction, neuron?: ICPNeuron): NeuronOpResult => {
@@ -225,13 +260,9 @@ const validateNeuronOp = (transaction: Transaction, neuron?: ICPNeuron): NeuronO
       return validateSplitNeuron(neuron, transaction.amount);
     case "spawn_neuron":
     case "spawn_neuron_from_maturity":
-      return opResult(
-        neuron ? validatePercentage(transaction.percentageToSpawn) : new ICPNeuronNotFound(),
-      );
+      return validateSpawn(neuron, transaction.percentageToSpawn);
     case "stake_maturity":
-      return opResult(
-        neuron ? validatePercentage(transaction.percentageToStake) : new ICPNeuronNotFound(),
-      );
+      return validateStakeMaturity(neuron, transaction.percentageToStake);
     default:
       return NEURON_REQUIRED_OPS.has(transaction.type) && !neuron
         ? opResult(new ICPNeuronNotFound())
