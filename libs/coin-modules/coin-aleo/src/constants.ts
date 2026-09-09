@@ -1,3 +1,5 @@
+import type { OperationType } from "@ledgerhq/types-live";
+
 export const ALEO_DUMMY_ADDRESS = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
 
 export const PROGRAM_ID = {
@@ -28,6 +30,12 @@ export const TRANSACTION_TYPE = {
 } as const;
 
 export const FEE_INTENT_TYPES = new Set(["fee_public", "fee_private"]);
+
+export const STAKING_OPERATION_TYPE: Record<string, OperationType> = {
+  [TRANSACTION_TYPE.BOND_PUBLIC]: "BOND",
+  [TRANSACTION_TYPE.UNBOND_PUBLIC]: "UNBOND",
+  [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC]: "WITHDRAW_UNBONDED",
+};
 
 // Function names that represent actual private token transfers between parties.
 // Used to exclude internal operations (split, join, fee_private, etc.) from history.
@@ -84,6 +92,10 @@ export const PROGRESS_THROTTLE_MIN_STEP = 5;
 // Root transition + up to 30 nested calls, within the device limit of n < 32 per signing session.
 export const MAX_SIGNATURES_PER_TRANSACTION = 31;
 
+// Minimum amount (in microcredits) required to bond/stake to a validator.
+// 1 ALEO = 1_000_000 microcredits (ALEO magnitude is 6).
+export const MIN_BOND_AMOUNT = 1_000_000;
+
 // The maximum number of private records that can be included in a single transaction.
 export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;
 
@@ -102,6 +114,8 @@ export const MICROCREDITS_PER_CREDIT = 1_000_000;
 
 // Below this bonded total the protocol pays a delegator nothing at all.
 export const MIN_DELEGATOR_STAKE_MICROCREDITS = 10_000 * MICROCREDITS_PER_CREDIT;
+
+export const MIN_VALIDATOR_STAKE_MICROCREDITS = 10_000_000 * MICROCREDITS_PER_CREDIT;
 
 // snarkVM `block_reward_v2` adds a coinbase share and transaction fees on top, so
 // rates derived from this alone are a lower bound.

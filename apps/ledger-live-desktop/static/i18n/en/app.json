@@ -8007,6 +8007,14 @@
       "title": "Amount too large for one transaction",
       "description": "Your private records can't cover this amount in a single transaction. Try a smaller amount."
     },
+    "AleoBondAmountTooLow": {
+      "title": "Amount too low to stake",
+      "description": "The minimum staking amount is {{minAmount}}."
+    },
+    "AleoStakeAmountTooLow": {
+      "title": "Amount too low to stake",
+      "description": "You must have at least {{minAmount}} staked in total."
+    },
     "AleoFeeRecordRequired": {
       "title": "Another private record is required to cover the network fee.",
       "description": "Top up your balance if needed. One private record is used for the transfer amount, and you must have another record that can cover the network fee."
@@ -8018,6 +8026,22 @@
     "AleoFeeRecordInsufficientBalance": {
       "title": "No private record can cover the network fee.",
       "description": "Select a different record for the transfer amount or top up your balance with additional funds."
+    },
+    "AleoNoClaimableAmount": {
+      "title": "Nothing to claim yet",
+      "description": "Your unstaked funds are not claimable yet. They unlock once the unbonding period ends."
+    },
+    "AleoClosedValidator": {
+      "title": "This validator is closed",
+      "description": "This validator is not accepting new delegators. Choose an open validator to continue."
+    },
+    "AleoUnbondingValidator": {
+      "title": "This validator is unbonding",
+      "description": "This validator is withdrawing its own stake, so the network rejects new stake to it. Choose another validator to continue."
+    },
+    "AleoAlreadyBondedElsewhere": {
+      "title": "You are already staking with another validator",
+      "description": "Aleo allows one validator per account. Unstake from {{bondedValidator}} before staking elsewhere."
     },
     "AleoApiConfigurationResetError": {
       "title": "Record scanner configuration was reset, please sync your account again."
@@ -9402,6 +9426,12 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public",
+      "stakedBalance": "Staked",
+      "stakedBalanceTooltip": "Balance that is bonded to a validator and earning rewards",
+      "unstakingBalance": "Unstaking",
+      "unstakingBalanceTooltip": "Balance that is unbonding and not yet claimable",
+      "claimableBalance": "Claimable",
+      "claimableBalanceTooltip": "Balance that has finished unbonding and can be claimed back to your available balance",
       "syncButton": {
         "startSync": "Start sync",
         "stopSync": "Stop sync",
@@ -9409,11 +9439,68 @@
         "lastSync": "Last synced: {{date}}"
       }
     },
+    "stake": {
+      "table": {
+        "header": "Staking",
+        "status": "Status",
+        "validator": "Validator",
+        "amount": "Amount",
+        "staked": "Staked",
+        "rate": "Est. rewards rate",
+        "completion": "Completion",
+        "source": "Source",
+        "estimatedRate": "{{rate}}% est.",
+        "unknownValidator": "Unknown validator",
+        "manage": "Manage"
+      },
+      "status": {
+        "earningTooltip": "This position is earning rewards."
+      },
+      "nonEarning": {
+        "belowCommitteeMinimum": "This validator holds less than the 10,000,000 ALEO committee minimum, so it earns no rewards and neither do you.",
+        "fullCommission": "This validator takes 100% commission, so you keep nothing.",
+        "overConcentrated": "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so you earn nothing.",
+        "leftCommittee": "This validator is no longer in the committee, so your stake earns nothing. Unstake and bond to another validator to start earning again."
+      },
+      "unstaking": {
+        "header": "Unstaking",
+        "headerTooltip": "Unbonded ALEO becomes claimable once the chain reaches the unbonding block height.",
+        "source": "Aleo",
+        "sourceTooltip": "Unbonded ALEO is held by the protocol until it is claimable, not by a validator. The chain does not record which validator it came from.",
+        "pendingTooltip": "Still unbonding - not yet claimable.",
+        "claimableTooltip": "Unbonding is complete. You can claim these funds.",
+        "settling": "Almost there…",
+        "settlingTooltip": "The unbonding period is over. Refreshing your balance - the claim will be available in a moment.",
+        "claimPending": "Claiming…",
+        "claimPendingTooltip": "Your claim has been sent and is waiting to be confirmed. These funds will land in your available balance shortly.",
+        "unbondPending": "Unstaking…",
+        "unbondPendingTooltip": "An unstake has been sent and is waiting to be confirmed. It changes this same unbonding position, so claiming is unavailable until it has gone through."
+      },
+      "unstake": "Unstake",
+      "claim": "Claim",
+      "claimableAtTooltip": "Claimable at block {{height}} (current block: {{current}})",
+      "blocksRemaining_one": "~{{count}} block left",
+      "blocksRemaining_other": "~{{count}} blocks left",
+      "emptyState": {
+        "description": "You can earn rewards by staking your {{name}}.",
+        "earnRewards": "Earn rewards"
+      }
+    },
     "operations": {
       "type": {
         "public": "Public",
         "private": "Private"
       }
+    },
+    "operationDetails": {
+      "extra": {
+        "validator": "Validator",
+        "bondedAmount": "Staked amount",
+        "unbondedAmount": "Unstaked amount"
+      }
+    },
+    "operationTypes": {
+      "WITHDRAW_UNBONDED": "Claim"
     },
     "send": {
       "stepRecipient": {
@@ -9429,6 +9516,109 @@
         "desc": "Please wait",
         "errorTitle": "Private sync failed",
         "errorDesc": "Something went wrong, please try again"
+      }
+    },
+    "bond": {
+      "headerAction": "Bond",
+      "flow": {
+        "title": "Bond ALEO",
+        "steps": {
+          "validator": {
+            "title": "Validator",
+            "fetchError": "The validator list could not be loaded.",
+            "totalStake": "Total stake",
+            "rateAndCommission": "{{rate}}% est. · {{commission}}% commission",
+            "commissionOnly": "{{commission}}% commission",
+            "rowSubtitleClosed": "Validator is closed to new stake",
+            "rowSubtitleUnbonding": "Validator is unbonding",
+            "unbondingTooltip": "This validator is withdrawing its own stake. The network rejects every new stake to it until that withdrawal is claimed.",
+            "rowSubtitleEarnsNothing": "Validator earns no rewards",
+            "nonEarning": {
+              "fullCommission": "This validator takes 100% commission, so delegators keep nothing.",
+              "overConcentrated": "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so delegators earn nothing."
+            },
+            "topUpOnly": "Aleo allows one validator per account. You can add to your stake with this validator, or unstake first to choose a different one."
+          },
+          "amount": {
+            "title": "Amount",
+            "minimum": "Your total stake with this validator must reach at least 10,000 ALEO to earn rewards. Only public ALEO can be staked - convert your private balance to public first if you want to stake it."
+          },
+          "connectDevice": {
+            "title": "Device",
+            "validatorLabel": "Validator"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "broadcastError": "Your bond could not be sent.",
+            "success": {
+              "title": "Bond sent",
+              "text": "Your bond is being processed.",
+              "cta": "View details"
+            }
+          }
+        }
+      }
+    },
+    "manage": {
+      "headerAction": "Earn",
+      "title": "Manage staking",
+      "bond": {
+        "title": "Bond",
+        "description": "Bond your ALEO to a validator to earn rewards."
+      },
+      "unbond": {
+        "title": "Unbond",
+        "description": "Unbond your bonded ALEO. Funds will be available after the unbonding period."
+      },
+      "claim": {
+        "title": "Claim",
+        "description": "Claim your unbonded ALEO back to your available balance."
+      },
+      "unbondPendingTooltip": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "claimPendingTooltip": "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through."
+    },
+    "unbond": {
+      "flow": {
+        "title": "Unbond ALEO",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "unbondableBanner": "Maximum unbondable amount is",
+            "belowMinimum": "If unbonding would leave less than {{minAmount}} bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met."
+          },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Unbond submitted",
+              "text": "Your unbonding request has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your unbond transaction was signed but could not be broadcast."
+          }
+        }
+      }
+    },
+    "claim": {
+      "flow": {
+        "title": "Claim ALEO",
+        "steps": {
+          "summary": {
+            "title": "Summary",
+            "info": "This claims all ALEO whose unbonding period has elapsed back to your account.",
+            "claimableAmountLabel": "Claimable amount"
+          },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Claim submitted",
+              "text": "Your claim has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your claim transaction was signed but could not be broadcast."
+          }
+        }
       }
     }
   },

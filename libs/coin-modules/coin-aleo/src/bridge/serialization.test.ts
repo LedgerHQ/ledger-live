@@ -8,7 +8,14 @@ import {
   mockAleoResourcesRaw,
 } from "../__tests__/fixtures/account.fixture";
 import { getMockedTokenCurrency } from "../__tests__/fixtures/currency.fixture";
-import type { AleoAccount, AleoAccountRaw, AleoResources, AleoResourcesRaw } from "../types";
+import type {
+  AleoAccount,
+  AleoAccountRaw,
+  AleoOperationExtra,
+  AleoOperationExtraRaw,
+  AleoResources,
+  AleoResourcesRaw,
+} from "../types";
 import {
   assignFromAccountRaw,
   assignFromTokenAccountRaw,
@@ -16,6 +23,8 @@ import {
   assignToTokenAccountRaw,
   toAleoResourcesRaw,
   fromAleoResourcesRaw,
+  toOperationExtraRaw,
+  fromOperationExtraRaw,
 } from "./serialization";
 
 describe("serialization", () => {
@@ -171,6 +180,52 @@ describe("serialization", () => {
       const restoredTokenAccount = getMockedTokenAccount();
       assignFromTokenAccountRaw(tokenAccountRaw, restoredTokenAccount);
       expect(restoredTokenAccount.transparentBalance).toEqual(new BigNumber(123456));
+    });
+  });
+
+  // Both functions whitelist fields explicitly, so a field added to AleoOperationExtra without
+  // being registered here is silently dropped when the account is reloaded from disk.
+  describe("operation extra round-trip", () => {
+    const VALIDATOR = "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t";
+
+    it("preserves every field of a fully-populated extra", () => {
+      const extra: AleoOperationExtra = {
+        functionId: "bond_public",
+        transactionType: "public",
+        patched: true,
+        programId: "credits.aleo",
+        transitionId: "au1bond",
+        validator: VALIDATOR,
+        stakedAmount: new BigNumber("2982828466682"),
+      };
+
+      expect(fromOperationExtraRaw(toOperationExtraRaw(extra))).toEqual(extra);
+    });
+
+    it("keeps a staked amount beyond the JS safe integer range exact", () => {
+      const stakedAmount = new BigNumber("123456789012345678901234567890");
+      const raw = toOperationExtraRaw({
+        functionId: "bond_public",
+        transactionType: "public",
+        stakedAmount,
+      }) as AleoOperationExtraRaw;
+
+      expect(raw.stakedAmount).toBe("123456789012345678901234567890");
+      expect((fromOperationExtraRaw(raw) as AleoOperationExtra).stakedAmount).toEqual(stakedAmount);
+    });
+
+    it("omits both staking fields when absent rather than writing undefined", () => {
+      const raw = toOperationExtraRaw({
+        functionId: "transfer_public",
+        transactionType: "public",
+      }) as AleoOperationExtraRaw;
+
+      expect("validator" in raw).toBe(false);
+      expect("stakedAmount" in raw).toBe(false);
+      expect(fromOperationExtraRaw(raw)).toEqual({
+        functionId: "transfer_public",
+        transactionType: "public",
+      });
     });
   });
 });

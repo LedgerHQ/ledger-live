@@ -7,6 +7,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { BigNumber } from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import invariant from "invariant";
 import type {
   AleoAccount,
@@ -18,12 +19,13 @@ import type {
   AleoCoinConfig,
 } from "../types";
 import type { AleoUnspentRecord } from "../types/logic";
-import { estimateFees, validateAddress } from "../logic";
+import { estimateFees, getValidators, validateAddress } from "../logic";
 import {
   calculateAmount,
   getAvailableBalance,
   getRecordByCommitment,
   isPrivateTransaction,
+  isSelfStakingMode,
   isSelfTransferTransaction,
   isTokenTransaction,
   getAleoSubAccount,
@@ -33,12 +35,21 @@ import aleoCoinConfig from "../config";
 import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  MIN_BOND_AMOUNT,
+  MIN_DELEGATOR_STAKE_MICROCREDITS,
+  TRANSACTION_TYPE,
 } from "../constants";
 import {
+  AleoAlreadyBondedElsewhere,
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
+  AleoBondAmountTooLow,
+  AleoClosedValidator,
+  AleoUnbondingValidator,
+  AleoStakeAmountTooLow,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
+  AleoNoClaimableAmount,
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
 } from "../errors";
@@ -220,6 +231,45 @@ async function validateRecipient({
   return null;
 }
 
+/**
+ * The two validator states `bond_public` refuses to bond to, both only knowable through
+ * getValidators: `is_open` comes from committee/latest, and the `unbonding` entry from a
+ * per-address mapping read there is no single call for here.
+ *
+ * A validator absent from the committee is not proven to be in either state (it may be
+ * new, or the fetch may be incomplete) so it is not blocked here — an invalid/unknown
+ * recipient is already caught by validateRecipient above. A network failure is treated the
+ * same way: we do not hard-fail the status (that would block legitimate bonds during an
+ * outage), we simply skip this check.
+ */
+async function validateBondValidator({
+  account,
+  recipient,
+}: {
+  account: Account;
+  recipient: string;
+}): Promise<Error | null> {
+  try {
+    const validators = await getValidators(account.currency.id);
+    const validator = validators.find(({ address }) => address === recipient);
+
+    if (!validator) return null;
+
+    if (validator.isUnbonding) {
+      return new AleoUnbondingValidator();
+    }
+
+    if (!validator.isOpen) {
+      return new AleoClosedValidator();
+    }
+  } catch {
+    // Unable to determine validator status (e.g. committee endpoint down):
+    // do not block the bond on an unrelated outage.
+  }
+
+  return null;
+}
+
 function validatePublicFees({
   account,
   transaction,
@@ -269,15 +319,78 @@ async function handleTransferTransaction({
   const recipientError = await validateRecipient({
     account,
     recipient: transaction.recipient,
-    allowSelfTransfer,
+    allowSelfTransfer: allowSelfTransfer || isSelfStakingMode(transaction),
   });
 
   if (recipientError) {
     errors.recipient = recipientError;
   }
 
-  if (!transaction.useAllAmount && transaction.amount.lte(0)) {
+  if (transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC) {
+    if (!recipientError) {
+      // One validator per address: a bond to any other one is rejected on-chain, so
+      // that takes precedence over whether the target happens to be open.
+      const bondedValidator = account.aleoResources?.bondedValidator;
+      if (bondedValidator && bondedValidator !== transaction.recipient) {
+        errors.recipient = new AleoAlreadyBondedElsewhere(undefined, { bondedValidator });
+      } else {
+        const validatorError = await validateBondValidator({
+          account,
+          recipient: transaction.recipient,
+        });
+        if (validatorError) {
+          errors.recipient = validatorError;
+        }
+      }
+    }
+  }
+
+  if (
+    transaction.mode !== TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC &&
+    !transaction.useAllAmount &&
+    transaction.amount.lte(0)
+  ) {
     errors.amount = new AmountRequired();
+  } else if (
+    // useAllAmount bypasses the guard above, but BOND/UNBOND have no other zero-amount
+    // check (unlike the transfer path, which reports NotEnoughBalance downstream). A
+    // resolved stake/unstake amount of 0 (e.g. balance == fee, or unbond with 0 bonded)
+    // must never validate clean.
+    transaction.useAllAmount &&
+    (transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC ||
+      transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) &&
+    calculatedAmount.amount.lte(0)
+  ) {
+    errors.amount = new AmountRequired();
+  } else if (
+    transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC &&
+    calculatedAmount.amount.gt(0) &&
+    calculatedAmount.amount.lt(MIN_BOND_AMOUNT)
+  ) {
+    errors.amount = new AleoBondAmountTooLow(undefined, {
+      minAmount: formatCurrencyUnit(account.currency.units[0], new BigNumber(MIN_BOND_AMOUNT), {
+        showCode: true,
+      }),
+    });
+  } else if (
+    transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC &&
+    calculatedAmount.amount.gt(0) &&
+    // A delegator must clear MIN_DELEGATOR_STAKE_MICROCREDITS in total. Validate the
+    // projected total stake (already-bonded balance + this bond amount), so top-ups
+    // on an existing position that already clears it are allowed.
+    (account.aleoResources?.bondedBalance ?? new BigNumber(0))
+      .plus(calculatedAmount.amount)
+      .lt(MIN_DELEGATOR_STAKE_MICROCREDITS)
+  ) {
+    errors.amount = new AleoStakeAmountTooLow(undefined, {
+      minAmount: formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS),
+        {
+          showCode: true,
+        },
+      ),
+    });
   }
 
   if (isPrivateTransaction(transaction)) {
@@ -295,7 +408,16 @@ async function handleTransferTransaction({
 
   Object.assign(errors, validatePublicFees({ account, transaction, config, estimatedFees }));
 
-  if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
+  if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
+    // fee coverage is validated separately by validatePublicFees against the transparent balance
+    if (calculatedAmount.amount.gt(availableBalance)) {
+      errors.amount = new NotEnoughBalance();
+    }
+  } else if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
+    if (availableBalance.lte(0)) {
+      errors.amount = new AleoNoClaimableAmount();
+    }
+  } else if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance();
   }
 

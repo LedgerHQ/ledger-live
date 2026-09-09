@@ -49,17 +49,21 @@ export type AleoAccountInfo = {
   scannedHeight: number;
 };
 
+export type AleoValidatorNonEarningReason = "overConcentrated" | "fullCommission";
+
 export type AleoValidator = {
   address: string;
   name?: string;
   stakeMicrocredits: number;
   isOpen: boolean;
+  isUnbonding: boolean;
   commissionPercent: number;
   /**
    * Estimated net yearly rate as a fraction (0.07 = 7%). Absent when it could not be
    * derived; `0` is a real value meaning "earns nothing".
    */
   estimatedYearlyRewardsRate?: number;
+  nonEarningReason?: AleoValidatorNonEarningReason;
 };
 
 export type AleoStakingPosition = {
@@ -81,6 +85,11 @@ export type RecordPickingStrategy = "manual" | "auto";
 export type AleoTokenType = "arc20" | "arc21" | "arc22" | "unknown";
 
 export type TransactionType = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION_TYPE];
+
+export type AleoStakingMode =
+  | typeof TRANSACTION_TYPE.BOND_PUBLIC
+  | typeof TRANSACTION_TYPE.UNBOND_PUBLIC
+  | typeof TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
 
 export type AleoTransactionIntentData =
   | TxDataNotSupported
@@ -124,6 +133,16 @@ export type AleoTransactionIntentData =
   | {
       type: typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE;
       programId: string;
+    }
+  | {
+      type: typeof TRANSACTION_TYPE.BOND_PUBLIC;
+      withdrawal: string;
+    }
+  | {
+      type: typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
+    }
+  | {
+      type: typeof TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
     };
 
 export type AleoTransactionIntent = TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;

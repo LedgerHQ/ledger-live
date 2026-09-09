@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import aleoConfig from "../config";
 import { TRANSACTION_TYPE } from "../constants";
-import { estimateFees } from "../logic";
+import { estimateFeesBN } from "../logic";
 import { calculateAmount, findBestRecordForFee } from "../logic/utils";
 import {
   getMockedAccount,
@@ -25,7 +25,7 @@ jest.mock("../logic/utils", () => ({
 
 const mockConfig = getMockedConfig("mainnet");
 const mockAleoConfig = jest.mocked(aleoConfig);
-const mockEstimateFees = jest.mocked(estimateFees);
+const mockEstimateFeesBN = jest.mocked(estimateFeesBN);
 const mockCalculateAmount = jest.mocked(calculateAmount);
 const mockFindBestRecordForFee = jest.mocked(findBestRecordForFee);
 
@@ -59,7 +59,7 @@ describe("prepareTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
-    mockEstimateFees.mockReturnValue({ value: BigInt(mockFees.toString()) });
+    mockEstimateFeesBN.mockReturnValue(mockFees);
     mockCalculateAmount.mockReturnValue({
       amount: mockAmount,
       totalSpent: mockAmount.plus(mockFees),
@@ -125,8 +125,8 @@ describe("prepareTransaction", () => {
       mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
     });
 
-    expect(mockEstimateFees).toHaveBeenCalledTimes(1);
-    expect(mockEstimateFees).toHaveBeenCalledWith({
+    expect(mockEstimateFeesBN).toHaveBeenCalledTimes(1);
+    expect(mockEstimateFeesBN).toHaveBeenCalledWith({
       configOrCurrencyId: mockConfig,
       transactionType: TRANSACTION_TYPE.TRANSFER_PUBLIC,
     });
@@ -530,8 +530,8 @@ describe("prepareTransaction", () => {
       subAccountId: mockTokenAccount.id,
     });
 
-    expect(mockEstimateFees).toHaveBeenCalledTimes(1);
-    expect(mockEstimateFees).toHaveBeenCalledWith({
+    expect(mockEstimateFeesBN).toHaveBeenCalledTimes(1);
+    expect(mockEstimateFeesBN).toHaveBeenCalledWith({
       configOrCurrencyId: mockConfig,
       transactionType: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
     });
