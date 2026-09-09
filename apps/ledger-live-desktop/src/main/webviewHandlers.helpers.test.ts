@@ -183,15 +183,16 @@ describe("mergePermissionsPolicyHeaders", () => {
     const original = 'camera=(self "https://kyc.example")';
     const merged = mergePermissionsPolicyHeaders({ "Permissions-Policy": [original] }, INJECTED);
 
-    expect(merged["Permissions-Policy"]).toEqual([INJECTED, original]);
+    expect(merged["Permissions-Policy"]).toEqual([original, INJECTED]);
   });
 
-  it("orders our policy first so it wins a conflict on the same feature", () => {
+  it("orders our policy last so it wins a conflict on the same feature", () => {
     const original = "display-capture=*";
     const merged = mergePermissionsPolicyHeaders({ "Permissions-Policy": [original] }, INJECTED);
 
-    // Chromium keeps the first declaration of a duplicated feature.
-    expect(merged["Permissions-Policy"]?.[0]).toBe(INJECTED);
+    // Every instance is comma-joined in order, and a repeated dictionary key
+    // overwrites the previous one, so the last declaration is the one that wins.
+    expect(merged["Permissions-Policy"]?.at(-1)).toBe(INJECTED);
   });
 
   it("normalises a lowercase permissions-policy header to the canonical key", () => {
@@ -199,7 +200,7 @@ describe("mergePermissionsPolicyHeaders", () => {
     const original = "geolocation=()";
     const merged = mergePermissionsPolicyHeaders({ "permissions-policy": [original] }, INJECTED);
 
-    expect(merged["Permissions-Policy"]).toEqual([INJECTED, original]);
+    expect(merged["Permissions-Policy"]).toEqual([original, INJECTED]);
     expect(merged["permissions-policy"]).toBeUndefined();
   });
 
@@ -207,7 +208,7 @@ describe("mergePermissionsPolicyHeaders", () => {
     const original = "geolocation=()";
     const merged = mergePermissionsPolicyHeaders({ "PeRmIsSiOnS-PoLiCy": [original] }, INJECTED);
 
-    expect(merged["Permissions-Policy"]).toEqual([INJECTED, original]);
+    expect(merged["Permissions-Policy"]).toEqual([original, INJECTED]);
     expect(merged["PeRmIsSiOnS-PoLiCy"]).toBeUndefined();
   });
 
@@ -244,6 +245,10 @@ describe("isParsablePermissionsPolicy", () => {
     ["geolocation=*"],
     ["fullscreen=self"],
     ['camera=(self "https://kyc.example")'],
+    // An unquoted origin is still a valid structured-fields token (RFC 8941
+    // 3.3.4 allows ":" and "/"), so Chromium parses the dictionary and merely
+    // skips the item. Rejecting it here would cost the app its delegation.
+    ["camera=(self https://kyc.example)"],
     ['camera=(self "https://a.example" "https://b.example"), geolocation=()'],
     ["autoplay=(), camera=*"],
     ["ch-ua-platform=*"],

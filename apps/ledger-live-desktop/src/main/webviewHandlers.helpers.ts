@@ -91,9 +91,11 @@ export function isParsablePermissionsPolicy(value: string): boolean {
  * it: overwriting a `camera=(self "https://kyc.example")` delegation would fall
  * back to the `self` default and break getUserMedia in the KYC iframe.
  *
- * Chromium keeps the FIRST declaration of a duplicated feature, so ours goes
- * first to win a direct conflict, and an unparsable value is dropped rather
- * than merged. Normalised to the canonical key (HTTP/2 always lowercases it).
+ * `Permissions-Policy` is a structured-fields dictionary, and a repeated key
+ * overwrites the previous one (RFC 8941 4.2.2) - every instance of the header
+ * is comma-joined in order before parsing - so ours goes LAST to win a direct
+ * conflict, and an unparsable value is dropped rather than merged. Normalised
+ * to the canonical key (HTTP/2 always lowercases it).
  */
 export function mergePermissionsPolicyHeaders(
   responseHeaders: Record<string, string[]> | undefined,
@@ -105,7 +107,7 @@ export function mergePermissionsPolicyHeaders(
   const existingPolicy = existingKey ? (headers[existingKey] ?? []) : [];
   if (existingKey) delete headers[existingKey];
   const preserved = existingPolicy.every(isParsablePermissionsPolicy) ? existingPolicy : [];
-  headers["Permissions-Policy"] = [permissionsPolicyValue, ...preserved];
+  headers["Permissions-Policy"] = [...preserved, permissionsPolicyValue];
 
   return headers;
 }
