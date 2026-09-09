@@ -3,9 +3,12 @@ import { render, screen } from "@testing-library/react-native";
 import { CardArtwork } from "./CardArtwork.native";
 
 describe("CardArtwork (native)", () => {
-  it("renders nothing until the native card artwork ships", () => {
+  it("renders the card artwork and network logo", () => {
     render(<CardArtwork />);
 
-    expect(screen.queryByTestId("card-artwork")).toBeNull();
+    expect(screen.getByTestId("card-artwork")).toBeTruthy();
+    expect(screen.getByTestId("card-artwork-halftone-left")).toBeTruthy();
+    expect(screen.getByTestId("card-artwork-halftone-right")).toBeTruthy();
+    expect(screen.getByLabelText("Visa")).toBeTruthy();
   });
 });

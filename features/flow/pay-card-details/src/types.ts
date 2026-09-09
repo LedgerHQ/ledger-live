@@ -16,6 +16,26 @@ export type CardVisualViewProps = CardVisualProps &
     isFrozen: boolean;
   }>;
 
+export type CardDetailsProps = Readonly<{
+  /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
+  cardVisual?: CardVisualProps;
+}>;
+
+export type CardDetailsViewProps = CardDetailsProps &
+  Readonly<{
+    placeholderLabel: string;
+    detailsLabel: string;
+    isSheetOpen: boolean;
+    onDetailsPress: () => void;
+    onSheetClose: () => void;
+  }>;
+
+export type CardDetailsSheetProps = CardDetailsProps &
+  Readonly<{
+    isOpen: boolean;
+    onClose: () => void;
+  }>;
+
 export type ConfirmState = "closed" | "idle" | "pending" | "error";
 
 type ConfirmProps = Readonly<{

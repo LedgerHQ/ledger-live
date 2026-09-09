@@ -10,9 +10,9 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
-  CardArtwork: () => <div data-testid="card-artwork" />,
-  CardVisual: () => <div data-testid="card-visual" />,
-  CardActions: () => <div data-testid="card-actions" />,
+  CardDetails: ({ cardVisual }: { cardVisual?: unknown }) => (
+    <div data-testid={cardVisual ? "card-details-with-visual" : "card-details"} />
+  ),
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
@@ -57,12 +57,11 @@ describe("Card (web)", () => {
     expect(screen.getByText(title)).toBeVisible();
   });
 
-  it("composes the bare artwork with the auth login and card actions", () => {
+  it("composes the card details block with the auth login", () => {
     render(<Card title={title} oauthConfig={oauthConfig} />);
 
-    expect(screen.getByTestId("card-artwork")).toBeVisible();
+    expect(screen.getByTestId("card-details")).toBeVisible();
     expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-actions")).toBeVisible();
   });
 
   it("mounts the onboarding widget", () => {
@@ -71,7 +70,7 @@ describe("Card (web)", () => {
     expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
   });
 
-  it("swaps the bare artwork for the card visual once the host provides a formatter and label", () => {
+  it("hands the card visual to the details block once the host provides a formatter and label", () => {
     render(
       <Card
         title={title}
@@ -81,9 +80,8 @@ describe("Card (web)", () => {
       />,
     );
 
-    expect(screen.getByTestId("card-visual")).toBeVisible();
-    expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
+    expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
+    expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
     expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-actions")).toBeVisible();
   });
 });

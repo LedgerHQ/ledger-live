@@ -1,7 +1,7 @@
 import React from "react";
+import { VISA_LOGO_PATH } from "./assets/visaLogoPath";
 import halftoneLeft from "./assets/halftoneLeft.svg";
 import halftoneRight from "./assets/halftoneRight.svg";
-import visaLogo from "./assets/visaLogo.svg";
 
 /**
  * The physical card face: a dark gradient with the decorative halftone artwork and the network
@@ -42,7 +42,16 @@ export function CardArtwork() {
             "calc(8.29% - 0.83px) calc(4.81% - 0.9px) calc(82.76% + 0.66px) calc(79.59% + 0.59px)",
         }}
       >
-        <img alt="Visa" className="block size-full max-w-none" src={visaLogo} />
+        <svg
+          aria-label="Visa"
+          className="block size-full max-w-none overflow-visible"
+          fill="none"
+          preserveAspectRatio="none"
+          role="img"
+          viewBox="0 0 53.49 17.2803"
+        >
+          <path d={VISA_LOGO_PATH} fill="white" />
+        </svg>
       </div>
     </div>
   );

@@ -11,10 +11,9 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
-  CardArtwork: () => <View testID="card-artwork" />,
-  CardVisual: () => <View testID="card-visual" />,
-  Freeze: () => <View testID="card-freeze" />,
-  More: () => <View testID="card-more" />,
+  CardDetails: ({ cardVisual }: { cardVisual?: unknown }) => (
+    <View testID={cardVisual ? "card-details-with-visual" : "card-details"} />
+  ),
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
@@ -45,13 +44,11 @@ describe("Card (native)", () => {
     mockIsSignedIn = false;
   });
 
-  it("composes the bare artwork with the auth login, freeze, and More", () => {
+  it("composes the card details block with the auth login", () => {
     render(<Card title={title} oauthConfig={oauthConfig} />);
 
-    expect(screen.getByTestId("card-artwork")).toBeVisible();
+    expect(screen.getByTestId("card-details")).toBeVisible();
     expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-freeze")).toBeVisible();
-    expect(screen.getByTestId("card-more")).toBeVisible();
   });
 
   it("leaves the title to the login block while nobody is signed in", () => {
@@ -74,7 +71,7 @@ describe("Card (native)", () => {
     expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
   });
 
-  it("swaps the bare artwork for the card visual once the host provides a formatter and label", () => {
+  it("hands the card visual to the details block once the host provides a formatter and label", () => {
     render(
       <Card
         title={title}
@@ -84,10 +81,8 @@ describe("Card (native)", () => {
       />,
     );
 
-    expect(screen.getByTestId("card-visual")).toBeVisible();
-    expect(screen.queryByTestId("card-artwork")).toBeNull();
+    expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
+    expect(screen.queryByTestId("card-details")).toBeNull();
     expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-freeze")).toBeVisible();
-    expect(screen.getByTestId("card-more")).toBeVisible();
   });
 });
