@@ -40,8 +40,8 @@ catalogs:
       specifier: 5.2.1
       version: 5.2.1
     '@ledgerhq/coin-hypercore':
-      specifier: 2.0.1
-      version: 2.0.1
+      specifier: 2.0.2
+      version: 2.0.2
     '@ledgerhq/coin-module-framework':
       specifier: 8.4.0
       version: 8.4.0
@@ -13025,7 +13025,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 2.0.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 2.0.2(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -18465,7 +18465,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -22229,14 +22229,18 @@ packages:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/coin-hypercore@2.0.1':
-    resolution: {integrity: sha512-2aen8CL/sAszgeiHZjKBOH6ECIkh49mD+/qT2Wg52fEDILB0k8RwOaStmO0yaW0hZl36r4bkwrW1YWfGBr/XVQ==}
+  '@ledgerhq/coin-hypercore@2.0.2':
+    resolution: {integrity: sha512-Uv8q/uSwrdsYEqiHa940ezfoHDoIlzC7Y3hnfCe4pdEK4Wztt61yV03eGzKz1OHUWAXsLFx56tAII/F1fl6e1Q==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
-      '@ledgerhq/logs': ^6.17.0
 
   '@ledgerhq/coin-module-framework@8.4.0':
     resolution: {integrity: sha512-dHt1kPdVyQPpMKCiY3Or0rcl1XvcIFrqN9/asZ5lKleNdDKw0ea1AiJwWe9rBH+QSfNQBNWO8H8Ai9ksfKFjFA==}
+    peerDependencies:
+      '@ledgerhq/live-network': ^3.0.0
+
+  '@ledgerhq/coin-module-framework@8.5.0':
+    resolution: {integrity: sha512-wIEcjk0BZAsDTEIgYEyiTsoeP0J6GXkVVUHfzzIZ8/n+mWCIhu2K0JDoKHNi2sovteCd6Mxw+aoLk/9kmI6e4w==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
@@ -47658,17 +47662,21 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-hypercore@2.0.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-hypercore@2.0.2(@ledgerhq/live-network@libs+live-network)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
-      '@ledgerhq/logs': 6.19.0
 
   '@ledgerhq/coin-module-framework@8.4.0':
     dependencies:
       bignumber.js: 9.1.2
 
   '@ledgerhq/coin-module-framework@8.4.0(@ledgerhq/live-network@libs+live-network)':
+    dependencies:
+      '@ledgerhq/live-network': link:libs/live-network
+      bignumber.js: 9.1.2
+
+  '@ledgerhq/coin-module-framework@8.5.0(@ledgerhq/live-network@libs+live-network)':
     dependencies:
       '@ledgerhq/live-network': link:libs/live-network
       bignumber.js: 9.1.2
@@ -65259,7 +65267,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
