@@ -22,7 +22,7 @@ function Q3WalletV4TourScreenDebug() {
       setOverride({
         key: RELEASE_TOUR_FLAG,
         value: {
-          ...releaseTour,
+          ...(releaseTour ?? {}),
           enabled: next,
           params: { variant: next ? "q3_a" : releaseTour?.params?.variant },
         },
