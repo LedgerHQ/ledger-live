@@ -28,6 +28,7 @@
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
+    "@shared/i18n": "workspace:*",
     "@features/flow-contacts-add-contact": "workspace:^",
     "@features/flow-contacts-edit-address": "workspace:^",
     "@features/flow-contacts-edit-contact": "workspace:^",

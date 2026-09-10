@@ -1,15 +1,20 @@
 import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "@shared/i18n";
 import type { ContactDetailViewProps } from "../types";
-import { resolveContactDetailEmptyStateCopy } from "../model/resolveContactDetailEmptyStateCopy";
 
-type ContactDetailEmptyStateProps = Pick<ContactDetailViewProps, "contact" | "labels">;
+type ContactDetailEmptyStateProps = Pick<ContactDetailViewProps, "contact">;
 
 export function ContactDetailEmptyState({
   contact,
-  labels,
 }: ContactDetailEmptyStateProps): React.JSX.Element {
-  const { title, description } = resolveContactDetailEmptyStateCopy(contact, labels);
+  const { t } = useTranslation();
+  const title = contact.isMe
+    ? t("contacts.detail.emptyState.meTitle")
+    : t("contacts.detail.emptyState.contactTitle", { name: contact.name });
+  const description = contact.isMe
+    ? t("contacts.detail.emptyState.meDescription")
+    : t("contacts.detail.emptyState.contactDescription", { name: contact.name });
 
   return (
     <Box

@@ -2,29 +2,40 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { createMeDisplayNameFormatter } from "@features/platform-contacts";
+import { I18nTestProvider, type I18nTestProviderProps } from "@shared/i18n/testing";
 import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
-import type { ContactDetailLabels } from "./types";
 import { ContactDetailView } from "./ContactDetailView.native";
 
-const labels: ContactDetailLabels = {
-  addAddress: "Add address",
-  addYourAddress: "Add your address",
-  emptyMeTitle: "Save your own addresses",
-  emptyContactTitle: name => `No saved addresses for ${name}`,
-  emptyMeDescription: "Save external addresses for Me.",
-  emptyContactDescription: () => "Save their wallet addresses to send to them by name next time",
-  ledgerWalletAddresses: "Ledger Wallet addresses",
-  formatMeDisplayName: createMeDisplayNameFormatter("My addresses", name => `${name} (Me)`),
-  formatAddressCount: count => `${count} address`,
+const resources: I18nTestProviderProps["resources"] = {
+  en: {
+    translation: {
+      contacts: {
+        addAddress: "Add address",
+        addYourAddress: "Add your address",
+        addressCount_zero: "0 address",
+        addressCount_one: "{{count}} address",
+        addressCount_other: "{{count}} addresses",
+        detail: {
+          emptyState: {
+            meTitle: "Save your own addresses",
+            contactTitle: "No saved addresses for {{name}}",
+            meDescription: "Save external addresses for Me.",
+            contactDescription: "Save their wallet addresses to send to them by name next time",
+          },
+          ledgerWalletAddresses: "Ledger Wallet addresses",
+          meDisplayName: "{{name}} (Me)",
+        },
+        me: { myAddresses: "My addresses" },
+      },
+    },
+  },
 };
 
 const onAddAddress = () => undefined;
 const onLedgerWalletAccountsPress = () => undefined;
 
 const defaultProps = {
-  labels,
   meAvatarSrc: "https://example.com/avatar.png",
   onAddAddress,
 };
@@ -35,9 +46,19 @@ const meDetailProps = {
   onLedgerWalletAccountsPress,
 };
 
+function renderContactDetailView(
+  props: React.ComponentProps<typeof ContactDetailView>,
+): ReturnType<typeof render> {
+  return render(
+    <I18nTestProvider resources={resources}>
+      <ContactDetailView {...props} />
+    </I18nTestProvider>,
+  );
+}
+
 describe("ContactDetailPage", () => {
   it("should render the Me empty state", () => {
-    render(<ContactDetailView {...meDetailProps} contact={mockMeContact()} />);
+    renderContactDetailView({ ...meDetailProps, contact: mockMeContact() });
 
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
     expect(screen.getByText("My addresses")).toBeVisible();
@@ -50,18 +71,19 @@ describe("ContactDetailPage", () => {
   });
 
   it("should render a custom Me display name with the Me suffix", () => {
-    render(<ContactDetailView {...meDetailProps} contact={mockMeContact({ name: "Maxime" })} />);
+    renderContactDetailView({
+      ...meDetailProps,
+      contact: mockMeContact({ name: "Maxime" }),
+    });
 
     expect(screen.getByText("Maxime (Me)")).toBeVisible();
   });
 
   it("should render a saved contact empty state", () => {
-    render(
-      <ContactDetailView
-        {...defaultProps}
-        contact={mockContact({ id: "contact-benoit", name: "Benoit" })}
-      />,
-    );
+    renderContactDetailView({
+      ...defaultProps,
+      contact: mockContact({ id: "contact-benoit", name: "Benoit" }),
+    });
 
     expect(screen.getByTestId("contacts-detail-avatar")).toBeVisible();
     expect(screen.getByText("Benoit")).toBeVisible();
@@ -73,30 +95,6 @@ describe("ContactDetailPage", () => {
     ).toBeVisible();
   });
 
-  it("should keep the shared detail defaults without Mobile-specific props", () => {
-    const sharedLabels: ContactDetailLabels = {
-      addAddress: labels.addAddress,
-      emptyMeTitle: labels.emptyMeTitle,
-      emptyContactTitle: labels.emptyContactTitle,
-      emptyMeDescription: labels.emptyMeDescription,
-      emptyContactDescription: labels.emptyContactDescription,
-      formatAddressCount: labels.formatAddressCount,
-    };
-
-    render(
-      <ContactDetailView
-        contact={mockMeContact()}
-        labels={sharedLabels}
-        meAvatarSrc={defaultProps.meAvatarSrc}
-        onAddAddress={onAddAddress}
-      />,
-    );
-
-    expect(screen.getByText("Me")).toBeVisible();
-    expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add address");
-    expect(screen.queryByTestId("contacts-detail-ledger-wallet-addresses")).toBeNull();
-  });
-
   it("should render populated address rows when provided", () => {
     const contact = mockContact({
       id: "contact-benoit",
@@ -106,29 +104,27 @@ describe("ContactDetailPage", () => {
     const address = contact.addresses[0]!;
     const handleAddressRowPress = jest.fn();
 
-    render(
-      <ContactDetailView
-        {...defaultProps}
-        contact={contact}
-        addressGroups={[
-          {
-            networkId: getCryptoCurrencyById("ethereum").id,
-            networkName: getCryptoCurrencyById("ethereum").name,
-            networkTicker: getCryptoCurrencyById("ethereum").ticker,
-            rows: [
-              {
-                addressId: address.id,
-                label: address.label,
-                address: address.address,
-                currencyId: address.currencyId,
-                intent: createContactDetailAddressRowIntent(contact.id, address.id),
-              },
-            ],
-          },
-        ]}
-        onAddressRowPress={handleAddressRowPress}
-      />,
-    );
+    renderContactDetailView({
+      ...defaultProps,
+      contact,
+      addressGroups: [
+        {
+          networkId: getCryptoCurrencyById("ethereum").id,
+          networkName: getCryptoCurrencyById("ethereum").name,
+          networkTicker: getCryptoCurrencyById("ethereum").ticker,
+          rows: [
+            {
+              addressId: address.id,
+              label: address.label,
+              address: address.address,
+              currencyId: address.currencyId,
+              intent: createContactDetailAddressRowIntent(contact.id, address.id),
+            },
+          ],
+        },
+      ],
+      onAddressRowPress: handleAddressRowPress,
+    });
 
     expect(screen.getByTestId("contacts-detail-address-list")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
@@ -146,29 +142,25 @@ describe("ContactDetailPage", () => {
   });
 
   it("should request adding an address when the action is pressed", () => {
-    const onAddAddress = jest.fn();
-    render(
-      <ContactDetailView
-        {...meDetailProps}
-        contact={mockMeContact()}
-        onAddAddress={onAddAddress}
-      />,
-    );
+    const onAddAddressHandler = jest.fn();
+    renderContactDetailView({
+      ...meDetailProps,
+      contact: mockMeContact(),
+      onAddAddress: onAddAddressHandler,
+    });
 
     fireEvent.press(screen.getByTestId("contacts-detail-add-address"));
 
-    expect(onAddAddress).toHaveBeenCalledTimes(1);
+    expect(onAddAddressHandler).toHaveBeenCalledTimes(1);
   });
 
   it("should request opening Ledger Wallet addresses for Me", () => {
     const handleLedgerWalletAccountsPress = jest.fn();
-    render(
-      <ContactDetailView
-        {...meDetailProps}
-        contact={mockMeContact()}
-        onLedgerWalletAccountsPress={handleLedgerWalletAccountsPress}
-      />,
-    );
+    renderContactDetailView({
+      ...meDetailProps,
+      contact: mockMeContact(),
+      onLedgerWalletAccountsPress: handleLedgerWalletAccountsPress,
+    });
 
     fireEvent.press(screen.getByTestId("contacts-detail-ledger-wallet-addresses"));
 

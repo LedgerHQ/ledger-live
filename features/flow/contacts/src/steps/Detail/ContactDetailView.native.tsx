@@ -3,6 +3,7 @@ import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactDetailViewProps } from "./types";
+import { useTranslation } from "@shared/i18n";
 import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList.native";
 import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState.native";
 import { ContactDetailHeader } from "./components/ContactDetailHeader.native";
@@ -10,7 +11,6 @@ import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCar
 
 export function ContactDetailView({
   contact,
-  labels,
   meAvatarSrc,
   onAddAddress,
   ledgerWalletAccountsIntent,
@@ -18,6 +18,7 @@ export function ContactDetailView({
   addressGroups,
   onAddressRowPress,
 }: ContactDetailViewProps): React.JSX.Element {
+  const { t } = useTranslation();
   const { bottom } = useSafeAreaInsets();
   const hasPopulatedAddresses = addressGroups !== undefined && onAddressRowPress !== undefined;
 
@@ -31,15 +32,12 @@ export function ContactDetailView({
       >
         <ContactDetailHeader
           contact={contact}
-          labels={labels}
           meAvatarSrc={meAvatarSrc}
           onAddAddress={onAddAddress}
         />
-        {ledgerWalletAccountsIntent &&
-        labels.ledgerWalletAddresses &&
-        onLedgerWalletAccountsPress ? (
+        {ledgerWalletAccountsIntent && onLedgerWalletAccountsPress ? (
           <LedgerWalletAddressesCard
-            label={labels.ledgerWalletAddresses}
+            label={t("contacts.detail.ledgerWalletAddresses")}
             intent={ledgerWalletAccountsIntent}
             onPress={onLedgerWalletAccountsPress}
           />
@@ -50,7 +48,7 @@ export function ContactDetailView({
             onAddressRowPress={onAddressRowPress}
           />
         ) : (
-          <ContactDetailEmptyState contact={contact} labels={labels} />
+          <ContactDetailEmptyState contact={contact} />
         )}
       </ScrollView>
     </Box>

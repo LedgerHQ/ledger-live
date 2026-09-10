@@ -72,7 +72,6 @@ export type ContactDetailActionsLabels = Readonly<{
 
 export type ContactDetailViewProps = Readonly<{
   contact: Contact;
-  labels: ContactDetailLabels;
   meAvatarSrc: string;
   onAddAddress: () => void;
   ledgerWalletAccountsIntent?: ContactDetailLedgerWalletAccountsIntent;
@@ -81,7 +80,6 @@ export type ContactDetailViewProps = Readonly<{
   onAddressRowPress?: (intent: ContactDetailAddressRowIntent) => void;
   detailActions?: Readonly<{
     canDelete: boolean;
-    labels: ContactDetailActionsLabels;
     onEdit: () => void;
     onDelete: () => void;
   }>;

@@ -1,5 +1,9 @@
-import React from "react";
-import { resolveMeContactDisplayName } from "@features/platform-contacts";
+import React, { useMemo } from "react";
+import {
+  createMeDisplayNameFormatter,
+  resolveMeContactDisplayName,
+} from "@features/platform-contacts";
+import { useTranslation } from "@shared/i18n";
 import type { ContactDetailViewProps } from "../../types";
 import {
   ContactDetailActions,
@@ -10,7 +14,7 @@ import { ContactDetailHeaderIdentity } from "./ContactDetailHeaderIdentity.web";
 
 type ContactDetailHeaderProps = Pick<
   ContactDetailViewProps,
-  "contact" | "labels" | "meAvatarSrc" | "onAddAddress"
+  "contact" | "meAvatarSrc" | "onAddAddress"
 > &
   Readonly<{
     detailActions?: ContactDetailActionsProps;
@@ -43,19 +47,21 @@ function getCompactHeaderLayout(detailActions?: ContactDetailActionsProps): Read
 
 export function ContactDetailHeader({
   contact,
-  labels,
   meAvatarSrc,
   onAddAddress,
   detailActions,
   isCollapsed,
 }: ContactDetailHeaderProps): React.ReactNode {
-  const displayName = resolveMeContactDisplayName(
-    contact,
-    labels.formatMeDisplayName ?? (name => name),
+  const { t } = useTranslation();
+  const formatMeDisplayName = useMemo(
+    () =>
+      createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
+        t("contacts.detail.meDisplayName", { name }),
+      ),
+    [t],
   );
-  const addAddressLabel = contact.isMe
-    ? (labels.addYourAddress ?? labels.addAddress)
-    : labels.addAddress;
+  const displayName = resolveMeContactDisplayName(contact, formatMeDisplayName);
+  const addAddressLabel = contact.isMe ? t("contacts.addYourAddress") : t("contacts.addAddress");
   const { addAddressOffset, contentRight } = getCompactHeaderLayout(detailActions);
 
   return (
@@ -70,7 +76,7 @@ export function ContactDetailHeader({
         contact={contact}
         meAvatarSrc={meAvatarSrc}
         name={displayName}
-        addressCount={labels.formatAddressCount(contact.addresses.length)}
+        addressCount={t("contacts.addressCount", { count: contact.addresses.length })}
         isCollapsed={isCollapsed}
         compactContentRight={contentRight}
       />

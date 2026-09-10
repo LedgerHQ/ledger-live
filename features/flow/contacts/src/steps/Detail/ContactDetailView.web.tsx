@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "@shared/i18n";
 import type { ContactDetailViewProps } from "./types";
 import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList.web";
 import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState.web";
@@ -9,7 +10,6 @@ const COMPACT_HEADER_SCROLL_OFFSET = 150;
 
 export function ContactDetailView({
   contact,
-  labels,
   meAvatarSrc,
   onAddAddress,
   ledgerWalletAccountsIntent,
@@ -18,6 +18,7 @@ export function ContactDetailView({
   onAddressRowPress,
   detailActions,
 }: ContactDetailViewProps): React.ReactNode {
+  const { t } = useTranslation();
   const hasPopulatedAddresses = addressGroups !== undefined && onAddressRowPress !== undefined;
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
 
@@ -41,15 +42,14 @@ export function ContactDetailView({
     >
       <ContactDetailHeader
         contact={contact}
-        labels={labels}
         meAvatarSrc={meAvatarSrc}
         onAddAddress={onAddAddress}
         detailActions={detailActions}
         isCollapsed={isHeaderCollapsed}
       />
-      {ledgerWalletAccountsIntent && labels.ledgerWalletAddresses && onLedgerWalletAccountsPress ? (
+      {ledgerWalletAccountsIntent && onLedgerWalletAccountsPress ? (
         <LedgerWalletAddressesCard
-          label={labels.ledgerWalletAddresses}
+          label={t("contacts.detail.ledgerWalletAddresses")}
           intent={ledgerWalletAccountsIntent}
           onPress={onLedgerWalletAccountsPress}
         />
@@ -62,7 +62,7 @@ export function ContactDetailView({
           onScroll={handleAddressListScroll}
         />
       ) : (
-        <ContactDetailEmptyState contact={contact} labels={labels} />
+        <ContactDetailEmptyState contact={contact} />
       )}
     </div>
   );

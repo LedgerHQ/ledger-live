@@ -1,7 +1,6 @@
 import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
 import {
   type ContactsEditSignerMismatchDialogProps,
-  type ContactDetailActionsLabels,
   createContactDetailEditDeleteUiState,
   resolveContactDetailEditDeleteLabels,
   useContactDetailEditDeleteAnalytics,
@@ -18,7 +17,6 @@ import { useContactsAnalytics } from "../../analytics";
 export type ContactDetailEditDeleteDialogProps = Readonly<{
   detailActions?: Readonly<{
     canDelete: boolean;
-    labels: ContactDetailActionsLabels;
     onEdit: () => void;
     onDelete: () => void;
   }>;
@@ -56,7 +54,6 @@ export function useContactDetailEditDeleteAdapter(
     detailActions: contactId
       ? {
           canDelete: flow.canDelete,
-          labels: labels.actions,
           onEdit,
           onDelete,
         }

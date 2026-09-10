@@ -1,19 +1,37 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import { I18nTestProvider, type I18nTestProviderProps } from "@shared/i18n/testing";
 import { ContactDetailActionsMenu } from "./ContactDetailActionsMenu.native";
 
-const labels = {
-  editContact: "Edit name",
-  deleteContact: "Delete contact",
+const resources: I18nTestProviderProps["resources"] = {
+  en: {
+    translation: {
+      contacts: {
+        detailActions: {
+          editName: "Edit name",
+          deleteContact: "Delete contact",
+        },
+      },
+    },
+  },
 };
 
 const defaultProps = {
   isOpen: true,
   canDelete: true,
-  labels,
   onEdit: jest.fn(),
   onDelete: jest.fn(),
 };
+
+function renderMenu(
+  props: React.ComponentProps<typeof ContactDetailActionsMenu>,
+): ReturnType<typeof render> {
+  return render(
+    <I18nTestProvider resources={resources}>
+      <ContactDetailActionsMenu {...props} />
+    </I18nTestProvider>,
+  );
+}
 
 describe("ContactDetailActionsMenu", () => {
   beforeEach(() => {
@@ -21,7 +39,7 @@ describe("ContactDetailActionsMenu", () => {
   });
 
   it("should render edit and delete actions when delete is allowed", () => {
-    render(<ContactDetailActionsMenu {...defaultProps} />);
+    renderMenu(defaultProps);
 
     expect(screen.getByTestId("contacts-detail-actions-menu")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-edit-action")).toHaveTextContent("Edit name");
@@ -29,14 +47,14 @@ describe("ContactDetailActionsMenu", () => {
   });
 
   it("should hide the delete action for Me contacts", () => {
-    render(<ContactDetailActionsMenu {...defaultProps} canDelete={false} />);
+    renderMenu({ ...defaultProps, canDelete: false });
 
     expect(screen.getByTestId("contacts-detail-edit-action")).toBeVisible();
     expect(screen.queryByTestId("contacts-detail-delete-action")).toBeNull();
   });
 
   it("should not render menu content when closed", () => {
-    render(<ContactDetailActionsMenu {...defaultProps} isOpen={false} />);
+    renderMenu({ ...defaultProps, isOpen: false });
 
     expect(screen.queryByTestId("contacts-detail-actions-menu")).toBeNull();
   });
@@ -44,7 +62,7 @@ describe("ContactDetailActionsMenu", () => {
   it("should call action handlers when menu items are pressed", () => {
     const onEdit = jest.fn();
     const onDelete = jest.fn();
-    render(<ContactDetailActionsMenu {...defaultProps} onEdit={onEdit} onDelete={onDelete} />);
+    renderMenu({ ...defaultProps, onEdit, onDelete });
 
     fireEvent.press(screen.getByTestId("contacts-detail-edit-action"));
     fireEvent.press(screen.getByTestId("contacts-detail-delete-action"));
