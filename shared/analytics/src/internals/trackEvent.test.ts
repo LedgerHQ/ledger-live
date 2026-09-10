@@ -1,3 +1,4 @@
+import type { Subscription } from "rxjs";
 import {
   setAnalytics,
   setExtraPropsFn,
@@ -9,7 +10,15 @@ import { analyticsEvents$ } from "./eventLog";
 import { trackEvent } from "./trackEvent";
 
 const events: LoggableEvent[] = [];
-analyticsEvents$.subscribe(event => events.push(event));
+let sub: Subscription;
+
+beforeAll(() => {
+  sub = analyticsEvents$.subscribe(event => events.push(event));
+});
+
+afterAll(() => {
+  sub.unsubscribe();
+});
 
 const createAnalyticsClient = ({
   track = jest.fn(),
