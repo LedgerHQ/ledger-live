@@ -312,6 +312,21 @@ describe("useCardLoginViewModel intro", () => {
     expect(mockPorts.openHostedLogin).not.toHaveBeenCalled();
   });
 
+  it("retries straight away on a second press while a login is still pending", async () => {
+    // First-time user: the intro has not been seen, so a normal press would open it. While a login
+    // is already waiting on its own redirect, though, a press can only mean "retry."
+    mockPorts.openHostedLogin.mockResolvedValue({ type: "pending" });
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onAlreadyHaveCardPress());
+    await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
+
+    act(() => result.current?.onLoginPress());
+
+    await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(2));
+    expect(result.current?.intro.isOpen).toBe(false);
+  });
+
   it("starts the login straight away once the intro has been seen", async () => {
     store.dispatch(markPayCardLoginIntroSeen());
     const { result } = await renderIdleLogin(store);
