@@ -14,6 +14,7 @@ import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { useWipeHostedSessionOnSignInChange } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
+import { useUnlockForCardNumbers } from "./useUnlockForCardNumbers";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
 function readCallbackCode(state: unknown): string | undefined {
@@ -117,9 +118,7 @@ export function useCardViewModel(): CardViewModel {
     [oauthConfig, callback, openHostedLogin, openHostedPage, onTrackEvent],
   );
 
-  // Nothing gates the reveal yet, so it authorizes every holder. The gate replaces this body, not
-  // its callers: the flow already treats a `false` as "the holder declined" and stays hidden.
-  const unlock = useCallback(() => Promise.resolve(true), []);
+  const { unlock, dialog: unlockDialog } = useUnlockForCardNumbers();
 
   const onShowMore = useCallback(() => {
     navigate(
@@ -132,6 +131,7 @@ export function useCardViewModel(): CardViewModel {
     formatters,
     login,
     unlock,
+    unlockDialog,
     onShowMore,
   };
 }
