@@ -30,22 +30,24 @@ export function SendHeader() {
 
   const headerDisplayMode = currentStep === SEND_FLOW_STEP.COIN_CONTROL ? "crypto" : displayMode;
 
-  const selectedPoolBalance = useMemo(() => {
-    const account = state.account.account;
-    const transaction = state.transaction.transaction;
-    if (!account || !transaction) return undefined;
+  const account = state.account.account;
+  const transaction = state.transaction.transaction;
+
+  const balanceTypeOptions = useMemo(() => {
+    if (!account) return undefined;
     const config = sendFeatures.getBalanceTypeConfig(getAccountCurrency(account));
     if (!config) return undefined;
-    const selectedId = config.getSelectedOptionId(transaction);
-    if (!selectedId) return undefined;
-    return config.getOptions({ account }).find(o => o.id === selectedId)?.balance;
-  }, [state.account.account, state.transaction.transaction]);
+    return { config, options: config.getOptions({ account }) };
+  }, [account]);
 
-  const availableText = useAvailableBalance(
-    state.account.account,
-    headerDisplayMode,
-    selectedPoolBalance,
-  );
+  const selectedPoolBalance = useMemo(() => {
+    if (!balanceTypeOptions || !transaction) return undefined;
+    const selectedId = balanceTypeOptions.config.getSelectedOptionId(transaction);
+    if (!selectedId) return undefined;
+    return balanceTypeOptions.options.find(o => o.id === selectedId)?.balance;
+  }, [balanceTypeOptions, transaction]);
+
+  const availableText = useAvailableBalance(account, headerDisplayMode, selectedPoolBalance);
 
   const {
     currencyId,
