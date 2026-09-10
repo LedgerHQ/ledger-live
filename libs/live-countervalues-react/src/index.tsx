@@ -11,7 +11,6 @@ import type {
   CounterValuesStateRaw,
   CountervaluesSettings,
 } from "@ledgerhq/live-countervalues/types";
-import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
 import type { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -22,7 +21,21 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from "react";
+
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+  return debouncedValue;
+}
 
 export interface PollingState {
   isPolling: boolean;
