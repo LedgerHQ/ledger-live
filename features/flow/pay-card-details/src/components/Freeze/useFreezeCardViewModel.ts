@@ -4,9 +4,13 @@ import {
   useGetCardStatusQuery,
   useUnfreezeCardMutation,
 } from "@domain/api-card-management";
-import type { ConfirmState, TileProps } from "../../types";
+import type { ConfirmState, FreezeViewModel } from "../../types";
 
-export function useFreezeCardViewModel(): TileProps {
+/**
+ * @param onResolved Called when the confirmation concludes — dismissed or applied — but not while it
+ * stays open on an error. Lets a host react (e.g. navigate back) without watching `confirmState`.
+ */
+export function useFreezeCardViewModel(onResolved?: () => void): FreezeViewModel {
   const { data: cardStatus, isLoading: isStatusLoading } = useGetCardStatusQuery();
   const [freeze] = useFreezeCardMutation();
   const [unfreeze] = useUnfreezeCardMutation();
@@ -14,17 +18,21 @@ export function useFreezeCardViewModel(): TileProps {
 
   const status = cardStatus?.status;
 
-  const onOpenConfirm = useCallback(() => setConfirmState("idle"), []);
-  const onClose = useCallback(() => setConfirmState("closed"), []);
+  const onOpenConfirm = useCallback(() => setConfirmState("prompt"), []);
+  const onClose = useCallback(() => {
+    setConfirmState("closed");
+    onResolved?.();
+  }, [onResolved]);
   const onConfirm = useCallback(async () => {
     setConfirmState("pending");
     try {
       await (status === "FROZEN" ? unfreeze() : freeze()).unwrap();
       setConfirmState("closed");
+      onResolved?.();
     } catch {
       setConfirmState("error");
     }
-  }, [status, freeze, unfreeze]);
+  }, [status, freeze, unfreeze, onResolved]);
 
   return useMemo(
     () => ({

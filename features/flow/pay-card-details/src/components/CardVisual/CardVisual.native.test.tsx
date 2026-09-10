@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
+import { I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardVisual } from "./CardVisual";
 import type { FormattedValue } from "../../types";
 
@@ -26,6 +27,7 @@ function mockStatus(status?: string) {
 function renderVisual() {
   return render(
     <CardVisual balance={100} formatCountervalue={formatCountervalue} balanceLabel="Balance" />,
+    { wrapper: I18nWrapper },
   );
 }
 

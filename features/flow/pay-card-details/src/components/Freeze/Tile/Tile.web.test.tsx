@@ -4,9 +4,9 @@ import userEvent from "@testing-library/user-event";
 import { CARD_COPY } from "../../../__tests__/i18nWrapper";
 import { WebTestWrapper } from "../../../__tests__/webTestWrapper";
 import { Tile } from "./Tile";
-import type { TileProps } from "../../../types";
+import type { FreezeViewModel } from "../../../types";
 
-function renderFreeze(props: Partial<TileProps> = {}) {
+function renderFreeze(props: Partial<FreezeViewModel> = {}) {
   const onOpenConfirm = jest.fn();
   const onClose = jest.fn();
   const onConfirm = jest.fn();
@@ -56,7 +56,7 @@ describe("Tile (web)", () => {
   });
 
   it("asks to confirm the unfreeze of a frozen card", () => {
-    renderFreeze({ confirmState: "idle", status: "FROZEN" });
+    renderFreeze({ confirmState: "prompt", status: "FROZEN" });
 
     expect(screen.getByText(CARD_COPY.unfreezeTitle)).toBeVisible();
   });

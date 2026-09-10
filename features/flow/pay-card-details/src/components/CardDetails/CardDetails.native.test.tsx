@@ -49,4 +49,35 @@ describe("CardDetails (native)", () => {
     expect(await screen.findByText(CARD_COPY.freeze)).toBeVisible();
     expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
   });
+
+  it("should navigate to More without opening another sheet", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(screen.getByLabelText(MORE_COPY.tile));
+
+    expect(screen.getByText(MORE_COPY.rows.managePin)).toBeVisible();
+    expect(screen.getByTestId("card-details-more-content")).toBeVisible();
+  });
+
+  it("should navigate to freeze confirmation without opening another sheet", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(screen.getByText(CARD_COPY.freeze));
+
+    expect(screen.getByText(CARD_COPY.freezeTitle)).toBeVisible();
+    expect(screen.getByTestId("card-details-freeze-content")).toBeVisible();
+  });
+
+  it("should return to the overview when the freeze confirmation is cancelled", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(screen.getByText(CARD_COPY.freeze));
+    await user.press(screen.getByTestId("freeze-confirm-cancel"));
+
+    expect(screen.getByTestId("card-details-overview")).toBeVisible();
+    expect(screen.queryByTestId("card-details-freeze-content")).toBeNull();
+  });
 });
