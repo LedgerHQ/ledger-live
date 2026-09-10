@@ -237,6 +237,81 @@ describe("buildSubAccounts", () => {
     ]);
   });
 
+  it("matches operations whose assetReference differs only by case from the balance's (Stacks-shaped case)", async () => {
+    const subAccounts = await buildSubAccounts({
+      accountId: "accountId",
+      allTokenAssetsBalances: [
+        { value: 20n, asset: { type: "token", assetReference: "usdc", assetOwner: "owner" } },
+      ],
+      syncConfig: { blacklistedTokenIds: [] } as unknown as SyncConfig,
+      operations: [
+        // Uppercased on the operation side, lowercase on the balance side -- must still match.
+        {
+          hash: "tx-hash1",
+          extra: {
+            assetReference: "USDC",
+            assetOwner: "owner",
+            ledgerOpType: "IN",
+            assetSenders: ["other"],
+            assetRecipients: ["owner"],
+          },
+        },
+      ] as any,
+      getTokenFromAsset: async asset =>
+        asset.type === "token" ? ({ id: asset.assetReference } as TokenCurrency) : undefined,
+    });
+
+    expect(subAccounts[0].operations.map(op => op.id)).toEqual(["accountId+usdc-tx-hash1-IN"]);
+  });
+
+  it("keeps operations separated by assetOwner when assetReference is otherwise identical", async () => {
+    // Identifiers deliberately dash-free: encodeTokenAccountId/encodeOperationId escape "-" in
+    // their inputs, which would make asserting on raw id strings fragile here.
+    const subAccounts = await buildSubAccounts({
+      accountId: "accountId",
+      allTokenAssetsBalances: [
+        { value: 10n, asset: { type: "token", assetReference: "usdc", assetOwner: "ownerA" } },
+        { value: 20n, asset: { type: "token", assetReference: "usdc", assetOwner: "ownerB" } },
+      ],
+      syncConfig: { blacklistedTokenIds: [] } as unknown as SyncConfig,
+      operations: [
+        {
+          hash: "txHashA",
+          extra: {
+            assetReference: "usdc",
+            assetOwner: "ownerA",
+            ledgerOpType: "IN",
+            assetSenders: ["other"],
+            assetRecipients: ["ownerA"],
+          },
+        },
+        {
+          hash: "txHashB",
+          extra: {
+            assetReference: "usdc",
+            assetOwner: "ownerB",
+            ledgerOpType: "IN",
+            assetSenders: ["other"],
+            assetRecipients: ["ownerB"],
+          },
+        },
+      ] as any,
+      // Both balances resolve to the same token id (same contract), only assetOwner differs --
+      // getTokenFromAsset's own return value can't discriminate them, so this test isolates
+      // whether buildSubAccounts routes operations by assetOwner rather than by the resolved token.
+      getTokenFromAsset: async asset =>
+        asset.type === "token" ? ({ id: `usdc${asset.assetOwner}` } as TokenCurrency) : undefined,
+    });
+
+    expect(subAccounts).toHaveLength(2);
+    expect(subAccounts.find(sa => sa.token.id === "usdcownerA")?.operations).toMatchObject([
+      { hash: "txHashA", senders: ["other"], recipients: ["ownerA"] },
+    ]);
+    expect(subAccounts.find(sa => sa.token.id === "usdcownerB")?.operations).toMatchObject([
+      { hash: "txHashB", senders: ["other"], recipients: ["ownerB"] },
+    ]);
+  });
+
   it("falls back to an exact match when either side's assetReference isn't a string", async () => {
     const subAccounts = await buildSubAccounts({
       accountId: "accountId",
