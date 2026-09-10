@@ -41,6 +41,7 @@ export enum AccountsActionTypes {
   REORDER_ACCOUNTS = "REORDER_ACCOUNTS",
   SET_ACCOUNTS = "SET_ACCOUNTS",
   UPDATE_ACCOUNT = "UPDATE_ACCOUNT",
+  UPDATE_ACCOUNTS = "UPDATE_ACCOUNTS",
   DELETE_ACCOUNT = "DELETE_ACCOUNT",
   CLEAN_CACHE = "CLEAN_CACHE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -51,12 +52,16 @@ export type AccountsUpdateAccountWithUpdaterPayload = {
   accountId: string;
   updater: (arg0: Account) => Account;
 };
+export type AccountsUpdateAccountsWithUpdatersPayload = {
+  updates: AccountsUpdateAccountWithUpdaterPayload[];
+};
 export type AccountsDeleteAccountPayload = Account;
 export type AccountsReplacePayload = Account[];
 export type AccountsPayload =
   | { accounts: Account[]; accountsUserData: AccountUserData[] }
   | AccountsReorderPayload
   | AccountsUpdateAccountWithUpdaterPayload
+  | AccountsUpdateAccountsWithUpdatersPayload
   | AccountsDeleteAccountPayload
   | AccountsReplacePayload
   | Account;

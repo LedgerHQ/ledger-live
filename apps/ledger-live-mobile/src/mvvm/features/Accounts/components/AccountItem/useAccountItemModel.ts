@@ -20,26 +20,38 @@ export interface AccountItemProps {
   hideBalanceInfo?: boolean;
   withPlaceholder?: boolean;
   squaredIcon?: boolean;
+  /** Parent account for token rows. Pass it from the list level to avoid a
+   * per-row `accountsSelector` subscription and O(N) find. */
+  parentAccount?: Account;
 }
 
-const useAccountItemModel = ({
+export const useAccountItemModelHook = ({
   account,
   balance,
   showUnit,
   hideBalanceInfo,
   withPlaceholder,
   squaredIcon,
+  parentAccount,
 }: AccountItemProps) => {
-  const allAccount = useSelector(accountsSelector);
   const isTokenAccount = isTokenAccountChecker(account);
   const currency = getAccountCurrency(account);
   const accountName = useMaybeAccountName(account);
   const unit = useMaybeAccountUnit(account);
 
-  const parentAccount = getParentAccount(account, allAccount);
+  // Unconditional subscription (react rules-of-hooks): when the caller passes
+  // the parent (AccountsListView), we skip the O(N) getParentAccount find, so
+  // the scan is eliminated even though the subscription is always made.
+  // ponytail: one selector subscription per row remains — a ref compare, not a
+  // scan. Upgrade path: migrate the other AccountItem call sites to pass
+  // parentAccount and lift the subscription out of the row entirely.
+  const allAccount = useSelector(accountsSelector);
+  const resolvedParentAccount =
+    parentAccount ?? (allAccount && getParentAccount(account, allAccount));
+
   const formattedAddress = formatAddress(
     isTokenAccount
-      ? getFreshAccountAddress(parentAccount)
+      ? getFreshAccountAddress(resolvedParentAccount)
       : getFreshAccountAddress(account as Account),
   );
   const tag =
@@ -65,5 +77,7 @@ const useAccountItemModel = ({
     squaredIcon,
   };
 };
+
+const useAccountItemModel = (props: AccountItemProps) => useAccountItemModelHook(props);
 
 export default useAccountItemModel;

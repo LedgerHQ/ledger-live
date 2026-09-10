@@ -44,6 +44,7 @@ import EvmAddressBookSetup from "~/components/EvmAddressBookSetup";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
+import { PortfolioBalanceProvider } from "LLM/hooks/usePortfolioBalance";
 import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
@@ -295,10 +296,12 @@ function AppView() {
         height: "100%",
       }}
     >
-      <ExperimentalHeader />
-      <View style={{ flex: 1 }}>
-        <RootNavigator />
-      </View>
+      <PortfolioBalanceProvider>
+        <ExperimentalHeader />
+        <View style={{ flex: 1 }}>
+          <RootNavigator />
+        </View>
+      </PortfolioBalanceProvider>
     </View>
   );
 }

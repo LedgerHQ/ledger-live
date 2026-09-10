@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { SectionList, SectionListData, SectionListRenderItem } from "react-native";
 import uniqBy from "lodash/uniqBy";
 import { Flex } from "@ledgerhq/native-ui";
@@ -83,6 +83,11 @@ export function OperationsList({
   );
   const bridges = useAccountBridgeMany(parentAccountsNeeded);
   const bridgeById = new Map(parentAccountsNeeded.map((a, i) => [a.id, bridges[i]]));
+  const flattenedAccounts = useMemo(() => flattenAccounts(accountsFiltered), [accountsFiltered]);
+  const accountsById = useMemo(
+    () => new Map(flattenedAccounts.map(a => [a.id, a])),
+    [flattenedAccounts],
+  );
   const isAllEmpty =
     accountsFiltered.length > 0 &&
     accountsFiltered.every(a =>
@@ -97,8 +102,7 @@ export function OperationsList({
     index,
     section,
   }) => {
-    const flattenedAccounts = flattenAccounts(accountsFiltered);
-    const account = flattenedAccounts.find(a => a.id === item.accountId);
+    const account = accountsById.get(item.accountId);
     const parentAccount =
       account && account.type !== "Account"
         ? (allAccounts.find(a => a.id === account.parentId) as Account)

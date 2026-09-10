@@ -49,7 +49,13 @@ const useAccountsListViewModel = ({
   const allAccounts = useSelector(flattenAccountsSelector, isEqual);
   const walletState = useSelector(walletSelector, isEqual);
   const accounts = specificAccounts || allAccounts;
-  const orderedAccountsByValue = orderAccountsByFiatValue(accounts, countervalueState, toCurrency);
+  // ponytail: memoize the O(N × calculate) fiat ordering so it only recomputes
+  // when accounts / countervalue state / target currency actually change,
+  // not on every render (sync ticks, focus, navigation).
+  const orderedAccountsByValue = useMemo(
+    () => orderAccountsByFiatValue(accounts, countervalueState, toCurrency),
+    [accounts, countervalueState, toCurrency],
+  );
 
   const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const filteredAccounts = useMemo(
