@@ -192,12 +192,18 @@ export function useBrazeProviderViewModel() {
       lastSyncedIdentity.isTrackedUser !== currentIdentity.isTrackedUser;
 
     if (isConsentTransition) {
+      const refreshAndReinitSession = async () => {
+        braze.automaticallyShowInAppMessages();
+        braze.openSession();
+        await refreshContentCards();
+      };
+
       const transition = Promise.resolve(
         applyBrazeConsentTransition(
           { isTrackedUser, userId },
           {
             prepareForIdentityTransition,
-            refreshContentCards,
+            refreshContentCards: refreshAndReinitSession,
             enableSDK: () => {
               brazeSdk.enableSDK();
               initializeBrazeSdk(devMode, isTrackedUser);
@@ -205,11 +211,7 @@ export function useBrazeProviderViewModel() {
           },
         ),
       )
-        .then(() => {
-          braze.automaticallyShowInAppMessages();
-          braze.openSession();
-          return true as const;
-        })
+        .then(() => true as const)
         .catch(error => {
           console.warn("Braze consent transition failed", error);
           return false;
