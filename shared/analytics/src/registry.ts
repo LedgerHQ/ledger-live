@@ -7,44 +7,44 @@ import type {
   PropsFilter,
 } from "./types";
 
-let analytics: Analytics | undefined;
-let enabledFn: EnabledFn | undefined;
-let extraPropsFn: ExtraPropsFn | undefined;
-let mandatoryExtraPropsFn: MandatoryExtraPropsFn | undefined;
-let propsFilter: PropsFilter | undefined;
+let _analytics: Analytics | undefined;
+let _enabledFn: EnabledFn | undefined;
+let _extraPropsFn: ExtraPropsFn | undefined;
+let _mandatoryExtraPropsFn: MandatoryExtraPropsFn | undefined;
+let _propsFilter: PropsFilter | undefined;
 
-export function setAnalytics(next: Analytics): void {
-  analytics = next;
+export function setAnalytics(analytics: Analytics): void {
+  _analytics = analytics;
 }
 
 export function getAnalytics(): Analytics | undefined {
-  return analytics;
+  return _analytics;
 }
 
-export function setEnabledFn(next?: EnabledFn): void {
-  enabledFn = next;
+export function setEnabledFn(enabledFn?: EnabledFn): void {
+  _enabledFn = enabledFn;
 }
 
 export function isEnabled(): boolean {
-  return enabledFn?.() ?? false;
+  return _enabledFn?.() ?? false;
 }
 
-export function setExtraPropsFn(next?: ExtraPropsFn): void {
-  extraPropsFn = next;
+export function setExtraPropsFn(extraPropsFn?: ExtraPropsFn): void {
+  _extraPropsFn = extraPropsFn;
 }
 
-export function setMandatoryExtraPropsFn(next?: MandatoryExtraPropsFn): void {
-  mandatoryExtraPropsFn = next;
+export function setMandatoryExtraPropsFn(mandatoryExtraPropsFn?: MandatoryExtraPropsFn): void {
+  _mandatoryExtraPropsFn = mandatoryExtraPropsFn;
 }
 
 export function resolveExtraProps(mandatory: boolean): Props | Promise<Props> | undefined {
-  return mandatory ? mandatoryExtraPropsFn?.() : extraPropsFn?.();
+  return mandatory ? _mandatoryExtraPropsFn?.() : _extraPropsFn?.();
 }
 
-export function setPropsFilter(next?: PropsFilter): void {
-  propsFilter = next;
+export function setPropsFilter(propsFilter?: PropsFilter): void {
+  _propsFilter = propsFilter;
 }
 
 export function applyPropsFilter(props: Props): Props {
-  return propsFilter ? propsFilter(props) : props;
+  return _propsFilter ? _propsFilter(props) : props;
 }
