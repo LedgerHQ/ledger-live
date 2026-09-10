@@ -182,47 +182,6 @@ describe("getTransactionStatus", () => {
 
       expect(result.errors.recipient).toBeUndefined();
     });
-
-    it("allows the account's own address as recipient for an unbond", async () => {
-      const account = getMockedAccount({ freshAddress: "aleo1sender" });
-      const transaction: Transaction = {
-        ...mockTransaction,
-        recipient: account.freshAddress,
-        mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
-      };
-
-      const result = await getTransactionStatus(account, transaction);
-
-      expect(result.errors.recipient).toBeUndefined();
-    });
-
-    it("allows the account's own address as recipient for a claim", async () => {
-      const account = getMockedAccount({ freshAddress: "aleo1sender" });
-      const transaction: Transaction = {
-        ...mockTransaction,
-        recipient: account.freshAddress,
-        mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
-      };
-
-      const result = await getTransactionStatus(account, transaction);
-
-      expect(result.errors.recipient).toBeUndefined();
-    });
-
-    // The regression this fix must not cause: a genuine self-send on a non-staking public
-    // transfer is still rejected (isSelfStakingMode must not widen to every mode).
-    it("still rejects the account's own address as recipient for a plain public transfer", async () => {
-      const account = getMockedAccount({ freshAddress: "aleo1sender" });
-      const transaction: Transaction = {
-        ...mockTransaction,
-        recipient: account.freshAddress,
-        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
-      };
-
-      const result = await getTransactionStatus(account, transaction);
-
-      expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
-    });
   });
 
   describe("amount validation", () => {

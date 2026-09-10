@@ -32,12 +32,6 @@ export const getMockedTransaction = (overrides?: Partial<Transaction>): Transact
   } as Transaction;
 };
 
-/**
- * `mode` is typed as the 3-way `AleoStakingMode` union rather than one call site's specific
- * literal, so TS cannot correlate it with `Transaction`'s per-arm discriminant (a structural
- * limitation of building a discriminated union from a generic key, independent of which modes
- * are members of `Transaction`) — hence the cast.
- */
 export const getMockedStakingTransaction = (
   mode: AleoStakingMode,
   overrides?: Partial<Omit<Transaction, "mode">>,

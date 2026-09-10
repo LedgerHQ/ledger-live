@@ -579,14 +579,6 @@ export function isTokenTransaction(transaction: Pick<Transaction, "mode">): bool
   return isPublicTokenTransaction(transaction) || isPrivateTokenTransaction(transaction);
 }
 
-/** Unbond and claim move funds within the account itself, so the recipient is the sender. */
-export function isSelfStakingMode(transaction: Pick<Transaction, "mode">): boolean {
-  return (
-    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
-    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC
-  );
-}
-
 export function isSelfTransferTransaction(
   transaction: Transaction,
 ): transaction is TransactionSelfTransfer {
