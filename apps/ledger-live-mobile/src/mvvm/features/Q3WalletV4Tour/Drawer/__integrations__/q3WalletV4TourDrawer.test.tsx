@@ -24,9 +24,7 @@ const SLIDES = [
   },
 ] as const;
 
-const Q3_TOUR_FEATURE_FLAGS = {
-  releaseTour: { enabled: true, params: { variant: "q3_a" as const } },
-};
+type Q3Variant = "q3_a" | "q3_b" | "q3_b2";
 
 const TestComponent = () => {
   const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer, closeDrawer, onSlideChange } =
@@ -46,15 +44,21 @@ const TestComponent = () => {
 };
 
 describe("Q3WalletV4TourDrawer integration", () => {
-  function renderTestComponent({ hasSeenTour = false } = {}) {
+  function renderTestComponent({
+    hasSeenTour = false,
+    variant = "q3_a",
+  }: { hasSeenTour?: boolean; variant?: Q3Variant } = {}) {
     const rendered = render(<TestComponent />, {
-      overrideInitialState: withFlagOverrides(Q3_TOUR_FEATURE_FLAGS, state => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          hasSeenQ3WalletV4Tour: hasSeenTour,
-        },
-      })),
+      overrideInitialState: withFlagOverrides(
+        { releaseTour: { enabled: true, params: { variant } } },
+        state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            hasSeenQ3WalletV4Tour: hasSeenTour,
+          },
+        }),
+      ),
     });
 
     const resizeScreenWidth = () => {
@@ -71,7 +75,9 @@ describe("Q3WalletV4TourDrawer integration", () => {
   }
 
   it("should open the drawer and show the first slide", async () => {
-    const { user, resizeScreenWidth } = renderTestComponent({ hasSeenTour: false });
+    const { user, resizeScreenWidth } = renderTestComponent({
+      hasSeenTour: false,
+    });
 
     await user.press(screen.getByText("Open Drawer"));
 
@@ -83,7 +89,9 @@ describe("Q3WalletV4TourDrawer integration", () => {
   });
 
   it("should not show the drawer again after the tour is completed", async () => {
-    const { user, resizeScreenWidth } = renderTestComponent({ hasSeenTour: false });
+    const { user, resizeScreenWidth } = renderTestComponent({
+      hasSeenTour: false,
+    });
 
     await user.press(screen.getByText("Open Drawer"));
 
@@ -108,4 +116,17 @@ describe("Q3WalletV4TourDrawer integration", () => {
       expect(screen.queryByText(slide.subtitle)).not.toBeOnTheScreen();
     });
   });
+
+  it.each(["q3_a", "q3_b", "q3_b2"] as const)(
+    "should open the %s tour on the intro slide",
+    async variant => {
+      const { user, resizeScreenWidth } = renderTestComponent({ variant });
+
+      await user.press(screen.getByText("Open Drawer"));
+      resizeScreenWidth();
+
+      await waitFor(() => expect(screen.getByText(SLIDES[0].title)).toBeOnTheScreen());
+      expect(screen.getByText(SLIDES[0].subtitle)).toBeOnTheScreen();
+    },
+  );
 });
