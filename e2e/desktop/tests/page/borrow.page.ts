@@ -9,11 +9,7 @@ const FUNDING_HINT =
 const EXECUTION_TIMEOUT_MS = 240_000;
 const APPROVAL_TIMEOUT_MS = 60_000;
 const SCREEN_TIMEOUT_MS = 60_000;
-/**
- * The partner prepares each transaction server-side before the app can ask the device, so the
- * borrow step reaches the device a good half-minute after the summary is confirmed. That is
- * longer than the global `expect` timeout, which is why these waits carry their own.
- */
+/** The partner prepares each transaction server-side, which outlasts the global expect timeout. */
 const DEVICE_SIGNATURE_TIMEOUT_MS = 120_000;
 
 export class BorrowPage extends WebViewAppPage {
