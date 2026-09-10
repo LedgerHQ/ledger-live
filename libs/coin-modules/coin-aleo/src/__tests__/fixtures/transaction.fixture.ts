@@ -33,9 +33,10 @@ export const getMockedTransaction = (overrides?: Partial<Transaction>): Transact
 };
 
 /**
- * Unbond and claim are not yet members of the bridge `Transaction` union, so a staking transaction
- * can only be built by widening. One cast here rather than one per test; it disappears when the
- * union gains the two modes.
+ * `mode` is typed as the 3-way `AleoStakingMode` union rather than one call site's specific
+ * literal, so TS cannot correlate it with `Transaction`'s per-arm discriminant (a structural
+ * limitation of building a discriminated union from a generic key, independent of which modes
+ * are members of `Transaction`) — hence the cast.
  */
 export const getMockedStakingTransaction = (
   mode: AleoStakingMode,

@@ -505,6 +505,11 @@ function getAmountToSpend({
     return tokenAccount?.transparentBalance ?? new BigNumber(0);
   }
 
+  // unbonding spends the bonded position; the fee is paid from the transparent balance
+  if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
+    return getAvailableBalance(account, transaction);
+  }
+
   const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
 
   return BigNumber.max(0, transparentBalance.minus(estimatedFees));
@@ -574,6 +579,14 @@ export function isTokenTransaction(transaction: Pick<Transaction, "mode">): bool
   return isPublicTokenTransaction(transaction) || isPrivateTokenTransaction(transaction);
 }
 
+/** Unbond and claim move funds within the account itself, so the recipient is the sender. */
+export function isSelfStakingMode(transaction: Pick<Transaction, "mode">): boolean {
+  return (
+    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC
+  );
+}
+
 export function isSelfTransferTransaction(
   transaction: Transaction,
 ): transaction is TransactionSelfTransfer {
@@ -590,6 +603,8 @@ export function isPublicTransaction(transaction: Transaction): transaction is Tr
     transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
     transaction.mode === TRANSACTION_TYPE.TRANSFER_PUBLIC ||
     transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC ||
     isPublicTokenTransaction(transaction)
   );
 }
@@ -991,6 +1006,10 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
         }),
       );
     }
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+      return account.aleoResources?.bondedBalance ?? new BigNumber(0);
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return getClaimableStakingBalance(account);
     default:
       // @ts-expect-error - runtime check to ensure all transaction types are handled
       throw new Error(`aleo: unsupported tx mode for balance calculation: ${transaction.mode}`);
@@ -1079,6 +1098,8 @@ export function createTransactionIntent({
   switch (transaction.mode) {
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
       return base;
 
     case TRANSACTION_TYPE.BOND_PUBLIC:

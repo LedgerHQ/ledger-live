@@ -24,6 +24,7 @@ import {
   getAvailableBalance,
   getRecordByCommitment,
   isPrivateTransaction,
+  isSelfStakingMode,
   isSelfTransferTransaction,
   isTokenTransaction,
   getAleoSubAccount,
@@ -269,7 +270,7 @@ async function handleTransferTransaction({
   const recipientError = await validateRecipient({
     account,
     recipient: transaction.recipient,
-    allowSelfTransfer,
+    allowSelfTransfer: allowSelfTransfer || isSelfStakingMode(transaction),
   });
 
   if (recipientError) {
