@@ -11,7 +11,7 @@ import {
 } from "./registry";
 
 beforeEach(() => {
-  setAnalytics({ track: jest.fn() });
+  setAnalytics(undefined);
   setEnabledFn(undefined);
   setExtraPropsFn(undefined);
   setMandatoryExtraPropsFn(undefined);
@@ -25,6 +25,13 @@ describe("registry", () => {
       setAnalytics(myAnalytics);
 
       expect(getAnalytics()).toBe(myAnalytics);
+    });
+
+    it("returns undefined after the analytics client is cleared", () => {
+      setAnalytics({ track: jest.fn() });
+      setAnalytics(undefined);
+
+      expect(getAnalytics()).toBeUndefined();
     });
   });
 

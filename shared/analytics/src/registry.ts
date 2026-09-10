@@ -33,7 +33,7 @@ let _extraPropsFn: ExtraPropsFn | undefined;
 let _mandatoryExtraPropsFn: MandatoryExtraPropsFn | undefined;
 let _propsFilter: PropsFilter | undefined;
 
-export function setAnalytics(analytics: Analytics): void {
+export function setAnalytics(analytics?: Analytics): void {
   _analytics = analytics;
 }
 
