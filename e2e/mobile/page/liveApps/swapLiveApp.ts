@@ -1,9 +1,21 @@
+import { log } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
+import {
+  QUOTE_CARD_PROVIDER_NAME_FRAGMENT,
+  quoteCardCtaPattern,
+  quoteCardMarkupPrefix,
+  SWAP_FLAG_OVERRIDES_KEY,
+  swapFlagPresetPayload,
+  swapFlagPresetQuoteCard,
+  type QuoteCardCtaCopy,
+  type QuoteCardMarkup,
+  type SwapFlagPreset,
+} from "@ledgerhq/live-e2e-shared/data/swapLiveAppFlags";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
@@ -16,19 +28,10 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 // Net value of a quote as shown on screen: amount received minus network fees (both in fiat).
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
-// swap-live-app renders two quote card markups behind its own `ptxLumenQuoteCard` flag, which
-// e2e can neither read nor force. Only the provider-name testid prefix and the CTA label differ.
-type QuoteCardVariant = "legacy" | "lumen";
-
 export default class SwapLiveAppPage {
-  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX: Record<QuoteCardVariant, string> = {
-    legacy: "compact-quote-card-provider-name-",
-    lumen: "lumen-quote-card-provider-name-",
-  };
-  // Common to both prefixes above, so it matches whichever variant is live.
-  private static readonly QUOTE_CARD_PROVIDER_NAME_SUFFIX = "quote-card-provider-name-";
+  private static readonly QUOTE_CARD_PROVIDER_NAMES = `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}']`;
 
-  private quoteCardVariant: QuoteCardVariant | null = null;
+  private pinnedCtaCopy: QuoteCardCtaCopy | null = null;
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -150,14 +153,10 @@ export default class SwapLiveAppPage {
     const providersList = (await this.getProviderList()).filter(
       name => name !== SwapProvider.LIFI.uiName,
     );
-    const prefix = await this.resolveProviderNamePrefix();
-
     for (const providerName of providersList) {
       const provider = SwapProvider.getByUiName(providerName);
       if (provider && !provider.kyc && !provider.app) {
-        const providerTestId = `${prefix}${provider.name}`;
-        await waitWebElementByTestId(providerTestId);
-        await tapWebElementByTestId(providerTestId);
+        await this.tapQuoteCardProvider(provider.name);
 
         return provider;
       }
@@ -165,30 +164,53 @@ export default class SwapLiveAppPage {
     throw new Error("No single-app exchange providers found");
   }
 
-  // Throws while no card is rendered rather than latching onto "legacy": no Lumen cards is
-  // indistinguishable from no cards at all. Callers retry or have already waited for a card.
-  @Step("Resolve active quote card variant")
-  private async resolveQuoteCardVariant(): Promise<QuoteCardVariant> {
-    if (!this.quoteCardVariant) {
-      const renderedCards = await getWebElementsText(
-        this.swapMainContainerWebElement,
-        `[data-testid*='${SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_SUFFIX}']`,
-      );
-      if (renderedCards.length === 0) {
-        throw new Error("No quote card rendered yet: cannot resolve the quote card variant");
-      }
-      const lumenCards = await getWebElementsText(
-        this.swapMainContainerWebElement,
-        `[data-testid^='${SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX.lumen}']`,
-      );
-      this.quoteCardVariant = lumenCards.length > 0 ? "lumen" : "legacy";
-    }
-    return this.quoteCardVariant;
+  private quoteCardProviderNameSelector(providerName: string) {
+    return `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${providerName.toLowerCase()}']`;
   }
 
-  @Step("Resolve active quote card provider-name testid prefix")
-  private async resolveProviderNamePrefix(): Promise<string> {
-    return SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX[await this.resolveQuoteCardVariant()];
+  private async tapQuoteCardProvider(providerName: string) {
+    const card = getWebElementByCssSelector(this.quoteCardProviderNameSelector(providerName));
+    await waitWebElement(card);
+    await tapWebElementByElement(card);
+  }
+
+  // Only the loaded page can write its localStorage, and the atom reads the key once per load.
+  @Step("Pin swap live app feature flags: {{{0}}}")
+  async applyFlagPreset(preset: SwapFlagPreset) {
+    await this.swapMainContainerWebElement.runScript(
+      (_el: HTMLElement, key: string, value: string) => localStorage.setItem(key, value),
+      [SWAP_FLAG_OVERRIDES_KEY, swapFlagPresetPayload(preset)],
+    );
+    this.pinnedCtaCopy = swapFlagPresetQuoteCard[preset].ctaCopy;
+    await app.mainNavigation.openPortfolioViaDeeplink();
+    await app.swap.openViaDeeplink();
+    await this.expectSwapLiveAppForm();
+  }
+
+  // The override outlives the test, so clear it in teardown. A failed test can leave any
+  // screen on top, and a missing live app is nothing to clean rather than a new failure.
+  @Step("Clear swap live app feature flag overrides")
+  async clearFlagOverrides() {
+    this.pinnedCtaCopy = null;
+    try {
+      await this.swapMainContainerWebElement.runScript(
+        (_el: HTMLElement, key: string) => localStorage.removeItem(key),
+        [SWAP_FLAG_OVERRIDES_KEY],
+      );
+    } catch (error) {
+      log.warn(`Could not clear the swap flag overrides: ${error}`);
+    }
+  }
+
+  @Step("Check quote card markup: {{{0}}}")
+  async checkQuoteCardMarkup(markup: QuoteCardMarkup) {
+    await retryUntilTimeout(async () => {
+      const cards = await getWebElementsText(
+        this.swapMainContainerWebElement,
+        `[data-testid^='${quoteCardMarkupPrefix[markup]}']`,
+      );
+      jestExpect(cards.length).toBeGreaterThan(0);
+    });
   }
 
   @Step("Wait for quotes countdown to be stable")
@@ -250,10 +272,9 @@ export default class SwapLiveAppPage {
 
     return await retryUntilTimeout(async () => {
       const numberOfQuotesText = await getWebElementText(this.numberOfQuotes);
-      const prefix = await this.resolveProviderNamePrefix();
       const providerList = await getWebElementsText(
         this.swapMainContainerWebElement,
-        `[data-testid^='${prefix}']`,
+        SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAMES,
       );
 
       // "N quotes found" is translated per language, so only the leading count is checked.
@@ -342,16 +363,13 @@ export default class SwapLiveAppPage {
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
 
-    if ((await this.resolveQuoteCardVariant()) === "lumen") {
-      // The Lumen CTA is a fixed "Review"/"Continue" — it never interpolates the provider name.
-      const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
-      jestExpect(actualButtonText).toMatch(expected);
-    } else {
-      const ctaVerbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
-      jestExpect(actualButtonText).toMatch(
-        new RegExp(`^(${ctaVerbs}) with ${escapeRegExp(provider)}$`, "i"),
-      );
-    }
+    jestExpect(actualButtonText).toMatch(
+      quoteCardCtaPattern({
+        providerUiName: provider,
+        approvalRequired,
+        copy: this.pinnedCtaCopy,
+      }),
+    );
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
@@ -574,9 +592,7 @@ export default class SwapLiveAppPage {
     if (!providerName) {
       throw new Error(`Unknown provider UI name: "${provider}"`);
     }
-    const providerTestId = `${await this.resolveProviderNamePrefix()}${providerName}`;
-    await waitWebElementByTestId(providerTestId);
-    await tapWebElementByTestId(providerTestId);
+    await this.tapQuoteCardProvider(providerName);
   }
 
   @Step("Go to {{{0}}} live app")
