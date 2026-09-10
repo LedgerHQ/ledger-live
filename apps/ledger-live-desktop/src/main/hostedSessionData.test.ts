@@ -113,15 +113,20 @@ describe("clearHostedSessionData", () => {
     expect(get).toHaveBeenCalledWith({ domain: "provider.test" });
   });
 
-  it.each([[undefined], ["https://dev.api.baanx.com"], [[""]], [[42]], [["dev.api.baanx.com"]]])(
-    "does nothing for the origin list %p",
-    async origins => {
-      const { session, get, clearStorageData } = fakeSession([]);
+  it.each([
+    [undefined],
+    ["https://dev.api.baanx.com"],
+    [[""]],
+    [[42]],
+    [["dev.api.baanx.com"]],
+    [["file:///etc/passwd"]],
+    [["chrome-extension://dev.api.baanx.com"]],
+  ])("does nothing for the origin list %p", async origins => {
+    const { session, get, clearStorageData } = fakeSession([]);
 
-      await clearHostedSessionData(session, origins);
+    await clearHostedSessionData(session, origins);
 
-      expect(get).not.toHaveBeenCalled();
-      expect(clearStorageData).not.toHaveBeenCalled();
-    },
-  );
+    expect(get).not.toHaveBeenCalled();
+    expect(clearStorageData).not.toHaveBeenCalled();
+  });
 });
