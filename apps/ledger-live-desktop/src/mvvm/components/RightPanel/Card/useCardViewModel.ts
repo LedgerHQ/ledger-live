@@ -8,6 +8,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import type { CardViewModel } from "./types";
+import { useUnlockForCardNumbers } from "./useUnlockForCardNumbers";
 
 export function useCardViewModel(): CardViewModel {
   const { t } = useTranslation();
@@ -44,11 +45,15 @@ export function useCardViewModel(): CardViewModel {
     track(event, params);
   }, []);
 
+  const { unlock, dialog: unlockDialog } = useUnlockForCardNumbers();
+
   return {
     title: t("payTab.card.title"),
     balanceLabel: t("payTab.card.balanceLabel"),
     formatCountervalue,
     oauthConfig,
     onTrackEvent,
+    unlock,
+    unlockDialog,
   };
 }

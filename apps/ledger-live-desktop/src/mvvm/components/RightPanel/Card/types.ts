@@ -1,5 +1,6 @@
 import type { CardProps as PayCardProps } from "@features/flow-pay-card";
-import type { FormattedValue } from "@features/flow-pay-card-details";
+import type { FormattedValue, UnlockForCardNumbers } from "@features/flow-pay-card-details";
+import type { CardNumbersUnlockDialogState } from "./useUnlockForCardNumbers";
 
 export interface CardViewModel {
   readonly title: string;
@@ -7,4 +8,6 @@ export interface CardViewModel {
   readonly balanceLabel: string;
   readonly oauthConfig: PayCardProps["oauthConfig"];
   readonly onTrackEvent: PayCardProps["onTrackEvent"];
+  readonly unlock: UnlockForCardNumbers;
+  readonly unlockDialog: CardNumbersUnlockDialogState;
 }
