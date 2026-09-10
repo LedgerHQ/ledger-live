@@ -38,6 +38,10 @@ As a result:
 
 Tests therefore assert on your own layout/view-model wiring, not on real Lumen internals.
 
+The Native project also maps `react-native-svg` to host elements. The real package reads React
+Native internals that the lightweight `react-native` mock does not provide; the SVG mock preserves
+test IDs and accessibility props without loading that native implementation.
+
 ## Queued bottom sheet
 
 The Native project maps `@shared/ui-queued-bottom-sheet` to the double that package ships

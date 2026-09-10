@@ -1,23 +1,56 @@
-import React, { type PropsWithChildren } from "react";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
-import { SignedInCardApiProviders, listenToSignedInCardApi } from "../../__tests__/cardApiStore";
+import React from "react";
+import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
 import { CARD_COPY, I18nWrapper, MORE_COPY } from "../../__tests__/i18nWrapper";
+import { buildMoreViewProps } from "../More/fixtures";
+import type { CardDetailsRoute } from "./Scenes/navigation";
+import type { CardDetailsSceneProps } from "./Scenes/types";
+import type { ConfirmState, FreezeViewModel } from "../../types";
 import { CardDetailsSheet } from "./CardDetailsSheet";
 
-listenToSignedInCardApi();
+type SheetOverrides = Readonly<{
+  isOpen?: boolean;
+  route?: CardDetailsRoute;
+  confirmState?: ConfirmState;
+}>;
 
-function Wrapper({ children }: PropsWithChildren) {
-  return (
-    <SignedInCardApiProviders>
-      <I18nWrapper>{children}</I18nWrapper>
-    </SignedInCardApiProviders>
-  );
+function buildScene({ route, confirmState }: SheetOverrides): CardDetailsSceneProps {
+  const viewModel: FreezeViewModel = {
+    status: "ACTIVE",
+    isActionDisabled: false,
+    confirmState: confirmState ?? "closed",
+    onOpenConfirm: jest.fn(),
+    onClose: jest.fn(),
+    onConfirm: jest.fn(),
+  };
+  const more = buildMoreViewProps();
+
+  return {
+    route: route ?? { name: "overview" },
+    overview: {
+      freezeViewModel: viewModel,
+      moreViewModel: more,
+      onFreezePress: jest.fn(),
+      onMorePress: jest.fn(),
+    },
+    freeze: { viewModel },
+    more: { viewModel: more },
+  };
 }
 
-function renderSheet(props: Partial<React.ComponentProps<typeof CardDetailsSheet>> = {}) {
-  return render(<CardDetailsSheet isOpen onClose={jest.fn()} {...props} />, {
-    wrapper: Wrapper,
-  });
+function renderSheet(overrides: SheetOverrides = {}) {
+  const onClose = jest.fn();
+  const user = userEvent.setup();
+  const sheet = (props: SheetOverrides) => (
+    <CardDetailsSheet isOpen={props.isOpen ?? true} scene={buildScene(props)} onClose={onClose} />
+  );
+  const view = render(sheet(overrides), { wrapper: I18nWrapper });
+
+  return {
+    ...view,
+    onClose,
+    pressDismiss: () => user.press(screen.getByTestId("card-details-sheet-dismiss")),
+    goTo: (next: SheetOverrides) => view.rerender(sheet(next)),
+  };
 }
 
 describe("CardDetailsSheet (native)", () => {
@@ -39,21 +72,58 @@ describe("CardDetailsSheet (native)", () => {
     expect(screen.getByTestId("card-details-sheet").props.accessibilityState.expanded).toBe(true);
   });
 
-  it("should show freeze and more when the sheet is open", async () => {
+  it("should show freeze and more when the sheet is open", () => {
     renderSheet();
 
-    expect(await screen.findByLabelText("Visa")).toBeVisible();
-    expect(await screen.findByText(CARD_COPY.freeze)).toBeVisible();
-    expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
+    expect(screen.getByLabelText("Visa")).toBeVisible();
+    expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
+    expect(screen.getByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 
-  it("should close once when dismiss is pressed twice", () => {
-    const onClose = jest.fn();
-    renderSheet({ onClose });
+  it("should show the scene the route selects, not one derived from the view models", () => {
+    renderSheet({ route: { name: "more" } });
 
-    fireEvent.press(screen.getByTestId("card-details-sheet-dismiss"));
-    fireEvent.press(screen.getByTestId("card-details-sheet-dismiss"));
+    expect(screen.getByTestId("card-details-more-content")).toBeVisible();
+    expect(screen.getByText(MORE_COPY.rows.managePin)).toBeVisible();
+  });
+
+  it("should show freeze confirmation in the same sheet", () => {
+    renderSheet({ route: { name: "freeze" }, confirmState: "prompt" });
+
+    expect(screen.getByTestId("card-details-freeze-content")).toBeVisible();
+    expect(screen.getByText(CARD_COPY.freezeTitle)).toBeVisible();
+  });
+
+  it("should render no freeze confirmation when the confirm state is closed", () => {
+    renderSheet({ route: { name: "freeze" } });
+
+    expect(screen.queryByTestId("card-details-freeze-content")).toBeNull();
+    expect(screen.queryByText(CARD_COPY.freezeTitle)).toBeNull();
+  });
+
+  it("should close once when dismiss is pressed twice", async () => {
+    const { onClose, pressDismiss } = renderSheet();
+
+    await pressDismiss();
+    await pressDismiss();
 
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not report a close when navigating to another scene", () => {
+    const { onClose, goTo } = renderSheet();
+
+    goTo({ route: { name: "freeze" }, confirmState: "prompt" });
+
+    expect(screen.getByTestId("card-details-freeze-content")).toBeVisible();
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("should ignore dismiss while freeze is pending", async () => {
+    const { onClose, pressDismiss } = renderSheet({ confirmState: "pending" });
+
+    await pressDismiss();
+
+    expect(onClose).not.toHaveBeenCalled();
   });
 });

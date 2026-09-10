@@ -23,8 +23,16 @@ import { CardVisual, CardActions } from "@features/flow-pay-card-details";
 
 Native hosts mount a single `CardDetails`. Two buttons — a disabled placeholder and **Details** —
 sit over the bottom of the card face, above a gradient that fades the artwork out behind them.
-Pressing Details opens a bottom sheet with the full card UI (card face, `Freeze` and `More`),
-where the actions stay below the card rather than over it:
+Pressing Details opens one bottom sheet. Its card overview uses the full-height snap point, while
+the `Freeze` confirmation and `More` menu resize to their content. These scenes replace each other
+within that sheet so they do not compete for the global bottom-sheet queue.
+
+Each scene is a self-contained screen. The view model owns a single current `route` and drives it
+through a small navigation contract (`goTo` / `goBack`, in `Scenes/navigation.ts`); the
+sheet is a dumb shell that only renders the route it is given and sizes itself from `Scenes/registry.ts`.
+Navigation is classic (one scene at a time, back to overview) but the same contract is deliberately
+thin: adding a scene (transactions, assets) is a new route plus a tile that calls `goTo`, and the
+scenes can later be mounted in a stack or as full pages without being rewritten.
 
 ```tsx
 import { CardDetails } from "@features/flow-pay-card-details";
@@ -88,35 +96,42 @@ pay-card-details/
     │   ├── CardDetails/                       # Card block: web inline, native Details sheet
     │   │   ├── CardDetails.web.tsx            # Visual + CardActions
     │   │   ├── CardDetails.native.tsx         # View-model + view
-    │   │   ├── useCardDetailsViewModel.ts     # Labels + sheet open state
+    │   │   ├── useCardDetailsViewModel.ts     # Details, Freeze and More state
     │   │   ├── CardDetailsView.native.tsx     # Overlay actions on the card face + fade
-    │   │   ├── CardDetailsSheet.native.tsx    # Bottom sheet: card face + Freeze + More
+    │   │   ├── CardDetailsSheet.native.tsx    # Adaptive sheet navigation and lifecycle
+    │   │   ├── Scenes/                        # Self-contained sheet scenes (screens)
+    │   │   │   ├── navigation.ts              # Route union + goTo / goBack contract
+    │   │   │   ├── registry.ts                # Per-scene sheet sizing
+    │   │   │   ├── CardDetailsScene.native.tsx # Router: renders the current route
+    │   │   │   ├── OverviewScene.native.tsx   # Card face + composable actions row
+    │   │   │   ├── FreezeScene.native.tsx
+    │   │   │   └── MoreScene.native.tsx
     │   │   ├── CardDetails.web.test.tsx
     │   │   ├── CardDetails.native.test.tsx
     │   │   └── CardDetailsSheet.native.test.tsx
     │   ├── Freeze/
     │   │   ├── Freeze.web.tsx                 # Tile + confirmation, wired to the view model
-    │   │   ├── Freeze.native.tsx
+    │   │   ├── Freeze.native.tsx              # Tile only; confirmation is a CardDetails scene
     │   │   ├── useFreezeCardViewModel.ts      # Card status, freeze/unfreeze, confirmation state
     │   │   ├── freezeCopy.ts                  # Freeze vs unfreeze i18n keys, keyed by card status
-    │   │   ├── Tile/                          # Freeze / unfreeze control, and the sheet it opens
+    │   │   ├── Tile/                          # Freeze / unfreeze control (native: action only)
     │   │   │   ├── Tile.web.tsx
     │   │   │   └── Tile.native.tsx
     │   │   └── Confirm/                       # The one confirmation: freeze, or unfreeze
     │   │       ├── ConfirmSheet.web.tsx       # Dialog shell, picks prompt or error
-    │   │       ├── ConfirmSheet.native.tsx    # Bottom sheet shell, same choice
     │   │       ├── ConfirmPrompt.tsx          # "Freeze?" state, platform-agnostic
     │   │       ├── ConfirmError.tsx           # "It failed" state, platform-agnostic
     │   │       ├── ConfirmBody.web.tsx        # Spot + title + description + the two buttons
     │   │       └── ConfirmBody.native.tsx     # Same body, and it tints the sheet
     │   └── More/
     │       ├── More.web.tsx                   # Tile + sheet, wired to the view model
-    │       ├── More.native.tsx
+    │       ├── More.native.tsx                # Tile only; menu is a CardDetails scene
     │       ├── useMoreViewModel.ts            # Signed-in user, sheet, logout
     │       ├── Tile/
     │       └── Sheet/
     ├── types.ts                               # Public props / view-model types
-    ├── exports.ts                             # Public surface
-    ├── index.ts                              # Public API barrel → ./exports (+ CardActions)
-    └── index.native.ts                       # Native public API barrel → ./exports (+ CardDetails)
+    ├── exports.web.ts                         # Public surface, with the web-only CardActions
+    ├── exports.native.ts                      # Public surface, without CardActions
+    ├── index.ts                              # Public API barrel → ./exports
+    └── index.native.ts                       # Public API barrel → ./exports
 ```

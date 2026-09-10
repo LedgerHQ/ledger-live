@@ -1,14 +1,18 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { CardArtwork } from "../CardArtwork/CardArtwork";
-import { CardVisual } from "../CardVisual/CardVisual";
-import { Freeze } from "../Freeze/Freeze";
-import { More } from "../More/More";
+import { CardDetailsScene } from "./Scenes/CardDetailsScene";
+import { CARD_DETAILS_SCENES } from "./Scenes/registry";
 import type { CardDetailsSheetProps } from "../../types";
 
-export function CardDetailsSheet({ isOpen, cardVisual, onClose }: CardDetailsSheetProps) {
+export function CardDetailsSheet({ isOpen, scene, onClose }: CardDetailsSheetProps) {
   const dismissed = useRef(false);
+  const isPending = scene.freeze.viewModel.confirmState === "pending";
+  const sizing = CARD_DETAILS_SCENES[scene.route.name].sizing;
+  const sizingProps =
+    sizing === "full"
+      ? ({ snapPoints: "fullWithOffset" } as const)
+      : ({ enableDynamicSizing: true, maxDynamicContentSize: "fullWithOffset" } as const);
 
   useEffect(() => {
     if (isOpen) {
@@ -16,32 +20,29 @@ export function CardDetailsSheet({ isOpen, cardVisual, onClose }: CardDetailsShe
     }
   }, [isOpen]);
 
-  const handleClose = () => {
-    if (dismissed.current) {
+  const handleClose = useCallback(() => {
+    if (isPending || dismissed.current) {
       return;
     }
     dismissed.current = true;
     onClose();
-  };
+  }, [isPending, onClose]);
 
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={handleClose}
-      snapPoints="fullWithOffset"
+      noCloseButton={isPending}
+      preventBackdropClick={isPending}
+      enablePanDownToClose={!isPending}
+      {...sizingProps}
       testID="card-details-sheet"
     >
       {isOpen ? (
-        <BottomSheetView style={{ paddingBottom: 24 }}>
-          <BottomSheetHeader density="compact" spacing />
-
-          <Box lx={{ gap: "s16" }}>
-            {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
-
-            <Box lx={{ flexDirection: "row", gap: "s8" }}>
-              <Freeze />
-              <More />
-            </Box>
+        <BottomSheetView>
+          <Box lx={{ paddingBottom: "s24" }}>
+            <BottomSheetHeader density="compact" spacing />
+            <CardDetailsScene {...scene} />
           </Box>
         </BottomSheetView>
       ) : null}

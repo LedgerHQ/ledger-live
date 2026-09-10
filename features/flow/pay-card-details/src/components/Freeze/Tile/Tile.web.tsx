@@ -4,9 +4,9 @@ import { Snow } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "@shared/i18n";
 import { freezeCopy } from "../freezeCopy";
 import { ConfirmSheet } from "../Confirm/ConfirmSheet";
-import type { TileProps } from "../../../types";
+import type { FreezeViewModel } from "../../../types";
 
-export function Tile({ isActionDisabled, onOpenConfirm, ...confirm }: TileProps) {
+export function Tile({ isActionDisabled, onOpenConfirm, ...confirm }: FreezeViewModel) {
   const { t } = useTranslation();
 
   return (
