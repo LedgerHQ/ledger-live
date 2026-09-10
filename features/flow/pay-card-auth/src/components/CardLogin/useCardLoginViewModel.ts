@@ -21,16 +21,6 @@ import type {
 
 type CardLoginStateValue = SnapshotFrom<typeof cardLoginMachine>["value"];
 
-/** Hardcoded English until the Pay tab gets its copy keys. */
-const ERROR_MESSAGES: Record<PayCardLoginErrorKind, string> = {
-  pkce_failed: "Login could not start. Please try again.",
-  browser_open_failed: "The login page could not open. Please try again.",
-  missing_attempt: "This login is no longer valid. Please log in again.",
-  exchange_failed: "Login could not be completed. Please try again.",
-  persist_failed: "Your session could not be saved. Please try again.",
-  fetch_user_failed: "Your card could not be loaded. Please try again.",
-};
-
 const LOGIN_KEY_PREFIX = "payTab.cardLogin";
 
 const INTRO_KEY_PREFIX = "payTab.cardLoginIntro";
@@ -65,7 +55,7 @@ const TRACK_BUTTON = {
  */
 export function mapSnapshotToViewModel(
   value: CardLoginStateValue,
-  errorKind: PayCardLoginErrorKind | null,
+  errorMessage: string | null,
   copy: CardLoginCopy,
   onLoginPress: () => void,
   onAlreadyHaveCardPress: () => void,
@@ -80,7 +70,7 @@ export function mapSnapshotToViewModel(
     ...copy,
     // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
     isLoading: value !== "idle" && value !== "error" && value !== "awaitingCallback",
-    errorMessage: errorKind ? ERROR_MESSAGES[errorKind] : null,
+    errorMessage,
     onLoginPress,
     onAlreadyHaveCardPress,
     intro,
@@ -257,9 +247,13 @@ export function useCardLoginViewModel({
     [isIntroOpen, t, introRows, introActions, onIntroActionPress, onIntroClose],
   );
 
+  const errorKind: PayCardLoginErrorKind | null = hasSignupFailed
+    ? "browser_open_failed"
+    : snapshot.context.errorKind;
+
   return mapSnapshotToViewModel(
     snapshot.value,
-    hasSignupFailed ? "browser_open_failed" : snapshot.context.errorKind,
+    errorKind ? t(`${LOGIN_KEY_PREFIX}.errors.${errorKind}`) : null,
     copy,
     onLoginPress,
     onAlreadyHaveCardPress,

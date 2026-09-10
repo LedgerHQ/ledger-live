@@ -10366,6 +10366,14 @@
       "afterIntro": {
         "description": "Log in to access your card",
         "action": "Login"
+      },
+      "errors": {
+        "pkce_failed": "Login could not start. Please try again.",
+        "browser_open_failed": "The login page could not open. Please try again.",
+        "missing_attempt": "This login is no longer valid. Please log in again.",
+        "exchange_failed": "Login could not be completed. Please try again.",
+        "persist_failed": "Your session could not be saved. Please try again.",
+        "fetch_user_failed": "Your card could not be loaded. Please try again."
       }
     },
     "cardLoginIntro": {

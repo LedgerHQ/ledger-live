@@ -109,26 +109,17 @@ describe("mapSnapshotToViewModel", () => {
     ).toBe(intro);
   });
 
-  it.each([
-    "pkce_failed",
-    "browser_open_failed",
-    "missing_attempt",
-    "exchange_failed",
-    "persist_failed",
-    "fetch_user_failed",
-  ] as const)("shows a message for %s", errorKind => {
+  it("shows the message it was handed", () => {
     const login = mapSnapshotToViewModel(
       "error",
-      errorKind,
+      "The login page could not open. Please try again.",
       copy,
       onLoginPress,
       onAlreadyHaveCardPress,
       intro,
     );
 
-    expect(login?.errorMessage).toMatch(/\.$/);
-    // The copy is ours, never the backend's or RTK's.
-    expect(login?.errorMessage).not.toContain(errorKind);
+    expect(login?.errorMessage).toBe("The login page could not open. Please try again.");
   });
 });
 
@@ -368,14 +359,16 @@ describe("useCardLoginViewModel intro", () => {
     expect(mockPorts.openHostedLogin).not.toHaveBeenCalled();
   });
 
-  it("reports a host that refuses the signup page", async () => {
+  it("reports a host that refuses the signup page, with the copy of that error kind", async () => {
     const openHostedPage = jest.fn().mockRejectedValue(new Error("no manifest"));
     const { result } = await renderIdleLogin(store, "both", undefined, openHostedPage);
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
 
-    await waitFor(() => expect(result.current?.errorMessage).not.toBeNull());
+    await waitFor(() =>
+      expect(result.current?.errorMessage).toBe("The login page could not open. Please try again."),
+    );
   });
 
   it("reports a browser that refuses the signup page", async () => {
