@@ -10,15 +10,17 @@ import {
   getNeuronActionPermissions,
   getNeuronDissolveDurationSeconds,
   getSecondsTillVotingPowerExpires,
-  hasEnoughMaturityToStake,
   isDeviceControlledNeuron,
-  isEnoughMaturityToSpawn,
   isNeuronDissolved,
+  neuronCanAddHotKey,
   neuronCanBeSplit,
   neuronCanDisburse,
+  neuronCanSpawn,
+  neuronCanStakeMaturity,
   neuronCanVote,
   neuronDecidingVotingPower,
   neuronStake,
+  neuronState,
 } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import {
   getNeuronState,
@@ -26,6 +28,7 @@ import {
   useICPNeuronById,
   useICPPrincipal,
 } from "@ledgerhq/live-common/families/internet_computer/react";
+import { NeuronState } from "@ledgerhq/live-common/families/internet_computer/types";
 import type { ICPAccount } from "@ledgerhq/live-common/families/internet_computer/types";
 import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import invariant from "invariant";
@@ -120,7 +123,10 @@ export default function NeuronDetails({ navigation, route }: Props) {
   // of less than a day is no headroom: the entry floors to zero and cannot be submitted. Comparing
   // seconds instead let a neuron at 730 days — twelve hours short of the two-year maximum — open a
   // screen with nothing enterable on it.
+  // Withheld while spawning: legal, but the mint still lands at spawn time and the minted ICP then
+  // dissolves for that much longer, so there is nothing to gain from it yet.
   const canExtendDissolveDelay =
+    neuronState(neuron) !== NeuronState.Spawning &&
     BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) - dissolveDelay >= BigInt(SECONDS_IN_DAY);
   const secondsTillExpiry = neuronCanVote(neuron)
     ? getSecondsTillVotingPowerExpires(neuron)
@@ -272,7 +278,7 @@ export default function NeuronDetails({ navigation, route }: Props) {
           />
           <NeuronDetailRow
             label={t("internetComputer.manageNeuronFlow.manage.votingPower.dissolveDelayBonus", {
-              percent: bonusPercent(dissolveDelayMultiplier(neuron.dissolveDelaySeconds)),
+              percent: bonusPercent(dissolveDelayMultiplier(dissolveDelay)),
             })}
             hint={t(
               "internetComputer.manageNeuronFlow.manage.votingPower.dissolveDelayBonusTooltip",
@@ -324,13 +330,13 @@ export default function NeuronDetails({ navigation, route }: Props) {
             }
             actions={[
               ...controlled(
-                hasEnoughMaturityToStake(neuron),
+                neuronCanStakeMaturity(neuron),
                 actions.onStakeMaturity,
                 t("internetComputer.manageNeuronFlow.manage.maturity.stake"),
               ),
               ...controlled(
                 // Spawning the whole balance is the best case; below that nothing can be spawned.
-                isEnoughMaturityToSpawn(neuron, 100),
+                neuronCanSpawn(neuron),
                 actions.onSpawnNeuron,
                 t("internetComputer.manageNeuronFlow.manage.maturity.spawn"),
               ),
@@ -412,7 +418,7 @@ export default function NeuronDetails({ navigation, route }: Props) {
           <NeuronDetailRow
             label={t("internetComputer.manageNeuronFlow.manage.hotKeys.add")}
             actions={controlled(
-              true,
+              neuronCanAddHotKey(neuron),
               actions.onAddHotKey,
               t("internetComputer.manageNeuronFlow.manage.hotKeys.addAction"),
             )}

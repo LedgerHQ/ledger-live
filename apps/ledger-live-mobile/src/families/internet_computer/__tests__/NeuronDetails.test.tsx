@@ -2,6 +2,7 @@ import {
   E8S_PER_ICP,
   ICP_FEES,
   KNOWN_TOPICS,
+  MAX_HOT_KEYS_PER_NEURON,
   MIN_NEURON_STAKE,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
@@ -92,6 +93,17 @@ const dissolved = (overrides: Partial<ICPNeuron> = {}) =>
     dissolveDelaySeconds: 0n,
     dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - SECONDS_IN_DAY) },
     cachedNeuronStakeE8s: BigInt(MIN_NEURON_STAKE),
+    ...overrides,
+  });
+
+// A spawning child holds maturity and no stake for seven days, under the same controller, so it
+// arrives looking like a neuron with maturity to do something with.
+const spawning = (overrides: Partial<ICPNeuron> = {}) =>
+  makeHealthyNeuron({
+    controller: CONTROLLER,
+    state: NeuronState.Spawning,
+    cachedNeuronStakeE8s: 0n,
+    dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS + SECONDS_IN_7_DAYS) },
     ...overrides,
   });
 
@@ -210,6 +222,24 @@ describe("NeuronDetails", () => {
     expect(screen.queryByText("Increase dissolve delay")).toBeNull();
   });
 
+  // The bonus row has to agree with the voting power printed above it: a snapshot bonus beside a
+  // live figure is the mismatch the rounding fix was about. The snapshot still says the full
+  // maximum; `ageSeconds` is zero because a dissolving neuron's age is zero on-chain.
+  it("counts a dissolving neuron's delay bonus from where the countdown stands", () => {
+    neuron = fullyBonused({
+      state: NeuronState.Dissolving,
+      ageSeconds: 0n,
+      dissolveState: {
+        WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS + NNS_MAXIMUM_DISSOLVE_DELAY / 2),
+      },
+    });
+
+    renderDetails();
+
+    expect(screen.getByText(/Dissolve delay bonus: \+50%/)).toBeVisible();
+    expect(screen.getByText("1.5 ICP")).toBeVisible();
+  });
+
   it("labels the dissolve delay action Set for a dissolved neuron and Increase otherwise", () => {
     neuron = dissolved();
     const unlocked = renderDetails();
@@ -228,6 +258,27 @@ describe("NeuronDetails", () => {
 
     expect(screen.getByText("Stake maturity")).toBeVisible();
     expect(screen.queryByText("Spawn neuron")).toBeNull();
+  });
+
+  // The canister refuses both commands on a spawning neuron, and each refusal costs a device
+  // signature to discover.
+  it("offers neither maturity action on a neuron that is spawning", () => {
+    neuron = spawning({ maturityE8sEquivalent: BigInt(2 * MIN_NEURON_STAKE) });
+
+    renderDetails();
+
+    expect(screen.queryByText("Stake maturity")).toBeNull();
+    expect(screen.queryByText("Spawn neuron")).toBeNull();
+  });
+
+  // Dissolved rules out staking maturity but not spawning it, so the two gates cannot share a rule.
+  it("keeps the spawn on a dissolved neuron while withholding the stake", () => {
+    neuron = dissolved({ maturityE8sEquivalent: BigInt(2 * MIN_NEURON_STAKE) });
+
+    renderDetails();
+
+    expect(screen.getByText("Spawn neuron")).toBeVisible();
+    expect(screen.queryByText("Stake maturity")).toBeNull();
   });
 
   // A top-up is a ledger transfer with no minimum, so the only bound is covering the fee. Below that
@@ -282,6 +333,17 @@ describe("NeuronDetails", () => {
 
     expect(almostMaximum).toBeLessThan(BigInt(NNS_MAXIMUM_DISSOLVE_DELAY));
     expect(screen.queryByText("Increase dissolve delay")).toBeNull();
+  });
+
+  // Legal on a spawning neuron, but the mint still lands at spawn time and the minted ICP then
+  // dissolves for that much longer, so there is nothing to gain from it yet.
+  it("withholds the dissolve-delay change while the neuron is spawning", () => {
+    neuron = spawning();
+
+    renderDetails();
+
+    expect(screen.queryByText("Increase dissolve delay")).toBeNull();
+    expect(screen.queryByText("Set dissolve delay")).toBeNull();
   });
 
   // getSecondsTillVotingPowerExpires counts to the moment power reaches zero, a month after decay
@@ -409,6 +471,19 @@ describe("NeuronDetails", () => {
 
     expect(screen.getByText(CONTROLLER)).toBeVisible();
     expect(screen.queryByText("Remove")).toBeNull();
+  });
+
+  // The canister refuses the eleventh with ResourceExhausted; the rows keep their Remove actions.
+  it("withholds Add hot key once the neuron holds the canister's ten", () => {
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      hotKeys: Array.from({ length: MAX_HOT_KEYS_PER_NEURON }, (_, i) => `key-${i}`),
+    });
+
+    renderDetails();
+
+    expect(screen.queryByText("Add hot key")).toBeNull();
+    expect(screen.getAllByText("Remove")).toHaveLength(MAX_HOT_KEYS_PER_NEURON);
   });
 
   // The section carries one action and no data, so the heading alone reads as a section that failed
