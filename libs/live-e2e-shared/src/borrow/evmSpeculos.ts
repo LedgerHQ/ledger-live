@@ -1,4 +1,4 @@
-import { JsonRpcProvider, Signature, Transaction, isError } from "ethers";
+import { JsonRpcProvider, Signature, Transaction } from "ethers";
 import { filter, firstValueFrom } from "rxjs";
 import { getEnv } from "@shared/env";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -26,6 +26,34 @@ function prefix0x(hex: string): string {
 }
 
 const sleep = (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms));
+
+const RPC_RETRY_ATTEMPTS = 8;
+const RPC_RETRY_BASE_DELAY_MS = 3_000;
+const CONFIRMATION_TIMEOUT_MS = 300_000;
+const CONFIRMATION_POLL_INTERVAL_MS = 3_000;
+
+/**
+ * The default keyless RPC load-balances onto archive-restricted backends, which reject a plain
+ * `eth_getBlockByNumber` — needed for both fee data and confirmations — with an "Archive requests
+ * require a personal token" error. Landing on one is a coin toss per call, so it reads as a broken
+ * driver rather than a flaky endpoint.
+ */
+function isRestrictedBackendError(error: unknown): boolean {
+  return JSON.stringify(error ?? "").includes("Archive requests require a personal token");
+}
+
+/** Retries read-only RPC work; safe because none of these calls broadcast. */
+async function withRpcRetry<T>(operation: () => Promise<T>): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      if (attempt >= RPC_RETRY_ATTEMPTS || !isRestrictedBackendError(error)) throw error;
+      console.log(`    rpc: restricted backend, retrying (${attempt}/${RPC_RETRY_ATTEMPTS - 1})`);
+      await sleep(RPC_RETRY_BASE_DELAY_MS * attempt);
+    }
+  }
+}
 
 /** The idle dashboard — we must not navigate here (it opens Settings/Quit). */
 const READY = /is ready/i;
@@ -139,18 +167,27 @@ export class EvmSpeculosExecutor {
     return value;
   }
 
+  /**
+   * Polls the receipt rather than awaiting `response.wait`, which fetches whole blocks to watch
+   * for a replacement: the default keyless RPC rejects those for minutes at a time, while it
+   * serves `eth_getTransactionReceipt` throughout. The driver never replaces a transaction of
+   * its own, so the replacement watch only costs availability here.
+   */
   private async waitForConfirmation(
     response: Awaited<ReturnType<JsonRpcProvider["broadcastTransaction"]>>,
   ): Promise<string> {
-    try {
-      const receipt = await response.wait(1);
-      return receipt?.hash ?? response.hash;
-    } catch (error) {
-      if (isError(error, "TRANSACTION_REPLACED") && error.receipt?.status === 1) {
-        return error.receipt.hash;
+    const deadline = Date.now() + CONFIRMATION_TIMEOUT_MS;
+    while (Date.now() < deadline) {
+      const receipt = await withRpcRetry(() => this.provider.getTransactionReceipt(response.hash));
+      if (receipt?.status === 0) {
+        throw new Error(`transaction ${receipt.hash} reverted on chain`);
       }
-      throw error;
+      if (receipt) return receipt.hash;
+      await sleep(CONFIRMATION_POLL_INTERVAL_MS);
     }
+    throw new Error(
+      `transaction ${response.hash} was not confirmed within ${CONFIRMATION_TIMEOUT_MS}ms`,
+    );
   }
 
   /**
@@ -164,21 +201,23 @@ export class EvmSpeculosExecutor {
     const data = payload.data ?? "0x";
     const value = payload.value ? BigInt(payload.value) : 0n;
 
-    const nonce = payload.nonce ?? (await this.provider.getTransactionCount(from, "pending"));
+    const nonce =
+      payload.nonce ??
+      (await withRpcRetry(() => this.provider.getTransactionCount(from, "pending")));
 
     let maxFeePerGas = payload.maxFeePerGas ? BigInt(payload.maxFeePerGas) : undefined;
     let maxPriorityFeePerGas = payload.maxPriorityFeePerGas
       ? BigInt(payload.maxPriorityFeePerGas)
       : undefined;
     if (maxFeePerGas === undefined || maxPriorityFeePerGas === undefined) {
-      const fee = await this.provider.getFeeData();
+      const fee = await withRpcRetry(() => this.provider.getFeeData());
       maxFeePerGas ??= fee.maxFeePerGas ?? undefined;
       maxPriorityFeePerGas ??= fee.maxPriorityFeePerGas ?? undefined;
     }
 
     const gasLimit = payload.gasLimit
       ? BigInt(payload.gasLimit)
-      : await this.provider.estimateGas({ from, to, data, value });
+      : await withRpcRetry(() => this.provider.estimateGas({ from, to, data, value }));
 
     const tx = Transaction.from({
       type: 2,
