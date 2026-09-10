@@ -14,6 +14,8 @@ import {
   PayCardStatusResponseSchema,
   PayCardTransactionsRequestSchema,
   PayCardTransactionsResponseSchema,
+  PayCardWalletHistoryRequestSchema,
+  PayCardWalletHistoryResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 import { transformPayCardSessionResponse } from "./transforms";
@@ -32,6 +34,8 @@ import type {
   PayCardStatus,
   PayCardTransaction,
   PayCardTransactionsRequest,
+  PayCardWalletHistoryEntry,
+  PayCardWalletHistoryRequest,
   PayCardUser,
 } from "./types";
 
@@ -139,6 +143,23 @@ export const cardManagementApi = cardApi
       }),
 
       /**
+       * One wallet's own history, newest first, ten to a page.
+       *
+       * Asked for a single wallet: a card has several linked, so a caller that wants them all asks
+       * once per wallet.
+       */
+      getWalletHistory: build.query<PayCardWalletHistoryEntry[], PayCardWalletHistoryRequest>({
+        query: filters => ({
+          url: "/v1/wallet/history",
+          method: "GET",
+          params: filters,
+        }),
+        argSchema: PayCardWalletHistoryRequestSchema,
+        responseSchema: PayCardWalletHistoryResponseSchema,
+        providesTags: ["WalletHistory"],
+      }),
+
+      /**
        * A mutation, though it reads: the provider spends the token on first use, so the answer must
        * never be served from a cache, and a mutation is never cached.
        *
@@ -223,6 +244,8 @@ export const {
   useGetCardStatusQuery,
   useGetCardTransactionsQuery,
   useLazyGetCardTransactionsQuery,
+  useGetWalletHistoryQuery,
+  useLazyGetWalletHistoryQuery,
   useCreateCardDetailsTokenMutation,
   useLazyGetCardStatusQuery,
   useFreezeCardMutation,

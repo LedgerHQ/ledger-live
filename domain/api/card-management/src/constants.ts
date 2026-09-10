@@ -6,6 +6,7 @@ export const CARD_MANAGEMENT_TAGS = [
   "CardStatus",
   "CardOnboardingStatus",
   "CardTransactions",
+  "WalletHistory",
 ] as const;
 
 export const OAUTH2_TOKEN_PATH = "/v1/auth/oauth2/token";

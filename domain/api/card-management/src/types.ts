@@ -15,6 +15,8 @@ import {
   PayCardStatusResponseSchema,
   PayCardTransactionSchema,
   PayCardTransactionsRequestSchema,
+  PayCardWalletHistoryEntrySchema,
+  PayCardWalletHistoryRequestSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 
@@ -41,6 +43,11 @@ export type PayCardTransaction = z.infer<typeof PayCardTransactionSchema>;
 
 /** Every filter the provider takes. The dates go together; the rest stand alone. */
 export type PayCardTransactionsRequest = z.infer<typeof PayCardTransactionsRequestSchema>;
+
+export type PayCardWalletHistoryEntry = z.infer<typeof PayCardWalletHistoryEntrySchema>;
+
+/** Which wallet's history to read, and which page of it. */
+export type PayCardWalletHistoryRequest = z.infer<typeof PayCardWalletHistoryRequestSchema>;
 
 /**
  * Single use, and short-lived: the provider invalidates the token once the image has been read.
