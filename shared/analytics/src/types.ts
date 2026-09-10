@@ -24,12 +24,10 @@ export interface AnalyticsTransport {
   log?(kind: "track" | "page", event: string, properties: Props): void;
 }
 
-export type AnalyticsStore = { getState(): unknown };
+export type EnabledFunction = () => boolean;
 
-export type TrackingSelector = (state: unknown) => boolean;
+export type ExtraPropertiesFunction = () => Props | Promise<Props>;
 
-export type Enricher = (state: unknown) => Props | Promise<Props>;
-
-export type MandatoryEnricher = (state: unknown) => Props;
+export type MandatoryExtraPropertiesFunction = () => Props;
 
 export type PropertyFilter = (properties: Props) => Props;

@@ -11,18 +11,20 @@ Shared `track` for Ledger Wallet apps. Each app registers its own analytics clie
 ```ts
 import {
   setAnalytics,
-  setAnalyticsStore,
-  setEnricher,
-  setIsTrackingEnabledSelector,
-  setMandatoryEnricher,
+  setEnabledFunction,
+  setExtraPropertiesFunction,
+  setMandatoryExtraPropertiesFunction,
   setPropertyFilter,
   track,
 } from "@shared/analytics";
 
-setAnalyticsStore(store);
-setIsTrackingEnabledSelector((state) => yourSelector(state));
-setEnricher((state) => yourExtraProperties(state));
-setMandatoryEnricher((state) => yourMandatoryProperties(state));
+setEnabledFunction(() => analyticsEnabledSelector(store.getState()));
+setExtraPropertiesFunction(() =>
+  analyticsExtraPropertiesSelector(store.getState())
+);
+setMandatoryExtraPropertiesFunction(() =>
+  analyticsMandatoryPropertiesSelector(store.getState())
+);
 setPropertyFilter((properties) => yourFilter(properties));
 
 setAnalytics({
@@ -34,8 +36,8 @@ setAnalytics({
 track("Your Event", { foo: "bar" });
 ```
 
-Tracking is off until a store selector says it is enabled. Pass `{ mandatory: true }` to skip that check.
+Tracking is off until enabled explicitly. Pass `{ mandatory: true }` to skip that check.
 
-`setEnricher` may be async. Extra properties from the enricher overwrite the same keys on the caller’s payload.
+`setExtraPropertiesFunction` and `setMandatoryExtraPropertiesFunction` may be async. Extra properties from the function overwrite the same keys on the caller’s payload.
 
 `trackSubject` provides an event bus (using RxJS) for in-app analytics consoles.
