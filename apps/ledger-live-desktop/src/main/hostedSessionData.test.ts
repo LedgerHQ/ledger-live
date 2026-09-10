@@ -20,6 +20,9 @@ describe("isProviderCookieForHost", () => {
     ["other.baanx.com", "dev.api.baanx.com"],
     ["baanxapi.com", "dev.api.baanx.com"],
     ["", "dev.api.baanx.com"],
+    ["ledger.com", "ledger.com"],
+    ["www.ledger.com", "ledger.com"],
+    [".ledger.com", "ledger.com"],
   ])("keeps the cookie on %s for the host %s", (cookieDomain, host) => {
     expect(isProviderCookieForHost(cookieDomain, host)).toBe(false);
   });
@@ -73,6 +76,22 @@ describe("clearHostedSessionData", () => {
     expect(get).toHaveBeenCalledWith({ domain: "provider.test" });
     expect(clearStorageData).toHaveBeenCalledWith({
       origin: "https://provider.test:8443",
+      storages: ["localstorage", "indexdb", "serviceworkers", "cachestorage"],
+    });
+  });
+
+  it("clears the storages even when a cookie refuses to go", async () => {
+    const { session, remove, clearStorageData } = fakeSession([
+      { domain: ".baanx.com", name: "sso", path: "/", secure: true },
+      { domain: "dev.api.baanx.com", name: "csrf", path: "/auth", secure: true },
+    ]);
+    remove.mockRejectedValueOnce(new Error("the cookie store is locked"));
+
+    await clearHostedSessionData(session, ["https://dev.api.baanx.com"]);
+
+    expect(remove).toHaveBeenCalledTimes(2);
+    expect(clearStorageData).toHaveBeenCalledWith({
+      origin: "https://dev.api.baanx.com",
       storages: ["localstorage", "indexdb", "serviceworkers", "cachestorage"],
     });
   });
