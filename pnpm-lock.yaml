@@ -37,8 +37,8 @@ catalogs:
       specifier: 30.5.0
       version: 30.5.0
     '@ledgerhq/coin-evm':
-      specifier: 5.3.1
-      version: 5.3.1
+      specifier: 5.3.2
+      version: 5.3.2
     '@ledgerhq/coin-hypercore':
       specifier: 2.0.1
       version: 2.0.1
@@ -1046,7 +1046,7 @@ importers:
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 5.3.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
@@ -1879,7 +1879,7 @@ importers:
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
+        version: 5.3.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
@@ -2669,7 +2669,7 @@ importers:
         version: link:../../libs/coin-modules/coin-bitcoin
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.1(@ledgerhq/logs@6.19.0)
+        version: 5.3.2(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 8.5.0
@@ -9178,7 +9178,7 @@ importers:
         version: 14.0.1
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 5.3.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 8.5.0(@ledgerhq/live-network@libs+live-network)
@@ -11288,7 +11288,7 @@ importers:
         version: link:../../../features/platform/currencies
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 5.3.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -13040,7 +13040,7 @@ importers:
         version: link:../coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
+        version: 5.3.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../coin-modules/coin-filecoin
@@ -22248,8 +22248,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/coin-evm@5.3.1':
-    resolution: {integrity: sha512-+Blns1bVDjlB5J+GlMY8vAVGyLY+59FZRk+dPhpy8xeCsVVROzQHljjTBs7nP+Om0T6S5v0ypawQXMtvGU0BSw==}
+  '@ledgerhq/coin-evm@5.3.2':
+    resolution: {integrity: sha512-tNkzYJnFpW99hvq66Xfpr7YvwlHmYVrUj4GH4vnURjeJ/ioQkIay0ziT6naAgbo3rMxpdZRDaXX5dexIanwbNQ==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
@@ -47596,7 +47596,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/coin-evm@5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-evm@5.3.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ethersproject/shims': 5.7.0
       '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
@@ -47612,7 +47612,7 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))':
+  '@ledgerhq/coin-evm@5.3.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))':
     dependencies:
       '@ethersproject/shims': 5.7.0
       '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
@@ -47628,7 +47628,7 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@5.3.1(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))':
+  '@ledgerhq/coin-evm@5.3.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))':
     dependencies:
       '@ethersproject/shims': 5.7.0
       '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
@@ -47644,7 +47644,7 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@5.3.1(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-evm@5.3.2(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ethersproject/shims': 5.7.0
       '@ledgerhq/coin-module-framework': 8.5.0
@@ -65246,7 +65246,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
