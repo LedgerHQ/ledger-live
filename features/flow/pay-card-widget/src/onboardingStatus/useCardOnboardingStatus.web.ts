@@ -11,9 +11,9 @@ import {
 export function useCardOnboardingStatus(
   params: CardOnboardingSourcesParams = {},
 ): UseCardOnboardingStatusResult {
-  const { signals, isLoading, isError } = useCardOnboardingSources(params);
+  const { signals, isLoading, isError, refresh } = useCardOnboardingSources(params);
 
   const data = useMemo(() => deriveCardOnboardingStatus(CARD_ONBOARDING_STEPS, signals), [signals]);
 
-  return { data, isLoading, isError };
+  return { data, isLoading, isError, refresh };
 }

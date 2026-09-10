@@ -17,6 +17,10 @@ import {
   markPayCardLoginIntroSeen,
 } from "@features/flow-pay-card-auth/state";
 import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
+import {
+  clearCardOnboardingStatusMock,
+  readCardOnboardingStatusMock,
+} from "@domain/api-card-management/mock/card-onboarding-status";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 
 function buildStore() {
@@ -268,5 +272,95 @@ describe("usePayCardToolProps", () => {
 
     expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(false);
     expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
+  });
+
+  describe("driving the onboarding steps", () => {
+    beforeEach(() => {
+      delete process.env.MSW_ENABLED;
+    });
+
+    afterEach(() => {
+      clearCardOnboardingStatusMock();
+      delete process.env.MSW_ENABLED;
+    });
+
+    it("sets the answer behind a step rather than the step itself", () => {
+      const store = buildStore();
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      act(() => {
+        result.current.cardOnboarding.setStepDone("top-up-card", true);
+        result.current.cardOnboarding.setStepDone("create-account", false);
+      });
+
+      expect(readCardOnboardingStatusMock()).toEqual({
+        walletFunded: true,
+        accountVerified: false,
+      });
+    });
+
+    it("keeps the phone wallet step on the device, because no endpoint answers it", () => {
+      const store = buildStore();
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      act(() => {
+        result.current.cardOnboarding.setStepDone("apple-google-pay", true);
+      });
+
+      expect(store.getState().payCardOnboardingWidget.hasAddedCardToWallet).toBe(true);
+      expect(readCardOnboardingStatusMock()).toEqual({});
+    });
+
+    it("ignores a step nothing answers, so the purchase step cannot be forced", () => {
+      const store = buildStore();
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      act(() => {
+        result.current.cardOnboarding.setStepDone("first-purchase", true);
+      });
+
+      expect(readCardOnboardingStatusMock()).toEqual({});
+    });
+
+    it("hands every endpoint back to the provider", () => {
+      const store = buildStore();
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      act(() => {
+        result.current.cardOnboarding.setStepDone("create-account", true);
+        result.current.cardOnboarding.setStepDone("choose-card-type", true);
+      });
+      act(() => {
+        result.current.cardOnboarding.clearMocks();
+      });
+
+      expect(readCardOnboardingStatusMock()).toEqual({});
+    });
+
+    it("offers no toggle at all while the host intercepts nothing", () => {
+      const store = buildStore();
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      expect(result.current.cardOnboarding.isMockingEnabled).toBe(false);
+      // Every step this project lists is answered by a request: the phone wallet step, which is
+      // answered on the device instead, is mobile-only and this project resolves the web hook.
+      expect(result.current.cardOnboarding.steps.every(({ canToggle }) => !canToggle)).toBe(true);
+    });
+
+    it("offers one per endpoint-answered step once the host intercepts requests", () => {
+      process.env.MSW_ENABLED = "true";
+      const store = buildStore();
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      expect(result.current.cardOnboarding.isMockingEnabled).toBe(true);
+      const togglable = result.current.cardOnboarding.steps
+        .filter(({ canToggle }) => canToggle)
+        .map(({ id }) => id);
+      expect(togglable).toContain("create-account");
+      expect(togglable).toContain("choose-card-type");
+      expect(togglable).toContain("top-up-card");
+      // Nothing answers the purchase step yet, so it stays read-only.
+      expect(togglable).not.toContain("first-purchase");
+    });
   });
 });
