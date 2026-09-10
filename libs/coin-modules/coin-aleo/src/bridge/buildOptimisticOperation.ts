@@ -5,6 +5,7 @@ import {
   getFunctionNameFromTransactionType,
   getNextSequenceNumber,
   getOperationTransactionType,
+  getStakingOperationType,
   isTokenTransaction,
 } from "../logic/utils";
 
@@ -17,8 +18,10 @@ export function buildOptimisticOperation({
 }): AleoOperation {
   const fee = transaction.fees;
   const isTokenTx = isTokenTransaction(transaction);
-  const value = isTokenTx ? fee : transaction.amount;
-  const mainOperationType: OperationType = isTokenTx ? "FEES" : "OUT";
+  const stakingType = getStakingOperationType(transaction.mode);
+  // Staking moves funds between the account's own balances, so the fee is all that leaves it.
+  const value = isTokenTx || stakingType ? fee : transaction.amount;
+  const mainOperationType: OperationType = isTokenTx ? "FEES" : (stakingType ?? "OUT");
   const subOperations: Operation[] = [];
   const tokenSubAccount = account.subAccounts?.find(s => s.id === transaction.subAccountId);
   const transactionSequenceNumber = getNextSequenceNumber(account);

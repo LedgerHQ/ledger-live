@@ -4,7 +4,7 @@ import type {
   TransactionIntent,
   TxDataNotSupported,
 } from "@ledgerhq/coin-module-framework/api/types";
-import type { TRANSACTION_TYPE } from "../constants";
+import type { STAKING_OPERATION_TYPE, TRANSACTION_TYPE } from "../constants";
 import type {
   AleoRecordScannerStatusResponse,
   AleoPublicTransactionDetailsResponse,
@@ -86,10 +86,7 @@ export type AleoTokenType = "arc20" | "arc21" | "arc22" | "unknown";
 
 export type TransactionType = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION_TYPE];
 
-export type AleoStakingMode =
-  | typeof TRANSACTION_TYPE.BOND_PUBLIC
-  | typeof TRANSACTION_TYPE.UNBOND_PUBLIC
-  | typeof TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
+export type AleoStakingMode = keyof typeof STAKING_OPERATION_TYPE;
 
 export type AleoTransactionIntentData =
   | TxDataNotSupported
