@@ -304,6 +304,12 @@ const transactionE2E = [
     teamOwner: Team.BST,
     postSeedHook: shareViewKeyCommand(Account.ALEO_1),
   },
+  {
+    transaction: new Transaction(Account.MINA_1, Account.MINA_2, "0.01"),
+    xrayTicket: "B2CQA-4778",
+    disableBroadcast: true,
+    teamOwner: Team.BST,
+  },
 ];
 
 test.describe("Send", () => {

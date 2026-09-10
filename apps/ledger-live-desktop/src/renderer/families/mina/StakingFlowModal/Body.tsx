@@ -23,6 +23,19 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import logger from "~/renderer/logger";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/mina/types";
+import Box from "~/renderer/components/Box";
+import BigSpinner from "~/renderer/components/BigSpinner";
+
+// Undelegating opens straight on the device step, with no footer to hold it back while the bridge
+// resolves the fee. Signing a zero fee is rejected by the signer, so wait for it to land.
+const StepConnectDevice = (props: StepProps) =>
+  props.bridgePending ? (
+    <Box alignItems="center" justifyContent="center" py={6}>
+      <BigSpinner size={40} />
+    </Box>
+  ) : (
+    <GenericStepConnectDevice {...props} />
+  );
 
 export type Props = {
   stepId: StepId;
@@ -64,7 +77,7 @@ const undelegateSteps: St[] = [
   {
     id: "connectDevice",
     label: <Trans i18nKey="mina.selectValidator.stepLabels.connectDevice" />,
-    component: GenericStepConnectDevice,
+    component: StepConnectDevice,
   },
   {
     id: "confirmation",

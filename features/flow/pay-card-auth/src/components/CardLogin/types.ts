@@ -71,6 +71,6 @@ export type CardLoginViewProps = CardLoginCopy & {
 
 /**
  * `null` once the card holder is signed in, because the login has nothing left to offer then.
- * `CardMore` takes over at that point, and it reads the same flag to know it.
+ * `More` takes over at that point, and it reads the same flag to know it.
  */
 export type CardLoginViewModel = CardLoginViewProps | null;

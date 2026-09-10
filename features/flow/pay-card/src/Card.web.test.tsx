@@ -6,14 +6,13 @@ let mockIsSignedIn = false;
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
-  CardMore: () => <div data-testid="card-more" />,
   useIsCardSignedIn: () => mockIsSignedIn,
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
   CardVisual: () => <div data-testid="card-visual" />,
-  Freeze: () => <div data-testid="card-freeze" />,
+  CardActions: () => <div data-testid="card-actions" />,
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
@@ -58,12 +57,12 @@ describe("Card (web)", () => {
     expect(screen.getByText(title)).toBeVisible();
   });
 
-  it("composes the bare artwork with the auth login and More menu", () => {
+  it("composes the bare artwork with the auth login and card actions", () => {
     render(<Card title={title} oauthConfig={oauthConfig} />);
 
     expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-more")).toBeVisible();
+    expect(screen.getByTestId("card-actions")).toBeVisible();
   });
 
   it("mounts the onboarding widget", () => {
@@ -85,6 +84,6 @@ describe("Card (web)", () => {
     expect(screen.getByTestId("card-visual")).toBeVisible();
     expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
     expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-more")).toBeVisible();
+    expect(screen.getByTestId("card-actions")).toBeVisible();
   });
 });
