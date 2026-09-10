@@ -7,9 +7,8 @@ import {
   type OpenHostedLogin,
 } from "@features/flow-pay-card-auth";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { SIDEBAR_VALUE_TO_PATH } from "LLD/components/SideBar/utils";
 import { useCardHostedManifests } from "./useCardHostedManifests";
-
-const PAY_TAB_PATH = "/paytab";
 
 export type CardHostedPageOpeners = {
   readonly openHostedLogin: OpenHostedLogin;
@@ -17,7 +16,7 @@ export type CardHostedPageOpeners = {
 };
 
 function manifestRoute(manifest: LiveAppManifest): string {
-  return `/platform/${manifest.id}?returnTo=${encodeURIComponent(PAY_TAB_PATH)}`;
+  return `/platform/${manifest.id}?returnTo=${encodeURIComponent(SIDEBAR_VALUE_TO_PATH.paytab)}`;
 }
 
 function requireManifest(manifest: LiveAppManifest | null | undefined): LiveAppManifest {
