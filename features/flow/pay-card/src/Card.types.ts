@@ -1,6 +1,12 @@
 import type { CardLoginProps } from "@features/flow-pay-card-auth";
-import type { CardVisualProps, FormattedValue } from "@features/flow-pay-card-details";
+import type {
+  CardVisualProps,
+  FormattedValue,
+  UnlockForCardNumbers,
+} from "@features/flow-pay-card-details";
 import type { FormatCardTransactionAmount } from "@features/flow-pay-card-transactions";
+
+export type { UnlockForCardNumbers };
 
 /** Host input for the Pay Card flow. */
 export type CardProps = {
@@ -14,6 +20,7 @@ export type CardProps = {
   readonly formatCountervalue?: (value: number) => FormattedValue;
   readonly formatTransactionAmount?: FormatCardTransactionAmount;
   readonly balanceLabel?: string;
+  readonly unlock?: UnlockForCardNumbers;
 };
 
 /**
@@ -33,4 +40,5 @@ export type CardViewProps = {
   readonly displayState: CardDisplayState;
   readonly cardVisual?: CardVisualProps;
   readonly formatTransactionAmount?: FormatCardTransactionAmount;
+  readonly unlock?: UnlockForCardNumbers;
 };
