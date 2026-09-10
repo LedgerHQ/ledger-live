@@ -1,0 +1,67 @@
+{
+  "name": "@features/flow-pay-card-transactions",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pay Card Transactions flow: displays card transaction history for Ledger Wallet",
+  "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "lint": "oxlint src && pnpm lint:tailwind",
+    "lint:ci": "oxlint src --quiet && pnpm lint:tailwind",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet && pnpm lint:tailwind",
+    "lint:tailwind": "eslint --no-eslintrc --no-error-on-unmatched-pattern -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card-transactions/knip.web.config.mjs -W features/flow/pay-card-transactions --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card-transactions/knip.native.config.mjs -W features/flow/pay-card-transactions --tsConfig tsconfig.native.json"
+  },
+  "devDependencies": {
+    "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "8.57.0",
+    "eslint-plugin-better-tailwindcss": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-native": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    }
+  }
+}

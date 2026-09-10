@@ -7061,6 +7061,87 @@ importers:
         specifier: 1.51.0
         version: 1.51.0
 
+  features/flow/pay-card-transactions:
+    devDependencies:
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.56(@ledgerhq/lumen-design-core@0.1.27)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@ledgerhq/lumen-ui-rnative':
+        specifier: 'catalog:'
+        version: 0.1.59(@ledgerhq/lumen-design-core@0.1.27)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/react-native':
+        specifier: 'catalog:'
+        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.5.0(@types/node@24.12.0))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.0.0(@types/react@19.0.14)
+      '@typescript-eslint/parser':
+        specifier: 'catalog:'
+        version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
+      eslint:
+        specifier: 8.57.0
+        version: 8.57.0
+      eslint-plugin-better-tailwindcss:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.3(@typescript/typescript6@6.0.2)(eslint@8.57.0)(tailwindcss@4.1.18)
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.64.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.79.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
+      react-test-renderer:
+        specifier: 'catalog:'
+        version: 19.1.4(react@19.1.4)
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.1.18
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   features/flow/pay-card-wallets:
     dependencies:
       '@domain/api-card-management':
@@ -23016,7 +23097,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -28489,7 +28569,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -37224,6 +37304,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -37414,9 +37495,6 @@ packages:
 
   react-is@19.1.1:
     resolution: {integrity: sha512-tr41fA15Vn8p4X9ntI+yCyeGSf1TlYaY5vlTZfQmeLBrFo3psOPX6HhTDnFNL9uj3EhP0KAQ80cugCl4b4BERA==}
-
-  react-is@19.2.7:
-    resolution: {integrity: sha512-kZFnouyVv7eP/Phmrlo9FK+zcAdriZJvzxXHF1Sl1P377WSGe2G/JxVolhTrB/jeV47lKImhNUsijjHAAbcl/A==}
 
   react-is@19.2.8:
     resolution: {integrity: sha512-s5un28nYxKJw5gvUHyW5PCC28CvBqLu9r3cWgzHT4Vo/5fqqkFcdRYsGcKf50WMPpjjFZS5d76fn3YCo2njKwQ==}
@@ -42441,7 +42519,7 @@ snapshots:
       '@babel/helper-optimise-call-expression': 7.27.1
       '@babel/helper-replace-supers': 7.27.1
       '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -42454,7 +42532,7 @@ snapshots:
       '@babel/helper-optimise-call-expression': 7.27.1
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
       '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -42466,7 +42544,7 @@ snapshots:
       '@babel/helper-optimise-call-expression': 7.27.1
       '@babel/helper-replace-supers': 7.27.1
       '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -42479,7 +42557,7 @@ snapshots:
       '@babel/helper-optimise-call-expression': 7.27.1
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
       '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -42558,7 +42636,7 @@ snapshots:
     dependencies:
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -42567,7 +42645,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -42613,8 +42691,8 @@ snapshots:
 
   '@babel/helper-skip-transparent-expression-wrappers@7.27.1':
     dependencies:
-      '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
+      '@babel/traverse': 7.29.8
+      '@babel/types': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -42645,7 +42723,7 @@ snapshots:
   '@babel/helpers@7.28.4':
     dependencies:
       '@babel/template': 7.28.6
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@babel/highlight@7.24.6':
     dependencies:
@@ -42664,7 +42742,7 @@ snapshots:
 
   '@babel/parser@7.29.2':
     dependencies:
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@babel/parser@7.29.8':
     dependencies:
@@ -42674,7 +42752,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -42701,7 +42779,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -42936,7 +43014,7 @@ snapshots:
     dependencies:
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-remap-async-to-generator': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -42945,7 +43023,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-remap-async-to-generator': 7.27.1(@babel/core@7.28.5)
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43010,7 +43088,7 @@ snapshots:
       '@babel/helper-globals': 7.28.0
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-replace-supers': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43022,7 +43100,7 @@ snapshots:
       '@babel/helper-globals': 7.28.0
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43040,7 +43118,7 @@ snapshots:
   '@babel/plugin-transform-destructuring@7.28.5':
     dependencies:
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43048,7 +43126,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43126,7 +43204,7 @@ snapshots:
     dependencies:
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43135,7 +43213,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43196,7 +43274,7 @@ snapshots:
       '@babel/helper-module-transforms': 7.28.3(@babel/core@7.28.5)
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43248,7 +43326,7 @@ snapshots:
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-transform-destructuring': 7.28.5
       '@babel/plugin-transform-parameters': 7.27.7
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43259,7 +43337,7 @@ snapshots:
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-transform-destructuring': 7.28.5(@babel/core@7.28.5)
       '@babel/plugin-transform-parameters': 7.27.7(@babel/core@7.28.5)
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43381,7 +43459,7 @@ snapshots:
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-syntax-jsx': 7.27.1
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43392,7 +43470,7 @@ snapshots:
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
     transitivePeerDependencies:
       - supports-color
 
@@ -43628,7 +43706,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       esutils: 2.0.3
 
   '@babel/preset-react@7.28.5(@babel/core@7.28.5)':
@@ -43700,7 +43778,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.29.7
       '@babel/parser': 7.29.2
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
 
   '@babel/template@7.29.7':
     dependencies:
@@ -43754,7 +43832,7 @@ snapshots:
       '@babel/helper-globals': 7.28.0
       '@babel/parser': 7.29.2
       '@babel/template': 7.28.6
-      '@babel/types': 7.29.0
+      '@babel/types': 7.29.8
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
@@ -43869,7 +43947,7 @@ snapshots:
 
   '@bunli/generator@0.6.5(@typescript/typescript6@6.0.2)(react@19.1.4)':
     dependencies:
-      '@babel/parser': 7.29.8
+      '@babel/parser': 7.29.2
       '@babel/traverse': 7.29.8
       '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react@19.1.4)
       better-result: 2.8.2
@@ -51491,7 +51569,7 @@ snapshots:
       open: 10.2.0
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
-      react-is: 19.2.7
+      react-is: 19.2.8
       semver: 7.8.1
       socketcluster-server: 19.2.1
       sqlite3: 5.1.7
@@ -68403,8 +68481,6 @@ snapshots:
   react-is@19.0.0: {}
 
   react-is@19.1.1: {}
-
-  react-is@19.2.7: {}
 
   react-is@19.2.8: {}
 
