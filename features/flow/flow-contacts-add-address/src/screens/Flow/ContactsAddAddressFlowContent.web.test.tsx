@@ -4,10 +4,9 @@ import {
   ContactAddressLabelSchema,
   ContactAddressValueSchema,
   type ContactAddress,
-  type ContactAddressLabelValidationErrorName,
   type ContactId,
 } from "@domain/entity-contact";
-import type { AddAddressEntryLabels, AddAddressFlowState } from "../../state/types";
+import type { AddAddressFlowState } from "../../state/types";
 import {
   ContactsAddAddressFlowContent,
   type ContactsAddAddressFlowContentProps,
@@ -15,8 +14,10 @@ import {
   shouldUseAddAddressFlowBackNavigation,
   type AddAddressWebFlowStep,
 } from "./ContactsAddAddressFlowContent";
-import type { ContactsAddAddressNameLabels } from "../AddressName/types";
-import type { ContactsAddAddressReviewLabels } from "../Review/types";
+
+jest.mock("@shared/i18n", () => ({
+  useTranslation: () => ({ t: (key: string) => key }),
+}));
 
 type OpenAddAddressFlowState = Exclude<AddAddressFlowState, { status: "closed" }>;
 
@@ -24,35 +25,6 @@ function createState(status: OpenAddAddressFlowState["status"]): OpenAddAddressF
   return { status } as OpenAddAddressFlowState;
 }
 
-const entryLabels: AddAddressEntryLabels = {
-  title: "Enter address",
-  addressPlaceholder: "Address",
-  confirmAddress: "Continue",
-  validatingAddress: "Validating address",
-  validAddress: "Valid address",
-  invalidAddress: "Invalid address",
-  domainNotFound: "Domain not found",
-  sanctionedAddress: "Address is sanctioned",
-  validationUnavailable: "Address validation is unavailable",
-  ensDisclaimer: "ENS disclaimer",
-  ensDisclaimerDescription: "ENS names can change over time.",
-};
-const nameLabels: ContactsAddAddressNameLabels = {
-  inputLabel: "Address name",
-  namingDisclaimer: "Address naming disclaimer",
-  namingDisclaimerAccessibilityLabel: "Address name information",
-  continueToReview: "Continue to review",
-  validAddress: "Valid address",
-  validationErrors: {} as Record<ContactAddressLabelValidationErrorName, string>,
-};
-const reviewLabels: ContactsAddAddressReviewLabels = {
-  title: "Review address",
-  addressLabel: "Address",
-  currencyLabel: "Currency",
-  networkLabel: "Network",
-  nameLabel: "Address name",
-  continue: "Confirm address",
-};
 const address = ContactAddressValueSchema.parse("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
 const label = ContactAddressLabelSchema.parse("Ethereum");
 
@@ -91,9 +63,6 @@ function createContentProps(
 ): ContactsAddAddressFlowContentProps {
   return {
     state,
-    entryLabels,
-    nameLabels,
-    reviewLabels,
     onAddressChange: jest.fn(),
     onContinueFromAddressDetails: jest.fn(),
     onAddressLabelChange: jest.fn(),

@@ -1,23 +1,12 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { ContactAddressValueSchema } from "@domain/entity-contact";
-import type { AddAddressEntryLabels, AddAddressEntryState } from "../../../../state/types";
+import type { AddAddressEntryState } from "../../../../state/types";
 import { ContactsAddAddressEntry } from "./ContactsAddAddressEntry";
 
-const labels: AddAddressEntryLabels = {
-  title: "Enter address",
-  addressPlaceholder: "Address or ENS",
-  confirmAddress: "Confirm address",
-  validatingAddress: "Validating address",
-  validAddress: "Valid address",
-  invalidAddress: "Invalid address",
-  domainNotFound: "No address found for this domain",
-  sanctionedAddress: "This address is sanctioned and cannot be used.",
-  validationUnavailable: "Address validation is unavailable",
-  ensDisclaimer: "ENS names resolve to wallet addresses.",
-  ensDisclaimerDescription:
-    "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify.",
-};
+jest.mock("@shared/i18n", () => ({
+  useTranslation: () => ({ t: (key: string) => key }),
+}));
 
 const VALID_ADDRESS = ContactAddressValueSchema.parse("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
 
@@ -29,7 +18,6 @@ function renderEntry(addressEntry: AddAddressEntryState, bottomOffset?: number) 
   render(
     <ContactsAddAddressEntry
       addressEntry={addressEntry}
-      labels={labels}
       {...(bottomOffset === undefined ? {} : { bottomOffset })}
       onChangeText={onChangeText}
       onConfirm={onConfirm}
@@ -50,8 +38,10 @@ describe("ContactsAddAddressEntry", () => {
     });
 
     const addressInput = screen.getByTestId("contacts-add-address-input");
-    expect(screen.UNSAFE_getByProps({ title: "Enter address" }).props.title).toBe("Enter address");
-    expect(addressInput.props.placeholder).toBe("Address or ENS");
+    expect(screen.UNSAFE_getByProps({ title: "contacts.addAddressEntry.title" }).props.title).toBe(
+      "contacts.addAddressEntry.title",
+    );
+    expect(addressInput.props.placeholder).toBe("contacts.addAddressEntry.addressPlaceholder");
     expect(screen.getByTestId("contacts-add-address-entry-screen")).toHaveStyle({
       bottom: 0,
       paddingBottom: 32,
@@ -135,7 +125,7 @@ describe("ContactsAddAddressEntry", () => {
     });
 
     expect(screen.getByTestId("contacts-add-address-input").props.helperText).toBe(
-      "Validating address",
+      "contacts.addAddressEntry.validatingAddress",
     );
     expect(screen.getByTestId("contacts-add-address-confirm").props.disabled).toBe(true);
   });
@@ -150,7 +140,6 @@ describe("ContactsAddAddressEntry", () => {
           inputMethod: "manual",
           error: "sanctioned",
         }}
-        labels={labels}
         sanctionedAddressBanner={{
           description: "This wallet address is sanctioned.",
           actionLabel: "Learn more",
@@ -179,7 +168,7 @@ describe("ContactsAddAddressEntry", () => {
     });
 
     expect(screen.getByTestId("contacts-add-address-input").props).toMatchObject({
-      helperText: "Valid address",
+      helperText: "contacts.addAddressEntry.validAddress",
       status: "success",
     });
     expect(screen.getByTestId("contacts-add-address-confirm").props.disabled).toBe(false);
@@ -190,9 +179,9 @@ describe("ContactsAddAddressEntry", () => {
   });
 
   it.each([
-    ["invalid_format", "Invalid address"],
-    ["domain_not_found", "No address found for this domain"],
-    ["sanctioned", "This address is sanctioned and cannot be used."],
+    ["invalid_format", "contacts.addAddressEntry.invalidAddress"],
+    ["domain_not_found", "contacts.addAddressEntry.domainNotFound"],
+    ["sanctioned", "contacts.addAddressEntry.sanctionedAddress"],
   ] as const)("should render the %s error", (error, expectedMessage) => {
     renderEntry({
       status: "invalid",
@@ -218,7 +207,7 @@ describe("ContactsAddAddressEntry", () => {
     });
 
     expect(screen.getByTestId("contacts-add-address-input").props).toMatchObject({
-      helperText: "Address validation is unavailable",
+      helperText: "contacts.addAddressEntry.validationUnavailable",
       status: "error",
     });
     expect(screen.getByTestId("contacts-add-address-confirm").props.disabled).toBe(true);
@@ -233,10 +222,10 @@ describe("ContactsAddAddressEntry", () => {
     });
 
     expect(screen.getByTestId("contacts-add-address-ens-disclaimer").props.title).toBe(
-      "ENS names resolve to wallet addresses.",
+      "contacts.addAddressEntry.ensDisclaimer",
     );
     expect(screen.getByTestId("contacts-add-address-ens-disclaimer").props.description).toBe(
-      "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify.",
+      "contacts.addAddressEntry.ensDisclaimerDescription",
     );
   });
 });

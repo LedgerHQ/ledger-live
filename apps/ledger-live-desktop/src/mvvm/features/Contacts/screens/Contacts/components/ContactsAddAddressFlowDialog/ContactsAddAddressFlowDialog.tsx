@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { DialogFlow, type DialogFlowScreenRegistry } from "LLD/components/DialogFlow";
 import { ModularDialogFlow } from "LLD/features/ModularDialog/ModularDialogFlow";
 import {
@@ -11,10 +12,7 @@ import type { ContactsAddAddressFlowDialogProps } from "./types";
 
 export function ContactsAddAddressFlowDialog({
   state,
-  entryLabels,
   sanctionedAddressBanner,
-  nameLabels,
-  reviewLabels,
   onAddressChange,
   onContinueFromAddressDetails,
   onAddressLabelChange,
@@ -23,6 +21,7 @@ export function ContactsAddAddressFlowDialog({
   onBack,
   onClose,
 }: ContactsAddAddressFlowDialogProps): React.JSX.Element | null {
+  const { t } = useTranslation();
   if (state.status === "closed") {
     return null;
   }
@@ -33,15 +32,13 @@ export function ContactsAddAddressFlowDialog({
     <ModularDialogFlow fillAvailableHeight={isSelectingCurrency} onClose={onClose}>
       {modularDialog => {
         const currentStep = resolveAddAddressWebFlowStep(state);
+        const entryTitle = t("contacts.addAddressEntry.title");
         const flowContent =
           state.status === "selectingCurrency" ? (
             modularDialog.content
           ) : (
             <ContactsAddAddressFlowContent
-              entryLabels={entryLabels}
               sanctionedAddressBanner={sanctionedAddressBanner}
-              nameLabels={nameLabels}
-              reviewLabels={reviewLabels}
               onAddressChange={onAddressChange}
               onAddressLabelChange={onAddressLabelChange}
               onContinueFromAddressDetails={onContinueFromAddressDetails}
@@ -65,28 +62,28 @@ export function ContactsAddAddressFlowDialog({
           address: {
             content: flowContent,
             options: {
-              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
+              dialogHeaderProps: { density: "expanded", title: entryTitle },
               hasBackButton: true,
             },
           },
           name: {
             content: flowContent,
             options: {
-              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
+              dialogHeaderProps: { density: "expanded", title: entryTitle },
               hasBackButton: true,
             },
           },
           review: {
             content: flowContent,
             options: {
-              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
+              dialogHeaderProps: { density: "expanded", title: entryTitle },
               hasBackButton: true,
             },
           },
           success: {
             content: flowContent,
             options: {
-              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
+              dialogHeaderProps: { density: "expanded", title: entryTitle },
               hasBackButton: false,
             },
           },

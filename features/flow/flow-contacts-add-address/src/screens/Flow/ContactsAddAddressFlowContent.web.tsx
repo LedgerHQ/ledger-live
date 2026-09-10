@@ -2,13 +2,8 @@ import React from "react";
 import { ContactsAddAddressEntry } from "../AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry";
 import type { SanctionedAddressBannerProps } from "../../components/SanctionedAddressBanner/types";
 import { ContactsAddAddressNameInput } from "../AddressName/components/Input/ContactsAddAddressNameInput";
-import type { ContactsAddAddressNameLabels } from "../AddressName/types";
-import { ContactsAddAddressReview, type ContactsAddAddressReviewLabels } from "../Review";
-import type {
-  AddAddressEntryLabels,
-  AddAddressFlowState,
-  AddAddressInputSource,
-} from "../../state/types";
+import { ContactsAddAddressReview } from "../Review";
+import type { AddAddressFlowState, AddAddressInputSource } from "../../state/types";
 
 export type AddAddressWebFlowStep = "currency" | "address" | "name" | "review" | "success";
 
@@ -17,10 +12,7 @@ type AddAddressFlowContentState = Exclude<OpenAddAddressFlowState, { status: "se
 
 export type ContactsAddAddressFlowContentProps = Readonly<{
   state: AddAddressFlowContentState;
-  entryLabels: AddAddressEntryLabels;
   sanctionedAddressBanner?: SanctionedAddressBannerProps;
-  nameLabels: ContactsAddAddressNameLabels;
-  reviewLabels?: ContactsAddAddressReviewLabels;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onContinueFromAddressDetails: () => void;
   onAddressLabelChange: (value: string) => void;
@@ -57,10 +49,7 @@ export function shouldUseAddAddressFlowBackNavigation(state: OpenAddAddressFlowS
 
 export function ContactsAddAddressFlowContent({
   state,
-  entryLabels,
   sanctionedAddressBanner,
-  nameLabels,
-  reviewLabels,
   onAddressChange,
   onContinueFromAddressDetails,
   onAddressLabelChange,
@@ -73,9 +62,7 @@ export function ContactsAddAddressFlowContent({
         <ContactsAddAddressEntry
           addressEntry={state.addressEntry}
           addressLabel={state.addressLabel}
-          labels={entryLabels}
           sanctionedAddressBanner={sanctionedAddressBanner}
-          nameLabels={nameLabels}
           onAddressChange={onAddressChange}
           onAddressLabelChange={onAddressLabelChange}
           onConfirm={onContinueFromAddressDetails}
@@ -86,7 +73,6 @@ export function ContactsAddAddressFlowContent({
         <ContactsAddAddressNameInput
           addressEntry={state.addressEntry}
           addressLabel={state.addressLabel}
-          labels={nameLabels}
           showConfirmedAddress={state.entryMode === "mad"}
           onAddressLabelChange={onAddressLabelChange}
           onContinue={onContinueFromName}
@@ -95,17 +81,12 @@ export function ContactsAddAddressFlowContent({
     case "confirmationRequired":
       return null;
     case "reviewingAddress":
-      if (
-        state.entryMode === "prefilled" &&
-        state.displayContext !== null &&
-        reviewLabels !== undefined
-      ) {
+      if (state.entryMode === "prefilled" && state.displayContext !== null) {
         return (
           <ContactsAddAddressReview
             addressEntry={state.addressEntry}
             addressLabel={state.addressLabel}
             displayContext={state.displayContext}
-            labels={reviewLabels}
             onContinue={onContinueFromReview}
           />
         );

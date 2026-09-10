@@ -10,7 +10,6 @@ import type {
 
 export type AddressLabelConfiguration = Readonly<{
   addressLabel: AddAddressLabelState;
-  nameLabels: ContactsAddAddressNameLabels;
   onAddressLabelChange: (value: string) => void;
 }>;
 
@@ -36,7 +35,6 @@ type WithoutAddressLabelViewConfiguration = Readonly<{
 
 type ContactsAddAddressEntryWebBaseProps = Readonly<{
   addressEntry: AddAddressEntryState;
-  labels: AddAddressEntryLabels;
   sanctionedAddressBanner?: SanctionedAddressBannerProps;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onConfirm?: () => void;

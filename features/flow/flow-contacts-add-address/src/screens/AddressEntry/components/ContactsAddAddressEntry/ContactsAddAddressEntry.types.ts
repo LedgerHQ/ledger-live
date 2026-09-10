@@ -9,7 +9,6 @@ export type { SanctionedAddressBannerProps } from "../../../../components/Sancti
 
 export type ContactsAddAddressEntryProps = Readonly<{
   addressEntry: AddAddressEntryState;
-  labels: AddAddressEntryLabels;
   sanctionedAddressBanner?: SanctionedAddressBannerProps;
   bottomOffset?: number;
   onChangeText: (value: string, inputMethod: AddAddressInputSource) => void;
