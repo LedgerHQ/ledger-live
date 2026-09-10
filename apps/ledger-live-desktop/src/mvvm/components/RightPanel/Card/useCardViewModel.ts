@@ -58,7 +58,7 @@ export function useCardViewModel(): CardViewModel {
       apiUrl,
       clientId,
       // No `hostedUiUrl`: the manifest of the live app carries the base of every hosted page.
-      // No `deepLink`: the Discover webview has no session to close, so nothing acts on it.
+      // No `deepLink`: the Discover webview has no secure-browser-session API to close it with.
       redirectUri,
     }),
     [apiUrl, clientId, redirectUri],
