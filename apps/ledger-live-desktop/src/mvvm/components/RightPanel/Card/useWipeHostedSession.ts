@@ -10,7 +10,13 @@ export function useWipeHostedSessionOnSignInChange(): void {
   const lastSignedIn = useRef(isSignedIn);
 
   const origins = useMemo(
-    () => [...new Set([manifestOrigin(login), manifestOrigin(hosted)].filter(o => o !== null))],
+    () => [
+      ...new Set(
+        [manifestOrigin(login), manifestOrigin(hosted)].filter(
+          (origin): origin is string => origin !== null,
+        ),
+      ),
+    ],
     [login, hosted],
   );
 
