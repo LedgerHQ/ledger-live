@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.20.0-next.1
+
+### Minor Changes
+
+- [#21746](https://github.com/LedgerHQ/ledger-live/pull/21746) [`c2e2276`](https://github.com/LedgerHQ/ledger-live/commit/c2e2276459d5e48e938145eb54bae572f5ae7a60) Thanks [@amaslakov](https://github.com/amaslakov)! - Add the error message shown when the protocol refuses a Tezos stake amount as too small
+
 ## 4.20.0-next.0
 
 ### Minor Changes

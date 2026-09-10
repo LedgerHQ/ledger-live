@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 4.20.0-next.1
+
+### Minor Changes
+
+- [#21746](https://github.com/LedgerHQ/ledger-live/pull/21746) [`c2e2276`](https://github.com/LedgerHQ/ledger-live/commit/c2e2276459d5e48e938145eb54bae572f5ae7a60) Thanks [@amaslakov](https://github.com/amaslakov)! - Add the error message shown when the protocol refuses a Tezos stake amount as too small
+
+### Patch Changes
+
+- Updated dependencies [[`12199a1`](https://github.com/LedgerHQ/ledger-live/commit/12199a1c615ccd21c1f3574b0f1868dbf0800ba2)]:
+  - @ledgerhq/live-common@37.6.0-next.1
+  - @ledgerhq/asset-detail@0.11.4-next.1
+  - @ledgerhq/live-dmk-desktop@0.21.0-next.1
+
 ## 4.20.0-next.0
 
 ### Minor Changes

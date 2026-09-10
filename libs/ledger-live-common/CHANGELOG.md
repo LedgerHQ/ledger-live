@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 37.6.0-next.1
+
+### Minor Changes
+
+- [#21746](https://github.com/LedgerHQ/ledger-live/pull/21746) [`12199a1`](https://github.com/LedgerHQ/ledger-live/commit/12199a1c615ccd21c1f3574b0f1868dbf0800ba2) Thanks [@amaslakov](https://github.com/amaslakov)! - Pass the coin-tezos context to the baker lookups, which now resolve the config themselves instead of taking a resolved one
+
 ## 37.6.0-next.0
 
 ### Minor Changes
