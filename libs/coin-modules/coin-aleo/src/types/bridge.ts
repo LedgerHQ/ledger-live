@@ -136,7 +136,10 @@ export interface AleoResources {
   lastPrivateSyncDate: Date | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  bondedBalance?: BigNumber;
   bondedValidator?: string | null;
+  unbondingBalance?: BigNumber;
+  unbondingHeight?: number | null;
 }
 
 export interface AleoResourcesRaw {
@@ -147,8 +150,20 @@ export interface AleoResourcesRaw {
   lastPrivateSyncDate: string | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  bondedBalance?: string;
   bondedValidator?: string | null;
+  unbondingBalance?: string;
+  unbondingHeight?: number | null;
 }
+
+/**
+ * The staking slice of {@link AleoResources}. Absent entirely — not zeroed — while the
+ * `enableStaking` flag is off, since the mappings are then never read.
+ */
+export type AleoStakingResources = Pick<
+  AleoResources,
+  "bondedBalance" | "bondedValidator" | "unbondingBalance" | "unbondingHeight"
+>;
 
 export type AleoAccount = Account & {
   aleoResources?: AleoResources;

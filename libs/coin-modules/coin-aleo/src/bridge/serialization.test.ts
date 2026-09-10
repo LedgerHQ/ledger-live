@@ -113,6 +113,87 @@ describe("serialization", () => {
     });
   });
 
+  describe("staking position round-trip", () => {
+    const stakedResources: AleoResources = {
+      ...mockAleoResources,
+      bondedBalance: new BigNumber("12500000000"),
+      bondedValidator: "aleo1validator",
+      unbondingBalance: new BigNumber("3000000"),
+      unbondingHeight: 987654,
+    };
+
+    it("preserves a fully-populated staking position", () => {
+      const result = fromAleoResourcesRaw(toAleoResourcesRaw(stakedResources));
+
+      expect(result).toEqual(stakedResources);
+    });
+
+    it("leaves the staking fields absent on an account persisted before they existed", () => {
+      // The four fields are absent from every cached account written before this change, and
+      // absent is not the same as zeroed: it means the mappings were never read.
+      const rawWithoutStaking: AleoResourcesRaw = {
+        transparentBalance: mockAleoResourcesRaw.transparentBalance,
+        privateBalance: mockAleoResourcesRaw.privateBalance,
+        provableApi: mockAleoResourcesRaw.provableApi,
+        lastPrivateSyncDate: mockAleoResourcesRaw.lastPrivateSyncDate,
+        unspentPrivateRecords: mockAleoResourcesRaw.unspentPrivateRecords,
+      };
+
+      const result = fromAleoResourcesRaw(rawWithoutStaking);
+
+      expect(result).not.toHaveProperty("bondedBalance");
+      expect(result).not.toHaveProperty("bondedValidator");
+      expect(result).not.toHaveProperty("unbondingBalance");
+      expect(result).not.toHaveProperty("unbondingHeight");
+    });
+
+    it("omits the staking fields when the position was never synced", () => {
+      // Same invariant on the way out: a staking-disabled account must not grow the fields
+      // on its first persist/restore.
+      const {
+        bondedBalance: _b,
+        bondedValidator: _v,
+        unbondingBalance: _u,
+        unbondingHeight: _h,
+        ...withoutStaking
+      } = mockAleoResources;
+
+      const raw = toAleoResourcesRaw(withoutStaking);
+
+      expect(raw).not.toHaveProperty("bondedBalance");
+      expect(raw).not.toHaveProperty("bondedValidator");
+      expect(raw).not.toHaveProperty("unbondingBalance");
+      expect(raw).not.toHaveProperty("unbondingHeight");
+      expect(fromAleoResourcesRaw(raw)).toEqual(withoutStaking);
+    });
+
+    it("keeps a zeroed position that was actually synced", () => {
+      // enableStaking on with nothing bonded: the zeros are a real reading, not an absence.
+      const raw = toAleoResourcesRaw({
+        ...mockAleoResources,
+        bondedBalance: new BigNumber(0),
+        bondedValidator: null,
+        unbondingBalance: new BigNumber(0),
+        unbondingHeight: null,
+      });
+
+      expect(raw.bondedBalance).toBe("0");
+      expect(raw.unbondingBalance).toBe("0");
+      expect(raw.bondedValidator).toBeNull();
+      expect(raw.unbondingHeight).toBeNull();
+    });
+
+    it("keeps a bonded balance beyond the JS safe integer range exact", () => {
+      const huge = "9007199254740993000";
+
+      const result = fromAleoResourcesRaw(
+        toAleoResourcesRaw({ ...mockAleoResources, bondedBalance: new BigNumber(huge) }),
+      );
+
+      expect(result.bondedBalance?.toFixed()).toBe(huge);
+    });
+  });
+
   describe("assignToAccountRaw", () => {
     it("should write serialized resources onto AccountRaw", () => {
       assignToAccountRaw(mockedAccount, mockedAccountRaw);
