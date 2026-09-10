@@ -15,9 +15,11 @@ export function CardLoginView({
   title,
   description,
   loginLabel,
+  alreadyHaveCardLabel,
   isLoading,
   errorMessage,
   onLoginPress,
+  onAlreadyHaveCardPress,
   intro,
 }: CardLoginViewProps) {
   return (
@@ -46,6 +48,18 @@ export function CardLoginView({
             {loginLabel}
           </Button>
         </Box>
+        {alreadyHaveCardLabel ? (
+          <Button
+            appearance="no-background"
+            size="md"
+            disabled={isLoading}
+            onPress={onAlreadyHaveCardPress}
+            accessibilityLabel={alreadyHaveCardLabel}
+            lx={{ alignSelf: "flex-end" }}
+          >
+            {alreadyHaveCardLabel}
+          </Button>
+        ) : null}
         {errorMessage ? (
           <Text typography="body3" lx={{ color: "error", alignSelf: "flex-end" }}>
             {errorMessage}
