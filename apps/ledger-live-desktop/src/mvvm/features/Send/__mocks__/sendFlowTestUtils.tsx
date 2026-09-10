@@ -266,6 +266,7 @@ jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientVa
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
   const actual = jest.requireActual("@ledgerhq/live-common/bridge/descriptor/send/features");
   return {
+    ...actual,
     sendFeatures: {
       ...actual.sendFeatures,
       hasBalanceTypeStep: jest.fn(() => mockBalanceTypeConfig !== null),
