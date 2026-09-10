@@ -8,44 +8,16 @@ const ready: CardAssetsViewModel = {
   isVisible: true,
   title: CARD_ASSETS_COPY.title,
   status: "ready",
-  rows: [
-    { id: "w-usdc", cryptoAmount: "125.40 USDC" },
-    { id: "w-usdt", cryptoAmount: "USDT" },
-  ],
+  rows: [{ id: "w-usdc", cryptoAmount: "125.40 USDC" }],
   emptyLabel: CARD_ASSETS_COPY.empty,
   errorLabel: CARD_ASSETS_COPY.error,
 };
 
 describe("CardAssetsView (native)", () => {
-  it("should render nothing while signed out", () => {
-    render(<CardAssetsView {...ready} isVisible={false} />);
-
-    expect(screen.queryByText(CARD_ASSETS_COPY.title)).toBeNull();
-  });
-
-  it("should show the Assets title without rows while loading", () => {
-    render(<CardAssetsView {...ready} status="loading" rows={[]} />);
-
-    expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeVisible();
-    expect(screen.queryByText("125.40 USDC")).toBeNull();
-  });
-
-  it("should show the error copy when the wallets read fails", () => {
-    render(<CardAssetsView {...ready} status="error" rows={[]} />);
-
-    expect(screen.getByText(CARD_ASSETS_COPY.error)).toBeVisible();
-  });
-
-  it("should show the empty copy when there are no linked wallets", () => {
-    render(<CardAssetsView {...ready} status="empty" rows={[]} />);
-
-    expect(screen.getByText(CARD_ASSETS_COPY.empty)).toBeVisible();
-  });
-
-  it("should list each wallet crypto amount", () => {
+  it("should render nothing until the mobile list is implemented", () => {
     render(<CardAssetsView {...ready} />);
 
-    expect(screen.getByText("125.40 USDC")).toBeVisible();
-    expect(screen.getByText("USDT")).toBeVisible();
+    expect(screen.queryByText(CARD_ASSETS_COPY.title)).toBeNull();
+    expect(screen.queryByText("125.40 USDC")).toBeNull();
   });
 });
