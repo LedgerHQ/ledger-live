@@ -33,6 +33,7 @@ describe("buildHostedUrl", () => {
     "https://attacker.test/onboarding/signup",
     "//attacker.test/onboarding/signup",
     "https://provider.test.attacker.test/onboarding/signup",
+    "http://provider.test/onboarding/signup",
   ])("refuses the path %p, which leaves the base origin", path => {
     expect(() => buildHostedUrl("https://provider.test", path)).toThrow(/must stay on/);
   });

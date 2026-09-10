@@ -4,11 +4,12 @@ export function buildHostedUrl(baseUrl: string | undefined, path: string): strin
   }
 
   const base = new URL(baseUrl);
-  const url = new URL(path, base);
 
-  if (url.protocol !== "https:") {
-    throw new Error(`buildHostedUrl: baseUrl must be https, got "${url.protocol}"`);
+  if (base.protocol !== "https:") {
+    throw new Error(`buildHostedUrl: baseUrl must be https, got "${base.protocol}"`);
   }
+
+  const url = new URL(path, base);
 
   if (url.origin !== base.origin) {
     throw new Error(`buildHostedUrl: the path must stay on ${base.origin}, got "${url.origin}"`);
