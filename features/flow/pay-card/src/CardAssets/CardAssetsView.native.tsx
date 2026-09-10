@@ -25,7 +25,7 @@ export function CardAssetsView({
   }
 
   return (
-    <Box lx={{ width: "100%", flexDirection: "column", gap: "s12" }}>
+    <Box lx={{ width: "full", flexDirection: "column", gap: "s12" }}>
       <Subheader>
         <SubheaderRow>
           <SubheaderTitle>{title}</SubheaderTitle>
@@ -42,7 +42,7 @@ export function CardAssetsView({
         </Text>
       ) : null}
       {status === "ready" ? (
-        <Box lx={{ width: "100%", flexDirection: "column", gap: "s8" }}>
+        <Box lx={{ width: "full", flexDirection: "column", gap: "s8" }}>
           {rows.map(row => (
             <ListItem key={row.id}>
               <ListItemTrailing>
