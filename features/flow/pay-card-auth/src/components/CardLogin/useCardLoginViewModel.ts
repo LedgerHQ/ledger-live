@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useMachine } from "@xstate/react";
 import type { SnapshotFrom } from "xstate";
 import { useTranslation } from "@shared/i18n";
-import { buildSignupUrl } from "../../state/buildSignupUrl";
+import { buildSignupUrl, SIGNUP_PATH } from "../../state/buildSignupUrl";
 import { createCardLoginPorts, type CardLoginDispatch } from "../../state/createCardLoginPorts";
 import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
@@ -78,7 +78,8 @@ export function mapSnapshotToViewModel(
 
   return {
     ...copy,
-    isLoading: value !== "idle" && value !== "error",
+    // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
+    isLoading: value !== "idle" && value !== "error" && value !== "awaitingCallback",
     errorMessage: errorKind ? ERROR_MESSAGES[errorKind] : null,
     onLoginPress,
     intro,
@@ -87,6 +88,7 @@ export function mapSnapshotToViewModel(
 
 export function useCardLoginViewModel({
   openHostedLogin,
+  openHostedPage,
   mobileWallet,
   oauthConfig,
   callback,
@@ -144,12 +146,16 @@ export function useCardLoginViewModel({
 
     void (async () => {
       try {
+        if (openHostedPage) {
+          await openHostedPage(SIGNUP_PATH);
+          return;
+        }
         await openHostedLogin(buildSignupUrl(oauthConfig), oauthConfig.deepLink);
       } catch {
         setHasSignupFailed(true);
       }
     })();
-  }, [openHostedLogin, oauthConfig]);
+  }, [openHostedPage, openHostedLogin, oauthConfig]);
 
   const trackCta = useCallback(
     (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
