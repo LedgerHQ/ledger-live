@@ -12,6 +12,8 @@ const BASE_URL = "https://global.api.stg.ledger-test.com/borrow";
 const JSON_HEADERS = { "Content-Type": "application/json" };
 const POLL_INTERVAL_MS = 3_000;
 const POLL_MAX_ATTEMPTS = 60;
+const THROTTLE_RETRY_ATTEMPTS = 6;
+const THROTTLE_RETRY_BASE_DELAY_MS = 4_000;
 
 /** This driver targets Ethereum mainnet only. */
 export const ETHEREUM_NETWORK = "ethereum";
@@ -35,19 +37,27 @@ function getString(v: unknown, key: string): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
-function post(pathname: string, body: unknown): Promise<Response> {
-  return fetch(`${BASE_URL}${pathname}`, {
-    method: "POST",
-    headers: JSON_HEADERS,
-    body: JSON.stringify(body),
-  });
+/** Rejected at the edge rather than by the partner, so the request never reached it. */
+function isThrottled(status: number): boolean {
+  return status >= 500 || status === 403 || status === 429;
 }
 
-/**
- * The partner puts the actionable reason in the body, not the status line — a 412 on a repay
- * spells out which token is short and by how much. Losing it leaves a bare "412 Precondition
- * Failed" that says nothing about how to fix the account.
- */
+async function post(pathname: string, body: unknown): Promise<Response> {
+  for (let attempt = 1; ; attempt++) {
+    const res = await fetch(`${BASE_URL}${pathname}`, {
+      method: "POST",
+      headers: JSON_HEADERS,
+      body: JSON.stringify(body),
+    });
+    if (!isThrottled(res.status) || attempt >= THROTTLE_RETRY_ATTEMPTS) return res;
+    console.log(
+      `    api: ${res.status} on ${pathname}, retrying (${attempt}/${THROTTLE_RETRY_ATTEMPTS - 1})`,
+    );
+    await new Promise(resolve => setTimeout(resolve, THROTTLE_RETRY_BASE_DELAY_MS * attempt));
+  }
+}
+
+/** The partner puts the actionable reason in the body, not the status line. */
 async function failedRequest(pathname: string, res: Response): Promise<Error> {
   const detail = await res.text().catch(() => "");
   return new Error(
@@ -112,15 +122,11 @@ function parseStepPayload(step: PartnerActionStep, index: number): EvmSignablePa
 /**
  * Address that needs an ERC-20 allowance to carry out `action`.
  *
- * The approve step is found by decoding calldata rather than by matching `step.actionType`,
- * because the spender is an argument of that calldata: one decode both identifies the step and
- * yields the value. `actionType` is an undocumented partner label — an open `string` with no
- * union and no other consumer — so it is reported on failure, not matched on.
+ * Decoding the calldata both identifies the approve step and yields the spender, which
+ * `step.actionType` — an undocumented partner label — could not.
  *
- * The partner omits the approve step entirely once the allowance already covers the amount, and
- * an earlier run can leave an unlimited one behind. Reading the spender only off that step would
- * therefore fail exactly when there is an allowance to revoke, so the target of the final step —
- * the contract that pulls the tokens, and so the spender — is the fallback.
+ * The partner omits the approve step once the allowance already covers the amount, so the
+ * final step's target is the fallback.
  */
 function requireAllowanceSpender(
   steps: PartnerActionStep[],
@@ -149,11 +155,8 @@ function requireAllowanceSpender(
  * It is an adapter the partner can redeploy, so it is resolved rather than pinned. Building an
  * action does not broadcast anything.
  *
- * Posts `supplyAndBorrow`, which is what the borrow live app posts, **not** `supply`: the two
- * take different routes and so approve different spenders — `supply` grants Morpho Blue directly
- * (`0xBBBB…`) while `supplyAndBorrow` goes through a bundler (`0x38B0C1…`). Resolving from the
- * wrong one zeroes an allowance the UI never uses, and the approval step the spec drives then
- * silently stays unnecessary.
+ * Posts `supplyAndBorrow`, as the live app does, **not** `supply`: the two approve different
+ * spenders — Morpho Blue directly versus a bundler.
  */
 export async function resolveCollateralSpender(
   address: string,
@@ -170,9 +173,8 @@ export async function resolveCollateralSpender(
 }
 
 /**
- * Same for the debt-token allowance a repay pulls through. `marketId` is the long id of the
- * position being repaid (not a market's `collateral[].id`), so an open loan with debt must
- * already exist — the partner has nothing to build a repay against otherwise.
+ * Same for the debt-token allowance a repay pulls through. `marketId` is the id of the position
+ * being repaid, not a market's `collateral[].id`, so an open loan with debt must already exist.
  */
 export async function resolveRepaySpender(address: string, marketId: string): Promise<string> {
   const { steps } = await postAction({
@@ -197,8 +199,7 @@ async function pollActionStatus(actionId: string): Promise<string | undefined> {
     return undefined;
   }
   if (res.ok) return getString(await res.json(), "status")?.toLowerCase();
-  // Gateway/upstream blips (502/503/504) are transient — keep polling; a 4xx is a real error.
-  if (res.status >= 500) return undefined;
+  if (isThrottled(res.status)) return undefined;
   throw new Error(`GET /v1/actions/${actionId} failed: ${res.status}`);
 }
 
