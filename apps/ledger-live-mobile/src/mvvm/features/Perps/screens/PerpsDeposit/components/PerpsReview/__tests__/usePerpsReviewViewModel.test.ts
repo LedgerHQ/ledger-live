@@ -15,6 +15,7 @@ function createProps(overrides?: Partial<PerpsReviewProps>): PerpsReviewProps {
     amountTo: "0.019",
     isOpen: true,
     onClose: jest.fn(),
+    onConfirm: jest.fn(),
     ...overrides,
   };
 }
@@ -66,12 +67,17 @@ describe("usePerpsReviewViewModel", () => {
     expect(result.current.drawerOpen).toBe(false);
   });
 
-  it("closes the drawer when confirming the deposit", () => {
+  it("hands over to the deposit screen when confirming, which opens the device step", () => {
     const onClose = jest.fn();
-    const { result } = renderHook(() => usePerpsReviewViewModel(createProps({ onClose })));
+    const onConfirm = jest.fn();
+    const { result } = renderHook(() =>
+      usePerpsReviewViewModel(createProps({ onClose, onConfirm })),
+    );
 
     result.current.handleDeposit();
 
-    expect(onClose).toHaveBeenCalled();
+    expect(onConfirm).toHaveBeenCalled();
+    // Closing is the deposit screen's call, so the summary can come back on a decline.
+    expect(onClose).not.toHaveBeenCalled();
   });
 });
