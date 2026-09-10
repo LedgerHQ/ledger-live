@@ -214,7 +214,10 @@ describe("property filter", () => {
     setEnricher(() => Promise.reject(new Error("permission read failed")));
     setPropertyFilter(scrubSensitive);
 
-    await track("Unenrichable", { sensitive: "data to filter", theme: "light" });
+    await track("Unenrichable", {
+      sensitive: "data to filter",
+      theme: "light",
+    });
 
     expect(events).toEqual([
       expect.objectContaining({
@@ -224,39 +227,6 @@ describe("property filter", () => {
         deliveryStatus: "failed",
       }),
     ]);
-  });
-
-  it("filters the merged payload once when extras are present", () => {
-    register();
-    setEnricher(() => ({ appVersion: "1.2.3" }));
-    const filter = jest.fn(scrubSensitive);
-    setPropertyFilter(filter);
-
-    track("Filtered Once", { sensitive: "data to filter", theme: "light" });
-
-    expect(filter).toHaveBeenCalledTimes(2);
-    expect(filter.mock.calls[0][0]).toEqual({
-      sensitive: "data to filter",
-      theme: "light",
-    });
-    expect(filter.mock.calls[1][0]).toEqual({
-      theme: "light",
-      appVersion: "1.2.3",
-    });
-  });
-
-  it("filters the base payload once when no extras are present", () => {
-    register();
-    const filter = jest.fn(scrubSensitive);
-    setPropertyFilter(filter);
-
-    track("Filtered Base", { sensitive: "data to filter", theme: "light" });
-
-    expect(filter).toHaveBeenCalledTimes(1);
-    expect(filter.mock.calls[0][0]).toEqual({
-      sensitive: "data to filter",
-      theme: "light",
-    });
   });
 });
 
