@@ -4,7 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { cardManagementApi } from "@domain/api-card-management";
-import { payCardAuthSlice } from "@features/flow-pay-card-auth/state";
+import { payCardAuthSlice, type PayCardAuthState } from "@features/flow-pay-card-auth/state";
 import { cardApi, cardApiExtra } from "@shared/api-services";
 
 export const CARD_API_BASE_URL = "https://card.test";
@@ -45,7 +45,10 @@ export function makeCardApiStore({ signedIn = false }: { signedIn?: boolean } = 
       payCardAuth: payCardAuthSlice.reducer,
     },
     preloadedState: {
-      payCardAuth: { hasCard: signedIn, isSignedIn: signedIn },
+      payCardAuth: {
+        hasCard: signedIn,
+        status: signedIn ? "signedIn" : "signedOut",
+      } satisfies PayCardAuthState,
     },
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({

@@ -44,6 +44,6 @@ describe("the payCard blob restored into the mobile store", () => {
   it("keeps the runtime auth slice out of the restore", () => {
     const state = restoreAll(blob);
 
-    expect(state.payCardAuth).toEqual({ hasCard: false, isSignedIn: false });
+    expect(state.payCardAuth).toEqual({ hasCard: false, status: "unknown" });
   });
 });

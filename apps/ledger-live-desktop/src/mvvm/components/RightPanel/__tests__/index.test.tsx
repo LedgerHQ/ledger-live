@@ -82,15 +82,26 @@ describe("RightPanel", () => {
   });
 
   describe("card variant", () => {
-    it("renders the Pay Card visual with the mock balance and no swap webview", () => {
+    it("renders the bare artwork while the card session is unresolved, and no swap webview", () => {
       render(<RightPanel variant="card" />);
+
+      expect(screen.getByTestId("pay-card-container")).toBeVisible();
+      expect(screen.getByTestId("card-artwork")).toBeVisible();
+      expect(screen.queryByTestId("card-visual")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("swap-webview-embedded")).not.toBeInTheDocument();
+      expect(mockUseSwapViewModel).not.toHaveBeenCalled();
+    });
+
+    it("hands the countervalue formatter and the balance label to the visual once signed in", () => {
+      render(<RightPanel variant="card" />, {
+        initialState: { payCardAuth: { hasCard: true, status: "signedIn" } },
+      });
 
       expect(screen.getByTestId("pay-card-container")).toBeVisible();
       expect(screen.getByTestId("card-visual")).toBeVisible();
       expect(screen.getByTestId("card-visual-amount")).toBeVisible();
       expect(screen.getByText("Balance")).toBeVisible();
       expect(screen.queryByTestId("swap-webview-embedded")).not.toBeInTheDocument();
-      expect(mockUseSwapViewModel).not.toHaveBeenCalled();
     });
   });
 });

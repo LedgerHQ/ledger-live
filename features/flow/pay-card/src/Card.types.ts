@@ -25,14 +25,24 @@ export type CardProps = {
   readonly onTrackEvent?: PayCardLoginTrackEvent;
 };
 
+/**
+ * Which of the three mutually exclusive faces the flow shows.
+ *
+ * - `resolving` — the login machine is still reading the stored session. Only the title and the bare
+ *   artwork show, so nothing flashes before the answer lands.
+ * - `signedOut` — nobody is signed in: the bare artwork sits above the login CTA.
+ * - `signedIn` — a live session: the card face, onboarding widget and card actions show, no login.
+ */
+export type CardDisplayState = "resolving" | "signedOut" | "signedIn";
+
 /** Props the presentational view renders, resolved by {@link useCardViewModel}. */
 export type CardViewProps = {
   readonly title: string;
   readonly oauthConfig: CardLoginOauthConfig;
   readonly callback?: PayCardAuthCallback | null;
   readonly onTrackEvent?: PayCardLoginTrackEvent;
-  /** True while a Card session is live. The title only shows to a signed-in card holder. */
-  readonly isSignedIn: boolean;
+  /** Which face to show. The children are mutually exclusive, so the view switches on this. */
+  readonly displayState: CardDisplayState;
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   readonly cardVisual?: CardVisualProps;
 };

@@ -2,5 +2,7 @@ export { CardLogin } from "./components/CardLogin";
 export type { CardLoginProps, PayCardLoginTrackEvent } from "./components/CardLogin/types";
 export type { OpenHostedLogin, HostedLoginResult } from "./state/types";
 export type { CardLoginOauthConfig, PayCardAuthCallback } from "./state/types";
+export type { PayCardAuthStatus } from "./state/types";
 export { useIsCardSignedIn } from "./hooks/useIsCardSignedIn";
+export { useCardAuthStatus } from "./hooks/useCardAuthStatus";
 export { useCardLogout } from "./hooks/useCardLogout";
