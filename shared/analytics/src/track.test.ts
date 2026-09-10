@@ -5,12 +5,12 @@ import {
   setMandatoryExtraPropsFn,
   setPropsFilter,
 } from "./registry";
+import { analyticsEvents$ } from "./analyticsEvents";
 import { track } from "./track";
-import { trackSubject } from "./trackSubject";
 import type { Analytics, LoggableEvent, Props } from "./types";
 
 const events: LoggableEvent[] = [];
-trackSubject.subscribe(event => events.push(event));
+analyticsEvents$.subscribe(event => events.push(event));
 
 const createAnalyticsClient = ({
   track = jest.fn(),
@@ -119,7 +119,7 @@ describe("track", () => {
   });
 
   describe("observability", () => {
-    it("logs before sending and publishes to trackSubject", () => {
+    it("logs before sending and publishes to analyticsEvents$", () => {
       const analyticsClient = register();
       setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
 

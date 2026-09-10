@@ -1,10 +1,10 @@
 import { setAnalytics } from "../registry";
-import { trackSubject } from "../trackSubject";
 import type { Analytics, DeliveryStatus, LoggableEvent } from "../types";
 import { deliver } from "./deliver";
+import { analyticsEvents$ } from "./eventLog";
 
 const events: LoggableEvent[] = [];
-trackSubject.subscribe(event => events.push(event));
+analyticsEvents$.subscribe(event => events.push(event));
 
 const createAnalyticsClient = ({
   track = jest.fn(),
