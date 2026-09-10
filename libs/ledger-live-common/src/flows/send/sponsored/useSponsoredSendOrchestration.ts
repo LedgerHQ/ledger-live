@@ -152,9 +152,12 @@ function reducer(state: SponsoredState, action: Action): SponsoredState {
         case SPONSORED_FAILURE_KIND.CONTRACT_DATA:
           // The order/delegation is untouched by a device refusal — resume at the step it failed
           // on (recorded on state at the moment of failure; see CONTRACT_DATA_FAILURE).
+          // Shallow-clone the order so useEffect([order]) in the VM fires and hasSubmittedRef resets
+          // — the same order reference would otherwise leave hasSubmittedRef true and block resubmit.
           return {
             ...state,
             phase: state.contractDataResumePhase,
+            order: state.order ? { ...state.order } : null,
             failureKind: null,
             failureError: null,
           };
