@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { useFeature } from "@features/platform-feature-flags";
-import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 
 type ResolvedManifest = LiveAppManifest | null | undefined;
 
@@ -12,15 +11,10 @@ export type CardHostedManifests = {
 };
 
 export function useCardHostedManifests(): CardHostedManifests {
-  const flagParams = useFeature("lwdPayTab")?.params;
+  const params = useFeature("lwdPayTab")?.params;
 
-  const params = useMemo(
-    () => ({ ...FEATURE_FLAGS_DEFAULTS.lwdPayTab.params, ...flagParams }),
-    [flagParams],
-  );
-
-  const login = useLiveAppManifest(params.baanx_login_manifest_id);
-  const hosted = useLiveAppManifest(params.baanx_hosted_manifest_id);
+  const login = useLiveAppManifest(params?.baanx_login_manifest_id);
+  const hosted = useLiveAppManifest(params?.baanx_hosted_manifest_id);
 
   return useMemo(() => ({ login, hosted }), [login, hosted]);
 }
