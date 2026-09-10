@@ -13,7 +13,9 @@ import { RecipientContactSelectionProvider } from "./context/RecipientContactSel
 import { RecipientInputFocusProvider } from "./context/RecipientInputFocusContext";
 import { SendFlowTrackingProvider } from "./context/SendFlowTrackingContext";
 import { SendSignatureProvider, useSendSignature } from "./context/SendSignatureContext";
+import { SponsoredSendProvider } from "./context/SponsoredSendContext";
 import { SignatureOverlayHost } from "./components/SignatureOverlayHost";
+import { SponsoredFlowHost } from "./components/SponsoredFlowHost";
 import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
 import type { SendStepConfig, SendFlowConfig } from "./types";
 
@@ -82,15 +84,18 @@ export function SendFlowOrchestrator({
       <SendFlowTrackingProvider>
         <RecipientContactSelectionProvider>
           <RecipientInputFocusProvider>
-            <SendSignatureProvider>
-              <SendFlowNavigator
-                stepRegistry={stepRegistry}
-                flowConfig={configuredFlowConfig}
-                onClose={onClose}
-              />
-              <SignatureOverlayHost />
-              {children}
-            </SendSignatureProvider>
+            <SponsoredSendProvider>
+              <SendSignatureProvider>
+                <SendFlowNavigator
+                  stepRegistry={stepRegistry}
+                  flowConfig={configuredFlowConfig}
+                  onClose={onClose}
+                />
+                <SignatureOverlayHost />
+                <SponsoredFlowHost />
+                {children}
+              </SendSignatureProvider>
+            </SponsoredSendProvider>
           </RecipientInputFocusProvider>
         </RecipientContactSelectionProvider>
       </SendFlowTrackingProvider>

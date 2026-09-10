@@ -142,9 +142,11 @@ function reducer(state: SponsoredState, action: Action): SponsoredState {
         case SPONSORED_FAILURE_KIND.CONTRACT_DATA:
           // The order/delegation is untouched by a device refusal — resume at the step it failed
           // on (recorded by the caller at the moment of failure; see `setContractDataFailure`).
+          // Shallow-clone the order so useEffect([order]) in the VM fires and hasSubmittedRef resets.
           return {
             ...state,
             phase: action.contractDataPhase,
+            order: state.order ? { ...state.order } : null,
             failureKind: null,
             failureError: null,
           };
@@ -209,15 +211,22 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
     typeof SPONSORED_PHASE.RENT_SIGNING | typeof SPONSORED_PHASE.TRANSFER
   >(SPONSORED_PHASE.RENT_SIGNING);
 
+  // Incremented by reset() to invalidate any in-flight craftRent() promise so a stale CRAFT_SUCCESS
+  // cannot resurrect RENT_SIGNING phase after the user has explicitly cancelled.
+  const craftGenRef = useRef(0);
+
   const craftRent = useCallback(async () => {
+    const gen = ++craftGenRef.current;
     try {
       const seam = await getSeam();
-      if (!seam) return;
+      if (!seam || craftGenRef.current !== gen) return;
       // One seam call builds the request (energy simulated on-chain, addresses + config resolved in
       // the coin module); captured in requestRef so startRentPayment reuses its payerAddress.
       const request = await seam.buildEnergyRentRequest(params.intent);
+      if (craftGenRef.current !== gen) return;
       requestRef.current = request;
       const order = await seam.craftEnergyRentTransaction(request);
+      if (craftGenRef.current !== gen) return;
       // The seam types order.transaction as `unknown`; the signing screen asserts it to the family's
       // wire shape and reads its fields. Guard the one invariant every sponsored family shares here —
       // a crafted rent order must carry a transaction object to sign — so a null/partial payload fails
@@ -232,6 +241,7 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
       }
       dispatch({ type: "CRAFT_SUCCESS", order });
     } catch (error) {
+      if (craftGenRef.current !== gen) return;
       dispatch({ type: "CRAFT_FAILURE", error: error as Error });
     }
   }, [getSeam, params.intent]);
@@ -308,6 +318,7 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
   }, []);
 
   const reset = useCallback(() => {
+    craftGenRef.current++;
     dispatch({ type: "RESET" });
   }, []);
 
