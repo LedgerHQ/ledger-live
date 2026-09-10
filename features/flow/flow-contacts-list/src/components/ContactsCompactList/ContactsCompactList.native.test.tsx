@@ -7,11 +7,19 @@ import {
   mockContactWithMultipleAddresses,
 } from "@domain/entity-contact/schema.mock";
 import type { Contact } from "@domain/entity-contact";
+import { I18nTestProvider, type I18nTestProviderProps } from "@shared/i18n/testing";
 import { ContactsCompactList } from "../../index.native";
 
-const labels = {
-  emptyAddress: "No saved addresses",
-  formatAddressCount: (count: number) => `${count} saved addresses`,
+const resources: I18nTestProviderProps["resources"] = {
+  en: {
+    translation: {
+      contacts: {
+        addressCount_zero: "0 address",
+        addressCount_one: "{{count}} address",
+        addressCount_other: "{{count}} addresses",
+      },
+    },
+  },
 };
 
 function createContacts(): readonly Contact[] {
@@ -29,19 +37,17 @@ function createContacts(): readonly Contact[] {
 describe("ContactsCompactList", () => {
   it("should render supplied contacts with the appropriate address descriptions", () => {
     render(
-      <ContactsCompactList
-        contacts={createContacts()}
-        labels={labels}
-        onContactSelect={jest.fn()}
-      />,
+      <I18nTestProvider resources={resources}>
+        <ContactsCompactList contacts={createContacts()} onContactSelect={jest.fn()} />
+      </I18nTestProvider>,
     );
 
     expect(screen.getByText("Zero")).toBeVisible();
-    expect(screen.getByText(labels.emptyAddress)).toBeVisible();
+    expect(screen.getByText("0 address")).toBeVisible();
     expect(screen.getByText("One")).toBeVisible();
     expect(screen.getByText("Main wallet")).toBeVisible();
     expect(screen.getByText("Many")).toBeVisible();
-    expect(screen.getByText("2 saved addresses")).toBeVisible();
+    expect(screen.getByText("2 addresses")).toBeVisible();
     expect(screen.getByTestId("contacts-avatar-contact-zero").props.size).toBe("md");
     expect(screen.getByTestId("contacts-compact-row-contact-zero").props.lx).toEqual({
       marginHorizontal: "-s8",
@@ -55,12 +61,13 @@ describe("ContactsCompactList", () => {
 
   it("should render only the first supplied contacts when maxContacts is set", () => {
     render(
-      <ContactsCompactList
-        contacts={createContacts()}
-        labels={labels}
-        maxContacts={2}
-        onContactSelect={jest.fn()}
-      />,
+      <I18nTestProvider resources={resources}>
+        <ContactsCompactList
+          contacts={createContacts()}
+          maxContacts={2}
+          onContactSelect={jest.fn()}
+        />
+      </I18nTestProvider>,
     );
 
     expect(screen.getByTestId("contacts-compact-row-contact-zero")).toBeVisible();
@@ -70,18 +77,21 @@ describe("ContactsCompactList", () => {
 
   it("should render no rows when contacts are empty or maxContacts is zero", () => {
     const { rerender } = render(
-      <ContactsCompactList contacts={[]} labels={labels} onContactSelect={jest.fn()} />,
+      <I18nTestProvider resources={resources}>
+        <ContactsCompactList contacts={[]} onContactSelect={jest.fn()} />
+      </I18nTestProvider>,
     );
 
     expect(screen.queryByTestId("contacts-compact-row-contact-zero")).toBeNull();
 
     rerender(
-      <ContactsCompactList
-        contacts={createContacts()}
-        labels={labels}
-        maxContacts={0}
-        onContactSelect={jest.fn()}
-      />,
+      <I18nTestProvider resources={resources}>
+        <ContactsCompactList
+          contacts={createContacts()}
+          maxContacts={0}
+          onContactSelect={jest.fn()}
+        />
+      </I18nTestProvider>,
     );
 
     expect(screen.queryByTestId("contacts-compact-row-contact-zero")).toBeNull();
@@ -93,7 +103,9 @@ describe("ContactsCompactList", () => {
     const user = userEvent.setup();
 
     render(
-      <ContactsCompactList contacts={contacts} labels={labels} onContactSelect={onContactSelect} />,
+      <I18nTestProvider resources={resources}>
+        <ContactsCompactList contacts={contacts} onContactSelect={onContactSelect} />
+      </I18nTestProvider>,
     );
 
     await user.press(screen.getByTestId("contacts-compact-row-contact-one"));

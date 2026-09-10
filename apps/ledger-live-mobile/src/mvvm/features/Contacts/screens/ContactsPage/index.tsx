@@ -7,6 +7,7 @@ import { useContactsFeature } from "@features/platform-contacts";
 import { ScreenName } from "~/const";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { TrackScreen } from "~/analytics";
+import { useTranslation } from "~/context/Locale";
 import { ContactsPageContent } from "./components/ContactsPageContent";
 import { useContactsAddContactDrawerAdapter } from "./hooks/useContactsAddContactDrawerAdapter";
 import { useContactsPageNavigationViewModel } from "./hooks/useContactsPageNavigationViewModel";
@@ -29,6 +30,7 @@ type ContactsPageProps = Readonly<{
 }>;
 
 export function ContactsPage({ title, onSelectContact }: ContactsPageProps) {
+  const { t } = useTranslation();
   const pageViewModel = useContactsPageViewModel(onSelectContact);
   const { onSearchQueryChange } = pageViewModel;
   const onSaveSuccess = useCallback(() => {
@@ -45,7 +47,7 @@ export function ContactsPage({ title, onSelectContact }: ContactsPageProps) {
   };
 
   useContactsPageNavigationViewModel(
-    pageViewModel.labels.addContact,
+    t("contacts.addContact"),
     !isContactsSearchNoResultsViewModel(pageViewModel.viewModel),
     onAddContact,
     title,

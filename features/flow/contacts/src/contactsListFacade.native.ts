@@ -10,7 +10,6 @@ export {
   ContactsAddContactHeaderButton,
 } from "@features/flow-contacts-list/native";
 export type {
-  ContactsListViewLabels,
   ContactsPageViewModel,
   ContactsSearchNoResultsViewModel,
   ContactsSearchResultsViewModel,

@@ -12,12 +12,14 @@ import {
   getCompactContactAddressDescription,
   getDisplayedCompactContacts,
 } from "./utils/ContactsCompactList.utils";
+import { useTranslation } from "@shared/i18n";
 
 export function ContactsCompactRow({
   contact,
-  labels,
   onContactSelect,
 }: ContactsCompactRowProps): React.JSX.Element {
+  const { t } = useTranslation();
+
   return (
     <ListItem
       testID={`contacts-compact-row-${contact.id}`}
@@ -30,7 +32,11 @@ export function ContactsCompactRow({
         <ListItemContent>
           <ListItemTitle>{contact.name}</ListItemTitle>
           <ListItemDescription>
-            {getCompactContactAddressDescription(contact, labels)}
+            {getCompactContactAddressDescription(
+              contact,
+              t("contacts.addressCount", { count: 0 }),
+              count => t("contacts.addressCount", { count }),
+            )}
           </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
@@ -40,7 +46,6 @@ export function ContactsCompactRow({
 
 export function ContactsCompactList({
   contacts,
-  labels,
   maxContacts,
   onContactSelect,
 }: ContactsCompactListProps): React.JSX.Element {
@@ -49,12 +54,7 @@ export function ContactsCompactList({
   return (
     <>
       {displayedContacts.map(contact => (
-        <ContactsCompactRow
-          key={contact.id}
-          contact={contact}
-          labels={labels}
-          onContactSelect={onContactSelect}
-        />
+        <ContactsCompactRow key={contact.id} contact={contact} onContactSelect={onContactSelect} />
       ))}
     </>
   );

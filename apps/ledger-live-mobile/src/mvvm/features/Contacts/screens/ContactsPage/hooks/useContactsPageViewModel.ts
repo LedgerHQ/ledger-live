@@ -1,5 +1,4 @@
 import {
-  type ContactsListViewLabels,
   type ContactsViewNativeProps,
   useContactsSearchViewModel,
   useContactsMeContact,
@@ -43,20 +42,11 @@ export function useContactsPageViewModel(
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
   const contacts = useContacts();
-  const labels = useMemo<ContactsListViewLabels>(
-    () => ({
-      title: t("contacts.title"),
-      searchPlaceholder: t("contacts.searchPlaceholder"),
-      searchNoResults: t("contacts.searchNoResults"),
-      addContact: t("contacts.addContact"),
-      ledgerSyncCheckingAccessibilityLabel: t(
-        "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
-      ),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
+  const formatMeDisplayName = useMemo(
+    () =>
+      createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
         t("contacts.detail.meDisplayName", { name }),
       ),
-    }),
     [t],
   );
   const preference = useContactsFeatureIntroductionPreference();
@@ -80,7 +70,7 @@ export function useContactsPageViewModel(
     useContactsLedgerSyncActivationDrawer();
   const [isLedgerSyncIntroductionRequested, setIsLedgerSyncIntroductionRequested] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const viewModel = useContactsSearchViewModel(searchQuery, labels.formatMeDisplayName);
+  const viewModel = useContactsSearchViewModel(searchQuery, formatMeDisplayName);
   const onSearchQueryChange = useCallback((query: string) => setSearchQuery(query), []);
   const onOpenContact = useCallback<ContactsViewNativeProps["onOpenContact"]>(
     contactId => {
@@ -143,7 +133,6 @@ export function useContactsPageViewModel(
 
   return {
     viewModel,
-    labels,
     searchQuery,
     onSearchQueryChange,
     meAvatarSrc: USER_AVATAR_URL,

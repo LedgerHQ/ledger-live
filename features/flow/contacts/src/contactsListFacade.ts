@@ -9,7 +9,6 @@ export {
   isPopulatedContactsListViewModel,
 } from "@features/flow-contacts-list";
 export type {
-  ContactsListViewLabels,
   ContactsPageViewModel,
   ContactsSearchNoResultsViewModel,
   ContactsSearchResultsViewModel,
