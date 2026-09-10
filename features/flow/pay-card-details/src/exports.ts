@@ -4,6 +4,7 @@ export * from "./components/CardNumbers/CardNumbers";
 export * from "./components/CardNumbers/useCardNumbersViewModel";
 export * from "./components/Freeze/Freeze";
 export * from "./components/CardVisual/CardVisual";
+export * from "./components/CardDetails/CardDetails";
 export * from "./components/Freeze/useFreezeCardViewModel";
 export * from "./components/More/More";
 export * from "./types";

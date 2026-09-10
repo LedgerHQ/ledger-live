@@ -10287,6 +10287,8 @@
     },
     "card": {
       "title": "Crypto card",
+      "placeholder": "Coming soon",
+      "details": "Details",
       "freeze": "Freeze",
       "unfreeze": "Unfreeze",
       "goBack": "Go back",

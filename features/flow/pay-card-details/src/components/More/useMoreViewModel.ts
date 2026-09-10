@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useGetUserQuery } from "@domain/api-card-management";
 import type { PayCardUser } from "@domain/api-card-management";
 import { useTranslation } from "@shared/i18n";
-import { useIsCardSignedIn, useCardLogout } from "@features/flow-pay-card-auth";
+import { useIsCardSignedIn, useCardLogout } from "@features/flow-pay-card-auth/hooks";
 import type { MoreRow, MoreRowId, MoreViewModel } from "./types";
 
 const ROW_ORDER: readonly MoreRowId[] = ["managePin", "accessBaanx", "help", "logout"];
