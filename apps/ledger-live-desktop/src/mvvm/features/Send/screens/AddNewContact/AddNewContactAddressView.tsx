@@ -19,9 +19,6 @@ export function AddNewContactAddressView({ addressPhase }: AddNewContactAddressV
     >
       <ContactsAddAddressFlowContent
         state={addressPhase.state}
-        entryLabels={addressPhase.entryLabels}
-        nameLabels={addressPhase.nameLabels}
-        reviewLabels={addressPhase.reviewLabels}
         onAddressChange={() => undefined}
         onContinueFromAddressDetails={() => undefined}
         onAddressLabelChange={addressPhase.onAddressLabelChange}

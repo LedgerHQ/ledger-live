@@ -7,21 +7,12 @@ import {
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
-import type { AddAddressLabelState, AddAddressNameLabels } from "../../state/types";
+import type { AddAddressLabelState } from "../../state/types";
 import { ContactsAddAddressName } from "./ContactsAddAddressName";
 
-const labels: AddAddressNameLabels = {
-  title: "Name address",
-  inputLabel: "Address name",
-  namingDisclaimer: "Only you can see this name.",
-  continueToReview: "Continue to review",
-  validationErrors: {
-    [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Special characters are not allowed.",
-    [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]:
-      "This address name is already used for this contact.",
-    [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: "This address name is too long.",
-  },
-};
+jest.mock("@shared/i18n", () => ({
+  useTranslation: () => ({ t: (key: string) => key }),
+}));
 
 describe("ContactsAddAddressName", () => {
   it("should render the default label with an enabled review action", () => {
@@ -36,21 +27,23 @@ describe("ContactsAddAddressName", () => {
           label: ContactAddressLabelSchema.parse("Ethereum"),
           validationError: null,
         }}
-        labels={labels}
+
         onChangeText={onChangeText}
         onContinue={onContinue}
       />,
     );
 
-    expect(screen.UNSAFE_getByProps({ title: "Name address" }).props.title).toBe("Name address");
+    expect(screen.UNSAFE_getByProps({ title: "contacts.addAddressName.title" }).props.title).toBe(
+      "contacts.addAddressName.title",
+    );
     expect(screen.getByTestId("contacts-add-address-name-input").props).toMatchObject({
-      label: "Address name",
+      label: "contacts.addAddressName.inputLabel",
       maxLength: CONTACT_ADDRESS_LABEL_MAX_LENGTH,
       value: "Ethereum",
     });
     expect(screen.getByTestId("contacts-add-address-name-count")).toHaveTextContent("8/32");
     expect(screen.getByTestId("contacts-add-address-name-disclaimer").props.description).toBe(
-      "Only you can see this name.",
+      "contacts.addAddressName.namingDisclaimer",
     );
     expect(screen.getByTestId("contacts-add-address-name-continue")).toBeEnabled();
     expect(screen.getByTestId("contacts-add-address-name-continue").props.icon).toEqual(
@@ -73,7 +66,7 @@ describe("ContactsAddAddressName", () => {
           label: ContactAddressLabelSchema.parse("Ethereum"),
           validationError: null,
         }}
-        labels={labels}
+
         bottomOffset={320}
         onChangeText={jest.fn()}
         onContinue={jest.fn()}
@@ -95,7 +88,7 @@ describe("ContactsAddAddressName", () => {
         label: null,
         validationError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
       },
-      helperText: "Special characters are not allowed.",
+      helperText: "contacts.addAddressName.invalidLabel",
     },
     {
       name: "duplicate label",
@@ -105,7 +98,7 @@ describe("ContactsAddAddressName", () => {
         label: null,
         validationError: DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
       },
-      helperText: "This address name is already used for this contact.",
+      helperText: "contacts.addAddressName.duplicateLabel",
     },
     {
       name: "too long label",
@@ -115,7 +108,7 @@ describe("ContactsAddAddressName", () => {
         label: null,
         validationError: CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
       },
-      helperText: "This address name is too long.",
+      helperText: "contacts.addAddressName.labelTooLong",
     },
     {
       name: "empty label",
@@ -135,7 +128,7 @@ describe("ContactsAddAddressName", () => {
     render(
       <ContactsAddAddressName
         addressLabel={addressLabel}
-        labels={labels}
+
         onChangeText={jest.fn()}
         onContinue={jest.fn()}
       />,
