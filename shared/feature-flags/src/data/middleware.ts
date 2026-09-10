@@ -9,10 +9,33 @@ export interface FeatureFlagsMeta {
   remoteFlags: PartialFeatures;
 }
 
+/** Which of the two reads failed, reported to {@link FeatureFlagsMiddlewareConfig.onRemoteFlagsError}. */
+export type FeatureFlagsReadStage = "cache" | "remote";
+
+/** Context for a failed feature-flag read. Observation only, it never feeds resolution. */
+export interface FeatureFlagsReadFailure {
+  /** The local cache prime, or a network poll. */
+  stage: FeatureFlagsReadStage;
+  /** 1 for the boot attempt, incremented on each subsequent poll. */
+  attempt: number;
+  /** Whether the middleware still holds no remote values at all. */
+  isCold: boolean;
+}
+
 /** Configuration for {@link createFeatureFlagsMiddleware}, bound at store creation. */
 export interface FeatureFlagsMiddlewareConfig<S = unknown> {
   /** Static context used by reducers to resolve flags (platform, version, env overrides). */
   resolutionConfig: ResolutionConfig;
+  /**
+   * Optional async callback returning the flags already cached on this device, read without
+   * any network access. When provided, the middleware primes from it *before* the first
+   * `fetchRemoteFlags`, so boot resolves on the last values the backend actually sent rather
+   * than on compiled defaults.
+   *
+   * An empty result is treated as "no cache" and leaves readiness to the network path, so a
+   * first-ever install never arms the gate on defaults.
+   */
+  readCachedFlags?: () => Promise<PartialFeatures>;
   /**
    * Optional async callback that returns the latest remote feature flags. When
    * provided, the middleware fires it once on creation and on every
@@ -24,6 +47,13 @@ export interface FeatureFlagsMiddlewareConfig<S = unknown> {
   refreshInterval?: number;
   /** Optional selector for the current app language, injected into resolution and re-resolved on change. */
   getAppLanguage?: (state: S) => string;
+  /**
+   * Optional reporter for a failed read, invoked once per failure. Purely observational: it
+   * runs after the middleware has already decided everything, the remote-flag cache is left
+   * untouched, and the return value is ignored, so a handler can never become a second source
+   * of flags. A handler that throws is swallowed and does not stop the poll loop.
+   */
+  onRemoteFlagsError?: (error: unknown, failure: FeatureFlagsReadFailure) => void;
 }
 
 /**
@@ -33,21 +63,30 @@ export interface FeatureFlagsMiddlewareConfig<S = unknown> {
  * a global singleton or persisted state.
  *
  * Remote flags are transient — held in a closure-private cache that is rebuilt
- * on each fetch and never persisted. Before the first fetch resolves, the cache
- * is `{}` and resolution falls back to local overrides + env + defaults.
+ * on each fetch and never persisted. `readCachedFlags` primes that cache from the
+ * device's own storage before the first fetch, so a failed or slow network does not
+ * push resolution back onto compiled defaults. Without it, and before the first fetch
+ * resolves, the cache is `{}` and resolution falls back to local overrides + env + defaults.
  *
  * @param config
- * Resolution context plus optional fetcher + interval. Bound at store creation.
+ * Resolution context plus optional cache reader, fetcher and interval. Bound at store creation.
  */
 export function createFeatureFlagsMiddleware<S = unknown>(
   config: FeatureFlagsMiddlewareConfig<S>,
 ): Middleware<object, S> {
   const remoteFlagsRef: RemoteFlagsRef = { current: {} };
   return ({ dispatch, getState }) => {
-    const { resolutionConfig, fetchRemoteFlags, refreshInterval, getAppLanguage } = config;
+    const {
+      resolutionConfig,
+      readCachedFlags,
+      fetchRemoteFlags,
+      refreshInterval,
+      getAppLanguage,
+      onRemoteFlagsError,
+    } = config;
     const readLang = () => getAppLanguage?.(getState());
     let lastLang = readLang();
-    if (fetchRemoteFlags) {
+    if (fetchRemoteFlags || readCachedFlags) {
       let readyDispatched = false;
       let initialSyncDone = false;
       const dispatchSync = (didFetch: boolean) => {
@@ -61,13 +100,52 @@ export function createFeatureFlagsMiddleware<S = unknown>(
         readyDispatched = true;
         dispatch(setRemoteFlagsReady());
       };
-      void pollRemoteFlags(
-        fetchRemoteFlags,
-        remoteFlagsRef,
-        dispatchSync,
-        dispatchReady,
-        refreshInterval,
-      );
+      const reportError = (error: unknown, stage: FeatureFlagsReadStage, attempt: number) => {
+        if (!onRemoteFlagsError) return;
+        try {
+          onRemoteFlagsError(error, {
+            stage,
+            attempt,
+            isCold: Object.keys(remoteFlagsRef.current).length === 0,
+          });
+        } catch {
+          // A reporter is never allowed to break flag resolution or kill the poll loop.
+        }
+      };
+      if (readCachedFlags) {
+        // Sequenced, never raced: a slow cache read must not land on top of a fresh fetch.
+        void (async () => {
+          try {
+            const cached = await readCachedFlags();
+            if (Object.keys(cached).length > 0) {
+              remoteFlagsRef.current = cached;
+              dispatchSync(true);
+              dispatchReady();
+            }
+          } catch (error) {
+            reportError(error, "cache", 1);
+          }
+          if (fetchRemoteFlags) {
+            await pollRemoteFlags(
+              fetchRemoteFlags,
+              remoteFlagsRef,
+              dispatchSync,
+              dispatchReady,
+              reportError,
+              refreshInterval,
+            );
+          }
+        })();
+      } else if (fetchRemoteFlags) {
+        void pollRemoteFlags(
+          fetchRemoteFlags,
+          remoteFlagsRef,
+          dispatchSync,
+          dispatchReady,
+          reportError,
+          refreshInterval,
+        );
+      }
     }
     return next => action => {
       if (!isAction(action)) return next(action);
@@ -139,24 +217,46 @@ function getMeta(action: Action<string>) {
  * dispatch `setRemoteFlagsReady()`. The caller guards it so only the first
  * settle propagates; idempotent on the reducer side regardless.
  *
+ * @param reportError
+ * Callback fired on each rejected fetch, before the loop swallows it.
+ *
  * @param ms
  * Delay between iterations, in milliseconds. Defaults to
  * {@link FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS}.
+ *
+ * @param attempt
+ * 1-based index of this iteration, passed to `reportError` so a consumer can tell a boot
+ * failure from a routine poll failure.
  */
 async function pollRemoteFlags(
   fetch: () => Promise<PartialFeatures>,
   ref: RemoteFlagsRef,
   dispatchSync: (didFetch: boolean) => void,
   dispatchReady: () => void,
+  reportError: (error: unknown, stage: FeatureFlagsReadStage, attempt: number) => void,
   ms: number = FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS,
+  attempt: number = 1,
 ) {
-  const remote = await fetch().catch(() => null);
+  const remote = await fetch().catch(error => {
+    reportError(error, "remote", attempt);
+    return null;
+  });
   if (remote !== null) {
     ref.current = remote;
   }
   dispatchSync(remote !== null);
   dispatchReady();
-  setTimeout(pollRemoteFlags, ms, fetch, ref, dispatchSync, dispatchReady, ms);
+  setTimeout(
+    pollRemoteFlags,
+    ms,
+    fetch,
+    ref,
+    dispatchSync,
+    dispatchReady,
+    reportError,
+    ms,
+    attempt + 1,
+  );
 }
 
 /**
