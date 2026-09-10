@@ -41,6 +41,16 @@ export function useDevToolsScreenViewModel() {
   }, [tabNavigation]);
 
   const onNavigateToPayTab = useCallback(() => navigateToPayTab(tabNavigation), [tabNavigation]);
+  const onNavigateToPaySuccess = useCallback(() => {
+    navigation.navigate(NavigatorName.Settings, {
+      screen: ScreenName.DebugPayContactSuccess,
+    });
+  }, [navigation]);
+  const onNavigateToSendSuccess = useCallback(() => {
+    navigation.navigate(NavigatorName.Settings, {
+      screen: ScreenName.DebugSendSuccess,
+    });
+  }, [navigation]);
 
   const openSecureBrowser = useCallback(async (url: string) => {
     const result = await openHostedLoginInSecureBrowser(url, PAY_TAB_DEEP_LINK);
@@ -54,8 +64,20 @@ export function useDevToolsScreenViewModel() {
   });
 
   const payCardToolProps = useMemo(
-    () => ({ ...boundPayCard, onNavigateToPortfolio, onNavigateToPayTab }),
-    [boundPayCard, onNavigateToPortfolio, onNavigateToPayTab],
+    () => ({
+      ...boundPayCard,
+      onNavigateToPortfolio,
+      onNavigateToPayTab,
+      onNavigateToPaySuccess,
+      onNavigateToSendSuccess,
+    }),
+    [
+      boundPayCard,
+      onNavigateToPortfolio,
+      onNavigateToPayTab,
+      onNavigateToPaySuccess,
+      onNavigateToSendSuccess,
+    ],
   );
   const envToolProps = useEnvDevToolProps();
   const { theme } = useTheme();
