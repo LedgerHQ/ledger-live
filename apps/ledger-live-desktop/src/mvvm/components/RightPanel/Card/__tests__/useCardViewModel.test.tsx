@@ -26,6 +26,12 @@ describe("useCardViewModel", () => {
     expect(result.current.callback).toEqual({ code: "auth-code" });
   });
 
+  it("hands it the attempt state alongside the code, when the deep link carried one", () => {
+    const { result } = renderCardViewModel({ code: "auth-code", state: "attempt-state" });
+
+    expect(result.current.callback).toEqual({ code: "auth-code", state: "attempt-state" });
+  });
+
   it("hands it no callback when the deep link brought no code", () => {
     const { result } = renderCardViewModel(null);
 

@@ -22,6 +22,17 @@ function readCallbackCode(state: unknown): string | undefined {
   return typeof code === "string" && code !== "" ? code : undefined;
 }
 
+/** The attempt id the redirect echoed back, carried the same way as the code. */
+function readCallbackState(state: unknown): string | undefined {
+  if (typeof state !== "object" || state === null) {
+    return undefined;
+  }
+
+  const oauthState = (state as { state?: unknown }).state;
+
+  return typeof oauthState === "string" && oauthState !== "" ? oauthState : undefined;
+}
+
 export function useCardViewModel(): CardViewModel {
   const { t } = useTranslation();
   const { state } = useLocation();
@@ -53,11 +64,12 @@ export function useCardViewModel(): CardViewModel {
     [apiUrl, clientId, redirectUri],
   );
 
-  // The code is the whole of the redirect: PKCE ties it to the verifier the attempt store still holds.
+  // The code is what the exchange needs: PKCE ties it to the verifier the attempt store still holds.
+  // The state, when the redirect carried one, only lets the flow recognize its own attempt's redirect.
   const callback: CardViewModel["callback"] = useMemo(() => {
     const code = readCallbackCode(state);
 
-    return code ? { code } : null;
+    return code ? { code, state: readCallbackState(state) } : null;
   }, [state]);
 
   const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
