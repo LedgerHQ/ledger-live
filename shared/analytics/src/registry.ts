@@ -1,3 +1,23 @@
+/**
+ * @module analytics/registry
+ * @description
+ * This module exports the analytics registry.
+ *
+ * @example
+ * ```ts
+ * import { setAnalytics, setEnabledFn, setExtraPropsFn, setMandatoryExtraPropsFn, setPropsFilter } from "@ledgerhq/analytics/registry";
+ *
+ * setAnalytics({ track: jest.fn() });
+ * setEnabledFn(() => true);
+ * setExtraPropsFn(() => ({ extra: "props" }));
+ * setMandatoryExtraPropsFn(() => ({ mandatory: "props" }));
+ * setPropsFilter(props => {
+ *   const filtered = { ...props };
+ *   delete filtered.sensitive;
+ *   return filtered;
+ * });
+ */
+
 import type {
   Analytics,
   EnabledFn,
