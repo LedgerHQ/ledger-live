@@ -50,12 +50,10 @@ catalog:
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
   "@ledgerhq/speculos-device-controller": 0.3.0
   "@ledgerhq/logs": 6.19.0
-  "@ledgerhq/lumen-design-core": 0.1.27
-  "@ledgerhq/lumen-ui-react": 0.1.56
-  "@ledgerhq/lumen-ui-rnative": 0.1.59
-  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.37
-  "@ledgerhq/lumen-ui-react-visualization": 0.1.37
-  "@ledgerhq/lumen-utils-shared": 0.1.11
+  "@ledgerhq/lumen-design-core": 0.1.28
+  "@ledgerhq/lumen-ui-react": 0.1.57
+  "@ledgerhq/lumen-ui-rnative": 0.1.60
+  "@ledgerhq/lumen-utils-shared": 0.1.12
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.15.3
   "@ledgerhq/wallet-api-client-react": 1.4.34
