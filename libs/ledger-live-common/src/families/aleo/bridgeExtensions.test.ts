@@ -19,6 +19,17 @@ describe("aleo bridgeExtensions", () => {
       expect(result).toEqual(new BigNumber(123));
     });
 
+    it("falls back to zero when the TokenAccount has no transparentBalance", () => {
+      const tokenAccount = {
+        type: "TokenAccount",
+        token: { parentCurrencyId: mockAccount.currency.id },
+      } as AleoTokenAccount;
+
+      const result = extensions.getWalletApiSpendableBalance?.(tokenAccount);
+
+      expect(result).toEqual(new BigNumber(0));
+    });
+
     it("returns the account's aleoResources.transparentBalance for a main Account", () => {
       const account: AleoAccount = {
         ...mockAccount,
