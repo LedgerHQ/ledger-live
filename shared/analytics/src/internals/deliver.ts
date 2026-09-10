@@ -1,7 +1,7 @@
 import { getAnalytics } from "../registry";
 import type { DeliveryStatus, EventType, Props } from "../types";
 import { isThenable } from "./isThenable";
-import { publishEvent } from "./publishEvent";
+import { publishEvent } from "./eventLog";
 
 type Delivery = {
   type: EventType;

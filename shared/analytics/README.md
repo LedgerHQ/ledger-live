@@ -38,4 +38,4 @@ Tracking is off until enabled explicitly. Pass `{ mandatory: true }` to skip tha
 
 `setExtraPropsFn` and `setMandatoryExtraPropsFn` may be async. Extra props from the function overwrite the same keys on the caller’s payload.
 
-`trackSubject` provides an event bus (using RxJS) for in-app analytics consoles.
+`analyticsEvents$` is a read-only RxJS stream for in-app diagnostic (success, skip and failure events).

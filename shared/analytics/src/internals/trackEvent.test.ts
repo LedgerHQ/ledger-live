@@ -4,12 +4,12 @@ import {
   setMandatoryExtraPropsFn,
   setPropsFilter,
 } from "../registry";
-import { trackSubject } from "../trackSubject";
 import type { Analytics, LoggableEvent, Props } from "../types";
+import { analyticsEvents$ } from "./eventLog";
 import { trackEvent } from "./trackEvent";
 
 const events: LoggableEvent[] = [];
-trackSubject.subscribe(event => events.push(event));
+analyticsEvents$.subscribe(event => events.push(event));
 
 const createAnalyticsClient = ({
   track = jest.fn(),
@@ -168,7 +168,7 @@ describe("trackEvent", () => {
       });
     });
 
-    it("publishes filtered payloads to trackSubject on success", () => {
+    it("publishes filtered payloads to analyticsEvents$ on success", () => {
       setAnalytics(createAnalyticsClient());
       setExtraPropsFn(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
       setPropsFilter(scrubSensitive);
@@ -184,7 +184,7 @@ describe("trackEvent", () => {
       );
     });
 
-    it("publishes filtered payloads to trackSubject when async extras reject", async () => {
+    it("publishes filtered payloads to analyticsEvents$ when async extras reject", async () => {
       setAnalytics(createAnalyticsClient());
       setExtraPropsFn(() => Promise.reject(new Error("permission read failed")));
       setPropsFilter(scrubSensitive);

@@ -1,5 +1,9 @@
-import { trackSubject } from "../trackSubject";
-import type { DeliveryStatus, Props } from "../types";
+import { ReplaySubject } from "rxjs";
+import type { DeliveryStatus, LoggableEvent, Props } from "../types";
+
+const eventLog = new ReplaySubject<LoggableEvent>(30);
+
+export const analyticsEvents$ = eventLog.asObservable();
 
 export function publishEvent({
   eventName,
@@ -12,7 +16,7 @@ export function publishEvent({
   eventPropsWithoutExtra?: Props;
   deliveryStatus: DeliveryStatus;
 }): void {
-  trackSubject.next({
+  eventLog.next({
     eventName,
     eventProps,
     eventPropsWithoutExtra,

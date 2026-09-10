@@ -2,7 +2,7 @@ import { applyPropsFilter, resolveExtraProps } from "../registry";
 import type { EventType, Props } from "../types";
 import { deliver } from "./deliver";
 import { isThenable } from "./isThenable";
-import { publishEvent } from "./publishEvent";
+import { publishEvent } from "./eventLog";
 
 export function trackEvent(
   kind: EventType,

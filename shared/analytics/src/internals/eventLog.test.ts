@@ -1,9 +1,8 @@
-import { trackSubject } from "../trackSubject";
 import type { LoggableEvent } from "../types";
-import { publishEvent } from "./publishEvent";
+import { analyticsEvents$, publishEvent } from "./eventLog";
 
 const events: LoggableEvent[] = [];
-trackSubject.subscribe(event => events.push(event));
+analyticsEvents$.subscribe(event => events.push(event));
 
 beforeEach(() => {
   events.length = 0;
