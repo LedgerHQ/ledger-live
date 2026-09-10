@@ -39,10 +39,10 @@ export function PaySuccessHero({
         <Avatar size={AVATAR_SIZE} aria-hidden />
       )}
       <div className="flex flex-col items-center gap-8">
-        <p className="text-center heading-3-semi-bold">
+        <h3 className="text-center heading-3-semi-bold">
           {t("payTab.contacts.paySuccess.title", { recipient: recipientLabel })}
-        </p>
-        <p className="text-center heading-2-semi-bold">{amountFormatted}</p>
+        </h3>
+        <h3 className="text-center heading-3-semi-bold">{amountFormatted}</h3>
       </div>
     </div>
   );
