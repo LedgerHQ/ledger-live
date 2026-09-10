@@ -76,4 +76,18 @@ describe("applyBrazeConsentTransition", () => {
       refreshContentCards.mock.invocationCallOrder[0],
     );
   });
+
+  it("should throw when wipeData is missing from the SDK", async () => {
+    const brazeMock = jest.requireMock("@braze/web-sdk") as { wipeData: unknown };
+    const originalWipeData = brazeMock.wipeData;
+    brazeMock.wipeData = undefined;
+
+    try {
+      await expect(
+        applyBrazeConsentTransition({ isTrackedUser: false, userId: REAL_USER_ID }),
+      ).rejects.toThrow("Braze SDK is missing wipeData");
+    } finally {
+      brazeMock.wipeData = originalWipeData;
+    }
+  });
 });
