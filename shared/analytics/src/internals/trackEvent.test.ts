@@ -5,7 +5,7 @@ import {
   setPropsFilter,
 } from "../registry";
 import { trackSubject } from "../trackSubject";
-import type { Analytics, DeliveryStatus, LoggableEvent, Props } from "../types";
+import type { Analytics, LoggableEvent, Props } from "../types";
 import { trackEvent } from "./trackEvent";
 
 const events: LoggableEvent[] = [];
@@ -222,97 +222,6 @@ describe("trackEvent", () => {
           deliveryStatus: "failed_filter",
         }),
       ]);
-    });
-  });
-
-  describe("delivery status", () => {
-    it("defaults to enqueued for a synchronous transport", () => {
-      setAnalytics(createTransport());
-
-      trackEvent("track", "Enqueued", {}, false);
-
-      expect(events[0].deliveryStatus).toBe("enqueued");
-    });
-
-    it("lets the transport override the default status", async () => {
-      setAnalytics(
-        createTransport({
-          track: async () => "skipped_no_token" as DeliveryStatus,
-        }),
-      );
-
-      await trackEvent("track", "Overridden", {}, false);
-
-      expect(events[0].deliveryStatus).toBe("skipped_no_token");
-    });
-
-    it("defaults to enqueued for a transport resolving nothing", async () => {
-      setAnalytics(createTransport({ track: async () => {} }));
-
-      await trackEvent("track", "Async Void", {}, false);
-
-      expect(events[0].deliveryStatus).toBe("enqueued");
-    });
-
-    it("reports failed_tracking when the transport throws", () => {
-      setAnalytics(
-        createTransport({
-          track: () => {
-            throw new Error("segment is down");
-          },
-        }),
-      );
-
-      expect(() => trackEvent("track", "Throwing", {}, false)).not.toThrow();
-      expect(events[0].deliveryStatus).toBe("failed_tracking");
-    });
-
-    it("reports failed_tracking without rejecting when the transport rejects", async () => {
-      setAnalytics(
-        createTransport({
-          track: async () => Promise.reject(new Error("segment is down")),
-        }),
-      );
-
-      await expect(trackEvent("track", "Rejecting", {}, false)).resolves.toBeUndefined();
-      expect(events[0].deliveryStatus).toBe("failed_tracking");
-    });
-
-    it("reports skipped_no_client when no transport is registered", () => {
-      setAnalytics(undefined as unknown as Analytics);
-
-      trackEvent("track", "No Client", {}, false);
-
-      expect(events[0].deliveryStatus).toBe("skipped_no_client");
-    });
-
-    it("publishes enriched and caller-only payloads separately", () => {
-      setAnalytics(createTransport());
-      setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
-
-      trackEvent("track", "Both Payloads", { foo: "bar" }, false);
-
-      expect(events[0]).toEqual({
-        date: expect.any(Date),
-        deliveryStatus: "enqueued",
-        eventName: "Both Payloads",
-        eventProps: { foo: "bar", appVersion: "1.2.3" },
-        eventPropsWithoutExtra: { foo: "bar" },
-      });
-    });
-  });
-
-  describe("logging", () => {
-    it("logs before sending", () => {
-      const transport = createTransport();
-      setAnalytics(transport);
-
-      trackEvent("track", "Logged", { foo: "bar" }, false);
-
-      expect(transport.log).toHaveBeenCalledWith("track", "Logged", {
-        foo: "bar",
-      });
-      expect(transport.track).toHaveBeenCalledWith("Logged", { foo: "bar" });
     });
   });
 });

@@ -1,5 +1,7 @@
 export type Props = Record<string, unknown>;
 
+export type EventType = "track" | "page";
+
 export type DeliveryStatus =
   | "enqueued"
   | "failed_tracking"
@@ -19,7 +21,7 @@ export type LoggableEvent = {
 
 export interface Analytics {
   track(event: string, props: Props): void | Promise<void | DeliveryStatus>;
-  log?(kind: "track" | "page", event: string, props: Props): void;
+  log?(type: EventType, event: string, props: Props): void;
 }
 
 export type EnabledFn = () => boolean;
