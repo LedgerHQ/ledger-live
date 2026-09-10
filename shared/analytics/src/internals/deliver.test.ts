@@ -21,11 +21,11 @@ beforeEach(() => {
 });
 
 describe("deliver", () => {
-  it("sends the event name and props to the analytics client", () => {
+  it("sends the event name and props to the analytics client", async () => {
     const analytics = createAnalyticsClient();
     setAnalytics(analytics);
 
-    deliver({
+    await deliver({
       type: "track",
       eventName: "Tracked",
       eventProps: { foo: "bar" },
@@ -35,11 +35,11 @@ describe("deliver", () => {
     expect(analytics.track).toHaveBeenCalledWith("Tracked", { foo: "bar" });
   });
 
-  it("logs before sending", () => {
+  it("logs before sending", async () => {
     const analytics = createAnalyticsClient();
     setAnalytics(analytics);
 
-    deliver({
+    await deliver({
       type: "track",
       eventName: "Logged",
       eventProps: { foo: "bar" },
@@ -51,7 +51,7 @@ describe("deliver", () => {
     });
   });
 
-  it("still tracks when logging throws", () => {
+  it("still tracks when logging throws", async () => {
     const analytics = createAnalyticsClient({
       log: () => {
         throw new Error("logger is down");
@@ -59,14 +59,14 @@ describe("deliver", () => {
     });
     setAnalytics(analytics);
 
-    expect(() =>
+    await expect(
       deliver({
         type: "track",
         eventName: "Tracked",
         eventProps: { foo: "bar" },
         eventPropsWithoutExtra: { foo: "bar" },
       }),
-    ).not.toThrow();
+    ).resolves.toBeUndefined();
 
     expect(analytics.track).toHaveBeenCalledWith("Tracked", {
       foo: "bar",
@@ -74,10 +74,10 @@ describe("deliver", () => {
     expect(events[0].deliveryStatus).toBe("enqueued");
   });
 
-  it("publishes enriched payloads", () => {
+  it("publishes enriched payloads", async () => {
     setAnalytics(createAnalyticsClient());
 
-    deliver({
+    await deliver({
       type: "track",
       eventName: "Both Payloads",
       eventProps: { foo: "bar", appVersion: "1.2.3" },
@@ -94,10 +94,10 @@ describe("deliver", () => {
   });
 
   describe("delivery status", () => {
-    it("defaults to enqueued for a synchronous analytics client", () => {
+    it("defaults to enqueued for a synchronous analytics client", async () => {
       setAnalytics(createAnalyticsClient());
 
-      deliver({
+      await deliver({
         type: "track",
         eventName: "Enqueued",
         eventProps: {},
@@ -137,7 +137,7 @@ describe("deliver", () => {
       expect(events[0].deliveryStatus).toBe("enqueued");
     });
 
-    it("reports failed_tracking when the analytics client throws", () => {
+    it("reports failed_tracking when the analytics client throws", async () => {
       setAnalytics(
         createAnalyticsClient({
           track: () => {
@@ -146,14 +146,14 @@ describe("deliver", () => {
         }),
       );
 
-      expect(() =>
+      await expect(
         deliver({
           type: "track",
           eventName: "Throwing",
           eventProps: {},
           eventPropsWithoutExtra: {},
         }),
-      ).not.toThrow();
+      ).resolves.toBeUndefined();
       expect(events[0].deliveryStatus).toBe("failed_tracking");
     });
 
@@ -175,10 +175,10 @@ describe("deliver", () => {
       expect(events[0].deliveryStatus).toBe("failed_tracking");
     });
 
-    it("reports skipped_no_client when no analytics client is registered", () => {
+    it("reports skipped_no_client when no analytics client is registered", async () => {
       setAnalytics(undefined);
 
-      deliver({
+      await deliver({
         type: "track",
         eventName: "No Client",
         eventProps: {},

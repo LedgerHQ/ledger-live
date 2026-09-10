@@ -31,3 +31,7 @@ export type ExtraPropsFn = () => Props | Promise<Props>;
 export type MandatoryExtraPropsFn = () => Props;
 
 export type PropsFilter = (props: Props) => Props;
+
+export type TrackOptions = {
+  mandatory?: boolean;
+};
