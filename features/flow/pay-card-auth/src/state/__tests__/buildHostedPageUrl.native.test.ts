@@ -31,4 +31,12 @@ describe("buildHostedPageUrl", () => {
       /Invalid URL/,
     );
   });
+
+  it("keeps a page of another scheme on the trusted base, never on its own", () => {
+    // Only the path and the query of `pageUrl` are read; its own scheme and host never reach the
+    // result, which stays validated https on `baseUrl` regardless of what `pageUrl` was.
+    expect(buildHostedPageUrl("https://provider.test", "javascript:alert(1)")).toBe(
+      "https://provider.test/alert(1)",
+    );
+  });
 });
