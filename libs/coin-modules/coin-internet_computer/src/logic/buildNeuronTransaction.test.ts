@@ -1,5 +1,7 @@
+import { IDL } from "@dfinity/candid";
 import { Principal } from "@dfinity/principal";
 import BigNumber from "bignumber.js";
+import { getCanisterIdlFunc, governanceIdlFactory } from "../network/candid";
 import { ICPNeuron, ICPTransactionType, InternetComputerOperation, Transaction } from "../types";
 import { derivePrincipalFromPubkey } from "./crypto";
 import {
@@ -51,6 +53,44 @@ describe("createUnsignedNeuronCommandTransaction", () => {
     const unsigned = createUnsignedNeuronCommandTransaction(tx({ type, ...over }), XPUB);
     expect(unsigned.method_name).toBe("manage_neuron");
     expect(unsigned.arg.byteLength).toBeGreaterThan(0);
+  });
+
+  const splitArg = () =>
+    createUnsignedNeuronCommandTransaction(
+      tx({ type: "split_neuron", amount: new BigNumber(200_000_000) }),
+      XPUB,
+    ).arg as ArrayBuffer;
+
+  // The device app reads the candid type table, not just the value, and refuses a Split record that
+  // holds anything but one field — so the table itself is what has to be pinned.
+  it("declares Split with only the amount_e8s field the device app parses", () => {
+    expect(Buffer.from(splitArg()).toString("hex")).toBe(
+      "4449444c09" + // 9 type-table entries
+        "6c01dbb70178" + // T0 NeuronId: record { id : nat64 }
+        "6e00" + // T1 opt T0
+        "6c01b9ef93800878" + // T2 Split: record { amount_e8s : nat64 } — one field
+        "6b01bab5f1a40102" + // T3 variant { Split : T2 }
+        "6e03" + // T4 opt T3
+        "6d7b" + // T5 vec nat8
+        "6b02cd8e8eb90405cebee1d30800" + // T6 variant { Subaccount : T5; NeuronId : T0 }
+        "6e06" + // T7 opt T6
+        "6c03dbb70101cbe2b58b0804f1bb8b880d07" + // T8 record { id; command; neuron_id_or_subaccount }
+        "0108" + // one argument, of type T8
+        "017b00000000000000" + // id = 123
+        "010000c2eb0b00000000" + // command = Split { amount_e8s = 200_000_000 }
+        "00", // neuron_id_or_subaccount absent
+    );
+  });
+
+  it("stays readable as the canister's own manage_neuron argument", () => {
+    const { argTypes } = getCanisterIdlFunc(governanceIdlFactory, "manage_neuron");
+    expect(IDL.decode(argTypes, splitArg())).toEqual([
+      {
+        id: [{ id: 123n }],
+        command: [{ Split: { amount_e8s: 200_000_000n, memo: [] } }],
+        neuron_id_or_subaccount: [],
+      },
+    ]);
   });
 });
 

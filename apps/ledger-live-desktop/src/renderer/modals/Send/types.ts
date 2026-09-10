@@ -34,7 +34,7 @@ export type StepProps = {
   onResetMaybeAmount: () => void;
   updateTransaction: (updater: (t: Transaction) => Transaction) => void;
   updateAccount?: (account: AccountLike) => void;
-  onConfirmationHandler: () => void;
+  onConfirmationHandler: (operation: Operation) => void;
   onFailHandler: () => void;
   currencyName: string | undefined | null;
   walletConnectProxy?: boolean;

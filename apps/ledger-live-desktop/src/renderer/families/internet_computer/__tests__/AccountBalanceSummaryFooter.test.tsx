@@ -81,4 +81,30 @@ describe("AccountBalanceSummaryFooter (internet_computer)", () => {
     expect(screen.getByText("Total Maturity")).toBeInTheDocument();
     expect(screen.getByText("maturity:0.5")).toBeInTheDocument();
   });
+
+  // The tooltip promises "both staked and liquid maturity". Staked maturity is excluded from
+  // neuronStake as well, so summing only the liquid half left it showing nowhere at all.
+  it("counts staked maturity toward the total alongside the liquid part", () => {
+    const account = makeICPAccount({
+      neurons: [
+        makeNeuron({
+          maturityE8sEquivalent: MATURITY_E8S / 2n,
+          stakedMaturityE8sEquivalent: MATURITY_E8S / 2n,
+        }),
+      ],
+    });
+    render(<AccountBalanceSummaryFooter account={account} />);
+
+    expect(screen.getByText("maturity:0.5")).toBeInTheDocument();
+  });
+
+  // With only the liquid half summed, both totals read zero here and the whole footer disappeared.
+  it("still renders when a neuron's maturity has all been staked", () => {
+    const account = makeICPAccount({
+      neurons: [makeNeuron({ stakedMaturityE8sEquivalent: MATURITY_E8S })],
+    });
+    render(<AccountBalanceSummaryFooter account={account} />);
+
+    expect(screen.getByText("maturity:0.5")).toBeInTheDocument();
+  });
 });
