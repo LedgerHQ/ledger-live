@@ -11,21 +11,21 @@ export type DeliveryStatus =
 
 export type LoggableEvent = {
   eventName: string;
-  eventProperties?: Props;
-  eventPropertiesWithoutExtra?: Props;
+  eventProps?: Props;
+  eventPropsWithoutExtra?: Props;
   date: Date;
   deliveryStatus?: DeliveryStatus;
 };
 
-export interface AnalyticsTransport {
-  track(event: string, properties: Props): void | Promise<void | DeliveryStatus>;
-  log?(kind: "track" | "page", event: string, properties: Props): void;
+export interface Analytics {
+  track(event: string, props: Props): void | Promise<void | DeliveryStatus>;
+  log?(kind: "track" | "page", event: string, props: Props): void;
 }
 
-export type EnabledFunction = () => boolean;
+export type EnabledFn = () => boolean;
 
-export type ExtraPropertiesFunction = () => Props | Promise<Props>;
+export type ExtraPropsFn = () => Props | Promise<Props>;
 
-export type MandatoryExtraPropertiesFunction = () => Props;
+export type MandatoryExtraPropsFn = () => Props;
 
-export type PropertyFilter = (properties: Props) => Props;
+export type PropsFilter = (props: Props) => Props;

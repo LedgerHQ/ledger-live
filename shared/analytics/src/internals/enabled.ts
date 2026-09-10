@@ -1,5 +1,5 @@
-import { getEnabledFunction } from "../registry";
+import { getEnabledFn } from "../registry";
 
 export function isEnabled(): boolean {
-  return getEnabledFunction()?.() ?? false;
+  return getEnabledFn()?.() ?? false;
 }

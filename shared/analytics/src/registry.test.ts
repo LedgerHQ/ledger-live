@@ -1,24 +1,24 @@
 import {
-  applyPropertyFilter,
+  applyPropsFilter,
   getAnalytics,
-  getEnabledFunction,
-  resolveExtraProperties,
+  getEnabledFn,
+  resolveExtraProps,
   setAnalytics,
-  setEnabledFunction,
-  setExtraPropertiesFunction,
-  setMandatoryExtraPropertiesFunction,
-  setPropertyFilter,
+  setEnabledFn,
+  setExtraPropsFn,
+  setMandatoryExtraPropsFn,
+  setPropsFilter,
 } from "./registry";
-import type { AnalyticsTransport, Props } from "./types";
+import type { Analytics, Props } from "./types";
 
-const transport = { track: jest.fn() } as AnalyticsTransport;
+const transport = { track: jest.fn() } as Analytics;
 
 beforeEach(() => {
   setAnalytics({ track: jest.fn() });
-  setEnabledFunction(undefined);
-  setExtraPropertiesFunction(undefined);
-  setMandatoryExtraPropertiesFunction(undefined);
-  setPropertyFilter(undefined);
+  setEnabledFn(undefined);
+  setExtraPropsFn(undefined);
+  setMandatoryExtraPropsFn(undefined);
+  setPropsFilter(undefined);
 });
 
 describe("@shared/analytics registry", () => {
@@ -31,53 +31,53 @@ describe("@shared/analytics registry", () => {
 
     it("round-trips enabled function", () => {
       const enabled = () => true;
-      setEnabledFunction(enabled);
+      setEnabledFn(enabled);
 
-      expect(getEnabledFunction()).toBe(enabled);
+      expect(getEnabledFn()).toBe(enabled);
     });
 
     it("clears enabled function when set to undefined", () => {
-      setEnabledFunction(() => true);
-      setEnabledFunction(undefined);
+      setEnabledFn(() => true);
+      setEnabledFn(undefined);
 
-      expect(getEnabledFunction()).toBeUndefined();
+      expect(getEnabledFn()).toBeUndefined();
     });
   });
 
-  describe("resolveExtraProperties", () => {
-    it("uses the extra properties function for non-mandatory events", () => {
-      setExtraPropertiesFunction(() => ({ extra: "props" }));
+  describe("resolveExtraProps", () => {
+    it("uses the extra props function for non-mandatory events", () => {
+      setExtraPropsFn(() => ({ extra: "props" }));
 
-      expect(resolveExtraProperties(false)).toEqual({ extra: "props" });
+      expect(resolveExtraProps(false)).toEqual({ extra: "props" });
     });
 
-    it("uses the mandatory extra properties function for mandatory events", () => {
-      setMandatoryExtraPropertiesFunction(() => ({ mandatory: "props" }));
+    it("uses the mandatory extra props function for mandatory events", () => {
+      setMandatoryExtraPropsFn(() => ({ mandatory: "props" }));
 
-      expect(resolveExtraProperties(true)).toEqual({ mandatory: "props" });
+      expect(resolveExtraProps(true)).toEqual({ mandatory: "props" });
     });
 
     it("returns undefined when no function is registered", () => {
-      expect(resolveExtraProperties(false)).toBeUndefined();
-      expect(resolveExtraProperties(true)).toBeUndefined();
+      expect(resolveExtraProps(false)).toBeUndefined();
+      expect(resolveExtraProps(true)).toBeUndefined();
     });
   });
 
-  describe("applyPropertyFilter", () => {
-    it("returns properties unchanged when no filter is registered", () => {
-      const properties: Props = { theme: "light" };
+  describe("applyPropsFilter", () => {
+    it("returns props unchanged when no filter is registered", () => {
+      const props: Props = { theme: "light" };
 
-      expect(applyPropertyFilter(properties)).toBe(properties);
+      expect(applyPropsFilter(props)).toBe(props);
     });
 
-    it("runs properties through the registered filter", () => {
-      setPropertyFilter(properties => {
-        const filtered = { ...properties };
+    it("runs props through the registered filter", () => {
+      setPropsFilter(props => {
+        const filtered = { ...props };
         delete filtered.sensitive;
         return filtered;
       });
 
-      expect(applyPropertyFilter({ sensitive: "secret", theme: "light" })).toEqual({
+      expect(applyPropsFilter({ sensitive: "secret", theme: "light" })).toEqual({
         theme: "light",
       });
     });

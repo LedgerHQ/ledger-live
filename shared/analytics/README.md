@@ -4,32 +4,30 @@
 >
 > **Status: WIP** — New package for LIVE-37157. Delete this note once the work is complete.
 
-Shared `track` for Ledger Wallet apps. Each app registers its own analytics client (e.g. Segment), consent check, and extra properties.
+Shared `track` for Ledger Wallet apps. Each app registers its own analytics client (e.g. Segment), consent check, and extra props.
 
 ## Example Setup
 
 ```ts
 import {
   setAnalytics,
-  setEnabledFunction,
-  setExtraPropertiesFunction,
-  setMandatoryExtraPropertiesFunction,
-  setPropertyFilter,
+  setEnabledFn,
+  setExtraPropsFn,
+  setMandatoryExtraPropsFn,
+  setPropsFilter,
   track,
 } from "@shared/analytics";
 
-setEnabledFunction(() => analyticsEnabledSelector(store.getState()));
-setExtraPropertiesFunction(() =>
-  analyticsExtraPropertiesSelector(store.getState())
+setEnabledFn(() => analyticsEnabledSelector(store.getState()));
+setExtraPropsFn(() => analyticsExtraPropsSelector(store.getState()));
+setMandatoryExtraPropsFn(() =>
+  analyticsMandatoryPropsSelector(store.getState())
 );
-setMandatoryExtraPropertiesFunction(() =>
-  analyticsMandatoryPropertiesSelector(store.getState())
-);
-setPropertyFilter((properties) => yourFilter(properties));
+setPropsFilter((props) => yourFilter(props));
 
 setAnalytics({
-  track: (event, properties) => {
-    void segment.track(event, properties);
+  track: (event, props) => {
+    void segment.track(event, props);
   },
 });
 
@@ -38,6 +36,6 @@ track("Your Event", { foo: "bar" });
 
 Tracking is off until enabled explicitly. Pass `{ mandatory: true }` to skip that check.
 
-`setExtraPropertiesFunction` and `setMandatoryExtraPropertiesFunction` may be async. Extra properties from the function overwrite the same keys on the caller’s payload.
+`setExtraPropsFn` and `setMandatoryExtraPropsFn` may be async. Extra props from the function overwrite the same keys on the caller’s payload.
 
 `trackSubject` provides an event bus (using RxJS) for in-app analytics consoles.

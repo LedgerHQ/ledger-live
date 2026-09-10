@@ -1,50 +1,50 @@
 import type {
-  AnalyticsTransport,
-  EnabledFunction,
-  ExtraPropertiesFunction,
-  MandatoryExtraPropertiesFunction,
+  Analytics,
+  EnabledFn,
+  ExtraPropsFn,
+  MandatoryExtraPropsFn,
   Props,
-  PropertyFilter,
+  PropsFilter,
 } from "./types";
 
-let transport: AnalyticsTransport | undefined;
-let enabledFunction: EnabledFunction | undefined;
-let extraPropertiesFunction: ExtraPropertiesFunction | undefined;
-let mandatoryExtraPropertiesFunction: MandatoryExtraPropertiesFunction | undefined;
-let propertyFilter: PropertyFilter | undefined;
+let analytics: Analytics | undefined;
+let enabledFn: EnabledFn | undefined;
+let extraPropsFn: ExtraPropsFn | undefined;
+let mandatoryExtraPropsFn: MandatoryExtraPropsFn | undefined;
+let propsFilter: PropsFilter | undefined;
 
-export function setAnalytics(next: AnalyticsTransport): void {
-  transport = next;
+export function setAnalytics(next: Analytics): void {
+  analytics = next;
 }
 
-export function getAnalytics(): AnalyticsTransport | undefined {
-  return transport;
+export function getAnalytics(): Analytics | undefined {
+  return analytics;
 }
 
-export function setEnabledFunction(next?: EnabledFunction): void {
-  enabledFunction = next;
+export function setEnabledFn(next?: EnabledFn): void {
+  enabledFn = next;
 }
 
-export function getEnabledFunction(): EnabledFunction | undefined {
-  return enabledFunction;
+export function getEnabledFn(): EnabledFn | undefined {
+  return enabledFn;
 }
 
-export function setExtraPropertiesFunction(next?: ExtraPropertiesFunction): void {
-  extraPropertiesFunction = next;
+export function setExtraPropsFn(next?: ExtraPropsFn): void {
+  extraPropsFn = next;
 }
 
-export function setMandatoryExtraPropertiesFunction(next?: MandatoryExtraPropertiesFunction): void {
-  mandatoryExtraPropertiesFunction = next;
+export function setMandatoryExtraPropsFn(next?: MandatoryExtraPropsFn): void {
+  mandatoryExtraPropsFn = next;
 }
 
-export function resolveExtraProperties(mandatory: boolean): Props | Promise<Props> | undefined {
-  return mandatory ? mandatoryExtraPropertiesFunction?.() : extraPropertiesFunction?.();
+export function resolveExtraProps(mandatory: boolean): Props | Promise<Props> | undefined {
+  return mandatory ? mandatoryExtraPropsFn?.() : extraPropsFn?.();
 }
 
-export function setPropertyFilter(next?: PropertyFilter): void {
-  propertyFilter = next;
+export function setPropsFilter(next?: PropsFilter): void {
+  propsFilter = next;
 }
 
-export function applyPropertyFilter(properties: Props): Props {
-  return propertyFilter ? propertyFilter(properties) : properties;
+export function applyPropsFilter(props: Props): Props {
+  return propsFilter ? propsFilter(props) : props;
 }
