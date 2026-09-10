@@ -41,7 +41,7 @@ export type CardLoginOauthConfig = Readonly<{
   apiUrl: string;
   clientId: string;
   /** Base of the provider's hosted UI, which carries the signup page the intro opens. */
-  hostedUiUrl: string;
+  hostedUiUrl?: string;
   /**
    * Sent to the provider on authorize. The token exchange does not repeat it. The provider whitelists
    * an `https` URL only, so this one cannot be the app's own link. It redirects to `deepLink`.

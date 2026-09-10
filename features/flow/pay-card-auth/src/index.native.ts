@@ -1,6 +1,8 @@
 export { CardLogin } from "./components/CardLogin/index.native";
 export type { CardLoginProps, PayCardLoginTrackEvent } from "./components/CardLogin/types";
 export { openHostedLoginInSecureBrowser } from "./components/CardLogin/openHostedLogin.native";
+export { buildHostedPageUrl } from "./state/buildHostedPageUrl";
+export { buildHostedUrl } from "./state/buildHostedUrl";
 export type { OpenHostedLogin, HostedLoginResult } from "./state/types";
 export type { CardLoginOauthConfig, PayCardAuthCallback } from "./state/types";
 export type { PayCardAuthStatus } from "./state/types";
