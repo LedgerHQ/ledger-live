@@ -83,7 +83,7 @@ export default class StakePage {
   @Step("Select the first provider offered for {{{0}}}")
   async selectFirstValidator(currencyId: string): Promise<string> {
     await tapById(this.delegationSummaryValidatorId(currencyId));
-    await waitForElementById(PROVIDER_ROW_REGEX);
+    await waitForElement(getElementById(PROVIDER_ROW_REGEX));
     const rowId = await getIdByRegexp(PROVIDER_ROW_REGEX);
     await tapById(rowId);
     await waitForElementById(this.delegationSummaryValidatorId(currencyId));

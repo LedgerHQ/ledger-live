@@ -18,7 +18,7 @@ export class DelegateDrawer extends Drawer {
     }
   }
 
-  @step("Verify validator group is $0")
+  @step("Verify validator group $0 is visible")
   async validatorGroupIsVisible(validatorGroup: string) {
     await expect(this.provider(validatorGroup)).toBeVisible();
   }
