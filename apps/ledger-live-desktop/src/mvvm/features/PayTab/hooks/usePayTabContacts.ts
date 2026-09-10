@@ -6,6 +6,7 @@ import {
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
   type Contact,
+  type ContactAddress,
 } from "@domain/entity-contact";
 import { createContactCreationPort } from "@features/flow-contacts-add-contact";
 import {
@@ -31,15 +32,15 @@ import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { usePayTabContactOperations } from "./usePayTabContactOperations";
 import { renderPayContactAddresses } from "../components/PayContactAddresses";
 
-const noopSelectAddress = () => undefined;
-
 export type UsePayTabContactsResult = Readonly<{
   contacts: ContactsProps;
   ledgerSyncIntroduction: ContactsLedgerSyncIntroductionDialogProps;
   contactAddressPicker: ContactAddressPickerProps;
 }>;
 
-export function usePayTabContacts(): UsePayTabContactsResult {
+export function usePayTabContacts(
+  onSelectAddress: (address: ContactAddress) => void,
+): UsePayTabContactsResult {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ export function usePayTabContacts(): UsePayTabContactsResult {
   );
   const { open: openContactAddressPicker, contactAddressPicker } = useContactAddressPickerViewModel(
     {
-      onSelectAddress: noopSelectAddress,
+      onSelectAddress,
       onAddNewAddress: onAddContactAddress,
     },
   );

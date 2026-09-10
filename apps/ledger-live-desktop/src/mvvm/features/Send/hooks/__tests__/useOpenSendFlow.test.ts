@@ -75,6 +75,7 @@ describe("useOpenSendFlow", () => {
     expect(store.getState().modularDialog.dialogParams?.categories).toEqual([
       AssetCategory.Stablecoins,
     ]);
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBeUndefined();
 
     store.getState().modularDialog.dialogParams?.onAccountSelected?.(account);
 
@@ -131,10 +132,52 @@ describe("useOpenSendFlow", () => {
     });
 
     result.current({
+      source: "Pay",
       currencyIds: ["bitcoin"],
       recipient,
       skipRecipientStep: true,
     });
+
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBe("pay");
+
+    store.getState().modularDialog.dialogParams?.onAccountSelected?.(account);
+
+    expect(store.getState().sendFlow.data?.params).toEqual(
+      expect.objectContaining({
+        account,
+        recipient,
+        skipRecipientStep: true,
+        source: "Pay",
+      }),
+    );
+  });
+
+  it("should not use the Pay account header when another flow prefills the recipient", () => {
+    const account = genAccount("send-contacts-account-selection", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const { result, store } = renderHook(() => useOpenSendFlow(), {
+      initialState: {
+        ...withFlagOverrides({
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["bitcoin"], excludedCurrencyIds: [] },
+          },
+        }),
+        accounts: [account],
+      },
+    });
+
+    const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+    result.current({
+      currencyIds: ["bitcoin"],
+      recipient,
+      skipRecipientStep: true,
+    });
+
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBeUndefined();
+
     store.getState().modularDialog.dialogParams?.onAccountSelected?.(account);
 
     expect(store.getState().sendFlow.data?.params).toEqual(
@@ -144,5 +187,33 @@ describe("useOpenSendFlow", () => {
         skipRecipientStep: true,
       }),
     );
+    expect(store.getState().sendFlow.data?.params).not.toEqual(
+      expect.objectContaining({ source: "Pay" }),
+    );
+  });
+
+  it("should not use the Pay account header when Pay has a recipient but does not skip", () => {
+    const account = genAccount("send-pay-recipient-no-skip", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const { result, store } = renderHook(() => useOpenSendFlow(), {
+      initialState: {
+        ...withFlagOverrides({
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["bitcoin"], excludedCurrencyIds: [] },
+          },
+        }),
+        accounts: [account],
+      },
+    });
+
+    result.current({
+      source: "Pay",
+      currencyIds: ["bitcoin"],
+      recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+    });
+
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBeUndefined();
   });
 });

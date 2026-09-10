@@ -44,6 +44,14 @@ export function useContactAddressPickerViewModel({
     [onAddNewAddress, contact],
   );
 
+  const handleSelectAddress = useCallback(
+    (address: ContactAddress) => {
+      close();
+      onSelectAddress(address);
+    },
+    [close, onSelectAddress],
+  );
+
   const contactAddressPicker = useMemo<ContactAddressPickerProps>(
     () => ({
       isOpen: contact !== null,
@@ -52,10 +60,10 @@ export function useContactAddressPickerViewModel({
       addAddressLabel: t("payTab.contacts.addressPicker.addAddress"),
       groups,
       onClose: close,
-      onSelectAddress,
+      onSelectAddress: handleSelectAddress,
       onAddNewAddress: handleAddNewAddress,
     }),
-    [contact, title, groups, t, close, onSelectAddress, handleAddNewAddress],
+    [contact, title, groups, t, close, handleSelectAddress, handleAddNewAddress],
   );
 
   return {

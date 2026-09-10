@@ -5,6 +5,8 @@ import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
 import { SEND_FLOW_CONFIG } from "./constants";
 import {
   canSkipRecipientStep,
+  hasDirectRecipient,
+  SEND_FLOW_SOURCE,
   SEND_FLOW_STEP,
   type SendFlowStep,
   type SendFlowInitParams,
@@ -31,9 +33,11 @@ export function SendFlowOrchestrator({
   const flowConfig = useMemo(
     () => ({
       ...SEND_FLOW_CONFIG,
-      initialStep: canSkipRecipientStep(initParams, businessContext.uiConfig)
-        ? SEND_FLOW_STEP.AMOUNT
-        : SEND_FLOW_STEP.RECIPIENT,
+      initialStep:
+        (initParams?.source === SEND_FLOW_SOURCE.PAY && hasDirectRecipient(initParams)) ||
+        canSkipRecipientStep(initParams, businessContext.uiConfig)
+          ? SEND_FLOW_STEP.AMOUNT
+          : SEND_FLOW_STEP.RECIPIENT,
     }),
     [businessContext.uiConfig, initParams],
   );

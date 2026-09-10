@@ -30,6 +30,20 @@ describe("usePayTabNewPayment", () => {
     });
   });
 
+  it("should prefill the recipient and network from a selected address", () => {
+    const address = mockContactWithAddress().addresses[0];
+    const { result } = renderHook(() => usePayTabNewPayment());
+
+    act(() => result.current.payFromAddress(address));
+
+    expect(mockOpenSendFlow).toHaveBeenCalledWith({
+      source: "Pay",
+      currencyIds: [address.currencyId],
+      recipient: address.address,
+      skipRecipientStep: true,
+    });
+  });
+
   it("should prefill the recipient and network for a contact with one address", () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0];
