@@ -1,10 +1,9 @@
 import {
   setAnalytics,
-  setEnricher,
-  setMandatoryEnricher,
+  setEnabledFunction,
+  setExtraPropertiesFunction,
+  setMandatoryExtraPropertiesFunction,
   setPropertyFilter,
-  setAnalyticsStore,
-  setIsTrackingEnabledSelector,
 } from "./registry";
 import { track } from "./track";
 import { trackSubject } from "./trackSubject";
@@ -12,8 +11,6 @@ import type { AnalyticsTransport, DeliveryStatus, LoggableEvent, Props } from ".
 
 const events: LoggableEvent[] = [];
 trackSubject.subscribe(event => events.push(event));
-
-const state = { settings: { shareAnalytics: true } };
 
 const createTransport = ({
   track = jest.fn(),
@@ -26,18 +23,16 @@ const createTransport = ({
 
 const register = (transport = createTransport()) => {
   setAnalytics(transport);
-  setAnalyticsStore({ getState: () => state });
-  setIsTrackingEnabledSelector(() => true);
+  setEnabledFunction(() => true);
   return transport;
 };
 
 beforeEach(() => {
   events.length = 0;
   setAnalytics({ track: jest.fn() });
-  setAnalyticsStore({ getState: () => state });
-  setIsTrackingEnabledSelector(() => true);
-  setEnricher(undefined);
-  setMandatoryEnricher(undefined);
+  setEnabledFunction(() => true);
+  setExtraPropertiesFunction(undefined);
+  setMandatoryExtraPropertiesFunction(undefined);
   setPropertyFilter(undefined);
 });
 
@@ -46,13 +41,13 @@ let transport: jest.Mocked<AnalyticsTransport>;
 describe("enabled/disabled", () => {
   beforeEach(() => {
     transport = register();
-    setEnricher(() => ({ extra: "props" }));
-    setMandatoryEnricher(() => ({ mandatory: "props" }));
+    setExtraPropertiesFunction(() => ({ extra: "props" }));
+    setMandatoryExtraPropertiesFunction(() => ({ mandatory: "props" }));
   });
 
   describe("with tracking enabled", () => {
     beforeEach(() => {
-      setIsTrackingEnabledSelector(() => true);
+      setEnabledFunction(() => true);
     });
 
     it("sends event properties and extra properties", () => {
@@ -76,7 +71,7 @@ describe("enabled/disabled", () => {
 
   describe("with tracking disabled", () => {
     beforeEach(() => {
-      setIsTrackingEnabledSelector(() => false);
+      setEnabledFunction(() => false);
     });
 
     it("non-mandatory events are not sent", () => {
@@ -99,7 +94,7 @@ describe("enabled/disabled", () => {
 describe("enrichment", () => {
   it("emits synchronously for a sync enricher", () => {
     const transport = register();
-    setEnricher(() => ({ appVersion: "1.2.3" }));
+    setExtraPropertiesFunction(() => ({ appVersion: "1.2.3" }));
 
     const result = track("Sync Event");
 
@@ -112,7 +107,7 @@ describe("enrichment", () => {
 
   it("resolves after the transport was called for an async enricher", async () => {
     const transport = register();
-    setEnricher(async () => ({ appVersion: "1.2.3" }));
+    setExtraPropertiesFunction(async () => ({ appVersion: "1.2.3" }));
 
     const result = track("Async Event");
 
@@ -126,7 +121,7 @@ describe("enrichment", () => {
 
   it("reports failed without rejecting when an async enricher rejects", async () => {
     const transport = register();
-    setEnricher(() => Promise.reject(new Error("permission read failed")));
+    setExtraPropertiesFunction(() => Promise.reject(new Error("permission read failed")));
 
     await expect(track("Unenrichable", { foo: "bar" })).resolves.toBeUndefined();
 
@@ -141,19 +136,19 @@ describe("enrichment", () => {
     ]);
   });
 
-  it("passes the store state to the enricher", () => {
+  it("calls the extra properties function with no arguments", () => {
     register();
-    const enricher = jest.fn(() => ({}));
-    setEnricher(enricher);
+    const extraProperties = jest.fn(() => ({}));
+    setExtraPropertiesFunction(extraProperties);
 
     track("Stateful");
 
-    expect(enricher).toHaveBeenCalledWith(state);
+    expect(extraProperties).toHaveBeenCalledWith();
   });
 
   it("lets the extra properties win over the caller's", () => {
     const transport = register();
-    setEnricher(() => ({ platform: "desktop" }));
+    setExtraPropertiesFunction(() => ({ platform: "desktop" }));
 
     track("Collision", { platform: "caller-supplied" });
 
@@ -183,7 +178,7 @@ describe("property filter", () => {
 
   it("filters enriched properties before sending", () => {
     const transport = register();
-    setEnricher(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
+    setExtraPropertiesFunction(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
     setPropertyFilter(scrubSensitive);
 
     track("Enriched Event", { theme: "light" });
@@ -196,7 +191,7 @@ describe("property filter", () => {
 
   it("publishes filtered payloads to trackSubject on success", () => {
     register();
-    setEnricher(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
+    setExtraPropertiesFunction(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
     setPropertyFilter(scrubSensitive);
 
     track("Subject Event", { theme: "light" });
@@ -212,7 +207,7 @@ describe("property filter", () => {
 
   it("publishes filtered payloads to trackSubject when an async enricher rejects", async () => {
     register();
-    setEnricher(() => Promise.reject(new Error("permission read failed")));
+    setExtraPropertiesFunction(() => Promise.reject(new Error("permission read failed")));
     setPropertyFilter(scrubSensitive);
 
     await track("Unenrichable", {
@@ -299,7 +294,7 @@ describe("delivery status", () => {
 
   it("reports the payload without the extra properties alongside the enriched one", () => {
     register();
-    setEnricher(() => ({ appVersion: "1.2.3" }));
+    setExtraPropertiesFunction(() => ({ appVersion: "1.2.3" }));
 
     track("Both Payloads", { foo: "bar" });
 
