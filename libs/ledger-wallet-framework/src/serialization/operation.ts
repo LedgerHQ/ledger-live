@@ -124,6 +124,43 @@ export const inferSubOperations = (txHash: string, subAccounts: TokenAccount[]):
   return all;
 };
 
+export type SubOperationIndex = Map<string, Operation[]>;
+
+/**
+ * Index equivalent to `inferSubOperations`, built once for a full set of sub-accounts instead of
+ * rescanning them for every hash. Entries are inserted in exactly the nesting order
+ * `inferSubOperations` walks — sub-account array order, then that sub-account's `operations` in
+ * order, then its `pendingOperations` in order — so `subOperationIndex.get(hash)` is deep-equal to
+ * `inferSubOperations(hash, subAccounts)` for every hash. That equivalence is the whole
+ * correctness argument for looking up the index instead of scanning.
+ */
+export const buildSubOperationIndex = (subAccounts: TokenAccount[]): SubOperationIndex => {
+  const index: SubOperationIndex = new Map();
+
+  const insert = (op: Operation) => {
+    const bucket = index.get(op.hash);
+    if (bucket) {
+      bucket.push(op);
+    } else {
+      index.set(op.hash, [op]);
+    }
+  };
+
+  for (let i = 0; i < subAccounts.length; i++) {
+    const ta = subAccounts[i];
+
+    for (let j = 0; j < ta.operations.length; j++) {
+      insert(ta.operations[j]);
+    }
+
+    for (let j = 0; j < ta.pendingOperations.length; j++) {
+      insert(ta.pendingOperations[j]);
+    }
+  }
+
+  return index;
+};
+
 export const fromOperationRaw = (
   {
     date,
@@ -151,6 +188,7 @@ export const fromOperationRaw = (
   accountId: string,
   subAccounts?: TokenAccount[] | null | undefined,
   fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"],
+  subOperationIndex?: SubOperationIndex,
 ): Operation => {
   const res: Operation = {
     id,
@@ -199,7 +237,9 @@ export const fromOperationRaw = (
   }
 
   if (subAccounts) {
-    res.subOperations = inferSubOperations(hash, subAccounts);
+    res.subOperations = subOperationIndex
+      ? (subOperationIndex.get(hash) ?? [])
+      : inferSubOperations(hash, subAccounts);
   } else if (subOperations) {
     res.subOperations = subOperations.map((o: OperationRaw) => fromOperationRaw(o, o.accountId));
   }
