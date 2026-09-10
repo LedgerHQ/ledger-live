@@ -77,12 +77,12 @@ async function resetBorrowState(flowName: string) {
   try {
     await app.common.removeSpeculos();
   } catch (error) {
-    console.error(`[borrow] ${flowName} could not release the app's Speculos:`, error);
+    console.warn(`[borrow] ${flowName} could not release the app's Speculos:`, error);
   }
   try {
     await resetLoanState(borrowSetupOptions);
   } catch (error) {
-    console.error(
+    console.warn(
       `[borrow] ${flowName} cleanup failed — ${loanAccount.accountName} may still hold a position:`,
       error,
     );
@@ -129,7 +129,7 @@ describeBorrowFlow("Borrow - Open loan", () => {
 
       await app.borrow.clickViewMyLoan();
       await app.borrow.expectLoansDashboard();
-      await expect(app.borrow.expectLoanDashboardRow()).resolves.toBeUndefined();
+      await app.borrow.expectLoanDashboardRow();
     },
     BORROW_TIMEOUT_MS,
   );
@@ -171,7 +171,7 @@ describeBorrowFlow("Borrow - Repay", () => {
       await app.borrow.completeRepayApprovalStep();
       await app.borrow.authorizeRepay();
 
-      await expect(app.borrow.expectRepaySuccess()).resolves.toBeUndefined();
+      await app.borrow.expectRepaySuccess();
     },
     BORROW_TIMEOUT_MS,
   );
@@ -207,7 +207,7 @@ describeBorrowFlow("Borrow - Withdraw", () => {
       await app.borrow.clickWithdrawCollateral();
       await app.borrow.authorizeWithdraw();
 
-      await expect(app.borrow.expectWithdrawSuccess()).resolves.toBeUndefined();
+      await app.borrow.expectWithdrawSuccess();
       await app.borrow.clickBackToMyLoans();
     },
     BORROW_TIMEOUT_MS,
