@@ -12,6 +12,8 @@ import {
   useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
   useGetCardOnboardingStatusQuery,
+  useGetWalletHistoryQuery,
+  useLazyGetWalletHistoryQuery,
   useCreateCardDetailsTokenMutation,
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
@@ -180,6 +182,12 @@ describe("cardManagementApi configuration", () => {
     expect(useGetInternalWalletsQuery).toBeDefined();
     expect(cardManagementApi.endpoints.getCardLinkedWallets).toBeDefined();
     expect(useGetCardLinkedWalletsQuery).toBeDefined();
+  });
+
+  it("exposes getWalletHistory with its hook and the lazy hook a per-wallet read uses", () => {
+    expect(cardManagementApi.endpoints.getWalletHistory).toBeDefined();
+    expect(useGetWalletHistoryQuery).toBeDefined();
+    expect(useLazyGetWalletHistoryQuery).toBeDefined();
   });
 
   it("exposes getCardOnboardingStatus and its hook", () => {
