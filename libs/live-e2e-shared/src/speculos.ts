@@ -746,20 +746,37 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   return result;
 }
 
+function formatSpeculosEventsFailure(message: string, substring: string, events: string[]): string {
+  let formattedEvents = events.join("\n  ");
+  const maxLength = 1000;
+  if (formattedEvents.length > maxLength) {
+    formattedEvents = `${formattedEvents.slice(0, maxLength)}...\n  (truncated, ${events.length} total events)`;
+  }
+  return `${message}. Expected events to contain "${substring}". Events:\n\n  ${formattedEvents}`;
+}
+
 export function expectSpeculosEventsContain(
   substring: string,
   events: string[],
   message = "Speculos events validation failed",
 ) {
   if (containsSubstringInEvent(substring, events) !== true) {
-    let formattedEvents = events.join("\n  ");
-    const maxLength = 1000;
-    if (formattedEvents.length > maxLength) {
-      formattedEvents = `${formattedEvents.slice(0, maxLength)}...\n  (truncated, ${events.length} total events)`;
-    }
-    throw new Error(
-      `${message}. Expected events to contain "${substring}". Events:\n\n  ${formattedEvents}`,
-    );
+    throw new Error(formatSpeculosEventsFailure(message, substring, events));
+  }
+}
+
+/**
+ * Strict counterpart to {@link expectSpeculosEventsContain}: matches literally across the
+ * concatenated screens, without the character-interleaving fallback. Use for short needles
+ * such as a token ticker, where that fallback ("W.*?G.*?N.*?K") matches almost any screen.
+ */
+export function expectSpeculosEventsContainExactly(
+  substring: string,
+  events: string[],
+  message = "Speculos events validation failed",
+) {
+  if (!events.join("").includes(substring)) {
+    throw new Error(formatSpeculosEventsFailure(message, substring, events));
   }
 }
 
@@ -965,6 +982,7 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.POL.id:
     case Currency.ETH.id:
     case Currency.ETH_USDT.id:
+    case Currency.ETH_WGNK.id:
     case Currency.SEI_EVM.id:
     case Currency.BASE_AERODROME.id:
       await sendEVM(tx);

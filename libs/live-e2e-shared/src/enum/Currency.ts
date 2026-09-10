@@ -149,6 +149,14 @@ export class Currency {
     AppInfos.ETHEREUM,
     [Network.ETHEREUM],
   );
+  static readonly ETH_WGNK = new Currency(
+    "Wrapped Gonka",
+    "WGNK",
+    "ethereum/erc20/wrapped_gonka_0x972a7a92d92796a98801a8818bcf91f1648f2f68",
+    AppInfos.ETHEREUM,
+    [Network.ETHEREUM],
+    "0x972a7A92D92796a98801A8818bcF91f1648f2F68",
+  );
   static readonly XLM_USDC = new Currency("USDC", "USDC", "stellar", AppInfos.STELLAR, [
     Network.STELLAR,
   ]);
@@ -268,6 +276,7 @@ const CURRENCY_TEST_LABELS = new Map<Currency, string>([
   [Currency.ETH_USDT, "USDT (Ethereum)"],
   [Currency.ETH_USDC, "USDC (Ethereum)"],
   [Currency.ETH_LIDO, "STETH (Ethereum)"],
+  [Currency.ETH_WGNK, "WGNK (Ethereum)"],
   [Currency.XLM_USDC, "USDC (Stellar)"],
   [Currency.ALGO_USDT, "USDT (Algorand)"],
   [Currency.TRX_USDT, "USDT (Tron)"],

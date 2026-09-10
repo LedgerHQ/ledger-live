@@ -100,6 +100,23 @@ export class NewSendModal extends Modal {
     await this.amountInput.fill(amount);
   }
 
+  @step("Verify crypto amount round-trips exactly: $0")
+  async expectCryptoAmount(amount: string) {
+    await expect(this.amountInput).toHaveValue(amount);
+  }
+
+  @step("Verify the amount input pins the currency magnitude at $0")
+  async expectAmountMagnitude(amount: string) {
+    // The exact-value check alone cannot detect a magnitude that is too *large*: an amount
+    // filling N decimals round-trips at any magnitude >= N, so 0.123456789 survives at 9, 10
+    // or 18 alike — and 18 is what a copy-paste from another ERC-20 would introduce. Probing
+    // one decimal deeper closes that side: it must not survive at the intended magnitude.
+    await this.fillCryptoAmount(`${amount}1`);
+    await expect(this.amountInput).not.toHaveValue(`${amount}1`);
+    await this.fillCryptoAmount(amount);
+    await this.expectCryptoAmount(amount);
+  }
+
   @step("Click review to proceed to signature")
   async clickReview() {
     await expect(this.reviewButton).toBeEnabled();
