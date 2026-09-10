@@ -9,13 +9,21 @@ beforeEach(() => {
 });
 
 describe("publishEvent", () => {
-  it("stamps a date on the published event", () => {
+  it("publishes a dated event to analyticsEvents$", () => {
     publishEvent({
-      eventName: "Stamped",
+      eventName: "Published",
+      eventProps: { foo: "bar", appVersion: "1.2.3" },
+      eventPropsWithoutExtra: { foo: "bar" },
       deliveryStatus: "enqueued",
     });
 
-    expect(events[0].date).toBeInstanceOf(Date);
+    expect(events[0]).toEqual({
+      date: expect.any(Date),
+      eventName: "Published",
+      eventProps: { foo: "bar", appVersion: "1.2.3" },
+      eventPropsWithoutExtra: { foo: "bar" },
+      deliveryStatus: "enqueued",
+    });
   });
 
   it("defaults absent payloads to empty objects", () => {
