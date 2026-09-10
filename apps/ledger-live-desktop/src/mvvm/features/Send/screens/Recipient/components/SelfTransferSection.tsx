@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import {
   ListItem,
@@ -12,11 +12,7 @@ import {
   SubheaderTitle,
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronRight, UserCheck, UserLock } from "@ledgerhq/lumen-ui-react/symbols";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
-import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
-import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
+import { useSelfTransferSectionViewModel } from "./useSelfTransferSectionViewModel";
 
 /**
  * Offers a transfer to the account's other balance pool, for currencies whose send
@@ -25,38 +21,12 @@ import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowCo
  */
 export function SelfTransferSection() {
   const { t } = useTranslation();
-  const { state } = useSendFlowData();
-  const { transaction } = useSendFlowActions();
-  const { navigation } = useFlowWizard<SendFlowStep>();
+  const viewModel = useSelfTransferSectionViewModel();
 
-  const account = state.account.account;
+  if (!viewModel) return null;
 
-  const target = useMemo(() => {
-    if (!account) return null;
-    const config = sendFeatures.getBalanceTypeConfig(getAccountCurrency(account));
-    return (
-      config?.getSelfTransferTarget({
-        account,
-        transaction: state.transaction.transaction,
-      }) ?? null
-    );
-  }, [account, state.transaction.transaction]);
-
-  const displayLabel = target ? t(`newSendFlow.${target.translationKey}.label`) : "";
-
-  const onSelfTransfer = useCallback(() => {
-    if (!target) return;
-    transaction.setRecipient({
-      ...(state.recipient ?? {}),
-      address: target.address,
-      displayLabel,
-      ensName: undefined,
-    });
-    navigation.goToNextStep();
-  }, [target, transaction, state.recipient, navigation, displayLabel]);
-
-  if (!target) return null;
-
+  const { target, onSelfTransfer } = viewModel;
+  const displayLabel = t(`newSendFlow.${target.translationKey}.label`);
   const IconComponent = target.isDestinationPublic ? UserCheck : UserLock;
 
   return (
@@ -66,7 +36,11 @@ export function SelfTransferSection() {
           <SubheaderTitle>{t("newSendFlow.recipient.selfTransfer.title")}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
-      <ListItem onClick={onSelfTransfer} data-testid="self-transfer-button" className="mt-6">
+      <ListItem
+        onClick={() => onSelfTransfer(displayLabel)}
+        data-testid="self-transfer-button"
+        className="mt-6"
+      >
         <ListItemLeading>
           <Spot appearance="icon" icon={IconComponent} />
           <ListItemContent>

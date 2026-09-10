@@ -25,6 +25,7 @@ export type BalanceTypeOption = {
   formattedCounterValue: string;
   isZero: boolean;
   hasPendingBalance: boolean;
+  icon: "lock" | "check";
 };
 
 export type BalanceTypeScreenViewModel =
@@ -94,6 +95,7 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
         : "",
       isZero: option.balance.isZero(),
       hasPendingBalance: option.hasPendingBalance,
+      icon: option.icon,
     };
   });
 

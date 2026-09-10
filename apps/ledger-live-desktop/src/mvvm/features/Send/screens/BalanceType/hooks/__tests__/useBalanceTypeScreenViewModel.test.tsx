@@ -64,6 +64,7 @@ const PUBLIC_POOL: BalanceTypeOption = {
   translationKey: "balanceType.transparent",
   balance: new BigNumber(1000),
   hasPendingBalance: false,
+  icon: "check",
 };
 
 const PRIVATE_POOL: BalanceTypeOption = {
@@ -71,6 +72,7 @@ const PRIVATE_POOL: BalanceTypeOption = {
   translationKey: "balanceType.shielded",
   balance: new BigNumber(2000),
   hasPendingBalance: false,
+  icon: "lock",
 };
 
 function stubBalanceTypeConfig(options: readonly BalanceTypeOption[]) {

@@ -66,6 +66,7 @@ describe("zcash balance-type config", () => {
         "balanceType.transparent",
         "balanceType.shielded",
       ]);
+      expect(options.map(option => option.icon)).toEqual(["check", "lock"]);
     });
 
     it("sums the account's transparent UTXOs", () => {

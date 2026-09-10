@@ -23,6 +23,7 @@ const PUBLIC_OPTION = {
   formattedCounterValue: "$10.00",
   isZero: false,
   hasPendingBalance: false,
+  icon: "check" as const,
 };
 
 const PRIVATE_OPTION = {
@@ -32,6 +33,7 @@ const PRIVATE_OPTION = {
   formattedCounterValue: "$20.00",
   isZero: false,
   hasPendingBalance: false,
+  icon: "lock" as const,
 };
 
 function readyViewModel(

@@ -362,6 +362,8 @@ export type BalanceTypeOption = Readonly<{
    * (ex: a Zcash note too young to spend). The UI warns instead of hiding the shortfall.
    */
   hasPendingBalance: boolean;
+  /** Icon variant for the pool — declared by the descriptor so generic UI stays coin-agnostic. */
+  icon: "lock" | "check";
 }>;
 
 /**

@@ -18,6 +18,7 @@ import {
   screen,
   waitFor,
   setMockBridgeRecipientValidation,
+  setMockBalanceTypeConfig,
   setMockScannedCode,
   setMockContacts,
   setMockStatus,
@@ -651,6 +652,60 @@ describe("Send Flow Integration", () => {
 
       expect(await screen.findByTestId("send-coin-control-footer")).toBeVisible();
       expect(await screen.findByTestId("send-get-funds-button")).toBeVisible();
+    });
+  });
+
+  describe("BalanceType step", () => {
+    const balanceTypeConfig = {
+      getOptions: jest.fn(() => [
+        {
+          id: "public",
+          translationKey: "balanceType.transparent",
+          balance: new BigNumber(1000),
+          hasPendingBalance: false,
+          icon: "check" as const,
+        },
+        {
+          id: "private",
+          translationKey: "balanceType.shielded",
+          balance: new BigNumber(2000),
+          hasPendingBalance: false,
+          icon: "lock" as const,
+        },
+      ]),
+      getSelectedOptionId: jest.fn(() => null),
+      buildSelectionPatch: jest.fn((id: string) => ({ sender: id })),
+      getSelfTransferTarget: jest.fn(() => null),
+    };
+
+    beforeEach(() => {
+      resetSendFlowTestState("evm");
+      setMockBalanceTypeConfig(balanceTypeConfig);
+    });
+
+    it("should show the balance-type screen as the first step when the currency has a balance type config", async () => {
+      renderSendFlow(ethereumAccount);
+
+      expect(await screen.findByTestId("balance-type-screen")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-input")).not.toBeInTheDocument();
+    });
+
+    it("should navigate to the recipient screen after the user selects a pool", async () => {
+      const { user } = renderSendFlow(ethereumAccount);
+      await screen.findByTestId("balance-type-screen");
+
+      await user.click(screen.getByTestId("balance-type-public"));
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("balance-type-screen")).not.toBeInTheDocument();
+    });
+
+    it("should skip the balance-type step and start at recipient when there is no balance type config", async () => {
+      setMockBalanceTypeConfig(null);
+      renderSendFlow(ethereumAccount);
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("balance-type-screen")).not.toBeInTheDocument();
     });
   });
 });

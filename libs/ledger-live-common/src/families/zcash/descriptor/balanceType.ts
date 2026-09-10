@@ -64,6 +64,7 @@ function getOptions({ account }: { account: AccountLike }): readonly BalanceType
       translationKey: "balanceType.transparent",
       balance: getTransparentBalance(account.bitcoinResources?.utxos),
       hasPendingBalance: false,
+      icon: "check" as const,
     },
     {
       id: PRIVATE,
@@ -72,6 +73,7 @@ function getOptions({ account }: { account: AccountLike }): readonly BalanceType
       // A freshly shielded or change note is owned but still too young to spend, so the
       // spendable figure above trails the total until it matures.
       hasPendingBalance: hasMaturingIronwoodNotes(account),
+      icon: "lock" as const,
     },
   ];
 }

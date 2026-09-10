@@ -31,7 +31,7 @@ type OptionItemProps = {
 
 function BalanceTypeOptionItem({ option, onSelect }: Readonly<OptionItemProps>) {
   const { t } = useTranslation();
-  const IconComponent = option.id === "private" ? UserLock : UserCheck;
+  const IconComponent = option.icon === "lock" ? UserLock : UserCheck;
 
   return (
     <ListItem onClick={() => onSelect(option.id)} data-testid={`balance-type-${option.id}`}>

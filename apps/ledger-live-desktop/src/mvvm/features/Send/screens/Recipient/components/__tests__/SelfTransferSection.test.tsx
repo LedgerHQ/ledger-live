@@ -2,85 +2,43 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { render, screen } from "tests/testSetup";
-import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
 import { SelfTransferSection } from "../SelfTransferSection";
+import * as viewModelModule from "../useSelfTransferSectionViewModel";
 
-const mockGoToNextStep = jest.fn();
-jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
-  useFlowWizard: jest.fn(() => ({ navigation: { goToNextStep: mockGoToNextStep } })),
-}));
+jest.mock("../useSelfTransferSectionViewModel");
 
-const mockSetRecipient = jest.fn();
-const mockAccount = createMockAccount({ id: "zcash-acc" });
+const mockedUseViewModel = jest.mocked(viewModelModule.useSelfTransferSectionViewModel);
 
-let mockRecipient: { address?: string; ensName?: string; memo?: { value: string } } | null = {
-  address: "0xresolved",
-  ensName: "alice.eth",
-  memo: { value: "keep-me" },
+const PRIVATE_TARGET = {
+  address: "zs1pooladdress",
+  translationKey: "recipient.selfTransfer.toPrivate",
+  isDestinationPublic: false,
 };
 
-jest.mock("../../../../context/SendFlowContext", () => ({
-  useSendFlowData: jest.fn(() => ({
-    state: {
-      account: { account: mockAccount },
-      transaction: { transaction: { family: "zcash" } },
-      recipient: mockRecipient,
-    },
-  })),
-  useSendFlowActions: jest.fn(() => ({
-    transaction: { setRecipient: mockSetRecipient },
-  })),
-}));
-
-jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
-  sendFeatures: { getBalanceTypeConfig: jest.fn() },
-}));
-
-const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
-
 describe("SelfTransferSection", () => {
+  const mockOnSelfTransfer = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
-    mockRecipient = { address: "0xresolved", ensName: "alice.eth", memo: { value: "keep-me" } };
-    mockedGetBalanceTypeConfig.mockReturnValue({
-      getOptions: jest.fn(),
-      getSelectedOptionId: jest.fn(),
-      buildSelectionPatch: jest.fn(),
-      getSelfTransferTarget: jest.fn(() => ({
-        address: "zs1pooladdress",
-        translationKey: "recipient.selfTransfer.toPrivate",
-        isDestinationPublic: false,
-      })),
+    mockedUseViewModel.mockReturnValue({
+      target: PRIVATE_TARGET,
+      onSelfTransfer: mockOnSelfTransfer,
     });
   });
 
-  it("should clear ensName when prefilling the self-transfer recipient", async () => {
+  it("should call onSelfTransfer with the translated display label when clicked", async () => {
     const { user } = render(<SelfTransferSection />);
 
     await user.click(screen.getByTestId("self-transfer-button"));
 
-    expect(mockSetRecipient).toHaveBeenCalledWith({
-      address: "zs1pooladdress",
-      ensName: undefined,
-      displayLabel: "Private balance",
-      memo: { value: "keep-me" },
-    });
-    expect(mockGoToNextStep).toHaveBeenCalled();
+    expect(mockOnSelfTransfer).toHaveBeenCalledWith("Private balance");
   });
 
-  it("should prefill the self-transfer recipient when existing recipient is null", async () => {
-    mockRecipient = null;
-    const { user } = render(<SelfTransferSection />);
+  it("should render nothing when the view model returns null", () => {
+    mockedUseViewModel.mockReturnValue(null);
+    const { container } = render(<SelfTransferSection />);
 
-    await user.click(screen.getByTestId("self-transfer-button"));
-
-    expect(mockSetRecipient).toHaveBeenCalledWith({
-      address: "zs1pooladdress",
-      ensName: undefined,
-      displayLabel: "Private balance",
-    });
-    expect(mockGoToNextStep).toHaveBeenCalled();
+    expect(container).toBeEmptyDOMElement();
   });
 });
