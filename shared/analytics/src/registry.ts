@@ -25,8 +25,8 @@ export function setEnabledFn(next?: EnabledFn): void {
   enabledFn = next;
 }
 
-export function getEnabledFn(): EnabledFn | undefined {
-  return enabledFn;
+export function isEnabled(): boolean {
+  return enabledFn?.() ?? false;
 }
 
 export function setExtraPropsFn(next?: ExtraPropsFn): void {
