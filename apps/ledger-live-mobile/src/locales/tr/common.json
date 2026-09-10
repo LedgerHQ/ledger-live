@@ -129,6 +129,12 @@
     "ldmkEnabled" : "LDMK taşıma etkinleştirildi"
   },
   "errors" : {
+    "ZcashMemoTooLong" : {
+      "title" : "Memo {{maxBytes}} baytı aşmamalıdır"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "Bu tutar tek bir işlemde gönderilemeyecek kadar büyük; daha küçük tutarlarla göndermeyi deneyin"
+    },
     "ReplacementTransactionUnderpriced" : {
       "title" : "Yeni işlemin ücreti düşük",
       "description" : "Ağ ücreti çok düşük olabilir. Lütfen artırın"
@@ -699,6 +705,10 @@
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "Bakiyeniz doğrulanamadı",
+      "description" : "Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin."
+    },
     "UnstakeNotEnoughStakedBalanceLeft" : {
       "title" : "{{maxAmount}} miktarından fazla varlığı stake etmeyi durdurursanız, toplamda {{totalAmount}} miktarındaki stake durdurulacaktır",
       "description" : "{{maxAmount}} miktarından fazla varlığı stake etmeyi durdurursanız, toplamda {{totalAmount}} miktarındaki stake durdurulacaktır"
@@ -957,6 +967,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "Öncelikle önceki doğrulayıcınız ile stake durdurma işleminin tamamlanması gerekir."
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "Bu tutar stake etmek için çok düşük."
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Lütfen önce tüm alt hesapları boşaltın"
@@ -1540,6 +1553,7 @@
       "title" : "Parolayı onaylayın",
       "description" : "Uygulamayı her açtığınızda bu parolaya ihtiyacınız olacaktır. Parolanızı kaybetmeniz durumunda uygulamayı yeniden yükleyin ve cüzdanınızı geri yükleyin.",
       "mismatch" : "Parolalar eşleşmiyor",
+      "saveFailed" : "Parolanızı kaydedemedik. Lütfen tekrar deneyin.",
       "cta" : "Onayla"
     }
   },
@@ -3172,7 +3186,8 @@
       "previousStakingNodeId" : "Önceki düğüm kimliği",
       "gasConsumed" : "Harcanan gas",
       "gasUsed" : "Kullanılan gas",
-      "functionId" : "İşlev Kimliği"
+      "functionId" : "İşlev Kimliği",
+      "inputs" : "Girdiler"
     },
     "multipleAddresses" : "Neden birden fazla adres var?"
   },
@@ -4273,6 +4288,11 @@
           "actions" : {
             "viewInExplorer" : "Tarayıcıda görüntüle",
             "copied" : "Kopyalandı"
+          },
+          "earnBanner" : {
+            "title" : "%{{apy}} {{type}} oranına kadar kazanın",
+            "description" : "Getiri fırsatlarını keşfedin",
+            "button" : "Keşfet"
           },
           "accessibility" : {
             "copySwapId" : "Takas kimliğini kopyala"
@@ -7728,7 +7748,53 @@
     }
   },
   "mina" : {
-    "memoPlaceholder" : "İsteğe Bağlı Memo"
+    "memoPlaceholder" : "İsteğe Bağlı Memo",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Yetki devret",
+      "earn" : "Kazan"
+    },
+    "stakeBanner" : {
+      "title" : "MINA ile ödüller kazanın",
+      "altTitle" : "MINA yetki devrinizi yönetin",
+      "description" : "MINA’larınızın yetkisini bir Blok Üreticiye devredin ve blok üretiminden ödüller kazanın. Ödüller, yetkisini devrettiğiniz miktara göre dağıtılır.",
+      "altDescription" : "Yetki devri ayarlarınızı değiştirin veya MINA token’larınızın yetki devrini sonlandırın."
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Yetkiyi devralan taraf",
+      "stakedBalance" : "Yetki Devrinde Kullanılan Bakiye",
+      "producerAddress" : "Üretici Adresi",
+      "delegatedToTooltip" : "Yetki devrettiğiniz blok üreticisinin adı",
+      "stakedBalanceTooltip" : "Bu doğrulayıcıya yetki devretmek için kullanılmış toplam MINA tutarı",
+      "producerAddressTooltip" : "Yetki devrettiğiniz blok üreticisinin açık adresi"
+    },
+    "delegators" : "Yetki Devredenler",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Doğrulayıcı Seçin",
+        "connectDevice" : "Cihazı Bağlayın",
+        "confirmation" : "Onaylayın"
+      },
+      "title" : "MINA ile Yetki Devredin",
+      "help" : "MINA token’larınızın yetkisini devretmek için aşağıdaki listeden bir doğrulayıcı seçin.",
+      "success" : {
+        "title" : "İşlem başarıyla yayınlandı",
+        "description" : "Yetki devrini değiştirme talebiniz yayınlandı."
+      },
+      "error" : {
+        "title" : "İşlem yayınlanırken bir hata oluştu"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Toplam Stake",
+      "commission" : "Komisyon",
+      "showAll" : "Tümünü göster",
+      "showLess" : "Daha az göster",
+      "iDelegate" : "Yetkisi devredilecek:",
+      "listHeader" : "Yetki Devri",
+      "redelegate" : "Yeniden yetki devret",
+      "undelegate" : "Yetki devrini iptal et",
+      "undelegateTitle" : "MINA Yetki Devrini Sonlandırın"
+    }
   },
   "near" : {
     "info" : {
@@ -8692,7 +8758,9 @@
           "inactive" : "Devre Dışı",
           "inactiveTooltip" : "Doğrulayıcı bulunamadı",
           "overstaked" : "Çok fazla staking yapılıyor",
-          "overstakedTooltip" : "Bu düğümde çok fazla staking yapılıyor, APY optimum seviyeden düşük"
+          "overstakedTooltip" : "Bu düğümde çok fazla staking yapılıyor, APY optimum seviyeden düşük",
+          "fetchError" : "Yüklenemiyor",
+          "fetchErrorTooltip" : "Doğrulayıcı verileri yüklenemedi. Lütfen tekrar deneyin."
         },
         "rewards" : "Ödüller",
         "actions" : {
@@ -9722,23 +9790,26 @@
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
     "selectAccount" : "Hesap seçin",
+    "selectAccountToPayFrom" : "Ödeme için kaynak hesabı seçin",
     "selectAccountPerpsTitle" : "Hyperliquid hesabı seçin",
-    "selectAccountPerpsDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
+    "selectAccountPerpsDescription" : "İşlemlerinizi gerçekleştirmek için bakiye yatırmak istediğiniz hesabı seçin",
+    "selectAccountPerpsEmptyDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
     "selectDepositCurrencyTitle" : "Yatırılacak varlığı seçin",
     "selectDepositCurrencyDescription" : "Desteklenen herhangi bir varlık kullanılabilir. Gerekirse otomatik olarak takas edilecektir.",
     "searchPlaceholder" : "İsim veya adrese göre ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
+    "notAvailableYet" : "Henüz mevcut değil",
     "accountCount_one" : "{{count}} hesap",
     "accountCount_other" : "{{count}} hesap",
     "emptyAccounts" : "Henüz bir {{network}} hesabınız yok. Devam etmek için lütfen bir tane ekleyin.",
     "addAccount" : "Hesap ekle",
     "unsupportedAssetExplanation" : {
-      "title" : "{{asset}} isn't supported yet",
-      "description" : "You can't add a {{asset}} address to your contacts yet. We're adding more cryptos over time."
+      "title" : "{{asset}} henüz desteklenmiyor",
+      "description" : "Kişilerinize henüz bir {{asset}} adresi ekleyemezsiniz. Zamanla daha fazla kripto eklemeye devam edeceğiz."
     },
     "unsupportedNetworkExplanation" : {
-      "title" : "{{network}} Network isn't supported yet",
-      "description" : "You can't select {{network}} network for {{asset}}. We're adding more networks over time."
+      "title" : "{{network}} ağı henüz desteklenmiyor",
+      "description" : "{{asset}} için {{network}} ağını seçemezsiniz. Zamanla daha fazla ağ eklemeye devam edeceğiz."
     },
     "errors" : {
       "title" : "Bağlantı başarısız oldu",
@@ -10099,22 +10170,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "Ödeme yapın ve ödeme alın",
-      "description" : "Stabil coin'ler, kripto dünyası ile gerçek hayattaki günlük harcamalarınız arasında bir köprü kurar",
-      "cta" : "Anladım",
+      "title" : "Tüm ödemeleriniz tek bir yerde",
+      "description" : "Kriptonuzu günlük para kullanımına hazır hâle getiren yeni Ödeme Yap sekmenizle tanışın.",
+      "cta" : "Ödeme yapmaya başla",
       "rows" : {
         "global" : {
-          "title" : "Küresel çapta ödeme yapın ve ödeme alın",
-          "description" : "Düşük ağ ücretlerinden yararlanın"
+          "title" : "Kişilerinize ödeme yapın",
+          "description" : "Kayıtlı adreslere kripto gönderin."
         },
         "volatility" : {
-          "title" : "Düşük volatilite",
-          "description" : "Stabil coin'ler, itibari paraya çıpalanır"
+          "title" : "Ödeme talep edin",
+          "description" : "Kişilerden doğrudan size bakiye göndermelerini isteyin."
         },
         "card" : {
-          "title" : "Kartla harcama yapın ve %1 para iadesi alın",
-          "description" : "USDC, USDT, BTC, ETH ve daha fazlasıyla ödeme yapın"
+          "title" : "Kripto kartı ile dünya çapında alışveriş yapın",
+          "description" : "Ve sınırsız %1 para iadesi kazanın."
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "Daha fazlası",
+      "title" : "Daha fazlası",
+      "rows" : {
+        "managePin" : "PIN kodunu yönet",
+        "accessBaanx" : "Baanx'e eriş",
+        "help" : "Yardım",
+        "logout" : "Oturumu kapat"
       }
     },
     "balance" : {
@@ -10129,7 +10210,12 @@
       }
     },
     "card" : {
-      "title" : "Kripto kartı"
+      "title" : "Kripto kartı",
+      "freeze" : "Dondur",
+      "unfreeze" : "Çöz"
+    },
+    "selectContact" : {
+      "placeholder" : "Kişi girin"
     },
     "actions" : {
       "deposit" : "Stabil coin ekle",
@@ -10144,6 +10230,10 @@
         "copied" : "Kopyalandı",
         "save" : "Kaydet",
         "verify" : "Doğrula"
+      },
+      "verifyHint" : {
+        "message" : "Paylaşmadan önce\nLedger cihazınızda\nadresinizi doğrulayın",
+        "gotIt" : "Anladım"
       },
       "verifyAddress" : {
         "introTitle" : "Adresinizi doğrulayın",
@@ -10187,10 +10277,86 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "Nakit gönderin, stabil coin alın",
+      "description" : "Nakit transfer edin ve stabil coin'leri doğrudan Ledger Wallet™'ınıza alın.",
+      "createAccount" : "Hesap oluştur",
+      "logIn" : "Noah'a giriş yap",
+      "providedBy" : "Bir Noah hizmeti",
+      "rows" : {
+        "bank" : {
+          "title" : "Herhangi bir bankadan transfer alın.",
+          "description" : "SEPA veya ACH ile maaş, ödeme ve mevduat alın."
+        },
+        "fees" : {
+          "title" : "Gizli ücret yok",
+          "description" : "%0,25 ücretle doğrudan bankadan blok zincirine."
+        },
+        "earn" : {
+          "title" : "Paranızı hemen çalıştırın",
+          "description" : "Stabil coin'inizle takas edebilir veya kazanç sağlayabilirsiniz."
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "Kripto Kartı",
+      "beforeIntro" : {
+        "description" : "Her harcamanızda %1 para iadesi alın",
+        "action" : "Kart al"
+      },
+      "afterIntro" : {
+        "description" : "Kartınıza erişmek için giriş yapın",
+        "action" : "Oturum aç"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "Kripto harcayın, para iadesi alın",
+      "providedBy" : "Kart bir Baanx hizmetidir",
+      "createAccount" : "Bir hesap oluştur",
+      "logIn" : "Baanx'e giriş yap",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay veya Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "Sınırsız %1 kripto para iadesi",
+          "description" : "USDC, USDT veya BTC ile yapılan tüm kripto kartı alışverişlerinde."
+        },
+        "virtualCard" : {
+          "title" : "Ücretsiz sanal kart",
+          "description" : "{{wallet}} cüzdanına ekleyin; anında hazır."
+        },
+        "topUp" : {
+          "title" : "Ledger Wallet ile güvenli bir şekilde bakiye yükleyin",
+          "description" : "Her transfer Ledger imzalayıcınız ile onaylanır."
+        }
+      }
+    },
     "contacts" : {
       "title" : "Ödeme yapın",
       "pay" : "Yeni",
-      "seeAllTitle" : "Kişiye ödeme yapın"
+      "seeAllTitle" : "Kişiye ödeme yapın",
+      "addressPicker" : {
+        "title" : "{{name}} için adres seçin",
+        "addAddress" : "Adres ekle"
+      }
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "Kartınızı kurun",
+        "allDone" : "Her şey hazır!"
+      },
+      "dialog" : {
+        "title" : "Kartınızı kurun",
+        "stepComplete" : "Tamamlandı",
+        "gotIt" : "Anladım"
+      },
+      "walletStep" : {
+        "title" : "Apple Pay/Google Pay'e ekleyin",
+        "description" : "Mağazada telefonunuzla ödeyin"
+      }
     }
   },
   "syncIndicator" : {
@@ -10418,6 +10584,16 @@
           "title" : "Ledger cihazınız hazırlanıyor"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "Ledger cihazınız hazırlanıyor"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "Ledger cihazınız hazırlanıyor"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "Bu kişiyi eklerken kullandığınız aynı Ledger cihazını kullanın",
@@ -10430,6 +10606,10 @@
         "appVersionTooLow" : {
           "title" : "Uygulama güncellemesi gerekli",
           "description" : "Kişileri kaydetmek için Ledger cihazınızdaki uygulamayı güncelleyin, ardından tekrar deneyin."
+        },
+        "osVersionTooLow" : {
+          "title" : "Ledger OS güncellemesi gerekli",
+          "description" : "Kişileri yeniden adlandırmak için Ledger cihazınızın işletim sistemini güncelleyin, ardından tekrar deneyin."
         }
       }
     },
@@ -10541,12 +10721,6 @@
       "applyChanges" : "Değişiklikleri uygula",
       "invalidLabelError" : "Özel karakterler desteklenmez."
     },
-    "editSigner" : {
-      "title" : "Cihazınızda onaylayın",
-      "description" : "Bu değişikliği onaylamak için Ledger cihazınızı bağlayın ve kilidini açın.",
-      "confirm" : "Devam",
-      "cancel" : "İptal et"
-    },
     "editSignerMismatch" : {
       "title" : "Bu kişiyi eklerken kullandığınız aynı Ledger cihazını kullanın",
       "description" : "Bağlı cihaz eşleşmiyor.",
@@ -10554,26 +10728,26 @@
       "cancel" : "İptal et"
     },
     "ledgerSyncIntroduction" : {
-      "title" : "Kişileri kaydetmek için Ledger Sync'i etkinleştirin",
-      "description" : "Kişileriniz, Ledger cihazınız ile uçtan uca şifrelenir ve cihazlarınız arasında senkronize edilir; bunların kilidini yalnızca siz açabilirsiniz.",
-      "activate" : "Ledger Sync'i etkinleştir",
-      "dismiss" : "Anladım",
+      "title" : "Bir kişi eklemek için cüzdanınızı senkronize edin",
+      "description" : "Kişiler uçtan uca şifrelenmiştir ve tüm telefonlarınız ile bilgisayarlarınızdaki Ledger Wallet genelinde senkronize edilir.",
+      "activate" : "Cüzdanınızı senkronize edin",
+      "dismiss" : "Şimdi değil",
       "checkingAccessibilityLabel" : "Ledger Sync durumu kontrol ediliyor"
     },
     "featureIntroduction" : {
       "title" : "Karşınızda Kişiler",
-      "primaryAction" : "Explore now",
+      "primaryAction" : "Hemen keşfet",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "Save addresses by a name you choose",
-          "description" : "Exchanges, friends, your own external accounts."
+          "title" : "Adresleri seçtiğiniz bir isimle kaydedin",
+          "description" : "Borsalar, arkadaşlar, kendi harici hesaplarınız."
         },
         "sendToRightAddress" : {
           "title" : "Doğru adrese gönderin",
-          "description" : "See a name you trust, not an address."
+          "description" : "Bir adresi değil, güvendiğiniz bir ismi görün."
         },
         "privateAcrossDevices" : {
-          "title" : "Securely top up via Ledger Wallet™",
+          "title" : "Ledger Wallet™ ile güvenli bir şekilde bakiye yükleyin",
           "description" : "Ledger Sync ile uçtan uca şifrelenir."
         }
       }
