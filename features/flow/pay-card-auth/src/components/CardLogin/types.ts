@@ -1,4 +1,9 @@
-import type { CardLoginOauthConfig, OpenHostedLogin, PayCardAuthCallback } from "../../state/types";
+import type {
+  CardLoginOauthConfig,
+  OpenCardHostedPage,
+  OpenHostedLogin,
+  PayCardAuthCallback,
+} from "../../state/types";
 
 export type PayCardLoginTrackEvent = (event: string, params: Record<string, unknown>) => void;
 
@@ -9,6 +14,8 @@ export type CardLoginProps = {
    * the flow the `code` and `state` it already parsed.
    */
   readonly callback?: PayCardAuthCallback | null;
+  readonly openHostedLogin?: OpenHostedLogin;
+  readonly openHostedPage?: OpenCardHostedPage;
   readonly onTrackEvent?: PayCardLoginTrackEvent;
 };
 

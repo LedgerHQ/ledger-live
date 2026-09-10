@@ -9,6 +9,8 @@ export function CardView({
   title,
   oauthConfig,
   callback,
+  openHostedLogin,
+  openHostedPage,
   onTrackEvent,
   displayState,
   cardVisual,
@@ -31,6 +33,8 @@ export function CardView({
             key={`${oauthConfig.apiUrl}`}
             oauthConfig={oauthConfig}
             callback={callback}
+            openHostedLogin={openHostedLogin}
+            openHostedPage={openHostedPage}
             onTrackEvent={onTrackEvent}
           />
           <CardArtwork />

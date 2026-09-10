@@ -131,6 +131,8 @@ export const cardLoginMachine = setup({
             target: "validatingCallback",
             actions: assign({ callback: ({ event }) => event.output.callback }),
           },
+          // The attempt has to outlive this step: the deep link carries the redirect in its own time.
+          { guard: ({ event }) => event.output.isPending, target: "awaitingCallback" },
           // Dismissed. The user left on purpose, so no message follows them back.
           { target: "clearingAttempt" },
         ],
@@ -147,6 +149,19 @@ export const cardLoginMachine = setup({
             callback: ({ event }) => ({ code: event.code }),
           }),
         },
+      },
+    },
+
+    awaitingCallback: {
+      on: {
+        CALLBACK_RECEIVED: {
+          target: "validatingCallback",
+          actions: assign({
+            callback: ({ event }) => ({ code: event.code }),
+          }),
+        },
+        // The redirect may never arrive, so a second press mints a fresh attempt instead of wedging.
+        LOGIN: { target: "preparingAttempt" },
       },
     },
 

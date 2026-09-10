@@ -1,5 +1,7 @@
 import type {
   CardLoginOauthConfig,
+  OpenCardHostedPage,
+  OpenHostedLogin,
   PayCardAuthCallback,
   PayCardLoginTrackEvent,
 } from "@features/flow-pay-card-auth";
@@ -14,6 +16,8 @@ export type CardProps = {
    * so it hands the flow the `code` it received.
    */
   readonly callback?: PayCardAuthCallback | null;
+  readonly openHostedLogin?: OpenHostedLogin;
+  readonly openHostedPage?: OpenCardHostedPage;
   /**
    * Turns the (flow-owned) card balance into a value `AmountDisplay` can render. This is the one bit
    * the flow cannot build itself: it needs the app's locale and counter-value currency. Omit it and
@@ -40,6 +44,8 @@ export type CardViewProps = {
   readonly title: string;
   readonly oauthConfig: CardLoginOauthConfig;
   readonly callback?: PayCardAuthCallback | null;
+  readonly openHostedLogin?: OpenHostedLogin;
+  readonly openHostedPage?: OpenCardHostedPage;
   readonly onTrackEvent?: PayCardLoginTrackEvent;
   /** Which face to show. The children are mutually exclusive, so the view switches on this. */
   readonly displayState: CardDisplayState;
