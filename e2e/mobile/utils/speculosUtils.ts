@@ -6,7 +6,7 @@ import {
   takeScreenshot,
   setExchangeDependencies,
 } from "@ledgerhq/live-e2e-shared/speculos";
-import { setEnv } from "@shared/env";
+import { getEnv, setEnv } from "@shared/env";
 import { device, log } from "detox";
 import {
   waitForSpeculosReady,
@@ -304,6 +304,38 @@ export async function registerSpeculos(speculosPort: number) {
   delete process.env.DEVICE_PROXY_URL;
   CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
   setEnv("SPECULOS_API_PORT", speculosPort);
+}
+
+/**
+ * Runs `work` on a Speculos of its own, then puts the caller's device back.
+ *
+ * A remote Speculos is identified by its URL, not its port, and `registerSpeculos` restores only
+ * the port — it reads SPECULOS_ADDRESS as it finds it. So the address has to be restored by hand,
+ * before re-registering, or every later screen read and transport call goes to the throwaway
+ * device this just destroyed. Locally the address is always 127.0.0.1 and only the port varies,
+ * which is why getting it wrong stays invisible until CI.
+ */
+export async function withTemporarySpeculos<T>(
+  appName: string,
+  work: () => Promise<T>,
+): Promise<T> {
+  const previousPort = getEnv("SPECULOS_API_PORT");
+  const previousAddress = process.env.SPECULOS_ADDRESS;
+  const speculos = await launchSpeculos(appName);
+  await registerSpeculos(speculos.port);
+  try {
+    return await work();
+  } finally {
+    await deleteSpeculos(speculos.id);
+    if (previousAddress === undefined) {
+      delete process.env.SPECULOS_ADDRESS;
+    } else {
+      process.env.SPECULOS_ADDRESS = previousAddress;
+    }
+    if (previousPort > 0) {
+      await registerSpeculos(previousPort);
+    }
+  }
 }
 
 function getKnownSpeculosAddress(speculosPort: number): string {
