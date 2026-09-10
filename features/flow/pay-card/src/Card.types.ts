@@ -3,7 +3,13 @@ import type {
   PayCardAuthCallback,
   PayCardLoginTrackEvent,
 } from "@features/flow-pay-card-auth";
-import type { CardVisualProps, FormattedValue } from "@features/flow-pay-card-details";
+import type {
+  CardVisualProps,
+  FormattedValue,
+  UnlockForCardNumbers,
+} from "@features/flow-pay-card-details";
+
+export type { UnlockForCardNumbers };
 
 /** Host input for the Pay Card flow. */
 export type CardProps = {
@@ -23,6 +29,7 @@ export type CardProps = {
   /** Localized caption shown above the balance. i18n stays with the host, so the app passes the string. */
   readonly balanceLabel?: string;
   readonly onTrackEvent?: PayCardLoginTrackEvent;
+  readonly unlock?: UnlockForCardNumbers;
 };
 
 /** Props the presentational view renders, resolved by {@link useCardViewModel}. */
@@ -35,4 +42,5 @@ export type CardViewProps = {
   readonly isSignedIn: boolean;
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   readonly cardVisual?: CardVisualProps;
+  readonly unlock?: UnlockForCardNumbers;
 };

@@ -13,15 +13,15 @@ Session teardown uses `useCardLogout` from [`@features/flow-pay-card-auth`](../p
 ## Usage
 
 ```tsx
-import { CardVisual, CardActions, Freeze, More } from "@features/flow-pay-card-details";
+import { CardVisual, CardNumbers, CardActions } from "@features/flow-pay-card-details";
 
-<CardVisual balance={100} formatCountervalue={format} balanceLabel="Balance" />
-<CardActions />
+<CardNumbers unlock={unlock} cardFace={<CardVisual {...cardVisual} />} />
 ```
 
 `CardVisual` composes the `CardArtwork` (card face) with the balance overlay. `CardArtwork` is also
-exported on its own for consumers that only need the card face. Web hosts place freeze and More
-together with `CardActions`; native hosts mount `Freeze` and `More` separately.
+exported on its own for consumers that only need the card face. On web, `CardNumbers` flips the face
+to the PAN/CVV image and mounts View on the `CardActions` row (Freeze + More). Without `unlock`,
+hosts mount the face and `CardActions` themselves. Native hosts mount `Freeze` and `More` separately.
 
 The frozen state is not a host prop: `useCardVisualViewModel` reads the same `CardStatus` query the
 freeze tile uses, so the card face and the tile can never disagree. A frozen card fades out and
@@ -63,9 +63,14 @@ pay-card-details/
     │   │   ├── CardVisual.native.test.tsx
     │   │   ├── CardVisualView.web.test.tsx
     │   │   └── CardVisualView.native.test.tsx
-    │   ├── CardActions/
-    │   │   ├── CardActions.web.tsx            # Freeze + More in one row (web)
+    │       ├── CardActions/
+    │   │   ├── CardActions.web.tsx            # Optional View + Freeze + More in one row (web)
     │   │   └── CardActions.native.tsx         # Null: native hosts mount Freeze and More separately
+    │   ├── CardNumbers/
+    │   │   ├── CardNumbers.web.tsx            # Flip + View on the CardActions row
+    │   │   ├── CardNumbers.native.tsx         # Stub until LWM reveal UI
+    │   │   ├── CardNumbersView.web.tsx        # Flip to the PAN/CVV image
+    │   │   └── Tile/                          # View / Hide control
     │   ├── Freeze/
     │   │   ├── Freeze.web.tsx                 # Tile + confirmation, wired to the view model
     │   │   ├── Freeze.native.tsx

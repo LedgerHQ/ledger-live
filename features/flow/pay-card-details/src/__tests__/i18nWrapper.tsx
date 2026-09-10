@@ -14,6 +14,10 @@ export const CARD_COPY = {
   unfreezeErrorTitle: "Unfreeze failed",
   errorDescription: "Something went wrong. Please try again.",
   retry: "Try again",
+  numbersReveal: "View",
+  numbersHide: "Hide",
+  numbersFailed: "Couldn't load card numbers",
+  numbersImageAlt: "Card numbers",
 } as const;
 
 export const CARD_RESOURCES = {
@@ -38,6 +42,12 @@ export const CARD_RESOURCES = {
           confirmError: {
             description: CARD_COPY.errorDescription,
             retry: CARD_COPY.retry,
+          },
+          numbers: {
+            reveal: CARD_COPY.numbersReveal,
+            hide: CARD_COPY.numbersHide,
+            failed: CARD_COPY.numbersFailed,
+            imageAlt: CARD_COPY.numbersImageAlt,
           },
         },
       },

@@ -13,6 +13,7 @@ jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
   CardVisual: () => <div data-testid="card-visual" />,
   CardActions: () => <div data-testid="card-actions" />,
+  CardNumbers: () => <div data-testid="card-numbers" />,
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
@@ -63,6 +64,19 @@ describe("Card (web)", () => {
     expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.getByTestId("card-login")).toBeVisible();
     expect(screen.getByTestId("card-actions")).toBeVisible();
+  });
+
+  it("should hide card numbers when unlock is omitted", () => {
+    render(<Card title={title} oauthConfig={oauthConfig} />);
+
+    expect(screen.queryByTestId("card-numbers")).not.toBeInTheDocument();
+  });
+
+  it("should show card numbers when unlock is passed", () => {
+    render(<Card title={title} oauthConfig={oauthConfig} unlock={jest.fn()} />);
+
+    expect(screen.getByTestId("card-numbers")).toBeVisible();
+    expect(screen.queryByTestId("card-actions")).not.toBeInTheDocument();
   });
 
   it("mounts the onboarding widget", () => {

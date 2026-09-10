@@ -18,6 +18,7 @@ export function useCardViewModel({
   formatCountervalue,
   balanceLabel,
   onTrackEvent,
+  unlock,
 }: CardProps): CardViewProps {
   const isSignedIn = useIsCardSignedIn();
 
@@ -26,5 +27,5 @@ export function useCardViewModel({
     return { balance: MOCK_CARD_BALANCE, formatCountervalue, balanceLabel };
   }, [formatCountervalue, balanceLabel]);
 
-  return { title, oauthConfig, callback, onTrackEvent, isSignedIn, cardVisual };
+  return { title, oauthConfig, callback, onTrackEvent, isSignedIn, cardVisual, unlock };
 }
