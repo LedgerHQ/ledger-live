@@ -556,6 +556,8 @@ apps/ledger-live-mobile/src/mvvm/features/LazyOnboardingBanner/                 
 apps/ledger-live-mobile/src/mvvm/features/Reborn/                                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/GenericAwarenessModal/                               @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/components/FeatureIntroLayout/                                @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/components/Slides/                                            @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/components/WalletV4TourDrawer/                                @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/OnboardingWidget/               @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioBannersSection/        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioCarouselSection/       @ledgerhq/engagement
