@@ -1,8 +1,8 @@
 {
-  "name": "@features/flow-pay-card",
-  "version": "0.2.0",
+  "name": "@features/flow-pay-card-assets",
+  "version": "0.1.0",
   "private": true,
-  "description": "Pay Card flow orchestrator: composes the Pay Card auth and details leaves for Ledger Wallet",
+  "description": "Pay Card linked-wallet assets list for Ledger Wallet",
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
@@ -17,25 +17,22 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
-    "lint": "oxlint src && pnpm lint:tailwind",
-    "lint:fix": "oxfmt src && oxlint src --fix --quiet && pnpm lint:tailwind",
-    "lint:tailwind": "eslint --no-eslintrc -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card/knip.web.config.mjs -W features/flow/pay-card --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card/knip.native.config.mjs -W features/flow/pay-card --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card-assets/knip.web.config.mjs -W features/flow/pay-card-assets --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card-assets/knip.native.config.mjs -W features/flow/pay-card-assets --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@features/flow-pay-card-auth": "workspace:^",
-    "@features/flow-pay-card-details": "workspace:^",
-    "@features/flow-pay-card-widget": "workspace:^",
+    "@features/flow-pay-card-wallets": "workspace:^",
     "@shared/i18n": "workspace:*"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
-    "@ledgerhq/lumen-ui-react": "catalog:",
-    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -45,15 +42,21 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
     "react-test-renderer": "catalog:",
     "typescript": "catalog:"
+  },
+  "optionalDependencies": {
+    "@oxlint/binding-darwin-arm64": "1.51.0",
+    "@oxlint/binding-darwin-x64": "1.51.0",
+    "@oxlint/binding-linux-x64-gnu": "1.51.0",
+    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
     "react": "catalog:",
