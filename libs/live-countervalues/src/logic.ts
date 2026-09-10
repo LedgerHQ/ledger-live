@@ -344,7 +344,7 @@ export async function loadCountervalues(
       }),
   ]);
 
-  const updates = [];
+  const updates: Array<Record<string, Record<string, unknown>>> = [];
   for (const patch of histo) {
     if (patch) {
       updates.push(patch);
