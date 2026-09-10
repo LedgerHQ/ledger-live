@@ -75,6 +75,8 @@ import QueuedBottomSheetsProvider from "LLM/components/QueuedDrawer/QueuedBottom
 import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
+// THROWAWAY DIAGNOSTIC — do not merge.
+import { FlagCacheProbeOverlay } from "~/firebase/cacheProbe";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
 import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
 import { StoragePerformanceOverlay } from "LLM/storage/screens/PerformanceMonitor";
@@ -390,6 +392,8 @@ export default class Root extends Component {
                               <NavBarColorHandler />
                               <AuthPass>
                                 <GestureHandlerRootView style={styles.root}>
+                                  {/* THROWAWAY DIAGNOSTIC — do not merge. */}
+                                  <FlagCacheProbeOverlay />
                                   <WaitForAppReady currencyInitialized={currencyInitialized}>
                                     <AppProviders initialCountervalues={initialCountervalues}>
                                       <AppGeoBlocker>

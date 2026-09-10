@@ -81,6 +81,8 @@ import {
 } from "~/renderer/reducers/coinConfigOverrides";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { installLiveConfigProvider } from "~/firebase/remoteConfig";
+// THROWAWAY DIAGNOSTIC — do not merge.
+import { startCacheProbe } from "~/firebase/cacheProbe";
 import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
 import { initHistory } from "~/renderer/reducers/history";
 
@@ -150,6 +152,7 @@ async function init() {
   // point analytics at the Redux slice. The middleware (wired at store creation) drives the
   // remote-flags fetch; boot waits on `selectRemoteFlagsReady` below.
   installLiveConfigProvider();
+  startCacheProbe(); // THROWAWAY DIAGNOSTIC — do not merge.
   setAnalyticsFeatureFlagMethod(
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     ((key: FeatureId) => selectFeature(store.getState(), key) ?? null) as Parameters<

@@ -17,6 +17,8 @@ import { formatDefaultFeatures } from "@features/platform-feature-flags";
 import { FEATURE_FLAGS_DEFAULTS, FeatureIdSchema } from "@shared/feature-flags";
 import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
 import { getFirebaseConfig } from "~/firebase-setup";
+// THROWAWAY DIAGNOSTIC — do not merge.
+import { recordCacheError, recordCacheRead, recordFetch } from "./cacheProbe";
 
 // Precomputed inverse of @features/platform-feature-flags' `formatToFirebaseFeatureId`
 // (`feature_${snakeCase(id)}`).
@@ -121,8 +123,11 @@ export async function readCachedFlags(): Promise<PartialFeatures> {
   try {
     const rc = getRemoteConfigSingleton();
     await ensureInitialized(rc);
-    return mapActivatedFlags(getAll(rc));
-  } catch {
+    const flags = mapActivatedFlags(getAll(rc));
+    recordCacheRead(flags); // THROWAWAY DIAGNOSTIC
+    return flags;
+  } catch (error) {
+    recordCacheError(error); // THROWAWAY DIAGNOSTIC
     return {};
   }
 }
@@ -138,8 +143,14 @@ export async function readCachedFlags(): Promise<PartialFeatures> {
  */
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   const rc = getRemoteConfigSingleton();
-  await fetchAndActivate(rc);
+  try {
+    await fetchAndActivate(rc);
+  } catch (error) {
+    recordFetch("failed", error); // THROWAWAY DIAGNOSTIC
+    throw error;
+  }
   const flags = mapActivatedFlags(getAll(rc));
+  recordFetch("ok", flags); // THROWAWAY DIAGNOSTIC
   const fetchedAt = Date.now();
   lastFetchedAt = fetchedAt;
   subscribers.forEach(callback => callback({ fetchedAt }));
