@@ -24,9 +24,11 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   title: "Crypto Card",
   description: "Log in to access your card",
   loginLabel: "Login",
+  alreadyHaveCardLabel: null,
   isLoading: false,
   errorMessage: null,
   onLoginPress: jest.fn(),
+  onAlreadyHaveCardPress: jest.fn(),
   intro,
 };
 
