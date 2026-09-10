@@ -7137,6 +7137,9 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:^
         version: link:../../../domain/api/card-management
+      '@features/flow-pay-card-wallets':
+        specifier: workspace:^
+        version: link:../pay-card-wallets
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
