@@ -38,6 +38,9 @@ type WorkflowParams = {
   source?: string;
 };
 
+const toLegacyAmount = (amount?: string | BigNumber) =>
+  typeof amount === "string" ? new BigNumber(amount) : amount;
+
 export function useOpenSendFlow() {
   const dispatch = useDispatch();
   const hasNoAccounts = useSelector(state => accountsSelector(state).length === 0);
@@ -105,10 +108,7 @@ export function useOpenSendFlow() {
           dispatch(
             openModal("MODAL_SEND", {
               ...flowParams,
-              amount:
-                typeof flowParams.amount === "string"
-                  ? new BigNumber(flowParams.amount)
-                  : flowParams.amount,
+              amount: toLegacyAmount(flowParams.amount),
             }),
           );
           return;
@@ -120,18 +120,9 @@ export function useOpenSendFlow() {
         );
 
         if (shouldUseNewFlow) {
-          let normalizedAmount: string | undefined;
-          if (typeof flowParams.amount === "string") {
-            normalizedAmount = flowParams.amount;
-          } else if (flowParams.amount) {
-            normalizedAmount = flowParams.amount.toString();
-          } else {
-            normalizedAmount = undefined;
-          }
-
           const normalizedParams: SendFlowParams = {
             ...flowParams,
-            amount: normalizedAmount,
+            amount: flowParams.amount?.toString(),
             fromMAD: flowParams.fromMAD ?? false,
           };
           dispatch(
@@ -143,10 +134,7 @@ export function useOpenSendFlow() {
           dispatch(
             openModal("MODAL_SEND", {
               ...flowParams,
-              amount:
-                typeof flowParams.amount === "string"
-                  ? new BigNumber(flowParams.amount)
-                  : flowParams.amount,
+              amount: toLegacyAmount(flowParams.amount),
             }),
           );
         }

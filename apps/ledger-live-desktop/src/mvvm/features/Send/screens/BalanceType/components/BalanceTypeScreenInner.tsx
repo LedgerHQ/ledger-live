@@ -28,7 +28,7 @@ type OptionCardProps = {
   onSelect: (optionId: string) => void;
 };
 
-function BalanceTypeOptionCard({ option, selected, onSelect }: OptionCardProps) {
+function BalanceTypeOptionCard({ option, selected, onSelect }: Readonly<OptionCardProps>) {
   const { t } = useTranslation();
 
   return (
@@ -66,7 +66,7 @@ function BalanceTypeOptionCard({ option, selected, onSelect }: OptionCardProps) 
   );
 }
 
-export function BalanceTypeScreenInner({ viewModel }: Props) {
+export function BalanceTypeScreenInner({ viewModel }: Readonly<Props>) {
   const { t } = useTranslation();
   const { selectedOptionId, options, onSelect } = viewModel;
 
