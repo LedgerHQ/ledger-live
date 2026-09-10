@@ -73,4 +73,22 @@ describe("CardLoginView (Native)", () => {
 
     expect(screen.getByText("Unable to start login. Please try again.")).toBeTruthy();
   });
+
+  it("should render no already-have-a-card action when no label is given", () => {
+    renderCardLoginView();
+
+    expect(screen.queryByLabelText("I already have a card")).toBeNull();
+  });
+
+  it("should call the already-have-a-card handler when that action is pressed", () => {
+    const onAlreadyHaveCardPress = jest.fn();
+    renderCardLoginView({
+      alreadyHaveCardLabel: "I already have a card",
+      onAlreadyHaveCardPress,
+    });
+
+    fireEvent.press(screen.getByLabelText("I already have a card"));
+
+    expect(onAlreadyHaveCardPress).toHaveBeenCalledTimes(1);
+  });
 });
