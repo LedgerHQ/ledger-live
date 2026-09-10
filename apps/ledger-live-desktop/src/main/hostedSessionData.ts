@@ -4,6 +4,8 @@ const LEDGER_OWN_DOMAIN = "ledger.com";
 
 const CLEARED_STORAGES = ["localstorage", "indexdb", "serviceworkers", "cachestorage"] as const;
 
+const ALLOWED_ORIGIN_PROTOCOLS = new Set(["http:", "https:"]);
+
 function withoutLeadingDot(cookieDomain: string): string {
   return cookieDomain.startsWith(".") ? cookieDomain.slice(1) : cookieDomain;
 }
@@ -42,7 +44,10 @@ function readOrigins(origins: unknown): URL[] {
     }
 
     try {
-      return [new URL(origin)];
+      const url = new URL(origin);
+      // This comes over IPC. Restricting it to http/https keeps a compromised renderer from
+      // aiming a storage wipe at a scheme clearStorageData was never meant to reach.
+      return ALLOWED_ORIGIN_PROTOCOLS.has(url.protocol) ? [url] : [];
     } catch {
       return [];
     }
