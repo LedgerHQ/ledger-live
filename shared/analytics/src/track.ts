@@ -5,10 +5,11 @@
  *
  * @example
  * ```ts
- * import { track } from "@ledgerhq/analytics/track";
+ * import { track } from "@shared/analytics";
  *
  * track("myEvent", { prop: "value" });
  * track("myEvent", { prop: "value" }, { mandatory: true });
+ * ```
  */
 
 import { normalizeProps } from "./internals/normalizeProps";

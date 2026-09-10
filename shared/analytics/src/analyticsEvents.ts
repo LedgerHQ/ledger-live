@@ -5,11 +5,12 @@
  *
  * @example
  * ```ts
- * import { analyticsEvents$ } from "@ledgerhq/analytics/analyticsEvents";
+ * import { analyticsEvents$ } from "@shared/analytics";
  *
  * analyticsEvents$.subscribe(event => {
  *   console.log(event);
  * });
+ * ```
  */
 
 export { analyticsEvents$ } from "./internals/eventLog";
