@@ -1,3 +1,16 @@
+/**
+ * @module analytics/track
+ * @description
+ * This module exports the track function.
+ *
+ * @example
+ * ```ts
+ * import { track } from "@ledgerhq/analytics/track";
+ *
+ * track("myEvent", { prop: "value" });
+ * track("myEvent", { prop: "value" }, { mandatory: true });
+ */
+
 import { normalizeProps } from "./internals/normalizeProps";
 import { isEnabled } from "./registry";
 import { trackEvent } from "./internals/trackEvent";
