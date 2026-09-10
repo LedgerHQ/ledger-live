@@ -7,7 +7,7 @@ import type {
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import invariant from "invariant";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { StyleSheet } from "react-native";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "styled-components/native";
@@ -125,42 +125,27 @@ export default function ICPConnectDevice({ navigation, route, category }: Props)
     [route.name, route.params, stepNavigation],
   );
 
-  // Only the device action is memoized. Anything theme-derived has to stay outside, or it would
-  // have to join the dependencies below and a theme switch would remount DeviceAction mid-signature.
-  const deviceAction = useMemo(
-    () =>
-      transaction ? (
-        <>
-          <TrackScreen
-            category={category}
-            name="ConnectDevice"
-            flow="stake"
-            action={transaction.type}
-            currency={mainAccount.currency.id}
-          />
-          <DeviceAction
-            // @ts-expect-error the action is typed against the generated union of every family's
-            // transaction, which does not track the narrowing to ICP.
-            action={action}
-            request={{ account, parentAccount, appName, transaction, status }}
-            device={device}
-            onSelectDeviceLink={onSelectDeviceLink}
-            renderOnResult={handleTx}
-            analyticsPropertyFlow={analyticsPropertyFlow}
-          />
-        </>
-      ) : null,
-    // Excludes account-derived deps on purpose: the optimistic fold above changes the account and
-    // would otherwise remount DeviceAction mid-signature.
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [status, transaction, device, handleTx, onSelectDeviceLink],
-  );
-
-  if (!deviceAction) return null;
+  if (!transaction) return null;
 
   return (
     <SafeAreaView edges={edges} style={[styles.root, { backgroundColor: colors.background.main }]}>
-      {deviceAction}
+      <TrackScreen
+        category={category}
+        name="ConnectDevice"
+        flow="stake"
+        action={transaction.type}
+        currency={mainAccount.currency.id}
+      />
+      <DeviceAction
+        // @ts-expect-error the action is typed against the generated union of every family's
+        // transaction, which does not track the narrowing to ICP.
+        action={action}
+        request={{ account, parentAccount, appName, transaction, status }}
+        device={device}
+        onSelectDeviceLink={onSelectDeviceLink}
+        renderOnResult={handleTx}
+        analyticsPropertyFlow={analyticsPropertyFlow}
+      />
     </SafeAreaView>
   );
 }
