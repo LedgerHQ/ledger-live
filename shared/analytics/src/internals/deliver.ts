@@ -27,7 +27,9 @@ export function deliver({
   const analytics = getAnalytics();
   if (!analytics) return publish("skipped_no_client");
 
-  analytics.log?.(kind, eventName, eventProps);
+  try {
+    analytics.log?.(kind, eventName, eventProps);
+  } catch {}
 
   let result: void | Promise<void | DeliveryStatus>;
 

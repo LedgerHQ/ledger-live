@@ -51,6 +51,29 @@ describe("deliver", () => {
     });
   });
 
+  it("still tracks when logging throws", () => {
+    const analytics = createAnalyticsClient({
+      log: () => {
+        throw new Error("logger is down");
+      },
+    });
+    setAnalytics(analytics);
+
+    expect(() =>
+      deliver({
+        type: "track",
+        eventName: "Tracked",
+        eventProps: { foo: "bar" },
+        eventPropsWithoutExtra: { foo: "bar" },
+      }),
+    ).not.toThrow();
+
+    expect(analytics.track).toHaveBeenCalledWith("Tracked", {
+      foo: "bar",
+    });
+    expect(events[0].deliveryStatus).toBe("enqueued");
+  });
+
   it("publishes enriched payloads", () => {
     setAnalytics(createAnalyticsClient());
 
