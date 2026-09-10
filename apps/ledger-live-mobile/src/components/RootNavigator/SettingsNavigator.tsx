@@ -35,6 +35,8 @@ import DebugContacts from "~/screens/Settings/Debug/Debugging/Contacts";
 import DebugDevTools from "LLM/features/DevTools/screens/DevToolsScreen";
 import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
+import DebugPayContactSuccess from "~/screens/Settings/Debug/Features/PayContactSuccess";
+import DebugSendSuccess from "~/screens/Settings/Debug/Features/SendSuccess";
 import DebugPlayground from "~/screens/Settings/Debug/Playground";
 import DebugBluetoothAndLocationServices from "~/screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "~/screens/Settings/Debug";
@@ -554,6 +556,20 @@ export default function SettingsNavigator() {
         component={DebugCustomImageGraphics}
         options={{
           title: "Custom image graphics",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugPayContactSuccess}
+        component={DebugPayContactSuccess}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugSendSuccess}
+        component={DebugSendSuccess}
+        options={{
+          headerShown: false,
         }}
       />
       <Stack.Screen

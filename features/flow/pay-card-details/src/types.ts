@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { PayCardStatus } from "@domain/api-card-management";
 import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
 
@@ -51,3 +52,21 @@ export type TileProps = ConfirmSheetProps &
     isActionDisabled: boolean;
     onOpenConfirm: () => void;
   }>;
+
+export type UnlockForCardNumbers = () => Promise<boolean>;
+
+export type CardNumbersProps = Readonly<{
+  unlock: UnlockForCardNumbers;
+  cardFace?: ReactNode;
+}>;
+
+export type CardNumbersStatus = "idle" | "loading" | "revealed" | "failed";
+
+export type CardNumbersViewProps = Readonly<{
+  status: CardNumbersStatus;
+  imageUrl: string | undefined;
+  onReveal: () => Promise<void>;
+  onHide: () => void;
+  onImageError: () => void;
+  cardFace?: ReactNode;
+}>;

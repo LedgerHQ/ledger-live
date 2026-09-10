@@ -206,6 +206,10 @@ export interface PayCardToolProps {
   readonly onNavigateToPortfolio?: () => void;
   /** Host-only: jump to the Pay tab. Omitted when the host cannot navigate. */
   readonly onNavigateToPayTab?: () => void;
+  /** Host-only: jump to the Pay contact success screen. Omitted when the host cannot navigate. */
+  readonly onNavigateToPaySuccess?: () => void;
+  /** Host-only: jump to the generic Send success screen. Omitted when the host cannot navigate. */
+  readonly onNavigateToSendSuccess?: () => void;
   readonly auth?: PayCardAuthProps;
   readonly openSecureBrowser?: PayCardOpenSecureBrowser;
 }

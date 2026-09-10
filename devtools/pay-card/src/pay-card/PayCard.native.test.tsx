@@ -126,19 +126,27 @@ describe("PayCard (native)", () => {
     const user = userEvent.setup();
     const onNavigateToPortfolio = jest.fn();
     const onNavigateToPayTab = jest.fn();
+    const onNavigateToPaySuccess = jest.fn();
+    const onNavigateToSendSuccess = jest.fn();
     render(
       <PayCard
         {...buildProps()}
         onNavigateToPortfolio={onNavigateToPortfolio}
         onNavigateToPayTab={onNavigateToPayTab}
+        onNavigateToPaySuccess={onNavigateToPaySuccess}
+        onNavigateToSendSuccess={onNavigateToSendSuccess}
       />,
     );
 
     expect(screen.getByText("Quick actions")).toBeTruthy();
     await user.press(screen.getByText("Go to Portfolio"));
     await user.press(screen.getByText("Go to Pay tab"));
+    await user.press(screen.getByText("Pay contact success"));
+    await user.press(screen.getByText("Send success"));
     expect(onNavigateToPortfolio).toHaveBeenCalledTimes(1);
     expect(onNavigateToPayTab).toHaveBeenCalledTimes(1);
+    expect(onNavigateToPaySuccess).toHaveBeenCalledTimes(1);
+    expect(onNavigateToSendSuccess).toHaveBeenCalledTimes(1);
   });
 
   it("hides the secure browser section on a host that has no browser", () => {
