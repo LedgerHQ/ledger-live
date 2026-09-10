@@ -1,5 +1,9 @@
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
-import { ConcordiumTokenAccountUnavailable } from "../types/errors";
+import type { Operation } from "@ledgerhq/types-live";
+import {
+  ConcordiumInvalidPltPayloadError,
+  ConcordiumTokenAccountUnavailable,
+} from "../types/errors";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountAddress } from "@ledgerhq/concordium-core";
@@ -29,6 +33,19 @@ jest.mock("../logic", () => {
       payload: {
         toAddress: AccountAddress.fromBuffer(Buffer.alloc(32)),
         amount: 5000000n,
+      },
+    }),
+    craftPltTransaction: jest.fn().mockReturnValue({
+      type: 27, // TokenUpdate
+      header: {
+        sender: AccountAddress.fromBuffer(Buffer.alloc(32)),
+        nonce: 5n,
+        expiry: 1700003600n,
+        energyAmount: 1080n,
+      },
+      payload: {
+        tokenId: Buffer.from("t-USDT", "utf-8"),
+        operations: Buffer.from("81", "hex"),
       },
     }),
     combine: jest.fn().mockReturnValue("combined-signature"),
@@ -471,7 +488,7 @@ describe("signOperation", () => {
   });
 
   describe("the persisted estimate", () => {
-    const { craftTransaction, estimateFees } = jest.requireMock("../logic");
+    const { craftPltTransaction, craftTransaction, estimateFees } = jest.requireMock("../logic");
 
     const tokenTransaction = (over = {}) => {
       const { account, subAccount } = withTokenSubAccount();
@@ -489,18 +506,96 @@ describe("signOperation", () => {
     it("does not re-estimate when preparation persisted the energy", async () => {
       const { account, transaction } = tokenTransaction();
 
-      await expect(sign(transaction, account)).rejects.toThrow(/not supported yet/);
+      await sign(transaction, account);
 
       expect(estimateFees).not.toHaveBeenCalled();
     });
 
-    // Reaching the device at all is the defect here: a completed signature would
-    // be a CCD transfer. Flipped back by LIVE-28337.
-    it("refuses to sign a token transfer, rather than signing a native one", async () => {
+    // Crafting natively would move CCD at the token's integer amount — the wrong
+    // asset, at a magnitude the token's decimals chose.
+    it("crafts a PLT transfer, never a native one", async () => {
       const { account, transaction } = tokenTransaction();
 
-      await expect(sign(transaction, account)).rejects.toThrow(/not supported yet/);
+      await sign(transaction, account);
+
+      expect(craftPltTransaction).toHaveBeenCalled();
       expect(craftTransaction).not.toHaveBeenCalled();
+    });
+
+    it("signs with the persisted fee and energy, and the token's own id and decimals", async () => {
+      const { account, transaction } = tokenTransaction();
+
+      const { mockSigner } = await sign(transaction, account);
+
+      expect(craftPltTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({ address: account.freshAddress, nextSequenceNumber: 5 }),
+        expect.objectContaining({
+          tokenId: account.subAccounts[0].token.contractAddress,
+          decimals: account.subAccounts[0].token.units[0].magnitude,
+          energy: BigInt(1080),
+        }),
+      );
+      // The max fee reaching the device is the persisted µCCD cost, not a
+      // re-estimate: it is the figure already shown to the user.
+      expect(mockSigner.signTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 27 }),
+        account.freshAddressPath,
+        BigInt(3600),
+      );
+    });
+
+    // Two balances move, so the send emits two operations: sync builds the
+    // confirmed pair the same way, and a mismatch would double-count the fee.
+    it("reports the fee on the parent and the token on the sub-account", async () => {
+      const { account, transaction } = tokenTransaction();
+
+      const { events } = await sign(transaction, account);
+      const { operation } = (
+        events[events.length - 1] as { signedOperation: { operation: Operation } }
+      ).signedOperation;
+
+      expect(operation).toMatchObject({
+        accountId: account.id,
+        type: "FEES",
+        value: new BigNumber(3600),
+        fee: new BigNumber(3600),
+      });
+      expect(operation.subOperations).toHaveLength(1);
+      expect(operation.subOperations?.[0]).toMatchObject({
+        accountId: account.subAccounts[0].id,
+        type: "OUT",
+        value: new BigNumber(5000000),
+      });
+    });
+
+    it("leaves a native transfer reporting a single OUT operation", async () => {
+      const { events } = await sign(createFixtureTransaction({ fee: new BigNumber(1000) }));
+      const { operation } = (
+        events[events.length - 1] as { signedOperation: { operation: Operation } }
+      ).signedOperation;
+
+      expect(operation.type).toBe("OUT");
+      expect(operation.subOperations).toBeUndefined();
+    });
+
+    // Status blocks this, but signing does not read `status.errors`.
+    it("refuses a token whose CAL magnitude is missing", async () => {
+      const { account, subAccount } = withTokenSubAccount();
+      const strippedToken = { ...subAccount.token, units: [] };
+      const accountWithoutMagnitude = {
+        ...account,
+        subAccounts: [{ ...subAccount, token: strippedToken }],
+      };
+      const transaction = createFixtureTransaction({
+        subAccountId: subAccount.id,
+        fee: new BigNumber(3600),
+        energy: 1080,
+      });
+
+      await expect(sign(transaction, accountWithoutMagnitude)).rejects.toBeInstanceOf(
+        ConcordiumInvalidPltPayloadError,
+      );
+      expect(craftPltTransaction).not.toHaveBeenCalled();
     });
 
     it("keeps estimating for a native transfer", async () => {
@@ -536,6 +631,20 @@ describe("signOperation", () => {
       // the invariant this replaced.
       await expect(sign(transaction)).rejects.toBeInstanceOf(ConcordiumTokenAccountUnavailable);
       expect(craftTransaction).not.toHaveBeenCalled();
+    });
+
+    // A `BigNumber` holding NaN is truthy, so the falsiness guard alone let it
+    // through. What this pins is the ordering: the throw lands before any event.
+    it("refuses a NaN fee before requesting the device", async () => {
+      const { account, transaction } = tokenTransaction({ fee: new BigNumber(NaN) });
+
+      const { events } = await sign(transaction, account).catch(e => {
+        expect(e).toBeInstanceOf(FeeNotLoaded);
+        return { events: [] as unknown[] };
+      });
+
+      expect(events).toHaveLength(0);
+      expect(craftPltTransaction).not.toHaveBeenCalled();
     });
 
     // The energy half of the pair is missing, so the fee on screen has no

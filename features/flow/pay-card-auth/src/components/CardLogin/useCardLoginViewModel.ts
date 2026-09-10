@@ -71,7 +71,7 @@ export function mapSnapshotToViewModel(
   onAlreadyHaveCardPress: () => void,
   intro: CardLoginIntroViewProps,
 ): CardLoginViewModel {
-  // The card holder is signed in, so there is no login left to offer. `CardMore` holds the screen.
+  // The card holder is signed in, so there is no login left to offer. `More` holds the screen.
   if (value === "ready") {
     return null;
   }
@@ -121,7 +121,7 @@ export function useCardLoginViewModel({
   }, [callback, send]);
 
   useEffect(() => {
-    // `CardMore` ended the session. `ready` raises the flag on entry, so a lowered flag while the
+    // `More` ended the session. `ready` raises the flag on entry, so a lowered flag while the
     // machine still reads `ready` can only come from there, and this puts the login back on offer.
     if (!isSignedIn && snapshot.value === "ready") {
       send({ type: "SESSION_ENDED" });

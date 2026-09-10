@@ -484,7 +484,7 @@ describe("cardLoginMachine signed-in flag", () => {
   it("publishes the signed-in flag when it reaches ready", async () => {
     const { ports } = await signedIn();
 
-    // `CardMore` has no machine of its own, so this flag is the only thing that puts it on screen.
+    // `More` has no machine of its own, so this flag is the only thing that puts it on screen.
     expect(ports.setSignedIn).toHaveBeenLastCalledWith(true);
   });
 
@@ -511,7 +511,7 @@ describe("cardLoginMachine signed-in flag", () => {
   });
 
   it("puts the login back on offer when a session ends elsewhere", async () => {
-    // `CardMore` owns that journey and has already ended the session, so nothing is undone here.
+    // `More` owns that journey and has already ended the session, so nothing is undone here.
     const { ports, actor } = await signedIn();
 
     actor.send({ type: "SESSION_ENDED" });

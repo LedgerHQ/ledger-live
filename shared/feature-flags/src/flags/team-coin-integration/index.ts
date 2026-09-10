@@ -100,6 +100,7 @@ export * from "./editBitcoinTx";
 export * from "./editEvmTx";
 export * from "./evmNativeStaking";
 export * from "./fetchAdditionalCoins";
+export * from "./gasSponsorship";
 export * from "./lldHideSmallValueTokenOperations";
 export * from "./lldMemoTag";
 export * from "./lldTezosStaking";
