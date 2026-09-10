@@ -1,7 +1,4 @@
-/**
- * `supplyAndBorrow` is the bundled route the borrow live app posts; the driver opens a loan
- * with separate `supply` + `borrow` calls instead, and the two approve different spenders.
- */
+/** `supplyAndBorrow` is the live app's bundled route; the driver uses `supply` + `borrow`. */
 export type BorrowAction = "supply" | "supplyAndBorrow" | "borrow" | "repay" | "withdraw";
 
 export interface PartnerActionStep {

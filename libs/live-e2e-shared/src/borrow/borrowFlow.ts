@@ -255,10 +255,8 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<string | vo
       if (!spec) throw new Error(`No Speculos spec for "${specKey}"`);
       device = await startSpeculos(`borrow-${options.flow}`, spec);
       if (!device) throw new Error("Speculos not started");
-      // A remote device is acquired asynchronously: /acquire returns 202 before the pod exists,
-      // hands back a sentinel port, and it is the readiness poll that publishes SPECULOS_ADDRESS.
-      // Skip it and every screen read and the DMK transport resolve against the default localhost
-      // instead, i.e. 127.0.0.1:443. Mirrors what initUtil does for the app's own device.
+      // /acquire returns 202 with a sentinel port; the readiness poll is what publishes
+      // SPECULOS_ADDRESS, without which everything resolves against 127.0.0.1.
       if (process.env.REMOTE_SPECULOS === "true") await waitForSpeculosReady(device.id);
       apiPort = device.port;
     }
@@ -267,9 +265,8 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<string | vo
     setEnv("SPECULOS_API_PORT", apiPort);
     process.env.SPECULOS_API_PORT = String(apiPort);
 
-    // Morpho's supply/borrow calldata carries no clear-signing descriptor, so the app answers
-    // 6a80 until this is on. Only for a device we booted: a caller that passed its own port
-    // owns its device's settings.
+    // Morpho calldata has no clear-signing descriptor, so the app answers 6a80 until this is
+    // on. Only for a device we booted; a caller that passed its own port owns its settings.
     if (ownSpeculos) await enableBlindSigning();
 
     const transport = await DeviceManagementKitTransportSpeculos.open({ apiPort: String(apiPort) });

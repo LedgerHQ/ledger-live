@@ -161,10 +161,8 @@ export async function approveToken() {
 /**
  * Walks an arbitrary contract-call review to the signature.
  *
- * Waits on "Review transaction" rather than "Review transaction to": the app names the contract
- * in the header only when it can describe the calldata, and titles a blind-signed review with
- * the bare phrase. The shorter string is a prefix of the longer one and the match is a substring
- * test against the current screen, so this covers both.
+ * Waits on the bare "Review transaction", which a blind-signed review is titled with and which
+ * is a prefix of the clear-signed "Review transaction to".
  */
 export const approveContractTransactionButtonDevice = withDeviceController(
   ({ getButtonsController }) =>

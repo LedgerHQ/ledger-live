@@ -19,13 +19,8 @@ const debtAccount = TokenAccount.ETH_USDT_4;
 const COLLATERAL_SYMBOL = "wBTC";
 const EXPECTED_LTV = "50%";
 
-/** Three mainnet transactions, each with its own on-chain budget, exceed the 360s jest default. */
 const BORROW_TIMEOUT_MS = 600_000;
-/**
- * Repay and withdraw precondition the loan first, so their setup pays for a full open on top of
- * the reset — and withdraw adds an API repay after it. Each leg waits on mainnet confirmations,
- * and zeroing the debt allowance adds an approval transaction to every later repay.
- */
+/** A precondition opens, and for withdraw also repays, a loan before the test starts. */
 const BORROW_PRECONDITION_TIMEOUT_MS = 1_800_000;
 const borrowSetupOptions = { nanoAppCatalogPath: NANO_APP_CATALOG_PATH };
 
@@ -39,13 +34,6 @@ const BORROW_TAGS = [
   "@family-evm",
 ];
 
-/**
- * Every flow below drives the same funded mainnet account, so none of them may run next to
- * another: they live in one file because jest parallelises across files and never within one,
- * and they share the single `BORROW` broadcast slot so a run cannot split them across
- * platforms. Each still owns its precondition through the borrow driver rather than inheriting
- * one from the flow above, so any of them can run, or be retried, on its own.
- */
 const describeBorrowFlow = shouldRunBroadcastFlow(BroadcastFlow.BORROW) ? describe : describe.skip;
 
 async function initBorrowApp() {
@@ -60,19 +48,13 @@ async function initBorrowApp() {
       },
     ],
   });
-  // Sets SWAP_DISABLE_APPS_INSTALL: without it connectApp quits the Ethereum app to reach the
-  // dashboard, which terminates the single-app Speculos container.
+  // Sets SWAP_DISABLE_APPS_INSTALL, without which connectApp quits the single-app container.
   await swapSetup();
-  // The deposit, borrow, repay and withdraw calls are Morpho calldata with no clear-signing
-  // descriptor, so the app shows "Blind signing must be enabled in settings" and never renders a
-  // review until this is on. Speculos NVRAM is per-container, so it is set on each fresh device.
+  // Morpho calldata has no clear-signing descriptor, and Speculos NVRAM is per-container.
   await app.speculos.enableBlindSigning();
 }
 
-/**
- * The driver boots a Speculos of its own and clears SPECULOS_API_PORT when it tears it down,
- * so the app's device is released first rather than being pulled out from under it.
- */
+/** Releases the app's Speculos first: the driver clears SPECULOS_API_PORT when it tears its own down. */
 async function resetBorrowState(flowName: string) {
   try {
     await app.common.removeSpeculos();
@@ -137,9 +119,7 @@ describeBorrowFlow("Borrow - Open loan", () => {
 
 describeBorrowFlow("Borrow - Repay", () => {
   beforeAll(async () => {
-    // Reset before opening rather than reusing whatever debt is already there: a leftover loan
-    // can sit on another market with another debt token, and the allowance this test zeroes —
-    // and so the approval step it expects — is specific to the default market's token.
+    // A leftover loan can sit on another market, whose debt token is not the one zeroed below.
     await resetLoanState(borrowSetupOptions);
     await ensureLoanOpen(borrowSetupOptions);
     await initBorrowApp();
@@ -179,8 +159,6 @@ describeBorrowFlow("Borrow - Repay", () => {
 
 describeBorrowFlow("Borrow - Withdraw", () => {
   beforeAll(async () => {
-    // Unconditionally reset, open and repay through the API, for the same reason as repay: the
-    // idempotent variant would hand the UI whatever repaid position happened to be lying around.
     await ensureLoanRepaidForWithdraw(borrowSetupOptions);
     await initBorrowApp();
     await app.mainNavigation.openPortfolioViaDeeplink();
