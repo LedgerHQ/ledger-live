@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Platform } from "react-native";
 import { v4 as uuid } from "uuid";
-import {
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
-  type Contact,
-} from "@domain/entity-contact";
+import { DUPLICATE_CONTACT_NAME_ERROR_NAME, type Contact } from "@domain/entity-contact";
 import { CONTACTS_EVENT_SOURCE } from "@features/flow-contacts";
 import {
   createContactCreationPort,
@@ -164,19 +160,6 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
     () => createContactCreationPort({ dispatch, generateId: uuid }),
     [dispatch],
   );
-  const labels = useMemo(
-    () => ({
-      title: t("contacts.addContact"),
-      namePlaceholder: t("contacts.addContactDrawer.namePlaceholder"),
-      namingDisclaimer: t("contacts.addContactDrawer.namingDisclaimer"),
-      confirmName: t("contacts.addContactDrawer.confirmName"),
-      nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.invalidNameError"),
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
-      },
-    }),
-    [t],
-  );
   const callbacks = useMemo(
     () => ({
       onOpen: () => {
@@ -194,7 +177,6 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   );
   const contactAdapter = useAddContactDialogViewModel({
     contactCreation,
-    labels,
     onSaveSuccess: handleSaveSuccess,
     callbacks,
   });

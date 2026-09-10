@@ -21,13 +21,6 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
 const me = mockMeContact();
 const ada = mockContact({ id: "contact-ada", name: "Ada" });
 const viewModel = createPopulatedContactsListViewModel(me, [me, ada]);
-const labels = {
-  title: "Select contact",
-  searchPlaceholder: "Search contact",
-  searchNoResults: "No contact found",
-  addContact: "Add contact",
-  formatAddressCount: (count: number) => `${count} address`,
-};
 
 describe("SelectContactStep", () => {
   it("should render the searchable contacts list", () => {
@@ -35,7 +28,6 @@ describe("SelectContactStep", () => {
       <SelectContactStep
         title="Select contact"
         viewModel={viewModel}
-        labels={labels}
         meAvatarSrc="https://example.com/me.png"
         searchQuery=""
         onSearchQueryChange={jest.fn()}
@@ -58,7 +50,6 @@ describe("SelectContactStep", () => {
       <SelectContactStep
         title="Select contact"
         viewModel={viewModel}
-        labels={labels}
         meAvatarSrc="https://example.com/me.png"
         searchQuery=""
         onSearchQueryChange={jest.fn()}

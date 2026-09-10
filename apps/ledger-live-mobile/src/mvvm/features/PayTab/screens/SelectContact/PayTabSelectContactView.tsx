@@ -36,10 +36,6 @@ export function PayTabSelectContactView({
   contactAddressPicker,
 }: PayTabSelectContactViewModel) {
   const { t } = useTranslation();
-  const contactLabels = {
-    emptyAddress: t("contacts.addressCount", { count: 0 }),
-    formatAddressCount: (count: number) => t("contacts.addressCount", { count }),
-  };
   const styles = useStyleSheet(
     theme => ({
       container: {
@@ -63,11 +59,7 @@ export function PayTabSelectContactView({
   );
 
   const renderItem = ({ item }: ListRenderItemInfo<Contact>) => (
-    <ContactsCompactRow
-      contact={item}
-      labels={contactLabels}
-      onContactSelect={handleContactSelect}
-    />
+    <ContactsCompactRow contact={item} onContactSelect={handleContactSelect} />
   );
 
   return (

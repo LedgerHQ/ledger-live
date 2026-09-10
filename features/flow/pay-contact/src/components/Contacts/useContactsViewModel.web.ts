@@ -32,16 +32,9 @@ export function useContactsViewModel({
       transactionCount: summaries[contact.id]?.txCount ?? 0,
     }));
   }, [contacts, operations]);
-  const {
-    labels: addContactLabels,
-    contactCreation,
-    onRequestAddContact,
-    onSaveSuccess,
-    callbacks,
-  } = addContact;
+  const { contactCreation, onRequestAddContact, onSaveSuccess, callbacks } = addContact;
   const addContactDialog = useAddContactDialogViewModel({
     contactCreation,
-    labels: addContactLabels,
     onSaveSuccess: onSaveSuccess ?? noop,
     callbacks,
   });

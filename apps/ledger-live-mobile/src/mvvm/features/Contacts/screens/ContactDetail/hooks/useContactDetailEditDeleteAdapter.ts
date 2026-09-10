@@ -46,7 +46,6 @@ export function useContactDetailEditDeleteAdapter(
       resolveContactDetailEditDeleteLabels({
         t,
         editContactLabelKey: "contacts.detailActions.editName",
-        deleteDescriptionKey: "contacts.deleteContact.mobileDescription",
       }),
     [t],
   );

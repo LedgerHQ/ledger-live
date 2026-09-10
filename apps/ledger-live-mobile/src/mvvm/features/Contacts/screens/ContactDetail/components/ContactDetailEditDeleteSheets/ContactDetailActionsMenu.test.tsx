@@ -5,6 +5,8 @@ import { ContactDetailActionsMenu } from "@features/flow-contacts";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { render, screen } from "@tests/test-renderer";
 
+jest.mock("@shared/i18n", () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
+
 // The flow package stubs Lumen in its own Jest setup, so the icon colors the design system
 // resolves at render time can only be asserted from the app.
 const theme = ledgerLiveThemes.dark;
@@ -20,13 +22,7 @@ describe("ContactDetailActionsMenu", () => {
   beforeEach(() => {
     render(
       <QueuedBottomSheet isRequestingToBeOpened onClose={jest.fn()} enableDynamicSizing>
-        <ContactDetailActionsMenu
-          isOpen
-          canDelete
-          labels={{ editContact: "Edit name", deleteContact: "Delete contact" }}
-          onEdit={jest.fn()}
-          onDelete={jest.fn()}
-        />
+        <ContactDetailActionsMenu isOpen canDelete onEdit={jest.fn()} onDelete={jest.fn()} />
       </QueuedBottomSheet>,
     );
   });

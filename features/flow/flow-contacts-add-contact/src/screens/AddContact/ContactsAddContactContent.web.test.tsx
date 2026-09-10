@@ -4,6 +4,7 @@ import {
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
 } from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsAddContactContent } from "../..";
 import type { ContactsAddContactContentProps } from "./types";
 
@@ -11,6 +12,21 @@ jest.mock("@features/platform-contacts", () => ({
   ...jest.requireActual("@features/platform-contacts"),
   getContactInitial: (name: string) => name.slice(0, 1),
 }));
+
+const resources = {
+  translation: {
+    contacts: {
+      addContactDrawer: {
+        namingDisclaimer:
+          "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
+        namePlaceholder: "Contact name",
+        confirmName: "Add contact",
+        invalidNameError: "Special characters are not allowed.",
+        duplicateNameError: "This contact name is already in use.",
+      },
+    },
+  },
+};
 
 function createProps(
   overrides: Partial<ContactsAddContactContentProps> = {},
@@ -21,17 +37,6 @@ function createProps(
     draftName: "",
     avatarInitial: "",
     invalidNameError: null,
-    labels: {
-      title: "Add contact",
-      namePlaceholder: "Contact name",
-      namingDisclaimer:
-        "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
-      confirmName: "Add contact",
-      nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: "Special characters are not allowed.",
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "This contact name is already in use.",
-      },
-    },
     onDraftNameChange: jest.fn(),
     onConfirm: jest.fn(async () => undefined),
     reset: jest.fn(),
@@ -39,9 +44,17 @@ function createProps(
   };
 }
 
+function renderWithI18n(props: ContactsAddContactContentProps) {
+  return render(
+    <I18nTestProvider resources={resources}>
+      <ContactsAddContactContent {...props} />
+    </I18nTestProvider>,
+  );
+}
+
 describe("ContactsAddContactContent", () => {
   it("should render embeddable form content without a dialog", () => {
-    render(<ContactsAddContactContent {...createProps()} />);
+    renderWithI18n(createProps());
 
     expect(screen.getByText(/For privacy, avoid full names and surnames/)).toBeVisible();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -49,10 +62,10 @@ describe("ContactsAddContactContent", () => {
 
   it("should generate distinct naming disclaimer ids for each embedded form", () => {
     render(
-      <>
+      <I18nTestProvider resources={resources}>
         <ContactsAddContactContent {...createProps()} />
         <ContactsAddContactContent {...createProps()} />
-      </>,
+      </I18nTestProvider>,
     );
 
     const disclaimerIds = screen
@@ -63,13 +76,11 @@ describe("ContactsAddContactContent", () => {
   });
 
   it("should render the shared validation error and disable confirmation", () => {
-    render(
-      <ContactsAddContactContent
-        {...createProps({
-          draftName: "Cédric",
-          invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
-        })}
-      />,
+    renderWithI18n(
+      createProps({
+        draftName: "Cédric",
+        invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
+      }),
     );
 
     expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveValue("Cédric");
@@ -84,15 +95,13 @@ describe("ContactsAddContactContent", () => {
     const onDraftNameChange = jest.fn();
     const onConfirm = jest.fn(async () => undefined);
 
-    render(
-      <ContactsAddContactContent
-        {...createProps({
-          draftName: "Ada",
-          isConfirmEnabled: true,
-          onDraftNameChange,
-          onConfirm,
-        })}
-      />,
+    renderWithI18n(
+      createProps({
+        draftName: "Ada",
+        isConfirmEnabled: true,
+        onDraftNameChange,
+        onConfirm,
+      }),
     );
 
     fireEvent.change(screen.getByTestId("contacts-add-contact-name-input"), {
@@ -105,13 +114,11 @@ describe("ContactsAddContactContent", () => {
   });
 
   it("should make the draft name read-only while saving", () => {
-    render(
-      <ContactsAddContactContent
-        {...createProps({
-          draftName: "Ada",
-          isSaving: true,
-        })}
-      />,
+    renderWithI18n(
+      createProps({
+        draftName: "Ada",
+        isSaving: true,
+      }),
     );
 
     expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveAttribute("readonly");

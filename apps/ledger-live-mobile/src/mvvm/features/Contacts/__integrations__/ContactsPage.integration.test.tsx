@@ -19,14 +19,6 @@ function renderContactsPage(
   const result = render(
     <ContactsView
       viewModel={viewModel ?? createEmptyContactsListViewModel(me)}
-      labels={{
-        title: "Contacts",
-        searchPlaceholder: "Search contact",
-        searchNoResults: "No contact found",
-        addContact: "Add contact",
-        ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
-        formatAddressCount: count => `${count} address`,
-      }}
       meAvatarSrc="https://example.com/avatar.png"
       searchQuery=""
       onSearchQueryChange={jest.fn()}

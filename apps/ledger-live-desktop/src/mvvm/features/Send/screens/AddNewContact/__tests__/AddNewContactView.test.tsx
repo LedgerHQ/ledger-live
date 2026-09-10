@@ -3,22 +3,7 @@
  */
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import {
-  INVALID_CONTACT_NAME_ERROR_NAME,
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-} from "@domain/entity-contact";
 import { AddNewContactView } from "../AddNewContactView";
-
-const labels = {
-  title: "Add contact",
-  namePlaceholder: "Contact name",
-  namingDisclaimer: "Use a nickname.",
-  confirmName: "Add contact",
-  nameValidationErrors: {
-    [INVALID_CONTACT_NAME_ERROR_NAME]: "Invalid name",
-    [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "Duplicate name",
-  },
-} as const;
 
 describe("AddNewContactView", () => {
   it("should render the add contact content", () => {
@@ -29,7 +14,6 @@ describe("AddNewContactView", () => {
         draftName="Benoit"
         avatarInitial="B"
         invalidNameError={null}
-        labels={labels}
         onDraftNameChange={jest.fn()}
         onConfirm={jest.fn()}
         reset={jest.fn()}

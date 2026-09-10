@@ -1,8 +1,4 @@
-import {
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
-  type Contact,
-} from "@domain/entity-contact";
+import { DUPLICATE_CONTACT_NAME_ERROR_NAME, type Contact } from "@domain/entity-contact";
 import {
   createContactCreationPort,
   useAddContactDialogViewModel,
@@ -15,7 +11,6 @@ import {
   useContactsFeature,
 } from "@features/platform-contacts";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
 import { useDispatch } from "LLD/hooks/redux";
 import { DEFAULT_ADD_NEW_CONTACT_HEADER_STATE } from "LLD/features/Send/context/AddNewContactHeaderContext";
@@ -36,7 +31,6 @@ export type AddNewContactViewModel = AddContactDialogViewModel &
   }>;
 
 export function useAddNewContactViewModel(): AddNewContactViewModel {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state } = useSendFlowData();
   const contacts = useContacts();
@@ -58,19 +52,6 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   const contactCreation = useMemo(
     () => createContactCreationPort({ dispatch, generateId: uuid }),
     [dispatch],
-  );
-  const labels = useMemo(
-    () => ({
-      title: t("contacts.addContact"),
-      namePlaceholder: t("contacts.addContactDrawer.namePlaceholder"),
-      namingDisclaimer: t("contacts.addContactDrawer.namingDisclaimer"),
-      confirmName: t("contacts.addContact"),
-      nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.invalidNameError"),
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
-      },
-    }),
-    [t],
   );
   const onSaveSuccess = useCallback(
     (contact: Contact) => {
@@ -101,7 +82,6 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   );
   const contactAdapter = useAddContactDialogViewModel({
     contactCreation,
-    labels,
     onSaveSuccess,
     callbacks,
   });

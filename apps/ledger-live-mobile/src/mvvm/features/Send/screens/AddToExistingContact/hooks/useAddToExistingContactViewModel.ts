@@ -5,10 +5,7 @@ import {
   useContacts,
   useContactsMeContact,
 } from "@features/platform-contacts";
-import {
-  useContactsSearchViewModel,
-  type ContactsListViewLabels,
-} from "@features/flow-contacts-list";
+import { useContactsSearchViewModel } from "@features/flow-contacts-list";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
@@ -33,12 +30,12 @@ export function useAddToExistingContactViewModel({
   );
 
   const labels = useMemo(
-    (): ContactsListViewLabels => ({
+    () => ({
       title: t("send.newSendFlow.addContact.selectContact"),
       searchPlaceholder: t("contacts.searchPlaceholder"),
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
+      formatAddressCount: (count: number) => t("contacts.addressCount", { count }),
       formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
         t("contacts.detail.meDisplayName", { name }),
       ),

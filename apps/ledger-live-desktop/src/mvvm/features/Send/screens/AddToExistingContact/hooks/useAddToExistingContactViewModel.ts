@@ -6,10 +6,7 @@ import {
   useContacts,
   useContactsMeContact,
 } from "@features/platform-contacts";
-import {
-  useContactsSearchViewModel,
-  type ContactsListViewLabels,
-} from "@features/flow-contacts-list";
+import { useContactsSearchViewModel } from "@features/flow-contacts-list";
 import type { AddNewContactHeaderState } from "LLD/features/Send/context/AddNewContactHeaderContext";
 import { useSendPrefillAddAddressFlow } from "LLD/features/Send/hooks/useSendPrefillAddAddressFlow";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
@@ -34,13 +31,10 @@ export function useAddToExistingContactViewModel() {
   });
 
   const labels = useMemo(
-    (): Pick<
-      ContactsListViewLabels,
-      "searchPlaceholder" | "searchNoResults" | "formatAddressCount" | "formatMeDisplayName"
-    > => ({
+    () => ({
       searchPlaceholder: t("contacts.searchPlaceholder"),
       searchNoResults: t("contacts.searchNoResults"),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
+      formatAddressCount: (count: number) => t("contacts.addressCount", { count }),
       formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
         t("contacts.detail.meDisplayName", { name }),
       ),

@@ -17,7 +17,6 @@ export function AddNewContactScreen() {
       draftName={viewModel.draftName}
       avatarInitial={viewModel.avatarInitial}
       invalidNameError={viewModel.invalidNameError}
-      labels={viewModel.labels}
       onDraftNameChange={viewModel.onDraftNameChange}
       onConfirm={viewModel.onConfirm}
       reset={viewModel.reset}

@@ -2,14 +2,7 @@ import React, { type FC, type ReactElement, type ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
-import {
-  addContact,
-  contact,
-  contactsSlice,
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
-  type Contact,
-} from "@domain/entity-contact";
+import { addContact, contact, contactsSlice, type Contact } from "@domain/entity-contact";
 import type { AddContactDialogViewModel } from "@features/flow-contacts-add-contact";
 import { StyleProvider } from "@features/platform-style";
 import { I18nTestProvider } from "@shared/i18n/testing";
@@ -86,16 +79,6 @@ export function makeAddContactProps(
   overrides: Partial<PayAddContactProps> = {},
 ): PayAddContactProps {
   return {
-    labels: {
-      title: "Add contact",
-      namePlaceholder: "Contact name",
-      namingDisclaimer: "Use a nickname.",
-      confirmName: "Add contact",
-      nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: "Special characters are not allowed.",
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "This contact name is already in use.",
-      },
-    },
     contactCreation: {
       createContact: async ({ name }) =>
         contact({ id: "contact-created", isMe: false, name, addresses: [] }),
@@ -126,7 +109,6 @@ export function makeAddContactDialogViewModel(
     onConfirm: jest.fn(async () => undefined),
     reset: jest.fn(),
     isOpen: false,
-    labels: makeAddContactProps().labels,
     onOpen: jest.fn(),
     onClose: jest.fn(),
     ...overrides,
