@@ -9,10 +9,33 @@ describe("normalizeProps", () => {
     expect(normalizeProps(undefined)).toEqual({});
   });
 
-  it("wraps an Error under the error key", () => {
+  it("wraps an Error as name and message only", () => {
     const error = new Error("something went wrong");
+    error.name = "TypeError";
 
-    expect(normalizeProps(error)).toEqual({ error });
+    const result = normalizeProps(error);
+
+    expect(result).toEqual({
+      error: { name: "TypeError", message: "something went wrong" },
+    });
+    expect(result.error).not.toBeInstanceOf(Error);
+    expect(JSON.stringify(result)).not.toContain("stack");
+  });
+
+  it("omits extra enumerable fields from a custom Error", () => {
+    class CustomError extends Error {
+      constructor(
+        message: string,
+        readonly token: string,
+      ) {
+        super(message);
+        this.name = "CustomError";
+      }
+    }
+
+    expect(normalizeProps(new CustomError("failed", "secret-token"))).toEqual({
+      error: { name: "CustomError", message: "failed" },
+    });
   });
 
   it("returns a shallow copy of an object", () => {
