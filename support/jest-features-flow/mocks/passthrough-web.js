@@ -3,6 +3,10 @@ const TooltipOpenContext = React.createContext();
 const DialogOpenContext = React.createContext();
 const PopoverOpenContext = React.createContext();
 
+function ThemeProvider({ children }) {
+  return React.createElement(React.Fragment, null, children);
+}
+
 function resolveAvatarColor(identifier) {
   return `avatar-color:${identifier}`;
 }
@@ -167,6 +171,7 @@ module.exports = new Proxy(
     InteractiveIcon,
     MenuTrigger,
     Tag,
+    ThemeProvider,
     resolveAvatarColor,
     Tooltip,
     TooltipContent,
