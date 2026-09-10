@@ -15,8 +15,8 @@ import type { CraftedTransaction } from "@ledgerhq/coin-module-framework/api/ind
  * check, so the device signs the exact bytes Tronify will broadcast.
  */
 export function craftRawTransaction(rawDataHex: string): CraftedTransaction {
-  // Require whole bytes: `raw_data_hex` is raw bytes, so an odd-length hex string is ambiguous —
-  // reject it rather than let the device sign different bytes than Tronify intended.
+  // Require whole bytes: `raw_data_hex` is raw bytes, so an odd-length hex string (e.g. "abc") is
+  // ambiguous — reject it rather than let the device sign different bytes than Tronify intended.
   if (typeof rawDataHex !== "string" || !/^([0-9a-fA-F]{2})+$/.test(rawDataHex)) {
     throw new Error(
       "Tron craftRawTransaction expects a non-empty even-length hex raw_data_hex string",
