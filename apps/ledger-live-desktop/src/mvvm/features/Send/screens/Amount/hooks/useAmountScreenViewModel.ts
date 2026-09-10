@@ -19,6 +19,7 @@ import { useAmountScreenMessage } from "./useAmountScreenMessage";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
 import { track } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 
 type UseAmountScreenViewModelParams = Readonly<{
   account: AccountLike;
@@ -45,6 +46,7 @@ export function useAmountScreenViewModel({
 }: UseAmountScreenViewModelParams): AmountScreenViewModel {
   const { t } = useTranslation();
   const { navigation } = useFlowWizard();
+  const { selectedFeeOptionId, available, quote } = useSponsoredSend();
 
   const sendFlowTrackingProperties = useMemo(
     () => getSendFlowTrackingProperties(account, parentAccount),
@@ -74,6 +76,11 @@ export function useAmountScreenViewModel({
     amountComputationPending,
     shouldPrepare,
   } = amountReviewCore;
+
+  const sponsoredFeeUnaffordable = useMemo(() => {
+    if (selectedFeeOptionId !== "tronify" || !available || !quote) return false;
+    return mainAccount.spendableBalance.lt(new BigNumber(quote.value.toString()));
+  }, [selectedFeeOptionId, available, quote, mainAccount]);
 
   const amountInput = useAmountInput({
     account,
@@ -214,7 +221,10 @@ export function useAmountScreenViewModel({
     amountMessage,
     reviewLabel,
     reviewShowIcon,
-    reviewDisabled,
+    reviewDisabled: reviewDisabled || sponsoredFeeUnaffordable,
+    sponsoredFeeError: sponsoredFeeUnaffordable
+      ? t("newSendFlow.feePayment.insufficientFunds")
+      : null,
     reviewLoading: amountComputationPending,
     ...networkFees,
     feeSelector: {
