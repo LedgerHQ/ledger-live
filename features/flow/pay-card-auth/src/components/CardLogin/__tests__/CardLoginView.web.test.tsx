@@ -48,6 +48,12 @@ describe("CardLoginView (Web)", () => {
     expect(screen.getByText("Log in to access your card")).toBeVisible();
   });
 
+  it("should render the title as a heading", () => {
+    renderCardLoginView();
+
+    expect(screen.getByRole("heading", { name: "Crypto Card" })).toBeVisible();
+  });
+
   it("should render the login link when the copy carries one", () => {
     const onAlreadyHaveCardPress = jest.fn();
     renderCardLoginView({
