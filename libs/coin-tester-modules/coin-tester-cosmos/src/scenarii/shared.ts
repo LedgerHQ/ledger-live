@@ -20,17 +20,6 @@ type CosmosScenarioTransaction = ScenarioTransaction<GenericTransaction, Account
 
 const LOCAL_LCD = "http://127.0.0.1:1317";
 
-// Override coin-cosmos's default config: point sync + broadcast at the local
-// node. Runtime shape is flat (CosmosCurrencyConfig + status); the declared
-// CosmosCoinConfig type wraps everything in ConfigInfo, which is what LiveConfig
-// stores but NOT what `() => config` returns (chain.ts spreads coinConfig as
-// flat fields).
-const coinConfig = {
-  lcd: LOCAL_LCD,
-  minGasPrice: 0.002,
-  status: { type: "active" as const },
-} satisfies CosmosCurrencyConfig & { status: { type: "active" } };
-
 // Query the local node for the first bonded validator. The validator's operator
 // address is dynamic per devnet run (the entrypoint's gentx mints fresh keys),
 // so scenarios resolve it at runtime rather than hardcoding it.
@@ -59,8 +48,16 @@ export type CosmosScenarioOptions = {
   currency: CryptoCurrency;
   /** Bech32 prefix for the recipient address derivation (e.g. "bbn", "cosmos"). */
   hrp: string;
-  /** Label for the delegate step (Babylon notes the x/epoching wrapping). */
-  delegateLabel: string;
+  /** The chain's minimum gas price, fed into the per-scenario coin config. */
+  minGasPrice: number;
+  /**
+   * Whether the chain's staking module accepts delegation. When `false`,
+   * `getTransactions()` returns only the send step and `setup()` skips the
+   * bonded-validator lookup (there may be no delegatable validator set).
+   */
+  staking: boolean;
+  /** Label for the delegate step. Only meaningful when `staking` is true. */
+  delegateLabel?: string;
   /** Bring the devnet up / tear it down. */
   spawn: () => Promise<void>;
   kill: () => Promise<void>;
@@ -73,14 +70,31 @@ export type CosmosScenarioOptions = {
   retryLimit: number;
 };
 
-// Build a send → delegate → claim-rewards scenario against a local Cosmos-SDK
-// devnet. The flow is identical across the cosmos family; only the currency,
-// devnet lifecycle, address prefix, and retry budget differ — hence the options.
+// Build a send (→ delegate → claim-rewards, when staking is supported) scenario
+// against a local Cosmos-SDK devnet. The flow is identical across the cosmos
+// family; only the currency, devnet lifecycle, address prefix, gas price, and
+// staking support differ — hence the options.
 export function makeCosmosScenario(
   options: CosmosScenarioOptions,
 ): Scenario<GenericTransaction, Account> {
-  const { name, currency, hrp, delegateLabel, spawn, kill, retryInterval, retryLimit } = options;
+  const { name, currency, hrp, minGasPrice, staking, delegateLabel, spawn, kill } = options;
+  const { retryInterval, retryLimit } = options;
   const unit = currency.units[0];
+  // Both derivations follow the currency's own coin type rather than a
+  // hardcoded 118 — cosmos and babylon are 118 (behaviour-preserving), gonka
+  // is 1200 (enforced by the chain).
+  const coinType = currency.coinType;
+
+  // Override coin-cosmos's default config: point sync + broadcast at the local
+  // node. Runtime shape is flat (CosmosCurrencyConfig + status); the declared
+  // CosmosCoinConfig type wraps everything in ConfigInfo, which is what LiveConfig
+  // stores but NOT what `() => config` returns (chain.ts spreads coinConfig as
+  // flat fields).
+  const coinConfig = {
+    lcd: LOCAL_LCD,
+    minGasPrice,
+    status: { type: "active" as const },
+  } satisfies CosmosCurrencyConfig & { status: { type: "active" } };
 
   const mockServer = setupServer();
   // Populated in setup() before getTransactions() runs. Closure-scoped per
@@ -107,8 +121,8 @@ export function makeCosmosScenario(
   const getTransactions = (
     _address: string,
     strategy: BridgeStrategy,
-  ): CosmosScenarioTransaction[] => [
-    {
+  ): CosmosScenarioTransaction[] => {
+    const sendStep: CosmosScenarioTransaction = {
       name: `Send 1 ${currency.ticker}`,
       family: "cosmos",
       mode: "send",
@@ -125,64 +139,82 @@ export function makeCosmosScenario(
         expect(currentAccount.balance.toFixed()).toBe(
           previousAccount.balance.minus(latestOperation.value).toFixed(),
         );
-      },
-    },
-    {
-      name: delegateLabel,
-      family: "cosmos",
-      mode: "delegate",
-      // Delegate reads transaction.amount (unlike undelegate/redelegate, which read
-      // validators[].amount); genericToCosmosTransaction sets both — see bridges.ts.
-      valAddress: validatorAddress,
-      amount: parseCurrencyUnit(unit, "100"),
-      expect: (previousAccount, currentAccount) => {
-        const [latestOperation] = currentAccount.operations;
-        expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-        expect(latestOperation.type).toBe("DELEGATE");
-        // op.value for DELEGATE is just the fee — principal is bonded, not spent.
-        expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
-        // The retry budget lets the delegation land (immediate on Hub, next epoch on Babylon).
-        const staking = getStakingView(currentAccount, strategy);
-        expect(staking).toBeDefined();
-        expect(staking!.delegations.some(d => d.validatorAddress === validatorAddress)).toBe(true);
-        expect(staking!.delegatedBalance.toFixed()).toBe(parseCurrencyUnit(unit, "100").toFixed());
-        // Legacy's operation.extra carries cosmos's `validators` array; the generic framework's
-        // adaptCoreOperationToLiveOperation only forwards a singular `stake` field (see
-        // listOperations.ts's toOperation, which mirrors validators[0] into details.stake for it).
-        const stakeTarget =
-          strategy === "legacy"
-            ? (latestOperation.extra as CosmosOperationExtra).validators?.[0]
-            : (latestOperation.extra as { stake?: { address: string; amount: BigNumber } }).stake;
-        expect(stakeTarget?.address).toBe(validatorAddress);
-        expect(stakeTarget?.amount.toFixed()).toBe(parseCurrencyUnit(unit, "100").toFixed());
-      },
-    },
-    {
-      name: "Claim rewards",
-      family: "cosmos",
-      mode: "claimReward",
-      valAddress: validatorAddress,
-      expect: (previousAccount, currentAccount) => {
-        const [latestOperation] = currentAccount.operations;
-        expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-        expect(latestOperation.type).toBe("REWARD");
-        // Only a sliver of rewards has accrued to the freshly-bonded 100 units by
-        // this point, so the chain may emit no reward-coin event and
-        // synchronisation records no per-validator reward shard (extra.validators
-        // stays empty). The REWARD op type is the guaranteed signal that the claim
-        // landed; only assert the validator when a shard actually exists.
-        const extra = latestOperation.extra as CosmosOperationExtra;
-        if (extra.validators?.length) {
-          expect(extra.validators[0].address).toBe(validatorAddress);
+        // On a zero-gas-price chain, `value === fee + amount` holds trivially at
+        // fee = 0, so it wouldn't catch a regression that dropped the fee
+        // entirely. Assert the fee explicitly so the zero-fee path is covered.
+        if (minGasPrice === 0) {
+          expect(latestOperation.fee.isZero()).toBe(true);
         }
       },
-    },
-    // NOTE: undelegate and redelegate are intentionally omitted. Crafting is
-    // correct (covered by coin-cosmos buildTransaction.unit.test.ts); they are
-    // left out to keep both scenarios in step — on the babylond devnet the
-    // wrapped variants are accepted but no-op at the epoch boundary, a chain /
-    // x-epoching execution gap to resolve in a follow-up.
-  ];
+    };
+
+    if (!staking) return [sendStep];
+
+    return [
+      sendStep,
+      {
+        name: delegateLabel!,
+        family: "cosmos",
+        mode: "delegate",
+        // Delegate reads transaction.amount (unlike undelegate/redelegate, which read
+        // validators[].amount); genericToCosmosTransaction sets both — see bridges.ts.
+        valAddress: validatorAddress,
+        amount: parseCurrencyUnit(unit, "100"),
+        expect: (previousAccount, currentAccount) => {
+          const [latestOperation] = currentAccount.operations;
+          expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+          expect(latestOperation.type).toBe("DELEGATE");
+          // op.value for DELEGATE is just the fee — principal is bonded, not spent.
+          expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
+          // The retry budget lets the delegation land (immediate on Hub, next epoch on Babylon).
+          // Named `stakingView` so it doesn't shadow the `staking` capability flag above.
+          const stakingView = getStakingView(currentAccount, strategy);
+          expect(stakingView).toBeDefined();
+          expect(stakingView!.delegations.some(d => d.validatorAddress === validatorAddress)).toBe(
+            true,
+          );
+          expect(stakingView!.delegatedBalance.toFixed()).toBe(
+            parseCurrencyUnit(unit, "100").toFixed(),
+          );
+          // Legacy's operation.extra carries cosmos's `validators` array; the generic framework's
+          // adaptCoreOperationToLiveOperation only forwards a singular `stake` field (see
+          // listOperations.ts's toOperation, which mirrors validators[0] into details.stake for it).
+          const stakeTarget =
+            strategy === "legacy"
+              ? (latestOperation.extra as CosmosOperationExtra).validators?.[0]
+              : (latestOperation.extra as { stake?: { address: string; amount: BigNumber } }).stake;
+          expect(stakeTarget?.address).toBe(validatorAddress);
+          expect(stakeTarget?.amount.toFixed()).toBe(parseCurrencyUnit(unit, "100").toFixed());
+        },
+      },
+      {
+        name: "Claim rewards",
+        family: "cosmos",
+        mode: "claimReward",
+        valAddress: validatorAddress,
+        expect: (previousAccount, currentAccount) => {
+          const [latestOperation] = currentAccount.operations;
+          expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+          expect(latestOperation.type).toBe("REWARD");
+          // Only a sliver of rewards has accrued to the freshly-bonded 100 units by
+          // this point, so the chain may emit no reward-coin event and
+          // synchronisation records no per-validator reward shard (extra.validators
+          // stays empty). The REWARD op type is the guaranteed signal that the claim
+          // landed; only assert the validator when a shard actually exists.
+          const extra = latestOperation.extra as CosmosOperationExtra;
+          if (extra.validators?.length) {
+            expect(extra.validators[0].address).toBe(validatorAddress);
+          }
+        },
+      },
+      // NOTE: undelegate and redelegate are intentionally omitted. Crafting is
+      // correct (covered by coin-cosmos buildTransaction.unit.test.ts); they are
+      // left out to keep the two staking scenarios (Cosmos Hub, Babylon) in step
+      // — on the babylond devnet the wrapped variants are accepted but no-op at
+      // the epoch boundary, a chain / x-epoching execution gap to resolve in a
+      // follow-up.
+    ];
+  };
 
   return {
     name,
@@ -209,7 +241,7 @@ export function makeCosmosScenario(
       // hand its address to the devnet so genesis pre-funds exactly that account.
       // entrypoint.sh reads DEV_ADDRESS from the environment via docker-compose.
       const { address } = await getAddress("", {
-        path: "44'/118'/0'/0/0",
+        path: `44'/${coinType}'/0'/0/0`,
         currency,
         derivationMode: "",
       });
@@ -219,12 +251,15 @@ export function makeCosmosScenario(
 
       // Recipient = alt-account-index derivation. Address validation only checks
       // the hrp prefix, so any well-formed bech32 with it works.
-      const recipient = await signer.getAddressAndPubKey([44, 118, 1, 0, 0], hrp);
+      const recipient = await signer.getAddressAndPubKey([44, coinType, 1, 0, 0], hrp);
       recipientAddress = recipient.bech32_address;
 
       // The validator address is dynamic per devnet run; pick the first bonded
-      // validator the entrypoint bootstrapped.
-      validatorAddress = await getBondedValidator(LOCAL_LCD);
+      // validator the entrypoint bootstrapped. Skipped for chains whose staking
+      // module doesn't accept delegation (e.g. Gonka's PoC validator set).
+      if (staking) {
+        validatorAddress = await getBondedValidator(LOCAL_LCD);
+      }
 
       const account = makeAccount(address, currency);
       return {
