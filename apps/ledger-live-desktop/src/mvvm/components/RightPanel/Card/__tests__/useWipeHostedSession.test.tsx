@@ -97,4 +97,24 @@ describe("useWipeHostedSessionOnSignInChange", () => {
       "https://ledger.baanxapi.test",
     ]);
   });
+
+  it("still wipes once the manifests resolve, after a toggle that netted no change", () => {
+    // Signing in then out again while the manifests are still resolving nets out to the same
+    // isSignedIn value the hook started with. A wipe still has to fire: the brief signed-in window
+    // may have set cookies or minted tokens at the provider.
+    manifestsFrom({});
+    const { store, rerender } = renderHook(() => useWipeHostedSessionOnSignInChange());
+
+    signIn(store, true);
+    signIn(store, false);
+    expect(mockedInvoke).not.toHaveBeenCalled();
+
+    manifestsFrom(CATALOG);
+    rerender();
+
+    expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [
+      "https://dev.api.baanx.test",
+      "https://ledger.baanxapi.test",
+    ]);
+  });
 });

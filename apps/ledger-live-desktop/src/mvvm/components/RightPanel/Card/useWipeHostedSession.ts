@@ -7,7 +7,11 @@ import { manifestOrigin, useCardHostedManifests } from "./useCardHostedManifests
 export function useWipeHostedSessionOnSignInChange(): void {
   const isSignedIn = useIsCardSignedIn();
   const { login, hosted } = useCardHostedManifests();
-  const lastSignedIn = useRef(isSignedIn);
+  const lastSeenSignedIn = useRef(isSignedIn);
+  // Set on any sign-in change seen before the manifests resolved, so a second change during that
+  // same wait (e.g. sign in then out again) still wipes once they do, instead of netting out to
+  // "nothing changed" and losing both.
+  const hasPendingWipe = useRef(false);
 
   const origins = useMemo(
     () => [
@@ -21,18 +25,16 @@ export function useWipeHostedSessionOnSignInChange(): void {
   );
 
   useEffect(() => {
-    if (lastSignedIn.current === isSignedIn) {
+    if (lastSeenSignedIn.current !== isSignedIn) {
+      lastSeenSignedIn.current = isSignedIn;
+      hasPendingWipe.current = true;
+    }
+
+    if (!hasPendingWipe.current || origins.length === 0) {
       return;
     }
 
-    if (origins.length === 0) {
-      // The manifests have not resolved yet, so there is nothing to wipe. `lastSignedIn` stays
-      // stale on purpose: once `origins` fills in and re-runs this effect, the sign-in change
-      // this render saw is still pending and still fires the wipe below.
-      return;
-    }
-
-    lastSignedIn.current = isSignedIn;
+    hasPendingWipe.current = false;
 
     ipcRenderer.invoke("clearCardHostedSessionData", origins).catch(logger.error);
   }, [isSignedIn, origins]);
