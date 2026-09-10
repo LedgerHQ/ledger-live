@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 37.6.0-next.2
+
+### Minor Changes
+
+- [#21800](https://github.com/LedgerHQ/ledger-live/pull/21800) [`800e718`](https://github.com/LedgerHQ/ledger-live/commit/800e71806a6b743161ae1eb4f163d6a9ca654f85) Thanks [@henri-ly](https://github.com/henri-ly)! - Guard against a bridge extension returning an undefined spendable balance, which crashed the wallet-api serializer when selecting an Aleo token with no synced sub-account
+
 ## 37.6.0-next.1
 
 ### Minor Changes

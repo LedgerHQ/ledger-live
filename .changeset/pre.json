@@ -347,6 +347,7 @@
     "gonka-currency-feature-flag",
     "good-rats-push",
     "grumpy-pears-punch",
+    "guard-undefined-wallet-api-spendable-balance",
     "hedera-desktop-validators-query",
     "hedera-drop-preload-layer",
     "hedera-mobile-validators-query",
