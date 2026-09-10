@@ -82,7 +82,7 @@ describe("usePerpsDepositViewModel", () => {
     mockCalculateCountervalue.mockImplementation((_currency, value) => value);
     mockCalculate.mockReturnValue(0);
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: { amountTo: new BigNumber(42) },
+      quote: { amountTo: new BigNumber(42), quoteId: "quote-1" },
       isLoading: false,
       isUnavailable: false,
     });
@@ -253,7 +253,7 @@ describe("usePerpsDepositViewModel", () => {
     selectFundingAccount();
 
     expect(result.current.headerDescription).toContain("***");
-    expect(result.current.depositAccountCounterValue).toBe("***");
+    expect(result.current.depositAccountCounterValue).toBe("$***");
   });
 
   it("holds the review CTA back until the quote lands", () => {
@@ -313,5 +313,61 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.statusError).toEqual({
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
+  });
+
+  it("opens the review with the amount converted into the funding currency", () => {
+    // $20 buys 0.025 ETH, which the review shows in the funding currency.
+    mockCalculate.mockReturnValue(2.5e16);
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount(fundedAccount);
+    typeAmount(result.current.pressAmountKey, "20");
+
+    act(() => result.current.handleReview());
+
+    expect(result.current.isReviewOpen).toBe(true);
+    expect(result.current.reviewParams).toEqual({
+      depositAccount: fundedAccount,
+      receiverAccount,
+      amountSent: "0.025",
+      amountTo: "42",
+      quoteId: "quote-1",
+    });
+  });
+
+  it("holds the reviewed amounts still while quotes refresh behind it", () => {
+    mockCalculate.mockReturnValue(2.5e16);
+    const { props } = createProps();
+    const { result, rerender } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount(fundedAccount);
+    typeAmount(result.current.pressAmountKey, "20");
+    act(() => result.current.handleReview());
+
+    const reviewed = result.current.reviewParams;
+
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: undefined,
+      isLoading: true,
+      isUnavailable: false,
+    });
+    act(() => rerender(undefined));
+
+    expect(result.current.isReviewOpen).toBe(true);
+    expect(result.current.reviewParams).toEqual(reviewed);
+  });
+
+  it("keeps the review closed while the form is incomplete", () => {
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    typeAmount(result.current.pressAmountKey, "20");
+    act(() => result.current.handleReview());
+
+    expect(result.current.isReviewOpen).toBe(false);
+    expect(result.current.reviewParams).toBeNull();
   });
 });
