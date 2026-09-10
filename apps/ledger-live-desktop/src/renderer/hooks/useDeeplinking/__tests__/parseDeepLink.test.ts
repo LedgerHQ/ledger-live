@@ -374,6 +374,17 @@ describe("parseDeepLink", () => {
       });
     });
 
+    it("creates paytab route with the authorization code and the attempt state", () => {
+      const parsed = parseDeepLink("ledgerlive://paytab?code=auth-code&state=attempt-state");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "paytab",
+        code: "auth-code",
+        state: "attempt-state",
+      });
+    });
+
     it("creates product tour route", () => {
       const parsed = parseDeepLink("ledgerlive://product-tour");
       const route = createRoute(parsed);
