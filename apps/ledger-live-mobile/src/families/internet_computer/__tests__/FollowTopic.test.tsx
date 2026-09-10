@@ -64,6 +64,20 @@ describe("FollowTopic", () => {
     expect(screen.queryByText("Unspecified")).toBeNull();
   });
 
+  // Topic 11 is retired on the canister and 15–18 are past what the Ledger ICP app signs, so a
+  // follow on any of them spends a signature and gets nowhere. KNOWN_TOPICS keeps them because a
+  // neuron's existing followees may still sit on one.
+  it("offers only the topics a follow can be signed and accepted on", () => {
+    renderScreen();
+
+    expect(screen.getByTestId("icp-follow-topic-SnsAndCommunityFund")).toBeVisible();
+    expect(screen.queryByTestId("icp-follow-topic-SnsDecentralizationSale")).toBeNull();
+    expect(screen.queryByTestId("icp-follow-topic-ApiBoundaryNodeManagement")).toBeNull();
+    expect(screen.queryByTestId("icp-follow-topic-SubnetRental")).toBeNull();
+    expect(screen.queryByTestId("icp-follow-topic-ProtocolCanisterManagement")).toBeNull();
+    expect(screen.queryByTestId("icp-follow-topic-ServiceNervousSystemManagement")).toBeNull();
+  });
+
   /*
    * The topic used to live in navigation state while the transaction was seeded elsewhere, so the two
    * could disagree: picking a topic, going back and picking another showed the second and signed the
