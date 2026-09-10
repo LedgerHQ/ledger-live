@@ -52,6 +52,7 @@ export const cardLoginMachine = setup({
     oauthConfig: input.oauthConfig,
     callback: input.callback ?? null,
     loginUrl: null,
+    attemptState: null,
     session: null,
     errorKind: null,
     clearSession: false,
@@ -108,7 +109,10 @@ export const cardLoginMachine = setup({
           // The provider hosts the authorize page, so the actor builds the URL and nothing is asked
           // of the backend first. One step fewer, and one fewer way for a login to fail.
           target: "awaitingHostedLogin",
-          actions: assign({ loginUrl: ({ event }) => event.output.loginUrl }),
+          actions: assign({
+            loginUrl: ({ event }) => event.output.loginUrl,
+            attemptState: ({ event }) => event.output.state,
+          }),
         },
         // The attempt may already be stored, because the URL is built after the write. `clearingAttempt`
         // wipes it and then reads the error kind, which sends this to `error`.
@@ -142,8 +146,11 @@ export const cardLoginMachine = setup({
         },
       },
       on: {
-        // The app forwarded the deep link before the browser reported it. First one wins.
+        // The app forwarded the deep link before the browser reported it. First one wins. A stray
+        // redirect from an attempt already abandoned answers `state` for a different attempt, so it
+        // fails the guard and is dropped: this invoke keeps waiting on its own attempt undisturbed.
         CALLBACK_RECEIVED: {
+          guard: ({ context, event }) => event.state === context.attemptState,
           target: "validatingCallback",
           actions: assign({
             callback: ({ event }) => ({ code: event.code }),
@@ -154,7 +161,10 @@ export const cardLoginMachine = setup({
 
     awaitingCallback: {
       on: {
+        // Same guard, same reason: the redirect this state is waiting on is the one whose `state`
+        // matches the attempt that is still current, not one left over from an attempt retried away.
         CALLBACK_RECEIVED: {
+          guard: ({ context, event }) => event.state === context.attemptState,
           target: "validatingCallback",
           actions: assign({
             callback: ({ event }) => ({ code: event.code }),

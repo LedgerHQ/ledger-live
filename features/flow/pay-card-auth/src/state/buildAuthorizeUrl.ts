@@ -17,10 +17,14 @@ const SCOPE = "openid profile email offline_access";
  *
  * Only the challenge leaves the device. The verifier stays in the attempt store until the token
  * exchange, which is what binds that exchange to this attempt.
+ *
+ * `state` is not a CSRF check — PKCE already covers that. It travels here only so the redirect
+ * echoes back an id this session can compare against the attempt it is currently waiting on.
  */
 export function buildAuthorizeUrl(
   oauthConfig: CardLoginOauthConfig,
   codeChallenge: string,
+  state: string,
 ): string {
   const url = new URL(AUTHORIZE_PATH, oauthConfig.apiUrl);
 
@@ -36,6 +40,7 @@ export function buildAuthorizeUrl(
     redirect_uri: oauthConfig.redirectUri,
     code_challenge: codeChallenge,
     code_challenge_method: "S256",
+    state,
     prompt: "consent",
   }).toString();
 
