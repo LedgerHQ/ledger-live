@@ -8,12 +8,14 @@ import type { PayCardLoginErrorKind } from "./errors";
 /* --- The login attempt, and what the provider sends back ------------------------------------- */
 
 /**
- * One login attempt: the PKCE verifier the token exchange must present, and the challenge derived
- * from that verifier for the authorize URL.
+ * One login attempt: the PKCE verifier the token exchange must present, the challenge derived from
+ * that verifier for the authorize URL, and a local id this session uses to recognize its own
+ * redirect.
  */
 export type PayCardAuthorizeAttempt = Readonly<{
   codeVerifier: string;
   codeChallenge: string;
+  state: string;
 }>;
 
 /**
@@ -25,11 +27,13 @@ export type PayCardStoredAttempt = Readonly<{
 }>;
 
 /**
- * What the provider sends back on the redirect. PKCE binds the code to the verifier on disk, so the
- * code alone identifies the attempt and no CSRF value is echoed.
+ * What the provider sends back on the redirect. PKCE binds the code to the verifier on disk, so this
+ * is not a CSRF check. `state` only lets the app recognize a redirect from an attempt it has already
+ * abandoned, when the source it arrived through can supply it.
  */
 export type PayCardAuthCallback = Readonly<{
   code: string;
+  state?: string;
 }>;
 
 /**
@@ -88,7 +92,7 @@ export type OpenCardHostedPage = (path: string) => Promise<void>;
  * platform-card session store.
  */
 export type CardLoginPorts = Readonly<{
-  /** Mints a fresh PKCE pair. */
+  /** Mints a fresh PKCE pair and a local attempt id. */
   createAttempt: () => Promise<PayCardAuthorizeAttempt>;
   saveAttempt: (attempt: PayCardStoredAttempt) => Promise<void>;
   loadAttempt: () => Promise<PayCardStoredAttempt | null>;
@@ -145,6 +149,12 @@ export type CardLoginContext = {
   oauthConfig: CardLoginOauthConfig;
   callback: PayCardAuthCallback | null;
   loginUrl: string | null;
+  /**
+   * The current attempt's local id, so a redirect from an attempt already abandoned is told apart
+   * from the one this session is waiting on. Not a CSRF value: PKCE already ties the code to the
+   * verifier on disk.
+   */
+  attemptState: string | null;
   session: PayCardSession | null;
   errorKind: PayCardLoginErrorKind | null;
   /** Set when the session on disk turned out to be dead, so the wipe takes it as well. */
@@ -158,7 +168,7 @@ export type CardLoginEvent =
   | { type: "LOGIN" }
   | { type: "RETRY" }
   | { type: "SESSION_ENDED" }
-  | { type: "CALLBACK_RECEIVED"; code: string };
+  | { type: "CALLBACK_RECEIVED"; code: string; state?: string };
 
 /* --- Redux ----------------------------------------------------------------------------------- */
 

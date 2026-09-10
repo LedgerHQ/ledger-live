@@ -33,12 +33,12 @@ export const prepareAttempt = fromPromise(
     input,
   }: {
     input: { ports: CardLoginPorts; oauthConfig: CardLoginOauthConfig };
-  }): Promise<{ loginUrl: string }> => {
-    const { codeVerifier, codeChallenge } = await input.ports.createAttempt();
+  }): Promise<{ loginUrl: string; state: string }> => {
+    const { codeVerifier, codeChallenge, state } = await input.ports.createAttempt();
     await input.ports.saveAttempt({ codeVerifier });
 
     // Only the challenge leaves the device. The verifier stays in the store until the token exchange.
-    return { loginUrl: buildAuthorizeUrl(input.oauthConfig, codeChallenge) };
+    return { loginUrl: buildAuthorizeUrl(input.oauthConfig, codeChallenge, state), state };
   },
 );
 
