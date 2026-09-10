@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
-import type { CardProps, CardViewProps } from "./Card.types";
+import { useCardAuthStatus } from "@features/flow-pay-card-auth";
+import type { CardDisplayState, CardProps, CardViewProps } from "./Card.types";
 
 /** Mock card balance shown until the real balance API is wired (see LIVE-35427 follow-up). */
 const MOCK_CARD_BALANCE = 100;
@@ -19,12 +19,16 @@ export function useCardViewModel({
   balanceLabel,
   onTrackEvent,
 }: CardProps): CardViewProps {
-  const isSignedIn = useIsCardSignedIn();
+  const status = useCardAuthStatus();
+  const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
+  const isSignedIn = status === "signedIn";
 
   const cardVisual = useMemo<CardViewProps["cardVisual"]>(() => {
-    if (!formatCountervalue || balanceLabel === undefined) return undefined;
+    // The balance overlay belongs to a signed-in card only. Building it while signed out would drop
+    // the mock balance onto the bare artwork the login CTA sits above.
+    if (!isSignedIn || !formatCountervalue || balanceLabel === undefined) return undefined;
     return { balance: MOCK_CARD_BALANCE, formatCountervalue, balanceLabel };
-  }, [formatCountervalue, balanceLabel]);
+  }, [isSignedIn, formatCountervalue, balanceLabel]);
 
-  return { title, oauthConfig, callback, onTrackEvent, isSignedIn, cardVisual };
+  return { title, oauthConfig, callback, onTrackEvent, displayState, cardVisual };
 }
