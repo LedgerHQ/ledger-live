@@ -153,7 +153,6 @@
     "wallet": "pnpm --filter live-wallet",
     "asset-aggregation": "pnpm --filter asset-aggregation",
     "utils": "pnpm --filter live-utils",
-    "hooks": "pnpm --filter live-hooks",
     "types-devices": "pnpm --filter types-devices",
     "types-live": "pnpm --filter types-live",
     "hw-transport-http": "pnpm --filter hw-transport-http",
