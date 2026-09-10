@@ -41,11 +41,25 @@ import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
   createFeatureFlagsMiddleware,
   selectFeature,
+  type FeatureFlagsReadFailure,
   type PartialFeatures,
 } from "@shared/feature-flags";
-import { fetchRemoteFlags } from "~/firebase/remoteConfig";
+import { fetchRemoteFlags, readCachedFlags } from "~/firebase/remoteConfig";
 import { sleepingListener } from "./sleepingListener";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
+
+/**
+ * Reports only the failures that actually degrade the session. A warm failure is routine: the
+ * previously read values stay in place and the next poll retries. A cold one means the app is
+ * running on compiled defaults, which is worth knowing about.
+ *
+ * `console.warn` rather than `console.error` on purpose: a flag read failing on a bad network is
+ * expected and recoverable, not an illegal state.
+ */
+function reportFeatureFlagsReadFailure(error: unknown, { stage, isCold }: FeatureFlagsReadFailure) {
+  if (!isCold) return;
+  console.warn(`Feature flags: ${stage} read failed, resolving on compiled defaults`, error);
+}
 
 export const store = configureStore({
   reducer: reducers,
@@ -125,8 +139,10 @@ export const store = configureStore({
             appVersion: VersionNumber.appVersion ?? undefined,
             envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
           },
+          readCachedFlags,
           fetchRemoteFlags,
           getAppLanguage: languageSelector,
+          onRemoteFlagsError: reportFeatureFlagsReadFailure,
         }),
       )
       .concat(sleepingListener.middleware),
