@@ -1,20 +1,28 @@
+import React from "react";
 import { act, renderHook } from "@testing-library/react";
 import type { ClipboardEvent } from "react";
 import { ContactAddressValueSchema } from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { createInitialEditAddressEntryState } from "./model/addressEntryValidation";
 import { useEditAddressDialogPresentation } from "./useEditAddressDialogPresentation.web";
 
-const labels = {
-  addressPlaceholder: "Address",
-  validatingAddress: "Validating",
-  validAddress: "Valid",
-  invalidAddress: "Invalid",
-  domainNotFound: "Domain not found",
-  sanctionedAddress: "Sanctioned",
-  validationUnavailable: "Unavailable",
-  ensDisclaimer: "ENS disclaimer",
-  ensDisclaimerDescription: "ENS names can change over time.",
+const i18nResources = {
+  translation: {
+    contacts: {
+      addAddressEntry: {
+        validatingAddress: "Validating",
+        validAddress: "Valid",
+        invalidAddress: "Invalid",
+        domainNotFound: "Domain not found",
+        sanctionedAddress: "Sanctioned",
+        validationUnavailable: "Unavailable",
+      },
+    },
+  },
 };
+
+const wrapper = ({ children }: { children: React.ReactNode }) =>
+  React.createElement(I18nTestProvider, { resources: i18nResources }, children);
 
 describe("useEditAddressDialogPresentation", () => {
   it("should expose validation presentation for a valid address entry", () => {
@@ -22,12 +30,13 @@ describe("useEditAddressDialogPresentation", () => {
       ContactAddressValueSchema.parse("0x1234567890123456789012345678901234567890"),
     );
     const onAddressChange = jest.fn();
-    const { result } = renderHook(() =>
-      useEditAddressDialogPresentation({
-        addressEntry,
-        labels,
-        onAddressChange,
-      }),
+    const { result } = renderHook(
+      () =>
+        useEditAddressDialogPresentation({
+          addressEntry,
+          onAddressChange,
+        }),
+      { wrapper },
     );
 
     expect(result.current).toMatchObject({
@@ -49,12 +58,13 @@ describe("useEditAddressDialogPresentation", () => {
     };
     const onAddressChange = jest.fn();
     const preventDefault = jest.fn();
-    const { result } = renderHook(() =>
-      useEditAddressDialogPresentation({
-        addressEntry,
-        labels,
-        onAddressChange,
-      }),
+    const { result } = renderHook(
+      () =>
+        useEditAddressDialogPresentation({
+          addressEntry,
+          onAddressChange,
+        }),
+      { wrapper },
     );
 
     act(() => {

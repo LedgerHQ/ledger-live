@@ -63,18 +63,6 @@ export type UseRenameAddressDialogViewModelOptions = Omit<
     requestSaveApproval?: () => Promise<boolean>;
   }>;
 
-export type ContactsEditAddressValidationLabels = Readonly<{
-  addressPlaceholder: string;
-  validatingAddress: string;
-  validAddress: string;
-  invalidAddress: string;
-  domainNotFound: string;
-  sanctionedAddress: string;
-  validationUnavailable: string;
-  ensDisclaimer: string;
-  ensDisclaimerDescription: string;
-}>;
-
 export type EditAddressAddressEntryPresentation = Readonly<{
   value: string;
   inputStatus?: "error" | "success";
@@ -83,18 +71,9 @@ export type EditAddressAddressEntryPresentation = Readonly<{
   onChangeText: (value: string) => void;
 }>;
 
-export type ContactsRenameAddressLabels = Readonly<{
-  title: string;
-  inputLabel: string;
-  applyChanges: string;
-  labelValidationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
-  addressValidation: ContactsEditAddressValidationLabels;
-}>;
-
 export type ContactsRenameAddressDialogProps = RenameAddressDialogViewModel &
   Readonly<{
     isDeviceRequired: boolean;
-    labels: ContactsRenameAddressLabels;
   }>;
 
 export type ContactsRenameAddressDrawerProps = ContactsRenameAddressDialogProps &

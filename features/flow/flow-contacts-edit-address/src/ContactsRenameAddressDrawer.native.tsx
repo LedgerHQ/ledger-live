@@ -8,8 +8,15 @@ import {
   TextInput,
 } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
+import {
+  CONTACT_ADDRESS_LABEL_MAX_LENGTH,
+  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
+  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  type ContactAddressLabelValidationErrorName,
+} from "@domain/entity-contact";
 import { CONTACTS_NATIVE_ADDRESS_INPUT_PROPS } from "@features/platform-contacts";
+import { useTranslation } from "@shared/i18n";
 import type { ContactsRenameAddressDrawerProps } from "./types";
 import { useEditAddressAddressEntryPresentation } from "./useEditAddressAddressEntryPresentation.native";
 
@@ -22,17 +29,21 @@ export function ContactsRenameAddressDialog({
   isDeviceRequired,
   bottomInset = 0,
   keyboardInset = 0,
-  labels,
   onDraftLabelChange,
   onAddressChange,
   onConfirm,
   addressEntry,
 }: ContactsRenameAddressDrawerProps): React.JSX.Element {
+  const { t } = useTranslation();
+  const labelValidationErrors: Record<ContactAddressLabelValidationErrorName, string> = {
+    [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t("contacts.editAddress.invalidLabelError"),
+    [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t("contacts.addAddressName.duplicateLabel"),
+    [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: t("contacts.addAddressName.labelTooLong"),
+  };
   const labelValidationError =
-    invalidLabelError === null ? undefined : labels.labelValidationErrors[invalidLabelError];
+    invalidLabelError === null ? undefined : labelValidationErrors[invalidLabelError];
   const addressInput = useEditAddressAddressEntryPresentation({
     addressEntry,
-    labels: labels.addressValidation,
     onAddressChange,
   });
 
@@ -40,12 +51,12 @@ export function ContactsRenameAddressDialog({
     <BottomSheetView style={{ paddingBottom: bottomInset + 24 + keyboardInset }}>
       {isOpen ? (
         <Box lx={{ gap: "s24" }}>
-          <BottomSheetHeader density="expanded" title={labels.title} />
+          <BottomSheetHeader density="expanded" title={t("contacts.editAddress.title")} />
           <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
             <TextInput
               testID="contacts-edit-address-input"
               value={addressInput.value}
-              placeholder={labels.addressValidation.addressPlaceholder}
+              placeholder={t("contacts.addAddressEntry.addressPlaceholder")}
               onChangeText={addressInput.onChangeText}
               status={addressInput.inputStatus}
               helperText={addressInput.helperText}
@@ -55,14 +66,14 @@ export function ContactsRenameAddressDialog({
               <Banner
                 testID="contacts-edit-address-ens-disclaimer"
                 appearance="info"
-                title={labels.addressValidation.ensDisclaimer}
-                description={labels.addressValidation.ensDisclaimerDescription}
+                title={t("contacts.addAddressEntry.ensDisclaimer")}
+                description={t("contacts.addAddressEntry.ensDisclaimerDescription")}
               />
             ) : null}
             <TextInput
               {...CONTACTS_NATIVE_ADDRESS_INPUT_PROPS}
               helperText={labelValidationError}
-              label={labels.inputLabel}
+              label={t("contacts.editAddress.inputLabel")}
               maxLength={CONTACT_ADDRESS_LABEL_MAX_LENGTH}
               onChangeText={onDraftLabelChange}
               status={labelValidationError ? "error" : undefined}
@@ -79,7 +90,7 @@ export function ContactsRenameAddressDialog({
               onPress={() => void onConfirm()}
               testID="contacts-rename-address-confirm"
             >
-              {labels.applyChanges}
+              {t("contacts.editAddress.applyChanges")}
             </Button>
           </Box>
         </Box>
