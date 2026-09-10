@@ -162,7 +162,11 @@ export function trackBrazeConsentTransition<TUserId>({
         syncBrazeIdentity();
         return;
       }
-      onIdentitySynced?.();
+      try {
+        onIdentitySynced?.();
+      } catch (error) {
+        console.warn("Braze onIdentitySynced callback failed", error);
+      }
       return;
     }
 
