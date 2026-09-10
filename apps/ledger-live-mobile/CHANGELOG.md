@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.20.0-next.2
+
+### Minor Changes
+
+- [#21806](https://github.com/LedgerHQ/ledger-live/pull/21806) [`04445dc`](https://github.com/LedgerHQ/ledger-live/commit/04445dc07c17323d9c9bdeb2a5dac139d0ccd40a) Thanks [@henri-ly](https://github.com/henri-ly)! - Add missing changeset for Aleo bugfix LIVE-37189
+
 ## 4.20.0-next.1
 
 ### Minor Changes
