@@ -15,25 +15,25 @@ export function CardView({
 }: CardViewProps) {
   return (
     <Box lx={{ flex: 1, gap: "s16" }}>
-      <Subheader>
-        <SubheaderRow>
-          <SubheaderTitle>{title}</SubheaderTitle>
-        </SubheaderRow>
-      </Subheader>
       {displayState === "signedIn" ? (
         <>
+          <Subheader>
+            <SubheaderRow>
+              <SubheaderTitle>{title}</SubheaderTitle>
+            </SubheaderRow>
+          </Subheader>
           <CardOnboardingWidget />
           <CardDetails cardVisual={cardVisual} />
         </>
       ) : (
         <>
-          <CardArtwork />
           <CardLogin
             key={`${oauthConfig.apiUrl}`}
             oauthConfig={oauthConfig}
             callback={callback}
             onTrackEvent={onTrackEvent}
           />
+          <CardArtwork />
         </>
       )}
     </Box>

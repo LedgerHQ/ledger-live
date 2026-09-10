@@ -26,7 +26,6 @@ export function CardLoginView({
         lx={{
           flexDirection: "column",
           gap: "s4",
-          paddingTop: "s16",
         }}
       >
         <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s16" }}>

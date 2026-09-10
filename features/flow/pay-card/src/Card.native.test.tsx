@@ -46,12 +46,6 @@ describe("Card (native)", () => {
     mockStatus = "unknown";
   });
 
-  it("always shows the host title", () => {
-    render(<Card title={title} oauthConfig={oauthConfig} />);
-
-    expect(screen.getByText(title)).toBeVisible();
-  });
-
   describe("while resolving the session", () => {
     it("shows only the bare artwork, holding back the widget and card details", () => {
       render(<Card title={title} oauthConfig={oauthConfig} />);

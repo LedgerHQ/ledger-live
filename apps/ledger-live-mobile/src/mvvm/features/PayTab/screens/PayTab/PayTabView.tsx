@@ -13,9 +13,11 @@ import {
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Wallet40Background } from "LLM/components/Wallet40Background";
 import { TrackScreen } from "~/analytics";
+import { ScrollView } from "react-native";
 
 type PayTabViewProps = {
   readonly top: number;
+  readonly bottom: number;
   readonly cardTitle: string;
   readonly oauthConfig: CardProps["oauthConfig"];
   readonly callback: CardProps["callback"];
@@ -32,6 +34,7 @@ type PayTabViewProps = {
 export function PayTabView({
   top,
   cardTitle,
+  bottom,
   oauthConfig,
   callback,
   featureTour,
@@ -46,21 +49,26 @@ export function PayTabView({
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
       <Wallet40Background type="pay" />
-      <Box lx={{ flex: 1, gap: "s24", paddingHorizontal: "s16" }} style={{ paddingTop: top }}>
-        <TrackScreen category="Pay" balance_filter={balance.filter} />
-        <Balance {...balance} actionTiles={actionTiles} />
-        {isContactsEnabled && <Contacts {...contacts} />}
-        <ContactAddressPicker {...contactAddressPicker} />
-        <Card
-          title={cardTitle}
-          oauthConfig={oauthConfig}
-          callback={callback}
-          onTrackEvent={balance.onTrackEvent}
-        />
-        <FeatureTour {...featureTour} />
-        <DepositOptions {...depositOptions} />
-        <BankTransferIntro {...bankTransferIntro} />
-      </Box>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1, paddingTop: top, paddingBottom: bottom }}
+      >
+        <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
+          <TrackScreen category="Pay" balance_filter={balance.filter} />
+          <Balance {...balance} actionTiles={actionTiles} />
+          {isContactsEnabled && <Contacts {...contacts} />}
+          <ContactAddressPicker {...contactAddressPicker} />
+          <Card
+            title={cardTitle}
+            oauthConfig={oauthConfig}
+            callback={callback}
+            onTrackEvent={balance.onTrackEvent}
+          />
+          <FeatureTour {...featureTour} />
+          <DepositOptions {...depositOptions} />
+          <BankTransferIntro {...bankTransferIntro} />
+        </Box>
+      </ScrollView>
     </Box>
   );
 }
