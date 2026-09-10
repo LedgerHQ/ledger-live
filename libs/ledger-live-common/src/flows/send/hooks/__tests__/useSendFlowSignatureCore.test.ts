@@ -227,7 +227,7 @@ describe("useSendFlowSignatureCore", () => {
     expect(params.statusActions.resetStatus).toHaveBeenCalledTimes(1);
     expect(params.statusActions.setError).not.toHaveBeenCalled();
     expect(params.onFinish).toHaveBeenCalledTimes(1);
-    expect(params.onFinish).toHaveBeenCalledWith(SEND_FLOW_COMPLETION.FAILURE);
+    expect(params.onFinish).toHaveBeenCalledWith(SEND_FLOW_COMPLETION.FAILURE, error);
   });
 
   it("should set error when finishing with a non-user-refused error", () => {
@@ -243,7 +243,7 @@ describe("useSendFlowSignatureCore", () => {
     expect(params.statusActions.setError).toHaveBeenCalledTimes(1);
     expect(params.statusActions.resetStatus).not.toHaveBeenCalled();
     expect(params.onFinish).toHaveBeenCalledTimes(1);
-    expect(params.onFinish).toHaveBeenCalledWith(SEND_FLOW_COMPLETION.FAILURE);
+    expect(params.onFinish).toHaveBeenCalledWith(SEND_FLOW_COMPLETION.FAILURE, error);
   });
 
   it("should broadcast the signed operation from a device action result", async () => {
