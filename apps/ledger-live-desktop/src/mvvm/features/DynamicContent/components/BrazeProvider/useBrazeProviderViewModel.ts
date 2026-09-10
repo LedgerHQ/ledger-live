@@ -20,8 +20,8 @@ import {
 } from "~/renderer/reducers/settings";
 
 const brazeSdk = braze as typeof braze & {
-  wipeData: () => void;
-  enableSDK: () => void;
+  wipeData: () => void | Promise<void>;
+  enableSDK: () => void | Promise<void>;
 };
 
 type SyncedBrazeIdentity = {
@@ -204,8 +204,8 @@ export function useBrazeProviderViewModel() {
           {
             prepareForIdentityTransition,
             refreshContentCards: refreshAndReinitSession,
-            enableSDK: () => {
-              brazeSdk.enableSDK();
+            enableSDK: async () => {
+              await brazeSdk.enableSDK();
               initializeBrazeSdk(devMode, isTrackedUser);
             },
           },
