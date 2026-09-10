@@ -69,9 +69,12 @@ export async function clearHostedSessionData(
         .map(cookie => targetSession.cookies.remove(cookieUrl(cookie), cookie.name)),
     );
 
-    await targetSession.clearStorageData({
-      origin,
-      storages: [...CLEARED_STORAGES],
-    });
+    // Best effort too: a wipe that fails for one origin must not skip the origins still left.
+    await targetSession
+      .clearStorageData({
+        origin,
+        storages: [...CLEARED_STORAGES],
+      })
+      .catch(() => undefined);
   }
 }
