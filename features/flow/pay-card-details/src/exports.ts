@@ -1,5 +1,7 @@
 export * from "./components/CardArtwork/CardArtwork";
 export * from "./components/CardActions/CardActions";
+export * from "./components/CardNumbers/CardNumbers";
+export * from "./components/CardNumbers/useCardNumbersViewModel";
 export * from "./components/Freeze/Freeze";
 export * from "./components/CardVisual/CardVisual";
 export * from "./components/Freeze/useFreezeCardViewModel";
