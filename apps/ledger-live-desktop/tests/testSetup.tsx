@@ -75,6 +75,22 @@ type LooseFlagOverrides = {
   };
 };
 
+/**
+ * Seeds the boot-readiness gate as settled, mirroring runtime: `init.tsx` blocks the first
+ * render until `remoteFlagsReady`, so anything gated on it is always mounted with the gate open.
+ * A test that wants the pre-resolution state sets `remoteFlagsReady: false` explicitly.
+ */
+function withBootReadiness(initialState: DeepPartial<State>): DeepPartial<State> {
+  return {
+    ...initialState,
+    featureFlags: {
+      ...FEATURE_FLAGS_INITIAL_STATE,
+      ...initialState.featureFlags,
+      remoteFlagsReady: initialState.featureFlags?.remoteFlagsReady ?? true,
+    },
+  };
+}
+
 export function withFlagOverrides(flags: LooseFlagOverrides): DeepPartial<State> {
   const merged: Record<string, Feature> = {};
   for (const key of Object.keys(flags) as FeatureId[]) {
@@ -94,6 +110,9 @@ export function withFlagOverrides(flags: LooseFlagOverrides): DeepPartial<State>
   return {
     featureFlags: {
       ...FEATURE_FLAGS_INITIAL_STATE,
+      // Configuring flags implies they have resolved, so keep the boot gate open. See
+      // `withBootReadiness`.
+      remoteFlagsReady: true,
       overrides: merged as unknown as PartialFeatures,
       // Mirror the slice's resolution chain (override > default) so hooks reading
       // from `resolved` see the override immediately, without needing an action dispatch.
@@ -225,7 +244,11 @@ function renderWithMockedCounterValuesProvider(
   const {
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
+    store = createStore({
+      state: withBootReadiness(initialState) as State,
+      dbMiddleware,
+      fetchRemoteFlags: null,
+    }),
     userEventOptions = {},
     skipRouter = false,
     withRampCatalog = false,
@@ -264,7 +287,11 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
   const {
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
+    store = createStore({
+      state: withBootReadiness(initialState) as State,
+      dbMiddleware,
+      fetchRemoteFlags: null,
+    }),
     userEventOptions = {},
     skipRouter = false,
     initialRoute,
@@ -325,7 +352,11 @@ function renderHook<Result, Props>(
     initialProps,
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
+    store = createStore({
+      state: withBootReadiness(initialState) as State,
+      dbMiddleware,
+      fetchRemoteFlags: null,
+    }),
     minimal = true,
     skipRouter = false,
     initialRoute,
@@ -362,7 +393,11 @@ function renderHookWithLiveAppProvider<Result, Props>(
     initialProps,
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    store = createStore({ state: initialState as State, dbMiddleware, fetchRemoteFlags: null }),
+    store = createStore({
+      state: withBootReadiness(initialState) as State,
+      dbMiddleware,
+      fetchRemoteFlags: null,
+    }),
   } = options;
 
   return {
