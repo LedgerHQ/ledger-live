@@ -1,5 +1,5 @@
 import { isThenable } from "./isThenable";
-import { applyPropertyFilter, getAnalytics, resolveExtraProperties } from "../registry";
+import { applyPropsFilter, getAnalytics, resolveExtraProps } from "../registry";
 import { trackSubject } from "../trackSubject";
 import type { DeliveryStatus, Props } from "../types";
 
@@ -12,26 +12,26 @@ export function trackEvent(
   let filteredProps: Props;
 
   try {
-    filteredProps = applyPropertyFilter(props);
+    filteredProps = applyPropsFilter(props);
   } catch {
     handleFail({ eventName, deliveryStatus: "failed_filter" });
     return;
   }
 
   const dispatch = (extras: Props | undefined) => {
-    const eventProperties = applyPropertyFilter({ ...props, ...extras });
+    const eventProps = applyPropsFilter({ ...props, ...extras });
 
     return emit({
       kind,
       eventName,
-      eventProperties,
-      eventPropertiesWithoutExtra: filteredProps,
+      eventProps,
+      eventPropsWithoutExtra: filteredProps,
     });
   };
 
   let extras: Props | Promise<Props> | undefined;
   try {
-    extras = resolveExtraProperties(mandatory);
+    extras = resolveExtraProps(mandatory);
   } catch {
     handleFail({
       eventName,
@@ -57,21 +57,16 @@ export function trackEvent(
 type Emit = {
   kind: "track" | "page";
   eventName: string;
-  eventProperties: Props;
-  eventPropertiesWithoutExtra: Props;
+  eventProps: Props;
+  eventPropsWithoutExtra: Props;
 };
 
-function emit({
-  kind,
-  eventName,
-  eventProperties,
-  eventPropertiesWithoutExtra,
-}: Emit): void | Promise<void> {
+function emit({ kind, eventName, eventProps, eventPropsWithoutExtra }: Emit): void | Promise<void> {
   const publish = (deliveryStatus: DeliveryStatus) => {
     trackSubject.next({
       eventName,
-      eventProperties,
-      eventPropertiesWithoutExtra,
+      eventProps,
+      eventPropsWithoutExtra,
       date: new Date(),
       deliveryStatus,
     });
@@ -84,12 +79,12 @@ function emit({
     return;
   }
 
-  transport.log?.(kind, eventName, eventProperties);
+  transport.log?.(kind, eventName, eventProps);
 
   let result: void | Promise<void | DeliveryStatus>;
 
   try {
-    result = transport.track(eventName, eventProperties);
+    result = transport.track(eventName, eventProps);
   } catch {
     publish("failed_tracking");
     return;
@@ -119,8 +114,8 @@ function handleFail({
 }) {
   trackSubject.next({
     eventName,
-    eventProperties: enrichedProps,
-    eventPropertiesWithoutExtra: props,
+    eventProps: enrichedProps,
+    eventPropsWithoutExtra: props,
     date: new Date(),
     deliveryStatus,
   });

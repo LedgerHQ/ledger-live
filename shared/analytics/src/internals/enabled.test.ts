@@ -1,9 +1,9 @@
-import { setEnabledFunction } from "../registry";
+import { setEnabledFn } from "../registry";
 import { isEnabled } from "./enabled";
 
 describe("isEnabled", () => {
   beforeEach(() => {
-    setEnabledFunction(undefined);
+    setEnabledFn(undefined);
   });
 
   it("tracking is disabled by default", () => {
@@ -11,17 +11,17 @@ describe("isEnabled", () => {
   });
 
   it("tracking is enabled when the enabled function returns true", () => {
-    setEnabledFunction(() => true);
+    setEnabledFn(() => true);
     expect(isEnabled()).toEqual(true);
   });
 
   it("tracking is disabled when the enabled function returns false", () => {
-    setEnabledFunction(() => false);
+    setEnabledFn(() => false);
     expect(isEnabled()).toEqual(false);
   });
 
   it("tracking is disabled when the enabled function is not set", () => {
-    setEnabledFunction(undefined);
+    setEnabledFn(undefined);
     expect(isEnabled()).toEqual(false);
   });
 });

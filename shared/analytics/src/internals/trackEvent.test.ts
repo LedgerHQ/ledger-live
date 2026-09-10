@@ -1,11 +1,11 @@
 import {
   setAnalytics,
-  setExtraPropertiesFunction,
-  setMandatoryExtraPropertiesFunction,
-  setPropertyFilter,
+  setExtraPropsFn,
+  setMandatoryExtraPropsFn,
+  setPropsFilter,
 } from "../registry";
 import { trackSubject } from "../trackSubject";
-import type { AnalyticsTransport, DeliveryStatus, LoggableEvent, Props } from "../types";
+import type { Analytics, DeliveryStatus, LoggableEvent, Props } from "../types";
 import { trackEvent } from "./trackEvent";
 
 const events: LoggableEvent[] = [];
@@ -14,14 +14,14 @@ trackSubject.subscribe(event => events.push(event));
 const createTransport = ({
   track = jest.fn(),
   log = jest.fn(),
-}: Partial<AnalyticsTransport> = {}): jest.Mocked<AnalyticsTransport> =>
+}: Partial<Analytics> = {}): jest.Mocked<Analytics> =>
   ({
     track: jest.fn(track),
     log: jest.fn(log),
-  }) as unknown as jest.Mocked<AnalyticsTransport>;
+  }) as unknown as jest.Mocked<Analytics>;
 
-const scrubSensitive = (properties: Props): Props => {
-  const filtered = { ...properties };
+const scrubSensitive = (props: Props): Props => {
+  const filtered = { ...props };
   delete filtered.sensitive;
   return filtered;
 };
@@ -29,9 +29,9 @@ const scrubSensitive = (properties: Props): Props => {
 beforeEach(() => {
   events.length = 0;
   setAnalytics({ track: jest.fn() });
-  setExtraPropertiesFunction(undefined);
-  setMandatoryExtraPropertiesFunction(undefined);
-  setPropertyFilter(undefined);
+  setExtraPropsFn(undefined);
+  setMandatoryExtraPropsFn(undefined);
+  setPropsFilter(undefined);
 });
 
 describe("trackEvent", () => {
@@ -39,7 +39,7 @@ describe("trackEvent", () => {
     it("sends synchronously for sync extras", () => {
       const transport = createTransport();
       setAnalytics(transport);
-      setExtraPropertiesFunction(() => ({ appVersion: "1.2.3" }));
+      setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
 
       const result = trackEvent("track", "Sync Event", {}, false);
 
@@ -52,7 +52,7 @@ describe("trackEvent", () => {
     it("resolves after sending for async extras", async () => {
       const transport = createTransport();
       setAnalytics(transport);
-      setExtraPropertiesFunction(async () => ({ appVersion: "1.2.3" }));
+      setExtraPropsFn(async () => ({ appVersion: "1.2.3" }));
 
       const result = trackEvent("track", "Async Event", {}, false);
 
@@ -64,21 +64,21 @@ describe("trackEvent", () => {
       });
     });
 
-    it("calls the extra properties function with no arguments", () => {
+    it("calls the extra props function with no arguments", () => {
       const transport = createTransport();
       setAnalytics(transport);
-      const extraProperties = jest.fn(() => ({}));
-      setExtraPropertiesFunction(extraProperties);
+      const extraProps = jest.fn(() => ({}));
+      setExtraPropsFn(extraProps);
 
       trackEvent("track", "Stateful", {}, false);
 
-      expect(extraProperties).toHaveBeenCalledWith();
+      expect(extraProps).toHaveBeenCalledWith();
     });
 
-    it("lets extra properties win over caller properties", () => {
+    it("lets extra props win over caller props", () => {
       const transport = createTransport();
       setAnalytics(transport);
-      setExtraPropertiesFunction(() => ({ platform: "desktop" }));
+      setExtraPropsFn(() => ({ platform: "desktop" }));
 
       trackEvent("track", "Collision", { platform: "caller-supplied" }, false);
 
@@ -87,10 +87,10 @@ describe("trackEvent", () => {
       });
     });
 
-    it("uses mandatory extra properties for mandatory events", () => {
+    it("uses mandatory extra props for mandatory events", () => {
       const transport = createTransport();
       setAnalytics(transport);
-      setMandatoryExtraPropertiesFunction(() => ({ mandatory: "props" }));
+      setMandatoryExtraPropsFn(() => ({ mandatory: "props" }));
 
       trackEvent("track", "Mandatory Event", { flow: "onboarding" }, true);
 
@@ -103,7 +103,7 @@ describe("trackEvent", () => {
     it("reports failed_enrichment without rejecting when async extras reject", async () => {
       const transport = createTransport();
       setAnalytics(transport);
-      setExtraPropertiesFunction(() => Promise.reject(new Error("permission read failed")));
+      setExtraPropsFn(() => Promise.reject(new Error("permission read failed")));
 
       await expect(
         trackEvent("track", "Unenrichable", { foo: "bar" }, false),
@@ -113,8 +113,8 @@ describe("trackEvent", () => {
       expect(events).toEqual([
         expect.objectContaining({
           eventName: "Unenrichable",
-          eventProperties: { foo: "bar" },
-          eventPropertiesWithoutExtra: { foo: "bar" },
+          eventProps: { foo: "bar" },
+          eventPropsWithoutExtra: { foo: "bar" },
           deliveryStatus: "failed_enrichment",
         }),
       ]);
@@ -123,7 +123,7 @@ describe("trackEvent", () => {
     it("reports failed_enrichment when sync extras throw", () => {
       const transport = createTransport();
       setAnalytics(transport);
-      setExtraPropertiesFunction(() => {
+      setExtraPropsFn(() => {
         throw new Error("permission read failed");
       });
 
@@ -133,8 +133,8 @@ describe("trackEvent", () => {
       expect(events).toEqual([
         expect.objectContaining({
           eventName: "Unenrichable",
-          eventProperties: { foo: "bar" },
-          eventPropertiesWithoutExtra: { foo: "bar" },
+          eventProps: { foo: "bar" },
+          eventPropsWithoutExtra: { foo: "bar" },
           deliveryStatus: "failed_enrichment",
         }),
       ]);
@@ -142,10 +142,10 @@ describe("trackEvent", () => {
   });
 
   describe("property filter", () => {
-    it("filters caller properties before sending", () => {
+    it("filters caller props before sending", () => {
       const transport = createTransport();
       setAnalytics(transport);
-      setPropertyFilter(scrubSensitive);
+      setPropsFilter(scrubSensitive);
 
       trackEvent("track", "Tracking Event", { sensitive: "data to filter", theme: "light" }, false);
 
@@ -154,11 +154,11 @@ describe("trackEvent", () => {
       });
     });
 
-    it("filters enriched properties before sending", () => {
+    it("filters enriched props before sending", () => {
       const transport = createTransport();
       setAnalytics(transport);
-      setExtraPropertiesFunction(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
-      setPropertyFilter(scrubSensitive);
+      setExtraPropsFn(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
+      setPropsFilter(scrubSensitive);
 
       trackEvent("track", "Enriched Event", { theme: "light" }, false);
 
@@ -170,24 +170,24 @@ describe("trackEvent", () => {
 
     it("publishes filtered payloads to trackSubject on success", () => {
       setAnalytics(createTransport());
-      setExtraPropertiesFunction(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
-      setPropertyFilter(scrubSensitive);
+      setExtraPropsFn(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
+      setPropsFilter(scrubSensitive);
 
       trackEvent("track", "Subject Event", { theme: "light" }, false);
 
       expect(events[0]).toEqual(
         expect.objectContaining({
           eventName: "Subject Event",
-          eventProperties: { theme: "light", appVersion: "1.2.3" },
-          eventPropertiesWithoutExtra: { theme: "light" },
+          eventProps: { theme: "light", appVersion: "1.2.3" },
+          eventPropsWithoutExtra: { theme: "light" },
         }),
       );
     });
 
     it("publishes filtered payloads to trackSubject when async extras reject", async () => {
       setAnalytics(createTransport());
-      setExtraPropertiesFunction(() => Promise.reject(new Error("permission read failed")));
-      setPropertyFilter(scrubSensitive);
+      setExtraPropsFn(() => Promise.reject(new Error("permission read failed")));
+      setPropsFilter(scrubSensitive);
 
       await trackEvent(
         "track",
@@ -199,8 +199,8 @@ describe("trackEvent", () => {
       expect(events).toEqual([
         expect.objectContaining({
           eventName: "Unenrichable",
-          eventProperties: { theme: "light" },
-          eventPropertiesWithoutExtra: { theme: "light" },
+          eventProps: { theme: "light" },
+          eventPropsWithoutExtra: { theme: "light" },
           deliveryStatus: "failed_enrichment",
         }),
       ]);
@@ -209,7 +209,7 @@ describe("trackEvent", () => {
     it("reports failed_filter when the property filter throws", () => {
       const transport = createTransport();
       setAnalytics(transport);
-      setPropertyFilter(() => {
+      setPropsFilter(() => {
         throw new Error("filter failed");
       });
 
@@ -279,7 +279,7 @@ describe("trackEvent", () => {
     });
 
     it("reports skipped_no_client when no transport is registered", () => {
-      setAnalytics(undefined as unknown as AnalyticsTransport);
+      setAnalytics(undefined as unknown as Analytics);
 
       trackEvent("track", "No Client", {}, false);
 
@@ -288,7 +288,7 @@ describe("trackEvent", () => {
 
     it("publishes enriched and caller-only payloads separately", () => {
       setAnalytics(createTransport());
-      setExtraPropertiesFunction(() => ({ appVersion: "1.2.3" }));
+      setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
 
       trackEvent("track", "Both Payloads", { foo: "bar" }, false);
 
@@ -296,8 +296,8 @@ describe("trackEvent", () => {
         date: expect.any(Date),
         deliveryStatus: "enqueued",
         eventName: "Both Payloads",
-        eventProperties: { foo: "bar", appVersion: "1.2.3" },
-        eventPropertiesWithoutExtra: { foo: "bar" },
+        eventProps: { foo: "bar", appVersion: "1.2.3" },
+        eventPropsWithoutExtra: { foo: "bar" },
       });
     });
   });
