@@ -107,7 +107,14 @@ describe("ICP stake banner", () => {
   });
 
   it("prompts a longer dissolve delay when a neuron cannot vote yet", () => {
-    renderBanner([makeHealthyNeuron({ dissolveDelaySeconds: BigInt(SECONDS_IN_DAY) })]);
+    // Both fields: eligibility is judged from the dissolve state, and `dissolveDelaySeconds` alone
+    // would leave the healthy fixture's own voting-length state in place.
+    renderBanner([
+      makeHealthyNeuron({
+        dissolveDelaySeconds: BigInt(SECONDS_IN_DAY),
+        dissolveState: { DissolveDelaySeconds: BigInt(SECONDS_IN_DAY) },
+      }),
+    ]);
     pressCta("Manage neurons");
 
     expect(screen.getByText(/longer dissolve delay/, { exact: false })).toBeVisible();

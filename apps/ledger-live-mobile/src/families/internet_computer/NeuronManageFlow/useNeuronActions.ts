@@ -1,4 +1,5 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { neuronState } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import { NeuronState } from "@ledgerhq/live-common/families/internet_computer/types";
 import type {
   ICPAccount,
@@ -40,6 +41,9 @@ type Params = {
 export function useNeuronActions({ account, neuron, navigate }: Params) {
   const bridge = useAccountBridge<Transaction>(account);
   const neuronId = neuron?.id?.toString();
+  // Judged from the dissolve state as it stands now: the snapshot's own `state` is fixed at the last
+  // device-signed read, and a dissolving neuron's unlock time passes on its own.
+  const state = neuron ? neuronState(neuron) : undefined;
 
   // Seeds the transaction for the chosen operation and routes to the screen that finishes it. Input
   // screens then only patch their own field, so none of them has to know how to build a transaction.
@@ -75,7 +79,7 @@ export function useNeuronActions({ account, neuron, navigate }: Params) {
       onConfirmFollowing: () => submit("refresh_voting_power"),
       // The canister has no toggle: which call ends the dissolve depends on the current state.
       onStartStopDissolving: () =>
-        submit(neuron?.state === NeuronState.Dissolving ? "stop_dissolving" : "start_dissolving"),
+        submit(state === NeuronState.Dissolving ? "stop_dissolving" : "start_dissolving"),
       onAutoStakeMaturity: (autoStakeMaturity: boolean) =>
         submit("auto_stake_maturity", { autoStakeMaturity }),
       onRemoveHotKey: (hotKeyToRemove: string) => submit("remove_hot_key", { hotKeyToRemove }),
@@ -86,9 +90,9 @@ export function useNeuronActions({ account, neuron, navigate }: Params) {
       // A dissolved neuron sets its delay from zero; a locked one may only increase it.
       onSetDissolveDelay: goTo(
         ScreenName.InternetComputerNeuronSetDissolveDelay,
-        neuron?.state === NeuronState.Dissolved ? "set_dissolve_delay" : "increase_dissolve_delay",
+        state === NeuronState.Dissolved ? "set_dissolve_delay" : "increase_dissolve_delay",
       ),
     }),
-    [goTo, neuron?.state, submit],
+    [goTo, state, submit],
   );
 }

@@ -73,6 +73,28 @@ const FIXED_NOW_MSECS = 1_800_000_000_000;
 const refreshedSecondsAgo = (seconds: number) =>
   BigInt(Math.floor(FIXED_NOW_MSECS / 1000) - Math.floor(seconds));
 
+const NOW_SECONDS = Math.floor(FIXED_NOW_MSECS / 1000);
+
+// The dissolve state a neuron in each state carries on the wire. The screen judges the state from
+// it, not from the snapshot's `state`, so a fixture has to carry the matching one.
+const dissolving = (overrides: Partial<ICPNeuron> = {}) =>
+  makeHealthyNeuron({
+    controller: CONTROLLER,
+    state: NeuronState.Dissolving,
+    dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS + SECONDS_IN_MONTH) },
+    ...overrides,
+  });
+
+const dissolved = (overrides: Partial<ICPNeuron> = {}) =>
+  makeHealthyNeuron({
+    controller: CONTROLLER,
+    state: NeuronState.Dissolved,
+    dissolveDelaySeconds: 0n,
+    dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - SECONDS_IN_DAY) },
+    cachedNeuronStakeE8s: BigInt(MIN_NEURON_STAKE),
+    ...overrides,
+  });
+
 const renderDetails = () =>
   render(
     <NeuronDetails
@@ -150,19 +172,21 @@ describe("NeuronDetails", () => {
   });
 
   it("hides Stop dissolving from a hot-key holder even though the neuron's state allows it", () => {
-    neuron = makeHealthyNeuron({
-      controller: STRANGER,
-      hotKeys: [CONTROLLER],
-      state: NeuronState.Dissolving,
-    });
+    neuron = dissolving({ controller: STRANGER, hotKeys: [CONTROLLER] });
 
-    renderDetails();
-
+    const asHotKey = renderDetails();
     expect(screen.queryByText("Stop dissolving")).toBeNull();
+    asHotKey.unmount();
+
+    // The same neuron seen by its controller. Without this the absence above would also be
+    // satisfied by a neuron the screen never read as dissolving in the first place.
+    principal = STRANGER;
+    renderDetails();
+    expect(screen.getByText("Stop dissolving")).toBeVisible();
   });
 
   it("offers Stop dissolving to the controller of a dissolving neuron, and not Start", () => {
-    neuron = makeHealthyNeuron({ controller: CONTROLLER, state: NeuronState.Dissolving });
+    neuron = dissolving();
 
     renderDetails();
 
@@ -170,11 +194,27 @@ describe("NeuronDetails", () => {
     expect(screen.queryByText("Start dissolving")).toBeNull();
   });
 
-  it("labels the dissolve delay action Set for a dissolved neuron and Increase otherwise", () => {
-    neuron = makeHealthyNeuron({ controller: CONTROLLER, state: NeuronState.Dissolved });
-    const dissolved = renderDetails();
+  // The unlock time passes on its own, between device-signed reads. The snapshot still says
+  // Dissolving; the canister has already moved on, and so must the screen.
+  it("reads a dissolving neuron as dissolved once its unlock time has passed", () => {
+    neuron = dissolving({
+      dissolveState: { WhenDissolvedTimestampSeconds: BigInt(NOW_SECONDS - 1) },
+      cachedNeuronStakeE8s: BigInt(MIN_NEURON_STAKE),
+    });
+
+    renderDetails();
+
+    expect(screen.getByText("Disburse")).toBeVisible();
+    expect(screen.queryByText("Stop dissolving")).toBeNull();
     expect(screen.getByText("Set dissolve delay")).toBeVisible();
-    dissolved.unmount();
+    expect(screen.queryByText("Increase dissolve delay")).toBeNull();
+  });
+
+  it("labels the dissolve delay action Set for a dissolved neuron and Increase otherwise", () => {
+    neuron = dissolved();
+    const unlocked = renderDetails();
+    expect(screen.getByText("Set dissolve delay")).toBeVisible();
+    unlocked.unmount();
 
     neuron = makeHealthyNeuron({ controller: CONTROLLER, state: NeuronState.Locked });
     renderDetails();

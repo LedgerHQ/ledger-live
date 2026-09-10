@@ -52,7 +52,9 @@ export default function RefreshVotingPower({ navigation, route }: Props) {
   const { expiring, stateFor } = useMemo(() => {
     const nowSeconds = Math.floor(Date.now() / 1000);
     const entries = neurons
-      .filter(neuronCanVote)
+      // Called through an arrow, not by reference: `filter` passes the index as the second
+      // argument, which `neuronCanVote` reads as the clock.
+      .filter(neuron => neuronCanVote(neuron, nowSeconds))
       .map(neuron => ({ neuron, seconds: getSecondsTillVotingPowerExpires(neuron, nowSeconds) }))
       .filter(
         (entry): entry is { neuron: ICPNeuron; seconds: number } => entry.seconds !== undefined,

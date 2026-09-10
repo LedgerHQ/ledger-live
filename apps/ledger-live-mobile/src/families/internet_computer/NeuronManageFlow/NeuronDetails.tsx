@@ -15,6 +15,7 @@ import {
   isEnoughMaturityToSpawn,
   isNeuronDissolved,
   neuronCanBeSplit,
+  neuronCanDisburse,
   neuronCanVote,
   neuronDecidingVotingPower,
   neuronStake,
@@ -246,7 +247,7 @@ export default function NeuronDetails({ navigation, route }: Props) {
             value={t(`internetComputer.neuronState.${getNeuronState(neuron)}`)}
             actions={[
               ...controlled(
-                permissions.canDisburse,
+                neuronCanDisburse(neuron, BigInt(ICP_FEES)),
                 actions.onDisburse,
                 t("internetComputer.common.disburse"),
               ),

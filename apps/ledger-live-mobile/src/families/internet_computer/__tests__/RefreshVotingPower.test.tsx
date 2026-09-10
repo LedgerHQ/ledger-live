@@ -79,6 +79,24 @@ describe("RefreshVotingPower", () => {
     expect(screen.getByText("2")).toBeVisible();
   });
 
+  // The countdown as it stands now, not the delay recorded at the last read: a dissolving neuron
+  // falls under the minimum on its own, and the list has to drop it without being told.
+  it("leaves out a dissolving neuron whose countdown has fallen under the voting minimum", () => {
+    neurons = [
+      makeHealthyNeuron({
+        id: 1n,
+        dissolveState: { WhenDissolvedTimestampSeconds: BigInt(nowSeconds + SECONDS_IN_7_DAYS) },
+        votingPowerRefreshedTimestampSeconds: BigInt(nowSeconds),
+      }),
+      refreshedDaysAgo(2n, 0),
+    ];
+
+    renderScreen();
+
+    expect(screen.getAllByText("Confirm")).toHaveLength(1);
+    expect(screen.getByText("2")).toBeVisible();
+  });
+
   it("marks a neuron that is already decaying, so it does not read like a healthy one", () => {
     neurons = [refreshedDaysAgo(1n, 195)];
 
