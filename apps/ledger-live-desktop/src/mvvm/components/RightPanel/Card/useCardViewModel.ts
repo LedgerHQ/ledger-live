@@ -1,16 +1,30 @@
 import { useCallback, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import type { FormattedValue } from "@features/flow-pay-card-details";
 import useEnv from "@features/platform-env";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
+import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import type { CardViewModel } from "./types";
+
+/** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
+function readCallbackCode(state: unknown): string | undefined {
+  if (typeof state !== "object" || state === null) {
+    return undefined;
+  }
+
+  const code = (state as { code?: unknown }).code;
+
+  return typeof code === "string" && code !== "" ? code : undefined;
+}
 
 export function useCardViewModel(): CardViewModel {
   const { t } = useTranslation();
+  const { state } = useLocation();
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const unit = counterValueCurrency.units[0];
@@ -25,7 +39,6 @@ export function useCardViewModel(): CardViewModel {
   // login must take the new values without a restart of the app.
   const apiUrl = useEnv("CARD_BAANX_API_URL");
   const clientId = useEnv("CARD_BAANX_CLIENT_KEY");
-  const hostedUiUrl = useEnv("CARD_BAANX_HOSTED_UI");
   const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
@@ -33,12 +46,21 @@ export function useCardViewModel(): CardViewModel {
     () => ({
       apiUrl,
       clientId,
-      hostedUiUrl,
-      // No `deepLink`: the user's own browser opens the page, and it reports nothing back (LIVE-34740).
+      // No `hostedUiUrl`: the manifest of the live app carries the base of every hosted page.
+      // No `deepLink`: the Discover webview has no session to close, so nothing acts on it.
       redirectUri,
     }),
-    [apiUrl, clientId, hostedUiUrl, redirectUri],
+    [apiUrl, clientId, redirectUri],
   );
+
+  // The code is the whole of the redirect: PKCE ties it to the verifier the attempt store still holds.
+  const callback: CardViewModel["callback"] = useMemo(() => {
+    const code = readCallbackCode(state);
+
+    return code ? { code } : null;
+  }, [state]);
+
+  const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
 
   const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
     track(event, params);
@@ -49,6 +71,9 @@ export function useCardViewModel(): CardViewModel {
     balanceLabel: t("payTab.card.balanceLabel"),
     formatCountervalue,
     oauthConfig,
+    callback,
+    openHostedLogin,
+    openHostedPage,
     onTrackEvent,
   };
 }
