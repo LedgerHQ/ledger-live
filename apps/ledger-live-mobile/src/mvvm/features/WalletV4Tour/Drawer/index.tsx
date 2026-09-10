@@ -6,10 +6,10 @@ import { FlatList } from "react-native-gesture-handler";
 import { useWalletV4TourDrawerViewModel } from "./hooks/useWalletV4TourDrawerViewModel";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { ProgressIndicator } from "LLM/components/Slides";
 import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
 import { Platform, StyleSheet } from "react-native";
-import { ProgressIndicator } from "./components/ProgressIndicator";
 import { TrackScreen } from "~/analytics";
 import { PAGE_TRACKING_WALLET_V4_TOUR, SLIDES_CONTAINER_HEIGHT, SLIDES_LIST_HEIGHT } from "./const";
 

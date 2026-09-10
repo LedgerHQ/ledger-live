@@ -7,10 +7,10 @@ import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Platform } from "react-native";
+import { ProgressIndicator } from "LLM/components/Slides";
 import { TrackScreen } from "~/analytics";
 import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
-import { ProgressIndicator } from "./components/ProgressIndicator";
 import type { WalletV4Tour, WalletV4TourDrawerViewModel } from "./types";
 
 const AnimatedGestureHandlerFlatList = Animated.createAnimatedComponent(FlatList);
