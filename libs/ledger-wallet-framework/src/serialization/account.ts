@@ -19,6 +19,7 @@ import {
 import { isAccountEmpty } from "../account/helpers";
 import { fromNFTRaw, toNFTRaw } from "./nft";
 import {
+  buildSubOperationIndex,
   fromOperationRaw,
   fromSwapOperationRaw,
   toOperationRaw,
@@ -84,8 +85,21 @@ export async function fromAccountRaw(
       ).then(results => results.filter(Boolean))
     : undefined;
 
+  // Built once for the whole account rather than once per operation: `fromOperationRaw` is called
+  // below for every restored operation *and* every pending operation, and would otherwise rescan
+  // every sub-account's operations for each of them.
+  const subOperationIndex = subAccounts
+    ? buildSubOperationIndex(subAccounts as TokenAccount[])
+    : undefined;
+
   const convertOperation = (op: OperationRaw) =>
-    fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
+    fromOperationRaw(
+      op,
+      id,
+      subAccounts as TokenAccount[],
+      fromRaw?.fromOperationExtraRaw,
+      subOperationIndex,
+    );
 
   const currency = getCurrenciesResolver().getCryptoCurrencyById(currencyId);
   const feesCurrency = feesCurrencyId
