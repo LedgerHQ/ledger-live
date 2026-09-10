@@ -113,6 +113,19 @@ describe("clearHostedSessionData", () => {
     expect(get).toHaveBeenCalledWith({ domain: "provider.test" });
   });
 
+  it("moves on to the next origin when a storage clear fails", async () => {
+    const { session, clearStorageData, get } = fakeSession([]);
+    clearStorageData.mockRejectedValueOnce(new Error("the storage partition is locked"));
+
+    await clearHostedSessionData(session, ["https://dev.api.baanx.com", "https://provider.test"]);
+
+    expect(clearStorageData).toHaveBeenCalledWith({
+      origin: "https://provider.test",
+      storages: ["localstorage", "indexdb", "serviceworkers", "cachestorage"],
+    });
+    expect(get).toHaveBeenCalledWith({ domain: "provider.test" });
+  });
+
   it.each([
     [undefined],
     ["https://dev.api.baanx.com"],
