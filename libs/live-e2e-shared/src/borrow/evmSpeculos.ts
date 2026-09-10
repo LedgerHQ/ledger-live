@@ -29,8 +29,20 @@ const sleep = (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms))
 
 const RPC_RETRY_ATTEMPTS = 8;
 const RPC_RETRY_BASE_DELAY_MS = 3_000;
-const CONFIRMATION_TIMEOUT_MS = 300_000;
+const CONFIRMATION_TIMEOUT_MS = 180_000;
 const CONFIRMATION_POLL_INTERVAL_MS = 3_000;
+
+/**
+ * The keyless RPC suggests a tip of ~0.0003 gwei — three orders of magnitude below what the wallet
+ * itself pays — and a cap of only twice the current base fee. Transactions priced that way sit in
+ * the mempool until they are evicted, so both are floored.
+ */
+const MIN_PRIORITY_FEE_WEI = 1_000_000_000n;
+const MIN_FEE_CAP_WEI = 30_000_000_000n;
+
+function atLeast(suggested: bigint | null, floor: bigint): bigint {
+  return suggested !== null && suggested > floor ? suggested : floor;
+}
 
 /**
  * The default keyless RPC load-balances onto archive-restricted backends, which reject a plain
@@ -211,8 +223,8 @@ export class EvmSpeculosExecutor {
       : undefined;
     if (maxFeePerGas === undefined || maxPriorityFeePerGas === undefined) {
       const fee = await withRpcRetry(() => this.provider.getFeeData());
-      maxFeePerGas ??= fee.maxFeePerGas ?? undefined;
-      maxPriorityFeePerGas ??= fee.maxPriorityFeePerGas ?? undefined;
+      maxFeePerGas ??= atLeast(fee.maxFeePerGas, MIN_FEE_CAP_WEI);
+      maxPriorityFeePerGas ??= atLeast(fee.maxPriorityFeePerGas, MIN_PRIORITY_FEE_WEI);
     }
 
     const gasLimit = payload.gasLimit
