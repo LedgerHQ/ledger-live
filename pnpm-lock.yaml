@@ -442,8 +442,8 @@ catalogs:
       specifier: 0.67.0
       version: 0.67.0
     oxlint:
-      specifier: 1.79.0
-      version: 1.79.0
+      specifier: 1.82.0
+      version: 1.82.0
     playwright:
       specifier: 1.60.0
       version: 1.60.0
@@ -707,7 +707,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -807,7 +807,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -1608,7 +1608,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       postcss:
         specifier: 8.5.6
         version: 8.5.6
@@ -2603,7 +2603,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react-native-bundle-visualizer:
         specifier: 3.1.3
         version: 3.1.3(patch_hash=860509fa484fba50bc575fd4729f51687bfb5342e9fca66d2b7c12b0cf81e11d)
@@ -2771,7 +2771,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       purify-ts:
         specifier: 2.1.0
         version: 2.1.0
@@ -5286,7 +5286,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       playwright:
         specifier: 'catalog:'
         version: 1.60.0
@@ -5456,7 +5456,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -5552,7 +5552,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6368,7 +6368,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6446,7 +6446,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6571,7 +6571,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6675,7 +6675,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -6891,7 +6891,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -7028,7 +7028,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -7128,7 +7128,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -7192,7 +7192,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -7287,7 +7287,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -7412,7 +7412,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -7525,7 +7525,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -7629,7 +7629,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -7748,7 +7748,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -8494,7 +8494,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -8546,7 +8546,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -8695,7 +8695,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-algorand:
     dependencies:
@@ -8768,7 +8768,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-aptos:
     dependencies:
@@ -8862,7 +8862,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -9013,7 +9013,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-canton:
     dependencies:
@@ -9089,7 +9089,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       protobufjs-cli:
         specifier: 1.1.2
         version: 1.1.2
@@ -9180,7 +9180,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-casper:
     dependencies:
@@ -9256,7 +9256,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-celo:
     dependencies:
@@ -9362,7 +9362,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -9447,7 +9447,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -9553,7 +9553,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-filecoin:
     dependencies:
@@ -9641,7 +9641,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-hedera:
     dependencies:
@@ -9726,7 +9726,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-icon:
     dependencies:
@@ -9793,7 +9793,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-internet_computer:
     dependencies:
@@ -9884,7 +9884,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-kaspa:
     dependencies:
@@ -9987,7 +9987,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       timemachine:
         specifier: ^0.3.2
         version: 0.3.2
@@ -10069,7 +10069,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-module-boilerplate:
     dependencies:
@@ -10139,7 +10139,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -10233,7 +10233,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-near:
     dependencies:
@@ -10297,7 +10297,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-polkadot:
     dependencies:
@@ -10397,7 +10397,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -10509,7 +10509,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-stacks:
     dependencies:
@@ -10600,7 +10600,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       ripple-keypairs:
         specifier: ^2.0.0
         version: 2.0.0
@@ -10700,7 +10700,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-ton:
     dependencies:
@@ -10779,7 +10779,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-tron:
     dependencies:
@@ -10843,7 +10843,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -10928,7 +10928,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/coin-modules/coin-zcash:
     dependencies:
@@ -11013,7 +11013,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
@@ -11059,7 +11059,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -11138,7 +11138,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       tsx:
         specifier: ^4.19.3
         version: 4.20.6
@@ -11214,7 +11214,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5
         version: 5.0.10
@@ -11284,7 +11284,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5.0.5
         version: 5.0.10
@@ -11360,7 +11360,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5
         version: 5.0.10
@@ -11439,7 +11439,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5.0.5
         version: 5.0.10
@@ -11518,7 +11518,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5
         version: 5.0.10
@@ -11588,7 +11588,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5
         version: 5.0.10
@@ -11652,7 +11652,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5
         version: 5.0.10
@@ -11728,7 +11728,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -11801,7 +11801,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5
         version: 5.0.10
@@ -11871,7 +11871,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5
         version: 5.0.10
@@ -11950,7 +11950,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5.0.5
         version: 5.0.10
@@ -12032,7 +12032,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5.0.5
         version: 5.0.10
@@ -12111,7 +12111,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5
         version: 5.0.10
@@ -12178,7 +12178,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5
         version: 5.0.10
@@ -12254,7 +12254,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^5.0.5
         version: 5.0.10
@@ -12351,7 +12351,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -12385,7 +12385,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -12407,7 +12407,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/device-core:
     dependencies:
@@ -12471,7 +12471,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/device-onboarding:
     dependencies:
@@ -12505,7 +12505,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -12551,7 +12551,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -12651,7 +12651,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
@@ -12678,7 +12678,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/ethereum-provider:
     dependencies:
@@ -12727,7 +12727,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/evm-tools:
     dependencies:
@@ -12792,7 +12792,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/feature-flag-module:
     dependencies:
@@ -12811,7 +12811,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/hw-ledger-key-ring-protocol:
     dependencies:
@@ -12857,7 +12857,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/hw-transport-http:
     dependencies:
@@ -12940,7 +12940,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -13031,7 +13031,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -13647,7 +13647,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -13739,7 +13739,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -13785,7 +13785,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -13903,7 +13903,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       timemachine:
         specifier: ^0.3.2
         version: 0.3.2
@@ -15790,7 +15790,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       tsx:
         specifier: ^4.19.3
         version: 4.20.6
@@ -16632,7 +16632,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -16666,7 +16666,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/test-utils:
     dependencies:
@@ -16716,7 +16716,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/types-devices:
     devDependencies:
@@ -17012,7 +17012,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       prop-types:
         specifier: ^15.8.1
         version: 15.8.1
@@ -17235,7 +17235,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -17326,7 +17326,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/wallet-api-acre-module:
     dependencies:
@@ -17345,7 +17345,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/wallet-btc:
     dependencies:
@@ -17469,7 +17469,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
 
   libs/wallet-framework-test-setup:
     dependencies:
@@ -17548,7 +17548,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -17640,7 +17640,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -18330,7 +18330,7 @@ importers:
         version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -23657,14 +23657,14 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@oxlint/binding-android-arm-eabi@1.79.0':
-    resolution: {integrity: sha512-TebFaaMklO/RXzTv7PucaCq9l3X6D1gA+C8H6K4njtjFOV+zWE9MKLpulcJZN9bzytbUbQIY0mZuz12nQ5Kv4Q==}
+  '@oxlint/binding-android-arm-eabi@1.82.0':
+    resolution: {integrity: sha512-a3LB+C5Dsj5b/qtmG/mv5WrzuiXEpg1KF5nXWcEvaoN5TYAqkIvxPOwTPp3Jy/FoGpRo8zsTFhMElMXfeoOEzA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [android]
 
-  '@oxlint/binding-android-arm64@1.79.0':
-    resolution: {integrity: sha512-KqqnOtAVgNsPPF0YSodkFZA1O80jcKoCZCTu3bgsszxA+MrMP9TLzfXitKjEj1FmrPprKDMdRDMmY3weESO9sg==}
+  '@oxlint/binding-android-arm64@1.82.0':
+    resolution: {integrity: sha512-OBlhRgNqFblGpGenno/aqOfJLOkQ2B8Ig3iDAalfn0H8hJGZKXPeexCRTDm6uwv6YUjSA9Xnwt1y/Bgj5ZH8uw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [android]
@@ -23675,8 +23675,8 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
-  '@oxlint/binding-darwin-arm64@1.79.0':
-    resolution: {integrity: sha512-BVC2nsMzqQzRDPc5RhixkZ+m1p7iH4bxRRvqkbwDXX0PlQKm1BPy8J8cRjnAFafOq2QzI+BfO3vE8w2GZ3CBag==}
+  '@oxlint/binding-darwin-arm64@1.82.0':
+    resolution: {integrity: sha512-dsopxqtY5ZdyT9uLHyGt1SyiLop6hi7hWI3PKpePodkRQOkLaCm+OE4fR9CAz9qdfjiFO8531tX/QDyP/psjFg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [darwin]
@@ -23687,67 +23687,67 @@ packages:
     cpu: [x64]
     os: [darwin]
 
-  '@oxlint/binding-darwin-x64@1.79.0':
-    resolution: {integrity: sha512-p6Lm+snmhGuLKL1+CpCV8L6ijkE/qJzK2H2jG9+eKJT0n31RbY4FLsdhexekgP3bLpw4Kgde+9DZuDZQ4yIInA==}
+  '@oxlint/binding-darwin-x64@1.82.0':
+    resolution: {integrity: sha512-94Lu0SgTClKColU66g1VDuigV3HkcbkJBnTtZjGYfE8UPugaWDgKrm2icjC6HJVUYler2OXaHP/X0TBy8+CowQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [darwin]
 
-  '@oxlint/binding-freebsd-x64@1.79.0':
-    resolution: {integrity: sha512-qDMm0dXZnoHyRqSL4N4xUq82T4sqK5cbKSjvd/dF/YbMUXc2R1wEPf+vmA5S0qUmi0nwXfNbjXBtZaIqzQLIMg==}
+  '@oxlint/binding-freebsd-x64@1.82.0':
+    resolution: {integrity: sha512-hne/V06ewhh1i0w8+l7GDNROAGCGPmyFuOwiP7YTRu0JycyStJ4785dmF8xU5p0uUwt2emvIF9vc7Xjis+cJ0g==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [freebsd]
 
-  '@oxlint/binding-linux-arm-gnueabihf@1.79.0':
-    resolution: {integrity: sha512-2od7s0nuKPzqyUZAWk9KkCyGg7eI9dwFPZg+20lB15fKFkVZ0c9ZFxqPfiBAyDTlTkh9stPI0t+JlPCqMbItVA==}
+  '@oxlint/binding-linux-arm-gnueabihf@1.82.0':
+    resolution: {integrity: sha512-aWY2xtbZf1LneW9Qsv/n2Sp8gOu74JrlQzEtj4coHX2SHFrCfhmAumaU+sI/A5nr+yoTRTSmI/pL2s6ADlNSkw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [linux]
 
-  '@oxlint/binding-linux-arm-musleabihf@1.79.0':
-    resolution: {integrity: sha512-ZOQUjkzDnvlhSE3+tWC3YXx94MMl+sYMlwH+u1+YGApGHOJP/YAc8ZBRFOXZ6eOBmxtXAWuS/fBcdZr8qqNO1A==}
+  '@oxlint/binding-linux-arm-musleabihf@1.82.0':
+    resolution: {integrity: sha512-Fe+TtXCXMh/5f7kWlZ2VAwsMumZWtraFlKVk1NJlL52/beGwfDE7ov+/8gVirHzWokzGu7X65hSPq0ucPDskWQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [linux]
 
-  '@oxlint/binding-linux-arm64-gnu@1.79.0':
-    resolution: {integrity: sha512-lu158FR4nGqGeRS3BQvtG85wRgU/Fy4MD5Cxp1hzJXizGiLo6u2742wJSCDKh8cFcZntvX7fcxlq4mMmfryH1g==}
+  '@oxlint/binding-linux-arm64-gnu@1.82.0':
+    resolution: {integrity: sha512-6azCZ6OJudlvipNttXCCQcyeFfcJ/NvUZdSN1z8elo73kCHtyQC7WTiUcSjWYvJ1jaq9KDUyMAoAS/vNzhBomA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/binding-linux-arm64-musl@1.79.0':
-    resolution: {integrity: sha512-mbpKQeE2aflTjddaHK7MP8KP/OFbUM++lt5M635ENM8IyIdK0jm2t9pb+2v9mVVIvhF6TqA4l7F79Pll1mi+uw==}
+  '@oxlint/binding-linux-arm64-musl@1.82.0':
+    resolution: {integrity: sha512-PLEaSD8IAIIlwW4dwOd9YaxuxeOpwiXL4J24rcnE4iNtyM5j9Q9/3+gti08oXpx0u2ygNjRDx9xjWWpQonuJEw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@oxlint/binding-linux-ppc64-gnu@1.79.0':
-    resolution: {integrity: sha512-WpGNua7gaxaHnpSDeog2ji8IDHn/QLPl9LPzwkR/FvVv58vT5BcXjRXnU+wbu3N75cpeha8CdC7ho/U2OIsB4g==}
+  '@oxlint/binding-linux-ppc64-gnu@1.82.0':
+    resolution: {integrity: sha512-D94em/BwknNTn4vqxjHh5wb2oL566eFhArabqKIr0cNZMHOJuiraFp1A8tXpH05bbE5tqwEfLXTI0MWEGtn3Dw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ppc64]
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/binding-linux-riscv64-gnu@1.79.0':
-    resolution: {integrity: sha512-tK1E93A5LVzISg4ngpKJnfTs7EqtIUceGI7MQ4GyDjJiLi8wPCkEyKlj2xkyKWZ1yzkDJyLHTBJ5/iFWRdnJvg==}
+  '@oxlint/binding-linux-riscv64-gnu@1.82.0':
+    resolution: {integrity: sha512-MOprxBaoYU2D4VgxXCl3ghydThWtx7Um1lL51kGYNeQ5Al7WzsH7/tqGdNtbLrIWnjq3bsm13+nz/gRIxjrOXw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [riscv64]
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/binding-linux-riscv64-musl@1.79.0':
-    resolution: {integrity: sha512-qhQvUIrngXivA2A9pQ+xPCychztn/5qUv7yS3gDwXv3w7Rag+eTeeXWmRyx+t7XsW5x6LuY/8AsTq36UgFIblg==}
+  '@oxlint/binding-linux-riscv64-musl@1.82.0':
+    resolution: {integrity: sha512-5h55QsfJ/luDXZzC20k6SNOY1Az+dCP9WvntKtcUWh2JhckAdwApY2ZusaBTwLENnReXU+A2fJtSrYvZJNKNPg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [riscv64]
     os: [linux]
     libc: [musl]
 
-  '@oxlint/binding-linux-s390x-gnu@1.79.0':
-    resolution: {integrity: sha512-sv6AaVgU/eE6u+6WFiQVDcPPwTxP6IJMSB9k701W2r/r6Tx465e8vPvVyRxquNH4Vy6KwRNu90mVbxXJN8+5gg==}
+  '@oxlint/binding-linux-s390x-gnu@1.82.0':
+    resolution: {integrity: sha512-IE8NJNLlHr0CaXyGJPGVn0eTkUyoj1I2UfA8x7I4PSOYKsQ/6btVC7Pywrj5onk0cMH25r6Z38SoN3AvE5Zuog==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [s390x]
     os: [linux]
@@ -23760,34 +23760,34 @@ packages:
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/binding-linux-x64-gnu@1.79.0':
-    resolution: {integrity: sha512-iFZL02deziHslb3jEX9KdqlAkYoo4fGyotchKDzdfK1f5mxlIBeiQeHhvK3iFpuEJSB4ma/qeFn9oxPiwnhUPQ==}
+  '@oxlint/binding-linux-x64-gnu@1.82.0':
+    resolution: {integrity: sha512-XUUUxaBo9XKl+J1B9EmP1cTGQPddzeURvoGkfwh/94PGnbW+hBprDljneoI2M1jzC1bzrIV3ihc7iM9UXl8+tg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/binding-linux-x64-musl@1.79.0':
-    resolution: {integrity: sha512-3DtZR2raqObnh7wXZoFYFd0Fw7skBvcb3f7A+/lkEiDuh8hrE6vv9b/62Qxao1a9/OeHLw/FcXlXzgsW9wTRFg==}
+  '@oxlint/binding-linux-x64-musl@1.82.0':
+    resolution: {integrity: sha512-SWLSFulX9TDuH6yvbPYp4+VNn6jkkIvvI+KiujDM5rWBRHEfkesCC/pCneIIUr6ovkxZ5fRtpi2v5Cz5FrMJZg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@oxlint/binding-openharmony-arm64@1.79.0':
-    resolution: {integrity: sha512-Oatt4GuA1WJkqzk2ozx4HrWROOi7opV3AKDw/U8qDIqeTqzsjn5K2x3REJMNjU3/KU/Bkq96Zi3CknaiDTaC/Q==}
+  '@oxlint/binding-openharmony-arm64@1.82.0':
+    resolution: {integrity: sha512-BQy35f6ZUdNr9a6c7B7orxQTcLjByGT2z3WAgmRovpRwmPYAaJ+NTplmMzhdjdJ4qSchfMNZy/Ukg+qRg6zseQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [openharmony]
 
-  '@oxlint/binding-win32-arm64-msvc@1.79.0':
-    resolution: {integrity: sha512-NAgZr9Qp8nIA9rpo0JEvwiabTF/2UVqBNnupBG9X4kxXcQoScJUTi+qHhvabb9s/thgj5wQ4XcIaJvb+ZMgoKw==}
+  '@oxlint/binding-win32-arm64-msvc@1.82.0':
+    resolution: {integrity: sha512-V4QhSTg5gctZue8RJjsGi7NpQPThr/p1/HfmiMC5kfe1KFEup9SQRVub4A6kijQjdHfxj7bLL1KO3QO7/5bwMQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [win32]
 
-  '@oxlint/binding-win32-ia32-msvc@1.79.0':
-    resolution: {integrity: sha512-+KyXjIvcpaXmWW/j9NNY5yWjrIVxaX18VyIheQy3jwc2GSYgpCr7MGI/HxIGQ/shAL5IWEKbhsqoMpAO5Stiog==}
+  '@oxlint/binding-win32-ia32-msvc@1.82.0':
+    resolution: {integrity: sha512-TUSCLaKB2yktpFAJ/r3HAUYsaV/3DT7JS4iNKyoh3a9YNwD0UG7Ezh4D8m23654vQcU6P/RQrCAjRPKe4peP/A==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ia32]
     os: [win32]
@@ -23798,8 +23798,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@oxlint/binding-win32-x64-msvc@1.79.0':
-    resolution: {integrity: sha512-mEelcCMMBS57sIXh2veGMNy+pQwuGtcMxHxGIZWQ5Ba9pJ5jCCUFOZB9E2JhBaxGsURe+WGe0zJp4RVre52gpQ==}
+  '@oxlint/binding-win32-x64-msvc@1.82.0':
+    resolution: {integrity: sha512-VTVoRIWJTb+wvUX8EYoPArfFH02whuR10goFXE/LHRRX33ajRrFgqbcONXZMiF4C5rnattfkm87HqYn8jb8hmQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [win32]
@@ -36277,8 +36277,8 @@ packages:
       vite-plus:
         optional: true
 
-  oxlint@1.79.0:
-    resolution: {integrity: sha512-hVJ9hq9m2unPS+Of4eJJgCPdIeCC+3DHEUX3tkmrPJr3OK2hz7PhXwgC+ZP71ZcYu8cCDEtQrqLxWNvxBppBVg==}
+  oxlint@1.82.0:
+    resolution: {integrity: sha512-+iFM1BGw1ntYJt3QngbJmjbrGxPaKMUADOXOijpWGnYcBPq8YZnQftSS1C+pVcDYy9YxqDVJKQqQkTazTQMboQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -49619,69 +49619,69 @@ snapshots:
   '@oxfmt/binding-win32-x64-msvc@0.67.0':
     optional: true
 
-  '@oxlint/binding-android-arm-eabi@1.79.0':
+  '@oxlint/binding-android-arm-eabi@1.82.0':
     optional: true
 
-  '@oxlint/binding-android-arm64@1.79.0':
+  '@oxlint/binding-android-arm64@1.82.0':
     optional: true
 
   '@oxlint/binding-darwin-arm64@1.51.0': {}
 
-  '@oxlint/binding-darwin-arm64@1.79.0':
+  '@oxlint/binding-darwin-arm64@1.82.0':
     optional: true
 
   '@oxlint/binding-darwin-x64@1.51.0': {}
 
-  '@oxlint/binding-darwin-x64@1.79.0':
+  '@oxlint/binding-darwin-x64@1.82.0':
     optional: true
 
-  '@oxlint/binding-freebsd-x64@1.79.0':
+  '@oxlint/binding-freebsd-x64@1.82.0':
     optional: true
 
-  '@oxlint/binding-linux-arm-gnueabihf@1.79.0':
+  '@oxlint/binding-linux-arm-gnueabihf@1.82.0':
     optional: true
 
-  '@oxlint/binding-linux-arm-musleabihf@1.79.0':
+  '@oxlint/binding-linux-arm-musleabihf@1.82.0':
     optional: true
 
-  '@oxlint/binding-linux-arm64-gnu@1.79.0':
+  '@oxlint/binding-linux-arm64-gnu@1.82.0':
     optional: true
 
-  '@oxlint/binding-linux-arm64-musl@1.79.0':
+  '@oxlint/binding-linux-arm64-musl@1.82.0':
     optional: true
 
-  '@oxlint/binding-linux-ppc64-gnu@1.79.0':
+  '@oxlint/binding-linux-ppc64-gnu@1.82.0':
     optional: true
 
-  '@oxlint/binding-linux-riscv64-gnu@1.79.0':
+  '@oxlint/binding-linux-riscv64-gnu@1.82.0':
     optional: true
 
-  '@oxlint/binding-linux-riscv64-musl@1.79.0':
+  '@oxlint/binding-linux-riscv64-musl@1.82.0':
     optional: true
 
-  '@oxlint/binding-linux-s390x-gnu@1.79.0':
+  '@oxlint/binding-linux-s390x-gnu@1.82.0':
     optional: true
 
   '@oxlint/binding-linux-x64-gnu@1.51.0': {}
 
-  '@oxlint/binding-linux-x64-gnu@1.79.0':
+  '@oxlint/binding-linux-x64-gnu@1.82.0':
     optional: true
 
-  '@oxlint/binding-linux-x64-musl@1.79.0':
+  '@oxlint/binding-linux-x64-musl@1.82.0':
     optional: true
 
-  '@oxlint/binding-openharmony-arm64@1.79.0':
+  '@oxlint/binding-openharmony-arm64@1.82.0':
     optional: true
 
-  '@oxlint/binding-win32-arm64-msvc@1.79.0':
+  '@oxlint/binding-win32-arm64-msvc@1.82.0':
     optional: true
 
-  '@oxlint/binding-win32-ia32-msvc@1.79.0':
+  '@oxlint/binding-win32-ia32-msvc@1.82.0':
     optional: true
 
   '@oxlint/binding-win32-x64-msvc@1.51.0': {}
 
-  '@oxlint/binding-win32-x64-msvc@1.79.0':
+  '@oxlint/binding-win32-x64-msvc@1.82.0':
     optional: true
 
   '@parcel/watcher-android-arm64@2.6.0':
@@ -67134,27 +67134,27 @@ snapshots:
       '@oxfmt/binding-win32-ia32-msvc': 0.67.0
       '@oxfmt/binding-win32-x64-msvc': 0.67.0
 
-  oxlint@1.79.0:
+  oxlint@1.82.0:
     optionalDependencies:
-      '@oxlint/binding-android-arm-eabi': 1.79.0
-      '@oxlint/binding-android-arm64': 1.79.0
-      '@oxlint/binding-darwin-arm64': 1.79.0
-      '@oxlint/binding-darwin-x64': 1.79.0
-      '@oxlint/binding-freebsd-x64': 1.79.0
-      '@oxlint/binding-linux-arm-gnueabihf': 1.79.0
-      '@oxlint/binding-linux-arm-musleabihf': 1.79.0
-      '@oxlint/binding-linux-arm64-gnu': 1.79.0
-      '@oxlint/binding-linux-arm64-musl': 1.79.0
-      '@oxlint/binding-linux-ppc64-gnu': 1.79.0
-      '@oxlint/binding-linux-riscv64-gnu': 1.79.0
-      '@oxlint/binding-linux-riscv64-musl': 1.79.0
-      '@oxlint/binding-linux-s390x-gnu': 1.79.0
-      '@oxlint/binding-linux-x64-gnu': 1.79.0
-      '@oxlint/binding-linux-x64-musl': 1.79.0
-      '@oxlint/binding-openharmony-arm64': 1.79.0
-      '@oxlint/binding-win32-arm64-msvc': 1.79.0
-      '@oxlint/binding-win32-ia32-msvc': 1.79.0
-      '@oxlint/binding-win32-x64-msvc': 1.79.0
+      '@oxlint/binding-android-arm-eabi': 1.82.0
+      '@oxlint/binding-android-arm64': 1.82.0
+      '@oxlint/binding-darwin-arm64': 1.82.0
+      '@oxlint/binding-darwin-x64': 1.82.0
+      '@oxlint/binding-freebsd-x64': 1.82.0
+      '@oxlint/binding-linux-arm-gnueabihf': 1.82.0
+      '@oxlint/binding-linux-arm-musleabihf': 1.82.0
+      '@oxlint/binding-linux-arm64-gnu': 1.82.0
+      '@oxlint/binding-linux-arm64-musl': 1.82.0
+      '@oxlint/binding-linux-ppc64-gnu': 1.82.0
+      '@oxlint/binding-linux-riscv64-gnu': 1.82.0
+      '@oxlint/binding-linux-riscv64-musl': 1.82.0
+      '@oxlint/binding-linux-s390x-gnu': 1.82.0
+      '@oxlint/binding-linux-x64-gnu': 1.82.0
+      '@oxlint/binding-linux-x64-musl': 1.82.0
+      '@oxlint/binding-openharmony-arm64': 1.82.0
+      '@oxlint/binding-win32-arm64-msvc': 1.82.0
+      '@oxlint/binding-win32-ia32-msvc': 1.82.0
+      '@oxlint/binding-win32-x64-msvc': 1.82.0
 
   p-cancelable@2.1.1: {}
 
