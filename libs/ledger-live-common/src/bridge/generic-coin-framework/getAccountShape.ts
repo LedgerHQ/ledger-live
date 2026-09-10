@@ -9,6 +9,7 @@ import { deriveA4AccountId } from "./a4/client/accountId";
 import { ensureA4Registered } from "./a4/client/registration";
 import { toA4Network, resolveA4BaseUrl } from "./a4/client/utils";
 import { resolveA4ChainConfig } from "./a4/config";
+import { resolveOperationHistoryBound } from "./operationHistoryBound";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
@@ -587,12 +588,29 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // documents its own as volatile). Only the cursor varies from page to page below.
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
 
-    const newCoreOps = await paginateOperations(cursor =>
-      coinModuleApi.listOperations(context, address, {
-        minHeight,
-        cursor,
-        order: "desc",
-      }),
+    // Resolved once per sync, keyed on `currency.id` (not the coin-framework `network` family
+    // key) so a remote payload written in the same per-currency key space as every other config
+    // in this framework actually matches. `undefined` (the shipped default) is unbounded,
+    // identical to today. The walk bound below protects sync-time memory and traffic; the store
+    // bound applied after `mergeOps` (parent and per-sub-account) protects persistence and
+    // stability across syncs -- bounding only the walk would still let the stored history grow
+    // sync after sync, since `minHeight` resumes from the newest stored operation and `mergeOps`
+    // appends.
+    const { maxOperations, pageSize } = resolveOperationHistoryBound(currency.id);
+
+    const newCoreOps = await paginateOperations(
+      cursor =>
+        coinModuleApi.listOperations(context, address, {
+          minHeight,
+          cursor,
+          order: "desc",
+          // Sent only once a bound applies: a `limit` flips several modules onto a distinct,
+          // limit-aware code path (e.g. coin-evm's etherscan arm runs a `limit + 1` probe), so
+          // sending one unconditionally would change behaviour for every family even with the
+          // bound unset -- the shipped default, which must stay identical to today.
+          ...(maxOperations !== undefined ? { limit: pageSize } : {}),
+        }),
+      maxOperations,
     );
     // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation ends
     // up in the shape a restored one has — the family's `fromOperationExtraRaw` is the single
@@ -627,7 +645,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     });
     const subAccounts = syncFromScratch
       ? newSubAccounts
-      : mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts);
+      : mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts, maxOperations);
 
     const newOpsWithSubs = buildParentOperations(
       newSubAccounts,
@@ -648,7 +666,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ? await bridgeApi.refreshOperations(operationsToRefresh)
         : [];
     const newOperations = [...confirmedOperations, ...newOpsWithSubs];
-    const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
+    const mergedOperations = mergeOps(
+      syncFromScratch ? [] : oldOps,
+      newOperations,
+    ) as OperationCommon[];
+    // Store bound: `mergeOps` returns newest-first (its own contract), so keeping the head keeps
+    // the newest -- this also keeps `minHeight` correct on the next sync, since it derives from
+    // the newest stored operation, which the head slice always retains.
+    const operations =
+      maxOperations === undefined ? mergedOperations : mergedOperations.slice(0, maxOperations);
     const stakingEnabled =
       bridgeApi.stakingSupported ?? (delegationsCount > 0 || unbondingsCount > 0);
     let stakingShape: {
@@ -690,6 +716,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       spendableBalance: new BigNumber(spendableBalance.toString()),
       operations,
       subAccounts,
+      // `operations.length`, i.e. the retained count once a bound applies, not the account's true
+      // count -- kept consistent with what is actually displayed rather than tracking a real
+      // count this bridge has no source of truth for. A bounded sync is still distinguishable via
+      // the `paginateOperations` log line (see `resolveOperationHistoryBound` above), which is
+      // this task's observability requirement; whether `operationsCount` itself should carry a
+      // different meaning is being decided on `account-data`'s own bridge (draft PRs #21560 and
+      // #21566) and is out of scope here.
       operationsCount: operations.length,
       syncHash,
       // key omitted rather than set to undefined: jsHelpers merges `{ ...a, ...shape }`, so a failed

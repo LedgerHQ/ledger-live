@@ -695,4 +695,113 @@ describe("mergeSubAccounts", () => {
     });
     expect(merged[0].operations).toHaveLength(3);
   });
+
+  describe("with an operation-history bound", () => {
+    const tokenAccount = (
+      id: string,
+      operations: Array<{ id: string; date: Date }>,
+    ): TokenAccount =>
+      ({
+        id: `accountId+${id}`,
+        type: "TokenAccount",
+        parentId: "accountId",
+        token: { id },
+        balance: new BigNumber(100),
+        spendableBalance: new BigNumber(100),
+        operations: operations.map(op => ({ ...op, type: "IN", senders: [], recipients: [] })),
+        operationsCount: operations.length,
+      }) as unknown as TokenAccount;
+
+    it("caps the merged operations to the bound, keeping the newest (mergeOps is newest-first)", () => {
+      const oldSubAccounts = [
+        tokenAccount("usdc", [
+          { id: "old-1", date: new Date("2024-01-01") },
+          { id: "old-2", date: new Date("2024-01-02") },
+          { id: "old-3", date: new Date("2024-01-03") },
+        ]),
+      ];
+      const newSubAccounts = [
+        tokenAccount("usdc", [
+          { id: "new-1", date: new Date("2024-01-10") },
+          { id: "new-2", date: new Date("2024-01-11") },
+        ]),
+      ];
+
+      // 5 operations merged, bounded to 2: only the two most recent survive.
+      const merged = mergeSubAccounts(oldSubAccounts, newSubAccounts, 2);
+
+      expect(merged[0].operations.map(op => op.id)).toEqual(["new-2", "new-1"]);
+      expect(merged[0].operationsCount).toBe(2);
+    });
+
+    it("does not shrink the merged operations below the bound when there are fewer than the bound", () => {
+      const oldSubAccounts = [
+        tokenAccount("usdc", [{ id: "old-1", date: new Date("2024-01-01") }]),
+      ];
+      const newSubAccounts = [
+        tokenAccount("usdc", [{ id: "new-1", date: new Date("2024-01-10") }]),
+      ];
+
+      const merged = mergeSubAccounts(oldSubAccounts, newSubAccounts, 10);
+
+      expect(merged[0].operations.map(op => op.id)).toEqual(["new-1", "old-1"]);
+      expect(merged[0].operationsCount).toBe(2);
+    });
+
+    it("stays stable across repeated merges: the retained count never exceeds the bound", () => {
+      // Newest-first, matching mergeOps's own precondition on `existing` -- the real caller always
+      // hands it a previously-merged (and, at the very start, freshly-paginated `order: "desc"`)
+      // list, never an arbitrarily-ordered one.
+      let subAccounts = [
+        tokenAccount("usdc", [
+          { id: "gen1-b", date: new Date("2024-01-02") },
+          { id: "gen1-a", date: new Date("2024-01-01") },
+        ]),
+      ];
+
+      // Three more "syncs", each contributing new operations -- the parent-level equivalent of
+      // this is the dedicated stability test in getAccountShape.test.ts.
+      for (const [i, date] of [
+        new Date("2024-02-01"),
+        new Date("2024-03-01"),
+        new Date("2024-04-01"),
+      ].entries()) {
+        const freshSubAccounts = [tokenAccount("usdc", [{ id: `gen${i + 2}`, date }])];
+        subAccounts = mergeSubAccounts(subAccounts, freshSubAccounts, 3);
+        expect(subAccounts[0].operations.length).toBeLessThanOrEqual(3);
+        expect(subAccounts[0].operationsCount).toBe(subAccounts[0].operations.length);
+      }
+
+      // Newest three survive: the two oldest (gen1-a, gen1-b) were dropped first.
+      expect(subAccounts[0].operations.map(op => op.id)).toEqual(["gen4", "gen3", "gen2"]);
+    });
+
+    it("does not bound a brand-new sub account's operations (already walk-bounded upstream)", () => {
+      const newSubAccounts = [
+        tokenAccount("usdc", [
+          { id: "op-1", date: new Date("2024-01-01") },
+          { id: "op-2", date: new Date("2024-01-02") },
+        ]),
+      ];
+
+      const merged = mergeSubAccounts([], newSubAccounts, 1);
+
+      expect(merged).toBe(newSubAccounts);
+    });
+
+    it("is unbounded when maxOperations is undefined, identical to today's behaviour", () => {
+      const oldSubAccounts = [
+        tokenAccount("usdc", [{ id: "old-1", date: new Date("2024-01-01") }]),
+      ];
+      const newSubAccounts = [
+        tokenAccount("usdc", [{ id: "new-1", date: new Date("2024-01-10") }]),
+      ];
+
+      const mergedWithoutBound = mergeSubAccounts(oldSubAccounts, newSubAccounts);
+      const mergedWithUndefinedBound = mergeSubAccounts(oldSubAccounts, newSubAccounts, undefined);
+
+      expect(mergedWithoutBound[0].operations.map(op => op.id)).toEqual(["new-1", "old-1"]);
+      expect(mergedWithUndefinedBound[0].operations.map(op => op.id)).toEqual(["new-1", "old-1"]);
+    });
+  });
 });

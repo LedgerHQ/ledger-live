@@ -42,6 +42,15 @@ jest.mock("../a4/client/registration", () => ({
   ensureA4Registered: jest.fn(),
   clearA4RegistrationCache: jest.fn(),
 }));
+
+// Defaults to unbounded (the shipped default) so every existing test in this file keeps
+// exercising today's behaviour unchanged; the dedicated "operation history bound" suite below
+// overrides this per test.
+const resolveOperationHistoryBoundMock = jest.fn();
+jest.mock("../operationHistoryBound", () => ({
+  resolveOperationHistoryBound: (...a: any[]) => resolveOperationHistoryBoundMock(...a),
+}));
+resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined });
 const defaultBridgeApi = () => ({
   getTokenFromAsset: getTokenFromAssetMock,
   getChainSpecificRules: {
@@ -2863,6 +2872,302 @@ describe("genericGetAccountShape", () => {
           },
         ],
       });
+    });
+  });
+
+  describe("operation history bound", () => {
+    const network = "mainnet";
+    const currency = { id: "evm-hist", name: "EVMHIST" };
+
+    // Raw core op as a family's `listOperations` would emit it, newest-first (`order: "desc"`).
+    const coreOp = (hash: string, height: number) => ({
+      hash,
+      type: "IN",
+      tx: { failed: false },
+      height,
+    });
+
+    beforeEach(() => {
+      // `jest.clearAllMocks()` (the outer suite's beforeEach) clears call history but never the
+      // queued `mockResolvedValueOnce` responses -- a bound stopping the walk early leaves pages
+      // un-consumed, which would otherwise bleed into the next test's calls.
+      listOperationsMock.mockReset();
+      const { mergeOps: realMergeOps } = jest.requireActual(
+        "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers",
+      );
+      // The real merge/sort logic is required here: these tests assert on the actual newest-first
+      // ordering the store bound relies on, not on a test double's simplified behaviour.
+      mergeOpsMock.mockImplementation(realMergeOps);
+      mergeSubAccountsMock.mockImplementation((_old: any[], newSub: any[]) => newSub ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      lastBlockMock.mockResolvedValue({ height: 1000 });
+      // accountId "accId" matches the mocked encodeAccountId, so `oldOps` on a later sync is
+      // passed through unchanged rather than re-encoded.
+      adaptCoreOperationToLiveOperationMock.mockImplementation((_accId: string, op: any) => ({
+        id: op.hash,
+        accountId: "accId",
+        hash: op.hash,
+        type: op.type,
+        blockHeight: op.height,
+        // Tied 1:1 to height so the real mergeOps's date-based sort agrees with block order.
+        date: new Date(op.height * 1000),
+        extra: {},
+        senders: [],
+        recipients: [],
+      }));
+    });
+
+    afterEach(() => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined });
+    });
+
+    test("from-scratch bounded sync retains the most recent operations, contiguously, with no gap at a page boundary and no duplicate ids", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 5 });
+      listOperationsMock
+        .mockResolvedValueOnce({
+          items: [coreOp("h9", 9), coreOp("h8", 8), coreOp("h7", 7)],
+          next: "c1",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h6", 6), coreOp("h5", 5), coreOp("h4", 4)],
+          next: "c2",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h3", 3), coreOp("h2", 2), coreOp("h1", 1)],
+        });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // The walk stopped after page 2 (6 raw ops >= bound 5): page 3 was never fetched.
+      expect(listOperationsMock).toHaveBeenCalledTimes(2);
+      // Store bound keeps the newest 5 of the 6 walked: h4 (height 4) is dropped.
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([9, 8, 7, 6, 5]);
+      const ids = result.operations?.map(op => op.id) ?? [];
+      expect(new Set(ids).size).toBe(ids.length);
+      // `operationsCount` carries the retained count (5), not the true walked count (6).
+      expect(result.operationsCount).toBe(5);
+    });
+
+    test("with the bound unset, the produced account is identical to today's: nothing is truncated", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined });
+      listOperationsMock
+        .mockResolvedValueOnce({
+          items: [coreOp("h9", 9), coreOp("h8", 8), coreOp("h7", 7)],
+          next: "c1",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h6", 6), coreOp("h5", 5), coreOp("h4", 4)],
+          next: "c2",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h3", 3), coreOp("h2", 2), coreOp("h1", 1)],
+        });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock).toHaveBeenCalledTimes(3);
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([9, 8, 7, 6, 5, 4, 3, 2, 1]);
+      expect(result.operationsCount).toBe(9);
+    });
+
+    test("stability across syncs: the stored count never exceeds the bound, no gap reappears, and the resume position derives from the newest retained operation", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 3 });
+
+      // Sync 1: two pages, walk-bounded to 4 raw ops (overshoots 3, whole page kept); store
+      // bound then keeps only the newest 3.
+      listOperationsMock
+        .mockResolvedValueOnce({ items: [coreOp("h9", 9), coreOp("h8", 8)], next: "c1" })
+        .mockResolvedValueOnce({ items: [coreOp("h7", 7), coreOp("h6", 6)] });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result1 = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result1.operations?.map(op => op.blockHeight)).toEqual([9, 8, 7]);
+      expect(result1.operationsCount).toBe(3);
+
+      // Sync 2: minHeight must resume from the newest retained operation of sync 1 (height 9),
+      // i.e. 10 -- not from the newest *walked* operation, which the store bound already dropped.
+      listOperationsMock.mockResolvedValueOnce({
+        items: [coreOp("h11", 11), coreOp("h10", 10)],
+      });
+
+      const result2 = await getShape(
+        {
+          address: "addr1",
+          initialAccount: { ...result1, pendingOperations: [], subAccounts: [] },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock).toHaveBeenNthCalledWith(
+        3,
+        expect.anything(),
+        "addr1",
+        expect.objectContaining({ minHeight: 10 }),
+      );
+      // Still bounded to 3, contiguous, and no operation ever seen twice.
+      expect(result2.operations?.map(op => op.blockHeight)).toEqual([11, 10, 9]);
+      expect(result2.operationsCount).toBe(3);
+
+      // Sync 3: same check one generation further -- the bound does not erode over time.
+      listOperationsMock.mockResolvedValueOnce({
+        items: [coreOp("h14", 14), coreOp("h13", 13), coreOp("h12", 12)],
+      });
+
+      const result3 = await getShape(
+        {
+          address: "addr1",
+          initialAccount: { ...result2, pendingOperations: [], subAccounts: [] },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock).toHaveBeenNthCalledWith(
+        4,
+        expect.anything(),
+        "addr1",
+        expect.objectContaining({ minHeight: 12 }),
+      );
+      expect(result3.operations?.map(op => op.blockHeight)).toEqual([14, 13, 12]);
+      expect(result3.operationsCount).toBe(3);
+    });
+
+    test("a bounded history does not shrink the fresh token list, and no sub-account is emitted with a zero balance because of the bound", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 2 });
+      const tokenBalance = {
+        asset: { type: "token", assetReference: "0xusdc", assetOwner: "addr1" },
+        value: 500n,
+      };
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 0n, locked: 0n },
+        tokenBalance,
+      ]);
+      const heldSubAccount = {
+        id: "subAcc1",
+        type: "TokenAccount",
+        balance: new BigNumber(500),
+        operations: [],
+      };
+      buildSubAccountsMock.mockReturnValue([heldSubAccount]);
+      // One page of 3 (walk overshoots the bound of 2, keeping the whole page) then the store
+      // bound trims the merged list back down to the newest 2.
+      listOperationsMock.mockResolvedValueOnce({
+        items: [coreOp("h7", 7), coreOp("h6", 6), coreOp("h5", 5)],
+      });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // The bound did truncate the history in this scenario (3 walked, 2 retained) ...
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([7, 6]);
+      expect(result.operations).toHaveLength(2);
+      // ... yet the fresh balance list handed to buildSubAccounts is untouched by it.
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([tokenBalance]);
+      expect(result.subAccounts).toEqual([heldSubAccount]);
+      expect((result.subAccounts as any)[0].balance.toString()).toBe("500");
+    });
+
+    test("with the bound unset, no `limit` key reaches listOperations -- not even an undefined one", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined, pageSize: 100 });
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h1", 1)] });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const options = listOperationsMock.mock.calls[0][2];
+      // `toHaveBeenCalledWith` with an object lacking `limit` would also pass if `limit` were
+      // present but `undefined` -- checking the key's own presence is what actually proves no
+      // `limit` was sent, which is what flips coin-evm's etherscan arm onto its `limit + 1` probe.
+      expect(Object.prototype.hasOwnProperty.call(options, "limit")).toBe(false);
+    });
+
+    test("with maxOperations set and no explicit pageSize, listOperations receives the resolved fallback page size as limit", async () => {
+      // `pageSize: 100` here mirrors what `resolveOperationHistoryBound` itself resolves to when
+      // no `pageSize` is configured (see `operationHistoryBound.test.ts`) -- this test is about
+      // the call-site wiring: whatever page size the bound resolves to reaches `listOperations`
+      // as `limit`, once and only once a bound applies.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 5, pageSize: 100 });
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h1", 1)] });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock.mock.calls[0][2]).toMatchObject({ limit: 100 });
+    });
+
+    test("with both maxOperations and pageSize configured, listOperations receives the configured pageSize as limit", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 5, pageSize: 250 });
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h1", 1)] });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock.mock.calls[0][2]).toMatchObject({ limit: 250 });
+    });
+
+    test("a multi-page bounded walk forwards the same limit on every page and still terminates at maxOperations, retaining the newest operations", async () => {
+      // The walk bound (`maxOperations`) and the page size (`limit`) are independent knobs: this
+      // proves neither masks the other -- the walk still stops once the bound is reached
+      // regardless of how the pages happen to be sized, and every fetched page carried the
+      // configured limit.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 5, pageSize: 3 });
+      listOperationsMock
+        .mockResolvedValueOnce({
+          items: [coreOp("h9", 9), coreOp("h8", 8), coreOp("h7", 7)],
+          next: "c1",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h6", 6), coreOp("h5", 5), coreOp("h4", 4)],
+          next: "c2",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h3", 3), coreOp("h2", 2), coreOp("h1", 1)],
+        });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // The walk stopped after page 2 (6 raw ops >= bound 5): page 3 was never fetched.
+      expect(listOperationsMock).toHaveBeenCalledTimes(2);
+      // Every fetched page carried the same configured limit.
+      expect(listOperationsMock.mock.calls.map(call => call[2].limit)).toEqual([3, 3]);
+      // Store bound keeps the newest 5 of the 6 walked: h4 (height 4) is dropped.
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([9, 8, 7, 6, 5]);
     });
   });
 });

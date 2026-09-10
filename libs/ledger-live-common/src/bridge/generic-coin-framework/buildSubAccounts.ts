@@ -54,6 +54,9 @@ function buildTokenAccount({
     balance,
     spendableBalance: spendableBalance,
     swapHistory: [],
+    // Oldest of the operations passed in -- under an operation-history bound this can be more
+    // recent than the token's real first activity, since older operations were never fetched.
+    // Accepted as cosmetic: nothing downstream treats creationDate as a completeness guarantee.
     creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
   };
@@ -162,9 +165,18 @@ export async function buildSubAccounts({
   return tokenAccounts;
 }
 
+/**
+ * `maxOperations`, when set, bounds a sub-account's stored operations the same way the parent
+ * account's history is bounded: `mergeOps` below only ever grows the merged list, so a token
+ * still receiving transfers would otherwise accumulate operations forever across syncs -- on the
+ * reference account the token operations are the bulk of the volume, dwarfing the parent's own.
+ * `mergeOps` returns newest-first, so keeping the head keeps the newest. `undefined` is unbounded,
+ * identical to today's behaviour.
+ */
 export function mergeSubAccounts(
   oldSubAccounts: Array<TokenAccount>,
   newSubAccounts: Array<TokenAccount>,
+  maxOperations?: number,
 ): Array<TokenAccount> {
   if (!oldSubAccounts.length) {
     return newSubAccounts;
@@ -186,7 +198,9 @@ export function mergeSubAccounts(
     }
 
     // New sub account is already known, probably outdated
-    const operations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
+    const mergedOperations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
+    const operations =
+      maxOperations === undefined ? mergedOperations : mergedOperations.slice(0, maxOperations);
     oldSubAccountsByTokenId[String(newSubAccount.token.id)] = {
       ...existingSubAccount,
       balance: newSubAccount.balance,
