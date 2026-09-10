@@ -1,7 +1,7 @@
 ---
 "@features/flow-pay-card-auth": minor
 "ledger-live-desktop": minor
-"ledger-live-mobile": minor
+"live-mobile": minor
 ---
 
 The desktop Pay tab centres the Card login block, and it offers a login link to a card holder who
