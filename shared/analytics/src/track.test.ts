@@ -135,7 +135,8 @@ describe("enrichment", () => {
       expect.objectContaining({
         eventName: "Unenrichable",
         eventProperties: { foo: "bar" },
-        deliveryStatus: "failed",
+        eventPropertiesWithoutExtra: { foo: "bar" },
+        deliveryStatus: "failed_enrichment",
       }),
     ]);
   });
@@ -224,7 +225,7 @@ describe("property filter", () => {
         eventName: "Unenrichable",
         eventProperties: { theme: "light" },
         eventPropertiesWithoutExtra: { theme: "light" },
-        deliveryStatus: "failed",
+        deliveryStatus: "failed_enrichment",
       }),
     ]);
   });
@@ -282,7 +283,7 @@ describe("delivery status", () => {
     );
 
     expect(() => track("Throwing")).not.toThrow();
-    expect(events[0].deliveryStatus).toBe("failed");
+    expect(events[0].deliveryStatus).toBe("failed_tracking");
   });
 
   it("reports failed without rejecting when the transport rejects", async () => {
@@ -293,7 +294,7 @@ describe("delivery status", () => {
     );
 
     await expect(track("Rejecting")).resolves.toBeUndefined();
-    expect(events[0].deliveryStatus).toBe("failed");
+    expect(events[0].deliveryStatus).toBe("failed_tracking");
   });
 
   it("reports the payload without the extra properties alongside the enriched one", () => {

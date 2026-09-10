@@ -1,34 +1,57 @@
+import { isThenable } from "./isThenable";
 import { applyPropertyFilter, getAnalytics, resolveExtraProperties } from "../registry";
 import { trackSubject } from "../trackSubject";
 import type { DeliveryStatus, LoggableEventProperties, Props } from "../types";
 
-const isThenable = <T>(value: unknown): value is Promise<T> =>
-  typeof (value as Promise<T> | null | undefined)?.then === "function";
-
 export function trackEvent(
   kind: "track" | "page",
   eventName: string,
-  base: Props,
+  props: Props,
   mandatory: boolean,
 ): void | Promise<void> {
-  const filteredBase = applyPropertyFilter(base);
+  let filteredProps: Props;
+
+  try {
+    filteredProps = applyPropertyFilter(props);
+  } catch {
+    handleFail({ eventName, deliveryStatus: "failed_filter" });
+    return;
+  }
 
   const dispatch = (extras: Props | undefined) => {
-    const filteredExtras = applyPropertyFilter(extras ?? {});
+    const eventProperties = applyPropertyFilter({ ...props, ...extras });
 
     return emit({
       kind,
       eventName,
-      eventProperties: { ...filteredBase, ...filteredExtras },
-      eventPropertiesWithoutExtra: filteredBase,
+      eventProperties,
+      eventPropertiesWithoutExtra: filteredProps,
     });
   };
 
-  const extras = resolveExtraProperties(mandatory);
+  let extras: Props | Promise<Props> | undefined;
+  try {
+    extras = resolveExtraProperties(mandatory);
+  } catch {
+    handleFail({
+      eventName,
+      props: filteredProps,
+      enrichedProps: filteredProps,
+      deliveryStatus: "failed_enrichment",
+    });
+    return;
+  }
 
   if (!isThenable<Props>(extras)) return dispatch(extras);
 
-  return extras.then(dispatch, handleFail(eventName, filteredBase));
+  return extras.then(dispatch, () =>
+    handleFail({
+      eventName,
+      props: filteredProps,
+      enrichedProps: filteredProps,
+      deliveryStatus: "failed_enrichment",
+    }),
+  );
 }
 
 type Emit = {
@@ -68,7 +91,7 @@ function emit({
   try {
     result = transport.track(eventName, eventProperties);
   } catch {
-    publish("failed");
+    publish("failed_tracking");
     return;
   }
 
@@ -79,21 +102,26 @@ function emit({
 
   return result.then(
     status => publish(status ?? "enqueued"),
-    () => publish("failed"),
+    () => publish("failed_tracking"),
   );
 }
 
-function handleFail(
-  eventName: string,
-  filteredBase: Props,
-): ((reason: any) => void | PromiseLike<void>) | null | undefined {
-  return () => {
-    trackSubject.next({
-      eventName,
-      eventProperties: filteredBase,
-      eventPropertiesWithoutExtra: filteredBase,
-      date: new Date(),
-      deliveryStatus: "failed",
-    });
-  };
+function handleFail({
+  eventName,
+  enrichedProps = {},
+  props = {},
+  deliveryStatus,
+}: {
+  eventName: string;
+  enrichedProps?: LoggableEventProperties;
+  props?: LoggableEventProperties;
+  deliveryStatus: DeliveryStatus;
+}) {
+  trackSubject.next({
+    eventName,
+    eventProperties: enrichedProps,
+    eventPropertiesWithoutExtra: props,
+    date: new Date(),
+    deliveryStatus,
+  });
 }
