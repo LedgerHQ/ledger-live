@@ -55,15 +55,15 @@ export function PayTabView({
       >
         <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
           <TrackScreen category="Pay" balance_filter={balance.filter} />
-          <Balance {...balance} actionTiles={actionTiles} />
-          {isContactsEnabled && <Contacts {...contacts} />}
-          <ContactAddressPicker {...contactAddressPicker} />
           <Card
             title={cardTitle}
             oauthConfig={oauthConfig}
             callback={callback}
             onTrackEvent={balance.onTrackEvent}
           />
+          <Balance {...balance} actionTiles={actionTiles} />
+          {isContactsEnabled && <Contacts {...contacts} />}
+          <ContactAddressPicker {...contactAddressPicker} />
           <FeatureTour {...featureTour} />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />
