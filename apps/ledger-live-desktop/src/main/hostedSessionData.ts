@@ -11,15 +11,17 @@ function withoutLeadingDot(cookieDomain: string): string {
 export function isProviderCookieForHost(cookieDomain: string, host: string): boolean {
   const domain = withoutLeadingDot(cookieDomain);
 
+  if (domain === LEDGER_OWN_DOMAIN || host === LEDGER_OWN_DOMAIN) {
+    return false;
+  }
+
   if (domain === host || domain.endsWith(`.${host}`)) {
     return true;
   }
 
   const isParentOfHost = host.endsWith(`.${domain}`);
 
-  return (
-    isParentOfHost && domain !== LEDGER_OWN_DOMAIN && !domain.endsWith(`.${LEDGER_OWN_DOMAIN}`)
-  );
+  return isParentOfHost && !domain.endsWith(`.${LEDGER_OWN_DOMAIN}`);
 }
 
 function cookieUrl(cookie: Cookie): string {
@@ -54,7 +56,7 @@ export async function clearHostedSessionData(
   for (const { origin, hostname } of readOrigins(origins)) {
     const stored = await targetSession.cookies.get({ domain: hostname });
 
-    await Promise.all(
+    await Promise.allSettled(
       stored
         .filter(cookie => isProviderCookieForHost(cookie.domain ?? "", hostname))
         .map(cookie => targetSession.cookies.remove(cookieUrl(cookie), cookie.name)),
