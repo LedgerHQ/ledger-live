@@ -922,7 +922,13 @@
         "reveal": "View",
         "hide": "Hide",
         "failed": "Couldn't load card numbers",
-        "imageAlt": "Card numbers"
+        "imageAlt": "Card numbers",
+        "unlockTitle": "Enter your password",
+        "passwordRequired": "Password required",
+        "passwordMismatch": "Passwords don't match",
+        "passwordIncorrect": "Incorrect password",
+        "passwordUnavailable": "Couldn't check your password",
+        "passwordCreateFailed": "Couldn't set your password"
       }
     },
     "cardTransactions": {
