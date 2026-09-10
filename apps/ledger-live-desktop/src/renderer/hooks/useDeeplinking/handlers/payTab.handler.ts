@@ -7,5 +7,8 @@ export const payTabHandler: DeeplinkHandler<"paytab"> = (route, context) => {
   }
 
   // The code travels as router state, because an authorization code has no business in a kept URL.
-  context.navigate("/paytab", route.code ? { code: route.code, state: route.state } : undefined);
+  context.navigate(
+    "/paytab",
+    route.code ? { code: route.code, ...(route.state ? { state: route.state } : {}) } : undefined,
+  );
 };
