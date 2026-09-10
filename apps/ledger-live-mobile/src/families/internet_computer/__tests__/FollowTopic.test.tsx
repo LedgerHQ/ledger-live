@@ -78,6 +78,13 @@ describe("FollowTopic", () => {
     expect(screen.queryByTestId("icp-follow-topic-ServiceNervousSystemManagement")).toBeNull();
   });
 
+  // The governance proto renamed topic 8; the key is a wire identifier, so only the label follows.
+  it("labels topic 8 by the name governance now gives it", () => {
+    renderScreen();
+
+    expect(screen.getByText("Application canister management")).toBeVisible();
+  });
+
   /*
    * The topic used to live in navigation state while the transaction was seeded elsewhere, so the two
    * could disagree: picking a topic, going back and picking another showed the second and signed the

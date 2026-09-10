@@ -243,7 +243,7 @@
       "NodeAdmin": "Node admin",
       "ParticipantManagement": "Participant management",
       "SubnetManagement": "Subnet management",
-      "NetworkCanisterManagement": "Network canister management",
+      "NetworkCanisterManagement": "Application canister management",
       "Kyc": "KYC",
       "NodeProviderRewards": "Node provider rewards",
       "SnsDecentralizationSale": "SNS decentralization sale",
@@ -1701,6 +1701,34 @@
     "ICPSplitNotAllowed": {
       "title": "Amount outside the range this neuron can split",
       "description": "Both the original neuron and the new one must keep at least 1 ICP staked, plus the network fee on the amount moved."
+    },
+    "ICPSpawnNotAllowed": {
+      "title": "Cannot spawn from this neuron",
+      "description": "A neuron that is already spawning cannot spawn again, and the maturity spawned has to leave at least 1 ICP after the network's maturity adjustment. Sync your neurons to see their current state."
+    },
+    "ICPStakeMaturityNotAllowed": {
+      "title": "Cannot stake this neuron's maturity",
+      "description": "Maturity cannot be staked while the neuron is spawning, once it has fully dissolved, or when the neuron has none. Sync your neurons to see their current state."
+    },
+    "ICPFollowTopicNotAllowed": {
+      "title": "This topic cannot be followed",
+      "description": "The Internet Computer has retired this topic, or the Ledger Internet Computer app cannot yet sign following on it. Choose another topic."
+    },
+    "ICPDisburseNotAllowed": {
+      "title": "Cannot disburse this neuron",
+      "description": "A neuron can be disbursed once it has fully dissolved and its stake is more than the network fee. Sync your neurons to see their current state."
+    },
+    "ICPTooManyHotKeys": {
+      "title": "Hot key limit reached",
+      "description": "A neuron can hold at most {{max}} hot keys. Remove one to add another."
+    },
+    "ICPTopUpBelowMinimumStake": {
+      "title": "Top-up too small",
+      "description": "A neuron's balance has to reach 1 ICP after a top-up. As of the last sync this neuron needs at least {{missing}} ICP more. A smaller transfer settles in the neuron's account but is not counted until a later top-up reaches the minimum."
+    },
+    "ICPStakeNotRefreshed": {
+      "title": "Stake transferred, neuron not updated",
+      "description": "The ICP was transferred to the neuron's account, but Internet Computer governance refused to update the neuron from it. {{reason}} Nothing is lost: the amount stays in the neuron's account and counts toward the next top-up that brings the balance to at least 1 ICP. Ledger Live cannot see it there yet, so the amount field still asks for the full shortfall the last sync shows."
     },
     "ICPStakeMemoNotRecoverable": {
       "title": "Cannot top up this neuron",

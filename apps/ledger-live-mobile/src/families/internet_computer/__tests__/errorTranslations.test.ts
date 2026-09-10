@@ -18,6 +18,13 @@ const REACHABLE_ERRORS = [
   "ICPHotKeyAlreadyExists",
   "ICPHotKeyIsController",
   "ICPSplitNotAllowed",
+  "ICPSpawnNotAllowed",
+  "ICPStakeMaturityNotAllowed",
+  "ICPFollowTopicNotAllowed",
+  "ICPDisburseNotAllowed",
+  "ICPTooManyHotKeys",
+  "ICPTopUpBelowMinimumStake",
+  "ICPStakeNotRefreshed",
   "ICPStakeMemoNotRecoverable",
   "ICPCallUnconfirmed",
   "ICPNeuronsNotRead",
@@ -69,8 +76,23 @@ describe("internet_computer error translations", () => {
     "ICPInvalidPercentage",
     "ICPInvalidDissolveDelayIncrease",
     "ICPHotKeyIsController",
+    "ICPTooManyHotKeys",
+    "ICPTopUpBelowMinimumStake",
   ])("%s explains how to correct the value", name => {
     expect(descriptionOf(name)).toBeTruthy();
+  });
+
+  it.each([
+    ["ICPTooManyHotKeys", "{{max}}"],
+    ["ICPTopUpBelowMinimumStake", "{{missing}}"],
+  ])("%s quotes the figure the bridge computed", (name, placeholder) => {
+    expect(descriptionOf(name)).toContain(placeholder);
+  });
+
+  // The transfer has settled by the time governance refuses the refresh, so copy that reads as a
+  // failed transaction would tell the user their ICP is gone.
+  it("says the ICP is still there when a stake refresh is refused", () => {
+    expect(errors.ICPStakeNotRefreshed?.description).toMatch(/Nothing is lost/);
   });
 
   // The dissolve-delay bounds are protocol seconds, but the copy quotes whole days, so the errors
@@ -98,7 +120,7 @@ describe("internet_computer error translations", () => {
 
   // Both are thrown with the network's own text in `reason`. Dropping the placeholder would lose the
   // only part of the message that says what actually went wrong.
-  it.each(["ICPGovernanceRejected", "ICPCallRejected"])(
+  it.each(["ICPGovernanceRejected", "ICPCallRejected", "ICPStakeNotRefreshed"])(
     "%s passes the network's own wording through",
     name => {
       expect(errors[name]?.description).toContain("{{reason}}");
