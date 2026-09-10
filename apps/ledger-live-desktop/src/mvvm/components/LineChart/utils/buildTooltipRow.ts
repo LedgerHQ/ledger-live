@@ -1,4 +1,4 @@
-import type { ChartTooltipItemData } from "@ledgerhq/lumen-ui-react-visualization";
+import type { ChartTooltipItemData } from "@ledgerhq/lumen-ui-react/visualization";
 import type { LineChartSeries, LineChartValueFormatter } from "../types";
 
 export function buildTooltipRow(

@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, SegmentedControl, SegmentedControlButton } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import { LineChart as LumenLineChart } from "@ledgerhq/lumen-ui-rnative-visualization";
+import { LineChart as LumenLineChart } from "@ledgerhq/lumen-ui-rnative/visualization";
 import { LineChartPoints } from "./LineChartPoints";
 import { LineChartScrubber } from "./LineChartScrubber";
 import type { LineChartViewModelResult } from "./useLineChartViewModel";

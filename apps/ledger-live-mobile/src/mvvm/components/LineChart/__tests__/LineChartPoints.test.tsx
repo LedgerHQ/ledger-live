@@ -5,7 +5,7 @@ import type { LineChartPointMarker } from "../types";
 
 let points: Array<Record<string, unknown>>;
 
-jest.mock("@ledgerhq/lumen-ui-rnative-visualization", () => ({
+jest.mock("@ledgerhq/lumen-ui-rnative/visualization", () => ({
   Point: (props: Record<string, unknown>) => {
     points.push(props);
     return null;
