@@ -83,7 +83,6 @@
         "expo-modules-core",
         "prop-types",
         "react-is",
-        "react-native-fast-pbkdf2",
         "react-native-navigation-bar-color",
         "react-native-randombytes",
         "react-native-udp",
