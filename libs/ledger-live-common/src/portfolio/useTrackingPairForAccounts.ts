@@ -4,10 +4,11 @@ import type { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";
 import { inferTrackingPairForAccounts } from "./trackingPairs";
 
+// Sorted by code unit, not localeCompare: the hash is a cache key and must not vary with locale.
 function trackingPairsHash(a: TrackingPair[]) {
   return a
     .map(p => `${p.from.ticker}:${p.to.ticker}:${p.startDate.toISOString().slice(0, 10) || ""}`)
-    .sort()
+    .sort((x, y) => (x < y ? -1 : x > y ? 1 : 0))
     .join("|");
 }
 
