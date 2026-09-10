@@ -49,8 +49,8 @@ catalogs:
       specifier: 9.6.1
       version: 9.6.1
     '@ledgerhq/coin-tezos':
-      specifier: 10.2.4
-      version: 10.2.4
+      specifier: 10.2.6
+      version: 10.2.6
     '@ledgerhq/coin-xrp':
       specifier: 10.1.1
       version: 10.1.1
@@ -11959,7 +11959,7 @@ importers:
         version: link:../../coin-tester
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 10.2.4
+        version: 10.2.6
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -13169,7 +13169,7 @@ importers:
         version: link:../coin-modules/coin-sui
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 10.2.4(@ledgerhq/live-network@libs+live-network)
+        version: 10.2.6(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/coin-ton':
         specifier: workspace:^
         version: link:../coin-modules/coin-ton
@@ -22352,8 +22352,8 @@ packages:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/coin-tezos@10.2.4':
-    resolution: {integrity: sha512-qgBV3NeQSGMPJIbbF8wAor6RRKRLUAF7UZr4e7pC8Br02GYdggqCgXYYRIKApLeWGzhdHQJKaFg4GSnv8fiYRA==}
+  '@ledgerhq/coin-tezos@10.2.6':
+    resolution: {integrity: sha512-8jb0AV7IILGm3lfETD1bjWfP/JpKpGdZpJx+vIXUDANdDtMaLQ5+QNtba0X+RcnzgV0CStb+ZrORCFnlyFiBrQ==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
@@ -23094,6 +23094,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -28566,7 +28567,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -47755,7 +47756,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@ledgerhq/coin-tezos@10.2.4':
+  '@ledgerhq/coin-tezos@10.2.6':
     dependencies:
       '@ledgerhq/coin-module-framework': 8.5.0
       '@taquito/ledger-signer': 23.0.1
@@ -47765,7 +47766,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-tezos@10.2.4(@ledgerhq/live-network@libs+live-network)':
+  '@ledgerhq/coin-tezos@10.2.6(@ledgerhq/live-network@libs+live-network)':
     dependencies:
       '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
