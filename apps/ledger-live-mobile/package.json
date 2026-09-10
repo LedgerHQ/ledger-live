@@ -396,7 +396,6 @@
     "jest-environment-node": "catalog:",
     "jest-metadata": "1.6.0",
     "jest-quiet-reporter": "1.0.1",
-    "jetifier": "2.0.0",
     "local-web-server": "4.2.1",
     "metro-transform-plugins": "0.83.3",
     "msw": "catalog:",
