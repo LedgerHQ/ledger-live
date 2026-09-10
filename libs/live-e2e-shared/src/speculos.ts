@@ -896,16 +896,11 @@ export const activateContractData = withDeviceController(({ getButtonsController
 });
 
 /**
- * Turns on the Ethereum app's "Blind signing" setting, which arbitrary contract calldata needs:
- * the app answers `6a80` while it is off, and the review never renders — the borrow flows sign
- * Morpho calls that carry no clear-signing descriptor, so every one of them stalls without this.
+ * Turns on the Ethereum app's "Blind signing" setting, without which the app answers `6a80` to
+ * calldata it cannot describe. Reads the toggle before pressing it, and ends back on the idle
+ * screen where a review can arrive.
  *
- * Speculos NVRAM lives and dies with its container, so this runs once per device, and it reads
- * the toggle before pressing it rather than blind-toggling an already-enabled setting off again.
- * Ends back on the app's idle screen, where a review can arrive.
- *
- * Verified against Ethereum 1.22.3 on nanos+ 1.6.1, whose menu is
- * `<app> is ready → App settings → Blind signing → … → Back`.
+ * Menu verified against Ethereum 1.22.3 on nanos+ 1.6.1.
  */
 /** Every app's idle screen reads "<app> is ready", so this matches without naming the app. */
 const IDLE_SCREEN_LABEL = "is ready";
@@ -926,9 +921,8 @@ export const enableBlindSigning = withDeviceController(({ getButtonsController }
   await buttons.both();
   // "Back" lands on the App settings entry of the top-level menu, one step short of idle.
   await buttons.left();
-  // Leaving the device parked in the menu is not a visible failure: the app simply stops
-  // answering sign APDUs, which surfaces much later as an opaque transport error. Assert we are
-  // back on the idle screen so a navigation that drifted is reported here instead.
+  // Parked in the menu the app stops answering sign APDUs, which surfaces much later as an
+  // opaque transport error, so a navigation that drifted is reported here instead.
   await waitFor(IDLE_SCREEN_LABEL);
 });
 
@@ -1276,78 +1270,66 @@ export const shareViewKey = withDeviceController(({ getButtonsController }) => a
   }
 });
 
+const OPT_IN_SCREEN_MAX_ATTEMPTS = Math.ceil(30_000 / SCREEN_POLL_INTERVAL_MS);
+
+/**
+ * Whether `label` is the screen the device settled on, giving up as soon as one of
+ * `labelsShownLater` proves it was never coming.
+ */
+async function waitForOptInScreen(
+  label: DeviceLabels,
+  labelsShownLater: DeviceLabels[],
+): Promise<boolean> {
+  const port = getEnv("SPECULOS_API_PORT");
+  const wanted = label.toLowerCase();
+  const tooLate = labelsShownLater.map(shown => shown.toLowerCase());
+
+  for (let attempt = 0; attempt < OPT_IN_SCREEN_MAX_ATTEMPTS; attempt++) {
+    const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
+    if (texts.includes(wanted)) return true;
+    if (tooLate.some(shown => texts.includes(shown))) return false;
+    await sleep(SCREEN_POLL_INTERVAL_MS);
+  }
+  return false;
+}
+
 export const acceptEnableTransactionCheck = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
-      const buttons = getButtonsController();
-
-      const port = getEnv("SPECULOS_API_PORT");
-      const promptLabel = DeviceLabels.ENABLE_TRANSACTION_CHECK.toLowerCase();
-      const labelsShownOnlyAfterThePrompt = [
+      const displayed = await waitForOptInScreen(DeviceLabels.ENABLE_TRANSACTION_CHECK, [
         DeviceLabels.REVIEW_TRANSACTION,
         DeviceLabels.BLIND_SIGNING_AHEAD,
-      ].map(label => label.toLowerCase());
-      let isTransactionCheckDisplayed = false;
-      for (let attempt = 0; attempt < 60; attempt++) {
-        const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
-        if (texts.includes(promptLabel)) {
-          isTransactionCheckDisplayed = true;
-          break;
-        }
-        if (labelsShownOnlyAfterThePrompt.some(label => texts.includes(label))) {
-          break;
-        }
-        await sleep(500);
-      }
-
-      if (!isTransactionCheckDisplayed) {
-        return;
-      }
+      ]);
+      if (!displayed) return;
 
       if (isTouchDevice()) {
         await pressAndRelease(DeviceLabels.YES_ENABLE);
-      } else {
-        await pressUntilTextFound(DeviceLabels.CONFIRM);
-        await buttons.both();
+        return;
       }
+      await pressUntilTextFound(DeviceLabels.CONFIRM);
+      await getButtonsController().both();
     },
 );
 
 /**
- * Clears the "Blind signing ahead / To accept risk, press both buttons" warning the Ethereum app
- * raises for calldata it cannot describe. It only appears once blind signing is *enabled* — with
- * the setting off the app refuses outright instead — so this is the second half of
- * [[enableBlindSigning]], and it blocks the review the same way the Transaction Check opt-in does.
+ * Clears the "Blind signing ahead" warning, which the app raises only once blind signing is
+ * enabled — the second half of [[enableBlindSigning]].
  *
- * Returns without pressing anything when the warning is not the current screen, so it is safe on
- * a transaction the app can clear-sign.
+ * No-ops when the warning is not the current screen.
  */
 export const acceptBlindSigningWarning = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
-      const buttons = getButtonsController();
-      const port = getEnv("SPECULOS_API_PORT");
-      const warningLabel = DeviceLabels.BLIND_SIGNING_AHEAD.toLowerCase();
-      const reviewLabel = DeviceLabels.REVIEW_TRANSACTION.toLowerCase();
-
-      let isWarningDisplayed = false;
-      for (let attempt = 0; attempt < 60; attempt++) {
-        const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
-        if (texts.includes(warningLabel)) {
-          isWarningDisplayed = true;
-          break;
-        }
-        if (texts.includes(reviewLabel)) break;
-        await sleep(500);
-      }
-
-      if (!isWarningDisplayed) return;
+      const displayed = await waitForOptInScreen(DeviceLabels.BLIND_SIGNING_AHEAD, [
+        DeviceLabels.REVIEW_TRANSACTION,
+      ]);
+      if (!displayed) return;
 
       if (isTouchDevice()) {
         await pressAndRelease(DeviceLabels.CONFIRM);
         return;
       }
-      await buttons.both();
+      await getButtonsController().both();
     },
 );
 
