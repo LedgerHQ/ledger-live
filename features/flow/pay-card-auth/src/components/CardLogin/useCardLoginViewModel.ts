@@ -115,7 +115,7 @@ export function useCardLoginViewModel({
     // A redirect that arrives while the screen is already open. The machine ignores it unless it is
     // waiting for one, so a repeat is harmless: the first callback wins.
     if (callback) {
-      send({ type: "CALLBACK_RECEIVED", code: callback.code });
+      send({ type: "CALLBACK_RECEIVED", code: callback.code, state: callback.state });
     }
   }, [callback, send]);
 
