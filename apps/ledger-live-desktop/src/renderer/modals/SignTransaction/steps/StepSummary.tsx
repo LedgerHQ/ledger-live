@@ -90,11 +90,6 @@ const StepSummary = (props: StepProps) => {
   return (
     <Box flow={4} mx={40}>
       <TrackPage category="Sign Flow" name="Step Summary" />
-      {isSolanaRawTransaction ? (
-        <Alert type="warning" title={t("send.steps.details.solanaRawTransaction.title")}>
-          <Trans i18nKey="send.steps.details.solanaRawTransaction.description" />
-        </Alert>
-      ) : null}
       {utxoLag ? (
         <Alert type="warning">
           <Trans i18nKey="send.steps.details.utxoLag" />
