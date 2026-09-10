@@ -23,6 +23,7 @@ import { AccountSelector } from "./screens/AccountSelector";
 import AssetSelector from "./screens/AssetSelector";
 import { NetworkSelector } from "./screens/NetworkSelector";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
+import SkeletonList from "./components/SkeletonList";
 import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";
 import { useModularDialogNavigation } from "./hooks/useModularDialogNavigation";
 import { useModularDialogRemoteData } from "./hooks/useModularDialogRemoteData";
@@ -192,7 +193,7 @@ export function ModularDialogFlow({
       screenKey={displayStep}
       direction={navigationDirection}
     >
-      {isAwaitingAutoSkip ? null : renderStepContent(currentStep)}
+      {isAwaitingAutoSkip ? <SkeletonList /> : renderStepContent(currentStep)}
     </AnimatedScreenWrapper>
   );
 

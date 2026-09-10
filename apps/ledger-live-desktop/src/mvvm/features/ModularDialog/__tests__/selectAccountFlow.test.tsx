@@ -171,6 +171,29 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     expect(screen.queryByText(/select asset/i)).not.toBeInTheDocument();
   });
 
+  it("should show list placeholders while a single currency is still loading", async () => {
+    server.use(
+      http.get("https://dada.api.ledger-test.com/v1/assets", () => new Promise(() => {})),
+      http.get("https://dada.api.ledger.com/v1/assets", () => new Promise(() => {})),
+    );
+
+    try {
+      render(<ModularDialogFlowManager />, {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [ETH_ACCOUNT],
+          modularDialog: createFilteredModularDialogState([ethereumCurrency.id]),
+        },
+      });
+
+      expect(screen.queryByText(/select asset/i)).not.toBeInTheDocument();
+      expect(screen.getByTestId("modular-dialog-screen-ACCOUNT_SELECTION")).toBeVisible();
+      expect(screen.getByTestId("modular-dialog-skeleton")).toBeVisible();
+    } finally {
+      server.resetHandlers();
+    }
+  });
+
   it("should keep the pay-from title while a single currency is auto-skipped", async () => {
     const filteredPayDialog = createFilteredModularDialogState([ethereumCurrency.id]);
 
