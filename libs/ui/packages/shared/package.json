@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/ui-shared",
   "version": "0.5.0",
+  "private": true,
   "description": "Package with the shared assets and code between the React and React Native versions of the Ledger design system",
   "main": "lib/index.js",
   "typescriptMain": "index.ts",
