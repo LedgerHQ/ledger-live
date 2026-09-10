@@ -1,6 +1,5 @@
 import { getAnalytics } from "../registry";
 import type { DeliveryStatus, EventType, Props } from "../types";
-import { isThenable } from "./isThenable";
 import { publishEvent } from "./eventLog";
 
 type Delivery = {
@@ -10,12 +9,12 @@ type Delivery = {
   eventPropsWithoutExtra: Props;
 };
 
-export function deliver({
+export async function deliver({
   type: kind,
   eventName,
   eventProps,
   eventPropsWithoutExtra,
-}: Delivery): void | Promise<void> {
+}: Delivery): Promise<void> {
   const publish = (deliveryStatus: DeliveryStatus) =>
     publishEvent({
       eventName,
@@ -25,22 +24,17 @@ export function deliver({
     });
 
   const analytics = getAnalytics();
-  if (!analytics) return publish("skipped_no_client");
+  if (!analytics) {
+    publish("skipped_no_client");
+    return;
+  }
 
   analytics.log?.(kind, eventName, eventProps);
 
-  let result: void | Promise<void | DeliveryStatus>;
-
   try {
-    result = analytics.track(eventName, eventProps);
+    const status = await analytics.track(eventName, eventProps);
+    publish(status ?? "enqueued");
   } catch {
-    return publish("failed_tracking");
+    publish("failed_tracking");
   }
-
-  if (!isThenable<void | DeliveryStatus>(result)) return publish("enqueued");
-
-  return result.then(
-    status => publish(status ?? "enqueued"),
-    () => publish("failed_tracking"),
-  );
 }

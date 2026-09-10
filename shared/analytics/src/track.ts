@@ -17,14 +17,14 @@ import { isEnabled } from "./registry";
 import { trackEvent } from "./internals/trackEvent";
 import type { Props } from "./types";
 
-export function track(
+export async function track(
   event: string,
   props?: Error | Props | null,
   { mandatory = false }: { mandatory?: boolean } = {},
-): void | Promise<void> {
+): Promise<void> {
   if (!isEnabled() && !mandatory) {
     return;
   }
 
-  return trackEvent("track", event, normalizeProps(props), mandatory);
+  await trackEvent("track", event, normalizeProps(props), mandatory);
 }

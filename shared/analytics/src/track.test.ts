@@ -38,11 +38,11 @@ beforeEach(() => {
 
 describe("track", () => {
   describe("consent", () => {
-    it("sends event props and extra props when tracking is enabled", () => {
+    it("sends event props and extra props when tracking is enabled", async () => {
       const analyticsClient = register();
       setExtraPropsFn(() => ({ extra: "props" }));
 
-      track("Analytics Event", { event: "props" });
+      await track("Analytics Event", { event: "props" });
 
       expect(analyticsClient.track).toHaveBeenCalledWith("Analytics Event", {
         event: "props",
@@ -50,21 +50,21 @@ describe("track", () => {
       });
     });
 
-    it("does not send non-mandatory events when tracking is disabled", () => {
+    it("does not send non-mandatory events when tracking is disabled", async () => {
       const analyticsClient = register();
       setEnabledFn(() => false);
 
-      track("Analytics Consent", { flow: "onboarding" });
+      await track("Analytics Consent", { flow: "onboarding" });
 
       expect(analyticsClient.track).not.toHaveBeenCalled();
     });
 
-    it("sends mandatory events with mandatory props when tracking is disabled", () => {
+    it("sends mandatory events with mandatory props when tracking is disabled", async () => {
       const analyticsClient = register();
       setEnabledFn(() => false);
       setMandatoryExtraPropsFn(() => ({ mandatory: "props" }));
 
-      track("Analytics Consent", { flow: "onboarding" }, { mandatory: true });
+      await track("Analytics Consent", { flow: "onboarding" }, { mandatory: true });
 
       expect(analyticsClient.track).toHaveBeenCalledWith("Analytics Consent", {
         flow: "onboarding",
@@ -74,27 +74,32 @@ describe("track", () => {
   });
 
   describe("enrichment", () => {
-    it("sends synchronously for a sync enricher", () => {
+    it("sends with sync extras", async () => {
       const analyticsClient = register();
       setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
 
-      const result = track("Sync Event");
+      await track("Sync Event");
 
-      expect(result).toBeUndefined();
       expect(analyticsClient.track).toHaveBeenCalledWith("Sync Event", {
         appVersion: "1.2.3",
       });
     });
 
-    it("resolves after sending for an async enricher", async () => {
+    it("sends after async extras resolve", async () => {
       const analyticsClient = register();
-      setExtraPropsFn(async () => ({ appVersion: "1.2.3" }));
+      let resolveExtras: (value: Props) => void = () => {};
+      setExtraPropsFn(
+        () =>
+          new Promise<Props>(resolve => {
+            resolveExtras = resolve;
+          }),
+      );
 
-      const result = track("Async Event");
+      const pending = track("Async Event");
 
-      expect(result).toBeInstanceOf(Promise);
       expect(analyticsClient.track).not.toHaveBeenCalled();
-      await result;
+      resolveExtras({ appVersion: "1.2.3" });
+      await pending;
       expect(analyticsClient.track).toHaveBeenCalledWith("Async Event", {
         appVersion: "1.2.3",
       });
@@ -102,7 +107,7 @@ describe("track", () => {
   });
 
   describe("property filter", () => {
-    it("filters props before sending", () => {
+    it("filters props before sending", async () => {
       const analyticsClient = register();
       setPropsFilter((props: Props) => {
         const filtered = { ...props };
@@ -110,7 +115,7 @@ describe("track", () => {
         return filtered;
       });
 
-      track("Tracking Event", { sensitive: "data to filter", theme: "light" });
+      await track("Tracking Event", { sensitive: "data to filter", theme: "light" });
 
       expect(analyticsClient.track).toHaveBeenCalledWith("Tracking Event", {
         theme: "light",
@@ -119,11 +124,11 @@ describe("track", () => {
   });
 
   describe("observability", () => {
-    it("logs before sending and publishes to analyticsEvents$", () => {
+    it("logs before sending and publishes to analyticsEvents$", async () => {
       const analyticsClient = register();
       setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
 
-      track("Logged", { foo: "bar" });
+      await track("Logged", { foo: "bar" });
 
       expect(analyticsClient.log).toHaveBeenCalledWith("track", "Logged", {
         foo: "bar",

@@ -1,15 +1,14 @@
 import { applyPropsFilter, resolveExtraProps } from "../registry";
 import type { EventType, Props } from "../types";
 import { deliver } from "./deliver";
-import { isThenable } from "./isThenable";
 import { publishEvent } from "./eventLog";
 
-export function trackEvent(
+export async function trackEvent(
   kind: EventType,
   eventName: string,
   props: Props,
   mandatory: boolean,
-): void | Promise<void> {
+): Promise<void> {
   let callerProps: Props;
 
   try {
@@ -19,14 +18,6 @@ export function trackEvent(
     return;
   }
 
-  const send = (extras: Props | undefined) =>
-    deliver({
-      type: kind,
-      eventName,
-      eventProps: applyPropsFilter({ ...props, ...extras }),
-      eventPropsWithoutExtra: callerProps,
-    });
-
   const failEnrichment = () =>
     publishEvent({
       eventName,
@@ -35,14 +26,18 @@ export function trackEvent(
       deliveryStatus: "failed_enrichment",
     });
 
-  let extras: Props | Promise<Props> | undefined;
+  let extras: Props | undefined;
   try {
-    extras = resolveExtraProps(mandatory);
+    extras = await resolveExtraProps(mandatory);
   } catch {
-    return failEnrichment();
+    failEnrichment();
+    return;
   }
 
-  if (!isThenable<Props>(extras)) return send(extras);
-
-  return extras.then(send, failEnrichment);
+  await deliver({
+    type: kind,
+    eventName,
+    eventProps: applyPropsFilter({ ...props, ...extras }),
+    eventPropsWithoutExtra: callerProps,
+  });
 }
