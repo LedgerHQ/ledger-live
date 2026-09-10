@@ -96,6 +96,23 @@ describe("clearHostedSessionData", () => {
     });
   });
 
+  it("clears the storages, and moves on to the next origin, when a cookie read fails", async () => {
+    const { session, get, clearStorageData } = fakeSession([]);
+    get.mockRejectedValueOnce(new Error("the cookie store is locked"));
+
+    await clearHostedSessionData(session, ["https://dev.api.baanx.com", "https://provider.test"]);
+
+    expect(clearStorageData).toHaveBeenCalledWith({
+      origin: "https://dev.api.baanx.com",
+      storages: ["localstorage", "indexdb", "serviceworkers", "cachestorage"],
+    });
+    expect(clearStorageData).toHaveBeenCalledWith({
+      origin: "https://provider.test",
+      storages: ["localstorage", "indexdb", "serviceworkers", "cachestorage"],
+    });
+    expect(get).toHaveBeenCalledWith({ domain: "provider.test" });
+  });
+
   it.each([[undefined], ["https://dev.api.baanx.com"], [[""]], [[42]], [["dev.api.baanx.com"]]])(
     "does nothing for the origin list %p",
     async origins => {
