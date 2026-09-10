@@ -1,19 +1,10 @@
 import { getRemoteConfig } from "@react-native-firebase/remote-config";
-import snakeCase from "lodash/snakeCase";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
 import { formatDefaultFeatures } from "@features/platform-feature-flags";
-import { FEATURE_FLAGS_DEFAULTS, FeatureIdSchema } from "@shared/feature-flags";
-import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
-
-// Precomputed inverse of @features/platform-feature-flags' `formatToFirebaseFeatureId`
-// (`feature_${snakeCase(id)}`).
-// `lodash.camelCase(snakeCase(id))` is not a clean round-trip for FeatureIds with digits
-// or consecutive uppercase letters (e.g. `llmAccountListUI` → `llm_account_list_ui` →
-// `llmAccountListUi`), which silently drops the flag at the slice boundary.
-const FIREBASE_KEY_TO_FEATURE_ID: Record<string, FeatureId> = Object.fromEntries(
-  FeatureIdSchema.options.map(id => [`feature_${snakeCase(id)}`, id]),
-);
+import { parseFirebaseFeatures } from "@features/platform-feature-flags/firebase";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 type Subscriber = (event: { fetchedAt: number }) => void;
 
@@ -73,33 +64,6 @@ export function subscribeToRemoteFlags(callback: Subscriber): () => void {
 }
 
 /**
- * Maps a `getAll` payload back to canonical FeatureIds.
- *
- * Entries sourced from the defaults are skipped: the SDK unions the activated config with the
- * defaults we seeded from {@link FEATURE_FLAGS_DEFAULTS}, so keeping them would record a
- * compiled default as if the backend had sent it. Dropping them leaves the slice to fall back
- * to the very same defaults, and makes a returned entry mean "Firebase really sent this".
- *
- * Unknown keys (`config_*`, stray entries) and malformed JSON are dropped silently.
- */
-function mapActivatedFlags(all: ReturnType<typeof rc.getAll>): PartialFeatures {
-  const flags: PartialFeatures = {};
-  for (const [key, value] of Object.entries(all)) {
-    if (value.getSource() !== "remote") continue;
-    // `lodash.snakeCase` always lowercases — match it on the read side so any
-    // case drift in Firebase admin entries still resolves to the canonical id.
-    const featureId = FIREBASE_KEY_TO_FEATURE_ID[key.toLowerCase()];
-    if (!featureId) continue;
-    try {
-      flags[featureId] = JSON.parse(value.asString());
-    } catch {
-      // Malformed JSON in remote config — drop this key, fall back to default.
-    }
-  }
-  return flags;
-}
-
-/**
  * Reads the config the platform SDK activated in an earlier session and kept on disk, with no
  * network access. Wired into `createFeatureFlagsMiddleware` as `readCachedFlags` so boot
  * resolves on the last values the backend actually sent instead of on compiled defaults.
@@ -115,7 +79,7 @@ function mapActivatedFlags(all: ReturnType<typeof rc.getAll>): PartialFeatures {
 export async function readCachedFlags(): Promise<PartialFeatures> {
   try {
     await setup();
-    return mapActivatedFlags(rc.getAll());
+    return parseFirebaseFeatures(rc.getAll());
   } catch {
     return {};
   }
@@ -133,7 +97,7 @@ export async function readCachedFlags(): Promise<PartialFeatures> {
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   await setup();
   await rc.fetchAndActivate();
-  const flags = mapActivatedFlags(rc.getAll());
+  const flags = parseFirebaseFeatures(rc.getAll());
   const fetchedAt = Date.now();
   lastFetchedAt = fetchedAt;
   subscribers.forEach(callback => callback({ fetchedAt }));
