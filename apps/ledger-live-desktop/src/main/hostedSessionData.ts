@@ -54,7 +54,9 @@ export async function clearHostedSessionData(
   origins: unknown,
 ): Promise<void> {
   for (const { origin, hostname } of readOrigins(origins)) {
-    const stored = await targetSession.cookies.get({ domain: hostname });
+    // Best effort, like the removal below: a store that refuses to answer must not skip this
+    // origin's storage wipe, nor abort the wipe of every origin still left in the list.
+    const stored = await targetSession.cookies.get({ domain: hostname }).catch(() => []);
 
     await Promise.allSettled(
       stored
