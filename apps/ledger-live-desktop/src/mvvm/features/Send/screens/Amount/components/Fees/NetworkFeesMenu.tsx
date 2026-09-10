@@ -13,9 +13,12 @@ import {
   TooltipContent,
   Tooltip,
 } from "@ledgerhq/lumen-ui-react";
-import { ChevronUpDown, Information, Check } from "@ledgerhq/lumen-ui-react/symbols";
+import { ChevronUpDown, ChevronRight, Information, Check } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
+import { useSponsoredSend } from "../../../../context/SponsoredSendContext";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   getAccountCurrency,
@@ -41,6 +44,48 @@ type NetworkFeesMenuProps = Readonly<{
   display: FeesDisplay;
   feeSelector: FeesSelector;
 }>;
+
+/**
+ * The Tronify sponsored-fee entry shown above the network-fees row: opens the FEE_PAYMENT selector
+ * and, when a quote is loaded, the savings nudge. Self-contained (reads the sponsored context and
+ * wizard itself) so the parent NetworkFeesMenu stays under the cognitive-complexity budget; renders
+ * nothing when the sponsored option isn't available for the current intent.
+ */
+function SponsoredFeeNudge() {
+  const { t } = useTranslation();
+  const { available, savingsFiatFormatted, selectedFeeOptionId } = useSponsoredSend();
+  const { navigation } = useFlowWizard<SendFlowStep>();
+
+  if (!available) {
+    return null;
+  }
+
+  return (
+    <div
+      className="flex w-full items-center justify-between mt-8"
+      data-testid="send-sponsored-fee-nudge"
+    >
+      <button
+        type="button"
+        onClick={() => navigation.goToStep(SEND_FLOW_STEP.FEE_PAYMENT)}
+        className="flex items-center gap-4 cursor-pointer"
+        data-testid="send-fee-payment-entry"
+      >
+        <span className="body-3 text-base">
+          {selectedFeeOptionId === "tronify"
+            ? t("newSendFlow.feePayment.tronify")
+            : t("newSendFlow.feePayment.regular")}
+        </span>
+        <ChevronRight size={16} className="text-muted" />
+      </button>
+      {savingsFiatFormatted ? (
+        <span className="body-3 text-active" data-testid="send-sponsored-fee-savings-nudge">
+          {t("newSendFlow.feePayment.nudge", { amount: savingsFiatFormatted })}
+        </span>
+      ) : null}
+    </div>
+  );
+}
 
 export function NetworkFeesMenu({ display, feeSelector }: NetworkFeesMenuProps) {
   const {
@@ -87,108 +132,114 @@ export function NetworkFeesMenu({ display, feeSelector }: NetworkFeesMenuProps) 
 
   if (!canOpen) {
     return (
+      <>
+        <SponsoredFeeNudge />
+        <div
+          className="flex w-full items-center justify-between mt-8 mb-12"
+          data-testid="send-network-fees-row"
+        >
+          <span className="flex items-center gap-8">
+            <span className="body-3">{feesLabel}</span>
+            {informationIcon}
+          </span>
+          <span className="flex items-center gap-4">
+            <span className="body-3 text-base">{feesValue}</span>
+            {feesSecondaryValue ? (
+              <span className="body-3 text-muted">{feesSecondaryValue}</span>
+            ) : null}
+          </span>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <SponsoredFeeNudge />
       <div
-        className="flex w-full items-center justify-between mt-8 mb-12"
+        className="flex w-full items-center justify-between mt-16 mb-12"
         data-testid="send-network-fees-row"
       >
         <span className="flex items-center gap-8">
           <span className="body-3">{feesLabel}</span>
           {informationIcon}
         </span>
-        <span className="flex items-center gap-4">
-          <span className="body-3 text-base">{feesValue}</span>
-          {feesSecondaryValue ? (
-            <span className="body-3 text-muted">{feesSecondaryValue}</span>
-          ) : null}
-        </span>
+        <Menu>
+          <MenuTrigger
+            render={
+              <button
+                type="button"
+                className="flex items-center gap-8 transition-colors hover:opacity-70  cursor-pointer"
+                data-testid="send-network-fees-menu-trigger"
+              >
+                <span className="body-3 text-base">
+                  {feesValue} • {feesStrategyLabel}
+                </span>
+                <ChevronUpDown size={16} className="text-muted" />
+              </button>
+            }
+          />
+          <MenuContent className="pointer-events-auto w-256" side="top">
+            <MenuGroup>
+              <MenuLabel>{feesLabel}</MenuLabel>
+              {strategyOptions.length > 0 ? (
+                <MenuRadioGroup
+                  value={selectedId}
+                  onValueChange={id => {
+                    const option = options.find(o => o.id === id);
+                    option?.onSelect();
+                  }}
+                >
+                  {strategyOptions.map(option => (
+                    <MenuRadioItem
+                      key={option.id}
+                      value={option.id}
+                      closeOnClick
+                      className="cursor-pointer"
+                      data-testid={`send-fees-preset-${option.id}`}
+                    >
+                      <div className="flex flex-col">
+                        <span className="text-base">{option.label}</span>
+                        {option.sublabel ? (
+                          <span className="body-3 text-muted">{option.sublabel}</span>
+                        ) : null}
+                      </div>
+                    </MenuRadioItem>
+                  ))}
+                </MenuRadioGroup>
+              ) : null}
+              {strategyOptions.length > 0 && (customOption || coinControlOption) ? (
+                <MenuSeparator />
+              ) : null}
+              {customOption ? (
+                <MenuItem
+                  className="cursor-pointer"
+                  data-testid="send-custom-fees-menu-item"
+                  onClick={() => {
+                    customOption.onSelect();
+                  }}
+                >
+                  <div className="flex w-full items-center justify-between">
+                    <span className="text-base">{customOption.label}</span>
+                    {customOption.selected ? <Check size={16} /> : null}
+                  </div>
+                </MenuItem>
+              ) : null}
+              {coinControlOption ? (
+                <MenuItem
+                  className="cursor-pointer"
+                  data-testid="send-coin-control-fees-menu-item"
+                  onClick={() => {
+                    coinControlOption.onSelect();
+                  }}
+                >
+                  {coinControlOption.label}
+                </MenuItem>
+              ) : null}
+            </MenuGroup>
+          </MenuContent>
+        </Menu>
       </div>
-    );
-  }
-
-  return (
-    <div
-      className="flex w-full items-center justify-between mt-16 mb-12"
-      data-testid="send-network-fees-row"
-    >
-      <span className="flex items-center gap-8">
-        <span className="body-3">{feesLabel}</span>
-        {informationIcon}
-      </span>
-      <Menu>
-        <MenuTrigger
-          render={
-            <button
-              type="button"
-              className="flex items-center gap-8 transition-colors hover:opacity-70  cursor-pointer"
-              data-testid="send-network-fees-menu-trigger"
-            >
-              <span className="body-3 text-base">
-                {feesValue} • {feesStrategyLabel}
-              </span>
-              <ChevronUpDown size={16} className="text-muted" />
-            </button>
-          }
-        />
-        <MenuContent className="pointer-events-auto w-256" side="top">
-          <MenuGroup>
-            <MenuLabel>{feesLabel}</MenuLabel>
-            {strategyOptions.length > 0 ? (
-              <MenuRadioGroup
-                value={selectedId}
-                onValueChange={id => {
-                  const option = options.find(o => o.id === id);
-                  option?.onSelect();
-                }}
-              >
-                {strategyOptions.map(option => (
-                  <MenuRadioItem
-                    key={option.id}
-                    value={option.id}
-                    closeOnClick
-                    className="cursor-pointer"
-                    data-testid={`send-fees-preset-${option.id}`}
-                  >
-                    <div className="flex flex-col">
-                      <span className="text-base">{option.label}</span>
-                      {option.sublabel ? (
-                        <span className="body-3 text-muted">{option.sublabel}</span>
-                      ) : null}
-                    </div>
-                  </MenuRadioItem>
-                ))}
-              </MenuRadioGroup>
-            ) : null}
-            {strategyOptions.length > 0 && (customOption || coinControlOption) ? (
-              <MenuSeparator />
-            ) : null}
-            {customOption ? (
-              <MenuItem
-                className="cursor-pointer"
-                data-testid="send-custom-fees-menu-item"
-                onClick={() => {
-                  customOption.onSelect();
-                }}
-              >
-                <div className="flex w-full items-center justify-between">
-                  <span className="text-base">{customOption.label}</span>
-                  {customOption.selected ? <Check size={16} /> : null}
-                </div>
-              </MenuItem>
-            ) : null}
-            {coinControlOption ? (
-              <MenuItem
-                className="cursor-pointer"
-                data-testid="send-coin-control-fees-menu-item"
-                onClick={() => {
-                  coinControlOption.onSelect();
-                }}
-              >
-                {coinControlOption.label}
-              </MenuItem>
-            ) : null}
-          </MenuGroup>
-        </MenuContent>
-      </Menu>
-    </div>
+    </>
   );
 }

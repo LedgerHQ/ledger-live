@@ -13,12 +13,15 @@ import {
   Block,
   AddressValidationCurrencyParameters,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { TronContext, TronCoinConfig } from "../config";
+import coinConfig, { type TronContext, type TronCoinConfig } from "../config";
 import {
   broadcast,
+  buildEnergyRentRequest,
   combine,
+  craftRawTransaction,
   craftTransaction,
   estimateFees,
+  estimateSponsoredFeeQuote,
   estimateTronifyFees,
   getAccountInfo,
   getBalance,
@@ -33,7 +36,19 @@ import {
   validateIntent,
 } from "../logic";
 import { TRONIFY_FEE_OPTION_ID } from "../logic/constants";
+import {
+  awaitEnergyDelivery,
+  broadcastEnergyRentTransaction,
+  craftEnergyRentTransaction,
+  getEnergyRentStatus,
+} from "../logic/energyRent";
+import type {
+  EnergyRentOrderRef,
+  EnergyRentRequest,
+  EnergyRentSignedTransaction,
+} from "../logic/energyRent";
 import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
+import { EnergyRentProviderNotConfigured } from "../types/errors";
 import type { TronMemo, TronTxData } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
@@ -47,16 +62,35 @@ export { TRONIFY_FEE_OPTION_ID };
 // Omitted rather than stubbed, and why:
 //   - `call`                — Tron contract reads (triggerconstantcontract) are not supported yet.
 //   - `getRewards`          — withdrawals already appear in `listOperations`.
-//   - `craftRawTransaction` — the chain takes no externally-built transaction.
 //   - `register`            — no enrollment step.
+// `craftRawTransaction` IS implemented (below): the ordinary send path builds its own transactions
+// from an intent, but the Tronify gas-sponsorship flow (LIVE-32780) must sign a payment transaction
+// built by Tronify's backend, so this pass-through lets that pre-built raw tx ride the raw-sign path.
 // The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
 export function createApi() {
-  return {
+  const base = {
     broadcast: async (context, tx, _options?) => {
       const config = await context.config();
       return broadcast(config, tx);
     },
     combine: (_context, tx, signature, _options?) => combine(tx, signature),
+    // The Tronify sponsored flow (LIVE-32780) signs a pre-built payment tx; the generic raw-sign
+    // path hands us its raw_data_hex here and re-crafting would be wrong, so we return it verbatim.
+    //
+    // Gated on a configured energy-rent provider: that flow is the only legitimate source of
+    // externally-built Tron bytes, and an ungated pass-through would let any
+    // `genericSignRawOperation` caller get arbitrary bytes signed with the account key. Checked per
+    // call rather than at construction (which would let the method be omitted outright, so
+    // `supports()` read false) because `getCoinConfig()` throws when the config singleton is unset
+    // and `createApi()` is resolved lazily with no ordering guarantee against `setCoinConfig`.
+    craftRawTransaction: async (_context, transaction, _sender, _publicKey, _sequence) => {
+      if (!coinConfig.getCoinConfig().energyRent) {
+        throw new EnergyRentProviderNotConfigured(
+          "Tron craftRawTransaction is reserved for the energy-rent payment flow, which is not configured",
+        );
+      }
+      return craftRawTransaction(transaction);
+    },
     craftTransaction: async (context, transactionIntent, options?) => {
       const config = await context.config();
       return craftTransaction(config, transactionIntent, options?.customFees);
@@ -123,6 +157,31 @@ export function createApi() {
     ): Promise<boolean> => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
   } satisfies CoinModuleImpl<TronCoinConfig, TronMemo, TronTxData>;
+
+  // Energy-rent seam (Tronify sponsored send): not yet part of CoinModuleApi, so these ride on the
+  // base object as extra members rather than through the `satisfies` check above, which enforces
+  // CoinModuleApi's exact key set and would reject them as excess properties. Reached only through
+  // the presence-guarded `getSponsoredCoinApi` accessor (generic-coin-framework/sponsored.ts).
+  return {
+    ...base,
+    // Context-free savings quote for the app-side fee nudge (no framework Context to build one).
+    estimateSponsoredFeeQuote: (intent: TransactionIntent<TronMemo, TronTxData>) =>
+      estimateSponsoredFeeQuote(intent),
+    // Context-free builder so the app hands a ready EnergyRentRequest to craftEnergyRentTransaction
+    // without estimating energy or reading coin-config itself.
+    buildEnergyRentRequest: (intent: TransactionIntent<TronMemo, TronTxData>) =>
+      buildEnergyRentRequest(intent),
+    craftEnergyRentTransaction: (request: EnergyRentRequest) => craftEnergyRentTransaction(request),
+    submitEnergyRentPayment: (payment: {
+      orderId: string;
+      signedTransaction: EnergyRentSignedTransaction;
+    }) => broadcastEnergyRentTransaction(payment),
+    getEnergyRentStatus: (ref: EnergyRentOrderRef) => getEnergyRentStatus(ref),
+    awaitEnergyDelivery: (
+      ref: EnergyRentOrderRef,
+      opts?: { intervalMs?: number; timeoutMs?: number; paymentTxId?: string },
+    ) => awaitEnergyDelivery(ref, opts),
+  };
 }
 
 /**
