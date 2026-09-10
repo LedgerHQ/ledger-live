@@ -2303,9 +2303,6 @@ importers:
       react-native-tcp-socket:
         specifier: 6.0.6
         version: 6.0.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
-      react-native-udp:
-        specifier: 4.1.7
-        version: 4.1.7
       react-native-url-polyfill:
         specifier: 1.3.0
         version: 1.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
@@ -2592,9 +2589,6 @@ importers:
       jest-quiet-reporter:
         specifier: 1.0.1
         version: 1.0.1
-      jetifier:
-        specifier: 2.0.0
-        version: 2.0.0
       local-web-server:
         specifier: 4.2.1
         version: 4.2.1
@@ -2613,9 +2607,6 @@ importers:
       react-native-bundle-visualizer:
         specifier: 3.1.3
         version: 3.1.3(patch_hash=860509fa484fba50bc575fd4729f51687bfb5342e9fca66d2b7c12b0cf81e11d)
-      react-native-debugger-open:
-        specifier: 0.4.3
-        version: 0.4.3
       react-native-launch-arguments:
         specifier: 4.0.2
         version: 4.0.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -31369,9 +31360,6 @@ packages:
     resolution: {integrity: sha512-sCeu9DOYhaSlKG7ry2y384bwxxaxPPdqWS0Jj45lv1MeQSpRK7mYlLO0jZdqwDLHViDWMsMikOkSIXuXpf4DiQ==}
     engines: {node: '>=0.10.0'}
 
-  es6-template@1.0.4:
-    resolution: {integrity: sha512-91S2Zl/xHps/4gYIOFTl6xIEZgkCYSmyH6Nmw3uZUD89EEjj7YjK4m8C9RbjSHwCw94ENLOJJQjxZ6eEM4JanQ==}
-
   es6template@1.0.5:
     resolution: {integrity: sha512-WASLwPb/GoVFxESVJqpVpgUhrC3Z4mami74a2d2MsvYwicn8YkGSWGippd+l2ciSoPoymv4KNFYgDi3B4t7RGA==}
 
@@ -33869,10 +33857,6 @@ packages:
       node-notifier:
         optional: true
 
-  jetifier@2.0.0:
-    resolution: {integrity: sha512-J4Au9KuT74te+PCCCHKgAjyLlEa+2VyIAEPNCdE5aNkAJ6FAJcAqcdzEkSnzNksIa9NkGmC4tPiClk2e7tCJuQ==}
-    hasBin: true
-
   jimp-compact@0.16.1:
     resolution: {integrity: sha512-dZ6Ra7u1G8c4Letq/B5EzAxj4tLFHL+cGtdpR+PVm4yzPDj+lCk+AbivWt1eOM+ikzkowtyV7qSqX6qr3t71Ww==}
 
@@ -34291,10 +34275,6 @@ packages:
 
   launch-editor@2.14.0:
     resolution: {integrity: sha512-Pj3ZOx9dD1BClS7YcSQx0An1PCF9wz4JpvbEmKvDxQtm0jxlkk5NhW8x0SBAKA/acHBKZaqdd5FFOWlXo500JA==}
-
-  lazy-cache@1.0.4:
-    resolution: {integrity: sha512-RE2g0b5VGZsOCFOCgP7omTRYFqydmZkBwl5oNnQ1lDYC57uyO9KqNnNVxT7COSHTxrRCWVcAVOcbjk+tvh/rgQ==}
-    engines: {node: '>=0.10.0'}
 
   lazy-val@1.0.5:
     resolution: {integrity: sha512-0/BnGCCfyUMkBpeDgWihanIAF9JmZhHBgUhEqzvf+adhNGLoP6TaiI5oF8oyb3I45P+PcnrqihSf01M0l0G5+Q==}
@@ -37503,10 +37483,6 @@ packages:
     peerDependencies:
       react-native-randombytes: '>=2.0.0 <4.0.0'
 
-  react-native-debugger-open@0.4.3:
-    resolution: {integrity: sha512-gYdVWBhQ0a/PbXgCi3T+FU4LS0ucq8QyUhDqtRd3JRr1AOyKSn1RHj+jxtda+LhfyodrIPbZXHRXL0MvZ5FLSA==}
-    hasBin: true
-
   react-native-device-info@11.1.0:
     resolution: {integrity: sha512-hzXJSObJdezEz0hF7MAJ3tGeoesuQWenXXt9mrQR9Mjb8kXpZ09rqSsZ/quNpJdZpQ3rYiFa3/0GFG5KNn9PBg==}
     peerDependencies:
@@ -37710,9 +37686,6 @@ packages:
     resolution: {integrity: sha512-FIFSP+3S5OnJRjl7ddD7G9NfVbVEiQ4WROEmOBei1cKE0pDz2R/Kcm4XkFlnMd5sdoG6Wbv830Yd/ZsmOjkEKw==}
     peerDependencies:
       react-native: '>=0.60.0'
-
-  react-native-udp@4.1.7:
-    resolution: {integrity: sha512-NUE3zewu61NCdSsLlj+l0ad6qojcVEZPT4hVG/x6DU9U4iCzwtfZSASh9vm7teAcVzLkdD+cO3411LHshAi/wA==}
 
   react-native-url-polyfill@1.3.0:
     resolution: {integrity: sha512-w9JfSkvpqqlix9UjDvJjm1EjSt652zVQ6iwCIj1cVVkwXf4jQhQgTNXY6EVTwuAmUjg6BC6k9RHCBynoLFo3IQ==}
@@ -60017,15 +59990,6 @@ snapshots:
 
   es6-template-regex@0.1.1: {}
 
-  es6-template@1.0.4:
-    dependencies:
-      es6-template-regex: 0.1.1
-      extend-shallow: 2.0.1
-      get-value: 2.0.6
-      lazy-cache: 1.0.4
-      mkdirp: 0.5.6
-      sliced: 1.0.1
-
   es6template@1.0.5:
     dependencies:
       es6-template-regex: 0.1.1
@@ -63461,8 +63425,6 @@ snapshots:
       - supports-color
       - ts-node
 
-  jetifier@2.0.0: {}
-
   jimp-compact@0.16.1: {}
 
   jimp@1.6.0:
@@ -63993,8 +63955,6 @@ snapshots:
     dependencies:
       picocolors: 1.1.1
       shell-quote: 1.10.0
-
-  lazy-cache@1.0.4: {}
 
   lazy-val@1.0.5: {}
 
@@ -68274,13 +68234,6 @@ snapshots:
       randomfill: 1.0.4
       react-native-randombytes: 3.6.1
 
-  react-native-debugger-open@0.4.3:
-    dependencies:
-      chalk: 1.1.3
-      es6-template: 1.0.4
-      minimist: 1.2.8
-      semver: 5.7.2
-
   react-native-device-info@11.1.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)):
     dependencies:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
@@ -68545,11 +68498,6 @@ snapshots:
       buffer: 5.7.1
       eventemitter3: 4.0.7
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
-
-  react-native-udp@4.1.7:
-    dependencies:
-      buffer: 5.7.1
-      events: 3.3.0
 
   react-native-url-polyfill@1.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)):
     dependencies:
