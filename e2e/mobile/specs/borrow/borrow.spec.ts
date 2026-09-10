@@ -19,14 +19,9 @@ const debtAccount = TokenAccount.ETH_USDT_4;
 const COLLATERAL_SYMBOL = "wBTC";
 const EXPECTED_LTV = "50%";
 
-/** Three mainnet transactions, each with its own on-chain budget, exceed the 360s jest default. */
 const BORROW_TIMEOUT_MS = 600_000;
-/**
- * Repay and withdraw precondition the loan first, so their setup pays for a full open on top of
- * the reset — and withdraw adds an API repay after it. Each leg waits on mainnet confirmations,
- * and zeroing the debt allowance adds an approval transaction to every later repay.
- */
-const BORROW_PRECONDITION_TIMEOUT_MS = 1_800_000;
+/** A precondition opens, and for withdraw also repays, a loan before the test starts. */
+const BORROW_PRECONDITION_TIMEOUT_MS = 3 * BORROW_TIMEOUT_MS;
 const borrowSetupOptions = { nanoAppCatalogPath: NANO_APP_CATALOG_PATH };
 
 const BORROW_TAGS = [
@@ -39,14 +34,13 @@ const BORROW_TAGS = [
   "@family-evm",
 ];
 
-/**
- * Every flow below drives the same funded mainnet account, so none of them may run next to
- * another: they live in one file because jest parallelises across files and never within one,
- * and they share the single `BORROW` broadcast slot so a run cannot split them across
- * platforms. Each still owns its precondition through the borrow driver rather than inheriting
- * one from the flow above, so any of them can run, or be retried, on its own.
- */
 const describeBorrowFlow = shouldRunBroadcastFlow(BroadcastFlow.BORROW) ? describe : describe.skip;
+
+function annotateBorrowFlow(tmsKey: string) {
+  setTeamOwner(Team.EARN);
+  $TmsLink(tmsKey);
+  BORROW_TAGS.forEach(tag => $Tag(tag));
+}
 
 async function initBorrowApp() {
   await app.init({
@@ -60,29 +54,23 @@ async function initBorrowApp() {
       },
     ],
   });
-  // Sets SWAP_DISABLE_APPS_INSTALL: without it connectApp quits the Ethereum app to reach the
-  // dashboard, which terminates the single-app Speculos container.
+  // Sets SWAP_DISABLE_APPS_INSTALL, without which connectApp quits the single-app container.
   await swapSetup();
-  // The deposit, borrow, repay and withdraw calls are Morpho calldata with no clear-signing
-  // descriptor, so the app shows "Blind signing must be enabled in settings" and never renders a
-  // review until this is on. Speculos NVRAM is per-container, so it is set on each fresh device.
+  // Morpho calldata has no clear-signing descriptor, and Speculos NVRAM is per-container.
   await app.speculos.enableBlindSigning();
 }
 
-/**
- * The driver boots a Speculos of its own and clears SPECULOS_API_PORT when it tears it down,
- * so the app's device is released first rather than being pulled out from under it.
- */
+/** Releases the app's Speculos first: the driver clears SPECULOS_API_PORT when it tears its own down. */
 async function resetBorrowState(flowName: string) {
   try {
     await app.common.removeSpeculos();
   } catch (error) {
-    console.error(`[borrow] ${flowName} could not release the app's Speculos:`, error);
+    console.warn(`[borrow] ${flowName} could not release the app's Speculos:`, error);
   }
   try {
     await resetLoanState(borrowSetupOptions);
   } catch (error) {
-    console.error(
+    console.warn(
       `[borrow] ${flowName} cleanup failed — ${loanAccount.accountName} may still hold a position:`,
       error,
     );
@@ -101,16 +89,12 @@ describeBorrowFlow("Borrow - Open loan", () => {
     await resetBorrowState("open-loan");
   }, BORROW_TIMEOUT_MS);
 
-  setTeamOwner(Team.EARN);
-  $TmsLink("B2CQA-6065");
-  BORROW_TAGS.forEach(tag => $Tag(tag));
+  annotateBorrowFlow("B2CQA-6065");
 
   it(
     "should open a loan by approving wBTC collateral then authorizing deposit and borrow",
     async () => {
-      await app.portfolio.expectBorrowEntryPointVisible();
-      await app.portfolio.clickBorrowEntryPoint();
-      await app.borrow.expectBorrowScreenVisible();
+      await app.borrow.openFromPortfolio();
 
       await app.borrow.expectIntroModal();
       await app.borrow.clickSimulateMyLoan();
@@ -129,7 +113,7 @@ describeBorrowFlow("Borrow - Open loan", () => {
 
       await app.borrow.clickViewMyLoan();
       await app.borrow.expectLoansDashboard();
-      await expect(app.borrow.expectLoanDashboardRow()).resolves.toBeUndefined();
+      await app.borrow.expectLoanDashboardRow();
     },
     BORROW_TIMEOUT_MS,
   );
@@ -137,9 +121,7 @@ describeBorrowFlow("Borrow - Open loan", () => {
 
 describeBorrowFlow("Borrow - Repay", () => {
   beforeAll(async () => {
-    // Reset before opening rather than reusing whatever debt is already there: a leftover loan
-    // can sit on another market with another debt token, and the allowance this test zeroes —
-    // and so the approval step it expects — is specific to the default market's token.
+    // A leftover loan can sit on another market, whose debt token is not the one zeroed below.
     await resetLoanState(borrowSetupOptions);
     await ensureLoanOpen(borrowSetupOptions);
     await initBorrowApp();
@@ -151,16 +133,12 @@ describeBorrowFlow("Borrow - Repay", () => {
     await resetBorrowState("repay");
   }, BORROW_TIMEOUT_MS);
 
-  setTeamOwner(Team.EARN);
-  $TmsLink("B2CQA-6073");
-  BORROW_TAGS.forEach(tag => $Tag(tag));
+  annotateBorrowFlow("B2CQA-6073");
 
   it(
     "should repay an open loan in full through approval and repayment",
     async () => {
-      await app.portfolio.expectBorrowEntryPointVisible();
-      await app.portfolio.clickBorrowEntryPoint();
-      await app.borrow.expectBorrowScreenVisible();
+      await app.borrow.openFromPortfolio();
 
       await app.borrow.expectHotStartDashboard();
       await app.borrow.openActiveLoan();
@@ -171,7 +149,7 @@ describeBorrowFlow("Borrow - Repay", () => {
       await app.borrow.completeRepayApprovalStep();
       await app.borrow.authorizeRepay();
 
-      await expect(app.borrow.expectRepaySuccess()).resolves.toBeUndefined();
+      await app.borrow.expectRepaySuccess();
     },
     BORROW_TIMEOUT_MS,
   );
@@ -179,8 +157,6 @@ describeBorrowFlow("Borrow - Repay", () => {
 
 describeBorrowFlow("Borrow - Withdraw", () => {
   beforeAll(async () => {
-    // Unconditionally reset, open and repay through the API, for the same reason as repay: the
-    // idempotent variant would hand the UI whatever repaid position happened to be lying around.
     await ensureLoanRepaidForWithdraw(borrowSetupOptions);
     await initBorrowApp();
     await app.mainNavigation.openPortfolioViaDeeplink();
@@ -190,16 +166,12 @@ describeBorrowFlow("Borrow - Withdraw", () => {
     await resetBorrowState("withdraw");
   }, BORROW_TIMEOUT_MS);
 
-  setTeamOwner(Team.EARN);
-  $TmsLink("B2CQA-6080");
-  BORROW_TAGS.forEach(tag => $Tag(tag));
+  annotateBorrowFlow("B2CQA-6080");
 
   it(
     "should withdraw the collateral of a fully repaid loan",
     async () => {
-      await app.portfolio.expectBorrowEntryPointVisible();
-      await app.portfolio.clickBorrowEntryPoint();
-      await app.borrow.expectBorrowScreenVisible();
+      await app.borrow.openFromPortfolio();
 
       await app.borrow.expectHotStartDashboard();
       await app.borrow.openRepaidLoan();
@@ -207,7 +179,7 @@ describeBorrowFlow("Borrow - Withdraw", () => {
       await app.borrow.clickWithdrawCollateral();
       await app.borrow.authorizeWithdraw();
 
-      await expect(app.borrow.expectWithdrawSuccess()).resolves.toBeUndefined();
+      await app.borrow.expectWithdrawSuccess();
       await app.borrow.clickBackToMyLoans();
     },
     BORROW_TIMEOUT_MS,
