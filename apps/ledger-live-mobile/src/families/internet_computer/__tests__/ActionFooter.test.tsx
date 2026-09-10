@@ -11,11 +11,12 @@ const renderFooter = (
   errors: Record<string, Error>,
   pristineField?: "amount" | "transaction",
   warnings: Record<string, Error> = {},
+  bridgePending = false,
 ) =>
   render(
     <ActionFooter
       status={{ errors, warnings } as never}
-      bridgePending={false}
+      bridgePending={bridgePending}
       onContinue={jest.fn()}
       pristineField={pristineField}
     />,
@@ -79,6 +80,16 @@ describe("ActionFooter", () => {
     renderFooter({ amount: makeError("NotEnoughTransferAmount") });
 
     expect(screen.getByText("Amount too small")).toBeVisible();
+  });
+
+  // Every recompute after the first is debounced by DEBOUNCE_STATUS_DELAY, so `status` still
+  // describes the previous entry for that window — long enough to read as a fault on what was just
+  // typed. Continue stays disabled throughout, so nothing unvalidated gets past it.
+  it("stays quiet while the bridge is still recomputing", () => {
+    renderFooter({ amount: makeError("NotEnoughTransferAmount") }, undefined, {}, true);
+
+    expect(screen.queryByText("Amount too small")).toBeNull();
+    expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
   });
 });
 

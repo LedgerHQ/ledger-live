@@ -37,7 +37,12 @@ export default function ActionFooter({
   // Blocking is measured over every error, including one this footer chooses not to report: the
   // entry is still invalid whether or not saying so yet would help.
   const blocking = errors.length > 0;
-  const reported = errors.find(([field]) => field !== pristineField)?.[1];
+  // Withheld while the bridge recomputes: getTransactionStatus is debounced, so an edit leaves the
+  // previous entry's verdict on screen for that window — long enough to read as a fault on what was
+  // just typed. Continue stays disabled throughout, so nothing unvalidated gets through.
+  const reported = bridgePending
+    ? undefined
+    : errors.find(([field]) => field !== pristineField)?.[1];
   // The bridge files staking notices under `warnings.staking`, a slot nothing has ever read: the
   // generic send flow renders `warnings.amount` and `warnings.transaction` only. This is the family's
   // own footer, so it is where a notice raised on every stake and every top-up can reach the user.
