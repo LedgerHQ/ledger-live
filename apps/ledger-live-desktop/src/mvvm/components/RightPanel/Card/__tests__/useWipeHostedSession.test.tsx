@@ -81,4 +81,20 @@ describe("useWipeHostedSessionOnSignInChange", () => {
 
     expect(mockedInvoke).not.toHaveBeenCalled();
   });
+
+  it("still wipes once the manifests resolve, for a sign-in seen while they had not", () => {
+    manifestsFrom({});
+    const { store, rerender } = renderHook(() => useWipeHostedSessionOnSignInChange());
+
+    signIn(store, true);
+    expect(mockedInvoke).not.toHaveBeenCalled();
+
+    manifestsFrom(CATALOG);
+    rerender();
+
+    expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [
+      "https://dev.api.baanx.test",
+      "https://ledger.baanxapi.test",
+    ]);
+  });
 });
