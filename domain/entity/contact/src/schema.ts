@@ -18,6 +18,7 @@ export const ContactCurrencyIdSchema = z.union([CryptoCurrencyIdSchema, TokenCur
 
 const ContactNamePattern =
   /^\p{L}[\p{L}\p{Mn}\p{Mc}\p{Nd}]*(?:[\p{Zs}'\u2019-][\p{L}\p{Nd}][\p{L}\p{Mn}\p{Mc}\p{Nd}]*)*$/u;
+const LatinDiacriticPattern = /\p{Script=Latin}\p{M}/u;
 const ContactAddressLabelPattern = /^(?=.*[A-Za-z0-9])[\x20-\x7E]+$/;
 
 export const CONTACT_NAME_MAX_LENGTH = 32;
@@ -30,6 +31,9 @@ export const ContactNameSchema = z
     error: () => new InvalidContactNameError().name,
   })
   .regex(ContactNamePattern, {
+    error: () => new InvalidContactNameError().name,
+  })
+  .refine(name => !LatinDiacriticPattern.test(name.normalize("NFD")), {
     error: () => new InvalidContactNameError().name,
   })
   .brand<"ContactName">();

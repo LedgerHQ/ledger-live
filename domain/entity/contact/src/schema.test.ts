@@ -48,15 +48,19 @@ describe("ContactSchema", () => {
   });
 
   it("accepts international contact names with numbers", () => {
-    expect(ContactNameInputSchema.parse(" E\u0301lodie ")).toBe("Élodie");
+    expect(ContactNameInputSchema.parse(" Jean-Luc ")).toBe("Jean-Luc");
     expect(ContactNameSchema.parse("Jean-Luc O'Connor")).toBe("Jean-Luc O'Connor");
     expect(ContactNameSchema.parse("Coinbase 1")).toBe("Coinbase 1");
     expect(ContactNameSchema.parse("Web3")).toBe("Web3");
     expect(ContactNameSchema.parse("Алексей")).toBe("Алексей");
     expect(ContactNameSchema.parse("مريم")).toBe("مريم");
+    expect(ContactNameSchema.parse("田中")).toBe("田中");
+    expect(ContactNameSchema.parse("नमस्ते")).toBe("नमस्ते");
   });
 
   it("rejects unsupported contact name characters", () => {
+    expect(() => ContactNameSchema.parse("Élodie")).toThrow();
+    expect(() => ContactNameSchema.parse("E\u0301lodie")).toThrow();
     expect(() => ContactNameSchema.parse("\u0301")).toThrow();
     expect(() => ContactNameSchema.parse("1Password")).toThrow();
     expect(() => ContactNameSchema.parse("@Olive")).toThrow();
