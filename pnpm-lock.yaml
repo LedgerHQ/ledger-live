@@ -49,8 +49,8 @@ catalogs:
       specifier: 9.6.0
       version: 9.6.0
     '@ledgerhq/coin-tezos':
-      specifier: 10.2.2
-      version: 10.2.2
+      specifier: 10.2.4
+      version: 10.2.4
     '@ledgerhq/coin-xrp':
       specifier: 10.1.0
       version: 10.1.0
@@ -11866,7 +11866,7 @@ importers:
         version: link:../../coin-tester
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 10.2.2
+        version: 10.2.4
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -13033,7 +13033,7 @@ importers:
         version: link:../coin-modules/coin-sui
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 10.2.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)
+        version: 10.2.4(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/coin-ton':
         specifier: workspace:^
         version: link:../coin-modules/coin-ton
@@ -22353,17 +22353,21 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
+  '@ledgerhq/coin-module-framework@8.5.0':
+    resolution: {integrity: sha512-wIEcjk0BZAsDTEIgYEyiTsoeP0J6GXkVVUHfzzIZ8/n+mWCIhu2K0JDoKHNi2sovteCd6Mxw+aoLk/9kmI6e4w==}
+    peerDependencies:
+      '@ledgerhq/live-network': ^3.0.0
+
   '@ledgerhq/coin-stellar@9.6.0':
     resolution: {integrity: sha512-r1Pi5nZ/bvNDbHvMkJVq5PnSoA05wv5+mS8TryCTVNh5BKfPlr4MnFVKDjTV7NWxPYGCHcrChAO9IA1Ri8uA5w==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/coin-tezos@10.2.2':
-    resolution: {integrity: sha512-yFQQ7adR6xJG0Mv5U9YHEzyv0xP3IdGWuTNAFlEnX9njp6me2y/gZl2+GI2pBpWscIRVqqzjaxkHfB/qdLiw4A==}
+  '@ledgerhq/coin-tezos@10.2.4':
+    resolution: {integrity: sha512-qgBV3NeQSGMPJIbbF8wAor6RRKRLUAF7UZr4e7pC8Br02GYdggqCgXYYRIKApLeWGzhdHQJKaFg4GSnv8fiYRA==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
-      '@ledgerhq/logs': ^6.17.0
 
   '@ledgerhq/coin-xrp@10.1.0':
     resolution: {integrity: sha512-qkKVgvmJEdGhkIs3Om8X9IQCNGa9w73vdN2CSMT6J/4Je/i8+S/RYEIBiFLe9+0J8wNcEUYr9oxIfIUztQ5XLw==}
@@ -47790,6 +47794,15 @@ snapshots:
       '@ledgerhq/live-network': link:libs/live-network
       bignumber.js: 9.1.2
 
+  '@ledgerhq/coin-module-framework@8.5.0':
+    dependencies:
+      bignumber.js: 9.1.2
+
+  '@ledgerhq/coin-module-framework@8.5.0(@ledgerhq/live-network@libs+live-network)':
+    dependencies:
+      '@ledgerhq/live-network': link:libs/live-network
+      bignumber.js: 9.1.2
+
   '@ledgerhq/coin-stellar@9.6.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
@@ -47801,9 +47814,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@ledgerhq/coin-tezos@10.2.2':
+  '@ledgerhq/coin-tezos@10.2.4':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.4.0
+      '@ledgerhq/coin-module-framework': 8.5.0
       '@taquito/ledger-signer': 23.0.1
       '@taquito/rpc': 23.0.1
       '@taquito/taquito': 23.0.1
@@ -47811,11 +47824,10 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-tezos@10.2.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-tezos@10.2.4(@ledgerhq/live-network@libs+live-network)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
-      '@ledgerhq/logs': 6.19.0
       '@taquito/ledger-signer': 23.0.1
       '@taquito/rpc': 23.0.1
       '@taquito/taquito': 23.0.1
