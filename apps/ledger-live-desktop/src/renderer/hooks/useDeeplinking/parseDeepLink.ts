@@ -277,6 +277,7 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
     case "paytab": {
       const route: PayTabRoute = {
         type: "paytab",
+        code: query.code,
       };
       return route;
     }

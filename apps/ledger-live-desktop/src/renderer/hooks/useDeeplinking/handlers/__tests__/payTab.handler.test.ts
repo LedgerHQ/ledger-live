@@ -12,7 +12,15 @@ describe("payTab.handler", () => {
 
       payTabHandler({ type: "paytab" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/paytab");
+      expect(context.navigate).toHaveBeenCalledWith("/paytab", undefined);
+    });
+
+    it("carries the Card login authorization code as router state", () => {
+      const context = createMockContext({ isPayTabEnabled: true });
+
+      payTabHandler({ type: "paytab", code: "auth-code" }, context);
+
+      expect(context.navigate).toHaveBeenCalledWith("/paytab", { code: "auth-code" });
     });
 
     it("falls back to the default handler when the lwdPayTab flag is disabled", () => {
