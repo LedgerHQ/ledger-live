@@ -5,9 +5,15 @@
  *
  * @example
  * ```ts
- * import { setAnalytics, setEnabledFn, setExtraPropsFn, setMandatoryExtraPropsFn, setPropsFilter } from "@ledgerhq/analytics/registry";
+ * import {
+ *   setAnalytics,
+ *   setEnabledFn,
+ *   setExtraPropsFn,
+ *   setMandatoryExtraPropsFn,
+ *   setPropsFilter,
+ * } from "@shared/analytics";
  *
- * setAnalytics({ track: jest.fn() });
+ * setAnalytics({ track: async (_event, _props) => {} });
  * setEnabledFn(() => true);
  * setExtraPropsFn(() => ({ extra: "props" }));
  * setMandatoryExtraPropsFn(() => ({ mandatory: "props" }));
@@ -16,6 +22,7 @@
  *   delete filtered.sensitive;
  *   return filtered;
  * });
+ * ```
  */
 
 import type {
