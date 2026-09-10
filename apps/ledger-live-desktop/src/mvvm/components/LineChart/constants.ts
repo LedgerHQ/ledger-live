@@ -13,7 +13,7 @@ export const LINE_CHART_RANGES: readonly LineChartRange[] = [
 
 export const DEFAULT_LINE_CHART_HEIGHT = 240;
 
-/** Matches @ledgerhq/lumen-ui-react-visualization CartesianChart overflow margins. */
+/** Matches @ledgerhq/lumen-ui-react/visualization CartesianChart overflow margins. */
 export const LUMEN_CHART_OVERFLOW_MARGIN = 30;
 
 export const LINE_CHART_DRAWING_INSET = {
