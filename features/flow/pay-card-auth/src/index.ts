@@ -2,6 +2,7 @@ export { CardLogin } from "./components/CardLogin";
 export type { CardLoginProps, PayCardLoginTrackEvent } from "./components/CardLogin/types";
 export { buildHostedPageUrl } from "./state/buildHostedPageUrl";
 export { buildHostedUrl } from "./state/buildHostedUrl";
+export { SIGNUP_PATH } from "./state/buildSignupUrl";
 export type { OpenHostedLogin, HostedLoginResult } from "./state/types";
 export type { CardLoginOauthConfig, PayCardAuthCallback } from "./state/types";
 export type { PayCardAuthStatus } from "./state/types";
