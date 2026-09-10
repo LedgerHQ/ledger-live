@@ -1,4 +1,4 @@
-import type { Props } from "src/types";
+import type { Props } from "../types";
 
 export function normalizeProperties(properties?: Error | Props | null): Props {
   if (properties == null) {
