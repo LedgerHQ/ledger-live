@@ -9,7 +9,6 @@ import {
   setMandatoryExtraPropsFn,
   setPropsFilter,
 } from "./registry";
-import type { Props } from "./types";
 
 beforeEach(() => {
   setAnalytics({ track: jest.fn() });
@@ -57,11 +56,13 @@ describe("registry", () => {
   describe("resolveExtraProps", () => {
     it("uses the extra props function for non-mandatory events", () => {
       setExtraPropsFn(() => ({ extra: "props" }));
+      setMandatoryExtraPropsFn(() => ({ mandatory: "props" }));
 
       expect(resolveExtraProps(false)).toEqual({ extra: "props" });
     });
 
     it("uses the mandatory extra props function for mandatory events", () => {
+      setExtraPropsFn(() => ({ extra: "props" }));
       setMandatoryExtraPropsFn(() => ({ mandatory: "props" }));
 
       expect(resolveExtraProps(true)).toEqual({ mandatory: "props" });
@@ -75,9 +76,9 @@ describe("registry", () => {
 
   describe("applyPropsFilter", () => {
     it("returns props unchanged when no filter is registered", () => {
-      const props: Props = { theme: "light" };
-
-      expect(applyPropsFilter(props)).toBe(props);
+      expect(applyPropsFilter({ harmless: "unfiltered" })).toStrictEqual({
+        harmless: "unfiltered",
+      });
     });
 
     it("runs props through the registered filter", () => {
@@ -87,8 +88,8 @@ describe("registry", () => {
         return filtered;
       });
 
-      expect(applyPropsFilter({ sensitive: "secret", theme: "light" })).toEqual({
-        theme: "light",
+      expect(applyPropsFilter({ sensitive: "filtered", harmless: "unfiltered" })).toEqual({
+        harmless: "unfiltered",
       });
     });
   });
