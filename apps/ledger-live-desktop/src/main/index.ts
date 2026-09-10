@@ -123,14 +123,6 @@ app.on("ready", async () => {
   // for it (see @ledgerhq/coin-zcash/network/ipc/main-host).
   setupZcashNativeHost();
 
-  /**
-   * Clears the session’s HTTP cache
-   * Used to remove third party cached auth tokens, among other things
-   */
-  ipcMain.handle("clearStorageData", () => {
-    const defaultSession = session.defaultSession;
-    return defaultSession.clearStorageData();
-  });
   ipcMain.handle("clearCardHostedSessionData", (_event, origins) =>
     clearHostedSessionData(session.defaultSession, origins),
   );
