@@ -12,6 +12,7 @@ import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import type { CardViewModel } from "./types";
+import { useUnlockForCardNumbers } from "./useUnlockForCardNumbers";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
 function readCallbackCode(state: unknown): string | undefined {
@@ -114,10 +115,14 @@ export function useCardViewModel(): CardViewModel {
     [oauthConfig, callback, openHostedLogin, openHostedPage, onTrackEvent],
   );
 
+  const { unlock, dialog: unlockDialog } = useUnlockForCardNumbers();
+
   return {
     title: t("payTab.card.title"),
     balanceLabel: t("payTab.card.balanceLabel"),
     formatters,
     login,
+    unlock,
+    unlockDialog,
   };
 }
