@@ -2,6 +2,7 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import type { ContactId } from "@domain/entity-contact";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
+import { I18nTestProvider, type I18nTestProviderProps } from "@shared/i18n/testing";
 import type { ContactsPageViewModel } from "./types";
 import {
   createContactsSearchViewModel,
@@ -10,13 +11,25 @@ import {
 } from "./model/viewModel";
 import { ContactsListView } from "./ContactsListView.web";
 
-const labels = {
-  title: "Contacts",
-  searchPlaceholder: "Search contact",
-  searchNoResults: "No contact found",
-  addContact: "Add contact",
-  ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
-  formatAddressCount: (count: number) => `${count} address`,
+const resources: I18nTestProviderProps["resources"] = {
+  en: {
+    translation: {
+      contacts: {
+        title: "Contacts",
+        searchPlaceholder: "Search contact",
+        searchNoResults: "No contact found",
+        addContact: "Add contact",
+        addressCount_zero: "0 address",
+        addressCount_one: "{{count}} address",
+        addressCount_other: "{{count}} addresses",
+        ledgerSyncIntroduction: {
+          checkingAccessibilityLabel: "Checking Ledger Sync status",
+        },
+        me: { myAddresses: "My addresses" },
+        detail: { meDisplayName: "My wallets ({{name}})" },
+      },
+    },
+  },
 };
 
 type RenderContactsPageOptions = Readonly<{
@@ -47,36 +60,37 @@ function renderContactsPage({
   onSearchInputChange = jest.fn(),
 }: RenderContactsPageOptions = {}) {
   render(
-    <ContactsListView
-      viewModel={viewModel}
-      labels={labels}
-      meAvatarSrc="https://example.com/black/user.png"
-      onOpenMe={onOpenMe}
-      onOpenContact={onOpenContact}
-      onAddContact={onAddContact}
-      searchQuery={searchQuery}
-      onSearchInputChange={onSearchInputChange}
-      isLedgerSyncChecking={isLedgerSyncChecking}
-      featureIntroduction={
-        isFeatureIntroductionOpen ? (
-          <div>
-            <p>Introducing Contacts</p>
-            <button onClick={onCompleteFeatureIntroduction}>Try contacts</button>
-          </div>
-        ) : undefined
-      }
-      ledgerSyncIntroduction={
-        isIntroductionOpen ? (
-          <div>
-            <p>
-              Your contacts are end-to-end encrypted with your Ledger and synced across your
-              devices, only you can unlock them.
-            </p>
-            <button onClick={onDismissIntroduction}>Got it</button>
-          </div>
-        ) : undefined
-      }
-    />,
+    <I18nTestProvider resources={resources}>
+      <ContactsListView
+        viewModel={viewModel}
+        meAvatarSrc="https://example.com/black/user.png"
+        onOpenMe={onOpenMe}
+        onOpenContact={onOpenContact}
+        onAddContact={onAddContact}
+        searchQuery={searchQuery}
+        onSearchInputChange={onSearchInputChange}
+        isLedgerSyncChecking={isLedgerSyncChecking}
+        featureIntroduction={
+          isFeatureIntroductionOpen ? (
+            <div>
+              <p>Introducing Contacts</p>
+              <button onClick={onCompleteFeatureIntroduction}>Try contacts</button>
+            </div>
+          ) : undefined
+        }
+        ledgerSyncIntroduction={
+          isIntroductionOpen ? (
+            <div>
+              <p>
+                Your contacts are end-to-end encrypted with your Ledger and synced across your
+                devices, only you can unlock them.
+              </p>
+              <button onClick={onDismissIntroduction}>Got it</button>
+            </div>
+          ) : undefined
+        }
+      />
+    </I18nTestProvider>,
   );
 
   return {
@@ -218,17 +232,18 @@ describe("ContactsPage", () => {
     const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
 
     render(
-      <ContactsListView
-        viewModel={createContactsSearchViewModel(me, contacts, "ben")}
-        labels={labels}
-        meAvatarSrc="https://example.com/black/user.png"
-        onOpenMe={jest.fn()}
-        onOpenContact={jest.fn()}
-        onAddContact={jest.fn()}
-        searchQuery="ben"
-        onSearchInputChange={jest.fn()}
-        isLedgerSyncChecking={false}
-      />,
+      <I18nTestProvider resources={resources}>
+        <ContactsListView
+          viewModel={createContactsSearchViewModel(me, contacts, "ben")}
+          meAvatarSrc="https://example.com/black/user.png"
+          onOpenMe={jest.fn()}
+          onOpenContact={jest.fn()}
+          onAddContact={jest.fn()}
+          searchQuery="ben"
+          onSearchInputChange={jest.fn()}
+          isLedgerSyncChecking={false}
+        />
+      </I18nTestProvider>,
     );
 
     const contactsList = screen.getByTestId("contacts-list");
@@ -243,17 +258,18 @@ describe("ContactsPage", () => {
     const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
 
     render(
-      <ContactsListView
-        viewModel={createContactsSearchViewModel(me, contacts, "unknown")}
-        labels={labels}
-        meAvatarSrc="https://example.com/black/user.png"
-        onOpenMe={jest.fn()}
-        onOpenContact={jest.fn()}
-        onAddContact={jest.fn()}
-        searchQuery="unknown"
-        onSearchInputChange={jest.fn()}
-        isLedgerSyncChecking={false}
-      />,
+      <I18nTestProvider resources={resources}>
+        <ContactsListView
+          viewModel={createContactsSearchViewModel(me, contacts, "unknown")}
+          meAvatarSrc="https://example.com/black/user.png"
+          onOpenMe={jest.fn()}
+          onOpenContact={jest.fn()}
+          onAddContact={jest.fn()}
+          searchQuery="unknown"
+          onSearchInputChange={jest.fn()}
+          isLedgerSyncChecking={false}
+        />
+      </I18nTestProvider>,
     );
 
     const contactsList = screen.getByTestId("contacts-list");

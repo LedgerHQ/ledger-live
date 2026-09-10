@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "@shared/i18n";
 import { isContactsSearchNoResultsViewModel, type ContactsListViewProps } from "./types";
 import { ContactsLedgerSyncLoadingPane } from "./components/LedgerSyncLoadingPane/ContactsLedgerSyncLoadingPane.web";
 import { ContactsList } from "./components/ContactsList/ContactsList.web";
@@ -21,6 +22,7 @@ function renderContactsDetailPane(
 
 export function ContactsListView(props: ContactsListViewProps): React.ReactNode {
   const { isLedgerSyncChecking } = props;
+  const { t } = useTranslation();
   const showAddContact = !isContactsSearchNoResultsViewModel(props.viewModel);
   const contactsList = <ContactsList {...props} />;
 
@@ -32,8 +34,8 @@ export function ContactsListView(props: ContactsListViewProps): React.ReactNode 
         inert={isLedgerSyncChecking}
       >
         <ContactsPageLayout
-          title={props.labels.title}
-          addContactLabel={props.labels.addContact}
+          title={t("contacts.title")}
+          addContactLabel={t("contacts.addContact")}
           showAddContact={showAddContact}
           onAddContact={props.onAddContact}
           list={

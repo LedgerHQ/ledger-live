@@ -46,37 +46,19 @@ export type ContactsSearchViewModel =
 
 export type ContactsPageViewModel = ContactsListViewModel | ContactsSearchViewModel;
 
-export type ContactsListViewLabels = Readonly<{
-  title: string;
-  searchPlaceholder: string;
-  searchNoResults: string;
-  addContact: string;
-  ledgerSyncCheckingAccessibilityLabel?: string;
-  formatAddressCount: (count: number) => string;
-  formatMeDisplayName?: (name: string) => string;
-}>;
-
-export type ContactsCompactListLabels = Readonly<{
-  emptyAddress: string;
-  formatAddressCount: (count: number) => string;
-}>;
-
 export type ContactsCompactRowProps = Readonly<{
   contact: Contact;
-  labels: ContactsCompactListLabels;
   onContactSelect: (contact: Contact) => void;
 }>;
 
 export type ContactsCompactListProps = Readonly<{
   contacts: readonly Contact[];
-  labels: ContactsCompactListLabels;
   maxContacts?: number;
   onContactSelect: (contact: Contact) => void;
 }>;
 
 export type ContactsPageSharedProps = Readonly<{
   viewModel: ContactsPageViewModel;
-  labels: ContactsListViewLabels;
   searchQuery: string;
   meAvatarSrc: string;
   onOpenContact: (contactId: ContactId) => void;

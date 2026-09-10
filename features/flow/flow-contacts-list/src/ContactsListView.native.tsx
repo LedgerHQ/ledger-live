@@ -6,6 +6,7 @@ import {
   type SectionListRenderItemInfo,
 } from "react-native";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "@shared/i18n";
 import type { ContactsListItem, ContactsListSection, ContactsListViewNativeProps } from "./types";
 import { createContactsListRowLayouts } from "./utils";
 import { ContactsListHeader } from "./components/ListHeader/ContactsListHeader.native";
@@ -20,7 +21,6 @@ const noContactsListSections: readonly never[] = [];
 
 export function ContactsListView({
   viewModel,
-  labels,
   meAvatarSrc,
   onOpenContact,
   onAddContact,
@@ -29,6 +29,7 @@ export function ContactsListView({
   onSearchQueryChange,
   surface = "base",
 }: ContactsListViewNativeProps): React.JSX.Element {
+  const { t } = useTranslation();
   const isPopulated = viewModel.displayMode === "populated";
   const hasNoResults = "status" in viewModel && viewModel.status === "no-results";
   const me = "me" in viewModel ? viewModel.me : undefined;
@@ -60,12 +61,12 @@ export function ContactsListView({
       <Box onLayout={onContactRowLayout}>
         <ContactsSavedContactListItem
           contact={item}
-          addressCountLabel={labels.formatAddressCount(item.addressCount)}
+          addressCountLabel={t("contacts.addressCount", { count: item.addressCount })}
           onOpen={onOpenContact}
         />
       </Box>
     ),
-    [labels, onContactRowLayout, onOpenContact],
+    [t, onContactRowLayout, onOpenContact],
   );
   const rowLayouts = useMemo(
     () => createContactsListRowLayouts(sections, sectionHeaderHeight, contactRowHeight),
@@ -92,7 +93,6 @@ export function ContactsListView({
   const listHeader = (
     <ContactsListHeader
       me={me}
-      labels={labels}
       meAvatarSrc={meAvatarSrc}
       showAddContact={!isPopulated && !hasNoResults}
       onOpenContact={onOpenContact}
@@ -151,7 +151,7 @@ export function ContactsListView({
     content = (
       <Box lx={{ flex: 1, paddingHorizontal: "s16", paddingTop: "s8" }}>
         {listHeader}
-        <ContactsSearchNoResults message={labels.searchNoResults} />
+        <ContactsSearchNoResults message={t("contacts.searchNoResults")} />
       </Box>
     );
   } else {
@@ -184,7 +184,7 @@ export function ContactsListView({
           }}
         >
           <ContactsSearchInput
-            placeholder={labels.searchPlaceholder}
+            placeholder={t("contacts.searchPlaceholder")}
             value={searchQuery}
             onSearchQueryChange={onSearchQueryChange}
           />
@@ -204,7 +204,7 @@ export function ContactsListView({
           }}
           accessible
           accessibilityRole="progressbar"
-          accessibilityLabel={labels.ledgerSyncCheckingAccessibilityLabel ?? labels.title}
+          accessibilityLabel={t("contacts.ledgerSyncIntroduction.checkingAccessibilityLabel")}
           accessibilityState={{ busy: true }}
         >
           <Spinner testID="contacts-ledger-sync-spinner" />

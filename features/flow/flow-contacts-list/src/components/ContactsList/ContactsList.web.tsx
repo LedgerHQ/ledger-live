@@ -9,11 +9,11 @@ import { ContactsAddContactListItem } from "./ListItems/ContactsAddContactListIt
 import { ContactsMeListItem } from "./ListItems/ContactsMeListItem.web";
 import { ContactsSavedListItem } from "./ListItems/ContactsSavedListItem.web";
 import { ContactsSearchNoResults } from "./Search/ContactsSearchNoResults.web";
+import { useTranslation } from "@shared/i18n";
 
 type ContactsListProps = Pick<
   ContactsListViewProps,
   | "viewModel"
-  | "labels"
   | "searchQuery"
   | "meAvatarSrc"
   | "onSearchInputChange"
@@ -24,7 +24,6 @@ type ContactsListProps = Pick<
 
 export function ContactsList({
   viewModel,
-  labels,
   searchQuery,
   meAvatarSrc,
   onSearchInputChange,
@@ -32,6 +31,7 @@ export function ContactsList({
   onOpenContact,
   onAddContact,
 }: ContactsListProps): React.ReactNode {
+  const { t } = useTranslation();
   const savedContactSections = isPopulatedContactsListViewModel(viewModel)
     ? viewModel.sections
     : [];
@@ -41,7 +41,7 @@ export function ContactsList({
 
   let savedContactsContent: React.ReactNode = null;
   if (showNoResults) {
-    savedContactsContent = <ContactsSearchNoResults message={labels.searchNoResults} />;
+    savedContactsContent = <ContactsSearchNoResults message={t("contacts.searchNoResults")} />;
   } else if (savedContactSections.length > 0) {
     savedContactsContent = (
       <div className="flex flex-col gap-16">
@@ -59,7 +59,7 @@ export function ContactsList({
                 <ContactsSavedListItem
                   key={contact.contactId}
                   contact={contact}
-                  formatAddressCount={labels.formatAddressCount}
+                  formatAddressCount={count => t("contacts.addressCount", { count })}
                   onOpen={onOpenContact}
                 />
               ))}
@@ -75,8 +75,8 @@ export function ContactsList({
       <div className="flex shrink-0 flex-col gap-8">
         <SearchInput
           value={searchQuery}
-          placeholder={labels.searchPlaceholder}
-          aria-label={labels.searchPlaceholder}
+          placeholder={t("contacts.searchPlaceholder")}
+          aria-label={t("contacts.searchPlaceholder")}
           data-testid="contacts-list-search"
           onChange={onSearchInputChange}
         />
@@ -84,7 +84,7 @@ export function ContactsList({
           <ContactsMeListItem
             contact={me}
             avatarSrc={meAvatarSrc}
-            formatAddressCount={labels.formatAddressCount}
+            formatAddressCount={count => t("contacts.addressCount", { count })}
             onOpen={onOpenMe}
           />
         ) : null}
@@ -96,7 +96,10 @@ export function ContactsList({
         <div className="flex flex-col gap-16">
           {savedContactsContent}
           {showAddContact ? (
-            <ContactsAddContactListItem label={labels.addContact} onAddContact={onAddContact} />
+            <ContactsAddContactListItem
+              label={t("contacts.addContact")}
+              onAddContact={onAddContact}
+            />
           ) : null}
         </div>
       </div>

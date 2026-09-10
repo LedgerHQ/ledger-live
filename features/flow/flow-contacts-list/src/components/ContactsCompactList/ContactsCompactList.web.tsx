@@ -12,13 +12,14 @@ import {
   getCompactContactAddressDescription,
   getDisplayedCompactContacts,
 } from "./utils/ContactsCompactList.utils";
+import { useTranslation } from "@shared/i18n";
 
 export function ContactsCompactList({
   contacts,
-  labels,
   maxContacts,
   onContactSelect,
 }: ContactsCompactListProps): React.JSX.Element {
+  const { t } = useTranslation();
   const displayedContacts = getDisplayedCompactContacts(contacts, maxContacts);
 
   return (
@@ -34,7 +35,11 @@ export function ContactsCompactList({
             <ListItemContent>
               <ListItemTitle>{contact.name}</ListItemTitle>
               <ListItemDescription>
-                {getCompactContactAddressDescription(contact, labels)}
+                {getCompactContactAddressDescription(
+                  contact,
+                  t("contacts.addressCount", { count: 0 }),
+                  count => t("contacts.addressCount", { count }),
+                )}
               </ListItemDescription>
             </ListItemContent>
           </ListItemLeading>

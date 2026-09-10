@@ -1,19 +1,19 @@
 import type { Contact } from "@domain/entity-contact";
-import type { ContactsCompactListProps } from "../../../types";
 
 export function getCompactContactAddressDescription(
   contact: Contact,
-  labels: ContactsCompactListProps["labels"],
+  emptyAddress: string,
+  formatAddressCount: (count: number) => string,
 ): string {
   if (contact.addresses.length === 0) {
-    return labels.emptyAddress;
+    return emptyAddress;
   }
 
   if (contact.addresses.length === 1) {
     return contact.addresses[0].label;
   }
 
-  return labels.formatAddressCount(contact.addresses.length);
+  return formatAddressCount(contact.addresses.length);
 }
 
 export function getDisplayedCompactContacts(
