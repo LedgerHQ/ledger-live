@@ -201,13 +201,15 @@ export function useBrazeProviderViewModel() {
             enableSDK: () => {
               brazeSdk.enableSDK();
               initializeBrazeSdk(devMode, isTrackedUser);
-              braze.automaticallyShowInAppMessages();
-              braze.openSession();
             },
           },
         ),
       )
-        .then(() => true)
+        .then(() => {
+          braze.automaticallyShowInAppMessages();
+          braze.openSession();
+          return true as const;
+        })
         .catch(error => {
           console.warn("Braze consent transition failed", error);
           return false;
