@@ -68,8 +68,9 @@ export function useCardViewModel(): CardViewModel {
   // The state, when the redirect carried one, only lets the flow recognize its own attempt's redirect.
   const callback: CardViewModel["callback"] = useMemo(() => {
     const code = readCallbackCode(state);
+    const oauthState = readCallbackState(state);
 
-    return code ? { code, state: readCallbackState(state) } : null;
+    return code ? { code, ...(oauthState ? { state: oauthState } : {}) } : null;
   }, [state]);
 
   const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
