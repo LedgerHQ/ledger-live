@@ -15,6 +15,7 @@ import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
+import { useUnlockForCardNumbers } from "LLM/features/PayTab/hooks/useUnlockForCardNumbers";
 import { track } from "~/analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
@@ -31,6 +32,7 @@ export function usePayTabViewModel() {
   const payment = usePayTabNewPayment();
   const contacts = usePayTabContacts(payment.open);
   const { isEnabled: isContactsEnabled } = useContactsFeature("mobile");
+  const { unlock, sheet: unlockSheet } = useUnlockForCardNumbers();
 
   // Read with `useEnv`, and not with `getEnv`: a tester sets these in the debug settings, and the
   // login must take the new values without a restart of the app.
@@ -80,5 +82,7 @@ export function usePayTabViewModel() {
     isContactsEnabled,
     depositOptions: deposit.depositOptions,
     bankTransferIntro: deposit.bankTransferIntro,
+    unlock,
+    unlockSheet,
   };
 }
