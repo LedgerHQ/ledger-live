@@ -1906,9 +1906,17 @@
       "title": "Say goodbye to long addresses",
       "subTitle": "Introducing Contacts. Save wallet addresses with names. Easy to find, easy to send."
     },
+    "contactNoPay": {
+      "title": "Say hello to Contacts",
+      "subTitle": "Say goodbye to long addresses. Save wallet addresses with names. Easy to find, easy to send."
+    },
     "pay": {
       "title": "Say hello to Pay",
       "subTitle": "Pay contacts, request money, and get cashback with crypto card. Now, all via one tab."
+    },
+    "payNoCard": {
+      "title": "Say hello to Pay",
+      "subTitle": "Pay contacts and request money, all via one tab."
     },
     "yield": {
       "title": "Keep your crypto, finance your projects",

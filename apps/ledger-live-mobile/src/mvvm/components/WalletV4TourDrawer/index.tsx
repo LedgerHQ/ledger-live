@@ -94,4 +94,4 @@ export const WalletV4TourDrawer = ({
 };
 
 export { useWalletV4TourDrawerViewModel } from "./hooks/useWalletV4TourDrawerViewModel";
-export type { WalletV4Tour, WalletV4TourDrawerViewModel } from "./types";
+export type { WalletV4Tour, WalletV4TourDrawerViewModel, WalletV4TourSlide } from "./types";
