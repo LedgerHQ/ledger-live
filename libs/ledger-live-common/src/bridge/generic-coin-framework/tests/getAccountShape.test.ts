@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
+import type { StakingResources } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "../getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
@@ -55,6 +56,7 @@ const adaptCoreOperationToLiveOperationMock = jest.fn();
 const extractBalanceMock = jest.fn();
 const cleanedOperationMock = jest.fn();
 jest.mock("../utils", () => ({
+  ...jest.requireActual("../utils"),
   adaptCoreOperationToLiveOperation: (...a: any[]) => adaptCoreOperationToLiveOperationMock(...a),
   extractBalance: (...a: any[]) => extractBalanceMock(...a),
   cleanedOperation: (...a: any[]) => cleanedOperationMock(...a),
@@ -73,6 +75,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
 const buildSubAccountsMock = jest.fn();
 const mergeSubAccountsMock = jest.fn();
 jest.mock("../buildSubAccounts", () => ({
+  adoptStoredSubAccountIds: jest.requireActual("../buildSubAccounts").adoptStoredSubAccountIds,
   buildSubAccounts: (...a: any[]) => buildSubAccountsMock(...a),
   mergeSubAccounts: (...a: any[]) => mergeSubAccountsMock(...a),
 }));
@@ -209,6 +212,33 @@ describe("genericGetAccountShape", () => {
         { paginationConfig: {} as any },
       );
     }
+
+    it("keeps only the freshly built sub-accounts when the sync rebuilds from scratch", async () => {
+      buildSubAccountsMock.mockReturnValue([
+        { id: "framework-id", token: { id: "tok1" }, operations: [], pendingOperations: [] },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result: any = await getShape(
+        {
+          address: "addr1",
+          initialAccount: {
+            subAccounts: [{ id: "legacy-ata-address", token: { id: "tok1" } }],
+            pendingOperations: [],
+            blockHeight: 10,
+            operations: [],
+          },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.subAccounts).toHaveLength(1);
+      expect(result.subAccounts[0].id).toBe("framework-id");
+      expect(mergeSubAccountsMock).not.toHaveBeenCalled();
+    });
 
     it("contributes nothing when the bridge has no getAssetFromToken hook", async () => {
       await callWithSubAccountToken();
@@ -1742,6 +1772,7 @@ describe("genericGetAccountShape", () => {
           stakingResources: expect.objectContaining({
             delegations: [
               {
+                positionId: "s-shares",
                 validatorAddress: "0xvalidator",
                 amount: new BigNumber(100),
                 pendingRewards: new BigNumber(0),
@@ -1749,6 +1780,7 @@ describe("genericGetAccountShape", () => {
                 shares: new BigNumber(999),
               },
               {
+                positionId: "s-noshares",
                 validatorAddress: "0xvalidator2",
                 amount: new BigNumber(50),
                 pendingRewards: new BigNumber(0),
@@ -1758,6 +1790,192 @@ describe("genericGetAccountShape", () => {
           }),
         }),
       );
+    });
+
+    test("maps stake.uid and the details bag onto StakingPositionDetails, and keeps undelegated stakes", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 200n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 200n },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "StakeAcc1",
+            address: "sol1",
+            delegate: "validator1",
+            state: "active",
+            asset: { type: "native" },
+            amount: 90n,
+            details: {
+              activeAmount: 90,
+              inactiveAmount: 0,
+              withdrawableAmount: 5,
+              lockedReserve: 2_282_880,
+              canStake: true,
+              canWithdraw: true,
+            },
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 50n,
+          stake: {
+            uid: "StakeAcc2",
+            address: "sol1",
+            state: "inactive",
+            actions: ["withdraw"],
+            asset: { type: "native" },
+            amount: 0n,
+            details: { withdrawableAmount: 50, canStake: true, canWithdraw: true },
+          },
+        },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      const getShape = genericGetAccountShape("mainnet", "solana");
+      const result = await getShape(
+        {
+          address: "sol1",
+          initialAccount: undefined,
+          currency: { id: "solana", name: "Solana", family: "solana" },
+          derivationMode: "",
+          index: 0,
+          derivationPath: "",
+          challenge: undefined,
+        } as never,
+        {} as never,
+      );
+
+      const resources = (result as { stakingResources: StakingResources }).stakingResources;
+      expect(resources.delegations).toEqual([
+        {
+          positionId: "StakeAcc1",
+          validatorAddress: "validator1",
+          amount: new BigNumber(90),
+          pendingRewards: new BigNumber(0),
+          status: "bonded",
+          activeAmount: new BigNumber(90),
+          inactiveAmount: new BigNumber(0),
+          withdrawableAmount: new BigNumber(5),
+          lockedReserve: new BigNumber(2_282_880),
+          canStake: true,
+          canWithdraw: true,
+        },
+      ]);
+      expect(resources.unbondings).toHaveLength(1);
+      expect(resources.unbondings[0]).toMatchObject({
+        positionId: "StakeAcc2",
+        validatorAddress: "",
+        status: "withdrawable",
+        withdrawableAmount: new BigNumber(50),
+      });
+    });
+
+    test("an inactive stake the chain offers no withdraw on is deactivating, not withdrawable", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 200n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 200n },
+        {
+          asset: { type: "native" },
+          value: 50n,
+          stake: {
+            uid: "tron1:unvoted",
+            address: "tron1",
+            state: "inactive",
+            actions: ["delegate", "undelegate"],
+            asset: { type: "native" },
+            amount: 50n,
+          },
+        },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      const getShape = genericGetAccountShape("mainnet", "tron");
+      const result = await getShape(
+        {
+          address: "tron1",
+          initialAccount: undefined,
+          currency: { id: "tron", name: "Tron", family: "tron" },
+          derivationMode: "",
+          index: 0,
+          derivationPath: "",
+          challenge: undefined,
+        } as never,
+        {} as never,
+      );
+
+      const resources = (result as { stakingResources: StakingResources }).stakingResources;
+      expect(resources.unbondings).toHaveLength(1);
+      expect(resources.unbondings[0]).toMatchObject({
+        positionId: "tron1:unvoted",
+        status: "deactivating",
+      });
+      expect(resources.unbondingBalance).toEqual(new BigNumber(50));
+    });
+
+    test("leaves StakingPositionDetails undefined for a chain that emits no details", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 200n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 200n },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "",
+            address: "cosmos1",
+            delegate: "cosmosvaloper1",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+          },
+        },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      const getShape = genericGetAccountShape("mainnet", "cosmos");
+      const result = await getShape(
+        {
+          address: "cosmos1",
+          initialAccount: undefined,
+          currency: { id: "cosmos", name: "Cosmos", family: "cosmos" },
+          derivationMode: "",
+          index: 0,
+          derivationPath: "",
+          challenge: undefined,
+        } as never,
+        {} as never,
+      );
+
+      const resources = (result as { stakingResources: StakingResources }).stakingResources;
+      expect(resources.delegations).toEqual([
+        {
+          validatorAddress: "cosmosvaloper1",
+          amount: new BigNumber(100),
+          pendingRewards: new BigNumber(0),
+          status: "bonded",
+        },
+      ]);
     });
 
     test("usesStakingPositions: surfaces raw Stake[] preserving uid prefixes; no stakingResources", async () => {
