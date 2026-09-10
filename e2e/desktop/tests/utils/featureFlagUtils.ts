@@ -169,6 +169,7 @@ export const getMergedFeatureFlags = ({
     // explicit defaults
     onboardingWidget: { enabled: true },
     largeScreenUpsell: { enabled: false },
+    releaseTour: { enabled: false },
     lldModularDrawer: {
       enabled: true,
       params: {

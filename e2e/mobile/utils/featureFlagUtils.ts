@@ -97,6 +97,7 @@ export const getMergedFeatureFlags = ({
       enabled: true,
     },
     largeScreenUpsell: { enabled: false },
+    releaseTour: { enabled: false },
     llmModularDrawer: {
       enabled: true,
       params: {
