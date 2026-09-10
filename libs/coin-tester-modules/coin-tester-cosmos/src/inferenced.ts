@@ -21,7 +21,12 @@ export async function spawnInferenced(): Promise<void> {
   // silently runs the previous entrypoint).
   await compose.upAll({
     ...composeOptions,
-    commandOptions: ["--wait", "--build"],
+    // `--remove-orphans` sweeps a sibling devnet container left behind by an
+    // interrupted run: the three compose files share one compose project
+    // (the directory name) and all bind 1317/26657/9090, so a leaked
+    // container from another scenario would otherwise still hold the ports
+    // and this `up` would fail with "port is already allocated".
+    commandOptions: ["--wait", "--build", "--remove-orphans"],
   });
   console.log(chalk.bgBlueBright(" -  INFERENCED READY ✅  - "));
 }

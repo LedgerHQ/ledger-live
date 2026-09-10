@@ -1,4 +1,12 @@
-FROM --platform=linux/amd64 babylonlabs/babylond:v4.3.0@sha256:9143d4317c5d7ee51392ae87b6ff4080a7a6beb34b1df08d792db208fea0e00a
+# Pinned to the multi-arch manifest LIST digest, deliberately WITHOUT a
+# --platform flag, so each host builds for its own architecture: amd64 on CI
+# runners, arm64 natively on Apple Silicon. Forcing linux/amd64 here (and the
+# amd64-only image digest 9143d431…) made babylond run under emulation, where
+# it dies instantly with SIGILL — container exit 132 — on an arm64 host.
+# v4.3.0 publishes both linux/amd64 and linux/arm64; the list digest covers
+# both and stays reproducible. Re-verify with:
+#   docker buildx imagetools inspect babylonlabs/babylond:<tag>
+FROM babylonlabs/babylond:v4.3.0@sha256:11cc4c98abe84940744d8ee0292ea1fc14c086e4029fbe905b5d14993318c13d
 
 USER root
 

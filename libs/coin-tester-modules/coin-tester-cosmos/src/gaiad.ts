@@ -18,7 +18,12 @@ export async function spawnGaiad(): Promise<void> {
   console.log("Starting gaiad...");
   await compose.upAll({
     ...composeOptions,
-    commandOptions: ["--wait", "--build"],
+    // `--remove-orphans` sweeps a sibling devnet container left behind by an
+    // interrupted run: the three compose files share one compose project
+    // (the directory name) and all bind 1317/26657/9090, so a leaked
+    // container from another scenario would otherwise still hold the ports
+    // and this `up` would fail with "port is already allocated".
+    commandOptions: ["--wait", "--build", "--remove-orphans"],
   });
   console.log(chalk.bgBlueBright(" -  GAIAD READY ✅  - "));
 }

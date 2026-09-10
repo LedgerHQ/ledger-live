@@ -55,6 +55,12 @@ alone, so no peering is needed. State lives in the container filesystem and is
 discarded on teardown. The three never run concurrently (Jest runs
 `--runInBand`), so they can all reuse the same host ports (1317/26657/9090).
 
+Because the three compose files share one compose project (the directory name),
+an interrupted run leaves a sibling container still holding those ports, and the
+next scenario's `up` would fail with `port is already allocated`. Each `up`
+therefore passes `--remove-orphans`, so a leaked devnet from a previous run is
+cleared instead of blocking the next one.
+
 - **Cosmos Hub** (`docker-compose.gaia.yml`) — `gaiad init` + a self-delegation
   gentx.
 - **Babylon** (`docker-compose.yml`) — `babylond testnet --v 1` bootstraps the
