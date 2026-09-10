@@ -1,7 +1,7 @@
 import {
   applyPropsFilter,
   getAnalytics,
-  getEnabledFn,
+  isEnabled,
   resolveExtraProps,
   setAnalytics,
   setEnabledFn,
@@ -22,25 +22,36 @@ beforeEach(() => {
 });
 
 describe("@shared/analytics registry", () => {
-  describe("consumers of @shared/analytics set their own interface", () => {
-    it("round-trips analytics transport", () => {
+  describe("getAnalytics", () => {
+    it("returns the registered transport", () => {
       setAnalytics(transport);
 
       expect(getAnalytics()).toBe(transport);
     });
+  });
 
-    it("round-trips enabled function", () => {
-      const enabled = () => true;
-      setEnabledFn(enabled);
-
-      expect(getEnabledFn()).toBe(enabled);
+  describe("isEnabled", () => {
+    it("is false by default", () => {
+      expect(isEnabled()).toEqual(false);
     });
 
-    it("clears enabled function when set to undefined", () => {
+    it("is true when the enabled function returns true", () => {
+      setEnabledFn(() => true);
+
+      expect(isEnabled()).toEqual(true);
+    });
+
+    it("is false when the enabled function returns false", () => {
+      setEnabledFn(() => false);
+
+      expect(isEnabled()).toEqual(false);
+    });
+
+    it("is false after the enabled function is cleared", () => {
       setEnabledFn(() => true);
       setEnabledFn(undefined);
 
-      expect(getEnabledFn()).toBeUndefined();
+      expect(isEnabled()).toEqual(false);
     });
   });
 

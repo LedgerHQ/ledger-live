@@ -1,5 +1,5 @@
 import { normalizeProps } from "./internals/normalizeProps";
-import { isEnabled } from "./internals/enabled";
+import { isEnabled } from "./registry";
 import { trackEvent } from "./internals/trackEvent";
 import type { Props } from "./types";
 
