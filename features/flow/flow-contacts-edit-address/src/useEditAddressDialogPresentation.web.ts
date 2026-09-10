@@ -4,17 +4,27 @@ import type {
   ContactsAddressEntryState,
   ContactsAddressInputSource,
 } from "@features/platform-contacts";
-import type { ContactsEditAddressValidationLabels } from "./types";
+import { useTranslation } from "@shared/i18n";
 
 export function useEditAddressDialogPresentation({
   addressEntry,
-  labels,
   onAddressChange,
 }: Readonly<{
   addressEntry: ContactsAddressEntryState;
-  labels: ContactsEditAddressValidationLabels;
   onAddressChange: (value: string, inputMethod: ContactsAddressInputSource) => void;
 }>) {
+  const { t } = useTranslation();
+  const labels = useMemo(
+    () => ({
+      validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
+      validAddress: t("contacts.addAddressEntry.validAddress"),
+      invalidAddress: t("contacts.addAddressEntry.invalidAddress"),
+      domainNotFound: t("contacts.addAddressEntry.domainNotFound"),
+      sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
+      validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
+    }),
+    [t],
+  );
   const presentation = useMemo(
     () => resolveAddressInputPresentation(addressEntry, labels),
     [addressEntry, labels],

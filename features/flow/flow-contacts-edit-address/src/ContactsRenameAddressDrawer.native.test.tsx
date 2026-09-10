@@ -1,13 +1,40 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import {
-  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   ContactAddressValueSchema,
-  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsRenameAddressDialog } from ".";
 import type { ContactsRenameAddressDrawerProps } from "./types";
+
+const i18nResources = {
+  translation: {
+    contacts: {
+      editAddress: {
+        title: "Edit address",
+        inputLabel: "Address label",
+        applyChanges: "Apply changes",
+        invalidLabelError: "Address label is invalid.",
+      },
+      addAddressName: {
+        duplicateLabel: "Address label is already in use.",
+        tooLongLabel: "Address label is too long.",
+      },
+      addAddressEntry: {
+        addressPlaceholder: "Address",
+        validatingAddress: "Validating address",
+        validAddress: "Valid address",
+        invalidAddress: "Invalid address",
+        domainNotFound: "Domain not found",
+        sanctionedAddress: "Sanctioned address",
+        validationUnavailable: "Validation unavailable",
+        ensDisclaimer: "ENS addresses are supported.",
+        ensDisclaimerDescription: "ENS names can change over time.",
+      },
+    },
+  },
+};
 
 function createViewModel(
   overrides: Partial<ContactsRenameAddressDrawerProps> = {},
@@ -27,27 +54,6 @@ function createViewModel(
       inputMethod: "manual",
     },
     isDeviceRequired: true,
-    labels: {
-      title: "Edit address",
-      inputLabel: "Address label",
-      applyChanges: "Apply changes",
-      labelValidationErrors: {
-        [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Address label is invalid.",
-        [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Address label is already in use.",
-        [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: "Address label is too long.",
-      },
-      addressValidation: {
-        addressPlaceholder: "Address",
-        validatingAddress: "Validating address",
-        validAddress: "Valid address",
-        invalidAddress: "Invalid address",
-        domainNotFound: "Domain not found",
-        sanctionedAddress: "Sanctioned address",
-        validationUnavailable: "Validation unavailable",
-        ensDisclaimer: "ENS addresses are supported.",
-        ensDisclaimerDescription: "ENS names can change over time.",
-      },
-    },
     onOpen: jest.fn(),
     onClose: jest.fn(),
     onDraftLabelChange: jest.fn(),
@@ -57,15 +63,21 @@ function createViewModel(
   };
 }
 
+function renderDrawer(props: ContactsRenameAddressDrawerProps) {
+  return render(
+    <I18nTestProvider resources={i18nResources}>
+      <ContactsRenameAddressDialog {...props} />
+    </I18nTestProvider>,
+  );
+}
+
 describe("ContactsRenameAddressDrawer", () => {
   it("should render the validation state while open", () => {
-    render(
-      <ContactsRenameAddressDialog
-        {...createViewModel({
-          draftLabel: "Treasury",
-          invalidLabelError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-        })}
-      />,
+    renderDrawer(
+      createViewModel({
+        draftLabel: "Treasury",
+        invalidLabelError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+      }),
     );
 
     expect(screen.getByTestId("contacts-rename-address-input")).toBeVisible();
@@ -76,14 +88,12 @@ describe("ContactsRenameAddressDrawer", () => {
     const onDraftLabelChange = jest.fn();
     const onConfirm = jest.fn(async () => undefined);
 
-    render(
-      <ContactsRenameAddressDialog
-        {...createViewModel({
-          isConfirmEnabled: true,
-          onDraftLabelChange,
-          onConfirm,
-        })}
-      />,
+    renderDrawer(
+      createViewModel({
+        isConfirmEnabled: true,
+        onDraftLabelChange,
+        onConfirm,
+      }),
     );
 
     fireEvent.changeText(screen.getByTestId("contacts-rename-address-input"), "Treasury");
@@ -94,15 +104,13 @@ describe("ContactsRenameAddressDrawer", () => {
   });
 
   it("should not render its content while closed", () => {
-    render(<ContactsRenameAddressDialog {...createViewModel({ isOpen: false })} />);
+    renderDrawer(createViewModel({ isOpen: false }));
 
     expect(screen.queryByText("Edit address")).not.toBeOnTheScreen();
   });
 
   it("should reserve room for the keyboard so the form stays above it", () => {
-    const { toJSON } = render(
-      <ContactsRenameAddressDialog {...createViewModel({ bottomInset: 8, keyboardInset: 300 })} />,
-    );
+    const { toJSON } = renderDrawer(createViewModel({ bottomInset: 8, keyboardInset: 300 }));
 
     expect(toJSON()).toMatchObject({ props: { style: { paddingBottom: 332 } } });
   });
