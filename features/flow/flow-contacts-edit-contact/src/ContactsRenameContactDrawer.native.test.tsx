@@ -4,8 +4,27 @@ import {
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
 } from "@domain/entity-contact";
+import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsRenameContactDrawer } from ".";
 import type { ContactsRenameContactDrawerProps } from "./types";
+
+const i18nResources = {
+  translation: {
+    contacts: {
+      editContact: {
+        title: "Edit contact",
+        namePlaceholder: "Contact name",
+        namingDisclaimer: "Use a nickname or a first name and initial.",
+        confirmName: "Apply changes",
+        applyChanges: "Apply changes",
+        invalidNameError: "Special characters are not allowed.",
+      },
+      addContactDrawer: {
+        duplicateNameError: "This contact name is already in use.",
+      },
+    },
+  },
+};
 
 const mockFocus = jest.fn();
 
@@ -39,17 +58,6 @@ function createViewModel(
     draftName: "",
     invalidNameError: null,
     isDeviceRequired: false,
-    labels: {
-      title: "Edit contact",
-      namePlaceholder: "Contact name",
-      namingDisclaimer: "Use a nickname or a first name and initial.",
-      applyChanges: "Apply changes",
-      confirmName: "Apply changes",
-      nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: "Special characters are not allowed.",
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "This contact name is already in use.",
-      },
-    },
     onOpen: jest.fn(),
     onClose: jest.fn(),
     onDraftNameChange: jest.fn(),
@@ -58,17 +66,23 @@ function createViewModel(
   };
 }
 
+function renderDrawer(props: ContactsRenameContactDrawerProps) {
+  return render(
+    <I18nTestProvider resources={i18nResources}>
+      <ContactsRenameContactDrawer {...props} />
+    </I18nTestProvider>,
+  );
+}
+
 describe("ContactsRenameContactDrawer", () => {
   it("should render the validation state and account for drawer insets", () => {
-    const { toJSON } = render(
-      <ContactsRenameContactDrawer
-        {...createViewModel({
-          draftName: "Ada",
-          invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
-          bottomInset: 8,
-          keyboardInset: 300,
-        })}
-      />,
+    const { toJSON } = renderDrawer(
+      createViewModel({
+        draftName: "Ada",
+        invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
+        bottomInset: 8,
+        keyboardInset: 300,
+      }),
     );
 
     expect(screen.getByTestId("contacts-rename-contact-content")).toBeVisible();
@@ -88,14 +102,12 @@ describe("ContactsRenameContactDrawer", () => {
     const onDraftNameChange = jest.fn();
     const onConfirm = jest.fn(async () => undefined);
 
-    render(
-      <ContactsRenameContactDrawer
-        {...createViewModel({
-          isConfirmEnabled: true,
-          onDraftNameChange,
-          onConfirm,
-        })}
-      />,
+    renderDrawer(
+      createViewModel({
+        isConfirmEnabled: true,
+        onDraftNameChange,
+        onConfirm,
+      }),
     );
 
     fireEvent.changeText(screen.getByTestId("contacts-rename-contact-name-input"), "Ada Lovelace");
@@ -106,17 +118,21 @@ describe("ContactsRenameContactDrawer", () => {
   });
 
   it("should withhold focus until the host grants it", () => {
-    const { rerender } = render(<ContactsRenameContactDrawer {...createViewModel()} />);
+    const { rerender } = renderDrawer(createViewModel());
 
     expect(mockFocus).not.toHaveBeenCalled();
 
-    rerender(<ContactsRenameContactDrawer {...createViewModel({ autoFocus: true })} />);
+    rerender(
+      <I18nTestProvider resources={i18nResources}>
+        <ContactsRenameContactDrawer {...createViewModel({ autoFocus: true })} />
+      </I18nTestProvider>,
+    );
 
     expect(mockFocus).toHaveBeenCalledTimes(1);
   });
 
   it("should not render its content while closed", () => {
-    render(<ContactsRenameContactDrawer {...createViewModel({ isOpen: false })} />);
+    renderDrawer(createViewModel({ isOpen: false }));
 
     expect(screen.queryByTestId("contacts-rename-contact-content")).not.toBeOnTheScreen();
   });
