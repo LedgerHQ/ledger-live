@@ -15,10 +15,11 @@ const webMocks = {
   "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),
 };
 
-// Lumen's shared utils (`cn`, the amount formatters) ship as ESM and are real logic the views
-// call, so SWC has to compile them instead of a stub standing in — unlike the component barrels
-// above, which only need to render a DOM node. Entries match the pnpm store directory names.
-const transformAllowlist = ["@ledgerhq\\+lumen-utils-shared"];
+// Lumen's shared utils (`cn`, the amount formatters) and its design tokens ship as ESM and are
+// real values the views pass around, so SWC has to compile them instead of a stub standing in —
+// unlike the component barrels above, which only need to render a DOM node. Entries match the
+// pnpm store directory names.
+const transformAllowlist = ["@ledgerhq\\+lumen-utils-shared", "@ledgerhq\\+lumen-design-core"];
 
 const nativeMocks = {
   // Stub react-native itself (Flow-typed ESM) so native tests run in a plain node env.

@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
+import { I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardVisualView } from "./CardVisualView.native";
 import type { FormattedValue } from "../../types";
 
@@ -20,6 +21,7 @@ function renderView({ isFrozen = false }: { isFrozen?: boolean } = {}) {
       isLoading={false}
       isFrozen={isFrozen}
     />,
+    { wrapper: I18nWrapper },
   );
 }
 

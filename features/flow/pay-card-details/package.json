@@ -96,9 +96,6 @@
     },
     "@ledgerhq/lumen-ui-rnative": {
       "optional": true
-    },
-    "@ledgerhq/lumen-design-core": {
-      "optional": true
     }
   }
 }

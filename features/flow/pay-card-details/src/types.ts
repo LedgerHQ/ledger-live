@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { PayCardStatus } from "@domain/api-card-management";
 import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
+import type { CardDetailsSceneProps } from "./components/CardDetails/Scenes/types";
 
 export type { FormattedValue };
 
@@ -26,17 +27,25 @@ export type CardDetailsViewProps = CardDetailsProps &
     placeholderLabel: string;
     detailsLabel: string;
     isSheetOpen: boolean;
+    scene: CardDetailsSceneProps;
     onDetailsPress: () => void;
     onSheetClose: () => void;
   }>;
 
-export type CardDetailsSheetProps = CardDetailsProps &
-  Readonly<{
-    isOpen: boolean;
-    onClose: () => void;
-  }>;
+export type CardDetailsSheetProps = Readonly<{
+  isOpen: boolean;
+  scene: CardDetailsSceneProps;
+  onClose: () => void;
+}>;
 
-export type ConfirmState = "closed" | "idle" | "pending" | "error";
+/**
+ * Lifecycle of the freeze/unfreeze confirmation:
+ * - `closed`: not shown
+ * - `prompt`: shown, awaiting the user's confirmation
+ * - `pending`: the freeze/unfreeze request is in flight
+ * - `error`: the request failed and the confirmation stays open to report it
+ */
+export type ConfirmState = "closed" | "prompt" | "pending" | "error";
 
 type ConfirmProps = Readonly<{
   status: PayCardStatus["status"] | undefined;
@@ -67,7 +76,7 @@ export type ConfirmSheetProps = ConfirmProps &
     confirmState: ConfirmState;
   }>;
 
-export type TileProps = ConfirmSheetProps &
+export type FreezeViewModel = ConfirmSheetProps &
   Readonly<{
     isActionDisabled: boolean;
     onOpenConfirm: () => void;

@@ -18,6 +18,7 @@ export function CardDetailsView({
   placeholderLabel,
   detailsLabel,
   isSheetOpen,
+  scene,
   onDetailsPress,
   onSheetClose,
 }: CardDetailsViewProps) {
@@ -65,7 +66,7 @@ export function CardDetailsView({
         </Box>
       </Box>
 
-      <CardDetailsSheet isOpen={isSheetOpen} cardVisual={cardVisual} onClose={onSheetClose} />
+      <CardDetailsSheet isOpen={isSheetOpen} scene={scene} onClose={onSheetClose} />
     </Box>
   );
 }
