@@ -11,7 +11,7 @@ import {
   useTheme,
 } from "@ledgerhq/lumen-ui-rnative";
 import { PenEdit, Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { ContactDetailActionsLabels } from "../../types";
+import { useTranslation } from "@shared/i18n";
 
 // Spot paints custom icons with the neutral color of its "icon" appearance and injects it
 // through `style`, so the destructive color has to override that style on the symbol itself.
@@ -26,7 +26,6 @@ export type ContactDetailActionsMenuProps = Readonly<{
   isOpen: boolean;
   canDelete: boolean;
   bottomInset?: number;
-  labels: ContactDetailActionsLabels;
   onEdit: () => void;
   onDelete: () => void;
 }>;
@@ -35,10 +34,11 @@ export function ContactDetailActionsMenu({
   isOpen,
   canDelete,
   bottomInset = 0,
-  labels,
   onEdit,
   onDelete,
 }: ContactDetailActionsMenuProps): React.JSX.Element {
+  const { t } = useTranslation();
+
   return (
     <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
       {isOpen ? (
@@ -49,7 +49,7 @@ export function ContactDetailActionsMenu({
               <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s12" }}>
                 <Spot appearance="icon" icon={PenEdit} size={40} />
                 <Text typography="body1SemiBold" lx={{ color: "base" }}>
-                  {labels.editContact}
+                  {t("contacts.detailActions.editName")}
                 </Text>
               </Box>
             </ListItem>
@@ -58,7 +58,7 @@ export function ContactDetailActionsMenu({
                 <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s12" }}>
                   <Spot appearance="icon" icon={TrashDestructive} size={40} />
                   <Text typography="body1SemiBold" lx={{ color: "error" }}>
-                    {labels.deleteContact}
+                    {t("contacts.detailActions.deleteContact")}
                   </Text>
                 </Box>
               </ListItem>

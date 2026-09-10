@@ -7,7 +7,6 @@ import { addAddress, contactAddress } from "@domain/entity-contact";
 import {
   type ContactAddressDetailDialogNativeLabels,
   type ContactAddressDetailDialogNativeProps,
-  type ContactDetailLabels,
   type ContactDetailViewProps,
   useContactDetailSharedState,
   useContactAddressDetailDialog,
@@ -33,7 +32,6 @@ import {
 } from "@features/flow-contacts-add-address";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
-  createMeDisplayNameFormatter,
   resolveEligibleAddressCurrencyIds,
   useContactsFeature,
   useContactsMeContact,
@@ -311,27 +309,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     completeAddressConfirmation,
     continueFromName,
   ]);
-  const labels = useMemo<ContactDetailLabels>(
-    () => ({
-      addAddress: t("contacts.addAddress"),
-      addYourAddress: t("contacts.addYourAddress"),
-      emptyMeTitle: t("contacts.detail.emptyState.meTitle"),
-      emptyContactTitle: name => t("contacts.detail.emptyState.contactTitle", { name }),
-      emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
-      emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
-      ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
-      myAddresses: t("contacts.detail.myAddresses"),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
-    }),
-    [t],
-  );
-  const detailSharedState = useContactDetailSharedState(
-    route.params.contactId,
-    labels.formatMeDisplayName,
-  );
+  const detailSharedState = useContactDetailSharedState(route.params.contactId);
   const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogNativeLabels>(
     () => ({
       send: t("contacts.addressDetail.send"),
@@ -437,7 +415,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
   const pageProps: ContactDetailViewProps = {
     contact,
-    labels,
     meAvatarSrc: USER_AVATAR_URL,
     onAddAddress,
     ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,

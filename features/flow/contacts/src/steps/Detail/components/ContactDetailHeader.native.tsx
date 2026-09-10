@@ -1,25 +1,33 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { resolveMeContactDisplayName } from "@features/platform-contacts";
+import {
+  createMeDisplayNameFormatter,
+  resolveMeContactDisplayName,
+} from "@features/platform-contacts";
+import { useTranslation } from "@shared/i18n";
 import type { ContactDetailViewProps } from "../types";
 import { ContactDetailAvatar } from "./ContactDetailAvatar.native";
 
 type ContactDetailHeaderProps = Pick<
   ContactDetailViewProps,
-  "contact" | "labels" | "meAvatarSrc" | "onAddAddress"
+  "contact" | "meAvatarSrc" | "onAddAddress"
 >;
 
 export function ContactDetailHeader({
   contact,
-  labels,
   meAvatarSrc,
   onAddAddress,
 }: ContactDetailHeaderProps): React.JSX.Element {
-  const displayName = resolveMeContactDisplayName(
-    contact,
-    labels.formatMeDisplayName ?? (name => name),
+  const { t } = useTranslation();
+  const formatMeDisplayName = useMemo(
+    () =>
+      createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
+        t("contacts.detail.meDisplayName", { name }),
+      ),
+    [t],
   );
+  const displayName = resolveMeContactDisplayName(contact, formatMeDisplayName);
 
   return (
     <Box lx={{ alignItems: "center", gap: "s24", paddingTop: "s24" }}>
@@ -30,7 +38,7 @@ export function ContactDetailHeader({
             {displayName}
           </Text>
           <Text testID="contacts-detail-address-count" typography="body2" lx={{ color: "muted" }}>
-            {labels.formatAddressCount(contact.addresses.length)}
+            {t("contacts.addressCount", { count: contact.addresses.length })}
           </Text>
         </Box>
       </Box>
@@ -41,7 +49,7 @@ export function ContactDetailHeader({
         onPress={onAddAddress}
         testID="contacts-detail-add-address"
       >
-        {contact.isMe ? (labels.addYourAddress ?? labels.addAddress) : labels.addAddress}
+        {contact.isMe ? t("contacts.addYourAddress") : t("contacts.addAddress")}
       </Button>
     </Box>
   );

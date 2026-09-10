@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
 import {
-  createMeDisplayNameFormatter,
   useContacts,
   useContactsMeContact,
   type ContactDeviceIntentsPort,
@@ -15,7 +14,6 @@ import {
   useContactAddressDetailDialog,
   type ContactAddressDetailDialogLabels,
   type ContactAddressDetailDialogProps,
-  type ContactDetailLabels,
   type ContactDetailViewProps,
   type ContactsViewProps,
   CONTACTS_EVENT_SOURCE,
@@ -94,26 +92,7 @@ export function useContactDetailPaneAdapter(
     addressDetailAsset,
     addressDetailNetwork,
   );
-  const labels = useMemo<ContactDetailLabels>(
-    () => ({
-      addAddress: t("contacts.addAddress"),
-      addYourAddress: t("contacts.addYourAddress"),
-      emptyMeTitle: t("contacts.detail.emptyState.meTitle"),
-      emptyContactTitle: name => t("contacts.detail.emptyState.contactTitle", { name }),
-      emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
-      emptyContactDescription: () => t("contacts.detail.emptyState.contactDescription"),
-      ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
-      formatAddressCount: count => t("contacts.addressCount", { count }),
-    }),
-    [t],
-  );
-  const detailSharedState = useContactDetailSharedState(
-    detailContactId,
-    labels.formatMeDisplayName,
-  );
+  const detailSharedState = useContactDetailSharedState(detailContactId);
   const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogLabels>(
     () => ({
       send: t("contacts.addressDetail.send"),
@@ -161,7 +140,6 @@ export function useContactDetailPaneAdapter(
     }
 
     return {
-      labels,
       meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
       contact,
       onAddAddress: () => handleAddAddress(contact),
@@ -180,7 +158,6 @@ export function useContactDetailPaneAdapter(
     emptyContact,
     editDeleteDialogs.detailActions,
     handleAddAddress,
-    labels,
     onLedgerWalletAccountsPress,
     onAddressRowPress,
     populatedContactDetail,

@@ -46,7 +46,6 @@ export function createInactiveContactAddressDetailActionsUiState(
       addressEntry: EMPTY_ADDRESS_ENTRY_STATE,
       isConfirmEnabled: false,
       isDeviceRequired: false,
-      labels: labels.rename,
       onOpen: () => undefined,
       onClose: () => undefined,
       onDraftLabelChange: () => undefined,
@@ -86,7 +85,6 @@ export function createActiveContactAddressDetailActionsUiState(
     rename: {
       ...renameViewModel,
       isDeviceRequired: flow.isSignerRequiredForEdit,
-      labels: labels.rename,
     },
     signerMismatch: {
       isOpen: flow.editUiState === "signer-mismatch",

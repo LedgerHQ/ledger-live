@@ -72,14 +72,7 @@ export function useContactAddressDetailActionsAdapter(
     sourceScreenName: ScreenName.MyWalletContactDetail,
   });
   const isSelectionActive = contactId !== undefined && addressId !== undefined;
-  const labels = useMemo(
-    () =>
-      resolveContactAddressDetailActionsLabels({
-        t,
-        addressLabelTooLongKey: "contacts.addAddressName.labelTooLong",
-      }),
-    [t],
-  );
+  const labels = useMemo(() => resolveContactAddressDetailActionsLabels({ t }), [t]);
   const trackQuickAction = useCallback(
     (
       button:
