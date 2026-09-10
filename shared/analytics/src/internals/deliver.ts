@@ -24,15 +24,15 @@ export function deliver({
       deliveryStatus,
     });
 
-  const transport = getAnalytics();
-  if (!transport) return publish("skipped_no_client");
+  const analytics = getAnalytics();
+  if (!analytics) return publish("skipped_no_client");
 
-  transport.log?.(kind, eventName, eventProps);
+  analytics.log?.(kind, eventName, eventProps);
 
   let result: void | Promise<void | DeliveryStatus>;
 
   try {
-    result = transport.track(eventName, eventProps);
+    result = analytics.track(eventName, eventProps);
   } catch {
     return publish("failed_tracking");
   }

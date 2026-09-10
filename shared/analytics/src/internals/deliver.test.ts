@@ -6,7 +6,7 @@ import { deliver } from "./deliver";
 const events: LoggableEvent[] = [];
 trackSubject.subscribe(event => events.push(event));
 
-const createTransport = ({
+const createAnalyticsClient = ({
   track = jest.fn(),
   log = jest.fn(),
 }: Partial<Analytics> = {}): jest.Mocked<Analytics> =>
@@ -22,8 +22,8 @@ beforeEach(() => {
 
 describe("deliver", () => {
   describe("delivery status", () => {
-    it("defaults to enqueued for a synchronous transport", () => {
-      setAnalytics(createTransport());
+    it("defaults to enqueued for a synchronous analytics client", () => {
+      setAnalytics(createAnalyticsClient());
 
       deliver({
         type: "track",
@@ -35,9 +35,9 @@ describe("deliver", () => {
       expect(events[0].deliveryStatus).toBe("enqueued");
     });
 
-    it("lets the transport override the default status", async () => {
+    it("lets the analytics client override the default status", async () => {
       setAnalytics(
-        createTransport({
+        createAnalyticsClient({
           track: async () => "skipped_no_token" as DeliveryStatus,
         }),
       );
@@ -52,8 +52,8 @@ describe("deliver", () => {
       expect(events[0].deliveryStatus).toBe("skipped_no_token");
     });
 
-    it("defaults to enqueued for a transport resolving nothing", async () => {
-      setAnalytics(createTransport({ track: async () => {} }));
+    it("defaults to enqueued for an analytics client resolving nothing", async () => {
+      setAnalytics(createAnalyticsClient({ track: async () => {} }));
 
       await deliver({
         type: "track",
@@ -65,9 +65,9 @@ describe("deliver", () => {
       expect(events[0].deliveryStatus).toBe("enqueued");
     });
 
-    it("reports failed_tracking when the transport throws", () => {
+    it("reports failed_tracking when the analytics client throws", () => {
       setAnalytics(
-        createTransport({
+        createAnalyticsClient({
           track: () => {
             throw new Error("segment is down");
           },
@@ -85,9 +85,9 @@ describe("deliver", () => {
       expect(events[0].deliveryStatus).toBe("failed_tracking");
     });
 
-    it("reports failed_tracking without rejecting when the transport rejects", async () => {
+    it("reports failed_tracking without rejecting when the analytics client rejects", async () => {
       setAnalytics(
-        createTransport({
+        createAnalyticsClient({
           track: async () => Promise.reject(new Error("segment is down")),
         }),
       );
@@ -103,7 +103,7 @@ describe("deliver", () => {
       expect(events[0].deliveryStatus).toBe("failed_tracking");
     });
 
-    it("reports skipped_no_client when no transport is registered", () => {
+    it("reports skipped_no_client when no analytics client is registered", () => {
       setAnalytics(undefined as unknown as Analytics);
 
       deliver({
@@ -117,7 +117,7 @@ describe("deliver", () => {
     });
 
     it("publishes enriched and caller-only payloads separately", () => {
-      setAnalytics(createTransport());
+      setAnalytics(createAnalyticsClient());
 
       deliver({
         type: "track",
@@ -138,8 +138,8 @@ describe("deliver", () => {
 
   describe("logging", () => {
     it("logs before sending", () => {
-      const transport = createTransport();
-      setAnalytics(transport);
+      const analytics = createAnalyticsClient();
+      setAnalytics(analytics);
 
       deliver({
         type: "track",
@@ -148,10 +148,10 @@ describe("deliver", () => {
         eventPropsWithoutExtra: { foo: "bar" },
       });
 
-      expect(transport.log).toHaveBeenCalledWith("track", "Logged", {
+      expect(analytics.log).toHaveBeenCalledWith("track", "Logged", {
         foo: "bar",
       });
-      expect(transport.track).toHaveBeenCalledWith("Logged", { foo: "bar" });
+      expect(analytics.track).toHaveBeenCalledWith("Logged", { foo: "bar" });
     });
   });
 });
