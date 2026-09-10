@@ -21,6 +21,55 @@ beforeEach(() => {
 });
 
 describe("deliver", () => {
+  it("sends the event name and props to the analytics client", () => {
+    const analytics = createAnalyticsClient();
+    setAnalytics(analytics);
+
+    deliver({
+      type: "track",
+      eventName: "Tracked",
+      eventProps: { foo: "bar" },
+      eventPropsWithoutExtra: { foo: "bar" },
+    });
+
+    expect(analytics.track).toHaveBeenCalledWith("Tracked", { foo: "bar" });
+  });
+
+  it("logs before sending", () => {
+    const analytics = createAnalyticsClient();
+    setAnalytics(analytics);
+
+    deliver({
+      type: "track",
+      eventName: "Logged",
+      eventProps: { foo: "bar" },
+      eventPropsWithoutExtra: { foo: "bar" },
+    });
+
+    expect(analytics.log).toHaveBeenCalledWith("track", "Logged", {
+      foo: "bar",
+    });
+  });
+
+  it("publishes enriched payloads", () => {
+    setAnalytics(createAnalyticsClient());
+
+    deliver({
+      type: "track",
+      eventName: "Both Payloads",
+      eventProps: { foo: "bar", appVersion: "1.2.3" },
+      eventPropsWithoutExtra: { foo: "bar" },
+    });
+
+    expect(events[0]).toEqual({
+      date: expect.any(Date),
+      deliveryStatus: "enqueued",
+      eventName: "Both Payloads",
+      eventProps: { foo: "bar", appVersion: "1.2.3" },
+      eventPropsWithoutExtra: { foo: "bar" },
+    });
+  });
+
   describe("delivery status", () => {
     it("defaults to enqueued for a synchronous analytics client", () => {
       setAnalytics(createAnalyticsClient());
@@ -114,44 +163,6 @@ describe("deliver", () => {
       });
 
       expect(events[0].deliveryStatus).toBe("skipped_no_client");
-    });
-
-    it("publishes enriched and caller-only payloads separately", () => {
-      setAnalytics(createAnalyticsClient());
-
-      deliver({
-        type: "track",
-        eventName: "Both Payloads",
-        eventProps: { foo: "bar", appVersion: "1.2.3" },
-        eventPropsWithoutExtra: { foo: "bar" },
-      });
-
-      expect(events[0]).toEqual({
-        date: expect.any(Date),
-        deliveryStatus: "enqueued",
-        eventName: "Both Payloads",
-        eventProps: { foo: "bar", appVersion: "1.2.3" },
-        eventPropsWithoutExtra: { foo: "bar" },
-      });
-    });
-  });
-
-  describe("logging", () => {
-    it("logs before sending", () => {
-      const analytics = createAnalyticsClient();
-      setAnalytics(analytics);
-
-      deliver({
-        type: "track",
-        eventName: "Logged",
-        eventProps: { foo: "bar" },
-        eventPropsWithoutExtra: { foo: "bar" },
-      });
-
-      expect(analytics.log).toHaveBeenCalledWith("track", "Logged", {
-        foo: "bar",
-      });
-      expect(analytics.track).toHaveBeenCalledWith("Logged", { foo: "bar" });
     });
   });
 });
