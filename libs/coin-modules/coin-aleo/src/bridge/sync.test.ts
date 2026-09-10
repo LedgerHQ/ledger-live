@@ -27,7 +27,12 @@ import { AleoApiConfigurationResetError } from "../errors";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedRecord, MOCK_ALEO_ADDRESS } from "../__tests__/fixtures/api.fixture";
 import coinConfig from "../config";
-import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
+import {
+  accessProvableApi,
+  fetchAllOwnedRecords,
+  getStakingPosition,
+  patchPublicOperations,
+} from "../network/utils";
 import { listPrivateOperations } from "./listPrivateOperations";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import {
@@ -49,6 +54,7 @@ jest.mock("../network/utils", () => ({
   ...jest.requireActual("../network/utils"),
   accessProvableApi: jest.fn(),
   fetchAllOwnedRecords: jest.fn(),
+  getStakingPosition: jest.fn(),
   patchPublicOperations: jest.fn(),
 }));
 jest.mock("./listOperations");
@@ -65,6 +71,7 @@ jest.mock("@ledgerhq/logs", () => ({
 const mockGetSyncHash = jest.mocked(getSyncHash);
 const mockGetPublicBalance = jest.mocked(getPublicBalance);
 const mockLastBlock = jest.mocked(lastBlock);
+const mockGetStakingPosition = jest.mocked(getStakingPosition);
 const mockListOperations = jest.mocked(listOperations);
 const mockAccessProvableApi = jest.mocked(accessProvableApi);
 const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
@@ -78,6 +85,7 @@ describe("sync.ts", () => {
   const mockCurrency = getMockedCurrency();
   const mockConfig = getMockedConfig("mainnet");
   const mockConfigWithTokens = { ...mockConfig, enableTokens: true };
+  const mockConfigWithStaking = { ...mockConfig, enableStaking: true };
   const mockTokenCurrency = getMockedTokenCurrency();
   const mockDerivationMode: DerivationMode = "";
   const mockLedgerAccountId = encodeAccountId({
@@ -124,6 +132,15 @@ describe("sync.ts", () => {
       height: 100,
       hash: "mock-block-hash",
       time: new Date("2024-01-01"),
+    });
+
+    // Nothing bonded by default: staking-specific expectations override this per test.
+    mockGetStakingPosition.mockResolvedValue({
+      bondedBalance: new BigNumber(0),
+      bondedValidator: null,
+      unbondingBalance: new BigNumber(0),
+      unbondingHeight: null,
+      withdrawalAddress: null,
     });
 
     mockListOperations.mockResolvedValue({
@@ -768,6 +785,107 @@ describe("sync.ts", () => {
           options: expect.objectContaining({ cursor: "12345" }),
         }),
       );
+    });
+
+    describe("staking position", () => {
+      const bondedBalance = new BigNumber(70000);
+      const unbondingBalance = new BigNumber(5000);
+      const publicSyncInfo = {
+        index: mockAccount.index,
+        derivationPath: mockAccount.freshAddressPath,
+        address: mockAccount.freshAddress,
+        currency: mockCurrency,
+        derivationMode: mockDerivationMode,
+        initialAccount: undefined,
+      };
+
+      beforeEach(() => {
+        coinConfig.setCoinConfig(() => mockConfigWithStaking);
+        mockGetStakingPosition.mockResolvedValue({
+          bondedBalance,
+          bondedValidator: "aleo1validator",
+          unbondingBalance,
+          unbondingHeight: 250,
+          withdrawalAddress: mockAccount.freshAddress,
+        });
+      });
+
+      it("persists the position onto aleoResources", async () => {
+        const result = await performPublicSync(publicSyncInfo, mockSyncConfig);
+
+        expect(result.aleoResources).toMatchObject({
+          bondedBalance,
+          bondedValidator: "aleo1validator",
+          unbondingBalance,
+          unbondingHeight: 250,
+        });
+      });
+
+      it("counts bonded and unbonding funds in balance but not spendableBalance", async () => {
+        const result = await performPublicSync(publicSyncInfo, mockSyncConfig);
+
+        // no initialAccount, so the private balance is 0 and liquid == transparent
+        expect(result.spendableBalance).toEqual(mockAccount.balance);
+        expect(result.balance).toEqual(
+          mockAccount.balance.plus(bondedBalance).plus(unbondingBalance),
+        );
+      });
+
+      it("does not persist the withdrawal address", async () => {
+        const result = await performPublicSync(publicSyncInfo, mockSyncConfig);
+
+        expect(result.aleoResources).not.toHaveProperty("withdrawalAddress");
+      });
+
+      describe("when enableStaking is off", () => {
+        beforeEach(() => {
+          coinConfig.setCoinConfig(() => mockConfig);
+        });
+
+        it("does not read the staking mappings at all", async () => {
+          await performPublicSync(publicSyncInfo, mockSyncConfig);
+
+          expect(mockGetStakingPosition).not.toHaveBeenCalled();
+        });
+
+        it("leaves the staking fields absent rather than zeroed", async () => {
+          const result = await performPublicSync(publicSyncInfo, mockSyncConfig);
+
+          // absent, not 0/null: the mappings were never read, so there is nothing to claim
+          expect(result.aleoResources).not.toHaveProperty("bondedBalance");
+          expect(result.aleoResources).not.toHaveProperty("bondedValidator");
+          expect(result.aleoResources).not.toHaveProperty("unbondingBalance");
+          expect(result.aleoResources).not.toHaveProperty("unbondingHeight");
+        });
+
+        it("keeps balance and spendableBalance equal, as before the rollout", async () => {
+          const result = await performPublicSync(publicSyncInfo, mockSyncConfig);
+
+          expect(result.balance).toEqual(mockAccount.balance);
+          expect(result.spendableBalance).toEqual(mockAccount.balance);
+        });
+
+        it("drops a previously persisted position, so the flag acts as a kill switch", async () => {
+          const bondedAccount: AleoAccount = {
+            ...mockInitialAccount,
+            aleoResources: {
+              ...mockInitialAccount.aleoResources!,
+              bondedBalance: new BigNumber(70000),
+              bondedValidator: "aleo1validator",
+              unbondingBalance: new BigNumber(5000),
+              unbondingHeight: 250,
+            },
+          };
+
+          const result = await performPublicSync(
+            { ...publicSyncInfo, initialAccount: bondedAccount },
+            mockSyncConfig,
+          );
+
+          expect(result.aleoResources).not.toHaveProperty("bondedBalance");
+          expect(result.balance).toEqual(result.spendableBalance);
+        });
+      });
     });
   });
 
@@ -1910,6 +2028,161 @@ describe("sync.ts", () => {
       // second emission: private result (has lastPrivateSyncDate, updated balance)
       expect(second.aleoResources?.lastPrivateSyncDate).toBeInstanceOf(Date);
       expect(second.aleoResources?.privateBalance).toEqual(new BigNumber(5000));
+    });
+
+    it("public+private sync keeps the freshly-fetched staking position in the private emission", async () => {
+      // Regression guard: the private shape is spread last, so if it read the staking
+      // position from initialAccount instead of the public cycle's result, a bond made
+      // since the last sync would be reverted on every combined sync.
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+      mockGetPrivateBalance.mockResolvedValue({
+        balance: new BigNumber(5000),
+        unspentRecords: [],
+      });
+      coinConfig.setCoinConfig(() => mockConfigWithStaking);
+
+      const freshlyBonded = new BigNumber(70000);
+      mockGetStakingPosition.mockResolvedValue({
+        bondedBalance: freshlyBonded,
+        bondedValidator: "aleo1freshvalidator",
+        unbondingBalance: new BigNumber(0),
+        unbondingHeight: null,
+        withdrawalAddress: null,
+      });
+
+      const syncedBaseInfo = {
+        ...baseInfo,
+        initialAccount: {
+          ...mockInitialAccount,
+          aleoResources: {
+            ...mockInitialAccount.aleoResources!,
+            lastPrivateSyncDate: new Date("2024-01-01"),
+            // stale: what the account knew before this cycle
+            bondedBalance: new BigNumber(0),
+            bondedValidator: null,
+          },
+        },
+      };
+
+      const { syncs } = buildSyncObservables(syncedBaseInfo, {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+      });
+
+      const [, second] = await collectAll(syncs[0]);
+
+      expect(second.aleoResources?.bondedBalance).toEqual(freshlyBonded);
+      expect(second.aleoResources?.bondedValidator).toBe("aleo1freshvalidator");
+      // and the bonded amount still counts towards balance but not spendableBalance
+      expect(second.balance).toEqual(second.spendableBalance!.plus(freshlyBonded));
+    });
+
+    it("private-only sync does not re-persist a stale staking position while enableStaking is off", async () => {
+      // A private-only sync receives no freshStakingPosition, so the private path has to
+      // check the flag itself rather than relying on the public path having skipped the fetch.
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+      coinConfig.setCoinConfig(() => mockConfig);
+
+      const bondedAccount: AleoAccount = {
+        ...mockInitialAccount,
+        aleoResources: {
+          ...mockInitialAccount.aleoResources!,
+          lastPrivateSyncDate: new Date("2024-01-01"),
+          bondedBalance: new BigNumber(70000),
+          bondedValidator: "aleo1validator",
+          unbondingBalance: new BigNumber(5000),
+          unbondingHeight: 250,
+        },
+      };
+
+      const { syncs } = buildSyncObservables(
+        { ...baseInfo, initialAccount: bondedAccount },
+        { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED },
+      );
+
+      const [emission] = await collectAll(syncs[0]);
+
+      expect(emission.aleoResources).not.toHaveProperty("bondedBalance");
+      expect(emission.aleoResources).not.toHaveProperty("unbondingHeight");
+      expect(emission.balance).toEqual(emission.spendableBalance);
+    });
+
+    it("private-only sync leaves the fields absent when no position has ever been synced", async () => {
+      // enableStaking is on but no public cycle ran, so there is no position to carry. Absent
+      // has to stay absent: zeroing it would claim the mappings were read and came back empty.
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+      coinConfig.setCoinConfig(() => mockConfigWithStaking);
+
+      const neverStakedAccount: AleoAccount = {
+        ...mockInitialAccount,
+        aleoResources: {
+          ...mockInitialAccount.aleoResources!,
+          lastPrivateSyncDate: new Date("2024-01-01"),
+        },
+      };
+
+      const { syncs } = buildSyncObservables(
+        { ...baseInfo, initialAccount: neverStakedAccount },
+        { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED },
+      );
+
+      const [emission] = await collectAll(syncs[0]);
+
+      expect(emission.aleoResources).not.toHaveProperty("bondedBalance");
+      expect(emission.aleoResources).not.toHaveProperty("bondedValidator");
+      expect(emission.aleoResources).not.toHaveProperty("unbondingBalance");
+      expect(emission.aleoResources).not.toHaveProperty("unbondingHeight");
+      expect(emission.balance).toEqual(emission.spendableBalance);
+    });
+
+    it("private-only sync carries an already-synced position through untouched", async () => {
+      // The flip side of the above: a position the account already holds is the best value
+      // available when no public cycle ran, so it must survive rather than be dropped.
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+      coinConfig.setCoinConfig(() => mockConfigWithStaking);
+
+      const bondedAccount: AleoAccount = {
+        ...mockInitialAccount,
+        aleoResources: {
+          ...mockInitialAccount.aleoResources!,
+          lastPrivateSyncDate: new Date("2024-01-01"),
+          bondedBalance: new BigNumber(70000),
+          bondedValidator: "aleo1validator",
+          unbondingBalance: new BigNumber(5000),
+          unbondingHeight: 250,
+        },
+      };
+
+      const { syncs } = buildSyncObservables(
+        { ...baseInfo, initialAccount: bondedAccount },
+        { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED },
+      );
+
+      const [emission] = await collectAll(syncs[0]);
+
+      expect(emission.aleoResources).toMatchObject({
+        bondedBalance: new BigNumber(70000),
+        bondedValidator: "aleo1validator",
+        unbondingBalance: new BigNumber(5000),
+        unbondingHeight: 250,
+      });
+      expect(emission.balance).toEqual(emission.spendableBalance!.plus(75000));
     });
 
     it("makeGetAccountShape completes immediately with no emissions when syncType is 0", async () => {

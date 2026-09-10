@@ -89,6 +89,9 @@ import {
   hasSpecificIntentData,
   getOperationDetailsExtraFields,
   getAvailableBalance,
+  getClaimableStakingBalance,
+  sumStakedBalance,
+  toStakingResources,
   isSelfTransferTransaction,
   isPublicTransaction,
   isPrivateTransaction,
@@ -1629,6 +1632,102 @@ describe("getAvailableBalance", () => {
     expect(() => getAvailableBalance(mockAccount, transaction)).toThrow(
       `aleo: unsupported tx mode for balance calculation: ${unsupportedMode}`,
     );
+  });
+});
+
+describe("toStakingResources", () => {
+  it("carries a chain position through unchanged, dropping the withdrawal address", () => {
+    const result = toStakingResources({
+      bondedBalance: new BigNumber(70000),
+      bondedValidator: "aleo1validator",
+      unbondingBalance: new BigNumber(5000),
+      unbondingHeight: 250,
+    });
+
+    expect(result).toStrictEqual({
+      bondedBalance: new BigNumber(70000),
+      bondedValidator: "aleo1validator",
+      unbondingBalance: new BigNumber(5000),
+      unbondingHeight: 250,
+    });
+  });
+
+  it("normalizes an account that predates the staking fields to an empty position", () => {
+    expect(toStakingResources({})).toStrictEqual({
+      bondedBalance: new BigNumber(0),
+      bondedValidator: null,
+      unbondingBalance: new BigNumber(0),
+      unbondingHeight: null,
+    });
+  });
+
+  it("normalizes a missing source to an empty position", () => {
+    expect(toStakingResources(undefined)).toStrictEqual({
+      bondedBalance: new BigNumber(0),
+      bondedValidator: null,
+      unbondingBalance: new BigNumber(0),
+      unbondingHeight: null,
+    });
+  });
+});
+
+describe("sumStakedBalance", () => {
+  it("adds the bonded and unbonding amounts", () => {
+    const result = sumStakedBalance({
+      bondedBalance: new BigNumber(70000),
+      unbondingBalance: new BigNumber(5000),
+    });
+
+    expect(result).toStrictEqual(new BigNumber(75000));
+  });
+
+  it("returns zero for the empty slice staking-disabled accounts carry", () => {
+    expect(sumStakedBalance({})).toStrictEqual(new BigNumber(0));
+  });
+});
+
+describe("getClaimableStakingBalance", () => {
+  const unbondingBalance = new BigNumber(50000);
+
+  const accountAt = (blockHeight: number, unbondingHeight: number | null) =>
+    getMockedAccount({
+      blockHeight,
+      aleoResources: { ...mockAleoResources, unbondingBalance, unbondingHeight },
+    });
+
+  it("returns zero while the chain has not reached the unbonding height", () => {
+    expect(getClaimableStakingBalance(accountAt(249, 250))).toStrictEqual(new BigNumber(0));
+  });
+
+  it("returns the full unbonding balance once the height is reached", () => {
+    expect(getClaimableStakingBalance(accountAt(250, 250))).toStrictEqual(unbondingBalance);
+  });
+
+  it("returns the full unbonding balance once the height is passed", () => {
+    expect(getClaimableStakingBalance(accountAt(999, 250))).toStrictEqual(unbondingBalance);
+  });
+
+  it("returns zero when there is no unbonding entry", () => {
+    expect(getClaimableStakingBalance(accountAt(999, null))).toStrictEqual(new BigNumber(0));
+  });
+
+  it("returns zero when the account has never synced a staking position", () => {
+    // the four fields are simply absent on an account cached before they existed
+    const {
+      unbondingBalance: _balance,
+      unbondingHeight: _height,
+      ...neverSynced
+    } = mockAleoResources;
+    const account = getMockedAccount({ blockHeight: 999, aleoResources: neverSynced });
+
+    expect(getClaimableStakingBalance(account)).toStrictEqual(new BigNumber(0));
+  });
+
+  it("returns zero when aleoResources is missing entirely", () => {
+    // @ts-expect-error - testing behavior when aleoResources is explicitly undefined
+    const brokenAccount = getMockedAccount({ blockHeight: 999, aleoResources: undefined });
+
+    expect(getClaimableStakingBalance(brokenAccount)).toStrictEqual(new BigNumber(0));
   });
 });
 

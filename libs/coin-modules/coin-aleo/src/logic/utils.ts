@@ -65,6 +65,7 @@ import type {
   AleoTokenType,
   EnrichedPrivateRecord,
   AleoStakingPosition,
+  AleoStakingResources,
   AleoStakingMode,
   AleoValidatorNonEarningReason,
 } from "../types";
@@ -888,6 +889,41 @@ export const getOperationDetailsExtraFields = (
 ): OperationDetailsExtraField[] => {
   return [{ key: "functionId", value: extra.functionId }];
 };
+
+/**
+ * Normalizes a staking position — from the chain or from a previously synced account —
+ * into the slice stored on `aleoResources`.
+ */
+export function toStakingResources(source: AleoStakingResources | undefined): AleoStakingResources {
+  return {
+    bondedBalance: source?.bondedBalance ?? new BigNumber(0),
+    bondedValidator: source?.bondedValidator ?? null,
+    unbondingBalance: source?.unbondingBalance ?? new BigNumber(0),
+    unbondingHeight: source?.unbondingHeight ?? null,
+  };
+}
+
+/**
+ * The part of the balance that is staked: bonded plus unbonding. Owned by the account but
+ * not spendable until unbonded and claimed, so it belongs in `balance` and not
+ * `spendableBalance`. Zero for an empty slice, i.e. whenever staking is disabled.
+ */
+export function sumStakedBalance(resources: AleoStakingResources): BigNumber {
+  return (resources.bondedBalance ?? new BigNumber(0)).plus(resources.unbondingBalance ?? 0);
+}
+
+/**
+ * Unbonded funds become claimable once the chain reaches the height stored in the
+ * credits.aleo `unbonding` mapping. Uses the account's last synced blockHeight.
+ *
+ * Returns zero while staking is disabled, since the slice is then absent.
+ */
+export function getClaimableStakingBalance(account: AleoAccount): BigNumber {
+  const { unbondingBalance, unbondingHeight } = account.aleoResources ?? {};
+  if (!unbondingBalance || unbondingHeight === null || unbondingHeight === undefined)
+    return new BigNumber(0);
+  return account.blockHeight >= unbondingHeight ? unbondingBalance : new BigNumber(0);
+}
 
 /**
  * Returns the spendable balance for a given Aleo transaction mode.
