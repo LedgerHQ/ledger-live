@@ -59,6 +59,47 @@ function buildTokenAccount({
   };
 }
 
+/**
+ * Groups `operations` once by (lowercased `assetReference`, `assetOwner`) so that each token's
+ * matching operations can be looked up instead of refiltering the whole list. Only operations
+ * whose `extra.assetReference` is a string are indexed here: the existing predicate lowercases
+ * only when *both* sides are strings, so an op whose reference isn't a string can never match a
+ * string-typed balance reference (and vice versa) — see `nonStringReferenceOperations` below,
+ * which keeps those out of the index and lets them be matched by the original predicate.
+ */
+function indexOperationsByAssetReference(operations: OperationCommon[]): {
+  byLowercasedReference: Map<string, Map<unknown, OperationCommon[]>>;
+  nonStringReferenceOperations: OperationCommon[];
+} {
+  const byLowercasedReference = new Map<string, Map<unknown, OperationCommon[]>>();
+  const nonStringReferenceOperations: OperationCommon[] = [];
+
+  for (const op of operations) {
+    const assetReference = op.extra.assetReference;
+    if (typeof assetReference !== "string") {
+      nonStringReferenceOperations.push(op);
+      continue;
+    }
+
+    const lowered = assetReference.toLowerCase();
+    let byOwner = byLowercasedReference.get(lowered);
+    if (!byOwner) {
+      byOwner = new Map();
+      byLowercasedReference.set(lowered, byOwner);
+    }
+
+    const owner = op.extra.assetOwner;
+    const bucket = byOwner.get(owner);
+    if (bucket) {
+      bucket.push(op);
+    } else {
+      byOwner.set(owner, [op]);
+    }
+  }
+
+  return { byLowercasedReference, nonStringReferenceOperations };
+}
+
 export async function buildSubAccounts({
   accountId,
   allTokenAssetsBalances,
@@ -86,28 +127,33 @@ export async function buildSubAccounts({
     })),
   );
 
+  const { byLowercasedReference, nonStringReferenceOperations } =
+    indexOperationsByAssetReference(operations);
+
   for (const { balance, token } of tokenBalances) {
     // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
     if (token && !blacklistedTokenIds.includes(token.id)) {
+      const assetReference = balance.asset?.["assetReference"];
+      const assetOwner = balance.asset?.["assetOwner"];
+      // assetReference compared case-insensitively: a chain's own listOperations output and
+      // its balance/getAssetFromToken derivation aren't guaranteed to agree on reference casing
+      // (observed on Stacks -- one path lowercases a composite contract-address string, the
+      // other returns it verbatim), so an exact-string match here would silently drop an
+      // operation from its subAccount.
+      const matchingOperations =
+        typeof assetReference === "string"
+          ? (byLowercasedReference.get(assetReference.toLowerCase())?.get(assetOwner) ?? [])
+          : nonStringReferenceOperations.filter(
+              op =>
+                op.extra.assetReference === assetReference && op.extra.assetOwner === assetOwner,
+            );
+
       tokenAccounts.push(
         buildTokenAccount({
           parentAccountId: accountId,
           assetBalance: balance,
           token,
-          // assetReference compared case-insensitively: a chain's own listOperations output and
-          // its balance/getAssetFromToken derivation aren't guaranteed to agree on reference casing
-          // (observed on Stacks -- one path lowercases a composite contract-address string, the
-          // other returns it verbatim), so an exact-string match here would silently drop an
-          // operation from its subAccount.
-          operations: operations.filter(op => {
-            const assetReference = balance.asset?.["assetReference"];
-            return (
-              (typeof op.extra.assetReference === "string" && typeof assetReference === "string"
-                ? op.extra.assetReference.toLowerCase() === assetReference.toLowerCase()
-                : op.extra.assetReference === assetReference) &&
-              op.extra.assetOwner === balance.asset?.["assetOwner"] // NOTE: we could narrow type
-            );
-          }),
+          operations: matchingOperations,
         }),
       );
     }

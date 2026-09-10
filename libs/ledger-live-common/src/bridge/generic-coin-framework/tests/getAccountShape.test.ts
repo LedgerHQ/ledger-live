@@ -68,6 +68,11 @@ jest.mock("../accountRawAssign", () => ({
 const inferSubOperationsMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
   inferSubOperations: (...a: any[]) => inferSubOperationsMock(...a),
+  // The SUT now builds one index per sync instead of scanning per hash; this shim keeps every
+  // existing inferSubOperationsMock setup below valid unchanged by routing lookups through it.
+  buildSubOperationIndex: (subAccounts: any[]) => ({
+    get: (hash: string) => inferSubOperationsMock(hash, subAccounts),
+  }),
 }));
 
 const buildSubAccountsMock = jest.fn();
@@ -1187,6 +1192,107 @@ describe("genericGetAccountShape", () => {
       expect(attachedInternalOp?.hash).toBe(parentOpHash);
       expect(attachedInternalOp?.type).toBe("IN");
       expect((attachedInternalOp as any)?.extra?.internal).toBe(true);
+    });
+
+    test("buildParentOperations: subOperations match inferSubOperations for a large account, order included", async () => {
+      // Real inferSubOperations used as the oracle for what the (mocked) index-based path should
+      // produce -- a full scan by construction cannot drift from itself, so this proves the
+      // getAccountShape wiring rather than re-testing inferSubOperations.
+      const { inferSubOperations: realInferSubOperations } = jest.requireActual(
+        "@ledgerhq/ledger-wallet-framework/serialization",
+      );
+
+      const TX_COUNT = 60;
+      const SUB_ACCOUNT_COUNT = 6;
+      const hashes = Array.from({ length: TX_COUNT }, (_, i) => `large-tx-${i}`);
+      const pendingOnlyHash = "large-tx-pending-only";
+      const allTxHashes = [...hashes, pendingOnlyHash];
+
+      // Interleaved on purpose: a given hash's sub-operations come from more than one sub-account
+      // and, for one hash, only from a pendingOperations entry -- exactly what a regression to a
+      // naive per-item scan or a wrongly-ordered index would get wrong.
+      const subAccounts = Array.from({ length: SUB_ACCOUNT_COUNT }, (_, subIndex) => {
+        const operations = hashes
+          .filter((_, i) => i % SUB_ACCOUNT_COUNT === subIndex || i % 3 === 0)
+          .map(hash => ({
+            hash,
+            type: "OUT",
+            accountId: `tokenAcc${subIndex}`,
+            id: `tokenAcc${subIndex}_${hash}_OUT`,
+            value: new BigNumber(1),
+            fee: new BigNumber(0),
+          }));
+        const pendingOperations =
+          subIndex === 0
+            ? [
+                {
+                  hash: pendingOnlyHash,
+                  type: "OUT",
+                  accountId: "tokenAcc0",
+                  id: `tokenAcc0_${pendingOnlyHash}_OUT`,
+                  value: new BigNumber(1),
+                  fee: new BigNumber(0),
+                },
+              ]
+            : [];
+        return {
+          id: `tokenAcc${subIndex}`,
+          type: "TokenAccount",
+          operations,
+          pendingOperations,
+        };
+      });
+
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      listOperationsMock.mockResolvedValue({
+        items: allTxHashes.map(hash => ({ hash, type: "OUT", height: 1, tx: { failed: false } })),
+      });
+      lastBlockMock.mockResolvedValue({ height: 100 });
+      adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op: any) => ({
+        hash: op.hash,
+        type: op.type,
+        blockHeight: op.height,
+        blockHash: "0xblock",
+        fee: new BigNumber(21000),
+        value: new BigNumber(1),
+        senders: ["0xabc"],
+        recipients: ["0xdef"],
+        date: new Date("2024-01-15"),
+        extra: {},
+      }));
+      buildSubAccountsMock.mockReturnValue(subAccounts);
+      inferSubOperationsMock.mockImplementation((hash: string, accounts: any[]) =>
+        realInferSubOperations(hash, accounts),
+      );
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: `${currency.id}_addr_large`,
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.operations).toHaveLength(allTxHashes.length);
+      for (const parentOp of result.operations ?? []) {
+        const expectedSubOps = realInferSubOperations(parentOp.hash, subAccounts);
+        expect(parentOp.subOperations?.map((o: any) => o.id)).toEqual(
+          expectedSubOps.map((o: any) => o.id),
+        );
+      }
+
+      // Dedicated check for the pending-only hash: its sole sub-operation lives only in
+      // tokenAcc0.pendingOperations, never in any operations array.
+      const pendingOnlyParent = result.operations?.find(op => op.hash === pendingOnlyHash);
+      expect(pendingOnlyParent?.subOperations?.map((o: any) => o.id)).toEqual([
+        `tokenAcc0_${pendingOnlyHash}_OUT`,
+      ]);
     });
   });
 
