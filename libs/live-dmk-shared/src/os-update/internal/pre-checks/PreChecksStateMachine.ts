@@ -319,7 +319,7 @@ export const preChecksStateMachine = setup({
         },
         onError: {
           actions: assign({ error: ({ event }) => event.error }),
-            target: "CheckErrorCause",
+          target: "CheckErrorCause",
         },
       },
     },

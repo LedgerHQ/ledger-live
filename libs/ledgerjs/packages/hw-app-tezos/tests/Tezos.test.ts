@@ -1,7 +1,4 @@
-import {
-  openTransportReplayer,
-  RecordStore,
-} from "@ledgerhq/hw-transport-mocker";
+import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Tezos from "../src/Tezos";
 
 test("Tezos init", async () => {

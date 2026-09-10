@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src"
   },
   "dependencies": {
     "@devtools/transport": "workspace:*",
@@ -19,15 +21,16 @@
     "ws": "catalog:"
   },
   "devDependencies": {
+    "@devtools/protocols": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
-    "@devtools/protocols": "workspace:*",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/qrcode-terminal": "^0.12.0",
     "@types/ws": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:"
   }

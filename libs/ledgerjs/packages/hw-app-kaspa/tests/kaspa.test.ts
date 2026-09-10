@@ -1,13 +1,6 @@
-import {
-  openTransportReplayer,
-  RecordStore,
-} from "@ledgerhq/hw-transport-mocker";
+import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Kaspa from "../src/Kaspa";
-import {
-  KaspaHwTransaction,
-  TransactionInput,
-  TransactionOutput,
-} from "../lib/kaspaHwTransaction";
+import { KaspaHwTransaction, TransactionInput, TransactionOutput } from "../lib/kaspaHwTransaction";
 
 describe("kaspa", () => {
   it("getVersion", async () => {
@@ -47,8 +40,7 @@ describe("kaspa", () => {
       `),
     );
     const kaspa = new Kaspa(transport);
-    const publicKey = (await kaspa.getAddress("44'/111111'/0'/0/0", false))
-      .publicKey;
+    const publicKey = (await kaspa.getAddress("44'/111111'/0'/0/0", false)).publicKey;
     expect(publicKey).toEqual("deadbeef");
   });
 
@@ -60,8 +52,7 @@ describe("kaspa", () => {
       `),
     );
     const kaspa = new Kaspa(transport);
-    const publicKey = (await kaspa.getAddress("44'/111111'/0'/0/0", true))
-      .publicKey;
+    const publicKey = (await kaspa.getAddress("44'/111111'/0'/0/0", true)).publicKey;
     expect(publicKey).toEqual("deadbeef");
   });
 
@@ -73,12 +64,9 @@ describe("kaspa", () => {
       `),
     );
     const kaspa = new Kaspa(transport);
-    const address = (await kaspa.getAddress("44'/111111'/0'/0/0", true))
-      .address;
+    const address = (await kaspa.getAddress("44'/111111'/0'/0/0", true)).address;
 
-    expect(address).toEqual(
-      "kaspa:qpsq6flzeqsj0cuwuzmnzlj9ermg8frl2p6azjmtx7wjdmvpkzyp24kndspxw",
-    );
+    expect(address).toEqual("kaspa:qpsq6flzeqsj0cuwuzmnzlj9ermg8frl2p6azjmtx7wjdmvpkzyp24kndspxw");
   });
 
   it("signTransaction with simple data", async () => {
@@ -95,8 +83,7 @@ describe("kaspa", () => {
     const kaspa = new Kaspa(transport);
 
     const txin = new TransactionInput({
-      prevTxId:
-        "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
+      prevTxId: "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
       value: 1100000,
       addressType: 0,
       addressIndex: 0,
@@ -105,8 +92,7 @@ describe("kaspa", () => {
 
     const txout = new TransactionOutput({
       value: 1090000,
-      scriptPublicKey:
-        "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+      scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
     });
 
     const tx = new KaspaHwTransaction({
@@ -149,8 +135,7 @@ describe("kaspa", () => {
     const kaspa = new Kaspa(transport);
 
     const txin1 = new TransactionInput({
-      prevTxId:
-        "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
+      prevTxId: "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
       value: 1100000,
       addressType: 0,
       addressIndex: 0,
@@ -158,8 +143,7 @@ describe("kaspa", () => {
     });
 
     const txin2 = new TransactionInput({
-      prevTxId:
-        "40aa22362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
+      prevTxId: "40aa22362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
       value: 1100000,
       addressType: 0,
       addressIndex: 0,
@@ -168,8 +152,7 @@ describe("kaspa", () => {
 
     const txout = new TransactionOutput({
       value: 1090000,
-      scriptPublicKey:
-        "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+      scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
     });
 
     const tx = new KaspaHwTransaction({
@@ -215,8 +198,7 @@ describe("kaspa", () => {
     const kaspa = new Kaspa(transport);
 
     const txin = new TransactionInput({
-      prevTxId:
-        "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
+      prevTxId: "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
       value: 1100000,
       addressType: 0,
       addressIndex: 0,
@@ -225,8 +207,7 @@ describe("kaspa", () => {
 
     const txout = new TransactionOutput({
       value: 1090000,
-      scriptPublicKey:
-        "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+      scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
     });
 
     const tx = new KaspaHwTransaction({
@@ -262,8 +243,7 @@ describe("kaspa", () => {
     const kaspa = new Kaspa(transport);
 
     const txin = new TransactionInput({
-      prevTxId:
-        "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
+      prevTxId: "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
       value: 1100000,
       addressType: 0,
       addressIndex: 0,
@@ -272,8 +252,7 @@ describe("kaspa", () => {
 
     const txout = new TransactionOutput({
       value: 1090000,
-      scriptPublicKey:
-        "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+      scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
     });
 
     const tx = new KaspaHwTransaction({
@@ -321,16 +300,13 @@ describe("kaspa", () => {
       "ec4a7f581dc2450ab43b412a67bdfdafa6f98281f854a1508852042e41ef86695ec7f0fa36122193fa201ce783618710d65c85cf94640cb93e965f5158fd84a3";
     txin.setSignature(expectedSignature);
 
-    expect(txin.toApiJSON().signatureScript).toEqual(
-      `41${expectedSignature}01`,
-    );
+    expect(txin.toApiJSON().signatureScript).toEqual(`41${expectedSignature}01`);
   });
 
   it("signMessage with simple data", async () => {
     const expectedSignature =
       "ec4a7f581dc2450ab43b412a67bdfdafa6f98281f854a1508852042e41ef86695ec7f0fa36122193fa201ce783618710d65c85cf94640cb93e965f5158fd84a3";
-    const expectedMessageHash =
-      "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
+    const expectedMessageHash = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
     const transport = await openTransportReplayer(
       RecordStore.fromString(`
         => e0070000160000000000800000000c48656c6c6f204b6173706121
@@ -340,11 +316,7 @@ describe("kaspa", () => {
     const kaspa = new Kaspa(transport);
 
     try {
-      const { signature, messageHash } = await kaspa.signMessage(
-        "Hello Kaspa!",
-        0,
-        0,
-      );
+      const { signature, messageHash } = await kaspa.signMessage("Hello Kaspa!", 0, 0);
       expect(signature).toEqual(expectedSignature);
       expect(messageHash).toEqual(messageHash);
     } catch (e) {
@@ -356,8 +328,7 @@ describe("kaspa", () => {
   it("signMessage requires valid address index", async () => {
     const expectedSignature =
       "ec4a7f581dc2450ab43b412a67bdfdafa6f98281f854a1508852042e41ef86695ec7f0fa36122193fa201ce783618710d65c85cf94640cb93e965f5158fd84a3";
-    const expectedMessageHash =
-      "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
+    const expectedMessageHash = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
     const transport = await openTransportReplayer(
       RecordStore.fromString(`
         => e00700001600000000008000000000c48656c6c6f204b6173706121
@@ -368,11 +339,7 @@ describe("kaspa", () => {
 
     let err: any = null;
     try {
-      const { signature, messageHash } = await kaspa.signMessage(
-        "Hello Kaspa!",
-        0,
-        -1,
-      );
+      const { signature, messageHash } = await kaspa.signMessage("Hello Kaspa!", 0, -1);
       expect(signature).toEqual(expectedSignature);
       expect(messageHash).toEqual(messageHash);
     } catch (e) {
@@ -385,8 +352,7 @@ describe("kaspa", () => {
   it("signMessage requires valid account", async () => {
     const expectedSignature =
       "ec4a7f581dc2450ab43b412a67bdfdafa6f98281f854a1508852042e41ef86695ec7f0fa36122193fa201ce783618710d65c85cf94640cb93e965f5158fd84a3";
-    const expectedMessageHash =
-      "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
+    const expectedMessageHash = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
     const transport = await openTransportReplayer(
       RecordStore.fromString(`
         => e00700001600000000008000000000c48656c6c6f204b6173706121
@@ -431,8 +397,7 @@ describe("kaspa", () => {
   it("signMessage sets default values for index and account", async () => {
     const expectedSignature =
       "ec4a7f581dc2450ab43b412a67bdfdafa6f98281f854a1508852042e41ef86695ec7f0fa36122193fa201ce783618710d65c85cf94640cb93e965f5158fd84a3";
-    const expectedMessageHash =
-      "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
+    const expectedMessageHash = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
     const transport = await openTransportReplayer(
       RecordStore.fromString(`
         => e00700001600000000008000000000c48656c6c6f204b6173706121
@@ -443,8 +408,7 @@ describe("kaspa", () => {
 
     let err: any = null;
     try {
-      const { signature, messageHash } =
-        await kaspa.signMessage("Hello Kaspa!");
+      const { signature, messageHash } = await kaspa.signMessage("Hello Kaspa!");
       expect(signature).toEqual(expectedSignature);
       expect(messageHash).toEqual(messageHash);
     } catch (e) {
@@ -456,8 +420,7 @@ describe("kaspa", () => {
 describe("Transaction", () => {
   it("should serialize", () => {
     const txin = new TransactionInput({
-      prevTxId:
-        "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
+      prevTxId: "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
       value: 1100000,
       addressType: 0,
       addressIndex: 0,
@@ -466,8 +429,7 @@ describe("Transaction", () => {
 
     const txout = new TransactionOutput({
       value: 1090000,
-      scriptPublicKey:
-        "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+      scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
     });
 
     const tx = new KaspaHwTransaction({
@@ -479,8 +441,7 @@ describe("Transaction", () => {
     });
 
     const expectation = Buffer.from([
-      0x00, 0x00, 0x01, 0x01, 0x01, 0x02, 0x03, 0x04, 0x05, 0x80, 0x00, 0x00,
-      0x00,
+      0x00, 0x00, 0x01, 0x01, 0x01, 0x02, 0x03, 0x04, 0x05, 0x80, 0x00, 0x00, 0x00,
     ]);
 
     expect(tx.serialize().equals(expectation)).toBeTruthy();
@@ -488,8 +449,7 @@ describe("Transaction", () => {
 
   it("should check that change address type is 0 or 1", () => {
     const txin = new TransactionInput({
-      prevTxId:
-        "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
+      prevTxId: "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
       value: 1100000,
       addressType: 0,
       addressIndex: 0,
@@ -498,8 +458,7 @@ describe("Transaction", () => {
 
     const txout = new TransactionOutput({
       value: 1090000,
-      scriptPublicKey:
-        "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+      scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
     });
 
     let err: any = null;
@@ -520,8 +479,7 @@ describe("Transaction", () => {
 
   it("should check that account is in 0x80000000 and 0xFFFFFFFF", () => {
     const txin = new TransactionInput({
-      prevTxId:
-        "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
+      prevTxId: "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
       value: 1100000,
       addressType: 0,
       addressIndex: 0,
@@ -530,8 +488,7 @@ describe("Transaction", () => {
 
     const txout = new TransactionOutput({
       value: 1090000,
-      scriptPublicKey:
-        "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+      scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
     });
 
     let err: any = null;
@@ -553,8 +510,7 @@ describe("Transaction", () => {
 
   it("should check that change address index to be in range", () => {
     const txin = new TransactionInput({
-      prevTxId:
-        "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
+      prevTxId: "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
       value: 1100000,
       addressType: 0,
       addressIndex: 0,
@@ -563,8 +519,7 @@ describe("Transaction", () => {
 
     const txout = new TransactionOutput({
       value: 1090000,
-      scriptPublicKey:
-        "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+      scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
     });
 
     let err: any = null;
@@ -585,8 +540,7 @@ describe("Transaction", () => {
 
   it("should check that API JSON is producible", () => {
     const txin = new TransactionInput({
-      prevTxId:
-        "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
+      prevTxId: "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
       value: 1100000,
       addressType: 0,
       addressIndex: 0,
@@ -595,8 +549,7 @@ describe("Transaction", () => {
 
     const txout = new TransactionOutput({
       value: 1090000,
-      scriptPublicKey:
-        "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+      scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
     });
 
     const tx = new KaspaHwTransaction({
@@ -612,9 +565,7 @@ describe("Transaction", () => {
     expect(json.inputs.length).toEqual(1);
     expect(json.outputs.length).toEqual(1);
     expect(json.lockTime).toEqual(0);
-    expect(json.subnetworkId).toEqual(
-      "0000000000000000000000000000000000000000",
-    );
+    expect(json.subnetworkId).toEqual("0000000000000000000000000000000000000000");
   });
 });
 
@@ -624,8 +575,7 @@ describe("TransactionInput", () => {
 
     try {
       const txin1 = new TransactionInput({
-        prevTxId:
-          "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
+        prevTxId: "40b022362f1a303518e2b49f86f87a317c87b514ca0f3d08ad2e7cf49d08cc70",
         value: 18446744073709551615,
         addressType: 0,
         addressIndex: 0,
@@ -649,8 +599,7 @@ describe("TransactionOutput", () => {
     try {
       new TransactionOutput({
         value: 1090000,
-        scriptPublicKey:
-          "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+        scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
       });
     } catch (e) {
       err = e;
@@ -662,15 +611,13 @@ describe("TransactionOutput", () => {
   it("should serialize value and scriptPublicKey", () => {
     const serial = new TransactionOutput({
       value: 1090000,
-      scriptPublicKey:
-        "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+      scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
     }).serialize();
 
     const expectation = Buffer.from([
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0xa1, 0xd0, 0x20, 0x11, 0xa7, 0x21,
-      0x5f, 0x66, 0x8e, 0x92, 0x10, 0x13, 0xeb, 0x7a, 0xac, 0x9b, 0x7e, 0x64,
-      0xb9, 0xec, 0x6e, 0x75, 0x7c, 0x1b, 0x64, 0x8e, 0x89, 0x38, 0x8c, 0x91,
-      0x9f, 0x67, 0x6a, 0xa8, 0x8c, 0xac,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0xa1, 0xd0, 0x20, 0x11, 0xa7, 0x21, 0x5f, 0x66, 0x8e,
+      0x92, 0x10, 0x13, 0xeb, 0x7a, 0xac, 0x9b, 0x7e, 0x64, 0xb9, 0xec, 0x6e, 0x75, 0x7c, 0x1b,
+      0x64, 0x8e, 0x89, 0x38, 0x8c, 0x91, 0x9f, 0x67, 0x6a, 0xa8, 0x8c, 0xac,
     ]);
 
     expect(serial.equals(expectation)).toBeTruthy();
@@ -681,8 +628,7 @@ describe("TransactionOutput", () => {
     try {
       new TransactionOutput({
         value: 0,
-        scriptPublicKey:
-          "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+        scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
       });
     } catch (e) {
       err = e;
@@ -693,8 +639,7 @@ describe("TransactionOutput", () => {
     try {
       new TransactionOutput({
         value: 0x10000000000000000,
-        scriptPublicKey:
-          "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+        scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
       });
     } catch (e) {
       err = e;
@@ -708,8 +653,7 @@ describe("TransactionOutput", () => {
     try {
       const output = new TransactionOutput({
         value: Number.MAX_SAFE_INTEGER,
-        scriptPublicKey:
-          "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
+        scriptPublicKey: "2011a7215f668e921013eb7aac9b7e64b9ec6e757c1b648e89388c919f676aa88cac",
       });
 
       output.serialize();

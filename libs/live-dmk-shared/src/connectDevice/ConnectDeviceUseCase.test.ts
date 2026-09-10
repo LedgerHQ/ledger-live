@@ -126,9 +126,7 @@ describe("connectDeviceUseCase", () => {
     });
 
     //Assert
-    expect(states).toEqual([
-      { type: ConnectDeviceUIStateTypes.UnknownError, error: thrown },
-    ]);
+    expect(states).toEqual([{ type: ConnectDeviceUIStateTypes.UnknownError, error: thrown }]);
     expect(errorHandler).not.toHaveBeenCalled();
     expect(completeHandler).toHaveBeenCalledTimes(1);
 
