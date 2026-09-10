@@ -1,5 +1,7 @@
+import { log } from "@ledgerhq/logs";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AccountBridge } from "@ledgerhq/types-live";
+import { ZCASH_LOG_TYPE } from "../constants";
 import type { BtcOperationExtra, Transaction, ZcashAccount } from "../types/bridge";
 import { getWalletAccount } from "./getWalletAccount";
 import { broadcast as broadcastLogic } from "../logic/transaction/broadcast";
@@ -37,6 +39,13 @@ export const broadcast: AccountBridge<Transaction, ZcashAccount>["broadcast"] = 
         : undefined,
     );
   } catch (error) {
+    // No operationHash here: on this path it's the txid of a transaction that
+    // never reached the chain -- exactly the "digest of the signed transaction"
+    // artifact this feature must not log (see logic/transaction/broadcast.ts's
+    // own "broadcast failed" line, already in the same log stream, for context).
+    log(ZCASH_LOG_TYPE, "released note reservation after broadcast failure", {
+      accountId: account.id,
+    });
     releaseReservation(account.id, operation.hash);
     throw error;
   }

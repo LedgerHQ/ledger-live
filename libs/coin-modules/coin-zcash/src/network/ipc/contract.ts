@@ -166,7 +166,7 @@ export type UtilityOutboundMessage =
   | { type: "finalize-transaction-result"; requestId: RequestId; result: FinalizeTransactionResult }
   | { type: "finalize-transaction-error"; requestId: RequestId; message: string }
   | { type: "broadcast-transaction-result"; requestId: RequestId; txid: string }
-  | { type: "broadcast-transaction-error"; requestId: RequestId; message: string }
+  | { type: "broadcast-transaction-error"; requestId: RequestId; message: string; endpoint: string }
   | {
       type: "transaction-details-result";
       requestId: RequestId;

@@ -209,6 +209,7 @@ async function handleBroadcastTransaction(
       type: "broadcast-transaction-error",
       requestId: args.requestId,
       message: err instanceof Error ? err.message : String(err),
+      endpoint: args.grpcUrl,
     });
   }
 }
