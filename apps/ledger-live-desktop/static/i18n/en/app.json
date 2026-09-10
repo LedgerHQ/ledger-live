@@ -2844,12 +2844,12 @@
     "balanceType": {
       "title": "Select balance type",
       "transparent": {
-        "title": "Transparent",
-        "subtitle": "Standard on-chain balance"
+        "title": "Public balance",
+        "subtitle": "Transparent"
       },
       "shielded": {
-        "title": "Shielded",
-        "subtitle": "Privacy-preserving balance",
+        "title": "Private balance",
+        "subtitle": "Shielded",
         "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
       },
       "zeroBalance": {

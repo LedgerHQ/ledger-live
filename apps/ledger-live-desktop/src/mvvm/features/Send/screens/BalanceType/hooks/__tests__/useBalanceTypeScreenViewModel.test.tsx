@@ -54,6 +54,7 @@ jest.mock("~/renderer/hooks/useAccountUnit", () => ({
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
   CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
+  useCalculateCountervalueCallback: jest.fn(() => (_from: unknown, value: unknown) => value),
 }));
 
 const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
@@ -152,6 +153,7 @@ describe("useBalanceTypeScreenViewModel", () => {
     expect(vm?.ready).toBe(true);
     if (vm?.ready) {
       expect(vm.options[0].formattedBalance).toBeTruthy();
+      expect(vm.options[0].formattedCounterValue).toBeTruthy();
       expect(vm.options[0].isZero).toBe(false);
       expect(vm.options[1].isZero).toBe(true);
     }

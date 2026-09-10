@@ -4,10 +4,15 @@ import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/featu
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
 import { useSelector } from "LLD/hooks/redux";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
+import {
+  counterValueCurrencySelector,
+  discreetModeSelector,
+  localeSelector,
+} from "~/renderer/reducers/settings";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 
 type FlowTransaction = NonNullable<SendFlowState["transaction"]["transaction"]>;
@@ -17,6 +22,7 @@ export type BalanceTypeOption = {
   /** i18n key suffix under `newSendFlow.`, owned by the currency's send descriptor. */
   translationKey: string;
   formattedBalance: string;
+  formattedCounterValue: string;
   isZero: boolean;
   hasPendingBalance: boolean;
 };
@@ -36,6 +42,10 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
   const { navigation } = useFlowWizard();
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const calculateCountervalue = useCalculateCountervalueCallback({
+    to: counterValueCurrency,
+  });
 
   const { account } = state.account;
   const { transaction } = state.transaction;
@@ -66,15 +76,26 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
     return { ready: false };
   }
 
-  const options = balanceTypeConfig.getOptions({ account }).map(option => ({
-    id: option.id,
-    translationKey: option.translationKey,
-    formattedBalance: unit
-      ? formatCurrencyUnit(unit, option.balance, { showCode: true, locale, discreet })
-      : "",
-    isZero: option.balance.isZero(),
-    hasPendingBalance: option.hasPendingBalance,
-  }));
+  const options = balanceTypeConfig.getOptions({ account }).map(option => {
+    const counterValue = calculateCountervalue(getAccountCurrency(account), option.balance);
+
+    return {
+      id: option.id,
+      translationKey: option.translationKey,
+      formattedBalance: unit
+        ? formatCurrencyUnit(unit, option.balance, { showCode: true, locale, discreet })
+        : "",
+      formattedCounterValue: counterValue
+        ? formatCurrencyUnit(counterValueCurrency.units[0], counterValue, {
+            showCode: true,
+            locale,
+            discreet,
+          })
+        : "",
+      isZero: option.balance.isZero(),
+      hasPendingBalance: option.hasPendingBalance,
+    };
+  });
 
   return {
     ready: true,

@@ -11,7 +11,7 @@ import {
   SubheaderRow,
   SubheaderTitle,
 } from "@ledgerhq/lumen-ui-react";
-import { ChevronRight, Eye, ShieldCheck } from "@ledgerhq/lumen-ui-react/symbols";
+import { ChevronRight, UserCheck, UserLock } from "@ledgerhq/lumen-ui-react/symbols";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
@@ -57,7 +57,7 @@ export function SelfTransferSection() {
 
   if (!target) return null;
 
-  const IconComponent = target.isDestinationPublic ? Eye : ShieldCheck;
+  const IconComponent = target.isDestinationPublic ? UserCheck : UserLock;
 
   return (
     <div className="mb-12" data-testid="self-transfer-section">
