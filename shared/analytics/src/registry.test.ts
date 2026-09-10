@@ -9,9 +9,7 @@ import {
   setMandatoryExtraPropsFn,
   setPropsFilter,
 } from "./registry";
-import type { Analytics, Props } from "./types";
-
-const transport = { track: jest.fn() } as Analytics;
+import type { Props } from "./types";
 
 beforeEach(() => {
   setAnalytics({ track: jest.fn() });
@@ -21,12 +19,13 @@ beforeEach(() => {
   setPropsFilter(undefined);
 });
 
-describe("@shared/analytics registry", () => {
+describe("registry", () => {
   describe("getAnalytics", () => {
-    it("returns the registered transport", () => {
-      setAnalytics(transport);
+    it("returns the injected analytics", () => {
+      const myAnalytics = { track: jest.fn() };
+      setAnalytics(myAnalytics);
 
-      expect(getAnalytics()).toBe(transport);
+      expect(getAnalytics()).toBe(myAnalytics);
     });
   });
 
