@@ -28,7 +28,10 @@ import {
   optionalNumeric,
   sumBalance,
 } from "./utils";
-import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
+import {
+  buildSubOperationIndex,
+  type SubOperationIndex,
+} from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { paginateOperations } from "./paginateOperations";
 import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
@@ -271,14 +274,14 @@ function parentOpsForTxWithNonInternalOperations(
   hash: string,
   transactionOps: OperationCommon[],
   internalOperations: OperationCommon[],
-  newSubAccounts: TokenAccount[],
+  subOperationIndex: SubOperationIndex,
   accountId: string,
   address: string,
 ): OperationCommon[] {
   const nativeOps = transactionOps.filter(isNativeLiveOp);
-  // inferSubOperations returns types-live Operation[]; we use OperationCommon in this bridge
+  // subOperationIndex holds types-live Operation[]; we use OperationCommon in this bridge
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- framework type vs bridge type
-  const subOperations = inferSubOperations(hash, newSubAccounts) as OperationCommon[];
+  const subOperations = (subOperationIndex.get(hash) ?? []) as OperationCommon[];
 
   // If transaction has native ops, use them as parents
   if (nativeOps.length > 0)
@@ -301,11 +304,11 @@ function parentOpsForTxWithNonInternalOperations(
 function parentOpsForTxWithOnlyInternalOperations(
   hash: string,
   internalOperations: OperationCommon[],
-  newSubAccounts: TokenAccount[],
+  subOperationIndex: SubOperationIndex,
   accountId: string,
 ): OperationCommon[] {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- framework type vs bridge type
-  const subOperations = inferSubOperations(hash, newSubAccounts) as OperationCommon[];
+  const subOperations = (subOperationIndex.get(hash) ?? []) as OperationCommon[];
   const firstInternal = internalOperations[0];
   if (!firstInternal) return [];
 
@@ -346,6 +349,10 @@ function buildParentOperations(
 ): OperationCommon[] {
   const nonInternalByHash = groupBy(newNonInternalOperations, "hash");
   const internalByHash = groupBy(newInternalOperations, "hash");
+  // Built once for all transactions rather than once per hash — the group-once pattern above
+  // already applies to the other side of this join (transactions grouped by hash); this applies it
+  // to the sub-account side.
+  const subOperationIndex = buildSubOperationIndex(newSubAccounts);
 
   const result: OperationCommon[] = [];
 
@@ -357,7 +364,7 @@ function buildParentOperations(
         hash,
         transactionOps,
         internalOperations,
-        newSubAccounts,
+        subOperationIndex,
         accountId,
         address,
       ),
@@ -371,7 +378,7 @@ function buildParentOperations(
       ...parentOpsForTxWithOnlyInternalOperations(
         hash,
         internalOperations,
-        newSubAccounts,
+        subOperationIndex,
         accountId,
       ),
     );
