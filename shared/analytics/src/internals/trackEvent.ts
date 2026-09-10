@@ -1,7 +1,7 @@
 import { isThenable } from "./isThenable";
 import { applyPropertyFilter, getAnalytics, resolveExtraProperties } from "../registry";
 import { trackSubject } from "../trackSubject";
-import type { DeliveryStatus, LoggableEventProperties, Props } from "../types";
+import type { DeliveryStatus, Props } from "../types";
 
 export function trackEvent(
   kind: "track" | "page",
@@ -58,7 +58,7 @@ type Emit = {
   kind: "track" | "page";
   eventName: string;
   eventProperties: Props;
-  eventPropertiesWithoutExtra: LoggableEventProperties;
+  eventPropertiesWithoutExtra: Props;
 };
 
 function emit({
@@ -113,8 +113,8 @@ function handleFail({
   deliveryStatus,
 }: {
   eventName: string;
-  enrichedProps?: LoggableEventProperties;
-  props?: LoggableEventProperties;
+  enrichedProps?: Props;
+  props?: Props;
   deliveryStatus: DeliveryStatus;
 }) {
   trackSubject.next({
