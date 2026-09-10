@@ -1,8 +1,17 @@
+import type { Subscription } from "rxjs";
 import type { LoggableEvent } from "../types";
 import { analyticsEvents$, publishEvent } from "./eventLog";
 
 const events: LoggableEvent[] = [];
-analyticsEvents$.subscribe(event => events.push(event));
+let sub: Subscription;
+
+beforeAll(() => {
+  sub = analyticsEvents$.subscribe(event => events.push(event));
+});
+
+afterAll(() => {
+  sub.unsubscribe();
+});
 
 beforeEach(() => {
   events.length = 0;
