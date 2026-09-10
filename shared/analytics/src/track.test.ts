@@ -29,7 +29,7 @@ const register = (analyticsClient = createAnalyticsClient()) => {
 
 beforeEach(() => {
   events.length = 0;
-  setAnalytics({ track: jest.fn() });
+  setAnalytics(undefined);
   setEnabledFn(() => true);
   setExtraPropsFn(undefined);
   setMandatoryExtraPropsFn(undefined);

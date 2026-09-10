@@ -17,7 +17,7 @@ const createAnalyticsClient = ({
 
 beforeEach(() => {
   events.length = 0;
-  setAnalytics({ track: jest.fn() });
+  setAnalytics(undefined);
 });
 
 describe("deliver", () => {
@@ -153,7 +153,7 @@ describe("deliver", () => {
     });
 
     it("reports skipped_no_client when no analytics client is registered", () => {
-      setAnalytics(undefined as unknown as Analytics);
+      setAnalytics(undefined);
 
       deliver({
         type: "track",

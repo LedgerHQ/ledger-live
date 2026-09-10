@@ -28,7 +28,7 @@ const scrubSensitive = (props: Props): Props => {
 
 beforeEach(() => {
   events.length = 0;
-  setAnalytics({ track: jest.fn() });
+  setAnalytics(undefined);
   setExtraPropsFn(undefined);
   setMandatoryExtraPropsFn(undefined);
   setPropsFilter(undefined);
