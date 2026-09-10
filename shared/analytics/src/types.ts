@@ -9,12 +9,10 @@ export type DeliveryStatus =
   | "skipped_no_store"
   | "skipped_no_token";
 
-export type LoggableEventProperties = Error | Props | null;
-
 export type LoggableEvent = {
   eventName: string;
-  eventProperties?: LoggableEventProperties;
-  eventPropertiesWithoutExtra?: LoggableEventProperties;
+  eventProperties?: Props;
+  eventPropertiesWithoutExtra?: Props;
   date: Date;
   deliveryStatus?: DeliveryStatus;
 };
