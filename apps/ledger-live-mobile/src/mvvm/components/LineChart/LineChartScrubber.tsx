@@ -3,7 +3,7 @@ import {
   Scrubber,
   type ChartTooltipItemData,
   type ScrubberTooltipContent,
-} from "@ledgerhq/lumen-ui-rnative-visualization";
+} from "@ledgerhq/lumen-ui-rnative/visualization";
 import { buildTooltipRow } from "./utils/buildTooltipRow";
 import { estimateTooltipMinWidth } from "./utils/estimateTooltipMinWidth";
 import { resolveNearestPointTooltip } from "./utils/resolveNearestPointTooltip";
