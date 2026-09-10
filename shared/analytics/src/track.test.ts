@@ -12,7 +12,7 @@ import type { Analytics, LoggableEvent, Props } from "./types";
 const events: LoggableEvent[] = [];
 trackSubject.subscribe(event => events.push(event));
 
-const createTransport = ({
+const createAnalyticsClient = ({
   track = jest.fn(),
   log = jest.fn(),
 }: Partial<Analytics> = {}): jest.Mocked<Analytics> =>
@@ -21,10 +21,10 @@ const createTransport = ({
     log: jest.fn(log),
   }) as unknown as jest.Mocked<Analytics>;
 
-const register = (transport = createTransport()) => {
-  setAnalytics(transport);
+const register = (analyticsClient = createAnalyticsClient()) => {
+  setAnalytics(analyticsClient);
   setEnabledFn(() => true);
-  return transport;
+  return analyticsClient;
 };
 
 beforeEach(() => {
@@ -39,34 +39,34 @@ beforeEach(() => {
 describe("track", () => {
   describe("consent", () => {
     it("sends event props and extra props when tracking is enabled", () => {
-      const transport = register();
+      const analyticsClient = register();
       setExtraPropsFn(() => ({ extra: "props" }));
 
       track("Analytics Event", { event: "props" });
 
-      expect(transport.track).toHaveBeenCalledWith("Analytics Event", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Analytics Event", {
         event: "props",
         extra: "props",
       });
     });
 
     it("does not send non-mandatory events when tracking is disabled", () => {
-      const transport = register();
+      const analyticsClient = register();
       setEnabledFn(() => false);
 
       track("Analytics Consent", { flow: "onboarding" });
 
-      expect(transport.track).not.toHaveBeenCalled();
+      expect(analyticsClient.track).not.toHaveBeenCalled();
     });
 
     it("sends mandatory events with mandatory props when tracking is disabled", () => {
-      const transport = register();
+      const analyticsClient = register();
       setEnabledFn(() => false);
       setMandatoryExtraPropsFn(() => ({ mandatory: "props" }));
 
       track("Analytics Consent", { flow: "onboarding" }, { mandatory: true });
 
-      expect(transport.track).toHaveBeenCalledWith("Analytics Consent", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Analytics Consent", {
         flow: "onboarding",
         mandatory: "props",
       });
@@ -75,27 +75,27 @@ describe("track", () => {
 
   describe("enrichment", () => {
     it("sends synchronously for a sync enricher", () => {
-      const transport = register();
+      const analyticsClient = register();
       setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
 
       const result = track("Sync Event");
 
       expect(result).toBeUndefined();
-      expect(transport.track).toHaveBeenCalledWith("Sync Event", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Sync Event", {
         appVersion: "1.2.3",
       });
     });
 
     it("resolves after sending for an async enricher", async () => {
-      const transport = register();
+      const analyticsClient = register();
       setExtraPropsFn(async () => ({ appVersion: "1.2.3" }));
 
       const result = track("Async Event");
 
       expect(result).toBeInstanceOf(Promise);
-      expect(transport.track).not.toHaveBeenCalled();
+      expect(analyticsClient.track).not.toHaveBeenCalled();
       await result;
-      expect(transport.track).toHaveBeenCalledWith("Async Event", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Async Event", {
         appVersion: "1.2.3",
       });
     });
@@ -103,7 +103,7 @@ describe("track", () => {
 
   describe("property filter", () => {
     it("filters props before sending", () => {
-      const transport = register();
+      const analyticsClient = register();
       setPropsFilter((props: Props) => {
         const filtered = { ...props };
         delete filtered.sensitive;
@@ -112,7 +112,7 @@ describe("track", () => {
 
       track("Tracking Event", { sensitive: "data to filter", theme: "light" });
 
-      expect(transport.track).toHaveBeenCalledWith("Tracking Event", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Tracking Event", {
         theme: "light",
       });
     });
@@ -120,16 +120,16 @@ describe("track", () => {
 
   describe("observability", () => {
     it("logs before sending and publishes to trackSubject", () => {
-      const transport = register();
+      const analyticsClient = register();
       setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
 
       track("Logged", { foo: "bar" });
 
-      expect(transport.log).toHaveBeenCalledWith("track", "Logged", {
+      expect(analyticsClient.log).toHaveBeenCalledWith("track", "Logged", {
         foo: "bar",
         appVersion: "1.2.3",
       });
-      expect(transport.track).toHaveBeenCalledWith("Logged", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Logged", {
         foo: "bar",
         appVersion: "1.2.3",
       });

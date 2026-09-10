@@ -11,7 +11,7 @@ import { trackEvent } from "./trackEvent";
 const events: LoggableEvent[] = [];
 trackSubject.subscribe(event => events.push(event));
 
-const createTransport = ({
+const createAnalyticsClient = ({
   track = jest.fn(),
   log = jest.fn(),
 }: Partial<Analytics> = {}): jest.Mocked<Analytics> =>
@@ -37,36 +37,36 @@ beforeEach(() => {
 describe("trackEvent", () => {
   describe("enrichment", () => {
     it("sends synchronously for sync extras", () => {
-      const transport = createTransport();
-      setAnalytics(transport);
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
       setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
 
       const result = trackEvent("track", "Sync Event", {}, false);
 
       expect(result).toBeUndefined();
-      expect(transport.track).toHaveBeenCalledWith("Sync Event", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Sync Event", {
         appVersion: "1.2.3",
       });
     });
 
     it("resolves after sending for async extras", async () => {
-      const transport = createTransport();
-      setAnalytics(transport);
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
       setExtraPropsFn(async () => ({ appVersion: "1.2.3" }));
 
       const result = trackEvent("track", "Async Event", {}, false);
 
       expect(result).toBeInstanceOf(Promise);
-      expect(transport.track).not.toHaveBeenCalled();
+      expect(analyticsClient.track).not.toHaveBeenCalled();
       await result;
-      expect(transport.track).toHaveBeenCalledWith("Async Event", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Async Event", {
         appVersion: "1.2.3",
       });
     });
 
     it("calls the extra props function with no arguments", () => {
-      const transport = createTransport();
-      setAnalytics(transport);
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
       const extraProps = jest.fn(() => ({}));
       setExtraPropsFn(extraProps);
 
@@ -76,40 +76,40 @@ describe("trackEvent", () => {
     });
 
     it("lets extra props win over caller props", () => {
-      const transport = createTransport();
-      setAnalytics(transport);
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
       setExtraPropsFn(() => ({ platform: "desktop" }));
 
       trackEvent("track", "Collision", { platform: "caller-supplied" }, false);
 
-      expect(transport.track).toHaveBeenCalledWith("Collision", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Collision", {
         platform: "desktop",
       });
     });
 
     it("uses mandatory extra props for mandatory events", () => {
-      const transport = createTransport();
-      setAnalytics(transport);
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
       setMandatoryExtraPropsFn(() => ({ mandatory: "props" }));
 
       trackEvent("track", "Mandatory Event", { flow: "onboarding" }, true);
 
-      expect(transport.track).toHaveBeenCalledWith("Mandatory Event", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Mandatory Event", {
         flow: "onboarding",
         mandatory: "props",
       });
     });
 
     it("reports failed_enrichment without rejecting when async extras reject", async () => {
-      const transport = createTransport();
-      setAnalytics(transport);
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
       setExtraPropsFn(() => Promise.reject(new Error("permission read failed")));
 
       await expect(
         trackEvent("track", "Unenrichable", { foo: "bar" }, false),
       ).resolves.toBeUndefined();
 
-      expect(transport.track).not.toHaveBeenCalled();
+      expect(analyticsClient.track).not.toHaveBeenCalled();
       expect(events).toEqual([
         expect.objectContaining({
           eventName: "Unenrichable",
@@ -121,15 +121,15 @@ describe("trackEvent", () => {
     });
 
     it("reports failed_enrichment when sync extras throw", () => {
-      const transport = createTransport();
-      setAnalytics(transport);
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
       setExtraPropsFn(() => {
         throw new Error("permission read failed");
       });
 
       trackEvent("track", "Unenrichable", { foo: "bar" }, false);
 
-      expect(transport.track).not.toHaveBeenCalled();
+      expect(analyticsClient.track).not.toHaveBeenCalled();
       expect(events).toEqual([
         expect.objectContaining({
           eventName: "Unenrichable",
@@ -143,33 +143,33 @@ describe("trackEvent", () => {
 
   describe("property filter", () => {
     it("filters caller props before sending", () => {
-      const transport = createTransport();
-      setAnalytics(transport);
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
       setPropsFilter(scrubSensitive);
 
       trackEvent("track", "Tracking Event", { sensitive: "data to filter", theme: "light" }, false);
 
-      expect(transport.track).toHaveBeenCalledWith("Tracking Event", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Tracking Event", {
         theme: "light",
       });
     });
 
     it("filters enriched props before sending", () => {
-      const transport = createTransport();
-      setAnalytics(transport);
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
       setExtraPropsFn(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
       setPropsFilter(scrubSensitive);
 
       trackEvent("track", "Enriched Event", { theme: "light" }, false);
 
-      expect(transport.track).toHaveBeenCalledWith("Enriched Event", {
+      expect(analyticsClient.track).toHaveBeenCalledWith("Enriched Event", {
         theme: "light",
         appVersion: "1.2.3",
       });
     });
 
     it("publishes filtered payloads to trackSubject on success", () => {
-      setAnalytics(createTransport());
+      setAnalytics(createAnalyticsClient());
       setExtraPropsFn(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
       setPropsFilter(scrubSensitive);
 
@@ -185,7 +185,7 @@ describe("trackEvent", () => {
     });
 
     it("publishes filtered payloads to trackSubject when async extras reject", async () => {
-      setAnalytics(createTransport());
+      setAnalytics(createAnalyticsClient());
       setExtraPropsFn(() => Promise.reject(new Error("permission read failed")));
       setPropsFilter(scrubSensitive);
 
@@ -207,15 +207,15 @@ describe("trackEvent", () => {
     });
 
     it("reports failed_filter when the property filter throws", () => {
-      const transport = createTransport();
-      setAnalytics(transport);
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
       setPropsFilter(() => {
         throw new Error("filter failed");
       });
 
       trackEvent("track", "Filtered Event", { theme: "light" }, false);
 
-      expect(transport.track).not.toHaveBeenCalled();
+      expect(analyticsClient.track).not.toHaveBeenCalled();
       expect(events).toEqual([
         expect.objectContaining({
           eventName: "Filtered Event",
