@@ -321,25 +321,6 @@ function SendSummary({ navigation, route }: Props) {
           </>
         ) : null}
 
-        {isSolanaRawTransaction ? (
-          <NativeUiAlert type="warning">
-            <Flex>
-              <Text
-                color="neutral.c100"
-                flexShrink={1}
-                variant="bodyLineHeight"
-                fontWeight="semiBold"
-              >
-                <Trans i18nKey="send.summary.solanaRawTransaction.title" />{" "}
-              </Text>
-
-              <Text paddingTop={2}>
-                <Trans i18nKey="send.summary.solanaRawTransaction.description" />
-              </Text>
-            </Flex>
-          </NativeUiAlert>
-        ) : null}
-
         {tooManyUtxos ? (
           <NativeUiAlert type="warning">
             <Flex>
