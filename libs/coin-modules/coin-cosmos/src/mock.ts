@@ -32,10 +32,9 @@ function setCosmosResources(
     unbondingBalance: account.cosmosResources
       ? account.cosmosResources.unbondingBalance.plus(unbondingBalance)
       : unbondingBalance,
-    withdrawAddress: account.id,
     unbondings: unbondings ?? account.cosmosResources?.unbondings ?? [],
     redelegations: redelegations ?? account.cosmosResources?.redelegations ?? [],
-    sequence: account.cosmosResources.sequence + 1,
+    sequence: (account.cosmosResources?.sequence ?? 0) + 1,
   };
   return account;
 }
@@ -93,7 +92,7 @@ function addDelegationOperation(account: CosmosAccount, rng: Prando): CosmosAcco
         delegatedBalance: new BigNumber(0),
         pendingRewardsBalance: new BigNumber(0),
         unbondingBalance: new BigNumber(0),
-        withdrawAddress: "",
+
         unbondings: [],
         redelegations: [],
         sequence: 1,
@@ -161,7 +160,7 @@ function addRedelegationOperation(account: CosmosAccount, rng: Prando): CosmosAc
         delegatedBalance: new BigNumber(0),
         pendingRewardsBalance: new BigNumber(0),
         unbondingBalance: new BigNumber(0),
-        withdrawAddress: "",
+
         unbondings: [],
         redelegations: [],
         sequence: 1,
@@ -221,7 +220,7 @@ function addClaimRewardsOperation(account: CosmosAccount, rng: Prando): CosmosAc
         delegatedBalance: new BigNumber(0),
         pendingRewardsBalance: new BigNumber(0),
         unbondingBalance: new BigNumber(0),
-        withdrawAddress: "",
+
         unbondings: [],
         redelegations: [],
         sequence: 1,
@@ -270,7 +269,7 @@ function addUndelegationOperation(account: CosmosAccount, rng: Prando): CosmosAc
         delegatedBalance: new BigNumber(0),
         pendingRewardsBalance: new BigNumber(0),
         unbondingBalance: new BigNumber(0),
-        withdrawAddress: "",
+
         unbondings: [],
         redelegations: [],
         sequence: 1,
@@ -378,7 +377,6 @@ function postScanAccount(
       delegatedBalance: new BigNumber(0),
       pendingRewardsBalance: new BigNumber(0),
       unbondingBalance: new BigNumber(0),
-      withdrawAddress: account.id,
       unbondings: [],
       redelegations: [],
       sequence: 0,

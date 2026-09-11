@@ -4,20 +4,21 @@ import * as bech32 from "bech32";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import cryptoFactory from "./chain/chain";
-import type {
-  CosmosAccount,
-  CosmosDelegation,
-  CosmosDelegationInfo,
-  CosmosMappedDelegation,
-  CosmosMappedDelegationInfo,
-  CosmosMappedRedelegation,
-  CosmosMappedUnbonding,
-  CosmosOperationMode,
-  CosmosRedelegation,
-  CosmosSearchFilter,
-  CosmosUnbonding,
-  CosmosValidatorItem,
-  Transaction,
+import {
+  getCosmosResources,
+  type CosmosAccount,
+  type CosmosDelegation,
+  type CosmosDelegationInfo,
+  type CosmosMappedDelegation,
+  type CosmosMappedDelegationInfo,
+  type CosmosMappedRedelegation,
+  type CosmosMappedUnbonding,
+  type CosmosOperationMode,
+  type CosmosRedelegation,
+  type CosmosSearchFilter,
+  type CosmosUnbonding,
+  type CosmosValidatorItem,
+  type Transaction,
 } from "./types";
 
 export const COSMOS_MAX_REDELEGATIONS = 7;
@@ -152,15 +153,18 @@ export function getMaxDelegationAvailable(
     .minus(COSMOS_MIN_FEES.multipliedBy(numberOfDelegations))
     .minus(COSMOS_MIN_SAFE);
 }
-export const getMaxEstimatedBalance = (a: CosmosAccount, estimatedFees: BigNumber): BigNumber => {
-  const { cosmosResources } = a;
+export const getMaxEstimatedBalance = (
+  account: CosmosAccount,
+  estimatedFees: BigNumber,
+): BigNumber => {
+  const cosmosResources = getCosmosResources(account);
   let blockBalance = new BigNumber(0);
 
   if (cosmosResources) {
     blockBalance = cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance);
   }
 
-  const amount = a.balance.minus(estimatedFees).minus(blockBalance);
+  const amount = account.balance.minus(estimatedFees).minus(blockBalance);
 
   // If the fees are greater than the balance we will have a negative amount
   // so we round it to 0
@@ -172,7 +176,7 @@ export const getMaxEstimatedBalance = (a: CosmosAccount, estimatedFees: BigNumbe
 };
 
 export function canUndelegate(account: CosmosAccount): boolean {
-  const { cosmosResources } = account;
+  const cosmosResources = getCosmosResources(account);
   invariant(cosmosResources, "cosmosResources should exist");
   return !!cosmosResources?.unbondings && cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS;
 }
@@ -186,7 +190,7 @@ export function canRedelegate(
   account: CosmosAccount,
   delegation: CosmosDelegation | CosmosValidatorItem,
 ): boolean {
-  const { cosmosResources } = account;
+  const cosmosResources = getCosmosResources(account);
   invariant(cosmosResources, "cosmosResources should exist");
   return (
     !!cosmosResources?.redelegations &&
@@ -201,7 +205,7 @@ export function getRedelegation(
   account: CosmosAccount,
   delegation: CosmosMappedDelegation,
 ): CosmosRedelegation | null | undefined {
-  const { cosmosResources } = account;
+  const cosmosResources = getCosmosResources(account);
   const redelegations = cosmosResources?.redelegations ?? [];
   const currentRedelegation = redelegations.find(
     r => r.validatorDstAddress === delegation.validatorAddress,

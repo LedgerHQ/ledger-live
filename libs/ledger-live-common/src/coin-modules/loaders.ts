@@ -224,7 +224,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => import("../families/evm/bridge/mock").then(m => m.default),
     loadSigner: () => import("../families/evm/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/evm/bridge/api").then(m => m.default),
-    loadAccountRawAssign: () => import("../families/evm/accountRawAssign").then(m => m.default),
+    loadAccountRawAssign: () =>
+      import("../bridge/generic-coin-framework/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/evm/bridgeExtensions").then(m => m.default),
   },
   {
