@@ -31,6 +31,11 @@ export const useWalletSyncUserState = () => React.useContext(WalletSyncContext);
  * reached through a ref. Lifting the watched object wholesale would loop forever the moment
  * `useWatchWalletSync` returned a fresh object per render, which is not a guarantee this
  * component should depend on.
+ *
+ * Scope: this gates the boot-time watcher, not every SDK consumer. The Ledger Sync screens reach
+ * `useTrustchainSdk` through their own hooks and are not covered here, but they are only reachable
+ * after navigation, by which point the cache prime has long armed readiness. Closing that gap for
+ * good means gating the SDK factory itself rather than each caller, which is tracked separately.
  */
 export function WalletSyncProvider({ children }: { children: React.ReactNode }) {
   const remoteFlagsReady = useSelector(selectRemoteFlagsReady);
