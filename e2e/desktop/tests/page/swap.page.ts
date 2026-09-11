@@ -123,16 +123,20 @@ export class SwapPage extends WebViewAppPage {
   }
 
   // Only the loaded page can write its localStorage, and the atom reads the key once.
+  // reopenSwap must leave swap and come back: a webview reload closes the page target.
   @step("Pin swap live app feature flags: $0")
-  async applyFlagPreset(preset: SwapFlagPreset) {
+  async applyFlagPreset(preset: SwapFlagPreset, reopenSwap: () => Promise<void>) {
     const webview = await this.getWebView();
     await webview.evaluate(({ key, value }) => localStorage.setItem(key, value), {
       key: SWAP_FLAG_OVERRIDES_KEY,
       value: swapFlagPresetPayload(preset),
     });
     this.flagPresetPinned = true;
-    await webview.reload();
-    await expect(webview.getByTestId(this.fromAccountCoinSelector)).toBeVisible();
+
+    // The remount reads the key again on the new page.
+    await this.goAndWaitForSwapToBeReady(reopenSwap);
+    const reopened = await this.getWebView();
+    await expect(reopened.getByTestId(this.fromAccountCoinSelector)).toBeVisible();
   }
 
   // The override outlives the test. A failed test can leave no webview, and waiting
