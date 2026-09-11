@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import type { Operation, Page } from "@ledgerhq/coin-module-framework/api/types";
-import { paginateOperations, PAGE_BUDGET } from "./paginateOperations";
+import { paginateOperations, PAGE_BUDGET, EMPTY_PAGE_BUDGET } from "./paginateOperations";
 
 jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 const logMock = jest.mocked(log);
@@ -217,6 +217,76 @@ describe("paginateOperations", () => {
 
       expect(items.map(o => o.tx.hash)).toEqual(["a", "b"]);
       expect(logMock).not.toHaveBeenCalled();
+    });
+
+    it("does not apply to a bounded walk: reaching the bound through more pages than the budget is legitimate, not a failure", async () => {
+      // The regression this guard's sizing used to cause. A module that honours a page size of 10
+      // needs 2 000 pages to reach a 20 000-operation bound -- twice the page budget. Counting pages
+      // for a bounded caller turned a well-behaved module into a failed sync, and the bound it was
+      // asked to enforce became unreachable.
+      const pageSize = 10;
+      const maxOperations = 20_000;
+      let fetches = 0;
+      const items = await paginateOperations(async () => {
+        fetches++;
+        return {
+          items: Array.from({ length: pageSize }, (_, i) => op(`p${fetches}-${i}`)),
+          next: `c${fetches}`,
+        };
+      }, maxOperations);
+
+      expect(items).toHaveLength(maxOperations);
+      expect(fetches).toBeGreaterThan(PAGE_BUDGET);
+      expect(logMock).toHaveBeenCalledWith(
+        "generic-coin-framework",
+        expect.stringContaining("operation-history bound reached"),
+        expect.objectContaining({ maxOperations, collected: maxOperations }),
+      );
+    });
+  });
+
+  describe("empty-page budget", () => {
+    it("throws when a module advances its cursor forever without ever returning an operation, which no operation bound can stop", async () => {
+      let fetches = 0;
+      const walk = paginateOperations(async () => {
+        fetches++;
+        return { items: [], next: `c${fetches}` };
+      }, 5_000);
+
+      await expect(walk).rejects.toThrow(
+        new RegExp(
+          `${EMPTY_PAGE_BUDGET} consecutive empty pages -- the module keeps advancing its cursor`,
+        ),
+      );
+      expect(fetches).toBe(EMPTY_PAGE_BUDGET);
+      expect(logMock).toHaveBeenCalledWith(
+        "generic-coin-framework",
+        expect.stringContaining("empty-page budget reached"),
+        expect.objectContaining({
+          consecutiveEmptyPages: EMPTY_PAGE_BUDGET,
+          collected: 0,
+        }),
+      );
+    });
+
+    it("counts a run, not a total: any page that yields an operation resets it, so it can never fire on a walk making progress", async () => {
+      // Alternating productive and empty pages forever -- far more empty pages in total than the
+      // budget, never that many in a row. The bound is what must stop this walk.
+      const maxOperations = 5;
+      let fetches = 0;
+      const items = await paginateOperations(async () => {
+        fetches++;
+        return fetches % 2 === 1
+          ? { items: [op(`op${fetches}`)], next: `c${fetches}` }
+          : { items: [], next: `c${fetches}` };
+      }, maxOperations);
+
+      expect(items).toHaveLength(maxOperations);
+      expect(logMock).toHaveBeenCalledWith(
+        "generic-coin-framework",
+        expect.stringContaining("operation-history bound reached"),
+        expect.objectContaining({ maxOperations, collected: maxOperations }),
+      );
     });
   });
 });
