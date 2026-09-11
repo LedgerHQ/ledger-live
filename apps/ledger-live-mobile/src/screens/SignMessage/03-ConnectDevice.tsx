@@ -50,15 +50,8 @@ export default function ConnectDevice({
       appName: route.params.appName,
       message: route.params.message,
       dependencies: appRequests,
-      isACRE: route.params.isACRE,
     };
-  }, [
-    mainAccount,
-    route.params.appName,
-    route.params.dependencies,
-    route.params.isACRE,
-    route.params.message,
-  ]);
+  }, [mainAccount, route.params.appName, route.params.dependencies, route.params.message]);
 
   return useMemo(
     () => (

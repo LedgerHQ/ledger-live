@@ -33,7 +33,6 @@ export type StepProps = {
   updateTransaction: (updater: (_: Transaction) => Transaction) => void;
   manifestId?: string;
   manifestName?: string;
-  isACRE?: boolean;
   location?: HOOKS_TRACKING_LOCATIONS;
 };
 export type St = Step<StepId, StepProps>;

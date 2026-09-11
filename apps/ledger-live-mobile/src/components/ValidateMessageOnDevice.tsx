@@ -44,8 +44,6 @@ export default function ValidateOnDevice({ device, message: messageData, account
 
   const mainAccountName = useAccountName(mainAccount);
 
-  const isACREWithdraw = "type" in messageData && messageData.type === "Withdraw";
-
   return (
     <View style={styles.root}>
       <ScrollView
@@ -86,14 +84,12 @@ export default function ValidateOnDevice({ device, message: messageData, account
           </>
         )}
 
-        {!isACREWithdraw ? (
-          messageData.standard === "EIP712" ? null : (
-            <View style={messageContainerStyle}>
-              <LText style={messageTextStyle}>{t("walletconnect.message")}</LText>
-              <LText semiBold>{messageData.message}</LText>
-            </View>
-          )
-        ) : null}
+        {messageData.standard === "EIP712" ? null : (
+          <View style={messageContainerStyle}>
+            <LText style={messageTextStyle}>{t("walletconnect.message")}</LText>
+            <LText semiBold>{messageData.message}</LText>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
