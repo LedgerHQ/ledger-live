@@ -70,9 +70,19 @@ export const genericSignOperation =
           );
           transactionIntent.senderPublicKey = publicKey;
 
-          if (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n) {
-            // The network sequence source lags behind a just-broadcast tx, so combine it with
-            // locally-tracked pending operations to avoid reusing a nonce on rapid consecutive sends.
+          // UTXO chains (e.g. Bitcoin) have no account sequence — their coin module answers
+          // "getNextSequence is not supported". Skip the call for those; only nonce-based chains
+          // resolve a sequence here. `supports` defaults to true so anything predating the flag is
+          // unaffected. The network sequence source lags behind a just-broadcast tx, so it is
+          // combined with locally-tracked pending operations to avoid reusing a nonce on rapid sends.
+          const supportsNextSequence =
+            (coinModuleApi as unknown as { supports?: (m: string) => boolean }).supports?.(
+              "getNextSequence",
+            ) ?? true;
+          if (
+            supportsNextSequence &&
+            (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n)
+          ) {
             const networkSequence = await coinModuleApi.getNextSequence(
               context,
               transactionIntent.sender,

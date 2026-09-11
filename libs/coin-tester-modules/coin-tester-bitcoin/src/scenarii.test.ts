@@ -1,26 +1,23 @@
 import console from "console";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { scenarioBitcoin } from "./scenarii/bitcoin";
-import { killAtlas } from "./atlas";
+import { scenarioBitcoinGeneric } from "./scenarii/bitcoinGeneric";
 
+// Force Node's console so logs stream live instead of being buffered by Jest.
 global.console = console;
+
+// Atlas (the dockerized Bitcoin regtest backend) is started/stopped by each scenario's
+// own setup/teardown, and atlas.ts registers process-signal handlers so an interrupted
+// run is torn down too — nothing to clean up from here.
 jest.setTimeout(1_000_000);
 
-describe("Bitcoin Deterministic Tester", () => {
-  it("scenario Bitcoin", async () => {
-    try {
-      await executeScenario(scenarioBitcoin);
-    } catch (e) {
-      if (e != "done") {
-        await killAtlas();
-        throw e;
-      }
-    }
-  });
+describe.each([
+  ["legacy", "scenario Bitcoin", () => executeScenario(scenarioBitcoin, "legacy")],
+  [
+    "generic-adapter",
+    "scenario Bitcoin generic-adapter simple send",
+    () => executeScenario(scenarioBitcoinGeneric, "generic-adapter"),
+  ],
+] as const)("Bitcoin Deterministic Tester (%s strategy)", (_strategy, name, run) => {
+  it(name, () => run());
 });
-
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
-  process.on(e as any, () => {
-    killAtlas().catch(() => {});
-  }),
-);

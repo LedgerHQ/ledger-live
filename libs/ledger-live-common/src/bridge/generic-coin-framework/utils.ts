@@ -816,6 +816,10 @@ export function transactionToIntent(
     // Needed upfront by families whose unsigned-tx builder embeds the public key (e.g. Stacks);
     // signOperation overwrites it with a freshly fetched value before actually signing.
     senderPublicKey: account.xpub,
+    // The account's derivation path — read only by descriptor (xpub) coin modules such as Bitcoin,
+    // which need it to derive the account from the extended key; ignored by address-based families.
+    // Always the account's own path, so it is correct when read and inert otherwise.
+    senderDerivationPath: account.freshAddressPath,
     recipient: transaction.recipient,
     amount,
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },

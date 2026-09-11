@@ -10982,6 +10982,9 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../../ledger-live-common
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
@@ -38874,10 +38877,6 @@ packages:
     resolution: {integrity: sha512-Fgl0YPZ902wEsAyiQ+idGd1A7rSFx/ayC1CQVMw5P+EQx2V0SgpGtf6OKFhVjPflPUl9YMmEOnmfjCdMUsygww==}
     engines: {node: '>= 10'}
 
-  socks@2.8.7:
-    resolution: {integrity: sha512-HLpt+uLy/pxB+bum/9DzAgiKS8CX1EvbWxI4zlmgGCExImLdiad2iCwXT5Z4c9c3Eq8rP2318mPW2c+QbtjK8A==}
-    engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
-
   socks@2.8.9:
     resolution: {integrity: sha512-LJhUYUvItdQ0LkJTmPeaEObWXAqFyfmP85x0tch/ez9cahmhlBBLbIqDFnvBnUJGagb0JbIQrkBs1wJ+yRYpEw==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
@@ -58143,7 +58142,7 @@ snapshots:
       lru-cache: 6.0.0
       minipass: 3.3.6
       minipass-collect: 1.0.2
-      minipass-flush: 1.0.5
+      minipass-flush: 1.0.7
       minipass-pipeline: 1.2.4
       mkdirp: 1.0.4
       p-map: 4.0.0
@@ -70440,7 +70439,7 @@ snapshots:
     dependencies:
       agent-base: 6.0.2
       debug: 4.4.3
-      socks: 2.8.7
+      socks: 2.8.9
     transitivePeerDependencies:
       - supports-color
     optional: true
@@ -70452,12 +70451,6 @@ snapshots:
       socks: 2.8.9
     transitivePeerDependencies:
       - supports-color
-
-  socks@2.8.7:
-    dependencies:
-      ip-address: 10.7.0
-      smart-buffer: 4.2.0
-    optional: true
 
   socks@2.8.9:
     dependencies:

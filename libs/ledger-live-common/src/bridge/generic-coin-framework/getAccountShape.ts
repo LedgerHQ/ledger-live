@@ -362,6 +362,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const context = buildContext(currency.id);
     const bridgeApi = await getBridgeApi(currency, network);
 
+    // Descriptor (xpub) chains — e.g. Bitcoin — need the account's derivation path alongside the
+    // extended key passed as `address`. Address-based families leave the flag unset, so nothing is
+    // added to their option bags (which matters: some wrap getBalance in `rejectBalanceOptions`,
+    // which throws on any options object).
+    const descriptorPath = bridgeApi.usesDescriptorDerivationPath
+      ? initialAccount?.freshAddressPath
+      : undefined;
+
     const chainSpecificValidation = bridgeApi.getChainSpecificRules;
     if (chainSpecificValidation) {
       chainSpecificValidation.getAccountShape(address);
@@ -422,7 +430,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       : Promise.resolve(undefined);
 
     const balancePromise = coinModuleApi
-      .getBalance(context, address, bridgeApi.balanceOptions)
+      .getBalance(
+        context,
+        address,
+        descriptorPath
+          ? { ...bridgeApi.balanceOptions, derivationPath: descriptorPath }
+          : bridgeApi.balanceOptions,
+      )
       .catch(err => {
         throw new UnexpectedGetBalanceError("", err);
       });
@@ -585,6 +599,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         minHeight,
         cursor,
         order: "desc",
+        ...(descriptorPath ? { derivationPath: descriptorPath } : {}),
       }),
     );
     // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation ends
