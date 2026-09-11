@@ -5,6 +5,7 @@ import { SponsoredRentSignatureScreen } from "../screens/SponsoredRentSignature/
 import { SponsoredPollingScreen } from "../screens/SponsoredPolling/SponsoredPollingScreen";
 import { SponsoredFailureScreen } from "../screens/SponsoredFailure/SponsoredFailureScreen";
 import { useSponsoredSend } from "../context/SponsoredSendContext";
+import { useSendSignature } from "../context/SendSignatureContext";
 
 /**
  * Phase-driven overlay host for the Tronify sponsored send steps (TX-A signing, energy delivery
@@ -15,12 +16,23 @@ import { useSponsoredSend } from "../context/SponsoredSendContext";
  * TRANSFER and DONE phases return null — the existing SignatureOverlayHost takes over for TX-C.
  */
 export function SponsoredFlowHost() {
-  const { state } = useSponsoredSend();
+  const { state, selectedFeeOptionId } = useSponsoredSend();
+  const { isSigning } = useSendSignature();
 
   let content: React.ReactNode = null;
 
   switch (state.phase) {
     case SPONSORED_PHASE.IDLE:
+      // craftRent() is async: Amount's onReview fires it and startSigning() together, so phase stays
+      // IDLE (with isSigning already true) until CRAFT_SUCCESS lands. Show the rent-signature loader
+      // during that window — otherwise both this host and SignatureOverlayHost (which suppresses TX-C
+      // for IDLE+tronify) render null and the user sees a blank screen. The screen renders only its
+      // "Preparing energy rental…" loader while order is null, so there is no premature device flow.
+      if (isSigning && selectedFeeOptionId === "tronify") {
+        content = <SponsoredRentSignatureScreen />;
+        break;
+      }
+      return null;
     case SPONSORED_PHASE.TRANSFER:
     case SPONSORED_PHASE.DONE:
       return null;

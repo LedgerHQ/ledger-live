@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -73,6 +74,11 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       return;
     }
 
+    // Identity-gate the intent: clear it up front on any transaction change so the previous intent
+    // never survives into the async rebuild window. Otherwise a quick edit + Review could enter
+    // sponsored signing (craftRent closes over `intent`) against the prior transaction's intent.
+    setIntent(null);
+
     (async () => {
       try {
         const network = mainAccount.currency.id;
@@ -123,11 +129,37 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     intent,
   });
 
+  // Mobile has no fee-picker UI: auto-activate Tronify when the seam says it's available,
+  // revert to standard when it becomes unavailable (e.g. account/currency not supported).
+  useEffect(() => {
+    setSelectedFeeOptionId(available ? "tronify" : "standard");
+  }, [available]);
+
+  // Reset the orchestration when the send identity changes. Clearing `intent` alone leaves the
+  // reducer's order/phase alive, so returning to Review would let the rent screen skip craftRent and
+  // sign/pay the previous intent's payment tx. reset is read through a ref so the effect need not
+  // depend on `actions` (rebuilt whenever an order is crafted, which would reset mid-flow).
+  const rentIntentKey = [
+    account?.id,
+    parentAccount?.id,
+    transaction?.recipient,
+    transaction?.amount?.toString(),
+    transaction?.useAllAmount,
+    transaction?.subAccountId,
+  ].join("|");
+  const resetRef = useRef(actions.reset);
+  resetRef.current = actions.reset;
+  useEffect(() => {
+    resetRef.current();
+  }, [rentIntentKey]);
+
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
   const savingsFiatFormatted = useMemo(
     () =>
-      savingsFiat
+      // estimateTronifyFees clamps savings to 0 when Tronify costs at least as much as the standard
+      // fee; BigNumber(0) is still truthy, so gate on a positive value to avoid "Save $0.00" copy.
+      savingsFiat && savingsFiat.gt(0)
         ? formatCurrencyUnit(counterValueCurrency.units[0], savingsFiat, {
             showCode: true,
             disableRounding: true,

@@ -20,7 +20,10 @@ function buildSigningDevice(connectionResult: DeviceConnectionResult): SigningDe
   };
 }
 
-function isUserRefusalError(mainAccount: ReturnType<typeof getMainAccount>, error: unknown): boolean {
+function isUserRefusalError(
+  mainAccount: ReturnType<typeof getMainAccount>,
+  error: unknown,
+): boolean {
   return (
     sendFeatures.isUserRefusedTransactionError(mainAccount.currency, error) ||
     (error as { name?: string })?.name === "TransactionRefusedOnDevice" ||

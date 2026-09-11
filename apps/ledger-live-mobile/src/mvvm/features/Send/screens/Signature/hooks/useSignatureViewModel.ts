@@ -15,6 +15,10 @@ import {
 } from "LLM/components/DeviceIntentExecutor";
 import { broadcastLogger } from "~/datadog";
 import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import {
+  SEND_FLOW_COMPLETION,
+  type SendFlowCompletion,
+} from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendSignature } from "../../../context/SendSignatureContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
@@ -68,12 +72,25 @@ export function useSignatureViewModel() {
     [reduxDispatch],
   );
 
-  const goToConfirmation = useCallback(() => {
-    // Dismisses the overlay and runs the onComplete callback registered by the triggering screen
-    // (Amount or CoinControl). That callback holds the navigation reference to navigate to
-    // Confirmation from within the FlowStackNavigator's React subtree.
-    finishSigning();
-  }, [finishSigning]);
+  const goToConfirmation = useCallback(
+    (completion: SendFlowCompletion, error?: Error) => {
+      // In a sponsored TRANSFER, a TX-C broadcast failure must drive the orchestration to its
+      // dedicated transfer-failure screen (Retry resumes at TRANSFER — energy is already delivered,
+      // so no re-rental), not silently navigate to Confirmation as if the send had succeeded.
+      if (
+        completion === SEND_FLOW_COMPLETION.FAILURE &&
+        sponsoredState.phase === SPONSORED_PHASE.TRANSFER
+      ) {
+        sponsoredActions.onTransferError(error ?? new Error("Sponsored transfer failed"));
+        return;
+      }
+      // Dismisses the overlay and runs the onComplete callback registered by the triggering screen
+      // (Amount or CoinControl). That callback holds the navigation reference to navigate to
+      // Confirmation from within the FlowStackNavigator's React subtree.
+      finishSigning();
+    },
+    [finishSigning, sponsoredState.phase, sponsoredActions],
+  );
 
   const { request, finishWithError, onDeviceActionResult } = useSendFlowSignatureCore({
     account,
@@ -166,10 +183,13 @@ export function useSignatureViewModel() {
         (error as { name?: string })?.name === "TransportStatusError" &&
         (error as { statusCode?: number })?.statusCode === 0x6a80
       ) {
-        sponsoredActions.setContractDataFailure(error as Error);
+        sponsoredActions.setContractDataFailure(
+          error as Error,
+          sponsoredState.paymentTxId ?? undefined,
+        );
       }
     },
-    [sponsoredState.phase, sponsoredActions],
+    [sponsoredState.phase, sponsoredState.paymentTxId, sponsoredActions],
   );
 
   // Explicit dismiss of the sheet (close button / backdrop) closes the overlay and leaves the user

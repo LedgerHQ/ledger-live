@@ -1,20 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import { useFeature } from "@features/platform-feature-flags";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
-import {
-  getSponsoredCoinApi,
-  SPONSORED_FEE_OPTION_ID,
-} from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
+import { getSponsoredCoinApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 
 export type SponsoredFeeQuote = { value: bigint; originalValue: bigint; savings: bigint };
+
+// Id coin-tron's listFeeOptions tags the energy-rent option with (its TRONIFY_FEE_OPTION_ID). Mirrored
+// as a literal because apps can't import a coin-module directly and the generic seam no longer
+// re-exports it; must stay in sync with @ledgerhq/coin-tron's TRONIFY_FEE_OPTION_ID ("tronify").
+const SPONSORED_FEE_OPTION_ID = "tronify";
 
 type UseSponsoredFeeParams = Readonly<{
   account: AccountLike;
@@ -113,7 +112,12 @@ export function useSponsoredFee({
         if (ignore) return;
         setQuote(result);
       } catch {
-        if (!ignore) setQuote(null);
+        // A quote failure must also drop availability: otherwise the auto-activate effect keeps
+        // Tronify selected with no quote and enters rent-signing that then fails at craft.
+        if (!ignore) {
+          setAvailable(false);
+          setQuote(null);
+        }
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -124,17 +128,23 @@ export function useSponsoredFee({
     };
   }, [flagEnabled, mainAccount, intent]);
 
+  // Guard the bigint→number conversion: a savings beyond MAX_SAFE_INTEGER would lose precision (or
+  // become Infinity) and mis-report the countervalue, so treat it as "no displayable savings".
+  const savingsConvertible = quote !== null && quote.savings <= BigInt(Number.MAX_SAFE_INTEGER);
   const savingsCountervalue = useCalculate({
-    from: feeCurrency,
+    // With no convertible quote, make from === to so useCalculate short-circuits without reading the
+    // (possibly placeholder) fee currency's magnitude.
+    from: savingsConvertible ? feeCurrency : counterValueCurrency,
     to: counterValueCurrency,
-    value: quote ? Number(quote.savings) : 0,
+    value: savingsConvertible ? Number(quote.savings) : 0,
     disableRounding: true,
   });
 
   const savingsFiat = useMemo(() => {
-    if (!quote || savingsCountervalue === null || savingsCountervalue === undefined) return null;
+    if (!savingsConvertible || savingsCountervalue === null || savingsCountervalue === undefined)
+      return null;
     return new BigNumber(savingsCountervalue);
-  }, [quote, savingsCountervalue]);
+  }, [savingsConvertible, savingsCountervalue]);
 
   return { available, quote, savingsFiat, feeCurrencyTicker: feeCurrency.ticker, loading };
 }
