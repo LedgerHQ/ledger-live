@@ -1,6 +1,5 @@
 import React, { useEffect, lazy, Suspense } from "react";
 import styled, { useTheme } from "styled-components";
-import { ipcRenderer } from "electron";
 import { Navigate, Route, Routes, useNavigate, useLocation, useParams } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
@@ -176,13 +175,6 @@ const LetThisCrashForCrashTest = () => {
   throw new Error("CrashTestRendering");
 };
 
-const LetInternalSendCrashTest = () => {
-  useEffect(() => {
-    ipcRenderer.send("internalCrashTest");
-  }, []);
-  return null;
-};
-
 const RedirectMarketToAsset = () => {
   const { currencyId } = useParams<{ currencyId: string }>();
   return <Navigate to={`/asset/${currencyId ?? ""}`} replace />;
@@ -352,9 +344,6 @@ export const MainAppLayout = () => {
 
       <KeyboardContent sequence="CRASH_TEST">
         <LetThisCrashForCrashTest />
-      </KeyboardContent>
-      <KeyboardContent sequence="CRASH_INTERNAL">
-        <LetInternalSendCrashTest />
       </KeyboardContent>
     </>
   );

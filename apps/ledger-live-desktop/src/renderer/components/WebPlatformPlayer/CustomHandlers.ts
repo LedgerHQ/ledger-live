@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ipcRenderer } from "electron";
+import { app, deeplink } from "~/renderer/bridge";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -32,7 +32,7 @@ type CreateDeeplinkOpenHandlerParams = {
 
 export function createDeeplinkOpenHandler({
   isDeeplinkOpenHardeningEnabled,
-  openDeepLink = url => ipcRenderer.send("deep-linking", url),
+  openDeepLink = url => deeplink.open(url),
 }: CreateDeeplinkOpenHandlerParams) {
   return (params?: DeeplinkOpenHandlerParams) => {
     if (!params) {
@@ -92,7 +92,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onError,
             onCancel,
           }) => {
-            ipcRenderer.send("show-app", {});
+            app.show();
             dispatch(
               openModal("MODAL_SIGN_MESSAGE", {
                 isACRE: true,
@@ -114,7 +114,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onSuccess,
             onError,
           }) => {
-            ipcRenderer.send("show-app", {});
+            app.show();
             dispatch(
               openModal("MODAL_SIGN_TRANSACTION", {
                 isACRE: true,

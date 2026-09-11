@@ -1,4 +1,5 @@
-import { ipcRenderer } from "electron";
+import { files } from "~/renderer/bridge";
+import type { SaveRequest } from "~/bridge/contract";
 import React, { useMemo, useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
@@ -27,7 +28,6 @@ import { useLocation } from "react-router";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
 import { useAutoOpenSwapDialog } from "./useAutoOpenSwapDialog";
-import { getEnv } from "@shared/env";
 
 const Head = styled(Box)`
   border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
@@ -37,14 +37,10 @@ const ExportOperationsWrapper = styled(Box)`
   align-items: center;
   z-index: 10;
 `;
-const exportOperations = async (
-  path: Electron.SaveDialogReturnValue,
-  csv: string,
-  callback?: () => void,
-) => {
+const exportOperations = async (request: SaveRequest, csv: string, callback?: () => void) => {
   try {
-    const res = await ipcRenderer.invoke("export-operations", path, csv);
-    if (res && callback) {
+    const res = await files.exportOperations(request, csv);
+    if (res === "saved" && callback) {
       callback();
     }
   } catch {
@@ -65,29 +61,24 @@ const History = () => {
   const getDateTxt = useTechnicalDateFn();
   const onExportOperations = useCallback(() => {
     async function asyncExport() {
-      let path;
-      if (!getEnv("PLAYWRIGHT_RUN")) {
-        path = await ipcRenderer.invoke("show-save-dialog", {
-          title: "Exported swap history",
-          defaultPath: `ledgerwallet-swap-history-${getDateTxt()}.csv`,
-          filters: [
-            {
-              name: "All Files",
-              extensions: ["csv"],
-            },
-          ],
-        });
-      } else {
-        path = {
-          canceled: false,
-          filePath: "./ledgerwallet-swap-history.csv",
-        };
-      }
-      if (path && mappedSwapOperations) {
-        exportOperations(path, mappedSwapOperationsToCSV(mappedSwapOperations), () =>
-          setExporting(false),
-        );
-      }
+      if (!mappedSwapOperations) return;
+      await exportOperations(
+        {
+          options: {
+            title: "Exported swap history",
+            defaultPath: `ledgerwallet-swap-history-${getDateTxt()}.csv`,
+            filters: [
+              {
+                name: "All Files",
+                extensions: ["csv"],
+              },
+            ],
+          },
+          e2ePath: "./ledgerwallet-swap-history.csv",
+        },
+        mappedSwapOperationsToCSV(mappedSwapOperations),
+        () => setExporting(false),
+      );
     }
     if (!exporting) {
       asyncExport()

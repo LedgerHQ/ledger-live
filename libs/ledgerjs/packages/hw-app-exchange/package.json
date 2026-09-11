@@ -44,6 +44,7 @@
     "bip32-path": "^0.4.2",
     "documentation": "14.0.2",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "ts-node": "^10.4.0"
   },
   "scripts": {

@@ -1,80 +1,121 @@
-import winston, { LogEntry } from "winston";
-import Transport from "winston-transport";
 import * as datadog from "~/datadog/renderer";
-const { format } = winston;
-const { combine, json, timestamp } = format;
 
-// A transport that keep logs in memory for later use on Ctrl+E
-class MemoryTransport extends Transport {
-  _logs: unknown[] = [];
+/**
+ * Minimal in-house logger, replacing winston — whose file/http/stream transports dragged in
+ * `fs`, `os`, `path`, `zlib`, `http`, `https` and `string_decoder`.
+ *
+ * The emitted shape matches winston's `combine(timestamp(), json())`. `timestamp` must stay
+ * an ISO 8601 string: main types renderer logs as `Array<{ timestamp: string }>` and
+ * interleaves them with its own by that field (src/main/mergeAllLogs.ts).
+ */
+export type LogEntry = {
+  level: string;
+  message?: string;
+  timestamp?: string;
+  type?: string;
+  [key: string]: unknown;
+};
+
+export interface LogTransport {
+  log(entry: LogEntry, callback: () => void): void;
+}
+
+// Kept in memory for later use on Ctrl+E.
+class MemoryTransport implements LogTransport {
+  _logs: LogEntry[] = [];
   capacity = 3000;
   getMemoryLogs() {
     return this._logs.slice(0).reverse();
   }
 
-  log(info: unknown, callback: () => void) {
-    setImmediate(() => {
-      this.emit("logged", info);
-    });
+  log(info: LogEntry, callback: () => void) {
     this._logs.push(info);
     const l = this._logs.length;
     if (l > this.capacity) this._logs.splice(0, l - this.capacity);
     callback();
   }
 }
+
 export const memoryLogger = new MemoryTransport();
-const transports = [memoryLogger];
-const logger = winston.createLogger({
-  level: "debug",
-  format: combine(timestamp(), json()),
-  transports,
-});
-export const add = (transport: winston.transport) => {
-  logger.add(transport);
+const transports: LogTransport[] = [memoryLogger];
+
+export const add = (transport: LogTransport) => {
+  transports.push(transport);
 };
 
-/**
- * Prints logs to the console, for debugging purposes.
- *
- * @param filter Optional filtering function applied to decide if the log should be printed
- */
-export function enableDebugLogger(filter?: (log: LogEntry) => boolean) {
-  let consoleT;
+const noop = () => {};
 
-  if (typeof window === "undefined") {
-    // on Node we want a concise logger
-    consoleT = new winston.transports.Console({
-      format: format.simple(),
-    });
-  } else {
-    class CustomConsole extends Transport {
-      log(log: LogEntry, callback: () => void) {
-        if (filter && !filter(log)) {
-          callback();
-          return;
-        }
-        setImmediate(() => {
-          this.emit("logged", log);
-        });
-        /* eslint-disable no-console, no-lonely-if */
-        switch (log.level) {
-          case "error":
-            console.error(JSON.stringify(log));
-            break;
-          case "warn":
-            console.warn(JSON.stringify(log));
-            break;
-          default:
-            console.log(JSON.stringify(log));
-            break;
-        }
-        /* eslint-enable */
-        callback();
-      }
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function emit(entry: LogEntry) {
+  const withTimestamp: LogEntry = { timestamp: new Date().toISOString(), ...entry };
+  for (const transport of transports) {
+    try {
+      transport.log(withTimestamp, noop);
+    } catch {
+      // A failing transport must never break the caller.
     }
-    consoleT = new CustomConsole();
   }
-  add(consoleT);
+}
+
+const logger = {
+  /** Accepts a ready-made entry, or winston's positional `log(level, message, meta?)`. */
+  log(levelOrEntry: string | LogEntry, message?: unknown, ...meta: unknown[]) {
+    if (typeof levelOrEntry !== "string") {
+      emit(levelOrEntry);
+      return;
+    }
+
+    // An object message *is* the entry, so its keys stay at the top level. Stringifying it
+    // into `message` instead drops `type`, which both the VERBOSE console filter
+    // (~/renderer/init) and the exported-log merge (src/main/mergeAllLogs.ts) read.
+    if (meta.length === 0 && isPlainObject(message)) {
+      const entry: Record<string, unknown> = { ...message, level: levelOrEntry };
+      if (message instanceof Error) {
+        // `message` and `stack` are non-enumerable, so the spread above copied neither.
+        entry.message = message.message;
+        entry.stack = message.stack;
+      }
+      emit(entry as LogEntry);
+      return;
+    }
+
+    const [first, ...rest] = meta;
+    const hasMeta = isPlainObject(first);
+    emit({
+      level: levelOrEntry,
+      message: typeof message === "string" ? message : JSON.stringify(message),
+      ...(hasMeta ? first : {}),
+      ...(hasMeta ? (rest.length ? { extra: rest } : {}) : meta.length ? { extra: meta } : {}),
+    });
+  },
+};
+
+export function enableDebugLogger(filter?: (log: LogEntry) => boolean) {
+  add({
+    log(log: LogEntry, callback: () => void) {
+      if (filter && !filter(log)) {
+        callback();
+        return;
+      }
+      /* eslint-disable no-console */
+      switch (log.level) {
+        case "error":
+          console.error(JSON.stringify(log));
+          break;
+        case "warn":
+          console.warn(JSON.stringify(log));
+          break;
+        default:
+          console.log(JSON.stringify(log));
+          break;
+      }
+      /* eslint-enable */
+      callback();
+    },
+  });
 }
 const logDb = !process.env.NO_DEBUG_DB;
 const logRedux = !process.env.NO_DEBUG_ACTION;
@@ -294,23 +335,18 @@ export default {
   // General functions in case the hooks don't apply
 
   debug: (...args: unknown[]) => {
-    // @ts-expect-error spreading unknowns is fine
     logger.log("debug", ...args);
   },
   info: (...args: unknown[]) => {
-    // @ts-expect-error spreading unknowns is fine
     logger.log("info", ...args);
   },
   log: (...args: unknown[]) => {
-    // @ts-expect-error spreading unknowns is fine
     logger.log("info", ...args);
   },
   warn: (...args: unknown[]) => {
-    // @ts-expect-error spreading unknowns is fine
     logger.log("warn", ...args);
   },
   error: (...args: unknown[]) => {
-    // @ts-expect-error spreading unknowns is fine
     logger.log("error", ...args);
   },
   critical: (error: unknown, context?: string) => {

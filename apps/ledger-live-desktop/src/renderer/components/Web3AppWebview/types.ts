@@ -1,7 +1,7 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
 import { DiscoverDB, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { WebContents } from "electron";
+import type { WebContents } from "electron";
 
 export interface WebviewTag extends Electron.WebviewTag {
   contentWindow: WebContents;

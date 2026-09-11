@@ -1,3 +1,4 @@
+import { app } from "~/renderer/bridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import {
@@ -10,7 +11,6 @@ import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/t
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation } from "@ledgerhq/types-live";
-import { ipcRenderer } from "electron";
 import React, { type RefObject, forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -68,7 +68,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         onSuccess,
         onCancel,
       }) => {
-        ipcRenderer.send("show-app", {});
+        app.show();
 
         // We agree that for useCase, we should send max 50 currencies if provided else use only useCase (e.g. buy)
         const shouldUseCurrencies =
@@ -98,7 +98,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         onError,
         onCancel,
       }) => {
-        ipcRenderer.send("show-app", {});
+        app.show();
         dispatch(
           openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
             account,
@@ -113,11 +113,11 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
       "account.publicKeyUnavailable": () => {
-        ipcRenderer.send("show-app", {});
+        app.show();
         dispatch(openAccountPublicKeyUnavailableDialog());
       },
       "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
-        ipcRenderer.send("show-app", {});
+        app.show();
         dispatch(
           openModal("MODAL_SIGN_MESSAGE", {
             account,
@@ -144,7 +144,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         onSuccess,
         onError,
       }) => {
-        ipcRenderer.send("show-app", {});
+        app.show();
         dispatch(
           openModal("MODAL_SIGN_TRANSACTION", {
             canEditFees,
@@ -171,7 +171,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         onSuccess,
         onError,
       }) => {
-        ipcRenderer.send("show-app", {});
+        app.show();
         dispatch(
           openModal("MODAL_SIGN_RAW_TRANSACTION", {
             transaction,
@@ -212,7 +212,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         });
       },
       "device.transport": ({ appName, onSuccess, onCancel }) => {
-        ipcRenderer.send("show-app", {});
+        app.show();
         dispatch(
           openModal("MODAL_CONNECT_DEVICE", {
             appName,
@@ -223,7 +223,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
       "device.select": ({ appName, onSuccess, onCancel }) => {
-        ipcRenderer.send("show-app", {});
+        app.show();
         dispatch(
           openModal("MODAL_CONNECT_DEVICE", {
             appName,
@@ -234,7 +234,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
-        ipcRenderer.send("show-app", {});
+        app.show();
         dispatch(
           openExchangeDrawer({
             type: "EXCHANGE_START",
@@ -249,7 +249,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
       "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
-        ipcRenderer.send("show-app", {});
+        app.show();
         dispatch(
           openExchangeDrawer({
             type: "EXCHANGE_COMPLETE",
