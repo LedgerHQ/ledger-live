@@ -12,7 +12,7 @@ import ValidatorRow from "../../shared/components/ValidatorRow";
 import { useStakeValidatorStep } from "../../shared/hooks/useStakeValidatorStep";
 
 export default function StepValidator({ account, transaction, status, error }: StepProps) {
-  const { unit, validator } = useStakeValidatorStep(account, transaction, "stake.delegate");
+  const { unit, validator } = useStakeValidatorStep(account, transaction, "delegate");
   if (validator === undefined) {
     return null;
   }

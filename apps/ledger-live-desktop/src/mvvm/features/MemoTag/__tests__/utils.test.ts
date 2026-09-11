@@ -31,9 +31,10 @@ describe("getMemoTagValueByTransactionFamily", () => {
   });
 
   it("should return memo for solana family", () => {
-    const transaction: SolanaTransaction = {
+    const transaction = {
       family: "solana",
-      model: { uiState: { memo: "Solana memo" } },
+      memoType: "TEXT",
+      memoValue: "Solana memo",
     } as SolanaTransaction;
     expect(getMemoTagValueByTransactionFamily(transaction)).toBe("Solana memo");
   });

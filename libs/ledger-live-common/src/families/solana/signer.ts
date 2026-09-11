@@ -1,34 +1,43 @@
 import Transport from "@ledgerhq/hw-transport";
-import { DmkSignerSol, LegacySignerSolana } from "@ledgerhq/live-signer-solana";
-import type { SolanaSigner as CoinSolanaSigner } from "@ledgerhq/coin-solana/signer";
+import type { Resolution } from "@ledgerhq/coin-solana/signer";
 import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { CoinFrameworkSigner } from "../../bridge/generic-coin-framework/types";
 import { CreateSigner, executeWithSigner } from "../../bridge/setup";
-import { isDmkTransport } from "../../hw/dmkUtils";
+import { canDMKSignerBeUsed, getSolanaSignerInstance } from "./setup";
 import bs58 from "bs58";
+import { VersionedTransaction } from "@solana/web3.js";
 
+/**
+ * The framework passes `getAddress` an options object, `hw-app-solana` a boolean `display`, and
+ * `SignerContext` erases the shape: forwarding the object would set P1=0x01 mid-signing.
+ */
 export type SolanaSigner = {
-  getAddress: (path: string, verify?: boolean) => Promise<{ address: Buffer }>;
-  signTransaction: (path: string, txBase64: string) => Promise<string>;
-};
-
-const createLiveSigner: CreateSigner<CoinSolanaSigner> = (transport: Transport) => {
-  if (isDmkTransport(transport)) {
-    return new DmkSignerSol(transport.dmk, transport.sessionId);
-  }
-
-  return new LegacySignerSolana(transport);
+  getAddress: (
+    path: string,
+    verify?: boolean | { verify?: boolean; derivationMode?: string },
+  ) => Promise<{ address: Buffer; publicKey: string }>;
+  signTransaction: (path: string, txBase64: string, resolution?: Resolution) => Promise<string>;
 };
 
 export const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
-  const signer = createLiveSigner(transport);
+  const signer = getSolanaSignerInstance(transport);
+  const isDmk = canDMKSignerBeUsed(transport);
   return {
-    getAddress: (path: string, verify?: boolean) =>
-      verify !== undefined ? signer.getAddress(path, verify) : signer.getAddress(path),
-    signTransaction: async (path: string, txBase64: string) => {
-      const txBuffer = Buffer.from(txBase64, "base64");
-      const { signature } = await signer.signTransaction(path, txBuffer);
+    getAddress: async (path: string, verify?: boolean | { verify?: boolean }) => {
+      const display = typeof verify === "boolean" ? verify : !!verify?.verify;
+      const { address } = await signer.getAddress(path, display);
+      return { address, publicKey: bs58.encode(address) };
+    },
+    signTransaction: async (path: string, txBase64: string, resolution?: Resolution) => {
+      // The crafted payload carries the signature vector too; the device signs the message alone.
+      const { message } = VersionedTransaction.deserialize(Buffer.from(txBase64, "base64"));
+      // `LegacySignerSolana` throws on a resolution with no `deviceModelId`, which is unavailable.
+      const { signature } = await signer.signTransaction(
+        path,
+        Buffer.from(message.serialize()),
+        isDmk ? resolution : undefined,
+      );
       return signature.toString("hex");
     },
   };
