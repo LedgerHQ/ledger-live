@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import type { Operation, Page } from "@ledgerhq/coin-module-framework/api/types";
-import { paginateOperations } from "./paginateOperations";
+import { paginateOperations, PAGE_BUDGET } from "./paginateOperations";
 
 jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 const logMock = jest.mocked(log);
@@ -23,6 +23,22 @@ beforeEach(() => {
 });
 
 describe("paginateOperations", () => {
+  it("continues past an empty page as long as the cursor still advances (coin-stellar's and coin-xrp's shape: a filtered page can legitimately be empty)", async () => {
+    const items = await paginateOperations(
+      pages(
+        { items: [op("a")], next: "c1" },
+        // Empty on purpose -- a page filtered down to nothing for this address, with a truthy,
+        // advancing cursor: not an end of stream. Stopping here is exactly the 4%-truncation bug.
+        { items: [], next: "c2" },
+        { items: [op("b")], next: "c3" },
+        { items: [op("c")] },
+      ),
+    );
+
+    expect(items.map(o => o.tx.hash)).toEqual(["a", "b", "c"]);
+    expect(calls).toEqual([undefined, "c1", "c2", "c3"]);
+  });
+
   it("stops on an absent cursor", async () => {
     const items = await paginateOperations(pages({ items: [op("a")] }));
 
@@ -50,17 +66,18 @@ describe("paginateOperations", () => {
     expect(calls).toEqual([undefined, "c1", "c2"]);
   });
 
-  it("stops when the cursor does not advance", async () => {
-    const items = await paginateOperations(
+  it("throws when the cursor does not advance, rather than returning the fragment collected so far", async () => {
+    const walk = paginateOperations(
       pages({ items: [op("a")], next: "c1" }, { items: [op("b")], next: "c1" }),
     );
 
-    expect(items.map(o => o.tx.hash)).toEqual(["a", "b"]);
+    // Rejects -- never resolves with the two operations collected before the stall.
+    await expect(walk).rejects.toThrow(/cursor c1 was served twice/);
     expect(calls).toEqual([undefined, "c1"]);
   });
 
-  it("stops on a cursor cycle longer than one page, which no equality check would catch", async () => {
-    const items = await paginateOperations(
+  it("throws on a cursor cycle longer than one page, which no equality check would catch, rather than returning a fragment", async () => {
+    const walk = paginateOperations(
       pages(
         { items: [op("a")], next: "c1" },
         { items: [op("b")], next: "c2" },
@@ -68,16 +85,18 @@ describe("paginateOperations", () => {
       ),
     );
 
-    expect(items.map(o => o.tx.hash)).toEqual(["a", "b", "c"]);
+    await expect(walk).rejects.toThrow(/cursor c1 was served twice/);
     expect(calls).toEqual([undefined, "c1", "c2"]);
   });
 
-  it("stops on an empty page handed back with a cursor (coin-vechain's early return)", async () => {
-    const items = await paginateOperations(
-      pages({ items: [op("a")], next: "c1" }, { items: [], next: "c2" }),
+  it("throws on a vechain-shaped module (an empty page repeating the same truthy cursor), rather than returning a fragment", async () => {
+    const walk = paginateOperations(
+      pages({ items: [op("a")], next: "c1" }, { items: [], next: "c1" }),
     );
 
-    expect(items.map(o => o.tx.hash)).toEqual(["a"]);
+    await expect(walk).rejects.toThrow(/cursor c1 was served twice/);
+    // One extra request beyond the last page with data: the empty page no longer stops the walk
+    // by itself, so this module is caught by the non-advancing guard on the very next fetch.
     expect(calls).toEqual([undefined, "c1"]);
   });
 
@@ -94,7 +113,7 @@ describe("paginateOperations", () => {
   });
 
   describe("with a bound", () => {
-    it("stops after the page that reaches the bound, without fetching further pages or trimming that page", async () => {
+    it("resolves with the collected operations when the bound stops the walk -- an intended truncation, not an error -- without fetching further pages or trimming that page", async () => {
       const items = await paginateOperations(
         pages(
           { items: [op("a"), op("b"), op("c")], next: "c1" },
@@ -165,6 +184,38 @@ describe("paginateOperations", () => {
 
       expect(items.map(o => o.tx.hash)).toEqual(["a", "b"]);
       expect(calls).toEqual([undefined, "c1"]);
+      expect(logMock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("page budget", () => {
+    it("throws when a module pages forever with strictly advancing cursors and non-empty pages, rather than returning a fragment, and logs that the budget -- not a natural end -- is what stopped it", async () => {
+      let fetches = 0;
+      const walk = paginateOperations(async () => {
+        fetches++;
+        return { items: [op(`op${fetches}`)], next: `c${fetches}` };
+      });
+
+      // Rejects -- never resolves with the PAGE_BUDGET operations collected before the safety net.
+      await expect(walk).rejects.toThrow(
+        new RegExp(
+          `page budget \\(${PAGE_BUDGET}\\) reached after collecting ${PAGE_BUDGET} operations`,
+        ),
+      );
+      expect(fetches).toBe(PAGE_BUDGET);
+      expect(logMock).toHaveBeenCalledWith(
+        "generic-coin-framework",
+        expect.stringContaining("budget"),
+        expect.objectContaining({ pagesFetched: PAGE_BUDGET, collected: PAGE_BUDGET }),
+      );
+    });
+
+    it("does not fire on a walk shorter than the budget", async () => {
+      const items = await paginateOperations(
+        pages({ items: [op("a")], next: "c1" }, { items: [op("b")] }),
+      );
+
+      expect(items.map(o => o.tx.hash)).toEqual(["a", "b"]);
       expect(logMock).not.toHaveBeenCalled();
     });
   });
