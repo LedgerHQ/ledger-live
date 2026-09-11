@@ -1,8 +1,8 @@
 import React from "react";
-import { ReleaseTourDialog } from "LLD/components/ReleaseTour";
-import { Q2_TOUR_CONFIG } from "./const";
+import { ReleaseTourDialog, type ReleaseTourConfig } from "LLD/components/ReleaseTour";
 
-interface Q2TourDialogProps {
+interface Q3TourDialogProps {
+  readonly tour: ReleaseTourConfig;
   readonly isOpen: boolean;
   readonly onHeaderClose: () => void;
   readonly onDismiss: () => void;
@@ -11,16 +11,17 @@ interface Q2TourDialogProps {
   readonly onSlideChange?: (index: number) => void;
 }
 
-export const Q2TourDialog = ({
+export const Q3TourDialog = ({
+  tour,
   isOpen,
   onHeaderClose,
   onDismiss,
   onContinueClick,
   onComplete,
   onSlideChange,
-}: Q2TourDialogProps) => (
+}: Q3TourDialogProps) => (
   <ReleaseTourDialog
-    tour={Q2_TOUR_CONFIG}
+    tour={tour}
     isOpen={isOpen}
     onHeaderClose={onHeaderClose}
     onDismiss={onDismiss}
