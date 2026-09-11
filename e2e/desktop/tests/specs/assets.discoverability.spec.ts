@@ -1,7 +1,6 @@
 import { test } from "tests/fixtures/common";
 import { expect } from "@playwright/test";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -25,8 +24,6 @@ test.describe("Asset discoverability", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.expectStocksDiscoveryVisible();
 
@@ -57,8 +54,6 @@ test.describe("Asset discoverability", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.expectStocksHoldingsVisible();
 
@@ -87,8 +82,6 @@ test.describe("Asset discoverability", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.topBarSearch.open();
       await app.topBarSearch.expectCategoriesVisible();
 
@@ -113,8 +106,6 @@ test.describe("Asset discoverability", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.topBarSearch.open();
 
       await app.topBarSearch.searchFor("btc");

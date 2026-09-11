@@ -3,7 +3,6 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import {
   liveDataCommand,
   liveDataWithAddressCommand,
@@ -31,8 +30,6 @@ test.describe("Undelegate", () => {
       annotation: { type: "TMS", description: "B2CQA-387" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(suiAccount.account.accountName);
 
@@ -75,8 +72,6 @@ test.describe("Undelegate - MINA", () => {
       annotation: { type: "TMS", description: "B2CQA-387" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(minaAccount.account.accountName);
 

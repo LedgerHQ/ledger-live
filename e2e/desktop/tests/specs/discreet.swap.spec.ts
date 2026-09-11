@@ -2,7 +2,6 @@ import { Account, type AccountType, TokenAccount } from "@ledgerhq/live-e2e-shar
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import test from "tests/fixtures/common";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { setupEnv } from "tests/utils/swapUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
@@ -50,7 +49,6 @@ test.describe("Swap - discreet mode", () => {
       ],
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       const fundedAssetTickers = fundedAssetsAccounts.map(account => account.currency.ticker);
       await app.swap.selectFromAccountCoinSelector();
       await app.modularDialog.validateItems();
@@ -70,7 +68,6 @@ test.describe("Swap - discreet mode", () => {
       ],
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.swap.selectFromAccountCoinSelector();
       await app.modularDialog.selectAsset(balanceCheckAccount.currency);
       await app.modularDialog.selectNetwork(balanceCheckAccount.currency);
@@ -92,7 +89,6 @@ test.describe("Swap - discreet mode", () => {
       ],
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );

@@ -1,6 +1,5 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import {
   Account,
   TokenAccount,
@@ -118,8 +117,6 @@ for (const token of subAccounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.portfolio.clickAddAccountButton();
 
         const selector = await getModularSelector(app, "ASSET");
@@ -169,8 +166,6 @@ for (const token of subAccountReceive) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(getParentAccountName(token.account));
         await app.account.expectAccountVisibility(getParentAccountName(token.account));
@@ -218,8 +213,6 @@ for (const token of subAccounts.filter(subAccount => !subAccount.notPreSeeded)) 
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         const parentAccountName = getParentAccountName(token.account);
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(parentAccountName);
@@ -282,8 +275,6 @@ for (const transaction of transactionE2E) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(
           getParentAccountName(transaction.tx.accountToDebit),
@@ -395,8 +386,6 @@ for (const transaction of transactionsAddressInvalid) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.portfolio.clickSendButton();
 
         await app.send.selectDebitCurrency(transaction.transaction);
@@ -445,8 +434,6 @@ for (const transaction of transactionsAddressValid) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.portfolio.clickSendButton();
 
         await app.send.selectDebitCurrency(transaction.transaction);
@@ -523,8 +510,6 @@ for (const transaction of tokenTransactionInvalid) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(
           getParentAccountName(transaction.tx.accountToDebit),
