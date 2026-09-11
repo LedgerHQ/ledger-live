@@ -13,8 +13,7 @@ import { createApi as createNearApi } from "@ledgerhq/coin-near/api/index";
 import { getCoinConfig } from "@ledgerhq/coin-near/config";
 import { getAccountCurrency } from "../../account";
 
-// NearContext = { config: () => Promise<NearConfig> }
-const nearContext = { config: () => Promise.resolve(getCoinConfig()) };
+const nearContext = { config: () => Promise.resolve(getCoinConfig()), logger: () => {} };
 
 // Framework writes stakingPositions to accounts with usesStakingPositions: true.
 // The type is local to getAccountShape.ts and not exported — access via this cast.
