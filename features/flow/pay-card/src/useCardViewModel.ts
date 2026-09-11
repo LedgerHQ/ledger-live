@@ -15,6 +15,8 @@ export function useCardViewModel({
   title,
   oauthConfig,
   callback,
+  openHostedLogin,
+  openHostedPage,
   formatCountervalue,
   balanceLabel,
   onTrackEvent,
@@ -30,5 +32,14 @@ export function useCardViewModel({
     return { balance: MOCK_CARD_BALANCE, formatCountervalue, balanceLabel };
   }, [isSignedIn, formatCountervalue, balanceLabel]);
 
-  return { title, oauthConfig, callback, onTrackEvent, displayState, cardVisual };
+  return {
+    title,
+    oauthConfig,
+    callback,
+    openHostedLogin,
+    openHostedPage,
+    onTrackEvent,
+    displayState,
+    cardVisual,
+  };
 }

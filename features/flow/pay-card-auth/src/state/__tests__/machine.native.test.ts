@@ -13,7 +13,7 @@ const oauthConfig: CardLoginOauthConfig = {
 };
 
 const attempt = { codeVerifier: "verifier-value" };
-const callback: PayCardAuthCallback = { code: "auth-code" };
+const callback: PayCardAuthCallback = { code: "auth-code", state: "state-value" };
 
 const session = {
   accessToken: "at_token",
@@ -34,6 +34,7 @@ function stubPorts(overrides: Partial<Ports> = {}): Ports {
     createAttempt: jest.fn(async () => ({
       ...attempt,
       codeChallenge: "challenge-value",
+      state: "state-value",
     })),
     saveAttempt: jest.fn(async () => undefined),
     loadAttempt: jest.fn(async () => null),
@@ -172,6 +173,7 @@ describe("cardLoginMachine login", () => {
       redirect_uri: "https://go.test/ledger/card",
       code_challenge: "challenge-value",
       code_challenge_method: "S256",
+      state: "state-value",
       prompt: "consent",
     });
     // The provider gets the redirect URI; the browser session ends on the deep link.
@@ -223,6 +225,90 @@ describe("cardLoginMachine login", () => {
 
     expect(actor.getSnapshot().value).toBe("ready");
     expect(ports.exchangeAuthorizationCode).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the attempt and waits when the page reports nothing back", async () => {
+    // Desktop: the window answers `pending`, and `ledgerlive://paytab` brings the code later.
+    const ports = stubPorts({
+      openHostedLogin: jest.fn(async () => ({ type: "pending" })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+
+    actor.send({ type: "LOGIN" });
+
+    await settledAt(actor, "awaitingCallback");
+    expect(ports.clearAttempt).not.toHaveBeenCalled();
+  });
+
+  it("completes the login when the deep link brings the code after the page opened", async () => {
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      openHostedLogin: jest.fn(async () => ({ type: "pending" })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+    await settledAt(actor, "awaitingCallback");
+
+    actor.send({ type: "CALLBACK_RECEIVED", ...callback });
+
+    await settledAt(actor, "ready");
+    expect(ports.exchangeAuthorizationCode).toHaveBeenCalledWith({
+      code: callback.code,
+      codeVerifier: attempt.codeVerifier,
+    });
+  });
+
+  it("starts a fresh attempt when the login is pressed again while it waits", async () => {
+    // The redirect may never arrive. A second press must not leave the login with no way forward.
+    const ports = stubPorts({
+      openHostedLogin: jest.fn(async () => ({ type: "pending" })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+    await settledAt(actor, "awaitingCallback");
+
+    actor.send({ type: "LOGIN" });
+
+    await settledAt(actor, "awaitingCallback");
+    expect(ports.createAttempt).toHaveBeenCalledTimes(2);
+  });
+
+  it("ignores a stray redirect from an attempt already abandoned", async () => {
+    // The first attempt's redirect straggles in late, after a retry started a second one. It must
+    // not be exchanged against the second attempt's verifier, and it must not wipe that attempt.
+    const ports = stubPorts({
+      // Nothing on disk yet at cold start; the exchange later reads back what `saveAttempt` wrote.
+      loadAttempt: jest.fn().mockResolvedValueOnce(null).mockResolvedValue(attempt),
+      openHostedLogin: jest.fn(async () => ({ type: "pending" })),
+      createAttempt: jest
+        .fn()
+        .mockResolvedValueOnce({ ...attempt, codeChallenge: "challenge-value", state: "state-a" })
+        .mockResolvedValueOnce({ ...attempt, codeChallenge: "challenge-value", state: "state-b" }),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+    await settledAt(actor, "awaitingCallback");
+
+    actor.send({ type: "LOGIN" });
+    await settledAt(actor, "awaitingCallback");
+
+    actor.send({ type: "CALLBACK_RECEIVED", code: "stale-code", state: "state-a" });
+
+    expect(actor.getSnapshot().value).toBe("awaitingCallback");
+    expect(ports.exchangeAuthorizationCode).not.toHaveBeenCalled();
+    expect(ports.clearAttempt).not.toHaveBeenCalled();
+
+    actor.send({ type: "CALLBACK_RECEIVED", code: callback.code, state: "state-b" });
+
+    await settledAt(actor, "ready");
+    expect(ports.exchangeAuthorizationCode).toHaveBeenCalledWith({
+      code: callback.code,
+      codeVerifier: attempt.codeVerifier,
+    });
   });
 
   it("goes back to the login action without a message when the browser is dismissed", async () => {

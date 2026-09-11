@@ -23,11 +23,11 @@ describe("openHostedLoginInBrowser", () => {
     expect(open).toHaveBeenCalledWith(loginUrl, "_blank", "noopener,noreferrer");
   });
 
-  it("should report a dismissal, because the browser reports nothing back", async () => {
+  it("should report a wait, because the redirect arrives through the app's deep link", async () => {
     // `noopener` makes the answer `null` for every login, so it cannot report a failure.
     open.mockReturnValue(null);
 
-    await expect(openHostedLoginInBrowser(loginUrl)).resolves.toEqual({ type: "dismissed" });
+    await expect(openHostedLoginInBrowser(loginUrl)).resolves.toEqual({ type: "pending" });
   });
 
   it("should reject when the platform refuses to open a context at all", async () => {
