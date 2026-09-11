@@ -26,8 +26,12 @@ function isZcashSender(optionId: string): optionId is ZcashSender {
   return optionId === PUBLIC || optionId === PRIVATE;
 }
 
-function isZcashBasedAccount(account: AccountLike): account is ZcashAccount {
-  return "bitcoinResources" in account && account.bitcoinResources !== undefined;
+function isZcashMainAccount(account: AccountLike): account is ZcashAccount {
+  return account.type === "Account" && account.currency.id === "zcash";
+}
+
+function hasShieldedViewingKey(account: ZcashAccount): boolean {
+  return Boolean(account.privateInfo?.ufvk);
 }
 
 function isZcashTransaction(transaction: unknown): transaction is ZcashTransaction {
@@ -50,18 +54,9 @@ function resolveSender(transaction: unknown): ZcashSender {
 }
 
 function getOptions({ account }: { account: AccountLike }): readonly BalanceTypeOption[] {
-  if (!isZcashBasedAccount(account)) return [];
+  if (!isZcashMainAccount(account)) return [];
 
-  // What the send flow can actually select from, not the account's totals: the spendable
-  // Ironwood notes (mature and unreserved) and the account's own transparent UTXOs. Both
-  // figures come from the same helpers note selection uses, so what the user reads here
-  // and what a spend can cover cannot disagree.
-  const spendablePrivateBalance = getSpendableIronwoodBalance(
-    account,
-    getReservedNullifiers(account),
-  );
-
-  return [
+  const options: BalanceTypeOption[] = [
     {
       id: PUBLIC,
       translationKey: "balanceType.transparent",
@@ -69,16 +64,21 @@ function getOptions({ account }: { account: AccountLike }): readonly BalanceType
       hasPendingBalance: false,
       icon: "check" as const,
     },
-    {
-      id: PRIVATE,
-      translationKey: "balanceType.shielded",
-      balance: spendablePrivateBalance,
-      // A freshly shielded or change note is owned but still too young to spend, so the
-      // spendable figure above trails the total until it matures.
-      hasPendingBalance: hasMaturingIronwoodNotes(account),
-      icon: "lock" as const,
-    },
   ];
+
+  if (!hasShieldedViewingKey(account)) return options;
+
+  options.push({
+    id: PRIVATE,
+    translationKey: "balanceType.shielded",
+    balance: getSpendableIronwoodBalance(account, getReservedNullifiers(account)),
+    // A freshly shielded or change note is owned but still too young to spend, so the
+    // spendable figure above trails the total until it matures.
+    hasPendingBalance: hasMaturingIronwoodNotes(account),
+    icon: "lock" as const,
+  });
+
+  return options;
 }
 
 function getSelfTransferTarget({
@@ -88,7 +88,7 @@ function getSelfTransferTarget({
   account: AccountLike;
   transaction: unknown;
 }): BalanceTypeSelfTransferTarget | null {
-  if (!isZcashBasedAccount(account)) return null;
+  if (!isZcashMainAccount(account) || !hasShieldedViewingKey(account)) return null;
 
   // A self-transfer moves funds to the pool the spend is not drawing from: shielding
   // transparent funds, or unshielding private ones.
@@ -122,9 +122,10 @@ function getSelectableBalance({
   account: AccountLike;
   optionId: string;
 }): BigNumber {
-  if (!isZcashBasedAccount(account)) return new BigNumber(0);
+  if (!isZcashMainAccount(account)) return new BigNumber(0);
 
   if (optionId === PRIVATE) {
+    if (!hasShieldedViewingKey(account)) return new BigNumber(0);
     const notes = collectSelectableIronwoodNotes(account, getReservedNullifiers(account));
     return notes.reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
   }

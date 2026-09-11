@@ -25,22 +25,30 @@ function account({
   notes = [],
   shieldedAddress = "u1shielded",
   freshAddress = "t1transparent",
+  withBitcoinResources = true,
+  ufvk = "uview1test",
 }: {
   utxoValues?: number[];
   notes?: { amount: number; blockHeight: number }[];
   shieldedAddress?: string | null;
   freshAddress?: string;
+  withBitcoinResources?: boolean;
+  ufvk?: string | null;
 } = {}): ZcashAccount {
   return {
     id: "js:2:zcash:xpub:",
     type: "Account",
+    currency: { id: "zcash" },
     freshAddress,
     blockHeight: REFERENCE_HEIGHT,
     pendingOperations: [],
-    bitcoinResources: { utxos: utxoValues.map(value => ({ value: new BigNumber(value) })) },
+    bitcoinResources: withBitcoinResources
+      ? { utxos: utxoValues.map(value => ({ value: new BigNumber(value) })) }
+      : undefined,
     privateInfo: {
       lastProcessedBlock: REFERENCE_HEIGHT,
       shieldedAddress,
+      ufvk,
       transactions: notes.map((note, index) => ({
         id: `tx-${index}`,
         blockHeight: note.blockHeight,
@@ -102,10 +110,34 @@ describe("zcash balance-type config", () => {
       expect(shielded.hasPendingBalance).toBe(false);
     });
 
-    it("offers no pool for an account holding no transparent resources", () => {
+    it("offers no pool for a token account", () => {
       const tokenAccount = { type: "TokenAccount", id: "token" } as unknown as AccountLike;
 
       expect(zcashBalanceTypeConfig.getOptions({ account: tokenAccount })).toEqual([]);
+    });
+
+    it("still offers both pools when transparent resources are not attached yet", () => {
+      const options = zcashBalanceTypeConfig.getOptions({
+        account: account({
+          withBitcoinResources: false,
+          notes: [{ amount: 700, blockHeight: MATURE_HEIGHT }],
+        }),
+      });
+
+      expect(options.map(option => option.id)).toEqual(["public", "private"]);
+      expect(options[0].balance).toEqual(new BigNumber(0));
+      expect(options[1].balance).toEqual(new BigNumber(700));
+    });
+
+    it("offers only the transparent pool when the shielded viewing key is missing", () => {
+      const options = zcashBalanceTypeConfig.getOptions({
+        account: account({
+          ufvk: null,
+          notes: [{ amount: 700, blockHeight: MATURE_HEIGHT }],
+        }),
+      });
+
+      expect(options.map(option => option.id)).toEqual(["public"]);
     });
   });
 
@@ -200,6 +232,25 @@ describe("zcash balance-type config", () => {
         zcashBalanceTypeConfig.getSelectableBalance({ account: tokenAccount, optionId: "public" }),
       ).toEqual(new BigNumber(0));
     });
+
+    it("returns zero while transparent resources are not attached yet", () => {
+      const acc = account({ withBitcoinResources: false });
+
+      expect(
+        zcashBalanceTypeConfig.getSelectableBalance({ account: acc, optionId: "public" }),
+      ).toEqual(new BigNumber(0));
+    });
+
+    it("returns zero for the private pool when the shielded viewing key is missing", () => {
+      const acc = account({
+        ufvk: null,
+        notes: [{ amount: 700, blockHeight: MATURE_HEIGHT }],
+      });
+
+      expect(
+        zcashBalanceTypeConfig.getSelectableBalance({ account: acc, optionId: "private" }),
+      ).toEqual(new BigNumber(0));
+    });
   });
 
   describe("getSelfTransferTarget", () => {
@@ -241,6 +292,15 @@ describe("zcash balance-type config", () => {
     it("offers nothing while the shielded address is unknown", () => {
       const target = zcashBalanceTypeConfig.getSelfTransferTarget({
         account: account({ shieldedAddress: null }),
+        transaction: transaction("public"),
+      });
+
+      expect(target).toBeNull();
+    });
+
+    it("offers nothing when the shielded viewing key is missing", () => {
+      const target = zcashBalanceTypeConfig.getSelfTransferTarget({
+        account: account({ ufvk: null }),
         transaction: transaction("public"),
       });
 

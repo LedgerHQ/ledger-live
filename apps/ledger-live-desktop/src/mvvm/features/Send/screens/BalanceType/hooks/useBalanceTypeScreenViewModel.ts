@@ -61,7 +61,10 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
 
   const onSelect = useCallback(
     (optionId: string) => {
-      if (!transaction || !bridge || !balanceTypeConfig) return;
+      if (!account || !transaction || !bridge || !balanceTypeConfig) return;
+      if (!balanceTypeConfig.getOptions({ account }).some(option => option.id === optionId)) {
+        return;
+      }
 
       const poolChanged = balanceTypeConfig.getSelectedOptionId(transaction) !== optionId;
       if (poolChanged) {
@@ -76,7 +79,15 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
       );
       navigation.goToStep(SEND_FLOW_STEP.RECIPIENT);
     },
-    [transaction, transactionActions, resetRecipient, bridge, balanceTypeConfig, navigation],
+    [
+      account,
+      transaction,
+      transactionActions,
+      resetRecipient,
+      bridge,
+      balanceTypeConfig,
+      navigation,
+    ],
   );
 
   if (!account || !transaction || !bridge || !balanceTypeConfig) {

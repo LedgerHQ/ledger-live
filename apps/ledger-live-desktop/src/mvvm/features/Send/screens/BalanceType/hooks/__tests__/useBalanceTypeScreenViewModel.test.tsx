@@ -262,4 +262,18 @@ describe("useBalanceTypeScreenViewModel", () => {
 
     expect(mockSetTransaction).not.toHaveBeenCalled();
   });
+
+  test("ignores a pool the descriptor does not offer", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL]);
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      vm.onSelect("private");
+    }
+
+    expect(mockUpdateTransactionAction).not.toHaveBeenCalled();
+    expect(mockGoToStep).not.toHaveBeenCalled();
+  });
 });
