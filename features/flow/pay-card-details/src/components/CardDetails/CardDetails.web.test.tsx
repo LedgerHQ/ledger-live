@@ -1,15 +1,14 @@
-import React, { type PropsWithChildren } from "react";
+import React from "react";
 import { screen } from "@testing-library/react";
-import { SignedInCardApiProviders, listenToSignedInCardApi } from "../../__tests__/cardApiStore";
+import { cardApiWrapper, listenToCardApi } from "@support/msw-features-flow-pay-card";
 import { CARD_COPY, MORE_COPY } from "../../__tests__/i18nWrapper";
 import { renderWeb } from "../../__tests__/renderWeb";
+import { signedInCardApiHandlers } from "./signedInCardApi";
 import { CardDetails } from "./CardDetails";
 
-listenToSignedInCardApi();
+listenToCardApi(signedInCardApiHandlers);
 
-function Wrapper({ children }: PropsWithChildren) {
-  return <SignedInCardApiProviders>{children}</SignedInCardApiProviders>;
-}
+const Wrapper = cardApiWrapper({ signedIn: true });
 
 describe("CardDetails (web)", () => {
   it("shows the card face with the freeze and more actions", async () => {
