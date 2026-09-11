@@ -1,7 +1,7 @@
 import { expect, type Locator } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import type { DeviceModelId } from "@ledgerhq/live-e2e-shared/mockServer";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 /**
  * The sync onboarding companion (`/onboarding/sync/manual/:deviceModelId`), driven

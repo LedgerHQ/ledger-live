@@ -1,7 +1,7 @@
 import test from "tests/fixtures/mockServerDevice";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { deviceWithScreenTags } from "tests/utils/tagsUtils";
-import { ONBOARDING_STEP } from "@ledgerhq/live-e2e-shared/mockServer";
+import { ONBOARDING_STEP } from "@ledgerhq/live-e2e-shared/mockServer/onboardingFlags";
 
 test.describe(`Onboarding (mock server)`, () => {
   test.use({

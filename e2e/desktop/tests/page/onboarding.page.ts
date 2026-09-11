@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import type { DeviceModelId } from "@ledgerhq/live-e2e-shared/mockServer";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export class OnboardingPage extends AppPage {
   private readonly getStartedButton = this.page.getByRole("button", { name: "Get Started" });
