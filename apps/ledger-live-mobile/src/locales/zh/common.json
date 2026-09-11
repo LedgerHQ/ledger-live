@@ -129,6 +129,12 @@
     "ldmkEnabled" : "已启用 LDMK 传输"
   },
   "errors" : {
+    "ZcashMemoTooLong" : {
+      "title" : "Memo 备注不能超过 {{maxBytes}} 字节"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "此数额过大，无法在单笔交易中发送：请尝试分批发送较小数额"
+    },
     "ReplacementTransactionUnderpriced" : {
       "title" : "替换交易定价过低",
       "description" : "网络费用可能太低。请增加"
@@ -699,6 +705,10 @@
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "无法获取您的余额",
+      "description" : "请检查您的互联网连接并重试。"
+    },
     "UnstakeNotEnoughStakedBalanceLeft" : {
       "title" : "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押",
       "description" : "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押"
@@ -957,6 +967,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "必须先完成从上一个验证者处的解除质押"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "此数额过小，无法质押"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "请先清空所有子账户"
@@ -1540,6 +1553,7 @@
       "title" : "确认密码",
       "description" : "每次打开该应用程序时，您都需要此密码。若您遗失密码，请重新安装该应用程序并恢复您的钱包。",
       "mismatch" : "密码不匹配",
+      "saveFailed" : "无法保存您的密码。请再次尝试。",
       "cta" : "确认"
     }
   },
@@ -3172,7 +3186,8 @@
       "previousStakingNodeId" : "前一节点 ID",
       "gasConsumed" : "Gas 消耗量",
       "gasUsed" : "Gas 使用量",
-      "functionId" : "函数标识"
+      "functionId" : "函数标识",
+      "inputs" : "输入"
     },
     "multipleAddresses" : "为什么有多个地址？"
   },
@@ -4273,6 +4288,11 @@
           "actions" : {
             "viewInExplorer" : "在浏览器中查看",
             "copied" : "已复制"
+          },
+          "earnBanner" : {
+            "title" : "赚取高达 {{apy}}% {{type}}",
+            "description" : "探索赚取机会",
+            "button" : "探索"
           },
           "accessibility" : {
             "copySwapId" : "复制互换 ID"
@@ -7728,7 +7748,53 @@
     }
   },
   "mina" : {
-    "memoPlaceholder" : "可选 Memo"
+    "memoPlaceholder" : "可选 Memo",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "重新委托",
+      "earn" : "赚取"
+    },
+    "stakeBanner" : {
+      "title" : "使用 MINA 赚取奖励",
+      "altTitle" : "管理您的 MINA 委托",
+      "description" : "将您的 MINA 委托给区块生产者，从区块生产中赚取奖励。奖励将根据您的委托数额进行分配。",
+      "altDescription" : "更改您的委托设置或解除委托您的 MINA 代币。"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "已委托给",
+      "stakedBalance" : "委托余额",
+      "producerAddress" : "生产者地址",
+      "delegatedToTooltip" : "您要委托的区块生产者名称",
+      "stakedBalanceTooltip" : "目前已委托给该验证者的 MINA 总数额",
+      "producerAddressTooltip" : "您要委托的区块生产者的公开地址"
+    },
+    "delegators" : "委托者",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "选择验证者",
+        "connectDevice" : "连接设备",
+        "confirmation" : "确认"
+      },
+      "title" : "委托 MINA",
+      "help" : "从下方列表中选择一个您要委托 MINA 代币的验证者。",
+      "success" : {
+        "title" : "交易已成功广播",
+        "description" : "您的委托变更请求已广播。"
+      },
+      "error" : {
+        "title" : "广播交易时发生错误"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "质押总额",
+      "commission" : "佣金",
+      "showAll" : "显示全部",
+      "showLess" : "显示更少",
+      "iDelegate" : "我委托",
+      "listHeader" : "委托",
+      "redelegate" : "重新委托",
+      "undelegate" : "解除委托",
+      "undelegateTitle" : "解除委托 MINA"
+    }
   },
   "near" : {
     "info" : {
@@ -8692,7 +8758,9 @@
           "inactive" : "不活跃",
           "inactiveTooltip" : "未找到验证者",
           "overstaked" : "超额质押",
-          "overstakedTooltip" : "该节点已超额质押，年收益率低于最佳水平"
+          "overstakedTooltip" : "该节点已超额质押，年收益率低于最佳水平",
+          "fetchError" : "无法加载",
+          "fetchErrorTooltip" : "无法加载验证者数据。请重试。"
         },
         "rewards" : "奖励",
         "actions" : {
@@ -9722,12 +9790,15 @@
     "selectAsset" : "选择资产",
     "selectNetwork" : "选择网络",
     "selectAccount" : "选择账户",
+    "selectAccountToPayFrom" : "选择付款账户",
     "selectAccountPerpsTitle" : "选择 Hyperliquid 账户",
-    "selectAccountPerpsDescription" : "若要为您的永续合约 (Perps) 提供资金，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
+    "selectAccountPerpsDescription" : "选择您想存入资金以进行交易的账户",
+    "selectAccountPerpsEmptyDescription" : "若要为您的永续合约 (Perps) 提供资金，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
     "selectDepositCurrencyTitle" : "选择要存入的资产",
     "selectDepositCurrencyDescription" : "任何支持的资产均可。必要时，该资产将自动互换。",
     "searchPlaceholder" : "按名称或地址搜索",
     "emptyAssetList" : "未找到资产",
+    "notAvailableYet" : "暂不可用",
     "accountCount_one" : "{{count}} 个账户",
     "accountCount_other" : "{{count}} 个账户",
     "emptyAccounts" : "您还没有 {{network}} 账户。请添加一个账户后继续",
@@ -10099,22 +10170,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "支付与收款",
-      "description" : "稳定币弥合了加密货币与现实生活支出之间的差距",
-      "cta" : "知道了",
+      "title" : "一站式管理您的所有付款",
+      "description" : "为您带来全新的\"支付\"选项卡，让您的加密货币随时准备好应对日常用钱时刻。",
+      "cta" : "探索“支付”",
       "rows" : {
         "global" : {
-          "title" : "全球支付与收款",
-          "description" : "享低网络费用"
+          "title" : "向您的联系人付款",
+          "description" : "向已保存的地址发送加密货币。"
         },
         "volatility" : {
-          "title" : "极低的波动性",
-          "description" : "稳定币基于法币"
+          "title" : "请求收款",
+          "description" : "让联系人直接向您发送资金。"
         },
         "card" : {
-          "title" : "用卡消费即可获得 1% 返现",
-          "description" : "使用 USDC、USDT、BTC、ETH 及更多币种进行支付"
+          "title" : "使用加密货币卡在全球范围内购物",
+          "description" : "并赚取无上限的 1% 返现。"
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "更多",
+      "title" : "更多",
+      "rows" : {
+        "managePin" : "管理 PIN 识别码",
+        "accessBaanx" : "访问 Baanx",
+        "help" : "帮助",
+        "logout" : "退出"
       }
     },
     "balance" : {
@@ -10129,7 +10210,12 @@
       }
     },
     "card" : {
-      "title" : "加密货币卡"
+      "title" : "加密货币卡",
+      "freeze" : "冻结",
+      "unfreeze" : "解冻"
+    },
+    "selectContact" : {
+      "placeholder" : "输入联系人"
     },
     "actions" : {
       "deposit" : "添加稳定币",
@@ -10144,6 +10230,10 @@
         "copied" : "已复制",
         "save" : "保存",
         "verify" : "验证"
+      },
+      "verifyHint" : {
+        "message" : "在分享前\n请在您的 Ledger 设备上\n验证您的地址",
+        "gotIt" : "知道了"
       },
       "verifyAddress" : {
         "introTitle" : "核实您的地址",
@@ -10187,10 +10277,86 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "发送现金，接收稳定币",
+      "description" : "转账现金并直接将稳定币接收至您的 Ledger Wallet™。",
+      "createAccount" : "创建账户",
+      "logIn" : "登录 Noah",
+      "providedBy" : "由 Noah 提供",
+      "rows" : {
+        "bank" : {
+          "title" : "接收来自任何银行的转账",
+          "description" : "通过 SEPA 或 ACH 接收薪资、付款及存款。"
+        },
+        "fees" : {
+          "title" : "无隐藏费用",
+          "description" : "直接从银行到区块链，费用仅为 0.25%。"
+        },
+        "earn" : {
+          "title" : "让您的资金立即发挥价值",
+          "description" : "您可以使用您的稳定币进行互换或赚取收益。"
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "加密货币卡",
+      "beforeIntro" : {
+        "description" : "每次消费均可获得 1% 返现",
+        "action" : "获取卡"
+      },
+      "afterIntro" : {
+        "description" : "登录以访问您的卡",
+        "action" : "登录"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "消费加密货币，赚取返现",
+      "providedBy" : "卡由 Baanx 提供",
+      "createAccount" : "创建账户",
+      "logIn" : "登录 Baanx",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay 或 Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "无上限 1% 加密货币返现",
+          "description" : "适用于所有使用 USDC、USDT 或 BTC 的加密货币卡消费。"
+        },
+        "virtualCard" : {
+          "title" : "免费虚拟卡",
+          "description" : "添加到 {{wallet}}，即刻可用。"
+        },
+        "topUp" : {
+          "title" : "通过 Ledger Wallet 安全充值",
+          "description" : "使用您的 Ledger 签署设备批准每笔转账。"
+        }
+      }
+    },
     "contacts" : {
       "title" : "付款",
       "pay" : "新",
-      "seeAllTitle" : "向联系人付款"
+      "seeAllTitle" : "向联系人付款",
+      "addressPicker" : {
+        "title" : "选择 {{name}} 的地址",
+        "addAddress" : "添加地址"
+      }
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "设置您的卡",
+        "allDone" : "一切就绪"
+      },
+      "dialog" : {
+        "title" : "设置您的卡",
+        "stepComplete" : "完成",
+        "gotIt" : "知道了"
+      },
+      "walletStep" : {
+        "title" : "添加到 Apple/Google Pay",
+        "description" : "在店内使用您的手机支付"
+      }
     }
   },
   "syncIndicator" : {
@@ -10418,6 +10584,16 @@
           "title" : "正在准备您的 Ledger 设备"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "正在准备您的 Ledger 设备"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "正在准备您的 Ledger 设备"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "需使用添加此联系人时的同一 Ledger 设备",
@@ -10430,6 +10606,10 @@
         "appVersionTooLow" : {
           "title" : "需要更新应用程序",
           "description" : "在您的 Ledger 设备上更新应用程序以保存联系人，然后重试。"
+        },
+        "osVersionTooLow" : {
+          "title" : "Ledger OS 需要更新",
+          "description" : "更新您的 Ledger 设备操作系统以重命名联系人，然后重试。"
         }
       }
     },
@@ -10541,12 +10721,6 @@
       "applyChanges" : "应用更改",
       "invalidLabelError" : "不允许使用特殊字符。"
     },
-    "editSigner" : {
-      "title" : "在设备上确认",
-      "description" : "连接并解锁您的 Ledger 设备以确认此更改。",
-      "confirm" : "继续",
-      "cancel" : "取消"
-    },
     "editSignerMismatch" : {
       "title" : "需使用添加此联系人时的同一 Ledger 设备",
       "description" : "已连接的设备不一致。",
@@ -10554,10 +10728,10 @@
       "cancel" : "取消"
     },
     "ledgerSyncIntroduction" : {
-      "title" : "开启 Ledger Sync 账户同步功能以保存联系人",
-      "description" : "您的联系人信息通过您的 Ledger 进行端到端加密，并在您的设备之间进行同步，只有您自己可以解锁。",
-      "activate" : "开启 Ledger Sync",
-      "dismiss" : "知道了",
+      "title" : "同步您的钱包以添加联系人",
+      "description" : "联系人已进行端到端加密，并可在您所有手机和电脑上的 Ledger Wallet 之间同步。",
+      "activate" : "同步我的钱包",
+      "dismiss" : "以后再说",
       "checkingAccessibilityLabel" : "正在检查 Ledger Sync 账户同步功能状态"
     },
     "featureIntroduction" : {

@@ -129,6 +129,12 @@
     "ldmkEnabled" : "Transporte LDMK activado"
   },
   "errors" : {
+    "ZcashMemoTooLong" : {
+      "title" : "El memo no debe superar los {{maxBytes}} bytes"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "Esta cantidad es demasiado grande para enviarla en una sola transacción: Intenta enviarla en cantidades más pequeñas"
+    },
     "ReplacementTransactionUnderpriced" : {
       "title" : "El precio de la transacción de sustitución es más bajo",
       "description" : "La tarifa de red podría ser demasiado baja. Auméntala."
@@ -699,6 +705,10 @@
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "No fue posible obtener el saldo",
+      "description" : "Verifica tu conexión a Internet y vuelve a intentarlo."
+    },
     "UnstakeNotEnoughStakedBalanceLeft" : {
       "title" : "Si cancelas la puesta en participación de más de {{maxAmount}}, se cancelará la totalidad de tu participación de {{totalAmount}}",
       "description" : "Si cancelas la puesta en participación de más de {{maxAmount}}, se cancelará la totalidad de tu participación de {{totalAmount}}"
@@ -957,6 +967,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "El proceso de quitar de participación de tu validador anterior debe finalizar primero"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "Este monto es demasiado pequeño para ponerlo en participación"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Primero vacía las subcuentas"
@@ -1540,6 +1553,7 @@
       "title" : "Confirmar contraseña",
       "description" : "Necesitarás esta contraseña cada vez que abras la app. Si la pierdes, reinstala la app y restaura tu wallet.",
       "mismatch" : "Las contraseñas no coinciden",
+      "saveFailed" : "No hemos podido guardar tu contraseña. Inténtalo de nuevo.",
       "cta" : "Confirmar"
     }
   },
@@ -3172,7 +3186,8 @@
       "previousStakingNodeId" : "ID del nodo anterior",
       "gasConsumed" : "Gas consumido",
       "gasUsed" : "Gas usado",
-      "functionId" : "ID de función"
+      "functionId" : "ID de función",
+      "inputs" : "Entradas"
     },
     "multipleAddresses" : "¿Por qué hay múltiples direcciones?"
   },
@@ -4273,6 +4288,11 @@
           "actions" : {
             "viewInExplorer" : "Ver en el explorador",
             "copied" : "Copiado"
+          },
+          "earnBanner" : {
+            "title" : "Gana hasta un {{apy}}% {{type}}",
+            "description" : "Explora las oportunidades de Earn",
+            "button" : "Explorar"
           },
           "accessibility" : {
             "copySwapId" : "Copiar ID de permuta"
@@ -7728,7 +7748,53 @@
     }
   },
   "mina" : {
-    "memoPlaceholder" : "Memo opcional"
+    "memoPlaceholder" : "Memo opcional",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegar",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Gana recompensas con MINA",
+      "altTitle" : "Gestiona tu delegación de MINA",
+      "description" : "Delega tus MINA a un productor de bloques y obtén recompensas por la producción de bloques. Las recompensas se distribuyen según la cantidad que tengas delegada.",
+      "altDescription" : "Cambia tus ajustes de delegación o cancela la delegación de tus tokens MINA."
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegados a",
+      "stakedBalance" : "Saldo delegado",
+      "producerAddress" : "Dirección del productor",
+      "delegatedToTooltip" : "Nombre del productor de bloques en el que delegas",
+      "stakedBalanceTooltip" : "Cantidad total de MINA actualmente delegada a este validador",
+      "producerAddressTooltip" : "Dirección pública del productor de bloques al que delegas"
+    },
+    "delegators" : "Delegadores",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Elegir validador",
+        "connectDevice" : "Conectar dispositivo",
+        "confirmation" : "Confirmación"
+      },
+      "title" : "Delegar MINA",
+      "help" : "Selecciona un validador de la siguiente lista para delegar tus tokens MINA.",
+      "success" : {
+        "title" : "Transacción transmitida correctamente",
+        "description" : "Se ha transmitido tu solicitud de cambio de delegación"
+      },
+      "error" : {
+        "title" : "Se produjo un error al transmitir la transacción"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Participación total",
+      "commission" : "Comisión",
+      "showAll" : "Mostrar todo",
+      "showLess" : "Mostrar menos",
+      "iDelegate" : "Delego",
+      "listHeader" : "Delegación",
+      "redelegate" : "Redelegar",
+      "undelegate" : "Desdelegar",
+      "undelegateTitle" : "Desdelegar MINA"
+    }
   },
   "near" : {
     "info" : {
@@ -8692,7 +8758,9 @@
           "inactive" : "Inactivo",
           "inactiveTooltip" : "Validador no encontrado",
           "overstaked" : "Puesta en participación excesiva",
-          "overstakedTooltip" : "En este nodo se ha puesto en participación en exceso, el APY no es óptimo"
+          "overstakedTooltip" : "En este nodo se ha puesto en participación en exceso, el APY no es óptimo",
+          "fetchError" : "No es posible cargar",
+          "fetchErrorTooltip" : "No se pudieron cargar los datos de los validadores. Inténtalo de nuevo."
         },
         "rewards" : "Recompensas",
         "actions" : {
@@ -9722,12 +9790,15 @@
     "selectAsset" : "Seleccionar activo",
     "selectNetwork" : "Seleccionar red",
     "selectAccount" : "Seleccionar cuenta",
+    "selectAccountToPayFrom" : "Selecciona la cuenta desde la que pagar",
     "selectAccountPerpsTitle" : "Selecciona una cuenta de Hyperliquid",
-    "selectAccountPerpsDescription" : "Para aportar fondos a tus perpetuos, necesitas una cuenta de Hyperliquid. Agrega una para continuar.",
+    "selectAccountPerpsDescription" : "Selecciona una cuenta en la que desees depositar fondos para realizar tus operaciones",
+    "selectAccountPerpsEmptyDescription" : "Para aportar fondos a tus perpetuos, necesitas una cuenta de Hyperliquid. Agrega una para continuar.",
     "selectDepositCurrencyTitle" : "Selecciona el activo a depositar",
     "selectDepositCurrencyDescription" : "Cualquier activo compatible funciona. Se permutará automáticamente si es necesario.",
     "searchPlaceholder" : "Buscar por nombre o dirección",
     "emptyAssetList" : "No se encontraron activos",
+    "notAvailableYet" : "No disponible todavía",
     "accountCount_one" : "{{count}} cuenta",
     "accountCount_other" : "{{count}} cuentas",
     "emptyAccounts" : "Todavía no tienes cuentas de {{network}}. Para continuar, agrega una.",
@@ -10099,22 +10170,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "Paga y recibe pagos",
-      "description" : "Las monedas estables reducen la brecha entre las cripto y el gasto en la vida real",
-      "cta" : "Entendido",
+      "title" : "Todos tus pagos, en un mismo lugar",
+      "description" : "Descubre la nueva pestaña Pay, que prepara tus cripto para el uso cotidiano de dinero.",
+      "cta" : "Explorar Pay",
       "rows" : {
         "global" : {
-          "title" : "Paga y recibe pagos globalmente",
-          "description" : "Aprovecha bajas tarifas de red"
+          "title" : "Paga a tus contactos",
+          "description" : "Envía cripto a las direcciones guardadas."
         },
         "volatility" : {
-          "title" : "Volatilidad mínima",
-          "description" : "Las monedas estables se basan en fiat"
+          "title" : "Solicita pagos",
+          "description" : "Pide a tus contactos que te envíen fondos directamente."
         },
         "card" : {
-          "title" : "Gasta con una tarjeta y obtén un 1% de devolución en efectivo",
-          "description" : "Paga en USDC, USDT, BTC, ETH y más"
+          "title" : "Compra en todo el mundo con la tarjeta cripto",
+          "description" : "Y obtén un 1% de devoluciones en efectivo sin límites."
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "Más",
+      "title" : "Más",
+      "rows" : {
+        "managePin" : "Gestionar código PIN",
+        "accessBaanx" : "Acceso a Baanx",
+        "help" : "Ayuda",
+        "logout" : "Cerrar sesión"
       }
     },
     "balance" : {
@@ -10129,7 +10210,12 @@
       }
     },
     "card" : {
-      "title" : "Tarjeta cripto"
+      "title" : "Tarjeta cripto",
+      "freeze" : "Inmovilizar",
+      "unfreeze" : "Desinmovilizar"
+    },
+    "selectContact" : {
+      "placeholder" : "Introduce un contacto"
     },
     "actions" : {
       "deposit" : "Añadir moneda estable",
@@ -10144,6 +10230,10 @@
         "copied" : "Copiado",
         "save" : "Guardar",
         "verify" : "Verificar"
+      },
+      "verifyHint" : {
+        "message" : "Verifica la dirección en el dispositivo Ledger antes de compartir",
+        "gotIt" : "Entendido"
       },
       "verifyAddress" : {
         "introTitle" : "Verifica tu dirección",
@@ -10187,10 +10277,86 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "Envía efectivo, recibe monedas estables",
+      "description" : "Transfiere efectivo y recibe monedas estables directamente en tu Ledger Wallet™.",
+      "createAccount" : "Crear una cuenta",
+      "logIn" : "Iniciar sesión en Noah",
+      "providedBy" : "Ofrecido por Noah",
+      "rows" : {
+        "bank" : {
+          "title" : "Recibe transferencias de cualquier banco",
+          "description" : "Recibe su salario, pagos y depósitos a través de SEPA o ACH."
+        },
+        "fees" : {
+          "title" : "Sin tarifas ocultas",
+          "description" : "Directo del banco a la blockchain por una tarifa del 0,25%."
+        },
+        "earn" : {
+          "title" : "Pon su dinero a trabajar de inmediato",
+          "description" : "Puedes permutar o ganar con tus monedas estables."
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "Tarjeta cripto",
+      "beforeIntro" : {
+        "description" : "Obtén un 1% de devolución en efectivo cada vez que gastes",
+        "action" : "Obtener tarjeta"
+      },
+      "afterIntro" : {
+        "description" : "Inicia sesión para acceder a la tarjeta",
+        "action" : "Inicio de sesión"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "Gasta cripto, obtén devoluciones",
+      "providedBy" : "Tarjeta ofrecida por Baanx",
+      "createAccount" : "Crear una cuenta",
+      "logIn" : "Iniciar sesión en Baanx",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay o Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "Devolución en efectivo del 1% en cripto sin límite",
+          "description" : "En todas las compras con tarjeta cripto con USDC, USDT o BTC."
+        },
+        "virtualCard" : {
+          "title" : "Tarjeta virtual gratuita",
+          "description" : "Añade a {{wallet}}, listo al instante."
+        },
+        "topUp" : {
+          "title" : "Recarga de forma segura desde Ledger Wallet™",
+          "description" : "Cada transferencia aprobada con tu signer Ledger."
+        }
+      }
+    },
     "contacts" : {
       "title" : "Pagar",
       "pay" : "Nuevo",
-      "seeAllTitle" : "Pagar a un contacto"
+      "seeAllTitle" : "Pagar a un contacto",
+      "addressPicker" : {
+        "title" : "Seleccionar la dirección de {{name}}",
+        "addAddress" : "Agregar dirección"
+      }
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "Configura tu tarjeta",
+        "allDone" : "¡Todo listo!"
+      },
+      "dialog" : {
+        "title" : "Configura tu tarjeta",
+        "stepComplete" : "Completo",
+        "gotIt" : "Entendido"
+      },
+      "walletStep" : {
+        "title" : "Añadir a Apple/Google Pay",
+        "description" : "Paga con el teléfono en tiendas"
+      }
     }
   },
   "syncIndicator" : {
@@ -10418,6 +10584,16 @@
           "title" : "Preparando tu dispositivo Ledger"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "Preparando tu dispositivo Ledger"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "Preparando tu dispositivo Ledger"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "Usa el mismo dispositivo Ledger que usaste para añadir este contacto",
@@ -10430,6 +10606,10 @@
         "appVersionTooLow" : {
           "title" : "Es necesario actualizar la aplicación.",
           "description" : "Actualiza la app en tu dispositivo Ledger para guardar contactos y, a continuación, vuelve a intentarlo."
+        },
+        "osVersionTooLow" : {
+          "title" : "Actualización del Ledger OS requerida",
+          "description" : "Actualiza el sistema operativo de tu dispositivo Ledger para cambiar el nombre de los contactos y, a continuación, vuelve a intentarlo."
         }
       }
     },
@@ -10541,12 +10721,6 @@
       "applyChanges" : "Aplicar cambios",
       "invalidLabelError" : "No se permiten caracteres especiales."
     },
-    "editSigner" : {
-      "title" : "Confirma en tu dispositivo",
-      "description" : "Conecta y desbloquea tu dispositivo Ledger para confirmar este cambio.",
-      "confirm" : "Continuar",
-      "cancel" : "Cancelar"
-    },
     "editSignerMismatch" : {
       "title" : "Usa el mismo dispositivo Ledger que usaste para añadir este contacto",
       "description" : "El dispositivo conectado no coincide.",
@@ -10554,10 +10728,10 @@
       "cancel" : "Cancelar"
     },
     "ledgerSyncIntroduction" : {
-      "title" : "Activar Ledger Sync para guardar contactos",
-      "description" : "Tus contactos están cifrados de extremo a extremo con tu Ledger y sincronizados en todos tus dispositivos; solo tú puedes desbloquearlos.",
-      "activate" : "Activar Ledger Sync",
-      "dismiss" : "Entendido",
+      "title" : "Sincroniza la wallet para añadir un contacto",
+      "description" : "Los contactos están cifrados de extremo a extremo y sincronizados en Ledger Wallet entre todos tus teléfonos y PCs.",
+      "activate" : "Sincronizar mi wallet",
+      "dismiss" : "Ahora no",
       "checkingAccessibilityLabel" : "Comprobando el estado de Ledger Sync"
     },
     "featureIntroduction" : {
