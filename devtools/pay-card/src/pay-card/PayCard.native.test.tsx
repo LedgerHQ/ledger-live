@@ -1,4 +1,5 @@
 import { render, screen, userEvent } from "@support/jest-devtools/native";
+import Clipboard from "@react-native-clipboard/clipboard";
 import PayCard from "./PayCard";
 import type { PayCardToolProps } from "../types";
 
@@ -385,6 +386,30 @@ describe("PayCard (native)", () => {
 
     expect(screen.getByText("ethereum/erc20/usd__coin")).toBeTruthy();
     expect(screen.getByText("undefined — this pair is not mapped")).toBeTruthy();
+  });
+
+  it("copies a joined wallet's address, one button per row", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, combinedWallets }} />);
+
+    await user.press(screen.getByText("Balance & Wallets"));
+    const copyButtons = screen.getAllByText("Copy address");
+    await user.press(copyButtons[1]!);
+
+    expect(copyButtons).toHaveLength(combinedWallets.length);
+    expect(Clipboard.setString).toHaveBeenCalledWith("sol-addr");
+  });
+
+  it("offers nothing to copy where there is no joined wallet", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, baanxWallets, linkedWallets }} />);
+
+    await user.press(screen.getByText("Balance & Wallets"));
+
+    // Only the join carries the address a top-up is sent to, so only its rows offer it.
+    expect(screen.queryByText("Copy address")).toBeNull();
   });
 
   it("says a joined row has no balance rather than showing it as zero", async () => {
