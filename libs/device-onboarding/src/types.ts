@@ -5,29 +5,37 @@ import type {
   FirmwareUpdateContext,
 } from "@ledgerhq/device-management-kit";
 
+/** Named with the values DMK's decoding returns, so reading one is a membership check and not a translation. */
 export const OnboardingStep = {
-  WelcomeScreen1: "WELCOME_SCREEN_1",
-  WelcomeScreen2: "WELCOME_SCREEN_2",
-  WelcomeScreen3: "WELCOME_SCREEN_3",
-  WelcomeScreen4: "WELCOME_SCREEN_4",
-  WelcomeScreenReminder: "WELCOME_SCREEN_REMINDER",
-  OnboardingEarlyCheck: "ONBOARDING_EARLY_CHECK",
-  ChooseName: "CHOOSE_NAME",
-  Pin: "PIN",
-  SetupChoice: "SETUP_CHOICE",
-  SetupChoiceRestore: "SETUP_CHOICE_RESTORE",
-  NewDevice: "NEW_DEVICE",
-  NewDeviceConfirming: "NEW_DEVICE_CONFIRMING",
-  RestoreSeed: "RESTORE_SEED",
-  RecoverRestore: "RECOVER_RESTORE",
-  RestoreCharon: "RESTORE_CHARON",
-  SafetyWarning: "SAFETY_WARNING",
-  Ready: "READY",
+  WelcomeScreen1: "welcome-screen-1",
+  WelcomeScreen2: "welcome-screen-2",
+  WelcomeScreen3: "welcome-screen-3",
+  WelcomeScreen4: "welcome-screen-4",
+  WelcomeScreenReminder: "welcome-screen-reminder",
+  OnboardingEarlyCheck: "onboarding-status-check",
+  ChooseName: "choose-name",
+  Pin: "pin",
+  SetupChoice: "setup-choice",
+  SetupChoiceRestore: "setup-restore-choice",
+  NewDevice: "new-device",
+  NewDeviceConfirming: "confirm-new-device",
+  RestoreSeed: "restore-recovery-phrase",
+  RecoverRestore: "restore-recover-backup",
+  RestoreCharon: "restore-with-rk",
+  SafetyWarning: "safety-warning",
+  Ready: "device-is-ready",
 } as const;
 
 export type OnboardingStep = (typeof OnboardingStep)[keyof typeof OnboardingStep];
 
 export type SeedPhraseWordCount = 12 | 18 | 24;
+
+/**
+ * Carried untouched so the app can pick a drawer the machine knows nothing about: an unreachable
+ * backend and a forced My Ledger provider both arrive as an `HttpFetchApiError`, and only the app
+ * holds the provider setting that tells them apart.
+ */
+export type GenuineCheckFailure = unknown;
 
 export type DeviceOnboardingState = {
   isOnboarded: boolean;
@@ -44,6 +52,22 @@ export type OnboardingEvent =
   | { type: "UNLOCKED" }
   | { type: "TRANSPORT_LOST" }
   | { type: "STEP_CHANGED"; state: DeviceOnboardingState }
+  | { type: "DEVICE_STATE_READ"; state: DeviceOnboardingState }
+  | { type: "DEVICE_STATE_UNREADABLE"; isOnboarded: boolean; isInRecoveryMode: boolean }
+  | { type: "DEVICE_STATE_FAILED" }
+  | { type: "DEVICE_IN_BOOTLOADER" }
+  | { type: "DEVICE_IN_OSU" }
+  | { type: "EARLY_CHECK_TOGGLED" }
+  | { type: "EARLY_CHECK_UNAVAILABLE" }
+  | { type: "ALLOW_SECURE_CONNECTION_REQUESTED" }
+  | { type: "GENUINE_CHECK_PASSED" }
+  | { type: "GENUINE_CHECK_REFUSED"; failure: GenuineCheckFailure }
+  | { type: "GENUINE_CHECK_FAILED"; failure: GenuineCheckFailure }
+  | { type: "DEVICE_NOT_GENUINE"; failure: GenuineCheckFailure }
+  | { type: "SECURE_CHANNEL_LOST"; failure: GenuineCheckFailure }
+  | { type: "FIRMWARE_UP_TO_DATE" }
+  | { type: "FIRMWARE_UPDATE_AVAILABLE"; update: AvailableFirmwareUpdate }
+  | { type: "FIRMWARE_CHECK_FAILED" }
   | { type: "START" }
   | { type: "RETRY" }
   | { type: "SKIP" }
