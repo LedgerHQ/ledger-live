@@ -22,6 +22,8 @@ export type LoggableEvent = {
 export interface Analytics {
   track(event: string, props: Props): void | Promise<void | DeliveryStatus>;
   log?(type: EventType, event: string, props: Props): void;
+  flush?(): Promise<void>;
+  closeAndFlush?(): Promise<void>;
 }
 
 export type EnabledFn = () => boolean;

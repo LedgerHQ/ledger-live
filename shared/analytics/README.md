@@ -13,6 +13,8 @@ Shared `track` for Ledger Wallet apps. Each app registers its own analytics clie
 ```ts
 import {
   analyticsEvents$,
+  closeAndFlush,
+  flush,
   setAnalytics,
   setEnabledFn,
   setExtraPropsFn,
@@ -32,6 +34,8 @@ setPropsFilter((props) => myFilter(props));
 setAnalytics({
   track: (event, props) => segment.track(event, props),
   log: console.log,
+  flush: () => segment.flush(),
+  closeAndFlush: () => segment.closeAndFlush(),
 });
 
 // track events
@@ -91,6 +95,15 @@ await trackPage({ category: "Market" });
 ```
 
 The registered analytics client may be sync or async.
+
+### Flush
+
+`flush` and `closeAndFlush` delegate to the registered analytics client when those methods are provided. They resolve without error when no client is registered or when the client omits them.
+
+```ts
+await flush();
+await closeAndFlush();
+```
 
 ### Filtering and enriching
 
