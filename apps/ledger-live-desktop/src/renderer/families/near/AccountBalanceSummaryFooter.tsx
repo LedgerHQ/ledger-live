@@ -12,6 +12,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import { NearFamily } from "./types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useNearBalanceBreakdown } from "@ledgerhq/live-common/families/near/react";
+import type { NearAccount } from "@ledgerhq/live-common/families/near/types";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -57,7 +58,7 @@ const AccountBalanceSummaryFooter: NearFamily["AccountBalanceSummaryFooter"] = (
     storageUsageBalance: _storageUsageBalance,
     availableBalance: _availableBalance,
     pendingBalance: _pendingBalance,
-  } = useNearBalanceBreakdown(account);
+  } = useNearBalanceBreakdown(account as NearAccount);
 
   if (account.type !== "Account") return null;
 
