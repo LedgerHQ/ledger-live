@@ -31,9 +31,9 @@ function TestHarness() {
 
 const tourEnabledState = {
   ...withFlagOverrides({
-    lwdWallet40: {
+    releaseTour: {
       enabled: true,
-      params: { q3Tour: true },
+      params: { variant: "q3_a" },
     },
   }),
   settings: {
@@ -84,13 +84,13 @@ describe("Q3Tour Drawer", () => {
     expect(store.getState().settings.hasSeenQ3Tour).toBe(true);
   });
 
-  it("should not open when q3Tour is disabled", async () => {
+  it("should not open when releaseTour is disabled", async () => {
     const { user } = render(<TestHarness />, {
       initialState: {
         ...withFlagOverrides({
-          lwdWallet40: {
-            enabled: true,
-            params: { q3Tour: false },
+          releaseTour: {
+            enabled: false,
+            params: { variant: "q3_a" },
           },
         }),
         settings: { hasSeenQ3Tour: false },
