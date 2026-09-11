@@ -6,6 +6,7 @@ import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
 import { A4Client } from "./a4/client/index";
 import { deriveA4AccountId } from "./a4/client/accountId";
+import { fetchA4Operations } from "./a4/client/operations";
 import { ensureA4Registered } from "./a4/client/registration";
 import { toA4Network, resolveA4BaseUrl } from "./a4/client/utils";
 import { resolveA4ChainConfig } from "./a4/config";
@@ -607,22 +608,48 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // documents its own as volatile). Only the cursor varies from page to page below.
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
 
-    const newCoreOps = await paginateOperations(cursor =>
-      coinModuleApi.listOperations(context, address, {
-        minHeight,
-        cursor,
-        order: "desc",
-      }),
-    );
-    // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation ends
-    // up in the shape a restored one has — the family's `fromOperationExtraRaw` is the single
-    // definition of it. Loaded per sync rather than per operation; the registry caches the import.
-    const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
-    const newOps = newCoreOps
-      .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
-      .map(op =>
-        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
-      ) as OperationCommon[];
+    const a4Network = toA4Network(currency.id);
+    const a4ChainConfig = a4Network ? resolveA4ChainConfig(a4Network) : null;
+
+    // delegateNewOps is lazy: getAccountRawAssignHooks is only awaited when the coin-module path is taken
+    const delegateNewOps = async (): Promise<OperationCommon[]> => {
+      const coreOps = await paginateOperations(cursor =>
+        coinModuleApi.listOperations(context, address, { minHeight, cursor, order: "desc" }),
+      );
+      // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation
+      // ends up in the shape a restored one has — the family's `fromOperationExtraRaw` is the
+      // single definition of it. Loaded per sync rather than per operation; the registry caches the import.
+      const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
+      return coreOps
+        .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
+        .map(op =>
+          adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
+        ) as OperationCommon[];
+    };
+
+    let newOps: OperationCommon[];
+
+    if (a4Network && a4ChainConfig?.read) {
+      try {
+        const url = resolveA4BaseUrl(a4ChainConfig.environment);
+        const a4Client = new A4Client(url, a4Network);
+        const a4AccountId = deriveA4AccountId(address);
+        newOps = (await fetchA4Operations(
+          a4Client,
+          a4AccountId,
+          accountId,
+          address,
+          minHeight,
+        )) as OperationCommon[];
+      } catch (e) {
+        log("generic-coin-framework", "a4 read failed, falling back to delegate", {
+          error: String(e),
+        });
+        newOps = await delegateNewOps();
+      }
+    } else {
+      newOps = await delegateNewOps();
+    }
 
     const newAssetOperations = newOps.filter(
       operation =>
