@@ -26,15 +26,20 @@ type Props = {
 
 type OptionItemProps = {
   option: BalanceTypeOption;
+  selected: boolean;
   onSelect: (optionId: string) => void;
 };
 
-function BalanceTypeOptionItem({ option, onSelect }: Readonly<OptionItemProps>) {
+function BalanceTypeOptionItem({ option, selected, onSelect }: Readonly<OptionItemProps>) {
   const { t } = useTranslation();
   const IconComponent = option.icon === "lock" ? UserLock : UserCheck;
 
   return (
-    <ListItem onClick={() => onSelect(option.id)} data-testid={`balance-type-${option.id}`}>
+    <ListItem
+      onClick={() => onSelect(option.id)}
+      active={selected}
+      data-testid={`balance-type-${option.id}`}
+    >
       <ListItemLeading>
         <Spot appearance="icon" icon={IconComponent} />
         <ListItemContent>
@@ -65,13 +70,18 @@ function BalanceTypeOptionItem({ option, onSelect }: Readonly<OptionItemProps>) 
 
 export function BalanceTypeScreenInner({ viewModel }: Readonly<Props>) {
   const { t } = useTranslation();
-  const { options, onSelect } = viewModel;
+  const { options, onSelect, selectedOptionId } = viewModel;
 
   return (
     <DialogBody className="flex flex-col gap-16" data-testid="balance-type-screen">
       <div className="flex flex-col gap-12">
         {options.map(option => (
-          <BalanceTypeOptionItem key={option.id} option={option} onSelect={onSelect} />
+          <BalanceTypeOptionItem
+            key={option.id}
+            option={option}
+            selected={option.id === selectedOptionId}
+            onSelect={onSelect}
+          />
         ))}
       </div>
       {options

@@ -54,12 +54,21 @@ describe("BalanceTypeScreenInner", () => {
 
     expect(screen.getByTestId("balance-type-public")).toBeVisible();
     expect(screen.getByTestId("balance-type-private")).toBeVisible();
+    expect(screen.getByTestId("balance-type-public")).not.toHaveAttribute("aria-selected");
+    expect(screen.getByTestId("balance-type-private")).not.toHaveAttribute("aria-selected");
     expect(screen.getByText("Public balance")).toBeVisible();
     expect(screen.getByText("Private balance")).toBeVisible();
     expect(screen.getByText("$10.00")).toBeVisible();
     expect(screen.getByText("1 ZEC")).toBeVisible();
     expect(screen.getByText("$20.00")).toBeVisible();
     expect(screen.getByText("2 ZEC")).toBeVisible();
+  });
+
+  it("should mark the matching pool as selected when returning to the step", () => {
+    render(<BalanceTypeScreenInner viewModel={readyViewModel({ selectedOptionId: "private" })} />);
+
+    expect(screen.getByTestId("balance-type-private")).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByTestId("balance-type-public")).not.toHaveAttribute("aria-selected");
   });
 
   it("should select a pool when its list item is clicked", async () => {
