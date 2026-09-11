@@ -12,6 +12,7 @@ import { useTranslatedBridgeError } from "../../../Recipient/hooks/useTranslated
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { createMockAccount } from "../../../Recipient/__integrations__/__fixtures__/accounts";
 
 jest.mock("@ledgerhq/live-common/bridge/impl");
@@ -28,6 +29,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
     hasCustomFees: () => false,
     hasCoinControl: () => false,
     getFeePresetOptions: jest.fn(() => []),
+    getBalanceTypeConfig: jest.fn(),
   },
 }));
 
@@ -80,8 +82,9 @@ jest.mock("../useAmountInput", () => ({
   }),
 }));
 
+const mockUseQuickActions = jest.fn((_params: { availableBalance: BigNumber }) => []);
 jest.mock("../useQuickActions", () => ({
-  useQuickActions: () => [],
+  useQuickActions: (params: { availableBalance: BigNumber }) => mockUseQuickActions(params),
 }));
 
 jest.mock("../../../Recipient/hooks/useTranslatedBridgeError");
@@ -116,6 +119,8 @@ function isAccount(account: Account | TokenAccount): account is Account {
 describe("useAmountScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    jest.mocked(sendFeatures.getBalanceTypeConfig).mockReturnValue(null);
 
     mockedGetAccountBridge.mockReturnValue({
       updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
@@ -325,5 +330,83 @@ describe("useAmountScreenViewModel", () => {
       error,
     });
     expect(result.current.reviewDisabled).toBe(true);
+  });
+
+  describe("quick actions base balance", () => {
+    function renderWithAccountBalance(transaction: Transaction) {
+      const currency = getCryptoCurrencyById("bitcoin");
+      mockedGetAccountCurrency.mockReturnValue(currency);
+      const account = createMockAccount({
+        id: "acc",
+        currency,
+        balance: new BigNumber(1000),
+        spendableBalance: new BigNumber(1000),
+      });
+      const status = {
+        errors: {},
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(0),
+        totalSpent: new BigNumber(0),
+      } as TransactionStatus;
+
+      return renderHook(
+        () =>
+          useAmountScreenViewModel({
+            account,
+            parentAccount: null,
+            transaction,
+            status,
+            bridgePending: false,
+            bridgeError: null,
+            uiConfig: { hasFeePresets: true } as never,
+            transactionActions: { updateTransaction: jest.fn() } as never,
+            onSelectCoinControl: jest.fn(),
+          }),
+        { initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } } },
+      );
+    }
+
+    it("uses the account balance when the coin holds a single balance", () => {
+      renderWithAccountBalance({ family: "bitcoin", recipient: "bc1q" } as Transaction);
+
+      expect(mockUseQuickActions.mock.calls[0][0]).toMatchObject({
+        availableBalance: new BigNumber(1000),
+      });
+    });
+
+    it("uses the selected pool balance, not the account total, when the coin holds several", () => {
+      jest.mocked(sendFeatures.getBalanceTypeConfig).mockReturnValue({
+        getOptions: () => [
+          {
+            id: "public",
+            translationKey: "balanceType.transparent",
+            balance: new BigNumber(300),
+            hasPendingBalance: false,
+            icon: "check",
+          },
+          {
+            id: "private",
+            translationKey: "balanceType.shielded",
+            balance: new BigNumber(700),
+            hasPendingBalance: false,
+            icon: "lock",
+          },
+        ],
+        getSelectedOptionId: () => "private",
+        buildSelectionPatch: () => ({}),
+        getSelfTransferTarget: () => null,
+      });
+
+      renderWithAccountBalance({
+        family: "zcash",
+        recipient: "u1shielded",
+        sender: "private",
+      } as unknown as Transaction);
+
+      expect(mockUseQuickActions.mock.calls[0][0]).toMatchObject({
+        availableBalance: new BigNumber(700),
+      });
+    });
   });
 });

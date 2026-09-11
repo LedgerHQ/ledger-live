@@ -17,7 +17,8 @@ type UseQuickActionsParams = Readonly<{
   parentAccount: Account | null;
   transaction: Transaction;
   /**
-   * Stable balance reference (spendableBalance or balance, without subtracting fees).
+   * Stable balance reference (selected balance pool, spendableBalance or balance, without
+   * subtracting fees).
    * Using the raw balance—not maxAvailable—ensures percentage buttons always compute
    * against the same base regardless of how estimated fees fluctuate as the transaction
    * amount changes (important for UTXO coins like Bitcoin where fees are amount-dependent).

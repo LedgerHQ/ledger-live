@@ -9,8 +9,7 @@ import {
   type SendFlowBusinessContext,
   type SendFlowStep,
 } from "@ledgerhq/live-common/flows/send/types";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-common/flows/send/utils/balanceType";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
 import { useSendHeaderMemo } from "../hooks/useSendHeaderMemo";
 import { useSendHeaderModel } from "../hooks/useSendHeaderModel";
@@ -33,19 +32,10 @@ export function SendHeader() {
   const account = state.account.account;
   const transaction = state.transaction.transaction;
 
-  const balanceTypeOptions = useMemo(() => {
-    if (!account) return undefined;
-    const config = sendFeatures.getBalanceTypeConfig(getAccountCurrency(account));
-    if (!config) return undefined;
-    return { config, options: config.getOptions({ account }) };
-  }, [account]);
-
-  const selectedPoolBalance = useMemo(() => {
-    if (!balanceTypeOptions || !transaction) return undefined;
-    const selectedId = balanceTypeOptions.config.getSelectedOptionId(transaction);
-    if (!selectedId) return undefined;
-    return balanceTypeOptions.options.find(o => o.id === selectedId)?.balance;
-  }, [balanceTypeOptions, transaction]);
+  const selectedPoolBalance = useMemo(
+    () => getSelectedBalanceTypeBalance(account, transaction),
+    [account, transaction],
+  );
 
   const availableText = useAvailableBalance(account, headerDisplayMode, selectedPoolBalance);
 
