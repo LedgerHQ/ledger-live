@@ -435,6 +435,11 @@
           "viewInExplorer" : "在浏览器中查看",
           "copied" : "已复制"
         },
+        "earnBanner" : {
+          "title" : "赚取高达 {{apy}}% {{type}}",
+          "description" : "探索赚取机会",
+          "button" : "探索"
+        },
         "accessibility" : {
           "copySwapId" : "复制互换 ID"
         }
@@ -873,22 +878,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "支付与收款",
-      "description" : "稳定币弥合了加密货币与现实生活支出之间的差距",
-      "cta" : "知道了",
+      "title" : "一站式管理您的所有付款",
+      "description" : "为您带来全新的“支付”选项卡，让您的加密货币随时准备好应对日常用钱时刻。",
+      "cta" : "探索“支付”",
       "rows" : {
         "global" : {
-          "title" : "全球支付与收款",
-          "description" : "享低网络费用"
+          "title" : "向您的联系人付款",
+          "description" : "向已保存的地址发送加密货币。"
         },
         "volatility" : {
-          "title" : "极低的波动性",
-          "description" : "稳定币基于法币"
+          "title" : "请求收款",
+          "description" : "让联系人直接向您发送资金。"
         },
         "card" : {
-          "title" : "用卡消费即可获得 1% 返现",
-          "description" : "使用 USDC、USDT、BTC、ETH 及更多币种进行支付"
+          "title" : "使用加密货币卡在全球范围内购物",
+          "description" : "并赚取无上限的 1% 返现。"
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "更多",
+      "title" : "更多",
+      "rows" : {
+        "managePin" : "管理 PIN 识别码",
+        "accessBaanx" : "访问 Baanx",
+        "help" : "帮助",
+        "logout" : "退出"
       }
     },
     "balance" : {
@@ -904,7 +919,20 @@
     },
     "card" : {
       "title" : "加密货币卡",
-      "balanceLabel" : "余额"
+      "balanceLabel" : "余额",
+      "freeze" : "冻结",
+      "unfreeze" : "解冻"
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "设置您的卡",
+        "allDone" : "一切就绪"
+      },
+      "dialog" : {
+        "title" : "完成卡片设置",
+        "stepComplete" : "已完成",
+        "gotIt" : "知道了"
+      }
     },
     "contacts" : {
       "title" : "向联系人付款",
@@ -923,7 +951,20 @@
       "actions" : {
         "pay" : "发送给联系人",
         "more" : "更多选项",
+        "viewContact" : "查看联系人",
         "viewTransactions" : "查看交易"
+      },
+      "addressPicker" : {
+        "title" : "选择 {{name}} 的地址",
+        "addAddress" : "添加地址"
+      },
+      "paySuccess" : {
+        "title" : "您已支付 ({{recipient}}) {{amount}}",
+        "amount" : "数额",
+        "estimatedTime" : "预估时间",
+        "from" : "来自",
+        "viewTransaction" : "查看交易",
+        "close" : "关闭"
       }
     },
     "actions" : {
@@ -952,6 +993,63 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "发送现金，接收稳定币",
+      "description" : "转账现金并直接接收稳定币至您的 Ledger Wallet™。",
+      "createAccount" : "创建账户",
+      "logIn" : "登录 Noah",
+      "providedBy" : "由 Noah 提供",
+      "rows" : {
+        "bank" : {
+          "title" : "接收来自任何银行的转账",
+          "description" : "通过 SEPA 或 ACH 接收薪资、款项，以及存款。"
+        },
+        "fees" : {
+          "title" : "无隐藏费用",
+          "description" : "从银行直接到区块链，费用仅为 0.25%。"
+        },
+        "earn" : {
+          "title" : "让您的资金立即发挥作用",
+          "description" : "您可以使用您的稳定币进行互换或赚取收益。"
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "加密货币卡",
+      "beforeIntro" : {
+        "description" : "每次消费均可获得 1% 返现",
+        "action" : "获取卡"
+      },
+      "afterIntro" : {
+        "description" : "登录以访问您的卡",
+        "action" : "登录"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "消费加密货币，赚取返现",
+      "providedBy" : "卡由 Baanx 提供",
+      "createAccount" : "创建账户",
+      "logIn" : "登录 Baanx",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay 或 Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "无上限 1% 加密货币返现",
+          "description" : "适用于所有使用 USDC、USDT 或 BTC 的加密货币卡消费。"
+        },
+        "virtualCard" : {
+          "title" : "免费虚拟卡",
+          "description" : "添加到 {{wallet}}，即刻可用。"
+        },
+        "topUp" : {
+          "title" : "通过 Ledger Wallet 安全充值",
+          "description" : "使用您的 Ledger 签署设备批准每笔转账。"
+        }
+      }
+    },
     "request" : {
       "title" : "请求 {{asset}}",
       "networkLabel" : "{{network}} 网络",
@@ -962,6 +1060,10 @@
         "copied" : "已复制",
         "save" : "保存",
         "verify" : "验证"
+      },
+      "verifyHint" : {
+        "message" : "在分享前\n请在您的 Ledger 设备上\n验证您的地址",
+        "gotIt" : "知道了"
       },
       "verifyAddress" : {
         "introTitle" : "核实您的地址",
@@ -2652,11 +2754,12 @@
       "walletNotExist" : "钱包不存在"
     },
     "skipMemo" : {
-      "title" : "跳过添加备注 {{memoLabel}}？",
+      "title" : "在没有备忘标签 {{memoLabel}} 的情况下发送？",
       "description" : "如果接收方要求备忘标签 {{memoLabel}}，您的资产可能会丢失。",
       "notRequired" : "接收方不需要备忘标签 {{memoLabel}}？",
-      "confirm" : "是，跳过",
-      "neverAskAgain" : "不再显示此警告"
+      "confirm" : "是的，在没有备忘标签 {{memoLabel}} 的情况下发送",
+      "cancel" : "不，返回",
+      "neverAskAgain" : "不再询问"
     },
     "tagHelp" : {
       "inputLabel" : "输入备忘标签 {{memoLabel}}",
@@ -5452,6 +5555,12 @@
       "enableLearnStagingUrlDesc" : "启用学习页面的模拟环境 URL 网址。",
       "enableCountervaluesStaging" : "对价 API 预发布环境",
       "enableCountervaluesStagingDesc" : "使用预发布环境而非生产环境的对价 API。",
+      "enableMockServerTransport" : "模拟服务器传输",
+      "enableMockServerTransportDesc" : "启用设备管理套件模拟服务器传输，以连接到设备模拟服务器，而非物理设备。除非 MOCK_SERVER_TRANSPORT_URL 指向其他位置，否则使用共享模拟服务器。需要重启应用程序才能生效。",
+      "mockServerStatus" : {
+        "connected" : "模拟服务器已连接 · 点击复制会话代币，右键点击打开配置 UI",
+        "disconnected" : "模拟服务器无法访问"
+      },
       "openOnboardingAppInstallDebug" : "打开入门应用程序安装调试界面",
       "openOnboardingAppInstallDebugDesc" : "打开一个界面，其中包含同步入门应用程序安装步骤中的组件"
     },
@@ -7117,6 +7226,10 @@
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "无法获取您的余额",
+      "description" : "请检查您的互联网连接并重试。"
+    },
     "NotEnoughTransferAmount" : {
       "title" : "向神经元质押最少需要 1 ICP。"
     },
@@ -7316,6 +7429,12 @@
     "ZcashAmountBelowDustThreshold" : {
       "title" : "数额过小，无法广播（最少 {{minimumZatoshis}} zatoshis）"
     },
+    "ZcashMemoTooLong" : {
+      "title" : "Memo 备注不能超过 {{maxBytes}} 字节"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "此数额过大，无法在单笔交易中发送：请尝试分批以较小数额发送"
+    },
     "InvalidNonce" : {
       "title" : "需要 Nonce"
     },
@@ -7428,6 +7547,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "必须先完成从上一个验证者处的解除质押"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "此数额过小，无法质押"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "请先清空所有子账户"
@@ -8230,6 +8352,7 @@
             "inactiveTooltip" : "未找到验证者",
             "overstakedTooltip" : "该节点已超额质押，年收益率低于最佳水平",
             "activeTooltip" : "已委托的数额会生成奖励",
+            "fetchErrorTooltip" : "无法加载验证者数据。请重试。",
             "delegated" : "已委托",
             "rewards" : "奖励"
           },
@@ -8308,6 +8431,8 @@
             "newValidatorLabel" : "新的委托",
             "newValidatorSelectPlaceholder" : "选择验证者",
             "removedValidatorSelectPlaceholder" : "先前选择的验证者已不再可用",
+            "unableToLoadSelectPlaceholder" : "无法加载验证者",
+            "loadingValidatorPlaceholder" : "正在加载验证者…",
             "newValidatorSelectNoOption" : "不存在与 \"{{validatorName}}\" 匹配的验证者",
             "amountLabel" : "要重新委托的数额",
             "alert" : "在 Hedera 上质押时，您的全部余额将被质押。您的资产保持完全流动性，不受锁定期或削减风险的影响。可能需要最多 48 小时才会开始产生质押奖励。",
@@ -8876,9 +9001,11 @@
     "selectNetwork" : "选择网络",
     "unsupportedAssetTooltip" : "暂不支持 {{asset}}",
     "unsupportedNetworkTooltip" : "暂不支持 {{network}} 网络。",
+    "notAvailableYet" : "暂不可用",
     "selectAccount" : "选择账户",
     "selectAccountPerpsTitle" : "选择 Hyperliquid 账户",
-    "selectAccountPerpsDescription" : "若要为您的永续合约 (Perps) 提供资金，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
+    "selectAccountPerpsDescription" : "选择您想存入资金以进行交易的账户",
+    "selectAccountPerpsEmptyDescription" : "若要为您的永续合约 (Perps) 提供资金，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
     "selectDepositCurrencyTitle" : "选择要存入的资产",
     "selectDepositCurrencyDescription" : "任何支持的资产均可。必要时，该资产将自动互换。",
     "accountCount_one" : "{{count}} 个账户",
@@ -9123,7 +9250,7 @@
         "memo" : {
           "label" : "Memo（可选）",
           "placeholder" : "输入 Memo 备注",
-          "tooltip" : "为此屏蔽交易附加一条私密消息。只有接收者才能阅读。最多 512 字节。"
+          "tooltip" : "为此屏蔽支付添加加密 Memo 备注。只有接收者才能阅读。最多 512 字节。"
         },
         "syncBanner" : {
           "stopped" : {
@@ -9146,15 +9273,15 @@
         "selfTransfer" : {
           "toPrivate" : "自转账至私密余额",
           "toPublic" : "自转账至公开余额",
-          "unavailable" : "您的私密地址目前不可用。导出您的查看密钥以启用此功能。",
+          "unavailable" : "一旦您的账户启用了屏蔽功能，您的私密地址即可使用。",
           "privacyWarning" : "此操作会将您的屏蔽资金与您账户的公开地址相关联，任何人均可查看该公开地址。发送至外部私密地址可使其保持未关联状态。"
         }
       },
       "state" : {
-        "showBalance" : "显示余额",
+        "showBalance" : "启用屏蔽",
         "startSync" : "开始同步",
         "stopSync" : "停止同步",
-        "upToDate" : "最新",
+        "upToDate" : "更新余额",
         "lastSync" : "上次同步：{{date}}",
         "estimatedTimeRemaining" : "预计剩余时间：{{hours}}:{{minutes}}",
         "syncFailed" : "私密余额同步失败"
@@ -9324,6 +9451,23 @@
         "desc" : "请稍候",
         "errorTitle" : "私密同步失败",
         "errorDesc" : "出了点问题，请重试"
+      }
+    },
+    "manage" : {
+      "headerAction" : "赚取",
+      "title" : "管理质押",
+      "comingSoonTooltip" : "敬请期待",
+      "bond" : {
+        "title" : "绑定",
+        "description" : "将您的 ALEO 绑定到验证者以赚取奖励。"
+      },
+      "unbond" : {
+        "title" : "解绑",
+        "description" : "解绑您已绑定的 ALEO。解绑期结束后资金可用。"
+      },
+      "claim" : {
+        "title" : "申领",
+        "description" : "将您已解绑的 ALEO 领取回您的可用余额。"
       }
     }
   },
@@ -9511,6 +9655,16 @@
           "title" : "正在准备您的 Ledger 设备"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "正在准备您的 Ledger 设备"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "正在准备您的 Ledger 设备"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "需使用添加此联系人时的同一 Ledger 设备",
@@ -9523,6 +9677,10 @@
         "appVersionTooLow" : {
           "title" : "需要更新应用程序",
           "description" : "在您的 Ledger 设备上更新应用程序以保存联系人，然后重试。"
+        },
+        "osVersionTooLow" : {
+          "title" : "Ledger OS 需要更新",
+          "description" : "更新您的 Ledger 设备操作系统以重命名联系人，然后重试。"
         }
       }
     },
@@ -9627,12 +9785,6 @@
       "applyChanges" : "应用更改",
       "invalidLabelError" : "不允许使用特殊字符。"
     },
-    "editSigner" : {
-      "title" : "在您的设备上确认",
-      "description" : "连接并解锁您的 Ledger 设备以确认此更改。",
-      "confirm" : "继续",
-      "cancel" : "取消"
-    },
     "editSignerMismatch" : {
       "title" : "需使用添加此联系人时的同一 Ledger 设备",
       "description" : "已连接的设备不一致。",
@@ -9640,9 +9792,10 @@
       "cancel" : "取消"
     },
     "ledgerSyncIntroduction" : {
-      "description" : "您的联系人信息通过您的 Ledger 进行端到端加密，并在您的设备之间进行同步，只有您自己可以解锁。",
-      "activate" : "开启 Ledger Sync",
-      "dismiss" : "知道了"
+      "title" : "同步您的钱包以添加联系人",
+      "description" : "联系人已进行端到端加密，并可在您所有手机和电脑上的 Ledger Wallet 之间同步。",
+      "activate" : "同步我的钱包",
+      "dismiss" : "以后再说"
     },
     "featureIntroduction" : {
       "title" : "认识「联系人」功能",
@@ -9947,5 +10100,44 @@
       "totalMaturity" : "总成熟度",
       "totalMaturityTooltip" : "累积的总质押奖励，包括已质押成熟度和流动成熟度。这些奖励可以再质押或以流动 ICP 的形式领取。"
     }
+  },
+  "perpsReview" : {
+    "depositTitle" : "通过 SwapKit 存款",
+    "depositSubtitle" : "我们的服务提供商 SwapKit 在一笔交易中管理您的互换和充值——全部由您的 Ledger 设备提供安全保障。",
+    "swapDetailTitle" : "互换详情",
+    "amountSendLabel" : "发送数额",
+    "amountReceiveLabel" : "接收数额",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "充值详情",
+    "depositAmountLabel" : "存入数额",
+    "depositReceiveLabel" : "接收账户",
+    "depositCTA" : "存款"
+  },
+  "perpsDeposit" : {
+    "title" : "存款",
+    "inputDepositAmount" : "存入 ~{{value}}",
+    "inputSubText" : "通过 {{provider}} 互换并存入",
+    "selectCurrencyTitle" : "使用 {{currencyTicker}} 存入",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "无账户",
+    "review" : "审核",
+    "formErrors" : {
+      "amountExceedsBalance" : "余额不足",
+      "quoteUnavailable" : "无法从 {{provider}} 获取报价，请尝试其他资产或稍后再试。"
+    }
+  },
+  "perpsDepositSign" : {
+    "a11yTitle" : "存款签署",
+    "terms" : "通过签署此交易，我接受 <termsLink>SwapKit by NEAR Intents 条款与条件</termsLink>"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "交易已签署",
+    "description" : "一旦在区块链上确认，您将接收您的 {{currency}}",
+    "viewTransaction" : "查看交易"
+  },
+  "perpsTransactionStatus" : {
+    "dialogTitle" : "交易详情",
+    "title" : "为永续合约提供资金",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
   }
 }
