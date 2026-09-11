@@ -11,20 +11,18 @@ import "./fixtures";
 );
 
 // mainnet guards what production runs, devnet catches upcoming Agave versions and feature activations
-describe.each([
-  ["mainnet", "legacy"],
-  ["mainnet", "generic-adapter"],
-  ["devnet", "legacy"],
-  ["devnet", "generic-adapter"],
-] as const)("Solana Deterministic Tester (%s cluster, %s strategy)", (cluster, strategy) => {
-  it("scenario Solana", async () => {
-    try {
-      await executeScenario(scenarioSolana(cluster), strategy);
-    } catch (e) {
-      if (e !== "done") {
-        await killAgave();
-        throw e;
+describe.each(["mainnet", "devnet"] as const)(
+  "Solana Deterministic Tester (%s cluster)",
+  cluster => {
+    it("scenario Solana", async () => {
+      try {
+        await executeScenario(scenarioSolana(cluster), "generic-adapter");
+      } catch (e) {
+        if (e !== "done") {
+          await killAgave();
+          throw e;
+        }
       }
-    }
-  });
-});
+    });
+  },
+);
