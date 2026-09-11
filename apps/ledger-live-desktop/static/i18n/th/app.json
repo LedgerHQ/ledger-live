@@ -435,6 +435,11 @@
           "viewInExplorer" : "ดูใน Explorer",
           "copied" : "คัดลอกแล้ว"
         },
+        "earnBanner" : {
+          "title" : "รับผลตอบแทนสูงสุด {{apy}}% {{type}}",
+          "description" : "สำรวจโอกาสในการสร้างรายได้",
+          "button" : "สำรวจ"
+        },
         "accessibility" : {
           "copySwapId" : "คัดลอกสวอป ID"
         }
@@ -873,22 +878,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "ใช้จ่ายและรับเงิน",
-      "description" : "สเตเบิลคอยน์ช่วยลดช่องว่างระหว่างคริปโตกับการใช้จ่ายจริงในชีวิตประจำวัน",
-      "cta" : "เข้าใจแล้ว",
+      "title" : "การชำระเงินทั้งหมดของคุณในที่เดียว",
+      "description" : "พบกับแท็บ 'จ่ายเงิน' ใหม่ ให้คุณใช้จ่ายคริปโตได้ง่าย ๆ ในชีวิตประจำวัน",
+      "cta" : "สำรวจฟีเจอร์ 'จ่ายเงิน'",
       "rows" : {
         "global" : {
-          "title" : "ใช้จ่ายและรับเงินได้ทั่วโลก",
-          "description" : "พร้อมรับประโยชน์จากค่าธรรมเนียมเครือข่ายที่ต่ำ"
+          "title" : "ชำระเงินให้คนในรายชื่อของคุณ",
+          "description" : "ส่งคริปโตไปยังที่อยู่คริปโตที่บันทึกไว้"
         },
         "volatility" : {
-          "title" : "ความผันผวนต่ำ",
-          "description" : "เพราะมูลค่าของสเตเบิลคอยน์อิงตามเงินสกุลทั่วไป"
+          "title" : "ขอรับการชำระเงิน",
+          "description" : "ขอให้คนในรายชื่อส่งเงินให้คุณ"
         },
         "card" : {
-          "title" : "ใช้จ่ายผ่านบัตรและรับเครดิตเงินคืน 1%",
-          "description" : "จ่ายได้ด้วย USDC, USDT, BTC, ETH และอื่น ๆ"
+          "title" : "ช้อปทั่วโลกด้วยบัตรคริปโต",
+          "description" : "และรับเครดิตเงินคืน 1% แบบไม่จำกัด"
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "เพิ่มเติม",
+      "title" : "เพิ่มเติม",
+      "rows" : {
+        "managePin" : "จัดการรหัส PIN",
+        "accessBaanx" : "ไปที่ Baanx",
+        "help" : "ขอความช่วยเหลือ",
+        "logout" : "ออกจากระบบ"
       }
     },
     "balance" : {
@@ -904,7 +919,20 @@
     },
     "card" : {
       "title" : "บัตรคริปโต",
-      "balanceLabel" : "ยอดคงเหลือในบัญชี"
+      "balanceLabel" : "ยอดคงเหลือในบัญชี",
+      "freeze" : "ระงับบัตรชั่วคราว",
+      "unfreeze" : "ยกเลิกการระงับบัตร"
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "ตั้งค่าบัตรของคุณ",
+        "allDone" : "เสร็จเรียบร้อยแล้ว!"
+      },
+      "dialog" : {
+        "title" : "ตั้งค่าบัตรของคุณให้เสร็จสิ้น",
+        "stepComplete" : "เสร็จเรียบร้อยแล้ว",
+        "gotIt" : "เข้าใจแล้ว"
+      }
     },
     "contacts" : {
       "title" : "ชำระเงิน",
@@ -923,7 +951,20 @@
       "actions" : {
         "pay" : "ส่งไปยังรายชื่อ",
         "more" : "ตัวเลือกเพิ่มเติม",
+        "viewContact" : "ดูรายชื่อ",
         "viewTransactions" : "ดูธุรกรรม"
+      },
+      "addressPicker" : {
+        "title" : "เลือกที่อยู่คริปโตของ {{name}}",
+        "addAddress" : "เพิ่มที่อยู่"
+      },
+      "paySuccess" : {
+        "title" : "คุณได้จ่ายเรียบร้อยแล้ว ({{recipient}}) {{amount}}",
+        "amount" : "จำนวน",
+        "estimatedTime" : "เวลาโดยประมาณ",
+        "from" : "จาก",
+        "viewTransaction" : "ดูธุรกรรม",
+        "close" : "ปิด"
       }
     },
     "actions" : {
@@ -952,6 +993,63 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "แปลงเงินสดเป็นสเตเบิลคอยน์",
+      "description" : "แปลงเงินสดเป็นสเตเบิลคอยน์เข้าแอป Ledger Wallet™ โดยตรง",
+      "createAccount" : "สร้างบัญชี",
+      "logIn" : "เข้าสู่ระบบ Noah",
+      "providedBy" : "ให้บริการโดย Noah",
+      "rows" : {
+        "bank" : {
+          "title" : "รับเงินโอนจากทุกธนาคาร",
+          "description" : "รับเงินเดือน รายการชำระเงิน และเงินฝากผ่าน SEPA หรือ ACH"
+        },
+        "fees" : {
+          "title" : "ไม่มีค่าธรรมเนียมแฝง",
+          "description" : "โอนตรงจากธนาคารสู่บล็อกเชน ค่าธรรมเนียมเพียง 0.25%"
+        },
+        "earn" : {
+          "title" : "ให้เงินทำงานแทนคุณได้ทันที",
+          "description" : "คุณสามารถสวอปหรือสร้างรายได้จากสเตเบิลคอยน์ของคุณ"
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "บัตรคริปโต",
+      "beforeIntro" : {
+        "description" : "รับเครดิตเงินคืน 1% ทุกครั้งที่ใช้จ่าย",
+        "action" : "สมัครบัตร"
+      },
+      "afterIntro" : {
+        "description" : "เข้าสู่ระบบเพื่อดูข้อมูลบัตรของคุณ",
+        "action" : "เข้าสู่ระบบ"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "ใช้จ่ายด้วยคริปโต แล้วรับเครดิตเงินคืน",
+      "providedBy" : "บัตรให้บริการโดย Baanx",
+      "createAccount" : "สร้างบัญชี",
+      "logIn" : "เข้าสู่ระบบ Baanx",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay หรือ Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "เครดิตเงินคืนคริปโต 1% แบบไม่จำกัด",
+          "description" : "สำหรับการซื้อผ่านบัตรคริปโตทั้งหมดด้วย USDC, USDT หรือ BTC"
+        },
+        "virtualCard" : {
+          "title" : "ได้รับ Virtual Card ฟรี",
+          "description" : "เพิ่มลงใน {{wallet}} และพร้อมใช้งานทันที"
+        },
+        "topUp" : {
+          "title" : "เติมเงินผ่านแอป Ledger Wallet™ ได้อย่างปลอดภัย",
+          "description" : "อนุมัติทุกการโอนด้วยอุปกรณ์ลงนาม Ledger ของคุณ"
+        }
+      }
+    },
     "request" : {
       "title" : "ส่งคำขอ {{asset}}",
       "networkLabel" : "เครือข่าย {{network}}",
@@ -962,6 +1060,10 @@
         "copied" : "คัดลอกแล้ว",
         "save" : "บันทึก",
         "verify" : "ตรวจสอบ"
+      },
+      "verifyHint" : {
+        "message" : "ตรวจสอบที่อยู่คริปโตบน\nอุปกรณ์ Ledger ของคุณ\nก่อนแชร์",
+        "gotIt" : "เข้าใจแล้ว"
       },
       "verifyAddress" : {
         "introTitle" : "ตรวจสอบที่อยู่คริปโตของคุณ",
@@ -2652,11 +2754,12 @@
       "walletNotExist" : "ไม่พบวอลเล็ตนี้"
     },
     "skipMemo" : {
-      "title" : "ข้ามการเพิ่ม {{memoLabel}}?",
-      "description" : "สินทรัพย์อาจหายไป หากผู้รับต้องการ {{memoLabel}} ในการรับ",
+      "title" : "ส่งโดยไม่มี {{memoLabel}} ?",
+      "description" : "สินทรัพย์อาจสูญหาย หากผู้รับต้องการ {{memoLabel}} ในการรับ",
       "notRequired" : "ผู้รับไม่จำเป็นต้องมี {{memoLabel}} ใช่หรือไม่?",
-      "confirm" : "ใช่! ข้ามขั้นตอนนี้",
-      "neverAskAgain" : "ไม่ต้องแสดงการแจ้งเตือนนี้อีก"
+      "confirm" : "ใช่! ส่งโดยไม่มี {{memoLabel}}",
+      "cancel" : "ไม่! ย้อนกลับ",
+      "neverAskAgain" : "ไม่ต้องถามอีก"
     },
     "tagHelp" : {
       "inputLabel" : "ป้อน {{memoLabel}}",
@@ -5452,6 +5555,12 @@
       "enableLearnStagingUrlDesc" : "เปิดใช้งาน Staging URL สำหรับหน้าการเรียนรู้",
       "enableCountervaluesStaging" : "สภาพแวดล้อมทดสอบแบบ Countervalues API Staging",
       "enableCountervaluesStagingDesc" : "ใช้การสร้างสภาพแวดล้อมทดสอบแบบ Countervalues API Staging แทน Production",
+      "enableMockServerTransport" : "Mock Server Transport (รับส่งข้อมูลกับเซิร์ฟเวอร์จำลอง)",
+      "enableMockServerTransportDesc" : "เปิดใช้งาน Mock Server Transport ของ Device Management Kit เพื่อเชื่อมต่อกับเซิร์ฟเวอร์จำลองของอุปกรณ์แทนอุปกรณ์จริง ใช้เซิร์ฟเวอร์จำลองที่แชร์ร่วมกัน เว้นแต่ MOCK_SERVER_TRANSPORT_URL จะชี้ไปยังตำแหน่งอื่น คุณจำเป็นต้องรีสตาร์ทแอปเพื่อให้การเปลี่ยนแปลงมีผล",
+      "mockServerStatus" : {
+        "connected" : "เชื่อมต่อเซิร์ฟเวอร์จำลองแล้ว · คลิกเพื่อคัดลอกโทเคนของเซสชัน คลิกขวาเพื่อทำกำหนดค่า UI",
+        "disconnected" : "ไม่สามารถเข้าถึงเซิร์ฟเวอร์จำลองได้"
+      },
       "openOnboardingAppInstallDebug" : "เปิดหน้าจอ Debug การติดตั้งแอปสำหรับการเข้าร่วม",
       "openOnboardingAppInstallDebugDesc" : "เปิดหน้าจอที่มีส่วนประกอบจากขั้นตอนการติดตั้งแอปสำหรับการเข้าร่วมในการซิงค์"
     },
@@ -7117,6 +7226,10 @@
       "title" : "ขออภัย เงินทุนไม่พอ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "ไม่สามารถดึงข้อมูลยอดคงเหลือในบัญชีของคุณได้",
+      "description" : "โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองอีกครั้ง"
+    },
     "NotEnoughTransferAmount" : {
       "title" : "ต้องมีอย่างน้อย 1 ICP เพื่อสเตคเป็น Neuron ได้"
     },
@@ -7316,6 +7429,12 @@
     "ZcashAmountBelowDustThreshold" : {
       "title" : "จำนวนน้อยเกินไปที่จะบรอดแคสต์ (ขั้นต่ำ {{minimumZatoshis}} Satoshis)"
     },
+    "ZcashMemoTooLong" : {
+      "title" : "Memo ต้องไม่เกิน {{maxBytes}} ไบต์"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "จำนวนนี้ใหญ่เกินไปที่จะส่งในธุรกรรมเดียว ลองแบ่งส่งเป็นจำนวนย่อยหลายครั้งแทน"
+    },
     "InvalidNonce" : {
       "title" : "จำเป็นต้องมีตัวเลข Nonce"
     },
@@ -7428,6 +7547,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "การยกเลิกการสเตคจากผู้ตรวจสอบก่อนหน้าต้องเสร็จสิ้นก่อน"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "มีจำนวนนี้น้อยกว่าที่จะสามารถสเตคได้"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "โปรดล้างบัญชีย่อยทั้งหมดก่อน"
@@ -8230,6 +8352,7 @@
             "inactiveTooltip" : "ไม่พบผู้ตรวจสอบ",
             "overstakedTooltip" : "มีการสเตคมากเกินไปในโหนดนี้ ทำให้อัตราผลตอบแทนต่อปี (APY) ต่ำกว่าค่าที่เหมาะสม",
             "activeTooltip" : "จำนวนที่ Delegate จะส่งผลต่อจำนวน Reward ที่ได้",
+            "fetchErrorTooltip" : "ไม่สามารถโหลดข้อมูลของผู้ตรวจสอบได้ โปรดลองอีกครั้ง",
             "delegated" : "Delegate เรียบร้อยแล้ว",
             "rewards" : "Reward"
           },
@@ -8308,6 +8431,8 @@
             "newValidatorLabel" : "การ Delegate ใหม่",
             "newValidatorSelectPlaceholder" : "เลือกผู้ตรวจสอบ",
             "removedValidatorSelectPlaceholder" : "ไม่มีผู้ตรวจสอบที่เลือกไว้ก่อนหน้า",
+            "unableToLoadSelectPlaceholder" : "ไม่สามารถโหลดผู้ตรวจสอบได้",
+            "loadingValidatorPlaceholder" : "กำลังโหลดผู้ตรวจสอบ...",
             "newValidatorSelectNoOption" : "ไม่มีผู้ตรวจสอบที่ \"{{validatorName}}\" ใช้ได้",
             "amountLabel" : "จำนวนที่จะ Redelegate",
             "alert" : "เมื่อสเตคใน Hedera ยอดคงเหลือในบัญชีทั้งหมดของคุณจะถูกนำไปสเตคด้วย โดยยอดทั้งหมดจะยังคงสภาพคล่องไว้ และไม่ต้องเสี่ยงกับช่วงล็อกอัปหรือการลงโทษผ่านวิธี Slashing สำหรับ Reward จากการสเตค คุณสามารถเริ่มรับได้ในไม่เกิน 48 ชั่วโมง",
@@ -8876,9 +9001,11 @@
     "selectNetwork" : "เลือกเครือข่าย",
     "unsupportedAssetTooltip" : "ขณะนี้ยังไม่รองรับ {{asset}}",
     "unsupportedNetworkTooltip" : "ขณะนี้ยังไม่รองรับเครือข่าย {{network}}",
+    "notAvailableYet" : "ยังไม่พร้อมใช้งาน",
     "selectAccount" : "เลือกบัญชี",
     "selectAccountPerpsTitle" : "เลือกบัญชี Hyperliquid",
-    "selectAccountPerpsDescription" : "หากต้องการเติมเงินทุนสำหรับสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps) คุณต้องมีบัญชี Hyperliquid เพิ่มบัญชีเพื่อดำเนินการต่อ",
+    "selectAccountPerpsDescription" : "เลือกบัญชีที่คุณต้องการฝากเงินทุนเพื่อทำการซื้อขาย",
+    "selectAccountPerpsEmptyDescription" : "หากต้องการเติมเงินทุนสำหรับสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps) คุณต้องมีบัญชี Hyperliquid เพิ่มบัญชีเพื่อดำเนินการต่อ",
     "selectDepositCurrencyTitle" : "เลือกสินทรัพย์ที่จะฝาก",
     "selectDepositCurrencyDescription" : "สามารถใช้สินทรัพย์ใดรับรองก็ได้ ระบบจะสวอปให้โดยอัตโนมัติหากจำเป็น",
     "accountCount_one" : "{{count}} บัญชี",
@@ -9123,7 +9250,7 @@
         "memo" : {
           "label" : "Memo (ไม่บังคับ)",
           "placeholder" : "ป้อน Memo",
-          "tooltip" : "แนบข้อความส่วนตัวกับธุรกรรมที่ได้รับการปกป้องนี้ เฉพาะผู้รับเท่านั้นที่สามารถอ่านได้ สูงสุด 512 ไบต์"
+          "tooltip" : "เพิ่ม Memo ที่ได้รับการเข้ารหัสให้กับการชำระเงินที่ได้รับการปกป้อง (Shielded Payment) นี้ เฉพาะผู้รับเท่านั้นที่สามารถอ่านได้ สูงสุด 512 ไบต์"
         },
         "syncBanner" : {
           "stopped" : {
@@ -9146,15 +9273,15 @@
         "selfTransfer" : {
           "toPrivate" : "โอนด้วยตัวเองไปยังยอดคงเหลือส่วนตัว",
           "toPublic" : "โอนด้วยตัวเองไปยังยอดคงเหลือสาธารณะ",
-          "unavailable" : "ที่อยู่คริปโตส่วนตัวของคุณยังไม่พร้อมใช้งาน ส่งออก View Key ของคุณเพื่อเปิดใช้งาน",
+          "unavailable" : "ที่อยู่คริปโตส่วนตัวของคุณจะพร้อมใช้งานหลังเปิดใช้งาน Shielded สำหรับบัญชีของคุณ",
           "privacyWarning" : "การส่งธุรกรรมนี้จะเชื่อมโยงเงินทุนที่ได้รับการปกป้องของคุณเข้ากับ Public Address ของบัญชีคุณ ซึ่งทุกคนสามารถมองเห็นได้ การส่งไปยังที่อยู่คริปโตภายนอกที่เป็นส่วนตัวจะช่วยป้องกันไม่ให้มีการเชื่อมโยงกับบัญชีสาธารณะของคุณ"
         }
       },
       "state" : {
-        "showBalance" : "แสดงยอดคงเหลือในบัญชี",
+        "showBalance" : "เปิดใช้งาน Shielded",
         "startSync" : "เริ่มซิงค์",
         "stopSync" : "หยุดการซิงค์",
-        "upToDate" : "เป็นปัจจุบัน",
+        "upToDate" : "อัปเดตยอดคงเหลือในบัญชี",
         "lastSync" : "ซิงค์ล่าสุด: {{date}}",
         "estimatedTimeRemaining" : "เวลาที่เหลือโดยประมาณ: {{hours}}:{{minutes}}",
         "syncFailed" : "การซิงค์ยอดคงเหลือส่วนตัวล้มเหลว"
@@ -9324,6 +9451,23 @@
         "desc" : "โปรดรอสักครู่",
         "errorTitle" : "การซิงค์ข้อมูลแบบส่วนตัวล้มเหลว",
         "errorDesc" : "มีบางอย่างผิดพลาด โปรดลองอีกครั้ง"
+      }
+    },
+    "manage" : {
+      "headerAction" : "สร้างรายได้",
+      "title" : "จัดการสเตคกิ้ง",
+      "comingSoonTooltip" : "เร็ว ๆ นี้",
+      "bond" : {
+        "title" : "ผูกมัด",
+        "description" : "ผูกมัด ALEO ของคุณกับผู้ตรวจสอบเพื่อรับรางวัล"
+      },
+      "unbond" : {
+        "title" : "ยกเลิกการผูกมัดสินทรัพย์",
+        "description" : "ยกเลิกการผูกมัด ALEO ที่ผูกมัดของคุณ เงินทุนจะพร้อมใช้งานหลังสิ้นสุดระยะเวลายกเลิกการผูกมัด"
+      },
+      "claim" : {
+        "title" : "เรียกคืน",
+        "description" : "เรียกคืน ALEO ของคุณที่เลิกผูกมัดแล้วกลับเข้ายอดคงเหลือที่พร้อมใช้งาน"
       }
     }
   },
@@ -9511,6 +9655,16 @@
           "title" : "กำลังเตรียมอุปกรณ์ Ledger ของคุณ"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "กำลังเตรียมอุปกรณ์ Ledger ของคุณ"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "กำลังเตรียมอุปกรณ์ Ledger ของคุณ"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "ใช้อุปกรณ์ Ledger เครื่องเดียวกับที่ใช้เพิ่มรายชื่อนี้",
@@ -9523,6 +9677,10 @@
         "appVersionTooLow" : {
           "title" : "ต้องอัปเดตแอป",
           "description" : "อัปเดตแอปบนอุปกรณ์ Ledger ของคุณเพื่อบันทึกรายชื่อ แล้วลองอีกครั้ง"
+        },
+        "osVersionTooLow" : {
+          "title" : "จำเป็นต้องมีการอัปเดต Ledger OS ก่อน",
+          "description" : "อัปเดตระบบปฏิบัติการของอุปกรณ์ Ledger ของคุณเพื่อแก้ไขชื่อในรายชื่อ แล้วลองใหม่"
         }
       }
     },
@@ -9627,12 +9785,6 @@
       "applyChanges" : "บันทึกการเปลี่ยนแปลง",
       "invalidLabelError" : "ห้ามใช้อักขระพิเศษ"
     },
-    "editSigner" : {
-      "title" : "ยืนยันบนอุปกรณ์ของคุณ",
-      "description" : "เชื่อมต่อและปลดล็อกอุปกรณ์ Ledger ของคุณเพื่อยืนยันการเปลี่ยนแปลงนี้",
-      "confirm" : "ดำเนินการต่อ",
-      "cancel" : "ยกเลิก"
-    },
     "editSignerMismatch" : {
       "title" : "ใช้อุปกรณ์ Ledger เดียวกันที่คุณใช้เพิ่มรายชื่อนี้",
       "description" : "อุปกรณ์ที่เชื่อมต่อไม่ตรงกัน",
@@ -9640,9 +9792,10 @@
       "cancel" : "ยกเลิก"
     },
     "ledgerSyncIntroduction" : {
-      "description" : "รายชื่อติดต่อของคุณได้รับการเข้ารหัสแบบต้นทางถึงปลายทาง (End-to-End Encrypted) ด้วย Ledger ของคุณ และซิงค์กับอุปกรณ์ต่าง ๆ ของคุณ โดยมีเพียงคุณเท่านั้นที่สามารถปลดล็อกได้",
-      "activate" : "เปิด Ledger Sync",
-      "dismiss" : "เข้าใจแล้ว"
+      "title" : "ซิงค์วอลเล็ตของคุณเพื่อเพิ่มรายชื่อ",
+      "description" : "รายชื่อได้รับการเข้ารหัสแบบต้นทางถึงปลายทาง และซิงค์ข้อมูลกับแอป Ledger Wallet บนโทรศัพท์และคอมพิวเตอร์ทุกเครื่องของคุณ",
+      "activate" : "ซิงค์วอลเล็ตของฉัน",
+      "dismiss" : "ไม่ใช่ตอนนี้"
     },
     "featureIntroduction" : {
       "title" : "ขอแนะนำรายชื่อ",
@@ -9947,5 +10100,44 @@
       "totalMaturity" : "Reward ทั้งหมดที่ได้รับ",
       "totalMaturityTooltip" : "Reward ที่สะสมทั้งหมดจากสเตคกิ้ง ซึ่งรวมทั้งผลตอบแทนจากการสเตค และผลตอบแทนจาก Liquid Maturity สามารถสเตค Reward เหล่านี้อีกครั้ง หรือจะเคลมเป็น Liquid ICP ก็ได้"
     }
+  },
+  "perpsReview" : {
+    "depositTitle" : "ฝากผ่าน SwapKit",
+    "depositSubtitle" : "ผู้ให้บริการ SwapKit จะจัดการสวอปและฝากเงินของคุณในธุรกรรมเดียว โดยมีอุปกรณ์ Ledger ของคุณคอยรักษาความปลอดภัยทั้งหมด",
+    "swapDetailTitle" : "รายละเอียดการสวอป",
+    "amountSendLabel" : "จำนวนที่ส่ง",
+    "amountReceiveLabel" : "จำนวนที่จะได้รับ",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "รายละเอียดการฝาก",
+    "depositAmountLabel" : "จำนวนเงินฝาก",
+    "depositReceiveLabel" : "บัญชีผู้รับ",
+    "depositCTA" : "ฝาก"
+  },
+  "perpsDeposit" : {
+    "title" : "ฝาก",
+    "inputDepositAmount" : "ฝาก {{value}}",
+    "inputSubText" : "สวอปและฝากผ่าน {{provider}}",
+    "selectCurrencyTitle" : "ฝากด้วย {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "ไม่มีบัญชี",
+    "review" : "ตรวจสอบ",
+    "formErrors" : {
+      "amountExceedsBalance" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
+      "quoteUnavailable" : "ไม่สามารถรับโควตจาก {{provider}} ได้ โปรดลองใช้สินทรัพย์อื่นหรือกลับมาใหม่ในภายหลัง"
+    }
+  },
+  "perpsDepositSign" : {
+    "a11yTitle" : "การลงนามเพื่อฝากเงิน",
+    "terms" : "เมื่อลงนามในธุรกรรมนี้ ฉันยอมรับ <termsLink>ข้อกำหนดและเงื่อนไขของ SwapKit by NEAR Intents</termsLink>"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "ลงนามธุรกรรมสำเร็จแล้ว",
+    "description" : "คุณจะได้รับ {{currency}} ของคุณเมื่อได้รับการยืนยันบนบล็อกเชน",
+    "viewTransaction" : "ดูธุรกรรม"
+  },
+  "perpsTransactionStatus" : {
+    "dialogTitle" : "รายละเอียดธุรกรรม",
+    "title" : "เติมเงินในสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perpetuals)",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
   }
 }
