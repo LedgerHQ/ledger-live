@@ -72,6 +72,7 @@ export function SendHeader() {
           <div className="relative">
             <AddressInput
               className="w-full"
+              data-testid="send-recipient-display"
               value={addressInputValue}
               readOnly
               hideClearButton
