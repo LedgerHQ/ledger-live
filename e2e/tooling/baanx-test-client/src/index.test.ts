@@ -13,7 +13,6 @@ const PUBLIC_EXPORTS = [
   // Entry points
   "getBaanxAuthToken",
   "clearBaanxAuthCache",
-  "baanxRequest",
   // Configuration
   "ENV_VARS",
   "resolveBaanxAuthConfig",
@@ -60,6 +59,7 @@ const INTERNALS = [
   "readJwtExpiry",
   "resolveExpiry",
   "parseCliArgs",
+  "baanxRequest",
 ];
 
 describe("public API", () => {
