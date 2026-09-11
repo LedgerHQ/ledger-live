@@ -16,8 +16,7 @@ const app: AppInfos = AppInfos.EXCHANGE;
 const accountToDebit = Account.ETH_1;
 const accountToCredit = Account.BTC_NATIVE_SEGWIT_1;
 
-// One case per value the A/B test serves. Disabled runs first, so a failed teardown
-// leaves the production state behind.
+// One case per value the A/B test serves.
 const presets: SwapFlagPreset[] = ["lumenQuoteCardDisabled", "lumenQuoteCardEnabled"];
 
 test.describe("Swap - quote card feature flag variants", () => {

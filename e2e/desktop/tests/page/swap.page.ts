@@ -16,6 +16,7 @@ import { expectAmountCloseTo } from "tests/utils/amountUtils";
 import {
   QUOTE_CARD_PROVIDER_NAME_FRAGMENT,
   quoteCardCtaPattern,
+  quoteCardProviderNameSelector,
   quoteCardVariantPrefix,
   SWAP_FLAG_OVERRIDES_KEY,
   swapFlagPresetPayload,
@@ -59,8 +60,6 @@ export class SwapPage extends WebViewAppPage {
   private readonly toAccountAmountInput = "to-account-amount-input";
   private readonly fromAccountAmountInactive = "from-account-amount-inactive";
   private flagPresetPinned = false;
-  private specificQuoteCardProviderName = (provider: string) =>
-    `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${provider.toLowerCase()}']`;
   private providerContainerSelector = (provider: string) =>
     `[data-testid^="quote-container-${provider}"]`;
   private providerContainerInfoSelector = (provider: string, suffix: string) =>
@@ -288,9 +287,7 @@ export class SwapPage extends WebViewAppPage {
     const providersList = await this.getProviderList();
 
     if (providersList.includes(provider.uiName)) {
-      const providerLocator = webview
-        .locator(this.specificQuoteCardProviderName(provider.name))
-        .first();
+      const providerLocator = webview.locator(quoteCardProviderNameSelector(provider.name)).first();
 
       await providerLocator.click();
     } else {
@@ -325,7 +322,7 @@ export class SwapPage extends WebViewAppPage {
       throw new Error(`No providers without KYC found: ${providersList.join(", ")}`);
     }
 
-    await webview.locator(this.specificQuoteCardProviderName(provider.name)).first().click();
+    await webview.locator(quoteCardProviderNameSelector(provider.name)).first().click();
     return provider;
   }
 
@@ -346,9 +343,7 @@ export class SwapPage extends WebViewAppPage {
       );
 
     for (const { providerName, provider } of providers) {
-      const providerLocator = webview
-        .locator(this.specificQuoteCardProviderName(provider.name))
-        .first();
+      const providerLocator = webview.locator(quoteCardProviderNameSelector(provider.name)).first();
 
       if (await providerLocator.isVisible()) {
         await providerLocator.click();
