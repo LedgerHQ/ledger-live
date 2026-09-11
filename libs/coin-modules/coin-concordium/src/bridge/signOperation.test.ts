@@ -52,9 +52,6 @@ jest.mock("../logic", () => {
   };
 });
 
-// Kept mocked, but only so signing can be asserted *not* to reach it: status
-// performs a recipient lookup that signing has no use for, and it would land in
-// front of the device prompt.
 jest.mock("./getTransactionStatus", () => ({
   getTransactionStatus: jest.fn().mockResolvedValue({
     errors: {},

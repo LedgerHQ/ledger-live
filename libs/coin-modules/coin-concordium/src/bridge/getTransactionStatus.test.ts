@@ -23,6 +23,7 @@ import {
   ConcordiumInsufficientFunds,
   ConcordiumInvalidPltPayloadError,
   ConcordiumMemoTooLong,
+  ConcordiumRecipientNotAllowed,
   ConcordiumTokenAccountUnavailable,
   ConcordiumTokenPaused,
   ConcordiumTokenRestrictionsUnverified,
@@ -30,7 +31,18 @@ import {
   ConcordiumUnsupportedTokenDecimals,
 } from "../types/errors";
 import type { ConcordiumAccount, ConcordiumTokenResources } from "../types";
+import { checkRecipientRestrictions } from "../logic/transaction/pltRecipientRestrictions";
 import { getTransactionStatus } from "./getTransactionStatus";
+
+// The recipient's standing is the one input that is not on the account, so it
+// is the one that reaches the network. Its own rules are covered in
+// `pltRecipientRestrictions.test.ts`; here it stands in as "the recipient is
+// fine", leaving each case below to assert the thing it names.
+jest.mock("../logic/transaction/pltRecipientRestrictions", () => ({
+  checkRecipientRestrictions: jest.fn(),
+}));
+
+const mockedRecipientRestrictions = jest.mocked(checkRecipientRestrictions);
 
 const PLT_ID = "t-USDT";
 
@@ -88,6 +100,8 @@ const tokenTx = (subAccountId: string, over = {}) =>
 describe("getTransactionStatus", () => {
   beforeEach(() => {
     setupTestnetCoinConfig({ minReserve: 0, currency: createFixtureAccount().currency });
+    mockedRecipientRestrictions.mockReset();
+    mockedRecipientRestrictions.mockResolvedValue(undefined);
   });
 
   describe("fee validation", () => {
@@ -850,5 +864,86 @@ describe("getTransactionStatus", () => {
 
       expect(status.warnings).toEqual({});
     });
+
+    describe("recipient restrictions", () => {
+      it("reports the restriction under the recipient key", async () => {
+        const { account, subAccount } = withToken();
+        const refusal = new ConcordiumRecipientNotAllowed("", { ticker: "TUSDT" });
+        mockedRecipientRestrictions.mockResolvedValue(refusal);
+
+        const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+        expect(status.errors.recipient).toBe(refusal);
+      });
+
+      it("passes the token id and ticker, so the message can name the token", async () => {
+        const { account, subAccount } = withToken();
+
+        await getTransactionStatus(account, tokenTx(subAccount.id));
+
+        expect(mockedRecipientRestrictions).toHaveBeenCalledWith(
+          expect.objectContaining({
+            currencyId: account.currency.id,
+            recipient: VALID_ADDRESS_2,
+            tokenId: PLT_ID,
+            ticker: subAccount.token.ticker,
+          }),
+        );
+      });
+
+      // Each of these already fails under `recipient`, and none of them names an
+      // address the proxy could answer for. Looking one up would spend a request
+      // to overwrite a more specific message with a less specific one.
+      it.each([
+        ["an empty recipient", ""],
+        ["a malformed recipient", "not-an-address"],
+      ])("does not look up %s", async (_label, recipient) => {
+        const { account, subAccount } = withToken();
+
+        await getTransactionStatus(account, tokenTx(subAccount.id, { recipient }));
+
+        expect(mockedRecipientRestrictions).not.toHaveBeenCalled();
+      });
+
+      it("does not look up a self-transfer", async () => {
+        const { account, subAccount } = withToken();
+
+        await getTransactionStatus(
+          account,
+          tokenTx(subAccount.id, { recipient: account.freshAddress }),
+        );
+
+        expect(mockedRecipientRestrictions).not.toHaveBeenCalled();
+      });
+
+      it("keeps the address error when the address itself is unusable", async () => {
+        const { account, subAccount } = withToken();
+        mockedRecipientRestrictions.mockResolvedValue(new ConcordiumRecipientNotAllowed());
+
+        const status = await getTransactionStatus(
+          account,
+          tokenTx(subAccount.id, { recipient: "not-an-address" }),
+        );
+
+        expect(status.errors.recipient).toBeInstanceOf(InvalidAddress);
+      });
+    });
+  });
+
+  // The lists belong to a token; a native transfer has none to check, so the
+  // recipient of a CCD send is never sent to the proxy.
+  it("performs no recipient lookup for a native CCD transfer", async () => {
+    const account = createFixtureAccount();
+
+    await getTransactionStatus(
+      account,
+      createFixtureTransaction({
+        recipient: VALID_ADDRESS_2,
+        amount: new BigNumber(1000),
+        fee: new BigNumber(500),
+      }),
+    );
+
+    expect(mockedRecipientRestrictions).not.toHaveBeenCalled();
   });
 });
