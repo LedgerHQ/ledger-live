@@ -36,7 +36,10 @@ function parseCursor(options: ListOperationsOptions): number {
   return Math.max(fromCursor, options.minHeight || 0);
 }
 
-// Merged VET + VTHO operations; `next` is one block past the current head for incremental resume.
+// Merged VET + VTHO operations. A page is never partial: getOperations/getTokenOperations exhaust
+// [startAt, head] within this call (splitting the block range until the node accepts it), so there
+// is no next page to advertise and `next` stays unset — a cursor on a complete (or empty) page traps
+// a client that pages until `next` is falsy. Resume across syncs is driven by `minHeight`.
 export async function listOperations(
   context: VechainContext,
   address: string,
@@ -47,7 +50,7 @@ export async function listOperations(
   const stopAt = await getLastBlockHeight(config);
 
   if (startAt > stopAt) {
-    return { items: [], next: String(startAt) };
+    return { items: [] };
   }
 
   const [vetOps, vthoOps] = await Promise.all([
@@ -58,10 +61,11 @@ export async function listOperations(
   const items = [
     ...vetOps.map(op => toFrameworkOperation(op, NATIVE_ASSET)),
     ...vthoOps.map(op => toFrameworkOperation(op, vthoAsset(address))),
-  ].sort((a, b) => b.tx.date.getTime() - a.tx.date.getTime());
+  ].sort((a, b) =>
+    options.order === "asc"
+      ? a.tx.date.getTime() - b.tx.date.getTime()
+      : b.tx.date.getTime() - a.tx.date.getTime(),
+  );
 
-  return {
-    items,
-    next: String(stopAt + 1),
-  };
+  return { items };
 }
