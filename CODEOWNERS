@@ -508,7 +508,7 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/LargeS
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/Q2Tour/                                      @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/Q3Tour/                                      @ledgerhq/engagement
-apps/ledger-live-desktop/src/mvvm/components/QuarterlyTour/                             @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/components/ReleaseTour/                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/ProductTour/                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BackupHub/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/BuyDevice/                                          @ledgerhq/engagement

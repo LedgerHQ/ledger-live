@@ -1,17 +1,17 @@
 import {
-  useQuarterlyTourSlideItemViewModel,
-  type QuarterlyTourSlideItemViewModel,
-} from "LLD/components/QuarterlyTour";
+  useReleaseTourSlideItemViewModel,
+  type ReleaseTourSlideItemViewModel,
+} from "LLD/components/ReleaseTour";
 import { Q2_TOUR_SLIDES } from "../const";
 
 interface UseQ2TourSlideItemViewModelProps {
   readonly slideIndex: number;
 }
 
-export type Q2TourSlideItemViewModel = QuarterlyTourSlideItemViewModel;
+export type Q2TourSlideItemViewModel = ReleaseTourSlideItemViewModel;
 
 export function useQ2TourSlideItemViewModel({
   slideIndex,
 }: UseQ2TourSlideItemViewModelProps): Q2TourSlideItemViewModel {
-  return useQuarterlyTourSlideItemViewModel({ slideIndex, slides: Q2_TOUR_SLIDES });
+  return useReleaseTourSlideItemViewModel({ slideIndex, slides: Q2_TOUR_SLIDES });
 }

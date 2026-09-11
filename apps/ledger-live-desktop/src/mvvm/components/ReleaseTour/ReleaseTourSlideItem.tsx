@@ -3,16 +3,16 @@ import {
   AwarenessModalClampedText,
   CAROUSEL_SLIDE_TEXT_LINE_LIMITS,
 } from "LLD/features/GenericAwarenessModal/components/clampedText";
-import { useQuarterlyTourSlideItemViewModel } from "./useQuarterlyTourSlideItemViewModel";
-import type { QuarterlyTourSlide } from "./types";
+import { useReleaseTourSlideItemViewModel } from "./useReleaseTourSlideItemViewModel";
+import type { ReleaseTourSlide } from "./types";
 
-interface QuarterlyTourSlideItemProps {
+interface ReleaseTourSlideItemProps {
   readonly slideIndex: number;
-  readonly slides: readonly QuarterlyTourSlide[];
+  readonly slides: readonly ReleaseTourSlide[];
 }
 
-export function QuarterlyTourSlideItem({ slideIndex, slides }: QuarterlyTourSlideItemProps) {
-  const { title, description, imageSrc } = useQuarterlyTourSlideItemViewModel({
+export function ReleaseTourSlideItem({ slideIndex, slides }: ReleaseTourSlideItemProps) {
+  const { title, description, imageSrc } = useReleaseTourSlideItemViewModel({
     slideIndex,
     slides,
   });

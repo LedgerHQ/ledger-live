@@ -2,23 +2,23 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { themeSelector } from "~/renderer/actions/general";
-import type { QuarterlyTourSlide } from "./types";
+import type { ReleaseTourSlide } from "./types";
 
-interface UseQuarterlyTourSlideItemViewModelProps {
+interface UseReleaseTourSlideItemViewModelProps {
   readonly slideIndex: number;
-  readonly slides: readonly QuarterlyTourSlide[];
+  readonly slides: readonly ReleaseTourSlide[];
 }
 
-export interface QuarterlyTourSlideItemViewModel {
+export interface ReleaseTourSlideItemViewModel {
   readonly title: string;
   readonly description: string;
   readonly imageSrc: string;
 }
 
-export function useQuarterlyTourSlideItemViewModel({
+export function useReleaseTourSlideItemViewModel({
   slideIndex,
   slides,
-}: UseQuarterlyTourSlideItemViewModelProps): QuarterlyTourSlideItemViewModel {
+}: UseReleaseTourSlideItemViewModelProps): ReleaseTourSlideItemViewModel {
   const { t } = useTranslation();
   const theme = useSelector(themeSelector);
 

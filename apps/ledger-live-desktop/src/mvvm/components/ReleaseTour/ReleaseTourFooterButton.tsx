@@ -2,19 +2,19 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useSlidesContext } from "LLD/components/Slides";
-import type { QuarterlyTourSlide } from "./types";
+import type { ReleaseTourSlide } from "./types";
 
-interface QuarterlyTourFooterButtonProps {
-  readonly slides: readonly QuarterlyTourSlide[];
+interface ReleaseTourFooterButtonProps {
+  readonly slides: readonly ReleaseTourSlide[];
   readonly onContinueClick: (slideIndex: number, isLastSlide: boolean) => void;
   readonly onComplete: () => void;
 }
 
-export function QuarterlyTourFooterButton({
+export function ReleaseTourFooterButton({
   slides,
   onContinueClick,
   onComplete,
-}: QuarterlyTourFooterButtonProps) {
+}: ReleaseTourFooterButtonProps) {
   const { displayedIndex, totalSlides, goToNext } = useSlidesContext();
   const { t } = useTranslation();
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { QuarterlyTourDialog } from "LLD/components/QuarterlyTour";
+import { ReleaseTourDialog } from "LLD/components/ReleaseTour";
 import { Q2_TOUR_CONFIG } from "./const";
 
 interface Q2TourDialogProps {
@@ -19,7 +19,7 @@ export const Q2TourDialog = ({
   onComplete,
   onSlideChange,
 }: Q2TourDialogProps) => (
-  <QuarterlyTourDialog
+  <ReleaseTourDialog
     tour={Q2_TOUR_CONFIG}
     isOpen={isOpen}
     onHeaderClose={onHeaderClose}

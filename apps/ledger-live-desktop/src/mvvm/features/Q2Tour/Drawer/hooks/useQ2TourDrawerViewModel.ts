@@ -2,10 +2,10 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
 import {
-  useQuarterlyTourDrawerViewModel,
-  type QuarterlyTourAnalytics,
-  type QuarterlyTourDrawerViewModel,
-} from "LLD/components/QuarterlyTour";
+  useReleaseTourDrawerViewModel,
+  type ReleaseTourAnalytics,
+  type ReleaseTourDrawerViewModel,
+} from "LLD/components/ReleaseTour";
 import {
   hasCompletedOnboardingSelector,
   hasSeenQ2TourSelector,
@@ -28,9 +28,9 @@ export interface UseQ2TourDrawerViewModelOptions {
   isOnPortfolioPage?: boolean;
 }
 
-export type Q2TourDrawerViewModel = QuarterlyTourDrawerViewModel;
+export type Q2TourDrawerViewModel = ReleaseTourDrawerViewModel;
 
-const Q2_TOUR_ANALYTICS: QuarterlyTourAnalytics = {
+const Q2_TOUR_ANALYTICS: ReleaseTourAnalytics = {
   getContext: getQ2TourAnalyticsContext,
   trackCloseClick: trackQ2TourCloseClick,
   trackContinueClick: trackQ2TourContinueClick,
@@ -53,7 +53,7 @@ export const useQ2TourDrawerViewModel = (
     dispatch(setHasSeenQ2Tour(true));
   }, [dispatch]);
 
-  return useQuarterlyTourDrawerViewModel({
+  return useReleaseTourDrawerViewModel({
     isTourEnabled,
     hasSeenTour,
     markTourAsSeen,

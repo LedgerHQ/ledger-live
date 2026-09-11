@@ -1,16 +1,16 @@
 import {
-  createQuarterlyTourAnalytics,
-  type QuarterlyTourAnalyticsContext,
-} from "LLD/components/QuarterlyTour";
+  createReleaseTourAnalytics,
+  type ReleaseTourAnalyticsContext,
+} from "LLD/components/ReleaseTour";
 import { Q2_TOUR_SLIDE_COUNT } from "../Drawer/const";
 import { PAGE_TRACKING_Q2_TOUR, Q2_TOUR_CONTENT_ID } from "./const";
 
-export type Q2TourAnalyticsContext = QuarterlyTourAnalyticsContext & {
+export type Q2TourAnalyticsContext = ReleaseTourAnalyticsContext & {
   readonly page: typeof PAGE_TRACKING_Q2_TOUR;
   readonly contentId: typeof Q2_TOUR_CONTENT_ID;
 };
 
-const analytics = createQuarterlyTourAnalytics({
+const analytics = createReleaseTourAnalytics({
   page: PAGE_TRACKING_Q2_TOUR,
   contentId: Q2_TOUR_CONTENT_ID,
   totalSteps: Q2_TOUR_SLIDE_COUNT,

@@ -1,13 +1,13 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { Slides } from "LLD/components/Slides";
-import { QuarterlyTourSlideItem } from "./QuarterlyTourSlideItem";
-import { QuarterlyTourFooterButton } from "./QuarterlyTourFooterButton";
-import { QuarterlyTourProgressIndicator } from "./QuarterlyTourProgressIndicator";
-import type { QuarterlyTourConfig } from "./types";
+import { ReleaseTourSlideItem } from "./ReleaseTourSlideItem";
+import { ReleaseTourFooterButton } from "./ReleaseTourFooterButton";
+import { ReleaseTourProgressIndicator } from "./ReleaseTourProgressIndicator";
+import type { ReleaseTourConfig } from "./types";
 
-interface QuarterlyTourDialogProps {
-  readonly tour: QuarterlyTourConfig;
+interface ReleaseTourDialogProps {
+  readonly tour: ReleaseTourConfig;
   readonly isOpen: boolean;
   readonly onHeaderClose: () => void;
   readonly onDismiss: () => void;
@@ -16,7 +16,7 @@ interface QuarterlyTourDialogProps {
   readonly onSlideChange?: (index: number) => void;
 }
 
-export const QuarterlyTourDialog = ({
+export const ReleaseTourDialog = ({
   tour,
   isOpen,
   onHeaderClose,
@@ -24,7 +24,7 @@ export const QuarterlyTourDialog = ({
   onContinueClick,
   onComplete,
   onSlideChange,
-}: QuarterlyTourDialogProps) => {
+}: ReleaseTourDialogProps) => {
   const slideItems = useMemo(
     () =>
       tour.slides.map((slide, index) => (
@@ -32,7 +32,7 @@ export const QuarterlyTourDialog = ({
           key={`${tour.id}-${slide.id}`}
           data-testid={`${tour.id}-slide-${index}`}
         >
-          <QuarterlyTourSlideItem slideIndex={index} slides={tour.slides} />
+          <ReleaseTourSlideItem slideIndex={index} slides={tour.slides} />
         </Slides.Content.Item>
       )),
     [tour],
@@ -60,11 +60,11 @@ export const QuarterlyTourDialog = ({
             <Slides.Content>{slideItems}</Slides.Content>
 
             <Slides.ProgressIndicator>
-              <QuarterlyTourProgressIndicator />
+              <ReleaseTourProgressIndicator />
             </Slides.ProgressIndicator>
 
             <Slides.Footer>
-              <QuarterlyTourFooterButton
+              <ReleaseTourFooterButton
                 slides={tour.slides}
                 onContinueClick={onContinueClick}
                 onComplete={onComplete}

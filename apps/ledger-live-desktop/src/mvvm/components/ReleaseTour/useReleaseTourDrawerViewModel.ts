@@ -1,28 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type {
-  QuarterlyTourAnalytics,
-  QuarterlyTourDrawerViewModel,
-  QuarterlyTourSlide,
-} from "./types";
+import type { ReleaseTourAnalytics, ReleaseTourDrawerViewModel, ReleaseTourSlide } from "./types";
 
-type UseQuarterlyTourDrawerViewModelParams = {
+type UseReleaseTourDrawerViewModelParams = {
   readonly isTourEnabled: boolean;
   readonly hasSeenTour: boolean;
   readonly markTourAsSeen: () => void;
   readonly shouldAutoOpen?: boolean;
-  readonly slides: readonly QuarterlyTourSlide[];
-  readonly analytics: QuarterlyTourAnalytics;
+  readonly slides: readonly ReleaseTourSlide[];
+  readonly analytics: ReleaseTourAnalytics;
 };
 
-export const useQuarterlyTourDrawerViewModel = ({
+export const useReleaseTourDrawerViewModel = ({
   isTourEnabled,
   hasSeenTour,
   markTourAsSeen,
   shouldAutoOpen = false,
   slides,
   analytics,
-}: UseQuarterlyTourDrawerViewModelParams): QuarterlyTourDrawerViewModel => {
+}: UseReleaseTourDrawerViewModelParams): ReleaseTourDrawerViewModel => {
   const { t } = useTranslation();
   const currentIndexRef = useRef(0);
   const isClosingRef = useRef(false);

@@ -1,18 +1,18 @@
 import { track, trackPage } from "~/renderer/analytics/segment";
-import type { QuarterlyTourAnalytics, QuarterlyTourAnalyticsContext } from "./types";
+import type { ReleaseTourAnalytics, ReleaseTourAnalyticsContext } from "./types";
 
-type CreateQuarterlyTourAnalyticsParams = {
+type CreateReleaseTourAnalyticsParams = {
   readonly page: string;
   readonly contentId: string;
   readonly totalSteps: number;
 };
 
-export const createQuarterlyTourAnalytics = ({
+export const createReleaseTourAnalytics = ({
   page,
   contentId,
   totalSteps,
-}: CreateQuarterlyTourAnalyticsParams): QuarterlyTourAnalytics => {
-  const getContext = (slideIndex: number, stepName: string): QuarterlyTourAnalyticsContext => ({
+}: CreateReleaseTourAnalyticsParams): ReleaseTourAnalytics => {
+  const getContext = (slideIndex: number, stepName: string): ReleaseTourAnalyticsContext => ({
     page,
     contentId,
     step: slideIndex + 1,
@@ -20,7 +20,7 @@ export const createQuarterlyTourAnalytics = ({
     totalSteps,
   });
 
-  const getPageProperties = (context: QuarterlyTourAnalyticsContext) => ({
+  const getPageProperties = (context: ReleaseTourAnalyticsContext) => ({
     name: page,
     contentId: context.contentId,
     step: context.step,
@@ -28,7 +28,7 @@ export const createQuarterlyTourAnalytics = ({
     totalSteps: context.totalSteps,
   });
 
-  const getInteractionProperties = (context: QuarterlyTourAnalyticsContext) => ({
+  const getInteractionProperties = (context: ReleaseTourAnalyticsContext) => ({
     page: context.page,
     contentId: context.contentId,
     step: context.step,
@@ -36,7 +36,7 @@ export const createQuarterlyTourAnalytics = ({
     totalSteps: context.totalSteps,
   });
 
-  const trackStepPage = (context: QuarterlyTourAnalyticsContext): void => {
+  const trackStepPage = (context: ReleaseTourAnalyticsContext): void => {
     trackPage(page, undefined, getPageProperties(context), true, false);
   };
 
