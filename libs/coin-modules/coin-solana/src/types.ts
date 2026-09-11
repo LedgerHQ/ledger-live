@@ -363,11 +363,6 @@ export type SolanaOperationExtraRaw = {
   stake?: ExtraStakeInfoRaw;
 };
 
-export type SolanaExtraDeviceTransactionField = {
-  type: "solana.token.transferFee";
-  label: string;
-};
-
 /** Not a chain payload, but the intent carries no other slot for a crafting input. */
 export interface SolanaStakeAccountSeedData extends TxData {
   type: "stakeAccountSeed";
