@@ -16,6 +16,8 @@ import CancelButton from "~/components/CancelButton";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
+import { isCurrencyRegionRestrictedError } from "@ledgerhq/live-common/errors";
+import { RegionRestrictedDrawer } from "LLM/features/Accounts/components/RegionRestrictedDrawer";
 import useScanDeviceAccountsViewModel from "./useScanDeviceAccountsViewModel";
 import AnimatedGradient from "./components/AnimatedGradient";
 import ScanDeviceAccountsFooter from "./components/ScanDeviceAccountsFooter";
@@ -89,6 +91,10 @@ function ScanDeviceAccounts() {
     blacklistedTokenIds,
     analyticsMetadata,
   });
+
+  // Retrying cannot lift a regional restriction, so it gets its own drawer rather than the generic
+  // error modal's Cancel/Retry pair.
+  const isRegionRestricted = isCurrencyRegionRestrictedError(error);
 
   const renderHeaderLeft = useCallback(
     () => <HeaderLeft onPress={scanDeviceAccountsBack} />,
@@ -220,8 +226,11 @@ function ScanDeviceAccounts() {
           confirmLabel={confirmLabel}
         />
       )}
+      {isRegionRestricted ? (
+        <RegionRestrictedDrawer isOpen currency={currency} onClose={onCancel} />
+      ) : null}
       <GenericErrorBottomModal
-        error={error}
+        error={isRegionRestricted ? null : error}
         onClose={onCancel}
         onModalHide={onModalHide}
         footerButtons={

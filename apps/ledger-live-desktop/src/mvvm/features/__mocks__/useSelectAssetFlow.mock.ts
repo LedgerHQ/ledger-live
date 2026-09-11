@@ -8,6 +8,7 @@ export const baseCurrency = getCryptoCurrencyById("base");
 export const scrollCurrency = getCryptoCurrencyById("scroll");
 export const solanaCurrency = getCryptoCurrencyById("solana");
 export const hederaCurrency = getCryptoCurrencyById("hedera");
+export const hypercoreCurrency = getCryptoCurrencyById("hypercore");
 
 export const arbitrumToken: TokenCurrency = {
   type: "TokenCurrency",

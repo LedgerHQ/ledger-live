@@ -8387,6 +8387,10 @@
     "ICPInvalidPercentage": {
       "title": "Percentage out of range",
       "description": "Enter a whole number between 1 and 100."
+    },
+    "CurrencyRegionRestrictedError": {
+      "title": "{{currencyName}} is not available in your region",
+      "description": "Access to {{currencyName}} is restricted in your region."
     }
   },
   "cryptoOrg": {

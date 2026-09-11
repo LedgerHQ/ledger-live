@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
+import { CurrencyRegionRestrictedError } from "../../../errors";
 import type { StakingResources } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "../getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -172,6 +173,23 @@ describe("genericGetAccountShape", () => {
 
       expect(err).toBeInstanceOf(UnexpectedGetBalanceError);
       expect(err).toMatchObject({ cause });
+    });
+
+    test("rejects with CurrencyRegionRestrictedError when the backend geo-blocks the region", async () => {
+      const currency = { id: "hypercore", name: "Hyperliquid", family: "hypercore" };
+      const network = "mainnet";
+      const cause = Object.assign(new Error("LedgerAPI4xx"), { name: "LedgerAPI4xx", status: 405 });
+      getBalanceMock.mockRejectedValue(cause);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const err = await getShape(
+        { address: "rTest", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} },
+      ).catch((e: unknown) => e);
+
+      expect(err).toBeInstanceOf(CurrencyRegionRestrictedError);
+      expect(err).toMatchObject({ currencyName: currency.name, cause });
     });
   });
 

@@ -4,6 +4,8 @@ import { LoadingOverlay } from "LLD/components/LoadingOverlay";
 import { default as React, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
+import { useShowCurrencyRegionRestricted } from "LLD/features/CurrencyRegionRestrictedDialog/useShowCurrencyRegionRestricted";
+import { isCurrencyRegionRestrictedError } from "@ledgerhq/live-common/errors";
 import { useTheme } from "styled-components";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { themeSelector } from "~/renderer/actions/general";
@@ -61,6 +63,10 @@ const ScanAccounts = ({
     onComplete,
   });
 
+  const isRegionRestricted = isCurrencyRegionRestrictedError(error);
+
+  useShowCurrencyRegionRestricted(isRegionRestricted, currency.name);
+
   const formatAccount = useFormatAccount(currency);
 
   const renderAccount = useCallback(
@@ -86,6 +92,8 @@ const ScanAccounts = ({
     },
     [colors.opacityDefault.c05, formatAccount, handleToggle, selectedIds],
   );
+
+  if (isRegionRestricted) return null;
 
   if (error) {
     return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
