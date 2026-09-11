@@ -35,3 +35,5 @@ export type PropsFilter = (props: Props) => Props;
 export type TrackOptions = {
   mandatory?: boolean;
 };
+
+export type TrackingRouteRef = { current: string | null | undefined };
