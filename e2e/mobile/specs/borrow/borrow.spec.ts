@@ -24,15 +24,8 @@ const BORROW_TIMEOUT_MS = 600_000;
 const BORROW_PRECONDITION_TIMEOUT_MS = 1_800_000;
 const borrowSetupOptions = { nanoAppCatalogPath: NANO_APP_CATALOG_PATH };
 
-const BORROW_TAGS = [
-  "@NanoSP",
-  "@NanoX",
-  "@Stax",
-  "@Flex",
-  "@NanoGen5",
-  "@ethereum",
-  "@family-evm",
-];
+/** Button devices only: enabling blind signing needs the App settings menu, which is button-driven. */
+const BORROW_TAGS = ["@NanoSP", "@NanoX", "@ethereum", "@family-evm"];
 
 const describeBorrowFlow = shouldRunBroadcastFlow(BroadcastFlow.BORROW) ? describe : describe.skip;
 
