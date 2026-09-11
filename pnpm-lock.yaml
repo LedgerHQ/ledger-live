@@ -65338,7 +65338,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:

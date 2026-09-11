@@ -39,7 +39,9 @@ export function combineCardLinkedWallets({
         currency,
         network,
         priority,
-        ledgerId,
+        // Carried through, and left off when the link had none: an unmapped asset is a wallet
+        // without a `ledgerId`, not one holding `undefined`.
+        ...(ledgerId === undefined ? {} : { ledgerId }),
         balance,
         counterValue: balance === null ? null : counterValueFor({ currency, network }, balance),
       };

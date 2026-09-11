@@ -24,8 +24,11 @@ export function transformPayCardSessionResponse(response: PayCardSessionResponse
 export function transformPayCardLinkedWallets(
   response: readonly PayCardLinkedWalletResponse[],
 ): PayCardLinkedWallet[] {
-  return response.map(wallet => ({
-    ...wallet,
-    ledgerId: baanxAssetLedgerId(wallet.currency, wallet.network),
-  }));
+  return response.map(wallet => {
+    const ledgerId = baanxAssetLedgerId(wallet.currency, wallet.network);
+
+    // Left off rather than set to `undefined`: `ledgerId` is optional, so an unmapped asset is a
+    // wallet without one, not a wallet whose currency is the value `undefined`.
+    return ledgerId === undefined ? { ...wallet } : { ...wallet, ledgerId };
+  });
 }

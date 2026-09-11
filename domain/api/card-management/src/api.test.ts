@@ -1045,7 +1045,9 @@ describe("cardManagementApi requests", () => {
 
       const result = await readLinkedWallets();
 
-      expect(result.data?.[0]?.ledgerId).toBeUndefined();
+      const [wallet] = result.data ?? [];
+      // Absent rather than set to `undefined`, which is what the optional field promises.
+      expect(wallet && "ledgerId" in wallet).toBe(false);
     });
 
     it("keeps a priority of zero, which is the first wallet charged", async () => {
