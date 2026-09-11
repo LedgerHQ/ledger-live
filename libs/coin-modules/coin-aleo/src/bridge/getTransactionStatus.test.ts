@@ -29,6 +29,7 @@ import {
   AleoAmountTooLargeForTransaction,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
+  AleoNoClaimableAmount,
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
 } from "../errors";
@@ -871,6 +872,119 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(mockAccount, transaction);
 
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+  });
+
+  // `claim_unbond_public` signs no amount: the chain releases whatever has finished unbonding.
+  // So the usual amount checks do not apply, and the "available balance" being compared is the
+  // claimable position rather than a spendable balance.
+  describe("claim_unbond_public", () => {
+    const claimTransaction: Transaction = {
+      family: "aleo",
+      amount: new BigNumber(0),
+      useAllAmount: false,
+      recipient: mockAccount.freshAddress,
+      fees: mockFees,
+      mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+    };
+
+    /** `getClaimableStakingBalance` reads the synced blockHeight against `unbondingHeight`. */
+    const getClaimableAccount = (unbondingBalance: BigNumber, unbondingHeight: number | null) =>
+      getMockedAccount({
+        balance: mockBalance,
+        blockHeight: 1_000,
+        aleoResources: {
+          ...mockAleoResources,
+          transparentBalance: mockTransparentBalance,
+          privateBalance: mockPrivateBalance,
+          unbondingBalance,
+          unbondingHeight,
+        },
+      });
+
+    beforeEach(() => {
+      // prepareTransaction pins the amount to zero, so the fee is all that is spent.
+      mockCalculateAmount.mockReturnValue({
+        amount: new BigNumber(0),
+        totalSpent: mockFees,
+      });
+    });
+
+    it("validates clean once the unbonding height has been reached", async () => {
+      const account = getClaimableAccount(new BigNumber(15_000_000_000), 900);
+
+      const result = await getTransactionStatus(account, claimTransaction);
+
+      expect(result).toMatchObject({
+        amount: new BigNumber(0),
+        totalSpent: mockFees,
+        estimatedFees: mockFees,
+        errors: {},
+        warnings: {},
+      });
+    });
+
+    it("does not add AmountRequired even though the amount is zero", async () => {
+      const account = getClaimableAccount(new BigNumber(15_000_000_000), 900);
+
+      const result = await getTransactionStatus(account, claimTransaction);
+
+      expect(result.errors.amount).toBeUndefined();
+    });
+
+    it("adds AleoNoClaimableAmount while the unbonding period is still running", async () => {
+      const account = getClaimableAccount(new BigNumber(15_000_000_000), 1_100);
+
+      const result = await getTransactionStatus(account, claimTransaction);
+
+      expect(result.errors.amount).toBeInstanceOf(AleoNoClaimableAmount);
+    });
+
+    it("adds AleoNoClaimableAmount when there is no unbonding position at all", async () => {
+      const account = getClaimableAccount(new BigNumber(0), null);
+
+      const result = await getTransactionStatus(account, claimTransaction);
+
+      expect(result.errors.amount).toBeInstanceOf(AleoNoClaimableAmount);
+    });
+
+    it("does not report NotEnoughBalance when the claimable amount is below the fee", async () => {
+      // The claim releases funds rather than spending them, so a claimable amount smaller than
+      // the fee is not a balance problem — the fee is covered separately by validatePublicFees.
+      const account = getClaimableAccount(new BigNumber(1), 900);
+
+      const result = await getTransactionStatus(account, claimTransaction);
+
+      expect(result.errors.amount).toBeUndefined();
+    });
+
+    it("treats the account's own address as the staker rather than a self-send mistake", async () => {
+      const account = getClaimableAccount(new BigNumber(15_000_000_000), 900);
+
+      const result = await getTransactionStatus(account, claimTransaction);
+
+      expect(result.errors.recipient).toBeUndefined();
+    });
+
+    it("still reports a fee error when the transparent balance cannot cover the fee", async () => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+      const account = getMockedAccount({
+        balance: mockBalance,
+        blockHeight: 1_000,
+        aleoResources: {
+          ...mockAleoResources,
+          transparentBalance: mockFees.minus(1),
+          privateBalance: mockPrivateBalance,
+          unbondingBalance: new BigNumber(15_000_000_000),
+          unbondingHeight: 900,
+        },
+      });
+
+      const result = await getTransactionStatus(account, claimTransaction);
+
+      expect(result.errors.fees).toBeInstanceOf(NotEnoughBalance);
+      // The claimable position is untouched by the fee shortfall: it is not an amount problem.
+      expect(result.errors.amount).toBeUndefined();
     });
   });
 });

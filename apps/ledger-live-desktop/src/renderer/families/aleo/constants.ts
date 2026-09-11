@@ -3,6 +3,7 @@ export enum AleoCustomModal {
   BOND_PUBLIC = "MODAL_ALEO_BOND_PUBLIC",
   MANAGE = "MODAL_ALEO_MANAGE",
   UNBOND = "MODAL_ALEO_UNBOND",
+  CLAIM_UNBOND = "MODAL_ALEO_CLAIM_UNBOND",
 }
 
 export const DEFAULT_ALEO_VALIDATOR: Record<"mainnet" | "testnet", string> = {

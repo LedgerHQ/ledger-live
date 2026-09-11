@@ -43,6 +43,29 @@ export const ALEO_BONDED_ACCOUNT: AleoAccount = {
   },
 };
 
+/**
+ * Unbonding finished: `getClaimableStakingBalance` compares the account's last synced
+ * `blockHeight` against `unbondingHeight`, so both have to be set for a claim to be offered.
+ */
+export const ALEO_CLAIMABLE_ACCOUNT: AleoAccount = {
+  ...ALEO_MAIN_ACCOUNT,
+  blockHeight: 1_000,
+  aleoResources: {
+    ...ALEO_MAIN_ACCOUNT.aleoResources!,
+    unbondingBalance: new BigNumber(15_000_000_000),
+    unbondingHeight: 900,
+  },
+};
+
+/** Same position, still counting down: nothing is claimable yet. */
+export const ALEO_UNBONDING_ACCOUNT: AleoAccount = {
+  ...ALEO_CLAIMABLE_ACCOUNT,
+  aleoResources: {
+    ...ALEO_CLAIMABLE_ACCOUNT.aleoResources!,
+    unbondingHeight: 1_100,
+  },
+};
+
 export const ALEO_TOKEN_ACCOUNT: AleoTokenAccount = {
   type: "TokenAccount",
   id: "aleo-token-sub-account-id",

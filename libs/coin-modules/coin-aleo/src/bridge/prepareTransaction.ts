@@ -195,6 +195,24 @@ export const prepareTransaction: AccountBridge<
     });
   }
 
+  if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
+    const feeEstimation = estimateFees({
+      configOrCurrencyId: config,
+      transactionType: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+    });
+    const estimatedFees = new BigNumber(feeEstimation.value.toString());
+
+    return updateTransaction(transaction, {
+      // `claim_unbond_public` names only the staker: the chain releases whatever is claimable,
+      // so no amount is signed.
+      amount: new BigNumber(0),
+      fees: estimatedFees,
+      // The recipient flows into the on-chain `staker` field, which must be the account
+      // itself; pin it so a stale recipient cannot target another staker.
+      recipient: account.freshAddress,
+    });
+  }
+
   if (isPrivateTransaction(transaction)) {
     const derivedTransactionMode = derivePrivateTransactionMode({ isTokenTx, isSelfTransfer });
     const feeEstimation = estimateFees({

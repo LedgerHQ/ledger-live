@@ -581,9 +581,12 @@ export function isTokenTransaction(transaction: Pick<Transaction, "mode">): bool
   return isPublicTokenTransaction(transaction) || isPrivateTokenTransaction(transaction);
 }
 
-/** Unbonding moves funds within the account itself, so the recipient is the sender. */
+/** Unbonding and claiming move funds within the account itself, so the recipient is the sender. */
 export function isSelfStakingMode(transaction: Pick<Transaction, "mode">): boolean {
-  return transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC;
+  return (
+    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC
+  );
 }
 
 export function isSelfTransferTransaction(
@@ -602,6 +605,7 @@ export function isPublicTransaction(transaction: Transaction): transaction is Tr
     transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
     transaction.mode === TRANSACTION_TYPE.TRANSFER_PUBLIC ||
     transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC ||
     isPublicTokenTransaction(transaction)
   );
 }
@@ -987,6 +991,9 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
       return account.aleoResources?.transparentBalance ?? new BigNumber(0);
     case TRANSACTION_TYPE.UNBOND_PUBLIC:
       return account.aleoResources?.bondedBalance ?? new BigNumber(0);
+    // claiming releases whatever has finished unbonding; the chain decides the amount
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return getClaimableStakingBalance(account);
     // spending private native balance
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC: {
@@ -1119,6 +1126,12 @@ export function createTransactionIntent({
       return {
         ...base,
         data: { type: TRANSACTION_TYPE.UNBOND_PUBLIC },
+      };
+
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return {
+        ...base,
+        data: { type: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC },
       };
 
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:

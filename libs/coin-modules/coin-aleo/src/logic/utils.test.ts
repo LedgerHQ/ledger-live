@@ -96,6 +96,7 @@ import {
   sumStakedBalance,
   toStakingResources,
   isSelfTransferTransaction,
+  isSelfStakingMode,
   isPublicTransaction,
   isPrivateTransaction,
   isTokenTransaction,
@@ -1679,6 +1680,38 @@ describe("getAvailableBalance", () => {
       `aleo: unsupported tx mode for balance calculation: ${unsupportedMode}`,
     );
   });
+
+  // A claim releases the unbonding position rather than spending a balance, so what is
+  // "available" to it is whatever has finished unbonding.
+  it("should return the claimable balance for claim_unbond_public", () => {
+    const account = getMockedAccount({
+      blockHeight: 1_000,
+      aleoResources: {
+        ...mockAleoResources,
+        transparentBalance: mockTransparentBalance,
+        unbondingBalance: new BigNumber(15_000_000_000),
+        unbondingHeight: 900,
+      },
+    });
+    const transaction = getMockedTransaction({ mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC });
+
+    expect(getAvailableBalance(account, transaction)).toStrictEqual(new BigNumber(15_000_000_000));
+  });
+
+  it("should return zero for claim_unbond_public while the unbonding height is not reached", () => {
+    const account = getMockedAccount({
+      blockHeight: 1_000,
+      aleoResources: {
+        ...mockAleoResources,
+        transparentBalance: mockTransparentBalance,
+        unbondingBalance: new BigNumber(15_000_000_000),
+        unbondingHeight: 1_100,
+      },
+    });
+    const transaction = getMockedTransaction({ mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC });
+
+    expect(getAvailableBalance(account, transaction)).toStrictEqual(new BigNumber(0));
+  });
 });
 
 describe("toStakingResources", () => {
@@ -1807,11 +1840,26 @@ describe("isPublicTransaction", () => {
     [true, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
     [true, TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC],
     [true, TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
+    [true, TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC],
     [false, "other_type" as never],
   ] as const)("should return %s for mode '%s'", (expected, mode) => {
     const transaction = getMockedTransaction({ mode });
 
     expect(isPublicTransaction(transaction)).toBe(expected);
+  });
+});
+
+// Unbond and claim name the account as its own on-chain `staker`, so their recipient being the
+// account's own address is correct rather than a destination-is-source mistake.
+describe("isSelfStakingMode", () => {
+  it.each([
+    [true, TRANSACTION_TYPE.UNBOND_PUBLIC],
+    [true, TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC],
+    // A bond's recipient is the validator, so it is a genuine counterparty.
+    [false, TRANSACTION_TYPE.BOND_PUBLIC],
+    [false, TRANSACTION_TYPE.TRANSFER_PUBLIC],
+  ] as const)("should return %s for mode '%s'", (expected, mode) => {
+    expect(isSelfStakingMode({ mode })).toBe(expected);
   });
 });
 
@@ -1945,6 +1993,28 @@ describe("createTransactionIntent", () => {
         type: TRANSACTION_TYPE.BOND_PUBLIC,
         withdrawal: mockAccount.freshAddress,
       },
+    });
+  });
+
+  // The craft path dispatches on `data.type`, so a claim needs its own tagged payload even
+  // though it carries no arguments of its own beyond the staker.
+  it("should tag a claim_unbond_public intent with its own data type", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+      amount: new BigNumber(0),
+      recipient: mockAccount.freshAddress,
+    });
+
+    const result = createTransactionIntent({ account: mockAccount, transaction });
+
+    expect(result).toEqual({
+      intentType: "transaction",
+      asset: { type: "native" },
+      type: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+      amount: 0n,
+      recipient: mockAccount.freshAddress,
+      sender: mockAccount.freshAddress,
+      data: { type: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC },
     });
   });
 

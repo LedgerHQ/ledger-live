@@ -26,6 +26,7 @@ const family: AleoFamily = {
     "MODAL_ALEO_BOND_PUBLIC",
     "MODAL_ALEO_MANAGE",
     "MODAL_ALEO_UNBOND",
+    "MODAL_ALEO_CLAIM_UNBOND",
   ],
 };
 

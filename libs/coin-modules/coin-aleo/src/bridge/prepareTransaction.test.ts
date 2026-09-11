@@ -637,4 +637,49 @@ describe("prepareTransaction", () => {
       },
     });
   });
+
+  describe("claim_unbond_public", () => {
+    const claimTransaction: Transaction = {
+      ...mockTransaction,
+      mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+      amount: new BigNumber(0),
+    };
+
+    it("should pin the amount to zero, since the chain decides how much is released", async () => {
+      const result = await prepareTransaction(mockAccount, claimTransaction);
+
+      expect(result.amount).toEqual(new BigNumber(0));
+      // No amount is signed, so there is nothing for calculateAmount to resolve.
+      expect(mockCalculateAmount).not.toHaveBeenCalled();
+    });
+
+    it("should set the claim fee", async () => {
+      const result = await prepareTransaction(mockAccount, claimTransaction);
+
+      expect(mockEstimateFees).toHaveBeenCalledWith({
+        configOrCurrencyId: mockConfig,
+        transactionType: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+      });
+      expect(result.fees).toEqual(mockFees);
+    });
+
+    it("should carry a non-zero amount through as zero", async () => {
+      // A stale amount left over from another step must not reach the signed payload.
+      const result = await prepareTransaction(mockAccount, {
+        ...claimTransaction,
+        amount: new BigNumber(12_345),
+      });
+
+      expect(result.amount).toEqual(new BigNumber(0));
+    });
+
+    it("should pin the recipient to the account's own address as the on-chain staker", async () => {
+      const result = await prepareTransaction(mockAccount, {
+        ...claimTransaction,
+        recipient: "aleo1someoneelse",
+      });
+
+      expect(result.recipient).toBe(mockAccount.freshAddress);
+    });
+  });
 });

@@ -34,12 +34,14 @@ import aleoCoinConfig from "../config";
 import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  TRANSACTION_TYPE,
 } from "../constants";
 import {
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
+  AleoNoClaimableAmount,
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
 } from "../errors";
@@ -270,7 +272,7 @@ async function handleTransferTransaction({
   const recipientError = await validateRecipient({
     account,
     recipient: transaction.recipient,
-    // An unbond names the account as its own on-chain `staker`, so the own-address
+    // An unbond or a claim names the account as its own on-chain `staker`, so the own-address
     // recipient is correct here rather than a destination-is-source mistake.
     allowSelfTransfer: allowSelfTransfer || isSelfStakingMode(transaction),
   });
@@ -279,7 +281,13 @@ async function handleTransferTransaction({
     errors.recipient = recipientError;
   }
 
-  if (!transaction.useAllAmount && transaction.amount.lte(0)) {
+  // `claim_unbond_public` signs no amount at all — the chain releases whatever has finished
+  // unbonding — so a zero amount is the expected shape rather than a missing input.
+  if (
+    transaction.mode !== TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC &&
+    !transaction.useAllAmount &&
+    transaction.amount.lte(0)
+  ) {
     errors.amount = new AmountRequired();
   }
 
@@ -298,7 +306,14 @@ async function handleTransferTransaction({
 
   Object.assign(errors, validatePublicFees({ account, transaction, config, estimatedFees }));
 
-  if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
+  if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
+    // For a claim `availableBalance` is the claimable amount and `totalSpent` is only the fee,
+    // which validatePublicFees already checked against the transparent balance. There is
+    // nothing to claim rather than not enough balance.
+    if (availableBalance.lte(0)) {
+      errors.amount = new AleoNoClaimableAmount();
+    }
+  } else if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance();
   }
 
