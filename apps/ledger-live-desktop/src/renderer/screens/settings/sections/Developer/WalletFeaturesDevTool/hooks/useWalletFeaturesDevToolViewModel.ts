@@ -2,9 +2,20 @@ import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
 import { setOverride } from "@shared/feature-flags";
-import { hasSeenWalletV4TourSelector, hasSeenQ2TourSelector } from "~/renderer/reducers/settings";
-import { setHasSeenWalletV4Tour, setHasSeenQ2Tour } from "~/renderer/actions/settings";
-import { isQ2ReleaseTourEnabled } from "LLD/features/Q2Tour/releaseTourGate";
+import {
+  hasSeenWalletV4TourSelector,
+  hasSeenQ2TourSelector,
+  hasSeenQ3TourSelector,
+} from "~/renderer/reducers/settings";
+import {
+  setHasSeenWalletV4Tour,
+  setHasSeenQ2Tour,
+  setHasSeenQ3Tour,
+} from "~/renderer/actions/settings";
+import {
+  isQ2ReleaseTourEnabled,
+  isQ3ReleaseTourEnabled,
+} from "LLD/features/Q2Tour/releaseTourGate";
 import {
   RELEASE_TOUR_FLAG,
   WALLET_FEATURES_FLAG,
@@ -19,9 +30,11 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
   const releaseTour = useFeature(RELEASE_TOUR_FLAG);
   const hasSeenWalletV4Tour = useSelector(hasSeenWalletV4TourSelector);
   const hasSeenQ2Tour = useSelector(hasSeenQ2TourSelector);
+  const hasSeenQ3Tour = useSelector(hasSeenQ3TourSelector);
 
   const isEnabled = featureFlag?.enabled ?? false;
   const isQ2TourEnabled = isQ2ReleaseTourEnabled(releaseTour);
+  const isQ3TourEnabled = isQ3ReleaseTourEnabled(releaseTour);
 
   const params = useMemo<WalletFeatureParams>(
     () => (featureFlag?.params as WalletFeatureParams) ?? {},
@@ -100,6 +113,23 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
     );
   }, [dispatch, isQ2TourEnabled, releaseTour]);
 
+  const handleToggleQ3TourHasSeen = useCallback(() => {
+    dispatch(setHasSeenQ3Tour(!hasSeenQ3Tour));
+  }, [dispatch, hasSeenQ3Tour]);
+
+  const handleToggleQ3TourEnabled = useCallback(() => {
+    const next = !isQ3TourEnabled;
+    dispatch(
+      setOverride({
+        key: RELEASE_TOUR_FLAG,
+        value: {
+          enabled: next,
+          params: { variant: next ? "q3_a" : releaseTour?.params?.variant },
+        },
+      }),
+    );
+  }, [dispatch, isQ3TourEnabled, releaseTour]);
+
   return {
     featureFlag,
     isEnabled,
@@ -108,11 +138,15 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
     hasSeenWalletV4Tour,
     hasSeenQ2Tour,
     isQ2TourEnabled,
+    hasSeenQ3Tour,
+    isQ3TourEnabled,
     handleToggleAll,
     handleToggleEnabled,
     handleToggleParam,
     handleToggleHasSeenTour,
     handleToggleQ2TourHasSeen,
     handleToggleQ2TourEnabled,
+    handleToggleQ3TourHasSeen,
+    handleToggleQ3TourEnabled,
   };
 };
