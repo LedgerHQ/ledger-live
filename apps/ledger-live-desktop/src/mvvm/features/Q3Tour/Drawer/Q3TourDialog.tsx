@@ -1,8 +1,8 @@
 import React from "react";
-import { ReleaseTourDialog } from "LLD/components/ReleaseTour";
-import { Q3_TOUR_CONFIG } from "./const";
+import { ReleaseTourDialog, type ReleaseTourConfig } from "LLD/components/ReleaseTour";
 
 interface Q3TourDialogProps {
+  readonly tour: ReleaseTourConfig;
   readonly isOpen: boolean;
   readonly onHeaderClose: () => void;
   readonly onDismiss: () => void;
@@ -12,6 +12,7 @@ interface Q3TourDialogProps {
 }
 
 export const Q3TourDialog = ({
+  tour,
   isOpen,
   onHeaderClose,
   onDismiss,
@@ -20,7 +21,7 @@ export const Q3TourDialog = ({
   onSlideChange,
 }: Q3TourDialogProps) => (
   <ReleaseTourDialog
-    tour={Q3_TOUR_CONFIG}
+    tour={tour}
     isOpen={isOpen}
     onHeaderClose={onHeaderClose}
     onDismiss={onDismiss}

@@ -1,7 +1,6 @@
 import { track, trackPage } from "~/renderer/analytics/segment";
-import { Q3_TOUR_SLIDES } from "../../Drawer/const";
 import { PAGE_TRACKING_Q3_TOUR } from "../const";
-import { Q3_TOUR_ANALYTICS } from "../q3TourCarouselAnalytics";
+import { createQ3TourAnalytics } from "../q3TourCarouselAnalytics";
 
 jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
@@ -9,24 +8,24 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 
 describe("q3TourCarouselAnalytics", () => {
+  const analytics = createQ3TourAnalytics(4);
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("should track the Q3 campaign and current carousel step", () => {
-    const context = Q3_TOUR_ANALYTICS.getContext(1, "Say goodbye to long addresses");
+    const context = analytics.getContext(1, "Say goodbye to long addresses");
 
     expect(context).toEqual({
       page: PAGE_TRACKING_Q3_TOUR,
       contentId: "q3-tour",
       step: 2,
       stepName: "Say goodbye to long addresses",
-      totalSteps: Q3_TOUR_SLIDES.length,
+      totalSteps: 4,
     });
 
-    Q3_TOUR_ANALYTICS.trackInitialStep(
-      Q3_TOUR_ANALYTICS.getContext(0, "A quick tour of the latest"),
-    );
+    analytics.trackInitialStep(analytics.getContext(0, "A quick tour of the latest"));
 
     expect(trackPage).toHaveBeenCalledWith(
       PAGE_TRACKING_Q3_TOUR,
@@ -42,11 +41,11 @@ describe("q3TourCarouselAnalytics", () => {
   });
 
   it("should track continue, dismiss, and completion interactions", () => {
-    const context = Q3_TOUR_ANALYTICS.getContext(3, "Keep your crypto, finance your projects");
+    const context = analytics.getContext(3, "Keep your crypto, finance your projects");
 
-    Q3_TOUR_ANALYTICS.trackContinueClick(context);
-    Q3_TOUR_ANALYTICS.trackDismissed(context);
-    Q3_TOUR_ANALYTICS.trackCompleted(context);
+    analytics.trackContinueClick(context);
+    analytics.trackDismissed(context);
+    analytics.trackCompleted(context);
 
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
@@ -62,7 +61,15 @@ describe("q3TourCarouselAnalytics", () => {
     );
     expect(track).toHaveBeenCalledWith(
       "tour_completed",
-      expect.objectContaining({ step: 4, totalSteps: Q3_TOUR_SLIDES.length }),
+      expect.objectContaining({ step: 4, totalSteps: 4 }),
+    );
+  });
+
+  it("should use the selected variant slide count", () => {
+    const q3BAnalytics = createQ3TourAnalytics(3);
+
+    expect(q3BAnalytics.getContext(2, "Keep your crypto, finance your projects")).toEqual(
+      expect.objectContaining({ step: 3, totalSteps: 3 }),
     );
   });
 });

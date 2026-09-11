@@ -10,15 +10,23 @@ import {
 } from "~/renderer/reducers/settings";
 
 function Q3TourSetupHarness() {
-  const { hasSeenQ3Tour, isQ3TourEnabled, handleToggleQ3TourHasSeen, handleToggleQ3TourEnabled } =
-    useWalletFeaturesDevToolViewModel();
+  const {
+    hasSeenQ3Tour,
+    isQ3TourEnabled,
+    selectedQ3TourVariant,
+    handleToggleQ3TourHasSeen,
+    handleToggleQ3TourEnabled,
+    handleQ3TourVariantChange,
+  } = useWalletFeaturesDevToolViewModel();
 
   return (
     <Q3TourSection
       hasSeen={hasSeenQ3Tour}
       isEnabled={isQ3TourEnabled}
+      selectedVariant={selectedQ3TourVariant}
       onToggleHasSeen={handleToggleQ3TourHasSeen}
       onToggleEnabled={handleToggleQ3TourEnabled}
+      onVariantChange={handleQ3TourVariantChange}
       onOpenDrawer={jest.fn()}
     />
   );
@@ -49,6 +57,21 @@ describe("Q3 Tour setup", () => {
     expect(hasSeenQ3TourSelector(store.getState())).toBe(true);
     expect(hasSeenQ2TourSelector(store.getState())).toBe(false);
     expect(hasSeenWalletV4TourSelector(store.getState())).toBe(false);
+  });
+
+  it("should update the Q3 release tour variant without changing enabled state", async () => {
+    const { user, store } = render(<Q3TourSetupHarness />, {
+      initialState: withFlagOverrides({
+        releaseTour: { enabled: true, params: { variant: "q3_a" } },
+      }),
+    });
+
+    await user.click(screen.getByText("q3_b"));
+
+    expect(selectFeature(store.getState(), "releaseTour")).toEqual({
+      enabled: true,
+      params: { variant: "q3_b" },
+    });
   });
 
   it("should enable Open Drawer when the tour has not been seen", () => {

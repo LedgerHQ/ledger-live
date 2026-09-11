@@ -32,6 +32,7 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
     isQ2TourEnabled,
     hasSeenQ3Tour,
     isQ3TourEnabled,
+    selectedQ3TourVariant,
     handleToggleAll,
     handleToggleEnabled,
     handleToggleParam,
@@ -40,6 +41,7 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
     handleToggleQ2TourEnabled,
     handleToggleQ3TourHasSeen,
     handleToggleQ3TourEnabled,
+    handleQ3TourVariantChange,
   } = useWalletFeaturesDevToolViewModel();
   const { isDialogOpen, handleOpenDialog, closeDrawer, completeDrawer, onSlideChange } =
     useWalletV4TourDrawerViewModel();
@@ -53,6 +55,7 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
     onContinueClick: onQ2TourContinueClick,
   } = useQ2TourDrawerViewModel();
   const {
+    tour: q3Tour,
     isDialogOpen: isQ3TourOpen,
     handleOpenDialog: handleOpenQ3Tour,
     closeDrawer: closeQ3Tour,
@@ -112,8 +115,10 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
           <Q3TourSection
             hasSeen={hasSeenQ3Tour}
             isEnabled={isQ3TourEnabled}
+            selectedVariant={selectedQ3TourVariant}
             onToggleHasSeen={handleToggleQ3TourHasSeen}
             onToggleEnabled={handleToggleQ3TourEnabled}
+            onVariantChange={handleQ3TourVariantChange}
             onOpenDrawer={handleOpenQ3Tour}
           />
 
@@ -140,6 +145,7 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
           />
 
           <Q3TourDialog
+            tour={q3Tour}
             isOpen={isQ3TourOpen}
             onHeaderClose={closeQ3Tour}
             onDismiss={dismissQ3Tour}
