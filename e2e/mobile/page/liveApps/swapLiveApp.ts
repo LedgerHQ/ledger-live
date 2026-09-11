@@ -8,12 +8,10 @@ import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import {
   QUOTE_CARD_PROVIDER_NAME_FRAGMENT,
   quoteCardCtaPattern,
-  quoteCardMarkupPrefix,
+  quoteCardVariantPrefix,
   SWAP_FLAG_OVERRIDES_KEY,
   swapFlagPresetPayload,
-  swapFlagPresetQuoteCard,
-  type QuoteCardCtaCopy,
-  type QuoteCardMarkup,
+  type QuoteCardVariant,
   type SwapFlagPreset,
 } from "@ledgerhq/live-e2e-shared/data/swapLiveAppFlags";
 
@@ -31,7 +29,7 @@ const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - qu
 export default class SwapLiveAppPage {
   private static readonly QUOTE_CARD_PROVIDER_NAMES = `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}']`;
 
-  private pinnedCtaCopy: QuoteCardCtaCopy | null = null;
+  private flagPresetPinned = false;
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -174,24 +172,23 @@ export default class SwapLiveAppPage {
     await tapWebElementByElement(card);
   }
 
-  // Only the loaded page can write its localStorage, and the atom reads the key once per load.
+  // Only the loaded page can write its localStorage, and the atom reads the key once.
   @Step("Pin swap live app feature flags: {{{0}}}")
   async applyFlagPreset(preset: SwapFlagPreset) {
     await this.swapMainContainerWebElement.runScript(
       (_el: HTMLElement, key: string, value: string) => localStorage.setItem(key, value),
       [SWAP_FLAG_OVERRIDES_KEY, swapFlagPresetPayload(preset)],
     );
-    this.pinnedCtaCopy = swapFlagPresetQuoteCard[preset].ctaCopy;
+    this.flagPresetPinned = true;
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.swap.openViaDeeplink();
     await this.expectSwapLiveAppForm();
   }
 
-  // The override outlives the test, so clear it in teardown. A failed test can leave any
-  // screen on top, and a missing live app is nothing to clean rather than a new failure.
+  // The override outlives the test. A missing live app is nothing to clean, not a failure.
   @Step("Clear swap live app feature flag overrides")
   async clearFlagOverrides() {
-    this.pinnedCtaCopy = null;
+    this.flagPresetPinned = false;
     try {
       await this.swapMainContainerWebElement.runScript(
         (_el: HTMLElement, key: string) => localStorage.removeItem(key),
@@ -202,12 +199,12 @@ export default class SwapLiveAppPage {
     }
   }
 
-  @Step("Check quote card markup: {{{0}}}")
-  async checkQuoteCardMarkup(markup: QuoteCardMarkup) {
+  @Step("Check quote card variant: {{{0}}}")
+  async checkQuoteCardVariant(variant: QuoteCardVariant) {
     await retryUntilTimeout(async () => {
       const cards = await getWebElementsText(
         this.swapMainContainerWebElement,
-        `[data-testid^='${quoteCardMarkupPrefix[markup]}']`,
+        `[data-testid^='${quoteCardVariantPrefix[variant]}']`,
       );
       jestExpect(cards.length).toBeGreaterThan(0);
     });
@@ -367,7 +364,7 @@ export default class SwapLiveAppPage {
       quoteCardCtaPattern({
         providerUiName: provider,
         approvalRequired,
-        copy: this.pinnedCtaCopy,
+        pinned: this.flagPresetPinned,
       }),
     );
   }

@@ -1,20 +1,18 @@
-// swap-live-app merges this localStorage key over its Firebase flags, so e2e can pin one variant.
+// swap-live-app merges this localStorage key over its Firebase flags.
 export const SWAP_FLAG_OVERRIDES_KEY = "feature-flag-overrides";
 
-export type QuoteCardMarkup = "lumen" | "compact";
-export type QuoteCardCtaCopy = "short" | "provider";
+export type QuoteCardVariant = "legacy" | "lumen";
 
-// The merge is shallow per key, so a preset holds the whole flag object. Of the four
-// LIVE-37173 variants only the CTA copy is observable: the design variants just swap CSS classes.
+// The two values the A/B test serves. The merge is shallow per key, so a preset holds the
+// whole flag object. `variant` is tracking only.
 export const swapFlagPresets = {
-  quoteCardShortCta: { ptxLumenQuoteCard: { enabled: true } },
-  quoteCardProviderCta: {
+  lumenQuoteCardDisabled: { ptxLumenQuoteCard: { enabled: false } },
+  lumenQuoteCardEnabled: {
     ptxLumenQuoteCard: {
       enabled: true,
       params: { internalVariant: "ptxLumenQuoteSameCtaCopy" },
     },
   },
-  quoteCardCompact: { ptxLumenQuoteCard: { enabled: false } },
 } as const;
 
 export type SwapFlagPreset = keyof typeof swapFlagPresets;
@@ -22,44 +20,36 @@ export type SwapFlagPreset = keyof typeof swapFlagPresets;
 export const swapFlagPresetPayload = (preset: SwapFlagPreset): string =>
   JSON.stringify(swapFlagPresets[preset]);
 
-export const swapFlagPresetQuoteCard: Record<
-  SwapFlagPreset,
-  { markup: QuoteCardMarkup; ctaCopy: QuoteCardCtaCopy }
-> = {
-  quoteCardShortCta: { markup: "lumen", ctaCopy: "short" },
-  quoteCardProviderCta: { markup: "lumen", ctaCopy: "provider" },
-  quoteCardCompact: { markup: "compact", ctaCopy: "provider" },
+// `enabled` alone picks the card. Both presets share the CTA copy.
+export const quoteCardVariantByPreset: Record<SwapFlagPreset, QuoteCardVariant> = {
+  lumenQuoteCardDisabled: "legacy",
+  lumenQuoteCardEnabled: "lumen",
 };
 
-// Shared by both markups: contains-match finds any card, a prefix pins one markup.
+// Contains-match finds any card, a prefix pins one variant.
 export const QUOTE_CARD_PROVIDER_NAME_FRAGMENT = "quote-card-provider-name-";
 
-export const quoteCardMarkupPrefix: Record<QuoteCardMarkup, string> = {
+export const quoteCardVariantPrefix: Record<QuoteCardVariant, string> = {
+  legacy: `compact-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
   lumen: `lumen-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
-  compact: `compact-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
 };
 
 // Provider UI names (e.g. "LI.FI") can carry regex metacharacters.
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-// No pinned copy means both shapes pass: the deployed app owns the variant.
+// Both presets name the provider. Unpinned runs also accept the short copy, which
+// Firebase still serves today.
 export const quoteCardCtaPattern = ({
   providerUiName,
   approvalRequired = false,
-  copy,
+  pinned = false,
 }: {
   providerUiName: string;
   approvalRequired?: boolean;
-  copy?: QuoteCardCtaCopy | null;
+  pinned?: boolean;
 }): RegExp => {
-  const shortShape = approvalRequired ? "Continue" : "Review";
-  const providerVerbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
-  const providerShape = `(?:${providerVerbs}) with ${escapeRegExp(providerUiName)}`;
-  const shapes =
-    copy === "short"
-      ? [shortShape]
-      : copy === "provider"
-        ? [providerShape]
-        : [shortShape, providerShape];
-  return new RegExp(`^(?:${shapes.join("|")})$`, "i");
+  const verbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
+  const withProvider = `(?:${verbs}) with ${escapeRegExp(providerUiName)}`;
+  const short = approvalRequired ? "Continue" : "Review";
+  return new RegExp(pinned ? `^${withProvider}$` : `^(?:${short}|${withProvider})$`, "i");
 };
