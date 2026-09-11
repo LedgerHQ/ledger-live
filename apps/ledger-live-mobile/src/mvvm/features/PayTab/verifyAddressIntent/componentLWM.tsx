@@ -3,7 +3,7 @@ import { Box, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ShieldLock } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
 import { InfoState } from "@shared/ui-info-state";
-import { useTranslation } from "~/context/Locale";
+import { useTranslation } from "@shared/i18n";
 
 type Props = Readonly<{
   jobState: VerifyAddressIntentJobState | undefined;

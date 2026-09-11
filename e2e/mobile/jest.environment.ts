@@ -12,6 +12,8 @@ import {
   installConsoleCapture,
   uninstallConsoleCapture,
 } from "@e2e/utils/loggingUtils";
+import { allure } from "jest-allure2-reporter/api";
+import type { OptionalFeatureMap } from "@shared/feature-flags";
 import { getLogs } from "@e2e/bridge/server";
 import { Circus } from "@jest/types";
 import {
@@ -44,7 +46,36 @@ import { withTimeout } from "@e2e/utils/withTimeout";
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
 
-async function captureFailureDiagnostics(): Promise<void> {
+// Set by the patched Detox retry (patches/detox@20.51.3.patch) to the exact full names of the
+// tests that failed in the previous attempt.
+const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
+  ? new Set<string>(JSON.parse(process.env.E2E_RETRY_TEST_NAMES))
+  : undefined;
+
+/**
+ * Mark every test that is not in `names` (so passed in the previous attempt) as skipped.
+ * Skipped tests write no Allure result, so the previous attempt's verdict remains.
+ */
+const skipToRetrySet = (
+  block: Circus.DescribeBlock,
+  names: Set<string>,
+  path: string[] = [],
+): number => {
+  let kept = 0;
+  for (const child of block.children) {
+    if (child.type === "describeBlock") {
+      kept += skipToRetrySet(child, names, [...path, child.name]);
+      // Mirrors jest-circus getTestID: the names path minus the root block, space-joined.
+    } else if (names.has([...path, child.name].join(" "))) {
+      kept++;
+    } else {
+      child.mode = "skip";
+    }
+  }
+  return kept;
+};
+
+async function captureFailureDiagnostics(mergedFeatureFlags?: OptionalFeatureMap): Promise<void> {
   await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
   await withTimeout(
     attachSpeculinhoLogsToAllure(),
@@ -66,6 +97,17 @@ async function captureFailureDiagnostics(): Promise<void> {
     FAST_DIAGNOSTIC_TIMEOUT_MS,
     "attachSpeculosStartupErrorToAllure",
   );
+  if (mergedFeatureFlags) {
+    await withTimeout(
+      allure.attachment(
+        "Merged Feature Flags",
+        JSON.stringify(mergedFeatureFlags, null, 2),
+        "application/json",
+      ),
+      FAST_DIAGNOSTIC_TIMEOUT_MS,
+      "attachMergedFeatureFlags",
+    );
+  }
   // getLogs has its own 10s RESPONSE_TIMEOUT inside the bridge; this outer bound
   // is just defense-in-depth in case the inner timer is starved on a wedged worker.
   let logs = await withTimeout(getLogs(), 12_000, "getLogs");
@@ -144,6 +186,7 @@ export default class TestEnvironment extends DetoxEnvironment {
 
     this.global.app = appInstance;
     this.global.IS_FAILED = false;
+    this.global.mergedFeatureFlags = undefined;
     this.global.speculosDevices = speculosDevicesMap;
     this.global.webSocket = webSocketObj;
     this.global.pendingCallbacks = pendingCallbacksMap;
@@ -297,17 +340,29 @@ export default class TestEnvironment extends DetoxEnvironment {
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
     if (event.name === "hook_failure") {
       this.global.IS_FAILED = true;
-      await captureFailureDiagnostics();
+      await captureFailureDiagnostics(this.global.mergedFeatureFlags);
     }
 
     await super.handleTestEvent(event, state);
 
     if (event.name === "test_fn_failure") {
       this.global.IS_FAILED = true;
-      await captureFailureDiagnostics();
+      await captureFailureDiagnostics(this.global.mergedFeatureFlags);
     }
 
     if (event.name === "run_start") {
+      if (retryTestNames) {
+        const kept = skipToRetrySet(state.rootDescribeBlock, retryTestNames);
+        // Detox only retries spec files that failed, and narrowing is all-or-nothing, so every
+        // retried file contributed at least one name. Matching none means the names and the tree
+        // disagree — fail loudly rather than skip the whole file and report a green pass.
+        if (kept === 0) {
+          throw new Error(
+            `E2E_RETRY_TEST_NAMES matched no test in this file, so the retry would run nothing. ` +
+              `Expected one of: ${[...retryTestNames].join(" | ")}`,
+          );
+        }
+      }
       resetStderrCaptureForCurrentTest();
       installConsoleCapture();
       await logMemoryUsage();

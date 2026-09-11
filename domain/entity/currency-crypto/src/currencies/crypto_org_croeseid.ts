@@ -23,7 +23,6 @@ export const crypto_org_croeseid = currency({
     },
   ],
   isTestnetFor: "crypto_org",
-  disableCountervalue: true,
   explorerViews: [
     {
       tx: "https://cronos-pos.org/explorer/croeseid/tx/$hash",

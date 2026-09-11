@@ -116,6 +116,15 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://www.thorswap.finance/",
     needsKYC: false,
   },
+  swapkit_hyperliquid: {
+    type: "CEX",
+    useInExchangeApp: true,
+    displayName: "SwapKit",
+    termsOfUseUrl: "https://swapkit.dev/terms-of-service/",
+    supportUrl: "https://ledgerhelp.swapkit.dev/",
+    mainUrl: "https://swapkit.dev/",
+    needsKYC: false,
+  },
   nearintents: {
     type: "CEX",
     useInExchangeApp: true,

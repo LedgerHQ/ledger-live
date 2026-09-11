@@ -52,6 +52,11 @@ export default class AccountsPage extends CommonPage {
     jestExpect(foundAccounts).toBe(expectedAccountCount);
   }
 
+  @Step("Expect account {{{0}}} to be absent from the list")
+  async expectAccountAbsence(accountId: string) {
+    await waitForElementNotVisible(`${this.accountItemId + accountId}-name`);
+  }
+
   @Step("Expect no accounts screen")
   async expectNoAccount() {
     if (await isAggregatedAssetsEnabled()) {

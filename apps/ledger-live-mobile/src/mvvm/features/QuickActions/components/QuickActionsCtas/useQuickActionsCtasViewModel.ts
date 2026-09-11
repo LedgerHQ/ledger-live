@@ -28,6 +28,9 @@ import { useTranslation } from "~/context/Locale";
 import useBuyDeviceAction from "LLM/features/Reborn/hooks/useBuyDeviceAction";
 import { useOpenSwap } from "LLM/features/Swap";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
+import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 const BUTTON_LOCATION = "quick_action";
 
@@ -70,6 +73,11 @@ export const useQuickActionsCtasViewModel = ({
     sourceScreenName: pageName,
     fromMenu: false,
   });
+  const { isEnabledForFamily } = useNewSendFlowFeature();
+  const shouldOpenNewSendFlow = isEnabledForFamily();
+  const { handleOpenSendFlow } = useOpenSendFlow({
+    sourceScreenName: pageName,
+  });
 
   const userState: UserQuickActionsState = useMemo(() => {
     if (readOnlyModeEnabled) return "no_signer";
@@ -79,7 +87,11 @@ export const useQuickActionsCtasViewModel = ({
 
   const trackPress = useCallback(
     (button: string) => {
-      track("button_clicked", { button, buttonLocation: BUTTON_LOCATION, page: pageName });
+      track("button_clicked", {
+        button,
+        buttonLocation: BUTTON_LOCATION,
+        page: pageName,
+      });
     },
     [pageName],
   );
@@ -96,7 +108,9 @@ export const useQuickActionsCtasViewModel = ({
 
   const handleBuyPress = useCallback(() => {
     trackPress("buy");
-    navigation.navigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy });
+    navigation.navigate(NavigatorName.Exchange, {
+      screen: ScreenName.ExchangeBuy,
+    });
   }, [trackPress, navigation]);
 
   const handleConnectPress = useCallback(() => {
@@ -120,10 +134,26 @@ export const useQuickActionsCtasViewModel = ({
     handleOpenReceiveDrawer();
   }, [trackPress, handleOpenReceiveDrawer]);
 
+  const sendTrackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(null, null, shouldOpenNewSendFlow),
+    [shouldOpenNewSendFlow],
+  );
+
   const handleSendPress = useCallback(() => {
-    trackPress("send");
-    navigation.navigate(NavigatorName.SendFunds, { screen: ScreenName.SendCoin });
-  }, [trackPress, navigation]);
+    track("button_clicked", {
+      ...sendTrackingProperties,
+      button: "send",
+      buttonLocation: BUTTON_LOCATION,
+      page: pageName,
+    });
+    if (shouldOpenNewSendFlow) {
+      handleOpenSendFlow();
+      return;
+    }
+    navigation.navigate(NavigatorName.SendFunds, {
+      screen: ScreenName.SendCoin,
+    });
+  }, [handleOpenSendFlow, navigation, pageName, sendTrackingProperties, shouldOpenNewSendFlow]);
 
   // no signer: Connect + Buy Ledger
   const noSignerActions: readonly QuickActionCta[] = useMemo(

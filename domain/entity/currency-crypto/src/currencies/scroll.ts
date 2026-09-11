@@ -37,7 +37,6 @@ export const scroll = currency({
       magnitude: 0,
     },
   ],
-  disableCountervalue: false,
   ethereumLikeInfo: {
     chainId: 534352,
   },

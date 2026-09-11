@@ -39,7 +39,7 @@ export const cardLoginMachine = setup({
     clearErrorKind,
     failPkce,
     /**
-     * `CardLogout` is a separate component with no machine, so it cannot read this snapshot. These two
+     * `CardMore` is a separate component with no machine, so it cannot read this snapshot. These two
      * publish the answer it needs through a port, on entry, which keeps the flag and the state in step.
      */
     publishSignedIn: ({ context }) => context.ports.setSignedIn(true),
@@ -245,7 +245,7 @@ export const cardLoginMachine = setup({
 
     ready: {
       entry: "publishSignedIn",
-      // `CardLogout` ended the session, and it owns that whole journey. Nothing is left to undo here,
+      // `CardMore` ended the session, and it owns that whole journey. Nothing is left to undo here,
       // so this only puts the login back on offer.
       on: { SESSION_ENDED: { target: "idle" } },
     },

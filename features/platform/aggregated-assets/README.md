@@ -25,9 +25,9 @@ in the store.
 
 ## `reducerPath` must stay `"assetsDataApi"`
 
-The cache selectors read `state.assetsDataApi?.queries` **by string**, and Storybook stories preload
-that same key directly. Renaming `reducerPath` produces **no type error** and silently returns
-`undefined` for every market and interest-rate lookup.
+The cache selectors read `state.assetsDataApi?.queries` **by string**. Renaming `reducerPath`
+produces **no type error** and silently returns `undefined` for every market and interest-rate
+lookup.
 
 ## Cache selectors scan every cache entry
 

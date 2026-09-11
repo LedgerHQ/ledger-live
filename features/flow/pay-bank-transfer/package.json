@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-bank-transfer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Pay cash-to-stable bank transfer intro for Ledger Wallet",
   "main": "src/index.ts",
@@ -26,6 +26,9 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-bank-transfer"
+  },
+  "dependencies": {
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",

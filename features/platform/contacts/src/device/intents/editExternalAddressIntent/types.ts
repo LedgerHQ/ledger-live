@@ -1,8 +1,10 @@
+import type { DeviceModelId } from "@ledgerhq/device-management-kit";
 import type {
   Intent,
   IntentDefinition,
   IntentPlatformDefinition,
 } from "@features/platform-device-intent";
+import type { ContactDeviceIntentFailureJobState } from "../../contactsDeviceActionFailure";
 import type { ContactIntentResult } from "../resultReporter";
 
 type ContactIdentifier = string;
@@ -39,14 +41,27 @@ export type EditExternalAddressResult = Readonly<{
 
 export type EditExternalAddressJobState =
   | { readonly type: "pending" }
-  | { readonly type: "awaiting-device-confirmation"; readonly step: EditExternalAddressStep }
+  /**
+   * Names the step under confirmation, and carries the connected device so the
+   * renderer can name the product and pick the matching animation: the executor
+   * hands intent components only the job state, so the job is what publishes
+   * the device.
+   */
+  | {
+      readonly type: "awaiting-device-confirmation";
+      readonly step: EditExternalAddressStep;
+      readonly deviceModelId: DeviceModelId;
+      readonly deviceName: string;
+    }
+  /**
+   * The combined edit approved its identifier step and is starting its scope
+   * step. Carries no payload: the device records nothing, so the intermediate
+   * proof is only the next step's input and abandoning the edit here leaves the
+   * stored record untouched and still valid.
+   */
   | { readonly type: "partial-result" }
   | { readonly type: "completed" }
-  | {
-      readonly type: "failed";
-      readonly failedStep?: EditExternalAddressStep;
-      readonly error: Error;
-    };
+  | ContactDeviceIntentFailureJobState;
 
 export type EditExternalAddressIntentDefinition = IntentDefinition<
   EditExternalAddressJobState,

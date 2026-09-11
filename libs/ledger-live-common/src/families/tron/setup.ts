@@ -1,5 +1,5 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
-import tronResolver from "@ledgerhq/coin-tron/signer";
+import tronResolver from "./getAddress";
 import { type Resolver } from "../../hw/getAddress/types";
 import { createResolver } from "../../bridge/setup";
 import { createSigner } from "./signer";

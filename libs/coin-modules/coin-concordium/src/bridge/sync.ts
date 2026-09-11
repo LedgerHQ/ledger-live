@@ -10,8 +10,9 @@ import {
   getConsensusInfo,
 } from "../network/proxyClient";
 import { listOperations } from "../logic/history/listOperations";
-import type { ConcordiumAccount, ConcordiumResources } from "../types";
+import type { ConcordiumAccount, ConcordiumResources, PltAccountToken } from "../types";
 import { mapRawOperationToBridgeOperation } from "./serialization";
+import { applyTokensToResources, resolveTokenSubAccounts, subAccountsPatch } from "./tokens";
 
 const fillConcordiumResources = (
   existing: Partial<ConcordiumResources> = {},
@@ -32,21 +33,32 @@ const valueToBigNumber = (value?: string | number): BigNumber => {
   return result.isNaN() ? new BigNumber(0) : result;
 };
 
+/**
+ * Reads the account balance once and reports the PLT list alongside it.
+ *
+ * `accountTokens` is `undefined` when the fetch failed, the response omitted
+ * the field, or it arrived as something other than an array — all three
+ * reachable because the response is not schema-checked. Callers must not read
+ * that as "holds no tokens": the zeroed balance below is synthetic, and
+ * treating the absent list as authoritative would drop the account's token
+ * sub-accounts on a single bad response.
+ */
 export async function getBalance(
   currencyId: string,
   address: string,
-): Promise<{ balance: BigNumber; spendableBalance: BigNumber }> {
+): Promise<{
+  balance: BigNumber;
+  spendableBalance: BigNumber;
+  accountTokens: PltAccountToken[] | undefined;
+}> {
   const config = coinConfig.getCoinConfig(currencyId);
-  const { finalizedBalance: { accountAmount, accountAtDisposal } = {} } = await getAccountBalance(
-    config,
-    currencyId,
-    address,
-  ).catch((error): { finalizedBalance: { accountAmount: string; accountAtDisposal: string } } => {
-    log("concordium-sync", `Error fetching balance for account with address ${address}`, {
-      error,
+  const { finalizedBalance: { accountAmount, accountAtDisposal, accountTokens } = {} } =
+    await getAccountBalance(config, currencyId, address).catch(error => {
+      log("concordium-sync", `Error fetching balance for account with address ${address}`, {
+        error,
+      });
+      return { finalizedBalance: undefined };
     });
-    return { finalizedBalance: { accountAmount: "0", accountAtDisposal: "0" } };
-  });
 
   const balance = valueToBigNumber(accountAmount);
   const minReserve = config.minReserve;
@@ -56,7 +68,12 @@ export async function getBalance(
     : balance.minus(minReserve);
   spendableBalance = spendableBalance.isNegative() ? new BigNumber(0) : spendableBalance;
 
-  return { balance, spendableBalance };
+  // Normalised rather than passed through, so the declared type holds.
+  return {
+    balance,
+    spendableBalance,
+    accountTokens: Array.isArray(accountTokens) ? accountTokens : undefined,
+  };
 }
 
 export async function syncOperations(
@@ -85,7 +102,7 @@ export async function syncOperations(
   return mergeOps(oldOperations, newOperations);
 }
 
-export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info => {
+export const getAccountShape: GetAccountShape<ConcordiumAccount> = async (info, syncConfig) => {
   const { currency, derivationMode, derivationPath, index, initialAccount, rest = {} } = info;
 
   const publicKey = rest.publicKey || initialAccount?.concordiumResources?.publicKey;
@@ -104,13 +121,19 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
     const accountsResponse = await getAccountsByPublicKey(config, currency.id, publicKey);
 
     if (!accountsResponse?.length) {
+      // An account that does not exist on chain holds no tokens, so this is
+      // authoritative: clear rather than preserve.
       return {
         balance: new BigNumber(0),
         blockHeight: 0,
-        concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources, {
-          publicKey,
-          isOnboarded: false,
-        }),
+        subAccounts: [],
+        concordiumResources: applyTokensToResources(
+          fillConcordiumResources(initialAccount?.concordiumResources, {
+            publicKey,
+            isOnboarded: false,
+          }),
+          { kind: "cleared" },
+        ),
         derivationMode,
         derivationPath,
         id: accountId,
@@ -125,21 +148,37 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
 
     const account = accountsResponse[0];
 
-    const [{ balance, spendableBalance }, operations, blockHeight] = await Promise.all([
-      getBalance(currency.id, account.address),
-      syncOperations(currency.id, account.address, accountId, initialAccount?.operations ?? []),
-      getConsensusInfo(config, currency.id)
-        .then(info => info.lastFinalizedBlockHeight)
-        .catch(() => 0),
-    ]);
+    const [{ balance, spendableBalance, accountTokens }, operations, blockHeight] =
+      await Promise.all([
+        getBalance(currency.id, account.address),
+        syncOperations(currency.id, account.address, accountId, initialAccount?.operations ?? []),
+        getConsensusInfo(config, currency.id)
+          .then(info => info.lastFinalizedBlockHeight)
+          .catch(() => 0),
+      ]);
+
+    const resolvedTokens = await resolveTokenSubAccounts({
+      enableTokens: config.enableTokens,
+      currencyId: currency.id,
+      accountId,
+      accountTokens,
+      initialAccount,
+      ...(syncConfig?.blacklistedTokenIds
+        ? { blacklistedTokenIds: syncConfig.blacklistedTokenIds }
+        : {}),
+    });
 
     return {
       balance,
       blockHeight,
-      concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources, {
-        isOnboarded: true,
-        publicKey,
-      }),
+      ...subAccountsPatch(resolvedTokens),
+      concordiumResources: applyTokensToResources(
+        fillConcordiumResources(initialAccount?.concordiumResources, {
+          isOnboarded: true,
+          publicKey,
+        }),
+        resolvedTokens,
+      ),
       freshAddress: account.address,
       seedIdentifier: publicKey,
       derivationMode,

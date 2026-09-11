@@ -71,7 +71,6 @@ export const cosmosConfig: CosmosConfig = {
     default: {
       lcd: "https://osmo.coin.ledger.com",
       minGasPrice: 0.04,
-      ledgerValidator: "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t",
       status: {
         type: "active",
       },

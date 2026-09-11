@@ -14,6 +14,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
+import { PAY_ACCOUNT_UI_USE_CASE } from "LLM/features/ModularDrawer/types";
 import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
 import { useNewSendFlowFeature } from "./useNewSendFlowFeature";
 
@@ -187,6 +188,9 @@ export function useOpenSendFlow({
         currencies = [currency.id];
       }
 
+      const payFromKnownRecipient =
+        Boolean(resolvedRecipient?.trim()) && resolvedSkipRecipientStep === true;
+
       openDrawer({
         currencies,
         categories: resolvedCategories,
@@ -194,6 +198,7 @@ export function useOpenSendFlow({
         source: sourceScreenName,
         areCurrenciesFiltered: hasCurrencyIds || Boolean(currency),
         enableAccountSelection: true,
+        ...(payFromKnownRecipient ? { uiUseCase: PAY_ACCOUNT_UI_USE_CASE } : {}),
         onAccountSelected: (account, parentAccount) =>
           navigateAfterAccountSelection(
             account,

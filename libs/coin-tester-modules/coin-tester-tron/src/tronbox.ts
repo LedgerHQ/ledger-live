@@ -1,7 +1,7 @@
 import path from "path";
 import chalk from "chalk";
 import * as compose from "docker-compose";
-import type { TronSigner } from "@ledgerhq/coin-tron/types/signer";
+import type { TronSigner } from "@ledgerhq/live-common/families/tron/types";
 import { TRON_LOCAL_RPC } from "./fixtures";
 import { buildTronTestSignerFromPrivateKeyHex } from "./signer";
 

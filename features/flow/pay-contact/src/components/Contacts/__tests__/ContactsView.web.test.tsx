@@ -1,5 +1,6 @@
 import React from "react";
 import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { ContactsView } from "../ContactsView.web";
 import { makeContactsViewProps, renderWithContacts } from "./shared";
@@ -49,5 +50,42 @@ describe("ContactsView (Web)", () => {
     renderView();
 
     expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
+  });
+
+  it("should call onContactPress with the contact when the row is clicked", async () => {
+    const user = userEvent.setup();
+    const onContactPress = jest.fn();
+    const contact = mockContact({ id: "contact-ada", name: "Ada" });
+    renderView({ isEmpty: false, rows: [{ contact, transactionCount: 0 }], onContactPress });
+
+    await user.click(screen.getByTestId("pay-contacts-tile-contact-ada"));
+
+    expect(onContactPress).toHaveBeenCalledTimes(1);
+    expect(onContactPress).toHaveBeenCalledWith(contact);
+  });
+
+  it("should call onContactPress once from the Telegram action without firing the row twice", async () => {
+    const user = userEvent.setup();
+    const onContactPress = jest.fn();
+    const contact = mockContact({ id: "contact-ada", name: "Ada" });
+    renderView({ isEmpty: false, rows: [{ contact, transactionCount: 0 }], onContactPress });
+
+    await user.click(screen.getByTestId("pay-contacts-pay-action-contact-ada"));
+
+    expect(onContactPress).toHaveBeenCalledTimes(1);
+    expect(onContactPress).toHaveBeenCalledWith(contact);
+  });
+
+  it("should expose View contact in the overflow menu and call onViewContact", async () => {
+    const user = userEvent.setup();
+    const onViewContact = jest.fn();
+    const contact = mockContact({ id: "contact-ada", name: "Ada" });
+    renderView({ isEmpty: false, rows: [{ contact, transactionCount: 0 }], onViewContact });
+
+    await user.click(screen.getByTestId("pay-contacts-more-action-contact-ada"));
+    await user.click(screen.getByTestId("pay-contacts-view-contact-contact-ada"));
+
+    expect(onViewContact).toHaveBeenCalledTimes(1);
+    expect(onViewContact).toHaveBeenCalledWith(contact);
   });
 });

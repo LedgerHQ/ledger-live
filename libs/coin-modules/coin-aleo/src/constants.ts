@@ -22,6 +22,9 @@ export const TRANSACTION_TYPE = {
   TRANSFER_TOKEN_PRIVATE: "transfer_token_private",
   CONVERT_TOKEN_PRIVATE_TO_PUBLIC: "convert_token_private_to_public",
   CONVERT_TOKEN_PUBLIC_TO_PRIVATE: "convert_token_public_to_private",
+  BOND_PUBLIC: "bond_public",
+  UNBOND_PUBLIC: "unbond_public",
+  CLAIM_UNBOND_PUBLIC: "claim_unbond_public",
 } as const;
 
 export const FEE_INTENT_TYPES = new Set(["fee_public", "fee_private"]);

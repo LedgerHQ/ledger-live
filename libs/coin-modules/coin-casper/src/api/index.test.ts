@@ -1,9 +1,5 @@
 import type { Balance, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import {
-  isNotSupportedStub,
-  requiredApiKeys,
-  withDefaults,
-} from "@ledgerhq/coin-module-framework/api/index";
+import { requiredApiKeys, withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { CASPER_FEES_MOTES } from "../constants";
 import { TEST_ADDRESSES } from "../__tests__/fixtures/addresses.fixture";
 import type { CasperContext, CasperMemo } from "../types";
@@ -30,16 +26,12 @@ const sendIntent: TransactionIntent<CasperMemo> = {
 const balances: Balance[] = [{ value: BALANCE, asset: { type: "native" }, locked: 0n }];
 
 describe("createApi", () => {
-  it("implements every method the contract requires", () => {
+  it("returns an object with all CoinModuleApi methods", () => {
     for (const method of requiredApiKeys) {
       expect(typeof api[method]).toBe("function");
     }
   });
 
-  // The capabilities Casper does not expose are omitted now rather than stubbed one by one,
-  // and the resolver's `withDefaults` supplies them — which is also what makes them
-  // reportable: a consumer can ask, where a throwing placeholder used to be
-  // indistinguishable from an implementation.
   it("omits the capabilities Casper does not expose", () => {
     const resolved = withDefaults(api);
     for (const capability of [
@@ -54,12 +46,6 @@ describe("createApi", () => {
     ] as const) {
       expect(resolved.supports(capability)).toBe(false);
     }
-  });
-
-  // `craftTransactionData` is the one unsupported method the contract requires, so it cannot
-  // be omitted — it stays declared, and stays visible for what it is.
-  it("declares craftTransactionData as unsupported", () => {
-    expect(isNotSupportedStub(api.craftTransactionData)).toBe(true);
   });
 
   describe("validateIntent", () => {
@@ -96,6 +82,12 @@ describe("createApi", () => {
   describe("getNextSequence", () => {
     it("resolves to 0n instead of throwing, as Casper has no account nonce", async () => {
       await expect(api.getNextSequence(context, validEd25519)).resolves.toBe(0n);
+    });
+  });
+
+  describe("craftTransactionData", () => {
+    it("reports no transaction data — Casper carries none, the transfer id travels on the intent memo", () => {
+      expect(api.craftTransactionData(context, sendIntent)).toEqual({ type: "none" });
     });
   });
 });

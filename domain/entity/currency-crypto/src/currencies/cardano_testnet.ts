@@ -9,7 +9,6 @@ export const cardano_testnet = currency({
   ticker: "tADA",
   scheme: "cardano_testnet",
   isTestnetFor: "cardano",
-  disableCountervalue: true,
   color: "#0A1D2C",
   family: "cardano",
   blockAvgTime: 20,

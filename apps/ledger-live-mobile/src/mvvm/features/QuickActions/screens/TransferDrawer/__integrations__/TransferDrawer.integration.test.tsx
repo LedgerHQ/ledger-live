@@ -163,7 +163,10 @@ describe("TransferDrawer Navigation", () => {
         {
           newSendFlow: {
             enabled: true,
-            params: { families: ["evm", "bitcoin", "tron"], excludedCurrencyIds: [] },
+            params: {
+              families: ["evm", "bitcoin", "tron"],
+              excludedCurrencyIds: [],
+            },
           },
         },
         overrideWithOpenDrawer,
@@ -176,6 +179,11 @@ describe("TransferDrawer Navigation", () => {
       "button_clicked",
       expect.objectContaining({ button: "send", newSendFlow: false }),
     );
+    expect(mockHandleOpenSendFlow).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFunds, {
+      screen: ScreenName.SendCoin,
+      params: { selectedCurrency: currency, currencyIds: undefined },
+    });
   });
 
   it("tracks newSendFlow as false when the asset currency is excluded by the flag", () => {
@@ -198,9 +206,14 @@ describe("TransferDrawer Navigation", () => {
       "button_clicked",
       expect.objectContaining({ button: "send", newSendFlow: false }),
     );
+    expect(mockHandleOpenSendFlow).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFunds, {
+      screen: ScreenName.SendCoin,
+      params: { selectedCurrency: currency, currencyIds: undefined },
+    });
   });
 
-  it("tracks newSendFlow as false when the drawer has no currency to open the new send flow", () => {
+  it("opens unfiltered account selection when the new send flow is enabled without a currency", () => {
     const { result } = renderHook(() => useTransferDrawerViewModel(), {
       overrideInitialState: withFlagOverrides(
         {
@@ -215,11 +228,33 @@ describe("TransferDrawer Navigation", () => {
 
     findAction(result, "send").onPress();
 
-    expect(mockHandleOpenSendFlow).not.toHaveBeenCalled();
+    expect(mockHandleOpenSendFlow).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).not.toHaveBeenCalled();
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
-      expect.objectContaining({ button: "send", newSendFlow: false }),
+      expect.objectContaining({ button: "send", newSendFlow: true }),
     );
+  });
+
+  it("keeps legacy account selection when the new send flow config has no families", () => {
+    const { result } = renderHook(() => useTransferDrawerViewModel(), {
+      overrideInitialState: withFlagOverrides(
+        {
+          newSendFlow: {
+            enabled: true,
+            params: { families: [], excludedCurrencyIds: [] },
+          },
+        },
+        overrideWithOpenDrawer,
+      ),
+    });
+
+    findAction(result, "send").onPress();
+
+    expect(mockHandleOpenSendFlow).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFunds, {
+      screen: ScreenName.SendCoin,
+    });
   });
 
   it("bank_transfer navigates to ReceiveFunds/ReceiveProvider with noah manifest and tracks", () => {

@@ -130,6 +130,14 @@ export type RequestReceiveLabels = Readonly<{
   actions: RequestReceiveActionLabels;
 }>;
 
+export type RequestReceiveVerifyHint = Readonly<{
+  open: boolean;
+  message: string;
+  gotItLabel: string;
+  onGotIt: () => void;
+  onShown?: () => void;
+}>;
+
 /** Props for the branded `CryptoIcon` shown for the asset and (optionally) the network row. */
 export type RequestReceiveIconProps = Readonly<{
   ledgerId: string;
@@ -151,6 +159,7 @@ type RequestReceiveShell = Readonly<{
    */
   cardRef?: RefObject<unknown>;
   onClose: () => void;
+  verifyHint?: RequestReceiveVerifyHint;
 }>;
 
 export type RequestReceiveProps = RequestReceiveViewModelParams & RequestReceiveShell;

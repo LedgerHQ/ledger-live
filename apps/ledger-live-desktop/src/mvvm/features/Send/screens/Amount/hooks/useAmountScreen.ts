@@ -13,6 +13,7 @@ import {
 import { trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 import { openURL } from "~/renderer/linking";
+import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 
 type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;
@@ -39,6 +40,7 @@ export type AmountScreenViewModel =
 export function useAmountScreen(): AmountScreenViewModel {
   const { state, uiConfig } = useSendFlowData();
   const { transaction: transactionActions, close } = useSendFlowActions();
+  const { recipientType } = useSendFlowTracking();
   const { navigation } = useFlowWizard();
   const navigate = useNavigate();
   const location = useLocation();
@@ -46,8 +48,11 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
 
   const trackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(account, parentAccount ?? null),
-    [account, parentAccount],
+    () => ({
+      ...getSendFlowTrackingProperties(account, parentAccount ?? null),
+      recipientType,
+    }),
+    [account, parentAccount, recipientType],
   );
 
   const isReady = Boolean(account && transaction && status && uiConfig && transactionActions);
@@ -133,7 +138,13 @@ export function useAmountScreen(): AmountScreenViewModel {
   }, [navigation]);
 
   if (!account || !transaction || !status || !uiConfig || !transactionActions) {
-    return { ready: false, onReview, onGetFunds, onSelectCoinControl, onMessageLinkPress };
+    return {
+      ready: false,
+      onReview,
+      onGetFunds,
+      onSelectCoinControl,
+      onMessageLinkPress,
+    };
   }
 
   return {

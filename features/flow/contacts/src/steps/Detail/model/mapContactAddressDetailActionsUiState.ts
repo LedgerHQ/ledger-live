@@ -1,5 +1,4 @@
 import type { ContactsDeleteAddressDialogProps } from "../components/ContactsDeleteAddressDialog/types";
-import type { ContactsEditSignerDialogProps } from "../components/ContactsEditSignerDialog/types";
 import type { ContactsEditSignerMismatchDialogProps } from "../components/ContactsEditSignerMismatchDialog/types";
 import type {
   ContactsRenameAddressDialogProps,
@@ -20,7 +19,6 @@ export type ContactAddressDetailActionsUiState = Readonly<{
   }>;
   delete: ContactsDeleteAddressDialogProps;
   rename: ContactsRenameAddressDialogProps;
-  signer: ContactsEditSignerDialogProps;
   signerMismatch: ContactsEditSignerMismatchDialogProps;
 }>;
 
@@ -47,18 +45,13 @@ export function createInactiveContactAddressDetailActionsUiState(
       invalidLabelError: null,
       addressEntry: EMPTY_ADDRESS_ENTRY_STATE,
       isConfirmEnabled: false,
+      isDeviceRequired: false,
       labels: labels.rename,
       onOpen: () => undefined,
       onClose: () => undefined,
       onDraftLabelChange: () => undefined,
       onAddressChange: () => undefined,
       onConfirm: async () => undefined,
-    },
-    signer: {
-      isOpen: false,
-      labels: labels.signer,
-      onConfirm: () => undefined,
-      onCancel: () => undefined,
     },
     signerMismatch: {
       isOpen: false,
@@ -92,13 +85,8 @@ export function createActiveContactAddressDetailActionsUiState(
     },
     rename: {
       ...renameViewModel,
+      isDeviceRequired: flow.isSignerRequiredForEdit,
       labels: labels.rename,
-    },
-    signer: {
-      isOpen: flow.editUiState === "signer-open",
-      labels: labels.signer,
-      onConfirm: flow.onSignerConfirm,
-      onCancel: flow.onSignerCancel,
     },
     signerMismatch: {
       isOpen: flow.editUiState === "signer-mismatch",

@@ -12,6 +12,8 @@ export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
   SEND_FLOW_STEP.COIN_CONTROL,
   SEND_FLOW_STEP.SIGNATURE,
   SEND_FLOW_STEP.CONFIRMATION,
+  SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION,
+  SEND_FLOW_STEP.PAY_SUCCESS,
 ];
 
 export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
@@ -19,6 +21,15 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     id: SEND_FLOW_STEP.RECIPIENT,
     canGoBack: true,
     addressInput: true,
+  },
+  [SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION]: {
+    id: SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION,
+    canGoBack: true,
+    floating: true,
+    titleKey: "newSendFlow.skipMemo.title",
+    showAvailable: false,
+    height: "fit",
+    headerDensity: "expanded",
   },
   [SEND_FLOW_STEP.RECENT_HISTORY]: {
     id: SEND_FLOW_STEP.RECENT_HISTORY,
@@ -80,6 +91,12 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
   },
   [SEND_FLOW_STEP.CONFIRMATION]: {
     id: SEND_FLOW_STEP.CONFIRMATION,
+    canGoBack: false,
+    showTitle: false,
+    height: "fit",
+  },
+  [SEND_FLOW_STEP.PAY_SUCCESS]: {
+    id: SEND_FLOW_STEP.PAY_SUCCESS,
     canGoBack: false,
     showTitle: false,
     height: "fit",

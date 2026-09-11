@@ -59,14 +59,14 @@ export function FeatureTourView({
     >
       {isOpen ? (
         <BottomSheetView>
-          <BottomSheetHeader density="expanded" />
+          <BottomSheetHeader density="compact" />
           <Box lx={{ paddingBottom: "s24", gap: "s16" }}>
             <Image
               source={heroImage as unknown as ImageSourcePropType}
               resizeMode="cover"
               style={{ width: "100%", height: 192, borderRadius: 24 }}
             />
-            <Box lx={{ flexDirection: "column", gap: "s4" }}>
+            <Box lx={{ flexDirection: "column", gap: "s4", paddingBottom: "s40" }}>
               <Box lx={{ flexDirection: "column", gap: "s8" }}>
                 <Text typography="heading3SemiBold" lx={{ color: "base" }}>
                   {title}
@@ -98,6 +98,7 @@ export function FeatureTourView({
             <Button
               appearance="base"
               size="lg"
+              isFull
               onPress={handleDismiss}
               accessibilityLabel={ctaLabel}
             >

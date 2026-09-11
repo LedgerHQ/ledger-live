@@ -18,7 +18,9 @@ export function ToggleRow({ label, description, checked, onChange }: ToggleRowPr
   return (
     <Box style={ROW_LX}>
       <Box style={{ flexShrink: 1 }}>
-        <Text typography="body3">{label}</Text>
+        <Text typography="body3" lx={{ color: "base" }}>
+          {label}
+        </Text>
         {description ? (
           <Text typography="body4" lx={{ color: "muted" }}>
             {description}

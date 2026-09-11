@@ -37,7 +37,6 @@ export const lukso = currency({
       magnitude: 0,
     },
   ],
-  disableCountervalue: false,
   ethereumLikeInfo: {
     chainId: 42,
   },

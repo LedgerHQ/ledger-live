@@ -13,6 +13,16 @@ export type TronifyProviderConfig = {
    * (all except `uploadHash`, which is keyed by the order id alone).
    */
   sourceFlag: string;
+  /**
+   * fastTrade rental window in seconds sent with each quote/order. Optional — falls back to 600
+   * (matches the UI fee-quote TTL) when the remote coin-config omits it.
+   */
+  rentalDurationSeconds?: number;
+  /**
+   * Bandwidth top-up in TRX bundled with each rental to cover the transaction's bandwidth cost.
+   * Optional — falls back to 0.8 when the remote coin-config omits it.
+   */
+  rentalExtraTrx?: number;
 };
 
 /**

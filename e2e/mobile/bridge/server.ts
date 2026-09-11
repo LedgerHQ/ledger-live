@@ -6,7 +6,7 @@ import merge from "lodash/merge";
 
 import { NavigatorName } from "~/const";
 import type { MessageData, OverrideFeatureFlagPayload, ServerData } from "~/e2e/bridge/types";
-import type { OptionalFeatureMap, FeatureId } from "@shared/feature-flags";
+import type { PartialFeatures, FeatureId } from "@shared/feature-flags";
 import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
@@ -120,12 +120,16 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
     postMessage({ type: "importTrustchain", id: uniqueId(), payload: data.trustchain });
   }
 
+  if (data.postOnboarding) {
+    postMessage({ type: "importPostOnboarding", id: uniqueId(), payload: data.postOnboarding });
+  }
+
   if (data.featureFlags?.overrides) {
     await setFeatureFlags(data.featureFlags.overrides);
   }
 }
 
-export async function setFeatureFlags(flags: OptionalFeatureMap) {
+export async function setFeatureFlags(flags: PartialFeatures) {
   for (const id in flags) {
     if (isFeatureId(id)) {
       setFeatureFlag({ id, value: flags[id] });

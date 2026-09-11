@@ -11,10 +11,8 @@
     "babel.config.js",
     "metro.config.js",
     "jest.config.js",
-    "rsbuild.config.ts",
     "./scripts",
     "./lib",
-    "**/*.stories.tsx",
     "**/*.test.ts",
     "**/*.test.tsx"
   ]

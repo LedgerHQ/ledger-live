@@ -1,6 +1,4 @@
 import React, { useCallback, useRef } from "react";
-import { useTranslation } from "~/context/Locale";
-import { Flex, Link as TextLink, Button } from "@ledgerhq/native-ui";
 import {
   useNotificationsData,
   useNotificationsDrawer,
@@ -8,13 +6,11 @@ import {
 } from "LLM/features/NotificationsPrompt";
 import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
-import { NotificationsDrawerIllustration } from "LLM/features/NotificationsPrompt/components/NotificationsDrawerIllustration";
-import { NotificationsPromptContent } from "LLM/features/NotificationsPrompt/components/NotificationsPromptContent";
 import { resolveDrawerPromptTargetForAnalytics } from "LLM/features/NotificationsPrompt/new/notificationsPromptAnalytics";
-import { getNotificationsPromptCopy } from "LLM/features/NotificationsPrompt/utils/getNotificationsPromptCopy";
 import type { NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import { TrackScreen } from "~/analytics";
 import type { NotificationsState } from "~/reducers/types";
+import { NotificationsPromptDrawerView } from "./NotificationsPromptDrawerView";
 
 type DrawerDisplayState = {
   drawerSource: NotificationsState["drawerSource"];
@@ -22,7 +18,6 @@ type DrawerDisplayState = {
 };
 
 export const NotificationsPromptDrawer = () => {
-  const { t } = useTranslation();
   const { permissionStatus, requestPushNotificationsPermission } = useNotificationsPermission();
   const {
     notifications,
@@ -78,8 +73,6 @@ export const NotificationsPromptDrawer = () => {
     };
   }, []);
 
-  const { allowKey, laterKey } = getNotificationsPromptCopy(displayedDrawerPromptTarget);
-
   return (
     <QueuedDrawer
       isRequestingToBeOpened={isPushNotificationsModalOpen}
@@ -95,28 +88,11 @@ export const NotificationsPromptDrawer = () => {
         dismissedCount={pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0}
       />
 
-      <Flex mb={4}>
-        <Flex alignItems={"center"}>
-          <NotificationsDrawerIllustration promptTarget={displayedDrawerPromptTarget} />
-          <NotificationsPromptContent promptTarget={displayedDrawerPromptTarget} />
-        </Flex>
-        <Button
-          type={"main"}
-          mt={8}
-          mb={7}
-          onPress={handleAllowNotificationsPress}
-          testID="notifications-prompt-allow"
-        >
-          {t(allowKey)}
-        </Button>
-        <TextLink
-          type={"shade"}
-          onPress={handleDelayLaterPress}
-          testID="notifications-prompt-later"
-        >
-          {t(laterKey)}
-        </TextLink>
-      </Flex>
+      <NotificationsPromptDrawerView
+        promptTarget={displayedDrawerPromptTarget}
+        onAllow={handleAllowNotificationsPress}
+        onLater={handleDelayLaterPress}
+      />
     </QueuedDrawer>
   );
 };

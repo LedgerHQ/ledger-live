@@ -1,6 +1,10 @@
-import { CurrencyLiveConfigDefinition } from "../../config";
+import { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
 
-export const casperConfig: CurrencyLiveConfigDefinition = {
+export const casperConfig: ConfigSchema = {
+  config_casper_generic_bridge: {
+    type: "boolean",
+    default: true,
+  },
   config_currency_casper: {
     type: "object",
     default: {

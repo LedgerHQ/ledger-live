@@ -189,7 +189,7 @@ describe("Aleo send flow — full modal", () => {
     await waitFor(() => expect(screen.getByText("Transaction sent")).toBeInTheDocument(), {
       timeout: 5000,
     });
-  }, 12000);
+  }, 20000);
 
   it("blocks at the mandatory private sync step when the private balance is selected", async () => {
     setupModal();

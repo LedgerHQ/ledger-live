@@ -15,8 +15,8 @@ import {
   makeTrc20Token,
   registerTronTokensInMockStore,
 } from "../fixtures";
-import type { TronAccount } from "@ledgerhq/coin-tron/types/index";
 import type {
+  TronAccount,
   Transaction as TronTransaction,
   TronFamilySpecificData,
 } from "@ledgerhq/live-common/families/tron/types";

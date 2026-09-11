@@ -1,21 +1,18 @@
 import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { Page } from "@playwright/test";
 
-import type { OptionalFeatureMap, Features } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 
-export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> => {
+export const getFeatureFlags = async (page: Page): Promise<PartialFeatures> => {
   const featureFlags = await page.evaluate(() => {
     return window.getAllFeatureFlags("en");
   });
-  return featureFlags;
+  return featureFlags as PartialFeatures;
 };
 
-const getLwdWallet40Params = async (
-  page: Page,
-): Promise<Features["lwdWallet40"]["params"] | undefined> => {
+const getLwdWallet40Params = async (page: Page) => {
   const featureFlags = await getFeatureFlags(page);
-  const lwdWallet40 = featureFlags.lwdWallet40 as Features["lwdWallet40"];
-  return lwdWallet40?.params;
+  return featureFlags.lwdWallet40?.params;
 };
 
 export const isAssetSectionEnabled = async (page: Page): Promise<boolean> =>
@@ -39,7 +36,8 @@ const FF_LWD_WALLET_40_Q1 = {
   lwdWallet40: {
     enabled: true,
     params: {
-      newReceiveDialog: true,
+      tour: false,
+      q2Tour: false,
       lazyOnboarding: true,
       assetSection: false,
       brazePlacement: true,
@@ -49,18 +47,17 @@ const FF_LWD_WALLET_40_Q1 = {
       pnl: false,
       earnUpselling: false,
       earnSimulator: false,
-      finishOnboardingWidget: false,
       assetDiscoverability: false,
-      q2Tour: false,
     },
   },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_LWD_WALLET_40_Q2 = {
   lwdWallet40: {
     enabled: true,
     params: {
-      newReceiveDialog: true,
+      tour: false,
+      q2Tour: false,
       lazyOnboarding: true,
       assetSection: true,
       brazePlacement: true,
@@ -70,25 +67,24 @@ export const FF_LWD_WALLET_40_Q2 = {
       pnl: true,
       earnUpselling: true,
       earnSimulator: true,
-      finishOnboardingWidget: true,
       assetDiscoverability: true,
     },
   },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 // Wallet 4.0 Q2 flags with the analytics consent dialog forced OFF, so the
 // "Help us improve Ledger" prompt never interrupts portfolio-landing E2E flows.
 export const FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT = {
   ...FF_LWD_WALLET_40_Q2,
   analyticsOptIn: { enabled: false },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_BORROW_DESKTOP = {
   ptxBorrowLiveApp: {
     enabled: true,
     params: { manifest_id: "borrow" },
   },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_EARN_V2_DESKTOP = {
   ...(useLocalEarnManifest && {
@@ -98,12 +94,12 @@ export const FF_EARN_V2_DESKTOP = {
     },
   }),
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_EARN_V2_DESKTOP_WITH_SIMULATOR = {
   ...FF_EARN_V2_DESKTOP,
   ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_STAKE_PROGRAMS_MODAL = {
   stakePrograms: {
@@ -132,7 +128,7 @@ export const FF_STAKE_PROGRAMS_MODAL = {
       },
     },
   },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_NEW_SEND_FLOW_DISABLED = {
   newSendFlow: {
@@ -142,16 +138,16 @@ export const FF_NEW_SEND_FLOW_DISABLED = {
       excludedCurrencyIds: [],
     },
   },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
-} satisfies OptionalFeatureMap;
+} satisfies PartialFeatures;
 
 export const getMergedFeatureFlags = ({
   testFlags,
-}: { testFlags?: OptionalFeatureMap } = {}): OptionalFeatureMap => {
-  const ffPresetMap: Record<string, OptionalFeatureMap> = {
+}: { testFlags?: PartialFeatures } = {}): PartialFeatures => {
+  const ffPresetMap: Record<string, PartialFeatures> = {
     /*
      * The keys here are the values of the `E2E_DESKTOP_FEATURE_FLAGS` environment variable.
      * We can add more mappings here in the future to test different feature flag combinations.
@@ -162,14 +158,14 @@ export const getMergedFeatureFlags = ({
     "wallet40-q1": FF_LWD_WALLET_40_Q1,
   };
 
-  const defaultFlags: OptionalFeatureMap = {
+  const defaultFlags: PartialFeatures = {
     // explicit defaults
+    onboardingWidget: { enabled: true },
     largeScreenUpsell: { enabled: false },
     lldModularDrawer: {
       enabled: true,
       params: {
         add_account: true,
-        earn_flow: true,
         live_app: true,
         receive_flow: false,
         send_flow: false,
@@ -189,7 +185,7 @@ export const getMergedFeatureFlags = ({
   };
 
   // parse JSON override flags for any overrides
-  const jsonOverrideFlags: OptionalFeatureMap = parseExtraFeatureFlags(
+  const jsonOverrideFlags: PartialFeatures = parseExtraFeatureFlags<PartialFeatures>(
     process.env.E2E_FEATURE_FLAGS_JSON,
   );
 

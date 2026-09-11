@@ -1,5 +1,19 @@
 # @ledgerhq/live-signer-canton
 
+## 0.9.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-canton@1.1.1
+
+## 0.9.19-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-canton@1.1.1-next.0
+
 ## 0.9.18
 
 ### Patch Changes
@@ -155,23 +169,5 @@
   - @ledgerhq/coin-canton@0.27.0
   - @ledgerhq/hw-app-canton@0.12.4
   - @ledgerhq/hw-transport@6.35.5
-
-## 0.9.9-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`ebda9d8`](https://github.com/LedgerHQ/ledger-live/commit/ebda9d88805501f4c2c03fef0fe24f116a8a2a6c), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`e441ffe`](https://github.com/LedgerHQ/ledger-live/commit/e441ffe805540c793be02f9d8b350ef41585ddf5)]:
-  - @ledgerhq/errors@6.37.0-next.0
-  - @ledgerhq/devices@8.16.0-next.0
-  - @ledgerhq/coin-canton@0.27.0-next.0
-  - @ledgerhq/hw-app-canton@0.12.4-next.0
-  - @ledgerhq/hw-transport@6.35.5-next.0
-
-## 0.9.8
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-canton@0.26.2
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

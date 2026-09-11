@@ -1,15 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
+import { clipboard } from "electron";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { darken, lighten } from "~/renderer/styles/helpers";
 import IconCopy from "~/renderer/icons/Copy";
 import Box from "~/renderer/components/Box";
-let clipboard: Electron.Clipboard | null = null;
-if (!process.env.STORYBOOK_ENV) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const electron = require("electron");
-  clipboard = electron.clipboard; // eslint-disable-line
-}
 type Props = {
   text: string;
 };
@@ -30,7 +25,7 @@ const CopyWithFeedback = ({ text }: Props) => {
   }, []);
 
   const handleCopy = () => {
-    if (clipboard) clipboard.writeText(text);
+    clipboard.writeText(text);
     setIsCopied(true);
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);

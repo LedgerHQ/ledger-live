@@ -169,6 +169,7 @@ async function runStakeTest(stakeTestSpec: StakeTestSpec) {
           activation: {
             state: stakeTestSpec.activationState,
             active: stakeTestSpec.activationState === "active" ? 1 : 0,
+            activating: 0,
             inactive: stakeTestSpec.activationState === "active" ? 0 : 1,
           },
         },

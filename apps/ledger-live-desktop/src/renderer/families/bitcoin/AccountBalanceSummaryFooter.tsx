@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -221,13 +221,6 @@ const EstimatedTimeRemaining = ({
   );
 };
 
-function usePrevious<T>(val: T): T {
-  const ref = useRef<T>(val);
-  const prevVal = ref.current;
-  ref.current = val;
-  return prevVal;
-}
-
 type Props = {
   account: ZcashAccount | TokenAccount;
 };
@@ -238,7 +231,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   const privateInfo = "privateInfo" in account ? account.privateInfo : null;
   const syncState = privateInfo?.syncState ?? "disabled";
-  const previousSyncState = usePrevious(syncState);
   const lastSync = privateInfo?.lastSyncTimestamp ? new Date(privateInfo.lastSyncTimestamp) : null;
   const progress = privateInfo?.progress ?? 0;
   const estimatedTimeRemaining = privateInfo?.estimatedTimeRemaining ?? { hours: 0, minutes: 0 };
@@ -282,13 +274,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
         break;
     }
   };
-
-  // Check if private balance has been activated
-  useEffect(() => {
-    if (previousSyncState === "disabled" && syncState === "running") {
-      startShieldedSync();
-    }
-  }, [previousSyncState, syncState, startShieldedSync]);
 
   if (
     account.type !== "Account" ||

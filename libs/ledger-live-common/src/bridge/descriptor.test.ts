@@ -6,8 +6,14 @@ import { resolveFeeUnitLabel, sendFeatures } from "./descriptor/send/features";
 import { applyMemoToTransaction } from "./descriptor/send/memo";
 import * as configModule from "../config/index";
 import { genAccount } from "../mock/account";
+import { isZcashShieldedEnabled, setZcashShieldedEnabled } from "./zcashRouting";
 
 jest.mock("../config/index");
+
+// Vectors shared with coin-zcash's `logic/address.test.ts`.
+const ZCASH_UA_WITH_ORCHARD =
+  "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
+const ZCASH_T1_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
 
 describe("getDescriptor", () => {
   afterEach(() => {
@@ -212,6 +218,7 @@ describe("sendFeatures", () => {
   ])("should check memo support for %s", (currencyId, expected) => {
     const currency = getCryptoCurrencyById(currencyId);
     expect(sendFeatures.hasMemo(currency)).toBe(expected);
+    expect(sendFeatures.hasMemoForRecipient(currency, "")).toBe(expected);
   });
 
   it("should check fee presets support", () => {
@@ -702,4 +709,123 @@ describe("sendFeatures", () => {
       sendFeatures.isUserRefusedTransactionError(undefined, { name: "TransactionRefusedOnDevice" }),
     ).toBe(false);
   });
+});
+
+describe("zcash descriptor resolution", () => {
+  const previousShieldedEnabled = isZcashShieldedEnabled();
+  let getCurrencyConfigurationSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    getCurrencyConfigurationSpy = jest
+      .spyOn(configModule, "getCurrencyConfiguration")
+      .mockReturnValue({
+        status: {
+          type: "active",
+          features: [{ id: "blockchain_txs", status: "active" }],
+        },
+      });
+  });
+
+  afterEach(() => {
+    getCurrencyConfigurationSpy.mockRestore();
+    // `setZcashShieldedEnabled` is module-level global state shared across
+    // every suite in this jest worker: restore it so later suites are not
+    // silently corrupted.
+    setZcashShieldedEnabled(previousShieldedEnabled);
+  });
+
+  it("returns the Zcash descriptor when zcashShielded is on", () => {
+    setZcashShieldedEnabled(true);
+    const zcash = getCryptoCurrencyById("zcash");
+
+    const descriptor = getDescriptor(zcash);
+
+    expect(descriptor).toMatchObject({
+      send: {
+        inputs: { memo: { type: "text", maxLength: 512 } },
+        fees: {
+          hasPresets: false,
+          hasCustom: false,
+          hasCoinControl: false,
+        },
+        selfTransfer: "free",
+      },
+    });
+  });
+
+  it("is not the Bitcoin descriptor when zcashShielded is on", () => {
+    setZcashShieldedEnabled(true);
+    const zcash = getCryptoCurrencyById("zcash");
+
+    const descriptor = getDescriptor(zcash);
+
+    expect(descriptor?.send.fees.presets).toBeUndefined();
+    expect(descriptor?.send.fees.coinControl).toBeUndefined();
+  });
+
+  it("returns the Bitcoin descriptor when zcashShielded is off", () => {
+    // Deliberate: with the flag off, the account is served by coin-bitcoin's
+    // Zcash chain-adapter, so the Bitcoin descriptor is the consistent answer.
+    setZcashShieldedEnabled(false);
+    const zcash = getCryptoCurrencyById("zcash");
+
+    const descriptor = getDescriptor(zcash);
+
+    expect(descriptor?.send.fees.hasCoinControl).toBe(true);
+  });
+
+  it("resolves memo and fee-preset features for Zcash when the flag is on", () => {
+    setZcashShieldedEnabled(true);
+    const zcash = getCryptoCurrencyById("zcash");
+
+    expect(sendFeatures.hasMemo(zcash)).toBe(true);
+    expect(sendFeatures.hasMemoForRecipient(zcash, ZCASH_UA_WITH_ORCHARD)).toBe(true);
+    expect(sendFeatures.hasMemoForRecipient(zcash, ZCASH_T1_ADDRESS)).toBe(false);
+    expect(sendFeatures.getMemoMaxLength(zcash)).toBe(512);
+    expect(sendFeatures.hasDefaultStrategy(zcash)).toBe(false);
+    expect(sendFeatures.getFeePresetOptions(zcash, {})).toEqual([]);
+  });
+
+  it.each([true, false])(
+    "leaves the Bitcoin descriptor unchanged regardless of the Zcash flag (flag=%s)",
+    flag => {
+      setZcashShieldedEnabled(flag);
+      const bitcoin = getCryptoCurrencyById("bitcoin");
+
+      const descriptor = getDescriptor(bitcoin);
+
+      expect(descriptor?.send.fees).toMatchObject({
+        hasCoinControl: true,
+        hasPresets: true,
+        hasCustom: true,
+      });
+    },
+  );
+
+  it.each([true, false])(
+    "leaves an unrelated family (evm) unchanged regardless of the Zcash flag (flag=%s)",
+    flag => {
+      setZcashShieldedEnabled(flag);
+      const ethereum = getCryptoCurrencyById("ethereum");
+
+      const descriptor = getDescriptor(ethereum);
+
+      expect(descriptor?.send.fees).toMatchObject({
+        hasPresets: true,
+        hasCustom: true,
+      });
+    },
+  );
+
+  it.each([true, false])(
+    "resolves the identity family for a non-Zcash bitcoin-family currency (litecoin, flag=%s)",
+    flag => {
+      setZcashShieldedEnabled(flag);
+      const litecoin = getCryptoCurrencyById("litecoin");
+
+      const descriptor = getDescriptor(litecoin);
+
+      expect(descriptor?.send.fees.hasCoinControl).toBe(true);
+    },
+  );
 });

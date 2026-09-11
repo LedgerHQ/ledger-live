@@ -7,6 +7,16 @@ import {
   payCardFeatureTourSlice,
   markPayCardFeatureTourSeen,
 } from "@features/flow-pay-feature-tour/state";
+import {
+  payRequestVerifyHintSlice,
+  markReceiveVerifyHintSeen,
+} from "@features/flow-pay-request/state";
+import { cardApi } from "@shared/api-services";
+import {
+  payCardLoginIntroSlice,
+  markPayCardLoginIntroSeen,
+} from "@features/flow-pay-card-auth/state";
+import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 
 function buildStore() {
@@ -14,8 +24,16 @@ function buildStore() {
     reducer: {
       featureFlags: featureFlagsReducer,
       payCardFeatureTour: payCardFeatureTourSlice.reducer,
+      payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
+      payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
+      // The tool reads the Card endpoints, so its api has to be part of the store under test.
+      [cardApi.reducerPath]: cardApi.reducer,
+      payCardLoginIntro: payCardLoginIntroSlice.reducer,
     },
-    middleware: gdm => gdm().concat(createFeatureFlagsMiddleware({ resolutionConfig: {} })),
+    middleware: gdm =>
+      gdm()
+        .concat(createFeatureFlagsMiddleware({ resolutionConfig: {} }))
+        .concat(cardApi.middleware),
   });
 }
 
@@ -34,26 +52,26 @@ describe("usePayCardToolProps", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
     expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "kyc",
-      "claim",
-      "topup",
-      "purchase",
+      "create-account",
+      "choose-card-type",
+      "top-up-card",
+      "first-purchase",
     ]);
     expect(result.current.flags.payTabEnabled).toBe(false);
     expect(result.current.flags.ptxCardEnabled).toBe(false);
   });
 
-  it("includes walletPay when platform is native", () => {
+  it("includes apple-google-pay step when platform is native", () => {
     const { result } = renderHook(() => usePayCardToolProps({ platform: "native" }), {
       wrapper: withStore(store),
     });
 
     expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "kyc",
-      "claim",
-      "topup",
-      "walletPay",
-      "purchase",
+      "create-account",
+      "choose-card-type",
+      "top-up-card",
+      "apple-google-pay",
+      "first-purchase",
     ]);
   });
 
@@ -130,14 +148,49 @@ describe("usePayCardToolProps", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
     act(() => {
-      result.current.onboarding.setStepDone("kyc", true);
+      result.current.onboarding.setStepDone("choose-card-type", true);
     });
-    expect(result.current.onboarding.steps.find(step => step.id === "kyc")?.done).toBe(true);
+    expect(result.current.onboarding.steps.find(step => step.id === "choose-card-type")?.done).toBe(
+      true,
+    );
 
     act(() => {
       result.current.onboarding.setStepDone("all", false);
     });
     expect(result.current.onboarding.steps.every(step => !step.done)).toBe(true);
+  });
+
+  it("reports no balance until the screen asks for one", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    expect(result.current.balance).toMatchObject({
+      baanxWallets: [],
+      linkedWallets: [],
+      combinedWallets: [],
+      isFetching: false,
+      errors: [],
+    });
+  });
+
+  it("starts reading the wallets when the screen opens", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => result.current.balance.load());
+
+    expect(result.current.balance.isFetching).toBe(true);
+  });
+
+  it("reads the wallets on a refresh, even as the first thing the screen does", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    // Refresh both requests them and refetches, so it stands on its own: pressing it before the
+    // first read has landed must not leave the screen with nothing.
+    act(() => result.current.balance.refresh());
+
+    expect(result.current.balance.isFetching).toBe(true);
   });
 
   it("exposes hasSeenFeatureTour from the payCard slice", () => {
@@ -146,6 +199,14 @@ describe("usePayCardToolProps", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
     expect(result.current.hasSeenFeatureTour).toBe(true);
+  });
+
+  it("exposes hasSeenLoginIntro from the payCard slice", () => {
+    store.dispatch(markPayCardLoginIntroSeen());
+
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    expect(result.current.hasSeenLoginIntro).toBe(true);
   });
 
   it("resetPayCardFeatureTourSeen clears the seen flag", () => {
@@ -159,5 +220,53 @@ describe("usePayCardToolProps", () => {
 
     expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(false);
     expect(result.current.hasSeenFeatureTour).toBe(false);
+  });
+
+  it("exposes hasSeenReceiveVerifyHint from the request verify hint slice", () => {
+    store.dispatch(markReceiveVerifyHintSeen());
+
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    expect(result.current.hasSeenReceiveVerifyHint).toBe(true);
+  });
+
+  it("resetReceiveVerifyHintSeen clears the seen flag", () => {
+    store.dispatch(markReceiveVerifyHintSeen());
+
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => {
+      result.current.resetReceiveVerifyHintSeen();
+    });
+
+    expect(store.getState().payRequestVerifyHint.hasSeenReceiveVerifyHint).toBe(false);
+    expect(result.current.hasSeenReceiveVerifyHint).toBe(false);
+  });
+
+  it("resetPayCardLoginIntroSeen clears the seen flag", () => {
+    store.dispatch(markPayCardLoginIntroSeen());
+
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => {
+      result.current.resetPayCardLoginIntroSeen();
+    });
+
+    expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(false);
+    expect(result.current.hasSeenLoginIntro).toBe(false);
+  });
+
+  it("keeps the two reset actions apart", () => {
+    store.dispatch(markPayCardFeatureTourSeen());
+    store.dispatch(markPayCardLoginIntroSeen());
+
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => {
+      result.current.resetPayCardLoginIntroSeen();
+    });
+
+    expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(false);
+    expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
   });
 });

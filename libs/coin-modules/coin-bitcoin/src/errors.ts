@@ -1,6 +1,6 @@
-// AccountNeedResync and RbfBuildError now live in @ledgerhq/wallet-btc; re-exported
-// here for backward compatibility with existing @ledgerhq/coin-bitcoin consumers.
-export { AccountNeedResync, RbfBuildError } from "@ledgerhq/wallet-btc/errors";
+// AccountNeedResync, RbfBuildError, and InvalidXpub live in @ledgerhq/wallet-btc;
+// re-exported here so consumers don't need to depend on wallet-btc directly.
+export { AccountNeedResync, RbfBuildError, InvalidXpub } from "@ledgerhq/wallet-btc/errors";
 
 export class TaprootNotActivated extends Error {
   override name = "TaprootNotActivated";

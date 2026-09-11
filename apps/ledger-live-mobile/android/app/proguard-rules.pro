@@ -30,3 +30,13 @@
 -keep class com.brentvatne.** { *; }
 -keep class com.yqritc.** { *; }
 -keep class com.google.android.exoplayer2.** { *; }
+
+-keep class com.ledger.live.BuildConfig { *; }
+
+# LIVE-37010: the HID transport passes a `cont::resume` callable reference inside a data
+# class that gets interpolated into a log string. FunctionReference.toString() asks
+# kotlin-reflect to render it, which resolves `resume` against ContinuationKt. The
+# reference's JVM signature is a compile-time constant R8 never rewrites, so both the
+# member and the Continuation type name must survive shrinking for the lookup to match.
+-keep class kotlin.coroutines.ContinuationKt { *; }
+-keepnames class kotlin.coroutines.Continuation

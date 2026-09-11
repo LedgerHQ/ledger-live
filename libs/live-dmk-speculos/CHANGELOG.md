@@ -1,5 +1,19 @@
 # @ledgerhq/live-dmk-speculos
 
+## 0.10.8
+
+### Patch Changes
+
+- Updated dependencies [[`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6)]:
+  - @shared/env@0.6.0
+
+## 0.10.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6)]:
+  - @shared/env@0.6.0-next.0
+
 ## 0.10.7
 
 ### Patch Changes
@@ -159,35 +173,5 @@
 - Updated dependencies [[`b14d5cc`](https://github.com/LedgerHQ/ledger-live/commit/b14d5cc29cc75c6be2e565db3d4d0ab400cc56d9), [`ec38133`](https://github.com/LedgerHQ/ledger-live/commit/ec38133ab6b2c18d329e1c78320b7c2a1f80fbfc)]:
   - @ledgerhq/live-env@2.38.0-next.0
   - @ledgerhq/hw-transport@6.35.4-next.0
-
-## 0.9.0
-
-### Minor Changes
-
-- [#17809](https://github.com/LedgerHQ/ledger-live/pull/17809) [`d61c27f`](https://github.com/LedgerHQ/ledger-live/commit/d61c27ffa89b7dc5d69278a38ebca3e9ea3aed6c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Repair the speculos e2e recording pipeline:
-
-  - `live-dmk-speculos` now consumes the speculos `/events?stream=true` SSE feed and forwards events to `automationEvents`. The wiring had been silently dropped, so any scenario that drives on-device prompts (e.g. `pnpm lkrp e2e`) would stall waiting for button presses that never fired. The stream is opened lazily on first subscription and torn down when the last subscriber leaves, so APDU-only consumers (e.g. desktop e2e smoke tests) pay no socket cost. `automationEvents` is now an `Observable` rather than a `Subject` — existing `.subscribe()` / `.pipe()` consumers are unaffected.
-  - `ledger-key-ring-protocol`'s e2e runner script switches its dynamic scenario loader from `await import()` to `createRequire` so Node 22+ resolves the `.ts` scenario files through the ts-node CJS hook instead of the native ESM resolver.
-
-### Patch Changes
-
-- Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9)]:
-  - @ledgerhq/live-env@2.37.0
-  - @ledgerhq/hw-transport@6.35.3
-
-## 0.9.0-next.0
-
-### Minor Changes
-
-- [#17809](https://github.com/LedgerHQ/ledger-live/pull/17809) [`d61c27f`](https://github.com/LedgerHQ/ledger-live/commit/d61c27ffa89b7dc5d69278a38ebca3e9ea3aed6c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Repair the speculos e2e recording pipeline:
-
-  - `live-dmk-speculos` now consumes the speculos `/events?stream=true` SSE feed and forwards events to `automationEvents`. The wiring had been silently dropped, so any scenario that drives on-device prompts (e.g. `pnpm lkrp e2e`) would stall waiting for button presses that never fired. The stream is opened lazily on first subscription and torn down when the last subscriber leaves, so APDU-only consumers (e.g. desktop e2e smoke tests) pay no socket cost. `automationEvents` is now an `Observable` rather than a `Subject` — existing `.subscribe()` / `.pipe()` consumers are unaffected.
-  - `ledger-key-ring-protocol`'s e2e runner script switches its dynamic scenario loader from `await import()` to `createRequire` so Node 22+ resolves the `.ts` scenario files through the ts-node CJS hook instead of the native ESM resolver.
-
-### Patch Changes
-
-- Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9)]:
-  - @ledgerhq/live-env@2.37.0-next.0
-  - @ledgerhq/hw-transport@6.35.3-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

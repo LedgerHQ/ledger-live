@@ -32,7 +32,7 @@ function normalizePathname(pathname: string): string {
  *   maps to the completed two-step title key.
  *
  * Header mapping:
- * - `/` + `tab=QUOTES_LIST` -> `quotesList`, opaque header, quotes title
+ * - `/` + `tab=QUOTES_LIST` -> `quotesList`, opaque header, no title (title rendered inside the live app)
  * - `/` (any other tab/missing tab) -> `home`, transparent header, no title
  * - `/multi-step-transaction` -> `multiStepTransaction`, opaque header, two-step title
  * - `/dev-settings` -> `devSettings`, opaque header, Dev Settings title
@@ -40,7 +40,7 @@ function normalizePathname(pathname: string): string {
  *
  * Examples:
  * - `https://swap.live.app/?tab=QUOTES_LIST`
- *   -> `{ routeName: "quotesList", headerStyle: "opaque", titleKey: "transfer.swap2.quotesList.title" }`
+ *   -> `{ routeName: "quotesList", headerStyle: "opaque", titleKey: null }`
  * - `https://swap.live.app/multi-step-transaction?transactionStatus=complete`
  *   -> `{ routeName: "multiStepTransaction", headerStyle: "opaque", titleKey: "transfer.swap2.twoStepApproval.completedTitle" }`
  * - `https://swap.live.app/anything-else`
@@ -59,7 +59,7 @@ export function parseSwapWallet40Route(url: string): SwapWallet40ParsedRoute {
         return {
           routeName: "quotesList",
           headerStyle: "opaque",
-          titleKey: "transfer.swap2.quotesList.title",
+          titleKey: null,
           isTransactionComplete: false,
         };
       }

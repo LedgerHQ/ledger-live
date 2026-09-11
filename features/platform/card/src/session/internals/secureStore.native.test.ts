@@ -64,10 +64,10 @@ describe("secureStore.native", () => {
     await expect(secureStore.read(KEY)).resolves.toBeNull();
   });
 
-  it("reads an unreadable value as absent", async () => {
+  it("rejects when the keychain refuses the read, rather than reading it as absent", async () => {
     jest.mocked(getGenericPassword).mockRejectedValue(new Error("Could not decrypt the value"));
 
-    await expect(secureStore.read(KEY)).resolves.toBeNull();
+    await expect(secureStore.read(KEY)).rejects.toThrow("Could not decrypt the value");
   });
 
   it("removes the entry of the key", async () => {

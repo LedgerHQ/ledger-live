@@ -64,7 +64,7 @@ describe("Contacts feature introduction integration", () => {
       expect(screen.getByText("Introducing Contacts")).toBeVisible();
       expect(screen.getByTestId("contacts-feature-introduction-primary")).toBeVisible();
     });
-    expect(screen.queryByText("Turn on Ledger Sync to save contacts")).toBeNull();
+    expect(screen.queryByText("Sync your wallet to add a contact")).toBeNull();
   });
 
   it("should persist dismissal from Explore now and keep the Contacts page available", async () => {
@@ -86,6 +86,28 @@ describe("Contacts feature introduction integration", () => {
       expect(screen.queryByTestId("contacts-feature-introduction-primary")).toBeNull();
       expect(screen.getByTestId("contacts-screen")).toBeVisible();
     });
+  });
+
+  it("should persist dismissal from the sheet header and keep the Contacts page open", async () => {
+    const { user, store } = render(<ContactsFeatureIntroductionTestApp />, {
+      navigationInitialState: contactsNavigationState,
+      overrideInitialState: withFlagOverrides(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({
+          ...state,
+          settings: { ...state.settings, hasDismissedContactsFeatureIntroduction: false },
+        }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("bottom-sheet-header-close-button"));
+
+    await waitFor(() => {
+      expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(true);
+      expect(screen.queryByTestId("contacts-feature-introduction-primary")).toBeNull();
+      expect(screen.getByTestId("contacts-screen")).toBeVisible();
+    });
+    expect(screen.queryByTestId("my-wallet-home")).toBeNull();
   });
 
   it("should navigate to the introduction from My Wallet when the feature flag is enabled", async () => {

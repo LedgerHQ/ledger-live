@@ -358,7 +358,7 @@ export function useAddAddressFlowViewModel({
       return { ...session, status: "success" };
     });
   }, []);
-  const completeMockConfirmation = useCallback(() => {
+  const completeConfirmation = useCallback(() => {
     setState(currentState =>
       currentState.status === "confirmationRequired"
         ? {
@@ -427,7 +427,7 @@ export function useAddAddressFlowViewModel({
     continueFromAddressDetails,
     continueFromName,
     continueFromReview,
-    completeMockConfirmation,
+    completeConfirmation,
     goBack,
     close,
   };

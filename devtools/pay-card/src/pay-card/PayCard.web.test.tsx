@@ -22,8 +22,33 @@ function buildProps(): PayCardToolProps {
       ],
       setStepDone: jest.fn(),
     },
+    interaction: {
+      probes: [],
+      details: {
+        imageUrl: undefined,
+        isFetching: false,
+        error: undefined,
+        request: jest.fn(),
+        clear: jest.fn(),
+      },
+    },
+    balance: {
+      baanxWallets: [],
+      linkedWallets: [],
+      combinedWallets: [],
+      isFetching: false,
+      errors: [],
+      load: jest.fn(),
+      refresh: jest.fn(),
+    },
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
+    hasSeenReceiveVerifyHint: false,
+    resetReceiveVerifyHintSeen: jest.fn(),
+    hasSeenLoginIntro: false,
+    resetPayCardLoginIntroSeen: jest.fn(),
+    hasCompletedCardOnboarding: false,
+    resetCardOnboarding: jest.fn(),
   };
 }
 
@@ -33,6 +58,8 @@ describe("PayCard (web)", () => {
     expect(screen.getByText("Feature flags")).toBeDefined();
     expect(screen.getByText("Onboarding")).toBeDefined();
     expect(screen.getByText("Feature tour")).toBeDefined();
+    expect(screen.getByText("Request verify hint")).toBeDefined();
+    expect(screen.getByText("Card login intro")).toBeDefined();
   });
 
   it("resets the feature tour", () => {
@@ -41,6 +68,46 @@ describe("PayCard (web)", () => {
 
     fireEvent.click(screen.getByText("Reset feature tour"));
     expect(props.resetPayCardFeatureTourSeen).toHaveBeenCalledTimes(1);
+  });
+
+  it("resets the request verify hint", () => {
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    fireEvent.click(screen.getByText("Reset verify hint"));
+    expect(props.resetReceiveVerifyHintSeen).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides quick actions when the host does not pass navigation", () => {
+    render(<PayCard {...buildProps()} />);
+    expect(screen.queryByText("Quick actions")).toBeNull();
+  });
+
+  it("navigates to Portfolio and Pay when the host wires the actions", () => {
+    const onNavigateToPortfolio = jest.fn();
+    const onNavigateToPayTab = jest.fn();
+    render(
+      <PayCard
+        {...buildProps()}
+        onNavigateToPortfolio={onNavigateToPortfolio}
+        onNavigateToPayTab={onNavigateToPayTab}
+      />,
+    );
+
+    expect(screen.getByText("Quick actions")).toBeDefined();
+    fireEvent.click(screen.getByText("Go to Portfolio"));
+    fireEvent.click(screen.getByText("Go to Pay tab"));
+    expect(onNavigateToPortfolio).toHaveBeenCalledTimes(1);
+    expect(onNavigateToPayTab).toHaveBeenCalledTimes(1);
+  });
+
+  it("resets the card login intro", () => {
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    fireEvent.click(screen.getByText("Reset card login intro"));
+    expect(props.resetPayCardLoginIntroSeen).toHaveBeenCalledTimes(1);
+    expect(props.resetPayCardFeatureTourSeen).not.toHaveBeenCalled();
   });
 
   it("wires onboarding actions", () => {

@@ -1,8 +1,7 @@
-import expect from "expect";
 import { Delegate } from "../models/Delegate";
 import { Transaction } from "../models/Transaction";
 import {
-  containsSubstringInEvent,
+  expectSpeculosEventsContain,
   expectMemoTagInEvents,
   getDelegateEvents,
   getSendEvents,
@@ -18,8 +17,7 @@ export const delegateCosmos = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getDelegateEvents(delegatingAccount);
-      const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
-      expect(isAmountCorrect).toBeTruthy();
+      expectSpeculosEventsContain(delegatingAccount.amount, events);
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
@@ -35,14 +33,12 @@ export const sendCosmos = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getSendEvents(tx);
-      const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-      expect(isAmountCorrect).toBeTruthy();
+      expectSpeculosEventsContain(tx.amount, events);
 
       if (!tx.accountToCredit.address) {
         throw new Error("Recipient address is not set");
       }
-      const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-      expect(isAddressCorrect).toBeTruthy();
+      expectSpeculosEventsContain(tx.accountToCredit.address, events);
       expectMemoTagInEvents(tx, events);
 
       if (isTouchDevice()) {

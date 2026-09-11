@@ -87,7 +87,7 @@ describe("formatTimeAgo", () => {
     });
 
     it("should format Jan 1 of the same year", () => {
-      const timestamp = new Date("2025-01-01T00:00:00Z").getTime();
+      const timestamp = new Date("2025-01-01T12:00:00Z").getTime();
       const expected = new Intl.DateTimeFormat(LOCALE, {
         day: "numeric",
         month: "short",

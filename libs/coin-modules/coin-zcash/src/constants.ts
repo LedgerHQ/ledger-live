@@ -65,6 +65,7 @@ export const ZCASH_ACTIVATION_DATE_STRING = "2026-07-28";
 // the note's transaction has this many blocks mined on top of it, the spendable
 // balance can trail the total.
 export const ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS = 12;
+export const ZCASH_MEMO_MAX_BYTES = 512;
 /** @deprecated kept for backward compatibility */
 export const ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES = 2;
 /** @deprecated kept for backward compatibility */
@@ -101,3 +102,25 @@ export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
 
 /** Estimation recipient used by estimateMaxSpendable/fee-estimation flows. */
 export const ZCASH_ESTIMATION_RECIPIENT = "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F";
+
+// ── Per-PCZT device ceilings ────────────────────────────────────────────────
+//
+// Values read from `app-zcash`'s `src/consts.rs` on `develop` (merge commit
+// `22dc385`, the non-`capacity_probe` build, which is what ships): both
+// bounds moved from 10 to 32 there. Re-check that file if these ever need
+// revisiting -- the device's own bound is the source of truth, this is only
+// a mirror of it.
+
+/**
+ * Transparent inputs one PCZT may spend, mirroring the device's
+ * `MAX_PCZT_TRANSPARENT_INPUTS_NUMBER` (app-zcash, src/consts.rs).
+ */
+export const ZCASH_MAX_TRANSPARENT_INPUTS = 32;
+
+/**
+ * Ironwood spends one PCZT may carry, mirroring the device's
+ * `MAX_PCZT_IRONWOOD_ACTIONS_NUMBER` (app-zcash, src/consts.rs). The shielded
+ * send flow spends the Ironwood pool exclusively (types/bridge.ts), so this is
+ * the only shielded-pool ceiling coin-zcash's own selection needs to mirror.
+ */
+export const ZCASH_MAX_IRONWOOD_ACTIONS = 32;

@@ -37,7 +37,6 @@ export const blast_sepolia = currency({
       magnitude: 0,
     },
   ],
-  disableCountervalue: false,
   isTestnetFor: "blast",
   ethereumLikeInfo: {
     chainId: 168587773,

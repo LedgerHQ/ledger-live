@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
@@ -33,7 +32,6 @@ import {
   useAddAddressCurrencySelectionViewModel,
   useAddAddressFlowViewModel,
   type AddAddressContact,
-  type AddAddressCompletionLabels,
   type AddAddressEntryLabels,
   type AddAddressFlowState,
   type ContactsAddAddressNameLabels,
@@ -78,10 +76,10 @@ export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact" | "ad
 export function useContactsViewModel(): ContactsPageViewModel {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const analytics = useContactsAnalytics();
   const { openDrawer } = useActivationDrawer();
   const helpCenterUrl = useLocalizedUrl(urls.helpModal.helpCenter);
+  const isSavingAddress = useRef(false);
   const handleSanctionedAddressLearnMore = useCallback(() => {
     openURL(helpCenterUrl);
   }, [helpCenterUrl]);
@@ -109,84 +107,138 @@ export function useContactsViewModel(): ContactsPageViewModel {
     continueFromAddressDetails,
     continueFromName,
     continueFromReview,
-    completeMockConfirmation,
+    completeConfirmation,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({ addressValidation });
-  const saveAddressFromReview = useCallback(async () => {
-    if (addAddressFlowState.status !== "reviewingAddress") {
+  const saveAddress = useCallback(
+    async (
+      flowState: Extract<
+        AddAddressFlowState,
+        { status: "reviewingAddress" } | { status: "confirmationRequired" }
+      >,
+    ) => {
+      const selectedContact = contacts.find(contact => contact.id === flowState.selectedContactId);
+      if (selectedContact === undefined || isSavingAddress.current) {
+        return;
+      }
+
+      isSavingAddress.current = true;
+      try {
+        const { network, asset } = await resolveContactsCurrencyAnalytics(
+          flowState.selectedCurrencyId,
+          {
+            findTokenById: currencyId => getCryptoAssetsStore().findTokenById(currencyId),
+          },
+        );
+        const inputMethod = flowState.addressEntry.inputMethod ?? "manual";
+
+        analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
+          source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+          button: CONTACTS_TRACKING_BUTTON.saveAddress,
+          page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
+          network,
+          asset,
+          inputMethod,
+          flow: CONTACTS_FLOW.CONTACTS,
+        });
+
+        const signedAddress = await deviceIntents.registerExternalAddress({
+          contact: selectedContact,
+          currencyId: flowState.selectedCurrencyId,
+          label: flowState.addressLabel.label,
+          address: flowState.addressEntry.resolvedAddress,
+        });
+
+        const address = contactAddress({
+          id: `address-${uuid()}`,
+          currencyId: flowState.selectedCurrencyId,
+          label: flowState.addressLabel.label,
+          address: flowState.addressEntry.resolvedAddress,
+          device: signedAddress.addressDeviceContext,
+        });
+
+        dispatch(
+          addAddress({
+            contactId: flowState.selectedContactId,
+            address,
+            deviceCredentials: signedAddress.deviceCredentials,
+          }),
+        );
+
+        analytics.trackEvent(CONTACTS_TRACK_EVENTS.ADDRESS_ADDED, {
+          source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+          network,
+          asset,
+          inputMethod,
+          isEns: inputMethod === "ens",
+          flow: CONTACTS_FLOW.CONTACTS,
+        });
+
+        if (flowState.status === "confirmationRequired") {
+          completeConfirmation();
+        } else {
+          continueFromReview();
+        }
+        closeAddAddress();
+      } catch {
+        closeAddAddress();
+      } finally {
+        isSavingAddress.current = false;
+      }
+    },
+    [
+      analytics,
+      closeAddAddress,
+      completeConfirmation,
+      contacts,
+      continueFromReview,
+      deviceIntents,
+      dispatch,
+    ],
+  );
+  const continueFromNameAndConfirm = useCallback(() => {
+    if (
+      addAddressFlowState.status !== "namingAddress" ||
+      addAddressFlowState.addressLabel.status !== "valid"
+    ) {
+      return;
+    }
+    if (addAddressFlowState.entryMode === "prefilled") {
+      continueFromName();
       return;
     }
 
-    const { network, asset } = await resolveContactsCurrencyAnalytics(
-      addAddressFlowState.selectedCurrencyId,
-      {
-        findTokenById: currencyId => getCryptoAssetsStore().findTokenById(currencyId),
-      },
-    );
-    const inputMethod = addAddressFlowState.addressEntry.inputMethod ?? "manual";
-
-    analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
-      source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
-      button: CONTACTS_TRACKING_BUTTON.saveAddress,
-      page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
-      network,
-      asset,
-      inputMethod,
-      flow: CONTACTS_FLOW.CONTACTS,
+    continueFromName();
+    void saveAddress({
+      ...addAddressFlowState,
+      addressEntry: addAddressFlowState.addressEntry,
+      addressLabel: addAddressFlowState.addressLabel,
+      status: "confirmationRequired",
     });
-
-    const selectedContact = contacts.find(
-      contact => contact.id === addAddressFlowState.selectedContactId,
-    );
-    if (selectedContact === undefined) {
+  }, [addAddressFlowState, continueFromName, saveAddress]);
+  const continueFromAddressDetailsAndConfirm = useCallback(() => {
+    if (
+      addAddressFlowState.status !== "enteringAddress" ||
+      addAddressFlowState.addressEntry.status !== "valid" ||
+      addAddressFlowState.addressLabel.status !== "valid"
+    ) {
       return;
     }
-    try {
-      const signedAddress = await deviceIntents.registerExternalAddress({
-        contact: selectedContact,
-        currencyId: addAddressFlowState.selectedCurrencyId,
-        label: addAddressFlowState.addressLabel.label,
-        address: addAddressFlowState.addressEntry.resolvedAddress,
-      });
 
-      const address = contactAddress({
-        id: `address-${uuid()}`,
-        currencyId: addAddressFlowState.selectedCurrencyId,
-        label: addAddressFlowState.addressLabel.label,
-        address: addAddressFlowState.addressEntry.resolvedAddress,
-        device: signedAddress.addressDeviceContext,
-      });
-
-      dispatch(
-        addAddress({
-          contactId: addAddressFlowState.selectedContactId,
-          address,
-          deviceCredentials: signedAddress.deviceCredentials,
-        }),
-      );
-
-      analytics.trackEvent(CONTACTS_TRACK_EVENTS.ADDRESS_ADDED, {
-        source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
-        network,
-        asset,
-        inputMethod,
-        isEns: inputMethod === "ens",
-        flow: CONTACTS_FLOW.CONTACTS,
-      });
-
-      continueFromReview();
-    } catch {
-      closeAddAddress();
+    continueFromAddressDetails();
+    void saveAddress({
+      ...addAddressFlowState,
+      addressEntry: addAddressFlowState.addressEntry,
+      addressLabel: addAddressFlowState.addressLabel,
+      status: "reviewingAddress",
+      origin: "addressDetails",
+    });
+  }, [addAddressFlowState, continueFromAddressDetails, saveAddress]);
+  const saveAddressFromReview = useCallback(() => {
+    if (addAddressFlowState.status === "reviewingAddress") {
+      void saveAddress(addAddressFlowState);
     }
-  }, [
-    addAddressFlowState,
-    analytics,
-    closeAddAddress,
-    contacts,
-    continueFromReview,
-    deviceIntents,
-    dispatch,
-  ]);
+  }, [addAddressFlowState, saveAddress]);
   const selectCurrencyForContact = useCallback(
     (contactId: ContactId) => {
       void selectCurrency()
@@ -203,7 +255,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   );
   const ledgerSyncStatus = useContactsLedgerSyncStatus();
   const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
-  const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
+  const [isLedgerSyncIntroductionRequested, setIsLedgerSyncIntroductionRequested] = useState(false);
   const onAddAddress = useCallback(
     (contact: AddAddressContact) => {
       const result = requestMutation(
@@ -212,7 +264,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       );
       if (result.status !== "allowed") {
         if (result.status === "blocked") {
-          setIsLedgerSyncIntroductionDismissed(false);
+          setIsLedgerSyncIntroductionRequested(true);
         }
         return;
       }
@@ -287,15 +339,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     }),
     [t],
   );
-  const addAddressCompletionLabels = useMemo<AddAddressCompletionLabels>(
-    () => ({
-      title: t("contacts.addAddressReview.title"),
-      continue: t("contacts.addAddressReview.continue"),
-      successTitle: t("contacts.addAddressReview.successTitle"),
-      close: t("contacts.addAddressReview.close"),
-    }),
-    [t],
-  );
   const addAddressFlowDialog = useMemo<ContactsAddAddressFlowDialogProps>(
     () => ({
       state: addAddressFlowState,
@@ -307,15 +350,13 @@ export function useContactsViewModel(): ContactsPageViewModel {
       },
       nameLabels: addAddressNameLabels,
       reviewLabels: addAddressReviewLabels,
-      completionLabels: addAddressCompletionLabels,
       onAddressChange: (address, inputMethod) => {
         void updateAddress(address, inputMethod);
       },
-      onContinueFromAddressDetails: continueFromAddressDetails,
+      onContinueFromAddressDetails: continueFromAddressDetailsAndConfirm,
       onAddressLabelChange: updateAddressLabel,
-      onContinueFromName: continueFromName,
+      onContinueFromName: continueFromNameAndConfirm,
       onContinueFromReview: saveAddressFromReview,
-      onCompleteMockConfirmation: completeMockConfirmation,
       onBack: onBackAddAddress,
       onClose: onCloseAddAddress,
     }),
@@ -324,16 +365,14 @@ export function useContactsViewModel(): ContactsPageViewModel {
       handleSanctionedAddressLearnMore,
       addAddressNameLabels,
       addAddressReviewLabels,
-      addAddressCompletionLabels,
       addAddressFlowState,
       onBackAddAddress,
       onCloseAddAddress,
       updateAddress,
       updateAddressLabel,
-      continueFromAddressDetails,
-      continueFromName,
+      continueFromAddressDetailsAndConfirm,
+      continueFromNameAndConfirm,
       saveAddressFromReview,
-      completeMockConfirmation,
       t,
     ],
   );
@@ -347,10 +386,11 @@ export function useContactsViewModel(): ContactsPageViewModel {
     onSelectContact,
   } = useContactDetailPaneAdapter(onAddAddress, deviceIntents);
   const preference = useContactsFeatureIntroductionPreference();
-  const featureIntroductionState = useContactsFeatureIntroductionState({
-    isContactsEntryAvailable: true,
-    preference,
-  });
+  const { isRequested: isFeatureIntroductionRequested, dismiss: dismissFeatureIntroduction } =
+    useContactsFeatureIntroductionState({
+      isContactsEntryAvailable: true,
+      preference,
+    });
   const labels = useMemo<ContactsListViewLabels>(
     () => ({
       title: t("contacts.title"),
@@ -390,13 +430,13 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncDismiss(analytics);
     dismissPendingIntent();
-    setIsLedgerSyncIntroductionDismissed(true);
+    setIsLedgerSyncIntroductionRequested(false);
   }, [analytics, dismissPendingIntent]);
   const onActivateLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
-    setIsLedgerSyncIntroductionDismissed(true);
-    openDrawer();
+    setIsLedgerSyncIntroductionRequested(false);
+    openDrawer({ startOnSyncMethod: true });
   }, [analytics, dismissPendingIntent, openDrawer]);
   const onRequestAddContact = useCallback(
     (onAllowed: () => void) => {
@@ -404,7 +444,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       if (result.status === "allowed") {
         onAllowed();
       } else if (result.status === "blocked") {
-        setIsLedgerSyncIntroductionDismissed(false);
+        setIsLedgerSyncIntroductionRequested(true);
       }
     },
     [ledgerSyncStatus, requestMutation],
@@ -413,21 +453,15 @@ export function useContactsViewModel(): ContactsPageViewModel {
   useEffect(() => {
     if (!isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
       dismissPendingIntent();
-      setIsLedgerSyncIntroductionDismissed(false);
+      setIsLedgerSyncIntroductionRequested(false);
     }
   }, [dismissPendingIntent, ledgerSyncStatus]);
 
   const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
-    isFeatureIntroductionRequested: featureIntroductionState.isRequested,
+    isFeatureIntroductionRequested,
     ledgerSyncStatus,
-    isLedgerSyncIntroductionDismissed,
+    isLedgerSyncIntroductionRequested,
   });
-  const onCompleteFeatureIntroduction = useCallback(() => {
-    featureIntroductionState.dismiss();
-  }, [featureIntroductionState]);
-  const onCloseFeatureIntroduction = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
   const searchHasResults = !("status" in viewModel && viewModel.status === "no-results");
 
   useContactsListPageAnalytics({
@@ -457,15 +491,16 @@ export function useContactsViewModel(): ContactsPageViewModel {
     ledgerSyncStatus,
     dieProps,
     featureIntroduction: {
-      isOpen: featureIntroductionState.isRequested,
+      isOpen: isFeatureIntroductionRequested,
       title: t("contacts.featureIntroduction.title"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
-      onComplete: onCompleteFeatureIntroduction,
-      onClose: onCloseFeatureIntroduction,
+      onComplete: dismissFeatureIntroduction,
+      onClose: dismissFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,
+      title: t("contacts.ledgerSyncIntroduction.title"),
       description: t("contacts.ledgerSyncIntroduction.description"),
       activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
       dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),

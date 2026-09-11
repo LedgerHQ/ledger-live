@@ -1,0 +1,2 @@
+-keep class kotlin.** { *; }
+-keep class kotlinx.coroutines.** { *; }

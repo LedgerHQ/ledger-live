@@ -70,6 +70,19 @@ describe("mapDeviceActionErrorToFailureJobState", () => {
     expect(result.type).toBe("invalid-input");
   });
 
+  it("GIVEN an ActionRefusedError WHEN mapping THEN it returns device-rejected", () => {
+    // WHEN
+    const result = mapDeviceActionErrorToFailureJobState({
+      _tag: "ActionRefusedError",
+      errorCode: "5501",
+      message: "Action refused on device.",
+    });
+
+    // THEN
+    expect(result.type).toBe("device-rejected");
+    expect(result.error.message).toBe("Action refused on device.");
+  });
+
   it.each([
     ["6a80", "device-rejected"],
     ["6982", "existing-group-verification-failed"],

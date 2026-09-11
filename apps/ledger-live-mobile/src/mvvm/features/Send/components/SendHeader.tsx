@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { View, Pressable } from "react-native";
 import {
   AddressInput,
@@ -17,10 +17,8 @@ import { useTranslation } from "~/context/Locale";
 
 import { AddressDisclaimer } from "./AddressDisclaimer";
 import { RecipientContactRow } from "./RecipientContactRow";
+import { useRecipientInputAutoFocus } from "../hooks/useRecipientInputAutoFocus";
 import { useSendHeaderViewModel } from "../hooks/useSendHeaderViewModel";
-import { useSendFlowData } from "../context/SendFlowContext";
-import { track, usePageNameFromRoute } from "~/analytics";
-import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 type SendHeaderProps = Readonly<{
   headerRight?: React.ReactNode;
@@ -32,6 +30,7 @@ const DISCLAIMER_HIT_AREA = 56;
 export function SendHeader({ headerRight }: SendHeaderProps) {
   const { t } = useTranslation();
   const viewModel = useSendHeaderViewModel();
+  const recipientInputRef = useRecipientInputAutoFocus(viewModel.isRecipientStep);
   const styles = useStyleSheet(
     theme => ({
       addressInputContainer: {
@@ -53,28 +52,6 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
     }),
     [],
   );
-
-  const { state } = useSendFlowData();
-  const { account, parentAccount } = state.account;
-
-  const trackingProperties = useMemo(() => {
-    return getSendFlowTrackingProperties(account ?? null, parentAccount);
-  }, [account, parentAccount]);
-
-  const page = usePageNameFromRoute();
-
-  useEffect(() => {
-    if (!viewModel.isRecipientStep) {
-      return;
-    }
-
-    track("send_modal", {
-      ...trackingProperties,
-      name: "step recipient",
-      page,
-      flow: "send",
-    });
-  }, [page, trackingProperties, viewModel.isRecipientStep]);
 
   return (
     <>
@@ -111,14 +88,14 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
         <View style={styles.addressInputContainer}>
           {viewModel.isRecipientStep ? (
             <AddressInput
+              ref={recipientInputRef}
               testID="recipient-input"
               prefix={t("send.newSendFlow.to")}
               value={viewModel.recipientSearch.value}
-              onChangeText={viewModel.recipientSearch.setValue}
+              onChangeText={viewModel.handleRecipientInputChange}
               onClear={viewModel.clearRecipientSearch}
               onQrCodeClick={viewModel.handleQrCodeClick}
               placeholder={viewModel.recipientPlaceholder}
-              autoFocus
             />
           ) : (
             <>

@@ -63,6 +63,20 @@ function renderHumanReport(
   } else {
     writeStdout("All skills up-to-date.");
   }
+  // Surface pre-rename install directories: they are inert (nothing reads or writes
+  // them any more) but an agent that scans a skills dir would load them alongside
+  // the canonical install as a duplicate skill. We never delete them — that call
+  // belongs to the user.
+  const superseded = [...new Set(results.flatMap(d => d.supersededRoots ?? []))];
+  if (superseded.length > 0) {
+    writeStdout(
+      colors.dim(
+        `Superseded install path(s) from an older wallet-cli: ${superseded.join(", ")}. ` +
+          "The skill was renamed, so these are no longer updated — delete them to avoid a duplicate skill.",
+      ),
+    );
+  }
+
   const stillModified = remainingDrift.filter(d => d.status === "modified-locally");
   // Only suppress the hint once the user has actually attempted an overwrite
   // (`--fix --force`); `--force` alone overwrites nothing, so the hint still helps.

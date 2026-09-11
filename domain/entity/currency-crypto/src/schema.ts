@@ -63,10 +63,6 @@ export const CryptoCurrencySchema = z.object({
   units: z.array(UnitSchema).min(1),
   /** Optional currency symbol (e.g. `"Ƀ"`). Not all currencies have one. */
   symbol: z.string().optional(),
-  /** When `true`, countervalue display is disabled (e.g. colliding tickers). */
-  disableCountervalue: z.boolean().optional(),
-  /** When `true`, the currency has been delisted and should not appear in new flows. */
-  delisted: z.boolean().optional(),
   /** Search keywords (e.g. `["btc", "bitcoin"]`). */
   keywords: z.array(z.string()).optional(),
   /** Id of the currency this was forked from (e.g. `"bitcoin"` for Bitcoin Cash). */
@@ -98,8 +94,6 @@ export const CryptoCurrencySchema = z.object({
   ethereumLikeInfo: EthereumLikeInfoSchema.optional(),
   /** One or more blockchain explorer URL templates. */
   explorerViews: z.array(ExplorerViewSchema),
-  /** Ticker displayed on the device (when different from `ticker`). */
-  deviceTicker: z.string().optional(),
   /**
    * Id used to connect to the Ledger explorer endpoint (when different from the currency id and ticker).
    * @deprecated Kept only for backward compatibility; the explorer-id concept is being phased out.

@@ -101,4 +101,24 @@ describe("api/craftTransaction", () => {
     expect(result).toHaveProperty("transaction");
     expect(typeof result.transaction).toBe("string");
   });
+
+  it("should reject a non-native asset instead of crafting a CCD transfer", async () => {
+    const api = createApi("concordium_testnet");
+    const transactionIntent = {
+      intentType: "transaction" as const,
+      type: "send",
+      sender: VALID_ADDRESS,
+      recipient: VALID_ADDRESS_2,
+      amount: BigInt(1000000),
+      asset: { type: "plt", assetReference: "t-USDT" },
+    } as any;
+
+    await expect(api.craftTransaction(context, transactionIntent)).rejects.toThrow(
+      /asset type plt is not supported/,
+    );
+    // Crafting ignores `asset`, so without the guard this would sign a CCD
+    // transfer of the same integer amount. PLT crafting is LIVE-28337.
+    expect(getNextValidSequenceMock).not.toHaveBeenCalled();
+    expect(craftTransactionMock).not.toHaveBeenCalled();
+  });
 });

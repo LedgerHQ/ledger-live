@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "7.2.0",
+  "version": "8.0.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -31,12 +31,6 @@
       "network": [
         "lib/network/index"
       ],
-      "signer": [
-        "lib/signer/index"
-      ],
-      "types": [
-        "lib/types/index"
-      ],
       "*": [
         "lib/*"
       ]
@@ -50,11 +44,6 @@
       "require": "./lib/network/index.js",
       "default": "./lib-es/network/index.js"
     },
-    "./signer": {
-      "@ledgerhq/source": "./src/signer/index.ts",
-      "require": "./lib/signer/index.js",
-      "default": "./lib-es/signer/index.js"
-    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
@@ -65,11 +54,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "catalog:",
-    "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",
     "lodash": "catalog:",

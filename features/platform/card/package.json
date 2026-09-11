@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-card",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "description": "Cross-flow Card runtime: in-memory Card session and the Bearer/refresh accessors the app injects into the shared cardApi service",
   "main": "src/index.ts",
@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/api-services": "workspace:*",
     "react-native-keychain": "catalog:"
   },
   "devDependencies": {

@@ -435,6 +435,11 @@
           "viewInExplorer": "View in explorer",
           "copied": "Copied"
         },
+        "earnBanner": {
+          "title": "Earn up to {{apy}}% {{type}}",
+          "description": "Explore Earn opportunities",
+          "button": "Explore"
+        },
         "accessibility": {
           "copySwapId": "Copy swap ID"
         }
@@ -873,22 +878,32 @@
   },
   "payTab": {
     "featureTour": {
-      "title": "Pay and get paid",
-      "description": "Stablecoin closes the gap between crypto and real life spending",
-      "cta": "Got it",
+      "title": "All your payments, in one place",
+      "description": "Meet your new Pay tab, making your crypto ready for everyday money moments.",
+      "cta": "Explore Pay",
       "rows": {
         "global": {
-          "title": "Pay and get paid globally",
-          "description": "Benefits from low networks fees"
+          "title": "Pay your contacts",
+          "description": "Send crypto to saved addresses."
         },
         "volatility": {
-          "title": "Minimal volatility",
-          "description": "Stablecoin are based on fiat"
+          "title": "Request payments",
+          "description": "Ask Contacts to send funds straight to you."
         },
         "card": {
-          "title": "Spend with a card and get 1% cashback",
-          "description": "Pay in USDC, USDT, BTC, ETH and more"
+          "title": "Shop worldwide with crypto card",
+          "description": "And earn uncapped 1% cashback."
         }
+      }
+    },
+    "cardMore": {
+      "tile": "More",
+      "title": "More",
+      "rows": {
+        "managePin": "Manage PIN Code",
+        "accessBaanx": "Access to Baanx",
+        "help": "Help",
+        "logout": "Logout"
       }
     },
     "balance": {
@@ -904,7 +919,20 @@
     },
     "card": {
       "title": "Crypto card",
-      "balanceLabel": "Balance"
+      "balanceLabel": "Balance",
+      "freeze": "Freeze",
+      "unfreeze": "Unfreeze"
+    },
+    "cardOnboarding": {
+      "widget": {
+        "title": "Set up your card",
+        "allDone": "You're all set"
+      },
+      "dialog": {
+        "title": "Complete your card",
+        "stepComplete": "Completed",
+        "gotIt": "Got it"
+      }
     },
     "contacts": {
       "title": "Pay contact",
@@ -923,7 +951,20 @@
       "actions": {
         "pay": "Send to contact",
         "more": "More options",
+        "viewContact": "View contact",
         "viewTransactions": "View transactions"
+      },
+      "addressPicker": {
+        "title": "Select {{name}}'s address",
+        "addAddress": "Add address"
+      },
+      "paySuccess": {
+        "title": "You paid ({{recipient}}) {{amount}}",
+        "amount": "Amount",
+        "estimatedTime": "Est. time",
+        "from": "From",
+        "viewTransaction": "View transaction",
+        "close": "Close"
       }
     },
     "actions": {
@@ -952,6 +993,63 @@
         }
       }
     },
+    "bankTransferIntro": {
+      "title": "Send cash, receive stablecoin",
+      "description": "Transfer cash and receive stablecoins straight to your Ledger Wallet™.",
+      "createAccount": "Create an account",
+      "logIn": "Log in to Noah",
+      "providedBy": "Provided by Noah",
+      "rows": {
+        "bank": {
+          "title": "Receive transfers from any bank",
+          "description": "Get salary, payments, deposits via SEPA or ACH."
+        },
+        "fees": {
+          "title": "No hidden fees",
+          "description": "Direct from bank to blockchain for 0.25% fees."
+        },
+        "earn": {
+          "title": "Put your money to work right away",
+          "description": "You can swap or earn with your stablecoin."
+        }
+      }
+    },
+    "cardLogin": {
+      "title": "Crypto Card",
+      "beforeIntro": {
+        "description": "Get 1% cashback every time you spend",
+        "action": "Get card"
+      },
+      "afterIntro": {
+        "description": "Log in to access your card",
+        "action": "Login"
+      }
+    },
+    "cardLoginIntro": {
+      "title": "Spend crypto, earn cashback",
+      "providedBy": "Card provided by Baanx",
+      "createAccount": "Create an account",
+      "logIn": "Log in to Baanx",
+      "wallets": {
+        "applePay": "Apple Pay",
+        "googlePay": "Google Pay",
+        "both": "Apple Pay or Google Pay"
+      },
+      "rows": {
+        "cashback": {
+          "title": "Uncapped 1% crypto cashback",
+          "description": "On all crypto card purchases with USDC, USDT, or BTC."
+        },
+        "virtualCard": {
+          "title": "Free virtual card",
+          "description": "Add to {{wallet}}, ready instantly."
+        },
+        "topUp": {
+          "title": "Securely top up via Ledger Wallet",
+          "description": "Every transfer approved with your Ledger signer."
+        }
+      }
+    },
     "request": {
       "title": "Request {{asset}}",
       "networkLabel": "{{network}} network",
@@ -962,6 +1060,10 @@
         "copied": "Copied",
         "save": "Save",
         "verify": "Verify"
+      },
+      "verifyHint": {
+        "message": "Verify your address on\nyour Ledger device\nbefore sharing",
+        "gotIt": "Got it"
       },
       "verifyAddress": {
         "introTitle": "Verify your address",
@@ -2652,11 +2754,12 @@
       "walletNotExist": "Wallet doesn’t exist"
     },
     "skipMemo": {
-      "title": "Skip adding {{memoLabel}}?",
-      "description": "Your asset may be lost if a {{memoLabel}} is required by your recipient",
+      "title": "Send without a {{memoLabel}}?",
+      "description": "Your asset may be lost if a {{memoLabel}} is required by your recipient.",
       "notRequired": "{{memoLabel}} not required by recipient?",
-      "confirm": "Yes skip",
-      "neverAskAgain": "Don't show this warning again"
+      "confirm": "Yes, send without a {{memoLabel}}",
+      "cancel": "No, go back",
+      "neverAskAgain": "Don't ask again"
     },
     "tagHelp": {
       "inputLabel": "Enter {{memoLabel}}",
@@ -5485,6 +5588,12 @@
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
       "enableCountervaluesStaging": "Countervalues API staging",
       "enableCountervaluesStagingDesc": "Use the staging countervalues API instead of production.",
+      "enableMockServerTransport": "Mock server transport",
+      "enableMockServerTransportDesc": "Enable the Device Management Kit mock server transport to connect to a device mock server instead of a physical device. Uses the shared mock server unless MOCK_SERVER_TRANSPORT_URL points elsewhere. Requires an app restart to take effect.",
+      "mockServerStatus": {
+        "connected": "Mock server connected · click to copy the session token, right-click to open the configuration UI",
+        "disconnected": "Mock server unreachable"
+      },
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
       "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
@@ -7153,6 +7262,10 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "UnexpectedGetBalanceError": {
+      "title": "Your balance could not be retrieved",
+      "description": "Please check your internet connection and try again."
+    },
     "NotEnoughTransferAmount": {
       "title": "A minimum of 1 ICP is required to stake into a neuron."
     },
@@ -7352,6 +7465,12 @@
     "ZcashAmountBelowDustThreshold": {
       "title": "Amount is too small to be broadcast (minimum {{minimumZatoshis}} zatoshis)"
     },
+    "ZcashMemoTooLong": {
+      "title": "Memo must not exceed {{maxBytes}} bytes"
+    },
+    "ZcashSendTooLarge": {
+      "title": "This amount is too large to send in one transaction: try sending it in smaller amounts"
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },
@@ -7464,6 +7583,9 @@
     },
     "TezosStakeBlockedByPendingUnstake": {
       "title": "Unstaking from your previous validator must finish first"
+    },
+    "TezosStakeAmountTooSmall": {
+      "title": "This amount is too small to stake"
     },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
@@ -8266,6 +8388,7 @@
             "inactiveTooltip": "Validator not found",
             "overstakedTooltip": "This node is overstaked, APY is lower than optimal",
             "activeTooltip": "Delegated amount generates rewards",
+            "fetchErrorTooltip": "Couldn't load validator data. Please try again.",
             "delegated": "Delegated",
             "rewards": "Rewards"
           },
@@ -8344,6 +8467,8 @@
             "newValidatorLabel": "New delegation",
             "newValidatorSelectPlaceholder": "Select validator",
             "removedValidatorSelectPlaceholder": "Previously selected validator is no longer available",
+            "unableToLoadSelectPlaceholder": "Unable to load validators",
+            "loadingValidatorPlaceholder": "Loading validators...",
             "newValidatorSelectNoOption": "No validator matching \"{{validatorName}}\"",
             "amountLabel": "Amount to redelegate",
             "alert": "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
@@ -8912,9 +9037,11 @@
     "selectNetwork": "Select network",
     "unsupportedAssetTooltip": "{{asset}} isn't supported yet.",
     "unsupportedNetworkTooltip": "{{network}} network isn't supported yet.",
+    "notAvailableYet": "Not available yet",
     "selectAccount": "Select account",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
-    "selectAccountPerpsDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
+    "selectAccountPerpsDescription": "Select an account you want to deposit funds into to place your trades",
+    "selectAccountPerpsEmptyDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
     "selectDepositCurrencyTitle": "Select asset to deposit",
     "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
     "accountCount_one": "{{count}} account",
@@ -9159,7 +9286,7 @@
         "memo": {
           "label": "Memo (optional)",
           "placeholder": "Enter a memo",
-          "tooltip": "Attach a private message to this shielded transaction. Only the recipient can read it. Up to 512 bytes."
+          "tooltip": "Add an encrypted memo to this shielded payment. Only the recipient can read it. Max 512 bytes."
         },
         "syncBanner": {
           "stopped": {
@@ -9182,15 +9309,15 @@
         "selfTransfer": {
           "toPrivate": "Self transfer to private balance",
           "toPublic": "Self transfer to public balance",
-          "unavailable": "Your private address is not available yet. Export your view key to enable this.",
+          "unavailable": "Your private address will be available once Shielded is enabled for your account.",
           "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
         }
       },
       "state": {
-        "showBalance": "Show balance",
+        "showBalance": "Enable shielded",
         "startSync": "Start sync",
         "stopSync": "Stop sync",
-        "upToDate": "Up to date",
+        "upToDate": "Update balance",
         "lastSync": "Last sync: {{date}}",
         "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}",
         "syncFailed": "Private balance sync failed"
@@ -9365,6 +9492,23 @@
         "desc": "Please wait",
         "errorTitle": "Private sync failed",
         "errorDesc": "Something went wrong, please try again"
+      }
+    },
+    "manage": {
+      "headerAction": "Earn",
+      "title": "Manage staking",
+      "comingSoonTooltip": "Coming soon.",
+      "bond": {
+        "title": "Bond",
+        "description": "Bond your ALEO to a validator to earn rewards."
+      },
+      "unbond": {
+        "title": "Unbond",
+        "description": "Unbond your bonded ALEO. Funds will be available after the unbonding period."
+      },
+      "claim": {
+        "title": "Claim",
+        "description": "Claim your unbonded ALEO back to your available balance."
       }
     }
   },
@@ -9552,6 +9696,16 @@
           "title": "Preparing your Ledger device"
         }
       },
+      "renameContact": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
+      "editExternalAddress": {
+        "pending": {
+          "title": "Preparing your Ledger device"
+        }
+      },
       "errors": {
         "wrongDevice": {
           "title": "Use the same Ledger device you used to add this contact",
@@ -9564,6 +9718,10 @@
         "appVersionTooLow": {
           "title": "App update required",
           "description": "Update the app on your Ledger device to save contacts, then try again."
+        },
+        "osVersionTooLow": {
+          "title": "Ledger OS update required",
+          "description": "Update your Ledger device's operating system to rename contacts, then try again."
         }
       }
     },
@@ -9668,12 +9826,6 @@
       "applyChanges": "Apply changes",
       "invalidLabelError": "Special characters are not allowed."
     },
-    "editSigner": {
-      "title": "Confirm on your device",
-      "description": "Connect and unlock your Ledger device to confirm this change.",
-      "confirm": "Continue",
-      "cancel": "Cancel"
-    },
     "editSignerMismatch": {
       "title": "Use the same Ledger device you used to add this contact",
       "description": "The connected device isn't a match.",
@@ -9681,9 +9833,10 @@
       "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {
-      "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
-      "activate": "Turn on Ledger Sync",
-      "dismiss": "Got it"
+      "title": "Sync your wallet to add a contact",
+      "description": "Contacts are end-to-end encrypted and synced across Ledger Wallet on all your phones and computers.",
+      "activate": "Sync my wallet",
+      "dismiss": "Not now"
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
@@ -9988,5 +10141,44 @@
       "totalMaturity": "Total Maturity",
       "totalMaturityTooltip": "The total accumulated rewards from staking, including both staked and liquid maturity. These rewards can be either staked again or claimed as liquid ICP."
     }
+  },
+  "perpsReview": {
+    "depositTitle": "Deposit via SwapKit",
+    "depositSubtitle": "Our partner SwapKit manages your swap and deposit in one transaction - all secured by your Ledger device.",
+    "swapDetailTitle": "Swap details",
+    "amountSendLabel": "Amount send",
+    "amountReceiveLabel": "Amount receive",
+    "approximateValue": "~{{value}}",
+    "depositDetailTitle": "Deposit details",
+    "depositAmountLabel": "Deposit amount",
+    "depositReceiveLabel": "Receiver account",
+    "depositCTA": "Deposit"
+  },
+  "perpsDeposit": {
+    "title": "Deposit",
+    "inputDepositAmount": "Deposit ~{{value}}",
+    "inputSubText": "Swap and deposit via {{provider}}",
+    "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount": "No account",
+    "review": "Review",
+    "formErrors": {
+      "amountExceedsBalance": "Insufficient balance",
+      "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
+    }
+  },
+  "perpsDepositSign": {
+    "a11yTitle": "Deposit signing",
+    "terms": "By signing this transaction, I accept <termsLink>SwapKit by NEAR Intents T&C</termsLink>"
+  },
+  "perpsTransactionSigned": {
+    "title": "Transaction signed",
+    "description": "You'll receive your {{currency}} once confirmed on the blockchain",
+    "viewTransaction": "View transaction"
+  },
+  "perpsTransactionStatus": {
+    "dialogTitle": "Transaction detail",
+    "title": "Fund Perpetuals",
+    "currencies": "{{sendTicker}} → {{receiveTicker}}"
   }
 }

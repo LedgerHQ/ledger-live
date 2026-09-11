@@ -11,6 +11,7 @@ export type AleoConfig = {
   feeSafetyMultiplier: number;
   isFeeSponsored: boolean;
   enableTokens: boolean;
+  enableStaking: boolean;
   useEncryptedProve: boolean;
   recordPickingStrategy: RecordPickingStrategy;
 };

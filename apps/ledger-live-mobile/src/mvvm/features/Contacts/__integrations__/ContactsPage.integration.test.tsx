@@ -36,8 +36,11 @@ function renderContactsPage(
       featureIntroduction={createClosedContactsFeatureIntroduction()}
       ledgerSyncIntroduction={{
         isOpen: false,
+        title: "Sync your wallet to add a contact",
         description: "Contacts are encrypted.",
+        activateLabel: "Sync my wallet",
         dismissLabel: "Not now",
+        onActivate: jest.fn(),
         onDismiss: jest.fn(),
       }}
     />,

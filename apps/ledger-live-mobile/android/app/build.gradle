@@ -84,6 +84,7 @@ def enableSeparateBuildPerCPUArchitecture = true
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
+// off while R8 is being stabilised: LIVE-37085
 def enableProguardInReleaseBuilds = false
 
 /**
@@ -135,6 +136,7 @@ android {
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testProguardFiles "proguard-rules-androidTest.pro"
     }
 
     configurations.all {
@@ -176,9 +178,9 @@ android {
             applicationIdSuffix ".debug"
         }
         release {
+            // no shrinkResources: one shrunk-resources per splits.abi ABI breaks bundleRelease https://issuetracker.google.com/402800800
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
             matchingFallbacks = ['debug']
         }
         stagingRelease {
@@ -190,11 +192,15 @@ android {
         detox {
             initWith(buildTypes.stagingRelease)
             applicationIdSuffix ".detox"
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+            proguardFile "proguard-rules-detox.pro"
             matchingFallbacks = ['stagingRelease', 'release']
         }
         detoxPreRelease {
             initWith(buildTypes.release)
             signingConfig signingConfigs.stagingRelease
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+            proguardFile "proguard-rules-detox.pro"
             matchingFallbacks = ['release']
         }
     }

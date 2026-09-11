@@ -6,7 +6,9 @@ import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { useSendHeaderModel } from "../useSendHeaderModel";
 
-jest.mock("../../../FlowWizard/FlowWizardContext", () => ({ useFlowWizard: jest.fn() }));
+jest.mock("../../../FlowWizard/FlowWizardContext", () => ({
+  useFlowWizard: jest.fn(),
+}));
 jest.mock("../../context/SendFlowContext", () => ({
   useSendFlowData: jest.fn(),
   useSendFlowActions: jest.fn(),
@@ -21,11 +23,19 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 jest.mock("LLD/hooks/redux");
 jest.mock("@features/platform-contacts", () => ({
-  useContactsFeature: jest.fn(() => ({ isEnabled: false, eligibleAddressFamilies: ["evm"] })),
+  useContactsFeature: jest.fn(() => ({
+    isEnabled: false,
+    eligibleAddressFamilies: ["evm"],
+  })),
 }));
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
   decodeURIScheme: jest.fn(),
+}));
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
+  sendFeatures: {
+    hasMemoForRecipient: jest.fn(() => true),
+  },
 }));
 jest.mock("../../context/RecipientContactSelectionContext", () => ({
   useRecipientContactSelection: jest.fn(),
@@ -34,6 +44,17 @@ jest.mock("../../context/AddNewContactHeaderContext", () => ({
   useAddNewContactHeaderState: jest.fn(() => ({
     titleKey: "contacts.addContact",
     onAddressPhaseBack: null,
+  })),
+}));
+jest.mock("../../context/SendFlowTrackingContext", () => ({
+  useSendFlowTracking: jest.fn(() => ({
+    inputMethod: "manual",
+    resultType: null,
+    recipientType: null,
+    savedContactDuringFlow: false,
+    setInputMethod: jest.fn(),
+    setRecipientResolution: jest.fn(),
+    markContactSaved: jest.fn(),
   })),
 }));
 
@@ -47,6 +68,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useContactsFeature } from "@features/platform-contacts";
 import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
 import { useAddNewContactHeaderState } from "../../context/AddNewContactHeaderContext";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 type VM = ReturnType<typeof useSendHeaderModel>;
 let container: HTMLElement;
@@ -101,12 +123,14 @@ const mockData = (
   state: unknown,
   uiConfig: Record<string, unknown> = { hasMemo: false },
   recipientSearch = { value: "" },
+  isRecipientAddressComplete = false,
 ) => {
   const search = { ...recipientSearch, setValue: jest.fn(), clear: jest.fn() };
   (useSendFlowData as jest.Mock).mockReturnValue({
     state,
     uiConfig,
     recipientSearch: search,
+    isRecipientAddressComplete,
   });
   return search;
 };
@@ -163,7 +187,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.RECIPIENT,
         currentStepConfig: { addressInput: true, showTitle: true },
-        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
       });
 
       renderHook("$5,969.83");
@@ -178,7 +206,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.RECIPIENT,
         currentStepConfig: { addressInput: true, showTitle: true },
-        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
       });
       (useMaybeAccountName as jest.Mock).mockReturnValue(undefined);
 
@@ -199,7 +231,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.RECIPIENT,
         currentStepConfig: { addressInput: true, showTitle: true },
-        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => false },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => false,
+        },
       });
 
       renderHook("$5,969.83");
@@ -248,7 +284,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.RECIPIENT,
         currentStepConfig: { addressInput: true, showTitle: true },
-        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
       });
 
       renderHook();
@@ -292,13 +332,62 @@ describe("useSendHeaderModel", () => {
     });
   });
 
+  describe("memo visibility", () => {
+    it("hides memo controls when the recipient does not support memos", () => {
+      jest.mocked(sendFeatures.hasMemoForRecipient).mockReturnValue(false);
+      mockActions();
+      mockData(
+        {
+          account: {
+            currency: {
+              type: "CryptoCurrency",
+              ticker: "ZEC",
+              id: "zcash",
+              family: "bitcoin",
+            },
+            account: {},
+          },
+          recipient: null,
+          transaction: { status: {} },
+        },
+        { hasMemo: true },
+        { value: "t1-recipient" },
+        true,
+      );
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.RECIPIENT,
+        currentStepConfig: { addressInput: true, showTitle: true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
+      });
+
+      renderHook();
+
+      expect(sendFeatures.hasMemoForRecipient).toHaveBeenCalledWith(
+        expect.objectContaining({ id: "zcash" }),
+        "t1-recipient",
+      );
+      expect(latestVM?.showMemoControls).toBe(false);
+    });
+  });
+
   describe("recipient address input value on amount step", () => {
     const ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";
     const CONTACT = {
       id: "contact-benoit",
       isMe: false,
       name: "Benoit Jean",
-      addresses: [{ id: "address-1", currencyId: "ethereum", label: "Eth main", address: ADDRESS }],
+      addresses: [
+        {
+          id: "address-1",
+          currencyId: "ethereum",
+          label: "Eth main",
+          address: ADDRESS,
+        },
+      ],
     };
 
     const renderOnAmountStep = () => {
@@ -306,7 +395,12 @@ describe("useSendHeaderModel", () => {
       mockActions();
       mockData({
         account: {
-          currency: { type: "CryptoCurrency", ticker: "ETH", id: "ethereum", family: "evm" },
+          currency: {
+            type: "CryptoCurrency",
+            ticker: "ETH",
+            id: "ethereum",
+            family: "evm",
+          },
           account: {},
         },
         recipient: { address: ADDRESS },
@@ -384,7 +478,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.COIN_CONTROL,
         currentStepConfig: {},
-        navigation: { goToStep: jest.fn(), goToPreviousStep, canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep,
+          canGoBack: () => true,
+        },
       });
 
       renderHook();
@@ -394,7 +492,10 @@ describe("useSendHeaderModel", () => {
       const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
       const txWithUtxo = {
         family: "bitcoin",
-        utxoStrategy: { strategy: 0, excludeUTXOs: [{ hash: "a", outputIndex: 0 }] },
+        utxoStrategy: {
+          strategy: 0,
+          excludeUTXOs: [{ hash: "a", outputIndex: 0 }],
+        },
       };
       expect(updater(txWithUtxo)).toEqual({
         ...txWithUtxo,
@@ -438,7 +539,11 @@ describe("useSendHeaderModel", () => {
           showTitle: true,
           showAvailable: false,
         },
-        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
       });
 
       renderHook();
@@ -482,7 +587,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.RECIPIENT,
         currentStepConfig: {},
-        navigation: { goToStep: jest.fn(), goToPreviousStep, canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep,
+          canGoBack: () => true,
+        },
       });
 
       renderHook();
@@ -498,7 +607,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.RECIPIENT,
         currentStepConfig: {},
-        navigation: { goToStep: jest.fn(), goToPreviousStep, canGoBack: () => false },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep,
+          canGoBack: () => false,
+        },
       });
 
       renderHook();
@@ -516,7 +629,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.AMOUNT,
         currentStepConfig: { showTitle: true },
-        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
       });
 
       renderHook("1 ETH");
@@ -531,7 +648,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.AMOUNT,
         currentStepConfig: { showTitle: true, showAvailable: false },
-        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
       });
 
       renderHook("1 ETH");
@@ -545,8 +666,15 @@ describe("useSendHeaderModel", () => {
       mockActions();
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.CUSTOM_FEES,
-        currentStepConfig: { showTitle: true, titleKey: "newSendFlow.customFees.title" },
-        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+        currentStepConfig: {
+          showTitle: true,
+          titleKey: "newSendFlow.customFees.title",
+        },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
       });
 
       renderHook("1 ETH");
@@ -560,7 +688,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.SIGNATURE,
         currentStepConfig: { showTitle: false },
-        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
       });
 
       renderHook("1 ETH");
@@ -575,7 +707,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.RECIPIENT,
         currentStepConfig: { addressInput: true, showTitle: true },
-        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep: jest.fn(),
+          canGoBack: () => true,
+        },
       });
     };
 
@@ -717,7 +853,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.AMOUNT,
         currentStepConfig: {},
-        navigation: { goToStep: jest.fn(), goToPreviousStep, canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep,
+          canGoBack: () => true,
+        },
       });
 
       renderHook("", resetViewState);
@@ -740,7 +880,11 @@ describe("useSendHeaderModel", () => {
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.COIN_CONTROL,
         currentStepConfig: {},
-        navigation: { goToStep: jest.fn(), goToPreviousStep, canGoBack: () => true },
+        navigation: {
+          goToStep: jest.fn(),
+          goToPreviousStep,
+          canGoBack: () => true,
+        },
       });
 
       renderHook();

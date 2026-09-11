@@ -54,9 +54,13 @@ export function useSendHeaderMemo() {
   const resetKey = `${state.account.account?.id ?? ""}|${currencyId ?? ""}|${
     isRecipientAddressComplete ? recipientSearch.value : ""
   }`;
+  const hasMemo = sendFeatures.hasMemoForRecipient(
+    state.account.currency ?? undefined,
+    recipientSearch.value,
+  );
 
   const memo = useRecipientMemo({
-    hasMemo: uiConfig.hasMemo,
+    hasMemo,
     memoDefaultOption,
     memoType: uiConfig.memoType,
     memoTypeOptions,

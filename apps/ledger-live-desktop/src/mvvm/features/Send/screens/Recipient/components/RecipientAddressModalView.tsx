@@ -1,14 +1,12 @@
 import React from "react";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
-import { cn } from "LLD/utils/cn";
 import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { Contact } from "@domain/entity-contact";
+import type { Contact, ContactAddress } from "@domain/entity-contact";
 import {
   ContactsFeatureIntroductionDialog,
   type ContactsFeatureIntroduction,
 } from "@features/flow-contacts-introduction";
-import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
 import type { AddressMatchedSectionViewModel } from "../hooks/useAddressMatchedSectionViewModel";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
@@ -31,7 +29,7 @@ type RecipientAddressModalViewProps = Readonly<{
   selectedContact: Contact | undefined;
   network: CryptoCurrency;
   handleContactSelect: (contact: Contact) => void;
-  handleContactAddressSelect: (address: string) => void;
+  handleContactAddressSelect: (address: ContactAddress, addressRank: number) => void;
   showMatchedAddress: boolean;
   showAddressValidationError: boolean;
   showEmptyState: boolean;
@@ -39,14 +37,11 @@ type RecipientAddressModalViewProps = Readonly<{
   showSanctionedBanner: boolean;
   showBridgeRecipientError: boolean;
   showBridgeRecipientWarning: boolean;
-  isAddressComplete: boolean;
   addressValidationErrorType: AddressValidationErrorType | null;
   bridgeRecipientError: Error | undefined;
   bridgeRecipientWarning: Error | undefined;
   bridgeSenderError: Error | undefined;
-  hasMemo: boolean;
   hasMemoValidationError: boolean;
-  hasFilledMemo: boolean;
   addressMatchedSectionViewModel: AddressMatchedSectionViewModel;
   featureIntroduction: ContactsFeatureIntroduction;
 }>;
@@ -70,14 +65,11 @@ export function RecipientAddressModalView({
   showSanctionedBanner,
   showBridgeRecipientError,
   showBridgeRecipientWarning,
-  isAddressComplete,
   addressValidationErrorType,
   bridgeRecipientError,
   bridgeRecipientWarning,
   bridgeSenderError,
-  hasMemo,
   hasMemoValidationError,
-  hasFilledMemo,
   addressMatchedSectionViewModel,
   featureIntroduction,
 }: RecipientAddressModalViewProps) {
@@ -88,16 +80,12 @@ export function RecipientAddressModalView({
       showBridgeRecipientError ||
       showBridgeRecipientWarning);
 
-  const isWaitingForMemo = hasMemo && isAddressComplete && !hasFilledMemo;
-  const showMatched = shouldShowMatchedAddress({
-    showMatchedAddress,
-    hasMemo,
-    hasFilledMemo,
-    hasMemoError: hasMemoValidationError,
-  });
+  // An empty memo no longer blocks the matched address: selecting it routes to the
+  // skip-memo confirmation step, which is where skipping is acknowledged.
+  const showMatched = showMatchedAddress && !hasMemoValidationError;
 
   return (
-    <DialogBody className={cn("flex flex-col py-16", !isWaitingForMemo && "min-h-[156px]")}>
+    <DialogBody className="flex min-h-[156px] flex-col py-16">
       <ContactsFeatureIntroductionDialog {...featureIntroduction} />
 
       {isLoading && !showMatched && <LoadingState />}

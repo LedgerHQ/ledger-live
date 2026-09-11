@@ -4,7 +4,7 @@ import { randomBytes } from "crypto";
 import { getChainParameters, getTronAccountNetwork } from "../network";
 import { encode58Check } from "../network/format";
 import type { TronMemo, TronTxData } from "../types";
-import { estimateFees } from "./estimateFees";
+import { estimateFees, estimateTronifyFees } from "./estimateFees";
 
 type TronIntent = TransactionIntent<TronMemo, TronTxData>;
 
@@ -117,5 +117,23 @@ describe("estimateFees [integ]", () => {
 
       expect(first.value).toBe(second.value);
     });
+  });
+});
+
+// estimateTronifyFees integ tests require a live Tronify provider wired into coinConfig, which
+// is not available in standard CI. The Tronify code path is fully covered by unit tests in
+// estimateFees.test.ts. Enable this block locally by pointing coinConfig at a real provider.
+describe.skip("estimateTronifyFees [integ — requires live Tronify provider]", () => {
+  it("returns value < originalValue for a USDT TRC-20 transfer with a cheap energy window", async () => {
+    const intent = sendIntent({ asset: { type: "trc20", assetReference: USDT_CONTRACT } });
+
+    const result = await estimateTronifyFees(mockConfig, intent);
+
+    expect(typeof result.value).toBe("bigint");
+    expect(typeof result.originalValue).toBe("bigint");
+    expect(result.value).toBeGreaterThan(0n);
+    expect(result.originalValue).toBeGreaterThan(0n);
+    // savings may be 0 if Tronify is currently not cheaper — just assert it's non-negative
+    expect(result.savings).toBeGreaterThanOrEqual(0n);
   });
 });

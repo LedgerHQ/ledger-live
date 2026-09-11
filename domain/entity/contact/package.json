@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-contact",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "private": true,
   "description": "Domain entity for Contacts: schemas, state, selectors, and mock factories",
   "main": "src/index.ts",

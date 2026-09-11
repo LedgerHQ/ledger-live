@@ -1,6 +1,7 @@
 const React = require("react");
 const TooltipOpenContext = React.createContext();
 const DialogOpenContext = React.createContext();
+const PopoverOpenContext = React.createContext();
 
 function resolveAvatarColor(identifier) {
   return `avatar-color:${identifier}`;
@@ -68,6 +69,14 @@ function Tag({ label, children, ...props }) {
   return React.createElement("span", { ...props, label }, label, children);
 }
 
+// `MenuTrigger` takes its trigger element through `render`, not through children, so the generic
+// stub would drop it and the consumer's button would never reach the DOM.
+function MenuTrigger({ render, children, ...props }) {
+  if (React.isValidElement(render)) return React.cloneElement(render, props);
+
+  return React.createElement("button", { type: "button", ...props }, children);
+}
+
 function Tooltip({ children, onOpenChange, open }) {
   return React.createElement(
     TooltipOpenContext.Provider,
@@ -88,6 +97,26 @@ function Tooltip({ children, onOpenChange, open }) {
 
 function TooltipTrigger({ children }) {
   return React.createElement(React.Fragment, undefined, children);
+}
+
+function Popover({ children, open }) {
+  return React.createElement(PopoverOpenContext.Provider, { value: open }, children);
+}
+
+function PopoverTrigger({ render, children }) {
+  if (typeof render === "function") {
+    return render({});
+  }
+  if (React.isValidElement(render)) {
+    return render;
+  }
+  return React.createElement(React.Fragment, undefined, children);
+}
+
+function PopoverContent({ children, ...props }) {
+  if (React.useContext(PopoverOpenContext) === false) return null;
+
+  return React.createElement("div", props, children);
 }
 
 function TooltipContent({ children, ...props }) {
@@ -136,11 +165,15 @@ module.exports = new Proxy(
     DialogContent,
     DialogHeader,
     InteractiveIcon,
+    MenuTrigger,
     Tag,
     resolveAvatarColor,
     Tooltip,
     TooltipContent,
     TooltipTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
   },
   {
     get(target, prop) {

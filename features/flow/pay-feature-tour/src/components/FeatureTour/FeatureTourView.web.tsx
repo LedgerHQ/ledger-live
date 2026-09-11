@@ -60,7 +60,7 @@ export function FeatureTourView({
   return (
     <Dialog open onOpenChange={handleOpenChange}>
       <DialogContent className="min-h-[696px]">
-        <DialogHeader density="expanded" onClose={handleDismiss} />
+        <DialogHeader density="compact" onClose={handleDismiss} />
         <DialogBody className="flex flex-1 flex-col">
           <div className="flex min-h-[608px] w-full flex-1 flex-col justify-between gap-16">
             <div className="flex flex-col gap-16">

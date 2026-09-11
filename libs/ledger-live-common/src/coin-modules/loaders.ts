@@ -85,6 +85,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "casper",
     supportedCoins: ["casper"],
     loadSetup: () => import("../families/casper/setup"),
+    loadLocalApi: () =>
+      import("../families/casper/coinModuleApi").then(m => m.createLocalCasperApi),
     loadTransaction: () => import("@ledgerhq/coin-casper/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-casper/deviceTransactionConfig").then(m => m.default),
@@ -138,6 +140,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => import("../families/cosmos/bridge/mock").then(m => m.default),
     loadMockAccount: () => import("@ledgerhq/coin-cosmos/mock").then(m => m.default),
     loadBridgeExtensions: () => import("../families/cosmos/bridgeExtensions").then(m => m.default),
+    loadAccountRawAssign: () => import("../families/cosmos/accountRawAssign").then(m => m.default),
     loadLocalApi: () =>
       import("../families/cosmos/coinModuleApi").then(m => m.createLocalCosmosApi),
     loadBridgeApi: () => import("../families/cosmos/bridge/api").then(m => m.default),
@@ -337,6 +340,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => import("../families/solana/bridge/mock").then(m => m.default),
     loadSigner: () => import("../families/solana/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/solana/bridge/api").then(m => m.default),
+    loadAccountRawAssign: () => import("../families/solana/accountRawAssign").then(m => m.default),
   },
   {
     family: "stacks",

@@ -21,6 +21,7 @@ export type DisabledItemsExplanation = Readonly<{
 }>;
 
 export const MODULAR_DRAWER_KEY = "modularDrawer";
+export const PAY_ACCOUNT_UI_USE_CASE = "pay";
 
 export type ModularDrawerCompletionMode = "currency";
 export type ModularDrawerPresentation = "drawer" | "embedded";

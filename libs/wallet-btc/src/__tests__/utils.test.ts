@@ -137,6 +137,9 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["MFYvHZcZ35typC4k2XyvRVooCDZxnoDS4B"], "qtum", true);
     validateAddrs(["t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8"], "zcash", true);
     validateAddrs(["t3PU1j7YW3fJ67jUbkGhSRto8qK2qXCUiW3"], "zcash", true);
+    // zcash_regtest reuses zcash's own (mainnet) version bytes -- see crypto/factory.ts.
+    validateAddrs(["t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8"], "zcash_regtest", true);
+    validateAddrs(["t3PU1j7YW3fJ67jUbkGhSRto8qK2qXCUiW3"], "zcash_regtest", true);
     validateAddrs(["AYRf8r4SJhmfaEwmWvY8ujmrepbrWyenFr"], "bitcoin_gold", true);
     validateAddrs(["D8cMCRimfjwQ9E8jJvgUswt18WnZbCUAaW"], "dogecoin", true);
     validateAddrs(["dgb1q7zjgqa23xzf602ljfrc94248a9u27xml08nhct"], "digibyte", true);
@@ -155,6 +158,8 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["MFYvHZcZ35typC4k2XyvRVooCDZxnoDS44"], "qtum", false);
     validateAddrs(["t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKtyy"], "zcash", false);
     validateAddrs(["t3PU1j7YW3fJ67jUbkGySRto8qK2qXCUiW3"], "zcash", false);
+    validateAddrs(["t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKtyy"], "zcash_regtest", false);
+    validateAddrs(["t3PU1j7YW3fJ67jUbkGySRto8qK2qXCUiW3"], "zcash_regtest", false);
     validateAddrs(["AYRf8r4SJhmfaEwmWvY8ujmrepbrWyenFF"], "bitcoin_gold", false);
     validateAddrs(["D8cMCRimfjwQ9E8jJvgUswt18WnZbCUAaa"], "dogecoin", false);
     validateAddrs(["dgb1q7zjgqa23xzf602ljfrc94248a9u27xml08nhcc"], "digibyte", false);

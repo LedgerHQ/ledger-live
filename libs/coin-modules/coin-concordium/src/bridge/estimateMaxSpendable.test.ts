@@ -177,4 +177,32 @@ describe("estimateMaxSpendable", () => {
     // THEN
     expect(result).toEqual(new BigNumber(0));
   });
+
+  describe("a failed preparation", () => {
+    // A rejection reaches the consumers as an unhandled one, so resolving is the
+    // contract, not a convenience.
+    it("resolves to zero rather than rejecting", async () => {
+      const { prepareTransaction } = jest.requireMock("./prepareTransaction");
+      prepareTransaction.mockRejectedValueOnce(new Error("proxy down"));
+
+      const result = await estimateMaxSpendable({
+        account: createFixtureAccount(),
+        transaction: null,
+      });
+
+      expect(result).toEqual(new BigNumber(0));
+    });
+
+    it("resolves to zero when the status lookup fails", async () => {
+      const { getTransactionStatus } = jest.requireMock("./getTransactionStatus");
+      getTransactionStatus.mockRejectedValueOnce(new Error("proxy down"));
+
+      const result = await estimateMaxSpendable({
+        account: createFixtureAccount(),
+        transaction: null,
+      });
+
+      expect(result).toEqual(new BigNumber(0));
+    });
+  });
 });

@@ -115,6 +115,8 @@ export enum ScreenName {
   Card = "Card",
   PayTab = "PayTab",
   PayTabRequestReceive = "PayTabRequestReceive",
+  PayTabSelectContact = "PayTabSelectContact",
+  PayTabPayContact = "PayTabPayContact",
   ExchangeBuy = "ExchangeBuy",
   ExchangeDeveloperMode = "ExchangeDeveloperMode",
   ExchangeSelectAccount = "ExchangeSelectAccount",
@@ -609,6 +611,13 @@ export enum ScreenName {
   SuiUnstakingConnectDevice = "SuiUnstakingConnectDevice",
   SuiUnstakingValidationError = "SuiUnstakingValidationError",
   SuiUnstakingValidationSuccess = "SuiUnstakingValidationSuccess",
+  // mina
+  MinaStakingValidator = "MinaStakingValidator",
+  MinaStakingSummary = "MinaStakingSummary",
+  MinaStakingSelectDevice = "MinaStakingSelectDevice",
+  MinaStakingConnectDevice = "MinaStakingConnectDevice",
+  MinaStakingValidationError = "MinaStakingValidationError",
+  MinaStakingValidationSuccess = "MinaStakingValidationSuccess",
 
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
@@ -779,6 +788,8 @@ export enum NavigatorName {
   // SUI
   SuiDelegateFlow = "SuiDelegationFlow",
   SuiUndelegateFlow = "SuiUndelegateFlow",
+  // MINA
+  MinaStakingFlow = "MinaStakingFlow",
 
   CantonOnboard = "CantonOnboard",
   ConcordiumOnboard = "ConcordiumOnboard",

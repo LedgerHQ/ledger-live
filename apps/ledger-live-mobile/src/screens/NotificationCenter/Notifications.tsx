@@ -27,7 +27,6 @@ import {
   removeLocalCard,
 } from "~/actions/dynamicContent";
 import { localMobileCardsSelector } from "~/reducers/dynamicContent";
-import { useDynamicContentLogic } from "~/dynamicContent/useDynamicContentLogic";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import {
   isLocalNotificationCard,
@@ -64,8 +63,8 @@ export default function NotificationCenter() {
     logDismissCard,
     logClickCard,
     trackContentCardEvent,
+    refreshDynamicContent,
   } = useDynamicContent();
-  const { fetchData, refreshDynamicContent } = useDynamicContentLogic();
   const [isDynamicContentLoading, setIsDynamicContentLoading] = useState(false);
   const localMobileCards = useSelector(localMobileCardsSelector);
 
@@ -75,28 +74,33 @@ export default function NotificationCenter() {
       localMobileCards,
     );
 
-    dispatch(setDynamicContentNotificationCards(brazeCards.map(n => ({ ...n, viewed: true }))));
-    if (localCards.length > 0) {
-      dispatch(markLocalCardsViewed(localCards.map(n => n.id)));
+    if (brazeCards.some(card => !card.viewed)) {
+      dispatch(
+        setDynamicContentNotificationCards(brazeCards.map(card => ({ ...card, viewed: true }))),
+      );
+    }
+    const unviewedLocalCards = localCards.filter(card => !card.viewed);
+    if (unviewedLocalCards.length > 0) {
+      dispatch(markLocalCardsViewed(unviewedLocalCards.map(card => card.id)));
     }
   }, [notificationCards, localMobileCards, dispatch]);
 
   const refreshNotifications = useCallback(async () => {
     setIsDynamicContentLoading(true);
-    refreshDynamicContent();
-    await fetchData();
-    setIsDynamicContentLoading(false);
-
-    dispatchCards();
-  }, [refreshDynamicContent, fetchData, dispatchCards]);
+    try {
+      await refreshDynamicContent();
+    } finally {
+      setIsDynamicContentLoading(false);
+    }
+  }, [refreshDynamicContent]);
 
   useEffect(() => {
     dispatchCards();
-    // Need to refresh just one time when coming in the Page
-    refreshNotifications();
+  }, [dispatchCards]);
 
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => {
+    void refreshNotifications();
+  }, [refreshNotifications]);
 
   // ----- Utils Functions ----------
   const onPress = useCallback(

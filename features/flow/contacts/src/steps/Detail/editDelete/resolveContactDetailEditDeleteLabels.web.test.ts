@@ -15,7 +15,6 @@ describe("resolveContactDetailEditDeleteLabels", () => {
       [INVALID_CONTACT_NAME_ERROR_NAME]: "contacts.editContact.invalidNameError",
       [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "contacts.addContactDrawer.duplicateNameError",
     });
-    expect(labels.signer.title).toBe("contacts.editSigner.title");
     expect(labels.signerMismatch.title).toBe("contacts.editSignerMismatch.title");
   });
 

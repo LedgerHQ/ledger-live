@@ -100,13 +100,10 @@ export const useBrazeContentCard = (mobileCards: Braze.ContentCard[]) => {
     [isTrackedUser, localMobileCards, localWalletCardIds],
   );
 
-  const refreshDynamicContent = () => Braze.requestContentCardsRefresh();
-
   return {
     logClickCard,
     logDismissCard,
     logImpressionCard,
-    refreshDynamicContent,
     Braze,
   };
 };

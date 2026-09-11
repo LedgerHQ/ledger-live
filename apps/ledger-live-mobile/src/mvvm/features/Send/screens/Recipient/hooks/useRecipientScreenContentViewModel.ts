@@ -1,4 +1,5 @@
 import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -9,9 +10,10 @@ import { track } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import { shouldUseKeyboardAvoidance } from "~/logic/keyboardVisible";
 import { useMemoViewModel } from "../../../components/Memo/hooks/useMemoViewModel";
-import { useSendFlowData } from "../../../context/SendFlowContext";
+import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { useRecipientScreenView } from "./useRecipientScreenView";
+import { useSettleRecipientInputFocus } from "./useSettleRecipientInputFocus";
 
 export type UseRecipientScreenContentViewModelProps = Readonly<{
   account: AccountLike;
@@ -42,11 +44,10 @@ export function useRecipientScreenContentViewModel({
     onAddressSelected,
     recipientSupportsDomain,
   });
-  const { uiConfig } = useSendFlowData();
+  const { setRecipientResolution } = useSendFlowTracking();
   const trackingProperties = useMemo(
     () => ({
       ...getSendFlowTrackingProperties(account, parentAccount),
-      button: "my accounts",
       page: "step recipient",
     }),
     [account, parentAccount],
@@ -62,14 +63,16 @@ export function useRecipientScreenContentViewModel({
   }, [onMemoProceed, trackingProperties]);
 
   const resolvedAddress = recipient.result.resolvedAddress ?? recipient.searchValue;
-  const showMemo = uiConfig.hasMemo && recipient.isAddressValid;
+  const hasMemo = sendFeatures.hasMemoForRecipient(currency, resolvedAddress);
+  const showMemo = hasMemo && recipient.isAddressValid;
   const memo = useMemoViewModel({
     address: showMemo ? resolvedAddress : "",
+    hasMemo,
     onSkip: handleSkipMemo,
   });
   const showMatched = shouldShowMatchedAddress({
     showMatchedAddress: recipient.showMatchedAddress,
-    hasMemo: uiConfig.hasMemo,
+    hasMemo,
     hasFilledMemo: memo.hasFilledMemo,
     hasMemoError: Boolean(memo.memoError),
   });
@@ -77,11 +80,34 @@ export function useRecipientScreenContentViewModel({
   const handleAddressSelect = recipient.handleAddressSelect;
   const handleMatchedAddress = useCallback(
     (address: string, ensName?: string) => {
-      track("button_clicked", trackingProperties);
+      track("button_clicked", {
+        ...trackingProperties,
+        button: "send",
+        resultType: recipient.recipientResolution.resultType,
+        recipientType: recipient.recipientResolution.recipientType,
+      });
+      setRecipientResolution(
+        recipient.recipientResolution.resultType,
+        recipient.recipientResolution.recipientType,
+      );
       handleAddressSelect(address, ensName);
     },
-    [trackingProperties, handleAddressSelect],
+    [
+      handleAddressSelect,
+      recipient.recipientResolution,
+      setRecipientResolution,
+      trackingProperties,
+    ],
   );
+
+  const handleAddContact = useCallback(() => {
+    track("button_clicked", {
+      ...trackingProperties,
+      button: "add contact",
+      addressAlreadyUsed: recipient.recipientResolution.addressAlreadyUsed,
+    });
+    onAddContact();
+  }, [onAddContact, recipient.recipientResolution.addressAlreadyUsed, trackingProperties]);
 
   const addressMatchedSectionViewModel = useAddressMatchedSectionViewModel({
     searchResult: recipient.result,
@@ -93,7 +119,9 @@ export function useRecipientScreenContentViewModel({
     isContactsFeatureEnabled: recipient.isContactsFeatureEnabled,
     hasAddressBook: recipient.hasAddressBook,
     addressBookFamilyName: recipient.addressBookFamilyName,
-    onAddContact,
+    onAddContact: handleAddContact,
+    onUnsupportedNetwork: recipient.handleUnsupportedNetwork,
+    onDismissUnsupportedNetwork: recipient.handleDismissUnsupportedNetwork,
   });
 
   useEffect(() => {
@@ -103,14 +131,14 @@ export function useRecipientScreenContentViewModel({
   }, [showMemo, trackingProperties]);
 
   useEffect(() => {
-    if (uiConfig.hasMemo && memo.hasFilledMemo && !memo.memoError) {
+    if (hasMemo && memo.hasFilledMemo && !memo.memoError) {
       track("send_modal", {
         ...trackingProperties,
         button: "skip",
         name: "step memo",
       });
     }
-  }, [trackingProperties, uiConfig.hasMemo, memo.hasFilledMemo, memo.memoError]);
+  }, [trackingProperties, hasMemo, memo.hasFilledMemo, memo.memoError]);
 
   const shouldShowErrorBanner =
     !recipient.isLoading &&
@@ -118,6 +146,16 @@ export function useRecipientScreenContentViewModel({
       recipient.showSanctionedBanner ||
       recipient.showBridgeRecipientError ||
       recipient.showBridgeRecipientWarning);
+
+  const hasContent =
+    !recipient.showInitialState ||
+    recipient.isLoading ||
+    recipient.showContactsList ||
+    recipient.showEmptyContactsState ||
+    recipient.featureIntroduction.isOpen ||
+    Boolean(recipient.clipboardAddress);
+
+  useSettleRecipientInputFocus(hasContent);
 
   const keyboardBehavior: KeyboardAvoidingViewProps["behavior"] = shouldUseKeyboardAvoidance(
     Platform.OS,

@@ -21,6 +21,17 @@ const ETHEREUM_SELECTION = {
   assetDisplayName: "Ethereum",
 } as const;
 
+const CONTACTS_DEVICE_APP_NAMES = new Set(["Ethereum", "Tron"]);
+
+function eligibleNetworkIdsOf(families: readonly string[]) {
+  return listCryptoCurrencies()
+    .filter(
+      network =>
+        families.includes(network.family) && CONTACTS_DEVICE_APP_NAMES.has(network.managerAppName),
+    )
+    .map(network => network.id);
+}
+
 function makeWrapper(contactsFeature?: Features["lwdContacts"]) {
   const resolved: Features = {
     ...FEATURE_FLAGS_DEFAULTS,
@@ -60,9 +71,7 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
   it("passes production EVM network ids when feature params are missing", async () => {
     const selectCurrency = jest.fn().mockResolvedValue(null);
     const { result } = renderViewModel({ selectCurrency }, { enabled: true });
-    const expectedNetworkIds = listCryptoCurrencies()
-      .filter(network => network.family === "evm")
-      .map(network => network.id);
+    const expectedNetworkIds = eligibleNetworkIdsOf(["evm"]);
 
     let selectionResult: AddAddressCurrencySelectionResult | undefined;
     await act(async () => {
@@ -85,13 +94,11 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
         enabled: true,
         params: {
           newBadge: false,
-          eligibleAddressFamilies: ["evm", "bitcoin"],
+          eligibleAddressFamilies: ["evm", "tron"],
         },
       },
     );
-    const expectedNetworkIds = listCryptoCurrencies()
-      .filter(network => network.family === "evm" || network.family === "bitcoin")
-      .map(network => network.id);
+    const expectedNetworkIds = eligibleNetworkIdsOf(["evm", "tron"]);
 
     let selectionResult: AddAddressCurrencySelectionResult | undefined;
     await act(async () => {

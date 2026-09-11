@@ -4,6 +4,7 @@ import type {
   WalletSyncSetActivateDrawer,
   WalletSyncSetActivateStep,
   WalletSyncSetManageKeyDrawerPayload,
+  WalletSyncSetReturnsToEntryScreen,
 } from "./types";
 
 export const setWallectSyncManageKeyDrawer = createAction<WalletSyncSetManageKeyDrawerPayload>(
@@ -16,4 +17,8 @@ export const setLedgerSyncActivateDrawer = createAction<WalletSyncSetActivateDra
 
 export const setLedgerSyncActivateStep = createAction<WalletSyncSetActivateStep>(
   WalletSyncActionTypes.LEDGER_SYNC_SET_ACTIVATE_STEP,
+);
+
+export const setLedgerSyncReturnsToEntryScreen = createAction<WalletSyncSetReturnsToEntryScreen>(
+  WalletSyncActionTypes.LEDGER_SYNC_SET_RETURNS_TO_ENTRY_SCREEN,
 );

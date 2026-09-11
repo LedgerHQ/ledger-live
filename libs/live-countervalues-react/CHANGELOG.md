@@ -1,5 +1,61 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.17.0
+
+### Minor Changes
+
+- [#21507](https://github.com/LedgerHQ/ledger-live/pull/21507) [`eb62268`](https://github.com/LedgerHQ/ledger-live/commit/eb622688cb7561882cd02b52c2eed569d5dc68f3) Thanks [@ysitbon](https://github.com/ysitbon)! - Move portfolio and account-coupled logic to live-common
+
+  `portfolio.ts`, the React `portfolioReact.tsx`, the internal `ranges.ts` and `assetsDistribution.ts`
+  helpers, and the `inferTrackingPairForAccounts*` tests migrate from the countervalues packages into
+  `libs/ledger-live-common/src/portfolio/`. This removes the account-entity blocker from the
+  countervalues epic: `live-countervalues` is now rate logic only.
+
+  `live-countervalues`: `portfolio` entry point removed; `src/internal/` directory removed.
+  `live-countervalues-react`: `portfolio` entry point removed; package now contains only `index.tsx`.
+  `live-common`: `portfolio/portfolio` and `portfolio/portfolioReact` entry points added.
+
+- [#21517](https://github.com/LedgerHQ/ledger-live/pull/21517) [`54124e4`](https://github.com/LedgerHQ/ledger-live/commit/54124e435c7adc3a2c3a9ed6cd1865fc68fa2584) Thanks [@ysitbon](https://github.com/ysitbon)! - rename CountervaluesBridge.useMarketcapIds to useSupportedCryptoIds and document why filterSupportedTrackingPairs guards against 422s
+
+- [#21518](https://github.com/LedgerHQ/ledger-live/pull/21518) [`018ee9b`](https://github.com/LedgerHQ/ledger-live/commit/018ee9bdcb993a1b4a203d5664676f7e757b3785) Thanks [@lewisd5](https://github.com/lewisd5)! - Don't arm the countervalues polling loop while refreshRate is 0
+
+  Both apps initialise `refreshRate` to 0 and overwrite it from LiveConfig once it resolves. Until then the loop re-armed itself with `setTimeout(pollingLoop, 0)`, so it spun at zero delay, dispatching `setPollingTriggerLoad(true)` into Redux on every tick. Polling now waits for a positive refresh rate; the effect already re-runs when one arrives.
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`e42c12a`](https://github.com/LedgerHQ/ledger-live/commit/e42c12a392ba60ee839c9a71f4f0d409ad9430fa), [`eb62268`](https://github.com/LedgerHQ/ledger-live/commit/eb622688cb7561882cd02b52c2eed569d5dc68f3), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`53dcdc9`](https://github.com/LedgerHQ/ledger-live/commit/53dcdc9bbef2324b48fac7469c2c1d0e66f7361f), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`54124e4`](https://github.com/LedgerHQ/ledger-live/commit/54124e435c7adc3a2c3a9ed6cd1865fc68fa2584), [`a19ffef`](https://github.com/LedgerHQ/ledger-live/commit/a19ffeff9dd4e173890d75d8634a33e53cc5a5d0), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
+  - @ledgerhq/types-live@6.123.0
+  - @ledgerhq/ledger-wallet-framework@3.3.0
+  - @ledgerhq/live-countervalues@0.25.0
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#21507](https://github.com/LedgerHQ/ledger-live/pull/21507) [`eb62268`](https://github.com/LedgerHQ/ledger-live/commit/eb622688cb7561882cd02b52c2eed569d5dc68f3) Thanks [@ysitbon](https://github.com/ysitbon)! - Move portfolio and account-coupled logic to live-common
+
+  `portfolio.ts`, the React `portfolioReact.tsx`, the internal `ranges.ts` and `assetsDistribution.ts`
+  helpers, and the `inferTrackingPairForAccounts*` tests migrate from the countervalues packages into
+  `libs/ledger-live-common/src/portfolio/`. This removes the account-entity blocker from the
+  countervalues epic: `live-countervalues` is now rate logic only.
+
+  `live-countervalues`: `portfolio` entry point removed; `src/internal/` directory removed.
+  `live-countervalues-react`: `portfolio` entry point removed; package now contains only `index.tsx`.
+  `live-common`: `portfolio/portfolio` and `portfolio/portfolioReact` entry points added.
+
+- [#21517](https://github.com/LedgerHQ/ledger-live/pull/21517) [`54124e4`](https://github.com/LedgerHQ/ledger-live/commit/54124e435c7adc3a2c3a9ed6cd1865fc68fa2584) Thanks [@ysitbon](https://github.com/ysitbon)! - rename CountervaluesBridge.useMarketcapIds to useSupportedCryptoIds and document why filterSupportedTrackingPairs guards against 422s
+
+- [#21518](https://github.com/LedgerHQ/ledger-live/pull/21518) [`018ee9b`](https://github.com/LedgerHQ/ledger-live/commit/018ee9bdcb993a1b4a203d5664676f7e757b3785) Thanks [@lewisd5](https://github.com/lewisd5)! - Don't arm the countervalues polling loop while refreshRate is 0
+
+  Both apps initialise `refreshRate` to 0 and overwrite it from LiveConfig once it resolves. Until then the loop re-armed itself with `setTimeout(pollingLoop, 0)`, so it spun at zero delay, dispatching `setPollingTriggerLoad(true)` into Redux on every tick. Polling now waits for a positive refresh rate; the effect already re-runs when one arrives.
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`e42c12a`](https://github.com/LedgerHQ/ledger-live/commit/e42c12a392ba60ee839c9a71f4f0d409ad9430fa), [`eb62268`](https://github.com/LedgerHQ/ledger-live/commit/eb622688cb7561882cd02b52c2eed569d5dc68f3), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`53dcdc9`](https://github.com/LedgerHQ/ledger-live/commit/53dcdc9bbef2324b48fac7469c2c1d0e66f7361f), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`54124e4`](https://github.com/LedgerHQ/ledger-live/commit/54124e435c7adc3a2c3a9ed6cd1865fc68fa2584), [`a19ffef`](https://github.com/LedgerHQ/ledger-live/commit/a19ffeff9dd4e173890d75d8634a33e53cc5a5d0), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
+  - @ledgerhq/types-live@6.123.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.3.0-next.0
+  - @ledgerhq/live-countervalues@0.25.0-next.0
+
 ## 0.16.9
 
 ### Patch Changes
@@ -185,28 +241,5 @@
   - @ledgerhq/live-countervalues@0.21.0
   - @ledgerhq/types-live@6.113.0
   - @ledgerhq/ledger-wallet-framework@2.2.1
-
-## 0.16.0-next.0
-
-### Minor Changes
-
-- [#18773](https://github.com/LedgerHQ/ledger-live/pull/18773) [`b383bd5`](https://github.com/LedgerHQ/ledger-live/commit/b383bd51879861ab707bbf4795ac1b76393acb98) Thanks [@deepyjr](https://github.com/deepyjr)! - Filter unsupported countervalue tracking pairs before polling.
-
-### Patch Changes
-
-- Updated dependencies [[`36200f9`](https://github.com/LedgerHQ/ledger-live/commit/36200f969272f31c6737146b154b7dca8139d4cc), [`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`b383bd5`](https://github.com/LedgerHQ/ledger-live/commit/b383bd51879861ab707bbf4795ac1b76393acb98), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`25101e2`](https://github.com/LedgerHQ/ledger-live/commit/25101e2991ea7c9ab54c7f3e4e5bc0bda8056d0b), [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
-  - @ledgerhq/live-countervalues@0.21.0-next.0
-  - @ledgerhq/types-live@6.113.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.2.1-next.0
-
-## 0.15.1
-
-### Patch Changes
-
-- Updated dependencies [[`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`37ddb59`](https://github.com/LedgerHQ/ledger-live/commit/37ddb59233c0eb06c18a0b1006052b708c847f9c), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
-  - @ledgerhq/types-live@6.112.0
-  - @ledgerhq/types-cryptoassets@7.38.0
-  - @ledgerhq/ledger-wallet-framework@2.2.0
-  - @ledgerhq/live-countervalues@0.20.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

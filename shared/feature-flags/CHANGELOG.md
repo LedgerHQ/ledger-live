@@ -1,5 +1,29 @@
 # @shared/feature-flags
 
+## 0.22.0
+
+### Minor Changes
+
+- [#21833](https://github.com/LedgerHQ/ledger-live/pull/21833) [`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix walletsync feature flags (lldWalletSync, llmWalletSync) to default to the PROD environment instead of STAGING.
+
+- [#21396](https://github.com/LedgerHQ/ledger-live/pull/21396) [`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Add the Gonka (GNK) currency feature flag, disabled by default
+
+- [#21283](https://github.com/LedgerHQ/ledger-live/pull/21283) [`761cf3e`](https://github.com/LedgerHQ/ledger-live/commit/761cf3e359fa197d07f6086d8522fd1785ba575d) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add earn banner to success transation modal
+
+## 0.22.0-next.1
+
+### Minor Changes
+
+- [#21833](https://github.com/LedgerHQ/ledger-live/pull/21833) [`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix walletsync feature flags (lldWalletSync, llmWalletSync) to default to the PROD environment instead of STAGING.
+
+## 0.22.0-next.0
+
+### Minor Changes
+
+- [#21396](https://github.com/LedgerHQ/ledger-live/pull/21396) [`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Add the Gonka (GNK) currency feature flag, disabled by default
+
+- [#21283](https://github.com/LedgerHQ/ledger-live/pull/21283) [`761cf3e`](https://github.com/LedgerHQ/ledger-live/commit/761cf3e359fa197d07f6086d8522fd1785ba575d) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add earn banner to success transation modal
+
 ## 0.21.0
 
 ### Minor Changes
@@ -513,17 +537,5 @@
 - [#18669](https://github.com/LedgerHQ/ledger-live/pull/18669) [`94923e3`](https://github.com/LedgerHQ/ledger-live/commit/94923e36342b58ebd4754ce41324680bd9eb1bfd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - add robinhood disclaimer ff
 
 - [#18011](https://github.com/LedgerHQ/ledger-live/pull/18011) [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Forward on the currencyId to the earn deposit screen to support the swap to earn feature
-
-## 0.12.0-next.2
-
-### Minor Changes
-
-- [#19098](https://github.com/LedgerHQ/ledger-live/pull/19098) [`98eb6d6`](https://github.com/LedgerHQ/ledger-live/commit/98eb6d636e8cbcf1ed35449f7070ac2a84b8b148) Thanks [@ysitbon](https://github.com/ysitbon)! - feature-flags: apply env (`FEATURE_FLAGS`) overrides at store boot even when the first remote-flags fetch fails. The middleware now re-resolves once on the first settled fetch — on success as before, and once on the first failure — so env (and version/language) resolution runs at boot without depending on a successful remote fetch. Subsequent failed polls do not re-resolve (a one-shot guard), so there is no per-poll churn. No app changes are required: any consumer of `createFeatureFlagsMiddleware` gets correct env-at-boot resolution.
-
-## 0.12.0-next.1
-
-### Minor Changes
-
-- [#18550](https://github.com/LedgerHQ/ledger-live/pull/18550) [`30cfdb1`](https://github.com/LedgerHQ/ledger-live/commit/30cfdb1c3c4bcaa9beab26cb8d28663d7a3daf1e) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add swapEntryPoint tracking field and ptxSwapLiveAppOnAsset feature flag
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

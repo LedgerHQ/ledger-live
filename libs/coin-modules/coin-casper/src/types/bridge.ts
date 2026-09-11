@@ -14,8 +14,14 @@ export type CasperAccount = Account;
 
 export type Transaction = TransactionCommon & {
   family: FamilyType;
-  fees: BigNumber;
+  fees: BigNumber | null;
   transferId?: string;
+  // Mirrors GenericTransaction.memoType/memoValue — required by genericSignOperation.
+  memoType?: string | null;
+  memoValue?: string | null;
+  // Generic bridge fields preserved for serialization round-trip.
+  mode?: string;
+  nonce?: BigNumber | null;
 };
 
 export type CasperOperation = Operation<CasperOperationExtra>;
@@ -27,7 +33,11 @@ interface CasperOperationExtra {
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
   transferId?: string;
-  fees: string;
+  fees: string | null;
+  memoType?: string | null;
+  memoValue?: string | null;
+  mode?: string;
+  nonce?: string | null;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

@@ -7,7 +7,6 @@ export const ethereum_hoodi = currency({
   name: "Ethereum Hoodi",
   managerAppName: "Ethereum",
   ticker: "ETH",
-  deviceTicker: "ETH",
   scheme: "eth_hoodi",
   color: "#0ebdcd",
   units: [
@@ -38,7 +37,6 @@ export const ethereum_hoodi = currency({
     },
   ],
   isTestnetFor: "ethereum",
-  disableCountervalue: true,
   family: "evm",
   blockAvgTime: 15,
   ethereumLikeInfo: {

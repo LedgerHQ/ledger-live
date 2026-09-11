@@ -1,8 +1,9 @@
 # @devtools/pay-card
 
-The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place, in four
-sections: **Feature flags**, **Onboarding** (toggle each step done or not-done), **Reset onboarding**
-and **Feature tour** (seen state plus a reset).
+The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place:
+**Feature flags**, **Onboarding** (toggle each step done or not-done), **Reset onboarding**,
+**Feature tour** (seen state plus a reset), **Request verify hint** (seen state plus a reset),
+and optional **Quick actions** (Portfolio / Pay) when the host passes navigation callbacks.
 
 ## Import boundary
 
@@ -44,6 +45,10 @@ interface PayCardToolProps {
   };
   hasSeenFeatureTour: boolean;
   resetPayCardFeatureTourSeen: () => void;
+  hasSeenReceiveVerifyHint: boolean;
+  resetReceiveVerifyHintSeen: () => void;
+  onNavigateToPortfolio?: () => void;
+  onNavigateToPayTab?: () => void;
 }
 ```
 

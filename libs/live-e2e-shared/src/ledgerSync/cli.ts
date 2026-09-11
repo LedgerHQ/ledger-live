@@ -5,6 +5,7 @@ import { liveSlug } from "@features/platform-wallet-sync";
 import { isDistantDocument, type DistantDocument } from "@shared/cloud-sync-module";
 import type { LedgerKeyRingProtocolOpts, LedgerSyncOpts } from "../runCli";
 import { trustchainApiBaseUrl } from "./environment";
+import { CLI_MEMBER_NAME } from "./testData";
 
 const CREDENTIALS_REQUIRED = "pubKey and privateKey are required";
 
@@ -28,7 +29,7 @@ export function ledgerKeyRingProtocol(opts: LedgerKeyRingProtocolOpts) {
   const {
     apiBaseUrl = trustchainApiBaseUrl,
     applicationId = 16,
-    name = "CLI",
+    name = CLI_MEMBER_NAME,
     initMemberCredentials,
     getKeyRingTree,
     pubKey,

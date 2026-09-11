@@ -37,7 +37,7 @@ export const isExchangeSupportedByApp = (appName: string, appVersion: string): b
 };
 
 const ARC_NATIVE_USDC_TOKEN_ID_BY_CURRENCY_ID: Record<string, string> = {
-  arc: "arc/erc20/usdc_0x0000000000000000000000000000000000000000",
+  arc: "arc/erc20/usdc_0x3600000000000000000000000000000000000000",
   arc_testnet: "arc_testnet/erc20/usdc_0x3600000000000000000000000000000000000000",
 };
 

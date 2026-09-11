@@ -131,15 +131,12 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
           }
           await app.newSendFlow.typeAddress(recipientAddress);
 
-          if (requiresMemoStep) {
-            if (validMemoTag) {
-              await app.newSendFlow.typeMemo(validMemoTag);
-              await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
-            } else {
-              await app.newSendFlow.skipMemo();
-            }
-          } else {
-            await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
+          if (requiresMemoStep && validMemoTag) {
+            await app.newSendFlow.typeMemo(validMemoTag);
+          }
+          await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
+          if (requiresMemoStep && !validMemoTag) {
+            await app.newSendFlow.confirmSkipMemo();
           }
 
           await app.newSendFlow.fillCryptoAmount(tx.amount);

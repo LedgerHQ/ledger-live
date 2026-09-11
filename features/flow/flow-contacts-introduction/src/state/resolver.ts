@@ -8,7 +8,7 @@ export type ContactsFeatureIntroductionRequestInput = Readonly<{
 export type ContactsLedgerSyncIntroductionOpenInput = Readonly<{
   isFeatureIntroductionRequested: boolean;
   ledgerSyncStatus: ContactsLedgerSyncStatus;
-  isLedgerSyncIntroductionDismissed: boolean;
+  isLedgerSyncIntroductionRequested: boolean;
 }>;
 
 export function resolveContactsFeatureIntroductionRequested(
@@ -29,7 +29,7 @@ export function resolveContactsLedgerSyncIntroductionOpen(
   }
 
   return (
-    isContactsLedgerSyncActivationRequired(input.ledgerSyncStatus) &&
-    !input.isLedgerSyncIntroductionDismissed
+    input.isLedgerSyncIntroductionRequested &&
+    isContactsLedgerSyncActivationRequired(input.ledgerSyncStatus)
   );
 }

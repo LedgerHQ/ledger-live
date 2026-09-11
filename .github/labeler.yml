@@ -75,6 +75,7 @@ shared-lib:
   - libs/live-signer-canton/**/*
   - libs/live-signer-evm/**/*
   - libs/live-signer-solana/**/*
+  - libs/live-signer-xrp/**/*
   - libs/live-wallet/**/*
   - libs/promise/**/*
   - libs/psbtv2/**/*

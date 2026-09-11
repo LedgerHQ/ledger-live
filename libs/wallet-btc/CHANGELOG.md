@@ -1,5 +1,21 @@
 # @ledgerhq/wallet-btc
 
+## 0.4.0
+
+### Minor Changes
+
+- [#21420](https://github.com/LedgerHQ/ledger-live/pull/21420) [`0152cad`](https://github.com/LedgerHQ/ledger-live/commit/0152cade87e061bb2b56fd71f8a404c3dfed21e0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Fix an undecodable/corrupted xpub crashing the whole Bitcoin address-scan block. `getPubkeyAt` now throws a typed `InvalidXpub` error; `checkAddressesBlock` uses `Promise.allSettled` so a bad xpub no longer aborts the block scan.
+
+- [#21388](https://github.com/LedgerHQ/ledger-live/pull/21388) [`6656f90`](https://github.com/LedgerHQ/ledger-live/commit/6656f90769c3419e1f121c0c2368eab4566e48ba) Thanks [@pawell24](https://github.com/pawell24)! - Add the missing `zcash_regtest` case to `cryptoFactory`, so the Zcash regtest currency used by the coin-tester no longer throws in `wallet-btc`'s crypto factory switch.
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#21420](https://github.com/LedgerHQ/ledger-live/pull/21420) [`0152cad`](https://github.com/LedgerHQ/ledger-live/commit/0152cade87e061bb2b56fd71f8a404c3dfed21e0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Fix an undecodable/corrupted xpub crashing the whole Bitcoin address-scan block. `getPubkeyAt` now throws a typed `InvalidXpub` error; `checkAddressesBlock` uses `Promise.allSettled` so a bad xpub no longer aborts the block scan.
+
+- [#21388](https://github.com/LedgerHQ/ledger-live/pull/21388) [`6656f90`](https://github.com/LedgerHQ/ledger-live/commit/6656f90769c3419e1f121c0c2368eab4566e48ba) Thanks [@pawell24](https://github.com/pawell24)! - Add the missing `zcash_regtest` case to `cryptoFactory`, so the Zcash regtest currency used by the coin-tester no longer throws in `wallet-btc`'s crypto factory switch.
+
 ## 0.3.0
 
 ### Minor Changes

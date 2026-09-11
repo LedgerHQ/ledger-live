@@ -27,8 +27,17 @@ const SOLANA_RPC_ENDPOINT = "https://solana.coin.ledger.com";
 const VIBECODOOR_MINT = "Aj1mSpD4vJDN5r3xptnHsjHQgGWDLge8bRQi2W6pump";
 const SENDER_ADDRESS = "8DpKDisipx6f76cEmuGvCX9TrA3SjeR76HaTRePxHBDe";
 
+// SIMD-0437 progressively reduces ATA rent (293 bytes = 165 data + 128 overhead):
+// Step 0 (pre-SIMD-0437): 6,960 × 293 = 2,039,280
+// Step 1 (Sep 2026):      6,333 × 293 = 1,855,569
+// Step 2 (mid-Sep 2026):  5,080 × 293 = 1,488,440
+// Step 3 (Nov 2026):      2,575 × 293 =   754,475
+// Step 4 (Nov 2026):      1,322 × 293 =   387,346
+// Step 5 (Nov 2026):        696 × 293 =   203,928
+const NETWORK_FEE = 5_000;
+const CLASSIC_ATA_RENT = 1_855_569; // Step 1 active on mainnet; update to current step when SIMD-0437 advances
 const MAIN_ACCOUNT_RENT_EXEMPT = new BigNumber(890_880);
-const SPENDABLE_AT_BUG_THRESHOLD = new BigNumber(2_044_280);
+const SPENDABLE_AT_BUG_THRESHOLD = new BigNumber(NETWORK_FEE + CLASSIC_ATA_RENT);
 const BALANCE_AT_BUG_THRESHOLD = SPENDABLE_AT_BUG_THRESHOLD.plus(MAIN_ACCOUNT_RENT_EXEMPT);
 
 const VIBECODOOR_TOKEN: TokenCurrency = {

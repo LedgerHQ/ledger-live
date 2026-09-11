@@ -11,6 +11,9 @@ export const mockFeeByTransactionType: Record<TransactionType, number> = {
   [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE]: 2308,
   [TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC]: 18494,
   [TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE]: 17972,
+  [TRANSACTION_TYPE.BOND_PUBLIC]: 5621,
+  [TRANSACTION_TYPE.UNBOND_PUBLIC]: 10813,
+  [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC]: 3066,
 };
 
 export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinConfig => {
@@ -24,6 +27,7 @@ export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinCon
     feeSafetyMultiplier: 1,
     isFeeSponsored: true,
     enableTokens: false,
+    enableStaking: false,
     useEncryptedProve: false,
     recordPickingStrategy: "manual",
     status: { type: "active" },
@@ -45,6 +49,7 @@ export const getTestnetIntegConfig = (overrides?: Partial<AleoCoinConfig>): Aleo
   feeSafetyMultiplier: 1,
   isFeeSponsored: true,
   enableTokens: false,
+  enableStaking: false,
   useEncryptedProve: false,
   recordPickingStrategy: "manual",
   ...overrides,

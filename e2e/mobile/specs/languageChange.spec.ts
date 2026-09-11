@@ -53,9 +53,6 @@ describe("Settings", () => {
       speculosForSetupOnly: true,
     });
     await app.mainNavigation.waitForWallet40Ready();
-  });
-
-  it("Open general settings", async () => {
     await app.mainNavigation.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
   });

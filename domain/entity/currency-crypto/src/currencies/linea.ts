@@ -37,7 +37,6 @@ export const linea = currency({
       magnitude: 0,
     },
   ],
-  disableCountervalue: false,
   ethereumLikeInfo: {
     chainId: 59144,
   },

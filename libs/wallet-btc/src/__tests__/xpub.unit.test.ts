@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import Xpub from "../xpub";
 import { Output } from "../storage/types";
 import { DerivationModes } from "../types";
-import { RbfBuildError } from "../errors";
+import { RbfBuildError, InvalidXpub } from "../errors";
 
 import { mockCrypto, mockStorage } from "./fixtures/common.fixtures";
 import { IExplorer } from "../explorer/types";
@@ -58,6 +58,42 @@ describe("Xpub", () => {
 
     expect(xpub.syncAddress).toHaveBeenCalledTimes(xpub.GAP);
     expect(result).toBe(true);
+  });
+
+  test("checkAddressesBlock does not abort the block when one address throws InvalidXpub", async () => {
+    jest.spyOn(xpub, "syncAddress").mockImplementation(async (_account, index) => {
+      if (index === 3) throw new InvalidXpub("undecodable xpub");
+      return true;
+    });
+
+    const result = await xpub.checkAddressesBlock(0, 0, false);
+
+    expect(xpub.syncAddress).toHaveBeenCalledTimes(xpub.GAP);
+    expect(result).toBe(true);
+  });
+
+  test("checkAddressesBlock returns false when every address throws InvalidXpub", async () => {
+    jest.spyOn(xpub, "syncAddress").mockRejectedValue(new InvalidXpub("undecodable xpub"));
+
+    const result = await xpub.checkAddressesBlock(0, 0, false);
+
+    expect(xpub.syncAddress).toHaveBeenCalledTimes(xpub.GAP);
+    expect(result).toBe(false);
+  });
+
+  test("checkAddressesBlock still rejects for errors that are not InvalidXpub", async () => {
+    jest.spyOn(xpub, "syncAddress").mockRejectedValue(new Error("explorer network error"));
+
+    await expect(xpub.checkAddressesBlock(0, 0, false)).rejects.toThrow("explorer network error");
+  });
+
+  test("checkAddressesBlock rejects for non-InvalidXpub errors even when an earlier address succeeds", async () => {
+    jest.spyOn(xpub, "syncAddress").mockImplementation(async (_account, index) => {
+      if (index === 0) return true;
+      throw new Error("explorer network error");
+    });
+
+    await expect(xpub.checkAddressesBlock(0, 0, false)).rejects.toThrow("explorer network error");
   });
 
   test("syncAccount", async () => {

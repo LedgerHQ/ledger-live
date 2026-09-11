@@ -1,5 +1,59 @@
 # @shared/api-services
 
+## 0.7.0
+
+### Minor Changes
+
+- [#21418](https://github.com/LedgerHQ/ledger-live/pull/21418) [`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Rename `CARD_API_URL` to `CARD_BAANX_API_URL`, keep the production defaults, and drop the Env vars section from the Card / Pay DevTool.
+
+- [#21445](https://github.com/LedgerHQ/ledger-live/pull/21445) [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Name the fields a Card response was rejected on.
+
+  - A schema failure reported only `expected string, received undefined`, naming no field, because RTK Query keeps just the thrown error's message unless the api converts it.
+  - `catchSchemaFailure` now lists every failing path, so one run reports them all.
+  - The rejected value is never carried into the error: a Card response holds the cardholder's name and PAN digits.
+  - An internal wallet with no address memo answers with the key absent, not `null`, so `addressMemo` is nullish.
+
+- [#21194](https://github.com/LedgerHQ/ledger-live/pull/21194) [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Refresh Baanx Pay Card sessions after a 401, and keep the credentials out of every reader of redux.
+
+  The two OAuth2 grants are RTK Query endpoints again. Both opt out of the Bearer and out of the
+  renewal, both run with `track: false`, so no session becomes a cache entry, and neither has a hook.
+
+  The desktop redux logger and both DevTools configurations now strip every Card action, which also
+  closes a live leak: the code exchange logs its code and its code verifier in production, into the
+  file users attach to a support ticket.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/auth@0.6.0
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#21418](https://github.com/LedgerHQ/ledger-live/pull/21418) [`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Rename `CARD_API_URL` to `CARD_BAANX_API_URL`, keep the production defaults, and drop the Env vars section from the Card / Pay DevTool.
+
+- [#21445](https://github.com/LedgerHQ/ledger-live/pull/21445) [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Name the fields a Card response was rejected on.
+
+  - A schema failure reported only `expected string, received undefined`, naming no field, because RTK Query keeps just the thrown error's message unless the api converts it.
+  - `catchSchemaFailure` now lists every failing path, so one run reports them all.
+  - The rejected value is never carried into the error: a Card response holds the cardholder's name and PAN digits.
+  - An internal wallet with no address memo answers with the key absent, not `null`, so `addressMemo` is nullish.
+
+- [#21194](https://github.com/LedgerHQ/ledger-live/pull/21194) [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Refresh Baanx Pay Card sessions after a 401, and keep the credentials out of every reader of redux.
+
+  The two OAuth2 grants are RTK Query endpoints again. Both opt out of the Bearer and out of the
+  renewal, both run with `track: false`, so no session becomes a cache entry, and neither has a hook.
+
+  The desktop redux logger and both DevTools configurations now strip every Card action, which also
+  closes a live leak: the code exchange logs its code and its code verifier in production, into the
+  file users attach to a support ticket.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/auth@0.6.0
+
 ## 0.6.0
 
 ### Minor Changes

@@ -15,6 +15,8 @@ module.exports = {
   moduleNameMapper: {
     "^@ledgerhq/device-transport-kit-web-hid$":
       "<rootDir>/tests/__mocks__/device-transport-kit-web-hid.ts",
+    "^@ledgerhq/device-transport-kit-mockserver$":
+      "<rootDir>/tests/__mocks__/device-transport-kit-mockserver.ts",
   },
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
   reporters: [

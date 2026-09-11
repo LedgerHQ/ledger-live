@@ -6,6 +6,7 @@ import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useSh
 import { useManifestWithSessionId } from "@ledgerhq/live-common/hooks/useManifestWithSessionId";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { getNoahGoToURL, type NoahAuthPath } from "@features/flow-pay-bank-transfer";
 import { openModal } from "~/renderer/actions/modals";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import Card from "~/renderer/components/Box/Card";
@@ -31,20 +32,34 @@ const Bank = () => {
   });
   const navigate = useNavigate();
   const themeType = useTheme().theme;
-  const params = location.state || {};
+  const noahAuth = new URLSearchParams(location.search).get("noahAuth");
+  let authPath: NoahAuthPath | undefined;
+  if (noahAuth === "createAccount") {
+    authPath = "/auth/signup";
+  }
+  if (noahAuth === "logIn") {
+    authPath = "/auth/signin";
+  }
+  const goToURL = getNoahGoToURL(manifestWithSessionId?.url.toString(), authPath, {
+    theme: themeType,
+    lang: locale,
+  });
   const providerInterstitialEnabled = useProviderInterstitalEnabled({
     manifest,
   });
 
   function handleClose() {
     navigate(-1);
-    dispatch(openModal("MODAL_RECEIVE", { sourcePage: RECEIVE_SOURCE_PAGE.BANK }));
+    if (!noahAuth) {
+      dispatch(openModal("MODAL_RECEIVE", { sourcePage: RECEIVE_SOURCE_PAGE.BANK }));
+    }
   }
 
   return (
     <Card grow style={{ overflow: "hidden" }} data-testid="reveive-app-container">
       {manifestWithSessionId ? (
         <WebPlatformPlayer
+          key={goToURL ?? "catalog"}
           config={{
             topBarConfig: {
               shouldDisplayName: false,
@@ -57,7 +72,7 @@ const Bank = () => {
           inputs={{
             theme: themeType,
             lang: locale,
-            ...params,
+            ...(goToURL ? { goToURL } : {}),
           }}
           onClose={handleClose}
           Loader={providerInterstitialEnabled ? CustomProviderInterstitial : undefined}

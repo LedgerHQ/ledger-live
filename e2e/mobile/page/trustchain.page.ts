@@ -44,7 +44,7 @@ export default class TrustchainPage {
     jestExpect(await this.getAccounts()).toEqual([]);
   }
 
-  @Step("Expect trustchain to hold exactly the accounts $0")
+  @Step("Expect trustchain to hold exactly the accounts {{{0}}}")
   async expectAccountIds(accountIds: string[], timeout = DEFAULT_TIMEOUT) {
     const expected = accountIds.toSorted(byName);
     const actual = await this.waitUntil(
@@ -55,7 +55,7 @@ export default class TrustchainPage {
     jestExpect(actual).toEqual(expected);
   }
 
-  @Step("Expect trustchain to hold account $0 on $1")
+  @Step("Expect trustchain to hold account {{{0}}} on {{{1}}}")
   async expectToHoldAccount(accountId: string, currencyId: string, timeout = DEFAULT_TIMEOUT) {
     const accounts = await this.waitUntil(
       () => this.getAccounts(),
@@ -65,12 +65,12 @@ export default class TrustchainPage {
     jestExpect(accounts).toEqual([jestExpect.objectContaining({ id: accountId, currencyId })]);
   }
 
-  @Step("Expect account $0 to keep its default name in the trustchain")
+  @Step("Expect account {{{0}}} to keep its default name in the trustchain")
   async expectAccountToHaveDefaultName(accountId: string) {
     jestExpect(await this.getAccountName(accountId)).toBeUndefined();
   }
 
-  @Step("Expect account $0 to be named $1 in the trustchain")
+  @Step("Expect account {{{0}}} to be named {{{1}}} in the trustchain")
   async expectAccountName(accountId: string, accountName: string, timeout = DEFAULT_TIMEOUT) {
     const name = await this.waitUntil(
       () => this.getAccountName(accountId),

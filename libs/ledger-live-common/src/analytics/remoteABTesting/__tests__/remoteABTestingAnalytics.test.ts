@@ -20,6 +20,8 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariant: "control",
       llmWalletApiDeviceIntentSignEnabled: false,
       llmWalletApiDeviceIntentSignVariant: "control",
+      ptxEarnTransactionSuccessBannerEnabled: false,
+      ptxEarnTransactionSuccessBanner: "ptxEarnTransactionSuccessBannerDisabled",
     });
   });
 
@@ -30,6 +32,8 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariant: "variant_a",
       llmWalletApiDeviceIntentSignEnabled: true,
       llmWalletApiDeviceIntentSignVariant: "variant_a",
+      ptxEarnTransactionSuccessBannerEnabled: true,
+      ptxEarnTransactionSuccessBanner: "ptxEarnTransactionSuccessBannerEnabled",
     });
   });
 
@@ -40,6 +44,8 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariant: undefined,
       llmWalletApiDeviceIntentSignEnabled: true,
       llmWalletApiDeviceIntentSignVariant: undefined,
+      ptxEarnTransactionSuccessBannerEnabled: true,
+      ptxEarnTransactionSuccessBanner: "ptxEarnTransactionSuccessBannerEnabled",
     });
   });
 
@@ -50,6 +56,8 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariant: undefined,
       llmWalletApiDeviceIntentSignEnabled: false,
       llmWalletApiDeviceIntentSignVariant: undefined,
+      ptxEarnTransactionSuccessBannerEnabled: false,
+      ptxEarnTransactionSuccessBanner: "ptxEarnTransactionSuccessBannerDisabled",
     });
   });
 });

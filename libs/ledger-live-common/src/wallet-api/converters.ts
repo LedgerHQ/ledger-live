@@ -150,7 +150,7 @@ export async function resolveWalletApiSpendableBalance(
 ): Promise<BigNumber> {
   try {
     const bridge = await getAccountBridge(account, parentAccount);
-    return bridge.getWalletApiSpendableBalance(account);
+    return bridge.getWalletApiSpendableBalance(account) ?? account.spendableBalance;
   } catch (error) {
     log(
       "wallet-api/converters",

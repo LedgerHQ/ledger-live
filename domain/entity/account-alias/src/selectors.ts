@@ -1,14 +1,17 @@
+import { safeParseAnyAccountId, type AnyAccountId } from "@domain/entity-account";
 import type { AccountAliasState } from "./schema";
 
 /** Account id behind an alias, `undefined` when the alias was never registered. */
 export const accountIdFromAliasSelector = (
   state: AccountAliasState,
   alias: string,
-): string | undefined => state.accountIdByAlias[alias];
+): AnyAccountId | undefined => state.accountIdByAlias[alias];
 
 /**
- * Account id behind a route segment. Falls back to the segment itself so links holding a raw
- * account id — legacy deeplinks, persisted navigation state — keep working.
+ * Account id behind a route segment, falling back to the segment when it is already a well-formed
+ * id so legacy deeplinks keep working. `undefined` when it is neither.
  */
-export const resolveAccountIdSelector = (state: AccountAliasState, segment: string): string =>
-  state.accountIdByAlias[segment] ?? segment;
+export const resolveAccountIdSelector = (
+  state: AccountAliasState,
+  segment: string,
+): AnyAccountId | undefined => state.accountIdByAlias[segment] ?? safeParseAnyAccountId(segment);

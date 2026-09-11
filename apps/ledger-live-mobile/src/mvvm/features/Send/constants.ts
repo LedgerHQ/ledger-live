@@ -26,6 +26,13 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       title: "",
     },
   },
+  [SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION]: {
+    id: SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION,
+    canGoBack: true,
+    floating: true,
+    showHeaderRight: false,
+    showTitle: false,
+  },
   [SEND_FLOW_STEP.RECENT_HISTORY]: {
     id: SEND_FLOW_STEP.RECENT_HISTORY,
     canGoBack: true,
@@ -110,6 +117,12 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       ...TransparentHeaderNavigationOptions,
       title: "",
     },
+  },
+  [SEND_FLOW_STEP.PAY_SUCCESS]: {
+    id: SEND_FLOW_STEP.PAY_SUCCESS,
+    canGoBack: false,
+    showHeaderRight: false,
+    showTitle: false,
   },
 };
 

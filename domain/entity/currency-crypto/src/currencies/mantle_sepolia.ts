@@ -38,7 +38,6 @@ export const mantle_sepolia = currency({
     },
   ],
   isTestnetFor: "mantle",
-  disableCountervalue: true,
   ethereumLikeInfo: {
     chainId: 5003,
   },

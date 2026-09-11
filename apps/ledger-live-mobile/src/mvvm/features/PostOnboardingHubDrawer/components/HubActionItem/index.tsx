@@ -5,7 +5,7 @@ import { HubStepRow } from "../HubStepRow";
 import { type HubActionItemProps, useHubActionItemViewModel } from "./useHubActionItemViewModel";
 
 export function HubActionItem(props: HubActionItemProps) {
-  const { Icon } = props;
+  const { Icon, id } = props;
   const {
     titleText,
     descriptionText,
@@ -35,6 +35,7 @@ export function HubActionItem(props: HubActionItemProps) {
 
   return (
     <Pressable
+      testID={`post-onboarding-hub-action-${id}`}
       lx={{ alignSelf: "stretch" }}
       onPress={isDisabled ? undefined : handleRowPress}
       disabled={isDisabled}

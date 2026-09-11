@@ -15,13 +15,11 @@ export function ContactsAddAddressFlowDialog({
   sanctionedAddressBanner,
   nameLabels,
   reviewLabels,
-  completionLabels,
   onAddressChange,
   onContinueFromAddressDetails,
   onAddressLabelChange,
   onContinueFromName,
   onContinueFromReview,
-  onCompleteMockConfirmation,
   onBack,
   onClose,
 }: ContactsAddAddressFlowDialogProps): React.JSX.Element | null {
@@ -40,18 +38,15 @@ export function ContactsAddAddressFlowDialog({
             modularDialog.content
           ) : (
             <ContactsAddAddressFlowContent
-              completionLabels={completionLabels}
               entryLabels={entryLabels}
               sanctionedAddressBanner={sanctionedAddressBanner}
               nameLabels={nameLabels}
               reviewLabels={reviewLabels}
               onAddressChange={onAddressChange}
               onAddressLabelChange={onAddressLabelChange}
-              onClose={onClose}
               onContinueFromAddressDetails={onContinueFromAddressDetails}
               onContinueFromName={onContinueFromName}
               onContinueFromReview={onContinueFromReview}
-              onCompleteMockConfirmation={onCompleteMockConfirmation}
               state={state}
             />
           );
