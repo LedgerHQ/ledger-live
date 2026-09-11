@@ -213,7 +213,7 @@ describe("combineCardLinkedWallets", () => {
         { id: "w-bxx", address: "0xbxx", currency: "bxx", network: "ethereum", priority: 1 },
       ],
       internal: [
-        { id: "w-bxx", balance: "5.00", currency: "bxx", address: "0xbxx", addressId: "a-bxx" },
+        { id: "w-bxx", balance: "5.00", currency: "bxx", address: "0xbxx", addressMemo: null },
       ],
       resolveCounterValue: resolve,
     });

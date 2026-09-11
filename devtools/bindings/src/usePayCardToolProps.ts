@@ -374,9 +374,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
           currency,
           network,
           priority,
-          // Left off when the wallet had none, as the join and the transform do: one rule, so a
-          // tool reading these rows cannot tell a mapped pair from an unmapped one by shape alone.
-          ...(ledgerId === undefined ? {} : { ledgerId }),
+          ledgerId,
           balance: walletBalance,
           counterValue,
         }) => ({
@@ -385,9 +383,11 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
           currency,
           network,
           priority,
-          ledgerId,
+          // Left off when the wallet had none, as the join and the transform do: one rule, so a
+          // tool reading these rows cannot tell a mapped pair from an unmapped one by shape alone.
+          ...(ledgerId === undefined ? {} : { ledgerId }),
           balance: walletBalance,
-          counterValue,
+          counterValueRaw: counterValue,
         }),
       ),
       isFetching: linkedWallets.isFetching,

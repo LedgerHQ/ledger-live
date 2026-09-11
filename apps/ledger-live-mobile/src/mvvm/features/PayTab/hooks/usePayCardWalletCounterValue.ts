@@ -30,7 +30,8 @@ const STABLECOIN_CATEGORIES = [AssetCategory.Stablecoins];
  * come from the stablecoin catalog the Pay tab already loads, which covers the card's two.
  *
  * A currency neither source knows prices to `null`, which the caller shows as unpriced rather than
- * as zero.
+ * as zero. What is answered is in the counter-value currency's smallest unit, as the rates state
+ * keeps it, and is passed on unconverted.
  *
  * The rates the app polls cover the assets the user holds an account in, and a card wallet is
  * usually none of them, so every card asset is registered as a tracking pair here. Without that a
@@ -65,7 +66,10 @@ export function usePayCardWalletCounterValue(): ResolveWalletCounterValue {
   const { poll } = useCountervaluesPolling();
 
   const cardCurrencies = useMemo(() => {
-    const ids = new Set(Object.values(BAANX_ASSET_LEDGER_IDS));
+    // Only the pairs the catalog actually resolves: a key it holds no id for has no rate to ask for.
+    const ids = new Set(
+      Object.values(BAANX_ASSET_LEDGER_IDS).filter((id): id is string => id !== undefined),
+    );
     return [...ids]
       .map(id => tokenById.get(id) ?? findCryptoCurrencyById(id))
       .filter((currency): currency is CryptoOrTokenCurrency => currency !== undefined);
