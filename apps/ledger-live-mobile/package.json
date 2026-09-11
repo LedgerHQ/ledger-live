@@ -296,7 +296,7 @@
     "react-native-startup-time": "2.1.0",
     "react-native-svg": "catalog:",
     "react-native-tcp-socket": "6.0.6",
-    "react-native-url-polyfill": "1.3.0",
+    "react-native-url-polyfill": "4.0.0",
     "react-native-version-number": "0.3.6",
     "react-native-video": "6.16.1",
     "react-native-view-shot": "5.1.1",
