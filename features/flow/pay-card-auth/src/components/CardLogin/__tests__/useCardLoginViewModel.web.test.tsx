@@ -569,3 +569,109 @@ describe("useCardLoginViewModel intro", () => {
     });
   });
 });
+
+// The hook resolves each machine error kind through `t(...)`, not a hardcoded map, so a renamed or
+// missing translation key would only show up by actually reading it back through i18n.
+const ERROR_MESSAGES = CARD_LOGIN_INTRO_RESOURCES.en.translation.payTab.cardLogin.errors;
+
+describe("useCardLoginViewModel errors", () => {
+  let store: ReturnType<typeof buildStore>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockPorts.hasSession.mockResolvedValue(false);
+    mockPorts.loadAttempt.mockResolvedValue(null);
+    mockPorts.openHostedLogin.mockResolvedValue({ type: "dismissed" });
+    store = buildStore();
+    mockPorts.setSignedIn.mockImplementation((value: boolean) =>
+      store.dispatch(setSignedIn(value)),
+    );
+  });
+
+  it("shows the translated message for pkce_failed", async () => {
+    mockPorts.saveAttempt.mockRejectedValueOnce(new Error("no store"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.pkce_failed));
+  });
+
+  it("shows the translated message for browser_open_failed", async () => {
+    mockPorts.openHostedLogin.mockRejectedValueOnce(new Error("no browser"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() =>
+      expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.browser_open_failed),
+    );
+  });
+
+  it("shows the translated message for exchange_failed", async () => {
+    mockPorts.loadAttempt.mockResolvedValue({ codeVerifier: "verifier-value" });
+    mockPorts.openHostedLogin.mockResolvedValue({
+      type: "success",
+      url: SUCCESS_REDIRECT,
+    });
+    mockPorts.exchangeAuthorizationCode.mockRejectedValueOnce(new Error("400"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.exchange_failed));
+  });
+
+  it("shows the translated message for persist_failed", async () => {
+    mockPorts.loadAttempt.mockResolvedValue({ codeVerifier: "verifier-value" });
+    mockPorts.openHostedLogin.mockResolvedValue({
+      type: "success",
+      url: SUCCESS_REDIRECT,
+    });
+    mockPorts.persistSession.mockRejectedValueOnce(new Error("no disk"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.persist_failed));
+  });
+
+  it("shows the translated message for missing_attempt", async () => {
+    mockPorts.loadAttempt.mockResolvedValue(null);
+    const staleCallback = { code: "stale-code" };
+    const { result } = renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+          callback: staleCallback,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.missing_attempt));
+  });
+
+  it("shows the translated message for fetch_user_failed", async () => {
+    mockPorts.hasSession.mockResolvedValue(true);
+    mockPorts.getUser.mockRejectedValueOnce({ status: "FETCH_ERROR" });
+    const { result } = renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() =>
+      expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.fetch_user_failed),
+    );
+  });
+});
