@@ -39,7 +39,7 @@ export type LiveDataCommandOptions = {
  * Tag a CLI command with a stable, human-readable name so Allure attachment titles read
  * `CLI liveDataCommand — result` instead of `CLI cmd` / `CLI anonymous` (QAA-1433).
  */
-function named<T extends (...args: never[]) => unknown>(name: string, cmd: T): T {
+export function named<T extends (...args: never[]) => unknown>(name: string, cmd: T): T {
   Object.defineProperty(cmd, "name", { value: name, configurable: true });
   return cmd;
 }

@@ -4036,6 +4036,7 @@
         "copyAdress": "Copy address",
         "addressCopied": "Address copied!",
         "addressVerified": "Address verified",
+        "qrCode": "QR code for your receive address",
         "verifyAddress": "Verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
         "sendWarning": "Send only tokens from {{network}} network. Sending from another network may result in permanent loss of your tokens.",
