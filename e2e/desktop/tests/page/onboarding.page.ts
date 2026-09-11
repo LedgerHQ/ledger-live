@@ -1,15 +1,14 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-
-export type OnboardingDeviceId = "nanoS" | "nanoX" | "nanoSP" | "stax" | "europa" | "apex";
+import type { DeviceModelId } from "@ledgerhq/live-e2e-shared/mockServer";
 
 export class OnboardingPage extends AppPage {
   private readonly getStartedButton = this.page.getByRole("button", { name: "Get Started" });
   private readonly welcomeTitle = this.page.getByTestId("onbording-welcome-title");
-  private readonly deviceTile = (device: OnboardingDeviceId) =>
+  private readonly deviceTile = (device: DeviceModelId) =>
     this.page.getByTestId(`v3-device-${device}`);
-  private readonly deviceContainer = (device: OnboardingDeviceId) =>
+  private readonly deviceContainer = (device: DeviceModelId) =>
     this.page.getByTestId(`v3-container-device-${device}`);
 
   @step("Wait for the onboarding welcome screen")
@@ -24,7 +23,7 @@ export class OnboardingPage extends AppPage {
   }
 
   @step("Select device $0")
-  async selectDevice(device: OnboardingDeviceId) {
+  async selectDevice(device: DeviceModelId) {
     const tile = this.deviceTile(device);
     await expect(tile).toBeVisible();
     // The tile only becomes clickable while its container is hovered.
