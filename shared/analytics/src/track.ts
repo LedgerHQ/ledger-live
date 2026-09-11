@@ -21,8 +21,8 @@ export function track(
   event: string,
   props?: Error | Props | null,
   { mandatory = false }: TrackOptions = {},
-): void {
+): void | Promise<void> {
   if (isEnabled() || mandatory) {
-    void trackEvent("track", event, normalizeProps(props), { mandatory });
+    return trackEvent("track", event, normalizeProps(props), { mandatory });
   }
 }

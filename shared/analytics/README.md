@@ -42,12 +42,18 @@ const sub = analyticsEvents$.subscribe((event) => myEvents.push(event));
 const unsubscribe = sub.unsubscribe;
 ```
 
-`track` returns `void` and is fire-and-forget. Enrichment and delivery run asynchronously inside the package.
-
 Tracking is off until enabled explicitly. Pass `{ mandatory: true }` to skip that check.
 
 ```ts
 track("Mandatory Event", { foo: "bar" }, { mandatory: true });
 ```
 
-Extra props and the registered analytics client may be sync or async. Extra props from the function overwrite the same keys on the caller’s payload.
+`track` is generally fire-and-forget. Delivery status is published on `analyticsEvents$`. When you need to wait until an event is enqueued await the call.
+
+```ts
+await track("Your Event", { foo: "bar" });
+```
+
+Extra props and the registered analytics client may be sync or async.
+
+Extra props override event props if they have the same key.
