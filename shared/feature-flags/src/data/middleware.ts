@@ -20,13 +20,36 @@ export interface FeatureFlagsMeta {
 /** Which of the two reads failed, reported to {@link FeatureFlagsMiddlewareConfig.onRemoteFlagsError}. */
 export type FeatureFlagsReadStage = "cache" | "remote";
 
-/** Context for a failed feature-flag read. Observation only, it never feeds resolution. */
+/**
+ * Context for a failed feature-flag read. Observation only, it never feeds resolution.
+ *
+ * The three fields answer three different questions: `stage` which read failed, `isCold` whether
+ * the session is degraded as a result, and `attempt` how long it has been going on. Severity comes
+ * from `isCold`, not from `stage`: a failed read whose values are already in place is routine.
+ *
+ * The shapes that occur:
+ *
+ * - `cache` / attempt 1 / cold — the device's own storage could not be read at all (IndexedDB
+ *   refused on desktop, native module unreachable on mobile). Not fatal, the network path still
+ *   runs. This is the only shape a cache failure ever takes: the prime runs before anything can
+ *   populate the map, so it is always cold, and it never retries.
+ * - `remote` / attempt 1 / cold — the one that matters. The boot fetch failed and no cache was
+ *   primed, so the entire session resolves on compiled defaults.
+ * - `remote` / attempt 1 / warm — the boot fetch failed but the cache had already primed, so the
+ *   session runs on the last values the backend sent. A connectivity signal, not a correctness one.
+ * - `remote` / attempt n > 1 / cold — still nothing after n tries. Multiply by the refresh interval
+ *   for how long this session has been misconfigured.
+ * - `remote` / attempt n > 1 / warm — a routine poll failure with values in place. Expected on any
+ *   flaky connection, and usually not worth reporting.
+ *
+ * `cache` combined with a warm map, or with an attempt above 1, cannot happen.
+ */
 export interface FeatureFlagsReadFailure {
   /** The local cache prime, or a network poll. */
   stage: FeatureFlagsReadStage;
-  /** 1 for the boot attempt, incremented on each subsequent poll. */
+  /** 1 for the boot attempt, incremented on each subsequent poll. Always 1 for `cache`. */
   attempt: number;
-  /** Whether the middleware still holds no remote values at all. */
+  /** Whether the middleware still holds no remote values at all, so resolution is on defaults. */
   isCold: boolean;
 }
 
