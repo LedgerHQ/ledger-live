@@ -1,8 +1,13 @@
 import { test } from "tests/fixtures/common";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import {
+  MINA_STAKING_ACCOUNTS,
+  pickMinaAccountToDelegate,
+  pickMinaAccountToRedelegate,
+  pickMinaValidator,
+} from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getEnv } from "@shared/env";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
@@ -556,36 +561,40 @@ test.describe("Delegate", () => {
 test.describe("Delegate - MINA", () => {
   test.slow();
 
-  // Mina delegates the whole balance, so the flow carries no amount.
-  const account = new Delegate(Account.MINA_1, "N/A", "Kraken", Addresses.MINA_KRAKEN_VALIDATOR);
-  // Broadcasting would leave `Mina 1` delegated, turning the next run into a redelegation.
-  setupEnv(true);
+  // Broadcasting is left to the nightly policy: this flow stakes the pool's free account, which
+  // the undelegate flow replaces.
   test.use({
-    teamOwner: delegateTeamOwner(account.account.currency.id),
+    teamOwner: delegateTeamOwner(Currency.MINA.id),
     userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
+    speculosApp: Currency.MINA.speculosApp,
+    cliCommands: MINA_STAKING_ACCOUNTS.map(account => liveDataCommand(account)),
     featureFlags: FF_MINA_STAKING_ENABLED,
   });
 
   test(
-    `[${account.account.currency.testLabel}] - Delegate`,
+    `[${Currency.MINA.testLabel}] - Delegate`,
     {
       // The Nano S build of the Mina app stops at 1.4.2, before the delegation flow.
-      tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
+      tag: buildTags({ currencyId: Currency.MINA.id, skipLNS: true }),
       annotation: { type: "TMS", description: "B2CQA-387" },
     },
     async ({ app }) => {
+      const account = await pickMinaAccountToDelegate();
+      const validator = await pickMinaValidator();
+      // Mina delegates the whole balance, so the flow carries no amount.
+      const delegation = new Delegate(account, "N/A", validator.name, validator.address);
+
+
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.account.accountName);
+      await app.accounts.navigateToAccountByName(account.accountName);
 
       await app.account.startStakingFlowFromMainStakeButton({ slowSync: true });
       await app.delegate.checkValidatorListIsVisible();
-      await app.delegate.inputProvider(account.provider);
-      await app.delegate.selectProviderByName(account.provider);
+      await app.delegate.inputProvider(delegation.provider);
+      await app.delegate.selectProviderByName(delegation.provider);
       await app.delegate.continue();
 
-      await app.speculos.signDelegationTransaction(account);
+      await app.speculos.signDelegationTransaction(delegation);
       await app.delegate.verifySuccessMessage();
       await app.delegate.clickViewDetailsButton();
 
@@ -593,9 +602,9 @@ test.describe("Delegate - MINA", () => {
       await app.delegateDrawer.verifyTxTypeIsVisible();
       await app.delegateDrawer.verifyTxTypeIs("Delegated");
       await app.delegateDrawer.operationTypeIsCorrect("Delegated");
-      await app.delegateDrawer.verifyAccountName(account.account.accountName);
+      await app.delegateDrawer.verifyAccountName(account.accountName);
       // A mina delegation moves no value: the amount shown is the fee.
-      await app.delegateDrawer.amountValueIsVisible(account.account.currency.ticker);
+      await app.delegateDrawer.amountValueIsVisible(Currency.MINA.ticker);
       await app.drawer.closeDrawer();
     },
   );
@@ -604,38 +613,40 @@ test.describe("Delegate - MINA", () => {
 test.describe("Redelegate - MINA", () => {
   test.slow();
 
-  // `Mina 2` is the account kept delegated, to Kraken: redelegating targets another validator.
-  const account = new Delegate(Account.MINA_2, "N/A", "Auro Wallet", Addresses.MINA_AURO_VALIDATOR);
-  // Broadcasting would move the delegation to Auro Wallet, which the next run could no longer
-  // select.
-  setupEnv(true);
+  // Broadcasting is left to the nightly policy: this flow keeps its account delegated, and the
+  // pool gives it the one the undelegate flow leaves alone.
   test.use({
-    teamOwner: delegateTeamOwner(account.account.currency.id),
+    teamOwner: delegateTeamOwner(Currency.MINA.id),
     userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
+    speculosApp: Currency.MINA.speculosApp,
+    cliCommands: MINA_STAKING_ACCOUNTS.map(account => liveDataCommand(account)),
     featureFlags: FF_MINA_STAKING_ENABLED,
   });
 
   test(
-    `[${account.account.currency.testLabel}] - Redelegate`,
+    `[${Currency.MINA.testLabel}] - Redelegate`,
     {
       // The Nano S build of the Mina app stops at 1.4.2, before the delegation flow.
-      tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
+      tag: buildTags({ currencyId: Currency.MINA.id, skipLNS: true }),
       annotation: { type: "TMS", description: "B2CQA-387" },
     },
     async ({ app }) => {
+      const { account, validatorAddress } = await pickMinaAccountToRedelegate();
+      const validator = await pickMinaValidator(validatorAddress);
+      const delegation = new Delegate(account, "N/A", validator.name, validator.address);
+
+
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.account.accountName);
+      await app.accounts.navigateToAccountByName(account.accountName);
 
       await app.layout.waitForSyncButtonToBeEnabled({ slowSync: true });
-      await app.delegate.openRedelegateFromManageMenu(account.account.currency.id);
+      await app.delegate.openRedelegateFromManageMenu(Currency.MINA.id);
       await app.delegate.checkValidatorListIsVisible();
-      await app.delegate.inputProvider(account.provider);
-      await app.delegate.selectProviderByName(account.provider);
+      await app.delegate.inputProvider(delegation.provider);
+      await app.delegate.selectProviderByName(delegation.provider);
       await app.delegate.continue();
 
-      await app.speculos.signDelegationTransaction(account);
+      await app.speculos.signDelegationTransaction(delegation);
       await app.delegate.verifySuccessMessage();
       await app.delegate.clickViewDetailsButton();
 
@@ -643,8 +654,8 @@ test.describe("Redelegate - MINA", () => {
       await app.delegateDrawer.verifyTxTypeIsVisible();
       await app.delegateDrawer.verifyTxTypeIs("Redelegated");
       await app.delegateDrawer.operationTypeIsCorrect("Redelegated");
-      await app.delegateDrawer.verifyAccountName(account.account.accountName);
-      await app.delegateDrawer.amountValueIsVisible(account.account.currency.ticker);
+      await app.delegateDrawer.verifyAccountName(account.accountName);
+      await app.delegateDrawer.amountValueIsVisible(Currency.MINA.ticker);
       await app.drawer.closeDrawer();
     },
   );
