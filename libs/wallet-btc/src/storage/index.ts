@@ -1,14 +1,20 @@
 import findLast from "lodash/findLast";
 import filter from "lodash/filter";
 import uniqBy from "lodash/uniqBy";
-import { log } from "@ledgerhq/logs";
 import Base from "../crypto/base";
+import { LogFn, noopLog } from "../logger";
 import { Input, IStorage, Output, TX, Address, Block } from "./types";
 
 // a mock storage class that just use js objects
 // sql.js would be perfect for the job
 class BitcoinLikeStorage implements IStorage {
   private txs: TX[] = [];
+
+  private readonly log: LogFn;
+
+  constructor(log: LogFn = noopLog) {
+    this.log = log;
+  }
 
   // indexe: address + hash -> tx
   primaryIndex: { [key: string]: number } = {};
@@ -107,12 +113,12 @@ class BitcoinLikeStorage implements IStorage {
       if (this.txs[this.primaryIndex[index]]) {
         const existing = this.txs[this.primaryIndex[index]];
         if (!existing.block && tx.block) {
-          log("bitcoin[storage]", `appendTxs, replacing with ${index}, pending->confirmed`);
+          this.log("bitcoin[storage]", `appendTxs, replacing with ${index}, pending->confirmed`);
           // Replace pending with confirmed version
           this.txs[this.primaryIndex[index]] = tx;
           return;
         }
-        log("bitcoin[storage]", `Already stored ${index}, skipping`);
+        this.log("bitcoin[storage]", `Already stored ${index}, skipping`);
         return;
       }
 
@@ -126,7 +132,7 @@ class BitcoinLikeStorage implements IStorage {
 
       tx.outputs.forEach(output => {
         if (output.address === tx.address) {
-          log(
+          this.log(
             "bitcoin[storage]",
             `Adding unspent output: ${output.output_hash}:${output.output_index} -> ${tx.address}`,
           );
