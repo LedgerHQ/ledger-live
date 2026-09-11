@@ -7,6 +7,7 @@ export type ContactsAddressValidationLabels = Readonly<{
   domainNotFound: string;
   sanctionedAddress: string;
   validationUnavailable: string;
+  duplicateAddress: (contactName: string) => string;
 }>;
 
 export type ContactsAddressInputPresentation = Readonly<{
@@ -40,6 +41,8 @@ export function resolveAddressInputPresentation(
         helperText = labels.domainNotFound;
       } else if (addressEntry.error === "sanctioned") {
         helperText = labels.sanctionedAddress;
+      } else if (addressEntry.error === "duplicate_address") {
+        helperText = labels.duplicateAddress(addressEntry.contactName);
       }
 
       return {

@@ -1,6 +1,9 @@
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import { useCallback, useEffect, useState } from "react";
-import type { ContactsAddressValidationPort } from "@features/platform-contacts";
+import type {
+  ContactsAddressValidationPort,
+  OtherContactAddress,
+} from "@features/platform-contacts";
 import { useEditAddressAddressEntry } from "./useEditAddressAddressEntry";
 import { useRenameAddressViewModel } from "./useRenameAddressViewModel";
 import type { RenameAddressDialogViewModel, UseRenameAddressDialogViewModelOptions } from "./types";
@@ -10,6 +13,7 @@ export type UseRenameAddressDialogViewModelOptionsWithValidation =
     Readonly<{
       addressValidation?: ContactsAddressValidationPort;
       manualValidationDebounceMs?: number;
+      otherContactsAddresses?: readonly OtherContactAddress[];
     }>;
 
 export function useRenameAddressDialogViewModel({
@@ -22,6 +26,7 @@ export function useRenameAddressDialogViewModel({
   editPort,
   addressValidation,
   manualValidationDebounceMs,
+  otherContactsAddresses,
   isRequestedOpen,
   isEditSessionActive = isRequestedOpen,
   onCloseRequest,
@@ -35,8 +40,10 @@ export function useRenameAddressDialogViewModel({
     addressValidation,
     currencyId,
     currentAddress,
+    contactId,
     isActive: isEditSessionActive,
     manualValidationDebounceMs,
+    otherContactsAddresses,
   });
   const { invalidLabelError, isConfirmEnabled, save } = useRenameAddressViewModel({
     contactId,

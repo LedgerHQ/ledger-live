@@ -14,7 +14,7 @@ export type ContactAddressDetailActionsLabels = Readonly<{
   ReturnType<typeof resolveContactEditSignerActionLabels>;
 
 export type ResolveContactAddressDetailActionsLabelsOptions = Readonly<{
-  t: (key: string) => string;
+  t: (key: string, options?: Record<string, unknown>) => string;
   addressLabelTooLongKey?: string;
 }>;
 
@@ -48,6 +48,8 @@ export function resolveContactAddressDetailActionsLabels({
         validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
         ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
         ensDisclaimerDescription: t("contacts.addAddressEntry.ensDisclaimerDescription"),
+        duplicateAddress: (contactName: string) =>
+          t("contacts.addAddressEntry.duplicateAddress", { contactName }),
       },
     },
     ...resolveContactEditSignerActionLabels(t),

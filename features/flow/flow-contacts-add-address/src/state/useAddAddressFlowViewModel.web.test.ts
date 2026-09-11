@@ -1073,4 +1073,55 @@ describe("useAddAddressFlowViewModel", () => {
       });
     });
   });
+
+  describe("duplicate address detection", () => {
+    it("should mark a valid address as invalid when it is already used by another contact", async () => {
+      const contact = mockContact({ addresses: [] });
+      const addressValidation = createValidationPort();
+      const { result } = renderHook(() =>
+        useAddAddressFlowViewModel({
+          addressValidation,
+          otherContactsAddresses: [
+            { contactId: "contact-other", contactName: "Alice", address: VALID_ADDRESS },
+          ],
+        }),
+      );
+
+      act(() => result.current.start(contact));
+      act(() => result.current.completeCurrencySelection(contact.id, ETHEREUM_SELECTION));
+      await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
+
+      expect(result.current.state).toMatchObject({
+        status: "enteringAddress",
+        addressEntry: {
+          status: "invalid",
+          error: "duplicate_address",
+          contactName: "Alice",
+        },
+      });
+    });
+
+    it("should not flag an address already assigned to the selected contact", async () => {
+      const existingAddress = mockContactAddress({ address: VALID_ADDRESS });
+      const contact = mockContact({ addresses: [existingAddress] });
+      const addressValidation = createValidationPort();
+      const { result } = renderHook(() =>
+        useAddAddressFlowViewModel({
+          addressValidation,
+          otherContactsAddresses: [
+            { contactId: contact.id, contactName: contact.name, address: VALID_ADDRESS },
+          ],
+        }),
+      );
+
+      act(() => result.current.start(contact));
+      act(() => result.current.completeCurrencySelection(contact.id, ETHEREUM_SELECTION));
+      await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
+
+      expect(result.current.state).toMatchObject({
+        status: "enteringAddress",
+        addressEntry: { status: "valid", resolvedAddress: VALID_ADDRESS },
+      });
+    });
+  });
 });

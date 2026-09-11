@@ -20,7 +20,11 @@ import {
   buildContactsSaveAddressClickProperties,
   CONTACTS_EVENT_SOURCE,
 } from "@features/flow-contacts";
-import { buildContactsGlobalProperties, useContacts } from "@features/platform-contacts";
+import {
+  buildContactsGlobalProperties,
+  useContacts,
+  type OtherContactAddress,
+} from "@features/platform-contacts";
 import {
   isPrefillAddAddressFlowOpen,
   useAddAddressFlowViewModel,
@@ -90,6 +94,13 @@ export function useSendPrefillAddAddressFlow({
     intents: contactsIntentLWDDefinitions,
     getLiveConfigMinVersion: getMinVersion,
   });
+  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
+    () =>
+      contacts.flatMap(c =>
+        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
+      ),
+    [contacts],
+  );
   const {
     state: addressFlowState,
     startWithPrefilled,
@@ -97,7 +108,10 @@ export function useSendPrefillAddAddressFlow({
     continueFromName,
     goBack,
     close,
-  } = useAddAddressFlowViewModel({ addressValidation });
+  } = useAddAddressFlowViewModel({
+    addressValidation,
+    otherContactsAddresses: allContactsAddresses,
+  });
   const isAddressPhase = isPrefillAddAddressFlowOpen(addressFlowState);
   const trackingProperties = useMemo(
     () => ({
@@ -297,6 +311,8 @@ export function useSendPrefillAddAddressFlow({
       validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
       ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
       ensDisclaimerDescription: t("contacts.addAddressEntry.ensDisclaimerDescription"),
+      duplicateAddress: (contactName: string) =>
+        t("contacts.addAddressEntry.duplicateAddress", { contactName }),
     }),
     [t],
   );

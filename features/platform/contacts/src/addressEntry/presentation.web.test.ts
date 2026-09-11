@@ -8,6 +8,7 @@ const labels = {
   domainNotFound: "Domain not found",
   sanctionedAddress: "Sanctioned",
   validationUnavailable: "Unavailable",
+  duplicateAddress: (contactName: string) => `This address is already used for ${contactName}.`,
 };
 
 describe("resolveAddressInputPresentation", () => {
@@ -64,6 +65,26 @@ describe("resolveAddressInputPresentation", () => {
     ).toEqual({
       inputStatus: "error",
       helperText: "Sanctioned",
+      showEnsDisclaimer: false,
+    });
+  });
+
+  it("should show the contact name when address is already used for another contact", () => {
+    expect(
+      resolveAddressInputPresentation(
+        {
+          status: "invalid",
+          value: "0xduplicate",
+          resolvedAddress: null,
+          inputMethod: "manual",
+          error: "duplicate_address",
+          contactName: "Alice",
+        },
+        labels,
+      ),
+    ).toEqual({
+      inputStatus: "error",
+      helperText: "This address is already used for Alice.",
       showEnsDisclaimer: false,
     });
   });

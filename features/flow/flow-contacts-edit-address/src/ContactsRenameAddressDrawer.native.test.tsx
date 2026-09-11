@@ -46,6 +46,8 @@ function createViewModel(
         validationUnavailable: "Validation unavailable",
         ensDisclaimer: "ENS addresses are supported.",
         ensDisclaimerDescription: "ENS names can change over time.",
+        duplicateAddress: (contactName: string) =>
+          `This address is already used for ${contactName}.`,
       },
     },
     onOpen: jest.fn(),

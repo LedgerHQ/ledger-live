@@ -48,6 +48,7 @@ import {
   createMeDisplayNameFormatter,
   useContacts,
   useContactsMeContact,
+  type OtherContactAddress,
 } from "@features/platform-contacts";
 import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
@@ -97,6 +98,13 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const currencySelection = useContactsCurrencySelectionAdapter();
   const { cancelCurrencySelection } = currencySelection;
   const addressValidation = useContactsAddressValidationAdapter();
+  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
+    () =>
+      contacts.flatMap(c =>
+        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
+      ),
+    [contacts],
+  );
   const { selectCurrency } = useAddAddressCurrencySelectionViewModel({
     platform: "desktop",
     currencySelection,
@@ -113,7 +121,10 @@ export function useContactsViewModel(): ContactsPageViewModel {
     continueFromReview,
     completeConfirmation,
     close: closeAddAddress,
-  } = useAddAddressFlowViewModel({ addressValidation });
+  } = useAddAddressFlowViewModel({
+    addressValidation,
+    otherContactsAddresses: allContactsAddresses,
+  });
   const saveAddress = useCallback(
     async (
       flowState: Extract<
@@ -313,6 +324,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
       validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
       ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
       ensDisclaimerDescription: t("contacts.addAddressEntry.ensDisclaimerDescription"),
+      duplicateAddress: (contactName: string) =>
+        t("contacts.addAddressEntry.duplicateAddress", { contactName }),
     }),
     [t],
   );

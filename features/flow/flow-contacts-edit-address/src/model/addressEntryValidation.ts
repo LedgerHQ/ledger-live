@@ -19,7 +19,3 @@ export function createInitialEditAddressEntryState(
     inputMethod: "manual",
   };
 }
-
-export function addressesMatch(value: string, currentAddress: ContactAddress["address"]): boolean {
-  return value.trim().toLowerCase() === currentAddress.toLowerCase();
-}
