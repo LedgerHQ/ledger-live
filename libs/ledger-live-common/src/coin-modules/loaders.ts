@@ -47,6 +47,9 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "bitcoin_regtest",
     ],
     loadSetup: () => import("../families/bitcoin/setup"),
+    loadLocalApi: () =>
+      import("../families/bitcoin/coinModuleApi").then(m => m.createLocalBitcoinApi),
+    loadBridgeApi: () => import("../families/bitcoin/coinModuleApi").then(m => m.bitcoinBridgeApi),
     loadTransaction: () => import("@ledgerhq/coin-bitcoin/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-bitcoin/deviceTransactionConfig").then(m => m.default),

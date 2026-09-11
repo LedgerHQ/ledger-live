@@ -45,6 +45,13 @@ export type ChainSpecificRules = {
 };
 
 export type BridgeApi = {
+  /**
+   * Descriptor (extended-public-key) account model, e.g. Bitcoin. When true, the generic framework
+   * forwards the account's `derivationPath` to `getBalance`/`listOperations` and sets the intent's
+   * `senderDerivationPath` — the extra context a descriptor coin module needs beyond the xpub.
+   * Address-based families leave this unset and are unaffected.
+   */
+  usesDescriptorDerivationPath?: boolean;
   getChainSpecificRules?: ChainSpecificRules;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined;
