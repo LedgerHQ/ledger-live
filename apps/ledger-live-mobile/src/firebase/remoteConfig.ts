@@ -31,13 +31,24 @@ const subscribers = new Set<Subscriber>();
  * Also the barrier {@link readCachedFlags} relies on: both calls resolve with native
  * constants, which is what hydrates the JS-side value map from the activated config the
  * platform SDK holds on disk.
+ *
+ * One-shot on success only. A rejected promise left in the memo would be handed to every
+ * later caller, so a single transient native error would keep both readers off the SDK for
+ * the rest of the session. Both calls are idempotent, so dropping the memo lets the next one
+ * retry. The pre-migration setup latched the same way, through `skip: !initResult.isSuccess`
+ * on a mutation fired once, but it cost only freshness back then: reads still went through
+ * the SDK and its on-disk config.
  */
 function setup(): Promise<void> {
   if (!setupPromise) {
-    setupPromise = Promise.all([
+    const pending = Promise.all([
       rc.setConfigSettings({ minimumFetchIntervalMillis: 0 }),
       rc.setDefaults(formatDefaultFeatures(FEATURE_FLAGS_DEFAULTS)),
     ]).then(() => undefined);
+    setupPromise = pending;
+    pending.catch(() => {
+      if (setupPromise === pending) setupPromise = null;
+    });
   }
   return setupPromise;
 }

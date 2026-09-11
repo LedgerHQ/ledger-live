@@ -105,4 +105,21 @@ describe("readCachedFlags", () => {
 
     await expect(readCachedFlags()).resolves.toEqual({});
   });
+
+  it("does not strand the network fetch when the cache read fails", async () => {
+    // `setup` is memoised at module scope and both readers await it, so a rejection kept in that
+    // memo would be handed straight to `fetchRemoteFlags` and the documented fall-through to the
+    // network would never happen. The memo holds successes only.
+    mockSetDefaults.mockRejectedValueOnce(new Error("native module unavailable"));
+
+    const { readCachedFlags, fetchRemoteFlags } = await loadModule();
+    await expect(readCachedFlags()).resolves.toEqual({});
+
+    mockGetAll.mockReturnValue({
+      feature_counter_value: value(JSON.stringify({ enabled: true })),
+    });
+
+    await expect(fetchRemoteFlags()).resolves.toEqual({ counterValue: { enabled: true } });
+    expect(mockFetchAndActivate).toHaveBeenCalledTimes(1);
+  });
 });
