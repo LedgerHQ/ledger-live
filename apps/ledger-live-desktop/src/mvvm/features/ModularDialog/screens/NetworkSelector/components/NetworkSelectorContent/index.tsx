@@ -17,6 +17,7 @@ type NetworkSelectorContentProps = {
   onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
   selectedAssetId?: string;
+  selectedAssetName?: string;
   selectableNetworkIds?: readonly string[];
 };
 
@@ -25,6 +26,7 @@ export const NetworkSelectorContent = ({
   onNetworkSelected,
   networksConfig,
   selectedAssetId,
+  selectedAssetName,
   selectableNetworkIds,
 }: NetworkSelectorContentProps) => {
   const { trackModularDialogEvent } = useModularDialogAnalytics();
@@ -71,11 +73,20 @@ export const NetworkSelectorContent = ({
 
     onNetworkSelected(network);
   };
+  const onDisabledClick = (network: CryptoOrTokenCurrency) => {
+    trackModularDialogEvent("button_clicked", {
+      button: "disabled network tooltip",
+      network: network.name,
+      ...(selectedAssetName ? { asset: selectedAssetName } : {}),
+      page: MODULAR_DIALOG_PAGE_NAME.MODULAR_NETWORK_SELECTION,
+    });
+  };
 
   return (
     <NetworkVirtualList
       networks={formattedNetworks}
       onClick={onClick}
+      onDisabledClick={onDisabledClick}
       selectableNetworkIdSet={selectableNetworkIdSet}
     />
   );

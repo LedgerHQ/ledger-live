@@ -443,7 +443,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
     setIsLedgerSyncIntroductionRequested(false);
-    openDrawer({ startOnSyncMethod: true });
+    openDrawer({ startOnSyncMethod: true, analyticsFlow: CONTACTS_FLOW.CONTACTS });
   }, [analytics, dismissPendingIntent, openDrawer]);
   const onRequestAddContact = useCallback(
     (onAllowed: () => void) => {

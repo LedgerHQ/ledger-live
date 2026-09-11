@@ -13,6 +13,7 @@ import {
   useContactsLedgerSyncMutationGuard,
   trackContactsLedgerSyncActivate,
   trackContactsLedgerSyncDismiss,
+  CONTACTS_FLOW,
 } from "@features/flow-contacts";
 import {
   isContactsLedgerSyncActivationRequired,
@@ -115,7 +116,7 @@ export function usePayTabContacts(): UsePayTabContactsResult {
     trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
     setIsLedgerSyncIntroductionRequested(false);
-    openDrawer({ startOnSyncMethod: true });
+    openDrawer({ startOnSyncMethod: true, analyticsFlow: CONTACTS_FLOW.CONTACTS });
   }, [analytics, dismissPendingIntent, openDrawer]);
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncDismiss(analytics);

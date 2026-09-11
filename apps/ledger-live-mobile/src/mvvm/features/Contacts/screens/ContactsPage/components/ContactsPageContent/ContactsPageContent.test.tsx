@@ -88,6 +88,7 @@ function createViewModel({
     ledgerSyncActivationDrawer: {
       isOpen: false,
       onClose: jest.fn(),
+      onNavigate: jest.fn(),
     },
   };
 }

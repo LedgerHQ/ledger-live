@@ -9,6 +9,8 @@ import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@shared/env";
 import { getDefaultAccountName } from "@domain/entity-account-name";
+import { selectContacts } from "@domain/entity-contact";
+import { buildContactsGlobalProperties } from "@features/platform-contacts";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { Feature, FeatureId, Features } from "@shared/feature-flags";
@@ -269,6 +271,10 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
+  const contactsAttributes = buildContactsGlobalProperties({
+    contacts: selectContacts(state),
+  });
+  const contactsFeature = analyticsFeatureFlagMethod?.("lwdContacts") ?? { enabled: false };
   const { postOnboardingInProgress } = hubStateSelector(state);
 
   const isOnboardingReceiveFlow = onboardingReceiveFlowSelector(state);
@@ -364,6 +370,8 @@ const extraProperties = (store: ReduxStore) => {
     sessionId,
     sidebarCollapsed,
     accountsWithFunds,
+    ContactsAttributes: contactsFeature,
+    ...contactsAttributes,
     tokenWithFunds,
     modelIdList: devices,
     ...ptxAttributes,

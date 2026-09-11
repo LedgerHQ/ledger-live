@@ -12,9 +12,10 @@ export function useContactDetailEditDeleteAnalytics(
   analytics: ContactsAnalyticsHelper,
   flow: Pick<
     UseContactDetailEditDeleteFlowViewModelResult,
-    "onEditPress" | "onDeletePress" | "openDelete"
+    "onEditPress" | "onDeletePress" | "openDelete" | "confirmDelete"
   >,
   isSignerMismatchOpen: boolean,
+  isSelf: boolean,
 ) {
   const hasTrackedSignerMismatch = useRef(false);
   const onEdit = useCallback(() => {
@@ -22,18 +23,30 @@ export function useContactDetailEditDeleteAnalytics(
       source: CONTACTS_EVENT_SOURCE.CONTACT_DETAIL,
       button: CONTACTS_TRACKING_BUTTON.editContact,
       page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
+      isSelf,
     });
     flow.onEditPress();
-  }, [analytics, flow]);
+  }, [analytics, flow, isSelf]);
   const onDelete = useCallback(() => {
+    flow.onDeletePress();
+    flow.openDelete();
+  }, [flow]);
+  const onConfirmDelete = useCallback(async () => {
     analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
       source: CONTACTS_EVENT_SOURCE.CONTACT_DETAIL,
       button: CONTACTS_TRACKING_BUTTON.deleteContact,
       page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
     });
-    flow.onDeletePress();
-    flow.openDelete();
+    await flow.confirmDelete();
   }, [analytics, flow]);
+  const onValidateEdit = useCallback(() => {
+    analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
+      source: CONTACTS_EVENT_SOURCE.CONTACT_DETAIL,
+      button: CONTACTS_TRACKING_BUTTON.validateEditContact,
+      page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
+      isSelf,
+    });
+  }, [analytics, isSelf]);
 
   useEffect(() => {
     if (isSignerMismatchOpen && !hasTrackedSignerMismatch.current) {
@@ -51,5 +64,5 @@ export function useContactDetailEditDeleteAnalytics(
     }
   }, [analytics, isSignerMismatchOpen]);
 
-  return { onEdit, onDelete };
+  return { onEdit, onDelete, onConfirmDelete, onValidateEdit };
 }

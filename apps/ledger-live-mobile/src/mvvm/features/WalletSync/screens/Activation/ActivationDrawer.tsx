@@ -13,6 +13,7 @@ type Props = {
   isOpen: boolean;
   startingStep: Steps;
   handleClose: () => void;
+  handleNavigate?: () => void;
 };
 
 function View({

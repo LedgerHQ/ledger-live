@@ -2,12 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { addAddress, contactAddress, type Contact } from "@domain/entity-contact";
 import { resolvePrefillAddAddressParams } from "@ledgerhq/live-common/flows/send/recipient/utils/resolvePrefillAddAddressParams";
-import { CONTACTS_EVENT_SOURCE } from "@features/flow-contacts";
 import {
-  buildContactsGlobalProperties,
-  useContacts,
-  useContactsFeature,
-} from "@features/platform-contacts";
+  buildContactsSaveAddressClickProperties,
+  CONTACTS_EVENT_SOURCE,
+} from "@features/flow-contacts";
+import { buildContactsGlobalProperties, useContacts } from "@features/platform-contacts";
 import {
   useContactsIntentsOrchestrator,
   type ContactsDeviceIntentExecutorProps,
@@ -52,7 +51,6 @@ export function useSendPrefillAddAddressFlow({
   const dispatch = useDispatch();
   const { state, recipientSearch } = useSendFlowData();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("mobile");
   const { inputMethod, markContactSaved } = useSendFlowTracking();
   const [isOpeningAddressFlow, setIsOpeningAddressFlow] = useState(false);
   const selectedContactRef = useRef<Contact | null>(null);
@@ -77,11 +75,10 @@ export function useSendPrefillAddAddressFlow({
     () => ({
       ...getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
       ...buildContactsGlobalProperties({
-        ffAddressBookEnabled: isContactsFeatureEnabled,
         contacts,
       }),
     }),
-    [contacts, isContactsFeatureEnabled, state.account.account, state.account.parentAccount],
+    [contacts, state.account.account, state.account.parentAccount],
   );
 
   const trackedAddressPhaseRef = useRef("");
@@ -245,6 +242,27 @@ export function useSendPrefillAddAddressFlow({
     [recipientSearch.value, startWithPrefilled, state.account.currency],
   );
 
+  const continueFromReview = useCallback(() => {
+    if (addressFlowState.status !== "reviewingAddress" || !addressFlowState.displayContext) {
+      return;
+    }
+    track(
+      "button_clicked",
+      buildContactsSaveAddressClickProperties(trackingProperties, {
+        page: "address review",
+        network: addressFlowState.displayContext.network.networkId,
+        asset: addressFlowState.selectedCurrencyId,
+        inputMethod,
+      }),
+    );
+    void screen("Modal send - address signing device", undefined, {
+      ...trackingProperties,
+      network: addressFlowState.displayContext.network.networkId,
+      asset: addressFlowState.selectedCurrencyId,
+    });
+    void saveFromReview();
+  }, [addressFlowState, inputMethod, saveFromReview, trackingProperties]);
+
   const addressPhase = isAddressPhase
     ? {
         state: addressFlowState,
@@ -263,17 +281,7 @@ export function useSendPrefillAddAddressFlow({
           });
           continueFromName();
         },
-        onContinueFromReview: () => {
-          if (!addressFlowState.displayContext) {
-            return;
-          }
-          void screen("Modal send - address signing device", undefined, {
-            ...trackingProperties,
-            network: addressFlowState.displayContext.network.networkId,
-            asset: addressFlowState.selectedCurrencyId,
-          });
-          void saveFromReview();
-        },
+        onContinueFromReview: continueFromReview,
       }
     : null;
 

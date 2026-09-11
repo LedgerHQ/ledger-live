@@ -5,6 +5,7 @@ import { renderHook, waitFor } from "tests/testSetup";
 import { TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { AnalyticsFlow } from "../hooks/useLedgerSyncAnalytics";
 import { useAddMember } from "../hooks/useAddMember";
 import {
   TrustchainAlreadyInitialized,
@@ -56,7 +57,7 @@ describe("useAddMember", () => {
       hasTrustchainBeenCreated: true,
     });
     expect(Mocks.track).toHaveBeenCalledTimes(1);
-    expect(Mocks.track).toHaveBeenCalledWith("ledgersync_activated");
+    expect(Mocks.track).toHaveBeenCalledWith("ledgersync_activated", { flow: AnalyticsFlow });
   });
 
   it("should get an existing trustchain", async () => {
@@ -81,7 +82,7 @@ describe("useAddMember", () => {
       hasTrustchainBeenCreated: false,
     });
     expect(Mocks.track).toHaveBeenCalledTimes(1);
-    expect(Mocks.track).toHaveBeenCalledWith("ledgersync_activated");
+    expect(Mocks.track).toHaveBeenCalledWith("ledgersync_activated", { flow: AnalyticsFlow });
   });
 
   it("should handle missing device", async () => {
@@ -200,7 +201,7 @@ jest.mock("~/renderer/actions/walletSync", () => ({
 }));
 
 jest.mock("~/renderer/analytics/segment", () => ({
-  track: (event: string) => Mocks.track(event),
+  track: (event: string, props?: Record<string, unknown>) => Mocks.track(event, props),
   setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 

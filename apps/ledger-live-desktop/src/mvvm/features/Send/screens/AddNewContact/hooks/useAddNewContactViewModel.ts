@@ -9,11 +9,7 @@ import {
   type AddContactDialogViewModel,
 } from "@features/flow-contacts-add-contact";
 import { CONTACTS_EVENT_SOURCE } from "@features/flow-contacts";
-import {
-  buildContactsGlobalProperties,
-  useContacts,
-  useContactsFeature,
-} from "@features/platform-contacts";
+import { buildContactsGlobalProperties, useContacts } from "@features/platform-contacts";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
@@ -40,7 +36,6 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   const dispatch = useDispatch();
   const { state } = useSendFlowData();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
   const { addressPhase, isOpeningAddressFlow, startForContact } = useSendPrefillAddAddressFlow({
     idleHeaderState: DEFAULT_ADD_NEW_CONTACT_HEADER_STATE,
     contactType: "new",
@@ -49,11 +44,10 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
     () => ({
       ...getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
       ...buildContactsGlobalProperties({
-        ffAddressBookEnabled: isContactsFeatureEnabled,
         contacts,
       }),
     }),
-    [contacts, isContactsFeatureEnabled, state.account.account, state.account.parentAccount],
+    [contacts, state.account.account, state.account.parentAccount],
   );
   const contactCreation = useMemo(
     () => createContactCreationPort({ dispatch, generateId: uuid }),
@@ -87,11 +81,12 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   const callbacks = useMemo(
     () => ({
       onOpen: () => {
-        trackPage("Modal send - add contact", null, trackingProperties);
+        trackPage("Add Contact", null, trackingProperties);
       },
       onConfirm: () => {
         track("button_clicked", {
-          button: "confirm name",
+          button: "save contact",
+          hasPicture: false,
           page: "add contact",
           ...trackingProperties,
         });

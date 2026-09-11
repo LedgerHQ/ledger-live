@@ -3,13 +3,14 @@ import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { ScreenName } from "~/const";
+import { track } from "~/analytics/segment";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { useContactsCurrencySelectionAdapter } from "./useContactsCurrencySelectionAdapter";
 
 jest.mock("LLM/features/ModularDrawer", () => ({
   useModularDrawerController: jest.fn(),
 }));
+jest.mock("~/analytics/segment", () => ({ track: jest.fn() }));
 
 const openDrawer = jest.fn();
 const closeDrawer = jest.fn();
@@ -62,13 +63,19 @@ describe("useContactsCurrencySelectionAdapter", () => {
     );
 
     expect(openDrawer).toHaveBeenCalledWith({
-      assetsConfiguration: { leftElement: "undefined", rightElement: "undefined" },
+      assetsConfiguration: {
+        leftElement: "undefined",
+        rightElement: "undefined",
+      },
       completionMode: "currency",
       enableAccountSelection: false,
-      flow: "contacts_add_address",
-      networksConfiguration: { leftElement: "undefined", rightElement: "undefined" },
+      flow: "contacts",
+      networksConfiguration: {
+        leftElement: "undefined",
+        rightElement: "undefined",
+      },
       presentation: "embedded",
-      source: ScreenName.MyWalletContactDetail,
+      source: "contacts",
       selectableNetworkIds: networkIds,
       onCurrencySelected: expect.any(Function),
     });
@@ -126,14 +133,61 @@ describe("useContactsCurrencySelectionAdapter", () => {
 
     expect(result.current.flowProps).toMatchObject({
       areCurrenciesFiltered: undefined,
-      assetsConfiguration: { leftElement: "undefined", rightElement: "undefined" },
+      assetsConfiguration: {
+        leftElement: "undefined",
+        rightElement: "undefined",
+      },
       currencies: [mockEthCryptoCurrency.id, mockBtcCryptoCurrency.id],
       isOpen: true,
-      networksConfiguration: { leftElement: "undefined", rightElement: "undefined" },
+      networksConfiguration: {
+        leftElement: "undefined",
+        rightElement: "undefined",
+      },
       onAccountSelected: handleAccountSelected,
       onClose: closeDrawer,
       onCurrencySelected: handleCurrencySelected,
       selectableNetworkIds: [mockEthCryptoCurrency.id],
+    });
+  });
+
+  it("should track clicks on disabled-item explanations", () => {
+    const { result } = renderHook(() =>
+      useContactsCurrencySelectionAdapter({
+        isOpen: true,
+        networkIds: [mockEthCryptoCurrency.id],
+        onCurrencySelected: jest.fn(),
+        onSelectionCancelled: jest.fn(),
+      }),
+    );
+    const networkExplanation = result.current.flowProps.disabledItemsExplanation?.network(
+      "Bitcoin",
+      "BTC",
+    );
+    const assetExplanation = result.current.flowProps.disabledItemsExplanation?.asset("Bitcoin");
+
+    act(() => {
+      if (networkExplanation) {
+        result.current.flowProps.disabledItemsExplanation?.onPress(networkExplanation);
+      }
+      if (assetExplanation) {
+        result.current.flowProps.disabledItemsExplanation?.onPress(assetExplanation);
+      }
+    });
+
+    expect(track).toHaveBeenNthCalledWith(1, "button_clicked", {
+      button: "disabled network tooltip",
+      flow: "contacts",
+      asset: "BTC",
+      network: "Bitcoin",
+      page: "Network Selection",
+      source: "contacts",
+    });
+    expect(track).toHaveBeenNthCalledWith(2, "button_clicked", {
+      button: "disabled network tooltip",
+      flow: "contacts",
+      asset: "Bitcoin",
+      page: "Asset Selection",
+      source: "contacts",
     });
   });
 

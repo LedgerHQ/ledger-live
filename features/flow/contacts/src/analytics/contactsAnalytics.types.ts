@@ -4,8 +4,8 @@
  *
  * P2 secured account-name tracking is intentionally excluded from Contacts: payloads must never
  * include contact names, address labels, account names, raw blockchain addresses, or raw search
- * queries. For `search_query`, send `queryLength` and `hasResults` instead of the tracking plan's
- * `$query` placeholder to avoid leaking names or address fragments.
+ * queries. For `search_query`, send only whether the query has results, never the query itself or
+ * its length, to avoid leaking information about names or address fragments.
  */
 
 import type { ContactsGlobalProperties } from "@features/platform-contacts";
@@ -71,12 +71,13 @@ export type ContactsPageProperty =
 export const CONTACTS_TRACKING_BUTTON = {
   contacts: "contacts",
   addContact: "add contact",
-  contact: "contact",
+  contact: "contact_details",
   activateLedgerSync: "activate ledger sync",
   dismiss: "dismiss",
   contactPicture: "contact picture",
   saveContact: "save contact",
   editContact: "edit contact",
+  validateEditContact: "validate edit contact",
   deleteContact: "delete contact",
   addAddress: "add address",
   disabledNetworkTooltip: "disabled network tooltip",
@@ -101,8 +102,6 @@ export type ContactsPictureAction = "add" | "change" | "delete";
 
 export type ContactsAddressInputMethod = "paste" | "qr_code" | "manual" | "ens";
 
-export type ContactsAddAddressType = "me" | "other";
-
 export type ContactsAddContactErrorType = "invalid name" | "invalid picture";
 
 export type ContactsContactDetailErrorType = "signer_mismatch";
@@ -118,7 +117,7 @@ export type ContactsTrackEventInputParams = {
     action?: ContactsPictureAction;
     hasPicture?: boolean;
     myContact?: boolean;
-    type?: ContactsAddAddressType;
+    isSelf?: boolean;
     asset?: string;
     network?: string;
     inputMethod?: ContactsAddressInputMethod;
@@ -126,7 +125,6 @@ export type ContactsTrackEventInputParams = {
   [CONTACTS_TRACK_EVENTS.SEARCH_QUERY]: Readonly<{
     source: typeof CONTACTS_EVENT_SOURCE.SEARCH;
     page: typeof CONTACTS_PAGE_PROPERTY.CONTACTS;
-    queryLength: number;
     hasResults: boolean;
   }>;
   [CONTACTS_TRACK_EVENTS.ERROR_DISPLAYED]: Readonly<{

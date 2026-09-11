@@ -36,7 +36,9 @@ function createCurrencySelectionPort(
       resolveContactCurrencySelection(
         await openCurrencyFlow(networkIds, {
           dialogConfiguration: CONTACTS_CURRENCY_SELECTION_CONFIGURATION,
+          flow: "contacts",
           presentation: "embedded",
+          source: "contacts",
         }),
       ),
   };
