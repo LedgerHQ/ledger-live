@@ -119,3 +119,56 @@ export function calculateToken2022TransferFees({
       .toNumber(),
   };
 }
+
+/**
+ * Token-2022 transfer fees for "send all": gross → net, where
+ * `calculateToken2022TransferFees` goes net → gross.
+ */
+export function computeTransferFeeFromTotal(
+  totalAmount: BigNumber.Value,
+  config: Pick<TransferFeeConfigExt["state"], "newerTransferFee" | "olderTransferFee">,
+  currentEpoch: number,
+): TransferFeeCalculated {
+  const { newerTransferFee, olderTransferFee } = config;
+  const feeConfig = currentEpoch >= newerTransferFee.epoch ? newerTransferFee : olderTransferFee;
+  const { maximumFee, transferFeeBasisPoints } = feeConfig;
+  const feePercent = bpsToPercent(transferFeeBasisPoints);
+
+  const totalBn = BigNumber(totalAmount);
+  const maxFeeBn = BigNumber(maximumFee);
+  let transferFeeBn = totalBn
+    .times(transferFeeBasisPoints)
+    .div(10000)
+    .decimalPlaces(0, BigNumber.ROUND_CEIL);
+  if (transferFeeBn.gt(maxFeeBn)) {
+    transferFeeBn = maxFeeBn;
+  }
+
+  return {
+    feePercent,
+    maxTransferFee: maximumFee,
+    transferFee: transferFeeBn.toNumber(),
+    feeBps: transferFeeBasisPoints,
+    transferAmountIncludingFee: totalBn.toNumber(),
+    transferAmountExcludingFee: totalBn.minus(transferFeeBn).toNumber(),
+  };
+}
+
+/** A send-all amount is the total leaving the account; any other is what the recipient receives. */
+export function transferFeeForIntent(
+  amount: bigint,
+  useAllAmount: boolean | undefined,
+  transferFeeConfigState: Pick<
+    TransferFeeConfigExt["state"],
+    "newerTransferFee" | "olderTransferFee"
+  >,
+  currentEpoch: number,
+): TransferFeeCalculated {
+  return useAllAmount
+    ? computeTransferFeeFromTotal(amount.toString(), transferFeeConfigState, currentEpoch)
+    : calculateToken2022TransferFees({
+        transferAmount: Number(amount),
+        transferFeeConfigState,
+        currentEpoch,
+      });
+}
