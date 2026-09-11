@@ -4,12 +4,16 @@ import type { CoinFrameworkSigner } from "../../bridge/generic-coin-framework/ty
 import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { executeWithSigner } from "../../bridge/setup";
 
-const createSigner = (transport: Transport) => {
+export const createSigner = (transport: Transport) => {
   const near = new Near(transport);
   return {
     // Framework calls signer.getAddress(path, { derivationMode, ... }); resolver calls (path, boolean).
-    // Accept both by normalising the second arg.
-    getAddress: async (path: string, options?: boolean | { verify?: boolean }) => {
+    // Accept both by normalising the second arg. The object form allows arbitrary extra
+    // properties (e.g. derivationMode) since NEAR doesn't need them for address derivation.
+    getAddress: async (
+      path: string,
+      options?: boolean | ({ verify?: boolean } & Record<string, unknown>),
+    ) => {
       const verify = typeof options === "boolean" ? options : (options?.verify ?? false);
       return near.getAddress(path, verify);
     },
