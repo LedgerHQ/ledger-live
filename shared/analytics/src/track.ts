@@ -22,7 +22,7 @@ export function track(
   props?: Error | Props | null,
   { mandatory = false }: TrackOptions = {},
 ): void | Promise<void> {
-  if (isEnabled() || mandatory) {
+  if (mandatory || isEnabled()) {
     return trackEvent("track", event, normalizeProps(props), { mandatory });
   }
 }
