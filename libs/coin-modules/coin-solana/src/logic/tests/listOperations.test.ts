@@ -2,7 +2,18 @@ import type { ParsedInstruction, PartiallyDecodedInstruction } from "@solana/web
 import { PublicKey } from "@solana/web3.js";
 import { http, HttpResponse } from "msw";
 import { listOperations } from "../listOperations";
-import { server, rpcHandler, createTestChainApi, TEST_ENDPOINT } from "./helpers/msw-rpc.mock";
+import {
+  server,
+  rpcHandler as baseRpcHandler,
+  createTestChainApi,
+  TEST_ENDPOINT,
+} from "./helpers/msw-rpc.mock";
+
+const rpcHandler: typeof baseRpcHandler = handlers =>
+  baseRpcHandler({
+    getTokenAccountsByOwner: () => ({ context: { slot: 0 }, value: [] }),
+    ...handlers,
+  });
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const TEST_RECIPIENT = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
@@ -96,6 +107,11 @@ describe("listOperations (MSW integration)", () => {
             id: "1",
           });
         }
+        return HttpResponse.json({
+          jsonrpc: "2.0",
+          result: { context: { slot: 0 }, value: [] },
+          id: "1",
+        });
       }),
     );
 
@@ -215,6 +231,14 @@ describe("listOperations (MSW integration)", () => {
         const body = (await request.json()) as
           | { method: string; params: unknown[]; id: unknown }
           | { method: string; params: unknown[]; id: unknown }[];
+
+        if (!Array.isArray(body) && body.method === "getTokenAccountsByOwner") {
+          return HttpResponse.json({
+            jsonrpc: "2.0",
+            result: { context: { slot: 0 }, value: [] },
+            id: body.id,
+          });
+        }
 
         if (!Array.isArray(body)) {
           return HttpResponse.json({
@@ -410,6 +434,17 @@ describe("listOperations (MSW integration)", () => {
                         amount: "1000000",
                         decimals: 6,
                         uiAmount: 1.0,
+                      },
+                    },
+                    {
+                      accountIndex: 0,
+                      mint: USDC_MINT,
+                      owner: TEST_RECIPIENT,
+                      programId: TOKEN_PROGRAM_ID,
+                      uiTokenAmount: {
+                        amount: "9000000",
+                        decimals: 6,
+                        uiAmount: 9.0,
                       },
                     },
                   ],

@@ -2,12 +2,27 @@
 import { ChainAPI, Config, getChainAPI, logged } from "@ledgerhq/coin-solana/network/index";
 import { getEnv } from "@shared/env";
 import { Functions } from "@ledgerhq/coin-solana/utils";
-import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
-import { PubKeyDisplayMode, SolanaSigner } from "@ledgerhq/coin-solana/signer";
 import { Message, MessageV0 } from "@solana/web3.js";
 import { flow, isArray, isEqual, isObject, isUndefined, mapValues, omitBy } from "lodash/fp";
 import { getMockedMethods } from "./mock-data";
-import { scanAccounts, sync } from "../../../bridge/mockHelpers";
+import BigNumber from "bignumber.js";
+import { Observable } from "rxjs";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { NotEnoughBalance, RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
+import { getSerializedAddressParameters } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { SOLANA_DUMMY_ADDRESS } from "@ledgerhq/coin-solana/constants";
+import { craftTransaction } from "@ledgerhq/coin-solana/logic/craftTransaction";
+import { combine } from "@ledgerhq/coin-solana/logic/combine";
+import {
+  broadcast,
+  makeAccountBridgeReceive,
+  scanAccounts,
+  sync,
+} from "../../../bridge/mockHelpers";
+import { validateAddress } from "../../../bridge/validateAddress";
+import { computeIntentType } from "./api";
+import accountRawAssign from "../accountRawAssign";
+import type { Transaction } from "../types";
 
 function mockChainAPI(config: Config): ChainAPI {
   const mockedMethods = getMockedMethods();
@@ -28,7 +43,11 @@ function mockChainAPI(config: Config): ChainAPI {
         }
         return function (...rawArgs: unknown[]) {
           const args = preprocessArgs(method, rawArgs);
-          const mock = mocks.find(({ params: mockArgs }) => isEqual(args)(mockArgs));
+          const mock =
+            mocks.find(({ params: mockArgs }) => isEqual(args)(mockArgs)) ??
+            // The fee doesn't reach the signed bytes, and the recorded calls were made on
+            // intermediate messages, so any recorded answer will do.
+            (method === "getFeeForMessage" ? mocks[0] : undefined);
           if (mock === undefined) {
             const argsJson = JSON.stringify(args);
             throw new Error(`no mock found for api method ${method} with args ${argsJson}`);
@@ -93,65 +112,126 @@ function preprocessArgs(method: keyof ChainAPI, args: unknown[]) {
   return removeUndefineds(args);
 }
 
-const APP_VERSION = "1.7.1";
-const signature = "fakeSignatureTlaowosfpqwkpofqkpqwpoesHQv6xHyYwDsrPJvqcSKRJGBLrbE";
-const signer = {
-  getAppConfiguration: () =>
-    Promise.resolve({
-      version: APP_VERSION,
-      blindSigningEnabled: false,
-      pubKeyDisplayMode: PubKeyDisplayMode.LONG,
-    }),
-  getAddress: (_path: string, _display?: boolean) =>
-    Promise.resolve({ address: Buffer.from("fakeAddress") }),
-  signTransaction: (_path: string, _txBuffer: Buffer) =>
-    Promise.resolve({ signature: Buffer.from(signature) }),
-  signMessage: (_path: string, _messageHex: string) =>
-    Promise.resolve({ signature: Buffer.from(signature) }),
+const FAKE_SIGNATURE = "fakeSignatureTlaowosfpqwkpofqkpqwpoesHQv6xHyYwDsrPJvqcSKRJGBLrbE";
+
+const mockedAPI = mockChainAPI({ endpoint: "mock" });
+
+const receive = makeAccountBridgeReceive();
+
+type SolanaMockBridge = AccountBridge<Transaction>;
+
+const createTransaction = (): Transaction => ({
+  family: "solana",
+  mode: "send",
+  amount: new BigNumber(0),
+  recipient: "",
+});
+
+const updateTransaction: SolanaMockBridge["updateTransaction"] = (t, patch) => ({ ...t, ...patch });
+
+const prepareTransaction: SolanaMockBridge["prepareTransaction"] = async (_account, transaction) =>
+  transaction;
+
+const estimateMaxSpendable: SolanaMockBridge["estimateMaxSpendable"] = async ({ account }) =>
+  account.balance;
+
+const getTransactionStatus: SolanaMockBridge["getTransactionStatus"] = async (account, t) => {
+  const errors: { amount?: Error; recipient?: Error } = {};
+  const estimatedFees = new BigNumber(0);
+  const amount = t.useAllAmount ? account.balance : new BigNumber(t.amount);
+  const totalSpent = t.subAccountId ? amount : amount.plus(estimatedFees);
+
+  if (!t.recipient && !t.raw) errors.recipient = new RecipientRequired("");
+  if (totalSpent.gt(account.balance)) errors.amount = new NotEnoughBalance();
+
+  return { errors, warnings: {}, estimatedFees, amount, totalSpent };
 };
-const signerContext = <T>(
-  _deviceId: string,
-  fn: (signer: SolanaSigner) => Promise<T>,
-): Promise<T> => fn(signer);
 
-// Bridge with this api will log all api calls to a file.
-// The calls data can be copied to mock-data.ts from the file.
-// Uncomment fs module in logged.ts
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-function createMockDataForAPI() {
-  const chainAPICache = new Map<string, ReturnType<typeof getChainAPI>>();
-  return {
-    getAPI: (config: Config) => {
-      const endpoint = config.endpoint;
-      if (!chainAPICache.has(endpoint)) {
-        chainAPICache.set(endpoint, logged(getChainAPI(config), "/tmp/log"));
-      }
-      return chainAPICache.get(endpoint)!;
-    },
-    signerContext,
+/**
+ * Crafts and combines through the coin module, so a mocked signature still yields a transaction the
+ * wallet API can deserialize — what `wallet-api.spec.ts` asserts.
+ */
+async function signWithMockedChain(
+  account: Parameters<SolanaMockBridge["signOperation"]>[0]["account"],
+  transaction: Transaction,
+) {
+  const intent = {
+    intentType: "transaction" as const,
+    type: computeIntentType(transaction),
+    sender: account.freshAddress,
+    senderPublicKey: account.freshAddress,
+    recipient: transaction.recipient,
+    amount: BigInt(transaction.amount.toFixed()),
+    asset: { type: "native" as const },
+    ...(transaction.raw ? { data: { type: "solana" as const, raw: transaction.raw } } : {}),
   };
+  const { transaction: unsigned } = await craftTransaction(mockedAPI, intent as never);
+  return combine(unsigned, [Buffer.from(FAKE_SIGNATURE).toString("hex")]);
 }
 
-function getMockedAPIs() {
-  const mockedAPI = mockChainAPI({ cluster: "mock" } as any);
-  return {
-    getAPI: (_: Config) => mockedAPI,
-    signerContext,
-  };
-}
-
-// const bridges = makeBridges(createMockDataForAPI());
-const bridges = makeBridges(getMockedAPIs());
-
-export default getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX")
-  ? {
-      accountBridge: {
-        ...bridges.accountBridge,
-        sync,
-      },
-      currencyBridge: {
-        ...bridges.currencyBridge,
-        scanAccounts,
-      },
+const signOperation: SolanaMockBridge["signOperation"] = ({ account, transaction }) =>
+  new Observable(o => {
+    async function main() {
+      o.next({ type: "device-signature-requested" });
+      const signature = await signWithMockedChain(account, transaction);
+      o.next({ type: "device-signature-granted" });
+      o.next({
+        type: "signed",
+        signedOperation: {
+          operation: {
+            id: `${account.id}--OUT`,
+            hash: "",
+            type: "OUT",
+            value: new BigNumber(transaction.amount),
+            fee: new BigNumber(0),
+            senders: [account.freshAddress],
+            recipients: [transaction.recipient],
+            blockHash: null,
+            blockHeight: null,
+            accountId: account.id,
+            date: new Date(),
+            extra: {},
+          },
+          signature,
+        },
+      });
     }
-  : bridges;
+    main().then(
+      () => o.complete(),
+      e => o.error(e),
+    );
+  });
+
+const signRawOperation: SolanaMockBridge["signRawOperation"] = ({ account, transaction }) =>
+  signOperation({
+    account,
+    transaction: { ...createTransaction(), raw: transaction } as Transaction,
+    deviceId: "",
+  } as Parameters<SolanaMockBridge["signOperation"]>[0]);
+
+const accountBridge: SolanaMockBridge = {
+  createTransaction,
+  updateTransaction,
+  prepareTransaction,
+  getTransactionStatus,
+  estimateMaxSpendable,
+  sync,
+  receive,
+  signOperation,
+  signRawOperation,
+  broadcast,
+  getSerializedAddressParameters,
+  validateAddress,
+  getEstimationRecipient: () => SOLANA_DUMMY_ADDRESS,
+  // `toAccountRaw` reads these off the bridge, so a mocked account keeps its token account state,
+  // its Token-2022 extensions and its staking resources across a reload.
+  ...accountRawAssign,
+};
+
+const currencyBridge: CurrencyBridge = {
+  preload: () => Promise.resolve({}),
+  hydrate: () => {},
+  scanAccounts,
+};
+
+export default { accountBridge, currencyBridge };

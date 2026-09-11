@@ -38,7 +38,7 @@ describe("createSigner", () => {
 
   describe("legacy transport", () => {
     describe("getAddress", () => {
-      it("returns { address: Buffer } from the legacy signer", async () => {
+      it("returns the address and its base58 public key, without asking to display it", async () => {
         const addressBuffer = Buffer.from("deadbeef", "hex");
         mockGetAddress.mockResolvedValue({ address: addressBuffer });
 
@@ -46,8 +46,8 @@ describe("createSigner", () => {
         const result = await signer.getAddress("44'/501'/0'/0'");
 
         expect(MockedLegacySignerSolana).toHaveBeenCalledWith(mockTransport);
-        expect(mockGetAddress).toHaveBeenCalledWith("44'/501'/0'/0'");
-        expect(result).toEqual({ address: addressBuffer });
+        expect(mockGetAddress).toHaveBeenCalledWith("44'/501'/0'/0'", false);
+        expect(result).toEqual({ address: addressBuffer, publicKey: bs58.encode(addressBuffer) });
       });
 
       it("forwards the verify flag to the signer", async () => {
@@ -58,6 +58,16 @@ describe("createSigner", () => {
         await signer.getAddress("44'/501'/0'/0'", true);
 
         expect(mockGetAddress).toHaveBeenCalledWith("44'/501'/0'/0'", true);
+      });
+
+      it("does not display the address when handed the framework's options object", async () => {
+        const addressBuffer = Buffer.from("cafebabe", "hex");
+        mockGetAddress.mockResolvedValue({ address: addressBuffer });
+
+        const signer = createSigner(mockTransport);
+        await signer.getAddress("44'/501'/0'/0'", { derivationMode: "solanaMain" });
+
+        expect(mockGetAddress).toHaveBeenCalledWith("44'/501'/0'/0'", false);
       });
     });
 
@@ -73,8 +83,23 @@ describe("createSigner", () => {
         expect(mockSignTransaction).toHaveBeenCalledWith(
           "44'/501'/0'/0'",
           Buffer.from(txBase64, "base64"),
+          undefined,
         );
         expect(result).toBe("aabbcc");
+      });
+
+      it("drops the resolution the legacy signer cannot honour", async () => {
+        mockSignTransaction.mockResolvedValue({ signature: Buffer.from("aabbcc", "hex") });
+
+        const signer = createSigner(mockTransport);
+        const txBase64 = Buffer.from("fake transaction bytes").toString("base64");
+        await signer.signTransaction("44'/501'/0'/0'", txBase64, { templateId: "swap-template" });
+
+        expect(mockSignTransaction).toHaveBeenCalledWith(
+          "44'/501'/0'/0'",
+          Buffer.from(txBase64, "base64"),
+          undefined,
+        );
       });
     });
   });
@@ -110,7 +135,7 @@ describe("createSigner", () => {
       const signer = createSigner(dmkTransport);
       const result = await signer.getAddress("44'/501'/0'/0'");
 
-      expect(result).toEqual({ address: addressBuffer });
+      expect(result).toEqual({ address: addressBuffer, publicKey: bs58.encode(addressBuffer) });
     });
 
     it("delegates signTransaction to the DMK signer", async () => {
@@ -122,6 +147,20 @@ describe("createSigner", () => {
       const result = await signer.signTransaction("44'/501'/0'/0'", txBase64);
 
       expect(result).toBe("aabbcc");
+    });
+
+    it("forwards the resolution so a swap is clear-signed as one", async () => {
+      mockSignTransaction.mockResolvedValue({ signature: Buffer.from("aabbcc", "hex") });
+
+      const signer = createSigner(dmkTransport);
+      const txBase64 = Buffer.from("fake transaction bytes").toString("base64");
+      await signer.signTransaction("44'/501'/0'/0'", txBase64, { templateId: "swap-template" });
+
+      expect(mockSignTransaction).toHaveBeenCalledWith(
+        "44'/501'/0'/0'",
+        Buffer.from(txBase64, "base64"),
+        { templateId: "swap-template" },
+      );
     });
   });
 });

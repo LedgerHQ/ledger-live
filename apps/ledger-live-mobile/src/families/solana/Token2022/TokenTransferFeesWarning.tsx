@@ -1,3 +1,4 @@
+import { getTransactionTransferFee } from "@ledgerhq/live-common/families/solana/transactions";
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -21,10 +22,7 @@ export default function TokenTransferFeesWarning({
   transaction: Transaction;
 }) {
   invariant(transaction.family === "solana", "expect solana transaction");
-  const transferFees =
-    transaction.model.commandDescriptor?.command.kind === "token.transfer"
-      ? transaction.model.commandDescriptor.command.extensions?.transferFee
-      : undefined;
+  const transferFees = getTransactionTransferFee(transaction);
 
   if (!transferFees) return null;
 

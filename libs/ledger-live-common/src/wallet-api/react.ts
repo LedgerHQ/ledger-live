@@ -57,6 +57,7 @@ import {
 } from "./logic";
 import { handlers as featureFlagsHandlers } from "./FeatureFlags";
 import { getAccountBridge } from "../bridge";
+
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
 import { Transaction } from "../coin-modules/transaction-types";
@@ -862,16 +863,13 @@ export function useWalletAPIServer({
     server.setHandler(
       "transaction.sign",
       async ({ accountId, tokenCurrency, transaction, options }) => {
-        let currency: string | undefined;
+        let family: string | undefined;
         const signedOperation = await signTransactionLogic(
           { manifest, accounts, tracking },
           accountId,
           transaction,
           (account, parentAccount, signFlowInfos) => {
-            currency =
-              account.type === "TokenAccount"
-                ? account.token.parentCurrencyId
-                : account.currency.id;
+            family = getMainAccount(account, parentAccount).currency.family;
             return new Promise((resolve, reject) => {
               let done = false;
               return uiTxSign({
@@ -897,8 +895,9 @@ export function useWalletAPIServer({
           tokenCurrency,
         );
 
-        return currency === "solana"
-          ? Buffer.from(signedOperation.signature, "hex")
+        // Every Solana bridge signs through the coin module's `combine`, which returns base64.
+        return family === "solana"
+          ? Buffer.from(signedOperation.signature, "base64")
           : Buffer.from(signedOperation.signature);
       },
     );
