@@ -193,6 +193,8 @@ export default class SwapLiveAppPage {
   async applyFlagPreset(preset: SwapFlagPreset) {
     await this.reopenSwapLiveApp();
     const payload = swapFlagPresetPayload(preset);
+    // Mark before the write: a rejected script can still leave the override behind.
+    this.flagPresetPinned = true;
     await this.swapMainContainerWebElement.runScript(
       (_el: HTMLElement, key: string, value: string, marker: string) => {
         localStorage.setItem(key, value);
@@ -201,7 +203,6 @@ export default class SwapLiveAppPage {
       },
       [SWAP_FLAG_OVERRIDES_KEY, payload, FLAG_RELOAD_MARKER],
     );
-    this.flagPresetPinned = true;
     await this.expectFlagPresetLoaded(payload);
     await this.expectSwapLiveAppForm();
   }
