@@ -563,7 +563,7 @@ export class CosmosAPI {
       let allTxs: CosmosTx[] = [];
       let paginationOffset = 0;
       let page = 1;
-      let maxTxs = 0;
+      let hasMore: boolean;
 
       // Unparseable version → legacy params: semver.gte throws, and the catch would hide it as empty history.
       const coerced = semver.coerce(await this.cosmosSDKVersion);
@@ -582,16 +582,22 @@ export class CosmosAPI {
           params.set("pagination.reverse", "true");
         }
 
-        const { txs, total } = await this.fetchTransactions(params);
+        // A failed page reads as an empty one: the walk ends, keeping the pages already fetched.
+        const { txs, total } = await this.fetchTransactions(params).catch(e => {
+          log("debug", "Could not fetch txs page", { e, page, paginationOffset });
+          return { txs: [] as CosmosTx[], total: 0 };
+        });
 
         if (useModernParams) {
           page += 1;
         } else {
           paginationOffset += paginationSize;
         }
-        maxTxs = total;
         allTxs = allTxs.concat(txs);
-      } while (allTxs.length < maxTxs);
+        // The walk only advances on the txs it receives, so an empty page never reaches `total`:
+        // without the `txs.length` term, a node counting more than it serves is paged forever.
+        hasMore = txs.length > 0 && allTxs.length < total;
+      } while (hasMore);
 
       return allTxs;
     } catch (e) {
@@ -664,9 +670,10 @@ export class CosmosAPI {
       url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?${params.toString()}`,
     });
 
+    // The wire is looser than the type: empty results come back as `null`, uint64 total as a string.
     return {
-      txs: data.tx_responses,
-      total: "total" in data ? data.total : data.pagination.total,
+      txs: data.tx_responses ?? [],
+      total: Number("total" in data ? data.total : data.pagination.total),
     };
   }
 

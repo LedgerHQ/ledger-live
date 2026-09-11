@@ -8,7 +8,7 @@ const extensions: AccountBridgeExtensions = {
     invariant(isAleoAccount(account), "aleo: invalid account in bridgeExtensions");
 
     if (account.type === "TokenAccount") {
-      return account.transparentBalance;
+      return account.transparentBalance ?? new BigNumber(0);
     }
 
     return account.aleoResources?.transparentBalance ?? new BigNumber(0);

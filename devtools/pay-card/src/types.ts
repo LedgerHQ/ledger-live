@@ -177,6 +177,44 @@ export interface PayCardBalanceProps {
 
 export type PayCardOpenSecureBrowser = (url: string) => Promise<string>;
 
+/** One step of the onboarding status the app works out from the Card endpoints. */
+export interface PayCardOnboardingStatusStep {
+  /** What the app keys the step on. There is no copy: the status carries ids, not labels. */
+  readonly id: string;
+  readonly isDone: boolean;
+  /**
+   * Whether something can drive this step. False while no source answers it, which is the purchase
+   * step until the transactions endpoint is read.
+   */
+  readonly canToggle: boolean;
+}
+
+/**
+ * The onboarding status the app works out from the Card endpoints, and how to drive it.
+ *
+ * The steps are worked out from several endpoints rather than fetched, so a step is set by mocking
+ * the answer behind it: the host intercepts that endpoint and the step follows on the next read.
+ * The raw answer is shown so a wrong step can be traced to the response behind it.
+ */
+export interface PayCardOnboardingStatusProps {
+  readonly steps: readonly PayCardOnboardingStatusStep[];
+  readonly completedCount: number;
+  readonly isFetching: boolean;
+  readonly error: string | undefined;
+  /** The derived answer, pretty-printed. Always present: every step has an answer to show. */
+  readonly raw: string;
+  readonly refresh: () => void;
+  /** Mocks the answer behind one step, then re-reads it. Ignored for a step nothing answers. */
+  readonly setStepDone: (id: string, done: boolean) => void;
+  /** Drops every mocked answer, so the endpoints reach the provider again. */
+  readonly clearMocks: () => void;
+  /**
+   * Whether the host is intercepting requests at all. Mocking is started by an env var, so without
+   * it a toggle would set an answer nothing ever reads.
+   */
+  readonly isMockingEnabled: boolean;
+}
+
 /**
  * Props contract for the Card / Pay DevTool.
  *
@@ -186,6 +224,7 @@ export type PayCardOpenSecureBrowser = (url: string) => Promise<string>;
 export interface PayCardToolProps {
   readonly flags: PayCardFlagsProps;
   readonly onboarding: PayCardOnboardingProps;
+  readonly cardOnboarding: PayCardOnboardingStatusProps;
   readonly interaction: PayCardInteractionProps;
   readonly balance: PayCardBalanceProps;
   /** Whether the user has already seen the Pay feature tour. */
@@ -206,6 +245,10 @@ export interface PayCardToolProps {
   readonly onNavigateToPortfolio?: () => void;
   /** Host-only: jump to the Pay tab. Omitted when the host cannot navigate. */
   readonly onNavigateToPayTab?: () => void;
+  /** Host-only: jump to the Pay contact success screen. Omitted when the host cannot navigate. */
+  readonly onNavigateToPaySuccess?: () => void;
+  /** Host-only: jump to the generic Send success screen. Omitted when the host cannot navigate. */
+  readonly onNavigateToSendSuccess?: () => void;
   readonly auth?: PayCardAuthProps;
   readonly openSecureBrowser?: PayCardOpenSecureBrowser;
 }

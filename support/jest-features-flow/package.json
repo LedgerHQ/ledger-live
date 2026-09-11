@@ -23,6 +23,9 @@
   "peerDependencies": {
     "react": ">=19.0.0"
   },
+  "dependencies": {
+    "undici": "catalog:"
+  },
   "devDependencies": {
     "react": "catalog:"
   }

@@ -4,12 +4,19 @@ export * from "@ledgerhq/coin-xrp/types";
 // Bridge related types
 import type { NetworkInfo, NetworkInfoRaw } from "@ledgerhq/coin-xrp/types";
 import type {
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
+
+export type XrpOperationExtra = {
+  memo?: string;
+};
+
+export type XrpOperation = Operation<XrpOperationExtra>;
 
 export type Transaction = TransactionCommon & {
   family: "xrp";

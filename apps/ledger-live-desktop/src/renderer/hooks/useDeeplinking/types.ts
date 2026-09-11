@@ -221,6 +221,16 @@ export interface PerpsRoute {
 
 export interface PayTabRoute {
   type: "paytab";
+  /**
+   * The OAuth authorization code, when the Card login redirect brought one. The provider redirects to
+   * `go.ledger.com`, which sends the browser on to `ledgerlive://paytab?code=…`.
+   */
+  code?: string;
+  /**
+   * The login attempt this code answers, echoed back by the provider. Lets the flow tell a stray
+   * redirect from an abandoned attempt apart from the one it is currently waiting on.
+   */
+  state?: string;
 }
 
 export interface LedgerSyncRoute {

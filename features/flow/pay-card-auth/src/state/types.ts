@@ -40,8 +40,13 @@ export type CardLoginOauthConfig = Readonly<{
   /** Base of the Card API, which also hosts the authorize page the browser opens. */
   apiUrl: string;
   clientId: string;
-  /** Base of the provider's hosted UI, which carries the signup page the intro opens. */
-  hostedUiUrl: string;
+  /**
+   * Base of the provider's hosted UI, which carries the signup page the intro opens.
+   *
+   * Optional, because it can be derived elsewhere (e.g. manifest-driven). Leave it out and
+   * `buildSignupUrl` throws.
+   */
+  hostedUiUrl?: string;
   /**
    * Sent to the provider on authorize. The token exchange does not repeat it. The provider whitelists
    * an `https` URL only, so this one cannot be the app's own link. It redirects to `deepLink`.
@@ -153,13 +158,21 @@ export type CardLoginEvent =
 
 /* --- Redux ----------------------------------------------------------------------------------- */
 
+/**
+ * Where the Card session stands. `unknown` is the boot value: the login machine is still reading the
+ * stored session, so no one can yet say whether the holder is signed in. It lets a host tell "still
+ * resolving" from "signed out", which a bare boolean cannot, and so keeps the login CTA from flashing
+ * before the machine hydrates.
+ */
+export type PayCardAuthStatus = "unknown" | "signedOut" | "signedIn";
+
 export type PayCardAuthState = Readonly<{
   hasCard: boolean;
   /**
-   * True while a Card session is live. The login machine owns the value, and every component outside
-   * it reads this flag instead, because two machines would each hydrate and neither would agree.
+   * Where the Card session stands. The login machine owns the value, and every component outside it
+   * reads this instead, because two machines would each hydrate and neither would agree.
    */
-  isSignedIn: boolean;
+  status: PayCardAuthStatus;
 }>;
 
 export type PayCardLoginIntroState = Readonly<{

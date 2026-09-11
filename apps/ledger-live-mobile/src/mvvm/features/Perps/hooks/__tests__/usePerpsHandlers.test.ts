@@ -59,4 +59,16 @@ describe("usePerpsHandlers", () => {
       onCancel: params.onCancel,
     });
   });
+
+  it("should navigate to the deposit amount form when deposit.execute is called", () => {
+    const accounts = [{ id: "acc-1" }] as never[];
+    const receiverAccount = { id: "receiver-1", name: "HL Account" } as never;
+
+    renderHook(() => usePerpsHandlers(accounts));
+
+    const depositExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["deposit.execute"];
+    depositExecute?.({ receiverAccount });
+
+    expect(mockNavigate).toHaveBeenCalledWith("PerpsDeposit", { receiverAccount });
+  });
 });

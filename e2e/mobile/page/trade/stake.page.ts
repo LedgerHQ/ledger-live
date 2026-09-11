@@ -83,11 +83,20 @@ export default class StakePage {
   @Step("Select the first provider offered for {{{0}}}")
   async selectFirstValidator(currencyId: string): Promise<string> {
     await tapById(this.delegationSummaryValidatorId(currencyId));
-    await waitForElementById(PROVIDER_ROW_REGEX);
+    await waitForElement(getElementById(PROVIDER_ROW_REGEX));
     const rowId = await getIdByRegexp(PROVIDER_ROW_REGEX);
     await tapById(rowId);
     await waitForElementById(this.delegationSummaryValidatorId(currencyId));
     return rowId.slice(PROVIDER_ROW_PREFIX.length);
+  }
+
+  // Families whose flow opens on the validator list have no summary row to tap first.
+  @Step("Select provider {{{0}}} from the validator list")
+  async selectValidatorFromList(provider: string) {
+    await waitForElementById(this.searchPoolInput);
+    await typeTextById(this.searchPoolInput, provider);
+    await waitForElementById(this.providerRow(provider));
+    await tapById(this.providerRow(provider));
   }
 
   @Step("Verify fees visible in summary {{{0}}}")

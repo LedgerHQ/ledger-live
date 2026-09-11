@@ -18,6 +18,7 @@ type Setup = {
   status?: PayCardStatus["status"] | null;
   isStatusLoading?: boolean;
   rejects?: boolean;
+  onResolved?: () => void;
 };
 
 function mutationTrigger(rejects: boolean) {
@@ -26,7 +27,12 @@ function mutationTrigger(rejects: boolean) {
   }));
 }
 
-function renderWith({ status = "ACTIVE", isStatusLoading = false, rejects = false }: Setup = {}) {
+function renderWith({
+  status = "ACTIVE",
+  isStatusLoading = false,
+  rejects = false,
+  onResolved,
+}: Setup = {}) {
   const freeze = mutationTrigger(rejects);
   const unfreeze = mutationTrigger(rejects);
 
@@ -45,7 +51,7 @@ function renderWith({ status = "ACTIVE", isStatusLoading = false, rejects = fals
     .mocked(useUnfreezeCardMutation)
     .mockReturnValue([unfreeze] as unknown as ReturnType<typeof useUnfreezeCardMutation>);
 
-  return { freeze, unfreeze, ...renderHook(() => useFreezeCardViewModel()) };
+  return { freeze, unfreeze, ...renderHook(() => useFreezeCardViewModel(onResolved)) };
 }
 
 describe("useFreezeCardViewModel", () => {
@@ -80,7 +86,7 @@ describe("useFreezeCardViewModel", () => {
 
     act(() => result.current.onOpenConfirm());
 
-    expect(result.current.confirmState).toBe("idle");
+    expect(result.current.confirmState).toBe("prompt");
   });
 
   it("closes the confirmation when it is dismissed", () => {
@@ -121,6 +127,36 @@ describe("useFreezeCardViewModel", () => {
     await act(async () => result.current.onConfirm());
 
     expect(result.current.confirmState).toBe("error");
+  });
+
+  it("reports that the confirmation resolved when it is dismissed", () => {
+    const onResolved = jest.fn();
+    const { result } = renderWith({ onResolved });
+
+    act(() => result.current.onOpenConfirm());
+    act(() => result.current.onClose());
+
+    expect(onResolved).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports that the confirmation resolved once the mutation succeeds", async () => {
+    const onResolved = jest.fn();
+    const { result } = renderWith({ onResolved });
+
+    act(() => result.current.onOpenConfirm());
+    await act(async () => result.current.onConfirm());
+
+    expect(onResolved).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not report resolution while the confirmation stays open on an error", async () => {
+    const onResolved = jest.fn();
+    const { result } = renderWith({ rejects: true, onResolved });
+
+    act(() => result.current.onOpenConfirm());
+    await act(async () => result.current.onConfirm());
+
+    expect(onResolved).not.toHaveBeenCalled();
   });
 
   it("retries from the error state", async () => {

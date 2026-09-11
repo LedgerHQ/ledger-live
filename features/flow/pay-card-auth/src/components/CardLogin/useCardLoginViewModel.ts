@@ -69,8 +69,10 @@ export function mapSnapshotToViewModel(
   onLoginPress: () => void,
   intro: CardLoginIntroViewProps,
 ): CardLoginViewModel {
-  // The card holder is signed in, so there is no login left to offer. `More` holds the screen.
-  if (value === "ready") {
+  // Nothing to offer yet. `hydrating` is still reading the stored session, so a login CTA here would
+  // flash for a holder who turns out to be signed in; `ready` means they already are, and `More`
+  // holds the screen.
+  if (value === "hydrating" || value === "ready") {
     return null;
   }
 

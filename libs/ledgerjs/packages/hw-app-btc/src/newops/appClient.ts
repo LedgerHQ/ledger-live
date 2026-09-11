@@ -42,7 +42,14 @@ export class AppClient {
     data: Buffer,
     cci?: ClientCommandInterpreter,
   ): Promise<Buffer> {
-    let response: Buffer = await this.transport.send(CLA_BTC, ins, 0, CURRENT_PROTOCOL_VERSION, data, [0x9000, 0xe000]);
+    let response: Buffer = await this.transport.send(
+      CLA_BTC,
+      ins,
+      0,
+      CURRENT_PROTOCOL_VERSION,
+      data,
+      [0x9000, 0xe000],
+    );
     while (response.readUInt16BE(response.length - 2) === 0xe000) {
       if (!cci) {
         throw new Error("Unexpected SW_INTERRUPTED_EXECUTION");
@@ -89,7 +96,7 @@ export class AppClient {
       throw new Error("Invalid HMAC length");
     }
 
-    const clientInterpreter = new ClientCommandInterpreter(() => { });
+    const clientInterpreter = new ClientCommandInterpreter(() => {});
     clientInterpreter.addKnownList(walletPolicy.keys.map(k => Buffer.from(k, "ascii")));
     clientInterpreter.addKnownPreimage(walletPolicy.serialize());
     clientInterpreter.addKnownPreimage(Buffer.from(walletPolicy.descriptorTemplate, "ascii"));
@@ -185,7 +192,7 @@ export class AppClient {
       throw new Error("Path too long. At most 6 levels allowed.");
     }
 
-    const clientInterpreter = new ClientCommandInterpreter(() => { });
+    const clientInterpreter = new ClientCommandInterpreter(() => {});
 
     // prepare ClientCommandInterpreter
     const nChunks = Math.ceil(message.length / 64);

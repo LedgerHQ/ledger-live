@@ -1,4 +1,4 @@
-jest.mock("@features/flow-pay-card-auth", () => ({
+jest.mock("@features/flow-pay-card-auth/hooks", () => ({
   useIsCardSignedIn: jest.fn(),
   useCardLogout: jest.fn(),
 }));

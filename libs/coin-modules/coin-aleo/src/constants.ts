@@ -1,3 +1,5 @@
+import type { OperationType } from "@ledgerhq/types-live";
+
 export const ALEO_DUMMY_ADDRESS = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
 
 export const PROGRAM_ID = {
@@ -26,6 +28,14 @@ export const TRANSACTION_TYPE = {
   UNBOND_PUBLIC: "unbond_public",
   CLAIM_UNBOND_PUBLIC: "claim_unbond_public",
 } as const;
+
+// The three staking modes are named exactly after the credits.aleo functions they call, so this
+// one table serves both a mode on the craft path and a `function_id` read back from the indexer.
+export const STAKING_OPERATION_TYPE = {
+  [TRANSACTION_TYPE.BOND_PUBLIC]: "BOND",
+  [TRANSACTION_TYPE.UNBOND_PUBLIC]: "UNBOND",
+  [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC]: "WITHDRAW_UNBONDED",
+} as const satisfies Record<string, OperationType>;
 
 export const FEE_INTENT_TYPES = new Set(["fee_public", "fee_private"]);
 

@@ -50,6 +50,24 @@ export const getZainoEndpoint = (): { grpcUrl: string; network: ZcashNetwork } =
   network: getZainoNetwork(),
 });
 
+/**
+ * Strips anything a log line or an error-context extraction (which can reach
+ * Datadog, unlike `@ledgerhq/logs`) shouldn't carry: `setZainoGrpcUrl` lets a
+ * caller point this at a custom or local node, so nothing guarantees the
+ * endpoint never carries userinfo or a token in its query string -- or in its
+ * path (e.g. a `/token/<value>`-style gateway route). `origin` never includes
+ * credentials by spec and is kept as the only diagnostic signal; both known
+ * production endpoints (ZCASH_GRPC_URL_MAINNET/TESTNET) are bare origins with
+ * no pathname today, so this drops nothing currently in use.
+ */
+export const sanitizeEndpointForLog = (url: string): string => {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return "[unparsable endpoint]";
+  }
+};
+
 // Whether a Zcash account is served by this module or by coin-bitcoin's Zcash
 // chain-adapter is decided upstream, by the `zcashShielded` feature flag the host
 // app mirrors into live-common (`bridge/zcashRouting.ts`). This module never has

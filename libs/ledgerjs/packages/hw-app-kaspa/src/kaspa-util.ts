@@ -1,11 +1,6 @@
 import base32 from "./base32";
 
-function convertBits(
-  data: number[],
-  from: number,
-  to: number,
-  strict: boolean = false,
-): number[] {
+function convertBits(data: number[], from: number, to: number, strict: boolean = false): number[] {
   strict = strict || false;
   let accumulator = 0;
   let bits = 0;

@@ -29,7 +29,9 @@
   "dependencies": {
     "@features/flow-pay-card-auth": "workspace:^",
     "@features/flow-pay-card-details": "workspace:^",
-    "@features/flow-pay-card-widget": "workspace:^"
+    "@features/flow-pay-card-wallets": "workspace:^",
+    "@features/flow-pay-card-widget": "workspace:^",
+    "@shared/i18n": "workspace:*"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",

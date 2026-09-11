@@ -15,7 +15,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/recent-addresses"
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/recent-addresses",
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
@@ -29,6 +31,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "typescript": "catalog:"
   }
 }

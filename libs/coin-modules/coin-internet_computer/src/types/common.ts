@@ -2,6 +2,8 @@ import {
   Account,
   AccountRaw,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -9,7 +11,7 @@ import {
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { KNOWN_TOPICS } from "../consts";
-import { ICPNeuron, NeuronsData, NeuronsDataRaw } from "./neuron";
+import { ICPNeuron, NeuronCommandOutcome, NeuronsData, NeuronsDataRaw } from "./neuron";
 
 type FamilyType = "internet_computer";
 
@@ -102,6 +104,42 @@ export type InternetComputerOperationExtra = {
   createdNeuronId?: string;
   // Carries a refreshed neuron snapshot back from a list_neurons operation.
   neurons?: ICPNeuron[];
+  // What the accepted manage_neuron command reported about its own result, where it reported one.
+  outcome?: NeuronCommandOutcome;
   // The governance method a neuron operation invoked (for display / operation typing).
   methodName?: string;
 };
+
+/**
+ * Persisted form of the above. Identical except for `neurons`, whose `bigint` fields have no JSON
+ * form and so travel as the same tagged string the account snapshot uses.
+ *
+ * Without this pair the framework copies `extra` into the raw operation untouched
+ * (`ledger-wallet-framework/src/serialization/operation.ts`), and one bigint reaching `JSON.stringify`
+ * fails the whole namespace save.
+ */
+export type InternetComputerOperationExtraRaw = {
+  memo?: string;
+  createdNeuronId?: string;
+  neurons?: string;
+  outcome?: NeuronCommandOutcome;
+  methodName?: string;
+};
+
+const EXTRA_KEYS = ["memo", "createdNeuronId", "neurons", "outcome", "methodName"] as const;
+
+// Own properties only: `in` would also answer for anything the prototype chain happens to carry.
+const hasAnyExtraKey = (value: object): boolean =>
+  EXTRA_KEYS.some(key => Object.hasOwn(value, key));
+
+export function isInternetComputerOperationExtra(
+  extra: OperationExtra,
+): extra is InternetComputerOperationExtra {
+  return extra !== null && typeof extra === "object" && hasAnyExtraKey(extra);
+}
+
+export function isInternetComputerOperationExtraRaw(
+  extraRaw: OperationExtraRaw,
+): extraRaw is InternetComputerOperationExtraRaw {
+  return extraRaw !== null && typeof extraRaw === "object" && hasAnyExtraKey(extraRaw);
+}

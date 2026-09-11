@@ -28,6 +28,7 @@
     "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card-details/knip.web.config.mjs -W features/flow/pay-card-details --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card-details/knip.native.config.mjs -W features/flow/pay-card-details --tsConfig tsconfig.native.json"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "catalog:",
     "@domain/api-card-management": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:*",
     "@ledgerhq/lumen-utils-shared": "catalog:",
@@ -35,6 +36,7 @@
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
+    "@shared/api-services": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
@@ -55,11 +57,14 @@
     "eslint-plugin-better-tailwindcss": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "msw": "catalog:",
+    "react-redux": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-native-svg": "catalog:",
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
@@ -75,19 +80,21 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-redux": "catalog:",
+    "react-native-svg": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
+      "optional": true
+    },
+    "react-native-svg": {
       "optional": true
     },
     "@ledgerhq/lumen-ui-react": {
       "optional": true
     },
     "@ledgerhq/lumen-ui-rnative": {
-      "optional": true
-    },
-    "@ledgerhq/lumen-design-core": {
       "optional": true
     }
   }

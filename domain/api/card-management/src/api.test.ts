@@ -125,8 +125,10 @@ describe("cardManagementApi configuration", () => {
       "getCardLinkedWallets",
       "getCardOnboardingStatus",
       "getCardStatus",
+      "getCardTransactions",
       "getInternalWallets",
       "getUser",
+      "getWalletHistory",
       "logout",
       "orderCard",
       "refreshSession",
@@ -432,6 +434,192 @@ describe("cardManagementApi requests", () => {
 
       expect(result.data).toBeUndefined();
       expect(result.error).toBeDefined();
+    });
+  });
+
+  describe("getCardTransactions", () => {
+    const TRANSACTIONS_PATH = "/v1/card/transactions";
+
+    const transaction = {
+      id: "100a99cf-f4d3-4fa1-9be9-2e9828b20ebb",
+      dateTime: "2024-10-14T10:44:36.276Z",
+      sign: "DEBIT",
+      merchantNameLocation: "WWW.ALIEXPRESS.COM, LONDON",
+      mccCategory: "MISC",
+      status: "CONFIRMED",
+      declineReason: "",
+      transactionCurrency: "EUR",
+      amountInTransactionCurrency: "0.79",
+      feesInTransactionCurrency: "0",
+      originalCurrency: "USD",
+      amountInOriginalCurrency: "0.85",
+    };
+
+    it("reads the transactions with the bearer token and the client key", async () => {
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([transaction]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardTransactions.initiate(undefined),
+      );
+
+      expectSessionRequest("GET", TRANSACTIONS_PATH);
+      expect(result.data).toEqual([transaction]);
+    });
+
+    it("sends the filters as query parameters", async () => {
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      await store.dispatch(
+        cardManagementApi.endpoints.getCardTransactions.initiate({
+          page: 2,
+          dateFrom: "2026-01-01",
+          dateTo: "2026-01-31",
+          mccCategories: "FOOD,TRAVEL",
+        }),
+      );
+
+      const { searchParams } = new URL(provider.sent().url);
+      expect(searchParams.get("page")).toBe("2");
+      expect(searchParams.get("dateFrom")).toBe("2026-01-01");
+      expect(searchParams.get("dateTo")).toBe("2026-01-31");
+      expect(searchParams.get("mccCategories")).toBe("FOOD,TRAVEL");
+    });
+
+    it("rejects one date without the other before the request goes out", async () => {
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        // The pairing is part of the request type, so this line also asserts the type refuses it.
+        // @ts-expect-error one date without the other is not a filter
+        cardManagementApi.endpoints.getCardTransactions.initiate({ dateFrom: "2026-01-01" }),
+      );
+
+      expect(result.error).toBeDefined();
+      // The provider would answer 400; the filter never leaves the app.
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("reads an empty history as an empty list, not as a failure", async () => {
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getCardTransactions.initiate(undefined),
+      );
+
+      expect(result.data).toEqual([]);
+      expect(result.error).toBeUndefined();
+    });
+  });
+
+  describe("getWalletHistory", () => {
+    const HISTORY_PATH = "/v1/wallet/history";
+
+    const entry = {
+      name: "Credit withdrawal",
+      amount: "10.00",
+      currency: "usdc",
+      sign: "debit",
+      date: "2024-02-02T15:01:09.091Z",
+    };
+
+    it("reads one wallet's history with the bearer token and the client key", async () => {
+      provider.get(HISTORY_PATH, () => jsonResponse([entry]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-usdc",
+          walletType: "INTERNAL",
+          walletCurrency: "usdc",
+        }),
+      );
+
+      const sent = provider.sent();
+      expect(new URL(sent.url).pathname).toBe(HISTORY_PATH);
+      expect(sent.method).toBe("GET");
+      expect(sent.headers.get("authorization")).toBe("Bearer session-token");
+      expect(sent.headers.get("x-client-key")).toBe("client-key");
+      expect(result.data).toEqual([entry]);
+    });
+
+    it("names the wallet, its type and its currency in the query", async () => {
+      provider.get(HISTORY_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      await store.dispatch(
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-usdc",
+          walletType: "INTERNAL",
+          walletCurrency: "usdc",
+          page: 2,
+        }),
+      );
+
+      const { searchParams } = new URL(provider.sent().url);
+      expect(searchParams.get("walletId")).toBe("w-usdc");
+      expect(searchParams.get("walletType")).toBe("INTERNAL");
+      expect(searchParams.get("walletCurrency")).toBe("usdc");
+      expect(searchParams.get("page")).toBe("2");
+    });
+
+    it("refuses an internal wallet with no currency before the request goes out", async () => {
+      provider.get(HISTORY_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        // The requirement is part of the request type, so this also asserts the type refuses it.
+        // @ts-expect-error an internal wallet without its currency is not a request
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-usdc",
+          walletType: "INTERNAL",
+        }),
+      );
+
+      expect(result.error).toBeDefined();
+      // The provider errors on this one, and the request never leaves the app.
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("caches each wallet separately, so one does not answer for another", async () => {
+      provider.get(HISTORY_PATH, () => jsonResponse([entry]));
+
+      const store = makeStore("session-token");
+      await store.dispatch(
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-usdc",
+          walletType: "INTERNAL",
+          walletCurrency: "usdc",
+        }),
+      );
+      await store.dispatch(
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-usdt",
+          walletType: "INTERNAL",
+          walletCurrency: "usdt",
+        }),
+      );
+
+      // Two wallets, two reads: a card has several linked and each has its own history.
+      expect(provider.sentTo(HISTORY_PATH)).toHaveLength(2);
+    });
+
+    it("reads an empty history as an empty list, not as a failure", async () => {
+      provider.get(HISTORY_PATH, () => jsonResponse([]));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.getWalletHistory.initiate({
+          walletId: "w-credit",
+          walletType: "CREDIT",
+        }),
+      );
+
+      expect(result.data).toEqual([]);
+      expect(result.error).toBeUndefined();
     });
   });
 

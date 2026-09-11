@@ -60,7 +60,7 @@ import { sendVechain } from "./families/vechain";
 import { getDeviceCoordinates } from "./deviceCoordinates";
 import { sendInternetComputer } from "./families/internet_computer";
 import { sleep } from "./index";
-import { delegateMina } from "./families/mina";
+import { delegateMina, sendMina } from "./families/mina";
 import { sendAleo } from "./families/aleo";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
@@ -613,10 +613,11 @@ export async function waitFor(
     try {
       const allEvents = (await fetchAllEvents(port)).join(" ");
       const shot = await takeScreenshot(port);
+      const shotSummary = shot ? `${shot.length} bytes` : "unreachable";
       console.warn(
         `[waitFor] "${text}" not matched after ${maxAttempts} polls on port ${port}. ` +
           `currentscreenonly=true => "${texts}" | currentscreenonly=false => "${allEvents}" | ` +
-          `screenshot(${port}) => ${shot ? `${shot.length} bytes` : "unreachable"}`,
+          `screenshot(${port}) => ${shotSummary}`,
       );
     } catch (err) {
       console.warn(`[waitFor] failed to dump diagnostics on port ${port}: ${sanitizeError(err)}`);
@@ -745,20 +746,37 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   return result;
 }
 
+function formatSpeculosEventsFailure(message: string, substring: string, events: string[]): string {
+  let formattedEvents = events.join("\n  ");
+  const maxLength = 1000;
+  if (formattedEvents.length > maxLength) {
+    formattedEvents = `${formattedEvents.slice(0, maxLength)}...\n  (truncated, ${events.length} total events)`;
+  }
+  return `${message}. Expected events to contain "${substring}". Events:\n\n  ${formattedEvents}`;
+}
+
 export function expectSpeculosEventsContain(
   substring: string,
   events: string[],
   message = "Speculos events validation failed",
 ) {
   if (containsSubstringInEvent(substring, events) !== true) {
-    let formattedEvents = events.join("\n  ");
-    const maxLength = 1000;
-    if (formattedEvents.length > maxLength) {
-      formattedEvents = `${formattedEvents.slice(0, maxLength)}...\n  (truncated, ${events.length} total events)`;
-    }
-    throw new Error(
-      `${message}. Expected events to contain "${substring}". Events:\n\n  ${formattedEvents}`,
-    );
+    throw new Error(formatSpeculosEventsFailure(message, substring, events));
+  }
+}
+
+/**
+ * Strict counterpart to {@link expectSpeculosEventsContain}: matches literally across the
+ * concatenated screens, without the character-interleaving fallback. Use for short needles
+ * such as a token ticker, where that fallback ("W.*?G.*?N.*?K") matches almost any screen.
+ */
+export function expectSpeculosEventsContainExactly(
+  substring: string,
+  events: string[],
+  message = "Speculos events validation failed",
+) {
+  if (!events.join("").includes(substring)) {
+    throw new Error(formatSpeculosEventsFailure(message, substring, events));
   }
 }
 
@@ -964,6 +982,7 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.POL.id:
     case Currency.ETH.id:
     case Currency.ETH_USDT.id:
+    case Currency.ETH_WGNK.id:
     case Currency.SEI_EVM.id:
     case Currency.BASE_AERODROME.id:
       await sendEVM(tx);
@@ -1028,6 +1047,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.ALEO.id:
       await sendAleo(tx);
+      break;
+    case Currency.MINA.id:
+      await sendMina(tx);
       break;
     default:
       throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);

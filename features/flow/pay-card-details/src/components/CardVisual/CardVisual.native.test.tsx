@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
+import { I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardVisual } from "./CardVisual";
 import type { FormattedValue } from "../../types";
 
@@ -17,16 +18,33 @@ const formatCountervalue = (value: number): FormattedValue => ({
   currencyPosition: "start",
 });
 
+function mockStatus(status?: string) {
+  jest.mocked(useGetCardStatusQuery).mockReturnValue({
+    data: status ? { status } : undefined,
+  } as unknown as ReturnType<typeof useGetCardStatusQuery>);
+}
+
+function renderVisual() {
+  return render(
+    <CardVisual balance={100} formatCountervalue={formatCountervalue} balanceLabel="Balance" />,
+    { wrapper: I18nWrapper },
+  );
+}
+
 describe("CardVisual (native)", () => {
-  it("renders nothing until the native card visual ships", () => {
-    jest.mocked(useGetCardStatusQuery).mockReturnValue({
-      data: undefined,
-    } as unknown as ReturnType<typeof useGetCardStatusQuery>);
+  it("renders the card face and the balance", () => {
+    mockStatus("ACTIVE");
+    renderVisual();
 
-    render(
-      <CardVisual balance={100} formatCountervalue={formatCountervalue} balanceLabel="Balance" />,
-    );
+    expect(screen.getByTestId("card-visual")).toBeVisible();
+    expect(screen.getByText("Balance")).toBeVisible();
+    expect(screen.queryByTestId("card-visual-frozen")).toBeNull();
+  });
 
-    expect(screen.queryByTestId("card-visual")).toBeNull();
+  it("shows the frozen marker when the card status is frozen", () => {
+    mockStatus("FROZEN");
+    renderVisual();
+
+    expect(screen.getByTestId("card-visual-frozen")).toBeVisible();
   });
 });

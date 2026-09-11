@@ -22,6 +22,17 @@ function buildProps(): PayCardToolProps {
       ],
       setStepDone: jest.fn(),
     },
+    cardOnboarding: {
+      steps: [],
+      completedCount: 0,
+      isFetching: false,
+      error: undefined,
+      raw: "{}",
+      refresh: jest.fn(),
+      setStepDone: jest.fn(),
+      clearMocks: jest.fn(),
+      isMockingEnabled: true,
+    },
     interaction: {
       probes: [],
       details: {
@@ -126,19 +137,27 @@ describe("PayCard (native)", () => {
     const user = userEvent.setup();
     const onNavigateToPortfolio = jest.fn();
     const onNavigateToPayTab = jest.fn();
+    const onNavigateToPaySuccess = jest.fn();
+    const onNavigateToSendSuccess = jest.fn();
     render(
       <PayCard
         {...buildProps()}
         onNavigateToPortfolio={onNavigateToPortfolio}
         onNavigateToPayTab={onNavigateToPayTab}
+        onNavigateToPaySuccess={onNavigateToPaySuccess}
+        onNavigateToSendSuccess={onNavigateToSendSuccess}
       />,
     );
 
     expect(screen.getByText("Quick actions")).toBeTruthy();
     await user.press(screen.getByText("Go to Portfolio"));
     await user.press(screen.getByText("Go to Pay tab"));
+    await user.press(screen.getByText("Pay contact success"));
+    await user.press(screen.getByText("Send success"));
     expect(onNavigateToPortfolio).toHaveBeenCalledTimes(1);
     expect(onNavigateToPayTab).toHaveBeenCalledTimes(1);
+    expect(onNavigateToPaySuccess).toHaveBeenCalledTimes(1);
+    expect(onNavigateToSendSuccess).toHaveBeenCalledTimes(1);
   });
 
   it("hides the secure browser section on a host that has no browser", () => {
@@ -481,5 +500,107 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("Send API requests")).toBeTruthy();
     expect(screen.getByText("MSW Auth Renewal Mock")).toBeTruthy();
     expect(screen.getByText("clear → cleared")).toBeTruthy();
+  });
+
+  const onboardingSteps = [
+    { id: "create-account", isDone: true, canToggle: true },
+    { id: "choose-card-type", isDone: true, canToggle: true },
+    { id: "top-up-card", isDone: false, canToggle: true },
+    { id: "first-purchase", isDone: false, canToggle: false },
+  ];
+
+  it("opens the card onboarding screen and asks for a fresh answer", async () => {
+    const user = userEvent.setup();
+    const refresh = jest.fn();
+    const props = buildProps();
+    render(<PayCard {...props} cardOnboarding={{ ...props.cardOnboarding, refresh }} />);
+
+    await user.press(screen.getByText("Card onboarding"));
+
+    expect(screen.getByText("Derived response")).toBeTruthy();
+    // Opening the screen re-asks, so a step is never read off a stale answer.
+    expect(refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows each step by the id the app keys it on", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(
+      <PayCard
+        {...props}
+        cardOnboarding={{ ...props.cardOnboarding, steps: onboardingSteps, completedCount: 2 }}
+      />,
+    );
+
+    await user.press(screen.getByText("Card onboarding"));
+
+    expect(screen.getByText("top-up-card")).toBeTruthy();
+    // Two done, two not: the labels have to tell them apart.
+    expect(screen.getAllByText("done")).toHaveLength(2);
+    expect(screen.getAllByText("open")).toHaveLength(2);
+  });
+
+  it("sets a step by the answer behind it, and leaves the unanswerable one alone", async () => {
+    const user = userEvent.setup();
+    const setStepDone = jest.fn();
+    const props = buildProps();
+    render(
+      <PayCard
+        {...props}
+        cardOnboarding={{ ...props.cardOnboarding, steps: onboardingSteps, setStepDone }}
+      />,
+    );
+
+    await user.press(screen.getByText("Card onboarding"));
+
+    // Three steps a request decides, so three toggles; the purchase step has none.
+    expect(screen.queryByLabelText("first-purchase")).toBeNull();
+
+    await user.press(screen.getByLabelText("top-up-card"));
+    expect(setStepDone).toHaveBeenCalledWith("top-up-card", true);
+
+    await user.press(screen.getByLabelText("create-account"));
+    expect(setStepDone).toHaveBeenCalledWith("create-account", false);
+  });
+
+  it("hands the endpoints back to the provider", async () => {
+    const user = userEvent.setup();
+    const clearMocks = jest.fn();
+    const props = buildProps();
+    render(<PayCard {...props} cardOnboarding={{ ...props.cardOnboarding, clearMocks }} />);
+
+    await user.press(screen.getByText("Card onboarding"));
+    await user.press(screen.getByText("Use the real answers"));
+
+    expect(clearMocks).toHaveBeenCalledTimes(1);
+  });
+
+  it("says so when the host is not intercepting requests, rather than offering a dead toggle", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    const steps = onboardingSteps.map(step => ({ ...step, canToggle: false }));
+    render(
+      <PayCard
+        {...props}
+        cardOnboarding={{ ...props.cardOnboarding, steps, isMockingEnabled: false }}
+      />,
+    );
+
+    await user.press(screen.getByText("Card onboarding"));
+
+    expect(screen.getByText(/Request mocking is off/)).toBeTruthy();
+    expect(screen.queryByText("Use the real answers")).toBeNull();
+    expect(screen.queryByLabelText("top-up-card")).toBeNull();
+  });
+
+  it("shows the derived answer itself, because the steps are worked out and not fetched", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    const raw = JSON.stringify({ steps: onboardingSteps, completedCount: 2 }, null, 2);
+    render(<PayCard {...props} cardOnboarding={{ ...props.cardOnboarding, raw }} />);
+
+    await user.press(screen.getByText("Card onboarding"));
+
+    expect(screen.getByText(raw)).toBeTruthy();
   });
 });

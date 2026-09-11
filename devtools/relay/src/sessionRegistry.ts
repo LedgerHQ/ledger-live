@@ -119,8 +119,7 @@ export function createSessionRegistry<S extends RelaySocket>(): SessionRegistry<
     if (session) {
       if (entry.role === "tool") session.tool?.delete(socket);
       else if (entry.role === "host") session.host = undefined;
-      if (!session.host && (!session.tool || session.tool.size === 0))
-        sessions.delete(entry.uid);
+      if (!session.host && (!session.tool || session.tool.size === 0)) sessions.delete(entry.uid);
     }
     return { role: entry.role, descriptor: entry.descriptor };
   }

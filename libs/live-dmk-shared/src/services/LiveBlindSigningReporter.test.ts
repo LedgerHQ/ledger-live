@@ -10,9 +10,7 @@ import {
   liveBlindSigningReporter,
 } from "./LiveBlindSigningReporter";
 
-const makeParams = (
-  overrides: Partial<BlindSigningReportParams> = {},
-): BlindSigningReportParams =>
+const makeParams = (overrides: Partial<BlindSigningReportParams> = {}): BlindSigningReportParams =>
   ({
     signatureId: "sig-1",
     signingMethod: "eth_signTransaction",
@@ -45,9 +43,7 @@ describe("LiveBlindSigningReporter", () => {
 
   describe("singleton", () => {
     it("returns the same instance from getInstance", () => {
-      expect(LiveBlindSigningReporter.getInstance()).toBe(
-        LiveBlindSigningReporter.getInstance(),
-      );
+      expect(LiveBlindSigningReporter.getInstance()).toBe(LiveBlindSigningReporter.getInstance());
     });
 
     it("exposes the same singleton via the liveBlindSigningReporter export", () => {
