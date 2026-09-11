@@ -6,6 +6,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Contact } from "@domain/entity-contact";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { BalanceTypeConfig } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { SendWorkflow } from "../index";
 
 export { screen, waitFor };
@@ -26,6 +27,7 @@ let mockDeviceActionResult: unknown = null;
 let mockScannedCode = "";
 let mockContacts: readonly Contact[] = [];
 let mockContactsFeatureEnabled = false;
+let mockBalanceTypeConfig: BalanceTypeConfig | null = null;
 
 const mockSetTransaction = jest.fn();
 const mockUpdateTransaction = jest.fn();
@@ -147,6 +149,10 @@ export const setMockContacts = (contacts: readonly Contact[], isEnabled = true) 
   mockContactsFeatureEnabled = isEnabled;
 };
 
+export const setMockBalanceTypeConfig = (config: BalanceTypeConfig | null) => {
+  mockBalanceTypeConfig = config;
+};
+
 export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   jest.clearAllMocks();
   resetBridgeState(family);
@@ -154,6 +160,7 @@ export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   setMockBridgeRecipientValidation({ errors: {}, warnings: {}, isLoading: false });
   setMockScannedCode("");
   setMockContacts([], false);
+  setMockBalanceTypeConfig(null);
 };
 
 jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
@@ -255,6 +262,18 @@ jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => ({
 jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation", () => ({
   useBridgeRecipientValidation: jest.fn(() => mockBridgeRecipientValidation),
 }));
+
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/bridge/descriptor/send/features");
+  return {
+    ...actual,
+    sendFeatures: {
+      ...actual.sendFeatures,
+      hasBalanceTypeStep: jest.fn(() => mockBalanceTypeConfig !== null),
+      getBalanceTypeConfig: jest.fn(() => mockBalanceTypeConfig),
+    },
+  };
+});
 
 jest.mock("@features/platform-contacts", () => ({
   ...jest.requireActual("@features/platform-contacts"),

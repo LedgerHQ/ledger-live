@@ -107,4 +107,26 @@ describe("useAvailableBalance", () => {
       expect(result.current).toBe("");
     },
   );
+
+  it("should use overrideBalance instead of spendableBalance when provided", () => {
+    mockedUseCalculate.mockReturnValueOnce(null);
+    mockedUseMaybeAccountUnit.mockReturnValueOnce({} as unknown as Unit);
+    mockedFormatCurrencyUnit.mockImplementation((_unit, value, _options) => `${value}$`);
+
+    const overrideBalance = new BigNumber(500);
+    const account = {
+      spendableBalance: new BigNumber(99999),
+    } as unknown as AccountLike;
+    const { result } = renderHook(() => useAvailableBalance(account, "crypto", overrideBalance), {
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, ...initialState },
+      },
+    });
+    expect(result.current).toBe(`${overrideBalance}$`);
+    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
+      expect.anything(),
+      overrideBalance,
+      expect.anything(),
+    );
+  });
 });

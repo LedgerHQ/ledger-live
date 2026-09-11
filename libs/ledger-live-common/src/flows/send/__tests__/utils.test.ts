@@ -88,6 +88,24 @@ describe("getRecipientDisplayValue", () => {
       "vitalik.eth (0x123456...12345678)",
     );
   });
+
+  it("should return displayLabel alone when set, ignoring address and ensName", () => {
+    expect(
+      getRecipientDisplayValue({
+        address: ADDRESS,
+        ensName: "vitalik.eth",
+        displayLabel: "Private balance",
+      }),
+    ).toBe("Private balance");
+  });
+
+  it("should return displayLabel when address is missing", () => {
+    expect(getRecipientDisplayValue({ displayLabel: "Private balance" })).toBe("Private balance");
+  });
+
+  it("should return empty when neither displayLabel nor address is set", () => {
+    expect(getRecipientDisplayValue({ ensName: "vitalik.eth" })).toBe("");
+  });
 });
 
 describe("getRecipientSearchPrefillValue", () => {
@@ -115,6 +133,7 @@ describe("buildRecipientForMemoChange", () => {
     expect(buildRecipientForMemoChange("rNewRecipient", null, memo)).toEqual({
       address: "rNewRecipient",
       ensName: undefined,
+      displayLabel: undefined,
       memo,
     });
   });
@@ -129,6 +148,7 @@ describe("buildRecipientForMemoChange", () => {
     ).toEqual({
       address: "rNewRecipient",
       ensName: undefined,
+      displayLabel: undefined,
       memo,
     });
   });
@@ -137,12 +157,13 @@ describe("buildRecipientForMemoChange", () => {
     expect(
       buildRecipientForMemoChange(
         "vitalik.eth",
-        { address: ADDRESS, ensName: "vitalik.eth" },
+        { address: ADDRESS, ensName: "vitalik.eth", displayLabel: "Private balance" },
         memo,
       ),
     ).toEqual({
       address: ADDRESS,
       ensName: "vitalik.eth",
+      displayLabel: "Private balance",
       memo,
     });
   });
@@ -151,12 +172,13 @@ describe("buildRecipientForMemoChange", () => {
     expect(
       buildRecipientForMemoChange(
         "rNewRecipient",
-        { address: ADDRESS, ensName: "vitalik.eth" },
+        { address: ADDRESS, ensName: "vitalik.eth", displayLabel: "Private balance" },
         memo,
       ),
     ).toEqual({
       address: "rNewRecipient",
       ensName: undefined,
+      displayLabel: undefined,
       memo,
     });
   });

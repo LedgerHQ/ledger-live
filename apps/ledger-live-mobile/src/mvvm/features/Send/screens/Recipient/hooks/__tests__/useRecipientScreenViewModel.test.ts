@@ -55,7 +55,7 @@ describe("useRecipientScreenViewModel", () => {
     mockedUseSendFlowData.mockReturnValue({
       state: {
         account: { account, parentAccount: null, currency: null },
-        recipient: { memo: { type: "MEMO", value: "123" } },
+        recipient: { memo: { type: "MEMO", value: "123" }, displayLabel: "Private balance" },
         transaction: { transaction: null },
       },
       uiConfig: { recipientSupportsDomain: true },
@@ -146,6 +146,7 @@ describe("useRecipientScreenViewModel", () => {
       address: "destination",
       ensName: "name.eth",
       memo: { type: "MEMO", value: "123" },
+      displayLabel: undefined,
     });
     expect(clearRecipientSearch).toHaveBeenCalledTimes(1);
     expect(navigate).toHaveBeenCalledWith(ScreenName.SendFlowAmount);

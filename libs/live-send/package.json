@@ -1,0 +1,63 @@
+{
+  "name": "@ledgerhq/live-send",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Shared Ledger Wallet send-flow helpers extracted from live-common",
+  "keywords": ["Ledger"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-send",
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "dependencies": {
+    "@ledgerhq/ledger-wallet-framework": "workspace:*",
+    "@ledgerhq/live-common": "workspace:*",
+    "@ledgerhq/types-live": "workspace:*",
+    "bignumber.js": "^9.1.2"
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm exec oxfmt -c ../oxc-live-libs/.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
+    "format": "pnpm exec oxfmt -c ../oxc-live-libs/.oxfmtrc.json ./src",
+    "format:check": "pnpm exec oxfmt -c ../oxc-live-libs/.oxfmtrc.json ./src --check",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "unimported": "pnpm knip --directory ../.. -W libs/live-send",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./package.json": "./package.json"
+  }
+}

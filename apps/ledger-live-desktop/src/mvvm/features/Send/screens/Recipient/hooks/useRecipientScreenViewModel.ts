@@ -91,6 +91,8 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
         ...state.recipient,
         address,
         ensName,
+        displayLabel: undefined,
+        isSelfTransfer: false,
         ...(memo ? { memo } : {}),
       });
 

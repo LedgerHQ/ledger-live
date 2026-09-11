@@ -2827,6 +2827,34 @@
       "selectSufficientCoins": "Select sufficient coins",
       "amountToSendInCurrency": "Amount to send in {{ticker}}",
       "amountInputLabel": "Amount to send"
+    },
+    "recipient": {
+      "selfTransfer": {
+        "title": "Self transfer",
+        "toPrivate": {
+          "action": "Send to private balance",
+          "label": "Private balance"
+        },
+        "toPublic": {
+          "action": "Send to public balance",
+          "label": "Public balance"
+        }
+      }
+    },
+    "balanceType": {
+      "title": "Select balance type",
+      "transparent": {
+        "title": "Public balance",
+        "subtitle": "Transparent"
+      },
+      "shielded": {
+        "title": "Private balance",
+        "subtitle": "Shielded",
+        "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
+      },
+      "zeroBalance": {
+        "warning": "No available balance"
+      }
     }
   },
   "releaseNotes": {

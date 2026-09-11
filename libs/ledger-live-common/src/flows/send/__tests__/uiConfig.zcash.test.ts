@@ -29,6 +29,14 @@ describe("getSendUiConfig (zcash, real resolution)", () => {
     expect(uiConfig.hasMemo).toBe(true);
     expect(uiConfig.memoType).toBe("text");
     expect(uiConfig.memoMaxLength).toBe(512);
+    expect(uiConfig.hasBalanceTypeStep).toBe(true);
+  });
+
+  it("hasBalanceTypeStep is false when shielded is disabled", () => {
+    setZcashShieldedEnabled(false);
+    const zcash = getCryptoCurrencyById("zcash");
+    const uiConfig = getSendUiConfig(zcash);
+    expect(uiConfig.hasBalanceTypeStep).toBe(false);
   });
 
   it("areFeesEditable is false", () => {
@@ -63,6 +71,7 @@ describe("getSendUiConfig (zcash, real resolution)", () => {
     expect(uiConfig.hasCoinControl).toBe(true);
     expect(uiConfig.hasFeePresets).toBe(true);
     expect(uiConfig.hasCustomFees).toBe(true);
+    expect(uiConfig.hasBalanceTypeStep).toBe(false);
   });
 
   it("regression: an unrelated family (evm) is unchanged", () => {
@@ -74,5 +83,6 @@ describe("getSendUiConfig (zcash, real resolution)", () => {
     expect(uiConfig.hasFeePresets).toBe(true);
     expect(uiConfig.hasCustomFees).toBe(true);
     expect(uiConfig.recipientSupportsDomain).toBe(true);
+    expect(uiConfig.hasBalanceTypeStep).toBe(false);
   });
 });
