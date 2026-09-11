@@ -10,10 +10,17 @@ import {
   NearStakingPosition,
 } from "@ledgerhq/coin-near/types";
 import { createApi as createNearApi } from "@ledgerhq/coin-near/api/index";
-import { getCoinConfig } from "@ledgerhq/coin-near/config";
+import type { NearConfig } from "@ledgerhq/coin-near/config";
 import { getAccountCurrency } from "../../account";
+import { getCurrencyConfiguration } from "../../config";
 
-const nearContext = { config: () => Promise.resolve(getCoinConfig()), logger: () => {} };
+// The generic-framework bridge never runs families/near/setup.ts (which seeds the legacy
+// getCoinConfig() singleton via setCoinConfig), so resolve config directly from LiveConfig
+// instead — same source setup.ts itself reads from.
+const nearContext = {
+  config: () => Promise.resolve(getCurrencyConfiguration<NearConfig>("near")),
+  logger: () => {},
+};
 
 // Framework writes stakingPositions to accounts with usesStakingPositions: true.
 // The type is local to getAccountShape.ts and not exported — access via this cast.
@@ -24,16 +31,24 @@ type FrameworkAccount = {
 function useNearValidators(): NearValidatorItem[] {
   const [validators, setValidators] = useState<NearValidatorItem[]>([]);
   useEffect(() => {
+    let mounted = true;
     const api = createNearApi();
-    api.getValidators(nearContext).then(page => {
-      setValidators(
-        page.items.map(v => ({
-          validatorAddress: v.address,
-          commission: v.commissionRate != null ? Number(v.commissionRate) : null,
-          tokens: String(v.balance),
-        })),
-      );
-    });
+    api
+      .getValidators(nearContext)
+      .then(page => {
+        if (!mounted) return;
+        setValidators(
+          page.items.map(v => ({
+            validatorAddress: v.address,
+            commission: v.commissionRate != null ? Number(v.commissionRate) : null,
+            tokens: String(v.balance),
+          })),
+        );
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
   }, []);
   return validators;
 }
@@ -132,14 +147,15 @@ export function useNearBalanceBreakdown(account: NearAccount): {
     .filter(p => p.state === "withdrawable")
     .reduce((acc, p) => acc.plus(p.amount), new BigNumber(0));
   const locked = account.balance.minus(account.spendableBalance);
-  const storageUsageBalance = locked.minus(stakedBalance).gt(0)
-    ? locked.minus(stakedBalance)
+  const nonStorageLocked = stakedBalance.plus(pendingBalance).plus(availableBalance);
+  const storageUsageBalance = locked.minus(nonStorageLocked).gt(0)
+    ? locked.minus(nonStorageLocked)
     : new BigNumber(0);
   return { stakedBalance, storageUsageBalance, availableBalance, pendingBalance };
 }
 
 function reorderValidators(validators: NearValidatorItem[]): NearValidatorItem[] {
-  const sortedValidators = validators.sort((a, b) =>
+  const sortedValidators = [...validators].sort((a, b) =>
     new BigNumber(b.tokens).minus(new BigNumber(a.tokens)).toNumber(),
   );
 

@@ -3,11 +3,7 @@ import * as preloadedData from "@ledgerhq/coin-near/preload";
 import * as logic from "@ledgerhq/coin-near/logic";
 
 import { BigNumber } from "bignumber.js";
-import type {
-  NearAccount,
-  NearStakingPosition,
-  NearValidatorItem,
-} from "@ledgerhq/coin-near/types";
+import type { NearAccount, NearValidatorItem } from "@ledgerhq/coin-near/types";
 
 const ledgerValidator: NearValidatorItem = {
   validatorAddress: "ledgerbyfigment.poolv1.near",
@@ -80,7 +76,9 @@ const account: NearAccount = {
     storageUsageBalance: new BigNumber("5.182e+22"),
     stakingPositions: [],
   },
-};
+  // Framework staking positions — banner.ts reads from here after the generic adapter migration.
+  stakingPositions: [],
+} as unknown as NearAccount;
 
 const validators = [expensiveValidator, cheapValidator, ledgerValidator];
 const validatorsMap = {
@@ -126,14 +124,17 @@ describe("near/banner", () => {
     });
   });
   it("should return display redelegate mode when deactive is an action", async () => {
-    const badValidator: NearStakingPosition = {
-      staked: new BigNumber("1.29802125309300073830514e+23"),
-      available: new BigNumber("1"),
-      pending: new BigNumber("0"),
-      validatorId: "vcap.poolv1.near",
-    };
     jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue(validatorsMap);
-    account.nearResources?.stakingPositions.push(badValidator);
+    jest.spyOn(logic, "canUnstake").mockReturnValue(true);
+    // Set framework stakingPositions for the bad (expensive) validator
+    (account as unknown as { stakingPositions: unknown[] }).stakingPositions = [
+      {
+        state: "active",
+        delegate: "vcap.poolv1.near",
+        amount: new BigNumber("1.29802125309300073830514e+23"),
+      },
+      { state: "withdrawable", delegate: "vcap.poolv1.near", amount: new BigNumber("1") },
+    ];
     const result = getAccountBannerState(account);
     expect(result).toStrictEqual({
       display: true,
@@ -141,5 +142,7 @@ describe("near/banner", () => {
       validatorId: "vcap.poolv1.near",
       ledgerValidator,
     });
+    // Reset for subsequent tests
+    (account as unknown as { stakingPositions: unknown[] }).stakingPositions = [];
   });
 });
