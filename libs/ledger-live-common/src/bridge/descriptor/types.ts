@@ -397,6 +397,13 @@ export type BalanceTypeConfig = Readonly<{
     transaction: unknown;
   }) => BalanceTypeSelfTransferTarget | null;
   /**
+   * Patch recording whether the spend targets the account's own other pool, applied on
+   * every recipient write. Coins that hold self-transfer state (e.g. Zcash's
+   * `selfTransfer`, which locks the recipient) never infer it from the recipient value,
+   * so the flow has to declare it both ways; return `{}` when the recipient says it all.
+   */
+  buildSelfTransferPatch: (params: { isSelfTransfer: boolean }) => TransactionPatch;
+  /**
    * Balance the amount step may spend from this pool, bounded by the pool's transaction
    * input ceiling (e.g. Zcash's 32-action / 32-UTXO limit). Distinct from
    * `BalanceTypeOption.balance`, which is the display figure and is deliberately unbounded

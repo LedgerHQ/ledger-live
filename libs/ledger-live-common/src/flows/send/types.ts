@@ -64,6 +64,12 @@ export type RecipientData = Readonly<{
   ensName?: string;
   /** Overrides address/ensName display. Clear when address or ensName changes unless setting a new label. */
   displayLabel?: string;
+  /**
+   * Set by the transfer-to-my-other-pool shortcut, which prefills an address the user
+   * never typed. Coins that hold self-transfer state read it from here, so clear it
+   * whenever the address changes.
+   */
+  isSelfTransfer?: boolean;
   memo?: Memo;
   destinationTag?: string;
 }>;

@@ -105,6 +105,7 @@ describe("useRecipientScreenViewModel", () => {
       ensName: "name.eth",
       memo: { type: "MEMO", value: "123" },
       displayLabel: undefined,
+      isSelfTransfer: false,
     });
     expect(goToNextStep).not.toHaveBeenCalled();
 
@@ -120,7 +121,35 @@ describe("useRecipientScreenViewModel", () => {
       ensName: "name.eth",
       memo: { value: "", type: "NO_MEMO" },
       displayLabel: undefined,
+      isSelfTransfer: false,
     });
+  });
+
+  it("drops the self-transfer flag of the recipient it replaces, since the address is no longer a prefilled one", () => {
+    mockedUseSendFlowData.mockReturnValue({
+      state: {
+        account: { account, parentAccount: null, currency: account.currency },
+        recipient: { address: "u1shielded", displayLabel: "Private balance", isSelfTransfer: true },
+      } as never,
+      uiConfig: { recipientSupportsDomain: true } as never,
+      recipientSearch: { value: "", setValue: jest.fn(), clear: jest.fn() },
+      isRecipientAddressComplete: false,
+    });
+
+    const { result } = renderHook(() => useRecipientScreenViewModel());
+
+    if (!result.current.ready) {
+      throw new Error("Expected a ready recipient screen");
+    }
+    const viewModel = result.current;
+
+    act(() => {
+      viewModel.onAddressSelected("typed-address");
+    });
+
+    expect(setRecipient).toHaveBeenCalledWith(
+      expect.objectContaining({ address: "typed-address", isSelfTransfer: false }),
+    );
   });
 
   it("does not render the modal while the scanner is open", () => {

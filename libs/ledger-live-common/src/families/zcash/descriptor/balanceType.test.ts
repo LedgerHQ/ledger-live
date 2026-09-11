@@ -307,4 +307,15 @@ describe("zcash balance-type config", () => {
       expect(target).toBeNull();
     });
   });
+
+  describe("buildSelfTransferPatch", () => {
+    it.each([true, false])(
+      "records a self-transfer of %s, which the bridge never infers from the recipient",
+      isSelfTransfer => {
+        expect(zcashBalanceTypeConfig.buildSelfTransferPatch({ isSelfTransfer })).toEqual({
+          selfTransfer: isSelfTransfer,
+        });
+      },
+    );
+  });
 });

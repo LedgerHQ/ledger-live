@@ -37,6 +37,9 @@ export function useSelfTransferSectionViewModel(): SelfTransferSectionViewModel 
         address: target.address,
         displayLabel,
         ensName: undefined,
+        // Prefilling the address is not enough: coins holding self-transfer state (Zcash
+        // locks the recipient on it) never infer it from the address itself.
+        isSelfTransfer: true,
       });
       navigation.goToNextStep();
     },

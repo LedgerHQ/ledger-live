@@ -13,6 +13,7 @@ import type {
   BalanceTypeConfig,
   BalanceTypeOption,
   BalanceTypeSelfTransferTarget,
+  TransactionPatch,
 } from "../../../bridge/descriptor/types";
 
 /** The pool a spend draws from, as recorded on the transaction's `sender`. */
@@ -111,6 +112,15 @@ function getSelfTransferTarget({
 }
 
 /**
+ * `selfTransfer` is never inferred from the recipient (an address the user could also
+ * have typed), so the flow records it on every recipient write. The bridge reads it back
+ * as `recipientIsReadOnly`.
+ */
+function buildSelfTransferPatch({ isSelfTransfer }: { isSelfTransfer: boolean }): TransactionPatch {
+  return { selfTransfer: isSelfTransfer };
+}
+
+/**
  * Balance the amount step may spend from the given pool, bounded by the 32-input ceiling.
  * `getOptions` returns the full spendable figure (display accuracy); this function caps it
  * to the inputs the bridge can actually include in one transaction.
@@ -144,5 +154,6 @@ export const zcashBalanceTypeConfig: BalanceTypeConfig = {
     isZcashTransaction(transaction) ? (transaction.sender ?? null) : null,
   buildSelectionPatch: optionId => (isZcashSender(optionId) ? { sender: optionId } : {}),
   getSelfTransferTarget,
+  buildSelfTransferPatch,
   getSelectableBalance,
 };
