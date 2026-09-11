@@ -51,7 +51,7 @@ export function useScanAccounts({
   const existingAccounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const familyImpl = useLLDCoinFamily(currency.family);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
   const dispatch = useDispatch();
 
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);

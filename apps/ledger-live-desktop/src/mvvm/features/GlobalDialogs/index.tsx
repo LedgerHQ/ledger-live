@@ -25,6 +25,9 @@ const PtxInfoDialog = lazy(() => import("LLD/features/PtxInfoDialog"));
 const LiveAppModal = lazy(() => import("LLD/features/LiveAppModal"));
 const GenericAwarenessModal = lazy(() => import("LLD/features/GenericAwarenessModal"));
 const SwapTransactionStatusDialog = lazy(() => import("LLD/features/SwapTransactionStatusDialog"));
+const CurrencyRegionRestrictedDialog = lazy(
+  () => import("LLD/features/CurrencyRegionRestrictedDialog"),
+);
 const AccountPublicKeyUnavailableDialog = lazy(
   () => import("LLD/features/AccountPublicKeyUnavailableDialog"),
 );
@@ -75,6 +78,9 @@ const GlobalDialogs = () => (
     </Suspense>
     <Suspense fallback={null}>
       <AccountPublicKeyUnavailableDialog />
+    </Suspense>
+    <Suspense fallback={null}>
+      <CurrencyRegionRestrictedDialog />
     </Suspense>
   </>
 );

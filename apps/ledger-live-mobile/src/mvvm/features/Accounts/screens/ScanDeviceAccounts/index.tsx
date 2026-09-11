@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect } from "react";
+import React, { useCallback, useEffect, useLayoutEffect } from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
@@ -16,6 +16,11 @@ import CancelButton from "~/components/CancelButton";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
+import { isCurrencyRegionRestrictedError } from "@ledgerhq/live-common/errors";
+import { useDispatch } from "~/context/hooks";
+import { openCurrencyRegionRestrictedDrawer } from "~/reducers/currencyRegionRestrictedDrawer";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import useScanDeviceAccountsViewModel from "./useScanDeviceAccountsViewModel";
 import AnimatedGradient from "./components/AnimatedGradient";
 import ScanDeviceAccountsFooter from "./components/ScanDeviceAccountsFooter";
@@ -48,6 +53,7 @@ function HeaderLeft({ onPress }: Readonly<HeaderLeftProps>) {
 }
 
 function ScanDeviceAccounts() {
+  const dispatch = useDispatch();
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -89,6 +95,18 @@ function ScanDeviceAccounts() {
     blacklistedTokenIds,
     analyticsMetadata,
   });
+
+  // Retrying cannot lift a regional restriction, so the flow is left behind and the message is
+  // handed over to the global drawer, which outlives this screen.
+  const isRegionRestricted = isCurrencyRegionRestrictedError(error);
+
+  useEffect(() => {
+    if (!isRegionRestricted) return;
+    // Same exit as confirming the flow's close button, which pops rather than navigates, so the
+    // flow is dismissed instead of another screen being pushed over it.
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()?.popToTop();
+    dispatch(openCurrencyRegionRestrictedDrawer(currency.name));
+  }, [isRegionRestricted, navigation, dispatch, currency.name]);
 
   const renderHeaderLeft = useCallback(
     () => <HeaderLeft onPress={scanDeviceAccountsBack} />,
@@ -221,7 +239,7 @@ function ScanDeviceAccounts() {
         />
       )}
       <GenericErrorBottomModal
-        error={error}
+        error={isRegionRestricted ? null : error}
         onClose={onCancel}
         onModalHide={onModalHide}
         footerButtons={
