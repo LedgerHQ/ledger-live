@@ -37,6 +37,8 @@ const poolConfig = (selectedId: string | null): BalanceTypeConfig => ({
   getSelectedOptionId: () => selectedId,
   buildSelectionPatch: () => ({}),
   getSelfTransferTarget: () => null,
+  getSelectableBalance: ({ optionId }) =>
+    optionId === "private" ? new BigNumber(700) : new BigNumber(300),
 });
 
 describe("getSelectedBalanceTypeBalance", () => {

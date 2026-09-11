@@ -673,7 +673,13 @@ describe("Send Flow Integration", () => {
           icon: "lock" as const,
         },
       ]),
-      getSelectedOptionId: jest.fn(() => null),
+      getSelectedOptionId: jest.fn((transaction: unknown) => {
+        if (typeof transaction !== "object" || transaction === null || !("sender" in transaction)) {
+          return null;
+        }
+        const sender = transaction.sender;
+        return typeof sender === "string" ? sender : null;
+      }),
       buildSelectionPatch: jest.fn((id: string) => ({ sender: id })),
       getSelfTransferTarget: jest.fn(() => null),
       getSelectableBalance: jest.fn(({ optionId }: { optionId: string }) =>
@@ -709,6 +715,26 @@ describe("Send Flow Integration", () => {
 
       expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
       expect(screen.queryByTestId("balance-type-screen")).not.toBeInTheDocument();
+    });
+
+    it("should clear the recipient when the user goes back and selects a different pool", async () => {
+      const { user } = renderSendFlow(ethereumAccount);
+      await screen.findByTestId("balance-type-screen");
+      await user.click(screen.getByTestId("balance-type-public"));
+
+      await navigateToAmountScreen(user, VALID_EVM_RECIPIENT);
+
+      await user.click(screen.getByRole("button", { name: /back/i }));
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue(VALID_EVM_RECIPIENT);
+
+      await user.click(screen.getByRole("button", { name: /back/i }));
+      expect(await screen.findByTestId("balance-type-screen")).toBeVisible();
+
+      await user.click(screen.getByTestId("balance-type-private"));
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue("");
     });
   });
 });

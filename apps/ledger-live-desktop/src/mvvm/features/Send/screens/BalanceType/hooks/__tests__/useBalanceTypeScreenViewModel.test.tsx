@@ -14,7 +14,12 @@ jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
 
 // SendFlow context mocks
 const mockSetTransaction = jest.fn();
-const mockTransactionActions = { setTransaction: mockSetTransaction };
+const mockUpdateTransactionAction = jest.fn();
+const mockResetRecipient = jest.fn();
+const mockTransactionActions = {
+  setTransaction: mockSetTransaction,
+  updateTransaction: mockUpdateTransactionAction,
+};
 
 type MockState = {
   account: { account: { id: string; type: string; currency: unknown } | null };
@@ -28,7 +33,10 @@ let mockState: MockState = {
 
 jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowData: jest.fn(() => ({ state: mockState })),
-  useSendFlowActions: jest.fn(() => ({ transaction: mockTransactionActions })),
+  useSendFlowActions: jest.fn(() => ({
+    transaction: mockTransactionActions,
+    resetRecipient: mockResetRecipient,
+  })),
 }));
 
 // Bridge mock
@@ -204,14 +212,50 @@ describe("useBalanceTypeScreenViewModel", () => {
         vm.onSelect(optionId);
       }
 
+      expect(mockResetRecipient).toHaveBeenCalledTimes(1);
+      expect(mockUpdateTransactionAction).toHaveBeenCalledTimes(1);
+      const updater = mockUpdateTransactionAction.mock.calls[0][0] as (
+        tx: Record<string, unknown>,
+      ) => Record<string, unknown>;
+      updater({ id: "tx1" });
       expect(config.buildSelectionPatch).toHaveBeenCalledWith(optionId);
       expect(mockUpdateTransaction).toHaveBeenCalledWith(expect.objectContaining({ id: "tx1" }), {
         sender: optionId,
       });
-      expect(mockSetTransaction).toHaveBeenCalledTimes(1);
+      expect(mockSetTransaction).not.toHaveBeenCalled();
       expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
     },
   );
+
+  test("keeps the recipient when the same pool is selected again", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL, PRIVATE_POOL]);
+    mockState.transaction.transaction = { id: "tx1", sender: "public" };
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      vm.onSelect("public");
+    }
+
+    expect(mockResetRecipient).not.toHaveBeenCalled();
+    expect(mockUpdateTransactionAction).toHaveBeenCalledTimes(1);
+    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
+  });
+
+  test("resets the recipient when the selected pool changes", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL, PRIVATE_POOL]);
+    mockState.transaction.transaction = { id: "tx1", sender: "public" };
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      vm.onSelect("private");
+    }
+
+    expect(mockResetRecipient).toHaveBeenCalledTimes(1);
+  });
 
   test("does not touch the transaction before the user selects a pool", () => {
     renderViewModel();

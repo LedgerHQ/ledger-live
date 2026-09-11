@@ -151,6 +151,7 @@ export type SendFlowBusinessContext = Readonly<{
   }>;
   isRecipientAddressComplete: boolean;
   setIsRecipientAddressComplete: (value: boolean) => void;
+  resetRecipient: () => void;
   close: () => void;
   setAccountAndNavigate: (account: AccountLike, parentAccount?: Account) => void;
 }>;

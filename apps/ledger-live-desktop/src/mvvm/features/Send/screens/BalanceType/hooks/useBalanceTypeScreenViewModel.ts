@@ -39,7 +39,7 @@ export type BalanceTypeScreenViewModel =
 
 export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
   const { state } = useSendFlowData();
-  const { transaction: transactionActions } = useSendFlowActions();
+  const { transaction: transactionActions, resetRecipient } = useSendFlowActions();
   const { navigation } = useFlowWizard();
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
@@ -62,15 +62,21 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
   const onSelect = useCallback(
     (optionId: string) => {
       if (!transaction || !bridge || !balanceTypeConfig) return;
-      transactionActions.setTransaction(
+
+      const poolChanged = balanceTypeConfig.getSelectedOptionId(transaction) !== optionId;
+      if (poolChanged) {
+        resetRecipient();
+      }
+
+      transactionActions.updateTransaction(currentTransaction =>
         bridge.updateTransaction(
-          transaction,
+          currentTransaction,
           balanceTypeConfig.buildSelectionPatch(optionId) as Partial<FlowTransaction>,
         ),
       );
       navigation.goToStep(SEND_FLOW_STEP.RECIPIENT);
     },
-    [transaction, transactionActions, bridge, balanceTypeConfig, navigation],
+    [transaction, transactionActions, resetRecipient, bridge, balanceTypeConfig, navigation],
   );
 
   if (!account || !transaction || !bridge || !balanceTypeConfig) {

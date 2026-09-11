@@ -396,6 +396,7 @@ describe("useAmountScreenViewModel", () => {
         getSelectedOptionId: () => "private",
         buildSelectionPatch: () => ({}),
         getSelfTransferTarget: () => null,
+        getSelectableBalance: () => new BigNumber(700),
       });
 
       renderWithAccountBalance({
