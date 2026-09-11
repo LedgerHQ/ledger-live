@@ -63,8 +63,9 @@ export interface FeatureFlagsMiddlewareConfig<S = unknown> {
    * `fetchRemoteFlags`, so boot resolves on the last values the backend actually sent rather
    * than on compiled defaults.
    *
-   * An empty result is treated as "no cache" and leaves readiness to the network path, so a
-   * first-ever install never arms the gate on defaults.
+   * It changes *which values* boot resolves on, not *when* readiness is announced: that stays
+   * with the first `fetchRemoteFlags` settling, so the boot gates keep the exact meaning they had
+   * before the cache existed.
    */
   readCachedFlags?: () => Promise<PartialFeatures>;
   /**

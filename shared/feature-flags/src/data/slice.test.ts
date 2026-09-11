@@ -465,8 +465,9 @@ describe("middleware behavior", () => {
 });
 
 describe("cache prime", () => {
-  it("resolves flags and arms readiness before any fetch settles", async () => {
-    // A fetch that never settles: anything resolved here can only come from the cache.
+  it("resolves flags from the cache without arming readiness", async () => {
+    // A fetch that never settles: anything resolved here can only come from the cache. Readiness
+    // keeps its original meaning and waits for that first call, so the boot gates are unchanged.
     const store = createStore(undefined, {
       readCachedFlags: () => Promise.resolve({ mockFeature: { enabled: true } }),
       fetchRemoteFlags: () => new Promise<PartialFeatures>(() => {}),
@@ -475,19 +476,17 @@ describe("cache prime", () => {
     await flushPromises();
 
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
-    expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
+    expect(store.getState().featureFlags.remoteFlagsReady).toBe(false);
   });
 
-  it("leaves readiness to the network when the cache is empty", async () => {
+  it("arms readiness once the first fetch settles, cache or no cache", async () => {
     let settle: (flags: PartialFeatures) => void = () => {};
     const store = createStore(undefined, {
-      readCachedFlags: () => Promise.resolve({}),
+      readCachedFlags: () => Promise.resolve({ mockFeature: { enabled: true } }),
       fetchRemoteFlags: () => new Promise<PartialFeatures>(resolve => (settle = resolve)),
     });
 
     await flushPromises();
-    // An empty cache must not arm the gate, otherwise a first-ever install boots on defaults
-    // with the gate already spent.
     expect(store.getState().featureFlags.remoteFlagsReady).toBe(false);
 
     settle({ mockFeature: { enabled: true } });
@@ -496,7 +495,8 @@ describe("cache prime", () => {
     expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
   });
 
-  it("works without a fetcher at all", async () => {
+  it("arms readiness itself when there is no fetcher to wait for", async () => {
+    // Nothing else would ever settle, so leaving the gate shut would strand consumers.
     const store = createStore(undefined, {
       readCachedFlags: () => Promise.resolve({ mockFeature: { enabled: true } }),
     });

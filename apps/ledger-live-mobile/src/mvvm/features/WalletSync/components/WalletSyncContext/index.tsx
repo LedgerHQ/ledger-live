@@ -35,7 +35,7 @@ export const useWalletSyncUserState = () => React.useContext(WalletSyncContext);
  *
  * Scope: this gates the boot-time watcher, not every SDK consumer. The Ledger Sync screens reach
  * `useTrustchainSdk` through their own hooks and are not covered here, but they are only reachable
- * after navigation, by which point the cache prime has long armed readiness. Closing that gap for
+ * after navigation, long after the first fetch has settled and armed readiness. Closing that gap for
  * good means gating the SDK factory itself rather than each caller, which is tracked separately.
  */
 export function WalletSyncProvider({ children }: { children: React.ReactNode }) {

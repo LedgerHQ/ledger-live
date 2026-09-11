@@ -98,20 +98,23 @@ export function createErrorReporter(
 /**
  * Primes the remote-flag cache from the device's own storage, with no network access.
  *
- * An empty result is treated as "no cache" and leaves both the ref and the gate untouched, so a
- * first-ever install never arms readiness on compiled defaults. A failing read is reported and
- * otherwise ignored: an unreadable cache is not an error, just nothing to prime from.
+ * Deliberately does not arm readiness. That signal keeps its original meaning, "the first sync
+ * call has been made, whether it succeeded or not", so the boot gates behave exactly as they did
+ * before the cache existed. Priming only fixes *which values* are resolved, not *when* consumers
+ * are told to look.
+ *
+ * A failing read is reported and otherwise ignored: an unreadable cache is not an error, just
+ * nothing to prime from.
  */
 export async function primeFromCache(
   readCachedFlags: () => Promise<PartialFeatures>,
-  { ref, dispatchSync, dispatchReady, reportError }: ReadContext,
+  { ref, dispatchSync, reportError }: ReadContext,
 ): Promise<void> {
   try {
     const cached = await readCachedFlags();
     if (Object.keys(cached).length > 0) {
       ref.current = cached;
       dispatchSync(true);
-      dispatchReady();
     }
   } catch (error) {
     reportError(error, "cache", 1);
@@ -148,8 +151,11 @@ export async function pollRemoteFlags(context: PollContext, attempt: number = 1)
  * Runs the cache prime, then hands over to the poll loop.
  *
  * Sequenced, never raced: awaiting the prime before starting the network means a slow storage
- * read can never land on top of a fresher fetch result. The poll is skipped entirely when no
- * fetcher was configured.
+ * read can never land on top of a fresher fetch result.
+ *
+ * Readiness is left to the poll, which arms it once the first call settles either way. With no
+ * fetcher configured nothing else would ever settle, so the prime arms it instead rather than
+ * leaving consumers waiting forever.
  */
 export async function primeThenPoll(
   readCachedFlags: () => Promise<PartialFeatures>,
@@ -158,7 +164,11 @@ export async function primeThenPoll(
   ms: number | undefined,
 ): Promise<void> {
   await primeFromCache(readCachedFlags, context);
-  if (fetch) await pollRemoteFlags({ ...context, fetch, ms });
+  if (fetch) {
+    await pollRemoteFlags({ ...context, fetch, ms });
+  } else {
+    context.dispatchReady();
+  }
 }
 
 /**

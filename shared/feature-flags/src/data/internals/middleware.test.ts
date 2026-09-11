@@ -97,7 +97,9 @@ describe("createErrorReporter", () => {
 });
 
 describe("primeFromCache", () => {
-  it("populates the ref and arms both dispatchers when the cache has values", async () => {
+  it("populates the ref and re-resolves, without arming readiness", async () => {
+    // Readiness keeps its original meaning, "the first sync call has been made". The prime only
+    // changes which values are resolved, never when consumers are told to look.
     const ref: RemoteFlagsRef = { current: {} };
     const dispatchSync = jest.fn();
     const dispatchReady = jest.fn();
@@ -111,12 +113,10 @@ describe("primeFromCache", () => {
 
     expect(ref.current).toEqual({ mockFeature: { enabled: true } });
     expect(dispatchSync).toHaveBeenCalledWith(true);
-    expect(dispatchReady).toHaveBeenCalledTimes(1);
+    expect(dispatchReady).not.toHaveBeenCalled();
   });
 
   it("leaves everything untouched when the cache is empty", async () => {
-    // An empty cache must not arm readiness, otherwise a first-ever install boots with the gate
-    // already spent on compiled defaults.
     const ref: RemoteFlagsRef = { current: {} };
     const dispatchSync = jest.fn();
     const dispatchReady = jest.fn();
