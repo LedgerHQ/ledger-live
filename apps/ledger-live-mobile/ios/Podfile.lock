@@ -3234,34 +3234,6 @@ PODS:
     - Yoga
   - RNLocalize (2.2.6):
     - React-Core
-  - RNReactNativeHapticFeedback (2.3.3):
-    - boost
-    - DoubleConversion
-    - fast_float
-    - fmt
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCT-Folly/Fabric
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - SocketRocket
-    - Yoga
   - RNReanimated (4.3.0):
     - boost
     - DoubleConversion
@@ -3739,7 +3711,6 @@ DEPENDENCIES:
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_0a7cb677e518f2e9f30a24dde608028e/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_22b59121ec847ba53fb2e7d8aec6c181/node_modules/react-native-localize`)"
-  - "RNReactNativeHapticFeedback (from `../../../node_modules/.pnpm/react-native-haptic-feedback@2.3.3_react-native_4be985a7c9ac5a85953ef361e5810bbb/node_modules/react-native-haptic-feedback`)"
   - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.3.0_react-native-work_428dfbb78210a4eccefe4ea5b615ab19/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@4.15.4_react-native@0.81.6_d34209bb2ab45ed965aa2e8d5e51931e/node_modules/react-native-screens`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@12.2.0/node_modules/react-native-share`)"
@@ -4045,8 +4016,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain"
   RNLocalize:
     :path: "../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_22b59121ec847ba53fb2e7d8aec6c181/node_modules/react-native-localize"
-  RNReactNativeHapticFeedback:
-    :path: "../../../node_modules/.pnpm/react-native-haptic-feedback@2.3.3_react-native_4be985a7c9ac5a85953ef361e5810bbb/node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../../../node_modules/.pnpm/react-native-reanimated@4.3.0_react-native-work_428dfbb78210a4eccefe4ea5b615ab19/node_modules/react-native-reanimated"
   RNScreens:
@@ -4225,7 +4194,6 @@ SPEC CHECKSUMS:
   RNGestureHandler: b8d2e75c2e88fc2a1f6be3b3beeeed80b88fa37d
   RNKeychain: 76d042fc1dfba47f3945920bc82e0bce9ad1ff55
   RNLocalize: 8bf466de4c92d4721b254aabe1ff0a1456e7b9f4
-  RNReactNativeHapticFeedback: 5f1542065f0b24c9252bd8cf3e83bc9c548182e4
   RNReanimated: c74d47574d33045e2129b2a192be1deac616c3a0
   RNScreens: 4f2aed147a2775017923789d8a0a2d377712ec2e
   RNShare: 81b8cfb58b1460c4a197d5379934bdf70980c124
