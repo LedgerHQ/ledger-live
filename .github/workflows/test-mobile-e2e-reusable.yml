@@ -306,6 +306,7 @@ jobs:
             e2e/tooling/filter
             libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
             .pnpmfile.cjs
+            pnpm-workspace.yaml
             tools
             .mise/tasks
           token: ${{ steps.generate-token.outputs.token }}

@@ -172,6 +172,7 @@ jobs:
             e2e/mobile
             e2e/tooling
             pnpm-lock.yaml
+            pnpm-workspace.yaml
             .pnpmfile.cjs
             tools
             .mise/tasks
