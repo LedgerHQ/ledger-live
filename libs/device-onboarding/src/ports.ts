@@ -47,9 +47,8 @@ export type FirmwareUpdateResult =
 /**
  * Implemented by each app without exposing its live-dmk transport types to this package.
  *
- * The app owns the session lifecycle. The machine reads the current id but never opens or closes
- * a session. `openSession` is the composition boundary that supplies the app's existing DMK
- * instance. `applyFirmwareUpdate` must resolve on a refusal event without waiting for the updater
+ * The app owns the session lifecycle: the machine reads the current id but never opens or closes a
+ * session. `applyFirmwareUpdate` must resolve on a refusal event without waiting for the updater
  * observable to complete.
  */
 export type DeviceOnboardingPorts = {
