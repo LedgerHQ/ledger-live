@@ -1,3 +1,7 @@
+# 4.19.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 4.19.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.
