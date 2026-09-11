@@ -65,6 +65,41 @@ pnpm mobile pod              # iOS: run before first build and after changing na
 pnpm mobile android:clean    # Android: clean storage like a fresh app install
 ```
 
+### Optional native engine: Zcash (proof of concept)
+
+The Zcash engine is Rust. Desktop loads it as a Node addon, which cannot run in
+a React Native bundle, so this app reaches the same code through a C-ABI
+binding: an iOS XCFramework and a per-ABI Android `.so` built from
+[ledger-zcash-utils](https://github.com/LedgerHQ/ledger-zcash-utils).
+
+**This is a proof of concept, wired to nothing.** One function is bound
+(Orchard address derivation), and its only caller is a development-only startup
+probe that derives a known test vector and logs whether the result matches what
+the hardware produces. Zcash shielded support on mobile does not exist; the
+wallet still treats it as desktop-only.
+
+The artifacts are binaries, so they are **not committed**, and nothing breaks
+without them: the iOS pod is skipped, Gradle never invokes CMake, the native
+module is never registered, and the probe logs "engine not linked".
+
+To build the app *with* the engine, in a `ledger-zcash-utils` checkout:
+
+```bash
+pnpm build:mobile:ios        # dist/ZcashFfiMobile.xcframework
+pnpm build:mobile:android    # dist/android/<abi>/libzcash_ffi_mobile.so
+```
+
+then, here:
+
+```bash
+ZCASH_UTILS_DIR=../ledger-zcash-utils ./scripts/sync-zcash-ffi.sh
+pnpm pod                     # iOS only: links the new pod
+```
+
+Run the app with `VERBOSE=zcash-ffi` to see the probe's result — the logger
+drops every other type. `./scripts/sync-zcash-ffi.sh --clean` removes the
+artifacts again.
+
 ## Testing
 
 Within LWD, use the following commands for TDD and validatiion checks:

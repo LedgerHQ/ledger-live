@@ -3610,6 +3610,8 @@ PODS:
   - VisionCamera/React (4.7.3):
     - React-Core
   - Yoga (0.0.0)
+  - ZcashFfiBridge (0.1.0):
+    - React-Core
 
 DEPENDENCIES:
   - "boost (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/third-party-podspecs/boost.podspec`)"
@@ -3750,6 +3752,7 @@ DEPENDENCIES:
   - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.4_@react-nativ_25e9a0e3ae9031a914d0dc38b2020c8c/node_modules/@segment/sovran-react-native`)"
   - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_react-native-r_e6625e401364b9c30fab2026f0a8707f/node_modules/react-native-vision-camera`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/ReactCommon/yoga`)"
+  - ZcashFfiBridge (from `./ZcashFfiBridge`)
 
 SPEC REPOS:
   trunk:
@@ -4065,6 +4068,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_react-native-r_e6625e401364b9c30fab2026f0a8707f/node_modules/react-native-vision-camera"
   Yoga:
     :path: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/ReactCommon/yoga"
+  ZcashFfiBridge:
+    :path: "./ZcashFfiBridge"
 
 SPEC CHECKSUMS:
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
@@ -4240,7 +4245,8 @@ SPEC CHECKSUMS:
   TOCropViewController: 20a14b6a7a098308bf369e7c8d700dc983a974e6
   VisionCamera: b51af005669c6642dd1b4fca434eda4c1778de87
   Yoga: ff16d80456ce825ffc9400eeccc645a0dfcccdf5
+  ZcashFfiBridge: 2d8df1c41176ded5bf74fefee53ee3338f8a9e68
 
-PODFILE CHECKSUM: 11b0543d8207874e261875d4864930a6c73fcd92
+PODFILE CHECKSUM: 733cf04d1941279163b687de284ea65009b6992d
 
 COCOAPODS: 1.14.3

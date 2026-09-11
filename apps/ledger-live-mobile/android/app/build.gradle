@@ -110,6 +110,15 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
+/**
+ * Whether this checkout carries the prebuilt Zcash engine, which is fetched by
+ * scripts/sync-zcash-ffi.sh rather than committed. It gates the CMake build of
+ * the JNI shim: a build that did not opt in stays exactly as it was, and the
+ * native module is never registered (see ZcashFfiModule.kt).
+ */
+def zcashEnginePresent = file("src/main/cpp/include/zcash_ffi_mobile.h").exists() &&
+    !fileTree(dir: "src/main/jniLibs", include: "**/libzcash_ffi_mobile.so").isEmpty()
+
 android {
     ndkVersion rootProject.ext.ndkVersion
 
@@ -137,6 +146,28 @@ android {
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         testProguardFiles "proguard-rules-androidTest.pro"
+
+        if (zcashEnginePresent) {
+            externalNativeBuild {
+                cmake {
+                    // The shim is plain C plus jni.h; no STL to link or package.
+                    arguments "-DANDROID_STL=none"
+                }
+            }
+        }
+    }
+
+    // JNI shim over the prebuilt Zcash engine (src/main/cpp/CMakeLists.txt).
+    // Wired only when the engine is actually there, so a build that did not opt
+    // in via scripts/sync-zcash-ffi.sh never invokes CMake and needs no NDK
+    // CMake package. Without it the native module is simply never registered.
+    if (zcashEnginePresent) {
+        externalNativeBuild {
+            cmake {
+                path "src/main/cpp/CMakeLists.txt"
+                version "3.22.1"
+            }
+        }
     }
 
     configurations.all {
