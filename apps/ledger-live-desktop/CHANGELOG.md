@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 4.19.1-hotfix.0
+
+### Patch Changes
+
+- [#21863](https://github.com/LedgerHQ/ledger-live/pull/21863) [`a312094`](https://github.com/LedgerHQ/ledger-live/commit/a312094b97c3d4cd9f807580f80f579e4ba04fd0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): update Arc mainnet native contract address
+
+- Updated dependencies [[`a312094`](https://github.com/LedgerHQ/ledger-live/commit/a312094b97c3d4cd9f807580f80f579e4ba04fd0)]:
+  - @ledgerhq/live-common@37.5.1-hotfix.0
+  - @ledgerhq/asset-detail@0.11.4-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.20.10-hotfix.0
+
 ## 4.19.0
 
 ### Minor Changes
