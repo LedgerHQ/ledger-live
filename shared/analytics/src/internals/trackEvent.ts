@@ -18,10 +18,10 @@ export async function trackEvent(
     return;
   }
 
-  let filteredExtras: Props = {};
+  let extraProps: Props;
 
   try {
-    filteredExtras = applyPropsFilter({ ...props, ...(await resolveExtraProps(mandatory)) });
+    extraProps = (await resolveExtraProps(mandatory)) ?? {};
   } catch {
     publishEvent({
       eventName,
@@ -29,6 +29,15 @@ export async function trackEvent(
       eventPropsWithoutExtra: filteredProps,
       deliveryStatus: "failed_enrichment",
     });
+    return;
+  }
+
+  let filteredExtras: Props;
+
+  try {
+    filteredExtras = applyPropsFilter({ ...props, ...extraProps });
+  } catch {
+    publishEvent({ eventName, deliveryStatus: "failed_filter" });
     return;
   }
 

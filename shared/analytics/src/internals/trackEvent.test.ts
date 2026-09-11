@@ -229,5 +229,27 @@ describe("trackEvent", () => {
         }),
       ]);
     });
+
+    it("reports failed_filter when the property filter throws after enrichment succeeds", async () => {
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
+      setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
+      setPropsFilter(props => {
+        if ("appVersion" in props) {
+          throw new Error("filter failed on enriched payload");
+        }
+        return scrubSensitive(props);
+      });
+
+      await trackEvent("track", "Enriched Filter Failure", { theme: "light" });
+
+      expect(analyticsClient.track).not.toHaveBeenCalled();
+      expect(events).toEqual([
+        expect.objectContaining({
+          eventName: "Enriched Filter Failure",
+          deliveryStatus: "failed_filter",
+        }),
+      ]);
+    });
   });
 });
