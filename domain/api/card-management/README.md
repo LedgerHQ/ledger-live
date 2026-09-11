@@ -11,6 +11,7 @@ shared `cardApi` service (`@shared/api-services`, `services/card`) rather than d
 - `types.ts` — the inferred response types and the request arguments each endpoint takes.
 - `transforms.ts` — maps a validated wire response onto its canonical shape.
 - `constants.ts` — `CARD_MANAGEMENT_TAGS` and the OAuth2 token path.
+- `*.mock.ts` — wire-shaped answers for the apps' MSW workers, behind the `./mock/*` exports.
 
 Every endpoint is declarative: `query`, never `queryFn`, with the schemas and the transform doing the
 rest. [`.agents/skills/card-endpoint-shape`](.agents/skills/card-endpoint-shape/SKILL.md) has the

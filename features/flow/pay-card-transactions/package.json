@@ -27,8 +27,14 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card-transactions/knip.web.config.mjs -W features/flow/pay-card-transactions --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card-transactions/knip.native.config.mjs -W features/flow/pay-card-transactions --tsConfig tsconfig.native.json"
   },
+  "dependencies": {
+    "@domain/api-card-management": "workspace:^",
+    "@features/flow-pay-card-auth": "workspace:*",
+    "@shared/i18n": "workspace:*"
+  },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
+    "@support/msw-features-flow-pay-card": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@swc/core": "catalog:",
@@ -46,18 +52,21 @@
     "eslint-plugin-better-tailwindcss": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-redux": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
