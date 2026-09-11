@@ -224,6 +224,7 @@
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
     "@shared/i18n": "workspace:*",
+    "@shared/platform-linking": "workspace:*",
     "@shared/password-verifier": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",

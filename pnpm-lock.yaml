@@ -1212,6 +1212,9 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n
+      '@shared/platform-linking':
+        specifier: workspace:*
+        version: link:../../shared/platform-linking
       '@shared/ui-info-state':
         specifier: workspace:*
         version: link:../../shared/ui-info-state
@@ -2090,6 +2093,9 @@ importers:
       '@shared/password-verifier':
         specifier: workspace:*
         version: link:../../shared/password-verifier
+      '@shared/platform-linking':
+        specifier: workspace:*
+        version: link:../../shared/platform-linking
       '@shared/ui-info-state':
         specifier: workspace:*
         version: link:../../shared/ui-info-state
@@ -17893,6 +17899,51 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  shared/platform-linking:
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.0.0(@types/react@19.0.14)
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   shared/schema-primitives:
     dependencies:
       zod:
@@ -23157,7 +23208,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -28630,7 +28680,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
