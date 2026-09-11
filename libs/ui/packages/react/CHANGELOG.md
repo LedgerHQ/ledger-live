@@ -1,5 +1,13 @@
 # @ledgerhq/react-ui
 
+## 0.54.0
+
+### Minor Changes
+
+- [#21390](https://github.com/LedgerHQ/ledger-live/pull/21390) [`8c98d3b`](https://github.com/LedgerHQ/ledger-live/commit/8c98d3b1e849a4684bd21861ae56faadf1dc3a28) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove Storybook from the desktop app: drop the `.storybook` config, the `rsbuild.storybook.config.js` builder, every `*.stories.*` file and the Storybook-only dependencies (`storybook`, `@storybook/*`, `storybook-react-rsbuild`, `@rsbuild/*`, `@vitest/mocker`, `events`). The `STORYBOOK_ENV` branches around `electron` access are gone, so `clipboard` and `shell` are now imported directly, and the shared Jest `electron` mock exposes `clipboard`. The now-dead `*.stories.tsx` exclusions in the repo Sonar and `@ledgerhq/react-ui` build configs are removed too.
+
+- [#21414](https://github.com/LedgerHQ/ledger-live/pull/21414) [`73f68cd`](https://github.com/LedgerHQ/ledger-live/commit/73f68cd228569c9d68ab22108aa5ead99adc6706) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the leftovers of the Storybook removal: the orphan `rsbuild.config.ts` and its now-unused dev dependencies (`@rsbuild/*`, `os-browserify`, `tty-browserify`, `util`), and the dead Playwright suite of `@ledgerhq/ui` which targeted the `examples/` folder deleted earlier.
+
 ## 0.54.0-next.0
 
 ### Minor Changes

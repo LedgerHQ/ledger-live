@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.12.0
+
+### Minor Changes
+
+- [#21642](https://github.com/LedgerHQ/ledger-live/pull/21642) [`5db7a7d`](https://github.com/LedgerHQ/ledger-live/commit/5db7a7dc517bb23d12532ae07cc947eddff6c10e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix the trustchain membership check, which accepted any public key of the right length and therefore let a block issued by a non-member be replayed. Seed and Derive, which grant ownership to their issuer, now also require an existing owner when the stream is already created, and two unreachable conditions were removed from the key publication check.
+
 ## 0.12.0-next.0
 
 ### Minor Changes

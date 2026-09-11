@@ -1,5 +1,17 @@
 # @features/flow-pay-feature-tour
 
+## 0.5.0
+
+### Minor Changes
+
+- [#21373](https://github.com/LedgerHQ/ledger-live/pull/21373) [`d54d191`](https://github.com/LedgerHQ/ledger-live/commit/d54d19127a958bb0ac8c9c479bba716ce67041ff) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Update the Pay feature tour copy, icons, and hero to match mockups (LIVE-36497).
+
+### Patch Changes
+
+- Updated dependencies [[`3ea6abc`](https://github.com/LedgerHQ/ledger-live/commit/3ea6abc7a12a27650caf47551e328ab38c9308d6)]:
+  - @shared/ui-queued-bottom-sheet@0.3.0
+  - @shared/i18n@0.2.0
+
 ## 0.5.0-next.0
 
 ### Minor Changes

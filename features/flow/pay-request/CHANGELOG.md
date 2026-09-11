@@ -1,5 +1,21 @@
 # @features/flow-pay-request
 
+## 0.4.0
+
+### Minor Changes
+
+- [#21421](https://github.com/LedgerHQ/ledger-live/pull/21421) [`3d23fd4`](https://github.com/LedgerHQ/ledger-live/commit/3d23fd471fbb0ba76a0e6997eba995e190a89f7c) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add a first-time verify hint on mobile Pay Request, persisted once dismissed.
+
+- [#21434](https://github.com/LedgerHQ/ledger-live/pull/21434) [`b7f83a1`](https://github.com/LedgerHQ/ledger-live/commit/b7f83a1c1818e4eff9ffbf19796a71d7242fd5b4) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add persisted Pay Request verify-hint state in `@features/flow-pay-request`.
+
+- [#21408](https://github.com/LedgerHQ/ledger-live/pull/21408) [`c270975`](https://github.com/LedgerHQ/ledger-live/commit/c2709750e007b758fa13f0f717efa897fcc6235d) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add a first-time Popover on desktop Pay Request Verify.
+
+### Patch Changes
+
+- Updated dependencies [[`3ea6abc`](https://github.com/LedgerHQ/ledger-live/commit/3ea6abc7a12a27650caf47551e328ab38c9308d6)]:
+  - @shared/ui-queued-bottom-sheet@0.3.0
+  - @shared/ui-qr-code@0.4.0
+
 ## 0.4.0-next.0
 
 ### Minor Changes

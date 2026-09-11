@@ -1,5 +1,13 @@
 # @features/flow-pay-balance
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`3ea6abc`](https://github.com/LedgerHQ/ledger-live/commit/3ea6abc7a12a27650caf47551e328ab38c9308d6)]:
+  - @shared/ui-queued-bottom-sheet@0.3.0
+  - @shared/i18n@0.2.0
+
 ## 0.4.1-next.0
 
 ### Patch Changes

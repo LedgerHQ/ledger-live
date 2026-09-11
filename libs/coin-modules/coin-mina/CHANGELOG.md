@@ -1,5 +1,27 @@
 # @ledgerhq/coin-mina
 
+## 1.23.0
+
+### Minor Changes
+
+- [#21345](https://github.com/LedgerHQ/ledger-live/pull/21345) [`4d295a4`](https://github.com/LedgerHQ/ledger-live/commit/4d295a4f41290cb7cd50a0b221e6956362443f2c) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Report a first mina delegation as DELEGATE instead of REDELEGATE
+
+  A `delegate_change` transaction does not say whether the account already delegated, and the
+  synchronisation typed every one of them as REDELEGATE, so a first delegation showed up as
+  "Redelegated" in the history once confirmed. Delegation operations are now replayed
+  oldest-first to tell a first delegation from a validator switch, and the optimistic operation
+  follows the same rule so the label no longer flips after the first sync.
+
+  Retyping an operation also re-ids it, and the merge of an account synchronisation dedupes on the
+  id alone, so an already-synchronised account would have listed its first delegation twice. The
+  stored operations a synchronisation brings back under other ids are now dropped.
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
+  - @ledgerhq/types-live@6.123.0
+  - @ledgerhq/ledger-wallet-framework@3.3.0
+
 ## 1.23.0-next.0
 
 ### Minor Changes

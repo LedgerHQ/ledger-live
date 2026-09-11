@@ -1,5 +1,16 @@
 # @ledgerhq/live-signer-concordium
 
+## 0.7.0
+
+### Minor Changes
+
+- [#21204](https://github.com/LedgerHQ/ledger-live/pull/21204) [`3a78322`](https://github.com/LedgerHQ/ledger-live/commit/3a783224b6016fce08fa8cb3254057b75882e2c5) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Adopt the PLT-capable Concordium signer and map the PLT status words to typed errors
+
+### Patch Changes
+
+- Updated dependencies [[`47a1cd0`](https://github.com/LedgerHQ/ledger-live/commit/47a1cd082cc30cd7cc539a8eb0e0fe5466128533), [`3a78322`](https://github.com/LedgerHQ/ledger-live/commit/3a783224b6016fce08fa8cb3254057b75882e2c5), [`2b8a4e4`](https://github.com/LedgerHQ/ledger-live/commit/2b8a4e4240a414cbb1bda31b97b70837cb6ac3fe), [`92b90a6`](https://github.com/LedgerHQ/ledger-live/commit/92b90a6eebca959abe0b04aa83c5799d34f9f10a), [`30619aa`](https://github.com/LedgerHQ/ledger-live/commit/30619aaa2af784fd917214bb0e4bbd092f883e11)]:
+  - @ledgerhq/coin-concordium@1.2.0
+
 ## 0.7.0-next.0
 
 ### Minor Changes
