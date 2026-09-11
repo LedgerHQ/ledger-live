@@ -21,6 +21,7 @@ function renderCardDetails() {
   };
 }
 
+// Triggers coverage re-run to validate nx cache key includes dep sources (see nx.workspace.json).
 describe("CardDetails (native)", () => {
   it("should show the preview actions when the card details screen renders", () => {
     renderCardDetails();
