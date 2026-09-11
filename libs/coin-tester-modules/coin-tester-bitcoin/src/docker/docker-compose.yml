@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:15@sha256:386166d1a81e5ed9dfbbbbd8d4abe439d35ced9cc845eb3d09bc43b0b3860117
+    image: postgres:15
     cpus: 1
     environment:
       POSTGRES_USER: username
@@ -58,7 +58,7 @@ services:
       timeout: 5s
   rabbitmq:
     cpus: 1
-    image: rabbitmq:3@sha256:d5c647e05eebc9d42ddcd242375a55eaf5e88d2403bbdeb79a96744c532a29ba
+    image: rabbitmq:3
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 5s
