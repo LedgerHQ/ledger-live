@@ -7,8 +7,7 @@ import "node-libs-react-native/globals";
 // https://github.com/kmagiera/react-native-gesture-handler/issues/320#issuecomment-443815828
 import "react-native-gesture-handler";
 
-/** URL polyfill */
-// URL object `intentionally` lightweight, does not support URLSearchParams features
+// Polyfill URL + URLSearchParams — React Native's native URL doesn't support URLSearchParams.
 // https://github.com/facebook/react-native/issues/23922
 import "react-native-url-polyfill/auto";
 

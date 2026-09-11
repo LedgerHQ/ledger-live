@@ -111,7 +111,7 @@ export default function LocaleProvider({ children }: Props) {
   // To be removed the day we want to support arabic again.
   if (I18nManager.isRTL) {
     I18nManager.forceRTL(false);
-    RNRestart.Restart();
+    RNRestart.restart();
   }
 
   const value: LocaleState = useMemo(
