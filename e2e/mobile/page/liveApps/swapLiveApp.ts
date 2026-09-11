@@ -8,6 +8,7 @@ import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import {
   QUOTE_CARD_PROVIDER_NAME_FRAGMENT,
   quoteCardCtaPattern,
+  quoteCardProviderNameSelector,
   quoteCardVariantPrefix,
   SWAP_FLAG_OVERRIDES_KEY,
   swapFlagPresetPayload,
@@ -162,34 +163,39 @@ export default class SwapLiveAppPage {
     throw new Error("No single-app exchange providers found");
   }
 
-  private quoteCardProviderNameSelector(providerName: string) {
-    return `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${providerName.toLowerCase()}']`;
-  }
-
   private async tapQuoteCardProvider(providerName: string) {
-    const card = getWebElementByCssSelector(this.quoteCardProviderNameSelector(providerName));
+    const card = getWebElementByCssSelector(quoteCardProviderNameSelector(providerName));
     await waitWebElement(card);
     await tapWebElementByElement(card);
   }
 
-  // Only the loaded page can write its localStorage, and the atom reads the key once.
-  @Step("Pin swap live app feature flags: {{{0}}}")
-  async applyFlagPreset(preset: SwapFlagPreset) {
-    await this.swapMainContainerWebElement.runScript(
-      (_el: HTMLElement, key: string, value: string) => localStorage.setItem(key, value),
-      [SWAP_FLAG_OVERRIDES_KEY, swapFlagPresetPayload(preset)],
-    );
-    this.flagPresetPinned = true;
+  // Detox has no webview reload, so a deeplink round trip remounts the live app.
+  private async reopenSwapLiveApp() {
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.swap.openViaDeeplink();
     await this.expectSwapLiveAppForm();
   }
 
-  // The override outlives the test. A missing live app is nothing to clean, not a failure.
+  // Open the live app first: only the loaded page can write its localStorage, whatever
+  // screen the previous test left on top. The atom reads the key once per load.
+  @Step("Pin swap live app feature flags: {{{0}}}")
+  async applyFlagPreset(preset: SwapFlagPreset) {
+    await this.reopenSwapLiveApp();
+    await this.swapMainContainerWebElement.runScript(
+      (_el: HTMLElement, key: string, value: string) => localStorage.setItem(key, value),
+      [SWAP_FLAG_OVERRIDES_KEY, swapFlagPresetPayload(preset)],
+    );
+    this.flagPresetPinned = true;
+    await this.reopenSwapLiveApp();
+  }
+
+  // The override outlives the test and survives an app relaunch, so reopen the live app
+  // before clearing it. A failed test can leave any screen on top.
   @Step("Clear swap live app feature flag overrides")
   async clearFlagOverrides() {
     this.flagPresetPinned = false;
     try {
+      await this.reopenSwapLiveApp();
       await this.swapMainContainerWebElement.runScript(
         (_el: HTMLElement, key: string) => localStorage.removeItem(key),
         [SWAP_FLAG_OVERRIDES_KEY],

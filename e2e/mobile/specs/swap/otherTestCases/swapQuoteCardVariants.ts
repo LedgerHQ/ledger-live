@@ -10,8 +10,7 @@ import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { performSwapUntilQuoteSelectionStep } from "@e2e/utils/swapUtils";
 import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
 
-// One case per value the A/B test serves. Disabled runs first, so a failed teardown
-// leaves the production state behind.
+// One case per value the A/B test serves.
 const presets: SwapFlagPreset[] = ["lumenQuoteCardDisabled", "lumenQuoteCardEnabled"];
 
 export function runSwapQuoteCardVariantsTest(
