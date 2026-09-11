@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-vechain
 
+## 0.1.5-next.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@37.6.0-next.4
+
 ## 0.1.5-next.3
 
 ### Patch Changes

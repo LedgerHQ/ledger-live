@@ -1,5 +1,11 @@
 # @shared/feature-flags
 
+## 0.22.0-next.1
+
+### Minor Changes
+
+- [#21833](https://github.com/LedgerHQ/ledger-live/pull/21833) [`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix walletsync feature flags (lldWalletSync, llmWalletSync) to default to the PROD environment instead of STAGING.
+
 ## 0.22.0-next.0
 
 ### Minor Changes

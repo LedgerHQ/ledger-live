@@ -1,5 +1,12 @@
 # @features/flow-contacts-delete-contact
 
+## 0.2.1-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-contacts@0.6.0-next.1
+
 ## 0.2.1-next.0
 
 ### Patch Changes

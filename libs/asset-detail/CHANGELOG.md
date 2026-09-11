@@ -1,5 +1,12 @@
 # @ledgerhq/asset-detail
 
+## 0.11.4-next.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@37.6.0-next.4
+
 ## 0.11.4-next.3
 
 ### Patch Changes

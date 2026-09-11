@@ -1,5 +1,31 @@
 # live-mobile
 
+## 4.20.0-next.4
+
+### Minor Changes
+
+- [#21833](https://github.com/LedgerHQ/ledger-live/pull/21833) [`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix walletsync feature flags (lldWalletSync, llmWalletSync) to default to the PROD environment instead of STAGING.
+
+### Patch Changes
+
+- Updated dependencies [[`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914)]:
+  - @shared/feature-flags@0.22.0-next.1
+  - @devtools/bindings@0.7.0-next.1
+  - @features/flow-contacts-add-address@0.4.0-next.1
+  - @features/flow-large-screen-upsell@2.0.2-next.1
+  - @features/platform-contacts@0.6.0-next.1
+  - @features/platform-currencies@0.8.0-next.1
+  - @features/platform-feature-flags@0.6.9-next.1
+  - @features/flow-contacts@0.10.0-next.1
+  - @features/flow-contacts-add-contact@0.5.1-next.1
+  - @features/flow-contacts-delete-contact@0.2.1-next.1
+  - @features/flow-contacts-edit-address@0.3.0-next.1
+  - @features/flow-contacts-edit-contact@0.4.0-next.1
+  - @features/flow-contacts-list@0.6.0-next.1
+  - @features/flow-pay-contact@0.3.0-next.1
+  - @features/flow-analytics-consent@0.2.5-next.1
+  - @devtools/shell@0.9.2-next.1
+
 ## 4.20.0-next.3
 
 ### Minor Changes

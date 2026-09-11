@@ -1,5 +1,14 @@
 # @features/flow-pay-contact
 
+## 0.3.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-contacts@0.6.0-next.1
+  - @features/flow-contacts@0.10.0-next.1
+  - @features/flow-contacts-add-contact@0.5.1-next.1
+
 ## 0.3.0-next.0
 
 ### Minor Changes
