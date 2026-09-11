@@ -30,7 +30,9 @@ describe("getStakes (integration)", () => {
         expect(typeof stake.amountDeposited).toBe("bigint");
       }
       expect(stake.details).not.toBeUndefined();
-      expect(typeof stake.details?.rentExemptReserve).toBe("string");
+      expect(typeof stake.details?.lockedReserve).toBe("number");
+      expect(typeof stake.details?.canStake).toBe("boolean");
+      expect(typeof stake.details?.canWithdraw).toBe("boolean");
 
       for (const action of stake.actions) {
         expect(["delegate", "redelegate", "undelegate", "claim_reward"]).toContain(action);

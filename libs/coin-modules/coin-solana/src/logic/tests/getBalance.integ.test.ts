@@ -51,16 +51,20 @@ describe("getBalance (integration)", () => {
 
     expect(balances.length).toBeGreaterThanOrEqual(1);
 
-    const [native, stake1, stake2, stake3, ...tokenBalances] = balances;
+    // Partitioned by shape, not by position: the address's stake count changes on chain.
+    const [native, ...rest] = balances;
 
     expect(native.asset).toEqual({ type: "native" });
     expect(native.value).toBeGreaterThan(0n);
     expect(native.locked).toBeGreaterThan(0n);
 
-    expectStakeBalance(stake1);
-    expectStakeBalance(stake2);
-    expectStakeBalance(stake3);
+    const stakeBalances = rest.filter(b => b.stake);
+    const tokenBalances = rest.filter(b => !b.stake);
 
+    expect(stakeBalances.length).toBeGreaterThan(0);
+    for (const b of stakeBalances) {
+      expectStakeBalance(b);
+    }
     for (const b of tokenBalances) {
       expectTokenBalance(b);
     }

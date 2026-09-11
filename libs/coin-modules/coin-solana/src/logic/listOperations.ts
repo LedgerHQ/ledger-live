@@ -4,13 +4,20 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import {
+  getAssociatedTokenAddressSync,
+  TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
+} from "@solana/spl-token";
+import { PublicKey } from "@solana/web3.js";
+import chunk from "lodash/chunk";
 import type {
   ConfirmedSignatureInfo,
   ParsedTransactionWithMeta,
   SignaturesForAddressOptions,
   TokenBalance,
 } from "@solana/web3.js";
+import { getTokenAccountProgramId } from "../helpers/token";
 import type { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import type { SolanaTokenProgram } from "../types";
@@ -30,43 +37,171 @@ export async function listOperations(
   }
 
   const rpcLimit = limit ?? 100;
-  const opts: SignaturesForAddressOptions = { limit: rpcLimit };
-
-  if (cursor) {
-    opts.before = cursor;
-  }
-
-  const signatures = await api.getSignaturesForAddress(address, opts);
-
-  if (signatures.length === 0) {
-    return { items: [], next: undefined };
-  }
-
-  const sigStrings = signatures.map(s => s.signature);
-  const parsed = await api.getParsedTransactions(sigStrings);
-  const txBySignature = indexTransactionsBySignature(parsed);
+  const decoded = decodeCursor(cursor, address);
+  let before = decoded.cursors;
+  let activeSources =
+    cursor && !decoded.legacy ? Object.keys(before) : await signatureSources(api, address);
 
   const items: Operation[] = [];
-  for (const sig of signatures) {
-    const tx = txBySignature.get(sig.signature);
-    if (!tx?.meta || sig.blockTime === null || sig.blockTime === undefined) continue;
 
-    if (minHeight > 0 && sig.slot < minHeight) continue;
+  // `paginateOperations` stops on an empty page even when a cursor comes with it.
+  for (;;) {
+    const batched = await api.getSignaturesForAddressBatch(
+      activeSources.map(source => ({
+        address: source,
+        opts: {
+          limit: rpcLimit,
+          ...(before[source] ? { before: before[source] } : {}),
+        } satisfies SignaturesForAddressOptions,
+      })),
+    );
+    const perSource = activeSources.map((source, index) => ({
+      source,
+      signatures: batched[index] ?? [],
+    }));
 
-    const txMeta = buildTxMeta(sig, tx);
+    const seen = new Set<string>();
+    const fromTokenStreamOnly = new Set<string>();
+    const sourced: Array<{ source: string; signature: ConfirmedSignatureInfo }> = [];
+    for (const { source, signatures: sourceSignatures } of perSource) {
+      for (const signature of sourceSignatures) {
+        if (seen.has(signature.signature)) continue;
+        seen.add(signature.signature);
+        if (source !== address) fromTokenStreamOnly.add(signature.signature);
+        sourced.push({ source, signature });
+      }
+    }
 
-    const nativeOps = parseNativeOperations(address, tx, txMeta);
-    const tokenOps = parseTokenOperations(address, tx, txMeta);
+    if (sourced.length === 0) {
+      return { items, next: undefined };
+    }
 
-    items.push(...nativeOps, ...tokenOps);
+    sourced.sort((a, b) => b.signature.slot - a.signature.slot);
+
+    const page = sourced.slice(0, rpcLimit);
+    const signatures = page.map(entry => entry.signature);
+
+    // A signature this source fetched is behind the page only if this source put it in `sourced`
+    // and the slice cut it; one another source contributed was handled there.
+    const cut = new Set(
+      sourced.slice(rpcLimit).map(entry => `${entry.source}|${entry.signature.signature}`),
+    );
+
+    const nextCursors: Record<string, string> = {};
+    for (const { source, signatures: sourceSignatures } of perSource) {
+      let covered = 0;
+      while (
+        covered < sourceSignatures.length &&
+        !cut.has(`${source}|${sourceSignatures[covered].signature}`)
+      ) {
+        covered++;
+      }
+      if (covered === sourceSignatures.length && sourceSignatures.length < rpcLimit) continue;
+
+      const last = sourceSignatures[covered - 1];
+      if (!last) {
+        nextCursors[source] = before[source] ?? "";
+      } else if (!(minHeight > 0 && last.slot < minHeight)) {
+        nextCursors[source] = last.signature;
+      }
+    }
+
+    const txBySignature = new Map<string, ParsedTransactionWithMeta>();
+    for (const batch of chunk(
+      signatures.map(s => s.signature),
+      PARSED_TRANSACTIONS_BATCH_SIZE,
+    )) {
+      for (const [signature, tx] of indexTransactionsBySignature(
+        await api.getParsedTransactions(batch),
+      )) {
+        txBySignature.set(signature, tx);
+      }
+    }
+
+    for (const sig of signatures) {
+      const tx = txBySignature.get(sig.signature);
+      if (!tx?.meta || sig.blockTime === null || sig.blockTime === undefined) continue;
+
+      if (minHeight > 0 && sig.slot < minHeight) continue;
+
+      if (fromTokenStreamOnly.has(sig.signature) && mentions(tx, address)) continue;
+
+      const txMeta = buildTxMeta(sig, tx);
+
+      const nativeOps = parseNativeOperations(address, tx, txMeta);
+      const tokenOps = parseTokenOperations(address, tx, txMeta);
+
+      items.push(...nativeOps, ...tokenOps);
+    }
+
+    const unchanged =
+      Object.keys(nextCursors).length === Object.keys(before).length &&
+      Object.entries(nextCursors).every(([source, sig]) => before[source] === sig);
+    if (items.length > 0 || Object.keys(nextCursors).length === 0 || unchanged) {
+      return { items, next: encodeCursor(nextCursors) };
+    }
+
+    before = nextCursors;
+    activeSources = Object.keys(nextCursors);
   }
+}
 
-  const lastSig = signatures[signatures.length - 1];
-  const hasMore = signatures.length === rpcLimit;
-  const reachedMinHeightBoundary = minHeight > 0 && lastSig.slot < minHeight;
-  const next = hasMore && !reachedMinHeightBoundary ? lastSig.signature : undefined;
+/** The RPC payload is capped near 50 KB; `network/chain/web3.ts` uses the same size. */
+const PARSED_TRANSACTIONS_BATCH_SIZE = 100;
 
-  return { items, next };
+function mentions(tx: ParsedTransactionWithMeta, address: string): boolean {
+  return tx.transaction.message.accountKeys.some(key => key.pubkey.toBase58() === address);
+}
+
+/**
+ * Auxiliary token accounts are left out: an operation names its account by owner and mint alone,
+ * so their activity would land on the associated account, which is the only one `getBalance`
+ * reports.
+ */
+async function signatureSources(api: ChainAPI, address: string): Promise<string[]> {
+  const owner = new PublicKey(address);
+  const [splTokenAccounts, token2022Accounts] = await Promise.all([
+    api.getParsedTokenAccountsByOwner(address).then(res => res.value),
+    api.getParsedToken2022AccountsByOwner(address).then(res => res.value),
+  ]);
+
+  const associated = [
+    ...splTokenAccounts.map(account => ({ account, program: PARSED_PROGRAMS.SPL_TOKEN })),
+    ...token2022Accounts.map(account => ({ account, program: PARSED_PROGRAMS.SPL_TOKEN_2022 })),
+  ].flatMap(({ account, program }) => {
+    const mint = account.account.data.parsed.info.mint as string;
+    const expected = getAssociatedTokenAddressSync(
+      new PublicKey(mint),
+      owner,
+      undefined,
+      getTokenAccountProgramId(program),
+    );
+    return expected.equals(account.pubkey) ? [account.pubkey.toBase58()] : [];
+  });
+
+  return [address, ...associated];
+}
+
+/** `legacy` marks a bare owner signature, minted before token streams existed. */
+function decodeCursor(
+  cursor: string | undefined,
+  address: string,
+): { cursors: Record<string, string>; legacy: boolean } {
+  if (!cursor) return { cursors: {}, legacy: false };
+  try {
+    const parsed: unknown = JSON.parse(Buffer.from(cursor, "base64").toString("utf8"));
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      return { cursors: parsed as Record<string, string>, legacy: false };
+    }
+  } catch {
+    // Not one of ours: fall through to the bare-signature reading.
+  }
+  return { cursors: { [address]: cursor }, legacy: true };
+}
+
+function encodeCursor(cursors: Record<string, string>): string | undefined {
+  if (Object.keys(cursors).length === 0) return undefined;
+  return Buffer.from(JSON.stringify(cursors)).toString("base64");
 }
 
 /** JSON-RPC batch responses are not order-guaranteed, so pairing by array position is unsafe. */
@@ -84,6 +219,7 @@ function indexTransactionsBySignature(
 }
 
 type TxMeta = {
+  memo?: string;
   hash: string;
   slot: number;
   blockTime: number;
@@ -97,8 +233,17 @@ type TxMeta = {
  * normalising types (e.g. fee → bigint) so downstream helpers don't depend on RPC shapes.
  * Callers guarantee that `sig.blockTime` and `tx.meta` are non-null before calling.
  */
+/**
+ * The RPC prefixes a memo with its byte length (`[5] hello`). Dropping the matched prefix rather
+ * than slicing by the declared length, which counts bytes where `String` indexes UTF-16 units.
+ */
+export function dropMemoLengthPrefixIfAny(memo: string): string {
+  return memo.replace(/^\[\d+\]\s/, "");
+}
+
 function buildTxMeta(sig: ConfirmedSignatureInfo, tx: ParsedTransactionWithMeta): TxMeta {
   return {
+    ...(sig.memo ? { memo: dropMemoLengthPrefixIfAny(sig.memo) } : {}),
     hash: sig.signature,
     slot: sig.slot,
     blockTime: sig.blockTime!,
@@ -132,7 +277,9 @@ function makeOperation(params: MakeOperationParams): Operation {
     recipients,
     value,
     asset,
-    ...(details ? { details } : {}),
+    ...(details || meta.memo
+      ? { details: { ...details, ...(meta.memo ? { memo: meta.memo } : {}) } }
+      : {}),
     tx: {
       hash: meta.hash,
       block: {
@@ -186,10 +333,26 @@ function parseNativeOperations(
   }
 
   const isFeePayer = accountIndex === 0;
+
+  const accountOpType = detectAccountOperation(tx, isFeePayer);
+  if (accountOpType) {
+    return [
+      makeOperation({
+        address,
+        opType: accountOpType,
+        value: balanceDelta < 0n ? -balanceDelta : balanceDelta,
+        senders: [],
+        recipients: [],
+        asset: { type: "native" },
+        meta,
+        operationIndex: 0,
+      }),
+    ];
+  }
+
   const { opType, value } = classifyNativeTransfer(balanceDelta, isFeePayer, meta.fee);
 
-  const counterparty = findNativeCounterparty(message.accountKeys, accountIndex, txMeta);
-  const { senders, recipients } = buildParties(opType, address, counterparty);
+  const { senders, recipients } = nativeParties(tx, opType, address, meta.fee);
 
   return [
     makeOperation({
@@ -203,6 +366,33 @@ function parseNativeOperations(
       operationIndex: 0,
     }),
   ];
+}
+
+function detectAccountOperation(
+  tx: ParsedTransactionWithMeta,
+  isFeePayer: boolean,
+): string | undefined {
+  const ixs = getParsedInstructions(tx);
+  if (ixs.length !== 1) return undefined;
+
+  const [ix] = ixs;
+  switch (ix.program) {
+    case PARSED_PROGRAMS.SPL_ASSOCIATED_TOKEN_ACCOUNT:
+      return ix.type === "associate" ? (isFeePayer ? "OPT_OUT" : "OPT_IN") : undefined;
+    case PARSED_PROGRAMS.SPL_TOKEN:
+    case PARSED_PROGRAMS.SPL_TOKEN_2022:
+      switch (ix.type) {
+        case "closeAccount":
+          return "OPT_OUT";
+        case "freezeAccount":
+          return "FREEZE";
+        case "thawAccount":
+          return "UNFREEZE";
+      }
+      return undefined;
+    default:
+      return undefined;
+  }
 }
 
 /**
@@ -229,35 +419,71 @@ function classifyNativeTransfer(
   return { opType: "NONE", value: 0n };
 }
 
-/**
- * Heuristic counterparty: first account whose lamport balance changed.
- * May be inaccurate for complex multi-account transactions.
- */
-function findNativeCounterparty(
-  accountKeys: ParsedTransactionWithMeta["transaction"]["message"]["accountKeys"],
-  accountIndex: number,
-  txMeta: NonNullable<ParsedTransactionWithMeta["meta"]>,
-): string | undefined {
-  const { preBalances, postBalances } = txMeta;
-  const idx = accountKeys.findIndex(
-    (_k, i) => i !== accountIndex && BigInt(postBalances[i]) - BigInt(preBalances[i]) !== 0n,
-  );
-  return idx >= 0 ? accountKeys[idx].pubkey.toBase58() : undefined;
-}
+type Parties = { senders: string[]; recipients: string[] };
 
-function buildParties(
+function nativeParties(
+  tx: ParsedTransactionWithMeta,
   opType: string,
   address: string,
-  counterparty: string | undefined,
-): { senders: string[]; recipients: string[] } {
-  const otherParty = counterparty ? [counterparty] : [];
+  txFee: bigint,
+): Parties {
+  const txMeta = tx.meta!;
 
-  const isSender = opType === "OUT" || opType === "FEES";
-  const senders = isSender ? [address] : otherParty;
+  if (opType === "FEES") return tokenParties(tx);
 
-  const recipients = opType === "IN" ? [address] : otherParty;
+  if (opType === "OPT_IN") {
+    const incoming = (txMeta.postTokenBalances ?? []).filter(b => b.owner === address);
+    return {
+      senders: incoming.map(b => b.mint),
+      recipients: incoming.map(
+        b => tx.transaction.message.accountKeys[b.accountIndex]?.pubkey.toBase58() ?? address,
+      ),
+    };
+  }
 
-  return { senders, recipients };
+  if (opType !== "IN" && opType !== "OUT") return { senders: [], recipients: [] };
+
+  const { preBalances, postBalances } = txMeta;
+  return tx.transaction.message.accountKeys.reduce<Parties>(
+    (acc, account, i) => {
+      const delta = BigInt(postBalances[i]) - BigInt(preBalances[i]);
+      if (delta < 0n) {
+        if (i !== 0 || -delta !== txFee) acc.senders.push(account.pubkey.toBase58());
+      } else if (delta > 0n) {
+        acc.recipients.push(account.pubkey.toBase58());
+      }
+      return acc;
+    },
+    { senders: [], recipients: [] },
+  );
+}
+
+/**
+ * Without a `mint`, every token the transaction moved counts — which is what a fee-only native
+ * operation needs. With one, a transaction touching several mints (a swap) keeps each operation's
+ * counterparties to its own asset.
+ */
+function tokenParties(tx: ParsedTransactionWithMeta, mint?: string): Parties {
+  const txMeta = tx.meta!;
+  const { preTokenBalances, postTokenBalances } = txMeta;
+
+  return tx.transaction.message.accountKeys.reduce<Parties>(
+    (acc, account, i) => {
+      const pre = preTokenBalances?.find(b => b.accountIndex === i);
+      const post = postTokenBalances?.find(b => b.accountIndex === i);
+      if (!pre && !post) return acc;
+      if (mint !== undefined && (post?.mint ?? pre?.mint) !== mint) return acc;
+
+      const delta =
+        BigInt(post?.uiTokenAmount.amount ?? 0) - BigInt(pre?.uiTokenAmount.amount ?? 0);
+      // A closed or fully spent token account is absent from `post`, but `pre` still names its owner.
+      const party = post?.owner ?? pre?.owner ?? account.pubkey.toBase58();
+      if (delta < 0n) acc.senders.push(party);
+      else if (delta > 0n) acc.recipients.push(party);
+      return acc;
+    },
+    { senders: [], recipients: [] },
+  );
 }
 
 type ParsedIx = { program: string; type: string; info: Record<string, unknown> | undefined };
@@ -266,6 +492,7 @@ function getParsedInstructions(tx: ParsedTransactionWithMeta): ParsedIx[] {
   const results: ParsedIx[] = [];
   for (const ix of tx.transaction.message.instructions) {
     if (!("parsed" in ix)) continue;
+    if ((ix as { program?: string }).program === PARSED_PROGRAMS.SPL_MEMO) continue;
     const raw = ix as { program?: string; parsed?: unknown };
     if (typeof raw.parsed !== "object" || raw.parsed === null) continue;
     const parsed = raw.parsed as { type?: string; info?: Record<string, unknown> };
@@ -387,17 +614,18 @@ function parseTokenOperations(
   );
   const ops: Operation[] = [];
   let operationIndex = 1;
+  const burned = isBurnTransaction(tx);
+  const frozenOpType = detectTokenAccountState(tx);
 
   for (const [, change] of tokenChanges) {
-    if (change.delta === 0n) continue;
+    if (change.delta === 0n && !frozenOpType) continue;
     const op = buildTokenOperation(
       address,
       change,
-      preTokenBalances,
-      postTokenBalances,
-      accountKeys,
       meta,
       operationIndex,
+      tokenParties(tx, change.mint),
+      frozenOpType ?? (burned ? "BURN" : undefined),
     );
     ops.push(op);
     operationIndex++;
@@ -409,11 +637,10 @@ function parseTokenOperations(
 function buildTokenOperation(
   address: string,
   change: TokenChange,
-  preTokenBalances: TokenBalance[],
-  postTokenBalances: TokenBalance[],
-  accountKeys: string[],
   meta: TxMeta,
   operationIndex: number,
+  parties: Parties,
+  opTypeOverride?: string,
 ): Operation {
   const { mint, delta, tokenType, owner } = change;
   // Emit the operation against the wallet owner (not the queried address): when
@@ -421,17 +648,10 @@ function buildTokenOperation(
   // assetOwner must still resolve to the wallet, matching a wallet-address query.
   const asset: AssetInfo = { type: tokenType, assetReference: mint, assetOwner: owner };
 
-  const opType = delta > 0n ? "IN" : "OUT";
+  const opType = opTypeOverride ?? (delta > 0n ? "IN" : "OUT");
   const value = delta > 0n ? delta : -delta;
 
-  const counterparty = findTokenCounterparty(
-    owner,
-    mint,
-    preTokenBalances,
-    postTokenBalances,
-    accountKeys,
-  );
-  const { senders, recipients } = buildParties(opType, owner, counterparty);
+  const { senders, recipients } = parties;
 
   return makeOperation({
     address,
@@ -498,67 +718,54 @@ function computeTokenBalanceDeltas(
   postTokenBalances: TokenBalance[],
   accountKeys: string[],
 ): Map<string, TokenChange> {
+  // A wallet can hold several token accounts for the same mint, so the balances are summed per
+  // mint: moving tokens between two of its own accounts nets to zero instead of reading as an
+  // incoming transfer.
+  const totals = new Map<string, { change: TokenChange; pre: bigint; post: bigint }>();
+
+  const accumulate = (balance: TokenBalance, side: "pre" | "post") => {
+    if (!tokenBalanceMatchesAddress(balance, address, accountKeys)) return;
+
+    const tokenType = resolveTokenType(balance.programId);
+    const key = `${balance.mint}-${tokenType}`;
+    const entry = totals.get(key) ?? {
+      change: { mint: balance.mint, delta: 0n, tokenType, owner: address },
+      pre: 0n,
+      post: 0n,
+    };
+    entry[side] += BigInt(balance.uiTokenAmount.amount);
+    if (balance.owner) entry.change.owner = balance.owner;
+    totals.set(key, entry);
+  };
+
+  for (const pre of preTokenBalances) accumulate(pre, "pre");
+  for (const post of postTokenBalances) accumulate(post, "post");
+
   const changes = new Map<string, TokenChange>();
-
-  const preBalancesByMint = new Map<string, bigint>();
-  for (const pre of preTokenBalances) {
-    if (!tokenBalanceMatchesAddress(pre, address, accountKeys)) continue;
-    if (!preBalancesByMint.has(pre.mint)) {
-      preBalancesByMint.set(pre.mint, BigInt(pre.uiTokenAmount.amount));
-    }
-  }
-
-  for (const post of postTokenBalances) {
-    if (!tokenBalanceMatchesAddress(post, address, accountKeys)) continue;
-    const tokenType = resolveTokenType(post.programId);
-    const key = `${post.mint}-${tokenType}`;
-    const postAmount = BigInt(post.uiTokenAmount.amount);
-    const preAmount = preBalancesByMint.get(post.mint) ?? 0n;
-    changes.set(key, {
-      mint: post.mint,
-      delta: postAmount - preAmount,
-      tokenType,
-      owner: post.owner ?? address,
-    });
-  }
-
-  for (const pre of preTokenBalances) {
-    if (!tokenBalanceMatchesAddress(pre, address, accountKeys)) continue;
-    const tokenType = resolveTokenType(pre.programId);
-    const key = `${pre.mint}-${tokenType}`;
-    if (!changes.has(key)) {
-      changes.set(key, {
-        mint: pre.mint,
-        delta: -BigInt(pre.uiTokenAmount.amount),
-        tokenType,
-        owner: pre.owner ?? address,
-      });
-    }
+  for (const [key, { change, pre, post }] of totals) {
+    changes.set(key, { ...change, delta: post - pre });
   }
 
   return changes;
 }
 
-/**
- * Best-effort counterparty detection for token transfers.
- *
- * Searches both post and pre token balance arrays for another wallet owner
- * of the same mint. Post is checked first because the recipient may not exist
- * in pre when their ATA is created in the same transaction.
- *
- * Falls back to the first different account key when neither array has an
- * owner-populated entry for a counterparty.
- */
-function findTokenCounterparty(
-  ownerAddress: string,
-  mint: string,
-  preTokenBalances: TokenBalance[],
-  postTokenBalances: TokenBalance[],
-  accountKeys: string[],
-): string | undefined {
-  for (const balances of [postTokenBalances, preTokenBalances]) {
-    const entry = balances.find(b => b.owner && b.owner !== ownerAddress && b.mint === mint);
-    if (entry?.owner) return entry.owner;
+function detectTokenAccountState(tx: ParsedTransactionWithMeta): string | undefined {
+  const ixs = getParsedInstructions(tx);
+  if (ixs.length !== 1) return undefined;
+  const [ix] = ixs;
+  if (ix.program !== PARSED_PROGRAMS.SPL_TOKEN && ix.program !== PARSED_PROGRAMS.SPL_TOKEN_2022) {
+    return undefined;
   }
-  return accountKeys.find(k => k !== ownerAddress);
+  if (ix.type === "freezeAccount") return "FREEZE";
+  return ix.type === "thawAccount" ? "UNFREEZE" : undefined;
+}
+
+function isBurnTransaction(tx: ParsedTransactionWithMeta): boolean {
+  const ixs = getParsedInstructions(tx);
+  if (ixs.length !== 1) return false;
+  const [ix] = ixs;
+  return (
+    (ix.program === PARSED_PROGRAMS.SPL_TOKEN || ix.program === PARSED_PROGRAMS.SPL_TOKEN_2022) &&
+    (ix.type === "burn" || ix.type === "burnChecked")
+  );
 }
