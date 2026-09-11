@@ -166,6 +166,30 @@ export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies PartialFeatures;
 
+/**
+ * The Pay tab, off by default (`lwdPayTab.enabled === false`), so any spec touching it must ask for
+ * it explicitly. `card: true` is the flag's own default param and gates the card-specific UI.
+ */
+export const FF_LWD_PAY_TAB = {
+  lwdPayTab: {
+    enabled: true,
+    params: { card: true },
+  },
+} satisfies PartialFeatures;
+
+/**
+ * Contacts on desktop, off by default (`lwdContacts.enabled === false`).
+ *
+ * The params mirror the flag's own defaults rather than inventing values: `eligibleAddressFamilies`
+ * is `["evm"]`, so only EVM addresses are offered as contacts.
+ */
+export const FF_LWD_CONTACTS = {
+  lwdContacts: {
+    enabled: true,
+    params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+  },
+} satisfies PartialFeatures;
+
 export const getMergedFeatureFlags = ({
   testFlags,
 }: { testFlags?: PartialFeatures } = {}): PartialFeatures => {
