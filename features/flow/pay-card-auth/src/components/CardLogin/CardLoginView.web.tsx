@@ -4,7 +4,6 @@ import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
 
 export function CardLoginView({
-  title,
   description,
   loginLabel,
   alreadyHaveCardLabel,
@@ -18,7 +17,6 @@ export function CardLoginView({
     <>
       <div className="flex flex-col gap-24 text-center">
         <div className="flex flex-col gap-12">
-          <h2 className="heading-2-semi-bold text-base">{title}</h2>
           <p className="body-2 text-muted">{description}</p>
         </div>
         <div className="flex flex-col items-center gap-16">
