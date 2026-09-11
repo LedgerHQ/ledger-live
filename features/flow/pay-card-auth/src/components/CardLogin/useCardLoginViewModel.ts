@@ -169,7 +169,7 @@ export function useCardLoginViewModel({
   );
 
   const onLoginPress = useCallback(() => {
-    if (hasSeenLoginIntro) {
+    if (snapshot.value === "awaitingCallback" || hasSeenLoginIntro) {
       trackCta(TRACK_BUTTON.login);
       startLogin();
       return;
@@ -177,7 +177,7 @@ export function useCardLoginViewModel({
     trackCta(TRACK_BUTTON.getCard);
     onTrackEvent?.(CARD_LOGIN_INTRO_PAGE_EVENT, { flow: CARD_LOGIN_INTRO_FLOW });
     setIsIntroRequested(true);
-  }, [hasSeenLoginIntro, onTrackEvent, startLogin, trackCta]);
+  }, [hasSeenLoginIntro, onTrackEvent, snapshot.value, startLogin, trackCta]);
 
   const onIntroActionPress = useCallback(
     (id: CardLoginIntroActionId) => {
