@@ -37,9 +37,13 @@ function getString(v: unknown, key: string): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
-/** Rejected at the edge rather than by the partner, so the request never reached it. */
-function isThrottled(status: number): boolean {
-  return status >= 500 || status === 403 || status === 429;
+/**
+ * Rejected by the edge before the partner saw the request. A partner-side 5xx is deliberately not
+ * included: `post` also builds actions, and retrying one the partner already accepted but whose
+ * response was lost would leave a second action behind.
+ */
+function isEdgeRejection(status: number): boolean {
+  return status === 403 || status === 429;
 }
 
 async function post(pathname: string, body: unknown): Promise<Response> {
@@ -49,7 +53,7 @@ async function post(pathname: string, body: unknown): Promise<Response> {
       headers: JSON_HEADERS,
       body: JSON.stringify(body),
     });
-    if (!isThrottled(res.status) || attempt >= THROTTLE_RETRY_ATTEMPTS) return res;
+    if (!isEdgeRejection(res.status) || attempt >= THROTTLE_RETRY_ATTEMPTS) return res;
     console.log(
       `    api: ${res.status} on ${pathname}, retrying (${attempt}/${THROTTLE_RETRY_ATTEMPTS - 1})`,
     );
@@ -199,7 +203,7 @@ async function pollActionStatus(actionId: string): Promise<string | undefined> {
     return undefined;
   }
   if (res.ok) return getString(await res.json(), "status")?.toLowerCase();
-  if (isThrottled(res.status)) return undefined;
+  if (res.status >= 500 || isEdgeRejection(res.status)) return undefined;
   throw new Error(`GET /v1/actions/${actionId} failed: ${res.status}`);
 }
 
