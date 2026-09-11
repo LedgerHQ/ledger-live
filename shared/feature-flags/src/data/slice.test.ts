@@ -545,6 +545,22 @@ describe("cache prime", () => {
     // The prime already spent the one-shot guard, so the failed poll must not re-resolve.
     expect(dispatchedTypes.filter(type => type === syncRemoteConfig.type)).toHaveLength(1);
   });
+
+  it("still arms readiness when the cache primed and the fetch then fails", async () => {
+    // The offline-with-a-warm-cache case, and the one that must never regress: readiness comes
+    // from the call settling, not from its outcome. Short-circuiting the poll because the prime
+    // already produced values would leave this user's boot gate shut forever.
+    const store = createStore(undefined, {
+      readCachedFlags: () => Promise.resolve({ mockFeature: { enabled: true } }),
+      fetchRemoteFlags: () => Promise.reject(new Error("network down")),
+      refreshInterval: 1_000,
+    });
+
+    await flushPromises();
+
+    expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
+    expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
+  });
 });
 
 describe("onRemoteFlagsError", () => {
