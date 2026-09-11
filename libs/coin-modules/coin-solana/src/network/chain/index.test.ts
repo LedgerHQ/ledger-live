@@ -89,6 +89,26 @@ describe("index", () => {
       });
     });
 
+    describe("getSignaturesForAddressBatch", () => {
+      const mockServer = setupServer();
+
+      beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+      afterEach(() => mockServer.resetHandlers());
+      afterAll(() => mockServer.close());
+
+      it("refuses a batch-level failure rather than reading it as empty history", async () => {
+        mockServer.use(
+          http.post(FAKE_CONFIG.endpoint, () =>
+            HttpResponse.json({ jsonrpc: "2.0", error: { code: -32601 }, id: null }),
+          ),
+        );
+
+        await expect(
+          getChainAPI(FAKE_CONFIG).getSignaturesForAddressBatch([{ address: "addr1" }]),
+        ).rejects.toThrow("batch failed");
+      });
+    });
+
     describe("getStakeAccountsByWithdrawAuth", () => {
       const mockServer = setupServer();
       const authAddr = "AuthorityAddress111111111111111111111111111";
@@ -97,6 +117,23 @@ describe("index", () => {
       beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
       afterEach(() => mockServer.resetHandlers());
       afterAll(() => mockServer.close());
+
+      it("retries a rate-limited call instead of surfacing it", async () => {
+        let calls = 0;
+        mockServer.use(
+          http.post(FAKE_CONFIG.endpoint, () => {
+            calls++;
+            return calls === 1
+              ? rpcJson({ error: { code: -32603, message: "Upstream returned 429" } })
+              : rpcJson({ result: { accounts: [stakeAccount(FIRST_STAKE_ACCOUNT)] } });
+          }),
+        );
+
+        const result = await getChainAPI(FAKE_CONFIG).getStakeAccountsByWithdrawAuth(authAddr);
+
+        expect(calls).toBe(2);
+        expect(result.map(({ pubkey }) => pubkey.toBase58())).toEqual([FIRST_STAKE_ACCOUNT]);
+      });
 
       it("follows getProgramAccountsV2 pagination", async () => {
         const cursors: unknown[] = [];
