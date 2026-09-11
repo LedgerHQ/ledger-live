@@ -26,7 +26,7 @@ import { Card } from "./Card";
 
 const title = "Crypto card";
 
-const oauthConfig: CardProps["oauthConfig"] = {
+const oauthConfig: CardProps["login"]["oauthConfig"] = {
   apiUrl: "https://card.example",
   clientId: "client-id",
   hostedUiUrl: "https://hosted.example",
@@ -48,7 +48,7 @@ describe("Card (native)", () => {
 
   describe("while resolving the session", () => {
     it("shows only the bare artwork, holding back the widget and card details", () => {
-      render(<Card title={title} oauthConfig={oauthConfig} />);
+      render(<Card title={title} login={{ oauthConfig }} />);
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-onboarding-widget")).toBeNull();
@@ -62,7 +62,7 @@ describe("Card (native)", () => {
     });
 
     it("shows the bare artwork above the login, with no card details", () => {
-      render(<Card title={title} oauthConfig={oauthConfig} />);
+      render(<Card title={title} login={{ oauthConfig }} />);
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.getByTestId("card-login")).toBeVisible();
@@ -73,7 +73,7 @@ describe("Card (native)", () => {
       render(
         <Card
           title={title}
-          oauthConfig={oauthConfig}
+          login={{ oauthConfig }}
           formatCountervalue={formatCountervalue}
           balanceLabel="Balance"
         />,
@@ -90,7 +90,7 @@ describe("Card (native)", () => {
     });
 
     it("shows the widget and the card details, with no login or bare artwork", () => {
-      render(<Card title={title} oauthConfig={oauthConfig} />);
+      render(<Card title={title} login={{ oauthConfig }} />);
 
       expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("card-details")).toBeVisible();
@@ -102,7 +102,7 @@ describe("Card (native)", () => {
       render(
         <Card
           title={title}
-          oauthConfig={oauthConfig}
+          login={{ oauthConfig }}
           formatCountervalue={formatCountervalue}
           balanceLabel="Balance"
         />,

@@ -29,7 +29,7 @@ export function useCardViewModel(): CardViewModel {
   const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
-  const oauthConfig: CardViewModel["oauthConfig"] = useMemo(
+  const oauthConfig: CardViewModel["login"]["oauthConfig"] = useMemo(
     () => ({
       apiUrl,
       clientId,
@@ -44,11 +44,15 @@ export function useCardViewModel(): CardViewModel {
     track(event, params);
   }, []);
 
+  const login: CardViewModel["login"] = useMemo(
+    () => ({ oauthConfig, onTrackEvent }),
+    [oauthConfig, onTrackEvent],
+  );
+
   return {
     title: t("payTab.card.title"),
     balanceLabel: t("payTab.card.balanceLabel"),
     formatCountervalue,
-    oauthConfig,
-    onTrackEvent,
+    login,
   };
 }

@@ -4,16 +4,7 @@ import { CardArtwork, CardDetails } from "@features/flow-pay-card-details";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import type { CardViewProps } from "./Card.types";
 
-export function CardView({
-  title,
-  oauthConfig,
-  callback,
-  openHostedLogin,
-  openHostedPage,
-  onTrackEvent,
-  displayState,
-  cardVisual,
-}: CardViewProps) {
+export function CardView({ title, login, displayState, cardVisual }: CardViewProps) {
   return (
     <div className="flex flex-col gap-16">
       <p className="heading-5-semi-bold text-base">{title}</p>
@@ -26,14 +17,7 @@ export function CardView({
         <>
           <CardArtwork />
 
-          <CardLogin
-            key={`${oauthConfig.apiUrl}`}
-            oauthConfig={oauthConfig}
-            callback={callback}
-            openHostedLogin={openHostedLogin}
-            openHostedPage={openHostedPage}
-            onTrackEvent={onTrackEvent}
-          />
+          <CardLogin key={login.oauthConfig.apiUrl} {...login} />
         </>
       )}
     </div>
