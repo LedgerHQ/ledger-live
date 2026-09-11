@@ -37,23 +37,29 @@ function getString(v: unknown, key: string): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
-/** Rejected at the edge rather than by the partner, so the request never reached it. */
-function isThrottled(status: number): boolean {
-  return status >= 500 || status === 403 || status === 429;
+/**
+ * Rejected by the edge before the partner saw the request. A partner-side 5xx is deliberately not
+ * included: `post` also builds actions, and retrying one the partner already accepted but whose
+ * response was lost would leave a second action behind.
+ */
+function isEdgeRejection(status: number): boolean {
+  return status === 403 || status === 429;
 }
 
 function isTransientRead(status: number): boolean {
   return status >= 500 || status === 429;
 }
 
-async function post(pathname: string, body: unknown): Promise<Response> {
+/** `retryOn5xx` is for the endpoints that only read, where a repeat cannot create anything. */
+async function post(pathname: string, body: unknown, retryOn5xx = false): Promise<Response> {
   for (let attempt = 1; ; attempt++) {
     const res = await fetch(`${BASE_URL}${pathname}`, {
       method: "POST",
       headers: JSON_HEADERS,
       body: JSON.stringify(body),
     });
-    if (!isThrottled(res.status) || attempt >= THROTTLE_RETRY_ATTEMPTS) return res;
+    const retriable = isEdgeRejection(res.status) || (retryOn5xx && res.status >= 500);
+    if (!retriable || attempt >= THROTTLE_RETRY_ATTEMPTS) return res;
     console.log(
       `    api: ${res.status} on ${pathname}, retrying (${attempt}/${THROTTLE_RETRY_ATTEMPTS - 1})`,
     );
@@ -66,18 +72,6 @@ async function failedRequest(request: string, res: Response): Promise<Error> {
   const detail = await res.text().catch(() => "");
   const reason = detail ? ` — ${detail}` : "";
   return new Error(`${request} failed: ${res.status} ${res.statusText}${reason}`);
-}
-
-/**
- * The partner puts the actionable reason in the body, not the status line — a 412 on a repay
- * spells out which token is short and by how much. Losing it leaves a bare "412 Precondition
- * Failed" that says nothing about how to fix the account.
- */
-async function failedRequest(pathname: string, res: Response): Promise<Error> {
-  const detail = await res.text().catch(() => "");
-  return new Error(
-    `POST ${pathname} failed: ${res.status} ${res.statusText}${detail ? ` — ${detail}` : ""}`,
-  );
 }
 
 /**
@@ -105,7 +99,7 @@ function normalizeStep(raw: unknown, index: number): PartnerActionStep {
 
 /** `POST /v1/positions` — returns the raw `{ positions, errors, metadata }`. */
 export async function getPositions(address: string): Promise<unknown> {
-  const res = await post("/v1/positions", [{ network: ETHEREUM_NETWORK, address }]);
+  const res = await post("/v1/positions", [{ network: ETHEREUM_NETWORK, address }], true);
   if (!res.ok) throw await failedRequest("POST /v1/positions", res);
   return res.json();
 }
