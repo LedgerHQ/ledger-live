@@ -6,6 +6,7 @@ import {
   useLazyGetCardStatusQuery,
   useCreateCardDetailsTokenMutation,
 } from "@domain/api-card-management";
+import { BAANX_ASSET_LEDGER_IDS } from "@domain/entity-card-asset-mapping";
 import {
   useCardLinkedWallets,
   type ResolveWalletCounterValue,
@@ -96,6 +97,11 @@ const STEP_ANSWERS: Readonly<Partial<Record<string, keyof CardOnboardingStatusMo
   "choose-card-type": "hasCard",
   "top-up-card": "walletFunded",
 };
+
+/** The catalog as the tool lists it, in key order so a pair is easy to find by eye. */
+const CURRENCY_MAPPING_ROWS = Object.entries(BAANX_ASSET_LEDGER_IDS)
+  .map(([key, ledgerId]) => ({ key, ledgerId }))
+  .sort((a, b) => a.key.localeCompare(b.key));
 
 const WALLET_STEP_ID = "apple-google-pay";
 
@@ -378,6 +384,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       cardOnboarding,
       interaction,
       balance,
+      currencyMapping: CURRENCY_MAPPING_ROWS,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
       hasSeenReceiveVerifyHint,
