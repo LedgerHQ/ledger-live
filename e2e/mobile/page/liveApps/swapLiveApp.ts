@@ -27,6 +27,9 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 // Net value of a quote as shown on screen: amount received minus network fees (both in fiat).
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
+// Set on the window before a reload, so its absence proves a fresh document.
+const FLAG_RELOAD_MARKER = "__swapE2eFlagReload";
+
 export default class SwapLiveAppPage {
   private static readonly QUOTE_CARD_PROVIDER_NAMES = `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}']`;
 
@@ -176,17 +179,38 @@ export default class SwapLiveAppPage {
     await this.expectSwapLiveAppForm();
   }
 
-  // Open the live app first: only the loaded page can write its localStorage, whatever
-  // screen the previous test left on top. The atom reads the key once per load.
+  // Open the live app first: only the loaded page can write its localStorage.
+  // Detox has no reload, so the page reloads itself and rereads the key.
   @Step("Pin swap live app feature flags: {{{0}}}")
   async applyFlagPreset(preset: SwapFlagPreset) {
     await this.reopenSwapLiveApp();
+    const payload = swapFlagPresetPayload(preset);
     await this.swapMainContainerWebElement.runScript(
-      (_el: HTMLElement, key: string, value: string) => localStorage.setItem(key, value),
-      [SWAP_FLAG_OVERRIDES_KEY, swapFlagPresetPayload(preset)],
+      (_el: HTMLElement, key: string, value: string, marker: string) => {
+        localStorage.setItem(key, value);
+        Object.assign(window, { [marker]: true });
+        setTimeout(() => location.reload(), 0);
+      },
+      [SWAP_FLAG_OVERRIDES_KEY, payload, FLAG_RELOAD_MARKER],
     );
     this.flagPresetPinned = true;
-    await this.reopenSwapLiveApp();
+    await this.expectFlagPresetLoaded(payload);
+    await this.expectSwapLiveAppForm();
+  }
+
+  // Tells a lost write apart from a flag the app ignored.
+  @Step("Check that the live app reloaded with the overrides")
+  private async expectFlagPresetLoaded(payload: string) {
+    await retryUntilTimeout(async () => {
+      const state = await this.swapMainContainerWebElement.runScript(
+        (_el: HTMLElement, key: string, marker: string) => ({
+          stored: localStorage.getItem(key),
+          reloaded: !(marker in window),
+        }),
+        [SWAP_FLAG_OVERRIDES_KEY, FLAG_RELOAD_MARKER],
+      );
+      jestExpect(state).toEqual({ stored: payload, reloaded: true });
+    });
   }
 
   // The override outlives the test and survives an app relaunch, so reopen the live app
