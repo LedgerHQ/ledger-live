@@ -1,11 +1,11 @@
-export { broadcast } from "./transaction/broadcast";
-export { combine } from "./transaction/combine";
-export { craftTransaction } from "./transaction/craftTransaction";
-export { estimateFees } from "./transaction/estimateFees";
-export { getBalance } from "./account/getBalance";
-export { lastBlock } from "./history/lastBlock";
-export { listOperations } from "./history/listOperations";
+export { broadcast } from "./broadcast";
+export { combine } from "./combine";
+export { craftTransaction } from "./craftTransaction";
+export { estimateFees } from "./estimateFees";
+export { getBalance } from "./getBalance";
+export { lastBlock } from "./lastBlock";
+export { listOperations } from "./listOperations";
 export { isRecipientValid } from "./utils";
-export { getNextValidSequence } from "./account/getNextSequence";
+export { getNextValidSequence } from "./getNextSequence";
 
 export { parseAPIValue } from "./common";
