@@ -315,6 +315,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-near/deviceTransactionConfig").then(m => m.default),
     loadAccount: () => import("@ledgerhq/coin-near/account").then(m => m.default),
+    loadMockBridge: () => import("../families/near/bridge/mock").then(m => m.default),
   },
   {
     family: "polkadot",
