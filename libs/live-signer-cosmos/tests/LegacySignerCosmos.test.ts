@@ -48,7 +48,7 @@ describe("LegacySignerCosmos", () => {
       expect(sign).toHaveBeenCalledWith([44, 118, 0, 0, 0], tx, "cosmos");
     });
 
-    it("signs a transaction without transactionType", async () => {
+    it("signs a transaction without hrp", async () => {
       const mockResult = {
         signature: Buffer.from("ddeeff", "hex"),
         return_code: 0x9000,
@@ -58,6 +58,18 @@ describe("LegacySignerCosmos", () => {
       const tx = Buffer.from("transaction-data");
       expect(await signer.sign([44, 118, 0, 0, 0], tx)).toEqual(mockResult);
       expect(sign).toHaveBeenCalledWith([44, 118, 0, 0, 0], tx, undefined);
+    });
+
+    it("forwards the hrp for a coin type outside the ethermint/cosmos gate (1200)", async () => {
+      const mockResult = {
+        signature: Buffer.from("aabbcc", "hex"),
+        return_code: 0x9000,
+      };
+      const sign = jest.spyOn(CosmosApp.prototype, "sign").mockResolvedValue(mockResult);
+
+      const tx = Buffer.from("transaction-data");
+      expect(await signer.sign([44, 1200, 0, 0, 0], tx, "gonka")).toEqual(mockResult);
+      expect(sign).toHaveBeenCalledWith([44, 1200, 0, 0, 0], tx, "gonka");
     });
   });
 

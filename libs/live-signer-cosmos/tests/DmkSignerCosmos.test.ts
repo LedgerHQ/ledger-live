@@ -239,7 +239,7 @@ describe("DmkSignerCosmos", () => {
       });
     });
 
-    it("uses default HRP 'cosmos' when transactionType is not provided", async () => {
+    it("uses default HRP 'cosmos' when hrp is not provided", async () => {
       const signatureBytes = Uint8Array.from([0xdd, 0xee]);
       const observable = of({
         status: DeviceActionStatus.Completed,
@@ -255,6 +255,27 @@ describe("DmkSignerCosmos", () => {
       expect((signer as any).signer.signTransaction).toHaveBeenCalledWith(
         "44/118/0/0/0",
         "cosmos",
+        tx,
+        expect.objectContaining({ skipOpenApp: true }),
+      );
+    });
+
+    it("forwards the hrp for a coin type outside the ethermint/cosmos gate (1200)", async () => {
+      const signatureBytes = Uint8Array.from([0x11, 0x22]);
+      const observable = of({
+        status: DeviceActionStatus.Completed,
+        output: signatureBytes,
+      });
+      (signer as any).signer = {
+        signTransaction: jest.fn().mockReturnValue({ observable }),
+      };
+
+      const tx = Buffer.from("transaction-data");
+      await signer.sign([44, 1200, 0, 0, 0], tx, "gonka");
+
+      expect((signer as any).signer.signTransaction).toHaveBeenCalledWith(
+        "44/1200/0/0/0",
+        "gonka",
         tx,
         expect.objectContaining({ skipOpenApp: true }),
       );
