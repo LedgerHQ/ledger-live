@@ -1,97 +1,17 @@
 import React from "react";
-import { selectRemoteFlagsReady } from "@shared/feature-flags";
-import { useSelector } from "~/context/hooks";
 import { useWatchWalletSync, WalletSyncUserState } from "../../hooks/useWatchWalletSync";
 
-type WalletSyncStatus = Pick<WalletSyncUserState, "visualPending" | "walletSyncError">;
-
-/** Seen only outside any provider. Left exactly as it was before the watcher was lifted out. */
-const NO_PROVIDER_STATUS: WalletSyncStatus = { visualPending: false, walletSyncError: null };
-
-/**
- * The provider's own starting point, mirroring `useWatchWalletSync`'s own `useState(true)`.
- *
- * It has to start pending rather than idle: between mount and the watcher's first report the
- * status is simply unknown, and `useLoadingStep` reads `!visualPending` as "the watch loop
- * finished". Starting at `false` would let its timeout expire against a status no watcher ever
- * produced, sending the activation flow to its success screen on a sync that never ran.
- */
-const INITIAL_STATUS: WalletSyncStatus = { visualPending: true, walletSyncError: null };
-
 export const WalletSyncContext = React.createContext<WalletSyncUserState>({
-  ...NO_PROVIDER_STATUS,
+  visualPending: false,
+  walletSyncError: null,
   onUserRefresh: () => {},
 });
 
 export const useWalletSyncUserState = () => React.useContext(WalletSyncContext);
 
-/**
- * Holds back Ledger Sync until the feature flags have resolved.
- *
- * `useWatchWalletSync` reaches `useTrustchainSdk`, which builds its SDK once and keeps it for
- * the session. Running it before the flags resolve would pin that SDK to whatever the compiled
- * defaults say, and `WaitForAppReady` releases the tree after a second whether the flags landed
- * or not, so the watcher only mounts once `remoteFlagsReady` is set.
- *
- * `children` deliberately sits outside the conditional, as a sibling of the watcher rather than
- * wrapped by it: swapping the element type *around* `children` when readiness flips would unmount
- * and remount the whole app subtree. Being siblings is safe because the two slots keep a constant
- * arity and are reconciled by index, so the watcher appearing beside `children` mounts without
- * displacing it. The provider test pins that down by counting child mounts across the flip.
- *
- * Only the two status fields are lifted, behind an identity check, and the refresh callback is
- * reached through a ref. Lifting the watched object wholesale would loop forever the moment
- * `useWatchWalletSync` returned a fresh object per render, which is not a guarantee this
- * component should depend on.
- *
- * Scope: this gates the boot-time watcher, the only caller that reaches `useTrustchainSdk` with no
- * user action. Every other consumer gets there through its own hook and is not covered, including
- * `AddAccount`, which calls `useInitMemberCredentials` unconditionally and is not a Ledger Sync
- * screen at all. Do not read those as "safe because they come later": what keeps them safe is that
- * the values are already right, the cache prime landing before the first render and the compiled
- * `environment` defaulting to PROD. Closing the gap properly means gating the SDK factory itself
- * rather than each caller, which is tracked separately.
- */
 export function WalletSyncProvider({ children }: { children: React.ReactNode }) {
-  const remoteFlagsReady = useSelector(selectRemoteFlagsReady);
-  const [status, setStatus] = React.useState<WalletSyncStatus>(INITIAL_STATUS);
-  const onUserRefreshRef = React.useRef<() => void>(() => {});
-
-  const value = React.useMemo<WalletSyncUserState>(
-    () => ({ ...status, onUserRefresh: () => onUserRefreshRef.current() }),
-    [status],
-  );
-
+  const walletSyncState = useWatchWalletSync();
   return (
-    <WalletSyncContext.Provider value={value}>
-      {remoteFlagsReady ? (
-        <WalletSyncWatcher onStatus={setStatus} onUserRefreshRef={onUserRefreshRef} />
-      ) : null}
-      {children}
-    </WalletSyncContext.Provider>
+    <WalletSyncContext.Provider value={walletSyncState}>{children}</WalletSyncContext.Provider>
   );
-}
-
-function WalletSyncWatcher({
-  onStatus,
-  onUserRefreshRef,
-}: {
-  onStatus: (update: (previous: WalletSyncStatus) => WalletSyncStatus) => void;
-  onUserRefreshRef: React.MutableRefObject<() => void>;
-}) {
-  const { visualPending, walletSyncError, onUserRefresh } = useWatchWalletSync();
-
-  React.useEffect(() => {
-    onUserRefreshRef.current = onUserRefresh;
-  });
-
-  React.useEffect(() => {
-    onStatus(previous =>
-      previous.visualPending === visualPending && previous.walletSyncError === walletSyncError
-        ? previous
-        : { visualPending, walletSyncError },
-    );
-  }, [visualPending, walletSyncError, onStatus]);
-
-  return null;
 }
