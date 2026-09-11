@@ -7,10 +7,7 @@ import {
   SPONSORED_FEE_OPTION_ID,
 } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 

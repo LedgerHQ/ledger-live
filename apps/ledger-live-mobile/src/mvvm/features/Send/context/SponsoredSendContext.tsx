@@ -73,6 +73,11 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       return;
     }
 
+    // Identity-gate the intent: clear it up front on any transaction change so the previous intent
+    // never survives into the async rebuild window. Otherwise a quick edit + Review could enter
+    // sponsored signing (craftRent closes over `intent`) against the prior transaction's intent.
+    setIntent(null);
+
     (async () => {
       try {
         const network = mainAccount.currency.id;
@@ -122,6 +127,12 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     parentAccount: parentAccount ?? undefined,
     intent,
   });
+
+  // Mobile has no fee-picker UI: auto-activate Tronify when the seam says it's available,
+  // revert to standard when it becomes unavailable (e.g. account/currency not supported).
+  useEffect(() => {
+    setSelectedFeeOptionId(available ? "tronify" : "standard");
+  }, [available]);
 
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
