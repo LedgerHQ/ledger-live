@@ -1,10 +1,10 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type {
   Block,
   BlockInfo,
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../config";
 import {
@@ -20,12 +20,16 @@ import type { TrongridTxInfo, TrongridTxType } from "../types";
 
 type BlockTxInfo = TrongridTxInfo;
 
-export async function getBlockInfo(config: TronCoinConfig, height: number): Promise<BlockInfo> {
+export async function getBlockInfo(
+  logger: Logger,
+  config: TronCoinConfig,
+  height: number,
+): Promise<BlockInfo> {
   if (!Number.isSafeInteger(height) || height <= 0) {
     throw new Error(`Invalid block height: ${height}`);
   }
 
-  const block = await networkGetBlock(config, height);
+  const block = await networkGetBlock(logger, config, height);
   return {
     height: block.height,
     hash: block.hash,
@@ -33,15 +37,19 @@ export async function getBlockInfo(config: TronCoinConfig, height: number): Prom
   };
 }
 
-export async function getBlock(config: TronCoinConfig, height: number): Promise<Block> {
+export async function getBlock(
+  logger: Logger,
+  config: TronCoinConfig,
+  height: number,
+): Promise<Block> {
   if (!Number.isSafeInteger(height) || height <= 0) {
     throw new Error(`Invalid block height: ${height}`);
   }
 
   const [data, txInfos] = await Promise.all([
-    getBlockWithTransactions(config, height),
-    getTransactionInfoByBlockNum(config, height).catch(error => {
-      log("tron/getBlock", "Failed to fetch transaction info, falling back to ret fees", {
+    getBlockWithTransactions(logger, config, height),
+    getTransactionInfoByBlockNum(logger, config, height).catch(error => {
+      logger("tron/getBlock", "Failed to fetch transaction info, falling back to ret fees", {
         height,
         error,
       });
@@ -65,7 +73,7 @@ export async function getBlock(config: TronCoinConfig, height: number): Promise<
   const txInfoById = buildTxInfoMap(txInfos);
 
   const transactions: BlockTransaction[] = rawTxs
-    .map(tx => toBlockTransaction(tx, blockTimestamp, info.height, txInfoById))
+    .map(tx => toBlockTransaction(logger, tx, blockTimestamp, info.height, txInfoById))
     .filter((tx): tx is BlockTransaction => tx !== null);
 
   return { info, transactions };
@@ -78,12 +86,13 @@ function buildTxInfoMap(
 }
 
 function toBlockTransaction(
+  logger: Logger,
   tx: BlockTransactionAPI,
   blockTimestamp: number,
   blockHeight: number,
   txInfoById: Map<string, TransactionInfoByBlockNumAPI>,
 ): BlockTransaction | null {
-  const txInfo = formatBlockTransaction(tx, blockTimestamp, blockHeight);
+  const txInfo = formatBlockTransaction(logger, tx, blockTimestamp, blockHeight);
   if (!txInfo) return null;
 
   const txDetail = txInfoById.get(tx.txID);
@@ -99,6 +108,7 @@ function toBlockTransaction(
 }
 
 function formatBlockTransaction(
+  logger: Logger,
   tx: BlockTransactionAPI,
   blockTimestamp: number,
   blockHeight: number,
@@ -157,7 +167,7 @@ function formatBlockTransaction(
       hasFailed,
     };
   } catch (error) {
-    log("tron/getBlock", "formatBlockTransaction error", {
+    logger("tron/getBlock", "formatBlockTransaction error", {
       txId: tx.txID,
       error,
     });

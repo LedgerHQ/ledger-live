@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import { fetchTronAccount } from "../network";
 import type { TronResources } from "../types";
@@ -13,6 +14,8 @@ jest.mock("./tronResources", () => {
 
 const mockFetchTronAccount = jest.mocked(fetchTronAccount);
 const mockFetchTronResources = jest.mocked(fetchTronResources);
+
+const mockLogger: Logger = jest.fn();
 
 const mockConfig = {
   status: { type: "active" },
@@ -223,7 +226,7 @@ describe("getStakes", () => {
   it("returns an empty page for an address the chain does not know", async () => {
     mockFetchTronAccount.mockResolvedValue([]);
 
-    await expect(getStakes(mockConfig, ADDRESS)).resolves.toEqual({ items: [] });
+    await expect(getStakes(mockLogger, mockConfig, ADDRESS)).resolves.toEqual({ items: [] });
     expect(mockFetchTronResources).not.toHaveBeenCalled();
   });
 
@@ -236,7 +239,7 @@ describe("getStakes", () => {
       }),
     );
 
-    const { items, next } = await getStakes(mockConfig, ADDRESS);
+    const { items, next } = await getStakes(mockLogger, mockConfig, ADDRESS);
 
     expect(items).toHaveLength(1);
     expect(items[0].amount).toBe(10_000_000n);
@@ -244,6 +247,8 @@ describe("getStakes", () => {
   });
 
   it("rejects a cursor rather than looping a paginating caller", async () => {
-    await expect(getStakes(mockConfig, ADDRESS, "cursor")).rejects.toThrow("does not paginate");
+    await expect(getStakes(mockLogger, mockConfig, ADDRESS, "cursor")).rejects.toThrow(
+      "does not paginate",
+    );
   });
 });

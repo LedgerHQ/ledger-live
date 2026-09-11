@@ -3,6 +3,7 @@ import {
   FeeEstimation,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../config";
 import {
@@ -21,6 +22,7 @@ import { TronMemo, TronTxData } from "../types";
 import { feesToNumber } from "./utils";
 
 export async function craftTransaction(
+  logger: Logger,
   config: TronCoinConfig,
   transactionIntent: TransactionIntent<TronMemo, TronTxData>,
   customFees?: FeeEstimation,
@@ -40,23 +42,25 @@ export async function craftTransaction(
 
   switch (type) {
     case "freeze":
-      return toCrafted(await freezeTronTransaction(config, sender, value(), resource));
+      return toCrafted(await freezeTronTransaction(logger, config, sender, value(), resource));
 
     case "unfreeze":
-      return toCrafted(await unfreezeTronTransaction(config, sender, value(), resource));
+      return toCrafted(await unfreezeTronTransaction(logger, config, sender, value(), resource));
 
     case "vote":
-      return toCrafted(await voteTronSuperRepresentatives(config, sender, data?.votes ?? []));
+      return toCrafted(
+        await voteTronSuperRepresentatives(logger, config, sender, data?.votes ?? []),
+      );
 
     case "claimReward":
-      return toCrafted(await claimRewardTronTransaction(config, sender));
+      return toCrafted(await claimRewardTronTransaction(logger, config, sender));
 
     case "withdrawExpireUnfreeze":
-      return toCrafted(await withdrawExpireUnfreezeTronTransaction(config, sender));
+      return toCrafted(await withdrawExpireUnfreezeTronTransaction(logger, config, sender));
 
     case "unDelegateResource":
       return toCrafted(
-        await unDelegateResourceTransaction(config, {
+        await unDelegateResourceTransaction(logger, config, {
           ownerAddress: sender,
           receiverAddress: recipient,
           amount: value(),
@@ -67,7 +71,7 @@ export async function craftTransaction(
     case "legacyUnfreeze":
       // Pre-Stake-2.0 unfreeze. A recipient is only present when reclaiming a delegation.
       return toCrafted(
-        await legacyUnfreezeTronTransaction(config, {
+        await legacyUnfreezeTronTransaction(logger, config, {
           ownerAddress: sender,
           resource,
           receiverAddress: recipient || undefined,
@@ -75,7 +79,7 @@ export async function craftTransaction(
       );
 
     case "send":
-      return craftSend(config, transactionIntent, memo, customFees);
+      return craftSend(logger, config, transactionIntent, memo, customFees);
 
     default:
       // The signing path must not be more permissive than `estimatedTxSize`, which rejects the same
@@ -93,6 +97,7 @@ function toCrafted({ raw_data_hex: rawDataHex }: { raw_data_hex?: string }): Cra
 }
 
 async function craftSend(
+  logger: Logger,
   config: TronCoinConfig,
   transactionIntent: TransactionIntent<TronMemo, TronTxData>,
   memo: string | undefined,
@@ -123,6 +128,7 @@ async function craftSend(
 
     return toCrafted(
       await craftTrc20Transaction(
+        logger,
         config,
         asset.assetReference,
         decode58Check(recipient),
@@ -137,7 +143,7 @@ async function craftSend(
   const isTransferAsset = asset.type === "trc10";
   const tokenId = asset.type === "trc10" ? asset.assetReference : undefined;
   return toCrafted(
-    await craftStandardTransaction(config, {
+    await craftStandardTransaction(logger, config, {
       tokenAddress: tokenId,
       recipientAddress: decode58Check(recipient),
       senderAddress: decode58Check(sender),
