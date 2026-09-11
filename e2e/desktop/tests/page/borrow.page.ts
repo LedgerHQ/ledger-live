@@ -9,6 +9,8 @@ const FUNDING_HINT =
 const EXECUTION_TIMEOUT_MS = 240_000;
 const APPROVAL_TIMEOUT_MS = 60_000;
 const SCREEN_TIMEOUT_MS = 60_000;
+/** The partner prepares each transaction server-side, which outlasts the global expect timeout. */
+const DEVICE_SIGNATURE_TIMEOUT_MS = 120_000;
 
 export class BorrowPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "borrow";
@@ -368,13 +370,15 @@ export class BorrowPage extends WebViewAppPage {
 
   @step("Wait for host device validation screen")
   async waitForHostDeviceValidation() {
-    await expect(this.deviceTransactionConfirm).toBeVisible();
+    await expect(this.deviceTransactionConfirm).toBeVisible({
+      timeout: DEVICE_SIGNATURE_TIMEOUT_MS,
+    });
   }
 
   @step("Wait for host sign modal to close")
   async waitForHostSignModalClosed() {
-    await expect(this.hostSignModal).toBeHidden({ timeout: 120_000 });
-    await expect(this.modalBackdrop).toBeHidden({ timeout: 120_000 });
+    await expect(this.hostSignModal).toBeHidden({ timeout: DEVICE_SIGNATURE_TIMEOUT_MS });
+    await expect(this.modalBackdrop).toBeHidden({ timeout: DEVICE_SIGNATURE_TIMEOUT_MS });
   }
 
   @step("Complete host device signature")

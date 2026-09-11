@@ -18,7 +18,12 @@ import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
-import { sendEVM, approveToken, signTypedMessage } from "./families/evm";
+import {
+  sendEVM,
+  approveToken,
+  approveContractTransaction,
+  signTypedMessage,
+} from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -890,6 +895,37 @@ export const activateContractData = withDeviceController(({ getButtonsController
   await buttons.both();
 });
 
+/**
+ * Turns on the Ethereum app's "Blind signing" setting, without which the app answers `6a80` to
+ * calldata it cannot describe. Reads the toggle before pressing it, and ends back on the idle
+ * screen where a review can arrive.
+ *
+ * Menu verified against Ethereum 1.22.3 on nanos+ 1.6.1.
+ */
+/** Every app's idle screen reads "<app> is ready", so this matches without naming the app. */
+const IDLE_SCREEN_LABEL = "is ready";
+
+export const enableBlindSigning = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+
+  await pressUntilTextFound(DeviceLabels.APP_SETTINGS);
+  await buttons.both();
+  await waitFor(DeviceLabels.BLIND_SIGNING);
+
+  if (!/Enabled/.test(await fetchCurrentScreenTexts(speculosApiPort))) {
+    await buttons.both();
+  }
+
+  await pressUntilTextFound(DeviceLabels.BACK);
+  await buttons.both();
+  // "Back" lands on the App settings entry of the top-level menu, one step short of idle.
+  await buttons.left();
+  // Parked in the menu the app stops answering sign APDUs, which surfaces much later as an
+  // opaque transport error, so a navigation that drifted is reported here instead.
+  await waitFor(IDLE_SCREEN_LABEL);
+});
+
 export const goToSettings = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
 
@@ -1234,41 +1270,67 @@ export const shareViewKey = withDeviceController(({ getButtonsController }) => a
   }
 });
 
+const OPT_IN_SCREEN_MAX_ATTEMPTS = Math.ceil(30_000 / SCREEN_POLL_INTERVAL_MS);
+
+/**
+ * Whether `label` is the screen the device settled on, giving up as soon as one of
+ * `labelsShownLater` proves it was never coming.
+ */
+async function waitForOptInScreen(
+  label: DeviceLabels,
+  labelsShownLater: DeviceLabels[],
+): Promise<boolean> {
+  const port = getEnv("SPECULOS_API_PORT");
+  const wanted = label.toLowerCase();
+  const tooLate = labelsShownLater.map(shown => shown.toLowerCase());
+
+  for (let attempt = 0; attempt < OPT_IN_SCREEN_MAX_ATTEMPTS; attempt++) {
+    const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
+    if (texts.includes(wanted)) return true;
+    if (tooLate.some(shown => texts.includes(shown))) return false;
+    await sleep(SCREEN_POLL_INTERVAL_MS);
+  }
+  return false;
+}
+
 export const acceptEnableTransactionCheck = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
-      const buttons = getButtonsController();
-
-      // Wait for loading to finish: poll until either the Transaction Check prompt
-      // or the next (review transaction) screen is displayed. If the prompt never
-      // shows up, skip this step instead of waiting for it to appear.
-      const port = getEnv("SPECULOS_API_PORT");
-      const enableLabel = DeviceLabels.ENABLE_TRANSACTION_CHECK.toLowerCase();
-      const reviewLabel = DeviceLabels.REVIEW_TRANSACTION.toLowerCase();
-      let isTransactionCheckDisplayed = false;
-      for (let attempt = 0; attempt < 60; attempt++) {
-        const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
-        if (texts.includes(enableLabel)) {
-          isTransactionCheckDisplayed = true;
-          break;
-        }
-        if (texts.includes(reviewLabel)) {
-          break;
-        }
-        await sleep(500);
-      }
-
-      if (!isTransactionCheckDisplayed) {
-        return;
-      }
+      const displayed = await waitForOptInScreen(DeviceLabels.ENABLE_TRANSACTION_CHECK, [
+        DeviceLabels.REVIEW_TRANSACTION,
+        DeviceLabels.BLIND_SIGNING_AHEAD,
+      ]);
+      if (!displayed) return;
 
       if (isTouchDevice()) {
         await pressAndRelease(DeviceLabels.YES_ENABLE);
-      } else {
-        await pressUntilTextFound(DeviceLabels.CONFIRM);
-        await buttons.both();
+        return;
       }
+      await pressUntilTextFound(DeviceLabels.CONFIRM);
+      await getButtonsController().both();
     },
 );
 
-export { approveToken, signTypedMessage };
+/**
+ * Clears the "Blind signing ahead" warning, which the app raises only once blind signing is
+ * enabled — the second half of [[enableBlindSigning]].
+ *
+ * No-ops when the warning is not the current screen.
+ */
+export const acceptBlindSigningWarning = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      const displayed = await waitForOptInScreen(DeviceLabels.BLIND_SIGNING_AHEAD, [
+        DeviceLabels.REVIEW_TRANSACTION,
+      ]);
+      if (!displayed) return;
+
+      if (isTouchDevice()) {
+        await pressAndRelease(DeviceLabels.CONFIRM);
+        return;
+      }
+      await getButtonsController().both();
+    },
+);
+
+export { approveToken, approveContractTransaction, signTypedMessage };
