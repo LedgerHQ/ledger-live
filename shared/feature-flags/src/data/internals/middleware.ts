@@ -154,8 +154,9 @@ export async function pollRemoteFlags(context: PollContext, attempt: number = 1)
  * read can never land on top of a fresher fetch result.
  *
  * Readiness is left to the poll, which arms it once the first call settles either way. With no
- * fetcher configured nothing else would ever settle, so the prime arms it instead rather than
- * leaving consumers waiting forever.
+ * fetcher configured nothing else would ever settle, so this stands in for that first settle
+ * rather than leaving consumers waiting forever: it re-resolves once and then arms the gate,
+ * exactly as a failed first poll does.
  */
 export async function primeThenPoll(
   readCachedFlags: () => Promise<PartialFeatures>,
@@ -167,6 +168,10 @@ export async function primeThenPoll(
   if (fetch) {
     await pollRemoteFlags({ ...context, fetch, ms });
   } else {
+    // `dispatchSync` first, and never the gate on its own: an empty or unreadable cache has left
+    // `resolved` on the raw compiled defaults, with env overrides and version filters never
+    // applied. A no-op when the prime already synced.
+    context.dispatchSync(false);
     context.dispatchReady();
   }
 }

@@ -507,6 +507,29 @@ describe("cache prime", () => {
     expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
   });
 
+  it("still applies envFlags when there is no fetcher and the cache is empty", async () => {
+    // On this branch the prime is the only thing that will ever open the gate, so it has to stand
+    // in for the first poll completely. Arming readiness without re-resolving would release
+    // consumers onto the raw compiled defaults, with env overrides and version filters never
+    // applied. An unreadable cache lands on this same branch.
+    const store = createStore(undefined, {
+      resolutionConfig: {
+        envFlags: { mockFeature: { enabled: true, params: { fromEnv: true } } },
+      },
+      readCachedFlags: () => Promise.resolve({}),
+    });
+
+    await flushPromises();
+
+    expect(store.getState().featureFlags.resolved.mockFeature).toEqual({
+      enabled: true,
+      params: { fromEnv: true },
+      overridesRemote: true,
+      overriddenByEnv: true,
+    });
+    expect(store.getState().featureFlags.remoteFlagsReady).toBe(true);
+  });
+
   it("lets a successful poll overwrite the primed values", async () => {
     const store = createStore(undefined, {
       readCachedFlags: () => Promise.resolve({ mockFeature: { enabled: false } }),

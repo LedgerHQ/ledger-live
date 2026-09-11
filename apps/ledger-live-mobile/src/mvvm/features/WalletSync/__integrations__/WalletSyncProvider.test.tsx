@@ -3,7 +3,7 @@ import { Text } from "react-native";
 import { setRemoteFlagsReady } from "@shared/feature-flags";
 import { act, render, screen } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
-import { WalletSyncProvider } from "../components/WalletSyncContext";
+import { WalletSyncProvider, useWalletSyncUserState } from "../components/WalletSyncContext";
 import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
 
 jest.mock("../hooks/useWatchWalletSync", () => ({
@@ -19,6 +19,11 @@ function Child({ onMount }: { onMount: () => void }) {
     onMount();
   }, [onMount]);
   return <Text>child</Text>;
+}
+
+function PendingProbe() {
+  const { visualPending } = useWalletSyncUserState();
+  return <Text testID="pending">{String(visualPending)}</Text>;
 }
 
 function renderProvider(remoteFlagsReady: boolean, onMount: () => void) {
@@ -86,5 +91,31 @@ describe("WalletSyncProvider", () => {
     });
 
     expect(jest.mocked(useWatchWalletSync).mock.calls.length).toBeLessThan(10);
+  });
+
+  it("should report the sync as pending until the watcher has reported", () => {
+    // `useWatchWalletSync` starts at `visualPending: true`, and while it is gated off the provider
+    // stands in for it. It has to stand in as pending, not idle: `useLoadingStep` reads
+    // `!visualPending` as "the watch loop finished" and would navigate the activation flow to its
+    // success screen on a sync that never ran. The idle value stays the outside-provider default.
+    const { store } = render(
+      <WalletSyncProvider>
+        <PendingProbe />
+      </WalletSyncProvider>,
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          featureFlags: { ...state.featureFlags, remoteFlagsReady: false },
+        }),
+      },
+    );
+    expect(screen.getByTestId("pending")).toHaveTextContent("true");
+
+    act(() => {
+      store.dispatch(setRemoteFlagsReady());
+    });
+
+    // And it yields to the watcher the moment there is a real answer.
+    expect(screen.getByTestId("pending")).toHaveTextContent("false");
   });
 });

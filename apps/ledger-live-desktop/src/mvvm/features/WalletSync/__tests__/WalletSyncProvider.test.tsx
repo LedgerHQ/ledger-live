@@ -1,7 +1,7 @@
 import React from "react";
 import { FEATURE_FLAGS_INITIAL_STATE, setRemoteFlagsReady } from "@shared/feature-flags";
 import { act, render, screen } from "tests/testSetup";
-import { WalletSyncProvider } from "../components/WalletSyncContext";
+import { WalletSyncProvider, useWalletSyncUserState } from "../components/WalletSyncContext";
 import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
 
 jest.mock("../hooks/useWatchWalletSync", () => ({
@@ -17,6 +17,11 @@ function Child({ onMount }: { onMount: () => void }) {
     onMount();
   }, [onMount]);
   return <div>child</div>;
+}
+
+function PendingProbe() {
+  const { visualPending } = useWalletSyncUserState();
+  return <span data-testid="pending">{String(visualPending)}</span>;
 }
 
 function renderProvider(remoteFlagsReady: boolean, onMount: () => void) {
@@ -78,5 +83,30 @@ describe("WalletSyncProvider", () => {
     });
 
     expect(jest.mocked(useWatchWalletSync).mock.calls.length).toBeLessThan(10);
+  });
+
+  it("should report the sync as pending until the watcher has reported", () => {
+    // `useWatchWalletSync` starts at `visualPending: true`, and while it is gated off the provider
+    // stands in for it. It has to stand in as pending, not idle: `useLoadingStep` reads
+    // `!visualPending` as "the watch loop finished" and would send the activation flow to its
+    // success screen on a sync that never ran. The idle value stays the outside-provider default.
+    const { store } = render(
+      <WalletSyncProvider>
+        <PendingProbe />
+      </WalletSyncProvider>,
+      {
+        initialState: {
+          featureFlags: { ...FEATURE_FLAGS_INITIAL_STATE, remoteFlagsReady: false },
+        },
+      },
+    );
+    expect(screen.getByTestId("pending")).toHaveTextContent("true");
+
+    act(() => {
+      store.dispatch(setRemoteFlagsReady());
+    });
+
+    // And it yields to the watcher the moment there is a real answer.
+    expect(screen.getByTestId("pending")).toHaveTextContent("false");
   });
 });

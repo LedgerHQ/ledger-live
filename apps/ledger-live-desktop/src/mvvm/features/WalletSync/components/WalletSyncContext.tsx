@@ -5,10 +5,21 @@ import { useWatchWalletSync, WalletSyncUserState } from "../hooks/useWatchWallet
 
 type WalletSyncStatus = Pick<WalletSyncUserState, "visualPending" | "walletSyncError">;
 
-const DEFAULT_STATUS: WalletSyncStatus = { visualPending: false, walletSyncError: null };
+/** Seen only outside any provider. Left exactly as it was before the watcher was lifted out. */
+const NO_PROVIDER_STATUS: WalletSyncStatus = { visualPending: false, walletSyncError: null };
+
+/**
+ * The provider's own starting point, mirroring `useWatchWalletSync`'s own `useState(true)`.
+ *
+ * It has to start pending rather than idle: between mount and the watcher's first report the
+ * status is simply unknown, and `useLoadingStep` reads `!visualPending` as "the watch loop
+ * finished". Starting at `false` would let its timeout expire against a status no watcher ever
+ * produced, sending the activation flow to its success screen on a sync that never ran.
+ */
+const INITIAL_STATUS: WalletSyncStatus = { visualPending: true, walletSyncError: null };
 
 export const WalletSyncContext = React.createContext<WalletSyncUserState>({
-  ...DEFAULT_STATUS,
+  ...NO_PROVIDER_STATUS,
   onUserRefresh: () => {},
 });
 
@@ -39,7 +50,7 @@ export const useWalletSyncUserState = () => React.useContext(WalletSyncContext);
  */
 export function WalletSyncProvider({ children }: { children: React.ReactNode }) {
   const remoteFlagsReady = useSelector(selectRemoteFlagsReady);
-  const [status, setStatus] = React.useState<WalletSyncStatus>(DEFAULT_STATUS);
+  const [status, setStatus] = React.useState<WalletSyncStatus>(INITIAL_STATUS);
   const onUserRefreshRef = React.useRef<() => void>(() => {});
 
   const value = React.useMemo<WalletSyncUserState>(
