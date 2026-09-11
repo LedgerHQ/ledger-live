@@ -5,7 +5,13 @@
 import { Observable, from } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import type { AccountDescriptor, Balance, SendEvent, DiscoveredAccountRaw } from "./models";
+import type {
+  AccountDescriptor,
+  Balance,
+  DiscoveredAccountRaw,
+  Operation,
+  SendEvent,
+} from "./models";
 // BridgeAdapter and CoinFrameworkAdapter are loaded lazily via dynamic import() inside getters
 // to avoid pulling in live-common/bridge/index (~328ms) and coinframework/local/evm (~105ms)
 // at module load time for every subprocess regardless of which command is invoked.
@@ -15,7 +21,7 @@ import type { EarnSolanaStake } from "./earn/types";
 import type { TransactionIntent } from "./intents";
 import type { Network } from "../shared/accountDescriptor";
 import { currencyIdFromNetwork, toV1 } from "../shared/accountDescriptor";
-import { readDescriptorBalances } from "./accountData";
+import { readDescriptorBalances, readDescriptorOperations } from "./accountData";
 
 export class WalletAdapter {
   private _bridge: Promise<BridgeAdapter> | null = null;
@@ -72,8 +78,24 @@ export class WalletAdapter {
     descriptor: AccountDescriptor,
     options?: { cursor?: string; limit?: number },
   ): Promise<OperationsPage> {
-    const ops = await (await this.getBridge()).getOperations(descriptor);
-    const limited = options?.limit == null ? ops : ops.slice(0, options.limit);
+    const rows = await readDescriptorOperations(descriptor);
+    const operations = rows.map(row => ({
+      id: row.id,
+      hash: row.hash,
+      type: row.type as Operation["type"],
+      value: row.value,
+      fee: row.fee,
+      senders: row.senders,
+      recipients: row.recipients,
+      blockHeight: row.blockHeight,
+      accountId: row.accountId,
+      assetId: row.assetId,
+      date: row.date,
+      ...(row.parentOperationId && row.accountId === descriptor.id
+        ? { parentId: row.parentOperationId }
+        : {}),
+    })) as Operation[];
+    const limited = options?.limit == null ? operations : operations.slice(0, options.limit);
     return { operations: limited, nextCursor: undefined };
   }
 

@@ -8,6 +8,7 @@ export const tools = {
   trustchain: platform.trustchain,
   "pay-card": walletXp.payCard,
   "account-balances": walletXp.accountBalances,
+  "account-operations": walletXp.accountOperations,
 } as const;
 
 /**
@@ -31,4 +32,5 @@ export type DevToolConfig =
   | { id: "feature-flags"; config: platform.FeatureFlagsToolProps }
   | { id: "trustchain"; config: platform.TrustchainDevToolProps }
   | { id: "pay-card"; config: walletXp.PayCardToolProps }
-  | { id: "account-balances"; config: walletXp.AccountBalancesToolProps };
+  | { id: "account-balances"; config: walletXp.AccountBalancesToolProps }
+  | { id: "account-operations"; config: walletXp.AccountOperationsToolProps };

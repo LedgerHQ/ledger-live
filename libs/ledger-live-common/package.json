@@ -269,6 +269,7 @@
     "@domain/entity-account": "workspace:^",
     "@domain/entity-account-balance": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
+    "@domain/entity-account-operations": "workspace:^",
     "@domain/entity-client-identity": "workspace:^",
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",

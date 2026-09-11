@@ -96,6 +96,7 @@
     "@domain/entity-account": "workspace:^",
     "@domain/entity-account-balance": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
+    "@domain/entity-account-operations": "workspace:^",
     "@domain/entity-altcoins-sentiment": "workspace:^",
     "@domain/entity-analytics-consent": "workspace:*",
     "@domain/entity-client-identity": "workspace:*",

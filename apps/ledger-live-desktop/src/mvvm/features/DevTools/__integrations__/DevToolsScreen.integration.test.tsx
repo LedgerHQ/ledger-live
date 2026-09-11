@@ -36,6 +36,7 @@ jest.mock("@devtools/bindings", () => ({
   useTrustchainDevToolProps: () => ({ marker: "trustchain-props" }),
   useCloudSyncDevToolProps: () => ({ marker: "cloud-sync-props" }),
   useAccountBalancesToolProps: () => ({ marker: "account-balances-props" }),
+  useAccountOperationsToolProps: () => ({ marker: "account-operations-props" }),
 }));
 
 jest.mock("@devtools/wire", () => {
@@ -70,6 +71,7 @@ describe("DevToolsScreen", () => {
           { id: "trustchain", config: { marker: "trustchain-props" } },
           { id: "cloud-sync", config: { marker: "cloud-sync-props" } },
           { id: "account-balances", config: { marker: "account-balances-props" } },
+          { id: "account-operations", config: { marker: "account-operations-props" } },
         ],
       }),
     );

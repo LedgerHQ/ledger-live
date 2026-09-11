@@ -16,13 +16,14 @@
     "lint": "oxlint src"
   },
   "dependencies": {
-    "zod": "catalog:",
-    "@devtools/feature-flags": "workspace:*",
+    "@devtools/account-balances": "workspace:*",
+    "@devtools/account-operations": "workspace:*",
+    "@devtools/cloud-sync": "workspace:*",
     "@devtools/env": "workspace:*",
+    "@devtools/feature-flags": "workspace:*",
     "@devtools/pay-card": "workspace:*",
     "@devtools/trustchain": "workspace:*",
-    "@devtools/cloud-sync": "workspace:*",
-    "@devtools/account-balances": "workspace:*"
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19"

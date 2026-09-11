@@ -78,6 +78,7 @@
     "@domain/entity-account-alias": "workspace:^",
     "@domain/entity-account-balance": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
+    "@domain/entity-account-operations": "workspace:^",
     "@domain/entity-analytics-consent": "workspace:*",
     "@domain/entity-client-identity": "workspace:*",
     "@domain/entity-contact": "workspace:*",
