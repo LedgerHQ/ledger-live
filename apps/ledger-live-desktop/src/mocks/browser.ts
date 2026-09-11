@@ -6,6 +6,7 @@ import { mockStocksResponse } from "@domain/api-aggregated-assets/mock/stocks";
 import { mockLedgerStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/mocks/ledgerStatus";
 import { mockFearAndGreedLatest } from "@domain/api-market-sentiment/mock";
 import { getMockCardOnboardingStatus } from "@domain/api-card-management/mock";
+import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import countervaluesHandlers from "../../tests/handlers/countervalues";
 import marketHandlers from "../../tests/handlers/market";
 
@@ -28,6 +29,7 @@ const handlers = [
   ...marketHandlers,
   ...countervaluesHandlers,
   http.get("*/v1/card/onboarding-status", () => HttpResponse.json(getMockCardOnboardingStatus())),
+  http.get("*/v1/card/transactions", () => HttpResponse.json(mockPayCardTransactions())),
 ];
 
 const mswWorker = setupWorker(...handlers);

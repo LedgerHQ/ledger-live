@@ -7050,6 +7050,16 @@ importers:
         version: 1.51.0
 
   features/flow/pay-card-transactions:
+    dependencies:
+      '@domain/api-card-management':
+        specifier: workspace:^
+        version: link:../../../domain/api/card-management
+      '@features/flow-pay-card-auth':
+        specifier: workspace:*
+        version: link:../pay-card-auth
+      '@shared/i18n':
+        specifier: workspace:*
+        version: link:../../../shared/i18n
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
@@ -7060,6 +7070,9 @@ importers:
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
+      '@support/msw-features-flow-pay-card':
+        specifier: workspace:*
+        version: link:../../../support/msw-features-flow-pay-card
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7105,6 +7118,9 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7120,6 +7136,9 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)

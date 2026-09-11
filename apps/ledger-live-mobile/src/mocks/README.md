@@ -65,6 +65,13 @@ reaches the real provider. Only the answer buttons and the renewal counter need 
 > So a Pay Card handler counts only what it answers. Do not count a pass-through here: count it in
 > the client. The `[card api]` trace in `@shared/api-services` prints one line per request.
 
+## Pay Card transactions
+
+`GET /v1/card/transactions` is always answered from
+`@domain/api-card-management/mock/card-transactions`, so a transaction list renders without a funded
+card. The page holds one transaction per spend category, which is how every
+`payTab.cardTransactions.categories` label becomes visible.
+
 `src/mocks/card/state.ts` holds the switchboard the panel and the handler share. It lives on
 `globalThis`, because the panel's props are built in `@devtools/bindings`, which cannot import from
 an app.

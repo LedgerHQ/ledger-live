@@ -10,8 +10,10 @@ import {
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
+  PAY_CARD_TRANSACTION_CATEGORIES,
   PayCardTransactionSchema,
   PayCardTransactionsRequestSchema,
+  PayCardTransactionsResponseSchema,
   PayCardWalletHistoryEntrySchema,
   PayCardWalletHistoryRequestSchema,
   PayCardUserResponseSchema,
@@ -432,6 +434,29 @@ describe("PayCardTransactionSchema", () => {
 
   it("rejects a direction the wire contract does not name", () => {
     expect(() => PayCardTransactionSchema.parse({ ...documented, sign: "REFUND" })).toThrow();
+  });
+
+  it.each(PAY_CARD_TRANSACTION_CATEGORIES)("reads a %s spend category", mccCategory => {
+    expect(PayCardTransactionSchema.parse({ ...documented, mccCategory }).mccCategory).toBe(
+      mccCategory,
+    );
+  });
+
+  it("reads a spend category the provider does not name as MISC", () => {
+    expect(
+      PayCardTransactionSchema.parse({ ...documented, mccCategory: "SHOPPING" }).mccCategory,
+    ).toBe("MISC");
+  });
+
+  it("keeps the whole page when one transaction carries an unnamed spend category", () => {
+    const page = [
+      { ...documented, mccCategory: "FOOD" },
+      { ...documented, id: "second", mccCategory: "SHOPPING" },
+    ];
+
+    expect(
+      PayCardTransactionsResponseSchema.parse(page).map(({ mccCategory }) => mccCategory),
+    ).toEqual(["FOOD", "MISC"]);
   });
 });
 

@@ -919,6 +919,18 @@
         "retry": "Try again"
       }
     },
+    "cardTransactions": {
+      "categories": {
+        "SUBSCRIPTIONS": "Subscriptions",
+        "FOOD": "Food",
+        "TRAVEL": "Travel",
+        "ENTERTAINMENT": "Entertainment",
+        "HEALTH": "Health",
+        "ATM": "ATM",
+        "UTILITIES": "Utilities",
+        "MISC": "Other"
+      }
+    },
     "cardOnboarding": {
       "widget": {
         "title": "Set up your card",
