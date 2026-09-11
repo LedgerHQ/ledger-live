@@ -69,9 +69,11 @@ export async function clearHostedSessionData(
   origins: unknown,
 ): Promise<void> {
   for (const { origin, hostname } of readOrigins(origins)) {
+    // The lookup takes no domain filter: `{ domain: hostname }` would hide the parent-domain
+    // cookies (e.g. `.baanx.com`) that carry the provider session just as much as the host's own.
     // Best effort, like the removal below: a store that refuses to answer must not skip this
     // origin's storage wipe, nor abort the wipe of every origin still left in the list.
-    const stored = await targetSession.cookies.get({ domain: hostname }).catch(() => []);
+    const stored = await targetSession.cookies.get({}).catch(() => []);
 
     await Promise.allSettled(
       stored
