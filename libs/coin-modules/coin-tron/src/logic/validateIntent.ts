@@ -13,6 +13,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import BigNumber from "bignumber.js";
 import sumBy from "lodash/sumBy";
@@ -63,6 +64,7 @@ function asResourceBreakdown(value: unknown): TronResourceBreakdown | undefined 
 }
 
 export async function validateIntent(
+  logger: Logger,
   config: TronCoinConfig,
   intent: TransactionIntent<TronMemo, TronTxData>,
   balances: Balance[],
@@ -83,16 +85,17 @@ export async function validateIntent(
   await validateRecipient(intent, mode, errors);
 
   if (MODES_NEEDING_RESOURCES.has(mode)) {
-    const tronResources = await fetchResources(config, intent.sender);
+    const tronResources = await fetchResources(logger, config, intent.sender);
     validateResourceMode(mode, resource, votes, intent, tronResources, errors);
-    if (mode === "vote") await validateVotes(config, votes, tronResources, errors);
+    if (mode === "vote") await validateVotes(logger, config, votes, tronResources, errors);
   }
 
   if (mode === "unDelegateResource") {
-    await validateUnDelegate(config, intent, resource, errors);
+    await validateUnDelegate(logger, config, intent, resource, errors);
   }
 
   const { estimatedFees, breakdown } = await resolveFeeContext(
+    logger,
     config,
     intent,
     customFees,
@@ -143,6 +146,7 @@ export async function validateIntent(
  * that already failed a recipient/resource check cannot be signed anyway, so `hasErrors` skips it.
  */
 async function resolveFeeContext(
+  logger: Logger,
   config: TronCoinConfig,
   intent: TransactionIntent<TronMemo, TronTxData>,
   customFees: FeeEstimation | undefined,
@@ -152,7 +156,9 @@ async function resolveFeeContext(
   const needsBreakdown = intent.asset.type === "trc20" && !customBreakdown;
   const needsValue = customFees?.value === undefined;
   const estimation =
-    !hasErrors && (needsBreakdown || needsValue) ? await estimateFees(config, intent) : undefined;
+    !hasErrors && (needsBreakdown || needsValue)
+      ? await estimateFees(logger, config, intent)
+      : undefined;
   const estimatedFees = customFees?.value ?? estimation?.value ?? 0n;
   const breakdown = customBreakdown ?? asResourceBreakdown(estimation?.parameters);
   return { estimatedFees, breakdown };
@@ -215,25 +221,36 @@ function applyFeeFindings(
 }
 
 async function validateUnDelegate(
+  logger: Logger,
   config: TronCoinConfig,
   intent: TransactionIntent<TronMemo, TronTxData>,
   resource: TronTxData["resource"],
   errors: Record<string, Error>,
 ): Promise<void> {
   if (!resource || !intent.recipient) return;
-  const delegated = await getDelegatedResource(config, intent.sender, intent.recipient, resource);
+  const delegated = await getDelegatedResource(
+    logger,
+    config,
+    intent.sender,
+    intent.recipient,
+    resource,
+  );
   if (delegated.lt(new BigNumber(intent.amount.toString()))) {
     errors.resource = new TronInvalidUnDelegateResourceAmount();
   }
 }
 
-async function fetchResources(config: TronCoinConfig, sender: string): Promise<TronResources> {
-  const accounts = await fetchTronAccount(config, sender);
+async function fetchResources(
+  logger: Logger,
+  config: TronCoinConfig,
+  sender: string,
+): Promise<TronResources> {
+  const accounts = await fetchTronAccount(logger, config, sender);
   // The all-zero defaults are the truth for an account TronGrid has never seen, and they are what
   // makes the resource guards below fire: returning `undefined` would skip every one of them,
   // letting an unsignable staking intent through with no error at all.
   if (accounts.length === 0) return defaultTronResources;
-  return fetchTronResources(config, accounts[0]);
+  return fetchTronResources(logger, config, accounts[0]);
 }
 
 async function validateRecipient(
@@ -362,6 +379,7 @@ function validateClaimReward(tronResources: TronResources, errors: Record<string
 }
 
 async function validateVotes(
+  logger: Logger,
   config: TronCoinConfig,
   votes: NonNullable<TronTxData["votes"]>,
   tronResources: TronResources,
@@ -369,7 +387,7 @@ async function validateVotes(
 ): Promise<void> {
   if (votes.length === 0) return;
 
-  const superRepresentatives = await getTronSuperRepresentatives(config);
+  const superRepresentatives = await getTronSuperRepresentatives(logger, config);
   const isValidAddresses = votes.every(v =>
     superRepresentatives.some(s => s.address === v.address),
   );

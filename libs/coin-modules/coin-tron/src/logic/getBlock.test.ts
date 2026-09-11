@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import {
   getBlock as networkGetBlock,
@@ -15,6 +16,8 @@ jest.mock("../network", () => ({
 
 const mockGetTransactionInfoByBlockNum = getTransactionInfoByBlockNum as jest.Mock;
 
+const mockLogger: Logger = jest.fn();
+
 const mockConfig = {
   status: { type: "active" },
   explorer: { url: "https://tron.coin.ledger.com" },
@@ -26,11 +29,19 @@ describe("getBlockInfo", () => {
   });
 
   it("should throw for invalid height", async () => {
-    await expect(getBlockInfo(mockConfig, 0)).rejects.toThrow("Invalid block height: 0");
-    await expect(getBlockInfo(mockConfig, -1)).rejects.toThrow("Invalid block height: -1");
-    await expect(getBlockInfo(mockConfig, 1.5)).rejects.toThrow("Invalid block height: 1.5");
-    await expect(getBlockInfo(mockConfig, NaN)).rejects.toThrow("Invalid block height: NaN");
-    await expect(getBlockInfo(mockConfig, Infinity)).rejects.toThrow(
+    await expect(getBlockInfo(mockLogger, mockConfig, 0)).rejects.toThrow(
+      "Invalid block height: 0",
+    );
+    await expect(getBlockInfo(mockLogger, mockConfig, -1)).rejects.toThrow(
+      "Invalid block height: -1",
+    );
+    await expect(getBlockInfo(mockLogger, mockConfig, 1.5)).rejects.toThrow(
+      "Invalid block height: 1.5",
+    );
+    await expect(getBlockInfo(mockLogger, mockConfig, NaN)).rejects.toThrow(
+      "Invalid block height: NaN",
+    );
+    await expect(getBlockInfo(mockLogger, mockConfig, Infinity)).rejects.toThrow(
       "Invalid block height: Infinity",
     );
     expect(networkGetBlock).not.toHaveBeenCalled();
@@ -43,14 +54,14 @@ describe("getBlockInfo", () => {
       time: new Date(1700000000000),
     });
 
-    const result = await getBlockInfo(mockConfig, 100);
+    const result = await getBlockInfo(mockLogger, mockConfig, 100);
 
     expect(result).toEqual({
       height: 100,
       hash: "blockhash",
       time: new Date(1700000000000),
     });
-    expect(networkGetBlock).toHaveBeenCalledWith(mockConfig, 100);
+    expect(networkGetBlock).toHaveBeenCalledWith(mockLogger, mockConfig, 100);
   });
 });
 
@@ -61,11 +72,17 @@ describe("getBlock", () => {
   });
 
   it("should throw for invalid height", async () => {
-    await expect(getBlock(mockConfig, 0)).rejects.toThrow("Invalid block height: 0");
-    await expect(getBlock(mockConfig, -1)).rejects.toThrow("Invalid block height: -1");
-    await expect(getBlock(mockConfig, 1.5)).rejects.toThrow("Invalid block height: 1.5");
-    await expect(getBlock(mockConfig, NaN)).rejects.toThrow("Invalid block height: NaN");
-    await expect(getBlock(mockConfig, Infinity)).rejects.toThrow("Invalid block height: Infinity");
+    await expect(getBlock(mockLogger, mockConfig, 0)).rejects.toThrow("Invalid block height: 0");
+    await expect(getBlock(mockLogger, mockConfig, -1)).rejects.toThrow("Invalid block height: -1");
+    await expect(getBlock(mockLogger, mockConfig, 1.5)).rejects.toThrow(
+      "Invalid block height: 1.5",
+    );
+    await expect(getBlock(mockLogger, mockConfig, NaN)).rejects.toThrow(
+      "Invalid block height: NaN",
+    );
+    await expect(getBlock(mockLogger, mockConfig, Infinity)).rejects.toThrow(
+      "Invalid block height: Infinity",
+    );
     expect(getBlockWithTransactions).not.toHaveBeenCalled();
   });
 
@@ -95,7 +112,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions).toHaveLength(1);
     expect(result.transactions[0].hash).toBe("tx1");
@@ -111,7 +128,7 @@ describe("getBlock", () => {
       asset: { type: "native" },
       amount: BigInt(1000000),
     });
-    expect(getBlockWithTransactions).toHaveBeenCalledWith(mockConfig, 100);
+    expect(getBlockWithTransactions).toHaveBeenCalledWith(mockLogger, mockConfig, 100);
   });
 
   it("should map TRC10 transfer to transfer operations", async () => {
@@ -141,7 +158,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions[0].operations[0]).toMatchObject({
       type: "transfer",
@@ -180,7 +197,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
     const expectedAssetReference = encode58Check(contractAddress);
 
     expect(result.transactions).toHaveLength(1);
@@ -244,7 +261,7 @@ describe("getBlock", () => {
       },
     ]);
 
-    const result = await getBlock(mockConfig, 85277401);
+    const result = await getBlock(mockLogger, mockConfig, 85277401);
     const amount = BigInt("100000000000000000000000000000000");
 
     expect(result.transactions).toHaveLength(1);
@@ -313,7 +330,7 @@ describe("getBlock", () => {
       },
     ]);
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions[0].operations).toHaveLength(4);
     expect(
@@ -353,7 +370,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions[0].operations).toEqual([
       { type: "other", operationType: "NONE", contractType: "CreateSmartContract" },
@@ -386,7 +403,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions[0].operations[0]).toMatchObject({
       type: "other",
@@ -420,7 +437,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions[0].operations[0]).toMatchObject({
       type: "other",
@@ -457,7 +474,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions[0].failed).toBe(true);
     expect(result.transactions[0].fees).toBe(BigInt(5000));
@@ -480,7 +497,7 @@ describe("getBlock", () => {
       block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions).toHaveLength(0);
   });
@@ -510,7 +527,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions[0].failed).toBe(false);
   });
@@ -543,9 +560,9 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
-    expect(mockGetTransactionInfoByBlockNum).toHaveBeenCalledWith(mockConfig, 100);
+    expect(mockGetTransactionInfoByBlockNum).toHaveBeenCalledWith(mockLogger, mockConfig, 100);
     expect(result.transactions[0].fees).toBe(BigInt(2500));
   });
 
@@ -577,7 +594,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions[0].fees).toBe(BigInt(9999));
   });
@@ -610,7 +627,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions).toHaveLength(1);
     expect(result.transactions[0].fees).toBe(BigInt(7500));
@@ -644,7 +661,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.transactions).toHaveLength(1);
     expect(result.transactions[0].fees).toBe(BigInt(0));
@@ -678,7 +695,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const result = await getBlock(mockConfig, 100);
+    const result = await getBlock(mockLogger, mockConfig, 100);
 
     expect(result.info.height).toBe(100);
     expect(result.transactions).toHaveLength(1);
