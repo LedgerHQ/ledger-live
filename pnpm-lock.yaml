@@ -3610,6 +3610,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@react-native-clipboard/clipboard':
+        specifier: 1.16.2
+        version: 1.16.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.81.6
@@ -50754,6 +50757,11 @@ snapshots:
     dependencies:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+
+  '@react-native-clipboard/clipboard@1.16.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
+    dependencies:
+      react: 19.1.4
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
 
   '@react-native-community/cli-clean@18.0.1':
     dependencies:

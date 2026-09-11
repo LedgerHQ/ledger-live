@@ -21,6 +21,7 @@
     "lint": "oxlint src"
   },
   "devDependencies": {
+    "@react-native-clipboard/clipboard": "1.16.2",
     "@support/jest-devtools": "workspace:*",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
@@ -65,6 +66,7 @@
   },
   "peerDependencies": {
     "react": ">=19",
+    "@react-native-clipboard/clipboard": ">=1.16.0",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
