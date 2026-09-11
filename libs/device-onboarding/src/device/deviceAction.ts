@@ -20,8 +20,8 @@ export type DeviceActionRunner<Output> = {
 
 /**
  * Turns a device action, an observable of intermediate states, into the promise the retry helper
- * can wrap. `stop` cancels the execution itself, not only the subscription, and is what a retry
- * calls before the next attempt.
+ * can wrap. `stop` cancels before it unsubscribes, since DMK reports the stop from `cancel` and an
+ * unsubscribed run would never settle, and is what a retry calls before the next attempt.
  */
 export function createDeviceActionRunner<
   Output,
@@ -35,8 +35,8 @@ export function createDeviceActionRunner<
   let subscription: Subscription | undefined;
 
   const stop = () => {
-    subscription?.unsubscribe();
     execution?.cancel();
+    subscription?.unsubscribe();
     subscription = undefined;
     execution = undefined;
   };
@@ -63,6 +63,7 @@ export function createDeviceActionRunner<
           }
         },
         error: reject,
+        complete: () => reject(new DeviceActionStoppedError()),
       });
     });
 

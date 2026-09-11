@@ -30,7 +30,7 @@ session open when the machine exits.
   from them means the retries are exhausted. An actor accepts a `retryPolicy` to override them.
 - `ToggleEarlyCheckCommand` carries the `e0 03` APDU. DMK exposes no such command and the ticket
   that was to add one was abandoned, so this is the one piece of device knowledge the package
-  holds on its own. It is meant to be deleted, not built on: import DMK's the day it ships one.
+  holds on its own. It is meant to be deleted, not built on: import DMK's command once it ships.
 
 `readDeviceState` reports `DEVICE_STATE_UNREADABLE` rather than a failure when the onboarding step
 is missing, since `isOnboarded` stays usable, and `seedPolling` stays quiet in that case. The
