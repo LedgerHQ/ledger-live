@@ -5,6 +5,7 @@ import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import type {
   SignRawTransactionIntent,
+  SignRawTransactionIntentInput,
   SignRawTransactionIntentJobState,
 } from "@ledgerhq/live-common/intents/signRawTransactionIntent";
 import {
@@ -114,11 +115,12 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
   const signIntent = useMemo<SignRawTransactionIntent | null>(() => {
     if (!account || !order) return null;
     const tx = order.transaction as TronifyUnsignedTransaction;
-    return createIntent(signRawTronTransactionIntentLWMDefinition, {
+    const input: SignRawTransactionIntentInput = {
       account,
       parentAccount: parentAccount ?? null,
       transaction: tx.raw_data_hex,
-    });
+    };
+    return createIntent(signRawTronTransactionIntentLWMDefinition, input);
   }, [account, parentAccount, order]);
 
   const onIntentJobStateChanged = useCallback(
