@@ -1,12 +1,8 @@
 import React from "react";
-import { CountervaluesProvider, useTrackingPairForAccounts, type CountervaluesBridge } from ".";
+import { CountervaluesProvider, type CountervaluesBridge } from ".";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { renderHook, act, render, waitFor } from "@testing-library/react";
-import {
-  inferTrackingPairForAccounts,
-  initialState,
-  loadCountervalues,
-} from "@ledgerhq/live-countervalues/logic";
+import { render, waitFor } from "@testing-library/react";
+import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
 import type {
   CountervaluesSettings,
   CounterValuesState,
@@ -34,122 +30,6 @@ const usd: FiatCurrency = {
   symbol: "$",
   units: [{ name: "dollar", code: "USD", magnitude: 2, showAllDigits: true, prefixCode: true }],
 };
-const eur: FiatCurrency = {
-  type: "FiatCurrency",
-  name: "Euro",
-  ticker: "EUR",
-  symbol: "€",
-  units: [{ name: "euro", code: "EUR", magnitude: 2, showAllDigits: true, prefixCode: true }],
-};
-
-describe("useTrackingPairForAccounts", () => {
-  const accounts = Array(20)
-    .fill(null)
-    .map((_, i) => genAccount("test" + i));
-  const trackingPairs = inferTrackingPairForAccounts(accounts, usd);
-
-  test("it returns same tracking pairs as when using inferTrackingPairForAccounts", async () => {
-    const { result } = renderHook(() => useTrackingPairForAccounts(accounts, usd));
-    await act(async () => {
-      expect(result.current).toEqual(trackingPairs);
-    });
-  });
-
-  test("a re-render preserve the reference", async () => {
-    const { result, rerender } = renderHook(() => useTrackingPairForAccounts(accounts, usd));
-    let initial: TrackingPair[] | undefined;
-    await act(async () => {
-      initial = result.current;
-    });
-    rerender();
-    await act(async () => {
-      expect(result.current).toBe(initial);
-    });
-  });
-
-  test("a re-render preserve the reference even when accounts change", async () => {
-    const { result, rerender } = renderHook(() =>
-      useTrackingPairForAccounts(accounts.slice(0), usd),
-    );
-    let initial: TrackingPair[] | undefined;
-    await act(async () => {
-      initial = result.current;
-    });
-    rerender();
-    await act(async () => {
-      expect(result.current).toBe(initial);
-    });
-  });
-
-  test("when accounts appears, it properly converge to the trackingPairs", async () => {
-    const { result, rerender } = renderHook(added =>
-      useTrackingPairForAccounts(!added ? [] : accounts, usd),
-    );
-    await act(async () => {
-      expect(result.current).toEqual([]);
-    });
-    rerender(true);
-    await act(async () => {
-      expect(result.current).toEqual(trackingPairs);
-    });
-  });
-
-  test("when accounts changes fundamentally, pairs change", async () => {
-    const { result, rerender } = renderHook(empty =>
-      useTrackingPairForAccounts(empty ? [] : accounts, usd),
-    );
-    await act(async () => {
-      expect(result.current).toEqual(trackingPairs);
-    });
-    rerender(true);
-    await act(async () => {
-      expect(result.current).toEqual([]);
-    });
-  });
-
-  test("when currency changes, pairs change", async () => {
-    const { result, rerender } = renderHook(usesEur =>
-      useTrackingPairForAccounts(accounts, usesEur ? eur : usd),
-    );
-    await act(async () => {
-      expect(result.current).toEqual(trackingPairs);
-    });
-    rerender(true);
-    await act(async () => {
-      expect(result.current).not.toEqual(trackingPairs);
-    });
-  });
-
-  test("if accounts reorder, it doesn't change", async () => {
-    const reverse = accounts.slice(0).reverse();
-    const { result, rerender } = renderHook(rev =>
-      useTrackingPairForAccounts(rev ? reverse : accounts, usd),
-    );
-    let initial: TrackingPair[] | undefined;
-    await act(async () => {
-      initial = result.current;
-    });
-    rerender(true);
-    await act(async () => {
-      expect(result.current).toBe(initial);
-    });
-  });
-
-  test("if accounts doubles, it doesn't change", async () => {
-    const doubled = accounts.concat(accounts);
-    const { result, rerender } = renderHook(d =>
-      useTrackingPairForAccounts(d ? doubled : accounts, usd),
-    );
-    let initial: TrackingPair[] | undefined;
-    await act(async () => {
-      initial = result.current;
-    });
-    rerender(true);
-    await act(async () => {
-      expect(result.current).toBe(initial);
-    });
-  });
-});
 
 describe("CountervaluesProvider", () => {
   const bitcoin = genAccount("bitcoin").currency;
@@ -201,7 +81,12 @@ describe("CountervaluesProvider", () => {
   it("should use the same API-ID lookup in filter and batching for remapped currencies", async () => {
     // assethub_polkadot maps to "polkadot" via inferCurrencyAPIID.
     // supportedCryptoIds contains API IDs, so the correct key is "polkadot", not "assethub_polkadot".
-    const assethubPolkadot = { type: "CryptoCurrency", id: "assethub_polkadot" } as unknown as Currency;
+    const assethubPolkadot: Currency = {
+      ...bitcoin,
+      id: CryptoCurrencyIdSchema.parse("assethub_polkadot"),
+      name: "Asset Hub Polkadot",
+      ticker: "DOT",
+    };
     const bridge = createBridge({
       supportedCryptoIds: ["polkadot"],
       trackingPairs: [trackingPair(assethubPolkadot)],
@@ -213,10 +98,9 @@ describe("CountervaluesProvider", () => {
     // filterSupportedTrackingPairs resolves assethub_polkadot → polkadot, so the pair is kept
     expect(mockLoadCountervalues.mock.calls[0][1].trackingPairs).toHaveLength(1);
     // shouldBatchCurrencyFrom must also resolve to "polkadot" (rank 0, ≤ marketCapBatchingAfterRank 20) → not batched
-    const solver = mockLoadCountervalues.mock.calls[0][2] as {
-      shouldBatchCurrencyFrom: (c: typeof assethubPolkadot) => boolean;
-    };
-    expect(solver.shouldBatchCurrencyFrom(assethubPolkadot)).toBe(false);
+    expect(mockLoadCountervalues.mock.calls[0][2]?.shouldBatchCurrencyFrom(assethubPolkadot)).toBe(
+      false,
+    );
   });
 });
 

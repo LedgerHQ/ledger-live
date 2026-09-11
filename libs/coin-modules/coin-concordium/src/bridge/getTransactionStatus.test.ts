@@ -1,5 +1,6 @@
 import {
   AmountRequired,
+  FeeNotLoaded,
   FeeRequired,
   FeeTooHigh,
   InvalidAddress,
@@ -7,16 +8,82 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
-import { MAX_MEMO_LENGTH } from "@ledgerhq/concordium-core";
+import { MAX_MEMO_LENGTH, PLT_MAX_DECIMALS, PLT_MAX_MEMO_SIZE } from "@ledgerhq/concordium-core";
 import {
   createFixtureAccount,
+  createFixtureTokenAccount,
+  createFixtureTokenCurrency,
   createFixtureTransaction,
   setupTestnetCoinConfig,
   VALID_ADDRESS,
   VALID_ADDRESS_2,
 } from "../test/fixtures";
-import { ConcordiumInsufficientFunds, ConcordiumMemoTooLong } from "../types/errors";
+import {
+  ConcordiumInsufficientCcdForFee,
+  ConcordiumInsufficientFunds,
+  ConcordiumInvalidPltPayloadError,
+  ConcordiumMemoTooLong,
+  ConcordiumTokenAccountUnavailable,
+  ConcordiumTokenPaused,
+  ConcordiumTokenRestrictionsUnverified,
+  ConcordiumTokenTransferNotPermitted,
+  ConcordiumUnsupportedTokenDecimals,
+} from "../types/errors";
+import type { ConcordiumAccount, ConcordiumTokenResources } from "../types";
 import { getTransactionStatus } from "./getTransactionStatus";
+
+const PLT_ID = "t-USDT";
+
+/**
+ * A parent holding one PLT sub-account, with the per-token state on the parent
+ * where sync puts it — `TokenAccount` is closed and has no family slot.
+ */
+const withToken = ({
+  tokenState = { transferStatus: "allowed" } as ConcordiumTokenResources,
+  magnitude = 6,
+  balance = new BigNumber(5000000),
+  ccdBalance,
+  ccdSpendable,
+}: {
+  tokenState?: ConcordiumTokenResources | null;
+  magnitude?: number;
+  balance?: BigNumber;
+  ccdBalance?: BigNumber;
+  ccdSpendable?: BigNumber;
+} = {}) => {
+  const parent = createFixtureAccount();
+  const token = createFixtureTokenCurrency({
+    units: magnitude === -1 ? [] : [{ name: PLT_ID, code: PLT_ID, magnitude }],
+  });
+  const subAccount = createFixtureTokenAccount({
+    parentId: parent.id,
+    token,
+    balance,
+    spendableBalance: balance,
+  });
+
+  const account = {
+    ...parent,
+    ...(ccdBalance ? { balance: ccdBalance } : {}),
+    ...(ccdSpendable ? { spendableBalance: ccdSpendable } : {}),
+    subAccounts: [subAccount],
+    concordiumResources: {
+      ...(parent as ConcordiumAccount).concordiumResources,
+      ...(tokenState ? { tokens: { [PLT_ID]: tokenState } } : {}),
+    },
+  } as ConcordiumAccount;
+
+  return { account, subAccount };
+};
+
+const tokenTx = (subAccountId: string, over = {}) =>
+  createFixtureTransaction({
+    subAccountId,
+    recipient: VALID_ADDRESS_2,
+    amount: new BigNumber(1000000),
+    fee: new BigNumber(3600),
+    ...over,
+  });
 
 describe("getTransactionStatus", () => {
   beforeEach(() => {
@@ -33,7 +100,7 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(account, transaction);
 
       // THEN
-      expect(result.errors.fee).toBeInstanceOf(FeeRequired);
+      expect(result.errors.amount).toBeInstanceOf(FeeRequired);
     });
 
     it("should return FeeRequired error when fee is zero", async () => {
@@ -45,7 +112,47 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(account, transaction);
 
       // THEN
-      expect(result.errors.fee).toBeInstanceOf(FeeRequired);
+      expect(result.errors.amount).toBeInstanceOf(FeeRequired);
+    });
+
+    // The key matters as much as the error: nothing under the desktop
+    // `modals/Send/` tree reads `errors.fee`, so filing it there greys out
+    // Continue with no message. See LIVE-37061.
+    it("files the fee error under a key the desktop send flow renders", async () => {
+      // GIVEN
+      const account = createFixtureAccount();
+      const transaction = createFixtureTransaction({ fee: null });
+
+      // WHEN
+      const result = await getTransactionStatus(account, transaction);
+
+      // THEN
+      expect(result.errors.fee).toBeUndefined();
+      expect(result.errors.amount).toBeInstanceOf(FeeRequired);
+    });
+
+    it("reports a NaN fee as not loaded", async () => {
+      // GIVEN - `fromTransactionRaw` yields NaN for a corrupt persisted fee
+      const account = createFixtureAccount();
+      const transaction = createFixtureTransaction({ fee: new BigNumber(NaN) });
+
+      // WHEN
+      const result = await getTransactionStatus(account, transaction);
+
+      // THEN
+      expect(result.errors.amount).toBeInstanceOf(FeeNotLoaded);
+    });
+
+    it("prefers the amount error over the missing fee", async () => {
+      // GIVEN - both would fire; the amount is the one the user can act on
+      const account = createFixtureAccount();
+      const transaction = createFixtureTransaction({ amount: new BigNumber(0), fee: null });
+
+      // WHEN
+      const result = await getTransactionStatus(account, transaction);
+
+      // THEN
+      expect(result.errors.amount).toBeInstanceOf(AmountRequired);
     });
 
     it("should return FeeTooHigh warning when fee exceeds 10x the amount", async () => {
@@ -381,6 +488,367 @@ describe("getTransactionStatus", () => {
 
       // THEN
       expect(result.errors.memo).toBeInstanceOf(ConcordiumMemoTooLong);
+    });
+  });
+
+  describe("PLT transfers", () => {
+    it("compares the amount against the token balance, not the CCD balance", async () => {
+      const { account, subAccount } = withToken({ balance: new BigNumber(1000) });
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { amount: new BigNumber(2000) }),
+      );
+
+      expect(status.errors.amount).toBeInstanceOf(ConcordiumInsufficientFunds);
+    });
+
+    it("accepts an amount the CCD balance could never cover", async () => {
+      const { account, subAccount } = withToken({ balance: new BigNumber("999999999999") });
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { amount: new BigNumber("999999999999") }),
+      );
+
+      expect(status.errors).toEqual({});
+    });
+
+    // The token balance is untouched here; only the CCD balance is short.
+    it("reports a distinct error when CCD cannot cover the fee", async () => {
+      const { account, subAccount } = withToken({ ccdBalance: new BigNumber(100) });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors.amount).toBeInstanceOf(ConcordiumInsufficientCcdForFee);
+    });
+
+    // A staked account: 10 CCD held, 1000 µCCD at its disposal. `minReserve` is 0
+    // on both networks, so a balance-based check would wave this through.
+    it("gates the fee on what is at the account's disposal, not its balance", async () => {
+      const { account, subAccount } = withToken({
+        ccdBalance: new BigNumber(10000000),
+        ccdSpendable: new BigNumber(1000),
+      });
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { fee: new BigNumber(3600) }),
+      );
+
+      expect(status.errors.amount).toBeInstanceOf(ConcordiumInsufficientCcdForFee);
+    });
+
+    it("accepts a fee the disposable balance covers", async () => {
+      const { account, subAccount } = withToken({
+        ccdBalance: new BigNumber(10000000),
+        ccdSpendable: new BigNumber(50000),
+      });
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { fee: new BigNumber(3600) }),
+      );
+
+      expect(status.errors).toEqual({});
+    });
+
+    it("keeps the fee out of totalSpent, which is the token amount alone", async () => {
+      const { account, subAccount } = withToken();
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { amount: new BigNumber(1000000) }),
+      );
+
+      expect(status.totalSpent).toEqual(new BigNumber(1000000));
+      expect(status.estimatedFees).toEqual(new BigNumber(3600));
+    });
+
+    it("sends the whole token balance on useAllAmount, unreduced by the fee", async () => {
+      const { account, subAccount } = withToken({ balance: new BigNumber(777) });
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { useAllAmount: true, amount: new BigNumber(0) }),
+      );
+
+      expect(status.amount).toEqual(new BigNumber(777));
+      expect(status.errors).toEqual({});
+    });
+
+    // A paused token's verdict is also `"blocked"`, so order decides this one.
+    it("reports a paused token as paused, not as a list rejection", async () => {
+      const { account, subAccount } = withToken({
+        tokenState: { transferStatus: "blocked", paused: true },
+      });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors.sender).toBeInstanceOf(ConcordiumTokenPaused);
+    });
+
+    it("blocks a rejected sender without naming which list refused them", async () => {
+      const { account, subAccount } = withToken({ tokenState: { transferStatus: "blocked" } });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors.sender).toBeInstanceOf(ConcordiumTokenTransferNotPermitted);
+    });
+
+    it("distinguishes an unreadable policy from a rejection", async () => {
+      const { account, subAccount } = withToken({ tokenState: { transferStatus: "unknown" } });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors.sender).toBeInstanceOf(ConcordiumTokenRestrictionsUnverified);
+      expect(status.errors.sender).not.toBeInstanceOf(ConcordiumTokenTransferNotPermitted);
+    });
+
+    it("blocks when sync recorded no state for the token at all", async () => {
+      const { account, subAccount } = withToken({ tokenState: null });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors.sender).toBeInstanceOf(ConcordiumTokenRestrictionsUnverified);
+    });
+
+    // A corrupted store or a newer app version can produce this.
+    it("blocks an off-union transferStatus", async () => {
+      const { account, subAccount } = withToken({
+        tokenState: { transferStatus: "something-newer" } as unknown as ConcordiumTokenResources,
+      });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors.sender).toBeInstanceOf(ConcordiumTokenTransferNotPermitted);
+    });
+
+    // The funded testnet tokens declare 2 decimals, not the usual 6.
+    // `validatePayloadSize` encodes with the token's own magnitude, so this runs
+    // the PLT path at that width.
+    it("accepts a 2-decimal token transfer", async () => {
+      const { account, subAccount } = withToken({ magnitude: 2, balance: new BigNumber(60000) });
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { amount: new BigNumber(30000) }),
+      );
+
+      expect(status.errors).toEqual({});
+      expect(status.amount).toEqual(new BigNumber(30000));
+      expect(status.totalSpent).toEqual(new BigNumber(30000));
+    });
+
+    it("rejects a token declaring more decimals than the device signs", async () => {
+      const { account, subAccount } = withToken({ magnitude: 19 });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors.amount).toBeInstanceOf(ConcordiumUnsupportedTokenDecimals);
+    });
+
+    it("accepts exactly 18 decimals", async () => {
+      const { account, subAccount } = withToken({ magnitude: 18 });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors).toEqual({});
+    });
+
+    // Reported as a payload defect, not as unsupported decimals: that message
+    // interpolates the count, and there is none to interpolate.
+    it("rejects a token whose magnitude is missing", async () => {
+      const { account, subAccount } = withToken({ magnitude: -1 });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors.amount).toBeInstanceOf(ConcordiumInvalidPltPayloadError);
+    });
+
+    // The message renders `{{decimals}}`, so a non-numeric value would reach the
+    // user as "The token uses undefined decimal places".
+    it("carries a real number in the decimals message", async () => {
+      const { account, subAccount } = withToken({ magnitude: 19 });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors.amount).toMatchObject({ decimals: "19", maxDecimals: "18" });
+    });
+
+    it("rejects an out-of-range token id as a payload defect", async () => {
+      const parent = createFixtureAccount();
+      const token = createFixtureTokenCurrency({ contractAddress: "x".repeat(129) });
+      const subAccount = createFixtureTokenAccount({ parentId: parent.id, token });
+      const account = {
+        ...parent,
+        subAccounts: [subAccount],
+        concordiumResources: {
+          ...(parent as ConcordiumAccount).concordiumResources,
+          tokens: { ["x".repeat(129)]: { transferStatus: "allowed" } },
+        },
+      } as ConcordiumAccount;
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors.amount).toBeInstanceOf(ConcordiumInvalidPltPayloadError);
+    });
+
+    it("rejects a memo past the chain's limit", async () => {
+      const { account, subAccount } = withToken();
+      const memo = "x".repeat(PLT_MAX_MEMO_SIZE + 1);
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id, { memo }));
+
+      expect(status.errors.memo).toBeInstanceOf(ConcordiumMemoTooLong);
+    });
+
+    it("accepts a memo at exactly the limit", async () => {
+      const { account, subAccount } = withToken();
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { memo: "x".repeat(PLT_MAX_MEMO_SIZE) }),
+      );
+
+      expect(status.errors).toEqual({});
+    });
+
+    // 64 bytes: past what the device renders, well inside what it signs.
+    it("accepts a memo longer than the device displays", async () => {
+      const { account, subAccount } = withToken();
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { memo: "x".repeat(64) }),
+      );
+
+      expect(status.errors).toEqual({});
+    });
+
+    it("counts memo bytes, not characters", async () => {
+      const { account, subAccount } = withToken();
+      // 86 characters, 258 bytes.
+      const memo = "€".repeat(86);
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id, { memo }));
+
+      expect(status.errors.memo).toBeInstanceOf(ConcordiumMemoTooLong);
+      expect(memo.length).toBeLessThanOrEqual(PLT_MAX_MEMO_SIZE);
+    });
+
+    // The second assertion is the point: one problem, one field.
+    it("reports an over-long memo only on the memo field", async () => {
+      const { account, subAccount } = withToken();
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { memo: "x".repeat(PLT_MAX_MEMO_SIZE + 1) }),
+      );
+
+      expect(status.errors.memo).toBeInstanceOf(ConcordiumMemoTooLong);
+      expect(status.errors.amount).toBeUndefined();
+    });
+
+    // 254 against 256 — close enough to conflate, and different limits on
+    // different transaction types.
+    it("does not use the CCD memo limit", async () => {
+      expect(PLT_MAX_MEMO_SIZE).not.toBe(MAX_MEMO_LENGTH);
+    });
+
+    it("still validates the recipient", async () => {
+      const { account, subAccount } = withToken();
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { recipient: "not-an-address" }),
+      );
+
+      expect(status.errors.recipient).toBeInstanceOf(InvalidAddress);
+    });
+
+    it("reports a missing fee under `amount`, as the native path does", async () => {
+      const { account, subAccount } = withToken();
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id, { fee: null }));
+
+      expect(status.errors.fee).toBeUndefined();
+      expect(status.errors.amount).toBeInstanceOf(FeeRequired);
+    });
+
+    // Each state that leaves the fee unset has its own error, so the bare
+    // "fee missing" must not mask the reason the fee could not be priced.
+    it("prefers the unsupported-decimals error over the missing fee it caused", async () => {
+      const { account, subAccount } = withToken({ magnitude: PLT_MAX_DECIMALS + 1 });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id, { fee: null }));
+
+      expect(status.errors.amount).toBeInstanceOf(ConcordiumUnsupportedTokenDecimals);
+    });
+
+    it("prefers the over-long memo over the missing fee it caused", async () => {
+      const { account, subAccount } = withToken();
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { fee: null, memo: "a".repeat(PLT_MAX_MEMO_SIZE + 1) }),
+      );
+
+      expect(status.errors.memo).toBeInstanceOf(ConcordiumMemoTooLong);
+      expect(status.errors.amount).toBeUndefined();
+    });
+
+    it("requires a non-zero amount", async () => {
+      const { account, subAccount } = withToken();
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { amount: new BigNumber(0) }),
+      );
+
+      expect(status.errors.amount).toBeInstanceOf(AmountRequired);
+    });
+
+    // The amount is deliberately one the parent's CCD balance could cover, so a
+    // fall-through would pass validation rather than fail it.
+    it("blocks a subAccountId that no longer resolves", async () => {
+      const { account, subAccount } = withToken();
+      const withoutTokens = { ...account, subAccounts: [] };
+
+      const status = await getTransactionStatus(
+        withoutTokens,
+        tokenTx(subAccount.id, { amount: new BigNumber(1000) }),
+      );
+
+      expect(status.errors.amount).toBeInstanceOf(ConcordiumTokenAccountUnavailable);
+    });
+
+    it("leaves a plain CCD transfer alone", async () => {
+      const { account } = withToken();
+
+      const status = await getTransactionStatus(
+        account,
+        createFixtureTransaction({
+          recipient: VALID_ADDRESS_2,
+          amount: new BigNumber(1000),
+          fee: new BigNumber(500),
+        }),
+      );
+
+      expect(status.errors).toEqual({});
+    });
+
+    // The parent's CCD balance is irrelevant to the token amount, so the
+    // native fee-vs-amount ratio warning must not fire on a token send.
+    it("does not warn that the fee is high relative to a token amount", async () => {
+      const { account, subAccount } = withToken();
+
+      const status = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { amount: new BigNumber(1) }),
+      );
+
+      expect(status.warnings).toEqual({});
     });
   });
 });

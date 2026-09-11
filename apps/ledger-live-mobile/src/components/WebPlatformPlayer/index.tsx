@@ -22,11 +22,7 @@ import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import {
-  useACRECustomHandlers,
-  useDeeplinkCustomHandlers,
-  useLiveAppModalCustomHandlers,
-} from "./CustomHandlers";
+import { useDeeplinkCustomHandlers, useLiveAppModalCustomHandlers } from "./CustomHandlers";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 type Props = {
@@ -110,7 +106,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   }, [manifest, navigation, webviewState]);
 
   const accounts = useSelector(flattenAccountsSelector);
-  const customACREHandlers = useACRECustomHandlers(manifest, accounts);
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customLiveAppModalHandlers = useLiveAppModalCustomHandlers(manifest);
@@ -118,12 +113,11 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...loggerHandlers,
-      ...customACREHandlers,
       ...customPTXHandlers,
       ...customDeeplinkHandlers,
       ...customLiveAppModalHandlers,
     };
-  }, [customACREHandlers, customPTXHandlers, customDeeplinkHandlers, customLiveAppModalHandlers]);
+  }, [customPTXHandlers, customDeeplinkHandlers, customLiveAppModalHandlers]);
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={[styles.root]}>

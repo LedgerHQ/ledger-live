@@ -10,7 +10,10 @@ import type {
   OperationExtra,
   OperationExtraRaw,
   OperationType,
+  StakingDelegation,
+  StakingUnbonding,
 } from "@ledgerhq/types-live";
+import { isStakingAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-module-framework/utils";
 import type {
@@ -20,6 +23,7 @@ import type {
   FeeEstimation,
   MapMemo,
   MemoNotSupported,
+  StakeState,
   StakingOperation,
   StringMemo,
   TransactionIntent,
@@ -38,6 +42,7 @@ import type {
   JsonSafe,
   JsonSafeRecord,
   OperationCommon,
+  TransferFee,
 } from "./types";
 import { craftTransactionData as defaultCraftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
@@ -179,6 +184,24 @@ export function toGasOptionsFromUnknown(value: unknown): GasOptions | undefined 
   };
 }
 
+const TRANSFER_FEE_FIELDS = [
+  "maxTransferFee",
+  "transferFee",
+  "feePercent",
+  "feeBps",
+  "transferAmountIncludingFee",
+  "transferAmountExcludingFee",
+] satisfies ReadonlyArray<keyof TransferFee>;
+
+export function toTransferFeeFromUnknown(value: unknown): TransferFee | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const fee = value as Record<string, unknown>;
+  // `Number.isFinite` coerces nothing, so it rejects a non-number, NaN and Infinity alike.
+  return TRANSFER_FEE_FIELDS.every(field => Number.isFinite(fee[field]))
+    ? (fee as TransferFee)
+    : undefined;
+}
+
 export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
   const networksRemap = {
     xrp: "ripple",
@@ -293,6 +316,67 @@ export function getPendingTokenSpent(pendingOperations: Operation[]): BigNumber 
   );
 }
 
+/**
+ * The staking positions, in the `Balance` shape `getBalance` reported them in. Appended after the
+ * native balance, which stays first.
+ */
+function stakingBalances(account: Account): Balance[] {
+  // `isStakingAccount` only tests that the key is present, so the value can still be undefined.
+  const resources = isStakingAccount(account) ? account.stakingResources : undefined;
+  if (!resources) return [];
+
+  const toBalance = (
+    position: StakingDelegation | StakingUnbonding,
+    state: StakeState,
+    delegate: string | undefined,
+  ): Balance => ({
+    value: BigInt(position.amount.toFixed()),
+    asset: { type: "native" },
+    stake: {
+      uid: position.positionId ?? "",
+      address: position.positionId ?? "",
+      state,
+      asset: { type: "native" },
+      amount: BigInt(position.amount.toFixed()),
+      ...(delegate ? { delegate } : {}),
+      actions: [],
+      details: {
+        ...numericDetailEntry("activeAmount", position.activeAmount),
+        ...numericDetailEntry("inactiveAmount", position.inactiveAmount),
+        ...numericDetailEntry("withdrawableAmount", position.withdrawableAmount),
+        ...numericDetailEntry("lockedReserve", position.lockedReserve),
+        ...(typeof position.canStake === "boolean" ? { canStake: position.canStake } : {}),
+        ...(typeof position.canWithdraw === "boolean" ? { canWithdraw: position.canWithdraw } : {}),
+      },
+    },
+  });
+
+  return [
+    ...resources.delegations.map(d =>
+      toBalance(d, d.status === "activating" ? "activating" : "active", d.validatorAddress),
+    ),
+    ...resources.unbondings.map(u =>
+      toBalance(
+        u,
+        u.status === "withdrawable" ? "withdrawable" : "deactivating",
+        u.validatorAddress,
+      ),
+    ),
+  ];
+}
+
+/**
+ * A value a double cannot hold exactly travels as a string; `optionalNumeric` reads both back.
+ */
+function numericDetailEntry(
+  key: string,
+  value: BigNumber | undefined,
+): Record<string, number | string> {
+  if (value === undefined) return {};
+  const fitsInADouble = value.isInteger() && value.abs().lte(Number.MAX_SAFE_INTEGER);
+  return { [key]: fitsInADouble ? value.toNumber() : value.toFixed() };
+}
+
 export function extractBalances(
   account: Account,
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
@@ -311,6 +395,8 @@ export function extractBalances(
     },
   ];
 
+  balances.push(...stakingBalances(account));
+
   if (!account.subAccounts?.length || !getAssetFromToken) {
     return balances;
   }
@@ -328,6 +414,17 @@ export function extractBalances(
   }
 
   return balances;
+}
+
+/**
+ * Reads a numeric field (bigint/number/string) as BigNumber, else `undefined`.
+ */
+export function optionalNumeric(value: unknown): BigNumber | undefined {
+  if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string") {
+    return undefined;
+  }
+  const parsed = new BigNumber(value.toString());
+  return parsed.isFinite() ? parsed : undefined;
 }
 
 /** Reads a numeric `parameters` field (bigint/number/string) as BigNumber, else `fallback`. */
@@ -661,6 +758,10 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
 
   if (op.details?.memo) {
     extra.memo = op.details.memo as string;
+  }
+
+  if (extra.memo === undefined && typeof op.details?.destinationTag === "number") {
+    extra.memo = op.details.destinationTag.toString();
   }
 
   if (op.details?.internal === true) {
@@ -1085,7 +1186,10 @@ export const buildOptimisticOperation = (
       // `adaptCoreOperationToLiveOperation` applies to a family bag arriving from a sync. `blockTime`
       // and `index` are this path's alone, which is why they are not in the reserved set.
       ...(described?.extra ? stripFrameworkReservedKeys(described.extra) : {}),
-      ...memoExtraFields(transaction.memoType, transaction.memoValue),
+      // A family that describes its own operation uses the memo field as transport, not as a memo.
+      ...(described === undefined && (parentType === "OUT" || parentType === "FEES")
+        ? memoExtraFields(transaction.memoType, transaction.memoValue)
+        : {}),
       ledgerOpType: type,
       blockTime: new Date(),
       index: "0",

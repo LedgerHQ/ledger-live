@@ -23,13 +23,19 @@ type Props = {
   isOpen: boolean;
   startingStep: Steps;
   handleClose: () => void;
+  handleNavigate?: () => void;
 };
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
 >;
 
-const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) => {
+const useActivationDrawerModel = ({
+  isOpen,
+  startingStep,
+  handleClose,
+  handleNavigate = handleClose,
+}: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const { currentStep, setCurrentStep } = useCurrentStep();
   const { closeAllBottomSheets } = useQueuedBottomSheetContext();
@@ -79,20 +85,25 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
 
   const goBackToPreviousStep = () => setCurrentStep(getPreviousStep(currentStep));
 
-  const onCloseDrawer = () => {
+  const resetDrawer = () => {
     dispatch(blockPasswordLock(false));
     setCurrentStep(startingStep);
     setCurrentOption(Options.SCAN);
-    handleClose();
   };
 
   const navigateToWalletSyncActivationProcess = () => {
-    onCloseDrawer();
+    resetDrawer();
+    handleNavigate();
     closeAllBottomSheets();
     dispatch(closePostOnboardingHubDrawer());
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
     });
+  };
+
+  const onCloseDrawer = () => {
+    resetDrawer();
+    handleClose();
   };
 
   const onCreateKey = () => {

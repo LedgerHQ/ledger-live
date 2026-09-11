@@ -22,6 +22,17 @@ function buildProps(): PayCardToolProps {
       ],
       setStepDone: jest.fn(),
     },
+    cardOnboarding: {
+      steps: [],
+      completedCount: 0,
+      isFetching: false,
+      error: undefined,
+      raw: "{}",
+      refresh: jest.fn(),
+      setStepDone: jest.fn(),
+      clearMocks: jest.fn(),
+      isMockingEnabled: true,
+    },
     interaction: {
       probes: [],
       details: {
@@ -86,19 +97,27 @@ describe("PayCard (web)", () => {
   it("navigates to Portfolio and Pay when the host wires the actions", () => {
     const onNavigateToPortfolio = jest.fn();
     const onNavigateToPayTab = jest.fn();
+    const onNavigateToPaySuccess = jest.fn();
+    const onNavigateToSendSuccess = jest.fn();
     render(
       <PayCard
         {...buildProps()}
         onNavigateToPortfolio={onNavigateToPortfolio}
         onNavigateToPayTab={onNavigateToPayTab}
+        onNavigateToPaySuccess={onNavigateToPaySuccess}
+        onNavigateToSendSuccess={onNavigateToSendSuccess}
       />,
     );
 
     expect(screen.getByText("Quick actions")).toBeDefined();
     fireEvent.click(screen.getByText("Go to Portfolio"));
     fireEvent.click(screen.getByText("Go to Pay tab"));
+    fireEvent.click(screen.getByText("Pay contact success"));
+    fireEvent.click(screen.getByText("Send success"));
     expect(onNavigateToPortfolio).toHaveBeenCalledTimes(1);
     expect(onNavigateToPayTab).toHaveBeenCalledTimes(1);
+    expect(onNavigateToPaySuccess).toHaveBeenCalledTimes(1);
+    expect(onNavigateToSendSuccess).toHaveBeenCalledTimes(1);
   });
 
   it("resets the card login intro", () => {

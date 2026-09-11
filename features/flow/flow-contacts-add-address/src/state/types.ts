@@ -149,6 +149,7 @@ export type AddAddressEntryLabels = Readonly<{
   sanctionedAddress: string;
   validationUnavailable: string;
   ensDisclaimer: string;
+  ensDisclaimerDescription: string;
 }>;
 
 export type AddAddressNameLabels = Readonly<{

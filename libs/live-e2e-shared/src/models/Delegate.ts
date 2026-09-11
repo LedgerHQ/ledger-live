@@ -7,5 +7,6 @@ export class Delegate {
     public account: Account,
     public amount: string,
     public provider: string,
+    public validatorAddress?: string,
   ) {}
 }

@@ -11,6 +11,7 @@ import {
   AnalyticsFlow,
   StepsOutsideFlow,
   AnalyticsPage,
+  resolveWalletSyncEntryFlow,
 } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { BackRef, WalletSyncRouter } from "LLD/features/WalletSync/screens/router";
 import { STEPS_WITH_BACK } from "LLD/features/WalletSync/hooks/useFlows";
@@ -49,7 +50,7 @@ const WalletSyncDrawer: React.FC<WalletSyncDrawerProps> = ({ currentPage, onClos
       onActionTrack({
         button: "Back",
         step: currentStep,
-        flow: hasFlowEvent ? AnalyticsFlow : undefined,
+        flow: hasFlowEvent ? resolveWalletSyncEntryFlow(AnalyticsFlow) : undefined,
       });
       if (onBack) onBack();
     }
@@ -59,7 +60,7 @@ const WalletSyncDrawer: React.FC<WalletSyncDrawerProps> = ({ currentPage, onClos
     onActionTrack({
       button: "Close",
       step: currentStep,
-      flow: hasFlowEvent ? AnalyticsFlow : undefined,
+      flow: hasFlowEvent ? resolveWalletSyncEntryFlow(AnalyticsFlow) : undefined,
     });
     dispatch(setDrawerVisibility(false));
     onClose();

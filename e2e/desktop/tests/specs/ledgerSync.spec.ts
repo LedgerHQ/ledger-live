@@ -2,8 +2,6 @@ import { type CliCommand, test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
@@ -81,8 +79,6 @@ test.describe("Ledger Sync - add account", () => {
       },
     },
     async ({ app, speculos }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await speculos.relaunch(addedCurrency.speculosApp.name);
 
       await app.portfolio.expectAddAccountButtonVisible();
@@ -137,8 +133,6 @@ test.describe("Ledger Sync - rename account", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.accounts.expectReduxAccountIds([ethAccount.id]);
       await app.trustchain.expectAccountToHaveDefaultName(ethAccount.id);
 
@@ -177,8 +171,6 @@ test.describe("Ledger Sync - delete account", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.accounts.expectReduxAccountIds([ethAccount.id, secondEthAccount.id]);
       await app.trustchain.expectAccountIds([ethAccount.id, secondEthAccount.id]);
 
@@ -217,8 +209,6 @@ test.describe("Ledger Sync - delete instance", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openSettings();
       await app.settings.openManageLedgerSync();
       await app.ledgerSync.manageInstances();
@@ -255,8 +245,6 @@ test.describe("Ledger Sync - delete backup", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.trustchain.expectToHoldAccount(ethAccount.id, ethAccount.currencyId);
 
       await app.mainNavigation.openSettings();
@@ -318,8 +306,6 @@ test.describe("Ledger Sync - entry point in settings", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openSettings();
       await app.settings.expectLedgerSyncSettingsRow();
       await app.settings.expectLedgerSyncSettingsEntryPoint();
@@ -340,8 +326,6 @@ test.describe("Ledger Sync - activation flow no backup activated", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openSettings();
       await app.settings.expectLedgerSyncSettingsRow();
       await app.settings.expectLedgerSyncSettingsEntryPoint();
@@ -367,8 +351,6 @@ test.describe("Ledger Sync - activation flow backup activated", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openSettings();
       await app.settings.expectLedgerSyncSettingsRow();
       await app.settings.expectLedgerSyncSettingsEntryPoint();

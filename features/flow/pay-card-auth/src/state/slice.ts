@@ -3,7 +3,7 @@ import type { PayCardAuthState } from "./types";
 
 export const payCardAuthInitialState: PayCardAuthState = {
   hasCard: false,
-  isSignedIn: false,
+  status: "unknown",
 };
 
 export const payCardAuthSlice = createSlice({
@@ -14,11 +14,12 @@ export const payCardAuthSlice = createSlice({
       state.hasCard = action.payload;
     },
     /**
-     * Written by the login machine, and by `CardMore` once a logout is through. It is runtime
-     * state, not a preference, so the slice must stay out of the persisted app state.
+     * Written by the login machine, and by `More` once a logout is through. It is runtime
+     * state, not a preference, so the slice must stay out of the persisted app state. The boolean
+     * maps onto the tri-state: a machine can only report the two resolved outcomes, never `unknown`.
      */
     setSignedIn: (state, action: PayloadAction<boolean>) => {
-      state.isSignedIn = action.payload;
+      state.status = action.payload ? "signedIn" : "signedOut";
     },
   },
 });

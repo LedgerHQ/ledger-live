@@ -4,15 +4,18 @@ import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { log } from "@ledgerhq/logs";
-import type { TokenAccount } from "@ledgerhq/types-live";
+import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getAccountListStatus, isDecodedPltState } from "../network/plt";
+import { baseOperation, toOperation } from "./operations";
 import type {
   ConcordiumAccount,
   ConcordiumResources,
   ConcordiumTokenResources,
   PltAccountToken,
   PltTransferStatus,
+  RawOperation,
+  Transaction,
 } from "../types";
 
 const CAL_LOOKUP_CONCURRENCY = 4;
@@ -26,11 +29,12 @@ const CAL_LOOKUP_CONCURRENCY = 4;
  */
 export type ResolvedTokens =
   | { kind: "cleared" }
-  | { kind: "unchanged" }
+  | { kind: "unchanged"; unattributedOperations?: true }
   | {
       kind: "resolved";
       subAccounts: TokenAccount[];
       tokens: Record<string, ConcordiumTokenResources>;
+      unattributedOperations?: true;
     };
 
 /**
@@ -72,6 +76,25 @@ export function subAccountsPatch(resolved: ResolvedTokens): { subAccounts?: Toke
 }
 
 /**
+ * The sub-accounts the account ends up holding, which {@link subAccountsPatch}
+ * cannot answer: it omits the key on `unchanged` precisely so the stored list
+ * survives, and the stored list is what anything reading the result needs.
+ */
+export function effectiveSubAccounts(
+  resolved: ResolvedTokens,
+  previous: TokenAccount[] | undefined,
+): TokenAccount[] {
+  switch (resolved.kind) {
+    case "resolved":
+      return resolved.subAccounts;
+    case "cleared":
+      return [];
+    case "unchanged":
+      return previous ?? [];
+  }
+}
+
+/**
  * Applies a {@link ResolvedTokens} to the account's resources.
  *
  * Clearing removes the key rather than setting it to `undefined`, matching
@@ -93,11 +116,22 @@ export function applyTokensToResources(
   }
 }
 
+/** Reduced rather than spread into `Math.min`, which overflows the stack on a long history. */
+function oldestDate(operations: Operation[]): Date {
+  return new Date(
+    operations.reduce(
+      (earliest, operation) => Math.min(earliest, operation.date.valueOf()),
+      Infinity,
+    ),
+  );
+}
+
 function buildTokenAccount(
   id: string,
   parentId: string,
   token: TokenCurrency,
   balance: BigNumber,
+  operations: Operation[],
 ): TokenAccount {
   return {
     type: "TokenAccount",
@@ -106,13 +140,40 @@ function buildTokenAccount(
     token,
     balance,
     spendableBalance: balance,
-    creationDate: new Date(),
-    operations: [],
-    operationsCount: 0,
+    // Only used for a sub-account this sync invented; `mergeSubAccounts` keeps
+    // the stored date for an existing one.
+    creationDate: operations.length > 0 ? oldestDate(operations) : new Date(),
+    operations,
+    operationsCount: operations.length,
     pendingOperations: [],
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
   };
+}
+
+/**
+ * Builds the CCD operation a PLT transfer leaves on the parent account.
+ *
+ * The type is decided from the transaction alone and never revised: an
+ * operation id embeds its type and `mergeOps` dedups on that id, so one retyped
+ * between syncs is stored twice, permanently. Promoting a stored `NONE` to
+ * `FEES` later is therefore not an option, and is never needed, since whether
+ * the account paid is known when the transaction is read.
+ *
+ * A zero fee stays `NONE`, which also keeps an incoming transfer out of the
+ * parent's history: `NONE` operations are dropped from every list.
+ */
+export function buildParentOperation(op: RawOperation, accountId: string): Operation {
+  const fee = new BigNumber(op.fee);
+  const paysFee = fee.isGreaterThan(0);
+
+  return baseOperation(
+    op,
+    accountId,
+    paysFee ? "FEES" : "NONE",
+    // `FEES` is an outgoing type, so this value is what gets debited from CCD.
+    paysFee ? fee : new BigNumber(0),
+  );
 }
 
 /**
@@ -173,6 +234,7 @@ export function mergeSubAccounts(
   previous: TokenAccount[] | undefined,
   newSubAccounts: TokenAccount[],
   keepIds: ReadonlySet<string> = new Set(),
+  refetchAll = false,
 ): TokenAccount[] {
   if (!previous?.length) return newSubAccounts;
 
@@ -182,7 +244,9 @@ export function mergeSubAccounts(
     const old = previousById.get(newSubAccount.id);
     if (!old) return newSubAccount;
 
-    const operations = mergeOps(old.operations, newSubAccount.operations);
+    // Discarded on a re-read for the same reason the parent's history is: the
+    // walk covered every block, so it already holds everything stored here.
+    const operations = mergeOps(refetchAll ? [] : old.operations, newSubAccount.operations);
 
     return {
       ...old,
@@ -206,6 +270,37 @@ type ResolvedEntry =
   | { entry: PltAccountToken; token: TokenCurrency; tokenId: string; balance: BigNumber }
   | { untrusted: string; tokenId: string }
   | undefined;
+
+/**
+ * `resolveEntries` already refuses to publish a balance whose decimals disagree
+ * with CAL; the same disagreement per transfer would render the amount at the
+ * wrong scale, so it is dropped. A rejected transfer reports no denomination at
+ * all, which is an absence rather than a disagreement, and passes.
+ */
+function operationsForToken(
+  pltOperations: RawOperation[],
+  tokenId: string,
+  token: TokenCurrency,
+  subAccountId: string,
+): Operation[] {
+  const magnitude = token.units[0]?.magnitude;
+
+  return pltOperations
+    .filter(op => {
+      if (op.tokenId !== tokenId) return false;
+
+      if (op.decimals !== undefined && op.decimals !== magnitude) {
+        log(
+          "concordium-sync",
+          `PLT ${tokenId} operation ${op.hash} is denominated in ${op.decimals} decimals, not the curated ${magnitude}, skipping it`,
+        );
+        return false;
+      }
+
+      return true;
+    })
+    .map(op => toOperation(op, subAccountId));
+}
 
 /**
  * Resolves to `undefined` when the lookup itself failed, which is distinct from
@@ -289,64 +384,34 @@ function resolveEntries({
 }
 
 /**
- * Builds the token sub-accounts and the per-token state for one sync.
- *
- * Only an actual array is authoritative enough to drop a token the account no
- * longer holds. Anything else preserves, because the absent list is reachable
- * on an HTTP 200: `getAccountBalance` performs no runtime validation, so a
- * response omitting `accountTokens` satisfies the declared type while carrying
- * nothing, and reading that as empty would delete every sub-account and its
- * operations.
+ * Turns the resolved entries into the sub-accounts and per-token state one sync
+ * produces, plus the ids `mergeSubAccounts` must keep despite building none.
  */
-export async function resolveTokenSubAccounts({
-  enableTokens,
-  currencyId,
+function absorbEntries({
+  resolved,
   accountId,
-  accountTokens,
+  pltOperations,
   initialAccount,
-  blacklistedTokenIds = [],
 }: {
-  enableTokens: boolean;
-  currencyId: string;
+  resolved: ResolvedEntry[];
   accountId: string;
-  accountTokens: PltAccountToken[] | undefined;
+  pltOperations: RawOperation[];
   initialAccount: ConcordiumAccount | undefined;
-  blacklistedTokenIds?: string[];
-}): Promise<ResolvedTokens> {
-  if (!enableTokens) {
-    return { kind: "cleared" };
-  }
-
-  if (!Array.isArray(accountTokens)) {
-    log("concordium-sync", "PLT token list absent from the balance response, keeping known tokens");
-    return { kind: "unchanged" };
-  }
-
-  const resolved = await resolveEntries({
-    accountTokens,
-    currencyId,
-    accountId,
-    blacklistedTokenIds,
-  });
-
-  // A CAL query error rejects rather than returning undefined, and one rejection
-  // fails the whole batch. `getAccountShape` only logs and rethrows, so letting
-  // it escape would discard an already-fetched CCD sync because a secondary
-  // metadata service was down.
-  if (resolved === undefined) {
-    return { kind: "unchanged" };
-  }
-
+}): {
+  newSubAccounts: TokenAccount[];
+  tokens: Record<string, ConcordiumTokenResources>;
+  keepIds: Set<string>;
+} {
   const newSubAccounts: TokenAccount[] = [];
   const tokens: Record<string, ConcordiumTokenResources> = {};
-  const untrustedIds = new Set<string>();
+  const keepIds = new Set<string>();
   const seenIds = new Set<string>();
 
   for (const item of resolved) {
     if (!item) continue;
 
     if ("untrusted" in item) {
-      untrustedIds.add(item.untrusted);
+      keepIds.add(item.untrusted);
 
       // The sub-account survives through `keepIds`, but the resources map is
       // rebuilt wholesale, so its prior entry has to be carried over with it.
@@ -367,7 +432,17 @@ export async function resolveTokenSubAccounts({
     }
     seenIds.add(subAccountId);
 
-    newSubAccounts.push(buildTokenAccount(subAccountId, accountId, token, balance));
+    newSubAccounts.push(
+      buildTokenAccount(
+        subAccountId,
+        accountId,
+        token,
+        balance,
+        // Through `mergeOps` so a fresh sub-account is deduped and ordered the
+        // same way an existing one is when this sync's operations reach it.
+        mergeOps([], operationsForToken(pltOperations, tokenId, token, subAccountId)),
+      ),
+    );
 
     const paused = readPaused(entry);
     tokens[tokenId] = {
@@ -376,9 +451,101 @@ export async function resolveTokenSubAccounts({
     };
   }
 
+  return { newSubAccounts, tokens, keepIds };
+}
+
+/**
+ * Reports that this sync fetched PLT transfers it could not place on a
+ * sub-account. The caller invalidates the stored `syncHash` on it, because the
+ * parent fee operations are kept either way: the watermark moves past those
+ * blocks and an incremental sync would never read them again.
+ */
+function unattributed(pltOperations: RawOperation[]): { unattributedOperations?: true } {
+  return pltOperations.length > 0 ? { unattributedOperations: true } : {};
+}
+
+/**
+ * Builds the token sub-accounts and the per-token state for one sync.
+ *
+ * Only an actual array is authoritative enough to drop a token the account no
+ * longer holds. Anything else preserves, because the absent list is reachable
+ * on an HTTP 200: `getAccountBalance` performs no runtime validation, so a
+ * response omitting `accountTokens` satisfies the declared type while carrying
+ * nothing, and reading that as empty would delete every sub-account and its
+ * operations.
+ */
+export async function resolveTokenSubAccounts({
+  enableTokens,
+  currencyId,
+  accountId,
+  accountTokens,
+  initialAccount,
+  pltOperations = [],
+  blacklistedTokenIds = [],
+  refetchAll = false,
+}: {
+  enableTokens: boolean;
+  currencyId: string;
+  accountId: string;
+  accountTokens: PltAccountToken[] | undefined;
+  initialAccount: ConcordiumAccount | undefined;
+  pltOperations?: RawOperation[];
+  blacklistedTokenIds?: string[];
+  refetchAll?: boolean;
+}): Promise<ResolvedTokens> {
+  if (!enableTokens) {
+    return { kind: "cleared" };
+  }
+
+  if (!Array.isArray(accountTokens)) {
+    log("concordium-sync", "PLT token list absent from the balance response, keeping known tokens");
+    return { kind: "unchanged", ...unattributed(pltOperations) };
+  }
+
+  const resolved = await resolveEntries({
+    accountTokens,
+    currencyId,
+    accountId,
+    blacklistedTokenIds,
+  });
+
+  // A CAL query error rejects rather than returning undefined, and one rejection
+  // fails the whole batch. `getAccountShape` only logs and rethrows, so letting
+  // it escape would discard an already-fetched CCD sync because a secondary
+  // metadata service was down.
+  if (resolved === undefined) {
+    return { kind: "unchanged", ...unattributed(pltOperations) };
+  }
+
+  const { newSubAccounts, tokens, keepIds } = absorbEntries({
+    resolved,
+    accountId,
+    pltOperations,
+    initialAccount,
+  });
+
+  // Asked of the entries rather than of `resolved`, which reports the same
+  // `undefined` for an uncurated or blacklisted token. Those are ordinary and
+  // are already covered by the CAL and blacklist inputs to `getSyncHash`, so
+  // treating them as unattributed would re-read the whole history every sync
+  // for as long as the account holds one.
+  const unreadableEntry = accountTokens.some(entry => !isUsableEntry(entry));
+
   return {
     kind: "resolved",
-    subAccounts: mergeSubAccounts(initialAccount?.subAccounts, newSubAccounts, untrustedIds),
+    subAccounts: mergeSubAccounts(initialAccount?.subAccounts, newSubAccounts, keepIds, refetchAll),
     tokens,
+    ...(unreadableEntry ? unattributed(pltOperations) : {}),
   };
+}
+
+/**
+ * The amount a PLT transfer will carry. Under `useAllAmount` that is the
+ * sub-account's balance, since `transaction.amount` is zero in that case.
+ *
+ * Shared by pricing and validation so the two cannot encode different payloads.
+ */
+export function effectivePltAmount(subAccount: TokenAccount, transaction: Transaction): bigint {
+  const amount = transaction.useAllAmount ? subAccount.spendableBalance : transaction.amount;
+  return BigInt(amount.toFixed(0));
 }

@@ -16,7 +16,7 @@ export type TransactionLike = { family?: string } & Record<string, unknown>;
  * through to `mode` scopes this to in-app staking without inspecting call data.
  *
  * `undefined` when the transaction carries no action, or when there is no rich transaction
- * at all (signRaw / signPsbt / ACRE).
+ * at all (signRaw / signPsbt).
  */
 export function getRawTransactionType(tx: TransactionLike | undefined | null): string | undefined {
   if (!tx) return undefined;

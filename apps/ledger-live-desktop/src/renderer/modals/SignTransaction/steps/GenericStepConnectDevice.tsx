@@ -41,7 +41,6 @@ export default function StepConnectDevice({
   requireLatestFirmware,
   manifestId,
   manifestName,
-  isACRE,
   location,
 }: {
   transitionTo: (a: string) => void;
@@ -56,7 +55,6 @@ export default function StepConnectDevice({
   requireLatestFirmware?: boolean;
   manifestId?: string;
   manifestName?: string;
-  isACRE?: boolean;
   location?: HOOKS_TRACKING_LOCATIONS;
 }) {
   const action = useTransactionAction();
@@ -73,12 +71,10 @@ export default function StepConnectDevice({
       requireLatestFirmware,
       manifestId,
       manifestName,
-      isACRE,
     }),
     [
       account,
       dependencies,
-      isACRE,
       manifestId,
       manifestName,
       parentAccount,

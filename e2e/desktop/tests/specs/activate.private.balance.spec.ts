@@ -2,8 +2,6 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { buildTags } from "tests/utils/tagsUtils";
 
 const accounts = [
@@ -35,7 +33,6 @@ for (const account of accounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(account.account.accountName);
         await app.account.expectAccountVisibility(account.account.accountName);

@@ -150,8 +150,6 @@ export default function StepSummary({ account, message: messageData }: StepProps
     messageData.standard === "EIP712" ? mainAccount.currency.family : undefined,
   );
 
-  const isACREWithdraw = "type" in messageData && messageData.type === "Withdraw";
-
   useEffect(() => {
     if (messageData.standard === "EIP712") {
       specific?.message?.getMessageProperties(messageData).then(setMessageFields);
@@ -180,9 +178,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
       </Box>
       <Separator />
 
-      {!isACREWithdraw ? (
-        <MessageProperty label={"message"} value={messageData.message.toString()} />
-      ) : null}
+      <MessageProperty label={"message"} value={messageData.message.toString()} />
 
       <MessageContainer flex="1">
         {messageFields ? (

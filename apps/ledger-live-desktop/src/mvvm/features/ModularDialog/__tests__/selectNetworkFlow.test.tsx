@@ -113,12 +113,12 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     await user.click(bitcoinAsset);
 
     expect(mockOnAssetSelected).not.toHaveBeenCalled();
-    expect(await screen.findByRole("tooltip")).toHaveTextContent("Bitcoin isn't supported yet.");
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("Bitcoin is not supported yet");
 
     bitcoinAsset.parentElement?.focus();
 
     expect(bitcoinAsset.parentElement).toHaveFocus();
-    expect(bitcoinAsset.parentElement).toHaveAttribute("role", "button");
+    expect(bitcoinAsset.parentElement?.tagName).toBe("BUTTON");
     expect(bitcoinAsset.parentElement).toHaveAttribute("aria-disabled", "true");
   });
 
@@ -142,13 +142,13 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
 
     expect(mockOnAssetSelected).not.toHaveBeenCalled();
     expect(await screen.findByRole("tooltip")).toHaveTextContent(
-      "Arbitrum network isn't supported yet.",
+      "Arbitrum network is not supported yet",
     );
 
     arbitrumNetwork.parentElement?.focus();
 
     expect(arbitrumNetwork.parentElement).toHaveFocus();
-    expect(arbitrumNetwork.parentElement).toHaveAttribute("role", "button");
+    expect(arbitrumNetwork.parentElement?.tagName).toBe("BUTTON");
     expect(arbitrumNetwork.parentElement).toHaveAttribute("aria-disabled", "true");
 
     await user.click(ethereumNetwork);

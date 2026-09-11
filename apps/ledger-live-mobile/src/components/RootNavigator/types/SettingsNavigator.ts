@@ -76,6 +76,8 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugWallet40]: undefined;
   [ScreenName.DebugContacts]: undefined;
   [ScreenName.DebugDevTools]: undefined;
+  [ScreenName.DebugPayContactSuccess]: undefined;
+  [ScreenName.DebugSendSuccess]: undefined;
   [ScreenName.DebugPlayground]: undefined;
   [ScreenName.DebugBluetoothAndLocationServices]: undefined;
   [ScreenName.DebugStorageMigration]: undefined;
@@ -102,4 +104,5 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugWalletV4Tour]: undefined;
   [ScreenName.DebugProductTour]: undefined;
   [ScreenName.DebugQ2WalletV4Tour]: undefined;
+  [ScreenName.DebugQ3WalletV4Tour]: undefined;
 };

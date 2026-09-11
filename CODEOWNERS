@@ -43,6 +43,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/                                                 @ledgerhq/platform
 
 # Platform — shared (explicit overrides)
+/shared/analytics/                                       @ledgerhq/platform
 /shared/feature-flags                                    @ledgerhq/platform
 /shared/schema-primitives                                @ledgerhq/platform
 /shared/qr-code                                          @ledgerhq/platform
@@ -81,6 +82,7 @@ tools/nx-plugins/generators/                             @ledgerhq/platform
 support/jest-devtools/                                   @ledgerhq/platform
 support/jest-features-flow/                              @ledgerhq/platform
 support/jest-shared/                                     @ledgerhq/platform
+support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
 
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
@@ -139,6 +141,7 @@ features/flow/pay-request/                               @ledgerhq/wallet-xp
 features/flow/pay-card-details/                          @ledgerhq/wallet-xp
 features/flow/pay-card-wallets/                          @ledgerhq/wallet-xp
 features/flow/pay-card-widget/                           @ledgerhq/wallet-xp
+features/flow/pay-card-transactions/                       @ledgerhq/wallet-xp
 features/flow/pay-contact/                               @ledgerhq/wallet-xp
 
 # Wallet — Intents
@@ -308,7 +311,6 @@ apps/ledger-live-mobile/src/screens/PTX/                             					@ledge
 apps/ledger-live-mobile/src/screens/Swap/                            					@ledgerhq/ptx
 libs/ledger-live-common/src/exchange/                                					@ledgerhq/ptx
 libs/exchange-module/                                                					@ledgerhq/ptx
-libs/wallet-api-acre-module/                                         					@ledgerhq/ptx
 libs/ledgerjs/packages/hw-app-exchange/                              					@ledgerhq/ptx
 libs/live-services/cal/src/partners/                                 					@ledgerhq/ptx
 libs/types-live/src/swap.ts                        					@ledgerhq/ptx
@@ -415,6 +417,7 @@ libs/ledger-live-common/src/device/                                @ledgerhq/liv
 libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/live-devices
 libs/device-core/                                                  @ledgerhq/live-devices
 libs/device-intent/                                                @ledgerhq/live-devices
+libs/device-onboarding/                                            @ledgerhq/engagement
 features/platform/device-intent/                                   @ledgerhq/live-devices
 features/platform/device-action-content/                           @ledgerhq/live-devices
 features/platform/contacts/src/device/                             @ledgerhq/live-devices
@@ -545,6 +548,9 @@ apps/ledger-live-mobile/src/mvvm/features/AnalyticsConsentDrawer/               
 apps/ledger-live-mobile/src/mvvm/features/WalletV4Tour/                                        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/ProductTour/                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Q2WalletV4Tour/                                       @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/Q3WalletV4Tour/                                       @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/utils/releaseTourGate.ts                                        @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/utils/__tests__/releaseTourGate.test.ts                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/BackupHub/                                           @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LNUpsell/                                           @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LargeScreenUpsell/                                   @ledgerhq/engagement

@@ -1,8 +1,6 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { waitForAccountRenamed } from "tests/utils/userdata";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
@@ -29,7 +27,6 @@ for (const account of accounts) {
         },
       },
       async ({ app, userdataFile }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.redux.listenToReduxActions();
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");

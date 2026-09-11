@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   useBankTransferIntroAdapter,
   type BankTransferHandoff,
-  type BankTransferIntroLabels,
   type BankTransferIntroProps,
 } from "@features/flow-pay-bank-transfer";
 import {
@@ -18,7 +17,6 @@ import {
 } from "@features/flow-pay-deposit";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { useTranslation } from "~/context/Locale";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useOpenSwap } from "LLM/features/Swap";
 import { useOpenBuySell } from "LLM/features/Buy";
@@ -38,7 +36,6 @@ export type UsePayTabDepositOptions = UseDepositOptionsAdapter & {
 export function usePayTabDepositOptions(
   onTrackEvent: PayCardTrackEvent | undefined,
 ): UsePayTabDepositOptions {
-  const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { bottom } = useSafeAreaInsets();
   const bottomInset = Platform.OS === "ios" ? bottom : 0;
@@ -65,33 +62,7 @@ export function usePayTabDepositOptions(
     [navigation],
   );
 
-  const introLabels: BankTransferIntroLabels = {
-    title: t("payTab.bankTransferIntro.title"),
-    description: t("payTab.bankTransferIntro.description"),
-    createAccountLabel: t("payTab.bankTransferIntro.createAccount"),
-    logInLabel: t("payTab.bankTransferIntro.logIn"),
-    providedBy: t("payTab.bankTransferIntro.providedBy"),
-    rows: [
-      {
-        icon: "Bank",
-        title: t("payTab.bankTransferIntro.rows.bank.title"),
-        description: t("payTab.bankTransferIntro.rows.bank.description"),
-      },
-      {
-        icon: "Coins",
-        title: t("payTab.bankTransferIntro.rows.fees.title"),
-        description: t("payTab.bankTransferIntro.rows.fees.description"),
-      },
-      {
-        icon: "Chart5",
-        title: t("payTab.bankTransferIntro.rows.earn.title"),
-        description: t("payTab.bankTransferIntro.rows.earn.description"),
-      },
-    ],
-  };
-
   const { open: openBankTransferIntro, bankTransferIntro } = useBankTransferIntroAdapter({
-    labels: introLabels,
     heroImage: BANK_TRANSFER_INTRO_HERO_IMAGE,
     bottomInset,
     onBankTransfer,

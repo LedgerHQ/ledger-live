@@ -12,6 +12,9 @@ jest.mock("../../../../../FlowWizard/FlowWizardContext");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("../../../../context/RecipientScannerContext");
 jest.mock("@features/platform-contacts", () => ({
+  isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).isEligibleAddressCurrency,
   useContacts: jest.fn(() => []),
   useContactsFeature: jest.fn(() => ({
     isEnabled: false,

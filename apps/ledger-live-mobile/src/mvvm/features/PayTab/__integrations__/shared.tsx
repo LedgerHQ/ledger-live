@@ -84,6 +84,7 @@ type TestStackParamList = {
           account?: { id: string };
           recipient?: string;
           skipRecipientStep?: boolean;
+          source?: string;
         };
       }
     | undefined;

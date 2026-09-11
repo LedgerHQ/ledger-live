@@ -15,7 +15,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/feature-flags"
+    "unimported": "pnpm knip --directory ../.. -W shared/feature-flags",
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
@@ -25,12 +27,13 @@
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@types/semver": "catalog:",
+    "@support/jest-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/semver": "catalog:",
     "jest": "catalog:",
-    "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "oxfmt": "catalog:",
+    "typescript": "catalog:"
   }
 }

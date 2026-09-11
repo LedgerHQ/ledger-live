@@ -1,6 +1,9 @@
 import { Step } from "jest-allure2-reporter/api";
 import invariant from "invariant";
 
+const PROVIDER_ROW_PREFIX = "provider-row-";
+const PROVIDER_ROW_REGEX = new RegExp(`^${PROVIDER_ROW_PREFIX}.+$`);
+
 export default class StakePage {
   celoLockAmountInput = "celo-lock-amount-input";
   celoVoteAmountId = "celo-vote-amount";
@@ -25,7 +28,7 @@ export default class StakePage {
   delegationAmountContinueId = (currencyId: string) =>
     `enabled-${currencyId}-delegation-amount-continue`;
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
-  providerRow = (providerTicker: string) => `provider-row-${providerTicker}`;
+  providerRow = (providerTicker: string) => `${PROVIDER_ROW_PREFIX}${providerTicker}`;
 
   @Step("Select currency {{{0}}}")
   async selectCurrency(currencyId: string) {
@@ -75,6 +78,25 @@ export default class StakePage {
     await typeTextById(this.searchPoolInput, ticker);
     await waitForElementById(this.searchPoolInput);
     await tapById(this.providerRow(ticker));
+  }
+
+  @Step("Select the first provider offered for {{{0}}}")
+  async selectFirstValidator(currencyId: string): Promise<string> {
+    await tapById(this.delegationSummaryValidatorId(currencyId));
+    await waitForElement(getElementById(PROVIDER_ROW_REGEX));
+    const rowId = await getIdByRegexp(PROVIDER_ROW_REGEX);
+    await tapById(rowId);
+    await waitForElementById(this.delegationSummaryValidatorId(currencyId));
+    return rowId.slice(PROVIDER_ROW_PREFIX.length);
+  }
+
+  // Families whose flow opens on the validator list have no summary row to tap first.
+  @Step("Select provider {{{0}}} from the validator list")
+  async selectValidatorFromList(provider: string) {
+    await waitForElementById(this.searchPoolInput);
+    await typeTextById(this.searchPoolInput, provider);
+    await waitForElementById(this.providerRow(provider));
+    await tapById(this.providerRow(provider));
   }
 
   @Step("Verify fees visible in summary {{{0}}}")

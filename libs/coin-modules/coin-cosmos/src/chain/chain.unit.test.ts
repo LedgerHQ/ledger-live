@@ -31,6 +31,7 @@ describe("cryptoFactory test", () => {
       "xion",
       "zenrock",
       "babylon",
+      "gonka",
     ];
     currencies.forEach(currency => {
       expect(cryptoFactory(currency)).not.toBeNull();
@@ -41,6 +42,27 @@ describe("cryptoFactory test", () => {
     const chain = cryptoFactory("crypto_org_croeseid");
     expect(chain.prefix).toBe("cro");
     expect(chain.unbondingPeriod).toBe(28);
+  });
+
+  it("should resolve gonka with its parameters", () => {
+    const chain = cryptoFactory("gonka");
+    expect(chain.prefix).toBe("gonka");
+    expect(chain.validatorPrefix).toBe("gonkavaloper");
+    expect(chain.minGasPrice).toBe(0);
+    expect(chain.ledgerValidator).toBeUndefined();
+  });
+
+  it("should opt crypto_org out of sending the prefix on the sign APDU", () => {
+    // The only chains here not served by app-cosmos: coin type 394 runs the "Cronos POS Chain"
+    // app, whose handling of the prefix field on signing is unverified.
+    expect(cryptoFactory("crypto_org").signWithPrefix).toBe(false);
+    expect(cryptoFactory("crypto_org_croeseid").signWithPrefix).toBe(false);
+  });
+
+  it("should send the prefix on the sign APDU for every app-cosmos chain", () => {
+    for (const id of ["cosmos", "osmo", "dydx", "injective", "xion", "babylon", "gonka"]) {
+      expect(cryptoFactory(id).signWithPrefix).toBe(true);
+    }
   });
 
   it("should throw an error when currency id is unknown", () => {

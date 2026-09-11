@@ -50,12 +50,10 @@ catalog:
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
   "@ledgerhq/speculos-device-controller": 0.3.0
   "@ledgerhq/logs": 6.19.0
-  "@ledgerhq/lumen-design-core": 0.1.27
-  "@ledgerhq/lumen-ui-react": 0.1.56
-  "@ledgerhq/lumen-ui-rnative": 0.1.59
-  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.37
-  "@ledgerhq/lumen-ui-react-visualization": 0.1.37
-  "@ledgerhq/lumen-utils-shared": 0.1.11
+  "@ledgerhq/lumen-design-core": 0.1.28
+  "@ledgerhq/lumen-ui-react": 0.1.57
+  "@ledgerhq/lumen-ui-rnative": 0.1.60
+  "@ledgerhq/lumen-utils-shared": 0.1.12
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.15.3
   "@ledgerhq/wallet-api-client-react": 1.4.34
@@ -137,7 +135,7 @@ catalog:
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@solana/spl-token": ^0.4.14
-  "@solana/web3.js": ^1.99.0-beta.0
+  "@solana/web3.js": ^1.99.0
   "@polkadot/api": 16.5.4
   "@polkadot/api-augment": 16.5.4
   "@polkadot/api-derive": 16.5.4
@@ -208,15 +206,15 @@ catalog:
   # pnpm -D skips optionalDependencies; declare here so the CI filtered install picks up the Linux x64 native binding
   "@nx/nx-linux-x64-gnu": 22.7.8
   "@nx/s3-cache": 5.0.7
-  oxlint: 1.79.0
-  oxfmt: 0.64.0
+  oxlint: 1.82.0
+  oxfmt: 0.67.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 5.2.1
+  "@ledgerhq/coin-evm": 5.3.2
   "@ledgerhq/coin-hypercore": 2.0.1
-  "@ledgerhq/coin-module-framework": 8.4.0
-  "@ledgerhq/coin-stellar": 9.6.0
-  "@ledgerhq/coin-tezos": 10.2.4
-  "@ledgerhq/coin-xrp": 10.1.0
+  "@ledgerhq/coin-module-framework": 8.5.0
+  "@ledgerhq/coin-stellar": 9.6.1
+  "@ledgerhq/coin-tezos": 10.2.6
+  "@ledgerhq/coin-xrp": 10.1.1
   detox: 20.51.3
 
 overrides:

@@ -1,0 +1,57 @@
+{
+  "name": "@ledgerhq/device-onboarding",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared DMK-native device onboarding state machine",
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
+    "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
+    "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "knip-check": "pnpm knip --directory ../.. -W libs/device-onboarding"
+  },
+  "dependencies": {
+    "xstate": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "rxjs": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "rxjs": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./package.json": "./package.json"
+  }
+}

@@ -38,6 +38,10 @@ As a result:
 
 Tests therefore assert on your own layout/view-model wiring, not on real Lumen internals.
 
+The Native project also maps `react-native-svg` to host elements. The real package reads React
+Native internals that the lightweight `react-native` mock does not provide; the SVG mock preserves
+test IDs and accessibility props without loading that native implementation.
+
 ## Queued bottom sheet
 
 The Native project maps `@shared/ui-queued-bottom-sheet` to the double that package ships
@@ -54,6 +58,11 @@ jsdom doesn't implement it, unlike every runtime this code ships to (browsers, R
 Node), so a package reading `TextEncoder` at module-eval time — `@ledgerhq/device-contacts-kit`
 does — throws `ReferenceError` the moment a web test imports it, even transitively.
 It also mocks `window.matchMedia`.
+
+The same file installs the fetch primitives (`fetch`, `Response`, `Request`, streams,
+`BroadcastChannel`) from `undici`, which MSW reads on import. Without them a web test throws
+`ReferenceError: Response is not defined` before a single assertion runs. The native project
+needs none of this: it runs on node, which has them already.
 
 ## Usage
 

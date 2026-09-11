@@ -1,5 +1,6 @@
+import { log } from "@ledgerhq/logs";
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getZainoEndpoint } from "../../constants";
+import { ZCASH_LOG_TYPE, getZainoEndpoint, sanitizeEndpointForLog } from "../../constants";
 import { getZCashClient } from "../engineClient";
 
 /**
@@ -40,12 +41,22 @@ export async function assertTransparentInputsUnspent({
 
   for (const txHash of uniqueHashes) {
     const tx = await fetchUtxoTx(txHash).catch(() => {
+      // Any fetchUtxoTx failure lands here, not just a genuine "not found"
+      // (a network error or timeout looks the same) -- the message reflects
+      // that broader failure mode rather than asserting a specific cause.
+      log(ZCASH_LOG_TYPE, "broadcast guard: failed to fetch source transaction", {
+        hash: txHash,
+      });
       throw new InvalidTransactionError("tx not found");
     });
 
     for (const ref of inputRefs.filter(r => r.hash === txHash)) {
       const output = tx.outputs.find(o => o.output_index === ref.outputIndex);
       if (output && typeof output.spent_at_height === "number" && output.spent_at_height > 0) {
+        log(ZCASH_LOG_TYPE, "broadcast guard: refusing already-spent transparent input", {
+          hash: ref.hash,
+          outputIndex: ref.outputIndex,
+        });
         throw new InvalidTransactionError("utxos already spent");
       }
     }
@@ -75,5 +86,44 @@ export async function broadcast(
     throw new Error("Shielded Zcash transactions are not supported in this environment");
   }
 
-  return client.broadcastTransaction(grpcUrl, txHex);
+  // The endpoint is overridable (setZainoGrpcUrl, e.g. to point at a custom or
+  // local node), so nothing guarantees it never carries userinfo or a token in
+  // its query string. Everywhere it's logged or attached to error context
+  // (which can reach Datadog), use the sanitized form; only the actual client
+  // call gets the real URL.
+  const sanitizedEndpoint = sanitizeEndpointForLog(grpcUrl);
+  const sizeBytes = txHex.length / 2;
+  log(ZCASH_LOG_TYPE, "broadcasting transaction", { endpoint: sanitizedEndpoint, sizeBytes });
+  const startedAt = Date.now();
+
+  try {
+    const txid = await client.broadcastTransaction(grpcUrl, txHex);
+    log(ZCASH_LOG_TYPE, "broadcast succeeded", {
+      endpoint: sanitizedEndpoint,
+      txid,
+      durationMs: Date.now() - startedAt,
+    });
+    return txid;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    log(ZCASH_LOG_TYPE, "broadcast failed", {
+      endpoint: sanitizedEndpoint,
+      durationMs: Date.now() - startedAt,
+      // The reason is the most actionable field in an exported log, so it is
+      // kept -- but the remote endpoint controls this string, so any hex run
+      // long enough to be the transaction or a digest of it is stripped first.
+      // 64 is the threshold because a digest is 32 bytes, and the transaction
+      // may only ever appear by size.
+      error: message.replace(/[0-9a-f]{64,}/gi, "[hex redacted]"),
+    });
+    // Re-attach `endpoint` here, on the renderer side: any own property set by
+    // main-host.ts's rejectOneShot is lost crossing Electron's ipcMain.handle /
+    // ipcRenderer.invoke boundary, which serializes a rejection to a plain
+    // string (error.toString()) and reconstructs a brand-new Error from it.
+    // This is the last hop before extractErrorContext reads the error, so it's
+    // the only place that can still make `endpoint` visible to it.
+    throw error instanceof Error
+      ? Object.assign(error, { endpoint: sanitizedEndpoint })
+      : Object.assign(new Error(String(error)), { endpoint: sanitizedEndpoint });
+  }
 }

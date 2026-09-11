@@ -81,7 +81,6 @@ shared-lib:
   - libs/psbtv2/**/*
   - libs/speculos-transport/**/*
   - libs/test-utils/**/*
-  - libs/wallet-api-acre-module/**/*
 
 desktop-lib:
   - libs/live-dmk-desktop/**/*

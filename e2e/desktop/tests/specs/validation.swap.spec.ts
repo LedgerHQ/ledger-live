@@ -4,8 +4,6 @@ import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
@@ -101,8 +99,6 @@ for (const swap of tooLowAmountForQuoteSwaps) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         const swapAmount =
           swap.swap.amount === "USE_MIN_AMOUNT"
             ? await app.swap.getMinimumAmount(accountToDebit, accountToCredit)
@@ -185,7 +181,6 @@ test.describe("Swap - network fees above balance", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       const minAmount = await app.swap.getMinimumAmount(accountToDebit, accountToCredit);
 
       await performSwapUntilQuoteSelectionStep(
@@ -212,7 +207,6 @@ test.describe("Swap - network fees above balance", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       const minAmount = await app.swap.getMinimumAmount(
         swapEthNeededForNetworkFeesTestConfig.swap.accountToDebit,
         swapEthNeededForNetworkFeesTestConfig.swap.accountToCredit,

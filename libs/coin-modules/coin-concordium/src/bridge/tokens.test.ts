@@ -9,6 +9,7 @@ import {
 import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import {
   applyTokensToResources,
+  buildParentOperation,
   mergeSubAccounts,
   resolveTokenSubAccounts,
   stripSubAccounts,
@@ -19,6 +20,7 @@ import type {
   ConcordiumResources,
   PltAccountToken,
   PltModuleState,
+  RawOperation,
 } from "../types";
 
 const CURRENCY_ID = "concordium";
@@ -126,6 +128,19 @@ describe("resolveTokenSubAccounts", () => {
     const result = await resolve();
 
     expect(result).toEqual({ kind: "resolved", subAccounts: [], tokens: {} });
+  });
+
+  // `Token1` and `tokmet` on testnet declare 2 decimals, not the 6 every other
+  // PLT uses, so this covers the agreeing-magnitude path at the second width.
+  it("builds a sub-account for a 2-decimal token", async () => {
+    useStore({ [TOKEN_ID]: makeToken(TOKEN_ID, 2) });
+
+    const result = await resolve({ accountTokens: [makeEntry({ balance: "60000", decimals: 2 })] });
+
+    if (result.kind !== "resolved") throw new Error("expected resolved");
+    const [sub] = result.subAccounts;
+    expect(sub.token.units[0].magnitude).toBe(2);
+    expect(sub.balance).toEqual(new BigNumber("60000"));
   });
 
   it("publishes no balance for a token whose CAL magnitude disagrees with the chain", async () => {
@@ -502,5 +517,184 @@ describe("initialAccount continuity", () => {
     if (result.kind !== "resolved") throw new Error("expected resolved");
     expect(result.subAccounts[0].balance).toEqual(new BigNumber("77"));
     expect(result.subAccounts[0].operations.map(op => op.id)).toEqual(["kept"]);
+  });
+});
+
+const makeRawOp = (over: Partial<RawOperation> = {}): RawOperation => ({
+  hash: "aa".repeat(32),
+  type: "OUT",
+  sender: "sender-address",
+  recipient: "recipient-address",
+  amount: "3000000",
+  fee: "595400",
+  value: "3000000",
+  memo: undefined,
+  date: new Date("2026-03-02T00:00:00Z"),
+  blockHash: "bb",
+  blockHeight: 900,
+  failed: false,
+  id: 1,
+  tokenId: TOKEN_ID,
+  decimals: 6,
+  ...over,
+});
+
+describe("buildParentOperation", () => {
+  it("charges an outgoing transfer's fee to the CCD account", () => {
+    const op = buildParentOperation(makeRawOp(), ACCOUNT_ID);
+
+    expect(op.type).toBe("FEES");
+    expect(op.value).toEqual(new BigNumber("595400"));
+    expect(op.fee).toEqual(new BigNumber("595400"));
+  });
+
+  it("leaves an incoming transfer worth nothing on the CCD account", () => {
+    const op = buildParentOperation(makeRawOp({ type: "IN", fee: "0" }), ACCOUNT_ID);
+
+    expect(op.type).toBe("NONE");
+    expect(op.value).toEqual(new BigNumber(0));
+  });
+
+  it("does not raise a FEES row for a fee of zero", () => {
+    expect(buildParentOperation(makeRawOp({ fee: "0" }), ACCOUNT_ID).type).toBe("NONE");
+  });
+
+  it("gives one transaction two ids if its type is ever revised", () => {
+    // Why the type is decided from the transaction alone and never revised:
+    // the id embeds it and mergeOps dedups on the id, so a parent reclassified
+    // between syncs is stored alongside its old self rather than replacing it.
+    const paid = buildParentOperation(makeRawOp({ fee: "595400" }), ACCOUNT_ID);
+    const unpaid = buildParentOperation(makeRawOp({ fee: "0" }), ACCOUNT_ID);
+
+    expect(paid.hash).toBe(unpaid.hash);
+    expect(paid.id).toContain("-FEES");
+    expect(unpaid.id).toContain("-NONE");
+    expect(paid.id).not.toBe(unpaid.id);
+  });
+
+  it("marks a rejected transfer as failed while still charging its fee", () => {
+    const op = buildParentOperation(makeRawOp({ failed: true, value: "0" }), ACCOUNT_ID);
+
+    expect(op.hasFailed).toBe(true);
+    expect(op.value).toEqual(new BigNumber("595400"));
+  });
+});
+
+describe("token operations on sub-accounts", () => {
+  const subAccountId = encodeTokenAccountId(ACCOUNT_ID, makeToken(TOKEN_ID));
+
+  beforeEach(() => {
+    useStore({ [TOKEN_ID]: makeToken(TOKEN_ID) });
+  });
+
+  it("attaches a transfer to the sub-account of the token it moved", async () => {
+    const result = await resolve({ pltOperations: [makeRawOp()] });
+
+    if (result.kind !== "resolved") throw new Error("expected resolved");
+    const [operation] = result.subAccounts[0].operations;
+    expect(operation.accountId).toBe(subAccountId);
+    expect(operation.value).toEqual(new BigNumber("3000000"));
+    expect(result.subAccounts[0].operationsCount).toBe(1);
+  });
+
+  it("gives a token only its own operations", async () => {
+    const result = await resolve({
+      pltOperations: [makeRawOp(), makeRawOp({ tokenId: "OTHER", hash: "cc".repeat(32) })],
+    });
+
+    if (result.kind !== "resolved") throw new Error("expected resolved");
+    expect(result.subAccounts[0].operations).toHaveLength(1);
+  });
+
+  it("skips a transfer denominated differently from the curated token", async () => {
+    const result = await resolve({ pltOperations: [makeRawOp({ decimals: 2 })] });
+
+    if (result.kind !== "resolved") throw new Error("expected resolved");
+    expect(result.subAccounts[0].operations).toHaveLength(0);
+  });
+
+  it("keeps a rejected transfer, which reports no denomination at all", async () => {
+    const rejected = makeRawOp({ failed: true, value: "0" });
+    delete rejected.decimals;
+
+    const result = await resolve({ pltOperations: [rejected] });
+
+    if (result.kind !== "resolved") throw new Error("expected resolved");
+    expect(result.subAccounts[0].operations).toHaveLength(1);
+  });
+
+  it("dates the sub-account from its oldest operation whichever way the page is ordered", async () => {
+    const older = makeRawOp({ hash: "dd".repeat(32), date: new Date("2020-01-01T00:00:00Z") });
+
+    const newestFirst = await resolve({ pltOperations: [makeRawOp(), older] });
+    const oldestFirst = await resolve({ pltOperations: [older, makeRawOp()] });
+
+    if (newestFirst.kind !== "resolved" || oldestFirst.kind !== "resolved") {
+      throw new Error("expected resolved");
+    }
+    expect(newestFirst.subAccounts[0].creationDate).toEqual(new Date("2020-01-01T00:00:00Z"));
+    expect(oldestFirst.subAccounts[0].creationDate).toEqual(new Date("2020-01-01T00:00:00Z"));
+  });
+
+  it("neither duplicates nor drops operations across a re-sync", async () => {
+    const stored = makeRawOp();
+    const first = await resolve({ pltOperations: [stored] });
+    if (first.kind !== "resolved") throw new Error("expected resolved");
+
+    const initialAccount = { subAccounts: first.subAccounts } as unknown as ConcordiumAccount;
+
+    // The same transfer comes back alongside a newer one, as it does whenever a
+    // page overlaps the stored history.
+    const second = await resolve({
+      initialAccount,
+      pltOperations: [makeRawOp({ hash: "ee".repeat(32), id: 2 }), stored],
+    });
+
+    if (second.kind !== "resolved") throw new Error("expected resolved");
+    const ids = second.subAccounts[0].operations.map(op => op.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids).toHaveLength(2);
+  });
+
+  it("replaces the sub-account's operations on a re-read, as the parent account does", async () => {
+    const stored = makeRawOp({ date: new Date("2024-06-01T00:00:00Z") });
+    const first = await resolve({ pltOperations: [stored] });
+    if (first.kind !== "resolved") throw new Error("expected resolved");
+
+    const initialAccount = { subAccounts: first.subAccounts } as unknown as ConcordiumAccount;
+    const older = makeRawOp({ hash: "ee".repeat(32), id: 2, date: new Date("2020-01-01") });
+
+    const second = await resolve({ initialAccount, pltOperations: [older], refetchAll: true });
+
+    if (second.kind !== "resolved") throw new Error("expected resolved");
+    expect(second.subAccounts[0].operations.map(op => op.hash)).toEqual(["ee".repeat(32)]);
+  });
+
+  it("publishes no operations for a token the CAL does not curate", async () => {
+    useStore({});
+
+    const result = await resolve({ pltOperations: [makeRawOp()] });
+
+    if (result.kind !== "resolved") throw new Error("expected resolved");
+    expect(result.subAccounts).toHaveLength(0);
+  });
+
+  it("asks for no re-read when the token is merely uncurated", async () => {
+    // The CAL hash already covers curation, so asking would re-read the whole
+    // history on every sync for as long as the account holds the token.
+    useStore({});
+
+    const result = await resolve({ pltOperations: [makeRawOp()] });
+
+    expect(result).not.toHaveProperty("unattributedOperations");
+  });
+
+  it("asks for a re-read when an entry is too malformed to name its token", async () => {
+    const result = await resolve({
+      accountTokens: [{} as unknown as PltAccountToken, makeEntry()],
+      pltOperations: [makeRawOp()],
+    });
+
+    expect(result).toMatchObject({ unattributedOperations: true });
   });
 });

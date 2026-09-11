@@ -6,30 +6,7 @@
 [![npm](https://img.shields.io/npm/v/@ledgerhq/native-ui)](https://www.npmjs.com/package/@ledgerhq/native-ui)
 ### Design and interface resources for React Native
 
-#### This package contains [React Native](https://reactnative.dev/) components and styles built on top of our design system and used internally at [Ledger](https://www.ledger.com/).
-
-## Installation
-
-### Package
-
-```sh
-npm i @ledgerhq/native-ui
-```
-
-### Peer dependencies
-
-_This library uses the following packages under the hood and relies on them being installed separately to avoid package duplication._
-
-```sh
-npm i styled-components react-native-reanimated react-native-svg
-```
-
-### Additional setup
-
-Follow the installation instructions for:
-
-- [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/docs/2.2.0/installation)
-- [react-native-svg](https://github.com/react-native-svg/react-native-svg#installation)
+#### This internal package contains [React Native](https://reactnative.dev/) components and styles built on top of our design system and used internally at [Ledger](https://www.ledger.com/).
 
 ## Usage
 

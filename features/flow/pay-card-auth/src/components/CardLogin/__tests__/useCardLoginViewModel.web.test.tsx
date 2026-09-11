@@ -53,7 +53,6 @@ describe("mapSnapshotToViewModel", () => {
   });
 
   it.each([
-    "hydrating",
     "preparingAttempt",
     "awaitingHostedLogin",
     "validatingCallback",
@@ -66,9 +65,10 @@ describe("mapSnapshotToViewModel", () => {
     expect(mapSnapshotToViewModel(value, null, copy, onLoginPress, intro)?.isLoading).toBe(true);
   });
 
-  it("offers nothing once the card holder is signed in", () => {
-    // `CardMore` holds the screen from here, and it reads the same flag to know it.
-    expect(mapSnapshotToViewModel("ready", null, copy, onLoginPress, intro)).toBeNull();
+  it.each(["hydrating", "ready"] as const)("offers nothing in %s", value => {
+    // `hydrating` is still reading the stored session, so a CTA here would flash for a holder who
+    // turns out to be signed in; `ready` means they already are, and `More` holds the screen.
+    expect(mapSnapshotToViewModel(value, null, copy, onLoginPress, intro)).toBeNull();
   });
 
   it("shows no message while there is no error", () => {
@@ -180,7 +180,7 @@ async function completeLogin(
   act(() => result.current?.onLoginPress());
   act(() => result.current?.intro.onActionPress("logIn"));
 
-  await waitFor(() => expect(store.getState().payCardAuth.isSignedIn).toBe(true));
+  await waitFor(() => expect(store.getState().payCardAuth.status).toBe("signedIn"));
 }
 
 describe("useCardLoginViewModel intro", () => {

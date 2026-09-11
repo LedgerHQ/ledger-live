@@ -23,8 +23,7 @@ import {
 } from "@ledgerhq/live-common/flows/send/utils";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
-import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
-import { useContactsFeature } from "@features/platform-contacts";
+import { isEligibleAddressCurrency, useContactsFeature } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "~/context/hooks";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
@@ -78,8 +77,11 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
   const { displayMode } = useSendAmountDisplayMode();
-  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
-    useContactsFeature("mobile");
+  const {
+    isEnabled: isContactsFeatureEnabled,
+    eligibleAddressFamilies,
+    excludedCurrencyIds,
+  } = useContactsFeature("mobile");
   const contacts = useSelector(selectContacts);
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
   const { recipientType, setInputMethod } = useSendFlowTracking();
@@ -293,7 +295,11 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
   const canSearchContacts =
     isContactsFeatureEnabled &&
-    isEligibleAddressCurrency(eligibleAddressFamilies, state.account.currency ?? undefined);
+    isEligibleAddressCurrency(
+      eligibleAddressFamilies,
+      state.account.currency ?? undefined,
+      excludedCurrencyIds,
+    );
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({
       supportsDomain: uiConfig.recipientSupportsDomain,

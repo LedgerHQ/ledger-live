@@ -4,8 +4,6 @@ import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import {
   setupEnv,
@@ -68,12 +66,10 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
             type: "TMS",
             description: xrayTicket,
           },
+          ...bugTickets.map(id => ({ type: "BUG", description: id })),
         ],
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await addBugLink(bugTickets);
-
         await revokeTokenApproval(fromAccount, provider);
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         await ensureTokenApproval(fromAccount, provider, minAmount);
@@ -135,8 +131,6 @@ test.describe("Swap - landing page", () => {
       annotation: { type: "TMS", description: "B2CQA-2918, B2CQA-2327" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
 
       if (!minAmount) {

@@ -18,7 +18,6 @@ const FF_LWM_WALLET_40_Q1 = {
       earnUpselling: false,
       earnSimulator: false,
       assetDiscoverability: false,
-      q2Tour: false,
     },
   },
 } satisfies PartialFeatures;
@@ -38,7 +37,6 @@ export const FF_LWM_WALLET_40_Q2 = {
       earnUpselling: true,
       earnSimulator: true,
       assetDiscoverability: true,
-      q2Tour: false,
     },
   },
 } satisfies PartialFeatures;
@@ -79,6 +77,19 @@ export const FF_NEW_SEND_FLOW_ENABLED = {
   ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } satisfies PartialFeatures;
 
+// Mina staking is not in the remote stakePrograms list yet, so the account's Earn action would not
+// render without this. An empty `redirects` keeps the native Ledger Live flow rather than a partner
+// app.
+export const FF_MINA_STAKING_ENABLED = {
+  stakePrograms: {
+    enabled: true,
+    params: {
+      list: ["mina"],
+      redirects: {},
+    },
+  },
+} satisfies PartialFeatures;
+
 export const getMergedFeatureFlags = ({
   testFlags,
 }: { testFlags?: PartialFeatures } = {}): PartialFeatures => {
@@ -99,6 +110,7 @@ export const getMergedFeatureFlags = ({
       enabled: true,
     },
     largeScreenUpsell: { enabled: false },
+    releaseTour: { enabled: false },
     llmModularDrawer: {
       enabled: true,
       params: {

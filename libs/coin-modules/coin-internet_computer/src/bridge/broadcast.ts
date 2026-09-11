@@ -11,7 +11,7 @@ import {
 } from "../api";
 import { toNeuronsData } from "../common-logic/neuron";
 import { MAINNET_GOVERNANCE_CANISTER_ID, MAINNET_LEDGER_CANISTER_ID } from "../consts";
-import { ICPCallUnconfirmed } from "../errors";
+import { ICPCallUnconfirmed, ICPNeuronsNotRead } from "../errors";
 import { derivePrincipalFromPubkey } from "../logic/crypto";
 import { TRANSFER_TYPES, Transaction } from "../types";
 
@@ -96,10 +96,11 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
     rawData.requestId,
   );
 
-  // list_neurons is an idempotent read: an indeterminate result is safe to retry, so just skip the
-  // snapshot update this round.
   if (rawData.methodName === "list_neurons") {
-    if (!reply) return operation;
+    // A read with no reply read nothing. Returning the operation would report the refresh as done
+    // while the snapshot is untouched, so the user spends a signature and is told their neurons are
+    // up to date. Nothing changed and the read is idempotent, so this one is safe to ask again.
+    if (!reply) throw new ICPNeuronsNotRead();
     const neurons = toNeuronsData(decodeListNeuronsReply(reply)).fullNeurons;
     return { ...operation, extra: { ...operation.extra, neurons } };
   }
@@ -109,6 +110,8 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   // indeterminate result must not be reported as a successful broadcast: that could strand the op or
   // invite a retry that double-executes a non-idempotent command (split/spawn/disburse).
   if (!reply) throw new ICPCallUnconfirmed();
-  decodeManageNeuronReply(reply);
-  return operation;
+  // A command that computed its own result says so in the reply; carrying it lets the neuron be
+  // brought up to date from figures the canister stated, instead of ones the app guessed at.
+  const outcome = decodeManageNeuronReply(reply);
+  return outcome ? { ...operation, extra: { ...operation.extra, outcome } } : operation;
 };

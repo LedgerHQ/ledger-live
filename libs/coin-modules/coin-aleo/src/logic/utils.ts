@@ -35,6 +35,7 @@ import {
   PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
+  STAKING_OPERATION_TYPE,
   TOKEN_RECORD_NAME,
   TRANSACTION_TYPE,
 } from "../constants";
@@ -65,6 +66,7 @@ import type {
   AleoTokenType,
   EnrichedPrivateRecord,
   AleoStakingPosition,
+  AleoStakingResources,
   AleoStakingMode,
   AleoValidatorNonEarningReason,
 } from "../types";
@@ -503,6 +505,11 @@ function getAmountToSpend({
     return tokenAccount?.transparentBalance ?? new BigNumber(0);
   }
 
+  // unbonding spends the bonded position; the fee is paid from the transparent balance
+  if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
+    return getAvailableBalance(account, transaction);
+  }
+
   const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
 
   return BigNumber.max(0, transparentBalance.minus(estimatedFees));
@@ -518,7 +525,9 @@ export function calculateAmount({
   estimatedFees: BigNumber;
 }) {
   const amount = getAmountToSpend({ account, transaction, estimatedFees });
-  const totalSpent = isTokenTransaction(transaction) ? amount : amount.plus(estimatedFees);
+  const feePaidFromAnotherBalance =
+    isTokenTransaction(transaction) || transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC;
+  const totalSpent = feePaidFromAnotherBalance ? amount : amount.plus(estimatedFees);
 
   return {
     amount,
@@ -548,6 +557,12 @@ export function getOperationTransactionType(transactionType: TransactionType): A
   }
 }
 
+export function getStakingOperationType(functionName: string): OperationType | undefined {
+  return Object.hasOwn(STAKING_OPERATION_TYPE, functionName)
+    ? STAKING_OPERATION_TYPE[functionName as AleoStakingMode]
+    : undefined;
+}
+
 export function isPublicTokenTransaction(transaction: Pick<Transaction, "mode">): boolean {
   return (
     transaction.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC ||
@@ -564,6 +579,11 @@ export function isPrivateTokenTransaction(transaction: Pick<Transaction, "mode">
 
 export function isTokenTransaction(transaction: Pick<Transaction, "mode">): boolean {
   return isPublicTokenTransaction(transaction) || isPrivateTokenTransaction(transaction);
+}
+
+/** Unbonding moves funds within the account itself, so the recipient is the sender. */
+export function isSelfStakingMode(transaction: Pick<Transaction, "mode">): boolean {
+  return transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC;
 }
 
 export function isSelfTransferTransaction(
@@ -869,6 +889,19 @@ export function mapTransactionIntentToSdkIntent(
         withdrawal: txIntent.data.withdrawal,
       };
     }
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC: {
+      // The intent carries a single address: for a bond it is the validator, for an unbond or a
+      // claim it is the staker — and the program only accepts the signing account as its own staker.
+      invariant(
+        to === txIntent.sender,
+        `aleo: ${type} staker must be the sender (recipient ${to}, sender ${txIntent.sender})`,
+      );
+
+      return type === TRANSACTION_TYPE.UNBOND_PUBLIC
+        ? { type: "unbond_public", amount, staker: to }
+        : { type: "claim_unbond_public", staker: to };
+    }
     default: {
       throw new Error(`aleo: unsupported intent type: ${type}`);
     }
@@ -890,6 +923,53 @@ export const getOperationDetailsExtraFields = (
 };
 
 /**
+ * Normalizes a staking position — from the chain or from a previously synced account —
+ * into the slice stored on `aleoResources`.
+ */
+export function toStakingResources(source: AleoStakingResources | undefined): AleoStakingResources {
+  return {
+    bondedBalance: source?.bondedBalance ?? new BigNumber(0),
+    bondedValidator: source?.bondedValidator ?? null,
+    unbondingBalance: source?.unbondingBalance ?? new BigNumber(0),
+    unbondingHeight: source?.unbondingHeight ?? null,
+  };
+}
+
+/**
+ * The part of the balance that is staked: bonded plus unbonding. Owned by the account but
+ * not spendable until unbonded and claimed, so it belongs in `balance` and not
+ * `spendableBalance`. Zero for an empty slice, i.e. whenever staking is disabled.
+ */
+export function sumStakedBalance(resources: AleoStakingResources): BigNumber {
+  return (resources.bondedBalance ?? new BigNumber(0)).plus(resources.unbondingBalance ?? 0);
+}
+
+/**
+ * Unbonded funds become claimable once the chain reaches the height stored in the
+ * credits.aleo `unbonding` mapping. Uses the account's last synced blockHeight.
+ *
+ * Returns zero while staking is disabled, since the slice is then absent.
+ */
+export function getClaimableStakingBalance(account: AleoAccount): BigNumber {
+  const { unbondingBalance, unbondingHeight } = account.aleoResources ?? {};
+  if (!unbondingBalance || unbondingHeight === null || unbondingHeight === undefined)
+    return new BigNumber(0);
+  return account.blockHeight >= unbondingHeight ? unbondingBalance : new BigNumber(0);
+}
+
+/**
+ * True while an operation of that type is still in the pending pool.
+ *
+ * The staking figures in `aleoResources` are read straight from the `credits.aleo` mappings
+ * on each sync and carry no optimistic adjustment, so between broadcast and the next sync
+ * `bondedBalance` and `unbondingBalance` still describe the pre-transaction chain state.
+ * A CTA driven by them alone would keep offering an amount the chain has already committed
+ * away — hence the guard on the pending pool rather than on the balances.
+ */
+export const hasPendingOperationType = (account: AleoAccount, type: OperationType): boolean =>
+  (account.pendingOperations ?? []).some(op => op.type === type);
+
+/**
  * Returns the spendable balance for a given Aleo transaction mode.
  *
  * Aleo accounts maintain two balances:
@@ -905,6 +985,8 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
     case TRANSACTION_TYPE.BOND_PUBLIC:
       return account.aleoResources?.transparentBalance ?? new BigNumber(0);
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+      return account.aleoResources?.bondedBalance ?? new BigNumber(0);
     // spending private native balance
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC: {
@@ -1032,6 +1114,11 @@ export function createTransactionIntent({
           type: TRANSACTION_TYPE.BOND_PUBLIC,
           withdrawal: transaction.withdrawal,
         },
+      };
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+      return {
+        ...base,
+        data: { type: TRANSACTION_TYPE.UNBOND_PUBLIC },
       };
 
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
@@ -1223,6 +1310,10 @@ export function getFunctionNameFromTransactionType(transactionType: TransactionT
       return "transfer_token_private_to_public";
     case TRANSACTION_TYPE.BOND_PUBLIC:
       return "bond_public";
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+      return "unbond_public";
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return "claim_unbond_public";
     default:
       throw new Error(`aleo: unsupported transaction type: ${transactionType}`);
   }

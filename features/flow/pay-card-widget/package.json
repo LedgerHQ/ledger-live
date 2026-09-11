@@ -11,12 +11,14 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./onboarding-status": "./src/onboardingStatus/index.ts",
     "./state": "./src/state/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "dependencies": {
     "@domain/api-card-management": "workspace:^",
+    "@features/flow-pay-card-wallets": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"

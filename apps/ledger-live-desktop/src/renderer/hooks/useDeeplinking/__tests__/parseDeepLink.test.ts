@@ -360,6 +360,28 @@ describe("parseDeepLink", () => {
 
       expect(route).toEqual({
         type: "paytab",
+        code: undefined,
+      });
+    });
+
+    it("creates paytab route with the Card login authorization code", () => {
+      const parsed = parseDeepLink("ledgerlive://paytab?code=auth-code&app_id=app-value");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "paytab",
+        code: "auth-code",
+      });
+    });
+
+    it("creates paytab route with the authorization code and the attempt state", () => {
+      const parsed = parseDeepLink("ledgerlive://paytab?code=auth-code&state=attempt-state");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "paytab",
+        code: "auth-code",
+        state: "attempt-state",
       });
     });
 

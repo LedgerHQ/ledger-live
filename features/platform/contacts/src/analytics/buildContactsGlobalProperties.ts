@@ -2,7 +2,6 @@ import type { Contact } from "@domain/entity-contact";
 import type { ContactsGlobalProperties } from "./contactsGlobalProperties";
 
 export type BuildContactsGlobalPropertiesInput = Readonly<{
-  ffAddressBookEnabled: boolean;
   contacts: readonly Contact[];
 }>;
 
@@ -17,7 +16,6 @@ export function buildContactsGlobalProperties(
   );
 
   return {
-    ffAddressBookEnabled: input.ffAddressBookEnabled,
     contactsCount: savedContacts.length,
     externalAddressesSavedCount,
     myAddressesSavedCount: meContact?.addresses.length ?? 0,

@@ -1,5 +1,5 @@
 import { expect, type Locator } from "@playwright/test";
-import { Layout } from "tests/component/layout.component";
+import { Layout, type SyncWaitOptions } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -98,9 +98,9 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click Stake button")
-  async startStakingFlowFromMainStakeButton() {
+  async startStakingFlowFromMainStakeButton(options?: SyncWaitOptions) {
     // Wait if a sync is in progress to avoid empty stake modal
-    await this.layout.waitForSyncButtonToBeEnabled();
+    await this.layout.waitForSyncButtonToBeEnabled(options);
     await this.stakeButton.click();
   }
 

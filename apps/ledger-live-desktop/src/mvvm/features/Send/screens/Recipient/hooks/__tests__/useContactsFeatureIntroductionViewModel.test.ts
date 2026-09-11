@@ -22,7 +22,7 @@ describe("useContactsFeatureIntroductionViewModel", () => {
 
     expect(result.current.isOpen).toBe(true);
     expect(result.current.title).toBe("Introducing Contacts");
-    expect(result.current.primaryActionLabel).toBe("Explore now");
+    expect(result.current.primaryActionLabel).toBe("Try now");
     expect(result.current.highlights).toEqual([
       {
         icon: "Contact",
@@ -36,7 +36,7 @@ describe("useContactsFeatureIntroductionViewModel", () => {
       },
       {
         icon: "Devices",
-        title: "Securely top up via Ledger Wallet™",
+        title: "Private across your Ledger devices",
         description: "End-to-end encrypted with Ledger Sync.",
       },
     ]);

@@ -27,9 +27,9 @@ jest.mock("../../../analytics/q2TourCarouselAnalytics", () => ({
 }));
 
 const q2TourEnabledOverrides = {
-  lwdWallet40: {
+  releaseTour: {
     enabled: true,
-    params: { q2Tour: true },
+    params: { variant: "q2" as const },
   },
 };
 
@@ -112,11 +112,11 @@ describe("useQ2TourDrawerViewModel", () => {
       expect(result.current.isDialogOpen).toBe(false);
     });
 
-    it("should not open when q2Tour flag is disabled", () => {
+    it("should not open when the release tour flag is disabled", () => {
       const { result } = renderHook(() => useQ2TourDrawerViewModel({ isOnPortfolioPage: false }), {
         initialState: getInitialState({
           featureFlagOverrides: {
-            lwdWallet40: { enabled: true, params: { q2Tour: false } },
+            releaseTour: { enabled: false, params: { variant: "q2" } },
           },
         }),
       });

@@ -1,12 +1,14 @@
 import { ContactIdSchema } from "@domain/entity-contact";
 import {
   CONTACTS_EVENT_SOURCE,
+  CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
 } from "./contactsAnalytics.types";
 import type { ContactsAnalyticsHelper } from "./createContactsAnalyticsHelper";
 import {
+  buildContactsSaveAddressClickProperties,
   trackContactAddressDetailQuickAction,
   trackContactsAddAddressClick,
   trackContactsLedgerSyncActivate,
@@ -23,6 +25,28 @@ function createAnalytics(): ContactsAnalyticsHelper {
 }
 
 describe("trackContactsEvents", () => {
+  it("should build save-address click properties without changing flow context", () => {
+    expect(
+      buildContactsSaveAddressClickProperties(
+        { flow: "send", contactsCount: 2 },
+        {
+          page: "address review",
+          network: "ethereum",
+          asset: "ethereum",
+          inputMethod: "manual",
+        },
+      ),
+    ).toEqual({
+      flow: "send",
+      contactsCount: 2,
+      button: CONTACTS_TRACKING_BUTTON.saveAddress,
+      page: "address review",
+      network: "ethereum",
+      asset: "ethereum",
+      inputMethod: "manual",
+    });
+  });
+
   it("should track list contact opens", () => {
     const analytics = createAnalytics();
     const meContactId = ContactIdSchema.parse("contact-me");
@@ -55,11 +79,13 @@ describe("trackContactsEvents", () => {
       source: CONTACTS_EVENT_SOURCE.LEDGER_SYNC_GATE,
       button: CONTACTS_TRACKING_BUTTON.dismiss,
       page: CONTACTS_PAGE_PROPERTY.LEDGER_SYNC_GATE,
+      flow: CONTACTS_FLOW.CONTACTS,
     });
     expect(analytics.trackEvent).toHaveBeenCalledWith(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
       source: CONTACTS_EVENT_SOURCE.LEDGER_SYNC_GATE,
       button: CONTACTS_TRACKING_BUTTON.activateLedgerSync,
       page: CONTACTS_PAGE_PROPERTY.LEDGER_SYNC_GATE,
+      flow: CONTACTS_FLOW.CONTACTS,
     });
   });
 
@@ -73,7 +99,7 @@ describe("trackContactsEvents", () => {
       source: CONTACTS_EVENT_SOURCE.CONTACT_DETAIL,
       button: CONTACTS_TRACKING_BUTTON.addAddress,
       page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
-      type: "me",
+      isSelf: true,
     });
   });
 
@@ -86,12 +112,12 @@ describe("trackContactsEvents", () => {
     expect(analytics.trackEvent).toHaveBeenNthCalledWith(1, CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
       source: CONTACTS_EVENT_SOURCE.QUICK_ACTION,
       button: CONTACTS_TRACKING_BUTTON.edit,
-      page: CONTACTS_PAGE_PROPERTY.ADDRESS_DETAIL,
+      page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
     });
     expect(analytics.trackEvent).toHaveBeenNthCalledWith(2, CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
       source: CONTACTS_EVENT_SOURCE.QUICK_ACTION,
       button: CONTACTS_TRACKING_BUTTON.send,
-      page: CONTACTS_PAGE_PROPERTY.ADDRESS_DETAIL,
+      page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
       asset: "ETH",
     });
   });

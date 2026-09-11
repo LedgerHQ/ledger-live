@@ -7,11 +7,35 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { track } from "~/analytics";
+import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { Steps } from "../types/Activation";
 import { NavigatorName, ScreenName } from "~/const";
 import { useInstanceName } from "./useInstanceName";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useCurrentStep } from "./useCurrentStep";
+
+function resolveSyncErrorStep(error: unknown, trustchainRootId?: string): Steps | undefined {
+  const errorName = (error as { name?: string })?.name;
+
+  switch (errorName) {
+    case "ScannedOldImportQrCode":
+      return Steps.ScannedOldImportQrCode;
+    case "ScannedInvalidQrCode":
+      return Steps.ScannedInvalidQrCode;
+    case "InvalidDigitsError":
+      return Steps.SyncError;
+    case "NoTrustchainInitialized":
+      return Steps.UnbackedError;
+    case "TrustchainAlreadyInitialized":
+      return (error as Error)?.message === trustchainRootId
+        ? Steps.AlreadyBacked
+        : Steps.BackedWithDifferentSeeds;
+    case "TrustchainAlreadyInitializedWithOtherSeed":
+      return Steps.BackedWithDifferentSeeds;
+    default:
+      return undefined;
+  }
+}
 
 export const useSyncWithQrCode = () => {
   const { setCurrentStep } = useCurrentStep();
@@ -25,6 +49,7 @@ export const useSyncWithQrCode = () => {
 
   const inputCallbackRef = useRef<((input: string) => void) | null>(null);
   const dispatch = useDispatch();
+  const trackingFlow = useWalletSyncTrackingFlow();
 
   const onRequestQRCodeInput = useCallback(
     (config: { digits: number }, callback: (input: string) => void) => {
@@ -65,39 +90,29 @@ export const useSyncWithQrCode = () => {
         });
         if (newTrustchain) {
           dispatch(setTrustchain(newTrustchain));
-          if (!trustchain) track(AnalyticsEvents.LedgerSyncActivated);
+          if (!trustchain) track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
         }
         onSyncFinished();
         return true;
       } catch (e) {
-        const eName = (e as { name?: string })?.name;
-        if (eName === "ScannedOldImportQrCode") {
-          setCurrentStep(Steps.ScannedOldImportQrCode);
-          return;
-        } else if (eName === "ScannedInvalidQrCode") {
-          setCurrentStep(Steps.ScannedInvalidQrCode);
-          return;
-        } else if (eName === "InvalidDigitsError") {
-          setCurrentStep(Steps.SyncError);
-          return;
-        } else if (eName === "NoTrustchainInitialized") {
-          setCurrentStep(Steps.UnbackedError);
-          return;
-        } else if (eName === "TrustchainAlreadyInitialized") {
-          if ((e as Error)?.message === trustchain?.rootId) {
-            setCurrentStep(Steps.AlreadyBacked);
-          } else {
-            setCurrentStep(Steps.BackedWithDifferentSeeds);
-          }
-          return;
-        } else if (eName === "TrustchainAlreadyInitializedWithOtherSeed") {
-          setCurrentStep(Steps.BackedWithDifferentSeeds);
+        const errorStep = resolveSyncErrorStep(e, trustchain?.rootId);
+        if (errorStep) {
+          setCurrentStep(errorStep);
           return;
         }
         throw e;
       }
     },
-    [instanceName, onRequestQRCodeInput, trustchain, onSyncFinished, sdk, dispatch, setCurrentStep],
+    [
+      instanceName,
+      onRequestQRCodeInput,
+      trustchain,
+      onSyncFinished,
+      sdk,
+      dispatch,
+      setCurrentStep,
+      trackingFlow,
+    ],
   );
 
   const handleSendDigits = useCallback(

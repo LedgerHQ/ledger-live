@@ -68,6 +68,8 @@ import { getOperationTypeI18nKey } from "~/logic/operationTypeName";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
 import PerpsSign from "LLM/features/Perps/screens/PerpsSign/PerpsSignScreen";
+import PerpsDeposit from "LLM/features/Perps/screens/PerpsDeposit/PerpsDepositScreen";
+import PerpsTransactionSigned from "LLM/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedScreen";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
@@ -184,6 +186,7 @@ export default function BaseNavigator() {
   // whole screen — same canvas `getStackNavigationConfigV4` paints from (`theme.colors.bg.canvas`).
   const { theme: lumenTheme } = useLumenTheme();
   const liveAppCanvasColor = lumenTheme.colors.bg.canvas;
+  const lumenBaseColor = lumenTheme.colors.bg.base;
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const nativeStackScreenOptions: Partial<NativeStackNavigationOptions> = stackNavigationConfig;
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
@@ -576,6 +579,23 @@ export default function BaseNavigator() {
           name={ScreenName.PerpsSign}
           component={PerpsSign}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={ScreenName.PerpsDeposit}
+          component={PerpsDeposit}
+          options={{
+            title: t("perpsDeposit.title"),
+            headerStyle: { backgroundColor: lumenBaseColor },
+            contentStyle: { backgroundColor: lumenBaseColor },
+          }}
+        />
+        <Stack.Screen
+          name={ScreenName.PerpsTransactionSigned}
+          component={PerpsTransactionSigned}
+          options={{
+            headerShown: false,
+            contentStyle: { backgroundColor: lumenBaseColor },
+          }}
         />
         <Stack.Screen
           name={ScreenName.RedirectToOnboardingRecoverFlow}

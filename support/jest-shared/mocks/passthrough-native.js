@@ -27,6 +27,17 @@ function Banner({ children, description, primaryAction, secondaryAction, ...prop
   );
 }
 
+const componentCache = new Map();
+
+function makeComponent(prop) {
+  return ({ children, onPress, ...props }) => {
+    if (onPress !== undefined) {
+      return React.createElement("Pressable", { onPress, ...props }, wrapTextChildren(children));
+    }
+    return React.createElement(prop, props, wrapTextChildren(children));
+  };
+}
+
 // Generic Lumen (native) stub: every named export becomes a host element named after the
 // component (e.g. Text -> "Text"), so React Native Testing Library text queries still work.
 // Hooks (`use*`) return a mutable ref stub. Redirected here via moduleNameMapper — no
@@ -41,10 +52,17 @@ module.exports = new Proxy(
         return () => ({ current: null });
       }
       if (prop === "Text") {
-        return ({ children, ...props }) => React.createElement("Text", props, children);
+        if (!componentCache.has("Text")) {
+          componentCache.set("Text", ({ children, ...props }) =>
+            React.createElement("Text", props, children),
+          );
+        }
+        return componentCache.get("Text");
       }
-      return ({ children, ...props }) =>
-        React.createElement(prop, props, wrapTextChildren(children));
+      if (!componentCache.has(prop)) {
+        componentCache.set(prop, makeComponent(prop));
+      }
+      return componentCache.get(prop);
     },
   },
 );

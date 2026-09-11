@@ -2420,9 +2420,6 @@ PODS:
   - react-native-tcp-socket (6.0.6):
     - CocoaAsyncSocket
     - React-Core
-  - react-native-udp (4.1.7):
-    - CocoaAsyncSocket
-    - React-Core
   - react-native-version-number (0.3.6):
     - React
   - react-native-video (6.16.1):
@@ -3695,7 +3692,6 @@ DEPENDENCIES:
   - "react-native-splash-screen (from `../../../node_modules/.pnpm/react-native-splash-screen@3.2.0_react-native@0_7fb3b50c4a313d239ce4fdf88b5162e5/node_modules/react-native-splash-screen`)"
   - "react-native-startup-time (from `../../../node_modules/.pnpm/react-native-startup-time@2.1.0_react-native@0._9046ca1eb6173c89565c2a34b7da3918/node_modules/react-native-startup-time`)"
   - "react-native-tcp-socket (from `../../../node_modules/.pnpm/react-native-tcp-socket@6.0.6_react-native@0.81_34ca5ceafa440bcbde428f36b080d61a/node_modules/react-native-tcp-socket`)"
-  - "react-native-udp (from `../../../node_modules/.pnpm/react-native-udp@4.1.7/node_modules/react-native-udp`)"
   - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
   - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_f6cee87bac56333e1bcaa7ed5e65d1cc/node_modules/react-native-video`)"
   - "react-native-view-shot (from `../../../node_modules/.pnpm/react-native-view-shot@5.1.1_react-native@0.81._83e6766540172c22b2f788432d1311fb/node_modules/react-native-view-shot`)"
@@ -3955,8 +3951,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-startup-time@2.1.0_react-native@0._9046ca1eb6173c89565c2a34b7da3918/node_modules/react-native-startup-time"
   react-native-tcp-socket:
     :path: "../../../node_modules/.pnpm/react-native-tcp-socket@6.0.6_react-native@0.81_34ca5ceafa440bcbde428f36b080d61a/node_modules/react-native-tcp-socket"
-  react-native-udp:
-    :path: "../../../node_modules/.pnpm/react-native-udp@4.1.7/node_modules/react-native-udp"
   react-native-version-number:
     :path: "../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number"
   react-native-video:
@@ -4184,7 +4178,6 @@ SPEC CHECKSUMS:
   react-native-splash-screen: a43276f9cf4b2e65d7ce30efe372ffc528064293
   react-native-startup-time: c7297d8a7892400239e6828bb94a3721c1a1a9df
   react-native-tcp-socket: ae8abcfebc071216302a09d9ed1e375d4e877484
-  react-native-udp: 7e484efc89db2214f7501ac946781d3205b2c6a0
   react-native-version-number: 3d74b5224ca4e1032b1593937d86d3f3c94bf95c
   react-native-video: 6ed94120c73e29c8fbea89ec4e3cedf3528751d6
   react-native-view-shot: 5ed55de8892be2746074c2f8066e6abc21dd6fd3

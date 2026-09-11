@@ -30,6 +30,10 @@ export const mockAleoResources = {
   privateBalance: new BigNumber(1),
   unspentPrivateRecords: [],
   lastPrivateSyncDate: new Date(),
+  bondedBalance: new BigNumber(0),
+  bondedValidator: null,
+  unbondingBalance: new BigNumber(0),
+  unbondingHeight: null,
 } satisfies AleoResources;
 
 export const mockAleoResourcesRaw: AleoResourcesRaw = {
@@ -38,6 +42,10 @@ export const mockAleoResourcesRaw: AleoResourcesRaw = {
   privateBalance: mockAleoResources.privateBalance?.toString() ?? null,
   unspentPrivateRecords: JSON.stringify(mockAleoResources.unspentPrivateRecords),
   lastPrivateSyncDate: mockAleoResources.lastPrivateSyncDate?.toISOString() ?? null,
+  bondedBalance: mockAleoResources.bondedBalance.toString(),
+  bondedValidator: mockAleoResources.bondedValidator ?? null,
+  unbondingBalance: mockAleoResources.unbondingBalance.toString(),
+  unbondingHeight: mockAleoResources.unbondingHeight ?? null,
 };
 
 export const mockUnspentRecord1: AleoUnspentRecord = {

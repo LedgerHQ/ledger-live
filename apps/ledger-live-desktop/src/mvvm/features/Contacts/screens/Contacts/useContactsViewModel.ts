@@ -44,7 +44,11 @@ import {
   useContactsFeatureIntroductionState,
 } from "@features/flow-contacts-introduction";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
-import { useContacts, useContactsMeContact } from "@features/platform-contacts";
+import {
+  createMeDisplayNameFormatter,
+  useContacts,
+  useContactsMeContact,
+} from "@features/platform-contacts";
 import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
@@ -308,6 +312,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
       validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
       ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
+      ensDisclaimerDescription: t("contacts.addAddressEntry.ensDisclaimerDescription"),
     }),
     [t],
   );
@@ -398,7 +403,9 @@ export function useContactsViewModel(): ContactsPageViewModel {
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
-      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
+      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
+        t("contacts.detail.meDisplayName", { name }),
+      ),
     }),
     [t],
   );
@@ -436,7 +443,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
     setIsLedgerSyncIntroductionRequested(false);
-    openDrawer({ startOnSyncMethod: true });
+    openDrawer({ startOnSyncMethod: true, analyticsFlow: CONTACTS_FLOW.CONTACTS });
   }, [analytics, dismissPendingIntent, openDrawer]);
   const onRequestAddContact = useCallback(
     (onAllowed: () => void) => {

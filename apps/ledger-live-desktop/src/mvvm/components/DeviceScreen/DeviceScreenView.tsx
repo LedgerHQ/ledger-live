@@ -1,11 +1,20 @@
 import React from "react";
 import type { DeviceScreenState } from "@ledgerhq/live-dmk-desktop";
 import { ChevronDown, ChevronUp, Devices } from "@ledgerhq/lumen-ui-react/symbols";
+import { cn } from "LLD/utils/cn";
 import { DeviceOsInfo } from "./components/DeviceOsInfo";
 import { DeviceScreenButtons } from "./components/DeviceScreenButtons";
 import { DeviceScreenImage } from "./components/DeviceScreenImage";
 import type { DeviceScreenViewModel } from "./types";
 import type { DeviceScreenModel } from "./utils/deviceModel";
+
+/**
+ * Device-interaction modals paint an overlay over the sidebar, disable pointer
+ * events on the body and dismiss on any pointer-down reaching the document.
+ * The panel opts out of all three so the device stays drivable under a modal.
+ */
+const reachableUnderModalOverlay = "pointer-events-auto relative z-[200]";
+const keepModalsOpen = (event: React.PointerEvent<HTMLDivElement>) => event.stopPropagation();
 
 export interface DeviceScreenViewProps {
   readonly viewModel: DeviceScreenViewModel;
@@ -26,11 +35,9 @@ export function DeviceScreenView({ viewModel }: DeviceScreenViewProps) {
   const Chevron = collapsed ? ChevronUp : ChevronDown;
 
   return (
-    // Painted above the modal layer (z-index 100): device flows put a full-window
-    // backdrop over the sidebar, and the screen has to stay clickable through it —
-    // confirming a receive address is gated on pressing the device.
     <div
-      className="relative z-[200] flex flex-col rounded-md bg-canvas-muted"
+      className={cn(reachableUnderModalOverlay, "flex flex-col rounded-md bg-canvas-muted")}
+      onPointerDown={keepModalsOpen}
       data-testid="device-screen"
     >
       <button

@@ -34,9 +34,9 @@ function TestHarness({ isOnPortfolioPage = false }: { isOnPortfolioPage?: boolea
 }
 
 const tourEnabledOverrides = {
-  lwdWallet40: {
+  releaseTour: {
     enabled: true,
-    params: { q2Tour: true },
+    params: { variant: "q2" as const },
   },
 };
 
@@ -77,11 +77,11 @@ describe("Q2Tour Drawer", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("should not open dialog when tour is disabled (q2Tour false)", async () => {
+  it("should not open dialog when the release tour is disabled", async () => {
     const { user } = render(<TestHarness />, {
       initialState: getTourTestInitialState({
         featureFlagOverrides: {
-          lwdWallet40: { enabled: true, params: { q2Tour: false } },
+          releaseTour: { enabled: false, params: { variant: "q2" } },
         },
       }),
     });

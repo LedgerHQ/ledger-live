@@ -120,7 +120,8 @@ export interface TransactionQueryParams {
   limit?: number;
   order?: "a" | "d"; // ascending or descending
   from?: string; // transaction ID to start from (exclusive cursor)
-  includeRewards?: boolean;
+  // A name, not a flag, and omitting it returns every reward.
+  includeRewards?: "none" | "allButFinalization" | "all";
   includeRawRejectReason?: boolean;
   onlyEncrypted?: boolean;
   blockTimeFrom?: number; // Unix seconds

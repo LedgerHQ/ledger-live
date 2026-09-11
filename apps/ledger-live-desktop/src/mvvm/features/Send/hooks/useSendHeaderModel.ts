@@ -7,8 +7,7 @@ import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send
 import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
-import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
-import { useContactsFeature } from "@features/platform-contacts";
+import { isEligibleAddressCurrency, useContactsFeature } from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "LLD/hooks/redux";
 import { buildTransactionPatchFromURIScheme } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
@@ -113,8 +112,11 @@ export function useSendHeaderModel({
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
   const { recipientType, setInputMethod } = useSendFlowTracking();
   const addNewContactHeader = useAddNewContactHeaderState();
-  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
-    useContactsFeature("desktop");
+  const {
+    isEnabled: isContactsFeatureEnabled,
+    eligibleAddressFamilies,
+    excludedCurrencyIds,
+  } = useContactsFeature("desktop");
   const contacts = useSelector(selectContacts);
 
   const currencyName = state.account.currency?.ticker ?? "";
@@ -358,7 +360,11 @@ export function useSendHeaderModel({
 
   const canSearchContacts =
     isContactsFeatureEnabled &&
-    isEligibleAddressCurrency(eligibleAddressFamilies, state.account.currency ?? undefined);
+    isEligibleAddressCurrency(
+      eligibleAddressFamilies,
+      state.account.currency ?? undefined,
+      excludedCurrencyIds,
+    );
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({
       supportsDomain: uiConfig.recipientSupportsDomain,

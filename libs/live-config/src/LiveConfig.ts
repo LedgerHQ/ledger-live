@@ -32,9 +32,7 @@ export const UNSAFE_OVERRIDE_KEYS: ReadonlySet<string> = new Set([
  * override-shaped payloads (LiveConfig setters, the desktop Redux slice,
  * persisted-state hydration).
  */
-export const cloneOverridesSafely = (
-  input: Record<string, unknown>,
-): Record<string, unknown> => {
+export const cloneOverridesSafely = (input: Record<string, unknown>): Record<string, unknown> => {
   const out: Record<string, unknown> = {};
   for (const key of Object.keys(input)) {
     if (UNSAFE_OVERRIDE_KEYS.has(key)) continue;

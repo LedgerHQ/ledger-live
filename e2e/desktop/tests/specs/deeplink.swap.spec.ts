@@ -8,7 +8,6 @@ import {
 } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
-import { addTmsLink } from "tests/utils/allureUtils";
 import { setupEnv, selectAccountFromDeeplinkDrawer } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import {
@@ -65,8 +64,6 @@ test.describe("Swap - deeplinks", () => {
     "Swap deeplinks - all scenarios",
     { tag: TAGS, annotation: { type: "TMS", description: TMS } },
     async ({ app }) => {
-      await addTmsLink([TMS]);
-
       setExchangeDependencies([
         { name: btcAccount.currency.speculosApp.name.replace(/ /g, "_") },
         { name: ethAccount.currency.speculosApp.name.replace(/ /g, "_") },

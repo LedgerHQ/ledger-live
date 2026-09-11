@@ -11,6 +11,7 @@ shared `cardApi` service (`@shared/api-services`, `services/card`) rather than d
 - `types.ts` — the inferred response types and the request arguments each endpoint takes.
 - `transforms.ts` — maps a validated wire response onto its canonical shape.
 - `constants.ts` — `CARD_MANAGEMENT_TAGS` and the OAuth2 token path.
+- `*.mock.ts` — wire-shaped answers for the apps' MSW workers, behind the `./mock/*` exports.
 
 Every endpoint is declarative: `query`, never `queryFn`, with the schemas and the transform doing the
 rest. [`.agents/skills/card-endpoint-shape`](.agents/skills/card-endpoint-shape/SKILL.md) has the
@@ -24,11 +25,13 @@ shape and the reasons.
 | `getUser` | GET | `/v1/user` | Read the account id and verification state |
 | `orderCard` | POST | `/v1/card/order` | Order a virtual card |
 | `getCardStatus` | GET | `/v1/card/status` | Read the ordered card's state and preview fields |
+| `getCardTransactions` | GET | `/v1/card/transactions` | Read the card's own transactions, newest first |
 | `createCardDetailsToken` | POST | `/v1/card/details/token` | Mint a single-use token and image URL showing PAN, CVV and expiry |
 | `freezeCard` | POST | `/v1/card/freeze` | Move an active card to `FROZEN` |
 | `unfreezeCard` | POST | `/v1/card/unfreeze` | Move a frozen card back to `ACTIVE` |
 | `getInternalWallets` | GET | `/v1/wallet/internal` | Read every custodial wallet, with balances |
 | `getCardLinkedWallets` | GET | `/v1/wallet/internal/card_linked` | Read the wallets funding the card, in charging order |
+| `getWalletHistory` | GET | `/v1/wallet/history` | Read one wallet's own history, newest first |
 
 ## OAuth2 grants
 
@@ -49,8 +52,12 @@ Both carry credentials in both directions, so three rules hold them:
    `redactCardApiAction` from `@shared/api-services` before the desktop logger, the desktop DevTools
    or the mobile DevTools relay reads one. `redactCardApiState` does the same for the state.
 
-`CARD_GRANT_ENDPOINTS` in `@shared/api-services` names both grants for the state redaction. A test
-in `api.test.ts` holds that list and these endpoints together.
+`CARD_GRANT_ENDPOINTS` in `@shared/api-services` names both grants for state redaction. A test in
+`api.test.ts` holds that list and these endpoints together.
+
+`initiatePayCardLogout(accessToken)` owns the logout details. It keeps the token outside the Redux
+action, dispatches the endpoint untracked, opts out of session lookup and detaches the fetch from API
+cache resets. Callers only capture the token and dispatch the returned thunk.
 
 `cardManagementApi` **is** `cardApi` after injection: importing this package is a module-level side
 effect that adds its endpoints to the shared service. The app registers `cardApi` (not this package)

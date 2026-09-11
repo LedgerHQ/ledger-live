@@ -22,7 +22,7 @@ export function ContactTile({ contact, index, onPress }: ContactTileProps): Reac
     >
       <ContactAvatar contactId={contact.id} name={contact.name} size="lg" />
       <TileContent>
-        <TileTitle lx={{ color: "muted" }}>{contact.name}</TileTitle>
+        <TileTitle lx={{ color: "base" }}>{contact.name}</TileTitle>
       </TileContent>
     </Tile>
   );

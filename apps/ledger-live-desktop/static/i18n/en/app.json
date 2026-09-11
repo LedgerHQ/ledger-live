@@ -687,26 +687,6 @@
   "postOnboardingDebugger": {
     "buttonTitle": "Test"
   },
-  "vaultSigner": {
-    "modal": {
-      "title": "Connect Vault",
-      "info": "Link your Ledger Vault workspace accounts and create transactions from Ledger Wallet by completing fields below. Locate info at Settings > External wallet signer.",
-      "info_link": "Learn more",
-      "host": {
-        "title": "URL Endpoint",
-        "placeholder": "ws://localhost:3030"
-      },
-      "workspace": {
-        "title": "Workspace name",
-        "placeholder": "workspace"
-      },
-      "token": {
-        "title": "Operator API Token",
-        "placeholder": "Token"
-      },
-      "submit": "Connect"
-    }
-  },
   "account": {
     "subHeader": {
       "moreInfo": "More info",
@@ -921,7 +901,35 @@
       "title": "Crypto card",
       "balanceLabel": "Balance",
       "freeze": "Freeze",
-      "unfreeze": "Unfreeze"
+      "unfreeze": "Unfreeze",
+      "goBack": "Go back",
+      "freezeConfirm": {
+        "title": "Freezing means you cannot use the card anymore",
+        "description": "You can unfreeze your card at any time.",
+        "confirm": "Freeze now",
+        "errorTitle": "Freeze failed"
+      },
+      "unfreezeConfirm": {
+        "title": "Unfreeze your card?",
+        "confirm": "Unfreeze now",
+        "errorTitle": "Unfreeze failed"
+      },
+      "confirmError": {
+        "description": "Something went wrong. Please try again.",
+        "retry": "Try again"
+      }
+    },
+    "cardTransactions": {
+      "categories": {
+        "SUBSCRIPTIONS": "Subscriptions",
+        "FOOD": "Food",
+        "TRAVEL": "Travel",
+        "ENTERTAINMENT": "Entertainment",
+        "HEALTH": "Health",
+        "ATM": "ATM",
+        "UTILITIES": "Utilities",
+        "MISC": "Other"
+      }
     },
     "cardOnboarding": {
       "widget": {
@@ -959,7 +967,7 @@
         "addAddress": "Add address"
       },
       "paySuccess": {
-        "title": "You paid ({{recipient}}) {{amount}}",
+        "title": "You paid ({{recipient}})",
         "amount": "Amount",
         "estimatedTime": "Est. time",
         "from": "From",
@@ -1704,10 +1712,6 @@
     "referralProgram": {
       "title": "Refer and earn $10",
       "description": "Successfully refer a friend and you both earn $10 worth of Bitcoin."
-    },
-    "vaultSigner": {
-      "title": "Vault signer mode",
-      "link": "Vault Help Center"
     }
   },
   "signmessage": {
@@ -2613,10 +2617,6 @@
         "title": "Device"
       },
       "details": {
-        "solanaRawTransaction": {
-          "title": "Blind signing required",
-          "description": "You cannot verify the transaction details on your Ledger device. If you sign it, you could lose all your assets. Only sign if you trust this website."
-        },
         "utxoLag": "This transaction may take long to verify and sign because the account has a significant number of coins.",
         "subaccountsWarning": "You will need to refill this account with {{ currency }} in order to send the tokens of this account",
         "from": "From",
@@ -2697,7 +2697,7 @@
     "addressMatched": "Address matched",
     "addressNotFound": "Address not found",
     "alreadyUsed": "Already used · {{date}}",
-    "addressBookUnsupported": "{{family}} isn't supported yet",
+    "addressBookUnsupported": "{{family}} is not supported yet",
     "recentSendWillAppear": "Your recent send will appear here",
     "contactsWillAppear": "Contacts will appear here",
     "selectAddress": "Select address",
@@ -5697,10 +5697,6 @@
           "title": "Deactivate EIP1559 minimum priority fee gate",
           "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
         },
-        "vaultSigner": {
-          "title": "Vault Signer",
-          "description": "Use Ledger Vault as a signer with your operator API token"
-        },
         "1559CustomPriorityLowerGate": {
           "title": "Custom priority fee gate",
           "description": "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction"
@@ -7872,6 +7868,42 @@
     "ConcordiumAddressVerificationFailedError": {
       "title": "Address verification failed"
     },
+    "ConcordiumInsufficientCcdForFee": {
+      "title": "Not enough CCD for the network fee",
+      "description": "The network fee is paid in CCD, not in the token you are sending. Add CCD to this account and try again."
+    },
+    "ConcordiumTokenPaused": {
+      "title": "Transfers are paused for this token",
+      "description": "The token issuer has paused all transfers. You can try again once transfers resume."
+    },
+    "ConcordiumTokenTransferNotPermitted": {
+      "title": "This account cannot send this token",
+      "description": "The token issuer restricts who may send it, and this account is not permitted. Contact the token issuer for access."
+    },
+    "ConcordiumTokenRestrictionsUnverified": {
+      "title": "Token restrictions could not be verified",
+      "description": "This token's transfer rules could not be read, so the transfer cannot be confirmed as allowed. Please resync your account and try again."
+    },
+    "ConcordiumUnsupportedTokenDecimals": {
+      "title": "This token cannot be signed on your Ledger device",
+      "description": "The token uses {{decimals}} decimal places, and your device supports at most {{maxDecimals}}. Receiving and holding it are unaffected."
+    },
+    "ConcordiumTokenAccountUnavailable": {
+      "title": "This token is no longer in your account",
+      "description": "The token you selected is not available any more. Please start the transaction again."
+    },
+    "ConcordiumInvalidPltPayloadError": {
+      "title": "This transaction cannot be prepared",
+      "description": "The token's details are outside what your Ledger device accepts, so the transaction cannot be built. Please contact Ledger Support."
+    },
+    "ConcordiumAppOutdatedError": {
+      "title": "App update required",
+      "description": "The Concordium app on your Ledger device does not support token transfers. Update it in My Ledger and try again."
+    },
+    "ConcordiumSignerProtocolError": {
+      "title": "Something went wrong. Please reconnect your device",
+      "description": "The Concordium app could not process the transaction. If the problem continues, please contact Ledger Support."
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
@@ -8269,6 +8301,104 @@
     },
     "UtxoLimitReachedError": {
       "title": "Amount too large for UTXO constraints."
+    },
+    "ICPDissolveDelayLTMin": {
+      "title": "Dissolve delay too short",
+      "description_one": "The Internet Computer requires a dissolve delay of at least {{minDays}} day.",
+      "description_other": "The Internet Computer requires a dissolve delay of at least {{minDays}} days."
+    },
+    "ICPInvalidDissolveDelayIncrease": {
+      "title": "Invalid number of days",
+      "description": "Enter a whole number of days greater than zero."
+    },
+    "ICPDissolveDelayGTMax": {
+      "title": "Dissolve delay too long",
+      "description_one": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} day.",
+      "description_other": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} days."
+    },
+    "ICPDissolveDelayLTCurrent": {
+      "title": "Dissolve delay cannot be shortened",
+      "description": "A neuron's dissolve delay can only be increased. To shorten it, start dissolving the neuron instead."
+    },
+    "ICPNeuronNotFound": {
+      "title": "Neuron not found",
+      "description": "This neuron is missing from your last synced snapshot. Sync your neurons and try again."
+    },
+    "ICPInvalidHotKey": {
+      "title": "Invalid principal",
+      "description": "A hot key must be a valid Internet Computer principal."
+    },
+    "ICPHotKeyAlreadyExists": {
+      "title": "Hot key already added",
+      "description": "This principal is already a hot key on this neuron."
+    },
+    "ICPHotKeyIsController": {
+      "title": "This principal already controls the neuron",
+      "description": "Enter a different principal. A hot key can only vote and set following, which the controller can already do."
+    },
+    "ICPSplitNotAllowed": {
+      "title": "Amount outside the range this neuron can split",
+      "description": "Both the original neuron and the new one must keep at least 1 ICP staked, plus the network fee on the amount moved."
+    },
+    "ICPSpawnNotAllowed": {
+      "title": "Cannot spawn from this neuron",
+      "description": "A neuron that is already spawning cannot spawn again, and the maturity spawned has to leave at least 1 ICP after the network's maturity adjustment. Sync your neurons to see their current state."
+    },
+    "ICPStakeMaturityNotAllowed": {
+      "title": "Cannot stake this neuron's maturity",
+      "description": "Maturity cannot be staked while the neuron is spawning, once it has fully dissolved, or when the neuron has none. Sync your neurons to see their current state."
+    },
+    "ICPFollowTopicNotAllowed": {
+      "title": "This topic cannot be followed",
+      "description": "The Internet Computer has retired this topic, or the Ledger Internet Computer app cannot yet sign following on it. Choose another topic."
+    },
+    "ICPDisburseNotAllowed": {
+      "title": "Cannot disburse this neuron",
+      "description": "A neuron can be disbursed once it has fully dissolved and its stake is more than the network fee. Sync your neurons to see their current state."
+    },
+    "ICPTooManyHotKeys": {
+      "title": "Hot key limit reached",
+      "description": "A neuron can hold at most {{max}} hot keys. Remove one to add another."
+    },
+    "ICPTopUpBelowMinimumStake": {
+      "title": "Top-up too small",
+      "description": "A neuron's balance has to reach 1 ICP after a top-up. As of the last sync this neuron needs at least {{missing}} ICP more. A smaller transfer settles in the neuron's account but is not counted until a later top-up reaches the minimum."
+    },
+    "ICPStakeNotRefreshed": {
+      "title": "Stake transferred, neuron not updated",
+      "description": "The ICP was transferred to the neuron's account, but Internet Computer governance refused to update the neuron from it. {{reason}} Nothing is lost: the amount stays in the neuron's account and counts toward the next top-up that brings the balance to at least 1 ICP. Ledger Live cannot see it there yet, so the amount field still asks for the full shortfall the last sync shows."
+    },
+    "ICPStakeMemoNotRecoverable": {
+      "title": "Cannot top up this neuron",
+      "description": "Topping up a neuron needs the memo from the transaction that created it, and it is not in this account's history. Top it up from the account that created the neuron."
+    },
+    "ICPCallUnconfirmed": {
+      "title": "Outcome unknown",
+      "description": "The Internet Computer accepted the request but returned no result, so it may or may not have taken effect. Sync your neurons to check before trying again."
+    },
+    "ICPNeuronsNotRead": {
+      "title": "Neurons not refreshed",
+      "description": "The Internet Computer did not return your neurons, so they are unchanged. Please try again."
+    },
+    "ICPCreateNeuronWarning": {
+      "title": "This locks your ICP in a new neuron",
+      "description": "The neuron starts with the shortest dissolve delay, which is too short to vote or earn rewards. Raise it from Manage Neurons, and expect to wait out the delay before the stake is spendable again."
+    },
+    "ICPIncreaseStakeWarning": {
+      "title": "This adds to a locked stake",
+      "description": "The amount joins the neuron's existing stake and follows its dissolve delay, so it is not spendable until the neuron dissolves."
+    },
+    "ICPGovernanceRejected": {
+      "title": "The network refused this operation",
+      "description": "Internet Computer governance rejected the request, so the neuron is unchanged. Sync your neurons to see their current state. {{reason}}"
+    },
+    "ICPCallRejected": {
+      "title": "Request not accepted",
+      "description": "The Internet Computer rejected the request before it ran, so nothing changed. Please try again. {{reason}}"
+    },
+    "ICPInvalidPercentage": {
+      "title": "Percentage out of range",
+      "description": "Enter a whole number between 1 and 100."
     }
   },
   "cryptoOrg": {
@@ -9035,8 +9165,8 @@
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
-    "unsupportedAssetTooltip": "{{asset}} isn't supported yet.",
-    "unsupportedNetworkTooltip": "{{network}} network isn't supported yet.",
+    "unsupportedAssetTooltip": "{{asset}} is not supported yet",
+    "unsupportedNetworkTooltip": "{{network}} network is not supported yet",
     "notAvailableYet": "Not available yet",
     "selectAccount": "Select account",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
@@ -9494,6 +9624,46 @@
         "errorDesc": "Something went wrong, please try again"
       }
     },
+    "bond": {
+      "flow": {
+        "title": "Bond ALEO",
+        "steps": {
+          "validator": {
+            "title": "Validator",
+            "fetchError": "The validator list could not be loaded.",
+            "totalStake": "Total stake",
+            "rateAndCommission": "{{rate}}% est. · {{commission}}% commission",
+            "commissionOnly": "{{commission}}% commission",
+            "rowSubtitleClosed": "Validator is closed to new stake",
+            "rowSubtitleUnbonding": "Validator is unbonding",
+            "unbondingTooltip": "This validator is withdrawing its own stake. The network rejects every new stake to it until that withdrawal is claimed.",
+            "rowSubtitleEarnsNothing": "Validator earns no rewards",
+            "nonEarning": {
+              "fullCommission": "This validator takes 100% commission, so delegators keep nothing.",
+              "overConcentrated": "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so delegators earn nothing."
+            },
+            "topUpOnly": "Aleo allows one validator per account. You can add to your stake with this validator, or unstake first to choose a different one."
+          },
+          "amount": {
+            "title": "Amount",
+            "minimum": "Your total stake with this validator must reach at least 10,000 ALEO to earn rewards. Only public ALEO can be staked - convert your private balance to public first if you want to stake it."
+          },
+          "connectDevice": {
+            "title": "Device",
+            "validatorLabel": "Validator"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "broadcastError": "Your bond could not be sent.",
+            "success": {
+              "title": "Bond sent",
+              "text": "Your bond is being processed.",
+              "cta": "View details"
+            }
+          }
+        }
+      }
+    },
     "manage": {
       "headerAction": "Earn",
       "title": "Manage staking",
@@ -9509,6 +9679,29 @@
       "claim": {
         "title": "Claim",
         "description": "Claim your unbonded ALEO back to your available balance."
+      },
+      "unbondPendingTooltip": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding is unavailable until it has gone through."
+    },
+    "unbond": {
+      "flow": {
+        "title": "Unbond ALEO",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "unbondableBanner": "Maximum unbondable amount is",
+            "belowMinimum": "If unbonding would leave less than {{minAmount}} bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met."
+          },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Unbond submitted",
+              "text": "Your unbonding request has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your unbond transaction was signed but could not be broadcast."
+          }
+        }
       }
     }
   },
@@ -9728,7 +9921,7 @@
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
-    "addExternalAddress": "Add external address",
+    "addYourAddress": "Add your address",
     "addAddressEntry": {
       "title": "Enter address",
       "addressPlaceholder": "Address or ENS",
@@ -9743,7 +9936,8 @@
         "learnMore": "Learn more"
       },
       "validationUnavailable": "Address validation is temporarily unavailable.",
-      "ensDisclaimer": "This ENS name resolves to the address shown above."
+      "ensDisclaimer": "ENS names can change",
+      "ensDisclaimerDescription": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify."
     },
     "addAddressName": {
       "inputLabel": "Address name",
@@ -9760,31 +9954,29 @@
       "currencyLabel": "Currency",
       "networkLabel": "Network",
       "nameLabel": "Address name",
-      "continue": "Confirm address",
-      "successTitle": "Address saved",
-      "close": "Close"
+      "continue": "Confirm address"
     },
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
-      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
+      "namingDisclaimer": "For privacy, avoid full names. Use a nickname or just a first name + initial, e.g. 'John S.'",
       "invalidNameError": "Special characters are not allowed.",
       "duplicateNameError": "This contact name is already in use."
     },
-    "searchPlaceholder": "Search contact",
+    "searchPlaceholder": "Search by name",
     "searchNoResults": "No contact found",
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",
     "me": {
-      "name": "Me"
+      "myAddresses": "My addresses"
     },
     "detail": {
       "meDisplayName": "{{name}} (Me)",
       "ledgerWalletAddresses": "Ledger Wallet addresses",
       "emptyState": {
-        "meTitle": "No saved addresses for you",
+        "meTitle": "Save your own addresses",
         "contactTitle": "No saved addresses for {{name}}",
-        "meDescription": "Save your wallet addresses to receive crypto by name next time.",
+        "meDescription": "Save the external addresses you own on exchanges or other wallets. Next time you send to yourself, your Ledger device will show the name you chose.",
         "contactDescription": "Save their wallet addresses to send to them by name next time"
       }
     },
@@ -9840,7 +10032,7 @@
     },
     "featureIntroduction": {
       "title": "Introducing Contacts",
-      "primaryAction": "Explore now",
+      "primaryAction": "Try now",
       "highlights": {
         "saveAddresses": {
           "title": "Save addresses by a name you choose",
@@ -9851,7 +10043,7 @@
           "description": "See a name you trust, not an address."
         },
         "privateAcrossDevices": {
-          "title": "Securely top up via Ledger Wallet™",
+          "title": "Private across your Ledger devices",
           "description": "End-to-end encrypted with Ledger Sync."
         }
       }
@@ -10128,12 +10320,241 @@
         "title": "Stake ICP",
         "description": "Stake ICP and gain rewards by participating in its governance.",
         "cta": "Stake ICP"
+      },
+      "confirmFollowing": {
+        "title": "Confirm your following",
+        "description": "One of your neurons is losing voting power. Confirm its following to restore it.",
+        "cta": "Confirm following"
+      },
+      "syncNeurons": {
+        "title": "Refresh your neurons",
+        "description": "Your neuron data is out of date. Connect your device to refresh it.",
+        "cta": "Refresh neurons"
+      },
+      "lockNeurons": {
+        "title": "Increase your dissolve delay",
+        "description": "A neuron needs a longer dissolve delay before it can vote and earn rewards.",
+        "cta": "Manage neurons"
+      },
+      "addFollowees": {
+        "title": "Start earning rewards",
+        "description": "Follow other neurons on governance topics so your neuron votes and earns rewards.",
+        "cta": "Manage neurons"
       }
     },
     "headerManageActions": {
       "manageNeurons": {
         "title": "Manage Neurons"
       }
+    },
+    "duration": {
+      "years_one": "{{count}} year",
+      "years_other": "{{count}} years",
+      "months_one": "{{count}} month",
+      "months_other": "{{count}} months",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days",
+      "hours_one": "{{count}} hour",
+      "hours_other": "{{count}} hours",
+      "minutes_one": "{{count}} minute",
+      "minutes_other": "{{count}} minutes",
+      "lessThanAMinute": "Less than a minute"
+    },
+    "neuronState": {
+      "Locked": "Locked",
+      "Dissolving": "Dissolving",
+      "Dissolved": "Dissolved",
+      "Spawning": "Spawning",
+      "Unknown": "Unknown"
+    },
+    "common": {
+      "neuronId": "Neuron ID",
+      "stake": "Stake",
+      "maturity": "Maturity",
+      "dissolveDelay": "Dissolve delay",
+      "state": "State",
+      "action": "Action",
+      "none": "None",
+      "disburse": "Disburse",
+      "startDissolving": "Start dissolving",
+      "stopDissolving": "Stop dissolving",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "enable": "Enable",
+      "disable": "Disable"
+    },
+    "manageNeuronFlow": {
+      "title": "Manage neurons",
+      "device": {
+        "title": "Device"
+      },
+      "confirmation": {
+        "title": "Confirmation",
+        "broadcastError": "Your operation was signed but could not be sent to the network.",
+        "backToNeurons": "Back to neurons",
+        "success": {
+          "title": "Done",
+          "default": "Your neuron has been updated.",
+          "list_neurons": "Your neurons are up to date.",
+          "start_dissolving": "Your neuron has started dissolving.",
+          "stop_dissolving": "Your neuron has stopped dissolving.",
+          "disburse": "Your neuron's stake has been disbursed to your account.",
+          "set_dissolve_delay": "Your neuron's dissolve delay has been set.",
+          "increase_dissolve_delay": "Your neuron's dissolve delay has been increased.",
+          "add_hot_key": "The hot key has been added to your neuron.",
+          "remove_hot_key": "The hot key has been removed from your neuron.",
+          "follow": "Your neuron's following has been updated.",
+          "refresh_voting_power": "Your neuron's voting power has been refreshed.",
+          "stake_maturity": "Your neuron's maturity has been staked.",
+          "auto_stake_maturity": "Automatic maturity staking has been updated.",
+          "spawn_neuron": "A new neuron is spawning from your maturity.",
+          "split_neuron": "Your neuron has been split.",
+          "increase_stake": "Your neuron's stake has been increased."
+        }
+      },
+      "listNeuron": {
+        "title": "Neurons",
+        "empty": "You have no neurons yet. Stake ICP to create one.",
+        "lastSynced": "Last synced: {{date}}",
+        "sync": "Refresh neurons"
+      },
+      "manage": {
+        "title": "Manage",
+        "neuron": "Neuron",
+        "hotKeyOnly": "You hold a hot key on this neuron. You can vote and set following, but not move its stake.",
+        "missingNeuron": "This neuron is no longer in your synced snapshot. Go back to your neurons and sync to pick another.",
+        "votingPower": {
+          "title": "Voting power",
+          "tooltip": "Voting power decides how much weight your neuron carries in governance, and how many rewards it earns.",
+          "staked": "Staked",
+          "increaseStake": "Increase stake",
+          "state": "State",
+          "bonusValue": "+{{percent}}%",
+          "ageBonus": "Age bonus",
+          "ageBonusTooltip": "A neuron earns up to +25% voting power as it ages, reaching the maximum after four years.",
+          "dissolveDelayBonus": "Dissolve delay bonus: +{{percent}}%",
+          "dissolveDelayBonusTooltip": "A longer dissolve delay earns up to +200% voting power, reaching the maximum at two years.",
+          "noDissolveDelay": "No dissolve delay",
+          "setDissolveDelay": "Set dissolve delay",
+          "increaseDissolveDelay": "Increase dissolve delay",
+          "decayStartsIn": "Voting power starts decaying in {{duration}}",
+          "decaying": "Voting power is decaying — reaches zero in {{duration}}",
+          "expired": "Voting power lost — following has been cleared",
+          "confirmFollowing": "Confirm following",
+          "confirmFollowingTooltip": "Confirm your following at least every six months, or your neuron gradually loses its voting power."
+        },
+        "maturity": {
+          "title": "Maturity",
+          "tooltip": "Maturity is the reward a neuron accrues. Stake it back into the neuron, or spawn it into a new one.",
+          "available": "Available maturity",
+          "staked": "Staked maturity",
+          "stakedTooltip": "Maturity already staked into the neuron. It counts toward voting power and can no longer be spawned into a new neuron.",
+          "stake": "Stake maturity",
+          "spawn": "Spawn neuron",
+          "autoStake": "Automatic maturity staking",
+          "autoStakeTooltip": "When enabled, maturity is staked back into the neuron as it accrues."
+        },
+        "following": {
+          "title": "Following",
+          "tooltip": "A neuron that follows others votes as they do, which is how it earns rewards without voting manually.",
+          "count_one": "{{count}} topic",
+          "count_other": "{{count}} topics",
+          "edit": "Follow neurons on a governance topic",
+          "follow": "Edit following"
+        },
+        "hotKeys": {
+          "title": "Hot keys",
+          "tooltip": "A hot key can vote and set following on your behalf, but can never move the neuron's stake.",
+          "add": "Grant hot-key access to another principal",
+          "addAction": "Add hot key",
+          "remove": "Remove"
+        },
+        "advanced": {
+          "title": "Advanced",
+          "split": "Split this neuron into two",
+          "splitTooltip": "Both the original and the new neuron must keep at least the minimum stake of 1 ICP.",
+          "splitAction": "Split neuron"
+        }
+      },
+      "setDissolveDelay": {
+        "title": "Dissolve delay",
+        "setDescription": "Choose how long the neuron takes to dissolve. Between {{min}} and {{max}} days.",
+        "increaseDescription": "Add to the neuron's dissolve delay. You can add up to {{remaining}} more days, for a total of {{max}}, and it can never be lowered.",
+        "days": "Days",
+        "resulting": "New dissolve delay: {{duration}}",
+        "belowVotingThreshold": "Below {{days}} days the neuron cannot vote and earns no rewards."
+      },
+      "stakeMaturity": {
+        "title": "Stake maturity",
+        "description": "Stake a share of this neuron's maturity back into it, increasing its voting power.",
+        "percentage": "Percentage to stake",
+        "selected": "Amount to stake:"
+      },
+      "splitNeuron": {
+        "title": "Split neuron",
+        "description": "Move part of this neuron's stake into a new neuron. The new neuron starts with no dissolve delay or age bonus.",
+        "amount": "Amount to split off",
+        "range": "Allowed range:"
+      },
+      "addHotKey": {
+        "title": "Add hot key",
+        "description": "Grant another principal permission to vote and set following on this neuron. It can never move the stake.",
+        "principal": "Principal ID",
+        "ownPrincipal": "This account's principal",
+        "ownPrincipalHint": "Enter a different principal — typically the one you sign in with on the NNS dapp. This account already controls the neuron, so adding its own principal grants nothing."
+      },
+      "followTopic": {
+        "title": "Topic",
+        "description": "Pick the governance topic whose following you want to change.",
+        "followeeCount_one": "{{count}} followee",
+        "followeeCount_other": "{{count}} followees"
+      },
+      "selectFollowees": {
+        "title": "Followees",
+        "description": "Your neuron will vote on {{topic}} exactly as these neurons do.",
+        "neuronId": "Neuron ID to follow",
+        "add": "Add",
+        "remove": "Remove",
+        "empty": "No followees yet. Your neuron will not vote on this topic.",
+        "clearsFollowing": "Continuing submits an empty list, which stops this neuron following anyone on {{topic}}. It currently follows {{count}}.",
+        "notANeuronId": "A neuron ID is digits only.",
+        "outOfRange": "This is not a valid neuron ID.",
+        "duplicate": "This neuron is already a followee on this topic.",
+        "self": "A neuron cannot follow itself.",
+        "unadded": "Select Add to include this neuron ID, or clear the field.",
+        "atCapacity": "A topic can follow at most {{max}} neurons. Remove one to add another."
+      }
+    },
+    "governanceTopic": {
+      "Unspecified": "All other topics",
+      "NeuronManagement": "Neuron management",
+      "ExchangeRate": "Exchange rate",
+      "NetworkEconomics": "Network economics",
+      "Governance": "Governance",
+      "NodeAdmin": "Node admin",
+      "ParticipantManagement": "Participant management",
+      "SubnetManagement": "Subnet management",
+      "NetworkCanisterManagement": "Application canister management",
+      "Kyc": "KYC",
+      "NodeProviderRewards": "Node provider rewards",
+      "SnsDecentralizationSale": "SNS decentralization sale",
+      "IcOsVersionDeployment": "IC OS version deployment",
+      "IcOsVersionElection": "IC OS version election",
+      "SnsAndCommunityFund": "SNS & Community Fund",
+      "ApiBoundaryNodeManagement": "API boundary node management",
+      "SubnetRental": "Subnet rental",
+      "ProtocolCanisterManagement": "Protocol canister management",
+      "ServiceNervousSystemManagement": "Service Nervous System management"
+    },
+    "refreshVotingPowerFlow": {
+      "title": "Confirm following",
+      "listTitle": "Neurons",
+      "description": "Confirming your following restores a neuron's voting power for another six months.",
+      "timeUntilLoss": "Voting power lost in",
+      "losing": "{{duration}} — losing power now",
+      "expired": "Already lost",
+      "confirm": "Confirm",
+      "empty": "None of your neurons are on a confirmation clock right now."
     },
     "summaryFooter": {
       "stakedBalance": "Staked Balance",

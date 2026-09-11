@@ -12,6 +12,7 @@ import { launchApp } from "tests/utils/electronUtils";
 import {
   captureArtifacts,
   addTeamOwner,
+  addAnnotationLinks,
   attachMergedFeatureFlags,
   runCliStep,
 } from "tests/utils/allureUtils";
@@ -63,6 +64,8 @@ type TestFixtures = {
   }[];
   localManifestOverride?: LiveAppManifest[];
   teamOwner?: Team;
+  teamOwnerLabel: void;
+  annotationLinks: void;
   speculos: SpeculosFixtureHandle;
   speculosForSetupOnly?: boolean;
 };
@@ -99,6 +102,24 @@ export const test = base.extend<TestFixtures>({
   localManifestOverride: undefined,
   teamOwner: undefined,
   speculosForSetupOnly: false,
+
+  teamOwnerLabel: [
+    async ({ teamOwner }, use) => {
+      if (teamOwner !== undefined) {
+        await addTeamOwner(teamOwner);
+      }
+      await use();
+    },
+    { auto: true },
+  ],
+
+  annotationLinks: [
+    async ({}, use, testInfo) => {
+      await addAnnotationLinks(testInfo.annotations);
+      await use();
+    },
+    { auto: true },
+  ],
 
   app: async ({ page, electronApp }, use) => {
     const app = new Application(page, electronApp);
@@ -263,13 +284,10 @@ export const test = base.extend<TestFixtures>({
       // No lingering process (only Reset App reboots the main process into a new instance)
     }
   },
-  page: async ({ electronApp, speculos, cliCommandsOnApp, teamOwner }, use, testInfo) => {
+  page: async ({ electronApp, speculos, cliCommandsOnApp }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
 
-    if (teamOwner !== undefined) {
-      await addTeamOwner(teamOwner);
-    }
     // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
     page.setDefaultTimeout(120000);
 

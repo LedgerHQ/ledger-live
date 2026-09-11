@@ -35,6 +35,8 @@ import DebugContacts from "~/screens/Settings/Debug/Debugging/Contacts";
 import DebugDevTools from "LLM/features/DevTools/screens/DevToolsScreen";
 import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
+import DebugPayContactSuccess from "~/screens/Settings/Debug/Features/PayContactSuccess";
+import DebugSendSuccess from "~/screens/Settings/Debug/Features/SendSuccess";
 import DebugPlayground from "~/screens/Settings/Debug/Playground";
 import DebugBluetoothAndLocationServices from "~/screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "~/screens/Settings/Debug";
@@ -95,6 +97,7 @@ import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 import WalletV4TourScreenDebug from "LLM/features/WalletV4Tour/Debug";
 import ProductTourScreenDebug from "LLM/features/ProductTour/Debug";
 import Q2WalletV4TourScreenDebug from "LLM/features/Q2WalletV4Tour/Debug";
+import Q3WalletV4TourScreenDebug from "LLM/features/Q3WalletV4Tour/Debug";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
@@ -556,6 +559,20 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugPayContactSuccess}
+        component={DebugPayContactSuccess}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugSendSuccess}
+        component={DebugSendSuccess}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugSnackbars}
         component={DebugSnackbars}
         options={{
@@ -674,6 +691,13 @@ export default function SettingsNavigator() {
         component={Q2WalletV4TourScreenDebug}
         options={{
           title: "Q2 Wallet V4 Tour",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugQ3WalletV4Tour}
+        component={Q3WalletV4TourScreenDebug}
+        options={{
+          title: "Q3 Wallet V4 Tour",
         }}
       />
     </Stack.Navigator>

@@ -261,7 +261,6 @@
     "https": false
   },
   "dependencies": {
-    "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@domain/api-aggregated-assets": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
@@ -366,7 +365,6 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/transaction-observability": "workspace:^",
-    "@ledgerhq/wallet-api-acre-module": "workspace:^",
     "@ledgerhq/wallet-api-client": "catalog:",
     "@ledgerhq/wallet-api-core": "catalog:",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",

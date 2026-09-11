@@ -123,6 +123,20 @@ export async function addBugLink(ids: string[]) {
   }
 }
 
+export async function addAnnotationLinks(annotations: TestInfo["annotations"]) {
+  const idsOf = (type: string) => [
+    ...new Set(
+      annotations
+        .filter(annotation => annotation.type === type)
+        .flatMap(annotation => (annotation.description ?? "").split(","))
+        .map(id => id.trim())
+        .filter(Boolean),
+    ),
+  ];
+  await addTmsLink(idsOf("TMS"));
+  await addBugLink(idsOf("BUG"));
+}
+
 export async function addTeamOwner(team: Team) {
   const teamString = team.toString();
   await allure.owner(teamString);

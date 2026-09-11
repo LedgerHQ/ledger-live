@@ -18,13 +18,11 @@ import type { AppRequest, AppState } from "./app";
 import { createAction as createAppAction } from "./app";
 import type {
   Account,
-  AccountBridge,
   AccountLike,
   SignedOperation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { bridge as ACREBridge } from "../../families/bitcoin/ACRESetup";
 
 type State = {
   signedOperation: SignedOperation | null | undefined;
@@ -48,7 +46,6 @@ type TransactionRequest = {
   requireLatestFirmware?: boolean;
   manifestId?: string;
   manifestName?: string;
-  isACRE?: boolean;
 };
 export type TransactionResult =
   | {
@@ -137,15 +134,8 @@ export const createAction = (
     reduxDevice: Device | null | undefined,
     txRequest: TransactionRequest,
   ): TransactionState => {
-    const {
-      transaction,
-      appName,
-      dependencies,
-      requireLatestFirmware,
-      manifestId,
-      manifestName,
-      isACRE,
-    } = txRequest;
+    const { transaction, appName, dependencies, requireLatestFirmware, manifestId, manifestName } =
+      txRequest;
     const mainAccount = getMainAccount(txRequest.account, txRequest.parentAccount);
     // A background account sync hands down a new account object with the same id. Tearing down an
     // in-flight device signature request over that identity change abandons a prompt the device is
@@ -158,7 +148,7 @@ export const createAction = (
     const mainAccountId = mainAccount.id;
 
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
-      account: isACRE ? undefined : mainAccount, // Bypass derivation check with ACRE as we can use other addresses than the freshest
+      account: mainAccount,
       appName,
       dependencies,
       requireLatestFirmware,
@@ -224,10 +214,7 @@ export const createAction = (
       let sub: { unsubscribe: () => void } | undefined;
       (async () => {
         const signingAccount = mainAccountRef.current;
-        const bridge = isACRE
-          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (ACREBridge.accountBridge as unknown as AccountBridge<any>)
-          : await getAccountBridge(signingAccount);
+        const bridge = await getAccountBridge(signingAccount);
         if (cancelled) return;
         sub = bridge
           .signOperation({
@@ -252,7 +239,7 @@ export const createAction = (
         cancelled = true;
         sub?.unsubscribe();
       };
-    }, [device, mainAccountId, transaction, opened, inWrongDeviceForAccount, error, isACRE]);
+    }, [device, mainAccountId, transaction, opened, inWrongDeviceForAccount, error]);
     return {
       ...appState,
       ...state,

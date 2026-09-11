@@ -35,6 +35,9 @@ jest.mock("../../../../../FlowWizard/FlowWizardContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@features/platform-contacts", () => ({
+  isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).isEligibleAddressCurrency,
   useContacts: jest.fn(),
   useContactsFeature: jest.fn(),
 }));
@@ -130,6 +133,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: false,
       showNewBadge: false,
       eligibleAddressFamilies: [],
+      excludedCurrencyIds: [],
     });
     mockedUseRecipientContactSelection.mockReturnValue({
       selectedContact: undefined,
@@ -184,6 +188,7 @@ describe("useRecipientAddressModalViewModel", () => {
         isEnabled,
         showNewBadge: false,
         eligibleAddressFamilies: families,
+        excludedCurrencyIds: [],
       });
 
       renderHook(() =>
@@ -261,6 +266,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([
       mockContact({
@@ -298,6 +304,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
 
     const { result } = renderHook(() =>
@@ -322,6 +329,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([
       mockContact({
@@ -357,6 +365,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([
       mockContact({
@@ -453,6 +462,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: true,
       showNewBadge: false,
       eligibleAddressFamilies: ["evm"],
+      excludedCurrencyIds: [],
     });
     mockedUseContacts.mockReturnValue([contact]);
     mockedUseRecipientContactSelection.mockReturnValue({

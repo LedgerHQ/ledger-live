@@ -26,8 +26,8 @@ const createSource = (
 } => ({
   transportId,
   subject,
-  listen: jest.fn(
-    (): Observable<DeviceDiscoverySourceEvent<UnknownDiscoveryError>> => subject.asObservable(),
+  listen: jest.fn((): Observable<DeviceDiscoverySourceEvent<UnknownDiscoveryError>> =>
+    subject.asObservable(),
   ),
 });
 

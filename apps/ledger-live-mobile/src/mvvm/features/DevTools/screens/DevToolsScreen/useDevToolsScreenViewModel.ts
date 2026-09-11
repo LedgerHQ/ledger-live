@@ -13,9 +13,11 @@ import {
   useEnvDevToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
+import { openHostedLoginInSecureBrowser } from "@features/flow-pay-card-auth";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
+import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
 type BaseNavigation = NativeStackNavigationProp<
@@ -28,7 +30,7 @@ export function useDevToolsScreenViewModel() {
   const navigation = useNavigation<BaseNavigation>();
   const tabNavigation = navigation.getParent(BASE_NAVIGATOR_ID) ?? navigation;
   const featureFlagsProps = useFeatureFlagsToolProps();
-  const boundPayCard = usePayCardToolProps({ platform: "native" });
+
   const onNavigateToPortfolio = useCallback(() => {
     tabNavigation.dispatch(
       StackActions.replace(NavigatorName.Main, {
@@ -37,10 +39,45 @@ export function useDevToolsScreenViewModel() {
       }),
     );
   }, [tabNavigation]);
+
   const onNavigateToPayTab = useCallback(() => navigateToPayTab(tabNavigation), [tabNavigation]);
+  const onNavigateToPaySuccess = useCallback(() => {
+    navigation.navigate(NavigatorName.Settings, {
+      screen: ScreenName.DebugPayContactSuccess,
+    });
+  }, [navigation]);
+  const onNavigateToSendSuccess = useCallback(() => {
+    navigation.navigate(NavigatorName.Settings, {
+      screen: ScreenName.DebugSendSuccess,
+    });
+  }, [navigation]);
+
+  const openSecureBrowser = useCallback(async (url: string) => {
+    const result = await openHostedLoginInSecureBrowser(url, PAY_TAB_DEEP_LINK);
+    return result.type === "success" ? `redirected to ${result.url}` : "dismissed";
+  }, []);
+
+  const boundPayCard = usePayCardToolProps({
+    platform: "native",
+    openPayTab: onNavigateToPayTab,
+    openSecureBrowser,
+  });
+
   const payCardToolProps = useMemo(
-    () => ({ ...boundPayCard, onNavigateToPortfolio, onNavigateToPayTab }),
-    [boundPayCard, onNavigateToPortfolio, onNavigateToPayTab],
+    () => ({
+      ...boundPayCard,
+      onNavigateToPortfolio,
+      onNavigateToPayTab,
+      onNavigateToPaySuccess,
+      onNavigateToSendSuccess,
+    }),
+    [
+      boundPayCard,
+      onNavigateToPortfolio,
+      onNavigateToPayTab,
+      onNavigateToPaySuccess,
+      onNavigateToSendSuccess,
+    ],
   );
   const envToolProps = useEnvDevToolProps();
   const { theme } = useTheme();

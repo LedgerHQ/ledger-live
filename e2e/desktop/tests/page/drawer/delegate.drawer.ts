@@ -5,11 +5,11 @@ import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { expect } from "@playwright/test";
 
 export class DelegateDrawer extends Drawer {
-  private provider = (provider: string) =>
-    this.page.getByTestId("drawer-content").locator(`text=${provider}`).first();
+  private provider = (provider: string) => this.content.getByText(provider).first();
   private amountValue = this.page.getByTestId("amountReceived-drawer").first();
   private transactionType = this.page.getByTestId("transaction-type").first();
   private operationType = this.page.getByTestId("operation-type");
+  private accountName = this.page.getByTestId("account-name");
 
   @step("Verify provider is visible")
   async providerIsVisible(account: Delegate) {
@@ -18,11 +18,21 @@ export class DelegateDrawer extends Drawer {
     }
   }
 
+  @step("Verify validator group $0 is visible")
+  async validatorGroupIsVisible(validatorGroup: string) {
+    await expect(this.provider(validatorGroup)).toBeVisible();
+  }
+
   @step("Verify amount is visible")
   async amountValueIsVisible(ticker: string) {
     await expect(this.amountValue).toBeVisible();
     const displayedAmount = await this.amountValue.innerText();
     expect(displayedAmount).toEqual(expect.stringContaining(ticker));
+  }
+
+  @step("Verify the operation belongs to account $0")
+  async verifyAccountName(accountName: string) {
+    await expect(this.accountName).toHaveText(accountName);
   }
 
   @step("Verify transaction type is correct")

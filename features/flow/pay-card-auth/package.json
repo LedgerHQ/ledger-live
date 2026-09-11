@@ -11,6 +11,7 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./hooks": "./src/hooks/index.ts",
     "./state": "./src/state/store.ts",
     "./package.json": "./package.json"
   },

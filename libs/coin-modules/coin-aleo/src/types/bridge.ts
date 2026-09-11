@@ -67,6 +67,10 @@ export type Transaction = TransactionCommon & {
         withdrawal: string;
         properties?: never;
       }
+    | {
+        mode: typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
+        properties?: never;
+      }
   );
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -122,6 +126,10 @@ export type TransactionRaw = TransactionCommonRaw & {
         withdrawal: string;
         properties?: never;
       }
+    | {
+        mode: typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
+        properties?: never;
+      }
   );
 
 export type TransactionStatus = TransactionStatusCommon;
@@ -136,6 +144,10 @@ export interface AleoResources {
   lastPrivateSyncDate: Date | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  bondedBalance?: BigNumber;
+  bondedValidator?: string | null;
+  unbondingBalance?: BigNumber;
+  unbondingHeight?: number | null;
 }
 
 export interface AleoResourcesRaw {
@@ -146,7 +158,20 @@ export interface AleoResourcesRaw {
   lastPrivateSyncDate: string | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  bondedBalance?: string;
+  bondedValidator?: string | null;
+  unbondingBalance?: string;
+  unbondingHeight?: number | null;
 }
+
+/**
+ * The staking slice of {@link AleoResources}. Absent entirely — not zeroed — while the
+ * `enableStaking` flag is off, since the mappings are then never read.
+ */
+export type AleoStakingResources = Pick<
+  AleoResources,
+  "bondedBalance" | "bondedValidator" | "unbondingBalance" | "unbondingHeight"
+>;
 
 export type AleoAccount = Account & {
   aleoResources?: AleoResources;
@@ -204,7 +229,8 @@ export type TransactionSelfTransfer = Extract<
       | typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
       | typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE
       | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC
-      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE;
+      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
+      | typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
   }
 >;
 
@@ -216,7 +242,8 @@ export type TransactionPublic = Extract<
       | typeof TRANSACTION_TYPE.TRANSFER_PUBLIC
       | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC
       | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
-      | typeof TRANSACTION_TYPE.BOND_PUBLIC;
+      | typeof TRANSACTION_TYPE.BOND_PUBLIC
+      | typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
   }
 >;
 

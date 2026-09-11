@@ -8,6 +8,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./mock": "./src/onboardingStatus.mock.ts",
+    "./mock/card-onboarding-status": "./src/cardOnboardingStatus.mock.ts",
+    "./mock/card-transactions": "./src/cardTransactions.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -35,6 +37,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
+    "msw": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
     "typescript": "catalog:"

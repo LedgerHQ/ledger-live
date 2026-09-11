@@ -37,7 +37,6 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
@@ -46,6 +45,7 @@
     "axios": "catalog:",
     "documentation": "14.0.2",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.4.0"
@@ -61,7 +61,9 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "format": "oxfmt src tests",
+    "format:check": "oxfmt --check src tests"
   },
   "exports": {
     ".": {

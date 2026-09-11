@@ -43,7 +43,9 @@
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest"
+    "test": "jest",
+    "format": "oxfmt src tests",
+    "format:check": "oxfmt --check src tests"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
@@ -55,6 +57,7 @@
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "rimraf": "^4.4.1",
     "ts-node": "^10.4.0"
   }
