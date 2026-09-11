@@ -3090,7 +3090,7 @@ describe("genericGetAccountShape", () => {
       expect((result.subAccounts as any)[0].balance.toString()).toBe("500");
     });
 
-    test("with the bound unset, no `limit` key reaches listOperations -- not even an undefined one", async () => {
+    test("with the bound unset, listOperations still receives the page size as limit -- page cost and retention are independent", async () => {
       resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined, pageSize: 100 });
       listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h1", 1)] });
 
@@ -3100,11 +3100,13 @@ describe("genericGetAccountShape", () => {
         { paginationConfig: {} as any },
       );
 
+      // `limit` bounds what one page costs -- the crash safety, always on. `maxOperations` bounds
+      // how much history is retained -- a product decision, unset here. Gating the first on the
+      // second would make a paginated fetch unreachable without a retention figure, and on the
+      // Ledger-explorer arm an absent `limit` means the exhaustive path that runs out of memory.
       const options = listOperationsMock.mock.calls[0][2];
-      // `toHaveBeenCalledWith` with an object lacking `limit` would also pass if `limit` were
-      // present but `undefined` -- checking the key's own presence is what actually proves no
-      // `limit` was sent, which is what flips coin-evm's etherscan arm onto its `limit + 1` probe.
-      expect(Object.prototype.hasOwnProperty.call(options, "limit")).toBe(false);
+      expect(Object.prototype.hasOwnProperty.call(options, "limit")).toBe(true);
+      expect(options.limit).toBe(100);
     });
 
     test("with maxOperations set and no explicit pageSize, listOperations receives the resolved fallback page size as limit", async () => {

@@ -604,11 +604,20 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           minHeight,
           cursor,
           order: "desc",
-          // Sent only once a bound applies: a `limit` flips several modules onto a distinct,
-          // limit-aware code path (e.g. coin-evm's etherscan arm runs a `limit + 1` probe), so
-          // sending one unconditionally would change behaviour for every family even with the
-          // bound unset -- the shipped default, which must stay identical to today.
-          ...(maxOperations !== undefined ? { limit: pageSize } : {}),
+          // Sent whenever a page size is resolved, independently of `maxOperations`. The two
+          // govern different things and must not be coupled: `limit` bounds what one page costs
+          // (the crash safety), `maxOperations` bounds how much history is retained (a product
+          // decision). Measured on the address from the out-of-memory report: with a page size of
+          // 100 the sync peaks flat at ~950 MB whatever the total bound (5 000 to 200 000
+          // operations, memory unchanged), while sending no `limit` puts the Ledger-explorer arm
+          // back on its exhaustive path and reproduces the crash. So gating `limit` on a retention
+          // figure would make crash safety unreachable without a product decision.
+          //
+          // The cost is deliberate: a `limit` flips several modules onto a distinct, limit-aware
+          // code path (coin-evm's etherscan arm runs a `limit + 1` probe, for instance), so this
+          // changes how every family fetches -- not what it retains, which only `maxOperations`
+          // affects.
+          limit: pageSize,
         }),
       maxOperations,
     );
