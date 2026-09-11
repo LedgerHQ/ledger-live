@@ -33,12 +33,16 @@ const CONFIRMATION_TIMEOUT_MS = 180_000;
 const CONFIRMATION_POLL_INTERVAL_MS = 3_000;
 
 /**
- * The keyless RPC suggests a tip of ~0.0003 gwei — three orders of magnitude below what the wallet
- * itself pays — and a cap of only twice the current base fee. Transactions priced that way sit in
- * the mempool until they are evicted, so both are floored.
+ * The keyless RPC suggests a tip of ~0.0003 gwei, three orders of magnitude below what the wallet
+ * itself pays, which leaves the transaction in the mempool until it is evicted. The suggestion
+ * still tracks congestion, so it is floored rather than replaced.
+ *
+ * The cap has to stay proportional: the node reserves `gasLimit * maxFeePerGas` up front, and these
+ * actions carry an ~850k gas limit, so a flat multi-gwei cap is rejected outright for insufficient
+ * funds on a thinly funded test account.
  */
-const MIN_PRIORITY_FEE_WEI = 1_000_000_000n;
-const MIN_FEE_CAP_WEI = 30_000_000_000n;
+const MIN_PRIORITY_FEE_WEI = 100_000_000n;
+const BASE_FEE_HEADROOM = 4n;
 
 function atLeast(suggested: bigint | null, floor: bigint): bigint {
   return suggested !== null && suggested > floor ? suggested : floor;
@@ -223,8 +227,9 @@ export class EvmSpeculosExecutor {
       : undefined;
     if (maxFeePerGas === undefined || maxPriorityFeePerGas === undefined) {
       const fee = await withRpcRetry(() => this.provider.getFeeData());
-      maxFeePerGas ??= atLeast(fee.maxFeePerGas, MIN_FEE_CAP_WEI);
+      const block = await withRpcRetry(() => this.provider.getBlock("latest"));
       maxPriorityFeePerGas ??= atLeast(fee.maxPriorityFeePerGas, MIN_PRIORITY_FEE_WEI);
+      maxFeePerGas ??= (block?.baseFeePerGas ?? 0n) * BASE_FEE_HEADROOM + maxPriorityFeePerGas;
     }
 
     const gasLimit = payload.gasLimit
