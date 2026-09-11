@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 37.5.1
+
+### Patch Changes
+
+- [#21863](https://github.com/LedgerHQ/ledger-live/pull/21863) [`a312094`](https://github.com/LedgerHQ/ledger-live/commit/a312094b97c3d4cd9f807580f80f579e4ba04fd0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): update Arc mainnet native contract address
+
 ## 37.5.1-hotfix.0
 
 ### Patch Changes

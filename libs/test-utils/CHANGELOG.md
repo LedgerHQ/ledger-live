@@ -1,5 +1,12 @@
 # @ledgerhq/test-utils
 
+## 0.5.10
+
+### Patch Changes
+
+- Updated dependencies [[`a312094`](https://github.com/LedgerHQ/ledger-live/commit/a312094b97c3d4cd9f807580f80f579e4ba04fd0)]:
+  - @ledgerhq/live-common@37.5.1
+
 ## 0.5.10-hotfix.0
 
 ### Patch Changes
