@@ -123,6 +123,12 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     intent,
   });
 
+  // Mobile has no fee-picker UI: auto-activate Tronify when the seam says it's available,
+  // revert to standard when it becomes unavailable (e.g. account/currency not supported).
+  useEffect(() => {
+    setSelectedFeeOptionId(available ? "tronify" : "standard");
+  }, [available]);
+
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
   const savingsFiatFormatted = useMemo(
