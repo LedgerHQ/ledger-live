@@ -1,11 +1,9 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { buildTags } from "tests/utils/tagsUtils";
 import { settleAfterDeviceStatusScreen } from "tests/utils/deviceStatusScreen";
-import {
-  zcashPrivateBalanceTestUse,
-  zcashPrivateBalanceTestOptions,
-  openZcashAccountUnderTest,
-} from "tests/utils/zcashPrivateBalanceUtils";
 
 const accounts = [
   { account: Account.ZEC_1, xrayTicket: "B2CQA-4300", birthdayHeight: "2026-08-01" },
@@ -13,13 +11,25 @@ const accounts = [
 
 for (const account of accounts) {
   test.describe("Activate private balance", () => {
-    test.use(zcashPrivateBalanceTestUse(account.account));
+    test.use({
+      teamOwner: Team.BST,
+      userdata: "skip-onboarding-with-last-seen-device",
+      speculosApp: account.account.currency.speculosApp,
+      cliCommands: [liveDataCommand(account.account)],
+      featureFlags: { zcashShielded: { enabled: true } },
+    });
 
     test(
       `[${account.account.currency.testLabel}] - Activate private balance`,
-      zcashPrivateBalanceTestOptions(account.account, account.xrayTicket),
+      {
+        tag: buildTags({ currencyId: account.account.currency.id }),
+        annotation: { type: "TMS", description: account.xrayTicket },
+      },
       async ({ app }) => {
-        await openZcashAccountUnderTest(app, account.account);
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.accounts.navigateToAccountByName(account.account.accountName);
+        await app.account.expectAccountVisibility(account.account.accountName);
+
         await app.account.clickShowBalance();
         await app.privateBalance.expectModalVisibility();
         await app.privateBalance.editBirthdayHeight(account.birthdayHeight);
@@ -33,11 +43,13 @@ for (const account of accounts) {
         // sent while it is up (LIVE-37178). Settle before driving the device again.
         await settleAfterDeviceStatusScreen();
 
-        // Now that the UFVK is persisted, the Receive step must show the private
-        // address block alongside the public one.
+        // The Receive step must now show the private address block, carrying the
+        // address derived from the UFVK that was just exported from the device.
         await app.account.clickReceive();
         await app.receive.continue();
         await app.receive.expectPrivateAddressBlockVisible();
+        const privateAddress = await app.receive.getPrivateAddressDisplayed();
+        await app.receive.expectValidPrivateAddress(privateAddress);
       },
     );
   });

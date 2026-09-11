@@ -1,81 +1,83 @@
 import fs from "fs";
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { named } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import {
-  zcashPrivateBalanceTestUse,
-  zcashPrivateBalanceTestOptions,
-  openZcashAccountUnderTest,
-} from "tests/utils/zcashPrivateBalanceUtils";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { buildTags } from "tests/utils/tagsUtils";
 
-// Enabling private balance (UFVK export) and then opening Receive in the SAME
-// device session reproduces a device-reconnect bug: the Zcash DMK signer-kit
-// hangs on any second device call within one session (tracked as LIVE-37178,
-// see activate.private.balance.spec.ts). This spec sidesteps it by seeding
-// privateInfo directly into the userdata file -- a fresh session, so Receive's
-// own device-connect check is the only Zcash device call this test makes.
-// NOTE: the seeded ufvk/shieldedAddress below are fabricated and won't match
-// what a real device derives -- once LIVE-37178 is fixed, this fixture must be
-// updated (or removed in favor of the live flow) or the test will start
-// failing on a device mismatch, which would look like a regression in the fix.
-const seedZcashPrivateInfo = (account: Account) => {
-  const cmd = async (userdataPath?: string) => {
-    if (!userdataPath) return;
-    const raw = JSON.parse(fs.readFileSync(userdataPath, "utf-8"));
-    if (!Array.isArray(raw?.data?.accounts)) {
-      throw new Error(
-        `seedZcashPrivateInfo: expected raw.data.accounts to be an array in ${userdataPath}, got ${JSON.stringify(raw?.data)}`,
-      );
-    }
-    const acc = raw.data.accounts.find((a: { data: { id: string } }) =>
-      a.data.id.includes(account.currency.id),
+// Covers the returning user: an account whose private balance is already
+// enabled opens Receive in a fresh session. `activate.private.balance.spec.ts`
+// covers the other half -- enabling it and receiving in the same session.
+const account = Account.ZEC_1;
+const xrayTicket = "B2CQA-6606";
+
+// The address the device derives for the shared QA seed at 44'/133'/0'/0/6.
+// It has to be the real one: ZcashShieldedVerify compares the device's answer
+// against this persisted value, so a made-up address would make the spec pass
+// only while that verification is broken, and invert on the fix.
+const ZEC_1_SHIELDED_ADDRESS =
+  "u1rxupz6pfemaqnxkakpf846uf6euuaqhhgp7pf26he0c5k8xcm73e4khwj5fkmqe5rw58ppa4xevm3tny0sufvlywqngj2vus0g5rqt4j";
+
+/** Writes an already-activated private balance into the seeded userdata. */
+const seedPrivateInfo = async (userdataPath?: string) => {
+  if (!userdataPath) return;
+  const raw = JSON.parse(fs.readFileSync(userdataPath, "utf-8"));
+  if (!Array.isArray(raw?.data?.accounts)) {
+    throw new Error(
+      `seedPrivateInfo: expected raw.data.accounts to be an array in ${userdataPath}`,
     );
-    if (!acc) {
-      throw new Error(
-        `seedZcashPrivateInfo: no account matching currency "${account.currency.id}" found in ${userdataPath}. Did liveDataCommand run first and add it?`,
-      );
-    }
-    acc.data.privateInfo = {
-      orchardBalance: "0",
-      saplingBalance: "0",
-      ironwoodBalance: "0",
-      syncState: "ready",
-      progress: 0,
-      estimatedTimeRemaining: { hours: 0, minutes: 0 },
-      ufvk: "uview1testnotreald3v1ceufvkplaceholderforuitest0000000000000000000",
-      birthday: "2026-08-01",
-      shieldedAddress:
-        "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9",
-      lastSyncTimestamp: null,
-      lastProcessedBlock: null,
-      transactions: [],
-    };
-    fs.writeFileSync(userdataPath, JSON.stringify(raw));
+  }
+  const acc = raw.data.accounts.find((a: { data: { id: string } }) =>
+    a.data.id.includes(account.currency.id),
+  );
+  if (!acc) {
+    throw new Error(
+      `seedPrivateInfo: no account matching "${account.currency.id}" in ${userdataPath}. Did liveDataCommand run first?`,
+    );
+  }
+  // Only `shieldedAddress` drives the Receive block; the rest is the shape the
+  // bridge expects. The UFVK is not exercised by this spec.
+  acc.data.privateInfo = {
+    orchardBalance: "0",
+    saplingBalance: "0",
+    ironwoodBalance: "0",
+    syncState: "ready",
+    progress: 0,
+    estimatedTimeRemaining: { hours: 0, minutes: 0 },
+    ufvk: "uview1testonlyplaceholdernotusedbythisspec000000000000000000000000",
+    birthday: "2026-08-01",
+    shieldedAddress: ZEC_1_SHIELDED_ADDRESS,
+    lastSyncTimestamp: null,
+    lastProcessedBlock: null,
+    transactions: [],
   };
-  cmd.canUseGeneratedUserdata = () => false;
-  return named("seedZcashPrivateInfo", cmd);
+  fs.writeFileSync(userdataPath, JSON.stringify(raw));
 };
 
-const accounts = [{ account: Account.ZEC_1, xrayTicket: "B2CQA-6606" }];
-
-for (const account of accounts) {
-  test.describe("Receive private address", () => {
-    test.use(zcashPrivateBalanceTestUse(account.account, [seedZcashPrivateInfo(account.account)]));
-
-    test(
-      `[${account.account.currency.testLabel}] - Verify private address displayed`,
-      zcashPrivateBalanceTestOptions(account.account, account.xrayTicket),
-      async ({ app }) => {
-        await openZcashAccountUnderTest(app, account.account);
-        await app.account.clickReceive();
-        await app.receive.continue();
-        // Proves the UI renders the private address block from the persisted
-        // shieldedAddress. It does NOT prove the device's own background
-        // shielded-address confirmation (ZcashShieldedVerify) succeeds -- that
-        // call is a second Zcash device call in this session and still hangs,
-        // it just doesn't block this visible block from rendering.
-        await app.receive.expectPrivateAddressBlockVisible();
-      },
-    );
+test.describe("Receive private address", () => {
+  test.use({
+    teamOwner: Team.BST,
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: account.currency.speculosApp,
+    cliCommands: [liveDataCommand(account, { postSeedHook: seedPrivateInfo })],
+    featureFlags: { zcashShielded: { enabled: true } },
   });
-}
+
+  test(
+    `[${account.currency.testLabel}] - Verify private address displayed`,
+    {
+      tag: buildTags({ currencyId: account.currency.id }),
+      annotation: { type: "TMS", description: xrayTicket },
+    },
+    async ({ app }) => {
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.navigateToAccountByName(account.accountName);
+      await app.account.expectAccountVisibility(account.accountName);
+
+      await app.account.clickReceive();
+      await app.receive.continue();
+      await app.receive.expectPrivateAddressBlockVisible();
+      await app.receive.expectValidPrivateAddress(ZEC_1_SHIELDED_ADDRESS);
+    },
+  );
+});
