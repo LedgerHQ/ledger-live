@@ -1,5 +1,5 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
-import { getLastBlock } from "../../network/node";
+import { getLastBlock } from "../network/node";
 
 export async function lastBlock(): Promise<BlockInfo> {
   const result = await getLastBlock();

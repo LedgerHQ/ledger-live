@@ -1,5 +1,5 @@
-import { simulate } from "../../network/node";
-import { SimulationError } from "../../types/errors";
+import { simulate } from "../network/node";
+import { SimulationError } from "../types/errors";
 
 export async function estimateFees(serializedTransaction: string): Promise<bigint> {
   try {
