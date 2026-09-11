@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import BigNumber from "bignumber.js";
 import { encodeAccountId, decodeAccountId } from "@ledgerhq/live-common/account/index";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { Account } from "@ledgerhq/types-live";
-import { Spinner, TextInput } from "@ledgerhq/lumen-ui-react";
+import { Button, Spinner, TextInput } from "@ledgerhq/lumen-ui-react";
+import type { AccountBalanceStatus } from "@domain/entity-account-balance";
+import { useAccountBalance } from "@features/platform-account-data/react";
 import { ToolPage } from "../components/ToolPage";
-import { syncAccount } from "../logic/syncAccount";
+import { inferAccount, syncAccount } from "../logic/syncAccount";
+import { accountRefOf } from "../logic/accountData";
 
 function App() {
   // synchronise account with an id that is input in a input text field
@@ -14,6 +19,7 @@ function App() {
 
   const [account, setAccount] = useState<Account | undefined | null>(null);
   const [accountError, setAccountError] = useState("");
+  const [fullSyncRequested, setFullSyncRequested] = useState(false);
 
   useEffect(() => {
     // if we have an accountId, we try to infer it
@@ -27,27 +33,49 @@ function App() {
     }
   }, [accountId]);
 
-  useEffect(() => {
-    // if we have an accountId, we try to synchronise it
-    if (accountId) {
-      try {
-        decodeAccountId(accountId);
-        setAccountError("");
-        setAccount(undefined);
-        syncAccount(accountId).then(setAccount, setAccountError);
-      } catch (e) {
-        setAccount(null);
-        console.error(e);
-      }
+  const validAccountId = useMemo(() => {
+    if (!accountId) return undefined;
+    try {
+      decodeAccountId(accountId);
+      return accountId;
+    } catch {
+      return undefined;
     }
   }, [accountId]);
 
-  const isLoading = account === undefined && !accountError;
+  useEffect(() => {
+    setFullSyncRequested(false);
+    setAccount(null);
+    setAccountError("");
+  }, [validAccountId]);
+
+  // Updated during render, not in an effect: a click landing before the effect ran would otherwise
+  // compare against a stale generation and discard its own sync's result.
+  const syncingId = useRef(validAccountId);
+  syncingId.current = validAccountId;
+
+  const onFullSync = useCallback(() => {
+    if (!validAccountId) return;
+    const startedFor = validAccountId;
+    setFullSyncRequested(true);
+    setAccountError("");
+    setAccount(undefined);
+    syncAccount(validAccountId).then(
+      synced => {
+        if (syncingId.current === startedFor) setAccount(synced);
+      },
+      e => {
+        if (syncingId.current === startedFor) setAccountError(String(e));
+      },
+    );
+  }, [validAccountId]);
+
+  const isLoading = fullSyncRequested && account === undefined && !accountError;
 
   return (
     <ToolPage
       title="Synchronisation"
-      description="Synchronise an account from its id (or a currency:xpub/address shorthand)."
+      description="Read an account's balance through the account-data layer, or run a full legacy sync to inspect everything else."
     >
       <TextInput
         label="Account id"
@@ -58,7 +86,14 @@ function App() {
         helperText={accountIdError || undefined}
       />
 
+      {validAccountId ? <BalancePanel accountId={validAccountId} /> : null}
+
       <div className="flex flex-col gap-8">
+        <div>
+          <Button size="sm" disabled={!validAccountId || isLoading} onClick={onFullSync}>
+            Run a full legacy sync
+          </Button>
+        </div>
         {accountError ? (
           <p className="body-2 text-error">{String(accountError)}</p>
         ) : isLoading ? (
@@ -71,10 +106,72 @@ function App() {
             <code>{JSON.stringify(account, null, 2)}</code>
           </pre>
         ) : !accountError && !isLoading ? (
-          <p className="body-2 text-muted">Enter an account id to synchronise.</p>
+          <p className="body-2 text-muted">
+            The full sync fetches the whole account — operations, balance history, family resources.
+            The balance above needs none of it.
+          </p>
         ) : null}
       </div>
     </ToolPage>
+  );
+}
+
+function sourceLine(status: AccountBalanceStatus, assetCount: number): string {
+  if (status.pending) return "reading…";
+  if (status.error) return status.error;
+  if (!status.sourceId) return "no read yet";
+  const extra = assetCount > 1 ? ` — ${assetCount} assets in one read` : "";
+  return `served by ${status.sourceId}${extra}`;
+}
+
+function BalancePanel({ accountId }: Readonly<{ accountId: string }>) {
+  const account = useMemo(() => {
+    try {
+      return inferAccount(accountId);
+    } catch {
+      return undefined;
+    }
+  }, [accountId]);
+  const ref = useMemo(() => (account ? accountRefOf(account) : undefined), [account]);
+  const { balance, subAccountBalances, status, refresh } = useAccountBalance(ref);
+  const unit = account?.currency.units[0];
+
+  if (!account || !unit) return <p className="body-2 text-error">Unsupported currency.</p>;
+
+  return (
+    <div className="flex flex-col gap-6 rounded-lg border border-base p-16">
+      <div className="flex items-baseline gap-8">
+        <span className="body-1-semi-bold">
+          {balance
+            ? formatCurrencyUnit(unit, new BigNumber(balance.balance), {
+                showCode: true,
+              })
+            : "—"}
+        </span>
+        {status.pending ? <Spinner size={12} /> : null}
+        <Button size="sm" appearance="transparent" onClick={() => void refresh()}>
+          Refresh
+        </Button>
+      </div>
+      {balance && balance.spendableBalance !== balance.balance ? (
+        <span className="body-3 text-muted">
+          spendable{" "}
+          {formatCurrencyUnit(unit, new BigNumber(balance.spendableBalance), {
+            showCode: true,
+          })}
+        </span>
+      ) : null}
+      {subAccountBalances.length > 0 ? (
+        <ul className="list-none p-0 m-0 flex flex-col gap-2">
+          {subAccountBalances.map(sub => (
+            <li key={sub.accountId} className="body-3 text-muted">
+              {sub.assetId}: {sub.balance}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      <span className="body-4 text-muted">{sourceLine(status, 1 + subAccountBalances.length)}</span>
+    </div>
   );
 }
 

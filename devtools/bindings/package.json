@@ -23,11 +23,13 @@
     "@devtools/env": "workspace:*",
     "@devtools/registry": "workspace:*",
     "@domain/api-card-management": "workspace:*",
+    "@domain/entity-account-balance": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:*",
     "@features/flow-pay-card-wallets": "workspace:*",
     "@features/flow-pay-card-widget": "workspace:*",
     "@features/flow-pay-feature-tour": "workspace:*",
     "@features/flow-pay-request": "workspace:*",
+    "@features/platform-account-data": "workspace:*",
     "@features/platform-card": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
     "@shared/api-services": "workspace:*",
@@ -39,6 +41,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@domain/entity-account": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:*",

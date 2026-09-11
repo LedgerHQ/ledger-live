@@ -35,6 +35,7 @@ jest.mock("@devtools/bindings", () => ({
   }),
   useTrustchainDevToolProps: () => ({ marker: "trustchain-props" }),
   useCloudSyncDevToolProps: () => ({ marker: "cloud-sync-props" }),
+  useAccountBalancesToolProps: () => ({ marker: "account-balances-props" }),
 }));
 
 jest.mock("@devtools/wire", () => {
@@ -57,7 +58,7 @@ describe("DevToolsScreen", () => {
     devToolsSpy.mockClear();
   });
 
-  it("mounts the DevTools shell with feature-flags and pay-card tool configs", () => {
+  it("mounts the DevTools shell with every tool config", () => {
     render(<DevToolsScreen />);
 
     expect(devToolsSpy).toHaveBeenCalledWith(
@@ -68,6 +69,7 @@ describe("DevToolsScreen", () => {
           { id: "pay-card", config: { marker: "pay-card-props" } },
           { id: "trustchain", config: { marker: "trustchain-props" } },
           { id: "cloud-sync", config: { marker: "cloud-sync-props" } },
+          { id: "account-balances", config: { marker: "account-balances-props" } },
         ],
       }),
     );
