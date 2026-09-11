@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import type { FormattedValue } from "@features/flow-pay-card-details";
 import useEnv from "@features/platform-env";
@@ -35,7 +35,8 @@ function readCallbackState(state: unknown): string | undefined {
 
 export function useCardViewModel(): CardViewModel {
   const { t } = useTranslation();
-  const { state } = useLocation();
+  const { pathname, state } = useLocation();
+  const navigate = useNavigate();
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const unit = counterValueCurrency.units[0];
@@ -72,6 +73,15 @@ export function useCardViewModel(): CardViewModel {
 
     return code ? { code, ...(oauthState ? { state: oauthState } : {}) } : null;
   }, [state]);
+
+  useEffect(() => {
+    // The flow only reads this on mount. Left on the history entry, it would replay into a later
+    // remount — e.g. a logout brings CardLogin back, hydrates with no attempt on disk, and the
+    // stale code alone is read as a redirect for a login that never started.
+    if (callback) {
+      navigate(pathname, { replace: true, state: null });
+    }
+  }, [callback, navigate, pathname]);
 
   const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
 
