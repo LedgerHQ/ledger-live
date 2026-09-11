@@ -14,6 +14,7 @@ Today we have:
 - **Domain TLV Parser**: allows to parse a domain APDU (TLV) returned by the Ledger NFT Metadata service. This is useful to test the parsing done in the Ethereum app.
 - **SVG Icons**: helper to facilitate the creation of currency SVG icons for the Ledger Live application. This will validate icons correctly matches Ledger Live expectations and will prefill a PR creation.
 - **Derivation Paths**: Get a simple list of supported derivation paths for a given currency
+- **Firmware App Deployments**: a matrix of which device app version is published on each device, provider (P1 production, P4 pre-production) and OS track (current stable, and the next prerelease when one exists). Reads the Manager API directly from the browser, so it answers "is this app rebuilt for the upcoming OS yet?" without a device.
 
 ---
 
