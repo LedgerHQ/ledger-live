@@ -359,11 +359,6 @@ export type SolanaOperationExtraRaw = {
   stake?: ExtraStakeInfoRaw;
 };
 
-export type SolanaExtraDeviceTransactionField = {
-  type: "solana.token.transferFee";
-  label: string;
-};
-
 /** A partner-built transaction: the intent's `type`, `recipient` and `amount` then describe nothing. */
 export interface SolanaTxData extends TxData {
   type: "solana";
