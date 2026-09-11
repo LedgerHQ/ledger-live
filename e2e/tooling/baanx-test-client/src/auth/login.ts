@@ -1,4 +1,4 @@
-import { asBoolean, asRecord, asString, redactBody } from "../http/body";
+import { asBoolean, asRecord, asString, redactBody, redactSecretsInText } from "../http/body";
 import { ENV_VARS } from "../config";
 import {
   BaanxHttpError,
@@ -9,7 +9,7 @@ import {
 import { resolveExpiry } from "./expiry";
 import { sendJson, toTypedError } from "../http/send";
 import type { BaanxResponse } from "../http/send";
-import { generateFreshTotpCode, systemClock } from "./totp";
+import { buildTotp, generateFreshTotpCode, normalizeBase32, systemClock } from "./totp";
 import { MIN_WINDOW_REMAINING_MS } from "../types";
 import type { BaanxAuthSession, FetchImpl, LoginDeps, ResolvedBaanxAuthConfig } from "../types";
 
@@ -31,9 +31,17 @@ export async function loginToBaanx(
   const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
   const { email, password } = config;
 
-  const first = await post(config, LOGIN_PATH, { email, password }, fetchImpl);
+  const first = await post(
+    config,
+    LOGIN_PATH,
+    { email, password },
+    fetchImpl,
+    [],
+    deps.requestTimeoutMs,
+  );
 
-  const phase = asString(asRecord(first.body).phase);
+  const secrets = secretsOf(config);
+  const phase = redactSecretsInText(asString(asRecord(first.body).phase) ?? "", secrets);
   if (phase) {
     throw new BaanxOnboardingIncompleteError(phase, asString(asRecord(first.body).userId));
   }
@@ -63,7 +71,9 @@ async function completeOtpChallenge(
     );
   }
 
-  await triggerOtp(config, userId, fetchImpl);
+  // test validity of the TOTP configuration before triggering the OTP challenge
+  buildTotp(config.totp);
+  await triggerOtp(config, userId, fetchImpl, deps.requestTimeoutMs);
 
   const { code } = await generateFreshTotpCode(
     config.totp,
@@ -79,9 +89,11 @@ async function completeOtpChallenge(
     // The package promises generated codes never reach an error message, and an
     // API that echoes `otpCode` back would otherwise break that.
     [code],
+    deps.requestTimeoutMs,
   );
 
-  const phase = asString(asRecord(retry.body).phase);
+  const secrets = [...secretsOf(config), code];
+  const phase = redactSecretsInText(asString(asRecord(retry.body).phase) ?? "", secrets);
   if (phase) {
     throw new BaanxOnboardingIncompleteError(phase, asString(asRecord(retry.body).userId));
   }
@@ -97,16 +109,17 @@ async function completeOtpChallenge(
     );
   }
 
-  return toSession(config, retry.body, { otpUsed: true });
+  return toSession(config, retry.body, { otpUsed: true, extraSecrets: [code] });
 }
 
 async function triggerOtp(
   config: ResolvedBaanxAuthConfig,
   userId: string,
   fetchImpl: FetchImpl,
+  requestTimeoutMs?: number,
 ): Promise<void> {
   try {
-    await post(config, OTP_PATH, { userId }, fetchImpl);
+    await post(config, OTP_PATH, { userId }, fetchImpl, [], requestTimeoutMs);
   } catch (error) {
     // A precisely-typed failure already explains itself — a 429, a rejected
     // client key or bad credentials are not mysteries about this endpoint, and
@@ -129,7 +142,13 @@ async function triggerOtp(
 
 /** Values that must never survive into an error message. */
 function secretsOf(config: ResolvedBaanxAuthConfig): readonly string[] {
-  return [config.clientKey, config.password, config.totp.secret];
+  const normalizedTotpSecret = normalizeBase32(config.totp.secret);
+  const totpSecrets =
+    normalizedTotpSecret === config.totp.secret
+      ? [config.totp.secret]
+      : [config.totp.secret, normalizedTotpSecret];
+
+  return [config.clientKey, config.password, ...totpSecrets];
 }
 
 /**
@@ -149,15 +168,18 @@ function isUsableToken(token: string | null): token is string {
 function toSession(
   config: ResolvedBaanxAuthConfig,
   body: unknown,
-  { otpUsed }: { otpUsed: boolean },
+  { otpUsed, extraSecrets = [] }: { otpUsed: boolean; extraSecrets?: readonly string[] },
 ): BaanxAuthSession {
   const payload = asRecord(body);
-  const accessToken = asString(payload.accessToken);
+  const accessToken = asString(payload.accessToken)?.trim() ?? null;
+  const secrets = [...secretsOf(config), ...extraSecrets];
 
   // `asString` rejects null, undefined, "" and whitespace; `isUsableToken`
   // additionally rejects string sentinels like "null", so a token reaching
   // `Bearer` is always something real.
-  if (!isUsableToken(accessToken)) throw new BaanxNoTokenError(redactBody(body, secretsOf(config)));
+  if (!isUsableToken(accessToken)) {
+    throw new BaanxNoTokenError(redactBody(body, secrets));
+  }
 
   const issuedAt = new Date();
   const { expiresAt, source } = resolveExpiry(accessToken, issuedAt);
@@ -169,7 +191,8 @@ function toSession(
     expiresAt: expiresAt.toISOString(),
     expirySource: source,
     otpUsed,
-    verificationState: asString(payload.verificationState),
+    verificationState:
+      redactSecretsInText(asString(payload.verificationState) ?? "", secrets) || null,
     isLinked: asBoolean(payload.isLinked),
     baseUrl: config.baseUrl,
     region: config.region,
@@ -184,7 +207,9 @@ async function post(
   fetchImpl: FetchImpl,
   /** Extra values to scrub, e.g. the generated OTP code on the retry. */
   extraSecrets: readonly string[] = [],
+  requestTimeoutMs?: number,
 ): Promise<BaanxResponse> {
+  const secrets = [...secretsOf(config), ...extraSecrets];
   const response = await sendJson({
     baseUrl: config.baseUrl,
     path,
@@ -192,9 +217,11 @@ async function post(
     region: config.region,
     body,
     fetchImpl,
+    secrets,
+    requestTimeoutMs,
   });
 
-  if (!response.ok) throw toTypedError(response, [...secretsOf(config), ...extraSecrets]);
+  if (!response.ok) throw toTypedError(response, secrets);
 
   return response;
 }

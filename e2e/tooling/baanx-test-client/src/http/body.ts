@@ -94,6 +94,7 @@ export function redactBody(value: unknown, secrets: readonly string[] = []): unk
   // `detail` or the `nonJsonBody` excerpt lands in a field we do not know, and
   // that body is attached to errors and printed by the CLI.
   if (typeof value === "string") return redactSecretsInText(value, secrets);
+  if (typeof value === "number" && secrets.includes(String(value))) return REDACTION_PLACEHOLDER;
 
   return value;
 }
@@ -107,7 +108,9 @@ export function redactBody(value: unknown, secrets: readonly string[] = []): unk
  */
 export function redactSecretsInText(text: string, secrets: readonly string[]): string {
   let out = text;
-  for (const secret of secrets) {
+  // replace longer secrets before shorter ones (and deduplicate them):
+  const uniqueSecrets = Array.from(new Set(secrets)).sort((a, b) => b.length - a.length);
+  for (const secret of uniqueSecrets) {
     if (secret) out = out.split(secret).join(REDACTION_PLACEHOLDER);
   }
   return out;
@@ -121,5 +124,7 @@ export function redactSecretsInText(text: string, secrets: readonly string[]): s
  */
 export function looksAccountLocked(message: string | null): boolean {
   if (!message) return false;
-  return /lock|too many (failed )?attempts|temporarily (disabled|blocked)/i.test(message);
+  return /\b(?:lock(?:ed|ing|s|out)?|too many (?:failed )?attempts|temporarily (?:disabled|blocked))\b/i.test(
+    message,
+  );
 }

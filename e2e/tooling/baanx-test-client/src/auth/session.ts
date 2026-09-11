@@ -4,7 +4,7 @@ import type { EnvSource } from "../config";
 import { loginToBaanx } from "./login";
 import { TOKEN_REFRESH_MARGIN_MS } from "../types";
 import type {
-  BaanxAuthConfig,
+  BaanxAuthConfigOverrides,
   BaanxAuthSession,
   LoginDeps,
   ResolvedBaanxAuthConfig,
@@ -23,7 +23,7 @@ import type {
  * memory for the lifetime of the process, like the app's own `cardSession`.
  */
 
-export interface BaanxAuthTokenOptions extends Partial<BaanxAuthConfig> {
+export interface BaanxAuthTokenOptions extends BaanxAuthConfigOverrides {
   /** Environment to read fallbacks from. Injected in tests. */
   env?: EnvSource;
   /** Transport and clock overrides. Tests pass a mocked `fetchImpl`. */
@@ -62,17 +62,16 @@ export async function getBaanxAuthToken(
     if (!forceRefresh && entry.session && isFresh(entry.session, now())) return entry.session;
   }
 
-  const inFlight = loginToBaanx(config, deps)
-    .then(session => {
-      cache.set(key, { session });
+  const inFlight = loginToBaanx(config, deps).then(
+    session => {
+      if (cache.get(key)?.inFlight === inFlight) cache.set(key, { session });
       return session;
-    })
-    .catch((error: unknown) => {
-      // Drop the failed attempt so the next caller retries rather than
-      // awaiting a promise that is already rejected.
-      cache.delete(key);
+    },
+    (error: unknown) => {
+      if (cache.get(key)?.inFlight === inFlight) cache.delete(key);
       throw error;
-    });
+    },
+  );
 
   cache.set(key, { ...entry, inFlight });
 

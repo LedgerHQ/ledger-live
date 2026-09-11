@@ -92,7 +92,7 @@ export async function generateFreshTotpCode(
   };
 }
 
-function buildTotp(config: Required<BaanxTotpConfig>): TOTP {
+export function buildTotp(config: Required<BaanxTotpConfig>): TOTP {
   let secret: Secret;
   try {
     secret = Secret.fromBase32(normalizeBase32(config.secret));
@@ -116,7 +116,7 @@ function buildTotp(config: Required<BaanxTotpConfig>): TOTP {
  * polynomial on input with many trailing '=' (CodeQL flags it as a ReDoS
  * shape), and this is both linear and easier to read.
  */
-function normalizeBase32(secret: string): string {
+export function normalizeBase32(secret: string): string {
   const compact = secret.replace(/[\s-]/g, "");
   return trimTrailing(compact, "=").toUpperCase();
 }

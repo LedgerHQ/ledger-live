@@ -1,14 +1,8 @@
 import type { FetchImpl, ResolvedBaanxAuthConfig } from "../types";
 
 /**
- * Test doubles. Unit tests never touch the network: every suite injects
- * `fetchImpl` and a fake clock, so nothing depends on wall time either.
- */
-
-/**
  * RFC 6238 test secret in base32 — it decodes to the ASCII string
- * "12345678901234567890" published in the RFC, and is what the appendix B
- * vectors in totp.test.ts are computed against. Not a credential; gitleaks
+ * "12345678901234567890" published in the RFC. Not a credential; gitleaks
  * flags it on entropy alone.
  */
 export const RFC6238_SECRET = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"; // gitleaks:allow
@@ -37,13 +31,6 @@ export interface MockResponseSpec {
   status?: number;
   body?: unknown;
   headers?: Record<string, string>;
-  /** Simulate a transport failure instead of responding. Wrapped in an `Error`. */
-  throws?: string;
-  /**
-   * Reject with this exact value. For failures an in-realm `new Error` cannot model — notably a
-   * cross-realm rejection, which is what real `fetch` produces under Jest.
-   */
-  rejectsWith?: unknown;
 }
 
 export interface RecordedRequest {
@@ -58,10 +45,6 @@ export interface FetchMock {
   requests: RecordedRequest[];
 }
 
-/**
- * Replies with `specs` in order. Running out of specs is a test bug, so it
- * throws loudly rather than hanging or returning something plausible.
- */
 export function createFetchMock(specs: MockResponseSpec[]): FetchMock {
   const requests: RecordedRequest[] = [];
   let callIndex = 0;
@@ -80,10 +63,6 @@ export function createFetchMock(specs: MockResponseSpec[]): FetchMock {
       body: JSON.parse(String(init?.body ?? "{}")),
     });
 
-    if ("rejectsWith" in spec) throw spec.rejectsWith;
-    if (spec.throws) throw new Error(spec.throws);
-
-    // A real Response, so status/ok/headers/text() behave exactly as in prod.
     return new Response(spec.body === undefined ? null : JSON.stringify(spec.body), {
       status: spec.status ?? 200,
       headers: spec.headers,
@@ -98,31 +77,15 @@ export interface FakeClock {
   sleep(ms: number): Promise<void>;
 }
 
-export interface FakeClockHandle {
-  clock: FakeClock;
-  /** Every sleep duration requested, in order. */
-  sleeps: number[];
-}
-
-/** A clock that only moves when something sleeps. No wall-time dependency. */
-export function createFakeClock(startMs: number): FakeClockHandle {
+export function createFakeClock(startMs: number): { clock: FakeClock } {
   let current = startMs;
-  const sleeps: number[] = [];
 
   return {
     clock: {
       now: () => current,
       sleep: async (ms: number) => {
-        sleeps.push(ms);
         current += ms;
       },
     },
-    sleeps,
   };
-}
-
-/** A JWT with the given `exp`. Signature is not read, so it is a placeholder. */
-export function jwtWithExpiry(expSeconds: number): string {
-  const encode = (value: object) => Buffer.from(JSON.stringify(value)).toString("base64url");
-  return `${encode({ alg: "HS256", typ: "JWT" })}.${encode({ exp: expSeconds })}.signature`;
 }

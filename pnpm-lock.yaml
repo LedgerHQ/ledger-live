@@ -5576,6 +5576,15 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
       tsx:
         specifier: 'catalog:'
         version: 4.20.6
@@ -37557,9 +37566,6 @@ packages:
   react-is@19.1.1:
     resolution: {integrity: sha512-tr41fA15Vn8p4X9ntI+yCyeGSf1TlYaY5vlTZfQmeLBrFo3psOPX6HhTDnFNL9uj3EhP0KAQ80cugCl4b4BERA==}
 
-  react-is@19.2.7:
-    resolution: {integrity: sha512-kZFnouyVv7eP/Phmrlo9FK+zcAdriZJvzxXHF1Sl1P377WSGe2G/JxVolhTrB/jeV47lKImhNUsijjHAAbcl/A==}
-
   react-is@19.2.8:
     resolution: {integrity: sha512-s5un28nYxKJw5gvUHyW5PCC28CvBqLu9r3cWgzHT4Vo/5fqqkFcdRYsGcKf50WMPpjjFZS5d76fn3YCo2njKwQ==}
 
@@ -43795,7 +43801,7 @@ snapshots:
 
   '@babel/template@7.27.2':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/parser': 7.29.2
       '@babel/types': 7.29.8
 
@@ -43828,7 +43834,7 @@ snapshots:
 
   '@babel/traverse@7.28.5':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/generator': 7.28.5
       '@babel/helper-globals': 7.28.0
       '@babel/parser': 7.29.2
@@ -43840,7 +43846,7 @@ snapshots:
 
   '@babel/traverse@7.28.5(supports-color@5.5.0)':
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@babel/generator': 7.28.5
       '@babel/helper-globals': 7.28.0
       '@babel/parser': 7.29.2
@@ -43956,7 +43962,7 @@ snapshots:
 
   '@bunli/generator@0.6.5(@typescript/typescript6@6.0.2)(react@19.1.4)':
     dependencies:
-      '@babel/parser': 7.29.2
+      '@babel/parser': 7.29.8
       '@babel/traverse': 7.29.8
       '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react@19.1.4)
       better-result: 2.8.2
@@ -45488,7 +45494,7 @@ snapshots:
       '@ethersproject/bytes': 5.8.0
       '@ethersproject/logger': 5.8.0
       '@ethersproject/properties': 5.8.0
-      bn.js: 5.2.2
+      bn.js: 5.2.5
       elliptic: 6.6.1
       hash.js: 1.1.7
 
@@ -51697,7 +51703,7 @@ snapshots:
       open: 10.2.0
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
-      react-is: 19.2.7
+      react-is: 19.2.8
       semver: 7.8.1
       socketcluster-server: 19.2.1
       sqlite3: 5.1.7
@@ -57836,12 +57842,12 @@ snapshots:
 
   browserify-rsa@4.1.0:
     dependencies:
-      bn.js: 5.2.2
+      bn.js: 5.2.5
       randombytes: 2.1.0
 
   browserify-sign@4.2.3:
     dependencies:
-      bn.js: 5.2.2
+      bn.js: 5.2.5
       browserify-rsa: 4.1.0
       create-hash: 1.2.0
       create-hmac: 1.1.7
@@ -63464,7 +63470,7 @@ snapshots:
 
   jest-message-util@30.5.0:
     dependencies:
-      '@babel/code-frame': 7.29.0
+      '@babel/code-frame': 7.29.7
       '@jest/types': 30.5.0
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
@@ -65316,7 +65322,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
@@ -68460,8 +68468,6 @@ snapshots:
 
   react-is@19.1.1: {}
 
-  react-is@19.2.7: {}
-
   react-is@19.2.8: {}
 
   react-json-tree@0.20.0(@types/react@19.0.14)(react@19.1.4):
@@ -71488,7 +71494,7 @@ snapshots:
   tsx@4.20.6:
     dependencies:
       esbuild: 0.25.5
-      get-tsconfig: 4.14.1
+      get-tsconfig: 4.7.5
     optionalDependencies:
       fsevents: 2.3.3
 

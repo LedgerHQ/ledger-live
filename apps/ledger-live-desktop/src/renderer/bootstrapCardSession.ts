@@ -1,3 +1,4 @@
+import { PayCardSessionSchema, type PayCardSession } from "@domain/api-card-management";
 import { cardSession } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import { getEnv } from "@shared/env";
@@ -13,10 +14,15 @@ import type { AppDispatch } from "~/state-manager/configureStore";
  * state, so a `userdata` fixture cannot carry it — an env var at launch is the one route that reaches
  * both `cardSession` and the `isSignedIn` flag.
  *
- * **This injects a bearer credential.** It runs in a development build, or in any build launched with
- * `PLAYWRIGHT_RUN` — which the Playwright fixture sets on the Electron process it spawns. A packaged
- * build therefore honours it too when that variable is set, so exporting `CARD_SESSION_BOOTSTRAP`
- * makes the machine hold a live credential.
+ * **This injects a bearer credential.** It is read from `process.env` at boot. Keeping it out of
+ * `@shared/env` keeps `getAllEnvs()` — export-log metadata, the env debug UI, Allure
+ * `environment.properties` — from serializing it. After the read, the process env is cleared so a
+ * later dump of `process.env` is clear of it too. A later launch still receives the value if the
+ * parent environment still has it.
+ *
+ * It runs in a development build, or in any build launched with `PLAYWRIGHT_RUN`. A packaged build
+ * therefore honours it too when that variable is set, so exporting `CARD_SESSION_BOOTSTRAP` makes
+ * the machine hold a live credential.
  *
  * The gate is a runtime check rather than a build-time constant (`__DEV__` / a `TESTING` define) on
  * purpose. Release-mode E2E runs against the release bundle — the workflow's `build_type: js`, which
@@ -25,9 +31,11 @@ import type { AppDispatch } from "~/state-manager/configureStore";
  * that most needs it. Please don't "harden" this to a define without solving that first.
  */
 export async function bootstrapCardSession(dispatch: AppDispatch): Promise<void> {
-  if (!__DEV__ && !getEnv("PLAYWRIGHT_RUN")) return;
+  const raw = process.env.CARD_SESSION_BOOTSTRAP;
+  if (raw) delete process.env.CARD_SESSION_BOOTSTRAP;
 
-  const raw = getEnv("CARD_SESSION_BOOTSTRAP");
+  const isDev = typeof __DEV__ !== "undefined" && __DEV__;
+  if (!isDev && !getEnv("PLAYWRIGHT_RUN")) return;
   if (!raw) return;
 
   try {
@@ -61,20 +69,20 @@ function requireToken(value: unknown, field: "accessToken" | "refreshToken"): st
 }
 
 /**
- * `readSession` treats a session as valid only when the access token, the refresh token and the
- * lifetimes all agree, so all three fields have to be present. The Baanx password login returns no
- * refresh token, so a caller using a real token must pass a placeholder for it.
+ * Validates a `CARD_SESSION_BOOTSTRAP` JSON payload. `readSession` only requires the access and
+ * refresh token slots — the lifetimes slot is unused — so both tokens have to be present. The Baanx
+ * password login returns no refresh token, so a caller using a real token must pass a placeholder
+ * for it.
  *
- * Values are validated rather than coerced: `String(null)` would smuggle in the token `"null"`, and
- * `Number(undefined)` an expiry of `NaN`, which is exactly the broken-session state the app guards
- * against everywhere else. String sentinels (`"null"`, `"undefined"`, …) are rejected for the same
- * reason — they would become `Authorization: Bearer null`.
+ * `expiresIn` is schema-checked here so a malformed payload is rejected at bootstrap. It is not
+ * persisted or enforced: `cardSession.set` keeps only the token slots, and an injected token is not
+ * expiry-checked.
  *
- * Intentionally unannotated: `cardSession.set` supplies the type, so a future change to
- * `PayCardSession` fails to compile here instead of silently bootstrapping a stale shape — which is
- * how the dropped `refreshTokenExpiresIn` slipped through once already.
+ * Tokens are trimmed and string sentinels (`"null"`, `"undefined"`, …) are rejected on top of
+ * `PayCardSessionSchema`: `z.string().min(1)` would otherwise accept `"null"` and pass it through as
+ * `Authorization: Bearer null`.
  */
-export function parseSession(raw: string) {
+export function parseSession(raw: string): PayCardSession {
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);
@@ -91,14 +99,9 @@ export function parseSession(raw: string) {
 
   const { accessToken, refreshToken, expiresIn } = parsed as Record<string, unknown>;
 
-  // The app schema is z.number().int().positive(), so a float is not a valid session.
-  if (typeof expiresIn !== "number" || !Number.isInteger(expiresIn) || expiresIn <= 0) {
-    throw new Error("expiresIn must be a positive whole number of seconds");
-  }
-
-  return {
+  return PayCardSessionSchema.parse({
     accessToken: requireToken(accessToken, "accessToken"),
     refreshToken: requireToken(refreshToken, "refreshToken"),
     expiresIn,
-  };
+  });
 }

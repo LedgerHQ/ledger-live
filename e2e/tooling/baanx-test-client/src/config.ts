@@ -5,8 +5,11 @@ import {
   DEFAULT_TOTP_ALGORITHM,
   DEFAULT_TOTP_DIGITS,
   DEFAULT_TOTP_PERIOD_S,
+  type BaanxAuthConfigOverrides,
+  type BaanxRegion,
+  type ResolvedBaanxAuthConfig,
+  type TotpAlgorithm,
 } from "./types";
-import type { BaanxAuthConfig, BaanxRegion, ResolvedBaanxAuthConfig, TotpAlgorithm } from "./types";
 
 /**
  * Turning explicit config plus environment variables into a runnable config.
@@ -37,12 +40,11 @@ const TOTP_ALGORITHMS = new Set<string>(["SHA1", "SHA256", "SHA512"]);
 export type EnvSource = Record<string, string | undefined>;
 
 export function resolveBaanxAuthConfig(
-  overrides: Partial<BaanxAuthConfig> = {},
+  overrides: BaanxAuthConfigOverrides = {},
   env: EnvSource = process.env,
 ): ResolvedBaanxAuthConfig {
-  // Overrides go through the same normalisation as the environment. A caller
-  // passing `clientKey: " "` must fail the missing-check exactly as an empty
-  // variable would, rather than sending whitespace as a credential.
+  // Overrides are normalised the same way as env, but a provided blank
+  // value is invalid — it must not fall through to the environment.
   const clientKey = clean(overrides.clientKey, ENV_VARS.clientKey) ?? read(env, ENV_VARS.clientKey);
   const email = clean(overrides.email, ENV_VARS.email) ?? read(env, ENV_VARS.email);
   // Not trimmed: trailing whitespace may genuinely be part of a password.
@@ -127,7 +129,7 @@ function checkInt(
 }
 
 function read(env: EnvSource, name: string): string | undefined {
-  return env[name]?.trim();
+  return env[name]?.trim() || undefined;
 }
 
 function resolveRegion(override: BaanxRegion | undefined, env: EnvSource): BaanxRegion {

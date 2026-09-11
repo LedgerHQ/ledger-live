@@ -165,7 +165,9 @@ export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
 export const FF_LWD_PAY_TAB = {
   lwdPayTab: {
     enabled: true,
-    params: { card: true },
+    params: {
+      card: true,
+    },
   },
 } satisfies PartialFeatures;
 
