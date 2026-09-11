@@ -435,6 +435,11 @@
           "viewInExplorer" : "Voir dans l’explorateur",
           "copied" : "Copié"
         },
+        "earnBanner" : {
+          "title" : "Gagnez jusqu’à {{apy}}% ({{type}})",
+          "description" : "Découvrez les opportunités disponibles.",
+          "button" : "Explorer"
+        },
         "accessibility" : {
           "copySwapId" : "Copier l’identifiant"
         }
@@ -873,22 +878,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "Payez et faites-vous payer",
-      "description" : "Les stablecoins intègrent vos cryptos directement dans vos dépenses de tous les jours.",
-      "cta" : "Compris",
+      "title" : "Tous vos paiements, au même endroit",
+      "description" : "Payer avec vos cryptos devient plus simple : tout est désormais réuni dans un onglet, pour vos achats du quotidien.",
+      "cta" : "Explorer l’onglet",
       "rows" : {
         "global" : {
-          "title" : "Paiements dans le monde entier",
-          "description" : "Profitez de faibles frais de réseau."
+          "title" : "Payez vos contacts",
+          "description" : "Envoyez des cryptos vers vos adresses enregistrées."
         },
         "volatility" : {
-          "title" : "Volatilité minimale",
-          "description" : "Les stablecoins sont basés sur les monnaies fiduciaires."
+          "title" : "Demandez des paiements",
+          "description" : "Demandez à vos contacts de vous envoyer des cryptos."
         },
         "card" : {
-          "title" : "Cashback à 1% sur les dépenses par carte",
-          "description" : "Payez avec vos USDC, USDT, BTC, ETH et plus."
+          "title" : "Faites vos achats avec une carte crypto",
+          "description" : "Profitez d’un cashback de 1%, sans plafond."
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "Plus",
+      "title" : "Plus",
+      "rows" : {
+        "managePin" : "Gérer le code PIN",
+        "accessBaanx" : "Accéder à Baanx",
+        "help" : "Aide",
+        "logout" : "Me déconnecter"
       }
     },
     "balance" : {
@@ -904,7 +919,20 @@
     },
     "card" : {
       "title" : "Carte crypto",
-      "balanceLabel" : "Solde"
+      "balanceLabel" : "Solde",
+      "freeze" : "Geler",
+      "unfreeze" : "Dégeler"
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "Configurez votre carte",
+        "allDone" : "Tout est prêt"
+      },
+      "dialog" : {
+        "title" : "Complétez votre carte",
+        "stepComplete" : "Terminé",
+        "gotIt" : "Compris"
+      }
     },
     "contacts" : {
       "title" : "Payer un contact",
@@ -923,7 +951,20 @@
       "actions" : {
         "pay" : "Envoyer à un contact",
         "more" : "Plus d’options",
+        "viewContact" : "Voir le contact",
         "viewTransactions" : "Voir les transactions"
+      },
+      "addressPicker" : {
+        "title" : "Sélectionnez l’adresse de {{name}}",
+        "addAddress" : "Ajouter une adresse"
+      },
+      "paySuccess" : {
+        "title" : "Vous avez payé ({{recipient}}) {{amount}}",
+        "amount" : "Montant",
+        "estimatedTime" : "Temps est.",
+        "from" : "De",
+        "viewTransaction" : "Voir la transaction",
+        "close" : "Fermer"
       }
     },
     "actions" : {
@@ -952,6 +993,63 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "Recevez des stablecoins depuis votre compte bancaire",
+      "description" : "Réalisez un virement bancaire et recevez des stablecoins directement sur Ledger Wallet™.",
+      "createAccount" : "Créer un compte",
+      "logIn" : "Me connecter à Noah",
+      "providedBy" : "Service fourni par Noah",
+      "rows" : {
+        "bank" : {
+          "title" : "Réalisez un virement depuis une banque",
+          "description" : "Recevez votre salaire, vos paiements et vos dépôts via SEPA ou ACH."
+        },
+        "fees" : {
+          "title" : "Pas de frais cachés",
+          "description" : "De votre banque à la blockchain avec 0,25% de frais."
+        },
+        "earn" : {
+          "title" : "Faites fructifier votre portefeuille",
+          "description" : "Vous pouvez échanger ou faire travailler vos stablecoins."
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "Carte crypto",
+      "beforeIntro" : {
+        "description" : "Profitez de 1% en cashback à chaque dépense.",
+        "action" : "Obtenir"
+      },
+      "afterIntro" : {
+        "description" : "Connectez-vous pour accéder à votre carte",
+        "action" : "Me connecter"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "Recevez du cashback sur vos achats",
+      "providedBy" : "Carte fournie par Baanx",
+      "createAccount" : "Créer un compte",
+      "logIn" : "Me connecter à Baanx",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay ou Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "Cashback crypto de 1%, sans plafond",
+          "description" : "Sur tous les achats par carte crypto, en USDC, USDT ou BTC."
+        },
+        "virtualCard" : {
+          "title" : "Carte virtuelle gratuite",
+          "description" : "Ajoutez-la à {{wallet}}, prête en un instant."
+        },
+        "topUp" : {
+          "title" : "Rechargez en toute sécurité via Ledger Wallet™",
+          "description" : "Approuvez chaque transfert sur votre signer Ledger."
+        }
+      }
+    },
     "request" : {
       "title" : "Demander des {{asset}}",
       "networkLabel" : "Réseau {{network}}",
@@ -962,6 +1060,10 @@
         "copied" : "Copié",
         "save" : "Enregistrer",
         "verify" : "Vérifier"
+      },
+      "verifyHint" : {
+        "message" : "Vérifiez votre adresse sur votre appareil Ledger avant de la partager",
+        "gotIt" : "Compris"
       },
       "verifyAddress" : {
         "introTitle" : "Vérifiez votre adresse",
@@ -2652,11 +2754,12 @@
       "walletNotExist" : "Le wallet n’existe pas"
     },
     "skipMemo" : {
-      "title" : "Ne pas ajouter de {{memoLabel}} ?",
+      "title" : "Envoyer sans {{memoLabel}} ?",
       "description" : "Votre actif peut être perdu si un {{memoLabel}} est requis par le bénéficiaire.",
       "notRequired" : "Le bénéficiaire n’exige pas de {{memoLabel}} ?",
-      "confirm" : "Oui, ignorer",
-      "neverAskAgain" : "Ne plus afficher cet avertissement"
+      "confirm" : "Envoyer sans {{memoLabel}}",
+      "cancel" : "Non, retour",
+      "neverAskAgain" : "Ne plus demander"
     },
     "tagHelp" : {
       "inputLabel" : "Entrer {{memoLabel}}",
@@ -5452,6 +5555,12 @@
       "enableLearnStagingUrlDesc" : "Activez l’URL de test de la page Apprendre.",
       "enableCountervaluesStaging" : "API Devises de contrepartie - Staging",
       "enableCountervaluesStagingDesc" : "Utilisez l’API Devises de contrepartie dans l’environnement Staging plutôt que dans l’environnement Production.",
+      "enableMockServerTransport" : "Transport serveur simulé",
+      "enableMockServerTransportDesc" : "Activez le transport serveur simulé du Device Management Kit pour vous connecter à un serveur appareil simulé, plutôt qu’à un appareil physique. Utilise le serveur simulé partagé, sauf si MOCK_SERVER_TRANSPORT_URL pointe ailleurs. Redémarrage de l’application requis pour prendre effet.",
+      "mockServerStatus" : {
+        "connected" : "Serveur simulé connecté. Cliquez pour copier le token de session, faites un clic droit pour ouvrir l’interface de configuration.",
+        "disconnected" : "Serveur simulé inaccessible"
+      },
       "openOnboardingAppInstallDebug" : "Ouvrir l’écran de débogage relatif à l’installation des apps (Onboarding)",
       "openOnboardingAppInstallDebugDesc" : "Ouvrez un écran contenant les composants de l’étape d’installation des apps (flux Sync Onboarding)."
     },
@@ -7117,6 +7226,10 @@
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a un solde suffisant."
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "Échec du chargement du solde",
+      "description" : "Veuillez vérifier votre connexion Internet et réessayer."
+    },
     "NotEnoughTransferAmount" : {
       "title" : "Un minimum de 1 ICP est requis pour staker dans un neurone."
     },
@@ -7316,6 +7429,12 @@
     "ZcashAmountBelowDustThreshold" : {
       "title" : "Montant trop faible pour être diffusé (minimum {{minimumZatoshis}} zatoshis)"
     },
+    "ZcashMemoTooLong" : {
+      "title" : "Le mémo ne doit pas dépasser {{maxBytes}} bytes"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "Montant trop élevé pour une seule transaction : essayez d’effectuer plusieurs petits envois"
+    },
     "InvalidNonce" : {
       "title" : "Nonce requis"
     },
@@ -7428,6 +7547,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "Le déstaking sur votre précédent validateur doit d’abord se terminer"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "Ce montant est trop faible pour être staké"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Commencez par vider tous les sous-comptes."
@@ -8230,6 +8352,7 @@
             "inactiveTooltip" : "Validateur non trouvé",
             "overstakedTooltip" : "Ce nœud est sur-staké : son APY est moins intéressant.",
             "activeTooltip" : "Les montants stakés génèrent des récompenses",
+            "fetchErrorTooltip" : "Le chargement des données du validateur a échoué. Veuillez réessayer.",
             "delegated" : "Staké",
             "rewards" : "Récompenses"
           },
@@ -8308,6 +8431,8 @@
             "newValidatorLabel" : "Nouveau",
             "newValidatorSelectPlaceholder" : "Sélectionner un validateur",
             "removedValidatorSelectPlaceholder" : "Le validateur précédemment sélectionné n’est plus disponible",
+            "unableToLoadSelectPlaceholder" : "Échec du chargement des validateurs",
+            "loadingValidatorPlaceholder" : "Chargement des validateurs...",
             "newValidatorSelectNoOption" : "Aucun validateur correspondant à \"{{validatorName}}\"",
             "amountLabel" : "Montant à redéléguer",
             "alert" : "Lorsque vous stakez sur Hedera, la totalité de votre solde est mise en staking. Elle reste liquide, sans durée minimale ni risque de slashing. Vous devrez peut-être patienter jusqu’à 48 heures avant de commencer à obtenir des récompenses de staking.",
@@ -8876,9 +9001,11 @@
     "selectNetwork" : "Sélectionner un réseau",
     "unsupportedAssetTooltip" : "{{asset}} n’est pas encore pris en charge.",
     "unsupportedNetworkTooltip" : "Le réseau {{network}} n’est pas encore pris en charge.",
+    "notAvailableYet" : "Pas encore disponible",
     "selectAccount" : "Sélectionner un compte",
     "selectAccountPerpsTitle" : "Sélectionner un compte Hyperliquid",
-    "selectAccountPerpsDescription" : "Pour accéder aux marchés perpétuels, vous avez besoin d’un compte Hyperliquid. Ajoutez-en un pour continuer.",
+    "selectAccountPerpsDescription" : "Sélectionnez un compte sur lequel déposer des actifs pour trader.",
+    "selectAccountPerpsEmptyDescription" : "Pour accéder aux marchés perpétuels, vous avez besoin d’un compte Hyperliquid. Ajoutez-en un pour continuer.",
     "selectDepositCurrencyTitle" : "Sélectionner l’actif à placer",
     "selectDepositCurrencyDescription" : "Choisissez l’actif pris en charge de votre choix. Un échange automatique s’exécute si nécessaire.",
     "accountCount_one" : "{{count}} compte",
@@ -9123,7 +9250,7 @@
         "memo" : {
           "label" : "Mémo (facultatif)",
           "placeholder" : "Saisissez un mémo",
-          "tooltip" : "Joignez un message privé à cette transaction protégée (shielded). Seul le bénéficiaire peut le lire. 512 bytes max."
+          "tooltip" : "Ajoutez un mémo chiffré à cette transaction protégée. Seul le bénéficiaire peut le lire. 512 bytes max."
         },
         "syncBanner" : {
           "stopped" : {
@@ -9146,15 +9273,15 @@
         "selfTransfer" : {
           "toPrivate" : "Transfert interne vers le solde privé",
           "toPublic" : "Transfert interne vers le solde public",
-          "unavailable" : "Votre adresse privée n’est pas encore disponible. Exportez votre clé de consultation pour l’activer.",
+          "unavailable" : "Votre adresse privée sera disponible une fois que la fonctionnalité shielded sera activée pour votre compte.",
           "privacyWarning" : "Vos actifs shielded seront alors associés à l’adresse publique de votre compte, visible de tous. Un envoi vers une adresse privée externe les maintient dissociés."
         }
       },
       "state" : {
-        "showBalance" : "Afficher le solde",
+        "showBalance" : "Activer les transactions shielded",
         "startSync" : "Synchroniser",
         "stopSync" : "Arrêter la synchro",
-        "upToDate" : "À jour",
+        "upToDate" : "Mettre à jour le solde",
         "lastSync" : "Dernière synchro : {{date}}",
         "estimatedTimeRemaining" : "Temps restant estimé : {{hours}}:{{minutes}}",
         "syncFailed" : "Échec de la synchronisation du solde privé"
@@ -9324,6 +9451,23 @@
         "desc" : "Veuillez patienter",
         "errorTitle" : "Échec de la synchronisation",
         "errorDesc" : "Une erreur est survenue, veuillez réessayer."
+      }
+    },
+    "manage" : {
+      "headerAction" : "Gagner",
+      "title" : "Gérer le staking",
+      "comingSoonTooltip" : "Bientôt disponible",
+      "bond" : {
+        "title" : "Lier",
+        "description" : "Liez vos ALEO à un validateur pour obtenir des récompenses."
+      },
+      "unbond" : {
+        "title" : "Délier",
+        "description" : "Déliez vos ALEO liés. Ils seront disponibles après la période de fin de liaison."
+      },
+      "claim" : {
+        "title" : "Demander",
+        "description" : "Récupérez vos ALEO déliés, sur votre solde disponible."
       }
     }
   },
@@ -9511,6 +9655,16 @@
           "title" : "Préparation de votre appareil Ledger"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "Préparation de votre appareil Ledger"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "Préparation de votre appareil Ledger"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "Utilisez l’appareil Ledger ayant servi à ajouter ce contact",
@@ -9523,6 +9677,10 @@
         "appVersionTooLow" : {
           "title" : "Mise à jour de l’app nécessaire",
           "description" : "Mettez à jour l’app sur votre appareil Ledger pour enregistrer les contacts, puis réessayez."
+        },
+        "osVersionTooLow" : {
+          "title" : "Mise à jour de Ledger OS requise",
+          "description" : "Mettez à jour le système d’exploitation de votre appareil Ledger pour renommer les contacts, puis réessayez."
         }
       }
     },
@@ -9627,12 +9785,6 @@
       "applyChanges" : "Appliquer les modifications",
       "invalidLabelError" : "Les caractères spéciaux ne sont pas pris en charge."
     },
-    "editSigner" : {
-      "title" : "Confirmez sur votre appareil",
-      "description" : "Connectez votre appareil Ledger et déverrouillez-le pour confirmer ce changement.",
-      "confirm" : "Continuer",
-      "cancel" : "Annuler"
-    },
     "editSignerMismatch" : {
       "title" : "Utilisez l’appareil Ledger ayant servi à ajouter ce contact",
       "description" : "L’appareil connecté ne correspond pas.",
@@ -9640,9 +9792,10 @@
       "cancel" : "Annuler"
     },
     "ledgerSyncIntroduction" : {
-      "description" : "Vos contacts sont chiffrés de bout en bout avec votre appareil Ledger et synchronisés sur vos appareils. Vous seul(e) pouvez y accéder.",
-      "activate" : "Activer Ledger Sync",
-      "dismiss" : "Compris"
+      "title" : "Synchronisez votre wallet pour ajouter un contact",
+      "description" : "Les contacts sont chiffrés de bout en bout et synchronisés dans Ledger Wallet sur tous vos téléphones et ordinateurs.",
+      "activate" : "Synchroniser",
+      "dismiss" : "Plus tard"
     },
     "featureIntroduction" : {
       "title" : "Découvrez les contacts",
@@ -9947,5 +10100,44 @@
       "totalMaturity" : "Maturité totale",
       "totalMaturityTooltip" : "Le total des récompenses générées par le staking, incluant à la fois les récompenses (\"maturity\") stakées et liquides. Vous pouvez soit restaker ces récompenses, soit les récupérer sous forme d’ICP liquides."
     }
+  },
+  "perpsReview" : {
+    "depositTitle" : "Placer via SwapKit",
+    "depositSubtitle" : "Notre prestataire SwapKit gère votre échange et votre placement en une seule transaction. Tout est sécurisé par votre appareil Ledger.",
+    "swapDetailTitle" : "Détails de l’échange",
+    "amountSendLabel" : "Montant à envoyer",
+    "amountReceiveLabel" : "Montant à recevoir",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "Détails du placement",
+    "depositAmountLabel" : "Montant du placement",
+    "depositReceiveLabel" : "Compte bénéficiaire",
+    "depositCTA" : "Placer"
+  },
+  "perpsDeposit" : {
+    "title" : "Placer",
+    "inputDepositAmount" : "Déposer ~{{value}}",
+    "inputSubText" : "Échanger et placer via {{provider}}",
+    "selectCurrencyTitle" : "Utiliser {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "Aucun compte",
+    "review" : "Vérifier",
+    "formErrors" : {
+      "amountExceedsBalance" : "Solde insuffisant",
+      "quoteUnavailable" : "Échec de la récupération de l’offre auprès de {{provider}}. Veuillez choisir un autre actif ou réessayer plus tard."
+    }
+  },
+  "perpsDepositSign" : {
+    "a11yTitle" : "Signature du placement",
+    "terms" : "En signant cette transaction, j’accepte <termsLink>les Conditions générales de SwapKit by NEAR Intents</termsLink>"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "Transaction signée",
+    "description" : "Vous recevrez vos {{currency}} une fois la transaction confirmée sur la blockchain.",
+    "viewTransaction" : "Voir la transaction"
+  },
+  "perpsTransactionStatus" : {
+    "dialogTitle" : "Détails de la transaction",
+    "title" : "Placement sur Perpétuels",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
   }
 }
