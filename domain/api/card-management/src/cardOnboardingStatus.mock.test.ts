@@ -1,3 +1,4 @@
+import { baanxAssetLedgerId } from "@domain/entity-card-asset-mapping";
 import {
   PayCardInternalWalletsResponseSchema,
   PayCardLinkedWalletsResponseSchema,
@@ -72,15 +73,46 @@ describe("the mocked responses", () => {
     expect(mockPayCardUser(false).verificationState).not.toBe("VERIFIED");
   });
 
-  it("describes the same wallet in both answers, because the join keys them by id", () => {
-    const [internal] = mockPayCardInternalWallets(true);
-    const [linked] = mockPayCardLinkedWallets();
+  it("describes the same wallets in both answers, because the join keys them by id", () => {
+    const internalIds = mockPayCardInternalWallets(true).map(({ id }) => id);
+    const linkedIds = mockPayCardLinkedWallets().map(({ id }) => id);
 
-    expect(internal?.id).toBe(linked?.id);
+    // Every wallet is linked, so the join drops none of them and shows no unmatched link.
+    expect(internalIds).toEqual(linkedIds);
+    expect(new Set(internalIds).size).toBe(internalIds.length);
   });
 
-  it("funds the wallet only when asked to, and empties it otherwise", () => {
-    expect(Number(mockPayCardInternalWallets(true)[0]?.balance)).toBeGreaterThan(0);
-    expect(Number(mockPayCardInternalWallets(false)[0]?.balance)).toBe(0);
+  it("names each wallet for the link by an id of its own, which is not the wallet's", () => {
+    const wallets = mockPayCardInternalWallets(true);
+    const addressIds = wallets.map(({ addressId }) => addressId);
+
+    // The link request keys on `addressId`, and a duplicate would make a mocked link ambiguous.
+    expect(addressIds.every(addressId => addressId !== undefined)).toBe(true);
+    expect(new Set(addressIds).size).toBe(wallets.length);
+    expect(addressIds).not.toEqual(wallets.map(({ id }) => id));
+  });
+
+  it("answers with more than one wallet, so a row is read against its neighbours", () => {
+    expect(mockPayCardLinkedWallets()).toHaveLength(3);
+  });
+
+  it("links them in the order they are answered, which is the order they are charged", () => {
+    expect(mockPayCardLinkedWallets().map(({ priority }) => priority)).toEqual([0, 1, 2]);
+  });
+
+  it("puts each wallet on a chain the asset catalog covers, so a mocked row prices", () => {
+    for (const { currency, network } of mockPayCardLinkedWallets()) {
+      expect(baanxAssetLedgerId(currency, network)).toBeDefined();
+    }
+  });
+
+  it("funds every wallet only when asked to, and empties them all otherwise", () => {
+    for (const { balance } of mockPayCardInternalWallets(true)) {
+      expect(Number(balance)).toBeGreaterThan(0);
+    }
+
+    for (const { balance } of mockPayCardInternalWallets(false)) {
+      expect(Number(balance)).toBe(0);
+    }
   });
 });
