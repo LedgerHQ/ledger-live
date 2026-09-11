@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.27.0
+
+### Minor Changes
+
+- [#21544](https://github.com/LedgerHQ/ledger-live/pull/21544) [`34767ef`](https://github.com/LedgerHQ/ledger-live/commit/34767ef352530bb832c95e10c63b8688648d6a5f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Format the generated protobuf files in `prebuild`. `pbjs`/`pbts` emit their own style while the committed `generate-protocol.js`/`.d.ts` are oxfmt-formatted, so regenerating them always dirtied the tree and failed the CLI job's `git diff` check. Only visible on an nx cache miss, which is why it went unnoticed.
+
+## 0.27.0-next.0
+
+### Minor Changes
+
+- [#21544](https://github.com/LedgerHQ/ledger-live/pull/21544) [`34767ef`](https://github.com/LedgerHQ/ledger-live/commit/34767ef352530bb832c95e10c63b8688648d6a5f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Format the generated protobuf files in `prebuild`. `pbjs`/`pbts` emit their own style while the committed `generate-protocol.js`/`.d.ts` are oxfmt-formatted, so regenerating them always dirtied the tree and failed the CLI job's `git diff` check. Only visible on an nx cache miss, which is why it went unnoticed.
+
 ## 0.26.0
 
 ### Minor Changes
@@ -169,33 +181,5 @@
 - Updated dependencies [[`4cf9b8c`](https://github.com/LedgerHQ/ledger-live/commit/4cf9b8cde388aebfe04a894e9a35584856d1713d)]:
   - @ledgerhq/errors@6.34.0-next.0
   - @ledgerhq/hw-transport@6.35.1-next.0
-
-## 0.22.0
-
-### Minor Changes
-
-- [#15754](https://github.com/LedgerHQ/ledger-live/pull/15754) [`6f5c0b2`](https://github.com/LedgerHQ/ledger-live/commit/6f5c0b21bfc2106a4dd051a9b7be7fc4732c00a3) Thanks [@dilaouid](https://github.com/dilaouid)! - chore(exchange): add more error status
-
-- [#15796](https://github.com/LedgerHQ/ledger-live/pull/15796) [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Replace ESLint/Prettier with oxlint and document oxfmt for LedgerJS packages under libs/ledgerjs/packages.
-
-### Patch Changes
-
-- Updated dependencies [[`53df748`](https://github.com/LedgerHQ/ledger-live/commit/53df74819753f084ed3df4a2ab9082d398b54920), [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
-  - @ledgerhq/errors@6.33.0
-  - @ledgerhq/hw-transport@6.35.0
-
-## 0.22.0-next.0
-
-### Minor Changes
-
-- [#15754](https://github.com/LedgerHQ/ledger-live/pull/15754) [`6f5c0b2`](https://github.com/LedgerHQ/ledger-live/commit/6f5c0b21bfc2106a4dd051a9b7be7fc4732c00a3) Thanks [@dilaouid](https://github.com/dilaouid)! - chore(exchange): add more error status
-
-- [#15796](https://github.com/LedgerHQ/ledger-live/pull/15796) [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Replace ESLint/Prettier with oxlint and document oxfmt for LedgerJS packages under libs/ledgerjs/packages.
-
-### Patch Changes
-
-- Updated dependencies [[`53df748`](https://github.com/LedgerHQ/ledger-live/commit/53df74819753f084ed3df4a2ab9082d398b54920), [`008a4bd`](https://github.com/LedgerHQ/ledger-live/commit/008a4bdb87f0e65fa23de3a29818a4d02f28f4f8)]:
-  - @ledgerhq/errors@6.33.0-next.0
-  - @ledgerhq/hw-transport@6.35.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

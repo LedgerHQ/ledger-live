@@ -1,5 +1,28 @@
 # @devtools/registry
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`81aa729`](https://github.com/LedgerHQ/ledger-live/commit/81aa7294c94ef114e6e82ec4c277f0a6c0038c92), [`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`ef29f07`](https://github.com/LedgerHQ/ledger-live/commit/ef29f0711ecec104e4dd9c9d86d4e4d41c4ddee3), [`d6b290b`](https://github.com/LedgerHQ/ledger-live/commit/d6b290b37b8ad6f677ab382bef53bf05cd394ca2), [`0a02a32`](https://github.com/LedgerHQ/ledger-live/commit/0a02a325f99033c086864b0778a8f81c3b4178ae), [`66c7569`](https://github.com/LedgerHQ/ledger-live/commit/66c7569dcfae90739b369ffb3a92cee75dd2e9cd), [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6), [`760dab2`](https://github.com/LedgerHQ/ledger-live/commit/760dab246a27d62f0feaa349122164e1c48aa6e4)]:
+  - @devtools/pay-card@0.5.0
+  - @devtools/feature-flags@0.9.1
+
+## 0.4.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/feature-flags@0.9.1-next.1
+
+## 0.4.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`81aa729`](https://github.com/LedgerHQ/ledger-live/commit/81aa7294c94ef114e6e82ec4c277f0a6c0038c92), [`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`ef29f07`](https://github.com/LedgerHQ/ledger-live/commit/ef29f0711ecec104e4dd9c9d86d4e4d41c4ddee3), [`d6b290b`](https://github.com/LedgerHQ/ledger-live/commit/d6b290b37b8ad6f677ab382bef53bf05cd394ca2), [`0a02a32`](https://github.com/LedgerHQ/ledger-live/commit/0a02a325f99033c086864b0778a8f81c3b4178ae), [`66c7569`](https://github.com/LedgerHQ/ledger-live/commit/66c7569dcfae90739b369ffb3a92cee75dd2e9cd), [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6), [`760dab2`](https://github.com/LedgerHQ/ledger-live/commit/760dab246a27d62f0feaa349122164e1c48aa6e4)]:
+  - @devtools/pay-card@0.5.0-next.0
+  - @devtools/feature-flags@0.9.1-next.0
+
 ## 0.4.1
 
 ### Patch Changes
@@ -175,19 +198,5 @@
 
 - Updated dependencies []:
   - @devtools/feature-flags@0.5.1
-
-## 0.1.4-next.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.5.1-next.2
-
-## 0.1.4-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.5.1-next.1
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

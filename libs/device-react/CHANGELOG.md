@@ -1,5 +1,19 @@
 # @ledgerhq/device-react
 
+## 0.6.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.11.15
+
+## 0.6.18-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.11.15-next.0
+
 ## 0.6.17
 
 ### Patch Changes
@@ -139,19 +153,5 @@
 
 - Updated dependencies []:
   - @ledgerhq/device-core@0.11.5
-
-## 0.6.8-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.11.5-next.0
-
-## 0.6.7
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.11.4
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

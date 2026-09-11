@@ -1,5 +1,65 @@
 # @ledgerhq/live-countervalues
 
+## 0.25.0
+
+### Minor Changes
+
+- [#21516](https://github.com/LedgerHQ/ledger-live/pull/21516) [`e42c12a`](https://github.com/LedgerHQ/ledger-live/commit/e42c12a392ba60ee839c9a71f4f0d409ad9430fa) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove `fetchIdsSortedByMarketcap` from the legacy countervalues API client. The RTK Query client in `ledger-live-common` already covers the same endpoint and is the single source of truth going forward.
+
+- [#21507](https://github.com/LedgerHQ/ledger-live/pull/21507) [`eb62268`](https://github.com/LedgerHQ/ledger-live/commit/eb622688cb7561882cd02b52c2eed569d5dc68f3) Thanks [@ysitbon](https://github.com/ysitbon)! - Move portfolio and account-coupled logic to live-common
+
+  `portfolio.ts`, the React `portfolioReact.tsx`, the internal `ranges.ts` and `assetsDistribution.ts`
+  helpers, and the `inferTrackingPairForAccounts*` tests migrate from the countervalues packages into
+  `libs/ledger-live-common/src/portfolio/`. This removes the account-entity blocker from the
+  countervalues epic: `live-countervalues` is now rate logic only.
+
+  `live-countervalues`: `portfolio` entry point removed; `src/internal/` directory removed.
+  `live-countervalues-react`: `portfolio` entry point removed; package now contains only `index.tsx`.
+  `live-common`: `portfolio/portfolio` and `portfolio/portfolioReact` entry points added.
+
+- [#21509](https://github.com/LedgerHQ/ledger-live/pull/21509) [`53dcdc9`](https://github.com/LedgerHQ/ledger-live/commit/53dcdc9bbef2324b48fac7469c2c1d0e66f7361f) Thanks [@ysitbon](https://github.com/ysitbon)! - wallet-analytics: inline `meaningfulPercentage` as a private utility, removing the `/portfolio` import edge. `live-countervalues`: un-export `meaningfulPercentage` (private implementation detail).
+
+- [#21517](https://github.com/LedgerHQ/ledger-live/pull/21517) [`54124e4`](https://github.com/LedgerHQ/ledger-live/commit/54124e435c7adc3a2c3a9ed6cd1865fc68fa2584) Thanks [@ysitbon](https://github.com/ysitbon)! - rename CountervaluesBridge.useMarketcapIds to useSupportedCryptoIds and document why filterSupportedTrackingPairs guards against 422s
+
+- [#21508](https://github.com/LedgerHQ/ledger-live/pull/21508) [`a19ffef`](https://github.com/LedgerHQ/ledger-live/commit/a19ffeff9dd4e173890d75d8634a33e53cc5a5d0) Thanks [@ysitbon](https://github.com/ysitbon)! - Reduce `portfolio.ts` export surface from 19 to 10. The 9 symbols that nothing outside the file imported (`startOfHour`, `startOfDay`, `startOfWeek`, `getRanges`, `getDates`, `getPortfolioRangeConfig`, `getPortfolioCountByDate`, `defaultAssetsDistribution`, `AssetsDistributionOpts`) are relocated to two internal modules (`src/internal/ranges.ts` and `src/internal/assetsDistribution.ts`) and re-imported by `portfolio.ts`. No behaviour change; the internal modules are a staging home until the package gains an explicit `exports` map.
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
+  - @ledgerhq/types-live@6.123.0
+  - @ledgerhq/ledger-wallet-framework@3.3.0
+  - @ledgerhq/live-env@4.0.0
+
+## 0.25.0-next.0
+
+### Minor Changes
+
+- [#21516](https://github.com/LedgerHQ/ledger-live/pull/21516) [`e42c12a`](https://github.com/LedgerHQ/ledger-live/commit/e42c12a392ba60ee839c9a71f4f0d409ad9430fa) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove `fetchIdsSortedByMarketcap` from the legacy countervalues API client. The RTK Query client in `ledger-live-common` already covers the same endpoint and is the single source of truth going forward.
+
+- [#21507](https://github.com/LedgerHQ/ledger-live/pull/21507) [`eb62268`](https://github.com/LedgerHQ/ledger-live/commit/eb622688cb7561882cd02b52c2eed569d5dc68f3) Thanks [@ysitbon](https://github.com/ysitbon)! - Move portfolio and account-coupled logic to live-common
+
+  `portfolio.ts`, the React `portfolioReact.tsx`, the internal `ranges.ts` and `assetsDistribution.ts`
+  helpers, and the `inferTrackingPairForAccounts*` tests migrate from the countervalues packages into
+  `libs/ledger-live-common/src/portfolio/`. This removes the account-entity blocker from the
+  countervalues epic: `live-countervalues` is now rate logic only.
+
+  `live-countervalues`: `portfolio` entry point removed; `src/internal/` directory removed.
+  `live-countervalues-react`: `portfolio` entry point removed; package now contains only `index.tsx`.
+  `live-common`: `portfolio/portfolio` and `portfolio/portfolioReact` entry points added.
+
+- [#21509](https://github.com/LedgerHQ/ledger-live/pull/21509) [`53dcdc9`](https://github.com/LedgerHQ/ledger-live/commit/53dcdc9bbef2324b48fac7469c2c1d0e66f7361f) Thanks [@ysitbon](https://github.com/ysitbon)! - wallet-analytics: inline `meaningfulPercentage` as a private utility, removing the `/portfolio` import edge. `live-countervalues`: un-export `meaningfulPercentage` (private implementation detail).
+
+- [#21517](https://github.com/LedgerHQ/ledger-live/pull/21517) [`54124e4`](https://github.com/LedgerHQ/ledger-live/commit/54124e435c7adc3a2c3a9ed6cd1865fc68fa2584) Thanks [@ysitbon](https://github.com/ysitbon)! - rename CountervaluesBridge.useMarketcapIds to useSupportedCryptoIds and document why filterSupportedTrackingPairs guards against 422s
+
+- [#21508](https://github.com/LedgerHQ/ledger-live/pull/21508) [`a19ffef`](https://github.com/LedgerHQ/ledger-live/commit/a19ffeff9dd4e173890d75d8634a33e53cc5a5d0) Thanks [@ysitbon](https://github.com/ysitbon)! - Reduce `portfolio.ts` export surface from 19 to 10. The 9 symbols that nothing outside the file imported (`startOfHour`, `startOfDay`, `startOfWeek`, `getRanges`, `getDates`, `getPortfolioRangeConfig`, `getPortfolioCountByDate`, `defaultAssetsDistribution`, `AssetsDistributionOpts`) are relocated to two internal modules (`src/internal/ranges.ts` and `src/internal/assetsDistribution.ts`) and re-imported by `portfolio.ts`. No behaviour change; the internal modules are a staging home until the package gains an explicit `exports` map.
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
+  - @ledgerhq/types-live@6.123.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.3.0-next.0
+  - @ledgerhq/live-env@4.0.0-next.0
+
 ## 0.24.5
 
 ### Patch Changes
@@ -217,40 +277,5 @@
   - @ledgerhq/live-env@2.40.0
   - @ledgerhq/ledger-wallet-framework@2.2.1
   - @ledgerhq/live-network@2.6.6
-
-## 0.21.0-next.0
-
-### Minor Changes
-
-- [#18757](https://github.com/LedgerHQ/ledger-live/pull/18757) [`36200f9`](https://github.com/LedgerHQ/ledger-live/commit/36200f969272f31c6737146b154b7dca8139d4cc) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix zero-balance asset trend display
-
-- [#18773](https://github.com/LedgerHQ/ledger-live/pull/18773) [`b383bd5`](https://github.com/LedgerHQ/ledger-live/commit/b383bd51879861ab707bbf4795ac1b76393acb98) Thanks [@deepyjr](https://github.com/deepyjr)! - Filter unsupported countervalue tracking pairs before polling.
-
-- [#18654](https://github.com/LedgerHQ/ledger-live/pull/18654) [`25101e2`](https://github.com/LedgerHQ/ledger-live/commit/25101e2991ea7c9ab54c7f3e4e5bc0bda8056d0b) Thanks [@deepyjr](https://github.com/deepyjr)! - Display a 1D variation for held assets instead of "-": when an asset's 24h portfolio value change is unavailable (e.g. freshly-acquired positions whose 24h-ago balance was zero), fall back to the asset's 1D price change computed locally from countervalues, expressed in the user's counter-value currency. This applies uniformly to crypto, stablecoins and stocks, and is handled in the shared trend hooks so generic display components stay decoupled from any asset category. A flat price now renders a real 0% (instead of "-"), and the fallback stays neutral when a rate is missing.
-
-- [#18847](https://github.com/LedgerHQ/ledger-live/pull/18847) [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872) Thanks [@semeano](https://github.com/semeano)! - Rename the native TON cryptocurrency to Gram
-
-### Patch Changes
-
-- Updated dependencies [[`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
-  - @ledgerhq/types-live@6.113.0-next.0
-  - @ledgerhq/live-env@2.40.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.2.1-next.0
-  - @ledgerhq/live-network@2.6.6-next.0
-
-## 0.20.0
-
-### Minor Changes
-
-- [#18496](https://github.com/LedgerHQ/ledger-live/pull/18496) [`37ddb59`](https://github.com/LedgerHQ/ledger-live/commit/37ddb59233c0eb06c18a0b1006052b708c847f9c) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix the global synchronization spinner spinning indefinitely when the portfolio contains only empty accounts (LIVE-32175). Empty accounts are never tracked for countervalues, so `getPortfolio` reported `balanceAvailable: false` forever, which kept `isColdStart`/`isBalanceLoading` true and the sync lifecycle stuck on `"syncing"`. `getPortfolio` now reports the balance as available when every still-unpriced account is empty (the total is a known 0), so the spinner settles and the balance shows instead of a permanent placeholder.
-
-### Patch Changes
-
-- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ddf006`](https://github.com/LedgerHQ/ledger-live/commit/9ddf006bc2897a2393f1a9595b3c6a43d0c35bf7), [`da1c0c8`](https://github.com/LedgerHQ/ledger-live/commit/da1c0c87b3d2540eff9e51c665df8192b4486855), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`82a143f`](https://github.com/LedgerHQ/ledger-live/commit/82a143ff527c4a71e2c9ea79babc473ed395b42d), [`93a5bcd`](https://github.com/LedgerHQ/ledger-live/commit/93a5bcd8b7e361148f7bac751d072cc8bcec2cf9), [`e6c617b`](https://github.com/LedgerHQ/ledger-live/commit/e6c617b91062f82f70d020212189a806d2452166), [`04e3349`](https://github.com/LedgerHQ/ledger-live/commit/04e33498ffd5d7a81ad86436a75b1562ca263356), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
-  - @ledgerhq/live-env@2.39.0
-  - @ledgerhq/types-live@6.112.0
-  - @ledgerhq/types-cryptoassets@7.38.0
-  - @ledgerhq/ledger-wallet-framework@2.2.0
-  - @ledgerhq/live-network@2.6.5
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

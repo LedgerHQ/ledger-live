@@ -1,5 +1,35 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.52.0
+
+### Minor Changes
+
+- [#21420](https://github.com/LedgerHQ/ledger-live/pull/21420) [`0152cad`](https://github.com/LedgerHQ/ledger-live/commit/0152cade87e061bb2b56fd71f8a404c3dfed21e0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Fix an undecodable/corrupted xpub crashing the whole Bitcoin address-scan block. `getPubkeyAt` now throws a typed `InvalidXpub` error; `checkAddressesBlock` uses `Promise.allSettled` so a bad xpub no longer aborts the block scan.
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`0152cad`](https://github.com/LedgerHQ/ledger-live/commit/0152cade87e061bb2b56fd71f8a404c3dfed21e0), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783), [`6656f90`](https://github.com/LedgerHQ/ledger-live/commit/6656f90769c3419e1f121c0c2368eab4566e48ba)]:
+  - @ledgerhq/types-live@6.123.0
+  - @ledgerhq/ledger-wallet-framework@3.3.0
+  - @ledgerhq/live-env@4.0.0
+  - @ledgerhq/wallet-btc@0.4.0
+  - @ledgerhq/live-signer-zcash@0.10.0
+
+## 0.52.0-next.0
+
+### Minor Changes
+
+- [#21420](https://github.com/LedgerHQ/ledger-live/pull/21420) [`0152cad`](https://github.com/LedgerHQ/ledger-live/commit/0152cade87e061bb2b56fd71f8a404c3dfed21e0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Fix an undecodable/corrupted xpub crashing the whole Bitcoin address-scan block. `getPubkeyAt` now throws a typed `InvalidXpub` error; `checkAddressesBlock` uses `Promise.allSettled` so a bad xpub no longer aborts the block scan.
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`0152cad`](https://github.com/LedgerHQ/ledger-live/commit/0152cade87e061bb2b56fd71f8a404c3dfed21e0), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783), [`6656f90`](https://github.com/LedgerHQ/ledger-live/commit/6656f90769c3419e1f121c0c2368eab4566e48ba)]:
+  - @ledgerhq/types-live@6.123.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.3.0-next.0
+  - @ledgerhq/live-env@4.0.0-next.0
+  - @ledgerhq/wallet-btc@0.4.0-next.0
+  - @ledgerhq/live-signer-zcash@0.10.0
+
 ## 0.51.3
 
 ### Patch Changes
@@ -430,49 +460,5 @@
   - @ledgerhq/devices@8.17.0-next.0
   - @ledgerhq/live-signer-zcash@0.4.0-next.0
   - @ledgerhq/live-network@2.6.7-next.0
-
-## 0.45.0
-
-### Minor Changes
-
-- [#18741](https://github.com/LedgerHQ/ledger-live/pull/18741) [`913f4a8`](https://github.com/LedgerHQ/ledger-live/commit/913f4a8ead3b50b9d17db177cf62d4c0e29c8a98) Thanks [@qperrot](https://github.com/qperrot)! - Fix: handle the "RBF requires an additional sats fee" error and show it in the frontend
-
-- [#18520](https://github.com/LedgerHQ/ledger-live/pull/18520) [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Move the dummy fee-estimation recipient out of `@ledgerhq/cryptoassets` (`abandonseed.ts`, now deleted) into each coin family. Every account bridge now exposes a required `getEstimationRecipient(account)` returning a valid recipient (or throwing for an unmapped currency, like the former `getAbandonSeedAddress`), and the swap layer dispatches through it instead of the central address map.
-
-- [#18625](https://github.com/LedgerHQ/ledger-live/pull/18625) [`ab76877`](https://github.com/LedgerHQ/ledger-live/commit/ab768773eb1a82a704e1a74213d12d8df91a16ba) Thanks [@semeano](https://github.com/semeano)! - Add a "Transfer from" source selector (Public / Private) to the Zcash send Recipient step, behind the zcashShielded feature flag
-
-### Patch Changes
-
-- Updated dependencies [[`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6), [`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`b8a0765`](https://github.com/LedgerHQ/ledger-live/commit/b8a0765d7ac1ac1a60456f9c604e7a694e38bd84), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`ebda9d8`](https://github.com/LedgerHQ/ledger-live/commit/ebda9d88805501f4c2c03fef0fe24f116a8a2a6c), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
-  - @ledgerhq/live-signer-zcash@0.3.0
-  - @ledgerhq/types-live@6.113.0
-  - @ledgerhq/errors@6.37.0
-  - @ledgerhq/live-env@2.40.0
-  - @ledgerhq/cryptoassets@13.53.0
-  - @ledgerhq/devices@8.16.0
-  - @ledgerhq/ledger-wallet-framework@2.2.1
-  - @ledgerhq/live-network@2.6.6
-
-## 0.45.0-next.0
-
-### Minor Changes
-
-- [#18741](https://github.com/LedgerHQ/ledger-live/pull/18741) [`913f4a8`](https://github.com/LedgerHQ/ledger-live/commit/913f4a8ead3b50b9d17db177cf62d4c0e29c8a98) Thanks [@qperrot](https://github.com/qperrot)! - Fix: handle the "RBF requires an additional sats fee" error and show it in the frontend
-
-- [#18520](https://github.com/LedgerHQ/ledger-live/pull/18520) [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Move the dummy fee-estimation recipient out of `@ledgerhq/cryptoassets` (`abandonseed.ts`, now deleted) into each coin family. Every account bridge now exposes a required `getEstimationRecipient(account)` returning a valid recipient (or throwing for an unmapped currency, like the former `getAbandonSeedAddress`), and the swap layer dispatches through it instead of the central address map.
-
-- [#18625](https://github.com/LedgerHQ/ledger-live/pull/18625) [`ab76877`](https://github.com/LedgerHQ/ledger-live/commit/ab768773eb1a82a704e1a74213d12d8df91a16ba) Thanks [@semeano](https://github.com/semeano)! - Add a "Transfer from" source selector (Public / Private) to the Zcash send Recipient step, behind the zcashShielded feature flag
-
-### Patch Changes
-
-- Updated dependencies [[`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6), [`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`b8a0765`](https://github.com/LedgerHQ/ledger-live/commit/b8a0765d7ac1ac1a60456f9c604e7a694e38bd84), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`ebda9d8`](https://github.com/LedgerHQ/ledger-live/commit/ebda9d88805501f4c2c03fef0fe24f116a8a2a6c), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
-  - @ledgerhq/live-signer-zcash@0.3.0-next.0
-  - @ledgerhq/types-live@6.113.0-next.0
-  - @ledgerhq/errors@6.37.0-next.0
-  - @ledgerhq/live-env@2.40.0-next.0
-  - @ledgerhq/cryptoassets@13.53.0-next.0
-  - @ledgerhq/devices@8.16.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.2.1-next.0
-  - @ledgerhq/live-network@2.6.6-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->
