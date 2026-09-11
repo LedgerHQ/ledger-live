@@ -97,7 +97,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
       dispatch(setLanguage(selectedLanguage)),
       updateIdentify(),
     ]);
-    setTimeout(() => RNRestart.Restart(), 0);
+    setTimeout(() => RNRestart.restart(), 0);
   };
 
   const changeLanguage = useCallback(
