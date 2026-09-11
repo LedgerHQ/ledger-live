@@ -9,6 +9,13 @@ import {
   FeatureIdSchema,
 } from "../schema";
 
+/** The version constraint that applies to a platform, if the feature declares one. */
+function versionConstraintFor(feature: Feature, platform: string): string | undefined {
+  if (platform === "desktop") return feature.desktop_version;
+  if (platform === "ios" || platform === "android") return feature.mobile_version;
+  return undefined;
+}
+
 /**
  * Checks whether the feature flag should be disabled based on a semver version
  * constraint. Uses `desktop_version` for desktop and `mobile_version` for
@@ -36,12 +43,7 @@ export function checkFeatureFlagVersion(
 ): Feature {
   if (!feature?.enabled || !platform) return feature;
 
-  const versionConstraint =
-    platform === "desktop"
-      ? feature.desktop_version
-      : platform === "ios" || platform === "android"
-        ? feature.mobile_version
-        : undefined;
+  const versionConstraint = versionConstraintFor(feature, platform);
 
   if (
     versionConstraint &&
@@ -72,8 +74,10 @@ export function applyLanguageFilter(feature: Feature, appLanguage?: string): Fea
   if (
     feature.enabled &&
     appLanguage &&
-    ((feature.languages_whitelisted && !feature.languages_whitelisted.includes(appLanguage)) ||
-      (feature.languages_blacklisted && feature.languages_blacklisted.includes(appLanguage)))
+    // Compared explicitly rather than negated: `!list?.includes(x)` is `true` when the list is
+    // absent, which would filter every feature that declares no language restriction at all.
+    (feature.languages_whitelisted?.includes(appLanguage) === false ||
+      feature.languages_blacklisted?.includes(appLanguage) === true)
   ) {
     return { ...feature, enabled: false, enabledOverriddenForCurrentLanguage: true };
   }
