@@ -72,11 +72,10 @@ export class BaanxOnboardingIncompleteError extends BaanxAuthError {
 export class BaanxInvalidClientKeyError extends BaanxAuthError {
   readonly status = 498;
 
-  constructor(apiMessage: string | null, clientKeyVar: string) {
+  constructor(apiMessage: string | null) {
     super(
       `${apiMessage ?? "Baanx rejected the client key (498 Invalid Token)."} ` +
-        `${clientKeyVar} is set but not accepted by this environment — sandbox needs its own key, ` +
-        `the app's configured value will not work.`,
+        `A client key was sent but is not accepted by this environment.`,
     );
   }
 }
@@ -85,10 +84,10 @@ export class BaanxInvalidClientKeyError extends BaanxAuthError {
 export class BaanxMissingClientKeyError extends BaanxAuthError {
   readonly status = 499;
 
-  constructor(apiMessage: string | null, clientKeyVar: string) {
+  constructor(apiMessage: string | null) {
     super(
       `${apiMessage ?? "Baanx received no client key (499 Token Required)."} ` +
-        `${clientKeyVar} looks empty.`,
+        `No client key reached Baanx.`,
     );
   }
 }

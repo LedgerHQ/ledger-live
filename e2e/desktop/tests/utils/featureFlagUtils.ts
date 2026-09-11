@@ -171,7 +171,11 @@ export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
 export const FF_LWD_PAY_TAB = {
   lwdPayTab: {
     enabled: true,
-    params: { card: true },
+    params: {
+      card: true,
+      baanx_login_manifest_id: "baanx-login-url-stg",
+      baanx_hosted_manifest_id: "baanx-hosted-url-stg",
+    },
   },
 } satisfies PartialFeatures;
 

@@ -107,7 +107,9 @@ export function redactBody(value: unknown, secrets: readonly string[] = []): unk
  */
 export function redactSecretsInText(text: string, secrets: readonly string[]): string {
   let out = text;
-  for (const secret of secrets) {
+  // replace longer secrets before shorter ones (and deduplicate them):
+  const uniqueSecrets = Array.from(new Set(secrets)).sort((a, b) => b.length - a.length);
+  for (const secret of uniqueSecrets) {
     if (secret) out = out.split(secret).join(REDACTION_PLACEHOLDER);
   }
   return out;

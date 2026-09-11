@@ -43,6 +43,9 @@ export const MIN_WINDOW_REMAINING_MS = 2_000;
 /** Re-authenticate this long before expiry rather than racing the deadline. */
 export const TOKEN_REFRESH_MARGIN_MS = 300_000;
 
+/** Abort a stalled Baanx request rather than waiting for the outer CI timeout. */
+export const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
+
 export interface BaanxTotpConfig {
   /**
    * The authenticator **setup key** (base32 secret) for the test user. Comes
@@ -66,6 +69,16 @@ export interface BaanxAuthConfig {
   region?: BaanxRegion;
   totp: BaanxTotpConfig;
 }
+
+/**
+ * Partial config for callers that already have credentials in the environment.
+ *
+ * Nested `totp` is itself partial: `{ totp: { digits: 8 } }` must typecheck without restating
+ * `secret`, which still comes from `BAANX_TEST_USER_TOTP_SECRET` unless overridden.
+ */
+export type BaanxAuthConfigOverrides = Omit<Partial<BaanxAuthConfig>, "totp"> & {
+  totp?: Partial<BaanxTotpConfig>;
+};
 
 /** Every optional field filled in. What the flow actually runs against. */
 export interface ResolvedBaanxAuthConfig {
@@ -101,8 +114,8 @@ export interface BaanxAuthSession {
 /* Injection points                                                           */
 /*                                                                            */
 /* These live here rather than beside their implementations because they are  */
-/* reachable from the public API (`BaanxAuthTokenOptions.deps`,               */
-/* `BaanxRequestOptions.fetchImpl`), while the modules that use them are not. */
+/* reachable from the public API (`BaanxAuthTokenOptions.deps`), while the    */
+/* modules that use them are not.                                             */
 /* -------------------------------------------------------------------------- */
 
 /** The `fetch` implementation to use. Injected so tests never hit the network. */
@@ -121,4 +134,6 @@ export interface LoginDeps {
   clock?: TotpClock;
   /** Overridable so a test can force the window-rollover branch. */
   minWindowRemainingMs?: number;
+  /** Per-request network deadline. Defaults to {@link DEFAULT_REQUEST_TIMEOUT_MS}. */
+  requestTimeoutMs?: number;
 }

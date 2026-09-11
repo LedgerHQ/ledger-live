@@ -1,0 +1,61 @@
+name: "[E2E Tooling] - Test - Called"
+
+on:
+  workflow_call:
+
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: true
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: true
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: true
+      AWS_CACHE_REGION:
+        required: true
+      AWS_CACHE_ROLE_NAME:
+        required: true
+      NX_KEY:
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test-e2e-tooling:
+    name: "E2E Tooling Test"
+    runs-on: ubuntu-22.04
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile --filter="{./e2e/tooling/**}..."
+
+      - name: Run tests
+        run: pnpm exec nx run-many -t test --projects=tag:scope:e2e-tooling --parallel=4
+
+      - name: Codechecks
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-codechecks@develop
+        with:
+          projects: "tag:scope:e2e-tooling"
+          parallel: "4"
