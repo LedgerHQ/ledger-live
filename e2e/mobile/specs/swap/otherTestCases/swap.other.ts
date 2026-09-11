@@ -173,8 +173,8 @@ export function runSwapLandingPageTest(
           swap.accountToCredit,
           minAmount,
         );
-        await app.swapLiveApp.checkQuoteCardVariant(variant);
         const providerList = await app.swapLiveApp.getProviderList();
+        await app.swapLiveApp.checkQuoteCardVariant(variant);
         await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
         await app.swapLiveApp.checkBestOffer(providerList);
 

@@ -168,8 +168,9 @@ test.describe("Swap - landing page", () => {
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
-        await app.swap.checkQuoteCardVariant(variant);
+        // getProviderList waits for the quotes, so the variant check cannot time out on them.
         const providerList = await app.swap.getProviderList();
+        await app.swap.checkQuoteCardVariant(variant);
         await app.swap.checkQuotesContainerInfos(providerList, toAccount.currency.ticker);
         await app.swap.checkBestOffer();
       },
