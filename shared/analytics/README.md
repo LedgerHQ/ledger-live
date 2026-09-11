@@ -2,7 +2,7 @@
 
 > [!CAUTION]
 >
-> **Status: WIP** — New package for LIVE-37157. Delete this note once the work is complete.
+> **Status: UNSTABLE** — New package for LIVE-37157. Delete this note once the work is complete.
 
 Shared `track` for Ledger Wallet apps. Each app registers its own analytics client (e.g. Segment), consent check, and extra props.
 
@@ -86,3 +86,18 @@ analyticsEvents$.subscribe((event) => {
 
 // { appVersion: "1.2.3", theme: "light" },
 ```
+
+### Screen refs
+
+```ts
+import {
+  currentRouteNameRef,
+  getCurrentTrackingPage,
+  setTrackingSource,
+} from "@shared/analytics";
+```
+
+Tracking routes are used in analytics to provide props like `page` and `source`. They are **ref objects** (similar to React refs) e.g. `currentRouteNameRef.current`.
+
+- Exporting the raw refs is **interim** – [LIVE-36002](https://ledgerhq.atlassian.net/browse/LIVE-36002) narrows this to a function-only API
+- Names are overly-varied (`screenRef`, `routeName` and `trackingSource`) – [LIVE-37304](https://ledgerhq.atlassian.net/browse/LIVE-37304) addresses ambigious names and duplicate logic
