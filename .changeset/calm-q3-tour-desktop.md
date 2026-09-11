@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-Add Q3 Wallet V4 Tour persisted seen state and desktop debug setup, gated by releaseTour.
+Add Q3 tour persisted seen state and Wallet Features debug controls on desktop, gated by releaseTour (q3_a) rather than lwdWallet40. Open Drawer stays disabled.
