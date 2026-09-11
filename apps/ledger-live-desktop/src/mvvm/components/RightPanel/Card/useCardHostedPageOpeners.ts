@@ -9,6 +9,7 @@ import {
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { SIDEBAR_VALUE_TO_PATH } from "LLD/components/SideBar/utils";
 import { useCardHostedManifests } from "./useCardHostedManifests";
+import { wipeHostedSessionForManifest } from "./useWipeHostedSession";
 
 export type CardHostedPageOpeners = {
   readonly openHostedLogin: OpenHostedLogin;
@@ -34,6 +35,10 @@ export function useCardHostedPageOpeners(): CardHostedPageOpeners {
   const openHostedLogin = useCallback<OpenHostedLogin>(
     async loginUrl => {
       const manifest = requireManifest(login);
+
+      // A cold start opens the login without ever crossing a sign-in change, so the wipe has to
+      // happen here too, or the provider signs the previous holder straight back in.
+      await wipeHostedSessionForManifest(manifest);
 
       navigate(manifestRoute(manifest), {
         state: { goToURL: buildHostedPageUrl(String(manifest.url), loginUrl) },

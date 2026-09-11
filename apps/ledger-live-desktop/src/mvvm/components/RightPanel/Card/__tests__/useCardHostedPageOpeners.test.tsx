@@ -1,3 +1,4 @@
+import { ipcRenderer } from "electron";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { act } from "@testing-library/react";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
@@ -15,14 +16,17 @@ jest.mock("@ledgerhq/live-common/wallet-api/useLiveAppManifest", () => ({
 }));
 
 const mockedManifest = jest.mocked(useLiveAppManifest);
+const mockedInvoke = jest.mocked(ipcRenderer.invoke);
 
 const AUTHORIZE_URL =
   "https://card.api.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge";
 
+const LOGIN_MANIFEST_URL = "https://dev.api.baanx.test/v1/auth/oauth2/authorize";
+
 const CATALOG: Record<string, unknown> = {
   "baanx-login-url-stg": {
     id: "baanx-login-url-stg",
-    url: "https://dev.api.baanx.test/v1/auth/oauth2/authorize",
+    url: LOGIN_MANIFEST_URL,
   },
   "baanx-hosted-url-stg": { id: "baanx-hosted-url-stg", url: "https://ledger.baanxapi.test" },
 };
@@ -55,6 +59,7 @@ async function run(action: () => Promise<unknown>) {
 describe("useCardHostedPageOpeners", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
+    mockedInvoke.mockClear();
     manifestsFrom(CATALOG);
   });
 
@@ -82,12 +87,58 @@ describe("useCardHostedPageOpeners", () => {
 
       await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
 
+      expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [
+        "https://other.test",
+      ]);
       expect(mockNavigate).toHaveBeenCalledWith("/platform/other?returnTo=%2Fpaytab", {
         state: {
           goToURL:
             "https://other.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
         },
       });
+    });
+
+    it("ends the provider session on the login manifest before it navigates", async () => {
+      // A cold start reaches the login without a sign-in change, so this is the only wipe the
+      // provider gets before it may sign the previous holder straight back in.
+      let settleWipe!: (value: unknown) => void;
+      mockedInvoke.mockImplementationOnce(
+        () =>
+          new Promise(resolve => {
+            settleWipe = resolve;
+          }),
+      );
+      const { result } = renderOpeners();
+
+      const opening = result.current.openHostedLogin(AUTHORIZE_URL);
+
+      expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [LOGIN_MANIFEST_URL]);
+      expect(mockNavigate).not.toHaveBeenCalled();
+
+      settleWipe(undefined);
+      await act(async () => {
+        await opening;
+      });
+
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    it("opens the login anyway when the wipe fails", async () => {
+      mockedInvoke.mockRejectedValueOnce(new Error("the session is not reachable"));
+      const { result } = renderOpeners();
+
+      const error = await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
+
+      expect(error).toBeNull();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/platform/baanx-login-url-stg?returnTo=%2Fpaytab",
+        {
+          state: {
+            goToURL:
+              "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
+          },
+        },
+      );
     });
   });
 
@@ -103,6 +154,8 @@ describe("useCardHostedPageOpeners", () => {
           "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
           { state: { goToURL: `https://ledger.baanxapi.test${path}` } },
         );
+        // The hosted page runs on the session the signed-in user already holds.
+        expect(mockedInvoke).not.toHaveBeenCalled();
       },
     );
 
