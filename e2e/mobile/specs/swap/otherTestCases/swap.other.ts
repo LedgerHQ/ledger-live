@@ -8,6 +8,10 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
 import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import {
+  quoteCardVariantByPreset,
+  swapFlagPresetNames,
+} from "@ledgerhq/live-e2e-shared/data/swapLiveAppFlags";
 import type { SwapTransactionStatusDetails } from "@e2e/page/drawer/swapTransactionStatus.drawer";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
@@ -145,28 +149,42 @@ export function runSwapLandingPageTest(
       });
     });
 
+    afterEach(async () => {
+      await app.swapLiveApp.clearFlagOverrides();
+    });
+
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`, async () => {
-      const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
-      const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        minAmount,
-      );
-      const providerList = await app.swapLiveApp.getProviderList();
-      await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
-      await app.swapLiveApp.checkBestOffer(providerList);
+    // One case per value the ptxLumenQuoteCard A/B test serves. Both values render the same CTA
+    // copy, so the card variant is the only difference the tests can see.
+    for (const preset of swapFlagPresetNames) {
+      const variant = quoteCardVariantByPreset[preset];
 
-      await app.mainNavigation.openPortfolioViaDeeplink();
-      await app.swap.openViaDeeplink();
-      await app.swapLiveApp.expectSwapLiveAppForm();
-      await app.swapLiveApp.checkAssetFromMatchesAccount(fromAccount);
-      await app.swapLiveApp.checkAssetToMatchesAccount(toAccount);
-    });
+      it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer on the ${variant} quote card`, async () => {
+        await app.swapLiveApp.applyFlagPreset(preset);
+
+        const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
+        const swap = new Swap(fromAccount, toAccount, minAmount);
+
+        await performSwapUntilQuoteSelectionStep(
+          swap.accountToDebit,
+          swap.accountToCredit,
+          minAmount,
+        );
+        await app.swapLiveApp.checkQuoteCardVariant(variant);
+        const providerList = await app.swapLiveApp.getProviderList();
+        await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
+        await app.swapLiveApp.checkBestOffer(providerList);
+
+        await app.mainNavigation.openPortfolioViaDeeplink();
+        await app.swap.openViaDeeplink();
+        await app.swapLiveApp.expectSwapLiveAppForm();
+        await app.swapLiveApp.checkAssetFromMatchesAccount(fromAccount);
+        await app.swapLiveApp.checkAssetToMatchesAccount(toAccount);
+      });
+    }
   });
 }
 

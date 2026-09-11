@@ -13,6 +13,10 @@ import {
   revokeTokenApproval,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import {
+  quoteCardVariantByPreset,
+  swapFlagPresetNames,
+} from "@ledgerhq/live-e2e-shared/data/swapLiveAppFlags";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.ETHEREUM;
@@ -127,27 +131,48 @@ test.describe("Swap - landing page", () => {
     ],
   });
 
-  test(
-    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`,
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
-      annotation: { type: "TMS", description: "B2CQA-2918, B2CQA-2327" },
-    },
-    async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+  test.afterEach(async ({ app }) => {
+    await app.swap.clearFlagOverrides();
+  });
 
-      const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
+  // One case per value the ptxLumenQuoteCard A/B test serves. Both values render the same CTA
+  // copy, so the card variant is the only difference the tests can see.
+  for (const preset of swapFlagPresetNames) {
+    const variant = quoteCardVariantByPreset[preset];
 
-      if (!minAmount) {
-        throw new Error("Test failed: No quotes retrieved from swap API.");
-      }
+    test(
+      `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer on the ${variant} quote card`,
+      {
+        tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
+        annotation: { type: "TMS", description: "B2CQA-2918, B2CQA-2327" },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      const swap = new Swap(fromAccount, toAccount, minAmount);
+        // Pin before the flow: the override needs the live app loaded, and the remount
+        // that applies it clears the form.
+        await app.swap.goAndWaitForSwapToBeReady(() =>
+          app.mainNavigation.openTargetFromMainNavigation("swap"),
+        );
+        await app.swap.applyFlagPreset(preset, async () => {
+          await app.mainNavigation.openTargetFromMainNavigation("home");
+          await app.mainNavigation.openTargetFromMainNavigation("swap");
+        });
 
-      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
-      const providerList = await app.swap.getProviderList();
-      await app.swap.checkQuotesContainerInfos(providerList, toAccount.currency.ticker);
-      await app.swap.checkBestOffer();
-    },
-  );
+        const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
+
+        if (!minAmount) {
+          throw new Error("Test failed: No quotes retrieved from swap API.");
+        }
+
+        const swap = new Swap(fromAccount, toAccount, minAmount);
+
+        await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+        await app.swap.checkQuoteCardVariant(variant);
+        const providerList = await app.swap.getProviderList();
+        await app.swap.checkQuotesContainerInfos(providerList, toAccount.currency.ticker);
+        await app.swap.checkBestOffer();
+      },
+    );
+  }
 });
