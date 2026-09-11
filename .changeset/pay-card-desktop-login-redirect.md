@@ -1,6 +1,4 @@
 ---
-"@features/flow-pay-card-auth": minor
-"@features/flow-pay-card": minor
 "@shared/feature-flags": minor
 "ledger-live-desktop": minor
 ---
