@@ -1,3 +1,8 @@
+import {
+  getTransactionMemo,
+  isTransferTransaction,
+  setTransactionMemo,
+} from "@ledgerhq/live-common/families/solana/transactions";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction as SolanaTransaction } from "@ledgerhq/live-common/families/solana/types";
 import { useTheme } from "@react-navigation/native";
@@ -13,7 +18,6 @@ import KeyboardView from "~/components/KeyboardView";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "~/const";
-import { isModelSupported } from "./SendRowsCustom";
 import { popToScreen } from "~/helpers/navigationHelpers";
 
 type NavigationProps = BaseComposite<
@@ -23,25 +27,13 @@ type NavigationProps = BaseComposite<
 function SolanaEditMemo({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { model } = route.params.transaction;
-
-  const modelSupported = isModelSupported(model);
-
-  const [memo, setMemo] = useState(modelSupported ? modelSupported.uiState.memo : undefined);
+  const [memo, setMemo] = useState(getTransactionMemo(route.params.transaction) || undefined);
   const account = route.params.account;
   const bridge = useAccountBridge<SolanaTransaction>(account);
 
   const onValidateText = useCallback(() => {
     const { transaction } = route.params;
-    const nextTx = bridge.updateTransaction(transaction, {
-      model: {
-        ...transaction.model,
-        uiState: {
-          ...transaction.model.uiState,
-          memo,
-        },
-      } as SolanaTransaction["model"],
-    });
+    const nextTx = bridge.updateTransaction(transaction, setTransactionMemo(memo ?? ""));
 
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
@@ -49,7 +41,7 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
     });
   }, [navigation, route.params, account, bridge, memo]);
 
-  if (!modelSupported) {
+  if (!isTransferTransaction(route.params.transaction)) {
     return null;
   }
 

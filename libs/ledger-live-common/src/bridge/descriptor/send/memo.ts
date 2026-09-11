@@ -14,19 +14,11 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
 const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
-  solana: (memo, _type, transaction) => {
-    const currentModel = isRecord(transaction.model) ? transaction.model : {};
-    const currentUiState = isRecord(currentModel.uiState) ? currentModel.uiState : {};
-    return {
-      model: {
-        ...currentModel,
-        uiState: {
-          ...currentUiState,
-          memo,
-        },
-      },
-    };
-  },
+  // Inlined like every other entry: `TEXT` mirrors `families/solana/transactions`.
+  solana: memo => ({
+    memoType: "TEXT",
+    memoValue: memo === undefined ? "" : String(memo),
+  }),
   // Authoritative Casper memo patch — all Casper UI sites must produce the same cleared state.
   casper: memo =>
     memo !== undefined

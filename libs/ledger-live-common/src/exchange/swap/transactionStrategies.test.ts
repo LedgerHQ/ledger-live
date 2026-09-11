@@ -33,7 +33,7 @@ describe("transactionStrategies", () => {
         family: "solana",
         amount: transaction.amount,
         recipient: transaction.recipient,
-        model: { kind: "transfer", uiState: {} },
+        mode: "send",
         raw: extraTransactionParameters.data,
         templateId: extraTransactionParameters.templateId,
       });
@@ -54,7 +54,7 @@ describe("transactionStrategies", () => {
         family: "solana",
         amount: transaction.amount,
         recipient: transaction.recipient,
-        model: { kind: "transfer", uiState: {} },
+        mode: "send",
       });
     });
   });

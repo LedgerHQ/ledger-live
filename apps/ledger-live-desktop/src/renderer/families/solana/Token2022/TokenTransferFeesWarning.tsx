@@ -1,3 +1,4 @@
+import { getTransactionTransferFee } from "@ledgerhq/live-common/families/solana/transactions";
 import React, { useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { Trans } from "react-i18next";
@@ -11,10 +12,7 @@ type Props = {
 };
 
 export default function TokenTransferFeesWarning({ transaction, tokenAccount }: Props) {
-  const transferFees =
-    transaction.model.commandDescriptor?.command.kind === "token.transfer"
-      ? transaction.model.commandDescriptor.command.extensions?.transferFee
-      : undefined;
+  const transferFees = getTransactionTransferFee(transaction);
 
   const values = useMemo(() => {
     return transferFees
