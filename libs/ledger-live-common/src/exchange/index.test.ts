@@ -43,7 +43,7 @@ describe("exchange/getCurrencyExchangeConfig", () => {
 
   it.each([
     ["arc_testnet", "arc_testnet/erc20/usdc_0x3600000000000000000000000000000000000000"],
-    ["arc", "arc/erc20/usdc_0x0000000000000000000000000000000000000000"],
+    ["arc", "arc/erc20/usdc_0x3600000000000000000000000000000000000000"],
   ])("resolves %s native USDC to its token id", async (currencyId, tokenId) => {
     await getCurrencyExchangeConfig({ id: currencyId } as CryptoCurrency);
 
