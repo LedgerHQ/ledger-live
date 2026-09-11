@@ -35,6 +35,14 @@ export const ALEO_MAIN_ACCOUNT: AleoAccount = {
   },
 };
 
+export const ALEO_BONDED_ACCOUNT: AleoAccount = {
+  ...ALEO_MAIN_ACCOUNT,
+  aleoResources: {
+    ...ALEO_MAIN_ACCOUNT.aleoResources!,
+    bondedBalance: new BigNumber(20_000_000_000),
+  },
+};
+
 export const ALEO_TOKEN_ACCOUNT: AleoTokenAccount = {
   type: "TokenAccount",
   id: "aleo-token-sub-account-id",
