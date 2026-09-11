@@ -2,6 +2,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import {
   resolveOperationHistoryBound,
   operationHistoryConfig,
+  DEFAULT_MAX_OPERATIONS,
   DEFAULT_PAGE_SIZE,
 } from "./operationHistoryBound";
 
@@ -19,22 +20,22 @@ describe("resolveOperationHistoryBound", () => {
   });
 
   describe("graceful degradation", () => {
-    it("resolves to unbounded when LiveConfig throws (config not set)", () => {
+    it("falls back to the safety ceiling when LiveConfig throws (config not set) -- a missing config must not reopen the crash", () => {
       mockGetValueByKey.mockImplementation(() => {
         throw new Error("Config not set");
       });
       expect(resolveOperationHistoryBound("ethereum")).toEqual({
-        maxOperations: undefined,
+        maxOperations: DEFAULT_MAX_OPERATIONS,
         pageSize: DEFAULT_PAGE_SIZE,
       });
     });
 
     it.each([[null], ["a string"], [42], [[]]])(
-      "resolves to unbounded for a malformed payload %j",
+      "falls back to the safety ceiling for a malformed payload %j",
       payload => {
         mockGetValueByKey.mockReturnValue(payload);
         expect(resolveOperationHistoryBound("ethereum")).toEqual({
-          maxOperations: undefined,
+          maxOperations: DEFAULT_MAX_OPERATIONS,
           pageSize: DEFAULT_PAGE_SIZE,
         });
       },
@@ -47,33 +48,36 @@ describe("resolveOperationHistoryBound", () => {
       ["zero", 0],
       ["a string", "5000"],
       ["null", null],
-    ])("resolves to unbounded when the currency entry's maxOperations is %s", (_label, value) => {
-      mockGetValueByKey.mockReturnValue({ networks: { ethereum: { maxOperations: value } } });
-      expect(resolveOperationHistoryBound("ethereum")).toEqual({
-        maxOperations: undefined,
-        pageSize: DEFAULT_PAGE_SIZE,
-      });
-    });
+    ])(
+      "falls back to the safety ceiling when the currency entry's maxOperations is %s",
+      (_label, value) => {
+        mockGetValueByKey.mockReturnValue({ networks: { ethereum: { maxOperations: value } } });
+        expect(resolveOperationHistoryBound("ethereum")).toEqual({
+          maxOperations: DEFAULT_MAX_OPERATIONS,
+          pageSize: DEFAULT_PAGE_SIZE,
+        });
+      },
+    );
 
     it.each([
       ["negative", -5],
       ["zero", 0],
       ["a string", "5000"],
       ["null", null],
-    ])("resolves to unbounded when the global maxOperations is %s", (_label, value) => {
+    ])("falls back to the safety ceiling when the global maxOperations is %s", (_label, value) => {
       mockGetValueByKey.mockReturnValue({ maxOperations: value, networks: {} });
       expect(resolveOperationHistoryBound("ethereum")).toEqual({
-        maxOperations: undefined,
+        maxOperations: DEFAULT_MAX_OPERATIONS,
         pageSize: DEFAULT_PAGE_SIZE,
       });
     });
   });
 
   describe("resolution", () => {
-    it("resolves to unbounded when neither a global nor a per-currency value is set", () => {
+    it("falls back to the safety ceiling when neither a global nor a per-currency value is set", () => {
       mockGetValueByKey.mockReturnValue({ networks: {} });
       expect(resolveOperationHistoryBound("ethereum")).toEqual({
-        maxOperations: undefined,
+        maxOperations: DEFAULT_MAX_OPERATIONS,
         pageSize: DEFAULT_PAGE_SIZE,
       });
     });
@@ -108,19 +112,20 @@ describe("resolveOperationHistoryBound", () => {
       });
     });
 
-    it("is absent from the networks map entirely and still resolves to unbounded when there is no global value", () => {
+    it("resolves the safety ceiling when the currency is absent from the networks map and no global value is set", () => {
       mockGetValueByKey.mockReturnValue({ networks: { tron: { maxOperations: 200 } } });
       expect(resolveOperationHistoryBound("ethereum")).toEqual({
-        maxOperations: undefined,
+        maxOperations: DEFAULT_MAX_OPERATIONS,
         pageSize: DEFAULT_PAGE_SIZE,
       });
     });
 
-    it("an unknown key falls back to the global value rather than to unbounded -- this is what makes the key space safe to get wrong", () => {
+    it("an unknown key falls back to the global value rather than to the safety ceiling -- this is what makes the key space safe to get wrong", () => {
       // The trap this key space exists to remove: a remote payload keyed by the coin-framework
       // family (e.g. "evm") rather than by currency id (e.g. "ethereum") never matches. If a
-      // mismatched key silently resolved to *unbounded* instead of falling back to the global,
-      // the bound would look configured and do nothing, with no error and no log.
+      // mismatched key silently resolved to the *safety ceiling* instead of falling back to the
+      // global, a deliberately lower bound would look configured and do nothing, with no error and
+      // no log.
       mockGetValueByKey.mockReturnValue({
         maxOperations: 5000,
         networks: { evm: { maxOperations: 200 } }, // wrong key space, deliberately
@@ -220,17 +225,20 @@ describe("resolveOperationHistoryBound", () => {
       });
       const first = resolveOperationHistoryBound("ethereum");
       const second = resolveOperationHistoryBound("stellar");
-      expect(first).toEqual({ maxOperations: undefined, pageSize: DEFAULT_PAGE_SIZE });
-      expect(second).toEqual({ maxOperations: undefined, pageSize: DEFAULT_PAGE_SIZE });
+      expect(first).toEqual({ maxOperations: DEFAULT_MAX_OPERATIONS, pageSize: DEFAULT_PAGE_SIZE });
+      expect(second).toEqual({
+        maxOperations: DEFAULT_MAX_OPERATIONS,
+        pageSize: DEFAULT_PAGE_SIZE,
+      });
     });
   });
 });
 
 describe("operationHistoryConfig", () => {
-  it("registers config_generic_operation_history as an object type, defaulting to unbounded", () => {
+  it("registers config_generic_operation_history as an object type, defaulting to the safety ceiling", () => {
     expect(operationHistoryConfig.config_generic_operation_history).toEqual({
       type: "object",
-      default: { maxOperations: undefined, pageSize: undefined, networks: {} },
+      default: { maxOperations: DEFAULT_MAX_OPERATIONS, pageSize: undefined, networks: {} },
     });
   });
 });
