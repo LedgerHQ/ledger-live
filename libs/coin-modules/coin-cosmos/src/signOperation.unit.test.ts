@@ -162,6 +162,39 @@ describe("buildSignOperation", () => {
     expect(signer.sign.mock.calls[0][2]).toBe("cosmos");
   });
 
+  it("omits the prefix for crypto_org, whose device app is not app-cosmos", async () => {
+    const signer = makeRealSigner();
+    const signOperation = buildSignOperation(signerContextOf(signer));
+    const account = makeAccount("44'/394'/0'/0/0", {
+      id: "crypto_org",
+      units: [{ code: "CRO" }, { code: "basecro" }],
+    });
+    const transaction = makeTransaction("cro1yyy");
+
+    await firstValueFrom(signOperation({ account, deviceId: "mock", transaction }).pipe(toArray()));
+
+    // Coin type 394 is served by the "Cronos POS Chain" app, which app-cosmos's chain config
+    // does not cover and whose sign-APDU handling of the field is unverified. Omitting it keeps
+    // the APDU framing that app has always received.
+    expect(signer.sign.mock.calls[0][2]).toBeUndefined();
+    // Address derivation is unaffected — it has always sent the prefix.
+    expect(signer.getAddressAndPubKey.mock.calls[0][1]).toBe("cro");
+  });
+
+  it("omits the prefix for crypto_org_croeseid, which reuses crypto_org's params", async () => {
+    const signer = makeRealSigner();
+    const signOperation = buildSignOperation(signerContextOf(signer));
+    const account = makeAccount("44'/394'/0'/0/0", {
+      id: "crypto_org_croeseid",
+      units: [{ code: "CRO" }, { code: "basecro" }],
+    });
+    const transaction = makeTransaction("cro1yyy");
+
+    await firstValueFrom(signOperation({ account, deviceId: "mock", transaction }).pipe(toArray()));
+
+    expect(signer.sign.mock.calls[0][2]).toBeUndefined();
+  });
+
   it("throws ExpertModeRequired when the device demands expert mode", async () => {
     const signer = makeRealSigner();
     signer.sign.mockResolvedValue({

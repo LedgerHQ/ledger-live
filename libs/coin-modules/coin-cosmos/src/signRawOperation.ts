@@ -51,9 +51,11 @@ function signTransaction(
   deviceId: string,
   path: number[],
   tx: Buffer,
-  hrp: string,
+  hrp: string | undefined,
 ): Promise<CosmosSignature> {
   // The device validates the (coin type, HRP) pair; the chain prefix goes on every request.
+  // `undefined` is reserved for chains whose device app is not app-cosmos (see CryptoOrg) and
+  // omits the field entirely, as before.
   return signerContext(deviceId, signer => signer.sign(path, tx, hrp));
 }
 
@@ -84,7 +86,7 @@ async function performSignRawOperation(
     deviceId,
     path,
     tx,
-    chainInstance.prefix,
+    chainInstance.signWithPrefix ? chainInstance.prefix : undefined,
   );
 
   switch (return_code) {

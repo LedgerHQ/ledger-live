@@ -69,8 +69,10 @@ export const buildSignOperation =
           deviceId,
           // The device validates the (coin type, HRP) pair, so the chain's own prefix goes on every
           // signing request. Gating it on coin type 60 only worked while 118 — which the device
-          // exempts — was the sole alternative.
-          async signer => signer.sign(path, tx, chainInstance.prefix),
+          // exempts — was the sole alternative. Chains whose device app is not app-cosmos opt out
+          // via signWithPrefix; see CryptoOrg.
+          async signer =>
+            signer.sign(path, tx, chainInstance.signWithPrefix ? chainInstance.prefix : undefined),
         )) as CosmosSignatureSdk;
 
         switch (return_code) {

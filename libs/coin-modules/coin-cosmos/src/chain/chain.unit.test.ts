@@ -52,6 +52,19 @@ describe("cryptoFactory test", () => {
     expect(chain.ledgerValidator).toBeUndefined();
   });
 
+  it("should opt crypto_org out of sending the prefix on the sign APDU", () => {
+    // The only chains here not served by app-cosmos: coin type 394 runs the "Cronos POS Chain"
+    // app, whose handling of the prefix field on signing is unverified.
+    expect(cryptoFactory("crypto_org").signWithPrefix).toBe(false);
+    expect(cryptoFactory("crypto_org_croeseid").signWithPrefix).toBe(false);
+  });
+
+  it("should send the prefix on the sign APDU for every app-cosmos chain", () => {
+    for (const id of ["cosmos", "osmo", "dydx", "injective", "xion", "babylon", "gonka"]) {
+      expect(cryptoFactory(id).signWithPrefix).toBe(true);
+    }
+  });
+
   it("should throw an error when currency id is unknown", () => {
     expect(() => cryptoFactory("unknown")).toThrow();
   });
