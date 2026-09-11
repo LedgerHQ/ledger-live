@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.20.0-next.3
+
+### Minor Changes
+
+- [#21854](https://github.com/LedgerHQ/ledger-live/pull/21854) [`6ad68ad`](https://github.com/LedgerHQ/ledger-live/commit/6ad68ad4358d6a1126f300c3855cab33a918c017) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): update Arc mainnet native contract address
+
 ## 4.20.0-next.2
 
 ### Minor Changes

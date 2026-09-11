@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-xrp
 
+## 0.6.4-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`6ad68ad`](https://github.com/LedgerHQ/ledger-live/commit/6ad68ad4358d6a1126f300c3855cab33a918c017)]:
+  - @ledgerhq/live-common@37.6.0-next.3
+
 ## 0.6.4-next.2
 
 ### Patch Changes
