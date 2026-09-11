@@ -1,7 +1,5 @@
 import { useCallback } from "react";
-import {
-  SPONSORED_FAILURE_KIND,
-} from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { SPONSORED_FAILURE_KIND } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { useTranslation } from "~/context/Locale";
 import { useSendFlowActions } from "../../../context/SendFlowContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";

@@ -65,13 +65,9 @@ export function useAmountScreen(): AmountScreenViewModel {
       input_mode: inputMode,
     });
     if (selectedFeeOptionId === "tronify") {
-      // Tronify path: craft TX A energy-rent order (transitions phase → RENT_SIGNING once ready),
-      // and pre-register TX C signing so the SignatureOverlayHost is ready when energy delivers.
       sponsoredActions.craftRent();
-      startSigning(() => navigation.navigate(getSendSuccessScreenName(source)));
-    } else {
-      startSigning(() => navigation.navigate(getSendSuccessScreenName(source)));
     }
+    startSigning(() => navigation.navigate(getSendSuccessScreenName(source)));
   }, [
     startSigning,
     navigation,

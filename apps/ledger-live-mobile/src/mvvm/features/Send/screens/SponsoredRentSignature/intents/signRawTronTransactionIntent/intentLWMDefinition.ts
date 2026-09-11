@@ -1,4 +1,4 @@
-import { SignTransactionIntentComponentLWM } from "../../../../Signature/intents/signTransactionIntent/componentLWM";
+import { SignTransactionIntentComponentLWM } from "../../../Signature/intents/signTransactionIntent/componentLWM";
 import { signRawTransactionIntentDefinition } from "@ledgerhq/live-common/intents/signRawTransactionIntent";
 import type { SignRawTransactionIntentPlatformDefinition } from "@ledgerhq/live-common/intents/signRawTransactionIntent";
 

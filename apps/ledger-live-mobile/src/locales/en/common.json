@@ -4784,6 +4784,20 @@
             "CUSTOM": "Custom coin selection"
           }
         }
+      },
+      "sponsoredRentSignature": {
+        "crafting": "Preparing energy rental..."
+      },
+      "sponsoredPolling": {
+        "waiting": "Waiting for energy delivery..."
+      },
+      "sponsoredFailure": {
+        "rentPayment": "The energy rental payment failed. Please try again.",
+        "deliveryFailed": "Energy delivery failed{{txidSuffix}}. Please try again.",
+        "contractData": "Enable Contract Data in your Tron app settings and retry.",
+        "transfer": "The transfer failed after energy delivery. Please try again.",
+        "retry": "Retry",
+        "cancel": "Cancel"
       }
     },
     "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
