@@ -1,4 +1,4 @@
-import type { AccountBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
@@ -76,6 +76,15 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
     case "ownerTokenAccount":
       dest.ownerTokenAccount = typeof value === "string" ? value : undefined;
       return;
+    case "recipientTokenAccount":
+      dest.recipientTokenAccount = typeof value === "string" ? value : undefined;
+      return;
+    case "recipientWalletAddress":
+      dest.recipientWalletAddress = typeof value === "string" ? value : undefined;
+      return;
+    case "userInputType":
+      dest.userInputType = typeof value === "string" ? value : undefined;
+      return;
     case "stakeAccountRent":
       dest.stakeAccountRent = isNumericLike(value) ? new BigNumber(value.toString()) : undefined;
       return;
@@ -95,7 +104,12 @@ export function genericPrepareTransaction(
 
     const getAssetFromTokenForCurrency = bridgeApi.getAssetFromToken;
     const { assetReference, assetOwner } = getAssetFromTokenForCurrency
-      ? await getAssetInfos(transaction, account.freshAddress, getAssetFromTokenForCurrency)
+      ? await getAssetInfos(
+          transaction,
+          account.freshAddress,
+          getAssetFromTokenForCurrency,
+          account,
+        )
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
 
@@ -211,6 +225,9 @@ export function genericPrepareTransaction(
       "transferFee",
       "stakeAccountRent",
       "ownerTokenAccount",
+      "recipientTokenAccount",
+      "recipientWalletAddress",
+      "userInputType",
     ];
 
     for (const field of fieldsToPropagate) {
@@ -221,22 +238,40 @@ export function genericPrepareTransaction(
   };
 }
 
+function findTokenOfSubAccount(
+  account: Account | undefined,
+  subAccountId: string,
+): TokenCurrency | undefined {
+  const subAccount = account?.subAccounts?.find(sub => sub.id === subAccountId);
+  return subAccount && "token" in subAccount ? subAccount.token : undefined;
+}
+
 export async function getAssetInfos(
   tr: GenericTransaction,
   owner: string,
   getAssetFromToken: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
+  account?: Account,
 ): Promise<{
   assetReference: string;
   assetOwner: string;
 }> {
   if (tr.subAccountId) {
-    const { token } = await decodeTokenAccountId(tr.subAccountId);
+    // Matched in memory first: an id minted by a legacy bridge ends with the token account address,
+    // which `decodeTokenAccountId` resolves neither by token id nor by contract address. Falling
+    // back to a native asset there would craft an SPL transfer as a SOL one.
+    const token =
+      findTokenOfSubAccount(account, tr.subAccountId) ??
+      (await decodeTokenAccountId(tr.subAccountId)).token;
 
-    if (!token) return assetInfosFallback(tr);
+    const asset = token && getAssetFromToken(token, owner);
 
-    const asset = getAssetFromToken(token, owner);
-
-    if (!asset) return assetInfosFallback(tr);
+    if (!asset) {
+      // Never silently native: a native asset would craft a coin transfer, not the token one the
+      // sub-account asks for. Keep an asset a previous run resolved; refuse outright otherwise.
+      const fallback = assetInfosFallback(tr);
+      if (fallback.assetReference) return fallback;
+      throw new Error(`Cannot resolve the token of sub-account ${tr.subAccountId}`);
+    }
 
     return {
       assetOwner: ("assetOwner" in asset && asset.assetOwner) || "",
