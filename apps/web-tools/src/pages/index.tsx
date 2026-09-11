@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Tile, TileContent, TileTitle, TileDescription, Spot } from "@ledgerhq/lumen-ui-react";
 import {
+  Apps,
   ChartPie,
   ColorPalette,
   LedgerLogo,
@@ -15,7 +16,8 @@ import {
 type Tool = {
   to: string;
   title: string;
-  description: string;
+  /** Omit when the title already says what the tool does. */
+  description?: string;
   icon: typeof Tools;
 };
 
@@ -68,6 +70,11 @@ const tools: Tool[] = [
     description: "Feature flags and developer settings.",
     icon: Tools,
   },
+  {
+    to: "/firmware-app-deployments",
+    title: "Firmware App Deployments",
+    icon: Apps,
+  },
 ];
 
 export default function Home() {
@@ -95,7 +102,7 @@ export default function Home() {
               <Spot appearance="icon" icon={tool.icon} />
               <TileContent>
                 <TileTitle>{tool.title}</TileTitle>
-                <TileDescription>{tool.description}</TileDescription>
+                {tool.description ? <TileDescription>{tool.description}</TileDescription> : null}
               </TileContent>
             </Tile>
           ))}
