@@ -1,4 +1,3 @@
-import { log } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
@@ -29,6 +28,9 @@ const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - qu
 
 // Set on the window before a reload, so its absence proves a fresh document.
 const FLAG_RELOAD_MARKER = "__swapE2eFlagReload";
+
+// Each attempt reopens the live app, so keep the budget short.
+const CLEAR_FLAG_OVERRIDES_TIMEOUT = 30_000;
 
 export default class SwapLiveAppPage {
   private static readonly QUOTE_CARD_PROVIDER_NAMES = `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}']`;
@@ -213,20 +215,24 @@ export default class SwapLiveAppPage {
     });
   }
 
-  // The override outlives the test and survives an app relaunch, so reopen the live app
-  // before clearing it. A failed test can leave any screen on top.
+  // The override survives an app relaunch, so a failed clear must fail the run.
+  // Reopen the live app first: a failed test can leave any screen on top.
   @Step("Clear swap live app feature flag overrides")
   async clearFlagOverrides() {
-    this.flagPresetPinned = false;
-    try {
+    if (!this.flagPresetPinned) return;
+    await retryUntilTimeout(async () => {
       await this.reopenSwapLiveApp();
-      await this.swapMainContainerWebElement.runScript(
-        (_el: HTMLElement, key: string) => localStorage.removeItem(key),
+      const stored = await this.swapMainContainerWebElement.runScript(
+        (_el: HTMLElement, key: string) => {
+          localStorage.removeItem(key);
+          return localStorage.getItem(key);
+        },
         [SWAP_FLAG_OVERRIDES_KEY],
       );
-    } catch (error) {
-      log.warn(`Could not clear the swap flag overrides: ${error}`);
-    }
+      jestExpect(stored).toBeNull();
+    }, CLEAR_FLAG_OVERRIDES_TIMEOUT);
+    // Assertions stay strict while the override is still in place.
+    this.flagPresetPinned = false;
   }
 
   @Step("Check quote card variant: {{{0}}}")
