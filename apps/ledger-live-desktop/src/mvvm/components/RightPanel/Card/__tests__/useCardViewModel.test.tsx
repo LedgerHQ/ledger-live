@@ -39,8 +39,9 @@ describe("useCardViewModel", () => {
   });
 
   it("hands it the attempt state alongside the code, when the deep link carried one", () => {
-    renderCardViewModel({ code: "auth-code", state: "attempt-state" });
+    const { result } = renderCardViewModel({ code: "auth-code", state: "attempt-state" });
 
+    expect(result.current.callback).toEqual({ code: "auth-code", state: "attempt-state" });
     expect(mockNavigate).toHaveBeenCalledWith("/paytab", { replace: true, state: null });
   });
 

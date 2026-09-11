@@ -1,4 +1,5 @@
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
+import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useCardHostedManifests } from "../useCardHostedManifests";
 
@@ -33,8 +34,19 @@ describe("useCardHostedManifests", () => {
 
   it("falls back to the registered default ids when a remote flag omits them", () => {
     // A remote or overridden flag replaces the whole params object, so `card: true` alone must not
-    // leave the manifest lookups undefined.
-    renderManifests();
+    // leave the manifest lookups undefined. Seed `resolved` raw: `withFlagOverrides` would merge
+    // FEATURE_FLAGS_DEFAULTS.lwdPayTab.params and skip both `??` fallbacks.
+    renderHook(() => useCardHostedManifests(), {
+      initialState: {
+        featureFlags: {
+          ...FEATURE_FLAGS_INITIAL_STATE,
+          resolved: {
+            ...FEATURE_FLAGS_DEFAULTS,
+            lwdPayTab: { enabled: true, params: { card: true } },
+          },
+        },
+      },
+    });
 
     expect(mockedManifest).toHaveBeenCalledWith("baanx-login-url-stg");
     expect(mockedManifest).toHaveBeenCalledWith("baanx-hosted-url-stg");
