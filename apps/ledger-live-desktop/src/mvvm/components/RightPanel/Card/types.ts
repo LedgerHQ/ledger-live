@@ -6,5 +6,8 @@ export interface CardViewModel {
   readonly formatCountervalue: (value: number) => FormattedValue;
   readonly balanceLabel: string;
   readonly oauthConfig: PayCardProps["oauthConfig"];
+  readonly callback: PayCardProps["callback"];
+  readonly openHostedLogin: PayCardProps["openHostedLogin"];
+  readonly openHostedPage: PayCardProps["openHostedPage"];
   readonly onTrackEvent: PayCardProps["onTrackEvent"];
 }
