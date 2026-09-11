@@ -23,6 +23,7 @@ import { reload, getKey } from "~/renderer/storage";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { bootstrapMockServerTransport } from "~/renderer/mockServerTransport";
+import { getMockServerSessionToken } from "@ledgerhq/live-dmk-desktop";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
@@ -439,6 +440,7 @@ async function init() {
     resetDevices: () => {
       store.dispatch(resetDevices());
     },
+    getMockServerSessionToken,
   };
 }
 const root = rootNode ? createRoot(rootNode) : null;
