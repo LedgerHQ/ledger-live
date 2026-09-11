@@ -49,7 +49,7 @@ Tracking is off until enabled explicitly with `setEnabledFn`.
 In the example above it is switched on by default but more often you will store user consent in some dynamic state. In this case, pass a selector for that state, e.g.
 
 ```ts
-setEnabledFn(myAnalyticsEnabledSelector(store.getState()));
+setEnabledFn(() => myAnalyticsEnabledSelector(store.getState()));
 ```
 
 For events that do not require consent use the mandatory option, e.g.
