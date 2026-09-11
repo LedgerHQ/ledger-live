@@ -5,6 +5,8 @@ const BASE_URL = "https://global.api.stg.ledger-test.com/borrow";
 const JSON_HEADERS = { "Content-Type": "application/json" };
 const POLL_INTERVAL_MS = 3_000;
 const POLL_MAX_ATTEMPTS = 60;
+const THROTTLE_RETRY_ATTEMPTS = 6;
+const THROTTLE_RETRY_BASE_DELAY_MS = 4_000;
 
 /** This driver targets Ethereum mainnet only. */
 export const ETHEREUM_NETWORK = "ethereum";
@@ -26,12 +28,32 @@ function getString(v: unknown, key: string): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
-function post(pathname: string, body: unknown): Promise<Response> {
-  return fetch(`${BASE_URL}${pathname}`, {
-    method: "POST",
-    headers: JSON_HEADERS,
-    body: JSON.stringify(body),
-  });
+/** Rejected at the edge rather than by the partner, so the request never reached it. */
+function isThrottled(status: number): boolean {
+  return status >= 500 || status === 403 || status === 429;
+}
+
+async function post(pathname: string, body: unknown): Promise<Response> {
+  for (let attempt = 1; ; attempt++) {
+    const res = await fetch(`${BASE_URL}${pathname}`, {
+      method: "POST",
+      headers: JSON_HEADERS,
+      body: JSON.stringify(body),
+    });
+    if (!isThrottled(res.status) || attempt >= THROTTLE_RETRY_ATTEMPTS) return res;
+    console.log(
+      `    api: ${res.status} on ${pathname}, retrying (${attempt}/${THROTTLE_RETRY_ATTEMPTS - 1})`,
+    );
+    await new Promise(resolve => setTimeout(resolve, THROTTLE_RETRY_BASE_DELAY_MS * attempt));
+  }
+}
+
+/** The partner puts the actionable reason in the body, not the status line. */
+async function failedRequest(pathname: string, res: Response): Promise<Error> {
+  const detail = await res.text().catch(() => "");
+  return new Error(
+    `POST ${pathname} failed: ${res.status} ${res.statusText}${detail ? ` — ${detail}` : ""}`,
+  );
 }
 
 /**
@@ -60,14 +82,14 @@ function normalizeStep(raw: unknown, index: number): PartnerActionStep {
 /** `POST /v1/positions` — returns the raw `{ positions, errors, metadata }`. */
 export async function getPositions(address: string): Promise<unknown> {
   const res = await post("/v1/positions", [{ network: ETHEREUM_NETWORK, address }]);
-  if (!res.ok) throw new Error(`POST /v1/positions failed: ${res.status} ${res.statusText}`);
+  if (!res.ok) throw await failedRequest("/v1/positions", res);
   return res.json();
 }
 
 /** Builds an action; returns `{ actionId, steps[] }`. Staging returns all steps upfront. */
 export async function postAction(body: ActionRequest): Promise<PartnerActionResponse> {
   const res = await post("/v1/actions", body);
-  if (!res.ok) throw new Error(`POST /v1/actions failed: ${res.status} ${res.statusText}`);
+  if (!res.ok) throw await failedRequest("/v1/actions", res);
   const raw: unknown = await res.json();
   const actionId = getString(raw, "actionId");
   const steps = get(raw, "steps");
@@ -92,8 +114,7 @@ async function pollActionStatus(actionId: string): Promise<string | undefined> {
     return undefined;
   }
   if (res.ok) return getString(await res.json(), "status")?.toLowerCase();
-  // Gateway/upstream blips (502/503/504) are transient — keep polling; a 4xx is a real error.
-  if (res.status >= 500) return undefined;
+  if (isThrottled(res.status)) return undefined;
   throw new Error(`GET /v1/actions/${actionId} failed: ${res.status}`);
 }
 
