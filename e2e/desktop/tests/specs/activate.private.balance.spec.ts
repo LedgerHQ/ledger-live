@@ -5,6 +5,10 @@ import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 import { settleAfterDeviceStatusScreen } from "tests/utils/deviceStatusScreen";
 
+// The address the device derives for the shared QA seed at 44'/133'/0'/0/6.
+const ZEC_1_SHIELDED_ADDRESS =
+  "u1rxupz6pfemaqnxkakpf846uf6euuaqhhgp7pf26he0c5k8xcm73e4khwj5fkmqe5rw58ppa4xevm3tny0sufvlywqngj2vus0g5rqt4j";
+
 const accounts = [
   { account: Account.ZEC_1, xrayTicket: "B2CQA-4300", birthdayHeight: "2026-08-01" },
 ];
@@ -48,8 +52,10 @@ for (const account of accounts) {
         await app.account.clickReceive();
         await app.receive.continue();
         await app.receive.expectPrivateAddressBlockVisible();
-        const privateAddress = await app.receive.getPrivateAddressDisplayed();
-        await app.receive.expectValidPrivateAddress(privateAddress);
+        // Compare against the address the device derives for the shared QA seed,
+        // not against whatever the UI just rendered: this is what makes the spec
+        // assert the export-to-receive linkage rather than its own output.
+        await app.receive.expectValidPrivateAddress(ZEC_1_SHIELDED_ADDRESS);
       },
     );
   });

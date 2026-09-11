@@ -35,16 +35,17 @@ const seedPrivateInfo = async (userdataPath?: string) => {
       `seedPrivateInfo: no account matching "${account.currency.id}" in ${userdataPath}. Did liveDataCommand run first?`,
     );
   }
-  // Only `shieldedAddress` drives the Receive block; the rest is the shape the
-  // bridge expects. The UFVK is not exercised by this spec.
+  // Only `shieldedAddress` drives the Receive block. The UFVK is left null and
+  // the sync disabled so this fixture cannot feed a malformed viewing key to
+  // any scanning path, rather than relying on none being reachable.
   acc.data.privateInfo = {
     orchardBalance: "0",
     saplingBalance: "0",
     ironwoodBalance: "0",
-    syncState: "ready",
+    syncState: "disabled",
     progress: 0,
     estimatedTimeRemaining: { hours: 0, minutes: 0 },
-    ufvk: "uview1testonlyplaceholdernotusedbythisspec000000000000000000000000",
+    ufvk: null,
     birthday: "2026-08-01",
     shieldedAddress: ZEC_1_SHIELDED_ADDRESS,
     lastSyncTimestamp: null,
