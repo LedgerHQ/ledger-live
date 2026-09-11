@@ -45,7 +45,7 @@ const prefixHex = (hex: string): `0x${string}` =>
  * `validateIntent` handles staking then delegates the rest to coin-evm.
  */
 // Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
-// survives — including `stakingSupported`, which is not part of the API surface.
+// survives
 //
 // `craftRawTransaction` is the one capability neither this module nor the EVM api it composes
 // provides, so it is absent here; the consumer resolver applies `withDefaults`, which answers
@@ -66,7 +66,7 @@ export function createApi(currencyId = "celo") {
   > &
     Required<Pick<CoinModuleApi<EvmConfigInfo, MemoNotSupported, BufferTxData>, "validateIntent">>;
 
-  const api = {
+  return {
     ...typedEvmApi,
     craftTransaction: (
       _context: CeloContext,
@@ -98,7 +98,6 @@ export function createApi(currencyId = "celo") {
       _context: CeloContext,
       _options?: { cursor?: Cursor },
     ): Promise<Page<Validator>> => getValidators(),
-    stakingSupported: true,
     validateIntent: (
       context: CeloContext,
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
@@ -108,11 +107,7 @@ export function createApi(currencyId = "celo") {
       isCeloStakingIntent(intent)
         ? validateStakingIntent(intent, balances, options?.customFees)
         : typedEvmApi.validateIntent(context, intent, balances, options),
-  } satisfies CoinModuleImpl<EvmConfigInfo, MemoNotSupported, BufferTxData> & {
-    stakingSupported?: boolean;
-  };
-
-  return api;
+  } satisfies CoinModuleImpl<EvmConfigInfo, MemoNotSupported, BufferTxData>;
 }
 
 export default createApi;
