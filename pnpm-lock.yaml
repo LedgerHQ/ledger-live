@@ -16456,8 +16456,8 @@ importers:
         specifier: 'catalog:'
         version: 1.9.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-zcash':
-        specifier: 0.6.0
-        version: 0.6.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        specifier: 0.7.1
+        version: 0.7.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -22510,10 +22510,10 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.9.0
 
-  '@ledgerhq/device-signer-kit-zcash@0.6.0':
-    resolution: {integrity: sha512-RASZEFtPKW+PY8N8Q5NMUT3OF3PkVX0UGLS05GKpbkS5w1eGwtsbXXcgv67oR1DwtJpfPW+98ifdWi42RHalHw==}
+  '@ledgerhq/device-signer-kit-zcash@0.7.1':
+    resolution: {integrity: sha512-WTim/MTeghnaShDr8IxKu+ZOc9NDhS5hJmHuN5np7McEfNuhrpnkVEVlGsjLn0+4D7ZZ8u+5Ry7C7Nur2oCkYA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.7.1
+      '@ledgerhq/device-management-kit': ^1.9.0
 
   '@ledgerhq/device-transport-kit-mockserver@1.1.1':
     resolution: {integrity: sha512-lAi0nlz9mIIxf+c+F6ZrCLWdPeYZzpIKm2qWCrsF4vVjt0bp7Ikn+I4D8xUCvB/lCZMWXSyz9wL556Q+BlLOKw==}
@@ -23157,7 +23157,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -28630,7 +28629,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -48107,7 +48106,7 @@ snapshots:
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-zcash@0.6.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-zcash@0.7.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
       '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
