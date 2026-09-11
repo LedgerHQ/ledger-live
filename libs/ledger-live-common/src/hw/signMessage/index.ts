@@ -3,7 +3,6 @@ import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { firstValueFrom, from, Observable } from "rxjs";
-import { AcreMessageType } from "@ledgerhq/wallet-api-acre-module";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
 import { loadSetupForFamily } from "../../coin-modules/registry";
 import type { AppRequest, AppState } from "../actions/app";
@@ -12,7 +11,6 @@ import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
 import type { SignMessage, Result } from "./types";
-import { messageSigner as ACREMessageSigner } from "../../families/bitcoin/ACRESetup";
 import { decodeAccountId } from "../../account";
 
 export const prepareMessageToSign = async (
@@ -37,20 +35,7 @@ export const prepareMessageToSign = async (
 const signMessage: SignMessage = async (transport, account, opts) => {
   const { currency } = account;
   const setup = await loadSetupForFamily(currency.family);
-  let signMessage = setup.messageSigner?.signMessage;
-  if ("type" in opts) {
-    switch (opts.type) {
-      case AcreMessageType.Withdraw:
-        signMessage = ACREMessageSigner.signWithdraw;
-        break;
-      case AcreMessageType.SignIn:
-        signMessage = ACREMessageSigner.signIn;
-        break;
-      default:
-        signMessage = ACREMessageSigner.signMessage;
-        break;
-    }
-  }
+  const signMessage = setup.messageSigner?.signMessage;
   invariant(signMessage, `signMessage is not implemented for ${currency.id}`);
   return signMessage(transport, account, opts)
     .then(result => {
@@ -81,7 +66,6 @@ type BaseState = {
 export type State = AppState & BaseState;
 export type Request = AppRequest & {
   message: AnyMessage;
-  isACRE?: boolean;
 };
 
 export type Input = {
@@ -123,7 +107,7 @@ export const createAction = (
     const appState: AppState = createAppAction(connectAppExec).useHook(reduxDevice, {
       appName: request.appName,
       dependencies: request.dependencies,
-      account: request.isACRE ? undefined : request.account, // Bypass derivation check with ACRE as we can use other addresses than the freshest
+      account: request.account,
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
     const [state, setState] = useState<BaseState>({

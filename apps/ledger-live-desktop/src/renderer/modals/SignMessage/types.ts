@@ -14,7 +14,6 @@ export type StepProps = {
   dependencies?: string[];
   onConfirmationHandler: (arg: string) => void;
   onFailHandler: (arg: Error) => void;
-  isACRE?: boolean;
 };
 
 export type St = Step<StepId, StepProps>;

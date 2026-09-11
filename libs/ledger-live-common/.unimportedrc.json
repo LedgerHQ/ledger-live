@@ -322,7 +322,6 @@
     "src/utils/runOnceWhen.ts",
     "src/utils/getAccountTuplesForCurrency.ts",
     "src/utils/timeAgo.ts",
-    "src/wallet-api/ACRE/server.ts",
     "src/wallet-api/constants.ts",
     "src/wallet-api/converters.ts",
     "src/wallet-api/Borrow/errorBottomSheetParams.ts",
