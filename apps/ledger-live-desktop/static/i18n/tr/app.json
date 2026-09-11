@@ -435,6 +435,11 @@
           "viewInExplorer" : "Tarayıcıda görüntüle",
           "copied" : "Kopyalandı"
         },
+        "earnBanner" : {
+          "title" : "%{{apy}} {{type}} oranına kadar kazanın",
+          "description" : "Getiri fırsatlarını keşfedin",
+          "button" : "Keşfet"
+        },
         "accessibility" : {
           "copySwapId" : "Takas kimliğini kopyala"
         }
@@ -873,22 +878,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "Ödeme yapın ve ödeme alın",
-      "description" : "Stabil coin'ler, kripto dünyası ile gerçek hayattaki günlük harcamalarınız arasında bir köprü kurar",
-      "cta" : "Anladım",
+      "title" : "Tüm ödemeleriniz tek bir yerde",
+      "description" : "Kriptonuzu günlük para anlarına hazır hâle getiren yeni Pay sekmenizle tanışın.",
+      "cta" : "Pay'i Keşfet",
       "rows" : {
         "global" : {
-          "title" : "Küresel çapta ödeme yapın ve ödeme alın",
-          "description" : "Düşük ağ ücretlerinden yararlanın"
+          "title" : "Kişilerinize ödeme yapın",
+          "description" : "Kayıtlı adreslere kripto gönderin."
         },
         "volatility" : {
-          "title" : "Düşük volatilite",
-          "description" : "Stabil coin'ler, itibari paraya çıpalanır"
+          "title" : "Ödeme talep edin",
+          "description" : "Kişilerden doğrudan size bakiye göndermelerini isteyin."
         },
         "card" : {
-          "title" : "Kartla harcama yapın ve %1 para iadesi alın",
-          "description" : "USDC, USDT, BTC, ETH ve daha fazlasıyla ödeme yapın"
+          "title" : "Kripto kartı ile dünya çapında alışveriş yapın",
+          "description" : "Ve sınırsız %1 para iadesi kazanın."
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "Daha fazlası",
+      "title" : "Daha fazlası",
+      "rows" : {
+        "managePin" : "PIN kodunu yönet",
+        "accessBaanx" : "Baanx'e eriş",
+        "help" : "Yardım",
+        "logout" : "Oturumu kapat"
       }
     },
     "balance" : {
@@ -904,7 +919,20 @@
     },
     "card" : {
       "title" : "Kripto kartı",
-      "balanceLabel" : "Bakiye"
+      "balanceLabel" : "Bakiye",
+      "freeze" : "Dondur",
+      "unfreeze" : "Çöz"
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "Kartınızı kurun",
+        "allDone" : "Her şey hazır!"
+      },
+      "dialog" : {
+        "title" : "Kart kurulumunu tamamlayın",
+        "stepComplete" : "Tamamlandı",
+        "gotIt" : "Anladım"
+      }
     },
     "contacts" : {
       "title" : "Kişiye ödeme yapın",
@@ -913,17 +941,30 @@
         "addContact" : "Kişi ekle"
       },
       "table" : {
-        "name" : "Name",
-        "addresses" : "Addresses",
-        "transactions" : "Transactions",
-        "transactionCount_zero" : "No transaction",
-        "transactionCount_one" : "{{count}} transaction",
-        "transactionCount_other" : "{{count}} transactions"
+        "name" : "İsim",
+        "addresses" : "Adresler",
+        "transactions" : "İşlemler",
+        "transactionCount_zero" : "İşlem yok",
+        "transactionCount_one" : "{{count}} işlem",
+        "transactionCount_other" : "{{count}} işlem"
       },
       "actions" : {
-        "pay" : "Send to contact",
-        "more" : "More options",
-        "viewTransactions" : "View transactions"
+        "pay" : "Kişiye gönder",
+        "more" : "Daha fazla seçenek",
+        "viewContact" : "Kişiyi görüntüle",
+        "viewTransactions" : "İşlemi görüntüle"
+      },
+      "addressPicker" : {
+        "title" : "{{name}} için adres seçin",
+        "addAddress" : "Adres ekle"
+      },
+      "paySuccess" : {
+        "title" : "{{recipient}} kişisine {{amount}} ödediniz",
+        "amount" : "Tutar",
+        "estimatedTime" : "Tahmini süre",
+        "from" : "Kaynak",
+        "viewTransaction" : "İşlemi görüntüle",
+        "close" : "Kapat"
       }
     },
     "actions" : {
@@ -952,6 +993,63 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "Nakit gönderin, stabil coin alın",
+      "description" : "Nakit transfer edin ve stabil coin'leri doğrudan Ledger Wallet™'ınıza alın.",
+      "createAccount" : "Hesap oluştur",
+      "logIn" : "Noah'a giriş yapın",
+      "providedBy" : "Bir Noah hizmeti",
+      "rows" : {
+        "bank" : {
+          "title" : "Dilediğiniz bankadan transfer alın",
+          "description" : "SEPA veya ACH üzerinden maaş, ödeme ve mevduat alın."
+        },
+        "fees" : {
+          "title" : "Gizli ücret yok",
+          "description" : "Bankadan doğrudan blok zincirine %0,25 ücretle."
+        },
+        "earn" : {
+          "title" : "Paranız hemen sizin için çalışsın",
+          "description" : "Stabil coin'inizle takas yapabilir veya kazanç elde edebilirsiniz."
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "Kripto Kartı",
+      "beforeIntro" : {
+        "description" : "Her harcamanızda %1 para iadesi alın",
+        "action" : "Kart al"
+      },
+      "afterIntro" : {
+        "description" : "Kartınıza erişmek için giriş yapın",
+        "action" : "Oturum aç"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "Kripto harcayın, para iadesi alın",
+      "providedBy" : "Kart bir Baanx hizmetidir",
+      "createAccount" : "Bir hesap oluştur",
+      "logIn" : "Baanx'e giriş yap",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay veya Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "Sınırsız %1 kripto para iadesi",
+          "description" : "USDC, USDT veya BTC ile yapılan tüm kripto kartı alışverişlerinde."
+        },
+        "virtualCard" : {
+          "title" : "Ücretsiz sanal kart",
+          "description" : "{{wallet}} cüzdanına ekleyin; anında hazır."
+        },
+        "topUp" : {
+          "title" : "Ledger Wallet ile güvenli bir şekilde bakiye yükleyin",
+          "description" : "Her transfer Ledger imzalayıcınız ile onaylanır."
+        }
+      }
+    },
     "request" : {
       "title" : "{{asset}} talep et",
       "networkLabel" : "{{network}} ağı",
@@ -962,6 +1060,10 @@
         "copied" : "Kopyalandı",
         "save" : "Kaydet",
         "verify" : "Doğrula"
+      },
+      "verifyHint" : {
+        "message" : "Paylaşmadan önce\nLedger cihazınızda\nadresinizi doğrulayın",
+        "gotIt" : "Anladım"
       },
       "verifyAddress" : {
         "introTitle" : "Adresinizi doğrulayın",
@@ -2652,11 +2754,12 @@
       "walletNotExist" : "Böyle bir cüzdan yok"
     },
     "skipMemo" : {
-      "title" : "{{memoLabel}} ekleme atlansın mı?",
+      "title" : "{{memoLabel}} olmadan gönderilsin mi?",
       "description" : "Alıcı bir {{memoLabel}} gerektiriyorsa varlığınız kaybolabilir.",
       "notRequired" : "Alıcı tarafından {{memoLabel}} gerekli kılınmamış mı?",
-      "confirm" : "Evet, atla",
-      "neverAskAgain" : "Bu uyarıyı tekrar gösterme"
+      "confirm" : "Evet, {{memoLabel}}olmadan gönder",
+      "cancel" : "Hayır, geri dön",
+      "neverAskAgain" : "Bir daha sorma"
     },
     "tagHelp" : {
       "inputLabel" : "{{memoLabel}} gir",
@@ -5317,7 +5420,7 @@
         "applyFamilies" : "Uygula",
         "contactsData" : "Kişi verileri",
         "loadPopulatedContacts" : "Örnek kişileri yükle",
-        "loadFromSendHistory" : "Load contacts from send history",
+        "loadFromSendHistory" : "Gönderim geçmişinden kişileri yükle",
         "resetContacts" : "Kişileri sıfırla",
         "resetOverride" : "Uygulamayı sıfırla",
         "featureIntroduction" : {
@@ -5452,6 +5555,12 @@
       "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin.",
       "enableCountervaluesStaging" : "Karşı değerler API'ı test ortamı",
       "enableCountervaluesStagingDesc" : "Sonuç yerine test ortamı karşı değerler API’ını kullanın.",
+      "enableMockServerTransport" : "Mock sunucu aktarımı",
+      "enableMockServerTransportDesc" : "Fiziksel bir cihaz yerine bir cihaz mock sunucusuna bağlanmak için Device Management Kit mock sunucu aktarımını etkinleştirin. MOCK_SERVER_TRANSPORT_URL farklı bir adresi işaret etmediği sürece paylaşılan mock sunucusunu kullanır. Bu işlemin geçerli olması için uygulamanın yeniden başlatılması gerekir.",
+      "mockServerStatus" : {
+        "connected" : "Mock sunucu bağlandı · oturum token'ını kopyalamak için tıklayın, yapılandırma arayüzünü açmak için sağ tıklayın",
+        "disconnected" : "Mock sunucuya ulaşılamıyor"
+      },
       "openOnboardingAppInstallDebug" : "İlk uygulama kurulumu hata ayıklama ekranını açın",
       "openOnboardingAppInstallDebugDesc" : "İlk uygulama kurulumunu senkronize etme adımındaki bileşenlerin yer aldığı bir ekranı açın"
     },
@@ -7117,6 +7226,10 @@
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "Bakiyeniz doğrulanamadı",
+      "description" : "Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin."
+    },
     "NotEnoughTransferAmount" : {
       "title" : "Bir nörona bakiye stake etmek için en az 1 ICP gereklidir."
     },
@@ -7316,6 +7429,12 @@
     "ZcashAmountBelowDustThreshold" : {
       "title" : "Tutar, yayımlanmak için çok az (en az {{minimumZatoshis}} zatoshi gerekir)"
     },
+    "ZcashMemoTooLong" : {
+      "title" : "Memo {{maxBytes}} baytı aşmamalıdır"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "Bu tutar tek bir işlemde gönderilemeyecek kadar büyük; daha küçük tutarlarla göndermeyi deneyin"
+    },
     "InvalidNonce" : {
       "title" : "Nonce gerekiyor"
     },
@@ -7428,6 +7547,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "Öncelikle önceki doğrulayıcınız ile stake durdurma işleminin tamamlanması gerekir."
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "Bu tutar stake etmek için çok düşük."
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Lütfen önce tüm alt hesapları boşaltın"
@@ -8230,6 +8352,7 @@
             "inactiveTooltip" : "Doğrulayıcı bulunamadı",
             "overstakedTooltip" : "Bu düğümde çok fazla staking yapılıyor, APY optimum seviyeden düşük",
             "activeTooltip" : "Yetki devrinde kullanılan tutar üzerinden ödüller kazanırsınız",
+            "fetchErrorTooltip" : "Doğrulayıcı verileri yüklenemedi. Lütfen tekrar deneyin.",
             "delegated" : "Yetki devredildi",
             "rewards" : "Ödüller"
           },
@@ -8308,6 +8431,8 @@
             "newValidatorLabel" : "Yeni yetkili",
             "newValidatorSelectPlaceholder" : "Doğrulayıcı seçin",
             "removedValidatorSelectPlaceholder" : "Daha önce seçilen doğrulayıcı artık kullanılabilir durumda değil",
+            "unableToLoadSelectPlaceholder" : "Doğrulayıcılar yüklenemiyor",
+            "loadingValidatorPlaceholder" : "Doğrulayıcılar yükleniyor...",
             "newValidatorSelectNoOption" : "\"{{validatorName}}\" isimli bir doğrulayıcı yok",
             "amountLabel" : "Yetkisi devredilecek tutar",
             "alert" : "Hedera’da staking yapılırken tüm bakiyeniz stake edilir. Tüm bakiyeniz tamamen likit kalır ve kilitlenme dönemine veya ceza kesintisi risklerine maruz kalmaz. Staking ödüllerinin başlaması için 48 saat kadar beklemeniz gerekebilir.",
@@ -8874,11 +8999,13 @@
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
-    "unsupportedAssetTooltip" : "{{asset}} isn't supported yet.",
-    "unsupportedNetworkTooltip" : "{{network}} network isn't supported yet.",
+    "unsupportedAssetTooltip" : "{{asset}} henüz desteklenmiyor",
+    "unsupportedNetworkTooltip" : "{{network}} ağı henüz desteklenmiyor.",
+    "notAvailableYet" : "Henüz mevcut değil",
     "selectAccount" : "Hesap seçin",
     "selectAccountPerpsTitle" : "Hyperliquid hesabı seçin",
-    "selectAccountPerpsDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
+    "selectAccountPerpsDescription" : "İşlemlerinizi gerçekleştirmek için bakiye yatırmak istediğiniz hesabı seçin",
+    "selectAccountPerpsEmptyDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
     "selectDepositCurrencyTitle" : "Yatırılacak varlığı seçin",
     "selectDepositCurrencyDescription" : "Desteklenen herhangi bir varlık kullanılabilir. Gerekirse otomatik olarak takas edilecektir.",
     "accountCount_one" : "{{count}} hesap",
@@ -9123,7 +9250,7 @@
         "memo" : {
           "label" : "Memo (isteğe bağlı)",
           "placeholder" : "Bir memo girin",
-          "tooltip" : "Bu korumalı işleme gizli bir mesaj ekleyin. Bunu yalnızca alıcı okuyabilir. En fazla 512 bayt."
+          "tooltip" : "Bu korumalı ödemeye şifrelenmiş bir memo ekleyin. Bunu yalnızca alıcı okuyabilir. En fazla 512 bayt."
         },
         "syncBanner" : {
           "stopped" : {
@@ -9146,15 +9273,15 @@
         "selfTransfer" : {
           "toPrivate" : "Kendi gizli bakiyenize transfer",
           "toPublic" : "Kendi açık bakiyenize transer",
-          "unavailable" : "Gizli adresiniz henüz kullanılabilir değil. Bunu etkinleştirmek için görüntüleme anahtarınızı dışa aktarın.",
+          "unavailable" : "Hesabınız için Koruma özelliği etkinleştirildiğinde gizli adresiniz kullanılabilir olacaktır.",
           "privacyWarning" : "Bu işlem, korumalı fonlarınızı, hesabınızın herkes tarafından görülebilen açık adresiyle ilişkilendirir. Harici bir gizli adrese gönderim yapmak ise bu fonların birbiriyle ilişkisiz kalmasını sağlar."
         }
       },
       "state" : {
-        "showBalance" : "Bakiyeyi göster",
+        "showBalance" : "Korumalı adresleri etkinleştirin",
         "startSync" : "Senkronizasyonu başlat",
         "stopSync" : "Senkronizasyonu durdur",
-        "upToDate" : "Güncel",
+        "upToDate" : "Bakiyeyi güncelle",
         "lastSync" : "Son senkronizasyon: {{date}}",
         "estimatedTimeRemaining" : "Tahmini kalan süre: {{hours}}:{{minutes}}",
         "syncFailed" : "Gizli bakiye senkronizasyonu başarısız oldu"
@@ -9324,6 +9451,23 @@
         "desc" : "Lütfen bekleyin",
         "errorTitle" : "Gizli bakiye senkronizasyonu başarısız oldu.",
         "errorDesc" : "Bir şeyler yanlış gitti, lütfen tekrar deneyin."
+      }
+    },
+    "manage" : {
+      "headerAction" : "Kazan",
+      "title" : "Stake'inizi yönetin",
+      "comingSoonTooltip" : "Çok yakında",
+      "bond" : {
+        "title" : "Bağla",
+        "description" : "Ödül kazanmak için ALEO'nuzu bir doğrulayıcıya bağlayın."
+      },
+      "unbond" : {
+        "title" : "Çöz",
+        "description" : "Bağlı ALEO'nuzun bağını çözün. Bakiye, çözülme sürecinden sonra kullanılabilir olacaktır."
+      },
+      "claim" : {
+        "title" : "Ödülleri topla",
+        "description" : "Çözülmüş ALEO varlıklarınızı kullanılabilir bakiyenize geri aktarmak için talep edin."
       }
     }
   },
@@ -9511,6 +9655,16 @@
           "title" : "Ledger cihazınız hazırlanıyor"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "Ledger cihazınız hazırlanıyor"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "Ledger cihazınız hazırlanıyor"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "Bu kişiyi eklerken kullandığınız aynı Ledger cihazını kullanın",
@@ -9523,6 +9677,10 @@
         "appVersionTooLow" : {
           "title" : "Uygulama güncellemesi gerekli",
           "description" : "Kişileri kaydetmek için Ledger cihazınızdaki uygulamayı güncelleyin, ardından tekrar deneyin."
+        },
+        "osVersionTooLow" : {
+          "title" : "Ledger OS güncellemesi gerekli",
+          "description" : "Kişileri yeniden adlandırmak için Ledger cihazınızın işletim sistemini güncelleyin, ardından tekrar deneyin."
         }
       }
     },
@@ -9627,12 +9785,6 @@
       "applyChanges" : "Değişiklikleri uygula",
       "invalidLabelError" : "Özel karakterler desteklenmez."
     },
-    "editSigner" : {
-      "title" : "Cihazınızda onaylayın",
-      "description" : "Bu değişikliği onaylamak için Ledger cihazınızı bağlayın ve kilidini açın.",
-      "confirm" : "Devam",
-      "cancel" : "İptal et"
-    },
     "editSignerMismatch" : {
       "title" : "Bu kişiyi eklerken kullandığınız aynı Ledger cihazını kullanın",
       "description" : "Bağlı cihaz eşleşmiyor.",
@@ -9640,24 +9792,25 @@
       "cancel" : "İptal et"
     },
     "ledgerSyncIntroduction" : {
-      "description" : "Kişileriniz, Ledger cihazınız ile uçtan uca şifrelenir ve cihazlarınız arasında senkronize edilir; bunların kilidini yalnızca siz açabilirsiniz.",
-      "activate" : "Ledger Sync'i etkinleştir",
-      "dismiss" : "Anladım"
+      "title" : "Bir kişi eklemek için cüzdanınızı senkronize edin",
+      "description" : "Kişiler uçtan uca şifrelenmiştir ve tüm telefonlarınız ile bilgisayarlarınızdaki Ledger Wallet genelinde senkronize edilir.",
+      "activate" : "Cüzdanınızı senkronize edin",
+      "dismiss" : "Şimdi değil"
     },
     "featureIntroduction" : {
       "title" : "Karşınızda Kişiler",
-      "primaryAction" : "Explore now",
+      "primaryAction" : "Hemen keşfet",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "Save addresses by a name you choose",
-          "description" : "Exchanges, friends, your own external accounts."
+          "title" : "Adresleri seçtiğiniz bir isimle kaydedin",
+          "description" : "Borsalar, arkadaşlar, kendi harici hesaplarınız."
         },
         "sendToRightAddress" : {
           "title" : "Doğru adrese gönderin",
-          "description" : "See a name you trust, not an address."
+          "description" : "Bir adresi değil, güvendiğiniz bir ismi görün."
         },
         "privateAcrossDevices" : {
-          "title" : "Securely top up via Ledger Wallet™",
+          "title" : "Ledger Wallet™ ile güvenli bir şekilde bakiye yükleyin",
           "description" : "Ledger Sync ile uçtan uca şifrelenir."
         }
       }
@@ -9947,5 +10100,44 @@
       "totalMaturity" : "Toplam Birikmiş Ödül Miktarı",
       "totalMaturityTooltip" : "Staking vadesi ve likidite vadesi kapsamındakiler de dâhil olmak üzere staking kapsamında biriken toplam ödül tutarı. Bu ödüller tekrar stake edilebilir veya likit ICP olarak alınabilir."
     }
+  },
+  "perpsReview" : {
+    "depositTitle" : "SwapKit aracılığıyla Yatırın",
+    "depositSubtitle" : "Sağlayıcımız SwapKit, takas ve yatırma işlemlerinizi tek bir işlem üzerinden yönetir ve tüm bu süreç Ledger cihazınız tarafından güvence altına alınır.",
+    "swapDetailTitle" : "Takas bilgileri",
+    "amountSendLabel" : "Gönderilecek tutar",
+    "amountReceiveLabel" : "Alınacak tutar",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "Yatırma bilgileri",
+    "depositAmountLabel" : "Yatırma tutarı",
+    "depositReceiveLabel" : "Alıcı hesap",
+    "depositCTA" : "Yatır"
+  },
+  "perpsDeposit" : {
+    "title" : "Yatırın",
+    "inputDepositAmount" : "~{{value}} yatırın",
+    "inputSubText" : "{{provider}} ile takas edin ve yatırın",
+    "selectCurrencyTitle" : "{{currencyTicker}} ile yatırın",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "Hesap yok",
+    "review" : "İncele",
+    "formErrors" : {
+      "amountExceedsBalance" : "Yetersiz bakiye",
+      "quoteUnavailable" : "{{provider}} üzerinden fiyat teklifi alamıyoruz. Farklı bir varlıkla deneyin veya daha sonra tekrar deneyin."
+    }
+  },
+  "perpsDepositSign" : {
+    "a11yTitle" : "Yatırma işlemini imzalayın",
+    "terms" : "Bu işlemi imzalayarak <termsLink>SwapKit by NEAR Intents Hüküm ve Koşullarını</termsLink> kabul ediyorum"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "İşlem imzalandı",
+    "description" : "İşlem blok zinciri üzerinde onaylandıktan sonra {{currency}} varlıklarınız hesabınıza geçecektir",
+    "viewTransaction" : "İşlemi görüntüle"
+  },
+  "perpsTransactionStatus" : {
+    "dialogTitle" : "İşlem bilgileri",
+    "title" : "Sürekli Vadeli İşlemlerinizi Fonlayın",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
   }
 }
