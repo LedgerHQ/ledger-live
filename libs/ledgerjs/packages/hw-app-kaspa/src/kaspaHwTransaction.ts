@@ -49,13 +49,8 @@ export class KaspaHwTransaction {
       throw new Error("account must be between 0x80000000 and 0xFFFFFFFF");
     }
 
-    if (
-      this.changeAddressIndex < 0x00000000 ||
-      this.changeAddressIndex > 0xffffffff
-    ) {
-      throw new Error(
-        `changeAddressIndex must be between 0x00000000 and 0xFFFFFFFF`,
-      );
+    if (this.changeAddressIndex < 0x00000000 || this.changeAddressIndex > 0xffffffff) {
+      throw new Error(`changeAddressIndex must be between 0x00000000 and 0xFFFFFFFF`);
     }
   }
 
@@ -95,8 +90,8 @@ export class KaspaHwTransaction {
     return {
       transaction: {
         version: this.version,
-        inputs: this.inputs.map((i) => i.toApiJSON()),
-        outputs: this.outputs.map((o) => o.toApiJSON()),
+        inputs: this.inputs.map(i => i.toApiJSON()),
+        outputs: this.outputs.map(o => o.toApiJSON()),
         lockTime: 0,
         subnetworkId: "0000000000000000000000000000000000000000",
       },
@@ -198,11 +193,7 @@ export class TransactionOutput {
   scriptPublicKey: string;
 
   constructor(outputData: { value: number; scriptPublicKey: string }) {
-    if (
-      !outputData.value ||
-      outputData.value < 0 ||
-      outputData.value > Number.MAX_SAFE_INTEGER
-    ) {
+    if (!outputData.value || outputData.value < 0 || outputData.value > Number.MAX_SAFE_INTEGER) {
       throw new Error(
         `value must be set to a value greater than 0 and less than ${Number.MAX_SAFE_INTEGER.toString()}`,
       );

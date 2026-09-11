@@ -3,7 +3,11 @@ import { pathArrayToString } from "../bip32";
 import { BufferWriter } from "@ledgerhq/psbtv2";
 import { hashLeaf, Merkle } from "./merkle";
 
-export type DefaultDescriptorTemplate = "pkh(@0/**)" | "sh(wpkh(@0/**))" | "wpkh(@0/**)" | "tr(@0/**)";
+export type DefaultDescriptorTemplate =
+  | "pkh(@0/**)"
+  | "sh(wpkh(@0/**))"
+  | "wpkh(@0/**)"
+  | "tr(@0/**)";
 
 /**
  * The Bitcon hardware app uses a descriptors-like thing to describe
@@ -40,7 +44,7 @@ export class WalletPolicy {
     buf.writeUInt8(0); // length of wallet name (empty string for default wallets)
     buf.writeVarInt(this.descriptorTemplate.length); // length of descriptor template
     buf.writeSlice(crypto.sha256(Buffer.from(this.descriptorTemplate, "ascii"))); // hash of descriptor template
-    buf.writeVarInt(this.keys.length), buf.writeSlice(m.getRoot());
+    (buf.writeVarInt(this.keys.length), buf.writeSlice(m.getRoot()));
     return buf.buffer();
   }
 }

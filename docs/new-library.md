@@ -16,9 +16,12 @@ The repo is moving toward a DDD layout (`domain/`, `features/`, `shared/`); it i
 - [ ] `"private": true`
 - [ ] `"sideEffects": false` — enables bundler tree-shaking
 - [ ] `"main"`, `"types"`, `"exports"` — source-only packages (DDD layers: domain/, features/, shared/) point directly to `src/index.ts` and expose `"./package.json"`; built/published libs/ packages use the `@ledgerhq/source` condition + `lib/`/`lib-es/` entries — copy from a neighbouring package of the same type
-- [ ] `devDependencies` via `catalog:` entries — `typescript`, `jest`, `@swc/core`, `@swc/jest`, `@types/jest` (never pin versions directly)
+- [ ] `devDependencies` via `catalog:` entries — `typescript`, `jest`, `@swc/core`, `@swc/jest`, `@types/jest`, `oxfmt`, `oxlint` (never pin versions directly)
 - [ ] `scripts.typecheck: "tsc --noEmit"` — required for the Nx `typecheck` target
 - [ ] `scripts.test` and `scripts.coverage` — `jest` / `jest --coverage`
+- [ ] `scripts.format: "oxfmt src"` — required for the Nx `format` target; add `tests` if the package keeps tests outside `src/` (e.g. `"oxfmt src tests"`)
+- [ ] `scripts.format:check: "oxfmt --check src"` — CI dry-run counterpart; mirror the same paths as `scripts.format`
+- [ ] `scripts.lint: "oxlint -c <path-to>/.oxlintrc.json ./src"` — required for the Nx `lint` target; path to `.oxlintrc.json` depends on depth (e.g. `../../libs/oxc-live-libs/.oxlintrc.json` from `shared/`)
 
 **Additional files**
 - [ ] `README.md` — scope, problem solved, main exports (a few paragraphs); **must include a status marker** (see [README status marker](#readme-status-marker) below)
