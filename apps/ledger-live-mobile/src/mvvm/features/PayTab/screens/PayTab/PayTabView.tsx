@@ -19,8 +19,7 @@ type PayTabViewProps = {
   readonly top: number;
   readonly bottom: number;
   readonly cardTitle: string;
-  readonly oauthConfig: CardProps["oauthConfig"];
-  readonly callback: CardProps["callback"];
+  readonly login: CardProps["login"];
   readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
@@ -35,8 +34,7 @@ export function PayTabView({
   top,
   cardTitle,
   bottom,
-  oauthConfig,
-  callback,
+  login,
   featureTour,
   balance,
   actionTiles,
@@ -58,12 +56,7 @@ export function PayTabView({
           <Balance {...balance} actionTiles={actionTiles} />
           {isContactsEnabled && <Contacts {...contacts} />}
           <ContactAddressPicker {...contactAddressPicker} />
-          <Card
-            title={cardTitle}
-            oauthConfig={oauthConfig}
-            callback={callback}
-            onTrackEvent={balance.onTrackEvent}
-          />
+          <Card title={cardTitle} login={login} />
           <FeatureTour {...featureTour} />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />

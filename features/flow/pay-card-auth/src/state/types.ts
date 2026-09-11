@@ -8,12 +8,14 @@ import type { PayCardLoginErrorKind } from "./errors";
 /* --- The login attempt, and what the provider sends back ------------------------------------- */
 
 /**
- * One login attempt: the PKCE verifier the token exchange must present, and the challenge derived
- * from that verifier for the authorize URL.
+ * One login attempt: the PKCE verifier the token exchange must present, the challenge derived from
+ * that verifier for the authorize URL, and a local id this session uses to recognize its own
+ * redirect.
  */
 export type PayCardAuthorizeAttempt = Readonly<{
   codeVerifier: string;
   codeChallenge: string;
+  state: string;
 }>;
 
 /**
@@ -25,11 +27,13 @@ export type PayCardStoredAttempt = Readonly<{
 }>;
 
 /**
- * What the provider sends back on the redirect. PKCE binds the code to the verifier on disk, so the
- * code alone identifies the attempt and no CSRF value is echoed.
+ * What the provider sends back on the redirect. PKCE binds the code to the verifier on disk, so this
+ * is not a CSRF check. `state` only lets the app recognize a redirect from an attempt it has already
+ * abandoned, when the source it arrived through can supply it.
  */
 export type PayCardAuthCallback = Readonly<{
   code: string;
+  state?: string;
 }>;
 
 /**
@@ -58,10 +62,10 @@ export type CardLoginOauthConfig = Readonly<{
    * Android polyfill matches the incoming link against the whole of it. Only a custom scheme can end a
    * session, so the redirect URI above cannot serve here.
    *
-   * Optional, because only the OS browser can act on it. Desktop opens the page in the user's own
-   * browser, which reports nothing back, so it passes none. Leave it out on a platform that has a
-   * session to end and the login still completes through the app's deep link, but nothing closes the
-   * browser and it stays on top of the app.
+   * Optional, because only a secure browser session has an API that acts on it. Desktop opens the
+   * page in a plain webview with no such API to close it, so it passes none. Leave it out on a
+   * platform that does have one and the login still completes through the app's deep link, but
+   * nothing closes the browser and it stays on top of the app.
    */
   deepLink?: string;
 }>;
@@ -69,14 +73,18 @@ export type CardLoginOauthConfig = Readonly<{
 /* --- What the machine needs from the outside world ------------------------------------------- */
 
 /**
- * What the OS browser reports when it closes. `success` carries the URL the session stopped on, which
- * is the redirect; `dismissed` covers every way the user left without one.
+ * What the hosted login reports back. `success` carries the URL the session stopped on, which is the
+ * redirect; `dismissed` covers every way the user left without one; `pending` says the page is open
+ * in a context that reports nothing, so the redirect reaches the app by its own deep link instead.
  */
 export type HostedLoginResult =
   | Readonly<{ type: "success"; url: string }>
-  | Readonly<{ type: "dismissed" }>;
+  | Readonly<{ type: "dismissed" }>
+  | Readonly<{ type: "pending" }>;
 
 export type OpenHostedLogin = (loginUrl: string, deepLink?: string) => Promise<HostedLoginResult>;
+
+export type OpenCardHostedPage = (path: string) => Promise<void>;
 
 /**
  * Everything the login machine needs from the outside world. The machine itself holds no React, no
@@ -84,7 +92,7 @@ export type OpenHostedLogin = (loginUrl: string, deepLink?: string) => Promise<H
  * platform-card session store.
  */
 export type CardLoginPorts = Readonly<{
-  /** Mints a fresh PKCE pair. */
+  /** Mints a fresh PKCE pair and a local attempt id. */
   createAttempt: () => Promise<PayCardAuthorizeAttempt>;
   saveAttempt: (attempt: PayCardStoredAttempt) => Promise<void>;
   loadAttempt: () => Promise<PayCardStoredAttempt | null>;
@@ -141,6 +149,12 @@ export type CardLoginContext = {
   oauthConfig: CardLoginOauthConfig;
   callback: PayCardAuthCallback | null;
   loginUrl: string | null;
+  /**
+   * The current attempt's local id, so a redirect from an attempt already abandoned is told apart
+   * from the one this session is waiting on. Not a CSRF value: PKCE already ties the code to the
+   * verifier on disk.
+   */
+  attemptState: string | null;
   session: PayCardSession | null;
   errorKind: PayCardLoginErrorKind | null;
   /** Set when the session on disk turned out to be dead, so the wipe takes it as well. */
@@ -154,7 +168,7 @@ export type CardLoginEvent =
   | { type: "LOGIN" }
   | { type: "RETRY" }
   | { type: "SESSION_ENDED" }
-  | { type: "CALLBACK_RECEIVED"; code: string };
+  | { type: "CALLBACK_RECEIVED"; code: string; state?: string };
 
 /* --- Redux ----------------------------------------------------------------------------------- */
 
