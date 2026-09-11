@@ -1007,6 +1007,53 @@ describe("calculateAmount", () => {
     expect(result.amount).toStrictEqual(expectedAmount);
     expect(result.totalSpent).toStrictEqual(expectedAmount);
   });
+
+  // The bonded figure reaches an unbond only when the caller sets useAllAmount: true — a
+  // documented, inherited limitation (see Known risks), not an oversight.
+  it("should return the bonded balance for unbond_public with useAllAmount true", () => {
+    const estimatedFees = new BigNumber(5000);
+    const bondedBalance = new BigNumber(70000);
+    const mockAccount = getMockedAccount({
+      aleoResources: { ...mockAleoResources, bondedBalance },
+    });
+    const mockTransaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
+      amount: new BigNumber(0),
+      useAllAmount: true,
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result.amount).toStrictEqual(bondedBalance);
+    expect(result.totalSpent).toStrictEqual(bondedBalance.plus(estimatedFees));
+  });
+
+  it("should return the caller's amount for unbond_public with useAllAmount false", () => {
+    const estimatedFees = new BigNumber(5000);
+    const bondedBalance = new BigNumber(70000);
+    const callerAmount = new BigNumber(1234);
+    const mockAccount = getMockedAccount({
+      aleoResources: { ...mockAleoResources, bondedBalance },
+    });
+    const mockTransaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
+      amount: callerAmount,
+      useAllAmount: false,
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result.amount).toStrictEqual(callerAmount);
+    expect(result.totalSpent).toStrictEqual(callerAmount.plus(estimatedFees));
+  });
 });
 
 describe("isProvableApiConfigured", () => {
@@ -1679,6 +1726,52 @@ describe("getAvailableBalance", () => {
       `aleo: unsupported tx mode for balance calculation: ${unsupportedMode}`,
     );
   });
+
+  describe("staking modes", () => {
+    const bondedBalance = new BigNumber(70000);
+    const unbondingBalance = new BigNumber(50000);
+
+    const stakingAccount = (unbondingHeight: number | null) =>
+      getMockedAccount({
+        blockHeight: 1234,
+        aleoResources: {
+          ...mockAleoResources,
+          bondedBalance,
+          unbondingBalance,
+          unbondingHeight,
+        },
+      });
+
+    it("returns bondedBalance for unbond_public", () => {
+      const transaction = getMockedTransaction({ mode: TRANSACTION_TYPE.UNBOND_PUBLIC });
+
+      expect(getAvailableBalance(stakingAccount(1234), transaction)).toStrictEqual(bondedBalance);
+    });
+
+    it("returns the claimable balance for claim_unbond_public once the unbonding height is reached", () => {
+      const transaction = getMockedTransaction({ mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC });
+
+      expect(getAvailableBalance(stakingAccount(1234), transaction)).toStrictEqual(
+        unbondingBalance,
+      );
+    });
+
+    it("returns zero for claim_unbond_public before the unbonding height is reached", () => {
+      const transaction = getMockedTransaction({ mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC });
+
+      expect(getAvailableBalance(stakingAccount(2000), transaction)).toStrictEqual(
+        new BigNumber(0),
+      );
+    });
+
+    it("returns zero for unbond_public when bondedBalance is absent", () => {
+      const { bondedBalance: _bondedBalance, ...withoutBondedBalance } = mockAleoResources;
+      const account = getMockedAccount({ aleoResources: withoutBondedBalance });
+      const transaction = getMockedTransaction({ mode: TRANSACTION_TYPE.UNBOND_PUBLIC });
+
+      expect(getAvailableBalance(account, transaction)).toStrictEqual(new BigNumber(0));
+    });
+  });
 });
 
 describe("toStakingResources", () => {
@@ -1783,6 +1876,8 @@ describe("isSelfTransferTransaction", () => {
     [true, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
     [true, TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
     [true, TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC],
+    [false, TRANSACTION_TYPE.UNBOND_PUBLIC],
+    [false, TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC],
     [false, "other_type" as never],
   ])("should return %s for mode '%s'", (expected, mode) => {
     const transaction = getMockedTransaction({ mode });
@@ -1807,6 +1902,8 @@ describe("isPublicTransaction", () => {
     [true, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
     [true, TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC],
     [true, TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
+    [true, TRANSACTION_TYPE.UNBOND_PUBLIC],
+    [true, TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC],
     [false, "other_type" as never],
   ] as const)("should return %s for mode '%s'", (expected, mode) => {
     const transaction = getMockedTransaction({ mode });
@@ -1947,6 +2044,29 @@ describe("createTransactionIntent", () => {
       },
     });
   });
+
+  it.each([TRANSACTION_TYPE.UNBOND_PUBLIC, TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC])(
+    "should create a base transaction intent with no data key for %s",
+    mode => {
+      const transaction = getMockedTransaction({
+        mode,
+        amount: new BigNumber(500000),
+        recipient: mockAccount.freshAddress,
+      });
+
+      const result = createTransactionIntent({ account: mockAccount, transaction });
+
+      expect(result).toEqual({
+        intentType: "transaction",
+        asset: { type: "native" },
+        type: mode,
+        amount: BigInt(transaction.amount.toString()),
+        recipient: transaction.recipient,
+        sender: mockAccount.freshAddress,
+      });
+      expect("data" in result).toBe(false);
+    },
+  );
 
   it.each(supportedPublicTransactionModes)(
     "should keep the native asset for %s even with a stale subAccountId from a previous token selection",

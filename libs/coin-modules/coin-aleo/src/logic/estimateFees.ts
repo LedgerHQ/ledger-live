@@ -30,3 +30,11 @@ export function estimateFees({
     value: BigInt(value.toString()),
   };
 }
+
+// {@link estimateFees} as a BigNumber
+export function estimateFeesBN(params: {
+  configOrCurrencyId: AleoCoinConfig | string;
+  transactionType: TransactionType;
+}): BigNumber {
+  return new BigNumber(estimateFees(params).value.toString());
+}
