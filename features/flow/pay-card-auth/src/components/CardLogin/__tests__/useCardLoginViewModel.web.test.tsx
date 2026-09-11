@@ -422,6 +422,23 @@ describe("useCardLoginViewModel intro", () => {
     expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(false);
   });
 
+  it("retries LOGIN from awaitingCallback even when the intro has not been marked seen", async () => {
+    mockPorts.openHostedLogin.mockResolvedValue({ type: "pending" });
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(result.current?.isLoading).toBe(false));
+    expect(mockPorts.createAttempt).toHaveBeenCalledTimes(1);
+    expect(result.current?.intro.isOpen).toBe(false);
+
+    act(() => result.current?.onLoginPress());
+
+    await waitFor(() => expect(mockPorts.createAttempt).toHaveBeenCalledTimes(2));
+    expect(result.current?.intro.isOpen).toBe(false);
+  });
+
   it("tracks Get card and the intro page when the intro opens", async () => {
     const onTrackEvent = jest.fn();
     const { result } = await renderIdleLogin(store, "both", onTrackEvent);
