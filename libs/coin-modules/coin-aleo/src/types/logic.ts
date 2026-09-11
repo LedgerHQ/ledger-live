@@ -134,6 +134,9 @@ export type AleoTransactionIntentData =
   | {
       type: typeof TRANSACTION_TYPE.BOND_PUBLIC;
       withdrawal: string;
+    }
+  | {
+      type: typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
     };
 
 export type AleoTransactionIntent = TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;

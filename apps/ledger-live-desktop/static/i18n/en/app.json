@@ -9573,6 +9573,29 @@
       "claim": {
         "title": "Claim",
         "description": "Claim your unbonded ALEO back to your available balance."
+      },
+      "unbondPendingTooltip": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding is unavailable until it has gone through."
+    },
+    "unbond": {
+      "flow": {
+        "title": "Unbond ALEO",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "unbondableBanner": "Maximum unbondable amount is",
+            "belowMinimum": "If unbonding would leave less than {{minAmount}} bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met."
+          },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Unbond submitted",
+              "text": "Your unbonding request has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your unbond transaction was signed but could not be broadcast."
+          }
+        }
       }
     }
   },
