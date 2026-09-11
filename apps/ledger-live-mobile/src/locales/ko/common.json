@@ -706,8 +706,8 @@
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
     "UnexpectedGetBalanceError" : {
-      "title" : "Your balance could not be retrieved",
-      "description" : "Please check your internet connection and try again."
+      "title" : "잔액을 불러올 수 없습니다",
+      "description" : "인터넷 연결을 확인하고 다시 시도하세요."
     },
     "UnstakeNotEnoughStakedBalanceLeft" : {
       "title" : "{{maxAmount}} 이상 언스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 언스테이킹됩니다.",
@@ -969,7 +969,7 @@
       "title" : "이전 검증인으로부터 진행 중인 언스테이킹 절차가 먼저 완료되어야 합니다"
     },
     "TezosStakeAmountTooSmall" : {
-      "title" : "This amount is too small to stake"
+      "title" : "최소 금액을 충족하지 않아 스테이킹이 불가합니다."
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "먼저 부계정을 모두 비워주세요"
