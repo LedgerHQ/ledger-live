@@ -21,7 +21,10 @@ jest.mock("@features/platform-feature-flags", () => ({
   formatDefaultFeatures: () => ({ feature_mock_feature: JSON.stringify({ enabled: false }) }),
 }));
 
-const value = (raw: string) => ({ asString: () => raw });
+const value = (raw: string, source: "remote" | "default" | "static" = "remote") => ({
+  asString: () => raw,
+  getSource: () => source,
+});
 
 async function loadModule() {
   return await import("./remoteConfig");
@@ -194,37 +197,5 @@ describe("subscribeToRemoteFlags", () => {
     unsubscribe();
     await fetchRemoteFlags();
     expect(cb).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe("whenReady", () => {
-  it("resolves after the first successful fetch", async () => {
-    const { fetchRemoteFlags, whenReady } = await loadModule();
-
-    let resolved = false;
-    void whenReady().then(() => {
-      resolved = true;
-    });
-
-    await Promise.resolve();
-    expect(resolved).toBe(false);
-
-    await fetchRemoteFlags();
-    await Promise.resolve();
-    expect(resolved).toBe(true);
-  });
-
-  it("resolves even when the first fetch fails (so boot is not blocked)", async () => {
-    mockFetchAndActivate.mockRejectedValue(new Error("network down"));
-    const { fetchRemoteFlags, whenReady } = await loadModule();
-
-    let resolved = false;
-    void whenReady().then(() => {
-      resolved = true;
-    });
-
-    await fetchRemoteFlags().catch(() => null);
-    await Promise.resolve();
-    expect(resolved).toBe(true);
   });
 });
