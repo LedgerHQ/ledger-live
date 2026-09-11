@@ -1,13 +1,17 @@
 import {
   selectContactAddressById,
   selectContactById,
+  selectContacts,
   type ContactAddressId,
   type ContactId,
 } from "@domain/entity-contact";
 import { ContactAddressIdSchema } from "@domain/entity-contact";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import type { ContactsAddressValidationPort } from "@features/platform-contacts";
+import type {
+  ContactsAddressValidationPort,
+  OtherContactAddress,
+} from "@features/platform-contacts";
 import {
   type ContactAddressEditSavePayload,
   useRenameAddressDialogViewModel,
@@ -63,6 +67,16 @@ export function useContactAddressDetailActionsFlowBindings({
         .map(address => address.label) ?? [],
     [addressId, contact?.addresses],
   );
+  const allContacts = useSelector((state: ContactsStateRoot) => selectContacts(state));
+  const otherContactsAddresses = useMemo<readonly OtherContactAddress[]>(
+    () =>
+      allContacts.flatMap(c =>
+        c.id !== contactId
+          ? c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address }))
+          : [],
+      ),
+    [allContacts, contactId],
+  );
   const renameViewModel = useRenameAddressDialogViewModel({
     contactId,
     addressId: resolvedAddressId,
@@ -73,6 +87,7 @@ export function useContactAddressDetailActionsFlowBindings({
     editPort: ports.edit,
     addressValidation,
     manualValidationDebounceMs,
+    otherContactsAddresses,
     isRequestedOpen: flow.editUiState === "edit-open",
     isEditSessionActive: flow.isEditSessionActive,
     onCloseRequest: flow.onEditClose,

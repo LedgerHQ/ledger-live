@@ -10744,7 +10744,8 @@
       "sanctioned": {
         "description": "This address has been flagged and Ledger doesn't allow sending to it",
         "learnMore": "Learn more"
-      }
+      },
+      "duplicateAddress": "This address is already used for {{contactName}}."
     },
     "addAddressName": {
       "title": "Name address",

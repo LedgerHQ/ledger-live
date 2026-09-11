@@ -6,7 +6,11 @@ import {
   buildContactsSaveAddressClickProperties,
   CONTACTS_EVENT_SOURCE,
 } from "@features/flow-contacts";
-import { buildContactsGlobalProperties, useContacts } from "@features/platform-contacts";
+import {
+  buildContactsGlobalProperties,
+  useContacts,
+  type OtherContactAddress,
+} from "@features/platform-contacts";
 import {
   useContactsIntentsOrchestrator,
   type ContactsDeviceIntentExecutorProps,
@@ -62,6 +66,13 @@ export function useSendPrefillAddAddressFlow({
     intents: contactsIntentLWMDefinitions,
     getLiveConfigMinVersion: getMinVersion,
   });
+  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
+    () =>
+      contacts.flatMap(c =>
+        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
+      ),
+    [contacts],
+  );
   const {
     state: addressFlowState,
     startWithPrefilled,
@@ -69,7 +80,10 @@ export function useSendPrefillAddAddressFlow({
     continueFromName,
     goBack,
     close,
-  } = useAddAddressFlowViewModel({ addressValidation });
+  } = useAddAddressFlowViewModel({
+    addressValidation,
+    otherContactsAddresses: allContactsAddresses,
+  });
   const isAddressPhase = isPrefillAddAddressFlowOpen(addressFlowState);
   const trackingProperties = useMemo(
     () => ({
