@@ -22,9 +22,11 @@ export const useWalletSyncUserState = () => React.useContext(WalletSyncContext);
  * defaults say, and `WaitForAppReady` releases the tree after a second whether the flags landed
  * or not, so the watcher only mounts once `remoteFlagsReady` is set.
  *
- * `children` deliberately sits outside the conditional. Swapping the element type at that
- * position when readiness flips would unmount and remount the entire app subtree, navigation
- * included, so the watcher is a sibling that reports upward instead of wrapping anything.
+ * `children` deliberately sits outside the conditional, as a sibling of the watcher rather than
+ * wrapped by it: swapping the element type *around* `children` when readiness flips would unmount
+ * and remount the whole app subtree. Being siblings is safe because the two slots keep a constant
+ * arity and are reconciled by index, so the watcher appearing beside `children` mounts without
+ * displacing it. The provider test pins that down by counting child mounts across the flip.
  *
  * Only the two status fields are lifted, behind an identity check, and the refresh callback is
  * reached through a ref. Lifting the watched object wholesale would loop forever the moment
