@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from "react";
-import type { View } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { View } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
 import Clipboard from "@react-native-clipboard/clipboard";
@@ -40,7 +40,7 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const route = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTabRequestReceive>>();
   const { account } = useAccountScreen(route);
   const currency = route.params.currency;
-  const cardRef = useRef<ComponentRef<typeof View>>(null);
+  const cardRef = useRef<View>(null);
   const { openIntro, verifyAddress, dieActive, onReady, onExit } = usePayTabVerifyAddress(
     onTrackEvent,
     goBack,
@@ -57,10 +57,10 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
     Clipboard.setString(address);
   }, []);
 
-  const onShare = useCallback(async (address: string) => {
+  const onShare = useCallback(async () => {
     try {
       const imageUrl = await captureRef(cardRef, { format: "png" });
-      await Share.open({ url: imageUrl, message: address, failOnCancel: false });
+      await Share.open({ url: imageUrl, failOnCancel: false });
     } catch {
       // TODO: handle share/capture errors
     }
