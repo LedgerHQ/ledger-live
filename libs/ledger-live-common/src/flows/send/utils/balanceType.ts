@@ -17,5 +17,8 @@ export function getSelectedBalanceTypeBalance(
   if (!config) return undefined;
   const selectedId = config.getSelectedOptionId(transaction);
   if (!selectedId) return undefined;
+  // A transaction can carry a pool the account no longer offers (ex: a shielded selection
+  // kept after the viewing key is gone), which must read as no selection at all.
+  if (!config.getOptions({ account }).some(option => option.id === selectedId)) return undefined;
   return config.getSelectableBalance({ account, optionId: selectedId });
 }
