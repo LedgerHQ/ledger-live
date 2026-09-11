@@ -11,7 +11,7 @@ import { assetMappingKey, type AssetMappingKey } from "./assetKey";
  * (`usdt.usdt`); both are listed so a wallet resolves whichever form arrives. Adding a form later is
  * one line, and an unlisted one resolves to `undefined` rather than to a wrong currency.
  */
-export const BAANX_ASSET_LEDGER_IDS: Readonly<Record<AssetMappingKey, string>> = {
+export const BAANX_ASSET_LEDGER_IDS: Readonly<Record<AssetMappingKey, string | undefined>> = {
   "usdt.ethereum": "ethereum/erc20/usd_tether__erc20_",
   "usdt.usdt": "ethereum/erc20/usd_tether__erc20_",
 

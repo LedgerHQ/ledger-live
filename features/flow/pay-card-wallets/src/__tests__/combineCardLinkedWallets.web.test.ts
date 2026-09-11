@@ -16,8 +16,22 @@ const internal: PayCardInternalWallet[] = [
 ];
 
 const linked: PayCardLinkedWallet[] = [
-  { id: "w-usdt", address: "0xusdt", currency: "usdt", network: "ethereum", priority: 2 },
-  { id: "w-usdc", address: "0xusdc", currency: "usdc", network: "ethereum", priority: 1 },
+  {
+    id: "w-usdt",
+    address: "0xusdt",
+    currency: "usdt",
+    network: "ethereum",
+    priority: 2,
+    ledgerId: "ethereum/erc20/usd_tether__erc20_",
+  },
+  {
+    id: "w-usdc",
+    address: "0xusdc",
+    currency: "usdc",
+    network: "ethereum",
+    priority: 1,
+    ledgerId: "ethereum/erc20/usd__coin",
+  },
 ];
 
 const rates: Record<string, number> = { usdc: 1, usdt: 1, sol: 150 };
@@ -42,9 +56,35 @@ describe("combineCardLinkedWallets", () => {
       currency: "usdc",
       network: "ethereum",
       priority: 1,
+      ledgerId: "ethereum/erc20/usd__coin",
       balance: "125.40",
       counterValue: 125.4,
     });
+  });
+
+  it("carries the Ledger currency each link already resolved to", () => {
+    const { wallets } = combineCardLinkedWallets({ linked, internal, resolveCounterValue });
+
+    // The next consumer prices on this, so dropping it here would read as a missing rate.
+    expect(wallets.map(({ ledgerId }) => ledgerId)).toEqual([
+      "ethereum/erc20/usd__coin",
+      "ethereum/erc20/usd_tether__erc20_",
+    ]);
+  });
+
+  it("leaves the field off for a link the catalog does not cover", () => {
+    const { wallets } = combineCardLinkedWallets({
+      linked: [
+        { id: "w-bxx", address: "0xbxx", currency: "bxx", network: "ethereum", priority: 1 },
+      ],
+      internal: [
+        { id: "w-bxx", balance: "5.00", currency: "bxx", address: "0xbxx", addressMemo: null },
+      ],
+      resolveCounterValue,
+    });
+
+    // Absent, not `undefined`: the wallet has no Ledger currency, it does not hold one called that.
+    expect(wallets[0] && "ledgerId" in wallets[0]).toBe(false);
   });
 
   it("totals the counter-values, not the raw balances", () => {
