@@ -7,7 +7,6 @@ import Xpub from "../xpub";
 import { PickingStrategy } from "./types";
 import * as utils from "../utils";
 import { DeepFirst } from "./DeepFirst";
-import { log } from "@ledgerhq/logs";
 import { OutputInfo } from "..";
 
 /**
@@ -28,7 +27,7 @@ export class CoinSelect extends PickingStrategy {
     // get the utxos to use as input
     // from all addresses of the account
     const addresses = await xpub.getXpubAddresses();
-    log("picking strategy", "Coinselect");
+    this.log("picking strategy", "Coinselect");
 
     const unspentUtxos = flatten(
       await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address))),
@@ -40,7 +39,7 @@ export class CoinSelect extends PickingStrategy {
     );
 
     const TOTAL_TRIES = 100000;
-    log("picking strategy", "utxos", unspentUtxos);
+    this.log("picking strategy", "utxos", unspentUtxos);
     // Compute cost of change
     const safeFeePerByte = Math.max(1, Math.ceil(feePerByte));
     // Compute sizes (integer vbytes)
@@ -191,7 +190,12 @@ export class CoinSelect extends PickingStrategy {
       };
     }
 
-    const pickingStrategy = new DeepFirst(this.crypto, this.derivationMode, this.excludedUTXOs);
+    const pickingStrategy = new DeepFirst(
+      this.crypto,
+      this.derivationMode,
+      this.excludedUTXOs,
+      this.log,
+    );
     return pickingStrategy.selectUnspentUtxosToUse(xpub, outputs, feePerByte);
   }
 }
