@@ -1,4 +1,4 @@
-import { AccountBridge } from "@ledgerhq/types-live";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
@@ -69,11 +69,16 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
       if (gasOptions) dest.gasOptions = gasOptions;
       return;
     }
-    case "transferFee": {
-      const transferFee = toTransferFeeFromUnknown(value);
-      if (transferFee) dest.transferFee = transferFee;
+    case "transferFee":
+      // Assigned even when absent: a stale fee would reach the device screen.
+      dest.transferFee = toTransferFeeFromUnknown(value);
       return;
-    }
+    case "ownerTokenAccount":
+      dest.ownerTokenAccount = typeof value === "string" ? value : undefined;
+      return;
+    case "stakeAccountRent":
+      dest.stakeAccountRent = isNumericLike(value) ? new BigNumber(value.toString()) : undefined;
+      return;
     default:
       return;
   }
@@ -204,6 +209,8 @@ export function genericPrepareTransaction(
       // Families that don't produce them leave this untouched.
       "gasOptions",
       "transferFee",
+      "stakeAccountRent",
+      "ownerTokenAccount",
     ];
 
     for (const field of fieldsToPropagate) {

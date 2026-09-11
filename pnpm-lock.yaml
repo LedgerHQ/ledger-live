@@ -8734,6 +8734,9 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../../domain/entity/currency-token
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:*
+        version: link:../ledger-wallet-framework
       '@ledgerhq/live-countervalues':
         specifier: workspace:*
         version: link:../live-countervalues

@@ -330,7 +330,7 @@ function stakingBalances(account: Account): Balance[] {
     state: StakeState,
     delegate: string | undefined,
   ): Balance => ({
-    value: BigInt(position.amount.toFixed()),
+    value: BigInt(position.amount.plus(position.lockedReserve ?? 0).toFixed()),
     asset: { type: "native" },
     stake: {
       uid: position.positionId ?? "",
