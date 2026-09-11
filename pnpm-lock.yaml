@@ -3175,6 +3175,9 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:*
         version: link:../../domain/api/card-management
+      '@domain/entity-card-asset-mapping':
+        specifier: workspace:*
+        version: link:../../domain/entity/card-asset-mapping
       '@features/flow-pay-card-auth':
         specifier: workspace:*
         version: link:../../features/flow/pay-card-auth
@@ -4352,7 +4355,7 @@ importers:
     dependencies:
       '@domain/entity-card-asset-mapping':
         specifier: workspace:*
-        version: link:../../entity/pay-card-asset
+        version: link:../../entity/card-asset-mapping
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
@@ -4822,6 +4825,30 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  domain/entity/card-asset-mapping:
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   domain/entity/client-identity:
     dependencies:
       '@reduxjs/toolkit':
@@ -5096,30 +5123,6 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 4.3.6
-    devDependencies:
-      '@jest/globals':
-        specifier: 'catalog:'
-        version: 30.5.0
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../../support/test-quarantine
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.0
-      typescript:
-        specifier: 'catalog:'
-        version: '@typescript/typescript6@6.0.2'
-
-  domain/entity/card-asset-mapping:
     devDependencies:
       '@jest/globals':
         specifier: 'catalog:'
@@ -65335,9 +65338,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
