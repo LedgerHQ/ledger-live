@@ -702,6 +702,30 @@ describe("coin-framework utils", () => {
   });
 
   describe("transactionToIntent", () => {
+    describe("memo", () => {
+      const account = { currency: { name: "solana", units: [{}] } } as Account;
+
+      it("carries a memo the user typed", () => {
+        expect(
+          transactionToIntent(account, {
+            mode: "send",
+            memoType: "TEXT",
+            memoValue: "hello",
+          } as GenericTransaction),
+        ).toMatchObject({ memo: { type: "string", kind: "TEXT", value: "hello" } });
+      });
+
+      it("reads a cleared memo as none, so nothing is crafted for it", () => {
+        expect(
+          transactionToIntent(account, {
+            mode: "send",
+            memoType: "TEXT",
+            memoValue: "",
+          } as GenericTransaction),
+        ).toMatchObject({ memo: { type: "none" } });
+      });
+    });
+
     describe("type", () => {
       it("fallbacks to 'Payment' without a transaction mode", () => {
         expect(
@@ -2037,6 +2061,13 @@ describe("extractBalances", () => {
     expect(optionalNumeric(delegation.stake?.details?.activeAmount)?.toFixed()).toBe(
       "9007199254740993",
     );
+  });
+
+  it("counts the rent-exempt reserve in the position's value, not in its delegated amount", () => {
+    const [, delegation] = extractBalances(account);
+
+    expect(delegation.value).toBe(1_000n + 2_282_880n);
+    expect(delegation.stake?.amount).toBe(1_000n);
   });
 
   it("returns only the native balance for an account with no staking resources", () => {

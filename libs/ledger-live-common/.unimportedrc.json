@@ -502,6 +502,7 @@
     "src/families/cardano/setup.ts",
     "src/families/cardano/signerSerializer.ts",
     "src/families/cardano/staking.ts",
+    "src/families/casper/bridgeExtensions.ts",
     "src/families/casper/common.ts",
     "src/families/casper/consts.ts",
     "src/families/casper/descriptor/index.ts",

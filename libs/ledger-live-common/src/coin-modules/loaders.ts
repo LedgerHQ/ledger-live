@@ -92,6 +92,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/coin-casper/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/casper/bridge/mock").then(m => m.default),
     loadSigner: () => import("../families/casper/signer").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/casper/bridgeExtensions").then(m => m.default),
   },
   {
     family: "celo",
