@@ -210,6 +210,44 @@ describe("getMaxAmount", () => {
       },
     );
   });
+
+  describe("when account uses the generic framework's stakingPositions (no nearResources)", () => {
+    const validatorId = "figment.poolv1.near";
+    const frameworkAccount = {
+      spendableBalance: new BigNumber(spendableBalance),
+      pendingOperations: [],
+      stakingPositions: [
+        { state: "active", delegate: validatorId, amount: new BigNumber(4_567) },
+        { state: "deactivating", delegate: validatorId, amount: new BigNumber(111) },
+        { state: "withdrawable", delegate: validatorId, amount: new BigNumber(8_901) },
+        { state: "active", delegate: "other.near", amount: new BigNumber(999) },
+      ],
+    } as unknown as NearAccount;
+
+    it("returns the staked amount for unstake", () => {
+      const result = getMaxAmount(frameworkAccount, {
+        mode: "unstake",
+        recipient: validatorId,
+      } as Transaction);
+      expect(result).toEqual(new BigNumber(4_567));
+    });
+
+    it("returns the withdrawable amount for withdraw", () => {
+      const result = getMaxAmount(frameworkAccount, {
+        mode: "withdraw",
+        recipient: validatorId,
+      } as Transaction);
+      expect(result).toEqual(new BigNumber(8_901));
+    });
+
+    it("returns 0 for an unstake on a validator with no matching position", () => {
+      const result = getMaxAmount(frameworkAccount, {
+        mode: "unstake",
+        recipient: "unknown.near",
+      } as Transaction);
+      expect(result).toEqual(new BigNumber(0));
+    });
+  });
 });
 
 describe("getTotalSpent", () => {

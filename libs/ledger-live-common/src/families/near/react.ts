@@ -1,5 +1,4 @@
-import invariant from "invariant";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/coin-near/constants";
 import { mapStakingPositions } from "@ledgerhq/coin-near/logic";
@@ -8,22 +7,79 @@ import {
   Transaction,
   NearMappedStakingPosition,
   NearAccount,
+  NearStakingPosition,
 } from "@ledgerhq/coin-near/types";
-import { getCurrentNearPreloadData } from "@ledgerhq/coin-near/preload";
+import { createApi as createNearApi } from "@ledgerhq/coin-near/api/index";
+import type { NearConfig } from "@ledgerhq/coin-near/config";
 import { getAccountCurrency } from "../../account";
+import { getCurrencyConfiguration } from "../../config";
+
+// The generic-framework bridge never runs families/near/setup.ts (which seeds the legacy
+// getCoinConfig() singleton via setCoinConfig), so resolve config directly from LiveConfig
+// instead — same source setup.ts itself reads from.
+const nearContext = {
+  config: () => Promise.resolve(getCurrencyConfiguration<NearConfig>("near")),
+  logger: () => {},
+};
+
+// Framework writes stakingPositions to accounts with usesStakingPositions: true.
+// The type is local to getAccountShape.ts and not exported — access via this cast.
+type FrameworkAccount = {
+  stakingPositions?: Array<{ state: string; delegate?: string; amount: BigNumber }>;
+};
+
+function useNearValidators(): NearValidatorItem[] {
+  const [validators, setValidators] = useState<NearValidatorItem[]>([]);
+  useEffect(() => {
+    let mounted = true;
+    const api = createNearApi();
+    api
+      .getValidators(nearContext)
+      .then(page => {
+        if (!mounted) return;
+        setValidators(
+          page.items.map(v => ({
+            validatorAddress: v.address,
+            commission: v.commissionRate != null ? Number(v.commissionRate) : null,
+            tokens: String(v.balance),
+          })),
+        );
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, []);
+  return validators;
+}
 
 export function useNearMappedStakingPositions(account: NearAccount): NearMappedStakingPosition[] {
-  const { validators } = getCurrentNearPreloadData();
-  const stakingPositions = account.nearResources?.stakingPositions;
+  const validators = useNearValidators();
 
-  invariant(stakingPositions, "near: stakingPositions is required");
+  const stakingPositions: NearStakingPosition[] = useMemo(() => {
+    const rawPositions = (account as unknown as FrameworkAccount).stakingPositions ?? [];
+    const byDelegate = new Map<string, NearStakingPosition>();
+    for (const pos of rawPositions) {
+      if (!pos.delegate) continue;
+      const cur = byDelegate.get(pos.delegate) ?? {
+        validatorId: pos.delegate,
+        staked: new BigNumber(0),
+        available: new BigNumber(0),
+        pending: new BigNumber(0),
+      };
+      if (pos.state === "active") cur.staked = cur.staked.plus(pos.amount);
+      else if (pos.state === "deactivating") cur.pending = cur.pending.plus(pos.amount);
+      else if (pos.state === "withdrawable") cur.available = cur.available.plus(pos.amount);
+      byDelegate.set(pos.delegate, cur);
+    }
+    return [...byDelegate.values()];
+  }, [account]);
 
   const unit = getAccountCurrency(account).units[0];
-
-  return useMemo(() => {
-    const mappedStakingPositions = mapStakingPositions(stakingPositions || [], validators, unit);
-    return mappedStakingPositions;
-  }, [stakingPositions, validators, unit]);
+  return useMemo(
+    () => mapStakingPositions(stakingPositions, validators, unit),
+    [stakingPositions, validators, unit],
+  );
 }
 
 export function useNearStakingPositionsQuerySelector(
@@ -56,7 +112,7 @@ export function useNearStakingPositionsQuerySelector(
 }
 
 export function useLedgerFirstShuffledValidatorsNear(search: string) {
-  const { validators: unorderedValidators } = getCurrentNearPreloadData();
+  const unorderedValidators = useNearValidators();
   const validators = reorderValidators(unorderedValidators);
 
   return useMemo(() => {
@@ -74,8 +130,32 @@ export function useLedgerFirstShuffledValidatorsNear(search: string) {
   }, [validators, search]);
 }
 
+export function useNearBalanceBreakdown(account: NearAccount): {
+  stakedBalance: BigNumber;
+  storageUsageBalance: BigNumber;
+  availableBalance: BigNumber;
+  pendingBalance: BigNumber;
+} {
+  const positions = (account as unknown as FrameworkAccount).stakingPositions ?? [];
+  const stakedBalance = positions
+    .filter(p => p.state === "active")
+    .reduce((acc, p) => acc.plus(p.amount), new BigNumber(0));
+  const pendingBalance = positions
+    .filter(p => p.state === "deactivating")
+    .reduce((acc, p) => acc.plus(p.amount), new BigNumber(0));
+  const availableBalance = positions
+    .filter(p => p.state === "withdrawable")
+    .reduce((acc, p) => acc.plus(p.amount), new BigNumber(0));
+  const locked = account.balance.minus(account.spendableBalance);
+  const nonStorageLocked = stakedBalance.plus(pendingBalance).plus(availableBalance);
+  const storageUsageBalance = locked.minus(nonStorageLocked).gt(0)
+    ? locked.minus(nonStorageLocked)
+    : new BigNumber(0);
+  return { stakedBalance, storageUsageBalance, availableBalance, pendingBalance };
+}
+
 function reorderValidators(validators: NearValidatorItem[]): NearValidatorItem[] {
-  const sortedValidators = validators.sort((a, b) =>
+  const sortedValidators = [...validators].sort((a, b) =>
     new BigNumber(b.tokens).minus(new BigNumber(a.tokens)).toNumber(),
   );
 

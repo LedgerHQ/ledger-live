@@ -21,7 +21,7 @@ const getMainActions = ({
 }): ActionButtonEvent[] => {
   const stakingDisabled = !canStake(account);
   const startWithValidator =
-    account.nearResources && account.nearResources?.stakingPositions.length > 0;
+    ((account as unknown as { stakingPositions?: unknown[] }).stakingPositions?.length ?? 0) > 0;
   const label = getStakeLabelLocaleBased();
 
   const navigationParams: NavigationParamsType = stakingDisabled

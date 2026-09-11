@@ -276,4 +276,41 @@ describe("genericSignOperation", () => {
     const zeroOverrideArgs = craftTransaction.mock.calls.at(-1);
     expect(zeroOverrideArgs[2].customFees.parameters.fees).toBe(0n);
   });
+
+  describe("NEAR: computeIntentType", () => {
+    // NEAR maps "withdraw" → "finalize_unstake" via its bridgeApi.computeIntentType.
+    // Verify the framework threads computeIntentType through to craftTransaction correctly.
+    it('maps "withdraw" mode to "finalize_unstake" intent type via computeIntentType', async () => {
+      const { computeIntentType } = await import("../../../families/near/bridge/api");
+      (getBridgeApi as jest.Mock).mockResolvedValue({ computeIntentType });
+
+      const nearAccount = {
+        freshAddressPath: "44'/397'/0'/0'/0'",
+        freshAddress: "nearTestAddress.testnet",
+        address: "nearTestAddress.testnet",
+        currency: { id: "near", name: "near", units: [{ name: "near", code: "NEAR" }] },
+      } as any;
+
+      const nearWithdrawTx = {
+        amount: new BigNumber(100_000),
+        fees: new BigNumber(500),
+        recipient: "validator.poolv1.near",
+        family: "near",
+        mode: "withdraw",
+      } as any;
+
+      const signOperation = genericSignOperation("mainnet", "near")(mockSignerContext);
+      await lastValueFrom(
+        signOperation({ account: nearAccount, transaction: nearWithdrawTx, deviceId: "" }).pipe(
+          toArray(),
+        ),
+      );
+
+      expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ type: "finalize_unstake" }),
+        expect.anything(),
+      );
+    });
+  });
 });
