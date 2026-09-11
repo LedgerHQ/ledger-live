@@ -16,12 +16,10 @@ import { expectAmountCloseTo } from "tests/utils/amountUtils";
 import {
   QUOTE_CARD_PROVIDER_NAME_FRAGMENT,
   quoteCardCtaPattern,
-  quoteCardMarkupPrefix,
+  quoteCardVariantPrefix,
   SWAP_FLAG_OVERRIDES_KEY,
   swapFlagPresetPayload,
-  swapFlagPresetQuoteCard,
-  type QuoteCardCtaCopy,
-  type QuoteCardMarkup,
+  type QuoteCardVariant,
   type SwapFlagPreset,
 } from "@ledgerhq/live-e2e-shared/data/swapLiveAppFlags";
 
@@ -60,7 +58,7 @@ export class SwapPage extends WebViewAppPage {
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
   private readonly toAccountAmountInput = "to-account-amount-input";
   private readonly fromAccountAmountInactive = "from-account-amount-inactive";
-  private pinnedCtaCopy: QuoteCardCtaCopy | null = null;
+  private flagPresetPinned = false;
   private specificQuoteCardProviderName = (provider: string) =>
     `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${provider.toLowerCase()}']`;
   private providerContainerSelector = (provider: string) =>
@@ -125,7 +123,7 @@ export class SwapPage extends WebViewAppPage {
     await this.maxSpendableToggle.click();
   }
 
-  // Only the loaded page can write its localStorage, and the atom reads the key once per load.
+  // Only the loaded page can write its localStorage, and the atom reads the key once.
   @step("Pin swap live app feature flags: $0")
   async applyFlagPreset(preset: SwapFlagPreset) {
     const webview = await this.getWebView();
@@ -133,26 +131,26 @@ export class SwapPage extends WebViewAppPage {
       key: SWAP_FLAG_OVERRIDES_KEY,
       value: swapFlagPresetPayload(preset),
     });
-    this.pinnedCtaCopy = swapFlagPresetQuoteCard[preset].ctaCopy;
+    this.flagPresetPinned = true;
     await webview.reload();
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toBeVisible();
   }
 
-  // The override outlives the test, so clear it in teardown. A failed test can leave no
-  // webview at all, and waiting 60s for one there would hide the real failure.
+  // The override outlives the test. A failed test can leave no webview, and waiting
+  // 60s for one would hide the real failure.
   @step("Clear swap live app feature flag overrides")
   async clearFlagOverrides() {
-    this.pinnedCtaCopy = null;
+    this.flagPresetPinned = false;
     const webview = this._webviewPage;
     if (!webview || webview.isClosed()) return;
     await webview.evaluate(key => localStorage.removeItem(key), SWAP_FLAG_OVERRIDES_KEY);
   }
 
-  @step("Check quote card markup: $0")
-  async checkQuoteCardMarkup(markup: QuoteCardMarkup) {
+  @step("Check quote card variant: $0")
+  async checkQuoteCardVariant(variant: QuoteCardVariant) {
     const webview = await this.getWebView();
     await expect(
-      webview.locator(`[data-testid^='${quoteCardMarkupPrefix[markup]}']`).first(),
+      webview.locator(`[data-testid^='${quoteCardVariantPrefix[variant]}']`).first(),
     ).toBeVisible();
   }
 
@@ -174,7 +172,7 @@ export class SwapPage extends WebViewAppPage {
     const actualButtonText = (await buttonLocator.textContent())?.trim() ?? "";
 
     expect(actualButtonText).toMatch(
-      quoteCardCtaPattern({ providerUiName, approvalRequired, copy: this.pinnedCtaCopy }),
+      quoteCardCtaPattern({ providerUiName, approvalRequired, pinned: this.flagPresetPinned }),
     );
   }
 

@@ -6,7 +6,7 @@ import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import {
-  swapFlagPresetQuoteCard,
+  quoteCardVariantByPreset,
   type SwapFlagPreset,
 } from "@ledgerhq/live-e2e-shared/data/swapLiveAppFlags";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
@@ -16,8 +16,9 @@ const app: AppInfos = AppInfos.EXCHANGE;
 const accountToDebit = Account.ETH_1;
 const accountToCredit = Account.BTC_NATIVE_SEGWIT_1;
 
-// One case per observable variant: the design variants only swap CSS classes.
-const presets: SwapFlagPreset[] = ["quoteCardShortCta", "quoteCardProviderCta", "quoteCardCompact"];
+// One case per value the A/B test serves. Disabled runs first, so a failed teardown
+// leaves the production state behind.
+const presets: SwapFlagPreset[] = ["lumenQuoteCardDisabled", "lumenQuoteCardEnabled"];
 
 test.describe("Swap - quote card feature flag variants", () => {
   setupEnv(true);
@@ -54,10 +55,10 @@ test.describe("Swap - quote card feature flag variants", () => {
   });
 
   for (const preset of presets) {
-    const { markup, ctaCopy } = swapFlagPresetQuoteCard[preset];
+    const variant = quoteCardVariantByPreset[preset];
 
     test(
-      `[${preset}] Quote card shows the ${markup} markup and the ${ctaCopy} CTA copy`,
+      `[${preset}] Quote card shows the ${variant} card and the provider CTA copy`,
       {
         tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       },
@@ -75,7 +76,7 @@ test.describe("Swap - quote card feature flag variants", () => {
           amount,
         );
         await app.swap.checkQuotes();
-        await app.swap.checkQuoteCardMarkup(markup);
+        await app.swap.checkQuoteCardVariant(variant);
 
         const providerList = await app.swap.getProviderList();
         await app.swap.checkQuoteCardCta(providerList[0]);

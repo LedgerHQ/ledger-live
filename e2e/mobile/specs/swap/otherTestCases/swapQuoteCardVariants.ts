@@ -3,17 +3,16 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import {
-  swapFlagPresetQuoteCard,
+  quoteCardVariantByPreset,
   type SwapFlagPreset,
 } from "@ledgerhq/live-e2e-shared/data/swapLiveAppFlags";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { performSwapUntilQuoteSelectionStep } from "@e2e/utils/swapUtils";
 import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
 
-// One case per observable variant: the design variants only swap CSS classes. The disabled
-// variant runs first, so a teardown that cannot reach the live app leaves the production
-// variant behind.
-const presets: SwapFlagPreset[] = ["quoteCardCompact", "quoteCardProviderCta", "quoteCardShortCta"];
+// One case per value the A/B test serves. Disabled runs first, so a failed teardown
+// leaves the production state behind.
+const presets: SwapFlagPreset[] = ["lumenQuoteCardDisabled", "lumenQuoteCardEnabled"];
 
 export function runSwapQuoteCardVariantsTest(
   fromAccount: Account,
@@ -47,15 +46,15 @@ export function runSwapQuoteCardVariantsTest(
     tags.forEach(tag => $Tag(tag));
 
     for (const preset of presets) {
-      const { markup, ctaCopy } = swapFlagPresetQuoteCard[preset];
+      const variant = quoteCardVariantByPreset[preset];
 
-      it(`[${preset}] Quote card shows the ${markup} markup and the ${ctaCopy} CTA copy`, async () => {
+      it(`[${preset}] Quote card shows the ${variant} card and the provider CTA copy`, async () => {
         await app.swapLiveApp.applyFlagPreset(preset);
 
         const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
         await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, minAmount);
         await app.swapLiveApp.checkQuotes();
-        await app.swapLiveApp.checkQuoteCardMarkup(markup);
+        await app.swapLiveApp.checkQuoteCardVariant(variant);
 
         const providerList = await app.swapLiveApp.getProviderList();
         await app.swapLiveApp.checkQuoteCardCta(providerList[0]);
