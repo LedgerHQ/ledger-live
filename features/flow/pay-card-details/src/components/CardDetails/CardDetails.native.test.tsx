@@ -44,9 +44,7 @@ describe("CardDetails (native)", () => {
     expect(screen.queryByText(CARD_COPY.freeze)).toBeNull();
   });
 
-  // TODO: userEvent.press does not fire onPress on custom Lumen host elements.
-  // Fix tracked in: https://github.com/LedgerHQ/ledger-live/pull/21814
-  it.skip("should open the details sheet when Details is pressed", async () => {
+  it("should open the details sheet when Details is pressed", async () => {
     const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
@@ -55,7 +53,7 @@ describe("CardDetails (native)", () => {
     expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 
-  it.skip("should navigate to More without opening another sheet", async () => {
+  it("should navigate to More without opening another sheet", async () => {
     const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
@@ -65,8 +63,7 @@ describe("CardDetails (native)", () => {
     expect(screen.getByTestId("card-details-more-content")).toBeVisible();
   });
 
-  // TODO: same as above — userEvent.press on custom Lumen host elements.
-  it.skip("should navigate to freeze confirmation without opening another sheet", async () => {
+  it("should navigate to freeze confirmation without opening another sheet", async () => {
     const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
@@ -76,8 +73,7 @@ describe("CardDetails (native)", () => {
     expect(screen.getByTestId("card-details-freeze-content")).toBeVisible();
   });
 
-  // TODO: same as above — userEvent.press on custom Lumen host elements.
-  it.skip("should return to the overview when the freeze confirmation is cancelled", async () => {
+  it("should return to the overview when the freeze confirmation is cancelled", async () => {
     const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
