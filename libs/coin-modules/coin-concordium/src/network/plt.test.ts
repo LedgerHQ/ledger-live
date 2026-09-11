@@ -1,4 +1,13 @@
-import { getAccountListStatus, isDecodedPltState, isPltRejectReason } from "./plt";
+import {
+  findAccountTokenEntry,
+  getAccountListStatus,
+  getListVerdict,
+  isDecodedPltState,
+  isPltRejectReason,
+  readAccountTokenEntry,
+  readAccountTokens,
+  readPltState,
+} from "./plt";
 import type {
   PltAccountModuleState,
   PltAccountToken,
@@ -101,6 +110,157 @@ describe("getAccountListStatus", () => {
 
   it("does not report unknown when the token declares no list, whatever the account state", () => {
     expect(getAccountListStatus(accountToken({}, "a1"))).toBe("allowed");
+  });
+});
+
+const verdict = (moduleState: PltModuleState, entry?: PltAccountToken) =>
+  getListVerdict(moduleState, entry);
+
+describe("getListVerdict", () => {
+  it("allows when the token declares no list", () => {
+    expect(verdict({ name: "Token" }, accountToken({ name: "Token" }))).toBe("allowed");
+  });
+
+  it("names the deny list when the account is on it", () => {
+    expect(verdict({ denyList: true }, accountToken({ denyList: true }, { denyList: true }))).toBe(
+      "denied",
+    );
+  });
+
+  it("names the allow list when the account is absent from it", () => {
+    expect(verdict({ allowList: true }, accountToken({ allowList: true }, {}))).toBe("notAllowed");
+  });
+
+  it("allows an approved account on an allow-list token", () => {
+    expect(
+      verdict({ allowList: true }, accountToken({ allowList: true }, { allowList: true })),
+    ).toBe("allowed");
+  });
+
+  // Both rules refuse it; the chain would too. Reporting the deny list is the
+  // more specific of the two facts.
+  it("prefers the deny list when both rules refuse the same account", () => {
+    const both = { allowList: true, denyList: true };
+    expect(verdict(both, accountToken(both, { allowList: false, denyList: true }))).toBe("denied");
+  });
+
+  describe("with no entry for the token", () => {
+    it("refuses an allow-list token, because membership requires a write", () => {
+      expect(verdict({ allowList: true })).toBe("notAllowed");
+    });
+
+    it("allows a deny-list token, which absence says nothing about", () => {
+      expect(verdict({ denyList: true })).toBe("allowed");
+    });
+
+    it("allows a token that declares neither list", () => {
+      expect(verdict({ name: "Token" })).toBe("allowed");
+    });
+  });
+
+  it("reports unknown for an undecodable account state", () => {
+    expect(verdict({ allowList: true }, accountToken({ allowList: true }, "a1"))).toBe("unknown");
+  });
+
+  it("reports unknown for a non-boolean flag in the account state", () => {
+    const state = { denyList: "true" } as unknown as PltAccountModuleState;
+
+    expect(verdict({ denyList: true }, accountToken({ denyList: true }, state))).toBe("unknown");
+  });
+
+  // The legitimate absence, which must keep its meaning: the proxy omits `state`
+  // when the account has no module state, so there is no membership to find.
+  it("still treats an absent `state` inside a present tokenAccountState as no membership", () => {
+    expect(verdict({ denyList: true }, accountToken({ denyList: true }))).toBe("allowed");
+  });
+});
+
+describe("readPltState", () => {
+  it("reads a decoded state", () => {
+    expect(readPltState<PltModuleState>({ allowList: true })).toEqual({ allowList: true });
+  });
+
+  it("rejects the hex the node falls back to when the CBOR does not decode", () => {
+    expect(readPltState<PltModuleState>("a1696a6c6c6f774c697374f5")).toBeUndefined();
+  });
+
+  it("rejects an absent state", () => {
+    expect(readPltState<PltModuleState>(undefined)).toBeUndefined();
+  });
+
+  // A non-boolean flag fails every `=== true` test downstream, which would read
+  // as "no list is declared" and allow a transfer off state that never decoded.
+  it.each([
+    ["a string flag", { denyList: "true" }],
+    ["a numeric flag", { allowList: 1 }],
+    ["a null flag", { denyList: null }],
+  ])("rejects %s", (_label, state) => {
+    expect(readPltState(state as unknown as PltModuleState)).toBeUndefined();
+  });
+
+  it("accepts a state that declares no flags at all", () => {
+    expect(readPltState<PltModuleState>({ name: "Token" })).toEqual({ name: "Token" });
+  });
+});
+
+describe("readAccountTokenEntry", () => {
+  it("reads a well-formed entry", () => {
+    const entry = accountToken({ allowList: true });
+    expect(readAccountTokenEntry(entry)).toBe(entry);
+  });
+
+  // An empty id is malformed rather than merely unmatched — the rule
+  // `isUsableEntry` already applies on the sync path.
+  it.each([
+    ["a null entry", null],
+    ["a string where an entry belongs", "nonsense"],
+    ["an entry with no token", {}],
+    ["an entry with no tokenId", { token: {}, tokenAccountState: {} }],
+    ["an entry with an empty tokenId", { token: { tokenId: "" }, tokenAccountState: {} }],
+    ["an entry with a non-string tokenId", { token: { tokenId: 7 }, tokenAccountState: {} }],
+    ["an entry with no tokenAccountState", { token: { tokenId: "PLT" } }],
+    [
+      "an entry whose tokenAccountState is a string",
+      { token: { tokenId: "PLT" }, tokenAccountState: "bad" },
+    ],
+  ])("rejects %s", (_label, value) => {
+    expect(readAccountTokenEntry(value)).toBeUndefined();
+  });
+});
+
+describe("readAccountTokens", () => {
+  it("reads a list whose entries all read", () => {
+    const entry = accountToken({ allowList: true });
+    expect(readAccountTokens([entry])).toEqual([entry]);
+  });
+
+  it("reads an empty list as empty rather than unreadable", () => {
+    expect(readAccountTokens([])).toEqual([]);
+  });
+
+  it.each([
+    ["an absent list", undefined],
+    ["a non-array list", {}],
+  ])("rejects %s", (_label, value) => {
+    expect(readAccountTokens(value)).toBeUndefined();
+  });
+
+  // The entry that failed to read could be the one being looked for, and not
+  // finding an entry is what "not on this list" is inferred from — which under a
+  // deny list means allowed.
+  it("rejects the whole list when one entry does not read", () => {
+    expect(readAccountTokens([accountToken({ allowList: true }), null])).toBeUndefined();
+  });
+});
+
+describe("findAccountTokenEntry", () => {
+  it("matches on the id the proxy nests under `token`", () => {
+    const entry = accountToken({ allowList: true });
+    expect(findAccountTokenEntry([entry], "PLT")).toBe(entry);
+  });
+
+  it("returns nothing when the account holds a different token", () => {
+    expect(findAccountTokenEntry([accountToken({})], "OTHER")).toBeUndefined();
   });
 });
 

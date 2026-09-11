@@ -34,7 +34,14 @@ export async function getBalance(
   currencyId: string,
 ): Promise<Balance[]> {
   const balanceResponse = await getAccountBalance(config, currencyId, address);
-  const { accountAmount, accountTokens } = balanceResponse.finalizedBalance;
+
+  // Reporting a zero native balance for an address that does not exist matches
+  // what the chain holds for it, where throwing would surface as an
+  // unexplained failure. A balance that is present but carries no amount is a
+  // different case, and still throws rather than understate what is held.
+  const { finalizedBalance } = balanceResponse;
+  const accountAmount = finalizedBalance ? finalizedBalance.accountAmount : "0";
+  const accountTokens = finalizedBalance?.accountTokens;
 
   const native: Balance = { asset: { type: "native" }, value: BigInt(accountAmount) };
 

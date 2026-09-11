@@ -101,14 +101,56 @@ export class ConcordiumAccountDenied extends Error {
 }
 
 /**
- * The recipient fails the token's own list rules — absent from an allow list,
- * or present on a deny list. Distinct from the sender-side errors because the
- * user's remedy is to change the recipient, not to get themselves approved.
+ * The token enforces an allow list and the recipient is not on it, which
+ * includes a recipient the token has never written state for: membership
+ * requires a write, so absence is "not approved".
+ *
+ * Distinct from the sender-side errors because the user's remedy is to change
+ * the recipient, not to get themselves approved. Kept apart from
+ * {@link ConcordiumRecipientDenied} because the recipient lookup reads the raw
+ * account state and can name which rule refused, unlike the sender check — see
+ * {@link ConcordiumTokenTransferNotPermitted}.
  */
 export class ConcordiumRecipientNotAllowed extends Error {
   override name = "ConcordiumRecipientNotAllowed";
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message ?? "ConcordiumRecipientNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/**
+ * The token enforces a deny list and the recipient is on it.
+ *
+ * Takes precedence over {@link ConcordiumRecipientNotAllowed} on a token that
+ * declares both lists, matching the order the chain rule is evaluated in: a
+ * denied account is refused whatever its allow-list standing.
+ */
+export class ConcordiumRecipientDenied extends Error {
+  override name = "ConcordiumRecipientDenied";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ConcordiumRecipientDenied");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/**
+ * The recipient's standing under the token's lists could not be read, so
+ * nothing can be concluded about whether the transfer would be accepted.
+ *
+ * Covers both an undecodable module or account state and a failed lookup. It
+ * blocks, for the reason {@link ConcordiumTokenRestrictionsUnverified} blocks:
+ * letting an unverifiable transfer reach the chain burns a real CCD fee.
+ *
+ * Separate from the sender-side class because the remedy differs. The sender's
+ * standing comes from sync, so "resync and try again" is actionable; the
+ * recipient's needs a live lookup, so a transient proxy failure lands here and
+ * the copy has to read as "could not check, try again" rather than as a refusal.
+ */
+export class ConcordiumRecipientRestrictionsUnverified extends Error {
+  override name = "ConcordiumRecipientRestrictionsUnverified";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ConcordiumRecipientRestrictionsUnverified");
     if (fields) Object.assign(this, fields);
   }
 }
