@@ -1,5 +1,5 @@
 import semver from "semver";
-import { FEATURE_FLAGS_DEFAULTS } from "../constants";
+import { FEATURE_FLAGS_DEFAULTS } from "../../constants";
 import {
   type Feature,
   type FeatureId,
@@ -7,7 +7,7 @@ import {
   type PartialFeatures,
   type ResolutionConfig,
   FeatureIdSchema,
-} from "./schema";
+} from "../schema";
 
 /**
  * Checks whether the feature flag should be disabled based on a semver version

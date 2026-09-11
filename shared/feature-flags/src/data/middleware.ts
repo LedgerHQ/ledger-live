@@ -1,7 +1,15 @@
-import { type Action, type Middleware, isAction } from "@reduxjs/toolkit";
+import { type Middleware, isAction } from "@reduxjs/toolkit";
 import type { PartialFeatures, ResolutionConfig } from "./schema";
 import { FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS } from "../constants";
-import { syncRemoteConfig, setRemoteFlagsReady } from "./slice";
+import {
+  buildFeatureFlagsMeta,
+  createDispatchers,
+  createErrorReporter,
+  createLanguageWatcher,
+  pollRemoteFlags,
+  primeThenPoll,
+  type RemoteFlagsRef,
+} from "./internals/middleware";
 
 /** Feature-flags metadata that the middleware injects into every `featureFlags/*` action. */
 export interface FeatureFlagsMeta {
@@ -68,6 +76,9 @@ export interface FeatureFlagsMiddlewareConfig<S = unknown> {
  * push resolution back onto compiled defaults. Without it, and before the first fetch
  * resolves, the cache is `{}` and resolution falls back to local overrides + env + defaults.
  *
+ * The body reads as: assemble the collaborators from `./internals/middleware`, pick one of the
+ * two start-ups, return the middleware.
+ *
  * @param config
  * Resolution context plus optional cache reader, fetcher and interval. Bound at store creation.
  */
@@ -84,186 +95,38 @@ export function createFeatureFlagsMiddleware<S = unknown>(
       getAppLanguage,
       onRemoteFlagsError,
     } = config;
-    const readLang = () => getAppLanguage?.(getState());
-    let lastLang = readLang();
-    if (fetchRemoteFlags || readCachedFlags) {
-      let readyDispatched = false;
-      let initialSyncDone = false;
-      const dispatchSync = (didFetch: boolean) => {
-        if (didFetch || !initialSyncDone) {
-          initialSyncDone = true;
-          dispatch(syncRemoteConfig());
-        }
-      };
-      const dispatchReady = () => {
-        if (readyDispatched) return;
-        readyDispatched = true;
-        dispatch(setRemoteFlagsReady());
-      };
-      const reportError = (error: unknown, stage: FeatureFlagsReadStage, attempt: number) => {
-        if (!onRemoteFlagsError) return;
-        try {
-          onRemoteFlagsError(error, {
-            stage,
-            attempt,
-            isCold: Object.keys(remoteFlagsRef.current).length === 0,
-          });
-        } catch {
-          // A reporter is never allowed to break flag resolution or kill the poll loop.
-        }
-      };
-      if (readCachedFlags) {
-        // Sequenced, never raced: a slow cache read must not land on top of a fresh fetch.
-        void (async () => {
-          try {
-            const cached = await readCachedFlags();
-            if (Object.keys(cached).length > 0) {
-              remoteFlagsRef.current = cached;
-              dispatchSync(true);
-              dispatchReady();
-            }
-          } catch (error) {
-            reportError(error, "cache", 1);
-          }
-          if (fetchRemoteFlags) {
-            await pollRemoteFlags(
-              fetchRemoteFlags,
-              remoteFlagsRef,
-              dispatchSync,
-              dispatchReady,
-              reportError,
-              refreshInterval,
-            );
-          }
-        })();
-      } else if (fetchRemoteFlags) {
-        void pollRemoteFlags(
-          fetchRemoteFlags,
-          remoteFlagsRef,
-          dispatchSync,
-          dispatchReady,
-          reportError,
-          refreshInterval,
-        );
-      }
+
+    const language = createLanguageWatcher(getAppLanguage, getState, dispatch);
+    const { dispatchSync, dispatchReady } = createDispatchers(dispatch);
+    const reportError = createErrorReporter(onRemoteFlagsError, remoteFlagsRef);
+    const readContext = { ref: remoteFlagsRef, dispatchSync, dispatchReady, reportError };
+
+    if (readCachedFlags) {
+      void primeThenPoll(readCachedFlags, readContext, fetchRemoteFlags, refreshInterval);
+    } else if (fetchRemoteFlags) {
+      // Deliberately a bare call: the middleware tests drain a fixed number of microtask turns,
+      // so the no-cache path must not gain an `await` in front of the loop.
+      void pollRemoteFlags({ ...readContext, fetch: fetchRemoteFlags, ms: refreshInterval });
     }
+
     return next => action => {
       if (!isAction(action)) return next(action);
 
       if (action.type.startsWith("featureFlags/")) {
-        return next({
-          ...action,
-          meta: {
-            ...getMeta(action),
-            resolutionConfig: getAppLanguage
-              ? { ...resolutionConfig, appLanguage: readLang() }
-              : resolutionConfig,
-            remoteFlags: remoteFlagsRef.current,
-          },
-        });
+        return next(
+          buildFeatureFlagsMeta(
+            action,
+            resolutionConfig,
+            language.read(),
+            !!getAppLanguage,
+            remoteFlagsRef.current,
+          ),
+        );
       }
 
       const result = next(action);
-      // Re-resolve when the language changes (resolution is event-driven).
-      if (getAppLanguage) {
-        const lang = readLang();
-        if (lang !== lastLang) {
-          lastLang = lang;
-          dispatch(syncRemoteConfig());
-        }
-      }
+      language.checkChange();
       return result;
     };
   };
 }
-
-/**
- * Extracts any existing `meta` from an action so it can be preserved when the
- * middleware spreads its own meta on top. `Action<string>` does not carry a
- * `meta` field in its type, so the presence check is done at runtime.
- *
- * @param action
- * The intercepted Redux action.
- *
- * @returns
- * The existing meta object, or an empty object if absent or not an object.
- */
-function getMeta(action: Action<string>) {
-  return "meta" in action && typeof action.meta === "object" && action.meta !== null
-    ? action.meta
-    : {};
-}
-
-/**
- * Self-rescheduling poll loop: fetches remote flags, writes them to the ref on
- * success, dispatches the update, signals readiness, then schedules the next
- * iteration. A failed fetch resolves to `null` (via `.catch`), leaves the ref
- * untouched, and still re-schedules so transient errors don't kill the loop.
- *
- * @param fetch
- * Async callback that returns the latest remote flags map.
- *
- * @param ref
- * Mutable container that receives each successful fetch result. Read by the
- * middleware when injecting `action.meta.remoteFlags`.
- *
- * @param dispatchSync
- * Callback fired after each *settled* fetch, told whether the fetch succeeded. It
- * re-resolves (`syncRemoteConfig()`) on every success and once on the first settle
- * even if it failed, so env/default resolution runs at boot.
- *
- * @param dispatchReady
- * Callback fired after each *settled* fetch (resolved or rejected) — used to
- * dispatch `setRemoteFlagsReady()`. The caller guards it so only the first
- * settle propagates; idempotent on the reducer side regardless.
- *
- * @param reportError
- * Callback fired on each rejected fetch, before the loop swallows it.
- *
- * @param ms
- * Delay between iterations, in milliseconds. Defaults to
- * {@link FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS}.
- *
- * @param attempt
- * 1-based index of this iteration, passed to `reportError` so a consumer can tell a boot
- * failure from a routine poll failure.
- */
-async function pollRemoteFlags(
-  fetch: () => Promise<PartialFeatures>,
-  ref: RemoteFlagsRef,
-  dispatchSync: (didFetch: boolean) => void,
-  dispatchReady: () => void,
-  reportError: (error: unknown, stage: FeatureFlagsReadStage, attempt: number) => void,
-  ms: number = FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS,
-  attempt: number = 1,
-) {
-  const remote = await fetch().catch(error => {
-    reportError(error, "remote", attempt);
-    return null;
-  });
-  if (remote !== null) {
-    ref.current = remote;
-  }
-  dispatchSync(remote !== null);
-  dispatchReady();
-  setTimeout(
-    pollRemoteFlags,
-    ms,
-    fetch,
-    ref,
-    dispatchSync,
-    dispatchReady,
-    reportError,
-    ms,
-    attempt + 1,
-  );
-}
-
-/**
- * Mutable single-slot container for the latest remote flags. Modeled after a
- * React ref: the middleware reads `current` on every action dispatch, while
- * {@link pollRemoteFlags} writes to it after each successful fetch.
- */
-type RemoteFlagsRef = {
-  current: PartialFeatures;
-};
