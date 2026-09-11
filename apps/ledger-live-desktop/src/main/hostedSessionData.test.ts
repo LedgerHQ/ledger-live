@@ -42,16 +42,17 @@ function fakeSession(cookies: Partial<Cookie>[]) {
 }
 
 describe("clearHostedSessionData", () => {
-  it("removes every provider cookie, and leaves the shared Ledger one", async () => {
+  it("removes the provider cookies, parent domain included, and leaves the other ones", async () => {
     const { session, get, remove } = fakeSession([
       { domain: ".baanx.com", name: "sso", path: "/", secure: true },
       { domain: "dev.api.baanx.com", name: "csrf", path: "/auth", secure: true },
+      { domain: "other.baanx.com", name: "unrelated", path: "/", secure: true },
       { domain: ".ledger.com", name: "ledger_session", path: "/", secure: true },
     ]);
 
     await clearHostedSessionData(session, ["https://dev.api.baanx.com"]);
 
-    expect(get).toHaveBeenCalledWith({ domain: "dev.api.baanx.com" });
+    expect(get).toHaveBeenCalledWith({});
     expect(remove).toHaveBeenCalledWith("https://baanx.com/", "sso");
     expect(remove).toHaveBeenCalledWith("https://dev.api.baanx.com/auth", "csrf");
     expect(remove).toHaveBeenCalledTimes(2);
@@ -68,12 +69,12 @@ describe("clearHostedSessionData", () => {
     });
   });
 
-  it("looks the cookies up on the hostname, and clears the storages on the whole origin", async () => {
+  it("enumerates the whole cookie store, and clears the storages on the whole origin", async () => {
     const { session, get, clearStorageData } = fakeSession([]);
 
     await clearHostedSessionData(session, ["https://provider.test:8443"]);
 
-    expect(get).toHaveBeenCalledWith({ domain: "provider.test" });
+    expect(get).toHaveBeenCalledWith({});
     expect(clearStorageData).toHaveBeenCalledWith({
       origin: "https://provider.test:8443",
       storages: ["localstorage", "indexdb", "serviceworkers", "cachestorage"],
@@ -110,7 +111,7 @@ describe("clearHostedSessionData", () => {
       origin: "https://provider.test",
       storages: ["localstorage", "indexdb", "serviceworkers", "cachestorage"],
     });
-    expect(get).toHaveBeenCalledWith({ domain: "provider.test" });
+    expect(get).toHaveBeenCalledTimes(2);
   });
 
   it("moves on to the next origin when a storage clear fails", async () => {
@@ -123,7 +124,7 @@ describe("clearHostedSessionData", () => {
       origin: "https://provider.test",
       storages: ["localstorage", "indexdb", "serviceworkers", "cachestorage"],
     });
-    expect(get).toHaveBeenCalledWith({ domain: "provider.test" });
+    expect(get).toHaveBeenCalledTimes(2);
   });
 
   it.each([
