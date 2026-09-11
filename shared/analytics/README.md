@@ -99,5 +99,7 @@ import {
 
 Tracking routes are used in analytics to provide props like `page` and `source`. They are **ref objects** (similar to React refs) e.g. `currentRouteNameRef.current`.
 
+`track()` adds `page` from `getCurrentTrackingPage()` when a current page is set. Callers can still pass their own `page`.
+
 - Exporting the raw refs is **interim** – [LIVE-36002](https://ledgerhq.atlassian.net/browse/LIVE-36002) narrows this to a function-only API
 - Names are overly-varied (`screenRef`, `routeName` and `trackingSource`) – [LIVE-37304](https://ledgerhq.atlassian.net/browse/LIVE-37304) addresses ambigious names and duplicate logic

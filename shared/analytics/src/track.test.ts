@@ -3,6 +3,7 @@ jest.mock("./internals/trackEvent", () => ({
 }));
 
 import { setEnabledFn } from "./registry";
+import { currentRouteNameRef } from "./screenRefs";
 import { trackEvent } from "./internals/trackEvent";
 import { track } from "./track";
 
@@ -13,6 +14,7 @@ const register = () => {
 beforeEach(() => {
   jest.mocked(trackEvent).mockReset();
   setEnabledFn(() => true);
+  currentRouteNameRef.current = undefined;
 });
 
 describe("track", () => {
@@ -85,5 +87,33 @@ describe("track", () => {
 
     expect(result).toBeUndefined();
     expect(trackEvent).not.toHaveBeenCalled();
+  });
+
+  it("injects the current tracking page if it has been set", () => {
+    register();
+    currentRouteNameRef.current = "Page Market";
+
+    track("Analytics Event", { event: "props" });
+
+    expect(trackEvent).toHaveBeenCalledWith(
+      "track",
+      "Analytics Event",
+      { page: "Page Market", event: "props" },
+      { mandatory: false },
+    );
+  });
+
+  it("allows caller to override page prop", () => {
+    register();
+    currentRouteNameRef.current = "Page from ref";
+
+    track("Analytics Event", { page: "Page from event", event: "props" });
+
+    expect(trackEvent).toHaveBeenCalledWith(
+      "track",
+      "Analytics Event",
+      { page: "Page from event", event: "props" },
+      { mandatory: false },
+    );
   });
 });
