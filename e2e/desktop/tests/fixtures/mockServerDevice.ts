@@ -1,12 +1,15 @@
 import { expect } from "@playwright/test";
+import { type MockServerDevice } from "@ledgerhq/live-e2e-shared/mockServer/types";
+import { deviceUnderTest } from "@ledgerhq/live-e2e-shared/mockServer/devices";
+import { mockServerEnv } from "@ledgerhq/live-e2e-shared/mockServer/launchEnv";
 import {
-  mockServerBaseUrl,
-  mockServerEnv,
-  MockServerSessionHandle,
-  deviceUnderTest,
-  MockServerDevice,
-} from "@ledgerhq/live-e2e-shared/mockServer";
+  assertMockServerReachable,
+  attachMockServerSession,
+  type MockServerSessionHandle,
+} from "@ledgerhq/live-e2e-shared/mockServer/session";
 import base from "tests/fixtures/common";
+
+const SESSION_TOKEN_TIMEOUT_MS = 30_000;
 
 type MockServerFixtures = {
   mockDevice: MockServerDevice;
@@ -31,13 +34,14 @@ export const test = base.extend<MockServerFixtures>({
     let token = "";
     await expect(async () => {
       token = (await page.evaluate(() => window.ledger?.getMockServerSessionToken?.())) ?? "";
-      expect(token).not.toBe("");
-    }).toPass();
+      expect(token, "the app published no mock server session token").not.toBe("");
+    }).toPass({ timeout: SESSION_TOKEN_TIMEOUT_MS });
 
-    await use(new MockServerSessionHandle(mockServerBaseUrl(), token));
+    await use(attachMockServerSession(token));
   },
 
   env: async ({ mockDevice }, use) => {
+    await assertMockServerReachable();
     await use(await mockServerEnv({ devices: [mockDevice] }));
   },
 });
