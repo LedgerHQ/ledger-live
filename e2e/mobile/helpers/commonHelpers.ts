@@ -7,6 +7,7 @@ import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
+import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -77,6 +78,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
+      ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
     },
     languageAndLocale: {

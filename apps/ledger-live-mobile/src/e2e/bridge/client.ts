@@ -46,6 +46,24 @@ async function disconnectAllSpeculosSessions() {
   await DeviceManagementKitTransportSpeculos.disconnectAll();
 }
 
+function overrideLedgerSyncEnvironment() {
+  const launchArg = LaunchArguments.value()["ledger_sync_environment"];
+  const environment =
+    launchArg === "PROD" ? "PROD" : launchArg === "STAGING" ? "STAGING" : undefined;
+  if (!environment) return;
+
+  log(`[E2E Bridge Client]: Ledger Sync environment=${environment}`);
+  store.dispatch(
+    setOverride({
+      key: "llmWalletSync",
+      value: {
+        enabled: false,
+        params: { environment, watchConfig: {}, learnMoreLink: "" },
+      },
+    }),
+  );
+}
+
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
   const mock = LaunchArguments.value()["mock"];
@@ -59,6 +77,7 @@ export function init() {
     Config.MOCK = "";
   }
   setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
+  overrideLedgerSyncEnvironment();
 
   initAppNetworkLogging();
 

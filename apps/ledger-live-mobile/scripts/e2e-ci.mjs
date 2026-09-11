@@ -150,6 +150,7 @@ for (const argName in argv) {
       break;
     case "production":
       target = "prerelease";
+      process.env.LEDGER_SYNC_ENVIRONMENT ??= "PROD";
       break;
     case "filter":
       filter = argv[argName];

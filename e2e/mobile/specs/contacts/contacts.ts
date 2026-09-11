@@ -6,6 +6,7 @@ import {
   LEDGER_SYNC_FEATURE_FLAGS,
   cleanupLedgerSyncAfterAll,
   setupLedgerSyncSeed,
+  verifyLedgerSyncEnvironment,
 } from "@e2e/helpers/ledgerSyncHelpers";
 import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
@@ -34,6 +35,7 @@ const NO_ADDRESS_LABEL = "0 address";
 
 /** Boots the app already a member of a freshly created trustchain, skipping the activation UI. */
 async function initApp(options: ApplicationOptions = {}) {
+  await verifyLedgerSyncEnvironment();
   await app.init({
     userdata: options.userdata ?? CONTACTS_USERDATA,
     speculosApp: AppInfos.LS,
