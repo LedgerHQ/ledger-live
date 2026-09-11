@@ -101,8 +101,8 @@ export interface BaanxAuthSession {
 /* Injection points                                                           */
 /*                                                                            */
 /* These live here rather than beside their implementations because they are  */
-/* reachable from the public API (`BaanxAuthTokenOptions.deps`,               */
-/* `BaanxRequestOptions.fetchImpl`), while the modules that use them are not. */
+/* reachable from the public API (`BaanxAuthTokenOptions.deps`), while the    */
+/* modules that use them are not.                                             */
 /* -------------------------------------------------------------------------- */
 
 /** The `fetch` implementation to use. Injected so tests never hit the network. */

@@ -10,14 +10,6 @@ import {
 } from "../errors";
 import type { BaanxRegion, FetchImpl } from "../types";
 
-/**
- * The one place this package talks to the network.
- *
- * Nothing here logs. A stray `console.log` in this file would put the password,
- * the client key or the token into CI output, so the module deliberately has no
- * logging at all — failures are described by the typed errors instead.
- */
-
 export interface BaanxResponse {
   status: number;
   ok: boolean;
@@ -27,47 +19,37 @@ export interface BaanxResponse {
 
 export interface SendJsonArgs {
   baseUrl: string;
-  /** Path beginning with a slash, e.g. "/v1/auth/login". */
   path: string;
-  method?: string;
   clientKey: string;
   region: BaanxRegion;
-  /** Serialised as JSON when present. Omitted entirely for GET-style calls. */
-  body?: unknown;
-  /** Extra headers, e.g. Authorization. Merged over the defaults. */
-  headers?: Record<string, string>;
+  body: unknown;
   fetchImpl: FetchImpl;
 }
 
-/** Longest a non-JSON error page we quote back is allowed to be. */
 const MAX_NON_JSON_BODY = 2_000;
 
 export async function sendJson({
   baseUrl,
   path,
-  method = "POST",
   clientKey,
   region,
   body,
-  headers: extraHeaders,
   fetchImpl,
 }: SendJsonArgs): Promise<BaanxResponse> {
-  const headers: Record<string, string> = { "x-client-key": clientKey };
-  // Only meaningful when we are actually sending a payload.
-  if (body !== undefined) headers["Content-Type"] = "application/json";
-  // US users live on a separate tenant; the header selects it.
+  const headers: Record<string, string> = {
+    "x-client-key": clientKey,
+    "Content-Type": "application/json",
+  };
   if (region === "us") headers["x-us-env"] = "true";
-  Object.assign(headers, extraHeaders);
 
   let response: Response;
   try {
     response = await fetchImpl(`${baseUrl}${path}`, {
-      method,
+      method: "POST",
       headers,
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+      body: JSON.stringify(body),
     });
   } catch (error) {
-    // Report the shape of the failure, never the request we attempted.
     throw new BaanxTransportError(baseUrl, transportReason(error));
   }
 
@@ -80,16 +62,10 @@ export async function sendJson({
 }
 
 /**
- * Describe a transport failure.
- *
- * Duck-typed rather than `instanceof Error` on purpose. Under a VM-context host — Jest, and
- * therefore Detox — undici builds its rejection in Node's realm, so `instanceof Error` is false for
- * a real `fetch` failure and every one of them would collapse to the generic fallback, exactly when
- * the reason matters most. A test that throws its own `new Error` cannot catch that; the unit test
- * for this uses `node:vm` to build a genuinely cross-realm rejection.
- *
- * undici's own message is only ever "fetch failed" — the useful text ("connect ECONNREFUSED …",
- * "getaddrinfo ENOTFOUND …") hangs off `cause`, so one level of it is appended when present.
+ * Duck-typed rather than `instanceof Error`. Under a VM-context host — Jest,
+ * and therefore Detox — undici builds its rejection in Node's realm, so
+ * `instanceof Error` is false for a real `fetch` failure. undici's own message
+ * is only ever "fetch failed"; the useful text hangs off `cause`.
  */
 function transportReason(error: unknown): string {
   const message = messageOf(error);
@@ -99,7 +75,6 @@ function transportReason(error: unknown): string {
   return cause && cause !== message ? `${message}: ${cause}` : message;
 }
 
-/** The readable message of a thrown value, whatever realm built it. */
 function messageOf(value: unknown): string | null {
   if (typeof value === "string") return value.trim() ? value : null;
 
@@ -114,34 +89,13 @@ async function parseBody(response: Response): Promise<unknown> {
   try {
     return JSON.parse(text);
   } catch {
-    // An HTML error page or a proxy notice. Keep a bounded slice so the caller
-    // can tell "wrong host" from "bad payload".
     return { nonJsonBody: text.slice(0, MAX_NON_JSON_BODY) };
   }
 }
 
-/**
- * Strip known credential values out of a string.
- *
- * Baanx (or a proxy in front of it) controls the text in `message`, and an API
- * that echoes a submitted value would otherwise put it straight into an error.
- * Redacting the attached body is not enough on its own — the message is a
- * separate path, and this is the chokepoint both go through.
- */
-export function redactSecrets(text: string | null, secrets: readonly string[]): string | null {
-  if (!text) return text;
-  return redactSecretsInText(text, secrets);
-}
-
-/**
- * Map a non-2xx onto the error that explains it, keeping Baanx's own message.
- *
- * Shared by the login flow and by `baanxRequest`, so a 429 during data setup
- * reads exactly like a 429 during login. `secrets` are scrubbed from the
- * API-supplied message before it is interpolated.
- */
 export function toTypedError(response: BaanxResponse, secrets: readonly string[] = []): Error {
-  const apiMessage = redactSecrets(extractApiMessage(response.body), secrets);
+  const rawMessage = extractApiMessage(response.body);
+  const apiMessage = rawMessage ? redactSecretsInText(rawMessage, secrets) : null;
 
   switch (response.status) {
     case 498:

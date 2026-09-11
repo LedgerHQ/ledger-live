@@ -3,26 +3,23 @@
 > [!CAUTION]
 > **Status: UNSTABLE** — New package; the API is still being designed and may change without notice.
 
-A test-only client for the **Baanx API**. It logs a test user in — answering the OTP challenge
-automatically from their TOTP setup key, so suites stay headless — and then lets you make
-authenticated calls for the data creation and validation a Paytab↔Baanx integration test needs.
+A test-only client that **logs a Baanx sandbox user in** — answering the OTP challenge from their
+TOTP setup key so suites stay headless — and returns a cached access token.
 
 Test-only tooling: `private`, never published, not imported by the shipped apps.
 
 **This is not the app's Card authentication.** The app mints a `PayCardSession` —
 `{ accessToken, expiresIn, refreshToken }` — through the OAuth/PKCE flow in
 `@features/flow-pay-card-auth`, and stores it in `@features/platform-card`. What this package does is
-a different flow entirely: password + TOTP, straight against Baanx. The token it returns is meant to
-be used directly as a `Bearer` credential against the Baanx API, which is what `baanxRequest` does.
-
-It is **not** an equivalent of `cardSession`, and cannot become one: the password login returns no
-refresh token at all, so nothing here can satisfy that half of the shape or renew anything.
+a different flow entirely: password + TOTP, straight against Baanx. The token is a `Bearer`
+credential for the Baanx API; it is not an equivalent of `cardSession` and cannot become one, because
+the password login returns no refresh token.
 
 There is one deliberate bridge, and it is a test scaffold rather than an equivalence:
 [`--session`](#starting-ledger-wallet-desktop-already-signed-in) synthesises a `PayCardSession` with
 a placeholder refresh token so Desktop can be started already signed in for local development and
-E2E. It comes with real constraints — read that section before using it, in particular the one about
-`CARD_API_URL` having to match the host that minted the token.
+E2E. Read that section before using it, in particular the one about `CARD_API_URL` having to match
+the host that minted the token.
 
 ## Assumption: our test users are authenticator-based, not SMS
 
@@ -61,36 +58,16 @@ const session = await getBaanxAuthToken();
 Overrides are accepted for a one-off against another user or host:
 `getBaanxAuthToken({ baseUrl: "…", region: "us" })`.
 
-### Authenticated API calls
-
-`baanxRequest` is the seam for data setup and validation. It attaches the bearer token, the client key
-and the region header, reuses the cached token, and raises the same typed errors as the login flow, so
-a `429` during fixture setup reads exactly like one during login.
-
-```ts
-import { baanxRequest } from "@ledgerhq/baanx-test-client";
-
-const { data } = await baanxRequest<UserProfile>({ path: "/v1/user" });
-
-await baanxRequest({ path: "/v1/some-resource", method: "POST", body: { … } });
-await baanxRequest({ path: "/v1/things", query: { page: 2, cursor: undefined } });
-```
-
-It is deliberately **endpoint-agnostic** — it owns authentication and error handling and leaves the
-endpoints to the caller. Non-2xx throws (catch the typed error and read `.status`); a `401` is retried
-once against a freshly minted token, since a long suite can outlive a 6-hour token. That mirrors what
-the app's own Card base query does after a 401.
-
 ### Sharing one token across parallel workers
 
 Tokens are cached in memory and reused until five minutes before expiry; concurrent callers in one
 process share a single in-flight login. That cache cannot cross processes, and Playwright and Detox
 fork a worker per shard — **logging in per worker is how you earn a `429`**.
 
-There is no pre-authenticated-token input on `getBaanxAuthToken` or `baanxRequest`: hand the token to
-whatever consumes it, not back into this client. For the app, that is `CARD_SESSION_BOOTSTRAP` (see
-below). For a suite calling the API directly, mint once outside the workers and read the token from
-the environment yourself:
+There is no pre-authenticated-token input on `getBaanxAuthToken`: hand the token to whatever consumes
+it, not back into this client. For the app, that is `CARD_SESSION_BOOTSTRAP` (see below). For a suite
+calling the API directly, mint once outside the workers and read the token from the environment
+yourself:
 
 ```bash
 # once, before the workers start
@@ -194,25 +171,20 @@ purpose. Bodies attached to errors pass through `redactBody` first. Variables ar
 
 ## Layout
 
-Layered so dependencies run one way — `http/` knows nothing about auth, `auth/` knows nothing about
-`request.ts`:
-
 ```text
 src/
 ├── index.ts        barrel: the public contract, nothing else
 ├── types.ts        public types and constants
 ├── errors.ts       the typed errors
 ├── config.ts       env resolution
-├── request.ts      baanxRequest — authenticated calls
 ├── cli.ts          the CLI entry point (+ cliArgs.ts)
 ├── auth/           login flow, TOTP, token cache, expiry
 └── http/           transport and response handling
 ```
 
-Only `index.ts`, `types.ts`, `errors.ts`, `config.ts`, `request.ts` and `auth/session.ts` are
-public. `auth/login.ts`, `auth/totp.ts`, `auth/expiry.ts`, `http/send.ts` and `http/body.ts` are
-implementation detail and are deliberately absent from the barrel — the same discipline
-`libs/ledger-auth` uses, where `http.ts` and `pkce.ts` are not exported either.
+Only `index.ts`, `types.ts`, `errors.ts`, `config.ts` and `auth/session.ts` are public.
+`auth/login.ts`, `auth/totp.ts`, `auth/expiry.ts`, `http/send.ts` and `http/body.ts` are
+implementation detail and are absent from the barrel.
 
 `src/index.test.ts` pins the exported names, so the surface only grows on purpose.
 
@@ -229,8 +201,7 @@ verified against the RFC 6238 vectors.
 
 ### Live integration test
 
-One opt-in test logs in for real and calls `GET /v1/user` through `baanxRequest` — the single
-authenticated endpoint Baanx documents — to prove the token actually authenticates:
+One opt-in test logs in for real:
 
 ```bash
 set -a; source .env; set +a      # or export the variables yourself
@@ -238,9 +209,5 @@ pnpm --filter @ledgerhq/baanx-test-client test-integ
 ```
 
 It is excluded from `pnpm test`, which stays hermetic, and **skips** (exit 0) when the variables are
-absent, so it is harmless in CI without secrets. It asserts the profile's `id` matches the session
-`userId`, and includes a negative control — the same request with a bogus token must not return 200,
-otherwise a 200 would prove nothing about the token.
-
-One run costs a login (3 calls) plus 2 requests. Baanx rate limits the OTP trigger, so don't loop it;
-a `429` surfaces as `BaanxRateLimitError`.
+absent, so it is harmless in CI without secrets. One run costs a login (up to 3 calls). Baanx rate
+limits the OTP trigger, so don't loop it; a `429` surfaces as `BaanxRateLimitError`.

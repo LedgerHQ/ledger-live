@@ -13,7 +13,6 @@ const PUBLIC_EXPORTS = [
   // Entry points
   "getBaanxAuthToken",
   "clearBaanxAuthCache",
-  "baanxRequest",
   // Configuration
   "ENV_VARS",
   "resolveBaanxAuthConfig",
