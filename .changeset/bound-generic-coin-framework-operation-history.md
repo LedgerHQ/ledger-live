@@ -28,17 +28,19 @@ a page came back empty, even when the module handed back a cursor to keep going.
 legitimate, not an end of stream — `coin-stellar` and `coin-xrp` both return it for a page filtered
 down to zero operations for the queried address — so real history was being cut off silently, page
 after page, until the module happened to return a falsy cursor. The walk now keeps following an
-empty page as long as the cursor still advances, and a page budget (a fixed, generous ceiling on
-pages fetched, unrelated to the operation bound above) guarantees the walk still terminates against
-a module that pages forever.
+empty page as long as the cursor still advances. Termination is still guaranteed: a bounded walk can
+only fetch as many productive pages as its bound allows, and a module that advances its cursor
+forever while returning nothing is caught by a cap on *consecutive empty* pages. A cap on the total
+page count is kept only for a caller that sets no bound at all — for a bounded one it would be a
+second, smaller operation bound in disguise, and would fail a sync that was behaving correctly.
 
 **This is user-visible**: accounts that were silently truncated will now sync their full history.
 For a family that returns empty pages with advancing cursors — stellar and xrp today — the first
 sync after this lands may fetch substantially more than before.
 
-Also **user-visible**: a sync that stalls on a repeated cursor, or that only stops because the page
-budget above was reached, now fails the sync instead of quietly persisting whatever was collected up
-to that point. Both are states this framework cannot legitimately be in, and returning a partial list
+Also **user-visible**: a sync that stalls on a repeated cursor, or that only stops because one of the
+termination nets above fired, now fails the sync instead of quietly persisting whatever was collected
+up to that point. Both are states this framework cannot legitimately be in, and returning a partial list
 from either would leave a gap below the newest retained operation that the next sync's watermark
 would never go back and fill — a silent, permanent hole rather than a failed sync that simply retries.
 Reaching `maxOperations` is the opposite case — an intended, contiguous truncation from the tip — so
