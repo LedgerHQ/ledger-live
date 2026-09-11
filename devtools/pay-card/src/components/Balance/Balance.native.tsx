@@ -79,6 +79,14 @@ function CombinedWallet({ wallet }: { readonly wallet: PayCardCombinedWallet }) 
         label="balance"
         value={wallet.balance ?? "null — still reading, or no Baanx wallet matched"}
       />
+      <Field
+        label="counterValueRaw"
+        value={
+          wallet.counterValueRaw === null
+            ? "null — nothing to price, or no rate for it"
+            : String(wallet.counterValueRaw)
+        }
+      />
       <Field label="address" value={wallet.address} />
     </Box>
   );
@@ -120,21 +128,21 @@ export function BalanceScreen({
         </Box>
       ))}
 
-      <Section title="Baanx wallets">
+      <Section title="Baanx wallets" backgroundColor="activeSubtle">
         <Count count={baanxWallets.length} />
         {baanxWallets.map(wallet => (
           <BaanxWallet key={wallet.id} wallet={wallet} />
         ))}
       </Section>
 
-      <Section title="Card linked wallets">
+      <Section title="Card linked wallets" backgroundColor="warning">
         <Count count={linkedWallets.length} />
         {linkedWallets.map(wallet => (
           <LinkedWallet key={wallet.id} wallet={wallet} />
         ))}
       </Section>
 
-      <Section title="Card linked combined wallets">
+      <Section title="Card linked combined wallets" backgroundColor="success">
         <Count count={combinedWallets.length} />
         {combinedWallets.map(wallet => (
           <CombinedWallet key={wallet.id} wallet={wallet} />

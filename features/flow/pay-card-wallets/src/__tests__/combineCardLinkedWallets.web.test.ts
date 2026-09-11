@@ -34,9 +34,13 @@ const linked: PayCardLinkedWallet[] = [
   },
 ];
 
-const rates: Record<string, number> = { usdc: 1, usdt: 1, sol: 150 };
-const resolveCounterValue: ResolveWalletCounterValue = ({ currency }, balance) => {
-  const rate = rates[currency];
+const rates: Record<string, number> = {
+  "ethereum/erc20/usd__coin": 1,
+  "ethereum/erc20/usd_tether__erc20_": 1,
+  solana: 150,
+};
+const resolveCounterValue: ResolveWalletCounterValue = (ledgerId, balance) => {
+  const rate = rates[ledgerId];
   return rate === undefined ? null : Number(balance) * rate;
 };
 
@@ -91,7 +95,14 @@ describe("combineCardLinkedWallets", () => {
     const { total, isPartialTotal } = combineCardLinkedWallets({
       linked: [
         ...linked,
-        { id: "w-sol", address: "sol-addr", currency: "sol", network: "solana", priority: 3 },
+        {
+          id: "w-sol",
+          address: "sol-addr",
+          currency: "sol",
+          network: "solana",
+          priority: 3,
+          ledgerId: "solana",
+        },
       ],
       internal,
       resolveCounterValue,
@@ -120,7 +131,14 @@ describe("combineCardLinkedWallets", () => {
     const { wallets, total, isPartialTotal } = combineCardLinkedWallets({
       linked: [
         ...linked,
-        { id: "w-missing", address: "0xmissing", currency: "usdc", network: "base", priority: 4 },
+        {
+          id: "w-missing",
+          address: "0xmissing",
+          currency: "usdc",
+          network: "base",
+          priority: 4,
+          ledgerId: "ethereum/erc20/usd__coin",
+        },
       ],
       internal,
       resolveCounterValue,
@@ -135,10 +153,17 @@ describe("combineCardLinkedWallets", () => {
     const { total, isPartialTotal } = combineCardLinkedWallets({
       linked: [
         ...linked,
-        { id: "w-sol", address: "sol-addr", currency: "sol", network: "solana", priority: 3 },
+        {
+          id: "w-sol",
+          address: "sol-addr",
+          currency: "sol",
+          network: "solana",
+          priority: 3,
+          ledgerId: "solana",
+        },
       ],
       internal,
-      resolveCounterValue: ({ currency }, balance) => (currency === "sol" ? null : Number(balance)),
+      resolveCounterValue: (ledgerId, balance) => (ledgerId === "solana" ? null : Number(balance)),
     });
 
     expect(total).toBe(135.4);
@@ -149,8 +174,8 @@ describe("combineCardLinkedWallets", () => {
     const { wallets, total, isPartialTotal } = combineCardLinkedWallets({
       linked,
       internal,
-      resolveCounterValue: ({ currency }, balance) =>
-        currency === "usdt" ? Number.NaN : Number(balance),
+      resolveCounterValue: (ledgerId, balance) =>
+        ledgerId === "ethereum/erc20/usd_tether__erc20_" ? Number.NaN : Number(balance),
     });
 
     expect(wallets.find(({ id }) => id === "w-usdt")?.counterValue).toBeNull();
@@ -162,8 +187,10 @@ describe("combineCardLinkedWallets", () => {
     const { total, isPartialTotal } = combineCardLinkedWallets({
       linked,
       internal,
-      resolveCounterValue: ({ currency }, balance) =>
-        currency === "usdt" ? Number.POSITIVE_INFINITY : Number(balance),
+      resolveCounterValue: (ledgerId, balance) =>
+        ledgerId === "ethereum/erc20/usd_tether__erc20_"
+          ? Number.POSITIVE_INFINITY
+          : Number(balance),
     });
 
     expect(total).toBe(125.4);
@@ -178,11 +205,38 @@ describe("combineCardLinkedWallets", () => {
     });
   });
 
+  it("does not price a wallet whose asset the catalog does not cover", () => {
+    const resolve = jest.fn<number | null, [string, string]>(() => 999);
+
+    const { wallets } = combineCardLinkedWallets({
+      linked: [
+        { id: "w-bxx", address: "0xbxx", currency: "bxx", network: "ethereum", priority: 1 },
+      ],
+      internal: [
+        { id: "w-bxx", balance: "5.00", currency: "bxx", address: "0xbxx", addressMemo: null },
+      ],
+      resolveCounterValue: resolve,
+    });
+
+    // The balance is read and shown; only its worth is unknown, and a guess would be worse.
+    expect(wallets[0]).toMatchObject({ balance: "5.00", counterValue: null });
+    expect(resolve).not.toHaveBeenCalled();
+  });
+
   it("does not resolve a rate for a wallet whose balance never arrived", () => {
-    const resolve = jest.fn<number | null, [{ currency: string; network: string }, string]>();
+    const resolve = jest.fn<number | null, [string, string]>();
 
     combineCardLinkedWallets({
-      linked: [{ id: "w-missing", address: "0x", currency: "usdc", network: "base", priority: 1 }],
+      linked: [
+        {
+          id: "w-missing",
+          address: "0x",
+          currency: "usdc",
+          network: "base",
+          priority: 1,
+          ledgerId: "ethereum/erc20/usd__coin",
+        },
+      ],
       internal: [],
       resolveCounterValue: resolve,
     });

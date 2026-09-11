@@ -118,7 +118,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
             <ListItemLeading>
               <Spot appearance="icon" icon={CoinsCrypto} />
               <ListItemContent>
-                <ListItemTitle>Balance</ListItemTitle>
+                <ListItemTitle>Balance & Wallets</ListItemTitle>
               </ListItemContent>
             </ListItemLeading>
             <ListItemTrailing>

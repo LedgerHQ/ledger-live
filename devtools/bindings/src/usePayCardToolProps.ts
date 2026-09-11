@@ -53,6 +53,11 @@ export type UsePayCardToolPropsOptions = {
   readonly platform?: "web" | "native";
   readonly openPayTab?: () => void;
   readonly openSecureBrowser?: PayCardToolProps["openSecureBrowser"];
+  /**
+   * Prices one wallet's balance. The rates and the counter-value currency are the app's, so the
+   * host owns this; without one the tool reads the wallets and prices none of them.
+   */
+  readonly resolveCounterValue?: ResolveWalletCounterValue;
 };
 
 const LEADING_ONBOARDING_STEPS: readonly OnboardingStep[] = [
@@ -81,8 +86,8 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
 }
 
 /**
- * The join needs a resolver, and this tool prices nothing. It is called for every wallet with a
- * balance and answers `null`, which the screen reports as unpriced.
+ * Stands in when the host prices nothing. The join calls it for every wallet with a balance and it
+ * answers `null`, so the wallets are still read and shown, just unpriced.
  */
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
 
@@ -325,7 +330,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const skipWallets = !walletsRequested;
 
   const linkedWallets = useCardLinkedWallets({
-    resolveCounterValue: NO_COUNTER_VALUE,
+    resolveCounterValue: options.resolveCounterValue ?? NO_COUNTER_VALUE,
     skip: skipWallets,
   });
 
@@ -362,9 +367,17 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     () => ({
       baanxWallets: internal ?? [],
       linkedWallets: linked ?? [],
-      // Without the counter value, which this tool does not price.
       combinedWallets: linkedWallets.wallets.map(
-        ({ id, address, currency, network, priority, ledgerId, balance: walletBalance }) => ({
+        ({
+          id,
+          address,
+          currency,
+          network,
+          priority,
+          ledgerId,
+          balance: walletBalance,
+          counterValue,
+        }) => ({
           id,
           address,
           currency,
@@ -374,6 +387,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
           // tool reading these rows cannot tell a mapped pair from an unmapped one by shape alone.
           ...(ledgerId === undefined ? {} : { ledgerId }),
           balance: walletBalance,
+          counterValueRaw: counterValue,
         }),
       ),
       isFetching: linkedWallets.isFetching,

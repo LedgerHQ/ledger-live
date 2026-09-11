@@ -1739,6 +1739,9 @@ importers:
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment
+      '@domain/entity-card-asset-mapping':
+        specifier: workspace:*
+        version: link:../../domain/entity/card-asset-mapping
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses
@@ -1799,6 +1802,9 @@ importers:
       '@features/flow-pay-card-auth':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-auth
+      '@features/flow-pay-card-wallets':
+        specifier: workspace:*
+        version: link:../../features/flow/pay-card-wallets
       '@features/flow-pay-card-widget':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-widget
