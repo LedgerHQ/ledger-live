@@ -1,4 +1,5 @@
 import type { Cursor, Page, Validator } from "@ledgerhq/coin-module-framework/api/types";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import { getTronSuperRepresentatives } from "../network";
 import type { SuperRepresentative } from "../types";
@@ -18,6 +19,7 @@ import { ONE_TRX } from "./constants";
  * coerces the absent values to 0, which would read as "0% commission, 0% yield".
  */
 export async function getValidators(
+  logger: Logger,
   config: TronCoinConfig,
   cursor?: Cursor,
 ): Promise<Page<Validator>> {
@@ -25,7 +27,7 @@ export async function getValidators(
     throw new Error("getValidators does not paginate for Tron: the witness list is returned whole");
   }
 
-  const superRepresentatives = await getTronSuperRepresentatives(config);
+  const superRepresentatives = await getTronSuperRepresentatives(logger, config);
   return { items: superRepresentatives.map(toValidator) };
 }
 

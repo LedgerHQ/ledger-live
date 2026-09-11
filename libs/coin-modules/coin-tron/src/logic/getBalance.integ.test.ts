@@ -1,6 +1,9 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import coinConfig from "../config";
 import { getBalance } from "./getBalance";
+
+const mockLogger: Logger = jest.fn();
 
 const mockConfig = {
   status: { type: "active" },
@@ -20,7 +23,7 @@ describe("getBalance", () => {
   });
 
   it("fetches native and token balances for TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9", async () => {
-    const balances = await getBalance(mockConfig, "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9");
+    const balances = await getBalance(mockLogger, mockConfig, "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9");
 
     expect(balances[0].asset).toEqual({ type: "native" });
     // Backend either returns trc10 or trc20 first (randomly)
@@ -31,14 +34,14 @@ describe("getBalance", () => {
   });
 
   it("returns 0 when account is not activated", async () => {
-    const result = await getBalance(mockConfig, "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD");
+    const result = await getBalance(mockLogger, mockConfig, "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD");
 
     expect(result).toEqual([{ value: 0n, locked: 0n, asset: { type: "native" } }]);
   });
 
   it("propagates upstream API errors for an invalid address", async () => {
-    await expect(getBalance(mockConfig, "TPqmGMoidNTbMZ8ApgcbPMf7JDyiHi1sv0")).rejects.toThrow(
-      /valid account address/i,
-    );
+    await expect(
+      getBalance(mockLogger, mockConfig, "TPqmGMoidNTbMZ8ApgcbPMf7JDyiHi1sv0"),
+    ).rejects.toThrow(/valid account address/i);
   });
 });

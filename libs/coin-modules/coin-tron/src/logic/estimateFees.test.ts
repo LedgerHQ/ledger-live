@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import coinConfig, { type TronCoinConfig } from "../config";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
@@ -47,6 +48,8 @@ const mockFetchTronAccount = jest.mocked(fetchTronAccount);
 const mockGetChainParameters = jest.mocked(getChainParameters);
 const mockTriggerConstantContract = jest.mocked(triggerConstantContract);
 const mockGetEnergyRentQuote = jest.mocked(getEnergyRentQuote);
+
+const mockLogger: Logger = jest.fn();
 
 const TRC20_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 
@@ -155,7 +158,7 @@ describe("estimateFees", () => {
       );
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
-      const result = await estimateFees(mockConfig, sendNative);
+      const result = await estimateFees(mockLogger, mockConfig, sendNative);
 
       expect(result.value).toBe(0n);
     });
@@ -164,7 +167,7 @@ describe("estimateFees", () => {
       mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
-      const result = await estimateFees(mockConfig, sendNative);
+      const result = await estimateFees(mockLogger, mockConfig, sendNative);
 
       expect(result.value).toBe(BigInt(270 * chainParams.transactionFee));
     });
@@ -175,7 +178,7 @@ describe("estimateFees", () => {
       );
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
-      const result = await estimateFees(mockConfig, sendNative);
+      const result = await estimateFees(mockLogger, mockConfig, sendNative);
 
       expect(result.value).toBe(BigInt(270 * chainParams.transactionFee));
     });
@@ -186,7 +189,7 @@ describe("estimateFees", () => {
       );
       mockFetchTronAccount.mockResolvedValue(inactiveRecipient);
 
-      const result = await estimateFees(mockConfig, sendNative);
+      const result = await estimateFees(mockLogger, mockConfig, sendNative);
 
       expect(result.value).toBe(
         BigInt(chainParams.createAccountFee + chainParams.createNewAccountFeeInSystemContract),
@@ -203,7 +206,7 @@ describe("estimateFees", () => {
       );
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
-      const result = await estimateFees(mockConfig, sendNativeWithMemo);
+      const result = await estimateFees(mockLogger, mockConfig, sendNativeWithMemo);
 
       expect(result.value).toBe(BigInt(chainParams.memoFee));
     });
@@ -212,7 +215,7 @@ describe("estimateFees", () => {
       mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
-      const result = await estimateFees(mockConfig, sendNativeWithMemo);
+      const result = await estimateFees(mockLogger, mockConfig, sendNativeWithMemo);
 
       expect(result.value).toBe(
         BigInt(
@@ -229,7 +232,7 @@ describe("estimateFees", () => {
       );
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
-      const result = await estimateFees(mockConfig, sendNativeWithMemo);
+      const result = await estimateFees(mockLogger, mockConfig, sendNativeWithMemo);
 
       expect(result.value).toBe(0n);
     });
@@ -238,7 +241,7 @@ describe("estimateFees", () => {
       mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
-      const result = await estimateFees(mockConfig, sendTrc10WithMemo);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc10WithMemo);
 
       // A TRC-10 transfer carries its memo in `raw_data.data` and pays TIP-387's memo fee the same
       // as a native send.
@@ -258,7 +261,7 @@ describe("estimateFees", () => {
       );
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
-      const result = await estimateFees(mockConfig, sendTrc10);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc10);
 
       expect(result.value).toBe(0n);
     });
@@ -267,7 +270,7 @@ describe("estimateFees", () => {
       mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
-      const result = await estimateFees(mockConfig, sendTrc10);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc10);
 
       expect(result.value).toBe(BigInt(285 * chainParams.transactionFee));
     });
@@ -278,7 +281,7 @@ describe("estimateFees", () => {
       );
       mockFetchTronAccount.mockResolvedValue(inactiveRecipient);
 
-      const result = await estimateFees(mockConfig, sendTrc10);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc10);
 
       expect(result.value).toBe(0n);
     });
@@ -289,7 +292,7 @@ describe("estimateFees", () => {
       );
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
-      await estimateFees(mockConfig, sendTrc10);
+      await estimateFees(mockLogger, mockConfig, sendTrc10);
 
       expect(mockTriggerConstantContract).not.toHaveBeenCalled();
     });
@@ -306,7 +309,7 @@ describe("estimateFees", () => {
       mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
       mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
 
-      const result = await estimateFees(mockConfig, sendTrc20);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
 
       expect(result.value).toBe(0n);
     });
@@ -318,7 +321,7 @@ describe("estimateFees", () => {
       mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
       mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
 
-      const result = await estimateFees(mockConfig, sendTrc20);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
 
       expect(result.value).toBe(BigInt(31_895 * chainParams.energyFee));
     });
@@ -333,7 +336,7 @@ describe("estimateFees", () => {
       mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
       mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
 
-      const result = await estimateFees(mockConfig, sendTrc20);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
 
       expect(result.value).toBe(BigInt((31_895 - 20_000) * chainParams.energyFee));
     });
@@ -348,7 +351,7 @@ describe("estimateFees", () => {
       mockFetchTronAccount.mockResolvedValue(inactiveRecipient);
       mockTriggerConstantContract.mockResolvedValue({ energy_used: 64_285 });
 
-      const result = await estimateFees(mockConfig, sendTrc20);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
 
       expect(result.value).toBe(0n);
     });
@@ -366,7 +369,7 @@ describe("estimateFees", () => {
         energy_used: 0,
       });
 
-      const result = await estimateFees(mockConfig, sendTrc20);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
 
       expect(result.value).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
     });
@@ -401,7 +404,7 @@ describe("estimateFees", () => {
 
   describe("estimateEnergy (exported helper)", () => {
     it("returns 0 without calling triggerConstantContract for a non-trc20 asset", async () => {
-      const result = await estimateEnergy(mockConfig, sendNative);
+      const result = await estimateEnergy(mockLogger, mockConfig, sendNative);
 
       expect(result).toBe(0);
       expect(mockTriggerConstantContract).not.toHaveBeenCalled();
@@ -410,7 +413,7 @@ describe("estimateFees", () => {
     it("returns the simulated energy_used for a trc20 asset", async () => {
       mockTriggerConstantContract.mockResolvedValue({ energy_used: 12_345 });
 
-      const result = await estimateEnergy(mockConfig, sendTrc20);
+      const result = await estimateEnergy(mockLogger, mockConfig, sendTrc20);
 
       expect(result).toBe(12_345);
     });
@@ -420,7 +423,7 @@ describe("estimateFees", () => {
         result: { result: false, code: "REVERT", message: "insufficient balance" },
       });
 
-      await expect(estimateEnergy(mockConfig, sendTrc20)).rejects.toThrow(
+      await expect(estimateEnergy(mockLogger, mockConfig, sendTrc20)).rejects.toThrow(
         /triggerConstantContract failed/,
       );
     });
@@ -428,19 +431,21 @@ describe("estimateFees", () => {
     it("throws when a successful simulation omits energy_used", async () => {
       mockTriggerConstantContract.mockResolvedValue({ result: { result: true } });
 
-      await expect(estimateEnergy(mockConfig, sendTrc20)).rejects.toThrow(/no energy_used/);
+      await expect(estimateEnergy(mockLogger, mockConfig, sendTrc20)).rejects.toThrow(
+        /no energy_used/,
+      );
     });
 
     it("skips the simulation for a staking mode that still carries a trc20 asset", async () => {
       // The UI can reach a staking flow from a token sub-account, leaving the asset on the intent.
-      const result = await estimateEnergy(mockConfig, { ...sendTrc20, type: "freeze" });
+      const result = await estimateEnergy(mockLogger, mockConfig, { ...sendTrc20, type: "freeze" });
 
       expect(result).toBe(0);
       expect(mockTriggerConstantContract).not.toHaveBeenCalled();
     });
 
     it("skips the simulation for a zero-amount non-max trc20 send", async () => {
-      const result = await estimateEnergy(mockConfig, { ...sendTrc20, amount: 0n });
+      const result = await estimateEnergy(mockLogger, mockConfig, { ...sendTrc20, amount: 0n });
 
       expect(result).toBe(0);
       expect(mockTriggerConstantContract).not.toHaveBeenCalled();
@@ -453,9 +458,13 @@ describe("estimateFees", () => {
       ]);
       mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
 
-      await estimateEnergy(mockConfig, { ...sendTrc20, amount: 0n, useAllAmount: true });
+      await estimateEnergy(mockLogger, mockConfig, {
+        ...sendTrc20,
+        amount: 0n,
+        useAllAmount: true,
+      });
 
-      const { parameter } = mockTriggerConstantContract.mock.calls[0][1];
+      const { parameter } = mockTriggerConstantContract.mock.calls[0][2];
       expect(parameter).toBe(
         abiEncodeTrc20Transfer(decode58Check(RECIPIENT), new BigNumber(4_200)),
       );
@@ -552,7 +561,7 @@ describe("estimateFees", () => {
     it("returns activation + bandwidth worst case when network fails for native send", async () => {
       mockGetTronAccountNetwork.mockRejectedValue(new Error("network down"));
 
-      const result = await estimateFees(mockConfig, sendNative);
+      const result = await estimateFees(mockLogger, mockConfig, sendNative);
 
       expect(result.value).toBe(BigInt(ACTIVATION_FEES.plus(STANDARD_FEES_NATIVE).toString()));
     });
@@ -560,7 +569,7 @@ describe("estimateFees", () => {
     it("returns STANDARD_FEES_TRC_20 when network fails for TRC20 send", async () => {
       mockGetChainParameters.mockRejectedValue(new Error("chain params unreachable"));
 
-      const result = await estimateFees(mockConfig, sendTrc20);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
 
       expect(result.value).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
     });
@@ -568,7 +577,7 @@ describe("estimateFees", () => {
     it("adds a pessimistic memo fee to the native fallback when the send carries a memo", async () => {
       mockGetTronAccountNetwork.mockRejectedValue(new Error("network down"));
 
-      const result = await estimateFees(mockConfig, sendNativeWithMemo);
+      const result = await estimateFees(mockLogger, mockConfig, sendNativeWithMemo);
 
       expect(result.value).toBe(
         BigInt(ACTIVATION_FEES.plus(STANDARD_FEES_NATIVE).plus(MEMO_FEE_PESSIMISTIC).toString()),
@@ -578,7 +587,7 @@ describe("estimateFees", () => {
     it("reports a non-zero requirement against an unknown pool so the tooltip cannot claim coverage", async () => {
       mockGetTronAccountNetwork.mockRejectedValue(new Error("network down"));
 
-      const result = await estimateFees(mockConfig, sendTrc20);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
 
       expect(breakdownOf(result)).toEqual({
         energyRequired: "1",
@@ -604,7 +613,7 @@ describe("estimateFees", () => {
       mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
       mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
 
-      const result = await estimateFees(mockConfig, sendTrc20);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
 
       expect(breakdownOf(result)).toEqual({
         energyRequired: "31895",
@@ -628,7 +637,7 @@ describe("estimateFees", () => {
         result: { result: false, code: "REVERT", message: "insufficient balance" },
       });
 
-      const result = await estimateFees(mockConfig, sendTrc20);
+      const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
 
       const breakdown = breakdownOf(result);
       expect(breakdown.energyEstimated).toBe(false);
@@ -642,7 +651,7 @@ describe("estimateFees", () => {
     mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
     mockTriggerConstantContract.mockResolvedValue({ energy_used: ENERGY_USED });
 
-    const result = await estimateFees(mockConfig, sendTrc20);
+    const result = await estimateFees(mockLogger, mockConfig, sendTrc20);
 
     expect(result.value).toBe(STANDARD_BURN);
     expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
@@ -692,7 +701,7 @@ describe("estimateTronifyFees", () => {
   });
 
   it("should return value, originalValue, savings and a resource breakdown when the quote is TRX-denominated", async () => {
-    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+    const result = await estimateTronifyFees(mockLogger, mockConfig, sendTrc20);
 
     expect(result.value).toBe(TRONIFY_VALUE);
     expect(result.originalValue).toBe(STANDARD_BURN);
@@ -706,17 +715,19 @@ describe("estimateTronifyFees", () => {
   it("should pass the raw estimateEnergy result as the energy pledge without a client-side minimum", async () => {
     mockTriggerConstantContract.mockResolvedValue({ energy_used: 5_000 });
 
-    await estimateTronifyFees(mockConfig, sendTrc20);
+    await estimateTronifyFees(mockLogger, mockConfig, sendTrc20);
 
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      mockLogger,
       expect.objectContaining({ energy: 5_000n }),
     );
   });
 
   it("should delegate energy to the sender address, not the recipient", async () => {
-    await estimateTronifyFees(mockConfig, sendTrc20);
+    await estimateTronifyFees(mockLogger, mockConfig, sendTrc20);
 
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      mockLogger,
       expect.objectContaining({
         payerAddress: SENDER,
         receiverAddress: SENDER,
@@ -725,9 +736,10 @@ describe("estimateTronifyFees", () => {
   });
 
   it("should default to the 10-min fastTrade duration and 0.8 TRX top-up when coin-config omits them", async () => {
-    await estimateTronifyFees(mockConfig, sendTrc20);
+    await estimateTronifyFees(mockLogger, mockConfig, sendTrc20);
 
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      mockLogger,
       expect.objectContaining({ durationSeconds: 600, extraTrx: 0.8 }),
     );
   });
@@ -747,9 +759,10 @@ describe("estimateTronifyFees", () => {
       },
     }));
 
-    await estimateTronifyFees(mockConfig, sendTrc20);
+    await estimateTronifyFees(mockLogger, mockConfig, sendTrc20);
 
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      mockLogger,
       expect.objectContaining({ durationSeconds: 1200, extraTrx: 1.5 }),
     );
   });
@@ -769,15 +782,16 @@ describe("estimateTronifyFees", () => {
       },
     }));
 
-    await estimateTronifyFees(mockConfig, sendTrc20);
+    await estimateTronifyFees(mockLogger, mockConfig, sendTrc20);
 
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      mockLogger,
       expect.objectContaining({ durationSeconds: 600, extraTrx: 0.8 }),
     );
   });
 
   it("should compute savings as originalValue - value", async () => {
-    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+    const result = await estimateTronifyFees(mockLogger, mockConfig, sendTrc20);
 
     expect(result.originalValue).toBe(STANDARD_BURN);
     const originalValue = result.originalValue as bigint;
@@ -785,30 +799,30 @@ describe("estimateTronifyFees", () => {
   });
 
   it("should throw when the intent is a native TRX send", async () => {
-    await expect(estimateTronifyFees(mockConfig, sendNative)).rejects.toThrow(
+    await expect(estimateTronifyFees(mockLogger, mockConfig, sendNative)).rejects.toThrow(
       /only available for TRC-20/,
     );
     expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
   });
 
   it("should throw when the intent is a TRC-10 send", async () => {
-    await expect(estimateTronifyFees(mockConfig, sendTrc10)).rejects.toThrow(
+    await expect(estimateTronifyFees(mockLogger, mockConfig, sendTrc10)).rejects.toThrow(
       /only available for TRC-20/,
     );
     expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
   });
 
   it("should throw when the recipient is empty", async () => {
-    await expect(estimateTronifyFees(mockConfig, { ...sendTrc20, recipient: "" })).rejects.toThrow(
-      /requires a recipient/,
-    );
+    await expect(
+      estimateTronifyFees(mockLogger, mockConfig, { ...sendTrc20, recipient: "" }),
+    ).rejects.toThrow(/requires a recipient/);
     expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
   });
 
   it("should throw when Tronify returns a USDT-denominated quote", async () => {
     mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinCode: "USDT" });
 
-    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(
+    await expect(estimateTronifyFees(mockLogger, mockConfig, sendTrc20)).rejects.toThrow(
       /unsupported payCoinCode/,
     );
   });
@@ -821,7 +835,7 @@ describe("estimateTronifyFees", () => {
       payCoinCode: undefined as unknown as string,
     });
 
-    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(
+    await expect(estimateTronifyFees(mockLogger, mockConfig, sendTrc20)).rejects.toThrow(
       /unsupported payCoinCode/,
     );
   });
@@ -829,7 +843,9 @@ describe("estimateTronifyFees", () => {
   it("should throw when Tronify returns a non-numeric payCoinAmt", async () => {
     mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinAmt: "not-a-number" });
 
-    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(/invalid payCoinAmt/);
+    await expect(estimateTronifyFees(mockLogger, mockConfig, sendTrc20)).rejects.toThrow(
+      /invalid payCoinAmt/,
+    );
   });
 
   it("should propagate TronifyApiError from getEnergyRentQuote without silent fallback", async () => {
@@ -839,7 +855,7 @@ describe("estimateTronifyFees", () => {
     });
     mockGetEnergyRentQuote.mockRejectedValue(apiError);
 
-    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toMatchObject({
+    await expect(estimateTronifyFees(mockLogger, mockConfig, sendTrc20)).rejects.toMatchObject({
       name: "TronifyApiError",
       resCode: 429,
     });
@@ -848,14 +864,16 @@ describe("estimateTronifyFees", () => {
   it("should propagate an estimateEnergy failure without silent fallback", async () => {
     mockTriggerConstantContract.mockRejectedValue(new Error("node unreachable"));
 
-    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow("node unreachable");
+    await expect(estimateTronifyFees(mockLogger, mockConfig, sendTrc20)).rejects.toThrow(
+      "node unreachable",
+    );
     expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
   });
 
   it("should propagate a getChainParameters failure without silent fallback to pessimistic originalValue", async () => {
     mockGetChainParameters.mockRejectedValue(new Error("chain params unavailable"));
 
-    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(
+    await expect(estimateTronifyFees(mockLogger, mockConfig, sendTrc20)).rejects.toThrow(
       "chain params unavailable",
     );
   });
@@ -864,7 +882,7 @@ describe("estimateTronifyFees", () => {
     // 10 TRX (10_000_000 SUN) > STANDARD_BURN (7_047_950n)
     mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinAmt: "10" });
 
-    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+    const result = await estimateTronifyFees(mockLogger, mockConfig, sendTrc20);
 
     expect(result.savings).toBe(0n);
     expect(result.value).toBe(10_000_000n);
@@ -875,9 +893,12 @@ describe("estimateTronifyFees", () => {
     // triggerConstantContract returns 0 — estimateEnergy reports 0, simulation did run.
     mockTriggerConstantContract.mockResolvedValue({ energy_used: 0 });
 
-    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+    const result = await estimateTronifyFees(mockLogger, mockConfig, sendTrc20);
 
-    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(expect.objectContaining({ energy: 0n }));
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      mockLogger,
+      expect.objectContaining({ energy: 0n }),
+    );
     expect(result.value).toBe(TRONIFY_VALUE);
   });
 
@@ -885,9 +906,12 @@ describe("estimateTronifyFees", () => {
     // amount === 0n && !useAllAmount → estimateEnergy returns 0 without calling triggerConstantContract
     const zeroAmountIntent = { ...sendTrc20, amount: 0n };
 
-    await estimateTronifyFees(mockConfig, zeroAmountIntent);
+    await estimateTronifyFees(mockLogger, mockConfig, zeroAmountIntent);
 
     expect(mockTriggerConstantContract).not.toHaveBeenCalled();
-    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(expect.objectContaining({ energy: 0n }));
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      mockLogger,
+      expect.objectContaining({ energy: 0n }),
+    );
   });
 });

@@ -1,8 +1,11 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import { DEFAULT_TRC20_FEES_LIMIT } from "../network";
 import { decode58Check } from "../network/format";
 import { craftTransaction } from "./craftTransaction";
 import { decodeTransaction } from "./utils";
+
+const mockLogger: Logger = (..._args: unknown[]) => {};
 
 const mockConfig = {
   status: { type: "active" },
@@ -16,7 +19,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const { transaction: result } = await craftTransaction(mockConfig, {
+    const { transaction: result } = await craftTransaction(mockLogger, mockConfig, {
       intentType: "transaction",
       type: "send",
       asset: {
@@ -59,7 +62,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const { transaction: result } = await craftTransaction(mockConfig, {
+    const { transaction: result } = await craftTransaction(mockLogger, mockConfig, {
       intentType: "transaction",
       type: "send",
       asset: {
@@ -100,7 +103,7 @@ describe("Testing craftTransaction function", () => {
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
-    const { transaction: result } = await craftTransaction(mockConfig, {
+    const { transaction: result } = await craftTransaction(mockLogger, mockConfig, {
       intentType: "transaction",
       type: "send",
       asset: {
@@ -129,6 +132,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     const { transaction: result } = await craftTransaction(
+      mockLogger,
       mockConfig,
       {
         intentType: "transaction",
@@ -179,6 +183,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     const { transaction: result } = await craftTransaction(
+      mockLogger,
       mockConfig,
       {
         intentType: "transaction",
@@ -212,6 +217,7 @@ describe("Testing craftTransaction function", () => {
 
     const customFees = 99n;
     const { transaction: result } = await craftTransaction(
+      mockLogger,
       mockConfig,
       {
         intentType: "transaction",
@@ -244,7 +250,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const { transaction: result } = await craftTransaction(mockConfig, {
+    const { transaction: result } = await craftTransaction(mockLogger, mockConfig, {
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",
@@ -283,7 +289,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const { transaction: result } = await craftTransaction(mockConfig, {
+    const { transaction: result } = await craftTransaction(mockLogger, mockConfig, {
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",
@@ -315,7 +321,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     await expect(
-      craftTransaction(mockConfig, {
+      craftTransaction(mockLogger, mockConfig, {
         intentType: "transaction",
         type: "send",
         asset: {
@@ -343,7 +349,7 @@ describe("Testing craftTransaction function", () => {
     const before = Date.now();
 
     // WHEN
-    const { transaction: result } = await craftTransaction(mockConfig, {
+    const { transaction: result } = await craftTransaction(mockLogger, mockConfig, {
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",
@@ -377,7 +383,7 @@ describe("Testing craftTransaction function", () => {
     const before = Date.now();
 
     // WHEN
-    const { transaction: result } = await craftTransaction(mockConfig, {
+    const { transaction: result } = await craftTransaction(mockLogger, mockConfig, {
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",

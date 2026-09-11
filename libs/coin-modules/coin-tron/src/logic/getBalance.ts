@@ -1,4 +1,5 @@
 import { Balance } from "@ledgerhq/coin-module-framework/api/index";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../config";
 import { fetchTronAccountOrFail } from "../network";
@@ -8,8 +9,12 @@ import { getTronResources } from "./utils";
 const bigIntOrZero = (val: number | BigNumber | undefined | null): bigint =>
   BigInt(val?.toString() ?? 0);
 
-export async function getBalance(config: TronCoinConfig, address: string): Promise<Balance[]> {
-  const accounts = await fetchTronAccountOrFail(config, address);
+export async function getBalance(
+  logger: Logger,
+  config: TronCoinConfig,
+  address: string,
+): Promise<Balance[]> {
+  const accounts = await fetchTronAccountOrFail(logger, config, address);
 
   // Same shape as `computeBalance`, which always reports `locked`, so consumers never have to
   // special-case an unactivated account.

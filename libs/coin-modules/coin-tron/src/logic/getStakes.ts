@@ -5,6 +5,7 @@ import type {
   Stake,
   StakeAction,
 } from "@ledgerhq/coin-module-framework/api/types";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { BigNumber } from "bignumber.js";
 import type { TronCoinConfig } from "../config";
 import { fetchTronAccount } from "../network";
@@ -31,6 +32,7 @@ const SUN_PER_TRX = BigInt(ONE_TRX.toFixed(0));
  * and rejected rather than silently ignored, which would loop a paginating caller forever.
  */
 export async function getStakes(
+  logger: Logger,
   config: TronCoinConfig,
   address: string,
   cursor?: Cursor,
@@ -41,12 +43,12 @@ export async function getStakes(
     );
   }
 
-  const accounts = await fetchTronAccount(config, address);
+  const accounts = await fetchTronAccount(logger, config, address);
   // An address with no on-chain account has nothing frozen, and `fetchTronResources` would fetch
   // network info for an address the node does not know.
   if (accounts.length === 0) return { items: [] };
 
-  return { items: buildTronStakes(address, await fetchTronResources(config, accounts[0])) };
+  return { items: buildTronStakes(address, await fetchTronResources(logger, config, accounts[0])) };
 }
 
 /**
