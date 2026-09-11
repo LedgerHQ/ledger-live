@@ -9,6 +9,7 @@ export default class ContactsPage {
   detail = new ContactDetailPage();
 
   addContactContentId = "contacts-add-contact-content";
+  addContactSaveButtonId = "contacts-add-contact-save";
 
   contactsContent = () => getElementById("contacts-content");
   meName = () => getElementById("contacts-me-name");
@@ -16,7 +17,7 @@ export default class ContactsPage {
   addContactHeaderButton = () => getElementById("contacts-add-contact-header");
   addContactRow = () => getElementById("contacts-add-contact-row");
   addContactNameInput = () => getElementById("contacts-add-contact-name-input");
-  addContactSaveButton = () => getElementById("contacts-add-contact-save");
+  addContactSaveButton = () => getElementById(this.addContactSaveButtonId);
   savedContactName = (name: string) => getElementByIdAndText(this.savedContactNameRegExp, name);
   savedContactRow = (rowId: string) => getElementById(rowId);
   savedContactRowName = (rowId: string) => getElementById(`${rowId}-name`);
@@ -47,6 +48,32 @@ export default class ContactsPage {
   async addContact(name: string) {
     await this.openAddContactDrawer();
     await typeTextByElement(this.addContactNameInput(), name);
+    await this.saveContact();
+  }
+
+  /** Leaves the keyboard up, so a caller can assert what stays reachable underneath it. */
+  @Step("Type the contact name {{0}} and leave the keyboard open")
+  async typeAddContactNameLeavingKeyboardOpen(name: string) {
+    await typeTextByElement(this.addContactNameInput(), name, false);
+  }
+
+  @Step("Expect the Add contact name field to hold {{0}}")
+  async expectAddContactName(name: string) {
+    await detoxExpect(this.addContactNameInput()).toHaveText(name);
+  }
+
+  @Step("Expect the Add contact form fully visible")
+  async expectAddContactContentFullyVisible() {
+    await waitForFullyVisibleById(this.addContactContentId);
+  }
+
+  @Step("Expect the Add contact save action fully visible")
+  async expectAddContactSaveFullyVisible() {
+    await waitForFullyVisibleById(this.addContactSaveButtonId);
+  }
+
+  @Step("Save the contact")
+  async saveContact() {
     await tapByElement(this.addContactSaveButton());
   }
 

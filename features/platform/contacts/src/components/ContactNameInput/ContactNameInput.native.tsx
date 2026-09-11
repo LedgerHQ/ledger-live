@@ -3,19 +3,15 @@ import type { TextInput as NativeTextInput } from "react-native";
 import { CONTACT_NAME_MAX_LENGTH } from "@domain/entity-contact";
 import { Box, Text, TextInput } from "@ledgerhq/lumen-ui-rnative";
 import { DeleteCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useBottomSheetKeyboardAwareInput } from "@shared/ui-queued-bottom-sheet/keyboard";
+import { CONTACTS_NATIVE_NAME_INPUT_PROPS } from "../../addressEntry/nativeInputProps";
 
 type ContactNameInputProps = Readonly<{
   value: string;
   placeholder: string;
   errorMessage?: string;
   isEditable?: boolean;
-  /**
-   * Focuses the field whenever this turns true, rather than only on mount. Defaults to off so a
-   * host inside an animating drawer never raises the keyboard by accident: it opts in once the
-   * drawer has settled, instead of the keyboard fighting the drawer's opening animation.
-   */
   autoFocus?: boolean;
-  /** Namespaces the test ids, so each host drawer identifies its own input. */
   testIDPrefix?: string;
   onChangeText: (name: string) => void;
 }>;
@@ -31,6 +27,8 @@ export function ContactNameInput({
 }: ContactNameInputProps): React.JSX.Element {
   const isAtNameLengthLimit = value.length === CONTACT_NAME_MAX_LENGTH;
   const inputRef = useRef<NativeTextInput>(null);
+
+  const bottomSheetInputProps = useBottomSheetKeyboardAwareInput(inputRef);
 
   useEffect(() => {
     if (autoFocus) {
@@ -49,6 +47,8 @@ export function ContactNameInput({
         maxLength={CONTACT_NAME_MAX_LENGTH}
         editable={isEditable}
         status={errorMessage ? "error" : undefined}
+        {...CONTACTS_NATIVE_NAME_INPUT_PROPS}
+        {...bottomSheetInputProps}
       />
       <Box
         lx={{

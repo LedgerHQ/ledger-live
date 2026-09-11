@@ -49,6 +49,15 @@ export type QueuedBottomSheetProps = Readonly<{
   enableHandlePanningGesture?: boolean;
   /** Maximum dynamic content size. */
   maxDynamicContentSize?: BottomSheetProps["maxDynamicContentSize"];
+  /**
+   * Sticky area pinned to the bottom of the sheet, for a primary action that has to stay reachable
+   * while a field inside the sheet is being edited. It tracks the keyboard, so unlike content
+   * inside the sheet it is never covered.
+   *
+   * Requires the edited field to opt into `useBottomSheetKeyboardAwareInput`, which is what tells
+   * gorhom the keyboard is up.
+   */
+  footer?: React.ReactNode;
   /** Test ID for end-to-end tests. */
   testID?: string;
   /** Content of the drawer. */

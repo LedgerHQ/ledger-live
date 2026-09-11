@@ -1,17 +1,15 @@
 import React from "react";
-import { Banner, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Banner, Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ContactNameInput } from "@features/platform-contacts";
 import type { ContactsAddContactContentNativeProps } from "./types";
 
 export function ContactsAddContactContent({
-  isConfirmEnabled,
   isSaving,
   draftName,
   invalidNameError,
   labels,
   autoFocus,
   onDraftNameChange,
-  onConfirm,
 }: ContactsAddContactContentNativeProps): React.JSX.Element {
   const nameValidationError =
     invalidNameError === null ? undefined : labels.nameValidationErrors[invalidNameError];
@@ -32,17 +30,6 @@ export function ContactsAddContactContent({
         />
         <Banner appearance="info" description={labels.namingDisclaimer} />
       </Box>
-      <Button
-        appearance="base"
-        size="lg"
-        isFull
-        disabled={!isConfirmEnabled}
-        loading={isSaving}
-        onPress={onConfirm}
-        testID="contacts-add-contact-save"
-      >
-        {labels.confirmName}
-      </Button>
     </Box>
   );
 }
