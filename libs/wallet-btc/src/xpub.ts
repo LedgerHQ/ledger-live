@@ -2,8 +2,8 @@ import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types"
 import maxBy from "lodash/maxBy";
 import range from "lodash/range";
 import BigNumber from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import { NotEnoughBalance, RbfBuildError } from "./errors";
+import { LogFn, noopLog } from "./logger";
 import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
@@ -71,18 +71,22 @@ class Xpub {
   // the height of the current block in blockchain
   currentBlockHeight: number | undefined = undefined;
 
+  log: LogFn;
+
   constructor({
     storage,
     explorer,
     crypto,
     xpub,
     derivationMode,
+    log = noopLog,
   }: {
     storage: IStorage;
     explorer: IExplorer;
     crypto: ICrypto;
     xpub: string;
     derivationMode: string;
+    log?: LogFn;
   }) {
     this.storage = storage;
     this.explorer = explorer;
@@ -91,6 +95,7 @@ class Xpub {
     this.derivationMode = derivationMode;
     this.freshAddress = "";
     this.freshAddressIndex = 0;
+    this.log = log;
   }
 
   async syncAddress(account: number, index: number, needReorg: boolean): Promise<boolean> {
@@ -134,7 +139,7 @@ class Xpub {
         hasTx = hasTx || !!result.value;
       } else if (result.reason instanceof Error && result.reason.name === "InvalidXpub") {
         if (!loggedInvalidXpub) {
-          log("btcwallet", "checkAddressesBlock: skipping block with undecodable xpub", {
+          this.log("btcwallet", "checkAddressesBlock: skipping block with undecodable xpub", {
             account,
             error: result.reason.message,
           });

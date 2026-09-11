@@ -8897,6 +8897,9 @@ importers:
       jest-file-snapshot:
         specifier: 'catalog:'
         version: 0.7.0
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       object-hash:
         specifier: ^2.2.0
         version: 2.2.0
@@ -22356,6 +22359,11 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
+  '@ledgerhq/coin-module-framework@8.5.0':
+    resolution: {integrity: sha512-wIEcjk0BZAsDTEIgYEyiTsoeP0J6GXkVVUHfzzIZ8/n+mWCIhu2K0JDoKHNi2sovteCd6Mxw+aoLk/9kmI6e4w==}
+    peerDependencies:
+      '@ledgerhq/live-network': ^3.0.0
+
   '@ledgerhq/coin-stellar@9.6.0':
     resolution: {integrity: sha512-r1Pi5nZ/bvNDbHvMkJVq5PnSoA05wv5+mS8TryCTVNh5BKfPlr4MnFVKDjTV7NWxPYGCHcrChAO9IA1Ri8uA5w==}
     peerDependencies:
@@ -23105,7 +23113,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -28578,7 +28585,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -47793,10 +47800,19 @@ snapshots:
       '@ledgerhq/live-network': link:libs/live-network
       bignumber.js: 9.1.2
 
+  '@ledgerhq/coin-module-framework@8.5.0':
+    dependencies:
+      bignumber.js: 9.1.2
+
+  '@ledgerhq/coin-module-framework@8.5.0(@ledgerhq/live-network@libs+live-network)':
+    dependencies:
+      '@ledgerhq/live-network': link:libs/live-network
+      bignumber.js: 9.1.2
+
   '@ledgerhq/coin-stellar@9.6.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
-      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
       '@stellar/stellar-sdk': 14.0.0
@@ -47806,7 +47822,7 @@ snapshots:
 
   '@ledgerhq/coin-tezos@10.2.2':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.4.0
+      '@ledgerhq/coin-module-framework': 8.5.0
       '@taquito/ledger-signer': 23.0.1
       '@taquito/rpc': 23.0.1
       '@taquito/taquito': 23.0.1
@@ -47816,7 +47832,7 @@ snapshots:
 
   '@ledgerhq/coin-tezos@10.2.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
       '@taquito/ledger-signer': 23.0.1
@@ -47828,7 +47844,7 @@ snapshots:
 
   '@ledgerhq/coin-xrp@10.1.0(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.19.0)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.4.0(@ledgerhq/live-network@libs+live-network)
+      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.19.0
       bignumber.js: 9.1.2
@@ -65379,9 +65395,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
