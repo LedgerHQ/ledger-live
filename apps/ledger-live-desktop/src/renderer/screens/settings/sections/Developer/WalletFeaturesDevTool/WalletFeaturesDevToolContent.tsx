@@ -26,11 +26,13 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
     allEnabled,
     hasSeenWalletV4Tour,
     hasSeenQ2Tour,
+    isQ2TourEnabled,
     handleToggleAll,
     handleToggleEnabled,
     handleToggleParam,
     handleToggleHasSeenTour,
     handleToggleQ2TourHasSeen,
+    handleToggleQ2TourEnabled,
   } = useWalletFeaturesDevToolViewModel();
   const { isDialogOpen, handleOpenDialog, closeDrawer, completeDrawer, onSlideChange } =
     useWalletV4TourDrawerViewModel();
@@ -85,7 +87,9 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
 
           <Q2TourSection
             hasSeen={hasSeenQ2Tour}
+            isEnabled={isQ2TourEnabled}
             onToggleHasSeen={handleToggleQ2TourHasSeen}
+            onToggleEnabled={handleToggleQ2TourEnabled}
             onOpenDrawer={handleOpenQ2Tour}
           />
 

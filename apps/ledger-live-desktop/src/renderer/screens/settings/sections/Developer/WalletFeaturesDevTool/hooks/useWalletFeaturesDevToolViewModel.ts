@@ -4,16 +4,24 @@ import { useFeature } from "@features/platform-feature-flags";
 import { setOverride } from "@shared/feature-flags";
 import { hasSeenWalletV4TourSelector, hasSeenQ2TourSelector } from "~/renderer/reducers/settings";
 import { setHasSeenWalletV4Tour, setHasSeenQ2Tour } from "~/renderer/actions/settings";
-import { WALLET_FEATURES_FLAG, WALLET_FEATURES_PARAMS, WalletFeatureParamKey } from "../constants";
+import { isQ2ReleaseTourEnabled } from "LLD/features/Q2Tour/releaseTourGate";
+import {
+  RELEASE_TOUR_FLAG,
+  WALLET_FEATURES_FLAG,
+  WALLET_FEATURES_PARAMS,
+  WalletFeatureParamKey,
+} from "../constants";
 import { WalletFeatureParams, WalletFeaturesViewModel } from "../types";
 
 export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => {
   const dispatch = useDispatch();
   const featureFlag = useFeature(WALLET_FEATURES_FLAG);
+  const releaseTour = useFeature(RELEASE_TOUR_FLAG);
   const hasSeenWalletV4Tour = useSelector(hasSeenWalletV4TourSelector);
   const hasSeenQ2Tour = useSelector(hasSeenQ2TourSelector);
 
   const isEnabled = featureFlag?.enabled ?? false;
+  const isQ2TourEnabled = isQ2ReleaseTourEnabled(releaseTour);
 
   const params = useMemo<WalletFeatureParams>(
     () => (featureFlag?.params as WalletFeatureParams) ?? {},
@@ -79,6 +87,19 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
     dispatch(setHasSeenQ2Tour(!hasSeenQ2Tour));
   }, [dispatch, hasSeenQ2Tour]);
 
+  const handleToggleQ2TourEnabled = useCallback(() => {
+    const next = !isQ2TourEnabled;
+    dispatch(
+      setOverride({
+        key: RELEASE_TOUR_FLAG,
+        value: {
+          enabled: next,
+          params: { variant: next ? "q2" : releaseTour?.params?.variant },
+        },
+      }),
+    );
+  }, [dispatch, isQ2TourEnabled, releaseTour]);
+
   return {
     featureFlag,
     isEnabled,
@@ -86,10 +107,12 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
     allEnabled,
     hasSeenWalletV4Tour,
     hasSeenQ2Tour,
+    isQ2TourEnabled,
     handleToggleAll,
     handleToggleEnabled,
     handleToggleParam,
     handleToggleHasSeenTour,
     handleToggleQ2TourHasSeen,
+    handleToggleQ2TourEnabled,
   };
 };

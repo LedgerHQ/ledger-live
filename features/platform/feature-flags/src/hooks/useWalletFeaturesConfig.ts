@@ -27,8 +27,6 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       isEnabled,
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
       shouldDisplayTour: isEnabled && Boolean(params?.tour),
-      shouldDisplayQ2Tour: isEnabled && Boolean(params?.q2Tour),
-      shouldDisplayQ3Tour: isEnabled && Boolean(params?.q3Tour),
       shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
@@ -57,9 +55,8 @@ export type WalletPlatform = "desktop" | "mobile";
  * derived (rather than hand-written) means new params show up automatically
  * once the Zod schemas declare them.
  */
-export type Wallet40Params = Partial<
-  Features["lwdWallet40"]["params"] & Features["lwmWallet40"]["params"]
->;
+export type Wallet40Params = Partial<Features["lwdWallet40"]["params"]> &
+  Partial<Features["lwmWallet40"]["params"]>;
 
 /** Config interface with boolean getters for each param */
 export interface WalletFeaturesConfig {
@@ -69,10 +66,6 @@ export interface WalletFeaturesConfig {
   readonly shouldUseLazyOnboarding: boolean;
   /** Whether to show the Wallet V4 Tour (e.g. drawer/dialog on Portfolio) */
   readonly shouldDisplayTour: boolean;
-  /** Whether to show the Q2 Tour on Portfolio */
-  readonly shouldDisplayQ2Tour: boolean;
-  /** Whether to show the Q3 Tour on Portfolio */
-  readonly shouldDisplayQ3Tour: boolean;
   /** Whether to show the asset section */
   readonly shouldDisplayAssetSection: boolean;
   /** Whether to show Braze content cards as ContentBanner (e.g. action cards on portfolio, mobile only) */

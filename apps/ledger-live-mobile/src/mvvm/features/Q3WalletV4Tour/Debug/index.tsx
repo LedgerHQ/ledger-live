@@ -6,28 +6,28 @@ import { setOverride } from "@shared/feature-flags";
 import { setHasSeenQ3WalletV4Tour } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { hasSeenQ3WalletV4TourSelector } from "~/reducers/settings";
+import { isQ3ReleaseTourEnabled } from "LLM/utils/releaseTourGate";
 
-const WALLET_40_FLAG = "lwmWallet40";
+const RELEASE_TOUR_FLAG = "releaseTour";
 
 function Q3WalletV4TourScreenDebug() {
   const dispatch = useDispatch();
   const hasSeenQ3WalletV4Tour = useSelector(hasSeenQ3WalletV4TourSelector);
-  const lwmWallet40 = useFeature(WALLET_40_FLAG);
-  const isQ3TourEnabled = (lwmWallet40?.enabled && lwmWallet40?.params?.q3Tour) ?? false;
+  const releaseTour = useFeature(RELEASE_TOUR_FLAG);
+  const isQ3TourEnabled = isQ3ReleaseTourEnabled(releaseTour);
 
   const handleToggleQ3TourEnabled = useCallback(() => {
     const next = !isQ3TourEnabled;
     dispatch(
       setOverride({
-        key: WALLET_40_FLAG,
+        key: RELEASE_TOUR_FLAG,
         value: {
-          ...lwmWallet40,
-          enabled: next ? true : (lwmWallet40?.enabled ?? false),
-          params: { ...lwmWallet40?.params, q3Tour: next },
+          enabled: next,
+          params: { variant: next ? "q3_a" : releaseTour?.params?.variant },
         },
       }),
     );
-  }, [dispatch, isQ3TourEnabled, lwmWallet40]);
+  }, [dispatch, isQ3TourEnabled, releaseTour]);
 
   const handleToggleHasSeenQ3WalletV4Tour = useCallback(() => {
     dispatch(setHasSeenQ3WalletV4Tour(!hasSeenQ3WalletV4Tour));
@@ -37,7 +37,7 @@ function Q3WalletV4TourScreenDebug() {
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <Box lx={{ padding: "s16", rowGap: "s24" }}>
         <Text typography="body2" lx={{ color: "muted" }}>
-          Test the Q3 Wallet V4 Tour setup, gated by the lwmWallet40 q3Tour parameter.
+          Test the Q3 Wallet V4 Tour setup, gated by releaseTour variants q3_a, q3_b, or q3_b2.
         </Text>
 
         <Box
@@ -50,10 +50,10 @@ function Q3WalletV4TourScreenDebug() {
         >
           <Box lx={{ flexShrink: 1 }}>
             <Text typography="body2SemiBold" lx={{ color: "base" }}>
-              q3Tour enabled
+              Q3 release tour
             </Text>
             <Text typography="body3" lx={{ color: "muted" }}>
-              Toggles lwmWallet40.params.q3Tour (also enables lwmWallet40).
+              Toggles releaseTour enabled with variant q3_a.
             </Text>
           </Box>
           <Switch

@@ -5,15 +5,17 @@ import { setHasSeenWalletV4Tour, setHasSeenQ2Tour } from "~/renderer/actions/set
 const tourEnabledOverrides = {
   lwdWallet40: {
     enabled: true,
-    params: { tour: true, q2Tour: false },
+    params: { tour: true },
   },
+  releaseTour: { enabled: false, params: { variant: "q2" as const } },
 };
 
 const q2TourEnabledOverrides = {
   lwdWallet40: {
     enabled: true,
-    params: { tour: false, q2Tour: true },
+    params: { tour: false },
   },
+  releaseTour: { enabled: true, params: { variant: "q2" as const } },
 };
 
 describe("useShouldShowDeferredModals", () => {

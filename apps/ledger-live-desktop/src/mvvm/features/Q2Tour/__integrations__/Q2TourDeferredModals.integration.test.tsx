@@ -18,7 +18,8 @@ const baseSettings = {
 
 const q2TourEnabledState = {
   ...withFlagOverrides({
-    lwdWallet40: { enabled: true, params: { q2Tour: true, tour: false } },
+    lwdWallet40: { enabled: true, params: { tour: false } },
+    releaseTour: { enabled: true, params: { variant: "q2" } },
   }),
   settings: {
     ...baseSettings,
@@ -28,7 +29,8 @@ const q2TourEnabledState = {
 
 const q2TourDisabledState = {
   ...withFlagOverrides({
-    lwdWallet40: { enabled: true, params: { q2Tour: false, tour: false } },
+    lwdWallet40: { enabled: true, params: { tour: false } },
+    releaseTour: { enabled: false, params: { variant: "q2" } },
   }),
   settings: {
     ...baseSettings,
@@ -38,7 +40,8 @@ const q2TourDisabledState = {
 
 const q2TourEnabledAlreadySeenState = {
   ...withFlagOverrides({
-    lwdWallet40: { enabled: true, params: { q2Tour: true, tour: false } },
+    lwdWallet40: { enabled: true, params: { tour: false } },
+    releaseTour: { enabled: true, params: { variant: "q2" } },
   }),
   settings: {
     ...baseSettings,

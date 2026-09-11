@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   areSettingsLoaded,
   hasCompletedOnboardingSelector,
   hasSeenQ2TourSelector,
 } from "~/renderer/reducers/settings";
 import { setHasSeenQ2Tour } from "~/renderer/actions/settings";
+import { isQ2ReleaseTourEnabled } from "../releaseTourGate";
 
 /**
  * The Q2 tour is only meant for users who were already onboarded when they got the
@@ -19,7 +20,7 @@ export const useSuppressQ2TourForNewUsers = (): void => {
   const settingsLoaded = useSelector(areSettingsLoaded);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const hasSeenQ2Tour = useSelector(hasSeenQ2TourSelector);
-  const { shouldDisplayQ2Tour } = useWalletFeaturesConfig("desktop");
+  const isTourEnabled = isQ2ReleaseTourEnabled(useFeature("releaseTour"));
 
   // Snapshot onboarding state at app open (first render where settings are loaded). The
   // tour flag can resolve after that, so we react to it — but decide against the snapshot
@@ -31,8 +32,8 @@ export const useSuppressQ2TourForNewUsers = (): void => {
     if (wasOnboardedAtOpenRef.current === null) {
       wasOnboardedAtOpenRef.current = hasCompletedOnboarding;
     }
-    if (shouldDisplayQ2Tour && !wasOnboardedAtOpenRef.current && !hasSeenQ2Tour) {
+    if (isTourEnabled && !wasOnboardedAtOpenRef.current && !hasSeenQ2Tour) {
       dispatch(setHasSeenQ2Tour(true));
     }
-  }, [settingsLoaded, shouldDisplayQ2Tour, hasCompletedOnboarding, hasSeenQ2Tour, dispatch]);
+  }, [settingsLoaded, isTourEnabled, hasCompletedOnboarding, hasSeenQ2Tour, dispatch]);
 };
