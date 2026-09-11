@@ -16,14 +16,18 @@ function OverviewActions({
 }: OverviewActionsProps) {
   return (
     <Box lx={{ flexDirection: "row", gap: "s8" }}>
-      <FreezeAction
-        status={freezeViewModel.status}
-        isActionDisabled={freezeViewModel.isActionDisabled}
-        onOpenConfirm={onFreezePress}
-      />
-      {moreViewModel ? (
-        <MoreAction moreLabel={moreViewModel.moreLabel} onMorePress={onMorePress} />
-      ) : null}
+      <Box lx={{ flex: 1 }}>
+        <FreezeAction
+          status={freezeViewModel.status}
+          isActionDisabled={freezeViewModel.isActionDisabled}
+          onOpenConfirm={onFreezePress}
+        />
+      </Box>
+      <Box lx={{ flex: 1 }}>
+        {moreViewModel ? (
+          <MoreAction moreLabel={moreViewModel.moreLabel} onMorePress={onMorePress} />
+        ) : null}
+      </Box>
     </Box>
   );
 }
