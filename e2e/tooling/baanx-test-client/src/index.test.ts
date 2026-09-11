@@ -59,7 +59,6 @@ const INTERNALS = [
   "readJwtExpiry",
   "resolveExpiry",
   "parseCliArgs",
-  "baanxRequest",
 ];
 
 describe("public API", () => {
