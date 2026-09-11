@@ -1,8 +1,16 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ipcRenderer } from "electron";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import logger from "~/renderer/logger";
-import { manifestOrigin, useCardHostedManifests } from "./useCardHostedManifests";
+import { useCardHostedManifests } from "./useCardHostedManifests";
+
+/** Best effort on purpose: a provider session left behind must never hold the login back. */
+export function wipeHostedSessionForManifest(manifest: LiveAppManifest): Promise<void> {
+  return ipcRenderer
+    .invoke("clearCardHostedSessionData", [String(manifest.url)])
+    .catch(logger.error);
+}
 
 export function useWipeHostedSessionOnSignInChange(): void {
   const isSignedIn = useIsCardSignedIn();
@@ -13,29 +21,22 @@ export function useWipeHostedSessionOnSignInChange(): void {
   // "nothing changed" and losing both.
   const hasPendingWipe = useRef(false);
 
-  const origins = useMemo(
-    () => [
-      ...new Set(
-        [manifestOrigin(login), manifestOrigin(hosted)].filter(
-          (origin): origin is string => origin !== null,
-        ),
-      ),
-    ],
-    [login, hosted],
-  );
-
   useEffect(() => {
     if (lastSeenSignedIn.current !== isSignedIn) {
       lastSeenSignedIn.current = isSignedIn;
       hasPendingWipe.current = true;
     }
 
-    if (!hasPendingWipe.current || origins.length === 0) {
+    // Both manifests are needed: consuming the pending wipe on the first one to resolve would
+    // leave the other one's session standing until the next sign-in change.
+    if (!hasPendingWipe.current || !login || !hosted) {
       return;
     }
 
     hasPendingWipe.current = false;
 
-    ipcRenderer.invoke("clearCardHostedSessionData", origins).catch(logger.error);
-  }, [isSignedIn, origins]);
+    for (const manifest of [login, hosted]) {
+      void wipeHostedSessionForManifest(manifest);
+    }
+  }, [isSignedIn, login, hosted]);
 }
