@@ -5,6 +5,7 @@ import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import type {
   SignRawTransactionIntent,
+  SignRawTransactionIntentInput,
   SignRawTransactionIntentJobState,
 } from "@ledgerhq/live-common/intents/signRawTransactionIntent";
 import {
@@ -15,29 +16,6 @@ import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendSignature } from "../../../context/SendSignatureContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { signRawTronTransactionIntentLWMDefinition } from "../intents/signRawTronTransactionIntent/intentLWMDefinition";
-
-/**
- * Structural mirror of coin-tron's Tronify wire types (network/tronify/types.ts). Declared locally
- * rather than imported: EnergyRentOrder.transaction is `unknown` at the seam boundary.
- */
-type TronifyUnsignedTransaction = Readonly<{
-  visible: boolean;
-  txID: string;
-  raw_data: Record<string, unknown>;
-  raw_data_hex: string;
-}>;
-
-type TronifySignedTransaction = TronifyUnsignedTransaction & Readonly<{ signature: string[] }>;
-
-/**
- * Inverse of coin-tron's combine(tx, [sig]) =
- * `${tx.length.toString(16).padStart(4,"0")}${tx}${sig}` (see combine.ts).
- * The generic raw-sign path returns the combined string as signedOperation.signature;
- * recover the raw device signature by dropping the 4-hex-digit length prefix + echoed raw_data_hex.
- */
-export function recoverDeviceSignature(rawDataHex: string, combinedSignature: string): string {
-  return combinedSignature.slice(4 + rawDataHex.length);
-}
 
 function isContractDataDisabledError(error: unknown): boolean {
   return (
@@ -112,14 +90,16 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
   }, [account, parentAccount, order]);
 
   const signIntent = useMemo<SignRawTransactionIntent | null>(() => {
-    if (!account || !order) return null;
-    const tx = order.transaction as TronifyUnsignedTransaction;
-    return createIntent(signRawTronTransactionIntentLWMDefinition, {
+    // `toSign` is the family-derived signable hex (coin-tron's raw_data_hex), put on state at
+    // CRAFT_SUCCESS so the platform never has to reach into the opaque `order.transaction`.
+    if (!account || !state.toSign) return null;
+    const input: SignRawTransactionIntentInput = {
       account,
       parentAccount: parentAccount ?? null,
-      transaction: tx.raw_data_hex,
-    });
-  }, [account, parentAccount, order]);
+      transaction: state.toSign,
+    };
+    return createIntent(signRawTronTransactionIntentLWMDefinition, input);
+  }, [account, parentAccount, state.toSign]);
 
   const onIntentJobStateChanged = useCallback(
     (jobState: SignRawTransactionIntentJobState) => {
@@ -127,23 +107,25 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
       if (!order || hasSubmittedRef.current) return;
       hasSubmittedRef.current = true;
 
-      const tx = order.transaction as TronifyUnsignedTransaction;
-      const sig = recoverDeviceSignature(tx.raw_data_hex, jobState.signedOperation.signature);
-      const signedTransaction: TronifySignedTransaction = { ...tx, signature: [sig] };
-      actions.startRentPayment(signedTransaction, tx.txID);
+      // The generic raw-sign path returns the device's combined signature; the orchestration hands it
+      // to the family seam (buildSignedEnergyRentTransaction) to rebuild TX-A, so pass it through as-is.
+      // Pass the paymentTxId we signed against so a signature from a since-recrafted order is rejected
+      // instead of broadcast against the new one.
+      actions.startRentPayment(jobState.signedOperation.signature, state.paymentTxId ?? undefined);
     },
-    [order, actions],
+    [order, actions, state.paymentTxId],
   );
 
   const onIntentJobError = useCallback(
     (error: unknown) => {
       if (isContractDataDisabledError(error)) {
-        actions.setContractDataFailure(error as Error);
+        // Same staleness guard as the submit path: tie the refusal to the paymentTxId in flight.
+        actions.setContractDataFailure(error as Error, state.paymentTxId ?? undefined);
       }
       // Any other error (wrong app, locked device) is handled by the executor's built-in
       // IntentErrorComponent — this screen does not need to navigate away.
     },
-    [actions],
+    [actions, state.paymentTxId],
   );
 
   const onUserCancel = useCallback(() => {

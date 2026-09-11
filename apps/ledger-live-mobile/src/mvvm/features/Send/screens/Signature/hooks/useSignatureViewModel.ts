@@ -166,10 +166,10 @@ export function useSignatureViewModel() {
         (error as { name?: string })?.name === "TransportStatusError" &&
         (error as { statusCode?: number })?.statusCode === 0x6a80
       ) {
-        sponsoredActions.setContractDataFailure(error as Error);
+        sponsoredActions.setContractDataFailure(error as Error, sponsoredState.paymentTxId ?? undefined);
       }
     },
-    [sponsoredState.phase, sponsoredActions],
+    [sponsoredState.phase, sponsoredState.paymentTxId, sponsoredActions],
   );
 
   // Explicit dismiss of the sheet (close button / backdrop) closes the overlay and leaves the user
