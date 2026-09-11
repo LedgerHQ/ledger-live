@@ -1,6 +1,7 @@
 import test from "tests/fixtures/mockServerDevice";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { deviceWithScreenTags } from "tests/utils/tagsUtils";
+import { ONBOARDING_STEP } from "@ledgerhq/live-e2e-shared/mockServer";
 
 test.describe(`Onboarding (mock server)`, () => {
   test.use({
@@ -14,7 +15,7 @@ test.describe(`Onboarding (mock server)`, () => {
       tag: ["@onboarding", ...deviceWithScreenTags()],
       annotation: { type: "TMS", description: "B2CQA-1866" },
     },
-    async ({ app, mockDevice }) => {
+    async ({ app, mockDevice, mockServer }) => {
       await app.onboarding.waitForLaunch();
       await app.onboarding.getStarted();
       await app.portfolio.startConnectDeviceFlow();
@@ -25,8 +26,11 @@ test.describe(`Onboarding (mock server)`, () => {
       await app.syncOnboarding.expectDeviceGenuine();
       await app.syncOnboarding.expectOsUpToDate();
 
+      await mockServer.pinOnboardingStep(ONBOARDING_STEP.newDevice);
       await app.syncOnboarding.continueToSetup();
       await app.syncOnboarding.expectNewSeedPath();
+      await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true);
+
       await app.syncOnboarding.skipWalletSync();
       await app.syncOnboarding.expectSetupComplete();
       await app.syncOnboarding.expectOnboardingComplete();
