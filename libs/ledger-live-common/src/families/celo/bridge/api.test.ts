@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
+import celoBridge, { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
@@ -100,6 +100,15 @@ describe("celo bridge", () => {
         assetOwner: owner,
         name: "Celo Dollar",
         unit: mockToken.units[0],
+      });
+    });
+  });
+
+  describe("staking", () => {
+    it("includes staking configuration", () => {
+      expect(celoBridge({} as unknown as CryptoCurrency)).toMatchObject({
+        stakingSupported: true,
+        usesStakingPositions: true,
       });
     });
   });
