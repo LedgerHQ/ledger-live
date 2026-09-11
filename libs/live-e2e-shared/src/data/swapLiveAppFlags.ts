@@ -17,6 +17,12 @@ export const swapFlagPresets = {
 
 export type SwapFlagPreset = keyof typeof swapFlagPresets;
 
+// One test case per entry, so the order here is the order the cases run in.
+export const swapFlagPresetNames: SwapFlagPreset[] = [
+  "lumenQuoteCardDisabled",
+  "lumenQuoteCardEnabled",
+];
+
 export const swapFlagPresetPayload = (preset: SwapFlagPreset): string =>
   JSON.stringify(swapFlagPresets[preset]);
 
