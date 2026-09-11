@@ -2,7 +2,6 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { TokenAccount, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { addBugLink, addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED } from "tests/utils/featureFlagUtils";
@@ -112,17 +111,15 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
         }${validMemoTag ? " with memo" : ""}`,
         {
           tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-          annotation: { type: "TMS", description: entry.xrayTicket },
+          annotation: [
+            { type: "TMS", description: entry.xrayTicket },
+            ...(entry.bugTicket ? [{ type: "BUG", description: entry.bugTicket }] : []),
+          ],
         },
         async ({ app }) => {
           const isTokenTransaction = tx.accountToDebit instanceof TokenAccount;
 
           const requiresMemoStep = family ? MEMO_STEP_FAMILIES.has(family) : false;
-
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          if (entry.bugTicket) {
-            await addBugLink([entry.bugTicket]);
-          }
 
           await app.mainNavigation.openTargetFromMainNavigation("accounts");
 

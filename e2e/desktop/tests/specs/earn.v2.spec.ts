@@ -10,7 +10,6 @@ import {
   FF_STAKE_PROGRAMS_MODAL,
   useLocalEarnManifest,
 } from "tests/utils/featureFlagUtils";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import earnLocalManifestJson from "tests/utils/earnLocalManifest.json";
 import {
@@ -29,7 +28,6 @@ function setupEnv(disableBroadcast?: boolean) {
 }
 
 async function navigateToEarn(app: Application) {
-  await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
   await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() =>
     app.mainNavigation.openTargetFromMainNavigation("earn"),
   );
@@ -422,7 +420,6 @@ test.describe("Select a validator", () => {
       annotation: { type: "TMS", description: "B2CQA-3024" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();

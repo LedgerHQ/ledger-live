@@ -1,7 +1,6 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
@@ -73,7 +72,6 @@ for (const currency of currencies) {
         },
       },
       async ({ app, userdataFile }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         const firstAccountName = `${currency.currency.name} 1`;
 
         await app.portfolio.waitForPortfolioEmptyState();
@@ -148,7 +146,6 @@ test.describe("Add account", () => {
       },
     },
     async ({ app, userdataFile }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       const firstAccountName = `${Currency.ALEO.name} 1`;
 
       await app.portfolio.waitForPortfolioEmptyState();

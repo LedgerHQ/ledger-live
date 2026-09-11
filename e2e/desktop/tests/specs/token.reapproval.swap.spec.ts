@@ -11,7 +11,6 @@ import {
   ensureTokenApproval,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
@@ -70,7 +69,6 @@ test.describe("Swap - token reapproval", () => {
       // Reapproval broadcasts revoke + approve and waits for each to confirm on mainnet; extend beyond the 400s CI default.
       test.setTimeout(600_000);
       await app.swap.logSelectedProvider(provider.uiName);
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await revokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const smallAmount = new BigNumber(minAmount).div(4).toFixed(6, BigNumber.ROUND_DOWN);

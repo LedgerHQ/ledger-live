@@ -111,11 +111,6 @@ function serializeCliError(error: unknown) {
   };
 }
 
-export function getDescription(annotations: TestInfo["annotations"], type: "TMS" | "BUG") {
-  const annotation = annotations.find(ann => ann.type === type);
-  return annotation?.description ?? "Type not found";
-}
-
 export async function addTmsLink(ids: string[]) {
   for (const id of ids) {
     await allure.tms(id);
@@ -126,6 +121,20 @@ export async function addBugLink(ids: string[]) {
   for (const id of ids) {
     await allure.issue(id);
   }
+}
+
+export async function addAnnotationLinks(annotations: TestInfo["annotations"]) {
+  const idsOf = (type: string) => [
+    ...new Set(
+      annotations
+        .filter(annotation => annotation.type === type)
+        .flatMap(annotation => (annotation.description ?? "").split(","))
+        .map(id => id.trim())
+        .filter(Boolean),
+    ),
+  ];
+  await addTmsLink(idsOf("TMS"));
+  await addBugLink(idsOf("BUG"));
 }
 
 export async function addTeamOwner(team: Team) {

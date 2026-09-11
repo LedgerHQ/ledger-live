@@ -5,7 +5,6 @@ import {
   TokenAccount,
   getParentAccountName,
 } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import type { Application } from "tests/page";
 import {
   addEmptyAccountCommand,
@@ -72,7 +71,6 @@ for (const receive of nativeAccounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(receive.account.accountName);
         await app.account.expectAccountVisibility(receive.account.accountName);
@@ -107,8 +105,6 @@ test.describe("Receive", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);
       await app.account.expectAccountVisibility(account.accountName);
@@ -136,8 +132,6 @@ test.describe("Receive", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(getParentAccountName(tokenAccount.account));
       await app.account.expectAccountVisibility(getParentAccountName(tokenAccount.account));
