@@ -2286,8 +2286,8 @@ importers:
         specifier: 'catalog:'
         version: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       react-native-tcp-socket:
-        specifier: 6.0.6
-        version: 6.0.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
+        specifier: 6.4.2
+        version: 6.4.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
       react-native-url-polyfill:
         specifier: 1.3.0
         version: 1.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
@@ -37816,8 +37816,8 @@ packages:
       react-native: '*'
       react-native-pager-view: '>= 6.0.0'
 
-  react-native-tcp-socket@6.0.6:
-    resolution: {integrity: sha512-FIFSP+3S5OnJRjl7ddD7G9NfVbVEiQ4WROEmOBei1cKE0pDz2R/Kcm4XkFlnMd5sdoG6Wbv830Yd/ZsmOjkEKw==}
+  react-native-tcp-socket@6.4.2:
+    resolution: {integrity: sha512-x3piN60BLaVA7or3n6HKhsa15QDpb1hu+X7Mh99ldV+ZXUGDVKymsLLyu7vzEybTzF3sC17ubpCEgjik5aXfcA==}
     peerDependencies:
       react-native: '>=0.60.0'
 
@@ -68920,7 +68920,7 @@ snapshots:
       react-native-pager-view: 7.0.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       use-latest-callback: 0.1.9(react@19.1.4)
 
-  react-native-tcp-socket@6.0.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)):
+  react-native-tcp-socket@6.4.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)):
     dependencies:
       buffer: 5.7.1
       eventemitter3: 4.0.7

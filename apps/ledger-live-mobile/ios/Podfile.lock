@@ -2417,7 +2417,7 @@ PODS:
     - React
   - react-native-startup-time (2.1.0):
     - React-Core
-  - react-native-tcp-socket (6.0.6):
+  - react-native-tcp-socket (6.4.2):
     - CocoaAsyncSocket
     - React-Core
   - react-native-version-number (0.3.6):
@@ -3691,7 +3691,7 @@ DEPENDENCIES:
   - "react-native-slider (from `../../../node_modules/.pnpm/@react-native-community+slider@5.1.1/node_modules/@react-native-community/slider`)"
   - "react-native-splash-screen (from `../../../node_modules/.pnpm/react-native-splash-screen@3.2.0_react-native@0_7fb3b50c4a313d239ce4fdf88b5162e5/node_modules/react-native-splash-screen`)"
   - "react-native-startup-time (from `../../../node_modules/.pnpm/react-native-startup-time@2.1.0_react-native@0._9046ca1eb6173c89565c2a34b7da3918/node_modules/react-native-startup-time`)"
-  - "react-native-tcp-socket (from `../../../node_modules/.pnpm/react-native-tcp-socket@6.0.6_react-native@0.81_34ca5ceafa440bcbde428f36b080d61a/node_modules/react-native-tcp-socket`)"
+  - "react-native-tcp-socket (from `../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_327f68c7b97e83fdd9f586e1781ec795/node_modules/react-native-tcp-socket`)"
   - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
   - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_f6cee87bac56333e1bcaa7ed5e65d1cc/node_modules/react-native-video`)"
   - "react-native-view-shot (from `../../../node_modules/.pnpm/react-native-view-shot@5.1.1_react-native@0.81._83e6766540172c22b2f788432d1311fb/node_modules/react-native-view-shot`)"
@@ -3950,7 +3950,7 @@ EXTERNAL SOURCES:
   react-native-startup-time:
     :path: "../../../node_modules/.pnpm/react-native-startup-time@2.1.0_react-native@0._9046ca1eb6173c89565c2a34b7da3918/node_modules/react-native-startup-time"
   react-native-tcp-socket:
-    :path: "../../../node_modules/.pnpm/react-native-tcp-socket@6.0.6_react-native@0.81_34ca5ceafa440bcbde428f36b080d61a/node_modules/react-native-tcp-socket"
+    :path: "../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_327f68c7b97e83fdd9f586e1781ec795/node_modules/react-native-tcp-socket"
   react-native-version-number:
     :path: "../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number"
   react-native-video:
@@ -4177,7 +4177,7 @@ SPEC CHECKSUMS:
   react-native-slider: 05e7080478df08489251c2a6739a0d5628b7c198
   react-native-splash-screen: a43276f9cf4b2e65d7ce30efe372ffc528064293
   react-native-startup-time: c7297d8a7892400239e6828bb94a3721c1a1a9df
-  react-native-tcp-socket: ae8abcfebc071216302a09d9ed1e375d4e877484
+  react-native-tcp-socket: 83a30b5da1deed4c720ee25595737ee851c23339
   react-native-version-number: 3d74b5224ca4e1032b1593937d86d3f3c94bf95c
   react-native-video: 6ed94120c73e29c8fbea89ec4e3cedf3528751d6
   react-native-view-shot: 5ed55de8892be2746074c2f8066e6abc21dd6fd3
