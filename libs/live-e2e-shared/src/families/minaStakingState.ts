@@ -10,85 +10,99 @@ const { API_MINA_GRAPHQL_NODE, API_VALIDATORS_BASE_URL } = (
   }
 ).infra;
 
+const DELEGATE_ACCOUNT_QUERY = `
+  query GetDelegateAccount($publicKey: String!) {
+    account(publicKey: $publicKey) {
+      delegateAccount {
+        publicKey
+      }
+    }
+  }
+`;
+
 // The query the app builds its validator list from, so a validator picked here is one it offers.
 const VALIDATORS_QUERY =
   "page=0&size=20&orderBy=DESC&sortBy=DELEGATORS&type=ACTIVE&isVerifiedOnly=true";
 
 /**
- * A mina account delegates its whole balance or nothing at all, so each staking flow needs an
- * account in a given state, and every broadcasting run moves one of them: `Mina 1` is not the
- * delegating account, it is whichever account happens to be free when the run starts.
- *
- * The pool holds one free account and two delegated ones. Delegating takes the free account,
- * undelegating frees one of the delegated ones and redelegating keeps the other delegated, so the
- * shape is preserved and the three flows never emit from the same account on a broadcasting night.
+ * Delegating and undelegating are inverses, so they share a pair: whichever account is free gets
+ * delegated, whichever is delegated gets freed. The pair holds one of each in every interleaving,
+ * including when one flow's transaction is included before the other reads the chain, so neither
+ * assumes a fixed account nor needs the other to have run.
  */
-export const MINA_STAKING_ACCOUNTS = [Account.MINA_1, Account.MINA_2, Account.MINA_3];
+export const MINA_DELEGATION_PAIR = [Account.MINA_1, Account.MINA_2];
+
+/**
+ * Redelegating only moves a delegation from one validator to another, so it leaves its account
+ * delegated. Keeping it out of the pair means its own precondition is the state it produces, and
+ * the specs stay independent: the three flows can run concurrently, in any order, broadcasting.
+ */
+export const MINA_REDELEGATION_ACCOUNT = Account.MINA_3;
 
 export type MinaValidator = { address: string; name: string };
 
-export type StakedMinaAccount = { account: Account; validatorAddress: string };
+export type MinaRedelegation = { account: Account; validatorAddress: string };
 
 type DelegationState = { account: Account; validatorAddress?: string };
 
 /** The validator an account delegates to, or undefined when it delegates to itself. */
 async function fetchDelegate(address: string): Promise<string | undefined> {
   const { data } = await axios.post(API_MINA_GRAPHQL_NODE, {
-    query: `query { account(publicKey: "${address}") { delegate } }`,
+    query: DELEGATE_ACCOUNT_QUERY,
+    variables: { publicKey: address },
   });
-  const delegate: string | undefined = data?.data?.account?.delegate;
+  const delegate: string | undefined = data?.data?.account?.delegateAccount?.publicKey;
   return delegate && delegate !== address ? delegate : undefined;
 }
 
-async function fetchPoolState(): Promise<DelegationState[]> {
+async function fetchDelegationState(account: Account): Promise<DelegationState> {
+  const address = await getAccountAddress(account);
+  return { account, validatorAddress: await fetchDelegate(address) };
+}
+
+async function fetchPairState(): Promise<DelegationState[]> {
   const states: DelegationState[] = [];
-  for (const account of MINA_STAKING_ACCOUNTS) {
+  for (const account of MINA_DELEGATION_PAIR) {
     // Address derivation goes through speculos, so keep it sequential.
-    const address = await getAccountAddress(account);
-    states.push({ account, validatorAddress: await fetchDelegate(address) });
+    states.push(await fetchDelegationState(account));
   }
   return states;
 }
 
-function isStaked(state: DelegationState): state is StakedMinaAccount {
+function isDelegated(state: DelegationState): boolean {
   return state.validatorAddress !== undefined;
 }
 
-function poolShape(states: DelegationState[]) {
+function pairShape(states: DelegationState[]) {
   return states
-    .map(state => `${state.account.accountName}: ${isStaked(state) ? "delegated" : "free"}`)
+    .map(state => `${state.account.accountName}: ${isDelegated(state) ? "delegated" : "free"}`)
     .join(", ");
 }
 
-/** The free account, which the delegate flow stakes. */
+/** The free account of the pair, which this flow delegates. */
 export async function pickMinaAccountToDelegate(): Promise<Account> {
-  const states = await fetchPoolState();
-  const free = states.find(state => !isStaked(state));
-  invariant(free, `No free mina account to delegate from (${poolShape(states)})`);
+  const states = await fetchPairState();
+  const free = states.find(state => !isDelegated(state));
+  invariant(free, `No free mina account to delegate from (${pairShape(states)})`);
   return free.account;
 }
 
-/**
- * The first delegated account. Undelegating and redelegating split the two delegated accounts by
- * pool order, so a broadcasting run never sends two transactions from the same account.
- */
-export async function pickMinaAccountToUndelegate(): Promise<StakedMinaAccount> {
-  const states = await fetchPoolState();
-  const staked = states.filter(isStaked);
-  invariant(staked.length > 0, `No delegated mina account to undelegate (${poolShape(states)})`);
-  return staked[0];
+/** The delegated account of the pair, which this flow frees. */
+export async function pickMinaAccountToUndelegate(): Promise<Account> {
+  const states = await fetchPairState();
+  const delegated = states.find(isDelegated);
+  invariant(delegated, `No delegated mina account to undelegate (${pairShape(states)})`);
+  return delegated.account;
 }
 
-/** The second delegated account, the one the undelegate flow leaves alone. */
-export async function pickMinaAccountToRedelegate(): Promise<StakedMinaAccount> {
-  const states = await fetchPoolState();
-  const staked = states.filter(isStaked);
+/** The dedicated account and the validator it currently delegates to, which cannot be reselected. */
+export async function pickMinaRedelegation(): Promise<MinaRedelegation> {
+  const { account, validatorAddress } = await fetchDelegationState(MINA_REDELEGATION_ACCOUNT);
   invariant(
-    staked.length > 1,
-    `Only ${staked.length} mina account(s) delegated, redelegating would claim the one the ` +
-      `undelegate flow uses (${poolShape(states)})`,
+    validatorAddress,
+    `${MINA_REDELEGATION_ACCOUNT.accountName} is not delegated: redelegating needs a delegation to move`,
   );
-  return staked[1];
+  return { account, validatorAddress };
 }
 
 /** A named validator other than the one given: the app rejects delegating to the current one. */
