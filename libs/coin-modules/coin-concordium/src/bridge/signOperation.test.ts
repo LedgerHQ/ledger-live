@@ -52,6 +52,9 @@ jest.mock("../logic", () => {
   };
 });
 
+// Kept mocked, but only so signing can be asserted *not* to reach it: status
+// performs a recipient lookup that signing has no use for, and it would land in
+// front of the device prompt.
 jest.mock("./getTransactionStatus", () => ({
   getTransactionStatus: jest.fn().mockResolvedValue({
     errors: {},
@@ -211,7 +214,7 @@ describe("signOperation", () => {
       });
     });
 
-    it("should set operation value from transaction status amount", async () => {
+    it("should set operation value from the transaction amount", async () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
@@ -228,8 +231,29 @@ describe("signOperation", () => {
       const events = await firstValueFrom(observable.pipe(toArray()));
       const signedEvent = events[2] as any;
 
-      // THEN - amount comes from getTransactionStatus mock (5000000)
-      expect(signedEvent.signedOperation.operation.value).toEqual(new BigNumber(5000000));
+      // THEN
+      expect(signedEvent.signedOperation.operation.value).toEqual(transaction.amount);
+    });
+
+    // Status resolves the recipient against the token's allow/deny lists, and
+    // signing does not read `errors`. Routing through it would put a request in
+    // front of the device prompt whose verdict is then discarded — and the
+    // recipient cache expires well within the time it takes to plug in and
+    // unlock a device, so it would usually be a live request.
+    it("does not fetch a transaction status while signing", async () => {
+      const { getTransactionStatus } = jest.requireMock("./getTransactionStatus");
+      const mockSigner = createFixtureSigner();
+      const signOperation = buildSignOperation(createFixtureSignerContext(mockSigner));
+
+      await firstValueFrom(
+        signOperation({
+          account: createFixtureAccount(),
+          deviceId: "test-device",
+          transaction: createFixtureTransaction(),
+        }).pipe(toArray()),
+      );
+
+      expect(getTransactionStatus).not.toHaveBeenCalled();
     });
 
     it("should set operation fee from estimation", async () => {
@@ -564,7 +588,7 @@ describe("signOperation", () => {
       expect(operation.subOperations?.[0]).toMatchObject({
         accountId: account.subAccounts[0].id,
         type: "OUT",
-        value: new BigNumber(5000000),
+        value: transaction.amount,
       });
     });
 

@@ -17,7 +17,7 @@ import {
   estimateFees,
   getNextValidSequence,
 } from "../logic";
-import { getTransactionStatus } from "./getTransactionStatus";
+import { resolveSendAmount } from "./amount";
 import coinConfig from "../config";
 
 export const buildSignOperation =
@@ -32,8 +32,27 @@ export const buildSignOperation =
         const { fee } = transaction;
         if (!fee || fee.isNaN()) throw new FeeNotLoaded();
 
-        const status = await getTransactionStatus(account, transaction);
-        const actualAmount = status.amount;
+        // The fee shown in the wallet and the energy in the signed header must
+        // be two halves of one estimate, or the device's "Max fees" step
+        // contradicts the figure the user already approved. The discriminator is
+        // the selected sub-account, not a present `energy`: that field outlives
+        // any token selection, so reading it alone would declare a token energy
+        // limit on a native transfer.
+        const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+        const tokenAccount = subAccount?.type === "TokenAccount" ? subAccount : undefined;
+
+        // Computed here rather than read off `getTransactionStatus`, which is the
+        // only thing this ever wanted from it. Status now looks the recipient up
+        // against the token's lists, and that request would sit in front of the
+        // device prompt for a verdict signing never reads — the sub-account TTL
+        // is shorter than the time it takes to plug in and unlock a device, so it
+        // would usually be a live request, not a cached one.
+        const actualAmount = resolveSendAmount({
+          account,
+          transaction,
+          tokenAccount,
+          estimatedFees: fee,
+        });
 
         o.next({
           type: "device-signature-requested",
@@ -45,15 +64,6 @@ export const buildSignOperation =
           account.freshAddress,
           account.currency.id,
         );
-
-        // The fee shown in the wallet and the energy in the signed header must
-        // be two halves of one estimate, or the device's "Max fees" step
-        // contradicts the figure the user already approved. The discriminator is
-        // the selected sub-account, not a present `energy`: that field outlives
-        // any token selection, so reading it alone would declare a token energy
-        // limit on a native transfer.
-        const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
-        const tokenAccount = subAccount?.type === "TokenAccount" ? subAccount : undefined;
 
         // Fails closed: the alternative is a signed CCD transfer. Typed rather
         // than an invariant because a user can reach this, so it needs to reach
