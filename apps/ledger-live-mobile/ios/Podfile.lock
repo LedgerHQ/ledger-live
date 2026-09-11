@@ -2267,8 +2267,34 @@ PODS:
     - Yoga
   - react-native-randombytes (3.6.1):
     - React-Core
-  - react-native-restart (0.0.24):
+  - react-native-restart (0.0.29):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - react-native-safe-area-context (5.6.1):
     - boost
     - DoubleConversion
@@ -3686,7 +3712,7 @@ DEPENDENCIES:
   - "react-native-pager-view (from `../../../node_modules/.pnpm/react-native-pager-view@7.0.0_react-native@0.81_c0ff24837a45f8c2423b5ee7da79e1b6/node_modules/react-native-pager-view`)"
   - "react-native-performance (from `../../../node_modules/.pnpm/react-native-performance@5.1.2_react-native@0.8_ffdcfbc49b03201535a4e2607a2b1c42/node_modules/react-native-performance`)"
   - "react-native-randombytes (from `../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes`)"
-  - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.24_react-native@0.81.6_3490b89e86473c217d6f2b0593c9edc0/node_modules/react-native-restart`)"
+  - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.81.6_f4e95484bb2762619f4b89d0ee00b582/node_modules/react-native-restart`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@5.6.1_react-nati_dc140c40b533e12ecb3cd17960e9d3aa/node_modules/react-native-safe-area-context`)"
   - "react-native-slider (from `../../../node_modules/.pnpm/@react-native-community+slider@5.1.1/node_modules/@react-native-community/slider`)"
   - "react-native-splash-screen (from `../../../node_modules/.pnpm/react-native-splash-screen@3.2.0_react-native@0_7fb3b50c4a313d239ce4fdf88b5162e5/node_modules/react-native-splash-screen`)"
@@ -3940,7 +3966,7 @@ EXTERNAL SOURCES:
   react-native-randombytes:
     :path: "../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes"
   react-native-restart:
-    :path: "../../../node_modules/.pnpm/react-native-restart@0.0.24_react-native@0.81.6_3490b89e86473c217d6f2b0593c9edc0/node_modules/react-native-restart"
+    :path: "../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.81.6_f4e95484bb2762619f4b89d0ee00b582/node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../../../node_modules/.pnpm/react-native-safe-area-context@5.6.1_react-nati_dc140c40b533e12ecb3cd17960e9d3aa/node_modules/react-native-safe-area-context"
   react-native-slider:
@@ -4172,7 +4198,7 @@ SPEC CHECKSUMS:
   react-native-pager-view: 4046e20b89f9ec1d29155668eb06c76a5f464951
   react-native-performance: 05f3b3d4418866a72dff821412160f96adc7460e
   react-native-randombytes: 3c8f3e89d12487fd03a2f966c288d495415fc116
-  react-native-restart: df7caae89026a8ab2ecdd82839978f657701f51d
+  react-native-restart: b195f3ec6628c041e52753fe84a4851240267957
   react-native-safe-area-context: ee1e8e2a7abf737a8d4d9d1a5686a7f2e7466236
   react-native-slider: 05e7080478df08489251c2a6739a0d5628b7c198
   react-native-splash-screen: a43276f9cf4b2e65d7ce30efe372ffc528064293
