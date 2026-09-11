@@ -1,6 +1,13 @@
 import { NetworkError } from "../../errors";
 import { Config, getChainAPI } from ".";
-import { Connection, PublicKey, SendTransactionError, StakeProgram } from "@solana/web3.js";
+import {
+  Connection,
+  PublicKey,
+  SendTransactionError,
+  StakeProgram,
+  TransactionExpiredBlockheightExceededError,
+  TransactionExpiredTimeoutError,
+} from "@solana/web3.js";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 
@@ -87,6 +94,27 @@ describe("index", () => {
           expect(mockedConfirmTransaction).not.toHaveBeenCalled();
         }
       });
+    });
+
+    it.each([
+      ["a timeout", () => new TransactionExpiredTimeoutError("sig", 30)],
+      ["an exceeded block height", () => new TransactionExpiredBlockheightExceededError("sig")],
+    ])("keeps %s from confirmTransaction intact, for broadcast to classify", async (_n, make) => {
+      const expiry = make();
+      jest.mocked(Connection).mockImplementation(
+        () =>
+          ({
+            sendRawTransaction: jest.fn().mockResolvedValue("sig"),
+            getLatestBlockhash: jest
+              .fn()
+              .mockResolvedValue({ blockhash: "b", lastValidBlockHeight: 1 }),
+            confirmTransaction: jest.fn().mockRejectedValue(expiry),
+          }) as unknown as Connection,
+      );
+
+      await expect(getChainAPI(FAKE_CONFIG).sendRawTransaction(Buffer.alloc(0))).rejects.toBe(
+        expiry,
+      );
     });
 
     describe("getStakeAccountsByWithdrawAuth", () => {

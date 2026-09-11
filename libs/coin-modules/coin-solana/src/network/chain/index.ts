@@ -7,6 +7,8 @@ import {
   getMinimumBalanceForRentExemptAccount,
 } from "@solana/spl-token";
 import {
+  TransactionExpiredBlockheightExceededError,
+  TransactionExpiredTimeoutError,
   ConfirmedSignatureInfo,
   Connection,
   FetchMiddleware,
@@ -126,7 +128,13 @@ export type ChainAPI = Readonly<{
 
 // Naive mode, allow us to filter in sentry all this error coming from Sol RPC node
 const remapErrors = (e: unknown) => {
-  if (e instanceof NetworkError) {
+  // An expired confirmation is an outcome, not a transport failure: flattening it would hide it
+  // from `broadcast`, which turns it into `SolanaTxConfirmationTimeout`.
+  if (
+    e instanceof NetworkError ||
+    e instanceof TransactionExpiredTimeoutError ||
+    e instanceof TransactionExpiredBlockheightExceededError
+  ) {
     throw e;
   }
 
