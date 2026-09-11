@@ -10,6 +10,9 @@ import type {
   Page,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { isOperationType, isStringArray, readFamilyExtra } from "../../utils";
+import { paginateOperations } from "../../paginateOperations";
+import { toA4HttpError } from "./errors";
+import { clearA4RegistrationCache, ensureA4Registered } from "./registration";
 import type { A4OperationView } from "./types";
 import type { A4Client } from "./index";
 
@@ -256,19 +259,61 @@ export function adaptA4OperationToLiveOperation(
 
 export async function listA4OperationsPage(
   client: A4Client,
-  accountId: string,
+  a4AccountId: string,
+  liveAccountId: string,
   address: string,
   { minHeight, cursor }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  const result = await client.listOperations(accountId, {
+  const result = await client.listOperations(a4AccountId, {
     blocks: [minHeight, "latest"],
     order: "DESC",
     token: cursor,
   });
 
   const items = (result.data?.items ?? []).flatMap(a4Op =>
-    adaptA4OperationToLiveOperation(accountId, address, a4Op),
+    adaptA4OperationToLiveOperation(liveAccountId, address, a4Op),
   );
 
   return { items, next: result.data?.nextToken };
+}
+
+/*
+ * 412 = datacenter roam: the account is registered, but on a different DC than the one we hit.
+ * We must NOT throw - throwing would trigger an unnecessary fallback to the coin-module delegate.
+ * Instead: clear the registration cache (the cached key is DC-specific; keeping it would let
+ * ensureA4Registered short-circuit without actually re-registering on the new DC), call
+ * ensureA4Registered to anchor the account on the current DC, then restart pagination from
+ * page 1 (nextToken cursors are DC-scoped and invalid across a datacenter switch).
+ * Any other status (5xx, 422, transport) is rethrown so the caller can fall back to the delegate.
+ *
+ * We paginate over raw A4OperationView[] rather than through listA4OperationsPage. Adapting
+ * inside the page fetcher means a page whose raw items all map to [] (NFT or failed-incoming)
+ * looks empty to paginateOperations, which stops pagination even when nextToken is present.
+ * Paginating raw items first ensures paginateOperations sees the true A4 item count.
+ */
+export async function fetchA4Operations(
+  client: A4Client,
+  a4AccountId: string,
+  liveAccountId: string,
+  address: string,
+  minHeight: number,
+): Promise<Operation[]> {
+  const fetchRawPage = (cursor: string | undefined) =>
+    client
+      .listOperations(a4AccountId, { blocks: [minHeight, "latest"], order: "DESC", token: cursor })
+      .then(r => ({ items: r.data?.items ?? [], next: r.data?.nextToken }));
+
+  const adapt = (rawOps: A4OperationView[]) =>
+    rawOps.flatMap(a4Op => adaptA4OperationToLiveOperation(liveAccountId, address, a4Op));
+
+  try {
+    return adapt(await paginateOperations(fetchRawPage));
+  } catch (rawErr) {
+    const err = toA4HttpError(rawErr);
+    if (err.status !== 412) throw err;
+
+    clearA4RegistrationCache();
+    await ensureA4Registered(client, a4AccountId, [address]);
+    return adapt(await paginateOperations(fetchRawPage));
+  }
 }
