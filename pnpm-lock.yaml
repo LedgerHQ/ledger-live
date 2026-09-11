@@ -17344,9 +17344,6 @@ importers:
       '@bitcoinerlab/secp256k1':
         specifier: 1.2.0
         version: 1.2.0
-      '@domain/entity-currency-crypto':
-        specifier: workspace:^
-        version: link:../../domain/entity/currency-crypto
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
@@ -65309,9 +65306,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
