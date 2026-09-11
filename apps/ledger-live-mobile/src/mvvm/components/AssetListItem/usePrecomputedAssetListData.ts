@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { formatPrice } from "@ledgerhq/live-currency-format";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
@@ -7,8 +7,62 @@ import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
 } from "@ledgerhq/live-common/portfolio/portfolio";
-import { useThrottledValue } from "@ledgerhq/live-hooks/useThrottledFunction";
 import { ValueChange } from "@ledgerhq/types-live";
+
+function useThrottledFunction<FnReturnType, Args extends unknown[]>(
+  callbackFunction: (...args: Args) => FnReturnType,
+  throttleMs: number,
+  args: Args,
+): FnReturnType {
+  const [state, setState] = useState<FnReturnType>(() => callbackFunction(...args));
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutMs = useRef<number>(throttleMs);
+  const skipInitialValue = useRef(true);
+  const nextArgs = useRef<Args | null>(null);
+
+  useEffect(() => {
+    const throttleDelayChanged = timeoutMs.current !== throttleMs;
+    timeoutMs.current = throttleMs;
+    const timeoutCallback = () => {
+      if (nextArgs.current) {
+        setState(callbackFunction(...nextArgs.current));
+        nextArgs.current = null;
+        timeout.current = setTimeout(timeoutCallback, timeoutMs.current);
+      } else {
+        timeout.current = null;
+      }
+    };
+    if (!timeout.current) {
+      if (skipInitialValue.current) {
+        skipInitialValue.current = false;
+      } else {
+        setState(callbackFunction(...args));
+      }
+      timeout.current = setTimeout(timeoutCallback, timeoutMs.current);
+    } else {
+      if (throttleDelayChanged) {
+        clearTimeout(timeout.current);
+        timeout.current = setTimeout(timeoutCallback, timeoutMs.current);
+      }
+      nextArgs.current = args;
+    }
+  }, [...args, throttleMs]); // eslint-disable-line
+
+  useEffect(
+    () => () => {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+    },
+    [],
+  );
+
+  return state;
+}
+
+function useThrottledValue<ValueType>(value: ValueType, throttleMs: number): ValueType {
+  return useThrottledFunction(v => v, throttleMs, [value]);
+}
 import BigNumber from "bignumber.js";
 import { useLocale } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";

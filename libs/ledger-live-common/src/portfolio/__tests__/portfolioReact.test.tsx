@@ -27,7 +27,7 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
 }));
 
 const mockThrottledValues = jest.fn();
-jest.mock("@ledgerhq/live-hooks/useThrottledFunction", () => ({
+jest.mock("../../hooks/useThrottledFunction", () => ({
   useThrottledValues: (...args: unknown[]) => mockThrottledValues(...args),
 }));
 

@@ -165,7 +165,6 @@
     "network": "pnpm --filter live-network",
     "config": "pnpm --filter live-config",
     "utils": "pnpm --filter live-utils",
-    "hooks": "pnpm --filter live-hooks",
     "psbtv2": "pnpm --filter psbtv2",
     "types-devices": "pnpm --filter types-devices",
     "types-live": "pnpm --filter types-live",

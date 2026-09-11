@@ -69,7 +69,6 @@ shared-lib:
   - libs/live-currency-format/**/*
   - libs/live-dmk-shared/**/*
   - libs/live-dmk-speculos/**/*
-  - libs/live-hooks/**/*
   - libs/live-network/**/*
   - libs/live-signer-aleo/**/*
   - libs/live-signer-canton/**/*
