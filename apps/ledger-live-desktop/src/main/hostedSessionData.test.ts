@@ -142,4 +142,24 @@ describe("clearHostedSessionData", () => {
     expect(get).not.toHaveBeenCalled();
     expect(clearStorageData).not.toHaveBeenCalled();
   });
+
+  it("wipes an origin only once, however many times the list repeats it", async () => {
+    const { session, clearStorageData } = fakeSession([]);
+
+    await clearHostedSessionData(session, [
+      "https://dev.api.baanx.com",
+      "https://dev.api.baanx.com/onboarding",
+    ]);
+
+    expect(clearStorageData).toHaveBeenCalledTimes(1);
+  });
+
+  it("caps the origins it processes, so a hostile list cannot force a long wipe loop", async () => {
+    const { session, clearStorageData } = fakeSession([]);
+    const origins = Array.from({ length: 50 }, (_, i) => `https://provider-${i}.test`);
+
+    await clearHostedSessionData(session, origins);
+
+    expect(clearStorageData).toHaveBeenCalledTimes(10);
+  });
 });
