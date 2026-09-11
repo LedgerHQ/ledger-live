@@ -9,6 +9,8 @@ export type CardLinkedWalletBalance = Readonly<{
   currency: string;
   network: string;
   priority: number;
+  /** The Ledger currency the wallet's asset resolves to, absent when it is not mapped. */
+  ledgerId?: string;
   balance: string | null;
   counterValue: number | null;
 }>;

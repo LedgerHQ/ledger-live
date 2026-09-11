@@ -30,7 +30,7 @@ export function combineCardLinkedWallets({
     // `linked` is the cache entry: never sort it in place.
     .slice()
     .sort((a, b) => a.priority - b.priority)
-    .map(({ id, address, currency, network, priority }) => {
+    .map(({ id, address, currency, network, priority, ledgerId }) => {
       const balance = balanceById.get(id) ?? null;
 
       return {
@@ -39,6 +39,7 @@ export function combineCardLinkedWallets({
         currency,
         network,
         priority,
+        ledgerId,
         balance,
         counterValue: balance === null ? null : counterValueFor({ currency, network }, balance),
       };
