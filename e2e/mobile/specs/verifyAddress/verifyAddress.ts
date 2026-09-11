@@ -2,7 +2,7 @@ import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
-const BST_VERIFY_ADDRESS_CURRENCIES = new Set(["ripple", "tezos"]);
+const BST_VERIFY_ADDRESS_CURRENCIES = new Set(["ripple", "tezos", "zcash"]);
 
 export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], tags: string[]) {
   describe("Receive", () => {
