@@ -36,12 +36,12 @@
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
-    "@shared/api-services": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@support/jest-features-flow": "workspace:*",
+    "@support/msw-features-flow-pay-card": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

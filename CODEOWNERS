@@ -82,6 +82,7 @@ tools/nx-plugins/generators/                             @ledgerhq/platform
 support/jest-devtools/                                   @ledgerhq/platform
 support/jest-features-flow/                              @ledgerhq/platform
 support/jest-shared/                                     @ledgerhq/platform
+support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
 
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp

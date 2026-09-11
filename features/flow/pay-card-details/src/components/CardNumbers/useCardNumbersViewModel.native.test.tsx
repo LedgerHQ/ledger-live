@@ -1,28 +1,26 @@
 import React, { type PropsWithChildren } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
 import {
-  CARD_DETAILS,
-  CARD_DETAILS_IMAGE_URL,
-  CARD_DETAILS_TOKEN,
-  CARD_DETAILS_TOKEN_URL,
+  CARD_API_BASE_URL,
   CardApiStoreProvider,
+  listenToCardApi,
   makeCardApiStore,
-} from "../../__tests__/cardApiStore";
+} from "@support/msw-features-flow-pay-card";
 import { useCardNumbersViewModel } from "./useCardNumbersViewModel";
 
-const server = setupServer();
+const CARD_DETAILS_TOKEN = "00000000-0000-4000-8000-000000000000";
+const CARD_DETAILS_IMAGE_URL = `${CARD_API_BASE_URL}/details-image?token=${CARD_DETAILS_TOKEN}`;
+const CARD_DETAILS = {
+  token: CARD_DETAILS_TOKEN,
+  imageUrl: CARD_DETAILS_IMAGE_URL,
+};
+const CARD_DETAILS_TOKEN_URL = `${CARD_API_BASE_URL}/v1/card/details/token`;
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
-afterAll(() => server.close());
+const server = listenToCardApi();
 
 beforeEach(() => {
   server.use(http.post(CARD_DETAILS_TOKEN_URL, () => HttpResponse.json(CARD_DETAILS)));
-});
-
-afterEach(() => {
-  server.resetHandlers();
 });
 
 function deferred<T>() {
