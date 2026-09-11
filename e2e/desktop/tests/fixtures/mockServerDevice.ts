@@ -1,15 +1,17 @@
+import { expect } from "@playwright/test";
 import {
+  mockServerBaseUrl,
   mockServerEnv,
-  type MockServerSession,
+  MockServerSessionHandle,
   deviceUnderTest,
   MockServerDevice,
 } from "@ledgerhq/live-e2e-shared/mockServer";
 import base from "tests/fixtures/common";
 
 type MockServerFixtures = {
-  mockServerSession: MockServerSession;
   mockDevice: MockServerDevice;
   mockDeviceParams: Partial<MockServerDevice>;
+  mockServer: MockServerSessionHandle;
 };
 
 /**
@@ -24,12 +26,19 @@ export const test = base.extend<MockServerFixtures>({
     await use({ ...deviceUnderTest(), ...mockDeviceParams });
   },
 
-  mockServerSession: async ({ mockDevice }, use) => {
-    await use({ devices: [mockDevice] });
+  // Attaches to the session the app created. Retrying as the token is published after launch.
+  mockServer: async ({ page }, use) => {
+    let token = "";
+    await expect(async () => {
+      token = (await page.evaluate(() => window.ledger?.getMockServerSessionToken?.())) ?? "";
+      expect(token).not.toBe("");
+    }).toPass();
+
+    await use(new MockServerSessionHandle(mockServerBaseUrl(), token));
   },
 
-  env: async ({ mockServerSession }, use) => {
-    await use(await mockServerEnv(mockServerSession));
+  env: async ({ mockDevice }, use) => {
+    await use(await mockServerEnv({ devices: [mockDevice] }));
   },
 });
 
