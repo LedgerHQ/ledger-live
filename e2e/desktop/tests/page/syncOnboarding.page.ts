@@ -1,13 +1,8 @@
 import { expect, type Locator } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import type { DeviceModelId } from "@ledgerhq/live-e2e-shared/mockServer";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 
-/**
- * The sync onboarding companion (`/onboarding/sync/manual/:deviceModelId`), driven
- * against an emulated device. Its steps advance as the device is polled, so each
- * assertion waits on the companion rather than following a fixed script.
- */
 /** Resolves with `outcome` once the locator is visible, or "timeout" if it never is. */
 async function appeared<T extends string>(locator: Locator, outcome: T) {
   try {
@@ -105,7 +100,6 @@ export class SyncOnboardingPage extends AppPage {
 
   @step("Expect the device setup to complete")
   async expectSetupComplete() {
-    // The mock server advances PIN and Secret Recovery Phrase as the companion polls it.
     await expect(this.successStep).toBeVisible();
   }
 

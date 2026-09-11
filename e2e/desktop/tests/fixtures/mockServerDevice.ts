@@ -1,11 +1,11 @@
 import { expect } from "@playwright/test";
+import { type MockServerDevice } from "@ledgerhq/live-e2e-shared/mockServer/types";
+import { deviceUnderTest } from "@ledgerhq/live-e2e-shared/mockServer/devices";
+import { mockServerEnv } from "@ledgerhq/live-e2e-shared/mockServer/launchEnv";
 import {
-  mockServerBaseUrl,
-  mockServerEnv,
-  MockServerSessionHandle,
-  deviceUnderTest,
-  MockServerDevice,
-} from "@ledgerhq/live-e2e-shared/mockServer";
+  attachMockServerSession,
+  type MockServerSessionHandle,
+} from "@ledgerhq/live-e2e-shared/mockServer/session";
 import base from "tests/fixtures/common";
 
 type MockServerFixtures = {
@@ -34,7 +34,7 @@ export const test = base.extend<MockServerFixtures>({
       expect(token).not.toBe("");
     }).toPass();
 
-    await use(new MockServerSessionHandle(mockServerBaseUrl(), token));
+    await use(attachMockServerSession(token));
   },
 
   env: async ({ mockDevice }, use) => {
