@@ -149,12 +149,15 @@ test.describe("Swap - landing page", () => {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        // Pin before the flow: the override needs the live app loaded, and the reload that
-        // applies it clears the form.
+        // Pin before the flow: the override needs the live app loaded, and the remount
+        // that applies it clears the form.
         await app.swap.goAndWaitForSwapToBeReady(() =>
           app.mainNavigation.openTargetFromMainNavigation("swap"),
         );
-        await app.swap.applyFlagPreset(preset);
+        await app.swap.applyFlagPreset(preset, async () => {
+          await app.mainNavigation.openTargetFromMainNavigation("home");
+          await app.mainNavigation.openTargetFromMainNavigation("swap");
+        });
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
 
