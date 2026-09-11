@@ -6,16 +6,20 @@ import type { CardLoginViewProps } from "./types";
 export function CardLoginView({
   description,
   loginLabel,
+  alreadyHaveCardLabel,
   isLoading,
   errorMessage,
   onLoginPress,
+  onAlreadyHaveCardPress,
   intro,
 }: CardLoginViewProps) {
   return (
     <>
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-row items-center justify-between gap-16">
-          <span className="body-3 min-w-0 flex-1 text-muted">{description}</span>
+      <div className="flex flex-col gap-24 text-center">
+        <div className="flex flex-col gap-12">
+          <p className="body-2 text-muted">{description}</p>
+        </div>
+        <div className="flex flex-col items-center gap-16">
           <Button
             appearance="base"
             size="md"
@@ -26,8 +30,19 @@ export function CardLoginView({
           >
             {loginLabel}
           </Button>
+          {alreadyHaveCardLabel ? (
+            <Button
+              appearance="no-background"
+              size="md"
+              disabled={isLoading}
+              onClick={onAlreadyHaveCardPress}
+              aria-label={alreadyHaveCardLabel}
+            >
+              {alreadyHaveCardLabel}
+            </Button>
+          ) : null}
+          {errorMessage ? <span className="body-3 text-error">{errorMessage}</span> : null}
         </div>
-        {errorMessage ? <span className="body-3 self-end text-error">{errorMessage}</span> : null}
       </div>
       <CardLoginIntroView {...intro} />
     </>

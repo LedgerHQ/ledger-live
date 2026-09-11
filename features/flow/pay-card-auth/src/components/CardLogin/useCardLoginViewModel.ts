@@ -21,16 +21,6 @@ import type {
 
 type CardLoginStateValue = SnapshotFrom<typeof cardLoginMachine>["value"];
 
-/** Hardcoded English until the Pay tab gets its copy keys. */
-const ERROR_MESSAGES: Record<PayCardLoginErrorKind, string> = {
-  pkce_failed: "Login could not start. Please try again.",
-  browser_open_failed: "The login page could not open. Please try again.",
-  missing_attempt: "This login is no longer valid. Please log in again.",
-  exchange_failed: "Login could not be completed. Please try again.",
-  persist_failed: "Your session could not be saved. Please try again.",
-  fetch_user_failed: "Your card could not be loaded. Please try again.",
-};
-
 const LOGIN_KEY_PREFIX = "payTab.cardLogin";
 
 const INTRO_KEY_PREFIX = "payTab.cardLoginIntro";
@@ -52,6 +42,7 @@ export const CARD_LOGIN_INTRO_FLOW = "card";
 
 const TRACK_BUTTON = {
   getCard: "get card",
+  alreadyHaveCard: "i already have a card",
   login: "login",
   createAccount: "create an account",
   logIn: "log in to baanx",
@@ -64,9 +55,10 @@ const TRACK_BUTTON = {
  */
 export function mapSnapshotToViewModel(
   value: CardLoginStateValue,
-  errorKind: PayCardLoginErrorKind | null,
+  errorMessage: string | null,
   copy: CardLoginCopy,
   onLoginPress: () => void,
+  onAlreadyHaveCardPress: () => void,
   intro: CardLoginIntroViewProps,
 ): CardLoginViewModel {
   // Nothing to offer yet. `hydrating` is still reading the stored session, so a login CTA here would
@@ -80,8 +72,9 @@ export function mapSnapshotToViewModel(
     ...copy,
     // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
     isLoading: value !== "idle" && value !== "error" && value !== "awaitingCallback",
-    errorMessage: errorKind ? ERROR_MESSAGES[errorKind] : null,
+    errorMessage,
     onLoginPress,
+    onAlreadyHaveCardPress,
     intro,
   };
 }
@@ -94,9 +87,9 @@ export function useCardLoginViewModel({
   callback,
   onTrackEvent,
 }: CardLoginViewModelParams): CardLoginViewModel {
+  const { t } = useTranslation();
   const dispatch = useDispatch<CardLoginDispatch>();
   const isSignedIn = useSelector(selectIsSignedIn);
-  const { t } = useTranslation();
   const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
   const [isIntroRequested, setIsIntroRequested] = useState(false);
   const [hasStartedLogin, setHasStartedLogin] = useState(false);
@@ -179,6 +172,11 @@ export function useCardLoginViewModel({
     setIsIntroRequested(true);
   }, [hasSeenLoginIntro, onTrackEvent, snapshot.value, startLogin, trackCta]);
 
+  const onAlreadyHaveCardPress = useCallback(() => {
+    trackCta(TRACK_BUTTON.alreadyHaveCard);
+    startLogin();
+  }, [startLogin, trackCta]);
+
   const onIntroActionPress = useCallback(
     (id: CardLoginIntroActionId) => {
       if (!isIntroOpen) {
@@ -232,6 +230,9 @@ export function useCardLoginViewModel({
       title: t(`${LOGIN_KEY_PREFIX}.title`),
       description: t(`${LOGIN_KEY_PREFIX}.${stage}.description`),
       loginLabel: t(`${LOGIN_KEY_PREFIX}.${stage}.action`),
+      alreadyHaveCardLabel: hasSeenLoginIntro
+        ? null
+        : t(`${LOGIN_KEY_PREFIX}.beforeIntro.alreadyHaveCard`),
     };
   }, [t, hasSeenLoginIntro]);
 
@@ -248,11 +249,16 @@ export function useCardLoginViewModel({
     [isIntroOpen, t, introRows, introActions, onIntroActionPress, onIntroClose],
   );
 
+  const errorKind: PayCardLoginErrorKind | null = hasSignupFailed
+    ? "browser_open_failed"
+    : snapshot.context.errorKind;
+
   return mapSnapshotToViewModel(
     snapshot.value,
-    hasSignupFailed ? "browser_open_failed" : snapshot.context.errorKind,
+    errorKind ? t(`${LOGIN_KEY_PREFIX}.errors.${errorKind}`) : null,
     copy,
     onLoginPress,
+    onAlreadyHaveCardPress,
     intro,
   );
 }
