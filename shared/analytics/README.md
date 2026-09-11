@@ -6,7 +6,9 @@
 
 Shared `track` for Ledger Wallet apps. Each app registers its own analytics client (e.g. Segment), consent check, and extra props.
 
-## Example Setup
+## Getting started
+
+### Example setup
 
 ```ts
 import {
@@ -19,17 +21,15 @@ import {
   track,
   type LoggableEvent,
 } from "@shared/analytics";
+// register analytics functions
+setEnabledFn(() => true);
+setExtraPropsFn(() => myExtraPropsSelector(store.getState()));
+setMandatoryExtraPropsFn(() => myMandatoryPropsSelector(store.getState()));
+setPropsFilter((props) => myFilter(props));
 
-setEnabledFn(() => analyticsEnabledSelector(store.getState()));
-setExtraPropsFn(() => analyticsExtraPropsSelector(store.getState()));
-setMandatoryExtraPropsFn(() =>
-  analyticsMandatoryPropsSelector(store.getState())
-);
-setPropsFilter((props) => yourFilter(props));
+// register tracking client and logger
 setAnalytics({
-  track: (event, props) => {
-    void segment.track(event, props);
-  },
+  track: (event, props) => segment.track(event, props),
   log: console.log,
 });
 
@@ -37,23 +37,52 @@ setAnalytics({
 track("Your Event", { foo: "bar" });
 
 // subscribe to the event bus, e.g. for a dev console
-const myDebugging: LoggableEvent[] = [];
-const sub = analyticsEvents$.subscribe((event) => myEvents.push(event));
-const unsubscribe = sub.unsubscribe;
+const myDebug: LoggableEvent[] = [];
+const sub = analyticsEvents$.subscribe((event) => myDebug.push(event));
+const unsubscribe = () => sub.unsubscribe();
 ```
 
-Tracking is off until enabled explicitly. Pass `{ mandatory: true }` to skip that check.
+### Enabling and mandatory
+
+Tracking is off until enabled explicitly with `setEnabledFn`.
+
+In the example above it is switched on by default but more often you will store user consent in some dynamic state. In this case, pass a selector for that state, e.g.
+
+```ts
+setEnabledFn(myAnalyticsEnabledSelector(store.getState()));
+```
+
+For events that do not require consent use the mandatory option, e.g.
 
 ```ts
 track("Mandatory Event", { foo: "bar" }, { mandatory: true });
 ```
 
-`track` is generally fire-and-forget. Delivery status is published on `analyticsEvents$`. When you need to wait until an event is enqueued await the call.
+### Async and await
+
+`track` can be fire-and-forget – async enrichment and delivery will run inside the package. The final delivery status is published on `analyticsEvents$`.
+
+When you need to wait until an event is enqueued, await the call, e.g.
 
 ```ts
-await track("Your Event", { foo: "bar" });
+await track("My Crucial Event", { foo: "bar" });
 ```
 
-Extra props and the registered analytics client may be sync or async.
+The registered analytics client may be sync or async.
 
-Extra props override event props if they have the same key.
+### Filtering and enriching
+
+Use `setPropsFilter` if you need to check your payload for sensitive data before tracking and use `setExtraPropsFn` and `setMandatoryExtraPropsFn` to add props to every payload, e.g.
+
+```ts
+setPropsFilter(scrubSensitive);
+setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
+
+await track("track", { theme: "light", sensitive: "from-enricher" });
+
+analyticsEvents$.subscribe((event) => {
+  console.log(event.eventProps);
+});
+
+// { appVersion: "1.2.3", theme: "light" },
+```
