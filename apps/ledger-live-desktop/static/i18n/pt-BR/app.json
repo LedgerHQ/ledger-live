@@ -435,6 +435,11 @@
           "viewInExplorer" : "Ver no explorer",
           "copied" : "Copiado"
         },
+        "earnBanner" : {
+          "title" : "Ganhe até {{apy}}% {{type}}",
+          "description" : "Explorar oportunidades de renda",
+          "button" : "Descobrir"
+        },
         "accessibility" : {
           "copySwapId" : "Copiar Swap ID"
         }
@@ -873,22 +878,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "Pague e receba",
-      "description" : "As stablecoins reduzem a distância entre as criptomoedas e os seus gastos no dia a dia",
-      "cta" : "Entendi",
+      "title" : "Todos os seus pagamentos em um só lugar",
+      "description" : "Conheça a sua nova aba Pagar, que prepara sua cripto para você usar como dinheiro no dia a dia.",
+      "cta" : "Descobrir",
       "rows" : {
         "global" : {
-          "title" : "Pague e receba de qualquer lugar do mundo",
-          "description" : "Aproveite uma taxa de rede baixa"
+          "title" : "Pagar seus contatos",
+          "description" : "Enviar cripto para endereços salvos."
         },
         "volatility" : {
-          "title" : "Volatilidade mínima",
-          "description" : "As stablecoins são baseadas em moedas fiduciárias"
+          "title" : "Solicitar pagamentos",
+          "description" : "Peça aos contatos que enviem fundos diretamente para a sua conta."
         },
         "card" : {
-          "title" : "Faça compras com cartão e ganhe 1% de cashback",
-          "description" : "Pague em USDC, USDT, BTC, ETH e muito mais"
+          "title" : "Compre no mundo todo com o cartão cripto",
+          "description" : "E ganhe 1% de cashback ilimitado."
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "Mais",
+      "title" : "Mais",
+      "rows" : {
+        "managePin" : "Gerenciar Código PIN",
+        "accessBaanx" : "Acessar Baanx",
+        "help" : "Ajuda",
+        "logout" : "Sair"
       }
     },
     "balance" : {
@@ -904,7 +919,20 @@
     },
     "card" : {
       "title" : "Cartão cripto",
-      "balanceLabel" : "Saldo"
+      "balanceLabel" : "Saldo",
+      "freeze" : "Congelar",
+      "unfreeze" : "Descongelar"
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "Configurar seu cartão",
+        "allDone" : "Tudo pronto!"
+      },
+      "dialog" : {
+        "title" : "Concluir seu cartão",
+        "stepComplete" : "Concluído",
+        "gotIt" : "Entendi"
+      }
     },
     "contacts" : {
       "title" : "Pagar contato",
@@ -923,7 +951,20 @@
       "actions" : {
         "pay" : "Enviar para contato",
         "more" : "Mais opções",
+        "viewContact" : "Visualizar contato",
         "viewTransactions" : "Ver transação"
+      },
+      "addressPicker" : {
+        "title" : "Selecione o endereço de {{name}}",
+        "addAddress" : "Adicionar endereço"
+      },
+      "paySuccess" : {
+        "title" : "Você pagou ({{recipient}}) {{amount}}",
+        "amount" : "Quantia",
+        "estimatedTime" : "Tempo est.",
+        "from" : "De",
+        "viewTransaction" : "Ver transação",
+        "close" : "Fechar"
       }
     },
     "actions" : {
@@ -952,6 +993,63 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "Envie dinheiro, receba stablecoin",
+      "description" : "Transfira dinheiro e receba stablecoins diretamente em sua Ledger Wallet™.",
+      "createAccount" : "Criar uma conta",
+      "logIn" : "Entrar no Noah",
+      "providedBy" : "Oferecido pela Noah",
+      "rows" : {
+        "bank" : {
+          "title" : "Receba transferências de qualquer banco",
+          "description" : "Receba salário, pagamentos e depósitos via SEPA ou ACH."
+        },
+        "fees" : {
+          "title" : "Sem taxas ocultas",
+          "description" : "Direto do banco para a blockchain com taxas de 0,25%."
+        },
+        "earn" : {
+          "title" : "Coloque seu dinheiro para trabalhar imediatamente",
+          "description" : "Troque ou rentabilize sua stablecoin."
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "Cartão cripto",
+      "beforeIntro" : {
+        "description" : "Receba 1% de cashback sempre que gastar",
+        "action" : "Obter cartão"
+      },
+      "afterIntro" : {
+        "description" : "Faça login para acessar seu cartão",
+        "action" : "Login"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "Gaste cripto, ganhe cashback",
+      "providedBy" : "Cartão oferecido pela Baanx",
+      "createAccount" : "Criar uma conta",
+      "logIn" : "Fazer login na Baanx",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay ou Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "1% de cashback em cripto, sem limite",
+          "description" : "Em todas as compras com cartão cripto utilizando USDC, USDT ou BTC."
+        },
+        "virtualCard" : {
+          "title" : "Cartão virtual gratuito",
+          "description" : "Adicione a {{wallet}}, pronto na hora."
+        },
+        "topUp" : {
+          "title" : "Recarregue com segurança pela Ledger Wallet™",
+          "description" : "Cada transferência aprovada pelo seu autenticador Ledger."
+        }
+      }
+    },
     "request" : {
       "title" : "Solicitar {{asset}}",
       "networkLabel" : "Rede {{network}}",
@@ -962,6 +1060,10 @@
         "copied" : "Copiado",
         "save" : "Salvar",
         "verify" : "Verificar"
+      },
+      "verifyHint" : {
+        "message" : "Verifique o endereço no\nseu dispositivo Ledger\nantes de compartilhar",
+        "gotIt" : "Entendi"
       },
       "verifyAddress" : {
         "introTitle" : "Verificar seu endereço",
@@ -2652,11 +2754,12 @@
       "walletNotExist" : "A carteira não existe"
     },
     "skipMemo" : {
-      "title" : "Pular adicionar a {{memoLabel}}?",
+      "title" : "Enviar sem {{memoLabel}}?",
       "description" : "O seu ativo pode ser perdido se a {{memoLabel}} for um requisito do seu recipiente",
       "notRequired" : "O {{memoLabel}} não é exigido pelo destinatário?",
-      "confirm" : "Sim, pular",
-      "neverAskAgain" : "Não mostrar este aviso novamente"
+      "confirm" : "Sim, enviar sem {{memoLabel}}",
+      "cancel" : "Não, voltar",
+      "neverAskAgain" : "Não perguntar novamente"
     },
     "tagHelp" : {
       "inputLabel" : "Inserir {{memoLabel}}",
@@ -5452,6 +5555,12 @@
       "enableLearnStagingUrlDesc" : "Habilite a staging URL da página Aprender.",
       "enableCountervaluesStaging" : "API de contravalores em staging",
       "enableCountervaluesStagingDesc" : "Utilize a API de contravalores em staging no ambiente de testes, em vez da versão em produção.",
+      "enableMockServerTransport" : "Transporte do servidor de teste",
+      "enableMockServerTransportDesc" : "Ative o transporte de servidor de teste do Device Management Kit para se conectar a um servidor de teste de dispositivo em vez de um dispositivo físico. Usa o servidor de teste compartilhado, a menos que MOCK_SERVER_TRANSPORT_URL aponte para outro local. Requer reiniciar o aplicativo para entrar em vigor.",
+      "mockServerStatus" : {
+        "connected" : "Servidor de teste conectado · clique para copiar o token da sessão, clique com o botão direito para abrir a UI de configuração",
+        "disconnected" : "Servidor de teste inacessível"
+      },
       "openOnboardingAppInstallDebug" : "Abrir a tela inicial de debug da instalação do aplicativo",
       "openOnboardingAppInstallDebugDesc" : "Abra uma tela com os componentes da etapa de instalação do aplicativo de sincronização inicial"
     },
@@ -7117,6 +7226,10 @@
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "Não foi possível recuperar seu saldo",
+      "description" : "Por favor, verifique sua conexão com a internet e tente novamente."
+    },
     "NotEnoughTransferAmount" : {
       "title" : "É necessário pelo menos 1 ICP para fazer staking em um neuron."
     },
@@ -7316,6 +7429,12 @@
     "ZcashAmountBelowDustThreshold" : {
       "title" : "A quantia é muito pequena para ser transmitida (mínimo de {{minimumZatoshis}} zatoshis)"
     },
+    "ZcashMemoTooLong" : {
+      "title" : "O memo não deve exceder {{maxBytes}} bytes"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "Esta quantia é grande demais para ser enviada em uma única transação: tente enviar em quantias menores"
+    },
     "InvalidNonce" : {
       "title" : "Requer o nonce"
     },
@@ -7428,6 +7547,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "A desaplicação do seu validador anterior deve terminar primeiro"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "Esta quantia é pequena demais para staking"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Esvazie todas as subcontas primeiro"
@@ -8230,6 +8352,7 @@
             "inactiveTooltip" : "Validador não encontrado",
             "overstakedTooltip" : "Este node está sobrecarregado, a APY está abaixo do ideal",
             "activeTooltip" : "A quantia delegada gera recompensas",
+            "fetchErrorTooltip" : "Não foi possível carregar os dados do validador. Tente novamente.",
             "delegated" : "Delegado",
             "rewards" : "Recompensas"
           },
@@ -8308,6 +8431,8 @@
             "newValidatorLabel" : "Nova Delegação",
             "newValidatorSelectPlaceholder" : "Selecionar Validador",
             "removedValidatorSelectPlaceholder" : "O validador selecionado anteriormente não está mais disponível",
+            "unableToLoadSelectPlaceholder" : "Não foi possível carregar os validadores",
+            "loadingValidatorPlaceholder" : "Carregando validadores…",
             "newValidatorSelectNoOption" : "Nenhum resultado para validador “{{validatorName}}”",
             "amountLabel" : "Quantia a redelegar",
             "alert" : "Ao fazer staking na Hedera, todo o seu saldo é aplicado. Ele permanece totalmente líquido e não está sujeito a riscos de bloqueio ou corte. Pode ser necessário aguardar até 48 horas para que as recompensas de staking comecem.",
@@ -8876,9 +9001,11 @@
     "selectNetwork" : "Selecione a rede",
     "unsupportedAssetTooltip" : "{{asset}} ainda não é compatível",
     "unsupportedNetworkTooltip" : "A rede {{network}} ainda não é compatível.",
+    "notAvailableYet" : "Ainda não disponível",
     "selectAccount" : "Selecionar conta",
     "selectAccountPerpsTitle" : "Selecionar conta Hyperliquid",
-    "selectAccountPerpsDescription" : "Para adicionar fundos aos seus perpétuos, é necessária uma conta Hyperliquid. Adicione uma para continuar.",
+    "selectAccountPerpsDescription" : "Selecione uma conta na qual deseja depositar fundos para realizar suas negociações",
+    "selectAccountPerpsEmptyDescription" : "Para adicionar fundos aos seus perpétuos, é necessária uma conta Hyperliquid. Adicione uma para continuar.",
     "selectDepositCurrencyTitle" : "Selecionar ativo para depositar",
     "selectDepositCurrencyDescription" : "Qualquer ativo compatível funciona. Será trocado automaticamente se necessário.",
     "accountCount_one" : "{{count}} conta",
@@ -9123,7 +9250,7 @@
         "memo" : {
           "label" : "Memo (opcional)",
           "placeholder" : "Insira um memo",
-          "tooltip" : "Anexe uma mensagem privada a esta transação protegida. Apenas o destinatário pode ler. Até 512 bytes."
+          "tooltip" : "Adicionar um memo criptografado a este pagamento protegido., Apenas o destinatário pode ler. Máx 512 bytes."
         },
         "syncBanner" : {
           "stopped" : {
@@ -9146,15 +9273,15 @@
         "selfTransfer" : {
           "toPrivate" : "Auto transferir para o saldo privado",
           "toPublic" : "Auto transferir para o saldo público",
-          "unavailable" : "Seu endereço privado ainda não está disponível. Exporte sua chave de visualização para habilitar isso.",
+          "unavailable" : "Seu endereço privado estará disponível assim que o Shielded for ativado em sua conta.",
           "privacyWarning" : "Isso vincula seus fundos protegidos ao endereço público da sua conta, que qualquer pessoa pode ver. Enviar para um endereço privado externo os mantém desvinculados."
         }
       },
       "state" : {
-        "showBalance" : "Mostrar saldo",
+        "showBalance" : "Permitir endereços Shielded",
         "startSync" : "Iniciar sincronização",
         "stopSync" : "Parar sincronização",
-        "upToDate" : "Atualizado",
+        "upToDate" : "Atualizar saldo",
         "lastSync" : "Última sincronização: {{date}}",
         "estimatedTimeRemaining" : "Tempo restante estimado: {{hours}}:{{minutes}}",
         "syncFailed" : "Falha na sincronização do saldo privado"
@@ -9324,6 +9451,23 @@
         "desc" : "Aguarde",
         "errorTitle" : "Falha na sincronização privada.",
         "errorDesc" : "Algo deu errado, tente novamente."
+      }
+    },
+    "manage" : {
+      "headerAction" : "Ganhar",
+      "title" : "Gerenciar staking",
+      "comingSoonTooltip" : "Em breve.",
+      "bond" : {
+        "title" : "Vincular",
+        "description" : "Vincule seu ALEO a um validador para ganhar recompensas."
+      },
+      "unbond" : {
+        "title" : "Desvincular",
+        "description" : "Desvincule seus ALEO vinculados. Os fundos estarão disponíveis após o período de desvinculação."
+      },
+      "claim" : {
+        "title" : "Resgatar",
+        "description" : "Resgate seu ALEO desvinculado de volta para o seu saldo disponível."
       }
     }
   },
@@ -9511,6 +9655,16 @@
           "title" : "Preparando seu dispositivo Ledger"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "Preparando seu dispositivo Ledger"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "Preparando seu dispositivo Ledger"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "Use o mesmo dispositivo Ledger usado para adicionar este contato",
@@ -9523,6 +9677,10 @@
         "appVersionTooLow" : {
           "title" : "Atualização de aplicativo necessária",
           "description" : "Atualize o aplicativo no seu dispositivo Ledger para salvar contatos e tente novamente."
+        },
+        "osVersionTooLow" : {
+          "title" : "É preciso atualizar o Ledger OS",
+          "description" : "Atualize o sistema operacional do seu dispositivo Ledger para renomear contatos e tente novamente."
         }
       }
     },
@@ -9627,12 +9785,6 @@
       "applyChanges" : "Aplicar alterações",
       "invalidLabelError" : "Não são permitidos caracteres especiais."
     },
-    "editSigner" : {
-      "title" : "Confirme em seu dispositivo",
-      "description" : "Conecte e desbloqueie seu dispositivo Ledger para confirmar essa alteração.",
-      "confirm" : "Continuar",
-      "cancel" : "Cancelar"
-    },
     "editSignerMismatch" : {
       "title" : "Use o mesmo dispositivo Ledger usado para adicionar este contato",
       "description" : "O dispositivo conectado não corresponde.",
@@ -9640,9 +9792,10 @@
       "cancel" : "Cancelar"
     },
     "ledgerSyncIntroduction" : {
-      "description" : "Seus contatos são criptografados de ponta a ponta com sua Ledger e sincronizados entre seus dispositivos, apenas você pode desbloqueá-los.",
-      "activate" : "Ativar o Ledger Sync",
-      "dismiss" : "Entendi"
+      "title" : "Sincronize sua carteira para adicionar um contato",
+      "description" : "Os contatos são criptografados de ponta a ponta e sincronizados na Ledger Wallet em todos os seus smartphones e computadores.",
+      "activate" : "Sincronizar minha carteira",
+      "dismiss" : "Agora não"
     },
     "featureIntroduction" : {
       "title" : "Apresentando Contatos",
@@ -9947,5 +10100,44 @@
       "totalMaturity" : "Maturidade total",
       "totalMaturityTooltip" : "Recompensas totais acumuladas por staking, somando a maturidade aplicada e a líquida. Essas recompensas podem ser reaplicadas novamente ou resgatadas como ICP líquido."
     }
+  },
+  "perpsReview" : {
+    "depositTitle" : "Depositar via SwapKit",
+    "depositSubtitle" : "Nosso parceiro SwapKit gerencia sua troca e depósito em uma transação — tudo protegido pelo seu dispositivo Ledger.",
+    "swapDetailTitle" : "Detalhes da troca",
+    "amountSendLabel" : "Quantia a enviar",
+    "amountReceiveLabel" : "Quantia a receber",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "Detalhes do depósito",
+    "depositAmountLabel" : "Quantia do depósito",
+    "depositReceiveLabel" : "Conta para receber",
+    "depositCTA" : "Depositar"
+  },
+  "perpsDeposit" : {
+    "title" : "Depositar",
+    "inputDepositAmount" : "Depositar ~{{value}}",
+    "inputSubText" : "Trocar e depositar via {{provider}}",
+    "selectCurrencyTitle" : "Depositar com {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "Nenhuma conta",
+    "review" : "Avaliação",
+    "formErrors" : {
+      "amountExceedsBalance" : "Saldo insuficiente",
+      "quoteUnavailable" : "Não foi possível obter uma cotação do {{provider}}SwapKit. Tente com um ativo diferente ou volte mais tarde."
+    }
+  },
+  "perpsDepositSign" : {
+    "a11yTitle" : "Assinatura de depósito",
+    "terms" : "Ao assinar esta transação, aceito os <termsLink>T&C do SwapKit by NEAR Intents</termsLink>"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "Transação assinada",
+    "description" : "Receberá seu {{currency}} assim que for confirmado na blockchain",
+    "viewTransaction" : "Ver transação"
+  },
+  "perpsTransactionStatus" : {
+    "dialogTitle" : "Detalhes da transação",
+    "title" : "Fundos Perpétuos",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
   }
 }
