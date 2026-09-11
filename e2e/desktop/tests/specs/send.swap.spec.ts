@@ -4,7 +4,6 @@ import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
@@ -228,8 +227,6 @@ for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason }
         },
       },
       async ({ app, speculos }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         const swap = new Swap(fromAccount, toAccount, minAmount);
 

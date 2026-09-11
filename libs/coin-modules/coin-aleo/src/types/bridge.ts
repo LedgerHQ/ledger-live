@@ -67,6 +67,10 @@ export type Transaction = TransactionCommon & {
         withdrawal: string;
         properties?: never;
       }
+    | {
+        mode: typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
+        properties?: never;
+      }
   );
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -120,6 +124,10 @@ export type TransactionRaw = TransactionCommonRaw & {
     | {
         mode: typeof TRANSACTION_TYPE.BOND_PUBLIC;
         withdrawal: string;
+        properties?: never;
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
         properties?: never;
       }
   );
@@ -221,7 +229,8 @@ export type TransactionSelfTransfer = Extract<
       | typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
       | typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE
       | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC
-      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE;
+      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
+      | typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
   }
 >;
 
@@ -233,7 +242,8 @@ export type TransactionPublic = Extract<
       | typeof TRANSACTION_TYPE.TRANSFER_PUBLIC
       | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC
       | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
-      | typeof TRANSACTION_TYPE.BOND_PUBLIC;
+      | typeof TRANSACTION_TYPE.BOND_PUBLIC
+      | typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
   }
 >;
 

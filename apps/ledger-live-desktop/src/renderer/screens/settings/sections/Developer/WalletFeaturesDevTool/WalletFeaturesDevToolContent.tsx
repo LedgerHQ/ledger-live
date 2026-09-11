@@ -10,6 +10,7 @@ import {
   MainFeatureToggle,
   TourSection,
   Q2TourSection,
+  Q3TourSection,
 } from "./components";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import {
@@ -17,6 +18,7 @@ import {
   WalletV4TourDialog,
 } from "LLD/features/WalletV4Tour/Drawer";
 import { Q2TourDialog, useQ2TourDrawerViewModel } from "LLD/features/Q2Tour";
+
 export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevToolContentProps) => {
   const { t } = useTranslation();
   const {
@@ -26,11 +28,17 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
     allEnabled,
     hasSeenWalletV4Tour,
     hasSeenQ2Tour,
+    isQ2TourEnabled,
+    hasSeenQ3Tour,
+    isQ3TourEnabled,
     handleToggleAll,
     handleToggleEnabled,
     handleToggleParam,
     handleToggleHasSeenTour,
     handleToggleQ2TourHasSeen,
+    handleToggleQ2TourEnabled,
+    handleToggleQ3TourHasSeen,
+    handleToggleQ3TourEnabled,
   } = useWalletFeaturesDevToolViewModel();
   const { isDialogOpen, handleOpenDialog, closeDrawer, completeDrawer, onSlideChange } =
     useWalletV4TourDrawerViewModel();
@@ -85,8 +93,17 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
 
           <Q2TourSection
             hasSeen={hasSeenQ2Tour}
+            isEnabled={isQ2TourEnabled}
             onToggleHasSeen={handleToggleQ2TourHasSeen}
+            onToggleEnabled={handleToggleQ2TourEnabled}
             onOpenDrawer={handleOpenQ2Tour}
+          />
+
+          <Q3TourSection
+            hasSeen={hasSeenQ3Tour}
+            isEnabled={isQ3TourEnabled}
+            onToggleHasSeen={handleToggleQ3TourHasSeen}
+            onToggleEnabled={handleToggleQ3TourEnabled}
           />
 
           <TourSection

@@ -9,7 +9,6 @@ import {
   revokeTokenApproval,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
 
@@ -69,7 +68,6 @@ test.describe("Swap - token approval", () => {
       // Approval (Step 1) can take 1-5 min; extend beyond the 400s CI default.
       test.setTimeout(480_000);
       await app.swap.logSelectedProvider(provider.uiName);
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await revokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount, provider);

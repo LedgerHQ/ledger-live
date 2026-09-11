@@ -2,8 +2,6 @@ import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
-const BST_VERIFY_ADDRESS_CURRENCIES = new Set(["ripple", "tezos", "zcash"]);
-
 export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], tags: string[]) {
   describe("Receive", () => {
     beforeAll(async () => {
@@ -14,9 +12,7 @@ export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], t
       await app.mainNavigation.waitForWallet40Ready();
     });
 
-    setTeamOwner(
-      BST_VERIFY_ADDRESS_CURRENCIES.has(account.currency.id) ? Team.BST : Team.COIN_INTEGRATION,
-    );
+    setTeamOwner(Team.COIN_INTEGRATION);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${account.currency.testLabel}] - Verify address`, async () => {

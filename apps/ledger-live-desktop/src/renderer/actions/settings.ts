@@ -402,6 +402,11 @@ export const setHasSeenQ2Tour = (hasSeenQ2Tour: boolean) => ({
   payload: hasSeenQ2Tour,
 });
 
+export const setHasSeenQ3Tour = (hasSeenQ3Tour: boolean) => ({
+  type: "SET_HAS_SEEN_Q3_TOUR",
+  payload: hasSeenQ3Tour,
+});
+
 export const setProductTourCompleted = (productTourCompleted: boolean) => ({
   type: SET_PRODUCT_TOUR_COMPLETED,
   payload: productTourCompleted,

@@ -171,8 +171,12 @@ function collapseToDirectories(teamPaths, allPaths, rootRel) {
 export function createTeamExpander({ files, specRoot, runner }) {
   const index = buildTeamIndex(files);
   const isDetox = runner === "detox";
-  const rootRel = path.relative(repoRoot, specRoot).replaceAll(path.sep, "/");
-  const toRel = filePath => path.relative(repoRoot, filePath).replaceAll(path.sep, "/");
+  // Reading the spec files themselves still assumes the process is at the repo root; resolve.mjs
+  // guarantees that with useRepoRootCwd().
+  const repoRelative = target =>
+    path.relative(repoRoot, path.resolve(repoRoot, target)).replaceAll(path.sep, "/");
+  const rootRel = repoRelative(specRoot);
+  const toRel = filePath => repoRelative(filePath);
   const allRel = files.map(toRel);
 
   return {

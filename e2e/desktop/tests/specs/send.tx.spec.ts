@@ -3,7 +3,6 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { addBugLink, addTmsLink, getDescription } from "tests/utils/allureUtils";
 import {
   getAccountAddress,
   liveDataWithRecipientAddressCommand,
@@ -341,14 +340,12 @@ test.describe("Send", () => {
                 ? ["@smoke"]
                 : [],
           }),
-          annotation: { type: "TMS", description: transaction.xrayTicket },
+          annotation: [
+            { type: "TMS", description: transaction.xrayTicket },
+            ...(transaction.bugTickets ?? []).map(id => ({ type: "BUG", description: id })),
+          ],
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          if (transaction.bugTickets) {
-            await addBugLink(transaction.bugTickets);
-          }
-
           await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
@@ -395,8 +392,6 @@ test.describe("Send", () => {
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
           await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
@@ -446,8 +441,6 @@ test.describe("Send", () => {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(
           transactionInputValid.accountToDebit.accountName,
@@ -490,8 +483,6 @@ test.describe("Send", () => {
           },
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
           await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
@@ -560,8 +551,6 @@ test.describe("Send", () => {
           },
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
           await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
@@ -612,8 +601,6 @@ test.describe("Send", () => {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(
           transactionEnsAddress.accountToDebit.accountName,
@@ -676,8 +663,6 @@ test.describe("Send", () => {
         annotation: { type: "TMS", description: "B2CQA-2949" },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(ccdTx.accountToDebit.accountName);
 

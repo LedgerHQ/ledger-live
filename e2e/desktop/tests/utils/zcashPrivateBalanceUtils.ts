@@ -1,9 +1,8 @@
-import { test, CliCommand } from "tests/fixtures/common";
+import { CliCommand } from "tests/fixtures/common";
 import { Application } from "tests/page";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
 /**
@@ -36,7 +35,6 @@ export function zcashPrivateBalanceTestOptions(account: Account, xrayTicket: str
 }
 
 export async function openZcashAccountUnderTest(app: Application, account: Account) {
-  await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
   await app.mainNavigation.openTargetFromMainNavigation("accounts");
   await app.accounts.navigateToAccountByName(account.accountName);
   await app.account.expectAccountVisibility(account.accountName);

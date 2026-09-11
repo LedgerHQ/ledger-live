@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { setHasSeenQ2WalletV4Tour } from "~/actions/settings";
 import { hasSeenQ2WalletV4TourSelector } from "~/reducers/settings";
 import { track } from "~/analytics";
+import { isQ2ReleaseTourEnabled } from "LLM/utils/releaseTourGate";
 import { PAGE_TRACKING_Q2_WALLET_V4_TOUR } from "../const";
 import type { Q2WalletV4TourDrawerViewModel } from "../types";
 
@@ -13,8 +14,7 @@ export const useQ2WalletV4TourDrawerViewModel = (): Q2WalletV4TourDrawerViewMode
   const isClosingRef = useRef(false);
   const hasAutoOpenedRef = useRef(false);
   const hasSeenTour = useSelector(hasSeenQ2WalletV4TourSelector);
-  const lwmWallet40 = useFeature("lwmWallet40");
-  const isTourEnabled = (lwmWallet40?.enabled && lwmWallet40?.params?.q2Tour) ?? false;
+  const isTourEnabled = isQ2ReleaseTourEnabled(useFeature("releaseTour"));
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(isTourEnabled && !hasSeenTour);
 

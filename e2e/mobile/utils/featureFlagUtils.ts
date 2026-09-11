@@ -18,7 +18,6 @@ const FF_LWM_WALLET_40_Q1 = {
       earnUpselling: false,
       earnSimulator: false,
       assetDiscoverability: false,
-      q2Tour: false,
     },
   },
 } satisfies PartialFeatures;
@@ -38,7 +37,6 @@ export const FF_LWM_WALLET_40_Q2 = {
       earnUpselling: true,
       earnSimulator: true,
       assetDiscoverability: true,
-      q2Tour: false,
     },
   },
 } satisfies PartialFeatures;
@@ -112,6 +110,7 @@ export const getMergedFeatureFlags = ({
       enabled: true,
     },
     largeScreenUpsell: { enabled: false },
+    releaseTour: { enabled: false },
     llmModularDrawer: {
       enabled: true,
       params: {

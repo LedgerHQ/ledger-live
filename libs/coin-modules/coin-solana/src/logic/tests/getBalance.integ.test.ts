@@ -51,17 +51,20 @@ describe("getBalance (integration)", () => {
 
     expect(balances.length).toBeGreaterThanOrEqual(1);
 
-    const [native, stake1, stake2, stake3, ...tokenBalances] = balances;
+    const [native, ...rest] = balances;
 
     expect(native.asset).toEqual({ type: "native" });
     expect(native.value).toBeGreaterThan(0n);
     expect(native.locked).toBeGreaterThan(0n);
 
-    expectStakeBalance(stake1);
-    expectStakeBalance(stake2);
-    expectStakeBalance(stake3);
+    // the funded address' stake account count changes on chain, so don't assert on positions
+    const stakeBalances = rest.filter(b => b.stake);
+    expect(stakeBalances.length).toBeGreaterThan(0);
+    for (const b of stakeBalances) {
+      expectStakeBalance(b);
+    }
 
-    for (const b of tokenBalances) {
+    for (const b of rest.filter(b => !b.stake)) {
       expectTokenBalance(b);
     }
   });

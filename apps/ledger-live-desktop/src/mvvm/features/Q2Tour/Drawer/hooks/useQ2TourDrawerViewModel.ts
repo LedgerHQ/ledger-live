@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   hasCompletedOnboardingSelector,
   hasSeenQ2TourSelector,
 } from "~/renderer/reducers/settings";
 import { setHasSeenQ2Tour } from "~/renderer/actions/settings";
+import { isQ2ReleaseTourEnabled } from "../../releaseTourGate";
 import {
   getQ2TourAnalyticsContext,
   trackQ2TourCloseClick,
@@ -47,7 +48,7 @@ export const useQ2TourDrawerViewModel = (
 
   const hasSeenTour = useSelector(hasSeenQ2TourSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const { shouldDisplayQ2Tour } = useWalletFeaturesConfig("desktop");
+  const isTourEnabled = isQ2ReleaseTourEnabled(useFeature("releaseTour"));
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -146,15 +147,15 @@ export const useQ2TourDrawerViewModel = (
   }, [getContext, isDialogOpen]);
 
   useEffect(() => {
-    if (isOnPortfolioPage && shouldDisplayQ2Tour && hasCompletedOnboarding && !hasSeenTour) {
+    if (isOnPortfolioPage && isTourEnabled && hasCompletedOnboarding && !hasSeenTour) {
       openDrawer();
     }
-  }, [isOnPortfolioPage, shouldDisplayQ2Tour, hasCompletedOnboarding, hasSeenTour, openDrawer]);
+  }, [isOnPortfolioPage, isTourEnabled, hasCompletedOnboarding, hasSeenTour, openDrawer]);
 
   const handleOpenDialog = useCallback(() => {
-    if (!shouldDisplayQ2Tour || hasSeenTour) return;
+    if (!isTourEnabled || hasSeenTour) return;
     openDrawer();
-  }, [shouldDisplayQ2Tour, hasSeenTour, openDrawer]);
+  }, [isTourEnabled, hasSeenTour, openDrawer]);
 
   return {
     isDialogOpen,

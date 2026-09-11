@@ -92,6 +92,28 @@ describe("DeviceScreen", () => {
     expect(pressButton).toHaveBeenCalledWith("left", "release");
   });
 
+  it("stays interactive while a modal disables pointer events on the body", () => {
+    render(<DeviceScreen />);
+
+    expect(screen.getByTestId("device-screen")).toHaveClass("pointer-events-auto");
+  });
+
+  it("keeps a press from reaching the document listeners modals dismiss on", () => {
+    const onDocumentPointerDown = jest.fn();
+    document.addEventListener("pointerdown", onDocumentPointerDown);
+
+    render(<DeviceScreen />);
+    const left = screen.getByTestId("device-screen-button-left");
+    // jsdom does not implement pointer capture.
+    left.setPointerCapture = jest.fn();
+
+    fireEvent.pointerDown(left, { pointerId: 1 });
+
+    expect(onDocumentPointerDown).not.toHaveBeenCalled();
+
+    document.removeEventListener("pointerdown", onDocumentPointerDown);
+  });
+
   it("collapses to its header, stops polling, and persists the choice", async () => {
     const { user } = render(<DeviceScreen />);
 

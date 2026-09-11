@@ -1,6 +1,5 @@
 import test from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { FF_POST_ONBOARDING_DESKTOP } from "tests/utils/featureFlagUtils";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 import {
@@ -27,8 +26,6 @@ test.describe("Post-onboarding hub", () => {
       annotation: { type: "TMS", description: "B2CQA-6545" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.postOnboarding.expectWidgetVisible();
       await app.postOnboarding.openDialogFromWidget();
