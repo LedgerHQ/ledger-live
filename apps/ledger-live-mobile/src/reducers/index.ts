@@ -27,6 +27,7 @@ import receiveOptionsDrawer from "./receiveOptionsDrawer";
 import rebornBuyDeviceDrawer from "./rebornBuyDeviceDrawer";
 import transferDrawer from "./transferDrawer";
 import swapTransactionStatusDrawer from "./swapTransactionStatusDrawer";
+import currencyRegionRestrictedDrawer from "./currencyRegionRestrictedDrawer";
 import notifications from "./notifications";
 import protect from "./protect";
 import ratings from "./ratings";
@@ -84,6 +85,7 @@ const appReducer = combineReducers({
   rebornBuyDeviceDrawer,
   transferDrawer,
   swapTransactionStatusDrawer,
+  currencyRegionRestrictedDrawer,
   notifications,
   largeScreenUpsellModal: largeScreenUpsellModalReducer,
   postOnboarding,
