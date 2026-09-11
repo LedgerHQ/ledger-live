@@ -609,11 +609,7 @@ function mapIntentToTxKind(
   if (!MEASURABLE_KINDS.has(intent.type)) {
     return intent.asset.type === "native" ? "transfer" : "token.transfer";
   }
-  if (
-    isSolanaStakingTransactionIntent(intent) ||
-    intent.type === "stake.split" ||
-    intent.type.startsWith("token.")
-  ) {
+  if (isSolanaStakingTransactionIntent(intent) || intent.type.startsWith("token.")) {
     return intent.type as TransactionModel["kind"];
   }
   if (intent.asset.type !== "native") {
