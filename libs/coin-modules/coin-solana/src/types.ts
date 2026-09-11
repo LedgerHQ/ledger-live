@@ -359,11 +359,6 @@ export type SolanaOperationExtraRaw = {
   stake?: ExtraStakeInfoRaw;
 };
 
-export type SolanaExtraDeviceTransactionField = {
-  type: "solana.token.transferFee";
-  label: string;
-};
-
 /**
  * A transaction a partner already built, reached through `Transaction.raw`. The intent's `type`,
  * `recipient` and `amount` describe nothing then: crafting only refreshes the blockhash.

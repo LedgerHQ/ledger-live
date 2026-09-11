@@ -74,7 +74,6 @@
     "invariant": "^2.2.2",
     "ky": "1.7.5",
     "lodash": "catalog:",
-    "rxjs": "catalog:",
     "semver": "catalog:",
     "superstruct": "0.16.7",
     "uuid": "11.1.0"
