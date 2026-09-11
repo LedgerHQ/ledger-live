@@ -1,10 +1,10 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { BalanceTypeConfig } from "../../../../bridge/descriptor/types";
-import { sendFeatures } from "../../../../bridge/descriptor/send/features";
-import { getSelectedBalanceTypeBalance } from "../balanceType";
+import type { BalanceTypeConfig } from "@ledgerhq/live-common/bridge/descriptor/types";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { getSelectedBalanceTypeBalance } from "./getSelectedBalanceTypeBalance";
 
-jest.mock("../../../../bridge/descriptor/send/features", () => ({
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: { getBalanceTypeConfig: jest.fn() },
 }));
 

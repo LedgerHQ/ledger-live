@@ -9,7 +9,7 @@ import {
   type SendFlowBusinessContext,
   type SendFlowStep,
 } from "@ledgerhq/live-common/flows/send/types";
-import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-common/flows/send/utils/balanceType";
+import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
 import { useSendHeaderMemo } from "../hooks/useSendHeaderMemo";
 import { useSendHeaderModel } from "../hooks/useSendHeaderModel";

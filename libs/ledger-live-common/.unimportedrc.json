@@ -180,7 +180,6 @@
     "src/families/vechain/types.ts",
     "src/families/xrp/types.ts",
     "src/firebase/featureFlags.ts",
-    "src/flows/send/utils/balanceType.ts",
     "src/generated/cli-transaction.ts",
     "src/generated/types.ts",
     "src/hoc/withRemountableWrapper.tsx",

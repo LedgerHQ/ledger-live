@@ -8,7 +8,7 @@ import type {
   SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowAmountReviewCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore";
-import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-common/flows/send/utils/balanceType";
+import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import type { AmountScreenMessage, AmountScreenViewModel } from "../types";
 import { useAmountInputController } from "./useAmountInputController";
 import { useQuickActions } from "./useQuickActions";

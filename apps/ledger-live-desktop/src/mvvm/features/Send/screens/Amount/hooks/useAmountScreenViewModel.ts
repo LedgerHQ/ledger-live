@@ -9,7 +9,7 @@ import type {
 } from "@ledgerhq/live-common/flows/send/types";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowAmountReviewCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore";
-import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-common/flows/send/utils/balanceType";
+import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import type { AmountScreenViewModel } from "../types";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useAmountInput } from "./useAmountInput";

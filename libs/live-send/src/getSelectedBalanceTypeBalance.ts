@@ -1,7 +1,7 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { sendFeatures } from "../../../bridge/descriptor/send/features";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 /**
  * Spendable balance of the pool the transaction draws from, for coins holding several
