@@ -190,7 +190,6 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@ledgerhq/lumen-ui-rnative-visualization": "catalog:",
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/transaction-observability": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",

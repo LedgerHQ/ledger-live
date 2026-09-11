@@ -1,5 +1,5 @@
 import React from "react";
-import { Point } from "@ledgerhq/lumen-ui-react-visualization";
+import { Point } from "@ledgerhq/lumen-ui-react/visualization";
 import { LINE_CHART_POINT_SIZE } from "./constants";
 import { resolveMarkerColor } from "./utils/resolveMarkerColor";
 import type { LineChartPointMarker, LineChartValueFormatter } from "./types";
