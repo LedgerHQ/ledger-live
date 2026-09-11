@@ -7,6 +7,7 @@ import {
   getMinimumBalanceForRentExemptAccount,
 } from "@solana/spl-token";
 import {
+  ConfirmedSignatureInfo,
   Connection,
   FetchMiddleware,
   VersionedMessage,
@@ -70,6 +71,11 @@ export type ChainAPI = Readonly<{
     address: string,
     opts?: SignaturesForAddressOptions,
   ) => ReturnType<Connection["getSignaturesForAddress"]>;
+
+  /** Every address in one JSON-RPC batch, so hundreds of token accounts cost one request. */
+  getSignaturesForAddressBatch: (
+    requests: Array<{ address: string; opts?: SignaturesForAddressOptions }>,
+  ) => Promise<ConfirmedSignatureInfo[][]>;
 
   getParsedTransactions: (signatures: string[]) => ReturnType<Connection["getParsedTransactions"]>;
 
@@ -212,9 +218,9 @@ export function getChainAPI(
         })
         .catch(remapErrors),
 
-    getStakeAccountsByWithdrawAuth: (authAddr: string) =>
-      programAccounts
-        .getParsedProgramAccounts(StakeProgram.programId, {
+    getStakeAccountsByWithdrawAuth: (authAddr: string) => {
+      const callback = () =>
+        programAccounts.getParsedProgramAccounts(StakeProgram.programId, {
           filters: [
             {
               memcmp: {
@@ -223,8 +229,9 @@ export function getChainAPI(
               },
             },
           ],
-        })
-        .catch(remapErrors),
+        });
+      return callback().catch(remapErrorsWithRetry(callback));
+    },
 
     getInflationReward: (addresses: string[]) =>
       connection.getInflationReward(addresses.map(addr => new PublicKey(addr))).catch(remapErrors),
@@ -242,6 +249,46 @@ export function getChainAPI(
           }
           throw err;
         });
+      };
+      return callback().catch(remapErrorsWithRetry(callback));
+    },
+
+    getSignaturesForAddressBatch: (
+      requests: Array<{ address: string; opts?: SignaturesForAddressOptions }>,
+    ) => {
+      if (requests.length === 0) return Promise.resolve([]);
+
+      const callback = async (): Promise<ConfirmedSignatureInfo[][]> => {
+        const body = requests.map(({ address, opts }, index) => ({
+          jsonrpc: "2.0",
+          id: String(index),
+          method: "getSignaturesForAddress",
+          params: [address, { commitment: "confirmed", ...opts }],
+        }));
+        const response: unknown = await kyNoTimeout.post(config.endpoint, { json: body }).json();
+        const byIndex: ConfirmedSignatureInfo[][] = requests.map(() => []);
+        if (Array.isArray(response)) {
+          for (const entry of response) {
+            if (!entry || typeof entry !== "object") continue;
+            const { id, result, error } = entry as {
+              id?: string;
+              result?: ConfirmedSignatureInfo[];
+              error?: unknown;
+            };
+            const index = Number(id);
+            if (!Number.isInteger(index) || index < 0 || index >= requests.length) continue;
+            if (error) {
+              // An empty stream would drop the source from the cursor and lose its older history.
+              const code = (error as { code?: number }).code;
+              if (code === JSON_RPC_SERVER_ERROR_FILTER_TRANSACTION_NOT_FOUND) continue;
+              throw new Error(
+                `getSignaturesForAddress failed for ${requests[index].address}: ${JSON.stringify(error)}`,
+              );
+            }
+            if (Array.isArray(result)) byIndex[index] = result;
+          }
+        }
+        return byIndex;
       };
       return callback().catch(remapErrorsWithRetry(callback));
     },
