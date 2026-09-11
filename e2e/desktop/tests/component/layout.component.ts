@@ -3,8 +3,8 @@ import { step } from "tests/misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
 
 // For currencies whose backend is slow to answer: mina's rosetta node takes 35s or so on
-// /search/transactions, well past the default expect timeout, and its staking specs seed a pool of
-// accounts rather than a single one.
+// /search/transactions, well past the default expect timeout, and a spec seeding several accounts
+// pays it once per account.
 const SLOW_SYNC_TIMEOUT = 240_000;
 
 export type SyncWaitOptions = { slowSync?: boolean };

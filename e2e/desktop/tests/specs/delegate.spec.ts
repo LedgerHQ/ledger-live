@@ -3,9 +3,10 @@ import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOw
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import {
-  MINA_STAKING_ACCOUNTS,
+  MINA_DELEGATION_PAIR,
+  MINA_REDELEGATION_ACCOUNT,
   pickMinaAccountToDelegate,
-  pickMinaAccountToRedelegate,
+  pickMinaRedelegation,
   pickMinaValidator,
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
@@ -561,13 +562,14 @@ test.describe("Delegate", () => {
 test.describe("Delegate - MINA", () => {
   test.slow();
 
-  // Broadcasting is left to the nightly policy: this flow stakes the pool's free account, which
-  // the undelegate flow replaces.
+  // Broadcasting is left to the nightly policy: this flow delegates the free account of the pair,
+  // which the undelegate flow replaces.
   test.use({
     teamOwner: delegateTeamOwner(Currency.MINA.id),
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Currency.MINA.speculosApp,
-    cliCommands: MINA_STAKING_ACCOUNTS.map(account => liveDataCommand(account)),
+    // Either account of the pair can be the free one, so both are seeded.
+    cliCommands: MINA_DELEGATION_PAIR.map(account => liveDataCommand(account)),
     featureFlags: FF_MINA_STAKING_ENABLED,
   });
 
@@ -583,7 +585,6 @@ test.describe("Delegate - MINA", () => {
       const validator = await pickMinaValidator();
       // Mina delegates the whole balance, so the flow carries no amount.
       const delegation = new Delegate(account, "N/A", validator.name, validator.address);
-
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);
@@ -613,13 +614,13 @@ test.describe("Delegate - MINA", () => {
 test.describe("Redelegate - MINA", () => {
   test.slow();
 
-  // Broadcasting is left to the nightly policy: this flow keeps its account delegated, and the
-  // pool gives it the one the undelegate flow leaves alone.
+  // Broadcasting is left to the nightly policy: moving a delegation leaves the account delegated,
+  // so this flow reproduces its own precondition on an account no other flow touches.
   test.use({
     teamOwner: delegateTeamOwner(Currency.MINA.id),
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Currency.MINA.speculosApp,
-    cliCommands: MINA_STAKING_ACCOUNTS.map(account => liveDataCommand(account)),
+    cliCommands: [liveDataCommand(MINA_REDELEGATION_ACCOUNT)],
     featureFlags: FF_MINA_STAKING_ENABLED,
   });
 
@@ -631,10 +632,9 @@ test.describe("Redelegate - MINA", () => {
       annotation: { type: "TMS", description: "B2CQA-387" },
     },
     async ({ app }) => {
-      const { account, validatorAddress } = await pickMinaAccountToRedelegate();
+      const { account, validatorAddress } = await pickMinaRedelegation();
       const validator = await pickMinaValidator(validatorAddress);
       const delegation = new Delegate(account, "N/A", validator.name, validator.address);
-
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);

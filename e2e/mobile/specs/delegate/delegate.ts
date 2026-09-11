@@ -1,11 +1,13 @@
 import { setEnv } from "@shared/env";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import type { Account as AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
 import {
-  MINA_STAKING_ACCOUNTS,
+  MINA_DELEGATION_PAIR,
+  MINA_REDELEGATION_ACCOUNT,
   pickMinaAccountToDelegate,
-  pickMinaAccountToRedelegate,
   pickMinaAccountToUndelegate,
+  pickMinaRedelegation,
   pickMinaValidator,
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "@e2e/models/stake";
@@ -138,11 +140,10 @@ export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[
   });
 }
 
-const minaBeforeAll = async () => {
+const minaBeforeAll = (accounts: AccountType[]) => async () => {
   await app.init({
     speculosApp: Currency.MINA.speculosApp,
-    // The whole pool is seeded: which account each flow claims is only known at runtime.
-    cliCommands: MINA_STAKING_ACCOUNTS.map(account => liveDataCommand(account)),
+    cliCommands: accounts.map(account => liveDataCommand(account)),
     featureFlags: FF_MINA_STAKING_ENABLED,
   });
 
@@ -158,7 +159,8 @@ function startMinaSpec(tmsLinks: string[], tags: string[]) {
 export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
   startMinaSpec(tmsLinks, tags);
   describe("Delegate", () => {
-    beforeAll(minaBeforeAll);
+    // Either account of the pair can be the free one, so both are seeded.
+    beforeAll(minaBeforeAll(MINA_DELEGATION_PAIR));
 
     it(`[${Currency.MINA.testLabel}] - Delegate`, async () => {
       const account = await pickMinaAccountToDelegate();
@@ -189,10 +191,10 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
 export function runMinaRedelegateTest(tmsLinks: string[], tags: string[]) {
   startMinaSpec(tmsLinks, tags);
   describe("Redelegate", () => {
-    beforeAll(minaBeforeAll);
+    beforeAll(minaBeforeAll([MINA_REDELEGATION_ACCOUNT]));
 
     it(`[${Currency.MINA.testLabel}] - Redelegate`, async () => {
-      const { account, validatorAddress } = await pickMinaAccountToRedelegate();
+      const { account, validatorAddress } = await pickMinaRedelegation();
       const validator = await pickMinaValidator(validatorAddress);
       const delegation = new Delegate(account, "N/A", validator.name, validator.address);
       const currencyId = Currency.MINA.id;
@@ -220,12 +222,13 @@ export function runMinaRedelegateTest(tmsLinks: string[], tags: string[]) {
 export function runMinaUndelegateTest(tmsLinks: string[], tags: string[]) {
   startMinaSpec(tmsLinks, tags);
   describe("Undelegate", () => {
-    beforeAll(minaBeforeAll);
+    // Either account of the pair can be the delegated one, so both are seeded.
+    beforeAll(minaBeforeAll(MINA_DELEGATION_PAIR));
 
     it(`[${Currency.MINA.testLabel}] - Undelegate`, async () => {
       // Undelegating delegates back to the account itself, and the device review renders that raw
       // address: the speculos helper asserts against it, hence no target validator here.
-      const { account } = await pickMinaAccountToUndelegate();
+      const account = await pickMinaAccountToUndelegate();
       const delegation = new Delegate(account, "N/A", "N/A");
 
       await app.portfolio.goToAccounts(Currency.MINA.name);

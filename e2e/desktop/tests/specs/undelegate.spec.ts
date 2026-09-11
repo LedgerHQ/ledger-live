@@ -6,7 +6,7 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import {
-  MINA_STAKING_ACCOUNTS,
+  MINA_DELEGATION_PAIR,
   pickMinaAccountToUndelegate,
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { buildTags } from "tests/utils/tagsUtils";
@@ -54,13 +54,14 @@ test.describe("Undelegate", () => {
 test.describe("Undelegate - MINA", () => {
   test.slow();
 
-  // Broadcasting is left to the nightly policy: this flow frees a delegated account, which the
-  // delegate flow stakes back.
+  // Broadcasting is left to the nightly policy: this flow frees the delegated account of the pair,
+  // which the delegate flow stakes back.
   test.use({
     teamOwner: delegateTeamOwner(Currency.MINA.id),
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Currency.MINA.speculosApp,
-    cliCommands: MINA_STAKING_ACCOUNTS.map(account => liveDataCommand(account)),
+    // Either account of the pair can be the delegated one, so both are seeded.
+    cliCommands: MINA_DELEGATION_PAIR.map(account => liveDataCommand(account)),
   });
 
   test(
@@ -73,9 +74,8 @@ test.describe("Undelegate - MINA", () => {
     async ({ app }) => {
       // Undelegating delegates back to the account itself, and the device review renders that raw
       // address: the speculos helper asserts against it, hence no target validator here.
-      const { account } = await pickMinaAccountToUndelegate();
+      const account = await pickMinaAccountToUndelegate();
       const delegation = new Delegate(account, "N/A", "N/A");
-
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);
