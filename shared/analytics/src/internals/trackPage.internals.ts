@@ -20,6 +20,9 @@ export function resetLastPageEventName(): void {
   lastPageEventName = undefined;
 }
 
-export function shouldSkipDuplicatePageEvent(eventName: string, avoidDuplicates: boolean): boolean {
-  return avoidDuplicates && eventName === lastPageEventName;
+export function shouldSkipDuplicatePageEvent(
+  eventName: string,
+  avoidDuplicates: boolean | undefined,
+): boolean {
+  return Boolean(avoidDuplicates) && eventName === lastPageEventName;
 }
