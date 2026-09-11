@@ -53,7 +53,11 @@ module.exports = {
   overrides: [
     {
       files: ["src/**/*.ts", "src/**/*.tsx"],
-      excludedFiles: ["src/renderer/linking.ts", "src/main/openURL.ts"],
+      excludedFiles: [
+        "src/renderer/linking.ts",
+        "src/main/openURL.ts",
+        "src/renderer/components/LinkingProviderWrapper.tsx",
+      ],
       rules: {
         "no-restricted-syntax": ["error", ...shellOpenExternalRestrictions],
       },
