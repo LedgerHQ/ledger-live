@@ -11,11 +11,13 @@ import {
   SEND_FLOW_STEP,
   type SendFlowCompletion,
 } from "@ledgerhq/live-common/flows/send/types";
+import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { selectIsBuyDeviceOpen } from "LLD/features/BuyDevice/buyDeviceDialog";
 import { hasOnboardedDeviceSelector, mevProtectionSelector } from "~/renderer/reducers/settings";
 import { broadcastLogger } from "~/datadog/logs";
@@ -78,15 +80,32 @@ export function useSignatureViewModel() {
     [reduxDispatch],
   );
 
+  // TX-C of the sponsored (Tronify) send is signed on this same SIGNATURE step, so its outcome has
+  // to be reported back to the orchestration that owns the sponsored state machine. Gated on the
+  // TRANSFER phase: an ordinary send runs through here too and must not touch that machine.
+  const { state: sponsoredState, actions: sponsoredActions } = useSponsoredSend();
+  const isSponsoredTransfer = sponsoredState.phase === SPONSORED_PHASE.TRANSFER;
+
   const onFinish = useCallback(
-    (completion: SendFlowCompletion) => {
+    (completion: SendFlowCompletion, error?: Error) => {
+      if (isSponsoredTransfer) {
+        if (completion === SEND_FLOW_COMPLETION.SUCCESS) {
+          sponsoredActions.onTransferSuccess();
+        } else {
+          // The rent is already paid, so a TX-C failure must land on SPONSORED_FAILURE rather than
+          // the generic confirmation, which would read as though the rent died with the transfer.
+          sponsoredActions.onTransferError(error ?? new Error("Sponsored transfer failed"));
+          navigation.goToStep(SEND_FLOW_STEP.SPONSORED_FAILURE);
+          return;
+        }
+      }
       if (completion === SEND_FLOW_COMPLETION.SUCCESS && source === SEND_FLOW_SOURCE.PAY) {
         navigation.goToStep(SEND_FLOW_STEP.PAY_SUCCESS);
         return;
       }
       navigation.goToNextStep();
     },
-    [navigation, source],
+    [navigation, source, isSponsoredTransfer, sponsoredActions],
   );
 
   const { request, finishWithError, onDeviceActionResult } = useSendFlowSignatureCore({

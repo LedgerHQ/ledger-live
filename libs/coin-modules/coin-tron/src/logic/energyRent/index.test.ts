@@ -5,13 +5,19 @@ import {
   queryPreorderInfo,
   uploadHash,
 } from "../../network/tronify";
-import { EnergyRentProviderNotConfigured } from "../../types/errors";
 import {
+  EnergyDelegationTimeoutError,
+  EnergyRentProviderNotConfigured,
+  TronifyApiError,
+} from "../../types/errors";
+import {
+  awaitEnergyDeliveryWith,
   broadcastEnergyRentTransaction,
   craftEnergyRentTransaction,
   getEnergyProvider,
   getEnergyRentQuote,
   getEnergyRentStatus,
+  type EnergyRentStatus,
 } from "./index";
 
 jest.mock("../../network/tronify", () => ({
@@ -186,6 +192,53 @@ describe("energyRent provider switch", () => {
         payCoinAmt: "3.12",
       });
     });
+
+    const orderCosting = (payCoinAmt: string, payCoinCode = "TRX") => ({
+      orderId: "order-1",
+      transaction: { visible: false, txID: "abc", raw_data: {}, raw_data_hex: "0x" },
+      payCoinCode,
+      payCoinAmt,
+      purchaseEnergyFee: "3",
+      purchaseTRXFee: "0",
+      purchaseBandwidthFee: "0",
+      activeAccountFee: "0",
+    });
+
+    it("accepts an order at or under the approved ceiling", async () => {
+      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("12.50"));
+
+      const order = await craftEnergyRentTransaction({
+        ...request,
+        maxPayCoinAmt: "12.5",
+        maxPayCoinCode: "TRX",
+      });
+
+      expect(order.payCoinAmt).toBe("12.50");
+    });
+
+    it("rejects an order priced above the approved ceiling", async () => {
+      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("99.9"));
+
+      await expect(
+        craftEnergyRentTransaction({ ...request, maxPayCoinAmt: "12.5", maxPayCoinCode: "TRX" }),
+      ).rejects.toBeInstanceOf(TronifyApiError);
+    });
+
+    it("rejects an order priced in a different coin than was approved", async () => {
+      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0", "USDT"));
+
+      await expect(
+        craftEnergyRentTransaction({ ...request, maxPayCoinAmt: "12.5", maxPayCoinCode: "TRX" }),
+      ).rejects.toBeInstanceOf(TronifyApiError);
+    });
+
+    it("rejects an order whose amount cannot be parsed", async () => {
+      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("not-a-number"));
+
+      await expect(
+        craftEnergyRentTransaction({ ...request, maxPayCoinAmt: "12.5", maxPayCoinCode: "TRX" }),
+      ).rejects.toBeInstanceOf(TronifyApiError);
+    });
   });
 
   describe("broadcastEnergyRentTransaction", () => {
@@ -257,5 +310,80 @@ describe("energyRent provider switch", () => {
     it("returns 'unknown' for an unrecognised orderStatus", async () => {
       expect(await statusOf("some_new_status")).toBe("unknown");
     });
+  });
+});
+
+describe("awaitEnergyDeliveryWith", () => {
+  beforeEach(() => jest.useFakeTimers());
+  afterEach(() => jest.useRealTimers());
+
+  test("resolves once status becomes delivered", async () => {
+    const statuses = ["pending", "paid", "delivered"] as const;
+    let i = 0;
+    const p = awaitEnergyDeliveryWith(() => Promise.resolve(statuses[i++]), {
+      intervalMs: 10,
+      timeoutMs: 1000,
+    });
+    await jest.advanceTimersByTimeAsync(30);
+    await expect(p).resolves.toBeUndefined();
+  });
+
+  test("throws EnergyDelegationTimeoutError past the deadline", async () => {
+    const p = awaitEnergyDeliveryWith(() => Promise.resolve("pending"), {
+      intervalMs: 10,
+      timeoutMs: 50,
+      paymentTxId: "tx",
+    });
+    const assertion = expect(p).rejects.toBeInstanceOf(EnergyDelegationTimeoutError);
+    await jest.advanceTimersByTimeAsync(80);
+    await assertion;
+  });
+
+  test("throws TronifyApiError when the order fails", async () => {
+    const p = awaitEnergyDeliveryWith(() => Promise.resolve("failed"), {
+      intervalMs: 10,
+      timeoutMs: 1000,
+    });
+    await expect(p).rejects.toBeInstanceOf(TronifyApiError);
+  });
+
+  // The rental is paid for before polling starts, so a transient status failure must not abandon it.
+  test("rides out transient status failures and still resolves on delivery", async () => {
+    const outcomes: Array<() => Promise<EnergyRentStatus>> = [
+      () => Promise.reject(new Error("503 Service Unavailable")),
+      () => Promise.reject(new Error("503 Service Unavailable")),
+      () => Promise.resolve("delivered"),
+    ];
+    let i = 0;
+    const p = awaitEnergyDeliveryWith(() => outcomes[i++](), {
+      intervalMs: 10,
+      timeoutMs: 1000,
+    });
+    await jest.advanceTimersByTimeAsync(30);
+    await expect(p).resolves.toBeUndefined();
+  });
+
+  test("surfaces the error once failures exceed the tolerance", async () => {
+    const p = awaitEnergyDeliveryWith(() => Promise.reject(new Error("503 Service Unavailable")), {
+      intervalMs: 10,
+      timeoutMs: 1000,
+      maxConsecutiveErrors: 3,
+    });
+    const assertion = expect(p).rejects.toThrow("503 Service Unavailable");
+    await jest.advanceTimersByTimeAsync(60);
+    await assertion;
+  });
+
+  // The deadline is enforced even while a request is in flight: a hung request surfaces
+  // EnergyDelegationTimeoutError instead of stranding the POLLING screen.
+  test("times out while a status request is still in flight", async () => {
+    const p = awaitEnergyDeliveryWith(() => new Promise<EnergyRentStatus>(() => {}), {
+      intervalMs: 10,
+      timeoutMs: 50,
+      paymentTxId: "tx",
+    });
+    const assertion = expect(p).rejects.toBeInstanceOf(EnergyDelegationTimeoutError);
+    await jest.advanceTimersByTimeAsync(80);
+    await assertion;
   });
 });
