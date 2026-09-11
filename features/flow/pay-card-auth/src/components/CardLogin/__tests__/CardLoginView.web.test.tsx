@@ -41,17 +41,16 @@ describe("CardLoginView (Web)", () => {
     expect(screen.getByRole("button", { name: "Login" })).toBeVisible();
   });
 
-  it("should render the title and the description", () => {
+  it("should render the description", () => {
     renderCardLoginView();
 
-    expect(screen.getByText("Crypto Card")).toBeVisible();
     expect(screen.getByText("Log in to access your card")).toBeVisible();
   });
 
-  it("should render the title as a heading", () => {
+  it("should not render its own heading", () => {
     renderCardLoginView();
 
-    expect(screen.getByRole("heading", { name: "Crypto Card" })).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Crypto Card" })).toBeNull();
   });
 
   it("should render the login link when the copy carries one", () => {
