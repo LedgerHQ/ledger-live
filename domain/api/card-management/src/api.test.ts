@@ -1010,13 +1010,42 @@ describe("cardManagementApi requests", () => {
         cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
       );
 
-    it("reads the wallets funding the card", async () => {
+    it("reads the wallets funding the card, each resolved to its Ledger currency", async () => {
       provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
 
       const result = await readLinkedWallets();
 
       expectSessionRequest("GET", LINKED_WALLETS_PATH);
-      expect(result.data).toEqual(linkedWallets);
+      // The wire fields, plus the Ledger currency each wallet's asset resolves to.
+      expect(result.data).toEqual(
+        linkedWallets.map(wallet => ({ ...wallet, ledgerId: expect.any(String) })),
+      );
+    });
+
+    it("resolves each wallet to its Ledger currency, so no consumer has to map it again", async () => {
+      provider.get(LINKED_WALLETS_PATH, () =>
+        jsonResponse([
+          { ...linkedWallets[0], currency: "usdc", network: "ethereum", priority: 0 },
+          { ...linkedWallets[0], id: "w-btc", currency: "btc", network: "bitcoin", priority: 1 },
+        ]),
+      );
+
+      const result = await readLinkedWallets();
+
+      expect(result.data?.map(({ ledgerId }) => ledgerId)).toEqual([
+        "ethereum/erc20/usd__coin",
+        "bitcoin",
+      ]);
+    });
+
+    it("leaves an asset the catalog does not cover unresolved rather than guessing one", async () => {
+      provider.get(LINKED_WALLETS_PATH, () =>
+        jsonResponse([{ ...linkedWallets[0], currency: "bxx", network: "ethereum" }]),
+      );
+
+      const result = await readLinkedWallets();
+
+      expect(result.data?.[0]?.ledgerId).toBeUndefined();
     });
 
     it("keeps a priority of zero, which is the first wallet charged", async () => {

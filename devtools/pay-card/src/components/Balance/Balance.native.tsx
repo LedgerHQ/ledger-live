@@ -62,6 +62,7 @@ function LinkedWallet({ wallet }: { readonly wallet: PayCardLinkedWallet }) {
       {/* The provider's own ids, unmapped: what a currency mapping would have to be keyed on. */}
       <Field label="currency" value={wallet.currency} />
       <Field label="network" value={wallet.network} />
+      <Field label="ledgerId" value={wallet.ledgerId ?? "undefined — this pair is not mapped"} />
       <Field label="address" value={wallet.address} />
     </Box>
   );
@@ -73,6 +74,7 @@ function CombinedWallet({ wallet }: { readonly wallet: PayCardCombinedWallet }) 
       <Divider />
       <Text typography="body2">{`${wallet.priority}. ${wallet.currency} / ${wallet.network}`}</Text>
       <Field label="id" value={wallet.id} />
+      <Field label="ledgerId" value={wallet.ledgerId ?? "undefined — this pair is not mapped"} />
       <Field
         label="balance"
         value={wallet.balance ?? "null — still reading, or no Baanx wallet matched"}
