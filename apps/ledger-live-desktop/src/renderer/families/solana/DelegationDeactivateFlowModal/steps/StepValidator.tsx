@@ -20,7 +20,7 @@ export default function StepValidator({
   t: _t,
   onClose,
 }: StepProps) {
-  const { unit, validator } = useStakeValidatorStep(account, transaction, "stake.undelegate");
+  const { unit, validator } = useStakeValidatorStep(account, transaction, "undelegate");
   if (validator === undefined) {
     return null;
   }

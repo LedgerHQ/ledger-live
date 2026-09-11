@@ -1,9 +1,16 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import BigNumber from "bignumber.js";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { getAssetFromToken, getTokenFromAsset, computeIntentType } from "./api";
+import solanaBridge, {
+  buildIntentData,
+  computeIntentType,
+  describeOptimisticOperation,
+  getAssetFromToken,
+  getTokenFromAsset,
+} from "./api";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
@@ -18,6 +25,12 @@ const mockToken = {
 const solana = getCryptoCurrencyById("solana");
 
 describe("solana bridge", () => {
+  describe("staking", () => {
+    it("declares staking support explicitly", () => {
+      expect(solanaBridge(solana).stakingSupported).toBe(true);
+    });
+  });
+
   describe("computeIntentType", () => {
     it.each([
       [{ mode: "send" }, "send"],
@@ -156,6 +169,69 @@ describe("solana bridge", () => {
       const result = getAssetFromToken(mockToken, owner);
 
       expect(result.name).toBe(mockToken.name);
+    });
+  });
+
+  describe("describeOptimisticOperation", () => {
+    const account = {} as Parameters<typeof describeOptimisticOperation>[1];
+    const fees = new BigNumber(5000);
+
+    // `getPendingNativeSpent` locks `operation.fee` on its own, so only a principal belongs here.
+    it.each([
+      ["delegate", "DELEGATE"],
+      ["undelegate", "UNDELEGATE"],
+      ["unstake", "WITHDRAW_UNBONDED"],
+      ["split", "FEES"],
+      ["approve", "FEES"],
+      ["revoke", "FEES"],
+    ])("types a %s as %s and moves no principal", (mode, expected) => {
+      expect(describeOptimisticOperation(mode, account, { fees })).toEqual({
+        type: expected,
+        value: new BigNumber(0),
+      });
+    });
+
+    it("locks the delegated amount and the stake account rent when opening a stake", () => {
+      expect(
+        describeOptimisticOperation("stake", account, {
+          fees,
+          amount: new BigNumber(1_000_000_000),
+          stakeAccountRent: new BigNumber(2_282_880),
+        }),
+      ).toEqual({ type: "DELEGATE", value: new BigNumber(1_002_282_880) });
+    });
+
+    it("types an opt-in as OPT_IN, its rent already carried by the fee", () => {
+      expect(describeOptimisticOperation("opt-in", account, { fees })).toEqual({
+        type: "OPT_IN",
+        value: new BigNumber(0),
+      });
+    });
+
+    it("leaves a plain send to the generic mapping", () => {
+      expect(describeOptimisticOperation("send", account, { fees })).toBeUndefined();
+    });
+
+    it("falls back to a zero value when the amount is not loaded", () => {
+      expect(describeOptimisticOperation("stake", account, {})?.value).toEqual(new BigNumber(0));
+    });
+  });
+
+  describe("buildIntentData", () => {
+    it("carries a partner-built transaction so the bytes reach the coin module", () => {
+      expect(buildIntentData({ raw: "AQID", templateId: "tpl-1" })).toEqual({
+        type: "solana",
+        raw: "AQID",
+        templateId: "tpl-1",
+      });
+    });
+
+    it("omits an absent template id", () => {
+      expect(buildIntentData({ raw: "AQID" })).toEqual({ type: "solana", raw: "AQID" });
+    });
+
+    it("leaves every other transaction to the coin module", () => {
+      expect(buildIntentData({ mode: "send", recipient: "addr" })).toEqual({ type: "none" });
     });
   });
 });

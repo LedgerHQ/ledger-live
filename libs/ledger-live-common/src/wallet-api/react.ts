@@ -57,6 +57,7 @@ import {
 } from "./logic";
 import { handlers as featureFlagsHandlers } from "./FeatureFlags";
 import { getAccountBridge } from "../bridge";
+
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
 import { Transaction } from "../coin-modules/transaction-types";
@@ -862,16 +863,13 @@ export function useWalletAPIServer({
     server.setHandler(
       "transaction.sign",
       async ({ accountId, tokenCurrency, transaction, options }) => {
-        let currency: string | undefined;
+        let family: string | undefined;
         const signedOperation = await signTransactionLogic(
           { manifest, accounts, tracking },
           accountId,
           transaction,
           (account, parentAccount, signFlowInfos) => {
-            currency =
-              account.type === "TokenAccount"
-                ? account.token.parentCurrencyId
-                : account.currency.id;
+            family = getMainAccount(account, parentAccount).currency.family;
             return new Promise((resolve, reject) => {
               let done = false;
               return uiTxSign({
@@ -897,8 +895,9 @@ export function useWalletAPIServer({
           tokenCurrency,
         );
 
-        return currency === "solana"
-          ? Buffer.from(signedOperation.signature, "hex")
+        // Every Solana bridge signs through the coin module's `combine`, which returns base64.
+        return family === "solana"
+          ? Buffer.from(signedOperation.signature, "base64")
           : Buffer.from(signedOperation.signature);
       },
     );
@@ -910,12 +909,14 @@ export function useWalletAPIServer({
     server.setHandler(
       "transaction.signRaw",
       async ({ accountId, transaction, broadcast, options }) => {
+        let family: string | undefined;
         const signedOperation = await signRawTransactionLogic(
           { manifest, accounts, tracking },
           accountId,
           transaction,
           (account, parentAccount, tx) =>
             new Promise((resolve, reject) => {
+              family = getMainAccount(account, parentAccount).currency.family;
               let done = false;
               return uiTxSignRaw({
                 account,
@@ -988,7 +989,12 @@ export function useWalletAPIServer({
         }
 
         return {
-          signedTransactionHex: signedOperation.signature,
+          // `signedTransactionHex` is decoded as hex by its consumers, and the coin module's
+          // `combine` returns base64.
+          signedTransactionHex:
+            family === "solana"
+              ? Buffer.from(signedOperation.signature, "base64").toString("hex")
+              : signedOperation.signature,
           transactionHash: hash,
         };
       },

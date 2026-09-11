@@ -204,7 +204,7 @@ export function solanaTransaction(
     family: "solana",
     amount,
     recipient,
-    model: { kind: "transfer", uiState: {} },
+    mode: "send",
     ...(raw && { raw }),
     ...(templateId && { templateId }),
   };

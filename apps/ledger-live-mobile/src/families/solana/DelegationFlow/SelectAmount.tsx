@@ -1,3 +1,4 @@
+import { createStakeAccountTransaction } from "@ledgerhq/live-common/families/solana/transactions";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -58,12 +59,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
         ...bridge.createTransaction(account),
         amount: new BigNumber(route.params.amount ?? 0),
         family: "solana",
-        model: {
-          kind: "stake.createAccount",
-          uiState: {
-            delegate: { voteAccAddress: "" },
-          },
-        },
+        ...createStakeAccountTransaction(""),
       } as SolanaTransaction,
     }));
 

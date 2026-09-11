@@ -561,35 +561,19 @@ describe("sendFeatures", () => {
     });
 
     describe("nested structures", () => {
-      it("should apply memo for solana with empty transaction", () => {
-        const result = applyMemoToTransaction("solana", "test memo", {});
-        expect(result).toEqual({
-          model: {
-            uiState: {
-              memo: "test memo",
-            },
-          },
+      it("should apply memo for solana", () => {
+        expect(applyMemoToTransaction("solana", "test memo", {})).toEqual({
+          memoType: "TEXT",
+          memoValue: "test memo",
         });
       });
 
-      it("should apply memo for solana preserving existing data", () => {
-        const transaction = {
-          model: {
-            kind: "transfer",
-            uiState: {
-              amount: "100",
-            },
-          },
-        };
-        const result = applyMemoToTransaction("solana", "test memo", transaction);
-        expect(result).toEqual({
-          model: {
-            kind: "transfer",
-            uiState: {
-              amount: "100",
-              memo: "test memo",
-            },
-          },
+      it("should patch only the memo fields, leaving the rest of the transaction alone", () => {
+        expect(
+          applyMemoToTransaction("solana", "test memo", { mode: "send", amount: "100" }),
+        ).toEqual({
+          memoType: "TEXT",
+          memoValue: "test memo",
         });
       });
 

@@ -55,4 +55,23 @@ describe("buildOptimisticOperation — memo extra field", () => {
     expect(op.extra).not.toHaveProperty("transferId");
     expect(op.extra).not.toHaveProperty("memo");
   });
+
+  it("locks the gross amount of a token transfer that levies a transfer fee", () => {
+    const tokenAccount = {
+      id: "sub1",
+      type: "TokenAccount",
+      balance: new BigNumber(1000),
+      token: { contractAddress: "mint1" },
+    };
+
+    const op = buildOptimisticOperation({ ...account, subAccounts: [tokenAccount] } as never, {
+      ...baseTransaction,
+      subAccountId: "sub1",
+      amount: new BigNumber(99),
+      transferFee: { transferAmountIncludingFee: 110 },
+    });
+
+    // 99 reaches the recipient, 110 leaves the account.
+    expect(op.subOperations?.[0].value).toEqual(new BigNumber(110));
+  });
 });
