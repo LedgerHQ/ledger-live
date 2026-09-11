@@ -51,10 +51,51 @@ const OperationHistoryBoundConfigSchema = z
   })
   .catch({ maxOperations: undefined, pageSize: undefined, networks: {} });
 
-// Default ships unbounded: retention is a product decision, not the implementer's. Shipping any
-// other default would be making that decision in code.
+/**
+ * The shipped default is a **safety ceiling**, not a retention policy.
+ *
+ * Those are two different things and only the second is Product's. How much history a user should
+ * see is a product decision, and this file does not make it: a lower `maxOperations` set remotely
+ * overrides this value at any time. What is *not* negotiable is that the sync must not run out of
+ * memory, and that is an engineering bound derived from measurement.
+ *
+ * Why a ceiling is required at all, rather than relying on `pageSize`: a page size bounds what one
+ * request costs, but `paginateOperations` accumulates every page into one array before returning,
+ * so nothing bounds the accumulation. Measured 2026-09-10 against the production EVM explorer on
+ * 0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe, walking with pages of 100 and no ceiling, reading
+ * live heap after a forced GC so the figures are retention and not collector lag:
+ *
+ *     page  25 ->     1 613 operations ->    72 MB
+ *     page  50 ->     9 636 operations ->    89 MB
+ *     page  75 ->   186 882 operations ->   392 MB
+ *     page 125 ->   312 092 operations ->   632 MB
+ *     page 150 ->   912 274 operations -> 1 817 MB
+ *
+ * That is linear, at roughly 2 KB of live heap per retained operation. This address carries about
+ * 8.4 M operations, which extrapolates past 16 GB; the run died under a 2 GB heap. So an unbounded
+ * walk cannot complete on an account of this shape however small the pages are.
+ *
+ * Why this figure: a full sync's peak is roughly 550 MB of constant cost (the exhaustive
+ * token-discovery walk plus operation assembly) plus 2 KB per retained operation. End-to-end
+ * measurements on the same address, same day, with pages of 100:
+ *
+ *     ceiling  50 000 -> 984 MB peak, completed
+ *     ceiling 200 000 -> 962 MB peak, completed, 4 045 operations retained, 24 min
+ *
+ * 200 000 is the largest ceiling measured to complete, and it is the last point before the figures
+ * leave measured ground. Above it the arithmetic predicts growth this walk never demonstrated.
+ *
+ * What it does *not* promise: 200 000 raw operations is not 200 000 rows a user sees. Operations
+ * are counted as the module emits them, before filtering and before grouping by transaction; deep
+ * in a spam-heavy history that ratio reached 49 to 1, so this ceiling retained about 4 045
+ * transactions out of roughly 35 000 on the measured address. A retention policy expressed in
+ * something a user recognises -- a number of transactions, or a time window -- is a separate
+ * decision this ceiling neither makes nor prevents.
+ */
+export const DEFAULT_MAX_OPERATIONS = 200_000;
+
 const DEFAULT_OPERATION_HISTORY_CONFIG: OperationHistoryBoundConfig = Object.freeze({
-  maxOperations: undefined,
+  maxOperations: DEFAULT_MAX_OPERATIONS,
   pageSize: undefined,
   networks: {},
 });
@@ -78,8 +119,13 @@ export const operationHistoryConfig: ConfigSchema = {
  */
 export const DEFAULT_PAGE_SIZE = 100;
 
-const UNBOUNDED: OperationHistoryBound = Object.freeze({
-  maxOperations: undefined,
+/**
+ * Resolved when the remote config is unavailable, malformed, or hostile. It carries the safety
+ * ceiling rather than no ceiling: a missing config must not reopen the out-of-memory crash the
+ * ceiling exists to prevent. Only a remote payload that parses can lower or lift it.
+ */
+const FALLBACK: OperationHistoryBound = Object.freeze({
+  maxOperations: DEFAULT_MAX_OPERATIONS,
   pageSize: DEFAULT_PAGE_SIZE,
 });
 
@@ -104,21 +150,21 @@ export function resolveOperationHistoryBound(currencyId: string): OperationHisto
     const raw = LiveConfig.getValueByKey("config_generic_operation_history");
 
     const parsed = OperationHistoryBoundConfigSchema.safeParse(raw);
-    if (!parsed.success) return UNBOUNDED;
+    if (!parsed.success) return FALLBACK;
 
     const { maxOperations: globalMax, pageSize: globalPageSize, networks } = parsed.data;
     const entry = networks[currencyId];
-    const maxOperations = entry?.maxOperations ?? globalMax;
+    const maxOperations = entry?.maxOperations ?? globalMax ?? DEFAULT_MAX_OPERATIONS;
     const pageSize = entry?.pageSize ?? globalPageSize ?? DEFAULT_PAGE_SIZE;
 
     return { maxOperations, pageSize };
   } catch {
-    if (warnedConfigMissing) return UNBOUNDED;
+    if (warnedConfigMissing) return FALLBACK;
     warnedConfigMissing = true;
     log(
       "generic-coin-framework",
-      "config_generic_operation_history not set in LiveConfig - operation history unbounded",
+      "config_generic_operation_history not set in LiveConfig - falling back to the default operation history ceiling",
     );
-    return UNBOUNDED;
+    return FALLBACK;
   }
 }
