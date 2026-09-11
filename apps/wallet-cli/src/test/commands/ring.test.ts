@@ -5,7 +5,30 @@ import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { Readable } from "node:stream";
 import { YAML } from "bun";
+import {
+  loadMemberCredentials as loadMemberCredentialsFromRepository,
+  savePrivateKey as savePrivateKeyToRepository,
+} from "../../key-ring/keychain";
 import { runCli, type RunResult } from "../helpers/cli-runner";
+import {
+  inMemoryMemberCredentialRepository,
+  withInMemoryMemberCredentialRepository,
+} from "../helpers/in-memory-member-credential-repository";
+import { withStateDir } from "../helpers/session-fixture";
+
+const _store = inMemoryMemberCredentialRepository.entries;
+
+const savePrivateKey = (
+  privatekey: string,
+  pubkey?: string,
+  wrappingKey?: CryptoKey,
+): Promise<void> =>
+  withInMemoryMemberCredentialRepository(() =>
+    savePrivateKeyToRepository(privatekey, pubkey, wrappingKey),
+  );
+
+const loadMemberCredentials = (wrappingKey?: CryptoKey) =>
+  withInMemoryMemberCredentialRepository(() => loadMemberCredentialsFromRepository(wrappingKey));
 
 function runCliWithStdin(
   args: string[],
@@ -22,33 +45,6 @@ function runCliWithStdin(
   });
 }
 
-// Mock OS keychain so tests never touch macOS Keychain / libsecret.
-// Must be installed before any runCli() call that triggers a keychain import.
-const _store = new Map<string, string>();
-function installKeychainMock(): void {
-  mock.module("@napi-rs/keyring", () => ({
-    Entry: class {
-      #k: string;
-      constructor(svc: string, acc: string) {
-        this.#k = `${svc}:${acc}`;
-      }
-      setPassword(v: string) {
-        _store.set(this.#k, v);
-      }
-      getPassword() {
-        return _store.get(this.#k) ?? null;
-      }
-      deletePassword() {
-        _store.delete(this.#k);
-      }
-    },
-  }));
-}
-installKeychainMock();
-// Final cleanup after the whole file, so neither the keychain mock nor any per-test module mock
-// leaks into other test files sharing this process.
-afterAll(() => mock.restore());
-
 const MOCK_ENV = { WALLET_CLI_MOCK: "1" };
 const MOCK_ENV_DMK = { ...MOCK_ENV, WALLET_CLI_MOCK_DMK: "1" };
 
@@ -59,6 +55,18 @@ function makeTmpDir(): { env: Record<string, string>; dir: string; cleanup: () =
     env: { XDG_STATE_HOME: dir, ...MOCK_ENV },
     cleanup: () => rmSync(dir, { recursive: true, force: true }),
   };
+}
+
+async function readSessionPasswordSalt(stateHome: string): Promise<string | undefined> {
+  const session = YAML.parse(
+    await Bun.file(join(stateHome, "ledger-wallet-cli", "session.yaml")).text(),
+  );
+  return typeof session === "object" &&
+    session !== null &&
+    "passwordSalt" in session &&
+    typeof session.passwordSalt === "string"
+    ? session.passwordSalt
+    : undefined;
 }
 
 describe("ring — not initialized", () => {
@@ -113,8 +121,16 @@ describe("ring — happy path", () => {
   });
 
   it("init fails when already initialized", async () => {
+    const [storedCredentialBeforeInit] = _store.values();
+    expect(_store.size).toBe(1);
+    expect(storedCredentialBeforeInit).not.toMatch(/^ENC:/);
+
     const r = await runCli(["ring", "init"], { ...env, ...MOCK_ENV_DMK });
+
     expect(r.exitCode).toBe(1);
+    const [storedCredentialAfterInit] = _store.values();
+    expect(_store.size).toBe(1);
+    expect(storedCredentialAfterInit).toBe(storedCredentialBeforeInit);
   });
 
   it("keys shows no keys after init", async () => {
@@ -265,6 +281,23 @@ describe("ring — with password", () => {
     expect(allValues.some(v => v.startsWith("ENC:"))).toBe(true);
   });
 
+  it("init keeps encrypted credentials when the ring is already initialized", async () => {
+    const [storedCredentialBeforeInit] = _store.values();
+    expect(_store.size).toBe(1);
+    expect(storedCredentialBeforeInit).toMatch(/^ENC:/);
+
+    const r = await runCli(["ring", "init"], {
+      ...env,
+      ...MOCK_ENV_DMK,
+      WALLET_PASS: "testpw",
+    });
+
+    expect(r.exitCode).toBe(1);
+    const [storedCredentialAfterInit] = _store.values();
+    expect(_store.size).toBe(1);
+    expect(storedCredentialAfterInit).toBe(storedCredentialBeforeInit);
+  });
+
   it("encrypt with correct password decrypts member credentials", async () => {
     const r = await runCli(
       [
@@ -329,6 +362,7 @@ describe("ring — with password", () => {
       "destroy",
     ]);
     expect(r.exitCode, r.stderr).toBe(0);
+    expect(await readSessionPasswordSalt(dir)).toBeUndefined();
   });
 
   it("keys exits 1 after destroy", async () => {
@@ -345,51 +379,173 @@ describe("ring — uninitialized with a stray password-protected key", () => {
   // output capture does not observe.
   it("throws 'not initialized' rather than a password error", async () => {
     // Dynamic import: static imports hoist above the mock.module() call above and defeat the mock.
-    const { savePrivateKey } = await import("../../key-ring/keychain");
     const { deriveWrappingKey } = await import("../../key-ring/crypto");
     const { loadKeyRing } = await import("../../key-ring/load-key-ring");
 
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the session dir + keychain account to this temp dir
-    try {
+    await withStateDir(dir, async () => {
       _store.clear();
       const wrappingKey = await deriveWrappingKey("pw", "0".repeat(32));
       await savePrivateKey("aa".repeat(32), "bb".repeat(33), wrappingKey);
 
       // No `ring init` ran, so there is no trustchain on disk.
-      await expect(loadKeyRing()).rejects.toThrow(/not initialized/i);
-      await expect(loadKeyRing()).rejects.not.toThrow(/password/i);
+      await expect(withInMemoryMemberCredentialRepository(() => loadKeyRing())).rejects.toThrow(
+        /^(?!.*password).*not initialized/is,
+      );
+    });
+  });
+});
+
+describe("ring init — existing auth credentials", () => {
+  const { dir, env, cleanup } = makeTmpDir();
+  afterAll(cleanup);
+
+  it("replaces a plaintext credential when the session has no trustchain", async () => {
+    const { deriveWrappingKey } = await import("../../key-ring/crypto");
+    const privatekey = "mock-private-key-auth";
+    const pubkey = "mock-pub-key-auth";
+    await withStateDir(dir, async () => {
+      _store.clear();
+      await savePrivateKey(privatekey, pubkey);
+    });
+
+    const r = await runCli(["ring", "init", "--output", "json"], {
+      ...env,
+      ...MOCK_ENV_DMK,
+      WALLET_PASS: "test-password",
+    });
+    expect(r.exitCode, `stdout: ${r.stdout}\nstderr: ${r.stderr}`).toBe(0);
+    expect([..._store.values()][0]).toMatch(/^ENC:/);
+
+    const passwordSalt = await readSessionPasswordSalt(dir);
+    expect(passwordSalt).toBeDefined();
+    const memberCredentials = await withStateDir(dir, async () => {
+      const wrappingKey = await deriveWrappingKey("test-password", passwordSalt!);
+      return loadMemberCredentials(wrappingKey);
+    });
+    expect(memberCredentials).not.toEqual({ privatekey, pubkey });
+  });
+});
+
+describe("ring init — encrypted credentials without trustchain metadata", () => {
+  const { dir, env, cleanup } = makeTmpDir();
+  afterAll(cleanup);
+
+  it("reuses the encrypted credential with its existing password", async () => {
+    const { deriveWrappingKey } = await import("../../key-ring/crypto");
+    const { Session } = await import("../../session/session-store");
+    const passwordSalt = "0".repeat(32);
+    const previousCredentials = {
+      privatekey: "mock-private-key-auth",
+      pubkey: "mock-pub-key-auth",
+    };
+    await withStateDir(dir, async () => {
+      _store.clear();
+      const session = Session.from([]);
+      session.setPasswordSalt(passwordSalt);
+      session.write();
+      const wrappingKey = await deriveWrappingKey("test-password", passwordSalt);
+      await savePrivateKey(previousCredentials.privatekey, previousCredentials.pubkey, wrappingKey);
+    });
+
+    const r = await runCli(["ring", "init", "--output", "json"], {
+      ...env,
+      ...MOCK_ENV_DMK,
+      WALLET_PASS: "test-password",
+    });
+
+    expect(r.exitCode, `stdout: ${r.stdout}\nstderr: ${r.stderr}`).toBe(0);
+    expect(await readSessionPasswordSalt(dir)).toBe(passwordSalt);
+    const memberCredentials = await withStateDir(dir, async () => {
+      const wrappingKey = await deriveWrappingKey("test-password", passwordSalt);
+      return loadMemberCredentials(wrappingKey);
+    });
+    expect(memberCredentials).toEqual(previousCredentials);
+  });
+});
+
+describe("ring init — encrypted credentials without password metadata", () => {
+  const { dir, env, cleanup } = makeTmpDir();
+  afterAll(cleanup);
+
+  it("rejects init without changing the credential", async () => {
+    const { deriveWrappingKey } = await import("../../key-ring/crypto");
+    const { Session } = await import("../../session/session-store");
+    await withStateDir(dir, async () => {
+      inMemoryMemberCredentialRepository.clear();
+      Session.from([]).write();
+      const wrappingKey = await deriveWrappingKey("test-password", "0".repeat(32));
+      await savePrivateKey("mock-private-key-auth", "mock-pub-key-auth", wrappingKey);
+    });
+    const [storedCredentialBeforeInit] = _store.values();
+    expect(_store.size).toBe(1);
+    expect(storedCredentialBeforeInit).toMatch(/^ENC:/);
+
+    const r = await runCli(["ring", "init", "--output", "json"], {
+      ...env,
+      ...MOCK_ENV_DMK,
+    });
+
+    expect(r.exitCode).toBe(1);
+    expect(r.stdout).toMatch(/password metadata is missing/i);
+    expect(r.stdout).not.toMatch(/wrong password/i);
+    expect(r.stderr).not.toMatch(/Password:/);
+    const [storedCredentialAfterInit] = _store.values();
+    expect(_store.size).toBe(1);
+    expect(storedCredentialAfterInit).toBe(storedCredentialBeforeInit);
+    const session = await withStateDir(dir, () => Session.read());
+    expect(session.passwordSalt).toBeUndefined();
+    expect(session.trustchain).toBeUndefined();
+  });
+});
+
+describe("ring init — credential deletion failure", () => {
+  const { dir, env, cleanup } = makeTmpDir();
+  afterAll(cleanup);
+
+  it("fails without reusing the existing credential", async () => {
+    await withStateDir(dir, async () => {
+      _store.clear();
+      await savePrivateKey("mock-private-key-auth", "mock-pub-key-auth");
+    });
+    const credentialsBeforeInit = [..._store.values()];
+    inMemoryMemberCredentialRepository.setDeleteError(new Error("keychain delete failed"));
+
+    try {
+      const r = await runCli(["ring", "init", "--output", "json"], {
+        ...env,
+        ...MOCK_ENV_DMK,
+        WALLET_PASS: "test-password",
+      });
+
+      expect(r.exitCode).toBe(1);
+      expect(r.stdout).toMatch(/failed to replace the existing member credential/i);
+      expect([..._store.values()]).toEqual(credentialsBeforeInit);
     } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
+      inMemoryMemberCredentialRepository.setDeleteError(undefined);
     }
   });
 });
 
-describe("ring init — orphan guard", () => {
+describe("ring init — unsecure recovery from stale password metadata", () => {
   const { dir, env, cleanup } = makeTmpDir();
   afterAll(cleanup);
 
-  it("refuses to init over a stray keychain key when the session has no trustchain", async () => {
-    const { savePrivateKey } = await import("../../key-ring/keychain");
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the keychain account to this temp dir
-    try {
+  it("clears the password salt after creating a plaintext credential", async () => {
+    const { Session } = await import("../../session/session-store");
+    await withStateDir(dir, async () => {
       _store.clear();
-      await savePrivateKey("aa".repeat(32), "bb".repeat(33)); // stray key, no trustchain on disk
-    } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
-    }
+      const session = Session.from([]);
+      session.setPasswordSalt("0".repeat(32));
+      session.write();
+    });
 
-    const before = [..._store.values()];
     const r = await runCli(["ring", "init", "--unsecure-no-password", "--output", "json"], {
       ...env,
       ...MOCK_ENV_DMK,
     });
-    expect(r.exitCode).toBe(1);
-    expect(r.stdout).toMatch(/already exists in the OS keychain/i);
-    expect([..._store.values()]).toEqual(before); // stray key untouched
+
+    expect(r.exitCode, `stdout: ${r.stdout}\nstderr: ${r.stderr}`).toBe(0);
+    expect(await readSessionPasswordSalt(dir)).toBeUndefined();
   });
 });
 
@@ -399,11 +555,7 @@ describe("ring — CRLF-stored keychain entry", () => {
 
   // Regression guard for a bare split("\n"), which left a trailing \r on the private-key line.
   it("loadMemberCredentials strips \\r from a CRLF-joined entry", async () => {
-    const { savePrivateKey, loadMemberCredentials } = await import("../../key-ring/keychain");
-
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir;
-    try {
+    await withStateDir(dir, async () => {
       _store.clear();
       const priv = "aa".repeat(32);
       const pub = "bb".repeat(33);
@@ -414,10 +566,7 @@ describe("ring — CRLF-stored keychain entry", () => {
       const creds = await loadMemberCredentials();
       expect(creds?.privatekey).toBe(priv);
       expect(creds?.pubkey).toBe(pub);
-    } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
-    }
+    });
   });
 });
 
@@ -425,35 +574,23 @@ describe("ring — password-protected keychain entry decode errors", () => {
   const { dir, cleanup } = makeTmpDir();
   afterAll(cleanup);
 
-  async function withStateDir<T>(fn: () => Promise<T>): Promise<T> {
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the keychain account to this temp dir
-    try {
-      return await fn();
-    } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
-    }
-  }
-
   it("reports corruption (not a wrong password) for a non-hex ENC payload", async () => {
-    const { savePrivateKey, loadMemberCredentials } = await import("../../key-ring/keychain");
     const { deriveWrappingKey } = await import("../../key-ring/crypto");
-    await withStateDir(async () => {
+    await withStateDir(dir, async () => {
       _store.clear();
       const wrappingKey = await deriveWrappingKey("pw", "0".repeat(32));
       await savePrivateKey("aa".repeat(32), "bb".repeat(33), wrappingKey);
       for (const [k, v] of _store) _store.set(k, v.replace(/^ENC:[0-9a-f]+/, "ENC:zzzz"));
 
-      await expect(loadMemberCredentials(wrappingKey)).rejects.toThrow(/not valid hex/i);
-      await expect(loadMemberCredentials(wrappingKey)).rejects.not.toThrow(/wrong password/i);
+      await expect(loadMemberCredentials(wrappingKey)).rejects.toThrow(
+        /^(?!.*wrong password).*not valid hex/is,
+      );
     });
   });
 
   it("reports a wrong password when the ENC payload is valid hex but does not decrypt", async () => {
-    const { savePrivateKey, loadMemberCredentials } = await import("../../key-ring/keychain");
     const { deriveWrappingKey } = await import("../../key-ring/crypto");
-    await withStateDir(async () => {
+    await withStateDir(dir, async () => {
       _store.clear();
       const stored = await deriveWrappingKey("right", "0".repeat(32));
       await savePrivateKey("aa".repeat(32), "bb".repeat(33), stored);
@@ -464,33 +601,52 @@ describe("ring — password-protected keychain entry decode errors", () => {
   });
 });
 
-describe("ring destroy — stray key with no trustchain (local-only recovery)", () => {
+describe("ring destroy — auth-only credential with no trustchain", () => {
   const { dir, env, cleanup } = makeTmpDir();
   afterAll(cleanup);
 
-  it("wipes the stray local key and unblocks a fresh init", async () => {
+  it("wipes the local credential before initializing a fresh identity", async () => {
     _store.clear();
-    const { savePrivateKey } = await import("../../key-ring/keychain");
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the keychain account to this temp dir
-    try {
-      await savePrivateKey("aa".repeat(32), "bb".repeat(33)); // stray key, no trustchain on disk
-    } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
-    }
+    await withStateDir(dir, async () => {
+      await savePrivateKey("aa".repeat(32), "bb".repeat(33));
+    });
     expect([..._store.values()]).toHaveLength(1);
 
     const r = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
     expect(r.exitCode, r.stderr).toBe(0);
-    expect([..._store.values()]).toHaveLength(0); // stray key wiped locally
+    expect([..._store.values()]).toHaveLength(0);
 
-    // init now succeeds — the recovery path `init` advertised actually works.
+    // Destroying the auth-only credential forces ring init to generate a fresh member identity.
     const init = await runCli(["ring", "init", "--name", "recovered", "--unsecure-no-password"], {
       ...env,
       ...MOCK_ENV_DMK,
     });
     expect(init.exitCode, init.stderr).toBe(0);
+  });
+});
+
+describe("ring destroy — encrypted credential with no trustchain", () => {
+  const { dir, env, cleanup } = makeTmpDir();
+  afterAll(cleanup);
+
+  it("clears the password salt after deleting the credential", async () => {
+    const { deriveWrappingKey } = await import("../../key-ring/crypto");
+    const { Session } = await import("../../session/session-store");
+    const passwordSalt = "0".repeat(32);
+    await withStateDir(dir, async () => {
+      inMemoryMemberCredentialRepository.clear();
+      const session = Session.from([]);
+      session.setPasswordSalt(passwordSalt);
+      session.write();
+      const wrappingKey = await deriveWrappingKey("test-password", passwordSalt);
+      await savePrivateKey("mock-private-key-auth", "mock-pub-key-auth", wrappingKey);
+    });
+
+    const r = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
+
+    expect(r.exitCode, r.stderr).toBe(0);
+    expect([..._store.values()]).toHaveLength(0);
+    expect(await readSessionPasswordSalt(dir)).toBeUndefined();
   });
 });
 
@@ -527,6 +683,29 @@ describe("ring encrypt — salt without trustchain must not prompt", () => {
     expect(r.stdout).toMatch(/not initialized/i);
     // No password prompt: the trustchain check short-circuits before resolveWrappingKey.
     expect(`${r.stdout}${r.stderr}`).not.toMatch(/password/i);
+  });
+});
+
+describe("ring destroy — missing credential with a trustchain", () => {
+  const { dir, env, cleanup } = makeTmpDir();
+  afterAll(cleanup);
+
+  it("clears the ring metadata when the credential is already absent", async () => {
+    inMemoryMemberCredentialRepository.clear();
+    const sessionPath = join(dir, "ledger-wallet-cli", "session.yaml");
+    mkdirSync(dirname(sessionPath), { recursive: true });
+    writeFileSync(
+      sessionPath,
+      YAML.stringify({
+        accounts: [],
+        trustchain: { rootId: "root-id", applicationPath: "m/0'/17'/0'" },
+      }),
+    );
+
+    const r = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
+
+    expect(r.exitCode, r.stderr).toBe(0);
+    expect(YAML.parse(await Bun.file(sessionPath).text())).toEqual({ accounts: [] });
   });
 });
 
@@ -568,10 +747,7 @@ describe("ring destroy — corrupt keychain entry with a trustchain (local-wipe 
 describe("ring destroy — transient remote failure keeps the local key", () => {
   const { env, cleanup } = makeTmpDir();
   afterAll(() => {
-    // Undo this block's lkrp-sdk module mock. mock.restore() is all-or-nothing, so it also drops the
-    // file-wide keychain mock — re-install it so the suite doesn't depend on this block running last.
     mock.restore();
-    installKeychainMock();
     cleanup();
   });
 
@@ -614,26 +790,63 @@ async function seedInitializedRing(dir: string): Promise<void> {
       trustchain: { rootId: "seed-root", applicationPath: "m/0'/17'/0'" },
     }),
   );
-  // savePrivateKey hashes the account name from XDG_STATE_HOME, so pin it to this temp dir (matching
-  // the env passed to runCli) before saving.
-  const { savePrivateKey } = await import("../../key-ring/keychain");
-  const saved = process.env.XDG_STATE_HOME;
-  process.env.XDG_STATE_HOME = dir;
-  try {
+  await withStateDir(dir, async () => {
     await savePrivateKey("aa".repeat(32), "bb".repeat(33));
-  } finally {
-    if (saved === undefined) delete process.env.XDG_STATE_HOME;
-    else process.env.XDG_STATE_HOME = saved;
-  }
+  });
 }
+
+describe("ring destroy — local deletion failure preserves ring state", () => {
+  const { dir, env, cleanup } = makeTmpDir();
+  afterAll(() => {
+    mock.restore();
+    cleanup();
+  });
+
+  it("keeps credentials and session metadata after remote teardown", async () => {
+    const { deriveWrappingKey } = await import("../../key-ring/crypto");
+    const passwordSalt = "0".repeat(32);
+    const sessionData = {
+      accounts: [],
+      trustchain: { rootId: "seed-root", applicationPath: "m/0'/17'/0'" },
+      domains: [{ domain: "project", firstUsed: "2026-09-01T00:00:00.000Z" }],
+      passwordSalt,
+    };
+    const sessionPath = join(dir, "ledger-wallet-cli", "session.yaml");
+    mkdirSync(dirname(sessionPath), { recursive: true });
+    writeFileSync(sessionPath, YAML.stringify(sessionData));
+    await withStateDir(dir, async () => {
+      inMemoryMemberCredentialRepository.clear();
+      const wrappingKey = await deriveWrappingKey("test-password", passwordSalt);
+      await savePrivateKey("aa".repeat(32), "bb".repeat(33), wrappingKey);
+    });
+    const credentialsBeforeDestroy = [..._store.values()];
+    inMemoryMemberCredentialRepository.setDeleteError(new Error("keychain delete failed"));
+    mock.module("../../key-ring/lkrp-sdk", () => ({
+      createLkrpSdk: () => ({
+        destroyApplication: async () => ({ trustchainDestroyed: false }),
+      }),
+    }));
+
+    try {
+      const r = await runCliWithStdin(
+        ["ring", "destroy"],
+        { ...env, WALLET_PASS: "test-password" },
+        ["destroy"],
+      );
+
+      expect(r.exitCode, r.stderr).toBe(0);
+      expect([..._store.values()]).toEqual(credentialsBeforeDestroy);
+      expect(YAML.parse(await Bun.file(sessionPath).text())).toEqual(sessionData);
+    } finally {
+      inMemoryMemberCredentialRepository.setDeleteError(undefined);
+    }
+  });
+});
 
 describe("ring destroy — ejected member wipes locally", () => {
   const { dir, env, cleanup } = makeTmpDir();
   afterAll(() => {
-    // See the transient-failure block: mock.restore() is all-or-nothing, so re-install the file-wide
-    // keychain mock afterwards.
     mock.restore();
-    installKeychainMock();
     cleanup();
   });
 
@@ -665,7 +878,6 @@ describe("ring encrypt/decrypt — closed application stream gives reactivation 
   const { dir, env, cleanup } = makeTmpDir();
   afterAll(() => {
     mock.restore();
-    installKeychainMock();
     cleanup();
   });
 
@@ -686,15 +898,11 @@ describe("ring encrypt/decrypt — closed application stream gives reactivation 
     // Dynamic import so the mock above is in effect (a static import would hoist above it).
     const { loadDomainKey } = await import("../../key-ring/load-key-ring");
 
-    const saved = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = dir; // pin the session dir + keychain account to this temp dir
-    try {
-      await expect(loadDomainKey("mykey")).rejects.toThrow(/deactivated/i);
-      await expect(loadDomainKey("mykey")).rejects.toThrow(/ring init/i);
-    } finally {
-      if (saved === undefined) delete process.env.XDG_STATE_HOME;
-      else process.env.XDG_STATE_HOME = saved;
-    }
+    await withStateDir(dir, async () => {
+      await expect(
+        withInMemoryMemberCredentialRepository(() => loadDomainKey("mykey")),
+      ).rejects.toThrow(/deactivated.*ring init/is);
+    });
   });
 
   it("the encrypt command fails on an ejected stream (but succeeds on an open one)", async () => {
@@ -750,7 +958,6 @@ describe("ring destroy — non-destructive deactivation keeps the ring but wipes
   const { dir, env, cleanup } = makeTmpDir();
   afterAll(() => {
     mock.restore();
-    installKeychainMock();
     cleanup();
   });
 

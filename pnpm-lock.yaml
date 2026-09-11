@@ -2643,6 +2643,9 @@ importers:
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
+      '@domain/api-swap-quotes':
+        specifier: workspace:^
+        version: link:../../domain/api/swap-quotes
       '@domain/entity-currency':
         specifier: workspace:^
         version: link:../../domain/entity/currency
@@ -2694,6 +2697,9 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/hw-transport
+      '@ledgerhq/ledger-auth':
+        specifier: workspace:^
+        version: link:../../libs/ledger-auth
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
@@ -2736,9 +2742,18 @@ importers:
       '@oxlint/binding-win32-x64-msvc':
         specifier: 1.51.0
         version: 1.51.0
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react@19.1.4)
       '@segment/analytics-node':
         specifier: 3.1.0
         version: 3.1.0
+      '@shared/api-services':
+        specifier: workspace:^
+        version: link:../../shared/api-services
+      '@shared/auth':
+        specifier: workspace:*
+        version: link:../../shared/auth
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -2766,6 +2781,9 @@ importers:
       debug:
         specifier: 4.4.3
         version: 4.4.3
+      fetch-cookie:
+        specifier: 3.2.0
+        version: 3.2.0
       oxfmt:
         specifier: 'catalog:'
         version: 0.64.0
@@ -4595,9 +4613,6 @@ importers:
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../../shared/api-services
-      '@shared/auth':
-        specifier: workspace:^
-        version: link:../../../shared/auth
       zod:
         specifier: 'catalog:'
         version: 4.3.6

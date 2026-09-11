@@ -109,6 +109,18 @@ export function spinner(text: string): Spinner {
   return activeSpinner;
 }
 
+export async function withSuspendedSpinner<T>(task: () => Promise<T>): Promise<T> {
+  const suspendedSpinner = activeSpinner?.isSpinning ? activeSpinner : null;
+  suspendedSpinner?.stop();
+  try {
+    return await task();
+  } finally {
+    if (suspendedSpinner === activeSpinner && suspendedSpinner?.isSpinning === false) {
+      suspendedSpinner.start();
+    }
+  }
+}
+
 /**
  * Best-effort terminal cursor restore.
  *

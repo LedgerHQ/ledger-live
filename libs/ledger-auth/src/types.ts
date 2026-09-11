@@ -64,3 +64,9 @@ export type ChallengeRequest = {
   codeChallenge?: string;
   codeChallengeMethod?: "S256";
 };
+
+/**
+ * Utils
+ */
+
+export type FetchFn = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;

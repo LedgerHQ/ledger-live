@@ -23,8 +23,7 @@ quotes stay with the caller.
   pieces of the request/response mapping, exported for testing and reuse.
 - The zod schemas, and the `Raw*` payload types inferred from them.
 - `./store` — `setSwapQuotesStore` / `getSwapQuotesDispatch`, the dispatch holder
-  the endpoint runs against. `./store.standalone` builds a minimal store for
-  headless consumers.
+  the endpoint runs against.
 
 ## Schema first
 
@@ -61,10 +60,12 @@ empty.
 ## Authentication
 
 The base query is `createAuthenticatedBaseQuery` from `@shared/auth`. Whether a
-request carries an `Authorization` header depends on the `lwdAuth`/`lwmAuth`
-feature flags, which are off by default. HTTP status errors are deliberately
-left as RTK Query errors so the adapter's 401/403 refresh-and-retry can fire;
-mapping them to a caller-facing outcome is the caller's job.
+request carries an `Authorization` header is decided by each app's injected auth
+provider. Desktop and Mobile use the disabled-by-default `lwdAuth`/`lwmAuth`
+feature flags; wallet-cli authenticates production requests unconditionally.
+HTTP status errors are deliberately left as RTK Query errors so the adapter's
+401 refresh-and-retry can fire; mapping them to a caller-facing outcome is the
+caller's job.
 
 ## Migration note
 
