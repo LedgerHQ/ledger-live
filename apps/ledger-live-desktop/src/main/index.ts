@@ -27,6 +27,7 @@ import {
   cleanupZcashNativeHost,
 } from "@ledgerhq/coin-zcash/network/ipc/main-host";
 import { setupWebviewHandlers } from "./webviewHandlers";
+import { clearHostedSessionData } from "./hostedSessionData";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
@@ -122,14 +123,9 @@ app.on("ready", async () => {
   // for it (see @ledgerhq/coin-zcash/network/ipc/main-host).
   setupZcashNativeHost();
 
-  /**
-   * Clears the session’s HTTP cache
-   * Used to remove third party cached auth tokens, among other things
-   */
-  ipcMain.handle("clearStorageData", () => {
-    const defaultSession = session.defaultSession;
-    return defaultSession.clearStorageData();
-  });
+  ipcMain.handle("clearCardHostedSessionData", (_event, origins) =>
+    clearHostedSessionData(session.defaultSession, origins),
+  );
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
     return db.getKey(ns, keyPath, defaultValue);
   });
