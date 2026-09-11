@@ -28,3 +28,7 @@ export const TRONIFY_FEE_OPTION_ID = "tronify" as const;
 export const TRX_UNIT = { name: "TRX", code: "TRX", magnitude: 6 };
 export const TRX_TICKER = "TRX";
 export const TRX_CURRENCY_NAME = "Tron";
+
+/** Energy-rent delivery poll cadence and hard timeout (ms). Tunable to Tronify's typical delivery time. */
+export const ENERGY_RENT_POLL_INTERVAL_MS = 3_000;
+export const ENERGY_RENT_POLL_TIMEOUT_MS = 120_000;

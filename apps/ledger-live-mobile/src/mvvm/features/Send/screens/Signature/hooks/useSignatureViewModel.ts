@@ -14,8 +14,10 @@ import {
   type InitializationInput,
 } from "LLM/components/DeviceIntentExecutor";
 import { broadcastLogger } from "~/datadog";
+import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendSignature } from "../../../context/SendSignatureContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { signTransactionIntentLWMDefinition } from "../intents/signTransactionIntent/intentLWMDefinition";
 
 function normalizeError(error: unknown): Error {
@@ -26,6 +28,7 @@ export function useSignatureViewModel() {
   const { operation, status } = useSendFlowActions();
   const { state } = useSendFlowData();
   const { finishSigning, stopSigning } = useSendSignature();
+  const { state: sponsoredState, actions: sponsoredActions } = useSponsoredSend();
   const reduxDispatch = useDispatch();
 
   const { account, parentAccount, currency } = state.account;
@@ -154,7 +157,20 @@ export function useSignatureViewModel() {
   // IntentError screen (Retry / Close). We deliberately do not navigate away here so
   // the user stays on the sheet, as opposed to the success path which broadcasts and
   // moves to the confirmation screen.
-  const onIntentJobError = useCallback(() => {}, []);
+  // Exception: 0x6a80 (Contract Data disabled) during the Tronify TRANSFER phase must
+  // route into the orchestration so the user gets the dedicated recovery screen.
+  const onIntentJobError = useCallback(
+    (error: unknown) => {
+      if (
+        sponsoredState.phase === SPONSORED_PHASE.TRANSFER &&
+        (error as { name?: string })?.name === "TransportStatusError" &&
+        (error as { statusCode?: number })?.statusCode === 0x6a80
+      ) {
+        sponsoredActions.setContractDataFailure(error as Error);
+      }
+    },
+    [sponsoredState.phase, sponsoredActions],
+  );
 
   // Explicit dismiss of the sheet (close button / backdrop) closes the overlay and leaves the user
   // on the underlying review screen.

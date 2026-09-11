@@ -47,10 +47,15 @@ jest.mock("../../FlowWizard/FlowStackNavigator", () => ({
   },
 }));
 
-// Keep this unit test focused on orchestration: the real overlay host pulls in the whole Device
+// Keep this unit test focused on orchestration: the real overlay hosts pull in the whole Device
 // Intent Executor chain (expo-keep-awake, DMK, …) which this suite does not exercise.
 jest.mock("../components/SignatureOverlayHost", () => ({
   SignatureOverlayHost: () => null,
+}));
+
+jest.mock("../context/SponsoredSendContext", () => ({
+  SponsoredSendProvider: ({ children }: { children: React.ReactNode }) => children,
+  useSponsoredSend: jest.fn(),
 }));
 
 function createStepRegistry(): StepRegistry<SendFlowStep> {
@@ -103,6 +108,21 @@ function createFlowConfig(overrides?: Partial<SendFlowConfig>): SendFlowConfig {
       },
       [SEND_FLOW_STEP.CONFIRMATION]: { id: SEND_FLOW_STEP.CONFIRMATION, canGoBack: true },
       [SEND_FLOW_STEP.PAY_SUCCESS]: { id: SEND_FLOW_STEP.PAY_SUCCESS, canGoBack: false },
+      // Desktop-only sponsored/fee steps — present only to satisfy the exhaustive
+      // Record<SendFlowStep, SendStepConfig>; mobile never routes to them.
+      [SEND_FLOW_STEP.FEE_PAYMENT]: { id: SEND_FLOW_STEP.FEE_PAYMENT, canGoBack: true },
+      [SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE]: {
+        id: SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE,
+        canGoBack: false,
+      },
+      [SEND_FLOW_STEP.SPONSORED_POLLING]: {
+        id: SEND_FLOW_STEP.SPONSORED_POLLING,
+        canGoBack: false,
+      },
+      [SEND_FLOW_STEP.SPONSORED_FAILURE]: {
+        id: SEND_FLOW_STEP.SPONSORED_FAILURE,
+        canGoBack: false,
+      },
     },
     ...overrides,
   };

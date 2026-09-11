@@ -2805,6 +2805,36 @@
       "feesAmount": "Fees amount ({{unit}})",
       "payFeesIn": "Pay fees in"
     },
+    "feePayment": {
+      "title": "Select fee payment",
+      "regular": "Regular",
+      "tronify": "Pay with Tronify",
+      "savings": "Save {{amount}}",
+      "nudge": "Save {{amount}} with Tronify",
+      "disclaimer": "Fees are paid in {{feeCurrency}} through Tronify, a third-party energy provider.",
+      "insufficientFunds": "You don't have enough TRX to cover the Tronify energy rental fee."
+    },
+    "sponsoredRentSignature": {
+      "title": "Confirm energy rental payment",
+      "strategy": "Energy rental - Tronify",
+      "crafting": "Preparing energy rental…",
+      "submitting": "Submitting energy rental payment…",
+      "feeLabel": "Rental fee"
+    },
+    "sponsoredPolling": {
+      "title": "Waiting for energy delivery",
+      "waiting": "Tronify is delivering the rented energy. This can take a moment.",
+      "elapsed": "Elapsed: {{time}}"
+    },
+    "sponsoredFailure": {
+      "title": "Something went wrong",
+      "rentPayment": "Fee payment failed — your funds were not moved.",
+      "deliveryFailed": "Energy was not delivered. Your rental fee payment was sent — contact Tronify support for a refund{{txidSuffix}}.",
+      "contractData": "Contract data is disabled on your TRON app. Enable TRON app → Settings → Contract data, then retry.",
+      "transfer": "Your transfer failed, but the rented energy is still valid — you can retry the transfer.",
+      "retry": "Retry",
+      "cancel": "Cancel"
+    },
     "coinControl": {
       "title": "Coin control",
       "strategy": "Strategy",

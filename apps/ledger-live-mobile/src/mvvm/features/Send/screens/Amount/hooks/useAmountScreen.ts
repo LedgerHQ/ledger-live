@@ -11,6 +11,7 @@ import { ScreenName } from "~/const";
 import { getSendSuccessScreenName } from "../../../utils/getSendSuccessScreenName";
 import type { SendFlowNavigationProp } from "../../../types";
 import { useSendSignature } from "../../../context/SendSignatureContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import { track } from "~/analytics";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
@@ -42,6 +43,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { transaction: transactionActions, close } = useSendFlowActions();
   const navigation = useNavigation<SendFlowNavigationProp>();
   const { startSigning } = useSendSignature();
+  const { selectedFeeOptionId, actions: sponsoredActions } = useSponsoredSend();
 
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
@@ -62,8 +64,19 @@ export function useAmountScreen(): AmountScreenViewModel {
       page: "step amount",
       input_mode: inputMode,
     });
+    if (selectedFeeOptionId === "tronify") {
+      sponsoredActions.craftRent();
+    }
     startSigning(() => navigation.navigate(getSendSuccessScreenName(source)));
-  }, [startSigning, navigation, trackingProperties, inputMode, source]);
+  }, [
+    startSigning,
+    navigation,
+    trackingProperties,
+    inputMode,
+    source,
+    selectedFeeOptionId,
+    sponsoredActions,
+  ]);
 
   const onSelectCoinControl = useCallback(() => {
     navigation.navigate(ScreenName.SendFlowCoinControl);
