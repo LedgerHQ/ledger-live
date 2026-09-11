@@ -319,8 +319,14 @@ export async function withTemporarySpeculos<T>(
   const previousPort = getEnv("SPECULOS_API_PORT");
   const previousAddress = process.env.SPECULOS_ADDRESS;
   const speculos = await launchSpeculos(appName);
-  await registerSpeculos(speculos.port);
   try {
+    // A remote /acquire returns a sentinel port before the pod exists, and the readiness poll is
+    // what publishes this device's SPECULOS_ADDRESS; registering first sends the work to the
+    // caller's device instead.
+    if (isSpeculosRemote()) {
+      await waitForSpeculosReady(speculos.id);
+    }
+    await registerSpeculos(speculos.port);
     return await work();
   } finally {
     await deleteSpeculos(speculos.id);
