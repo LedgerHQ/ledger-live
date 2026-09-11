@@ -36,4 +36,10 @@ export type TrackOptions = {
   mandatory?: boolean;
 };
 
+export type TrackPageOptions = TrackOptions & {
+  updateRoutes?: boolean;
+  refreshSource?: boolean;
+  avoidDuplicates?: boolean;
+};
+
 export type TrackingRouteRef = { current: string | null | undefined };

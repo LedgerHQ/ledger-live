@@ -19,6 +19,7 @@ import {
   setMandatoryExtraPropsFn,
   setPropsFilter,
   track,
+  trackPage,
   type LoggableEvent,
 } from "@shared/analytics";
 // register analytics functions
@@ -35,6 +36,14 @@ setAnalytics({
 
 // track events
 track("Your Event", { foo: "bar" });
+
+// track page views
+trackPage(
+  "Modal send",
+  "step recipient",
+  { flow: "send" },
+  { updateRoutes: true }
+);
 
 // subscribe to the event bus, e.g. for a dev console
 const myDebug: LoggableEvent[] = [];
@@ -66,9 +75,30 @@ When you need to wait until an event is enqueued, await the call, e.g.
 
 ```ts
 await track("My Crucial Event", { foo: "bar" });
+await trackPage("Market");
 ```
 
 The registered analytics client may be sync or async.
+
+### Page views
+
+`trackPage` emits events named `Page ${category} ${name}`. Use `updateRoutes` and `refreshSource` to keep route refs in sync for subsequent `page` and `source` props on other events.
+
+```ts
+trackPage(
+  "Modal send",
+  "step recipient",
+  { flow: "send" },
+  {
+    updateRoutes: true,
+    refreshSource: true,
+  }
+);
+
+trackPage("Mandatory Page", null, null, { mandatory: true });
+```
+
+Use `avoidDuplicates: true` when a screen component may remount and emit the same page event twice.
 
 ### Filtering and enriching
 
