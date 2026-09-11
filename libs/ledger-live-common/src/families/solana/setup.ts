@@ -1,16 +1,13 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import Transport from "@ledgerhq/hw-transport";
-import type { Bridge } from "@ledgerhq/types-live";
 import { SolanaSigner } from "@ledgerhq/coin-solana/signer";
-import { createBridges } from "@ledgerhq/coin-solana/bridge/js";
 import solanaResolver from "@ledgerhq/coin-solana/hw-getAddress";
-import { SolanaAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-solana/types";
-import { createMessageSigner, createResolver, executeWithSigner } from "../../bridge/setup";
+import { createMessageSigner, createResolver } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";
-import { getCurrencyConfiguration } from "../../config";
-import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
+import coinConfig, { type SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
+import { getCurrencyConfiguration } from "../../config";
 import { LegacySignerSolana, DmkSignerSol } from "@ledgerhq/live-signer-solana";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 
@@ -28,7 +25,7 @@ export function setSolanaTxcEnabled(enabled: boolean): void {
   _solanaTxcFFEnabled = enabled;
 }
 
-const canDMKSignerBeUsed = (
+export const canDMKSignerBeUsed = (
   transport: Transport & Partial<{ dmk: DeviceManagementKit; sessionId: string }>,
 ): transport is Transport & { dmk: DeviceManagementKit; sessionId: string } =>
   _solanaLdmkFFEnabled &&
@@ -46,17 +43,15 @@ export function getSolanaSignerInstance(
   return new LegacySignerSolana(transport);
 }
 
-const getCurrencyConfig = () => getCurrencyConfiguration<SolanaCoinConfig>("solana");
-
-const bridge: Bridge<Transaction, SolanaAccount, TransactionStatus> = createBridges(
-  executeWithSigner(getSolanaSignerInstance),
-  getCurrencyConfig,
-);
-
+// No `bridge` export: Solana runs on the generic coin framework, which builds the account bridge
+// from the Coin Module API plus the family hooks registered in `coin-modules/loaders.ts`.
+// `hw-signMessage` still reads the module's own config singleton, which the legacy bridge used to
+// install on creation.
+coinConfig.setCoinConfig(() => getCurrencyConfiguration<SolanaCoinConfig>("solana"));
 const messageSigner = {
   signMessage: createMessageSigner(getSolanaSignerInstance, signMessage),
 };
 
 const resolver: Resolver = createResolver(getSolanaSignerInstance, solanaResolver);
 
-export { bridge, messageSigner, resolver };
+export { messageSigner, resolver };

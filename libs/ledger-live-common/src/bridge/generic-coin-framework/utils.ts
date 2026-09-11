@@ -1134,6 +1134,11 @@ function memoExtraFields(
   return { [extraKey]: memoValue };
 }
 
+function grossOutgoingTokenAmount(transaction: GenericTransaction): BigNumber {
+  const including = transaction.transferFee?.transferAmountIncludingFee;
+  return including === undefined ? transaction.amount : new BigNumber(including);
+}
+
 export const buildOptimisticOperation = (
   account: Account,
   transaction: GenericTransaction,
@@ -1198,7 +1203,11 @@ export const buildOptimisticOperation = (
         id: `${subAccountId}--${type}`,
         hash: "",
         type,
-        value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
+        // A Token-2022 transfer fee is debited on top of what the recipient gets, so the pending
+        // balance has to lock the gross amount. A send-all already leaves the whole balance.
+        value: transaction.useAllAmount
+          ? tokenAccount.balance
+          : grossOutgoingTokenAmount(transaction),
         fee: new BigNumber(fees.toString()),
         blockHash: null,
         blockHeight: null,

@@ -15,24 +15,7 @@ describe("TokenTransferFeesWarning", () => {
             },
           } as unknown as SolanaTokenAccount
         }
-        transaction={
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            model: {
-              commandDescriptor: {
-                command: {
-                  kind: "token.transfer",
-                  extensions: {
-                    transferFee: {
-                      feeBps: 100,
-                      transferFee: 500,
-                    },
-                  },
-                },
-              },
-            },
-          } as unknown as Transaction
-        }
+        transaction={{ transferFee: { feeBps: 100, transferFee: 500 } } as Transaction}
       />,
     );
 
@@ -52,19 +35,7 @@ describe("TokenTransferFeesWarning", () => {
             },
           } as unknown as SolanaTokenAccount
         }
-        transaction={
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            model: {
-              commandDescriptor: {
-                command: {
-                  kind: "token.transfer",
-                  extensions: {},
-                },
-              },
-            },
-          } as unknown as Transaction
-        }
+        transaction={{} as Transaction}
       />,
     );
 
