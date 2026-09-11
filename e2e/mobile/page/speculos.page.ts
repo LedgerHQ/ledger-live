@@ -1,6 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import {
   activateContractData,
+  enableBlindSigning,
   goToSettings,
   activateExpertMode,
   expectValidAddressDevice,
@@ -10,8 +11,10 @@ import {
   verifyAmountsAndAcceptSwapForDifferentSeed,
   verifyAmountsAndRejectSwap,
   approveToken,
+  approveContractTransaction,
   signTypedMessage as signTypedMessageDevice,
   acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
+  acceptBlindSigningWarning as acceptBlindSigningWarningDevice,
   shareViewKey,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { setExchangeDependencies } from "@e2e/utils/speculosUtils";
@@ -43,6 +46,16 @@ export default class SpeculosPage {
   @Step("Activate contract data on Speculos")
   async activateContractData() {
     await activateContractData();
+  }
+
+  @Step("Enable blind signing on Speculos")
+  async enableBlindSigning() {
+    await enableBlindSigning();
+  }
+
+  @Step("Accept the blind-signing risk warning on Speculos")
+  async acceptBlindSigningWarning() {
+    await acceptBlindSigningWarningDevice();
   }
 
   @Step("Go to settings on Speculos")
@@ -81,7 +94,7 @@ export default class SpeculosPage {
 
   @Step("Sign EVM contract transaction on device")
   async signEvmContractTransaction() {
-    await approveToken();
+    await approveContractTransaction();
   }
 
   @Step("Sign typed message on device")
