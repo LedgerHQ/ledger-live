@@ -32,6 +32,12 @@ const FLAG_RELOAD_MARKER = "__swapE2eFlagReload";
 // Each attempt reopens the live app, so keep the budget short.
 const CLEAR_FLAG_OVERRIDES_TIMEOUT = 30_000;
 
+// Some drivers wrap a runScript result in { result }, as getValueByWebTestId does.
+const parseScriptJson = (raw: unknown): unknown => {
+  const value = raw !== null && typeof raw === "object" && "result" in raw ? raw["result"] : raw;
+  return JSON.parse(String(value));
+};
+
 export default class SwapLiveAppPage {
   private static readonly QUOTE_CARD_PROVIDER_NAMES = `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}']`;
 
@@ -204,12 +210,12 @@ export default class SwapLiveAppPage {
   @Step("Check that the live app reloaded with the overrides")
   private async expectFlagPresetLoaded(payload: string) {
     await retryUntilTimeout(async () => {
-      const state = await this.swapMainContainerWebElement.runScript(
-        (_el: HTMLElement, key: string, marker: string) => ({
-          stored: localStorage.getItem(key),
-          reloaded: !(marker in window),
-        }),
-        [SWAP_FLAG_OVERRIDES_KEY, FLAG_RELOAD_MARKER],
+      const state = parseScriptJson(
+        await this.swapMainContainerWebElement.runScript(
+          (_el: HTMLElement, key: string, marker: string) =>
+            JSON.stringify({ stored: localStorage.getItem(key), reloaded: !(marker in window) }),
+          [SWAP_FLAG_OVERRIDES_KEY, FLAG_RELOAD_MARKER],
+        ),
       );
       jestExpect(state).toEqual({ stored: payload, reloaded: true });
     });
@@ -222,12 +228,14 @@ export default class SwapLiveAppPage {
     if (!this.flagPresetPinned) return;
     await retryUntilTimeout(async () => {
       await this.reopenSwapLiveApp();
-      const stored = await this.swapMainContainerWebElement.runScript(
-        (_el: HTMLElement, key: string) => {
-          localStorage.removeItem(key);
-          return localStorage.getItem(key);
-        },
-        [SWAP_FLAG_OVERRIDES_KEY],
+      const stored = parseScriptJson(
+        await this.swapMainContainerWebElement.runScript(
+          (_el: HTMLElement, key: string) => {
+            localStorage.removeItem(key);
+            return JSON.stringify(localStorage.getItem(key));
+          },
+          [SWAP_FLAG_OVERRIDES_KEY],
+        ),
       );
       jestExpect(stored).toBeNull();
     }, CLEAR_FLAG_OVERRIDES_TIMEOUT);
