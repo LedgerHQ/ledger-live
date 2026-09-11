@@ -18,7 +18,7 @@ function useRecoverBannerViewModel() {
 
   const recoverResumeActivatePath = useCustomURI(
     recoverServices,
-    "resumeActivate",
+    undefined,
     "llm-banner-unfinished-onboarding",
     "recover-launch",
   );
