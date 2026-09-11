@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useSendFlowBusinessLogic as useCommonBusinessLogic } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowBusinessLogic";
 import { useSendFlowTransaction } from "./useSendFlowTransaction";
 import { useSendFlowOperation } from "./useSendFlowOperation";
@@ -26,18 +26,11 @@ export function useSendFlowBusinessLogic({
     useTransactionHook: useSendFlowTransaction,
   });
 
-  const resetRecipient = useCallback(() => {
-    businessLogic.transaction.setRecipient({ address: "" });
-    businessLogic.recipientSearch.clear();
-    businessLogic.setIsRecipientAddressComplete(false);
-  }, [businessLogic]);
-
   return useMemo(
     () => ({
       ...businessLogic,
       close: onClose,
-      resetRecipient,
     }),
-    [businessLogic, onClose, resetRecipient],
+    [businessLogic, onClose],
   );
 }
