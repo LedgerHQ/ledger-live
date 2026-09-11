@@ -43,6 +43,30 @@ export const getStakingGas = (t?: StakingGasInput, multiplier = 5): BigNumber =>
   return stakingGasBase.multipliedBy(multiplier);
 };
 
+// Framework accounts (usesStakingPositions: true) carry per-state positions under
+// `stakingPositions`, not under `nearResources`. The type is generic-coin-framework internal
+// and not exported, so access it structurally.
+type FrameworkStakingPositionOnAccount = { state: string; delegate?: string; amount: BigNumber };
+type FrameworkAccount = { stakingPositions?: FrameworkStakingPositionOnAccount[] };
+
+const getFrameworkValidatorPosition = (
+  account: NearAccount,
+  validatorId: string | undefined,
+): { staked: BigNumber; available: BigNumber } | undefined => {
+  const positions = (account as unknown as FrameworkAccount).stakingPositions;
+  if (!positions || !validatorId) return undefined;
+  const forValidator = positions.filter(p => p.delegate === validatorId);
+  if (forValidator.length === 0) return undefined;
+  return {
+    staked: forValidator
+      .filter(p => p.state === "active")
+      .reduce((acc, p) => acc.plus(p.amount), new BigNumber(0)),
+    available: forValidator
+      .filter(p => p.state === "withdrawable")
+      .reduce((acc, p) => acc.plus(p.amount), new BigNumber(0)),
+  };
+};
+
 /*
  * Get the max amount that can be spent, taking into account tx type and pending operations.
  */
@@ -52,9 +76,10 @@ export const getMaxAmount = (
   fees?: BigNumber,
 ): BigNumber => {
   let maxAmount;
-  const selectedValidator = account.nearResources?.stakingPositions.find(
-    ({ validatorId }) => validatorId === transaction.recipient,
-  );
+  const selectedValidator =
+    account.nearResources?.stakingPositions.find(
+      ({ validatorId }) => validatorId === transaction.recipient,
+    ) ?? getFrameworkValidatorPosition(account, transaction.recipient);
 
   let pendingUnstakingAmount = new BigNumber(0);
   let pendingWithdrawingAmount = new BigNumber(0);
@@ -62,7 +87,7 @@ export const getMaxAmount = (
   account.pendingOperations.forEach(({ type, value, recipients }) => {
     const recipient = recipients[0];
 
-    if (recipient === selectedValidator?.validatorId) {
+    if (selectedValidator && recipient === transaction.recipient) {
       if (type === "UNSTAKE") {
         pendingUnstakingAmount = pendingUnstakingAmount.plus(value);
       } else if (type === "WITHDRAW_UNSTAKED") {
