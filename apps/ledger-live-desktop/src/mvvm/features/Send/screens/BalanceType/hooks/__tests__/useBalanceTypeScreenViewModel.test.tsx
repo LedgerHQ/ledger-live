@@ -81,6 +81,10 @@ function stubBalanceTypeConfig(options: readonly BalanceTypeOption[]) {
     getSelectedOptionId: jest.fn((tx: unknown) => (tx as { sender?: string })?.sender ?? null),
     buildSelectionPatch: jest.fn((optionId: string) => ({ sender: optionId })),
     getSelfTransferTarget: jest.fn(() => null),
+    getSelectableBalance: jest.fn(
+      ({ optionId }: { optionId: string }) =>
+        options.find(o => o.id === optionId)?.balance ?? new BigNumber(0),
+    ),
   };
   mockedGetBalanceTypeConfig.mockReturnValue(config);
   return config;

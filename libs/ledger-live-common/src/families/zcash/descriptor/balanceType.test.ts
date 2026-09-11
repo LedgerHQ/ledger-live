@@ -133,6 +133,75 @@ describe("zcash balance-type config", () => {
     });
   });
 
+  describe("getSelectableBalance", () => {
+    it("returns the full transparent balance when there are ≤32 UTXOs", () => {
+      const acc = account({ utxoValues: [1000, 250, 500] });
+
+      expect(
+        zcashBalanceTypeConfig.getSelectableBalance({ account: acc, optionId: "public" }),
+      ).toEqual(new BigNumber(1750));
+    });
+
+    it("caps the transparent balance to the 32 largest UTXOs when there are more", () => {
+      // 33 UTXOs of 100 each — only 32 can be included in one transaction.
+      const utxoValues = Array.from({ length: 33 }, () => 100);
+      const acc = account({ utxoValues });
+
+      const selectable = zcashBalanceTypeConfig.getSelectableBalance({
+        account: acc,
+        optionId: "public",
+      });
+      const displayBalance = zcashBalanceTypeConfig.getOptions({ account: acc })[0].balance;
+
+      expect(selectable).toEqual(new BigNumber(3200)); // 32 × 100
+      expect(displayBalance).toEqual(new BigNumber(3300)); // 33 × 100
+    });
+
+    it("returns the full shielded balance when there are ≤32 notes", () => {
+      const acc = account({
+        notes: [
+          { amount: 400, blockHeight: MATURE_HEIGHT },
+          { amount: 300, blockHeight: MATURE_HEIGHT },
+        ],
+      });
+
+      expect(
+        zcashBalanceTypeConfig.getSelectableBalance({ account: acc, optionId: "private" }),
+      ).toEqual(new BigNumber(700));
+    });
+
+    it("caps the shielded balance to the 32 largest notes when there are more", () => {
+      // 33 mature notes of 100 each — only 32 can be included in one transaction.
+      const notes = Array.from({ length: 33 }, () => ({ amount: 100, blockHeight: MATURE_HEIGHT }));
+      const acc = account({ notes });
+
+      const selectable = zcashBalanceTypeConfig.getSelectableBalance({
+        account: acc,
+        optionId: "private",
+      });
+      const displayBalance = zcashBalanceTypeConfig.getOptions({ account: acc })[1].balance;
+
+      expect(selectable).toEqual(new BigNumber(3200)); // 32 × 100
+      expect(displayBalance).toEqual(new BigNumber(3300)); // 33 × 100
+    });
+
+    it("returns zero for an unknown option id", () => {
+      const acc = account({ utxoValues: [1000] });
+
+      expect(
+        zcashBalanceTypeConfig.getSelectableBalance({ account: acc, optionId: "staking" }),
+      ).toEqual(new BigNumber(0));
+    });
+
+    it("returns zero for a non-Zcash account", () => {
+      const tokenAccount = { type: "TokenAccount", id: "token" } as unknown as AccountLike;
+
+      expect(
+        zcashBalanceTypeConfig.getSelectableBalance({ account: tokenAccount, optionId: "public" }),
+      ).toEqual(new BigNumber(0));
+    });
+  });
+
   describe("getSelfTransferTarget", () => {
     it("shields to the account's shielded address when spending transparent funds", () => {
       const target = zcashBalanceTypeConfig.getSelfTransferTarget({

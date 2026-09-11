@@ -396,6 +396,15 @@ export type BalanceTypeConfig = Readonly<{
     account: AccountLike;
     transaction: unknown;
   }) => BalanceTypeSelfTransferTarget | null;
+  /**
+   * Balance the amount step may spend from this pool, bounded by the pool's transaction
+   * input ceiling (e.g. Zcash's 32-action / 32-UTXO limit). Distinct from
+   * `BalanceTypeOption.balance`, which is the display figure and is deliberately unbounded
+   * so the UI shows the full pool size even when a single transaction cannot spend it all.
+   * Percentage-of-balance buttons must use this figure, not `balance`, to stay within the
+   * ceiling the bridge enforces.
+   */
+  getSelectableBalance: (params: { account: AccountLike; optionId: string }) => BigNumber;
 }>;
 
 /**

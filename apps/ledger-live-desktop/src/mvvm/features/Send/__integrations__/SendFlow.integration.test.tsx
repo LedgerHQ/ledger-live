@@ -676,6 +676,9 @@ describe("Send Flow Integration", () => {
       getSelectedOptionId: jest.fn(() => null),
       buildSelectionPatch: jest.fn((id: string) => ({ sender: id })),
       getSelfTransferTarget: jest.fn(() => null),
+      getSelectableBalance: jest.fn(({ optionId }: { optionId: string }) =>
+        optionId === "private" ? new BigNumber(2000) : new BigNumber(1000),
+      ),
     };
 
     beforeEach(() => {

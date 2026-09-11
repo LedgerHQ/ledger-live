@@ -1,9 +1,12 @@
+import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getTransparentBalance } from "@ledgerhq/coin-zcash/logic/account/balance";
 import {
+  collectSelectableIronwoodNotes,
   getSpendableIronwoodBalance,
   hasMaturingIronwoodNotes,
 } from "@ledgerhq/coin-zcash/logic/account/spendability";
+import { boundTransparentUtxos } from "@ledgerhq/coin-zcash/bridge/statusHelpers";
 import { getReservedNullifiers } from "@ledgerhq/coin-zcash/bridge/note-reservation";
 import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import type {
@@ -107,10 +110,38 @@ function getSelfTransferTarget({
   };
 }
 
+/**
+ * Balance the amount step may spend from the given pool, bounded by the 32-input ceiling.
+ * `getOptions` returns the full spendable figure (display accuracy); this function caps it
+ * to the inputs the bridge can actually include in one transaction.
+ */
+function getSelectableBalance({
+  account,
+  optionId,
+}: {
+  account: AccountLike;
+  optionId: string;
+}): BigNumber {
+  if (!isZcashBasedAccount(account)) return new BigNumber(0);
+
+  if (optionId === PRIVATE) {
+    const notes = collectSelectableIronwoodNotes(account, getReservedNullifiers(account));
+    return notes.reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
+  }
+
+  if (optionId === PUBLIC) {
+    const utxos = boundTransparentUtxos(account.bitcoinResources?.utxos ?? []);
+    return utxos.reduce((sum, u) => sum.plus(u.value), new BigNumber(0));
+  }
+
+  return new BigNumber(0);
+}
+
 export const zcashBalanceTypeConfig: BalanceTypeConfig = {
   getOptions,
   getSelectedOptionId: transaction =>
     isZcashTransaction(transaction) ? (transaction.sender ?? null) : null,
   buildSelectionPatch: optionId => (isZcashSender(optionId) ? { sender: optionId } : {}),
   getSelfTransferTarget,
+  getSelectableBalance,
 };

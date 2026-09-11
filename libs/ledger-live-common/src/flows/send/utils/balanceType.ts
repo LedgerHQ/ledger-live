@@ -17,5 +17,5 @@ export function getSelectedBalanceTypeBalance(
   if (!config) return undefined;
   const selectedId = config.getSelectedOptionId(transaction);
   if (!selectedId) return undefined;
-  return config.getOptions({ account }).find(option => option.id === selectedId)?.balance;
+  return config.getSelectableBalance({ account, optionId: selectedId });
 }
