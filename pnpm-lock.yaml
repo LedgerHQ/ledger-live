@@ -6822,10 +6822,10 @@ importers:
         version: 30.5.0
       oxfmt:
         specifier: 'catalog:'
-        version: 0.64.0
+        version: 0.67.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.79.0
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4
