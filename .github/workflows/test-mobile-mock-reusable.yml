@@ -711,8 +711,8 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@perf/ci-cache-s5cmd-pzstd
         with:
-          skip-pod-cache: "true"
-          skip-pnpm-cache: "true"
+          skip-pod-cache: "false"
+          skip-pnpm-cache: "false"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
