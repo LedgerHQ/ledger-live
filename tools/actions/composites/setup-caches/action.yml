@@ -81,6 +81,13 @@ runs:
       with:
         packages: build-essential pkg-config
 
+    - name: Pin pnpm store directory
+      if: runner.os == 'Linux' && runner.environment == 'self-hosted'
+      shell: bash
+      env:
+        STORE_PARENT: ${{ github.workspace }}/../..
+      run: echo "npm_config_store_dir=$(cd "$STORE_PARENT" && pwd)/.pnpm-store" >> "$GITHUB_ENV" # zizmor: ignore[github-env]
+
     - name: Get pnpm store directory
       id: get-store-path
       shell: bash
@@ -117,20 +124,121 @@ runs:
         role-to-assume: ${{ steps.nx-remote-cache.outputs.role-arn }}
         aws-region: ${{ inputs.region }}
 
-    - name: Cache pnpm store
-      uses: tespkg/actions-cache@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
-      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
-      with:
-        path: ${{ steps.get-store-path.outputs.store-path }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
-        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-        sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-        bucket: ll-gha-s3-cache
-        region: ${{ inputs.region }}
-        use-fallback: false
+    - name: Install s5cmd
+      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true' && runner.os == 'Linux'
+      shell: bash
+      env:
+        S5CMD_VERSION: "2.3.0"
+        S5CMD_SHA256: "de0fdbfa3aceae55e069ba81a0fc17b2026567637603734a387b2fca06c299b4"
+      run: |
+        set -euo pipefail
+        mkdir -p "$RUNNER_TEMP/s5cmd-bin"
+        cd "$RUNNER_TEMP/s5cmd-bin"
+        curl -sSfL -o s5cmd.tar.gz \
+          "https://github.com/peak/s5cmd/releases/download/v${S5CMD_VERSION}/s5cmd_${S5CMD_VERSION}_Linux-64bit.tar.gz"
+        echo "${S5CMD_SHA256}  s5cmd.tar.gz" | sha256sum -c -
+        tar -xzf s5cmd.tar.gz s5cmd
+        chmod +x s5cmd
+        ./s5cmd version
+
+    - name: Restore pnpm store (s5cmd experiment)
+      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true' && runner.os == 'Linux'
+      shell: bash
+      env:
+        BUCKET: ll-gha-s3-cache
+        CACHE_KEY: ${{ runner.os }}-pnpm-store-v2-${{ hashFiles('pnpm-lock.yaml') }}
+        RESTORE_PREFIX: ${{ runner.os }}-pnpm-store-v2-
+        CONCURRENCY: "16"
+        PART_SIZE: "64"
+      run: |
+        set -euo pipefail
+        s5cmd="$RUNNER_TEMP/s5cmd-bin/s5cmd"
+
+        # tespkg/actions-cache stores each cache at <key>/cache.tzst (or cache.tgz under gzip)
+        object=""
+        for fn in cache.tzst cache.tgz; do
+          if "$s5cmd" ls "s3://${BUCKET}/${CACHE_KEY}/${fn}" >/dev/null 2>&1; then
+            object="${CACHE_KEY}/${fn}"
+            break
+          fi
+        done
+        if [ -z "$object" ]; then
+          object=$("$s5cmd" ls "s3://${BUCKET}/${RESTORE_PREFIX}*" 2>/dev/null \
+            | grep -E 'cache\.(tzst|tgz)$' | sort -k1,2 | tail -n1 | awk '{print $NF}' || true)
+        fi
+        if [ -z "$object" ]; then
+          echo "::warning::pnpm store cache miss for ${CACHE_KEY}"
+          exit 0
+        fi
+        echo "Restoring s3://${BUCKET}/${object}"
+
+        archive="$RUNNER_TEMP/$(basename "$object")"
+        start=$SECONDS
+        "$s5cmd" cp --concurrency "$CONCURRENCY" --part-size "$PART_SIZE" \
+          "s3://${BUCKET}/${object}" "$archive"
+        download=$((SECONDS - start))
+        bytes=$(stat -c %s "$archive")
+
+        case "$archive" in
+          *.tzst) decomp=(--use-compress-program "unzstd --long=30") ;;
+          *)      decomp=(-z) ;;
+        esac
+        # archive holds paths relative to GITHUB_WORKSPACE, and the store lives outside it,
+        # so -P -C is what puts ../../.pnpm-store back where pnpm actually looks
+        start=$SECONDS
+        tar -xf "$archive" -P -C "$GITHUB_WORKSPACE" "${decomp[@]}"
+        extract=$((SECONDS - start))
+
+        printf '| s5cmd restore | %s |\n| --- | --- |\n| size | %s |\n| download | %ss |\n| extract | %ss |\n' \
+          "$object" "$(numfmt --to=iec "$bytes")" "$download" "$extract" >> "$GITHUB_STEP_SUMMARY"
+        echo "download ${download}s, extract ${extract}s, $(numfmt --to=iec "$bytes")"
+
+    - name: pzstd codec trial
+      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true' && runner.os == 'Linux'
+      shell: bash
+      run: |
+        set -uo pipefail
+        archive="$RUNNER_TEMP/cache.tzst"
+        tar_path="$RUNNER_TEMP/trial.tar"
+        pzst_path="$RUNNER_TEMP/trial.tar.pzst"
+        trap 'rm -f "$tar_path" "$pzst_path"' EXIT
+
+        [ -f "$archive" ] || { echo "no cache.tzst from restore, skipping trial"; exit 0; }
+        command -v pzstd >/dev/null || { echo "::warning::pzstd not on PATH, skipping trial"; exit 0; }
+
+        avail=$(df -k --output=avail "$RUNNER_TEMP" | tail -1)
+        if [ "$avail" -lt 10485760 ]; then
+          echo "::warning::only $((avail/1024))MB free, skipping trial"; exit 0
+        fi
+
+        cores=$(nproc)
+        pzstd --version 2>&1 | head -1
+
+        # both decodes write to /dev/null so the comparison is codec-only, no filesystem cost
+        s=$SECONDS; unzstd --long=30 -c "$archive" > /dev/null; zstd_decode=$((SECONDS-s))
+
+        unzstd --long=30 -c "$archive" > "$tar_path"
+        raw=$(stat -c %s "$tar_path")
+
+        s=$SECONDS; pzstd -p "$cores" -f -o "$pzst_path" "$tar_path"; pzstd_compress=$((SECONDS-s))
+        s=$SECONDS; pzstd -d -p "$cores" -c "$pzst_path" > /dev/null; pzstd_decode=$((SECONDS-s))
+
+        zstd_size=$(stat -c %s "$archive")
+        pzstd_size=$(stat -c %s "$pzst_path")
+
+        {
+          echo "| pzstd trial (${cores} cores) | value |"
+          echo "| --- | --- |"
+          echo "| uncompressed tar | $(numfmt --to=iec "$raw") |"
+          echo "| zstdmt --long=30 size | $(numfmt --to=iec "$zstd_size") |"
+          echo "| pzstd size | $(numfmt --to=iec "$pzstd_size") |"
+          echo "| **zstd decode (1 thread)** | **${zstd_decode}s** |"
+          echo "| **pzstd decode (${cores} threads)** | **${pzstd_decode}s** |"
+          echo "| pzstd compress | ${pzstd_compress}s |"
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        echo "raw=$(numfmt --to=iec "$raw") zstd=$(numfmt --to=iec "$zstd_size") pzstd=$(numfmt --to=iec "$pzstd_size")"
+        echo "zstd_decode=${zstd_decode}s pzstd_decode=${pzstd_decode}s pzstd_compress=${pzstd_compress}s"
 
     - name: Cache LLM pods
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0

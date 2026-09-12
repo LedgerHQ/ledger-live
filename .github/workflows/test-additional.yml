@@ -24,7 +24,7 @@ permissions:
 jobs:
   changeset-validation:
     name: Changeset Validation
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-1cpu-aws-public
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -34,19 +34,20 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Install pnpm
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-runner-test
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate Changesets
-        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@ci-runner-test
 
   changes:
     name: Detect Workflow File Changes
     if: ${{ !inputs.skip-ci-sast }}
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-1cpu-aws-public
     outputs:
       workflow-files: ${{ steps.filter.outputs.workflow-files }}
     steps:
@@ -73,7 +74,7 @@ jobs:
 
   ci-sast:
     name: Test CI Scripts
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-1cpu-aws-public-docker
     needs: changes
     if: needs.changes.outputs.workflow-files == 'true'
     permissions:
@@ -86,8 +87,9 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup mise
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-runner-test
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 

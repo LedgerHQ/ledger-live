@@ -66,17 +66,18 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: ubuntu-22.04
-    runs-on: ubuntu-22.04
+      CI_OS: ledger-wallet-4cpu-aws-public
+    runs-on: ledger-wallet-4cpu-aws-public
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-runner-test
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -86,10 +87,11 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@ci-runner-test
         id: setup-test-desktop
         with:
           skip_builds: true
+          skip_ruby: true
 
       - name: format check
         if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch'
@@ -117,9 +119,9 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
-      CI_OS: ledger-live-linux-16CPU-64RAM
+      CI_OS: ledger-wallet-16cpu-aws-public
       JEST_MAX_WORKERS: "95%"
-    runs-on: [ledger-live-linux-16CPU-64RAM]
+    runs-on: [ledger-wallet-16cpu-aws-public]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
@@ -128,9 +130,10 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-runner-test
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -141,7 +144,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-runner-test
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -189,7 +192,7 @@ jobs:
   report:
     name: "Desktop Lint & Unit Tests > Report"
     needs: [codechecks, unit-tests]
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-1cpu-aws-public
     # Only report on push events (e.g. develop, main, release, hotfix).
     if: ${{ !cancelled() && github.event_name == 'push' }}
     steps:

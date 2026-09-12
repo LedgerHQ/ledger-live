@@ -42,7 +42,7 @@ permissions:
 jobs:
   test-shared:
     name: "Shared Test"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-scope-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-scope-reusable.yml@ci-runner-test
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}

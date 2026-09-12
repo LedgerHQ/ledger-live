@@ -63,7 +63,7 @@ jobs:
       id-token: write
       contents: read
     if: ${{ inputs.build-web-tools != 'false' }}
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-4cpu-aws-public
     outputs:
       deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
     steps:
@@ -72,9 +72,10 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-runner-test
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -86,7 +87,7 @@ jobs:
 
       - name: Build and Deploy
         id: build-deploy
-        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@ci-runner-test
         with:
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
@@ -96,13 +97,13 @@ jobs:
 
       - name: Check formatting web-tools
         if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch'
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@ci-runner-test
         with:
           command: pnpm exec nx run @ledgerhq/web-tools:format:check
           disable_cache: false
 
       - name: Typecheck web-tools
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@ci-runner-test
         with:
           command: pnpm exec nx run @ledgerhq/web-tools:typecheck
           disable_cache: false
@@ -112,7 +113,7 @@ jobs:
     name: "Post build status to PR"
     needs: [build-web-tools]
     if: ${{ always() && !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ubuntu-24.04
+    runs-on: ledger-wallet-1cpu-aws-public
     permissions:
       contents: read
       pull-requests: write

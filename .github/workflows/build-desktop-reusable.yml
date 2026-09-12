@@ -69,8 +69,8 @@ jobs:
       matrix:
         config: >-
           ${{ fromJSON(inputs.linux-only
-          && '[{"name":"Linux","os":"ledger-live-linux-8CPU-32RAM","image":"linux-x86_64.AppImage","output-name":"linux"}]'
-          || '[{"name":"Linux","os":"ledger-live-linux-8CPU-32RAM","image":"linux-x86_64.AppImage","output-name":"linux"},{"name":"Windows","os":"windows-2022","dotnet":true,"image":"win-x64.exe","output-name":"win"},{"name":"macOS","os":"macos-14","image":"mac.dmg","output-name":"mac"}]') }}
+          && '[{"name":"Linux","os":"ledger-wallet-8cpu-aws-public","image":"linux-x86_64.AppImage","output-name":"linux"}]'
+          || '[{"name":"Linux","os":"ledger-wallet-8cpu-aws-public","image":"linux-x86_64.AppImage","output-name":"linux"},{"name":"Windows","os":"windows-2022","dotnet":true,"image":"win-x64.exe","output-name":"win"},{"name":"macOS","os":"macos-14","image":"mac.dmg","output-name":"mac"}]') }}
     name: "${{ matrix.config.name }} Build"
     runs-on: ${{ matrix.config.os }}
     timeout-minutes: 20
@@ -89,12 +89,13 @@ jobs:
           persist-credentials: false
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@ci-runner-test
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-runner-test
         id: setup-caches
         with:
+          skip-nx-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -105,14 +106,14 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-runner-test
         if: ${{ matrix.config.name == 'Linux' }}
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Build desktop
         id: build-desktop
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@ci-runner-test
         with:
           os: ${{ matrix.config.output-name }}
 
@@ -166,7 +167,7 @@ jobs:
     permissions:
       contents: read
     needs: build-desktop-app
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-1cpu-aws-public
     timeout-minutes: 5
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request' || github.event_name == 'push') && needs.build-desktop-app.outputs.linux == 'success' && needs.build-desktop-app.outputs.win == 'success' && needs.build-desktop-app.outputs.mac == 'success' }}
     steps:
@@ -212,7 +213,7 @@ jobs:
             }
             return JSON.stringify(obj);
 
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@ci-runner-test
         if: ${{ !cancelled() && github.event.number != '' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
@@ -220,7 +221,7 @@ jobs:
           prNumber: ${{ github.event.number}}
           mode: desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@ci-runner-test
         name: Report summary
         with:
           token: ${{ steps.generate-token.outputs.token }}
