@@ -17,7 +17,7 @@ runs:
   steps:
     - name: Install system dependencies (Linux)
       if: runner.os == 'Linux'
-      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@perf/ci-cache-s5cmd-pzstd
       with:
         packages: build-essential pkg-config
     - name: install dependencies
@@ -26,12 +26,12 @@ runs:
         LANG: en_US.UTF-8
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm
       shell: bash
-    - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+    - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@perf/ci-cache-s5cmd-pzstd
       id: version
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop
     - name: set beta name
-      uses: LedgerHQ/ledger-live/tools/actions/change-product-name@develop
+      uses: LedgerHQ/ledger-live/tools/actions/change-product-name@perf/ci-cache-s5cmd-pzstd
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop
     - name: make local version (workflow dispatch)
@@ -52,7 +52,7 @@ runs:
         VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
       run: cd apps/ledger-live-desktop && npm version $VERSION
       shell: bash
-    - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+    - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@perf/ci-cache-s5cmd-pzstd
       id: post-version
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop

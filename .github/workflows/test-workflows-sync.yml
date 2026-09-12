@@ -25,7 +25,7 @@ jobs:
           script: |
             // Workflows that gate a PR *and* are resolved from the PR head, so a stale
             // branch runs a stale copy. Everything else under .github/workflows/ runs
-            // develop's copy regardless - reusables are always called @develop - and so
+            // develop's copy regardless - reusables are always called @perf/ci-cache-s5cmd-pzstd - and so
             // cannot go stale here. Keep in step with the required checks on develop.
             const MONITORED = new Set([
               '.github/workflows/build-and-test-pr.yml',

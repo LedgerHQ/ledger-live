@@ -72,7 +72,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@perf/ci-cache-s5cmd-pzstd
         id: setup-caches
         with:
           use-mise: true
@@ -86,7 +86,7 @@ jobs:
 
       - name: Build and Deploy
         id: build-deploy
-        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@perf/ci-cache-s5cmd-pzstd
         with:
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
@@ -96,13 +96,13 @@ jobs:
 
       - name: Check formatting web-tools
         if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch'
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@perf/ci-cache-s5cmd-pzstd
         with:
           command: pnpm exec nx run @ledgerhq/web-tools:format:check
           disable_cache: false
 
       - name: Typecheck web-tools
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@perf/ci-cache-s5cmd-pzstd
         with:
           command: pnpm exec nx run @ledgerhq/web-tools:typecheck
           disable_cache: false

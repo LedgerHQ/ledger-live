@@ -60,7 +60,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@perf/ci-cache-s5cmd-pzstd
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -90,13 +90,13 @@ jobs:
         run: pnpm changeset version
 
       - name: Get desktop version
-        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@perf/ci-cache-s5cmd-pzstd
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
       - name: Get mobile version
-        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@perf/ci-cache-s5cmd-pzstd
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile

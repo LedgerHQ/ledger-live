@@ -1,0 +1,51 @@
+name: "Cache"
+description: "Restore an S3 cache at the start of a job and save it back in a post step"
+inputs:
+  endpoint:
+    description: the S3 endpoint URL, e.g., 's3.amazonaws.com'
+    required: false
+  key:
+    description: cache key; the object lives at <key>/cache.tzst
+    required: true
+  path:
+    description: newline-separated paths to archive in the post step
+    required: true
+  restore-keys:
+    description: newline-separated key prefixes tried, in order, when the exact key misses
+    required: false
+  accessKey:
+    required: true
+  secretKey:
+    required: true
+  sessionToken:
+    required: false
+  bucket:
+    required: true
+  region:
+    required: true
+  destination:
+    description: "The destination path to extract the cache files to"
+    required: false
+    default: ${{ github.workspace }}
+  concurrency:
+    description: "s5cmd parts transferred in parallel"
+    required: false
+    default: "16"
+  part-size:
+    description: "s5cmd part size in MiB"
+    required: false
+    default: "64"
+  save-always:
+    description: "Save in the post step even when the key was already present"
+    required: false
+    default: "false"
+outputs:
+  cache-hit:
+    description: "true when the key was already in the bucket"
+runs:
+  using: node24
+  main: main.ts
+  post: post.ts
+  # A failed job has usually not produced a cache worth keeping, and saving one
+  # would overwrite a good object with a partial tree.
+  post-if: success()

@@ -1,0 +1,20 @@
+name: "Cache Install"
+description: "Install the cache transport tools (s5cmd, pinned and checksum verified) ahead of time"
+inputs:
+  s5cmd-version:
+    description: "s5cmd release to install; checksums are pinned per platform in cache.sh, bump both together"
+    type: string
+    required: false
+    default: "2.3.0"
+runs:
+  using: "composite"
+  steps:
+    # Optional: exists/download/upload each install on demand. Running this
+    # early just moves the ~0.3s off the critical path and surfaces a missing
+    # pzstd as a warning before any cache step depends on it.
+    - name: Install cache tools
+      shell: bash
+      run: |
+        "$GITHUB_ACTION_PATH/../cache.sh" install
+      env:
+        S5CMD_VERSION: ${{ inputs.s5cmd-version }}

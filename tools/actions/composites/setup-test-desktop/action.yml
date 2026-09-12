@@ -23,7 +23,7 @@ runs:
   steps:
     - name: Install system dependencies (Linux)
       if: runner.os == 'Linux'
-      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@perf/ci-cache-s5cmd-pzstd
       with:
         packages: libudev-dev build-essential
     - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
