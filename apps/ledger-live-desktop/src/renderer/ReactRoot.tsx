@@ -12,7 +12,7 @@ type State = {
 type Props = {
   store: Store<StoreState, UnknownAction>;
   language: string;
-  initialCountervalues: Countervalues;
+  initialCountervalues: Countervalues | null | undefined;
 };
 class ReactRoot extends Component<Props, State> {
   state = {
@@ -31,7 +31,12 @@ class ReactRoot extends Component<Props, State> {
     return error ? (
       String(error)
     ) : (
-      <App store={store} initialCountervalues={initialCountervalues as CounterValuesStateRaw} />
+      <App
+        store={store}
+        initialCountervalues={
+          (initialCountervalues ?? undefined) as CounterValuesStateRaw | undefined
+        }
+      />
     );
   }
 }

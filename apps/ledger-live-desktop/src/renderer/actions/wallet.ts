@@ -8,9 +8,9 @@ export const toggleStarAction = (id: string, value: boolean) => {
 
 export const fetchWallet =
   (): ThunkResult<Promise<void>> => async (dispatch, _getState, _extra) => {
-    const data = await getKey("app", "wallet");
-    if (data && data.walletSyncState) {
-      // we don't throw in this case, only accounts is used as password check safeguard
-      dispatch(importWalletState(data));
+    const storedWallet = await getKey("app", "wallet");
+    if (storedWallet.status === "encrypted") return; // we don't throw in this case, only accounts is used as password check safeguard
+    if (storedWallet.data?.walletSyncState) {
+      dispatch(importWalletState(storedWallet.data));
     }
   };

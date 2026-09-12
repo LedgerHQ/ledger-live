@@ -68,7 +68,7 @@ export function CountervaluesBridgedProvider({
   initialState,
 }: {
   children: React.ReactNode;
-  initialState: CounterValuesStateRaw;
+  initialState: CounterValuesStateRaw | undefined;
 }) {
   const bridge = useCountervaluesBridge();
 

@@ -7,6 +7,7 @@ import pick from "lodash/pick";
 import fs from "fs/promises";
 import { getEnv } from "@shared/env";
 import { NoDBPathGiven, DBWrongPassword } from "../../errors";
+import { ENCRYPTED_APP_KEYS, type EncryptedAppKey } from "~/config/encryptedAppKeys";
 import { INITIAL_STATE as trustchainInitialState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   exportWalletState,
@@ -55,12 +56,10 @@ const saveTriggers: Map<string, Set<string>> = new Map();
 
 /** Allow list for app namespace: only these + keepLegacy keys are loaded and can be persisted. */
 const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
-  "accounts",
+  ...ENCRYPTED_APP_KEYS,
   "countervalues",
   "postOnboarding",
   "settings",
-  "trustchain",
-  "wallet",
   "market",
   "marketBanner",
   LARGE_SCREEN_UPSELL_MODAL,
@@ -153,16 +152,10 @@ async function reload() {
 /**
  * define all db paths where we need encryption
  */
-const encryptedDataPaths = [
-  ["app", "accounts"],
-  ["app", "trustchain"],
-  ["app", "wallet"],
-] as const;
-
-type EncryptedAppKeyPath = (typeof encryptedDataPaths)[number][1];
+const encryptedDataPaths = ENCRYPTED_APP_KEYS.map(key => ["app", key] as const);
 
 // Empty payloads encrypted when password lock is enabled before any account exists.
-const ENCRYPTION_PATH_DEFAULTS: Record<EncryptedAppKeyPath, unknown> = {
+const ENCRYPTION_PATH_DEFAULTS: Record<EncryptedAppKey, unknown> = {
   accounts: [],
   trustchain: trustchainInitialState,
   wallet: exportWalletState({ wallet: walletInitialState, contacts: contactsInitialState }),
@@ -174,7 +167,7 @@ for (const [, keyPath] of encryptedDataPaths) {
   }
 }
 
-function ensureEncryptedPathInMemory(ns: string, keyPath: EncryptedAppKeyPath): void {
+function ensureEncryptedPathInMemory(ns: string, keyPath: EncryptedAppKey): void {
   const memory = memoryNamespaces[ns]!;
   const current = get(memory, keyPath);
   if (current === undefined || current === null) {
@@ -182,11 +175,7 @@ function ensureEncryptedPathInMemory(ns: string, keyPath: EncryptedAppKeyPath): 
   }
 }
 
-function decryptEncryptedPathInMemory(
-  ns: string,
-  keyPath: EncryptedAppKeyPath,
-  encryptionKey: string,
-) {
+function decryptEncryptedPathInMemory(ns: string, keyPath: EncryptedAppKey, encryptionKey: string) {
   const memory = memoryNamespaces[ns]!;
   const val = get(memory, keyPath);
   if (typeof val !== "string") return;
@@ -347,7 +336,7 @@ async function saveToDisk(ns: string) {
         const encryptionKey = namespacedEncryptionKeys[keyPath];
         if (!encryptionKey) continue; // eslint-disable-line no-continue
         const val = get(clone, keyPath);
-        const payload = val ?? ENCRYPTION_PATH_DEFAULTS[keyPath as EncryptedAppKeyPath];
+        const payload = val ?? ENCRYPTION_PATH_DEFAULTS[keyPath as EncryptedAppKey];
         if (val === undefined || val === null) {
           set(memory, keyPath, payload);
         }
