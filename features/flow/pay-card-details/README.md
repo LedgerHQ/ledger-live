@@ -43,8 +43,8 @@ import { CardDetails } from "@features/flow-pay-card-details";
 exported on its own for consumers that only need the card face. Hosts mount `CardDetails` and pass
 `cardVisual` to overlay the balance, or omit it for the bare artwork. On web that keeps freeze and
 More inline; on native they live in the Details bottom sheet. On web, `CardNumbers` flips the face
-to the PAN/CVV image and mounts View on the `CardActions` row (Freeze + More). Without `unlock`,
-hosts mount `CardDetails` (or the face and `CardActions`) themselves.
+to the PAN/CVV image and mounts View on the `CardActions` row (Freeze + More). On native it swaps
+the face for the details image and mounts the View tile. Without `unlock`, hosts mount `CardDetails`.
 
 The frozen state is not a host prop: `useCardVisualViewModel` reads the same `CardStatus` query the
 freeze tile uses, so the card face and the tile can never disagree. A frozen card fades out and
@@ -112,8 +112,9 @@ pay-card-details/
     │   │   └── CardDetailsSheet.native.test.tsx
     │   ├── CardNumbers/
     │   │   ├── CardNumbers.web.tsx            # Flip + View on the CardActions row
-    │   │   ├── CardNumbers.native.tsx         # Stub until LWM reveal UI
+    │   │   ├── CardNumbers.native.tsx         # Image swap + View tile
     │   │   ├── CardNumbersView.web.tsx        # Flip to the PAN/CVV image
+    │   │   ├── CardNumbersView.native.tsx     # Swap face for the PAN/CVV image
     │   │   └── Tile/                          # View / Hide control
     │   ├── Freeze/
     │   │   ├── Freeze.web.tsx                 # Tile + confirmation, wired to the view model

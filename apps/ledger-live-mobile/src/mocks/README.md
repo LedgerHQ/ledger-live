@@ -54,6 +54,10 @@ see that each documented status reaches that end, and by which route.
 The panel works without MSW too: the buttons still call the real session accessors, and every request
 reaches the real provider. Only the answer buttons and the renewal counter need `MSW_ENABLED=true`.
 
+`POST /v1/card/details/token` is always answered while MSW is on: a placeholder PAN/CVV image
+(`dummyimage.com`). Use it from Pay → View, or from **Card / Pay → Card interaction → Request Card
+Details**. Turn MSW off to hit the real provider.
+
 > [!IMPORTANT]
 >
 > **A handler runs twice for every request it passes through.** `msw/native` installs two
