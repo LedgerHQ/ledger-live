@@ -89,10 +89,10 @@ jobs:
           persist-credentials: false
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@ci-runner-test
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-runner-test
         id: setup-caches
         with:
           skip-nx-cache: "true"
@@ -106,14 +106,14 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-runner-test
         if: ${{ matrix.config.name == 'Linux' }}
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Build desktop
         id: build-desktop
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@ci-runner-test
         with:
           os: ${{ matrix.config.output-name }}
 
@@ -213,7 +213,7 @@ jobs:
             }
             return JSON.stringify(obj);
 
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@ci-runner-test
         if: ${{ !cancelled() && github.event.number != '' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
@@ -221,7 +221,7 @@ jobs:
           prNumber: ${{ github.event.number}}
           mode: desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@ci-runner-test
         name: Report summary
         with:
           token: ${{ steps.generate-token.outputs.token }}

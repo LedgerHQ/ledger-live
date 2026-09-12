@@ -74,7 +74,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-runner-test
         id: setup-caches
         with:
           skip-nx-cache: "true"
@@ -87,7 +87,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@ci-runner-test
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -130,7 +130,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-runner-test
         id: setup-caches
         with:
           skip-nx-cache: "true"
@@ -144,7 +144,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-runner-test
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 

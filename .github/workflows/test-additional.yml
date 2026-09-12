@@ -34,7 +34,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Install pnpm
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-runner-test
         id: setup-caches
         with:
           skip-nx-cache: "true"
@@ -42,7 +42,7 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate Changesets
-        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@ci-runner-test
 
   changes:
     name: Detect Workflow File Changes
@@ -87,7 +87,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup mise
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-runner-test
         with:
           skip-nx-cache: "true"
           use-mise: true
