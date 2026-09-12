@@ -137,6 +137,8 @@ export interface PayCardLinkedWallet {
   readonly network: string;
   /** Charging order. The wallets are listed in it. */
   readonly priority: number;
+  /** The Ledger currency the pair above resolves to, absent when the catalog does not cover it. */
+  readonly ledgerId?: string;
 }
 
 /** One item of the join the app builds from the two responses above. */
@@ -146,8 +148,16 @@ export interface PayCardCombinedWallet {
   readonly currency: string;
   readonly network: string;
   readonly priority: number;
+  readonly ledgerId?: string;
   /** `null` when no Baanx wallet matched this link, and while they are still being read. */
   readonly balance: string | null;
+}
+
+/** One row of the Card asset catalog: what the provider calls an asset, and what Ledger calls it. */
+export interface PayCardCurrencyMappingRow {
+  /** The `{currency}.{network}` id the catalog is keyed on. */
+  readonly key: string;
+  readonly ledgerId: string;
 }
 
 export interface PayCardBalanceError {
@@ -227,6 +237,8 @@ export interface PayCardToolProps {
   readonly cardOnboarding: PayCardOnboardingStatusProps;
   readonly interaction: PayCardInteractionProps;
   readonly balance: PayCardBalanceProps;
+  /** The whole Card asset catalog, so a mapping gap can be read against it. */
+  readonly currencyMapping: readonly PayCardCurrencyMappingRow[];
   /** Whether the user has already seen the Pay feature tour. */
   readonly hasSeenFeatureTour: boolean;
   /** Resets the feature tour so it plays again on the next Pay visit. */

@@ -6,6 +6,7 @@ import {
   useLazyGetCardStatusQuery,
   useCreateCardDetailsTokenMutation,
 } from "@domain/api-card-management";
+import { BAANX_ASSET_LEDGER_IDS } from "@domain/entity-card-asset-mapping";
 import {
   useCardLinkedWallets,
   type ResolveWalletCounterValue,
@@ -96,6 +97,16 @@ const STEP_ANSWERS: Readonly<Partial<Record<string, keyof CardOnboardingStatusMo
   "choose-card-type": "hasCard",
   "top-up-card": "walletFunded",
 };
+
+/**
+ * The catalog as the tool lists it, in key order so a pair is easy to find by eye.
+ *
+ * A key the catalog holds no id for is dropped: the screen lists what resolves, and a row with a
+ * blank currency would read as a mapping that exists and is wrong.
+ */
+const CURRENCY_MAPPING_ROWS = Object.entries(BAANX_ASSET_LEDGER_IDS)
+  .flatMap(([key, ledgerId]) => (ledgerId === undefined ? [] : [{ key, ledgerId }]))
+  .sort((a, b) => a.key.localeCompare(b.key));
 
 const WALLET_STEP_ID = "apple-google-pay";
 
@@ -353,12 +364,15 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       linkedWallets: linked ?? [],
       // Without the counter value, which this tool does not price.
       combinedWallets: linkedWallets.wallets.map(
-        ({ id, address, currency, network, priority, balance: walletBalance }) => ({
+        ({ id, address, currency, network, priority, ledgerId, balance: walletBalance }) => ({
           id,
           address,
           currency,
           network,
           priority,
+          // Left off when the wallet had none, as the join and the transform do: one rule, so a
+          // tool reading these rows cannot tell a mapped pair from an unmapped one by shape alone.
+          ...(ledgerId === undefined ? {} : { ledgerId }),
           balance: walletBalance,
         }),
       ),
@@ -377,6 +391,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       cardOnboarding,
       interaction,
       balance,
+      currencyMapping: CURRENCY_MAPPING_ROWS,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
       hasSeenReceiveVerifyHint,
