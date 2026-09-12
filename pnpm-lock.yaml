@@ -6707,9 +6707,6 @@ importers:
       '@features/flow-pay-card-widget':
         specifier: workspace:^
         version: link:../pay-card-widget
-      '@shared/i18n':
-        specifier: workspace:*
-        version: link:../../../shared/i18n
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
