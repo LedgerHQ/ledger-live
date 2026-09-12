@@ -34,6 +34,12 @@
 
 set -euo pipefail
 
+# Runner shells do not reliably carry these: gtar and pzstd live in the
+# homebrew prefix, and sysctl in /usr/sbin. A macOS runner without /usr/sbin is
+# what made cores() come back empty once.
+PATH="/opt/homebrew/bin:/usr/local/bin:/usr/sbin:/sbin:$PATH"
+export PATH
+
 CACHE_ENDPOINT="${CACHE_ENDPOINT:-}"
 CACHE_CONCURRENCY="${CACHE_CONCURRENCY:-16}"
 CACHE_PART_SIZE="${CACHE_PART_SIZE:-64}"
@@ -51,10 +57,19 @@ if [ -n "${CACHE_TAR:-}" ]; then TAR="$CACHE_TAR"
 elif [ "$(uname -s)" = "Darwin" ]; then TAR=gtar
 else TAR=tar; fi
 
+# Must always print a positive integer. An empty value here silently becomes a
+# bare "-p" in the pzstd command line, which then swallows the next flag and
+# yields a corrupt stream rather than an error.
 cores() {
-  if command -v nproc >/dev/null 2>&1; then nproc
-  elif [ "$(uname -s)" = "Darwin" ]; then sysctl -n hw.ncpu
-  else echo 4; fi
+  n=""
+  if command -v nproc >/dev/null 2>&1; then n=$(nproc 2>/dev/null || true)
+  elif command -v sysctl >/dev/null 2>&1; then n=$(sysctl -n hw.ncpu 2>/dev/null || true)
+  fi
+  case "$n" in
+    ""|*[!0-9]*) n=4 ;;
+    0) n=4 ;;
+  esac
+  echo "$n"
 }
 
 die() { echo "::error title=Cache::$*" >&2; exit 1; }
