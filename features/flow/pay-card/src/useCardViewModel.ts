@@ -18,6 +18,7 @@ export function useCardViewModel({
   formatCountervalue,
   balanceLabel,
   onTrackEvent,
+  unlock,
 }: CardProps): CardViewProps {
   const status = useCardAuthStatus();
   const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
@@ -30,5 +31,5 @@ export function useCardViewModel({
     return { balance: MOCK_CARD_BALANCE, formatCountervalue, balanceLabel };
   }, [isSignedIn, formatCountervalue, balanceLabel]);
 
-  return { title, oauthConfig, callback, onTrackEvent, displayState, cardVisual };
+  return { title, oauthConfig, callback, onTrackEvent, displayState, cardVisual, unlock };
 }
