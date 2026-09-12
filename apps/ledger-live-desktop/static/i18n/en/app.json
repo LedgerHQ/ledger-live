@@ -900,6 +900,11 @@
     "card": {
       "title": "Crypto card",
       "balanceLabel": "Balance",
+      "assets": {
+        "title": "Assets",
+        "empty": "No assets yet",
+        "error": "Couldn't load assets"
+      },
       "freeze": "Freeze",
       "unfreeze": "Unfreeze",
       "goBack": "Go back",
