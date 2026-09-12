@@ -4,10 +4,13 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 import {
   getPerpsUiUseCase,
+  PAY_ACCOUNT_UI_USE_CASE,
   PERPS_UI_USE_CASE,
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import {
+  modularDialogAreCurrenciesFilteredSelector,
   modularDialogConfigurationSelector,
+  modularDialogCurrenciesSelector,
   modularDialogFlowSelector,
   modularDialogIsOpenSelector,
   modularDialogOnAccountSelectedSelector,
@@ -20,6 +23,7 @@ import { AccountSelector } from "./screens/AccountSelector";
 import AssetSelector from "./screens/AssetSelector";
 import { NetworkSelector } from "./screens/NetworkSelector";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
+import SkeletonList from "./components/SkeletonList";
 import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";
 import { useModularDialogNavigation } from "./hooks/useModularDialogNavigation";
 import { useModularDialogRemoteData } from "./hooks/useModularDialogRemoteData";
@@ -63,6 +67,10 @@ function getStepHeading(
     };
   }
 
+  if (step === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION && uiUseCase === PAY_ACCOUNT_UI_USE_CASE) {
+    return { titleKey: "modularAssetDrawer.selectAccountToPayFrom" };
+  }
+
   return { titleKey: TRANSLATION_KEYS[step] };
 }
 
@@ -80,6 +88,8 @@ export function ModularDialogFlow({
   const onAccountSelected = useSelector(modularDialogOnAccountSelectedSelector);
   const dialogConfiguration = useSelector(modularDialogConfigurationSelector);
   const uiUseCase = useSelector(modularDialogUiUseCaseSelector);
+  const currencyIds = useSelector(modularDialogCurrenciesSelector);
+  const areCurrenciesFiltered = useSelector(modularDialogAreCurrenciesFilteredSelector);
 
   const handleClose = useCallback(() => {
     track("button_clicked", {
@@ -125,6 +135,13 @@ export function ModularDialogFlow({
     dialogConfiguration,
   );
   const hasAccounts = useHasAccountsForAsset(selectedAsset);
+  const isAwaitingAutoSkip =
+    Boolean(areCurrenciesFiltered) &&
+    currencyIds?.length === 1 &&
+    currentStep === MODULAR_DIALOG_STEP.ASSET_SELECTION &&
+    !errorInfo?.hasError &&
+    (assetsSorted === undefined || assetsSorted.length === 1);
+  const displayStep = isAwaitingAutoSkip ? MODULAR_DIALOG_STEP.ACCOUNT_SELECTION : currentStep;
 
   const renderStepContent = (step: ModularDialogStep) => {
     switch (step) {
@@ -172,23 +189,23 @@ export function ModularDialogFlow({
 
   const content = (
     <AnimatedScreenWrapper
-      key={`${currentStep}-${navigationDirection}`}
+      key={`${displayStep}-${navigationDirection}`}
       fillAvailableHeight={fillAvailableHeight}
-      screenKey={currentStep}
+      screenKey={displayStep}
       direction={navigationDirection}
     >
-      {renderStepContent(currentStep)}
+      {isAwaitingAutoSkip ? <SkeletonList /> : renderStepContent(currentStep)}
     </AnimatedScreenWrapper>
   );
 
   const accountSelectionDescription =
-    currentStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION && selectedNetwork?.name && !hasAccounts
+    displayStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION && selectedNetwork?.name && !hasAccounts
       ? t("dialogs.selectAccount.description", {
           network: selectedNetwork.name,
         })
       : undefined;
 
-  const { titleKey, descriptionKey } = getStepHeading(currentStep, uiUseCase, hasAccounts);
+  const { titleKey, descriptionKey } = getStepHeading(displayStep, uiUseCase, hasAccounts);
   const title = t(titleKey);
   const description = descriptionKey ? t(descriptionKey) : accountSelectionDescription;
 
@@ -196,7 +213,7 @@ export function ModularDialogFlow({
     <>
       {children({
         content,
-        currentStep,
+        currentStep: displayStep,
         title,
         description,
         hasBackButton: Boolean(handleBack),

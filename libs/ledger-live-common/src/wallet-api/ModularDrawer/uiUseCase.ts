@@ -2,6 +2,8 @@
  * `namespace:variant` hints a live-app passes to `account.request` to pick the
  * wording of the asset and account selection screens.
  */
+export const PAY_ACCOUNT_UI_USE_CASE = "pay";
+
 export const PERPS_UI_USE_CASE = {
   /** Perps account pick with no stated variant. */
   legacy: "perpetuals",

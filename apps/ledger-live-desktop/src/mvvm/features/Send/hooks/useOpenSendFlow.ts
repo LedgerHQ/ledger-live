@@ -8,6 +8,8 @@ import BigNumber from "bignumber.js";
 import { openSendFlowDialog, type SendFlowParams } from "~/renderer/reducers/sendFlow";
 import { useNewSendFlowFeature } from "./useNewSendFlowFeature";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
+import { PAY_ACCOUNT_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import {
   closeDialog,
   openDialog,
@@ -37,6 +39,16 @@ type WorkflowParams = {
   source?: string;
 };
 
+function payAccountUiUseCase(
+  params: Pick<WorkflowParams, "source" | "recipient" | "skipRecipientStep">,
+) {
+  return params.source === SEND_FLOW_SOURCE.PAY &&
+    Boolean(params.recipient?.trim()) &&
+    params.skipRecipientStep === true
+    ? PAY_ACCOUNT_UI_USE_CASE
+    : undefined;
+}
+
 export function useOpenSendFlow() {
   const dispatch = useDispatch();
   const hasNoAccounts = useSelector(state => accountsSelector(state).length === 0);
@@ -60,9 +72,10 @@ export function useOpenSendFlow() {
             dispatch(setSourceValue(flowParams.source ?? ""));
             dispatch(
               openDialog({
-                currencies: currencyIds ? [...currencyIds] : [],
+                currencies: [...(currencyIds ?? [])],
                 categories,
                 areCurrenciesFiltered: Boolean(currencyIds?.length),
+                uiUseCase: payAccountUiUseCase(flowParams),
                 dialogConfiguration: SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION,
                 onAccountSelected: (account: AccountLike, parentAccount?: Account) => {
                   dispatch(closeDialog());

@@ -2,6 +2,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import React from "react";
 import * as reduxHooks from "LLD/hooks/redux";
 import { act, render, screen, waitFor } from "tests/testSetup";
+import { server, http, HttpResponse } from "tests/server";
 import { closeDialog } from "~/renderer/reducers/modularDialog";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -164,10 +165,86 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       },
     });
 
-    await waitFor(() =>
-      expect(screen.getByTestId("modular-dialog-screen-ACCOUNT_SELECTION")).toBeVisible(),
-    );
+    expect(screen.queryByText(/select asset/i)).not.toBeInTheDocument();
+    expect(screen.getByTestId("modular-dialog-screen-ACCOUNT_SELECTION")).toBeVisible();
     expect(await screen.findByText(/ethereum 2/i)).toBeVisible();
+    expect(screen.queryByText(/select asset/i)).not.toBeInTheDocument();
+  });
+
+  it("should show list placeholders while a single currency is still loading", async () => {
+    server.use(
+      http.get("https://dada.api.ledger-test.com/v1/assets", () => new Promise(() => {})),
+      http.get("https://dada.api.ledger.com/v1/assets", () => new Promise(() => {})),
+    );
+
+    try {
+      render(<ModularDialogFlowManager />, {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [ETH_ACCOUNT],
+          modularDialog: createFilteredModularDialogState([ethereumCurrency.id]),
+        },
+      });
+
+      expect(screen.queryByText(/select asset/i)).not.toBeInTheDocument();
+      expect(screen.getByTestId("modular-dialog-screen-ACCOUNT_SELECTION")).toBeVisible();
+      expect(screen.getByTestId("modular-dialog-skeleton")).toBeVisible();
+    } finally {
+      server.resetHandlers();
+    }
+  });
+
+  it("should keep the pay-from title while a single currency is auto-skipped", async () => {
+    const filteredPayDialog = createFilteredModularDialogState([ethereumCurrency.id]);
+
+    render(<ModularDialogFlowManager />, {
+      ...INITIAL_STATE,
+      initialState: {
+        accounts: [ETH_ACCOUNT],
+        modularDialog: {
+          ...filteredPayDialog,
+          dialogParams: {
+            ...filteredPayDialog.dialogParams,
+            uiUseCase: "pay",
+          },
+        },
+      },
+    });
+
+    expect(screen.queryByText(/select asset/i)).not.toBeInTheDocument();
+    expect(screen.getAllByText(/select account to pay from/i)[0]).toBeVisible();
+    expect(await screen.findByText(/ethereum 2/i)).toBeVisible();
+    expect(screen.getAllByText(/select account to pay from/i)[0]).toBeVisible();
+  });
+
+  it("should show the asset error when a single-currency catalog request fails", async () => {
+    server.use(
+      http.get("https://dada.api.ledger-test.com/v1/assets", () =>
+        HttpResponse.json(null, { status: 500 }),
+      ),
+      http.get("https://dada.api.ledger.com/v1/assets", () =>
+        HttpResponse.json(null, { status: 500 }),
+      ),
+    );
+
+    try {
+      render(<ModularDialogFlowManager />, {
+        ...INITIAL_STATE,
+        initialState: {
+          accounts: [ETH_ACCOUNT],
+          modularDialog: createFilteredModularDialogState([ethereumCurrency.id]),
+        },
+      });
+
+      expect(await screen.findByText(/connection failed/i)).toBeVisible();
+      expect(screen.getAllByText(/select asset/i)[0]).toBeVisible();
+      expect(screen.getByRole("button", { name: /try again/i })).toBeVisible();
+      expect(
+        screen.queryByTestId("modular-dialog-screen-ACCOUNT_SELECTION"),
+      ).not.toBeInTheDocument();
+    } finally {
+      server.resetHandlers();
+    }
   });
 
   it("should navigate directly to networkSelection step", async () => {
@@ -191,8 +268,8 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       },
     });
 
-    await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
-    expect(screen.getByText(/add account/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/add account/i)).toBeVisible());
+    expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
     expect(screen.getAllByText(/you don't have bitcoin accounts yet/i)[0]).toBeVisible();
   });
 
@@ -207,8 +284,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       },
     });
 
-    await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
-    expect(screen.getByText(/add account/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/add account/i)).toBeVisible());
     await user.click(screen.getByText(/add account/i));
     expect(setDrawer).toHaveBeenCalledTimes(1);
     expect(jest.mocked(setDrawer).mock.calls[0][1]).toEqual(
@@ -503,6 +579,13 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
     expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
     expect(screen.getAllByText(/only supported with usdc on arbitrum chain/i)[0]).toBeVisible();
+  });
+
+  it("should show the pay-from header for the pay use case", async () => {
+    await renderAccountStep("pay");
+
+    expect(screen.getAllByText(/select account to pay from/i)[0]).toBeVisible();
+    expect(screen.queryByText(/select hyperliquid account/i)).not.toBeInTheDocument();
   });
 
   it("should not display perpetuals account header when uiUseCase is not set", async () => {

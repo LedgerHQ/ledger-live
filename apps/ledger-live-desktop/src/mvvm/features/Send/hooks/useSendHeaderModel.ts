@@ -270,12 +270,21 @@ export function useSendHeaderModel({
   const recipientHeader = useMemo(
     () =>
       getRecipientHeaderPresentation({
-        recipient: state.recipient,
+        recipient:
+          state.recipient ??
+          (recipientSearch.value.trim() ? { address: recipientSearch.value.trim() } : null),
         contacts,
         currencyId: state.account.currency?.id,
         isContactsFeatureEnabled: isContactsFeatureEnabled && isAmountStep,
       }),
-    [contacts, isAmountStep, isContactsFeatureEnabled, state.account.currency?.id, state.recipient],
+    [
+      contacts,
+      isAmountStep,
+      isContactsFeatureEnabled,
+      recipientSearch.value,
+      state.account.currency?.id,
+      state.recipient,
+    ],
   );
 
   const addressInputValue = useMemo(() => {
