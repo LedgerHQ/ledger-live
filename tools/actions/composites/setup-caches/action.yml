@@ -77,7 +77,7 @@ runs:
 
     - name: Install Linux native build dependencies
       if: runner.os == 'Linux'
-      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@perf/ci-cache-s5cmd-pzstd
       with:
         packages: build-essential pkg-config
 
@@ -90,7 +90,7 @@ runs:
     - name: Resolve Nx remote cache profile and apply S3 prefix
       id: nx-remote-cache
       if: ${{ (inputs.cache-develop-role-arn != '' && inputs.cache-branch-role-arn != '') }}
-      uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@perf/ci-cache-s5cmd-pzstd
       with:
         develop-role-arn: ${{ inputs.cache-develop-role-arn }}
         branch-role-arn: ${{ inputs.cache-branch-role-arn }}

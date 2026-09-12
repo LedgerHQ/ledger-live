@@ -54,7 +54,7 @@ runs:
       id: test-files
       shell: bash
       run: |
-        # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
+        # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @perf/ci-cache-s5cmd-pzstd-pinned
         # action keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
         SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
         [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
@@ -168,7 +168,7 @@ runs:
         SHARD_COUNT_ANDROID=${{ steps.shard-counts.outputs.SHARD_COUNT_ANDROID }}
         TEST_DIR="${INPUTS_TEST_DIRECTORY}"
 
-        # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
+        # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @perf/ci-cache-s5cmd-pzstd-pinned
         # action keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
         SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
         [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
