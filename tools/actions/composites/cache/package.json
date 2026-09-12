@@ -8,9 +8,5 @@
     "typecheck": "tsc --noEmit",
     "lint": "oxlint ./",
     "lint:fix": "oxlint ./ --fix --quiet"
-  },
-  "devDependencies": {
-    "@types/node": "catalog:",
-    "typescript": "catalog:"
   }
 }
