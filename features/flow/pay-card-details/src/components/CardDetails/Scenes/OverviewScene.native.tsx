@@ -12,9 +12,11 @@ import { MoreAction } from "../../More/Tile/MoreAction";
 import type { CardVisualProps } from "../../../types";
 import type { OverviewSceneProps } from "./types";
 
+const FLIP_MS = 500;
+
 const FLIP_TRANSITION = {
   transitionProperty: "transform",
-  transitionDuration: 500,
+  transitionDuration: FLIP_MS,
   transitionTimingFunction: "ease-in-out",
 } as const;
 
@@ -38,6 +40,8 @@ function FlipCard({
   return (
     <View testID="card-numbers-flip">
       <Animated.View
+        accessibilityElementsHidden={isRevealed}
+        importantForAccessibility={isRevealed ? "no-hide-descendants" : "auto"}
         style={{
           ...FLIP_TRANSITION,
           backfaceVisibility: "hidden",
@@ -48,6 +52,8 @@ function FlipCard({
       </Animated.View>
       <Animated.View
         pointerEvents="none"
+        accessibilityElementsHidden={!isRevealed}
+        importantForAccessibility={!isRevealed ? "no-hide-descendants" : "auto"}
         style={[
           styles.back,
           {
