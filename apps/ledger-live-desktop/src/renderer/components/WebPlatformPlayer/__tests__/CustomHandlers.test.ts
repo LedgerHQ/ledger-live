@@ -25,27 +25,11 @@ describe("createDeeplinkOpenHandler", () => {
     warnSpy.mockRestore();
   });
 
-  it("should forward dangerous URLs when hardening is disabled", () => {
-    const openDeepLink = jest.fn();
-    const handler = createDeeplinkOpenHandler({
-      isDeeplinkOpenHardeningEnabled: false,
-      openDeepLink,
-    });
-
-    handler({ url: "file:///etc/passwd" });
-
-    expect(openDeepLink).toHaveBeenCalledWith("file:///etc/passwd");
-    expect(mockTrack).not.toHaveBeenCalled();
-  });
-
   it.each(["file:///etc/passwd", "javascript:alert(1)", "smb://attacker/share", "itms-apps://app"])(
-    "should block %s when hardening is enabled",
+    "should block %s",
     url => {
       const openDeepLink = jest.fn();
-      const handler = createDeeplinkOpenHandler({
-        isDeeplinkOpenHardeningEnabled: true,
-        openDeepLink,
-      });
+      const handler = createDeeplinkOpenHandler({ openDeepLink });
 
       handler({ url });
 
@@ -62,12 +46,9 @@ describe("createDeeplinkOpenHandler", () => {
     "ledgerlive://swap",
     "ledgerwallet://settings",
     "mailto:support@ledger.com",
-  ])("should forward %s when hardening is enabled", url => {
+  ])("should forward %s", url => {
     const openDeepLink = jest.fn();
-    const handler = createDeeplinkOpenHandler({
-      isDeeplinkOpenHardeningEnabled: true,
-      openDeepLink,
-    });
+    const handler = createDeeplinkOpenHandler({ openDeepLink });
 
     handler({ url });
 
