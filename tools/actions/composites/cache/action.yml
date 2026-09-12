@@ -10,6 +10,9 @@ inputs:
   path:
     description: newline-separated paths to archive in the post step
     required: true
+  restore-keys:
+    description: newline-separated key prefixes tried, in order, when the exact key misses
+    required: false
   accessKey:
     required: true
   secretKey:

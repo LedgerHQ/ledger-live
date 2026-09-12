@@ -30,6 +30,7 @@ function cacheEnv(): NodeJS.ProcessEnv {
     CACHE_REGION: input("region"),
     CACHE_ENDPOINT: input("endpoint"),
     CACHE_PATH: input("path"),
+    CACHE_RESTORE_KEYS: input("restore-keys"),
     CACHE_DESTINATION: input("destination"),
     CACHE_CONCURRENCY: input("concurrency"),
     CACHE_PART_SIZE: input("part-size"),

@@ -23,6 +23,10 @@ inputs:
   region:
     type: string
     required: true
+  restore-keys:
+    description: "newline-separated key prefixes tried, in order, when the exact key misses"
+    type: string
+    required: false
   destination:
     description: "The destination path to extract the cache files to"
     type: string
@@ -59,6 +63,7 @@ runs:
         CACHE_BUCKET: ${{ inputs.bucket }}
         CACHE_REGION: ${{ inputs.region }}
         CACHE_ENDPOINT: ${{ inputs.endpoint }}
+        CACHE_RESTORE_KEYS: ${{ inputs['restore-keys'] }}
         CACHE_DESTINATION: ${{ inputs.destination }}
         CACHE_CONCURRENCY: ${{ inputs.concurrency }}
         CACHE_PART_SIZE: ${{ inputs['part-size'] }}

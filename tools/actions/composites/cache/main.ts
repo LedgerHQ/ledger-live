@@ -9,8 +9,17 @@ setOutput("cache-hit", String(hit));
 // verbatim, and STATE_cache-hit is awkward to read back.
 saveState("CACHE_HIT", String(hit));
 
+// Attempt the download even when the exact key missed: cache.sh falls back to
+// the restore-key prefixes, and a prefix match is still worth restoring. Only
+// an exact hit makes a download failure fatal — otherwise it is just a miss.
+const status = run("download");
+
+if (status === 0) {
+  process.exit(0);
+}
+
 if (hit) {
-  process.exit(run("download"));
+  process.exit(status);
 }
 
 console.log(`Cache miss for ${input("key")}; the post step will save it.`);

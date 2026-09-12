@@ -24,6 +24,8 @@
 # Env (required): CACHE_KEY CACHE_BUCKET CACHE_REGION
 # Env (optional): CACHE_ENDPOINT       host only, no scheme; default AWS S3
 #                 CACHE_PATH           upload: newline-separated paths
+#                 CACHE_RESTORE_KEYS   download: newline-separated key prefixes,
+#                                      tried in order when the exact key misses
 #                 CACHE_DESTINATION    download: default $GITHUB_WORKSPACE
 #                 CACHE_CONCURRENCY    s5cmd parts in flight, default 16
 #                 CACHE_PART_SIZE      s5cmd part size in MiB, default 64
@@ -114,6 +116,45 @@ s5() {
   fi
 }
 
+# Paths are stored relative to the workspace, using ".." when the target sits
+# outside it — which the pnpm store does. Storing absolute paths instead would
+# tie an archive to one runner's directory layout. GNU tar needs -P to keep
+# those ".." components on both create and extract.
+relpath() {
+  target=$1; base=$2; prefix=""
+  while [ "$base" != "/" ] && [ "${target#"$base"/}" = "$target" ]; do
+    base=$(dirname "$base")
+    prefix="../$prefix"
+  done
+  if [ "$base" = "/" ]; then echo "${prefix}${target#/}"; else echo "${prefix}${target#"$base"/}"; fi
+}
+
+# Exact key first, then each restore-key prefix in order, newest object wins —
+# the same precedence actions/cache and tespkg use. Without this a changed
+# lockfile misses outright instead of falling back to the previous store.
+resolve_object() {
+  if s5 ls "$(object_url)" >/dev/null 2>&1; then
+    echo "${CACHE_KEY}/cache.tzst"
+    return 0
+  fi
+  [ -n "${CACHE_RESTORE_KEYS:-}" ] || return 1
+  old_ifs=$IFS
+  IFS='
+'
+  set -- $CACHE_RESTORE_KEYS
+  IFS=$old_ifs
+  for prefix in "$@"; do
+    [ -n "$prefix" ] || continue
+    match=$(s5 ls "s3://${CACHE_BUCKET}/${prefix}*" 2>/dev/null \
+      | grep -E 'cache\.tzst$' | sort -k1,2 | tail -n1 | awk '{print $NF}')
+    if [ -n "$match" ]; then
+      echo "$match"
+      return 0
+    fi
+  done
+  return 1
+}
+
 object_url() {
   : "${CACHE_KEY:?CACHE_KEY is required}"
   : "${CACHE_BUCKET:?CACHE_BUCKET is required}"
@@ -151,8 +192,10 @@ cmd_exists() {
 
 cmd_download() {
   ensure_s5cmd
-  url=$(object_url)
+  object=$(resolve_object) || die "No cache object for ${CACHE_KEY} (and no restore-key matched)."
+  url="s3://${CACHE_BUCKET}/${object}"
   dest="${CACHE_DESTINATION:-${GITHUB_WORKSPACE}}"
+  [ "$object" = "${CACHE_KEY}/cache.tzst" ] || echo "Exact key missed; restored from ${object}"
 
   start=$SECONDS
   s5 cp --concurrency "$CACHE_CONCURRENCY" --part-size "$CACHE_PART_SIZE" "$url" "$ARCHIVE"
@@ -162,7 +205,7 @@ cmd_download() {
   # Piped rather than --use-compress-program: bsdtar has no such flag, and GNU
   # tar appends its own -d when decompressing, which a pzstd invocation would
   # then receive twice.
-  $(decompress_program) -c "$ARCHIVE" | "$TAR" -xf - -C "$dest"
+  $(decompress_program) -c "$ARCHIVE" | "$TAR" -xf - -P -C "$dest"
   extract=$((SECONDS - start))
 
   bytes=$(wc -c < "$ARCHIVE" | tr -d ' ')
@@ -187,6 +230,7 @@ cmd_upload() {
         case "$foundPath" in
           "$workspace"/*) echo "${foundPath#"$workspace"/}" ;;
           "$workspace")   echo "." ;;
+          /*)             relpath "$foundPath" "$workspace" ;;
           *)              echo "$foundPath" ;;
         esac
       done
@@ -201,7 +245,7 @@ cmd_upload() {
   fi
 
   start=$SECONDS
-  "$TAR" --posix -cf - -C "$workspace" --files-from "$file_list" | $(compress_program) -o "$ARCHIVE" -f -
+  "$TAR" --posix -cf - -P -C "$workspace" --files-from "$file_list" | $(compress_program) -o "$ARCHIVE" -f -
   compress=$((SECONDS - start))
 
   start=$SECONDS
