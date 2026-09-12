@@ -11,6 +11,8 @@ import {
   type ContactsNativeProps,
 } from "@features/flow-pay-contact";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { CardNumbersUnlockSheet } from "LLM/features/PayTab/components/CardNumbersUnlockSheet";
+import type { CardNumbersUnlockSheetState } from "LLM/features/PayTab/hooks/useUnlockForCardNumbers";
 import { Wallet40Background } from "LLM/components/Wallet40Background";
 import { TrackScreen } from "~/analytics";
 import { ScrollView } from "react-native";
@@ -29,6 +31,8 @@ type PayTabViewProps = {
   readonly isContactsEnabled: boolean;
   readonly depositOptions: DepositOptionsProps;
   readonly bankTransferIntro: BankTransferIntroProps;
+  readonly unlock: CardProps["unlock"];
+  readonly unlockSheet: CardNumbersUnlockSheetState;
 };
 
 export function PayTabView({
@@ -45,6 +49,8 @@ export function PayTabView({
   isContactsEnabled,
   depositOptions,
   bankTransferIntro,
+  unlock,
+  unlockSheet,
 }: PayTabViewProps) {
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
@@ -63,12 +69,14 @@ export function PayTabView({
             oauthConfig={oauthConfig}
             callback={callback}
             onTrackEvent={balance.onTrackEvent}
+            unlock={unlock}
           />
           <FeatureTour {...featureTour} />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />
         </Box>
       </ScrollView>
+      <CardNumbersUnlockSheet {...unlockSheet} />
     </Box>
   );
 }

@@ -10307,7 +10307,11 @@
         "reveal": "View",
         "hide": "Hide",
         "failed": "Couldn't load card numbers",
-        "imageAlt": "Card numbers"
+        "imageAlt": "Card numbers",
+        "unlockTitle": "Enter your password",
+        "passwordRequired": "Password required",
+        "passwordIncorrect": "Incorrect password",
+        "passwordUnavailable": "Couldn't check your password"
       }
     },
     "cardTransactions": {
