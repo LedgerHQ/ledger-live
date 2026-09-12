@@ -1,9 +1,19 @@
 import { UserId, DUMMY_USER_ID } from "@domain/entity-client-identity";
-import { resolveDesktopBrazeUserId } from "../brazeIdentity";
+import { exportDesktopBrazeUserId, resolveDesktopBrazeUserId } from "../brazeIdentity";
 
 const REAL_USER_ID = UserId.fromString("11111111-1111-1111-1111-111111111111");
 
 describe("brazeIdentity", () => {
+  describe("exportDesktopBrazeUserId", () => {
+    it("returns null for dummy user id", () => {
+      expect(exportDesktopBrazeUserId(DUMMY_USER_ID)).toBeNull();
+    });
+
+    it("returns the Braze export for a real user id", () => {
+      expect(exportDesktopBrazeUserId(REAL_USER_ID)).toBe(REAL_USER_ID.exportUserIdForBraze());
+    });
+  });
+
   describe("resolveDesktopBrazeUserId", () => {
     it("returns null for dummy user id", () => {
       expect(
