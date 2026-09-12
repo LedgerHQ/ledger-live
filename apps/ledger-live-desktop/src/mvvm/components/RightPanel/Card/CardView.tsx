@@ -7,13 +7,8 @@ export interface CardViewProps {
   readonly viewModel: CardViewModel;
 }
 
-/**
- * CardView
- * Right-panel content for the Pay tab: the Pay Card container framing the card visual and the
- * authentication controls.
- */
 export const CardView = ({ viewModel }: CardViewProps) => {
-  const { title, formatCountervalue, balanceLabel, oauthConfig, onTrackEvent } = viewModel;
+  const { title, formatCountervalue, balanceLabel, oauthConfig, onTrackEvent, unlock } = viewModel;
 
   return (
     <div className="flex h-full flex-col pb-32">
@@ -25,6 +20,7 @@ export const CardView = ({ viewModel }: CardViewProps) => {
             formatCountervalue={formatCountervalue}
             balanceLabel={balanceLabel}
             onTrackEvent={onTrackEvent}
+            unlock={unlock}
           />
         </div>
       </PayCardContainer>
