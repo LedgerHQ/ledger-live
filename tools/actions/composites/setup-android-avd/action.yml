@@ -86,7 +86,7 @@ runs:
         script: ${{ inputs.wait_script_path }}
 
     - name: Cache android emulator
-      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@perf/ci-cache-s5cmd-pzstd
       with:
         path: |
           /home/runner/.android/

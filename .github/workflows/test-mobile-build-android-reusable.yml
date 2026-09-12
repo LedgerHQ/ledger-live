@@ -180,7 +180,7 @@ jobs:
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Upload Detox Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@perf/ci-cache-s5cmd-pzstd
         with:
           path: |
             ${{ github.workspace }}/${{ env.ANDROID_APK_PATH }}
@@ -263,7 +263,7 @@ jobs:
           echo size=`ls -l apps/ledger-live-mobile/main.jsbundle.minified | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@perf/ci-cache-s5cmd-pzstd
         with:
           path: ${{ github.workspace }}/${{ env.ANDROID_JSBUNDLE_PATH }}
           key: ${{ inputs.android-js-cache-key }}
