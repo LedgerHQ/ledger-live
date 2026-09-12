@@ -193,6 +193,53 @@ runs:
           "$object" "$(numfmt --to=iec "$bytes")" "$download" "$extract" >> "$GITHUB_STEP_SUMMARY"
         echo "download ${download}s, extract ${extract}s, $(numfmt --to=iec "$bytes")"
 
+    - name: pzstd codec trial
+      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true' && runner.os == 'Linux'
+      shell: bash
+      run: |
+        set -uo pipefail
+        archive="$RUNNER_TEMP/cache.tzst"
+        tar_path="$RUNNER_TEMP/trial.tar"
+        pzst_path="$RUNNER_TEMP/trial.tar.pzst"
+        trap 'rm -f "$tar_path" "$pzst_path"' EXIT
+
+        [ -f "$archive" ] || { echo "no cache.tzst from restore, skipping trial"; exit 0; }
+        command -v pzstd >/dev/null || { echo "::warning::pzstd not on PATH, skipping trial"; exit 0; }
+
+        avail=$(df -k --output=avail "$RUNNER_TEMP" | tail -1)
+        if [ "$avail" -lt 10485760 ]; then
+          echo "::warning::only $((avail/1024))MB free, skipping trial"; exit 0
+        fi
+
+        cores=$(nproc)
+        pzstd --version 2>&1 | head -1
+
+        # both decodes write to /dev/null so the comparison is codec-only, no filesystem cost
+        s=$SECONDS; unzstd --long=30 -c "$archive" > /dev/null; zstd_decode=$((SECONDS-s))
+
+        unzstd --long=30 -c "$archive" > "$tar_path"
+        raw=$(stat -c %s "$tar_path")
+
+        s=$SECONDS; pzstd -p "$cores" -f -o "$pzst_path" "$tar_path"; pzstd_compress=$((SECONDS-s))
+        s=$SECONDS; pzstd -d -p "$cores" -c "$pzst_path" > /dev/null; pzstd_decode=$((SECONDS-s))
+
+        zstd_size=$(stat -c %s "$archive")
+        pzstd_size=$(stat -c %s "$pzst_path")
+
+        {
+          echo "| pzstd trial (${cores} cores) | value |"
+          echo "| --- | --- |"
+          echo "| uncompressed tar | $(numfmt --to=iec "$raw") |"
+          echo "| zstdmt --long=30 size | $(numfmt --to=iec "$zstd_size") |"
+          echo "| pzstd size | $(numfmt --to=iec "$pzstd_size") |"
+          echo "| **zstd decode (1 thread)** | **${zstd_decode}s** |"
+          echo "| **pzstd decode (${cores} threads)** | **${pzstd_decode}s** |"
+          echo "| pzstd compress | ${pzstd_compress}s |"
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        echo "raw=$(numfmt --to=iec "$raw") zstd=$(numfmt --to=iec "$zstd_size") pzstd=$(numfmt --to=iec "$pzstd_size")"
+        echo "zstd_decode=${zstd_decode}s pzstd_decode=${pzstd_decode}s pzstd_compress=${pzstd_compress}s"
+
     - name: Cache LLM pods
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       if: inputs.skip-pod-cache != 'true'
