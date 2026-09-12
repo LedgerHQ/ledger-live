@@ -28,12 +28,6 @@ import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state
 import type { PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";
 import type { PayCardOnboardingWidgetState } from "@features/flow-pay-card-widget/state";
 
-type PayCardPersistedState = PayCardFeatureTourState &
-  PayRequestVerifyHintState &
-  PayCardBalanceState &
-  PayCardLoginIntroState &
-  PayCardOnboardingWidgetState;
-
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
   Because only serialized json can be sent between processes, the transform system now live here.
@@ -53,7 +47,11 @@ export type Settings = ReturnType<typeof settingsStoreSelector>;
 export type Market = ReturnType<typeof marketStoreSelector>;
 export type MarketBanner = ReturnType<typeof marketBannerStoreSelector>;
 export type KnownDevices = ReturnType<typeof knownDevicesStoreSelector>;
-export type PayCard = PayCardPersistedState;
+export type PayCard = PayCardFeatureTourState &
+  PayRequestVerifyHintState &
+  PayCardBalanceState &
+  PayCardLoginIntroState &
+  PayCardOnboardingWidgetState;
 
 export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
 
@@ -213,6 +211,8 @@ export const resetAll = () => ipcRenderer.invoke("resetAll");
 export const reload = () => ipcRenderer.invoke("reload");
 
 export const cleanCache = () => ipcRenderer.invoke("cleanCache");
+
+export const clearStorageData = () => ipcRenderer.invoke("clearStorageData");
 
 function identitySelector<V>(state: V): V {
   return state;

@@ -2,7 +2,12 @@ import { describe, expect, it } from "@jest/globals";
 import {
   WEBVIEW_GUEST_CSP,
   createLiveAppSchemeChecker,
+  isDeviceCaptureRequest,
+  isParsablePermissionsPolicy,
   mergeCspHeaders,
+  mergePermissionsPolicyHeaders,
+  resolvePermissionCheck,
+  resolvePermissionRequest,
 } from "./webviewHandlers.helpers";
 
 describe("createLiveAppSchemeChecker", () => {
@@ -156,6 +161,112 @@ describe("mergeCspHeaders", () => {
   });
 });
 
+describe("mergePermissionsPolicyHeaders", () => {
+  const INJECTED = "display-capture=()";
+
+  it("sets our policy when no Permissions-Policy header exists", () => {
+    const merged = mergePermissionsPolicyHeaders({ "Content-Type": ["text/html"] }, INJECTED);
+
+    expect(merged["Permissions-Policy"]).toEqual([INJECTED]);
+    expect(merged["Content-Type"]).toEqual(["text/html"]);
+  });
+
+  it("handles an undefined responseHeaders argument", () => {
+    expect(mergePermissionsPolicyHeaders(undefined, INJECTED)["Permissions-Policy"]).toEqual([
+      INJECTED,
+    ]);
+  });
+
+  it("keeps a Live App's own cross-origin delegation instead of replacing it", () => {
+    // A fiat ramp delegating camera into its cross-origin KYC iframe: dropping
+    // this header would fall back to the `self` default and break getUserMedia.
+    const original = 'camera=(self "https://kyc.example")';
+    const merged = mergePermissionsPolicyHeaders({ "Permissions-Policy": [original] }, INJECTED);
+
+    expect(merged["Permissions-Policy"]).toEqual([original, INJECTED]);
+  });
+
+  it("orders our policy last so it wins a conflict on the same feature", () => {
+    const original = "display-capture=*";
+    const merged = mergePermissionsPolicyHeaders({ "Permissions-Policy": [original] }, INJECTED);
+
+    // Every instance is comma-joined in order, and a repeated dictionary key
+    // overwrites the previous one, so the last declaration is the one that wins.
+    expect(merged["Permissions-Policy"]?.at(-1)).toBe(INJECTED);
+  });
+
+  it("normalises a lowercase permissions-policy header to the canonical key", () => {
+    // How the header always arrives over HTTP/2; a plain assignment would emit two.
+    const original = "geolocation=()";
+    const merged = mergePermissionsPolicyHeaders({ "permissions-policy": [original] }, INJECTED);
+
+    expect(merged["Permissions-Policy"]).toEqual([original, INJECTED]);
+    expect(merged["permissions-policy"]).toBeUndefined();
+  });
+
+  it("normalises mixed-case PeRmIsSiOnS-PoLiCy to the canonical key", () => {
+    const original = "geolocation=()";
+    const merged = mergePermissionsPolicyHeaders({ "PeRmIsSiOnS-PoLiCy": [original] }, INJECTED);
+
+    expect(merged["Permissions-Policy"]).toEqual([original, INJECTED]);
+    expect(merged["PeRmIsSiOnS-PoLiCy"]).toBeUndefined();
+  });
+
+  it("does not mutate the input headers", () => {
+    const input = { "Permissions-Policy": ["geolocation=()"] };
+    const snapshot = JSON.parse(JSON.stringify(input));
+
+    mergePermissionsPolicyHeaders(input, INJECTED);
+
+    expect(input).toEqual(snapshot);
+  });
+
+  it("drops an unparsable policy instead of letting it take ours down", () => {
+    // Chromium comma-joins every instance and discards the whole dictionary on a
+    // parse error, so merging a malformed value would neutralise our own member.
+    const merged = mergePermissionsPolicyHeaders({ "Permissions-Policy": ["camera=(("] }, INJECTED);
+
+    expect(merged["Permissions-Policy"]).toEqual([INJECTED]);
+  });
+
+  it("drops every value when only one of them is unparsable", () => {
+    const merged = mergePermissionsPolicyHeaders(
+      { "Permissions-Policy": ["geolocation=()", "camera=(("] },
+      INJECTED,
+    );
+
+    expect(merged["Permissions-Policy"]).toEqual([INJECTED]);
+  });
+});
+
+describe("isParsablePermissionsPolicy", () => {
+  it.each([
+    ["display-capture=()"],
+    ["geolocation=*"],
+    ["fullscreen=self"],
+    ['camera=(self "https://kyc.example")'],
+    // An unquoted origin is still a valid structured-fields token (RFC 8941
+    // 3.3.4 allows ":" and "/"), so Chromium parses the dictionary and merely
+    // skips the item. Rejecting it here would cost the app its delegation.
+    ["camera=(self https://kyc.example)"],
+    ['camera=(self "https://a.example" "https://b.example"), geolocation=()'],
+    ["autoplay=(), camera=*"],
+    ["ch-ua-platform=*"],
+    // An empty dictionary is a valid structured field.
+    [""],
+    ["   "],
+  ])("accepts %s", value => {
+    expect(isParsablePermissionsPolicy(value)).toBe(true);
+  });
+
+  it.each([["camera=(("], ["camera=)"], ['camera=self"'], ["=()"], ["camera=(self"]])(
+    "rejects %s",
+    value => {
+      expect(isParsablePermissionsPolicy(value)).toBe(false);
+    },
+  );
+});
+
 describe("WEBVIEW_GUEST_CSP", () => {
   it("contains frame-src, child-src, worker-src and form-action directives", () => {
     expect(WEBVIEW_GUEST_CSP).toContain("frame-src");
@@ -185,5 +296,103 @@ describe("WEBVIEW_GUEST_CSP", () => {
     expect(directives["frame-src"]).not.toContain("data:");
     expect(directives["child-src"]).not.toContain("data:");
     expect(directives["form-action"]).not.toContain("data:");
+  });
+});
+
+describe("isDeviceCaptureRequest", () => {
+  it("treats an empty mediaTypes list as a non-device capture", () => {
+    // What a chromeMediaSource:"desktop" getUserMedia arrives as (DONJON-1404).
+    expect(isDeviceCaptureRequest([])).toBe(false);
+  });
+
+  it("treats a missing mediaTypes list as a non-device capture", () => {
+    expect(isDeviceCaptureRequest(undefined)).toBe(false);
+  });
+
+  it.each([[["video"]], [["audio"]], [["video", "audio"]]] as Array<[Array<"video" | "audio">]>)(
+    "recognises %j as a device capture",
+    mediaTypes => {
+      expect(isDeviceCaptureRequest(mediaTypes)).toBe(true);
+    },
+  );
+});
+
+describe("resolvePermissionRequest", () => {
+  describe("Live App guests", () => {
+    it("denies whole-desktop capture requested through the media permission", () => {
+      expect(resolvePermissionRequest({ isGuest: true, permission: "media", mediaTypes: [] })).toBe(
+        false,
+      );
+    });
+
+    it("allows the camera, which live apps use for QR scanning and KYC", () => {
+      expect(
+        resolvePermissionRequest({ isGuest: true, permission: "media", mediaTypes: ["video"] }),
+      ).toBe(true);
+    });
+
+    it("denies display-capture outright", () => {
+      expect(resolvePermissionRequest({ isGuest: true, permission: "display-capture" })).toBe(
+        false,
+      );
+    });
+
+    it.each([["geolocation"], ["notifications"], ["midi"], ["openExternal"], ["unknown"]])(
+      "denies %s",
+      permission => {
+        expect(resolvePermissionRequest({ isGuest: true, permission })).toBe(false);
+      },
+    );
+
+    it.each([
+      ["fullscreen"],
+      ["clipboard-sanitized-write"],
+      // Granted before the allowlist existed and still needed: a cross-site KYC
+      // iframe calling requestStorageAccess, and "paste a WalletConnect URI".
+      ["storage-access"],
+      ["top-level-storage-access"],
+      ["clipboard-read"],
+    ])("allows %s", permission => {
+      expect(resolvePermissionRequest({ isGuest: true, permission })).toBe(true);
+    });
+  });
+
+  describe("host renderer", () => {
+    it("allows the camera for the Send flow QR scanner", () => {
+      expect(
+        resolvePermissionRequest({ isGuest: false, permission: "media", mediaTypes: ["video"] }),
+      ).toBe(true);
+    });
+
+    it("denies desktop capture even to the host, which never needs it", () => {
+      expect(
+        resolvePermissionRequest({ isGuest: false, permission: "media", mediaTypes: [] }),
+      ).toBe(false);
+    });
+
+    it("denies geolocation", () => {
+      expect(resolvePermissionRequest({ isGuest: false, permission: "geolocation" })).toBe(false);
+    });
+  });
+});
+
+describe("resolvePermissionCheck", () => {
+  // Chromium only falls through to the request handler when the check denies, so
+  // a `media` check that returned true would skip the capture discriminator.
+  it.each([[true], [false]])("denies media for isGuest=%s so the request handler runs", isGuest => {
+    expect(resolvePermissionCheck({ isGuest, permission: "media" })).toBe(false);
+  });
+
+  it("keeps hid available to the host renderer", () => {
+    expect(resolvePermissionCheck({ isGuest: false, permission: "hid" })).toBe(true);
+  });
+
+  it("denies hid to a guest", () => {
+    expect(resolvePermissionCheck({ isGuest: true, permission: "hid" })).toBe(false);
+  });
+
+  it("denies everything else for the host, as before DONJON-1404", () => {
+    expect(resolvePermissionCheck({ isGuest: false, permission: "geolocation" })).toBe(false);
+    expect(resolvePermissionCheck({ isGuest: false, permission: "fullscreen" })).toBe(false);
   });
 });

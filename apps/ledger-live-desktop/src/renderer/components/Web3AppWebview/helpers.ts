@@ -16,6 +16,7 @@ import {
   useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
+import { getLiveAppPartition } from "~/config/liveAppSession";
 import { track } from "~/renderer/analytics/segment";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
@@ -43,7 +44,7 @@ type UseWebviewStateParams = {
 };
 
 type WebviewPartition = {
-  partition?: string;
+  partition: string;
 };
 
 /**
@@ -318,18 +319,12 @@ export function useWebviewState(
     src: webviewSrc,
   };
 
-  const webviewPartition = useMemo(() => {
-    const _webviewPartition: WebviewPartition = {};
-    if (manifest.cacheBustingId !== undefined) {
-      // webview data will persist across LL app reloads
-      // when changing cacheBustingId, the partition will change and the webview's cache will be reset
-      // NOTE: setting partition to "temp-no-cache" (anything that's not starting with "persist")
-      // means that the webview will not persist data across LL app reloads
-      const idSlug = manifest.id.replace(/[^a-zA-Z0-9]/g, "");
-      _webviewPartition.partition = `persist:${idSlug}-${manifest.cacheBustingId}`;
-    }
-    return _webviewPartition;
-  }, [manifest]);
+  // Always set: an omitted `partition` puts the guest in the host's own default
+  // session (DONJON-1404). Data persists across reloads via the `persist:` prefix.
+  const webviewPartition = useMemo(
+    (): WebviewPartition => ({ partition: getLiveAppPartition(manifest) }),
+    [manifest],
+  );
 
   return {
     webviewState: state,

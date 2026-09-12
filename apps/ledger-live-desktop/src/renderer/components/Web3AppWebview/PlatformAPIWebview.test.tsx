@@ -3,6 +3,7 @@ import { render } from "@testing-library/react";
 import { PlatformAPIWebview } from "./PlatformAPIWebview";
 import { useWebviewState } from "./helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { LIVE_APP_PARTITION } from "~/config/liveAppSession";
 
 jest.mock("./helpers", () => ({
   useWebviewState: jest.fn(),
@@ -167,7 +168,7 @@ const defaultHookResult = {
   webviewRef: { current: null },
   setWebviewRef: jest.fn(),
   webviewProps: { src: "https://example.com" },
-  webviewPartition: {},
+  webviewPartition: { partition: LIVE_APP_PARTITION },
   handleRefresh: jest.fn(),
 };
 
