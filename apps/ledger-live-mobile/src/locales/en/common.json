@@ -10302,6 +10302,12 @@
       "confirmError": {
         "description": "Something went wrong. Please try again.",
         "retry": "Try again"
+      },
+      "numbers": {
+        "reveal": "View",
+        "hide": "Hide",
+        "failed": "Couldn't load card numbers",
+        "imageAlt": "Card numbers"
       }
     },
     "cardTransactions": {

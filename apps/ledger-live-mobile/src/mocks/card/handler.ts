@@ -16,6 +16,9 @@ const SLOW_MS = 5_000;
 
 const MOCK_TOKEN_PREFIX = "at_mock_";
 
+const MOCK_DETAILS_IMAGE_URL =
+  "https://dummyimage.com/640x195/1f1f1f/ffffff.png&text=****+****+****+1234";
+
 function usesMockToken(request: Request): boolean {
   return request.headers.get("authorization")?.includes(MOCK_TOKEN_PREFIX) ?? false;
 }
@@ -161,6 +164,13 @@ const handlers = [
     return walletFunded === undefined && !usesMockToken(request)
       ? passthrough()
       : HttpResponse.json(mockPayCardLinkedWallets());
+  }),
+
+  http.post("*/v1/card/details/token", () => {
+    return HttpResponse.json({
+      token: "00000000-0000-4000-8000-000000000000",
+      imageUrl: MOCK_DETAILS_IMAGE_URL,
+    });
   }),
 ];
 
