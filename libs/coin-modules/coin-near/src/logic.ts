@@ -76,10 +76,13 @@ export const getMaxAmount = (
   fees?: BigNumber,
 ): BigNumber => {
   let maxAmount;
+  // A migrated account can still carry a stale `nearResources` blob alongside the framework's
+  // `stakingPositions`, so the framework field wins whenever it is present.
   const selectedValidator =
+    getFrameworkValidatorPosition(account, transaction.recipient) ??
     account.nearResources?.stakingPositions.find(
       ({ validatorId }) => validatorId === transaction.recipient,
-    ) ?? getFrameworkValidatorPosition(account, transaction.recipient);
+    );
 
   let pendingUnstakingAmount = new BigNumber(0);
   let pendingWithdrawingAmount = new BigNumber(0);

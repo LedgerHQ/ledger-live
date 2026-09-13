@@ -17,7 +17,10 @@ test.use({
   },
 });
 
-test.describe("NEAR account UI (generic framework)", () => {
+// NEAR is not yet listed in genericCoinFrameworkFamilies.json, so this suite drives the NEAR
+// account UI over the mock bridge rather than the generic one. It guards the screens this PR
+// touches against render regressions; the generic-bridge path is covered once the flag flip lands.
+test.describe("NEAR account UI", () => {
   test("account page renders without crash and shows balance footer @smoke", async ({ page }) => {
     const layout = new Layout(page);
     const accountsPage = new AccountsPage(page);
