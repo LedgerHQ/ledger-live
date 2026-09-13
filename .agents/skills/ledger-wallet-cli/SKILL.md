@@ -184,6 +184,13 @@ pnpm --silent wallet-cli start send ethereum-1 --to <WETH_CONTRACT_ADDRESS> --am
 
 Always run with `--dry-run` first to validate calldata before signing. The CLI cannot verify the semantic correctness of hand-supplied `--data` — the device screen is the last line of defense, so review the decoded call on-device before approving.
 
+A zero-value call is allowed whenever `--data` is present (`--amount '0 ETH'`). The account can
+be positional or `--account`.
+
+`send` signs **and** broadcasts through Ledger's backend. There is no sign-only output and no
+custom RPC: Ethereum transactions go to mainnet. For a fork or a local node, use the DMK
+directly (see the `dmk` skills).
+
 ### swap quote
 
 Fetches quotes in parallel from the built-in provider list (no device required; addresses are resolved from session accounts).
