@@ -10,6 +10,7 @@ import {
   pickMinaAccountToUndelegate,
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { buildTags } from "tests/utils/tagsUtils";
+import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
 
 const suiAccount = new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG");
 
@@ -53,6 +54,7 @@ test.describe("Undelegate", () => {
 
 test.describe("Undelegate - MINA", () => {
   test.slow();
+  skipSharedAccountOnSecondaryLeg("Mina undelegate");
 
   // Broadcasting is left to the nightly policy: this flow frees the delegated account of the pair,
   // which the delegate flow stakes back.

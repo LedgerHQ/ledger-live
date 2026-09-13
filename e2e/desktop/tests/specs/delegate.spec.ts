@@ -18,6 +18,7 @@ import {
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { FF_MINA_STAKING_ENABLED, FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
 import { buildTags, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
+import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   test.use({
@@ -561,6 +562,7 @@ test.describe("Delegate", () => {
 
 test.describe("Delegate - MINA", () => {
   test.slow();
+  skipSharedAccountOnSecondaryLeg("Mina delegate");
 
   // Broadcasting is left to the nightly policy: this flow delegates the free account of the pair,
   // which the undelegate flow replaces.
@@ -613,6 +615,7 @@ test.describe("Delegate - MINA", () => {
 
 test.describe("Redelegate - MINA", () => {
   test.slow();
+  skipSharedAccountOnSecondaryLeg("Mina redelegate");
 
   // Broadcasting is left to the nightly policy: moving a delegation leaves the account delegated,
   // so this flow reproduces its own precondition on an account no other flow touches.
