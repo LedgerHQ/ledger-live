@@ -276,8 +276,9 @@ pnpm --silent wallet-cli start ring destroy
 plaintext bytes to stdout and nothing else; spinners and the password prompt go to stderr, so stdout
 can be piped or captured as-is. With no `--input` and a TTY on stdin the command refuses
 (`No input: provide --input FILE or pipe data to stdin.`). `--output json` is refused unless `--out
-<file>` is given — binary data cannot be written as JSON to stdout. A file written with `--out` is an
-atomic 0600 write. `ring init --unsecure-no-password` exists and stores the private key unencrypted
+<file>` is given — binary data cannot be written as JSON to stdout. A file written with `--out` is
+created at 0600 and renamed into place: atomic on POSIX, best-effort (delete then rename) on Windows.
+`ring init --unsecure-no-password` exists and stores the private key unencrypted
 in the OS keychain; the rule below applies — never use it for a ring that will hold a real secret.
 
 > **Always provision with a password.** The ring must be protected by a password. The user provides it via `WALLET_PASS` in the environment before running `ring init` (see [Non-TTY password injection](#ring--ledger-key-ring-lkrp)) — the agent never provisions a ring without one.
