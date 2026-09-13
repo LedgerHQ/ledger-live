@@ -1,4 +1,6 @@
 import nearSigner, { createSigner } from "./signer";
+import { getSigner } from "../../bridge/generic-coin-framework/signer";
+import { coinModuleLoaders } from "../../coin-modules/loaders";
 
 const mockGetAddress = jest.fn();
 const mockSignTransaction = jest.fn();
@@ -107,5 +109,17 @@ describe("near/signer default export getAddress", () => {
     await nearSigner.getAddress("device-1", { path: "44'/397'/0'/0'/0'" } as any);
 
     expect(mockGetAddress).toHaveBeenCalledWith("44'/397'/0'/0'/0'", false);
+  });
+});
+
+describe("near signer registration", () => {
+  it("registers a loadSigner on the near coin-module loader", () => {
+    const loader = coinModuleLoaders.find(l => l.family === "near");
+
+    expect(loader?.loadSigner).toBeDefined();
+  });
+
+  it("resolves through getSigner so the generic coin framework can reach it", async () => {
+    await expect(getSigner("near")).resolves.toBe(nearSigner);
   });
 });
