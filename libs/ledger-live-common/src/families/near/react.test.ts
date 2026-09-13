@@ -1,6 +1,31 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../../__tests__/test-helpers/dom-polyfill";
 import { BigNumber } from "bignumber.js";
-import { getNearBalanceBreakdown } from "./react";
-import type { NearAccount } from "@ledgerhq/coin-near/types";
+import { renderHook, waitFor } from "@testing-library/react";
+import {
+  getNearBalanceBreakdown,
+  useNearMappedStakingPositions,
+  useNearStakingPositionsQuerySelector,
+  useLedgerFirstShuffledValidatorsNear,
+} from "./react";
+import type { NearAccount, Transaction } from "@ledgerhq/coin-near/types";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/coin-near/constants";
+
+const mockGetValidators = jest.fn();
+
+jest.mock("../../bridge/generic-coin-framework/api", () => ({
+  getCoinModuleApi: () => Promise.resolve({ getValidators: mockGetValidators }),
+}));
+
+jest.mock("../../config", () => ({
+  getCurrencyConfiguration: () => ({}),
+}));
+
+jest.mock("../../account", () => ({
+  getAccountCurrency: () => ({ units: [{ code: "NEAR", name: "NEAR", magnitude: 24 }] }),
+}));
 
 // getNearBalanceBreakdown reads account fields without any React state,
 // so it can be called directly as a pure function in tests.
@@ -87,5 +112,178 @@ describe("getNearBalanceBreakdown", () => {
     const result = getNearBalanceBreakdown(account);
     expect(result.stakedBalance.toFixed()).toBe("0");
     expect(result.storageUsageBalance.toFixed()).toBe("0");
+  });
+});
+
+const validatorPage = (
+  items: Array<{ address: string; balance: bigint; commissionRate?: string }>,
+) => ({ items, next: undefined });
+
+// The validator fetch resolves on a later tick; settle it inside the test so the resulting
+// state update is not reported as an un-acted-on React update after the test has finished.
+const settleValidatorFetch = () => waitFor(() => expect(mockGetValidators).toHaveBeenCalled());
+
+describe("useNearMappedStakingPositions", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetValidators.mockResolvedValue(validatorPage([]));
+  });
+
+  it("groups framework positions by delegate and sums each state bucket", async () => {
+    const account = makeAccount("1000", "400", [
+      { state: "active", delegate: "a.near", amount: new BigNumber(100) },
+      { state: "active", delegate: "a.near", amount: new BigNumber(50) },
+      { state: "deactivating", delegate: "a.near", amount: new BigNumber(20) },
+      { state: "withdrawable", delegate: "a.near", amount: new BigNumber(10) },
+      { state: "active", delegate: "b.near", amount: new BigNumber(7) },
+    ]);
+
+    const { result } = renderHook(() => useNearMappedStakingPositions(account));
+
+    expect(result.current).toHaveLength(2);
+    const a = result.current.find(p => p.validatorId === "a.near")!;
+    expect(a.staked.toFixed()).toBe("150");
+    expect(a.pending.toFixed()).toBe("20");
+    expect(a.available.toFixed()).toBe("10");
+    expect(result.current.find(p => p.validatorId === "b.near")!.staked.toFixed()).toBe("7");
+
+    await settleValidatorFetch();
+  });
+
+  it("skips positions without a delegate", async () => {
+    const account = makeAccount("1000", "900", [
+      { state: "active", amount: new BigNumber(100) },
+      { state: "active", delegate: "a.near", amount: new BigNumber(5) },
+    ]);
+
+    const { result } = renderHook(() => useNearMappedStakingPositions(account));
+
+    expect(result.current).toHaveLength(1);
+    expect(result.current[0].validatorId).toBe("a.near");
+
+    await settleValidatorFetch();
+  });
+
+  it("returns an empty list when the account has no positions", async () => {
+    const { result } = renderHook(() => useNearMappedStakingPositions(makeAccount("10", "10")));
+
+    expect(result.current).toEqual([]);
+
+    await settleValidatorFetch();
+  });
+});
+
+describe("useNearStakingPositionsQuerySelector", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetValidators.mockResolvedValue(validatorPage([]));
+  });
+
+  const account = makeAccount("1000", "400", [
+    { state: "active", delegate: "staked.near", amount: new BigNumber(100) },
+    { state: "withdrawable", delegate: "withdrawable.near", amount: new BigNumber(40) },
+  ]);
+
+  it("offers only staked positions for unstake and selects the transaction recipient", async () => {
+    const { result } = renderHook(() =>
+      useNearStakingPositionsQuerySelector(account, {
+        mode: "unstake",
+        recipient: "staked.near",
+      } as Transaction),
+    );
+
+    expect(result.current.options.map(o => o.validatorId)).toEqual(["staked.near"]);
+    expect(result.current.value?.validatorId).toBe("staked.near");
+
+    await settleValidatorFetch();
+  });
+
+  it("offers only withdrawable positions for withdraw", async () => {
+    const { result } = renderHook(() =>
+      useNearStakingPositionsQuerySelector(account, {
+        mode: "withdraw",
+        recipient: "withdrawable.near",
+      } as Transaction),
+    );
+
+    expect(result.current.options.map(o => o.validatorId)).toEqual(["withdrawable.near"]);
+
+    await settleValidatorFetch();
+  });
+
+  it("leaves value undefined when the recipient matches no position", async () => {
+    const { result } = renderHook(() =>
+      useNearStakingPositionsQuerySelector(account, {
+        mode: "unstake",
+        recipient: "unknown.near",
+      } as Transaction),
+    );
+
+    expect(result.current.value).toBeUndefined();
+
+    await settleValidatorFetch();
+  });
+});
+
+describe("useLedgerFirstShuffledValidatorsNear", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("starts empty, then sorts by stake with the Ledger validator pulled to the front", async () => {
+    mockGetValidators.mockResolvedValue(
+      validatorPage([
+        { address: "small.near", balance: 10n, commissionRate: "0.05" },
+        { address: FIGMENT_NEAR_VALIDATOR_ADDRESS, balance: 1n, commissionRate: "0.02" },
+        { address: "big.near", balance: 999n, commissionRate: "0.1" },
+      ]),
+    );
+
+    const { result } = renderHook(() => useLedgerFirstShuffledValidatorsNear(""));
+
+    expect(result.current).toEqual([]);
+
+    await waitFor(() => expect(result.current).toHaveLength(3));
+    expect(result.current.map(v => v.validatorAddress)).toEqual([
+      FIGMENT_NEAR_VALIDATOR_ADDRESS,
+      "big.near",
+      "small.near",
+    ]);
+    expect(result.current[1].commission).toBe(0.1);
+    expect(result.current[1].tokens).toBe("999");
+  });
+
+  it("filters by the search term", async () => {
+    mockGetValidators.mockResolvedValue(
+      validatorPage([
+        { address: "alpha.near", balance: 5n, commissionRate: "0.05" },
+        { address: "beta.near", balance: 3n, commissionRate: "0.05" },
+      ]),
+    );
+
+    const { result } = renderHook(() => useLedgerFirstShuffledValidatorsNear("BET"));
+
+    await waitFor(() => expect(result.current).toHaveLength(1));
+    expect(result.current[0].validatorAddress).toBe("beta.near");
+  });
+
+  it("keeps an empty list when the validator request fails", async () => {
+    mockGetValidators.mockRejectedValue(new Error("network down"));
+
+    const { result } = renderHook(() => useLedgerFirstShuffledValidatorsNear(""));
+
+    await waitFor(() => expect(mockGetValidators).toHaveBeenCalled());
+    expect(result.current).toEqual([]);
+  });
+
+  it("maps a null commissionRate to null rather than NaN", async () => {
+    mockGetValidators.mockResolvedValue(
+      validatorPage([{ address: "nocommission.near", balance: 1n }]),
+    );
+
+    const { result } = renderHook(() => useLedgerFirstShuffledValidatorsNear(""));
+
+    await waitFor(() => expect(result.current).toHaveLength(1));
+    expect(result.current[0].commission).toBeNull();
   });
 });
