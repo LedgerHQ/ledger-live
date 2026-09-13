@@ -15,20 +15,26 @@ export type OperationHistoryBoundConfig = {
 };
 
 export type OperationHistoryBound = {
-  /** `undefined` means unbounded: the walk and the store never truncate. */
+  /**
+   * `undefined` means unbounded: the walk and the store never truncate. The resolver never
+   * produces it -- every path yields at least the shipped safety ceiling -- but the type keeps it
+   * because `paginateOperations` accepts an unbounded caller, and the A4 client is one.
+   */
   maxOperations: number | undefined;
   /**
    * The per-request page size for the paginated `listOperations` walk. Distinct from
-   * `maxOperations`: this bounds one request, `maxOperations` bounds the whole walk. Always
-   * resolved (defaulting to `DEFAULT_PAGE_SIZE`), but only meaningful -- i.e. only turned into a
-   * `limit` at the call site -- when `maxOperations` is set; when unbounded, no page size is
-   * ever sent, and this value is unused.
+   * `maxOperations` and independent of it: this bounds what one request costs, `maxOperations`
+   * bounds how much the walk keeps. Always resolved (defaulting to `DEFAULT_PAGE_SIZE`) and
+   * always turned into a `limit` at the call site, whatever `maxOperations` says -- page cost is
+   * crash safety, retention is a product decision, and gating the first on the second would make
+   * crash safety unreachable without one.
    */
   pageSize: number;
 };
 
 // A bound is meaningful only as a positive operation count; anything else (zero, negative,
-// a non-number) degrades to unbounded rather than to an accidental truncation.
+// a non-number) degrades to "absent" rather than to an accidental truncation -- the resolver then
+// substitutes the global value, or the shipped safety ceiling.
 const MaxOperationsSchema = z.number().int().positive().optional().catch(undefined);
 
 // Same shape of validation as above, but a page size never degrades to "no limit" -- an absent or
@@ -142,8 +148,9 @@ let warnedConfigMissing = false;
  * magnitude across chains, so the bound is looked up per currency rather than shared; the global
  * `maxOperations` still applies to any currency absent from `networks`, so a family-wide bound
  * stays expressible by setting the global. Every failure path -- LiveConfig unavailable, a
- * malformed payload, or a hostile per-currency value -- resolves to unbounded, never to an
- * accidental bound.
+ * malformed payload, or a hostile per-currency value -- resolves to the shipped safety ceiling,
+ * never to unbounded: a config that cannot be read must not reopen the out-of-memory crash the
+ * ceiling exists to prevent. Only a payload that parses can lower or raise it.
  */
 export function resolveOperationHistoryBound(currencyId: string): OperationHistoryBound {
   try {

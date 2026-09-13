@@ -663,8 +663,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     // Resolved once per sync, keyed on `currency.id` (not the coin-framework `network` family
     // key) so a remote payload written in the same per-currency key space as every other config
-    // in this framework actually matches. `undefined` (the shipped default) is unbounded,
-    // identical to today. The walk bound below protects sync-time memory and traffic; the store
+    // in this framework actually matches. A bound always resolves -- the shipped default is a
+    // measured safety ceiling, not `undefined` -- and a remote payload can only lower or raise
+    // it, never disable it. The walk bound below protects sync-time memory and traffic; the store
     // bound applied after `mergeOps` (parent and per-sub-account) protects persistence and
     // stability across syncs -- bounding only the walk would still let the stored history grow
     // sync after sync, since `minHeight` resumes from the newest stored operation and `mergeOps`
