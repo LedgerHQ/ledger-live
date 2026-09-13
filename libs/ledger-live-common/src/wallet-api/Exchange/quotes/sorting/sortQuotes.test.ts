@@ -44,11 +44,12 @@ describe("sortQuotes", () => {
     expect(sorted.map(q => q.key)).toEqual(["high", "middle", "low"]);
   });
 
-  it("subtracts estimated and approval network fee countervalues", () => {
+  it("subtracts total network fee countervalues", () => {
     const higherReceiveWithFees = makeQuote("higher-receive-with-fees", {
       receiveAmount: 1,
       estimatedNetworkFee: { amount: "100000000000000000", currencyId: "ethereum" },
       approvalNetworkFee: { amount: "100000000000000000", currencyId: "ethereum" },
+      totalNetworkFee: { amount: "200000000000000000", currencyId: "ethereum" },
     });
     const lowerReceiveNoFees = makeQuote("lower-receive-no-fees", {
       receiveAmount: 0.99,
