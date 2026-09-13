@@ -127,6 +127,26 @@ describe("getNearBalanceBreakdown", () => {
     expect(result.storageUsageBalance.toFixed()).toBe("250");
   });
 
+  it("trusts an empty framework array over stale legacy aggregates", () => {
+    const account = {
+      balance: new BigNumber("1000"),
+      spendableBalance: new BigNumber("1000"),
+      stakingPositions: [],
+      nearResources: {
+        stakedBalance: new BigNumber("200"),
+        pendingBalance: new BigNumber("100"),
+        availableBalance: new BigNumber("50"),
+        storageUsageBalance: new BigNumber("250"),
+      },
+    } as unknown as NearAccount;
+
+    const result = getNearBalanceBreakdown(account);
+
+    expect(result.stakedBalance.toFixed()).toBe("0");
+    expect(result.pendingBalance.toFixed()).toBe("0");
+    expect(result.availableBalance.toFixed()).toBe("0");
+  });
+
   it("prefers framework positions over the legacy aggregates when both are present", () => {
     const account = {
       balance: new BigNumber("1000"),

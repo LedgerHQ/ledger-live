@@ -125,7 +125,9 @@ export function getNearBalanceBreakdown(account: NearAccount): {
 
   // Legacy accounts already carry these as aggregates, including a storage figure the chain
   // reports directly — prefer them over re-deriving from a position list that isn't there.
-  if (!positions?.length && account.nearResources) {
+  // Gated on `undefined` rather than emptiness: under the generic route the field is always
+  // written, so an empty array means "nothing staked" and must not resurrect stale aggregates.
+  if (positions === undefined && account.nearResources) {
     const { stakedBalance, storageUsageBalance, availableBalance, pendingBalance } =
       account.nearResources;
     return { stakedBalance, storageUsageBalance, availableBalance, pendingBalance };

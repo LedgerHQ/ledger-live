@@ -324,6 +324,51 @@ describe("getNearStakingPositions", () => {
     expect(getNearStakingPositions(account)[0].staked).toEqual(new BigNumber(999));
   });
 
+  it("treats an empty framework array as authoritative, not as a missing field", () => {
+    // getAccountShape always writes stakingPositions under the generic route, so [] means
+    // "nothing staked" and must not resurrect a stale nearResources blob.
+    const account = {
+      stakingPositions: [],
+      nearResources: {
+        stakingPositions: [
+          {
+            validatorId,
+            staked: new BigNumber(500),
+            available: new BigNumber(500),
+            pending: new BigNumber(0),
+          },
+        ],
+      },
+    } as unknown as NearAccount;
+
+    expect(getNearStakingPositions(account)).toEqual([]);
+  });
+
+  it("reports zero max amount once a migrated account has unstaked everything", () => {
+    const account = {
+      spendableBalance: new BigNumber(1_000_000),
+      pendingOperations: [],
+      stakingPositions: [],
+      nearResources: {
+        stakingPositions: [
+          {
+            validatorId,
+            staked: new BigNumber(500),
+            available: new BigNumber(500),
+            pending: new BigNumber(0),
+          },
+        ],
+      },
+    } as unknown as NearAccount;
+
+    expect(
+      getMaxAmount(account, { mode: "unstake", recipient: validatorId } as Transaction),
+    ).toEqual(new BigNumber(0));
+    expect(
+      getMaxAmount(account, { mode: "withdraw", recipient: validatorId } as Transaction),
+    ).toEqual(new BigNumber(0));
+  });
+
   it("returns an empty list when the account carries neither shape", () => {
     expect(getNearStakingPositions({} as NearAccount)).toEqual([]);
   });
