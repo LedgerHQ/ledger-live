@@ -15,6 +15,7 @@ export const BroadcastFlow = {
   MINA_DELEGATE: 3,
   MINA_UNDELEGATE: 4,
   MINA_REDELEGATE: 5,
+  MINA_SEND: 6,
 } as const;
 export type BroadcastFlow = (typeof BroadcastFlow)[keyof typeof BroadcastFlow];
 

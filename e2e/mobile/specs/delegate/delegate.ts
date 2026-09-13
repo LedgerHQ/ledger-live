@@ -4,6 +4,7 @@ import type { Account as AccountType } from "@ledgerhq/live-e2e-shared/enum/Acco
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
 import {
   MINA_DELEGATION_PAIR,
+  MINA_PAIR_SETTLE_TIMEOUT_MS,
   MINA_REDELEGATION_ACCOUNT,
   pickMinaAccountToDelegate,
   pickMinaAccountToUndelegate,
@@ -141,6 +142,12 @@ export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[
   });
 }
 
+/**
+ * The delegate and undelegate pickers can wait for the pair to settle, which the default per-test
+ * budget cannot absorb on top of the flow itself.
+ */
+const MINA_PAIR_TEST_TIMEOUT_MS = MINA_PAIR_SETTLE_TIMEOUT_MS + 6 * 60 * 1000;
+
 const minaBeforeAll = (accounts: AccountType[]) => async () => {
   await app.init({
     speculosApp: Currency.MINA.speculosApp,
@@ -169,29 +176,33 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
     // Either account of the pair can be the free one, so both are seeded.
     beforeAll(minaBeforeAll(MINA_DELEGATION_PAIR));
 
-    it(`[${Currency.MINA.testLabel}] - Delegate`, async () => {
-      const account = await pickMinaAccountToDelegate();
-      const validator = await pickMinaValidator();
-      const delegation = new Delegate(account, "N/A", validator.name, validator.address);
-      const amountWithCode = delegation.amount + " " + Currency.MINA.ticker;
-      const currencyId = Currency.MINA.id;
+    it(
+      `[${Currency.MINA.testLabel}] - Delegate`,
+      async () => {
+        const account = await pickMinaAccountToDelegate();
+        const validator = await pickMinaValidator();
+        const delegation = new Delegate(account, "N/A", validator.name, validator.address);
+        const amountWithCode = delegation.amount + " " + Currency.MINA.ticker;
+        const currencyId = Currency.MINA.id;
 
-      await app.portfolio.goToAccounts(Currency.MINA.name);
-      await app.common.goToAccountByName(account.accountName);
-      await app.account.tapEarn();
+        await app.portfolio.goToAccounts(Currency.MINA.name);
+        await app.common.goToAccountByName(account.accountName);
+        await app.account.tapEarn();
 
-      // Mina delegates the whole balance, so the flow opens on the validator list and has no
-      // amount step.
-      await app.stake.selectValidatorFromList(delegation.provider);
-      await app.stake.expectProvider(currencyId, delegation.provider);
-      await app.stake.summaryContinue(currencyId);
+        // Mina delegates the whole balance, so the flow opens on the validator list and has no
+        // amount step.
+        await app.stake.selectValidatorFromList(delegation.provider);
+        await app.stake.expectProvider(currencyId, delegation.provider);
+        await app.stake.summaryContinue(currencyId);
 
-      await verifyAppValidationStakeInfo(delegation, amountWithCode);
-      await app.speculos.signDelegationTransaction(delegation);
-      await app.common.successViewDetails();
+        await verifyAppValidationStakeInfo(delegation, amountWithCode);
+        await app.speculos.signDelegationTransaction(delegation);
+        await app.common.successViewDetails();
 
-      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
-    });
+        await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+      },
+      MINA_PAIR_TEST_TIMEOUT_MS,
+    );
   });
 }
 
@@ -232,27 +243,31 @@ export function runMinaUndelegateTest(tmsLinks: string[], tags: string[]) {
     // Either account of the pair can be the delegated one, so both are seeded.
     beforeAll(minaBeforeAll(MINA_DELEGATION_PAIR));
 
-    it(`[${Currency.MINA.testLabel}] - Undelegate`, async () => {
-      // Undelegating delegates back to the account itself, and the device review renders that raw
-      // address: the speculos helper asserts against it, hence no target validator here.
-      const account = await pickMinaAccountToUndelegate();
-      const delegation = new Delegate(account, "N/A", "N/A");
+    it(
+      `[${Currency.MINA.testLabel}] - Undelegate`,
+      async () => {
+        // Undelegating delegates back to the account itself, and the device review renders that raw
+        // address: the speculos helper asserts against it, hence no target validator here.
+        const account = await pickMinaAccountToUndelegate();
+        const delegation = new Delegate(account, "N/A", "N/A");
 
-      await app.portfolio.goToAccounts(Currency.MINA.name);
-      await app.common.goToAccountByName(account.accountName);
+        await app.portfolio.goToAccounts(Currency.MINA.name);
+        await app.common.goToAccountByName(account.accountName);
 
-      // Undelegating returns the whole balance, so the action prepares the transaction itself and
-      // goes straight to the device.
-      await app.undelegate.tapStakingRow(Currency.MINA.id);
-      await app.undelegate.tapUnstakeAction(Currency.MINA.id);
+        // Undelegating returns the whole balance, so the action prepares the transaction itself and
+        // goes straight to the device.
+        await app.undelegate.tapStakingRow(Currency.MINA.id);
+        await app.undelegate.tapUnstakeAction(Currency.MINA.id);
 
-      await app.speculos.signDelegationTransaction(delegation);
-      await app.common.successViewDetails();
+        await app.speculos.signDelegationTransaction(delegation);
+        await app.common.successViewDetails();
 
-      await app.operationDetails.waitForOperationDetails();
-      await app.operationDetails.checkAccount(account.accountName);
-      await app.operationDetails.checkTransactionType("UNDELEGATE");
-    });
+        await app.operationDetails.waitForOperationDetails();
+        await app.operationDetails.checkAccount(account.accountName);
+        await app.operationDetails.checkTransactionType("UNDELEGATE");
+      },
+      MINA_PAIR_TEST_TIMEOUT_MS,
+    );
   });
 }
 
