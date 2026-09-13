@@ -9,10 +9,10 @@ import {
   NearAccount,
   NearStakingPosition,
 } from "@ledgerhq/coin-near/types";
-import { createApi as createNearApi } from "@ledgerhq/coin-near/api/index";
 import type { NearConfig } from "@ledgerhq/coin-near/config";
 import { getAccountCurrency } from "../../account";
 import { getCurrencyConfiguration } from "../../config";
+import { getCoinModuleApi } from "../../bridge/generic-coin-framework/api";
 
 // The generic-framework bridge never runs families/near/setup.ts (which seeds the legacy
 // getCoinConfig() singleton via setCoinConfig), so resolve config directly from LiveConfig
@@ -32,9 +32,8 @@ function useNearValidators(): NearValidatorItem[] {
   const [validators, setValidators] = useState<NearValidatorItem[]>([]);
   useEffect(() => {
     let mounted = true;
-    const api = createNearApi();
-    api
-      .getValidators(nearContext)
+    getCoinModuleApi("near", "local")
+      .then(api => api.getValidators(nearContext))
       .then(page => {
         if (!mounted) return;
         setValidators(
