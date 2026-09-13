@@ -123,6 +123,34 @@ describe("near/banner", () => {
       ledgerValidator,
     });
   });
+  it("uses validators passed in by the caller when the preload cache is empty", async () => {
+    jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue({
+      ...validatorsMap,
+      validators: [],
+    });
+    jest.spyOn(logic, "canUnstake").mockReturnValue(true);
+
+    const result = getAccountBannerState(account, validators);
+
+    expect(result.ledgerValidator).toEqual(ledgerValidator);
+  });
+
+  it("reports no ledger validator when neither the caller nor the preload cache has one", async () => {
+    jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue({
+      ...validatorsMap,
+      validators: [],
+    });
+
+    const result = getAccountBannerState(account);
+
+    expect(result).toStrictEqual({
+      display: false,
+      redelegate: false,
+      validatorId: "",
+      ledgerValidator: undefined,
+    });
+  });
+
   it("should return display redelegate mode when deactive is an action", async () => {
     jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue(validatorsMap);
     jest.spyOn(logic, "canUnstake").mockReturnValue(true);
