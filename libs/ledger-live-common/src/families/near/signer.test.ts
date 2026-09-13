@@ -1,4 +1,4 @@
-import { createSigner } from "./signer";
+import nearSigner, { createSigner } from "./signer";
 
 const mockGetAddress = jest.fn();
 const mockSignTransaction = jest.fn();
@@ -9,6 +9,12 @@ jest.mock("@ledgerhq/hw-app-near", () => ({
     getAddress: mockGetAddress,
     signTransaction: mockSignTransaction,
   })),
+}));
+
+// Bypass the transport/device plumbing so the exported getAddress wrapper runs against a stub signer.
+jest.mock("../../bridge/setup", () => ({
+  executeWithSigner: () => (_deviceId: string, job: (signer: unknown) => unknown) =>
+    job({ getAddress: mockGetAddress, signTransaction: mockSignTransaction }),
 }));
 
 const mockTransport = {} as any;
@@ -71,5 +77,35 @@ describe("near/signer createSigner", () => {
         signer.signTransaction("44'/397'/0'/0'/0'", Buffer.from("tx").toString("base64")),
       ).rejects.toThrow("Near: no signature returned from device");
     });
+  });
+});
+
+describe("near/signer default export getAddress", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("returns address, publicKey and the requested path", async () => {
+    mockGetAddress.mockResolvedValue({ address: "alice.near", publicKey: "ed25519:pk" });
+
+    const result = await nearSigner.getAddress("device-1", {
+      path: "44'/397'/0'/0'/0'",
+      verify: true,
+    } as any);
+
+    expect(mockGetAddress).toHaveBeenCalledWith("44'/397'/0'/0'/0'", true);
+    expect(result).toEqual({
+      address: "alice.near",
+      publicKey: "ed25519:pk",
+      path: "44'/397'/0'/0'/0'",
+    });
+  });
+
+  it("defaults verify to false when the caller omits it", async () => {
+    mockGetAddress.mockResolvedValue({ address: "alice.near", publicKey: "ed25519:pk" });
+
+    await nearSigner.getAddress("device-1", { path: "44'/397'/0'/0'/0'" } as any);
+
+    expect(mockGetAddress).toHaveBeenCalledWith("44'/397'/0'/0'/0'", false);
   });
 });
