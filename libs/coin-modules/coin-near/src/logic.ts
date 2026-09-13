@@ -60,11 +60,15 @@ type FrameworkAccount = { stakingPositions?: FrameworkStakingPositionOnAccount[]
  *
  * Once the flag flip lands and no account carries `nearResources` any more, the fallback branch
  * becomes dead and can be dropped.
+ *
+ * The presence test is `!== undefined`, not `.length`: `getAccountShape` always writes the field
+ * under the generic route, so an empty array is a real answer ("nothing staked") and must not fall
+ * back to a stale `nearResources` blob left over from before the migration.
  */
 export const getNearStakingPositions = (account: NearAccount): NearStakingPosition[] => {
   const rawPositions = (account as unknown as FrameworkAccount).stakingPositions;
 
-  if (rawPositions?.length) {
+  if (rawPositions !== undefined) {
     const byDelegate = new Map<string, NearStakingPosition>();
     for (const pos of rawPositions) {
       if (!pos.delegate) continue;

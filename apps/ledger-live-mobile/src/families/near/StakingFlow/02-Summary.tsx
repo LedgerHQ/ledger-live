@@ -110,6 +110,9 @@ export default function StakingSummary({ navigation, route }: Props) {
   const color = getCurrencyColor(currency);
 
   const onChangeAmount = () => {
+    // The amount screen requires a validator and its header dereferences it, so stay put until
+    // the asynchronous validator fetch has produced one.
+    if (!chosenValidator) return;
     navigation.navigate(ScreenName.NearStakingAmount, {
       ...route.params,
       transaction,
