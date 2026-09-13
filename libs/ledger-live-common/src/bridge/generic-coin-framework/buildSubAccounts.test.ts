@@ -796,17 +796,42 @@ describe("mergeSubAccounts", () => {
       expect(subAccounts[0].operations.map(op => op.id)).toEqual(["gen4", "gen3", "gen2"]);
     });
 
-    it("does not bound a brand-new sub account's operations (already walk-bounded upstream)", () => {
+    it("bounds a brand-new sub account too: the walk overshoots its bound by up to a page", () => {
+      // "Already walk-bounded upstream" is not enough. `paginateOperations` returns the whole page
+      // that reached the bound rather than splitting a transaction across the boundary, so a walk
+      // bounded at N can hand back N plus up to one page -- and all of that overshoot can belong to
+      // a single token. Without this, a token first seen on this sync is stored over the bound and
+      // only comes back under it on some later sync that happens to merge it.
       const newSubAccounts = [
         tokenAccount("usdc", [
-          { id: "op-1", date: new Date("2024-01-01") },
           { id: "op-2", date: new Date("2024-01-02") },
+          { id: "op-1", date: new Date("2024-01-01") },
         ]),
       ];
 
       const merged = mergeSubAccounts([], newSubAccounts, 1);
 
-      expect(merged).toBe(newSubAccounts);
+      expect(merged[0].operations.map(op => op.id)).toEqual(["op-2"]);
+      expect(merged[0].operationsCount).toBe(1);
+    });
+
+    it("bounds a token first discovered on a later sync, on the path where other tokens are known", () => {
+      const oldSubAccounts = [
+        tokenAccount("usdc", [{ id: "usdc-1", date: new Date("2024-01-01") }]),
+      ];
+      const newSubAccounts = [
+        tokenAccount("usdc", [{ id: "usdc-1", date: new Date("2024-01-01") }]),
+        tokenAccount("dai", [
+          { id: "dai-2", date: new Date("2024-01-02") },
+          { id: "dai-1", date: new Date("2024-01-01") },
+        ]),
+      ];
+
+      const merged = mergeSubAccounts(oldSubAccounts, newSubAccounts, 1);
+
+      const dai = merged.find(a => a.token.id === "dai");
+      expect(dai?.operations.map(op => op.id)).toEqual(["dai-2"]);
+      expect(dai?.operationsCount).toBe(1);
     });
 
     it("is unbounded when maxOperations is undefined, identical to today's behaviour", () => {
