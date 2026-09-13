@@ -174,16 +174,29 @@ export async function buildSubAccounts({
  * account's history is bounded: `mergeOps` below only ever grows the merged list, so a token
  * still receiving transfers would otherwise accumulate operations forever across syncs -- on the
  * reference account the token operations are the bulk of the volume, dwarfing the parent's own.
- * `mergeOps` returns newest-first, so keeping the head keeps the newest. `undefined` is unbounded,
+ * Operations are newest-first, so keeping the head keeps the newest. `undefined` is unbounded,
  * identical to today's behaviour.
+ *
+ * The bound applies to sub-accounts this sync *creates* as well as to the ones it merges. A newly
+ * discovered token is not exempt: `paginateOperations` returns the whole page that reached the
+ * bound rather than cutting a transaction in half, so a walk bounded at N can hand back up to N
+ * plus one page, and all of that overshoot can belong to a single token.
  */
+function boundOperations(subAccount: TokenAccount, maxOperations?: number): TokenAccount {
+  if (maxOperations === undefined || subAccount.operations.length <= maxOperations) {
+    return subAccount;
+  }
+  const operations = subAccount.operations.slice(0, maxOperations);
+  return { ...subAccount, operations, operationsCount: operations.length };
+}
+
 export function mergeSubAccounts(
   oldSubAccounts: Array<TokenAccount>,
   newSubAccounts: Array<TokenAccount>,
   maxOperations?: number,
 ): Array<TokenAccount> {
   if (!oldSubAccounts.length) {
-    return newSubAccounts;
+    return newSubAccounts.map(subAccount => boundOperations(subAccount, maxOperations));
   }
 
   const oldSubAccountsByTokenId = Object.fromEntries(
@@ -192,7 +205,7 @@ export function mergeSubAccounts(
 
   return newSubAccounts.map(newSubAccount => {
     const existingSubAccount = oldSubAccountsByTokenId[String(newSubAccount.token.id)];
-    if (!existingSubAccount) return newSubAccount;
+    if (!existingSubAccount) return boundOperations(newSubAccount, maxOperations);
 
     const mergedOperations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
     const operations =
