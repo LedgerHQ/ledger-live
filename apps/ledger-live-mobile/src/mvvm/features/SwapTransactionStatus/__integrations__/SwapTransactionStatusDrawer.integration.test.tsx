@@ -26,6 +26,20 @@ function withSwapTransactionStatusDrawerOpen(state: State): State {
   };
 }
 
+function withPerpsSwapTransactionStatusDrawerOpen(state: State): State {
+  return {
+    ...state,
+    swapTransactionStatusDrawer: {
+      isOpen: true,
+      params: {
+        provider: "lifi",
+        swapId: "swap-1",
+        origin: "perps",
+      },
+    },
+  };
+}
+
 describe("SwapTransactionStatusDrawer", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -79,5 +93,39 @@ describe("SwapTransactionStatusDrawer", () => {
       });
     });
     expect(screen.queryByText("Swap BTC → ETH")).toBeNull();
+  });
+
+  it("should name the deposit it is funding when perps opens it", async () => {
+    render(<SwapTransactionStatusDrawerWrapper />, {
+      overrideInitialState: withPerpsSwapTransactionStatusDrawerOpen,
+    });
+
+    expect(await screen.findByText("Fund Perpetuals")).toBeOnTheScreen();
+    expect(screen.getByText("BTC → ETH")).toBeOnTheScreen();
+    expect(screen.queryByText("Swap BTC → ETH")).toBeNull();
+  });
+
+  it("should return to perps by closing the drawer over it", async () => {
+    const { store, user } = render(<SwapTransactionStatusDrawerWrapper />, {
+      overrideInitialState: withPerpsSwapTransactionStatusDrawerOpen,
+    });
+
+    await user.press(await screen.findByText("Return to Perps"));
+
+    await waitFor(() => {
+      expect(store.getState().swapTransactionStatusDrawer).toEqual({
+        isOpen: false,
+        params: null,
+      });
+    });
+  });
+
+  it("should offer no way back to perps when swap opens it", async () => {
+    render(<SwapTransactionStatusDrawerWrapper />, {
+      overrideInitialState: withSwapTransactionStatusDrawerOpen,
+    });
+
+    expect(await screen.findByText("Swap BTC → ETH")).toBeOnTheScreen();
+    expect(screen.queryByText("Return to Perps")).toBeNull();
   });
 });
