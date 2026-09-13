@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
-import { useNearBalanceBreakdown } from "./react";
+import { getNearBalanceBreakdown } from "./react";
 import type { NearAccount } from "@ledgerhq/coin-near/types";
 
-// useNearBalanceBreakdown reads account fields without any React state,
+// getNearBalanceBreakdown reads account fields without any React state,
 // so it can be called directly as a pure function in tests.
 
 type FrameworkAccount = {
@@ -21,10 +21,10 @@ function makeAccount(
   } as unknown as NearAccount;
 }
 
-describe("useNearBalanceBreakdown", () => {
+describe("getNearBalanceBreakdown", () => {
   it("returns all zeros when there are no staking positions", () => {
     const account = makeAccount("1000", "1000");
-    const result = useNearBalanceBreakdown(account);
+    const result = getNearBalanceBreakdown(account);
     expect(result.stakedBalance.toFixed()).toBe("0");
     expect(result.pendingBalance.toFixed()).toBe("0");
     expect(result.availableBalance.toFixed()).toBe("0");
@@ -36,7 +36,7 @@ describe("useNearBalanceBreakdown", () => {
       { state: "active", delegate: "validator.near", amount: new BigNumber("300") },
       { state: "active", delegate: "other.near", amount: new BigNumber("100") },
     ]);
-    const result = useNearBalanceBreakdown(account);
+    const result = getNearBalanceBreakdown(account);
     expect(result.stakedBalance.toFixed()).toBe("400");
   });
 
@@ -45,7 +45,7 @@ describe("useNearBalanceBreakdown", () => {
       { state: "deactivating", delegate: "validator.near", amount: new BigNumber("200") },
       { state: "deactivating", delegate: "other.near", amount: new BigNumber("50") },
     ]);
-    const result = useNearBalanceBreakdown(account);
+    const result = getNearBalanceBreakdown(account);
     expect(result.pendingBalance.toFixed()).toBe("250");
   });
 
@@ -53,7 +53,7 @@ describe("useNearBalanceBreakdown", () => {
     const account = makeAccount("1000", "800", [
       { state: "withdrawable", delegate: "validator.near", amount: new BigNumber("150") },
     ]);
-    const result = useNearBalanceBreakdown(account);
+    const result = getNearBalanceBreakdown(account);
     expect(result.availableBalance.toFixed()).toBe("150");
   });
 
@@ -66,7 +66,7 @@ describe("useNearBalanceBreakdown", () => {
       { state: "deactivating", delegate: "v.near", amount: new BigNumber("100") },
       { state: "withdrawable", delegate: "v.near", amount: new BigNumber("50") },
     ]);
-    const result = useNearBalanceBreakdown(account);
+    const result = getNearBalanceBreakdown(account);
     expect(result.stakedBalance.toFixed()).toBe("200");
     expect(result.pendingBalance.toFixed()).toBe("100");
     expect(result.availableBalance.toFixed()).toBe("50");
@@ -78,13 +78,13 @@ describe("useNearBalanceBreakdown", () => {
     const account = makeAccount("100", "50", [
       { state: "active", delegate: "v.near", amount: new BigNumber("200") },
     ]);
-    const result = useNearBalanceBreakdown(account);
+    const result = getNearBalanceBreakdown(account);
     expect(result.storageUsageBalance.toFixed()).toBe("0");
   });
 
   it("falls back gracefully when account has no stakingPositions field", () => {
     const account = makeAccount("500", "500");
-    const result = useNearBalanceBreakdown(account);
+    const result = getNearBalanceBreakdown(account);
     expect(result.stakedBalance.toFixed()).toBe("0");
     expect(result.storageUsageBalance.toFixed()).toBe("0");
   });

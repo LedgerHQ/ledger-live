@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
-import { useNearBalanceBreakdown } from "@ledgerhq/live-common/families/near/react";
+import { getNearBalanceBreakdown } from "@ledgerhq/live-common/families/near/react";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "~/context/Locale";
@@ -23,7 +23,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const info = useMemo(() => getInfo(t), [t]);
   const { spendableBalance } = account;
   const { storageUsageBalance, stakedBalance, pendingBalance, availableBalance } =
-    useNearBalanceBreakdown(account);
+    getNearBalanceBreakdown(account);
   const unit = useAccountUnit(account);
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);

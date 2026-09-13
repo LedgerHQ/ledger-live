@@ -247,6 +247,29 @@ describe("getMaxAmount", () => {
       } as Transaction);
       expect(result).toEqual(new BigNumber(0));
     });
+
+    it("prefers stakingPositions over a stale nearResources blob on a migrated account", () => {
+      const migratedAccount = {
+        spendableBalance: new BigNumber(spendableBalance),
+        pendingOperations: [],
+        nearResources: {
+          stakingPositions: [
+            { validatorId, staked: new BigNumber(1), available: new BigNumber(1) },
+          ],
+        },
+        stakingPositions: [
+          { state: "active", delegate: validatorId, amount: new BigNumber(4_567) },
+          { state: "withdrawable", delegate: validatorId, amount: new BigNumber(8_901) },
+        ],
+      } as unknown as NearAccount;
+
+      expect(
+        getMaxAmount(migratedAccount, { mode: "unstake", recipient: validatorId } as Transaction),
+      ).toEqual(new BigNumber(4_567));
+      expect(
+        getMaxAmount(migratedAccount, { mode: "withdraw", recipient: validatorId } as Transaction),
+      ).toEqual(new BigNumber(8_901));
+    });
   });
 });
 

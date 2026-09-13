@@ -129,7 +129,7 @@ export function useLedgerFirstShuffledValidatorsNear(search: string) {
   }, [validators, search]);
 }
 
-export function useNearBalanceBreakdown(account: NearAccount): {
+export function getNearBalanceBreakdown(account: NearAccount): {
   stakedBalance: BigNumber;
   storageUsageBalance: BigNumber;
   availableBalance: BigNumber;
