@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/coin-near/constants";
-import { mapStakingPositions } from "@ledgerhq/coin-near/logic";
+import { mapStakingPositions, getNearStakingPositions } from "@ledgerhq/coin-near/logic";
 import {
   NearValidatorItem,
   Transaction,
@@ -55,24 +55,10 @@ function useNearValidators(): NearValidatorItem[] {
 export function useNearMappedStakingPositions(account: NearAccount): NearMappedStakingPosition[] {
   const validators = useNearValidators();
 
-  const stakingPositions: NearStakingPosition[] = useMemo(() => {
-    const rawPositions = (account as unknown as FrameworkAccount).stakingPositions ?? [];
-    const byDelegate = new Map<string, NearStakingPosition>();
-    for (const pos of rawPositions) {
-      if (!pos.delegate) continue;
-      const cur = byDelegate.get(pos.delegate) ?? {
-        validatorId: pos.delegate,
-        staked: new BigNumber(0),
-        available: new BigNumber(0),
-        pending: new BigNumber(0),
-      };
-      if (pos.state === "active") cur.staked = cur.staked.plus(pos.amount);
-      else if (pos.state === "deactivating") cur.pending = cur.pending.plus(pos.amount);
-      else if (pos.state === "withdrawable") cur.available = cur.available.plus(pos.amount);
-      byDelegate.set(pos.delegate, cur);
-    }
-    return [...byDelegate.values()];
-  }, [account]);
+  const stakingPositions: NearStakingPosition[] = useMemo(
+    () => getNearStakingPositions(account),
+    [account],
+  );
 
   const unit = getAccountCurrency(account).units[0];
   return useMemo(
@@ -135,14 +121,23 @@ export function getNearBalanceBreakdown(account: NearAccount): {
   availableBalance: BigNumber;
   pendingBalance: BigNumber;
 } {
-  const positions = (account as unknown as FrameworkAccount).stakingPositions ?? [];
-  const stakedBalance = positions
+  const positions = (account as unknown as FrameworkAccount).stakingPositions;
+
+  // Legacy accounts already carry these as aggregates, including a storage figure the chain
+  // reports directly — prefer them over re-deriving from a position list that isn't there.
+  if (!positions?.length && account.nearResources) {
+    const { stakedBalance, storageUsageBalance, availableBalance, pendingBalance } =
+      account.nearResources;
+    return { stakedBalance, storageUsageBalance, availableBalance, pendingBalance };
+  }
+
+  const stakedBalance = (positions ?? [])
     .filter(p => p.state === "active")
     .reduce((acc, p) => acc.plus(p.amount), new BigNumber(0));
-  const pendingBalance = positions
+  const pendingBalance = (positions ?? [])
     .filter(p => p.state === "deactivating")
     .reduce((acc, p) => acc.plus(p.amount), new BigNumber(0));
-  const availableBalance = positions
+  const availableBalance = (positions ?? [])
     .filter(p => p.state === "withdrawable")
     .reduce((acc, p) => acc.plus(p.amount), new BigNumber(0));
   const locked = account.balance.minus(account.spendableBalance);

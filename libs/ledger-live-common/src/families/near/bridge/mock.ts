@@ -22,6 +22,7 @@ import {
 import { validateAddress } from "../../../bridge/validateAddress";
 import { isValidAddress } from "@ledgerhq/coin-near/logic";
 import { NEAR_DUMMY_ADDRESS } from "@ledgerhq/coin-near/constants";
+import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-near/serialization";
 import type { Transaction, TransactionStatus } from "../types";
 
 // Typical NEAR transfer fee: ~0.001 NEAR (10^21 yoctoNEAR)
@@ -106,6 +107,10 @@ const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   getSerializedAddressParameters,
   validateAddress,
+  // Without these the E2E fixture's nearResources is dropped on load and the account renders
+  // as if it had never staked.
+  assignToAccountRaw,
+  assignFromAccountRaw,
   getEstimationRecipient: () => NEAR_DUMMY_ADDRESS,
 };
 

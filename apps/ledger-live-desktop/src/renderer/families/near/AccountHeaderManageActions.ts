@@ -1,5 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { canStake } from "@ledgerhq/live-common/families/near/logic";
+import { canStake, getNearStakingPositions } from "@ledgerhq/live-common/families/near/logic";
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -16,9 +16,7 @@ const AccountHeaderActions: NearFamily["accountHeaderManageActions"] = ({
   const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
   const stakingEnabled = canStake(mainAccount);
-  const hasStakingPositions =
-    ((mainAccount as unknown as { stakingPositions?: unknown[] }).stakingPositions?.length ?? 0) >
-    0;
+  const hasStakingPositions = getNearStakingPositions(mainAccount).length > 0;
 
   const onClick = useCallback(() => {
     if (!stakingEnabled) {

@@ -107,6 +107,42 @@ describe("getNearBalanceBreakdown", () => {
     expect(result.storageUsageBalance.toFixed()).toBe("0");
   });
 
+  it("reads the legacy nearResources aggregates while the routing flag is still off", () => {
+    const account = {
+      balance: new BigNumber("1000"),
+      spendableBalance: new BigNumber("400"),
+      nearResources: {
+        stakedBalance: new BigNumber("200"),
+        pendingBalance: new BigNumber("100"),
+        availableBalance: new BigNumber("50"),
+        storageUsageBalance: new BigNumber("250"),
+      },
+    } as unknown as NearAccount;
+
+    const result = getNearBalanceBreakdown(account);
+
+    expect(result.stakedBalance.toFixed()).toBe("200");
+    expect(result.pendingBalance.toFixed()).toBe("100");
+    expect(result.availableBalance.toFixed()).toBe("50");
+    expect(result.storageUsageBalance.toFixed()).toBe("250");
+  });
+
+  it("prefers framework positions over the legacy aggregates when both are present", () => {
+    const account = {
+      balance: new BigNumber("1000"),
+      spendableBalance: new BigNumber("400"),
+      nearResources: {
+        stakedBalance: new BigNumber("1"),
+        pendingBalance: new BigNumber("1"),
+        availableBalance: new BigNumber("1"),
+        storageUsageBalance: new BigNumber("1"),
+      },
+      stakingPositions: [{ state: "active", delegate: "v.near", amount: new BigNumber("200") }],
+    } as unknown as NearAccount;
+
+    expect(getNearBalanceBreakdown(account).stakedBalance.toFixed()).toBe("200");
+  });
+
   it("falls back gracefully when account has no stakingPositions field", () => {
     const account = makeAccount("500", "500");
     const result = getNearBalanceBreakdown(account);
