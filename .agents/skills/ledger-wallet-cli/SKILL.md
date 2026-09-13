@@ -272,6 +272,14 @@ pnpm --silent wallet-cli start ring keys
 pnpm --silent wallet-cli start ring destroy
 ```
 
+`--input`/`--out` default to stdin/stdout, so `ring decrypt --key K < secrets.ring` writes the raw
+plaintext bytes to stdout and nothing else; spinners and the password prompt go to stderr, so stdout
+can be piped or captured as-is. With no `--input` and a TTY on stdin the command refuses
+(`No input: provide --input FILE or pipe data to stdin.`). `--output json` is refused unless `--out
+<file>` is given — binary data cannot be written as JSON to stdout. A file written with `--out` is an
+atomic 0600 write. `ring init --unsecure-no-password` exists and stores the private key unencrypted
+in the OS keychain; the rule below applies — never use it for a ring that will hold a real secret.
+
 > **Always provision with a password.** The ring must be protected by a password. The user provides it via `WALLET_PASS` in the environment before running `ring init` (see [Non-TTY password injection](#ring--ledger-key-ring-lkrp)) — the agent never provisions a ring without one.
 
 > **Decrypted output is sensitive.** `ring decrypt` emits secrets — never print them to the terminal, `cat` a decrypted file, or otherwise surface the decrypted contents, since they land in the agent transcript, logs, and scrollback. Pipe `decrypt` straight to its destination (a file via `-o`, another process, or the clipboard as shown above) or capture it into an env var; avoid `--output`/logging sinks that could echo it back.
