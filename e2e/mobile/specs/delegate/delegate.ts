@@ -10,6 +10,7 @@ import {
   pickMinaRedelegation,
   pickMinaValidator,
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
+import { BroadcastFlow, shouldRunSharedAccountFlow } from "@e2e/helpers/broadcastRotation";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "@e2e/models/stake";
 import { FF_MINA_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
@@ -150,15 +151,21 @@ const minaBeforeAll = (accounts: AccountType[]) => async () => {
   await app.mainNavigation.waitForWallet40Ready();
 };
 
-function startMinaSpec(tmsLinks: string[], tags: string[]) {
+/**
+ * The three mina flows share their accounts with the other mobile platform, so when both broadcast
+ * in the same run each flow only runs on the platform that owns it, which keeps the two jobs from
+ * building transactions on the same account and colliding on its nonce.
+ */
+function startMinaSpec(flow: BroadcastFlow, tmsLinks: string[], tags: string[]) {
   setTeamOwner(delegateTeamOwner(Currency.MINA.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
+  return shouldRunSharedAccountFlow(flow) ? describe : describe.skip;
 }
 
 export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
-  startMinaSpec(tmsLinks, tags);
-  describe("Delegate", () => {
+  const describeFlow = startMinaSpec(BroadcastFlow.MINA_DELEGATE, tmsLinks, tags);
+  describeFlow("Delegate", () => {
     // Either account of the pair can be the free one, so both are seeded.
     beforeAll(minaBeforeAll(MINA_DELEGATION_PAIR));
 
@@ -189,8 +196,8 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
 }
 
 export function runMinaRedelegateTest(tmsLinks: string[], tags: string[]) {
-  startMinaSpec(tmsLinks, tags);
-  describe("Redelegate", () => {
+  const describeFlow = startMinaSpec(BroadcastFlow.MINA_REDELEGATE, tmsLinks, tags);
+  describeFlow("Redelegate", () => {
     beforeAll(minaBeforeAll([MINA_REDELEGATION_ACCOUNT]));
 
     it(`[${Currency.MINA.testLabel}] - Redelegate`, async () => {
@@ -220,8 +227,8 @@ export function runMinaRedelegateTest(tmsLinks: string[], tags: string[]) {
 }
 
 export function runMinaUndelegateTest(tmsLinks: string[], tags: string[]) {
-  startMinaSpec(tmsLinks, tags);
-  describe("Undelegate", () => {
+  const describeFlow = startMinaSpec(BroadcastFlow.MINA_UNDELEGATE, tmsLinks, tags);
+  describeFlow("Undelegate", () => {
     // Either account of the pair can be the delegated one, so both are seeded.
     beforeAll(minaBeforeAll(MINA_DELEGATION_PAIR));
 
