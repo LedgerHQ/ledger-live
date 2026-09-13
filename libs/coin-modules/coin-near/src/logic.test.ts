@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getMaxAmount, getStakingFees, getTotalSpent } from "./logic";
+import { getMaxAmount, getNearStakingPositions, getStakingFees, getTotalSpent } from "./logic";
 import { NearAccount, Transaction } from "./types";
 
 describe("getMaxAmount", () => {
@@ -270,6 +270,76 @@ describe("getMaxAmount", () => {
         getMaxAmount(migratedAccount, { mode: "withdraw", recipient: validatorId } as Transaction),
       ).toEqual(new BigNumber(8_901));
     });
+  });
+});
+
+describe("getNearStakingPositions", () => {
+  const validatorId = "figment.poolv1.near";
+
+  it("groups framework positions by delegate and sums each state bucket", () => {
+    const account = {
+      stakingPositions: [
+        { state: "active", delegate: validatorId, amount: new BigNumber(100) },
+        { state: "active", delegate: validatorId, amount: new BigNumber(50) },
+        { state: "deactivating", delegate: validatorId, amount: new BigNumber(20) },
+        { state: "withdrawable", delegate: validatorId, amount: new BigNumber(10) },
+      ],
+    } as unknown as NearAccount;
+
+    const [position] = getNearStakingPositions(account);
+
+    expect(position.validatorId).toBe(validatorId);
+    expect(position.staked).toEqual(new BigNumber(150));
+    expect(position.pending).toEqual(new BigNumber(20));
+    expect(position.available).toEqual(new BigNumber(10));
+  });
+
+  it("falls back to nearResources while the routing flag is still off", () => {
+    const legacy = {
+      validatorId,
+      staked: new BigNumber(7),
+      available: new BigNumber(3),
+      pending: new BigNumber(1),
+    };
+    const account = { nearResources: { stakingPositions: [legacy] } } as unknown as NearAccount;
+
+    expect(getNearStakingPositions(account)).toEqual([legacy]);
+  });
+
+  it("prefers framework positions when an account carries both shapes", () => {
+    const account = {
+      nearResources: {
+        stakingPositions: [
+          {
+            validatorId,
+            staked: new BigNumber(1),
+            available: new BigNumber(1),
+            pending: new BigNumber(1),
+          },
+        ],
+      },
+      stakingPositions: [{ state: "active", delegate: validatorId, amount: new BigNumber(999) }],
+    } as unknown as NearAccount;
+
+    expect(getNearStakingPositions(account)[0].staked).toEqual(new BigNumber(999));
+  });
+
+  it("returns an empty list when the account carries neither shape", () => {
+    expect(getNearStakingPositions({} as NearAccount)).toEqual([]);
+  });
+
+  it("skips framework positions that have no delegate", () => {
+    const account = {
+      stakingPositions: [
+        { state: "active", amount: new BigNumber(100) },
+        { state: "active", delegate: validatorId, amount: new BigNumber(5) },
+      ],
+    } as unknown as NearAccount;
+
+    const positions = getNearStakingPositions(account);
+
+    expect(positions).toHaveLength(1);
+    expect(positions[0].validatorId).toBe(validatorId);
   });
 });
 

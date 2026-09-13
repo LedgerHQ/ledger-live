@@ -49,22 +49,40 @@ export const getStakingGas = (t?: StakingGasInput, multiplier = 5): BigNumber =>
 type FrameworkStakingPositionOnAccount = { state: string; delegate?: string; amount: BigNumber };
 type FrameworkAccount = { stakingPositions?: FrameworkStakingPositionOnAccount[] };
 
-const getFrameworkValidatorPosition = (
-  account: NearAccount,
-  validatorId: string | undefined,
-): { staked: BigNumber; available: BigNumber } | undefined => {
-  const positions = (account as unknown as FrameworkAccount).stakingPositions;
-  if (!positions || !validatorId) return undefined;
-  const forValidator = positions.filter(p => p.delegate === validatorId);
-  if (forValidator.length === 0) return undefined;
-  return {
-    staked: forValidator
-      .filter(p => p.state === "active")
-      .reduce((acc, p) => acc.plus(p.amount), new BigNumber(0)),
-    available: forValidator
-      .filter(p => p.state === "withdrawable")
-      .reduce((acc, p) => acc.plus(p.amount), new BigNumber(0)),
-  };
+/**
+ * The single place that answers "what is this account staking?", for both account shapes.
+ *
+ * NEAR is mid-migration: the generic bridge writes per-(validator, state) entries to
+ * `account.stakingPositions`, while the legacy bridge writes per-validator aggregates to
+ * `account.nearResources`. Which one is populated depends on the routing flag, and a migrated
+ * account can briefly carry both — so the framework field wins when present and the legacy blob
+ * is the fallback. Callers get the legacy-shaped `NearStakingPosition[]` either way.
+ *
+ * Once the flag flip lands and no account carries `nearResources` any more, the fallback branch
+ * becomes dead and can be dropped.
+ */
+export const getNearStakingPositions = (account: NearAccount): NearStakingPosition[] => {
+  const rawPositions = (account as unknown as FrameworkAccount).stakingPositions;
+
+  if (rawPositions?.length) {
+    const byDelegate = new Map<string, NearStakingPosition>();
+    for (const pos of rawPositions) {
+      if (!pos.delegate) continue;
+      const cur = byDelegate.get(pos.delegate) ?? {
+        validatorId: pos.delegate,
+        staked: new BigNumber(0),
+        available: new BigNumber(0),
+        pending: new BigNumber(0),
+      };
+      if (pos.state === "active") cur.staked = cur.staked.plus(pos.amount);
+      else if (pos.state === "deactivating") cur.pending = cur.pending.plus(pos.amount);
+      else if (pos.state === "withdrawable") cur.available = cur.available.plus(pos.amount);
+      byDelegate.set(pos.delegate, cur);
+    }
+    return [...byDelegate.values()];
+  }
+
+  return account.nearResources?.stakingPositions ?? [];
 };
 
 /*
@@ -76,13 +94,9 @@ export const getMaxAmount = (
   fees?: BigNumber,
 ): BigNumber => {
   let maxAmount;
-  // A migrated account can still carry a stale `nearResources` blob alongside the framework's
-  // `stakingPositions`, so the framework field wins whenever it is present.
-  const selectedValidator =
-    getFrameworkValidatorPosition(account, transaction.recipient) ??
-    account.nearResources?.stakingPositions.find(
-      ({ validatorId }) => validatorId === transaction.recipient,
-    );
+  const selectedValidator = getNearStakingPositions(account).find(
+    ({ validatorId }) => validatorId === transaction.recipient,
+  );
 
   let pendingUnstakingAmount = new BigNumber(0);
   let pendingWithdrawingAmount = new BigNumber(0);
