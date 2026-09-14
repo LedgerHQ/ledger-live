@@ -30,6 +30,7 @@ export type ReleaseTourAnalyticsContext = {
   readonly step: number;
   readonly stepName: string;
   readonly totalSteps: number;
+  readonly variant?: string;
 };
 
 export type ReleaseTourAnalytics = {
