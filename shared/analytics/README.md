@@ -13,6 +13,8 @@ Shared `track` for Ledger Wallet apps. Each app registers its own analytics clie
 ```ts
 import {
   analyticsEvents$,
+  closeAndFlush,
+  flush,
   setAnalytics,
   setEnabledFn,
   setExtraPropsFn,
@@ -32,6 +34,8 @@ setPropsFilter((props) => myFilter(props));
 setAnalytics({
   track: (event, props) => segment.track(event, props),
   log: console.log,
+  flush: () => segment.flush(),
+  closeAndFlush: () => segment.closeAndFlush(),
 });
 
 // track events
@@ -91,6 +95,35 @@ await trackPage({ category: "Market" });
 ```
 
 The registered analytics client may be sync or async.
+
+### Page views
+
+`trackPage` emits events named `Page ${category} ${name}`. Use `updateRoutes` and `refreshSource` to keep route refs in sync for subsequent `page` and `source` props on other events.
+
+```ts
+trackPage(
+  "Modal send",
+  "step recipient",
+  { flow: "send" },
+  {
+    updateRoutes: true,
+    refreshSource: true,
+  }
+);
+
+trackPage("Mandatory Page", null, null, { mandatory: true });
+```
+
+Use `avoidDuplicates: true` when a screen component may remount and emit the same page event twice.
+
+### Flush
+
+`flush` and `closeAndFlush` delegate to the registered analytics client when those methods are provided. They resolve without error when no client is registered or when the client omits them.
+
+```ts
+await flush();
+await closeAndFlush();
+```
 
 ### Filtering and enriching
 

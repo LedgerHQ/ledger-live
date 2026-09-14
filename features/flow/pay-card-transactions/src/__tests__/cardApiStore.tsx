@@ -18,11 +18,16 @@ export const CATEGORY_LABELS = {
   MISC: "Other",
 } as const;
 
+export const SECTION_TITLE = "Transactions";
+
 const CARD_TRANSACTIONS_RESOURCES = {
   en: {
     translation: {
       payTab: {
-        cardTransactions: { categories: CATEGORY_LABELS },
+        cardTransactions: {
+          categories: CATEGORY_LABELS,
+          title: SECTION_TITLE,
+        },
       },
     },
   },

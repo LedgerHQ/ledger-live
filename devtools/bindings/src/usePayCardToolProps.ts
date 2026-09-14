@@ -6,8 +6,10 @@ import {
   useLazyGetCardStatusQuery,
   useCreateCardDetailsTokenMutation,
 } from "@domain/api-card-management";
+import { BAANX_ASSET_LEDGER_IDS } from "@domain/entity-card-asset-mapping";
 import {
   useCardLinkedWallets,
+  type CardLinkedWalletBalance,
   type ResolveWalletCounterValue,
 } from "@features/flow-pay-card-wallets";
 import { useDispatch, useSelector } from "react-redux";
@@ -96,6 +98,39 @@ const STEP_ANSWERS: Readonly<Partial<Record<string, keyof CardOnboardingStatusMo
   "choose-card-type": "hasCard",
   "top-up-card": "walletFunded",
 };
+
+/**
+ * The catalog as the tool lists it, in key order so a pair is easy to find by eye.
+ *
+ * A key the catalog holds no id for is dropped: the screen lists what resolves, and a row with a
+ * blank currency would read as a mapping that exists and is wrong.
+ */
+const CURRENCY_MAPPING_ROWS = Object.entries(BAANX_ASSET_LEDGER_IDS)
+  .flatMap(([key, ledgerId]) => (ledgerId === undefined ? [] : [{ key, ledgerId }]))
+  .sort((a, b) => a.key.localeCompare(b.key));
+
+type PayCardCombinedWallet = PayCardToolProps["balance"]["combinedWallets"][number];
+
+/**
+ * One joined wallet as the tool lists it.
+ *
+ * An unmapped asset has no Ledger currency, so its row has no `ledgerId` at all. That is the shape
+ * the transform and the join answer with, and repeating it here keeps a mapped pair distinguishable
+ * from an unmapped one by shape alone.
+ */
+function toCombinedWallet({
+  id,
+  address,
+  currency,
+  network,
+  priority,
+  ledgerId,
+  balance,
+}: CardLinkedWalletBalance): PayCardCombinedWallet {
+  const row = { id, address, currency, network, priority, balance };
+
+  return ledgerId === undefined ? row : { ...row, ledgerId };
+}
 
 const WALLET_STEP_ID = "apple-google-pay";
 
@@ -352,16 +387,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       baanxWallets: internal ?? [],
       linkedWallets: linked ?? [],
       // Without the counter value, which this tool does not price.
-      combinedWallets: linkedWallets.wallets.map(
-        ({ id, address, currency, network, priority, balance: walletBalance }) => ({
-          id,
-          address,
-          currency,
-          network,
-          priority,
-          balance: walletBalance,
-        }),
-      ),
+      combinedWallets: linkedWallets.wallets.map(toCombinedWallet),
       isFetching: linkedWallets.isFetching,
       errors,
       load: loadWallets,
@@ -377,6 +403,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       cardOnboarding,
       interaction,
       balance,
+      currencyMapping: CURRENCY_MAPPING_ROWS,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
       hasSeenReceiveVerifyHint,

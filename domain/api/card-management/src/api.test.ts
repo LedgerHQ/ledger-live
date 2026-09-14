@@ -27,6 +27,8 @@ import {
   jsonResponse,
   mockCardProvider,
 } from "./cardProvider.mock";
+import { documentedPayCardTransaction } from "./cardTransactions.mock";
+import { PayCardTransactionSchema } from "./schema";
 
 const provider = mockCardProvider();
 
@@ -439,24 +441,10 @@ describe("cardManagementApi requests", () => {
 
   describe("getCardTransactions", () => {
     const TRANSACTIONS_PATH = "/v1/card/transactions";
-
-    const transaction = {
-      id: "100a99cf-f4d3-4fa1-9be9-2e9828b20ebb",
-      dateTime: "2024-10-14T10:44:36.276Z",
-      sign: "DEBIT",
-      merchantNameLocation: "WWW.ALIEXPRESS.COM, LONDON",
-      mccCategory: "MISC",
-      status: "CONFIRMED",
-      declineReason: "",
-      transactionCurrency: "EUR",
-      amountInTransactionCurrency: "0.79",
-      feesInTransactionCurrency: "0",
-      originalCurrency: "USD",
-      amountInOriginalCurrency: "0.85",
-    };
+    const transaction = PayCardTransactionSchema.parse(documentedPayCardTransaction);
 
     it("reads the transactions with the bearer token and the client key", async () => {
-      provider.get(TRANSACTIONS_PATH, () => jsonResponse([transaction]));
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([documentedPayCardTransaction]));
 
       const store = makeStore("session-token");
       const result = await store.dispatch(
@@ -1010,13 +998,44 @@ describe("cardManagementApi requests", () => {
         cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
       );
 
-    it("reads the wallets funding the card", async () => {
+    it("reads the wallets funding the card, each resolved to its Ledger currency", async () => {
       provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
 
       const result = await readLinkedWallets();
 
       expectSessionRequest("GET", LINKED_WALLETS_PATH);
-      expect(result.data).toEqual(linkedWallets);
+      // The wire fields, plus the Ledger currency each wallet's asset resolves to.
+      expect(result.data).toEqual(
+        linkedWallets.map(wallet => ({ ...wallet, ledgerId: expect.any(String) })),
+      );
+    });
+
+    it("resolves each wallet to its Ledger currency, so no consumer has to map it again", async () => {
+      provider.get(LINKED_WALLETS_PATH, () =>
+        jsonResponse([
+          { ...linkedWallets[0], currency: "usdc", network: "ethereum", priority: 0 },
+          { ...linkedWallets[0], id: "w-btc", currency: "btc", network: "bitcoin", priority: 1 },
+        ]),
+      );
+
+      const result = await readLinkedWallets();
+
+      expect(result.data?.map(({ ledgerId }) => ledgerId)).toEqual([
+        "ethereum/erc20/usd__coin",
+        "bitcoin",
+      ]);
+    });
+
+    it("leaves an asset the catalog does not cover unresolved rather than guessing one", async () => {
+      provider.get(LINKED_WALLETS_PATH, () =>
+        jsonResponse([{ ...linkedWallets[0], currency: "bxx", network: "ethereum" }]),
+      );
+
+      const result = await readLinkedWallets();
+
+      const [wallet] = result.data ?? [];
+      // Absent rather than set to `undefined`, which is what the optional field promises.
+      expect(wallet && "ledgerId" in wallet).toBe(false);
     });
 
     it("keeps a priority of zero, which is the first wallet charged", async () => {

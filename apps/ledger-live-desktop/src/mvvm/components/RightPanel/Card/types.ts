@@ -4,6 +4,7 @@ import type { FormattedValue } from "@features/flow-pay-card-details";
 export interface CardViewModel {
   readonly title: string;
   readonly formatCountervalue: (value: number) => FormattedValue;
+  readonly formatTransactionAmount: NonNullable<PayCardProps["formatTransactionAmount"]>;
   readonly balanceLabel: string;
   readonly login: PayCardProps["login"];
 }

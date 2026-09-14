@@ -29,9 +29,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-canton": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/hw-app-canton": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "semver": "catalog:"
   },
   "scripts": {

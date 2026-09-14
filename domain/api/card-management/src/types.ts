@@ -4,6 +4,7 @@ import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletSchema,
   PayCardLinkedWalletSchema,
+  PayCardLinkedWalletCanonicalSchema,
   PayCardLogoutResponseSchema,
   PayCardOnboardingStatusResponseSchema,
   PayCardOnboardingStepSchema,
@@ -14,6 +15,7 @@ import {
   PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardTransactionCategorySchema,
+  PayCardTransactionFundingSourceSchema,
   PayCardTransactionSchema,
   PayCardTransactionsRequestSchema,
   PayCardWalletHistoryEntrySchema,
@@ -41,6 +43,8 @@ export type PayCardStatus = z.infer<typeof PayCardStatusResponseSchema>;
 export type PayCardDetailsCss = z.infer<typeof PayCardDetailsCssSchema>;
 
 export type PayCardTransactionCategory = z.infer<typeof PayCardTransactionCategorySchema>;
+
+export type PayCardTransactionFundingSource = z.infer<typeof PayCardTransactionFundingSourceSchema>;
 
 export type PayCardTransaction = z.infer<typeof PayCardTransactionSchema>;
 
@@ -72,7 +76,11 @@ export type PayCardRefreshSessionRequest = {
 
 export type PayCardInternalWallet = z.infer<typeof PayCardInternalWalletSchema>;
 
-export type PayCardLinkedWallet = z.infer<typeof PayCardLinkedWalletSchema>;
+/** One card-linked wallet exactly as the wire sent it. */
+export type PayCardLinkedWalletResponse = z.infer<typeof PayCardLinkedWalletSchema>;
+
+/** The same wallet, resolved to its Ledger currency once so every consumer reads one answer. */
+export type PayCardLinkedWallet = z.infer<typeof PayCardLinkedWalletCanonicalSchema>;
 
 export type PayCardOnboardingStep = z.infer<typeof PayCardOnboardingStepSchema>;
 

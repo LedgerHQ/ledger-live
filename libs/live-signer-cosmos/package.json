@@ -31,7 +31,7 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-cosmos": "catalog:",
     "@ledgerhq/hw-app-cosmos": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "@zondax/ledger-cosmos-js": "3.0.3",
     "rxjs": "catalog:"
   },

@@ -4,6 +4,7 @@ import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
   PayCardLinkedWalletsResponseSchema,
+  PayCardLinkedWalletsCanonicalSchema,
   PayCardLogoutResponseSchema,
   PayCardOnboardingStatusResponseSchema,
   PayCardOrderResponseSchema,
@@ -18,7 +19,7 @@ import {
   PayCardWalletHistoryResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
-import { transformPayCardSessionResponse } from "./transforms";
+import { transformPayCardLinkedWallets, transformPayCardSessionResponse } from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
   PayCardFreezeStateResult,
@@ -214,7 +215,9 @@ export const cardManagementApi = cardApi
           url: "/v1/wallet/internal/card_linked",
           method: "GET",
         }),
-        responseSchema: PayCardLinkedWalletsResponseSchema,
+        rawResponseSchema: PayCardLinkedWalletsResponseSchema,
+        transformResponse: transformPayCardLinkedWallets,
+        responseSchema: PayCardLinkedWalletsCanonicalSchema,
       }),
 
       getCardOnboardingStatus: build.query<PayCardOnboardingStatus, void>({

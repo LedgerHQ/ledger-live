@@ -3,25 +3,27 @@
 Pay Card Transactions flow: displays card transaction history for Ledger Wallet.
 
 ```ts
-import { useCardTransactionsViewModel } from "@features/flow-pay-card-transactions";
+import { CardTransactions, useCardTransactionsViewModel } from "@features/flow-pay-card-transactions";
+
+<CardTransactions />
 ```
 
-`useCardTransactionsViewModel` reads the first page of `getCardTransactions`
+`CardTransactions` is the Desktop list of the first page. With no transactions it renders
+nothing. It uses
+`useCardTransactionsViewModel`, which reads `getCardTransactions`
 ([`@domain/api-card-management`](../../../domain/api/card-management/README.md)) while a Card
 session is live, and answers one item per transaction:
 
 | Field           | What it holds                                                       |
 | --------------- | ------------------------------------------------------------------- |
 | `transaction`   | The transaction as the API package narrowed it                      |
-| `category`      | `PayCardTransactionCategory` — the provider's own spend grouping    |
 | `categoryLabel` | That category translated, from `payTab.cardTransactions.categories` |
 
-The provider classifies each charge itself and sends the label on the transaction, so `categoryOf`
-reads it rather than deriving one from the numeric MCC, which the API package drops before the
-cache. `transactionHasCategory` is the same answer as a predicate, for filtering.
+The provider classifies each charge through `transaction.mccCategory`; the numeric MCC is dropped
+by the API package before the cache.
 
 Signed out, the query is skipped and the list reads empty, so a host composing this flow around a
-signed-out session provokes no 401.
+signed-out session provokes no 401. Native `CardTransactions` renders nothing.
 
 ## Mocked transactions
 

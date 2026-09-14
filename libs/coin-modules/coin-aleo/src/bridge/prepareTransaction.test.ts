@@ -6,12 +6,14 @@ import { calculateAmount, findBestRecordForFee } from "../logic/utils";
 import {
   getMockedAccount,
   getMockedTokenAccount,
+  mockAleoResources,
   mockUnspentRecord1,
   mockUnspentRecord2,
   mockUnspentTokenRecord1,
   mockUnspentTokenRecord2,
 } from "../__tests__/fixtures/account.fixture";
-import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
+import { getMockedConfig, mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
+import { getMockedStakingTransaction } from "../__tests__/fixtures/transaction.fixture";
 import type { Transaction } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
 
@@ -28,6 +30,9 @@ const mockAleoConfig = jest.mocked(aleoConfig);
 const mockEstimateFees = jest.mocked(estimateFees);
 const mockCalculateAmount = jest.mocked(calculateAmount);
 const mockFindBestRecordForFee = jest.mocked(findBestRecordForFee);
+const realEstimateFees: typeof estimateFees = jest.requireActual("../logic").estimateFees;
+const realCalculateAmount: typeof calculateAmount =
+  jest.requireActual("../logic/utils").calculateAmount;
 
 describe("prepareTransaction", () => {
   const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
@@ -635,6 +640,207 @@ describe("prepareTransaction", () => {
       properties: {
         amountRecordCommitments: [mockUnspentTokenRecord1.commitment],
       },
+    });
+  });
+
+  describe("staking modes", () => {
+    const foreignAddress = "aleo1foreign00000000000000000000000000000000000000000000000q6qm";
+
+    beforeEach(() => {
+      mockEstimateFees.mockImplementation(realEstimateFees);
+      mockCalculateAmount.mockImplementation(realCalculateAmount);
+    });
+
+    describe("bond", () => {
+      it("keeps the mode as bond_public and prices the fee with BOND_PUBLIC", async () => {
+        const transaction = getMockedStakingTransaction(TRANSACTION_TYPE.BOND_PUBLIC, {
+          amount: new BigNumber(100),
+        });
+
+        const result = await prepareTransaction(mockAccount, transaction);
+
+        expect(mockEstimateFees).toHaveBeenCalledWith({
+          configOrCurrencyId: mockConfig,
+          transactionType: TRANSACTION_TYPE.BOND_PUBLIC,
+        });
+        expect(result).toMatchObject({ mode: TRANSACTION_TYPE.BOND_PUBLIC });
+      });
+
+      it("pins withdrawal to the account's own address, overwriting a hostile or stale value", async () => {
+        const transaction = {
+          ...getMockedStakingTransaction(TRANSACTION_TYPE.BOND_PUBLIC, {
+            amount: new BigNumber(100),
+          }),
+          withdrawal: foreignAddress,
+        } as Transaction;
+
+        const result = await prepareTransaction(mockAccount, transaction);
+
+        expect(result).toMatchObject({ withdrawal: mockAccount.freshAddress });
+      });
+
+      it("passes a user-entered amount through unchanged", async () => {
+        const enteredAmount = new BigNumber(12345);
+        const transaction = getMockedStakingTransaction(TRANSACTION_TYPE.BOND_PUBLIC, {
+          amount: enteredAmount,
+          useAllAmount: false,
+        });
+
+        const result = await prepareTransaction(mockAccount, transaction);
+
+        expect(result).toMatchObject({ amount: enteredAmount });
+      });
+
+      it("resolves useAllAmount against the transparent balance minus the fee", async () => {
+        mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+        const transparentBalance = new BigNumber(1_000_000);
+        const account = getMockedAccount({
+          aleoResources: { ...mockAleoResources, transparentBalance },
+        });
+        const transaction = getMockedStakingTransaction(TRANSACTION_TYPE.BOND_PUBLIC, {
+          useAllAmount: true,
+        });
+
+        const result = await prepareTransaction(account, transaction);
+
+        const expectedFee = new BigNumber(mockFeeByTransactionType[TRANSACTION_TYPE.BOND_PUBLIC]);
+        expect(result).toMatchObject({ amount: transparentBalance.minus(expectedFee) });
+      });
+
+      it("never resolves useAllAmount below zero when the fee exceeds the transparent balance", async () => {
+        mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+        const account = getMockedAccount({
+          aleoResources: { ...mockAleoResources, transparentBalance: new BigNumber(1) },
+        });
+        const transaction = getMockedStakingTransaction(TRANSACTION_TYPE.BOND_PUBLIC, {
+          useAllAmount: true,
+        });
+
+        const result = await prepareTransaction(account, transaction);
+
+        expect(result).toMatchObject({ amount: new BigNumber(0) });
+      });
+    });
+
+    describe("unbond", () => {
+      it("keeps the mode as unbond_public and prices the fee with UNBOND_PUBLIC", async () => {
+        const transaction = getMockedStakingTransaction(TRANSACTION_TYPE.UNBOND_PUBLIC, {
+          amount: new BigNumber(100),
+        });
+
+        const result = await prepareTransaction(mockAccount, transaction);
+
+        expect(mockEstimateFees).toHaveBeenCalledWith({
+          configOrCurrencyId: mockConfig,
+          transactionType: TRANSACTION_TYPE.UNBOND_PUBLIC,
+        });
+        expect(result).toMatchObject({ mode: TRANSACTION_TYPE.UNBOND_PUBLIC });
+      });
+
+      it("pins recipient to the account's own address, overwriting a hostile or stale value", async () => {
+        const transaction = getMockedStakingTransaction(TRANSACTION_TYPE.UNBOND_PUBLIC, {
+          amount: new BigNumber(100),
+          recipient: foreignAddress,
+        });
+
+        const result = await prepareTransaction(mockAccount, transaction);
+
+        expect(result).toMatchObject({ recipient: mockAccount.freshAddress });
+      });
+
+      it("resolves useAllAmount against the bonded balance", async () => {
+        const bondedBalance = new BigNumber(70_000);
+        const account = getMockedAccount({
+          aleoResources: { ...mockAleoResources, bondedBalance },
+        });
+        const transaction = getMockedStakingTransaction(TRANSACTION_TYPE.UNBOND_PUBLIC, {
+          useAllAmount: true,
+        });
+
+        const result = await prepareTransaction(account, transaction);
+
+        expect(result).toMatchObject({ amount: bondedBalance });
+      });
+    });
+
+    describe("claim", () => {
+      it("keeps the mode as claim_unbond_public and prices the fee with CLAIM_UNBOND_PUBLIC", async () => {
+        const transaction = getMockedStakingTransaction(TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC);
+
+        const result = await prepareTransaction(mockAccount, transaction);
+
+        expect(mockEstimateFees).toHaveBeenCalledWith({
+          configOrCurrencyId: mockConfig,
+          transactionType: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+        });
+        expect(result).toMatchObject({ mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC });
+      });
+
+      it("signs no amount: the chain releases whatever is claimable", async () => {
+        const transaction = getMockedStakingTransaction(TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, {
+          amount: new BigNumber(999),
+        });
+
+        const result = await prepareTransaction(mockAccount, transaction);
+
+        expect(result).toMatchObject({ amount: new BigNumber(0) });
+      });
+
+      it("pins recipient to the account's own address, overwriting a hostile or stale value", async () => {
+        const transaction = getMockedStakingTransaction(TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, {
+          recipient: foreignAddress,
+        });
+
+        const result = await prepareTransaction(mockAccount, transaction);
+
+        expect(result).toMatchObject({ recipient: mockAccount.freshAddress });
+      });
+    });
+
+    describe("fees under both fee-sponsorship states", () => {
+      it.each([
+        TRANSACTION_TYPE.BOND_PUBLIC,
+        TRANSACTION_TYPE.UNBOND_PUBLIC,
+        TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+      ] as const)("charges no fee for %s when isFeeSponsored is true", async mode => {
+        mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: true });
+        const transaction = getMockedStakingTransaction(mode);
+
+        const result = await prepareTransaction(mockAccount, transaction);
+
+        expect(result).toMatchObject({ fees: new BigNumber(0) });
+      });
+
+      it.each([
+        TRANSACTION_TYPE.BOND_PUBLIC,
+        TRANSACTION_TYPE.UNBOND_PUBLIC,
+        TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+      ] as const)(
+        "charges the mainnet default fee for %s when isFeeSponsored is false",
+        async mode => {
+          mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+          const transaction = getMockedStakingTransaction(mode);
+
+          const result = await prepareTransaction(mockAccount, transaction);
+
+          expect(result).toMatchObject({ fees: new BigNumber(mockFeeByTransactionType[mode]) });
+        },
+      );
+    });
+
+    it("still rewrites a transfer's mode: the staking dispatch is not authoritative for every mode", async () => {
+      mockEstimateFees.mockReturnValue({ value: BigInt(mockFees.toString()) });
+      mockCalculateAmount.mockReturnValue({
+        amount: mockAmount,
+        totalSpent: mockAmount.plus(mockFees),
+      });
+
+      const result = await prepareTransaction(mockAccount, {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+      });
+
+      expect(result).toMatchObject({ mode: TRANSACTION_TYPE.TRANSFER_PUBLIC });
     });
   });
 });

@@ -1,6 +1,6 @@
 import { PAY_CARD_TRANSACTION_CATEGORIES } from "./schema";
 
-const DOCUMENTED_TRANSACTION = {
+export const documentedPayCardTransaction = {
   id: "100a99cf-f4d3-4fa1-9be9-2e9828b20ebb",
   cardId: "1234537292209260487",
   panLast4: "9189",
@@ -10,6 +10,7 @@ const DOCUMENTED_TRANSACTION = {
   merchantNameLocation: "WWW.ALIEXPRESS.COM, LONDON",
   merchantType: "OutOfWalletOnline",
   mcc: 5964,
+  mccCategory: "MISC" as const,
   transactionCurrency: "EUR",
   amountInTransactionCurrency: "0.79",
   feesInTransactionCurrency: "0",
@@ -45,18 +46,53 @@ const MERCHANT_BY_CATEGORY = {
   HEALTH: "BOOTS UK, LONDON",
   ATM: "ATM WITHDRAWAL, LONDON",
   UTILITIES: "BRITISH GAS, WINDSOR",
-  MISC: DOCUMENTED_TRANSACTION.merchantNameLocation,
+  MISC: documentedPayCardTransaction.merchantNameLocation,
 } as const satisfies Record<(typeof PAY_CARD_TRANSACTION_CATEGORIES)[number], string>;
+
+const PAYMENT_BY_CATEGORY = {
+  SUBSCRIPTIONS: { fiatAmount: "12.99", assets: [{ currency: "usdc", amount: "13.0214" }] },
+  FOOD: { fiatAmount: "4.75", assets: [{ currency: "btc", amount: "0.00005231" }] },
+  TRAVEL: {
+    fiatAmount: "349.90",
+    assets: [
+      { currency: "eth", amount: "0.1" },
+      { currency: "usdc", amount: "14.82" },
+    ],
+  },
+  ENTERTAINMENT: { fiatAmount: "9.99", assets: [{ currency: "usdc", amount: "10.0142" }] },
+  HEALTH: { fiatAmount: "26.40", assets: [{ currency: "eth", amount: "0.007913" }] },
+  ATM: { fiatAmount: "100.00", assets: [{ currency: "btc", amount: "0.00110245" }] },
+  UTILITIES: { fiatAmount: "78.32", assets: [{ currency: "usdc", amount: "78.4318" }] },
+  MISC: { fiatAmount: "0.79", assets: [{ currency: "usdc", amount: "0.104201" }] },
+} as const satisfies Record<
+  (typeof PAY_CARD_TRANSACTION_CATEGORIES)[number],
+  { fiatAmount: string; assets: readonly { currency: string; amount: string }[] }
+>;
 
 /**
  * A wire-shaped page for the apps' MSW workers: the provider's documented charge, repeated once per
  * spend category, so a transaction list can be seen without a funded card.
  */
 export function mockPayCardTransactions() {
-  return PAY_CARD_TRANSACTION_CATEGORIES.map((mccCategory, index) => ({
-    ...DOCUMENTED_TRANSACTION,
-    id: `${DOCUMENTED_TRANSACTION.id.slice(0, -1)}${index}`,
-    merchantNameLocation: MERCHANT_BY_CATEGORY[mccCategory],
-    mccCategory,
-  }));
+  return PAY_CARD_TRANSACTION_CATEGORIES.map((mccCategory, index) => {
+    if (mccCategory === "MISC") return documentedPayCardTransaction;
+
+    const payment = PAYMENT_BY_CATEGORY[mccCategory];
+
+    return {
+      ...documentedPayCardTransaction,
+      id: `${documentedPayCardTransaction.id.slice(0, -1)}${index}`,
+      merchantNameLocation: MERCHANT_BY_CATEGORY[mccCategory],
+      mccCategory,
+      amountInTransactionCurrency: payment.fiatAmount,
+      originalCurrency: "EUR",
+      amountInOriginalCurrency: payment.fiatAmount,
+      billingConversionRate: "1",
+      ecbRate: "1",
+      fundingSources: payment.assets.map(source => ({
+        ...source,
+        sign: "DEBIT" as const,
+      })),
+    };
+  });
 }
