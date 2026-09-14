@@ -1,18 +1,22 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, act, withFlagOverrides } from "tests/testSetup";
 import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Contact } from "@domain/entity-contact";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { SponsoredCoinApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
+import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import type { SponsoredState } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { SendWorkflow } from "../index";
 
-export { screen, waitFor };
+export { screen, waitFor, act };
 
-type SupportedMockFamily = "bitcoin" | "evm";
+type SupportedMockFamily = "bitcoin" | "evm" | "tron";
 type EvmTransaction = Extract<Transaction, { family: "evm" }>;
 type BtcTransaction = Extract<Transaction, { family: "bitcoin" }>;
+type TronTransaction = Extract<Transaction, { family: "tron" }>;
 
 export type MockTransactionStatus = {
   errors: Record<string, Error>;
@@ -94,9 +98,26 @@ export const createMinimalBtcTransaction = (overrides?: Partial<BtcTransaction>)
   ...overrides,
 });
 
+const defaultTronTransaction: TronTransaction = {
+  family: "tron",
+  mode: "send",
+  amount: new BigNumber(0),
+  recipient: "",
+  useAllAmount: false,
+  subAccountId: null,
+};
+
+export const createMinimalTronTransaction = (
+  overrides?: Partial<TronTransaction>,
+): Transaction => ({
+  ...defaultTronTransaction,
+  ...overrides,
+});
+
 const transactionFactories: Record<SupportedMockFamily, () => Transaction> = {
   bitcoin: createMinimalBtcTransaction,
   evm: createMinimalEvmTransaction,
+  tron: createMinimalTronTransaction,
 };
 
 let mockTransaction: Transaction = createMinimalEvmTransaction();
@@ -147,6 +168,56 @@ export const setMockContacts = (contacts: readonly Contact[], isEnabled = true) 
   mockContactsFeatureEnabled = isEnabled;
 };
 
+/**
+ * Fake seam for the TRON Tronify sponsored-send flow (bridge/generic-coin-framework/sponsored),
+ * mirroring useSponsoredFee.test.tsx's own `fakeSeam`. `null` (the default) makes
+ * getSponsoredCoinApi resolve null exactly like a non-TRON/unconfigured family, so the existing
+ * EVM/BTC suites never touch this seam.
+ */
+let mockSponsoredApi: SponsoredCoinApi | null = null;
+// Opaque intent handed to the seam methods and to useSponsoredSendOrchestration; a plain object is
+// enough since every consumer treats it as unknown at this seam boundary.
+const mockSponsoredIntent: unknown = { kind: "mock-sponsored-intent" };
+
+function fakeSponsoredSeam(overrides: Partial<SponsoredCoinApi> = {}): SponsoredCoinApi {
+  return {
+    listFeeOptions: jest.fn().mockResolvedValue([]),
+    estimateSponsoredFeeQuote: jest
+      .fn()
+      .mockResolvedValue({ value: 0n, originalValue: 0n, savings: 0n }),
+    buildEnergyRentRequest: jest.fn().mockResolvedValue({
+      payerAddress: "TPayerAddress",
+      receiverAddress: "TReceiverAddress",
+      energy: 1000n,
+      durationSeconds: 60,
+    }),
+    craftEnergyRentTransaction: jest.fn(),
+    submitEnergyRentPayment: jest.fn().mockResolvedValue(undefined),
+    getEnergyRentStatus: jest.fn().mockResolvedValue("pending"),
+    awaitEnergyDelivery: jest.fn().mockResolvedValue(undefined),
+    ...overrides,
+  };
+}
+
+export const setMockSponsoredSeam = (overrides: Partial<SponsoredCoinApi>) => {
+  mockSponsoredApi = fakeSponsoredSeam(overrides);
+};
+
+/** Convenience for the two delivery outcomes the orchestration branches on: an immediate resolve
+ * (delivered) or a rejection shaped exactly like useSponsoredSendOrchestration's own timeout match
+ * (`error.name === "EnergyDelegationTimeoutError"`) -> phase FAILED / failureKind DELIVERY_FAILED. */
+export const setMockSponsoredDelivery = (outcome: "delivered" | "timeout") => {
+  if (!mockSponsoredApi) return;
+  mockSponsoredApi.awaitEnergyDelivery =
+    outcome === "delivered"
+      ? jest.fn().mockResolvedValue(undefined)
+      : jest.fn().mockRejectedValue(
+          Object.assign(new Error("energy delivery timed out"), {
+            name: "EnergyDelegationTimeoutError",
+          }),
+        );
+};
+
 export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   jest.clearAllMocks();
   resetBridgeState(family);
@@ -154,7 +225,69 @@ export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   setMockBridgeRecipientValidation({ errors: {}, warnings: {}, isLoading: false });
   setMockScannedCode("");
   setMockContacts([], false);
+  mockSponsoredApi = null;
+  resetMockOrchestration();
 };
+
+// Mock boundary: the seam + the device, never the real orchestration/context. Resolving null by
+// default (no test has opted in via setMockSponsoredSeam) keeps every non-sponsored suite on its
+// existing not-sponsored path with zero behavior change.
+jest.mock("@ledgerhq/live-common/bridge/generic-coin-framework/sponsored", () => ({
+  getSponsoredCoinApi: jest.fn(() => Promise.resolve(mockSponsoredApi)),
+  SPONSORED_FEE_OPTION_ID: "tronify",
+}));
+
+jest.mock("@ledgerhq/live-common/bridge/generic-coin-framework/buildIntent", () => ({
+  buildGenericTransactionIntent: jest.fn(() => Promise.resolve(mockSponsoredIntent)),
+}));
+
+// Mock boundary: the real useSponsoredSendOrchestration hook is swapped for this fully test-driven
+// fake so the integration tests can step phases deterministically. The SPONSORED_POLLING screen
+// runs a live setInterval elapsed timer, and driving the real orchestration through POLLING under
+// real timers makes React's act() flush loop never quiesce (the flow hangs to the jest timeout —
+// non-deterministic across machines). Driving phases directly through this fake sidesteps that
+// timer/act() interaction while still exercising the real desktop screens + routing. The real
+// orchestration's own phase transitions are covered by its unit tests
+// (libs/ledger-live-common/src/flows/send/sponsored/useSponsoredSendOrchestration.test.ts).
+const initialMockOrchestrationState: SponsoredState = {
+  phase: SPONSORED_PHASE.RENT_SIGNING,
+  order: null,
+  paymentTxId: null,
+  failureKind: null,
+  failureError: null,
+};
+let mockOrchestrationState: SponsoredState = initialMockOrchestrationState;
+let mockOrchestrationSetState: ((state: SponsoredState) => void) | null = null;
+
+export const mockSponsoredOrchestrationActions = {
+  craftRent: jest.fn(() => Promise.resolve()),
+  startRentPayment: jest.fn(() => Promise.resolve()),
+  onTransferSuccess: jest.fn(),
+  onTransferError: jest.fn(),
+  setContractDataFailure: jest.fn(),
+  retry: jest.fn(),
+  reset: jest.fn(),
+};
+
+/** Pushes a patch onto the fake orchestration's shared state and (once a component has mounted the
+ * mocked hook) re-renders it — call inside `act()`/`await act(async () => ...)` from the test. */
+export const setMockOrchestrationState = (patch: Partial<SponsoredState>) => {
+  mockOrchestrationState = { ...mockOrchestrationState, ...patch };
+  mockOrchestrationSetState?.(mockOrchestrationState);
+};
+
+const resetMockOrchestration = () => {
+  mockOrchestrationState = initialMockOrchestrationState;
+  mockOrchestrationSetState = null;
+};
+
+jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration", () => ({
+  useSponsoredSendOrchestration: () => {
+    const [state, setState] = React.useState(mockOrchestrationState);
+    mockOrchestrationSetState = setState;
+    return { state, actions: mockSponsoredOrchestrationActions };
+  },
+}));
 
 jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
   marketApi: {
@@ -307,27 +440,36 @@ jest.mock("../screens/Recipient/components/RecipientQrScanner", () => {
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   useTransactionAction: jest.fn(() => jest.fn()),
+  // Used by SponsoredRentSignatureScreen (TX-A, raw-sign, never broadcast) — kept alongside
+  // useTransactionAction so that screen doesn't crash calling an unmocked export.
+  useRawTransactionAction: jest.fn(() => jest.fn()),
 }));
 
+// A single stable function reused across renders — useSendFlowSignatureCore's onDeviceActionResult
+// is a useCallback keyed on `broadcast`, and MockDeviceAction's own mount effect is keyed on
+// `[onResult]`; a fresh broadcast identity per render makes onResult churn every render, re-firing
+// the mount effect indefinitely ("Maximum update depth exceeded") the moment a test actually drives
+// DeviceAction through to broadcast (never exercised by the EVM/BTC suites, which only assert the
+// signature screen renders).
+const mockBroadcast = jest.fn(() =>
+  Promise.resolve({
+    id: "op-1",
+    hash: "0xabc",
+    type: "OUT",
+    value: new BigNumber(1000),
+    fee: new BigNumber(100),
+    senders: ["sender"],
+    recipients: ["recipient"],
+    accountId: "mock-account-id",
+    date: new Date(),
+    blockHeight: null,
+    blockHash: null,
+    extra: {},
+  }),
+);
+
 jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
-  useBroadcast: jest.fn(() =>
-    jest.fn(() =>
-      Promise.resolve({
-        id: "op-1",
-        hash: "0xabc",
-        type: "OUT",
-        value: new BigNumber(1000),
-        fee: new BigNumber(100),
-        senders: ["sender"],
-        recipients: ["recipient"],
-        accountId: "mock-account-id",
-        date: new Date(),
-        blockHeight: null,
-        blockHash: null,
-        extra: {},
-      }),
-    ),
-  ),
+  useBroadcast: jest.fn(() => mockBroadcast),
 }));
 
 const ethCurrency = getCryptoCurrencyById("ethereum");
@@ -359,9 +501,28 @@ export const createBitcoinAccount = (overrides?: Partial<Account>): Account => {
   };
 };
 
+const tronCurrency = getCryptoCurrencyById("tron");
+
+export const VALID_TRON_RECIPIENT = "TWKsL6EqQgQXqhq6cJnP2sQrbUdRJDvUCX";
+
+export const createTronAccount = (overrides?: Partial<Account>): Account => {
+  const account = genAccount("send-tron-integration-test");
+  return {
+    ...account,
+    id: "mock-tron-account-id",
+    freshAddress: "TLsV52sRDL79HXGGm9yzwKibb6BeruhUzy",
+    // 100 TRX in sun — well above the 1000-sun sponsored quote used by the sponsored-send tests.
+    balance: new BigNumber("100000000"),
+    spendableBalance: new BigNumber("100000000"),
+    currency: tronCurrency,
+    ...overrides,
+  };
+};
+
 export const renderSendFlow = (
   account: Account,
   params: Omit<NonNullable<React.ComponentProps<typeof SendWorkflow>["params"]>, "account"> = {},
+  options?: { flags?: Parameters<typeof withFlagOverrides>[0] },
 ) =>
   render(<SendWorkflow isOpen onClose={jest.fn()} params={{ account, ...params }} />, {
     initialState: {
@@ -371,6 +532,7 @@ export const renderSendFlow = (
         counterValueExchange: "BINANCE",
         currenciesSettings: {},
       },
+      ...(options?.flags ? withFlagOverrides(options.flags) : {}),
     },
   });
 

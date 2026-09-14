@@ -130,6 +130,37 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       title: "",
     },
   },
+  // Desktop-only sponsored-send / fee-payment steps (TRON Tronify). Not registered as navigation
+  // screens on mobile (absent from SEND_FLOW_STEP_ORDER, no mobile UI yet) — kept only to satisfy
+  // the Record<SendFlowStep, SendStepConfig> contract, like the other unregistered steps above.
+  [SEND_FLOW_STEP.FEE_PAYMENT]: {
+    id: SEND_FLOW_STEP.FEE_PAYMENT,
+    canGoBack: true,
+    floating: true,
+    showHeaderRight: false,
+    showTitle: false,
+  },
+  [SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE]: {
+    id: SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE,
+    canGoBack: false,
+    floating: true,
+    showHeaderRight: false,
+    showTitle: false,
+  },
+  [SEND_FLOW_STEP.SPONSORED_POLLING]: {
+    id: SEND_FLOW_STEP.SPONSORED_POLLING,
+    canGoBack: false,
+    floating: true,
+    showHeaderRight: false,
+    showTitle: false,
+  },
+  [SEND_FLOW_STEP.SPONSORED_FAILURE]: {
+    id: SEND_FLOW_STEP.SPONSORED_FAILURE,
+    canGoBack: false,
+    floating: true,
+    showHeaderRight: false,
+    showTitle: false,
+  },
 };
 
 export const SEND_FLOW_CONFIG: SendFlowConfig = {

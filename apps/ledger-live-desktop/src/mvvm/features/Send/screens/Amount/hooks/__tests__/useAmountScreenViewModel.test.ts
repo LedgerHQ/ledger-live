@@ -13,6 +13,7 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createMockAccount } from "../../../Recipient/__integrations__/__fixtures__/accounts";
+import { useSponsoredSend } from "../../../../context/SponsoredSendContext";
 
 jest.mock("@ledgerhq/live-common/bridge/impl");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
@@ -86,6 +87,10 @@ jest.mock("../useQuickActions", () => ({
 
 jest.mock("../../../Recipient/hooks/useTranslatedBridgeError");
 
+jest.mock("../../../../context/SponsoredSendContext", () => ({
+  useSponsoredSend: jest.fn(),
+}));
+
 jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
   useFlowWizard: () => ({
     navigation: {
@@ -102,6 +107,7 @@ const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
 const mockedUseTranslatedBridgeError = jest.mocked(useTranslatedBridgeError);
+const mockedUseSponsoredSend = jest.mocked(useSponsoredSend);
 
 function createNamedError(name: string): Error {
   const err = new Error("");
@@ -134,6 +140,12 @@ describe("useAmountScreenViewModel", () => {
     mockedUseTranslatedBridgeError.mockImplementation((error?: Error) =>
       error ? { title: error.name, description: "" } : null,
     );
+
+    mockedUseSponsoredSend.mockReturnValue({
+      selectedFeeOptionId: "standard",
+      available: false,
+      quote: null,
+    } as never);
   });
 
   it("shows an input-blocking recipient error and disables the amount input", () => {
@@ -325,5 +337,106 @@ describe("useAmountScreenViewModel", () => {
       error,
     });
     expect(result.current.reviewDisabled).toBe(true);
+  });
+
+  describe("sponsored fee guard", () => {
+    function buildAffordableParams(spendableBalance: BigNumber) {
+      mockedGetAccountCurrency.mockReturnValue(getCryptoCurrencyById("bitcoin"));
+      const account = createMockAccount({
+        id: "acc",
+        currency: getCryptoCurrencyById("bitcoin"),
+        spendableBalance,
+      });
+      const transaction = {
+        family: "bitcoin",
+        recipient: "bc1qrecipient",
+        amount: new BigNumber(1),
+        useAllAmount: false,
+      } as Transaction;
+      const status = {
+        errors: {},
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(1),
+        totalSpent: new BigNumber(1),
+      } as TransactionStatus;
+      return { account, transaction, status };
+    }
+
+    function renderViewModel(
+      account: Account,
+      transaction: Transaction,
+      status: TransactionStatus,
+    ) {
+      return renderHook(
+        () =>
+          useAmountScreenViewModel({
+            account,
+            parentAccount: null,
+            transaction,
+            status,
+            bridgePending: false,
+            bridgeError: null,
+            uiConfig: { hasFeePresets: true } as never,
+            transactionActions: { updateTransaction: jest.fn() } as never,
+            onSelectCoinControl: jest.fn(),
+          }),
+        {
+          initialState: {
+            settings: {
+              ...INITIAL_STATE_SETTINGS,
+              counterValue: "USD",
+            },
+          },
+        },
+      );
+    }
+
+    it("disables review and surfaces the translated error when the quote exceeds spendable balance", () => {
+      const { account, transaction, status } = buildAffordableParams(new BigNumber(100));
+
+      mockedUseSponsoredSend.mockReturnValue({
+        selectedFeeOptionId: "tronify",
+        available: true,
+        quote: { value: 1_000n, originalValue: 1_500n, savings: 500n },
+      } as never);
+
+      const { result } = renderViewModel(account, transaction, status);
+
+      expect(result.current.reviewDisabled).toBe(true);
+      expect(result.current.sponsoredFeeError).toBe(
+        "You don't have enough TRX to cover the Tronify energy rental fee.",
+      );
+    });
+
+    it("does not force-disable review when the quote is within spendable balance", () => {
+      const { account, transaction, status } = buildAffordableParams(new BigNumber(1_000_000));
+
+      mockedUseSponsoredSend.mockReturnValue({
+        selectedFeeOptionId: "tronify",
+        available: true,
+        quote: { value: 1_000n, originalValue: 1_500n, savings: 500n },
+      } as never);
+
+      const { result } = renderViewModel(account, transaction, status);
+
+      expect(result.current.sponsoredFeeError).toBeNull();
+      expect(result.current.reviewDisabled).toBe(false);
+    });
+
+    it("never disables on its own when the standard fee option is selected", () => {
+      const { account, transaction, status } = buildAffordableParams(new BigNumber(100));
+
+      mockedUseSponsoredSend.mockReturnValue({
+        selectedFeeOptionId: "standard",
+        available: true,
+        quote: { value: 1_000n, originalValue: 1_500n, savings: 500n },
+      } as never);
+
+      const { result } = renderViewModel(account, transaction, status);
+
+      expect(result.current.sponsoredFeeError).toBeNull();
+      expect(result.current.reviewDisabled).toBe(false);
+    });
   });
 });

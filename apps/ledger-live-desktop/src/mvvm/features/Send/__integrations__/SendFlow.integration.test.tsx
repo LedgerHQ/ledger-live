@@ -1,14 +1,23 @@
 import BigNumber from "bignumber.js";
+import userEvent from "@testing-library/user-event";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import {
+  SPONSORED_FAILURE_KIND,
+  SPONSORED_PHASE,
+} from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import {
+  act,
   createBitcoinAccount,
   createEthereumAccount,
   createMinimalBtcTransaction,
   createMinimalEvmTransaction,
+  createMinimalTronTransaction,
   createResolvedStatus,
+  createTronAccount,
+  mockSponsoredOrchestrationActions,
   navigateToAmountScreen,
   openCoinControlScreen,
   openCustomFeesScreen,
@@ -18,13 +27,17 @@ import {
   screen,
   waitFor,
   setMockBridgeRecipientValidation,
+  setMockDeviceActionResult,
+  setMockOrchestrationState,
   setMockScannedCode,
   setMockContacts,
+  setMockSponsoredSeam,
   setMockStatus,
   setMockStatusResolver,
   setMockTransaction,
   VALID_BTC_RECIPIENT,
   VALID_EVM_RECIPIENT,
+  VALID_TRON_RECIPIENT,
 } from "../__mocks__/sendFlowTestUtils";
 
 describe("Send Flow Integration", () => {
@@ -651,6 +664,184 @@ describe("Send Flow Integration", () => {
 
       expect(await screen.findByTestId("send-coin-control-footer")).toBeVisible();
       expect(await screen.findByTestId("send-get-funds-button")).toBeVisible();
+    });
+  });
+
+  describe("Sponsored send (TRON Tronify)", () => {
+    const tronAccount = createTronAccount();
+    // Known constant used to build the TX-A device signature the way coin-tron's combine() actually
+    // shapes it (see recoverDeviceSignature: combined.slice(4 + rawDataHex.length)).
+    const rawDataHex = "0a02abcd";
+    const rentOrder = {
+      orderId: "order-1",
+      transaction: {
+        visible: true,
+        txID: "tx-a-id",
+        raw_data: {},
+        raw_data_hex: rawDataHex,
+      },
+      payCoinCode: "TRX",
+      payCoinAmt: "5",
+    };
+
+    beforeEach(() => {
+      resetSendFlowTestState("tron");
+      setMockTransaction(
+        createMinimalTronTransaction({
+          amount: new BigNumber("1000000"),
+          recipient: VALID_TRON_RECIPIENT,
+        }),
+      );
+    });
+
+    // Fake timers for the whole test, not switched mid-flight: SponsoredPolling's
+    // setInterval(...,1000) otherwise defeats React's async act() flush loop under real timers
+    // (the interval keeps firing while act() waits for quiescence), hanging the test to the 5s
+    // asyncUtilTimeout non-deterministically. A partial/mid-test switch to fake timers was tried
+    // and breaks other microtask chains instead — timers must be consistent start-to-finish.
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    /**
+     * Navigates AMOUNT -> FEE_PAYMENT (select Tronify) -> AMOUNT -> review -> SPONSORED_RENT_SIGNATURE.
+     * The mocked orchestration (see sendFlowTestUtils' useSponsoredSendOrchestration mock) starts in
+     * RENT_SIGNING with no order, so the screen's craft-on-entry effect fires actions.craftRent()
+     * (our spy) exactly once and the screen renders observably mid-craft (isCrafting=true, no
+     * DeviceAction mounted yet) until the test pushes an order in via setMockOrchestrationState.
+     */
+    async function navigateToRentSignature(user: ReturnType<typeof renderSendFlow>["user"]) {
+      await navigateToAmountScreen(user, VALID_TRON_RECIPIENT);
+      expect(await screen.findByTestId("send-sponsored-fee-nudge")).toBeVisible();
+
+      await user.click(screen.getByTestId("send-fee-payment-entry"));
+      expect(await screen.findByTestId("send-fee-payment-options")).toBeVisible();
+
+      await user.click(screen.getByTestId("send-fee-payment-option-tronify"));
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+
+      await user.click(screen.getByTestId("send-review-button"));
+      expect(await screen.findByTestId("send-sponsored-rent-signature")).toBeVisible();
+    }
+
+    it("runs the sponsored happy path: rent signature -> polling -> transfer signature -> confirmation", async () => {
+      const listFeeOptions = jest.fn().mockResolvedValue([
+        { id: "tronify", feeAsset: {} },
+        { id: "standard", feeAsset: {} },
+      ]);
+      const estimateSponsoredFeeQuote = jest
+        .fn()
+        .mockResolvedValue({ value: 1000n, originalValue: 5000n, savings: 4000n });
+      // Only the fee-nudge/option-list seam calls matter here (useSponsoredFee) — the rent-payment
+      // seam calls (craft/submit/deliver) live inside the now-mocked orchestration hook and are
+      // never reached from this test; fakeSponsoredSeam's defaults for those fields are unused.
+      setMockSponsoredSeam({ listFeeOptions, estimateSponsoredFeeQuote });
+
+      renderSendFlow(tronAccount, {}, { flags: { gasSponsorship: { enabled: true } } });
+      // Not the `user` renderSendFlow returns: under fake timers, userEvent needs
+      // advanceTimers wired to its own event-loop advance or user.type/click hang forever.
+      const user = userEvent.setup({
+        advanceTimers: jest.advanceTimersByTime,
+        pointerEventsCheck: 0,
+      });
+
+      await navigateToRentSignature(user);
+      expect(mockSponsoredOrchestrationActions.craftRent).toHaveBeenCalledTimes(1);
+
+      // TX-A: set the device result, then push the crafted order in — the mocked DeviceAction
+      // mounts for the first time (order truthy -> request non-null) and immediately consumes it,
+      // driving the real onResult -> actions.startRentPayment call synchronously.
+      setMockDeviceActionResult({
+        signedOperation: { signature: "0008" + rawDataHex + "SIGA" },
+        device: {},
+      });
+      await act(async () => {
+        setMockOrchestrationState({ order: rentOrder });
+      });
+
+      // Proves the signature recovered from the TX-A device result is what reaches the rent-payment
+      // action — the stand-in for asserting the seam's submitEnergyRentPayment call, which now lives
+      // inside the mocked-out orchestration and is never exercised from this test.
+      expect(mockSponsoredOrchestrationActions.startRentPayment).toHaveBeenCalledWith(
+        expect.objectContaining({ signature: ["SIGA"] }),
+        "tx-a-id",
+      );
+
+      // Step the phase the way the real orchestration would once startRentPayment begins polling.
+      await act(async () => {
+        setMockOrchestrationState({ phase: SPONSORED_PHASE.POLLING, paymentTxId: "tx-a-id" });
+      });
+      expect(await screen.findByTestId("send-sponsored-polling")).toBeVisible();
+
+      // TX-C: swap the device result before delivery "succeeds", so the standard SIGNATURE screen's
+      // fresh DeviceAction consumes this value rather than TX-A's stale one.
+      setMockDeviceActionResult({ signedOperation: { signature: "tx-c-signature" }, device: {} });
+      await act(async () => {
+        setMockOrchestrationState({ phase: SPONSORED_PHASE.TRANSFER });
+      });
+
+      expect(await screen.findByTestId("send-confirmation-step")).toBeVisible();
+      expect(screen.getByTestId("send-confirmation-success-content")).toBeVisible();
+    });
+
+    it("lands on SPONSORED_FAILURE with retry/cancel when energy delivery times out", async () => {
+      const listFeeOptions = jest.fn().mockResolvedValue([
+        { id: "tronify", feeAsset: {} },
+        { id: "standard", feeAsset: {} },
+      ]);
+      const estimateSponsoredFeeQuote = jest
+        .fn()
+        .mockResolvedValue({ value: 1000n, originalValue: 5000n, savings: 4000n });
+      setMockSponsoredSeam({ listFeeOptions, estimateSponsoredFeeQuote });
+
+      renderSendFlow(tronAccount, {}, { flags: { gasSponsorship: { enabled: true } } });
+      const user = userEvent.setup({
+        advanceTimers: jest.advanceTimersByTime,
+        pointerEventsCheck: 0,
+      });
+
+      await navigateToRentSignature(user);
+      expect(mockSponsoredOrchestrationActions.craftRent).toHaveBeenCalledTimes(1);
+
+      setMockDeviceActionResult({
+        signedOperation: { signature: "0008" + rawDataHex + "SIGA" },
+        device: {},
+      });
+      await act(async () => {
+        setMockOrchestrationState({ order: rentOrder });
+      });
+      expect(mockSponsoredOrchestrationActions.startRentPayment).toHaveBeenCalledWith(
+        expect.objectContaining({ signature: ["SIGA"] }),
+        "tx-a-id",
+      );
+
+      await act(async () => {
+        setMockOrchestrationState({ phase: SPONSORED_PHASE.POLLING, paymentTxId: "tx-a-id" });
+      });
+      expect(await screen.findByTestId("send-sponsored-polling")).toBeVisible();
+
+      // Shaped exactly like useSponsoredSendOrchestration's own delivery-timeout dispatch
+      // (error.name === "EnergyDelegationTimeoutError"), which maps to the DELIVERY_FAILED kind.
+      await act(async () => {
+        setMockOrchestrationState({
+          phase: SPONSORED_PHASE.FAILED,
+          failureKind: SPONSORED_FAILURE_KIND.DELIVERY_FAILED,
+          failureError: Object.assign(new Error("energy delivery timed out"), {
+            name: "EnergyDelegationTimeoutError",
+          }),
+        });
+      });
+
+      expect(await screen.findByTestId("send-sponsored-failure")).toBeVisible();
+      expect(screen.getByTestId("send-sponsored-failure-retry")).toBeVisible();
+      expect(screen.getByTestId("send-sponsored-failure-cancel")).toBeVisible();
+      // Not just "some failure screen": the delivery-failed copy specifically (distinct from the
+      // other three failureKind messages), confirming this is the DELIVERY_FAILED branch.
+      expect(screen.getByText(/Energy was not delivered/i)).toBeVisible();
     });
   });
 });

@@ -16,6 +16,10 @@ import { AddContactScreen } from "./screens/AddContact/AddContactScreen";
 import { AddNewContactScreen } from "./screens/AddNewContact/AddNewContactScreen";
 import { AddToExistingContactScreen } from "./screens/AddToExistingContact/AddToExistingContactScreen";
 import { CustomFeesScreen } from "./screens/CustomFees/CustomFeesScreen";
+import { FeePaymentScreen } from "./screens/FeePayment/FeePaymentScreen";
+import { SponsoredRentSignatureScreen } from "./screens/SponsoredRentSignature/SponsoredRentSignatureScreen";
+import { SponsoredPollingScreen } from "./screens/SponsoredPolling/SponsoredPollingScreen";
+import { SponsoredFailureScreen } from "./screens/SponsoredFailure/SponsoredFailureScreen";
 import { CoinControlScreen } from "./screens/CoinControl/CoinControlScreen";
 import { SkipMemoConfirmationScreen } from "./screens/SkipMemoConfirmation/SkipMemoConfirmationScreen";
 import { PaySuccessScreen } from "./screens/PaySuccess/PaySuccessScreen";
@@ -23,6 +27,7 @@ import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import { SendFlowTrackingProvider } from "./context/SendFlowTrackingContext";
 import { AddNewContactHeaderProvider } from "./context/AddNewContactHeaderContext";
 import { RecipientContactSelectionProvider } from "./context/RecipientContactSelectionContext";
+import { SponsoredSendProvider } from "./context/SponsoredSendContext";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
@@ -33,6 +38,10 @@ const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.ADD_NEW_CONTACT]: AddNewContactScreen,
   [SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT]: AddToExistingContactScreen,
   [SEND_FLOW_STEP.CUSTOM_FEES]: CustomFeesScreen,
+  [SEND_FLOW_STEP.FEE_PAYMENT]: FeePaymentScreen,
+  [SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE]: SponsoredRentSignatureScreen,
+  [SEND_FLOW_STEP.SPONSORED_POLLING]: SponsoredPollingScreen,
+  [SEND_FLOW_STEP.SPONSORED_FAILURE]: SponsoredFailureScreen,
   [SEND_FLOW_STEP.COIN_CONTROL]: CoinControlScreen,
   [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
   [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
@@ -81,7 +90,9 @@ export function SendWorkflow({ onClose, params, isOpen }: SendWorkflowProps) {
       <SendFlowTrackingProvider>
         <AddNewContactHeaderProvider>
           <RecipientContactSelectionProvider>
-            <SendFlowLayout isOpen={isOpen} onClose={handleClose} />
+            <SponsoredSendProvider>
+              <SendFlowLayout isOpen={isOpen} onClose={handleClose} />
+            </SponsoredSendProvider>
           </RecipientContactSelectionProvider>
         </AddNewContactHeaderProvider>
       </SendFlowTrackingProvider>

@@ -23,7 +23,9 @@ import {
   computeEnergyFee,
   estimateEnergy,
   estimatedTxSize,
+  buildEnergyRentRequest,
   estimateFees,
+  estimateSponsoredFeeQuote,
   estimateTronifyFees,
   type TronResourceBreakdown,
 } from "./estimateFees";
@@ -889,5 +891,81 @@ describe("estimateTronifyFees", () => {
 
     expect(mockTriggerConstantContract).not.toHaveBeenCalled();
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(expect.objectContaining({ energy: 0n }));
+  });
+});
+
+describe("estimateSponsoredFeeQuote", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Reads the coin-config singleton (no framework Context) — mirror the estimateTronifyFees setup.
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: {
+        provider: "tronify",
+        tronify: { url: "https://open.tronify.io", sourceFlag: "ledgerLive" },
+      },
+    }));
+    mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
+    mockGetChainParameters.mockResolvedValue(chainParams);
+    mockTriggerConstantContract.mockResolvedValue({ energy_used: ENERGY_USED });
+    mockGetEnergyRentQuote.mockResolvedValue(trxQuote);
+  });
+
+  it("returns the Tronify quote's value/originalValue/savings from the config singleton", async () => {
+    const result = await estimateSponsoredFeeQuote(sendTrc20);
+
+    expect(result).toEqual({
+      value: TRONIFY_VALUE,
+      originalValue: STANDARD_BURN,
+      savings: STANDARD_BURN - TRONIFY_VALUE,
+    });
+  });
+
+  it("propagates estimateTronifyFees' throw on a non-TRC-20 intent (caller renders no savings)", async () => {
+    await expect(estimateSponsoredFeeQuote(sendNative)).rejects.toThrow(
+      "Tronify fee option is only available for TRC-20 send intents",
+    );
+  });
+});
+
+describe("buildEnergyRentRequest", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: {
+        provider: "tronify",
+        tronify: { url: "https://open.tronify.io", sourceFlag: "ledgerLive" },
+      },
+    }));
+    mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
+    mockGetChainParameters.mockResolvedValue(chainParams);
+    mockTriggerConstantContract.mockResolvedValue({ energy_used: ENERGY_USED });
+  });
+
+  it("delegates energy to the sender and applies the default rental window / extra-TRX", async () => {
+    const request = await buildEnergyRentRequest(sendTrc20);
+
+    expect(request).toEqual({
+      payerAddress: SENDER,
+      receiverAddress: SENDER,
+      energy: BigInt(ENERGY_USED),
+      durationSeconds: 600,
+      extraTrx: 0.8,
+    });
+  });
+
+  it("throws for a non-TRC-20 intent (caller has gated on listFeeOptions)", async () => {
+    await expect(buildEnergyRentRequest(sendNative)).rejects.toThrow(
+      "Energy rent is only available for TRC-20 send intents",
+    );
+  });
+
+  it("throws when the recipient is not yet entered", async () => {
+    await expect(buildEnergyRentRequest({ ...sendTrc20, recipient: "" })).rejects.toThrow(
+      "Energy rent requires a recipient",
+    );
   });
 });
