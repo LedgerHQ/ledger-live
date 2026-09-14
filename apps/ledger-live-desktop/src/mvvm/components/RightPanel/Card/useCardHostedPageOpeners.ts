@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import {
   buildHostedPageUrl,
   buildHostedUrl,
+  SIGNUP_PATH,
   type OpenCardHostedPage,
   type OpenHostedLogin,
 } from "@features/flow-pay-card-auth";
@@ -52,6 +53,12 @@ export function useCardHostedPageOpeners(): CardHostedPageOpeners {
   const openHostedPage = useCallback<OpenCardHostedPage>(
     async path => {
       const manifest = requireManifest(hosted);
+
+      // A signup reached after a restart never crosses a sign-in change, so without this the
+      // provider hands the previous holder's session to the new applicant.
+      if (path === SIGNUP_PATH) {
+        await wipeHostedSessionForManifest(manifest);
+      }
 
       navigate(manifestRoute(manifest), {
         state: { goToURL: buildHostedUrl(String(manifest.url), path) },

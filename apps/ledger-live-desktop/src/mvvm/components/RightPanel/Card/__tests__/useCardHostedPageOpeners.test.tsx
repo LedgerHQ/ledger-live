@@ -143,21 +143,69 @@ describe("useCardHostedPageOpeners", () => {
   });
 
   describe("openHostedPage", () => {
-    it.each(["/onboarding/signup", "/kyc?step=2"])(
-      "opens %s on the hosted manifest, with no environment host involved",
-      async path => {
-        const { result } = renderOpeners();
+    it("opens /kyc?step=2 on the hosted manifest, with no environment host involved", async () => {
+      const { result } = renderOpeners();
 
-        await run(() => result.current.openHostedPage(path));
+      await run(() => result.current.openHostedPage("/kyc?step=2"));
 
-        expect(mockNavigate).toHaveBeenCalledWith(
-          "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
-          { state: { goToURL: `https://ledger.baanxapi.test${path}` } },
-        );
-        // The hosted page runs on the session the signed-in user already holds.
-        expect(mockedInvoke).not.toHaveBeenCalled();
-      },
-    );
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
+        { state: { goToURL: "https://ledger.baanxapi.test/kyc?step=2" } },
+      );
+      // The hosted page runs on the session the signed-in user already holds.
+      expect(mockedInvoke).not.toHaveBeenCalled();
+    });
+
+    it("opens /onboarding/signup on the hosted manifest, with no environment host involved", async () => {
+      const { result } = renderOpeners();
+
+      await run(() => result.current.openHostedPage("/onboarding/signup"));
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
+        { state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" } },
+      );
+    });
+
+    it("ends the provider session on the hosted manifest before it opens the signup", async () => {
+      // A signup reached after a restart never crosses a sign-in change, so this is the only wipe
+      // standing between the previous holder's session and the new applicant.
+      let settleWipe!: (value: unknown) => void;
+      mockedInvoke.mockImplementationOnce(
+        () =>
+          new Promise(resolve => {
+            settleWipe = resolve;
+          }),
+      );
+      const { result } = renderOpeners();
+
+      const opening = result.current.openHostedPage("/onboarding/signup");
+
+      expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [
+        "https://ledger.baanxapi.test",
+      ]);
+      expect(mockNavigate).not.toHaveBeenCalled();
+
+      settleWipe(undefined);
+      await act(async () => {
+        await opening;
+      });
+
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    it("opens the signup anyway when the wipe fails", async () => {
+      mockedInvoke.mockRejectedValueOnce(new Error("the session is not reachable"));
+      const { result } = renderOpeners();
+
+      const error = await run(() => result.current.openHostedPage("/onboarding/signup"));
+
+      expect(error).toBeNull();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
+        { state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" } },
+      );
+    });
 
     it("takes the hosted manifest id the flag carries", async () => {
       manifestsFrom({ other: { id: "other", url: "https://other.test" } });
