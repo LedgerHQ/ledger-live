@@ -577,7 +577,7 @@ overrides:
 
 packageExtensionsChecksum: sha256-URDZkX/cZOxeA5EuBamAG/cwb/sXOIcYg7e9jJO2gm8=
 
-pnpmfileChecksum: sha256-ZNHoNVcRLz4gpfAnITCoJlvN5h6UujVUAfEizb358f8=
+pnpmfileChecksum: sha256-B0h7Mo0jLDDHyZV29yOs7LApxEzIDsL0Eq3E4zsxGrg=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
@@ -23192,6 +23192,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -37347,6 +37348,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -65335,9 +65337,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
