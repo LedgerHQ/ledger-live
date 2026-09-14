@@ -49,9 +49,10 @@ This package **composes**; it does not re-export its leaves. Each leaf keeps its
 imported directly when an app needs a single piece or its Redux state:
 
 - Auth-only runtime state (`payCardAuth`) stays behind `@features/flow-pay-card-auth/state`.
-- Other Pay Card surfaces (`Balance`, `DepositOptions`, `RequestReceive`, `FeatureTour`,
-  [`CardAssets`](../pay-card-assets/README.md)) remain independent `@features/flow-pay-card-*` leaves
-  that the app assembles on its Pay tab; they are not pulled into this orchestrator.
+- [`CardAssets`](../pay-card-assets/README.md) is composed under the card; import it from
+  `@features/flow-pay-card-assets` if you need the list on its own.
+- Other Pay Card surfaces (`Balance`, `DepositOptions`, `RequestReceive`, `FeatureTour`) remain
+  independent `@features/flow-pay-card-*` leaves that the app assembles on its Pay tab.
 
 ## Platform resolution
 

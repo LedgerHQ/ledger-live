@@ -2,6 +2,7 @@ import React from "react";
 import { CardLogin } from "@features/flow-pay-card-auth";
 import { CardArtwork, CardDetails } from "@features/flow-pay-card-details";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
+import { CardAssets } from "@features/flow-pay-card-assets";
 import type { CardViewProps } from "./Card.types";
 
 export function CardView({
@@ -19,6 +20,7 @@ export function CardView({
         <>
           <CardOnboardingWidget />
           <CardDetails cardVisual={cardVisual} />
+          <CardAssets />
         </>
       ) : (
         <>

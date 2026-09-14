@@ -17,12 +17,12 @@ import { CardAssets } from "@features/flow-pay-card-assets";
 <CardAssets />;
 ```
 
-Public API is the container. Views still render `null` until the desktop/mobile lists land.
+Public API is the container. Desktop lists `balance` + ticker (`125.40 USDC`; ticker only when the
+balance is unknown). Native still renders `null`.
 
 ## MVVM
 
-- `useCardAssetsViewModel` (private) reads linked wallets and builds rows (`125.40 USDC`; ticker
-  only when the balance is unknown).
+- `useCardAssetsViewModel` (private) reads linked wallets and builds rows.
 - `CardAssetsView.web.tsx` / `CardAssetsView.native.tsx` are the presentational views.
 - `CardAssets` wires the hook to the platform view.
 

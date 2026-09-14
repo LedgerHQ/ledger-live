@@ -22,6 +22,10 @@ jest.mock("@features/flow-pay-card-widget", () => ({
   CardOnboardingWidget: () => <View testID="card-onboarding-widget" />,
 }));
 
+jest.mock("@features/flow-pay-card-assets", () => ({
+  CardAssets: () => <View testID="card-assets" />,
+}));
+
 import { Card } from "./Card";
 
 const title = "Crypto card";
@@ -53,6 +57,7 @@ describe("Card (native)", () => {
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-onboarding-widget")).toBeNull();
       expect(screen.queryByTestId("card-details")).toBeNull();
+      expect(screen.queryByTestId("card-assets")).toBeNull();
     });
   });
 
@@ -67,6 +72,7 @@ describe("Card (native)", () => {
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.getByTestId("card-login")).toBeVisible();
       expect(screen.queryByTestId("card-details")).toBeNull();
+      expect(screen.queryByTestId("card-assets")).toBeNull();
     });
 
     it("never builds the balance overlay, even when the host provides a formatter and label", () => {
@@ -89,11 +95,12 @@ describe("Card (native)", () => {
       mockStatus = "signedIn";
     });
 
-    it("shows the widget and the card details, with no login or bare artwork", () => {
+    it("shows the widget, card details, and CardAssets, with no login or bare artwork", () => {
       render(<Card title={title} oauthConfig={oauthConfig} />);
 
       expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("card-details")).toBeVisible();
+      expect(screen.getByTestId("card-assets")).toBeVisible();
       expect(screen.queryByTestId("card-login")).toBeNull();
       expect(screen.queryByTestId("card-artwork")).toBeNull();
     });
