@@ -1,8 +1,10 @@
 import { http, HttpResponse } from "msw";
+import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { CARD_API_BASE_URL } from "@support/msw-features-flow-pay-card";
 
 export const CARD_STATUS_URL = `${CARD_API_BASE_URL}/v1/card/status`;
 export const CARD_USER_URL = `${CARD_API_BASE_URL}/v1/user`;
+export const CARD_TRANSACTIONS_URL = `${CARD_API_BASE_URL}/v1/card/transactions`;
 
 export const CARD_STATUS = {
   id: "000000000050277836",
@@ -22,4 +24,5 @@ export const CARD_USER = {
 export const signedInCardApiHandlers = [
   http.get(CARD_STATUS_URL, () => HttpResponse.json(CARD_STATUS)),
   http.get(CARD_USER_URL, () => HttpResponse.json(CARD_USER)),
+  http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(mockPayCardTransactions())),
 ];
