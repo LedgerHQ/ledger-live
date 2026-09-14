@@ -4,7 +4,6 @@ import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
-import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { useFeature } from "@features/platform-feature-flags";
@@ -688,9 +687,15 @@ describe("Send Flow Integration", () => {
   describe("Zcash shielded send", () => {
     const zcashCurrency = getCryptoCurrencyById("zcash");
 
-    const createZcashAccount = (
-      privateInfoOverrides: Partial<typeof DEFAULT_ZCASH_PRIVATE_INFO> = {},
-    ) => {
+    const zcashPrivateInfo = {
+      ufvk: "uview1testufvk",
+      shieldedAddress:
+        "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9",
+      syncState: "disabled",
+      progress: 0,
+    };
+
+    const createZcashAccount = (privateInfoOverrides: Partial<typeof zcashPrivateInfo> = {}) => {
       const base = genAccount("zcash-shielded-send-test");
       return {
         ...base,
@@ -700,10 +705,7 @@ describe("Send Flow Integration", () => {
         balance: new BigNumber("10000000"),
         spendableBalance: new BigNumber("10000000"),
         privateInfo: {
-          ...DEFAULT_ZCASH_PRIVATE_INFO,
-          ufvk: "uview1testufvk",
-          shieldedAddress:
-            "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9",
+          ...zcashPrivateInfo,
           ...privateInfoOverrides,
         },
       };
