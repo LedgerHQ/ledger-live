@@ -74,7 +74,7 @@ describe("createApi", () => {
     await api.getBalance(context, "address");
 
     expect(context.config).toHaveBeenCalled();
-    expect(getBalance).toHaveBeenCalledWith(mockTronConfig, "address");
+    expect(getBalance).toHaveBeenCalledWith(context.logger, mockTronConfig, "address");
   });
 
   it("should pass parameters correctly", async () => {
@@ -103,14 +103,19 @@ describe("createApi", () => {
     await api.listOperations(context, "address", { minHeight, order: "asc" });
 
     // Test that each of the methods was called with correct arguments, threading the config
-    expect(broadcast).toHaveBeenCalledWith(mockTronConfig, "transaction");
+    expect(broadcast).toHaveBeenCalledWith(context.logger, mockTronConfig, "transaction");
     expect(combine).toHaveBeenCalledWith("tx", ["signature"]);
-    expect(mockEstimateFees).toHaveBeenCalledWith(mockTronConfig, intent);
-    expect(craftTransaction).toHaveBeenCalledWith(mockTronConfig, intent, undefined);
-    expect(getBalance).toHaveBeenCalledWith(mockTronConfig, "address");
-    expect(getAccountInfo).toHaveBeenCalledWith(mockTronConfig, "address");
-    expect(lastBlock).toHaveBeenCalledWith(mockTronConfig);
-    expect(listOperations).toHaveBeenCalledWith(mockTronConfig, "address", {
+    expect(mockEstimateFees).toHaveBeenCalledWith(context.logger, mockTronConfig, intent);
+    expect(craftTransaction).toHaveBeenCalledWith(
+      context.logger,
+      mockTronConfig,
+      intent,
+      undefined,
+    );
+    expect(getBalance).toHaveBeenCalledWith(context.logger, mockTronConfig, "address");
+    expect(getAccountInfo).toHaveBeenCalledWith(context.logger, mockTronConfig, "address");
+    expect(lastBlock).toHaveBeenCalledWith(context.logger, mockTronConfig);
+    expect(listOperations).toHaveBeenCalledWith(context.logger, mockTronConfig, "address", {
       limit: 200,
       minTimestamp: 0,
       order: "asc",
@@ -135,6 +140,7 @@ describe("createApi", () => {
       next: undefined,
     });
     expect(listOperations).toHaveBeenCalledWith(
+      context.logger,
       mockTronConfig,
       "address",
       expect.objectContaining({ limit: 200, minTimestamp: 0 }),
@@ -161,9 +167,9 @@ describe("createApi", () => {
 
     it("should call estimateFees when no feeOption is provided", async () => {
       const api = createApi();
-      await api.estimateFees(context, trc20Intent);
+      await api.estimateFees(context, trc20Intent, {});
 
-      expect(mockEstimateFees).toHaveBeenCalledWith(mockTronConfig, trc20Intent);
+      expect(mockEstimateFees).toHaveBeenCalledWith(context.logger, mockTronConfig, trc20Intent);
       expect(mockEstimateTronifyFees).not.toHaveBeenCalled();
     });
 
@@ -173,7 +179,11 @@ describe("createApi", () => {
         feeOption: { feeOptionId: TRONIFY_FEE_OPTION_ID },
       });
 
-      expect(mockEstimateTronifyFees).toHaveBeenCalledWith(mockTronConfig, trc20Intent);
+      expect(mockEstimateTronifyFees).toHaveBeenCalledWith(
+        context.logger,
+        mockTronConfig,
+        trc20Intent,
+      );
       expect(mockEstimateFees).not.toHaveBeenCalled();
     });
 
@@ -181,7 +191,7 @@ describe("createApi", () => {
       const api = createApi();
       await api.estimateFees(context, trc20Intent, { feeOption: { feeOptionId: "unknown" } });
 
-      expect(mockEstimateFees).toHaveBeenCalledWith(mockTronConfig, trc20Intent);
+      expect(mockEstimateFees).toHaveBeenCalledWith(context.logger, mockTronConfig, trc20Intent);
       expect(mockEstimateTronifyFees).not.toHaveBeenCalled();
     });
   });
@@ -204,8 +214,8 @@ describe("createApi", () => {
       mockListFeeOptions.mockResolvedValue(feeOptions);
       const api = createApi();
 
-      await expect(api.listFeeOptions!(trc20Intent)).resolves.toBe(feeOptions);
-      expect(mockListFeeOptions).toHaveBeenCalledWith(trc20Intent);
+      await expect(api.listFeeOptions!(context, trc20Intent)).resolves.toBe(feeOptions);
+      expect(mockListFeeOptions).toHaveBeenCalledWith(context, trc20Intent);
     });
   });
 

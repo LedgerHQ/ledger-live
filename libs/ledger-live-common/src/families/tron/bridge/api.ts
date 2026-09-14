@@ -16,6 +16,8 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { BigNumber } from "bignumber.js";
 import { getCurrencyConfiguration } from "../../../config";
+import { log } from "@ledgerhq/logs";
+import { Logger } from "@ledgerhq/coin-module-framework/config";
 
 /**
  * Attaches `tronResources` (frozen/unfrozen amounts, votes, unwithdrawn reward) to the account
@@ -28,13 +30,13 @@ import { getCurrencyConfiguration } from "../../../config";
  */
 export async function buildAccountShape(address: string): Promise<FamilyAccountShape> {
   const config = getCurrencyConfiguration<TronCoinConfig>("tron");
-  const accounts = await fetchTronAccount(config, address);
+  const accounts = await fetchTronAccount(log as Logger, config, address);
   // An unactivated address still gets the zeroed defaults. Leaving `tronResources` absent instead
   // would invert `isAccountEmpty` — it reads `bandwidth.freeLimit.eq(0)`, so no resources means
   // "not empty" — and would hide the staking actions, which gate on `mainAccount.tronResources`
   // being present.
   if (accounts.length === 0) return { tronResources: defaultTronResources };
-  return { tronResources: await fetchTronResources(config, accounts[0]) };
+  return { tronResources: await fetchTronResources(log as Logger, config, accounts[0]) };
 }
 
 export async function getTokenFromAsset(

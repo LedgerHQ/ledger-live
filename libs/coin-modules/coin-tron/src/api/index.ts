@@ -54,55 +54,54 @@ export function createApi() {
   return {
     broadcast: async (context, tx, _options?) => {
       const config = await context.config();
-      return broadcast(config, tx);
+      return broadcast(context.logger, config, tx);
     },
     combine: (_context, tx, signature, _options?) => combine(tx, signature),
     craftTransaction: async (context, transactionIntent, options?) => {
       const config = await context.config();
-      return craftTransaction(config, transactionIntent, options?.customFees);
+      return craftTransaction(context.logger, config, transactionIntent, options?.customFees);
     },
     estimateFees: async (context, transactionIntent, options) => {
       const config = await context.config();
       if (options?.feeOption?.feeOptionId === TRONIFY_FEE_OPTION_ID) {
-        return estimateTronifyFees(config, transactionIntent);
+        return estimateTronifyFees(context.logger, config, transactionIntent);
       }
-      return estimateFees(config, transactionIntent);
+      return estimateFees(context.logger, config, transactionIntent);
     },
     // Fee-option discovery (ADR-050 Option 3): advertises [tronify, standard] for eligible TRC-20
-    // sends, [standard] otherwise. The framework passes only the intent — the coin-config is read
-    // from the singleton inside the logic layer (no context here). See logic/feeOptions.ts.
-    listFeeOptions: transactionIntent => listFeeOptionsLogic(transactionIntent),
+    // sends, [standard] otherwise. See logic/feeOptions.ts.
+    listFeeOptions: (context, transactionIntent) => listFeeOptionsLogic(context, transactionIntent),
     getAccountInfo: async (context, address): Promise<AccountInfo> => {
       const config = await context.config();
-      return getAccountInfo(config, address);
+      return getAccountInfo(context.logger, config, address);
     },
     getBalance: async (context, address: string, options?: BalanceOptions): Promise<Balance[]> => {
       const config = await context.config();
-      return rejectBalanceOptions(() => getBalance(config, address), options);
+      return rejectBalanceOptions(() => getBalance(context.logger, config, address), options);
     },
     lastBlock: async (context): Promise<BlockInfo> => {
       const config = await context.config();
-      return lastBlock(config);
+      return lastBlock(context.logger, config);
     },
     listOperations,
     getBlock: async (context, height): Promise<Block> => {
       const config = await context.config();
-      return getBlock(config, height);
+      return getBlock(context.logger, config, height);
     },
     getBlockInfo: async (context, height): Promise<BlockInfo> => {
       const config = await context.config();
-      return getBlockInfo(config, height);
+      return getBlockInfo(context.logger, config, height);
     },
     getStakes: async (context, address, options?) => {
       const config = await context.config();
-      return getStakes(config, address, options?.cursor);
+      return getStakes(context.logger, config, address, options?.cursor);
     },
     // Unsupported chain-wide, as it is for cosmos, cardano and tezos: `Reward` describes a distribution
     // event with a `receivedAt` date, and Trongrid exposes only the *pending* accrued total
     // (`tronResources.unwithdrawnReward`), which `getStakes` reports as `amountRewarded` instead.
     getValidators: async (context, options?) => {
       const config = await context.config();
-      return getValidators(config, options?.cursor);
+      return getValidators(context.logger, config, options?.cursor);
     },
     validateIntent: async (
       context,
@@ -111,7 +110,13 @@ export function createApi() {
       options,
     ): Promise<TransactionValidation> => {
       const config = await context.config();
-      return validateIntent(config, transactionIntent, balances, options?.customFees);
+      return validateIntent(
+        context.logger,
+        config,
+        transactionIntent,
+        balances,
+        options?.customFees,
+      );
     },
     // Tron uses (timestamp + ref_block_hash) for replay protection rather than
     // a per-account nonce, so getNextSequence has no meaningful value here.
@@ -152,11 +157,11 @@ async function listOperations(
   if (minHeight > 0) {
     // getBlock rejects when minHeight points just past the chain tip (block not yet
     // produced); fall back to the default bound instead of failing the whole listing.
-    const block = await getBlockNetwork(config, minHeight).catch(() => null);
+    const block = await getBlockNetwork(context.logger, config, minHeight).catch(() => null);
     minTimestamp = block?.time?.getTime() ?? defaultFetchParams.minTimestamp;
   }
 
-  return listOperationsLogic(config, address, {
+  return listOperationsLogic(context.logger, config, address, {
     limit: effectiveLimit,
     minTimestamp,
     order: effectiveOrder,
