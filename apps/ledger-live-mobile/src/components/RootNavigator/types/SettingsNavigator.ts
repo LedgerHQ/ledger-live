@@ -50,6 +50,7 @@ export type SettingsNavigatorStackParamList = {
         pairedDevice?: Device | null;
       }
     | undefined;
+  [ScreenName.DebugStartTour]: undefined;
   [ScreenName.DebugConnectivity]: undefined;
   [ScreenName.DebugGenerators]: undefined;
   [ScreenName.DebugContentCards]: undefined;

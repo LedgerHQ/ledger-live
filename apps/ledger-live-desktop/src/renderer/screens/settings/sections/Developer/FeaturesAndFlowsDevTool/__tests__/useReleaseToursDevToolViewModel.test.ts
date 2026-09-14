@@ -1,9 +1,9 @@
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
-import { useWalletFeaturesDevToolViewModel } from "../useWalletFeaturesDevToolViewModel";
+import { useReleaseToursDevToolViewModel } from "../useReleaseToursDevToolViewModel";
 
-describe("useWalletFeaturesDevToolViewModel", () => {
+describe("useReleaseToursDevToolViewModel", () => {
   it("should enable the Q2 release tour", () => {
-    const { result, store } = renderHook(() => useWalletFeaturesDevToolViewModel());
+    const { result, store } = renderHook(() => useReleaseToursDevToolViewModel());
 
     act(() => {
       result.current.handleToggleQ2TourEnabled();
@@ -16,7 +16,7 @@ describe("useWalletFeaturesDevToolViewModel", () => {
   });
 
   it("should disable the Q2 release tour while retaining its variant", () => {
-    const { result, store } = renderHook(() => useWalletFeaturesDevToolViewModel(), {
+    const { result, store } = renderHook(() => useReleaseToursDevToolViewModel(), {
       initialState: withFlagOverrides({
         releaseTour: { enabled: true, params: { variant: "q2" } },
       }),
@@ -33,7 +33,7 @@ describe("useWalletFeaturesDevToolViewModel", () => {
   });
 
   it("should reset the persisted Q2 tour seen state", () => {
-    const { result, store } = renderHook(() => useWalletFeaturesDevToolViewModel(), {
+    const { result, store } = renderHook(() => useReleaseToursDevToolViewModel(), {
       initialState: { settings: { hasSeenQ2Tour: true } },
     });
 

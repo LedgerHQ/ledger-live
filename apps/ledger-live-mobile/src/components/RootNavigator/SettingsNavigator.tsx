@@ -18,6 +18,7 @@ import DebugLargeScreenUpsell from "LLM/features/LargeScreenUpsell/Debug";
 import DebugOsUpdateOrchestrator from "LLM/features/OsUpdate/Debug/screens/OsUpdatesOrchestratorDebugScreen";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
+import DebugStartTour from "~/screens/Settings/Debug/Features/StartTour";
 import DebugFetchCustomImage, {
   debugFetchCustomImageHeaderOptions,
 } from "~/screens/Settings/Debug/Features/FetchCustomImage";
@@ -313,6 +314,13 @@ export default function SettingsNavigator() {
         component={DebugFeatures}
         options={{
           title: "Features",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugStartTour}
+        component={DebugStartTour}
+        options={{
+          title: "Start Tour",
         }}
       />
       <Stack.Screen

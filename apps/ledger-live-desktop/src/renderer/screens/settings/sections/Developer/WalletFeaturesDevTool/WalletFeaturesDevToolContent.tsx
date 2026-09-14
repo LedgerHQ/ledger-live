@@ -9,16 +9,12 @@ import {
   FeatureFlagPreview,
   MainFeatureToggle,
   TourSection,
-  Q2TourSection,
-  Q3TourSection,
 } from "./components";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import {
   useWalletV4TourDrawerViewModel,
   WalletV4TourDialog,
 } from "LLD/features/WalletV4Tour/Drawer";
-import { Q2TourDialog, useQ2TourDrawerViewModel } from "LLD/features/Q2Tour";
-import { Q3TourDialog, useQ3TourDrawerViewModel } from "LLD/features/Q3Tour";
 
 export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevToolContentProps) => {
   const { t } = useTranslation();
@@ -28,42 +24,13 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
     params,
     allEnabled,
     hasSeenWalletV4Tour,
-    hasSeenQ2Tour,
-    isQ2TourEnabled,
-    hasSeenQ3Tour,
-    isQ3TourEnabled,
-    selectedQ3TourVariant,
     handleToggleAll,
     handleToggleEnabled,
     handleToggleParam,
     handleToggleHasSeenTour,
-    handleToggleQ2TourHasSeen,
-    handleToggleQ2TourEnabled,
-    handleToggleQ3TourHasSeen,
-    handleToggleQ3TourEnabled,
-    handleQ3TourVariantChange,
   } = useWalletFeaturesDevToolViewModel();
   const { isDialogOpen, handleOpenDialog, closeDrawer, completeDrawer, onSlideChange } =
     useWalletV4TourDrawerViewModel();
-  const {
-    isDialogOpen: isQ2TourOpen,
-    handleOpenDialog: handleOpenQ2Tour,
-    closeDrawer: closeQ2Tour,
-    dismissDrawer: dismissQ2Tour,
-    completeDrawer: completeQ2Tour,
-    onSlideChange: onQ2TourSlideChange,
-    onContinueClick: onQ2TourContinueClick,
-  } = useQ2TourDrawerViewModel();
-  const {
-    tour: q3Tour,
-    isDialogOpen: isQ3TourOpen,
-    handleOpenDialog: handleOpenQ3Tour,
-    closeDrawer: closeQ3Tour,
-    dismissDrawer: dismissQ3Tour,
-    completeDrawer: completeQ3Tour,
-    onSlideChange: onQ3TourSlideChange,
-    onContinueClick: onQ3TourContinueClick,
-  } = useQ3TourDrawerViewModel();
 
   return (
     <div className="flex flex-col gap-2 pt-2">
@@ -104,24 +71,6 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
             </div>
           </div>
 
-          <Q2TourSection
-            hasSeen={hasSeenQ2Tour}
-            isEnabled={isQ2TourEnabled}
-            onToggleHasSeen={handleToggleQ2TourHasSeen}
-            onToggleEnabled={handleToggleQ2TourEnabled}
-            onOpenDrawer={handleOpenQ2Tour}
-          />
-
-          <Q3TourSection
-            hasSeen={hasSeenQ3Tour}
-            isEnabled={isQ3TourEnabled}
-            selectedVariant={selectedQ3TourVariant}
-            onToggleHasSeen={handleToggleQ3TourHasSeen}
-            onToggleEnabled={handleToggleQ3TourEnabled}
-            onVariantChange={handleQ3TourVariantChange}
-            onOpenDrawer={handleOpenQ3Tour}
-          />
-
           <TourSection
             hasSeenTour={hasSeenWalletV4Tour}
             onToggleHasSeenTour={handleToggleHasSeenTour}
@@ -133,25 +82,6 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
             onClose={closeDrawer}
             onComplete={completeDrawer}
             onSlideChange={onSlideChange}
-          />
-
-          <Q2TourDialog
-            isOpen={isQ2TourOpen}
-            onHeaderClose={closeQ2Tour}
-            onDismiss={dismissQ2Tour}
-            onContinueClick={onQ2TourContinueClick}
-            onComplete={completeQ2Tour}
-            onSlideChange={onQ2TourSlideChange}
-          />
-
-          <Q3TourDialog
-            tour={q3Tour}
-            isOpen={isQ3TourOpen}
-            onHeaderClose={closeQ3Tour}
-            onDismiss={dismissQ3Tour}
-            onContinueClick={onQ3TourContinueClick}
-            onComplete={completeQ3Tour}
-            onSlideChange={onQ3TourSlideChange}
           />
 
           <div className="flex gap-4">

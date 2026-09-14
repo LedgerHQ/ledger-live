@@ -7,7 +7,7 @@ import {
   SegmentedControlButton,
 } from "@ledgerhq/lumen-ui-react";
 import type { Q3TourVariant } from "LLD/features/Q3Tour/Drawer/const";
-import { DeveloperToggleRow } from "../../components/DeveloperToggleRow";
+import { DeveloperToggleRow } from "../components/DeveloperToggleRow";
 
 interface Q3TourSectionProps {
   readonly hasSeen: boolean;
@@ -35,7 +35,7 @@ export const Q3TourSection = ({
       <span className="body-2-semi-bold text-muted">Q3 Tour</span>
       <Divider />
       <DeveloperToggleRow
-        name="wallet-feature-q3-tour-enabled"
+        name="release-tour-q3-enabled"
         label="Q3 release tour"
         selected={isEnabled}
         onChange={onToggleEnabled}
@@ -55,7 +55,7 @@ export const Q3TourSection = ({
         </SegmentedControl>
       </div>
       <DeveloperToggleRow
-        name="wallet-feature-q3-tour-has-seen"
+        name="release-tour-q3-has-seen"
         label="Has Seen Q3 Tour"
         selected={hasSeen}
         onChange={onToggleHasSeen}
