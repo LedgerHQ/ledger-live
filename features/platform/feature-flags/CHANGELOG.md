@@ -1,5 +1,26 @@
 # @features/platform-feature-flags
 
+## 0.6.9
+
+### Patch Changes
+
+- Updated dependencies [[`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914), [`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f), [`761cf3e`](https://github.com/LedgerHQ/ledger-live/commit/761cf3e359fa197d07f6086d8522fd1785ba575d)]:
+  - @shared/feature-flags@0.22.0
+
+## 0.6.9-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914)]:
+  - @shared/feature-flags@0.22.0-next.1
+
+## 0.6.9-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f), [`761cf3e`](https://github.com/LedgerHQ/ledger-live/commit/761cf3e359fa197d07f6086d8522fd1785ba575d)]:
+  - @shared/feature-flags@0.22.0-next.0
+
 ## 0.6.8
 
 ### Patch Changes
@@ -197,19 +218,5 @@
 
 - Updated dependencies [[`dd0be79`](https://github.com/LedgerHQ/ledger-live/commit/dd0be79ac4a388e9db17e349fbdf218f0a05a91f), [`30cfdb1`](https://github.com/LedgerHQ/ledger-live/commit/30cfdb1c3c4bcaa9beab26cb8d28663d7a3daf1e), [`98eb6d6`](https://github.com/LedgerHQ/ledger-live/commit/98eb6d636e8cbcf1ed35449f7070ac2a84b8b148), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`94923e3`](https://github.com/LedgerHQ/ledger-live/commit/94923e36342b58ebd4754ce41324680bd9eb1bfd), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
   - @shared/feature-flags@0.12.0
-
-## 0.5.0-next.2
-
-### Patch Changes
-
-- Updated dependencies [[`98eb6d6`](https://github.com/LedgerHQ/ledger-live/commit/98eb6d636e8cbcf1ed35449f7070ac2a84b8b148)]:
-  - @shared/feature-flags@0.12.0-next.2
-
-## 0.5.0-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`30cfdb1`](https://github.com/LedgerHQ/ledger-live/commit/30cfdb1c3c4bcaa9beab26cb8d28663d7a3daf1e)]:
-  - @shared/feature-flags@0.12.0-next.1
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

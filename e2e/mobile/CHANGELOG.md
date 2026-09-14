@@ -1,5 +1,149 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.38.0
+
+### Minor Changes
+
+- [#21206](https://github.com/LedgerHQ/ledger-live/pull/21206) [`750bdd4`](https://github.com/LedgerHQ/ledger-live/commit/750bdd4bbaaf7a1c591c8a8f21479f6c64fc9c95) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Add mobile E2E for the post-onboarding hub mock flow (LIVE-31323).
+
+- [#21332](https://github.com/LedgerHQ/ledger-live/pull/21332) [`08201e0`](https://github.com/LedgerHQ/ledger-live/commit/08201e0c9e14ed5436972d544bffc7484fad3703) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(send): open the MAD for the new send flow on LWM
+
+- [#21312](https://github.com/LedgerHQ/ledger-live/pull/21312) [`a6db426`](https://github.com/LedgerHQ/ledger-live/commit/a6db4268cedf2523669ba946a683e1680ea4033e) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the transfer bottom sheet to settle before tapping it (QAA-1522)
+
+  `tapById` does not wait, and `openReceiveDrawer` tapped the sheet's receive button
+  immediately after asking the sheet to open. `toBeVisible()` is satisfied at 75%,
+  which a bottom sheet meets while still sliding, so on Android CI the tap landed
+  either on a moving view — Espresso refusing the action with `target view does not
+match one or more of the following constraints` — or before the button had
+  mounted at all. 3/5 nightlies, still failing in the latest.
+
+  Each of the three sheet taps now waits for the sheet's own container
+  (`transfer-drawer`) at 100% visibility, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11
+  and 12: anchor on the state that proves the sheet is at rest rather than adding a
+  retry or lengthening a timeout.
+
+- [#21328](https://github.com/LedgerHQ/ledger-live/pull/21328) [`e9bdc14`](https://github.com/LedgerHQ/ledger-live/commit/e9bdc141bf251f0b94cdf58024386f1842adb7c7) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the portfolio balance to resolve before reading it (QAA-1523)
+
+  `expectTotalBalanceCounterValue` read `portfolio-balance-amount` with no prior
+  wait. The balance section renders a skeleton in place of that element until the
+  counter values resolve, so straight after a counter-value change the element does
+  not exist. `getLabelOfElement` wraps its read in `retryUntilTimeout`, which
+  retries on throw — so it polled a missing element for 60s and failed with
+  `❌ [retryUntilTimeout] Timed out after 60000ms`, naming neither the element nor
+  the reason. 3/5 nightlies on Android.
+
+  The assertion now waits for `portfolio-balance-normal`, which the section carries
+  only once the balance is available, before reading the amount. That puts the
+  budget on the step that is actually slow and separates "the balance never
+  resolved" from "it resolved in the wrong currency".
+
+- [#21313](https://github.com/LedgerHQ/ledger-live/pull/21313) [`42f8610`](https://github.com/LedgerHQ/ledger-live/commit/42f86106adef416c279d7306508d1e454311d565) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the portfolio quick-action row to settle before tapping it (QAA-1524)
+
+  `tapById` does not wait, so the quick-action taps were issued as soon as the
+  portfolio rendered. The row mounts after the portfolio's own data resolves, so on
+  Android CI the tap could land before it existed — `No views in hierarchy found
+matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
+
+  Each press now waits for the row's own container at 100% visibility, which proves
+  the row is mounted and laid out. Anchoring the wait rather than lengthening a
+  timeout or adding a retry, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11 and 12.
+
+- [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
+  60s budget on a success screen that can no longer appear. The step is shared by every mobile
+  send/delegate/stake spec, and it waited on `validate-success-screen` with a bare `toBeVisible`. When
+  the signing job fails, the flow renders `GenericErrorView` in place of the success screen, so the
+  wait could only ever time out — and reported "success screen never appears", which hid the real
+  error and mis-attributed QAA-1540 for four nightlies.
+
+  The wait now passes `errorElementId: generic-error-modal`, the fail-fast option `waitForElement`
+  already offers and that `swap.page.ts` already uses, so the failure is raised within ~1s of the
+  error modal appearing and names it.
+
+  This does not make the underlying NEAR/Stax delegate failure less frequent — see QAA-1540 for the
+  30s `GeneralDmkError` it exposes.
+
+- [#21449](https://github.com/LedgerHQ/ledger-live/pull/21449) [`b08a530`](https://github.com/LedgerHQ/ledger-live/commit/b08a5308ccad03cdfc95a8f18230a2bc13f80a55) Thanks [@jeportie](https://github.com/jeportie)! - Trim the portfolio page object comments to one line each
+
+  The two settle helpers carried four comment blocks, 15 lines, restating the root
+  cause already recorded in the QAA-1522 and QAA-1524 pull requests. Long comments
+  go stale and the analysis is easier to correct where people look for it.
+
+  The two container id fields lose their comments entirely — the field names already
+  say they are containers. Each settle helper keeps one line, holding only the fact a
+  future reader needs to not remove the wait, plus its ticket reference.
+
+## 0.38.0-next.0
+
+### Minor Changes
+
+- [#21206](https://github.com/LedgerHQ/ledger-live/pull/21206) [`750bdd4`](https://github.com/LedgerHQ/ledger-live/commit/750bdd4bbaaf7a1c591c8a8f21479f6c64fc9c95) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Add mobile E2E for the post-onboarding hub mock flow (LIVE-31323).
+
+- [#21332](https://github.com/LedgerHQ/ledger-live/pull/21332) [`08201e0`](https://github.com/LedgerHQ/ledger-live/commit/08201e0c9e14ed5436972d544bffc7484fad3703) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(send): open the MAD for the new send flow on LWM
+
+- [#21312](https://github.com/LedgerHQ/ledger-live/pull/21312) [`a6db426`](https://github.com/LedgerHQ/ledger-live/commit/a6db4268cedf2523669ba946a683e1680ea4033e) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the transfer bottom sheet to settle before tapping it (QAA-1522)
+
+  `tapById` does not wait, and `openReceiveDrawer` tapped the sheet's receive button
+  immediately after asking the sheet to open. `toBeVisible()` is satisfied at 75%,
+  which a bottom sheet meets while still sliding, so on Android CI the tap landed
+  either on a moving view — Espresso refusing the action with `target view does not
+match one or more of the following constraints` — or before the button had
+  mounted at all. 3/5 nightlies, still failing in the latest.
+
+  Each of the three sheet taps now waits for the sheet's own container
+  (`transfer-drawer`) at 100% visibility, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11
+  and 12: anchor on the state that proves the sheet is at rest rather than adding a
+  retry or lengthening a timeout.
+
+- [#21328](https://github.com/LedgerHQ/ledger-live/pull/21328) [`e9bdc14`](https://github.com/LedgerHQ/ledger-live/commit/e9bdc141bf251f0b94cdf58024386f1842adb7c7) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the portfolio balance to resolve before reading it (QAA-1523)
+
+  `expectTotalBalanceCounterValue` read `portfolio-balance-amount` with no prior
+  wait. The balance section renders a skeleton in place of that element until the
+  counter values resolve, so straight after a counter-value change the element does
+  not exist. `getLabelOfElement` wraps its read in `retryUntilTimeout`, which
+  retries on throw — so it polled a missing element for 60s and failed with
+  `❌ [retryUntilTimeout] Timed out after 60000ms`, naming neither the element nor
+  the reason. 3/5 nightlies on Android.
+
+  The assertion now waits for `portfolio-balance-normal`, which the section carries
+  only once the balance is available, before reading the amount. That puts the
+  budget on the step that is actually slow and separates "the balance never
+  resolved" from "it resolved in the wrong currency".
+
+- [#21313](https://github.com/LedgerHQ/ledger-live/pull/21313) [`42f8610`](https://github.com/LedgerHQ/ledger-live/commit/42f86106adef416c279d7306508d1e454311d565) Thanks [@jeportie](https://github.com/jeportie)! - Wait for the portfolio quick-action row to settle before tapping it (QAA-1524)
+
+  `tapById` does not wait, so the quick-action taps were issued as soon as the
+  portfolio rendered. The row mounts after the portfolio's own data resolves, so on
+  Android CI the tap could land before it existed — `No views in hierarchy found
+matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
+
+  Each press now waits for the row's own container at 100% visibility, which proves
+  the row is mounted and laid out. Anchoring the wait rather than lengthening a
+  timeout or adding a retry, per `e2e/mobile/docs/add-or-update-e2e.md` rules 11 and 12.
+
+- [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
+  60s budget on a success screen that can no longer appear. The step is shared by every mobile
+  send/delegate/stake spec, and it waited on `validate-success-screen` with a bare `toBeVisible`. When
+  the signing job fails, the flow renders `GenericErrorView` in place of the success screen, so the
+  wait could only ever time out — and reported "success screen never appears", which hid the real
+  error and mis-attributed QAA-1540 for four nightlies.
+
+  The wait now passes `errorElementId: generic-error-modal`, the fail-fast option `waitForElement`
+  already offers and that `swap.page.ts` already uses, so the failure is raised within ~1s of the
+  error modal appearing and names it.
+
+  This does not make the underlying NEAR/Stax delegate failure less frequent — see QAA-1540 for the
+  30s `GeneralDmkError` it exposes.
+
+- [#21449](https://github.com/LedgerHQ/ledger-live/pull/21449) [`b08a530`](https://github.com/LedgerHQ/ledger-live/commit/b08a5308ccad03cdfc95a8f18230a2bc13f80a55) Thanks [@jeportie](https://github.com/jeportie)! - Trim the portfolio page object comments to one line each
+
+  The two settle helpers carried four comment blocks, 15 lines, restating the root
+  cause already recorded in the QAA-1522 and QAA-1524 pull requests. Long comments
+  go stale and the analysis is easier to correct where people look for it.
+
+  The two container id fields lose their comments entirely — the field names already
+  say they are containers. Each settle helper keeps one line, holding only the fact a
+  future reader needs to not remove the wait, plus its ticket reference.
+
 ## 0.37.0
 
 ### Minor Changes
@@ -303,25 +447,5 @@
 ### Minor Changes
 
 - [#18681](https://github.com/LedgerHQ/ledger-live/pull/18681) [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Remove llmAnalyticsOptInPrompt feature flag and unused variant B code
-
-## 0.27.0
-
-### Minor Changes
-
-- [#18421](https://github.com/LedgerHQ/ledger-live/pull/18421) [`8b3c998`](https://github.com/LedgerHQ/ledger-live/commit/8b3c99867c109bd6502cf10ecd2d15b0c2f4680a) Thanks [@jeportie](https://github.com/jeportie)! - Use a dynamic minimum sell amount in the buy/sell E2E specs: fetch the live per-currency `maxOfMin` from the sell `cryptoLimitations` API (with a USD-countervalues fallback) instead of hardcoded amounts, so sell flows always clear every provider's threshold. Extract `getAmountFromUSD` into a shared `currencyUtils` helper.
-
-- [#18386](https://github.com/LedgerHQ/ledger-live/pull/18386) [`24d19cc`](https://github.com/LedgerHQ/ledger-live/commit/24d19ccd6aad7603d022ac17e025e7ea343f8e21) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint the remaining `@ledgerhq/types-live` feature-type consumers (desktop app + desktop/mobile e2e) onto `@shared/feature-flags`, taking in-repo usage of the legacy types-live feature types to zero. Also drop now-dead feature-flag tooling config: the `@ledgerhq/live-common/featureFlags/index` `unimported` entry in `live-dmk-desktop`, and the deleted `FeatureFlagsContextBridge` eslint-guardrail exemptions in both apps (the block rules against re-introducing the deleted module are kept).
-
-- [#18435](https://github.com/LedgerHQ/ledger-live/pull/18435) [`136ca7c`](https://github.com/LedgerHQ/ledger-live/commit/136ca7c3bc4a489e49a8df647e2f87585cd705c5) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Align delegate and earn v2 e2e tests (desktop and mobile) with the versioned stakePrograms feature-flag values. ETH staking now redirects into the earn deposit webview instead of a native staking flow, so the affected cold-start, inline add-account, partner-dapp CTA and delegate assertions drive the deposit webview for ETH (amount → provider → partner dapp) while other assets keep the native staking checks. Keeps the test environment in sync with production.
-
-## 0.27.0-next.0
-
-### Minor Changes
-
-- [#18421](https://github.com/LedgerHQ/ledger-live/pull/18421) [`8b3c998`](https://github.com/LedgerHQ/ledger-live/commit/8b3c99867c109bd6502cf10ecd2d15b0c2f4680a) Thanks [@jeportie](https://github.com/jeportie)! - Use a dynamic minimum sell amount in the buy/sell E2E specs: fetch the live per-currency `maxOfMin` from the sell `cryptoLimitations` API (with a USD-countervalues fallback) instead of hardcoded amounts, so sell flows always clear every provider's threshold. Extract `getAmountFromUSD` into a shared `currencyUtils` helper.
-
-- [#18386](https://github.com/LedgerHQ/ledger-live/pull/18386) [`24d19cc`](https://github.com/LedgerHQ/ledger-live/commit/24d19ccd6aad7603d022ac17e025e7ea343f8e21) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint the remaining `@ledgerhq/types-live` feature-type consumers (desktop app + desktop/mobile e2e) onto `@shared/feature-flags`, taking in-repo usage of the legacy types-live feature types to zero. Also drop now-dead feature-flag tooling config: the `@ledgerhq/live-common/featureFlags/index` `unimported` entry in `live-dmk-desktop`, and the deleted `FeatureFlagsContextBridge` eslint-guardrail exemptions in both apps (the block rules against re-introducing the deleted module are kept).
-
-- [#18435](https://github.com/LedgerHQ/ledger-live/pull/18435) [`136ca7c`](https://github.com/LedgerHQ/ledger-live/commit/136ca7c3bc4a489e49a8df647e2f87585cd705c5) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Align delegate and earn v2 e2e tests (desktop and mobile) with the versioned stakePrograms feature-flag values. ETH staking now redirects into the earn deposit webview instead of a native staking flow, so the affected cold-start, inline add-account, partner-dapp CTA and delegate assertions drive the deposit webview for ETH (amount → provider → partner dapp) while other assets keep the native staking checks. Keeps the test environment in sync with production.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

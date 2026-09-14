@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-icp",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "description": "Ledger Hardware Wallet Internet Computer Application API",
   "keywords": [

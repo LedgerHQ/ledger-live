@@ -1,5 +1,170 @@
 # @devtools/bindings
 
+## 0.7.0
+
+### Minor Changes
+
+- [#21422](https://github.com/LedgerHQ/ledger-live/pull/21422) [`81aa729`](https://github.com/LedgerHQ/ledger-live/commit/81aa7294c94ef114e6e82ec4c277f0a6c0038c92) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add a DevTools reset for the Pay Request verify hint, plus mobile shortcuts to Portfolio and Pay.
+
+- [#21418](https://github.com/LedgerHQ/ledger-live/pull/21418) [`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Rename `CARD_API_URL` to `CARD_BAANX_API_URL`, keep the production defaults, and drop the Env vars section from the Card / Pay DevTool.
+
+- [#21552](https://github.com/LedgerHQ/ledger-live/pull/21552) [`ef29f07`](https://github.com/LedgerHQ/ledger-live/commit/ef29f0711ecec104e4dd9c9d86d4e4d41c4ddee3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add controls for card onboarding progress and dismiss state to the Pay Card DevTool.
+
+- [#21368](https://github.com/LedgerHQ/ledger-live/pull/21368) [`d6b290b`](https://github.com/LedgerHQ/ledger-live/commit/d6b290b37b8ad6f677ab382bef53bf05cd394ca2) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add an "Env vars" section to the Card / Pay DevTool. It shows the value the app reads for CARD_API_URL and CARD_BAANX_CLIENT_KEY, and it sets either one from an input. Each input starts on the Baanx development tenant, so a tester switches with one press.
+
+- [#21448](https://github.com/LedgerHQ/ledger-live/pull/21448) [`0a02a32`](https://github.com/LedgerHQ/ledger-live/commit/0a02a325f99033c086864b0778a8f81c3b4178ae) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add a "Balance" screen to the Card / Pay devtool.
+
+  - Three sections: "Baanx wallets" and "Card linked wallets" are the two wallet responses exactly as they arrived, "Card linked combined wallets" is the join the app builds from them.
+  - Every field is shown unformatted, the provider's own unmapped `currency` and `network` ids included, so a currency-mapping gap can be read off the screen.
+  - A joined row with no Baanx wallet behind it says so rather than reading as a zero.
+  - Each section counts what it got, so an empty answer does not read as a missing one.
+  - Names the endpoint that failed and prints what it answered, rather than reporting that something failed.
+  - A refresh button refetches both.
+  - Opening the screen is what requests them; the tool mounts without reading anything.
+
+- [#21468](https://github.com/LedgerHQ/ledger-live/pull/21468) [`66c7569`](https://github.com/LedgerHQ/ledger-live/commit/66c7569dcfae90739b369ffb3a92cee75dd2e9cd) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Show the secure card details image in the Card interaction screen.
+
+  - A placeholder stands in for the card until it is pressed, then the provider's image replaces it.
+  - The image loads straight from the returned URL: its token is the whole credential, so no headers are needed.
+  - Leaving the screen drops the URL, because the provider spends it on first use and a stale one renders nothing.
+  - The URL is never rendered as text.
+  - The image loads with `cache: "reload"`: the token is spent on first use, so a cache hit is the only way it could be seen twice.
+  - Asks for the card and PAN colours per colour scheme, so the card number reads as its own surface against the card body.
+
+- [#21444](https://github.com/LedgerHQ/ledger-live/pull/21444) [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add a "Card interaction" screen to the Card / Pay devtool.
+
+  - Calls a signed-in cardholder's endpoints on demand and prints what they answer, so the data can be checked before any screen renders it.
+  - First probe: card status. Probes are a list, so further endpoints are one entry each.
+  - Exports `useLazyGetCardStatusQuery`, which a button-triggered fetch needs.
+  - Native only for now.
+
+- [#21428](https://github.com/LedgerHQ/ledger-live/pull/21428) [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show a Card login intro sheet on the first press of the card's action (LIVE-36793). The sheet has two
+  buttons. "Log in to Baanx" runs the OAuth2 hosted login. "Create an account" opens the provider's
+  own signup page, `/onboarding/signup` on the new `CARD_BAANX_HOSTED_UI` host, in the same browser. The
+  intro shows once: a new persisted `payCardLoginIntro` flag goes up when a login the card holder just
+  started reaches `ready`, and it survives an app restart inside the shared `payCard` blob. A hydrated
+  session raises nothing. A tester resets the flag from the Pay Card devtool, and the intro shows again
+  on the next press.
+
+  The same flag now picks what the login block says, from the app's new `payTab.cardLogin.*` keys. It
+  sells the card while the flag is down — "Get 1% cashback every time you spend" under a `Get card`
+  button that opens the intro — and offers a login once the flag is up: "Log in to access your card"
+  under a `Login` button that starts one. Its title is `Crypto Card`, and on mobile it is a Lumen
+  `Subheader` under the card face, so the Pay Card flow no longer draws a section title above it there.
+  Desktop keeps its host-provided title.
+
+  The virtual card row names one wallet only: Apple Pay on iOS, Google Pay on Android. Desktop cannot
+  see the phone the card will be added to, so it keeps naming both. Each row wraps its title and its
+  description over as many lines as the copy needs, instead of cutting both off at the first.
+
+  Hosts inject `onTrackEvent`. Get card, Login, the intro buttons and close fire `button_clicked`;
+  opening the intro also fires `Page card login intro`.
+
+  `CARD_BAANX_HOSTED_UI` defaults to `https://ledger-ew1uat.baanxapi.com`. Both apps read it with
+  `useEnv` and hand it to the flow as `oauthConfig.hostedUiUrl`, so a new value moves the signup page
+  to another tenant without a restart.
+
+### Patch Changes
+
+- Updated dependencies [[`3d23fd4`](https://github.com/LedgerHQ/ledger-live/commit/3d23fd471fbb0ba76a0e6997eba995e190a89f7c), [`b7f83a1`](https://github.com/LedgerHQ/ledger-live/commit/b7f83a1c1818e4eff9ffbf19796a71d7242fd5b4), [`c270975`](https://github.com/LedgerHQ/ledger-live/commit/c2709750e007b758fa13f0f717efa897fcc6235d), [`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`55bd216`](https://github.com/LedgerHQ/ledger-live/commit/55bd2166238ab3e03c33226bb5f5eb2e8646a818), [`6b47659`](https://github.com/LedgerHQ/ledger-live/commit/6b4765929e98abbcb08cd5348fddb528a9e674e7), [`b1b1e38`](https://github.com/LedgerHQ/ledger-live/commit/b1b1e38d2a8311f935f30c185276c165a6992dbc), [`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914), [`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`761cf3e`](https://github.com/LedgerHQ/ledger-live/commit/761cf3e359fa197d07f6086d8522fd1785ba575d), [`08ee05c`](https://github.com/LedgerHQ/ledger-live/commit/08ee05cfb66f393b14fdf1377ed6c54c4831a87c), [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2), [`a7d54c0`](https://github.com/LedgerHQ/ledger-live/commit/a7d54c0d6af65abe7aa2170053b3fd07ae9b05ab), [`b053fc7`](https://github.com/LedgerHQ/ledger-live/commit/b053fc79c49c604e765ac7d3d793471196be9ae1), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6), [`3de7317`](https://github.com/LedgerHQ/ledger-live/commit/3de7317d858c570600eb0a4297876327fdc2c7b5), [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f), [`7aa3071`](https://github.com/LedgerHQ/ledger-live/commit/7aa3071a532c98804a4357ff36a001b23351da73), [`faa8ef1`](https://github.com/LedgerHQ/ledger-live/commit/faa8ef11055a27af3eb7bcf1b662e8bf5c3da77d), [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a), [`d54d191`](https://github.com/LedgerHQ/ledger-live/commit/d54d19127a958bb0ac8c9c479bba716ce67041ff)]:
+  - @features/flow-pay-request@0.4.0
+  - @shared/env@0.6.0
+  - @domain/api-card-management@0.5.0
+  - @features/flow-pay-card-widget@0.2.0
+  - @shared/feature-flags@0.22.0
+  - @features/flow-pay-card-wallets@0.2.0
+  - @features/flow-pay-card-auth@0.6.0
+  - @features/flow-pay-feature-tour@0.5.0
+  - @devtools/registry@0.4.2
+  - @features/platform-feature-flags@0.6.9
+
+## 0.7.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914)]:
+  - @shared/feature-flags@0.22.0-next.1
+  - @features/platform-feature-flags@0.6.9-next.1
+  - @devtools/registry@0.4.2-next.1
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#21422](https://github.com/LedgerHQ/ledger-live/pull/21422) [`81aa729`](https://github.com/LedgerHQ/ledger-live/commit/81aa7294c94ef114e6e82ec4c277f0a6c0038c92) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add a DevTools reset for the Pay Request verify hint, plus mobile shortcuts to Portfolio and Pay.
+
+- [#21418](https://github.com/LedgerHQ/ledger-live/pull/21418) [`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Rename `CARD_API_URL` to `CARD_BAANX_API_URL`, keep the production defaults, and drop the Env vars section from the Card / Pay DevTool.
+
+- [#21552](https://github.com/LedgerHQ/ledger-live/pull/21552) [`ef29f07`](https://github.com/LedgerHQ/ledger-live/commit/ef29f0711ecec104e4dd9c9d86d4e4d41c4ddee3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add controls for card onboarding progress and dismiss state to the Pay Card DevTool.
+
+- [#21368](https://github.com/LedgerHQ/ledger-live/pull/21368) [`d6b290b`](https://github.com/LedgerHQ/ledger-live/commit/d6b290b37b8ad6f677ab382bef53bf05cd394ca2) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add an "Env vars" section to the Card / Pay DevTool. It shows the value the app reads for CARD_API_URL and CARD_BAANX_CLIENT_KEY, and it sets either one from an input. Each input starts on the Baanx development tenant, so a tester switches with one press.
+
+- [#21448](https://github.com/LedgerHQ/ledger-live/pull/21448) [`0a02a32`](https://github.com/LedgerHQ/ledger-live/commit/0a02a325f99033c086864b0778a8f81c3b4178ae) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add a "Balance" screen to the Card / Pay devtool.
+
+  - Three sections: "Baanx wallets" and "Card linked wallets" are the two wallet responses exactly as they arrived, "Card linked combined wallets" is the join the app builds from them.
+  - Every field is shown unformatted, the provider's own unmapped `currency` and `network` ids included, so a currency-mapping gap can be read off the screen.
+  - A joined row with no Baanx wallet behind it says so rather than reading as a zero.
+  - Each section counts what it got, so an empty answer does not read as a missing one.
+  - Names the endpoint that failed and prints what it answered, rather than reporting that something failed.
+  - A refresh button refetches both.
+  - Opening the screen is what requests them; the tool mounts without reading anything.
+
+- [#21468](https://github.com/LedgerHQ/ledger-live/pull/21468) [`66c7569`](https://github.com/LedgerHQ/ledger-live/commit/66c7569dcfae90739b369ffb3a92cee75dd2e9cd) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Show the secure card details image in the Card interaction screen.
+
+  - A placeholder stands in for the card until it is pressed, then the provider's image replaces it.
+  - The image loads straight from the returned URL: its token is the whole credential, so no headers are needed.
+  - Leaving the screen drops the URL, because the provider spends it on first use and a stale one renders nothing.
+  - The URL is never rendered as text.
+  - The image loads with `cache: "reload"`: the token is spent on first use, so a cache hit is the only way it could be seen twice.
+  - Asks for the card and PAN colours per colour scheme, so the card number reads as its own surface against the card body.
+
+- [#21444](https://github.com/LedgerHQ/ledger-live/pull/21444) [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add a "Card interaction" screen to the Card / Pay devtool.
+
+  - Calls a signed-in cardholder's endpoints on demand and prints what they answer, so the data can be checked before any screen renders it.
+  - First probe: card status. Probes are a list, so further endpoints are one entry each.
+  - Exports `useLazyGetCardStatusQuery`, which a button-triggered fetch needs.
+  - Native only for now.
+
+- [#21428](https://github.com/LedgerHQ/ledger-live/pull/21428) [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show a Card login intro sheet on the first press of the card's action (LIVE-36793). The sheet has two
+  buttons. "Log in to Baanx" runs the OAuth2 hosted login. "Create an account" opens the provider's
+  own signup page, `/onboarding/signup` on the new `CARD_BAANX_HOSTED_UI` host, in the same browser. The
+  intro shows once: a new persisted `payCardLoginIntro` flag goes up when a login the card holder just
+  started reaches `ready`, and it survives an app restart inside the shared `payCard` blob. A hydrated
+  session raises nothing. A tester resets the flag from the Pay Card devtool, and the intro shows again
+  on the next press.
+
+  The same flag now picks what the login block says, from the app's new `payTab.cardLogin.*` keys. It
+  sells the card while the flag is down — "Get 1% cashback every time you spend" under a `Get card`
+  button that opens the intro — and offers a login once the flag is up: "Log in to access your card"
+  under a `Login` button that starts one. Its title is `Crypto Card`, and on mobile it is a Lumen
+  `Subheader` under the card face, so the Pay Card flow no longer draws a section title above it there.
+  Desktop keeps its host-provided title.
+
+  The virtual card row names one wallet only: Apple Pay on iOS, Google Pay on Android. Desktop cannot
+  see the phone the card will be added to, so it keeps naming both. Each row wraps its title and its
+  description over as many lines as the copy needs, instead of cutting both off at the first.
+
+  Hosts inject `onTrackEvent`. Get card, Login, the intro buttons and close fire `button_clicked`;
+  opening the intro also fires `Page card login intro`.
+
+  `CARD_BAANX_HOSTED_UI` defaults to `https://ledger-ew1uat.baanxapi.com`. Both apps read it with
+  `useEnv` and hand it to the flow as `oauthConfig.hostedUiUrl`, so a new value moves the signup page
+  to another tenant without a restart.
+
+### Patch Changes
+
+- Updated dependencies [[`3d23fd4`](https://github.com/LedgerHQ/ledger-live/commit/3d23fd471fbb0ba76a0e6997eba995e190a89f7c), [`b7f83a1`](https://github.com/LedgerHQ/ledger-live/commit/b7f83a1c1818e4eff9ffbf19796a71d7242fd5b4), [`c270975`](https://github.com/LedgerHQ/ledger-live/commit/c2709750e007b758fa13f0f717efa897fcc6235d), [`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`55bd216`](https://github.com/LedgerHQ/ledger-live/commit/55bd2166238ab3e03c33226bb5f5eb2e8646a818), [`6b47659`](https://github.com/LedgerHQ/ledger-live/commit/6b4765929e98abbcb08cd5348fddb528a9e674e7), [`b1b1e38`](https://github.com/LedgerHQ/ledger-live/commit/b1b1e38d2a8311f935f30c185276c165a6992dbc), [`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`761cf3e`](https://github.com/LedgerHQ/ledger-live/commit/761cf3e359fa197d07f6086d8522fd1785ba575d), [`08ee05c`](https://github.com/LedgerHQ/ledger-live/commit/08ee05cfb66f393b14fdf1377ed6c54c4831a87c), [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2), [`a7d54c0`](https://github.com/LedgerHQ/ledger-live/commit/a7d54c0d6af65abe7aa2170053b3fd07ae9b05ab), [`b053fc7`](https://github.com/LedgerHQ/ledger-live/commit/b053fc79c49c604e765ac7d3d793471196be9ae1), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6), [`3de7317`](https://github.com/LedgerHQ/ledger-live/commit/3de7317d858c570600eb0a4297876327fdc2c7b5), [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f), [`7aa3071`](https://github.com/LedgerHQ/ledger-live/commit/7aa3071a532c98804a4357ff36a001b23351da73), [`faa8ef1`](https://github.com/LedgerHQ/ledger-live/commit/faa8ef11055a27af3eb7bcf1b662e8bf5c3da77d), [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a), [`d54d191`](https://github.com/LedgerHQ/ledger-live/commit/d54d19127a958bb0ac8c9c479bba716ce67041ff)]:
+  - @features/flow-pay-request@0.4.0-next.0
+  - @shared/env@0.6.0-next.0
+  - @domain/api-card-management@0.5.0-next.0
+  - @features/flow-pay-card-widget@0.2.0-next.0
+  - @shared/feature-flags@0.22.0-next.0
+  - @features/flow-pay-card-wallets@0.2.0-next.0
+  - @features/flow-pay-card-auth@0.6.0-next.0
+  - @features/flow-pay-feature-tour@0.5.0-next.0
+  - @devtools/registry@0.4.2-next.0
+  - @features/platform-feature-flags@0.6.9-next.0
+
 ## 0.6.0
 
 ### Minor Changes

@@ -129,6 +129,12 @@
     "ldmkEnabled" : "LDMK 전송 활성화됨"
   },
   "errors" : {
+    "ZcashMemoTooLong" : {
+      "title" : "메모는 {{maxBytes}} 바이트를 초과할 수 없습니다"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "한 번에 전송할 수 있는 최대 금액을 초과했습니다. 금액을 여러 번에 나누어 전송하세요."
+    },
     "ReplacementTransactionUnderpriced" : {
       "title" : "시세 이하의 대체 트랜잭션",
       "description" : "네트워크 수수료가 너무 낮은 것 같습니다. 조금 높여주세요"
@@ -699,6 +705,10 @@
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "Your balance could not be retrieved",
+      "description" : "Please check your internet connection and try again."
+    },
     "UnstakeNotEnoughStakedBalanceLeft" : {
       "title" : "{{maxAmount}} 이상 언스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 언스테이킹됩니다.",
       "description" : "{{maxAmount}} 이상 언스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 언스테이킹됩니다."
@@ -957,6 +967,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "이전 검증인으로부터 진행 중인 언스테이킹 절차가 먼저 완료되어야 합니다"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "This amount is too small to stake"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "먼저 부계정을 모두 비워주세요"
@@ -1540,6 +1553,7 @@
       "title" : "패스워드 확인",
       "description" : "앱을 열 때마다 이 패스워드가 필요합니다. 분실할 경우, 앱을 재설치하고 지갑을 복구하세요.",
       "mismatch" : "패스워드가 일치하지 않습니다",
+      "saveFailed" : "패스워드를 저장하지 못했습니다. 다시 시도해 주세요.",
       "cta" : "확인"
     }
   },
@@ -3172,7 +3186,8 @@
       "previousStakingNodeId" : "이전 노드 ID",
       "gasConsumed" : "소모된 가스비",
       "gasUsed" : "사용된 가스비",
-      "functionId" : "함수 ID"
+      "functionId" : "함수 ID",
+      "inputs" : "입력값"
     },
     "multipleAddresses" : "왜 주소가 여러 개인가요?"
   },
@@ -4273,6 +4288,11 @@
           "actions" : {
             "viewInExplorer" : "탐색기에서 보기",
             "copied" : "복사됨"
+          },
+          "earnBanner" : {
+            "title" : "최대 수익 {{apy}}% {{type}}",
+            "description" : "수익 창출 기회 둘러보기",
+            "button" : "탐색"
           },
           "accessibility" : {
             "copySwapId" : "스왑 ID 복사"
@@ -7728,7 +7748,53 @@
     }
   },
   "mina" : {
-    "memoPlaceholder" : "메모(선택)"
+    "memoPlaceholder" : "메모(선택)",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "재위임",
+      "earn" : "수익 창출"
+    },
+    "stakeBanner" : {
+      "title" : "MINA로 보상 받기",
+      "altTitle" : "MINA 위임 관리하기",
+      "description" : "MINA를 블록 프로듀서에 위임하고 블록 생성을 통해 수익을 창출해보세요. 보상은 위임된 수량에 따라 분배됩니다.",
+      "altDescription" : "위임 설정을 변경하거나 MINA 토큰 위임을 해제하세요."
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "위임 대상",
+      "stakedBalance" : "위임 수량",
+      "producerAddress" : "프로듀서 주소",
+      "delegatedToTooltip" : "위임할 블록 프로듀서 이름",
+      "stakedBalanceTooltip" : "현재 이 검증인에게 위임된 총 MINA 수량",
+      "producerAddressTooltip" : "위임할 블록 프로듀서의 공개 주소"
+    },
+    "delegators" : "위임자",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "검증인 선택",
+        "connectDevice" : "장치 연결",
+        "confirmation" : "확인"
+      },
+      "title" : "MINA 위임",
+      "help" : "아래 목록에서 MINA 토큰을 위임할 검증인을 선택하세요.",
+      "success" : {
+        "title" : "트랜잭션이 성공적으로 브로드캐스트되었습니다",
+        "description" : "위임 변경 요청이 브로드캐스트되었습니다."
+      },
+      "error" : {
+        "title" : "트랜잭션 브로드캐스트 중 오류가 발생했습니다"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "총 스테이킹",
+      "commission" : "수수료",
+      "showAll" : "모두 보기",
+      "showLess" : "접기",
+      "iDelegate" : "위임",
+      "listHeader" : "위임",
+      "redelegate" : "재위임",
+      "undelegate" : "위임 해제",
+      "undelegateTitle" : "MINA 위임 해제"
+    }
   },
   "near" : {
     "info" : {
@@ -8692,7 +8758,9 @@
           "inactive" : "비활성",
           "inactiveTooltip" : "검증인을 찾을 수 없습니다",
           "overstaked" : "스테이킹 한도 초과",
-          "overstakedTooltip" : "이 노드는 스테이킹 한도를 초과하여 연간 수익률이 최적 수준보다 낮습니다"
+          "overstakedTooltip" : "이 노드는 스테이킹 한도를 초과하여 연간 수익률이 최적 수준보다 낮습니다",
+          "fetchError" : "불러오지 못했습니다",
+          "fetchErrorTooltip" : "검증인 데이터를 불러올 수 없습니다. 다시 시도하세요."
         },
         "rewards" : "보상",
         "actions" : {
@@ -9722,12 +9790,15 @@
     "selectAsset" : "자산 선택",
     "selectNetwork" : "네트워크 선택",
     "selectAccount" : "계정 선택",
+    "selectAccountToPayFrom" : "결제할 계정을 선택하세요",
     "selectAccountPerpsTitle" : "Hyperliquid 계정 선택",
-    "selectAccountPerpsDescription" : "무기한 선물에 자산을 예치하려면 Hyperliquid 계정이 필요합니다. 계속하려면 계정을 추가하세요.",
+    "selectAccountPerpsDescription" : "거래를 시작하려면 입금 계좌를 선택해 주세요",
+    "selectAccountPerpsEmptyDescription" : "무기한 선물 거래 자금을 입금하려면 Hyperliquid 계정이 필요합니다. 먼저 계정을 추가하세요.",
     "selectDepositCurrencyTitle" : "입금할 자산 선택",
     "selectDepositCurrencyDescription" : "지원되는 모든 자산을 사용할 수 있습니다. 필요한 경우 자동으로 스왑됩니다.",
     "searchPlaceholder" : "이름 또는 주소로 검색",
     "emptyAssetList" : "자산을 찾을 수 없습니다",
+    "notAvailableYet" : "지원 예정",
     "accountCount_one" : "{{count}}개 계정",
     "accountCount_other" : "{{count}}개 계정",
     "emptyAccounts" : "아직 {{network}} 계정이 없습니다. 계속하려면 계정을 추가하세요",
@@ -10099,22 +10170,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "결제 및 송금 받기",
-      "description" : "스테이블코인으로 암호화폐와 실생활 결제의 경계를 허물어 보세요.",
-      "cta" : "확인",
+      "title" : "모든 결제를 한 곳에서",
+      "description" : "새로운 결제 탭에서 크립토를 일상 속 결제에 바로 사용해 보세요.",
+      "cta" : "결제 탭 둘러보기",
       "rows" : {
         "global" : {
-          "title" : "전 세계 어디서나 결제 및 송금 받기",
-          "description" : "저렴한 네트워크 수수료 혜택"
+          "title" : "저장된 주소로 보내기",
+          "description" : "저장된 주소로 암호화폐를 보낼 수 있습니다."
         },
         "volatility" : {
-          "title" : "가격 변동성 최소화",
-          "description" : "스테이블코인은 법정화폐를 기반으로 합니다."
+          "title" : "결제 요청",
+          "description" : "주소록에 저장된 상대에게 바로 입금을 요청할 수 있습니다."
         },
         "card" : {
-          "title" : "카드로 결제하고 1% 캐시백 받기",
-          "description" : "USDC, USDT, BTC, ETH 등 다양한 자산 결제를 지원합니다"
+          "title" : "크립토 카드로 전 세계 어디서나 자유롭게 쇼핑",
+          "description" : "제한 없는 1% 캐시백 혜택까지 누려보세요."
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "더 보기",
+      "title" : "더 보기",
+      "rows" : {
+        "managePin" : "PIN 코드 관리",
+        "accessBaanx" : "Baanx 액세스",
+        "help" : "도움말",
+        "logout" : "로그아웃"
       }
     },
     "balance" : {
@@ -10129,7 +10210,12 @@
       }
     },
     "card" : {
-      "title" : "크립토 카드"
+      "title" : "크립토 카드",
+      "freeze" : "동결",
+      "unfreeze" : "동결 해제"
+    },
+    "selectContact" : {
+      "placeholder" : "주소 또는 이름 입력"
     },
     "actions" : {
       "deposit" : "스테이블코인 추가",
@@ -10144,6 +10230,10 @@
         "copied" : "복사됨",
         "save" : "저장",
         "verify" : "확인"
+      },
+      "verifyHint" : {
+        "message" : "공유하기 전 \nLedger 장치에서 \n주소를 확인하세요",
+        "gotIt" : "확인"
       },
       "verifyAddress" : {
         "introTitle" : "주소를 확인하세요",
@@ -10187,10 +10277,86 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "현금을 스테이블코인으로 바로",
+      "description" : "현금을 이체하면 스테이블코인이 Ledger Wallet™으로 바로 들어옵니다.",
+      "createAccount" : "계정 생성하기",
+      "logIn" : "Noah 로그인",
+      "providedBy" : "Noah 제공 서비스",
+      "rows" : {
+        "bank" : {
+          "title" : "모든 은행 이체 지원",
+          "description" : "SEPA 또는 ACH를 통해 급여, 결제 대금, 입금까지 한번에."
+        },
+        "fees" : {
+          "title" : "숨겨진 수수료 없음",
+          "description" : "수수료 0.25%로 은행에서 블록체인으로 바로 연결."
+        },
+        "earn" : {
+          "title" : "보유 자산을 바로 활용",
+          "description" : "스테이블코인 스왑 등으로 수익 창출 가능."
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "크립토 카드",
+      "beforeIntro" : {
+        "description" : "결제할 때마다 1% 캐시백 혜택이 지급됩니다",
+        "action" : "카드 발급받기"
+      },
+      "afterIntro" : {
+        "description" : "카드에 액세스하려면 로그인하세요",
+        "action" : "로그인"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "암호화폐로 결제하면 캐시백이 혜택이",
+      "providedBy" : "Baanx 제공 서비스",
+      "createAccount" : "계정 생성하기",
+      "logIn" : "Baanx 로그인",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay 또는 Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "무제한 1% 암호화폐 캐시백",
+          "description" : "USDC, USDT, BTC를 사용하는 모든 크립토 카드 결제에 적용됩니다."
+        },
+        "virtualCard" : {
+          "title" : "무료 가상 카드 발급",
+          "description" : "{{wallet}}에 추가하고 결제에 바로 사용해 보세요."
+        },
+        "topUp" : {
+          "title" : "Ledger Wallet™에서 안전하게 충전",
+          "description" : "모든 이체는 사용자의 Ledger 사이너로 안전하게 승인됩니다."
+        }
+      }
+    },
     "contacts" : {
       "title" : "결제",
       "pay" : "New",
-      "seeAllTitle" : "저장된 주소로 보내기"
+      "seeAllTitle" : "저장된 주소로 보내기",
+      "addressPicker" : {
+        "title" : "{{name}} 주소 선택",
+        "addAddress" : "주소 추가"
+      }
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "카드 설정하기",
+        "allDone" : "설정이 모두 완료되었습니다."
+      },
+      "dialog" : {
+        "title" : "카드 설정하기",
+        "stepComplete" : "완료",
+        "gotIt" : "확인"
+      },
+      "walletStep" : {
+        "title" : "Apple/Google Pay에 추가하기",
+        "description" : "매장에서 스마트폰으로 결제하기"
+      }
     }
   },
   "syncIndicator" : {
@@ -10418,6 +10584,16 @@
           "title" : "Ledger 장치 준비 중"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "Ledger 장치 준비 중"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "Ledger 장치 준비 중"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "주소록 추가 시 사용한 것과 동일한 Ledger 장치를 사용하세요.",
@@ -10430,6 +10606,10 @@
         "appVersionTooLow" : {
           "title" : "앱 업데이트가 필요합니다",
           "description" : "주소록에 저장하려면 Ledger 장치에서 앱을 업데이트하고 다시 시도하세요."
+        },
+        "osVersionTooLow" : {
+          "title" : "Ledger OS 업데이트 필요",
+          "description" : "이름을 변경하려면 Ledger 기기의 운영 체제를 업데이트한 후 다시 시도하세요."
         }
       }
     },
@@ -10541,12 +10721,6 @@
       "applyChanges" : "변경 사항 적용",
       "invalidLabelError" : "특수 문자는 허용되지 않습니다."
     },
-    "editSigner" : {
-      "title" : "장치에서 확인하세요",
-      "description" : "이 변경 사항을 확인하려면 사용 중인 Ledger 장치를 연결하고 잠금을 해제하세요.",
-      "confirm" : "계속",
-      "cancel" : "취소"
-    },
     "editSignerMismatch" : {
       "title" : "이 연락처를 추가할 때 사용한 것과 동일한 Ledger 장치를 사용하세요.",
       "description" : "연결된 장치가 일치하지 않습니다.",
@@ -10554,10 +10728,10 @@
       "cancel" : "취소"
     },
     "ledgerSyncIntroduction" : {
-      "title" : "연락처를 저장하려면 Ledger Sync를 활성화하세요",
-      "description" : "연락처는 Ledger 장치를 통해 종단간 암호화되어 모든 장치에 동기화되며, 오직 사용자 본인만 잠금을 해제할 수 있습니다.",
-      "activate" : "Ledger Sync 활성화하기",
-      "dismiss" : "확인",
+      "title" : "주소록에 추가하려면 지갑을 동기화하세요",
+      "description" : "주소록은 종단간 암호화되어 모든 휴대폰과 컴퓨터의 Ledger Wallet에서 동기화됩니다.",
+      "activate" : "지갑 동기화",
+      "dismiss" : "나중에 하기",
       "checkingAccessibilityLabel" : "Ledger Sync 상태 확인 중"
     },
     "featureIntroduction" : {
