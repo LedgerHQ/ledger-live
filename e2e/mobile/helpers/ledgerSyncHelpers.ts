@@ -1,3 +1,4 @@
+import { sleep } from "@ledgerhq/live-e2e-shared";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { getFlags } from "@e2e/bridge/server";
@@ -45,20 +46,26 @@ export const LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS: PartialFeatures = {
   lwmLedgerSyncOptimisation: { enabled: true },
 };
 
-/** `getFlags` returns "" when the bridge has not connected yet, so retry before believing it. */
+const ENVIRONMENT_READ_TIMEOUT_MS = 30_000;
+const ENVIRONMENT_READ_POLL_MS = 1_000;
+
+/** `getFlags` returns "" when the bridge has not connected yet, so poll before believing it. */
 async function readAppLedgerSyncEnvironment() {
-  for (let attempt = 1; ; attempt++) {
+  const deadline = Date.now() + ENVIRONMENT_READ_TIMEOUT_MS;
+
+  while (Date.now() < deadline) {
     const rawFlags = await getFlags();
     if (rawFlags) {
       return parseExtraFeatureFlags<PartialFeatures>(rawFlags).llmWalletSync?.params?.environment;
     }
-    if (attempt === 3) {
-      throw new Error(
-        "Ledger Sync: the app never answered `getFlags`, so its environment could not be checked. " +
-          "The bridge is down — look for a launch or connection failure above.",
-      );
-    }
+    await sleep(ENVIRONMENT_READ_POLL_MS);
   }
+
+  throw new Error(
+    `Ledger Sync: the app never answered \`getFlags\` within ${ENVIRONMENT_READ_TIMEOUT_MS / 1_000}s, ` +
+      "so its environment could not be checked. " +
+      "The bridge is down — look for a launch or connection failure above.",
+  );
 }
 
 /** Call before `app.init`: once a suite has pushed its own flags, this reads them back to itself. */

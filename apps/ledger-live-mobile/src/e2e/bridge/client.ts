@@ -47,10 +47,8 @@ async function disconnectAllSpeculosSessions() {
 }
 
 function overrideLedgerSyncEnvironment() {
-  const launchArg = LaunchArguments.value()["ledger_sync_environment"];
-  const environment =
-    launchArg === "PROD" ? "PROD" : launchArg === "STAGING" ? "STAGING" : undefined;
-  if (!environment) return;
+  const environment = LaunchArguments.value()["ledger_sync_environment"];
+  if (environment !== "PROD" && environment !== "STAGING") return;
 
   log(`[E2E Bridge Client]: Ledger Sync environment=${environment}`);
   store.dispatch(
