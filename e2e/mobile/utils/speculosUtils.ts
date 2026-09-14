@@ -339,10 +339,13 @@ async function waitForBridgeEnv(
       },
       timeout,
       interval,
+      { cancellable: true },
     );
-  } catch {
+  } catch (cause) {
+    const reason = cause instanceof Error ? cause.message : String(cause);
     throw new Error(
-      `Bridge env sync failed: expected ${key}="${expectedValue}" after ${timeout}ms`,
+      `Bridge env sync failed: expected ${key}="${expectedValue}" after ${timeout}ms — ${reason}`,
+      { cause },
     );
   }
 }
