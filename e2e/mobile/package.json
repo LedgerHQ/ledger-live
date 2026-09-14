@@ -29,6 +29,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@domain/entity-contact": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@jest/reporters": "catalog:",
     "@jest/types": "^30.2.0",
