@@ -13,7 +13,7 @@ export interface CardViewProps {
  * authentication controls.
  */
 export const CardView = ({ viewModel }: CardViewProps) => {
-  const { title, formatCountervalue, balanceLabel, oauthConfig, onTrackEvent } = viewModel;
+  const { title, formatCountervalue, balanceLabel, login } = viewModel;
 
   return (
     <div className="flex h-full flex-col pb-32">
@@ -21,10 +21,9 @@ export const CardView = ({ viewModel }: CardViewProps) => {
         <div className="p-16">
           <PayCard
             title={title}
-            oauthConfig={oauthConfig}
+            login={login}
             formatCountervalue={formatCountervalue}
             balanceLabel={balanceLabel}
-            onTrackEvent={onTrackEvent}
           />
         </div>
       </PayCardContainer>

@@ -5,14 +5,7 @@ import { CardArtwork, CardDetails } from "@features/flow-pay-card-details";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import type { CardViewProps } from "./Card.types";
 
-export function CardView({
-  title,
-  oauthConfig,
-  callback,
-  onTrackEvent,
-  displayState,
-  cardVisual,
-}: CardViewProps) {
+export function CardView({ title, login, displayState, cardVisual }: CardViewProps) {
   return (
     <Box lx={{ flex: 1, gap: "s16" }}>
       {displayState === "signedIn" ? (
@@ -27,12 +20,7 @@ export function CardView({
         </>
       ) : (
         <>
-          <CardLogin
-            key={`${oauthConfig.apiUrl}`}
-            oauthConfig={oauthConfig}
-            callback={callback}
-            onTrackEvent={onTrackEvent}
-          />
+          <CardLogin key={login.oauthConfig.apiUrl} {...login} />
           <CardArtwork />
         </>
       )}

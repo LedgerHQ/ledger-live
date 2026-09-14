@@ -13,11 +13,9 @@ const MOCK_CARD_BALANCE = 100;
  */
 export function useCardViewModel({
   title,
-  oauthConfig,
-  callback,
+  login,
   formatCountervalue,
   balanceLabel,
-  onTrackEvent,
 }: CardProps): CardViewProps {
   const status = useCardAuthStatus();
   const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
@@ -30,5 +28,10 @@ export function useCardViewModel({
     return { balance: MOCK_CARD_BALANCE, formatCountervalue, balanceLabel };
   }, [isSignedIn, formatCountervalue, balanceLabel]);
 
-  return { title, oauthConfig, callback, onTrackEvent, displayState, cardVisual };
+  return {
+    title,
+    login,
+    displayState,
+    cardVisual,
+  };
 }
