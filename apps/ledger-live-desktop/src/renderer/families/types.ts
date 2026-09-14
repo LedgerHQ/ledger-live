@@ -343,7 +343,7 @@ export type LLDCoinFamily<
    * it does not apply.
    *
    * When it needs to prevent the recipient step from completing/advancing (e.g.
-   * the shielded sync is not ready, so signing could use an incomplete note
+   * the shielded sync is not complete, so signing could use an incomplete note
    * set), it reports `onBlockedChange(true)` and `onBlockedChange(false)` once
    * the block clears. Generic recipient code honors this flag to gate both the
    * completion signal and forward navigation.

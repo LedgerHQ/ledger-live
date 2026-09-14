@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
  * Lets a family-specific recipient notice (SendRecipientNotice slot) block the
  * recipient step from being completed or advancing. Generic recipient code reads
  * `isFamilyRecipientBlocked` to gate completion and navigation, so the block stays
- * family-agnostic (e.g. Zcash shielded sync not ready — see families/bitcoin).
+ * family-agnostic (e.g. Zcash shielded sync not complete — see families/bitcoin).
  */
 type RecipientContinuationContextValue = Readonly<{
   isFamilyRecipientBlocked: boolean;

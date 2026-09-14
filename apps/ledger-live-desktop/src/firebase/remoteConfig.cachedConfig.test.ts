@@ -7,7 +7,6 @@
 
 // Declared as a module so its locals do not collide with the sibling `remoteConfig.test.ts`,
 // which has no top-level import/export and therefore lives in the global scope.
-export {};
 
 const mockInitializeApp = jest.fn(() => ({ name: "test-app" }));
 const mockGetRemoteConfig = jest.fn(() => ({

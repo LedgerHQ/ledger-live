@@ -39,7 +39,7 @@ export function RecipientAddressModal({
     recipientSupportsDomain,
   });
 
-  // A family notice (e.g. Zcash shielded sync not ready) can block the step even
+  // A family notice (e.g. Zcash shielded sync not complete) can block the step even
   // when the address itself is valid, so the recipient is only complete when both
   // hold.
   useEffect(() => {

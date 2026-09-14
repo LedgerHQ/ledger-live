@@ -12,6 +12,7 @@ import {
   SubheaderTitle,
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronRight, UserCheck, UserLock } from "@ledgerhq/lumen-ui-react/symbols";
+import { cn } from "LLD/utils/cn";
 import { useSelfTransferSectionViewModel } from "./useSelfTransferSectionViewModel";
 
 /**
@@ -25,7 +26,7 @@ export function SelfTransferSection() {
 
   if (!viewModel) return null;
 
-  const { target, onSelfTransfer } = viewModel;
+  const { target, onSelfTransfer, isBlocked } = viewModel;
   const displayLabel = t(`newSendFlow.${target.translationKey}.label`);
   const IconComponent = target.isDestinationPublic ? UserCheck : UserLock;
 
@@ -37,9 +38,9 @@ export function SelfTransferSection() {
         </SubheaderRow>
       </Subheader>
       <ListItem
-        onClick={() => onSelfTransfer(displayLabel)}
+        onClick={isBlocked ? undefined : () => onSelfTransfer(displayLabel)}
         data-testid="self-transfer-button"
-        className="mt-6"
+        className={cn("mt-6", { "cursor-not-allowed opacity-50": isBlocked })}
       >
         <ListItemLeading>
           <Spot appearance="icon" icon={IconComponent} />

@@ -60,7 +60,7 @@ export type AddressMatchedSectionViewModel = Readonly<{
 }>;
 
 /**
- * Applies a family-imposed block (e.g. Zcash shielded sync not ready) to a
+ * Applies a family-imposed block (e.g. Zcash shielded sync not complete) to a
  * computed view model: the recipient can still see the matched address, but its
  * send/select actions are disabled so they can't advance until the block clears.
  */

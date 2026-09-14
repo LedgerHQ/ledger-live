@@ -83,12 +83,17 @@ describe("ZcashSyncNotice", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it("renders the stopped banner for Zcash + private sender + syncState=ready", () => {
+    renderNotice(buildZcashAccount({ syncState: "ready" }), "private");
+    expect(screen.getByTestId("zcash-sync-banner-stopped")).toBeVisible();
+  });
+
   it("renders the stopped banner for Zcash + private sender + syncState=disabled (default)", () => {
     renderNotice(buildZcashAccount(), "private");
     expect(screen.getByTestId("zcash-sync-banner-stopped")).toBeVisible();
   });
 
-  it.each(["running", "stopped", "disabled", "outdated"] as const)(
+  it.each(["running", "ready", "stopped", "disabled", "outdated"] as const)(
     "reports blocked for Zcash + private sender + syncState=%s",
     syncState => {
       const onBlockedChange = jest.fn();
@@ -97,14 +102,11 @@ describe("ZcashSyncNotice", () => {
     },
   );
 
-  it.each(["complete", "ready"] as const)(
-    "does not block once the shielded sync is %s",
-    syncState => {
-      const onBlockedChange = jest.fn();
-      renderNotice(buildZcashAccount({ syncState }), "private", true, onBlockedChange);
-      expect(onBlockedChange).toHaveBeenLastCalledWith(false);
-    },
-  );
+  it("does not block once the shielded sync is complete", () => {
+    const onBlockedChange = jest.fn();
+    renderNotice(buildZcashAccount({ syncState: "complete" }), "private", true, onBlockedChange);
+    expect(onBlockedChange).toHaveBeenLastCalledWith(false);
+  });
 
   it("does not block a public sender", () => {
     const onBlockedChange = jest.fn();

@@ -15,12 +15,6 @@ type Props = Readonly<{
   onBlockedChange?: (blocked: boolean) => void;
 }>;
 
-// A private send must not reach signing until the shielded sync has a complete
-// note set, otherwise the transaction could be built from stale notes. Only
-// "complete"/"ready" are safe; every other state (running, stopped, disabled,
-// outdated, failed) shows a banner and blocks the recipient step.
-const READY_SYNC_STATES = new Set(["complete", "ready"]);
-
 export function ZcashSyncNotice({ account, transaction, onBlockedChange }: Props) {
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
   const isZcash = account.currency.id === "zcash";
@@ -36,7 +30,7 @@ export function ZcashSyncNotice({ account, transaction, onBlockedChange }: Props
 
   const applies = shieldedEnabled && isZcash && sender === "private";
   const syncState = activeAccount.privateInfo?.syncState ?? "disabled";
-  const blocked = applies && !READY_SYNC_STATES.has(syncState);
+  const blocked = applies && syncState !== "complete";
 
   useEffect(() => {
     onBlockedChange?.(blocked);

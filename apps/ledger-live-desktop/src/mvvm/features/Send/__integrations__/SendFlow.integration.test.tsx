@@ -42,8 +42,6 @@ jest.mock("~/renderer/families", () => ({
   },
 }));
 
-const READY_SYNC_STATES = new Set(["complete", "ready"]);
-
 function TestSendRecipientNotice({
   account,
   transaction,
@@ -57,15 +55,15 @@ function TestSendRecipientNotice({
   const applies =
     shieldedEnabled && account.currency.id === "zcash" && transaction.sender === "private";
   const syncState = account.privateInfo?.syncState ?? "disabled";
-  const blocked = applies && !READY_SYNC_STATES.has(syncState);
+  const blocked = applies && syncState !== "complete";
 
   React.useEffect(() => {
     onBlockedChange?.(blocked);
   }, [blocked, onBlockedChange]);
   React.useEffect(() => () => onBlockedChange?.(false), [onBlockedChange]);
 
-  if (!applies || syncState !== "running") return null;
-  return <div data-testid="zcash-sync-banner-running" />;
+  if (!applies || (syncState !== "running" && syncState !== "ready")) return null;
+  return <div data-testid={`zcash-sync-banner-${syncState}`} />;
 }
 
 describe("Send Flow Integration", () => {
@@ -824,27 +822,47 @@ describe("Send Flow Integration", () => {
       expect(screen.getByTestId("send-network-fees-row")).toBeVisible();
     });
 
-    it("blocks advancing to amount while a private send sync is not ready", async () => {
+    it.each(["running", "ready"] as const)(
+      "blocks advancing to amount while a private send sync is %s",
+      async syncState => {
+        const shieldedRecipient =
+          "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
+        const account = createZcashAccount({
+          syncState,
+          progress: syncState === "running" ? 50 : 0,
+        });
+        setMockTransaction(createMinimalBtcTransaction({ recipient: shieldedRecipient }));
+        const { user } = renderZcashSendFlow(account);
+
+        await screen.findByTestId("balance-type-screen");
+        await user.click(screen.getByTestId("balance-type-private"));
+
+        expect(await screen.findByTestId(`zcash-sync-banner-${syncState}`)).toBeVisible();
+
+        const recipientInput = await screen.findByTestId("send-recipient-input");
+        await user.type(recipientInput, shieldedRecipient);
+
+        const matchedButton = await screen.findByTestId("send-matched-address-button");
+        await user.click(matchedButton);
+
+        expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+        expect(screen.getByTestId(`zcash-sync-banner-${syncState}`)).toBeVisible();
+      },
+    );
+
+    it("advances to amount for a private send once the shielded sync is complete", async () => {
       const shieldedRecipient =
         "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
-      const account = createZcashAccount({ syncState: "running", progress: 50 });
+      const account = createZcashAccount({ syncState: "complete" });
       setMockTransaction(createMinimalBtcTransaction({ recipient: shieldedRecipient }));
       const { user } = renderZcashSendFlow(account);
 
       await screen.findByTestId("balance-type-screen");
       await user.click(screen.getByTestId("balance-type-private"));
 
-      expect(await screen.findByTestId("zcash-sync-banner-running")).toBeVisible();
+      await navigateToAmountScreen(user, shieldedRecipient);
 
-      const recipientInput = await screen.findByTestId("send-recipient-input");
-      await user.type(recipientInput, shieldedRecipient);
-
-      const matchedButton = await screen.findByTestId("send-matched-address-button");
-      await user.click(matchedButton);
-
-      // The gate keeps the flow on the recipient step: no amount screen, banner still shown.
-      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
-      expect(screen.getByTestId("zcash-sync-banner-running")).toBeVisible();
+      expect(screen.getByTestId("send-amount-step")).toBeVisible();
     });
   });
 

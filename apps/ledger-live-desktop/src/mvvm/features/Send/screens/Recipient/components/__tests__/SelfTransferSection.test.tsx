@@ -24,6 +24,7 @@ describe("SelfTransferSection", () => {
     mockedUseViewModel.mockReturnValue({
       target: PRIVATE_TARGET,
       onSelfTransfer: mockOnSelfTransfer,
+      isBlocked: false,
     });
   });
 
@@ -33,6 +34,19 @@ describe("SelfTransferSection", () => {
     await user.click(screen.getByTestId("self-transfer-button"));
 
     expect(mockOnSelfTransfer).toHaveBeenCalledWith("Private balance");
+  });
+
+  it("should not call onSelfTransfer when the family notice blocks the recipient step", async () => {
+    mockedUseViewModel.mockReturnValue({
+      target: PRIVATE_TARGET,
+      onSelfTransfer: mockOnSelfTransfer,
+      isBlocked: true,
+    });
+    const { user } = render(<SelfTransferSection />);
+
+    await user.click(screen.getByTestId("self-transfer-button"));
+
+    expect(mockOnSelfTransfer).not.toHaveBeenCalled();
   });
 
   it("should render nothing when the view model returns null", () => {

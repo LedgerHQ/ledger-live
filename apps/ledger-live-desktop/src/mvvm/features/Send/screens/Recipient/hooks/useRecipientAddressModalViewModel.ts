@@ -199,7 +199,7 @@ export function useRecipientAddressModalViewModel({
 
   const continueWithAddress = useCallback(
     (address: string, ensName?: string) => {
-      // A family notice can block advancing (e.g. Zcash shielded sync not ready).
+      // A family notice can block advancing (e.g. Zcash shielded sync not complete).
       // Refuse to navigate so a private send can't reach amount/signature early.
       if (isFamilyRecipientBlocked) return;
 

@@ -5,16 +5,19 @@ import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import type { BalanceTypeSelfTransferTarget } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
+import { useRecipientContinuation } from "../../../context/RecipientContinuationContext";
 
 export type SelfTransferSectionViewModel = {
   target: BalanceTypeSelfTransferTarget;
   onSelfTransfer: (displayLabel: string) => void;
+  isBlocked: boolean;
 } | null;
 
 export function useSelfTransferSectionViewModel(): SelfTransferSectionViewModel {
   const { state } = useSendFlowData();
   const { transaction } = useSendFlowActions();
   const { navigation } = useFlowWizard<SendFlowStep>();
+  const { isFamilyRecipientBlocked } = useRecipientContinuation();
 
   const account = state.account.account;
 
@@ -31,7 +34,7 @@ export function useSelfTransferSectionViewModel(): SelfTransferSectionViewModel 
 
   const onSelfTransfer = useCallback(
     (displayLabel: string) => {
-      if (!target) return;
+      if (!target || isFamilyRecipientBlocked) return;
       transaction.setRecipient({
         ...(state.recipient ?? {}),
         address: target.address,
@@ -43,10 +46,10 @@ export function useSelfTransferSectionViewModel(): SelfTransferSectionViewModel 
       });
       navigation.goToNextStep();
     },
-    [target, transaction, state.recipient, navigation],
+    [isFamilyRecipientBlocked, target, transaction, state.recipient, navigation],
   );
 
   if (!target) return null;
 
-  return { target, onSelfTransfer };
+  return { target, onSelfTransfer, isBlocked: isFamilyRecipientBlocked };
 }
