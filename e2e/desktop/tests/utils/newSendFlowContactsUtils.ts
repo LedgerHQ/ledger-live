@@ -18,11 +18,6 @@ import {
 import { NEW_SEND_FLOW_FAMILIES, type NewSendFlowEntry } from "tests/utils/newSendFlowUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
-/** Spare contact addresses: never sent to, they only make the "Select address" sheet open. */
-export const EVM_SPARE_ADDRESS = "0x000000000000000000000000000000000000dEaD";
-/** Tron black-hole address. */
-export const TRON_SPARE_ADDRESS = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb";
-
 export type ContactsEntry = NewSendFlowEntry & {
   /**
    * A second address on the sending network: seeded as the contact's spare address so the

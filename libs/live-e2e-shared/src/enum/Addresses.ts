@@ -13,4 +13,8 @@ export enum Addresses {
   SWAP_HISTORY_ERC20_ETH_USDT_TO = "0x70AAEEe70118a065ddF84dF6669b496A447C8CcC",
   MINA_KRAKEN_VALIDATOR = "B62qoiM41U5gBnjujQRgeewfkK9VmgVT8ifrRRwAsqBUM6pdxi9ywk2",
   MINA_AURO_VALIDATOR = "B62qq3TQ8AP7MFYPVtMx5tZGF3kWLJukfwG1A1RGvaBW1jfTPTkDBW6",
+  /** Never sent to: only used to make an address-book "Add contact"/"Select address" action appear. */
+  EVM_SPARE = "0x000000000000000000000000000000000000dEaD",
+  /** Tron black-hole address, same purpose as `EVM_SPARE`. */
+  TRON_SPARE = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb",
 }
