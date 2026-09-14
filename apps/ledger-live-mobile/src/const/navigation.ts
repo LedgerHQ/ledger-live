@@ -449,6 +449,8 @@ export enum ScreenName {
   AleoBondPublicConnectDevice = "AleoBondPublicConnectDevice",
   AleoBondPublicValidationError = "AleoBondPublicValidationError",
   AleoBondPublicValidationSuccess = "AleoBondPublicValidationSuccess",
+  AleoUnbondAmount = "AleoUnbondAmount",
+  AleoClaimUnbondSelectDevice = "AleoClaimUnbondSelectDevice",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
@@ -795,6 +797,8 @@ export enum NavigatorName {
   HederaClaimRewardsFlow = "HederaClaimRewardsFlow",
   // Aleo
   AleoBondPublicFlow = "AleoBondPublicFlow",
+  AleoUnbondFlow = "AleoUnbondFlow",
+  AleoClaimUnbondFlow = "AleoClaimUnbondFlow",
   // SUI
   SuiDelegateFlow = "SuiDelegationFlow",
   SuiUndelegateFlow = "SuiUndelegateFlow",

@@ -17,7 +17,7 @@ import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 import SectionTitle from "~/screens/WalletCentricSections/SectionTitle";
 import PrivateSyncButton from "./PrivateSyncButton";
 
-type InfoName = "transparent" | "private";
+type InfoName = "available" | "transparent" | "private";
 
 function AleoBalanceSummary({
   account,
@@ -32,6 +32,7 @@ function AleoBalanceSummary({
   const unit = useAccountUnit(account);
 
   const isTokenAccount = account.type === "TokenAccount";
+  const availableBalance = account.spendableBalance;
   const transparentBalance = isTokenAccount
     ? account.transparentBalance
     : (account.aleoResources?.transparentBalance ?? BigNumber(0));
@@ -58,6 +59,11 @@ function AleoBalanceSummary({
           data={infoName ? info[infoName] : []}
         />
         <Box style={{ flexDirection: "row" }}>
+          <InfoItem
+            title={t("aleo.info.available.title")}
+            onPress={onPressInfoCreator("available")}
+            value={<CurrencyUnitValue unit={unit} value={availableBalance} disableRounding />}
+          />
           <InfoItem
             title={t("aleo.info.transparent.title")}
             onPress={onPressInfoCreator("transparent")}
@@ -106,6 +112,12 @@ export default function AccountBalanceHeader({
 
 function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
   return {
+    available: [
+      {
+        title: t("aleo.info.available.title"),
+        description: t("aleo.info.available.description"),
+      },
+    ],
     transparent: [
       {
         title: t("aleo.info.transparent.title"),

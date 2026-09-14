@@ -1575,6 +1575,14 @@ export function estimateGrossRate(
 }
 
 /**
+ * Whether a delegator's own position is too small to earn, regardless of its validator.
+ * `credits.aleo` pays nothing below this threshold.
+ */
+export function isDelegatorBelowMinimum(delegatorStakeMicrocredits: BigNumber): boolean {
+  return delegatorStakeMicrocredits.isLessThan(MIN_DELEGATOR_STAKE_MICROCREDITS);
+}
+
+/**
  * Why a validator pays its delegators nothing, or null when it pays. The single source
  * of truth for these rules: {@link estimateNetRate} collapses all of them to a rate of
  * exactly 0, so anything wanting to say *which* must ask here rather than infer.
@@ -1633,8 +1641,7 @@ export function estimateNetRate({
   if (!commissionPercent.isFinite() || commissionPercent.isLessThan(0)) return null;
 
   const delegatorBelowMinimum =
-    delegatorStakeMicrocredits !== undefined &&
-    delegatorStakeMicrocredits.isLessThan(MIN_DELEGATOR_STAKE_MICROCREDITS);
+    delegatorStakeMicrocredits !== undefined && isDelegatorBelowMinimum(delegatorStakeMicrocredits);
   const nonEarningReason = getValidatorNonEarningReason({
     totalStakeMicrocredits,
     validatorStakeMicrocredits,
