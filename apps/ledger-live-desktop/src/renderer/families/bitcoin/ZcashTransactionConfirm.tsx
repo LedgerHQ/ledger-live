@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { Device } from "@ledgerhq/types-devices";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency-unit";
 import { useFeature } from "@features/platform-feature-flags";
 import Animation from "~/renderer/animations";
 import useTheme from "~/renderer/hooks/useTheme";

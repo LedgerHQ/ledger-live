@@ -7,8 +7,8 @@ import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.m
 import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { useFeature } from "@features/platform-feature-flags";
 import { render, withFlagOverrides } from "tests/testSetup";
-import { SendWorkflow } from "../index";
 import {
   createBitcoinAccount,
   createEthereumAccount,
@@ -25,6 +25,7 @@ import {
   waitFor,
   setMockBridgeRecipientValidation,
   setMockBalanceTypeConfig,
+  setMockLLDCoinFamily,
   setMockScannedCode,
   setMockContacts,
   setMockStatus,
@@ -33,6 +34,29 @@ import {
   VALID_BTC_RECIPIENT,
   VALID_EVM_RECIPIENT,
 } from "../__mocks__/sendFlowTestUtils";
+import { SendWorkflow } from "../index";
+
+jest.mock("~/renderer/families", () => ({
+  useLLDCoinFamily: () => {
+    const { getMockLLDCoinFamily } = jest.requireActual("../__mocks__/sendFlowTestUtils");
+    return getMockLLDCoinFamily();
+  },
+}));
+
+function TestSendRecipientNotice({
+  account,
+  transaction,
+}: {
+  account: { currency: { id: string }; privateInfo?: { syncState?: string } };
+  transaction: { sender?: "public" | "private" };
+}) {
+  const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
+  if (!shieldedEnabled || account.currency.id !== "zcash" || transaction.sender !== "private") {
+    return null;
+  }
+  if (account.privateInfo?.syncState !== "running") return null;
+  return <div data-testid="zcash-sync-banner-running" />;
+}
 
 describe("Send Flow Integration", () => {
   const ethereumAccount = createEthereumAccount();
@@ -736,6 +760,7 @@ describe("Send Flow Integration", () => {
     beforeEach(() => {
       resetSendFlowTestState("bitcoin");
       setMockBalanceTypeConfig(zcashBalanceTypeConfig);
+      setMockLLDCoinFamily({ SendRecipientNotice: TestSendRecipientNotice });
     });
 
     it("shows sync banner on recipient screen when private sender and syncState=running", async () => {

@@ -2,25 +2,16 @@ import React from "react";
 import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction, ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
-import { useSendFlowData } from "../../../context/SendFlowContext";
 import { ZcashSyncNotice } from "../ZcashSyncNotice";
 
-jest.mock("../../../context/SendFlowContext", () => ({
-  useSendFlowData: jest.fn(),
-}));
-
-// ZcashSyncNotice renders the real ZcashSyncStateBanner (not a mock) so this test also exercises
-// that component's own zcashShielded-flag gating; these two mocks are its own dependencies.
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getAccountBridge: jest.fn(),
 }));
 jest.mock("~/renderer/families/bitcoin/ZCashExportKeyFlowModal/sync", () => ({
   syncStateUpdater: jest.fn(() => ({ type: "test/syncStateUpdater" })),
 }));
-
-const mockUseSendFlowData = jest.mocked(useSendFlowData);
 
 const baseAccount = createFixtureAccount();
 
@@ -36,41 +27,22 @@ const buildZcashAccount = (
     },
   }) as unknown as ZcashAccount;
 
-const buildState = (account: unknown, sender: "public" | "private" | undefined) =>
-  ({
-    state: {
-      account: {
-        account,
-        parentAccount: null,
-        currency: (account as { currency?: unknown } | null)?.currency,
-      },
-      transaction: {
-        transaction: sender !== undefined ? { family: "bitcoin", sender } : { family: "bitcoin" },
-        status: { errors: {}, warnings: {} },
-      },
-      recipient: null,
-    },
-    uiConfig: {},
-    recipientSearch: { value: "", setValue: jest.fn(), clear: jest.fn() },
-    isRecipientAddressComplete: false,
-  }) as never;
+const buildTransaction = (sender: "public" | "private" | undefined): Transaction =>
+  (sender !== undefined ? { family: "bitcoin", sender } : { family: "bitcoin" }) as Transaction;
 
 const renderNotice = (
-  account: unknown,
+  account: ZcashAccount | (typeof baseAccount & { currency: { id: string } }),
   sender: "public" | "private" | undefined,
   shieldedEnabled = true,
-) => {
-  mockUseSendFlowData.mockReturnValue(buildState(account, sender));
-  return render(<ZcashSyncNotice />, {
-    initialState: withFlagOverrides({ zcashShielded: { enabled: shieldedEnabled } }),
-  });
-};
+) =>
+  render(
+    <ZcashSyncNotice account={account as ZcashAccount} transaction={buildTransaction(sender)} />,
+    {
+      initialState: withFlagOverrides({ zcashShielded: { enabled: shieldedEnabled } }),
+    },
+  );
 
 describe("ZcashSyncNotice", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("renders nothing for a non-Zcash account", () => {
     const nonZcashAccount = { ...baseAccount, currency: { id: "ethereum" } as CryptoCurrency };
     const { container } = renderNotice(nonZcashAccount, "private");

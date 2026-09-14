@@ -28,6 +28,7 @@ let mockScannedCode = "";
 let mockContacts: readonly Contact[] = [];
 let mockContactsFeatureEnabled = false;
 let mockBalanceTypeConfig: BalanceTypeConfig | null = null;
+let mockCoinFamily: Record<string, unknown> = {};
 
 const mockSetTransaction = jest.fn();
 const mockUpdateTransaction = jest.fn();
@@ -153,6 +154,12 @@ export const setMockBalanceTypeConfig = (config: BalanceTypeConfig | null) => {
   mockBalanceTypeConfig = config;
 };
 
+export const setMockLLDCoinFamily = (family: Record<string, unknown> = {}) => {
+  mockCoinFamily = family;
+};
+
+export const getMockLLDCoinFamily = () => mockCoinFamily;
+
 export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   jest.clearAllMocks();
   resetBridgeState(family);
@@ -161,7 +168,12 @@ export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   setMockScannedCode("");
   setMockContacts([], false);
   setMockBalanceTypeConfig(null);
+  setMockLLDCoinFamily();
 };
+
+jest.mock("~/renderer/families", () => ({
+  useLLDCoinFamily: () => mockCoinFamily,
+}));
 
 jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
   marketApi: {
