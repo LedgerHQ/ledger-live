@@ -48,6 +48,22 @@ describe("SmallSquareCard", () => {
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
+  it("should let the title wrap on two lines", () => {
+    render(<SmallSquareCard title="Ledger Nano X Special Edition" />);
+
+    expect(screen.getByText("Ledger Nano X Special Edition")).toHaveClass("line-clamp-2");
+  });
+
+  it("should free the price row for the title when there is no price", () => {
+    const { rerender } = render(<SmallSquareCard title="Ledger Stax" subDescription="$50" />);
+
+    expect(screen.getByText("$50")).toBeVisible();
+
+    rerender(<SmallSquareCard title="Ledger Stax" />);
+
+    expect(screen.queryByText("$50")).not.toBeInTheDocument();
+  });
+
   it("should highlight the card on hover only when it is clickable", () => {
     const { rerender } = render(<SmallSquareCard title="Ledger Stax" onClick={jest.fn()} />);
 
