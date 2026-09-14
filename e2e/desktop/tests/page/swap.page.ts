@@ -27,6 +27,9 @@ import {
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
+
+// Set on the window before the remount, so its absence proves a fresh document.
+const FLAG_REMOUNT_MARKER = "__swapE2eFlagRemount";
 type SwapSurface = "full" | "embedded";
 
 type PercentageKey = "25%" | "50%" | "75%";
@@ -127,16 +130,35 @@ export class SwapPage extends WebViewAppPage {
   @step("Pin swap live app feature flags: $0")
   async applyFlagPreset(preset: SwapFlagPreset, reopenSwap: () => Promise<void>) {
     const webview = await this.getWebView();
-    await webview.evaluate(({ key, value }) => localStorage.setItem(key, value), {
-      key: SWAP_FLAG_OVERRIDES_KEY,
-      value: swapFlagPresetPayload(preset),
-    });
+    const payload = swapFlagPresetPayload(preset);
+    // Mark before the write: a rejected evaluate can still leave the override behind.
     this.flagPresetPinned = true;
+    await webview.evaluate(
+      ({ key, value, marker }) => {
+        localStorage.setItem(key, value);
+        Object.assign(window, { [marker]: true });
+      },
+      { key: SWAP_FLAG_OVERRIDES_KEY, value: payload, marker: FLAG_REMOUNT_MARKER },
+    );
 
     // The remount reads the key again on the new page.
     await this.goAndWaitForSwapToBeReady(reopenSwap);
     const reopened = await this.getWebView();
     await expect(reopened.getByTestId(this.fromAccountCoinSelector)).toBeVisible();
+    await this.expectFlagPresetLoaded(reopened, payload);
+  }
+
+  // Tells a lost override apart from a flag the app ignored.
+  @step("Check that the live app remounted with the overrides")
+  private async expectFlagPresetLoaded(webview: Page, payload: string) {
+    const state = await webview.evaluate(
+      ({ key, marker }) => ({
+        stored: localStorage.getItem(key),
+        remounted: !(marker in window),
+      }),
+      { key: SWAP_FLAG_OVERRIDES_KEY, marker: FLAG_REMOUNT_MARKER },
+    );
+    expect(state).toEqual({ stored: payload, remounted: true });
   }
 
   // The override outlives the test. A failed test can leave no webview, and waiting
