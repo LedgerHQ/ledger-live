@@ -70,8 +70,7 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
       return;
     }
     case "transferFee":
-      // Assigned even when absent: a fee kept from a previously selected asset would reach the
-      // device screen.
+      // Assigned even when absent: a stale fee would reach the device screen.
       dest.transferFee = toTransferFeeFromUnknown(value);
       return;
     case "ownerTokenAccount":
@@ -245,8 +244,7 @@ export async function getAssetInfos(
   assetOwner: string;
 }> {
   if (tr.subAccountId) {
-    // Decoding the id only works for ids the framework minted itself; a legacy Solana id still in
-    // storage before the first sync would otherwise craft an SPL transfer as a SOL one.
+    // A legacy id still in storage does not decode, and would craft an SPL transfer as a SOL one.
     const token =
       findTokenOfSubAccount(account, tr.subAccountId) ??
       (await decodeTokenAccountId(tr.subAccountId)).token;
