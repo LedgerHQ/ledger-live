@@ -7,6 +7,8 @@ module.exports = {
   testRegex: ".integ.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   testTimeout: 60_000,
+  // Serial: these suites share one rate-limited RPC endpoint, and running them at once earns 429s.
+  maxWorkers: 1,
   forceExit: true,
   passWithNoTests: true,
   transform: {
