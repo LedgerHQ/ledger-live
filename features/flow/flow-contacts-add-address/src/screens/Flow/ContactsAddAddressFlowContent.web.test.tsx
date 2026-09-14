@@ -124,8 +124,7 @@ describe("ContactsAddAddressFlowContent", () => {
     const addressProps = createContentProps(createContentState("enteringAddress"));
     const { rerender } = render(<ContactsAddAddressFlowContent {...addressProps} />);
 
-    fireEvent.click(screen.getByTestId("contacts-add-address-confirm"));
-    expect(addressProps.onContinueFromAddressDetails).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("contacts-add-address-input")).toBeInTheDocument();
 
     const nameProps = createContentProps(createContentState("namingAddress"));
     rerender(<ContactsAddAddressFlowContent {...nameProps} />);

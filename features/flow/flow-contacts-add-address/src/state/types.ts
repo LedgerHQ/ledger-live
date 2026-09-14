@@ -163,4 +163,5 @@ export type AddAddressNameLabels = Readonly<{
   namingDisclaimer: string;
   continueToReview: string;
   validationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
+  privacyPolicy?: string;
 }>;

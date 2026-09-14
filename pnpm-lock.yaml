@@ -5773,6 +5773,9 @@ importers:
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../platform/contacts
+      '@shared/platform-linking':
+        specifier: workspace:*
+        version: link:../../../shared/platform-linking
     devDependencies:
       '@features/platform-feature-flags':
         specifier: workspace:^
