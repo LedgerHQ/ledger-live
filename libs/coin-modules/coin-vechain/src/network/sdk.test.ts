@@ -35,9 +35,13 @@ const mockGetLastBlockCount = jest.fn(
     data: { number: LAST_BLOCK_COUNT, id: "abcdefghiklmnopqrstuvwxyz" },
   }),
 );
-const mockGetFees = jest.fn(async (): Promise<{ data: { paid?: string } }> => ({
-  data: { paid: "42" },
-}));
+const mockGetFees = jest.fn(
+  async (): Promise<{
+    data: { paid?: string; gasPayer?: string; meta?: { txOrigin?: string } };
+  }> => ({
+    data: { paid: "42" },
+  }),
+);
 const mockSubmit = jest.fn(async (): Promise<{ data: { id?: string } }> => ({
   data: { id: "123" },
 }));
@@ -126,16 +130,38 @@ describe("sdk", () => {
       test("retrieves fees paid for the transaction", async () => {
         mockGetFees.mockImplementationOnce(async () => ({ data: {} }));
 
-        const account = await getFees(mockVechainConfig, "0xtransaxtion");
-        expect(account).toStrictEqual(new BigNumber(0));
+        const { fees } = await getFees(mockVechainConfig, "0xtransaxtion");
+        expect(fees).toStrictEqual(new BigNumber(0));
       });
     });
 
     describe("when the transaction's receipt has data.paid", () => {
       test("retrieves fees paid for the transaction", async () => {
-        const account = await getFees(mockVechainConfig, "0xtransaxtion");
-        expect(account).toStrictEqual(new BigNumber(42));
+        const { fees } = await getFees(mockVechainConfig, "0xtransaxtion");
+        expect(fees).toStrictEqual(new BigNumber(42));
       });
+    });
+
+    test("returns the delegated gas payer declared by the receipt", async () => {
+      mockGetFees.mockImplementationOnce(async () => ({
+        data: {
+          paid: "42",
+          gasPayer: "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
+          meta: { txOrigin: "0x0fe6688548f0c303932bb197b0a96034f1d74dba" },
+        },
+      }));
+
+      const { gasPayer } = await getFees(mockVechainConfig, "0xtransaxtion");
+      expect(gasPayer).toBe("0xcf130b42ae31c4931298b4b1c0f1d974b8732957");
+    });
+
+    test("falls back to the transaction origin when the receipt declares no gas payer", async () => {
+      mockGetFees.mockImplementationOnce(async () => ({
+        data: { paid: "42", meta: { txOrigin: "0x0fe6688548f0c303932bb197b0a96034f1d74dba" } },
+      }));
+
+      const { gasPayer } = await getFees(mockVechainConfig, "0xtransaxtion");
+      expect(gasPayer).toBe("0x0fe6688548f0c303932bb197b0a96034f1d74dba");
     });
   });
 

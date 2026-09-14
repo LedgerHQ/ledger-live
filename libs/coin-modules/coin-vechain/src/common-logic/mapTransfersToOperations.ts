@@ -14,7 +14,7 @@ export const mapVetTransfersToOperations = async (
 ): Promise<Operation[]> => {
   return Promise.all(
     txs.map(async tx => {
-      const fees = await getFees(config, tx.meta.txID);
+      const { fees, gasPayer } = await getFees(config, tx.meta.txID);
       return {
         id: encodeOperationId(
           accountId,
@@ -24,14 +24,14 @@ export const mapVetTransfersToOperations = async (
         hash: tx.meta.txID,
         type: tx.recipient.toLowerCase() === addr.toLowerCase() ? "IN" : "OUT",
         value: new BigNumber(tx.amount),
-        fee: new BigNumber(fees),
+        fee: fees,
         senders: [tx.sender.toLowerCase()],
         recipients: [tx.recipient.toLowerCase()],
         blockHeight: tx.meta.blockNumber,
         blockHash: tx.meta.blockID,
         accountId,
         date: new Date(tx.meta.blockTimestamp * 1000),
-        extra: {},
+        extra: gasPayer ? { gasPayer } : {},
       };
     }),
   );
@@ -60,7 +60,7 @@ export const mapTokenTransfersToOperations = async (
       const to = decoded.args.to;
       const value = decoded.args.value;
       const type = to.toLowerCase() === addr.toLowerCase() ? "IN" : "OUT";
-      const fees = await getFees(config, event.meta.txID);
+      const { fees, gasPayer } = await getFees(config, event.meta.txID);
       return {
         id: encodeOperationId(accountId, event.meta.txID, type),
         hash: event.meta.txID,
@@ -73,7 +73,7 @@ export const mapTokenTransfersToOperations = async (
         blockHash: event.meta.blockID,
         accountId,
         date: new Date(event.meta.blockTimestamp * 1000),
-        extra: {},
+        extra: gasPayer ? { gasPayer } : {},
       };
     }),
   );
