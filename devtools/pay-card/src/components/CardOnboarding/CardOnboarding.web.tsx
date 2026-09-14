@@ -86,8 +86,8 @@ export function CardOnboardingScreen({
           </>
         ) : (
           <p className="body-3 text-warning">
-            The steps read from the Card endpoints, and only the mobile app mocks those, so here
-            they follow the real session and cannot be set.
+            Request mocking is off, so the endpoint steps cannot be set. Restart with
+            ENABLE_MSW=true to turn it on.
           </p>
         )}
       </Section>

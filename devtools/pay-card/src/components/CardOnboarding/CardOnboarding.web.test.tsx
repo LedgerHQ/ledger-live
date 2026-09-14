@@ -49,7 +49,7 @@ describe("CardOnboarding (web)", () => {
   it("says why the steps cannot be set here when nothing mocks the endpoints", () => {
     render(<CardOnboardingScreen {...buildProps({ isMockingEnabled: false })} />);
 
-    expect(screen.getByText(/only the mobile app mocks those/)).toBeInTheDocument();
+    expect(screen.getByText(/ENABLE_MSW=true/)).toBeInTheDocument();
     expect(screen.queryByText("Use the real answers")).not.toBeInTheDocument();
   });
 
