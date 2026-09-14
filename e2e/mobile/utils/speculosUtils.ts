@@ -17,6 +17,7 @@ import {
 import { isSpeculosRemote } from "@e2e/helpers/commonHelpers";
 import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "@e2e/bridge/server";
 import { CLI } from "@e2e/utils/cliUtils";
+import { retryUntilTimeout } from "@e2e/utils/retry";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -324,26 +325,26 @@ function getKnownSpeculosAddress(speculosPort: number): string {
 async function waitForBridgeEnv(
   key: string,
   expectedValue: string,
-  attempts = 12,
-  delayMs = 500,
+  timeout = 15_000,
+  interval = 500,
 ): Promise<void> {
-  for (let attempt = 1; attempt <= attempts; attempt++) {
-    try {
-      const envsRaw = await getEnvs();
-      if (envsRaw) {
-        const envs = JSON.parse(envsRaw) as Record<string, string | undefined>;
-        if ((envs[key] ?? "") === expectedValue) return;
-      }
-    } catch {
-      // retry until timeout
-    }
-    if (attempt < attempts) {
-      await new Promise(resolve => setTimeout(resolve, delayMs));
-    }
+  try {
+    await retryUntilTimeout(
+      async () => {
+        const envsRaw = await getEnvs();
+        const envs = envsRaw ? (JSON.parse(envsRaw) as Record<string, string | undefined>) : {};
+        if ((envs[key] ?? "") !== expectedValue) {
+          throw new Error(`env ${key} not yet "${expectedValue}"`);
+        }
+      },
+      timeout,
+      interval,
+    );
+  } catch {
+    throw new Error(
+      `Bridge env sync failed: expected ${key}="${expectedValue}" after ${timeout}ms`,
+    );
   }
-  throw new Error(
-    `Bridge env sync failed: expected ${key}="${expectedValue}" after ${attempts} attempts`,
-  );
 }
 
 export async function registerKnownSpeculos(speculosPort: number) {
