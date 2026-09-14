@@ -33,11 +33,32 @@ describe("CardOnboarding (web)", () => {
   it("only offers a toggle for a step an endpoint answers", () => {
     render(<CardOnboardingScreen {...buildProps()} />);
 
+    // `first-purchase` has no toggle: nothing answers it, so there is nothing to set.
     const toggles = screen.getAllByRole("switch");
     expect(toggles).toHaveLength(1);
-
-    fireEvent.click(toggles[0]!);
     expect(screen.getByLabelText("create-account")).toBeInTheDocument();
+  });
+
+  it("sets the step the toggle names, to the value it was flipped to", () => {
+    const props = buildProps();
+    render(<CardOnboardingScreen {...props} />);
+
+    // `create-account` is done, so flipping it asks for the answer behind it to read as not done.
+    fireEvent.click(screen.getByLabelText("create-account"));
+
+    expect(props.setStepDone).toHaveBeenCalledWith("create-account", false);
+  });
+
+  it("sets a step that is open to done", () => {
+    const props = buildProps({
+      steps: [{ id: "top-up-card", isDone: false, canToggle: true }],
+      completedCount: 0,
+    });
+    render(<CardOnboardingScreen {...props} />);
+
+    fireEvent.click(screen.getByLabelText("top-up-card"));
+
+    expect(props.setStepDone).toHaveBeenCalledWith("top-up-card", true);
   });
 
   it("shows the derived answer itself, because the steps are worked out rather than fetched", () => {
