@@ -11,8 +11,3 @@ export type ContactsEditSignerMismatchDialogProps = Readonly<{
   onConnectDifferentDevice: () => void;
   onCancel: () => void;
 }>;
-
-export type ContactsEditSignerMismatchDrawerProps = ContactsEditSignerMismatchDialogProps &
-  Readonly<{
-    bottomInset?: number;
-  }>;

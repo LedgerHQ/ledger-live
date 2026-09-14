@@ -1,7 +1,12 @@
 import React from "react";
 import { Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { ContactConfirmationBottomSheet } from "@features/platform-contacts/native";
-import type { ContactsDeleteAddressDrawerProps } from "./types";
+import type { ContactsDeleteAddressDialogProps } from "./types";
+
+export type ContactsDeleteAddressDrawerProps = ContactsDeleteAddressDialogProps &
+  Readonly<{
+    bottomInset?: number;
+  }>;
 
 export function ContactsDeleteAddressDialog({
   isOpen,
