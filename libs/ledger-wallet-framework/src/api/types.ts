@@ -113,6 +113,15 @@ export type BridgeApi = {
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
   /**
+   * Currency this chain charges fees in, when that is not the account's own currency — VeChain
+   * bills gas in VTHO while the account holds VET. Declaring it makes the framework record the
+   * account's `feesCurrency`, so fees render in the right unit, and stop folding `tx.fees` into
+   * native operation values, which would otherwise inflate an amount with an unrelated asset.
+   *
+   * Omit it for the overwhelming majority of chains, which pay fees in their own coin.
+   */
+  feesCurrencyId?: string;
+  /**
    * Whether the chain surfaces staking data through `getBalance`
    */
   stakingSupported?: boolean;

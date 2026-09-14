@@ -31,6 +31,11 @@ export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInf
 
 export default function vechainBridge(currency: CryptoCurrency): BridgeApi {
   return {
+    // VeChain's two-token model: VET is the coin the account holds, VTHO is what gas is charged in.
+    // Declaring it keeps the framework from adding a VTHO fee to a VET amount, and renders fees in
+    // VTHO — matching what the legacy account bridge already reports (`coin-vechain`'s
+    // `getAccountShape` sets the same `feesCurrency`).
+    feesCurrencyId: "vechain/vip180/vtho",
     getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
   };

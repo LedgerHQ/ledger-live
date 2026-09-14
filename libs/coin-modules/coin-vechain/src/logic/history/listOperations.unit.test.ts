@@ -11,6 +11,7 @@ jest.mock("../../network", () => ({
 }));
 
 const ADDRESS = "0x0fe6688548f0C303932bB197B0A96034f1d74dba";
+const GAS_PAYER = "0xcf130b42ae31c4931298b4b1c0f1d974b8732957";
 const context = createMockVechainContext();
 
 function makeLegacyOp(overrides: Partial<LegacyOperation> = {}): LegacyOperation {
@@ -90,7 +91,7 @@ describe("listOperations", () => {
     expect(page.next).toBeUndefined();
   });
 
-  it("attaches no fee to a native VET operation (VeChain gas is VTHO, avoids inflating the debit)", async () => {
+  it("reports the real VTHO gas as the fee on an outgoing native VET operation", async () => {
     jest.mocked(getLastBlockHeight).mockResolvedValueOnce(200);
     const outOp = makeLegacyOp({
       type: "OUT",
@@ -103,7 +104,57 @@ describe("listOperations", () => {
     const page = await listOperations(context, ADDRESS, { minHeight: 0 });
 
     expect(page.items[0].value).toBe(BigInt("1000000000000000000"));
-    expect(page.items[0].tx.fees).toBe(0n);
+    expect(page.items[0].tx.fees).toBe(BigInt("21000000000000000"));
+  });
+
+  it("reports the real VTHO gas as the fee on an incoming native VET operation", async () => {
+    jest.mocked(getLastBlockHeight).mockResolvedValueOnce(200);
+    const inOp = makeLegacyOp({
+      type: "IN",
+      value: new BigNumber("10000000000000000000"),
+      fee: new BigNumber("210000000000000000"),
+    });
+    jest.mocked(getOperations).mockResolvedValueOnce([inOp]);
+    jest.mocked(getTokenOperations).mockResolvedValueOnce([]);
+
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
+
+    expect(page.items[0].value).toBe(BigInt("10000000000000000000"));
+    expect(page.items[0].tx.fees).toBe(BigInt("210000000000000000"));
+  });
+
+  it("exposes the gas payer as feesPayer on a native VET operation", async () => {
+    jest.mocked(getLastBlockHeight).mockResolvedValueOnce(200);
+    jest
+      .mocked(getOperations)
+      .mockResolvedValueOnce([makeLegacyOp({ type: "IN", extra: { gasPayer: GAS_PAYER } })]);
+    jest.mocked(getTokenOperations).mockResolvedValueOnce([]);
+
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
+
+    expect(page.items[0].tx.feesPayer).toBe(GAS_PAYER);
+  });
+
+  it("exposes the gas payer as feesPayer on a VTHO (token) operation", async () => {
+    jest.mocked(getLastBlockHeight).mockResolvedValueOnce(200);
+    jest.mocked(getOperations).mockResolvedValueOnce([]);
+    jest
+      .mocked(getTokenOperations)
+      .mockResolvedValueOnce([makeLegacyOp({ type: "IN", extra: { gasPayer: GAS_PAYER } })]);
+
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
+
+    expect(page.items[0].tx.feesPayer).toBe(GAS_PAYER);
+  });
+
+  it("omits feesPayer when the receipt yielded no gas payer", async () => {
+    jest.mocked(getLastBlockHeight).mockResolvedValueOnce(200);
+    jest.mocked(getOperations).mockResolvedValueOnce([makeLegacyOp({ type: "IN", extra: {} })]);
+    jest.mocked(getTokenOperations).mockResolvedValueOnce([]);
+
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
+
+    expect(page.items[0].tx).not.toHaveProperty("feesPayer");
   });
 
   it("keeps the VTHO gas as the fee on a VTHO (token) operation", async () => {

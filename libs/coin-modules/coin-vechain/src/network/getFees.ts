@@ -2,21 +2,37 @@ import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network";
 import { getNodeUrl, type VechainCurrencyConfig } from "../config";
 
+/** What a Thor transaction receipt tells us about who paid for the transaction, and how much. */
+export type TransactionFeeInfo = {
+  /** Fee paid for the transaction, in VTHO base units (VeChain gas is always VTHO, never VET). */
+  fees: BigNumber;
+  /** Address that paid the gas: the VIP-191 delegated payer when there is one, else the origin. */
+  gasPayer?: string | undefined;
+};
+
+type ReceiptResponse = {
+  paid?: string;
+  gasPayer?: string;
+  meta?: { txOrigin?: string };
+};
+
 /**
- * Get fees paid for the transaction
+ * Get the fee paid for a transaction and the address that paid it.
+ * Both come from the same receipt, so the payer costs no extra request.
  * @param transactionId - the id of the transaction
- * @return the fee paid in VTHO or 0
  */
 export const getFees = async (
   config: VechainCurrencyConfig,
   transactionId: string,
-): Promise<BigNumber> => {
-  const { data } = await network<{ paid: string }>({
+): Promise<TransactionFeeInfo> => {
+  const { data } = await network<ReceiptResponse>({
     method: "GET",
     url: `${getNodeUrl(config)}/transactions/${transactionId}/receipt`,
     params: { id: transactionId },
   });
 
-  if (!data || !data.paid) return new BigNumber(0);
-  return new BigNumber(data.paid);
+  return {
+    fees: data?.paid ? new BigNumber(data.paid) : new BigNumber(0),
+    gasPayer: data?.gasPayer ?? data?.meta?.txOrigin,
+  };
 };

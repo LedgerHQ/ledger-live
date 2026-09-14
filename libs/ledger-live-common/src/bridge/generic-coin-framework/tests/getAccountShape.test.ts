@@ -780,6 +780,7 @@ describe("genericGetAccountShape", () => {
         expect.any(String),
         expect.objectContaining({ hash: "tx-revive" }),
         fromOperationExtraRaw,
+        { feesAreNative: true },
       );
     });
 
@@ -1217,6 +1218,85 @@ describe("genericGetAccountShape", () => {
       expect(attachedInternalOp?.hash).toBe(parentOpHash);
       expect(attachedInternalOp?.type).toBe("IN");
       expect((attachedInternalOp as any)?.extra?.internal).toBe(true);
+    });
+  });
+
+  describe("fees paid in another currency", () => {
+    const network = "mainnet";
+    const currency = { id: "vechain", name: "VeChain" };
+    const VTHO = { id: "vechain/vip180/vtho", name: "VeThor", ticker: "VTHO" };
+
+    const emptyStore = {
+      findTokenById: async () => undefined,
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
+    };
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [{ id: "core-op" }], next: undefined });
+      adaptCoreOperationToLiveOperationMock.mockReturnValue({ id: "live-op" });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+      setCryptoAssetsStore({
+        ...emptyStore,
+        findTokenById: async (id: string) => (id === VTHO.id ? VTHO : undefined),
+      } as any);
+    });
+
+    afterEach(() => {
+      getBridgeApiMock.mockImplementation(defaultBridgeApi);
+      setCryptoAssetsStore(emptyStore as any);
+    });
+
+    const sync = () =>
+      genericGetAccountShape(network, currency.id)(
+        { address: "addr-fees", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+    test("records the family's declared fees currency on the account", async () => {
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        feesCurrencyId: VTHO.id,
+      }));
+
+      const result = await sync();
+
+      expect((result as any).feesCurrency).toEqual(VTHO);
+    });
+
+    test("tells the operation adapter that fees are not native", async () => {
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        feesCurrencyId: VTHO.id,
+      }));
+
+      await sync();
+
+      expect(adaptCoreOperationToLiveOperationMock).toHaveBeenCalledWith(
+        expect.anything(),
+        { id: "core-op" },
+        undefined,
+        { feesAreNative: false },
+      );
+    });
+
+    test("leaves a chain that pays its own fees untouched", async () => {
+      const result = await sync();
+
+      expect((result as any).feesCurrency).toBeUndefined();
+      expect(adaptCoreOperationToLiveOperationMock).toHaveBeenCalledWith(
+        expect.anything(),
+        { id: "core-op" },
+        undefined,
+        { feesAreNative: true },
+      );
     });
   });
 
