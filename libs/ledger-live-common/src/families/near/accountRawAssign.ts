@@ -69,11 +69,12 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): vo
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
   const raw = (accountRaw as AccountRawWithStakingPositions).stakingPositions;
-  // Always set the field: an empty array means "nothing staked" and must stay distinguishable
-  // from an absent field, which the UI treats as "fall back to the legacy nearResources blob".
-  (account as AccountWithStakingPositions).stakingPositions = raw
-    ? raw.map(fromStakingPositionRaw)
-    : [];
+  // Absent stays absent, `[]` stays `[]`. The UI reads an empty array as "nothing staked" and an
+  // absent field as "fall back to the legacy nearResources blob", so both have to survive the
+  // cycle verbatim. Defaulting an absent field to `[]` would hide the staking data of every
+  // account persisted before the migration until its first successful generic sync.
+  if (raw === undefined) return;
+  (account as AccountWithStakingPositions).stakingPositions = raw.map(fromStakingPositionRaw);
 }
 
 export default {

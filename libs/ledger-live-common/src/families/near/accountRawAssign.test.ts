@@ -97,12 +97,20 @@ describe("near accountRawAssign", () => {
       expect(revived.amount.toFixed()).toBe("2902170000000000000000000");
     });
 
-    it("defaults to an empty array when the raw account has no positions", () => {
+    it("keeps an explicitly persisted empty list", () => {
+      const account = {} as Account;
+
+      assignFromAccountRaw({ stakingPositions: [] } as unknown as AccountRaw, account);
+
+      expect((account as Account & { stakingPositions: unknown[] }).stakingPositions).toEqual([]);
+    });
+
+    it("leaves the field absent when the raw account has none", () => {
       const account = {} as Account;
 
       assignFromAccountRaw({} as AccountRaw, account);
 
-      expect((account as Account & { stakingPositions: unknown[] }).stakingPositions).toEqual([]);
+      expect("stakingPositions" in account).toBe(false);
     });
   });
 
