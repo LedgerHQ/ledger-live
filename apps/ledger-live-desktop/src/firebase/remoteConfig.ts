@@ -2,29 +2,20 @@ import { initializeApp, deleteApp, FirebaseApp } from "firebase/app";
 import {
   getRemoteConfig,
   fetchAndActivate,
+  ensureInitialized,
   getAll,
   getValue,
   RemoteConfig,
 } from "firebase/remote-config";
-import snakeCase from "lodash/snakeCase";
 import isMatch from "lodash/isMatch";
 import * as fs from "fs";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
 import { formatDefaultFeatures } from "@features/platform-feature-flags";
-import { FEATURE_FLAGS_DEFAULTS, FeatureIdSchema } from "@shared/feature-flags";
-import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
+import { parseFirebaseFeatures } from "@features/platform-feature-flags/firebase";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 import { getFirebaseConfig } from "~/firebase-setup";
-
-// Precomputed inverse of @features/platform-feature-flags' `formatToFirebaseFeatureId`
-// (`feature_${snakeCase(id)}`).
-// `lodash.camelCase(snakeCase(id))` is not a clean round-trip for FeatureIds with digits
-// or consecutive uppercase letters (e.g. `web3hub` → `web_3_hub` → `web3Hub`,
-// `ptxSwapReceiveTRC20WithoutTrx` → `..._trc_20_..._trx` → `ptxSwapReceiveTrc20WithoutTrx`),
-// which would silently drop the flag at the slice boundary.
-const FIREBASE_KEY_TO_FEATURE_ID: Record<string, FeatureId> = Object.fromEntries(
-  FeatureIdSchema.options.map(id => [`feature_${snakeCase(id)}`, id]),
-);
 
 type Subscriber = (event: { fetchedAt: number }) => void;
 
@@ -33,11 +24,6 @@ let remoteConfig: RemoteConfig | null = null;
 let setupDone = false;
 let lastFetchedAt: number | null = null;
 const subscribers = new Set<Subscriber>();
-
-let resolveReady: (() => void) | null = null;
-const readyPromise: Promise<void> = new Promise(resolve => {
-  resolveReady = resolve;
-});
 
 function getApp(): FirebaseApp {
   if (!app) app = initializeApp(getFirebaseConfig());
@@ -84,13 +70,23 @@ export function subscribeToRemoteFlags(callback: Subscriber): () => void {
 }
 
 /**
- * Resolves on the first {@link fetchRemoteFlags} completion (success or failure)
- * so callers can gate app boot on Firebase having had a chance to respond.
- * Mirrors the legacy provider's `loaded` flag, which flipped true in a `finally`
- * block regardless of fetch outcome.
+ * Reads the config Firebase activated in an earlier session and restored from IndexedDB, with
+ * no network access. Wired into `createFeatureFlagsMiddleware` as `readCachedFlags` so boot
+ * resolves on the last values the backend actually sent instead of on compiled defaults.
+ *
+ * Never throws: both the singleton accessor (which throws `indexed-db-unavailable`
+ * synchronously) and `ensureInitialized` (which rejects, and memoises that rejection) fail when
+ * storage is refused. An unreadable cache is not an error, it just means there is nothing to
+ * prime from, so the caller falls through to the network.
  */
-export function whenReady(): Promise<void> {
-  return readyPromise;
+export async function readCachedFlags(): Promise<PartialFeatures> {
+  try {
+    const rc = getRemoteConfigSingleton();
+    await ensureInitialized(rc);
+    return parseFirebaseFeatures(getAll(rc));
+  } catch {
+    return {};
+  }
 }
 
 /**
@@ -99,36 +95,17 @@ export function whenReady(): Promise<void> {
  * stays in sync, and exposed via {@link subscribeToRemoteFlags} so the legacy
  * Context provider hydrates from the same payload at the same tick.
  *
- * Maps each known Firebase key (`feature_${snakeCase(id)}`) back to its canonical
- * FeatureId via {@link FIREBASE_KEY_TO_FEATURE_ID}, then JSON-parses each value.
- * Unknown keys (`config_*`, stray entries) and malformed JSON are dropped
- * silently — at worst the slice falls back to defaults for that flag.
+ * Rethrows on a failed fetch. The middleware swallows it, and {@link readCachedFlags} has
+ * already served whatever this device knew.
  */
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
-  try {
-    const rc = getRemoteConfigSingleton();
-    await fetchAndActivate(rc);
-    const all = getAll(rc);
-    const flags: PartialFeatures = {};
-    for (const [key, value] of Object.entries(all)) {
-      // `lodash.snakeCase` always lowercases — match it on the read side so any
-      // case drift in Firebase admin entries still resolves to the canonical id.
-      const featureId = FIREBASE_KEY_TO_FEATURE_ID[key.toLowerCase()];
-      if (!featureId) continue;
-      try {
-        flags[featureId] = JSON.parse(value.asString());
-      } catch {
-        // Malformed JSON in remote config — drop this key, fall back to default.
-      }
-    }
-    const fetchedAt = Date.now();
-    lastFetchedAt = fetchedAt;
-    subscribers.forEach(callback => callback({ fetchedAt }));
-    return flags;
-  } finally {
-    resolveReady?.();
-    resolveReady = null;
-  }
+  const rc = getRemoteConfigSingleton();
+  await fetchAndActivate(rc);
+  const flags = parseFirebaseFeatures(getAll(rc));
+  const fetchedAt = Date.now();
+  lastFetchedAt = fetchedAt;
+  subscribers.forEach(callback => callback({ fetchedAt }));
+  return flags;
 }
 
 const parseEnvFile = (fileContent: string) => {

@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { Feature, FeatureFlagsState } from "./schema";
-import { FEATURE_FLAGS_DEFAULTS } from "../constants";
-import {
-  checkFeatureFlagVersion,
-  applyLanguageFilter,
-  resolveFeature,
-  resolveAll,
-} from "./internals";
+import type { Feature, FeatureFlagsState } from "../schema";
+import { FEATURE_FLAGS_DEFAULTS } from "../../constants";
+import { checkFeatureFlagVersion, applyLanguageFilter, resolveFeature, resolveAll } from "./slice";
 
 const defaults = FEATURE_FLAGS_DEFAULTS as FeatureFlagsState["resolved"];
 
