@@ -58,7 +58,7 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
       title: t("contacts.addContact"),
       namePlaceholder: t("contacts.addContactDrawer.namePlaceholder"),
       namingDisclaimer: t("contacts.addContactDrawer.namingDisclaimer"),
-      confirmName: t("contacts.addContact"),
+      confirmAddContact: t("contacts.addContact"),
       nameValidationErrors: {
         [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.invalidNameError"),
         [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
