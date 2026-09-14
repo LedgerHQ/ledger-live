@@ -18,12 +18,7 @@ import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
-import {
-  sendEVM,
-  approveToken,
-  approveContractTransaction,
-  signTypedMessage,
-} from "./families/evm";
+import { sendEVM } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -906,14 +901,31 @@ const IDLE_SCREEN_LABEL = "is ready";
  * Menu verified against Ethereum 1.22.3 on nanos+ 1.6.1.
  */
 export const enableBlindSigning = withDeviceController(({ getButtonsController }) => async () => {
-  const buttons = getButtonsController();
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  const isEnabled = async () => /Enabled/.test(await fetchCurrentScreenTexts(speculosApiPort));
+
+  if (isTouchDevice()) {
+    await goToSettings();
+    await waitFor(DeviceLabels.BLIND_SIGNING);
+
+    if (!(await isEnabled())) {
+      const toggle = getDeviceCoordinates("settingsToggle1");
+      await pressAndRelease(DeviceLabels.SETTINGS_TOGGLE_1, toggle.x, toggle.y);
+    }
+
+    const back = getDeviceCoordinates("arrowBack");
+    await pressAndRelease(DeviceLabels.BACK, back.x, back.y);
+    await waitFor(IDLE_SCREEN_LABEL);
+    return;
+  }
+
+  const buttons = getButtonsController();
 
   await pressUntilTextFound(DeviceLabels.APP_SETTINGS);
   await buttons.both();
   await waitFor(DeviceLabels.BLIND_SIGNING);
 
-  if (!/Enabled/.test(await fetchCurrentScreenTexts(speculosApiPort))) {
+  if (!(await isEnabled())) {
     await buttons.both();
   }
 
@@ -1333,4 +1345,4 @@ export const acceptBlindSigningWarning = withDeviceController(
     },
 );
 
-export { approveToken, approveContractTransaction, signTypedMessage };
+export { approveToken, approveContractTransaction, signTypedMessage } from "./families/evm";

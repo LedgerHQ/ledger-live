@@ -33,6 +33,15 @@ function isThrottled(status: number): boolean {
   return status >= 500 || status === 403 || status === 429;
 }
 
+/**
+ * Transient for a read. A 403 is excluded on purpose: on a GET it is far likelier a real
+ * authorization failure than the edge throttle the writes see, and swallowing it here would
+ * spend the whole polling budget and then report the action as a timeout.
+ */
+function isTransientRead(status: number): boolean {
+  return status >= 500 || status === 429;
+}
+
 async function post(pathname: string, body: unknown): Promise<Response> {
   for (let attempt = 1; ; attempt++) {
     const res = await fetch(`${BASE_URL}${pathname}`, {
@@ -49,11 +58,10 @@ async function post(pathname: string, body: unknown): Promise<Response> {
 }
 
 /** The partner puts the actionable reason in the body, not the status line. */
-async function failedRequest(pathname: string, res: Response): Promise<Error> {
+async function failedRequest(request: string, res: Response): Promise<Error> {
   const detail = await res.text().catch(() => "");
-  return new Error(
-    `POST ${pathname} failed: ${res.status} ${res.statusText}${detail ? ` — ${detail}` : ""}`,
-  );
+  const reason = detail ? ` — ${detail}` : "";
+  return new Error(`${request} failed: ${res.status} ${res.statusText}${reason}`);
 }
 
 /**
@@ -82,14 +90,14 @@ function normalizeStep(raw: unknown, index: number): PartnerActionStep {
 /** `POST /v1/positions` — returns the raw `{ positions, errors, metadata }`. */
 export async function getPositions(address: string): Promise<unknown> {
   const res = await post("/v1/positions", [{ network: ETHEREUM_NETWORK, address }]);
-  if (!res.ok) throw await failedRequest("/v1/positions", res);
+  if (!res.ok) throw await failedRequest("POST /v1/positions", res);
   return res.json();
 }
 
 /** Builds an action; returns `{ actionId, steps[] }`. Staging returns all steps upfront. */
 export async function postAction(body: ActionRequest): Promise<PartnerActionResponse> {
   const res = await post("/v1/actions", body);
-  if (!res.ok) throw await failedRequest("/v1/actions", res);
+  if (!res.ok) throw await failedRequest("POST /v1/actions", res);
   const raw: unknown = await res.json();
   const actionId = getString(raw, "actionId");
   const steps = get(raw, "steps");
@@ -114,8 +122,8 @@ async function pollActionStatus(actionId: string): Promise<string | undefined> {
     return undefined;
   }
   if (res.ok) return getString(await res.json(), "status")?.toLowerCase();
-  if (isThrottled(res.status)) return undefined;
-  throw new Error(`GET /v1/actions/${actionId} failed: ${res.status}`);
+  if (isTransientRead(res.status)) return undefined;
+  throw await failedRequest(`GET /v1/actions/${actionId}`, res);
 }
 
 /** Polls the action to `success` (throws on `failed` or timeout); transient 5xx/network errors retry. */

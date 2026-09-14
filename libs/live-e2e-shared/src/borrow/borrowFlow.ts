@@ -215,6 +215,34 @@ async function close(
 }
 
 /**
+ * Boots the Speculos this flow owns. `startSpeculos` reads SEED / COINAPPS straight from
+ * `process.env`, so those are prepared here rather than through live-env alone.
+ */
+async function startOwnSpeculos(
+  options: BorrowFlowOptions,
+  specKey: string,
+): Promise<SpeculosDevice> {
+  if (!process.env.SEED) throw new Error("Missing SEED env (Speculos seed)");
+  setEnv("MOCK", "");
+  process.env.MOCK = "";
+  setEnv("PLAYWRIGHT_RUN", true);
+  // The Speculos app-version catalog is read via live-env; default it to the
+  // checked-in desktop catalog unless the caller already set one.
+  if (options.nanoAppCatalogPath) {
+    setEnv("E2E_NANO_APP_VERSION_PATH", options.nanoAppCatalogPath);
+  } else if (!getEnv("E2E_NANO_APP_VERSION_PATH")) {
+    throw new Error(
+      "Missing Speculos app-version catalog: pass nanoAppCatalogPath or set E2E_NANO_APP_VERSION_PATH",
+    );
+  }
+  const spec = specs[specKey];
+  if (!spec) throw new Error(`No Speculos spec for "${specKey}"`);
+  const device = await startSpeculos(`borrow-${options.flow}`, spec);
+  if (!device) throw new Error("Speculos not started");
+  return device;
+}
+
+/**
  * Runs a Borrow flow end-to-end, signing on Speculos. Safe to call from
  * Playwright `beforeAll` / `afterAll` hooks — it never calls `process.exit`,
  * awaits fully, and cleans up the device + RPC sockets it created.
@@ -237,24 +265,8 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<string | vo
 
   try {
     if (ownSpeculos) {
-      // startSpeculos reads SEED / COINAPPS from process.env directly (not live-env).
-      if (!process.env.SEED) throw new Error("Missing SEED env (Speculos seed)");
-      setEnv("MOCK", "");
-      process.env.MOCK = "";
-      setEnv("PLAYWRIGHT_RUN", true);
-      // The Speculos app-version catalog is read via live-env; default it to the
-      // checked-in desktop catalog unless the caller already set one.
-      if (options.nanoAppCatalogPath) {
-        setEnv("E2E_NANO_APP_VERSION_PATH", options.nanoAppCatalogPath);
-      } else if (!getEnv("E2E_NANO_APP_VERSION_PATH")) {
-        throw new Error(
-          "Missing Speculos app-version catalog: pass nanoAppCatalogPath or set E2E_NANO_APP_VERSION_PATH",
-        );
-      }
-      const spec = specs[specKey];
-      if (!spec) throw new Error(`No Speculos spec for "${specKey}"`);
-      device = await startSpeculos(`borrow-${options.flow}`, spec);
-      if (!device) throw new Error("Speculos not started");
+      // Assigned before the readiness poll so a failing poll still reaches stopSpeculos below.
+      device = await startOwnSpeculos(options, specKey);
       // /acquire returns 202 with a sentinel port; the readiness poll is what publishes
       // SPECULOS_ADDRESS, without which everything resolves against 127.0.0.1.
       if (process.env.REMOTE_SPECULOS === "true") await waitForSpeculosReady(device.id);

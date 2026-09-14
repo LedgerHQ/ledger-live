@@ -122,7 +122,7 @@ export default class SpeculosPage {
 
     setExchangeDependencies(
       accounts.map(acc => ({
-        name: acc.currency.speculosApp.name.replace(/ /g, "_"),
+        name: acc.currency.speculosApp.name.replaceAll(" ", "_"),
       })),
     );
   }

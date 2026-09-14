@@ -8,6 +8,8 @@ const CONTINUE_READY_TIMEOUT_MS = 30_000;
 /** The partner prepares each transaction server-side, so the CTA stays disabled meanwhile. */
 const EXECUTION_STEP_TIMEOUT_MS = 240_000;
 const PROBE_TIMEOUT_MS = 2_000;
+/** The execution screen mounts before the partner's step state is rendered into it. */
+const STEP_STATE_TIMEOUT_MS = 30_000;
 
 const MAINNET_FUNDING_HINT =
   "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
@@ -119,7 +121,7 @@ export default class BorrowPage {
   @Step("Give approval and sign on device")
   async completeApprovalStep() {
     await waitWebElementByTestId(this.loanExecutionScreenId);
-    if (await this.isPresent(getWebElementByTestId(this.step1AccessApprovedId))) return;
+    if (await this.alreadyDone(this.step1AccessApprovedId, this.giveApprovalButtonId)) return;
     await this.authorizeStep(this.giveApprovalButtonId, this.step1AccessApprovedId, () =>
       this.signContractTransaction(),
     );
@@ -204,6 +206,18 @@ export default class BorrowPage {
       PROBE_TIMEOUT_MS,
       false,
     ));
+  }
+
+  /**
+   * Whether the step is already complete, settled once either marker renders so that a step
+   * still loading is not mistaken for one with nothing to sign.
+   */
+  private async alreadyDone(doneId: string, ctaId: string): Promise<boolean> {
+    return retryUntilTimeout(async () => {
+      if (await this.isPresent(getWebElementByTestId(doneId))) return true;
+      if (await this.isPresent(getWebElementByTestId(ctaId))) return false;
+      throw new Error(`neither '${doneId}' nor '${ctaId}' rendered on the execution screen`);
+    }, STEP_STATE_TIMEOUT_MS);
   }
 
   private async isPresent(element: WebElement): Promise<boolean> {
