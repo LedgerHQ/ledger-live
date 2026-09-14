@@ -71,7 +71,7 @@
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "catalog:",

@@ -5,9 +5,6 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "paths": {
-      "@ledgerhq/live-env": ["../../libs/env/src/index.ts"]
-    },
     "noEmit": true
   },
   "include": ["src/**/*"],

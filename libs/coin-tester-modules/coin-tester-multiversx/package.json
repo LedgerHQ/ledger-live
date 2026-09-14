@@ -56,7 +56,7 @@
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@multiversx/sdk-core": "^13.7.0",
     "bignumber.js": "^9",

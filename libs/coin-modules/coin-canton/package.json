@@ -118,7 +118,7 @@
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/hw-app-canton": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
