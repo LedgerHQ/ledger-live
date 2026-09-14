@@ -15,8 +15,6 @@ import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 
 const FILL_STYLE = { flex: 1 } as const;
 
-const FOOTER_STYLE = { paddingBottom: 24 } as const;
-
 const ROW_ICONS: Record<CardLoginIntroRowIcon, typeof CreditCard> = {
   CoinsAddPlus,
   CreditCard,
@@ -47,7 +45,7 @@ export function CardLoginIntroView({
             alwaysBounceVertical={false}
             showsVerticalScrollIndicator={false}
           >
-            <Box lx={{ gap: "s16", paddingBottom: "s16" }}>
+            <Box lx={{ gap: "s16" }}>
               <Box
                 lx={{ width: "full", height: "s192", borderRadius: "xl", overflow: "hidden" }}
                 testID="pay-card-login-intro-hero"
@@ -85,7 +83,7 @@ export function CardLoginIntroView({
               </Box>
             </Box>
           </BottomSheetScrollView>
-          <BottomSheetFooter style={FOOTER_STYLE}>
+          <BottomSheetFooter>
             <Box lx={{ flexDirection: "column", alignItems: "center", gap: "s16" }}>
               <Text
                 typography="body3"
