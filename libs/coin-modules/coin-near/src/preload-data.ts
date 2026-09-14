@@ -1,11 +1,11 @@
 import { BigNumber } from "bignumber.js";
 import { Subject } from "rxjs";
-import { FALLBACK_STORAGE_AMOUNT_PER_BYTE } from "./constants";
+import { FALLBACK_GAS_PRICE, FALLBACK_STORAGE_AMOUNT_PER_BYTE } from "./constants";
 import type { NearPreloadedData } from "./types";
 
 let currentPreloadedData: NearPreloadedData = {
   storageCost: new BigNumber(FALLBACK_STORAGE_AMOUNT_PER_BYTE),
-  gasPrice: new BigNumber(0),
+  gasPrice: new BigNumber(FALLBACK_GAS_PRICE),
   createAccountCostSend: new BigNumber(0),
   createAccountCostExecution: new BigNumber(0),
   transferCostSend: new BigNumber(0),
