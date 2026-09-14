@@ -46,7 +46,8 @@ export const quoteCardProviderNameSelector = (providerName: string): string =>
   `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${providerName.toLowerCase()}']`;
 
 // Provider UI names (e.g. "LI.FI") can carry regex metacharacters.
-const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
 // Both presets name the provider. Unpinned runs also accept the short copy, which
 // Firebase still serves today.
