@@ -1,6 +1,6 @@
 import { configureStore, type Middleware, type ThunkDispatch } from "@reduxjs/toolkit";
 import { UnknownAction } from "redux";
-import { AuthSDK } from "@ledgerhq/ledger-auth";
+import { AuthSDK } from "@ledgerhq/auth";
 import { getEnv } from "@shared/env";
 import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";

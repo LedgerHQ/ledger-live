@@ -1,4 +1,4 @@
-import { getDeviceModel } from "@ledgerhq/devices/index";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";

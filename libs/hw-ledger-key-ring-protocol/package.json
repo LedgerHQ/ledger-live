@@ -19,7 +19,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "bip32": "^4.0.0",
     "@noble/curves": "^1.9.7",
     "create-hmac": "^1.1.7"
