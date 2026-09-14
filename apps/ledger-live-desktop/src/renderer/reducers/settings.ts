@@ -129,7 +129,6 @@ export type SettingsState = {
   lastOnboardedDevice: Device | null;
   alwaysShowMemoTagInfo: boolean;
   anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
-  hasSeenWalletV4Tour: boolean;
   hasSeenQ2Tour: boolean;
   hasSeenQ3Tour: boolean;
   productTourCompleted: boolean;
@@ -238,7 +237,6 @@ export const INITIAL_STATE: SettingsState = {
   lastOnboardedDevice: null,
   alwaysShowMemoTagInfo: true,
   anonymousUserNotifications: {},
-  hasSeenWalletV4Tour: false,
   hasSeenQ2Tour: false,
   hasSeenQ3Tour: false,
   productTourCompleted: false,
@@ -307,7 +305,6 @@ type HandlersPayloads = {
   [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: {
     notifications: Record<string, number>;
   };
-  SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
   SET_HAS_SEEN_Q2_TOUR: boolean;
   SET_HAS_SEEN_Q3_TOUR: boolean;
   [SET_PRODUCT_TOUR_COMPLETED]: boolean;
@@ -537,10 +534,6 @@ const handlers: SettingsHandlers = {
       ...state.anonymousUserNotifications,
       ...notifications,
     },
-  }),
-  SET_HAS_SEEN_WALLET_V4_TOUR: (state: SettingsState, { payload }) => ({
-    ...state,
-    hasSeenWalletV4Tour: payload,
   }),
   SET_HAS_SEEN_Q2_TOUR: (state: SettingsState, { payload }) => ({
     ...state,
@@ -882,7 +875,6 @@ export const mevProtectionSelector = (state: State) => state.settings.mevProtect
 export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.alwaysShowMemoTagInfo;
 export const anonymousUserNotificationsSelector = (state: State) =>
   state.settings.anonymousUserNotifications;
-export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
 export const hasSeenQ2TourSelector = (state: State) => state.settings.hasSeenQ2Tour;
 export const hasSeenQ3TourSelector = (state: State) => state.settings.hasSeenQ3Tour;
 export const productTourCompletedSelector = (state: State) => state.settings.productTourCompleted;

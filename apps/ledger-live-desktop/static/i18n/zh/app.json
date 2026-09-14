@@ -9333,26 +9333,6 @@
     "errorTryAgain" : "更新时出错请重试",
     "installAndRelaunch" : "有新更新。立即安装并重新启动"
   },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "更清楚地展示您的资产组合",
-        "description" : "一目了然地查看您的总余额，点按“今天”可深入了解。"
-      },
-      "navigation" : {
-        "title" : "更快访问关键操作功能",
-        "description" : "即时进行接收、买入、卖出和发送操作。"
-      },
-      "actions" : {
-        "title" : "快速查看市场趋势",
-        "description" : "在资产组合中快速查看热门趋势，从洞察到行动，一步到位。"
-      }
-    },
-    "cta" : {
-      "continue" : "继续",
-      "explore" : "探索我的全新资产组合"
-    }
-  },
   "q2Tour" : {
     "slides" : {
       "welcome" : {

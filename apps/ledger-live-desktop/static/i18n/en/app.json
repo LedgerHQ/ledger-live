@@ -9769,26 +9769,6 @@
     "errorTryAgain": "Error during update. Try again",
     "installAndRelaunch": "New update. Install and relaunch"
   },
-  "walletV4Tour": {
-    "slides": {
-      "portfolio": {
-        "title": "A clearer view of your portfolio",
-        "description": "See your total balance at a glance, and tap \"Today\" to dive deeper."
-      },
-      "navigation": {
-        "title": "Access key actions faster",
-        "description": "Access Receive, Buy, Sell, and Send actions instantly."
-      },
-      "actions": {
-        "title": "View market trends instantly",
-        "description": "Quickly see what's trending directly in your portfolio, and move from insights to action."
-      }
-    },
-    "cta": {
-      "continue": "Continue",
-      "explore": "Explore my new portfolio"
-    }
-  },
   "q2Tour": {
     "slides": {
       "welcome": {
