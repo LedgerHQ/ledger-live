@@ -3,6 +3,8 @@ import { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { useDispatch } from "~/context/hooks";
+import { isCurrencyRegionRestrictedError } from "@ledgerhq/live-common/errors";
+import { openCurrencyRegionRestrictedDrawer } from "~/reducers/currencyRegionRestrictedDrawer";
 import { useTranslation } from "~/context/Locale";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import uniq from "lodash/uniq";
@@ -444,8 +446,24 @@ export default function useScanDeviceAccountsViewModel({
       }
     : undefined;
 
+  const isRegionRestricted = isCurrencyRegionRestrictedError(error);
+
+  useEffect(() => {
+    if (!isRegionRestricted) return;
+
+    if (inline) {
+      onCancel();
+      onModalHide();
+    } else {
+      navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()?.popToTop();
+    }
+
+    dispatch(openCurrencyRegionRestrictedDrawer(currency.name));
+  }, [isRegionRestricted, inline, onCancel, onModalHide, navigation, dispatch, currency.name]);
+
   return {
     alreadyEmptyAccount,
+    isRegionRestricted,
     alreadyEmptyAccountName,
     cantCreateAccount,
     CustomNoAssociatedAccounts,

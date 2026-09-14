@@ -35,6 +35,8 @@ import type {
   TokenAccount,
 } from "@ledgerhq/types-live";
 import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/errors";
+import { CurrencyRegionRestrictedError } from "../../errors";
+import { isRegionRestrictedFailure } from "./regionRestriction";
 
 function isNftCoreOp(operation: Operation): boolean {
   return (
@@ -444,7 +446,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const balancePromise = coinModuleApi
       .getBalance(context, address, bridgeApi.balanceOptions)
-      .catch(err => {
+      .catch(async err => {
+        // The config rejects when the currency has none, which is not a region restriction.
+        const config = await context.config().catch(() => undefined);
+        if (isRegionRestrictedFailure(err, config)) {
+          throw new CurrencyRegionRestrictedError(currency.name, err);
+        }
         throw new UnexpectedGetBalanceError("", err);
       });
 

@@ -10,6 +10,8 @@ import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import * as RX from "rxjs/operators";
 import { useLLDCoinFamily } from "~/renderer/families";
+import { isCurrencyRegionRestrictedError } from "@ledgerhq/live-common/errors";
+import { openCurrencyRegionRestrictedDialog } from "LLD/features/CurrencyRegionRestrictedDialog/currencyRegionRestrictedDialog";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import {
@@ -51,7 +53,7 @@ export function useScanAccounts({
   const existingAccounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const familyImpl = useLLDCoinFamily(currency.family);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
   const dispatch = useDispatch();
 
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
@@ -296,9 +298,18 @@ export function useScanAccounts({
     scanning,
   ]);
 
+  const isRegionRestricted = isCurrencyRegionRestrictedError(error);
+
+  useEffect(() => {
+    if (!isRegionRestricted) return;
+    setDrawer();
+    dispatch(openCurrencyRegionRestrictedDialog(currency.name));
+  }, [isRegionRestricted, dispatch, currency.name]);
+
   return {
     creatableAccounts,
     error,
+    isRegionRestricted,
     handleConfirm,
     handleDeselectAll,
     handleSelectAll,
