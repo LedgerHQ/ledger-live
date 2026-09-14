@@ -20,13 +20,18 @@ const NET_ERROR_LOG_TRANSFERS_LIMIT = {
   msgPattern: /exceeds the maximum allowed/,
 };
 
+// `revision` pins the read to a block, so the response is the account state as of that block
+// instead of the chain head. Tested against `undefined` rather than falsiness: revision 0 is the
+// genesis block, a legitimate revision that must reach Thor.
 export const getAccount = async (
   config: VechainCurrencyConfig,
   address: string,
+  revision?: number,
 ): Promise<AccountResponse> => {
+  const query = revision === undefined ? "" : `?revision=${revision}`;
   const { data } = await network<AccountResponse>({
     method: "GET",
-    url: `${getNodeUrl(config)}/accounts/${address}`,
+    url: `${getNodeUrl(config)}/accounts/${address}${query}`,
   });
 
   return data;
