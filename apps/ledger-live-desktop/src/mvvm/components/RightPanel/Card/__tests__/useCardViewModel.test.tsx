@@ -34,21 +34,21 @@ describe("useCardViewModel", () => {
   it("hands the Card login the code the deep link brought", () => {
     const { result } = renderCardViewModel({ code: "auth-code" });
 
-    expect(result.current.callback).toEqual({ code: "auth-code" });
+    expect(result.current.login.callback).toEqual({ code: "auth-code" });
     expect(mockNavigate).toHaveBeenCalledWith("/paytab", { replace: true, state: null });
   });
 
   it("hands it the attempt state alongside the code, when the deep link carried one", () => {
     const { result } = renderCardViewModel({ code: "auth-code", state: "attempt-state" });
 
-    expect(result.current.callback).toEqual({ code: "auth-code", state: "attempt-state" });
+    expect(result.current.login.callback).toEqual({ code: "auth-code", state: "attempt-state" });
     expect(mockNavigate).toHaveBeenCalledWith("/paytab", { replace: true, state: null });
   });
 
   it("hands it no callback when the deep link brought no code", () => {
     const { result } = renderCardViewModel(null);
 
-    expect(result.current.callback).toBeNull();
+    expect(result.current.login.callback).toBeNull();
   });
 
   it.each([{ code: "" }, { code: 42 }, { other: "value" }])(
@@ -56,7 +56,7 @@ describe("useCardViewModel", () => {
     state => {
       const { result } = renderCardViewModel(state);
 
-      expect(result.current.callback).toBeNull();
+      expect(result.current.login.callback).toBeNull();
     },
   );
 
