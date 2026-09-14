@@ -1,6 +1,13 @@
 import React from "react";
 import { Image, type ImageSourcePropType } from "react-native";
-import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import {
+  BottomSheetFooter,
+  BottomSheetHeader,
+  BottomSheetScrollView,
+  Box,
+  Button,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
 import { CoinsAddPlus, CreditCard, LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import heroImage from "./payCardLoginIntro.webp";
@@ -8,7 +15,7 @@ import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 
 const FILL_STYLE = { flex: 1 } as const;
 
-const CONTENT_STYLE = { paddingBottom: 24 } as const;
+const FOOTER_STYLE = { paddingBottom: 24 } as const;
 
 const ROW_ICONS: Record<CardLoginIntroRowIcon, typeof CreditCard> = {
   CoinsAddPlus,
@@ -29,48 +36,56 @@ export function CardLoginIntroView({
     <QueuedBottomSheet
       isForcingToBeOpened={isOpen}
       onClose={onClose}
-      enableDynamicSizing
+      snapPoints="fullWithOffset"
       testID="pay-card-login-intro-sheet"
     >
       {isOpen ? (
-        <BottomSheetView style={CONTENT_STYLE} testID="pay-card-login-intro-content">
-          <BottomSheetHeader density="compact" />
-          <Box lx={{ gap: "s16" }}>
-            <Box
-              lx={{ width: "full", height: "s192", borderRadius: "xl", overflow: "hidden" }}
-              testID="pay-card-login-intro-hero"
-            >
-              <Image
-                source={heroImage as unknown as ImageSourcePropType}
-                resizeMode="cover"
-                style={FILL_STYLE}
-              />
-            </Box>
-            <Text accessibilityRole="header" typography="heading3SemiBold" lx={{ color: "base" }}>
-              {title}
-            </Text>
-            <Box lx={{ flexDirection: "column", gap: "s16" }}>
-              {rows.map(row => {
-                const RowIcon = ROW_ICONS[row.icon];
-                return (
-                  <Box
-                    key={row.icon}
-                    lx={{ flexDirection: "row", alignItems: "center", gap: "s12" }}
-                    testID={`pay-card-login-intro-row-${row.icon}`}
-                  >
-                    {RowIcon ? <RowIcon size={24} /> : null}
-                    <Box lx={{ flex: 1, flexDirection: "column", gap: "s4" }}>
-                      <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                        {row.title}
-                      </Text>
-                      <Text typography="body3" lx={{ color: "muted" }}>
-                        {row.description}
-                      </Text>
+        <>
+          <BottomSheetHeader density="compact" spacing />
+          <BottomSheetScrollView
+            testID="pay-card-login-intro-content"
+            alwaysBounceVertical={false}
+            showsVerticalScrollIndicator={false}
+          >
+            <Box lx={{ gap: "s16", paddingBottom: "s16" }}>
+              <Box
+                lx={{ width: "full", height: "s192", borderRadius: "xl", overflow: "hidden" }}
+                testID="pay-card-login-intro-hero"
+              >
+                <Image
+                  source={heroImage as unknown as ImageSourcePropType}
+                  resizeMode="cover"
+                  style={FILL_STYLE}
+                />
+              </Box>
+              <Text accessibilityRole="header" typography="heading3SemiBold" lx={{ color: "base" }}>
+                {title}
+              </Text>
+              <Box lx={{ flexDirection: "column", gap: "s16" }}>
+                {rows.map(row => {
+                  const RowIcon = ROW_ICONS[row.icon];
+                  return (
+                    <Box
+                      key={row.icon}
+                      lx={{ flexDirection: "row", alignItems: "center", gap: "s12" }}
+                      testID={`pay-card-login-intro-row-${row.icon}`}
+                    >
+                      {RowIcon ? <RowIcon size={24} /> : null}
+                      <Box lx={{ flex: 1, flexDirection: "column", gap: "s4" }}>
+                        <Text typography="body2SemiBold" lx={{ color: "base" }}>
+                          {row.title}
+                        </Text>
+                        <Text typography="body3" lx={{ color: "muted" }}>
+                          {row.description}
+                        </Text>
+                      </Box>
                     </Box>
-                  </Box>
-                );
-              })}
+                  );
+                })}
+              </Box>
             </Box>
+          </BottomSheetScrollView>
+          <BottomSheetFooter style={FOOTER_STYLE}>
             <Box lx={{ flexDirection: "column", alignItems: "center", gap: "s16" }}>
               <Text
                 typography="body3"
@@ -93,8 +108,8 @@ export function CardLoginIntroView({
                 </Button>
               ))}
             </Box>
-          </Box>
-        </BottomSheetView>
+          </BottomSheetFooter>
+        </>
       ) : null}
     </QueuedBottomSheet>
   );

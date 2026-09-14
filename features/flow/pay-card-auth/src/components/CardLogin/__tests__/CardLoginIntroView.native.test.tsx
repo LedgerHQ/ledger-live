@@ -7,13 +7,19 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: ({
     children,
     isForcingToBeOpened,
+    snapPoints,
     testID,
   }: {
     children: React.ReactNode;
     isForcingToBeOpened?: boolean;
+    snapPoints?: string;
     testID?: string;
   }) => (
-    <View testID={testID} accessibilityState={{ expanded: !!isForcingToBeOpened }}>
+    <View
+      testID={testID}
+      accessibilityState={{ expanded: !!isForcingToBeOpened }}
+      accessibilityValue={{ text: snapPoints }}
+    >
       {children}
     </View>
   ),
@@ -67,6 +73,14 @@ describe("CardLoginIntroView (Native)", () => {
     expect(screen.getByTestId("pay-card-login-intro-sheet")).toBeTruthy();
     expect(screen.queryByTestId("pay-card-login-intro-content")).toBeNull();
     expect(screen.queryByText("Spend crypto, earn cashback")).toBeNull();
+  });
+
+  it("opens the sheet at full height", () => {
+    renderIntro();
+
+    expect(screen.getByTestId("pay-card-login-intro-sheet").props.accessibilityValue.text).toBe(
+      "fullWithOffset",
+    );
   });
 
   it("renders the title, every row and the disclaimer once open", () => {
