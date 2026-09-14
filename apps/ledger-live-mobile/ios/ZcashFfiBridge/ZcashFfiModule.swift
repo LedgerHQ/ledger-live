@@ -82,4 +82,39 @@ final class ZcashFfiModule: NSObject, RCTBridgeModule {
       reject(errorCode(for: status), value, nil)
     }
   }
+
+  /// Diagnostic probe: does Rayon give real parallelism on this device?
+  ///
+  /// Not part of the wallet surface. It exists because nothing shipped has ever
+  /// spawned a thread from Rust here — the artifact imports no `pthread_create`
+  /// at all — and mobile shielded sync depends on the answer.
+  ///
+  /// Whoever reads the numbers: on the Simulator this measures the **Mac's**
+  /// cores, not a phone's.
+  @objc func threadProbe(
+    _ ufvk: String,
+    iterations: NSNumber,
+    resolver resolve: @escaping RCTPromiseResolveBlock,
+    rejecter reject: @escaping RCTPromiseRejectBlock
+  ) {
+    var out: UnsafeMutablePointer<CChar>?
+    let status = zcash_ffi_thread_probe(ufvk, iterations.uint32Value, &out)
+
+    defer {
+      if let out = out { zcash_string_free(out) }
+    }
+
+    guard let out = out else {
+      reject(errorCode(for: status), "Zcash FFI rejected a null argument", nil)
+      return
+    }
+
+    let value = String(cString: out)
+
+    if status == 0 {
+      resolve(value)
+    } else {
+      reject(errorCode(for: status), value, nil)
+    }
+  }
 }

@@ -47,7 +47,19 @@ interface ZcashFfiNativeModule {
    * Rejects with one of {@link ZCASH_FFI_ERROR_CODES} as the error `code`.
    */
   deriveOrchardAddress(ufvk: string): Promise<string>;
+
+  /** Diagnostic — see {@link runThreadProbe}. */
+  threadProbe(ufvk: string, iterations: number): Promise<string>;
 }
+
+/** What the engine reports back from a threading probe. */
+export type ZcashThreadProbe = {
+  threads: number;
+  iterations: number;
+  serial_ms: number;
+  parallel_ms: number;
+  speedup: number;
+};
 
 const nativeModule: ZcashFfiNativeModule | null = NativeModules.ZcashFfiModule ?? null;
 
@@ -84,6 +96,34 @@ export async function deriveOrchardAddress(ufvk: string): Promise<string> {
   } catch (error) {
     const code = (error as { code?: unknown })?.code;
     const message = error instanceof Error ? error.message : "Zcash FFI call failed";
+    throw new ZcashFfiError(isKnownCode(code) ? code : "ZCASH_FFI_UNKNOWN", message);
+  }
+}
+
+/**
+ * Diagnostic: measure whether the Rust layer gets real parallelism here.
+ *
+ * Answers a question blocking the mobile shielded-sync decision — threading is
+ * assumed to work on iOS and Android, but nothing shipped has ever spawned a
+ * thread from Rust. Runs real elliptic-curve work serially, then through
+ * Rayon, and reports both.
+ *
+ * **On the Simulator this measures the Mac's cores, not a phone's.** A figure
+ * from a physical device is the one that counts.
+ */
+export async function runThreadProbe(ufvk: string, iterations = 200): Promise<ZcashThreadProbe> {
+  if (!nativeModule) {
+    throw new ZcashFfiError(
+      "ZCASH_FFI_UNAVAILABLE",
+      "The Zcash native library is not linked into this build",
+    );
+  }
+
+  try {
+    return JSON.parse(await nativeModule.threadProbe(ufvk, iterations)) as ZcashThreadProbe;
+  } catch (error) {
+    const code = (error as { code?: unknown })?.code;
+    const message = error instanceof Error ? error.message : "Zcash FFI probe failed";
     throw new ZcashFfiError(isKnownCode(code) ? code : "ZCASH_FFI_UNKNOWN", message);
   }
 }

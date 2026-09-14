@@ -16,4 +16,10 @@ RCT_EXTERN_METHOD(deriveOrchardAddress:(NSString *)ufvk
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+// Diagnostic only — see the Swift implementation.
+RCT_EXTERN_METHOD(threadProbe:(NSString *)ufvk
+                  iterations:(nonnull NSNumber *)iterations
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 @end

@@ -1,5 +1,10 @@
 import { log } from "@ledgerhq/logs";
-import { deriveOrchardAddress, isZcashFfiAvailable, ZcashFfiError } from "./ZcashFfiModule";
+import {
+  deriveOrchardAddress,
+  isZcashFfiAvailable,
+  runThreadProbe,
+  ZcashFfiError,
+} from "./ZcashFfiModule";
 
 // Proves the Zcash Rust engine actually runs inside the app: it derives a known
 // address and compares it against the expected value. Nothing in the wallet
@@ -49,6 +54,24 @@ export async function logZcashFfiSmokeCheck(): Promise<void> {
     }
   } catch (error) {
     log(ZCASH_FFI_LOG_TYPE, "engine call failed", {
+      code: error instanceof ZcashFfiError ? error.code : "unknown",
+      message: error instanceof Error ? error.message : String(error),
+    });
+    return;
+  }
+
+  // Threading probe. Separate try/catch: a failure here says nothing about the
+  // derivation above, which has already reported its own verdict.
+  try {
+    const probe = await runThreadProbe(TEST_UFVK);
+    log(
+      ZCASH_FFI_LOG_TYPE,
+      `threads: ${probe.threads}, speedup ${probe.speedup}x ` +
+        `(${probe.iterations} derivations: ${probe.serial_ms}ms serial -> ${probe.parallel_ms}ms parallel)`,
+      probe,
+    );
+  } catch (error) {
+    log(ZCASH_FFI_LOG_TYPE, "thread probe failed", {
       code: error instanceof ZcashFfiError ? error.code : "unknown",
       message: error instanceof Error ? error.message : String(error),
     });
