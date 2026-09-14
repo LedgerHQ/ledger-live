@@ -51,10 +51,11 @@ export const MINA_DELEGATION_PAIR = [Account.MINA_1, Account.MINA_2];
 
 /**
  * A spec seeding the pair syncs two accounts, and the rosetta node answers /search/transactions in
- * 35 s or so per account whatever its history, so the app settles well after the budget one slow
- * account gets.
+ * 35 s or so per account whatever its history — longer under the parallelism the suite runs at, the
+ * endpoint having already timed out on it. The margin is wide on purpose: overshooting only delays
+ * a genuine failure, falling short turns a slow node into a red run.
  */
-export const MINA_PAIR_SYNC_TIMEOUT_MS = 150 * 1000;
+export const MINA_PAIR_SYNC_TIMEOUT_MS = 240 * 1000;
 
 /**
  * A picker can find the pair unusable for two reasons, both of which pass on their own: a
