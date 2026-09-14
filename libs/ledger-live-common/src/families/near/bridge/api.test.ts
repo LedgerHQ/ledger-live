@@ -1,6 +1,6 @@
 import * as nearBridge from "./api";
 
-const { computeIntentType } = nearBridge;
+const { computeIntentType, describeOptimisticOperation } = nearBridge;
 const bridgeApi = nearBridge.default;
 
 describe("generic-coin-framework NEAR bridge api", () => {
@@ -38,6 +38,16 @@ describe("generic-coin-framework NEAR bridge api", () => {
     });
   });
 
+  describe("describeOptimisticOperation", () => {
+    it("types a withdraw the way the indexer types it, not WITHDRAW_UNBONDED", () => {
+      expect(describeOptimisticOperation("withdraw")).toEqual({ type: "WITHDRAW_UNSTAKED" });
+    });
+
+    it.each(["send", "stake", "unstake"])("defers to the generic mapping for '%s'", mode => {
+      expect(describeOptimisticOperation(mode)).toBeUndefined();
+    });
+  });
+
   describe("default export", () => {
     it("declares staking support", () => {
       expect(bridgeApi.stakingSupported).toBe(true);
@@ -50,6 +60,10 @@ describe("generic-coin-framework NEAR bridge api", () => {
     it("wires computeIntentType so the framework picks it up over its own whitelist", () => {
       expect(bridgeApi.computeIntentType).toBe(computeIntentType);
       expect(bridgeApi.computeIntentType?.({ mode: "withdraw" })).toBe("finalize_unstake");
+    });
+
+    it("wires describeOptimisticOperation so the pending withdraw row keeps its type", () => {
+      expect(bridgeApi.describeOptimisticOperation).toBe(describeOptimisticOperation);
     });
   });
 });
