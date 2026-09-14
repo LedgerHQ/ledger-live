@@ -111,6 +111,8 @@ export type CardLoginPorts = Readonly<{
    * `More` reads that flag to decide whether it belongs on screen.
    */
   setSignedIn: (isSignedIn: boolean) => void;
+  /** Records that the card holder has logged in once, so the intro is never sold to them again. */
+  markIntroSeen: () => void;
   openHostedLogin: OpenHostedLogin;
 }>;
 

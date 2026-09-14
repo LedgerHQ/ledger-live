@@ -8,7 +8,6 @@ import { createCardLoginPorts, type CardLoginDispatch } from "../../state/create
 import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
 import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors";
-import { markPayCardLoginIntroSeen } from "../../state/loginIntroSlice";
 import { selectIsSignedIn } from "../../state/selectors";
 import type {
   CardLoginCopy,
@@ -92,8 +91,6 @@ export function useCardLoginViewModel({
   const isSignedIn = useSelector(selectIsSignedIn);
   const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
   const [isIntroRequested, setIsIntroRequested] = useState(false);
-  const isFinishingRedirectLogin = Boolean(callback?.code);
-  const [isLoginUnderway, setIsLoginUnderway] = useState(isFinishingRedirectLogin);
   const [hasSignupFailed, setHasSignupFailed] = useState(false);
 
   const ports = useMemo(
@@ -124,17 +121,10 @@ export function useCardLoginViewModel({
     }
   }, [isSignedIn, snapshot.value, send]);
 
-  useEffect(() => {
-    if (snapshot.value === "ready" && isLoginUnderway) {
-      dispatch(markPayCardLoginIntroSeen());
-    }
-  }, [snapshot.value, isLoginUnderway, dispatch]);
-
   const isIntroOpen = isIntroRequested && (snapshot.value === "idle" || snapshot.value === "error");
 
   const startLogin = useCallback(() => {
     setHasSignupFailed(false);
-    setIsLoginUnderway(true);
     send({ type: "LOGIN" });
   }, [send]);
 

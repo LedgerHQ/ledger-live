@@ -51,6 +51,11 @@ export const cardLoginMachine = setup({
      */
     publishSignedIn: ({ context }) => context.ports.setSignedIn(true),
     publishSignedOut: ({ context }) => context.ports.setSignedIn(false),
+    /**
+     * Only a code exchange reaches this, so a resumed session never raises the flag. It runs in the
+     * transition, not in an effect: `ready` signs the holder in, which unmounts CardLogin at once.
+     */
+    markIntroSeen: ({ context }) => context.ports.markIntroSeen(),
   },
 }).createMachine({
   id: "cardLogin",
@@ -226,6 +231,7 @@ export const cardLoginMachine = setup({
     },
 
     persistingSession: {
+      entry: "markIntroSeen",
       invoke: {
         src: "persistSession",
         input: ({ context }) => ({ ports: context.ports, session: context.session }),

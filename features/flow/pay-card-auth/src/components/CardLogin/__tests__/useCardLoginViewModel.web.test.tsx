@@ -142,6 +142,7 @@ const mockPorts: { [K in keyof CardLoginPorts]: jest.Mock } = {
   exchangeAuthorizationCode: jest.fn(async () => session),
   getUser: jest.fn(async () => user),
   setSignedIn: jest.fn(),
+  markIntroSeen: jest.fn(),
   openHostedLogin: jest.fn(
     async (): Promise<HostedLoginResult> => ({ type: "dismissed" }) as HostedLoginResult,
   ),
@@ -224,6 +225,7 @@ describe("useCardLoginViewModel intro", () => {
     mockPorts.setSignedIn.mockImplementation((value: boolean) =>
       store.dispatch(setSignedIn(value)),
     );
+    mockPorts.markIntroSeen.mockImplementation(() => store.dispatch(markPayCardLoginIntroSeen()));
   });
 
   it("resolves the copy from the app's own translation keys", async () => {
@@ -606,6 +608,7 @@ describe("useCardLoginViewModel errors", () => {
     mockPorts.setSignedIn.mockImplementation((value: boolean) =>
       store.dispatch(setSignedIn(value)),
     );
+    mockPorts.markIntroSeen.mockImplementation(() => store.dispatch(markPayCardLoginIntroSeen()));
   });
 
   it("shows the translated message for pkce_failed", async () => {

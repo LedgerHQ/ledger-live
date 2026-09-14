@@ -3,6 +3,7 @@ import { cardSession, getCardSessionToken } from "@features/platform-card";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { clearAttempt, loadAttempt, saveAttempt } from "./attemptStore";
 import { createAuthorizeAttempt } from "./authorizeAttempt";
+import { markPayCardLoginIntroSeen } from "./loginIntroSlice";
 import { setSignedIn } from "./slice";
 import type { CardLoginPorts, OpenHostedLogin } from "./types";
 
@@ -51,6 +52,9 @@ export function createCardLoginPorts({
     },
     setSignedIn: isSignedIn => {
       dispatch(setSignedIn(isSignedIn));
+    },
+    markIntroSeen: () => {
+      dispatch(markPayCardLoginIntroSeen());
     },
     openHostedLogin,
   };
