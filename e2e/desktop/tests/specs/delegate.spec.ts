@@ -580,7 +580,7 @@ test.describe("Delegate - MINA", () => {
     {
       // The Nano S build of the Mina app stops at 1.4.2, before the delegation flow.
       tag: buildTags({ currencyId: Currency.MINA.id, skipLNS: true }),
-      annotation: { type: "TMS", description: "B2CQA-387" },
+      annotation: { type: "TMS", description: "B2CQA-6626" },
     },
     async ({ app }) => {
       const account = await pickMinaAccountToDelegate();
@@ -632,7 +632,7 @@ test.describe("Redelegate - MINA", () => {
     {
       // The Nano S build of the Mina app stops at 1.4.2, before the delegation flow.
       tag: buildTags({ currencyId: Currency.MINA.id, skipLNS: true }),
-      annotation: { type: "TMS", description: "B2CQA-387" },
+      annotation: { type: "TMS", description: "B2CQA-6627" },
     },
     async ({ app }) => {
       const { account, validatorAddress } = await pickMinaRedelegation();

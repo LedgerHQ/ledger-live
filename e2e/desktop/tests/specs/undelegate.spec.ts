@@ -71,7 +71,7 @@ test.describe("Undelegate - MINA", () => {
     {
       // The Nano S build of the Mina app stops at 1.4.2, before the delegation flow.
       tag: buildTags({ currencyId: Currency.MINA.id, skipLNS: true }),
-      annotation: { type: "TMS", description: "B2CQA-387" },
+      annotation: { type: "TMS", description: "B2CQA-6628" },
     },
     async ({ app }) => {
       // Undelegating delegates back to the account itself, and the device review renders that raw
