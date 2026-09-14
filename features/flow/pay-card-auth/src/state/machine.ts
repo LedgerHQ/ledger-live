@@ -14,6 +14,13 @@ import { isUnauthorizedError } from "./errors";
 import { hasErrorKind, shouldResumeAuthenticated } from "./guards";
 import type { CardLoginContext, CardLoginEvent, CardLoginMachineInput } from "./types";
 
+function isRedirectForCurrentAttempt(
+  redirectState: string | undefined,
+  attemptState: string | null,
+): boolean {
+  return redirectState === undefined || redirectState === attemptState;
+}
+
 export const cardLoginMachine = setup({
   types: {
     context: {} as CardLoginContext,
@@ -136,8 +143,7 @@ export const cardLoginMachine = setup({
             // cannot supply `state` at all still gets through on its `code` alone.
             guard: ({ context, event }) =>
               event.output.callback !== null &&
-              (event.output.callback.state === undefined ||
-                event.output.callback.state === context.attemptState),
+              isRedirectForCurrentAttempt(event.output.callback.state, context.attemptState),
             target: "validatingCallback",
             actions: assign({ callback: ({ event }) => event.output.callback }),
           },
@@ -156,7 +162,8 @@ export const cardLoginMachine = setup({
         // redirect from an attempt already abandoned answers `state` for a different attempt, so it
         // fails the guard and is dropped: this invoke keeps waiting on its own attempt undisturbed.
         CALLBACK_RECEIVED: {
-          guard: ({ context, event }) => event.state === context.attemptState,
+          guard: ({ context, event }) =>
+            isRedirectForCurrentAttempt(event.state, context.attemptState),
           target: "validatingCallback",
           actions: assign({
             callback: ({ event }) => ({ code: event.code }),
@@ -170,7 +177,8 @@ export const cardLoginMachine = setup({
         // Same guard, same reason: the redirect this state is waiting on is the one whose `state`
         // matches the attempt that is still current, not one left over from an attempt retried away.
         CALLBACK_RECEIVED: {
-          guard: ({ context, event }) => event.state === context.attemptState,
+          guard: ({ context, event }) =>
+            isRedirectForCurrentAttempt(event.state, context.attemptState),
           target: "validatingCallback",
           actions: assign({
             callback: ({ event }) => ({ code: event.code }),
