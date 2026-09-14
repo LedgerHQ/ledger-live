@@ -19,22 +19,24 @@ describe("createDeeplinkOpenHandler", () => {
     warnSpy.mockRestore();
   });
 
-  it("should forward dangerous URLs when hardening is disabled", () => {
+  it("should block dangerous URLs even when hardening flag is disabled", () => {
     const openURL = jest.fn();
     const handler = createDeeplinkOpenHandler({
       isDeeplinkOpenHardeningEnabled: false,
-      isLocked: true,
+      isLocked: false,
       openURL,
     });
 
     handler({ url: "file:///etc/passwd" });
 
-    expect(openURL).toHaveBeenCalledWith("file:///etc/passwd");
-    expect(mockTrack).not.toHaveBeenCalled();
+    expect(openURL).not.toHaveBeenCalled();
+    expect(mockTrack).toHaveBeenCalledWith("custom.deeplink.open blocked", {
+      reason: "scheme",
+    });
   });
 
   it.each(["file:///etc/passwd", "javascript:alert(1)", "smb://attacker/share", "itms-apps://app"])(
-    "should block %s when hardening is enabled",
+    "should block %s (scheme allowlist always on)",
     url => {
       const openURL = jest.fn();
       const handler = createDeeplinkOpenHandler({
