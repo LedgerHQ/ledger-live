@@ -131,7 +131,7 @@ export function useBrazeContentCardsProviderViewModel() {
     const cards = lastFetchedCardsRef.current;
     if (!cards) return;
     publishEligibleCards(cards);
-  }, [eligibilityContext]);
+  }, [eligibilityContext, publishEligibleCards]);
 
   return {
     prepareForIdentityTransition,

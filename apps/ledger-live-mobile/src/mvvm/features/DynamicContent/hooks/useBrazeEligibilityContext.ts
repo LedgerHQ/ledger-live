@@ -1,22 +1,22 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useMemo } from "react";
+import { defaultIsAccountEmpty } from "@ledgerhq/live-common/bridge/defaultBridgeExtensions";
 import type { EligibilityContext } from "@ledgerhq/live-common/braze/localEligibility";
-import { accountsCountSelector, useAreAccountsEmpty } from "~/reducers/accounts";
+import { accountsSelector } from "~/reducers/accounts";
 import { hasCompletedOnboardingSelector, knownDeviceModelIdsSelector } from "~/reducers/settings";
 import { useSelector } from "~/context/hooks";
 
 export function useBrazeEligibilityContext(): EligibilityContext {
-  const hasAnyAccounts = useSelector(accountsCountSelector) > 0;
-  const areAccountsEmpty = useAreAccountsEmpty();
+  const accounts = useSelector(accountsSelector);
   const isOnboarded = useSelector(hasCompletedOnboardingSelector);
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
 
   return useMemo(
     () => ({
-      hasFunds: hasAnyAccounts && !areAccountsEmpty,
+      hasFunds: accounts.some(account => !defaultIsAccountEmpty(account)),
       isOnboarded,
       hasStax: Boolean(knownDeviceModelIds[DeviceModelId.stax]),
     }),
-    [areAccountsEmpty, hasAnyAccounts, isOnboarded, knownDeviceModelIds],
+    [accounts, isOnboarded, knownDeviceModelIds],
   );
 }

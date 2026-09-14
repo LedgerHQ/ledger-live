@@ -1,12 +1,20 @@
 import Braze, { type ContentCard } from "@braze/react-native-sdk";
 import { BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS } from "@ledgerhq/live-common/braze/identityLifecycle";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { act, render } from "@tests/test-renderer";
 import React, { useEffect } from "react";
+import { addOneAccount } from "~/actions/accounts";
 import { completeOnboarding, unsafe_setKnownDeviceModelIds } from "~/actions/settings";
 import {
   BrazeContentCardsProvider,
   useBrazeContentCards,
 } from "../components/BrazeContentCardsProvider";
+
+const FUNDED_ACCOUNT = genAccount("braze-eligibility-btc", {
+  currency: getCryptoCurrencyById("bitcoin"),
+  operationsSize: 3,
+});
 
 const mockedAddListener = jest.mocked(Braze.addListener);
 const mockedRequestContentCardsRefresh = jest.mocked(Braze.requestContentCardsRefresh);
@@ -258,11 +266,61 @@ describe("BrazeContentCardsProvider", () => {
     });
 
     expect(store.getState().dynamicContent.mobileCards).toEqual([onboardedCard]);
+  });
+
+  it("should publish a hasStax card after Stax becomes known without another Braze event", async () => {
+    const { store } = render(
+      <BrazeContentCardsProvider>
+        <RefreshConsumer onReady={jest.fn()} />
+      </BrazeContentCardsProvider>,
+    );
+
+    const onContentCardsUpdated = mockedAddListener.mock.calls[0][1] as unknown as (
+      event: Braze.ContentCardsUpdatedEvent,
+    ) => void;
+    const staxCard: ContentCard = {
+      ...contentCard,
+      extras: { ...contentCard.extras, requiredStates: "hasStax" },
+    };
+
+    await act(async () => {
+      onContentCardsUpdated({ cards: [staxCard] });
+    });
+
+    expect(store.getState().dynamicContent.mobileCards).toEqual([]);
 
     await act(async () => {
       store.dispatch(unsafe_setKnownDeviceModelIds({ stax: true }));
     });
 
-    expect(store.getState().dynamicContent.mobileCards).toEqual([onboardedCard]);
+    expect(store.getState().dynamicContent.mobileCards).toEqual([staxCard]);
+  });
+
+  it("should publish a hasFunds card after a funded account is added without another Braze event", async () => {
+    const { store } = render(
+      <BrazeContentCardsProvider>
+        <RefreshConsumer onReady={jest.fn()} />
+      </BrazeContentCardsProvider>,
+    );
+
+    const onContentCardsUpdated = mockedAddListener.mock.calls[0][1] as unknown as (
+      event: Braze.ContentCardsUpdatedEvent,
+    ) => void;
+    const fundsCard: ContentCard = {
+      ...contentCard,
+      extras: { ...contentCard.extras, requiredStates: "hasFunds" },
+    };
+
+    await act(async () => {
+      onContentCardsUpdated({ cards: [fundsCard] });
+    });
+
+    expect(store.getState().dynamicContent.mobileCards).toEqual([]);
+
+    await act(async () => {
+      store.dispatch(addOneAccount(FUNDED_ACCOUNT));
+    });
+
+    expect(store.getState().dynamicContent.mobileCards).toEqual([fundsCard]);
   });
 });
