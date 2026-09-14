@@ -36,7 +36,7 @@ export function CardLoginIntroView({
     <QueuedBottomSheet
       isForcingToBeOpened={isOpen}
       onClose={onClose}
-      snapPoints="fullWithOffset"
+      snapPoints="full"
       testID="pay-card-login-intro-sheet"
     >
       {isOpen ? (

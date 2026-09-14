@@ -79,7 +79,7 @@ describe("CardLoginIntroView (Native)", () => {
     renderIntro();
 
     expect(screen.getByTestId("pay-card-login-intro-sheet").props.accessibilityValue.text).toBe(
-      "fullWithOffset",
+      "full",
     );
   });
 
