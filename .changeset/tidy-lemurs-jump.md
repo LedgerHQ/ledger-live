@@ -1,5 +1,5 @@
 ---
-"@features/flow-pay-card-auth": patch
+"@features/flow-pay-card-auth": minor
 ---
 
 fix(pay-card): ignore a stray login redirect from an abandoned attempt

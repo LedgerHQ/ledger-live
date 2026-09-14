@@ -15,8 +15,8 @@ const SCOPE = "openid profile email offline_access";
  * it needs travels in the query, and the browser goes straight there. `prompt=consent` makes the
  * provider ask every time, which is what a login has to do.
  *
- * Only the challenge leaves the device. The verifier stays in the attempt store until the token
- * exchange, which is what binds that exchange to this attempt.
+ * The verifier stays on the device. The challenge and the correlation `state` both go on the
+ * authorize URL.
  *
  * `state` is not a CSRF check — PKCE already covers that. It travels here only so the redirect
  * echoes back an id this session can compare against the attempt it is currently waiting on.
