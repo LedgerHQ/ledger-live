@@ -4,18 +4,21 @@ import * as compose from "docker-compose";
 
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
 
-// Single-validator Cosmos Hub devnet. Its own compose file so it stays
-// independent of the (two-validator) babylond devnet; the two scenarios run
-// sequentially, each spinning its chain up and tearing it down.
+// Single-validator Gonka devnet. Its own compose file so it stays independent
+// of the gaiad/babylond devnets; the three scenarios run sequentially, each
+// spinning its chain up and tearing it down.
 const composeOptions = {
   cwd: PACKAGE_ROOT,
-  config: "docker-compose.gaia.yml",
+  config: "docker-compose.gonka.yml",
   log: Boolean(process.env.DEBUG),
   env: process.env,
 };
 
-export async function spawnGaiad(): Promise<void> {
-  console.log("Starting gaiad...");
+export async function spawnInferenced(): Promise<void> {
+  console.log("Starting inferenced...");
+  // `--build` keeps the image in sync with inferenced.Dockerfile +
+  // entrypoint.sh edits (see gaiad.ts for why this matters: a stale image
+  // silently runs the previous entrypoint).
   await compose.upAll({
     ...composeOptions,
     // `--remove-orphans` sweeps a sibling devnet container left behind by an
@@ -25,11 +28,11 @@ export async function spawnGaiad(): Promise<void> {
     // and this `up` would fail with "port is already allocated".
     commandOptions: ["--wait", "--build", "--remove-orphans"],
   });
-  console.log(chalk.bgBlueBright(" -  GAIAD READY ✅  - "));
+  console.log(chalk.bgBlueBright(" -  INFERENCED READY ✅  - "));
 }
 
-export async function killGaiad(): Promise<void> {
-  console.log("Stopping gaiad...");
+export async function killInferenced(): Promise<void> {
+  console.log("Stopping inferenced...");
   await compose.down({
     ...composeOptions,
     commandOptions: ["--remove-orphans", "--volumes"],
