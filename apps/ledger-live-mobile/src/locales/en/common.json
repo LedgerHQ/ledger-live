@@ -10494,6 +10494,7 @@
         "action": "Get card"
       },
       "afterIntro": {
+        "title": "Log in to access your Card",
         "description": "Log in to access your card",
         "action": "Login"
       },

@@ -10,8 +10,9 @@ export const CARD_LOGIN_INTRO_RESOURCES = {
             alreadyHaveCard: "I already have a card",
           },
           afterIntro: {
-            description: "Log in to access your card",
-            action: "Login",
+            title: "Log in to access your Card",
+            description: "You’ve been logged out for security",
+            action: "Log in",
           },
           errors: {
             pkce_failed: "Login could not start. Please try again.",

@@ -92,7 +92,9 @@ export function useCardLoginViewModel({
   const isSignedIn = useSelector(selectIsSignedIn);
   const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
   const [isIntroRequested, setIsIntroRequested] = useState(false);
-  const [hasStartedLogin, setHasStartedLogin] = useState(false);
+  // A mount that already holds a redirect is finishing a login started before it: on desktop the
+  // redirect returns through a route change, so the press that started it belongs to an earlier mount.
+  const [isLoginUnderway, setIsLoginUnderway] = useState(() => Boolean(callback?.code));
   const [hasSignupFailed, setHasSignupFailed] = useState(false);
 
   const ports = useMemo(
@@ -104,13 +106,16 @@ export function useCardLoginViewModel({
     input: { ports, oauthConfig, callback },
   });
 
+  const callbackCode = callback?.code;
+  const callbackState = callback?.state;
+
   useEffect(() => {
     // A redirect that arrives while the screen is already open. The machine ignores it unless it is
     // waiting for one, so a repeat is harmless: the first callback wins.
-    if (callback) {
-      send({ type: "CALLBACK_RECEIVED", code: callback.code, state: callback.state });
+    if (callbackCode) {
+      send({ type: "CALLBACK_RECEIVED", code: callbackCode, state: callbackState });
     }
-  }, [callback, send]);
+  }, [callbackCode, callbackState, send]);
 
   useEffect(() => {
     // `More` ended the session. `ready` raises the flag on entry, so a lowered flag while the
@@ -121,16 +126,16 @@ export function useCardLoginViewModel({
   }, [isSignedIn, snapshot.value, send]);
 
   useEffect(() => {
-    if (snapshot.value === "ready" && hasStartedLogin) {
+    if (snapshot.value === "ready" && isLoginUnderway) {
       dispatch(markPayCardLoginIntroSeen());
     }
-  }, [snapshot.value, hasStartedLogin, dispatch]);
+  }, [snapshot.value, isLoginUnderway, dispatch]);
 
   const isIntroOpen = isIntroRequested && (snapshot.value === "idle" || snapshot.value === "error");
 
   const startLogin = useCallback(() => {
     setHasSignupFailed(false);
-    setHasStartedLogin(true);
+    setIsLoginUnderway(true);
     send({ type: "LOGIN" });
   }, [send]);
 
@@ -228,6 +233,7 @@ export function useCardLoginViewModel({
 
     return {
       title: t(`${LOGIN_KEY_PREFIX}.title`),
+      headline: hasSeenLoginIntro ? t(`${LOGIN_KEY_PREFIX}.afterIntro.title`) : null,
       description: t(`${LOGIN_KEY_PREFIX}.${stage}.description`),
       loginLabel: t(`${LOGIN_KEY_PREFIX}.${stage}.action`),
       alreadyHaveCardLabel: hasSeenLoginIntro

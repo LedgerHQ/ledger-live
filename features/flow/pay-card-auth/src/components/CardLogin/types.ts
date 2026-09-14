@@ -54,6 +54,8 @@ export type CardLoginIntroViewProps = Readonly<{
 
 export type CardLoginCopy = Readonly<{
   title: string;
+  /** `null` until the intro has been seen, because the host heading is the only one until then. */
+  headline: string | null;
   description: string;
   loginLabel: string;
   /** `null` once the intro has been seen, because the login action is the login by then. */

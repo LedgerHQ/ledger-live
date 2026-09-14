@@ -24,6 +24,7 @@ const onLoginPress = jest.fn();
 const onAlreadyHaveCardPress = jest.fn();
 
 const copy: CardLoginCopy = {
+  headline: null,
   title: "Crypto Card",
   description: "Log in to access your card",
   loginLabel: "Login",
@@ -278,8 +279,9 @@ describe("useCardLoginViewModel intro", () => {
     const { result } = await renderIdleLogin(store);
 
     expect(result.current?.title).toBe("Crypto Card");
-    expect(result.current?.description).toBe("Log in to access your card");
-    expect(result.current?.loginLabel).toBe("Login");
+    expect(result.current?.headline).toBe("Log in to access your Card");
+    expect(result.current?.description).toBe("You’ve been logged out for security");
+    expect(result.current?.loginLabel).toBe("Log in");
   });
 
   it.each([
@@ -446,6 +448,24 @@ describe("useCardLoginViewModel intro", () => {
     });
     expect(mockPorts.persistSession).toHaveBeenCalledWith(session);
     expect(mockPorts.getUser).toHaveBeenCalledTimes(1);
+    expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(true);
+  });
+
+  it("marks the intro seen when the redirect lands on a fresh mount", async () => {
+    mockPorts.loadAttempt.mockResolvedValue({ codeVerifier: "verifier-value" });
+
+    renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+          callback: { code: "authorization-code" },
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() => expect(store.getState().payCardAuth.status).toBe("signedIn"));
     expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(true);
   });
 

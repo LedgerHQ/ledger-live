@@ -16,6 +16,7 @@ const intro: CardLoginIntroViewProps = {
 
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   title: "Crypto Card",
+  headline: null,
   description: "Log in to access your card",
   loginLabel: "Login",
   alreadyHaveCardLabel: null,
@@ -51,6 +52,12 @@ describe("CardLoginView (Web)", () => {
     renderCardLoginView();
 
     expect(screen.queryByRole("heading", { name: "Crypto Card" })).toBeNull();
+  });
+
+  it("should render the headline when the copy carries one", () => {
+    renderCardLoginView({ headline: "Log in to access your Card" });
+
+    expect(screen.getByRole("heading", { name: "Log in to access your Card" })).toBeVisible();
   });
 
   it("should render the login link when the copy carries one", () => {
