@@ -168,6 +168,17 @@ describe("DebugContentCards", () => {
     expect(screen.queryByText("Local cards")).not.toBeOnTheScreen();
   });
 
+  it("should show required vs actual eligibility states on Inspect", async () => {
+    const { user } = render(<DebugContentCardsTestScreen />);
+
+    await user.press(screen.getByText("Inspect"));
+
+    expect(screen.getByText("Local eligibility")).toBeOnTheScreen();
+    expect(screen.getByText("hasFunds")).toBeOnTheScreen();
+    expect(screen.getByText("isOnboarded")).toBeOnTheScreen();
+    expect(screen.getByText("hasStax")).toBeOnTheScreen();
+  });
+
   it("should create fixed-placement cards from Overview and keep them scoped to their placement", async () => {
     const { store, user } = render(<DebugContentCardsTestScreen />);
 
