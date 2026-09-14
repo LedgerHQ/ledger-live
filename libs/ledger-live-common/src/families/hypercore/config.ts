@@ -11,6 +11,6 @@ export const hypercoreConfig: CurrencyLiveConfigDefinition = {
       },
       node: "https://perps.live.ledger.com/proxy/perps",
       checkRegionRestriction: true,
-    } as HypercoreCoinConfig,
+    } satisfies HypercoreCoinConfig,
   },
 };
