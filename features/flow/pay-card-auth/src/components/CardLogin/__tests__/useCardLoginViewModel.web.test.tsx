@@ -21,11 +21,13 @@ import type { CardLoginOauthConfig, CardLoginPorts, HostedLoginResult } from "..
 import { CARD_LOGIN_INTRO_RESOURCES } from "./fixtures";
 
 const onLoginPress = jest.fn();
+const onAlreadyHaveCardPress = jest.fn();
 
 const copy: CardLoginCopy = {
   title: "Crypto Card",
   description: "Log in to access your card",
   loginLabel: "Login",
+  alreadyHaveCardLabel: null,
 };
 
 const intro: CardLoginIntroViewProps = {
@@ -42,7 +44,14 @@ describe("mapSnapshotToViewModel", () => {
   it.each(["idle", "error", "awaitingCallback"] as const)(
     "offers the login action in %s",
     value => {
-      const login = mapSnapshotToViewModel(value, null, copy, onLoginPress, intro);
+      const login = mapSnapshotToViewModel(
+        value,
+        null,
+        copy,
+        onLoginPress,
+        onAlreadyHaveCardPress,
+        intro,
+      );
 
       expect(login?.isLoading).toBe(false);
       expect(login?.loginLabel).toBe("Login");
@@ -50,7 +59,14 @@ describe("mapSnapshotToViewModel", () => {
   );
 
   it("shows the copy it was handed", () => {
-    const login = mapSnapshotToViewModel("idle", null, copy, onLoginPress, intro);
+    const login = mapSnapshotToViewModel(
+      "idle",
+      null,
+      copy,
+      onLoginPress,
+      onAlreadyHaveCardPress,
+      intro,
+    );
 
     expect(login).toMatchObject(copy);
   });
@@ -65,38 +81,45 @@ describe("mapSnapshotToViewModel", () => {
     "fetchingUser",
     "clearingAttempt",
   ] as const)("shows work in progress in %s", value => {
-    expect(mapSnapshotToViewModel(value, null, copy, onLoginPress, intro)?.isLoading).toBe(true);
+    expect(
+      mapSnapshotToViewModel(value, null, copy, onLoginPress, onAlreadyHaveCardPress, intro)
+        ?.isLoading,
+    ).toBe(true);
   });
 
   it.each(["hydrating", "ready"] as const)("offers nothing in %s", value => {
     // `hydrating` is still reading the stored session, so a CTA here would flash for a holder who
     // turns out to be signed in; `ready` means they already are, and `More` holds the screen.
-    expect(mapSnapshotToViewModel(value, null, copy, onLoginPress, intro)).toBeNull();
+    expect(
+      mapSnapshotToViewModel(value, null, copy, onLoginPress, onAlreadyHaveCardPress, intro),
+    ).toBeNull();
   });
 
   it("shows no message while there is no error", () => {
     expect(
-      mapSnapshotToViewModel("idle", null, copy, onLoginPress, intro)?.errorMessage,
+      mapSnapshotToViewModel("idle", null, copy, onLoginPress, onAlreadyHaveCardPress, intro)
+        ?.errorMessage,
     ).toBeNull();
   });
 
   it("hands the intro props straight through", () => {
-    expect(mapSnapshotToViewModel("idle", null, copy, onLoginPress, intro)?.intro).toBe(intro);
+    expect(
+      mapSnapshotToViewModel("idle", null, copy, onLoginPress, onAlreadyHaveCardPress, intro)
+        ?.intro,
+    ).toBe(intro);
   });
 
-  it.each([
-    "pkce_failed",
-    "browser_open_failed",
-    "missing_attempt",
-    "exchange_failed",
-    "persist_failed",
-    "fetch_user_failed",
-  ] as const)("shows a message for %s", errorKind => {
-    const login = mapSnapshotToViewModel("error", errorKind, copy, onLoginPress, intro);
+  it("shows the message it was handed", () => {
+    const login = mapSnapshotToViewModel(
+      "error",
+      "The login page could not open. Please try again.",
+      copy,
+      onLoginPress,
+      onAlreadyHaveCardPress,
+      intro,
+    );
 
-    expect(login?.errorMessage).toMatch(/\.$/);
-    // The copy is ours, never the backend's or RTK's.
-    expect(login?.errorMessage).not.toContain(errorKind);
+    expect(login?.errorMessage).toBe("The login page could not open. Please try again.");
   });
 });
 
@@ -222,6 +245,34 @@ describe("useCardLoginViewModel intro", () => {
     expect(result.current?.loginLabel).toBe("Get card");
   });
 
+  it("offers the login link to a card holder who has one already", async () => {
+    const { result } = await renderIdleLogin(store);
+
+    expect(result.current?.alreadyHaveCardLabel).toBe("I already have a card");
+  });
+
+  it("starts the login from that link, and skips the intro", async () => {
+    const onTrackEvent = jest.fn();
+    const { result } = await renderIdleLogin(store, "both", onTrackEvent);
+
+    act(() => result.current?.onAlreadyHaveCardPress());
+
+    await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
+    expect(result.current?.intro.isOpen).toBe(false);
+    expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+      button: "i already have a card",
+      flow: CARD_LOGIN_INTRO_FLOW,
+      page: CARD_LOGIN_INTRO_PAGE,
+    });
+  });
+
+  it("drops the login link once the intro has been seen", async () => {
+    store.dispatch(markPayCardLoginIntroSeen());
+    const { result } = await renderIdleLogin(store);
+
+    expect(result.current?.alreadyHaveCardLabel).toBeNull();
+  });
+
   it("offers a login once the intro has been seen", async () => {
     store.dispatch(markPayCardLoginIntroSeen());
     const { result } = await renderIdleLogin(store);
@@ -259,6 +310,21 @@ describe("useCardLoginViewModel intro", () => {
 
     expect(result.current?.intro.isOpen).toBe(true);
     expect(mockPorts.openHostedLogin).not.toHaveBeenCalled();
+  });
+
+  it("retries straight away on a second press while a login is still pending", async () => {
+    // First-time user: the intro has not been seen, so a normal press would open it. While a login
+    // is already waiting on its own redirect, though, a press can only mean "retry."
+    mockPorts.openHostedLogin.mockResolvedValue({ type: "pending" });
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onAlreadyHaveCardPress());
+    await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
+
+    act(() => result.current?.onLoginPress());
+
+    await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(2));
+    expect(result.current?.intro.isOpen).toBe(false);
   });
 
   it("starts the login straight away once the intro has been seen", async () => {
@@ -501,5 +567,111 @@ describe("useCardLoginViewModel intro", () => {
       flow: CARD_LOGIN_INTRO_FLOW,
       page: CARD_LOGIN_INTRO_PAGE,
     });
+  });
+});
+
+// The hook resolves each machine error kind through `t(...)`, not a hardcoded map, so a renamed or
+// missing translation key would only show up by actually reading it back through i18n.
+const ERROR_MESSAGES = CARD_LOGIN_INTRO_RESOURCES.en.translation.payTab.cardLogin.errors;
+
+describe("useCardLoginViewModel errors", () => {
+  let store: ReturnType<typeof buildStore>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockPorts.hasSession.mockResolvedValue(false);
+    mockPorts.loadAttempt.mockResolvedValue(null);
+    mockPorts.openHostedLogin.mockResolvedValue({ type: "dismissed" });
+    store = buildStore();
+    mockPorts.setSignedIn.mockImplementation((value: boolean) =>
+      store.dispatch(setSignedIn(value)),
+    );
+  });
+
+  it("shows the translated message for pkce_failed", async () => {
+    mockPorts.saveAttempt.mockRejectedValueOnce(new Error("no store"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.pkce_failed));
+  });
+
+  it("shows the translated message for browser_open_failed", async () => {
+    mockPorts.openHostedLogin.mockRejectedValueOnce(new Error("no browser"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() =>
+      expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.browser_open_failed),
+    );
+  });
+
+  it("shows the translated message for exchange_failed", async () => {
+    mockPorts.loadAttempt.mockResolvedValue({ codeVerifier: "verifier-value" });
+    mockPorts.openHostedLogin.mockResolvedValue({
+      type: "success",
+      url: SUCCESS_REDIRECT,
+    });
+    mockPorts.exchangeAuthorizationCode.mockRejectedValueOnce(new Error("400"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.exchange_failed));
+  });
+
+  it("shows the translated message for persist_failed", async () => {
+    mockPorts.loadAttempt.mockResolvedValue({ codeVerifier: "verifier-value" });
+    mockPorts.openHostedLogin.mockResolvedValue({
+      type: "success",
+      url: SUCCESS_REDIRECT,
+    });
+    mockPorts.persistSession.mockRejectedValueOnce(new Error("no disk"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.persist_failed));
+  });
+
+  it("shows the translated message for missing_attempt", async () => {
+    mockPorts.loadAttempt.mockResolvedValue(null);
+    const staleCallback = { code: "stale-code" };
+    const { result } = renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+          callback: staleCallback,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.missing_attempt));
+  });
+
+  it("shows the translated message for fetch_user_failed", async () => {
+    mockPorts.hasSession.mockResolvedValue(true);
+    mockPorts.getUser.mockRejectedValueOnce({ status: "FETCH_ERROR" });
+    const { result } = renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() =>
+      expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.fetch_user_failed),
+    );
   });
 });
