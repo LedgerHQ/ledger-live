@@ -39,43 +39,14 @@ function readPackage(pkg, context) {
         So we are going to patch these until the maintainers fix their own stuff…
         Feel free to make PRs if you feel like it :).
       */
-      /*
-        Remove react-native/react-dom from react-redux optional peer dependencies.
-        Without this, using react-redux code in LLM from LLC will fail because the package will get duplicated.
-      */
-      removeDependencies("react-redux", ["react-native"], {
-        kind: "peerDependencies",
-      }),
-
       addDependencies("jest-allure2-reporter", { tslib: "*" }),
-      /* @celo/* packages */
-      addDependencies("@celo/connect", {
-        web3: pkg.peerDependencies?.web3 ?? "1.10",
-      }),
-      /*  @cosmjs/* packages */
-      addDependencies("@cosmjs/proto-signing", {
-        "@cosmjs/crypto": pkg.version,
-        "@cosmjs/encoding": pkg.version,
-        "@cosmjs/utils": pkg.version,
-        "@cosmjs/math": pkg.version,
-      }),
-      addDependencies("@cosmjs/tendermint-rpc", {
-        "@cosmjs/utils": pkg.version,
-      }),
-
       removeDependencies("@zondax/ledger-cosmos-js", ["crypto"], {
         kind: "dependencies",
       }),
       /* React Native and Metro bundler packages */
-      // Crashes ios build if removed /!\
-      addDependencies("@react-native/codegen", {
-        glob: "*",
-        invariant: "*",
-      }),
-      // Crashes ios build if removed /!\
+      // react-native does not declare mkdirp; removing it has broken the iOS build before /!\
       addDependencies("react-native", {
         mkdirp: "*",
-        yargs: "*",
       }),
 
       addPeerDependencies("@react-native-community/cli", {
@@ -97,24 +68,11 @@ function readPackage(pkg, context) {
         "jest-environment-node": "*",
         "jest-circus": "*",
       }),
-      addDependencies("allure-playwright", { "@playwright/test": "*" }),
       addPeerDependencies("@svgr/core", { "@svgr/plugin-svgo": "*" }),
-      addDependencies("react-native-text-input-mask", {
-        tslib: "*",
-      }),
-      addDependencies("react-native-locale", {
-        fbjs: "*",
-      }),
-      addDependencies("react-native-tcp", {
-        "stream-browserify": "*",
-      }),
       addDependencies("postcss-loader", {
         "postcss-flexbugs-fixes": "*",
         "postcss-preset-env": "*",
         "postcss-normalize": "*",
-      }),
-      addPeerDependencies("any-observable", {
-        rxjs: "*",
       }),
       addPeerDependencies("@cspotcode/source-map-support", {
         "source-map-support": "*",
@@ -122,21 +80,9 @@ function readPackage(pkg, context) {
       addPeerDependencies("react-lottie", {
         "prop-types": "*",
       }),
-      addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
 
-      // addPeerDependencies("styled-components", { "react-native": "*" }),
-      addPeerDependencies("use-latest-callback", { react: "*" }),
-
-      addDependencies("expo-pwa", {
-        "@expo/config": "*",
-      }),
-      addPeerDependencies("expo-modules-core", {
-        "react-native": "*",
-      }),
       addPeerDependencies("expo", {
-        "react-native": "*",
-        react: "*",
         "expo-modules-autolinking": "*",
         "expo-modules-core": "*",
       }),
@@ -147,14 +93,8 @@ function readPackage(pkg, context) {
         react: "*",
       }),
 
-      addDependencies("@react-native/dev-middleware", { ws: "*" }),
-      // "dmg-builder" is required to build .dmg electron apps on macs,
-      // but is not declared as such by app-builder-lib.
-      // I'm not adding it as a dependency because if I did,
-      // then pnpm would fail on win / linux during install.
-      // Mildly related (error is not the same): https://github.com/pnpm/pnpm/issues/3640
+      // node-abi is pinned to match the root "resolutions" entry
       addPeerDependencies("app-builder-lib", {
-        "dmg-builder": "*",
         "node-abi": "4.9.0",
         lodash: "*",
       }),
@@ -195,9 +135,6 @@ function readPackage(pkg, context) {
         "@ethersproject/properties": "*",
         "@ethersproject/strings": "*",
         "@ethersproject/logger": "*",
-      }),
-      addDependencies("casper-js-sdk", {
-        "@noble/curves": "*",
       }),
       addDependencies("@actions/github", {
         undici: "*",
