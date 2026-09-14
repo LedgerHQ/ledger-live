@@ -89,6 +89,7 @@ libs/live-countervalues-react/                           @ledgerhq/wallet-xp
 libs/live-countervalues/                                 @ledgerhq/wallet-xp
 libs/live-currency-format/                               @ledgerhq/wallet-xp
 libs/live-hooks/                                         @ledgerhq/wallet-xp
+libs/live-send/                                          @ledgerhq/wallet-xp
 libs/ui/                                                 @ledgerhq/wallet-xp
 libs/asset-aggregation/                                  @ledgerhq/wallet-xp
 libs/asset-detail/                                       @ledgerhq/wallet-xp

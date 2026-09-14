@@ -9,6 +9,7 @@ import type {
 } from "@ledgerhq/live-common/flows/send/types";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowAmountReviewCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore";
+import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import type { AmountScreenViewModel } from "../types";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useAmountInput } from "./useAmountInput";
@@ -91,10 +92,15 @@ export function useAmountScreenViewModel({
   });
 
   const quickActionsAvailableBalance = useMemo(() => {
+    // Coins drawing from several pools (ex: Zcash transparent vs shielded) spend only the
+    // pool picked on the balance-type step, so the ratios apply to it and not to the
+    // account total, which sums pools the transaction cannot touch.
+    const selectedPoolBalance = getSelectedBalanceTypeBalance(account, transaction);
+    if (selectedPoolBalance) return selectedPoolBalance;
     const spendable = "spendableBalance" in account ? account.spendableBalance : undefined;
     const balance = "balance" in account ? account.balance : new BigNumber(0);
     return spendable ?? balance ?? new BigNumber(0);
-  }, [account]);
+  }, [account, transaction]);
 
   const setAmountFromRatio = useCallback(
     (nextAmount: BigNumber) => {

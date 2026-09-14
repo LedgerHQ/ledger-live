@@ -347,6 +347,74 @@ export type SendAmountDescriptor = Readonly<{
 export type SelfTransferPolicy = "free" | "warning" | "impossible";
 
 /**
+ * One balance pool a transaction can draw from, described without coin vocabulary:
+ * the UI formats `balance` with its own unit and privacy settings, reads its copy from
+ * `translationKey`, and hands `id` back to `buildSelectionPatch` when the user picks it.
+ */
+export type BalanceTypeOption = Readonly<{
+  /** Stable id owned by the coin-module; only ever forwarded back to the descriptor. */
+  id: string;
+  /** i18n key suffix; the UI prepends its namespace and appends `.title`, `.subtitle`, ... */
+  translationKey: string;
+  balance: BigNumber;
+  /**
+   * Whether the pool holds funds that are not spendable yet, so `balance` may still grow
+   * (ex: a Zcash note too young to spend). The UI warns instead of hiding the shortfall.
+   */
+  hasPendingBalance: boolean;
+  /** Icon variant for the pool — declared by the descriptor so generic UI stays coin-agnostic. */
+  icon: "lock" | "check";
+}>;
+
+/**
+ * Where a transfer between the account's own pools should go, once a source pool is picked.
+ */
+export type BalanceTypeSelfTransferTarget = Readonly<{
+  /** Address of the destination pool, prefilled as the recipient. */
+  address: string;
+  /** i18n key suffix; the UI prepends its namespace and appends `.action`, `.label`, ... */
+  translationKey: string;
+  /** Whether funds landing in the destination pool are publicly visible on-chain. */
+  isDestinationPublic: boolean;
+}>;
+
+/**
+ * Coin-specific balance pools: which ones the account holds, which one the transaction
+ * draws from, and the patches that move it between them. Implemented per family (e.g.
+ * Zcash's transparent and shielded pools) and attached to `SendDescriptor.balanceType`.
+ * Declaring it is what adds the balance-type step to the send flow.
+ */
+export type BalanceTypeConfig = Readonly<{
+  /** Selectable pools in display order; empty when the account holds none. */
+  getOptions: (params: { account: AccountLike }) => readonly BalanceTypeOption[];
+  /** Id of the pool the transaction draws from, or `null` until the user picks one. */
+  getSelectedOptionId: (transaction: unknown) => string | null;
+  /** Patch making the transaction draw from `optionId`. */
+  buildSelectionPatch: (optionId: string) => TransactionPatch;
+  /** Destination for a transfer to the account's other pool; `null` when it has none. */
+  getSelfTransferTarget: (params: {
+    account: AccountLike;
+    transaction: unknown;
+  }) => BalanceTypeSelfTransferTarget | null;
+  /**
+   * Patch recording whether the spend targets the account's own other pool, applied on
+   * every recipient write. Coins that hold self-transfer state (e.g. Zcash's
+   * `selfTransfer`, which locks the recipient) never infer it from the recipient value,
+   * so the flow has to declare it both ways; return `{}` when the recipient says it all.
+   */
+  buildSelfTransferPatch: (params: { isSelfTransfer: boolean }) => TransactionPatch;
+  /**
+   * Balance the amount step may spend from this pool, bounded by the pool's transaction
+   * input ceiling (e.g. Zcash's 32-action / 32-UTXO limit). Distinct from
+   * `BalanceTypeOption.balance`, which is the display figure and is deliberately unbounded
+   * so the UI shows the full pool size even when a single transaction cannot spend it all.
+   * Percentage-of-balance buttons must use this figure, not `balance`, to stay within the
+   * ceiling the bridge enforces.
+   */
+  getSelectableBalance: (params: { account: AccountLike; optionId: string }) => BigNumber;
+}>;
+
+/**
  * Error registry for coin-specific error classes
  */
 export type ErrorRegistry = {
@@ -365,6 +433,12 @@ export type SendDescriptor = {
   amount?: SendAmountDescriptor;
   selfTransfer?: SelfTransferPolicy; // Policy for sending to self (same address), defaults to "impossible"
   errors?: ErrorRegistry; // Registry of error class names for this coin
+  /**
+   * Balance pools the send flow lets the user choose between before entering a
+   * recipient. Declared by coins that draw from more than one pool (e.g. Zcash
+   * transparent vs shielded); omitted by every coin with a single balance.
+   */
+  balanceType?: BalanceTypeConfig;
 };
 
 /**

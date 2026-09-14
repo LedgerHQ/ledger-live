@@ -183,6 +183,7 @@
     "@ledgerhq/live-engagement": "workspace:^",
     "@ledgerhq/live-hooks": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-send": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "catalog:",

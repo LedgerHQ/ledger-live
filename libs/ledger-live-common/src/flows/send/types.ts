@@ -5,6 +5,7 @@ import type { FlowStatus, FlowStatusActions, FlowStepConfig, FlowConfig } from "
 
 export const SEND_FLOW_STEP = {
   RECIPIENT: "RECIPIENT",
+  BALANCE_TYPE: "BALANCE_TYPE",
   SKIP_MEMO_CONFIRMATION: "SKIP_MEMO_CONFIRMATION",
   RECENT_HISTORY: "RECENT_HISTORY",
   ADD_CONTACT: "ADD_CONTACT",
@@ -52,6 +53,8 @@ export type SendFlowUiConfig = Readonly<{
   hasCustomFees: boolean;
   hasCoinControl: boolean;
   hasDefaultStrategy: boolean;
+  /** Whether the flow should start with a balance-type (pool) selection step. */
+  hasBalanceTypeStep: boolean;
 }>;
 
 export type Memo = { value: string; type?: string };
@@ -59,6 +62,14 @@ export type Memo = { value: string; type?: string };
 export type RecipientData = Readonly<{
   address?: string;
   ensName?: string;
+  /** Overrides address/ensName display. Clear when address or ensName changes unless setting a new label. */
+  displayLabel?: string;
+  /**
+   * Set by the transfer-to-my-other-pool shortcut, which prefills an address the user
+   * never typed. Coins that hold self-transfer state read it from here, so clear it
+   * whenever the address changes.
+   */
+  isSelfTransfer?: boolean;
   memo?: Memo;
   destinationTag?: string;
 }>;
@@ -146,6 +157,7 @@ export type SendFlowBusinessContext = Readonly<{
   }>;
   isRecipientAddressComplete: boolean;
   setIsRecipientAddressComplete: (value: boolean) => void;
+  resetRecipient: () => void;
   close: () => void;
   setAccountAndNavigate: (account: AccountLike, parentAccount?: Account) => void;
 }>;

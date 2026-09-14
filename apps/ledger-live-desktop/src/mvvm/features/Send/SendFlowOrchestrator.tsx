@@ -8,6 +8,7 @@ import {
   SEND_FLOW_STEP,
   type SendFlowStep,
   type SendFlowInitParams,
+  type SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig as DesktopSendStepConfig } from "./types";
 import { FlowWizardOrchestrator } from "../FlowWizard/FlowWizardOrchestrator";
@@ -21,6 +22,19 @@ type SendFlowOrchestratorProps = Readonly<{
   children?: ReactNode;
 }>;
 
+function getInitialSendFlowStep(
+  initParams: SendFlowInitParams | undefined,
+  uiConfig: SendFlowUiConfig,
+): SendFlowStep {
+  if (uiConfig.hasBalanceTypeStep) {
+    return SEND_FLOW_STEP.BALANCE_TYPE;
+  }
+  if (canSkipRecipientStep(initParams, uiConfig)) {
+    return SEND_FLOW_STEP.AMOUNT;
+  }
+  return SEND_FLOW_STEP.RECIPIENT;
+}
+
 export function SendFlowOrchestrator({
   initParams,
   onClose,
@@ -31,9 +45,7 @@ export function SendFlowOrchestrator({
   const flowConfig = useMemo(
     () => ({
       ...SEND_FLOW_CONFIG,
-      initialStep: canSkipRecipientStep(initParams, businessContext.uiConfig)
-        ? SEND_FLOW_STEP.AMOUNT
-        : SEND_FLOW_STEP.RECIPIENT,
+      initialStep: getInitialSendFlowStep(initParams, businessContext.uiConfig),
     }),
     [businessContext.uiConfig, initParams],
   );
