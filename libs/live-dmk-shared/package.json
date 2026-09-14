@@ -40,7 +40,7 @@
     "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-devices": "workspace:^",
-    "@noble/hashes": "^1.8.0",
+    "@noble/hashes": "catalog:",
     "@types/semver": "catalog:",
     "purify-ts": "^2.1.0",
     "semver": "catalog:",
