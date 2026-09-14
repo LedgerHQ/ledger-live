@@ -920,6 +920,7 @@
       }
     },
     "cardTransactions": {
+      "title": "Transactions",
       "categories": {
         "SUBSCRIPTIONS": "Subscriptions",
         "FOOD": "Food",

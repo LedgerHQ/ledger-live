@@ -4,6 +4,7 @@ import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
 import type { CardProps } from "./Card.types";
 
 let mockStatus: PayCardAuthStatus = "unknown";
+let receivedTransactionFormatter: CardProps["formatTransactionAmount"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
@@ -19,6 +20,13 @@ jest.mock("@features/flow-pay-card-details", () => ({
 
 jest.mock("@features/flow-pay-card-widget", () => ({
   CardOnboardingWidget: () => <div data-testid="card-onboarding-widget" />,
+}));
+
+jest.mock("@features/flow-pay-card-transactions", () => ({
+  CardTransactions: ({ formatAmount }: { formatAmount?: CardProps["formatTransactionAmount"] }) => {
+    receivedTransactionFormatter = formatAmount;
+    return <div data-testid="card-transactions" />;
+  },
 }));
 
 import { Card } from "./Card";
@@ -43,6 +51,7 @@ const formatCountervalue: CardProps["formatCountervalue"] = (value: number) => (
 describe("Card (web)", () => {
   beforeEach(() => {
     mockStatus = "unknown";
+    receivedTransactionFormatter = undefined;
   });
 
   it("always shows the host title", () => {
@@ -59,6 +68,7 @@ describe("Card (web)", () => {
       expect(screen.queryByTestId("card-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
     });
   });
 
@@ -74,6 +84,7 @@ describe("Card (web)", () => {
       expect(screen.getByTestId("card-login")).toBeVisible();
       expect(screen.queryByTestId("card-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
     });
 
     it("never builds the balance overlay, even when the host provides a formatter and label", () => {
@@ -101,6 +112,7 @@ describe("Card (web)", () => {
 
       expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("card-details")).toBeVisible();
+      expect(screen.getByTestId("card-transactions")).toBeVisible();
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
     });
@@ -118,6 +130,20 @@ describe("Card (web)", () => {
       expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
+    });
+
+    it("hands the transaction formatter to the transactions list", () => {
+      const formatTransactionAmount = jest.fn();
+
+      render(
+        <Card
+          title={title}
+          login={{ oauthConfig }}
+          formatTransactionAmount={formatTransactionAmount}
+        />,
+      );
+
+      expect(receivedTransactionFormatter).toBe(formatTransactionAmount);
     });
   });
 });

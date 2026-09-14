@@ -7,11 +7,6 @@ interface Wallet40LayoutProps {
   readonly rightPanel: React.ReactNode | undefined;
 }
 
-/**
- * Wallet 4.0 Layout
- * Pure Tailwind implementation with right panel support
- * Provides consistent spacing: 32px horizontal/top padding, 32px gap between sections
- */
 export const Wallet40Layout = memo(function Wallet40Layout({
   children,
   scrollerRef,
@@ -19,7 +14,7 @@ export const Wallet40Layout = memo(function Wallet40Layout({
 }: Wallet40LayoutProps) {
   return (
     <div
-      className="grid flex-1 gap-32 overflow-hidden pr-32 pl-16"
+      className="grid flex-1 grid-rows-1 gap-32 overflow-hidden pr-32 pl-16"
       style={rightPanel ? { gridTemplateColumns: `1fr ${RIGHT_PANEL_WIDTH}px` } : undefined}
     >
       <div id="scroll-area" className="relative flex min-w-0 flex-col overflow-hidden">

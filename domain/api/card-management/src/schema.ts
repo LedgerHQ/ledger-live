@@ -91,13 +91,19 @@ export const PAY_CARD_TRANSACTION_CATEGORIES = [
 
 export const PayCardTransactionCategorySchema = z.enum(PAY_CARD_TRANSACTION_CATEGORIES);
 
+export const PayCardTransactionFundingSourceSchema = z.object({
+  currency: z.string().min(1),
+  amount: z.string().min(1),
+  sign: z.enum(["DEBIT", "CREDIT"]),
+});
+
 /**
  * One card transaction, narrowed to what a transaction list shows.
  *
- * The response carries more: the card and processor ids, the MCC number, the conversion and ECB
- * rates, and the funding sources behind each charge. None of it is displayed, and one field here is
- * already sensitive — `merchantNameLocation` says where the cardholder shopped — so the rest is
- * left undeclared and Zod drops it before it reaches the cache.
+ * The response carries more: the card and processor ids, the MCC number, and conversion and ECB
+ * rates. None of those are displayed, and one field here is already sensitive —
+ * `merchantNameLocation` says where the cardholder shopped — so the rest is left undeclared and Zod
+ * drops it before it reaches the cache.
  */
 export const PayCardTransactionSchema = z.object({
   id: z.string().min(1),
@@ -115,6 +121,7 @@ export const PayCardTransactionSchema = z.object({
   /** What the merchant charged, when that differs from the card's own currency. */
   originalCurrency: z.string().min(1),
   amountInOriginalCurrency: z.string().min(1),
+  fundingSources: z.array(PayCardTransactionFundingSourceSchema).optional(),
 });
 
 export const PayCardTransactionsResponseSchema = z.array(PayCardTransactionSchema);

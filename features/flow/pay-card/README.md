@@ -26,6 +26,8 @@ import { Card } from "@features/flow-pay-card";
   side by side on native).
 - `CardLogin` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md) — it shows while
   nobody is signed in, and `useCardLogout` ends the session from the More menu.
+- `CardTransactions` from [`@features/flow-pay-card-transactions`](../pay-card-transactions/README.md)
+  on web once signed in (the first page of card transactions, or nothing when the list is empty).
 
 The flow owns the (currently mocked) card balance, so hosts no longer assemble the visual themselves.
 They pass only the two things the flow cannot know: `formatCountervalue` (needs the app's locale and

@@ -27,6 +27,8 @@ import {
   jsonResponse,
   mockCardProvider,
 } from "./cardProvider.mock";
+import { documentedPayCardTransaction } from "./cardTransactions.mock";
+import { PayCardTransactionSchema } from "./schema";
 
 const provider = mockCardProvider();
 
@@ -439,24 +441,10 @@ describe("cardManagementApi requests", () => {
 
   describe("getCardTransactions", () => {
     const TRANSACTIONS_PATH = "/v1/card/transactions";
-
-    const transaction = {
-      id: "100a99cf-f4d3-4fa1-9be9-2e9828b20ebb",
-      dateTime: "2024-10-14T10:44:36.276Z",
-      sign: "DEBIT",
-      merchantNameLocation: "WWW.ALIEXPRESS.COM, LONDON",
-      mccCategory: "MISC",
-      status: "CONFIRMED",
-      declineReason: "",
-      transactionCurrency: "EUR",
-      amountInTransactionCurrency: "0.79",
-      feesInTransactionCurrency: "0",
-      originalCurrency: "USD",
-      amountInOriginalCurrency: "0.85",
-    };
+    const transaction = PayCardTransactionSchema.parse(documentedPayCardTransaction);
 
     it("reads the transactions with the bearer token and the client key", async () => {
-      provider.get(TRANSACTIONS_PATH, () => jsonResponse([transaction]));
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([documentedPayCardTransaction]));
 
       const store = makeStore("session-token");
       const result = await store.dispatch(

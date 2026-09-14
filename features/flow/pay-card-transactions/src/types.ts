@@ -1,8 +1,15 @@
-import type { PayCardTransaction, PayCardTransactionCategory } from "@domain/api-card-management";
+import type { PayCardTransaction } from "@domain/api-card-management";
+
+export type CardTransactionAmountKind = "fiat" | "crypto";
+
+export type FormatCardTransactionAmount = (
+  value: string,
+  currency: string,
+  kind: CardTransactionAmountKind,
+) => string;
 
 export type CardTransactionItem = Readonly<{
   transaction: PayCardTransaction;
-  category: PayCardTransactionCategory;
   categoryLabel: string;
 }>;
 

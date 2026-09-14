@@ -7,6 +7,7 @@ import useEnv from "@features/platform-env";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
+import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import type { CardViewModel } from "./types";
 
 export function useCardViewModel(): CardViewModel {
@@ -19,6 +20,11 @@ export function useCardViewModel(): CardViewModel {
     (value: number): FormattedValue =>
       formatCurrencyUnitFragment(unit, new BigNumber(value), { locale, showCode: true }),
     [unit, locale],
+  );
+
+  const formatTransactionAmount = useCallback<CardViewModel["formatTransactionAmount"]>(
+    (value, currency, kind) => formatCardTransactionAmount({ value, currency, kind, locale }),
+    [locale],
   );
 
   // Read with `useEnv`, and not with `getEnv`: a tester sets these in the debug settings, and the
@@ -53,6 +59,7 @@ export function useCardViewModel(): CardViewModel {
     title: t("payTab.card.title"),
     balanceLabel: t("payTab.card.balanceLabel"),
     formatCountervalue,
+    formatTransactionAmount,
     login,
   };
 }
