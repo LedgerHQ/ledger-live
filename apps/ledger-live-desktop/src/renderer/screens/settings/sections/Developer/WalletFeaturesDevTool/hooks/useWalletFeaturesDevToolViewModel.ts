@@ -2,16 +2,8 @@ import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
 import { setOverride } from "@shared/feature-flags";
-import {
-  hasSeenWalletV4TourSelector,
-  hasSeenQ2TourSelector,
-  hasSeenQ3TourSelector,
-} from "~/renderer/reducers/settings";
-import {
-  setHasSeenWalletV4Tour,
-  setHasSeenQ2Tour,
-  setHasSeenQ3Tour,
-} from "~/renderer/actions/settings";
+import { hasSeenQ2TourSelector, hasSeenQ3TourSelector } from "~/renderer/reducers/settings";
+import { setHasSeenQ2Tour, setHasSeenQ3Tour } from "~/renderer/actions/settings";
 import {
   isQ2ReleaseTourEnabled,
   isQ3ReleaseTourEnabled,
@@ -29,7 +21,6 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
   const dispatch = useDispatch();
   const featureFlag = useFeature(WALLET_FEATURES_FLAG);
   const releaseTour = useFeature(RELEASE_TOUR_FLAG);
-  const hasSeenWalletV4Tour = useSelector(hasSeenWalletV4TourSelector);
   const hasSeenQ2Tour = useSelector(hasSeenQ2TourSelector);
   const hasSeenQ3Tour = useSelector(hasSeenQ3TourSelector);
 
@@ -96,10 +87,6 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
     [isEnabled, params],
   );
 
-  const handleToggleHasSeenTour = useCallback(() => {
-    dispatch(setHasSeenWalletV4Tour(!hasSeenWalletV4Tour));
-  }, [dispatch, hasSeenWalletV4Tour]);
-
   const handleToggleQ2TourHasSeen = useCallback(() => {
     dispatch(setHasSeenQ2Tour(!hasSeenQ2Tour));
   }, [dispatch, hasSeenQ2Tour]);
@@ -155,7 +142,6 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
     isEnabled,
     params,
     allEnabled,
-    hasSeenWalletV4Tour,
     hasSeenQ2Tour,
     isQ2TourEnabled,
     hasSeenQ3Tour,
@@ -164,7 +150,6 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
     handleToggleAll,
     handleToggleEnabled,
     handleToggleParam,
-    handleToggleHasSeenTour,
     handleToggleQ2TourHasSeen,
     handleToggleQ2TourEnabled,
     handleToggleQ3TourHasSeen,

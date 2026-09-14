@@ -10139,27 +10139,6 @@
       "iHaveACard" : "카드가 있습니다"
     }
   },
-  "walletV4Tour" : {
-    "title" : "새로워진 포트폴리오를 만나보세요",
-    "slides" : {
-      "portfolio" : {
-        "title" : "내 포트폴리오 한눈에 보기",
-        "description" : "전체 잔액을 한눈에 확인하고, \"오늘(Today)\" 탭을 늘러 상세 내역을 살펴보세요."
-      },
-      "navigation" : {
-        "title" : "핵심 기능을 더 빠르게",
-        "description" : "스왑, 이체, 매수까지, 즉각적으로. 하단 내비게이션 바에서 수익 창출과 카드 탭을 확인하세요."
-      },
-      "actions" : {
-        "title" : "즉각적인 시장 트렌드 확인",
-        "description" : "포트폴리오에서 시장 동향을 빠르게 확인하고 데이터를 바탕으로 신속하게 대응하세요."
-      }
-    },
-    "cta" : {
-      "continue" : "다음",
-      "explore" : "새로워진 포트폴리오 살펴보기"
-    }
-  },
   "mainNavigation" : {
     "home" : "홈",
     "swap" : "스왑",

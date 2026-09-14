@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   LargeScreenUpsellModal,
   mapDevicesModelListToUpsellInputs,
@@ -21,7 +21,6 @@ import { selectIsGenericAwarenessModalOpen } from "LLD/features/GenericAwareness
 import {
   devicesModelListSelector,
   hasSeenQ2TourSelector,
-  hasSeenWalletV4TourSelector,
   sharePersonalizedRecommendationsSelector,
 } from "~/renderer/reducers/settings";
 import { openURL } from "~/renderer/linking";
@@ -58,17 +57,12 @@ function buildSharedAnalyticsProps({
 }
 
 function resolveCompetingAppStartModal({
-  isWalletV4TourCompeting,
   isQ2TourCompeting,
   isGenericAwarenessModalOpen,
 }: {
-  isWalletV4TourCompeting: boolean;
   isQ2TourCompeting: boolean;
   isGenericAwarenessModalOpen: boolean;
 }): LargeScreenUpsellBlockedCompetitor | null {
-  if (isWalletV4TourCompeting) {
-    return "wallet_v4_tour";
-  }
   if (isQ2TourCompeting) {
     return "q2_tour";
   }
@@ -89,9 +83,7 @@ export function LargeScreenUpsellModalMount() {
   const session = useSelector(sessionSelector);
   const feature = useFeature("largeScreenUpsell");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
-  const hasSeenWalletV4Tour = useSelector(hasSeenWalletV4TourSelector);
   const hasSeenQ2Tour = useSelector(hasSeenQ2TourSelector);
-  const { shouldDisplayTour } = useWalletFeaturesConfig("desktop");
   const isQ2TourEnabled = isQ2ReleaseTourEnabled(useFeature("releaseTour"));
   const isGenericAwarenessModalOpen = useSelector(selectIsGenericAwarenessModalOpen);
 
@@ -112,7 +104,6 @@ export function LargeScreenUpsellModalMount() {
 
   // Competitor identity is only for analytics (`modal_blocked`).
   const competingModal = resolveCompetingAppStartModal({
-    isWalletV4TourCompeting: shouldDisplayTour && !hasSeenWalletV4Tour,
     isQ2TourCompeting: isQ2TourEnabled && !hasSeenQ2Tour,
     isGenericAwarenessModalOpen,
   });

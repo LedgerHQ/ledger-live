@@ -9333,26 +9333,6 @@
     "errorTryAgain" : "Erro durante a atualização. Tentar novamente",
     "installAndRelaunch" : "Nova atualização. Instalar e reiniciar"
   },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "Uma visão mais clara do seu portfólio",
-        "description" : "Veja seu saldo total na hora e toque em “Hoje” para explorar mais a fundo."
-      },
-      "navigation" : {
-        "title" : "Acesse as ações principais mais rapidamente",
-        "description" : "Acesse as ações de receber, comprar, vender e enviar na hora."
-      },
-      "actions" : {
-        "title" : "Veja as tendências do mercado instantaneamente",
-        "description" : "Acompanhe o que está em alta no seu portfólio e transforme insights em ação."
-      }
-    },
-    "cta" : {
-      "continue" : "Continuar",
-      "explore" : "Explorar meu novo portfólio"
-    }
-  },
   "q2Tour" : {
     "slides" : {
       "welcome" : {

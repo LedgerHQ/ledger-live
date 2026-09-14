@@ -106,8 +106,7 @@
       "onboardingUseCase": null,
       "lastOnboardedDevice": null,
       "alwaysShowMemoTagInfo": true,
-      "anonymousUserNotifications": {},
-      "hasSeenWalletV4Tour": false
+      "anonymousUserNotifications": {}
     },
     "postOnboarding": {
       "deviceModelId": "europa",

@@ -9333,26 +9333,6 @@
     "errorTryAgain" : "업데이트 중 오류가 발생했습니다. 다시 시도하세요",
     "installAndRelaunch" : "새로운 업데이트. 설치하고 다시 시작하기"
   },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "내 포트폴리오 한눈에 보기",
-        "description" : "전체 잔액을 한눈에 확인하고, \"오늘(Today)\" 탭에서 자세한 내용을 살펴보세요."
-      },
-      "navigation" : {
-        "title" : "핵심 기능을 더 빠르게",
-        "description" : "받기, 매수, 매도 및 전송 기능을 빠르게 이용해 보세요."
-      },
-      "actions" : {
-        "title" : "즉각적인 시장 트렌드 확인",
-        "description" : "포트폴리오에서 시장 동향을 빠르게 확인하고, 인사이트를 바탕으로 빠르게 대응하세요."
-      }
-    },
-    "cta" : {
-      "continue" : "계속",
-      "explore" : "새로워진 포트폴리오 살펴보기"
-    }
-  },
   "q2Tour" : {
     "slides" : {
       "welcome" : {

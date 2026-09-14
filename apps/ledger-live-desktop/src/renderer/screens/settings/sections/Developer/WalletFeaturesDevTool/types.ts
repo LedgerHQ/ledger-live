@@ -13,7 +13,6 @@ export interface WalletFeaturesViewModel {
   readonly isEnabled: boolean;
   readonly params: WalletFeatureParams;
   readonly allEnabled: boolean;
-  readonly hasSeenWalletV4Tour: boolean;
   readonly hasSeenQ2Tour: boolean;
   readonly isQ2TourEnabled: boolean;
   readonly hasSeenQ3Tour: boolean;
@@ -22,7 +21,6 @@ export interface WalletFeaturesViewModel {
   readonly handleToggleAll: (enable: boolean) => void;
   readonly handleToggleEnabled: () => void;
   readonly handleToggleParam: (key: WalletFeatureParamKey) => void;
-  readonly handleToggleHasSeenTour: () => void;
   readonly handleToggleQ2TourHasSeen: () => void;
   readonly handleToggleQ2TourEnabled: () => void;
   readonly handleToggleQ3TourHasSeen: () => void;
