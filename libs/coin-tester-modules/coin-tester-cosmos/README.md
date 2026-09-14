@@ -61,6 +61,13 @@ next scenario's `up` would fail with `port is already allocated`. Each `up`
 therefore passes `--remove-orphans`, so a leaked devnet from a previous run is
 cleared instead of blocking the next one.
 
+The flip side: a devnet you started **by hand** in this directory is an orphan
+relative to whichever compose file the next scenario brings up, so an automated
+run will tear it down under you. Ports are the shared resource here — freeing
+them automatically and leaving a hand-started node alone are mutually
+exclusive — so if you want a node to survive, run it on other ports or outside
+this compose project.
+
 - **Cosmos Hub** (`docker-compose.gaia.yml`) — `gaiad init` + a self-delegation
   gentx.
 - **Babylon** (`docker-compose.yml`) — `babylond testnet --v 1` bootstraps the

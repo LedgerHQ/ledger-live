@@ -41,7 +41,20 @@ async function getBondedValidator(lcd: string): Promise<string> {
   return operators[0];
 }
 
-export type CosmosScenarioOptions = {
+/**
+ * Whether the chain's staking module accepts delegation, and the delegate
+ * step's label. Modelled as a union so `delegateLabel` is required exactly
+ * when `staking` is true: with `staking: false` (e.g. Gonka, whose PoC
+ * validator set overrides x/staking) `getTransactions()` returns only the send
+ * step and `setup()` skips the bonded-validator lookup, so a label would be
+ * meaningless. This keeps the delegate step's name a plain `string` instead of
+ * a non-null assertion on an optional field.
+ */
+type CosmosScenarioStaking =
+  | { staking: true; delegateLabel: string }
+  | { staking: false; delegateLabel?: never };
+
+export type CosmosScenarioOptions = CosmosScenarioStaking & {
   /** Scenario display name. */
   name: string;
   /** The cryptocurrency under test (drives the unit used for amounts). */
@@ -50,14 +63,6 @@ export type CosmosScenarioOptions = {
   hrp: string;
   /** The chain's minimum gas price, fed into the per-scenario coin config. */
   minGasPrice: number;
-  /**
-   * Whether the chain's staking module accepts delegation. When `false`,
-   * `getTransactions()` returns only the send step and `setup()` skips the
-   * bonded-validator lookup (there may be no delegatable validator set).
-   */
-  staking: boolean;
-  /** Label for the delegate step. Only meaningful when `staking` is true. */
-  delegateLabel?: string;
   /** Bring the devnet up / tear it down. */
   spawn: () => Promise<void>;
   kill: () => Promise<void>;
@@ -77,7 +82,10 @@ export type CosmosScenarioOptions = {
 export function makeCosmosScenario(
   options: CosmosScenarioOptions,
 ): Scenario<GenericTransaction, Account> {
-  const { name, currency, hrp, minGasPrice, staking, delegateLabel, spawn, kill } = options;
+  // `staking` / `delegateLabel` stay on `options`: destructuring a
+  // discriminated union severs the correlation between the two, so narrowing
+  // has to happen on the object for `delegateLabel` to be a plain string.
+  const { name, currency, hrp, minGasPrice, spawn, kill } = options;
   const { retryInterval, retryLimit } = options;
   const unit = currency.units[0];
   // Both derivations follow the currency's own coin type rather than a
@@ -139,21 +147,24 @@ export function makeCosmosScenario(
         expect(currentAccount.balance.toFixed()).toBe(
           previousAccount.balance.minus(latestOperation.value).toFixed(),
         );
-        // On a zero-gas-price chain, `value === fee + amount` holds trivially at
-        // fee = 0, so it wouldn't catch a regression that dropped the fee
-        // entirely. Assert the fee explicitly so the zero-fee path is covered.
+        // `value === fee + amount` and the balance delta above both hold
+        // trivially whatever the fee is, so neither can catch a fee that
+        // silently collapsed. Pin it explicitly in both directions: zero on a
+        // zero-gas-price chain, non-zero on a chain that actually charges.
         if (minGasPrice === 0) {
           expect(latestOperation.fee.isZero()).toBe(true);
+        } else {
+          expect(latestOperation.fee.isZero()).toBe(false);
         }
       },
     };
 
-    if (!staking) return [sendStep];
+    if (!options.staking) return [sendStep];
 
     return [
       sendStep,
       {
-        name: delegateLabel!,
+        name: options.delegateLabel,
         family: "cosmos",
         mode: "delegate",
         // Delegate reads transaction.amount (unlike undelegate/redelegate, which read
@@ -257,7 +268,7 @@ export function makeCosmosScenario(
       // The validator address is dynamic per devnet run; pick the first bonded
       // validator the entrypoint bootstrapped. Skipped for chains whose staking
       // module doesn't accept delegation (e.g. Gonka's PoC validator set).
-      if (staking) {
+      if (options.staking) {
         validatorAddress = await getBondedValidator(LOCAL_LCD);
       }
 
