@@ -1,3 +1,4 @@
+import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { WebElementHelpers } from "@e2e/helpers/elementHelpers";
 import { retryUntilTimeout } from "@e2e/utils/retry";
@@ -10,6 +11,8 @@ const PROBE_TIMEOUT_MS = 2_000;
 
 const MAINNET_FUNDING_HINT =
   "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
+
+type ExecutionStep = { buttonId: string; doneId: string };
 
 export default class BorrowPage {
   private readonly borrowScreenId = "borrow-screen";
@@ -32,6 +35,13 @@ export default class BorrowPage {
   private readonly loanDashboardRowId = "borrow-loan-dashboard-row";
   private readonly executionErrorLocator =
     '[data-testid="borrow-execution-error"], [data-testid="borrow-on-chain-failed-message"]';
+
+  /** In flow order: the step whose CTA is on screen is the first one left to run. */
+  private readonly executionSteps: ExecutionStep[] = [
+    { buttonId: this.giveApprovalButtonId, doneId: this.step1AccessApprovedId },
+    { buttonId: this.authorizeDepositingButtonId, doneId: this.step2DepositDoneId },
+    { buttonId: this.authorizeBorrowingButtonId, doneId: this.loanCompletionCardId },
+  ];
 
   /** The collateral row carries no test id, so it is matched on its symbol. */
   private readonly symbolButtonXpath = (symbol: string) =>
@@ -110,26 +120,15 @@ export default class BorrowPage {
     await waitWebElementByTestId(this.loanExecutionScreenId);
   }
 
-  @Step("Give approval and sign on device")
-  async completeApprovalStep() {
-    await this.authorizeStep(this.giveApprovalButtonId, this.step1AccessApprovedId, () =>
-      this.signContractTransaction(),
-    );
-  }
-
-  @Step("Authorize depositing and sign on device")
-  async authorizeDeposit() {
-    await this.authorizeStep(this.authorizeDepositingButtonId, this.step2DepositDoneId, () =>
-      this.signContractTransaction(),
-    );
-  }
-
-  /** Completing the last step leaves the execution screen, so the terminal card is the marker. */
-  @Step("Authorize borrowing and sign on device")
-  async authorizeBorrow() {
-    await this.authorizeStep(this.authorizeBorrowingButtonId, this.loanCompletionCardId, () =>
-      this.signContractTransaction(),
-    );
+  /**
+   * On-chain state decides how much of the flow is left: an allowance or collateral the account
+   * already holds settles the leading steps, so the run starts at the only CTA on screen.
+   */
+  @Step("Complete every remaining execution step, signing each on device")
+  async completeExecutionSteps() {
+    for (const { buttonId, doneId } of await this.waitForRemainingSteps()) {
+      await this.authorizeStep(buttonId, doneId, () => this.signContractTransaction());
+    }
     await waitWebElementByTestId(this.viewMyLoanButtonId);
   }
 
@@ -149,10 +148,31 @@ export default class BorrowPage {
     await waitWebElementByTestId(this.loanDashboardRowId);
   }
 
-  /** Asserting the marker is absent first makes the wait afterwards proof that the step ran. */
+  private async waitForRemainingSteps(): Promise<ExecutionStep[]> {
+    await waitWebElementByTestId(this.loanExecutionScreenId);
+    try {
+      return await retryUntilTimeout(async () => {
+        for (const [index, step] of this.executionSteps.entries()) {
+          if (await this.isOnScreen(step.buttonId)) return this.executionSteps.slice(index);
+        }
+        throw new Error("No execution CTA on screen yet");
+      }, EXECUTION_STEP_TIMEOUT_MS);
+    } catch {
+      throw new Error(
+        `The execution screen showed none of ${this.executionSteps.map(step => `'${step.buttonId}'`).join(", ")} within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
+      );
+    }
+  }
+
+  private async isOnScreen(testId: string): Promise<boolean> {
+    return !!(await waitWebElementByTestId(testId, {
+      timeout: PROBE_TIMEOUT_MS,
+      throwOnTimeout: false,
+    }));
+  }
+
   private async authorizeStep(buttonId: string, doneId: string, sign: () => Promise<void>) {
     await waitWebElementByTestId(this.loanExecutionScreenId);
-    await expectWebElementNotVisible(doneId);
     await this.revealAndTap(buttonId, EXECUTION_STEP_TIMEOUT_MS);
     await waitForElementById(app.send.summaryContinueEnabledButtonId);
     await app.send.summaryContinue();

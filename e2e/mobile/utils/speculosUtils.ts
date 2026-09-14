@@ -66,6 +66,10 @@ export const ARTIFACTS_DIR = path.resolve("artifacts");
 const SPECULOS_TRACKING_FILE = path.join(ARTIFACTS_DIR, `speculos-instances.${process.pid}.json`);
 export const SPECULOS_TRACKING_FILE_PATTERN = /^speculos-instances\.\d+\.json$/;
 
+function getSpeculosDevices(): Map<string, number> {
+  return (globalThis.speculosDevices ??= new Map());
+}
+
 // Register in tracking file for cross-process cleanup
 async function writeSpeculosInFile(deviceId: string) {
   try {
@@ -142,7 +146,7 @@ export async function launchSpeculos(appName: string) {
     throw new Error(message);
   }
   setEnv("SPECULOS_API_PORT", device.port);
-  speculosDevices.set(device.id, device.port);
+  getSpeculosDevices().set(device.id, device.port);
 
   await writeSpeculosInFile(device.id);
   log.info("E2E Setup", "Device info before map set:", {
@@ -168,13 +172,13 @@ async function findPortByDeviceId(
     log.info(
       "E2E",
       `Current speculosDevices map (attempt ${attempt}/${maxAttempts}):`,
-      Array.from(speculosDevices.entries())
+      Array.from(getSpeculosDevices().entries())
         .map(([id, p]) => `${id} -> ${p ?? "(null)"}`)
         .join(", "),
     );
 
-    if (speculosDevices.has(deviceId)) {
-      return speculosDevices.get(deviceId);
+    if (getSpeculosDevices().has(deviceId)) {
+      return getSpeculosDevices().get(deviceId);
     }
 
     if (attempt < maxAttempts) {
@@ -191,12 +195,12 @@ async function findPortByDeviceId(
 
 export async function deleteSpeculos(deviceId?: string): Promise<number | undefined> {
   if (!deviceId) {
-    if (!speculosDevices.size) {
+    if (!getSpeculosDevices().size) {
       log.info("E2E", "No active Speculos instances to stop.");
       return;
     }
 
-    const tasks = Array.from(speculosDevices.entries()).map(async ([deviceId, port]) => {
+    const tasks = Array.from(getSpeculosDevices().entries()).map(async ([deviceId, port]) => {
       try {
         log.info("E2E", `Stopping Speculos with device ${deviceId} and port ${port}}`);
         await deleteSpeculos(deviceId);
@@ -221,7 +225,7 @@ export async function deleteSpeculos(deviceId?: string): Promise<number | undefi
     log.error("E2E", `Failed to stop Speculos ${deviceId}: ${sanitizeError(error)}`);
   } finally {
     if (stopped) {
-      speculosDevices.delete(deviceId);
+      getSpeculosDevices().delete(deviceId);
       await removeSpeculosFromFile(deviceId);
     }
     setEnv("SPECULOS_API_PORT", 0);
@@ -236,7 +240,7 @@ export async function attachSpeculinhoLogsToAllure() {
     return;
   }
 
-  const deviceIds = new Set<string>(speculosDevices.keys());
+  const deviceIds = new Set<string>(getSpeculosDevices().keys());
   for (const runId of globalThis.speculosFailedRunIds ?? []) {
     deviceIds.add(runId);
   }
@@ -277,7 +281,7 @@ export async function cleanupAllSpeculos(): Promise<void> {
 }
 
 export async function takeSpeculosScreenshot() {
-  for (const [deviceId, apiPort] of speculosDevices.entries()) {
+  for (const [deviceId, apiPort] of getSpeculosDevices().entries()) {
     if (isSpeculosRemote()) {
       try {
         await waitForSpeculosReady(deviceId, {

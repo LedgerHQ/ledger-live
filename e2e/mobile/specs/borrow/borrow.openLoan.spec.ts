@@ -76,9 +76,7 @@ const borrowSetupOptions = { nanoAppCatalogPath: NANO_APP_CATALOG_PATH };
         await app.borrow.clickContinue();
         await app.borrow.expectExecutionScreen();
 
-        await app.borrow.completeApprovalStep();
-        await app.borrow.authorizeDeposit();
-        await app.borrow.authorizeBorrow();
+        await app.borrow.completeExecutionSteps();
 
         await app.borrow.clickViewMyLoan();
         await app.borrow.expectLoansDashboard();
