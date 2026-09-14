@@ -176,6 +176,47 @@ describe("PayCard (web)", () => {
     fireEvent.click(switches[switches.length - 1]!);
     expect(props.onboarding.setStepDone).toHaveBeenCalledWith("step1", true);
   });
+  it("lists the same Card Debug entries the mobile tool lists", () => {
+    render(<PayCard {...buildProps()} />);
+
+    expect(screen.getByText("Card Status")).toBeInTheDocument();
+    expect(screen.getByText("Balance & Wallets")).toBeInTheDocument();
+    expect(screen.getByText("Card onboarding")).toBeInTheDocument();
+    expect(screen.getByText("Currency Mapping")).toBeInTheDocument();
+  });
+
+  it("opens the probes, and drops the minted card url on the way back", () => {
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    fireEvent.click(screen.getByText("Card Status"));
+    expect(screen.getByText("Request Card Details")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("Back"));
+    expect(props.interaction.details.clear).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Feature flags")).toBeInTheDocument();
+  });
+
+  it("opens the onboarding screen and asks for a fresh answer", () => {
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    fireEvent.click(screen.getByText("Card onboarding"));
+
+    expect(props.cardOnboarding.refresh).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Mocked answers")).toBeInTheDocument();
+  });
+
+  it("opens the currency mapping, which needs nothing asked for", () => {
+    const props = buildProps();
+    render(<PayCard {...props} currencyMapping={[{ key: "btc.bitcoin", ledgerId: "bitcoin" }]} />);
+
+    fireEvent.click(screen.getByText("Currency Mapping"));
+
+    expect(screen.getByText("btc.bitcoin")).toBeInTheDocument();
+    expect(props.balance.load).not.toHaveBeenCalled();
+  });
+
   it("opens the wallet screen and asks for the wallets when it does", () => {
     const props = buildProps();
     render(<PayCard {...props} />);
