@@ -3,7 +3,12 @@ import { z } from "zod";
 import os from "node:os";
 import { Session } from "../../session/session-store";
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
-import { savePrivateKey, hasStoredKey } from "../../key-ring/keychain";
+import {
+  deletePrivateKey,
+  hasStoredKey,
+  isStoredKeyPasswordProtected,
+} from "../../key-ring/keychain";
+import { getOrCreateMemberCredentials } from "../../key-ring/member-credentials";
 import { generatePasswordSalt, deriveWrappingKey } from "../../key-ring/crypto";
 import { promptHidden } from "../../key-ring/prompt";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../../device/register-dmk-transport";
@@ -45,13 +50,11 @@ export default defineCommand({
           "Ledger Key Ring already initialized. Run `wallet-cli ring destroy` to reset.",
         );
       }
-      // Refuse a stray keychain key with no ring metadata (e.g. after `session reset` on a corrupt
-      // file): overwriting it would orphan the previous remote member, whose only auth key it is.
-      if (hasStoredKey()) {
+      if (isStoredKeyPasswordProtected() && !session.passwordSalt) {
         throw new Error(
-          "A member credential already exists in the OS keychain but this session has no Ledger Key " +
-            "Ring metadata. Run `wallet-cli ring destroy` (or remove the keychain entry) before " +
-            "re-initializing.",
+          "The stored password-protected member credential cannot be unlocked because its password " +
+            "metadata is missing. Run `wallet-cli ring destroy`, then rerun " +
+            "`wallet-cli ring init` to create a new identity.",
         );
       }
 
@@ -68,18 +71,38 @@ export default defineCommand({
         if (!password) throw new Error("Password must not be empty.");
         const { value: confirm } = await promptHidden("Confirm password: ");
         if (password !== confirm) throw new Error("Passwords do not match.");
-        passwordSalt = generatePasswordSalt();
+        passwordSalt = session.passwordSalt ?? generatePasswordSalt();
         wrappingKey = await deriveWrappingKey(password, passwordSalt);
+        const hasPlaintextCredential = hasStoredKey() && !isStoredKeyPasswordProtected();
+        const isStoredCredentialReady = !hasPlaintextCredential || deletePrivateKey();
+        if (!isStoredCredentialReady) {
+          throw new Error("Failed to replace the existing member credential in the OS keychain.");
+        }
       }
 
       const memberName = flags.name ?? defaultMemberName();
       const sdk = createLkrpSdk(memberName);
 
       const memberCredentials = await out.withActivity(
-        "Generating member credentials…",
-        "Member credentials created",
-        () => sdk.initMemberCredentials(),
+        "Preparing member credentials…",
+        "Member credentials ready",
+        () =>
+          getOrCreateMemberCredentials({
+            wrappingKey,
+            createMemberCredentials: () => sdk.initMemberCredentials(),
+            beforePersistCreated: passwordSalt
+              ? () => {
+                  session.setPasswordSalt(passwordSalt);
+                  session.write();
+                }
+              : undefined,
+          }),
       );
+
+      if (flags["unsecure-no-password"] && session.passwordSalt) {
+        session.clearPasswordSalt();
+        session.write();
+      }
 
       const deviceSpin = out.spin(
         "Connect device, open Ledger Sync app — provisioning your Ledger Key Ring…",
@@ -89,12 +112,10 @@ export default defineCommand({
       );
       deviceSpin?.success("Ledger Key Ring ready");
 
-      await savePrivateKey(memberCredentials.privatekey, memberCredentials.pubkey, wrappingKey);
       session.setTrustchain({
         rootId: trustchain.rootId,
         applicationPath: trustchain.applicationPath,
       });
-      if (passwordSalt) session.setPasswordSalt(passwordSalt);
       session.write();
 
       out.ringInit({ memberName, rootId: trustchain.rootId });

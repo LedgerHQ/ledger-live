@@ -151,6 +151,7 @@ async function destroyStrayKey(session: Session, out: CommandOutput): Promise<vo
   const localWiped = deletePrivateKey();
   if (localWiped) {
     session.wipeRing();
+    session.clearPasswordSalt();
     session.write();
   }
   out.ringDestroy({ remoteSucceeded: false, trustchainDestroyed: false, localWiped });
@@ -241,6 +242,7 @@ export default defineCommand({
       // metadata so the user can re-run destroy (a stale pointer is harmless by comparison).
       if (localWiped) {
         session.wipeRing();
+        session.clearPasswordSalt();
         session.write();
       }
       out.ringDestroy({ remoteSucceeded, trustchainDestroyed, localWiped, memberEjected });

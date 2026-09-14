@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach } from "bun:test";
 import { runCli } from "../../helpers/cli-runner";
 import { makeSessionDir } from "../../helpers/session-fixture";
+import { inMemoryMemberCredentialRepository } from "../../helpers/in-memory-member-credential-repository";
 
 const SAMPLE_ENTRIES = [
   {
@@ -27,6 +28,17 @@ describe("session view — human", () => {
     const { stdout, exitCode } = await runCli(["session", "view"], fixture.env);
     expect(exitCode).toBe(0);
     expect(stdout).toMatch(/no accounts/i);
+  });
+
+  it("does not initialize authentication credentials", async () => {
+    const fixture = makeSessionDir([]);
+    cleanup = fixture.cleanup;
+    inMemoryMemberCredentialRepository.clear();
+
+    const { exitCode } = await runCli(["session", "view"], fixture.env);
+
+    expect(exitCode).toBe(0);
+    expect(inMemoryMemberCredentialRepository.entries.size).toBe(0);
   });
 
   it("prints label and descriptor for each entry", async () => {

@@ -1,7 +1,13 @@
 import { WalletAuthInvalidChallengeError, WalletAuthInvalidTokenError } from "./errors";
 import { HttpKeycloakService } from "./keycloakService";
 import { createPkcePairWithWebCrypto, type CreatePkcePair } from "./pkce";
-import type { AuthConfig, IdentityProvider, KeycloakService, KeycloakToken } from "./types";
+import type {
+  AuthConfig,
+  FetchFn,
+  IdentityProvider,
+  KeycloakService,
+  KeycloakToken,
+} from "./types";
 import { getTokenState } from "./utils";
 
 export class AuthSDK {
@@ -24,7 +30,7 @@ export class AuthSDK {
     }: {
       provider: IdentityProvider;
       createPkcePair?: CreatePkcePair;
-      fetch?: typeof globalThis.fetch;
+      fetch?: FetchFn;
       keycloakService?: KeycloakService;
     },
   ) {

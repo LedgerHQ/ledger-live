@@ -3,6 +3,7 @@ import { MockServer } from "../../helpers/mock-server";
 import { runCli } from "../../helpers/cli-runner";
 import { makeSessionDir } from "../../helpers/session-fixture";
 import { ETH_DESCRIPTOR } from "../../helpers/constants";
+import { KEYCLOAK_TOKEN, makeAuthRoutes } from "../../helpers/auth-routes";
 
 /** Minimal `RawQuote` row for `/quote` — enough for `normalizeQuote` + `buildQuoteDetails`. */
 const MOCK_QUOTE_ROW = {
@@ -37,7 +38,14 @@ const MOCK_PROVIDER_ROW = {
 };
 
 describe("quote command", () => {
+  let challengeCookie: string | null = null;
+  let quoteAuthorization: string | null = null;
   const server = new MockServer([
+    ...makeAuthRoutes({
+      onChallengeRequest: request => {
+        challengeCookie = request.headers.get("cookie");
+      },
+    }),
     {
       method: "GET",
       match: /\/v1\/partners(\?|$)/,
@@ -52,6 +60,9 @@ describe("quote command", () => {
       method: "GET",
       match: /\/quote(\?|$)/,
       response: [MOCK_QUOTE_ROW],
+      onRequest: request => {
+        quoteAuthorization = request.headers.get("authorization");
+      },
     },
   ]);
 
@@ -60,6 +71,8 @@ describe("quote command", () => {
 
   let fixture: ReturnType<typeof makeSessionDir>;
   beforeEach(() => {
+    challengeCookie = null;
+    quoteAuthorization = null;
     fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
   });
   afterEach(() => {
@@ -86,9 +99,9 @@ describe("quote command", () => {
     );
     expect(exitCode, `stdout: ${stdout}\nstderr: ${stderr}`).toBe(0);
     expect(stdout).toMatch(/ethereum\s*→\s*bitcoin/i);
-    expect(stdout).toMatch(/ethereum/i);
-    expect(stdout).toMatch(/bitcoin/i);
     expect(stdout).toMatch(/paraswap/i);
+    expect(challengeCookie).toBe("AUTH_SESSION_ID=wallet-cli-test");
+    expect(quoteAuthorization).toBe(`Bearer ${KEYCLOAK_TOKEN}`);
   });
 
   it("json output: returns a valid swap quote envelope", async () => {

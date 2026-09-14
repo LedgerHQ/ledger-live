@@ -3,7 +3,7 @@ import { YAML } from "bun";
 import { statSync, mkdtempSync, mkdirSync, writeFileSync, chmodSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
-import { generateLabel, getSessionPath, Session } from "./session-store";
+import { generateLabel, getSessionPath, InvalidSessionYamlError, Session } from "./session-store";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 
 const btcNative: AccountDescriptorV1 = {
@@ -175,6 +175,21 @@ describe("Session.addDescriptors", () => {
   });
 });
 
+describe("Session.wipeRing", () => {
+  it("clears trustchain state while preserving the password salt", () => {
+    const session = Session.from([]);
+    session.setTrustchain({ rootId: "root-id", applicationPath: "m/0'/17'/0'" });
+    session.trackDomain("project");
+    session.setPasswordSalt("0".repeat(32));
+
+    session.wipeRing();
+
+    expect(session.trustchain).toBeUndefined();
+    expect(session.domains).toEqual([]);
+    expect(session.passwordSalt).toBe("0".repeat(32));
+  });
+});
+
 describe("YAML round-trip", () => {
   it("session serializes and parses back intact", () => {
     const session = Session.from([]);
@@ -282,6 +297,21 @@ describe("ring-field resilience", () => {
     expect(session.accounts).toHaveLength(1);
     expect(session.trustchain).toBeUndefined();
     expect(session.domains).toHaveLength(0);
+  });
+
+  it("should wrap invalid YAML failures for readForReset", async () => {
+    useTmpState();
+    writeFileSync(getSessionPath(), ": : :\n\t- [");
+    let error: unknown;
+
+    try {
+      await Session.readForReset();
+    } catch (cause) {
+      error = cause;
+    }
+
+    expect(error).toBeInstanceOf(InvalidSessionYamlError);
+    expect((error as InvalidSessionYamlError).cause).toBeDefined();
   });
 
   it("readForReset preserves the trustchain even when the file is otherwise corrupt", async () => {

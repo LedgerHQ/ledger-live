@@ -1,11 +1,19 @@
-import { describe, it, expect, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
 import { EventEmitter } from "node:events";
+import * as sharedUi from "../shared/ui";
 import { promptHidden } from "./prompt";
 
 const origStdin = Object.getOwnPropertyDescriptor(process, "stdin");
 const origPass = process.env.WALLET_PASS;
 
+let suspensionSpy: ReturnType<typeof spyOn<typeof sharedUi, "withSuspendedSpinner">>;
+
+beforeEach(() => {
+  suspensionSpy = spyOn(sharedUi, "withSuspendedSpinner");
+});
+
 afterEach(() => {
+  suspensionSpy.mockRestore();
   if (origStdin) Object.defineProperty(process, "stdin", origStdin);
   if (origPass === undefined) delete process.env.WALLET_PASS;
   else process.env.WALLET_PASS = origPass;
@@ -49,6 +57,7 @@ describe("promptHidden", () => {
   it("reads WALLET_PASS without touching the TTY", async () => {
     process.env.WALLET_PASS = "from-env";
     expect(await promptHidden("Password: ")).toEqual({ source: "env", value: "from-env" });
+    expect(suspensionSpy).not.toHaveBeenCalled();
   });
 
   it("reports the tty source for an interactively-typed password", async () => {
@@ -63,5 +72,6 @@ describe("promptHidden", () => {
     const result = promptHidden("Password: ");
     stdin.emit("data", "pw\n");
     expect(await result).toEqual({ source: "tty", value: "pw" });
+    expect(suspensionSpy).toHaveBeenCalledTimes(1);
   });
 });

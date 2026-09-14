@@ -3,6 +3,7 @@ export type Route = {
   /** URL path pattern to match (string = substring, RegExp = test against pathname+search) */
   match: RegExp | string;
   response: unknown;
+  onRequest?: (request: Request) => void;
   status?: number;
   headers?: Record<string, string>;
 };
@@ -28,6 +29,7 @@ export class MockServer {
               : route.match.test(pathAndQuery);
 
           if (matches && (!route.method || route.method === req.method)) {
+            route.onRequest?.(req);
             return Response.json(route.response, {
               status: route.status ?? 200,
               headers: { "Content-Type": "application/json", ...(route.headers ?? {}) },

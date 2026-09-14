@@ -42,7 +42,7 @@ mock.module("yocto-spinner", () => ({
   },
 }));
 
-const { spinner } = await import("./ui");
+const { spinner, withSuspendedSpinner } = await import("./ui");
 
 describe("spinner", () => {
   const envVars = [
@@ -90,5 +90,51 @@ describe("spinner", () => {
     expect(first.isSpinning).toBe(false);
     expect(second.isSpinning).toBe(true);
     expect(createdSpinners).toHaveLength(2);
+  });
+
+  it("suspends the active spinner while a task is pending and resumes it after resolution", async () => {
+    const spin = spinner("fetching");
+    let resolveTask!: () => void;
+    const task = new Promise<void>(resolve => {
+      resolveTask = resolve;
+    });
+
+    const result = withSuspendedSpinner(() => task);
+
+    expect(spin.isSpinning).toBe(false);
+    resolveTask();
+    await result;
+    expect(spin.isSpinning).toBe(true);
+  });
+
+  it("resumes the active spinner after a task rejects", async () => {
+    const spin = spinner("fetching");
+    let rejectTask!: (error: Error) => void;
+    const task = new Promise<void>((_, reject) => {
+      rejectTask = reject;
+    });
+
+    const result = withSuspendedSpinner(() => task);
+
+    expect(spin.isSpinning).toBe(false);
+    rejectTask(new Error("failed"));
+    await expect(result).rejects.toThrow("failed");
+    expect(spin.isSpinning).toBe(true);
+  });
+
+  it("does not restart a suspended spinner when a newer spinner starts", async () => {
+    const first = spinner("first");
+    let resolveTask!: () => void;
+    const task = new Promise<void>(resolve => {
+      resolveTask = resolve;
+    });
+    const result = withSuspendedSpinner(() => task);
+
+    const second = spinner("second");
+    resolveTask();
+
+    await result;
+    expect(first.isSpinning).toBe(false);
+    expect(second.isSpinning).toBe(true);
   });
 });
