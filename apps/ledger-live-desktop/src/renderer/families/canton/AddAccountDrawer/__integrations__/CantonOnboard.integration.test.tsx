@@ -137,9 +137,11 @@ describe("CantonOnboard (MAD) Integration", () => {
     await act(async () => {
       cleanup();
     });
-    // Flush pending microtasks to prevent "import after teardown" warnings from undici/MSW
+    // Flush pending microtasks to prevent "import after teardown" warnings from undici/MSW.
+    // A zero-delay macrotask is enough: it yields one turn of the event loop after the
+    // microtask queue has drained. A longer sleep only added idle wall-clock.
     await act(async () => {
-      await new Promise(r => setTimeout(r, 100));
+      await new Promise(r => setTimeout(r, 0));
     });
   });
 
