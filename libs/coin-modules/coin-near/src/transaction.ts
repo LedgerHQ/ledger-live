@@ -39,7 +39,7 @@ export const fromTransactionRaw = (transactionRaw: TransactionRaw): Transaction 
     family: transactionRaw.family,
     mode: transactionRaw.mode,
     fees: transactionRaw.fees ? new BigNumber(transactionRaw.fees) : null,
-    ...(transactionRaw.nonce != null && { nonce: new BigNumber(transactionRaw.nonce) }),
+    ...(transactionRaw.nonce ? { nonce: new BigNumber(transactionRaw.nonce) } : {}),
   };
 };
 
@@ -50,7 +50,7 @@ export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
     family: transaction.family,
     mode: transaction.mode,
     fees: transaction.fees ? transaction.fees.toString() : null,
-    ...(transaction.nonce != null && { nonce: transaction.nonce.toString() }),
+    ...(transaction.nonce ? { nonce: transaction.nonce.toString() } : {}),
   };
 
   return transactionRaw;
