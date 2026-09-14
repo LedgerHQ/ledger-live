@@ -1,4 +1,5 @@
-import { getMainMessage } from "./helpers";
+import BigNumber from "bignumber.js";
+import { getMainMessage, isAccountEmpty } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
 
 describe("getMainMessage", () => {
@@ -60,6 +61,32 @@ describe("getMainMessage", () => {
         },
       ]).type,
     ).toEqual("MsgBeginRedelegate");
+  });
+});
+
+describe("isAccountEmpty", () => {
+  it("returns false when cosmosResources is undefined instead of throwing", () => {
+    expect(isAccountEmpty({ cosmosResources: undefined, balance: new BigNumber(0) } as never)).toBe(
+      false,
+    );
+  });
+
+  it("returns true when resources are present, sequence is 0 and balance is zero", () => {
+    expect(
+      isAccountEmpty({
+        cosmosResources: { sequence: 0 },
+        balance: new BigNumber(0),
+      } as never),
+    ).toBe(true);
+  });
+
+  it("returns false when balance is not zero", () => {
+    expect(
+      isAccountEmpty({
+        cosmosResources: { sequence: 0 },
+        balance: new BigNumber(1),
+      } as never),
+    ).toBe(false);
   });
 });
 
