@@ -13,12 +13,7 @@ export const CardView = ({ viewModel }: CardViewProps) => {
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden pb-32">
       <PayCardContainer>
-        <div
-          aria-label={title}
-          className="scrollbar-none min-h-0 flex-1 overflow-y-auto p-16"
-          role="region"
-          tabIndex={0}
-        >
+        <section aria-label={title} className="scrollbar-none min-h-0 flex-1 overflow-y-auto p-16">
           <PayCard
             title={title}
             login={login}
@@ -26,7 +21,7 @@ export const CardView = ({ viewModel }: CardViewProps) => {
             formatTransactionAmount={formatTransactionAmount}
             balanceLabel={balanceLabel}
           />
-        </div>
+        </section>
       </PayCardContainer>
     </div>
   );

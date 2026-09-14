@@ -138,7 +138,7 @@ describe("Card (web)", () => {
       render(
         <Card
           title={title}
-          oauthConfig={oauthConfig}
+          login={{ oauthConfig }}
           formatTransactionAmount={formatTransactionAmount}
         />,
       );
