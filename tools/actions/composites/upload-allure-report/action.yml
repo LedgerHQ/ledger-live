@@ -58,7 +58,7 @@ runs:
         INPUTS_PATH: ${{ inputs.path }}
     - name: Install pngquant
       if: runner.os == 'Linux' && steps.pngs.outputs.count != '0'
-      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@perf/ci-cache-s5cmd-pzstd
       with:
         packages: pngquant
     - name: Compress PNG files

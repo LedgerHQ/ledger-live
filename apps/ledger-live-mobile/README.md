@@ -98,3 +98,4 @@ ANALYTICS_CONSOLE=TRUE pnpm dev:llm
 Translations are handled internally at Ledger. If a translation string is broken, report it to [Ledger support](https://support.ledger.com/) rather than editing localized content directly.
 
 Use `pnpm mobile sync-locales` when adding a new supported language.
+

@@ -198,7 +198,7 @@ jobs:
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@perf/ci-cache-s5cmd-pzstd
         id: setup-caches
         with:
           use-mise: true
@@ -216,7 +216,7 @@ jobs:
 
       - name: Generate shards matrix and test files
         id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@perf/ci-cache-s5cmd-pzstd
         with:
           test_directory: apps/ledger-live-mobile/e2e
           event_name: ${{ github.event_name }}
@@ -233,7 +233,7 @@ jobs:
       - name: Check if Android AVD cache exists
         id: check-avd
         if: ${{ steps.generate-shards.outputs.matrix_android != '[]' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@perf/ci-cache-s5cmd-pzstd
         with:
           key: ${{ steps.cache-keys.outputs.avd_cache_key }}
           accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -244,7 +244,7 @@ jobs:
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
-        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@perf/ci-cache-s5cmd-pzstd
         with:
           key: ${{ steps.cache-keys.outputs.ios_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -252,12 +252,10 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
 
       - name: Check if Android Native Build exists already
         id: check-android-native
-        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@perf/ci-cache-s5cmd-pzstd
         with:
           key: ${{ steps.cache-keys.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -265,12 +263,10 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
 
       - name: Check if iOS JS Build exists already
         id: check-ios-js
-        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@perf/ci-cache-s5cmd-pzstd
         with:
           key: ${{ steps.cache-keys.outputs.ios_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -278,12 +274,10 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
 
       - name: Check if Android JS Build exists already
         id: check-android-js
-        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@perf/ci-cache-s5cmd-pzstd
         with:
           key: ${{ steps.cache-keys.outputs.android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -291,12 +285,10 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
 
       - name: Check if pod lockfile has been validated
         id: check-lockfile-status
-        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@perf/ci-cache-s5cmd-pzstd
         with:
           key: ${{ steps.cache-keys.outputs.pod_check_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -304,13 +296,11 @@ jobs:
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
-          lookup-only: true
 
   build-ios:
     name: "iOS Build"
     needs: [determine-builds]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@perf/ci-cache-s5cmd-pzstd
     permissions:
       id-token: write
       contents: read
@@ -338,7 +328,7 @@ jobs:
   build-android:
     name: "Android Build"
     needs: [determine-builds]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@perf/ci-cache-s5cmd-pzstd
     permissions:
       id-token: write
       contents: read
@@ -381,7 +371,7 @@ jobs:
               \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
               \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
           }" > mobile.metafile.json
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@perf/ci-cache-s5cmd-pzstd
         if: ${{ !inputs.skip-bundle-size-reporting }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
@@ -453,7 +443,7 @@ jobs:
           packages: "tools platform-tools"
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@perf/ci-cache-s5cmd-pzstd
         id: setup-caches
         with:
           use-mise: true
@@ -467,12 +457,12 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@perf/ci-cache-s5cmd-pzstd
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@perf/ci-cache-s5cmd-pzstd
         with:
           key: ${{ needs.determine-builds.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -482,7 +472,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Bundle
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@perf/ci-cache-s5cmd-pzstd
         with:
           key: ${{ needs.determine-builds.outputs.android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -518,20 +508,20 @@ jobs:
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@perf/ci-cache-s5cmd-pzstd
         with:
           command: pnpm build:llm:deps
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Build e2e dependencies (CLI + libs)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@perf/ci-cache-s5cmd-pzstd
         with:
           command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Download android emulator
         timeout-minutes: 5
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@perf/ci-cache-s5cmd-pzstd
         id: detox-avd
         with:
           key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
@@ -560,7 +550,7 @@ jobs:
           script: ./tools/scripts/wait_emulator_idle.sh
 
       - name: Cache android emulator
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@perf/ci-cache-s5cmd-pzstd
         if: steps.detox-avd.outputs.cache-hit != 'true'
         with:
           path: |
@@ -575,7 +565,7 @@ jobs:
           region: auto
 
       - name: Duplicate AVDs for parallel testing
-        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@perf/ci-cache-s5cmd-pzstd
         with:
           source_avd_name: ${{ env.AVD_NAME }}
           target_suffixes: "_2,_3"
@@ -612,7 +602,7 @@ jobs:
 
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@perf/ci-cache-s5cmd-pzstd
         with:
           coinapps_path: ${{ env.COINAPPS }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
@@ -641,7 +631,7 @@ jobs:
           use-fallback: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@perf/ci-cache-s5cmd-pzstd
         with:
           enable_broadcast: false
           build_type: testing
@@ -649,7 +639,7 @@ jobs:
       - name: Get smoke test files
         id: smoke-files
         run: |
-          # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
+          # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @perf/ci-cache-s5cmd-pzstd-pinned
           # reusable keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
           SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
           [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
@@ -719,10 +709,10 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@perf/ci-cache-s5cmd-pzstd
         with:
-          skip-pod-cache: "true"
-          skip-pnpm-cache: "true"
+          skip-pod-cache: "false"
+          skip-pnpm-cache: "false"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -733,7 +723,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@perf/ci-cache-s5cmd-pzstd
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -748,7 +738,7 @@ jobs:
 
       # Warm simulators before Detox; worker_count matches the iOS Simulator … N names in detox.config.js.
       - name: Boot iOS Simulators in Background
-        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@perf/ci-cache-s5cmd-pzstd
         with:
           worker_count: 3
           artifacts_root: e2e/mobile/artifacts
@@ -758,7 +748,7 @@ jobs:
         working-directory: apps/ledger-live-mobile
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@perf/ci-cache-s5cmd-pzstd
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_native_key }}
@@ -769,7 +759,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@perf/ci-cache-s5cmd-pzstd
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_js_key }}
@@ -785,7 +775,7 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
       - name: Build e2e dependencies (CLI + libs)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@perf/ci-cache-s5cmd-pzstd
         with:
           command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
           disable_cache: ${{ inputs.disable-nx-cache || false }}
@@ -813,7 +803,7 @@ jobs:
           use-fallback: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@perf/ci-cache-s5cmd-pzstd
         with:
           enable_broadcast: false
           build_type: testing
@@ -821,7 +811,7 @@ jobs:
       - name: Get smoke test files
         id: smoke-files
         run: |
-          # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
+          # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @perf/ci-cache-s5cmd-pzstd-pinned
           # reusable keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
           SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
           [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
@@ -879,7 +869,7 @@ jobs:
 
       - name: Publish report on Allure Server
         id: upload
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@perf/ci-cache-s5cmd-pzstd
         with:
           platform: mobile-ui-e2e-smoke
           login: ${{ vars.ALLURE_USERNAME }}
@@ -909,7 +899,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@perf/ci-cache-s5cmd-pzstd
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"
@@ -922,7 +912,7 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@perf/ci-cache-s5cmd-pzstd
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -939,7 +929,7 @@ jobs:
           echo "pod-lockfile-validated=true" > pod-lockfile-cache.txt
 
       - name: Write cache
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@perf/ci-cache-s5cmd-pzstd
         with:
           path: pod-lockfile-cache.txt
           key: ${{ needs.determine-builds.outputs.pod_check_key }}
