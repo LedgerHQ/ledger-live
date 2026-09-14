@@ -1,16 +1,10 @@
 import { Box, Button, Text, Tag } from "@ledgerhq/lumen-ui-rnative";
 import type { PayCardAuthProps } from "../types";
 import { Section } from "../components/Section/Section";
+import { maskToken } from "./maskToken";
 
 const ROW = { flexDirection: "row", flexWrap: "wrap", gap: 8, alignItems: "center" } as const;
 const FIELD = { flexDirection: "row", gap: 4, alignItems: "center" } as const;
-
-const VISIBLE_TOKEN_CHARS = 9;
-
-function mask(token: string): string {
-  const visibleLength = Math.min(VISIBLE_TOKEN_CHARS, Math.max(0, token.length - 1));
-  return `${token.slice(0, visibleLength)}…`;
-}
 
 function Field({ label, value }: { readonly label: string; readonly value: string }) {
   return (
@@ -47,8 +41,8 @@ function SessionStatusRow({
     return (
       <Box style={ROW}>
         <Tag size="sm" appearance="success" label="Live" />
-        <Field label="access" value={mask(session.accessToken)} />
-        <Field label="refresh" value={mask(session.refreshToken)} />
+        <Field label="access" value={maskToken(session.accessToken)} />
+        <Field label="refresh" value={maskToken(session.refreshToken)} />
       </Box>
     );
   }

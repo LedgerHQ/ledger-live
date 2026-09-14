@@ -1,11 +1,25 @@
-import React from "react";
+import React, { type PropsWithChildren } from "react";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
+import { cardApiWrapper, listenToCardApi } from "@support/msw-features-flow-pay-card";
 import { CARD_COPY, I18nWrapper, MORE_COPY } from "../../__tests__/i18nWrapper";
+import { signedInCardApiHandlers } from "./signedInCardApi";
 import { buildMoreViewProps } from "../More/fixtures";
 import type { CardDetailsRoute } from "./Scenes/navigation";
 import type { CardDetailsSceneProps } from "./Scenes/types";
 import type { ConfirmState, FreezeViewModel } from "../../types";
 import { CardDetailsSheet } from "./CardDetailsSheet";
+
+listenToCardApi(signedInCardApiHandlers);
+
+const StoreWrapper = cardApiWrapper({ signedIn: true });
+
+function Wrapper({ children }: PropsWithChildren) {
+  return (
+    <StoreWrapper>
+      <I18nWrapper>{children}</I18nWrapper>
+    </StoreWrapper>
+  );
+}
 
 type SheetOverrides = Readonly<{
   isOpen?: boolean;
@@ -43,7 +57,7 @@ function renderSheet(overrides: SheetOverrides = {}) {
   const sheet = (props: SheetOverrides) => (
     <CardDetailsSheet isOpen={props.isOpen ?? true} scene={buildScene(props)} onClose={onClose} />
   );
-  const view = render(sheet(overrides), { wrapper: I18nWrapper });
+  const view = render(sheet(overrides), { wrapper: Wrapper });
 
   return {
     ...view,

@@ -5,7 +5,13 @@ import { CardArtwork, CardDetails } from "@features/flow-pay-card-details";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import type { CardViewProps } from "./Card.types";
 
-export function CardView({ title, login, displayState, cardVisual }: CardViewProps) {
+export function CardView({
+  title,
+  login,
+  displayState,
+  cardVisual,
+  formatTransactionAmount,
+}: CardViewProps) {
   return (
     <Box lx={{ flex: 1, gap: "s16" }}>
       {displayState === "signedIn" ? (
@@ -16,7 +22,7 @@ export function CardView({ title, login, displayState, cardVisual }: CardViewPro
             </SubheaderRow>
           </Subheader>
           <CardOnboardingWidget />
-          <CardDetails cardVisual={cardVisual} />
+          <CardDetails cardVisual={cardVisual} formatTransactionAmount={formatTransactionAmount} />
         </>
       ) : (
         <>

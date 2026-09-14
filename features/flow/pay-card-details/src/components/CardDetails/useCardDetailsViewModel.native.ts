@@ -6,7 +6,10 @@ import { useCardDetailsNavigation } from "./Scenes/navigation";
 import type { CardDetailsSceneProps } from "./Scenes/types";
 import type { CardDetailsProps, CardDetailsViewProps } from "../../types";
 
-export function useCardDetailsViewModel({ cardVisual }: CardDetailsProps): CardDetailsViewProps {
+export function useCardDetailsViewModel({
+  cardVisual,
+  formatTransactionAmount,
+}: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { route, goTo, goBack } = useCardDetailsNavigation();
@@ -36,7 +39,14 @@ export function useCardDetailsViewModel({ cardVisual }: CardDetailsProps): CardD
 
   const scene: CardDetailsSceneProps = {
     route,
-    overview: { cardVisual, freezeViewModel, moreViewModel, onFreezePress, onMorePress },
+    overview: {
+      cardVisual,
+      freezeViewModel,
+      moreViewModel,
+      onFreezePress,
+      onMorePress,
+      formatTransactionAmount,
+    },
     freeze: { viewModel: freezeViewModel },
     more: moreViewModel ? { viewModel: moreViewModel } : null,
   };

@@ -15,6 +15,7 @@ import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 import { BalanceScreen } from "../components/Balance/Balance";
+import { AuthSection } from "./AuthSection";
 
 export function PayCard(props: Readonly<PayCardToolProps>) {
   const {
@@ -33,6 +34,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     resetPayCardLoginIntroSeen,
     onNavigateToPaySuccess,
     onNavigateToSendSuccess,
+    auth,
   } = props;
   const hasQuickActions = Boolean(
     onNavigateToPortfolio ||
@@ -48,6 +50,12 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
 
   return (
     <div className="flex flex-col overflow-y-auto">
+      {auth ? (
+        <>
+          <AuthSection auth={auth} />
+          <Divider />
+        </>
+      ) : null}
       <Section title="Card Debug">
         <ListItem
           onClick={() => {
