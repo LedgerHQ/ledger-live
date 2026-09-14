@@ -42,8 +42,7 @@ export const SignatureScreen = () => {
     return null;
   }
 
-  const isZcash = getAccountCurrency(account).id === "zcash";
-  const zcashUnit = isZcash ? getAccountCurrency(account).units[0] : undefined;
+  const currency = getAccountCurrency(account);
 
   return (
     <DialogBody className="py-16">
@@ -59,18 +58,18 @@ export const SignatureScreen = () => {
             if (!device) return null;
             return <LockedDevicePrompt deviceModelId={device.modelId} onRetry={onRetry} />;
           }}
-          renderDeviceSignatureRequested={({ device }) =>
-            isZcash && zcashUnit ? (
-              <ZcashTransactionConfirm
-                device={device}
-                transaction={transaction}
-                unit={zcashUnit}
-                onShown={onDeviceConfirmationShown}
-              />
-            ) : (
-              <SimplifiedTransactionConfirm device={device} onShown={onDeviceConfirmationShown} />
-            )
-          }
+          renderDeviceSignatureRequested={({ device }) => (
+            <ZcashTransactionConfirm
+              device={device}
+              transaction={transaction}
+              unit={currency.units[0]}
+              currencyId={currency.id}
+              onShown={onDeviceConfirmationShown}
+              fallback={
+                <SimplifiedTransactionConfirm device={device} onShown={onDeviceConfirmationShown} />
+              }
+            />
+          )}
         />
       </div>
     </DialogBody>

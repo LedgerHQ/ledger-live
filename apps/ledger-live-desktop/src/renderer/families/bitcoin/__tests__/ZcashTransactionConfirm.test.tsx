@@ -1,7 +1,9 @@
 import React from "react";
 import { BigNumber } from "bignumber.js";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { render, screen } from "tests/testSetup";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Device } from "@ledgerhq/types-devices";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { ZcashTransactionConfirm } from "../ZcashTransactionConfirm";
 
 jest.mock("~/renderer/animations", () => ({ __esModule: true, default: () => null }));
@@ -27,7 +29,7 @@ jest.mock("~/renderer/components/FormattedVal", () => ({
   ),
 }));
 
-const mockDevice = {
+const mockDevice: Device = {
   deviceId: "mock-device-id",
   modelId: DeviceModelId.nanoS,
   wired: true,
@@ -39,36 +41,75 @@ const TRANSPARENT_RECIPIENT = "t1ZcashTransparentAddressXXXXXXXXXXXXXXXX";
 const SHIELDED_RECIPIENT =
   "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
 
+const FALLBACK_TEST_ID = "fallback-confirm";
+const fallback = <div data-testid={FALLBACK_TEST_ID} />;
+
+const buildTransaction = (recipient: string, amount = new BigNumber(1_000_000)) =>
+  ({ recipient, amount }) as Transaction;
+
+type RenderOptions = {
+  amount?: BigNumber;
+  currencyId?: string;
+  shieldedEnabled?: boolean;
+  device?: Device | null;
+  onShown?: () => void;
+};
+
 const renderConfirm = (
-  recipient: string | undefined,
-  amount = new BigNumber(1_000_000),
-  onShown = jest.fn(),
+  recipient: string,
+  {
+    amount = new BigNumber(1_000_000),
+    currencyId = "zcash",
+    shieldedEnabled = true,
+    device = mockDevice,
+    onShown = jest.fn(),
+  }: RenderOptions = {},
 ) =>
   render(
     <ZcashTransactionConfirm
-      device={mockDevice}
-      transaction={{ recipient, amount }}
+      device={device}
+      transaction={buildTransaction(recipient, amount)}
       unit={mockUnit}
+      currencyId={currencyId}
       onShown={onShown}
+      fallback={fallback}
     />,
+    { initialState: withFlagOverrides({ zcashShielded: { enabled: shieldedEnabled } }) },
   );
 
 describe("ZcashTransactionConfirm", () => {
+  it("renders the fallback when the zcashShielded flag is off", () => {
+    renderConfirm(TRANSPARENT_RECIPIENT, { shieldedEnabled: false });
+    expect(screen.getByTestId(FALLBACK_TEST_ID)).toBeVisible();
+    expect(screen.queryByTestId("send-signature-prompt")).not.toBeInTheDocument();
+  });
+
+  it("renders the fallback for a non-Zcash currency even when the flag is on", () => {
+    renderConfirm(TRANSPARENT_RECIPIENT, { currencyId: "bitcoin" });
+    expect(screen.getByTestId(FALLBACK_TEST_ID)).toBeVisible();
+    expect(screen.queryByTestId("send-signature-prompt")).not.toBeInTheDocument();
+  });
+
+  it("does not call onShown when the flag is off — the fallback owns its own onShown", () => {
+    const onShown = jest.fn();
+    renderConfirm(TRANSPARENT_RECIPIENT, { shieldedEnabled: false, onShown });
+    expect(onShown).not.toHaveBeenCalled();
+  });
+
   it("renders nothing when device is null", () => {
-    const { container } = render(
-      <ZcashTransactionConfirm device={null} transaction={{}} unit={mockUnit} />,
-    );
+    const { container } = renderConfirm(TRANSPARENT_RECIPIENT, { device: null });
     expect(container).toBeEmptyDOMElement();
   });
 
   it("calls onShown exactly once when a device is provided", () => {
     const onShown = jest.fn();
-    renderConfirm(TRANSPARENT_RECIPIENT, new BigNumber(500_000), onShown);
+    renderConfirm(TRANSPARENT_RECIPIENT, { onShown });
     expect(onShown).toHaveBeenCalledTimes(1);
   });
 
   it("transparent recipient: renders the full address in data-testid=zcash-confirm-transparent-address", () => {
     renderConfirm(TRANSPARENT_RECIPIENT);
+    expect(screen.getByTestId("zcash-confirm-transparent-address")).toBeVisible();
     expect(screen.getByTestId("zcash-confirm-transparent-address")).toHaveTextContent(
       TRANSPARENT_RECIPIENT,
     );
@@ -76,8 +117,8 @@ describe("ZcashTransactionConfirm", () => {
 
   it("shielded recipient: renders private-transaction label and amount", () => {
     renderConfirm(SHIELDED_RECIPIENT);
-    expect(screen.getByTestId("zcash-private-transaction-label")).toBeInTheDocument();
-    expect(screen.getByTestId("zcash-confirm-amount")).toBeInTheDocument();
+    expect(screen.getByTestId("zcash-private-transaction-label")).toBeVisible();
+    expect(screen.getByTestId("zcash-confirm-amount")).toBeVisible();
   });
 
   it("shielded recipient: does NOT render the address", () => {

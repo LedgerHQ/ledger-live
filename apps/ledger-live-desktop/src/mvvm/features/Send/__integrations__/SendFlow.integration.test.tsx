@@ -717,7 +717,10 @@ describe("Send Flow Integration", () => {
       ),
     };
 
-    const renderZcashSendFlow = (account: ReturnType<typeof createZcashAccount>) =>
+    const renderZcashSendFlow = (
+      account: ReturnType<typeof createZcashAccount>,
+      shieldedEnabled = true,
+    ) =>
       render(<SendWorkflow isOpen onClose={jest.fn()} params={{ account: account as never }} />, {
         initialState: {
           accounts: [account],
@@ -726,7 +729,7 @@ describe("Send Flow Integration", () => {
             counterValueExchange: "BINANCE",
             currenciesSettings: {},
           },
-          ...withFlagOverrides({ zcashShielded: { enabled: true } }),
+          ...withFlagOverrides({ zcashShielded: { enabled: shieldedEnabled } }),
         },
       });
 
@@ -743,6 +746,17 @@ describe("Send Flow Integration", () => {
       await user.click(screen.getByTestId("balance-type-private"));
 
       expect(await screen.findByTestId("zcash-sync-banner-running")).toBeVisible();
+    });
+
+    it("hides sync banner when the zcashShielded flag is off, even with private sender and a running sync", async () => {
+      const account = createZcashAccount({ syncState: "running", progress: 50 });
+      const { user } = renderZcashSendFlow(account, false);
+
+      await screen.findByTestId("balance-type-screen");
+      await user.click(screen.getByTestId("balance-type-private"));
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("zcash-sync-banner-running")).not.toBeInTheDocument();
     });
 
     it("hides sync banner when sender is public (transparent pool)", async () => {

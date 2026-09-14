@@ -1,5 +1,9 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
+import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { ZcashSyncNotice } from "../ZcashSyncNotice";
 
@@ -7,54 +11,38 @@ jest.mock("../../../context/SendFlowContext", () => ({
   useSendFlowData: jest.fn(),
 }));
 
-jest.mock("~/renderer/families/bitcoin/ZcashSyncStateBanner", () => ({
-  __esModule: true,
-  default: ({
-    account,
-    sender,
-  }: {
-    account: { privateInfo?: { syncState?: string } };
-    sender?: string;
-  }) => {
-    if (sender !== "private") return null;
-    const syncState = account?.privateInfo?.syncState;
-    if (!syncState || syncState === "complete") return null;
-    if (syncState === "running")
-      return React.createElement("div", { "data-testid": "zcash-sync-banner-running" });
-    if (syncState === "stopped" || syncState === "disabled")
-      return React.createElement("div", { "data-testid": "zcash-sync-banner-stopped" });
-    if (syncState === "outdated")
-      return React.createElement("div", { "data-testid": "zcash-sync-banner-outdated" });
-    return null;
-  },
+// ZcashSyncNotice renders the real ZcashSyncStateBanner (not a mock) so this test also exercises
+// that component's own zcashShielded-flag gating; these two mocks are its own dependencies.
+jest.mock("@ledgerhq/live-common/bridge/index", () => ({
+  getAccountBridge: jest.fn(),
+}));
+jest.mock("~/renderer/families/bitcoin/ZCashExportKeyFlowModal/sync", () => ({
+  syncStateUpdater: jest.fn(() => ({ type: "test/syncStateUpdater" })),
 }));
 
 const mockUseSendFlowData = jest.mocked(useSendFlowData);
 
-const buildState = (
-  currencyId: string,
-  sender: "public" | "private" | undefined,
-  syncState?: string,
-) =>
+const baseAccount = createFixtureAccount();
+
+const buildZcashAccount = (
+  privateInfoOverrides: Partial<typeof DEFAULT_ZCASH_PRIVATE_INFO> = {},
+): ZcashAccount =>
+  ({
+    ...baseAccount,
+    currency: { id: "zcash" } as CryptoCurrency,
+    privateInfo: {
+      ...DEFAULT_ZCASH_PRIVATE_INFO,
+      ...privateInfoOverrides,
+    },
+  }) as unknown as ZcashAccount;
+
+const buildState = (account: unknown, sender: "public" | "private" | undefined) =>
   ({
     state: {
       account: {
-        account: {
-          id: "mock-account-id",
-          type: "Account",
-          currency: { id: currencyId },
-          privateInfo:
-            syncState !== undefined
-              ? {
-                  syncState,
-                  progress: 50,
-                  estimatedTimeRemaining: { hours: 0, minutes: 5 },
-                  lastSyncError: null,
-                }
-              : undefined,
-        },
+        account,
         parentAccount: null,
-        currency: { id: currencyId },
+        currency: (account as { currency?: unknown } | null)?.currency,
       },
       transaction: {
         transaction: sender !== undefined ? { family: "bitcoin", sender } : { family: "bitcoin" },
@@ -67,40 +55,59 @@ const buildState = (
     isRecipientAddressComplete: false,
   }) as never;
 
+const renderNotice = (
+  account: unknown,
+  sender: "public" | "private" | undefined,
+  shieldedEnabled = true,
+) => {
+  mockUseSendFlowData.mockReturnValue(buildState(account, sender));
+  return render(<ZcashSyncNotice />, {
+    initialState: withFlagOverrides({ zcashShielded: { enabled: shieldedEnabled } }),
+  });
+};
+
 describe("ZcashSyncNotice", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("renders nothing for a non-Zcash account", () => {
-    mockUseSendFlowData.mockReturnValue(buildState("ethereum", "private", "running"));
-    const { container } = render(<ZcashSyncNotice />);
+    const nonZcashAccount = { ...baseAccount, currency: { id: "ethereum" } as CryptoCurrency };
+    const { container } = renderNotice(nonZcashAccount, "private");
     expect(container).toBeEmptyDOMElement();
   });
 
   it("renders nothing when sender is public", () => {
-    mockUseSendFlowData.mockReturnValue(buildState("zcash", "public", "running"));
-    const { container } = render(<ZcashSyncNotice />);
+    const { container } = renderNotice(buildZcashAccount({ syncState: "running" }), "public");
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders running banner when Zcash + private sender + syncState=running", () => {
-    mockUseSendFlowData.mockReturnValue(buildState("zcash", "private", "running"));
-    render(<ZcashSyncNotice />);
-    expect(screen.getByTestId("zcash-sync-banner-running")).toBeInTheDocument();
-  });
-
-  it("renders stopped banner when Zcash + private sender + syncState=stopped", () => {
-    mockUseSendFlowData.mockReturnValue(buildState("zcash", "private", "stopped"));
-    render(<ZcashSyncNotice />);
-    expect(screen.getByTestId("zcash-sync-banner-stopped")).toBeInTheDocument();
-  });
-
-  it("renders nothing when Zcash + private sender + syncState=complete", () => {
-    mockUseSendFlowData.mockReturnValue(buildState("zcash", "private", "complete"));
-    const { container } = render(<ZcashSyncNotice />);
+  it("renders nothing when the zcashShielded flag is off, even with a private sender and a stalled sync", () => {
+    const { container } = renderNotice(
+      buildZcashAccount({ syncState: "stopped" }),
+      "private",
+      false,
+    );
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders stopped banner when Zcash + private sender + syncState=disabled", () => {
-    mockUseSendFlowData.mockReturnValue(buildState("zcash", "private", "disabled"));
-    render(<ZcashSyncNotice />);
-    expect(screen.getByTestId("zcash-sync-banner-stopped")).toBeInTheDocument();
+  it("renders the running banner for Zcash + private sender + syncState=running", () => {
+    renderNotice(buildZcashAccount({ syncState: "running", progress: 50 }), "private");
+    expect(screen.getByTestId("zcash-sync-banner-running")).toBeVisible();
+  });
+
+  it("renders the stopped banner for Zcash + private sender + syncState=stopped", () => {
+    renderNotice(buildZcashAccount({ syncState: "stopped" }), "private");
+    expect(screen.getByTestId("zcash-sync-banner-stopped")).toBeVisible();
+  });
+
+  it("renders nothing for Zcash + private sender + syncState=complete", () => {
+    const { container } = renderNotice(buildZcashAccount({ syncState: "complete" }), "private");
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders the stopped banner for Zcash + private sender + syncState=disabled (default)", () => {
+    renderNotice(buildZcashAccount(), "private");
+    expect(screen.getByTestId("zcash-sync-banner-stopped")).toBeVisible();
   });
 });
