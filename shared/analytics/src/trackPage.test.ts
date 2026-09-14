@@ -29,16 +29,21 @@ describe("trackPage", () => {
   it("delegates to trackEvent when tracking is enabled", () => {
     register();
 
-    trackPage("Market");
+    trackPage({ category: "Market" });
 
-    expect(trackEvent).toHaveBeenCalledWith("page", "Page Market", {}, { mandatory: false });
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "page",
+      eventName: "Page Market",
+      props: {},
+      mandatory: false,
+    });
   });
 
   it("does not delegate when tracking is disabled", () => {
     register();
     setEnabledFn(() => false);
 
-    trackPage("Market");
+    trackPage({ category: "Market" });
 
     expect(trackEvent).not.toHaveBeenCalled();
   });
@@ -47,58 +52,73 @@ describe("trackPage", () => {
     register();
     setEnabledFn(() => false);
 
-    trackPage("Market", null, null, { mandatory: true });
+    trackPage({ category: "Market" }, { mandatory: true });
 
-    expect(trackEvent).toHaveBeenCalledWith("page", "Page Market", {}, { mandatory: true });
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "page",
+      eventName: "Page Market",
+      props: {},
+      mandatory: true,
+    });
   });
 
   it("builds the event name from category only", () => {
     register();
 
-    trackPage("Market");
+    trackPage({ category: "Market" });
 
-    expect(trackEvent).toHaveBeenCalledWith("page", "Page Market", {}, { mandatory: false });
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "page",
+      eventName: "Page Market",
+      props: {},
+      mandatory: false,
+    });
   });
 
   it("builds the event name from category and name", () => {
     register();
 
-    trackPage("Modal send", "step recipient");
+    trackPage({ category: "Modal send", name: "step recipient" });
 
-    expect(trackEvent).toHaveBeenCalledWith(
-      "page",
-      "Page Modal send step recipient",
-      {},
-      { mandatory: false },
-    );
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "page",
+      eventName: "Page Modal send step recipient",
+      props: {},
+      mandatory: false,
+    });
   });
 
   it("builds the event name from name only", () => {
     register();
 
-    trackPage(undefined, "step recipient");
+    trackPage({ name: "step recipient" });
 
-    expect(trackEvent).toHaveBeenCalledWith(
-      "page",
-      "Page step recipient",
-      {},
-      { mandatory: false },
-    );
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "page",
+      eventName: "Page step recipient",
+      props: {},
+      mandatory: false,
+    });
   });
 
   it("builds the event name when category and name are empty", () => {
     register();
 
-    trackPage();
+    trackPage({});
 
-    expect(trackEvent).toHaveBeenCalledWith("page", "Page ", {}, { mandatory: false });
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "page",
+      eventName: "Page ",
+      props: {},
+      mandatory: false,
+    });
   });
 
   it("updates previous and current route when updateRoutes and refreshSource are true", () => {
     register();
     currentRouteNameRef.current = "Page Portfolio";
 
-    trackPage("Market", null, null, { updateRoutes: true, refreshSource: true });
+    trackPage({ category: "Market" }, { updateRoutes: true, refreshSource: true });
 
     expect(getPreviousTrackingPage()).toBe("Page Portfolio");
     expect(getCurrentTrackingPage()).toBe("Market");
@@ -108,7 +128,7 @@ describe("trackPage", () => {
     register();
     currentRouteNameRef.current = "Page Portfolio";
 
-    trackPage("Market", null, null, { updateRoutes: true });
+    trackPage({ category: "Market" }, { updateRoutes: true });
 
     expect(getPreviousTrackingPage()).toBe("Page Portfolio");
     expect(getCurrentTrackingPage()).toBe("Page Portfolio");
@@ -118,43 +138,48 @@ describe("trackPage", () => {
     register();
     previousRouteNameRef.current = "Page Portfolio";
 
-    trackPage("Market");
+    trackPage({ category: "Market" });
 
-    expect(trackEvent).toHaveBeenCalledWith(
-      "page",
-      "Page Market",
-      { source: "Page Portfolio" },
-      { mandatory: false },
-    );
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "page",
+      eventName: "Page Market",
+      props: { source: "Page Portfolio" },
+      mandatory: false,
+    });
   });
 
   it("omits source when the previous tracking page is unknown", () => {
     register();
 
-    trackPage("Market");
+    trackPage({ category: "Market" });
 
-    expect(trackEvent).toHaveBeenCalledWith("page", "Page Market", {}, { mandatory: false });
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "page",
+      eventName: "Page Market",
+      props: {},
+      mandatory: false,
+    });
   });
 
   it("allows caller to override source prop", () => {
     register();
     previousRouteNameRef.current = "Page Portfolio";
 
-    trackPage("Market", null, { source: "Custom source" });
+    trackPage({ category: "Market", props: { source: "Custom source" } });
 
-    expect(trackEvent).toHaveBeenCalledWith(
-      "page",
-      "Page Market",
-      { source: "Custom source" },
-      { mandatory: false },
-    );
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "page",
+      eventName: "Page Market",
+      props: { source: "Custom source" },
+      mandatory: false,
+    });
   });
 
   it("skips duplicate page events when avoidDuplicates is true", () => {
     register();
 
-    trackPage("Market", null, null, { avoidDuplicates: true });
-    trackPage("Market", null, null, { avoidDuplicates: true });
+    trackPage({ category: "Market" }, { avoidDuplicates: true });
+    trackPage({ category: "Market" }, { avoidDuplicates: true });
 
     expect(trackEvent).toHaveBeenCalledTimes(1);
   });
@@ -162,8 +187,8 @@ describe("trackPage", () => {
   it("records duplicate page events when avoidDuplicates is false", () => {
     register();
 
-    trackPage("Market");
-    trackPage("Market");
+    trackPage({ category: "Market" });
+    trackPage({ category: "Market" });
 
     expect(trackEvent).toHaveBeenCalledTimes(2);
   });
@@ -179,7 +204,7 @@ describe("trackPage", () => {
     );
 
     let settled = false;
-    const pending = trackPage("Market");
+    const pending = trackPage({ category: "Market" });
     expect(pending).toBeInstanceOf(Promise);
 
     void pending?.then(() => {
@@ -197,7 +222,7 @@ describe("trackPage", () => {
     register();
     setEnabledFn(() => false);
 
-    const result = trackPage("Market");
+    const result = trackPage({ category: "Market" });
 
     expect(result).toBeUndefined();
     expect(trackEvent).not.toHaveBeenCalled();

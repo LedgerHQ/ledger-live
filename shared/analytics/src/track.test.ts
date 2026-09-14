@@ -23,12 +23,12 @@ describe("track", () => {
 
     track("Analytics Event", { event: "props" });
 
-    expect(trackEvent).toHaveBeenCalledWith(
-      "track",
-      "Analytics Event",
-      { event: "props" },
-      { mandatory: false },
-    );
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "track",
+      eventName: "Analytics Event",
+      props: { event: "props" },
+      mandatory: false,
+    });
   });
 
   it("does not delegate when tracking is disabled", () => {
@@ -46,12 +46,12 @@ describe("track", () => {
 
     track("Analytics Consent", { flow: "onboarding" }, { mandatory: true });
 
-    expect(trackEvent).toHaveBeenCalledWith(
-      "track",
-      "Analytics Consent",
-      { flow: "onboarding" },
-      { mandatory: true },
-    );
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "track",
+      eventName: "Analytics Consent",
+      props: { flow: "onboarding" },
+      mandatory: true,
+    });
   });
 
   it("returns a promise that settles when trackEvent resolves", async () => {
@@ -95,12 +95,12 @@ describe("track", () => {
 
     track("Analytics Event", { event: "props" });
 
-    expect(trackEvent).toHaveBeenCalledWith(
-      "track",
-      "Analytics Event",
-      { page: "Page Market", event: "props" },
-      { mandatory: false },
-    );
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "track",
+      eventName: "Analytics Event",
+      props: { page: "Page Market", event: "props" },
+      mandatory: false,
+    });
   });
 
   it("allows caller to override page prop", () => {
@@ -109,11 +109,11 @@ describe("track", () => {
 
     track("Analytics Event", { page: "Page from event", event: "props" });
 
-    expect(trackEvent).toHaveBeenCalledWith(
-      "track",
-      "Analytics Event",
-      { page: "Page from event", event: "props" },
-      { mandatory: false },
-    );
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "track",
+      eventName: "Analytics Event",
+      props: { page: "Page from event", event: "props" },
+      mandatory: false,
+    });
   });
 });

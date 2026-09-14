@@ -1,14 +1,16 @@
 import { applyPropsFilter, resolveExtraProps } from "../registry";
-import type { EventType, Props, TrackOptions } from "../types";
+import type { EventType, Props } from "../types";
 import { deliver } from "./deliver";
 import { publishEvent } from "./eventLog";
 
-export async function trackEvent(
-  kind: EventType,
-  eventName: string,
-  props: Props,
-  { mandatory = false }: TrackOptions = {},
-) {
+type TrackEvent = {
+  kind: EventType;
+  eventName: string;
+  props: Props;
+  mandatory?: boolean;
+};
+
+export async function trackEvent({ kind, eventName, props, mandatory = false }: TrackEvent) {
   let filteredProps: Props;
 
   try {

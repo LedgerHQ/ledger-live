@@ -7,9 +7,12 @@
  * ```ts
  * import { trackPage } from "@shared/analytics";
  *
- * trackPage("Market");
- * trackPage("Modal send", "step recipient", { flow: "send" }, { updateRoutes: true });
- * trackPage("Mandatory Page", null, null, { mandatory: true });
+ * trackPage({ category: "Market" });
+ * trackPage(
+ *   { category: "Modal send", name: "step recipient", props: { flow: "send" } },
+ *   { updateRoutes: true },
+ * );
+ * trackPage({ category: "Mandatory Page" }, { mandatory: true });
  * ```
  */
 
@@ -23,12 +26,10 @@ import {
   setLastPageEventName,
   shouldSkipDuplicatePageEvent,
 } from "./internals/trackPage.internals";
-import type { Props, TrackPageOptions } from "./types";
+import type { TrackPageOptions, TrackPagePayload } from "./types";
 
 export function trackPage(
-  category?: string,
-  name?: string | null,
-  props?: Error | Props | null,
+  { category, name, props }: TrackPagePayload,
   {
     mandatory = false,
     updateRoutes = false,
@@ -42,11 +43,11 @@ export function trackPage(
 
   const fullScreenName = buildFullScreenName(category, name);
   const eventName = buildPageEventName(fullScreenName);
+  const shouldSkip = shouldSkipDuplicatePageEvent(eventName, avoidDuplicates);
 
-  if (shouldSkipDuplicatePageEvent(eventName, avoidDuplicates)) {
+  if (shouldSkip) {
     return;
   }
-
   setLastPageEventName(eventName);
 
   if (updateRoutes) {
@@ -60,5 +61,5 @@ export function trackPage(
   const source = getPreviousTrackingPage();
   const eventProps = source ? { source, ...normalizedProps } : normalizedProps;
 
-  return trackEvent("page", eventName, eventProps, { mandatory });
+  return trackEvent({ kind: "page", eventName, props: eventProps, mandatory });
 }

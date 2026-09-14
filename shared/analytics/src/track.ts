@@ -27,7 +27,10 @@ export function track(
     const normalizedProps = normalizeProps(props);
     const page = getCurrentTrackingPage();
 
-    return trackEvent("track", event, page ? { page, ...normalizedProps } : normalizedProps, {
+    return trackEvent({
+      kind: "track",
+      eventName: event,
+      props: page ? { page, ...normalizedProps } : normalizedProps,
       mandatory,
     });
   }
