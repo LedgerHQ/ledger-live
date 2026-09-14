@@ -3,6 +3,7 @@ import type { RecordPickingStrategy, TransactionType } from "./logic";
 
 export type AleoConfig = {
   networkType: "mainnet" | "testnet";
+  defaultValidator: string | null;
   apiUrls: {
     node: string;
     sdk: string;

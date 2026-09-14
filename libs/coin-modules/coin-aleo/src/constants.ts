@@ -92,9 +92,7 @@ export const PROGRESS_THROTTLE_MIN_STEP = 5;
 // Root transition + up to 30 nested calls, within the device limit of n < 32 per signing session.
 export const MAX_SIGNATURES_PER_TRANSACTION = 31;
 
-// Minimum amount (in microcredits) required to bond/stake to a validator.
-// 1 ALEO = 1_000_000 microcredits (ALEO magnitude is 6).
-export const MIN_BOND_AMOUNT = 1_000_000;
+export const MIN_BOND_AMOUNT_MICROCREDITS = 1_000_000;
 
 // The maximum number of private records that can be included in a single transaction.
 export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;

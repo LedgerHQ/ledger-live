@@ -26,6 +26,7 @@ type Props = {
   testID?: string;
   fiatTestID?: string;
   transferFeeCalculated?: TransferFeeCalculated;
+  errorField?: "title" | "description";
 };
 export default function AmountInput({
   onChange,
@@ -37,6 +38,7 @@ export default function AmountInput({
   testID,
   fiatTestID,
   transferFeeCalculated,
+  errorField = "title",
 }: Props) {
   const { t } = useTranslation();
   const fiatCurrency = useSelector(counterValueCurrencySelector);
@@ -96,7 +98,7 @@ export default function AmountInput({
           color={error ? "alert" : "orange"}
           testID="send-amount-error"
         >
-          <TranslatedError error={error || warning} />
+          <TranslatedError error={error || warning} field={errorField} />
         </LText>
       </View>
       <CounterValuesSeparator />
