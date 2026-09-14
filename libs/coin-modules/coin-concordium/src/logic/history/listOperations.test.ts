@@ -233,10 +233,20 @@ describe("parseTransaction, PLT", () => {
     expect(parseTransaction(withCost, VALID_ADDRESS)!.fee).toBe("0");
   });
 
-  it("decodes a PLT memo, which is CBOR exactly as a CCD memo is", () => {
-    const tx = { ...outgoingTx, details: { ...outgoingTx.details, memo: "78ab31" } };
+  // The proxy unwraps the CBOR byte string the chain holds a PLT memo in, so
+  // these bytes are the memo. The CCD decoder read the first one as a length
+  // header and dropped it.
+  it("decodes a PLT memo from the raw bytes the proxy reports", () => {
+    const memo = Buffer.from("send with memo", "utf8").toString("hex");
+    const tx = { ...outgoingTx, details: { ...outgoingTx.details, memo } };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)!.memo).toBe("decoded memo");
+    expect(parseTransaction(tx, VALID_ADDRESS)!.memo).toBe("send with memo");
+  });
+
+  it("leaves the memo out when the bytes are not valid UTF-8", () => {
+    const tx = { ...outgoingTx, details: { ...outgoingTx.details, memo: "fffefd" } };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)!.memo).toBeUndefined();
   });
 
   it("returns null when the address is neither source nor destination", () => {
