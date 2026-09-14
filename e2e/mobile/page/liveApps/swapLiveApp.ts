@@ -136,12 +136,14 @@ export default class SwapLiveAppPage {
     await typeTextByWebTestId(this.fromAmountInput, amount);
   }
 
-  // An exact testid skips the disabled CTA, which the prefix match would tap.
-  // The app drops the CTA once it has quotes, so waitForQuotes stays the real gate.
+  // Take any suffix, but never the disabled CTA.
+  // The app drops the CTA once it has quotes.
   @Step("Tap get quotes button")
   async tapGetQuotesButton() {
     await getValueByWebTestId(this.toAmountInput);
-    const cta = getWebElementByCssSelector(`[data-testid='${this.getQuotesButton}']`);
+    const cta = getWebElementByCssSelector(
+      `[data-testid^='${this.getQuotesButton}']:not([data-testid^='${this.quotesButtonDisabled}'])`,
+    );
     if (await waitWebElement(cta, DEFAULT_TIMEOUT, false)) {
       await tapWebElementByElement(cta);
     }
