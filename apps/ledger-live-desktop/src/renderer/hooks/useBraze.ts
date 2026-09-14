@@ -3,7 +3,6 @@ import { ClassicCard } from "@braze/web-sdk";
 import { parseOrder, sanitizeExtras } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { appendDeeplinkLocationIfDefined } from "@ledgerhq/live-common/deeplinks/index";
 import { ALWAYS_ON_CATEGORY_ID } from "LLD/features/DynamicContent/utils/constants";
-import type { AppDispatch } from "~/state-manager/configureStore";
 import {
   ActionContentCard,
   CategoryContentCard,
@@ -12,25 +11,8 @@ import {
   ContentCardsType,
   LocationContentCard,
   NotificationContentCard,
-  Platform,
   PortfolioContentCard,
 } from "~/types/dynamicContent";
-import { processGenericAwarenessModalBrazeCards } from "@ledgerhq/live-common/genericAwarenessModal";
-import {
-  setActionCards,
-  setCategoriesCards,
-  setDesktopCards,
-  setNotificationsCards,
-  setPortfolioCards,
-  setBottomPortfolioCards,
-} from "../actions/dynamicContent";
-import {
-  filterDismissedGenericAwarenessModalContentCards,
-  setGenericAwarenessModalContentCards,
-} from "../reducers/genericAwarenessModalSlice";
-
-const getDesktopCards = (elem: braze.ContentCards) =>
-  elem.cards.filter(card => card.extras?.platform === Platform.Desktop);
 
 export const filterByPage = (array: braze.Card[], page: LocationContentCard) =>
   array.filter(card => card.extras?.location === page);
@@ -140,66 +122,3 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
   url: appendDeeplinkLocationIfDefined(card.extras?.url, LocationContentCard.NotificationCenter),
   viewed: card.viewed,
 });
-
-export const publishDesktopContentCards = (
-  dispatch: AppDispatch,
-  cards: braze.ContentCards,
-  dismissedCardIds: string[],
-) => {
-  const desktopCards = getDesktopCards(cards);
-  const hiddenCardIds = new Set(dismissedCardIds);
-  const filteredDesktopCards = desktopCards.filter(card => !hiddenCardIds.has(String(card.id)));
-
-  const portfolioCards = filterByPage(filteredDesktopCards, LocationContentCard.Portfolio)
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    .map(card => mapAsPortfolioContentCard(card as ClassicCard))
-    .sort(compareCards);
-
-  const actionCards = filterByPage(filteredDesktopCards, LocationContentCard.Action)
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    .map(card => mapAsActionContentCard(card as ClassicCard))
-    .sort(compareCards);
-
-  const bottomPortfolioCards = filterByPage(
-    filteredDesktopCards,
-    LocationContentCard.BottomPortfolio,
-  )
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    .map(card => mapAsBottomPortfolioContentCard(card as ClassicCard))
-    .sort(compareCards);
-
-  const notificationsCards = filterByPage(
-    filteredDesktopCards,
-    LocationContentCard.NotificationCenter,
-  )
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    .map(card => mapAsNotificationContentCard(card as ClassicCard))
-    .sort(compareCards);
-
-  const categoriesCards = filterByType(filteredDesktopCards, ContentCardsType.category)
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    .map(card => mapAsCategoryContentCard(card as ClassicCard))
-    .filter(card => !!card.categoryId)
-    .sort(compareCards);
-
-  const genericAwarenessModalBrazeCardsFromBraze = filterByPage(
-    filteredDesktopCards,
-    LocationContentCard.GenericAwarenessModal,
-  ).map(card => ({
-    id: String(card.id),
-    extras: card.extras,
-  }));
-
-  const genericAwarenessModalContentCards = filterDismissedGenericAwarenessModalContentCards(
-    processGenericAwarenessModalBrazeCards(genericAwarenessModalBrazeCardsFromBraze),
-    dismissedCardIds,
-  );
-
-  dispatch(setDesktopCards(filteredDesktopCards));
-  dispatch(setPortfolioCards(portfolioCards));
-  dispatch(setBottomPortfolioCards(bottomPortfolioCards));
-  dispatch(setActionCards(actionCards));
-  dispatch(setNotificationsCards(notificationsCards));
-  dispatch(setCategoriesCards(categoriesCards));
-  dispatch(setGenericAwarenessModalContentCards(genericAwarenessModalContentCards));
-};

@@ -15,7 +15,7 @@ import {
   brazeSdk,
 } from "~/renderer/braze/applyBrazeConsentTransition";
 import { resolveDesktopBrazeUserId } from "~/renderer/braze/brazeIdentity";
-import { publishDesktopContentCards } from "~/renderer/hooks/useBraze";
+import { publishDesktopContentCards } from "LLD/features/DynamicContent/utils/contentCardsPublisher";
 import {
   clearDismissedContentCards,
   purgeExpiredAnonymousUserNotifications,
