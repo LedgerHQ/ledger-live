@@ -7,7 +7,7 @@ import {
   mockContactWithMultipleAddresses,
 } from "@domain/entity-contact/schema.mock";
 import type { Contact } from "@domain/entity-contact";
-import { ContactsCompactList } from "../../web";
+import { ContactsCompactList } from "../../index";
 
 const labels = {
   emptyAddress: "No saved addresses",
