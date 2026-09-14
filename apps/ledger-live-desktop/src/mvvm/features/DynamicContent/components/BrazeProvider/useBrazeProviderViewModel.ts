@@ -29,6 +29,11 @@ import {
 
 const userIdsMatch = (left: UserId, right: UserId): boolean => left.equals(right);
 const CONTENT_CARDS_REFRESH_TIMEOUT_MS = 15_000;
+const EMPTY_CONTENT_CARDS = {
+  cards: [],
+  lastUpdated: new Date(0),
+  getUnviewedCardCount: () => 0,
+} as braze.ContentCards;
 
 const initializeBrazeSdk = (devMode: boolean, isTrackedUser: boolean): boolean => {
   const brazeConfig = getBrazeConfig();
@@ -51,6 +56,8 @@ export function useBrazeProviderViewModel() {
   const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
   const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
   const userId = useSelector(userIdSelector);
+  const userIdRef = useRef(userId);
+  userIdRef.current = userId;
   const brazeOptOutIdentityCleanupEnabled = brazeOptOutIdentityCleanup?.enabled ?? false;
 
   const contentCardsDismissedRef = useRef(contentCardsDismissed);
@@ -65,6 +72,7 @@ export function useBrazeProviderViewModel() {
   const retryCountRef = useRef(0);
   const syncBrazeIdentityRef = useRef<() => void>(() => {});
   const sessionStartedRef = useRef(false);
+  const lifecycleGenerationRef = useRef(0);
   const [sdkReady, setSdkReady] = useState(false);
 
   const handleContentCardsUpdated = useCallback(
@@ -166,7 +174,9 @@ export function useBrazeProviderViewModel() {
     };
     const isDummyUser = isDummyUserId(userId);
     if (isDummyUser && (lastSyncedIdentityRef.current != null || sessionStartedRef.current)) {
+      lifecycleGenerationRef.current += 1;
       prepareForIdentityTransition();
+      publishDesktopContentCards(dispatch, EMPTY_CONTENT_CARDS, []);
     }
     const identitySync = prepareBrazeIdentitySync({
       currentIdentity,
@@ -180,7 +190,11 @@ export function useBrazeProviderViewModel() {
     if (!identitySync) return;
 
     if (identitySync.isConsentTransition) {
+      const generation = lifecycleGenerationRef.current;
+      const shouldAbort = () =>
+        lifecycleGenerationRef.current !== generation || isDummyUserId(userIdRef.current);
       const refreshAndReinitSession = async () => {
+        if (shouldAbort()) return;
         ensureSessionStarted();
         await refreshContentCards();
       };
@@ -191,7 +205,9 @@ export function useBrazeProviderViewModel() {
           {
             prepareForIdentityTransition,
             refreshContentCards: refreshAndReinitSession,
+            shouldAbort,
             enableSDK: async () => {
+              if (shouldAbort()) return;
               await requireBrazeLifecycleMethod("enableSDK")();
               const isInitialized = initializeBrazeSdk(devMode, isTrackedUser);
               if (!isInitialized) {
@@ -207,6 +223,7 @@ export function useBrazeProviderViewModel() {
         pendingConsentTransitionRef,
         retryCountRef,
         syncBrazeIdentity: () => syncBrazeIdentityRef.current(),
+        isCurrent: () => !shouldAbort(),
       });
       return;
     }
@@ -229,6 +246,7 @@ export function useBrazeProviderViewModel() {
     ensureSessionStarted,
     isTrackedUser,
     prepareForIdentityTransition,
+    dispatch,
     refreshContentCards,
     sdkReady,
     userId,
@@ -254,6 +272,7 @@ export function useBrazeProviderViewModel() {
     setSdkReady(true);
 
     return () => {
+      lifecycleGenerationRef.current += 1;
       if (subscriptionIdRef.current) {
         braze.removeSubscription(subscriptionIdRef.current);
         subscriptionIdRef.current = null;

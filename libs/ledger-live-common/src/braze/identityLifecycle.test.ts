@@ -258,6 +258,30 @@ describe("trackBrazeConsentTransition", () => {
     expect(syncBrazeIdentity).not.toHaveBeenCalled();
     expect(refs.lastSyncedIdentityRef.current).toBe(previousIdentity);
   });
+
+  it("should not mark the captured identity synced when the transition is no longer current", async () => {
+    const previousIdentity = createIdentity(USER_ID, false);
+    const currentIdentity = createIdentity(USER_ID, true);
+    const refs = createIdentitySyncRefs(previousIdentity, currentIdentity);
+    const syncBrazeIdentity = jest.fn();
+    const onIdentitySynced = jest.fn();
+
+    trackBrazeConsentTransition({
+      transition: Promise.resolve(),
+      currentIdentity,
+      userIdsMatch,
+      ...refs,
+      syncBrazeIdentity,
+      onIdentitySynced,
+      isCurrent: () => false,
+    });
+
+    await flushMicrotasks();
+
+    expect(refs.lastSyncedIdentityRef.current).toBe(previousIdentity);
+    expect(onIdentitySynced).not.toHaveBeenCalled();
+    expect(syncBrazeIdentity).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("brazeIdentitiesMatch", () => {

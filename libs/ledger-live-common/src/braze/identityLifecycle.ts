@@ -59,6 +59,7 @@ type TrackBrazeConsentTransitionOptions<TUserId> = {
   retryCountRef: MutableRef<number>;
   syncBrazeIdentity: () => void;
   onIdentitySynced?: () => void;
+  isCurrent?: () => boolean;
 };
 
 const noop = () => {};
@@ -141,6 +142,7 @@ export function trackBrazeConsentTransition<TUserId>({
   retryCountRef,
   syncBrazeIdentity,
   onIdentitySynced,
+  isCurrent,
 }: TrackBrazeConsentTransitionOptions<TUserId>): void {
   const trackedTransition = Promise.resolve(transition)
     .then(() => true)
@@ -153,6 +155,11 @@ export function trackBrazeConsentTransition<TUserId>({
   void trackedTransition.then(didTransitionSucceed => {
     if (pendingConsentTransitionRef.current === trackedTransition) {
       pendingConsentTransitionRef.current = null;
+    }
+
+    if (isCurrent && !isCurrent()) {
+      syncBrazeIdentity();
+      return;
     }
 
     if (didTransitionSucceed) {

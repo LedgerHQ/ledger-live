@@ -364,6 +364,15 @@ describe("BrazeProvider", () => {
     });
 
     expect(mockedOpenSession).toHaveBeenCalledTimes(1);
+
+    const onContentCardsUpdated = mockedSubscribeToContentCardsUpdates.mock.calls[0][0];
+    await act(async () => {
+      onContentCardsUpdated(mockContentCards([desktopCard]));
+    });
+    expect(store.getState().dynamicContent.portfolioCards).toEqual([
+      expect.objectContaining({ id: "wallet-card" }),
+    ]);
+
     mockedChangeUser.mockClear();
     mockedOpenSession.mockClear();
     mockedRemoveSubscription.mockClear();
@@ -376,6 +385,7 @@ describe("BrazeProvider", () => {
     expect(mockedRemoveSubscription).toHaveBeenCalledTimes(1);
     expect(mockedChangeUser).not.toHaveBeenCalled();
     expect(mockedOpenSession).not.toHaveBeenCalled();
+    expect(store.getState().dynamicContent.portfolioCards).toEqual([]);
 
     await act(async () => {
       store.dispatch(
@@ -388,6 +398,50 @@ describe("BrazeProvider", () => {
     expect(mockedChangeUser).toHaveBeenCalledTimes(1);
     expect(mockedChangeUser).toHaveBeenCalledWith(REAL_USER_ID.exportUserIdForBraze());
     expect(mockedOpenSession).toHaveBeenCalledTimes(1);
+    unmount();
+  });
+
+  it("should not identify the previous user when logout happens during an in-flight opt-in", async () => {
+    let completeWipe: () => void = () => {};
+    mockedWipeData.mockImplementationOnce(
+      () =>
+        new Promise<void>(resolve => {
+          completeWipe = resolve;
+        }),
+    );
+
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <div />
+      </BrazeProvider>,
+      { isTrackedUser: false },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+    mockedChangeUser.mockClear();
+    mockedEnableSDK.mockClear();
+
+    await act(async () => {
+      store.dispatch(setShareAnalytics(true));
+    });
+
+    expect(mockedWipeData).toHaveBeenCalledTimes(1);
+    expect(mockedChangeUser).not.toHaveBeenCalled();
+
+    await act(async () => {
+      store.dispatch(identitiesSlice.actions.importFromLegacy({ userId: DUMMY_ID_STR }));
+    });
+
+    await act(async () => {
+      completeWipe();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(mockedChangeUser).not.toHaveBeenCalled();
+    expect(mockedEnableSDK).not.toHaveBeenCalled();
     unmount();
   });
 

@@ -27,21 +27,42 @@ export const applyBrazeConsentTransition = async (
     prepareForIdentityTransition,
     refreshContentCards = webBrazeSdk.refreshContentCards,
     enableSDK = webBrazeSdk.enableSDK,
+    shouldAbort,
   }: {
     prepareForIdentityTransition?: () => void;
     refreshContentCards?: BrazeIdentityLifecycleSdk["refreshContentCards"];
     enableSDK?: BrazeIdentityLifecycleSdk["enableSDK"];
+    shouldAbort?: () => boolean;
   } = {},
 ): Promise<void> => {
-  if (isDummyUserId(userId)) return;
+  const isAborted = () => shouldAbort?.() === true;
+  if (isDummyUserId(userId) || isAborted()) return;
 
   prepareForIdentityTransition?.();
-  const sdk = { ...webBrazeSdk, refreshContentCards, enableSDK };
+  if (isAborted()) return;
+
+  const sdk: BrazeIdentityLifecycleSdk = {
+    ...webBrazeSdk,
+    enableSDK: async () => {
+      if (isAborted()) return;
+      await enableSDK();
+    },
+    changeUser: async changeUserId => {
+      if (isAborted()) return;
+      await webBrazeSdk.changeUser(changeUserId);
+    },
+    refreshContentCards: async () => {
+      if (isAborted()) return;
+      await refreshContentCards();
+    },
+  };
 
   if (!isTrackedUser) {
     await runBrazeOptOutTransition(sdk);
     return;
   }
+
+  if (isAborted()) return;
 
   const brazeUserId = exportDesktopBrazeUserId(userId);
   if (!brazeUserId) return;
