@@ -311,6 +311,67 @@ describe("cardLoginMachine login", () => {
     });
   });
 
+  it("completes the login when the browser reports the redirect for the current attempt", async () => {
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      openHostedLogin: jest.fn(async () => ({
+        type: "success",
+        url: "ledgerlive://paytab?code=auth-code&state=state-value",
+      })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+
+    actor.send({ type: "LOGIN" });
+
+    await settledAt(actor, "ready");
+    expect(ports.exchangeAuthorizationCode).toHaveBeenCalledWith({
+      code: "auth-code",
+      codeVerifier: "verifier-value",
+    });
+  });
+
+  it("ignores the redirect the browser reports for an attempt already abandoned", async () => {
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      openHostedLogin: jest.fn(async () => ({
+        type: "success",
+        url: "ledgerlive://paytab?code=stale-code&state=state-a",
+      })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+
+    actor.send({ type: "LOGIN" });
+
+    // The browser closed on a redirect for another attempt, so there is nothing left to wait on:
+    // the attempt is wiped, and the stale code is never exchanged.
+    await settledAt(actor, "idle");
+    expect(ports.exchangeAuthorizationCode).not.toHaveBeenCalled();
+    expect(actor.getSnapshot().context.errorKind).toBeNull();
+  });
+
+  it("completes the login when the browser reports a redirect with no state", async () => {
+    // A source that cannot echo `state` back, so the code alone has to be enough.
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      openHostedLogin: jest.fn(async () => ({
+        type: "success",
+        url: "ledgerlive://paytab?code=auth-code&app_id=app-value",
+      })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+
+    actor.send({ type: "LOGIN" });
+
+    await settledAt(actor, "ready");
+    expect(ports.exchangeAuthorizationCode).toHaveBeenCalledWith({
+      code: "auth-code",
+      codeVerifier: "verifier-value",
+    });
+  });
+
   it("goes back to the login action without a message when the browser is dismissed", async () => {
     const ports = stubPorts({
       loadAttempt: jest.fn(async () => attempt),

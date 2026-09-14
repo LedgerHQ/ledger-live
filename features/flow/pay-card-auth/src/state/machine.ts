@@ -131,7 +131,13 @@ export const cardLoginMachine = setup({
         }),
         onDone: [
           {
-            guard: ({ event }) => event.output.callback !== null,
+            // Same rule as the deep link below, when the source can answer it: a redirect that
+            // carries a `state` for another attempt is not the one this invoke opened. A source that
+            // cannot supply `state` at all still gets through on its `code` alone.
+            guard: ({ context, event }) =>
+              event.output.callback !== null &&
+              (event.output.callback.state === undefined ||
+                event.output.callback.state === context.attemptState),
             target: "validatingCallback",
             actions: assign({ callback: ({ event }) => event.output.callback }),
           },

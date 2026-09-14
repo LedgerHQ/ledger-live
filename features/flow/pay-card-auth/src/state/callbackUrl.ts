@@ -9,7 +9,8 @@ import type { PayCardAuthCallback } from "./types";
  * query. The query is read from the string itself.
  *
  * The redirect also carries `app_id`, which nothing here needs: PKCE already ties the code to the
- * verifier on disk.
+ * verifier on disk. `state` is carried over when the provider echoed one, so the machine can tell a
+ * redirect from the attempt it is waiting on from one left over from an attempt already abandoned.
  */
 export function parseCallbackUrl(url: string): PayCardAuthCallback | null {
   const query = url.slice(url.indexOf("?") + 1);
@@ -17,7 +18,13 @@ export function parseCallbackUrl(url: string): PayCardAuthCallback | null {
     return null;
   }
 
-  const code = new URLSearchParams(query).get("code");
+  const params = new URLSearchParams(query);
+  const code = params.get("code");
+  if (!code) {
+    return null;
+  }
 
-  return code ? { code } : null;
+  const state = params.get("state");
+
+  return state ? { code, state } : { code };
 }
