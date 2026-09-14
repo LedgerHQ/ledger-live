@@ -3390,4 +3390,86 @@ describe("genericGetAccountShape", () => {
       expect(result.operations?.map(op => op.blockHeight)).toEqual([9, 8, 7, 6, 5]);
     });
   });
+
+  describe("resumable token discovery", () => {
+    const network = "mainnet";
+    const currency = { id: "ethereum", name: "Ethereum" };
+    const getAssetFromTokenMock = jest.fn();
+
+    const subAccount = (contract: string) =>
+      ({ type: "TokenAccount", token: { id: `ethereum/erc20/${contract}` } }) as any;
+
+    beforeEach(() => {
+      getSyncHashMock.mockResolvedValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 100 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      getAssetFromTokenMock.mockImplementation((token: any) => ({
+        type: "erc20",
+        assetReference: token.id,
+      }));
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: getAssetFromTokenMock,
+      }));
+    });
+
+    const syncWith = (initialAccount: any) =>
+      genericGetAccountShape(network, "local")(
+        { address: "0xabc", currency, derivationMode: "", initialAccount } as any,
+        { paginationConfig: {}, blacklistedTokenIds: [] } as any,
+      );
+
+    it("hands the module what the account already holds, and the height to resume from", async () => {
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "sync-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [subAccount("0xaaa"), subAccount("0xbbb")],
+      });
+
+      const options = getBalanceMock.mock.calls[0][2];
+      expect(options.fromHeight).toBe(43); // newest stored operation + 1, the same watermark the walk uses
+      expect(options.knownAssets).toEqual([
+        { type: "erc20", assetReference: "ethereum/erc20/0xaaa" },
+        { type: "erc20", assetReference: "ethereum/erc20/0xbbb" },
+      ]);
+    });
+
+    it("resumes from nothing when the token list changed, so a newly listed token is still found", async () => {
+      // The completeness `fromHeight` demands is held by `syncHash`: it covers the currency's CAL
+      // list and the blacklist, so a token becoming listed invalidates the resume rather than
+      // leaving it permanently undiscovered.
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "a-different-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [subAccount("0xaaa")],
+      });
+
+      const options = getBalanceMock.mock.calls[0][2];
+      expect(options.fromHeight).toBeUndefined();
+      expect(options.knownAssets).toBeUndefined();
+    });
+
+    it("passes neither option when the account holds no token yet", async () => {
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "sync-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [],
+      });
+
+      const options = getBalanceMock.mock.calls[0][2];
+      expect(options.fromHeight).toBeUndefined();
+      expect(options.knownAssets).toBeUndefined();
+    });
+  });
 });
