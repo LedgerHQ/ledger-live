@@ -1,7 +1,7 @@
 import { createDualPlatformKnipConfig } from "../../../knip.config.base.mjs";
 
 export default createDualPlatformKnipConfig({
-  packagePath: "features/flow/pay-card",
+  packagePath: "features/flow/pay-card-assets",
   platform: "web",
-  entry: [],
+  entry: ["src/index.ts"],
 });
