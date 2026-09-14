@@ -375,7 +375,7 @@ describe("useAmountScreenViewModel", () => {
       });
     });
 
-    it("uses the selected pool balance, not the account total, when the coin holds several", () => {
+    it("uses the selected pool's selectable ceiling, not its unbounded display balance", () => {
       jest.mocked(sendFeatures.getBalanceTypeConfig).mockReturnValue({
         getOptions: () => [
           {
@@ -397,7 +397,7 @@ describe("useAmountScreenViewModel", () => {
         buildSelectionPatch: () => ({}),
         getSelfTransferTarget: () => null,
         buildSelfTransferPatch: () => ({}),
-        getSelectableBalance: () => new BigNumber(700),
+        getSelectableBalance: () => new BigNumber(220),
       });
 
       renderWithAccountBalance({
@@ -407,7 +407,7 @@ describe("useAmountScreenViewModel", () => {
       } as unknown as Transaction);
 
       expect(mockUseQuickActions.mock.calls[0][0]).toMatchObject({
-        availableBalance: new BigNumber(700),
+        availableBalance: new BigNumber(220),
       });
     });
   });

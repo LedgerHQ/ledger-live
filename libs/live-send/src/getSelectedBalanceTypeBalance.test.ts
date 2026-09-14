@@ -39,7 +39,7 @@ const poolConfig = (selectedId: string | null): BalanceTypeConfig => ({
   getSelfTransferTarget: () => null,
   buildSelfTransferPatch: () => ({}),
   getSelectableBalance: ({ optionId }) =>
-    optionId === "private" ? new BigNumber(700) : new BigNumber(300),
+    optionId === "private" ? new BigNumber(220) : new BigNumber(300),
 });
 
 describe("getSelectedBalanceTypeBalance", () => {
@@ -47,14 +47,17 @@ describe("getSelectedBalanceTypeBalance", () => {
 
   it.each([
     ["public", 300],
-    ["private", 700],
-  ])("returns the balance of the %s pool the transaction draws from", (selectedId, expected) => {
-    getBalanceTypeConfig.mockReturnValue(poolConfig(selectedId));
+    ["private", 220],
+  ])(
+    "returns the selectable ceiling of the %s pool, not its unbounded display balance",
+    (selectedId, expected) => {
+      getBalanceTypeConfig.mockReturnValue(poolConfig(selectedId));
 
-    expect(getSelectedBalanceTypeBalance(account, { family: "zcash" })).toEqual(
-      new BigNumber(expected),
-    );
-  });
+      expect(getSelectedBalanceTypeBalance(account, { family: "zcash" })).toEqual(
+        new BigNumber(expected),
+      );
+    },
+  );
 
   it("returns undefined for a coin holding a single balance", () => {
     getBalanceTypeConfig.mockReturnValue(null);
