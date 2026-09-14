@@ -10,7 +10,6 @@ import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import * as RX from "rxjs/operators";
 import { useLLDCoinFamily } from "~/renderer/families";
-import { isCurrencyRegionRestrictedError } from "@ledgerhq/live-common/errors";
 import { openCurrencyRegionRestrictedDialog } from "LLD/features/CurrencyRegionRestrictedDialog/currencyRegionRestrictedDialog";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
@@ -298,7 +297,7 @@ export function useScanAccounts({
     scanning,
   ]);
 
-  const isRegionRestricted = isCurrencyRegionRestrictedError(error);
+  const isRegionRestricted = error?.name === "CurrencyRegionRestrictedError";
 
   useEffect(() => {
     if (!isRegionRestricted) return;

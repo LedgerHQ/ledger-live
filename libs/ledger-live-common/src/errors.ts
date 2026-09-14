@@ -1101,7 +1101,3 @@ export class CurrencyRegionRestrictedError extends Error {
     this.currencyName = currencyName;
   }
 }
-
-export function isCurrencyRegionRestrictedError(error: unknown): boolean {
-  return error instanceof Error && error.name === "CurrencyRegionRestrictedError";
-}
