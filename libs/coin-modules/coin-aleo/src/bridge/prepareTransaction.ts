@@ -180,6 +180,21 @@ export const prepareTransaction: AccountBridge<
   const subAccount = getAleoSubAccount(account, transaction.subAccountId);
   const isTokenTx = !!subAccount;
 
+  if (transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC) {
+    const feeEstimation = estimateFees({
+      configOrCurrencyId: config,
+      transactionType: TRANSACTION_TYPE.BOND_PUBLIC,
+    });
+    const estimatedFees = new BigNumber(feeEstimation.value.toString());
+    const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
+
+    return updateTransaction(transaction, {
+      amount: calculatedAmount.amount,
+      fees: estimatedFees,
+      withdrawal: account.freshAddress,
+    });
+  }
+
   if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
     const feeEstimation = estimateFees({
       configOrCurrencyId: config,
@@ -190,6 +205,22 @@ export const prepareTransaction: AccountBridge<
 
     return updateTransaction(transaction, {
       amount: calculatedAmount.amount,
+      fees: estimatedFees,
+      recipient: account.freshAddress,
+    });
+  }
+
+  if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
+    const feeEstimation = estimateFees({
+      configOrCurrencyId: config,
+      transactionType: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+    });
+    const estimatedFees = new BigNumber(feeEstimation.value.toString());
+
+    return updateTransaction(transaction, {
+      // The chain releases whatever is claimable; no amount is signed.
+      amount: new BigNumber(0),
+      useAllAmount: false,
       fees: estimatedFees,
       recipient: account.freshAddress,
     });
