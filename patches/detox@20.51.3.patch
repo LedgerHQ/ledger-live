@@ -1,5 +1,5 @@
 diff --git a/local-cli/testCommand/TestRunnerCommand.js b/local-cli/testCommand/TestRunnerCommand.js
-index 65e6cd7..1fbdd2b 100644
+index 65e6cd70a6257138afd8270671f0ef1c555a9bbc..89c4f92166d331b142b71c5fbc511d8fc3ad5921 100644
 --- a/local-cli/testCommand/TestRunnerCommand.js
 +++ b/local-cli/testCommand/TestRunnerCommand.js
 @@ -36,6 +36,7 @@ class TestRunnerCommand {
@@ -82,7 +82,7 @@ index 65e6cd7..1fbdd2b 100644
      ].map(String);
    }
 diff --git a/runners/jest/reporters/DetoxIPCReporter.js b/runners/jest/reporters/DetoxIPCReporter.js
-index 9e4c6ea..623bd4b 100644
+index 9e4c6eaba0607d9ff427a55a3738056caccf512f..623bd4b346e443063f7fb68d9e67ee8f4b714f14 100644
 --- a/runners/jest/reporters/DetoxIPCReporter.js
 +++ b/runners/jest/reporters/DetoxIPCReporter.js
 @@ -16,6 +16,10 @@ class DetoxIPCReporter {
@@ -96,8 +96,121 @@ index 9e4c6ea..623bd4b 100644
      })));
    }
  
+diff --git a/src/devices/allocation/DeviceRegistry.js b/src/devices/allocation/DeviceRegistry.js
+index 3741e0866f13cef09a6545295af6b9739b600391..b79299f46549d9250125fda713bb2ad3238c2efe 100644
+--- a/src/devices/allocation/DeviceRegistry.js
++++ b/src/devices/allocation/DeviceRegistry.js
+@@ -127,6 +127,17 @@ class DeviceRegistry {
+     });
+   }
+ 
++  /**
++   * Whether a registered device's owning process has died. Caller must already hold
++   * this._lockfile exclusively - this does not acquire it itself.
++   * @param {string} udid
++   * @returns {boolean}
++   */
++  isDeviceZombie(udid) {
++    const device = [...this._getRegisteredDevices()].find(d => d.id === udid);
++    return !!device && !this._pidService.isAlive(device.pid);
++  }
++
+   /**
+    * @returns {Promise<DeviceList>}
+    */
+diff --git a/src/devices/allocation/drivers/ios/SimulatorAllocDriver.js b/src/devices/allocation/drivers/ios/SimulatorAllocDriver.js
+index 38472ddad2940e659127869c3a1d0eb97889001c..2f90618d32884c082c46c0c52581d8277dc3531a 100644
+--- a/src/devices/allocation/drivers/ios/SimulatorAllocDriver.js
++++ b/src/devices/allocation/drivers/ios/SimulatorAllocDriver.js
+@@ -8,6 +8,7 @@ const _ = require('lodash');
+ 
+ const { DetoxRuntimeError } = require('../../../../errors');
+ const log = require('../../../../utils/logger').child({ cat: 'device,device-allocation' });
++const retry = require('../../../../utils/retry');
+ const SimulatorAppCache = require('../../../common/drivers/ios/tools/SimulatorAppCache');
+ 
+ const SimulatorQuery = require('./SimulatorQuery');
+@@ -121,21 +122,70 @@ class SimulatorAllocDriver {
+    * @returns {Promise<String>}
+    */
+   async _findOrCreateDevice(deviceQuery) {
+-    let udid;
+-
+     const { free, taken } = await this._groupDevicesByStatus(deviceQuery);
+ 
+-    if (_.isEmpty(free)) {
+-      const prototypeDevice = taken[0];
+-      udid = this._applesimutils.create(prototypeDevice);
+-      await this._runScreenshotWorkaround(udid);
+-    } else {
+-      udid = free[0].udid;
++    if (!_.isEmpty(free)) {
++      return free[0].udid;
++    }
++
++    // CI only boots these devices by their fixed name and never recreates a missing one, so
++    // reclaim a dead worker's device instead of creating a replacement it can never delete.
++    const zombieUdid = await this._reclaimZombieForReuse(taken);
++    if (zombieUdid) {
++      return zombieUdid;
+     }
++    log.debug({}, `No reusable device among ${taken.length} taken; creating a new one`);
+ 
++    const prototypeDevice = taken[0];
++    const udid = this._applesimutils.create(prototypeDevice);
++    await this._runScreenshotWorkaround(udid);
+     return udid;
+   }
+ 
++  /**
++   * @param {Array<{udid: string}>} takenDevices
++   * @returns {Promise<string|undefined>}
++   * @private
++   */
++  async _reclaimZombieForReuse(takenDevices) {
++    for (const { udid } of takenDevices) {
++      if (!this._deviceRegistry.isDeviceZombie(udid)) continue;
++      if (await this._isDeviceSafeToReuse(udid)) {
++        return udid;
++      }
++    }
++    return undefined;
++  }
++
++  /**
++   * Called only once isDeviceZombie() confirms the owner is dead, so a lingering "Booted"
++   * state isn't a live owner - only isBooted() itself failing is treated as unsafe.
++   * @param {string} udid
++   * @returns {Promise<boolean>}
++   * @private
++   */
++  async _isDeviceSafeToReuse(udid) {
++    try {
++      await retry({ retries: 2, interval: 1500 }, () => this._applesimutils.shutdown(udid));
++      return true;
++    } catch (err) {
++      try {
++        const stillBooted = await this._applesimutils.isBooted(udid);
++        log[stillBooted ? 'warn' : 'debug'](
++          { err },
++          `Zombie simulator ${udid} would not shut down; reusing it anyway since its owning process is dead`,
++        );
++        return true;
++      } catch (verifyErr) {
++        log.warn(
++          { err: verifyErr },
++          `Could not verify zombie simulator ${udid}'s state after a failed shutdown; leaving it alone`,
++        );
++        return false;
++      }
++    }
++  }
++
+   async _runScreenshotWorkaround(udid) {
+     await this._applesimutils.takeScreenshot(udid, '/dev/null').catch(() => {
+       log.debug({}, `
 diff --git a/src/devices/common/drivers/android/exec/ADB.js b/src/devices/common/drivers/android/exec/ADB.js
-index bde116c..06ab2f0 100644
+index bde116c69467a8f16f1d420a8fdbac89443099f0..06ab2f0a482af02d8675cd4a85070a9e46a660d9 100644
 --- a/src/devices/common/drivers/android/exec/ADB.js
 +++ b/src/devices/common/drivers/android/exec/ADB.js
 @@ -9,13 +9,15 @@ const { escape } = require('../../../../../utils/pipeCommands');
@@ -137,7 +250,7 @@ index bde116c..06ab2f0 100644
  
    async emuKill(deviceId) {
 diff --git a/src/utils/ExclusiveLockfile.js b/src/utils/ExclusiveLockfile.js
-index da29ae9..cb210d6 100644
+index da29ae99c8b90877f15715cdeb692ed8a2b47569..ce884adcafa10e78b0b040dbbbe3c4eeaacd7452 100644
 --- a/src/utils/ExclusiveLockfile.js
 +++ b/src/utils/ExclusiveLockfile.js
 @@ -6,6 +6,14 @@ const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
