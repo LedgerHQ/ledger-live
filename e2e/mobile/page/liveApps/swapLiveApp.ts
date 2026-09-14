@@ -3,6 +3,7 @@ import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "@e2e/utils/retry";
+import { DEFAULT_TIMEOUT } from "@e2e/helpers/elementHelpers";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import {
   QUOTE_CARD_PROVIDER_NAME_FRAGMENT,
@@ -135,10 +136,15 @@ export default class SwapLiveAppPage {
     await typeTextByWebTestId(this.fromAmountInput, amount);
   }
 
+  // An exact testid skips the disabled CTA, which the prefix match would tap.
+  // The app drops the CTA once it has quotes, so waitForQuotes stays the real gate.
   @Step("Tap get quotes button")
   async tapGetQuotesButton() {
     await getValueByWebTestId(this.toAmountInput);
-    await tapWebElementByTestId(this.getQuotesButton);
+    const cta = getWebElementByCssSelector(`[data-testid='${this.getQuotesButton}']`);
+    if (await waitWebElement(cta, DEFAULT_TIMEOUT, false)) {
+      await tapWebElementByElement(cta);
+    }
   }
 
   @Step("Verify get quotes CTA is hidden")
