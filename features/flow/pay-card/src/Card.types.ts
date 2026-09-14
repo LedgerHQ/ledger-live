@@ -1,5 +1,6 @@
 import type { CardLoginProps } from "@features/flow-pay-card-auth";
 import type { CardVisualProps, FormattedValue } from "@features/flow-pay-card-details";
+import type { FormatCardTransactionAmount } from "@features/flow-pay-card-transactions";
 
 /** Host input for the Pay Card flow. */
 export type CardProps = {
@@ -11,7 +12,7 @@ export type CardProps = {
    * the card falls back to the bare artwork.
    */
   readonly formatCountervalue?: (value: number) => FormattedValue;
-  /** Localized caption shown above the balance. i18n stays with the host, so the app passes the string. */
+  readonly formatTransactionAmount?: FormatCardTransactionAmount;
   readonly balanceLabel?: string;
 };
 
@@ -25,12 +26,11 @@ export type CardProps = {
  */
 export type CardDisplayState = "resolving" | "signedOut" | "signedIn";
 
-/** Props the presentational view renders, resolved by {@link useCardViewModel}. */
 export type CardViewProps = {
   readonly title: string;
   readonly login: CardLoginProps;
   /** Which face to show. The children are mutually exclusive, so the view switches on this. */
   readonly displayState: CardDisplayState;
-  /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   readonly cardVisual?: CardVisualProps;
+  readonly formatTransactionAmount?: FormatCardTransactionAmount;
 };

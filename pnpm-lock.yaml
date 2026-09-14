@@ -6740,6 +6740,9 @@ importers:
       '@features/flow-pay-card-details':
         specifier: workspace:^
         version: link:../pay-card-details
+      '@features/flow-pay-card-transactions':
+        specifier: workspace:^
+        version: link:../pay-card-transactions
       '@features/flow-pay-card-wallets':
         specifier: workspace:^
         version: link:../pay-card-wallets

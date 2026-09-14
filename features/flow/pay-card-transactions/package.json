@@ -64,12 +64,20 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
     "react-redux": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
       "optional": true
     }
   }

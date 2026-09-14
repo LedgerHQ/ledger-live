@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { http, HttpResponse, type JsonBodyType } from "msw";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
-import { useCardTransactionsViewModel } from "../hooks/useCardTransactionsViewModel";
+import { useCardTransactionsViewModel } from "./useCardTransactionsViewModel";
 import { listenToCardApi } from "@support/msw-features-flow-pay-card";
-import { CARD_TRANSACTIONS_URL, CATEGORY_LABELS, cardApiWrapper } from "./cardApiStore";
+import { CARD_TRANSACTIONS_URL, CATEGORY_LABELS, cardApiWrapper } from "../__tests__/cardApiStore";
 
 const server = listenToCardApi();
 
@@ -49,11 +49,11 @@ describe("useCardTransactionsViewModel", () => {
     const aliExpress = result.current.transactions.find(
       ({ transaction }) => transaction.merchantNameLocation === "WWW.ALIEXPRESS.COM, LONDON",
     );
-    expect(aliExpress?.category).toBe("MISC");
+    expect(aliExpress?.transaction.mccCategory).toBe("MISC");
     expect(aliExpress?.categoryLabel).toBe(CATEGORY_LABELS.MISC);
 
-    for (const { category, categoryLabel } of result.current.transactions) {
-      expect(categoryLabel).toBe(CATEGORY_LABELS[category]);
+    for (const { transaction, categoryLabel } of result.current.transactions) {
+      expect(categoryLabel).toBe(CATEGORY_LABELS[transaction.mccCategory]);
     }
   });
 
@@ -64,7 +64,7 @@ describe("useCardTransactionsViewModel", () => {
     const { result } = renderViewModel();
 
     await waitFor(() => expect(result.current.transactions).toHaveLength(1));
-    expect(result.current.transactions[0]?.category).toBe("MISC");
+    expect(result.current.transactions[0]?.transaction.mccCategory).toBe("MISC");
     expect(result.current.transactions[0]?.categoryLabel).toBe(CATEGORY_LABELS.MISC);
   });
 
