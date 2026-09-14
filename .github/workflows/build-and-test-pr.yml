@@ -268,7 +268,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{(contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features')) && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@chore/pnpmfile-LIVE-37369-verify-ci-guard
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
