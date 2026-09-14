@@ -6,6 +6,8 @@
 
 Shared `track` for Ledger Wallet apps. Each app registers its own analytics client (e.g. Segment), consent check, and extra props.
 
+This package is **React-free**. For React lifecycle adapters (`<Track>`, `<TrackPage>`, `<TrackScreen>`), use [`@shared/analytics-react`](../analytics-react/).
+
 ## Getting started
 
 ### Example setup
