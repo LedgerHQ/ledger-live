@@ -42,6 +42,7 @@ import {
 } from "@domain/api-card-management/mock/card-onboarding-status";
 import { setMockOnboardingStepDone } from "@domain/api-card-management/mock";
 import type { DevToolsConfig } from "@devtools/registry";
+import { isRequestMockingEnabled } from "./isRequestMockingEnabled";
 import { usePayCardAuthProps } from "./usePayCardAuthProps";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
@@ -50,7 +51,6 @@ type OnboardingStep = PayCardToolProps["onboarding"]["steps"][number];
 type PayCardProbe = PayCardToolProps["interaction"]["probes"][number];
 
 export type UsePayCardToolPropsOptions = {
-  /** Pass `"native"` on mobile to include the `walletPay` onboarding step. */
   readonly platform?: "web" | "native";
   readonly openPayTab?: () => void;
   readonly openSecureBrowser?: PayCardToolProps["openSecureBrowser"];
@@ -62,7 +62,6 @@ const LEADING_ONBOARDING_STEPS: readonly OnboardingStep[] = [
   { id: "top-up-card", label: "Top up card", done: false },
 ];
 
-// Mobile-only, injected just before the final purchase step.
 const NATIVE_ONLY_STEP: OnboardingStep = {
   id: "apple-google-pay",
   label: "Apple/Google Pay",
@@ -81,18 +80,8 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
     : [...LEADING_ONBOARDING_STEPS, PURCHASE_STEP];
 }
 
-/**
- * The join needs a resolver, and this tool prices nothing. It is called for every wallet with a
- * balance and answers `null`, which the screen reports as unpriced.
- */
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
 
-/**
- * The endpoint answer each derived step is decided by, for the steps a request decides.
- *
- * `apple-google-pay` is missing on purpose: nothing is asked for it, the holder says so and the
- * answer is kept on the device. `first-purchase` is missing because nothing answers it yet.
- */
 const STEP_ANSWERS: Readonly<Partial<Record<string, keyof CardOnboardingStatusMock>>> = {
   "create-account": "accountVerified",
   "choose-card-type": "hasCard",
@@ -134,27 +123,11 @@ function toCombinedWallet({
 
 const WALLET_STEP_ID = "apple-google-pay";
 
-/**
- * Whether the host intercepts the requests these answers are read from.
- *
- * Only the mobile handlers read the store, and mobile starts its worker from `MSW_ENABLED`. Desktop
- * has its own flag, and answering to it here would report mocking a desktop request never sees.
- */
-function isRequestMockingEnabled(): boolean {
-  return process.env.MSW_ENABLED === "true";
-}
-
-/** Reads what an endpoint answered, whatever shape the failure arrives in. */
 function describeError(error: unknown): string {
   if (error === undefined || error === null) return "";
   return typeof error === "string" ? error : JSON.stringify(error, null, 2);
 }
 
-/**
- * Builds the Card / Pay tool's props from the host's feature-flag overrides and
- * a local onboarding-step debug state. Apps consume this instead of re-implementing
- * the wiring in each host.
- */
 export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): PayCardToolProps {
   const platform = options.platform ?? "web";
   const dispatch = useDispatch();
@@ -244,14 +217,12 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const onboarding = useMemo(() => ({ steps, setStepDone }), [steps, setStepDone]);
 
   const auth = usePayCardAuthProps({ openPayTab: options.openPayTab });
-  // Only the native tool renders this screen, so desktop asks the three endpoints for nothing.
   const onboardingStatus = useCardOnboardingStatus({ skip: platform !== "native" });
   const { data: derivedOnboarding, refresh: refreshCardOnboarding } = onboardingStatus;
 
   const setDerivedStepDone = useCallback(
     (id: string, done: boolean) => {
       if (id === WALLET_STEP_ID) {
-        // Not an endpoint answer: the step is what the holder said, so the store is the source.
         dispatch(done ? markCardAddedToWallet() : resetCardAddedToWallet());
         return;
       }
@@ -281,7 +252,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       })),
       completedCount: derivedOnboarding.completedCount,
       isFetching: onboardingStatus.isLoading,
-      // Only the account read is surfaced as an error: a step nothing can answer reads as not done.
       error: onboardingStatus.isError ? "the account could not be read" : undefined,
       raw: JSON.stringify(derivedOnboarding, null, 2),
       refresh: refreshCardOnboarding,
@@ -319,9 +289,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const { reset: resetCardDetails } = cardDetails;
   const details = useMemo(
     () => ({
-      // A live, single-use credential. RTK holds it in mutation state while this hook is mounted,
-      // so what the tool guarantees is narrower: it is never handed over as text, and `clear`
-      // resets it on the way out.
       imageUrl: cardDetails.data?.imageUrl,
       isFetching: cardDetails.isLoading,
       error: cardDetails.error === undefined ? undefined : describeError(cardDetails.error),
@@ -344,7 +311,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     [cardStatusProbe, details],
   );
 
-  // The wallets are read when the balance screen opens, not when the tool mounts.
   const [walletsRequested, setWalletsRequested] = useState(false);
   const skipWallets = !walletsRequested;
 
@@ -361,9 +327,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     refetchWallets();
   }, [refetchWallets]);
 
-  // `useCardLinkedWallets` hands back only the join, and reports no more than that something
-  // failed. Reading the same cache entries again costs no request and gives the tool both
-  // responses as they arrived, which is what the screen is for.
   const { data: linked, error: linkedError } = useGetCardLinkedWalletsQuery(undefined, {
     skip: skipWallets,
   });
@@ -412,7 +375,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetPayCardLoginIntroSeen: resetLoginIntro,
       hasCompletedCardOnboarding,
       resetCardOnboarding,
-      auth: platform === "native" ? auth : undefined,
+      auth,
       openSecureBrowser: options.openSecureBrowser,
     }),
     [
@@ -429,7 +392,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetLoginIntro,
       hasCompletedCardOnboarding,
       resetCardOnboarding,
-      platform,
       auth,
       options.openSecureBrowser,
     ],

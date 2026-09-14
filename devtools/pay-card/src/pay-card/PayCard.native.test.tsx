@@ -75,6 +75,7 @@ function buildAuth(): NonNullable<PayCardToolProps["auth"]> {
     breakAccessToken: jest.fn(),
     breakRefreshToken: jest.fn(),
     clearSession: jest.fn(),
+    signOut: jest.fn(),
     fetchUser: jest.fn(),
     mock: {
       available: false,
@@ -84,6 +85,10 @@ function buildAuth(): NonNullable<PayCardToolProps["auth"]> {
       renewals: 0,
       resetRenewals: jest.fn(),
       armUnauthorized: jest.fn(),
+    },
+    mockSession: {
+      available: false,
+      signIn: jest.fn(),
     },
   };
 }

@@ -1,8 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { cardSession, readCardSession, refreshCardSession } from "@features/platform-card";
+import { setSignedIn } from "@features/flow-pay-card-auth/state";
+import {
+  MOCK_CARD_ACCESS_TOKEN,
+  MOCK_CARD_REFRESH_TOKEN,
+} from "@domain/api-card-management/mock/card-session";
 import { cardApi } from "@shared/api-services";
 import type { DevToolsConfig } from "@devtools/registry";
+import { isMockSessionSupported } from "./isMockSessionSupported";
+import { isRequestMockingEnabled } from "./isRequestMockingEnabled";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
 type PayCardAuthProps = NonNullable<PayCardToolProps["auth"]>;
@@ -49,6 +56,15 @@ type CardEndpoints = { endpoints: { getUser?: CardQuery; getCardStatus?: CardQue
 const cardEndpoints = cardApi as unknown as CardEndpoints;
 
 const VISIBLE_TOKEN_CHARS = 9;
+
+const MOCK_SESSION = {
+  accessToken: MOCK_CARD_ACCESS_TOKEN,
+  refreshToken: MOCK_CARD_REFRESH_TOKEN,
+};
+
+function canMockSession(): boolean {
+  return isRequestMockingEnabled() && isMockSessionSupported();
+}
 
 function mask(token: string | null): string {
   if (!token) return "null";
@@ -177,6 +193,29 @@ export function usePayCardAuthProps(options: UsePayCardAuthPropsOptions = {}): P
     });
   }, [run]);
 
+  const signInMockSession = useCallback(() => {
+    run("mock sign in", async () => {
+      // Never persist fake tokens unless requests are intercepted.
+      if (!canMockSession()) {
+        return "nothing is mocking the Card endpoints";
+      }
+
+      await cardSession.set(MOCK_SESSION);
+      dispatch(cardApi.util.resetApiState());
+      dispatch(setSignedIn(true));
+      return "the app reads as signed in";
+    });
+  }, [dispatch, run]);
+
+  const signOutMockSession = useCallback(() => {
+    run("sign out", async () => {
+      await cardSession.clear();
+      dispatch(cardApi.util.resetApiState());
+      dispatch(setSignedIn(false));
+      return "the session is gone";
+    });
+  }, [dispatch, run]);
+
   const fetchUser = useCallback(() => {
     run("get user", async () => {
       const getUser = cardEndpoints.endpoints.getUser;
@@ -225,6 +264,7 @@ export function usePayCardAuthProps(options: UsePayCardAuthPropsOptions = {}): P
     breakAccessToken,
     breakRefreshToken,
     clearSession,
+    signOut: signOutMockSession,
     fetchUser,
     openPayTab: options.openPayTab,
     mock: {
@@ -235,6 +275,10 @@ export function usePayCardAuthProps(options: UsePayCardAuthPropsOptions = {}): P
       renewals: mockSnapshot.renewals,
       resetRenewals,
       armUnauthorized,
+    },
+    mockSession: {
+      available: canMockSession(),
+      signIn: signInMockSession,
     },
   };
 }
