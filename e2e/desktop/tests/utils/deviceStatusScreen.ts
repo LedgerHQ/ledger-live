@@ -30,12 +30,20 @@ export async function settleAfterDeviceStatusScreen(): Promise<void> {
   const port = getEnv("SPECULOS_API_PORT");
   const deadline = Date.now() + STATUS_SCREEN_UPPER_BOUND_MS;
 
+  let lastSeen = "";
   while (Date.now() < deadline) {
-    const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
-    if (texts.includes(APP_IDLE_MARKER)) return;
+    lastSeen = await fetchCurrentScreenTexts(port);
+    if (lastSeen.toLowerCase().includes(APP_IDLE_MARKER)) return;
     await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL_MS));
   }
-  // Upper bound reached: the status screen outlived its usual lifetime. Fall
-  // through rather than throw -- this is a settle, not an assertion, and the
-  // caller's own expectations will report anything actually broken.
+
+  // Falling through here would let the caller send its next command into the
+  // discard window, and that command has no timeout of its own -- the run would
+  // hang for the full test timeout with nothing pointing at the cause. Fail here
+  // instead, where the reason is still known.
+  throw new Error(
+    `Device did not return to its idle screen within ${STATUS_SCREEN_UPPER_BOUND_MS}ms. ` +
+      `A command sent now would land in the status screen's discard window (LIVE-37178). ` +
+      `Last screen text: "${lastSeen}"`,
+  );
 }
