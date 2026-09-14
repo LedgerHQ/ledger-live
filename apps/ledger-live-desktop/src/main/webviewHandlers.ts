@@ -1,10 +1,15 @@
 import { app, ipcMain, session, webContents } from "electron";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import { openURL } from "./openURL";
+import { trackLiveAppSession } from "./liveAppSessions";
 import {
   WEBVIEW_GUEST_CSP,
+  WEBVIEW_GUEST_PERMISSIONS_POLICY,
   createLiveAppSchemeChecker,
   mergeCspHeaders,
+  mergePermissionsPolicyHeaders,
+  resolvePermissionCheck,
+  resolvePermissionRequest,
 } from "./webviewHandlers.helpers";
 
 type WebviewHandlersGlobal = typeof globalThis & {
@@ -16,6 +21,18 @@ const webviewHandlersGlobal = globalThis as WebviewHandlersGlobal;
 // Electron 42 made guest-side DevTools capture unreliable, so discovery happens
 // app-wide and ownership is re-derived when a Live App <webview> is destroyed.
 const trackedDevToolsContents = new Set<Electron.WebContents>();
+
+// `getType()` throws on a destroyed WebContents; callers must still answer, so
+// an unresolvable type comes back as `undefined` rather than as an exception.
+const resolveContentsType = (
+  contents: Electron.WebContents | null | undefined,
+): string | undefined => {
+  try {
+    return contents && !contents.isDestroyed() ? contents.getType() : undefined;
+  } catch {
+    return undefined;
+  }
+};
 
 const isDevToolsContents = (contents: Electron.WebContents) => {
   try {
@@ -164,11 +181,49 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
     if (hardenedSessions.has(s)) return;
     hardenedSessions.add(s);
 
+    // The host renderer only ever runs in the default session, so a partitioned
+    // session is a guest by construction. On the default session `getType()` is
+    // the only signal, and a caller it can't resolve (null, or destroyed, which
+    // throws) must not inherit the host's `hid` grant.
+    const isGuestCaller = (contents: Electron.WebContents | null): boolean => {
+      if (s !== session.defaultSession) return true;
+      const type = resolveContentsType(contents);
+      return type === undefined || type === "webview";
+    };
+
+    // Electron grants every request when no handler is installed, so one goes on
+    // every session - including the default one, in case a <webview> is ever
+    // created without a partition.
+    s.setPermissionRequestHandler((contents, permission, callback, requestDetails) => {
+      const { mediaTypes } = requestDetails as Electron.MediaAccessPermissionRequest;
+      const isGuest = isGuestCaller(contents);
+      const granted = resolvePermissionRequest({ isGuest, permission, mediaTypes });
+
+      // Electron granted everything before this allowlist existed, and a denial
+      // is otherwise invisible - the web API just rejects inside the Live App.
+      if (!granted) {
+        console.warn(
+          `Denied "${permission}" permission requested by ${
+            isGuest ? "a Live App guest" : "the host renderer"
+          } at ${requestDetails.requestingUrl || "an unknown URL"}.`,
+        );
+      }
+
+      callback(granted);
+    });
+
+    s.setPermissionCheckHandler((contents, permission) =>
+      resolvePermissionCheck({ isGuest: isGuestCaller(contents), permission }),
+    );
+
+    // Denied explicitly rather than left to fail on an Electron default.
+    s.setDisplayMediaRequestHandler((_request, callback) => callback({}));
+
     s.webRequest.onHeadersReceived((details, callback) => {
       // Only harden responses loaded by a guest <webview> to avoid affecting
       // the host renderer or unrelated BrowserViews. `getType()` returns
       // "webview" for guest WebContents.
-      const isWebviewGuest = details.webContents?.getType() === "webview";
+      const isWebviewGuest = resolveContentsType(details.webContents) === "webview";
       const isFrameDocument =
         details.resourceType === "mainFrame" || details.resourceType === "subFrame";
       if (!isWebviewGuest || !isFrameDocument) {
@@ -176,9 +231,11 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
         return;
       }
 
-      callback({
-        responseHeaders: mergeCspHeaders(details.responseHeaders, WEBVIEW_GUEST_CSP),
-      });
+      const responseHeaders = mergePermissionsPolicyHeaders(
+        mergeCspHeaders(details.responseHeaders, WEBVIEW_GUEST_CSP),
+        WEBVIEW_GUEST_PERMISSIONS_POLICY,
+      );
+      callback({ responseHeaders });
     });
   };
 
@@ -210,6 +267,9 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
     }
 
     if (contentsType !== "webview") return;
+
+    // So Settings can clear this partition later.
+    trackLiveAppSession(contents.session);
 
     // Route same-tab `window.open` attempts: http(s) goes to the user's
     // default browser via `openURL`; everything else (including

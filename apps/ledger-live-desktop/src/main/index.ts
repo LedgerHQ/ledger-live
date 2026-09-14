@@ -27,6 +27,7 @@ import {
   cleanupZcashNativeHost,
 } from "@ledgerhq/coin-zcash/network/ipc/main-host";
 import { setupWebviewHandlers } from "./webviewHandlers";
+import { clearLiveAppSessionsCache, clearLiveAppSessionsStorage } from "./liveAppSessions";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
@@ -123,13 +124,12 @@ app.on("ready", async () => {
   setupZcashNativeHost();
 
   /**
-   * Clears the session’s HTTP cache
+   * Clears storage for the host session and every Live App partition
    * Used to remove third party cached auth tokens, among other things
    */
-  ipcMain.handle("clearStorageData", () => {
-    const defaultSession = session.defaultSession;
-    return defaultSession.clearStorageData();
-  });
+  ipcMain.handle("clearStorageData", () =>
+    Promise.all([session.defaultSession.clearStorageData(), clearLiveAppSessionsStorage()]),
+  );
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
     return db.getKey(ns, keyPath, defaultValue);
   });
@@ -157,9 +157,8 @@ app.on("ready", async () => {
   ipcMain.handle("reload", () => {
     return db.reload();
   });
-  ipcMain.handle("cleanCache", () => {
-    return db.cleanCache();
-  });
+  // Live Apps hold their HTTP cache in their own partitions.
+  ipcMain.handle("cleanCache", () => Promise.all([db.cleanCache(), clearLiveAppSessionsCache()]));
   ipcMain.handle("reloadRenderer", () => {
     console.log("reloading renderer ...");
     loadWindow();
@@ -200,21 +199,30 @@ app.on("ready", async () => {
   if (__DEV__ || process.env.PLAYWRIGHT_RUN) {
     // Catch ledgerlive:// deep-link requests in dev mode from the app or live-apps
     // We cannot get deep-links from outside the app, from the browser for example
-    SUPPORTED_SCHEMES.forEach(scheme => {
-      protocol.handle(scheme, request => {
-        const url = request.url;
-        getMainWindowAsync()
-          .then(w => {
-            if (w) {
-              show(w);
-              sendDeepLink(w, url);
-            }
-          })
-          .catch((err: unknown) => console.log(err));
+    const handleDeepLink = (request: Request) => {
+      const url = request.url;
+      getMainWindowAsync()
+        .then(w => {
+          if (w) {
+            show(w);
+            sendDeepLink(w, url);
+          }
+        })
+        .catch((err: unknown) => console.log(err));
 
-        return new Response();
+      return new Response();
+    };
+
+    // Registration is per-session, and Live Apps run in their own partitions:
+    // the global `protocol` only covers the host's default session.
+    const registerDeepLinkSchemes = (target: Electron.Protocol) => {
+      SUPPORTED_SCHEMES.forEach(scheme => {
+        if (!target.isProtocolHandled(scheme)) target.handle(scheme, handleDeepLink);
       });
-    });
+    };
+
+    registerDeepLinkSchemes(protocol);
+    app.on("session-created", s => registerDeepLinkSchemes(s.protocol));
   }
 
   await clearSessionCache(window.webContents.session);

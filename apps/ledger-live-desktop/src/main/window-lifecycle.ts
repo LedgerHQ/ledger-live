@@ -1,4 +1,4 @@
-import { BrowserWindow, screen, app, WebPreferences } from "electron";
+import { BrowserWindow, screen, app, webContents, WebPreferences } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL, pathToFileURL } from "url";
@@ -173,25 +173,53 @@ export function createEarlyMainWindow() {
 function setupMainWindowHandlers() {
   if (!mainWindow) return;
 
+  // Guests have their own partitions and never reach this session; the check
+  // below is a second line of defence (DONJON-1404).
   mainWindow.webContents.session.on("select-hid-device", (event, details, callback) => {
     event.preventDefault();
+
+    // `fromFrame` and `getType()` both throw on contents disposed while
+    // `requestDevice()` was pending; escaping here would leave `callback`
+    // uncalled and the renderer hanging, so a throw is an explicit deny.
+    let isHostRequest = false;
+    try {
+      const requestingContents = details.frame ? webContents.fromFrame(details.frame) : undefined;
+      isHostRequest =
+        !!requestingContents &&
+        !requestingContents.isDestroyed() &&
+        requestingContents.getType() !== "webview";
+    } catch (error) {
+      console.warn("Could not resolve the frame requesting a HID device.", error);
+      callback(null);
+      return;
+    }
+
+    if (!isHostRequest) {
+      console.warn("Ignoring HID device selection not attributable to the host renderer.");
+      callback(null);
+      return;
+    }
+
     const ledgerDevices = details.deviceList.filter(
       device => device.vendorId === ledgerUSBVendorId,
     );
     if (ledgerDevices.length > 0) {
       callback(ledgerDevices[0].deviceId);
     } else {
+      // Cancel rather than leave the pick open: resolving it later would need a
+      // `hid-device-added` listener, and there is none.
       console.warn("No Ledger HID devices found.");
+      callback(null);
     }
   });
 
-  mainWindow.webContents.session.setPermissionCheckHandler((_, permission) => {
-    if (permission === "hid") return true;
-    return false;
-  });
-
+  // What `navigator.hid.getDevices()` and `HIDDevice.open()` consult - neither
+  // goes through the `hid` check or through `select-hid-device` above. Guests
+  // are kept out by session isolation, not by an origin check: their partitions
+  // have no device permission handler at all, and with none set Electron grants
+  // only what `select-hid-device` picked (DONJON-1404).
   mainWindow.webContents.session.setDevicePermissionHandler(details => {
-    if (details.deviceType === "hid" && details.device.vendorId === 0x2c97) {
+    if (details.deviceType === "hid" && details.device.vendorId === ledgerUSBVendorId) {
       return true;
     }
     return false;

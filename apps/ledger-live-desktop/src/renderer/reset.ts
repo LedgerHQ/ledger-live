@@ -4,7 +4,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { log } from "@ledgerhq/logs";
 import { delay } from "@ledgerhq/live-common/promise";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
-import { resetAll, cleanCache } from "~/renderer/storage";
+import { resetAll, cleanCache, clearStorageData } from "~/renderer/storage";
 import { resetStore } from "~/renderer/store";
 import { cleanAccountsCache } from "~/renderer/actions/accounts";
 import { disable as disableDBMiddleware } from "./middlewares/db";
@@ -19,6 +19,12 @@ export async function hardReset() {
   log("clear-cache", "hardReset()");
   disableDBMiddleware();
   await resetAll();
+  // `resetAll` only removes the app DB, not any session storage. Best-effort:
+  // the DB is already gone, so a failure here must not abort the rest.
+  log("clear-cache", "clearStorageData()");
+  await clearStorageData().catch(error =>
+    log("clear-cache", `clearStorageData() failed: ${String(error)}`),
+  );
   resetStore();
   window.localStorage.clear();
 }
