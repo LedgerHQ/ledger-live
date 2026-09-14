@@ -114,12 +114,6 @@ jest.mock("react-native-gesture-handler", () => {
 
 jest.mock("react-native-gesture-handler/ReanimatedSwipeable");
 
-jest.mock("react-native-haptic-feedback", () => ({
-  default: {
-    trigger: jest.fn(),
-  },
-}));
-
 jest.mock("expo-haptics", () => ({
   impactAsync: jest.fn().mockResolvedValue(undefined),
   notificationAsync: jest.fn().mockResolvedValue(undefined),
