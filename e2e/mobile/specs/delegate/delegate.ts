@@ -179,7 +179,7 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
     it(
       `[${Currency.MINA.testLabel}] - Delegate`,
       async () => {
-        const account = await pickMinaAccountToDelegate();
+        const { account } = await pickMinaAccountToDelegate();
         const validator = await pickMinaValidator();
         const delegation = new Delegate(account, "N/A", validator.name, validator.address);
         const amountWithCode = delegation.amount + " " + Currency.MINA.ticker;
@@ -211,29 +211,33 @@ export function runMinaRedelegateTest(tmsLinks: string[], tags: string[]) {
   describeFlow("Redelegate", () => {
     beforeAll(minaBeforeAll([MINA_REDELEGATION_ACCOUNT]));
 
-    it(`[${Currency.MINA.testLabel}] - Redelegate`, async () => {
-      const { account, validatorAddress } = await pickMinaRedelegation();
-      const validator = await pickMinaValidator(validatorAddress);
-      const delegation = new Delegate(account, "N/A", validator.name, validator.address);
-      const currencyId = Currency.MINA.id;
+    it(
+      `[${Currency.MINA.testLabel}] - Redelegate`,
+      async () => {
+        const { account, validatorAddress } = await pickMinaRedelegation();
+        const validator = await pickMinaValidator(validatorAddress);
+        const delegation = new Delegate(account, "N/A", validator.name, validator.address);
+        const currencyId = Currency.MINA.id;
 
-      await app.portfolio.goToAccounts(Currency.MINA.name);
-      await app.common.goToAccountByName(account.accountName);
+        await app.portfolio.goToAccounts(Currency.MINA.name);
+        await app.common.goToAccountByName(account.accountName);
 
-      // Redelegating reopens the delegate flow on the validator list.
-      await app.undelegate.tapStakingRow(currencyId);
-      await app.undelegate.tapRedelegateAction(currencyId);
-      await app.stake.selectValidatorFromList(delegation.provider);
-      await app.stake.expectProvider(currencyId, delegation.provider);
-      await app.stake.summaryContinue(currencyId);
+        // Redelegating reopens the delegate flow on the validator list.
+        await app.undelegate.tapStakingRow(currencyId);
+        await app.undelegate.tapRedelegateAction(currencyId);
+        await app.stake.selectValidatorFromList(delegation.provider);
+        await app.stake.expectProvider(currencyId, delegation.provider);
+        await app.stake.summaryContinue(currencyId);
 
-      await app.speculos.signDelegationTransaction(delegation);
-      await app.common.successViewDetails();
+        await app.speculos.signDelegationTransaction(delegation);
+        await app.common.successViewDetails();
 
-      await app.operationDetails.waitForOperationDetails();
-      await app.operationDetails.checkAccount(account.accountName);
-      await app.operationDetails.checkTransactionType("REDELEGATE");
-    });
+        await app.operationDetails.waitForOperationDetails();
+        await app.operationDetails.checkAccount(account.accountName);
+        await app.operationDetails.checkTransactionType("REDELEGATE");
+      },
+      MINA_PAIR_TEST_TIMEOUT_MS,
+    );
   });
 }
 
@@ -246,10 +250,10 @@ export function runMinaUndelegateTest(tmsLinks: string[], tags: string[]) {
     it(
       `[${Currency.MINA.testLabel}] - Undelegate`,
       async () => {
-        // Undelegating delegates back to the account itself, and the device review renders that raw
-        // address: the speculos helper asserts against it, hence no target validator here.
-        const account = await pickMinaAccountToUndelegate();
-        const delegation = new Delegate(account, "N/A", "N/A");
+        // Undelegating is a delegation to the account itself, so the account's own address is the
+        // target the device renders and the speculos helper asserts against.
+        const { account, address } = await pickMinaAccountToUndelegate();
+        const delegation = new Delegate(account, "N/A", "N/A", address);
 
         await app.portfolio.goToAccounts(Currency.MINA.name);
         await app.common.goToAccountByName(account.accountName);

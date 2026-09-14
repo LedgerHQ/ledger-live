@@ -7,6 +7,7 @@ import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOw
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import {
   MINA_DELEGATION_PAIR,
+  MINA_PAIR_SYNC_TIMEOUT_MS,
   pickMinaAccountToUndelegate,
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { buildTags } from "tests/utils/tagsUtils";
@@ -74,15 +75,15 @@ test.describe("Undelegate - MINA", () => {
       annotation: { type: "TMS", description: "B2CQA-6628" },
     },
     async ({ app }) => {
-      // Undelegating delegates back to the account itself, and the device review renders that raw
-      // address: the speculos helper asserts against it, hence no target validator here.
-      const account = await pickMinaAccountToUndelegate();
-      const delegation = new Delegate(account, "N/A", "N/A");
+      // Undelegating is a delegation to the account itself, so the account's own address is the
+      // target the device renders and the speculos helper asserts against.
+      const { account, address } = await pickMinaAccountToUndelegate();
+      const delegation = new Delegate(account, "N/A", "N/A", address);
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);
 
-      await app.layout.waitForSyncButtonToBeEnabled({ slowSync: true });
+      await app.layout.waitForSyncButtonToBeEnabled({ timeout: MINA_PAIR_SYNC_TIMEOUT_MS });
       // Mina holds a single delegation, so its row is not indexed.
       await app.undelegate.openFromManageMenu(Currency.MINA.id);
 

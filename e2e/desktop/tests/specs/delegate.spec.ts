@@ -5,6 +5,7 @@ import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import {
   MINA_DELEGATION_PAIR,
   MINA_REDELEGATION_ACCOUNT,
+  MINA_PAIR_SYNC_TIMEOUT_MS,
   pickMinaAccountToDelegate,
   pickMinaRedelegation,
   pickMinaValidator,
@@ -583,7 +584,7 @@ test.describe("Delegate - MINA", () => {
       annotation: { type: "TMS", description: "B2CQA-6626" },
     },
     async ({ app }) => {
-      const account = await pickMinaAccountToDelegate();
+      const { account } = await pickMinaAccountToDelegate();
       const validator = await pickMinaValidator();
       // Mina delegates the whole balance, so the flow carries no amount.
       const delegation = new Delegate(account, "N/A", validator.name, validator.address);
@@ -591,7 +592,9 @@ test.describe("Delegate - MINA", () => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);
 
-      await app.account.startStakingFlowFromMainStakeButton({ slowSync: true });
+      await app.account.startStakingFlowFromMainStakeButton({
+        timeout: MINA_PAIR_SYNC_TIMEOUT_MS,
+      });
       await app.delegate.checkValidatorListIsVisible();
       await app.delegate.inputProvider(delegation.provider);
       await app.delegate.selectProviderByName(delegation.provider);

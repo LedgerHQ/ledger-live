@@ -21,6 +21,23 @@ const DELEGATE_ACCOUNT_QUERY = `
   }
 `;
 
+/**
+ * A transaction sits in the pool for about one block before it is included. Until then the chain
+ * still reports the state the account is leaving, so an account with a pooled command has not
+ * arrived anywhere yet and must not be handed to a flow.
+ */
+const PENDING_COMMANDS_QUERY = `
+  query GetPendingCommands($publicKey: PublicKey!) {
+    pooledUserCommands(publicKey: $publicKey) {
+      nonce
+    }
+  }
+`;
+
+// The node answers the queries below in about 150 ms. A request still outstanding after this is a
+// hung socket, which without a timeout would hold the flow until the test runner kills it.
+const MINA_NODE_TIMEOUT_MS = 30 * 1000;
+
 // The query the app builds its validator list from, so a validator picked here is one it offers.
 const VALIDATORS_QUERY =
   "page=0&size=20&orderBy=DESC&sortBy=DELEGATORS&type=ACTIVE&isVerifiedOnly=true";
@@ -33,21 +50,32 @@ const VALIDATORS_QUERY =
 export const MINA_DELEGATION_PAIR = [Account.MINA_1, Account.MINA_2];
 
 /**
- * Between the two transactions being included the pair transiently holds two accounts in the same
- * state, and a picker reading right then finds nothing to work on. That happens on a retry of the
- * flow that just broadcast, and on the platform that is not broadcasting while the other mutates
- * the pair — the weekly nightlies run both platforms but only let one broadcast.
- *
- * So a picker waits the window out rather than failing on it: a mina transaction is included in
- * about three minutes, and outside the window the first read already matches and costs nothing.
+ * A spec seeding the pair syncs two accounts, and the rosetta node answers /search/transactions in
+ * 35 s or so per account whatever its history, so the app settles well after the budget one slow
+ * account gets.
  */
-export const MINA_PAIR_SETTLE_TIMEOUT_MS = 4 * 60 * 1000;
+export const MINA_PAIR_SYNC_TIMEOUT_MS = 150 * 1000;
+
+/**
+ * A picker can find the pair unusable for two reasons, both of which pass on their own: a
+ * transaction of the pair still in the pool, or the two accounts transiently in the same state
+ * between the delegate and the undelegate transaction being included.
+ *
+ * So a picker waits rather than failing: one mina inclusion takes about three minutes, and the
+ * budget covers the pool plus the settle. Outside those windows the first read already matches and
+ * costs nothing.
+ */
+export const MINA_PAIR_SETTLE_TIMEOUT_MS = 6 * 60 * 1000;
 const PAIR_POLL_INTERVAL_MS = 15 * 1000;
 
 /**
  * Redelegating only moves a delegation from one validator to another, so it leaves its account
- * delegated. Keeping it out of the pair means its own precondition is the state it produces, and
- * the specs stay independent: the three flows can run concurrently, in any order, broadcasting.
+ * delegated — and a transaction that fails leaves the previous delegation untouched. Keeping it out
+ * of the pair means its own precondition is the state it produces, and the specs stay independent:
+ * the three flows can run concurrently, in any order, broadcasting.
+ *
+ * Nothing in the suite can therefore free this account: no flow undelegates it and none debits it.
+ * If it ever is free, someone did it by hand, and only a delegation sent by hand puts it back.
  */
 export const MINA_REDELEGATION_ACCOUNT = Account.MINA_3;
 
@@ -55,21 +83,66 @@ export type MinaValidator = { address: string; name: string };
 
 export type MinaRedelegation = { account: Account; validatorAddress: string };
 
-type DelegationState = { account: Account; validatorAddress?: string };
+/** A pair account, with the address the pickers resolved it to. */
+export type MinaPick = { account: Account; address: string };
 
-/** The validator an account delegates to, or undefined when it delegates to itself. */
-async function fetchDelegate(address: string): Promise<string | undefined> {
-  const { data } = await axios.post(API_MINA_GRAPHQL_NODE, {
-    query: DELEGATE_ACCOUNT_QUERY,
-    variables: { publicKey: address },
-  });
-  const delegate: string | undefined = data?.data?.account?.delegateAccount?.publicKey;
-  return delegate && delegate !== address ? delegate : undefined;
+type DelegationState = MinaPick & { validatorAddress?: string; pending: boolean };
+
+type GraphqlResponse<T> = { data?: T | null; errors?: { message?: string }[] };
+
+/**
+ * The node answers 200 with `{ data: null, errors: [...] }` on a rejected query, and
+ * `{ account: null }` for an address it does not know. Reading either as an answer would report an
+ * account whose state could not be determined as "not delegated" — so both raise here, and the
+ * caller's retry budget decides whether it was transient.
+ */
+async function queryNode<T>(
+  query: string,
+  variables: Record<string, unknown>,
+  subject: string,
+): Promise<T> {
+  const { data } = await axios.post<GraphqlResponse<T>>(
+    API_MINA_GRAPHQL_NODE,
+    { query, variables },
+    { timeout: MINA_NODE_TIMEOUT_MS },
+  );
+
+  const errors = data?.errors;
+  invariant(
+    !errors?.length,
+    `mina node rejected the ${subject} query: ${errors?.map(e => e.message ?? "unknown error").join("; ")}`,
+  );
+  invariant(data?.data, `mina node returned no data for the ${subject} query`);
+  return data.data;
 }
+
+type DelegateAccountData = {
+  account: { delegateAccount?: { publicKey?: string } | null } | null;
+};
 
 async function fetchDelegationState(account: Account): Promise<DelegationState> {
   const address = await getAccountAddress(account);
-  return { account, validatorAddress: await fetchDelegate(address) };
+
+  const { account: onChain } = await queryNode<DelegateAccountData>(
+    DELEGATE_ACCOUNT_QUERY,
+    { publicKey: address },
+    "delegation",
+  );
+  invariant(onChain, `mina node knows no account at ${address} (${account.accountName})`);
+
+  const { pooledUserCommands } = await queryNode<{ pooledUserCommands: unknown[] }>(
+    PENDING_COMMANDS_QUERY,
+    { publicKey: address },
+    "pending commands",
+  );
+
+  const delegate = onChain.delegateAccount?.publicKey;
+  return {
+    account,
+    address,
+    validatorAddress: delegate && delegate !== address ? delegate : undefined,
+    pending: pooledUserCommands.length > 0,
+  };
 }
 
 async function fetchPairState(): Promise<DelegationState[]> {
@@ -87,45 +160,82 @@ function isDelegated(state: DelegationState): boolean {
 
 function pairShape(states: DelegationState[]) {
   return states
-    .map(state => `${state.account.accountName}: ${isDelegated(state) ? "delegated" : "free"}`)
+    .map(state => {
+      const held = isDelegated(state) ? "delegated" : "free";
+      return `${state.account.accountName}: ${held}${state.pending ? ", tx pending" : ""}`;
+    })
     .join(", ");
 }
 
-/** The account of the pair in the given state, waiting out a pair caught mid-swap. */
-async function pickFromPair(delegated: boolean): Promise<Account> {
+const describeError = (error: unknown) => (error instanceof Error ? error.message : String(error));
+
+/**
+ * Poll until the pair offers a usable account, so that the transient shapes resolve themselves
+ * instead of failing the flow. Reading the chain is part of what is retried: the node this talks to
+ * is known to time out under load, and a single unlucky read should not spend the whole budget.
+ */
+async function pickFromPair(delegated: boolean): Promise<DelegationState> {
   const deadline = Date.now() + MINA_PAIR_SETTLE_TIMEOUT_MS;
+  let blocker = "not read yet";
+
   for (;;) {
-    const states = await fetchPairState();
-    const match = states.find(state => isDelegated(state) === delegated);
-    if (match) return match.account;
+    try {
+      const states = await fetchPairState();
+      // A pooled transaction means the account is still moving: taking it would sign a second
+      // transaction on a nonce the first already spent — which is what a retry of a flow that
+      // broadcast then failed later would otherwise do, twice, since CI retries twice.
+      const match = states.find(state => !state.pending && isDelegated(state) === delegated);
+      if (match) return match;
+      blocker = pairShape(states);
+    } catch (error) {
+      blocker = `could not read the pair — ${describeError(error)}`;
+    }
 
     const wanted = delegated ? "delegated" : "free";
     invariant(
       Date.now() < deadline,
-      `No ${wanted} mina account in the pair after ${MINA_PAIR_SETTLE_TIMEOUT_MS / 60_000} min (${pairShape(states)})`,
+      `No settled ${wanted} mina account in the pair after ${MINA_PAIR_SETTLE_TIMEOUT_MS / 60_000} min (${blocker})`,
     );
     await wait(PAIR_POLL_INTERVAL_MS);
   }
 }
 
 /** The free account of the pair, which this flow delegates. */
-export function pickMinaAccountToDelegate(): Promise<Account> {
+export function pickMinaAccountToDelegate(): Promise<MinaPick> {
   return pickFromPair(false);
 }
 
 /** The delegated account of the pair, which this flow frees. */
-export function pickMinaAccountToUndelegate(): Promise<Account> {
+export function pickMinaAccountToUndelegate(): Promise<MinaPick> {
   return pickFromPair(true);
 }
 
 /** The dedicated account and the validator it currently delegates to, which cannot be reselected. */
 export async function pickMinaRedelegation(): Promise<MinaRedelegation> {
-  const { account, validatorAddress } = await fetchDelegationState(MINA_REDELEGATION_ACCOUNT);
-  invariant(
-    validatorAddress,
-    `${MINA_REDELEGATION_ACCOUNT.accountName} is not delegated: redelegating needs a delegation to move`,
-  );
-  return { account, validatorAddress };
+  const deadline = Date.now() + MINA_PAIR_SETTLE_TIMEOUT_MS;
+  let blocker = "not read yet";
+
+  for (;;) {
+    try {
+      const state = await fetchDelegationState(MINA_REDELEGATION_ACCOUNT);
+      // Same reasoning as the pair: a redelegation signed while the previous one is still pooled
+      // would reuse its nonce.
+      if (!state.pending && state.validatorAddress) {
+        return { account: state.account, validatorAddress: state.validatorAddress };
+      }
+      blocker = pairShape([state]);
+    } catch (error) {
+      blocker = `could not read the account — ${describeError(error)}`;
+    }
+
+    invariant(
+      Date.now() < deadline,
+      `${MINA_REDELEGATION_ACCOUNT.accountName} holds no settled delegation to move after ` +
+        `${MINA_PAIR_SETTLE_TIMEOUT_MS / 60_000} min (${blocker}). No flow frees this account, so a ` +
+        `free one means it was undelegated by hand and has to be delegated again the same way.`,
+    );
+    await wait(PAIR_POLL_INTERVAL_MS);
+  }
 }
 
 type ValidatorEntry = { validatorAddress: string; validatorName?: string };
@@ -134,6 +244,7 @@ type ValidatorEntry = { validatorAddress: string; validatorName?: string };
 export async function pickMinaValidator(excludedAddress?: string): Promise<MinaValidator> {
   const { data } = await axios.get<{ content?: ValidatorEntry[] }>(
     `${API_VALIDATORS_BASE_URL}?${VALIDATORS_QUERY}`,
+    { timeout: MINA_NODE_TIMEOUT_MS },
   );
   // An unnamed validator cannot be searched for in the app's list, so it is not selectable.
   const named = (data?.content ?? []).flatMap(({ validatorAddress, validatorName }) =>
