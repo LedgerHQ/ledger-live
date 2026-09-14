@@ -1,6 +1,6 @@
 import { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import type { BoilerplateContext } from "../../config";
-import { getAccountInfo } from "../../network/node";
+import type { BoilerplateContext } from "../config";
+import { getAccountInfo } from "../network/node";
 
 // Could be getAccountInfo so it is used in both bridge and api
 export async function getBalance(context: BoilerplateContext, address: string): Promise<Balance[]> {
