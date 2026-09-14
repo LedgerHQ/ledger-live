@@ -269,7 +269,6 @@ function StakingPositions({ account }: Props) {
 
 export default function NearStakingPositions(props: Props) {
   const { account } = props as { account: NearAccount };
-  if (!account.nearResources) return null;
   return <StakingPositions account={account} />;
 }
 
