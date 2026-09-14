@@ -37,6 +37,7 @@ type PendingRefresh = {
 };
 
 const MAX_CONSENT_TRANSITION_RETRIES = 1;
+const CONTENT_CARDS_REFRESH_TIMEOUT_MS = 15_000;
 
 const identitiesMatch = (
   left: SyncedBrazeIdentity | null,
@@ -64,7 +65,8 @@ export function useBrazeProviderViewModel() {
   const devMode = useSelector(developerModeSelector);
   const contentCardsDismissed = useSelector(dismissedContentCardsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
-  const initialIsTrackedUserRef = useRef(isTrackedUser);
+  const isTrackedUserRef = useRef(isTrackedUser);
+  isTrackedUserRef.current = isTrackedUser;
   const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
   const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
   const userId = useSelector(userIdSelector);
@@ -135,17 +137,29 @@ export function useBrazeProviderViewModel() {
       rejectRefresh = reject;
     });
 
+    const timeoutId = setTimeout(() => {
+      if (pendingRefreshRef.current?.promise !== promise) return;
+      pendingRefreshRef.current = null;
+      rejectRefresh(new Error("Timed out waiting for Braze content cards refresh"));
+    }, CONTENT_CARDS_REFRESH_TIMEOUT_MS);
+
     pendingRefreshRef.current = {
       promise,
-      resolve: resolveRefresh,
-      reject: rejectRefresh,
+      resolve: () => {
+        clearTimeout(timeoutId);
+        resolveRefresh();
+      },
+      reject: error => {
+        clearTimeout(timeoutId);
+        rejectRefresh(error);
+      },
     };
 
-    ensureSubscription();
-
     try {
+      ensureSubscription();
       braze.requestContentCardsRefresh();
     } catch (error) {
+      clearTimeout(timeoutId);
       pendingRefreshRef.current = null;
       rejectRefresh(error);
     }
@@ -206,7 +220,10 @@ export function useBrazeProviderViewModel() {
             refreshContentCards: refreshAndReinitSession,
             enableSDK: async () => {
               await brazeSdk.enableSDK();
-              initializeBrazeSdk(devMode, isTrackedUser);
+              const isReinitialized = initializeBrazeSdk(devMode, isTrackedUser);
+              if (!isReinitialized) {
+                throw new Error("Failed to reinitialize Braze SDK after consent transition");
+              }
             },
           },
         ),
@@ -221,6 +238,16 @@ export function useBrazeProviderViewModel() {
       void transition.then(didTransitionSucceed => {
         if (pendingConsentTransitionRef.current === transition) {
           pendingConsentTransitionRef.current = null;
+        }
+
+        const isStillLatestTarget = identitiesMatch(targetIdentityRef.current, currentIdentity);
+
+        if (!isStillLatestTarget) {
+          // A newer identity became the target while this transition was in flight:
+          // don't mark the stale one as synced, resync against the latest target instead.
+          retryCountRef.current = 0;
+          syncBrazeIdentityRef.current();
+          return;
         }
 
         if (didTransitionSucceed) {
@@ -266,7 +293,7 @@ export function useBrazeProviderViewModel() {
 
   useEffect(() => {
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
-    const isInitialized = initializeBrazeSdk(devMode, initialIsTrackedUserRef.current);
+    const isInitialized = initializeBrazeSdk(devMode, isTrackedUserRef.current);
 
     if (!isInitialized) {
       console.warn("Failed to initialize Braze SDK");
@@ -288,6 +315,9 @@ export function useBrazeProviderViewModel() {
       }
       pendingRefreshRef.current?.resolve();
       pendingRefreshRef.current = null;
+      // Force the next sync to recreate the subscription and re-request cards,
+      // otherwise an unchanged identity short-circuits and dynamic content never resumes.
+      lastSyncedIdentityRef.current = null;
       setSdkReady(false);
     };
   }, [devMode]);
