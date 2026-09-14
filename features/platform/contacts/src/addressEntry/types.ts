@@ -30,8 +30,22 @@ export type ContactsAddressEntryState =
       error: "invalid_format" | "domain_not_found" | "sanctioned";
     }>
   | Readonly<{
+      status: "invalid";
+      value: string;
+      resolvedAddress: null;
+      inputMethod: ContactsAddressInputMethod;
+      error: "duplicate_address";
+      contactName: string;
+    }>
+  | Readonly<{
       status: "unavailable";
       value: string;
       resolvedAddress: null;
       inputMethod: ContactsAddressInputSource;
     }>;
+
+export type OtherContactAddress = Readonly<{
+  contactId: string;
+  contactName: string;
+  address: string;
+}>;

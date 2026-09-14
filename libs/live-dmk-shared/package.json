@@ -30,7 +30,9 @@
     "coverage": "jest --coverage",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src"
   },
   "dependencies": {
     "@ledgerhq/context-module": "catalog:",
@@ -56,6 +58,7 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "rxjs": "catalog:",

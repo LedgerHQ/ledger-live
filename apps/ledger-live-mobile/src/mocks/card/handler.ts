@@ -1,5 +1,6 @@
 import { http, HttpResponse, passthrough, delay } from "msw";
 import { getMockCardOnboardingStatus } from "@domain/api-card-management/mock";
+import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
   mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
@@ -140,6 +141,7 @@ const handlers = [
   http.get("*/v1/card/onboarding-status", () => {
     return HttpResponse.json(getMockCardOnboardingStatus());
   }),
+  http.get("*/v1/card/transactions", () => HttpResponse.json(mockPayCardTransactions())),
   http.get("*/v1/wallet/internal", ({ request }) => {
     const { walletFunded } = readCardOnboardingStatusMock();
     if (walletFunded !== undefined) {

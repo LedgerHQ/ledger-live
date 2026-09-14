@@ -1,7 +1,6 @@
 import { resolve as resolvePath } from "node:path";
 import test from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
@@ -88,8 +87,6 @@ test.describe("Borrow", () => {
       annotation: { type: "TMS", description: "B2CQA-6062" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.expectBorrowEntryPointVisible();
 
@@ -123,7 +120,6 @@ test.describe("Borrow", () => {
     },
     async ({ app }) => {
       test.setTimeout(BORROW_TEST_TIMEOUT_MS);
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.expectBorrowEntryPointVisible();
@@ -186,7 +182,6 @@ test.describe("Borrow", () => {
     },
     async ({ app }) => {
       test.setTimeout(BORROW_TEST_TIMEOUT_MS);
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.expectBorrowEntryPointVisible();
@@ -246,7 +241,6 @@ test.describe("Borrow", () => {
     },
     async ({ app }) => {
       test.setTimeout(BORROW_TEST_TIMEOUT_MS);
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.expectBorrowEntryPointVisible();

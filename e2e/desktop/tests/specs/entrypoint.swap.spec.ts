@@ -8,7 +8,6 @@ import {
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { getEnv } from "@shared/env";
@@ -60,7 +59,6 @@ test.describe("Swap - entry points", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.clickAsset(swapEntryPoint.swap.accountToDebit.currency);
       if (await isAggregatedAssetsEnabled(app.getPage())) {
@@ -84,7 +82,6 @@ test.describe("Swap - entry points", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.marketBanner.clickExploreMarketHeader();
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
@@ -106,7 +103,6 @@ test.describe("Swap - entry points", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.marketBanner.clickExploreMarketHeader();
       await app.market.clickCoinRow(swapEntryPoint.swap.accountToDebit.currency.ticker);
       if (await isAggregatedAssetsEnabled(app.getPage())) {
@@ -133,7 +129,6 @@ test.describe("Swap - entry points", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(
         getParentAccountName(swapEntryPoint.swap.accountToDebit),
@@ -156,8 +151,6 @@ test.describe("Swap - entry points", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
@@ -225,7 +218,6 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.swap.goAndWaitForSwapToBeReady(() =>
           app.mainNavigation.openTargetFromMainNavigation("swap"),
         );
@@ -305,8 +297,6 @@ test.describe("Swap - history", () => {
       annotation: { type: "TMS", description: "B2CQA-604" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       swapHistory.swap.accountToDebit.address = swapHistory.addressFrom;
       swapHistory.swap.accountToCredit.address = swapHistory.addressTo;
 
@@ -331,8 +321,6 @@ test.describe("Swap - history", () => {
       annotation: { type: "TMS", description: "B2CQA-602" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("swap");
       await app.swap.goToSwapHistory();
       await app.swap.checkSwapOperation(swapHistory.swapId, swapHistory.provider, swapHistory.swap);
@@ -388,8 +376,6 @@ test.describe("Swap - blacklisted address", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       const sanctionedAddressUrl = getEnv("SANCTIONED_ADDRESSES_URL");
       await overrideNetworkPayload(app, sanctionedAddressUrl, (json: any) => {
         json.bannedAddresses = [fromAccount.address];

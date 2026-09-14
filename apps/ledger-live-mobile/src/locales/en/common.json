@@ -1900,6 +1900,37 @@
       "subTitle": "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins."
     }
   },
+  "q3WalletV4Tour": {
+    "cta": {
+      "start": "Take a look",
+      "next": "Next",
+      "done": "All caught up"
+    },
+    "intro": {
+      "title": "A quick tour of the latest",
+      "subTitle": "New ways to send, spend, earn, and more."
+    },
+    "contact": {
+      "title": "Say goodbye to long addresses",
+      "subTitle": "Introducing Contacts. Save wallet addresses with names. Easy to find, easy to send."
+    },
+    "contactNoPay": {
+      "title": "Say hello to Contacts",
+      "subTitle": "Say goodbye to long addresses. Save wallet addresses with names. Easy to find, easy to send."
+    },
+    "pay": {
+      "title": "Say hello to Pay",
+      "subTitle": "Pay contacts, request money, and get cashback with crypto card. Now, all via one tab."
+    },
+    "payNoCard": {
+      "title": "Say hello to Pay",
+      "subTitle": "Pay contacts and request money, all via one tab."
+    },
+    "yield": {
+      "title": "Keep your crypto, finance your projects",
+      "subTitle": "Borrow stablecoins using wrapped BTC as collateral via Yield.xyz powered by Morpho."
+    }
+  },
   "q2WalletV4Tour": {
     "cta": {
       "start": "See what's new",
@@ -9876,6 +9907,11 @@
     "description": "You'll receive your {{currency}} once confirmed on the blockchain",
     "viewTransaction": "View transaction"
   },
+  "perpsTransactionStatus": {
+    "title": "Fund Perpetuals",
+    "currencies": "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps": "Return to Perps"
+  },
   "perpsDeposit": {
     "title": "Deposit",
     "inputDepositAmount": "Deposit ~{{value}}",
@@ -10304,6 +10340,18 @@
         "retry": "Try again"
       }
     },
+    "cardTransactions": {
+      "categories": {
+        "SUBSCRIPTIONS": "Subscriptions",
+        "FOOD": "Food",
+        "TRAVEL": "Travel",
+        "ENTERTAINMENT": "Entertainment",
+        "HEALTH": "Health",
+        "ATM": "ATM",
+        "UTILITIES": "Utilities",
+        "MISC": "Other"
+      }
+    },
     "selectContact": {
       "placeholder": "Enter contact"
     },
@@ -10725,7 +10773,6 @@
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names. Use a nickname or just a first name + initial, e.g. 'John S.'",
-      "confirmName": "Confirm name",
       "invalidNameError": "Special characters are not allowed.",
       "duplicateNameError": "This contact name is already in use."
     },
@@ -10744,7 +10791,8 @@
       "sanctioned": {
         "description": "This address has been flagged and Ledger doesn't allow sending to it",
         "learnMore": "Learn more"
-      }
+      },
+      "duplicateAddress": "This address is already used for {{contactName}}."
     },
     "addAddressName": {
       "title": "Name address",

@@ -13,11 +13,7 @@ import {
   type AddContactDialogViewModel,
 } from "@features/flow-contacts-add-contact";
 import type { AddAddressFlowState } from "@features/flow-contacts-add-address";
-import {
-  buildContactsGlobalProperties,
-  useContacts,
-  useContactsFeature,
-} from "@features/platform-contacts";
+import { buildContactsGlobalProperties, useContacts } from "@features/platform-contacts";
 import type { ContactsDeviceIntentExecutorProps } from "@features/platform-contacts/device";
 import {
   useSendPrefillAddAddressFlow,
@@ -116,7 +112,6 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   const dispatch = useDispatch();
   const { state } = useSendFlowData();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("mobile");
   const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
     eventTiming: Platform.OS === "ios" ? "will" : "did",
   });
@@ -131,11 +126,10 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
     () => ({
       ...getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
       ...buildContactsGlobalProperties({
-        ffAddressBookEnabled: isContactsFeatureEnabled,
         contacts,
       }),
     }),
-    [contacts, isContactsFeatureEnabled, state.account.account, state.account.parentAccount],
+    [contacts, state.account.account, state.account.parentAccount],
   );
   const closeAfterSave = useCallback(() => {
     setDrawerOrigin(null);
@@ -169,7 +163,7 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
       title: t("contacts.addContact"),
       namePlaceholder: t("contacts.addContactDrawer.namePlaceholder"),
       namingDisclaimer: t("contacts.addContactDrawer.namingDisclaimer"),
-      confirmName: t("contacts.addContactDrawer.confirmName"),
+      confirmAddContact: t("contacts.addContact"),
       nameValidationErrors: {
         [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.invalidNameError"),
         [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
@@ -180,11 +174,12 @@ export function useAddNewContactViewModel(): AddNewContactViewModel {
   const callbacks = useMemo(
     () => ({
       onOpen: () => {
-        void screen("Modal send - add contact", undefined, trackingProperties);
+        void screen("Add Contact", undefined, trackingProperties);
       },
       onConfirm: () => {
         track("button_clicked", {
-          button: "confirm name",
+          button: "save contact",
+          hasPicture: false,
           page: "add contact",
           ...trackingProperties,
         });

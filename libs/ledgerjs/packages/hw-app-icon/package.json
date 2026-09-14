@@ -39,6 +39,7 @@
     "@types/node": "catalog:",
     "documentation": "14.0.2",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.4.0"
@@ -53,7 +54,9 @@
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest"
+    "test": "jest",
+    "format": "oxfmt src tests",
+    "format:check": "oxfmt --check src tests"
   },
   "exports": {
     ".": {

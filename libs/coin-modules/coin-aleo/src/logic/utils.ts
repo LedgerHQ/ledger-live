@@ -505,6 +505,11 @@ function getAmountToSpend({
     return tokenAccount?.transparentBalance ?? new BigNumber(0);
   }
 
+  // unbonding spends the bonded position; the fee is paid from the transparent balance
+  if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
+    return getAvailableBalance(account, transaction);
+  }
+
   const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
 
   return BigNumber.max(0, transparentBalance.minus(estimatedFees));
@@ -520,7 +525,9 @@ export function calculateAmount({
   estimatedFees: BigNumber;
 }) {
   const amount = getAmountToSpend({ account, transaction, estimatedFees });
-  const totalSpent = isTokenTransaction(transaction) ? amount : amount.plus(estimatedFees);
+  const feePaidFromAnotherBalance =
+    isTokenTransaction(transaction) || transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC;
+  const totalSpent = feePaidFromAnotherBalance ? amount : amount.plus(estimatedFees);
 
   return {
     amount,
@@ -572,6 +579,11 @@ export function isPrivateTokenTransaction(transaction: Pick<Transaction, "mode">
 
 export function isTokenTransaction(transaction: Pick<Transaction, "mode">): boolean {
   return isPublicTokenTransaction(transaction) || isPrivateTokenTransaction(transaction);
+}
+
+/** Unbonding moves funds within the account itself, so the recipient is the sender. */
+export function isSelfStakingMode(transaction: Pick<Transaction, "mode">): boolean {
+  return transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC;
 }
 
 export function isSelfTransferTransaction(
@@ -946,6 +958,18 @@ export function getClaimableStakingBalance(account: AleoAccount): BigNumber {
 }
 
 /**
+ * True while an operation of that type is still in the pending pool.
+ *
+ * The staking figures in `aleoResources` are read straight from the `credits.aleo` mappings
+ * on each sync and carry no optimistic adjustment, so between broadcast and the next sync
+ * `bondedBalance` and `unbondingBalance` still describe the pre-transaction chain state.
+ * A CTA driven by them alone would keep offering an amount the chain has already committed
+ * away — hence the guard on the pending pool rather than on the balances.
+ */
+export const hasPendingOperationType = (account: AleoAccount, type: OperationType): boolean =>
+  (account.pendingOperations ?? []).some(op => op.type === type);
+
+/**
  * Returns the spendable balance for a given Aleo transaction mode.
  *
  * Aleo accounts maintain two balances:
@@ -961,6 +985,8 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
     case TRANSACTION_TYPE.BOND_PUBLIC:
       return account.aleoResources?.transparentBalance ?? new BigNumber(0);
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+      return account.aleoResources?.bondedBalance ?? new BigNumber(0);
     // spending private native balance
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC: {
@@ -1088,6 +1114,11 @@ export function createTransactionIntent({
           type: TRANSACTION_TYPE.BOND_PUBLIC,
           withdrawal: transaction.withdrawal,
         },
+      };
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+      return {
+        ...base,
+        data: { type: TRANSACTION_TYPE.UNBOND_PUBLIC },
       };
 
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:

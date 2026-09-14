@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import aleoCoinConfig from "../config";
-import { MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION } from "../constants";
+import { MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION, TRANSACTION_TYPE } from "../constants";
 import { estimateFees } from "../logic";
 import {
   calculateAmount,
@@ -179,6 +179,21 @@ export const prepareTransaction: AccountBridge<
   const isSelfTransfer = isSelfTransferTransaction(transaction);
   const subAccount = getAleoSubAccount(account, transaction.subAccountId);
   const isTokenTx = !!subAccount;
+
+  if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
+    const feeEstimation = estimateFees({
+      configOrCurrencyId: config,
+      transactionType: TRANSACTION_TYPE.UNBOND_PUBLIC,
+    });
+    const estimatedFees = new BigNumber(feeEstimation.value.toString());
+    const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
+
+    return updateTransaction(transaction, {
+      amount: calculatedAmount.amount,
+      fees: estimatedFees,
+      recipient: account.freshAddress,
+    });
+  }
 
   if (isPrivateTransaction(transaction)) {
     const derivedTransactionMode = derivePrivateTransactionMode({ isTokenTx, isSelfTransfer });

@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
-import { CardApiStoreProvider, makeCardApiStore } from "../../__tests__/cardApiStore";
+import { CardApiStoreProvider, makeCardApiStore } from "@support/msw-features-flow-pay-card";
 import { CardNumbers } from "./CardNumbers";
 
 describe("CardNumbers (native)", () => {

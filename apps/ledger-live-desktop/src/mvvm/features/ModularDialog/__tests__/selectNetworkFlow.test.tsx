@@ -118,7 +118,7 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     bitcoinAsset.parentElement?.focus();
 
     expect(bitcoinAsset.parentElement).toHaveFocus();
-    expect(bitcoinAsset.parentElement).toHaveAttribute("role", "button");
+    expect(bitcoinAsset.parentElement?.tagName).toBe("BUTTON");
     expect(bitcoinAsset.parentElement).toHaveAttribute("aria-disabled", "true");
   });
 
@@ -148,7 +148,7 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     arbitrumNetwork.parentElement?.focus();
 
     expect(arbitrumNetwork.parentElement).toHaveFocus();
-    expect(arbitrumNetwork.parentElement).toHaveAttribute("role", "button");
+    expect(arbitrumNetwork.parentElement?.tagName).toBe("BUTTON");
     expect(arbitrumNetwork.parentElement).toHaveAttribute("aria-disabled", "true");
 
     await user.click(ethereumNetwork);

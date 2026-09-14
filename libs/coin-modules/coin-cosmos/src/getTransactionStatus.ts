@@ -157,6 +157,11 @@ export class CosmosTransactionStatusManager {
 
     const estimatedFees = transaction.fees || new BigNumber(0);
 
+    // A zero fee is treated as missing here, unlike the send path below, which only raises on a
+    // genuinely absent fee. A chain with `minGasPrice: 0` that enables staking therefore hits a
+    // permanent FeeNotLoaded on this path: the Delegate button stays disabled with no message
+    // explaining why. Left in place because no such chain currently reaches these modes; tracked
+    // in LIVE-37264 alongside unit coverage for the staking paths.
     if (!transaction.fees || !transaction.fees.gt(0)) {
       errors.fees = new FeeNotLoaded();
     }
@@ -228,7 +233,9 @@ export class CosmosTransactionStatusManager {
     }
 
     const estimatedFees = transaction.fees || new BigNumber(0);
-    if (!transaction.fees || !transaction.fees.gt(0)) {
+    // A zero fee is a loaded fee. `createTransaction` initialises `fees: null`, which is the
+    // only genuine "not yet computed" state.
+    if (!transaction.fees) {
       errors.fees = new FeeNotLoaded();
     }
 

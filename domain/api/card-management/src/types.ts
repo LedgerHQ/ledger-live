@@ -13,6 +13,7 @@ import {
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
+  PayCardTransactionCategorySchema,
   PayCardTransactionSchema,
   PayCardTransactionsRequestSchema,
   PayCardWalletHistoryEntrySchema,
@@ -38,6 +39,8 @@ export type PayCardErrorResponse = z.infer<typeof PayCardErrorResponseSchema>;
 export type PayCardStatus = z.infer<typeof PayCardStatusResponseSchema>;
 
 export type PayCardDetailsCss = z.infer<typeof PayCardDetailsCssSchema>;
+
+export type PayCardTransactionCategory = z.infer<typeof PayCardTransactionCategorySchema>;
 
 export type PayCardTransaction = z.infer<typeof PayCardTransactionSchema>;
 

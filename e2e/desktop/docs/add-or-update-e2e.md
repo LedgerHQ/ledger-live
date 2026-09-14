@@ -195,9 +195,10 @@ test.use({
 - Use `@step` decorator in Page Objects
 - Access methods via `app` fixture (e.g., `app.layout`, `app.send`, `app.speculos`)
 - **MANDATORY:** Test on all 6 device models (LNS, LNSP, LNX, STAX, FLEX, NG5) before marking tests complete
-- **Every `test()` must include a TMS annotation** with a valid `B2CQA-XXXX` id. Omitting it causes
-  `getDescription(test.info().annotations, "TMS")` to return the literal string `"Type not found"`,
-  which `addTmsLink()` then renders in Allure as a dead link.
+- **Every `test()` must include a TMS annotation** with a valid `B2CQA-XXXX` id. The `annotationLinks` auto
+  fixture reads that annotation and publishes the Allure TMS link before any other fixture runs, so
+  the link is present even when CLI/Speculos setup fails and the body never executes. Never call
+  `addTmsLink()` from a test body — a test with no annotation simply gets no link.
 
   ```typescript
   const xrayTicket = "B2CQA-XXXX"; // obtain from QA before merging

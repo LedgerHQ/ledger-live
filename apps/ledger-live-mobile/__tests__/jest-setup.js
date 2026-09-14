@@ -332,9 +332,9 @@ jest.mock("@react-native-firebase/remote-config", () => {
 // Inert mock — avoids the real module's `getRemoteConfig()` + `LiveConfig` import side
 // effects. Boot readiness comes from the Redux `remoteFlagsReady` flag instead.
 jest.mock("~/firebase/remoteConfig", () => ({
+  readCachedFlags: jest.fn().mockResolvedValue({}),
   fetchRemoteFlags: jest.fn().mockResolvedValue({}),
   subscribeToRemoteFlags: jest.fn(() => () => {}),
-  whenReady: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.mock("@braze/react-native-sdk", () => ({

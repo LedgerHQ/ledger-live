@@ -26,7 +26,7 @@ export interface CosmosSigner {
     hrp: string,
     boolDisplay?: boolean,
   ): Promise<CosmosGetAddressAndPubKeyRes>;
-  sign(path: number[], buffer: Buffer, transactionType?: string): Promise<CosmosSignature>;
+  sign(path: number[], buffer: Buffer, hrp?: string): Promise<CosmosSignature>;
   // NOTE: explain this one, to support cosmos-like chains (hw-app-cosmos)
   getAddress(path: string, hrp: string, boolDisplay?: boolean): Promise<CosmosAddress>;
 }

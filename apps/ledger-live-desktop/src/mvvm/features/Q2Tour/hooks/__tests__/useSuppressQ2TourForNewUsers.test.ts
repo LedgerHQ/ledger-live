@@ -2,9 +2,9 @@ import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useSuppressQ2TourForNewUsers } from "../useSuppressQ2TourForNewUsers";
 
 const q2TourEnabledOverrides = {
-  lwdWallet40: {
+  releaseTour: {
     enabled: true,
-    params: { q2Tour: true },
+    params: { variant: "q2" as const },
   },
 };
 
@@ -34,7 +34,7 @@ describe("useSuppressQ2TourForNewUsers", () => {
   it("does nothing when the tour feature is disabled", () => {
     const { store } = renderHook(() => useSuppressQ2TourForNewUsers(), {
       initialState: getInitialState({
-        featureFlagOverrides: { lwdWallet40: { enabled: true, params: { q2Tour: false } } },
+        featureFlagOverrides: { releaseTour: { enabled: false, params: { variant: "q2" } } },
       }),
     });
 

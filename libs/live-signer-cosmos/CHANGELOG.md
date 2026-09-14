@@ -1,5 +1,19 @@
 # @ledgerhq/live-signer-cosmos
 
+## 0.4.9
+
+### Patch Changes
+
+- Updated dependencies [[`147a290`](https://github.com/LedgerHQ/ledger-live/commit/147a2905d735eee5682d849b3e2c2cde5178f7bb), [`59ea8fb`](https://github.com/LedgerHQ/ledger-live/commit/59ea8fbd36754199f1c68ab53537460ca31c70b4)]:
+  - @ledgerhq/coin-cosmos@1.2.0
+
+## 0.4.9-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`147a290`](https://github.com/LedgerHQ/ledger-live/commit/147a2905d735eee5682d849b3e2c2cde5178f7bb), [`59ea8fb`](https://github.com/LedgerHQ/ledger-live/commit/59ea8fbd36754199f1c68ab53537460ca31c70b4)]:
+  - @ledgerhq/coin-cosmos@1.2.0-next.0
+
 ## 0.4.8
 
 ### Patch Changes
@@ -164,26 +178,5 @@
   - @ledgerhq/coin-cosmos@0.37.0
   - @ledgerhq/hw-app-cosmos@6.36.5
   - @ledgerhq/hw-transport@6.35.5
-
-## 0.3.0-next.0
-
-### Minor Changes
-
-- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
-
-### Patch Changes
-
-- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`64b8071`](https://github.com/LedgerHQ/ledger-live/commit/64b8071125821693ef325a32a9437c75ecbe2f06), [`9dc9a1f`](https://github.com/LedgerHQ/ledger-live/commit/9dc9a1f6e9767a3056d88d63a36d5e20bc305f48), [`e93a936`](https://github.com/LedgerHQ/ledger-live/commit/e93a9367e61d8f060849782c7b5b95371979faf2), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292)]:
-  - @ledgerhq/errors@6.37.0-next.0
-  - @ledgerhq/coin-cosmos@0.37.0-next.0
-  - @ledgerhq/hw-app-cosmos@6.36.5-next.0
-  - @ledgerhq/hw-transport@6.35.5-next.0
-
-## 0.2.7
-
-### Patch Changes
-
-- Updated dependencies [[`558e633`](https://github.com/LedgerHQ/ledger-live/commit/558e633d633b73fd5b7f9bd6845ef2902ed60405)]:
-  - @ledgerhq/coin-cosmos@0.36.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

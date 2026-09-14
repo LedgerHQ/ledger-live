@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
-import { adaptA4OperationToLiveOperation, parseA4Asset } from "./operations";
+import { adaptA4OperationToLiveOperation, listA4OperationsPage, parseA4Asset } from "./operations";
 import type { A4OperationView } from "./types";
+import { A4Client } from "./index";
+import { paginateOperations } from "../../paginateOperations";
 
 describe("parseA4Asset", () => {
   it("returns native for 'native'", () => {
@@ -744,5 +746,127 @@ describe("adaptA4OperationToLiveOperation", () => {
       parts: [{ type: "transfer", address: "0xaddress", asset: "native", amount: "1000000" }],
     };
     expect(adaptA4OperationToLiveOperation("accountId", "0xaddress", op)).toEqual([]);
+  });
+});
+
+describe("listA4OperationsPage", () => {
+  let client: A4Client;
+  let listOperationsSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    client = new A4Client("https://a4.test", "ethereum");
+    listOperationsSpy = jest.spyOn(client, "listOperations");
+  });
+
+  afterEach(() => {
+    listOperationsSpy.mockRestore();
+  });
+
+  it("returns next=undefined when nextToken is absent", async () => {
+    listOperationsSpy.mockResolvedValueOnce({
+      data: { items: [], nextToken: undefined },
+      version: undefined,
+    });
+    const page = await listA4OperationsPage(client, "accountId", "0xaddress", { minHeight: 0 });
+    expect(page.next).toBeUndefined();
+  });
+
+  it("returns next=nextToken when present", async () => {
+    listOperationsSpy.mockResolvedValueOnce({
+      data: { items: [], nextToken: "cursor123" },
+      version: undefined,
+    });
+    const page = await listA4OperationsPage(client, "accountId", "0xaddress", { minHeight: 0 });
+    expect(page.next).toEqual("cursor123");
+  });
+
+  it("drains two pages when used with paginateOperations", async () => {
+    const a4Op1: A4OperationView = {
+      block: { hash: "0xb1", height: 100, time: "2024-01-01T00:00:00Z" },
+      tx: { hash: "0xtx1" },
+      assets: { native: "500" },
+      events: {},
+      failed: false,
+      fees: "0",
+      feeAsset: "native",
+    };
+    const a4Op2: A4OperationView = {
+      block: { hash: "0xb2", height: 99, time: "2024-01-01T00:00:00Z" },
+      tx: { hash: "0xtx2" },
+      assets: { native: "300" },
+      events: {},
+      failed: false,
+      fees: "0",
+      feeAsset: "native",
+    };
+
+    listOperationsSpy
+      .mockResolvedValueOnce({
+        data: { items: [a4Op1], nextToken: "page2token" },
+        version: undefined,
+      })
+      .mockResolvedValueOnce({
+        data: { items: [a4Op2], nextToken: undefined },
+        version: undefined,
+      });
+
+    const ops = await paginateOperations(cursor =>
+      listA4OperationsPage(client, "accountId", "0xaddress", { minHeight: 0, cursor }),
+    );
+
+    expect(listOperationsSpy).toHaveBeenCalledTimes(2);
+    expect(listOperationsSpy).toHaveBeenNthCalledWith(1, "accountId", {
+      blocks: [0, "latest"],
+      order: "DESC",
+      token: undefined,
+    });
+    expect(listOperationsSpy).toHaveBeenNthCalledWith(2, "accountId", {
+      blocks: [0, "latest"],
+      order: "DESC",
+      token: "page2token",
+    });
+    expect(ops).toEqual([
+      expect.objectContaining({ hash: "0xtx1" }),
+      expect.objectContaining({ hash: "0xtx2" }),
+    ]);
+  });
+
+  it("second sync uses updated minHeight to skip already-fetched blocks", async () => {
+    const a4Op: A4OperationView = {
+      block: { hash: "0xb1", height: 100, time: "2024-01-01T00:00:00Z" },
+      tx: { hash: "0xtx1" },
+      assets: { native: "500" },
+      events: {},
+      failed: false,
+      fees: "0",
+      feeAsset: "native",
+    };
+
+    listOperationsSpy.mockResolvedValueOnce({
+      data: { items: [a4Op], nextToken: undefined },
+      version: undefined,
+    });
+    const firstSyncOps = await paginateOperations(cursor =>
+      listA4OperationsPage(client, "accountId", "0xaddress", { minHeight: 0, cursor }),
+    );
+
+    const lastBlockHeight = firstSyncOps[0].blockHeight ?? 0;
+
+    listOperationsSpy.mockResolvedValueOnce({
+      data: { items: [], nextToken: undefined },
+      version: undefined,
+    });
+    await paginateOperations(cursor =>
+      listA4OperationsPage(client, "accountId", "0xaddress", {
+        minHeight: lastBlockHeight + 1,
+        cursor,
+      }),
+    );
+
+    expect(listOperationsSpy).toHaveBeenLastCalledWith("accountId", {
+      blocks: [101, "latest"],
+      order: "DESC",
+      token: undefined,
+    });
   });
 });

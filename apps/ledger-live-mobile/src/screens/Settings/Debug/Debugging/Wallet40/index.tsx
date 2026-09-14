@@ -230,7 +230,7 @@ export default function DebugWallet40() {
         />
         <SettingsRow
           title="Q3 Wallet V4 Tour"
-          desc="Test Q3 Wallet V4 tour setup"
+          desc="Test image-based Q3 Wallet V4 tour drawer"
           iconLeft={<IconsLegacy.NewsMedium size={24} color="black" />}
           arrowRight
           onPress={() => navigation.navigate(ScreenName.DebugQ3WalletV4Tour)}

@@ -1,6 +1,5 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import {
   Account,
   TokenAccount,
@@ -69,7 +68,6 @@ for (const asset of assets) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.clickAsset(crypto.currency);
         await app.assetPage.startBuyFlow();
@@ -89,7 +87,6 @@ for (const asset of assets) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.marketBanner.clickExploreMarketHeader();
         await app.market.search(crypto.currency.ticker);
         await app.market.openBuyPage(crypto.currency.ticker);
@@ -109,7 +106,6 @@ for (const asset of assets) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(getParentAccountName(asset.buySell.crypto));
         if (asset.buySell.crypto.tokenType) {
@@ -139,7 +135,6 @@ for (const asset of assets) {
         },
       },
       async ({ app, userdataDestinationPath }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.portfolio.clickBuyButton();
         await app.buyAndSell.chooseAssetIfNotSelected(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
@@ -206,7 +201,6 @@ for (const sellAsset of sellAssets) {
         },
       },
       async ({ app, userdataDestinationPath }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.portfolio.clickSellButton();
         await app.buyAndSell.chooseAssetIfNotSelected(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, OperationType.Sell);

@@ -4,7 +4,6 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
@@ -63,8 +62,6 @@ test.describe("Swap - feedback link", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       const minAmount = await app.swap.getMinimumAmount(kycFromAccount, kycToAccount);
       const initialSwap = new Swap(kycFromAccount, kycToAccount, minAmount);
 

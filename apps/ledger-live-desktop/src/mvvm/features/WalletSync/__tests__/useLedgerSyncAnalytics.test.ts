@@ -4,6 +4,10 @@ import {
   StepMappedToAnalytics,
   AnalyticsPage,
   StepsOutsideFlow,
+  setWalletSyncEntryFlow,
+  resolveWalletSyncEntryFlow,
+  walletSyncEntryFlowProperties,
+  AnalyticsFlow,
 } from "../hooks/useLedgerSyncAnalytics";
 import { Step } from "~/renderer/reducers/walletSync";
 
@@ -48,6 +52,24 @@ describe("useLedgerSyncAnalytics", () => {
       page: StepMappedToAnalytics[Step.DeleteBackup],
       flow: "Ledger Sync",
     });
+  });
+});
+
+describe("walletSyncEntryFlow", () => {
+  afterEach(() => {
+    setWalletSyncEntryFlow(undefined);
+  });
+
+  it("should resolve contacts flow when set from the contacts entry", () => {
+    setWalletSyncEntryFlow("contacts");
+
+    expect(resolveWalletSyncEntryFlow(AnalyticsFlow)).toBe("contacts");
+    expect(walletSyncEntryFlowProperties(AnalyticsFlow)).toEqual({ flow: "contacts" });
+  });
+
+  it("should fall back to Ledger Sync when no contacts entry is set", () => {
+    expect(resolveWalletSyncEntryFlow(AnalyticsFlow)).toBe(AnalyticsFlow);
+    expect(walletSyncEntryFlowProperties()).toEqual({});
   });
 });
 

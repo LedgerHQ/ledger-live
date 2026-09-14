@@ -919,6 +919,18 @@
         "retry": "Try again"
       }
     },
+    "cardTransactions": {
+      "categories": {
+        "SUBSCRIPTIONS": "Subscriptions",
+        "FOOD": "Food",
+        "TRAVEL": "Travel",
+        "ENTERTAINMENT": "Entertainment",
+        "HEALTH": "Health",
+        "ATM": "ATM",
+        "UTILITIES": "Utilities",
+        "MISC": "Other"
+      }
+    },
     "cardOnboarding": {
       "widget": {
         "title": "Set up your card",
@@ -2815,6 +2827,34 @@
       "selectSufficientCoins": "Select sufficient coins",
       "amountToSendInCurrency": "Amount to send in {{ticker}}",
       "amountInputLabel": "Amount to send"
+    },
+    "recipient": {
+      "selfTransfer": {
+        "title": "Self transfer",
+        "toPrivate": {
+          "action": "Send to private balance",
+          "label": "Private balance"
+        },
+        "toPublic": {
+          "action": "Send to public balance",
+          "label": "Public balance"
+        }
+      }
+    },
+    "balanceType": {
+      "title": "Select balance type",
+      "transparent": {
+        "title": "Public balance",
+        "subtitle": "Transparent"
+      },
+      "shielded": {
+        "title": "Private balance",
+        "subtitle": "Shielded",
+        "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
+      },
+      "zeroBalance": {
+        "warning": "No available balance"
+      }
     }
   },
   "releaseNotes": {
@@ -9667,6 +9707,29 @@
       "claim": {
         "title": "Claim",
         "description": "Claim your unbonded ALEO back to your available balance."
+      },
+      "unbondPendingTooltip": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding is unavailable until it has gone through."
+    },
+    "unbond": {
+      "flow": {
+        "title": "Unbond ALEO",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "unbondableBanner": "Maximum unbondable amount is",
+            "belowMinimum": "If unbonding would leave less than {{minAmount}} bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met."
+          },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Unbond submitted",
+              "text": "Your unbonding request has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your unbond transaction was signed but could not be broadcast."
+          }
+        }
       }
     }
   },
@@ -9723,6 +9786,39 @@
       "seeWhatsNew": "See what's new",
       "next": "Next",
       "gotIt": "Got it"
+    }
+  },
+  "q3Tour": {
+    "slides": {
+      "intro": {
+        "title": "A quick tour of the latest",
+        "description": "New ways to send, spend, earn, and more."
+      },
+      "contact": {
+        "title": "Say goodbye to long addresses",
+        "description": "Introducing Contacts. Save wallet addresses with names. Easy to find, easy to send."
+      },
+      "contactNoPay": {
+        "title": "Say hello to Contacts",
+        "description": "Say goodbye to long addresses. Save wallet addresses with names. Easy to find, easy to send."
+      },
+      "pay": {
+        "title": "Say hello to Pay",
+        "description": "Pay contacts, request money, and get cashback with crypto card. Now, all via one tab."
+      },
+      "payNoCard": {
+        "title": "Say hello to Pay",
+        "description": "Pay contacts and request money, all via one tab."
+      },
+      "yield": {
+        "title": "Keep your crypto, finance your projects",
+        "description": "Borrow stablecoins using wrapped BTC as collateral via Yield.xyz powered by Morpho."
+      }
+    },
+    "cta": {
+      "start": "Take a look",
+      "next": "Next",
+      "done": "All caught up"
     }
   },
   "productTour": {
@@ -9902,7 +9998,8 @@
       },
       "validationUnavailable": "Address validation is temporarily unavailable.",
       "ensDisclaimer": "ENS names can change",
-      "ensDisclaimerDescription": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify."
+      "ensDisclaimerDescription": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify.",
+      "duplicateAddress": "This address is already used for {{contactName}}."
     },
     "addAddressName": {
       "inputLabel": "Address name",

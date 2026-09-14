@@ -1,5 +1,113 @@
 # @domain/api-card-management
 
+## 0.5.0
+
+### Minor Changes
+
+- [#21548](https://github.com/LedgerHQ/ledger-live/pull/21548) [`55bd216`](https://github.com/LedgerHQ/ledger-live/commit/55bd2166238ab3e03c33226bb5f5eb2e8646a818) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a getCardOnboardingStatus RTK Query endpoint and a schema-validated mock fixture.
+
+- [#21467](https://github.com/LedgerHQ/ledger-live/pull/21467) [`08ee05c`](https://github.com/LedgerHQ/ledger-live/commit/08ee05cfb66f393b14fdf1377ed6c54c4831a87c) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add `createCardDetailsToken` for `POST /v1/card/details/token`.
+
+  - Answers with a single-use token and an image URL that renders PAN, CVV and expiry, so the app never handles the card data itself.
+  - A mutation, not a query: the provider spends the token on first use, so the answer must never be served from a cache.
+  - Takes the documented `customCss` colours, and validates them as hex before the provider answers 422.
+  - `imageUrl` must be an `https` URL: it is loaded straight into an image.
+  - RTK Query retains a tracked mutation result, so callers dispatch with `track: false` or reset once the URL is used. The answer is a credential.
+
+- [#21444](https://github.com/LedgerHQ/ledger-live/pull/21444) [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add a "Card interaction" screen to the Card / Pay devtool.
+
+  - Calls a signed-in cardholder's endpoints on demand and prints what they answer, so the data can be checked before any screen renders it.
+  - First probe: card status. Probes are a list, so further endpoints are one entry each.
+  - Exports `useLazyGetCardStatusQuery`, which a button-triggered fetch needs.
+  - Native only for now.
+
+- [#21163](https://github.com/LedgerHQ/ledger-live/pull/21163) [`a7d54c0`](https://github.com/LedgerHQ/ledger-live/commit/a7d54c0d6af65abe7aa2170053b3fd07ae9b05ab) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add `freezeCard` and `unfreezeCard` for `POST /v1/card/freeze` and `POST /v1/card/unfreeze`.
+
+  - Mutations taking no argument: the provider documents no request body for either.
+  - Both invalidate `CardStatus`, so the status refetches itself after the card moves between `ACTIVE` and `FROZEN` — no caller has to sequence the two.
+  - Each carries its own documented 400: `Card is already frozen` on freeze, `Card is not frozen` on unfreeze.
+  - Drops the README row for `initiateAuthorize`, which the endpoint table still listed after that endpoint was removed.
+
+- [#21445](https://github.com/LedgerHQ/ledger-live/pull/21445) [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Name the fields a Card response was rejected on.
+
+  - A schema failure reported only `expected string, received undefined`, naming no field, because RTK Query keeps just the thrown error's message unless the api converts it.
+  - `catchSchemaFailure` now lists every failing path, so one run reports them all.
+  - The rejected value is never carried into the error: a Card response holds the cardholder's name and PAN digits.
+  - An internal wallet with no address memo answers with the key absent, not `null`, so `addressMemo` is nullish.
+
+- [#21534](https://github.com/LedgerHQ/ledger-live/pull/21534) [`7aa3071`](https://github.com/LedgerHQ/ledger-live/commit/7aa3071a532c98804a4357ff36a001b23351da73) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Accept a card status with no holder name or expiry date.
+
+  - A live card answers `/v1/card/status` without `holderName` or `expiryDate`, and the response was rejected, so the endpoint returned nothing at all.
+  - Both are optional now; every other field stays required.
+
+- [#21194](https://github.com/LedgerHQ/ledger-live/pull/21194) [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Refresh Baanx Pay Card sessions after a 401, and keep the credentials out of every reader of redux.
+
+  The two OAuth2 grants are RTK Query endpoints again. Both opt out of the Bearer and out of the
+  renewal, both run with `track: false`, so no session becomes a cache entry, and neither has a hook.
+
+  The desktop redux logger and both DevTools configurations now strip every Card action, which also
+  closes a live leak: the code exchange logs its code and its code verifier in production, into the
+  file users attach to a support ticket.
+
+### Patch Changes
+
+- Updated dependencies [[`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f), [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a)]:
+  - @shared/api-services@0.7.0
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#21548](https://github.com/LedgerHQ/ledger-live/pull/21548) [`55bd216`](https://github.com/LedgerHQ/ledger-live/commit/55bd2166238ab3e03c33226bb5f5eb2e8646a818) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a getCardOnboardingStatus RTK Query endpoint and a schema-validated mock fixture.
+
+- [#21467](https://github.com/LedgerHQ/ledger-live/pull/21467) [`08ee05c`](https://github.com/LedgerHQ/ledger-live/commit/08ee05cfb66f393b14fdf1377ed6c54c4831a87c) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add `createCardDetailsToken` for `POST /v1/card/details/token`.
+
+  - Answers with a single-use token and an image URL that renders PAN, CVV and expiry, so the app never handles the card data itself.
+  - A mutation, not a query: the provider spends the token on first use, so the answer must never be served from a cache.
+  - Takes the documented `customCss` colours, and validates them as hex before the provider answers 422.
+  - `imageUrl` must be an `https` URL: it is loaded straight into an image.
+  - RTK Query retains a tracked mutation result, so callers dispatch with `track: false` or reset once the URL is used. The answer is a credential.
+
+- [#21444](https://github.com/LedgerHQ/ledger-live/pull/21444) [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add a "Card interaction" screen to the Card / Pay devtool.
+
+  - Calls a signed-in cardholder's endpoints on demand and prints what they answer, so the data can be checked before any screen renders it.
+  - First probe: card status. Probes are a list, so further endpoints are one entry each.
+  - Exports `useLazyGetCardStatusQuery`, which a button-triggered fetch needs.
+  - Native only for now.
+
+- [#21163](https://github.com/LedgerHQ/ledger-live/pull/21163) [`a7d54c0`](https://github.com/LedgerHQ/ledger-live/commit/a7d54c0d6af65abe7aa2170053b3fd07ae9b05ab) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add `freezeCard` and `unfreezeCard` for `POST /v1/card/freeze` and `POST /v1/card/unfreeze`.
+
+  - Mutations taking no argument: the provider documents no request body for either.
+  - Both invalidate `CardStatus`, so the status refetches itself after the card moves between `ACTIVE` and `FROZEN` — no caller has to sequence the two.
+  - Each carries its own documented 400: `Card is already frozen` on freeze, `Card is not frozen` on unfreeze.
+  - Drops the README row for `initiateAuthorize`, which the endpoint table still listed after that endpoint was removed.
+
+- [#21445](https://github.com/LedgerHQ/ledger-live/pull/21445) [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Name the fields a Card response was rejected on.
+
+  - A schema failure reported only `expected string, received undefined`, naming no field, because RTK Query keeps just the thrown error's message unless the api converts it.
+  - `catchSchemaFailure` now lists every failing path, so one run reports them all.
+  - The rejected value is never carried into the error: a Card response holds the cardholder's name and PAN digits.
+  - An internal wallet with no address memo answers with the key absent, not `null`, so `addressMemo` is nullish.
+
+- [#21534](https://github.com/LedgerHQ/ledger-live/pull/21534) [`7aa3071`](https://github.com/LedgerHQ/ledger-live/commit/7aa3071a532c98804a4357ff36a001b23351da73) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Accept a card status with no holder name or expiry date.
+
+  - A live card answers `/v1/card/status` without `holderName` or `expiryDate`, and the response was rejected, so the endpoint returned nothing at all.
+  - Both are optional now; every other field stays required.
+
+- [#21194](https://github.com/LedgerHQ/ledger-live/pull/21194) [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Refresh Baanx Pay Card sessions after a 401, and keep the credentials out of every reader of redux.
+
+  The two OAuth2 grants are RTK Query endpoints again. Both opt out of the Bearer and out of the
+  renewal, both run with `track: false`, so no session becomes a cache entry, and neither has a hook.
+
+  The desktop redux logger and both DevTools configurations now strip every Card action, which also
+  closes a live leak: the code exchange logs its code and its code verifier in production, into the
+  file users attach to a support ticket.
+
+### Patch Changes
+
+- Updated dependencies [[`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f), [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a)]:
+  - @shared/api-services@0.7.0-next.0
+
 ## 0.4.0
 
 ### Minor Changes

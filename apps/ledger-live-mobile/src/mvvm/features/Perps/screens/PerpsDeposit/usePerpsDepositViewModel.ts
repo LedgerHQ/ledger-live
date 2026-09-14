@@ -57,7 +57,6 @@ export type PerpsDepositViewModel = Readonly<{
   depositAccountName: string | null;
   depositAccountCounterValue: string | null;
   maxAmount: number;
-  selectMax: () => void;
   statusError: DepositFormError | null;
   canReview: boolean;
   exceedsBalance: boolean;
@@ -192,11 +191,6 @@ export function usePerpsDepositViewModel({
     [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
   );
 
-  const selectMax = useCallback(() => {
-    if (maxAmount === null) return;
-    selectAmountRatio(maxAmount);
-  }, [maxAmount, selectAmountRatio]);
-
   const submitError = useMemo(
     () =>
       validateDepositFlow({
@@ -316,7 +310,6 @@ export function usePerpsDepositViewModel({
       : null,
     depositAccountCounterValue,
     maxAmount: maxAmount ?? 0,
-    selectMax,
     statusError,
     canReview,
     exceedsBalance,

@@ -68,10 +68,12 @@ Things worth knowing before you rely on it:
 - **The dropdown is single-select.** To cover several teams in one go, filter on something they
   share (a path or coin tag) or dispatch once per team.
 - **An unknown team, an empty team ∩ filter, or a team that owns nothing on that app fails the run
-  immediately**, with the valid list printed. It never falls back to running everything —
-  `engagement` owns no desktop spec today, so picking it on Desktop is always an error.
-- **`team` and `invert_filter` cannot be combined.** Inversion is applied to the whole pattern, so
-  "only earn" would become "everything except earn". The run fails in the first minute instead.
+  immediately**, with the valid list printed. It never falls back to running everything. Team
+  ownership differs per app, so check `--list-teams` for the app you are dispatching.
+- **`invert_filter` cannot be combined with `team` or with Smoke.** Inversion is applied to the whole
+  pattern, so anything added to it is inverted too: with a team you would get every *other* team's
+  specs, and with Smoke the whole suite *minus* the smoke tests. Invert applies to `test_filter`
+  only — the run fails in the first minute instead.
 - **A spec can have more than one owning team**, because ownership is recorded per test — the
   shared send/addAccount flows are split per currency between `bst` and `coin-integration`.
 

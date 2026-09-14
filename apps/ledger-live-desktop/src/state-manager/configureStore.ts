@@ -28,6 +28,7 @@ import {
   withAccountAliases,
 } from "~/renderer/middlewares/accountAlias";
 import logger from "~/renderer/middlewares/logger";
+import appLogger from "~/renderer/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
@@ -35,10 +36,29 @@ import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/
 import {
   createFeatureFlagsMiddleware,
   selectFeature,
+  type FeatureFlagsReadFailure,
   type PartialFeatures,
 } from "@shared/feature-flags";
-import { fetchRemoteFlags as defaultFetchRemoteFlags } from "~/firebase/remoteConfig";
+import {
+  fetchRemoteFlags as defaultFetchRemoteFlags,
+  readCachedFlags as defaultReadCachedFlags,
+} from "~/firebase/remoteConfig";
 import { sleepingListener } from "./sleepingListener";
+/**
+ * Reports only the failures that actually degrade the session. A warm failure is routine: the
+ * previously read values stay in place and the next poll retries. A cold one means the app is
+ * running on compiled defaults, which is a misconfigured session rather than a passing network
+ * blip, and is precisely the signal whose absence let a staging leak run unnoticed for a whole
+ * release cycle.
+ *
+ * `logger.critical` rather than a bare console call: it is the one path wired to Datadog
+ * (breadcrumb plus `captureException`), so a cold boot becomes searchable instead of invisible.
+ */
+function reportFeatureFlagsReadFailure(error: unknown, { stage, isCold }: FeatureFlagsReadFailure) {
+  if (!isCold) return;
+  appLogger.critical(error, `Feature flags: ${stage} read failed, resolving on compiled defaults`);
+}
+
 type Props = {
   state?: State;
   dbMiddleware?: Middleware;
@@ -48,6 +68,13 @@ type Props = {
    * Pass `null` to disable polling (e.g. unit tests, which must not hit a live backend).
    */
   fetchRemoteFlags?: (() => Promise<PartialFeatures>) | null;
+  /**
+   * Network-free read of the flags Firebase already cached on this device, used to prime the
+   * slice before the first fetch. Defaults to the Firebase reader, or to `null` when
+   * `fetchRemoteFlags` is explicitly disabled, so opting out of the backend opts out of the
+   * whole Firebase path. Pass `null` to disable it on its own.
+   */
+  readCachedFlags?: (() => Promise<PartialFeatures>) | null;
 };
 
 const customCreateStore = ({
@@ -55,6 +82,7 @@ const customCreateStore = ({
   dbMiddleware,
   analyticsMiddleware,
   fetchRemoteFlags = defaultFetchRemoteFlags,
+  readCachedFlags = fetchRemoteFlags === null ? null : defaultReadCachedFlags,
 }: Props) => {
   const store = configureStore({
     reducer: reducers,
@@ -134,8 +162,10 @@ const customCreateStore = ({
               appVersion: __APP_VERSION__,
               envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
             },
+            readCachedFlags: readCachedFlags ?? undefined,
             fetchRemoteFlags: fetchRemoteFlags ?? undefined,
             getAppLanguage: languageSelector,
+            onRemoteFlagsError: reportFeatureFlagsReadFailure,
           }),
         )
         .concat(sleepingListener.middleware),

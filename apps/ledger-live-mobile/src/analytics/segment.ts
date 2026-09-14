@@ -28,6 +28,8 @@ import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFu
 import { getEnv } from "@shared/env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
+import { selectContacts } from "@domain/entity-contact";
+import { buildContactsGlobalProperties } from "@features/platform-contacts";
 import {
   analyticsEnabledSelector,
   trackingEnabledSelector,
@@ -331,10 +333,18 @@ const getPayTabAttributes = () => {
 };
 
 const getLdmkAndSyncFlags = () => ({
-  ldmkTransport: analyticsFeatureFlagMethod?.("ldmkTransport") ?? { enabled: false },
-  ldmkConnectApp: analyticsFeatureFlagMethod?.("ldmkConnectApp") ?? { enabled: false },
-  ldmkSolanaSigner: analyticsFeatureFlagMethod?.("ldmkSolanaSigner") ?? { enabled: false },
-  ldmkCosmosSigner: analyticsFeatureFlagMethod?.("ldmkCosmosSigner") ?? { enabled: false },
+  ldmkTransport: analyticsFeatureFlagMethod?.("ldmkTransport") ?? {
+    enabled: false,
+  },
+  ldmkConnectApp: analyticsFeatureFlagMethod?.("ldmkConnectApp") ?? {
+    enabled: false,
+  },
+  ldmkSolanaSigner: analyticsFeatureFlagMethod?.("ldmkSolanaSigner") ?? {
+    enabled: false,
+  },
+  ldmkCosmosSigner: analyticsFeatureFlagMethod?.("ldmkCosmosSigner") ?? {
+    enabled: false,
+  },
 });
 
 const getAccountsWithFunds = (accounts: ReturnType<typeof accountsSelector>) =>
@@ -356,7 +366,11 @@ const getStakingCurrenciesFromFlags = () => {
     stakePrograms?.enabled && stakePrograms?.params?.redirects
       ? Object.keys(stakePrograms.params.redirects)
       : [];
-  return { stakePrograms, stakingCurrenciesEnabled, partnerStakingCurrenciesEnabled };
+  return {
+    stakePrograms,
+    stakingCurrenciesEnabled,
+    partnerStakingCurrenciesEnabled,
+  };
 };
 
 const getFlowAndSatisfactionProps = (
@@ -382,6 +396,10 @@ const extraProperties = async (store: AppStore) => {
   const bleDevices = bleDevicesSelector(state);
   const satisfaction = satisfactionSelector(state);
   const accounts = accountsSelector(state);
+  const contactsAttributes = buildContactsGlobalProperties({
+    contacts: selectContacts(state),
+  });
+  const contactsFeature = analyticsFeatureFlagMethod?.("lwmContacts") ?? { enabled: false };
   const lastDevice = devices.at(-1) || bleDevices.at(-1);
   const { ldmkTransport, ldmkConnectApp, ldmkSolanaSigner, ldmkCosmosSigner } =
     getLdmkAndSyncFlags();
@@ -459,7 +477,10 @@ const extraProperties = async (store: AppStore) => {
   const seenBleModels = new Set(bleDevices.map(d => d.modelId));
   const usbDeviceModelSeen = devices.filter(d => !seenBleModels.has(d.modelId));
   const devicesCount = bleDevices.length + usbDeviceModelSeen.length;
-  const modelIdQtyList = { ...aggregateData(bleDevices), ...aggregateData(usbDeviceModelSeen) };
+  const modelIdQtyList = {
+    ...aggregateData(bleDevices),
+    ...aggregateData(usbDeviceModelSeen),
+  };
 
   const startupEvents = await resolveStartupEvents();
   const legacyStartupTime = startupEvents.find(
@@ -495,6 +516,8 @@ const extraProperties = async (store: AppStore) => {
     notificationsBlacklisted,
     ...notificationsOptedIn,
     accountsWithFunds,
+    ContactsAttributes: contactsFeature,
+    ...contactsAttributes,
     appTimeToInteractiveMilliseconds: legacyStartupTime, // WARNING: this is not accurate in practice the splash is still blocking the user at this point
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",

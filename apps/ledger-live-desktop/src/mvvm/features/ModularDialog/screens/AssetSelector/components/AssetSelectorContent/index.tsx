@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AssetType } from "../../../../types";
 import { useModularDialogAnalytics } from "../../../../analytics/useModularDialogAnalytics";
+import { MODULAR_DIALOG_PAGE_NAME } from "../../../../analytics/modularDialog.types";
 import SkeletonList from "../../../../components/SkeletonList";
 import { MarketPriceIndicator, MarketPercentIndicator } from "../../../../components/Market";
 import { useAssetConfiguration } from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
@@ -29,8 +30,6 @@ export type AssetSelectorContentProps = {
   assetsSorted?: AssetData[];
   disabledAssetIds?: ReadonlySet<string>;
 };
-
-const CURRENT_PAGE = "Modular Asset Selection";
 
 export const AssetSelectorContent = ({
   assetsToDisplay,
@@ -85,7 +84,7 @@ export const AssetSelectorContent = ({
         "asset_clicked",
         {
           asset: selectedAsset.name,
-          page: CURRENT_PAGE,
+          page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ASSET_SELECTION,
         },
         {
           formatAssetConfig: true,
@@ -96,6 +95,16 @@ export const AssetSelectorContent = ({
       onAssetSelected(selectedAsset);
     },
     [assetsToDisplay, trackModularDialogEvent, assetsConfiguration, onAssetSelected],
+  );
+  const onDisabledClick = useCallback(
+    (asset: AssetType) => {
+      trackModularDialogEvent("button_clicked", {
+        asset: asset.name,
+        button: "disabled network tooltip",
+        page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ASSET_SELECTION,
+      });
+    },
+    [trackModularDialogEvent],
   );
 
   useEffect(() => {
@@ -117,6 +126,7 @@ export const AssetSelectorContent = ({
       scrollToTop={scrollToTop}
       assets={formattedAssets}
       onClick={onClick}
+      onDisabledClick={onDisabledClick}
       onVisibleItemsScrollEnd={loadNext}
       hasNextPage={!!loadNext}
       isDebuggingDuplicates={isDebuggingDuplicates}

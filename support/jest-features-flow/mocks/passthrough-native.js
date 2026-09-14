@@ -41,6 +41,17 @@ function Tag({ label, children, ...props }) {
 // component (e.g. Text -> "Text"), so React Native Testing Library text queries still work.
 // Hooks (`use*`) return a mutable ref stub. Redirected here via moduleNameMapper — no
 // per-component mocks, no peer installs.
+const componentCache = new Map();
+
+function makeComponent(prop) {
+  return ({ children, onPress, ...props }) => {
+    if (onPress !== undefined) {
+      return React.createElement("Pressable", { onPress, ...props }, wrapTextChildren(children));
+    }
+    return React.createElement(prop, props, wrapTextChildren(children));
+  };
+}
+
 module.exports = new Proxy(
   { __esModule: true, Banner, Tag },
   {
@@ -51,10 +62,17 @@ module.exports = new Proxy(
         return () => ({ current: null });
       }
       if (prop === "Text") {
-        return ({ children, ...props }) => React.createElement("Text", props, children);
+        if (!componentCache.has("Text")) {
+          componentCache.set("Text", ({ children, ...props }) =>
+            React.createElement("Text", props, children),
+          );
+        }
+        return componentCache.get("Text");
       }
-      return ({ children, ...props }) =>
-        React.createElement(prop, props, wrapTextChildren(children));
+      if (!componentCache.has(prop)) {
+        componentCache.set(prop, makeComponent(prop));
+      }
+      return componentCache.get(prop);
     },
   },
 );

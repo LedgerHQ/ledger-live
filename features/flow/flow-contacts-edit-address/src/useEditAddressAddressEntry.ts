@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ContactAddress } from "@domain/entity-contact";
-import { wait } from "@features/platform-contacts";
+import { addressesMatch, wait } from "@features/platform-contacts";
 import type {
   ContactsAddressEntryState,
   ContactsAddressInputSource,
   ContactsAddressValidationPort,
+  OtherContactAddress,
 } from "@features/platform-contacts";
 import {
-  addressesMatch,
   applyAddressEntryState,
   createInitialEditAddressEntryState,
   createValidatingAddressEntryState,
@@ -24,8 +24,10 @@ export type UseEditAddressAddressEntryOptions = Readonly<{
   addressValidation?: ContactsAddressValidationPort;
   currencyId: ContactAddress["currencyId"] | undefined;
   currentAddress: ContactAddress["address"] | undefined;
+  contactId?: string;
   isActive: boolean;
   manualValidationDebounceMs?: number;
+  otherContactsAddresses?: readonly OtherContactAddress[];
 }>;
 
 export type UseEditAddressAddressEntryResult = Readonly<{
@@ -37,8 +39,10 @@ export function useEditAddressAddressEntry({
   addressValidation = UNAVAILABLE_ADDRESS_VALIDATION,
   currencyId,
   currentAddress,
+  contactId,
   isActive,
   manualValidationDebounceMs = 0,
+  otherContactsAddresses = [],
 }: UseEditAddressAddressEntryOptions): UseEditAddressAddressEntryResult {
   const [addressEntry, setAddressEntry] = useState<ContactsAddressEntryState>(() =>
     currentAddress === undefined
@@ -129,16 +133,38 @@ export function useEditAddressAddressEntry({
           return;
         }
 
-        setAddressEntry(currentEntry =>
-          applyAddressEntryState(
-            currentEntry,
-            resolveAddressEntryState(value, inputMethod, validationResult),
-            value,
-          ),
-        );
+        let finalEntry = resolveAddressEntryState(value, inputMethod, validationResult);
+        if (finalEntry.status === "valid") {
+          const resolvedAddress = finalEntry.resolvedAddress;
+          const dup =
+            otherContactsAddresses.find(
+              other =>
+                (contactId === undefined || other.contactId !== contactId) &&
+                addressesMatch(other.address, resolvedAddress),
+            )?.contactName ?? null;
+          if (dup !== null) {
+            finalEntry = {
+              status: "invalid",
+              value,
+              resolvedAddress: null,
+              inputMethod: finalEntry.inputMethod,
+              error: "duplicate_address",
+              contactName: dup,
+            };
+          }
+        }
+
+        setAddressEntry(currentEntry => applyAddressEntryState(currentEntry, finalEntry, value));
       })();
     },
-    [addressValidation, currencyId, currentAddress, manualValidationDebounceMs],
+    [
+      addressValidation,
+      contactId,
+      currencyId,
+      currentAddress,
+      manualValidationDebounceMs,
+      otherContactsAddresses,
+    ],
   );
 
   return { addressEntry, onAddressChange };

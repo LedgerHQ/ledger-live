@@ -79,6 +79,8 @@ export function useContactsAddAddressFlowDrawerViewModel({
               validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
               ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
               ensDisclaimerDescription: t("contacts.addAddressEntry.ensDisclaimerDescription"),
+              duplicateAddress: (contactName: string) =>
+                t("contacts.addAddressEntry.duplicateAddress", { contactName }),
             },
             sanctionedAddressBanner: {
               description: t("contacts.addAddressEntry.sanctioned.description"),

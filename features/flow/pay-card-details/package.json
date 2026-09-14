@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-details",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Pay Card details visual (card artwork + balance) for Ledger Wallet",
   "main": "src/index.ts",
@@ -36,12 +36,12 @@
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
-    "@shared/api-services": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@support/jest-features-flow": "workspace:*",
+    "@support/msw-features-flow-pay-card": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

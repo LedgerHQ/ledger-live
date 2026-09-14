@@ -4,7 +4,11 @@ import { useSelector } from "LLD/hooks/redux";
 import { themeSelector } from "~/renderer/actions/general";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Loading from "../../components/LoadingStep";
-import { AnalyticsFlow, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
+import {
+  AnalyticsFlow,
+  AnalyticsPage,
+  walletSyncEntryFlowProperties,
+} from "../../hooks/useLedgerSyncAnalytics";
 import { useLoadingStep } from "../../hooks/useLoadingStep";
 
 export default function ActivationLoadingStep() {
@@ -15,7 +19,10 @@ export default function ActivationLoadingStep() {
 
   return (
     <>
-      <TrackPage category={String(AnalyticsPage.Loading)} flow={AnalyticsFlow} />
+      <TrackPage
+        category={String(AnalyticsPage.Loading)}
+        {...walletSyncEntryFlowProperties(AnalyticsFlow)}
+      />
       <Loading
         title={t(title)}
         subtitle={t("walletSync.loading.activation")}

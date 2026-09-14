@@ -1,5 +1,6 @@
 import { act, renderHook } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useOpenCurrencyFlow } from "../useOpenCurrencyFlow";
 
 describe("useOpenCurrencyFlow", () => {
@@ -93,6 +94,28 @@ describe("useOpenCurrencyFlow", () => {
 
     await expect(selection).resolves.toBeNull();
     expect(store.getState().modularDialog.isOpen).toBe(false);
+  });
+
+  it("should set MAD flow and source only when the caller provides them", () => {
+    const { result, store } = renderHook(() => useOpenCurrencyFlow());
+
+    act(() => {
+      store.dispatch(setFlowValue("send"));
+      store.dispatch(setSourceValue("portfolio"));
+    });
+
+    void result.current.openCurrencyFlow([ethereum.id]);
+
+    expect(store.getState().modularDialog.flow).toBe("send");
+    expect(store.getState().modularDialog.source).toBe("portfolio");
+
+    void result.current.openCurrencyFlow([ethereum.id], {
+      flow: "contacts",
+      source: "contacts",
+    });
+
+    expect(store.getState().modularDialog.flow).toBe("contacts");
+    expect(store.getState().modularDialog.source).toBe("contacts");
   });
 
   it("should cancel its pending selection before opening another one", async () => {

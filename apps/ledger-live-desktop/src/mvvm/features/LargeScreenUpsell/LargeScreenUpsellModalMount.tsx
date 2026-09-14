@@ -25,6 +25,7 @@ import {
   sharePersonalizedRecommendationsSelector,
 } from "~/renderer/reducers/settings";
 import { openURL } from "~/renderer/linking";
+import { isQ2ReleaseTourEnabled } from "LLD/features/Q2Tour/releaseTourGate";
 import {
   toLargeScreenUpsellDeviceModelAnalyticsValue,
   trackLargeScreenUpsellModalBlockedByCompeting,
@@ -90,7 +91,8 @@ export function LargeScreenUpsellModalMount() {
   const shouldShowDeferredModals = useShouldShowDeferredModals();
   const hasSeenWalletV4Tour = useSelector(hasSeenWalletV4TourSelector);
   const hasSeenQ2Tour = useSelector(hasSeenQ2TourSelector);
-  const { shouldDisplayTour, shouldDisplayQ2Tour } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayTour } = useWalletFeaturesConfig("desktop");
+  const isQ2TourEnabled = isQ2ReleaseTourEnabled(useFeature("releaseTour"));
   const isGenericAwarenessModalOpen = useSelector(selectIsGenericAwarenessModalOpen);
 
   const variant = personalizedRecommendationsEnabled ? "opted_in" : "opted_out";
@@ -111,7 +113,7 @@ export function LargeScreenUpsellModalMount() {
   // Competitor identity is only for analytics (`modal_blocked`).
   const competingModal = resolveCompetingAppStartModal({
     isWalletV4TourCompeting: shouldDisplayTour && !hasSeenWalletV4Tour,
-    isQ2TourCompeting: shouldDisplayQ2Tour && !hasSeenQ2Tour,
+    isQ2TourCompeting: isQ2TourEnabled && !hasSeenQ2Tour,
     isGenericAwarenessModalOpen,
   });
 

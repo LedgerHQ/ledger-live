@@ -77,6 +77,20 @@ export const PayCardDetailsTokenResponseSchema = z.object({
     .refine(value => value.startsWith("https://"), { message: "must be an https URL" }),
 });
 
+/** The provider's spend groupings. It sends the label; the numeric MCC behind it is dropped. */
+export const PAY_CARD_TRANSACTION_CATEGORIES = [
+  "SUBSCRIPTIONS",
+  "FOOD",
+  "TRAVEL",
+  "ENTERTAINMENT",
+  "HEALTH",
+  "ATM",
+  "UTILITIES",
+  "MISC",
+] as const;
+
+export const PayCardTransactionCategorySchema = z.enum(PAY_CARD_TRANSACTION_CATEGORIES);
+
 /**
  * One card transaction, narrowed to what a transaction list shows.
  *
@@ -91,8 +105,7 @@ export const PayCardTransactionSchema = z.object({
   dateTime: z.string().min(1),
   sign: z.enum(["DEBIT", "CREDIT"]),
   merchantNameLocation: z.string().min(1),
-  /** The provider's own grouping, not an id we map: `SUBSCRIPTIONS`, `FOOD`, `MISC` and so on. */
-  mccCategory: z.string().min(1),
+  mccCategory: PayCardTransactionCategorySchema.catch("MISC"),
   status: z.enum(["CONFIRMED", "PENDING", "DECLINED", "REVERTED"]),
   /** The provider sends `""` on a transaction that was not declined, so an empty one is expected. */
   declineReason: z.string().optional(),

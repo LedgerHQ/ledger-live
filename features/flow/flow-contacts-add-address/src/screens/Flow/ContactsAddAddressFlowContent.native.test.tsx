@@ -26,6 +26,7 @@ const entryLabels: AddAddressEntryLabels = {
   validationUnavailable: "Address validation is unavailable",
   ensDisclaimer: "ENS disclaimer",
   ensDisclaimerDescription: "ENS names can change over time.",
+  duplicateAddress: (contactName: string) => `This address is already used for ${contactName}.`,
 };
 const nameLabels: AddAddressNameLabels = {
   title: "Address name",

@@ -9,12 +9,15 @@ import type {
   ContactsAddressEntryState,
   ContactsAddressInputMethod,
   ContactsAddressInputSource,
+  OtherContactAddress,
 } from "@features/platform-contacts";
 
 export type AddAddressInputMethod = ContactsAddressInputMethod;
 export type AddAddressInputSource = ContactsAddressInputSource;
 
 export type AddAddressContact = Pick<Contact, "id" | "addresses">;
+
+export type { OtherContactAddress };
 
 export type AddAddressCurrencySelection = Readonly<{
   currencyId: ContactAddress["currencyId"];
@@ -48,6 +51,7 @@ export type PrefillAddAddressStartResult =
       status: "invalid_address";
       error: PrefillAddAddressInvalidReason;
     }>
+  | Readonly<{ status: "duplicate_address"; contactName: string }>
   | Readonly<{ status: "cancelled" }>
   | Readonly<{ status: "unavailable" }>;
 
@@ -150,6 +154,7 @@ export type AddAddressEntryLabels = Readonly<{
   validationUnavailable: string;
   ensDisclaimer: string;
   ensDisclaimerDescription: string;
+  duplicateAddress: (contactName: string) => string;
 }>;
 
 export type AddAddressNameLabels = Readonly<{

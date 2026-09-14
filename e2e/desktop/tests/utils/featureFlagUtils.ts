@@ -37,7 +37,6 @@ const FF_LWD_WALLET_40_Q1 = {
     enabled: true,
     params: {
       tour: false,
-      q2Tour: false,
       lazyOnboarding: true,
       assetSection: false,
       brazePlacement: true,
@@ -57,7 +56,6 @@ export const FF_LWD_WALLET_40_Q2 = {
     enabled: true,
     params: {
       tour: false,
-      q2Tour: false,
       lazyOnboarding: true,
       assetSection: true,
       brazePlacement: true,
@@ -184,6 +182,7 @@ export const getMergedFeatureFlags = ({
     // explicit defaults
     onboardingWidget: { enabled: true },
     largeScreenUpsell: { enabled: false },
+    releaseTour: { enabled: false },
     lldModularDrawer: {
       enabled: true,
       params: {
