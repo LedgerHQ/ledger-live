@@ -55,8 +55,8 @@ catalogs:
       specifier: 10.2.6
       version: 10.2.6
     '@ledgerhq/coin-xrp':
-      specifier: 10.1.1
-      version: 10.1.1
+      specifier: 10.1.4
+      version: 10.1.4
     '@ledgerhq/crypto-icons':
       specifier: 2.0.4
       version: 2.0.4
@@ -12326,7 +12326,7 @@ importers:
         version: link:../../coin-tester
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 10.1.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
+        version: 10.1.4(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -13289,7 +13289,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 10.1.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
+        version: 10.1.4(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -22444,6 +22444,11 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
+  '@ledgerhq/coin-module-framework@9.1.0':
+    resolution: {integrity: sha512-iUOlKikmUBMXopE5oUFMREiP5q8ySLiDmxbFXcEWAKwItMGZzht9hrp8SawX1vWwS/b7JAUci5Dh8EXkwofUgQ==}
+    peerDependencies:
+      '@ledgerhq/live-network': ^3.0.0
+
   '@ledgerhq/coin-stellar@9.6.1':
     resolution: {integrity: sha512-9ySQqPIU9JTizOKZwtOJ3mLL0trkGvKyNfI/WAx8QI99QoNEqUdg3qL3f0TEyhY4z/uQqQ8FxwM+8y5W9Uptvg==}
     peerDependencies:
@@ -22455,11 +22460,10 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
-  '@ledgerhq/coin-xrp@10.1.1':
-    resolution: {integrity: sha512-Lv/tIVPb0rCyhgPlJeIXvXYhr9By9GHyUmZlJWy93bgbhqYcF32ZLt/mNFYwzrSzG37yUb6geh0lQmhuLHjJEQ==}
+  '@ledgerhq/coin-xrp@10.1.4':
+    resolution: {integrity: sha512-U3kNOELHRoW2E4guBLgUoWeQG3WKS8Ceo+XCdpWB6dZkimZMoMSZvOfL/9CXhEhDUhibYf2REdji1ekEaRi3dg==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
-      '@ledgerhq/logs': ^6.17.0
 
   '@ledgerhq/context-module@2.5.0':
     resolution: {integrity: sha512-oN9kh4i6/PFFNk7prXYk3TVkxPYUMx8fYyxHJ4wtvWacI+yOYCT8SyKmzIVs8dEyqEG/Da8HMySEnQJ46H4tkA==}
@@ -23192,6 +23196,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -28642,7 +28647,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -37347,6 +37352,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -47760,6 +47766,12 @@ snapshots:
       axios: 1.13.5
       bignumber.js: 9.1.2
 
+  '@ledgerhq/coin-module-framework@9.1.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
+    dependencies:
+      '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
+      axios: 1.13.5
+      bignumber.js: 9.1.2
+
   '@ledgerhq/coin-stellar@9.6.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
@@ -47792,11 +47804,10 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-xrp@10.1.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-xrp@10.1.4(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+      '@ledgerhq/coin-module-framework': 9.1.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
-      '@ledgerhq/logs': 6.19.0
       bignumber.js: 9.1.2
       invariant: 2.2.4
       ripple-address-codec: 5.0.0
