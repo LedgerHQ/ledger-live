@@ -28,6 +28,7 @@ import {
 } from "~/renderer/reducers/settings";
 
 const userIdsMatch = (left: UserId, right: UserId): boolean => left.equals(right);
+const CONTENT_CARDS_REFRESH_TIMEOUT_MS = 15_000;
 
 const initializeBrazeSdk = (devMode: boolean, isTrackedUser: boolean): boolean => {
   const brazeConfig = getBrazeConfig();
@@ -62,6 +63,7 @@ export function useBrazeProviderViewModel() {
   const pendingConsentTransitionRef = useRef<Promise<boolean> | null>(null);
   const retryCountRef = useRef(0);
   const syncBrazeIdentityRef = useRef<() => void>(() => {});
+  const sessionStartedRef = useRef(false);
   const [sdkReady, setSdkReady] = useState(false);
 
   const handleContentCardsUpdated = useCallback(
@@ -96,12 +98,21 @@ export function useBrazeProviderViewModel() {
 
   const prepareForIdentityTransition = useCallback(() => {
     subscriptionEpochRef.current += 1;
+    sessionStartedRef.current = false;
     if (subscriptionIdRef.current) {
       braze.removeSubscription(subscriptionIdRef.current);
       subscriptionIdRef.current = null;
     }
-    pendingRefreshRef.current?.resolve();
+    pendingRefreshRef.current?.reject(new Error("Braze content cards refresh cancelled"));
     pendingRefreshRef.current = null;
+  }, []);
+
+  const ensureSessionStarted = useCallback(() => {
+    if (sessionStartedRef.current) return;
+
+    braze.automaticallyShowInAppMessages();
+    braze.openSession();
+    sessionStartedRef.current = true;
   }, []);
 
   const refreshContentCards = useCallback(() => {
@@ -110,13 +121,31 @@ export function useBrazeProviderViewModel() {
     }
 
     const pendingRefresh = createBrazePendingRefresh();
-    pendingRefreshRef.current = pendingRefresh;
+    const timeoutId = setTimeout(() => {
+      if (pendingRefreshRef.current?.promise !== pendingRefresh.promise) return;
+
+      pendingRefreshRef.current = null;
+      pendingRefresh.reject(new Error("Timed out waiting for Braze content cards refresh"));
+    }, CONTENT_CARDS_REFRESH_TIMEOUT_MS);
+
+    pendingRefreshRef.current = {
+      promise: pendingRefresh.promise,
+      resolve: () => {
+        clearTimeout(timeoutId);
+        pendingRefresh.resolve();
+      },
+      reject: error => {
+        clearTimeout(timeoutId);
+        pendingRefresh.reject(error);
+      },
+    };
 
     ensureSubscription();
 
     try {
       braze.requestContentCardsRefresh();
     } catch (error) {
+      clearTimeout(timeoutId);
       pendingRefreshRef.current = null;
       pendingRefresh.reject(error);
     }
@@ -147,8 +176,7 @@ export function useBrazeProviderViewModel() {
 
     if (identitySync.isConsentTransition) {
       const refreshAndReinitSession = async () => {
-        braze.automaticallyShowInAppMessages();
-        braze.openSession();
+        ensureSessionStarted();
         await refreshContentCards();
       };
 
@@ -187,11 +215,13 @@ export function useBrazeProviderViewModel() {
     if (changeUserId) {
       braze.changeUser(changeUserId);
     }
+    ensureSessionStarted();
     lastSyncedIdentityRef.current = currentIdentity;
     void refreshContentCards().catch(() => {});
   }, [
     brazeOptOutIdentityCleanupEnabled,
     devMode,
+    ensureSessionStarted,
     isTrackedUser,
     prepareForIdentityTransition,
     refreshContentCards,
@@ -216,8 +246,6 @@ export function useBrazeProviderViewModel() {
       return;
     }
 
-    braze.automaticallyShowInAppMessages();
-    braze.openSession();
     setSdkReady(true);
 
     return () => {
@@ -227,6 +255,8 @@ export function useBrazeProviderViewModel() {
       }
       pendingRefreshRef.current?.resolve();
       pendingRefreshRef.current = null;
+      lastSyncedIdentityRef.current = null;
+      sessionStartedRef.current = false;
       setSdkReady(false);
     };
   }, [devMode]);

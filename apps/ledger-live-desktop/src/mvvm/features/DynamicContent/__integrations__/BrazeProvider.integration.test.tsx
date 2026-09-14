@@ -85,6 +85,9 @@ describe("BrazeProvider", () => {
     expect(mockedInitialize).toHaveBeenCalledTimes(1);
     expect(mockedChangeUser).toHaveBeenCalledTimes(1);
     expect(mockedChangeUser).toHaveBeenCalledWith(REAL_USER_ID.exportUserIdForBraze());
+    expect(mockedChangeUser.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedOpenSession.mock.invocationCallOrder[0],
+    );
     expect(mockedSubscribeToContentCardsUpdates).toHaveBeenCalledTimes(1);
     expect(mockedRequestContentCardsRefresh).toHaveBeenCalledTimes(1);
     unmount();
@@ -113,6 +116,69 @@ describe("BrazeProvider", () => {
       expect.objectContaining({ id: "wallet-card" }),
     ]);
     unmount();
+  });
+
+  it("should reject a refresh when Braze does not emit a content cards update", async () => {
+    const nativeSetTimeout = global.setTimeout.bind(global);
+    const nativeClearTimeout = global.clearTimeout.bind(global);
+    const refreshTimeouts = new Map<object, () => void>();
+    const setTimeoutSpy = jest.spyOn(global, "setTimeout").mockImplementation(((
+      handler: TimerHandler,
+      delay?: number,
+      ...args: unknown[]
+    ) => {
+      if (delay !== 15_000) {
+        return nativeSetTimeout(handler as never, delay, ...args);
+      }
+
+      const timeoutId = {};
+      refreshTimeouts.set(timeoutId, () => {
+        if (typeof handler === "function") {
+          handler(...args);
+        }
+      });
+      return timeoutId as ReturnType<typeof setTimeout>;
+    }) as unknown as typeof setTimeout);
+    const clearTimeoutSpy = jest.spyOn(global, "clearTimeout").mockImplementation(timeoutId => {
+      if (refreshTimeouts.delete(timeoutId as object)) {
+        return;
+      }
+      nativeClearTimeout(timeoutId);
+    });
+
+    try {
+      let lifecycle = defaultLifecycle;
+      const { unmount } = renderProvider(
+        <BrazeProvider>
+          <RefreshConsumer
+            onReady={value => {
+              lifecycle = value;
+            }}
+          />
+        </BrazeProvider>,
+        { isTrackedUser: true },
+      );
+
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      const refreshPromise = lifecycle.refreshContentCards();
+
+      await act(async () => {
+        for (const fireTimeout of refreshTimeouts.values()) {
+          fireTimeout();
+        }
+      });
+      await expect(refreshPromise).rejects.toThrow(
+        "Timed out waiting for Braze content cards refresh",
+      );
+
+      unmount();
+    } finally {
+      setTimeoutSpy.mockRestore();
+      clearTimeoutSpy.mockRestore();
+    }
   });
 
   it("should run the shared identity lifecycle on opt-out without stacking a new session from init deps", async () => {
