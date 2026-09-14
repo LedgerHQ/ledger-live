@@ -20,7 +20,7 @@
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "command-line-args": "6.0.1",
     "rxjs": "catalog:"

@@ -1,5 +1,4 @@
 ---
-"@ledgerhq/live-env": patch
 "@shared/env": patch
 "@features/platform-env": patch
 ---

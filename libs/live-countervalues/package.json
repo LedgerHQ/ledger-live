@@ -22,7 +22,7 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/live-promise": "catalog:",
-    "@ledgerhq/live-env": "workspace:*"
+    "@ledgerhq/live-env": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",

@@ -26,7 +26,6 @@
 "@ledgerhq/coin-tron": patch
 "@ledgerhq/coin-vechain": patch
 "@ledgerhq/coin-zcash": patch
-"@ledgerhq/evm-tools": patch
 "@ledgerhq/hw-app-algorand": patch
 "@ledgerhq/hw-app-aptos": patch
 "@ledgerhq/hw-app-btc": patch
