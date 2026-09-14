@@ -11,11 +11,15 @@ adds a **Secure browser** section: a URL field and one button, which opens that 
 browser the hosted login uses. The host supplies the action, so a host without such a browser
 shows no section.
 
-When the host builds the `auth` prop, the native panel adds four more sections at the top:
-**Auth session** (the stored tokens, or why the secure store refused a read), **Device secure
-storage** (read the tokens, damage one, or clear the session), **Send API requests** (renew the
-session, or get the user) and **MSW Auth Renewal Mock** (what the mocked
-token endpoint answers, plus a count of the renewals). A toast reports what each action answered.
+When the host builds the `auth` prop, both panels add a **Card session** section: stored tokens,
+sign-out, and a user fetch. On Desktop, with `pnpm desktop start:msw`, that section can also sign
+in a mock session so Card surfaces work without the hosted login. Native never offers that, because
+the session lives in the Keychain.
+
+The native panel then adds three more sections: **Device secure storage** (read the tokens, damage
+one, or clear the session), **Send API requests** (renew the session, or get the user) and **MSW
+Auth Renewal Mock** (what the mocked token endpoint answers, plus a count of the renewals). A toast
+reports what each action answered.
 
 ## Import boundary
 
@@ -63,9 +67,10 @@ interface PayCardToolProps {
   onNavigateToPayTab?: () => void;
   onNavigateToPaySuccess?: () => void;
   onNavigateToSendSuccess?: () => void;
-  // Native only, and optional: absent on a host that does not build the Card session controls,
-  // which hides the four auth sections. `PayCardAuthProps` in `src/types.ts` gives the full shape:
-  // the session, the action handlers and the mock controls.
+  // Optional: absent on a host that does not build the Card session controls, which hides them.
+  // Desktop uses this for mock sign-in (when request mocking is on) and sign-out. Native uses the
+  // same prop for the full session / secure-storage / renewal sections. `PayCardAuthProps` in
+  // `src/types.ts` gives the full shape.
   auth?: PayCardAuthProps;
   // Native only, and optional: absent on a host with no secure browser, which hides the section.
   // Answers one line about what came back, and the panel prints it under the button.
