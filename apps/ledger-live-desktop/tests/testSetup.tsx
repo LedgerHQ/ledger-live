@@ -23,6 +23,7 @@ import { I18nProvider } from "@shared/i18n";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import { config } from "react-transition-group";
+import { LinkingProvider } from "@shared/platform-linking";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
 import type { ReduxStore } from "~/state-manager/configureStore";
@@ -179,15 +180,17 @@ function Providers({
     <I18nextProvider i18n={i18n}>
       <I18nProvider i18n={i18n}>
         <QueryClientProvider client={queryClient}>
-          <Provider store={store}>
-            {skipRouter ? (
-              routerContent
-            ) : (
-              <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
-                {routerContent}
-              </MemoryRouter>
-            )}
-          </Provider>
+          <LinkingProvider config={{ openExternal: () => {} }}>
+            <Provider store={store}>
+              {skipRouter ? (
+                routerContent
+              ) : (
+                <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
+                  {routerContent}
+                </MemoryRouter>
+              )}
+            </Provider>
+          </LinkingProvider>
         </QueryClientProvider>
       </I18nProvider>
     </I18nextProvider>

@@ -357,10 +357,17 @@ export function useContactsViewModel(): ContactsPageViewModel {
     }),
     [t],
   );
+  const isMeContactForAddAddress =
+    addAddressFlowState.status !== "closed" &&
+    meContact !== undefined &&
+    addAddressFlowState.selectedContactId === meContact.id;
   const addAddressFlowDialog = useMemo<ContactsAddAddressFlowDialogProps>(
     () => ({
       state: addAddressFlowState,
       entryLabels: addAddressEntryLabels,
+      privacyLink: isMeContactForAddAddress
+        ? { label: t("contacts.addAddressEntry.privacyPolicy") }
+        : undefined,
       sanctionedAddressBanner: {
         description: t("contacts.addAddressEntry.sanctioned.description"),
         actionLabel: t("contacts.addAddressEntry.sanctioned.learnMore"),
@@ -384,6 +391,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       addAddressNameLabels,
       addAddressReviewLabels,
       addAddressFlowState,
+      isMeContactForAddAddress,
       onBackAddAddress,
       onCloseAddAddress,
       updateAddress,

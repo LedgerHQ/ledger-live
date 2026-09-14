@@ -9,6 +9,7 @@ import { useTranslation } from "~/context/Locale";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
+import { useContactsMeContact } from "@features/platform-contacts";
 import { useContactsCurrencySelectionAdapter } from "LLM/features/Contacts/hooks/useContactsCurrencySelectionAdapter";
 import type { ContactsAddAddressDrawerStep, ContactsAddAddressFlowDrawerProps } from "./types";
 
@@ -44,6 +45,11 @@ export function useContactsAddAddressFlowDrawerViewModel({
 }: ContactsAddAddressFlowDrawerProps) {
   const { t } = useTranslation();
   const helpCenterUrl = useLocalizedUrl(urls.resources.helpCenter);
+  const meContact = useContactsMeContact();
+  const isMeContact =
+    (state.status === "namingAddress" || state.status === "confirmationRequired") &&
+    meContact !== undefined &&
+    state.selectedContactId === meContact.id;
   const handleSanctionedAddressLearnMore = useCallback(() => {
     void Linking.openURL(helpCenterUrl);
   }, [helpCenterUrl]);
@@ -113,6 +119,7 @@ export function useContactsAddAddressFlowDrawerViewModel({
                   "contacts.addAddressName.labelTooLong",
                 ),
               },
+              privacyPolicy: isMeContact ? t("contacts.addAddressName.privacyPolicy") : undefined,
             },
             bottomOffset,
             onChangeText: onAddressNameChange,

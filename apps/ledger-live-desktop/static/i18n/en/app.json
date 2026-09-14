@@ -10000,7 +10000,8 @@
       "validationUnavailable": "Address validation is temporarily unavailable.",
       "ensDisclaimer": "ENS names can change",
       "ensDisclaimerDescription": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify.",
-      "duplicateAddress": "This address is already used for {{contactName}}."
+      "duplicateAddress": "This address is already used for {{contactName}}.",
+      "privacyPolicy": "Learn more about Ledger's Privacy Policy."
     },
     "addAddressName": {
       "inputLabel": "Address name",

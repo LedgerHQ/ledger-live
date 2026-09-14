@@ -1,5 +1,10 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+
+jest.mock("@shared/platform-linking", () => ({
+  useOpenLink: () => jest.fn(),
+  useLocalizedUrl: (url: string) => url,
+}));
 import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   ContactAddressLabelSchema,
