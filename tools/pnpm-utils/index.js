@@ -8,6 +8,32 @@ function field(str, { length = 36, bolden = true } = {}) {
 }
 
 const memoMap = new Map();
+
+// Records what each patch actually did during a resolution, so `.pnpmfile.cjs` can report
+// the ones that never fired or that a package now declares on its own.
+const auditRegistry = new Map();
+function track(filter, kind) {
+  const key = `${filter instanceof RegExp ? String(filter) : filter} (${kind})`;
+  if (!auditRegistry.has(key))
+    auditRegistry.set(key, { key, matched: 0, applied: new Set(), noop: new Set() });
+  return auditRegistry.get(key);
+}
+
+function getPatchReport() {
+  const never = [];
+  const noop = [];
+  for (const entry of auditRegistry.values()) {
+    if (entry.matched === 0) {
+      never.push(entry.key);
+      continue;
+    }
+    for (const dep of entry.noop) {
+      if (!entry.applied.has(dep)) noop.push(`${entry.key} → ${dep}`);
+    }
+  }
+  return { never, noop };
+}
+
 function addDependencies(
   filter,
   dependencies,
@@ -19,11 +45,13 @@ function addDependencies(
     silent = false,
   } = {},
 ) {
+  const audit = track(filter, kind);
   return (pkg, context) => {
     if (filter instanceof RegExp ? filter.test(pkg?.name) : pkg.name === filter) {
       if (filterOnPkg && !filterOnPkg(pkg)) {
         return;
       }
+      audit.matched++;
       const key = `${pkg.name}@${pkg.version}`;
       if (!memoMap.has(key)) memoMap.set(key, new Set());
       const visitedDeps = memoMap.get(key);
@@ -40,6 +68,7 @@ function addDependencies(
 
         if (pkg[kind][dep]) {
           if (!ignoreExisting) {
+            audit.noop.add(dep);
             !silent &&
               console.log(
                 `${bold("[!]", 33)} ${field(depKey)} | ${field(key, {
@@ -50,6 +79,7 @@ function addDependencies(
           }
         }
 
+        audit.applied.add(dep);
         !silent && console.log(`${bold("[+]", 32)} ${field(depKey)} | ${field(key)} (${kind})`);
 
         if (kind === "peerDependencies") {
@@ -71,11 +101,15 @@ function addDependencies(
 }
 
 function removeDependencies(filter, dependencies, { kind = "dependencies" } = {}) {
+  const audit = track(filter, kind);
   return (pkg, context) => {
     const key = `${pkg.name}@${pkg.version}`;
     if (filter instanceof RegExp ? filter.test(pkg?.name) : pkg.name === filter) {
+      audit.matched++;
       dependencies.forEach(dependency => {
-        if (pkg[kind][dependency]) {
+        let removed = false;
+        if (pkg[kind]?.[dependency]) {
+          removed = true;
           console.log(`${bold("[-]", 31)} ${field(dependency)} | ${field(key)} (${kind})`);
           delete pkg[kind][dependency];
         }
@@ -84,11 +118,13 @@ function removeDependencies(filter, dependencies, { kind = "dependencies" } = {}
           kind === "peerDependencies" &&
           pkg.peerDependenciesMeta[dependency]
         ) {
+          removed = true;
           console.log(
             `${bold("[-]", 31)} ${field(dependency)} | ${field(key)} (peerDependenciesMeta)`,
           );
           delete pkg.peerDependenciesMeta[dependency];
         }
+        (removed ? audit.applied : audit.noop).add(dependency);
       });
     }
   };
@@ -112,6 +148,7 @@ function addPeerDependencies(filter, dependencies, options = {}) {
 }
 
 module.exports = {
+  getPatchReport,
   process,
   addDependencies,
   addDevDependencies,

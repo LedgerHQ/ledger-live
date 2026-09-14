@@ -55,6 +55,9 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: Audit the .pnpmfile.cjs patches
+        run: node tools/pnpm-utils/audit.js
+
       - name: Install dependencies
         run: pnpm i --frozen-lockfile
 
