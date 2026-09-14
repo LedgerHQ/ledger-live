@@ -67,6 +67,13 @@ export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies PartialFeatures;
 
+export const FF_LWM_CONTACTS_ENABLED = {
+  lwmContacts: {
+    enabled: true,
+    params: { newBadge: false, eligibleAddressFamilies: ["evm", "tron"] },
+  },
+} satisfies PartialFeatures;
+
 export const FF_NEW_SEND_FLOW_ENABLED = {
   newSendFlow: {
     enabled: true,

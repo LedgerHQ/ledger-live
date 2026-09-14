@@ -64,7 +64,11 @@ export function RecipientCard({
             <Spot appearance="icon" icon={Wallet} />
           )}
           <CardContent>
-            <CardContentTitle typography="body2SemiBold" numberOfLines={contact ? 1 : undefined}>
+            <CardContentTitle
+              testID="send-recipient-card-title"
+              typography="body2SemiBold"
+              numberOfLines={contact ? 1 : undefined}
+            >
               {contact?.contactName ?? recipient}
             </CardContentTitle>
             {(contact?.addressLabel ?? description) && (

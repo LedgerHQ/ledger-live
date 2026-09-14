@@ -21,6 +21,20 @@ export default class NewSendFlowPage {
   signaturePromptId = "send-signature-prompt";
   successViewTransactionId = "send-confirmation-success-view-transaction";
 
+  recipientCardId = "send-recipient-card";
+  recipientCardTitleId = "send-recipient-card-title";
+  recipientCardSendId = "send-recipient-card-send";
+  recipientCardAddContactId = "send-recipient-card-add-contact";
+  addContactStepId = "send-add-contact-step";
+  addContactNewId = "send-add-contact-new";
+  contactNameInputId = "contacts-add-contact-name-input";
+  contactNameSaveId = "contacts-add-contact-save";
+  addressLabelInputId = "contacts-add-address-name-input";
+  addressLabelContinueId = "contacts-add-address-name-continue";
+  addressReviewContinueId = "contacts-add-address-review-continue";
+  recipientContactRowId = "recipient-contact-row";
+  recipientContactNameId = "recipient-contact-name";
+
   @Step("Fill recipient address and continue: {{{0}}}")
   async setRecipientAndContinueNewFlow(address: string | undefined, memoTag?: string) {
     if (!address) throw new Error("Recipient address is not set");
@@ -96,6 +110,53 @@ export default class NewSendFlowPage {
   @Step("Wait for signature screen or device action loader")
   async waitForSignature() {
     await waitForElementById(this.signaturePromptId);
+  }
+
+  @Step("Clear the recipient input (stay on recipient step)")
+  async clearRecipientNewFlow() {
+    await clearTextByElement(getElementById(this.recipientInputId));
+  }
+
+  @Step("Add a new contact named {{{0}}} with address label {{{1}}} from the recipient step")
+  async createContactFromRecipientStep(name: string, addressLabel: string) {
+    await waitForElementById(this.recipientCardAddContactId);
+    await tapById(this.recipientCardAddContactId);
+    await waitForFullyVisibleById(this.addContactStepId);
+    await tapById(this.addContactNewId);
+    await typeTextById(this.contactNameInputId, name);
+    await tapById(this.contactNameSaveId);
+    await waitForElementById(this.addressLabelInputId);
+    await typeTextById(this.addressLabelInputId, addressLabel);
+    await tapById(this.addressLabelContinueId);
+    await waitForElementById(this.addressReviewContinueId);
+    await tapByIdAndExpectToDisappear(this.addressReviewContinueId);
+  }
+
+  @Step("Expect the matched recipient card for contact: {{{0}}}")
+  async expectMatchedContactCard(contactName: string) {
+    await waitForElementById(this.recipientCardId);
+    const actualTitle = await getTextOfElement(this.recipientCardTitleId);
+    jestExpect(actualTitle).toEqual(contactName);
+  }
+
+  @Step("Confirm the matched recipient card and continue")
+  async confirmMatchedContact() {
+    await waitForElementById(this.recipientCardSendId);
+    await tapById(this.recipientCardSendId);
+  }
+
+  @Step("Expect the Add contact action to be enabled")
+  async expectAddContactEnabled() {
+    await waitForElementById(this.recipientCardId);
+    const { enabled } = await getAttributesOfElement(this.recipientCardAddContactId);
+    jestExpect(enabled).toBe(true);
+  }
+
+  @Step("Expect the amount step recipient is contact: {{{0}}}")
+  async expectAmountStepContact(contactName: string) {
+    await waitForElementById(this.recipientContactRowId);
+    const actualName = await getTextOfElement(this.recipientContactNameId);
+    jestExpect(actualName).toEqual(contactName);
   }
 
   @Step("Wait for and tap success confirmation screen")
