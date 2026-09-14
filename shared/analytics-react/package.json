@@ -30,7 +30,16 @@
   },
   "peerDependencies": {
     "@react-navigation/native": "catalog:",
-    "react": ">=19.0.0"
+    "react": ">=19.0.0",
+    "react-native": ">=0.70.0"
+  },
+  "peerDependenciesMeta": {
+    "@react-navigation/native": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
