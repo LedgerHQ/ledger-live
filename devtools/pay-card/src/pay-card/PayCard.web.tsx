@@ -1,12 +1,26 @@
-import { Button, Divider, Tag } from "@ledgerhq/lumen-ui-react";
+import { useState } from "react";
+import {
+  Button,
+  Divider,
+  ListItem,
+  ListItemContent,
+  ListItemLeading,
+  ListItemTitle,
+  ListItemTrailing,
+  Spot,
+  Tag,
+} from "@ledgerhq/lumen-ui-react";
+import { ChevronRight, CoinsCrypto } from "@ledgerhq/lumen-ui-react/symbols";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
+import { BalanceScreen } from "../components/Balance/Balance";
 
 export function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
     onboarding,
+    balance,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
     hasSeenReceiveVerifyHint,
@@ -26,9 +40,35 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPaySuccess ||
     onNavigateToSendSuccess,
   );
+  const [screen, setScreen] = useState<"tool" | "balance">("tool");
+
+  if (screen === "balance") {
+    return <BalanceScreen {...balance} onBack={() => setScreen("tool")} />;
+  }
 
   return (
     <div className="flex flex-col overflow-y-auto">
+      <Section title="Card Debug">
+        <ListItem
+          onClick={() => {
+            balance.load();
+            setScreen("balance");
+          }}
+        >
+          <ListItemLeading>
+            <Spot appearance="icon" icon={CoinsCrypto} />
+            <ListItemContent>
+              <ListItemTitle>Balance & Wallets</ListItemTitle>
+            </ListItemContent>
+          </ListItemLeading>
+          <ListItemTrailing>
+            <ChevronRight />
+          </ListItemTrailing>
+        </ListItem>
+      </Section>
+
+      <Divider />
+
       <Section title="Feature flags">
         <ToggleRow
           label="Pay tab"
