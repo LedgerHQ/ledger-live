@@ -4836,6 +4836,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -65400,9 +65406,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
@@ -65719,7 +65723,9 @@ snapshots:
       ws: 7.5.10
       yargs: 17.7.2
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro@0.83.3:
     dependencies:
