@@ -2,8 +2,10 @@ import React from "react";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { SimplifiedTransactionConfirm } from "./components/SimplifiedTransactionConfirm";
+import { ZcashTransactionConfirm } from "~/renderer/families/bitcoin/ZcashTransactionConfirm";
 import { useSignatureViewModel } from "./hooks/useSignatureViewModel";
 import { LockedDevicePrompt } from "./components/LockedDevicePrompt";
 import { PendingState } from "./components/PendingState";
@@ -40,6 +42,9 @@ export const SignatureScreen = () => {
     return null;
   }
 
+  const isZcash = getAccountCurrency(account).id === "zcash";
+  const zcashUnit = isZcash ? getAccountCurrency(account).units[0] : undefined;
+
   return (
     <DialogBody className="py-16">
       <div className="-mt-12 mb-24" data-testid="send-signature-step">
@@ -54,9 +59,18 @@ export const SignatureScreen = () => {
             if (!device) return null;
             return <LockedDevicePrompt deviceModelId={device.modelId} onRetry={onRetry} />;
           }}
-          renderDeviceSignatureRequested={({ device }) => (
-            <SimplifiedTransactionConfirm device={device} onShown={onDeviceConfirmationShown} />
-          )}
+          renderDeviceSignatureRequested={({ device }) =>
+            isZcash && zcashUnit ? (
+              <ZcashTransactionConfirm
+                device={device}
+                transaction={transaction}
+                unit={zcashUnit}
+                onShown={onDeviceConfirmationShown}
+              />
+            ) : (
+              <SimplifiedTransactionConfirm device={device} onShown={onDeviceConfirmationShown} />
+            )
+          }
         />
       </div>
     </DialogBody>

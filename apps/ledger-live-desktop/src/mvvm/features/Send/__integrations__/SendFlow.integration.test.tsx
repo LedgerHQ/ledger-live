@@ -1,8 +1,14 @@
 import BigNumber from "bignumber.js";
+import React from "react";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
+import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { render, withFlagOverrides } from "tests/testSetup";
+import { SendWorkflow } from "../index";
 import {
   createBitcoinAccount,
   createEthereumAccount,
@@ -652,6 +658,118 @@ describe("Send Flow Integration", () => {
 
       expect(await screen.findByTestId("send-coin-control-footer")).toBeVisible();
       expect(await screen.findByTestId("send-get-funds-button")).toBeVisible();
+    });
+  });
+
+  describe("Zcash shielded send", () => {
+    const zcashCurrency = getCryptoCurrencyById("zcash");
+
+    const createZcashAccount = (
+      privateInfoOverrides: Partial<typeof DEFAULT_ZCASH_PRIVATE_INFO> = {},
+    ) => {
+      const base = genAccount("zcash-shielded-send-test");
+      return {
+        ...base,
+        id: "mock-zcash-account-id",
+        currency: zcashCurrency,
+        freshAddress: "t1ZcashTransparentXXXXXXXXXXXXXXXXXXXXXX",
+        balance: new BigNumber("10000000"),
+        spendableBalance: new BigNumber("10000000"),
+        privateInfo: {
+          ...DEFAULT_ZCASH_PRIVATE_INFO,
+          ufvk: "uview1testufvk",
+          shieldedAddress:
+            "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9",
+          ...privateInfoOverrides,
+        },
+      };
+    };
+
+    const zcashBalanceTypeConfig = {
+      getOptions: jest.fn(() => [
+        {
+          id: "public",
+          translationKey: "balanceType.transparent",
+          balance: new BigNumber(1000),
+          hasPendingBalance: false,
+          icon: "check" as const,
+        },
+        {
+          id: "private",
+          translationKey: "balanceType.shielded",
+          balance: new BigNumber(2000),
+          hasPendingBalance: false,
+          icon: "lock" as const,
+        },
+      ]),
+      getSelectedOptionId: jest.fn((transaction: unknown) => {
+        if (typeof transaction !== "object" || transaction === null || !("sender" in transaction)) {
+          return null;
+        }
+        const sender = (transaction as { sender?: string }).sender;
+        return typeof sender === "string" ? sender : null;
+      }),
+      buildSelectionPatch: jest.fn((id: string) => ({ sender: id })),
+      getSelfTransferTarget: jest.fn(() => null),
+      buildSelfTransferPatch: jest.fn(() => ({})),
+      getSelectableBalance: jest.fn(({ optionId }: { optionId: string }) =>
+        optionId === "private" ? new BigNumber(2000) : new BigNumber(1000),
+      ),
+    };
+
+    const renderZcashSendFlow = (account: ReturnType<typeof createZcashAccount>) =>
+      render(<SendWorkflow isOpen onClose={jest.fn()} params={{ account: account as never }} />, {
+        initialState: {
+          accounts: [account],
+          settings: {
+            counterValue: "USD",
+            counterValueExchange: "BINANCE",
+            currenciesSettings: {},
+          },
+          ...withFlagOverrides({ zcashShielded: { enabled: true } }),
+        },
+      });
+
+    beforeEach(() => {
+      resetSendFlowTestState("bitcoin");
+      setMockBalanceTypeConfig(zcashBalanceTypeConfig);
+    });
+
+    it("shows sync banner on recipient screen when private sender and syncState=running", async () => {
+      const account = createZcashAccount({ syncState: "running", progress: 50 });
+      const { user } = renderZcashSendFlow(account);
+
+      await screen.findByTestId("balance-type-screen");
+      await user.click(screen.getByTestId("balance-type-private"));
+
+      expect(await screen.findByTestId("zcash-sync-banner-running")).toBeVisible();
+    });
+
+    it("hides sync banner when sender is public (transparent pool)", async () => {
+      const account = createZcashAccount({ syncState: "running", progress: 50 });
+      const { user } = renderZcashSendFlow(account);
+
+      await screen.findByTestId("balance-type-screen");
+      await user.click(screen.getByTestId("balance-type-public"));
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("zcash-sync-banner-running")).not.toBeInTheDocument();
+    });
+
+    it("shows the amount screen after entering a transparent recipient", async () => {
+      const account = createZcashAccount({ syncState: "complete" });
+      setMockTransaction(
+        createMinimalBtcTransaction({ recipient: "t1ZcashTransparentXXXXXXXXXXXXXXXXXXXXXX" }),
+      );
+      const { user } = renderZcashSendFlow(account);
+
+      await screen.findByTestId("balance-type-screen");
+      await user.click(screen.getByTestId("balance-type-public"));
+
+      await navigateToAmountScreen(user, "t1ZcashTransparentXXXXXXXXXXXXXXXXXXXXXX");
+
+      expect(screen.getByTestId("send-amount-step")).toBeVisible();
+      expect(screen.getByTestId("send-network-fees-row")).toBeVisible();
     });
   });
 

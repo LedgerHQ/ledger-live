@@ -101,4 +101,26 @@ describe("bridge/impl -- zcash routing (zcashShielded flag)", () => {
     expect(afterClear).not.toBe(first);
     await afterClear;
   });
+
+  it("t→t with flag on: signOperation comes from coin-zcash (PCZT path)", async () => {
+    setZcashShieldedEnabled(true);
+    const account = genAccount("zcash-tt-sign-test", { currency: ZCASH });
+
+    const bridge = await getAccountBridge(account);
+    const zcashBridge = (await coinZcash()).bridge.accountBridge;
+    const bitcoinBridge = (await coinBitcoin()).bridge.accountBridge;
+
+    expect(bridge.signOperation).toBe(zcashBridge.signOperation);
+    expect(bridge.signOperation).not.toBe(bitcoinBridge.signOperation);
+  });
+
+  it("t→t with flag off: signOperation comes from coin-bitcoin (legacy path)", async () => {
+    setZcashShieldedEnabled(false);
+    const account = genAccount("zcash-tt-legacy-sign-test", { currency: ZCASH });
+
+    const bridge = await getAccountBridge(account);
+    const bitcoinBridge = (await coinBitcoin()).bridge.accountBridge;
+
+    expect(bridge.signOperation).toBe(bitcoinBridge.signOperation);
+  });
 });
