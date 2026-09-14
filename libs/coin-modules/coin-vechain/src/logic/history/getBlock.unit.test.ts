@@ -6,6 +6,26 @@ jest.mock("../../network", () => ({ getBlock: jest.fn() }));
 
 const context = createMockVechainContext();
 
+const VTHO_ADDRESS = "0x0000000000000000000000000000456e65726779";
+const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+
+// Verbatim from mainnet block 16407374, tx
+// 0x5fdd7191c4d476a8e86060d516366e87421f65667b9b3c14c33a740c04921b10: a 10 VTHO transfer, which
+// Thor reports as an event on the VTHO contract with an empty `transfers` array.
+const VTHO_TRANSFER_EVENT = {
+  address: VTHO_ADDRESS,
+  topics: [
+    TRANSFER_TOPIC,
+    "0x000000000000000000000000cf130b42ae31c4931298b4b1c0f1d974b8732957",
+    "0x0000000000000000000000000fe6688548f0c303932bb197b0a96034f1d74dba",
+  ],
+  data: "0x0000000000000000000000000000000000000000000000008ac7230489e80000",
+};
+
+const VTHO_SENDER = "0xcf130b42ae31c4931298b4b1c0f1d974b8732957";
+const VTHO_RECIPIENT = "0x0fe6688548f0c303932bb197b0a96034f1d74dba";
+const VTHO_AMOUNT = BigInt("10000000000000000000");
+
 describe("getBlock", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -52,6 +72,13 @@ describe("getBlock", () => {
         operations: [
           {
             type: "transfer",
+            address: "0xsender",
+            peer: "0xrecipient",
+            asset: { type: "native" },
+            amount: -BigInt("0x64"),
+          },
+          {
+            type: "transfer",
             address: "0xrecipient",
             peer: "0xsender",
             asset: { type: "native" },
@@ -60,6 +87,113 @@ describe("getBlock", () => {
         ],
       },
     ]);
+  });
+
+  it("maps a VTHO (VIP-180) transfer event to token transfer operations", async () => {
+    jest.mocked(getBlockFromNetwork).mockResolvedValueOnce({
+      id: "0xabc",
+      number: 16407374,
+      timestamp: 1_694_598_050,
+      transactions: [
+        {
+          id: "0x5fdd7191c4d476a8e86060d516366e87421f65667b9b3c14c33a740c04921b10",
+          origin: VTHO_SENDER,
+          gasUsed: 36518,
+          paid: "0x51161467313c000",
+          reverted: false,
+          outputs: [{ contractAddress: null, events: [VTHO_TRANSFER_EVENT], transfers: [] }],
+        },
+      ],
+    });
+
+    const block = await getBlock(context, 16407374);
+
+    const asset = { type: "token", assetReference: VTHO_ADDRESS, name: "VTHO" };
+    expect(block.transactions[0].operations).toEqual([
+      {
+        type: "transfer",
+        address: VTHO_SENDER,
+        peer: VTHO_RECIPIENT,
+        asset,
+        amount: -VTHO_AMOUNT,
+      },
+      {
+        type: "transfer",
+        address: VTHO_RECIPIENT,
+        peer: VTHO_SENDER,
+        asset,
+        amount: VTHO_AMOUNT,
+      },
+    ]);
+  });
+
+  it("ignores VIP-180 transfer events emitted by a contract other than VTHO", async () => {
+    jest.mocked(getBlockFromNetwork).mockResolvedValueOnce({
+      id: "0xabc",
+      number: 10,
+      timestamp: 1_700_000_000,
+      transactions: [
+        {
+          id: "0xtx4",
+          origin: "0xsender",
+          gasUsed: 36518,
+          paid: "0x100",
+          reverted: false,
+          outputs: [
+            {
+              contractAddress: null,
+              events: [
+                { ...VTHO_TRANSFER_EVENT, address: "0x5db3c8a942333f6468176a870db36eef120a34dc" },
+              ],
+              transfers: [],
+            },
+          ],
+        },
+      ],
+    });
+
+    const block = await getBlock(context, 10);
+
+    expect(block.transactions[0].operations).toEqual([]);
+  });
+
+  it("ignores non-transfer events emitted by the VTHO contract", async () => {
+    jest.mocked(getBlockFromNetwork).mockResolvedValueOnce({
+      id: "0xabc",
+      number: 10,
+      timestamp: 1_700_000_000,
+      transactions: [
+        {
+          id: "0xtx5",
+          origin: "0xsender",
+          gasUsed: 36518,
+          paid: "0x100",
+          reverted: false,
+          outputs: [
+            {
+              contractAddress: null,
+              events: [
+                {
+                  address: VTHO_ADDRESS,
+                  // Approval(address,address,uint256)
+                  topics: [
+                    "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+                    VTHO_TRANSFER_EVENT.topics[1],
+                    VTHO_TRANSFER_EVENT.topics[2],
+                  ],
+                  data: VTHO_TRANSFER_EVENT.data,
+                },
+              ],
+              transfers: [],
+            },
+          ],
+        },
+      ],
+    });
+
+    const block = await getBlock(context, 10);
+
+    expect(block.transactions[0].operations).toEqual([]);
   });
 
   it("marks a reverted transaction as failed", async () => {
