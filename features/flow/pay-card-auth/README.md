@@ -80,9 +80,10 @@ App composition and DevTools consume shared Pay Card entity state through
 | `payCardAuth` | `hasCard` and `isSignedIn` | **No.** It is runtime state, so it stays out of every persisted blob. |
 | `payCardLoginIntro` | `hasSeenLoginIntro` | **Yes**, in the shared `payCard` blob, beside the balance filter and the feature-tour flag. |
 
-`hasSeenLoginIntro` says whether the card holder has already seen the login intro sheet. The flag
-goes up only when a login this session started reaches `ready`, so neither a hydrated session nor a
-reset from the Pay Card devtool raises it. Other Pay Card UI state is owned by the flow it belongs
+`hasSeenLoginIntro` says whether the card holder has already logged in once. The machine raises the
+flag on entry to `persistingSession`, and only a code exchange reaches that state, so neither a
+hydrated session nor a reset from the Pay Card devtool raises it. A session that cannot be stored
+leaves the flag up, because the exchange already proved the holder has an account. Other Pay Card UI state is owned by the flow it belongs
 to: the balance filter by `@features/flow-pay-balance` and the feature-tour flag by
 `@features/flow-pay-feature-tour`.
 
