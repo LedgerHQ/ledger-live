@@ -10,18 +10,12 @@ import {
 } from "@ledgerhq/live-e2e-shared/contacts";
 import { test } from "tests/fixtures/common";
 import { Application } from "tests/page";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import {
   FF_LWD_CONTACTS_ENABLED,
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } from "tests/utils/featureFlagUtils";
 import { NEW_SEND_FLOW_FAMILIES, type NewSendFlowEntry } from "tests/utils/newSendFlowUtils";
 import { buildTags } from "tests/utils/tagsUtils";
-
-/** Spare contact addresses: never sent to, they only make the "Select address" sheet open. */
-export const EVM_SPARE_ADDRESS = "0x000000000000000000000000000000000000dEaD";
-/** Tron black-hole address. */
-export const TRON_SPARE_ADDRESS = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb";
 
 export type ContactsEntry = NewSendFlowEntry & {
   /**
@@ -92,10 +86,6 @@ function testOptions(entry: ContactsEntry) {
   };
 }
 
-async function linkTms() {
-  await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-}
-
 export function registerSendViaContactTests(entries: ContactsEntry[]) {
   for (const entry of entries) {
     const tx = entry.transaction;
@@ -135,8 +125,6 @@ export function registerSendViaContactTests(entries: ContactsEntry[]) {
           `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) via contact`,
           testOptions(entry),
           async ({ app }) => {
-            await linkTms();
-
             await seedContacts(app, seed());
             await openSendFlow(app, tx);
 
@@ -194,8 +182,6 @@ export function registerContactRetrievalTests(entries: ContactsEntry[]) {
           `[${tx.accountToDebit.currency.testLabel}] - Contact retrieval and Add contact availability on the recipient step`,
           testOptions(entry),
           async ({ app }) => {
-            await linkTms();
-
             const ensName = tx.accountToCredit.ensName;
             const recipientInputs = [
               recipientAddress(tx),
