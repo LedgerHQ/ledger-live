@@ -25,6 +25,10 @@ by the API package before the cache.
 Signed out, the query is skipped, so a host composing this flow around a signed-out session provokes
 no 401.
 
+Hosts may pass `formatters.amount` and `formatters.date`. Amounts fall back to `"<value> <CURRENCY>"`.
+Dates fall back to the runtime locale's medium date. Desktop should pass `useDateFormatter` so the
+region locale and Thai Gregorian calendar apply.
+
 ## Mocked transactions
 
 `GET /v1/card/transactions` is mocked in both apps when MSW is enabled (`MSW_ENABLED=true` on

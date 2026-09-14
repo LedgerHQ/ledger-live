@@ -8,13 +8,13 @@ const MOCK_CARD_BALANCE = 100;
 export function useCardViewModel({
   title,
   login,
-  formatCountervalue,
-  formatTransactionAmount,
+  formatters,
   balanceLabel,
 }: CardProps): CardViewProps {
   const status = useCardAuthStatus();
   const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
   const isSignedIn = status === "signedIn";
+  const formatCountervalue = formatters?.countervalue;
 
   const cardVisual = useMemo<CardViewProps["cardVisual"]>(() => {
     if (!isSignedIn || !formatCountervalue || balanceLabel === undefined) return undefined;
@@ -26,6 +26,6 @@ export function useCardViewModel({
     login,
     displayState,
     cardVisual,
-    formatTransactionAmount,
+    formatters,
   };
 }

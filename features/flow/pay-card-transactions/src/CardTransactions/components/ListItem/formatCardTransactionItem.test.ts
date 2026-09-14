@@ -9,6 +9,12 @@ import {
 
 const transaction = PayCardTransactionSchema.parse(mockPayCardTransactions()[0]);
 
+const TIMESTAMP = "2024-10-14T10:44:36.276Z";
+
+function formatLocale(locale: string) {
+  return (date: Date) => new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date);
+}
+
 describe("formatCardTransactionItem", () => {
   it("prefixes a debit with a minus and a credit with a plus", () => {
     expect(formatSignedAmount(transaction)).toBe("-12.99 EUR");
@@ -26,17 +32,13 @@ describe("formatCardTransactionItem", () => {
     expect(formatMerchantName("LEDGER")).toBe("LEDGER");
   });
 
-  it("formats the provider timestamp as a medium date", () => {
-    expect(formatCardTransactionDate("2024-10-14T10:44:36.276Z", "en-US")).toBe("Oct 14, 2024");
-  });
-
-  it("formats the timestamp in the locale it was given", () => {
-    const inEnglish = formatCardTransactionDate("2024-10-14T10:44:36.276Z", "en-US");
-
-    expect(formatCardTransactionDate("2024-10-14T10:44:36.276Z", "fr-FR")).not.toBe(inEnglish);
+  it("uses the host date formatter", () => {
+    expect(formatCardTransactionDate(TIMESTAMP, formatLocale("en-US"))).toBe("Oct 14, 2024");
+    expect(formatCardTransactionDate(TIMESTAMP, formatLocale("en-GB"))).toBe("14 Oct 2024");
+    expect(formatCardTransactionDate(TIMESTAMP, () => "14/10/2024")).toBe("14/10/2024");
   });
 
   it("keeps an unparseable timestamp as it was sent", () => {
-    expect(formatCardTransactionDate("not-a-date", "en-US")).toBe("not-a-date");
+    expect(formatCardTransactionDate("not-a-date", formatLocale("en-US"))).toBe("not-a-date");
   });
 });

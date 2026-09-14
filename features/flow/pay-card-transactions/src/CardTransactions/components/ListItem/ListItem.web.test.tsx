@@ -19,7 +19,12 @@ function item(overrides: Partial<CardTransactionItem["transaction"]> = {}): Card
 
 describe("ListItem", () => {
   it("shows the merchant name, date, category icon, fiat amount and funding asset amount", () => {
-    render(<ListItem item={item()} />, { wrapper: cardApiWrapper() });
+    render(
+      <ListItem item={item()} formatters={{ date: date => date.toISOString().slice(0, 10) }} />,
+      {
+        wrapper: cardApiWrapper(),
+      },
+    );
 
     expect(screen.getByTestId(`card-transactions-item-${transaction.id}`)).toBeVisible();
     expect(screen.getByText("NETFLIX.COM")).toBeVisible();
@@ -27,13 +32,15 @@ describe("ListItem", () => {
     expect(screen.getByText(CATEGORY_LABELS[transaction.mccCategory])).toBeVisible();
     expect(screen.getByText("-12.99 EUR")).toBeVisible();
     expect(screen.getByText("-13.0214 USDC")).toBeVisible();
-    expect(screen.getByText("Oct 14, 2024")).toBeVisible();
+    expect(screen.getByText("2024-10-14")).toBeVisible();
   });
 
   it("uses the host amount formatter for fiat and funding asset values", () => {
     const formatAmount = jest.fn((value: string, currency: string) => `${currency}:${value}`);
 
-    render(<ListItem item={item()} formatAmount={formatAmount} />, { wrapper: cardApiWrapper() });
+    render(<ListItem item={item()} formatters={{ amount: formatAmount }} />, {
+      wrapper: cardApiWrapper(),
+    });
 
     expect(screen.getByText("EUR:-12.99")).toBeVisible();
     expect(screen.getByText("usdc:-13.0214")).toBeVisible();

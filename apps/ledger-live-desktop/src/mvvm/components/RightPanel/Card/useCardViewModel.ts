@@ -8,6 +8,7 @@ import useEnv from "@features/platform-env";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
+import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import type { CardViewModel } from "./types";
@@ -33,6 +34,7 @@ function readCallbackState(state: unknown): string | undefined {
 
   return typeof oauthState === "string" && oauthState !== "" ? oauthState : undefined;
 }
+const CARD_TRANSACTION_DATE_FORMAT: Intl.DateTimeFormatOptions = { dateStyle: "medium" };
 
 export function useCardViewModel(): CardViewModel {
   const { t } = useTranslation();
@@ -48,9 +50,21 @@ export function useCardViewModel(): CardViewModel {
     [unit, locale],
   );
 
-  const formatTransactionAmount = useCallback<CardViewModel["formatTransactionAmount"]>(
+  const formatTransactionAmount = useCallback<
+    NonNullable<CardViewModel["formatters"]["transactionAmount"]>
+  >(
     (value, currency, kind) => formatCardTransactionAmount({ value, currency, kind, locale }),
     [locale],
+  );
+  const formatTransactionDate = useDateFormatter(CARD_TRANSACTION_DATE_FORMAT);
+
+  const formatters = useMemo(
+    () => ({
+      countervalue: formatCountervalue,
+      transactionAmount: formatTransactionAmount,
+      transactionDate: formatTransactionDate,
+    }),
+    [formatCountervalue, formatTransactionAmount, formatTransactionDate],
   );
 
   // Read with `useEnv`, and not with `getEnv`: a tester sets these in the debug settings, and the
@@ -103,8 +117,7 @@ export function useCardViewModel(): CardViewModel {
   return {
     title: t("payTab.card.title"),
     balanceLabel: t("payTab.card.balanceLabel"),
-    formatCountervalue,
-    formatTransactionAmount,
+    formatters,
     login,
   };
 }

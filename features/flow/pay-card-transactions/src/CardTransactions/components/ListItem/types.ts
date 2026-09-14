@@ -1,9 +1,9 @@
 import type { PayCardTransactionCategory } from "@domain/api-card-management";
-import type { CardTransactionItem, FormatCardTransactionAmount } from "../../../types";
+import type { CardTransactionItem, CardTransactionFormatters } from "../../../types";
 
 export type ListItemProps = Readonly<{
   item: CardTransactionItem;
-  formatAmount?: FormatCardTransactionAmount;
+  formatters?: CardTransactionFormatters;
 }>;
 
 export type ListItemViewProps = Readonly<{

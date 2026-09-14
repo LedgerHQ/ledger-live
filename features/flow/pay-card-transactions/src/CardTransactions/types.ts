@@ -1,14 +1,14 @@
-import type { CardTransactionItem, FormatCardTransactionAmount } from "../types";
+import type { CardTransactionItem, CardTransactionFormatters } from "../types";
 
 export type CardTransactionsDisplayMode = "loading" | "error" | "empty" | "list";
 
 export type CardTransactionsProps = Readonly<{
-  formatAmount?: FormatCardTransactionAmount;
+  formatters?: CardTransactionFormatters;
 }>;
 
 export type CardTransactionsScreenViewProps = Readonly<{
   displayMode: CardTransactionsDisplayMode;
   title: string;
   transactions: readonly CardTransactionItem[];
-  formatAmount?: FormatCardTransactionAmount;
+  formatters?: CardTransactionFormatters;
 }>;

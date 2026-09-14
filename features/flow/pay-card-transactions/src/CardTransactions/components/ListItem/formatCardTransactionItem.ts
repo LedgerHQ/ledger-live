@@ -2,7 +2,7 @@ import type {
   PayCardTransaction,
   PayCardTransactionFundingSource,
 } from "@domain/api-card-management";
-import type { FormatCardTransactionAmount } from "../../../types";
+import type { FormatCardTransactionAmount, FormatCardTransactionDate } from "../../../types";
 
 function signedValue(value: string, sign: "DEBIT" | "CREDIT"): string {
   return `${sign === "DEBIT" ? "-" : "+"}${value}`;
@@ -44,12 +44,19 @@ export function formatMerchantName(merchantNameLocation: string): string {
   return merchantName || merchantNameLocation;
 }
 
-export function formatCardTransactionDate(dateTime: string, locale: string): string {
+function defaultFormatDate(date: Date): string {
+  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(date);
+}
+
+export function formatCardTransactionDate(
+  dateTime: string,
+  formatDate: FormatCardTransactionDate = defaultFormatDate,
+): string {
   const date = new Date(dateTime);
 
   if (Number.isNaN(date.getTime())) {
     return dateTime;
   }
 
-  return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date);
+  return formatDate(date);
 }

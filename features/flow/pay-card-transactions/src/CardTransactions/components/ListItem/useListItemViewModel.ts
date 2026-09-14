@@ -1,4 +1,3 @@
-import { useTranslation } from "@shared/i18n";
 import {
   formatCardTransactionDate,
   formatFundingSources,
@@ -7,8 +6,7 @@ import {
 } from "./formatCardTransactionItem";
 import type { ListItemProps, ListItemViewProps } from "./types";
 
-export function useListItemViewModel({ item, formatAmount }: ListItemProps): ListItemViewProps {
-  const { i18n } = useTranslation();
+export function useListItemViewModel({ item, formatters }: ListItemProps): ListItemViewProps {
   const { transaction, categoryLabel } = item;
 
   return {
@@ -16,8 +14,8 @@ export function useListItemViewModel({ item, formatAmount }: ListItemProps): Lis
     merchant: formatMerchantName(transaction.merchantNameLocation),
     category: transaction.mccCategory,
     categoryLabel,
-    fiatAmount: formatSignedAmount(transaction, formatAmount),
-    assetAmount: formatFundingSources(transaction.fundingSources, formatAmount),
-    dateLabel: formatCardTransactionDate(transaction.dateTime, i18n.language),
+    fiatAmount: formatSignedAmount(transaction, formatters?.amount),
+    assetAmount: formatFundingSources(transaction.fundingSources, formatters?.amount),
+    dateLabel: formatCardTransactionDate(transaction.dateTime, formatters?.date),
   };
 }

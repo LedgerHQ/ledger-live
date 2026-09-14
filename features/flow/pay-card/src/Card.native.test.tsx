@@ -33,13 +33,15 @@ const oauthConfig: CardProps["login"]["oauthConfig"] = {
   redirectUri: "https://card.example/callback",
 };
 
-const formatCountervalue: CardProps["formatCountervalue"] = (value: number) => ({
-  integerPart: String(value),
-  decimalPart: "00",
-  currencyText: "$",
-  decimalSeparator: ".",
-  currencyPosition: "start",
-});
+const formatters: CardProps["formatters"] = {
+  countervalue: (value: number) => ({
+    integerPart: String(value),
+    decimalPart: "00",
+    currencyText: "$",
+    decimalSeparator: ".",
+    currencyPosition: "start",
+  }),
+};
 
 describe("Card (native)", () => {
   beforeEach(() => {
@@ -74,7 +76,7 @@ describe("Card (native)", () => {
         <Card
           title={title}
           login={{ oauthConfig }}
-          formatCountervalue={formatCountervalue}
+          formatters={formatters}
           balanceLabel="Balance"
         />,
       );
@@ -103,7 +105,7 @@ describe("Card (native)", () => {
         <Card
           title={title}
           login={{ oauthConfig }}
-          formatCountervalue={formatCountervalue}
+          formatters={formatters}
           balanceLabel="Balance"
         />,
       );

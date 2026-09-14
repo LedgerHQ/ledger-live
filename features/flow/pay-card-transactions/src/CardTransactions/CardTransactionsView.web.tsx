@@ -7,7 +7,7 @@ export function CardTransactionsView({
   displayMode,
   title,
   transactions,
-  formatAmount,
+  formatters,
 }: CardTransactionsScreenViewProps) {
   if (displayMode !== "list") {
     return null;
@@ -20,7 +20,7 @@ export function CardTransactionsView({
           <SubheaderTitle>{title}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
-      <List transactions={transactions} formatAmount={formatAmount} />
+      <List transactions={transactions} formatters={formatters} />
     </div>
   );
 }

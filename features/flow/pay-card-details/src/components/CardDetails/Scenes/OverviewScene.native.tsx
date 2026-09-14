@@ -39,7 +39,7 @@ export function OverviewScene({
   moreViewModel,
   onFreezePress,
   onMorePress,
-  formatTransactionAmount,
+  formatters,
 }: OverviewSceneProps) {
   return (
     <Box lx={{ gap: "s16" }} testID="card-details-overview">
@@ -52,7 +52,7 @@ export function OverviewScene({
         onMorePress={onMorePress}
       />
 
-      <CardTransactions formatAmount={formatTransactionAmount} />
+      <CardTransactions formatters={formatters} />
     </Box>
   );
 }

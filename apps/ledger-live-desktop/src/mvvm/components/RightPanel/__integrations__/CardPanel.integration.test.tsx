@@ -49,6 +49,14 @@ describe("RightPanel card integration", () => {
     expect(within(item).getByText(/13\.0214/)).toHaveTextContent("USDC");
   });
 
+  it("should format the transaction date with the Desktop locale", async () => {
+    render(<Card />, { initialState: { ...signedIn, settings: { locale: "en-GB" } } });
+
+    const item = await screen.findByTestId(`card-transactions-item-${subscription.id}`);
+
+    expect(within(item).getByText("14 Oct 2024")).toBeVisible();
+  });
+
   it("should not ask for the history while the card session is unresolved", async () => {
     render(<Card />);
 

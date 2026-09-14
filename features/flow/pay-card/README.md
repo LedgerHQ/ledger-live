@@ -13,7 +13,7 @@ import { Card } from "@features/flow-pay-card";
 
 <Card
   login={{ oauthConfig, callback }}
-  formatCountervalue={formatCountervalue}
+  formatters={{ countervalue, transactionAmount, transactionDate }}
   balanceLabel={balanceLabel}
 />;
 ```
@@ -30,10 +30,12 @@ import { Card } from "@features/flow-pay-card";
   on web once signed in (the first page of card transactions, or nothing when the list is empty).
 
 The flow owns the (currently mocked) card balance, so hosts no longer assemble the visual themselves.
-They pass only the two things the flow cannot know: `formatCountervalue` (needs the app's locale and
-counter-value currency) and `balanceLabel` (i18n stays with the host). Hosts pass `oauthConfig` and
-`callback` under `login` (`CardProps.login`); those come from `@features/flow-pay-card-auth`. Desktop
-mounts this flow in the Pay tab's right panel.
+They pass a `formatters` object for what only the app knows: `countervalue` (locale and
+counter-value currency), and on web `transactionAmount` / `transactionDate` so the history uses the
+same amount and date formatters as the rest of the app (`useDateFormatter` on Desktop). `balanceLabel`
+stays with the host because of i18n. Hosts pass `oauthConfig` and `callback` under `login`
+(`CardProps.login`); those come from `@features/flow-pay-card-auth`. Desktop mounts this flow in the
+Pay tab's right panel.
 
 ## MVVM
 

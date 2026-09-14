@@ -2,9 +2,7 @@ import BigNumber from "bignumber.js";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { Unit } from "@domain/entity-currency-unit";
-import type { CardProps as PayCardProps } from "@features/flow-pay-card";
-
-type FormatTransactionAmount = NonNullable<PayCardProps["formatTransactionAmount"]>;
+import type { FormatCardTransactionAmount } from "@features/flow-pay-card-transactions";
 
 const CRYPTO_MAGNITUDE_BY_TICKER: Readonly<Record<string, number>> = {
   BTC: 8,
@@ -16,7 +14,7 @@ const CRYPTO_MAGNITUDE_BY_TICKER: Readonly<Record<string, number>> = {
 type FormatCardTransactionAmountArgs = Readonly<{
   value: string;
   currency: string;
-  kind: Parameters<FormatTransactionAmount>[2];
+  kind: Parameters<FormatCardTransactionAmount>[2];
   locale: string;
 }>;
 
