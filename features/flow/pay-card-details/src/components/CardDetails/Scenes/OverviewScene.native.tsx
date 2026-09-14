@@ -1,5 +1,6 @@
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { CardTransactions } from "@features/flow-pay-card-transactions";
 import { CardArtwork } from "../../CardArtwork/CardArtwork";
 import { CardVisual } from "../../CardVisual/CardVisual";
 import { FreezeAction } from "../../Freeze/Tile/FreezeAction";
@@ -38,6 +39,7 @@ export function OverviewScene({
   moreViewModel,
   onFreezePress,
   onMorePress,
+  formatTransactionAmount,
 }: OverviewSceneProps) {
   return (
     <Box lx={{ gap: "s16" }} testID="card-details-overview">
@@ -49,6 +51,8 @@ export function OverviewScene({
         onFreezePress={onFreezePress}
         onMorePress={onMorePress}
       />
+
+      <CardTransactions formatAmount={formatTransactionAmount} />
     </Box>
   );
 }

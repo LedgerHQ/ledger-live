@@ -6992,6 +6992,9 @@ importers:
       '@features/flow-pay-card-auth':
         specifier: workspace:*
         version: link:../pay-card-auth
+      '@features/flow-pay-card-transactions':
+        specifier: workspace:*
+        version: link:../pay-card-transactions
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.12(react@19.1.4)
