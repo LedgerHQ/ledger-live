@@ -1,11 +1,19 @@
 import * as braze from "@braze/web-sdk";
-import { type UserId, userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
+import { userIdSelector } from "@domain/entity-client-identity";
 import { useFeature } from "@features/platform-feature-flags";
 import { getEnv } from "@shared/env";
+import {
+  planBrazeIdentitySync,
+  identitiesMatch,
+  type SyncedBrazeIdentity,
+} from "@ledgerhq/live-common/braze/identitySync";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { getBrazeConfig } from "~/braze-setup";
-import { applyBrazeConsentTransition } from "~/renderer/braze/applyBrazeConsentTransition";
+import {
+  applyBrazeConsentTransition,
+  brazeSdk,
+} from "~/renderer/braze/applyBrazeConsentTransition";
 import { resolveDesktopBrazeUserId } from "~/renderer/braze/brazeIdentity";
 import { publishDesktopContentCards } from "~/renderer/hooks/useBraze";
 import {
@@ -19,17 +27,6 @@ import {
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
 
-const brazeSdk = braze as typeof braze & {
-  wipeData: () => void | Promise<void>;
-  enableSDK: () => void | Promise<void>;
-};
-
-type SyncedBrazeIdentity = {
-  userId: UserId;
-  isTrackedUser: boolean;
-  brazeOptOutIdentityCleanup: boolean;
-};
-
 type PendingRefresh = {
   promise: Promise<void>;
   resolve: () => void;
@@ -38,16 +35,6 @@ type PendingRefresh = {
 
 const MAX_CONSENT_TRANSITION_RETRIES = 1;
 const CONTENT_CARDS_REFRESH_TIMEOUT_MS = 15_000;
-
-const identitiesMatch = (
-  left: SyncedBrazeIdentity | null,
-  right: SyncedBrazeIdentity | null,
-): boolean =>
-  left != null &&
-  right != null &&
-  left.userId.equals(right.userId) &&
-  left.isTrackedUser === right.isTrackedUser &&
-  left.brazeOptOutIdentityCleanup === right.brazeOptOutIdentityCleanup;
 
 const initializeBrazeSdk = (devMode: boolean, isTrackedUser: boolean): boolean => {
   const brazeConfig = getBrazeConfig();
@@ -172,40 +159,32 @@ export function useBrazeProviderViewModel() {
       return;
     }
 
-    if (isDummyUserId(userId)) {
+    const plan = planBrazeIdentitySync(
+      { userId, isTrackedUser, brazeOptOutIdentityCleanupEnabled },
+      {
+        targetIdentity: targetIdentityRef.current,
+        lastSyncedIdentity: lastSyncedIdentityRef.current,
+        hasPendingConsentTransition: pendingConsentTransitionRef.current != null,
+      },
+    );
+
+    targetIdentityRef.current = plan.nextTargetIdentity;
+    if (plan.shouldResetRetryCount) {
+      retryCountRef.current = 0;
+    }
+
+    if (plan.action.type === "reset") {
       lastSyncedIdentityRef.current = null;
-      targetIdentityRef.current = null;
-      retryCountRef.current = 0;
       return;
     }
 
-    const currentIdentity: SyncedBrazeIdentity = {
-      userId,
-      isTrackedUser,
-      brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
-    };
-
-    if (!identitiesMatch(targetIdentityRef.current, currentIdentity)) {
-      targetIdentityRef.current = currentIdentity;
-      retryCountRef.current = 0;
-    }
-
-    if (identitiesMatch(lastSyncedIdentityRef.current, currentIdentity)) {
-      retryCountRef.current = 0;
+    if (plan.action.type === "skip") {
       return;
     }
 
-    if (pendingConsentTransitionRef.current) {
-      return;
-    }
+    const currentIdentity = plan.action.identity;
 
-    const lastSyncedIdentity = lastSyncedIdentityRef.current;
-    const isConsentTransition =
-      brazeOptOutIdentityCleanupEnabled &&
-      lastSyncedIdentity != null &&
-      lastSyncedIdentity.isTrackedUser !== currentIdentity.isTrackedUser;
-
-    if (isConsentTransition) {
+    if (plan.action.type === "consentTransition") {
       const refreshAndReinitSession = async () => {
         braze.automaticallyShowInAppMessages();
         braze.openSession();

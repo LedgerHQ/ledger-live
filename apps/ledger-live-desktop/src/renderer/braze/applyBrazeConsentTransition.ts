@@ -7,7 +7,8 @@ import {
 } from "@ledgerhq/live-common/braze/identityLifecycle";
 import { exportDesktopBrazeUserId } from "./brazeIdentity";
 
-const brazeSdk = braze as typeof braze & Pick<BrazeIdentityLifecycleSdk, "wipeData" | "enableSDK">;
+export const brazeSdk = braze as typeof braze &
+  Pick<BrazeIdentityLifecycleSdk, "wipeData" | "enableSDK">;
 
 const webBrazeSdk: BrazeIdentityLifecycleSdk = {
   wipeData: () => brazeSdk.wipeData(),
