@@ -106,6 +106,5 @@ export function useCardViewModel(): CardViewModel {
     formatCountervalue,
     formatTransactionAmount,
     login,
-    
   };
 }
