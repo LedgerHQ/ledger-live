@@ -1,5 +1,11 @@
 import BigNumber from "bignumber.js";
-import { getMaxAmount, getNearStakingPositions, getStakingFees, getTotalSpent } from "./logic";
+import {
+  canStake,
+  getMaxAmount,
+  getNearStakingPositions,
+  getStakingFees,
+  getTotalSpent,
+} from "./logic";
 import { NearAccount, Transaction } from "./types";
 
 describe("getMaxAmount", () => {
@@ -385,6 +391,31 @@ describe("getNearStakingPositions", () => {
 
     expect(positions).toHaveLength(1);
     expect(positions[0].validatorId).toBe(validatorId);
+  });
+});
+
+describe("canStake with an unseeded preload cache", () => {
+  // The generic-coin-framework bridge never runs preload(), so the cache keeps its initial values
+  // for the whole session. Seeding gasPrice with zero used to collapse the fee estimate to zero
+  // and offer staking to accounts that cannot cover it.
+  const account = (spendableBalance: string) =>
+    ({
+      spendableBalance: new BigNumber(spendableBalance),
+      pendingOperations: [],
+      stakingPositions: [],
+    }) as unknown as NearAccount;
+
+  it("rejects an account that cannot cover the staking fees", () => {
+    // 0.006772 NEAR, the dust account observed on the generic route
+    expect(canStake(account("6772452918750000000000"))).toBe(false);
+  });
+
+  it("allows an account with a comfortable balance", () => {
+    expect(canStake(account("2280000000000000000000000"))).toBe(true);
+  });
+
+  it("rejects an empty account", () => {
+    expect(canStake(account("0"))).toBe(false);
   });
 });
 
