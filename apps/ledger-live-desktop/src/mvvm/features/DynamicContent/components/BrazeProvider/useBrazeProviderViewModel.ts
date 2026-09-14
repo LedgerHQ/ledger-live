@@ -46,7 +46,8 @@ export function useBrazeProviderViewModel() {
   const devMode = useSelector(developerModeSelector);
   const contentCardsDismissed = useSelector(dismissedContentCardsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
-  const initialIsTrackedUserRef = useRef(isTrackedUser);
+  const isTrackedUserRef = useRef(isTrackedUser);
+  isTrackedUserRef.current = isTrackedUser;
   const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
   const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
   const userId = useSelector(userIdSelector);
@@ -163,9 +164,13 @@ export function useBrazeProviderViewModel() {
       isTrackedUser,
       brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
     };
+    const isDummyUser = isDummyUserId(userId);
+    if (isDummyUser && (lastSyncedIdentityRef.current != null || sessionStartedRef.current)) {
+      prepareForIdentityTransition();
+    }
     const identitySync = prepareBrazeIdentitySync({
       currentIdentity,
-      isDummyUser: isDummyUserId(userId),
+      isDummyUser,
       userIdsMatch,
       lastSyncedIdentityRef,
       targetIdentityRef,
@@ -235,7 +240,7 @@ export function useBrazeProviderViewModel() {
 
   useEffect(() => {
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
-    const isInitialized = initializeBrazeSdk(devMode, initialIsTrackedUserRef.current);
+    const isInitialized = initializeBrazeSdk(devMode, isTrackedUserRef.current);
 
     if (!isInitialized) {
       console.warn("Failed to initialize Braze SDK");

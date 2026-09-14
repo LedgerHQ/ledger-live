@@ -1,8 +1,13 @@
-import { UserId, initialIdentitiesState } from "@domain/entity-client-identity";
+import {
+  DUMMY_ID_STR,
+  UserId,
+  identitiesSlice,
+  initialIdentitiesState,
+} from "@domain/entity-client-identity";
 import * as braze from "@braze/web-sdk";
 import React, { useEffect } from "react";
 import { act, render, withFlagOverrides } from "tests/testSetup";
-import { setShareAnalytics } from "~/renderer/actions/settings";
+import { setDeveloperMode, setShareAnalytics } from "~/renderer/actions/settings";
 import { LocationContentCard, Platform } from "~/types/dynamicContent";
 import { BrazeProvider, useBraze } from "../components/BrazeProvider";
 
@@ -343,6 +348,81 @@ describe("BrazeProvider", () => {
     expect(mockedEnableSDK).toHaveBeenCalledTimes(2);
     expect(mockedAutomaticallyShowInAppMessages).toHaveBeenCalledTimes(1);
     expect(mockedOpenSession).toHaveBeenCalledTimes(1);
+    unmount();
+  });
+
+  it("should tear down the session when the user id becomes dummy and reopen it for the next real user", async () => {
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <div />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(mockedOpenSession).toHaveBeenCalledTimes(1);
+    mockedChangeUser.mockClear();
+    mockedOpenSession.mockClear();
+    mockedRemoveSubscription.mockClear();
+    mockedSubscribeToContentCardsUpdates.mockReturnValue("subscription-id-2");
+
+    await act(async () => {
+      store.dispatch(identitiesSlice.actions.importFromLegacy({ userId: DUMMY_ID_STR }));
+    });
+
+    expect(mockedRemoveSubscription).toHaveBeenCalledTimes(1);
+    expect(mockedChangeUser).not.toHaveBeenCalled();
+    expect(mockedOpenSession).not.toHaveBeenCalled();
+
+    await act(async () => {
+      store.dispatch(
+        identitiesSlice.actions.importFromLegacy({
+          userId: REAL_USER_ID.exportUserIdForPersistence(),
+        }),
+      );
+    });
+
+    expect(mockedChangeUser).toHaveBeenCalledTimes(1);
+    expect(mockedChangeUser).toHaveBeenCalledWith(REAL_USER_ID.exportUserIdForBraze());
+    expect(mockedOpenSession).toHaveBeenCalledTimes(1);
+    unmount();
+  });
+
+  it("should re-initialize the SDK with live consent when developer mode changes", async () => {
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <div />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      store.dispatch(setShareAnalytics(false));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    mockedInitialize.mockClear();
+
+    await act(async () => {
+      store.dispatch(setDeveloperMode(true));
+    });
+
+    expect(mockedInitialize).toHaveBeenCalledTimes(1);
+    expect(mockedInitialize).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        sessionTimeoutInSeconds: 1,
+        appVersion: undefined,
+      }),
+    );
     unmount();
   });
 });
