@@ -54,6 +54,13 @@ describe("SmallSquareCard", () => {
     expect(screen.getByText("Ledger Nano X Special Edition")).toHaveClass("line-clamp-2");
   });
 
+  it("should keep a two-line title together with the price", () => {
+    render(<SmallSquareCard title="Ledger Nano X Special Edition" subDescription="$50" />);
+
+    expect(screen.getByText("Ledger Nano X Special Edition")).toHaveClass("line-clamp-2");
+    expect(screen.getByText("$50")).toBeVisible();
+  });
+
   it("should free the price row for the title when there is no price", () => {
     const { rerender } = render(<SmallSquareCard title="Ledger Stax" subDescription="$50" />);
 
