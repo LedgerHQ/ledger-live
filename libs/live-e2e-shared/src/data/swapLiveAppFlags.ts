@@ -40,10 +40,10 @@ export const quoteCardVariantPrefix: Record<QuoteCardVariant, string> = {
   lumen: `lumen-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
 };
 
-// The testid ends with the provider id, so anchor the end: a contains-match would also
-// find a longer id (moonpay finds moonpay_trade).
+// Cards can append to the provider id, so use contains.
+// Swap quotes only name MoonPay Trade, so no id collides.
 export const quoteCardProviderNameSelector = (providerName: string): string =>
-  `[data-testid$='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${providerName.toLowerCase()}']`;
+  `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${providerName.toLowerCase()}']`;
 
 // Provider UI names (e.g. "LI.FI") can carry regex metacharacters.
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
