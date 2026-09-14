@@ -780,14 +780,23 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
   return extra;
 }
 
+/**
+ * A debit costs the account its amount *plus* the fee, so the fee belongs in the operation value —
+ * but only when both are denominated in the same asset. A chain that charges fees in another
+ * currency (VeChain pays gas in VTHO while the account holds VET) declares it through
+ * `BridgeApi.feesCurrencyId`; there the fee is tracked on its own and never folded in, or the
+ * amount would be inflated by an unrelated asset.
+ */
 function computeOperationValue(
   op: CoreOperation,
   opType: OperationType,
   bnFees: BigNumber,
   hasFailed: boolean,
+  feesAreNative: boolean,
 ): BigNumber {
-  if (hasFailed) return bnFees;
+  if (hasFailed) return feesAreNative ? bnFees : new BigNumber(op.value.toString());
   if (
+    feesAreNative &&
     op.asset.type === "native" &&
     ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"].includes(opType)
   ) {
@@ -800,13 +809,26 @@ export function adaptCoreOperationToLiveOperation(
   accountId: string,
   op: CoreOperation,
   reviveFamilyExtra?: (extraRaw: OperationExtraRaw) => OperationExtra,
+  options?: {
+    /**
+     * Whether the chain charges fees in the account's own currency. False only for the few chains
+     * that bill gas in a separate asset (see `BridgeApi.feesCurrencyId`). Defaults to true.
+     */
+    feesAreNative?: boolean;
+  },
 ): Operation {
   const opType = op.type as OperationType;
   const extra = buildOperationExtra(op);
 
   const bnFees = new BigNumber(op.tx.fees.toString());
   const hasFailed = op.tx.failed;
-  const value = computeOperationValue(op, opType, bnFees, hasFailed);
+  const value = computeOperationValue(
+    op,
+    opType,
+    bnFees,
+    hasFailed,
+    options?.feesAreNative ?? true,
+  );
 
   // Landed flat beside the framework's own keys and revived through the family's
   // `fromOperationExtraRaw` — the same pair `accountRawAssign.ts` composes — so a family reads one

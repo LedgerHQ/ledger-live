@@ -1598,6 +1598,55 @@ describe("coin-framework utils", () => {
       },
     );
 
+    it("leaves a native debit's value alone when the chain pays fees in another currency", () => {
+      // VeChain pays gas in VTHO while the account holds VET: adding the fee to the amount would
+      // inflate the debit by an unrelated asset.
+      const op = {
+        ...baseOp,
+        type: "OUT",
+        value: BigInt(100),
+        tx: { ...baseOp.tx, fees: BigInt(10) },
+      };
+
+      const result = adaptCoreOperationToLiveOperation(accountId, op, undefined, {
+        feesAreNative: false,
+      });
+
+      expect(result.value.toString()).toEqual("100");
+      expect(result.fee.toString()).toEqual("10");
+    });
+
+    it("keeps a failed operation's value at zero when fees are not native", () => {
+      const op = {
+        ...baseOp,
+        type: "OUT",
+        value: BigInt(0),
+        tx: { ...baseOp.tx, fees: BigInt(25), failed: true },
+      };
+
+      const result = adaptCoreOperationToLiveOperation(accountId, op, undefined, {
+        feesAreNative: false,
+      });
+
+      expect(result.value.toString()).toEqual("0");
+      expect(result.fee.toString()).toEqual("25");
+    });
+
+    it("still folds fees into a native debit when fees are native", () => {
+      const op = {
+        ...baseOp,
+        type: "OUT",
+        value: BigInt(100),
+        tx: { ...baseOp.tx, fees: BigInt(10) },
+      };
+
+      const result = adaptCoreOperationToLiveOperation(accountId, op, undefined, {
+        feesAreNative: true,
+      });
+
+      expect(result.value.toString()).toEqual("110");
+    });
+
     it("handles non-FEES/OUT operation where value = value only", () => {
       const op = {
         ...baseOp,

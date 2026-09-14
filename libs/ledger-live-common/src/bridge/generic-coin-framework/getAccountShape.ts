@@ -9,6 +9,8 @@ import { deriveA4AccountId } from "./a4/client/accountId";
 import { ensureA4Registered } from "./a4/client/registration";
 import { toA4Network, resolveA4BaseUrl } from "./a4/client/utils";
 import { resolveA4ChainConfig } from "./a4/config";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { getCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
@@ -618,10 +620,17 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // up in the shape a restored one has — the family's `fromOperationExtraRaw` is the single
     // definition of it. Loaded per sync rather than per operation; the registry caches the import.
     const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
+    // A chain that bills gas in another asset (VeChain: VTHO for a VET account) declares it here;
+    // resolved the same way `fromAccountRaw` resolves a persisted `feesCurrencyId`.
+    const feesCurrency = bridgeApi.feesCurrencyId
+      ? (getCurrenciesResolver().findCryptoCurrencyById(bridgeApi.feesCurrencyId) ??
+        (await getCryptoAssetsStore().findTokenById(bridgeApi.feesCurrencyId)))
+      : undefined;
+    const feesAreNative = !feesCurrency;
     const newOps = newCoreOps
       .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
       .map(op =>
-        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
+        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra, { feesAreNative }),
       ) as OperationCommon[];
 
     const newAssetOperations = newOps.filter(
@@ -712,6 +721,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       subAccounts,
       operationsCount: operations.length,
       syncHash,
+      // key omitted rather than set to undefined, like `readiness` below: `jsHelpers` merges
+      // `{ ...account, ...shape }`, so writing `undefined` would clear a persisted value.
+      ...(feesCurrency ? { feesCurrency } : {}),
       // key omitted rather than set to undefined: jsHelpers merges `{ ...a, ...shape }`, so a failed
       // readiness lookup retains the last persisted value instead of clearing it.
       ...(readiness !== undefined ? { readiness } : {}),
