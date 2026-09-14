@@ -10,27 +10,30 @@ exports[`near currency bridge scanAccounts near seed 1 1`] = `
     "freshAddressPath": "44'/397'/0'/0'/0'",
     "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h",
     "index": 0,
-    "nearResources": {
-      "availableBalance": "10000000000000000001",
-      "pendingBalance": "0",
-      "stakedBalance": "0",
-      "stakingPositions": [
-        {
-          "available": "10000000000000000001",
-          "pending": "0",
-          "staked": "0",
-          "validatorId": "figment.poolv1.near",
-        },
-      ],
-      "storageUsageBalance": "5.182e+22",
-    },
     "operationsCount": 6,
     "pendingOperations": [],
     "seedIdentifier": "ed25519:2fxYBxPh3sP1KeqraqSNcUBx8chZ4RHpVAnQ1rFK9xNF",
     "spendableBalance": "15332281393064900000000",
+    "stakingPositions": [
+      {
+        "actions": [
+          "withdraw",
+        ],
+        "address": "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
+        "amount": "10000000000000000001",
+        "asset": {
+          "type": "native",
+        },
+        "delegate": "figment.poolv1.near",
+        "state": "withdrawable",
+        "uid": "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:figment.poolv1.near:available",
+      },
+    ],
+    "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x83092fe0",
     "used": true,
+    "xpub": "ed25519:2fxYBxPh3sP1KeqraqSNcUBx8chZ4RHpVAnQ1rFK9xNF",
   },
   {
     "balance": "0",
@@ -40,20 +43,16 @@ exports[`near currency bridge scanAccounts near seed 1 1`] = `
     "freshAddressPath": "44'/397'/0'/0'/1'",
     "id": "js:2:near:6cbf3b0f8d8b4667bf64bf44b4fefa830e4cef0e5da1e5cfb4015b5a755c4ac0:nearbip44h",
     "index": 1,
-    "nearResources": {
-      "availableBalance": "0",
-      "pendingBalance": "0",
-      "stakedBalance": "0",
-      "stakingPositions": [],
-      "storageUsageBalance": "5e+22",
-    },
     "operationsCount": 0,
     "pendingOperations": [],
     "seedIdentifier": "ed25519:2fxYBxPh3sP1KeqraqSNcUBx8chZ4RHpVAnQ1rFK9xNF",
     "spendableBalance": "0",
+    "stakingPositions": [],
+    "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x83092fe0",
     "used": false,
+    "xpub": "ed25519:8KWA6MZ7nrgL5LfS3g2ZAwZ3JmkbGHvfQvFWikqFnst3",
   },
 ]
 `;
@@ -70,6 +69,7 @@ exports[`near currency bridge scanAccounts near seed 1 2`] = `
       "hasFailed": false,
       "hash": "13gLnmysNkb1iQVgaRrQPjEZqg3jj9BxLP2MCANR8trf",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-13gLnmysNkb1iQVgaRrQPjEZqg3jj9BxLP2MCANR8trf-IN",
+      "internalOperations": [],
       "recipients": [
         "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
       ],
@@ -88,6 +88,7 @@ exports[`near currency bridge scanAccounts near seed 1 2`] = `
       "hasFailed": false,
       "hash": "6YxdoR3gd67SPXx3dNMgttiDGn9zdPU3CkMTNUnMkEqx",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-6YxdoR3gd67SPXx3dNMgttiDGn9zdPU3CkMTNUnMkEqx-IN",
+      "internalOperations": [],
       "recipients": [
         "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
       ],
@@ -106,6 +107,7 @@ exports[`near currency bridge scanAccounts near seed 1 2`] = `
       "hasFailed": false,
       "hash": "71eNXoNJNcWMGs4UJaM1rgSuYWxs7gdY4Aqu1gUUvvLx",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-71eNXoNJNcWMGs4UJaM1rgSuYWxs7gdY4Aqu1gUUvvLx-UNSTAKE",
+      "internalOperations": [],
       "recipients": [
         "figment.poolv1.near",
       ],
@@ -124,6 +126,7 @@ exports[`near currency bridge scanAccounts near seed 1 2`] = `
       "hasFailed": false,
       "hash": "7fW6S2Qi9CCRjuAF2soVwtC5XX7zhxci9nHUV7wA6uJh",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-7fW6S2Qi9CCRjuAF2soVwtC5XX7zhxci9nHUV7wA6uJh-STAKE",
+      "internalOperations": [],
       "recipients": [
         "figment.poolv1.near",
       ],
@@ -142,6 +145,7 @@ exports[`near currency bridge scanAccounts near seed 1 2`] = `
       "hasFailed": false,
       "hash": "CXkpUV26wytDrGdJ17pZPNmzauXxCtiiGwA7WcC7Rahi",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-CXkpUV26wytDrGdJ17pZPNmzauXxCtiiGwA7WcC7Rahi-IN",
+      "internalOperations": [],
       "recipients": [
         "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
       ],
@@ -160,6 +164,7 @@ exports[`near currency bridge scanAccounts near seed 1 2`] = `
       "hasFailed": false,
       "hash": "FNW5wQhaVDUqyczfB2nj2Rq2RGVifAbnjVT6Yabdey9m",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-FNW5wQhaVDUqyczfB2nj2Rq2RGVifAbnjVT6Yabdey9m-OUT",
+      "internalOperations": [],
       "recipients": [
         "abdd03656c69dd2c51b054b4d3e0db7864c34f5ae07b27b558f0fe14f5ff76c3",
       ],
