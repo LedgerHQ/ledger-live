@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { Device } from "@ledgerhq/types-devices";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useFeature } from "@features/platform-feature-flags";
 import Animation from "~/renderer/animations";
@@ -20,10 +21,6 @@ type Props = Readonly<{
   /** Rendered instead when this currency isn't Zcash, or the zcashShielded flag is off. */
   fallback: React.ReactNode;
 }>;
-
-function isShieldedRecipient(recipient: string): boolean {
-  return recipient.startsWith("u1");
-}
 
 export function ZcashTransactionConfirm({
   device,
@@ -47,7 +44,11 @@ export function ZcashTransactionConfirm({
   if (!applies) return <>{fallback}</>;
   if (!device) return null;
 
-  const shielded = isShieldedRecipient(transaction.recipient);
+  // Use the recipient class persisted by the Zcash bridge (classifyZcashRecipient
+  // via updateTransaction) rather than the address prefix: a transparent-only
+  // Unified Address also starts with "u1" but is classified as "public", and its
+  // destination must stay visible instead of being hidden as a private transaction.
+  const shielded = (transaction as unknown as ZcashTransaction).recipientType === "private";
 
   return (
     <div

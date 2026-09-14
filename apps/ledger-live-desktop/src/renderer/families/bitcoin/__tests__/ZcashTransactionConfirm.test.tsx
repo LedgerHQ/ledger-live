@@ -44,8 +44,13 @@ const SHIELDED_RECIPIENT =
 const FALLBACK_TEST_ID = "fallback-confirm";
 const fallback = <div data-testid={FALLBACK_TEST_ID} />;
 
-const buildTransaction = (recipient: string, amount = new BigNumber(1_000_000)) =>
-  ({ recipient, amount }) as Transaction;
+type RecipientType = "public" | "private";
+
+const buildTransaction = (
+  recipient: string,
+  amount = new BigNumber(1_000_000),
+  recipientType: RecipientType = recipient.startsWith("t") ? "public" : "private",
+) => ({ recipient, amount, recipientType }) as unknown as Transaction;
 
 type RenderOptions = {
   amount?: BigNumber;
@@ -53,6 +58,7 @@ type RenderOptions = {
   shieldedEnabled?: boolean;
   device?: Device | null;
   onShown?: () => void;
+  recipientType?: RecipientType;
 };
 
 const renderConfirm = (
@@ -63,12 +69,17 @@ const renderConfirm = (
     shieldedEnabled = true,
     device = mockDevice,
     onShown = jest.fn(),
+    recipientType,
   }: RenderOptions = {},
 ) =>
   render(
     <ZcashTransactionConfirm
       device={device}
-      transaction={buildTransaction(recipient, amount)}
+      transaction={buildTransaction(
+        recipient,
+        amount,
+        recipientType ?? (recipient.startsWith("t") ? "public" : "private"),
+      )}
       unit={mockUnit}
       currencyId={currencyId}
       onShown={onShown}
@@ -124,5 +135,14 @@ describe("ZcashTransactionConfirm", () => {
   it("shielded recipient: does NOT render the address", () => {
     renderConfirm(SHIELDED_RECIPIENT);
     expect(screen.queryByTestId("zcash-confirm-transparent-address")).not.toBeInTheDocument();
+  });
+
+  it("transparent-only Unified Address (recipientType public): renders the address, not the private label", () => {
+    renderConfirm(SHIELDED_RECIPIENT, { recipientType: "public" });
+    expect(screen.getByTestId("zcash-confirm-transparent-address")).toBeVisible();
+    expect(screen.getByTestId("zcash-confirm-transparent-address")).toHaveTextContent(
+      SHIELDED_RECIPIENT,
+    );
+    expect(screen.queryByTestId("zcash-private-transaction-label")).not.toBeInTheDocument();
   });
 });
