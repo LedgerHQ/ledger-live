@@ -1,10 +1,12 @@
+import Braze, { type ContentCard } from "@braze/react-native-sdk";
 import React from "react";
 import { Linking } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { GenericAwarenessModalLayout } from "@ledgerhq/live-common/genericAwarenessModal";
-import { render, screen } from "@tests/test-renderer";
+import { act, render, screen } from "@tests/test-renderer";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import type { State } from "~/reducers/types";
+import { BrazeContentCardsProvider } from "LLM/features/DynamicContent/components/BrazeContentCardsProvider";
 import {
   ContentCardLocation,
   ContentCardsLayout,
@@ -177,6 +179,52 @@ describe("DebugContentCards", () => {
     expect(screen.getByText("hasFunds")).toBeOnTheScreen();
     expect(screen.getByText("isOnboarded")).toBeOnTheScreen();
     expect(screen.getByText("hasStax")).toBeOnTheScreen();
+  });
+
+  it("should show required vs actual and blockedBy for a blocked fetched card", async () => {
+    const blockedCard: ContentCard = {
+      id: "blocked-stax-card",
+      created: 1_690_112_400,
+      expiresAt: -1,
+      viewed: false,
+      clicked: false,
+      pinned: false,
+      dismissed: false,
+      dismissible: true,
+      openURLInWebView: true,
+      isControl: false,
+      extras: {
+        platform: "mobile",
+        location: "wallet",
+        type: "hero",
+        title: "Blocked Stax card",
+        requiredStates: "hasStax",
+      },
+      type: "Classic",
+      title: "Blocked Stax card",
+      cardDescription: "Requires Stax",
+    };
+
+    const { user } = render(
+      <BrazeContentCardsProvider>
+        <DebugContentCardsTestScreen />
+      </BrazeContentCardsProvider>,
+    );
+
+    const onContentCardsUpdated = jest.mocked(Braze.addListener).mock.calls[0][1] as unknown as (
+      event: Braze.ContentCardsUpdatedEvent,
+    ) => void;
+
+    await act(async () => {
+      onContentCardsUpdated({ cards: [blockedCard] });
+    });
+
+    await user.press(screen.getByText("Inspect"));
+    await user.press(screen.getByText("All cards"));
+    await user.press(screen.getByText("Blocked Stax card"));
+
+    expect(screen.getByText("hasStax: required · actual no")).toBeOnTheScreen();
+    expect(screen.getByText("blockedBy: hasStax (unmet-state)")).toBeOnTheScreen();
   });
 
   it("should create fixed-placement cards from Overview and keep them scoped to their placement", async () => {
