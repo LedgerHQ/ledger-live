@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useBridgeSync } from "../../bridge/react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
@@ -21,7 +22,9 @@ import {
   type ViewKeysByAccountId,
 } from "./hw/getViewKey/index";
 import {
+  getClaimableStakingBalance,
   getStrategyConfig,
+  hasPendingOperationType,
   isAleoAccount,
   isAleoTransaction,
   isPrivateTransaction,
@@ -30,14 +33,23 @@ import {
 } from "./utils";
 import type {
   AleoAccount,
+  AleoCoinConfig,
   AleoTokenAccount,
   AleoUnspentRecord,
   AleoValidator,
   SigningStrategy,
 } from "./types";
-import { getValidators } from "@ledgerhq/coin-aleo/logic";
+import { getValidators, isDelegatorBelowMinimum, lastBlock } from "@ledgerhq/coin-aleo/logic";
+import { getCurrencyConfiguration } from "../../config";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
-import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "./constants";
+import {
+  LIVE_BLOCK_HEIGHT_POLL_MS,
+  MANDATORY_SYNC_POLLING_DELAY,
+  MAX_UNBONDING_SYNC_ATTEMPTS,
+  PROGRESS_THROTTLE_INTERVAL_MS,
+  UNBONDING_SYNC_PRIORITY,
+  UNBONDING_SYNC_RETRY_MS,
+} from "./constants";
 
 const QUICK_AMOUNT_STRATEGIES: SigningStrategy[] = ["fast", "balanced", "full"];
 
@@ -620,4 +632,186 @@ export function useAleoValidators(currency: CryptoCurrency): UseAleoValidatorsRe
   }, [currencyId]);
 
   return { validators, loading, error };
+}
+
+export type AleoNonEarningReason =
+  | NonNullable<AleoValidator["nonEarningReason"]>
+  | "leftCommittee"
+  | "ownStakeBelowMinimum";
+
+export type AleoStakingPosition = {
+  bondedBalance: BigNumber;
+  bondedValidator: string | null;
+  validatorLabel: string;
+  nonEarningReason: AleoNonEarningReason | undefined;
+  /**
+   * Estimated net yearly rate as a fraction (0.07 = 7%). Undefined when it could not be
+   * derived; `0` is a real value meaning "earns nothing" — never conflate the two.
+   */
+  estimatedRate: number | undefined;
+  unbondingBalance: BigNumber;
+  unbondingHeight: number | null;
+  claimableBalance: BigNumber;
+  hasBonded: boolean;
+  hasUnbonding: boolean;
+  hasPendingUnbond: boolean;
+  hasPendingClaim: boolean;
+  hasPendingUnbondingChange: boolean;
+};
+
+type LiveBlockHeightOptions = {
+  /** Height from the last account sync; the returned height never goes below it. */
+  fallbackHeight: number;
+  /** False tears the poll down and drops the polled height. */
+  enabled: boolean;
+  /** True stops the ticker but keeps the polled height, for a host that is off screen. */
+  paused?: boolean;
+};
+
+/**
+ * Chain tip for the unbonding countdown, polled independently of account syncs.
+ *
+ * Network errors keep the last good value, and a reply that lands after the poll was torn
+ * down is dropped so it cannot resurrect a stale height.
+ */
+export function useAleoLiveBlockHeight(
+  currency: CryptoCurrency,
+  { fallbackHeight, enabled, paused = false }: LiveBlockHeightOptions,
+): number {
+  const [liveHeight, setLiveHeight] = useState<number | null>(null);
+  const inFlight = useRef(false);
+  const cancelled = useRef(false);
+  const polling = enabled && !paused;
+
+  const fetchHeight = useCallback(async () => {
+    if (inFlight.current) return;
+    // getCurrencyConfiguration throws when no config is registered for the currency.
+    let config: AleoCoinConfig;
+    try {
+      config = getCurrencyConfiguration<AleoCoinConfig>(currency.id);
+    } catch {
+      return;
+    }
+    inFlight.current = true;
+    try {
+      const block = await lastBlock(config);
+      if (!cancelled.current) setLiveHeight(block.height);
+    } catch {
+      // Keep the last good value; the next tick will retry.
+    } finally {
+      inFlight.current = false;
+    }
+    // currency.id keeps the callback stable across referentially-new currency objects.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currency.id]);
+
+  useEffect(() => {
+    // Drop any stale height from a previous countdown so the next one starts clean instead
+    // of inheriting an inflated value.
+    if (!enabled) setLiveHeight(null);
+  }, [enabled]);
+
+  useEffect(() => {
+    if (!polling) return;
+
+    cancelled.current = false;
+    fetchHeight();
+    const interval = setInterval(fetchHeight, LIVE_BLOCK_HEIGHT_POLL_MS);
+
+    return () => {
+      cancelled.current = true;
+      clearInterval(interval);
+    };
+  }, [polling, fetchHeight]);
+
+  return liveHeight != null ? Math.max(liveHeight, fallbackHeight) : fallbackHeight;
+}
+
+export function useStakingPosition(account: AleoAccount): AleoStakingPosition {
+  const { validators, loading } = useAleoValidators(account.currency);
+
+  const bondedBalance = account.aleoResources?.bondedBalance ?? new BigNumber(0);
+  const unbondingBalance = account.aleoResources?.unbondingBalance ?? new BigNumber(0);
+  const unbondingHeight = account.aleoResources?.unbondingHeight ?? null;
+  const claimableBalance = getClaimableStakingBalance(account);
+  const bondedValidator = account.aleoResources?.bondedValidator ?? null;
+
+  const validator = useMemo(
+    () => (bondedValidator ? validators.find(item => item.address === bondedValidator) : undefined),
+    [validators, bondedValidator],
+  );
+
+  const hasBonded = bondedBalance.gt(0);
+  const hasPendingUnbond = hasPendingOperationType(account, "UNBOND");
+  const hasPendingClaim = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
+
+  const nonEarningReason = ((): AleoNonEarningReason | undefined => {
+    if (loading || !hasBonded) return undefined;
+    if (!validator) return "leftCommittee";
+    if (validator.nonEarningReason) return validator.nonEarningReason;
+    return isDelegatorBelowMinimum(bondedBalance) ? "ownStakeBelowMinimum" : undefined;
+  })();
+
+  const estimatedRate = nonEarningReason ? 0 : validator?.estimatedYearlyRewardsRate;
+
+  return {
+    bondedBalance,
+    bondedValidator,
+    validatorLabel: validator?.name || bondedValidator || "",
+    nonEarningReason,
+    estimatedRate,
+    unbondingBalance,
+    unbondingHeight,
+    claimableBalance,
+    hasBonded,
+    hasUnbonding: unbondingBalance.gt(0),
+    hasPendingUnbond,
+    hasPendingClaim,
+    hasPendingUnbondingChange: hasPendingUnbond || hasPendingClaim,
+  };
+}
+
+/**
+ * Requests account syncs while the chain has passed the unbonding height but the account has
+ * not caught up yet.
+ *
+ * The live block-height poll sees the crossing within seconds; `account.blockHeight` only
+ * moves on a sync, and that is the height every claimable decision reads. So the gap is
+ * closed by syncing rather than by reading the live height in more places — the bridge
+ * validates the claim against the synced height too, and a UI that disagreed with it would
+ * offer a claim the flow then refuses.
+ *
+ * Retries because a single sync can fail or land a block too early; the effect tears down as
+ * soon as `enabled` goes false, which is what a successful sync causes.
+ */
+export function useSyncOnUnbondingComplete(accountId: string, enabled: boolean): void {
+  const sync = useBridgeSync();
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    let attempts = 0;
+    const requestSync = () => {
+      attempts += 1;
+      sync({
+        type: "SYNC_ONE_ACCOUNT",
+        accountId,
+        priority: UNBONDING_SYNC_PRIORITY,
+        reason: "aleo-unbonding-complete",
+      });
+    };
+
+    requestSync();
+    const interval = setInterval(() => {
+      // Give up rather than poll forever: the background tick remains the backstop, and the
+      // row keeps showing that it is still settling.
+      if (attempts >= MAX_UNBONDING_SYNC_ATTEMPTS) {
+        clearInterval(interval);
+        return;
+      }
+      requestSync();
+    }, UNBONDING_SYNC_RETRY_MS);
+
+    return () => clearInterval(interval);
+  }, [enabled, accountId, sync]);
 }

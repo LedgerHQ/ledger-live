@@ -8,22 +8,30 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { Subject } from "rxjs";
 import BigNumber from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Transaction } from "../../generated/types";
 import type { AleoAccount, AleoUnspentRecord } from "./types";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
-import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "./constants";
+import {
+  LIVE_BLOCK_HEIGHT_POLL_MS,
+  MANDATORY_SYNC_POLLING_DELAY,
+  MIN_DELEGATOR_STAKE_MICROCREDITS,
+  PROGRESS_THROTTLE_INTERVAL_MS,
+} from "./constants";
 import {
   useAleoViewKeyApproval,
   buildAccountsWithViewKeys,
   useAleoPrivateSync,
   useAleoQuickAmountSelector,
+  useAleoLiveBlockHeight,
   useAleoValidators,
+  useStakingPosition,
 } from "./react";
-import { getValidators } from "@ledgerhq/coin-aleo/logic";
+import { getValidators, lastBlock } from "@ledgerhq/coin-aleo/logic";
+import { getCurrencyConfiguration } from "../../config";
 import { ALEO_ACCOUNT_1, makeAleoAccount } from "./__mocks__/account.mock";
 
 const mockCreateAction = jest.fn();
@@ -53,7 +61,16 @@ jest.mock("./utils", () => ({
   })),
 }));
 
-jest.mock("@ledgerhq/coin-aleo/logic", () => ({ getValidators: jest.fn() }));
+jest.mock("@ledgerhq/coin-aleo/logic", () => ({
+  ...jest.requireActual("@ledgerhq/coin-aleo/logic"),
+  getValidators: jest.fn(),
+  lastBlock: jest.fn(),
+}));
+
+jest.mock("../../config", () => ({
+  ...jest.requireActual("../../config"),
+  getCurrencyConfiguration: jest.fn(),
+}));
 
 const { useFeature } = jest.requireMock("@features/platform-feature-flags");
 const { getViewKeyExec } = jest.requireMock("./hw/getViewKey/index");
@@ -1506,5 +1523,233 @@ describe("useAleoValidators", () => {
 
     expect(result.current.validators).toEqual([]);
     await waitFor(() => expect(result.current.validators).toEqual([testnetValidator]));
+  });
+});
+
+describe("useAleoLiveBlockHeight", () => {
+  const currency = getCryptoCurrencyById("aleo");
+  const mockLastBlock = jest.mocked(lastBlock);
+
+  const heightOf = (options: { fallbackHeight: number; enabled: boolean; paused?: boolean }) =>
+    renderHook(() => useAleoLiveBlockHeight(currency, options));
+
+  beforeEach(() => {
+    jest.mocked(getCurrencyConfiguration).mockReturnValue({
+      status: { type: "active" },
+      networkType: "mainnet",
+    } as ReturnType<typeof getCurrencyConfiguration>);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("returns the fallback height and fetches nothing while disabled", () => {
+    const { result } = heightOf({ fallbackHeight: 100, enabled: false });
+
+    expect(result.current).toBe(100);
+    expect(mockLastBlock).not.toHaveBeenCalled();
+  });
+
+  it("returns the polled height once it is ahead of the fallback", async () => {
+    mockLastBlock.mockResolvedValue({ height: 140 } as Awaited<ReturnType<typeof lastBlock>>);
+
+    const { result } = heightOf({ fallbackHeight: 100, enabled: true });
+
+    await waitFor(() => expect(result.current).toBe(140));
+  });
+
+  // A synced account that overtook the last successful poll must not make the countdown grow.
+  it("never returns less than the fallback height", async () => {
+    mockLastBlock.mockResolvedValue({ height: 90 } as Awaited<ReturnType<typeof lastBlock>>);
+
+    const { result } = heightOf({ fallbackHeight: 100, enabled: true });
+
+    await waitFor(() => expect(mockLastBlock).toHaveBeenCalled());
+    expect(result.current).toBe(100);
+  });
+
+  it("keeps the last good height when a poll fails", async () => {
+    mockLastBlock.mockRejectedValue(new Error("network down"));
+
+    const { result } = heightOf({ fallbackHeight: 100, enabled: true });
+
+    await waitFor(() => expect(mockLastBlock).toHaveBeenCalled());
+    expect(result.current).toBe(100);
+  });
+
+  it("stops the ticker but keeps the polled height while paused", async () => {
+    mockLastBlock.mockResolvedValue({ height: 140 } as Awaited<ReturnType<typeof lastBlock>>);
+    const { result, rerender } = renderHook(
+      ({ paused }: { paused: boolean }) =>
+        useAleoLiveBlockHeight(currency, { fallbackHeight: 100, enabled: true, paused }),
+      { initialProps: { paused: false } },
+    );
+
+    await waitFor(() => expect(result.current).toBe(140));
+    mockLastBlock.mockClear();
+    jest.useFakeTimers();
+
+    rerender({ paused: true });
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(LIVE_BLOCK_HEIGHT_POLL_MS);
+    });
+
+    expect(mockLastBlock).not.toHaveBeenCalled();
+    expect(result.current).toBe(140);
+  });
+
+  it("fetches again as soon as it is unpaused", async () => {
+    mockLastBlock.mockResolvedValue({ height: 140 } as Awaited<ReturnType<typeof lastBlock>>);
+    const { rerender } = renderHook(
+      ({ paused }: { paused: boolean }) =>
+        useAleoLiveBlockHeight(currency, { fallbackHeight: 100, enabled: true, paused }),
+      { initialProps: { paused: false } },
+    );
+
+    await waitFor(() => expect(mockLastBlock).toHaveBeenCalled());
+    rerender({ paused: true });
+    mockLastBlock.mockClear();
+
+    rerender({ paused: false });
+
+    await waitFor(() => expect(mockLastBlock).toHaveBeenCalledTimes(1));
+  });
+
+  // Inheriting a height from a finished countdown would make the next one start short.
+  it("drops the polled height once disabled", async () => {
+    mockLastBlock.mockResolvedValue({ height: 140 } as Awaited<ReturnType<typeof lastBlock>>);
+    const { result, rerender } = renderHook(
+      ({ enabled }: { enabled: boolean }) =>
+        useAleoLiveBlockHeight(currency, { fallbackHeight: 100, enabled }),
+      { initialProps: { enabled: true } },
+    );
+
+    await waitFor(() => expect(result.current).toBe(140));
+
+    rerender({ enabled: false });
+
+    expect(result.current).toBe(100);
+  });
+});
+
+describe("useStakingPosition", () => {
+  const pendingOperation = (type: OperationType): Operation =>
+    ({
+      id: `pending-${type}`,
+      hash: "",
+      type,
+      value: new BigNumber(1),
+      fee: new BigNumber(1),
+      senders: [],
+      recipients: [],
+      accountId: ALEO_ACCOUNT_1.id,
+      date: new Date(),
+      blockHash: null,
+      blockHeight: null,
+      extra: {},
+    }) as unknown as Operation;
+
+  const positionFor = (pendingOperations: Operation[]) =>
+    renderHook(() => useStakingPosition({ ...ALEO_ACCOUNT_1, pendingOperations } as AleoAccount))
+      .result.current;
+
+  beforeEach(() => {
+    jest.mocked(getValidators).mockResolvedValue([]);
+  });
+
+  // `unbond_public` and `claim_unbond_public` share one `unbonding` slot on chain, so the gate
+  // both actions read has to close on either of them — the per-type flags exist only to label
+  // what is in flight.
+  describe("hasPendingUnbondingChange", () => {
+    it("is false with nothing pending", () => {
+      expect(positionFor([]).hasPendingUnbondingChange).toBe(false);
+    });
+
+    it("is true for a pending unbond", () => {
+      const position = positionFor([pendingOperation("UNBOND")]);
+
+      expect(position.hasPendingUnbondingChange).toBe(true);
+      expect(position.hasPendingUnbond).toBe(true);
+      expect(position.hasPendingClaim).toBe(false);
+    });
+
+    it("is true for a pending claim", () => {
+      const position = positionFor([pendingOperation("WITHDRAW_UNBONDED")]);
+
+      expect(position.hasPendingUnbondingChange).toBe(true);
+      expect(position.hasPendingClaim).toBe(true);
+      expect(position.hasPendingUnbond).toBe(false);
+    });
+
+    // A bond writes the `bonded` mapping, not `unbonding`, so it must not close either action.
+    it("ignores a pending bond", () => {
+      expect(positionFor([pendingOperation("BOND")]).hasPendingUnbondingChange).toBe(false);
+    });
+
+    it("ignores an unrelated pending operation", () => {
+      expect(positionFor([pendingOperation("OUT")]).hasPendingUnbondingChange).toBe(false);
+    });
+  });
+
+  describe("nonEarningReason", () => {
+    const VALIDATOR_ADDRESS = "aleo1validator";
+
+    const bondedPosition = (bondedBalance: BigNumber) =>
+      renderHook(() =>
+        useStakingPosition({
+          ...ALEO_ACCOUNT_1,
+          pendingOperations: [],
+          aleoResources: {
+            ...(ALEO_ACCOUNT_1 as AleoAccount).aleoResources,
+            bondedBalance,
+            bondedValidator: VALIDATOR_ADDRESS,
+          },
+        } as AleoAccount),
+      );
+
+    const earningValidator = {
+      address: VALIDATOR_ADDRESS,
+      name: "Validator One",
+      stakeMicrocredits: 0,
+      isOpen: true,
+      isUnbonding: false,
+      commissionPercent: 5,
+      estimatedYearlyRewardsRate: 0.07,
+    };
+
+    beforeEach(() => {
+      jest
+        .mocked(getValidators)
+        .mockResolvedValue([earningValidator] as Awaited<ReturnType<typeof getValidators>>);
+    });
+
+    it("is undefined for a healthy position", async () => {
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
+
+      await waitFor(() => expect(result.current.validatorLabel).toBe("Validator One"));
+      expect(result.current.nonEarningReason).toBeUndefined();
+      expect(result.current.estimatedRate).toBe(0.07);
+    });
+
+    it("is ownStakeBelowMinimum below the delegator minimum", async () => {
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS).minus(1));
+
+      await waitFor(() => expect(result.current.nonEarningReason).toBe("ownStakeBelowMinimum"));
+      expect(result.current.estimatedRate).toBe(0);
+    });
+
+    // A validator that pays nothing makes the delegator's own size irrelevant.
+    it("keeps the validator's own reason over the delegator minimum", async () => {
+      jest
+        .mocked(getValidators)
+        .mockResolvedValue([{ ...earningValidator, nonEarningReason: "fullCommission" }] as Awaited<
+          ReturnType<typeof getValidators>
+        >);
+
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS).minus(1));
+
+      await waitFor(() => expect(result.current.nonEarningReason).toBe("fullCommission"));
+    });
   });
 });

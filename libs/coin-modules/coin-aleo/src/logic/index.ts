@@ -5,7 +5,7 @@ export { estimateFees } from "./estimateFees";
 export { getAccountInfo } from "./getAccountInfo";
 export { getBalance } from "./getBalance";
 export { getValidators } from "./getValidators";
-export { estimateNetRate } from "./utils";
+export { estimateNetRate, isDelegatorBelowMinimum } from "./utils";
 export { lastBlock } from "./lastBlock";
 export { register } from "./register";
 export { validateIntent } from "./validateIntent";

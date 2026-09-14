@@ -25,7 +25,13 @@ jest.mock("LLM/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ code: "ALEO", name: "Aleo", magnitude: 6 }),
 }));
 
-jest.mock("~/components/CurrencyUnitValue", () => ({ __esModule: true, default: () => null }));
+jest.mock("~/components/CurrencyUnitValue", () => ({
+  __esModule: true,
+  default: ({ value }: { value: { toString: () => string } }) => {
+    const { Text } = jest.requireActual("react-native");
+    return <Text>{value.toString()}</Text>;
+  },
+}));
 
 const baseAleoResources = {
   transparentBalance: new BigNumber(600000),
@@ -48,11 +54,22 @@ describe("AccountBalanceHeader", () => {
     expect(screen.getByText("aleo.balancesSection")).toBeOnTheScreen();
   });
 
-  it("renders transparent and private balance items when both are present", () => {
+  it("renders available, transparent and private balance items when all are present", () => {
     render(<AccountBalanceHeader account={baseAccount} />);
 
+    expect(screen.getByText("aleo.info.available.title")).toBeOnTheScreen();
     expect(screen.getByText("aleo.info.transparent.title")).toBeOnTheScreen();
     expect(screen.getByText("aleo.info.private.title")).toBeOnTheScreen();
+  });
+
+  it("shows the spendable balance as the available amount, next to the breakdown", () => {
+    const account: AleoAccount = { ...baseAccount, spendableBalance: new BigNumber(750000) };
+
+    render(<AccountBalanceHeader account={account} />);
+
+    expect(screen.getByText("750000")).toBeOnTheScreen();
+    expect(screen.getByText("600000")).toBeOnTheScreen();
+    expect(screen.getByText("400000")).toBeOnTheScreen();
   });
 
   it("shows placeholder text for private balance when privateBalance is null (not yet synced)", () => {
