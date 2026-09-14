@@ -92,9 +92,8 @@ export function useCardLoginViewModel({
   const isSignedIn = useSelector(selectIsSignedIn);
   const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
   const [isIntroRequested, setIsIntroRequested] = useState(false);
-  // A mount that already holds a redirect is finishing a login started before it: on desktop the
-  // redirect returns through a route change, so the press that started it belongs to an earlier mount.
-  const [isLoginUnderway, setIsLoginUnderway] = useState(() => Boolean(callback?.code));
+  const isFinishingRedirectLogin = Boolean(callback?.code);
+  const [isLoginUnderway, setIsLoginUnderway] = useState(isFinishingRedirectLogin);
   const [hasSignupFailed, setHasSignupFailed] = useState(false);
 
   const ports = useMemo(
