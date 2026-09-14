@@ -16,6 +16,7 @@ import {
   isQ2ReleaseTourEnabled,
   isQ3ReleaseTourEnabled,
 } from "LLD/features/Q2Tour/releaseTourGate";
+import { isQ3TourVariant, type Q3TourVariant } from "LLD/features/Q3Tour/Drawer/const";
 import {
   RELEASE_TOUR_FLAG,
   WALLET_FEATURES_FLAG,
@@ -35,6 +36,9 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
   const isEnabled = featureFlag?.enabled ?? false;
   const isQ2TourEnabled = isQ2ReleaseTourEnabled(releaseTour);
   const isQ3TourEnabled = isQ3ReleaseTourEnabled(releaseTour);
+  const selectedQ3TourVariant: Q3TourVariant = isQ3TourVariant(releaseTour?.params?.variant)
+    ? releaseTour.params.variant
+    : "q3_a";
 
   const params = useMemo<WalletFeatureParams>(
     () => (featureFlag?.params as WalletFeatureParams) ?? {},
@@ -124,11 +128,27 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
         key: RELEASE_TOUR_FLAG,
         value: {
           enabled: next,
-          params: { variant: next ? "q3_a" : releaseTour?.params?.variant },
+          params: { variant: next ? selectedQ3TourVariant : releaseTour?.params?.variant },
         },
       }),
     );
-  }, [dispatch, isQ3TourEnabled, releaseTour]);
+  }, [dispatch, isQ3TourEnabled, releaseTour, selectedQ3TourVariant]);
+
+  const handleQ3TourVariantChange = useCallback(
+    (variant: string) => {
+      if (!isQ3TourVariant(variant)) return;
+      dispatch(
+        setOverride({
+          key: RELEASE_TOUR_FLAG,
+          value: {
+            enabled: releaseTour?.enabled ?? false,
+            params: { variant },
+          },
+        }),
+      );
+    },
+    [dispatch, releaseTour?.enabled],
+  );
 
   return {
     featureFlag,
@@ -140,6 +160,7 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
     isQ2TourEnabled,
     hasSeenQ3Tour,
     isQ3TourEnabled,
+    selectedQ3TourVariant,
     handleToggleAll,
     handleToggleEnabled,
     handleToggleParam,
@@ -148,5 +169,6 @@ export const useWalletFeaturesDevToolViewModel = (): WalletFeaturesViewModel => 
     handleToggleQ2TourEnabled,
     handleToggleQ3TourHasSeen,
     handleToggleQ3TourEnabled,
+    handleQ3TourVariantChange,
   };
 };

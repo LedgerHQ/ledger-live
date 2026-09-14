@@ -1,4 +1,5 @@
 import { Feature } from "@shared/feature-flags";
+import type { Q3TourVariant } from "LLD/features/Q3Tour/Drawer/const";
 import { WalletFeatureParamKey } from "./constants";
 
 export type WalletFeatureParams = Partial<Record<WalletFeatureParamKey, boolean>>;
@@ -17,6 +18,7 @@ export interface WalletFeaturesViewModel {
   readonly isQ2TourEnabled: boolean;
   readonly hasSeenQ3Tour: boolean;
   readonly isQ3TourEnabled: boolean;
+  readonly selectedQ3TourVariant: Q3TourVariant;
   readonly handleToggleAll: (enable: boolean) => void;
   readonly handleToggleEnabled: () => void;
   readonly handleToggleParam: (key: WalletFeatureParamKey) => void;
@@ -25,6 +27,7 @@ export interface WalletFeaturesViewModel {
   readonly handleToggleQ2TourEnabled: () => void;
   readonly handleToggleQ3TourHasSeen: () => void;
   readonly handleToggleQ3TourEnabled: () => void;
+  readonly handleQ3TourVariantChange: (variant: string) => void;
 }
 
 export interface FeatureParamRowProps<T extends string = WalletFeatureParamKey> {
