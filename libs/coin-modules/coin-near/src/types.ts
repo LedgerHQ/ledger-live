@@ -14,13 +14,22 @@ export type { NearStakingPosition } from "./network/sdk.types";
 export type Transaction = TransactionCommon & {
   family: "near";
   mode: string;
-  fees?: BigNumber;
+  /** `null` until estimated, matching the generic-coin-framework's `createTransaction`. */
+  fees?: BigNumber | null;
+  /**
+   * Set by the generic-coin-framework's `createTransaction`. A NEAR nonce belongs to an access key
+   * rather than to the account, so the value is inert for crafting — it exists so `signOperation`
+   * can skip `getNextSequence`, which this module deliberately does not implement. It has to
+   * survive serialization, or a restored transaction sends `signOperation` down that throwing path.
+   */
+  nonce?: BigNumber;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "near";
   mode: string;
-  fees?: string;
+  fees?: string | null;
+  nonce?: string;
 };
 
 export type NearPreloadedData = {

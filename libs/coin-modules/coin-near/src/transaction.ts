@@ -27,13 +27,19 @@ ${mode.toUpperCase()} ${
         })
 }${recipient ? `\nTO ${recipient}` : ""}`;
 
+// `fees` and `nonce` round-trip verbatim, including the `null` the generic-coin-framework's
+// `createTransaction` starts them at. Coercing an unestimated fee to zero, or dropping the nonce,
+// makes `fromTransactionRaw(toTransactionRaw(t))` differ from `t` — and a lost nonce sends
+// `signOperation` into `getNextSequence`, which this module does not implement. Same shape as the
+// other generic-route families (tezos, xrp).
 export const fromTransactionRaw = (transactionRaw: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(transactionRaw);
   return {
     ...common,
     family: transactionRaw.family,
     mode: transactionRaw.mode,
-    fees: new BigNumber(transactionRaw?.fees || 0),
+    fees: transactionRaw.fees ? new BigNumber(transactionRaw.fees) : null,
+    ...(transactionRaw.nonce != null && { nonce: new BigNumber(transactionRaw.nonce) }),
   };
 };
 
@@ -43,10 +49,9 @@ export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
     ...common,
     family: transaction.family,
     mode: transaction.mode,
+    fees: transaction.fees ? transaction.fees.toString() : null,
+    ...(transaction.nonce != null && { nonce: transaction.nonce.toString() }),
   };
-  if (transaction.fees) {
-    transactionRaw.fees = transaction.fees.toString();
-  }
 
   return transactionRaw;
 };
