@@ -31,6 +31,31 @@ describe("Q3WalletV4Tour setup", () => {
     });
   });
 
+  it("should write the selected Q3 variant onto releaseTour", () => {
+    const { store } = render(<Q3WalletV4TourScreenDebug />, {
+      overrideInitialState: withFlagOverrides({
+        releaseTour: { enabled: true, params: { variant: "q3_a" } },
+      }),
+    });
+
+    fireEvent.press(screen.getByText("q3_b2"));
+
+    expect(selectFeature(store.getState(), "releaseTour")).toMatchObject({
+      enabled: true,
+      params: { variant: "q3_b2" },
+    });
+  });
+
+  it("should allow opening the drawer for an enabled Q3 variant other than q3_a", () => {
+    render(<Q3WalletV4TourScreenDebug />, {
+      overrideInitialState: withFlagOverrides({
+        releaseTour: { enabled: true, params: { variant: "q3_b" } },
+      }),
+    });
+
+    expect(screen.getByRole("button", { name: "Open Drawer" })).toBeEnabled();
+  });
+
   it("should toggle the persisted Q3 tour seen state independently", () => {
     const { store } = render(<Q3WalletV4TourScreenDebug />);
 
