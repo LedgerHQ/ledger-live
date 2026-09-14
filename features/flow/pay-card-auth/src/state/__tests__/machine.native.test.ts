@@ -260,6 +260,25 @@ describe("cardLoginMachine login", () => {
     });
   });
 
+  it("completes the login when the deep link brings the code back without a state", async () => {
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      openHostedLogin: jest.fn(async () => ({ type: "pending" })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+    await settledAt(actor, "awaitingCallback");
+
+    actor.send({ type: "CALLBACK_RECEIVED", code: callback.code });
+
+    await settledAt(actor, "ready");
+    expect(ports.exchangeAuthorizationCode).toHaveBeenCalledWith({
+      code: callback.code,
+      codeVerifier: attempt.codeVerifier,
+    });
+  });
+
   it("starts a fresh attempt when the login is pressed again while it waits", async () => {
     // The redirect may never arrive. A second press must not leave the login with no way forward.
     const ports = stubPorts({
