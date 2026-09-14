@@ -33,7 +33,8 @@ The flow owns the (currently mocked) card balance, so hosts no longer assemble t
 They pass a `formatters` object for what only the app knows: `countervalue` (locale and
 counter-value currency), and on web `transactionAmount` / `transactionDate` so the history uses the
 same amount and date formatters as the rest of the app (`useDateFormatter` on Desktop). `balanceLabel`
-stays with the host because of i18n. Hosts pass `oauthConfig` and `callback` under `login`
+stays with the host because of i18n; the flow resolves its own card title through `@shared/i18n`.
+Hosts pass `oauthConfig` and `callback` under `login`
 (`CardProps.login`); those come from `@features/flow-pay-card-auth`. Desktop mounts this flow in the
 Pay tab's right panel.
 

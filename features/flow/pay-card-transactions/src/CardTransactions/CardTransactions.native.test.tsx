@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react-native";
+import { render, screen, userEvent, waitFor } from "@testing-library/react-native";
 import { http, HttpResponse, type JsonBodyType } from "msw";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { listenToCardApi } from "@support/msw-features-flow-pay-card";
@@ -48,5 +48,24 @@ describe("CardTransactions (native)", () => {
     await waitFor(() => expect(screen.getByTestId("card-transactions-list")).toBeVisible());
     expect(screen.getByText(SECTION_TITLE)).toBeVisible();
     expect(screen.getByText("NETFLIX.COM")).toBeVisible();
+  });
+
+  it("returns the selected transaction item", async () => {
+    const page = mockPayCardTransactions();
+    const onTransactionPress = jest.fn();
+    const user = userEvent.setup();
+    server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
+
+    render(<CardTransactions onTransactionPress={onTransactionPress} />, {
+      wrapper: cardApiWrapper({ signedIn: true }),
+    });
+
+    await user.press(await screen.findByText("NETFLIX.COM"));
+
+    expect(onTransactionPress).toHaveBeenCalledWith(
+      expect.objectContaining({
+        transaction: expect.objectContaining({ id: page[0]?.id }),
+      }),
+    );
   });
 });

@@ -1,6 +1,11 @@
 import { useState } from "react";
+import type { PayCardTransaction } from "@domain/api-card-management";
 
-export type CardDetailsRoute = { name: "overview" } | { name: "freeze" } | { name: "more" };
+export type CardDetailsRoute =
+  | { name: "overview" }
+  | { name: "freeze" }
+  | { name: "more" }
+  | { name: "transaction"; transaction: PayCardTransaction };
 
 export type CardDetailsNavigation = Readonly<{
   route: CardDetailsRoute;

@@ -52,11 +52,61 @@ export function formatCardTransactionDate(
   dateTime: string,
   formatDate: FormatCardTransactionDate = defaultFormatDate,
 ): string {
+  const date = parseTransactionDate(dateTime);
+
+  return date ? formatDate(date) : dateTime;
+}
+
+export function formatMaskedPanLast4(panLast4: string): string {
+  return `***${panLast4}`;
+}
+
+function parseTransactionDate(dateTime: string): Date | undefined {
   const date = new Date(dateTime);
 
-  if (Number.isNaN(date.getTime())) {
-    return dateTime;
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
+function isSameCalendarDay(left: Date, right: Date): boolean {
+  return (
+    left.getFullYear() === right.getFullYear() &&
+    left.getMonth() === right.getMonth() &&
+    left.getDate() === right.getDate()
+  );
+}
+
+function formatTimeOfDay(date: Date): string {
+  return new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+}
+
+export type TranslateTransactionDetailDate = (
+  key: "today" | "yesterday" | "dateTime",
+  options: Readonly<{ time: string; date?: string }>,
+) => string;
+
+export function formatTransactionDetailDateTime(
+  dateTime: string,
+  translate: TranslateTransactionDetailDate,
+  formatDate: FormatCardTransactionDate = defaultFormatDate,
+  now: Date = new Date(),
+): string {
+  const date = parseTransactionDate(dateTime);
+  if (!date) return dateTime;
+
+  const time = formatTimeOfDay(date);
+  if (isSameCalendarDay(date, now)) {
+    return translate("today", { time });
   }
 
-  return formatDate(date);
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (isSameCalendarDay(date, yesterday)) {
+    return translate("yesterday", { time });
+  }
+
+  return translate("dateTime", { date: formatDate(date), time });
 }

@@ -29,6 +29,11 @@ Hosts may pass `formatters.amount` and `formatters.date`. Amounts fall back to `
 Dates fall back to the runtime locale's medium date. Desktop should pass `useDateFormatter` so the
 region locale and Thai Gregorian calendar apply.
 
+On native, transaction rows can be selected through `onTransactionPress`. The native-only
+`CardTransactionDetail` shows the merchant, relative date and time, amount, status, masked card,
+funding source and copyable processor transaction ID. Its view model writes to the native clipboard,
+so the view stays free of side effects; hosts only provide locale-aware amount and date formatters.
+
 ## Mocked transactions
 
 `GET /v1/card/transactions` is mocked in both apps when MSW is enabled (`MSW_ENABLED=true` on

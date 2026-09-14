@@ -21,6 +21,7 @@ export function CardDetailsView({
   scene,
   onDetailsPress,
   onSheetClose,
+  onSceneBack,
 }: CardDetailsViewProps) {
   return (
     <Box>
@@ -66,7 +67,12 @@ export function CardDetailsView({
         </Box>
       </Box>
 
-      <CardDetailsSheet isOpen={isSheetOpen} scene={scene} onClose={onSheetClose} />
+      <CardDetailsSheet
+        isOpen={isSheetOpen}
+        scene={scene}
+        onClose={onSheetClose}
+        onBack={onSceneBack}
+      />
     </Box>
   );
 }

@@ -6,6 +6,8 @@ import type { CardDetailsSceneProps } from "./components/CardDetails/Scenes/type
 
 export type { FormattedValue };
 
+export type CardTrackEvent = (event: string, params: Record<string, unknown>) => void;
+
 export type CardVisualProps = Readonly<{
   balance: number;
   formatCountervalue: (value: number) => FormattedValue;
@@ -23,6 +25,7 @@ export type CardDetailsProps = Readonly<{
   cardVisual?: CardVisualProps;
   /** Native only: the Details sheet overview lists the card's transactions. */
   formatters?: CardTransactionFormatters;
+  onTrackEvent?: CardTrackEvent;
 }>;
 
 export type CardDetailsViewProps = CardDetailsProps &
@@ -33,12 +36,15 @@ export type CardDetailsViewProps = CardDetailsProps &
     scene: CardDetailsSceneProps;
     onDetailsPress: () => void;
     onSheetClose: () => void;
+    onSceneBack: () => void;
   }>;
 
 export type CardDetailsSheetProps = Readonly<{
   isOpen: boolean;
   scene: CardDetailsSceneProps;
   onClose: () => void;
+  /** Returns to the overview from a scene the registry gives a back button. */
+  onBack: () => void;
 }>;
 
 /**

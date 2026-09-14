@@ -1,16 +1,13 @@
 import { useMemo } from "react";
 import { useCardAuthStatus } from "@features/flow-pay-card-auth";
+import { useTranslation } from "@shared/i18n";
 import type { CardDisplayState, CardProps, CardViewProps } from "./Card.types";
 
 /** Mock card balance shown until the real balance API is wired (see LIVE-35427 follow-up). */
 const MOCK_CARD_BALANCE = 100;
 
-export function useCardViewModel({
-  title,
-  login,
-  formatters,
-  balanceLabel,
-}: CardProps): CardViewProps {
+export function useCardViewModel({ login, formatters, balanceLabel }: CardProps): CardViewProps {
+  const { t } = useTranslation();
   const status = useCardAuthStatus();
   const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
   const isSignedIn = status === "signedIn";
@@ -22,7 +19,7 @@ export function useCardViewModel({
   }, [isSignedIn, formatCountervalue, balanceLabel]);
 
   return {
-    title,
+    title: t("payTab.card.title"),
     login,
     displayState,
     cardVisual,
