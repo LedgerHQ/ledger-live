@@ -15,6 +15,18 @@ export const PAGE_TRACKING_Q3_WALLET_V4_TOUR = "Q3 Wallet V4 Tour";
 
 type ReleaseTourVariant = NonNullable<NonNullable<Features["releaseTour"]["params"]>["variant"]>;
 
+export const Q3_TOUR_VARIANTS = ["q3_a", "q3_b", "q3_b2"] as const;
+export type Q3TourVariant = (typeof Q3_TOUR_VARIANTS)[number];
+
+export function resolveQ3WalletV4TourVariant(
+  variant: ReleaseTourVariant | undefined,
+): Q3TourVariant {
+  if (variant === "q3_b" || variant === "q3_b2") {
+    return variant;
+  }
+  return "q3_a";
+}
+
 const SLIDES_LIST_HEIGHT = 440;
 
 const PROGRESS_HEIGHT = 94;
@@ -75,7 +87,7 @@ const q3TourBase: Omit<WalletV4Tour, "slides"> = {
   },
 };
 
-const Q3_TOURS_BY_VARIANT: Record<"q3_a" | "q3_b" | "q3_b2", WalletV4Tour> = {
+const Q3_TOURS_BY_VARIANT: Record<Q3TourVariant, WalletV4Tour> = {
   q3_a: {
     ...q3TourBase,
     slides: [introSlide, contactSlide, paySlide, yieldSlide],
@@ -88,10 +100,11 @@ const Q3_TOURS_BY_VARIANT: Record<"q3_a" | "q3_b" | "q3_b2", WalletV4Tour> = {
 };
 
 export function getQ3WalletV4Tour(variant: ReleaseTourVariant | undefined): WalletV4Tour {
-  if (variant === "q3_b" || variant === "q3_b2") {
-    return Q3_TOURS_BY_VARIANT[variant];
-  }
-  return Q3_TOURS_BY_VARIANT.q3_a;
+  const resolvedVariant = resolveQ3WalletV4TourVariant(variant);
+  return {
+    ...Q3_TOURS_BY_VARIANT[resolvedVariant],
+    variant: resolvedVariant,
+  };
 }
 
-export const Q3_WALLET_V4_TOUR = Q3_TOURS_BY_VARIANT.q3_a;
+export const Q3_WALLET_V4_TOUR = getQ3WalletV4Tour("q3_a");

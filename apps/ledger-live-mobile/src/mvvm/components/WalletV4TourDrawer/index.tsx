@@ -60,7 +60,12 @@ export const WalletV4TourDrawer = ({
       {isDrawerOpen ? (
         <BottomSheetView style={styles.content}>
           <BottomSheetHeader />
-          <TrackScreen category={tour.page} source={source} refreshSource={false} />
+          <TrackScreen
+            category={tour.page}
+            source={source}
+            refreshSource={false}
+            {...(tour.variant ? { variant: tour.variant } : {})}
+          />
           <Slides
             bounces={false}
             as={AnimatedGestureHandlerFlatList}
@@ -84,7 +89,12 @@ export const WalletV4TourDrawer = ({
             </Slides.ProgressIndicator>
 
             <Slides.Footer>
-              <SlideFooterButton onComplete={handleCloseDrawer} copy={tour.copy} page={tour.page} />
+              <SlideFooterButton
+                onComplete={handleCloseDrawer}
+                copy={tour.copy}
+                page={tour.page}
+                variant={tour.variant}
+              />
             </Slides.Footer>
           </Slides>
         </BottomSheetView>
