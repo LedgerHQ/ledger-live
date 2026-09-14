@@ -13,6 +13,7 @@ const eligiblePortfolioState = withFlagOverrides(
     ...state,
     settings: {
       ...state.settings,
+      hasCompletedOnboarding: true,
       hasSeenQ3WalletV4Tour: false,
     },
   }),
