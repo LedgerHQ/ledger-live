@@ -27,6 +27,7 @@ Several `@ledgerhq/*` packages consumed here are published from separate reposit
 | Repository | Key packages |
 | --- | --- |
 | [device-sdk-ts](https://github.com/LedgerHQ/device-sdk-ts) | `@ledgerhq/device-management-kit`, `@ledgerhq/context-module`, `@ledgerhq/device-signer-kit-*`, `@ledgerhq/device-transport-kit-*`, `@ledgerhq/speculos-device-controller` |
+| [ts-libs](https://github.com/LedgerHQ/ts-libs) | `@ledgerhq/auth`, `@ledgerhq/devices`, `@ledgerhq/hw-transport`, `@ledgerhq/hw-transport-mocker`, `@ledgerhq/live-network`, `@ledgerhq/live-promise`, `@ledgerhq/psbtv2`, [...more](https://ledgerhq.atlassian.net/browse/LIVE-37105) |
 | [wallet-api](https://github.com/LedgerHQ/wallet-api) | `@ledgerhq/wallet-api-client`, `@ledgerhq/wallet-api-client-react`, `@ledgerhq/wallet-api-core`, `@ledgerhq/wallet-api-server`, `@ledgerhq/wallet-api-simulator` |
 | [coin-modules](https://github.com/LedgerHQ/coin-modules) | `@ledgerhq/coin-stellar`, `@ledgerhq/coin-xrp` |
 | [lumen](https://github.com/LedgerHQ/lumen) | `@ledgerhq/lumen-ui-react`, `@ledgerhq/lumen-ui-rnative`, `@ledgerhq/lumen-utils-shared`, `@ledgerhq/lumen-ui-*-visualization` |
