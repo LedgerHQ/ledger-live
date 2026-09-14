@@ -60,7 +60,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
     ],
   );
 
-  const dialogHeight = currentStepConfig?.height ?? "fixed";
+  const dialogHeight = currentStepConfig?.height ?? "fit";
 
   const shouldShowStatusGradient =
     state.flowStatus === FLOW_STATUS.ERROR || state.flowStatus === FLOW_STATUS.SUCCESS;
