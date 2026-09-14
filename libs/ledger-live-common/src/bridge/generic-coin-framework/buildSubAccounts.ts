@@ -55,9 +55,53 @@ function buildTokenAccount({
     balance,
     spendableBalance: spendableBalance,
     swapHistory: [],
+    // Oldest of the operations passed in -- under an operation-history bound this can be more
+    // recent than the token's real first activity, since older operations were never fetched.
+    // Accepted as cosmetic: nothing downstream treats creationDate as a completeness guarantee.
     creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
   };
+}
+
+/**
+ * Groups `operations` once by (lowercased `assetReference`, `assetOwner`) so that each token's
+ * matching operations can be looked up instead of refiltering the whole list. Only operations
+ * whose `extra.assetReference` is a string are indexed here: the existing predicate lowercases
+ * only when *both* sides are strings, so an op whose reference isn't a string can never match a
+ * string-typed balance reference (and vice versa) — see `nonStringReferenceOperations` below,
+ * which keeps those out of the index and lets them be matched by the original predicate.
+ */
+function indexOperationsByAssetReference(operations: OperationCommon[]): {
+  byLowercasedReference: Map<string, Map<unknown, OperationCommon[]>>;
+  nonStringReferenceOperations: OperationCommon[];
+} {
+  const byLowercasedReference = new Map<string, Map<unknown, OperationCommon[]>>();
+  const nonStringReferenceOperations: OperationCommon[] = [];
+
+  for (const op of operations) {
+    const assetReference = op.extra.assetReference;
+    if (typeof assetReference !== "string") {
+      nonStringReferenceOperations.push(op);
+      continue;
+    }
+
+    const lowered = assetReference.toLowerCase();
+    let byOwner = byLowercasedReference.get(lowered);
+    if (!byOwner) {
+      byOwner = new Map();
+      byLowercasedReference.set(lowered, byOwner);
+    }
+
+    const owner = op.extra.assetOwner;
+    const bucket = byOwner.get(owner);
+    if (bucket) {
+      bucket.push(op);
+    } else {
+      byOwner.set(owner, [op]);
+    }
+  }
+
+  return { byLowercasedReference, nonStringReferenceOperations };
 }
 
 export async function buildSubAccounts({
@@ -87,29 +131,34 @@ export async function buildSubAccounts({
     })),
   );
 
+  const { byLowercasedReference, nonStringReferenceOperations } =
+    indexOperationsByAssetReference(operations);
+
   for (const { balance, token } of tokenBalances) {
     // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
     if (token && !blacklistedTokenIds.includes(token.id)) {
+      const assetReference = balance.asset?.["assetReference"];
+      const assetOwner = balance.asset?.["assetOwner"];
+      // assetReference compared case-insensitively: a chain's own listOperations output and
+      // its balance/getAssetFromToken derivation aren't guaranteed to agree on reference casing
+      // (observed on Stacks -- one path lowercases a composite contract-address string, the
+      // other returns it verbatim), so an exact-string match here would silently drop an
+      // operation from its subAccount.
+      const matchingOperations =
+        typeof assetReference === "string"
+          ? (byLowercasedReference.get(assetReference.toLowerCase())?.get(assetOwner) ?? [])
+          : nonStringReferenceOperations.filter(
+              op =>
+                op.extra.assetReference === assetReference && op.extra.assetOwner === assetOwner,
+            );
+
       tokenAccounts.push({
         ...buildTokenAccount({
           id: encodeTokenAccountId(accountId, token),
           parentAccountId: accountId,
           assetBalance: balance,
           token,
-          // assetReference compared case-insensitively: a chain's own listOperations output and
-          // its balance/getAssetFromToken derivation aren't guaranteed to agree on reference casing
-          // (observed on Stacks -- one path lowercases a composite contract-address string, the
-          // other returns it verbatim), so an exact-string match here would silently drop an
-          // operation from its subAccount.
-          operations: operations.filter(op => {
-            const assetReference = balance.asset?.["assetReference"];
-            return (
-              (typeof op.extra.assetReference === "string" && typeof assetReference === "string"
-                ? op.extra.assetReference.toLowerCase() === assetReference.toLowerCase()
-                : op.extra.assetReference === assetReference) &&
-              op.extra.assetOwner === balance.asset?.["assetOwner"] // NOTE: we could narrow type
-            );
-          }),
+          operations: matchingOperations,
         }),
       });
     }
@@ -118,13 +167,36 @@ export async function buildSubAccounts({
   return tokenAccounts;
 }
 
-/** Keeps only what the chain still reports, carrying the stored operations of a token that stays. */
+/**
+ * Keeps only what the chain still reports, carrying the stored operations of a token that stays.
+ *
+ * `maxOperations`, when set, bounds a sub-account's stored operations the same way the parent
+ * account's history is bounded: `mergeOps` below only ever grows the merged list, so a token
+ * still receiving transfers would otherwise accumulate operations forever across syncs -- on the
+ * reference account the token operations are the bulk of the volume, dwarfing the parent's own.
+ * Operations are newest-first, so keeping the head keeps the newest. `undefined` is unbounded,
+ * identical to today's behaviour.
+ *
+ * The bound applies to sub-accounts this sync *creates* as well as to the ones it merges. A newly
+ * discovered token is not exempt: `paginateOperations` returns the whole page that reached the
+ * bound rather than cutting a transaction in half, so a walk bounded at N can hand back up to N
+ * plus one page, and all of that overshoot can belong to a single token.
+ */
+function boundOperations(subAccount: TokenAccount, maxOperations?: number): TokenAccount {
+  if (maxOperations === undefined || subAccount.operations.length <= maxOperations) {
+    return subAccount;
+  }
+  const operations = subAccount.operations.slice(0, maxOperations);
+  return { ...subAccount, operations, operationsCount: operations.length };
+}
+
 export function mergeSubAccounts(
   oldSubAccounts: Array<TokenAccount>,
   newSubAccounts: Array<TokenAccount>,
+  maxOperations?: number,
 ): Array<TokenAccount> {
   if (!oldSubAccounts.length) {
-    return newSubAccounts;
+    return newSubAccounts.map(subAccount => boundOperations(subAccount, maxOperations));
   }
 
   const oldSubAccountsByTokenId = Object.fromEntries(
@@ -133,9 +205,11 @@ export function mergeSubAccounts(
 
   return newSubAccounts.map(newSubAccount => {
     const existingSubAccount = oldSubAccountsByTokenId[String(newSubAccount.token.id)];
-    if (!existingSubAccount) return newSubAccount;
+    if (!existingSubAccount) return boundOperations(newSubAccount, maxOperations);
 
-    const operations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
+    const mergedOperations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
+    const operations =
+      maxOperations === undefined ? mergedOperations : mergedOperations.slice(0, maxOperations);
     return {
       ...newSubAccount,
       operations,

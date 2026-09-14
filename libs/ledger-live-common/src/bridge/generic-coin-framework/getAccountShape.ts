@@ -9,6 +9,7 @@ import { deriveA4AccountId } from "./a4/client/accountId";
 import { ensureA4Registered } from "./a4/client/registration";
 import { toA4Network, resolveA4BaseUrl } from "./a4/client/utils";
 import { resolveA4ChainConfig } from "./a4/config";
+import { resolveOperationHistoryBound } from "./operationHistoryBound";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
@@ -19,10 +20,19 @@ import {
   extractBalance,
   optionalNumeric,
 } from "./utils";
-import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
+import {
+  buildSubOperationIndex,
+  type SubOperationIndex,
+} from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { paginateOperations } from "./paginateOperations";
-import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
+import type {
+  AssetInfo,
+  Balance,
+  BalanceOptions,
+  Operation,
+  Stake,
+} from "@ledgerhq/coin-module-framework/api/types";
 import type { OperationCommon } from "./types";
 import type {
   Account,
@@ -249,14 +259,14 @@ function parentOpsForTxWithNonInternalOperations(
   hash: string,
   transactionOps: OperationCommon[],
   internalOperations: OperationCommon[],
-  newSubAccounts: TokenAccount[],
+  subOperationIndex: SubOperationIndex,
   accountId: string,
   address: string,
 ): OperationCommon[] {
   const nativeOps = transactionOps.filter(isNativeLiveOp);
-  // inferSubOperations returns types-live Operation[]; we use OperationCommon in this bridge
+  // subOperationIndex holds types-live Operation[]; we use OperationCommon in this bridge
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- framework type vs bridge type
-  const subOperations = inferSubOperations(hash, newSubAccounts) as OperationCommon[];
+  const subOperations = (subOperationIndex.get(hash) ?? []) as OperationCommon[];
 
   // If transaction has native ops, use them as parents
   if (nativeOps.length > 0)
@@ -279,11 +289,11 @@ function parentOpsForTxWithNonInternalOperations(
 function parentOpsForTxWithOnlyInternalOperations(
   hash: string,
   internalOperations: OperationCommon[],
-  newSubAccounts: TokenAccount[],
+  subOperationIndex: SubOperationIndex,
   accountId: string,
 ): OperationCommon[] {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- framework type vs bridge type
-  const subOperations = inferSubOperations(hash, newSubAccounts) as OperationCommon[];
+  const subOperations = (subOperationIndex.get(hash) ?? []) as OperationCommon[];
   const firstInternal = internalOperations[0];
   if (!firstInternal) return [];
 
@@ -324,6 +334,10 @@ function buildParentOperations(
 ): OperationCommon[] {
   const nonInternalByHash = groupBy(newNonInternalOperations, "hash");
   const internalByHash = groupBy(newInternalOperations, "hash");
+  // Built once for all transactions rather than once per hash — the group-once pattern above
+  // already applies to the other side of this join (transactions grouped by hash); this applies it
+  // to the sub-account side.
+  const subOperationIndex = buildSubOperationIndex(newSubAccounts);
 
   const result: OperationCommon[] = [];
 
@@ -335,7 +349,7 @@ function buildParentOperations(
         hash,
         transactionOps,
         internalOperations,
-        newSubAccounts,
+        subOperationIndex,
         accountId,
         address,
       ),
@@ -349,7 +363,7 @@ function buildParentOperations(
       ...parentOpsForTxWithOnlyInternalOperations(
         hash,
         internalOperations,
-        newSubAccounts,
+        subOperationIndex,
         accountId,
       ),
     );
@@ -441,11 +455,52 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         })
       : Promise.resolve(undefined);
 
-    const balancePromise = coinModuleApi
-      .getBalance(context, address, bridgeApi.balanceOptions)
-      .catch(err => {
-        throw new UnexpectedGetBalanceError("", err);
-      });
+    // Normalize pre-coin-framework operations to the new accountId to keep UI rendering consistent
+    const oldOps = ((initialAccount?.operations || []) as OperationCommon[]).map(op =>
+      op.accountId === accountId
+        ? op
+        : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
+    );
+    const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+    const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
+    // Resume position across syncs: `minHeight` alone, derived from the newest stored operation.
+    // It is non-volatile by construction and already persisted, unlike a module cursor (coin-hypercore
+    // documents its own as volatile). Only the cursor varies from page to page below.
+    const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
+
+    // Assets the account is already known to hold, so the module can resume discovery from
+    // `fromHeight` instead of rewalking the whole history: a token whose last transfer predates
+    // the watermark is still balance-read because it is listed here.
+    //
+    // The completeness `fromHeight` requires holds by induction, and `syncHash` is what makes it
+    // hold. This list is what the *caller* kept, which is a filtered view -- on the reference
+    // account, 134 sub-accounts for 2 847 contracts discovered, because the family's
+    // `includeAssets` keeps only CAL-resolvable tokens. That filter is hashed into `syncHash`
+    // (`getTokensSyncHash` over the currency's CAL list, plus the blacklist), so the day a token
+    // becomes listed -- or the user blacklists one -- the hash changes, `syncFromScratch` goes
+    // true, and the next sync rediscovers everything from height 0 with no `knownAssets`. Within
+    // one hash generation the kept set is therefore complete with respect to what this caller can
+    // ever store, which is exactly the guarantee the option asks for.
+    const knownAssets = syncFromScratch
+      ? undefined
+      : ((initialAccount?.subAccounts ?? []) as TokenAccount[])
+          .map(sub => bridgeApi.getAssetFromToken?.(sub.token, address))
+          .filter((asset): asset is AssetInfo => asset !== undefined);
+
+    // Assigned onto a typed object rather than spread into the literal. A spread of a conditional
+    // object escapes excess-property checking, so the resume would compile against a coin module
+    // whose `BalanceOptions` has neither field and ship as a silent no-op -- verified, not feared.
+    // Written this way the compiler enforces the cross-repo ordering: this file does not build
+    // until a coin-module-framework carrying both options is in the catalog.
+    const balanceOptions: BalanceOptions = { ...bridgeApi.balanceOptions };
+    if (knownAssets?.length) {
+      balanceOptions.knownAssets = knownAssets;
+      balanceOptions.fromHeight = minHeight;
+    }
+
+    const balancePromise = coinModuleApi.getBalance(context, address, balanceOptions).catch(err => {
+      throw new UnexpectedGetBalanceError("", err);
+    });
 
     const [blockInfo, balanceRes, validators, readiness, chainSpecificShape] = await Promise.all([
       coinModuleApi.lastBlock(context),
@@ -594,25 +649,39 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       unbondingsCount = unbondings.length;
     }
 
-    // Normalize pre-coin-framework operations to the new accountId to keep UI rendering consistent
-    const oldOps = ((initialAccount?.operations || []) as OperationCommon[]).map(op =>
-      op.accountId === accountId
-        ? op
-        : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
-    );
-    const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
-    const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
-    // Resume position across syncs: `minHeight` alone, derived from the newest stored operation.
-    // It is non-volatile by construction and already persisted, unlike a module cursor (coin-hypercore
-    // documents its own as volatile). Only the cursor varies from page to page below.
-    const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
+    // Resolved once per sync, keyed on `currency.id` (not the coin-framework `network` family
+    // key) so a remote payload written in the same per-currency key space as every other config
+    // in this framework actually matches. A bound always resolves -- the shipped default is a
+    // measured safety ceiling, not `undefined` -- and a remote payload can only lower or raise
+    // it, never disable it. The walk bound below protects sync-time memory and traffic; the store
+    // bound applied after `mergeOps` (parent and per-sub-account) protects persistence and
+    // stability across syncs -- bounding only the walk would still let the stored history grow
+    // sync after sync, since `minHeight` resumes from the newest stored operation and `mergeOps`
+    // appends.
+    const { maxOperations, pageSize } = resolveOperationHistoryBound(currency.id);
 
-    const newCoreOps = await paginateOperations(cursor =>
-      coinModuleApi.listOperations(context, address, {
-        minHeight,
-        cursor,
-        order: "desc",
-      }),
+    const newCoreOps = await paginateOperations(
+      cursor =>
+        coinModuleApi.listOperations(context, address, {
+          minHeight,
+          cursor,
+          order: "desc",
+          // Sent whenever a page size is resolved, independently of `maxOperations`. The two
+          // govern different things and must not be coupled: `limit` bounds what one page costs
+          // (the crash safety), `maxOperations` bounds how much history is retained (a product
+          // decision). Measured on the address from the out-of-memory report: with a page size of
+          // 100 the sync peaks flat at ~950 MB whatever the total bound (5 000 to 200 000
+          // operations, memory unchanged), while sending no `limit` puts the Ledger-explorer arm
+          // back on its exhaustive path and reproduces the crash. So gating `limit` on a retention
+          // figure would make crash safety unreachable without a product decision.
+          //
+          // The cost is deliberate: a `limit` flips several modules onto a distinct, limit-aware
+          // code path (coin-evm's etherscan arm runs a `limit + 1` probe, for instance), so this
+          // changes how every family fetches -- not what it retains, which only `maxOperations`
+          // affects.
+          limit: pageSize,
+        }),
+      maxOperations,
     );
     // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation ends
     // up in the shape a restored one has — the family's `fromOperationExtraRaw` is the single
@@ -647,7 +716,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     });
     const subAccounts = syncFromScratch
       ? newSubAccounts
-      : mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts);
+      : mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts, maxOperations);
 
     const newOpsWithSubs = buildParentOperations(
       newSubAccounts,
@@ -668,7 +737,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ? await bridgeApi.refreshOperations(operationsToRefresh)
         : [];
     const newOperations = [...confirmedOperations, ...newOpsWithSubs];
-    const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
+    const mergedOperations = mergeOps(
+      syncFromScratch ? [] : oldOps,
+      newOperations,
+    ) as OperationCommon[];
+    // Store bound: `mergeOps` returns newest-first (its own contract), so keeping the head keeps
+    // the newest -- this also keeps `minHeight` correct on the next sync, since it derives from
+    // the newest stored operation, which the head slice always retains.
+    const operations =
+      maxOperations === undefined ? mergedOperations : mergedOperations.slice(0, maxOperations);
     const stakingEnabled =
       bridgeApi.stakingSupported ?? (delegationsCount > 0 || unbondingsCount > 0);
     let stakingShape: {
@@ -710,6 +787,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       spendableBalance: new BigNumber(spendableBalance.toString()),
       operations,
       subAccounts,
+      // `operations.length`, i.e. the retained count once a bound applies, not the account's true
+      // count -- kept consistent with what is actually displayed rather than tracking a real
+      // count this bridge has no source of truth for. A bounded sync is still distinguishable via
+      // the `paginateOperations` log line (see `resolveOperationHistoryBound` above), which is
+      // this task's observability requirement; whether `operationsCount` itself should carry a
+      // different meaning is being decided on `account-data`'s own bridge (draft PRs #21560 and
+      // #21566) and is out of scope here.
       operationsCount: operations.length,
       syncHash,
       // key omitted rather than set to undefined: jsHelpers merges `{ ...a, ...shape }`, so a failed
