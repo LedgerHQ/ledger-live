@@ -13,7 +13,6 @@ export type CardFormatters = Readonly<{
 
 /** Host input for the Pay Card flow. */
 export type CardProps = {
-  readonly title: string;
   readonly login: CardLoginProps;
   readonly formatters?: CardFormatters;
   readonly balanceLabel?: string;

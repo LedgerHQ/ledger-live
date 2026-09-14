@@ -383,11 +383,25 @@ describe("PayCardTransactionSchema", () => {
     expect(PayCardTransactionSchema.parse({ ...documented, status }).status).toBe(status);
   });
 
-  it("keeps the card and processor ids out of what callers receive", () => {
+  it("keeps the last four PAN digits and the processor transaction id", () => {
     const parsed = PayCardTransactionSchema.parse(documented);
 
+    expect(parsed.panLast4).toBe(documented.panLast4);
+    expect(parsed.transactionId).toBe(documented.transactionId);
     expect(parsed).not.toHaveProperty("cardId");
-    expect(parsed).not.toHaveProperty("panLast4");
+  });
+
+  it("drops a PAN fragment that is not exactly four digits, without rejecting the transaction", () => {
+    const parsed = PayCardTransactionSchema.parse({ ...documented, panLast4: "918912345678" });
+
+    expect(parsed.id).toBe(documented.id);
+    expect(parsed.panLast4).toBeUndefined();
+  });
+
+  it("drops a last-four value that is not digits", () => {
+    expect(
+      PayCardTransactionSchema.parse({ ...documented, panLast4: "9A89" }).panLast4,
+    ).toBeUndefined();
   });
 
   it("keeps the funding asset amounts used by the transaction list", () => {

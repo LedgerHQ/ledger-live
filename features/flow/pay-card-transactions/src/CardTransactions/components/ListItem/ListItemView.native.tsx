@@ -21,11 +21,12 @@ export function ListItemView({
   fiatAmount,
   assetAmount,
   dateLabel,
+  onPress,
 }: ListItemViewProps) {
   const { Icon, backgroundColor, iconColor } = useCategoryVisual(category);
 
   return (
-    <LumenListItem testID={`card-transactions-item-${id}`}>
+    <LumenListItem onPress={onPress} testID={`card-transactions-item-${id}`}>
       <ListItemLeading>
         <Box
           accessibilityLabel={categoryLabel}

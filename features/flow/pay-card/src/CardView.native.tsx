@@ -22,6 +22,7 @@ export function CardView({ title, login, displayState, cardVisual, formatters }:
               amount: formatters?.transactionAmount,
               date: formatters?.transactionDate,
             }}
+            onTrackEvent={login.onTrackEvent}
           />
         </>
       ) : (

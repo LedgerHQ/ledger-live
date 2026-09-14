@@ -14,12 +14,7 @@ export const CardView = ({ viewModel }: CardViewProps) => {
     <div className="flex h-full min-h-0 flex-col overflow-hidden pb-32">
       <PayCardContainer>
         <section aria-label={title} className="scrollbar-none min-h-0 flex-1 overflow-y-auto p-16">
-          <PayCard
-            title={title}
-            login={login}
-            formatters={formatters}
-            balanceLabel={balanceLabel}
-          />
+          <PayCard login={login} formatters={formatters} balanceLabel={balanceLabel} />
         </section>
       </PayCardContainer>
     </div>

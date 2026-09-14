@@ -4,6 +4,7 @@ export type CardTransactionsDisplayMode = "loading" | "error" | "empty" | "list"
 
 export type CardTransactionsProps = Readonly<{
   formatters?: CardTransactionFormatters;
+  onTransactionPress?: (item: CardTransactionItem) => void;
 }>;
 
 export type CardTransactionsScreenViewProps = Readonly<{
@@ -11,4 +12,5 @@ export type CardTransactionsScreenViewProps = Readonly<{
   title: string;
   transactions: readonly CardTransactionItem[];
   formatters?: CardTransactionFormatters;
+  onTransactionPress?: (item: CardTransactionItem) => void;
 }>;

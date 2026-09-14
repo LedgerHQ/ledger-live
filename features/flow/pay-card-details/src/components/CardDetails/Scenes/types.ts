@@ -1,3 +1,4 @@
+import type { PayCardTransaction } from "@domain/api-card-management";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { CardVisualProps, FreezeViewModel } from "../../../types";
 import type { MoreViewModel, MoreViewProps } from "../../More/types";
@@ -9,6 +10,7 @@ export type OverviewSceneProps = Readonly<{
   moreViewModel: MoreViewModel;
   onFreezePress: () => void;
   onMorePress: () => void;
+  onTransactionPress: (transaction: PayCardTransaction) => void;
   formatters?: CardTransactionFormatters;
 }>;
 
@@ -20,9 +22,15 @@ export type MoreSceneProps = Readonly<{
   viewModel: MoreViewProps;
 }>;
 
+export type TransactionSceneProps = Readonly<{
+  transaction: PayCardTransaction;
+  formatters?: CardTransactionFormatters;
+}>;
+
 export type CardDetailsSceneProps = Readonly<{
   route: CardDetailsRoute;
   overview: OverviewSceneProps;
   freeze: FreezeSceneProps;
   more: MoreSceneProps | null;
+  transaction: TransactionSceneProps | null;
 }>;
