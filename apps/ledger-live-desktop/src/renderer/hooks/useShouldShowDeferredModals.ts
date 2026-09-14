@@ -1,11 +1,7 @@
 import { useRef } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import {
-  hasSeenQ2TourSelector,
-  hasSeenQ3TourSelector,
-  hasSeenWalletV4TourSelector,
-} from "~/renderer/reducers/settings";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { hasSeenQ2TourSelector, hasSeenQ3TourSelector } from "~/renderer/reducers/settings";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   isQ2ReleaseTourEnabled,
   isQ3ReleaseTourEnabled,
@@ -17,19 +13,15 @@ import {
  * at mount so closing the tour in the same session does not mount them.
  */
 export function useShouldShowDeferredModals(): boolean {
-  const hasSeenTour = useSelector(hasSeenWalletV4TourSelector);
   const hasSeenQ2Tour = useSelector(hasSeenQ2TourSelector);
   const hasSeenQ3Tour = useSelector(hasSeenQ3TourSelector);
-  const { shouldDisplayTour } = useWalletFeaturesConfig("desktop");
   const releaseTour = useFeature("releaseTour");
   const isQ2TourEnabled = isQ2ReleaseTourEnabled(releaseTour);
   const isQ3TourEnabled = isQ3ReleaseTourEnabled(releaseTour);
-  const hasSeenTourAtMountRef = useRef(hasSeenTour);
   const hasSeenQ2TourAtMountRef = useRef(hasSeenQ2Tour);
   const hasSeenQ3TourAtMountRef = useRef(hasSeenQ3Tour);
 
   const isAnyTourActiveAtMount =
-    (shouldDisplayTour && !hasSeenTourAtMountRef.current) ||
     (isQ2TourEnabled && !hasSeenQ2TourAtMountRef.current) ||
     (isQ3TourEnabled && !hasSeenQ3TourAtMountRef.current);
 

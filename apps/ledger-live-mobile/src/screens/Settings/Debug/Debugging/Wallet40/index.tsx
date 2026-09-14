@@ -159,8 +159,7 @@ export default function DebugWallet40() {
           >
             <Text typography="body3" lx={{ color: "muted", marginBottom: "s12" }}>
               Inspect the lwmProductTour feature flag and the persisted Redux flag
-              productTourCompleted. This is not the carousel tour (hasSeenWalletV4Tour); use
-              &quot;Wallet V4 Tour&quot; below for that.
+              productTourCompleted.
             </Text>
             <Text typography="body2SemiBold" lx={{ color: "base", marginBottom: "s8" }}>
               Feature flag: useFeature(&quot;lwmProductTour&quot;) — enabled + params
@@ -205,14 +204,6 @@ export default function DebugWallet40() {
               params: { currencyId: "bitcoin" },
             })
           }
-        />
-
-        <SettingsRow
-          title="Wallet V4 Tour"
-          desc="Test tour drawer"
-          iconLeft={<IconsLegacy.NewsMedium size={24} color="black" />}
-          arrowRight
-          onPress={() => navigation.navigate(ScreenName.DebugWalletV4Tour)}
         />
         <SettingsRow
           title="Product Tour"

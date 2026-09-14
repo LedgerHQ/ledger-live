@@ -22,6 +22,7 @@ describe("DebugWallet40", () => {
     expect(screen.getByText(/Product Tour — completed \(persisted\)/)).toBeTruthy();
     expect(screen.getByText(/Current productTourCompleted \(Redux\): No/)).toBeTruthy();
     expect(screen.getByText(/"enabled": false/)).toBeTruthy();
+    expect(screen.queryByText("Wallet V4 Tour")).toBeNull();
   });
 
   it("toggles productTourCompleted via debug switch", async () => {

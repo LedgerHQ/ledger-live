@@ -9333,26 +9333,6 @@
     "errorTryAgain" : "更新中にエラーが発生再試行",
     "installAndRelaunch" : "新しいアップデート。インストールして再起動"
   },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "ポートフォリオがさらに見やすく",
-        "description" : "残高を一目で確認。「今日」をタップすると、さらに詳細を見ることができます。"
-      },
-      "navigation" : {
-        "title" : "主要な機能へすばやくアクセス",
-        "description" : "受け取る、購入、売却、送付のアクションに即座にアクセス。"
-      },
-      "actions" : {
-        "title" : "市場のトレンドをすばやくチェック",
-        "description" : "ポートフォリオからトレンドを直接確認。市場の動きをチェックして、すぐに次のアクションへ。"
-      }
-    },
-    "cta" : {
-      "continue" : "続行",
-      "explore" : "新しいポートフォリオを見る"
-    }
-  },
   "q2Tour" : {
     "slides" : {
       "welcome" : {

@@ -5,7 +5,6 @@ export const WALLET_FEATURES_FLAG: FeatureId = "lwdWallet40";
 export const RELEASE_TOUR_FLAG = "releaseTour";
 
 export const WALLET_FEATURES_PARAMS = [
-  { key: "tour", label: "Tour" },
   { key: "assetSection", label: "Asset Section" },
   {
     key: "brazePlacement",

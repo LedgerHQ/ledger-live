@@ -315,7 +315,6 @@ export type SettingsState = {
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
-  hasSeenWalletV4Tour: boolean;
   hasDismissedContactsFeatureIntroduction: boolean;
   productTourCompleted: boolean;
   hasSeenQ2WalletV4Tour: boolean;
