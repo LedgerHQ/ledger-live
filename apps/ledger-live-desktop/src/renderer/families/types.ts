@@ -341,10 +341,17 @@ export type LLDCoinFamily<
    * Notice rendered on the new Send flow recipient step (e.g. Zcash shielded
    * sync banner). The component owns its own gating and renders nothing when
    * it does not apply.
+   *
+   * When it needs to prevent the recipient step from completing/advancing (e.g.
+   * the shielded sync is not ready, so signing could use an incomplete note
+   * set), it reports `onBlockedChange(true)` and `onBlockedChange(false)` once
+   * the block clears. Generic recipient code honors this flag to gate both the
+   * completion signal and forward navigation.
    */
   SendRecipientNotice?: React.ComponentType<{
     account: A;
     transaction: T;
+    onBlockedChange?: (blocked: boolean) => void;
   }>;
 
   /**

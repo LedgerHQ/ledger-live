@@ -20,6 +20,7 @@ import {
 } from "@ledgerhq/live-common/flows/send/types";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../../../context/SendFlowContext";
+import { useRecipientContinuation } from "../../../context/RecipientContinuationContext";
 import { useAddressValidation } from "./useAddressValidation";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
@@ -51,6 +52,7 @@ export function useRecipientAddressModalViewModel({
   recipientSupportsDomain,
 }: UseRecipientAddressModalViewModelProps) {
   const { recipientSearch, state } = useSendFlowData();
+  const { isFamilyRecipientBlocked } = useRecipientContinuation();
   const contacts = useContacts();
   const [doNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
   const {
@@ -197,6 +199,10 @@ export function useRecipientAddressModalViewModel({
 
   const continueWithAddress = useCallback(
     (address: string, ensName?: string) => {
+      // A family notice can block advancing (e.g. Zcash shielded sync not ready).
+      // Refuse to navigate so a private send can't reach amount/signature early.
+      if (isFamilyRecipientBlocked) return;
+
       if (hasMemo && !hasFilledMemo) {
         if (doNotAskAgainSkipMemo) {
           onAddressSelected(address, ensName, true, { value: "", type: "NO_MEMO" });
@@ -210,7 +216,14 @@ export function useRecipientAddressModalViewModel({
 
       onAddressSelected(address, ensName, true);
     },
-    [doNotAskAgainSkipMemo, hasFilledMemo, hasMemo, navigation, onAddressSelected],
+    [
+      doNotAskAgainSkipMemo,
+      hasFilledMemo,
+      hasMemo,
+      isFamilyRecipientBlocked,
+      navigation,
+      onAddressSelected,
+    ],
   );
 
   const handleAddressSelect = useCallback(
@@ -337,6 +350,7 @@ export function useRecipientAddressModalViewModel({
     isContactsFeatureEnabled,
     hasAddressBook,
     addressBookFamilyName: mainAccount.currency.name,
+    isBlocked: isFamilyRecipientBlocked,
   });
 
   return {

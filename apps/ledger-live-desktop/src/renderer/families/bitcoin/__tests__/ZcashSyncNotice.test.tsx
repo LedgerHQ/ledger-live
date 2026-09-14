@@ -34,9 +34,14 @@ const renderNotice = (
   account: ZcashAccount | (typeof baseAccount & { currency: { id: string } }),
   sender: "public" | "private" | undefined,
   shieldedEnabled = true,
+  onBlockedChange?: (blocked: boolean) => void,
 ) =>
   render(
-    <ZcashSyncNotice account={account as ZcashAccount} transaction={buildTransaction(sender)} />,
+    <ZcashSyncNotice
+      account={account as ZcashAccount}
+      transaction={buildTransaction(sender)}
+      onBlockedChange={onBlockedChange}
+    />,
     {
       initialState: withFlagOverrides({ zcashShielded: { enabled: shieldedEnabled } }),
     },
@@ -81,5 +86,35 @@ describe("ZcashSyncNotice", () => {
   it("renders the stopped banner for Zcash + private sender + syncState=disabled (default)", () => {
     renderNotice(buildZcashAccount(), "private");
     expect(screen.getByTestId("zcash-sync-banner-stopped")).toBeVisible();
+  });
+
+  it.each(["running", "stopped", "disabled", "outdated"] as const)(
+    "reports blocked for Zcash + private sender + syncState=%s",
+    syncState => {
+      const onBlockedChange = jest.fn();
+      renderNotice(buildZcashAccount({ syncState }), "private", true, onBlockedChange);
+      expect(onBlockedChange).toHaveBeenLastCalledWith(true);
+    },
+  );
+
+  it.each(["complete", "ready"] as const)(
+    "does not block once the shielded sync is %s",
+    syncState => {
+      const onBlockedChange = jest.fn();
+      renderNotice(buildZcashAccount({ syncState }), "private", true, onBlockedChange);
+      expect(onBlockedChange).toHaveBeenLastCalledWith(false);
+    },
+  );
+
+  it("does not block a public sender", () => {
+    const onBlockedChange = jest.fn();
+    renderNotice(buildZcashAccount({ syncState: "running" }), "public", true, onBlockedChange);
+    expect(onBlockedChange).toHaveBeenLastCalledWith(false);
+  });
+
+  it("does not block when the zcashShielded flag is off", () => {
+    const onBlockedChange = jest.fn();
+    renderNotice(buildZcashAccount({ syncState: "stopped" }), "private", false, onBlockedChange);
+    expect(onBlockedChange).toHaveBeenLastCalledWith(false);
   });
 });
