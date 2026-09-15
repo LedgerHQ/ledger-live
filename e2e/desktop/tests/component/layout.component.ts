@@ -6,7 +6,12 @@ import { Component } from "tests/page/abstractClasses";
 // /search/transactions, well past the default expect timeout.
 const SLOW_SYNC_TIMEOUT = 120_000;
 
-export type SyncWaitOptions = { slowSync?: boolean };
+/**
+ * `slowSync` buys the budget above, which covers one slow account. A spec seeding several pays it
+ * once per account, and states its own `timeout` rather than stretching the shared one for every
+ * currency that will ever set `slowSync`.
+ */
+export type SyncWaitOptions = { slowSync?: boolean; timeout?: number };
 
 export class Layout extends Component {
   readonly renderError = this.page.getByTestId("render-error");
@@ -52,7 +57,7 @@ export class Layout extends Component {
   @step("Wait for accounts sync to be finished")
   async waitForSyncButtonToBeEnabled(options?: SyncWaitOptions) {
     await expect(this.topbarSynchronizeButton).not.toHaveAttribute("disabled", {
-      timeout: options?.slowSync ? SLOW_SYNC_TIMEOUT : undefined,
+      timeout: options?.timeout ?? (options?.slowSync ? SLOW_SYNC_TIMEOUT : undefined),
     });
   }
 }

@@ -1,6 +1,17 @@
 import { setEnv } from "@shared/env";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import type { Account as AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
+import {
+  MINA_DELEGATION_PAIR,
+  MINA_PAIR_SETTLE_TIMEOUT_MS,
+  MINA_REDELEGATION_ACCOUNT,
+  pickMinaAccountToDelegate,
+  pickMinaAccountToUndelegate,
+  pickMinaRedelegation,
+  pickMinaValidator,
+} from "@ledgerhq/live-e2e-shared/families/minaStakingState";
+import { BroadcastFlow, shouldRunSharedAccountFlow } from "@e2e/helpers/broadcastRotation";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "@e2e/models/stake";
 import { FF_MINA_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
@@ -131,114 +142,138 @@ export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[
   });
 }
 
-export function runMinaDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
-  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
+/**
+ * The delegate and undelegate pickers can wait for the pair to settle, which the default per-test
+ * budget cannot absorb on top of the flow itself.
+ */
+const MINA_PAIR_TEST_TIMEOUT_MS = MINA_PAIR_SETTLE_TIMEOUT_MS + 6 * 60 * 1000;
+
+const minaBeforeAll = (accounts: AccountType[]) => async () => {
+  await app.init({
+    speculosApp: Currency.MINA.speculosApp,
+    // The address is resolved here, while the CLI still owns the device: the pickers read it back
+    // from the account and never touch speculos themselves.
+    cliCommands: accounts.map(account => liveDataWithAddressCommand(account)),
+    featureFlags: FF_MINA_STAKING_ENABLED,
+  });
+
+  await app.mainNavigation.waitForWallet40Ready();
+};
+
+/**
+ * The three mina flows share their accounts with the other mobile platform, so when both broadcast
+ * in the same run each flow only runs on the platform that owns it, which keeps the two jobs from
+ * building transactions on the same account and colliding on its nonce.
+ */
+function startMinaSpec(flow: BroadcastFlow, tmsLinks: string[], tags: string[]) {
+  setTeamOwner(delegateTeamOwner(Currency.MINA.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
-  describe("Delegate", () => {
-    beforeAll(async () => {
-      await beforeAllFunction(delegation, FF_MINA_STAKING_ENABLED);
-    });
+  return shouldRunSharedAccountFlow(flow) ? describe : describe.skip;
+}
 
-    it(`[${delegation.account.currency.testLabel}] - Delegate`, async () => {
-      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
-      const currencyId = delegation.account.currency.id;
+export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
+  const describeFlow = startMinaSpec(BroadcastFlow.MINA_DELEGATE, tmsLinks, tags);
+  describeFlow("Delegate", () => {
+    // Either account of the pair can be the free one, so both are seeded.
+    beforeAll(minaBeforeAll(MINA_DELEGATION_PAIR));
 
-      await app.portfolio.goToAccounts(delegation.account.currency.name);
-      await app.common.goToAccountByName(delegation.account.accountName);
-      await app.account.tapEarn();
+    it(
+      `[${Currency.MINA.testLabel}] - Delegate`,
+      async () => {
+        const { account } = await pickMinaAccountToDelegate();
+        const validator = await pickMinaValidator();
+        const delegation = new Delegate(account, "N/A", validator.name, validator.address);
+        const amountWithCode = delegation.amount + " " + Currency.MINA.ticker;
+        const currencyId = Currency.MINA.id;
 
-      // Mina delegates the whole balance, so the flow opens on the validator list and has no
-      // amount step.
-      await app.stake.selectValidatorFromList(delegation.provider);
-      await app.stake.expectProvider(currencyId, delegation.provider);
-      await app.stake.summaryContinue(currencyId);
+        await app.portfolio.goToAccounts(Currency.MINA.name);
+        await app.common.goToAccountByName(account.accountName);
+        await app.account.tapEarn();
 
-      await verifyAppValidationStakeInfo(delegation, amountWithCode);
-      await app.speculos.signDelegationTransaction(delegation);
-      await app.common.successViewDetails();
+        // Mina delegates the whole balance, so the flow opens on the validator list and has no
+        // amount step.
+        await app.stake.selectValidatorFromList(delegation.provider);
+        await app.stake.expectProvider(currencyId, delegation.provider);
+        await app.stake.summaryContinue(currencyId);
 
-      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
-    });
+        await verifyAppValidationStakeInfo(delegation, amountWithCode);
+        await app.speculos.signDelegationTransaction(delegation);
+        await app.common.successViewDetails();
+
+        await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+      },
+      MINA_PAIR_TEST_TIMEOUT_MS,
+    );
   });
 }
 
-export function runMinaRedelegateTest(
-  delegation: DelegateType,
-  tmsLinks: string[],
-  tags: string[],
-) {
-  // Broadcasting would move the delegation to the target validator, which the next run could no
-  // longer select: this flow is only repeatable when the transaction stays local.
-  const broadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
-  if (broadcastEnabled) {
-    console.warn("[redelegateMINA.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST != 0");
-  }
-  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
-  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-  tags.forEach(tag => $Tag(tag));
-  (broadcastEnabled ? describe.skip : describe)("Redelegate", () => {
-    beforeAll(async () => {
-      await beforeAllFunction(delegation, FF_MINA_STAKING_ENABLED);
-    });
+export function runMinaRedelegateTest(tmsLinks: string[], tags: string[]) {
+  const describeFlow = startMinaSpec(BroadcastFlow.MINA_REDELEGATE, tmsLinks, tags);
+  describeFlow("Redelegate", () => {
+    beforeAll(minaBeforeAll([MINA_REDELEGATION_ACCOUNT]));
 
-    it(`[${delegation.account.currency.testLabel}] - Redelegate`, async () => {
-      const currencyId = delegation.account.currency.id;
+    it(
+      `[${Currency.MINA.testLabel}] - Redelegate`,
+      async () => {
+        const { account, validatorAddress } = await pickMinaRedelegation();
+        const validator = await pickMinaValidator(validatorAddress);
+        const delegation = new Delegate(account, "N/A", validator.name, validator.address);
+        const currencyId = Currency.MINA.id;
 
-      await app.portfolio.goToAccounts(delegation.account.currency.name);
-      await app.common.goToAccountByName(delegation.account.accountName);
+        await app.portfolio.goToAccounts(Currency.MINA.name);
+        await app.common.goToAccountByName(account.accountName);
 
-      // Redelegating reopens the delegate flow on the validator list, the current validator
-      // excluded.
-      await app.undelegate.tapStakingRow(currencyId);
-      await app.undelegate.tapRedelegateAction(currencyId);
-      await app.stake.selectValidatorFromList(delegation.provider);
-      await app.stake.expectProvider(currencyId, delegation.provider);
-      await app.stake.summaryContinue(currencyId);
+        // Redelegating reopens the delegate flow on the validator list.
+        await app.undelegate.tapStakingRow(currencyId);
+        await app.undelegate.tapRedelegateAction(currencyId);
+        await app.stake.selectValidatorFromList(delegation.provider);
+        await app.stake.expectProvider(currencyId, delegation.provider);
+        await app.stake.summaryContinue(currencyId);
 
-      await app.speculos.signDelegationTransaction(delegation);
-      await app.common.successViewDetails();
+        await app.speculos.signDelegationTransaction(delegation);
+        await app.common.successViewDetails();
 
-      await app.operationDetails.waitForOperationDetails();
-      await app.operationDetails.checkAccount(delegation.account.accountName);
-      await app.operationDetails.checkTransactionType("REDELEGATE");
-    });
+        await app.operationDetails.waitForOperationDetails();
+        await app.operationDetails.checkAccount(account.accountName);
+        await app.operationDetails.checkTransactionType("REDELEGATE");
+      },
+      MINA_PAIR_TEST_TIMEOUT_MS,
+    );
   });
 }
 
-export function runMinaUndelegateTest(
-  delegation: DelegateType,
-  tmsLinks: string[],
-  tags: string[],
-) {
-  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
-  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-  tags.forEach(tag => $Tag(tag));
-  describe("Undelegate", () => {
-    beforeAll(async () => {
-      await beforeAllFunction(delegation, FF_MINA_STAKING_ENABLED);
-    });
+export function runMinaUndelegateTest(tmsLinks: string[], tags: string[]) {
+  const describeFlow = startMinaSpec(BroadcastFlow.MINA_UNDELEGATE, tmsLinks, tags);
+  describeFlow("Undelegate", () => {
+    // Either account of the pair can be the delegated one, so both are seeded.
+    beforeAll(minaBeforeAll(MINA_DELEGATION_PAIR));
 
-    it(`[${delegation.account.currency.testLabel}] - Undelegate`, async () => {
-      // Mina undelegates by delegating back to the account itself, and its device review renders
-      // that raw address: the shared speculos helper asserts against it.
-      delegation.account.address = await getAccountAddress(delegation.account);
+    it(
+      `[${Currency.MINA.testLabel}] - Undelegate`,
+      async () => {
+        // Undelegating is a delegation to the account itself, so the account's own address is the
+        // target the device renders and the speculos helper asserts against.
+        const { account, address } = await pickMinaAccountToUndelegate();
+        const delegation = new Delegate(account, "N/A", "N/A", address);
 
-      await app.portfolio.goToAccounts(delegation.account.currency.name);
-      await app.common.goToAccountByName(delegation.account.accountName);
+        await app.portfolio.goToAccounts(Currency.MINA.name);
+        await app.common.goToAccountByName(account.accountName);
 
-      // Undelegating returns the whole balance, so the action prepares the transaction itself and
-      // goes straight to the device.
-      await app.undelegate.tapStakingRow(delegation.account.currency.id);
-      await app.undelegate.tapUnstakeAction(delegation.account.currency.id);
+        // Undelegating returns the whole balance, so the action prepares the transaction itself and
+        // goes straight to the device.
+        await app.undelegate.tapStakingRow(Currency.MINA.id);
+        await app.undelegate.tapUnstakeAction(Currency.MINA.id);
 
-      await app.speculos.signDelegationTransaction(delegation);
-      await app.common.successViewDetails();
+        await app.speculos.signDelegationTransaction(delegation);
+        await app.common.successViewDetails();
 
-      await app.operationDetails.waitForOperationDetails();
-      await app.operationDetails.checkAccount(delegation.account.accountName);
-      await app.operationDetails.checkTransactionType("UNDELEGATE");
-    });
+        await app.operationDetails.waitForOperationDetails();
+        await app.operationDetails.checkAccount(account.accountName);
+        await app.operationDetails.checkTransactionType("UNDELEGATE");
+      },
+      MINA_PAIR_TEST_TIMEOUT_MS,
+    );
   });
 }
 
