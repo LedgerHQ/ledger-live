@@ -23,6 +23,8 @@ export type CardDetailsProps = Readonly<{
   cardVisual?: CardVisualProps;
   /** Native only: the Details sheet overview lists the card's transactions. */
   formatTransactionAmount?: FormatCardTransactionAmount;
+  /** When omitted, View stays off the Details overview. */
+  unlock?: UnlockForCardNumbers;
 }>;
 
 export type CardDetailsViewProps = CardDetailsProps &

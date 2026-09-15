@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { cardManagementApi } from "@domain/api-card-management";
+import { preloadCardNumbersImage } from "./preloadCardNumbersImage";
 import type { CardNumbersProps, CardNumbersStatus, CardNumbersViewProps } from "../../types";
 
 type CardApiState = {
@@ -42,6 +43,10 @@ export function useCardNumbersViewModel({ unlock }: CardNumbersProps): CardNumbe
       const details = await dispatch(
         cardManagementApi.endpoints.createCardDetailsToken.initiate(undefined, { track: false }),
       ).unwrap();
+      if (isStale()) {
+        return;
+      }
+      await preloadCardNumbersImage(details.imageUrl);
       if (isStale()) {
         return;
       }

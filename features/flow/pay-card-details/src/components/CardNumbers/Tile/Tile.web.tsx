@@ -14,7 +14,7 @@ export function CardNumbersTile({
   const isRevealed = status === "revealed" && Boolean(imageUrl);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex min-w-0 flex-1 flex-col">
       <TileButton
         icon={CreditCard}
         onClick={isRevealed ? onHide : onReveal}

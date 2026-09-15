@@ -38,18 +38,16 @@ describe("CardActions (web)", () => {
     expect(screen.getByRole("button", { name: "More" })).toBeVisible();
   });
 
-  it("should render View beside Freeze and More when a view tile is passed", () => {
+  it("should render View beside Freeze and More when a View tile is passed", () => {
     render(
-      <CardActions
-        view={
-          <CardNumbersTile
-            status="idle"
-            imageUrl={undefined}
-            onReveal={jest.fn()}
-            onHide={jest.fn()}
-          />
-        }
-      />,
+      <CardActions>
+        <CardNumbersTile
+          status="idle"
+          imageUrl={undefined}
+          onReveal={jest.fn()}
+          onHide={jest.fn()}
+        />
+      </CardActions>,
       { wrapper: WebTestWrapper },
     );
 
@@ -60,20 +58,18 @@ describe("CardActions (web)", () => {
 
   it("should keep the failed message under View, not beside Freeze", () => {
     render(
-      <CardActions
-        view={
-          <CardNumbersTile
-            status="failed"
-            imageUrl={undefined}
-            onReveal={jest.fn()}
-            onHide={jest.fn()}
-          />
-        }
-      />,
+      <CardActions>
+        <CardNumbersTile
+          status="failed"
+          imageUrl={undefined}
+          onReveal={jest.fn()}
+          onHide={jest.fn()}
+        />
+      </CardActions>,
       { wrapper: WebTestWrapper },
     );
 
-    const row = screen.getByRole("button", { name: "Freeze" }).parentElement;
+    const row = screen.getByRole("button", { name: "Freeze" }).parentElement?.parentElement;
     const failed = screen.getByText(CARD_COPY.numbersFailed);
 
     expect(row?.childElementCount).toBe(3);

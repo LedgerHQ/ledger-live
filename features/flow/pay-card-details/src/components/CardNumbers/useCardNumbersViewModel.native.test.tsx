@@ -8,6 +8,11 @@ import {
   makeCardApiStore,
 } from "@support/msw-features-flow-pay-card";
 import { useCardNumbersViewModel } from "./useCardNumbersViewModel";
+import { preloadCardNumbersImage } from "./preloadCardNumbersImage";
+
+jest.mock("./preloadCardNumbersImage", () => ({
+  preloadCardNumbersImage: jest.fn(() => Promise.resolve()),
+}));
 
 const CARD_DETAILS_TOKEN = "00000000-0000-4000-8000-000000000000";
 const CARD_DETAILS_IMAGE_URL = `${CARD_API_BASE_URL}/details-image?token=${CARD_DETAILS_TOKEN}`;
@@ -20,6 +25,7 @@ const CARD_DETAILS_TOKEN_URL = `${CARD_API_BASE_URL}/v1/card/details/token`;
 const server = listenToCardApi();
 
 beforeEach(() => {
+  jest.mocked(preloadCardNumbersImage).mockResolvedValue(undefined);
   server.use(http.post(CARD_DETAILS_TOKEN_URL, () => HttpResponse.json(CARD_DETAILS)));
 });
 
@@ -86,6 +92,14 @@ describe("useCardNumbersViewModel", () => {
 
     await waitFor(() => expect(result.current.status).toBe("revealed"));
     expect(result.current.imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
+  });
+
+  it("sets failed when the image fails to preload", async () => {
+    jest.mocked(preloadCardNumbersImage).mockRejectedValue(new Error("preload"));
+    const { result } = await reveal();
+
+    await waitFor(() => expect(result.current.status).toBe("failed"));
+    expect(result.current.imageUrl).toBeUndefined();
   });
 
   it("sets failed when the token request fails", async () => {

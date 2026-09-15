@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "@ledgerhq/lumen-utils-shared";
 import { useTranslation } from "@shared/i18n";
-import { CARD_GRADIENT } from "../CardArtwork/cardGradient";
+import { CARD_GRADIENT } from "../CardArtwork/CardArtwork";
 import type { CardNumbersViewProps } from "../../types";
 
 export function CardNumbersView({
@@ -71,14 +71,14 @@ function DetailsImage({
 
   return (
     <div
-      className="flex size-full h-[195px] w-full items-center overflow-hidden rounded-lg border border-muted-subtle pl-4 pr-16"
+      className="size-full h-[195px] w-full overflow-hidden rounded-lg border border-muted-subtle"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <img
         src={imageUrl}
         alt={t("payTab.card.numbers.imageAlt")}
         referrerPolicy="no-referrer"
-        className="max-h-full max-w-full object-contain object-left"
+        className="size-full object-cover"
         onError={onImageError}
       />
     </div>
