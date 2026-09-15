@@ -1,5 +1,5 @@
 import React, { type PropsWithChildren } from "react";
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
@@ -298,6 +298,19 @@ describe("usePayCardToolProps", () => {
     afterEach(() => {
       clearCardOnboardingStatusMock();
       delete process.env.MSW_ENABLED;
+    });
+
+    it("reads the status on either host, once the screen asks for it", async () => {
+      const store = buildStore();
+      // No platform: the desktop tool, which is where the read used to be skipped outright.
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      // Nothing is asked for until the screen opens, so DevTools does not send a session anywhere.
+      expect(result.current.cardOnboarding.isFetching).toBe(false);
+
+      act(() => result.current.cardOnboarding.refresh());
+
+      await waitFor(() => expect(result.current.cardOnboarding.isFetching).toBe(true));
     });
 
     it("sets the answer behind a step rather than the step itself", () => {

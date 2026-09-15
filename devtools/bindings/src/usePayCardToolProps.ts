@@ -217,8 +217,18 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const onboarding = useMemo(() => ({ steps, setStepDone }), [steps, setStepDone]);
 
   const auth = usePayCardAuthProps({ openPayTab: options.openPayTab });
-  const onboardingStatus = useCardOnboardingStatus({ skip: platform !== "native" });
-  const { data: derivedOnboarding, refresh: refreshCardOnboarding } = onboardingStatus;
+  // Read when the screen asks for it, not when the tool mounts: these are Card endpoints, and a
+  // developer who opened DevTools for something else should not have a session sent to them. Both
+  // hosts mock them, so the screen works on either once it has asked.
+  const [onboardingRequested, setOnboardingRequested] = useState(false);
+  const onboardingStatus = useCardOnboardingStatus({ skip: !onboardingRequested });
+  const { data: derivedOnboarding, refresh: refreshStatus } = onboardingStatus;
+
+  const refreshCardOnboarding = useCallback(() => {
+    // The first call starts the reads by lifting the skip; `refresh` only re-asks once they exist.
+    setOnboardingRequested(true);
+    refreshStatus();
+  }, [refreshStatus]);
 
   const setDerivedStepDone = useCallback(
     (id: string, done: boolean) => {

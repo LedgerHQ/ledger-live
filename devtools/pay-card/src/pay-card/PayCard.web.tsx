@@ -10,18 +10,30 @@ import {
   Spot,
   Tag,
 } from "@ledgerhq/lumen-ui-react";
-import { ChevronRight, CoinsCrypto } from "@ledgerhq/lumen-ui-react/symbols";
+import {
+  CheckmarkCircle,
+  ChevronRight,
+  Coins,
+  CoinsCrypto,
+  CreditCard,
+} from "@ledgerhq/lumen-ui-react/symbols";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 import { BalanceScreen } from "../components/Balance/Balance";
+import { CardOnboardingScreen } from "../components/CardOnboarding/CardOnboarding";
+import { CurrencyMappingScreen } from "../components/CurrencyMapping/CurrencyMapping";
+import { Interaction } from "../components/Interaction/Interaction";
 import { AuthSection } from "./AuthSection";
 
 export function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
     onboarding,
+    cardOnboarding,
+    interaction,
     balance,
+    currencyMapping,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
     hasSeenReceiveVerifyHint,
@@ -42,10 +54,24 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPaySuccess ||
     onNavigateToSendSuccess,
   );
-  const [screen, setScreen] = useState<"tool" | "balance">("tool");
+  const [screen, setScreen] = useState<
+    "tool" | "interaction" | "balance" | "onboarding" | "mapping"
+  >("tool");
+
+  if (screen === "interaction") {
+    return <Interaction {...interaction} onBack={() => setScreen("tool")} />;
+  }
 
   if (screen === "balance") {
     return <BalanceScreen {...balance} onBack={() => setScreen("tool")} />;
+  }
+
+  if (screen === "onboarding") {
+    return <CardOnboardingScreen {...cardOnboarding} onBack={() => setScreen("tool")} />;
+  }
+
+  if (screen === "mapping") {
+    return <CurrencyMappingScreen rows={currencyMapping} onBack={() => setScreen("tool")} />;
   }
 
   return (
@@ -57,6 +83,18 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
         </>
       ) : null}
       <Section title="Card Debug">
+        <ListItem onClick={() => setScreen("interaction")}>
+          <ListItemLeading>
+            <Spot appearance="icon" icon={CreditCard} />
+            <ListItemContent>
+              <ListItemTitle>Card Status</ListItemTitle>
+            </ListItemContent>
+          </ListItemLeading>
+          <ListItemTrailing>
+            <ChevronRight />
+          </ListItemTrailing>
+        </ListItem>
+
         <ListItem
           onClick={() => {
             balance.load();
@@ -67,6 +105,35 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
             <Spot appearance="icon" icon={CoinsCrypto} />
             <ListItemContent>
               <ListItemTitle>Balance & Wallets</ListItemTitle>
+            </ListItemContent>
+          </ListItemLeading>
+          <ListItemTrailing>
+            <ChevronRight />
+          </ListItemTrailing>
+        </ListItem>
+
+        <ListItem
+          onClick={() => {
+            cardOnboarding.refresh();
+            setScreen("onboarding");
+          }}
+        >
+          <ListItemLeading>
+            <Spot appearance="icon" icon={CheckmarkCircle} />
+            <ListItemContent>
+              <ListItemTitle>Card onboarding</ListItemTitle>
+            </ListItemContent>
+          </ListItemLeading>
+          <ListItemTrailing>
+            <ChevronRight />
+          </ListItemTrailing>
+        </ListItem>
+
+        <ListItem onClick={() => setScreen("mapping")}>
+          <ListItemLeading>
+            <Spot appearance="icon" icon={Coins} />
+            <ListItemContent>
+              <ListItemTitle>Currency Mapping</ListItemTitle>
             </ListItemContent>
           </ListItemLeading>
           <ListItemTrailing>
