@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, memo } from "react";
 import { trackPage } from "@shared/analytics";
 
 export type TrackPageProps = {
@@ -13,20 +13,25 @@ export type TrackPageProps = {
  * On mount, tracks an event named `Page ${category}${name ? " " + name : ""}`. A page view belongs
  * to the mount: later prop changes never emit a second event, so render one `<TrackPage>` per page.
  */
-export const TrackPage = ({
+const TrackPageComponent = ({
   category,
   name,
   refreshSource = true,
   mandatory = false,
-  ...properties
+  ...props
 }: TrackPageProps): null => {
+  const firstRender = useRef(true);
+
   useEffect(() => {
-    trackPage(
-      { category, name, props: properties },
-      { updateRoutes: true, refreshSource, mandatory },
-    );
+    if (firstRender.current) {
+      firstRender.current = false;
+
+      trackPage({ category, name, props }, { updateRoutes: true, refreshSource, mandatory });
+    }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return null;
 };
+
+export const TrackPage = memo(TrackPageComponent);

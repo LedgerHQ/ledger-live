@@ -103,6 +103,15 @@ describe("TrackPage", () => {
     expect(track).toHaveBeenCalledWith("Page Portfolio", {});
   });
 
+  it("sends a single page event when StrictMode mounts the component twice", async () => {
+    render(<TrackPage category="Portfolio" />, { wrapper: React.StrictMode });
+
+    await waitFor(() => {
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+    expect(track).toHaveBeenCalledWith("Page Portfolio", {});
+  });
+
   it("sends a mandatory page event even when consent is refused", async () => {
     setEnabledFn(() => false);
 

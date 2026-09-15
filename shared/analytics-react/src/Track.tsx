@@ -30,22 +30,22 @@ const TrackComponent = (props: TrackProps): null => {
   trackEventRef.current = trackEvent;
 
   useEffect(() => {
-    if (onMount) trackEventRef.current();
+    if (onMount && hasMountedRef.current === false) {
+      trackEventRef.current();
+    }
 
+    if (onUpdate && hasMountedRef.current === true) {
+      trackEventRef.current();
+    }
+
+    hasMountedRef.current = true;
+  }, [onUpdate, onMount, props]);
+
+  useEffect(() => {
     return () => {
       if (onUnmount) trackEventRef.current();
     };
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (!hasMountedRef.current) {
-      hasMountedRef.current = true;
-      return;
-    }
-
-    if (onUpdate) trackEventRef.current();
-  }, [onUpdate, props]);
 
   return null;
 };

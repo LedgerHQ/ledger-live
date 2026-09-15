@@ -96,6 +96,25 @@ describe("TrackScreen", () => {
     });
   });
 
+  it("leaves the current screen untouched when it does not refresh the source", async () => {
+    currentRouteNameRef.current = "Portfolio";
+
+    render(<TrackScreen category="Some Modal" refreshSource={false} />);
+
+    await waitFor(() => {
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+    expect(currentRouteNameRef.current).toBe("Portfolio");
+  });
+
+  it("sends a single screen event when StrictMode mounts the component twice", async () => {
+    render(<TrackScreen category="Portfolio" />, { wrapper: React.StrictMode });
+
+    await waitFor(() => {
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it("sends a mandatory screen event even when consent is refused", async () => {
     setEnabledFn(() => false);
 
