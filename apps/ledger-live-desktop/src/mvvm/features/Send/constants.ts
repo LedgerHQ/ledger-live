@@ -23,6 +23,10 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     canGoBack: false,
     showTitle: true,
     titleKey: "newSendFlow.balanceType.title",
+    // Matches the design: title only, straight into the two balance rows -- no
+    // account name, no aggregate balance (a third, summed figure would be
+    // confusing on a screen whose whole purpose is choosing between two pools).
+    showAvailable: false,
     height: "fit",
   },
   [SEND_FLOW_STEP.RECIPIENT]: {
