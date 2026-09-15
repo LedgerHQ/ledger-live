@@ -1,6 +1,7 @@
 import { ScrollView } from "react-native";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { Box, Button, Divider, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
-import { Refresh } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Copy, Refresh } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type {
   PayCardBaanxWallet,
   PayCardBalanceProps,
@@ -20,6 +21,7 @@ const HEADER_LX = {
   padding: "s16",
 } as const;
 const BLOCK_LX = { gap: "s4" } as const;
+const COPY_ROW_LX = { flexDirection: "row", paddingTop: "s4" } as const;
 const FIELD_LX = { flexDirection: "row", gap: "s8" } as const;
 
 function Field({ label, value }: { readonly label: string; readonly value: string }) {
@@ -68,6 +70,17 @@ function LinkedWallet({ wallet }: { readonly wallet: PayCardLinkedWallet }) {
   );
 }
 
+/** An address is too long to read off a phone screen, so it is taken rather than transcribed. */
+function CopyAddress({ address }: { readonly address: string }) {
+  return (
+    <Box lx={COPY_ROW_LX}>
+      <Button appearance="gray" size="sm" icon={Copy} onPress={() => Clipboard.setString(address)}>
+        Copy address
+      </Button>
+    </Box>
+  );
+}
+
 function CombinedWallet({ wallet }: { readonly wallet: PayCardCombinedWallet }) {
   return (
     <Box lx={BLOCK_LX}>
@@ -88,6 +101,7 @@ function CombinedWallet({ wallet }: { readonly wallet: PayCardCombinedWallet }) 
         }
       />
       <Field label="address" value={wallet.address} />
+      <CopyAddress address={wallet.address} />
     </Box>
   );
 }
