@@ -250,7 +250,6 @@ export function usePerpsDepositViewModel(
     })
       .then(({ account }) => {
         setDepositAccountId(account.id);
-        setAmountText(EMPTY_AMOUNT_TEXT);
       })
       .catch(() => undefined);
   }, [openAssetAndAccountPromise]);
