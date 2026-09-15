@@ -992,6 +992,9 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
       return account.aleoResources?.transparentBalance ?? new BigNumber(0);
     case TRANSACTION_TYPE.UNBOND_PUBLIC:
       return account.aleoResources?.bondedBalance ?? new BigNumber(0);
+    // claiming releases whatever has finished unbonding; the chain decides the amount
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return getClaimableStakingBalance(account);
     // spending private native balance
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC: {
@@ -1022,8 +1025,6 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
         }),
       );
     }
-    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
-      return getClaimableStakingBalance(account);
     default:
       // @ts-expect-error - runtime check to ensure all transaction types are handled
       throw new Error(`aleo: unsupported tx mode for balance calculation: ${transaction.mode}`);
@@ -1112,7 +1113,6 @@ export function createTransactionIntent({
   switch (transaction.mode) {
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
-    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
       return base;
 
     case TRANSACTION_TYPE.BOND_PUBLIC:
@@ -1127,6 +1127,12 @@ export function createTransactionIntent({
       return {
         ...base,
         data: { type: TRANSACTION_TYPE.UNBOND_PUBLIC },
+      };
+
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return {
+        ...base,
+        data: { type: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC },
       };
 
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:

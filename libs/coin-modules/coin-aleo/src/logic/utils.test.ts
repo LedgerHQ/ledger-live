@@ -96,6 +96,7 @@ import {
   sumStakedBalance,
   toStakingResources,
   isSelfTransferTransaction,
+  isSelfStakingMode,
   isPublicTransaction,
   isPrivateTransaction,
   isTokenTransaction,
@@ -1909,6 +1910,20 @@ describe("isPublicTransaction", () => {
     const transaction = getMockedTransaction({ mode });
 
     expect(isPublicTransaction(transaction)).toBe(expected);
+  });
+});
+
+// Unbond and claim name the account as its own on-chain `staker`, so their recipient being the
+// account's own address is correct rather than a destination-is-source mistake.
+describe("isSelfStakingMode", () => {
+  it.each([
+    [true, TRANSACTION_TYPE.UNBOND_PUBLIC],
+    [true, TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC],
+    // A bond's recipient is the validator, so it is a genuine counterparty.
+    [false, TRANSACTION_TYPE.BOND_PUBLIC],
+    [false, TRANSACTION_TYPE.TRANSFER_PUBLIC],
+  ] as const)("should return %s for mode '%s'", (expected, mode) => {
+    expect(isSelfStakingMode({ mode })).toBe(expected);
   });
 });
 

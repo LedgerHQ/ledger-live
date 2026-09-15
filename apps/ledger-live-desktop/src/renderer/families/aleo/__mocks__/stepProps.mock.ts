@@ -4,8 +4,14 @@ import type { TFunction } from "i18next";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import type { StepProps as BondStepProps } from "../BondPublicFlowModal/types";
 import type { StepProps as UnbondStepProps } from "../UnbondFlowModal/types";
+import type { StepProps as ClaimStepProps } from "../ClaimUnbondFlowModal/types";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
-import { ALEO_ACCOUNT_1, ALEO_BONDED_ACCOUNT, ALEO_MAIN_ACCOUNT } from "./account.mock";
+import {
+  ALEO_ACCOUNT_1,
+  ALEO_BONDED_ACCOUNT,
+  ALEO_CLAIMABLE_ACCOUNT,
+  ALEO_MAIN_ACCOUNT,
+} from "./account.mock";
 
 const makeAleoAccount = (percentage = 0): AleoAccount => ({
   ...ALEO_ACCOUNT_1,
@@ -93,3 +99,10 @@ export const makeUnbondStepProps = (overrides: Partial<UnbondStepProps> = {}): U
     account: ALEO_BONDED_ACCOUNT,
     ...overrides,
   }) as UnbondStepProps;
+
+export const makeClaimStepProps = (overrides: Partial<ClaimStepProps> = {}): ClaimStepProps =>
+  ({
+    ...makeBondStepProps(overrides as Partial<BondStepProps>),
+    account: ALEO_CLAIMABLE_ACCOUNT,
+    ...overrides,
+  }) as ClaimStepProps;
