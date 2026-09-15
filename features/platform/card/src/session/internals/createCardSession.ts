@@ -34,15 +34,45 @@ export function createCardSession(store: CardSessionStore) {
    */
   let providerAppId: string | null = null;
 
-  let hasReadProviderAppId = false;
+  let isProviderAppIdHydrated = false;
 
-  async function hydrateProviderAppId(): Promise<void> {
-    if (hasReadProviderAppId) {
-      return;
+  /** Counts the writes, so a read still in flight cannot put a stale value over a newer one. */
+  let providerAppIdWrites = 0;
+
+  /** The one read every concurrent caller waits on, so none of them builds headers ahead of it. */
+  let providerAppIdHydration: Promise<void> | null = null;
+
+  function hydrateProviderAppId(): Promise<void> {
+    if (isProviderAppIdHydrated) {
+      return Promise.resolve();
     }
 
-    hasReadProviderAppId = true;
-    providerAppId = await store.read(CARD_SESSION_KEYS.providerAppId).catch(() => null);
+    if (providerAppIdHydration) {
+      return providerAppIdHydration;
+    }
+
+    const writesBeforeRead = providerAppIdWrites;
+    providerAppIdHydration = store
+      .read(CARD_SESSION_KEYS.providerAppId)
+      .then(stored => {
+        if (providerAppIdWrites === writesBeforeRead) {
+          providerAppId = stored;
+        }
+        isProviderAppIdHydrated = true;
+      })
+      // A store that could not answer has not answered. The next request asks again.
+      .catch(() => undefined)
+      .finally(() => {
+        providerAppIdHydration = null;
+      });
+
+    return providerAppIdHydration;
+  }
+
+  function recordProviderAppId(appId: string | null): void {
+    providerAppId = appId;
+    isProviderAppIdHydrated = true;
+    providerAppIdWrites += 1;
   }
 
   type InFlightRefresh = {
@@ -82,8 +112,7 @@ export function createCardSession(store: CardSessionStore) {
 
   async function removeSession(): Promise<void> {
     isCleared = true;
-    providerAppId = null;
-    hasReadProviderAppId = true;
+    recordProviderAppId(null);
 
     await store.remove(CARD_SESSION_KEYS.accessToken).catch(() => undefined);
     await store.remove(CARD_SESSION_KEYS.refreshToken).catch(() => undefined);
@@ -248,8 +277,7 @@ export function createCardSession(store: CardSessionStore) {
    * tenant and it leaves while this store call is still in flight.
    */
   const setCardProviderAppId = (appId: string | null): Promise<void> => {
-    providerAppId = appId;
-    hasReadProviderAppId = true;
+    recordProviderAppId(appId);
 
     return takeTurn(async () => {
       if (appId === null) {
@@ -257,7 +285,11 @@ export function createCardSession(store: CardSessionStore) {
         return;
       }
 
-      await store.write(CARD_SESSION_KEYS.providerAppId, appId).catch(() => undefined);
+      await store.write(CARD_SESSION_KEYS.providerAppId, appId).catch(() => {
+        // This process still routes on the mirror. Only a restart would read no tenant back, and
+        // the login that follows it records the value again.
+        console.warn("[card] the provider app id was not stored");
+      });
     });
   };
 
