@@ -825,6 +825,37 @@ describe("the provider app id", () => {
     await expect(readCardSession()).resolves.toMatchObject({ token: null });
   });
 
+  it("keeps the tenant of a newer login when a superseded session write cleans up", async () => {
+    // A renewal or a first login can still be writing its tokens when a second login records
+    // another tenant. The stale cleanup drops the tokens it wrote, but the tenant belongs to the
+    // newer login, and wiping the mirror would omit `x-us-env` for the rest of the process.
+    const hold = deferred<void>();
+    const { store, slots } = fakeStore();
+    let reachedAccessWrite!: () => void;
+    const atAccessWrite = new Promise<void>(resolve => {
+      reachedAccessWrite = resolve;
+    });
+    store.write = jest.fn(async (key, value) => {
+      slots.set(key, value);
+      if (key === CARD_SESSION_KEYS.accessToken) {
+        reachedAccessWrite();
+        await hold.promise;
+      }
+    });
+    const api = createCardSession(store);
+    await api.setCardProviderAppId("LEDGERUAT");
+
+    const superseded = api.cardSession.set(session);
+    await atAccessWrite;
+    const newer = api.setCardProviderAppId("LEDGERUS");
+    hold.resolve();
+
+    await expect(superseded).rejects.toBeInstanceOf(CardSessionNotStoredError);
+    await newer;
+    expect(api.isCardUsEnv("LEDGERUS")).toBe(true);
+    expect(slots.get(CARD_SESSION_KEYS.providerAppId)).toBe("LEDGERUS");
+  });
+
   it("keeps the app id across the session write that follows it", async () => {
     const { store } = fakeStore();
     const { cardSession, setCardProviderAppId, isCardUsEnv } = createCardSession(store);
