@@ -8,18 +8,19 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 
 describe("q3TourCarouselAnalytics", () => {
-  const analytics = createQ3TourAnalytics(4);
+  const analytics = createQ3TourAnalytics(4, "q3_a");
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should track the Q3 campaign and current carousel step", () => {
+  it("should track the Q3 campaign, variant, and current carousel step", () => {
     const context = analytics.getContext(1, "Say goodbye to long addresses");
 
     expect(context).toEqual({
       page: PAGE_TRACKING_Q3_TOUR,
       contentId: "q3-tour",
+      variant: "q3_a",
       step: 2,
       stepName: "Say goodbye to long addresses",
       totalSteps: 4,
@@ -32,6 +33,7 @@ describe("q3TourCarouselAnalytics", () => {
       undefined,
       expect.objectContaining({
         contentId: "q3-tour",
+        variant: "q3_a",
         step: 1,
         stepName: "A quick tour of the latest",
       }),
@@ -40,7 +42,7 @@ describe("q3TourCarouselAnalytics", () => {
     );
   });
 
-  it("should track continue, dismiss, and completion interactions", () => {
+  it("should track continue, dismiss, and completion interactions with the variant", () => {
     const context = analytics.getContext(3, "Keep your crypto, finance your projects");
 
     analytics.trackContinueClick(context);
@@ -53,23 +55,24 @@ describe("q3TourCarouselAnalytics", () => {
         button: "continue",
         page: PAGE_TRACKING_Q3_TOUR,
         contentId: "q3-tour",
+        variant: "q3_a",
       }),
     );
     expect(track).toHaveBeenCalledWith(
       "drawer_dismissed",
-      expect.objectContaining({ drawer: PAGE_TRACKING_Q3_TOUR, step: 4 }),
+      expect.objectContaining({ drawer: PAGE_TRACKING_Q3_TOUR, step: 4, variant: "q3_a" }),
     );
     expect(track).toHaveBeenCalledWith(
       "tour_completed",
-      expect.objectContaining({ step: 4, totalSteps: 4 }),
+      expect.objectContaining({ step: 4, totalSteps: 4, variant: "q3_a" }),
     );
   });
 
-  it("should use the selected variant slide count", () => {
-    const q3BAnalytics = createQ3TourAnalytics(3);
+  it("should use the selected variant slide count and id", () => {
+    const q3BAnalytics = createQ3TourAnalytics(3, "q3_b");
 
     expect(q3BAnalytics.getContext(2, "Keep your crypto, finance your projects")).toEqual(
-      expect.objectContaining({ step: 3, totalSteps: 3 }),
+      expect.objectContaining({ step: 3, totalSteps: 3, variant: "q3_b" }),
     );
   });
 });
