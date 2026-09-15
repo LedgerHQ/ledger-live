@@ -28,6 +28,6 @@ export const CopyableIdentifier = ({ text, testID, copyTestID }: Props) => (
         {text}
       </Text>
     </Flex>
-    <CopyButton text={text} size="small" type="shade" testID={copyTestID} />
+    <CopyButton text={text} size="small" testID={copyTestID} />
   </Flex>
 );

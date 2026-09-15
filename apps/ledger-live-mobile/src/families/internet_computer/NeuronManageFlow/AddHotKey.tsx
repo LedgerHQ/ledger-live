@@ -90,7 +90,7 @@ export default function AddHotKey({ navigation, route }: Props) {
                     {principal}
                   </Text>
                 </Flex>
-                <CopyButton text={principal} size="small" type="shade" />
+                <CopyButton text={principal} size="small" />
               </Flex>
               <Text variant="small" color="neutral.c70">
                 {t("internetComputer.manageNeuronFlow.addHotKey.ownPrincipalHint")}
