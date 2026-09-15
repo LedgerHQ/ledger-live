@@ -22,6 +22,7 @@ import {
 import { getBalance } from "./getBalance";
 import { findBalance } from "./utils";
 import { getEnergyRentQuote } from "./energyRent";
+import type { EnergyRentRequest } from "./energyRent";
 
 type TronIntent = TransactionIntent<TronMemo, TronTxData>;
 
@@ -455,4 +456,66 @@ export async function estimateTronifyFees(
     savings: originalValue > value ? originalValue - value : 0n,
     parameters: { ...breakdown },
   };
+}
+
+/**
+ * Context-free Tronify fee quote for the app-side savings display: the Tronify rental cost
+ * (`value`), the standard TRX burn it replaces (`originalValue`), and the delta (`savings`) — all
+ * TRX-denominated. Reads the coin-config singleton exactly like `listFeeOptions`, so an app can
+ * quote the savings nudge without constructing a framework `Context` (the seam the desktop/mobile
+ * `useSponsoredFee` hook consumes). Propagates `estimateTronifyFees`' throw on unavailability — the
+ * caller has already gated on `listFeeOptions` and renders "no savings" if this rejects.
+ */
+export async function estimateSponsoredFeeQuote(
+  intent: TronIntent,
+): Promise<{ value: bigint; originalValue: bigint; savings: bigint }> {
+  const config = coinConfig.getCoinConfig();
+  const { value, originalValue, savings } = await estimateTronifyFees(config, intent);
+  return { value, originalValue: originalValue ?? value, savings: savings ?? 0n };
+}
+
+/**
+ * Build the energy-rent request for a TRC-20 send, so the app can hand it straight to
+ * `craftEnergyRentTransaction` without computing energy or reading coin-config itself. Context-free
+ * (reads the coin-config singleton, like `listFeeOptions`): the energy is simulated on-chain, the
+ * energy is delegated to the sender (they call the contract), and the rental window / extra-TRX come
+ * from remote coin-config with defaults. Mirrors the request `estimateTronifyFees` prices internally.
+ * Throws on a non-TRC-20 or recipient-less intent — the caller has already gated on `listFeeOptions`.
+ */
+export async function buildEnergyRentRequest(intent: TronIntent): Promise<EnergyRentRequest> {
+  if (intent.type !== "send" || intent.asset.type !== "trc20") {
+    throw new Error("Energy rent is only available for TRC-20 send intents");
+  }
+  if (!intent.recipient) {
+    throw new Error("Energy rent requires a recipient");
+  }
+  const config = coinConfig.getCoinConfig();
+  const tronifyConfig = config.energyRent?.tronify;
+  const durationSeconds = readRentalParam(
+    tronifyConfig?.rentalDurationSeconds,
+    DEFAULT_TRONIFY_RENTAL_DURATION_SECONDS,
+    1,
+    "rentalDurationSeconds",
+  );
+  const extraTrx = readRentalParam(
+    tronifyConfig?.rentalExtraTrx,
+    DEFAULT_TRONIFY_RENTAL_EXTRA_TRX,
+    0,
+    "rentalExtraTrx",
+  );
+  const energyNeeded = await estimateEnergy(config, intent);
+  const request: EnergyRentRequest = {
+    payerAddress: intent.sender,
+    receiverAddress: intent.sender,
+    energy: BigInt(energyNeeded),
+    durationSeconds,
+    extraTrx,
+  };
+
+  // Bind the order craftEnergyRentTransaction will place to the price quoted for these exact
+  // params; both calls share this one request (and so toOrderParams), leaving price as the only
+  // thing that can differ. A quote failure propagates: crafting without a ceiling is the unbounded
+  // case the ceiling guards against, and the very next step calls the same backend anyway.
+  const quote = await getEnergyRentQuote(request);
+  return { ...request, maxPayCoinAmt: quote.payCoinAmt, maxPayCoinCode: quote.payCoinCode };
 }

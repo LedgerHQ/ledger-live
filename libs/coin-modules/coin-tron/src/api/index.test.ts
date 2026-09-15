@@ -4,12 +4,13 @@ import {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
-import { createApi } from ".";
-import { TronCoinConfig, TronContext } from "../config";
+import { createApi, createSponsoredSendApi } from ".";
+import coinConfig, { TronCoinConfig, TronContext } from "../config";
 import type { TronMemo, TronTxData } from "../types";
 import {
   broadcast,
   combine,
+  craftRawTransaction,
   craftTransaction,
   estimateFees,
   estimateTronifyFees,
@@ -24,6 +25,7 @@ import { TRONIFY_FEE_OPTION_ID } from ".";
 jest.mock("../logic", () => ({
   broadcast: jest.fn(),
   combine: jest.fn(),
+  craftRawTransaction: jest.fn((rawDataHex: string) => ({ transaction: rawDataHex })),
   craftTransaction: jest.fn(),
   estimateFees: jest.fn(),
   estimateTronifyFees: jest.fn(),
@@ -48,11 +50,45 @@ describe("createApi", () => {
     const impl = createApi();
 
     // Kept out rather than stubbed: Tron contract reads are unsupported, withdrawals already show
-    // up in listOperations, the chain takes no externally-built transaction, and there is no
-    // enrollment step. The consumer resolver answers "not supported" for each.
-    for (const method of ["call", "register", "craftRawTransaction", "getRewards"] as const) {
+    // up in listOperations, and there is no enrollment step. The consumer resolver answers "not
+    // supported" for each. (craftRawTransaction IS implemented — see the sponsored-flow test below.)
+    for (const method of ["call", "register", "getRewards"] as const) {
       expect(impl).not.toHaveProperty(method);
     }
+  });
+
+  const withEnergyRentConfigured = (energyRent: unknown) =>
+    coinConfig.setCoinConfig(
+      () =>
+        ({
+          explorer: { url: "iamaurl" },
+          status: { type: "active" },
+          energyRent,
+        }) as unknown as TronCoinConfig,
+    );
+
+  it("craftRawTransaction delegates the pre-built Tronify payment tx through to the logic layer", async () => {
+    withEnergyRentConfigured({
+      provider: "tronify",
+      tronify: { url: "https://open.tronify.io", sourceFlag: "ledgerLive" },
+    });
+    const impl = createApi();
+    const rawDataHex = "0a02abcd220812345678";
+
+    await expect(
+      impl.craftRawTransaction(context, rawDataHex, "TSender", "pubkey", 0n),
+    ).resolves.toEqual({ transaction: rawDataHex });
+    expect(craftRawTransaction).toHaveBeenCalledWith(rawDataHex);
+  });
+
+  it("craftRawTransaction refuses when no energy-rent provider is configured", async () => {
+    withEnergyRentConfigured(undefined);
+    const impl = createApi();
+
+    await expect(
+      impl.craftRawTransaction(context, "0a02abcd220812345678", "TSender", "pubkey", 0n),
+    ).rejects.toThrow(/energy-rent/i);
+    expect(craftRawTransaction).not.toHaveBeenCalled();
   });
 
   const mockTronConfig: TronCoinConfig = {
@@ -217,4 +253,25 @@ describe("createApi", () => {
       ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });
+});
+
+test("createApi does not carry the energy-rent seam methods (they live in createSponsoredSendApi)", () => {
+  const api = createApi() as unknown as Record<string, unknown>;
+  expect(api.craftEnergyRentTransaction).toBeUndefined();
+  expect(api.submitEnergyRentPayment).toBeUndefined();
+  expect(api.getEnergyRentStatus).toBeUndefined();
+  expect(api.awaitEnergyDelivery).toBeUndefined();
+  expect(api.estimateSponsoredFeeQuote).toBeUndefined();
+  expect(api.buildEnergyRentRequest).toBeUndefined();
+});
+
+test("createSponsoredSendApi exposes the energy-rent seam methods", () => {
+  const seam = createSponsoredSendApi() as unknown as Record<string, unknown>;
+  expect(typeof seam.listFeeOptions).toBe("function");
+  expect(typeof seam.craftEnergyRentTransaction).toBe("function");
+  expect(typeof seam.submitEnergyRentPayment).toBe("function");
+  expect(typeof seam.getEnergyRentStatus).toBe("function");
+  expect(typeof seam.awaitEnergyDelivery).toBe("function");
+  expect(typeof seam.estimateSponsoredFeeQuote).toBe("function");
+  expect(typeof seam.buildEnergyRentRequest).toBe("function");
 });
