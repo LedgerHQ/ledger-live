@@ -61,10 +61,6 @@ export const ALEO_UNBONDING_ACCOUNT: AleoAccount = {
   },
 };
 
-/**
- * A broadcast-but-unconfirmed operation. Only `type` and `accountId` carry meaning for the
- * staking guards that read the pending pool; the rest is filler to satisfy the shape.
- */
 export const aleoPendingOperation = (type: OperationType): Operation => ({
   id: `pending-${type}`,
   hash: "",

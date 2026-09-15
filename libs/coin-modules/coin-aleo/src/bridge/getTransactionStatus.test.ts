@@ -31,7 +31,6 @@ import {
   AleoAmountTooLargeForTransaction,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
-  AleoNoClaimableAmount,
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
 } from "../errors";

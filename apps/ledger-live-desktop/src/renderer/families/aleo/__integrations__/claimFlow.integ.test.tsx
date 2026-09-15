@@ -90,8 +90,6 @@ describe("Aleo claim flow — full modal", () => {
     });
   }, 20000);
 
-  // There is no amount step: `claim_unbond_public` signs no amount, the chain releases
-  // whatever has finished unbonding.
   it("prepares the transaction with no amount and the account as its own staker", async () => {
     setupModal();
 

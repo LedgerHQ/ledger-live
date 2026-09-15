@@ -61,8 +61,6 @@ describe("Aleo claim StepSummary", () => {
     );
   });
 
-  // The chain releases whatever has finished unbonding, so the amount is shown read-only for
-  // the user to check rather than as something they pick.
   it("shows the claimable amount read-only", () => {
     setup(StepSummary);
 
@@ -71,8 +69,6 @@ describe("Aleo claim StepSummary", () => {
     expect(input).toHaveAttribute("readonly");
   });
 
-  // The unbonding position is still counting down: nothing is claimable yet, so showing a
-  // figure would imply the user can act on it.
   it("hides the amount while the unbonding height has not been reached", () => {
     setup(StepSummary, { account: ALEO_UNBONDING_ACCOUNT });
 
@@ -130,8 +126,6 @@ describe("Aleo claim StepSummaryFooter", () => {
     expect(continueButton()).toBeDisabled();
   });
 
-  // AleoNoClaimableAmount lands on `status.errors.amount`, so the user cannot sign a claim
-  // that the chain would reject.
   it.each(["amount", "fees", "recipient"])("blocks Continue on a %s error", key => {
     setup(StepSummaryFooter, withStatusErrors({ [key]: new NotEnoughBalance() }));
 

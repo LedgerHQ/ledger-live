@@ -97,8 +97,6 @@ describe("Aleo ManageModal", () => {
       expect(store.getState().modals[AleoCustomModal.MANAGE]?.isOpened).toBeFalsy();
     });
 
-    // The chain only releases funds once it reaches `unbondingHeight`, so an unbonding
-    // position that is still counting down must not offer a claim.
     it("stays disabled while the unbonding position is still counting down", async () => {
       setup(ALEO_UNBONDING_ACCOUNT);
 
@@ -111,16 +109,12 @@ describe("Aleo ManageModal", () => {
       expect(await screen.findByTestId("aleo-claim-button")).toBeDisabled();
     });
 
-    // Same reasoning as the unbond row: the synced staking figures still describe the
-    // pre-broadcast position, so a second claim is closed off on the pending pool.
     it("stays disabled while a claim is pending", async () => {
       setup(withPendingOperations(ALEO_CLAIMABLE_ACCOUNT, "WITHDRAW_UNBONDED"));
 
       expect(await screen.findByTestId("aleo-claim-button")).toBeDisabled();
     });
 
-    // Aleo tracks one unbonding position per staker, and an unbond rewrites the same slot a
-    // claim would read, so the two block each other.
     it("stays disabled while an unbond is pending", async () => {
       setup(withPendingOperations(ALEO_CLAIMABLE_ACCOUNT, "UNBOND"));
 
@@ -134,7 +128,6 @@ describe("Aleo ManageModal", () => {
     });
   });
 
-  // The unbond row is blocked by a pending claim for the same single-slot reason.
   it("disables the unbond row while a claim is pending", async () => {
     setup(withPendingOperations(ALEO_BONDED_ACCOUNT, "WITHDRAW_UNBONDED"));
 
