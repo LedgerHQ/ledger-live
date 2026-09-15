@@ -14,7 +14,12 @@ import {
   MOCK_TOKEN_PROGRAM_ID,
 } from "../__tests__/fixtures/currency.fixture";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { EXPLORER_TRANSFER_TYPES, TOKEN_RECORD_NAME, TRANSACTION_TYPE } from "../constants";
+import {
+  EXPLORER_TRANSFER_TYPES,
+  PROGRAM_ID,
+  TOKEN_RECORD_NAME,
+  TRANSACTION_TYPE,
+} from "../constants";
 import { sdkClient } from "../network/sdk";
 import {
   getMockedAccount,
@@ -552,7 +557,11 @@ describe("sync.ts", () => {
         blockHeight: 900,
         senders: [""],
         recipients: [""],
-        extra: { transactionType: "public", functionId: TRANSACTION_TYPE.BOND_PUBLIC },
+        extra: {
+          transactionType: "public",
+          functionId: TRANSACTION_TYPE.BOND_PUBLIC,
+          programId: PROGRAM_ID.CREDITS,
+        },
       });
       const transferOp = getMockedOperation({
         id: "transfer-op",
@@ -2367,7 +2376,11 @@ describe("sync.ts", () => {
         hash: "tx-bond",
         type: "OUT",
         blockHeight: 400,
-        extra: { transactionType: "public", functionId: TRANSACTION_TYPE.BOND_PUBLIC },
+        extra: {
+          transactionType: "public",
+          functionId: TRANSACTION_TYPE.BOND_PUBLIC,
+          programId: PROGRAM_ID.CREDITS,
+        },
       });
       const transferOp = getMockedOperation({
         id: "cached-transfer",
@@ -2437,7 +2450,11 @@ describe("sync.ts", () => {
         id: "cached-bond",
         hash: "tx-bond",
         type: "OUT",
-        extra: { transactionType: "public", functionId: TRANSACTION_TYPE.BOND_PUBLIC },
+        extra: {
+          transactionType: "public",
+          functionId: TRANSACTION_TYPE.BOND_PUBLIC,
+          programId: PROGRAM_ID.CREDITS,
+        },
       });
       const transferOp = getMockedOperation({
         id: "cached-transfer",

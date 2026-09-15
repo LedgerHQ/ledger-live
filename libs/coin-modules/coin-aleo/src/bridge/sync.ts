@@ -120,9 +120,9 @@ export async function performPublicSync(
     AleoOperation[],
   ];
 
-  // Cached staking rows predating staking support are typed OUT, and the type is part of the
-  // operation id — so a re-fetch would add the correctly typed row beside the stale one rather
-  // than replace it. They are dropped instead, and the cursor reset to rebuild them.
+  // While staking is off the cached staking rows are dropped and the marker cleared, yet the
+  // cursor stays past the history that drop removed. Turning staking back on has to rewind it
+  // to 0, or that history is never fetched again.
   const isStakingMigrationRequired = config.enableStaking && hasMigratedStaking !== true;
   const shouldKeepCachedStakingOps = config.enableStaking && hasMigratedStaking === true;
 

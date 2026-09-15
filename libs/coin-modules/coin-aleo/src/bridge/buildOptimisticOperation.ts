@@ -1,6 +1,7 @@
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AleoOperation, AleoOperationExtra, Transaction } from "../types";
+import { PROGRAM_ID } from "../constants";
 import {
   getFunctionNameFromTransactionType,
   getNextSequenceNumber,
@@ -13,13 +14,19 @@ function resolveStakingExtra(
   stakingType: OperationType | undefined,
   transaction: Transaction,
 ): Partial<AleoOperationExtra> {
+  if (stakingType === undefined) return {};
+
+  // Staking is credits.aleo by definition, and `isStakingOperation` reads the program to tell a
+  // staking row from a same-named function of another program.
+  const base = { programId: PROGRAM_ID.CREDITS };
+
   switch (stakingType) {
     case "BOND":
-      return { validator: transaction.recipient, stakedAmount: transaction.amount };
+      return { ...base, validator: transaction.recipient, stakedAmount: transaction.amount };
     case "UNBOND":
-      return { stakedAmount: transaction.amount };
+      return { ...base, stakedAmount: transaction.amount };
     default:
-      return {};
+      return base;
   }
 }
 

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { TRANSACTION_TYPE } from "../constants";
+import { PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
 import { getMockedAccount, getMockedTokenAccount } from "../__tests__/fixtures/account.fixture";
 import {
   getMockedStakingTransaction,
@@ -209,7 +209,12 @@ describe("buildOptimisticOperation", () => {
       expect(operation.value).toEqual(transaction.fees);
       expect(operation.fee).toEqual(transaction.fees);
       expect(operation.id).toBe(encodeOperationId(account.id, "", operationType));
-      expect(operation.extra).toEqual({ functionId, transactionType: "public", ...stakingExtra });
+      expect(operation.extra).toEqual({
+        functionId,
+        transactionType: "public",
+        programId: PROGRAM_ID.CREDITS,
+        ...stakingExtra,
+      });
       expect(operation.senders).toEqual([]);
       expect(operation.recipients).toEqual([]);
       expect(operation.subOperations).toBeUndefined();
