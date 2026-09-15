@@ -92,6 +92,7 @@
     "ecpair": "3.0.1",
     "jest": "catalog:",
     "jest-file-snapshot": "catalog:",
+    "msw": "catalog:",
     "object-hash": "^2.2.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
