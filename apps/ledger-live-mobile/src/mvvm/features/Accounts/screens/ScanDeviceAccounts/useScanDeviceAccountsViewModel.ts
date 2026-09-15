@@ -3,6 +3,7 @@ import { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { useDispatch } from "~/context/hooks";
+import { openCurrencyRegionRestrictedDrawer } from "~/reducers/currencyRegionRestrictedDrawer";
 import { useTranslation } from "~/context/Locale";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import uniq from "lodash/uniq";
@@ -43,7 +44,7 @@ export default function useScanDeviceAccountsViewModel({
   const { t } = useTranslation();
   const [scanning, setScanning] = useState(true);
   const navigation = useNavigation<ScanDeviceAccountsNavigationProps["navigation"]>();
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
   const [latestScannedAccount, setLatestScannedAccount] = useState<Account | null>(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
@@ -444,8 +445,24 @@ export default function useScanDeviceAccountsViewModel({
       }
     : undefined;
 
+  const isRegionRestricted = error?.name === "CurrencyRegionRestrictedError";
+
+  useEffect(() => {
+    if (!isRegionRestricted) return;
+
+    if (inline) {
+      onCancel();
+      onModalHide();
+    } else {
+      navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()?.popToTop();
+    }
+
+    dispatch(openCurrencyRegionRestrictedDrawer(currency.name));
+  }, [isRegionRestricted, inline, onCancel, onModalHide, navigation, dispatch, currency.name]);
+
   return {
     alreadyEmptyAccount,
+    isRegionRestricted,
     alreadyEmptyAccountName,
     cantCreateAccount,
     CustomNoAssociatedAccounts,

@@ -61,7 +61,7 @@ export function createApi() {
       const config = await context.config();
       return craftTransaction(config, transactionIntent, options?.customFees);
     },
-    estimateFees: async (context, transactionIntent, options) => {
+    estimateFees: async (context, transactionIntent, options?) => {
       const config = await context.config();
       if (options?.feeOption?.feeOptionId === TRONIFY_FEE_OPTION_ID) {
         return estimateTronifyFees(config, transactionIntent);
@@ -69,9 +69,9 @@ export function createApi() {
       return estimateFees(config, transactionIntent);
     },
     // Fee-option discovery (ADR-050 Option 3): advertises [tronify, standard] for eligible TRC-20
-    // sends, [standard] otherwise. The framework passes only the intent — the coin-config is read
-    // from the singleton inside the logic layer (no context here). See logic/feeOptions.ts.
-    listFeeOptions: transactionIntent => listFeeOptionsLogic(transactionIntent),
+    // sends, [standard] otherwise. The coin-config is read from the singleton inside the logic
+    // layer, so the context the framework passes is unused here. See logic/feeOptions.ts.
+    listFeeOptions: (_context, transactionIntent) => listFeeOptionsLogic(transactionIntent),
     getAccountInfo: async (context, address): Promise<AccountInfo> => {
       const config = await context.config();
       return getAccountInfo(config, address);

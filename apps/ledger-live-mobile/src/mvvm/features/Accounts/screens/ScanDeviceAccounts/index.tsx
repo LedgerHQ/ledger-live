@@ -62,6 +62,7 @@ function ScanDeviceAccounts() {
   const {
     cantCreateAccount,
     error,
+    isRegionRestricted,
     importAccounts,
     newAccountSchemes,
     noImportableAccounts,
@@ -221,7 +222,7 @@ function ScanDeviceAccounts() {
         />
       )}
       <GenericErrorBottomModal
-        error={error}
+        error={isRegionRestricted ? null : error}
         onClose={onCancel}
         onModalHide={onModalHide}
         footerButtons={
