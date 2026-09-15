@@ -1,10 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import {
-  MAX_UNBONDING_SYNC_ATTEMPTS,
-  UNBONDING_SYNC_PRIORITY,
-  UNBONDING_SYNC_RETRY_MS,
-} from "../constants";
+import { useGetLastBlockHeightQuery } from "@ledgerhq/live-common/families/aleo/state-manager/api";
+import { LIVE_BLOCK_HEIGHT_POLL_MS } from "@ledgerhq/live-common/families/aleo/constants";
+import { MAX_UNBONDING_SYNC_ATTEMPTS, UNBONDING_SYNC_PRIORITY } from "../constants";
 
 /**
  * Requests account syncs while the chain has passed the unbonding height but the account has
@@ -13,30 +11,40 @@ import {
  * Every claimable decision — the bridge's included — reads `account.blockHeight`, which only
  * moves on a sync. So the gap is closed by syncing rather than by reading the live height in
  * more places, which would offer a claim the flow then refuses.
+ *
+ * The retry cadence is the chain-tip query's polling: subscribing to the same endpoint and
+ * argument as `useAleoLiveBlockHeight` shares its cache entry and its single polling loop, so
+ * each fresh tip is one sync attempt and there is no second timer to keep in step.
  */
-export function useSyncOnUnbondingComplete(accountId: string, enabled: boolean): void {
+export function useSyncOnUnbondingComplete(
+  accountId: string,
+  currencyId: string,
+  enabled: boolean,
+): void {
   const sync = useBridgeSync();
+  const { fulfilledTimeStamp } = useGetLastBlockHeightQuery(currencyId, {
+    skip: !enabled,
+    pollingInterval: LIVE_BLOCK_HEIGHT_POLL_MS,
+    skipPollingIfUnfocused: true,
+  });
+  const attemptsLeft = useRef(MAX_UNBONDING_SYNC_ATTEMPTS);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      attemptsLeft.current = MAX_UNBONDING_SYNC_ATTEMPTS;
+      return;
+    }
+    if (attemptsLeft.current <= 0) return;
+    attemptsLeft.current -= 1;
 
-    let attemptsLeft = MAX_UNBONDING_SYNC_ATTEMPTS;
-    const requestSync = () => {
-      attemptsLeft -= 1;
-      sync({
-        type: "SYNC_ONE_ACCOUNT",
-        accountId,
-        priority: UNBONDING_SYNC_PRIORITY,
-        reason: "aleo-unbonding-complete",
-      });
-    };
-
-    requestSync();
-    const interval = setInterval(() => {
-      if (attemptsLeft > 0) return requestSync();
-      clearInterval(interval);
-    }, UNBONDING_SYNC_RETRY_MS);
-
-    return () => clearInterval(interval);
-  }, [enabled, accountId, sync]);
+    sync({
+      type: "SYNC_ONE_ACCOUNT",
+      accountId,
+      priority: UNBONDING_SYNC_PRIORITY,
+      reason: "aleo-unbonding-complete",
+    });
+    // `fulfilledTimeStamp` is the tick: unused in the body, it changes once per successful
+    // chain-tip poll and that is exactly when the next attempt is due.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled, accountId, sync, fulfilledTimeStamp]);
 }

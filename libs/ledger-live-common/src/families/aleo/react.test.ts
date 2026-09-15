@@ -15,15 +15,22 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Transaction } from "../../generated/types";
 import type { AleoAccount, AleoUnspentRecord } from "./types";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
-import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "./constants";
+import {
+  LIVE_BLOCK_HEIGHT_POLL_MS,
+  MANDATORY_SYNC_POLLING_DELAY,
+  PROGRESS_THROTTLE_INTERVAL_MS,
+} from "./constants";
 import {
   useAleoViewKeyApproval,
   buildAccountsWithViewKeys,
+  useAleoLiveBlockHeight,
   useAleoPrivateSync,
   useAleoQuickAmountSelector,
   useAleoValidators,
 } from "./react";
-import { getValidators } from "@ledgerhq/coin-aleo/logic";
+import { getValidators, lastBlock } from "@ledgerhq/coin-aleo/logic";
+import { createTestStore, createWrapper } from "../../__tests__/test-helpers/testUtils";
+import { aleoApi } from "./state-manager/api";
 import { ALEO_ACCOUNT_1, makeAleoAccount } from "./__mocks__/account.mock";
 
 const mockCreateAction = jest.fn();
@@ -53,7 +60,9 @@ jest.mock("./utils", () => ({
   })),
 }));
 
-jest.mock("@ledgerhq/coin-aleo/logic", () => ({ getValidators: jest.fn() }));
+jest.mock("@ledgerhq/coin-aleo/logic", () => ({ getValidators: jest.fn(), lastBlock: jest.fn() }));
+
+jest.mock("../../config/index", () => ({ getCurrencyConfiguration: jest.fn(() => ({})) }));
 
 const { useFeature } = jest.requireMock("@features/platform-feature-flags");
 const { getViewKeyExec } = jest.requireMock("./hw/getViewKey/index");
@@ -1506,5 +1515,98 @@ describe("useAleoValidators", () => {
 
     expect(result.current.validators).toEqual([]);
     await waitFor(() => expect(result.current.validators).toEqual([testnetValidator]));
+  });
+});
+
+describe("useAleoLiveBlockHeight", () => {
+  const FALLBACK = 1_000;
+  const block = (height: number) => ({ height, hash: `hash-${height}`, time: new Date(0) });
+
+  let wrapper: ReturnType<typeof createWrapper>;
+
+  beforeEach(() => {
+    // Fake timers drive the query's polling; `waitFor` only ever advances a fraction of the
+    // interval, so a poll happens when a test asks for one and not before.
+    jest.useFakeTimers();
+    jest.mocked(lastBlock).mockReset();
+    // Each test gets its own store, so no cached chain tip leaks between them.
+    wrapper = createWrapper(createTestStore([aleoApi], { disableSerializableCheck: true }));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("returns the account's height until the chain tip lands", async () => {
+    jest.mocked(lastBlock).mockResolvedValue(block(FALLBACK + 50));
+
+    const { result } = renderHook(
+      () => useAleoLiveBlockHeight("aleo", { fallbackHeight: FALLBACK, enabled: true }),
+      { wrapper },
+    );
+
+    expect(result.current).toBe(FALLBACK);
+    await waitFor(() => expect(result.current).toBe(FALLBACK + 50));
+  });
+
+  it("does not read the chain while disabled", async () => {
+    jest.mocked(lastBlock).mockResolvedValue(block(FALLBACK + 50));
+
+    const { result } = renderHook(
+      () => useAleoLiveBlockHeight("aleo", { fallbackHeight: FALLBACK, enabled: false }),
+      { wrapper },
+    );
+
+    await act(async () => {});
+    expect(result.current).toBe(FALLBACK);
+    expect(lastBlock).not.toHaveBeenCalled();
+  });
+
+  // A node behind the account's last sync would otherwise grow the countdown back.
+  it("never reports a tip below the account's height", async () => {
+    jest.mocked(lastBlock).mockResolvedValue(block(FALLBACK - 200));
+
+    const { result } = renderHook(
+      () => useAleoLiveBlockHeight("aleo", { fallbackHeight: FALLBACK, enabled: true }),
+      { wrapper },
+    );
+
+    await waitFor(() => expect(lastBlock).toHaveBeenCalled());
+    expect(result.current).toBe(FALLBACK);
+  });
+
+  it("keeps the last good tip when a poll fails", async () => {
+    jest.mocked(lastBlock).mockResolvedValueOnce(block(FALLBACK + 50));
+    jest.mocked(lastBlock).mockRejectedValue(new Error("offline"));
+
+    const { result } = renderHook(
+      () => useAleoLiveBlockHeight("aleo", { fallbackHeight: FALLBACK, enabled: true }),
+      { wrapper },
+    );
+    await waitFor(() => expect(result.current).toBe(FALLBACK + 50));
+
+    await act(async () => {
+      jest.advanceTimersByTime(LIVE_BLOCK_HEIGHT_POLL_MS);
+    });
+
+    expect(jest.mocked(lastBlock).mock.calls.length).toBeGreaterThan(1);
+    expect(result.current).toBe(FALLBACK + 50);
+  });
+
+  it("re-reads the chain tip on every poll interval", async () => {
+    jest.mocked(lastBlock).mockImplementation(async () => block(FALLBACK + 50));
+
+    const { result } = renderHook(
+      () => useAleoLiveBlockHeight("aleo", { fallbackHeight: FALLBACK, enabled: true }),
+      { wrapper },
+    );
+    await waitFor(() => expect(result.current).toBe(FALLBACK + 50));
+
+    jest.mocked(lastBlock).mockImplementation(async () => block(FALLBACK + 120));
+    await act(async () => {
+      jest.advanceTimersByTime(LIVE_BLOCK_HEIGHT_POLL_MS);
+    });
+
+    await waitFor(() => expect(result.current).toBe(FALLBACK + 120));
   });
 });
