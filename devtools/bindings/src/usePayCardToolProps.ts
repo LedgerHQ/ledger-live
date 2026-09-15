@@ -54,6 +54,8 @@ export type UsePayCardToolPropsOptions = {
   readonly platform?: "web" | "native";
   readonly openPayTab?: () => void;
   readonly openSecureBrowser?: PayCardToolProps["openSecureBrowser"];
+  /** Prices one wallet's balance; the rates are the app's, so the host owns this. */
+  readonly resolveCounterValue?: ResolveWalletCounterValue;
 };
 
 const LEADING_ONBOARDING_STEPS: readonly OnboardingStep[] = [
@@ -80,6 +82,7 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
     : [...LEADING_ONBOARDING_STEPS, PURCHASE_STEP];
 }
 
+/** Stands in when the host prices nothing, so wallets are still listed, unpriced. */
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
 
 const STEP_ANSWERS: Readonly<Partial<Record<string, keyof CardOnboardingStatusMock>>> = {
@@ -115,8 +118,9 @@ function toCombinedWallet({
   priority,
   ledgerId,
   balance,
+  counterValue,
 }: CardLinkedWalletBalance): PayCardCombinedWallet {
-  const row = { id, address, currency, network, priority, balance };
+  const row = { id, address, currency, network, priority, balance, counterValueRaw: counterValue };
 
   return ledgerId === undefined ? row : { ...row, ledgerId };
 }
@@ -325,7 +329,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const skipWallets = !walletsRequested;
 
   const linkedWallets = useCardLinkedWallets({
-    resolveCounterValue: NO_COUNTER_VALUE,
+    resolveCounterValue: options.resolveCounterValue ?? NO_COUNTER_VALUE,
     skip: skipWallets,
   });
 
@@ -359,7 +363,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     () => ({
       baanxWallets: internal ?? [],
       linkedWallets: linked ?? [],
-      // Without the counter value, which this tool does not price.
       combinedWallets: linkedWallets.wallets.map(toCombinedWallet),
       isFetching: linkedWallets.isFetching,
       errors,

@@ -135,6 +135,8 @@ export interface PayCardCombinedWallet {
   readonly ledgerId?: string;
   /** `null` when no Baanx wallet matched this link, and while they are still being read. */
   readonly balance: string | null;
+  /** Raw: the counter-value currency's smallest unit, unformatted. `null` when unpriced. */
+  readonly counterValueRaw: number | null;
 }
 
 /** One row of the Card asset catalog: what the provider calls an asset, and what Ledger calls it. */

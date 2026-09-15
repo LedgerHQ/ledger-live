@@ -18,6 +18,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
+import { usePayCardWalletCounterValue } from "LLM/features/PayTab/hooks/usePayCardWalletCounterValue";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
 type BaseNavigation = NativeStackNavigationProp<
@@ -57,10 +58,13 @@ export function useDevToolsScreenViewModel() {
     return result.type === "success" ? `redirected to ${result.url}` : "dismissed";
   }, []);
 
+  const resolveCounterValue = usePayCardWalletCounterValue();
+
   const boundPayCard = usePayCardToolProps({
     platform: "native",
     openPayTab: onNavigateToPayTab,
     openSecureBrowser,
+    resolveCounterValue,
   });
 
   const payCardToolProps = useMemo(

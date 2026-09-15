@@ -28,6 +28,7 @@ const combinedWallets = [
     priority: 0,
     ledgerId: "ethereum/erc20/usd__coin",
     balance: "125.40",
+    counterValueRaw: 12_540,
   },
   {
     id: "w-sol",
@@ -36,6 +37,7 @@ const combinedWallets = [
     network: "solana",
     priority: 1,
     balance: null,
+    counterValueRaw: null,
   },
 ];
 
@@ -251,6 +253,8 @@ describe("PayCard (web)", () => {
     expect(
       screen.getByText("null — still reading, or no Baanx wallet matched"),
     ).toBeInTheDocument();
+    expect(screen.getByText("12540")).toBeInTheDocument();
+    expect(screen.getByText("null — nothing to price, or no rate for it")).toBeInTheDocument();
   });
 
   it("refreshes the wallets from the screen, and returns to the tool", () => {
