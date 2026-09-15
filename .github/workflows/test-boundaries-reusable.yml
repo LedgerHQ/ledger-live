@@ -66,3 +66,9 @@ jobs:
 
       - name: Enforce package structure
         run: pnpm exec nx run-many -t lint:structure
+
+      - name: Test the secp256k1-allowlist rules
+        run: pnpm exec nx run enforce-crypto-allowlist:test
+
+      - name: Enforce the secp256k1 allowlist
+        run: pnpm exec nx run enforce-crypto-allowlist:lint:crypto
