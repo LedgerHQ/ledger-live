@@ -3,12 +3,14 @@ import {
   computeZip317Fee,
   computeShieldedSpendFee,
   computeShieldingFee,
+  computeTransparentSelectionFee,
   selectNotes,
   selectTransparentInputs,
   estimateMaxSpendableAmount,
   estimateMaxSpendableTransparent,
 } from "./coin-selection";
 import type { SpendableNote } from "../network/types";
+import type { ZcashTransferType } from "../types/bridge";
 
 // ── Helpers ────────────────────────────────────────────────────────────
 
@@ -156,7 +158,7 @@ describe("selectNotes", () => {
     const result = selectNotes(notes, amount, "shielded");
 
     // 9 notes of 50k (450k total), amount 400k, max(9 spends, 2 outputs) = 9 actions, fee = 45k
-    // change = 450k - 400k - 45k = 5k (exactly at DUST_THRESHOLD, not absorbed)
+    // change = 450k - 400k - 45k = 5k, kept as change (never folded into the fee)
     expect(result?.selectedNotes).toHaveLength(9);
     expect(result?.totalInput.toNumber()).toBe(450_000);
     expect(result?.fee.toNumber()).toBe(45_000);
@@ -194,6 +196,69 @@ describe("selectNotes", () => {
     expect(result?.fee.toNumber()).toBe(15_000);
     expect(result?.changeAmount.toNumber()).toBe(485_000);
   });
+
+  // ── Invariant: the returned fee must be bit-identical to the ZIP-317 fee for
+  // the resulting layout (spends, orchard outputs incl. change), because the
+  // native Ironwood builder rejects any fee that is not exactly that. Absorbing
+  // residual change into the fee (as a "dust" convenience) breaks this contract
+  // for every flow selectNotes serves -- "shielded" and "shielded-to-transparent"
+  // both build as V6 (Ironwood) PCZTs against the strict builder.
+  describe("fee/layout invariant (never diverges from computeShieldedSpendFee)", () => {
+    it.each([
+      ["single note, no change", [1_000_000], 500_000, "shielded"],
+      ["single note, exact match", [100_000], 90_000, "shielded"],
+      ["multiple small notes", [200_000, 200_000, 200_000], 400_000, "shielded"],
+      ["many notes converging over several rounds", Array(10).fill(50_000), 400_000, "shielded"],
+      [
+        "shielded-to-transparent, transparent recipient leg",
+        [1_000_000],
+        500_000,
+        "shielded-to-transparent",
+      ],
+      // The user's field failure: 4 notes summing 4_512_800, amount 4_487_803 --
+      // the residual after the correct fee (4_997) is below the old dust bound.
+      [
+        "field failure — residual under the old dust threshold",
+        [1_128_200, 1_128_200, 1_128_200, 1_128_200],
+        4_487_803,
+        "shielded",
+      ],
+    ] as [string, number[], number, ZcashTransferType][])(
+      "%s: fee === computeShieldedSpendFee(selection, hasChange, transferType)",
+      (_label, noteAmounts, amount, transferType) => {
+        const notes = noteAmounts.map((a, i) =>
+          makeNote({ txid: "tx", outputIndex: i, amount: new BigNumber(a) }),
+        );
+        const result = selectNotes(notes, new BigNumber(amount), transferType);
+
+        expect(result).not.toBeUndefined();
+        const hasChange = result!.changeAmount.gt(0);
+        const expectedFee = computeShieldedSpendFee(
+          result!.selectedNotes.length,
+          hasChange,
+          transferType,
+        );
+        expect(result!.fee.toNumber()).toBe(expectedFee.toNumber());
+      },
+    );
+  });
+
+  // ── Regression vector: exact numbers from the field failure. A z→z send with
+  // 4 notes totalling 4_512_800, amount 4_487_803. The correct ZIP-317 fee for
+  // the final layout (4 spends, 1 recipient + 1 change = 2 orchard outputs) is
+  // 20_000 zats, leaving 4_997 as change -- a residual the old dust-absorption
+  // logic folded into the fee instead, producing an unbuildable 24_997 fee.
+  it("prices the field failure at the exact ZIP-317 fee, not an absorbed one", () => {
+    const notes = [1_128_200, 1_128_200, 1_128_200, 1_128_200].map((a, i) =>
+      makeNote({ txid: "tx", outputIndex: i, amount: new BigNumber(a) }),
+    );
+    const result = selectNotes(notes, new BigNumber(4_487_803), "shielded");
+
+    expect(result?.selectedNotes).toHaveLength(4);
+    expect(result?.totalInput.toNumber()).toBe(4_512_800);
+    expect(result?.fee.toNumber()).toBe(20_000);
+    expect(result?.changeAmount.toNumber()).toBe(4_997);
+  });
 });
 
 // ── computeShieldingFee ────────────────────────────────────────────────
@@ -210,6 +275,26 @@ describe("computeShieldingFee", () => {
     // logical = 5 → 25_000.
     expect(computeShieldingFee(3, 2).toNumber()).toBe(25_000);
   });
+});
+
+describe("computeTransparentSelectionFee", () => {
+  // `selectTransparentInputs` relies on this equality: because dropping the change
+  // output never lowers the fee, an amount it cannot afford with a change output it
+  // cannot afford without one either, so there is no single-output retry to attempt
+  // and no remainder left without a change output to hold it. Both floors are what
+  // make the two equal -- the grace actions for t→t, the Orchard minimum for t→z.
+  // If a future fee-model change breaks the equality (say a t→z's change becomes a
+  // transparent output), this fails and the retry has to be reconsidered.
+  it.each<ZcashTransferType>(["transparent", "transparent-to-shielded"])(
+    "prices 1 and 2 outputs identically for %s, whatever the input count",
+    transferType => {
+      for (const inputCount of [1, 2, 3, 8, 32]) {
+        expect(computeTransparentSelectionFee(inputCount, 1, transferType).toNumber()).toBe(
+          computeTransparentSelectionFee(inputCount, 2, transferType).toNumber(),
+        );
+      }
+    },
+  );
 });
 
 // ── selectTransparentInputs ────────────────────────────────────────────
@@ -249,16 +334,18 @@ describe("selectTransparentInputs (transparent-to-shielded)", () => {
     ).toBe(undefined);
   });
 
-  it("absorbs dust change into the fee", () => {
-    // With change fee = 15_000; change = 1_000_000 - 982_000 - 15_000 = 3_000 (< 5_000 dust).
+  it("does not inflate the fee by absorbing dust change (native owns change)", () => {
+    // fee = 15_000; change = 1_000_000 - 982_000 - 15_000 = 3_000. "transparent-to-shielded"
+    // also builds as a V6 (Ironwood) PCZT, so the fee must stay at the exact
+    // ZIP-317 value; the residual remains as change instead of inflating the fee.
     const result = selectTransparentInputs(
       [new BigNumber(1_000_000)],
       new BigNumber(982_000),
       false,
       "transparent-to-shielded",
     );
-    expect(result?.changeAmount.toNumber()).toBe(0);
-    expect(result?.fee.toNumber()).toBe(18_000); // 15_000 + 3_000 absorbed
+    expect(result?.fee.toNumber()).toBe(15_000);
+    expect(result?.changeAmount.toNumber()).toBe(3_000);
   });
 
   it("returns undefined when balance cannot cover amount + fee", () => {
@@ -295,6 +382,39 @@ describe("selectTransparentInputs (transparent-to-shielded)", () => {
         "transparent-to-shielded",
       ),
     ).toBe(undefined);
+  });
+
+  // ── Invariant: same contract as selectNotes, for the same reason --
+  // "transparent-to-shielded" also builds as a V6 (Ironwood) PCZT, so the
+  // returned fee must be bit-identical to the ZIP-317 fee for the final
+  // (inputCount, outputCount) layout. Folding residual change into the fee
+  // breaks this for any UTXO set whose leftover lands under the old dust bound.
+  describe("fee/layout invariant (never diverges from computeTransparentSelectionFee)", () => {
+    it.each([
+      ["single UTXO, plenty of change", [1_000_000], 100_000],
+      ["single UTXO, dust-sized residual", [1_000_000], 982_000],
+      ["multiple UTXOs", [400_000, 400_000, 400_000], 700_000],
+    ] as [string, number[], number][])(
+      "%s: fee === computeTransparentSelectionFee(inputCount, outputCount, transferType)",
+      (_label, utxoAmounts, amount) => {
+        const utxos = utxoAmounts.map(v => new BigNumber(v));
+        const result = selectTransparentInputs(
+          utxos,
+          new BigNumber(amount),
+          false,
+          "transparent-to-shielded",
+        );
+
+        expect(result).not.toBeUndefined();
+        const outputCount = result!.changeAmount.gt(0) ? 2 : 1;
+        const expectedFee = computeTransparentSelectionFee(
+          utxos.length,
+          outputCount,
+          "transparent-to-shielded",
+        );
+        expect(result!.fee.toNumber()).toBe(expectedFee.toNumber());
+      },
+    );
   });
 });
 
