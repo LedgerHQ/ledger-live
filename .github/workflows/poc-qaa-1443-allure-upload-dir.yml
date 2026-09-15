@@ -12,11 +12,18 @@ name: "POC QAA-1443 - Allure upload dir A/B"
 # costs 5.6-7.5 min on the critical path).
 
 on:
+  # workflow_dispatch alone cannot start this: GitHub only dispatches workflows that exist on the
+  # default branch, and this file is deliberately never merged. The path-scoped pull_request
+  # trigger runs the head ref's own copy, which is what makes the A/B possible from a branch.
+  pull_request:
+    paths:
+      - ".github/workflows/poc-qaa-1443-allure-upload-dir.yml"
+      - "tools/actions/composites/upload-allure-report/**"
   workflow_dispatch:
     inputs:
       source_run_id:
         description: "Mobile E2E run id to pull android-test-artifacts-* from (must be within artifact retention)"
-        required: true
+        required: false
         type: string
       artifact_pattern:
         description: "Artifact name pattern to download"
@@ -51,8 +58,8 @@ jobs:
       - name: Download the real Allure artifacts
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUN_ID: ${{ inputs.source_run_id }}
-          PATTERN: ${{ inputs.artifact_pattern }}
+          RUN_ID: ${{ inputs.source_run_id || '34792176831' }}
+          PATTERN: ${{ inputs.artifact_pattern || 'android-test-artifacts-*' }}
         run: |
           mkdir -p raw merged
           gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --pattern "$PATTERN" --dir raw
@@ -140,7 +147,7 @@ jobs:
           OTHER_DIFF: ${{ steps.compare.outputs.other_diff }}
           XML_LEFT: ${{ steps.compare.outputs.xml_left }}
           PROBE: ${{ steps.probe.outputs.result }}
-          RUN_ID: ${{ inputs.source_run_id }}
+          RUN_ID: ${{ inputs.source_run_id || '34792176831' }}
         run: |
           {
             echo "## POC QAA-1443 - build-allure-upload-dir.sh"
