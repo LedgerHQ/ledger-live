@@ -150,7 +150,7 @@ jobs:
           HASH_IOS_NATIVE: ${{ hashFiles('apps/ledger-live-mobile/ios') }}
           HASH_ANDROID_NATIVE: ${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}
           HASH_PODFILE: ${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}
-        run: bash tools/scripts/determine-mobile-cache-keys.sh
+        run: bash tools/scripts/e2e/determine-mobile-cache-keys.sh
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -482,7 +482,7 @@ jobs:
         run: |
           LOG_FILE="e2e/mobile/artifacts/emulator-boot.log"
           mkdir -p e2e/mobile/artifacts
-          nohup bash tools/scripts/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
+          nohup bash tools/scripts/e2e/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
 
@@ -516,7 +516,7 @@ jobs:
 
       - name: Get smoke test files
         id: smoke-files
-        run: bash tools/scripts/select-smoke-test-files.sh
+        run: bash tools/scripts/e2e/select-smoke-test-files.sh
 
       - name: Run Android Tests - Smoke Tests
         if: steps.smoke-files.outputs.has_tests == 'true'
@@ -677,7 +677,7 @@ jobs:
 
       - name: Get smoke test files
         id: smoke-files
-        run: bash tools/scripts/select-smoke-test-files.sh
+        run: bash tools/scripts/e2e/select-smoke-test-files.sh
 
       - name: Run iOS Tests - Smoke Tests
         if: steps.smoke-files.outputs.has_tests == 'true'

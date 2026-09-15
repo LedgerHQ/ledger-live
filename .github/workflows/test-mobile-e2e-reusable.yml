@@ -323,7 +323,7 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
           SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device || 'nanoX' }}
-        run: bash tools/scripts/resolve-speculos-device.sh
+        run: bash tools/scripts/e2e/resolve-speculos-device.sh
 
       - name: Write summary
         env:
@@ -336,10 +336,10 @@ jobs:
           TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
           COMMIT_SHA: ${{ github.sha }}
           SLACK_NOTIF_STATUS: ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'enabled' || 'disabled' }}
-        run: bash tools/scripts/write-mobile-e2e-summary.sh
+        run: bash tools/scripts/e2e/write-mobile-e2e-summary.sh
 
       - name: Validate feature flags JSON input
-        run: bash tools/scripts/validate-feature-flags-json.sh
+        run: bash tools/scripts/e2e/validate-feature-flags-json.sh
 
       - name: Determine cache keys
         id: cache-keys
@@ -350,7 +350,7 @@ jobs:
           HASH_IOS_NATIVE: ${{ hashFiles('apps/ledger-live-mobile/ios') }}
           HASH_ANDROID_NATIVE: ${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}
           HASH_SPECS: ${{ hashFiles('e2e/mobile/specs') }}
-        run: bash tools/scripts/determine-mobile-cache-keys.sh
+        run: bash tools/scripts/e2e/determine-mobile-cache-keys.sh
 
       - name: Prepare test filter
         id: test-filter
@@ -608,7 +608,7 @@ jobs:
           SHARD_FILES: ${{ matrix.files }}
           SHARD_INDEX: ${{ matrix.shard }}
           SHARD_TOTAL: ${{ matrix.total }}
-        run: bash tools/scripts/set-shard-test-files.sh
+        run: bash tools/scripts/e2e/set-shard-test-files.sh
 
       - name: JFrog npm auth
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
@@ -677,7 +677,7 @@ jobs:
         env:
           PLATFORM: ios
           IOS_SIMULATOR_DEVICE: ${{ env.IOS_SIMULATOR_DEVICE }}
-        run: bash tools/scripts/get-mobile-device-info.sh
+        run: bash tools/scripts/e2e/get-mobile-device-info.sh
 
       - name: Compute userdata cache key date
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
@@ -748,7 +748,7 @@ jobs:
         env:
           SHARD_INDEX: ${{ matrix.shard }}
           DETOX_OUTCOME: ${{ steps.run-ios.outcome }}
-        run: bash tools/scripts/set-shard-job-output.sh
+        run: bash tools/scripts/e2e/set-shard-job-output.sh
 
   detox-tests-android:
     name: Android E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
@@ -833,7 +833,7 @@ jobs:
           SHARD_FILES: ${{ matrix.files }}
           SHARD_INDEX: ${{ matrix.shard }}
           SHARD_TOTAL: ${{ matrix.total }}
-        run: bash tools/scripts/set-shard-test-files.sh
+        run: bash tools/scripts/e2e/set-shard-test-files.sh
 
       - name: Setup Android Environment
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
@@ -902,7 +902,7 @@ jobs:
           avd_api: ${{ env.AVD_API }}
 
       - name: Cleanup any running Android emulators (pre-boot)
-        run: tools/scripts/cleanup-android-emulators.sh || true
+        run: tools/scripts/e2e/cleanup-android-emulators.sh || true
 
       - name: Boot Android Emulators in Background
         run: |
@@ -910,7 +910,7 @@ jobs:
           mkdir -p ${{ env.MOBILE_ARTIFACTS_ROOT }}
           export AVD_NAME="${{ env.AVD_NAME }}"
           export AVD_OPTIONS="${{ env.AVD_OPTIONS }}"
-          nohup bash tools/scripts/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
+          nohup bash tools/scripts/e2e/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
 
@@ -926,7 +926,7 @@ jobs:
           # forensics behind it are opt-in, because their questions are answered.
           export WATCH_DIAGNOSTICS="${{ inputs.emulator_diagnostics && '1' || '' }}"
           rm -f "$WATCH_STOP_FILE"
-          nohup bash tools/scripts/watch-android-emulators-ci.sh \
+          nohup bash tools/scripts/e2e/watch-android-emulators-ci.sh \
             >> "${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-watchdog.log" 2>&1 &
           echo "ℹ️ Emulator liveness watchdog started."
         shell: bash
@@ -948,7 +948,7 @@ jobs:
           PLATFORM: android
           AVD_PROFILE: ${{ env.AVD_PROFILE }}
           AVD_API: ${{ env.AVD_API }}
-        run: bash tools/scripts/get-mobile-device-info.sh
+        run: bash tools/scripts/e2e/get-mobile-device-info.sh
 
       - name: Compute userdata cache key date
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
@@ -1152,7 +1152,7 @@ jobs:
         env:
           SHARD_INDEX: ${{ matrix.shard }}
           DETOX_OUTCOME: ${{ steps.run-android.outcome }}
-        run: bash tools/scripts/set-shard-job-output.sh
+        run: bash tools/scripts/e2e/set-shard-job-output.sh
 
   allure-report-ios:
     name: Allure Report iOS
