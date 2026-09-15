@@ -435,6 +435,11 @@
           "viewInExplorer" : "Ver en el explorador",
           "copied" : "Copiado"
         },
+        "earnBanner" : {
+          "title" : "Gana hasta un {{apy}}% {{type}}",
+          "description" : "Explora las oportunidades de Earn",
+          "button" : "Explorar"
+        },
         "accessibility" : {
           "copySwapId" : "Copiar ID de permuta"
         }
@@ -682,26 +687,6 @@
   "postOnboardingDebugger" : {
     "buttonTitle" : "Prueba"
   },
-  "vaultSigner" : {
-    "modal" : {
-      "title" : "Conectar Vault",
-      "info" : "Vincula las cuentas de tu espacio de trabajo de Ledger Vault y crea transacciones desde Ledger Wallet completando los siguientes campos. Busca la información en Ajustes > Firmante de billetera externa.",
-      "info_link" : "Más información",
-      "host" : {
-        "title" : "Endpoint de URL",
-        "placeholder" : "ws://localhost:3030"
-      },
-      "workspace" : {
-        "title" : "Nombre del espacio de trabajo",
-        "placeholder" : "espacio de trabajo"
-      },
-      "token" : {
-        "title" : "Token de API de operador",
-        "placeholder" : "Token"
-      },
-      "submit" : "Conectar"
-    }
-  },
   "account" : {
     "subHeader" : {
       "moreInfo" : "Más información",
@@ -873,22 +858,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "Paga y recibe pagos",
-      "description" : "Las monedas estables reducen la brecha entre las cripto y el gasto en la vida real",
-      "cta" : "Entendido",
+      "title" : "Todos tus pagos, en un mismo lugar",
+      "description" : "Descubre la nueva pestaña Pay, que prepara tus cripto para el uso cotidiano de dinero.",
+      "cta" : "Explorar Pay",
       "rows" : {
         "global" : {
-          "title" : "Paga y recibe pagos globalmente",
-          "description" : "Aprovecha bajas tarifas de red"
+          "title" : "Paga a tus contactos",
+          "description" : "Envía cripto a las direcciones guardadas."
         },
         "volatility" : {
-          "title" : "Volatilidad mínima",
-          "description" : "Las monedas estables se basan en fiat"
+          "title" : "Solicita pagos",
+          "description" : "Pide a tus contactos que te envíen fondos directamente."
         },
         "card" : {
-          "title" : "Gasta con una tarjeta y obtén un 1% de devolución en efectivo",
-          "description" : "Paga en USDC, USDT, BTC, ETH y más"
+          "title" : "Compra en todo el mundo con la tarjeta cripto",
+          "description" : "Y obtén un 1% de devoluciones en efectivo sin límites."
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "Más",
+      "title" : "Más",
+      "rows" : {
+        "managePin" : "Gestionar código PIN",
+        "accessBaanx" : "Acceso a Baanx",
+        "help" : "Ayuda",
+        "logout" : "Cerrar sesión"
       }
     },
     "balance" : {
@@ -904,7 +899,49 @@
     },
     "card" : {
       "title" : "Tarjeta cripto",
-      "balanceLabel" : "Saldo"
+      "balanceLabel" : "Saldo",
+      "freeze" : "Inmovilizar",
+      "unfreeze" : "Desinmovilizar",
+      "goBack" : "Volver",
+      "freezeConfirm" : {
+        "title" : "Bloquear la tarjeta significa que ya no podrás utilizarla.",
+        "description" : "Puedes desbloquear la tarjeta en cualquier momento.",
+        "confirm" : "Bloquear ahora",
+        "errorTitle" : "Falló la inmovilización"
+      },
+      "unfreezeConfirm" : {
+        "title" : "¿Desbloquear la tarjeta?",
+        "confirm" : "Desbloquear ahora",
+        "errorTitle" : "Error al desinmovilizar"
+      },
+      "confirmError" : {
+        "description" : "Algo ha salido mal. Inténtalo de nuevo.",
+        "retry" : "Intentar de nuevo"
+      }
+    },
+    "cardTransactions" : {
+      "title" : "Transacciones",
+      "categories" : {
+        "SUBSCRIPTIONS" : "Suscripciones",
+        "FOOD" : "Comida",
+        "TRAVEL" : "Viajes",
+        "ENTERTAINMENT" : "Entretenimiento",
+        "HEALTH" : "Salud",
+        "ATM" : "Cajero automático",
+        "UTILITIES" : "Servicios",
+        "MISC" : "Otros"
+      }
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "Configura tu tarjeta",
+        "allDone" : "¡Todo listo!"
+      },
+      "dialog" : {
+        "title" : "Completa tu tarjeta",
+        "stepComplete" : "Completado",
+        "gotIt" : "Entendido"
+      }
     },
     "contacts" : {
       "title" : "Pagar a un contacto",
@@ -923,7 +960,20 @@
       "actions" : {
         "pay" : "Enviar a un contacto",
         "more" : "Más opciones",
+        "viewContact" : "Ver contacto",
         "viewTransactions" : "Ver transacciones"
+      },
+      "addressPicker" : {
+        "title" : "Seleccionar la dirección de {{name}}",
+        "addAddress" : "Agregar dirección"
+      },
+      "paySuccess" : {
+        "title" : "Has pagado ({{recipient}})",
+        "amount" : "Importe",
+        "estimatedTime" : "Tiempo est.",
+        "from" : "De",
+        "viewTransaction" : "Ver transacción",
+        "close" : "Cerrar"
       }
     },
     "actions" : {
@@ -952,6 +1002,72 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "Envía efectivo, recibe monedas estables",
+      "description" : "Transfiere efectivo y recibe monedas estables directamente en tu Ledger Wallet™.",
+      "createAccount" : "Crear una cuenta",
+      "logIn" : "Iniciar sesión en Noah",
+      "providedBy" : "Ofrecido por Noah",
+      "rows" : {
+        "bank" : {
+          "title" : "Recibe transferencias de cualquier banco",
+          "description" : "Recibe su salario, pagos y depósitos a través de SEPA o ACH."
+        },
+        "fees" : {
+          "title" : "Sin tarifas ocultas",
+          "description" : "Directo del banco a la blockchain por una tarifa del 0,25%."
+        },
+        "earn" : {
+          "title" : "Pon su dinero a trabajar de inmediato",
+          "description" : "Puedes permutar o ganar con tus monedas estables."
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "Tarjeta cripto",
+      "beforeIntro" : {
+        "description" : "Obtén un 1% de devolución en efectivo cada vez que gastes",
+        "action" : "Obtener tarjeta",
+        "alreadyHaveCard" : "Ya tengo una tarjeta"
+      },
+      "afterIntro" : {
+        "description" : "Inicia sesión para acceder a la tarjeta",
+        "action" : "Inicio de sesión"
+      },
+      "errors" : {
+        "pkce_failed" : "No fue posible realizar el inicio de sesión. Inténtalo de nuevo.",
+        "browser_open_failed" : "No fue posible abrir la página de inicio de sesión. Inténtalo de nuevo.",
+        "missing_attempt" : "Este inicio de sesión ya no es válido. Vuelve a iniciar sesión.",
+        "exchange_failed" : "No fue posible completar el inicio de sesión. Inténtalo de nuevo.",
+        "persist_failed" : "No fue posible guardar la sesión. Inténtalo de nuevo.",
+        "fetch_user_failed" : "No fue posible cargar tu tarjeta. Inténtalo de nuevo."
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "Gasta cripto, obtén devoluciones",
+      "providedBy" : "Tarjeta ofrecida por Baanx",
+      "createAccount" : "Crear una cuenta",
+      "logIn" : "Iniciar sesión en Baanx",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay o Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "Devolución en efectivo del 1% en cripto sin límite",
+          "description" : "En todas las compras con tarjeta cripto con USDC, USDT o BTC."
+        },
+        "virtualCard" : {
+          "title" : "Tarjeta virtual gratuita",
+          "description" : "Añade a {{wallet}}, listo al instante."
+        },
+        "topUp" : {
+          "title" : "Recarga de forma segura desde Ledger Wallet™",
+          "description" : "Cada transferencia aprobada con tu signer Ledger."
+        }
+      }
+    },
     "request" : {
       "title" : "Solicitud {{asset}}",
       "networkLabel" : "Red {{network}}",
@@ -962,6 +1078,10 @@
         "copied" : "Copiado",
         "save" : "Guardar",
         "verify" : "Verificar"
+      },
+      "verifyHint" : {
+        "message" : "Verifica la dirección en el dispositivo Ledger antes de compartir",
+        "gotIt" : "Entendido"
       },
       "verifyAddress" : {
         "introTitle" : "Verifica tu dirección",
@@ -1602,10 +1722,6 @@
     "referralProgram" : {
       "title" : "Recomiéndanos y llévate $10 USD",
       "description" : "Refiere con éxito a un amigo para recibir $10 USD en Bitcoin cada uno."
-    },
-    "vaultSigner" : {
-      "title" : "Modo firmante de Vault",
-      "link" : "Centro de ayuda de Vault"
     }
   },
   "signmessage" : {
@@ -2511,10 +2627,6 @@
         "title" : "Dispositivo"
       },
       "details" : {
-        "solanaRawTransaction" : {
-          "title" : "Firma a ciegas requerida",
-          "description" : "No puedes verificar los detalles de la transacción en tu dispositivo Ledger. Si la firmas, podrías perder todos tus activos. Firma la transacción sólo si confías en este sitio web."
-        },
         "utxoLag" : "La firma y verificación de esta transacción puede llevar un tiempo prolongado porque la cuenta presenta una cantidad significativa de monedas.",
         "subaccountsWarning" : "Necesitarás enviar de nuevo {{ currency }} a esta cuenta para enviar tokens desde esta cuenta",
         "from" : "De",
@@ -2652,11 +2764,12 @@
       "walletNotExist" : "La wallet no existe"
     },
     "skipMemo" : {
-      "title" : "¿Omitir agregar {{memoLabel}}?",
+      "title" : "¿Enviar sin {{memoLabel}}?",
       "description" : "Es posible que pierdas tus activos si el receptor solicita una {{memoLabel}}",
       "notRequired" : "¿El destinatario no requiere {{memoLabel}}?",
-      "confirm" : "Sí, omitir",
-      "neverAskAgain" : "No volver a mostrar esta advertencia"
+      "confirm" : "Sí, enviar sin {{memoLabel}}",
+      "cancel" : "No, volver",
+      "neverAskAgain" : "No volver a preguntar"
     },
     "tagHelp" : {
       "inputLabel" : "Ingresar {{memoLabel}}",
@@ -2724,6 +2837,34 @@
       "selectSufficientCoins" : "Selecciona monedas suficientes",
       "amountToSendInCurrency" : "Monto a enviar en ({{ticker}})",
       "amountInputLabel" : "Importe a enviar"
+    },
+    "recipient" : {
+      "selfTransfer" : {
+        "title" : "Autotransferencia",
+        "toPrivate" : {
+          "action" : "Enviar al saldo privado",
+          "label" : "Saldo privado"
+        },
+        "toPublic" : {
+          "action" : "Enviar al saldo público",
+          "label" : "Saldo público"
+        }
+      }
+    },
+    "balanceType" : {
+      "title" : "Seleccionar tipo de saldo",
+      "transparent" : {
+        "title" : "Saldo público",
+        "subtitle" : "Transparente"
+      },
+      "shielded" : {
+        "title" : "Saldo privado",
+        "subtitle" : "Blindado",
+        "pendingNotice" : "Algunas notas blindadas aún están madurando y es posible que todavía no se puedan gastar"
+      },
+      "zeroBalance" : {
+        "warning" : "No hay saldo disponible"
+      }
     }
   },
   "releaseNotes" : {
@@ -5452,6 +5593,12 @@
       "enableLearnStagingUrlDesc" : "Activar el URL de ensayo de la página Learn.",
       "enableCountervaluesStaging" : "Entorno de prueba de API de contravalores",
       "enableCountervaluesStagingDesc" : "Usa el entorno de prueba de la API de contravalores en lugar del entorno de producción.",
+      "enableMockServerTransport" : "Transporte de servidor simulado",
+      "enableMockServerTransportDesc" : "Activa el transporte de servidor simulado del Device Management Kit para conectarte a un servidor de dispositivo simulado en lugar de a un dispositivo físico. Utiliza el servidor simulado compartido a menos que MOCK_SERVER_TRANSPORT_URL apunte a otro lugar. Requiere reiniciar la app para que surta efecto.",
+      "mockServerStatus" : {
+        "connected" : "Servidor simulado conectado. Haz clic para copiar el token de sesión, clic derecho para abrir la interfaz de configuración",
+        "disconnected" : "Servidor simulado inaccesible"
+      },
       "openOnboardingAppInstallDebug" : "Abre la pantalla de depuración de la instalación de aplicaciones iniciales",
       "openOnboardingAppInstallDebugDesc" : "Abre una pantalla con los componentes del paso de sincronización de la instalación de aplicaciones iniciales"
     },
@@ -5554,10 +5701,6 @@
         "1559DeactivateGate" : {
           "title" : "Desactivar umbral de tarifa de prioridad mínima EIP1559",
           "description" : "Esto permite enviar una transacción sin ninguna expectativa de tarifa de prioridad mínima. Optar por ello puede provocar que una transacción quede bloqueada en el pool de memoria para siempre."
-        },
-        "vaultSigner" : {
-          "title" : "Firmante de Vault",
-          "description" : "Usar Ledger Vault como firmante con tu token de API de operador"
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "Umbral de tarifa de prioridad personalizada",
@@ -7117,6 +7260,10 @@
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "No fue posible obtener el saldo",
+      "description" : "Verifica tu conexión a Internet y vuelve a intentarlo."
+    },
     "NotEnoughTransferAmount" : {
       "title" : "Se requiere un mínimo de 1 ICP para poner en participación en una neurona."
     },
@@ -7316,6 +7463,12 @@
     "ZcashAmountBelowDustThreshold" : {
       "title" : "La cantidad es demasiado pequeña para transmitirse (mínimo de {{minimumZatoshis}} zatoshis)"
     },
+    "ZcashMemoTooLong" : {
+      "title" : "El memo no debe superar los {{maxBytes}} bytes"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "Esta cantidad es demasiado grande para enviarla en una sola transacción: Intenta enviarla en cantidades más pequeñas"
+    },
     "InvalidNonce" : {
       "title" : "Es obligatorio añadir un nonce"
     },
@@ -7428,6 +7581,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "El proceso de quitar de participación de tu validador anterior debe finalizar primero"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "Este monto es demasiado pequeño para ponerlo en participación"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Primero vacía las subcuentas"
@@ -7713,6 +7869,58 @@
     },
     "ConcordiumAddressVerificationFailedError" : {
       "title" : "La verificación de la dirección ha fallado"
+    },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "No hay suficientes CCD para la tarifa de red",
+      "description" : "La tarifa de red se paga en CCD, no en el token que estás enviando. Añade CCD a esta cuenta y vuelve a intentarlo."
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "Las transferencias están pausadas para este token",
+      "description" : "El emisor del token ha pausado todas las transferencias. Puedes volver a intentarlo cuando se reanuden las transferencias."
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "Esta cuenta no puede enviar este token",
+      "description" : "El emisor del token restringe quién puede enviarlo, y esta cuenta no está autorizada. Ponte en contacto con el emisor del token para obtener acceso."
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "No fue posible verificar las restricciones del token",
+      "description" : "No ha sido posible leer las reglas de transferencia de este token, por lo que no es posible confirmar que la transferencia esté permitida. Vuelve a sincronizar la cuenta e inténtalo de nuevo."
+    },
+    "ConcordiumRecipientNotAllowed" : {
+      "title" : "Esta dirección no puede recibir {{ticker}}",
+      "description" : "No ha sido aprobada por el emisor del token. La aprobación la gestiona el emisor, no Ledger."
+    },
+    "ConcordiumRecipientDenied" : {
+      "title" : "Esta dirección tiene restringido recibir {{ticker}}",
+      "description" : "El emisor del token ha restringido esta dirección. Ponte en contacto con el emisor para obtener más detalles."
+    },
+    "ConcordiumRecipientRestrictionsUnverified" : {
+      "title" : "No fue posible verificar las restricciones de {{ticker}}",
+      "description" : "No ha sido posible comprobar si esta dirección puede recibir {{ticker}}, por lo que no es posible confirmar que la transferencia esté permitida. Comprueba tu conexión e inténtalo de nuevo."
+    },
+    "ConcordiumRecipientNotFound" : {
+      "title" : "Esta dirección no existe en Concordium",
+      "description" : "Comprueba la dirección e inténtalo de nuevo. Enviar a una dirección que nunca se creó falla en la red y, aun así, conlleva una tarifa."
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "Este token no se puede firmar en tu dispositivo Ledger",
+      "description" : "El token utiliza {{decimals}} decimales y tu dispositivo admite como máximo {{maxDecimals}}. Puedes recibirlos y conservarlos sin inconvenientes."
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "Este token ya no está en tu cuenta",
+      "description" : "El token seleccionado ya no está disponible. Por favor, inicia la transacción de nuevo."
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "No es posible preparar esta transacción",
+      "description" : "Los detalles del token caen por fuera de lo que acepta tu dispositivo Ledger, por lo que no será posible crear la transacción. Ponte en contacto con el Soporte de Ledger."
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "Es necesario actualizar la aplicación.",
+      "description" : "La aplicación Concordium en tu dispositivo Ledger no admite transferencias de tokens. Actualízala en Mi Ledger e inténtalo de nuevo."
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "Se ha producido un error. Vuelve a conectar tu dispositivo",
+      "description" : "La app Concordium no pudo procesar la transacción. Si el problema persiste, ponte en contacto con el Soporte de Ledger."
     },
     "StacksMemoTooLong" : {
       "title" : "El memo es demasiado largo"
@@ -8111,6 +8319,104 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "Cantidad demasiado grande para las limitaciones de UTXO."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "Retardo de disolución demasiado corto",
+      "description_one" : "Internet Computer requiere un retardo de disolución de al menos {{minDays}} día.",
+      "description_other" : "Internet Computer requiere un retardo de disolución de al menos {{minDays}} días."
+    },
+    "ICPInvalidDissolveDelayIncrease" : {
+      "title" : "Número de días no válido",
+      "description" : "Introduce un número de días mayor que cero."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "Retardo de disolución demasiado largo",
+      "description_one" : "Internet Computer limita el retardo de disolución de una neurona a {{maxDays}} día.",
+      "description_other" : "Internet Computer limita el retardo de disolución de una neurona a {{maxDays}} días."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "No se puede acortar el retardo de disolución",
+      "description" : "El retardo de disolución de una neurona solo se puede aumentar. Para acortarlo, comienza a disolver la neurona."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "No se encontró la neurona",
+      "description" : "Esta neurona no aparece en tu última instantánea sincronizada. Sincroniza tus neuronas e inténtalo de nuevo."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "Principal no válido",
+      "description" : "Una clave activa debe ser un principal de Internet Computer válido."
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "Hotkey ya añadida",
+      "description" : "Este principal ya es una clave activa en esta neurona."
+    },
+    "ICPHotKeyIsController" : {
+      "title" : "Este principal ya controla la neurona",
+      "description" : "Introduce un principal diferente. Una clave activa solo puede votar y configurar el seguimiento, algo que el controlador ya puede hacer."
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "Cantidad fuera del rango en el que esta neurona puede dividirse",
+      "description" : "Tanto la neurona original como la nueva deben mantener al menos 1 ICP puesto en participación, más la tarifa de red sobre la cantidad transferida."
+    },
+    "ICPSpawnNotAllowed" : {
+      "title" : "No se puede generar desde esta neurona",
+      "description" : "Una neurona que ya está generando no puede volver a generar y la madurez generada debe dejar al menos 1 ICP después del ajuste de madurez de la red. Sincroniza tus neuronas para ver su estado actual."
+    },
+    "ICPStakeMaturityNotAllowed" : {
+      "title" : "No se puede poner en participación la madurez de esta neurona",
+      "description" : "La madurez no se puede poner en participación mientras la neurona se esté generando, una vez que se haya disuelto por completo o cuando la neurona no tenga ninguna. Sincroniza tus neuronas para ver su estado actual."
+    },
+    "ICPFollowTopicNotAllowed" : {
+      "title" : "No se puede seguir este tema",
+      "description" : "Internet Computer ha retirado este tema o la app de Internet Computer de Ledger aún no puede firmar el seguimiento de éste. Elige otro tema."
+    },
+    "ICPDisburseNotAllowed" : {
+      "title" : "No se puede desembolsar esta neurona",
+      "description" : "Una neurona se puede desembolsar una vez que se haya disuelto por completo y su participación sea superior a la tarifa de red. Sincroniza tus neuronas para ver su estado actual."
+    },
+    "ICPTooManyHotKeys" : {
+      "title" : "Límite de claves activas alcanzado",
+      "description" : "Una neurona puede tener como máximo {{max}} hot keys. Elimina una para añadir otra."
+    },
+    "ICPTopUpBelowMinimumStake" : {
+      "title" : "Recarga demasiado pequeña",
+      "description" : "El saldo de una neurona debe alcanzar 1 ICP después de una recarga. Según la última sincronización, esta neurona necesita al menos {{missing}} ICP más. Una transferencia menor se liquida en la cuenta de la neurona, pero no se contabiliza hasta que una recarga posterior alcance el mínimo."
+    },
+    "ICPStakeNotRefreshed" : {
+      "title" : "Puesta en participación transferida, neurona no actualizada",
+      "description" : "El ICP se transfirió a la cuenta de la neurona, pero la gobernanza de Internet Computer se negó a actualizar la neurona desde esta. {{reason}} No se pierde nada: El monto permanece en la cuenta de la neurona y se acumula para la próxima recarga que eleve el saldo a un mínimo de 1 ICP. Ledger Wallet todavía no puede verlo allí, por lo que el campo de cantidad sigue solicitando la diferencia total que muestra la última sincronización."
+    },
+    "ICPStakeMemoNotRecoverable" : {
+      "title" : "No se puede recargar esta neurona",
+      "description" : "Para recargar una neurona se necesita el memo de la transacción que la creó, y éste no se encuentra en el historial de esta cuenta. Recárgala desde la cuenta que creó la neurona."
+    },
+    "ICPCallUnconfirmed" : {
+      "title" : "Resultado desconocido",
+      "description" : "Internet Computer aceptó la solicitud pero no devolvió ningún resultado, por lo que puede haber tenido efecto o no. Sincroniza tus neuronas para verificar antes de volver a intentarlo."
+    },
+    "ICPNeuronsNotRead" : {
+      "title" : "Neuronas no actualizadas",
+      "description" : "Internet Computer no devolvió tus neuronas, por lo que no han cambiado. Inténtalo de nuevo."
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "Esto bloquea tus ICP en una nueva neurona",
+      "description" : "La neurona comienza con el retardo de disolución más corto, que es demasiado breve para votar u obtener una recompensa. Auméntalo desde Gestionar Neuronas y ten en cuenta que tendrás que esperar a que transcurra el plazo del retardo antes de que la participación se pueda volver a gastar."
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "Esto se añade a una participación bloqueada",
+      "description" : "La cantidad se suma a la participación existente de la neurona y sigue su retardo de disolución, por lo que no se puede gastar hasta que la neurona se disuelva."
+    },
+    "ICPGovernanceRejected" : {
+      "title" : "La red rechazó esta operación",
+      "description" : "La gobernanza de Internet Computer rechazó la solicitud, por lo que la neurona no ha cambiado. Sincroniza tus neuronas para ver su estado actual. {{reason}}"
+    },
+    "ICPCallRejected" : {
+      "title" : "Solicitud no aceptada",
+      "description" : "Internet Computer rechazó la solicitud antes de que se ejecutara, por lo que nada ha cambiado. Inténtalo de nuevo. {{reason}}"
+    },
+    "ICPInvalidPercentage" : {
+      "title" : "Porcentaje fuera de rango",
+      "description" : "Introduce un número entero entre 1 y 100."
     }
   },
   "cryptoOrg" : {
@@ -8230,6 +8536,7 @@
             "inactiveTooltip" : "Validador no encontrado",
             "overstakedTooltip" : "En este nodo se ha puesto en participación en exceso, el APY no es óptimo",
             "activeTooltip" : "Las cantidades delegadas generan recompensas",
+            "fetchErrorTooltip" : "No se pudieron cargar los datos de los validadores. Inténtalo de nuevo.",
             "delegated" : "Delegado",
             "rewards" : "Recompensas"
           },
@@ -8308,6 +8615,8 @@
             "newValidatorLabel" : "Nueva delegación",
             "newValidatorSelectPlaceholder" : "Seleccionar validador",
             "removedValidatorSelectPlaceholder" : "El validador seleccionado anteriormente ya no está disponible.",
+            "unableToLoadSelectPlaceholder" : "No es posible cargar los validadores",
+            "loadingValidatorPlaceholder" : "Cargando validadores...",
             "newValidatorSelectNoOption" : "Ningún validador coincide con \"{{validatorName}}\"",
             "amountLabel" : "Importe a redelegar",
             "alert" : "Al poner en participación en Hedera, se pone en participación todo tu saldo. Permanece totalmente líquido, no se expone a periodo de inmovilización ni a riesgos de penalización. Puede que tengas que esperar hasta 48 horas para que comiences a recibir recompensas por puesta en participación.",
@@ -8876,9 +9185,11 @@
     "selectNetwork" : "Seleccionar red",
     "unsupportedAssetTooltip" : "{{asset}} no es compatible todavía",
     "unsupportedNetworkTooltip" : "La red {{network}} no es compatible todavía.",
+    "notAvailableYet" : "No disponible todavía",
     "selectAccount" : "Seleccionar cuenta",
     "selectAccountPerpsTitle" : "Selecciona una cuenta de Hyperliquid",
-    "selectAccountPerpsDescription" : "Para aportar fondos a tus perpetuos, necesitas una cuenta de Hyperliquid. Agrega una para continuar.",
+    "selectAccountPerpsDescription" : "Selecciona una cuenta en la que desees depositar fondos para realizar tus operaciones",
+    "selectAccountPerpsEmptyDescription" : "Para aportar fondos a tus perpetuos, necesitas una cuenta de Hyperliquid. Agrega una para continuar.",
     "selectDepositCurrencyTitle" : "Selecciona el activo a depositar",
     "selectDepositCurrencyDescription" : "Cualquier activo compatible funciona. Se permutará automáticamente si es necesario.",
     "accountCount_one" : "Cuenta {{count}}",
@@ -9123,7 +9434,7 @@
         "memo" : {
           "label" : "Memo (opcional)",
           "placeholder" : "Escribe un memo",
-          "tooltip" : "Adjunta un mensaje privado a esta transacción blindada. Solo el receptor puede leerlo. Hasta 512 bytes."
+          "tooltip" : "Añade un memo cifrado a este pago blindado. Solo el receptor puede leerlo. Máx. 512 bytes."
         },
         "syncBanner" : {
           "stopped" : {
@@ -9146,15 +9457,15 @@
         "selfTransfer" : {
           "toPrivate" : "Autotransferencia al saldo privado",
           "toPublic" : "Autotransferencia al saldo público",
-          "unavailable" : "Tu dirección privada aún no está disponible. Exporta tu clave de visualización para habilitar esto.",
+          "unavailable" : "Tu dirección privada estará disponible una vez que se active Blindado para tu cuenta.",
           "privacyWarning" : "Esto vincula tus fondos blindados con la dirección pública de tu cuenta, que cualquiera puede ver. Enviar a una dirección privada externa los mantiene desvinculados."
         }
       },
       "state" : {
-        "showBalance" : "Mostrar saldo",
+        "showBalance" : "Activar blindadas",
         "startSync" : "Iniciar sincronización",
         "stopSync" : "Detener sincronización",
-        "upToDate" : "Actualizado",
+        "upToDate" : "Actualizar saldo",
         "lastSync" : "Última sincronización: {{date}}",
         "estimatedTimeRemaining" : "Tiempo restante estimado: {{hours}}:{{minutes}}",
         "syncFailed" : "La sincronización del saldo privado ha fallado."
@@ -9325,6 +9636,88 @@
         "errorTitle" : "La sincronización privada ha fallado.",
         "errorDesc" : "Algo salió mal, por favor inténtalo de nuevo"
       }
+    },
+    "bond" : {
+      "flow" : {
+        "title" : "Vincular ALEO",
+        "steps" : {
+          "validator" : {
+            "title" : "Validador",
+            "fetchError" : "No fue posible cargar la lista de validadores.",
+            "totalStake" : "Participación total",
+            "rateAndCommission" : "{{rate}}% est. · {{commission}}% de comisión",
+            "commissionOnly" : "{{commission}}% de comisión",
+            "rowSubtitleClosed" : "El validador está cerrado a nuevas participaciones",
+            "rowSubtitleUnbonding" : "El validador se está desvinculando",
+            "unbondingTooltip" : "Este validador está retirando su propia participación. La red rechaza toda nueva participación en él hasta que se reclame esa retirada.",
+            "rowSubtitleEarnsNothing" : "El validador no obtiene recompensas",
+            "nonEarning" : {
+              "fullCommission" : "Este validador cobra el 100% de comisión, por lo que los delegadores no se quedan con nada.",
+              "overConcentrated" : "Este validador posee más del 25% de todo los ALEO puestos en participación. El protocolo no le paga nada por encima de ese límite, por lo que los delegadores no ganan nada."
+            },
+            "topUpOnly" : "Aleo permite un validador por cuenta. Puedes aumentar la participación con este validador o quitar de participación primero para elegir uno diferente."
+          },
+          "amount" : {
+            "title" : "Importe",
+            "minimum" : "La participación total con este validador debe alcanzar al menos 10.000 ALEO para obtener recompensas. Solo se puede poner en participación los ALEO públicos: Convierte primero el saldo privado a público si deseas ponerlo en participación."
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo",
+            "validatorLabel" : "Validador"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "broadcastError" : "No fue posible enviar la vinculación.",
+            "success" : {
+              "title" : "Vinculación enviada",
+              "text" : "La vinculación se está procesando.",
+              "cta" : "Ver detalles"
+            }
+          }
+        }
+      }
+    },
+    "manage" : {
+      "headerAction" : "Earn",
+      "title" : "Gestionar la puesta en participación",
+      "comingSoonTooltip" : "Próximamente",
+      "bond" : {
+        "title" : "Vincular",
+        "description" : "Vincula tus ALEO a un validador para obtener recompensas."
+      },
+      "unbond" : {
+        "title" : "Desvincular",
+        "description" : "Desvincula tus ALEO vinculados. Los fondos estarán disponibles después del período de desvinculación."
+      },
+      "claim" : {
+        "title" : "Reclamar",
+        "description" : "Reclama tus ALEO vinculados para regresarlos a tu saldo disponible."
+      },
+      "unbondPendingTooltip" : "Una operación de quitar de participación está esperando a ser confirmada. Aleo realiza un seguimiento de una sola posición de desvinculación a la vez, por lo que la desvinculación no estará disponible hasta que se haya procesado."
+    },
+    "unbond" : {
+      "flow" : {
+        "title" : "Desvincular ALEO",
+        "steps" : {
+          "amount" : {
+            "title" : "Importe",
+            "unbondableBanner" : "La cantidad máxima desvinculable es",
+            "belowMinimum" : "Si la desvinculación dejara menos de {{minAmount}} vinculado, se desvinculará todo el saldo vinculado en su lugar, ya que ya no se cumpliría con el mínimo para participar."
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Desvinculación enviada",
+              "text" : "Se ha transmitido la solicitud de desvinculación.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción de desvinculación se firmó, pero no se pudo transmitir."
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9380,6 +9773,39 @@
       "seeWhatsNew" : "Entérate de las novedades",
       "next" : "Siguiente",
       "gotIt" : "Entendido"
+    }
+  },
+  "q3Tour" : {
+    "slides" : {
+      "intro" : {
+        "title" : "Un recorrido rápido por las novedades",
+        "description" : "Nuevas formas de enviar, gastar, ganar y mucho más."
+      },
+      "contact" : {
+        "title" : "Despídete de las direcciones largas",
+        "description" : "Presentamos Contactos Guarda las direcciones de wallet con nombres. Fáciles de encontrar, fáciles de enviar."
+      },
+      "contactNoPay" : {
+        "title" : "Presentamos Contactos",
+        "description" : "Despídete de las direcciones largas Guarda las direcciones de wallet con nombres. Fáciles de encontrar, fáciles de enviar."
+      },
+      "pay" : {
+        "title" : "Presentamos Pay",
+        "description" : "Paga a contactos, solicita dinero y obtén devoluciones en efectivo con la tarjeta cripto. Ahora, todo desde una pestaña."
+      },
+      "payNoCard" : {
+        "title" : "Presentamos Pay",
+        "description" : "Paga a contactos y solicita dinero, todo desde una sola pestaña."
+      },
+      "yield" : {
+        "title" : "Conserva tus cripto, financia tus proyectos",
+        "description" : "Pide un préstamo de monedas estables utilizando wrapped BTC como garantía a través de Yield.xyz, desarrollado por Morpho."
+      }
+    },
+    "cta" : {
+      "start" : "Echa un vistazo",
+      "next" : "Siguiente",
+      "done" : "Todo al día"
     }
   },
   "productTour" : {
@@ -9511,6 +9937,16 @@
           "title" : "Preparando tu dispositivo Ledger"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "Preparando tu dispositivo Ledger"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "Preparando tu dispositivo Ledger"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "Usa el mismo dispositivo Ledger que usaste para añadir este contacto",
@@ -9523,13 +9959,17 @@
         "appVersionTooLow" : {
           "title" : "Es necesario actualizar la aplicación.",
           "description" : "Actualiza la app en tu dispositivo Ledger para guardar contactos y, a continuación, vuelve a intentarlo."
+        },
+        "osVersionTooLow" : {
+          "title" : "Actualización del Ledger OS requerida",
+          "description" : "Actualiza el sistema operativo de tu dispositivo Ledger para cambiar el nombre de los contactos y, a continuación, vuelve a intentarlo."
         }
       }
     },
     "title" : "Contactos",
     "addContact" : "Agregar contacto",
     "addAddress" : "Agregar dirección",
-    "addExternalAddress" : "Añadir dirección externa",
+    "addYourAddress" : "Añade tu dirección",
     "addAddressEntry" : {
       "title" : "Ingresar dirección",
       "addressPlaceholder" : "Dirección o ENS",
@@ -9544,7 +9984,10 @@
         "learnMore" : "Más información"
       },
       "validationUnavailable" : "La validación de la dirección no está disponible temporalmente",
-      "ensDisclaimer" : "Este nombre ENS se resuelve en la dirección que se muestra arriba."
+      "ensDisclaimer" : "Los nombres ENS pueden cambiar",
+      "ensDisclaimerDescription" : "Los nombres ENS pueden apuntar a diferentes direcciones a lo largo del tiempo. Guardamos la dirección subyacente ahora para garantizar que los fondos solo lleguen a la dirección que verifiques.",
+      "duplicateAddress" : "Esta dirección ya está en uso para {{contactName}}.",
+      "privacyPolicy" : "Learn more about Ledger's Privacy Policy."
     },
     "addAddressName" : {
       "inputLabel" : "Nombre de la dirección",
@@ -9561,31 +10004,29 @@
       "currencyLabel" : "Divisa",
       "networkLabel" : "Red",
       "nameLabel" : "Nombre de la dirección",
-      "continue" : "Confirmar dirección",
-      "successTitle" : "Dirección guardada",
-      "close" : "Cerrar"
+      "continue" : "Confirmar dirección"
     },
     "addContactDrawer" : {
       "namePlaceholder" : "Nombre del contacto",
-      "namingDisclaimer" : "Por privacidad, evita los nombres y apellidos completos. Usa un apodo o sólo el nombre y la inicial, como por ejemplo, \"John S\".",
+      "namingDisclaimer" : "Por privacidad, evita los nombres completos. Utiliza un apodo o solo el nombre y la inicial, por ejemplo, \"John S.\"",
       "invalidNameError" : "No se permiten caracteres especiales.",
       "duplicateNameError" : "Este nombre de contacto ya está en uso."
     },
-    "searchPlaceholder" : "Buscar contacto",
+    "searchPlaceholder" : "Buscar por nombre",
     "searchNoResults" : "No se encontró ningún contacto",
     "addressCount_zero" : "0 direcciones",
     "addressCount_one" : "{{count}} dirección",
     "addressCount_other" : "{{count}} direcciones",
     "me" : {
-      "name" : "Yo"
+      "myAddresses" : "Mis direcciones"
     },
     "detail" : {
       "meDisplayName" : "{{name}} (Yo)",
       "ledgerWalletAddresses" : "Direcciones de Ledger Wallet",
       "emptyState" : {
-        "meTitle" : "No tienes direcciones guardadas",
+        "meTitle" : "Guarda tus propias direcciones",
         "contactTitle" : "No hay direcciones guardadas para {{name}}",
-        "meDescription" : "Guarda tus direcciones de wallet para recibir cripto por nombre la próxima vez.",
+        "meDescription" : "Guarda las direcciones externas que poseas en exchanges u otras wallets. La próxima vez que te envíes activos a tí mismo, tu dispositivo Ledger mostrará el nombre que hayas elegido.",
         "contactDescription" : "Guarda sus direcciones de wallet para enviarlas por nombre la próxima vez."
       }
     },
@@ -9627,12 +10068,6 @@
       "applyChanges" : "Aplicar cambios",
       "invalidLabelError" : "No se permiten caracteres especiales."
     },
-    "editSigner" : {
-      "title" : "Confirma en tu dispositivo",
-      "description" : "Conecta y desbloquea tu dispositivo Ledger para confirmar este cambio.",
-      "confirm" : "Continuar",
-      "cancel" : "Cancelar"
-    },
     "editSignerMismatch" : {
       "title" : "Usa el mismo dispositivo Ledger que usaste para añadir este contacto",
       "description" : "El dispositivo conectado no coincide.",
@@ -9640,13 +10075,14 @@
       "cancel" : "Cancelar"
     },
     "ledgerSyncIntroduction" : {
-      "description" : "Tus contactos están cifrados de extremo a extremo con tu Ledger y sincronizados en todos tus dispositivos; solo tú puedes desbloquearlos.",
-      "activate" : "Activar Ledger Sync",
-      "dismiss" : "Entendido"
+      "title" : "Sincroniza la wallet para añadir un contacto",
+      "description" : "Los contactos están cifrados de extremo a extremo y sincronizados en Ledger Wallet entre todos tus teléfonos y PCs.",
+      "activate" : "Sincronizar mi wallet",
+      "dismiss" : "Ahora no"
     },
     "featureIntroduction" : {
       "title" : "Presentamos Contactos",
-      "primaryAction" : "Explorar ahora",
+      "primaryAction" : "Probar ahora",
       "highlights" : {
         "saveAddresses" : {
           "title" : "Guarda direcciones con el nombre que elijas",
@@ -9657,7 +10093,7 @@
           "description" : "Ve un nombre de confianza, no una dirección."
         },
         "privateAcrossDevices" : {
-          "title" : "Recarga de forma segura desde Ledger Wallet™",
+          "title" : "Privado en todos tus dispositivos Ledger",
           "description" : "Cifrado de extremo a extremo con Ledger Sync."
         }
       }
@@ -9934,6 +10370,26 @@
         "title" : "Poner en participación ICP",
         "description" : "Pon ICP en participación y obtén recompensas por colaborar en su gobernanza.",
         "cta" : "Poner en participación ICP"
+      },
+      "confirmFollowing" : {
+        "title" : "Confirma el seguimiento",
+        "description" : "Una de tus neuronas está perdiendo poder para votar. Confirma su seguimiento para restaurarla.",
+        "cta" : "Confirmar seguimiento"
+      },
+      "syncNeurons" : {
+        "title" : "Actualiza tus neuronas",
+        "description" : "Los datos de tu neurona están desactualizados. Conecta tu dispositivo para actualizarlo.",
+        "cta" : "Actualizar neuronas"
+      },
+      "lockNeurons" : {
+        "title" : "Aumenta tu retardo de disolución",
+        "description" : "Una neurona necesita un retardo de disolución más largo antes de poder votar y obtener recompensas.",
+        "cta" : "Gestionar neuronas"
+      },
+      "addFollowees" : {
+        "title" : "Comienza a ganar recompensas",
+        "description" : "Sigue a otras neuronas en temas de gobernanza para que tu neurona vote y gane recompensas.",
+        "cta" : "Gestionar neuronas"
       }
     },
     "headerManageActions" : {
@@ -9941,11 +10397,259 @@
         "title" : "Gestionar neuronas"
       }
     },
+    "duration" : {
+      "years_one" : "{{count}} año",
+      "years_other" : "{{count}} años",
+      "months_one" : "{{count}} mes",
+      "months_other" : "{{count}} meses",
+      "days_one" : "{{count}} día",
+      "days_other" : "{{count}} días",
+      "hours_one" : "{{count}} hora",
+      "hours_other" : "{{count}} horas",
+      "minutes_one" : "{{count}} minuto",
+      "minutes_other" : "{{count}} minutos",
+      "lessThanAMinute" : "Menos de un minuto"
+    },
+    "neuronState" : {
+      "Locked" : "Bloqueada",
+      "Dissolving" : "Disolviendo",
+      "Dissolved" : "Disuelta",
+      "Spawning" : "Generando",
+      "Unknown" : "Desconocido"
+    },
+    "common" : {
+      "neuronId" : "ID de la neurona",
+      "stake" : "Participar",
+      "maturity" : "Madurez",
+      "dissolveDelay" : "Retardo de disolución",
+      "state" : "Estado",
+      "action" : "Acción",
+      "none" : "Ninguno",
+      "disburse" : "Desembolsar",
+      "startDissolving" : "Iniciar disolución",
+      "stopDissolving" : "Detener disolución",
+      "enabled" : "Habilitado",
+      "disabled" : "Desactivado",
+      "enable" : "Habilitar",
+      "disable" : "Desactivar"
+    },
+    "manageNeuronFlow" : {
+      "title" : "Gestionar neuronas",
+      "device" : {
+        "title" : "Dispositivo"
+      },
+      "confirmation" : {
+        "title" : "Confirmación",
+        "broadcastError" : "Tu operación se firmó, pero no fue posible enviarla a la red.",
+        "backToNeurons" : "Volver a las neuronas",
+        "success" : {
+          "title" : "Listo",
+          "default" : "Tu neurona se ha actualizado.",
+          "list_neurons" : "Tus neuronas están actualizadas.",
+          "start_dissolving" : "Tu neurona ha comenzado a disolverse.",
+          "stop_dissolving" : "Tu neurona ha dejado de disolverse.",
+          "disburse" : "La participación de tu neurona se ha desembolsado en su cuenta.",
+          "set_dissolve_delay" : "Se ha establecido el retardo de disolución de tu neurona.",
+          "increase_dissolve_delay" : "Se ha aumentado el retardo de disolución de tu neurona.",
+          "add_hot_key" : "La clave de acceso rápido se ha añadido a tu neurona.",
+          "remove_hot_key" : "La clave de acceso rápido se ha eliminado de tu neurona.",
+          "follow" : "Se ha actualizado el seguimiento de tu neurona.",
+          "refresh_voting_power" : "El poder de voto de tu neurona se ha actualizado.",
+          "stake_maturity" : "La madurez de tu neurona se ha puesto en participación.",
+          "auto_stake_maturity" : "Se ha actualizado la puesta en participación automática de madurez.",
+          "spawn_neuron" : "Se está generando una nueva neurona a partir de tu madurez.",
+          "split_neuron" : "Tu neurona se ha dividido.",
+          "increase_stake" : "La participación de tu neurona ha aumentado."
+        }
+      },
+      "listNeuron" : {
+        "title" : "Neuronas",
+        "empty" : "Aún no tienes neuronas. Participa con ICP para crear una.",
+        "lastSynced" : "Última sincronización: {{date}}",
+        "sync" : "Actualizar neuronas"
+      },
+      "manage" : {
+        "title" : "Administrar",
+        "neuron" : "Neurona",
+        "hotKeyOnly" : "Tienes una clave activa en esta neurona. Puedes votar y configurar el seguimiento, pero no mover tu participación.",
+        "missingNeuron" : "Esta neurona ya no está en tu instantánea sincronizada. Vuelve a tus neuronas y sincroniza para elegir otra.",
+        "votingPower" : {
+          "title" : "Poder de voto",
+          "tooltip" : "El poder de voto decide cuánto peso tiene tu neurona en la gobernanza y cuántas recompensas obtiene.",
+          "staked" : "En participación",
+          "increaseStake" : "Aumentar participación",
+          "state" : "Estado",
+          "bonusValue" : "+{{percent}}%",
+          "ageBonus" : "Bonificación por antigüedad",
+          "ageBonusTooltip" : "Una neurona obtiene hasta un +25% de poder de voto a medida que envejece, y alcanza el máximo después de cuatro años.",
+          "dissolveDelayBonus" : "Bonificación por retardo de disolución: +{{percent}}%",
+          "dissolveDelayBonusTooltip" : "Un retardo de disolución más largo otorga hasta un +200% de poder de voto, alcanzando el máximo a los dos años.",
+          "noDissolveDelay" : "Sin retardo de disolución",
+          "setDissolveDelay" : "Definir retardo de disolución",
+          "increaseDissolveDelay" : "Aumentar el retardo de disolución",
+          "decayStartsIn" : "El poder de voto comienza a disminuir en {{duration}}",
+          "decaying" : "El poder de voto está disminuyendo — llegará a cero en {{duration}}",
+          "expired" : "Poder de voto perdido — se ha eliminado el seguimiento",
+          "confirmFollowing" : "Confirmar seguimiento",
+          "confirmFollowingTooltip" : "Confirma tu seguimiento al menos cada seis meses o tu neurona perderá gradualmente su poder de voto."
+        },
+        "maturity" : {
+          "title" : "Madurez",
+          "tooltip" : "La madurez es la recompensa que acumula una neurona. Vuelve a ponerla en participación en la neurona o genérala en una nueva.",
+          "available" : "Madurez disponible",
+          "staked" : "Madurez puesta en participación",
+          "stakedTooltip" : "Madurez ya puesta en participación en la neurona. Cuenta para el poder de voto y ya no puede usarse para generar una nueva neurona.",
+          "stake" : "Puesta en participación de madurez",
+          "spawn" : "Generar neurona",
+          "autoStake" : "Puesta en participación automática de la madurez",
+          "autoStakeTooltip" : "Cuando está habilitada, la madurez se vuelve a poner en participación en la neurona a medida que se acumula."
+        },
+        "following" : {
+          "title" : "Siguiendo",
+          "tooltip" : "Una neurona que sigue a otras vota como lo hacen esas otras, que es la forma en que obtiene recompensas sin votar manualmente.",
+          "count_one" : "{{count}} tema",
+          "count_other" : "{{count}} temas",
+          "edit" : "Seguir neuronas en un tema de gobernanza",
+          "follow" : "Editar seguimiento"
+        },
+        "hotKeys" : {
+          "title" : "Hot keys",
+          "tooltip" : "Una hot key puede votar y configurar el seguimiento en su nombre, pero nunca puede mover la participación de la neurona.",
+          "add" : "Conceder acceso de hot key a otro principal",
+          "addAction" : "Agregar hot key",
+          "remove" : "Eliminar"
+        },
+        "advanced" : {
+          "title" : "Avanzado",
+          "split" : "Dividir esta neurona en dos",
+          "splitTooltip" : "Tanto la neurona original como la nueva deben mantener al menos el mínimo para participar de 1 ICP.",
+          "splitAction" : "Dividir neurona"
+        }
+      },
+      "setDissolveDelay" : {
+        "title" : "Retardo de disolución",
+        "setDescription" : "Elige cuánto tiempo tarda la neurona en disolverse. Entre {{min}} y {{max}} días.",
+        "increaseDescription" : "Aumenta el retardo de disolución de la neurona. Puedes añadir hasta {{remaining}} días más, para un total de {{max}}, y nunca se podrá reducir.",
+        "days" : "Días",
+        "resulting" : "Nuevo retardo de disolución: {{duration}}",
+        "belowVotingThreshold" : "Por debajo de {{days}} días, la neurona no puede votar y no recibe ninguna recompensa."
+      },
+      "stakeMaturity" : {
+        "title" : "Puesta en participación de madurez",
+        "description" : "Pon en participación una parte de la madurez de esta neurona para aumentar su poder de voto.",
+        "percentage" : "Porcentaje para participar",
+        "selected" : "Importe a poner en participación"
+      },
+      "splitNeuron" : {
+        "title" : "Dividir neurona",
+        "description" : "Mueve parte de la participación de esta neurona a una nueva neurona. La nueva neurona comienza sin retraso de disolución ni bono por antigüedad.",
+        "amount" : "Cantidad a dividir",
+        "range" : "Rango permitido:"
+      },
+      "addHotKey" : {
+        "title" : "Agregar hot key",
+        "description" : "Concede a otro principal permiso para votar y configurar el seguimiento en esta neurona. Nunca puede mover la participación.",
+        "principal" : "ID de Principal",
+        "ownPrincipal" : "El principal de esta cuenta",
+        "ownPrincipalHint" : "Escribe un principal diferente — normalmente con el que inicias sesión en la dApp de NNS. Esta cuenta ya controla la neurona, por lo que añadir su propio principal no otorga nada."
+      },
+      "followTopic" : {
+        "title" : "Tema",
+        "description" : "Elige el tema de gobernanza cuyo seguimiento deseas cambiar.",
+        "followeeCount_one" : "{{count}} seguido",
+        "followeeCount_other" : "{{count}} seguidos"
+      },
+      "selectFollowees" : {
+        "title" : "Seguidos",
+        "description" : "Tu neurona votará sobre {{topic}} exactamente como estas neuronas.",
+        "neuronId" : "ID de la neurona a seguir",
+        "add" : "Agregar",
+        "remove" : "Eliminar",
+        "empty" : "Aún no hay neuronas seguidas. Tu neurona no votará sobre este tema.",
+        "clearsFollowing" : "Si continúas, se enviará una lista vacía, lo que hará que esta neurona deje de seguir a alguien en {{topic}}. Actualmente sigue a {{count}}.",
+        "notANeuronId" : "Un ID de neurona solo contiene dígitos.",
+        "outOfRange" : "Este no es un ID de neurona válido.",
+        "duplicate" : "Esta neurona ya es una neurona seguida en este tema.",
+        "self" : "Una neurona no puede seguirse a sí misma.",
+        "unadded" : "Selecciona Añadir para incluir este ID de neurona o borra el campo.",
+        "atCapacity" : "Un tema puede seguir como máximo a {{max}} neuronas. Elimina una para añadir otra."
+      }
+    },
+    "governanceTopic" : {
+      "Unspecified" : "Todos los demás temas",
+      "NeuronManagement" : "Gestión de neuronas",
+      "ExchangeRate" : "Tasa de cambio",
+      "NetworkEconomics" : "Economía de red",
+      "Governance" : "Gobernanza",
+      "NodeAdmin" : "Administración de nodos",
+      "ParticipantManagement" : "Gestión de participantes",
+      "SubnetManagement" : "Gestión de subredes",
+      "NetworkCanisterManagement" : "Gestión de canisters de la aplicación",
+      "Kyc" : "KYC",
+      "NodeProviderRewards" : "Recompensas para proveedores de nodos",
+      "SnsDecentralizationSale" : "Venta de descentralización de SNS",
+      "IcOsVersionDeployment" : "Implementación de versiones del SO de IC",
+      "IcOsVersionElection" : "Elección de versión del SO de IC",
+      "SnsAndCommunityFund" : "Fondo de la comunidad y SNS",
+      "ApiBoundaryNodeManagement" : "Gestión de nodos perimetrales de la API",
+      "SubnetRental" : "Alquiler de subredes",
+      "ProtocolCanisterManagement" : "Gestión de canisters del protocolo",
+      "ServiceNervousSystemManagement" : "Gestión de sistema nervioso de servicio"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "Confirmar seguimiento",
+      "listTitle" : "Neuronas",
+      "description" : "Confirmar tu seguimiento restaura el poder de voto de una neurona durante otros seis meses.",
+      "timeUntilLoss" : "Poder de voto perdido en",
+      "losing" : "{{duration}} — perdiendo energía ahora",
+      "expired" : "Ya perdido",
+      "confirm" : "Confirmar",
+      "empty" : "Ninguna de tus neuronas está en un temporizador de confirmaciones en este momento."
+    },
     "summaryFooter" : {
       "stakedBalance" : "Saldo en participación",
       "stakedBalanceTooltip" : "La cantidad total de tokens ICP puestos en participación en neuronas actualmente. Los ICP puestos en participación reportan recompensas de voto y se pueden usar para la gobernanza.",
       "totalMaturity" : "Madurez total",
       "totalMaturityTooltip" : "El total de recompensas acumuladas por la puesta en participación, incluidas las de madurez líquida y puesta en participación. Estas recompensas se pueden volver a poner en participación o reclamarse como ICP líquido."
     }
+  },
+  "perpsReview" : {
+    "depositTitle" : "Depósito a través de SwapKit",
+    "depositSubtitle" : "Nuestro socio SwapKit gestiona tus permutas y depósitos en una sola transacción — todo protegido por tu dispositivo Ledger.",
+    "swapDetailTitle" : "Detalles de la permuta",
+    "amountSendLabel" : "Cantidad a enviar",
+    "amountReceiveLabel" : "Cantidad a recibir",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "Detalles del depósito",
+    "depositAmountLabel" : "Cantidad del depósito",
+    "depositReceiveLabel" : "Cuenta para recibir",
+    "depositCTA" : "Depositar"
+  },
+  "perpsDeposit" : {
+    "title" : "Depositar",
+    "inputDepositAmount" : "Depositar{{value}}",
+    "inputSubText" : "Permuta y deposita a través de {{provider}}",
+    "selectCurrencyTitle" : "Depositar con {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "Sin cuenta",
+    "review" : "Revisar",
+    "formErrors" : {
+      "amountExceedsBalance" : "Saldo insuficiente",
+      "quoteUnavailable" : "No podemos obtener una cotización de {{provider}}SwapKit. Prueba con otros activos o intenta más tarde."
+    }
+  },
+  "perpsDepositSign" : {
+    "a11yTitle" : "Firma del depósito",
+    "terms" : "Al firmar esta transacción, acepto los <termsLink>Términos y Condiciones de SwapKit by NEAR Intents</termsLink>"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "Transacción firmada",
+    "description" : "Recibirás tus {{currency}} una vez que se confirme en la blockchain",
+    "viewTransaction" : "Ver transacción"
+  },
+  "perpsTransactionStatus" : {
+    "dialogTitle" : "Detalles de las transacciones",
+    "title" : "Aportar fondos a perpetuos",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
   }
 }
