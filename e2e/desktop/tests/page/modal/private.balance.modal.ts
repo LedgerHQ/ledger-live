@@ -29,4 +29,15 @@ export class PrivateBalanceModal extends Modal {
   async confirmUfvkExportedFromDevice() {
     await expect(this.finalMessage).toBeVisible();
   }
+
+  // Overrides Modal.close(): on this step, the generic modal-header close
+  // button and StepConfirmationFooter's own Close button (which also disables
+  // auto-sync-now, ZCashExportKeyFlowModal/steps/StepConfirmation.tsx) are both
+  // present, and the base locator's data-testid="modal-close-button" matches
+  // the header's button too. Target the confirmation footer's button by its
+  // own testid instead of relying on role/visibility to disambiguate.
+  @step("Close modal")
+  async close() {
+    await this.container.getByTestId("modal-close-button-confirmation").click();
+  }
 }
