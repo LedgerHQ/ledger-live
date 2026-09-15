@@ -36,7 +36,7 @@ export function useSelfTransferSectionViewModel(): SelfTransferSectionViewModel 
     (displayLabel: string) => {
       if (!target || isFamilyRecipientBlocked) return;
       transaction.setRecipient({
-        ...(state.recipient ?? {}),
+        ...state.recipient,
         address: target.address,
         displayLabel,
         ensName: undefined,

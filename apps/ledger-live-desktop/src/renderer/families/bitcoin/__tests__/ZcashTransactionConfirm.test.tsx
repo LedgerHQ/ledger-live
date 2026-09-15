@@ -17,9 +17,6 @@ jest.mock("~/renderer/components/DeviceAction/animations", () => ({
 jest.mock("~/renderer/components/DeviceAction/DeviceBlocker", () => ({
   DeviceBlocker: () => null,
 }));
-jest.mock("LLD/utils/getProductName", () => ({
-  getProductName: () => "Ledger Nano S",
-}));
 jest.mock("~/renderer/components/FormattedVal", () => ({
   __esModule: true,
   default: ({ val, unit }: { val: { toString(): string }; unit: { code: string } }) => (

@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { getProductName } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/types-devices";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
@@ -9,7 +10,6 @@ import Animation from "~/renderer/animations";
 import useTheme from "~/renderer/hooks/useTheme";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
-import { getProductName } from "LLD/utils/getProductName";
 import FormattedVal from "~/renderer/components/FormattedVal";
 
 type Props = Readonly<{
