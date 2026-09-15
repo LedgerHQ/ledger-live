@@ -3,4 +3,5 @@ import type { CardTransactionItem, CardTransactionFormatters } from "../../../ty
 export type ListProps = Readonly<{
   transactions: readonly CardTransactionItem[];
   formatters?: CardTransactionFormatters;
+  onTransactionPress?: (item: CardTransactionItem) => void;
 }>;

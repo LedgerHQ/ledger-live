@@ -3,7 +3,6 @@ import { useRoute, type RouteProp } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useEnv from "@features/platform-env";
 import { useContactsFeature } from "@features/platform-contacts";
-import { useTranslation } from "@shared/i18n";
 import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
@@ -21,7 +20,6 @@ import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 export function usePayTabViewModel() {
   const { top, bottom } = useNavigationBarHeights();
   const insets = useSafeAreaInsets();
-  const { t } = useTranslation();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
   const balance = usePayCardBalance();
@@ -74,7 +72,6 @@ export function usePayTabViewModel() {
   return {
     top,
     bottom: bottom + insets.bottom,
-    cardTitle: t("payTab.card.title"),
     login,
     featureTour,
     balance,

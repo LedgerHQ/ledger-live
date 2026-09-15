@@ -3,8 +3,10 @@ import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-t
 import {
   formatCardTransactionDate,
   formatFundingSources,
+  formatMaskedPanLast4,
   formatMerchantName,
   formatSignedAmount,
+  formatTransactionDetailDateTime,
 } from "./formatCardTransactionItem";
 
 const transaction = PayCardTransactionSchema.parse(mockPayCardTransactions()[0]);
@@ -40,5 +42,35 @@ describe("formatCardTransactionItem", () => {
 
   it("keeps an unparseable timestamp as it was sent", () => {
     expect(formatCardTransactionDate("not-a-date", formatLocale("en-US"))).toBe("not-a-date");
+  });
+
+  it("masks the last four PAN digits", () => {
+    expect(formatMaskedPanLast4("3328")).toBe("***3328");
+  });
+
+  it("labels a same-day timestamp as today plus the time of day", () => {
+    const now = new Date(2024, 9, 14, 15, 0, 0);
+    const dateTime = new Date(2024, 9, 14, 12, 32, 0).toISOString();
+    const translate = jest.fn(
+      (key: "today" | "yesterday" | "dateTime", options: { time: string }) =>
+        `${key}:${options.time}`,
+    );
+
+    formatTransactionDetailDateTime(dateTime, translate, undefined, now);
+
+    expect(translate).toHaveBeenCalledWith("today", { time: expect.any(String) });
+  });
+
+  it("labels the previous calendar day as yesterday plus the time of day", () => {
+    const now = new Date(2024, 9, 15, 9, 0, 0);
+    const dateTime = new Date(2024, 9, 14, 12, 32, 0).toISOString();
+    const translate = jest.fn(
+      (key: "today" | "yesterday" | "dateTime", options: { time: string }) =>
+        `${key}:${options.time}`,
+    );
+
+    formatTransactionDetailDateTime(dateTime, translate, undefined, now);
+
+    expect(translate).toHaveBeenCalledWith("yesterday", { time: expect.any(String) });
   });
 });

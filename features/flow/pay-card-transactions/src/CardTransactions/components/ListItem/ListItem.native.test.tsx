@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
 import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { ListItem } from "./ListItem";
@@ -41,5 +41,16 @@ describe("ListItem (native)", () => {
     expect(screen.getByText("usdc:-13.0214")).toBeVisible();
     expect(formatAmount).toHaveBeenNthCalledWith(1, "-12.99", "EUR", "fiat");
     expect(formatAmount).toHaveBeenNthCalledWith(2, "-13.0214", "usdc", "crypto");
+  });
+
+  it("calls onPress when the transaction is selected", async () => {
+    const onPress = jest.fn();
+    const user = userEvent.setup();
+
+    render(<ListItem item={item()} onPress={onPress} />, { wrapper: cardApiWrapper() });
+
+    await user.press(screen.getByTestId(`card-transactions-item-${transaction.id}`));
+
+    expect(onPress).toHaveBeenCalledTimes(1);
   });
 });

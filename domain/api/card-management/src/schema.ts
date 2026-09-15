@@ -149,15 +149,21 @@ export const PayCardTransactionFundingSourceSchema = z.object({
 });
 
 /**
- * One card transaction, narrowed to what a transaction list shows.
+ * One card transaction, narrowed to the list and the transaction detail sheet.
  *
- * The response carries more: the card and processor ids, the MCC number, and conversion and ECB
- * rates. None of those are displayed, and one field here is already sensitive —
- * `merchantNameLocation` says where the cardholder shopped — so the rest is left undeclared and Zod
- * drops it before it reaches the cache.
+ * The response also carries the provider card id, the MCC number, conversion and ECB rates, and
+ * funding `txHash` / `address`. Those stay undeclared so Zod drops them before they reach the cache.
+ * `merchantNameLocation` and a four-digit `panLast4` are already enough to identify a purchase; `transactionId`
+ * is the processor reference the detail sheet copies.
  */
 export const PayCardTransactionSchema = z.object({
   id: z.string().min(1),
+  panLast4: z
+    .string()
+    .regex(/^\d{4}$/)
+    .optional()
+    .catch(undefined),
+  transactionId: z.string().min(1).optional(),
   /** ISO 8601, as the provider formats it. */
   dateTime: z.string().min(1),
   sign: z.enum(["DEBIT", "CREDIT"]),

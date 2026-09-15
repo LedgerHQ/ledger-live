@@ -85,6 +85,7 @@ catalog:
   "@react-native-community/cli": 18.0.1
   "@react-native-community/cli-platform-android": 18.0.1
   "@react-native-community/cli-platform-ios": 18.0.1
+  "@react-native-clipboard/clipboard": 1.16.2
   # Expo
   expo: 54.0.33
   expo-constants: 18.0.13

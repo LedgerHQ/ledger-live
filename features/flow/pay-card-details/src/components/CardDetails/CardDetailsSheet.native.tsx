@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { CardDetailsScene } from "./Scenes/CardDetailsScene";
 import { CARD_DETAILS_SCENES } from "./Scenes/registry";
 import type { CardDetailsSheetProps } from "../../types";
 
-export function CardDetailsSheet({ isOpen, scene, onClose }: CardDetailsSheetProps) {
+export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetailsSheetProps) {
   const dismissed = useRef(false);
   const isPending = scene.freeze.viewModel.confirmState === "pending";
-  const sizing = CARD_DETAILS_SCENES[scene.route.name].sizing;
+  const { sizing, hasBackButton } = CARD_DETAILS_SCENES[scene.route.name];
+  const canGoBack = hasBackButton && !isPending;
   const sizingProps =
     sizing === "full"
       ? ({ snapPoints: "fullWithOffset" } as const)
@@ -35,16 +36,18 @@ export function CardDetailsSheet({ isOpen, scene, onClose }: CardDetailsSheetPro
       noCloseButton={isPending}
       preventBackdropClick={isPending}
       enablePanDownToClose={!isPending}
+      hasBackButton={canGoBack}
+      onBack={canGoBack ? onBack : undefined}
       {...sizingProps}
       testID="card-details-sheet"
     >
       {isOpen ? (
-        <BottomSheetView>
+        <BottomSheetScrollView>
           <Box lx={{ paddingBottom: "s24" }}>
             <BottomSheetHeader density="compact" spacing />
             <CardDetailsScene {...scene} />
           </Box>
-        </BottomSheetView>
+        </BottomSheetScrollView>
       ) : null}
     </QueuedBottomSheet>
   );

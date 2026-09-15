@@ -29,6 +29,38 @@ export const MORE_COPY = {
   },
 } as const;
 
+export const CARD_TRANSACTIONS_COPY = {
+  title: "Transactions",
+  categories: {
+    SUBSCRIPTIONS: "Subscriptions",
+    FOOD: "Food",
+    TRAVEL: "Travel",
+    ENTERTAINMENT: "Entertainment",
+    HEALTH: "Health",
+    ATM: "ATM",
+    UTILITIES: "Utilities",
+    MISC: "Other",
+  },
+  detail: {
+    amount: "Amount",
+    status: "Status",
+    card: "Card",
+    cardInfo: "The last four digits of the card used for this payment.",
+    fundingSource: "Funding source",
+    transactionId: "Transaction ID",
+    copyTransactionId: "Copy transaction ID",
+    today: "Today {{time}}",
+    yesterday: "Yesterday {{time}}",
+    dateTime: "{{date}} {{time}}",
+    statusValues: {
+      CONFIRMED: "Confirmed",
+      PENDING: "Pending",
+      DECLINED: "Declined",
+      REVERTED: "Reverted",
+    },
+  },
+} as const;
+
 export const CARD_RESOURCES = {
   en: {
     translation: {
@@ -60,6 +92,7 @@ export const CARD_RESOURCES = {
           title: MORE_COPY.title,
           rows: MORE_COPY.rows,
         },
+        cardTransactions: CARD_TRANSACTIONS_COPY,
       },
     },
   },

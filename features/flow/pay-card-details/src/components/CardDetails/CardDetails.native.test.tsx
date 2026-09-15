@@ -17,10 +17,11 @@ function Wrapper({ children }: PropsWithChildren) {
   );
 }
 
-function renderCardDetails() {
+function renderCardDetails(onTrackEvent = jest.fn()) {
   return {
     user: userEvent.setup(),
-    ...render(<CardDetails />, { wrapper: Wrapper }),
+    onTrackEvent,
+    ...render(<CardDetails onTrackEvent={onTrackEvent} />, { wrapper: Wrapper }),
   };
 }
 
@@ -82,5 +83,43 @@ describe("CardDetails (native)", () => {
 
     expect(screen.getByTestId("card-details-overview")).toBeVisible();
     expect(screen.queryByTestId("card-details-freeze-content")).toBeNull();
+  });
+
+  it("should open the selected transaction in the same sheet and track the click", async () => {
+    const { user, onTrackEvent } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByText("NETFLIX.COM"));
+
+    expect(screen.getByTestId("card-details-transaction-content")).toBeVisible();
+    expect(onTrackEvent).toHaveBeenCalledWith("transaction_clicked", {
+      category: "card",
+      transaction: "out",
+      page: "Pay",
+      cardFundSourceAsset: "USDC",
+    });
+  });
+
+  it("should return to the overview when leaving transaction details through back", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByText("NETFLIX.COM"));
+    await user.press(screen.getByTestId("card-details-sheet-back"));
+
+    expect(screen.getByTestId("card-details-overview")).toBeVisible();
+    expect(screen.queryByTestId("card-details-transaction-content")).toBeNull();
+  });
+
+  it("should reopen on the overview after transaction details are dismissed", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByText("NETFLIX.COM"));
+    await user.press(screen.getByTestId("card-details-sheet-dismiss"));
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+
+    expect(screen.getByTestId("card-details-overview")).toBeVisible();
+    expect(screen.queryByTestId("card-details-transaction-content")).toBeNull();
   });
 });

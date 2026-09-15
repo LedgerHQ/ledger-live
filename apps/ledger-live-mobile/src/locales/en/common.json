@@ -10371,6 +10371,24 @@
         "ATM": "ATM",
         "UTILITIES": "Utilities",
         "MISC": "Other"
+      },
+      "detail": {
+        "amount": "Amount",
+        "status": "Status",
+        "card": "Card",
+        "cardInfo": "The last four digits of the card used for this payment.",
+        "fundingSource": "Funding source",
+        "transactionId": "Transaction ID",
+        "copyTransactionId": "Copy transaction ID",
+        "today": "Today {{time}}",
+        "yesterday": "Yesterday {{time}}",
+        "dateTime": "{{date}} {{time}}",
+        "statusValues": {
+          "CONFIRMED": "Confirmed",
+          "PENDING": "Pending",
+          "DECLINED": "Declined",
+          "REVERTED": "Reverted"
+        }
       }
     },
     "selectContact": {

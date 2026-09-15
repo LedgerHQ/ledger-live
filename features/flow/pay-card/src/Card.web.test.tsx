@@ -1,8 +1,9 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { CardFormatters, CardProps } from "./Card.types";
+import { CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
 
 let mockStatus: PayCardAuthStatus = "unknown";
 let receivedTransactionFormatters: CardTransactionFormatters | undefined;
@@ -32,7 +33,11 @@ jest.mock("@features/flow-pay-card-transactions", () => ({
 
 import { Card } from "./Card";
 
-const title = "Crypto card";
+const title = CARD_TITLE;
+
+function renderCard(card: React.ReactElement) {
+  return render(card, { wrapper: I18nWrapper });
+}
 
 const oauthConfig: CardProps["login"]["oauthConfig"] = {
   apiUrl: "https://card.example",
@@ -52,20 +57,22 @@ const formatters: CardFormatters = {
 };
 
 describe("Card (web)", () => {
+  afterEach(cleanup);
+
   beforeEach(() => {
     mockStatus = "unknown";
     receivedTransactionFormatters = undefined;
   });
 
   it("always shows the host title", () => {
-    render(<Card title={title} login={{ oauthConfig }} />);
+    renderCard(<Card login={{ oauthConfig }} />);
 
     expect(screen.getByText(title)).toBeVisible();
   });
 
   describe("while resolving the session", () => {
     it("shows only the bare artwork, holding back the widget and the card details", () => {
-      render(<Card title={title} login={{ oauthConfig }} />);
+      renderCard(<Card login={{ oauthConfig }} />);
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-onboarding-widget")).not.toBeInTheDocument();
@@ -81,7 +88,7 @@ describe("Card (web)", () => {
     });
 
     it("shows the bare artwork above the login, with no card details or widget", () => {
-      render(<Card title={title} login={{ oauthConfig }} />);
+      renderCard(<Card login={{ oauthConfig }} />);
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.getByTestId("card-login")).toBeVisible();
@@ -91,14 +98,7 @@ describe("Card (web)", () => {
     });
 
     it("never builds the balance overlay, even when the host provides a formatter and label", () => {
-      render(
-        <Card
-          title={title}
-          login={{ oauthConfig }}
-          formatters={formatters}
-          balanceLabel="Balance"
-        />,
-      );
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} balanceLabel="Balance" />);
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
@@ -111,7 +111,7 @@ describe("Card (web)", () => {
     });
 
     it("shows the widget and the card details, with no login or bare artwork", () => {
-      render(<Card title={title} login={{ oauthConfig }} />);
+      renderCard(<Card login={{ oauthConfig }} />);
 
       expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("card-details")).toBeVisible();
@@ -121,14 +121,7 @@ describe("Card (web)", () => {
     });
 
     it("hands the card visual to the details block once the host provides a formatter and label", () => {
-      render(
-        <Card
-          title={title}
-          login={{ oauthConfig }}
-          formatters={formatters}
-          balanceLabel="Balance"
-        />,
-      );
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} balanceLabel="Balance" />);
 
       expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
@@ -139,12 +132,8 @@ describe("Card (web)", () => {
       const transactionAmount = jest.fn();
       const transactionDate = jest.fn();
 
-      render(
-        <Card
-          title={title}
-          login={{ oauthConfig }}
-          formatters={{ transactionAmount, transactionDate }}
-        />,
+      renderCard(
+        <Card login={{ oauthConfig }} formatters={{ transactionAmount, transactionDate }} />,
       );
 
       expect(receivedTransactionFormatters?.amount).toBe(transactionAmount);

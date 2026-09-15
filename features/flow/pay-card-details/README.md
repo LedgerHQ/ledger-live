@@ -23,13 +23,16 @@ import { CardVisual, CardActions } from "@features/flow-pay-card-details";
 
 Native hosts mount a single `CardDetails`. Two buttons — a disabled placeholder and **Details** —
 sit over the bottom of the card face, above a gradient that fades the artwork out behind them.
-Pressing Details opens one bottom sheet. Its card overview uses the full-height snap point, while
-the `Freeze` confirmation and `More` menu resize to their content. These scenes replace each other
-within that sheet so they do not compete for the global bottom-sheet queue.
+Pressing Details opens one bottom sheet. Its card overview and the selected transaction use the
+full-height snap point, while the `Freeze` confirmation and `More` menu resize to their content.
+These scenes replace each other within that sheet so they do not compete for the global
+bottom-sheet queue. Selecting a transaction also emits the injected tracking-plan
+`transaction_clicked` event.
 
 Each scene is a self-contained screen. The view model owns a single current `route` and drives it
 through a small navigation contract (`goTo` / `goBack`, in `Scenes/navigation.ts`); the
-sheet is a dumb shell that only renders the route it is given and sizes itself from `Scenes/registry.ts`.
+sheet is a dumb shell that only renders the route it is given, sizing itself and showing its header
+back button from `Scenes/registry.ts`.
 Navigation is classic (one scene at a time, back to overview) but the same contract is deliberately
 thin: adding a scene (transactions, assets) is a new route plus a tile that calls `goTo`, and the
 scenes can later be mounted in a stack or as full pages without being rewritten.
@@ -101,9 +104,10 @@ pay-card-details/
     │   │   ├── CardDetailsSheet.native.tsx    # Adaptive sheet navigation and lifecycle
     │   │   ├── Scenes/                        # Self-contained sheet scenes (screens)
     │   │   │   ├── navigation.ts              # Route union + goTo / goBack contract
-    │   │   │   ├── registry.ts                # Per-scene sheet sizing
+    │   │   │   ├── registry.native.ts         # Per-scene sheet sizing and back button
     │   │   │   ├── CardDetailsScene.native.tsx # Router: renders the current route
     │   │   │   ├── OverviewScene.native.tsx   # Card face + composable actions row
+    │   │   │   ├── TransactionScene.native.tsx
     │   │   │   ├── FreezeScene.native.tsx
     │   │   │   └── MoreScene.native.tsx
     │   │   ├── CardDetails.web.test.tsx

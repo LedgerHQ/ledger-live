@@ -20,6 +20,25 @@ export const CATEGORY_LABELS = {
 
 export const SECTION_TITLE = "Transactions";
 
+export const DETAIL_COPY = {
+  amount: "Amount",
+  status: "Status",
+  card: "Card",
+  cardInfo: "The last four digits of the card used for this payment.",
+  fundingSource: "Funding source",
+  transactionId: "Transaction ID",
+  copyTransactionId: "Copy transaction ID",
+  today: "Today {{time}}",
+  yesterday: "Yesterday {{time}}",
+  dateTime: "{{date}} {{time}}",
+  statusValues: {
+    CONFIRMED: "Confirmed",
+    PENDING: "Pending",
+    DECLINED: "Declined",
+    REVERTED: "Reverted",
+  },
+} as const;
+
 const CARD_TRANSACTIONS_RESOURCES = {
   en: {
     translation: {
@@ -27,6 +46,7 @@ const CARD_TRANSACTIONS_RESOURCES = {
         cardTransactions: {
           categories: CATEGORY_LABELS,
           title: SECTION_TITLE,
+          detail: DETAIL_COPY,
         },
       },
     },
