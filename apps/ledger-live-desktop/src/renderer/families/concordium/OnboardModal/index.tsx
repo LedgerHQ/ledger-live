@@ -40,9 +40,8 @@ import {
   prepareAccountsForAdding,
 } from "./utils/accounts";
 import { getConfirmationCode, shouldRetryPairing, handlePairingProgress } from "./utils/pairing";
+import { STEP_TRANSITION_TIMEOUT } from "./constants";
 import { handleOnboardingProgress } from "./utils/onboarding";
-
-const STEP_TRANSITION_TIMEOUT = 1500; // Delay before continue to next step while ID app handles the pairing
 
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,

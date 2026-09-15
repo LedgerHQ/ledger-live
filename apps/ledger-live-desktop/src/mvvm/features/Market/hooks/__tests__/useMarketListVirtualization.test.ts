@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, waitFor } from "tests/testSetup";
+import { act, renderHook, waitFor } from "tests/testSetup";
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketListVirtualization } from "../useMarketListVirtualization";
 import { mockDomMeasurements, setRefCurrent } from "LLD/features/__tests__/shared";
@@ -12,6 +12,13 @@ const buildData = (count: number): MarketCurrencyData[] =>
     { length: count },
     (_, index) => ({ ...MOCK_MARKET_CURRENCY_DATA[0], id: `asset-${index}` }) as MarketCurrencyData,
   );
+
+/**
+ * Let the hook's effects settle. The pagination callbacks fire from effects and
+ * promise continuations, never from a timer, so draining the microtask queue inside
+ * `act` is sufficient — a real sleep only added idle wall-clock to the run.
+ */
+const flushEffects = () => act(async () => {});
 
 describe("useMarketListVirtualization", () => {
   const mockOnLoadNextPage = jest.fn();
@@ -147,7 +154,7 @@ describe("useMarketListVirtualization", () => {
 
     // Same list, same data (no new rows arrived) -> the ref guard must not request another page.
     rerender({ listKey: "all" });
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await flushEffects();
     expect(mockOnLoadNextPage).toHaveBeenCalledTimes(1);
   });
 
@@ -200,7 +207,7 @@ describe("useMarketListVirtualization", () => {
       }),
     );
 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await flushEffects();
 
     expect(mockOnLoadNextPage).not.toHaveBeenCalled();
   });
@@ -218,7 +225,7 @@ describe("useMarketListVirtualization", () => {
       }),
     );
 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await flushEffects();
 
     expect(mockOnLoadNextPage).not.toHaveBeenCalled();
   });
@@ -271,7 +278,7 @@ describe("useMarketListVirtualization", () => {
     setRefCurrent(result.current.parentRef, mockParentElement);
     rerender();
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await flushEffects();
 
     if (capturedHandlers.length > 0) {
       const scrollEvent = new Event("scroll");
