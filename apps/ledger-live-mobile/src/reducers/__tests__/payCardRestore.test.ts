@@ -1,10 +1,7 @@
 import type { UnknownAction } from "@reduxjs/toolkit";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
-import {
-  restorePayCardLoginIntro,
-  restorePayCardProviderApp,
-} from "@features/flow-pay-card-auth/state";
+import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
 import rootReducer from "..";
 
@@ -14,7 +11,6 @@ describe("the payCard blob restored into the mobile store", () => {
     hasSeenReceiveVerifyHint: true,
     balanceFilter: "ethereum/erc20/usd__coin",
     hasSeenLoginIntro: true,
-    providerAppId: "ledger-us",
   };
 
   function restoreAll(payCardState: Record<string, unknown>) {
@@ -23,7 +19,6 @@ describe("the payCard blob restored into the mobile store", () => {
       restoreReceiveVerifyHint(payCardState),
       restorePayCardBalanceFilter(payCardState),
       restorePayCardLoginIntro(payCardState),
-      restorePayCardProviderApp(payCardState),
     ].reduce(
       (state, action) => rootReducer(state, action as UnknownAction),
       rootReducer(undefined, { type: "@@INIT" }),
@@ -37,7 +32,6 @@ describe("the payCard blob restored into the mobile store", () => {
     expect(state.payRequestVerifyHint.hasSeenReceiveVerifyHint).toBe(true);
     expect(state.payCardBalance.balanceFilter).toBe("ethereum/erc20/usd__coin");
     expect(state.payCardLoginIntro.hasSeenLoginIntro).toBe(true);
-    expect(state.payCardProviderApp.providerAppId).toBe("ledger-us");
   });
 
   it("leaves a slice at its initial state when an older blob carries no field for it", () => {
@@ -45,7 +39,6 @@ describe("the payCard blob restored into the mobile store", () => {
 
     expect(state.payCardFeatureTour.hasSeenFeatureTour).toBe(true);
     expect(state.payCardLoginIntro.hasSeenLoginIntro).toBe(false);
-    expect(state.payCardProviderApp.providerAppId).toBeNull();
   });
 
   it("keeps the runtime auth slice out of the restore", () => {

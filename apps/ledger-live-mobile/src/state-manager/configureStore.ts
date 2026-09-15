@@ -34,10 +34,11 @@ import {
 import {
   configureCardSessionRenewal,
   isCardSessionCurrent,
+  isCardUsEnv,
   readCardSession,
   refreshCardSession,
 } from "@features/platform-card";
-import { selectPayCardIsUsEnv, setSignedIn } from "@features/flow-pay-card-auth/state";
+import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
   createFeatureFlagsMiddleware,
   selectFeature,
@@ -91,8 +92,7 @@ export const store = configureStore({
               // Read on every request, so the debug settings can change them without a restart.
               getCardApiBaseUrl: () => getEnv("CARD_BAANX_API_URL"),
               getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
-              isCardUsEnv: (): boolean =>
-                selectPayCardIsUsEnv(store.getState(), getEnv("CARD_BAANX_US_APP_ID")),
+              isCardUsEnv: () => isCardUsEnv(getEnv("CARD_BAANX_US_APP_ID")),
               readCardSession,
               isCardSessionCurrent,
               refreshCardSession,

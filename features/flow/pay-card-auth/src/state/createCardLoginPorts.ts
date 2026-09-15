@@ -1,9 +1,8 @@
 import { cardManagementApi } from "@domain/api-card-management";
-import { cardSession, getCardSessionToken } from "@features/platform-card";
+import { cardSession, getCardSessionToken, setCardProviderAppId } from "@features/platform-card";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { clearAttempt, loadAttempt, saveAttempt } from "./attemptStore";
 import { createAuthorizeAttempt } from "./authorizeAttempt";
-import { setPayCardProviderAppId } from "./providerAppSlice";
 import { setSignedIn } from "./slice";
 import type { CardLoginPorts, OpenHostedLogin } from "./types";
 
@@ -54,7 +53,9 @@ export function createCardLoginPorts({
       dispatch(setSignedIn(isSignedIn));
     },
     setProviderAppId: appId => {
-      dispatch(setPayCardProviderAppId(appId));
+      // The store call is not awaited: it holds the value for later requests, while the exchange
+      // that follows this line reads the in-memory mirror the call already set.
+      void setCardProviderAppId(appId);
     },
     openHostedLogin,
   };

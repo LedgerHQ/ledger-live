@@ -44,10 +44,8 @@ import {
 import {
   payCardAuthSlice,
   payCardLoginIntroSlice,
-  payCardProviderAppSlice,
   type PayCardAuthState,
   type PayCardLoginIntroState,
-  type PayCardProviderAppState,
 } from "@features/flow-pay-card-auth/state";
 import {
   payCardOnboardingWidgetSlice,
@@ -117,7 +115,6 @@ export type State = LLDRTKApiState & {
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
   payCardAuth: PayCardAuthState;
   payCardLoginIntro: PayCardLoginIntroState;
-  payCardProviderApp: PayCardProviderAppState;
 };
 
 const appReducer = combineReducers({
@@ -164,7 +161,6 @@ const appReducer = combineReducers({
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
   payCardLoginIntro: payCardLoginIntroSlice.reducer,
-  payCardProviderApp: payCardProviderAppSlice.reducer,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && {
     lastAction: (_: unknown, action: PayloadAction) => action,

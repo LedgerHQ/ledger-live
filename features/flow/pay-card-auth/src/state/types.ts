@@ -116,9 +116,9 @@ export type CardLoginPorts = Readonly<{
    */
   setSignedIn: (isSignedIn: boolean) => void;
   /**
-   * Records the provider app the redirect named, so the Card API can route every later request. The
-   * flow only stores the value; the comparison with the US app id belongs to the API layer, which
-   * reads the env on every request.
+   * Records the provider app the redirect named, so the Card API can route every later request. It
+   * is kept beside the session, whose lifetime it shares, and the comparison with the US app id
+   * belongs to the API layer, which reads the env on every request.
    */
   setProviderAppId: (appId: string | null) => void;
   openHostedLogin: OpenHostedLogin;
@@ -201,13 +201,4 @@ export type PayCardAuthState = Readonly<{
 
 export type PayCardLoginIntroState = Readonly<{
   hasSeenLoginIntro: boolean;
-}>;
-
-/**
- * The provider app the last redirect named. It outlives the process on purpose: on a platform that
- * keeps the session in secure storage the holder comes back signed in, with no redirect to name the
- * app a second time.
- */
-export type PayCardProviderAppState = Readonly<{
-  providerAppId: string | null;
 }>;

@@ -1,6 +1,7 @@
 ---
 "@shared/env": minor
 "@shared/api-services": minor
+"@features/platform-card": minor
 "@features/flow-pay-card-auth": minor
 "@support/msw-features-flow-pay-card": minor
 "ledger-live-desktop": minor

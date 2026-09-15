@@ -62,9 +62,6 @@ jest.mock("@features/flow-pay-card-auth/state", () => ({
   payCardLoginIntroPersistedSelector: (state: FakeState) => ({
     hasSeenLoginIntro: state.payCardLoginIntro.hasSeenLoginIntro,
   }),
-  payCardProviderAppPersistedSelector: (state: FakeState) => ({
-    providerAppId: state.payCardProviderApp.providerAppId,
-  }),
 }));
 
 jest.mock("@ledgerhq/live-common/account/index", () => ({
@@ -96,9 +93,6 @@ type FakeState = {
   payCardLoginIntro: {
     hasSeenLoginIntro: boolean;
   };
-  payCardProviderApp: {
-    providerAppId: string | null;
-  };
   payCardOnboardingWidget: {
     hasCompletedOnboarding: boolean;
   };
@@ -120,7 +114,6 @@ const baseState = (): FakeState => ({
   payCardFeatureTour: { hasSeenFeatureTour: false },
   payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
   payCardLoginIntro: { hasSeenLoginIntro: false },
-  payCardProviderApp: { providerAppId: null },
   payCardOnboardingWidget: { hasCompletedOnboarding: false },
 });
 
@@ -271,7 +264,6 @@ describe("DBMiddleware - payCard branch", () => {
     payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
     payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
     payCardLoginIntro: { hasSeenLoginIntro: true },
-    payCardProviderApp: { providerAppId: "ledger-us" },
     payCardOnboardingWidget: { hasCompletedOnboarding: true },
   };
 
@@ -280,7 +272,6 @@ describe("DBMiddleware - payCard branch", () => {
     hasSeenReceiveVerifyHint: true,
     balanceFilter: "ethereum/erc20/usd__coin",
     hasSeenLoginIntro: true,
-    providerAppId: "ledger-us",
     hasCompletedOnboarding: true,
   };
 
@@ -289,7 +280,6 @@ describe("DBMiddleware - payCard branch", () => {
     "payRequestVerifyHint/markReceiveVerifyHintSeen",
     "payCardBalance/setPayCardBalanceFilter",
     "payCardLoginIntro/markPayCardLoginIntroSeen",
-    "payCardProviderApp/setPayCardProviderAppId",
     "payCardOnboardingWidget/markCardOnboardingCompleted",
   ])("persists the composed payCard blob on %s", actionType => {
     runMiddleware([payCardState, payCardState], { type: actionType });
