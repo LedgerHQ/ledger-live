@@ -2,6 +2,12 @@ import { z } from "zod";
 
 const HEX_COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
+/** A URL the app loads or opens, or hands the provider to navigate to. Anything but `https:` is rejected. */
+const HttpsUrlSchema = z
+  .string()
+  .url()
+  .refine(value => value.startsWith("https://"), { message: "must be an https URL" });
+
 /**
  * Both grants — `authorization_code` and `refresh_token` — answer with this shape. Baanx's contract
  * carries no lifetime for the refresh token itself, only for the access token.
@@ -70,11 +76,56 @@ export const PayCardDetailsCssSchema = z.object({
 
 export const PayCardDetailsTokenResponseSchema = z.object({
   token: z.string().min(1),
-  /** Loaded straight into an image, so reject anything that is not an `https:` URL. */
-  imageUrl: z
-    .string()
-    .url()
-    .refine(value => value.startsWith("https://"), { message: "must be an https URL" }),
+  /** Loaded straight into an image. */
+  imageUrl: HttpsUrlSchema,
+});
+
+/**
+ * Colours and radii the provider paints the hosted PIN page with, its own defaults applying to
+ * whatever is omitted. A separate set from the card details image's: this page styles a keypad.
+ */
+export const PayCardSetPinCssSchema = z.object({
+  backgroundColor: z.string().regex(HEX_COLOR).optional(),
+  textColor: z.string().regex(HEX_COLOR).optional(),
+  backgroundColorPrimary: z.string().regex(HEX_COLOR).optional(),
+  textColorPrimary: z.string().regex(HEX_COLOR).optional(),
+  pinBorderColor: z.string().regex(HEX_COLOR).optional(),
+  buttonBorderRadius: z.number().nonnegative().optional(),
+  pinBorderRadius: z.number().nonnegative().optional(),
+});
+
+const PayCardSetPinTokenBaseSchema = z.object({
+  customCss: PayCardSetPinCssSchema.optional(),
+});
+
+/**
+ * How the hosted PIN page should end, and how it should look. Every field is optional: asking for a
+ * token needs no argument at all.
+ *
+ * An embedded page posts a message to its host frame when it is done and never navigates, so a
+ * `redirectUrl` alongside `isEmbedded: true` is a destination nothing would reach. A union rather
+ * than two independent fields, so that pairing does not compile instead of being quietly dropped.
+ */
+export const PayCardSetPinTokenRequestSchema = z
+  .union(
+    [
+      PayCardSetPinTokenBaseSchema.extend({
+        isEmbedded: z.literal(true),
+        redirectUrl: z.undefined().optional(),
+      }),
+      PayCardSetPinTokenBaseSchema.extend({
+        isEmbedded: z.literal(false).optional(),
+        redirectUrl: HttpsUrlSchema.optional(),
+      }),
+    ],
+    { error: "redirectUrl belongs to the redirect flow, so isEmbedded cannot be true" },
+  )
+  .optional();
+
+export const PayCardSetPinTokenResponseSchema = z.object({
+  token: z.string().min(1),
+  /** Opened in a tab or an iframe. */
+  hostedPageUrl: HttpsUrlSchema,
 });
 
 /** The provider's spend groupings. It sends the label; the numeric MCC behind it is dropped. */

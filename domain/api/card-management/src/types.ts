@@ -13,6 +13,9 @@ import {
   PayCardSessionSchema,
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
+  PayCardSetPinCssSchema,
+  PayCardSetPinTokenRequestSchema,
+  PayCardSetPinTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardTransactionCategorySchema,
   PayCardTransactionFundingSourceSchema,
@@ -64,6 +67,20 @@ export type PayCardWalletHistoryRequest = z.infer<typeof PayCardWalletHistoryReq
  * `{ track: false }` or reset as soon as the URL has been used.
  */
 export type PayCardDetailsToken = z.infer<typeof PayCardDetailsTokenResponseSchema>;
+
+export type PayCardSetPinCss = z.infer<typeof PayCardSetPinCssSchema>;
+
+/** How the hosted PIN page should end, and how it should look. */
+export type PayCardSetPinTokenRequest = z.infer<typeof PayCardSetPinTokenRequestSchema>;
+
+/**
+ * Single use, and short-lived: the provider spends the token when the hosted page is opened.
+ *
+ * `hostedPageUrl` carries the token in its query string, so neither field may be logged or stored.
+ * The same caution as {@link PayCardDetailsToken}: dispatch with `{ track: false }`, or reset as
+ * soon as the page has been opened.
+ */
+export type PayCardSetPinToken = z.infer<typeof PayCardSetPinTokenResponseSchema>;
 
 export type PayCardAuthorizationCodeRequest = {
   readonly code: string;
