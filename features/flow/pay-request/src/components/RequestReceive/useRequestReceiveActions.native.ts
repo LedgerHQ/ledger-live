@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Check, Copy, Download, LedgerLogo, Share } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Check, Copy, Download, Share, ShieldCheck } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { RequestReceiveActionId, RequestReceiveActionLabels } from "../../types";
 
 type SymbolComponent = typeof Copy;
@@ -56,7 +56,7 @@ export function useRequestReceiveActions({
       },
       verify: {
         id: "verify",
-        icon: LedgerLogo,
+        icon: ShieldCheck,
         label: labels.verify,
         onClick: onVerify,
         testId: "pay-request-receive-verify",
