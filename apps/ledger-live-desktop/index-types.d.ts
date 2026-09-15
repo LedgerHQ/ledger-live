@@ -13,6 +13,7 @@ declare const __CHANNEL__: string;
 declare const __static: string;
 declare const __DEV__: boolean;
 declare const __UPDATE_CHECK_PUBKEY__: string | null;
+declare const __BUILD_ENVS__: Record<string, string>;
 
 declare module "*.css";
 
