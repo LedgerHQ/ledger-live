@@ -18,7 +18,7 @@ export default function ValidationError(props: Props) {
   // neurons lives, which is the only thing that establishes what the command actually did.
   const onBackToList = useCallback(
     () =>
-      navigation.navigate(ScreenName.InternetComputerNeuronList, {
+      navigation.popTo(ScreenName.InternetComputerNeuronList, {
         accountId: route.params.accountId,
         parentId: route.params.parentId,
       }),

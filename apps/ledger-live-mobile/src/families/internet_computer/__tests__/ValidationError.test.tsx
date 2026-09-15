@@ -6,8 +6,9 @@ import StakingValidationError from "../StakingFlow/ValidationError";
 
 const goBack = jest.fn();
 const navigate = jest.fn();
+const popTo = jest.fn();
 const pop = jest.fn();
-const navigation = { goBack, navigate, getParent: () => ({ pop }) };
+const navigation = { goBack, navigate, popTo, getParent: () => ({ pop }) };
 
 const named = (name: string) => Object.assign(new Error(name), { name });
 
@@ -35,6 +36,7 @@ describe("ValidationError", () => {
   beforeEach(() => {
     goBack.mockClear();
     navigate.mockClear();
+    popTo.mockClear();
     pop.mockClear();
   });
 
@@ -72,14 +74,25 @@ describe("ValidationError retry routing", () => {
   beforeEach(() => {
     goBack.mockClear();
     navigate.mockClear();
+    popTo.mockClear();
   });
 
-  it("returns to the screen that collected the action's input", () => {
-    renderNeuron({ error: named("ICPCallRejected"), transaction: { type: "stake_maturity" } });
+  // `navigate` would push a second copy of the screen rather than return to it, and `popTo` replaces
+  // the target's params, so the params have to travel with the call — the screens fault on an
+  // account they cannot read.
+  it("returns to the screen that collected the action's input, carrying its params", () => {
+    const params = {
+      error: named("ICPCallRejected"),
+      transaction: { type: "stake_maturity" },
+      accountId: "account-1",
+      neuronId: "7",
+    };
 
+    renderNeuron(params);
     fireEvent.press(screen.getByText("Retry"));
 
-    expect(navigate).toHaveBeenCalledWith(ScreenName.InternetComputerNeuronStakeMaturity);
+    expect(popTo).toHaveBeenCalledWith(ScreenName.InternetComputerNeuronStakeMaturity, params);
+    expect(navigate).not.toHaveBeenCalled();
     expect(goBack).not.toHaveBeenCalled();
   });
 
@@ -89,7 +102,10 @@ describe("ValidationError retry routing", () => {
 
     fireEvent.press(screen.getByText("Retry"));
 
-    expect(navigate).toHaveBeenCalledWith(ScreenName.InternetComputerNeuronFollowees);
+    expect(popTo).toHaveBeenCalledWith(
+      ScreenName.InternetComputerNeuronFollowees,
+      expect.anything(),
+    );
   });
 
   // Both dissolve-delay commands are entered on the same screen.
@@ -101,7 +117,31 @@ describe("ValidationError retry routing", () => {
 
     fireEvent.press(screen.getByText("Retry"));
 
-    expect(navigate).toHaveBeenCalledWith(ScreenName.InternetComputerNeuronSetDissolveDelay);
+    expect(popTo).toHaveBeenCalledWith(
+      ScreenName.InternetComputerNeuronSetDissolveDelay,
+      expect.anything(),
+    );
+  });
+
+  /*
+   * The confirmation list is the one retry target that need not be in the stack: a neuron's own
+   * Confirm following goes straight to the device, so the retry is the first time the list mounts
+   * and there is nothing to pop back to. `popTo` puts it in place of this screen, which only works
+   * because the account travels with the call.
+   */
+  it("carries the account to a confirmation list that was never mounted", () => {
+    renderNeuron({
+      error: named("ICPCallRejected"),
+      transaction: { type: "refresh_voting_power" },
+      accountId: "account-1",
+    });
+
+    fireEvent.press(screen.getByText("Retry"));
+
+    expect(popTo).toHaveBeenCalledWith(
+      ScreenName.InternetComputerNeuronRefreshVotingPower,
+      expect.objectContaining({ accountId: "account-1" }),
+    );
   });
 
   it("goes back one screen for an action that took no input", () => {
@@ -110,7 +150,7 @@ describe("ValidationError retry routing", () => {
     fireEvent.press(screen.getByText("Retry"));
 
     expect(goBack).toHaveBeenCalled();
-    expect(navigate).not.toHaveBeenCalled();
+    expect(popTo).not.toHaveBeenCalled();
   });
 });
 
@@ -123,6 +163,7 @@ describe("ValidationError withholding an unsafe retry", () => {
   beforeEach(() => {
     goBack.mockClear();
     navigate.mockClear();
+    popTo.mockClear();
   });
 
   it("withholds Retry when a non-repeatable command may already have run", () => {
@@ -146,7 +187,7 @@ describe("ValidationError withholding an unsafe retry", () => {
 
     fireEvent.press(screen.getByText("Back to neurons"));
 
-    expect(navigate).toHaveBeenCalledWith(ScreenName.InternetComputerNeuronList, {
+    expect(popTo).toHaveBeenCalledWith(ScreenName.InternetComputerNeuronList, {
       accountId: "account-1",
       parentId: undefined,
     });

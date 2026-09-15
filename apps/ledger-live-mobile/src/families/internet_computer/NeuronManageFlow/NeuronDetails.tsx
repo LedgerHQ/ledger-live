@@ -104,7 +104,7 @@ export default function NeuronDetails({ navigation, route }: Props) {
 
   const backToList = useCallback(
     () =>
-      navigation.navigate(ScreenName.InternetComputerNeuronList, {
+      navigation.popTo(ScreenName.InternetComputerNeuronList, {
         accountId: route.params.accountId,
         parentId: route.params.parentId,
       }),

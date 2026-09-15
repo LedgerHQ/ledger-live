@@ -19,6 +19,7 @@ let bridgePending: boolean;
 let bridgeError: Error | undefined;
 
 const mockNavigate = jest.fn();
+const mockPopTo = jest.fn();
 
 // Stood in for so the gate can be tested without mounting DeviceAction, which starts talking to a
 // device the moment it renders.
@@ -55,7 +56,7 @@ const renderScreen = () =>
   render(
     <ConnectDevice
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      navigation={{ navigate: mockNavigate } as any}
+      navigation={{ navigate: mockNavigate, popTo: mockPopTo } as any}
       route={
         {
           params: {
@@ -85,6 +86,7 @@ describe("neuron ConnectDevice", () => {
     bridgePending = false;
     bridgeError = undefined;
     mockNavigate.mockClear();
+    mockPopTo.mockClear();
   });
 
   it("hands a transaction the bridge accepts to the device screen", () => {
@@ -121,7 +123,7 @@ describe("neuron ConnectDevice", () => {
     renderScreen();
     fireEvent.press(screen.getByTestId("icp-blocked-action-back-button"));
 
-    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.InternetComputerNeuronList, {
+    expect(mockPopTo).toHaveBeenCalledWith(ScreenName.InternetComputerNeuronList, {
       accountId: "icp-1",
       parentId: undefined,
     });

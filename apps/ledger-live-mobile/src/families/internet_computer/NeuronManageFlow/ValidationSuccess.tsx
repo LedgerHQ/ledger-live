@@ -38,7 +38,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   // Back to the list rather than closing: the point of the flow is managing several neurons.
   const onBackToNeurons = useCallback(
     () =>
-      navigation.navigate(ScreenName.InternetComputerNeuronList, {
+      navigation.popTo(ScreenName.InternetComputerNeuronList, {
         accountId: route.params.accountId,
         parentId: route.params.parentId,
       }),

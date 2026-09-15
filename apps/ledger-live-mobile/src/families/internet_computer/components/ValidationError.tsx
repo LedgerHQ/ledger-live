@@ -107,16 +107,21 @@ export default function ICPValidationError({
   }, [navigation]);
 
   const retryScreen = command && RETRY_SCREEN[command];
-  // Navigating to a screen already below in the stack returns to it with the transaction the user
-  // built still on it. Without an input screen there is nothing to correct, so one step back — the
-  // device screen — is where a retry belongs.
+  // `popTo`, not `navigate`, which pushes a second copy of the screen rather than returning to it.
+  // The params travel because `popTo` replaces the target's own, and because the screen need not be
+  // in the stack at all: a confirmation reached from a neuron goes straight to the device, so its
+  // retry mounts the list for the first time. Without an input screen there is nothing to correct,
+  // so a retry belongs one step back, at the device screen.
   const retry = useCallback(() => {
     if (retryScreen) {
-      (navigation as unknown as { navigate: (screen: string) => void }).navigate(retryScreen);
+      (navigation as unknown as { popTo: (screen: string, params: unknown) => void }).popTo(
+        retryScreen,
+        route.params,
+      );
       return;
     }
     navigation.goBack();
-  }, [navigation, retryScreen]);
+  }, [navigation, retryScreen, route.params]);
 
   /*
    * Three ways a retry is safe: the signature never left the device, so nothing was sent; the network

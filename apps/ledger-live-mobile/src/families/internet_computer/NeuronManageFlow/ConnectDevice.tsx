@@ -58,7 +58,7 @@ export default function ConnectDevice(props: Props) {
   }));
 
   const backToList = useCallback(
-    () => navigation.navigate(ScreenName.InternetComputerNeuronList, { accountId, parentId }),
+    () => navigation.popTo(ScreenName.InternetComputerNeuronList, { accountId, parentId }),
     [accountId, navigation, parentId],
   );
 

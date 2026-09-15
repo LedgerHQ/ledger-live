@@ -24,6 +24,13 @@ type ActionRoute = {
 
 type Navigation = {
   navigate: (screen: string, params: Record<string, unknown>) => void;
+  // Returning to a step is `popTo`: `navigate` pushes a second copy of a screen already in the
+  // stack. Named to the one screen this hook goes back to, because the real signature pairs each
+  // screen with its own params and so cannot be widened to a string.
+  popTo: (
+    screen: ScreenName.InternetComputerNeuronList,
+    params: { accountId: string; parentId?: string },
+  ) => void;
 };
 
 /**
@@ -63,7 +70,7 @@ export function useNeuronAction(navigation: Navigation, route: ActionRoute) {
   // render the shared MissingNeuron, and so a screen added later cannot forget the way out.
   const backToList = useCallback(
     () =>
-      navigation.navigate(ScreenName.InternetComputerNeuronList, {
+      navigation.popTo(ScreenName.InternetComputerNeuronList, {
         accountId: route.params.accountId,
         parentId: route.params.parentId,
       }),
