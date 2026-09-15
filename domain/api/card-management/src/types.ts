@@ -3,6 +3,7 @@ import {
   PayCardErrorResponseSchema,
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletSchema,
+  PayCardRewardWalletSchema,
   PayCardLinkedWalletSchema,
   PayCardLinkedWalletCanonicalSchema,
   PayCardLogoutResponseSchema,
@@ -75,6 +76,9 @@ export type PayCardRefreshSessionRequest = {
 };
 
 export type PayCardInternalWallet = z.infer<typeof PayCardInternalWalletSchema>;
+
+/** The wallet the card's rewards are paid into. */
+export type PayCardRewardWallet = z.infer<typeof PayCardRewardWalletSchema>;
 
 /** One card-linked wallet exactly as the wire sent it. */
 export type PayCardLinkedWalletResponse = z.infer<typeof PayCardLinkedWalletSchema>;
