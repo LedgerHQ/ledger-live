@@ -51,11 +51,14 @@ export function usePayTabViewModel() {
     [apiUrl, clientId, hostedUiUrl, redirectUri],
   );
 
-  // The OAuth redirect, when the deep link brought one. The code is the whole of it: PKCE ties it to
-  // the verifier on disk, so nothing else has to be echoed back.
+  // The OAuth redirect, when the deep link brought one. PKCE ties the code to the verifier on disk,
+  // so nothing else has to be echoed back, but the app id names the provider tenant to route on.
   const callback: CardProps["login"]["callback"] = useMemo(
-    () => (params?.code ? { code: params.code } : null),
-    [params?.code],
+    () =>
+      params?.code
+        ? { code: params.code, ...(params.app_id ? { appId: params.app_id } : {}) }
+        : null,
+    [params?.code, params?.app_id],
   );
 
   const login: CardProps["login"] = useMemo(
