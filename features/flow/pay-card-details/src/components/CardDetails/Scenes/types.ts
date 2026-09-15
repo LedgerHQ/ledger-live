@@ -1,5 +1,5 @@
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
-import type { CardVisualProps, FreezeViewModel } from "../../../types";
+import type { CardVisualProps, FreezeViewModel, UnlockForCardNumbers } from "../../../types";
 import type { MoreViewModel, MoreViewProps } from "../../More/types";
 import type { CardDetailsRoute } from "./navigation";
 
@@ -10,6 +10,7 @@ export type OverviewSceneProps = Readonly<{
   onFreezePress: () => void;
   onMorePress: () => void;
   formatters?: CardTransactionFormatters;
+  unlock?: UnlockForCardNumbers;
 }>;
 
 export type FreezeSceneProps = Readonly<{

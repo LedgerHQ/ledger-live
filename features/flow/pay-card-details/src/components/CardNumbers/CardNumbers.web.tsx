@@ -8,9 +8,9 @@ export function CardNumbers({ unlock, cardFace }: CardNumbersProps) {
   const cardNumbersViewModel = useCardNumbersViewModel({ unlock });
 
   return (
-    <>
+    <div className="flex flex-col gap-16">
       <CardNumbersView {...cardNumbersViewModel} cardFace={cardFace} />
       <CardActions cardNumbersViewModel={cardNumbersViewModel} />
-    </>
+    </div>
   );
 }
