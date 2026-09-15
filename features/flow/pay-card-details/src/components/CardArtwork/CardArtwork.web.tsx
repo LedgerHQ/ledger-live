@@ -1,8 +1,9 @@
 import React from "react";
 import { VISA_LOGO_PATH } from "./assets/visaLogoPath";
-import { CARD_GRADIENT } from "./cardGradient";
 import halftoneLeft from "./assets/halftoneLeft.svg";
 import halftoneRight from "./assets/halftoneRight.svg";
+
+export const CARD_GRADIENT = "linear-gradient(119.51deg, rgb(0, 0, 0) 0%, rgb(31, 31, 31) 100%)";
 
 /**
  * The physical card face: a dark gradient with the decorative halftone artwork and the network
