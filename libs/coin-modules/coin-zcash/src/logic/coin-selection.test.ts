@@ -277,6 +277,26 @@ describe("computeShieldingFee", () => {
   });
 });
 
+describe("computeTransparentSelectionFee", () => {
+  // `selectTransparentInputs` relies on this equality: because dropping the change
+  // output never lowers the fee, an amount it cannot afford with a change output it
+  // cannot afford without one either, so there is no single-output retry to attempt
+  // and no remainder left without a change output to hold it. Both floors are what
+  // make the two equal -- the grace actions for t→t, the Orchard minimum for t→z.
+  // If a future fee-model change breaks the equality (say a t→z's change becomes a
+  // transparent output), this fails and the retry has to be reconsidered.
+  it.each<ZcashTransferType>(["transparent", "transparent-to-shielded"])(
+    "prices 1 and 2 outputs identically for %s, whatever the input count",
+    transferType => {
+      for (const inputCount of [1, 2, 3, 8, 32]) {
+        expect(computeTransparentSelectionFee(inputCount, 1, transferType).toNumber()).toBe(
+          computeTransparentSelectionFee(inputCount, 2, transferType).toNumber(),
+        );
+      }
+    },
+  );
+});
+
 // ── selectTransparentInputs ────────────────────────────────────────────
 
 describe("selectTransparentInputs (transparent-to-shielded)", () => {

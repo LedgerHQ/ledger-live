@@ -160,26 +160,18 @@ export function selectTransparentInputs(
   }
 
   // Assume a change output (recipient + change = 2 outputs).
-  let fee = computeTransparentSelectionFee(inputCount, 2, transferType);
-  let changeAmount = totalInput.minus(amount).minus(fee);
+  const fee = computeTransparentSelectionFee(inputCount, 2, transferType);
+  const changeAmount = totalInput.minus(amount).minus(fee);
 
-  if (changeAmount.lt(0)) {
-    // Not enough for amount + change-fee: retry without a change output.
-    fee = computeTransparentSelectionFee(inputCount, 1, transferType);
-    changeAmount = totalInput.minus(amount).minus(fee);
-    if (changeAmount.lt(0)) return undefined; // insufficient balance
-    // For "transparent-to-shielded" the 1-output fee can leave a small positive
-    // remainder (< marginal fee) that has no change output to hold it. Absorb it
-    // into the fee so the balance closes; otherwise the native PCZT builder would
-    // reintroduce a change note or reject the mismatched fee. Guarded to t→s: the
-    // t→t builder requires the fee to equal the ZIP-317 fee exactly (never inflate
-    // it), and t→t cannot reach here with a positive remainder anyway (its 1- and
-    // 2-output fees are always equal).
-    if (transferType === "transparent-to-shielded" && changeAmount.gt(0)) {
-      fee = fee.plus(changeAmount);
-    }
-    return { totalInput, fee, changeAmount: new BigNumber(0) };
-  }
+  // Dropping the change output would not make an unaffordable amount affordable:
+  // for both transfer types this function serves the 1- and 2-output fees are
+  // identical -- "transparent" is floored by the grace actions
+  // (`max(GRACE, max(in, out))`) and "transparent-to-shielded" by the Orchard
+  // minimum (`max(ORCHARD_MIN, out)`, equal for out of 1 or 2). So there is no
+  // single-output retry to attempt, and no remainder that could end up without a
+  // change output to hold it. `computeTransparentSelectionFee`'s own tests pin
+  // that equality, so a future fee-model change that breaks it fails loudly here.
+  if (changeAmount.lt(0)) return undefined; // insufficient balance
 
   // The native PCZT builder owns change creation for every transfer type this
   // function serves -- "transparent" (t→t) on the V5 builder and
