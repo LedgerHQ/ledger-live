@@ -89,6 +89,26 @@ describe("index", () => {
       });
     });
 
+    describe("getSignaturesForAddressBatch", () => {
+      const mockServer = setupServer();
+
+      beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+      afterEach(() => mockServer.resetHandlers());
+      afterAll(() => mockServer.close());
+
+      it("refuses a batch-level failure rather than reading it as empty history", async () => {
+        mockServer.use(
+          http.post(FAKE_CONFIG.endpoint, () =>
+            HttpResponse.json({ jsonrpc: "2.0", error: { code: -32601 }, id: null }),
+          ),
+        );
+
+        await expect(
+          getChainAPI(FAKE_CONFIG).getSignaturesForAddressBatch([{ address: "addr1" }]),
+        ).rejects.toThrow("batch failed");
+      });
+    });
+
     describe("getStakeAccountsByWithdrawAuth", () => {
       const mockServer = setupServer();
       const authAddr = "AuthorityAddress111111111111111111111111111";

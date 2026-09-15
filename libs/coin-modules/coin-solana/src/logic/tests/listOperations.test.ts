@@ -2,7 +2,18 @@ import type { ParsedInstruction, PartiallyDecodedInstruction } from "@solana/web
 import { PublicKey } from "@solana/web3.js";
 import { http, HttpResponse } from "msw";
 import { listOperations } from "../listOperations";
-import { server, rpcHandler, createTestChainApi, TEST_ENDPOINT } from "./helpers/msw-rpc.mock";
+import {
+  server,
+  rpcHandler as baseRpcHandler,
+  createTestChainApi,
+  TEST_ENDPOINT,
+} from "./helpers/msw-rpc.mock";
+
+const rpcHandler: typeof baseRpcHandler = handlers =>
+  baseRpcHandler({
+    getTokenAccountsByOwner: () => ({ context: { slot: 0 }, value: [] }),
+    ...handlers,
+  });
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const TEST_RECIPIENT = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
@@ -84,18 +95,20 @@ describe("listOperations (MSW integration)", () => {
     server.use(
       http.post(TEST_ENDPOINT, async ({ request }) => {
         const body: unknown = await request.clone().json();
-        if (
-          typeof body === "object" &&
-          body !== null &&
-          "method" in body &&
-          body.method === "getSignaturesForAddress"
-        ) {
-          return HttpResponse.json({
-            jsonrpc: "2.0",
-            error: { code: -32020, message: "Invalid param: until" },
-            id: "1",
-          });
+        if (Array.isArray(body)) {
+          return HttpResponse.json(
+            body.map((req: { id: string }) => ({
+              jsonrpc: "2.0",
+              error: { code: -32020, message: "Invalid param: until" },
+              id: req.id,
+            })),
+          );
         }
+        return HttpResponse.json({
+          jsonrpc: "2.0",
+          result: { context: { slot: 0 }, value: [] },
+          id: "1",
+        });
       }),
     );
 
@@ -216,6 +229,14 @@ describe("listOperations (MSW integration)", () => {
           | { method: string; params: unknown[]; id: unknown }
           | { method: string; params: unknown[]; id: unknown }[];
 
+        if (!Array.isArray(body) && body.method === "getTokenAccountsByOwner") {
+          return HttpResponse.json({
+            jsonrpc: "2.0",
+            result: { context: { slot: 0 }, value: [] },
+            id: body.id,
+          });
+        }
+
         if (!Array.isArray(body)) {
           return HttpResponse.json({
             jsonrpc: "2.0",
@@ -229,6 +250,25 @@ describe("listOperations (MSW integration)", () => {
             })),
             id: body.id,
           });
+        }
+
+        if (body[0]?.method === "getSignaturesForAddress") {
+          return HttpResponse.json(
+            body
+              .map(req => ({
+                jsonrpc: "2.0",
+                result: Object.keys(txBySignature).map(signature => ({
+                  signature,
+                  slot: 100,
+                  blockTime,
+                  err: null,
+                  memo: null,
+                  confirmationStatus: "finalized",
+                })),
+                id: req.id,
+              }))
+              .reverse(),
+          );
         }
 
         // Answer the getTransaction batch in reverse order, as a node is free to do.
@@ -410,6 +450,17 @@ describe("listOperations (MSW integration)", () => {
                         amount: "1000000",
                         decimals: 6,
                         uiAmount: 1.0,
+                      },
+                    },
+                    {
+                      accountIndex: 0,
+                      mint: USDC_MINT,
+                      owner: TEST_RECIPIENT,
+                      programId: TOKEN_PROGRAM_ID,
+                      uiTokenAmount: {
+                        amount: "9000000",
+                        decimals: 6,
+                        uiAmount: 9.0,
                       },
                     },
                   ],
