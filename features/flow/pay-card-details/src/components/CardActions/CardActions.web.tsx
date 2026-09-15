@@ -1,21 +1,17 @@
 import React from "react";
 import { Freeze } from "../Freeze/Freeze";
 import { More } from "../More/More";
-import { RevealTile } from "../CardNumbers/Tile/RevealTile";
-import type { CardNumbersViewProps } from "../../types";
+import { Reveal } from "../Reveal/Reveal";
+import type { RevealTileProps } from "../../types";
 
-type RevealProps = Pick<CardNumbersViewProps, "status" | "isRevealed" | "onReveal" | "onHide">;
+type CardActionsProps = Readonly<{
+  reveal?: RevealTileProps | null;
+}>;
 
-export function CardActions({
-  cardNumbersViewModel,
-}: {
-  readonly cardNumbersViewModel: RevealProps;
-}) {
+export function CardActions({ reveal }: CardActionsProps) {
   return (
     <div className="flex flex-row gap-8">
-      <div className="min-w-0 flex-1">
-        <RevealTile {...cardNumbersViewModel} />
-      </div>
+      {reveal ? <Reveal {...reveal} /> : null}
       <div className="min-w-0 flex-1">
         <Freeze />
       </div>

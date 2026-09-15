@@ -1,11 +1,11 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { CARD_COPY, I18nWrapper } from "../../../__tests__/i18nWrapper";
-import { RevealTile } from "./RevealTile";
-import type { CardNumbersViewProps } from "../../../types";
+import { CARD_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
+import { Reveal } from "./Reveal";
+import type { RevealTileProps } from "../../types";
 
-function renderTile(cardNumbersViewModel: Partial<CardNumbersViewProps> = {}) {
+function renderReveal(props: Partial<RevealTileProps> = {}) {
   const onReveal = jest.fn();
   const onHide = jest.fn();
 
@@ -13,27 +13,21 @@ function renderTile(cardNumbersViewModel: Partial<CardNumbersViewProps> = {}) {
     onReveal,
     onHide,
     ...render(
-      <RevealTile
-        status="idle"
-        isRevealed={false}
-        onReveal={onReveal}
-        onHide={onHide}
-        {...cardNumbersViewModel}
-      />,
+      <Reveal status="idle" isRevealed={false} onReveal={onReveal} onHide={onHide} {...props} />,
       { wrapper: I18nWrapper },
     ),
   };
 }
 
-describe("RevealTile (web)", () => {
+describe("Reveal (web)", () => {
   it("should show View when nothing is open yet", () => {
-    renderTile();
+    renderReveal();
 
     expect(screen.getByRole("button", { name: CARD_COPY.numbersReveal })).toBeVisible();
   });
 
   it("should ask to show numbers when the user clicks View", async () => {
-    const { onReveal, onHide } = renderTile();
+    const { onReveal, onHide } = renderReveal();
 
     await userEvent.click(screen.getByRole("button", { name: CARD_COPY.numbersReveal }));
 
@@ -42,19 +36,19 @@ describe("RevealTile (web)", () => {
   });
 
   it("should lock View while loading", () => {
-    renderTile({ status: "loading" });
+    renderReveal({ status: "loading" });
 
     expect(screen.getByRole("button", { name: CARD_COPY.numbersReveal })).toBeDisabled();
   });
 
   it("should show Hide when numbers are visible", () => {
-    renderTile({ isRevealed: true });
+    renderReveal({ isRevealed: true });
 
     expect(screen.getByRole("button", { name: CARD_COPY.numbersHide })).toBeVisible();
   });
 
   it("should hide the image when the user clicks Hide", async () => {
-    const { onHide, onReveal } = renderTile({ isRevealed: true });
+    const { onHide, onReveal } = renderReveal({ isRevealed: true });
 
     await userEvent.click(screen.getByRole("button", { name: CARD_COPY.numbersHide }));
 
@@ -63,7 +57,7 @@ describe("RevealTile (web)", () => {
   });
 
   it("should show an error when loading fails", () => {
-    renderTile({ status: "failed" });
+    renderReveal({ status: "failed" });
 
     expect(screen.getByText(CARD_COPY.numbersFailed)).toBeVisible();
   });

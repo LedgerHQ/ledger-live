@@ -72,4 +72,10 @@ describe("useCardViewModel", () => {
 
     expect(mockNavigate).not.toHaveBeenCalled();
   });
+
+  it("authorizes every holder to reveal the card numbers, until a gate lands", async () => {
+    const { result } = renderCardViewModel(null);
+
+    await expect(result.current.unlock()).resolves.toBe(true);
+  });
 });

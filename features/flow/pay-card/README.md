@@ -22,8 +22,7 @@ import { Card } from "@features/flow-pay-card";
 
 - The card face from [`@features/flow-pay-card-details`](../pay-card-details/README.md): `CardVisual`
   once the host provides a countervalue formatter and a balance label, the bare `CardArtwork`
-  otherwise. Freeze and More also come from that package (`CardActions` on web; `Freeze` and `More`
-  side by side on native).
+  otherwise. Freeze and More also come from that package (`CardDetails` on both platforms).
 - `CardLogin` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md) — it shows while
   nobody is signed in, and `useCardLogout` ends the session from the More menu.
 - `CardTransactions` from [`@features/flow-pay-card-transactions`](../pay-card-transactions/README.md)
