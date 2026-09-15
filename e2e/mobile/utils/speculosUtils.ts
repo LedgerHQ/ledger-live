@@ -67,7 +67,10 @@ const SPECULOS_TRACKING_FILE = path.join(ARTIFACTS_DIR, `speculos-instances.${pr
 export const SPECULOS_TRACKING_FILE_PATTERN = /^speculos-instances\.\d+\.json$/;
 
 function getSpeculosDevices(): Map<string, number> {
-  return (globalThis.speculosDevices ??= new Map());
+  if (!globalThis.speculosDevices) {
+    globalThis.speculosDevices = new Map();
+  }
+  return globalThis.speculosDevices;
 }
 
 // Register in tracking file for cross-process cleanup
@@ -109,7 +112,7 @@ export async function launchSpeculos(appName: string) {
   const testName = jestExpect.getState().testPath || "unknown";
   let device;
   try {
-    device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]);
+    device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replaceAll(" ", "_")]);
   } catch (e: unknown) {
     const err = e instanceof Error ? e : new Error(String(e));
     globalThis.speculosStartupErrorMessage = err.message;

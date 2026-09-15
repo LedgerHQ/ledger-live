@@ -153,22 +153,32 @@ export default class BorrowPage {
     try {
       return await retryUntilTimeout(async () => {
         for (const [index, step] of this.executionSteps.entries()) {
-          if (await this.isOnScreen(step.buttonId)) return this.executionSteps.slice(index);
+          if (await this.isVisibleCta(step.buttonId)) return this.executionSteps.slice(index);
         }
         throw new Error("No execution CTA on screen yet");
       }, EXECUTION_STEP_TIMEOUT_MS);
     } catch {
+      const stepIds = this.executionSteps.map(step => `'${step.buttonId}'`).join(", ");
       throw new Error(
-        `The execution screen showed none of ${this.executionSteps.map(step => `'${step.buttonId}'`).join(", ")} within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
+        `The execution screen showed none of ${stepIds} within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
       );
     }
   }
 
-  private async isOnScreen(testId: string): Promise<boolean> {
-    return !!(await waitWebElementByTestId(testId, {
-      timeout: PROBE_TIMEOUT_MS,
-      throwOnTimeout: false,
-    }));
+  private async isVisibleCta(testId: string): Promise<boolean> {
+    try {
+      return Boolean(
+        await getWebElementByTestId(testId).runScript((el: HTMLElement) => {
+          if (!el?.isConnected) return false;
+          const style = window.getComputedStyle(el);
+          if (style.display === "none" || style.visibility === "hidden") return false;
+          const rect = el.getBoundingClientRect();
+          return rect.width > 0 && rect.height > 0;
+        }),
+      );
+    } catch {
+      return false;
+    }
   }
 
   private async authorizeStep(buttonId: string, doneId: string, sign: () => Promise<void>) {
