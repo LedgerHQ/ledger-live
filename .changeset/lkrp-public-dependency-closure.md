@@ -18,7 +18,7 @@ read the automation event stream — and all three are covered by two already-pu
 ledgerjs base class builds `send` on top of it. The harness is test-only: `tsconfig.build.json`
 excludes `tests/`, and only `pnpm e2e` (Docker + `COIN_APPS`) reaches it.
 
-`@shared/env` is gone from the tests, following the four exits in `libs/env/MIGRATION.md`:
+`@shared/env` is gone from the tests, following the homes in `docs/configuration.md`:
 `setEnv("GET_CALLS_RETRY", 0)` was dead (`live-network` reads only `getNetworkState()`, and both
 helpers already call `setNetworkState({ getCallsRetry: 0 })` on the next line),
 `TRUSTCHAIN_API_STAGING` becomes a plain constant, and `MOCK` is dropped — nothing set it, and

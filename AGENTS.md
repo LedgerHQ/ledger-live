@@ -26,10 +26,13 @@ When a task involves GitHub — pull requests, issues, CI checks, or releases �
 
 Always follow the [validate-before-finishing](/docs/validate-before-finishing.md) instructions before completing code changes.
 
+## Configuration and environment variables
+
+Before adding any configuration value — an environment variable, a URL, a partner key — read [/docs/configuration.md](/docs/configuration.md) to pick its home. `@shared/env` is deprecated and takes no new definitions.
+
 ## Keep the external services catalog up to date
 
-- [/docs/services.md](/docs/services.md) lists every external service the apps contact (domain, how it's managed, scope/team).
-- When you add, remove, or change a service — a new entry in `libs/env/src/env.ts`, a hardcoded endpoint, a coin/family config change, or a new SDK dependency that phones home — update the matching table in `docs/services.md`.
+New endpoint or new SDK that phones home? Add it to [/docs/services.md](/docs/services.md).
 
 ## Read READMEs for packages where you're working
 
