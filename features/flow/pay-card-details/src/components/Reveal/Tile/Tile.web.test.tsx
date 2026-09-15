@@ -2,10 +2,10 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CARD_COPY, I18nWrapper } from "../../../__tests__/i18nWrapper";
-import { RevealTile } from "./RevealTile";
-import type { CardNumbersViewProps } from "../../../types";
+import { Tile } from "./Tile";
+import type { RevealTileProps } from "../../../types";
 
-function renderTile(cardNumbersViewModel: Partial<CardNumbersViewProps> = {}) {
+function renderTile(props: Partial<RevealTileProps> = {}) {
   const onReveal = jest.fn();
   const onHide = jest.fn();
 
@@ -13,19 +13,13 @@ function renderTile(cardNumbersViewModel: Partial<CardNumbersViewProps> = {}) {
     onReveal,
     onHide,
     ...render(
-      <RevealTile
-        status="idle"
-        isRevealed={false}
-        onReveal={onReveal}
-        onHide={onHide}
-        {...cardNumbersViewModel}
-      />,
+      <Tile status="idle" isRevealed={false} onReveal={onReveal} onHide={onHide} {...props} />,
       { wrapper: I18nWrapper },
     ),
   };
 }
 
-describe("RevealTile (web)", () => {
+describe("Reveal Tile (web)", () => {
   it("should show View when nothing is open yet", () => {
     renderTile();
 

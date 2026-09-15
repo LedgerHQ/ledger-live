@@ -4,6 +4,7 @@ import {
   isMockCardRequest,
   MOCK_CARD_ACCESS_TOKEN_PREFIX,
 } from "@domain/api-card-management/mock/card-session";
+import { mockPayCardDetailsToken } from "@domain/api-card-management/mock/card-details-token";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
   mockPayCardInternalWallets,
@@ -145,6 +146,13 @@ const handlers = [
   http.get("*/v1/card/transactions", ({ request }) =>
     isMockCardRequest(request) ? HttpResponse.json(mockPayCardTransactions()) : passthrough(),
   ),
+
+  // The image the token points at is not mocked here: RN loads it through native networking, which
+  // these interceptors never see. It stays unread until LWM grows its own reveal UI.
+  http.post("*/v1/card/details/token", ({ request }) =>
+    isMockCardRequest(request) ? HttpResponse.json(mockPayCardDetailsToken()) : passthrough(),
+  ),
+
   http.get("*/v1/wallet/internal", ({ request }) => {
     const { walletFunded } = readCardOnboardingStatusMock();
     if (walletFunded !== undefined) {
