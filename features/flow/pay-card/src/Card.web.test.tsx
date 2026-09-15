@@ -73,7 +73,7 @@ describe("Card (web)", () => {
     receivedTransactionTracker = undefined;
   });
 
-  it("always shows the host title", () => {
+  it("always shows the card title", () => {
     renderCard(<Card login={{ oauthConfig }} />);
 
     expect(screen.getByText(title)).toBeVisible();
@@ -106,8 +106,8 @@ describe("Card (web)", () => {
       expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
     });
 
-    it("never builds the balance overlay, even when the host provides a formatter and label", () => {
-      renderCard(<Card login={{ oauthConfig }} formatters={formatters} balanceLabel="Balance" />);
+    it("never builds the balance overlay, even when the host provides a formatter", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
@@ -129,8 +129,8 @@ describe("Card (web)", () => {
       expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
     });
 
-    it("hands the card visual to the details block once the host provides a formatter and label", () => {
-      renderCard(<Card login={{ oauthConfig }} formatters={formatters} balanceLabel="Balance" />);
+    it("hands the card visual to the details block once the host provides a formatter", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
 
       expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();

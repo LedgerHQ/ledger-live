@@ -6,15 +6,16 @@ import type { CardDisplayState, CardProps, CardViewProps } from "./Card.types";
 /** Mock card balance shown until the real balance API is wired (see LIVE-35427 follow-up). */
 const MOCK_CARD_BALANCE = 100;
 
-export function useCardViewModel({ login, formatters, balanceLabel }: CardProps): CardViewProps {
+export function useCardViewModel({ login, formatters }: CardProps): CardViewProps {
   const { t } = useTranslation();
   const status = useCardAuthStatus();
   const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
   const isSignedIn = status === "signedIn";
   const formatCountervalue = formatters?.countervalue;
+  const balanceLabel = t("payTab.card.balanceLabel");
 
   const cardVisual = useMemo<CardViewProps["cardVisual"]>(() => {
-    if (!isSignedIn || !formatCountervalue || balanceLabel === undefined) return undefined;
+    if (!isSignedIn || !formatCountervalue) return undefined;
     return { balance: MOCK_CARD_BALANCE, formatCountervalue, balanceLabel };
   }, [isSignedIn, formatCountervalue, balanceLabel]);
 

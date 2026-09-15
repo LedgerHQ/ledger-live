@@ -7,7 +7,7 @@ import type { CardViewProps } from "./Card.types";
 
 export function CardView({ title, login, displayState, cardVisual, formatters }: CardViewProps) {
   return (
-    <div className="flex flex-col gap-16">
+    <section aria-label={title} className="flex flex-col gap-16">
       <p className="heading-5-semi-bold text-base">{title}</p>
       {displayState === "signedIn" ? (
         <>
@@ -28,6 +28,6 @@ export function CardView({ title, login, displayState, cardVisual, formatters }:
           <CardLogin key={login.oauthConfig.apiUrl} {...login} />
         </>
       )}
-    </div>
+    </section>
   );
 }

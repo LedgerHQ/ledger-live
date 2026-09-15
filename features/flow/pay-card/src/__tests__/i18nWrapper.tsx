@@ -9,6 +9,7 @@ const CARD_RESOURCES = {
       payTab: {
         card: {
           title: CARD_TITLE,
+          balanceLabel: "Balance",
         },
       },
     },
