@@ -53,7 +53,14 @@ function assertOrderWithinApprovedCost(request: EnergyRentRequest, order: Energy
   const { maxPayCoinAmt, maxPayCoinCode } = request;
   if (maxPayCoinAmt === undefined) return;
 
-  if (maxPayCoinCode !== undefined && order.payCoinCode !== maxPayCoinCode) {
+  // Fail closed on a ceiling amount with no coin code: an amount alone means nothing across
+  // denominations, so a provider could price the order in a cheaper-looking coin and slip under it.
+  if (maxPayCoinCode === undefined) {
+    throw new TronifyApiError(
+      `Energy-rent cost ceiling "${maxPayCoinAmt}" has no approved coin code to compare against`,
+    );
+  }
+  if (order.payCoinCode !== maxPayCoinCode) {
     throw new TronifyApiError(
       `Energy-rent order is priced in ${String(order.payCoinCode)}, but ${maxPayCoinCode} was approved`,
     );
