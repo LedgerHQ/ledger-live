@@ -13,4 +13,8 @@ export enum Addresses {
   SWAP_HISTORY_ERC20_ETH_USDT_TO = "0x70AAEEe70118a065ddF84dF6669b496A447C8CcC",
   MINA_KRAKEN_VALIDATOR = "B62qoiM41U5gBnjujQRgeewfkK9VmgVT8ifrRRwAsqBUM6pdxi9ywk2",
   MINA_AURO_VALIDATOR = "B62qq3TQ8AP7MFYPVtMx5tZGF3kWLJukfwG1A1RGvaBW1jfTPTkDBW6",
+  // The address the device derives for the shared QA seed at 44'/133'/0'/0/6
+  // (Account.ZEC_1). Shielded-address verification compares the device's
+  // answer against this persisted value, so it must stay the real one.
+  ZEC_1_SHIELDED_ADDRESS = "u1rxupz6pfemaqnxkakpf846uf6euuaqhhgp7pf26he0c5k8xcm73e4khwj5fkmqe5rw58ppa4xevm3tny0sufvlywqngj2vus0g5rqt4j",
 }

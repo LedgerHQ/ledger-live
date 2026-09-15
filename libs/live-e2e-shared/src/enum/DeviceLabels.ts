@@ -81,4 +81,5 @@ export enum DeviceLabels {
   YES_ENABLE = "Yes, enable",
   YES_REJECT = "Yes, reject",
   CONTINUE_ANYWAY = "Continue anyway",
+  ZCASH_IS_READY = "Zcash app is ready",
 }
