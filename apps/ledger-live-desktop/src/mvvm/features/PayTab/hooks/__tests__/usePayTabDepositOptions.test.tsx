@@ -1,26 +1,24 @@
 import { act, renderHook } from "tests/testSetup";
 import { useNavigate } from "react-router";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { AssetCategory } from "@domain/api-aggregated-assets";
-import { useOpenAssetFlow } from "../../../ModularDialog/hooks/useOpenAssetFlow";
+import { useOpenAssetAndAccount } from "../../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { usePayTabDepositOptions } from "../usePayTabDepositOptions";
 
 const mockNavigate = jest.fn();
-const mockOpenAssetFlow = jest.fn();
+const mockOpenAssetAndAccount = jest.fn();
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(() => mockNavigate),
 }));
 
-jest.mock("../../../ModularDialog/hooks/useOpenAssetFlow", () => ({
-  useOpenAssetFlow: jest.fn(() => ({
-    openAssetFlow: mockOpenAssetFlow,
-    openAddAccountFlow: jest.fn(),
-  })),
+jest.mock("../../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
+  useOpenAssetAndAccount: jest.fn(),
 }));
 
 const mockedUseNavigate = jest.mocked(useNavigate);
-const mockedUseOpenAssetFlow = jest.mocked(useOpenAssetFlow);
+const mockedUseOpenAssetAndAccount = jest.mocked(useOpenAssetAndAccount);
 
 function render(onTrackEvent = jest.fn()) {
   return renderHook(() => usePayTabDepositOptions(onTrackEvent));
@@ -30,9 +28,9 @@ describe("usePayTabDepositOptions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseNavigate.mockReturnValue(mockNavigate);
-    mockedUseOpenAssetFlow.mockReturnValue({
-      openAssetFlow: mockOpenAssetFlow,
-      openAddAccountFlow: jest.fn(),
+    mockedUseOpenAssetAndAccount.mockReturnValue({
+      openAssetAndAccount: mockOpenAssetAndAccount,
+      openAssetAndAccountPromise: jest.fn(),
     });
   });
 
@@ -110,22 +108,37 @@ describe("usePayTabDepositOptions", () => {
     });
   });
 
-  it("opens the asset flow filtered to the stablecoin category for receive", () => {
+  it("opens the asset and account flow filtered to the stablecoin category for receive, letting the user pick an existing account or add a new one", () => {
     const { result } = render();
 
     act(() => result.current.depositOptions.onSelect("receive"));
 
-    expect(mockOpenAssetFlow).toHaveBeenCalledWith(undefined, undefined, [
-      AssetCategory.Stablecoins,
-    ]);
+    expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
+      expect.objectContaining({
+        categories: [AssetCategory.Stablecoins],
+      }),
+    );
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("skips receive options when opening receive from Pay", () => {
-    render();
+  it("opens the receive modal for the account picked (existing or newly added) once the flow succeeds", () => {
+    const { result, store } = render();
 
-    expect(mockedUseOpenAssetFlow).toHaveBeenCalledWith(expect.anything(), "Pay", "MODAL_RECEIVE", {
-      shouldUseReceiveOptions: false,
+    act(() => result.current.depositOptions.onSelect("receive"));
+
+    const { onSuccess } = mockOpenAssetAndAccount.mock.calls[0][0];
+    const account = { id: "account-1" } as unknown as AccountLike;
+    const parentAccount = { id: "parent-1" } as unknown as Account;
+
+    act(() => onSuccess(account, parentAccount));
+
+    expect(store.getState().modals.MODAL_RECEIVE).toEqual({
+      isOpened: true,
+      data: {
+        account,
+        parentAccount,
+        shouldUseReceiveOptions: false,
+      },
     });
   });
 });
