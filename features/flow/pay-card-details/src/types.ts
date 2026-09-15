@@ -26,6 +26,8 @@ export type CardDetailsProps = Readonly<{
   /** Native only: the Details sheet overview lists the card's transactions. */
   formatters?: CardTransactionFormatters;
   onTrackEvent?: CardTrackEvent;
+  /** When omitted, View stays off the Details overview. */
+  unlock?: UnlockForCardNumbers;
 }>;
 
 export type CardDetailsViewProps = CardDetailsProps &
@@ -102,6 +104,7 @@ export type CardNumbersStatus = "idle" | "loading" | "revealed" | "failed";
 
 export type CardNumbersViewProps = Readonly<{
   status: CardNumbersStatus;
+  isRevealed: boolean;
   imageUrl: string | undefined;
   onReveal: () => Promise<void>;
   onHide: () => void;
