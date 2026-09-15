@@ -12,7 +12,11 @@ export type TrackProps = {
 
 const TrackComponent = (props: TrackProps): null => {
   const { onMount, onUnmount, onUpdate } = props;
-  const firstRenderRef = useRef(true);
+
+  // Refs used to avoid duplicate events in development - see React.StrictMode tests for details
+  const mountTrackedRef = useRef(false);
+  const lastSeenPropsRef = useRef<TrackProps | null>(null);
+  const pendingUnmountRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const trackEvent = () => {
     const {
@@ -30,20 +34,29 @@ const TrackComponent = (props: TrackProps): null => {
   trackEventRef.current = trackEvent;
 
   useEffect(() => {
-    if (onMount && firstRenderRef.current === true) {
+    clearTimeout(pendingUnmountRef.current);
+    pendingUnmountRef.current = undefined;
+
+    if (onMount && !mountTrackedRef.current) {
+      mountTrackedRef.current = true;
       trackEventRef.current();
     }
 
     return () => {
-      if (onUnmount) trackEventRef.current();
+      if (!onUnmount) return;
+
+      pendingUnmountRef.current = setTimeout(() => {
+        pendingUnmountRef.current = undefined;
+        trackEventRef.current();
+      });
     };
   }, []);
 
   useEffect(() => {
-    if (onUpdate && firstRenderRef.current === false) {
-      trackEventRef.current();
-    }
-    firstRenderRef.current = false;
+    const lastSeenProps = lastSeenPropsRef.current;
+    lastSeenPropsRef.current = props;
+    if (lastSeenProps === null || lastSeenProps === props) return;
+    if (onUpdate) trackEventRef.current();
   }, [onUpdate, props]);
 
   return null;

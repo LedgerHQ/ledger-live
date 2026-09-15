@@ -1,9 +1,12 @@
 import React from "react";
-import { cleanup, render, waitFor } from "@testing-library/react";
+import { act, cleanup, render, waitFor } from "@testing-library/react";
 import { setAnalytics, setEnabledFn } from "@shared/analytics";
 import { Track } from ".";
 
 const track = jest.fn();
+
+/** Gives unmount a chance to fire, so a test can assert on the final count. */
+const flushDeferredEvents = () => act(() => new Promise(resolve => setTimeout(resolve, 0)));
 
 beforeEach(() => {
   track.mockClear();
@@ -46,8 +49,47 @@ describe("Track", () => {
     });
   });
 
+  it("sends the unmount event only on the real unmount when StrictMode mounts twice", async () => {
+    const { unmount } = render(<Track onMount onUnmount event="Drawer Closed" example="data" />, {
+      wrapper: React.StrictMode,
+    });
+
+    await flushDeferredEvents();
+    expect(track).toHaveBeenCalledTimes(1);
+
+    unmount();
+
+    await waitFor(() => {
+      expect(track).toHaveBeenCalledTimes(2);
+    });
+    expect(track).toHaveBeenLastCalledWith("Drawer Closed", {
+      example: "data",
+    });
+  });
+
+  it("sends no update event when StrictMode replays the mount effects", async () => {
+    render(<Track onUpdate event="Filter Changed" filter="all" />, { wrapper: React.StrictMode });
+
+    await flushDeferredEvents();
+    expect(track).not.toHaveBeenCalled();
+  });
+
   it("tracks the event when a property changes and onUpdate is set", async () => {
     const { rerender } = render(<Track onUpdate event="Filter Changed" filter="all" />);
+    rerender(<Track onUpdate event="Filter Changed" filter="favourites" />);
+
+    await waitFor(() => {
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+    expect(track).toHaveBeenCalledWith("Filter Changed", {
+      filter: "favourites",
+    });
+  });
+
+  it("still tracks a property change under StrictMode", async () => {
+    const { rerender } = render(<Track onUpdate event="Filter Changed" filter="all" />, {
+      wrapper: React.StrictMode,
+    });
     rerender(<Track onUpdate event="Filter Changed" filter="favourites" />);
 
     await waitFor(() => {
