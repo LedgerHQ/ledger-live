@@ -91,10 +91,16 @@ The flag also picks what the login block says, from the app's `payTab.cardLogin.
 is `Crypto Card` either way, and on mobile it is a Lumen `Subheader` under the card face — the Pay
 Card flow no longer draws a section title of its own there:
 
-| `hasSeenLoginIntro` | Subtitle | Button | The press |
-| --- | --- | --- | --- |
-| Down | Get 1% cashback every time you spend | `Get card` | Opens the intro sheet |
-| Up | Log in to access your card | `Login` | Starts the login |
+| `hasSeenLoginIntro` | Headline | Subtitle | Button | The press |
+| --- | --- | --- | --- | --- |
+| Down, desktop | Get your crypto card | Get 1% cashback every time you spend | `Get card` | Opens the intro sheet |
+| Up, desktop | Log in to access your Card | You’ve been logged out for security | `Log in` | Starts the login |
+| Down, mobile | — | Get 1% cashback every time you spend | `Get card` | Opens the intro sheet |
+| Up, mobile | — | Log in to access your card | `Login` | Starts the login |
+
+`CardLoginView.web` draws the headline as an `h2`. `CardLoginView.native` drops it, so the mobile
+screen keeps its own two lines. Both locales still carry every `payTab.cardLogin.<stage>.title` key,
+because the view model resolves the key on both platforms.
 
 One press, one handler: `onLoginPress` reads the flag and either opens the sheet or sends `LOGIN`,
 and the sheet's own buttons send the same `LOGIN` afterwards.
