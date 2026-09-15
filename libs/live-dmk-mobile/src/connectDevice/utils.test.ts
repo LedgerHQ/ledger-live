@@ -8,6 +8,7 @@ import {
   rnBleTransportIdentifier,
 } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PeerRemovedPairing } from "../errors";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
@@ -15,6 +16,10 @@ import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { BaseConnectionErrorTypes, ConnectionErrorTypes } from "./types";
 import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
 import { buildUsbCompatDeviceId } from "../transport/usbCompatDeviceId";
+import {
+  buildSpeculosLegacyDeviceId,
+  speculosTargetSubject,
+} from "../transport/SpeculosDmkTransport";
 
 const knownDeviceA: KnownDevice = {
   transport: rnBleTransportIdentifier,
@@ -100,6 +105,35 @@ describe("mobile connectDevice utils", () => {
         deviceModelId: DMKDeviceModelId.NANO_X,
         model: DMKDeviceModelId.NANO_X,
         transport: rnHidTransportIdentifier,
+      });
+
+      expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([]);
+    });
+
+    it("should match Speculos known devices by mapped DMK device model", () => {
+      const knownDevice: KnownDevice = {
+        ...knownDeviceA,
+        id: "speculos|http://localhost:5000",
+        transport: speculosIdentifier,
+      };
+      const discoveredDevice = makeDiscoveredDevice({
+        id: "SpeculosID",
+        transport: speculosIdentifier,
+      });
+
+      expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([
+        { knownDevice, discoveredDevice },
+      ]);
+    });
+
+    it("should not match Speculos known devices when the emulated model differs", () => {
+      const knownDevice: KnownDevice = {
+        ...knownDeviceB,
+        transport: speculosIdentifier,
+      };
+      const discoveredDevice = makeDiscoveredDevice({
+        id: "SpeculosID",
+        transport: speculosIdentifier,
       });
 
       expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([]);
@@ -222,6 +256,34 @@ describe("mobile connectDevice utils", () => {
           }),
         ),
       ).toBe(buildUsbCompatDeviceId("usb_1002"));
+    });
+
+    it("should map Speculos device ids to the legacy Speculos transport id format", () => {
+      speculosTargetSubject.next({ url: "http://localhost:5000" });
+
+      expect(
+        buildMobileCompatDeviceId(
+          makeConnectedDevice({
+            id: "SpeculosID",
+            type: "USB",
+            transport: speculosIdentifier,
+          }),
+        ),
+      ).toBe(buildSpeculosLegacyDeviceId("http://localhost:5000"));
+
+      speculosTargetSubject.next(null);
+    });
+
+    it("should keep the Speculos device id when no target is set", () => {
+      expect(
+        buildMobileCompatDeviceId(
+          makeConnectedDevice({
+            id: "SpeculosID",
+            type: "USB",
+            transport: speculosIdentifier,
+          }),
+        ),
+      ).toBe("SpeculosID");
     });
   });
 });

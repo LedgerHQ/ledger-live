@@ -31,6 +31,14 @@ import { getAllEnvs, setEnv } from "@shared/env";
 import Config from "react-native-config";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";
+import { addKnownDevice, knownDevicesSelector, removeKnownDevices } from "~/reducers/knownDevices";
+import {
+  buildSpeculosLegacyDeviceId,
+  speculosIdentifier,
+  speculosTargetSubject,
+} from "@ledgerhq/live-dmk-mobile";
+import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { setSpeculosDeviceModel } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
@@ -219,7 +227,9 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "addKnownSpeculos": {
-        const { address, model } = JSON.parse(msg.payload);
+        const { address, model }: { address: string; model: DeviceModelId } = JSON.parse(
+          msg.payload,
+        );
         setSpeculosDeviceModel(model);
         await disconnectAllSpeculosSessions();
         const knownSpeculosIds = bleDevicesSelector(store.getState())
@@ -243,6 +253,23 @@ async function onMessage(event: WebSocketMessageEvent) {
             modelId: model,
           }),
         );
+        // The Device Intent Executor discovers through the DMK and only offers devices it already
+        // knows, so Speculos has to be registered in both places to drive device intents.
+        speculosTargetSubject.next({ url: address, deviceModelId: ledgerToDmkDeviceIdMap[model] });
+        const staleSpeculosDevices = knownDevicesSelector(store.getState())
+          .filter(device => device.transport === speculosIdentifier)
+          .map(device => device.id);
+        if (staleSpeculosDevices.length) {
+          store.dispatch(removeKnownDevices(staleSpeculosDevices));
+        }
+        store.dispatch(
+          addKnownDevice({
+            transport: speculosIdentifier,
+            id: buildSpeculosLegacyDeviceId(address),
+            name: `${address}`,
+            deviceModelId: model,
+          }),
+        );
         setEnv("DEVICE_PROXY_URL", address);
         break;
       }
@@ -251,6 +278,8 @@ async function onMessage(event: WebSocketMessageEvent) {
         setSpeculosDeviceModel(undefined);
         await disconnectAllSpeculosSessions();
         store.dispatch(removeKnownBleDevice(`speculos|${address}`));
+        speculosTargetSubject.next(null);
+        store.dispatch(removeKnownDevices([buildSpeculosLegacyDeviceId(address)]));
         setEnv("DEVICE_PROXY_URL", "");
         break;
       }

@@ -83,6 +83,7 @@ export default class ContactDetailPage {
     await waitForFullyVisibleById(this.addAddressNameScreenId);
     await detoxExpect(this.addAddressNameInput()).toHaveText(data.defaultAddressLabel);
 
+    // Continue stays disabled while the prefill collides with a label the contact already uses.
     if (data.addressLabel !== data.defaultAddressLabel) {
       await clearTextByElement(this.addAddressNameInput());
       await typeTextByElement(this.addAddressNameInput(), data.addressLabel);

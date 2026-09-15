@@ -21,7 +21,12 @@ export type ContactAddressTestData = Readonly<{
   networkName: string;
   addressInput: string;
   savedValue: string;
+  /** The label the name step prefills, which is the selected asset name. */
   defaultAddressLabel: string;
+  /**
+   * Labels are unique per contact, so a second address on the same network has to be renamed
+   * before Continue enables.
+   */
   addressLabel: string;
   isEns?: boolean;
 }>;

@@ -34,6 +34,7 @@
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-ble": "catalog:",
+    "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/live-dmk-shared": "workspace:^",

@@ -3,6 +3,7 @@ import {
   rnBleTransportIdentifier,
 } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import type { ConnectedDevice, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import {
   dmkToLedgerDeviceIdMap,
@@ -13,6 +14,10 @@ import { isPeerRemovedPairingError } from "../errors";
 import { BaseConnectionErrorTypes, ConnectionErrorTypes, MobileConnectionError } from "./types";
 import { findMatchingNewDevice } from "../utils/matchDevicesByNameOrId";
 import { buildUsbCompatDeviceId } from "../transport/usbCompatDeviceId";
+import {
+  buildSpeculosLegacyDeviceId,
+  speculosTargetSubject,
+} from "../transport/SpeculosDmkTransport";
 
 export const filterMatchedDevices = (
   discoveredDevices: DiscoveredDevice[],
@@ -25,7 +30,10 @@ export const filterMatchedDevices = (
           return false;
         }
 
-        if (knownDevice.transport === rnHidTransportIdentifier) {
+        if (
+          knownDevice.transport === rnHidTransportIdentifier ||
+          knownDevice.transport === speculosIdentifier
+        ) {
           return dmkToLedgerDeviceIdMap[device.deviceModel.model] === knownDevice.deviceModelId;
         }
 
@@ -51,6 +59,14 @@ export const filterMatchedDevices = (
 };
 
 export const buildMobileCompatDeviceId = (device: ConnectedDevice): string => {
+  // Speculos presents itself as a USB device, but the legacy transport registry only knows how to
+  // open it from its URL, so it keeps the id the e2e bridge registered it under.
+  if (device.transport === speculosIdentifier) {
+    const target = speculosTargetSubject.getValue();
+
+    return target ? buildSpeculosLegacyDeviceId(target.url) : device.id;
+  }
+
   if (device.type === "USB") {
     return buildUsbCompatDeviceId(device.id);
   }

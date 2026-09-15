@@ -10,6 +10,10 @@ import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-nati
 import { getEnv } from "@shared/env";
 import { LocalTracer } from "@ledgerhq/logs";
 import { httpProxyTransportFactory, httpProxyUrlSubject } from "../transport/HttpProxyDmkTransport";
+import {
+  speculosDmkTransportFactory,
+  speculosTargetSubject,
+} from "../transport/SpeculosDmkTransport";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManagementKit" });
 
@@ -26,6 +30,7 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
       .addTransport(RNBleTransportFactory)
       .addTransport(RNHidTransportFactory)
       .addTransport(httpProxyTransportFactory(httpProxyUrlSubject))
+      .addTransport(speculosDmkTransportFactory(speculosTargetSubject))
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
       .addConfig({ firmwareDistributionSalt })
       .build();
