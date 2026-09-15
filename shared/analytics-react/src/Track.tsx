@@ -12,7 +12,7 @@ export type TrackProps = {
 
 const TrackComponent = (props: TrackProps): null => {
   const { onMount, onUnmount, onUpdate } = props;
-  const hasMountedRef = useRef(false);
+  const firstRenderRef = useRef(true);
 
   const trackEvent = () => {
     const {
@@ -30,22 +30,21 @@ const TrackComponent = (props: TrackProps): null => {
   trackEventRef.current = trackEvent;
 
   useEffect(() => {
-    if (onMount && hasMountedRef.current === false) {
+    if (onMount && firstRenderRef.current === true) {
       trackEventRef.current();
     }
 
-    if (onUpdate && hasMountedRef.current === true) {
-      trackEventRef.current();
-    }
-
-    hasMountedRef.current = true;
-  }, [onUpdate, onMount, props]);
-
-  useEffect(() => {
     return () => {
       if (onUnmount) trackEventRef.current();
     };
   }, []);
+
+  useEffect(() => {
+    if (onUpdate && firstRenderRef.current === false) {
+      trackEventRef.current();
+    }
+    firstRenderRef.current = false;
+  }, [onUpdate, props]);
 
   return null;
 };
