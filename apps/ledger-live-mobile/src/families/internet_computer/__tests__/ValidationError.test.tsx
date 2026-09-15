@@ -10,6 +10,15 @@ const popTo = jest.fn();
 const pop = jest.fn();
 const navigation = { goBack, navigate, popTo, getParent: () => ({ pop }) };
 
+jest.mock("~/components/PreventNativeBack", () => {
+  const React = require("react");
+  const { View } = require("react-native");
+  return {
+    __esModule: true,
+    default: () => React.createElement(View, { testID: "icp-prevent-native-back" }),
+  };
+});
+
 const named = (name: string) => Object.assign(new Error(name), { name });
 
 const renderNeuron = (params: Record<string, unknown>) =>
@@ -175,6 +184,33 @@ describe("ValidationError withholding an unsafe retry", () => {
 
     expect(screen.queryByText("Retry")).toBeNull();
     expect(screen.getByText("Back to neurons")).toBeVisible();
+  });
+
+  /*
+   * Hiding the button is only half of it. This screen replaced the device screen, so Android's
+   * hardware Back pops to SelectDevice, which auto-selects the last device and signs the same
+   * command again — the one outcome the withholding exists to prevent.
+   */
+  it("blocks hardware Back when it refused a retry", () => {
+    renderNeuron({
+      error: named("ICPCallUnconfirmed"),
+      transaction: { type: "increase_dissolve_delay" },
+      signed: true,
+    });
+
+    expect(screen.getByTestId("icp-prevent-native-back")).toBeVisible();
+  });
+
+  // Where a retry is offered, Back does what Retry does, so there is nothing to protect.
+  it("leaves Back alone when a retry is safe", () => {
+    renderNeuron({
+      error: named("ICPCallRejected"),
+      transaction: { type: "increase_dissolve_delay" },
+      signed: true,
+    });
+
+    expect(screen.getByText("Retry")).toBeVisible();
+    expect(screen.queryByTestId("icp-prevent-native-back")).toBeNull();
   });
 
   it("sends that user to the list, where Refresh neurons is", () => {

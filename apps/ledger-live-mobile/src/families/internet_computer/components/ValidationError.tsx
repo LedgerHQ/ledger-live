@@ -10,6 +10,7 @@ import type {
   StackNavigatorNavigation,
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
+import PreventNativeBack from "~/components/PreventNativeBack";
 import SafeAreaView from "~/components/SafeAreaView";
 import ValidateError from "~/components/ValidateError";
 import { ScreenName } from "~/const";
@@ -137,6 +138,10 @@ export default function ICPValidationError({
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      {/* Withholding Retry is not enough on Android: this screen replaced the device screen, so
+          hardware Back pops to SelectDevice, which auto-selects the last device and signs again.
+          Guarded only where a retry was refused — where it was offered, Back is what Retry does. */}
+      {!canRetry && <PreventNativeBack />}
       <TrackScreen category={category} name="ValidationError" flow="stake" action={action} />
       <ValidateError
         error={error}
