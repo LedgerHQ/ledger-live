@@ -46,6 +46,7 @@ function stubPorts(overrides: Partial<Ports> = {}): Ports {
     exchangeAuthorizationCode: jest.fn(async () => session),
     getUser: jest.fn(async () => user),
     setSignedIn: jest.fn(),
+    markIntroSeen: jest.fn(),
     openHostedLogin: jest.fn(async () => ({
       type: "success",
       url: "ledgerlive://paytab?code=auth-code&app_id=app-value",
@@ -93,6 +94,15 @@ describe("cardLoginMachine cold start", () => {
 
     await settledAt(actor, "ready");
     expect(ports.getUser).toHaveBeenCalledTimes(1);
+  });
+
+  it("sells the intro again to a holder whose stored session it only resumed", async () => {
+    const ports = stubPorts({ hasSession: jest.fn(async () => true) });
+
+    const actor = start(ports);
+
+    await settledAt(actor, "ready");
+    expect(ports.markIntroSeen).not.toHaveBeenCalled();
   });
 
   it("wipes a leftover attempt before it carries on signed in", async () => {
@@ -439,6 +449,64 @@ describe("cardLoginMachine login", () => {
 
     await waitFor(actor, snapshot => snapshot.context.errorKind === null);
     expect(ports.createAttempt).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("cardLoginMachine intro flag", () => {
+  it("marks the intro seen once the exchanged code becomes a session", async () => {
+    const ports = stubPorts({ loadAttempt: jest.fn(async () => attempt) });
+
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+
+    await settledAt(actor, "ready");
+    expect(ports.markIntroSeen).toHaveBeenCalledTimes(1);
+  });
+
+  // The flag is raised in the transition, not in an effect of the screen. `ready` signs the holder
+  // in, which unmounts CardLogin in the same render, so an effect there never runs.
+  it("marks the intro seen before it publishes the sign-in", async () => {
+    const calls: string[] = [];
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      markIntroSeen: jest.fn(() => calls.push("markIntroSeen")),
+      setSignedIn: jest.fn((value: boolean) => calls.push(`setSignedIn:${value}`)),
+    });
+
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+
+    await settledAt(actor, "ready");
+    expect(calls.indexOf("markIntroSeen")).toBeLessThan(calls.indexOf("setSignedIn:true"));
+  });
+
+  it("marks the intro seen for a redirect the app already held", async () => {
+    const ports = stubPorts({ loadAttempt: jest.fn(async () => attempt) });
+
+    const actor = start(ports, callback);
+
+    await settledAt(actor, "ready");
+    expect(ports.markIntroSeen).toHaveBeenCalledTimes(1);
+  });
+
+  // The code exchange already proved the holder has an account, so a store that refuses the session
+  // must not put them back in front of the sales pitch when they retry.
+  it("keeps the intro seen when the session cannot be stored", async () => {
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      persistSession: jest.fn(async () => {
+        throw new Error("disk full");
+      }),
+    });
+
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+
+    await settledAt(actor, "error");
+    expect(ports.markIntroSeen).toHaveBeenCalledTimes(1);
   });
 });
 

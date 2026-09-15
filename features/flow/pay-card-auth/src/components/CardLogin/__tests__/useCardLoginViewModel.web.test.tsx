@@ -24,6 +24,7 @@ const onLoginPress = jest.fn();
 const onAlreadyHaveCardPress = jest.fn();
 
 const copy: CardLoginCopy = {
+  headline: "Get your crypto card",
   title: "Crypto Card",
   description: "Log in to access your card",
   loginLabel: "Login",
@@ -141,6 +142,7 @@ const mockPorts: { [K in keyof CardLoginPorts]: jest.Mock } = {
   exchangeAuthorizationCode: jest.fn(async () => session),
   getUser: jest.fn(async () => user),
   setSignedIn: jest.fn(),
+  markIntroSeen: jest.fn(),
   openHostedLogin: jest.fn(
     async (): Promise<HostedLoginResult> => ({ type: "dismissed" }) as HostedLoginResult,
   ),
@@ -223,6 +225,7 @@ describe("useCardLoginViewModel intro", () => {
     mockPorts.setSignedIn.mockImplementation((value: boolean) =>
       store.dispatch(setSignedIn(value)),
     );
+    mockPorts.markIntroSeen.mockImplementation(() => store.dispatch(markPayCardLoginIntroSeen()));
   });
 
   it("resolves the copy from the app's own translation keys", async () => {
@@ -266,6 +269,15 @@ describe("useCardLoginViewModel intro", () => {
     });
   });
 
+  it("sells the card before the intro has been seen", async () => {
+    const { result } = await renderIdleLogin(store);
+
+    expect(result.current?.title).toBe("Crypto Card");
+    expect(result.current?.headline).toBe("Get your crypto card");
+    expect(result.current?.description).toBe("Get 1% cashback every time you spend");
+    expect(result.current?.loginLabel).toBe("Get card");
+  });
+
   it("drops the login link once the intro has been seen", async () => {
     store.dispatch(markPayCardLoginIntroSeen());
     const { result } = await renderIdleLogin(store);
@@ -278,8 +290,9 @@ describe("useCardLoginViewModel intro", () => {
     const { result } = await renderIdleLogin(store);
 
     expect(result.current?.title).toBe("Crypto Card");
-    expect(result.current?.description).toBe("Log in to access your card");
-    expect(result.current?.loginLabel).toBe("Login");
+    expect(result.current?.headline).toBe("Log in to access your Card");
+    expect(result.current?.description).toBe("You’ve been logged out for security");
+    expect(result.current?.loginLabel).toBe("Log in");
   });
 
   it.each([
@@ -449,6 +462,24 @@ describe("useCardLoginViewModel intro", () => {
     expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(true);
   });
 
+  it("marks the intro seen when the redirect lands on a fresh mount", async () => {
+    mockPorts.loadAttempt.mockResolvedValue({ codeVerifier: "verifier-value" });
+
+    renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+          callback: { code: "authorization-code" },
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() => expect(store.getState().payCardAuth.status).toBe("signedIn"));
+    expect(store.getState().payCardLoginIntro.hasSeenLoginIntro).toBe(true);
+  });
+
   it("leaves the intro unseen when a stored session is hydrated at mount", async () => {
     mockPorts.hasSession.mockResolvedValue(true);
 
@@ -586,6 +617,7 @@ describe("useCardLoginViewModel errors", () => {
     mockPorts.setSignedIn.mockImplementation((value: boolean) =>
       store.dispatch(setSignedIn(value)),
     );
+    mockPorts.markIntroSeen.mockImplementation(() => store.dispatch(markPayCardLoginIntroSeen()));
   });
 
   it("shows the translated message for pkce_failed", async () => {

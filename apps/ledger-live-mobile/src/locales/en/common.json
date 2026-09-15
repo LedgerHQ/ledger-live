@@ -10490,10 +10490,12 @@
     "cardLogin": {
       "title": "Crypto Card",
       "beforeIntro": {
+        "title": "Get your crypto card",
         "description": "Get 1% cashback every time you spend",
         "action": "Get card"
       },
       "afterIntro": {
+        "title": "Log in to access your Card",
         "description": "Log in to access your card",
         "action": "Login"
       },
