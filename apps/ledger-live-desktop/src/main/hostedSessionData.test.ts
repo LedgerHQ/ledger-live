@@ -135,6 +135,7 @@ describe("clearHostedSessionData", () => {
     [["dev.api.baanx.com"]],
     [["file:///etc/passwd"]],
     [["chrome-extension://dev.api.baanx.com"]],
+    [["https://ledger.com"]],
   ])("does nothing for the origin list %p", async origins => {
     const { session, get, clearStorageData } = fakeSession([]);
 

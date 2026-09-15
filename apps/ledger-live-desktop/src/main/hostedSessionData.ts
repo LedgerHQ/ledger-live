@@ -53,7 +53,11 @@ function readOrigins(origins: unknown): URL[] {
       // This comes over IPC. Restricting it to http/https keeps a compromised renderer from
       // aiming a storage wipe at a scheme clearStorageData was never meant to reach. The cap and
       // the dedupe above bound the same renderer to a short, distinct wipe loop.
-      if (!ALLOWED_ORIGIN_PROTOCOLS.has(url.protocol) || seen.has(url.origin)) {
+      if (
+        !ALLOWED_ORIGIN_PROTOCOLS.has(url.protocol) ||
+        url.hostname === LEDGER_OWN_DOMAIN ||
+        seen.has(url.origin)
+      ) {
         return [];
       }
       seen.add(url.origin);
