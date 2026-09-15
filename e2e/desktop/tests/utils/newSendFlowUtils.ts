@@ -4,9 +4,12 @@ import { TokenAccount, getParentAccountName } from "@ledgerhq/live-e2e-shared/en
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED } from "tests/utils/featureFlagUtils";
+import {
+  FF_NEW_SEND_FLOW_ENABLED,
+  FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
+} from "tests/utils/featureFlagUtils";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { buildTags } from "tests/utils/tagsUtils";
+import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
 
 function getRequiredFamily(currencyId: string): string {
   const family = getFamilyByCurrencyId(currencyId);
@@ -15,37 +18,6 @@ function getRequiredFamily(currencyId: string): string {
   }
   return family;
 }
-
-const NEW_SEND_FLOW_FAMILIES = Array.from(
-  new Set(
-    [
-      Currency.ADA,
-      Currency.ALGO,
-      Currency.APT,
-      Currency.ATOM,
-      Currency.BASE,
-      Currency.BCH,
-      Currency.BTC,
-      Currency.DOGE,
-      Currency.DOT,
-      Currency.ETH,
-      Currency.HBAR,
-      Currency.ICP,
-      Currency.KAS,
-      Currency.NEAR,
-      Currency.OSMO,
-      Currency.POL,
-      Currency.SOL,
-      Currency.SUI,
-      Currency.TRX,
-      Currency.VET,
-      Currency.XLM,
-      Currency.XRP,
-      Currency.XTZ,
-      Currency.ZEC,
-    ].map(currency => getRequiredFamily(currency.id)),
-  ),
-);
 
 const MEMO_STEP_FAMILIES = new Set(
   [
@@ -65,6 +37,7 @@ export type NewSendFlowEntry = {
   xrayTicket: string;
   bugTicket?: string;
   teamOwner?: Team;
+  extraTags?: string[];
   /**
    * When set, the amount input is asserted to pin the currency's decimal magnitude: an exact
    * round-trip, plus one decimal deeper rejected. Only meaningful when the amount already
@@ -80,6 +53,11 @@ export type NewSendFlowEntry = {
    * entry, on entries that have actually been run.
    */
   verifyOperationAmount?: boolean;
+  /**
+   * Opt in to a real broadcast. Off by default so the shared test accounts keep their funds on
+   * the enable_broadcast workflow, which sets DISABLE_TRANSACTION_BROADCAST=0 for the whole job.
+   */
+  broadcast?: boolean;
 };
 
 export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
@@ -96,12 +74,10 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: tx.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(tx)],
+        env: entry.broadcast ? {} : { DISABLE_TRANSACTION_BROADCAST: "1" },
         featureFlags: {
           ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
-          newSendFlow: {
-            enabled: true,
-            params: { families: NEW_SEND_FLOW_FAMILIES },
-          },
+          ...FF_NEW_SEND_FLOW_ENABLED,
         },
       });
 
@@ -110,7 +86,11 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
           tx.accountToDebit.derivationMode ? ` - ${tx.accountToDebit.derivationMode}` : ""
         }${validMemoTag ? " with memo" : ""}`,
         {
-          tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
+          tag: buildTags({
+            currencyId: tx.accountToDebit.currency.id,
+            skipLNS: shouldSkipLNSTag(tx.accountToDebit.currency.id),
+            extraTags: entry.extraTags,
+          }),
           annotation: [
             { type: "TMS", description: entry.xrayTicket },
             ...(entry.bugTicket ? [{ type: "BUG", description: entry.bugTicket }] : []),
