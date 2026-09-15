@@ -25,6 +25,7 @@ const HookNotifications = () => {
   const pendingConsentTransitionRef = useRef<Promise<boolean> | null>(null);
   const targetIdentityRef = useRef<SyncedBrazeIdentity<UserId> | null>(null);
   const retryCountRef = useRef(0);
+  const identityUntrustedRef = useRef(false);
   const syncBrazeIdentityRef = useRef<() => void>(() => {});
   const [syncedEpoch, setSyncedEpoch] = useState(0);
 
@@ -42,6 +43,7 @@ const HookNotifications = () => {
       targetIdentityRef,
       pendingConsentTransitionRef,
       retryCountRef,
+      identityUntrustedRef,
     });
     if (!identitySync) return;
 
@@ -57,6 +59,7 @@ const HookNotifications = () => {
         targetIdentityRef,
         pendingConsentTransitionRef,
         retryCountRef,
+        identityUntrustedRef,
         syncBrazeIdentity: () => syncBrazeIdentityRef.current(),
         onIdentitySynced: () => setSyncedEpoch(epoch => epoch + 1),
       });
@@ -67,6 +70,7 @@ const HookNotifications = () => {
       brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
     });
     lastSyncedIdentityRef.current = currentIdentity;
+    identityUntrustedRef.current = false;
   }, [
     brazeOptOutIdentityCleanupEnabled,
     isTrackedUser,

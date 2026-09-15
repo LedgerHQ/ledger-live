@@ -1,5 +1,6 @@
 import Braze from "@braze/react-native-sdk";
 import {
+  armBrazePendingRefreshTimeout,
   createBrazePendingRefresh,
   type BrazePendingRefresh,
 } from "@ledgerhq/live-common/braze/identityLifecycle";
@@ -63,7 +64,14 @@ export function useBrazeContentCardsProviderViewModel() {
     }
 
     const pendingRefresh = createBrazePendingRefresh();
-    pendingRefreshRef.current = pendingRefresh;
+    pendingRefreshRef.current = armBrazePendingRefreshTimeout(pendingRefresh, pendingRefreshRef, {
+      onTimeout: () => {
+        subscriptionEpochRef.current += 1;
+        subscriptionRef.current?.remove();
+        subscriptionRef.current = null;
+        setDynamicContentLoading(false);
+      },
+    });
 
     setDynamicContentLoading(true);
     ensureSubscription();
@@ -71,9 +79,9 @@ export function useBrazeContentCardsProviderViewModel() {
     try {
       Braze.requestContentCardsRefresh();
     } catch (error) {
+      pendingRefreshRef.current?.reject(error);
       pendingRefreshRef.current = null;
       setDynamicContentLoading(false);
-      pendingRefresh.reject(error);
     }
 
     return pendingRefresh.promise;

@@ -1,4 +1,6 @@
 import {
+  armBrazePendingRefreshTimeout,
+  BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS,
   brazeIdentitiesMatch,
   createBrazePendingRefresh,
   prepareBrazeIdentitySync,
@@ -6,6 +8,7 @@ import {
   runBrazeOptOutTransition,
   trackBrazeConsentTransition,
   type BrazeIdentityLifecycleSdk,
+  type BrazePendingRefresh,
   type SyncedBrazeIdentity,
 } from "./identityLifecycle";
 
@@ -48,6 +51,7 @@ const createIdentitySyncRefs = (
     targetIdentityRef: { current: targetIdentity },
     pendingConsentTransitionRef,
     retryCountRef: { current: 0 },
+    identityUntrustedRef: { current: false },
   };
 };
 
@@ -70,11 +74,69 @@ describe("createBrazePendingRefresh", () => {
   });
 });
 
+describe("armBrazePendingRefreshTimeout", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("should reject a current refresh after the shared timeout", async () => {
+    const pendingRefresh = createBrazePendingRefresh();
+    const pendingRefreshRef: { current: BrazePendingRefresh | null } = { current: null };
+    const onTimeout = jest.fn();
+    pendingRefreshRef.current = armBrazePendingRefreshTimeout(pendingRefresh, pendingRefreshRef, {
+      onTimeout,
+    });
+    void pendingRefresh.promise.catch(() => {});
+
+    jest.advanceTimersByTime(BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS);
+
+    await expect(pendingRefresh.promise).rejects.toThrow(
+      "Timed out waiting for Braze content cards refresh",
+    );
+    expect(pendingRefreshRef.current).toBeNull();
+    expect(onTimeout).toHaveBeenCalledTimes(1);
+  });
+
+  it("should cancel the timeout when the refresh settles", async () => {
+    const pendingRefresh = createBrazePendingRefresh();
+    const pendingRefreshRef: { current: BrazePendingRefresh | null } = { current: null };
+    pendingRefreshRef.current = armBrazePendingRefreshTimeout(pendingRefresh, pendingRefreshRef);
+
+    pendingRefreshRef.current.resolve();
+
+    await expect(pendingRefresh.promise).resolves.toBeUndefined();
+    expect(jest.getTimerCount()).toBe(0);
+  });
+
+  it("should ignore a timeout for a refresh that is no longer current", () => {
+    const pendingRefresh: BrazePendingRefresh = {
+      promise: Promise.resolve(),
+      resolve: jest.fn(),
+      reject: jest.fn(),
+    };
+    const pendingRefreshRef: { current: BrazePendingRefresh | null } = {
+      current: createBrazePendingRefresh(),
+    };
+    const onTimeout = jest.fn();
+    armBrazePendingRefreshTimeout(pendingRefresh, pendingRefreshRef, { onTimeout });
+
+    jest.advanceTimersByTime(BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS);
+
+    expect(pendingRefresh.reject).not.toHaveBeenCalled();
+    expect(onTimeout).not.toHaveBeenCalled();
+  });
+});
+
 describe("prepareBrazeIdentitySync", () => {
   it("should clear identity synchronization state for a dummy user", () => {
     const identity = createIdentity(USER_ID);
     const refs = createIdentitySyncRefs(identity, identity);
     refs.retryCountRef.current = 1;
+    refs.identityUntrustedRef.current = true;
 
     const result = prepareBrazeIdentitySync({
       currentIdentity: identity,
@@ -87,6 +149,7 @@ describe("prepareBrazeIdentitySync", () => {
     expect(refs.lastSyncedIdentityRef.current).toBeNull();
     expect(refs.targetIdentityRef.current).toBeNull();
     expect(refs.retryCountRef.current).toBe(0);
+    expect(refs.identityUntrustedRef.current).toBe(false);
   });
 
   it("should skip synchronization when the identity is already synchronized", () => {
@@ -152,6 +215,36 @@ describe("prepareBrazeIdentitySync", () => {
 
     expect(result).toEqual({ isConsentTransition: false });
   });
+
+  it("should request a regular synchronization on first boot", () => {
+    const currentIdentity = createIdentity(USER_ID);
+    const refs = createIdentitySyncRefs();
+
+    const result = prepareBrazeIdentitySync({
+      currentIdentity,
+      isDummyUser: false,
+      userIdsMatch,
+      ...refs,
+    });
+
+    expect(result).toEqual({ isConsentTransition: false });
+    expect(refs.identityUntrustedRef.current).toBe(false);
+  });
+
+  it("should request a consent transition when the SDK identity is untrusted", () => {
+    const identity = createIdentity(USER_ID);
+    const refs = createIdentitySyncRefs(identity, identity);
+    refs.identityUntrustedRef.current = true;
+
+    const result = prepareBrazeIdentitySync({
+      currentIdentity: identity,
+      isDummyUser: false,
+      userIdsMatch,
+      ...refs,
+    });
+
+    expect(result).toEqual({ isConsentTransition: true });
+  });
 });
 
 describe("trackBrazeConsentTransition", () => {
@@ -187,6 +280,7 @@ describe("trackBrazeConsentTransition", () => {
     await flushMicrotasks();
 
     expect(refs.lastSyncedIdentityRef.current).toBe(currentIdentity);
+    expect(refs.identityUntrustedRef.current).toBe(false);
     expect(refs.pendingConsentTransitionRef.current).toBeNull();
     expect(syncBrazeIdentity).not.toHaveBeenCalled();
     expect(onIdentitySynced).toHaveBeenCalledTimes(1);
@@ -233,7 +327,8 @@ describe("trackBrazeConsentTransition", () => {
 
     await flushMicrotasks();
 
-    expect(refs.lastSyncedIdentityRef.current).toBe(previousIdentity);
+    expect(refs.lastSyncedIdentityRef.current).toBeNull();
+    expect(refs.identityUntrustedRef.current).toBe(true);
     expect(refs.retryCountRef.current).toBe(1);
     expect(syncBrazeIdentity).toHaveBeenCalledTimes(1);
   });
@@ -256,7 +351,39 @@ describe("trackBrazeConsentTransition", () => {
     await flushMicrotasks();
 
     expect(syncBrazeIdentity).not.toHaveBeenCalled();
-    expect(refs.lastSyncedIdentityRef.current).toBe(previousIdentity);
+    expect(refs.lastSyncedIdentityRef.current).toBeNull();
+    expect(refs.identityUntrustedRef.current).toBe(true);
+  });
+
+  it("should re-apply the flipped-back identity after a failed transition", async () => {
+    const optedIn = createIdentity(USER_ID, true);
+    const optedOut = createIdentity(USER_ID, false);
+    const refs = createIdentitySyncRefs(optedIn, optedOut);
+    const syncBrazeIdentity = jest.fn();
+
+    trackBrazeConsentTransition({
+      transition: Promise.reject(new Error("wipe failed")),
+      currentIdentity: optedOut,
+      userIdsMatch,
+      ...refs,
+      syncBrazeIdentity,
+    });
+    refs.targetIdentityRef.current = optedIn;
+
+    await flushMicrotasks();
+
+    expect(refs.lastSyncedIdentityRef.current).toBeNull();
+    expect(refs.identityUntrustedRef.current).toBe(true);
+    expect(syncBrazeIdentity).toHaveBeenCalledTimes(1);
+
+    const result = prepareBrazeIdentitySync({
+      currentIdentity: optedIn,
+      isDummyUser: false,
+      userIdsMatch,
+      ...refs,
+    });
+
+    expect(result).toEqual({ isConsentTransition: true });
   });
 
   it("should not mark the captured identity synced when the transition is no longer current", async () => {

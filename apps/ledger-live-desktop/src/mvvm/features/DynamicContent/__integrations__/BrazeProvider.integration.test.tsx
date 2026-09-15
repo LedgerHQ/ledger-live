@@ -4,6 +4,7 @@ import {
   identitiesSlice,
   initialIdentitiesState,
 } from "@domain/entity-client-identity";
+import { BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS } from "@ledgerhq/live-common/braze/identityLifecycle";
 import * as braze from "@braze/web-sdk";
 import React, { useEffect } from "react";
 import { act, render, withFlagOverrides } from "tests/testSetup";
@@ -132,7 +133,7 @@ describe("BrazeProvider", () => {
       delay?: number,
       ...args: unknown[]
     ) => {
-      if (delay !== 15_000) {
+      if (delay !== BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS) {
         return nativeSetTimeout(handler as never, delay, ...args);
       }
 
@@ -316,6 +317,53 @@ describe("BrazeProvider", () => {
     expect(mockedWipeData).toHaveBeenCalledTimes(2);
     expect(mockedChangeUser).toHaveBeenCalledTimes(1);
     expect(mockedChangeUser).toHaveBeenCalledWith(REAL_USER_ID.exportUserIdForBraze());
+    unmount();
+  });
+
+  it("should re-apply opt-in after a failed opt-out when consent flips back", async () => {
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <div />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+    mockedChangeUser.mockClear();
+    mockedWipeData.mockClear();
+    mockedEnableSDK.mockClear();
+    mockedRequestContentCardsRefresh.mockClear();
+    mockedWipeData.mockImplementationOnce(() => {
+      throw new Error("wipe failed");
+    });
+
+    await act(async () => {
+      store.dispatch(setShareAnalytics(false));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    mockedSubscribeToContentCardsUpdates.mockReturnValue("subscription-id-failed-opt-out");
+
+    await act(async () => {
+      store.dispatch(setShareAnalytics(true));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    const latestListener = mockedSubscribeToContentCardsUpdates.mock.calls.at(-1)?.[0];
+    await act(async () => {
+      latestListener?.(mockContentCards([]));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(mockedWipeData).toHaveBeenCalled();
+    expect(mockedEnableSDK).toHaveBeenCalled();
+    expect(mockedChangeUser).toHaveBeenCalledWith(REAL_USER_ID.exportUserIdForBraze());
+
     unmount();
   });
 

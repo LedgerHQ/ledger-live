@@ -41,6 +41,7 @@ type PrepareBrazeIdentitySyncOptions<TUserId> = {
   targetIdentityRef: MutableRef<SyncedBrazeIdentity<TUserId> | null>;
   pendingConsentTransitionRef: MutableRef<Promise<boolean> | null>;
   retryCountRef: MutableRef<number>;
+  identityUntrustedRef: MutableRef<boolean>;
 };
 
 export type BrazeIdentitySync = {
@@ -57,6 +58,7 @@ type TrackBrazeConsentTransitionOptions<TUserId> = {
   targetIdentityRef: MutableRef<SyncedBrazeIdentity<TUserId> | null>;
   pendingConsentTransitionRef: MutableRef<Promise<boolean> | null>;
   retryCountRef: MutableRef<number>;
+  identityUntrustedRef: MutableRef<boolean>;
   syncBrazeIdentity: () => void;
   onIdentitySynced?: () => void;
   isCurrent?: () => boolean;
@@ -64,6 +66,8 @@ type TrackBrazeConsentTransitionOptions<TUserId> = {
 
 const noop = () => {};
 const noopReject = (_error: unknown) => {};
+
+export const BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS = 15_000;
 
 export function createBrazePendingRefresh(): BrazePendingRefresh {
   let resolveRefresh: () => void = noop;
@@ -77,6 +81,32 @@ export function createBrazePendingRefresh(): BrazePendingRefresh {
     promise,
     resolve: resolveRefresh,
     reject: rejectRefresh,
+  };
+}
+
+export function armBrazePendingRefreshTimeout(
+  pendingRefresh: BrazePendingRefresh,
+  pendingRefreshRef: MutableRef<BrazePendingRefresh | null>,
+  { onTimeout }: { onTimeout?: () => void } = {},
+): BrazePendingRefresh {
+  const timeoutId = setTimeout(() => {
+    if (pendingRefreshRef.current?.promise !== pendingRefresh.promise) return;
+
+    pendingRefreshRef.current = null;
+    onTimeout?.();
+    pendingRefresh.reject(new Error("Timed out waiting for Braze content cards refresh"));
+  }, BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS);
+
+  return {
+    promise: pendingRefresh.promise,
+    resolve: () => {
+      clearTimeout(timeoutId);
+      pendingRefresh.resolve();
+    },
+    reject: error => {
+      clearTimeout(timeoutId);
+      pendingRefresh.reject(error);
+    },
   };
 }
 
@@ -102,11 +132,13 @@ export function prepareBrazeIdentitySync<TUserId>({
   targetIdentityRef,
   pendingConsentTransitionRef,
   retryCountRef,
+  identityUntrustedRef,
 }: PrepareBrazeIdentitySyncOptions<TUserId>): BrazeIdentitySync | null {
   if (isDummyUser) {
     lastSyncedIdentityRef.current = null;
     targetIdentityRef.current = null;
     retryCountRef.current = 0;
+    identityUntrustedRef.current = false;
     return null;
   }
 
@@ -115,7 +147,10 @@ export function prepareBrazeIdentitySync<TUserId>({
     retryCountRef.current = 0;
   }
 
-  if (brazeIdentitiesMatch(lastSyncedIdentityRef.current, currentIdentity, userIdsMatch)) {
+  if (
+    !identityUntrustedRef.current &&
+    brazeIdentitiesMatch(lastSyncedIdentityRef.current, currentIdentity, userIdsMatch)
+  ) {
     retryCountRef.current = 0;
     return null;
   }
@@ -127,8 +162,9 @@ export function prepareBrazeIdentitySync<TUserId>({
   return {
     isConsentTransition:
       currentIdentity.brazeOptOutIdentityCleanup &&
-      lastSyncedIdentityRef.current != null &&
-      lastSyncedIdentityRef.current.isTrackedUser !== currentIdentity.isTrackedUser,
+      (identityUntrustedRef.current ||
+        (lastSyncedIdentityRef.current != null &&
+          lastSyncedIdentityRef.current.isTrackedUser !== currentIdentity.isTrackedUser)),
   };
 }
 
@@ -140,6 +176,7 @@ export function trackBrazeConsentTransition<TUserId>({
   targetIdentityRef,
   pendingConsentTransitionRef,
   retryCountRef,
+  identityUntrustedRef,
   syncBrazeIdentity,
   onIdentitySynced,
   isCurrent,
@@ -157,6 +194,11 @@ export function trackBrazeConsentTransition<TUserId>({
       pendingConsentTransitionRef.current = null;
     }
 
+    if (!didTransitionSucceed) {
+      lastSyncedIdentityRef.current = null;
+      identityUntrustedRef.current = true;
+    }
+
     if (isCurrent && !isCurrent()) {
       syncBrazeIdentity();
       return;
@@ -164,6 +206,7 @@ export function trackBrazeConsentTransition<TUserId>({
 
     if (didTransitionSucceed) {
       lastSyncedIdentityRef.current = currentIdentity;
+      identityUntrustedRef.current = false;
       retryCountRef.current = 0;
       if (!brazeIdentitiesMatch(currentIdentity, targetIdentityRef.current, userIdsMatch)) {
         syncBrazeIdentity();

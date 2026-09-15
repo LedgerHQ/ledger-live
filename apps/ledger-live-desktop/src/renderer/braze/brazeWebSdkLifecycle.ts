@@ -10,12 +10,15 @@ function getBrazeSdk(): Record<string, unknown> {
   return sdk;
 }
 
-export function requireBrazeLifecycleMethod(methodName: BrazeLifecycleMethodName): () => void {
+export function requireBrazeLifecycleMethod(
+  methodName: BrazeLifecycleMethodName,
+): () => Promise<void> {
   const brazeSdk = getBrazeSdk();
   const method = brazeSdk[methodName];
   if (typeof method !== "function") {
-    throw new Error(`Braze SDK is missing ${methodName}`);
+    throw new TypeError(`Braze SDK is missing ${methodName}`);
   }
 
-  return (method as () => void).bind(brazeSdk);
+  const boundMethod = (method as () => void | Promise<void>).bind(brazeSdk);
+  return () => Promise.resolve(boundMethod());
 }
