@@ -213,7 +213,7 @@ export function createCardSession(store: CardSessionStore) {
         return { kind: "refreshed", accessToken: currentAccessToken };
       }
 
-      const session = await grantNewSession();
+      const session = await grantNewSession(requestSessionId);
       logoutAccessToken = session.accessToken;
       const outcome = await takeTurn(() => writeSession(session, requestSessionId));
 
@@ -225,7 +225,7 @@ export function createCardSession(store: CardSessionStore) {
     }
   }
 
-  async function grantNewSession(): Promise<StoredCardSession> {
+  async function grantNewSession(requestSessionId: number): Promise<StoredCardSession> {
     if (!renewal) {
       throw new Error("the Card session renewal is not configured");
     }
@@ -233,6 +233,12 @@ export function createCardSession(store: CardSessionStore) {
     const refreshToken = await readRefreshToken();
     if (!refreshToken) {
       throw new Error("the Card session holds no refresh token");
+    }
+
+    // A login that recorded another tenant while the refresh token was read owns the routing now.
+    // This grant carries the token of the session being replaced, so it must not leave for it.
+    if (requestSessionId !== sessionId) {
+      throw new Error("the Card session was replaced before its refresh grant");
     }
 
     return renewal
@@ -301,10 +307,17 @@ export function createCardSession(store: CardSessionStore) {
    */
   const setCardProviderAppId = (appId: string | null): Promise<void> => {
     recordProviderAppId(appId);
-    const replacing = beginSessionReplacement();
+    const recorded = providerAppIdWrites;
+    beginSessionReplacement();
 
     return takeTurn(async () => {
-      if (replacing !== sessionId) {
+      /**
+       * The tenant, not the session, decides whether this turn still has work. `set` advances the
+       * session generation for this very login, and a turn that read the generation would then skip
+       * its own write and commit tokens with no routing beside them. Only a newer record — another
+       * login, or a wipe — supersedes this one, and that one persists its own value.
+       */
+      if (providerAppIdWrites !== recorded) {
         return;
       }
 
