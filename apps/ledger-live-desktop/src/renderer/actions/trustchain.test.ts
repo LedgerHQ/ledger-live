@@ -24,7 +24,10 @@ describe("fetchTrustchain", () => {
       },
       memberCredentials: initMemberCredentials(),
     };
-    jest.mocked(getKey).mockResolvedValue(persistedTrustchainStore);
+    jest.mocked(getKey).mockResolvedValue({
+      status: "available",
+      data: persistedTrustchainStore,
+    });
 
     await fetchTrustchain()(dispatch, jest.fn(), undefined);
 
@@ -36,7 +39,7 @@ describe("fetchTrustchain", () => {
   });
 
   it("should dispatch a default trustchain state when storage is missing", async () => {
-    jest.mocked(getKey).mockResolvedValue(undefined);
+    jest.mocked(getKey).mockResolvedValue({ status: "available", data: null });
 
     await fetchTrustchain()(dispatch, jest.fn(), undefined);
 
@@ -54,8 +57,8 @@ describe("fetchTrustchain", () => {
     });
   });
 
-  it("should not dispatch when storage returns an encrypted string (app is password-locked)", async () => {
-    jest.mocked(getKey).mockResolvedValue("6a9f1c...ciphertext..." as unknown as TrustchainStore);
+  it("should not dispatch when the persisted trustchain is encrypted", async () => {
+    jest.mocked(getKey).mockResolvedValue({ status: "encrypted" });
 
     await fetchTrustchain()(dispatch, jest.fn(), undefined);
 

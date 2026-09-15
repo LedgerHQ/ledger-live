@@ -54,9 +54,11 @@ export const reorderAccounts =
 
 export const fetchAccounts =
   (): ThunkResult<Promise<void>> => async (dispatch, _getState, _extra) => {
-    const data = await getKey("app", "accounts", []);
-    if (!data) throw new PasswordIncorrectError("app accounts seems to still be encrypted");
-    dispatch(initAccounts(data));
+    const storedAccounts = await getKey("app", "accounts", []);
+    if (storedAccounts.status === "encrypted") {
+      throw new PasswordIncorrectError("app accounts seems to still be encrypted");
+    }
+    dispatch(initAccounts(storedAccounts.data ?? []));
   };
 
 export type UpdateAccountAction = {
