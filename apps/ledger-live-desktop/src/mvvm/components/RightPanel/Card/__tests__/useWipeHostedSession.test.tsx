@@ -19,14 +19,18 @@ jest.mock("@ledgerhq/live-common/wallet-api/useLiveAppManifest", () => ({
 const mockedInvoke = jest.mocked(ipcRenderer.invoke);
 const mockedManifest = jest.mocked(useLiveAppManifest);
 
-const LOGIN_URL = "https://dev.api.baanx.test/v1/auth/oauth2/authorize";
-const HOSTED_URL = "https://ledger.baanxapi.test";
+const LOGIN_ID = "baanx-login-url-stg";
+const HOSTED_ID = "baanx-hosted-url-stg";
 
-const LOGIN_MANIFEST = { id: "baanx-login-url-stg", url: LOGIN_URL };
+const LOGIN_MANIFEST = {
+  id: LOGIN_ID,
+  url: "https://dev.api.baanx.test/v1/auth/oauth2/authorize",
+};
+const HOSTED_MANIFEST = { id: HOSTED_ID, url: "https://ledger.baanxapi.test" };
 
 const CATALOG: Record<string, unknown> = {
-  "baanx-login-url-stg": LOGIN_MANIFEST,
-  "baanx-hosted-url-stg": { id: "baanx-hosted-url-stg", url: HOSTED_URL },
+  [LOGIN_ID]: LOGIN_MANIFEST,
+  [HOSTED_ID]: HOSTED_MANIFEST,
 };
 
 function manifestsFrom(catalog: Record<string, unknown>) {
@@ -43,8 +47,8 @@ function signIn(store: ReduxStore, isSignedIn: boolean) {
 }
 
 function expectBothManifestsWiped() {
-  expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [LOGIN_URL]);
-  expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [HOSTED_URL]);
+  expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [LOGIN_MANIFEST.url]);
+  expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [HOSTED_MANIFEST.url]);
 }
 
 describe("useWipeHostedSessionOnSignInChange", () => {
@@ -106,7 +110,7 @@ describe("useWipeHostedSessionOnSignInChange", () => {
 
     signIn(store, true);
 
-    manifestsFrom({ "baanx-login-url-stg": LOGIN_MANIFEST });
+    manifestsFrom({ [LOGIN_ID]: LOGIN_MANIFEST });
     rerender();
     expect(mockedInvoke).not.toHaveBeenCalled();
 
