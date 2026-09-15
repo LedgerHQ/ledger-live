@@ -1,3 +1,8 @@
+import {
+  delegateTransaction,
+  getTransactionStakeAccount,
+  getTransactionValidator,
+} from "@ledgerhq/live-common/families/solana/transactions";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/solana/types";
 import invariant from "invariant";
@@ -22,21 +27,13 @@ export default function StepValidator({
   const bridge = useAccountBridge<Transaction>(account);
   const updateValidator = ({ address }: { address: string }) => {
     onUpdateTransaction(tx => {
-      if (tx.model.kind !== "stake.delegate") return tx;
-      return bridge.updateTransaction(tx, {
-        model: {
-          ...tx.model,
-          uiState: {
-            ...tx.model.uiState,
-            voteAccAddr: address,
-          },
-        },
-      });
+      const stakeAccAddr = getTransactionStakeAccount(tx);
+      if (!stakeAccAddr) return tx;
+      return bridge.updateTransaction(tx, delegateTransaction(stakeAccAddr, address));
     });
   };
 
-  const chosenVoteAccAddr =
-    transaction.model.kind === "stake.delegate" ? transaction.model.uiState.voteAccAddr : "";
+  const chosenVoteAccAddr = getTransactionValidator(transaction) ?? "";
 
   return (
     <Box flow={1}>
