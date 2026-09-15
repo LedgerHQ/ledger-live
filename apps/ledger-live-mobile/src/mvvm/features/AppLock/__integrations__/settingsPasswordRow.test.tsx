@@ -46,13 +46,12 @@ describe("the password row in Settings", () => {
     expect(screen.getByTestId("password-settings-switch")).not.toBeChecked();
   });
 
-  it("does not offer a removal the flow cannot perform yet", async () => {
+  it("sends a removal to the modify flow", async () => {
     render(<AuthSecurityToggle />, { overrideInitialState: revamped(true) });
 
-    // The legacy removal screen checks a plaintext password, so it would report success
-    // without clearing the verifier. It stays shut until LIVE-35965.
-    expect(await screen.findByTestId("password-settings-switch")).toBeDisabled();
-    expect(mockNavigate).not.toHaveBeenCalled();
+    await toggle(false);
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.PasswordModifyFlow);
   });
 
   it("reflects a password stored while the screen is open", async () => {

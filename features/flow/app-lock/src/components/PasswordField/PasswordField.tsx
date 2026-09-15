@@ -1,6 +1,7 @@
 import { PASSWORD_MAX_LENGTH } from "@features/platform-app-lock";
 import { TextInput } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useTranslation } from "@shared/i18n";
 import React, { useCallback, useState } from "react";
 import { Pressable } from "react-native";
 import type { PasswordFieldProps } from "./types";
@@ -8,20 +9,20 @@ import type { PasswordFieldProps } from "./types";
 export function PasswordField({
   value,
   onChangeText,
-  labels,
   helperText,
   hasError = false,
   autoFocus = false,
   onSubmitEditing,
   testID,
 }: PasswordFieldProps): React.JSX.Element {
+  const { t } = useTranslation();
   const [isRevealed, setIsRevealed] = useState(false);
   const toggleReveal = useCallback(() => setIsRevealed(revealed => !revealed), []);
   const RevealIcon = isRevealed ? EyeCross : Eye;
 
   return (
     <TextInput
-      label={labels.fieldLabel}
+      label={t("appLock.field.label")}
       value={value}
       onChangeText={onChangeText}
       secureTextEntry={!isRevealed}
@@ -39,7 +40,7 @@ export function PasswordField({
       suffix={
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={isRevealed ? labels.hidePassword : labels.revealPassword}
+          accessibilityLabel={t(isRevealed ? "appLock.field.hide" : "appLock.field.reveal")}
           onPress={toggleReveal}
           testID={testID ? `${testID}-reveal` : undefined}
         >

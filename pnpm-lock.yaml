@@ -5567,6 +5567,9 @@ importers:
       '@features/platform-app-lock':
         specifier: workspace:*
         version: link:../../platform/app-lock
+      '@shared/i18n':
+        specifier: workspace:*
+        version: link:../../../shared/i18n
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
