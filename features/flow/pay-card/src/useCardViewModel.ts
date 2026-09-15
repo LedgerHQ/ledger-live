@@ -10,6 +10,7 @@ export function useCardViewModel({
   login,
   formatters,
   balanceLabel,
+  unlock,
 }: CardProps): CardViewProps {
   const status = useCardAuthStatus();
   const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
@@ -27,5 +28,6 @@ export function useCardViewModel({
     displayState,
     cardVisual,
     formatters,
+    unlock,
   };
 }
