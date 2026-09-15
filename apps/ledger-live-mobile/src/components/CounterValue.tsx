@@ -8,6 +8,7 @@ import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { counterValueCurrencySelector } from "~/reducers/settings";
+import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { useTrackingPairs, addExtraSessionTrackingPair } from "~/actions/general";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import type { CurrencyUnitValueProps } from "./CurrencyUnitValue";
@@ -70,10 +71,11 @@ export default function CounterValue({
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const trackingPairs = useTrackingPairs();
   const { poll } = useCountervaluesPolling();
-  const hasTrackingPair = useMemo(
-    () => trackingPairs.some(tp => tp.from === currency && tp.to === counterValueCurrency),
-    [counterValueCurrency, currency, trackingPairs],
-  );
+  // On `pairId`, to match the setter's dedupe; by reference this never sees a refused pair.
+  const hasTrackingPair = useMemo(() => {
+    const id = pairId({ from: currency, to: counterValueCurrency });
+    return trackingPairs.some(tp => pairId(tp) === id);
+  }, [counterValueCurrency, currency, trackingPairs]);
   useEffect(() => {
     let t: NodeJS.Timeout | undefined;
 

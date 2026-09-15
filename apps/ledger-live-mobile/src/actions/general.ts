@@ -7,6 +7,8 @@ import {
 } from "@ledgerhq/live-common/account/ordering";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
+import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { resolveTrackingPairs } from "@ledgerhq/live-countervalues/logic";
 import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@ledgerhq/live-countervalues-react";
 import { useTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/useTrackingPairForAccounts";
 import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-common/portfolio/portfolioReact";
@@ -154,7 +156,8 @@ export function useUserSettings() {
 
   return useMemo(
     () => ({
-      trackingPairs,
+      // Only this consumer's list reaches `loadCountervalues`, so it is resolved here.
+      trackingPairs: resolveTrackingPairs(trackingPairs),
       autofillGaps: true,
       refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
       marketCapBatchingAfterRank: LiveConfig.getValueByKey(
@@ -166,10 +169,24 @@ export function useUserSettings() {
   );
 }
 
-export function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
+/** Registers pairs in one emission, deduped by `pairId`: a queried currency is a fresh object. */
+export function addExtraSessionTrackingPairs(trackingPairs: TrackingPair[]) {
   const value = extraSessionTrackingPairsChanges.value;
-  if (!value.some(tp => tp.from === trackingPair.from && tp.to === trackingPair.to))
-    extraSessionTrackingPairsChanges.next(value.concat(trackingPair));
+  const known = new Set(value.map(pairId));
+  const missing = trackingPairs.filter(trackingPair => {
+    // `resolveTrackingPairs` drops a same-currency pair, so storing one is never useful.
+    if (trackingPair.from === trackingPair.to) return false;
+    const id = pairId(trackingPair);
+    if (known.has(id)) return false;
+    known.add(id);
+    return true;
+  });
+
+  if (missing.length > 0) extraSessionTrackingPairsChanges.next(value.concat(missing));
+}
+
+export function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
+  addExtraSessionTrackingPairs([trackingPair]);
 }
 
 export function useExtraSessionTrackingPair() {
