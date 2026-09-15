@@ -234,6 +234,58 @@
       "title" : "会话已过期",
       "description" : "Concordium ID 应用程序的会话不再活跃。请重新配对。"
     },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "CCD 不足，无法支付网络费用",
+      "description" : "网络费用以 CCD 支付，而非您要发送的代币。请向此账户添加 CCD 并重试。"
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "该代币已暂停转账",
+      "description" : "代币发行方已暂停所有转账。转账恢复后，您可以再次尝试。"
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "该账户无法发送此代币",
+      "description" : "代币发行方限制了谁可以发送该代币，且此账户未获许可。请联系代币发行方以获取访问权限。"
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "无法验证代币限制",
+      "description" : "无法读取该代币的转账规则，因此无法确认是否允许转账。请重新同步您的账户并重试。"
+    },
+    "ConcordiumRecipientNotAllowed" : {
+      "title" : "This address can't receive {{ticker}}",
+      "description" : "It hasn't been approved by the token issuer. Approval is managed by the issuer, not by Ledger."
+    },
+    "ConcordiumRecipientDenied" : {
+      "title" : "This address is restricted from receiving {{ticker}}",
+      "description" : "The token issuer has restricted this address. Contact the issuer for details."
+    },
+    "ConcordiumRecipientRestrictionsUnverified" : {
+      "title" : "{{ticker}} restrictions could not be verified",
+      "description" : "Whether this address may receive {{ticker}} could not be checked, so the transfer cannot be confirmed as allowed. Please check your connection and try again."
+    },
+    "ConcordiumRecipientNotFound" : {
+      "title" : "This address doesn't exist on Concordium",
+      "description" : "Check the address and try again. Sending to an address that was never created fails on the network and still costs a fee."
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "此代币无法在您的 Ledger 设备上签署",
+      "description" : "该代币使用 {{decimals}} 位小数，而您的设备最多支持 {{maxDecimals}} 位。接收和持有该代币不受影响。"
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "该代币已不在您的账户中",
+      "description" : "您选择的代币已不可用。请重新开始交易。"
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "无法准备该交易",
+      "description" : "该代币的详细信息超出了您的 Ledger 设备所能接受的范围，因此无法构建该交易。请联系 Ledger 客服。"
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "需要更新应用程序",
+      "description" : "您的 Ledger 设备上的 Concordium 应用程序不支持代币转账。请在“我的 Ledger”中更新该应用程序并重试。"
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "出错了。请重新连接您的设备",
+      "description" : "Concordium 应用程序无法处理该交易。如果问题仍然存在，请联系 Ledger 客服。"
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "出了点问题 (Error #1)",
       "description" : "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
@@ -1862,6 +1914,37 @@
       "cta" : "为您的钱包注资",
       "title" : "首先为您的钱包充值",
       "subTitle" : "以您偏好的方式为 Ledger Wallet 注资——转账、买入或将现金转换为稳定币。"
+    }
+  },
+  "q3WalletV4Tour" : {
+    "cta" : {
+      "start" : "立即查看",
+      "next" : "下一步",
+      "done" : "已全部看完"
+    },
+    "intro" : {
+      "title" : "快速了解最新动态",
+      "subTitle" : "发送、消费、赚取，以及更多全新方式。"
+    },
+    "contact" : {
+      "title" : "告别冗长的地址",
+      "subTitle" : "推出 “联系人” 功能。保存钱包地址并为其命名。易于查找，便于发送。"
+    },
+    "contactNoPay" : {
+      "title" : "推出“联系人”功能",
+      "subTitle" : "告别冗长的地址保存钱包地址并为其命名。易于查找，便于发送。"
+    },
+    "pay" : {
+      "title" : "推出支付功能 Pay",
+      "subTitle" : "向联系人付款、请求收款，并通过加密货币卡获取返现。现在，一个选项卡完成全部操作。"
+    },
+    "payNoCard" : {
+      "title" : "推出支付功能 Pay",
+      "subTitle" : "向联系人付款并请求收款，一切均可通过一个选项卡完成。"
+    },
+    "yield" : {
+      "title" : "保留您的加密货币，为您的项目获取资金",
+      "subTitle" : "通过 Morpho 技术支持的 Yield.xyz，使用封装比特币作为保证金借入稳定币。"
     }
   },
   "q2WalletV4Tour" : {
@@ -4806,10 +4889,6 @@
       "toggleCurrency" : "切换货币"
     },
     "summary" : {
-      "solanaRawTransaction" : {
-        "title" : "需要盲签名",
-        "description" : "您无法在 Ledger 设备上验证交易详情。如果您签署此交易，可能会丢失所有资产。仅在您信任此网站的情况下才可签署。"
-      },
       "subaccountsWarning" : "您需要向此账户充值 {{ currency }} 才能发送此账户的代币",
       "tag" : "标签 (可选)",
       "validateTag" : "验证标签",
@@ -9808,7 +9887,7 @@
       "description" : "您目前还无法将 {{asset}} 地址添加到您的联系人中。我们将不断添加更多加密货币。"
     },
     "unsupportedNetworkExplanation" : {
-      "title" : "暂不支持 {{network}} 网络。",
+      "title" : "暂不支持 {{network}} 网络",
       "description" : "您无法为 {{asset}} 选择 {{network}} 网络。我们将不断添加更多网络。"
     },
     "errors" : {
@@ -9816,6 +9895,45 @@
       "backend" : "我们这边出错了。请稍后重试",
       "internet" : "无互联网连接。请重试",
       "cta" : "请重试"
+    }
+  },
+  "perpsReview" : {
+    "depositTitle" : "通过 SwapKit 存入",
+    "depositSubtitle" : "我们的服务提供商 SwapKit 在单笔交易中管理您的互换和存入——全部由您的 Ledger 设备保障安全。",
+    "swapDetailTitle" : "互换详情",
+    "amountSendLabel" : "发送数额",
+    "amountReceiveLabel" : "接收数额",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "存入详情",
+    "depositAmountLabel" : "存入数额",
+    "depositReceiveLabel" : "接收账户",
+    "depositCTA" : "存入"
+  },
+  "perpsDepositSign" : {
+    "terms" : "签署此交易即表示我接受 <termsLink>SwapKit by NEAR Intents 条款与条件</termsLink>"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "交易已签署",
+    "description" : "一旦在区块链上确认，您将接收您的 {{currency}}",
+    "viewTransaction" : "查看交易"
+  },
+  "perpsTransactionStatus" : {
+    "title" : "为永续合约提供资金",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "返回永续合约 (Perps)"
+  },
+  "perpsDeposit" : {
+    "title" : "存款",
+    "inputDepositAmount" : "存入 ~{{value}}",
+    "inputSubText" : "通过 {{provider}} 互换并存入",
+    "selectCurrencyTitle" : "使用 {{currencyTicker}} 存入",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "无账户",
+    "review" : "审核",
+    "keypadDelete" : "删除末位数字",
+    "formErrors" : {
+      "amountExceedsBalance" : "余额不足",
+      "quoteUnavailable" : "无法从 {{provider}} 获取报价，请尝试其他资产或稍后再试。"
     }
   },
   "swapErrors" : {
@@ -10211,8 +10329,39 @@
     },
     "card" : {
       "title" : "加密货币卡",
+      "placeholder" : "敬请期待",
+      "details" : "详情",
       "freeze" : "冻结",
-      "unfreeze" : "解冻"
+      "unfreeze" : "解冻",
+      "goBack" : "返回",
+      "freezeConfirm" : {
+        "title" : "冻结意味着您将无法再使用该卡。",
+        "description" : "您可以随时解冻您的卡。",
+        "confirm" : "立即冻结",
+        "errorTitle" : "冻结失败"
+      },
+      "unfreezeConfirm" : {
+        "title" : "解冻您的卡？",
+        "confirm" : "立即解冻",
+        "errorTitle" : "解冻失败"
+      },
+      "confirmError" : {
+        "description" : "出错了。请重试。",
+        "retry" : "重试"
+      }
+    },
+    "cardTransactions" : {
+      "title" : "交易",
+      "categories" : {
+        "SUBSCRIPTIONS" : "订阅",
+        "FOOD" : "餐饮",
+        "TRAVEL" : "旅行",
+        "ENTERTAINMENT" : "娱乐",
+        "HEALTH" : "健康",
+        "ATM" : "自动取款机",
+        "UTILITIES" : "生活缴费",
+        "MISC" : "其他"
+      }
     },
     "selectContact" : {
       "placeholder" : "输入联系人"
@@ -10307,6 +10456,14 @@
       "afterIntro" : {
         "description" : "登录以访问您的卡",
         "action" : "登录"
+      },
+      "errors" : {
+        "pkce_failed" : "Login could not start. Please try again.",
+        "browser_open_failed" : "The login page could not open. Please try again.",
+        "missing_attempt" : "This login is no longer valid. Please log in again.",
+        "exchange_failed" : "Login could not be completed. Please try again.",
+        "persist_failed" : "Your session could not be saved. Please try again.",
+        "fetch_user_failed" : "Your card could not be loaded. Please try again."
       }
     },
     "cardLoginIntro" : {
@@ -10341,6 +10498,14 @@
       "addressPicker" : {
         "title" : "选择 {{name}} 的地址",
         "addAddress" : "添加地址"
+      },
+      "paySuccess" : {
+        "title" : "您已向 ({{recipient}}) 支付",
+        "amount" : "数额",
+        "estimatedTime" : "预估时间",
+        "from" : "来自",
+        "viewTransaction" : "查看交易",
+        "close" : "关闭"
       }
     },
     "cardOnboarding" : {
@@ -10617,12 +10782,11 @@
     "addContact" : "添加联系人",
     "addAddress" : "添加地址",
     "addYourAddress" : "添加您的地址",
-    "searchPlaceholder" : "搜索联系人",
+    "searchPlaceholder" : "按名称搜索",
     "searchNoResults" : "未找到联系人",
     "addContactDrawer" : {
       "namePlaceholder" : "联系人姓名",
-      "namingDisclaimer" : "为了保护隐私，请避免使用全名和姓氏。使用昵称，或仅使用名字+首字母，例如：“John S”。",
-      "confirmName" : "确认名称",
+      "namingDisclaimer" : "为了保护隐私，请避免使用全名。使用昵称，或仅使用名字+首字母，例如：“John S.”",
       "invalidNameError" : "不允许使用特殊字符。",
       "duplicateNameError" : "此联系人名称已被使用。"
     },
@@ -10636,20 +10800,23 @@
       "domainNotFound" : "未找到此网域的地址",
       "sanctionedAddress" : "该地址已被制裁，无法使用。",
       "validationUnavailable" : "地址验证暂时不可用",
-      "ensDisclaimer" : "ENS 名称解析为钱包地址。在继续之前，请务必验证解析后的地址。",
+      "ensDisclaimer" : "ENS 名称可能会发生变化",
+      "ensDisclaimerDescription" : "随着时间的推移，ENS 名称可能会指向不同的地址。我们现在保存底层地址，以确保您的资金只会发送至您验证的地址。",
       "sanctioned" : {
         "description" : "该地址已被标记，Ledger 不允许向其发送",
         "learnMore" : "了解更多"
-      }
+      },
+      "duplicateAddress" : "此地址已用于 {{contactName}}。"
     },
     "addAddressName" : {
       "title" : "命名地址",
       "inputLabel" : "地址名称",
-      "namingDisclaimer" : "建议您为此地址命名，以便在需要时轻松找到该地址。此名称仅对您可见。",
+      "namingDisclaimer" : "当您向此地址发送时，此名称会显示在您的 Ledger 设备上。为其命名，以便于查找。",
       "continueToReview" : "继续核对",
       "invalidLabel" : "不允许使用特殊字符。",
       "duplicateLabel" : "此地址名称已用于此联系人。",
-      "labelTooLong" : "此地址名称过长。"
+      "labelTooLong" : "此地址名称过长。",
+      "privacyPolicy" : "详细了解 Ledger 的隐私政策。"
     },
     "addAddressReview" : {
       "title" : "核对地址",
@@ -10663,10 +10830,7 @@
     "addressCount_one" : "{{count}} 个地址",
     "addressCount_other" : "{{count}} 个地址",
     "me" : {
-      "name" : "我",
-      "addressCount_zero" : "0 个地址",
-      "addressCount_one" : "{{count}} 个地址",
-      "addressCount_other" : "{{count}} 个地址"
+      "myAddresses" : "我的地址"
     },
     "detail" : {
       "meDisplayName" : "{{name}}（我）",
@@ -10697,7 +10861,7 @@
     "editContact" : {
       "title" : "编辑联系人",
       "namePlaceholder" : "联系人姓名",
-      "namingDisclaimer" : "为了保护隐私，请避免使用全名和姓氏。使用昵称，或仅使用名字+首字母，例如：“John S.”",
+      "namingDisclaimer" : "为了保护隐私，请避免使用全名。使用昵称，或仅使用名字+首字母，例如：“John S.”",
       "confirmName" : "确认名称",
       "applyChanges" : "应用更改",
       "invalidNameError" : "不允许使用特殊字符。"
@@ -10736,7 +10900,7 @@
     },
     "featureIntroduction" : {
       "title" : "推出「联系人」功能",
-      "primaryAction" : "立即探索",
+      "primaryAction" : "立即尝试",
       "highlights" : {
         "saveAddresses" : {
           "title" : "使用您选择的名称保存地址",
@@ -10747,7 +10911,7 @@
           "description" : "显示您信任的名称，而非地址。"
         },
         "privateAcrossDevices" : {
-          "title" : "通过 Ledger Wallet™ 安全充值",
+          "title" : "在您的 Ledger 设备间保持私密",
           "description" : "通过 Ledger Sync 账户同步功能进行端到端加密。"
         }
       }
