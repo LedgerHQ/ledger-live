@@ -16,6 +16,11 @@ import {
 import { explainOrphanCard, getCardOpenLink, getCardShape, getDismissalKey } from "./qaConsole";
 import { StatusRow } from "./StatusRow";
 import { CollapsibleSection, SectionCard, ShapeTag } from "./shared";
+import type { ContentCardEligibilityEvaluation } from "LLM/features/DynamicContent/utils/filterEligibleContentCards";
+import {
+  APPROVED_STATES,
+  type EligibilityContext,
+} from "@ledgerhq/live-common/braze/localEligibility";
 function truncateCardId(id: string): string {
   return id.length > 20 ? `${id.slice(0, 10)}…${id.slice(-6)}` : id;
 }
@@ -70,7 +75,9 @@ function orphanCardSubtitle(card: BrazeContentCard): string {
 function getCardRowStatus(
   isUnmapped: boolean,
   isDismissed: boolean,
+  isEligibilityBlocked: boolean,
 ): { statusLabel?: string; statusAppearance?: "error" | "gray" } {
+  if (isEligibilityBlocked) return { statusLabel: "Blocked", statusAppearance: "error" };
   if (isUnmapped) return { statusLabel: "Unmapped", statusAppearance: "error" };
   if (isDismissed) return { statusLabel: "Dismissed", statusAppearance: "gray" };
   return {};
@@ -100,6 +107,7 @@ function FunnelStat({
 }
 type CardsFetchedSummary = {
   fetched: number;
+  eligibilityBlocked: number;
   dismissedRemoved: number;
   wrongPlatformRemoved: number;
   mobileEligible: number;
@@ -168,6 +176,8 @@ export function CardsSection({
   onUndismiss,
   allCards,
   unmappedCards,
+  eligibilityEvaluations,
+  eligibilityContext,
   onSelectCard,
   onCopyCards,
   localCardsCount,
@@ -181,6 +191,8 @@ export function CardsSection({
   onUndismiss: (cardId: string) => void;
   allCards: BrazeContentCard[];
   unmappedCards: BrazeContentCard[];
+  eligibilityEvaluations: ContentCardEligibilityEvaluation[];
+  eligibilityContext: EligibilityContext;
   onSelectCard: (cardId: string) => void;
   onCopyCards: (id: string, cards: BrazeContentCard[]) => void;
   localCardsCount: number;
@@ -195,11 +207,21 @@ export function CardsSection({
     setExpandedSection(current => (current === section ? undefined : section));
   const unmappedIds = useMemo(() => new Set(unmappedCards.map(card => card.id)), [unmappedCards]);
   const dismissedIdSet = useMemo(() => new Set(dismissedIds), [dismissedIds]);
+  const evaluationsById = useMemo(
+    () => new Map(eligibilityEvaluations.map(evaluation => [evaluation.id, evaluation])),
+    [eligibilityEvaluations],
+  );
   const renderCardRow = (card: BrazeContentCard) => {
     const isUnmapped = unmappedIds.has(card.id);
     const dismissalKey = getDismissalKey(card);
     const isDismissed = Boolean(dismissalKey && dismissedIdSet.has(dismissalKey));
-    const { statusLabel, statusAppearance } = getCardRowStatus(isUnmapped, isDismissed);
+    const evaluation = evaluationsById.get(card.id);
+    const isEligibilityBlocked = evaluation?.result.eligible === false;
+    const { statusLabel, statusAppearance } = getCardRowStatus(
+      isUnmapped,
+      isDismissed,
+      isEligibilityBlocked,
+    );
     return (
       <StatusRow
         key={card.id}
@@ -226,6 +248,23 @@ export function CardsSection({
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 }}>
       <FeatureFlagsSectionCard />
+      <SectionCard title="Local eligibility" subtitle="requiredStates vs current app state">
+        <Box lx={{ paddingHorizontal: "s24", gap: "s4" }}>
+          {APPROVED_STATES.map(state => (
+            <Box key={state} lx={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <Text typography="body2" lx={{ color: "muted" }}>
+                {state}
+              </Text>
+              <Text
+                typography="body2SemiBold"
+                lx={{ color: eligibilityContext[state] ? "success" : "error" }}
+              >
+                {eligibilityContext[state] ? "yes" : "no"}
+              </Text>
+            </Box>
+          ))}
+        </Box>
+      </SectionCard>
       <SectionCard
         title="Bulk actions"
         subtitle={`${localCardsCount} local card(s) across every placement`}
@@ -267,6 +306,11 @@ export function CardsSection({
             Pipeline
           </Text>
           <FunnelStat label="Fetched from Braze" value={cardsFetched.fetched} />
+          <FunnelStat
+            label="Removed (local eligibility)"
+            value={cardsFetched.eligibilityBlocked}
+            tone="negative"
+          />
           <FunnelStat
             label="Removed (already dismissed)"
             value={cardsFetched.dismissedRemoved}
@@ -358,12 +402,16 @@ export function CardDetailContent({
   placement,
   isDismissed,
   isUnmapped,
+  eligibilityEvaluation,
+  eligibilityContext = {},
   onCopy,
 }: Readonly<{
   card: BrazeContentCard;
   placement?: AllLocations;
   isDismissed: boolean;
   isUnmapped: boolean;
+  eligibilityEvaluation?: ContentCardEligibilityEvaluation;
+  eligibilityContext?: EligibilityContext;
   onCopy: () => void;
 }>) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
@@ -392,6 +440,9 @@ export function CardDetailContent({
           appearance={isDismissed ? "gray" : "success"}
         />
         {isUnmapped ? <Tag label="Unmapped" size="sm" appearance="error" /> : null}
+        {eligibilityEvaluation?.result.eligible === false ? (
+          <Tag label="Blocked" size="sm" appearance="error" />
+        ) : null}
       </Box>
       <Text typography="body2SemiBold" lx={{ color: "base" }}>
         {cardRoleExplanation(card)}
@@ -415,6 +466,29 @@ export function CardDetailContent({
       <Text typography="body2" lx={{ color: "muted" }}>
         viewed: {card.viewed ? "yes" : "no"}
       </Text>
+      <Box lx={{ gap: "s4" }}>
+        <Text typography="body2SemiBold" lx={{ color: "base" }}>
+          Local eligibility
+        </Text>
+        {eligibilityEvaluation && eligibilityEvaluation.requiredStates.length > 0 ? (
+          eligibilityEvaluation.requiredStates.map(state => (
+            <Text key={state} typography="body2" lx={{ color: "muted" }}>
+              {state}: required · actual{" "}
+              {eligibilityContext[state as keyof EligibilityContext] ? "yes" : "no"}
+            </Text>
+          ))
+        ) : (
+          <Text typography="body2" lx={{ color: "muted" }}>
+            No requiredStates
+          </Text>
+        )}
+        {eligibilityEvaluation?.result.eligible === false ? (
+          <Text typography="body2" lx={{ color: "error" }}>
+            blockedBy: {eligibilityEvaluation.result.blockedBy} (
+            {eligibilityEvaluation.result.reason})
+          </Text>
+        ) : null}
+      </Box>
       <Box lx={{ gap: "s4" }}>
         <Text typography="body2SemiBold" lx={{ color: "base" }}>
           Extras
