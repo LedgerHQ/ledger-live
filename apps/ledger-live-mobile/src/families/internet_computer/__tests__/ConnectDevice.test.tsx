@@ -139,6 +139,19 @@ describe("neuron ConnectDevice", () => {
     expect(screen.queryByTestId("icp-device-action")).toBeNull();
   });
 
+  // The pair the hook actually produces: a preparation that threw never advances the transaction its
+  // status was computed against, so `bridgePending` stays set alongside the error. Waiting on it
+  // would hold the screen on a spinner that nothing can clear.
+  it("reports a thrown error that arrives while the bridge is still pending", () => {
+    bridgeError = makeError("ICPNeuronsNotRead");
+    bridgePending = true;
+
+    renderScreen();
+
+    expect(screen.getByTestId("icp-blocked-action")).toBeVisible();
+    expect(screen.queryByTestId("icp-device-action")).toBeNull();
+  });
+
   // DeviceAction starts an exchange on mount, so mounting it before the verdict lands and
   // unmounting it after would interrupt one already under way.
   it("waits for the bridge before mounting the device screen", () => {

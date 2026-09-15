@@ -71,8 +71,11 @@ export default function ConnectDevice(props: Props) {
   if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
   // Held rather than passed through: DeviceAction starts talking to the device on mount, so
-  // unmounting it once a verdict arrives would interrupt an exchange already under way.
-  if (bridgePending) return renderLoading({ t });
+  // unmounting it once a verdict arrives would interrupt an exchange already under way. A thrown
+  // preparation is the exception — it leaves the status behind the transaction it was computed for,
+  // so the hook reports pending and the error together and the wait would never end. Desktop's
+  // `submitGate` orders it the same way.
+  if (bridgePending && !bridgeError) return renderLoading({ t });
 
   const objection = bridgeError ?? Object.values(status.errors)[0];
   if (!objection) return <ICPConnectDevice {...props} category={CATEGORY} />;
