@@ -1,5 +1,5 @@
 import React from "react";
-import { DotIcon, mediaImageDotIconSizeMap } from "@ledgerhq/lumen-ui-rnative";
+import { DotIcon, getDotIconProps } from "@ledgerhq/lumen-ui-rnative";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -11,7 +11,7 @@ export type TransactionalIconProps = {
   isPending: boolean;
   hasFailed?: boolean;
   currency: CryptoCurrency | TokenCurrency;
-  mediaSize?: keyof typeof mediaImageDotIconSizeMap;
+  mediaSize?: Parameters<typeof getDotIconProps>[1];
 };
 
 function TransactionalIcon({
@@ -40,7 +40,7 @@ function TransactionalIcon({
       testID={`transactional-icon-dot-${operationType}`}
       icon={dot.icon}
       appearance={dot.appearance}
-      size={mediaImageDotIconSizeMap[mediaSize]}
+      size={getDotIconProps("mediaImage", mediaSize).size}
       pin="top-end"
     >
       {cryptoIcon}
