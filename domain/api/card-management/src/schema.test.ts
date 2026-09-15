@@ -9,6 +9,8 @@ import {
   PayCardSessionResponseSchema,
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
+  PayCardPinCssSchema,
+  PayCardPinTokenResponseSchema,
   PayCardSetPinCssSchema,
   PayCardSetPinTokenRequestSchema,
   PayCardSetPinTokenResponseSchema,
@@ -178,6 +180,46 @@ describe("PayCardDetailsCssSchema", () => {
   it("rejects a colour the provider would answer 422 for", () => {
     expect(() => PayCardDetailsCssSchema.parse({ cardTextColor: "white" })).toThrow();
     expect(() => PayCardDetailsCssSchema.parse({ cardTextColor: "#GGGGGG" })).toThrow();
+  });
+});
+
+describe("PayCardPinTokenResponseSchema", () => {
+  // The provider's example, with an all-zero token: a real-looking one trips secret scanning.
+  const pinToken = {
+    token: "00000000-0000-4000-8000-000000000000",
+    imageUrl:
+      "https://card.api.live.ledger.com/details-image?token=00000000-0000-4000-8000-000000000000",
+  };
+
+  it("reads the documented token response", () => {
+    expect(PayCardPinTokenResponseSchema.parse(pinToken)).toEqual(pinToken);
+  });
+
+  it("rejects an image url that is not https, which is loaded straight into an image", () => {
+    expect(() => PayCardPinTokenResponseSchema.parse({ ...pinToken, imageUrl: "" })).toThrow();
+    expect(() =>
+      PayCardPinTokenResponseSchema.parse({ ...pinToken, imageUrl: "javascript:alert(1)" }),
+    ).toThrow();
+  });
+});
+
+describe("PayCardPinCssSchema", () => {
+  it("takes the documented colours, and takes none at all", () => {
+    const css = { backgroundColor: "#EFEFEF", textColor: "#000000" };
+
+    expect(PayCardPinCssSchema.parse(css)).toEqual(css);
+    expect(PayCardPinCssSchema.parse({})).toEqual({});
+  });
+
+  it("rejects a colour the provider would answer 422 for", () => {
+    expect(() => PayCardPinCssSchema.parse({ textColor: "white" })).toThrow();
+    expect(() => PayCardPinCssSchema.parse({ backgroundColor: "#GGGGGG" })).toThrow();
+  });
+
+  it("declares two colours, and drops every other key on parse", () => {
+    expect(PayCardPinCssSchema.parse({ panTextColor: "#000000", textColor: "#000000" })).toEqual({
+      textColor: "#000000",
+    });
   });
 });
 

@@ -81,6 +81,25 @@ export const PayCardDetailsTokenResponseSchema = z.object({
 });
 
 /**
+ * The two colours this endpoint documents, its own defaults applying to whatever is omitted. A
+ * different set from the card details image's, so anything undeclared here is dropped on parse.
+ */
+export const PayCardPinCssSchema = z.object({
+  backgroundColor: z.string().regex(HEX_COLOR).optional(),
+  textColor: z.string().regex(HEX_COLOR).optional(),
+});
+
+/**
+ * Same shape as the card details token, and kept separate: two endpoints of the provider's that
+ * agree today are still two contracts, and either may move without the other.
+ */
+export const PayCardPinTokenResponseSchema = z.object({
+  token: z.string().min(1),
+  /** Loaded straight into an image. */
+  imageUrl: HttpsUrlSchema,
+});
+
+/**
  * Colours and radii the provider paints the hosted PIN page with, its own defaults applying to
  * whatever is omitted. A separate set from the card details image's: this page styles a keypad.
  */
