@@ -1,6 +1,6 @@
 import { Connection } from "@solana/web3.js";
 import { getChainAPI } from "../../network/chain/index";
-import { toLiveTransaction } from "../../rawTransaction";
+import { craftRawTransaction } from "../../logic/craftRawTransaction";
 
 // Pre-built v1 SOL transfer (version byte 0x81), fake blockhash, PAYER signing to self.
 // Structurally valid but not broadcastable.
@@ -22,12 +22,9 @@ describe("Solana v1 transaction support (SIMD-0385)", () => {
     );
   });
 
-  it("toLiveTransaction handles a v1 transaction without throwing", async () => {
-    jest
-      .spyOn(Connection.prototype, "getFeeForMessage")
-      .mockResolvedValue({ context: { slot: 1 }, value: 5000 });
-    const api = getChainAPI({ endpoint: "http://localhost:8899" });
-    const result = await toLiveTransaction(api, V1_TX_FIXTURE);
-    expect(result.raw).toEqual(V1_TX_FIXTURE);
+  it("crafts a v1 transaction without throwing", async () => {
+    const result = await craftRawTransaction(V1_TX_FIXTURE);
+
+    expect(result.transaction).toEqual(V1_TX_FIXTURE);
   });
 });
