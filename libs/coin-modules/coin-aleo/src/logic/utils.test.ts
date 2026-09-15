@@ -55,6 +55,7 @@ import {
 } from "../__tests__/fixtures/transaction.fixture";
 import type {
   AleoContext,
+  AleoOperation,
   AleoOperationExtra,
   AleoTransactionIntent,
   AleoPublicTransaction,
@@ -121,6 +122,11 @@ import {
   classifyAleoTokenType,
   resolvePrivacyContext,
   toStakingPosition,
+  parseTransactionFields,
+  resolveStakingOperationType,
+  isStakingOperation,
+  isAleoOperationExtra,
+  isAleoOperationExtraRaw,
 } from "./utils";
 
 jest.mock("../config");
@@ -3490,5 +3496,144 @@ describe("toStakingPosition", () => {
         { raw: Object.values(mocks)[0] },
       );
     });
+  });
+});
+
+describe("resolveStakingOperationType", () => {
+  it.each([
+    [TRANSACTION_TYPE.BOND_PUBLIC, "BOND"],
+    [TRANSACTION_TYPE.UNBOND_PUBLIC, "UNBOND"],
+    [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, "WITHDRAW_UNBONDED"],
+  ])("maps %s to %s", (functionId, expected) => {
+    const rawTx = getMockedPublicTransaction({ function_id: functionId });
+
+    expect(resolveStakingOperationType(rawTx)).toBe(expected);
+  });
+
+  it("returns undefined for a plain credits.aleo transfer", () => {
+    expect(resolveStakingOperationType(getMockedPublicTransaction())).toBeUndefined();
+  });
+
+  it("returns undefined for a bond_public on another program", () => {
+    const rawTx = getMockedPublicTransaction({
+      function_id: TRANSACTION_TYPE.BOND_PUBLIC,
+      program_id: MOCK_TOKEN_PROGRAM_ID,
+    });
+
+    expect(resolveStakingOperationType(rawTx)).toBeUndefined();
+  });
+});
+
+describe("parseTransactionFields", () => {
+  const address = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
+
+  const stakingTx = (functionId: string) =>
+    getMockedPublicTransaction({
+      function_id: functionId,
+      sender_address: "",
+      recipient_address: "",
+      amount: 0,
+    });
+
+  it.each([
+    [TRANSACTION_TYPE.BOND_PUBLIC, "BOND"],
+    [TRANSACTION_TYPE.UNBOND_PUBLIC, "UNBOND"],
+    [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, "WITHDRAW_UNBONDED"],
+  ])("types %s as %s from the function id alone", (functionId, expected) => {
+    expect(parseTransactionFields(stakingTx(functionId), address).type).toBe(expected);
+  });
+
+  it("badges a staking call as public", () => {
+    const { transactionType } = parseTransactionFields(
+      stakingTx(TRANSACTION_TYPE.BOND_PUBLIC),
+      address,
+    );
+
+    expect(transactionType).toBe("public");
+  });
+
+  it("still types a plain transfer by address", () => {
+    const rawTx = getMockedPublicTransaction();
+
+    expect(parseTransactionFields(rawTx, rawTx.recipient_address).type).toBe("IN");
+    expect(parseTransactionFields(rawTx, rawTx.sender_address).type).toBe("OUT");
+  });
+});
+
+describe("isStakingOperation", () => {
+  const opWith = (extra: Partial<AleoOperation["extra"]>) =>
+    getMockedOperation({
+      extra: { functionId: "transfer_public", transactionType: "public", ...extra },
+    });
+
+  it.each([
+    TRANSACTION_TYPE.BOND_PUBLIC,
+    TRANSACTION_TYPE.UNBOND_PUBLIC,
+    TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+  ])("recognises %s on credits.aleo", functionId => {
+    expect(isStakingOperation(opWith({ functionId, programId: PROGRAM_ID.CREDITS }))).toBe(true);
+  });
+
+  it("recognises a staking op still typed OUT", () => {
+    const op = getMockedOperation({
+      type: "OUT",
+      extra: {
+        functionId: TRANSACTION_TYPE.BOND_PUBLIC,
+        transactionType: "public",
+        programId: PROGRAM_ID.CREDITS,
+      },
+    });
+
+    expect(isStakingOperation(op)).toBe(true);
+  });
+
+  it.each(["transfer_public", "transfer_token_public", "fee_public"])(
+    "rejects %s on credits.aleo",
+    functionId => {
+      expect(isStakingOperation(opWith({ functionId, programId: PROGRAM_ID.CREDITS }))).toBe(false);
+    },
+  );
+
+  it("rejects a staking function name exposed by another program", () => {
+    const op = opWith({
+      functionId: TRANSACTION_TYPE.BOND_PUBLIC,
+      programId: MOCK_TOKEN_PROGRAM_ID,
+    });
+
+    expect(isStakingOperation(op)).toBe(false);
+  });
+
+  // An operation that cannot name its program is not taken for a staking one: the function id
+  // alone does not say it came from credits.aleo, and any program may expose the same name.
+  it("rejects a staking function name on an op without a programId", () => {
+    expect(isStakingOperation(opWith({ functionId: TRANSACTION_TYPE.BOND_PUBLIC }))).toBe(false);
+  });
+
+  it("rejects a non-staking op without a programId", () => {
+    expect(isStakingOperation(opWith({ functionId: "transfer_public" }))).toBe(false);
+  });
+
+  it("rejects an op without a functionId", () => {
+    const op = getMockedOperation({ extra: {} as AleoOperation["extra"] });
+
+    expect(isStakingOperation(op)).toBe(false);
+  });
+});
+
+describe("isAleoOperationExtra", () => {
+  it.each([
+    ["null", null],
+    ["undefined", undefined],
+    ["an extra without functionId", { transactionType: "public" }],
+  ])("rejects %s", (_label, extra) => {
+    expect(isAleoOperationExtra(extra as never)).toBe(false);
+    expect(isAleoOperationExtraRaw(extra as never)).toBe(false);
+  });
+
+  it("accepts an extra carrying a functionId", () => {
+    const extra = { functionId: "transfer_public", transactionType: "public" as const };
+
+    expect(isAleoOperationExtra(extra)).toBe(true);
+    expect(isAleoOperationExtraRaw(extra)).toBe(true);
   });
 });

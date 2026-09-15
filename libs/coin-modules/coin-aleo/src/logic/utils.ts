@@ -6,6 +6,8 @@ import type {
   Account,
   AccountLike,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
   OperationType,
   TokenAccount,
 } from "@ledgerhq/types-live";
@@ -51,7 +53,9 @@ import type {
   Intent,
   AleoTransactionIntentData,
   AleoPublicTransaction,
+  AleoOperation,
   AleoOperationExtra,
+  AleoOperationExtraRaw,
   TransactionPublic,
   TransactionPrivate,
   AleoCoinConfig,
@@ -285,7 +289,9 @@ export function parseTransactionFields(rawTx: AleoPublicTransaction, address: st
   const blockHash = rawTx.block_hash;
 
   if (rawTx.program_id === PROGRAM_ID.CREDITS) {
-    type = address === rawTx.recipient_address ? "IN" : "OUT";
+    // The indexer blanks both sides of a staking call, so no address comparison can type it.
+    type =
+      resolveStakingOperationType(rawTx) ?? (address === rawTx.recipient_address ? "IN" : "OUT");
   }
 
   const transactionType = determineTransactionType(rawTx.function_id, type);
@@ -357,15 +363,19 @@ export const toPublicOperation = ({
     !rawTx.recipient_address && hasOwnedRecord
       ? address
       : rawTx.recipient_address || (resolvedRecipient ?? "");
-  const type = resolveOperationType(rawTx, address, sender, recipient);
+  const stakingType = resolveStakingOperationType(rawTx);
+  const type = stakingType ?? resolveOperationType(rawTx, address, sender, recipient);
+  const value = stakingType ? new BigNumber(rawTx.fee) : resolveTransactionAmount(rawTx);
 
   return {
     id: hash,
     type,
-    senders: [sender],
-    recipients: [recipient],
-    value: BigInt(resolveTransactionAmount(rawTx).toFixed(0)),
+    senders: stakingType ? [] : [sender],
+    recipients: stakingType ? [] : [recipient],
+    value: BigInt(value.toFixed(0)),
     asset: toOperationAsset(rawTx.program_id, tokenTypeByProgramName),
+    // No `validator`/`stakedAmount`: those cost one request per bond (see resolveBondArguments),
+    // which the api path does not spend.
     details: {
       functionId: rawTx.function_id,
       transactionType: determineTransactionType(rawTx.function_id, type),
@@ -561,6 +571,33 @@ export function getStakingOperationType(functionName: string): OperationType | u
   return Object.hasOwn(STAKING_OPERATION_TYPE, functionName)
     ? STAKING_OPERATION_TYPE[functionName as AleoStakingMode]
     : undefined;
+}
+
+/** Another program may expose a same-named function; only credits.aleo staking counts. */
+export function resolveStakingOperationType(
+  rawTx: AleoPublicTransaction,
+): OperationType | undefined {
+  return rawTx.program_id === PROGRAM_ID.CREDITS
+    ? getStakingOperationType(rawTx.function_id)
+    : undefined;
+}
+
+export function isStakingOperation(op: AleoOperation): boolean {
+  const { functionId, programId } = op.extra ?? {};
+  if (functionId === undefined) return false;
+
+  return programId === PROGRAM_ID.CREDITS && getStakingOperationType(functionId) !== undefined;
+}
+
+/** `functionId` works as the discriminant because no other family's extra carries one. */
+export function isAleoOperationExtra(extra: OperationExtra): extra is AleoOperationExtra {
+  return isRecord(extra) && "functionId" in extra;
+}
+
+export function isAleoOperationExtraRaw(
+  extraRaw: OperationExtraRaw,
+): extraRaw is AleoOperationExtraRaw {
+  return isRecord(extraRaw) && "functionId" in extraRaw;
 }
 
 export function isPublicTokenTransaction(transaction: Pick<Transaction, "mode">): boolean {
@@ -920,7 +957,8 @@ export function fromHex<T>(txHex: string): T {
   return JSON.parse(Buffer.from(txHex, "hex").toString());
 }
 
-// this function is used to extract the fields that should be displayed in the operation details
+// `validator` is absent by design: this renders as plain text on both platforms, while desktop
+// shows it as a truncated, copyable address.
 export const getOperationDetailsExtraFields = (
   extra: AleoOperationExtra,
 ): OperationDetailsExtraField[] => {
