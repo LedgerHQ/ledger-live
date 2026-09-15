@@ -2980,6 +2980,11 @@
       "skipCTA": "Maybe later"
     }
   },
+  "perpsAccountBanner": {
+    "title": "About Hyperliquid account",
+    "description": "This account is related to Perpetual trading. Transactional actions are not supported for this account",
+    "cta": "Open Perps"
+  },
   "portfolio": {
     "totalBalance": "Total balance",
     "syncPending": "Synchronizing...",

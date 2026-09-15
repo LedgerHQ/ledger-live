@@ -41,6 +41,7 @@ import WarningCustomBanner from "~/components/WarningCustomBanner";
 import ErrorWarning from "./ErrorWarning";
 import NftEntryPoint from "LLM/features/NftEntryPoint";
 import perFamilyPendingTransferProposals from "../../generated/PendingTransferProposals";
+import { PerpsAccountBanner } from "LLM/features/Accounts/components/PerpsAccountBanner";
 
 type Props = {
   account?: AccountLike;
@@ -96,7 +97,6 @@ export function useListHeaderComponents({
   t,
 }: Props): {
   listHeaderComponents: ReactNode[];
-  stickyHeaderIndices?: number[];
 } {
   const mainAccount = useMemo(
     () => (account ? getMainAccount(account, parentAccount) : undefined),
@@ -128,8 +128,7 @@ export function useListHeaderComponents({
         })[0];
   }, [account, mainAccount, bridge]);
 
-  if (!account || !mainAccount || !bridge)
-    return { listHeaderComponents: [], stickyHeaderIndices: undefined };
+  if (!account || !mainAccount || !bridge) return { listHeaderComponents: [] };
 
   const family: string = mainAccount.currency.family;
 
@@ -170,8 +169,6 @@ export function useListHeaderComponents({
         NearAccount,
     });
 
-  const stickyHeaderIndices = empty ? [] : [0];
-
   const isOperationStuck = Boolean(
     oldestEditableOperation && bridge.isStuckOperation(oldestEditableOperation),
   );
@@ -185,6 +182,7 @@ export function useListHeaderComponents({
     listHeaderComponents: [
       <Box mt={6} onLayout={onAccountCardLayout} key="AccountGraphCard">
         <AccountGraphCard
+          belowHeader={<PerpsAccountBanner currency={currency} />}
           account={account}
           range={range}
           history={history}
@@ -278,6 +276,5 @@ export function useListHeaderComponents({
         : []),
       ...(account.type === "Account" ? [<NftEntryPoint account={account} key={account.id} />] : []),
     ],
-    stickyHeaderIndices,
   };
 }
