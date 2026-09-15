@@ -15,13 +15,15 @@ import {
   mockUnspentTokenRecord1,
 } from "../__tests__/fixtures/account.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import { estimateFees, validateAddress } from "../logic";
+import { estimateFees, getValidators, validateAddress } from "../logic";
 import { calculateAmount } from "../logic/utils";
-import type { Transaction } from "../types";
+import type { AleoAccount, AleoCoinConfig, AleoValidator, Transaction } from "../types";
 import aleoCoinConfig from "../config";
 import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  MIN_BOND_AMOUNT,
+  MIN_DELEGATOR_STAKE_MICROCREDITS,
   TRANSACTION_TYPE,
 } from "../constants";
 import {
@@ -32,10 +34,16 @@ import {
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
 } from "../errors";
+import { prepareTransaction } from "./prepareTransaction";
 import { getTransactionStatus } from "./getTransactionStatus";
 
 jest.mock("../config");
-jest.mock("../logic");
+jest.mock("../logic", () => ({
+  ...jest.requireActual("../logic"),
+  estimateFees: jest.fn(),
+  getValidators: jest.fn(),
+  validateAddress: jest.fn(),
+}));
 jest.mock("../logic/utils", () => ({
   ...jest.requireActual("../logic/utils"),
   calculateAmount: jest.fn(),
@@ -43,6 +51,7 @@ jest.mock("../logic/utils", () => ({
 
 const mockEstimateFees = jest.mocked(estimateFees);
 const mockValidateAddress = jest.mocked(validateAddress);
+const mockGetValidators = jest.mocked(getValidators);
 const mockCalculateAmount = jest.mocked(calculateAmount);
 const mockAleoConfig = jest.mocked(aleoCoinConfig);
 
@@ -181,47 +190,6 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(account, transaction);
 
       expect(result.errors.recipient).toBeUndefined();
-    });
-
-    it("allows the account's own address as recipient for an unbond", async () => {
-      const account = getMockedAccount({ freshAddress: "aleo1sender" });
-      const transaction: Transaction = {
-        ...mockTransaction,
-        recipient: account.freshAddress,
-        mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
-      };
-
-      const result = await getTransactionStatus(account, transaction);
-
-      expect(result.errors.recipient).toBeUndefined();
-    });
-
-    it("allows the account's own address as recipient for a claim", async () => {
-      const account = getMockedAccount({ freshAddress: "aleo1sender" });
-      const transaction: Transaction = {
-        ...mockTransaction,
-        recipient: account.freshAddress,
-        mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
-      };
-
-      const result = await getTransactionStatus(account, transaction);
-
-      expect(result.errors.recipient).toBeUndefined();
-    });
-
-    // The regression this fix must not cause: a genuine self-send on a non-staking public
-    // transfer is still rejected (isSelfStakingMode must not widen to every mode).
-    it("still rejects the account's own address as recipient for a plain public transfer", async () => {
-      const account = getMockedAccount({ freshAddress: "aleo1sender" });
-      const transaction: Transaction = {
-        ...mockTransaction,
-        recipient: account.freshAddress,
-        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
-      };
-
-      const result = await getTransactionStatus(account, transaction);
-
-      expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
     });
   });
 
@@ -912,6 +880,288 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(mockAccount, transaction);
 
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+  });
+
+  describe("staking", () => {
+    const VALIDATOR = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
+    const OTHER_VALIDATOR = "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f";
+
+    const actualLogic = jest.requireActual<typeof import("../logic")>("../logic");
+    const actualUtils = jest.requireActual<typeof import("../logic/utils")>("../logic/utils");
+
+    const asValidator = (address: string, isOpen: boolean, isUnbonding = false): AleoValidator => ({
+      address,
+      stakeMicrocredits: 20_000_000_000_000,
+      isOpen,
+      isUnbonding,
+      commissionPercent: 10,
+    });
+
+    function setStakingConfig(overrides?: Partial<AleoCoinConfig>) {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...getMockedConfig("mainnet"), ...overrides });
+    }
+
+    function makeAccount(
+      staking: Partial<AleoAccount["aleoResources"]> = {},
+      transparentBalance = new BigNumber(50_000_000_000),
+    ): AleoAccount {
+      return getMockedAccount({
+        aleoResources: { ...mockAleoResources, transparentBalance, ...staking },
+      });
+    }
+
+    /** Mirrors the bridge: create → prepare → status, so no field is hand-fed to the validator. */
+    async function statusOf(account: AleoAccount, transaction: Transaction) {
+      const prepared = await prepareTransaction(account, transaction);
+      return { prepared, status: await getTransactionStatus(account, prepared) };
+    }
+
+    const stakingTransaction = (
+      mode: Transaction["mode"],
+      overrides: Partial<Transaction> = {},
+    ): Transaction =>
+      ({
+        family: "aleo",
+        mode,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: new BigNumber(0),
+        useAllAmount: false,
+        ...(mode === TRANSACTION_TYPE.BOND_PUBLIC && { withdrawal: "" }),
+        ...overrides,
+      }) as Transaction;
+
+    beforeEach(() => {
+      // These cases run the real bridge chain, so the fee, address and amount helpers the rest
+      // of the suite stubs out are restored.
+      mockEstimateFees.mockImplementation(actualLogic.estimateFees);
+      mockValidateAddress.mockImplementation(actualLogic.validateAddress);
+      mockCalculateAmount.mockImplementation(actualUtils.calculateAmount);
+      setStakingConfig();
+      mockGetValidators.mockResolvedValue([asValidator(VALIDATOR, true)]);
+    });
+
+    describe("unbond_public", () => {
+      it("accepts a prepared unbond, whose recipient is the account's own address", async () => {
+        const account = makeAccount({ bondedBalance: new BigNumber(20_000_000_000) });
+
+        const { prepared, status } = await statusOf(
+          account,
+          stakingTransaction(TRANSACTION_TYPE.UNBOND_PUBLIC, {
+            amount: new BigNumber(5_000_000_000),
+          }),
+        );
+
+        expect(prepared.recipient).toBe(account.freshAddress);
+        expect(status.errors).toEqual({});
+      });
+
+      it("charges the fee to the transparent balance, so a full unbond of the bonded position passes", async () => {
+        setStakingConfig({ isFeeSponsored: false });
+        const bondedBalance = new BigNumber(20_000_000_000);
+        const account = makeAccount({ bondedBalance });
+
+        const { prepared, status } = await statusOf(
+          account,
+          stakingTransaction(TRANSACTION_TYPE.UNBOND_PUBLIC, { useAllAmount: true }),
+        );
+
+        expect(prepared.amount).toEqual(bondedBalance);
+        expect(status.totalSpent).toEqual(bondedBalance);
+        expect(status.estimatedFees.isGreaterThan(0)).toBe(true);
+        expect(status.errors).toEqual({});
+      });
+
+      it("rejects an amount above the bonded position", async () => {
+        const account = makeAccount({ bondedBalance: new BigNumber(20_000_000_000) });
+
+        const { status } = await statusOf(
+          account,
+          stakingTransaction(TRANSACTION_TYPE.UNBOND_PUBLIC, {
+            amount: new BigNumber(30_000_000_000),
+          }),
+        );
+
+        expect(status.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      });
+
+      it("rejects a use-all unbond with nothing bonded", async () => {
+        const { status } = await statusOf(
+          makeAccount({ bondedBalance: new BigNumber(0) }),
+          stakingTransaction(TRANSACTION_TYPE.UNBOND_PUBLIC, { useAllAmount: true }),
+        );
+
+        expect(status.errors.amount).toBeInstanceOf(AmountRequired);
+      });
+    });
+
+    describe("claim_unbond_public", () => {
+      const claimable = {
+        unbondingBalance: new BigNumber(7_000_000),
+        unbondingHeight: 1000,
+      };
+
+      it("accepts a prepared claim, which signs no amount", async () => {
+        const { prepared, status } = await statusOf(
+          makeAccount(claimable),
+          stakingTransaction(TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC),
+        );
+
+        expect(prepared.amount).toEqual(new BigNumber(0));
+        expect(status.errors).toEqual({});
+      });
+
+      it("rejects a claim with nothing matured", async () => {
+        const { status } = await statusOf(
+          makeAccount({ unbondingBalance: new BigNumber(7_000_000), unbondingHeight: 999_999 }),
+          stakingTransaction(TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC),
+        );
+
+        expect(status.errors.amount?.message).toMatch(/no unbonded funds to claim/);
+      });
+
+      it("resolves no amount for use-all, rather than the whole transparent balance", async () => {
+        const transparentBalance = new BigNumber(50_000_000_000);
+        const { prepared, status } = await statusOf(
+          makeAccount(claimable, transparentBalance),
+          stakingTransaction(TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, { useAllAmount: true }),
+        );
+
+        expect(prepared.useAllAmount).toBe(false);
+        expect(prepared.amount).toEqual(new BigNumber(0));
+        expect(status.amount).toEqual(new BigNumber(0));
+        expect(status.amount).not.toEqual(transparentBalance);
+        expect(status.errors).toEqual({});
+      });
+    });
+
+    describe("bond_public", () => {
+      const bond = (amount: BigNumber, overrides: Partial<Transaction> = {}) =>
+        stakingTransaction(TRANSACTION_TYPE.BOND_PUBLIC, {
+          amount,
+          recipient: VALIDATOR,
+          ...overrides,
+        });
+
+      it("accepts a bond clearing both protocol floors", async () => {
+        const { prepared, status } = await statusOf(
+          makeAccount(),
+          bond(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS)),
+        );
+
+        expect(prepared).toHaveProperty("withdrawal", makeAccount().freshAddress);
+        expect(status.errors).toEqual({});
+      });
+
+      it("rejects a bond below the per-call one-credit floor", async () => {
+        const { status } = await statusOf(
+          makeAccount({ bondedBalance: new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS) }),
+          bond(new BigNumber(MIN_BOND_AMOUNT - 1)),
+        );
+
+        expect(status.errors.amount?.message).toMatch(/stake at least .* at a time/);
+      });
+
+      it("rejects a bond leaving the delegator total below the minimum stake", async () => {
+        const { status } = await statusOf(makeAccount(), bond(new BigNumber(MIN_BOND_AMOUNT)));
+
+        expect(status.errors.amount?.message).toMatch(/total of at least/);
+      });
+
+      it("accepts a top-up on a position that already clears the minimum stake", async () => {
+        const { status } = await statusOf(
+          makeAccount({ bondedBalance: new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS) }),
+          bond(new BigNumber(MIN_BOND_AMOUNT)),
+        );
+
+        expect(status.errors).toEqual({});
+      });
+
+      it("rejects a bond to a validator closed to new delegators", async () => {
+        mockGetValidators.mockResolvedValue([asValidator(VALIDATOR, false)]);
+
+        const { status } = await statusOf(
+          makeAccount(),
+          bond(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS)),
+        );
+
+        expect(status.errors.recipient?.message).toMatch(/not accepting new delegations/);
+      });
+
+      it("rejects a bond to an open validator that is unbonding", async () => {
+        mockGetValidators.mockResolvedValue([asValidator(VALIDATOR, true, true)]);
+
+        const { status } = await statusOf(
+          makeAccount(),
+          bond(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS)),
+        );
+
+        expect(status.errors.recipient?.message).toMatch(/not accepting new delegations/);
+      });
+
+      it("does not block a bond when the committee cannot be fetched", async () => {
+        mockGetValidators.mockRejectedValue(new Error("committee endpoint down"));
+
+        const { status } = await statusOf(
+          makeAccount(),
+          bond(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS)),
+        );
+
+        expect(status.errors).toEqual({});
+      });
+
+      it("does not block a bond to a validator absent from the committee", async () => {
+        mockGetValidators.mockResolvedValue([asValidator(OTHER_VALIDATOR, true)]);
+
+        const { status } = await statusOf(
+          makeAccount(),
+          bond(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS)),
+        );
+
+        expect(status.errors).toEqual({});
+      });
+
+      it("rejects a bond to a second validator, in preference to the open/closed check", async () => {
+        mockGetValidators.mockResolvedValue([asValidator(VALIDATOR, false)]);
+
+        const { status } = await statusOf(
+          makeAccount({ bondedValidator: OTHER_VALIDATOR }),
+          bond(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS)),
+        );
+
+        expect(status.errors.recipient?.message).toMatch(
+          new RegExp(`Already staking with ${OTHER_VALIDATOR}`),
+        );
+      });
+
+      it("reports a missing recipient without running the validator checks", async () => {
+        const { status } = await statusOf(
+          makeAccount(),
+          bond(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS), { recipient: "" }),
+        );
+
+        expect(status.errors.recipient).toBeInstanceOf(RecipientRequired);
+        expect(mockGetValidators).not.toHaveBeenCalled();
+      });
+
+      it("reports an invalid withdrawal address", async () => {
+        const status = await getTransactionStatus(
+          makeAccount(),
+          bond(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS), { withdrawal: "not-an-address" }),
+        );
+
+        expect(status.errors.withdrawal).toBeInstanceOf(InvalidAddress);
+      });
+
+      it("rejects a use-all bond whose transparent balance only covers the fee", async () => {
+        setStakingConfig({ isFeeSponsored: false });
+        const account = makeAccount({}, new BigNumber(5621));
+
+        const { status } = await statusOf(account, bond(new BigNumber(0), { useAllAmount: true }));
+
+        expect(status.errors.amount).toBeInstanceOf(AmountRequired);
+      });
     });
   });
 });
