@@ -10,6 +10,7 @@ import {
   CARD_REDUCER_PATH,
   CARD_STALE_REQUEST,
   HEADER_X_CLIENT_KEY,
+  HEADER_X_US_ENV,
   UNAUTHORIZED_STATUS,
 } from "./constants";
 import { CardApiExtraSchema } from "./schema";
@@ -32,6 +33,11 @@ export function getCardExtra(api: { extra: unknown }): CardApiExtra {
 function cardHeaders(extra: CardApiExtra, token?: string | null, headers = new Headers()): Headers {
   headers.set("Content-Type", "application/json");
   headers.set(HEADER_X_CLIENT_KEY, extra.getCardBaanxClientKey());
+  // Only the US tenant is named. The other one is the provider's default, and a literal "false"
+  // reads as true to a header parser that only tests for presence.
+  if (extra.isCardUsEnv()) {
+    headers.set(HEADER_X_US_ENV, "true");
+  }
   if (token) {
     headers.set("authorization", `Bearer ${token}`);
   }

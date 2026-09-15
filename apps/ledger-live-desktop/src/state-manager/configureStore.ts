@@ -22,7 +22,7 @@ import {
   readCardSession,
   refreshCardSession,
 } from "@features/platform-card";
-import { setSignedIn } from "@features/flow-pay-card-auth/state";
+import { selectPayCardIsUsEnv, setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
   createAccountAliasMiddleware,
   withAccountAliases,
@@ -108,6 +108,8 @@ const customCreateStore = ({
                 // Read on every request, so the debug settings can change them without a restart.
                 getCardApiBaseUrl: () => getEnv("CARD_BAANX_API_URL"),
                 getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
+                isCardUsEnv: (): boolean =>
+                  selectPayCardIsUsEnv(store.getState(), getEnv("CARD_BAANX_US_APP_ID")),
                 readCardSession,
                 isCardSessionCurrent,
                 refreshCardSession,
