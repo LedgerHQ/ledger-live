@@ -2,32 +2,32 @@ import React from "react";
 import { cn } from "@ledgerhq/lumen-utils-shared";
 import { useTranslation } from "@shared/i18n";
 import { CARD_GRADIENT } from "../CardArtwork/cardGradient.web";
-import type { CardNumbersViewProps } from "../../types";
+import type { CardFlipViewProps } from "../../types";
 
-export function CardNumbersView({
+export function CardFlipView({
   isRevealed,
   imageUrl,
   onImageError,
   cardFace,
-}: CardNumbersViewProps) {
+}: CardFlipViewProps) {
   const details = imageUrl ? (
     <DetailsImage imageUrl={imageUrl} onImageError={onImageError} />
   ) : null;
 
   if (cardFace) {
     return (
-      <div data-testid="card-numbers">
-        <FlipCard isRevealed={isRevealed} cardFace={cardFace}>
+      <div data-testid="card-flip">
+        <FlipFaces isRevealed={isRevealed} cardFace={cardFace}>
           {details}
-        </FlipCard>
+        </FlipFaces>
       </div>
     );
   }
 
-  return <div data-testid="card-numbers">{isRevealed ? details : null}</div>;
+  return <div data-testid="card-flip">{isRevealed ? details : null}</div>;
 }
 
-function FlipCard({
+function FlipFaces({
   isRevealed,
   cardFace,
   children,
