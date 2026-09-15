@@ -129,6 +129,26 @@
     "ldmkEnabled": "LDMK transport enabled"
   },
   "errors": {
+    "AleoAlreadyBondedElsewhere": {
+      "title": "Already staking with {{bondedValidator}}. Unstake before changing validator.",
+      "description": "Aleo allows one validator per account. Unstake from {{bondedValidator}} before staking elsewhere."
+    },
+    "AleoBondAmountTooLow": {
+      "title": "You must stake at least {{minAmount}} at a time.",
+      "description": "The minimum staking amount is {{minAmount}}."
+    },
+    "AleoClosedValidator": {
+      "title": "This validator is not accepting new delegators.",
+      "description": "This validator is not accepting new delegators. Choose an open validator to continue."
+    },
+    "AleoStakeAmountTooLow": {
+      "title": "Staking requires a total of at least {{minAmount}}.",
+      "description": "You must have at least {{minAmount}} staked in total."
+    },
+    "AleoUnbondingValidator": {
+      "title": "This validator is unbonding.",
+      "description": "This validator is withdrawing its own stake, so the network rejects new stake to it. Choose another validator to continue."
+    },
     "ZcashMemoTooLong": {
       "title": "Memo must not exceed {{maxBytes}} bytes"
     },
@@ -1424,6 +1444,9 @@
     },
     "AccountCreationFeeWarning": {
       "title": "This transaction will incur an account creation fee of {{fee}}"
+    },
+    "AmountRequired": {
+      "title": "Enter an amount to continue."
     },
     "AmountTooSmall": {
       "title": "Minimum required amount for this transaction is {{amount}}"

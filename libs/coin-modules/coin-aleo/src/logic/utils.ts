@@ -33,6 +33,7 @@ import {
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   MAX_VALIDATOR_STAKE_SHARE,
   MICROCREDITS_PER_CREDIT,
+  MIN_BOND_AMOUNT_MICROCREDITS,
   MIN_DELEGATOR_STAKE_MICROCREDITS,
   PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
@@ -72,6 +73,7 @@ import type {
   AleoStakingPosition,
   AleoStakingResources,
   AleoStakingMode,
+  AleoValidator,
   AleoValidatorNonEarningReason,
 } from "../types";
 
@@ -1581,6 +1583,19 @@ export function getValidatorNonEarningReason({
 }
 
 /**
+ * Whether a delegator may bond to this validator. A full-commission validator stays
+ * bondable — it pays nothing, which the picker warns about, but the network accepts
+ * the stake; a closed, unbonding or over-concentrated one does not.
+ */
+export function isValidatorBondable(
+  validator: Pick<AleoValidator, "isOpen" | "isUnbonding" | "nonEarningReason">,
+): boolean {
+  return (
+    validator.isOpen && !validator.isUnbonding && validator.nonEarningReason !== "overConcentrated"
+  );
+}
+
+/**
  * What a delegator can expect from one validator: the gross network rate less that
  * validator's commission, as a fraction (0.07 = 7%). A **lower bound** — every surface
  * showing it must label it an estimate.
@@ -1619,4 +1634,18 @@ export function estimateNetRate({
   const keptShare = new BigNumber(1).minus(commissionPercent.dividedBy(100));
 
   return grossRate.multipliedBy(keptShare);
+}
+
+/**
+ * The smallest bond a delegator may submit given what is already bonded: enough for the
+ * projected total to clear MIN_DELEGATOR_STAKE_MICROCREDITS, never below the absolute
+ * MIN_BOND_AMOUNT_MICROCREDITS floor. Mirrors the two amount checks in
+ * `getTransactionStatus`.
+ */
+export function getMinBondAmount(bondedBalance: BigNumber = new BigNumber(0)): BigNumber {
+  const missingForDelegatorMinimum = new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS).minus(
+    bondedBalance,
+  );
+
+  return BigNumber.max(MIN_BOND_AMOUNT_MICROCREDITS, missingForDelegatorMinimum);
 }
