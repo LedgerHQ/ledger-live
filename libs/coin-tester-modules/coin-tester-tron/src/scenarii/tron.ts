@@ -179,8 +179,8 @@ function makeTransactions(): Tx[] {
       expect(latestOp.recipients).toContain(recipient.address);
       // No frozen energy → TVM call burns TRX for energy.
       expect(latestOp.fee.gt(0)).toBe(true);
-      // LIVE-36865: with no fee override the crafted `fee_limit` is the DEFAULT ceiling, never the
-      // display estimate — which the migration wrongly piped into it.
+      // LIVE-36865: with no fee override the crafted `fee_limit` is the ceiling `estimateFees`
+      // published, floored at the DEFAULT — never the display estimate.
       expect(onChainFeeLimitByHash.get(latestOp.hash)).toBe(DEFAULT_TRC20_FEES_LIMIT);
     },
   };
@@ -263,10 +263,10 @@ function makeTransactions(): Tx[] {
     amount: new BigNumber(1_000_000),
     recipient: recipient.address,
     subAccountId: trc20SubAccountId,
-    // LIVE-36865 regression guard. With energy mocked as covered, `estimateFees` nets the display fee to
-    // 0 — the exact state the generic-adapter migration crafted `fee_limit: 0` from, reverting
-    // OUT_OF_ENERGY on-chain. With no fee override the crafted `fee_limit` must instead be the DEFAULT
-    // ceiling (the on-chain readback proves it), and the transfer must still land.
+    // LIVE-36865 regression guard, and the only row that checks the crafted ceiling on chain: energy
+    // mocked as covered nets the display fee to 0, and a `fee_limit` of 0 reverts OUT_OF_ENERGY. The
+    // ceiling must come from `estimateFees`'s own `feeLimit`, carried through `feeParameters` into
+    // `craftTransaction`, which floors at the DEFAULT here. The readback proves it; the transfer lands.
     expect: (prev, curr) => {
       // Restore real energy reporting for the remaining rows. Set first so it survives an expect retry.
       setEnergyLimitOverride(null);

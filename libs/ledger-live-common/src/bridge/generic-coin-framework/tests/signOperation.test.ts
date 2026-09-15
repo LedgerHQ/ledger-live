@@ -239,9 +239,10 @@ describe("genericSignOperation", () => {
   });
 
   it("forwards an explicit fee-override marker to craftTransaction, and undefined on the auto path", async () => {
-    // LIVE-36865: `transaction.fees` is the auto-resolved display fee, forwarded as customFees.value on
-    // every send. Only a deliberate user override carries customFees.parameters.fees, and the framework
-    // must relay it so a coin module (TRON's TRC20 fee_limit) can tell an override from the auto value.
+    // `transaction.fees` is the auto-resolved display fee, forwarded as customFees.value on every
+    // send, so it cannot tell a coin module whether the user chose that number. Only a deliberate
+    // override carries customFees.parameters.fees, and a module resolving a chain *ceiling* from the
+    // fee bag has to prefer it over the estimate's own figures (TRON's TRC20 fee_limit).
     const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
 
     // Auto path: no override on the transaction → the module sees no fee marker.
@@ -275,5 +276,48 @@ describe("genericSignOperation", () => {
     );
     const zeroOverrideArgs = craftTransaction.mock.calls.at(-1);
     expect(zeroOverrideArgs[2].customFees.parameters.fees).toBe(0n);
+  });
+
+  it("forwards the last estimation's feeParameters to an opted-in family, framework fields winning", async () => {
+    // LIVE-36865: `getTransactionStatus` already hands the family its own fee breakdown, so without
+    // this `validateIntent` and `craftTransaction` see different `parameters` for one transaction.
+    // TRON needs it on the craft path too: its TRC20 `fee_limit` is a ceiling, and `value` is a fee
+    // that reads 0 once the account's energy covers the transfer.
+    (getBridgeApi as jest.Mock).mockResolvedValue({ forwardsFeeParametersToCraft: true });
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+
+    await lastValueFrom(
+      signOperation({
+        account,
+        transaction: {
+          ...transaction,
+          feeParameters: { feeLimit: "50000000", energyRequired: "31895", gasLimit: "999999" },
+        },
+        deviceId: "",
+      }).pipe(toArray()),
+    );
+
+    const { parameters } = craftTransaction.mock.calls.at(-1)[2].customFees;
+    expect(parameters.feeLimit).toBe("50000000");
+    expect(parameters.energyRequired).toBe("31895");
+    // Spread first, so a key the framework owns is not shadowed by a stale estimation figure.
+    expect(parameters.gasLimit).not.toBe("999999");
+  });
+
+  it("withholds feeParameters from a family that has not opted in", async () => {
+    // The opt-in exists so this bag cannot change crafting for a family that never asked for it: a
+    // module reading a key its own estimation emits would shift behaviour with no type error.
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+
+    await lastValueFrom(
+      signOperation({
+        account,
+        transaction: { ...transaction, feeParameters: { feeLimit: "50000000" } },
+        deviceId: "",
+      }).pipe(toArray()),
+    );
+
+    const { parameters } = craftTransaction.mock.calls.at(-1)[2].customFees;
+    expect(parameters.feeLimit).toBeUndefined();
   });
 });
