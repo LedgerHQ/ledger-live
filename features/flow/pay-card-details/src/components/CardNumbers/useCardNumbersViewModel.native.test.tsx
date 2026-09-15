@@ -57,6 +57,7 @@ describe("useCardNumbersViewModel", () => {
     const { result, store } = await reveal();
 
     await waitFor(() => expect(result.current.status).toBe("revealed"));
+    expect(result.current.isRevealed).toBe(true);
     expect(result.current.imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
     const state = JSON.stringify(store.getState());
     expect(state).not.toContain(CARD_DETAILS_TOKEN);
@@ -67,6 +68,7 @@ describe("useCardNumbersViewModel", () => {
     const { result } = await reveal(() => Promise.resolve(false));
 
     expect(result.current.status).toBe("idle");
+    expect(result.current.isRevealed).toBe(false);
     expect(result.current.imageUrl).toBeUndefined();
   });
 
