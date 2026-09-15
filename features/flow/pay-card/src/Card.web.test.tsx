@@ -16,8 +16,12 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
-  CardDetails: ({ cardVisual }: { cardVisual?: unknown }) => (
-    <div data-testid={cardVisual ? "card-details-with-visual" : "card-details"} />
+  CardVisual: () => <div data-testid="card-visual" />,
+  CardDetails: ({ cardVisual, unlock }: { cardVisual?: unknown; unlock?: unknown }) => (
+    <div
+      data-testid={cardVisual ? "card-details-with-visual" : "card-details"}
+      data-unlock={unlock ? "granted" : "none"}
+    />
   ),
 }));
 
@@ -112,6 +116,12 @@ describe("Card (web)", () => {
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
     });
+
+    it("does not mount the card details even when unlock is passed", () => {
+      renderCard(<Card login={{ oauthConfig }} unlock={jest.fn()} />);
+
+      expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
+    });
   });
 
   describe("once signed in", () => {
@@ -155,6 +165,18 @@ describe("Card (web)", () => {
       renderCard(<Card login={{ oauthConfig, onTrackEvent }} />);
 
       expect(receivedTransactionTracker).toBe(onTrackEvent);
+    });
+
+    it("leaves the details block without an unlock when the host omits one", () => {
+      renderCard(<Card login={{ oauthConfig }} />);
+
+      expect(screen.getByTestId("card-details")).toHaveAttribute("data-unlock", "none");
+    });
+
+    it("hands the unlock to the details block when the host passes one", () => {
+      renderCard(<Card login={{ oauthConfig }} unlock={jest.fn()} />);
+
+      expect(screen.getByTestId("card-details")).toHaveAttribute("data-unlock", "granted");
     });
   });
 });

@@ -5,14 +5,21 @@ import { CardTransactions } from "@features/flow-pay-card-transactions";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import type { CardViewProps } from "./Card.types";
 
-export function CardView({ title, login, displayState, cardVisual, formatters }: CardViewProps) {
+export function CardView({
+  title,
+  login,
+  displayState,
+  cardVisual,
+  formatters,
+  unlock,
+}: CardViewProps) {
   return (
     <section aria-label={title} className="flex flex-col gap-16">
       <p className="heading-5-semi-bold text-base">{title}</p>
       {displayState === "signedIn" ? (
         <>
           <CardOnboardingWidget />
-          <CardDetails cardVisual={cardVisual} />
+          <CardDetails cardVisual={cardVisual} unlock={unlock} />
           <CardTransactions
             formatters={{
               amount: formatters?.transactionAmount,
