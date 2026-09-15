@@ -1,5 +1,5 @@
 import React from "react";
-import { canStake } from "@ledgerhq/live-common/families/near/logic";
+import { canStake, getNearStakingPositions } from "@ledgerhq/live-common/families/near/logic";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 
 import { IconsLegacy } from "@ledgerhq/native-ui";
@@ -20,8 +20,7 @@ const getMainActions = ({
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
   const stakingDisabled = !canStake(account);
-  const startWithValidator =
-    account.nearResources && account.nearResources?.stakingPositions.length > 0;
+  const startWithValidator = getNearStakingPositions(account).length > 0;
   const label = getStakeLabelLocaleBased();
 
   const navigationParams: NavigationParamsType = stakingDisabled

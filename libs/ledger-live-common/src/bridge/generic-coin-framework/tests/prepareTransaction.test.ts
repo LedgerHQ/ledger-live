@@ -687,4 +687,27 @@ describe("genericPrepareTransaction", () => {
       undefined,
     );
   });
+
+  describe("NEAR: computeIntentType forwarding", () => {
+    it("forwards NEAR's computeIntentType to transactionToIntent", async () => {
+      const { computeIntentType } = await import("../../../families/near/bridge/api");
+      (getBridgeApi as jest.Mock).mockResolvedValue({ computeIntentType });
+      (getCoinModuleApi as jest.Mock).mockReturnValue({
+        estimateFees: jest.fn().mockResolvedValue({ value: 500n }),
+      });
+
+      const nearAccount = { ...account, currency: { id: "near" } } as any;
+      const nearTx = { ...baseTransaction, family: "near", mode: "withdraw" } as any;
+      const prepareTransaction = genericPrepareTransaction("mainnet", "near");
+      await prepareTransaction(nearAccount, nearTx);
+
+      expect(transactionToIntent).toHaveBeenCalledWith(
+        nearAccount,
+        expect.objectContaining({ mode: "withdraw" }),
+        computeIntentType,
+        expect.any(Function),
+        undefined,
+      );
+    });
+  });
 });
