@@ -1,5 +1,10 @@
 import { http, HttpResponse, passthrough } from "msw";
 import { getMockCardOnboardingStatus } from "@domain/api-card-management/mock";
+import {
+  MOCK_CARD_DETAILS_IMAGE_URL,
+  mockCardDetailsImage,
+  mockPayCardDetailsToken,
+} from "@domain/api-card-management/mock/card-details-token";
 import { isMockCardRequest } from "@domain/api-card-management/mock/card-session";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
@@ -37,6 +42,14 @@ const handlers = [
 
   http.get("*/v1/card/transactions", ({ request }) =>
     isMockCardRequest(request) ? HttpResponse.json(mockPayCardTransactions()) : passthrough(),
+  ),
+
+  http.post("*/v1/card/details/token", ({ request }) =>
+    isMockCardRequest(request) ? HttpResponse.json(mockPayCardDetailsToken()) : passthrough(),
+  ),
+
+  http.get(MOCK_CARD_DETAILS_IMAGE_URL, () =>
+    HttpResponse.text(mockCardDetailsImage(), { headers: { "Content-Type": "image/svg+xml" } }),
   ),
 
   http.get("*/v1/wallet/internal", ({ request }) => {

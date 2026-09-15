@@ -6,6 +6,8 @@ import type { CardDetailsSceneProps } from "./components/CardDetails/Scenes/type
 
 export type { FormattedValue };
 
+export type UnlockForReveal = () => Promise<boolean>;
+
 export type CardVisualProps = Readonly<{
   balance: number;
   formatCountervalue: (value: number) => FormattedValue;
@@ -23,8 +25,7 @@ export type CardDetailsProps = Readonly<{
   cardVisual?: CardVisualProps;
   /** Native only: the Details sheet overview lists the card's transactions. */
   formatters?: CardTransactionFormatters;
-  /** When omitted, View stays off the Details overview. */
-  unlock?: UnlockForCardNumbers;
+  unlock?: UnlockForReveal;
 }>;
 
 export type CardDetailsViewProps = CardDetailsProps &
@@ -87,21 +88,23 @@ export type FreezeViewModel = ConfirmSheetProps &
     onOpenConfirm: () => void;
   }>;
 
-export type UnlockForCardNumbers = () => Promise<boolean>;
+export type RevealStatus = "idle" | "loading" | "revealed" | "failed";
 
-export type CardNumbersProps = Readonly<{
-  unlock: UnlockForCardNumbers;
-  cardFace?: ReactNode;
-}>;
-
-export type CardNumbersStatus = "idle" | "loading" | "revealed" | "failed";
-
-export type CardNumbersViewProps = Readonly<{
-  status: CardNumbersStatus;
+export type RevealViewModel = Readonly<{
+  status: RevealStatus;
   isRevealed: boolean;
   imageUrl: string | undefined;
   onReveal: () => Promise<void>;
   onHide: () => void;
   onImageError: () => void;
-  cardFace?: ReactNode;
 }>;
+
+export type RevealTileProps = Pick<
+  RevealViewModel,
+  "status" | "isRevealed" | "onReveal" | "onHide"
+>;
+
+export type CardFlipViewProps = RevealViewModel &
+  Readonly<{
+    cardFace?: ReactNode;
+  }>;

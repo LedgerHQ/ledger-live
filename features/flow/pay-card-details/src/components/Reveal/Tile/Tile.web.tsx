@@ -1,21 +1,16 @@
 import React from "react";
 import { TileButton } from "@ledgerhq/lumen-ui-react";
-import { CreditCard } from "@ledgerhq/lumen-ui-react/symbols";
+import { Eye } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "@shared/i18n";
-import type { CardNumbersViewProps } from "../../../types";
+import type { RevealTileProps } from "../../../types";
 
-export function RevealTile({
-  status,
-  isRevealed,
-  onReveal,
-  onHide,
-}: Pick<CardNumbersViewProps, "status" | "isRevealed" | "onReveal" | "onHide">) {
+export function Tile({ status, isRevealed, onReveal, onHide }: RevealTileProps) {
   const { t } = useTranslation();
 
   return (
     <div className="flex min-w-0 flex-1 flex-col">
       <TileButton
-        icon={CreditCard}
+        icon={Eye}
         onClick={isRevealed ? onHide : onReveal}
         disabled={status === "loading"}
         isFull
