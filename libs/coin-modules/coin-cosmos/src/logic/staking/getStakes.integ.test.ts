@@ -5,7 +5,7 @@ import { getStakes } from "./getStakes";
 // validator's `/delegations` and picking a delegator with a non-zero stake (re-derive if it goes
 // stale). Babylon's x/epoching makes exact staking amounts/counts time-dependent, so this asserts
 // structural invariants only.
-const ADDR = "bbn1qndfkmcjxnlk3eh79x4d763u48d6lss8up9spn";
+const ADDR = "bbn1g84934jpu3v5de5yqukkkhxmcvsw3u2a9casjx";
 
 describe("getStakes (integ, Babylon)", () => {
   it("returns stakes with a well-formed delegate address and a positive amount", async () => {
