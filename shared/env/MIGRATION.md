@@ -81,6 +81,27 @@ Only four variables are genuinely flag-shaped: `ADDRESS_POISONING_FAMILIES`,
 `APTOS_ENABLE_STAKING`, `ENABLE_CELO_TOKENS` and `EXPERIMENTAL_ROI_CALCULATION`. For anything else,
 check the other exits first.
 
+## Per-environment app config → the app's `.env` file
+
+Non-backend values that are fixed per released environment — a partner client key, a hosted-UI
+origin, an OAuth redirect URI, a manifest id — take exit 4. They belong in
+`apps/ledger-live-desktop/.env.*` and `apps/ledger-live-mobile/.env.*`, next to the Firebase,
+Braze, Segment and Datadog RUM keys that already live there, read as `process.env.X` on desktop and
+`Config.X` on mobile. [`docs/configuration.md`](../../docs/configuration.md) has the mechanics and
+the rule separating public app config from real build secrets.
+
+The `CARD_BAANX_*` / `CARD_OAUTH_REDIRECT_URI` group is the worked example of getting this wrong.
+Registering them here made them invisible to the bundler — `getEnv`/`useEnv` is a dynamic lookup,
+so `buildDotEnvDefine()` cannot substitute it — which is what pushed their values into GitHub
+Secrets and a `ledger-live-build` workflow edit per feature. Nothing else in the registry needs to
+follow.
+
+> [!NOTE]
+> Both apps loop their whole environment into the registry — `main/setup.ts` over `process.env`,
+> LLM's `experimental.ts` over `Config` — and `setEnvUnsafe` silently drops any name without a
+> definition. So a registered name is enough to make a `.env` key arrive today, which is why this
+> group works at all on mobile. Do not rely on it: it is the coupling this migration removes.
+
 ## Pass the context, do not restore a singleton
 
 The target shape is ADR-019: exported functions take the context as their first argument and

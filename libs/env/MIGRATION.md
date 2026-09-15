@@ -15,7 +15,7 @@ mutable singleton, and everything downstream inherits it:
 - it duplicates three mechanisms that already exist: feature flags, build-time constants, and
   `process.env`
 
-## The four exits
+## The five exits
 
 Every variable leaves by exactly one of these. Pick by asking what the value actually does, not by
 what is easiest to type.
@@ -25,6 +25,7 @@ what is easiest to type.
 | is togglable remotely      | **feature flag**                  | already remote, typed, audited   |
 | never varies at runtime    | **inline constant**               | the dependency leaves the graph  |
 | varies in CI / tests / dev | **`process.env` at the use site** | no registry, no injection        |
+| varies per released env    | **the app's `.env` file**         | committed, no CI coupling        |
 | varies per app             | **passed in as a parameter**      | the app owns state, not the lib  |
 
 If two look plausible, prefer the one further down the table: it removes more machinery.
@@ -85,10 +86,31 @@ Keep the default at the use site, as above.
 > an already-parsed value. This is the most likely way to introduce a bug while migrating.
 
 Where `process.env` is not populated the way it is under Node — a React Native app, a bundler
-target — use that platform's existing accessor. The point of the exit is unchanged: the value stops
-travelling through a singleton.
+target — use that platform's existing accessor, and see exit 4 for where a packaged build gets the
+value. The point of the exit is unchanged: the value stops travelling through a singleton.
 
-### 4. Varies per app → passed in as a parameter
+### 4. Varies per released environment → the app's `.env` file
+
+Exit 3 says where to *read* the value; this says where it *comes from* in a build nobody launches
+from a shell. A value that is fixed for the lifetime of a given artifact but differs between
+production, staging and nightly — a partner API base URL, a hosted-UI origin, an OAuth redirect
+URI, a public analytics key — belongs in the consuming app's per-environment `.env` file, which the
+bundler bakes in.
+
+This is the exit people miss, and missing it is expensive: the value ends up as a feature flag it
+has no reason to be, or as a CI secret that couples every release pipeline to one feature's
+configuration.
+
+The mechanics differ per app and are documented once, in
+[`docs/configuration.md`](../../docs/configuration.md), together with the rule that keeps public
+app config and real build secrets apart. Two things hold everywhere:
+
+- **Public configuration only.** Whatever is in those files is compiled into the artifact and
+  readable by anyone holding the binary.
+- **Add the key to every `.env` file for that app**, so no environment silently falls back to a
+  default.
+
+### 5. Varies per app → passed in as a parameter
 
 The app knows things a library cannot. Take the value as an argument. Do not store it.
 
@@ -129,13 +151,13 @@ Two things to get right:
 scatters one backend's address across every file that talks to it, which is the same mistake in a
 new shape. Resolve it once, in the app, and pass it down with the rest of the context.
 `_STAGING`/`_PROD` pairs are not two endpoints: they are one endpoint and an app-level choice of
-which URL to pass.
+which URL to pass — and exit 4 is where the chosen value lives.
 
 ---
 
 ## While the burn-down runs
 
-- **Do not add a new definition.** A new value should be born in one of the four exits.
+- **Do not add a new definition.** A new value should be born in one of the five exits.
 - **Do not add a new call site**, including in tests. In a test, set the value the way the
   production code will read it after the migration, not through `setEnv`.
 - Migrating a variable means removing its definition in the same PR. A definition with zero call
