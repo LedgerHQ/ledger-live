@@ -1,0 +1,168 @@
+name: "POC QAA-1443 - Allure upload dir A/B"
+
+# TEMPORARY: delete this file before merging QAA-1443.
+#
+# Runs develop's build-allure-upload-dir.sh and this branch's version against the *same* real
+# Allure artifacts from a past mobile E2E run, on Linux with GNU tar, and compares both the
+# wall time and the resulting upload directory. The local measurement that motivated the
+# rewrite used a shimmed `realpath` and BSD tar on macOS, so it needs confirming here.
+#
+# Also probes whether the internal Allure server answers from a GitHub-hosted runner, which
+# decides whether the reporting jobs can leave the ledger-live-medium pool (its cold start
+# costs 5.6-7.5 min on the critical path).
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Mobile E2E run id to pull android-test-artifacts-* from (must be within artifact retention)"
+        required: true
+        type: string
+      artifact_pattern:
+        description: "Artifact name pattern to download"
+        required: false
+        type: string
+        default: "android-test-artifacts-*"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  ab-compare:
+    name: "A/B the upload dir builder"
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out this branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          sparse-checkout: tools/actions/composites/upload-allure-report
+          path: head
+
+      - name: Check out develop for the baseline script
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: develop
+          persist-credentials: false
+          sparse-checkout: tools/actions/composites/upload-allure-report
+          path: base
+
+      - name: Download the real Allure artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ inputs.source_run_id }}
+          PATTERN: ${{ inputs.artifact_pattern }}
+        run: |
+          mkdir -p raw merged
+          gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --pattern "$PATTERN" --dir raw
+          # download-artifact's merge-multiple flattens every shard into one results dir;
+          # gh keeps them per-artifact, so flatten to reproduce the real input shape.
+          find raw -mindepth 1 -maxdepth 1 -type d -print0 | while IFS= read -r -d '' d; do
+            cp -a "$d/." merged/
+          done
+          printf 'result/container JSONs: %s\n' "$(find merged -maxdepth 1 \( -name '*-result.json' -o -name '*-container.json' \) | wc -l)"
+          printf 'total files: %s\n' "$(find merged -type f | wc -l)"
+          printf 'size: %s\n' "$(du -sh merged | cut -f1)"
+
+      - name: Baseline (develop) build-allure-upload-dir.sh
+        id: baseline
+        run: |
+          START=$(date +%s)
+          GITHUB_OUTPUT=/dev/null bash base/tools/actions/composites/upload-allure-report/build-allure-upload-dir.sh \
+            merged out-base
+          END=$(date +%s)
+          echo "seconds=$((END - START))" >> "$GITHUB_OUTPUT"
+
+      - name: Candidate (this branch) build-allure-upload-dir.sh
+        id: candidate
+        run: |
+          START=$(date +%s)
+          GITHUB_OUTPUT=/dev/null bash head/tools/actions/composites/upload-allure-report/build-allure-upload-dir.sh \
+            merged out-head
+          END=$(date +%s)
+          echo "seconds=$((END - START))" >> "$GITHUB_OUTPUT"
+
+      - name: Compare the two upload dirs
+        id: compare
+        run: |
+          ( cd out-base && find . -type f | sort ) > list-base.txt
+          ( cd out-head && find . -type f | sort ) > list-head.txt
+          SAME_SET=no
+          if diff -q list-base.txt list-head.txt >/dev/null; then SAME_SET=yes; fi
+
+          # JSONs must match semantically (the candidate leaves untouched files unformatted,
+          # so bytes legitimately differ); everything else must match byte for byte.
+          JSON_DIFF=0
+          OTHER_DIFF=0
+          while IFS= read -r f; do
+            case "$f" in
+              *.json)
+                if ! diff -q <(jq -S -c . "out-base/$f") <(jq -S -c . "out-head/$f") >/dev/null 2>&1; then
+                  JSON_DIFF=$((JSON_DIFF + 1))
+                  if [ "$JSON_DIFF" -le 5 ]; then echo "json differs: $f"; fi
+                fi
+                ;;
+              *)
+                if ! cmp -s "out-base/$f" "out-head/$f"; then
+                  OTHER_DIFF=$((OTHER_DIFF + 1))
+                  if [ "$OTHER_DIFF" -le 5 ]; then echo "payload differs: $f"; fi
+                fi
+                ;;
+            esac
+          done < list-base.txt
+          {
+            echo "same_set=$SAME_SET"
+            echo "files=$(wc -l < list-base.txt)"
+            echo "json_diff=$JSON_DIFF"
+            echo "other_diff=$OTHER_DIFF"
+            echo "xml_left=$(grep -rl 'text/xml' out-head | wc -l)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Probe the Allure server from this GitHub-hosted runner
+        id: probe
+        continue-on-error: true
+        run: |
+          URL="https://ledger-live.allure.green.ledgerlabs.net"
+          if CODE=$(curl -sS -o /dev/null -m 20 -w '%{http_code}' "$URL" 2>/dev/null); then
+            echo "result=reachable (HTTP $CODE)" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=NOT reachable" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Summary
+        env:
+          BASE_S: ${{ steps.baseline.outputs.seconds }}
+          HEAD_S: ${{ steps.candidate.outputs.seconds }}
+          SAME_SET: ${{ steps.compare.outputs.same_set }}
+          FILES: ${{ steps.compare.outputs.files }}
+          JSON_DIFF: ${{ steps.compare.outputs.json_diff }}
+          OTHER_DIFF: ${{ steps.compare.outputs.other_diff }}
+          XML_LEFT: ${{ steps.compare.outputs.xml_left }}
+          PROBE: ${{ steps.probe.outputs.result }}
+          RUN_ID: ${{ inputs.source_run_id }}
+        run: |
+          {
+            echo "## POC QAA-1443 - build-allure-upload-dir.sh"
+            echo
+            echo "Source artifacts: run \`$RUN_ID\`, $FILES files in the upload dir."
+            echo
+            echo "| | seconds |"
+            echo "|---|---|"
+            echo "| develop (baseline) | $BASE_S |"
+            echo "| this branch | $HEAD_S |"
+            echo
+            echo "### Equivalence"
+            echo "- identical file set: **$SAME_SET**"
+            echo "- JSONs differing semantically: **$JSON_DIFF** (must be 0)"
+            echo "- payloads differing byte-wise: **$OTHER_DIFF** (must be 0)"
+            echo "- files still carrying text/xml: **$XML_LEFT** (must be 0)"
+            echo
+            echo "### Allure server from a GitHub-hosted runner"
+            echo "- $PROBE"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$SAME_SET" != "yes" ] || [ "$JSON_DIFF" -ne 0 ] || [ "$OTHER_DIFF" -ne 0 ]; then
+            echo "::error::the candidate script did not reproduce the baseline output"
+            exit 1
+          fi
