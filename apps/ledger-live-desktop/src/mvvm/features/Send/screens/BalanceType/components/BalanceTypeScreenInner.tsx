@@ -10,7 +10,6 @@ import {
   ListItemTitle,
   ListItemTrailing,
   Spot,
-  Tag,
 } from "@ledgerhq/lumen-ui-react";
 import { UserCheck, UserLock } from "@ledgerhq/lumen-ui-react/symbols";
 import type {
@@ -48,11 +47,12 @@ function BalanceTypeOptionItem({ option, selected, onSelect }: Readonly<OptionIt
             {t(`newSendFlow.${option.translationKey}.subtitle`)}
           </ListItemDescription>
           {option.isZero ? (
-            <Tag
-              appearance="warning"
-              label={t("newSendFlow.balanceType.zeroBalance.warning")}
+            <ListItemDescription
+              className="text-warning"
               data-testid={`balance-type-${option.id}-zero`}
-            />
+            >
+              {t("newSendFlow.balanceType.zeroBalance.warning")}
+            </ListItemDescription>
           ) : null}
         </ListItemContent>
       </ListItemLeading>

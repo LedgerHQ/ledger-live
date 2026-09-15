@@ -4,6 +4,7 @@ import type {
   Transaction,
   ZcashAccount,
 } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "LLD/hooks/redux";
 import { accountSelector } from "~/renderer/reducers/accounts";
@@ -18,7 +19,7 @@ type Props = Readonly<{
 export function ZcashSyncNotice({ account, transaction, onBlockedChange }: Props) {
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
   const isZcash = account.currency.id === "zcash";
-  const sender = "sender" in transaction ? transaction.sender : undefined;
+  const sender = (transaction as unknown as ZcashTransaction).sender;
 
   // The `account` prop is a snapshot captured when the send flow opened, so read
   // the live account to reflect shielded sync progress in real time (falling back
