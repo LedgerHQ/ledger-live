@@ -14,7 +14,7 @@ import {
   MOCK_TOKEN_PROGRAM_ID,
 } from "../__tests__/fixtures/currency.fixture";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { EXPLORER_TRANSFER_TYPES, TOKEN_RECORD_NAME } from "../constants";
+import { EXPLORER_TRANSFER_TYPES, TOKEN_RECORD_NAME, TRANSACTION_TYPE } from "../constants";
 import { sdkClient } from "../network/sdk";
 import {
   getMockedAccount,
@@ -542,6 +542,105 @@ describe("sync.ts", () => {
         }),
       );
       coinConfig.setCoinConfig(() => mockConfig);
+    });
+
+    describe("staking migration and gating", () => {
+      const staleStakingOp = getMockedOperation({
+        id: "stale-bond-op",
+        hash: "tx-bond",
+        type: "OUT",
+        blockHeight: 900,
+        senders: [""],
+        recipients: [""],
+        extra: { transactionType: "public", functionId: TRANSACTION_TYPE.BOND_PUBLIC },
+      });
+      const transferOp = getMockedOperation({
+        id: "transfer-op",
+        hash: "tx-transfer",
+        blockHeight: 950,
+        extra: { transactionType: "public", functionId: "transfer_public" },
+      });
+
+      const accountWith = (
+        aleoResourceOverrides: Partial<NonNullable<typeof mockInitialAccount.aleoResources>>,
+      ) => ({
+        ...mockInitialAccount,
+        operations: [transferOp, staleStakingOp],
+        aleoResources: { ...mockInitialAccount.aleoResources!, ...aleoResourceOverrides },
+      });
+
+      const syncWith = (initialAccount: typeof mockInitialAccount) =>
+        performPublicSync(
+          {
+            index: mockAccount.index,
+            derivationPath: mockAccount.freshAddressPath,
+            address: mockAccount.freshAddress,
+            currency: mockCurrency,
+            derivationMode: mockDerivationMode,
+            initialAccount,
+          },
+          mockSyncConfig,
+        );
+
+      afterEach(() => {
+        coinConfig.setCoinConfig(() => mockConfig);
+      });
+
+      it("should reset the cursor, drop the stale staking op and mark the account migrated", async () => {
+        coinConfig.setCoinConfig(() => mockConfigWithStaking);
+
+        const result = await syncWith(accountWith({ hasMigratedStaking: false }));
+
+        expect(mockListOperations).toHaveBeenCalledWith(
+          expect.objectContaining({
+            options: expect.not.objectContaining({ cursor: expect.anything() }),
+          }),
+        );
+        expect(result.operations?.map(op => op.id)).not.toContain("stale-bond-op");
+        expect(result.aleoResources?.hasMigratedStaking).toBe(true);
+      });
+
+      it("should keep the cursor and the cached staking ops once the migration has run", async () => {
+        coinConfig.setCoinConfig(() => mockConfigWithStaking);
+
+        const result = await syncWith(accountWith({ hasMigratedStaking: true }));
+
+        expect(mockListOperations).toHaveBeenCalledWith(
+          expect.objectContaining({
+            options: expect.objectContaining({ cursor: "950" }),
+          }),
+        );
+        expect(result.operations?.map(op => op.id)).toContain("stale-bond-op");
+      });
+
+      it("should hide cached staking ops and clear the marker while staking is disabled", async () => {
+        const result = await syncWith(accountWith({ hasMigratedStaking: true }));
+
+        expect(result.operations?.map(op => op.id)).not.toContain("stale-bond-op");
+        expect(result.operations?.map(op => op.id)).toContain("transfer-op");
+        expect(result.aleoResources?.hasMigratedStaking).toBeUndefined();
+      });
+
+      it("should keep a bond_public from another program while staking is disabled", async () => {
+        const foreignBondOp = getMockedOperation({
+          id: "foreign-bond-op",
+          hash: "tx-foreign-bond",
+          blockHeight: 920,
+          extra: {
+            transactionType: "public",
+            functionId: TRANSACTION_TYPE.BOND_PUBLIC,
+            programId: MOCK_TOKEN_PROGRAM_ID,
+          },
+        });
+
+        const result = await syncWith({
+          ...mockInitialAccount,
+          operations: [transferOp, foreignBondOp],
+          aleoResources: { ...mockInitialAccount.aleoResources!, hasMigratedStaking: true },
+        });
+
+        expect(result.operations?.map(op => op.id)).toContain("foreign-bond-op");
+      });
     });
 
     it("should exclude incoming public ops whose ids are already patched locally", async () => {
@@ -2081,6 +2180,40 @@ describe("sync.ts", () => {
       expect(second.balance).toEqual(second.spendableBalance!.plus(freshlyBonded));
     });
 
+    it("public+private sync keeps the staking migration flag the public cycle just set", async () => {
+      // Tokens are off on purpose: that leaves syncHash stale, so it cannot signal that a
+      // public sync ran this cycle.
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+      coinConfig.setCoinConfig(() => mockConfigWithStaking);
+
+      const unmigratedInfo = {
+        ...baseInfo,
+        initialAccount: {
+          ...mockInitialAccount,
+          syncHash: undefined,
+          aleoResources: {
+            ...mockInitialAccount.aleoResources!,
+            lastPrivateSyncDate: new Date("2024-01-01"),
+            hasMigratedStaking: false,
+          },
+        },
+      };
+
+      const { syncs } = buildSyncObservables(unmigratedInfo, {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+      });
+
+      const [first, second] = await collectAll(syncs[0]);
+
+      expect(first.aleoResources?.hasMigratedStaking).toBe(true);
+      expect(second.aleoResources?.hasMigratedStaking).toBe(true);
+    });
+
     it("private-only sync does not re-persist a stale staking position while enableStaking is off", async () => {
       // A private-only sync receives no freshStakingPosition, so the private path has to
       // check the flag itself rather than relying on the public path having skipped the fetch.
@@ -2183,6 +2316,157 @@ describe("sync.ts", () => {
         unbondingHeight: 250,
       });
       expect(emission.balance).toEqual(emission.spendableBalance!.plus(75000));
+    });
+
+    // The private shape spreads last, so what it says about the migration flag is what sticks.
+    it.each([
+      ["preserves a migrated account while staking is on", true, true, true],
+      ["leaves an unmigrated account unmigrated while staking is on", true, false, false],
+      ["clears the marker while staking is off", false, true, false],
+      ["leaves the marker absent while staking is off", false, false, false],
+    ])("private-only sync %s", async (_, enableStaking, storedFlag, expected) => {
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+      coinConfig.setCoinConfig(() => (enableStaking ? mockConfigWithStaking : mockConfig));
+
+      const account: AleoAccount = {
+        ...mockInitialAccount,
+        aleoResources: {
+          ...mockInitialAccount.aleoResources!,
+          lastPrivateSyncDate: new Date("2024-01-01"),
+          hasMigratedStaking: storedFlag,
+        },
+      };
+
+      const { syncs } = buildSyncObservables(
+        { ...baseInfo, initialAccount: account },
+        { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED },
+      );
+
+      const [emission] = await collectAll(syncs[0]);
+
+      if (expected) {
+        expect(emission.aleoResources?.hasMigratedStaking).toBe(true);
+      } else {
+        expect(emission.aleoResources).not.toHaveProperty("hasMigratedStaking");
+      }
+    });
+
+    it("re-enabling staking after a disabled private sync still triggers the migration", async () => {
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+
+      const stakingOp = getMockedOperation({
+        id: "cached-bond",
+        hash: "tx-bond",
+        type: "OUT",
+        blockHeight: 400,
+        extra: { transactionType: "public", functionId: TRANSACTION_TYPE.BOND_PUBLIC },
+      });
+      const transferOp = getMockedOperation({
+        id: "cached-transfer",
+        hash: "tx-transfer",
+        blockHeight: 950,
+        extra: { transactionType: "public", functionId: "transfer_public" },
+      });
+      const migratedAccount: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [transferOp, stakingOp],
+        aleoResources: {
+          ...mockInitialAccount.aleoResources!,
+          lastPrivateSyncDate: new Date("2024-01-01"),
+          hasMigratedStaking: true,
+        },
+      };
+
+      // Staking off: the private-only sync drops the bond row.
+      coinConfig.setCoinConfig(() => mockConfig);
+      mockPatchPublicOperations.mockResolvedValue([transferOp, stakingOp] as never);
+
+      const { syncs } = buildSyncObservables(
+        { ...baseInfo, initialAccount: migratedAccount },
+        { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED },
+      );
+      const [disabledEmission] = await collectAll(syncs[0]);
+
+      expect(disabledEmission.operations?.map(op => op.id)).not.toContain("cached-bond");
+      expect(disabledEmission.aleoResources).not.toHaveProperty("hasMigratedStaking");
+
+      // Staking back on, against the account that private sync produced.
+      coinConfig.setCoinConfig(() => mockConfigWithStaking);
+      const strippedAccount: AleoAccount = {
+        ...migratedAccount,
+        operations: disabledEmission.operations!,
+        aleoResources: disabledEmission.aleoResources!,
+      };
+
+      await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: strippedAccount,
+        },
+        mockSyncConfig,
+      );
+
+      expect(mockListOperations).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          options: expect.not.objectContaining({ cursor: expect.anything() }),
+        }),
+      );
+    });
+
+    it("private-only sync keeps staking ops out of the list while staking is disabled", async () => {
+      const configuredProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      };
+      mockAccessProvableApi.mockResolvedValue(configuredProvableApi);
+      coinConfig.setCoinConfig(() => mockConfig);
+
+      const stakingOp = getMockedOperation({
+        id: "cached-bond",
+        hash: "tx-bond",
+        type: "OUT",
+        extra: { transactionType: "public", functionId: TRANSACTION_TYPE.BOND_PUBLIC },
+      });
+      const transferOp = getMockedOperation({
+        id: "cached-transfer",
+        hash: "tx-transfer",
+        extra: { transactionType: "public", functionId: "transfer_public" },
+      });
+
+      const account: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [transferOp, stakingOp],
+        aleoResources: {
+          ...mockInitialAccount.aleoResources!,
+          lastPrivateSyncDate: new Date("2024-01-01"),
+        },
+      };
+
+      // The patching pass is mocked; the staking filter runs on whatever it returns.
+      mockPatchPublicOperations.mockResolvedValue([transferOp, stakingOp] as never);
+
+      const { syncs } = buildSyncObservables(
+        { ...baseInfo, initialAccount: account },
+        { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED },
+      );
+
+      const [emission] = await collectAll(syncs[0]);
+      const ids = emission.operations?.map(op => op.id);
+
+      expect(ids).not.toContain("cached-bond");
+      expect(ids).toContain("cached-transfer");
     });
 
     it("makeGetAccountShape completes immediately with no emissions when syncType is 0", async () => {

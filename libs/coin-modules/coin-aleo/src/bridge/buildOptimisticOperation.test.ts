@@ -175,17 +175,32 @@ describe("buildOptimisticOperation", () => {
     });
   });
 
+  const validator = "aleo1validator123";
+  const stakedAmount = new BigNumber(5_000_000);
+
   it.each([
-    [TRANSACTION_TYPE.BOND_PUBLIC, "BOND", "bond_public"],
-    [TRANSACTION_TYPE.UNBOND_PUBLIC, "UNBOND", "unbond_public"],
-    [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, "WITHDRAW_UNBONDED", "claim_unbond_public"],
+    [TRANSACTION_TYPE.BOND_PUBLIC, "BOND", "bond_public", validator, { validator, stakedAmount }],
+    [
+      TRANSACTION_TYPE.UNBOND_PUBLIC,
+      "UNBOND",
+      "unbond_public",
+      "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f",
+      { stakedAmount },
+    ],
+    [
+      TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+      "WITHDRAW_UNBONDED",
+      "claim_unbond_public",
+      "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f",
+      {},
+    ],
   ] as const)(
     "should build a fee-valued %s staking operation typed %s",
-    (mode, operationType, functionId) => {
+    (mode, operationType, functionId, recipient, stakingExtra) => {
       const transaction = getMockedStakingTransaction(mode, {
-        amount: new BigNumber(5_000_000),
+        amount: stakedAmount,
         fees: new BigNumber(34_060),
-        recipient: account.freshAddress,
+        recipient,
       });
 
       const operation = buildOptimisticOperation({ account, transaction });
@@ -194,7 +209,9 @@ describe("buildOptimisticOperation", () => {
       expect(operation.value).toEqual(transaction.fees);
       expect(operation.fee).toEqual(transaction.fees);
       expect(operation.id).toBe(encodeOperationId(account.id, "", operationType));
-      expect(operation.extra).toEqual({ functionId, transactionType: "public" });
+      expect(operation.extra).toEqual({ functionId, transactionType: "public", ...stakingExtra });
+      expect(operation.senders).toEqual([]);
+      expect(operation.recipients).toEqual([]);
       expect(operation.subOperations).toBeUndefined();
     },
   );

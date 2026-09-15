@@ -9662,6 +9662,13 @@
         "private": "Private"
       }
     },
+    "operationDetails": {
+      "extra": {
+        "validator": "Validator",
+        "bondedAmount": "Staked amount",
+        "unbondedAmount": "Unstaked amount"
+      }
+    },
     "send": {
       "stepRecipient": {
         "selectLabel": "Send from"
