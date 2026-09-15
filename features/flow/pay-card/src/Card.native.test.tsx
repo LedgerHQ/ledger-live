@@ -76,8 +76,8 @@ describe("Card (native)", () => {
       expect(screen.queryByTestId("card-details")).toBeNull();
     });
 
-    it("never builds the balance overlay, even when the host provides a formatter and label", () => {
-      renderCard(<Card login={{ oauthConfig }} formatters={formatters} balanceLabel="Balance" />);
+    it("never builds the balance overlay, even when the host provides a formatter", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-details-with-visual")).toBeNull();
@@ -98,8 +98,8 @@ describe("Card (native)", () => {
       expect(screen.queryByTestId("card-artwork")).toBeNull();
     });
 
-    it("hands the card visual to the details block once the host provides a formatter and label", () => {
-      renderCard(<Card login={{ oauthConfig }} formatters={formatters} balanceLabel="Balance" />);
+    it("hands the card visual to the details block once the host provides a formatter", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
 
       expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
       expect(screen.queryByTestId("card-details")).toBeNull();

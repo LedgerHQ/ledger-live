@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
 import BigNumber from "bignumber.js";
-import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import type { FormattedValue } from "@features/flow-pay-card-details";
@@ -37,7 +36,6 @@ function readCallbackState(state: unknown): string | undefined {
 const CARD_TRANSACTION_DATE_FORMAT: Intl.DateTimeFormatOptions = { dateStyle: "medium" };
 
 export function useCardViewModel(): CardViewModel {
-  const { t } = useTranslation();
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const locale = useSelector(localeSelector);
@@ -115,8 +113,6 @@ export function useCardViewModel(): CardViewModel {
   );
 
   return {
-    title: t("payTab.card.title"),
-    balanceLabel: t("payTab.card.balanceLabel"),
     formatters,
     login,
   };

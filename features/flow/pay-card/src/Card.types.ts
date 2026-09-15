@@ -15,7 +15,6 @@ export type CardFormatters = Readonly<{
 export type CardProps = {
   readonly login: CardLoginProps;
   readonly formatters?: CardFormatters;
-  readonly balanceLabel?: string;
 };
 
 /**

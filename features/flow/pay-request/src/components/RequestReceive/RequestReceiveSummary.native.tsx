@@ -61,7 +61,7 @@ export function RequestReceiveSummary({
               ticker={networkIcon.ticker}
               network={networkIcon.network}
               size={NETWORK_ICON_SIZE}
-              shape="circle"
+              shape="square"
             />
           ) : null}
           <Text typography="body2" lx={{ color: "muted" }}>
