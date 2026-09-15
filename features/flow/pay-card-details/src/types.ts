@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { PayCardStatus } from "@domain/api-card-management";
-import type { FormatCardTransactionAmount } from "@features/flow-pay-card-transactions";
+import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
 import type { CardDetailsSceneProps } from "./components/CardDetails/Scenes/types";
 
@@ -22,7 +22,7 @@ export type CardDetailsProps = Readonly<{
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   cardVisual?: CardVisualProps;
   /** Native only: the Details sheet overview lists the card's transactions. */
-  formatTransactionAmount?: FormatCardTransactionAmount;
+  formatters?: CardTransactionFormatters;
 }>;
 
 export type CardDetailsViewProps = CardDetailsProps &

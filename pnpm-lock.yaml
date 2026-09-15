@@ -981,6 +981,9 @@ importers:
       '@features/flow-pay-card-details':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-details
+      '@features/flow-pay-card-transactions':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-card-transactions
       '@features/flow-pay-card-widget':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-widget
@@ -28643,7 +28646,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:

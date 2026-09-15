@@ -1,10 +1,11 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
-import type { CardProps } from "./Card.types";
+import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
+import type { CardFormatters, CardProps } from "./Card.types";
 
 let mockStatus: PayCardAuthStatus = "unknown";
-let receivedTransactionFormatter: CardProps["formatTransactionAmount"];
+let receivedTransactionFormatters: CardTransactionFormatters | undefined;
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
@@ -23,8 +24,8 @@ jest.mock("@features/flow-pay-card-widget", () => ({
 }));
 
 jest.mock("@features/flow-pay-card-transactions", () => ({
-  CardTransactions: ({ formatAmount }: { formatAmount?: CardProps["formatTransactionAmount"] }) => {
-    receivedTransactionFormatter = formatAmount;
+  CardTransactions: ({ formatters }: { formatters?: CardTransactionFormatters }) => {
+    receivedTransactionFormatters = formatters;
     return <div data-testid="card-transactions" />;
   },
 }));
@@ -40,18 +41,20 @@ const oauthConfig: CardProps["login"]["oauthConfig"] = {
   redirectUri: "https://card.example/callback",
 };
 
-const formatCountervalue: CardProps["formatCountervalue"] = (value: number) => ({
-  integerPart: String(value),
-  decimalPart: "00",
-  currencyText: "$",
-  decimalSeparator: ".",
-  currencyPosition: "start",
-});
+const formatters: CardFormatters = {
+  countervalue: (value: number) => ({
+    integerPart: String(value),
+    decimalPart: "00",
+    currencyText: "$",
+    decimalSeparator: ".",
+    currencyPosition: "start",
+  }),
+};
 
 describe("Card (web)", () => {
   beforeEach(() => {
     mockStatus = "unknown";
-    receivedTransactionFormatter = undefined;
+    receivedTransactionFormatters = undefined;
   });
 
   it("always shows the host title", () => {
@@ -92,7 +95,7 @@ describe("Card (web)", () => {
         <Card
           title={title}
           login={{ oauthConfig }}
-          formatCountervalue={formatCountervalue}
+          formatters={formatters}
           balanceLabel="Balance"
         />,
       );
@@ -122,7 +125,7 @@ describe("Card (web)", () => {
         <Card
           title={title}
           login={{ oauthConfig }}
-          formatCountervalue={formatCountervalue}
+          formatters={formatters}
           balanceLabel="Balance"
         />,
       );
@@ -132,18 +135,20 @@ describe("Card (web)", () => {
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
     });
 
-    it("hands the transaction formatter to the transactions list", () => {
-      const formatTransactionAmount = jest.fn();
+    it("hands the transaction formatters to the transactions list", () => {
+      const transactionAmount = jest.fn();
+      const transactionDate = jest.fn();
 
       render(
         <Card
           title={title}
           login={{ oauthConfig }}
-          formatTransactionAmount={formatTransactionAmount}
+          formatters={{ transactionAmount, transactionDate }}
         />,
       );
 
-      expect(receivedTransactionFormatter).toBe(formatTransactionAmount);
+      expect(receivedTransactionFormatters?.amount).toBe(transactionAmount);
+      expect(receivedTransactionFormatters?.date).toBe(transactionDate);
     });
   });
 });

@@ -8,6 +8,13 @@ export type FormatCardTransactionAmount = (
   kind: CardTransactionAmountKind,
 ) => string;
 
+export type FormatCardTransactionDate = (date: Date) => string;
+
+export type CardTransactionFormatters = Readonly<{
+  amount?: FormatCardTransactionAmount;
+  date?: FormatCardTransactionDate;
+}>;
+
 export type CardTransactionItem = Readonly<{
   transaction: PayCardTransaction;
   categoryLabel: string;
