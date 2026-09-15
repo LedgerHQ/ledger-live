@@ -571,8 +571,9 @@ test.describe("Delegate - MINA", () => {
     teamOwner: delegateTeamOwner(Currency.MINA.id),
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Currency.MINA.speculosApp,
-    // Either account of the pair can be the free one, so both are seeded.
-    cliCommands: MINA_DELEGATION_PAIR.map(account => liveDataCommand(account)),
+    // Either account of the pair can be the free one, so both are seeded. Seeding also resolves
+    // their address, which the picker reads back rather than deriving it from the device itself.
+    cliCommands: MINA_DELEGATION_PAIR.map(account => liveDataWithAddressCommand(account)),
     featureFlags: FF_MINA_STAKING_ENABLED,
   });
 
@@ -626,7 +627,7 @@ test.describe("Redelegate - MINA", () => {
     teamOwner: delegateTeamOwner(Currency.MINA.id),
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Currency.MINA.speculosApp,
-    cliCommands: [liveDataCommand(MINA_REDELEGATION_ACCOUNT)],
+    cliCommands: [liveDataWithAddressCommand(MINA_REDELEGATION_ACCOUNT)],
     featureFlags: FF_MINA_STAKING_ENABLED,
   });
 

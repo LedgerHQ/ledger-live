@@ -3,7 +3,6 @@ import axios from "axios";
 import invariant from "invariant";
 import { minaConfig } from "@ledgerhq/live-common/families/mina/config";
 import { Account } from "../enum/Account";
-import { getAccountAddress } from "../cliCommandsUtils";
 
 const { API_MINA_GRAPHQL_NODE, API_VALIDATORS_BASE_URL } = (
   minaConfig.config_currency_mina.default as {
@@ -84,7 +83,7 @@ export type MinaValidator = { address: string; name: string };
 
 export type MinaRedelegation = { account: Account; validatorAddress: string };
 
-/** A pair account, with the address the pickers resolved it to. */
+/** A pair account, with the address its spec resolved when it seeded it. */
 export type MinaPick = { account: Account; address: string };
 
 type DelegationState = MinaPick & { validatorAddress?: string; pending: boolean };
@@ -92,10 +91,17 @@ type DelegationState = MinaPick & { validatorAddress?: string; pending: boolean 
 type GraphqlResponse<T> = { data?: T | null; errors?: { message?: string }[] };
 
 /**
+ * A failure the polling budget cannot resolve — a flow wired wrong, or a query the node refuses.
+ * The pickers wait out what the chain is doing, not this: retrying it spends the whole budget on an
+ * answer that was already final, three times over since CI retries the test twice.
+ */
+class MinaFinalError extends Error {}
+
+/**
  * The node answers 200 with `{ data: null, errors: [...] }` on a rejected query, and
  * `{ account: null }` for an address it does not know. Reading either as an answer would report an
- * account whose state could not be determined as "not delegated" — so both raise here, and the
- * caller's retry budget decides whether it was transient.
+ * account whose state could not be determined as "not delegated", so both raise — one as final,
+ * the other for the caller's retry budget to outwait.
  */
 async function queryNode<T>(
   query: string,
@@ -109,10 +115,13 @@ async function queryNode<T>(
   );
 
   const errors = data?.errors;
-  invariant(
-    !errors?.length,
-    `mina node rejected the ${subject} query: ${errors?.map(e => e.message ?? "unknown error").join("; ")}`,
-  );
+  // The queries are constants, so a rejected one is this file's bug and stays rejected. A missing
+  // data field, on the other hand, is how this node has been seen to answer under load.
+  if (errors?.length) {
+    throw new MinaFinalError(
+      `mina node rejected the ${subject} query: ${errors.map(e => e.message ?? "unknown error").join("; ")}`,
+    );
+  }
   invariant(data?.data, `mina node returned no data for the ${subject} query`);
   return data.data;
 }
@@ -121,8 +130,24 @@ type DelegateAccountData = {
   account: { delegateAccount?: { publicKey?: string } | null } | null;
 };
 
+/**
+ * Deriving an address goes through the device, which the mobile harness hands to the app once the
+ * setup is done — a picker asking for one from a test body gets a CLI that no longer has a speculos
+ * to talk to. So the address is the one the spec resolved while seeding, through
+ * `liveDataWithAddressCommand`, which every flow reaching these pickers uses.
+ */
+function seededAddress(account: Account): string {
+  if (!account.address) {
+    throw new MinaFinalError(
+      `${account.accountName} has no address: seed it with liveDataWithAddressCommand, the ` +
+        `pickers cannot derive one once the app owns the device.`,
+    );
+  }
+  return account.address;
+}
+
 async function fetchDelegationState(account: Account): Promise<DelegationState> {
-  const address = await getAccountAddress(account);
+  const address = seededAddress(account);
 
   const { account: onChain } = await queryNode<DelegateAccountData>(
     DELEGATE_ACCOUNT_QUERY,
@@ -146,13 +171,10 @@ async function fetchDelegationState(account: Account): Promise<DelegationState> 
   };
 }
 
-async function fetchPairState(): Promise<DelegationState[]> {
-  const states: DelegationState[] = [];
-  for (const account of MINA_DELEGATION_PAIR) {
-    // Address derivation goes through speculos, so keep it sequential.
-    states.push(await fetchDelegationState(account));
-  }
-  return states;
+function fetchPairState(): Promise<DelegationState[]> {
+  // Read both at once: the narrower the window between the two reads, the less often the pair is
+  // seen mid-swap, with one account already moved and the other not yet.
+  return Promise.all(MINA_DELEGATION_PAIR.map(account => fetchDelegationState(account)));
 }
 
 function isDelegated(state: DelegationState): boolean {
@@ -189,6 +211,7 @@ async function pickFromPair(delegated: boolean): Promise<DelegationState> {
       if (match) return match;
       blocker = pairShape(states);
     } catch (error) {
+      if (error instanceof MinaFinalError) throw error;
       blocker = `could not read the pair — ${describeError(error)}`;
     }
 
@@ -215,6 +238,7 @@ export function pickMinaAccountToUndelegate(): Promise<MinaPick> {
 export async function pickMinaRedelegation(): Promise<MinaRedelegation> {
   const deadline = Date.now() + MINA_PAIR_SETTLE_TIMEOUT_MS;
   let blocker = "not read yet";
+  let seenFree = false;
 
   for (;;) {
     try {
@@ -225,15 +249,24 @@ export async function pickMinaRedelegation(): Promise<MinaRedelegation> {
         return { account: state.account, validatorAddress: state.validatorAddress };
       }
       blocker = pairShape([state]);
+      seenFree = !state.pending && !state.validatorAddress;
     } catch (error) {
+      if (error instanceof MinaFinalError) throw error;
       blocker = `could not read the account — ${describeError(error)}`;
+      seenFree = false;
     }
 
+    // The account being free is one of several ways to get here, and the only one that explanation
+    // fits. Stating it unconditionally sent the on-call after chain state when the read itself was
+    // what had failed.
+    const cause = seenFree
+      ? " No flow frees this account, so it was undelegated by hand and has to be delegated again" +
+        " the same way."
+      : "";
     invariant(
       Date.now() < deadline,
       `${MINA_REDELEGATION_ACCOUNT.accountName} holds no settled delegation to move after ` +
-        `${MINA_PAIR_SETTLE_TIMEOUT_MS / 60_000} min (${blocker}). No flow frees this account, so a ` +
-        `free one means it was undelegated by hand and has to be delegated again the same way.`,
+        `${MINA_PAIR_SETTLE_TIMEOUT_MS / 60_000} min (${blocker}).${cause}`,
     );
     await wait(PAIR_POLL_INTERVAL_MS);
   }

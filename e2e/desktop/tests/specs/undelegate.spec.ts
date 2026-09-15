@@ -4,7 +4,10 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
-import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import {
+  liveDataCommand,
+  liveDataWithAddressCommand,
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import {
   MINA_DELEGATION_PAIR,
   MINA_PAIR_SYNC_TIMEOUT_MS,
@@ -63,8 +66,9 @@ test.describe("Undelegate - MINA", () => {
     teamOwner: delegateTeamOwner(Currency.MINA.id),
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Currency.MINA.speculosApp,
-    // Either account of the pair can be the delegated one, so both are seeded.
-    cliCommands: MINA_DELEGATION_PAIR.map(account => liveDataCommand(account)),
+    // Either account of the pair can be the delegated one, so both are seeded. Seeding also
+    // resolves their address, which the picker reads back and the device renders when signing.
+    cliCommands: MINA_DELEGATION_PAIR.map(account => liveDataWithAddressCommand(account)),
   });
 
   test(

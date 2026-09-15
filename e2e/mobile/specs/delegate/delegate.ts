@@ -151,7 +151,9 @@ const MINA_PAIR_TEST_TIMEOUT_MS = MINA_PAIR_SETTLE_TIMEOUT_MS + 6 * 60 * 1000;
 const minaBeforeAll = (accounts: AccountType[]) => async () => {
   await app.init({
     speculosApp: Currency.MINA.speculosApp,
-    cliCommands: accounts.map(account => liveDataCommand(account)),
+    // The address is resolved here, while the CLI still owns the device: the pickers read it back
+    // from the account and never touch speculos themselves.
+    cliCommands: accounts.map(account => liveDataWithAddressCommand(account)),
     featureFlags: FF_MINA_STAKING_ENABLED,
   });
 
