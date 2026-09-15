@@ -6,7 +6,12 @@ import type { CardDisplayState, CardProps, CardViewProps } from "./Card.types";
 /** Mock card balance shown until the real balance API is wired (see LIVE-35427 follow-up). */
 const MOCK_CARD_BALANCE = 100;
 
-export function useCardViewModel({ login, formatters, balanceLabel }: CardProps): CardViewProps {
+export function useCardViewModel({
+  login,
+  formatters,
+  balanceLabel,
+  unlock,
+}: CardProps): CardViewProps {
   const { t } = useTranslation();
   const status = useCardAuthStatus();
   const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
@@ -24,5 +29,6 @@ export function useCardViewModel({ login, formatters, balanceLabel }: CardProps)
     displayState,
     cardVisual,
     formatters,
+    unlock,
   };
 }
