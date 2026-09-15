@@ -454,6 +454,32 @@ describe("useSendHeaderModel", () => {
       expect(latestVM?.recipientContact).toBeUndefined();
       expect(latestVM?.addressInputValue).toBe("0x123456...12345678");
     });
+
+    it("shows the search address when the recipient is not accepted yet", () => {
+      mockNavigation();
+      mockActions();
+      mockData(
+        {
+          account: {
+            currency: {
+              type: "CryptoCurrency",
+              ticker: "XRP",
+              id: "ripple",
+              family: "xrp",
+            },
+            account: {},
+          },
+          recipient: null,
+          transaction: { status: {} },
+        },
+        { hasMemo: true },
+        { value: ADDRESS },
+      );
+
+      renderHook();
+
+      expect(latestVM?.addressInputValue).toBe("0x123456...12345678");
+    });
   });
 
   describe("handleBack — floating steps (history-based)", () => {

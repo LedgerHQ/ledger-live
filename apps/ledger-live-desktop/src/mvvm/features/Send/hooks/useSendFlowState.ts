@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useSendFlowBusinessLogic as useCommonBusinessLogic } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowBusinessLogic";
 import { useSendFlowTransaction } from "./useSendFlowTransaction";
 import { useSendFlowOperation } from "./useSendFlowOperation";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type {
   SendFlowBusinessContext,
   SendFlowInitParams,
@@ -20,10 +21,18 @@ export function useSendFlowBusinessLogic({
   initParams,
   onClose,
 }: UseSendFlowBusinessLogicParams): SendFlowBusinessContext {
+  const initialRecipient =
+    initParams?.skipRecipientStep === true ? initParams.recipient?.trim() || undefined : undefined;
+
+  const useTransactionHook = (params: {
+    account: AccountLike | null;
+    parentAccount: Account | null;
+  }) => useSendFlowTransaction({ ...params, initialRecipient });
+
   const businessLogic = useCommonBusinessLogic({
     initParams,
     useOperationHook: useSendFlowOperation,
-    useTransactionHook: useSendFlowTransaction,
+    useTransactionHook,
   });
 
   return useMemo(
