@@ -3,12 +3,7 @@ import { useTranslation } from "react-i18next";
 import { WALLET_FEATURES_FLAG, WALLET_FEATURES_PARAMS } from "./constants";
 import { WalletFeaturesDevToolContentProps } from "./types";
 import { useWalletFeaturesDevToolViewModel } from "./hooks/useWalletFeaturesDevToolViewModel";
-import {
-  QuickActions,
-  FeatureParamRow,
-  FeatureFlagPreview,
-  MainFeatureToggle,
-} from "./components";
+import { QuickActions, FeatureParamRow, FeatureFlagPreview, MainFeatureToggle } from "./components";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 
 export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevToolContentProps) => {
