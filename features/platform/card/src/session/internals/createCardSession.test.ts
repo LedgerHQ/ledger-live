@@ -722,6 +722,60 @@ describe("the provider app id", () => {
     expect(isCardUsEnv("")).toBe(false);
   });
 
+  it("makes every concurrent request wait on the one hydration read", async () => {
+    // Two requests can land together on a cold native session. If the second one skipped the read
+    // because the first had started it, it would build headers with no tenant.
+    const read = deferred<string | null>();
+    const { store } = fakeStore({
+      [CARD_SESSION_KEYS.accessToken]: session.accessToken,
+      [CARD_SESSION_KEYS.refreshToken]: session.refreshToken,
+    });
+    store.read = jest.fn(async key =>
+      key === CARD_SESSION_KEYS.providerAppId ? read.promise : session.accessToken,
+    );
+    const { readCardSession, isCardUsEnv } = createCardSession(store);
+
+    const both = Promise.all([readCardSession(), readCardSession()]);
+    read.resolve("LEDGERUS");
+    await both;
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+    expect(store.read).toHaveBeenCalledWith(CARD_SESSION_KEYS.providerAppId);
+  });
+
+  it("asks the store again after a read that failed", async () => {
+    // A transient keychain failure must not be remembered as "this session has no tenant".
+    const { store, slots } = fakeStore({ [CARD_SESSION_KEYS.providerAppId]: "LEDGERUS" });
+    store.read = jest
+      .fn()
+      .mockRejectedValueOnce(new Error("keychain busy"))
+      .mockImplementation(async key => slots.get(key) ?? null);
+    const { readCardSession, isCardUsEnv } = createCardSession(store);
+
+    await readCardSession();
+    expect(isCardUsEnv("LEDGERUS")).toBe(false);
+
+    await readCardSession();
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+  });
+
+  it("keeps a login that lands mid-read over the value the store answers", async () => {
+    const read = deferred<string | null>();
+    const { store } = fakeStore();
+    store.read = jest.fn(async key =>
+      key === CARD_SESSION_KEYS.providerAppId ? read.promise : null,
+    );
+    const { readCardSession, setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+
+    const reading = readCardSession();
+    await setCardProviderAppId("LEDGERUS");
+    read.resolve("LEDGERUAT");
+    await reading;
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+  });
+
   it("reads a stored app id back on the first session read", async () => {
     // A platform that kept the session across a restart has no redirect to name the app again.
     const { store } = fakeStore({
