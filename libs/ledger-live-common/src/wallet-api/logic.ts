@@ -366,9 +366,7 @@ const ACCOUNT_PUBLIC_KEY_RESOLVERS: Partial<Record<string, AccountPublicKeyResol
     if (publicKey) return publicKey;
     throw new AccountPublicKeyUnavailable();
   },
-  // cosmos seedIdentifier is seed-level (shared across accounts), so the per-account
-  // compressed pubkey (hex) is persisted in cosmosResources at scan time.
-  cosmos: account => (account as CosmosAccount).cosmosResources?.publicKey || null,
+  cosmos: account => (account as CosmosAccount).xpub || null,
 };
 
 export const accountGetPublicKeyLogic = async (
