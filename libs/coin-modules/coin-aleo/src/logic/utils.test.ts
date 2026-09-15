@@ -7,6 +7,7 @@ import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   MICROCREDITS_PER_CREDIT,
+  MIN_BOND_AMOUNT_MICROCREDITS,
   MIN_DELEGATOR_STAKE_MICROCREDITS,
   PROGRAM_ID,
   TRANSACTION_TYPE,
@@ -121,6 +122,8 @@ import {
   classifyAleoTokenType,
   resolvePrivacyContext,
   toStakingPosition,
+  getMinBondAmount,
+  isValidatorBondable,
 } from "./utils";
 
 jest.mock("../config");
@@ -3490,5 +3493,55 @@ describe("toStakingPosition", () => {
         { raw: Object.values(mocks)[0] },
       );
     });
+  });
+});
+
+describe("getMinBondAmount", () => {
+  it("requires the full delegator minimum when nothing is bonded yet", () => {
+    expect(getMinBondAmount(new BigNumber(0)).toString()).toBe(
+      MIN_DELEGATOR_STAKE_MICROCREDITS.toString(),
+    );
+  });
+
+  it("defaults to the full delegator minimum when no bonded balance is known", () => {
+    expect(getMinBondAmount().toString()).toBe(MIN_DELEGATOR_STAKE_MICROCREDITS.toString());
+  });
+
+  it("only asks for the missing part of the delegator minimum on a top-up", () => {
+    const bonded = new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS).minus(
+      500 * MICROCREDITS_PER_CREDIT,
+    );
+
+    expect(getMinBondAmount(bonded).toString()).toBe((500 * MICROCREDITS_PER_CREDIT).toString());
+  });
+
+  it("never falls below the absolute bond floor once the delegator minimum is cleared", () => {
+    const bonded = new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS).multipliedBy(2);
+
+    expect(getMinBondAmount(bonded).toString()).toBe(MIN_BOND_AMOUNT_MICROCREDITS.toString());
+  });
+});
+
+describe("isValidatorBondable", () => {
+  const bondable = { isOpen: true, isUnbonding: false } as const;
+
+  it("accepts an open, non-unbonding validator with no non-earning reason", () => {
+    expect(isValidatorBondable(bondable)).toBe(true);
+  });
+
+  it("accepts a validator that earns nothing only because it takes full commission", () => {
+    expect(isValidatorBondable({ ...bondable, nonEarningReason: "fullCommission" })).toBe(true);
+  });
+
+  it("rejects a closed validator", () => {
+    expect(isValidatorBondable({ ...bondable, isOpen: false })).toBe(false);
+  });
+
+  it("rejects an unbonding validator", () => {
+    expect(isValidatorBondable({ ...bondable, isUnbonding: true })).toBe(false);
+  });
+
+  it("rejects an over-concentrated validator", () => {
+    expect(isValidatorBondable({ ...bondable, nonEarningReason: "overConcentrated" })).toBe(false);
   });
 });

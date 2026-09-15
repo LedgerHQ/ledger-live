@@ -5,6 +5,7 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
 import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
+import { isValidatorBondable } from "@ledgerhq/live-common/families/aleo/utils";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
@@ -15,7 +16,7 @@ import ValidatorSearchInput, {
 } from "~/renderer/components/Delegation/ValidatorSearchInput";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
-import AleoValidatorRow, { isDisabled } from "./ValidatorRow";
+import AleoValidatorRow from "./ValidatorRow";
 
 const LIST_HEIGHT = 256;
 
@@ -42,9 +43,9 @@ export default function ValidatorPicker({
     if (lockedTo) return;
 
     const current = validators.find(({ address }) => address === selected);
-    if (!current || !isDisabled(current)) return;
+    if (!current || isValidatorBondable(current)) return;
 
-    const replacement = validators.find(validator => !isDisabled(validator));
+    const replacement = validators.find(validator => isValidatorBondable(validator));
     if (replacement) onSelect(replacement.address);
   }, [validators, selected, lockedTo, onSelect]);
 
@@ -57,7 +58,9 @@ export default function ValidatorPicker({
         )
       : validators;
 
-    return [...matched].sort((left, right) => Number(isDisabled(left)) - Number(isDisabled(right)));
+    return [...matched].sort(
+      (left, right) => Number(isValidatorBondable(right)) - Number(isValidatorBondable(left)),
+    );
   }, [search, validators]);
 
   const renderItem = useCallback(

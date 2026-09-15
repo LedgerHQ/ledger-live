@@ -35,17 +35,22 @@ import aleoCoinConfig from "../config";
 import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
-  MIN_BOND_AMOUNT,
+  MIN_BOND_AMOUNT_MICROCREDITS,
   MIN_DELEGATOR_STAKE_MICROCREDITS,
   TRANSACTION_TYPE,
 } from "../constants";
 import {
+  AleoAlreadyBondedElsewhere,
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
+  AleoBondAmountTooLow,
+  AleoClosedValidator,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
+  AleoStakeAmountTooLow,
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
+  AleoUnbondingValidator,
 } from "../errors";
 
 type Errors = Record<string, Error>;
@@ -240,16 +245,18 @@ async function validateBondRecipient({
   // credits.aleo rejects a bond to any validator other than the one already bonded.
   const bondedValidator = account.aleoResources?.bondedValidator;
   if (bondedValidator && bondedValidator !== recipient) {
-    return new Error(`Already staking with ${bondedValidator}. Unstake before changing validator.`);
+    return new AleoAlreadyBondedElsewhere(undefined, { bondedValidator });
   }
 
   try {
     const validators = await getValidators(account.currency.id);
     const validator = validators.find(({ address }) => address === recipient);
 
-    return validator && (!validator.isOpen || validator.isUnbonding)
-      ? new Error("This validator is not accepting new delegations.")
-      : null;
+    if (!validator) return null;
+    if (validator.isUnbonding) return new AleoUnbondingValidator();
+    if (!validator.isOpen) return new AleoClosedValidator();
+
+    return null;
   } catch {
     return null;
   }
@@ -288,15 +295,17 @@ function validateStakingAmount({
   const formatAmount = (value: number) =>
     formatCurrencyUnit(account.currency.units[0], new BigNumber(value), { showCode: true });
 
-  if (amount.lt(MIN_BOND_AMOUNT)) {
-    return new Error(`You must stake at least ${formatAmount(MIN_BOND_AMOUNT)} at a time.`);
+  if (amount.lt(MIN_BOND_AMOUNT_MICROCREDITS)) {
+    return new AleoBondAmountTooLow(undefined, {
+      minAmount: formatAmount(MIN_BOND_AMOUNT_MICROCREDITS),
+    });
   }
 
   const bondedBalance = account.aleoResources?.bondedBalance ?? new BigNumber(0);
   if (bondedBalance.plus(amount).lt(MIN_DELEGATOR_STAKE_MICROCREDITS)) {
-    return new Error(
-      `Staking requires a total of at least ${formatAmount(MIN_DELEGATOR_STAKE_MICROCREDITS)}.`,
-    );
+    return new AleoStakeAmountTooLow(undefined, {
+      minAmount: formatAmount(MIN_DELEGATOR_STAKE_MICROCREDITS),
+    });
   }
 
   return null;
