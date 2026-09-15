@@ -3,4 +3,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-Add shielded send screens for Zcash: sync-state notice on the recipient screen (ZcashSyncNotice) and family-specific device-signature confirmation screen (ZcashTransactionConfirm) that shows a private-transaction indicator for shielded recipients and the full address for transparent recipients.
+Add Zcash shielded send screens (recipient sync notice and family device-signature confirmation) and block the recipient step until shielded sync reports complete
