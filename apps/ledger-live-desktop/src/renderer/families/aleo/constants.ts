@@ -5,8 +5,6 @@ export enum AleoCustomModal {
   UNBOND = "MODAL_ALEO_UNBOND",
 }
 
-export const LIVE_BLOCK_HEIGHT_POLL_MS = 10_000;
-export const UNBONDING_SYNC_RETRY_MS = 10_000;
 export const MAX_UNBONDING_SYNC_ATTEMPTS = 3;
 /** Below the 100 that device flows set with `SyncSkipUnderPriority`: never resync mid-signing. */
 export const UNBONDING_SYNC_PRIORITY = 10;

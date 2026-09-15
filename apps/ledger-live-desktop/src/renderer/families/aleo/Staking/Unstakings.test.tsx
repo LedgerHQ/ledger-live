@@ -5,11 +5,13 @@ import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import Unstakings from "./Unstakings";
 import type { AleoStakingPosition } from "./useStakingPosition";
-import { useAleoLiveBlockHeight } from "../hooks/useAleoLiveBlockHeight";
+import { useAleoLiveBlockHeight } from "@ledgerhq/live-common/families/aleo/react";
 import { useSyncOnUnbondingComplete } from "../hooks/useSyncOnUnbondingComplete";
 import { ALEO_MAIN_ACCOUNT } from "../__mocks__/account.mock";
 
-jest.mock("../hooks/useAleoLiveBlockHeight");
+jest.mock("@ledgerhq/live-common/families/aleo/react", () => ({
+  useAleoLiveBlockHeight: jest.fn(),
+}));
 jest.mock("../hooks/useSyncOnUnbondingComplete");
 
 const mockUseAleoLiveBlockHeight = jest.mocked(useAleoLiveBlockHeight);
@@ -131,7 +133,11 @@ describe("Unstakings", () => {
     it("asks for an account sync to close the gap", () => {
       settling();
 
-      expect(mockUseSyncOnUnbondingComplete).toHaveBeenCalledWith(ALEO_MAIN_ACCOUNT.id, true);
+      expect(mockUseSyncOnUnbondingComplete).toHaveBeenCalledWith(
+        ALEO_MAIN_ACCOUNT.id,
+        ALEO_MAIN_ACCOUNT.currency.id,
+        true,
+      );
     });
 
     it("does not ask for a sync while the countdown is still running", () => {
@@ -143,7 +149,11 @@ describe("Unstakings", () => {
         />,
       );
 
-      expect(mockUseSyncOnUnbondingComplete).toHaveBeenCalledWith(ALEO_MAIN_ACCOUNT.id, false);
+      expect(mockUseSyncOnUnbondingComplete).toHaveBeenCalledWith(
+        ALEO_MAIN_ACCOUNT.id,
+        ALEO_MAIN_ACCOUNT.currency.id,
+        false,
+      );
       expect(screen.queryByTestId("aleo-claim-settling")).not.toBeInTheDocument();
     });
   });

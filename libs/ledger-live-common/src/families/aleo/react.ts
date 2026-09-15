@@ -37,7 +37,12 @@ import type {
 } from "./types";
 import { getValidators } from "@ledgerhq/coin-aleo/logic";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
-import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "./constants";
+import {
+  LIVE_BLOCK_HEIGHT_POLL_MS,
+  MANDATORY_SYNC_POLLING_DELAY,
+  PROGRESS_THROTTLE_INTERVAL_MS,
+} from "./constants";
+import { useGetLastBlockHeightQuery } from "./state-manager/api";
 
 const QUICK_AMOUNT_STRATEGIES: SigningStrategy[] = ["fast", "balanced", "full"];
 
@@ -620,4 +625,30 @@ export function useAleoValidators(currency: CryptoCurrency): UseAleoValidatorsRe
   }, [currencyId]);
 
   return { validators, loading, error };
+}
+
+export type UseAleoLiveBlockHeightOptions = {
+  /** The account's last synced height, returned until the chain tip is known. */
+  fallbackHeight: number;
+  enabled: boolean;
+};
+
+/**
+ * Chain tip, polled by RTK Query while `enabled`.
+ *
+ * The polling pauses while the app is unfocused and a failed poll keeps the last good height,
+ * both of which come from the query cache rather than from a timer of our own. The result never
+ * goes backwards from `fallbackHeight`, so a lagging tip can't grow a countdown.
+ */
+export function useAleoLiveBlockHeight(
+  currencyId: string,
+  { fallbackHeight, enabled }: UseAleoLiveBlockHeightOptions,
+): number {
+  const { data } = useGetLastBlockHeightQuery(currencyId, {
+    skip: !enabled,
+    pollingInterval: LIVE_BLOCK_HEIGHT_POLL_MS,
+    skipPollingIfUnfocused: true,
+  });
+
+  return data != null ? Math.max(data, fallbackHeight) : fallbackHeight;
 }
