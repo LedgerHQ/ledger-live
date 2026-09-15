@@ -164,10 +164,29 @@ export function useSendHeaderModel({
 
   const showTitle = currentStepConfig?.showTitle !== false;
 
+  // Resolved from the send descriptor rather than a currency check, so this stays
+  // family-agnostic: a currency with no balanceType config, or no pool selected yet,
+  // yields `undefined` and the summary below degrades to its pre-existing shape.
+  const poolLabel = useMemo(() => {
+    const currency = state.account.currency;
+    const accountLike = state.account.account;
+    if (!currency || !accountLike) return undefined;
+
+    const balanceTypeConfig = sendFeatures.getBalanceTypeConfig(currency);
+    const selectedOptionId = balanceTypeConfig?.getSelectedOptionId(state.transaction.transaction);
+    if (!balanceTypeConfig || !selectedOptionId) return undefined;
+
+    const selectedOption = balanceTypeConfig
+      .getOptions({ account: accountLike })
+      .find(option => option.id === selectedOptionId);
+    return selectedOption ? t(`newSendFlow.${selectedOption.translationKey}.title`) : undefined;
+  }, [state.account.currency, state.account.account, state.transaction.transaction]);
+
   const accountSummary = useMemo(() => {
-    if (accountName && availableText) return `${accountName} · ${availableText}`;
-    return accountName || availableText || "";
-  }, [accountName, availableText]);
+    const qualifiedName = poolLabel && accountName ? `${accountName} (${poolLabel})` : accountName;
+    if (qualifiedName && availableText) return `${qualifiedName} · ${availableText}`;
+    return qualifiedName || availableText || "";
+  }, [accountName, availableText, poolLabel]);
 
   const titleKey = resolveContactFlowTitleKey({
     isContactAddressFlowStep,
