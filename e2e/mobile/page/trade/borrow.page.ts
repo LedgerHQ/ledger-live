@@ -1,12 +1,15 @@
 import { Step } from "jest-allure2-reporter/api";
+import { WebElement } from "detox/detox";
+import { sleep } from "@ledgerhq/live-e2e-shared/index";
 import { WebElementHelpers } from "@e2e/helpers/elementHelpers";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 
 const MODAL_DISMISS_TIMEOUT_MS = 30_000;
 const CONTINUE_READY_TIMEOUT_MS = 30_000;
-/** The partner prepares each transaction server-side, so the CTA stays disabled meanwhile. */
 const EXECUTION_STEP_TIMEOUT_MS = 240_000;
-const PROBE_TIMEOUT_MS = 2_000;
+const SCREEN_READY_TIMEOUT_MS = 60_000;
+const DASHBOARD_READY_TIMEOUT_MS = 120_000;
+const EXECUTION_POLL_INTERVAL_MS = 2_000;
 
 const MAINNET_FUNDING_HINT =
   "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
@@ -25,11 +28,32 @@ export default class BorrowPage {
   private readonly authorizeBorrowingButtonId = "borrow-authorize-borrowing-button";
   private readonly step1AccessApprovedId = "borrow-step-1-access-approved";
   private readonly step2DepositDoneId = "borrow-step-2-deposit-done";
+  private readonly step3BorrowDoneId = "borrow-step-3-borrow-done";
   private readonly loanCompletionCardId = "borrow-loan-completion-card";
   private readonly viewMyLoanButtonId = "borrow-view-my-loan-button";
+  private readonly getNewLoanButtonId = "borrow-get-new-loan-button";
   private readonly yourLoansTitleId = "borrow-your-loans-title";
   private readonly loansDashboardId = "borrow-loans-dashboard";
   private readonly loanDashboardRowId = "borrow-loan-dashboard-row";
+
+  private readonly repayButtonId = "borrow-repay-button";
+  private readonly repayModalId = "borrow-repay-modal";
+  private readonly repayInFullButtonId = "borrow-repay-in-full-button";
+  private readonly repayContinueButtonId = "borrow-repay-continue-button";
+  private readonly repayExecutionScreenId = "borrow-repay-execution-screen";
+  private readonly authorizeRepayButtonId = "borrow-authorize-repay-button";
+  private readonly repayStep1ApprovedId = "borrow-repay-step-1-access-approved";
+  private readonly repayStep2DoneId = "borrow-repay-step-2-repay-done";
+  private readonly repayCompletionCardId = "borrow-repay-completion-card";
+
+  private readonly withdrawOverviewScreenId = "borrow-withdraw-overview-screen";
+  private readonly withdrawCollateralButtonId = "borrow-withdraw-collateral-button";
+  private readonly withdrawExecutionScreenId = "borrow-withdraw-execution-screen";
+  private readonly authorizeWithdrawButtonId = "borrow-authorize-withdraw-button";
+  private readonly withdrawStepDoneId = "borrow-withdraw-step-done";
+  private readonly withdrawCompletionCardId = "borrow-withdraw-completion-card";
+  private readonly backToMyLoansButtonId = "borrow-back-to-my-loans-button";
+
   private readonly executionErrorLocator =
     '[data-testid="borrow-execution-error"], [data-testid="borrow-on-chain-failed-message"]';
 
@@ -110,11 +134,18 @@ export default class BorrowPage {
     await waitWebElementByTestId(this.loanExecutionScreenId);
   }
 
-  @Step("Give approval and sign on device")
-  async completeApprovalStep() {
-    await this.authorizeStep(this.giveApprovalButtonId, this.step1AccessApprovedId, () =>
-      this.signContractTransaction(),
-    );
+  @Step("Expect the Morpho authorization to already be granted")
+  async expectAccessAlreadyApproved() {
+    const marker = await waitWebElementByTestId(this.step1AccessApprovedId, {
+      throwOnTimeout: false,
+    });
+    if (!marker) {
+      throw new Error(
+        `"${this.step1AccessApprovedId}" is absent, so this account has not authorized Morpho ` +
+          `yet and the flow opens on that step instead of the collateral approval. Grant it once ` +
+          `by running the open-loan flow by hand — it is sticky on-chain state, not per-loan.`,
+      );
+    }
   }
 
   @Step("Authorize depositing and sign on device")
@@ -124,11 +155,13 @@ export default class BorrowPage {
     );
   }
 
-  /** Completing the last step leaves the execution screen, so the terminal card is the marker. */
+  /** Completing the last step leaves the execution screen, so the terminal card counts too. */
   @Step("Authorize borrowing and sign on device")
   async authorizeBorrow() {
-    await this.authorizeStep(this.authorizeBorrowingButtonId, this.loanCompletionCardId, () =>
-      this.signContractTransaction(),
+    await this.authorizeStep(
+      this.authorizeBorrowingButtonId,
+      [this.step3BorrowDoneId, this.loanCompletionCardId, this.viewMyLoanButtonId],
+      () => this.signContractTransaction(),
     );
     await waitWebElementByTestId(this.viewMyLoanButtonId);
   }
@@ -149,50 +182,180 @@ export default class BorrowPage {
     await waitWebElementByTestId(this.loanDashboardRowId);
   }
 
+  /** With a loan already open the live app skips the introduction and lists the position. */
+  @Step("Expect the borrow app to open on the loans dashboard")
+  async expectHotStartDashboard() {
+    await waitWebElementByTestId(this.loansDashboardId, { timeout: DASHBOARD_READY_TIMEOUT_MS });
+    await waitWebElementByTestId(this.yourLoansTitleId);
+    await waitWebElementByTestId(this.loanDashboardRowId);
+  }
+
+  /** Anchored on the Repay CTA: `borrow-loan-overview-screen` is web-only in the live app. */
+  @Step("Open the loan with debt from the dashboard")
+  async openActiveLoan() {
+    await this.revealAndTap(this.loanDashboardRowId);
+    await waitForCurrentWebviewUrlToContain("/loanoverview/");
+    await waitForWebElementToBeEnabled(this.repayButtonId, SCREEN_READY_TIMEOUT_MS);
+  }
+
+  @Step("Click Repay on the loan overview")
+  async clickRepay() {
+    await this.revealAndTap(this.repayButtonId);
+    await waitWebElementByTestId(this.repayModalId);
+  }
+
+  @Step("Select Repay in full and continue to execution")
+  async submitRepayInFull() {
+    await this.revealAndTap(this.repayInFullButtonId);
+    await this.revealAndTap(this.repayContinueButtonId);
+    await waitForCurrentWebviewUrlToContain("/forms/repay/");
+    await waitWebElementByTestId(this.repayExecutionScreenId);
+  }
+
+  /** The spec zeroes the debt-token allowance beforehand, so this step is always required. */
+  @Step("Give repay approval and sign on device")
+  async completeRepayApprovalStep() {
+    await this.authorizeStep(
+      this.giveApprovalButtonId,
+      this.repayStep1ApprovedId,
+      () => this.signContractTransaction(),
+      this.repayExecutionScreenId,
+    );
+  }
+
+  @Step("Authorize repay and sign on device")
+  async authorizeRepay() {
+    await this.authorizeStep(
+      this.authorizeRepayButtonId,
+      [this.repayStep2DoneId, this.repayCompletionCardId, this.viewMyLoanButtonId],
+      () => this.signContractTransaction(),
+      this.repayExecutionScreenId,
+    );
+  }
+
+  @Step("Expect the repay completion card")
+  async expectRepaySuccess() {
+    await waitWebElementByTestId(this.repayCompletionCardId);
+    await waitWebElementByTestId(this.viewMyLoanButtonId);
+  }
+
+  /** A loan with no debt left routes straight to withdraw instead of the loan overview. */
+  @Step("Open the repaid loan from the dashboard")
+  async openRepaidLoan() {
+    await this.revealAndTap(this.loanDashboardRowId);
+    await waitForCurrentWebviewUrlToContain("/withdrawoverview/");
+    await waitWebElementByTestId(this.withdrawOverviewScreenId);
+  }
+
+  @Step("Click Withdraw collateral")
+  async clickWithdrawCollateral() {
+    await this.revealAndTap(this.withdrawCollateralButtonId);
+    await waitForCurrentWebviewUrlToContain("/forms/withdraw/");
+    await waitWebElementByTestId(this.withdrawExecutionScreenId);
+  }
+
+  @Step("Authorize withdraw and sign on device")
+  async authorizeWithdraw() {
+    await this.authorizeStep(
+      this.authorizeWithdrawButtonId,
+      [this.withdrawStepDoneId, this.withdrawCompletionCardId, this.backToMyLoansButtonId],
+      () => this.signContractTransaction(),
+      this.withdrawExecutionScreenId,
+    );
+  }
+
+  @Step("Expect the withdraw completion card")
+  async expectWithdrawSuccess() {
+    await waitWebElementByTestId(this.withdrawCompletionCardId);
+    await waitWebElementByTestId(this.backToMyLoansButtonId);
+  }
+
+  /** Withdrawing the last loan empties the dashboard, so the no-loans screens count too. */
+  @Step("Click Back to my loans")
+  async clickBackToMyLoans() {
+    await this.revealAndTap(this.backToMyLoansButtonId);
+    await this.waitForAnyTestId(
+      [this.loansDashboardId, this.getNewLoanButtonId, this.introModalId],
+      SCREEN_READY_TIMEOUT_MS,
+    );
+  }
+
   /** Asserting the marker is absent first makes the wait afterwards proof that the step ran. */
-  private async authorizeStep(buttonId: string, doneId: string, sign: () => Promise<void>) {
-    await waitWebElementByTestId(this.loanExecutionScreenId);
-    await expectWebElementNotVisible(doneId);
+  private async authorizeStep(
+    buttonId: string,
+    doneIds: string | string[],
+    sign: () => Promise<void>,
+    screenId = this.loanExecutionScreenId,
+  ) {
+    const markers = Array.isArray(doneIds) ? doneIds : [doneIds];
+    await waitWebElementByTestId(screenId);
+    await expectWebElementNotVisible(markers[0]);
     await this.revealAndTap(buttonId, EXECUTION_STEP_TIMEOUT_MS);
     await waitForElementById(app.send.summaryContinueEnabledButtonId);
     await app.send.summaryContinue();
     await sign();
-    await this.expectStepDone(doneId);
+    await this.expectStepDone(markers);
   }
 
+  /** Two opt-in screens can sit in front of the review, in this order; both no-op when absent. */
   private async signContractTransaction() {
     await app.speculos.acceptEnableTransactionCheck();
+    await app.speculos.acceptBlindSigningWarning();
     await app.speculos.signEvmContractTransaction();
   }
 
-  /** Scrolls the target into view before tapping, so a partly-offscreen CTA is never tapped. */
   private async revealAndTap(testId: string, timeout?: number) {
     await waitForWebElementToBeEnabled(testId, timeout);
     await scrollToWebElement(getWebElementByTestId(testId));
     await tapWebElementByTestId(testId);
   }
 
-  private async expectStepDone(doneId: string) {
-    await device.disableSynchronization();
+  private async expectStepDone(doneIds: string[]) {
+    await app.common.disableSynchronizationForiOS();
     try {
-      await waitWebElementByTestId(doneId, { timeout: EXECUTION_STEP_TIMEOUT_MS });
-    } catch {
-      const executionFailed = await this.isExecutionErrorVisible();
-      throw new Error(
-        executionFailed
-          ? `Borrow execution failed before "${doneId}". ${MAINNET_FUNDING_HINT}`
-          : `Borrow step "${doneId}" did not complete within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
-      );
+      await this.awaitStepOutcome(doneIds);
     } finally {
-      await device.enableSynchronization();
+      await app.common.enableSynchronization();
     }
   }
 
-  private async isExecutionErrorVisible(): Promise<boolean> {
-    return !!(await waitWebElement(
-      getWebElementByCssSelector(this.executionErrorLocator),
-      PROBE_TIMEOUT_MS,
-      false,
-    ));
+  /** Races the step markers against the execution error, so a failed step surfaces at once. */
+  private async awaitStepOutcome(doneIds: string[]) {
+    const deadline = Date.now() + EXECUTION_STEP_TIMEOUT_MS;
+    while (Date.now() < deadline) {
+      if (await this.isAnyPresent(doneIds)) return;
+      if (await this.isPresent(getWebElementByCssSelector(this.executionErrorLocator))) {
+        throw new Error(`Borrow execution failed before "${doneIds[0]}". ${MAINNET_FUNDING_HINT}`);
+      }
+      await sleep(EXECUTION_POLL_INTERVAL_MS);
+    }
+    throw new Error(
+      `Borrow step "${doneIds.join('" / "')}" did not complete within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
+    );
+  }
+
+  private async waitForAnyTestId(ids: string[], timeout: number) {
+    const deadline = Date.now() + timeout;
+    while (Date.now() < deadline) {
+      if (await this.isAnyPresent(ids)) return;
+      await sleep(EXECUTION_POLL_INTERVAL_MS);
+    }
+    throw new Error(`None of "${ids.join('" / "')}" appeared within ${timeout}ms`);
+  }
+
+  private async isAnyPresent(testIds: string[]): Promise<boolean> {
+    for (const testId of testIds) {
+      if (await this.isPresent(getWebElementByTestId(testId))) return true;
+    }
+    return false;
+  }
+
+  private async isPresent(element: WebElement): Promise<boolean> {
+    try {
+      await element.runScript(el => el.innerText);
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
