@@ -1,9 +1,13 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useTranslation } from "~/context/Locale";
 import Video, { OnLoadData, ReactVideoSource, VideoRef } from "react-native-video";
 import useIsAppInBackground from "~/components/useIsAppInBackground";
 import { VideoTitleText } from "./WelcomePage.styles";
+
+// Stories crossfade rather than cut, so a revealed player never flashes its first frame in.
+const CROSSFADE_DURATION_MS = 250;
 
 type VideoBackgroundProps = {
   videoSource: ReactVideoSource;
@@ -31,6 +35,15 @@ export function VideoBackground({
   const videoRef = useRef<VideoRef | null>(null);
   const hasLoadedRef = useRef(false);
   const videoMounted = !useIsAppInBackground();
+
+  // Off-stage stories stay mounted at zero opacity instead of display:none. A player detached
+  // by display:none repaints a black frame when it is shown again, which reads as a flicker
+  // during the story transition; keeping the layer composited and crossfading avoids it.
+  const opacity = useSharedValue(isOnStage ? 1 : 0);
+  useEffect(() => {
+    opacity.value = withTiming(isOnStage ? 1 : 0, { duration: CROSSFADE_DURATION_MS });
+  }, [isOnStage, opacity]);
+  const animatedContainerStyle = useAnimatedStyle(() => ({ opacity: opacity.value }), [opacity]);
 
   const handleLoad = useCallback(
     (data: OnLoadData) => {
@@ -64,7 +77,7 @@ export function VideoBackground({
   }, [isOnStage, onVideoEnd]);
 
   return (
-    <View style={[styles.container, { display: isOnStage ? "flex" : "none" }]}>
+    <Animated.View style={[styles.container, animatedContainerStyle]} pointerEvents="none">
       {videoMounted && (
         <Video
           ref={videoRef}
@@ -80,7 +93,7 @@ export function VideoBackground({
         />
       )}
       <VideoTitleText>{t(titleKey)}</VideoTitleText>
-    </View>
+    </Animated.View>
   );
 }
 
