@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js";
 import { renderHook } from "@tests/test-renderer";
 import { useCustomExchangeHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
+import { openSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
 import { useSwapCustomHandlers } from "../index";
 
 jest.mock("@react-navigation/native", () => ({
@@ -276,17 +277,26 @@ describe("useSwapCustomHandlers", () => {
       callHandler();
 
       expect(mockResetWebview).toHaveBeenCalledTimes(1);
+      // Without a swapId there is nothing to open, so the status drawer stays closed.
+      expect(MOCK_DISPATCH).not.toHaveBeenCalledWith(
+        openSwapTransactionStatusDrawer(expect.anything()),
+      );
     });
 
-    it("passes swapId to SwapHistory when swapRedirectToHistory handler is called with params", () => {
+    it("passes swapId to SwapHistory and opens the status drawer when called with params", () => {
       mockBaseNavigatorOnSwapTab();
 
-      callHandler({ params: { swapId: "swap-123" } });
+      callHandler({ params: { swapId: "swap-123", provider: "lifi" } });
 
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SwapSubScreens, {
         screen: ScreenName.SwapHistory,
         params: { swapId: "swap-123" },
       });
+      // The status drawer opens directly with the forwarded swapId/provider so it
+      // does not depend on the swap operation being synced into local history first.
+      expect(MOCK_DISPATCH).toHaveBeenCalledWith(
+        openSwapTransactionStatusDrawer({ swapId: "swap-123", provider: "lifi" }),
+      );
     });
   });
 
