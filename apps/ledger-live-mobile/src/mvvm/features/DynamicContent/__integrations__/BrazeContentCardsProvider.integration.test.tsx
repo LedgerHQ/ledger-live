@@ -127,7 +127,9 @@ describe("BrazeContentCardsProvider", () => {
       event: Braze.ContentCardsUpdatedEvent,
     ) => void;
 
-    lifecycle.prepareForIdentityTransition();
+    await act(async () => {
+      lifecycle.prepareForIdentityTransition();
+    });
     const postWipeRefresh = lifecycle.refreshContentCards();
 
     expect(mockedRequestContentCardsRefresh).toHaveBeenCalledTimes(2);
@@ -147,6 +149,44 @@ describe("BrazeContentCardsProvider", () => {
     });
 
     expect(store.getState().dynamicContent.mobileCards).toEqual([contentCard]);
+  });
+
+  it("should clear cached cards and not republish them after an identity reset", async () => {
+    let lifecycle = defaultLifecycle;
+    const { store } = render(
+      <BrazeContentCardsProvider>
+        <RefreshConsumer
+          onReady={value => {
+            lifecycle = value;
+          }}
+        />
+      </BrazeContentCardsProvider>,
+    );
+    const onContentCardsUpdated = mockedAddListener.mock.calls[0][1] as unknown as (
+      event: Braze.ContentCardsUpdatedEvent,
+    ) => void;
+
+    await act(async () => {
+      onContentCardsUpdated({ cards: [contentCard] });
+    });
+
+    expect(store.getState().dynamicContent.mobileCards).toEqual([contentCard]);
+    expect(lifecycle.lastFetchedCards).toEqual([contentCard]);
+    expect(lifecycle.eligibilityEvaluations).toHaveLength(1);
+
+    await act(async () => {
+      lifecycle.prepareForIdentityTransition();
+    });
+
+    expect(store.getState().dynamicContent.mobileCards).toEqual([]);
+    expect(lifecycle.lastFetchedCards).toBeNull();
+    expect(lifecycle.eligibilityEvaluations).toEqual([]);
+
+    await act(async () => {
+      store.dispatch(completeOnboarding());
+    });
+
+    expect(store.getState().dynamicContent.mobileCards).toEqual([]);
   });
 
   it("should keep ineligible cards out of Redux", async () => {
