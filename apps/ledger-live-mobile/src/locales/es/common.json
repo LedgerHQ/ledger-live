@@ -10139,6 +10139,27 @@
       "iHaveACard" : "Tengo una tarjeta"
     }
   },
+  "walletV4Tour" : {
+    "title" : "Descubre tu nuevo portfolio",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Una visión más clara de tu portfolio",
+        "description" : "Consulta tu saldo global de un vistazo y pulsa \"Hoy\" para profundizar."
+      },
+      "navigation" : {
+        "title" : "Accede a las acciones clave más rápido",
+        "description" : "Acceso instantáneo a Permutas, Transferir y Comprar. Las opciones Earn y tu Tarjeta están en el menú de navegación inferior."
+      },
+      "actions" : {
+        "title" : "Observa las tendencias del mercado al instante",
+        "description" : "Visualiza rápidamente las tendencias actuales directamente en tu portfolio para pasar de los datos a la acción."
+      }
+    },
+    "cta" : {
+      "continue" : "Siguiente",
+      "explore" : "Descubrir mi nuevo portfolio"
+    }
+  },
   "mainNavigation" : {
     "home" : "Inicio",
     "swap" : "Permutas",

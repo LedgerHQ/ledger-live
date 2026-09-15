@@ -9333,6 +9333,26 @@
     "errorTryAgain" : "Erreur lors de la mise à jour. Réessayer",
     "installAndRelaunch" : "Nouvelle mise à jour. Installer et relancer"
   },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "Un vue plus claire de votre portefeuille",
+        "description" : "Consultez votre solde total d’un coup d’œil, et appuyez sur « Aujourd’hui » pour plus d’informations."
+      },
+      "navigation" : {
+        "title" : "Accédez instantanément aux actions clés",
+        "description" : "Accédez aux fonctions Recevoir, Acheter, Vendre et Envoyer en un instant."
+      },
+      "actions" : {
+        "title" : "Suivez l’évolution des marchés",
+        "description" : "Visualisez les tendances au sein de votre portefeuille et agissez sans attendre."
+      }
+    },
+    "cta" : {
+      "continue" : "Continuer",
+      "explore" : "Explorer"
+    }
+  },
   "q2Tour" : {
     "slides" : {
       "welcome" : {

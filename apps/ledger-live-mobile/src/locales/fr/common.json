@@ -10139,6 +10139,27 @@
       "iHaveACard" : "J’ai une carte"
     }
   },
+  "walletV4Tour" : {
+    "title" : "Découvrez votre nouveau portefeuille",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Un vue plus claire de votre portefeuille",
+        "description" : "Consultez votre solde total d’un coup d’œil, et appuyez sur « Aujourd’hui » pour plus d’informations."
+      },
+      "navigation" : {
+        "title" : "Accédez instantanément aux actions clés",
+        "description" : "Échangez, transférez et achetez en toute simplicité. Les sections Gagner et Carte sont désormais en bas de votre app."
+      },
+      "actions" : {
+        "title" : "Suivez l’évolution des marchés",
+        "description" : "Visualisez les tendances au sein de votre portefeuille et agissez sans attendre."
+      }
+    },
+    "cta" : {
+      "continue" : "Suivant",
+      "explore" : "Découvrir mon nouveau portefeuille"
+    }
+  },
   "mainNavigation" : {
     "home" : "Accueil",
     "swap" : "Swap",

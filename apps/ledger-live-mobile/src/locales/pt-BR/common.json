@@ -10139,6 +10139,27 @@
       "iHaveACard" : "Tenho um cartão"
     }
   },
+  "walletV4Tour" : {
+    "title" : "Descubra o seu novo portfólio",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Uma visão mais clara do seu portfólio",
+        "description" : "Veja seu saldo total rapidamente e toque em “Hoje” para obter mais detalhes."
+      },
+      "navigation" : {
+        "title" : "Acesse as ações principais mais rapidamente",
+        "description" : "Acesse Trocar, Transferir e Comprar instantaneamente. Encontre Ganhar e Cartão no menu de navegação inferior."
+      },
+      "actions" : {
+        "title" : "Veja as tendências do mercado instantaneamente",
+        "description" : "Veja rapidamente as tendências diretamente em seu portfólio e passe da análise para a ação."
+      }
+    },
+    "cta" : {
+      "continue" : "Próximo",
+      "explore" : "Descobrir meu novo portfólio"
+    }
+  },
   "mainNavigation" : {
     "home" : "Início",
     "swap" : "Trocar",

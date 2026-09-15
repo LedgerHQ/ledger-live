@@ -10139,6 +10139,27 @@
       "iHaveACard" : "Kartım var"
     }
   },
+  "walletV4Tour" : {
+    "title" : "Yeni portföyü keşfet",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Portföyünüz şimdi daha net",
+        "description" : "Toplam bakiyenizi ilk bakışta görün ve detaylı bilgiler için \"Bugün\" seçeneğine dokunun."
+      },
+      "navigation" : {
+        "title" : "Temel eylemlere daha hızlı erişin",
+        "description" : "Takas, Transfer ve Satın Al işlevlerine anında erişin. Kazan bölümünü ve Kartınızı alt gezinti menüsünde bulabilirsiniz."
+      },
+      "actions" : {
+        "title" : "Piyasa trendlerini anında görün",
+        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hızlıca görün ve içgörüleri eyleme dönüştürün."
+      }
+    },
+    "cta" : {
+      "continue" : "İleri",
+      "explore" : "Yeni portföyü keşfet"
+    }
+  },
   "mainNavigation" : {
     "home" : "Ana Sayfa",
     "swap" : "Takas et",

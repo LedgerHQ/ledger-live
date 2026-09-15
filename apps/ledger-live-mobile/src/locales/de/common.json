@@ -10139,6 +10139,27 @@
       "iHaveACard" : "Ich habe eine Karte"
     }
   },
+  "walletV4Tour" : {
+    "title" : "Entdecke dein neues Portfolio",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Ein besserer Überblick über dein Portfolio",
+        "description" : "Zeige dein Gesamtguthaben auf einen Blick an und tippe auf „Heute“, um weitere Details einzusehen."
+      },
+      "navigation" : {
+        "title" : "Wichtige Funktionen im schnellen Zugriff",
+        "description" : "Die Funktionen zum Swappen, Übertragen und Kaufen kannst du direkt aufrufen. „Verdienen“ und deine Karte findest du in der unteren Navigationsleiste."
+      },
+      "actions" : {
+        "title" : "Marktentwicklungen in Echtzeit verfolgen",
+        "description" : "Du kannst aktuelle Trends direkt in deinem Portfolio einsehen und Erkenntnisse sofort in Handeln umsetzen."
+      }
+    },
+    "cta" : {
+      "continue" : "Weiter",
+      "explore" : "Mein neues Portfolio entdecken"
+    }
+  },
   "mainNavigation" : {
     "home" : "Startseite",
     "swap" : "Swappen",

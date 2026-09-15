@@ -9333,6 +9333,26 @@
     "errorTryAgain" : "Güncelleme sırasında bir hata oluştu. Tekrar deneyin",
     "installAndRelaunch" : "Yeni güncelleme. Yükleyip yeniden başlatın"
   },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "Portföyünüz şimdi daha net",
+        "description" : "Toplam bakiyenizi ilk bakışta görün ve detaylı bilgiler için \"Bugün\" seçeneğine dokunun."
+      },
+      "navigation" : {
+        "title" : "Temel eylemlere daha hızlı erişin",
+        "description" : "Transfer alma, gönderme, satın alma ve satma işlemlerine anında erişin."
+      },
+      "actions" : {
+        "title" : "Piyasa trendlerini anında görün",
+        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hızlıca görün ve içgörüleri eyleme dönüştürün."
+      }
+    },
+    "cta" : {
+      "continue" : "Devam",
+      "explore" : "Yeni portföyü keşfet"
+    }
+  },
   "q2Tour" : {
     "slides" : {
       "welcome" : {

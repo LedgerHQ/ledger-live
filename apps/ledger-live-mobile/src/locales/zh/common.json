@@ -10139,6 +10139,27 @@
       "iHaveACard" : "我有一张卡"
     }
   },
+  "walletV4Tour" : {
+    "title" : "探索您的全新资产组合",
+    "slides" : {
+      "portfolio" : {
+        "title" : "更清楚地展示您的资产组合",
+        "description" : "一目了然地查看您的总余额，点按“今天”可深入了解。"
+      },
+      "navigation" : {
+        "title" : "更快访问关键操作功能",
+        "description" : "快速访问互换、转账和买入功能。“赚取”和您的\"卡\"位于底部导航栏。"
+      },
+      "actions" : {
+        "title" : "快速查看市场趋势",
+        "description" : "快速查看您资产组合中的热门趋势，并从洞察转向行动。"
+      }
+    },
+    "cta" : {
+      "continue" : "下一步",
+      "explore" : "探索我的全新资产组合"
+    }
+  },
   "mainNavigation" : {
     "home" : "首页",
     "swap" : "互换",
