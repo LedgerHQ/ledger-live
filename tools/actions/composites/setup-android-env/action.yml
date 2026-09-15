@@ -12,7 +12,7 @@ inputs:
   android_packages:
     description: "Android SDK packages to install"
     required: false
-    default: "tools platform-tools"
+    default: "platform-tools"
 
 runs:
   using: "composite"
@@ -36,7 +36,7 @@ runs:
       uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
       with:
         packages: ${{ inputs.android_packages }}
-        cmdline-tools-version: 14742923
+        cmdline-tools-version: 15859902
 
     - name: Enable Hardware Acceleration
       shell: bash
@@ -47,4 +47,8 @@ runs:
 
     - name: Fix emulator directory permissions
       shell: bash
-      run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
+      run: |
+        SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-$HOME/.android/sdk}}"
+        if [ -d "$SDK/emulator" ]; then
+          sudo chown -R $(whoami):$(id -ng) "$SDK/emulator"
+        fi
