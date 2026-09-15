@@ -6,8 +6,8 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { useFeature } from "@features/platform-feature-flags";
 import { render, withFlagOverrides } from "tests/testSetup";
+import { ZcashSyncNotice } from "~/renderer/families/bitcoin/ZcashSyncNotice";
 import {
   createBitcoinAccount,
   createEthereumAccount,
@@ -35,36 +35,9 @@ import {
 } from "../__mocks__/sendFlowTestUtils";
 import { SendWorkflow } from "../index";
 
-jest.mock("~/renderer/families", () => ({
-  useLLDCoinFamily: () => {
-    const { getMockLLDCoinFamily } = jest.requireActual("../__mocks__/sendFlowTestUtils");
-    return getMockLLDCoinFamily();
-  },
+jest.mock("~/renderer/families/bitcoin/ZCashExportKeyFlowModal/sync", () => ({
+  syncStateUpdater: jest.fn(() => ({ type: "test/syncStateUpdater" })),
 }));
-
-function TestSendRecipientNotice({
-  account,
-  transaction,
-  onBlockedChange,
-}: {
-  account: { currency: { id: string }; privateInfo?: { syncState?: string } };
-  transaction: { sender?: "public" | "private" };
-  onBlockedChange?: (blocked: boolean) => void;
-}) {
-  const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
-  const applies =
-    shieldedEnabled && account.currency.id === "zcash" && transaction.sender === "private";
-  const syncState = account.privateInfo?.syncState ?? "disabled";
-  const blocked = applies && syncState !== "complete";
-
-  React.useEffect(() => {
-    onBlockedChange?.(blocked);
-  }, [blocked, onBlockedChange]);
-  React.useEffect(() => () => onBlockedChange?.(false), [onBlockedChange]);
-
-  if (!applies || (syncState !== "running" && syncState !== "ready")) return null;
-  return <div data-testid={`zcash-sync-banner-${syncState}`} />;
-}
 
 describe("Send Flow Integration", () => {
   const ethereumAccount = createEthereumAccount();
@@ -771,7 +744,7 @@ describe("Send Flow Integration", () => {
     beforeEach(() => {
       resetSendFlowTestState("bitcoin");
       setMockBalanceTypeConfig(zcashBalanceTypeConfig);
-      setMockLLDCoinFamily({ SendRecipientNotice: TestSendRecipientNotice });
+      setMockLLDCoinFamily({ SendRecipientNotice: ZcashSyncNotice });
     });
 
     it("shows sync banner on recipient screen when private sender and syncState=running", async () => {
@@ -822,22 +795,22 @@ describe("Send Flow Integration", () => {
       expect(screen.getByTestId("send-network-fees-row")).toBeVisible();
     });
 
-    it.each(["running", "ready"] as const)(
-      "blocks advancing to amount while a private send sync is %s",
-      async syncState => {
+    it.each([
+      { syncState: "running" as const, bannerTestId: "zcash-sync-banner-running", progress: 50 },
+      { syncState: "ready" as const, bannerTestId: "zcash-sync-banner-stopped", progress: 0 },
+    ])(
+      "blocks advancing to amount while a private send sync is $syncState",
+      async ({ syncState, bannerTestId, progress }) => {
         const shieldedRecipient =
           "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
-        const account = createZcashAccount({
-          syncState,
-          progress: syncState === "running" ? 50 : 0,
-        });
+        const account = createZcashAccount({ syncState, progress });
         setMockTransaction(createMinimalBtcTransaction({ recipient: shieldedRecipient }));
         const { user } = renderZcashSendFlow(account);
 
         await screen.findByTestId("balance-type-screen");
         await user.click(screen.getByTestId("balance-type-private"));
 
-        expect(await screen.findByTestId(`zcash-sync-banner-${syncState}`)).toBeVisible();
+        expect(await screen.findByTestId(bannerTestId)).toBeVisible();
 
         const recipientInput = await screen.findByTestId("send-recipient-input");
         await user.type(recipientInput, shieldedRecipient);
@@ -846,7 +819,7 @@ describe("Send Flow Integration", () => {
         await user.click(matchedButton);
 
         expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
-        expect(screen.getByTestId(`zcash-sync-banner-${syncState}`)).toBeVisible();
+        expect(screen.getByTestId(bannerTestId)).toBeVisible();
       },
     );
 

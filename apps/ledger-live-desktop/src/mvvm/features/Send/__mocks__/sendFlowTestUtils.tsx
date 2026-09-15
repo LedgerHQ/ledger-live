@@ -158,8 +158,6 @@ export const setMockLLDCoinFamily = (family: Record<string, unknown> = {}) => {
   mockCoinFamily = family;
 };
 
-export const getMockLLDCoinFamily = () => mockCoinFamily;
-
 export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   jest.clearAllMocks();
   resetBridgeState(family);
