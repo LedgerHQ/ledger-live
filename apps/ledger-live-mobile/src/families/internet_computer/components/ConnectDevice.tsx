@@ -96,10 +96,15 @@ export default function ICPConnectDevice({ navigation, route, category }: Props)
               // neurons are full of bigints, which cannot be serialized.
               result: { ...operation, extra: { ...operation.extra, neurons: undefined } },
             });
-          } catch (error) {
-            const name = (error as { name?: string })?.name;
-            if (name !== "UserRefusedOnDevice" && name !== "TransactionRefusedOnDevice") {
-              logger.critical(error as Error);
+          } catch (caught) {
+            // Normalised here because this is where a throw becomes a screen: TranslatedError
+            // keys off `name`, and logger.critical expects an Error.
+            const error = caught instanceof Error ? caught : new Error(String(caught));
+            if (
+              error.name !== "UserRefusedOnDevice" &&
+              error.name !== "TransactionRefusedOnDevice"
+            ) {
+              logger.critical(error);
             }
             stepNavigation.replace(route.name.replace("ConnectDevice", "ValidationError"), {
               ...route.params,

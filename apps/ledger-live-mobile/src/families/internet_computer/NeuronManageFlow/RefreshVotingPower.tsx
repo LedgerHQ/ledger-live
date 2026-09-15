@@ -119,8 +119,10 @@ export default function RefreshVotingPower({ navigation, route }: Props) {
             type="main"
             size="small"
             mt={4}
+            // The canister declares a neuron's id optional and a refresh call has to name one.
+            disabled={!neuron.id}
             onPress={() => onConfirm(neuron)}
-            testID="icp-confirm-following-button"
+            testID={`icp-confirm-following-${neuronKey(neuron)}`}
           >
             {t("internetComputer.refreshVotingPowerFlow.confirm")}
           </Button>

@@ -43,7 +43,9 @@ const NeuronList = ({
           {renderNeuron(item)}
         </Flex>
       );
-      return onPressNeuron ? (
+      // Every screen behind onPressNeuron names the neuron by id, so an unidentified one would
+      // give a row that looks tappable and does nothing.
+      return onPressNeuron && item.id !== undefined ? (
         <TouchableOpacity onPress={() => onPressNeuron(item)} activeOpacity={0.7}>
           {card}
         </TouchableOpacity>

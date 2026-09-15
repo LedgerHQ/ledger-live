@@ -143,7 +143,7 @@ describe("RefreshVotingPower", () => {
     neurons = [refreshedDaysAgo(7n, 200)];
 
     renderScreen();
-    fireEvent.press(screen.getByTestId("icp-confirm-following-button"));
+    fireEvent.press(screen.getByTestId("icp-confirm-following-7"));
 
     expect(mockNavigate).toHaveBeenCalledWith(
       expect.any(String),
@@ -158,8 +158,20 @@ describe("RefreshVotingPower", () => {
     neurons = [makeHealthyNeuron({ id: undefined })];
 
     renderScreen();
-    fireEvent.press(screen.getByTestId("icp-confirm-following-button"));
+    const confirm = screen.getByTestId("icp-confirm-following-neuron-account-identifier");
 
+    expect(confirm).toBeDisabled();
+    fireEvent.press(confirm);
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  // One Confirm per row, so a fixed testID would collide and `getBy*` would throw on two.
+  it("names each confirm control after its own neuron", () => {
+    neurons = [refreshedDaysAgo(7n, 200), refreshedDaysAgo(8n, 200)];
+
+    renderScreen();
+
+    expect(screen.getByTestId("icp-confirm-following-7")).toBeVisible();
+    expect(screen.getByTestId("icp-confirm-following-8")).toBeVisible();
   });
 });
