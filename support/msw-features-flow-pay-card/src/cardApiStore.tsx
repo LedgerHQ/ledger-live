@@ -27,6 +27,7 @@ export function makeCardApiStore({ signedIn = false }: { signedIn?: boolean } = 
           extraArgument: cardApiExtra({
             getCardApiBaseUrl: () => CARD_API_BASE_URL,
             getCardBaanxClientKey: () => "client-key",
+            isCardUsEnv: () => false,
             readCardSession: () => Promise.resolve({ token: "session-token", sessionId: 1 }),
             isCardSessionCurrent: () => true,
             refreshCardSession: () => Promise.resolve({ kind: "session-replaced" as const }),
