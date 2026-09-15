@@ -1,8 +1,11 @@
 import React, { type PropsWithChildren } from "react";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
-import { cardApiWrapper, listenToCardApi } from "@support/msw-features-flow-pay-card";
+import {
+  cardApiWrapper,
+  listenToCardApi,
+  signedInCardApiHandlers,
+} from "@support/msw-features-flow-pay-card";
 import { CARD_COPY, I18nWrapper, MORE_COPY } from "../../__tests__/i18nWrapper";
-import { signedInCardApiHandlers } from "./signedInCardApi";
 import { buildMoreViewProps } from "../More/fixtures";
 import type { CardDetailsRoute } from "./Scenes/navigation";
 import type { CardDetailsSceneProps } from "./Scenes/types";

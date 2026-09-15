@@ -1,8 +1,8 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { cardManagementApi } from "@domain/api-card-management";
-import type { CardNumbersProps, CardNumbersStatus, CardNumbersViewProps } from "../../types";
+import type { CardDetailsProps, RevealStatus, RevealViewModel } from "../../types";
 
 type CardApiState = {
   [cardManagementApi.reducerPath]: ReturnType<typeof cardManagementApi.reducer>;
@@ -11,14 +11,27 @@ type CardApiState = {
 const useCardApiDispatch =
   useDispatch.withTypes<ThunkDispatch<CardApiState, unknown, UnknownAction>>();
 
-export function useCardNumbersViewModel({ unlock }: CardNumbersProps): CardNumbersViewProps {
+export function useRevealViewModel({
+  unlock,
+}: Pick<CardDetailsProps, "unlock">): RevealViewModel | null {
   const dispatch = useCardApiDispatch();
-  const [status, setStatus] = useState<CardNumbersStatus>("idle");
+  const [status, setStatus] = useState<RevealStatus>("idle");
   const [imageUrl, setImageUrl] = useState<string>();
   const inFlight = useRef(false);
   const generation = useRef(0);
 
-  async function onReveal() {
+  const onHide = useCallback(() => {
+    generation.current += 1;
+    inFlight.current = false;
+    setStatus("idle");
+  }, []);
+
+  const onImageError = useCallback(() => {
+    setImageUrl(undefined);
+    setStatus("failed");
+  }, []);
+
+  const onReveal = useCallback(async () => {
     if (inFlight.current) {
       return;
     }
@@ -30,7 +43,7 @@ export function useCardNumbersViewModel({ unlock }: CardNumbersProps): CardNumbe
     setImageUrl(undefined);
 
     try {
-      const unlocked = await unlock();
+      const unlocked = await unlock?.();
       if (isStale()) {
         return;
       }
@@ -58,18 +71,10 @@ export function useCardNumbersViewModel({ unlock }: CardNumbersProps): CardNumbe
         inFlight.current = false;
       }
     }
-  }
+  }, [dispatch, unlock]);
 
-  function onHide() {
-    generation.current += 1;
-    inFlight.current = false;
-    setImageUrl(undefined);
-    setStatus("idle");
-  }
-
-  function onImageError() {
-    setImageUrl(undefined);
-    setStatus("failed");
+  if (!unlock) {
+    return null;
   }
 
   return {

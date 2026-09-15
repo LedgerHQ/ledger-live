@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { CARD_API_BASE_URL } from "@support/msw-features-flow-pay-card";
+import { CARD_API_BASE_URL } from "./cardApiStore";
 
 export const CARD_STATUS_URL = `${CARD_API_BASE_URL}/v1/card/status`;
 export const CARD_USER_URL = `${CARD_API_BASE_URL}/v1/user`;
