@@ -68,6 +68,20 @@ function readOrigins(origins: unknown): URL[] {
   });
 }
 
+let pendingWipes: Promise<unknown> = Promise.resolve();
+
+/** A wipe the caller never awaits must not outlive the login that follows it and erase its session. */
+export function queueHostedSessionDataWipe(
+  targetSession: Session,
+  origins: unknown,
+): Promise<void> {
+  const wipe = pendingWipes.then(() => clearHostedSessionData(targetSession, origins));
+
+  pendingWipes = wipe.catch(() => undefined);
+
+  return wipe;
+}
+
 export async function clearHostedSessionData(
   targetSession: Session,
   origins: unknown,

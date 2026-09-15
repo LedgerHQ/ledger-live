@@ -27,7 +27,7 @@ import {
   cleanupZcashNativeHost,
 } from "@ledgerhq/coin-zcash/network/ipc/main-host";
 import { setupWebviewHandlers } from "./webviewHandlers";
-import { clearHostedSessionData } from "./hostedSessionData";
+import { queueHostedSessionDataWipe } from "./hostedSessionData";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
@@ -124,7 +124,7 @@ app.on("ready", async () => {
   setupZcashNativeHost();
 
   ipcMain.handle("clearCardHostedSessionData", (_event, origins) =>
-    clearHostedSessionData(session.defaultSession, origins),
+    queueHostedSessionDataWipe(session.defaultSession, origins),
   );
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
     return db.getKey(ns, keyPath, defaultValue);

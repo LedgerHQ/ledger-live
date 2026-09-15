@@ -1,5 +1,9 @@
 import type { Cookie, Session } from "electron";
-import { clearHostedSessionData, isProviderCookieForHost } from "./hostedSessionData";
+import {
+  clearHostedSessionData,
+  isProviderCookieForHost,
+  queueHostedSessionDataWipe,
+} from "./hostedSessionData";
 
 describe("isProviderCookieForHost", () => {
   it.each([
@@ -163,5 +167,56 @@ describe("clearHostedSessionData", () => {
     await clearHostedSessionData(session, origins);
 
     expect(clearStorageData).toHaveBeenCalledTimes(10);
+  });
+});
+
+describe("queueHostedSessionDataWipe", () => {
+  const flushPendingWork = () => new Promise(resolve => setImmediate(resolve));
+
+  it("runs the wipes one after the other, so a stale one cannot outlive a newer login", async () => {
+    const order: string[] = [];
+    let releaseFirst = () => {};
+    const clearStorageData = jest
+      .fn()
+      .mockImplementationOnce(
+        () =>
+          new Promise<void>(resolve => {
+            order.push("first started");
+            releaseFirst = () => {
+              order.push("first done");
+              resolve();
+            };
+          }),
+      )
+      .mockImplementationOnce(async () => {
+        order.push("second started");
+      });
+    const session = {
+      cookies: { get: jest.fn().mockResolvedValue([]), remove: jest.fn() },
+      clearStorageData,
+    } as unknown as Session;
+
+    const first = queueHostedSessionDataWipe(session, ["https://dev.api.baanx.com"]);
+    const second = queueHostedSessionDataWipe(session, ["https://provider.test"]);
+
+    await flushPendingWork();
+    releaseFirst();
+    await Promise.all([first, second]);
+
+    expect(order).toEqual(["first started", "first done", "second started"]);
+  });
+
+  it("keeps draining the queue after a wipe throws", async () => {
+    const clearStorageData = jest.fn().mockResolvedValue(undefined);
+    const get = jest.fn().mockRejectedValueOnce(new Error("store is gone")).mockResolvedValue([]);
+    const session = {
+      cookies: { get, remove: jest.fn() },
+      clearStorageData,
+    } as unknown as Session;
+
+    await queueHostedSessionDataWipe(session, ["https://dev.api.baanx.com"]);
+    await queueHostedSessionDataWipe(session, ["https://provider.test"]);
+
+    expect(clearStorageData).toHaveBeenCalledTimes(2);
   });
 });
