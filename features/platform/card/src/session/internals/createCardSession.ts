@@ -36,6 +36,12 @@ export function createCardSession(store: CardSessionStore) {
 
   let isProviderAppIdHydrated = false;
 
+  /**
+   * False when a replacement could not clear the session on disk or record its tenant. The store
+   * then holds an unknown mix of the two, so no session may be committed on top of it.
+   */
+  let isReplacementPersisted = true;
+
   /** Counts the writes, so a read still in flight cannot put a stale value over a newer one. */
   let providerAppIdWrites = 0;
 
@@ -92,6 +98,10 @@ export function createCardSession(store: CardSessionStore) {
       return "stale";
     }
 
+    if (!isReplacementPersisted) {
+      return "stale";
+    }
+
     try {
       await store.write(CARD_SESSION_KEYS.refreshToken, session.refreshToken);
       await store.write(CARD_SESSION_KEYS.accessToken, session.accessToken);
@@ -122,6 +132,7 @@ export function createCardSession(store: CardSessionStore) {
     isCleared = true;
     if (ownsCurrentSession) {
       recordProviderAppId(null);
+      isReplacementPersisted = true;
     }
 
     await store.remove(CARD_SESSION_KEYS.accessToken).catch(() => undefined);
@@ -290,25 +301,34 @@ export function createCardSession(store: CardSessionStore) {
    */
   const setCardProviderAppId = (appId: string | null): Promise<void> => {
     recordProviderAppId(appId);
-    /**
-     * Recording a tenant starts a session replacement. The session on disk belongs to the tenant
-     * being left, so it stops being current here: a snapshot taken before this call is stale, and
-     * no later request can pair that token with the new routing. A login that then fails leaves the
-     * holder signed out rather than signed in against a tenant it no longer names.
-     */
-    beginSessionReplacement();
+    const replacing = beginSessionReplacement();
 
     return takeTurn(async () => {
-      if (appId === null) {
-        await store.remove(CARD_SESSION_KEYS.providerAppId).catch(() => undefined);
+      if (replacing !== sessionId) {
         return;
       }
 
-      await store.write(CARD_SESSION_KEYS.providerAppId, appId).catch(() => {
-        // This process still routes on the mirror. Only a restart would read no tenant back, and
-        // the login that follows it records the value again.
-        console.warn("[card] the provider app id was not stored");
-      });
+      try {
+        /**
+         * The tokens on disk belong to the tenant being left. They go before the new routing lands,
+         * so a launch after a failed exchange cannot resume them against a tenant they never came
+         * from. Nothing is swallowed here: a store that refused leaves an unknown mix of the two
+         * sessions, and `writeSession` then refuses to commit a session on top of it.
+         */
+        await store.remove(CARD_SESSION_KEYS.accessToken);
+        await store.remove(CARD_SESSION_KEYS.refreshToken);
+
+        if (appId === null) {
+          await store.remove(CARD_SESSION_KEYS.providerAppId);
+        } else {
+          await store.write(CARD_SESSION_KEYS.providerAppId, appId);
+        }
+
+        isReplacementPersisted = true;
+      } catch {
+        isReplacementPersisted = false;
+        console.warn("[card] the session replacement was not persisted");
+      }
     });
   };
 

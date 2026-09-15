@@ -856,6 +856,42 @@ describe("the provider app id", () => {
     expect(slots.get(CARD_SESSION_KEYS.providerAppId)).toBe("LEDGERUS");
   });
 
+  it("drops the persisted tokens when a replacement starts", async () => {
+    // A launch after a failed exchange must not find the previous tenant's tokens and resume them
+    // against the routing this login recorded.
+    const { store, slots } = fakeStore({
+      [CARD_SESSION_KEYS.accessToken]: session.accessToken,
+      [CARD_SESSION_KEYS.refreshToken]: session.refreshToken,
+      [CARD_SESSION_KEYS.providerAppId]: "LEDGERUAT",
+    });
+    const { setCardProviderAppId } = createCardSession(store);
+
+    await setCardProviderAppId("LEDGERUS");
+
+    expect(slots.has(CARD_SESSION_KEYS.accessToken)).toBe(false);
+    expect(slots.has(CARD_SESSION_KEYS.refreshToken)).toBe(false);
+    expect(slots.get(CARD_SESSION_KEYS.providerAppId)).toBe("LEDGERUS");
+  });
+
+  it("refuses to commit a session when the replacement was not persisted", async () => {
+    // The store now holds an unknown mix of the two sessions, so committing tokens onto it would
+    // leave a launch able to resume them with the wrong routing.
+    const { store, slots } = fakeStore();
+    store.write = jest.fn(async (key, value) => {
+      if (key === CARD_SESSION_KEYS.providerAppId) {
+        throw new Error("keychain refused");
+      }
+      slots.set(key, value);
+    });
+    const { setCardProviderAppId, cardSession } = createCardSession(store);
+
+    await setCardProviderAppId("LEDGERUS");
+
+    await expect(cardSession.set(session)).rejects.toBeInstanceOf(CardSessionNotStoredError);
+    expect(slots.has(CARD_SESSION_KEYS.accessToken)).toBe(false);
+    expect(slots.has(CARD_SESSION_KEYS.refreshToken)).toBe(false);
+  });
+
   it("keeps the app id across the session write that follows it", async () => {
     const { store } = fakeStore();
     const { cardSession, setCardProviderAppId, isCardUsEnv } = createCardSession(store);
