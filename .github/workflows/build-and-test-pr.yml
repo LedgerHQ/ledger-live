@@ -35,7 +35,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          echo "should_skip=true" >> $GITHUB_OUTPUT
+          echo "should_skip=true" >> "$GITHUB_OUTPUT"
           gh pr close "$PR_NUMBER" -R LedgerHQ/ledger-live --delete-branch
 
   determine-affected:
