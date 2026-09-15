@@ -102,6 +102,7 @@ jobs:
       CARD_BAANX_CLIENT_KEY: ${{ secrets.CARD_BAANX_CLIENT_KEY }}
       CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
       CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
+      GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
       GH_BOT_CLIENT_ID: ${{ secrets.GH_BOT_CLIENT_ID }}
       GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       NX_KEY: ${{ secrets.NX_KEY }}

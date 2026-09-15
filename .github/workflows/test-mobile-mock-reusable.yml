@@ -58,6 +58,8 @@ on:
         required: false
       CARD_OAUTH_REDIRECT_URI:
         required: false
+      GH_BOT_APP_ID:
+        required: true
       GH_BOT_CLIENT_ID:
         required: true
       GH_BOT_PRIVATE_KEY:
