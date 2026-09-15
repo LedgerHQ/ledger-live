@@ -24,7 +24,7 @@ const onLoginPress = jest.fn();
 const onAlreadyHaveCardPress = jest.fn();
 
 const copy: CardLoginCopy = {
-  headline: null,
+  headline: "Get your crypto card",
   title: "Crypto Card",
   description: "Log in to access your card",
   loginLabel: "Login",
@@ -267,6 +267,15 @@ describe("useCardLoginViewModel intro", () => {
       flow: CARD_LOGIN_INTRO_FLOW,
       page: CARD_LOGIN_INTRO_PAGE,
     });
+  });
+
+  it("sells the card before the intro has been seen", async () => {
+    const { result } = await renderIdleLogin(store);
+
+    expect(result.current?.title).toBe("Crypto Card");
+    expect(result.current?.headline).toBe("Get your crypto card");
+    expect(result.current?.description).toBe("Get 1% cashback every time you spend");
+    expect(result.current?.loginLabel).toBe("Get card");
   });
 
   it("drops the login link once the intro has been seen", async () => {

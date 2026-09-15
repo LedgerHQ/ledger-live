@@ -5,6 +5,7 @@ export const CARD_LOGIN_INTRO_RESOURCES = {
         cardLogin: {
           title: "Crypto Card",
           beforeIntro: {
+            title: "Get your crypto card",
             description: "Get 1% cashback every time you spend",
             action: "Get card",
             alreadyHaveCard: "I already have a card",

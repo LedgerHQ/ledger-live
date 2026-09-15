@@ -222,7 +222,7 @@ export function useCardLoginViewModel({
 
     return {
       title: t(`${LOGIN_KEY_PREFIX}.title`),
-      headline: hasSeenLoginIntro ? t(`${LOGIN_KEY_PREFIX}.afterIntro.title`) : null,
+      headline: t(`${LOGIN_KEY_PREFIX}.${stage}.title`),
       description: t(`${LOGIN_KEY_PREFIX}.${stage}.description`),
       loginLabel: t(`${LOGIN_KEY_PREFIX}.${stage}.action`),
       alreadyHaveCardLabel: hasSeenLoginIntro

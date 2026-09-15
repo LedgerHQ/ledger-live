@@ -22,7 +22,7 @@ const intro: CardLoginIntroViewProps = {
 
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   title: "Crypto Card",
-  headline: null,
+  headline: "Get your crypto card",
   description: "Log in to access your card",
   loginLabel: "Login",
   isLoading: false,
