@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   useCalculateCountervalueCallback,
@@ -106,10 +106,27 @@ export function usePerpsDepositViewModel(
     [],
   );
 
+  /** The USDC funding account with the highest spendable balance, used as the default. */
+  const defaultDepositAccount = useMemo(
+    () =>
+      accounts
+        .filter(
+          (acc): acc is TokenAccount =>
+            acc.type === "TokenAccount" &&
+            acc.token.id === PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID &&
+            acc.spendableBalance.gt(0),
+        )
+        .reduce<TokenAccount | undefined>(
+          (best, acc) => (!best || acc.spendableBalance.gt(best.spendableBalance) ? acc : best),
+          undefined,
+        ),
+    [accounts],
+  );
+
   /** Read from the store so balances stay live while the form is open. */
   const depositAccount = useMemo(
-    () => accounts.find(account => account.id === depositAccountId),
-    [accounts, depositAccountId],
+    () => accounts.find(account => account.id === depositAccountId) ?? defaultDepositAccount,
+    [accounts, depositAccountId, defaultDepositAccount],
   );
 
   const receiverAccount = data.receiverAccount;
