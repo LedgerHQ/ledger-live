@@ -9,7 +9,7 @@ import {
   prepareAttempt,
   validateCallback,
 } from "./actors";
-import { clearErrorKind, failPkce, forgetAttempt } from "./actions";
+import { clearErrorKind, failPkce, forgetAttempt, publishProviderAppId } from "./actions";
 import { isUnauthorizedError } from "./errors";
 import { hasErrorKind, shouldResumeAuthenticated } from "./guards";
 import type { CardLoginContext, CardLoginEvent, CardLoginMachineInput } from "./types";
@@ -45,6 +45,7 @@ export const cardLoginMachine = setup({
     forgetAttempt,
     clearErrorKind,
     failPkce,
+    publishProviderAppId,
     /**
      * `More` is a separate component with no machine, so it cannot read this snapshot. These two
      * publish the answer it needs through a port, on entry, which keeps the flag and the state in step.
@@ -96,7 +97,7 @@ export const cardLoginMachine = setup({
         // arrives one render after mount can never overtake the disk read.
         CALLBACK_RECEIVED: {
           actions: assign({
-            callback: ({ event }) => ({ code: event.code }),
+            callback: ({ event }) => ({ code: event.code, appId: event.appId }),
           }),
         },
       },
@@ -166,7 +167,7 @@ export const cardLoginMachine = setup({
             isRedirectForCurrentAttempt(event.state, context.attemptState),
           target: "validatingCallback",
           actions: assign({
-            callback: ({ event }) => ({ code: event.code }),
+            callback: ({ event }) => ({ code: event.code, appId: event.appId }),
           }),
         },
       },
@@ -181,7 +182,7 @@ export const cardLoginMachine = setup({
             isRedirectForCurrentAttempt(event.state, context.attemptState),
           target: "validatingCallback",
           actions: assign({
-            callback: ({ event }) => ({ code: event.code }),
+            callback: ({ event }) => ({ code: event.code, appId: event.appId }),
           }),
         },
         // The redirect may never arrive, so a second press mints a fresh attempt instead of wedging.
@@ -194,7 +195,13 @@ export const cardLoginMachine = setup({
         src: "validateCallback",
         input: ({ context }) => ({ ports: context.ports, callback: context.callback }),
         onDone: [
-          { guard: ({ event }) => event.output.kind === null, target: "exchangingCode" },
+          {
+            guard: ({ event }) => event.output.kind === null,
+            target: "exchangingCode",
+            // On the transition, not on entry: a transition action runs before the target state
+            // spawns its actor, so the exchange itself already carries the tenant.
+            actions: "publishProviderAppId",
+          },
           {
             target: "clearingAttempt",
             actions: assign({ errorKind: ({ event }) => event.output.kind }),

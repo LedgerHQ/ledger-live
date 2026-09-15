@@ -141,6 +141,7 @@ const mockPorts: { [K in keyof CardLoginPorts]: jest.Mock } = {
   exchangeAuthorizationCode: jest.fn(async () => session),
   getUser: jest.fn(async () => user),
   setSignedIn: jest.fn(),
+  setProviderAppId: jest.fn(),
   openHostedLogin: jest.fn(
     async (): Promise<HostedLoginResult> => ({ type: "dismissed" }) as HostedLoginResult,
   ),
@@ -573,6 +574,40 @@ describe("useCardLoginViewModel intro", () => {
 // The hook resolves each machine error kind through `t(...)`, not a hardcoded map, so a renamed or
 // missing translation key would only show up by actually reading it back through i18n.
 const ERROR_MESSAGES = CARD_LOGIN_INTRO_RESOURCES.en.translation.payTab.cardLogin.errors;
+
+describe("useCardLoginViewModel provider app", () => {
+  let store: ReturnType<typeof buildStore>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockPorts.hasSession.mockResolvedValue(false);
+    mockPorts.loadAttempt.mockResolvedValue({ codeVerifier: "verifier-value" });
+    mockPorts.openHostedLogin.mockResolvedValue({ type: "pending" });
+    store = buildStore();
+    mockPorts.setSignedIn.mockImplementation((value: boolean) =>
+      store.dispatch(setSignedIn(value)),
+    );
+  });
+
+  const hostCallback = { code: "authorization-code", appId: "LEDGERUAT" };
+
+  it("forwards the app id of a redirect the host hands over", async () => {
+    // The desktop host reports the redirect through this prop, not through the browser session, so
+    // the forwarded event has to carry the app id as well as the code.
+    renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+          callback: hostCallback,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() => expect(mockPorts.setProviderAppId).toHaveBeenCalledWith("LEDGERUAT"));
+  });
+});
 
 describe("useCardLoginViewModel errors", () => {
   let store: ReturnType<typeof buildStore>;
