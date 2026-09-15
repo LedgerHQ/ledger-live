@@ -38,6 +38,7 @@ export type WalletV4TourCopy = {
 export type WalletV4Tour = {
   /** Analytics page name shared by the screen view and the button events. */
   readonly page: string;
+  readonly variant?: string;
   readonly testID: string;
   readonly slides: readonly WalletV4TourSlide[];
   readonly copy: WalletV4TourCopy;

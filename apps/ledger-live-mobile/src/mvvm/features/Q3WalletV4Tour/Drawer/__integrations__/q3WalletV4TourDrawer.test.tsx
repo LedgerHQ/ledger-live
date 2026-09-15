@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "react-native";
 import { fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { track } from "~/analytics";
 import { useQ3WalletV4TourDrawerViewModel } from "../hooks/useQ3WalletV4TourDrawerViewModel";
 import { Q3WalletV4TourDrawer } from "../index";
 
@@ -88,6 +89,23 @@ describe("Q3WalletV4TourDrawer integration", () => {
     await user.press(screen.getByRole("button", { name: "Take a look" }));
   });
 
+  it("should track Next with the Q3 variant", async () => {
+    const { user, resizeScreenWidth } = renderTestComponent({ variant: "q3_b2" });
+
+    await user.press(screen.getByText("Open Drawer"));
+    resizeScreenWidth();
+    await waitFor(() => expect(screen.getByText(SLIDES[0].title)).toBeOnTheScreen());
+
+    await user.press(screen.getByRole("button", { name: "Take a look" }));
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Next",
+      page: "Q3 Wallet V4 Tour",
+      card: 1,
+      variant: "q3_b2",
+    });
+  });
+
   it("should not show the drawer again after the tour is completed", async () => {
     const { user, resizeScreenWidth } = renderTestComponent({
       hasSeenTour: false,
@@ -101,6 +119,12 @@ describe("Q3WalletV4TourDrawer integration", () => {
     await user.press(screen.getByRole("button", { name: "All caught up" }));
 
     expect(firstSlideTitle).not.toBeOnTheScreen();
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Got it",
+      page: "Q3 Wallet V4 Tour",
+      variant: "q3_a",
+    });
 
     await user.press(screen.getByText("Open Drawer"));
     expect(screen.queryByText(SLIDES[0].title)).not.toBeOnTheScreen();
