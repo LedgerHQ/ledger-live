@@ -1,42 +1,78 @@
 import React from "react";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { StyleSheet, View } from "react-native";
+import { Box, Text, TileButton } from "@ledgerhq/lumen-ui-rnative";
+import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useTranslation } from "@shared/i18n";
 import { CardTransactions } from "@features/flow-pay-card-transactions";
 import { CardArtwork } from "../../CardArtwork/CardArtwork";
 import { CardVisual } from "../../CardVisual/CardVisual";
 import { FreezeAction } from "../../Freeze/Tile/FreezeAction";
 import { MoreAction } from "../../More/Tile/MoreAction";
+import { CardFlip } from "../../CardFlip/CardFlip";
+import { useRevealViewModel } from "../../Reveal/useRevealViewModel";
+import type { RevealViewModel, UnlockForReveal } from "../../../types";
 import type { OverviewSceneProps } from "./types";
 
 type OverviewActionsProps = Omit<
   OverviewSceneProps,
-  "cardVisual" | "onTransactionPress" | "formatters"
->;
+  "cardVisual" | "onTransactionPress" | "formatters" | "unlock"
+> &
+  Readonly<{
+    reveal: RevealViewModel | null;
+  }>;
+
+function CardFace({ cardVisual }: Pick<OverviewSceneProps, "cardVisual">) {
+  return cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />;
+}
 
 function OverviewActions({
   freezeViewModel,
   moreViewModel,
   onFreezePress,
   onMorePress,
+  reveal,
 }: OverviewActionsProps) {
+  const { t } = useTranslation();
+  const isRevealed = Boolean(reveal?.isRevealed);
+  const viewLabel = isRevealed ? t("payTab.card.numbers.hide") : t("payTab.card.numbers.reveal");
+
   return (
-    <Box lx={{ flexDirection: "row", gap: "s8" }}>
-      <Box lx={{ flex: 1 }}>
-        <FreezeAction
-          status={freezeViewModel.status}
-          isActionDisabled={freezeViewModel.isActionDisabled}
-          onOpenConfirm={onFreezePress}
-        />
-      </Box>
-      <Box lx={{ flex: 1 }}>
-        {moreViewModel ? (
-          <MoreAction moreLabel={moreViewModel.moreLabel} onMorePress={onMorePress} />
+    <Box lx={{ gap: "s8" }}>
+      <Box lx={{ flexDirection: "row", gap: "s8" }}>
+        {reveal ? (
+          <View style={styles.action}>
+            <TileButton
+              icon={isRevealed ? EyeCross : Eye}
+              isFull
+              disabled={reveal.status === "loading"}
+              onPress={isRevealed ? reveal.onHide : reveal.onReveal}
+              accessibilityLabel={viewLabel}
+            >
+              {viewLabel}
+            </TileButton>
+          </View>
         ) : null}
+        <View style={styles.action}>
+          <FreezeAction
+            status={freezeViewModel.status}
+            isActionDisabled={freezeViewModel.isActionDisabled}
+            onOpenConfirm={onFreezePress}
+          />
+        </View>
+        <View style={styles.action}>
+          {moreViewModel ? (
+            <MoreAction moreLabel={moreViewModel.moreLabel} onMorePress={onMorePress} />
+          ) : null}
+        </View>
       </Box>
+      {reveal?.status === "failed" ? (
+        <Text typography="body2">{t("payTab.card.numbers.failed")}</Text>
+      ) : null}
     </Box>
   );
 }
 
-export function OverviewScene({
+function OverviewLayout({
   cardVisual,
   freezeViewModel,
   moreViewModel,
@@ -44,16 +80,18 @@ export function OverviewScene({
   onMorePress,
   onTransactionPress,
   formatters,
-}: OverviewSceneProps) {
+  reveal,
+}: OverviewSceneProps & { readonly reveal: RevealViewModel | null }) {
   return (
     <Box lx={{ gap: "s16" }} testID="card-details-overview">
-      {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
+      <CardFlip reveal={reveal} cardFace={<CardFace cardVisual={cardVisual} />} />
 
       <OverviewActions
         freezeViewModel={freezeViewModel}
         moreViewModel={moreViewModel}
         onFreezePress={onFreezePress}
         onMorePress={onMorePress}
+        reveal={reveal}
       />
 
       <CardTransactions
@@ -63,3 +101,23 @@ export function OverviewScene({
     </Box>
   );
 }
+
+function OverviewWithReveal({
+  unlock,
+  ...props
+}: OverviewSceneProps & { readonly unlock: UnlockForReveal }) {
+  const reveal = useRevealViewModel({ unlock });
+  return <OverviewLayout {...props} unlock={unlock} reveal={reveal} />;
+}
+
+export function OverviewScene(props: OverviewSceneProps) {
+  return props.unlock ? (
+    <OverviewWithReveal {...props} unlock={props.unlock} />
+  ) : (
+    <OverviewLayout {...props} reveal={null} />
+  );
+}
+
+const styles = StyleSheet.create({
+  action: { flex: 1, minWidth: 0 },
+});

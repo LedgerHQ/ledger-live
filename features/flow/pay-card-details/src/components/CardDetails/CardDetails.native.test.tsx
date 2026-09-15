@@ -3,12 +3,13 @@ import { render, screen, userEvent } from "@testing-library/react-native";
 import {
   cardApiWrapper,
   listenToCardApi,
+  revealCardDetailsHandler,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
 import { CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardDetails } from "./CardDetails";
 
-listenToCardApi(signedInCardApiHandlers);
+listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 
 const StoreWrapper = cardApiWrapper({ signedIn: true });
 
@@ -20,11 +21,17 @@ function Wrapper({ children }: PropsWithChildren) {
   );
 }
 
-function renderCardDetails(onTrackEvent = jest.fn()) {
+function renderCardDetails({
+  unlock,
+  onTrackEvent = jest.fn(),
+}: {
+  unlock?: () => Promise<boolean>;
+  onTrackEvent?: jest.Mock;
+} = {}) {
   return {
     user: userEvent.setup(),
     onTrackEvent,
-    ...render(<CardDetails onTrackEvent={onTrackEvent} />, { wrapper: Wrapper }),
+    ...render(<CardDetails unlock={unlock} onTrackEvent={onTrackEvent} />, { wrapper: Wrapper }),
   };
 }
 
@@ -53,8 +60,34 @@ describe("CardDetails (native)", () => {
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
 
-    expect(await screen.findByText(CARD_COPY.freeze)).toBeVisible();
+    expect(screen.queryByText(CARD_COPY.numbersReveal)).not.toBeOnTheScreen();
+    expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
     expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
+  });
+
+  it("should show the card numbers image after View when unlock succeeds", async () => {
+    const { user } = renderCardDetails({ unlock: () => Promise.resolve(true) });
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByText(CARD_COPY.numbersReveal));
+
+    expect(await screen.findByLabelText(CARD_COPY.numbersImageAlt)).toBeVisible();
+    expect(screen.getByText(CARD_COPY.numbersHide)).toBeVisible();
+
+    await user.press(screen.getByText(CARD_COPY.numbersHide));
+
+    expect(screen.queryByLabelText(CARD_COPY.numbersImageAlt)).not.toBeOnTheScreen();
+    expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
+  });
+
+  it("should keep the card face when unlock is cancelled", async () => {
+    const { user } = renderCardDetails({ unlock: () => Promise.resolve(false) });
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByText(CARD_COPY.numbersReveal));
+
+    expect(screen.queryByLabelText(CARD_COPY.numbersImageAlt)).not.toBeOnTheScreen();
+    expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
   });
 
   it("should navigate to More without opening another sheet", async () => {
