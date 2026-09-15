@@ -1,5 +1,13 @@
 import { createPasswordVerifier, type ScryptParams } from "@shared/password-verifier";
-import { deserialisePasswordVerifier, serialisePasswordVerifier } from "./verifierStore";
+import { deserialisePasswordVerifier, serialisePasswordVerifier } from "./store.native";
+
+// The real module pulls react-native, which this package's node test environment cannot load.
+jest.mock("react-native-keychain", () => ({
+  ACCESSIBLE: { WHEN_UNLOCKED_THIS_DEVICE_ONLY: "AccessibleWhenUnlockedThisDeviceOnly" },
+  setGenericPassword: jest.fn(async () => true),
+  getGenericPassword: jest.fn(async () => false),
+  resetGenericPassword: jest.fn(async () => true),
+}));
 
 const scrypt: ScryptParams = {
   cost: 16384,

@@ -1,5 +1,7 @@
 import type { ScryptParams } from "@shared/password-verifier";
 import { scrypt } from "react-native-fast-crypto";
+// React Native provides no Buffer global; the app happened to have one, a package cannot.
+import { Buffer } from "buffer";
 
 export const APP_LOCK_SCRYPT_PARAMS: ScryptParams = {
   cost: 16384,
@@ -7,8 +9,6 @@ export const APP_LOCK_SCRYPT_PARAMS: ScryptParams = {
   parallelization: 1,
   digestLength: 32,
 };
-
-export const APP_LOCK_SALT_LENGTH = 16;
 
 function encodePassword(password: string): Uint8Array {
   return new Uint8Array(Buffer.from(password, "utf8"));
