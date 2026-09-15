@@ -96,12 +96,12 @@ export function createCardSession(store: CardSessionStore) {
       await store.write(CARD_SESSION_KEYS.refreshToken, session.refreshToken);
       await store.write(CARD_SESSION_KEYS.accessToken, session.accessToken);
     } catch (error) {
-      await removeSession();
+      await removeSession(expectedSessionId);
       throw error;
     }
 
     if (expectedSessionId !== sessionId) {
-      await removeSession();
+      await removeSession(expectedSessionId);
       return "stale";
     }
 
@@ -110,14 +110,26 @@ export function createCardSession(store: CardSessionStore) {
     return "written";
   }
 
-  async function removeSession(): Promise<void> {
+  /**
+   * Wipes the session this call owns. A cleanup for a superseded generation still drops the tokens
+   * it wrote, because the login that replaced it writes its own after this turn, but it leaves the
+   * tenant alone: that value belongs to the newer login, which recorded it in memory before this
+   * cleanup was reached and would otherwise route the rest of the process to the wrong server.
+   */
+  async function removeSession(cleanedSessionId: number): Promise<void> {
+    const ownsCurrentSession = cleanedSessionId === sessionId;
+
     isCleared = true;
-    recordProviderAppId(null);
+    if (ownsCurrentSession) {
+      recordProviderAppId(null);
+    }
 
     await store.remove(CARD_SESSION_KEYS.accessToken).catch(() => undefined);
     await store.remove(CARD_SESSION_KEYS.refreshToken).catch(() => undefined);
     await store.remove(CARD_SESSION_KEYS.lifetimes).catch(() => undefined);
-    await store.remove(CARD_SESSION_KEYS.providerAppId).catch(() => undefined);
+    if (ownsCurrentSession) {
+      await store.remove(CARD_SESSION_KEYS.providerAppId).catch(() => undefined);
+    }
   }
 
   async function readToken(key: string): Promise<string | null> {
@@ -265,8 +277,8 @@ export function createCardSession(store: CardSessionStore) {
   };
 
   const clear = (): Promise<void> => {
-    beginSessionReplacement();
-    return takeTurn(removeSession);
+    const cleaned = beginSessionReplacement();
+    return takeTurn(() => removeSession(cleaned));
   };
 
   const get = (): Promise<StoredCardSession | null> => takeTurn(readSession);
