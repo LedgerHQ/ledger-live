@@ -11,7 +11,7 @@ export type TransactionalIconProps = {
   isPending: boolean;
   hasFailed?: boolean;
   currency: CryptoCurrency | TokenCurrency;
-  mediaSize?: Parameters<typeof getDotIconProps<"mediaImage">>[1];
+  mediaSize?: 40 | 48 | 56 | 64 | 72;
 };
 
 function TransactionalIcon({
