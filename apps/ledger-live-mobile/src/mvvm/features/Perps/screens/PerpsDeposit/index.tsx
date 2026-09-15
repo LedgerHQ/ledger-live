@@ -46,27 +46,23 @@ function AmountMessage({
   const { t } = useTranslation();
   const provider = getProviderName(PERPS_DEPOSIT_PROVIDER_ID);
 
-  if (statusError) {
-    return (
-      <Text
-        typography="body3"
-        lx={{ color: "error", textAlign: "center" }}
-        testID="perps-deposit-form-error"
-      >
-        {t(statusError.labelKey, { provider })}
-      </Text>
-    );
-  }
+  const message = statusError ? (
+    <Text
+      typography="body3"
+      lx={{ color: "error", textAlign: "center" }}
+      testID="perps-deposit-form-error"
+    >
+      {t(statusError.labelKey, { provider })}
+    </Text>
+  ) : depositAmount > 0 ? (
+    <Text typography="body3" lx={{ color: "base", textAlign: "center" }}>
+      {t("perpsDeposit.inputSubText", { provider })}
+    </Text>
+  ) : null;
 
-  if (depositAmount > 0) {
-    return (
-      <Text typography="body3" lx={{ color: "base" }}>
-        {t("perpsDeposit.inputSubText", { provider })}
-      </Text>
-    );
-  }
-
-  return null;
+  return (
+    <Box lx={{ minHeight: "s40", justifyContent: "center", alignItems: "center" }}>{message}</Box>
+  );
 }
 
 function DepositForm({
@@ -111,10 +107,12 @@ function DepositForm({
             isInvalid={statusError !== null}
             testID="perps-deposit-amount-input"
           />
-          <QuotedAmount
-            formattedQuotedAmount={formattedQuotedAmount}
-            isQuoteLoading={isQuoteLoading}
-          />
+          <Box lx={{ minHeight: "s20", justifyContent: "center", alignItems: "center" }}>
+            <QuotedAmount
+              formattedQuotedAmount={formattedQuotedAmount}
+              isQuoteLoading={isQuoteLoading}
+            />
+          </Box>
           <AmountMessage statusError={statusError} depositAmount={depositAmount} />
         </Box>
 
