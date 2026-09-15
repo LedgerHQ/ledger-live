@@ -17,9 +17,17 @@ class NativeModulesPackage : ReactPackage {
 
     override fun createNativeModules(
         reactContext: ReactApplicationContext
-    ): MutableList<NativeModule> = listOf(
-        BluetoothHelperModule(reactContext),
-        LocationHelperModule(reactContext, coroutineDispatcher = Dispatchers.Default),
-        MeasureTransformModule(reactContext)
-    ).toMutableList()
+    ): MutableList<NativeModule> = buildList {
+        add(BluetoothHelperModule(reactContext))
+        add(LocationHelperModule(reactContext, coroutineDispatcher = Dispatchers.Default))
+        add(MeasureTransformModule(reactContext))
+
+        // Registered only when the build carries the prebuilt Zcash engine
+        // (scripts/sync-zcash-ffi.sh). Leaving the module out is the signal the
+        // JS layer reads as "engine unavailable" -- registering one that always
+        // fails would turn that clear answer into a runtime error.
+        if (ZcashFfiModule.isLibraryAvailable()) {
+            add(ZcashFfiModule(reactContext))
+        }
+    }.toMutableList()
 }
