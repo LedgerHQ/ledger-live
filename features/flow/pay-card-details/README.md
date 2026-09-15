@@ -12,12 +12,12 @@ Session teardown uses `useCardLogout` from [`@features/flow-pay-card-auth`](../p
 
 ## Usage
 
-Web hosts lay freeze and More next to the card with `CardActions`:
+Every host mounts a single `CardDetails`. Pass `unlock` to let the holder reveal the card numbers:
 
 ```tsx
-import { CardVisual, CardNumbers } from "@features/flow-pay-card-details";
+import { CardDetails } from "@features/flow-pay-card-details";
 
-<CardNumbers unlock={unlock} cardFace={<CardVisual {...cardVisual} />} />
+<CardDetails cardVisual={cardVisual} unlock={unlock} />
 ```
 
 Native hosts mount a single `CardDetails`. Two buttons — a disabled placeholder and **Details** —
@@ -42,9 +42,15 @@ import { CardDetails } from "@features/flow-pay-card-details";
 `CardVisual` composes the `CardArtwork` (card face) with the balance overlay. `CardArtwork` is also
 exported on its own for consumers that only need the card face. Hosts mount `CardDetails` and pass
 `cardVisual` to overlay the balance, or omit it for the bare artwork. On web that keeps freeze and
-More inline; on native they live in the Details bottom sheet. On web, `CardNumbers` flips the face
-to the PAN/CVV image and passes `cardNumbersViewModel` into `CardActions`, which returns Reveal beside Freeze and More. Without `unlock`,
-hosts mount `CardDetails` (or the face and `CardActions`) themselves.
+More inline; on native they live in the Details bottom sheet.
+
+On web `CardDetails` owns one reveal view model and passes it to `CardFlip` and `CardActions`.
+Omit `unlock` and that value is `null`: the face never flips and `CardActions` lays out Freeze
+and More alone.
+
+Hide only drops the status, not the image URL. The card takes a flip to turn back, and clearing
+the URL there would empty the face the moment the rotation starts; the next reveal clears it
+before minting a fresh token.
 
 The frozen state is not a host prop: `useCardVisualViewModel` reads the same `CardStatus` query the
 freeze tile uses, so the card face and the tile can never disagree. A frozen card fades out and
@@ -95,7 +101,7 @@ pay-card-details/
     │   ├── CardActions/
     │   │   └── CardActions.web.tsx            # Optional Reveal + Freeze + More in one row (web)
     │   ├── CardDetails/                       # Card block: web inline, native Details sheet
-    │   │   ├── CardDetails.web.tsx            # Visual + CardActions
+    │   │   ├── CardDetails.web.tsx            # Reveal VM passed to CardFlip and CardActions
     │   │   ├── CardDetails.native.tsx         # View-model + view
     │   │   ├── useCardDetailsViewModel.ts     # Details, Freeze and More state
     │   │   ├── CardDetailsView.native.tsx     # Overlay actions on the card face + fade
@@ -110,11 +116,11 @@ pay-card-details/
     │   │   ├── CardDetails.web.test.tsx
     │   │   ├── CardDetails.native.test.tsx
     │   │   └── CardDetailsSheet.native.test.tsx
-    │   ├── CardNumbers/
-    │   │   ├── CardNumbers.web.tsx            # Flip + View on the CardActions row
-    │   │   ├── CardNumbers.native.tsx         # Stub until LWM reveal UI
-    │   │   ├── CardNumbersView.web.tsx        # Flip to the PAN/CVV image
-    │   │   └── Tile/                          # View / Hide control
+    │   ├── CardFlip/
+    │   │   └── CardFlip.web.tsx               # Flip the card face to the PAN/CVV image
+    │   ├── Reveal/
+    │   │   ├── Reveal.web.tsx                 # View / Hide tile
+    │   │   └── useRevealViewModel.ts          # Unlock, mint the token, hold the image URL
     │   ├── Freeze/
     │   │   ├── Freeze.web.tsx                 # Tile + confirmation, wired to the view model
     │   │   ├── Freeze.native.tsx              # Tile only; confirmation is a CardDetails scene

@@ -8,7 +8,7 @@ export interface CardViewProps {
 }
 
 export const CardView = ({ viewModel }: CardViewProps) => {
-  const { title, formatters, balanceLabel, login } = viewModel;
+  const { title, formatters, balanceLabel, login, unlock } = viewModel;
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden pb-32">
@@ -19,6 +19,7 @@ export const CardView = ({ viewModel }: CardViewProps) => {
             login={login}
             formatters={formatters}
             balanceLabel={balanceLabel}
+            unlock={unlock}
           />
         </section>
       </PayCardContainer>
