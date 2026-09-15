@@ -40,8 +40,8 @@ catalogs:
       specifier: 0.1.0
       version: 0.1.0
     '@ledgerhq/coin-evm':
-      specifier: 5.3.2
-      version: 5.3.2
+      specifier: 5.3.6
+      version: 5.3.6
     '@ledgerhq/coin-hypercore':
       specifier: 2.0.1
       version: 2.0.1
@@ -1061,7 +1061,7 @@ importers:
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
+        version: 5.3.6(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
@@ -1897,7 +1897,7 @@ importers:
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
+        version: 5.3.6(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
@@ -2678,7 +2678,7 @@ importers:
         version: link:../../libs/coin-modules/coin-bitcoin
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.2(@ledgerhq/logs@6.19.0)
+        version: 5.3.6(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 8.5.0
@@ -9353,7 +9353,7 @@ importers:
         version: 14.0.1
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
+        version: 5.3.6(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 8.5.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
@@ -11505,7 +11505,7 @@ importers:
         version: link:../../../features/platform/currencies
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
+        version: 5.3.6(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -13232,7 +13232,7 @@ importers:
         version: link:../coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
         specifier: 'catalog:'
-        version: 5.3.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
+        version: 5.3.6(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../coin-modules/coin-filecoin
@@ -22430,8 +22430,8 @@ packages:
   '@ledgerhq/auth@0.1.0':
     resolution: {integrity: sha512-5gk625VjWuriSPk/+D+o5Y31tRHbRGHg2KCTmMWfxn1Mgij9iQVtC5NCTjfDzSZVHU+deE79Qm+b38+uNpEXkA==}
 
-  '@ledgerhq/coin-evm@5.3.2':
-    resolution: {integrity: sha512-tNkzYJnFpW99hvq66Xfpr7YvwlHmYVrUj4GH4vnURjeJ/ioQkIay0ziT6naAgbo3rMxpdZRDaXX5dexIanwbNQ==}
+  '@ledgerhq/coin-evm@5.3.6':
+    resolution: {integrity: sha512-m6y0SDnj1XhNyKwrlAZMKeMOHh38T90SYQvQERRuoqdPzNz0UyEllMlGqNheCwqopfj8ecEl+gexfQQDEOs+GA==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
@@ -22444,6 +22444,11 @@ packages:
 
   '@ledgerhq/coin-module-framework@8.5.0':
     resolution: {integrity: sha512-wIEcjk0BZAsDTEIgYEyiTsoeP0J6GXkVVUHfzzIZ8/n+mWCIhu2K0JDoKHNi2sovteCd6Mxw+aoLk/9kmI6e4w==}
+    peerDependencies:
+      '@ledgerhq/live-network': ^3.0.0
+
+  '@ledgerhq/coin-module-framework@9.1.0':
+    resolution: {integrity: sha512-iUOlKikmUBMXopE5oUFMREiP5q8ySLiDmxbFXcEWAKwItMGZzht9hrp8SawX1vWwS/b7JAUci5Dh8EXkwofUgQ==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
@@ -47685,10 +47690,10 @@ snapshots:
       jwt-decode: 4.0.0
       zod: 4.4.3
 
-  '@ledgerhq/coin-evm@5.3.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-evm@5.3.6(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+      '@ledgerhq/coin-module-framework': 9.1.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.5
@@ -47701,10 +47706,10 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@5.3.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))':
+  '@ledgerhq/coin-evm@5.3.6(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+      '@ledgerhq/coin-module-framework': 9.1.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.5
@@ -47717,10 +47722,10 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@5.3.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))':
+  '@ledgerhq/coin-evm@5.3.6(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+      '@ledgerhq/coin-module-framework': 9.1.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.5
@@ -47733,10 +47738,10 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-evm@5.3.2(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-evm@5.3.6(@ledgerhq/logs@6.19.0)':
     dependencies:
       '@ethersproject/shims': 5.7.0
-      '@ledgerhq/coin-module-framework': 8.5.0
+      '@ledgerhq/coin-module-framework': 9.1.0
       '@ledgerhq/logs': 6.19.0
       axios: 1.13.5
       bignumber.js: 9.1.2
@@ -47760,6 +47765,17 @@ snapshots:
       bignumber.js: 9.1.2
 
   '@ledgerhq/coin-module-framework@8.5.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
+    dependencies:
+      '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
+      axios: 1.13.5
+      bignumber.js: 9.1.2
+
+  '@ledgerhq/coin-module-framework@9.1.0':
+    dependencies:
+      axios: 1.13.5
+      bignumber.js: 9.1.2
+
+  '@ledgerhq/coin-module-framework@9.1.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
     dependencies:
       '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
       axios: 1.13.5
