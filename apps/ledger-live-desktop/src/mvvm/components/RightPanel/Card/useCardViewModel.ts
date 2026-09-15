@@ -117,10 +117,15 @@ export function useCardViewModel(): CardViewModel {
     [oauthConfig, callback, openHostedLogin, openHostedPage, onTrackEvent],
   );
 
+  // Nothing gates the reveal yet, so it authorizes every holder. The gate replaces this body, not
+  // its callers: the flow already treats a `false` as "the holder declined" and stays hidden.
+  const unlock = useCallback(() => Promise.resolve(true), []);
+
   return {
     title: t("payTab.card.title"),
     balanceLabel: t("payTab.card.balanceLabel"),
     formatters,
     login,
+    unlock,
   };
 }
