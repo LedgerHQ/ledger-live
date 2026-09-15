@@ -299,10 +299,6 @@ export async function takeSpeculosScreenshot() {
 
 export async function registerSpeculos(speculosPort: number) {
   const speculosAddress = process.env.SPECULOS_ADDRESS;
-  // A remote Speculos is reached at its own URL on 443, so there is nothing on the host to
-  // map a device port onto. Attempting it anyway is a no-op on an iOS simulator but a real
-  // `adb reverse tcp:443` on Android, which fails to bind a privileged port and is contended
-  // by all three workers.
   if (!isSpeculosRemote()) {
     await device.reverseTcpPort(speculosPort);
   }
