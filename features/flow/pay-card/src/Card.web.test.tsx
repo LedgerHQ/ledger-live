@@ -1,90 +1,160 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import type { CardProps } from "./Card.types";
+import { cleanup, render, screen } from "@testing-library/react";
+import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
+import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
+import type { CardFormatters, CardProps } from "./Card.types";
+import { CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
 
-let mockIsSignedIn = false;
+let mockStatus: PayCardAuthStatus = "unknown";
+let receivedTransactionFormatters: CardTransactionFormatters | undefined;
+let receivedTransactionTracker: CardProps["login"]["onTrackEvent"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
-  CardMore: () => <div data-testid="card-more" />,
-  useIsCardSignedIn: () => mockIsSignedIn,
+  useCardAuthStatus: () => mockStatus,
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
-  CardVisual: () => <div data-testid="card-visual" />,
-  Freeze: () => <div data-testid="card-freeze" />,
+  CardDetails: ({ cardVisual }: { cardVisual?: unknown }) => (
+    <div data-testid={cardVisual ? "card-details-with-visual" : "card-details"} />
+  ),
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
   CardOnboardingWidget: () => <div data-testid="card-onboarding-widget" />,
 }));
 
+jest.mock("@features/flow-pay-card-transactions", () => ({
+  CardTransactions: ({
+    formatters,
+    onTrackEvent,
+  }: {
+    formatters?: CardTransactionFormatters;
+    onTrackEvent?: CardProps["login"]["onTrackEvent"];
+  }) => {
+    receivedTransactionFormatters = formatters;
+    receivedTransactionTracker = onTrackEvent;
+    return <div data-testid="card-transactions" />;
+  },
+}));
+
 import { Card } from "./Card";
 
-const title = "Crypto card";
+const title = CARD_TITLE;
 
-const oauthConfig: CardProps["oauthConfig"] = {
+function renderCard(card: React.ReactElement) {
+  return render(card, { wrapper: I18nWrapper });
+}
+
+const oauthConfig: CardProps["login"]["oauthConfig"] = {
   apiUrl: "https://card.example",
   clientId: "client-id",
   hostedUiUrl: "https://hosted.example",
   redirectUri: "https://card.example/callback",
 };
 
-const formatCountervalue: CardProps["formatCountervalue"] = (value: number) => ({
-  integerPart: String(value),
-  decimalPart: "00",
-  currencyText: "$",
-  decimalSeparator: ".",
-  currencyPosition: "start",
-});
+const formatters: CardFormatters = {
+  countervalue: (value: number) => ({
+    integerPart: String(value),
+    decimalPart: "00",
+    currencyText: "$",
+    decimalSeparator: ".",
+    currencyPosition: "start",
+  }),
+};
 
 describe("Card (web)", () => {
+  afterEach(cleanup);
+
   beforeEach(() => {
-    mockIsSignedIn = false;
+    mockStatus = "unknown";
+    receivedTransactionFormatters = undefined;
+    receivedTransactionTracker = undefined;
   });
 
-  it("renders the host title once the card holder is signed in", () => {
-    mockIsSignedIn = true;
-
-    render(<Card title={title} oauthConfig={oauthConfig} />);
+  it("always shows the card title", () => {
+    renderCard(<Card login={{ oauthConfig }} />);
 
     expect(screen.getByText(title)).toBeVisible();
   });
 
-  it("shows the host title while nobody is signed in", () => {
-    render(<Card title={title} oauthConfig={oauthConfig} />);
+  describe("while resolving the session", () => {
+    it("shows only the bare artwork, holding back the widget and the card details", () => {
+      renderCard(<Card login={{ oauthConfig }} />);
 
-    expect(screen.getByText(title)).toBeVisible();
+      expect(screen.getByTestId("card-artwork")).toBeVisible();
+      expect(screen.queryByTestId("card-onboarding-widget")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
+    });
   });
 
-  it("composes the bare artwork with the auth login and More menu", () => {
-    render(<Card title={title} oauthConfig={oauthConfig} />);
+  describe("while signed out", () => {
+    beforeEach(() => {
+      mockStatus = "signedOut";
+    });
 
-    expect(screen.getByTestId("card-artwork")).toBeVisible();
-    expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-more")).toBeVisible();
+    it("shows the bare artwork above the login, with no card details or widget", () => {
+      renderCard(<Card login={{ oauthConfig }} />);
+
+      expect(screen.getByTestId("card-artwork")).toBeVisible();
+      expect(screen.getByTestId("card-login")).toBeVisible();
+      expect(screen.queryByTestId("card-onboarding-widget")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
+    });
+
+    it("never builds the balance overlay, even when the host provides a formatter", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+
+      expect(screen.getByTestId("card-artwork")).toBeVisible();
+      expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
+    });
   });
 
-  it("mounts the onboarding widget", () => {
-    render(<Card title={title} oauthConfig={oauthConfig} />);
+  describe("once signed in", () => {
+    beforeEach(() => {
+      mockStatus = "signedIn";
+    });
 
-    expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
-  });
+    it("shows the widget and the card details, with no login or bare artwork", () => {
+      renderCard(<Card login={{ oauthConfig }} />);
 
-  it("swaps the bare artwork for the card visual once the host provides a formatter and label", () => {
-    render(
-      <Card
-        title={title}
-        oauthConfig={oauthConfig}
-        formatCountervalue={formatCountervalue}
-        balanceLabel="Balance"
-      />,
-    );
+      expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
+      expect(screen.getByTestId("card-details")).toBeVisible();
+      expect(screen.getByTestId("card-transactions")).toBeVisible();
+      expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
+    });
 
-    expect(screen.getByTestId("card-visual")).toBeVisible();
-    expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
-    expect(screen.getByTestId("card-login")).toBeVisible();
-    expect(screen.getByTestId("card-more")).toBeVisible();
+    it("hands the card visual to the details block once the host provides a formatter", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+
+      expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
+      expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
+    });
+
+    it("hands the transaction formatters to the transactions list", () => {
+      const transactionAmount = jest.fn();
+      const transactionDate = jest.fn();
+
+      renderCard(
+        <Card login={{ oauthConfig }} formatters={{ transactionAmount, transactionDate }} />,
+      );
+
+      expect(receivedTransactionFormatters?.amount).toBe(transactionAmount);
+      expect(receivedTransactionFormatters?.date).toBe(transactionDate);
+    });
+
+    it("hands the host tracker to the transactions list", () => {
+      const onTrackEvent = jest.fn();
+
+      renderCard(<Card login={{ oauthConfig, onTrackEvent }} />);
+
+      expect(receivedTransactionTracker).toBe(onTrackEvent);
+    });
   });
 });

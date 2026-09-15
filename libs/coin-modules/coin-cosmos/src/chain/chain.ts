@@ -7,6 +7,7 @@ import Cosmos from "./Cosmos";
 import CryptoOrg from "./CryptoOrg";
 import Desmos from "./Desmos";
 import Dydx from "./Dydx";
+import Gonka from "./Gonka";
 import Injective from "./Injective";
 import Mantra from "./Mantra";
 import Nyx from "./Nyx";
@@ -88,6 +89,9 @@ export default function cryptoFactory(currencyId: string, config?: CosmosCoinCon
         break;
       case "babylon":
         chain = new Babylon();
+        break;
+      case "gonka":
+        chain = new Gonka();
         break;
       default:
         throw new Error(`${currencyId} is not supported`);

@@ -1,7 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { buildRecipientTransactionPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type {
   SendFlowTransactionState,
@@ -52,10 +54,15 @@ export function useSendFlowTransaction({
     (recipient: RecipientData) => {
       if (!account || !transaction || !bridge) return;
 
-      const updates = buildRecipientTransactionPatch(
-        transaction,
-        recipient,
-      ) as Partial<Transaction>;
+      const balanceTypeConfig = sendFeatures.getBalanceTypeConfig(getAccountCurrency(account));
+      const updates = {
+        ...buildRecipientTransactionPatch(transaction, recipient),
+        // Every recipient write passes here, so a coin holding self-transfer state has it
+        // set by the shortcut that prefills its own pool and cleared by anything else.
+        ...balanceTypeConfig?.buildSelfTransferPatch({
+          isSelfTransfer: recipient.isSelfTransfer === true,
+        }),
+      } as Partial<Transaction>;
 
       bridgeSetTransaction(bridge.updateTransaction(transaction, updates));
     },

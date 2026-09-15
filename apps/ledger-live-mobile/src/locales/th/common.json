@@ -129,6 +129,12 @@
     "ldmkEnabled" : "เปิดใช้งาน LDMK Transport แล้ว"
   },
   "errors" : {
+    "ZcashMemoTooLong" : {
+      "title" : "Memo ต้องไม่เกิน {{maxBytes}} ไบต์"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "จำนวนนี้ใหญ่เกินไปที่จะส่งในธุรกรรมเดียว ลองแบ่งส่งเป็นจำนวนย่อยหลายครั้งแทน"
+    },
     "ReplacementTransactionUnderpriced" : {
       "title" : "ธุรกรรมแทนที่มีราคาต่ำกว่าราคาจริง",
       "description" : "ค่าธรรมเนียมเครือข่ายอาจต่ำเกินไป โปรดเพิ่ม"
@@ -699,6 +705,10 @@
       "title" : "ขออภัย เงินทุนไม่พอ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "ไม่สามารถดึงข้อมูลยอดคงเหลือในบัญชีของคุณได้",
+      "description" : "โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองอีกครั้ง"
+    },
     "UnstakeNotEnoughStakedBalanceLeft" : {
       "title" : "หากคุณ Unstake เกิน {{maxAmount}} จำนวนที่คุณสเตคทั้งหมด {{totalAmount}} จะถูก Unstake",
       "description" : "หากคุณ Unstake เกิน {{maxAmount}} จำนวนที่คุณสเตคทั้งหมด {{totalAmount}} จะถูก Unstake"
@@ -957,6 +967,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "การยกเลิกการสเตคจากผู้ตรวจสอบก่อนหน้าต้องเสร็จสิ้นก่อน"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "มีจำนวนนี้น้อยกว่าที่จะสามารถสเตคได้"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "โปรดล้างบัญชีย่อยทั้งหมดก่อน"
@@ -1540,6 +1553,7 @@
       "title" : "ยืนยันรหัสผ่าน",
       "description" : "คุณจะต้องใช้รหัสผ่านนี้ทุกครั้งที่เปิดแอป หากคุณทำหาย ให้ติดตั้งแอปใหม่และกู้คืนวอลเล็ตของคุณอีกครั้ง",
       "mismatch" : "รหัสผ่านไม่ตรงกัน",
+      "saveFailed" : "เราไม่สามารถบันทึกรหัสผ่านของคุณได้ โปรดลองอีกครั้ง",
       "cta" : "ยืนยัน"
     }
   },
@@ -3172,7 +3186,8 @@
       "previousStakingNodeId" : "ID โหนดก่อนหน้า",
       "gasConsumed" : "ค่าแก๊สที่ใช้หมดไป",
       "gasUsed" : "ค่าแก๊สที่ใช้ไป",
-      "functionId" : "รหัสฟังก์ชัน"
+      "functionId" : "รหัสฟังก์ชัน",
+      "inputs" : "อินพุต"
     },
     "multipleAddresses" : "ทำไมต้องหลาย Address?"
   },
@@ -4273,6 +4288,11 @@
           "actions" : {
             "viewInExplorer" : "ดูใน Explorer",
             "copied" : "คัดลอกแล้ว"
+          },
+          "earnBanner" : {
+            "title" : "รับผลตอบแทนสูงสุด {{apy}}% {{type}}",
+            "description" : "สำรวจโอกาสในการสร้างรายได้",
+            "button" : "สำรวจ"
           },
           "accessibility" : {
             "copySwapId" : "คัดลอกสวอป ID"
@@ -7728,7 +7748,53 @@
     }
   },
   "mina" : {
-    "memoPlaceholder" : "Memo (ไม่บังคับ)"
+    "memoPlaceholder" : "Memo (ไม่บังคับ)",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegate",
+      "earn" : "สร้างรายได้"
+    },
+    "stakeBanner" : {
+      "title" : "รับ Reward จาก MINA",
+      "altTitle" : "จัดการการ Delegate MINA ของคุณ",
+      "description" : "Delegate MINA เป็น Block Producer และรับ Reward จากการสร้างบล็อก Reward จะถูกแจกจ่ายตามจำนวนที่ Delegate",
+      "altDescription" : "เปลี่ยนการตั้งค่าการ Delegate หรือ Undelegate โทเคน MINA ของคุณ"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegate ไปยัง",
+      "stakedBalance" : "ยอดคงเหลือในบัญชีที่ Delegate",
+      "producerAddress" : "Address ของผู้สร้าง",
+      "delegatedToTooltip" : "ชื่อของผู้สร้างบล็อกที่คุณ Delegate ให้",
+      "stakedBalanceTooltip" : "ยอดรวม MINA ทั้งหมดที่ Delegate ให้ผู้ตรวจสอบรายนี้ในปัจจุบัน",
+      "producerAddressTooltip" : "Public Address ของผู้สร้างบล็อกที่คุณกำลัง Delegate ให้"
+    },
+    "delegators" : "ผู้ Delegate",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "เลือกผู้ตรวจสอบ",
+        "connectDevice" : "เชื่อมต่ออุปกรณ์",
+        "confirmation" : "การยืนยัน"
+      },
+      "title" : "Delegate MINA",
+      "help" : "เลือกผู้ตรวจสอบจากรายการด้านล่างเพื่อ Delegate โทเคน MINA ของคุณ",
+      "success" : {
+        "title" : "ประกาศธุรกรรมเรียบร้อยแล้ว",
+        "description" : "ประกาศคำขอเปลี่ยนการ Delegate ของคุณแล้ว"
+      },
+      "error" : {
+        "title" : "เกิดข้อผิดพลาดระหว่างประกาศธุรกรรมของคุณ"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "จำนวนที่สเตคแล้วทั้งหมด",
+      "commission" : "คอมมิชชัน",
+      "showAll" : "แสดงทั้งหมด",
+      "showLess" : "แสดงน้อยลง",
+      "iDelegate" : "ฉันจะ Delegate",
+      "listHeader" : "การ Delegate",
+      "redelegate" : "Redelegate",
+      "undelegate" : "Undelegate",
+      "undelegateTitle" : "ยกเลิกการมอบหมาย MINA"
+    }
   },
   "near" : {
     "info" : {
@@ -8692,7 +8758,9 @@
           "inactive" : "ไม่ได้เปิดใช้งาน",
           "inactiveTooltip" : "ไม่พบผู้ตรวจสอบ",
           "overstaked" : "สเตคมากเกินไป",
-          "overstakedTooltip" : "มีการสเตคมากเกินไปในโหนดนี้ ทำให้อัตราผลตอบแทนต่อปี (APY) ต่ำกว่าค่าที่เหมาะสม"
+          "overstakedTooltip" : "มีการสเตคมากเกินไปในโหนดนี้ ทำให้อัตราผลตอบแทนต่อปี (APY) ต่ำกว่าค่าที่เหมาะสม",
+          "fetchError" : "ไม่สามารถโหลดได้",
+          "fetchErrorTooltip" : "ไม่สามารถโหลดข้อมูลของผู้ตรวจสอบได้ โปรดลองอีกครั้ง"
         },
         "rewards" : "Reward",
         "actions" : {
@@ -9722,12 +9790,15 @@
     "selectAsset" : "เลือกสินทรัพย์",
     "selectNetwork" : "เลือกเครือข่าย",
     "selectAccount" : "เลือกบัญชี",
+    "selectAccountToPayFrom" : "เลือกบัญชีที่จะใช้ชำระเงิน",
     "selectAccountPerpsTitle" : "เลือกบัญชี Hyperliquid",
-    "selectAccountPerpsDescription" : "หากต้องการเติมเงินทุนสำหรับสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps) คุณต้องมีบัญชี Hyperliquid เพิ่มบัญชีเพื่อดำเนินการต่อ",
+    "selectAccountPerpsDescription" : "เลือกบัญชีที่คุณต้องการฝากเงินทุนเพื่อทำการซื้อขาย",
+    "selectAccountPerpsEmptyDescription" : "หากต้องการเติมเงินทุนสำหรับสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps) คุณต้องมีบัญชี Hyperliquid เพิ่มบัญชีเพื่อดำเนินการต่อ",
     "selectDepositCurrencyTitle" : "เลือกสินทรัพย์ที่จะฝาก",
     "selectDepositCurrencyDescription" : "สามารถใช้สินทรัพย์ใดรับรองก็ได้ ระบบจะสวอปให้โดยอัตโนมัติหากจำเป็น",
     "searchPlaceholder" : "ค้นหาตามชื่อหรือ Address",
     "emptyAssetList" : "ไม่พบสินทรัพย์",
+    "notAvailableYet" : "ยังไม่พร้อมใช้งาน",
     "accountCount_one" : "{{count}} บัญชี",
     "accountCount_other" : "{{count}} บัญชี",
     "emptyAccounts" : "คุณยังไม่มีบัญชี {{network}} โปรดเพิ่มบัญชีเพื่อดำเนินการต่อ",
@@ -10099,22 +10170,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "ใช้จ่ายและรับเงิน",
-      "description" : "สเตเบิลคอยน์ช่วยลดช่องว่างระหว่างคริปโตกับการใช้จ่ายจริงในชีวิตประจำวัน",
-      "cta" : "เข้าใจแล้ว",
+      "title" : "การชำระเงินทั้งหมดของคุณในที่เดียว",
+      "description" : "พบกับแท็บ 'จ่ายเงิน' ใหม่ ให้คุณใช้จ่ายคริปโตได้ง่าย ๆ ในชีวิตประจำวัน",
+      "cta" : "สำรวจฟีเจอร์ 'จ่ายเงิน'",
       "rows" : {
         "global" : {
-          "title" : "ใช้จ่ายและรับเงินได้ทั่วโลก",
-          "description" : "พร้อมรับประโยชน์จากค่าธรรมเนียมเครือข่ายที่ต่ำ"
+          "title" : "ชำระเงินให้คนในรายชื่อของคุณ",
+          "description" : "ส่งคริปโตไปยังที่อยู่คริปโตที่บันทึกไว้"
         },
         "volatility" : {
-          "title" : "ความผันผวนต่ำ",
-          "description" : "เพราะมูลค่าของสเตเบิลคอยน์อิงตามเงินสกุลทั่วไป"
+          "title" : "ขอรับการชำระเงิน",
+          "description" : "ขอให้คนในรายชื่อส่งเงินให้คุณ"
         },
         "card" : {
-          "title" : "ใช้จ่ายผ่านบัตรและรับเครดิตเงินคืน 1%",
-          "description" : "จ่ายได้ด้วย USDC, USDT, BTC, ETH และอื่น ๆ"
+          "title" : "ช้อปทั่วโลกด้วยบัตรคริปโต",
+          "description" : "และรับเครดิตเงินคืน 1% แบบไม่จำกัด"
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "เพิ่มเติม",
+      "title" : "เพิ่มเติม",
+      "rows" : {
+        "managePin" : "จัดการรหัส PIN",
+        "accessBaanx" : "ไปที่ Baanx",
+        "help" : "ขอความช่วยเหลือ",
+        "logout" : "ออกจากระบบ"
       }
     },
     "balance" : {
@@ -10129,7 +10210,12 @@
       }
     },
     "card" : {
-      "title" : "บัตรคริปโต"
+      "title" : "บัตรคริปโต",
+      "freeze" : "ระงับบัตรชั่วคราว",
+      "unfreeze" : "ยกเลิกการระงับบัตร"
+    },
+    "selectContact" : {
+      "placeholder" : "ป้อนรายชื่อ"
     },
     "actions" : {
       "deposit" : "เพิ่มสเตเบิลคอยน์",
@@ -10144,6 +10230,10 @@
         "copied" : "คัดลอกแล้ว",
         "save" : "บันทึก",
         "verify" : "ตรวจสอบ"
+      },
+      "verifyHint" : {
+        "message" : "ตรวจสอบที่อยู่คริปโตบน\nอุปกรณ์ Ledger ของคุณ\nก่อนแชร์",
+        "gotIt" : "เข้าใจแล้ว"
       },
       "verifyAddress" : {
         "introTitle" : "ตรวจสอบที่อยู่คริปโตของคุณ",
@@ -10187,10 +10277,86 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "แปลงเงินสดเป็นสเตเบิลคอยน์",
+      "description" : "แปลงเงินสดเป็นสเตเบิลคอยน์เข้าแอป Ledger Wallet™ โดยตรง",
+      "createAccount" : "สร้างบัญชี",
+      "logIn" : "เข้าสู่ระบบ Noah",
+      "providedBy" : "ให้บริการโดย Noah",
+      "rows" : {
+        "bank" : {
+          "title" : "รับเงินโอนจากทุกธนาคาร",
+          "description" : "รับเงินเดือน รายการชำระเงิน และเงินฝากผ่าน SEPA หรือ ACH"
+        },
+        "fees" : {
+          "title" : "ไม่มีค่าธรรมเนียมแฝง",
+          "description" : "โอนตรงจากธนาคารสู่บล็อกเชน ค่าธรรมเนียมเพียง 0.25%"
+        },
+        "earn" : {
+          "title" : "ให้เงินทำงานแทนคุณได้ทันที",
+          "description" : "คุณสามารถสวอปหรือสร้างรายได้จากสเตเบิลคอยน์ของคุณ"
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "บัตรคริปโต",
+      "beforeIntro" : {
+        "description" : "รับเครดิตเงินคืน 1% ทุกครั้งที่ใช้จ่าย",
+        "action" : "สมัครบัตร"
+      },
+      "afterIntro" : {
+        "description" : "เข้าสู่ระบบเพื่อดูข้อมูลบัตรของคุณ",
+        "action" : "เข้าสู่ระบบ"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "ใช้จ่ายด้วยคริปโต แล้วรับเครดิตเงินคืน",
+      "providedBy" : "บัตรให้บริการโดย Baanx",
+      "createAccount" : "สร้างบัญชี",
+      "logIn" : "เข้าสู่ระบบ Baanx",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay หรือ Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "เครดิตเงินคืนคริปโต 1% แบบไม่จำกัด",
+          "description" : "สำหรับการซื้อผ่านบัตรคริปโตทั้งหมดด้วย USDC, USDT หรือ BTC"
+        },
+        "virtualCard" : {
+          "title" : "ได้รับ Virtual Card ฟรี",
+          "description" : "เพิ่มลงใน {{wallet}} และพร้อมใช้งานทันที"
+        },
+        "topUp" : {
+          "title" : "เติมเงินผ่านแอป Ledger Wallet™ ได้อย่างปลอดภัย",
+          "description" : "อนุมัติทุกการโอนด้วยอุปกรณ์ลงนาม Ledger ของคุณ"
+        }
+      }
+    },
     "contacts" : {
       "title" : "จ่าย",
       "pay" : "ใหม่",
-      "seeAllTitle" : "ชำระเงินผ่านฟีเจอร์รายชื่อ"
+      "seeAllTitle" : "ชำระเงินผ่านฟีเจอร์รายชื่อ",
+      "addressPicker" : {
+        "title" : "เลือกที่อยู่คริปโตของ {{name}}",
+        "addAddress" : "เพิ่มที่อยู่"
+      }
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "ตั้งค่าบัตรของคุณ",
+        "allDone" : "เสร็จเรียบร้อยแล้ว!"
+      },
+      "dialog" : {
+        "title" : "ตั้งค่าบัตรของคุณ",
+        "stepComplete" : "เสร็จเรียบร้อย",
+        "gotIt" : "เข้าใจแล้ว"
+      },
+      "walletStep" : {
+        "title" : "เพิ่มบัตรเข้าไปใน Apple หรือ Google Pay",
+        "description" : "ใช้จ่ายผ่านโทรศัพท์ของคุณในร้านค้า"
+      }
     }
   },
   "syncIndicator" : {
@@ -10418,6 +10584,16 @@
           "title" : "กำลังเตรียมอุปกรณ์ Ledger ของคุณ"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "กำลังเตรียมอุปกรณ์ Ledger ของคุณ"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "กำลังเตรียมอุปกรณ์ Ledger ของคุณ"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "ใช้อุปกรณ์ Ledger เครื่องเดียวกับที่ใช้เพิ่มรายชื่อนี้",
@@ -10430,6 +10606,10 @@
         "appVersionTooLow" : {
           "title" : "ต้องอัปเดตแอป",
           "description" : "อัปเดตแอปบนอุปกรณ์ Ledger ของคุณเพื่อบันทึกรายชื่อ แล้วลองอีกครั้ง"
+        },
+        "osVersionTooLow" : {
+          "title" : "จำเป็นต้องมีการอัปเดต Ledger OS ก่อน",
+          "description" : "อัปเดตระบบปฏิบัติการของอุปกรณ์ Ledger ของคุณเพื่อแก้ไขชื่อในรายชื่อ แล้วลองใหม่"
         }
       }
     },
@@ -10541,12 +10721,6 @@
       "applyChanges" : "บันทึกการเปลี่ยนแปลง",
       "invalidLabelError" : "ห้ามใช้อักขระพิเศษ"
     },
-    "editSigner" : {
-      "title" : "ยืนยันบนอุปกรณ์ของคุณ",
-      "description" : "เชื่อมต่อและปลดล็อกอุปกรณ์ Ledger ของคุณเพื่อยืนยันการเปลี่ยนแปลงนี้",
-      "confirm" : "ดำเนินการต่อ",
-      "cancel" : "ยกเลิก"
-    },
     "editSignerMismatch" : {
       "title" : "ใช้อุปกรณ์ Ledger เดียวกันกับที่คุณใช้เพิ่มรายชื่อนี้",
       "description" : "อุปกรณ์ที่เชื่อมต่อไม่ตรงกัน",
@@ -10554,10 +10728,10 @@
       "cancel" : "ยกเลิก"
     },
     "ledgerSyncIntroduction" : {
-      "title" : "เปิดฟีเจอร์ Ledger Sync เพื่อบันทึกรายชื่อ",
-      "description" : "รายชื่อติดต่อของคุณได้รับการเข้ารหัสแบบต้นทางถึงปลายทาง (End-to-End Encrypted) ด้วย Ledger ของคุณ และซิงค์กับอุปกรณ์ต่าง ๆ ของคุณ โดยมีเพียงคุณเท่านั้นที่สามารถปลดล็อกได้",
-      "activate" : "เปิด Ledger Sync",
-      "dismiss" : "เข้าใจแล้ว",
+      "title" : "ซิงค์วอลเล็ตของคุณเพื่อเพิ่มรายชื่อ",
+      "description" : "รายชื่อได้รับการเข้ารหัสแบบต้นทางถึงปลายทาง และซิงค์ข้อมูลกับแอป Ledger Wallet บนโทรศัพท์และคอมพิวเตอร์ทุกเครื่องของคุณ",
+      "activate" : "ซิงค์วอลเล็ตของฉัน",
+      "dismiss" : "ไม่ใช่ตอนนี้",
       "checkingAccessibilityLabel" : "กำลังตรวจสอบสถานะของฟีเจอร์ Ledger Sync"
     },
     "featureIntroduction" : {

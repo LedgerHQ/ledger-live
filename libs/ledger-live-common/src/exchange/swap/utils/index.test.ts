@@ -10,6 +10,7 @@ import {
   getAvailableAccountsById,
   getNoticeType,
   getProviderName,
+  getProviderTermsOfUseUrl,
   isRegistrationRequired,
 } from "./index";
 
@@ -226,6 +227,30 @@ describe("swap/utils/getProviderName", () => {
     const result = getProviderName("changelly");
 
     expect(result).toBe(expectedResult);
+  });
+});
+
+describe("swap/utils/getProviderTermsOfUseUrl", () => {
+  test("should return the terms of use url for changelly", () => {
+    const expectedResult = "https://changelly.com/terms-of-use";
+
+    const result = getProviderTermsOfUseUrl("changelly");
+
+    expect(result).toBe(expectedResult);
+  });
+
+  test("should return the terms of use url for the perps deposit provider", () => {
+    const expectedResult = "https://swapkit.dev/terms-of-service/";
+
+    const result = getProviderTermsOfUseUrl("swapkit_hyperliquid");
+
+    expect(result).toBe(expectedResult);
+  });
+
+  test("should return undefined for an unknown provider", () => {
+    const result = getProviderTermsOfUseUrl("unknown-provider");
+
+    expect(result).toBeUndefined();
   });
 });
 

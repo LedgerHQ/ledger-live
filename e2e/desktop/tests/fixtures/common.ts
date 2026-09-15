@@ -12,6 +12,7 @@ import { launchApp } from "tests/utils/electronUtils";
 import {
   captureArtifacts,
   addTeamOwner,
+  addAnnotationLinks,
   attachMergedFeatureFlags,
   runCliStep,
 } from "tests/utils/allureUtils";
@@ -64,6 +65,7 @@ type TestFixtures = {
   localManifestOverride?: LiveAppManifest[];
   teamOwner?: Team;
   teamOwnerLabel: void;
+  annotationLinks: void;
   speculos: SpeculosFixtureHandle;
   speculosForSetupOnly?: boolean;
 };
@@ -106,6 +108,14 @@ export const test = base.extend<TestFixtures>({
       if (teamOwner !== undefined) {
         await addTeamOwner(teamOwner);
       }
+      await use();
+    },
+    { auto: true },
+  ],
+
+  annotationLinks: [
+    async ({}, use, testInfo) => {
+      await addAnnotationLinks(testInfo.annotations);
       await use();
     },
     { auto: true },
@@ -155,7 +165,7 @@ export const test = base.extend<TestFixtures>({
     const handle: SpeculosFixtureHandle = {
       get current(): SpeculosDevice {
         if (!currentDevice) {
-          throw new Error("[E2E] speculos fixture: no device (missing speculosApp?)");
+          base.abort("[E2E] speculos fixture: no device (missing speculosApp?)");
         }
         return currentDevice;
       },

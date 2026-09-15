@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { compose } from "redux";
+import styled from "styled-components";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
@@ -24,6 +25,7 @@ import BalanceSummary from "./BalanceSummary";
 import { AccountWarningBanner, AccountWarningCustomBanner } from "./AccountWarningBanner";
 import AccountHeaderActions from "./AccountHeaderActions";
 import AccountHeaderRow from "./AccountHeaderRow";
+import { PerpsAccountBanner } from "LLD/features/Accounts/components/PerpsAccountBanner";
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
@@ -36,6 +38,12 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 import { useAccountBackNavigation } from "./hooks/useAccountBackNavigation";
 import { useAccountIdFromRoute } from "~/renderer/hooks/useAccountIdFromRoute";
+
+const AccountHeaderActionsRow = styled(Box)`
+  &:empty {
+    display: none;
+  }
+`;
 
 type Params = {
   id?: string;
@@ -138,7 +146,7 @@ const AccountPage = ({
         showBackButton={showBackButton}
         onBack={navigateBack}
       />
-      <Box
+      <AccountHeaderActionsRow
         horizontal
         pb={3}
         flow={4}
@@ -149,9 +157,10 @@ const AccountPage = ({
         }}
       >
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
-      </Box>
+      </AccountHeaderActionsRow>
       <AccountWarningBanner currency={currency} />
       <AccountWarningCustomBanner currency={currency} />
+      <PerpsAccountBanner currency={currency} />
       {AccountSubHeader ? (
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}

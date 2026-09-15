@@ -23,6 +23,22 @@ describe("parseCallbackUrl", () => {
     expect(parseCallbackUrl("ledgerlive://paytab?code=auth-code")).toEqual({ code: "auth-code" });
   });
 
+  it("carries the state the provider echoed back", () => {
+    expect(
+      parseCallbackUrl(`${REDIRECT}?code=auth-code&state=state-value&app_id=app-value`),
+    ).toEqual({
+      code: "auth-code",
+      state: "state-value",
+    });
+  });
+
+  it.each([
+    ["is missing", `${REDIRECT}?code=auth-code&app_id=app-value`],
+    ["is empty", `${REDIRECT}?code=auth-code&state=`],
+  ])("reads the code alone when the state %s", (_case, url) => {
+    expect(parseCallbackUrl(url)).toEqual({ code: "auth-code" });
+  });
+
   it.each([
     ["there is no query", REDIRECT],
     ["the query is empty", `${REDIRECT}?`],

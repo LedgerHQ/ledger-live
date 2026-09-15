@@ -2,6 +2,12 @@ import { z } from "zod";
 
 const HEX_COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
+/** A URL the app loads or opens, or hands the provider to navigate to. Anything but `https:` is rejected. */
+const HttpsUrlSchema = z
+  .string()
+  .url()
+  .refine(value => value.startsWith("https://"), { message: "must be an https URL" });
+
 /**
  * Both grants — `authorization_code` and `refresh_token` — answer with this shape. Baanx's contract
  * carries no lifetime for the refresh token itself, only for the access token.
@@ -70,12 +76,208 @@ export const PayCardDetailsCssSchema = z.object({
 
 export const PayCardDetailsTokenResponseSchema = z.object({
   token: z.string().min(1),
-  /** Loaded straight into an image, so reject anything that is not an `https:` URL. */
-  imageUrl: z
-    .string()
-    .url()
-    .refine(value => value.startsWith("https://"), { message: "must be an https URL" }),
+  /** Loaded straight into an image. */
+  imageUrl: HttpsUrlSchema,
 });
+
+/**
+ * The two colours this endpoint documents, its own defaults applying to whatever is omitted. A
+ * different set from the card details image's, so anything undeclared here is dropped on parse.
+ */
+export const PayCardPinCssSchema = z.object({
+  backgroundColor: z.string().regex(HEX_COLOR).optional(),
+  textColor: z.string().regex(HEX_COLOR).optional(),
+});
+
+/**
+ * Same shape as the card details token, and kept separate: two endpoints of the provider's that
+ * agree today are still two contracts, and either may move without the other.
+ */
+export const PayCardPinTokenResponseSchema = z.object({
+  token: z.string().min(1),
+  /** Loaded straight into an image. */
+  imageUrl: HttpsUrlSchema,
+});
+
+/**
+ * Colours and radii the provider paints the hosted PIN page with, its own defaults applying to
+ * whatever is omitted. A separate set from the card details image's: this page styles a keypad.
+ */
+export const PayCardSetPinCssSchema = z.object({
+  backgroundColor: z.string().regex(HEX_COLOR).optional(),
+  textColor: z.string().regex(HEX_COLOR).optional(),
+  backgroundColorPrimary: z.string().regex(HEX_COLOR).optional(),
+  textColorPrimary: z.string().regex(HEX_COLOR).optional(),
+  pinBorderColor: z.string().regex(HEX_COLOR).optional(),
+  buttonBorderRadius: z.number().nonnegative().optional(),
+  pinBorderRadius: z.number().nonnegative().optional(),
+});
+
+const PayCardSetPinTokenBaseSchema = z.object({
+  customCss: PayCardSetPinCssSchema.optional(),
+});
+
+/**
+ * How the hosted PIN page should end, and how it should look. Every field is optional: asking for a
+ * token needs no argument at all.
+ *
+ * An embedded page posts a message to its host frame when it is done and never navigates, so a
+ * `redirectUrl` alongside `isEmbedded: true` is a destination nothing would reach. A union rather
+ * than two independent fields, so that pairing does not compile instead of being quietly dropped.
+ */
+export const PayCardSetPinTokenRequestSchema = z
+  .union(
+    [
+      PayCardSetPinTokenBaseSchema.extend({
+        isEmbedded: z.literal(true),
+        redirectUrl: z.undefined().optional(),
+      }),
+      PayCardSetPinTokenBaseSchema.extend({
+        isEmbedded: z.literal(false).optional(),
+        redirectUrl: HttpsUrlSchema.optional(),
+      }),
+    ],
+    { error: "redirectUrl belongs to the redirect flow, so isEmbedded cannot be true" },
+  )
+  .optional();
+
+export const PayCardSetPinTokenResponseSchema = z.object({
+  token: z.string().min(1),
+  /** Opened in a tab or an iframe. */
+  hostedPageUrl: HttpsUrlSchema,
+});
+
+/** The provider's spend groupings. It sends the label; the numeric MCC behind it is dropped. */
+export const PAY_CARD_TRANSACTION_CATEGORIES = [
+  "SUBSCRIPTIONS",
+  "FOOD",
+  "TRAVEL",
+  "ENTERTAINMENT",
+  "HEALTH",
+  "ATM",
+  "UTILITIES",
+  "MISC",
+] as const;
+
+export const PayCardTransactionCategorySchema = z.enum(PAY_CARD_TRANSACTION_CATEGORIES);
+
+export const PayCardTransactionFundingSourceSchema = z.object({
+  currency: z.string().min(1),
+  amount: z.string().min(1),
+  sign: z.enum(["DEBIT", "CREDIT"]),
+});
+
+/**
+ * One card transaction, narrowed to the list and the transaction detail sheet.
+ *
+ * The response also carries the provider card id, the MCC number, conversion and ECB rates, and
+ * funding `txHash` / `address`. Those stay undeclared so Zod drops them before they reach the cache.
+ * `merchantNameLocation` and a four-digit `panLast4` are already enough to identify a purchase; `transactionId`
+ * is the processor reference the detail sheet copies.
+ */
+export const PayCardTransactionSchema = z.object({
+  id: z.string().min(1),
+  panLast4: z
+    .string()
+    .regex(/^\d{4}$/)
+    .optional()
+    .catch(undefined),
+  transactionId: z.string().min(1).optional(),
+  /** ISO 8601, as the provider formats it. */
+  dateTime: z.string().min(1),
+  sign: z.enum(["DEBIT", "CREDIT"]),
+  merchantNameLocation: z.string().min(1),
+  mccCategory: PayCardTransactionCategorySchema.catch("MISC"),
+  status: z.enum(["CONFIRMED", "PENDING", "DECLINED", "REVERTED"]),
+  /** The provider sends `""` on a transaction that was not declined, so an empty one is expected. */
+  declineReason: z.string().optional(),
+  transactionCurrency: z.string().min(1),
+  amountInTransactionCurrency: z.string().min(1),
+  feesInTransactionCurrency: z.string().min(1),
+  /** What the merchant charged, when that differs from the card's own currency. */
+  originalCurrency: z.string().min(1),
+  amountInOriginalCurrency: z.string().min(1),
+  fundingSources: z.array(PayCardTransactionFundingSourceSchema).optional(),
+});
+
+export const PayCardTransactionsResponseSchema = z.array(PayCardTransactionSchema);
+
+const PayCardTransactionFiltersSchema = z.object({
+  page: z.number().int().nonnegative().optional(),
+  searchKey: z.string().min(1).optional(),
+  mccCategories: z.string().min(1).optional(),
+});
+
+/**
+ * The provider requires `dateFrom` and `dateTo` together, so neither is useful alone: one without
+ * the other is a filter the backend rejects.
+ *
+ * A union rather than a refinement, so the rule is in the inferred type as well: a caller cannot
+ * write a filter that only fails once it is sent.
+ */
+export const PayCardTransactionsRequestSchema = z
+  .union(
+    [
+      PayCardTransactionFiltersSchema.extend({
+        dateFrom: z.string().min(1),
+        dateTo: z.string().min(1),
+      }),
+      PayCardTransactionFiltersSchema.extend({
+        dateFrom: z.undefined().optional(),
+        dateTo: z.undefined().optional(),
+      }),
+    ],
+    { error: "dateFrom and dateTo go together" },
+  )
+  .optional();
+
+/**
+ * One entry of a wallet's own history.
+ *
+ * Narrower than a card transaction: the movement arrives as one `name`, so whatever a card
+ * transaction carries in its own fields has to be read out of that string here.
+ *
+ * `sign` is lowercase on this endpoint and uppercase on card transactions. Each schema keeps the
+ * case its own endpoint answers with and rejects the other, so the difference stays visible to a
+ * caller that reads both rather than being smoothed over here.
+ */
+export const PayCardWalletHistoryEntrySchema = z.object({
+  /** The provider's own description, e.g. `Credit withdrawal` or `Card purchase - Starbucks`. */
+  name: z.string().min(1),
+  amount: z.string().min(1),
+  currency: z.string().min(1),
+  sign: z.enum(["debit", "credit"]),
+  /** ISO 8601, as the provider formats it. */
+  date: z.string().min(1),
+});
+
+export const PayCardWalletHistoryResponseSchema = z.array(PayCardWalletHistoryEntrySchema);
+
+/**
+ * A wallet's history is asked for one wallet at a time.
+ *
+ * `walletCurrency` is required for an internal wallet and meaningless for the others, so the pair
+ * is checked here rather than left to a 400.
+ */
+const PayCardWalletHistoryBaseSchema = z.object({
+  walletId: z.string().min(1),
+  page: z.number().int().nonnegative().optional(),
+});
+
+/**
+ * Keyed on the wallet type, so the currency requirement is in the inferred type as well: asking for
+ * an internal wallet without naming its currency does not compile, let alone reach the provider.
+ */
+export const PayCardWalletHistoryRequestSchema = z.discriminatedUnion("walletType", [
+  PayCardWalletHistoryBaseSchema.extend({
+    walletType: z.literal("INTERNAL"),
+    walletCurrency: z.string().min(1),
+  }),
+  PayCardWalletHistoryBaseSchema.extend({
+    walletType: z.enum(["CREDIT", "REWARD"]),
+    walletCurrency: z.string().min(1).optional(),
+  }),
+]);
 
 export const PayCardInternalWalletSchema = z.object({
   id: z.string().min(1),
@@ -109,3 +311,13 @@ export const PayCardOnboardingStepSchema = z.object({
 export const PayCardOnboardingStatusResponseSchema = z.object({
   steps: z.array(PayCardOnboardingStepSchema),
 });
+
+/**
+ * The wire wallet plus the Ledger currency its `currency`/`network` pair resolves to. Optional
+ * because the catalog does not cover every asset the provider may answer with.
+ */
+export const PayCardLinkedWalletCanonicalSchema = PayCardLinkedWalletSchema.extend({
+  ledgerId: z.string().min(1).optional(),
+});
+
+export const PayCardLinkedWalletsCanonicalSchema = z.array(PayCardLinkedWalletCanonicalSchema);

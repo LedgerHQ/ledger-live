@@ -90,7 +90,7 @@ export function makeAddContactProps(
       title: "Add contact",
       namePlaceholder: "Contact name",
       namingDisclaimer: "Use a nickname.",
-      confirmName: "Add contact",
+      confirmAddContact: "Add contact",
       nameValidationErrors: {
         [INVALID_CONTACT_NAME_ERROR_NAME]: "Special characters are not allowed.",
         [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "This contact name is already in use.",

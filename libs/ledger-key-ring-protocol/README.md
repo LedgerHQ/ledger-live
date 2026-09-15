@@ -49,15 +49,16 @@ and no network needed in CI.
     served by MSW from the recorded transactions, and `crypto` randomness is mocked from
     the recorded outputs. Each request is matched against the snapshot, so a change in SDK
     behaviour (different call, body, or order) fails the test.
-  - `mock.sdk.test.ts` runs the same scenarios against the in-memory mock SDK
-    (`MOCK=1`), skipping the ones listed as non-mockable.
+  - `mock.sdk.test.ts` runs the same scenarios against the in-memory mock SDK,
+    skipping the ones listed as non-mockable.
 
 ### Recording / re-recording a snapshot
 
 Recording runs the scenario for real — against a Speculos device (Docker) and the staging
 trustchain backend — and writes the snapshot. Prerequisites:
 
-- Docker running (Speculos is launched in a container),
+- Docker running (Speculos is launched in a container), its CLI installed in
+  `/usr/local/bin`, `/usr/bin` or `/opt/homebrew/bin`,
 - `COIN_APPS` pointing to a clone of [coin-apps](https://github.com/LedgerHQ/coin-apps)
   (provides the Ledger Sync app loaded into Speculos),
 - network access to staging.

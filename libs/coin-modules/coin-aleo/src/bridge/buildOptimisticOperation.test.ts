@@ -2,7 +2,10 @@ import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { TRANSACTION_TYPE } from "../constants";
 import { getMockedAccount, getMockedTokenAccount } from "../__tests__/fixtures/account.fixture";
-import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";
+import {
+  getMockedStakingTransaction,
+  getMockedTransaction,
+} from "../__tests__/fixtures/transaction.fixture";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
 describe("buildOptimisticOperation", () => {
@@ -171,4 +174,28 @@ describe("buildOptimisticOperation", () => {
       },
     });
   });
+
+  it.each([
+    [TRANSACTION_TYPE.BOND_PUBLIC, "BOND", "bond_public"],
+    [TRANSACTION_TYPE.UNBOND_PUBLIC, "UNBOND", "unbond_public"],
+    [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, "WITHDRAW_UNBONDED", "claim_unbond_public"],
+  ] as const)(
+    "should build a fee-valued %s staking operation typed %s",
+    (mode, operationType, functionId) => {
+      const transaction = getMockedStakingTransaction(mode, {
+        amount: new BigNumber(5_000_000),
+        fees: new BigNumber(34_060),
+        recipient: account.freshAddress,
+      });
+
+      const operation = buildOptimisticOperation({ account, transaction });
+
+      expect(operation.type).toBe(operationType);
+      expect(operation.value).toEqual(transaction.fees);
+      expect(operation.fee).toEqual(transaction.fees);
+      expect(operation.id).toBe(encodeOperationId(account.id, "", operationType));
+      expect(operation.extra).toEqual({ functionId, transactionType: "public" });
+      expect(operation.subOperations).toBeUndefined();
+    },
+  );
 });

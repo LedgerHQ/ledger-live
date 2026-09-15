@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import type { SendFlowOperationActions, SendFlowTransactionActions } from "../../types";
 import { useSendFlowBusinessLogic } from "../useSendFlowBusinessLogic";
 import { getSendUiConfig } from "../../uiConfig";
@@ -151,5 +151,34 @@ describe("useSendFlowBusinessLogic", () => {
     });
     expect(result.current.isRecipientAddressComplete).toBe(false);
     expect(transactionActions.setRecipient).not.toHaveBeenCalled();
+  });
+
+  it("should clear recipient search and transaction recipient when reset", () => {
+    const recipient = "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034";
+    const { result } = renderHook(() =>
+      useSendFlowBusinessLogic({
+        initParams: { recipient },
+        useTransactionHook,
+        useOperationHook,
+      }),
+    );
+
+    act(() => {
+      result.current.transaction.setRecipient({
+        address: recipient,
+        displayLabel: "Private balance",
+      });
+      result.current.recipientSearch.setValue(recipient);
+      result.current.setIsRecipientAddressComplete(true);
+    });
+
+    act(() => {
+      result.current.resetRecipient();
+    });
+
+    expect(result.current.state.recipient).toBeNull();
+    expect(result.current.recipientSearch.value).toBe("");
+    expect(result.current.isRecipientAddressComplete).toBe(false);
+    expect(transactionActions.setRecipient).toHaveBeenCalledWith({ address: "" });
   });
 });

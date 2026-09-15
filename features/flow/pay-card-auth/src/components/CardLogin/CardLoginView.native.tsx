@@ -11,6 +11,11 @@ import {
 import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
 
+type CardLoginNativeViewProps = Omit<
+  CardLoginViewProps,
+  "alreadyHaveCardLabel" | "onAlreadyHaveCardPress"
+>;
+
 export function CardLoginView({
   title,
   description,
@@ -19,14 +24,13 @@ export function CardLoginView({
   errorMessage,
   onLoginPress,
   intro,
-}: CardLoginViewProps) {
+}: CardLoginNativeViewProps) {
   return (
     <>
       <Box
         lx={{
           flexDirection: "column",
           gap: "s4",
-          paddingTop: "s16",
         }}
       >
         <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s16" }}>

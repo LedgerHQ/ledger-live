@@ -21,6 +21,7 @@
     "@jest/get-type",
     "jest-util",
     "lru-cache",
+    "semver",
     "@ledgerhq/devices"
   ],
   "ignoreUnimported": [

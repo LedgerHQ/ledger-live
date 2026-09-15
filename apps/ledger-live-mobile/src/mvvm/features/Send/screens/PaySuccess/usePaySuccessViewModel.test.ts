@@ -90,14 +90,14 @@ describe("usePaySuccessViewModel", () => {
   it("should expose the contact as recipient when the address belongs to one", () => {
     const { result } = renderPaySuccess();
 
-    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada", isMe: false });
+    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada" });
     expect(result.current.recipientLabel).toBe("Ada");
   });
 
   it("should fall back to the input recipient when the signed transaction has no address", () => {
     const { result } = renderPaySuccess(buildFlowState({ signedRecipient: "" }));
 
-    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada", isMe: false });
+    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada" });
     expect(result.current.recipientLabel).toBe("Ada");
   });
 
@@ -106,7 +106,7 @@ describe("usePaySuccessViewModel", () => {
       buildFlowState({ address: "ada.eth", signedRecipient: ADA_ADDRESS }),
     );
 
-    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada", isMe: false });
+    expect(result.current.recipient).toEqual({ id: "contact-ada", name: "Ada" });
     expect(result.current.recipientLabel).toBe("Ada");
   });
 
@@ -124,13 +124,10 @@ describe("usePaySuccessViewModel", () => {
     expect(result.current.recipientLabel).toBe("0x1ad23b...46c53034");
   });
 
-  it("should summarize the transaction from the account and its network", () => {
+  it("should format the paid amount", () => {
     const { result } = renderPaySuccess();
 
     expect(result.current.amountFormatted).toMatch(/1\.5/);
-    expect(result.current.fromAccountName).toBe(ACCOUNT_NAME);
-    expect(result.current.networkIcon).toEqual({ ledgerId: "ethereum", ticker: "ETH" });
-    expect(result.current.estimatedTime).toBe("~15s");
   });
 
   it("should open operation details when viewing the transaction", () => {
@@ -145,6 +142,8 @@ describe("usePaySuccessViewModel", () => {
       }),
     );
 
+    expect(result.current.canViewTransaction).toBe(true);
+
     result.current.onViewTransaction();
 
     expect(mockNavigate).toHaveBeenCalledWith(ScreenName.OperationDetails, {
@@ -154,8 +153,10 @@ describe("usePaySuccessViewModel", () => {
     });
   });
 
-  it("should not navigate when there is no operation to view", () => {
+  it("should not expose view transaction when there is no operation to view", () => {
     const { result } = renderPaySuccess();
+
+    expect(result.current.canViewTransaction).toBe(false);
 
     result.current.onViewTransaction();
 

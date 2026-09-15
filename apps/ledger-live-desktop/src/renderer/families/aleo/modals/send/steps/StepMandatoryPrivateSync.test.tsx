@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { Subject } from "rxjs";
-import { act, render, screen, waitFor } from "tests/testSetup";
+import { act, render, screen, useComponentFakeTimers } from "tests/testSetup";
 import type { AleoAccount, AleoCoinConfig } from "@ledgerhq/live-common/families/aleo/types";
 import { ALEO_ACCOUNT_1 } from "../../../__mocks__/account.mock";
 import { mockAleoCoinConfig } from "../../../__mocks__/config.mock";
@@ -110,6 +110,14 @@ describe("StepMandatoryPrivateSync", () => {
   });
 
   describe("transition when progress reaches 100%", () => {
+    // The step waits 500ms before transitioning. Real timers made every test here idle
+    // for that long; faking the clock asserts the same behaviour instantly. Only
+    // setTimeout/clearTimeout are faked — see useComponentFakeTimers for why the real
+    // useAleoPrivateSync needs the other schedulers left alone.
+    beforeEach(() => {
+      useComponentFakeTimers();
+    });
+
     const makeAleoAccountAt100 = (): AleoAccount => ({
       ...ALEO_ACCOUNT_1,
       aleoResources: {
@@ -130,9 +138,11 @@ describe("StepMandatoryPrivateSync", () => {
         syncSubject.next(() => makeAleoAccountAt100());
       });
 
-      await waitFor(() => expect(props.transitionTo).toHaveBeenCalledWith("record-picker"), {
-        timeout: 1000,
+      act(() => {
+        jest.advanceTimersByTime(500);
       });
+
+      expect(props.transitionTo).toHaveBeenCalledWith("record-picker");
     });
 
     it("should call transitionTo('amount') after progress reaches 100 with auto strategy", async () => {
@@ -147,9 +157,11 @@ describe("StepMandatoryPrivateSync", () => {
         syncSubject.next(() => makeAleoAccountAt100());
       });
 
-      await waitFor(() => expect(props.transitionTo).toHaveBeenCalledWith("amount"), {
-        timeout: 1000,
+      act(() => {
+        jest.advanceTimersByTime(500);
       });
+
+      expect(props.transitionTo).toHaveBeenCalledWith("amount");
     });
 
     it("should not call transitionTo if the component unmounts before the timer fires", async () => {
@@ -163,7 +175,9 @@ describe("StepMandatoryPrivateSync", () => {
 
       unmount();
 
-      await new Promise(resolve => setTimeout(resolve, 600));
+      act(() => {
+        jest.advanceTimersByTime(600);
+      });
       expect(props.transitionTo).not.toHaveBeenCalled();
     });
   });

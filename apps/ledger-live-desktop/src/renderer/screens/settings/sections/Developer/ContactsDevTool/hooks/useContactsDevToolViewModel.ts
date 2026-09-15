@@ -25,6 +25,7 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
     hasDismissedContactsFeatureIntroductionSelector,
   );
   const [customFamiliesInput, setCustomFamiliesInput] = useState("");
+  const [excludedCurrencyIdsInput, setExcludedCurrencyIdsInput] = useState("");
 
   const isEnabled = featureFlag?.enabled === true;
   const params = useMemo(
@@ -32,10 +33,15 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
     [featureFlag?.params],
   );
   const familiesInput = params.eligibleAddressFamilies.join(", ");
+  const excludedCurrencyIdsString = params.excludedCurrencyIds.join(", ");
 
   useEffect(() => {
     setCustomFamiliesInput(familiesInput);
   }, [familiesInput]);
+
+  useEffect(() => {
+    setExcludedCurrencyIdsInput(excludedCurrencyIdsString);
+  }, [excludedCurrencyIdsString]);
 
   const setContactsOverride = useCallback(
     (patch: ContactsFeatureValuePatch) =>
@@ -66,6 +72,14 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
   const handleApplyCustomFamilies = useCallback(() => {
     handleSetEligibleAddressFamilies(parseEligibleAddressFamiliesInput(customFamiliesInput));
   }, [customFamiliesInput, handleSetEligibleAddressFamilies]);
+
+  const handleApplyExcludedCurrencyIds = useCallback(() => {
+    const ids = excludedCurrencyIdsInput
+      .split(",")
+      .map(id => id.trim())
+      .filter(Boolean);
+    setContactsOverride({ params: { excludedCurrencyIds: ids } });
+  }, [excludedCurrencyIdsInput, setContactsOverride]);
 
   const handleLoadPopulatedContacts = useCallback(() => {
     dispatch(setContacts(mockPopulatedContacts()));
@@ -99,6 +113,9 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
     handleSetEligibleAddressFamilies,
     setCustomFamiliesInput,
     handleApplyCustomFamilies,
+    excludedCurrencyIdsInput,
+    setExcludedCurrencyIdsInput,
+    handleApplyExcludedCurrencyIds,
     handleLoadPopulatedContacts,
     handleLoadFromSendHistory,
     handleResetContacts,

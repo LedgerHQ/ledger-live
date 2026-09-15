@@ -80,6 +80,7 @@ export default function celoBridge(currency: CryptoCurrency): BridgeApi {
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
     balanceOptions: getBalanceOptions(currency),
+    stakingSupported: true,
     // Celo votes + pending withdrawals are surfaced per-position (via Balance.stake),
     // not as the EVM-style aggregate; see coin-celo src/api/getBalance.ts.
     usesStakingPositions: true,

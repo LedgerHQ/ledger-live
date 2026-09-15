@@ -95,7 +95,7 @@ const store = configureStore({
 The facade evaluates `isFeatureEnabled` for every request. It calls queries without a
 token while authentication is disabled and delegates to the same injected
 `AuthProvider` while enabled. Provider creation, feature selection, and environment
-availability remain app-owned. `AuthSDK` from `@ledgerhq/ledger-auth` is one concrete
+availability remain app-owned. `AuthSDK` from `@ledgerhq/auth` is one concrete
 implementation behind this thunk contract.
 
 ## Scope

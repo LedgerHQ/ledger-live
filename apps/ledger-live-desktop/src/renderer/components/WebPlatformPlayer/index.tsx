@@ -14,11 +14,7 @@ import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/renderer/screens/platform/v2/hooks";
 import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
-import {
-  useACRECustomHandlers,
-  useDeeplinkCustomHandlers,
-  useLiveAppModalCustomHandlers,
-} from "./CustomHandlers";
+import { useDeeplinkCustomHandlers, useLiveAppModalCustomHandlers } from "./CustomHandlers";
 
 export const Container = styled.div`
   display: flex;
@@ -63,7 +59,6 @@ export default function WebPlatformPlayer({
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
   const accounts = useSelector(flattenAccountsSelector);
-  const customACREHandlers = useACRECustomHandlers(manifest, accounts);
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customLiveAppModalHandlers = useLiveAppModalCustomHandlers(manifest);
@@ -74,7 +69,6 @@ export default function WebPlatformPlayer({
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...loggerHandlers,
-      ...customACREHandlers,
       ...customPTXHandlers,
       ...customDeeplinkHandlers,
       ...customLiveAppModalHandlers,
@@ -82,7 +76,6 @@ export default function WebPlatformPlayer({
       ...customPerpsHandlers,
     };
   }, [
-    customACREHandlers,
     customPTXHandlers,
     props.customHandlers,
     customDeeplinkHandlers,

@@ -10,7 +10,11 @@ import { useTrustchainSdk } from "./useTrustchainSdk";
 import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { track } from "~/renderer/analytics/segment";
-import { AnalyticsPage } from "./useLedgerSyncAnalytics";
+import {
+  AnalyticsFlow,
+  AnalyticsPage,
+  walletSyncEntryFlowProperties,
+} from "./useLedgerSyncAnalytics";
 import { saveSettings, setLastOnboardedDevice } from "~/renderer/actions/settings";
 import { useNavigate } from "react-router";
 
@@ -40,7 +44,7 @@ export function useAddMember({
   const transitionToNextScreen = useCallback(
     (trustchainResult: TrustchainResult) => {
       dispatch(setTrustchain(trustchainResult.trustchain));
-      track("ledgersync_activated");
+      track("ledgersync_activated", walletSyncEntryFlowProperties(AnalyticsFlow));
       if (sourcePage === AnalyticsPage.Onboarding) {
         if (!isOnboardingNewDeviceInitial.current) {
           dispatch(saveSettings({ hasCompletedOnboarding: true }));

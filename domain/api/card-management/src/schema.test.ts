@@ -9,9 +9,21 @@ import {
   PayCardSessionResponseSchema,
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
+  PayCardPinCssSchema,
+  PayCardPinTokenResponseSchema,
+  PayCardSetPinCssSchema,
+  PayCardSetPinTokenRequestSchema,
+  PayCardSetPinTokenResponseSchema,
   PayCardStatusResponseSchema,
+  PAY_CARD_TRANSACTION_CATEGORIES,
+  PayCardTransactionSchema,
+  PayCardTransactionsRequestSchema,
+  PayCardTransactionsResponseSchema,
+  PayCardWalletHistoryEntrySchema,
+  PayCardWalletHistoryRequestSchema,
   PayCardUserResponseSchema,
 } from "./schema";
+import { documentedPayCardTransaction } from "./cardTransactions.mock";
 
 describe("PayCardSessionResponseSchema", () => {
   it("accepts a token payload", () => {
@@ -168,6 +180,131 @@ describe("PayCardDetailsCssSchema", () => {
   it("rejects a colour the provider would answer 422 for", () => {
     expect(() => PayCardDetailsCssSchema.parse({ cardTextColor: "white" })).toThrow();
     expect(() => PayCardDetailsCssSchema.parse({ cardTextColor: "#GGGGGG" })).toThrow();
+  });
+});
+
+describe("PayCardPinTokenResponseSchema", () => {
+  // The provider's example, with an all-zero token: a real-looking one trips secret scanning.
+  const pinToken = {
+    token: "00000000-0000-4000-8000-000000000000",
+    imageUrl:
+      "https://card.api.live.ledger.com/details-image?token=00000000-0000-4000-8000-000000000000",
+  };
+
+  it("reads the documented token response", () => {
+    expect(PayCardPinTokenResponseSchema.parse(pinToken)).toEqual(pinToken);
+  });
+
+  it("rejects an image url that is not https, which is loaded straight into an image", () => {
+    expect(() => PayCardPinTokenResponseSchema.parse({ ...pinToken, imageUrl: "" })).toThrow();
+    expect(() =>
+      PayCardPinTokenResponseSchema.parse({ ...pinToken, imageUrl: "javascript:alert(1)" }),
+    ).toThrow();
+  });
+});
+
+describe("PayCardPinCssSchema", () => {
+  it("takes the documented colours, and takes none at all", () => {
+    const css = { backgroundColor: "#EFEFEF", textColor: "#000000" };
+
+    expect(PayCardPinCssSchema.parse(css)).toEqual(css);
+    expect(PayCardPinCssSchema.parse({})).toEqual({});
+  });
+
+  it("rejects a colour the provider would answer 422 for", () => {
+    expect(() => PayCardPinCssSchema.parse({ textColor: "white" })).toThrow();
+    expect(() => PayCardPinCssSchema.parse({ backgroundColor: "#GGGGGG" })).toThrow();
+  });
+
+  it("declares two colours, and drops every other key on parse", () => {
+    expect(PayCardPinCssSchema.parse({ panTextColor: "#000000", textColor: "#000000" })).toEqual({
+      textColor: "#000000",
+    });
+  });
+});
+
+describe("PayCardSetPinTokenResponseSchema", () => {
+  // The provider's example, with an all-zero token: a real-looking one trips secret scanning.
+  const setPinToken = {
+    token: "00000000-0000-4000-8000-000000000000",
+    hostedPageUrl:
+      "https://card.api.live.ledger.com/pin-direct/set?token=00000000-0000-4000-8000-000000000000",
+  };
+
+  it("reads the documented token response", () => {
+    expect(PayCardSetPinTokenResponseSchema.parse(setPinToken)).toEqual(setPinToken);
+  });
+
+  it("rejects a hosted page url that is not https, which the app would open", () => {
+    expect(() =>
+      PayCardSetPinTokenResponseSchema.parse({ ...setPinToken, hostedPageUrl: "" }),
+    ).toThrow();
+    expect(() =>
+      PayCardSetPinTokenResponseSchema.parse({
+        ...setPinToken,
+        hostedPageUrl: "http://card.api.live.ledger.com/pin-direct/set",
+      }),
+    ).toThrow();
+  });
+});
+
+describe("PayCardSetPinCssSchema", () => {
+  it("takes the documented colours and radii, and takes none at all", () => {
+    const css = {
+      backgroundColor: "#EFEFEF",
+      textColor: "#000000",
+      backgroundColorPrimary: "#000000",
+      textColorPrimary: "#FFFFFF",
+      pinBorderColor: "#000000",
+      buttonBorderRadius: 8,
+      pinBorderRadius: 4,
+    };
+
+    expect(PayCardSetPinCssSchema.parse(css)).toEqual(css);
+    expect(PayCardSetPinCssSchema.parse({})).toEqual({});
+  });
+
+  it("rejects a colour the provider would answer 422 for", () => {
+    expect(() => PayCardSetPinCssSchema.parse({ textColor: "white" })).toThrow();
+    expect(() => PayCardSetPinCssSchema.parse({ pinBorderColor: "#GGGGGG" })).toThrow();
+  });
+
+  it("rejects a radius that cannot be drawn", () => {
+    expect(() => PayCardSetPinCssSchema.parse({ buttonBorderRadius: -1 })).toThrow();
+    expect(() => PayCardSetPinCssSchema.parse({ pinBorderRadius: "4" })).toThrow();
+  });
+});
+
+describe("PayCardSetPinTokenRequestSchema", () => {
+  it("asks for a token with no argument at all", () => {
+    expect(PayCardSetPinTokenRequestSchema.parse(undefined)).toBeUndefined();
+    expect(PayCardSetPinTokenRequestSchema.parse({})).toEqual({});
+  });
+
+  it("takes a redirect destination, and an embedded page without one", () => {
+    const redirecting = { redirectUrl: "https://card.test/pin-done", isEmbedded: false };
+    expect(PayCardSetPinTokenRequestSchema.parse(redirecting)).toEqual(redirecting);
+    expect(PayCardSetPinTokenRequestSchema.parse({ isEmbedded: true })).toEqual({
+      isEmbedded: true,
+    });
+  });
+
+  it("rejects a destination for an embedded page, which would never navigate to it", () => {
+    expect(() =>
+      PayCardSetPinTokenRequestSchema.parse({
+        isEmbedded: true,
+        redirectUrl: "https://card.test/pin-done",
+      }),
+    ).toThrow();
+  });
+
+  it("rejects a destination that is not https", () => {
+    expect(() =>
+      PayCardSetPinTokenRequestSchema.parse({ redirectUrl: "http://card.test/pin-done" }),
+    ).toThrow();
+    expect(() =>
+      PayCardSetPinTokenRequestSchema.parse({ redirectUrl: "javascript:alert(1)" }),
+    ).toThrow();
   });
 });
 
@@ -347,5 +484,210 @@ describe("PayCardOnboardingStatusResponseSchema", () => {
         steps: [{ ...response.steps[0], title: "" }],
       }),
     ).toThrow();
+  });
+});
+
+describe("PayCardTransactionSchema", () => {
+  const documented = documentedPayCardTransaction;
+
+  it("reads the transaction the provider documents", () => {
+    expect(PayCardTransactionSchema.parse(documented).id).toBe(documented.id);
+  });
+
+  it("accepts the empty decline reason a confirmed transaction carries", () => {
+    // The provider sends `""`, not an absent key. A non-empty rule here would reject every
+    // transaction that was not declined.
+    expect(PayCardTransactionSchema.parse(documented).declineReason).toBe("");
+  });
+
+  it("reads a declined transaction with its reason", () => {
+    const declined = { ...documented, status: "DECLINED", declineReason: "Insufficient funds" };
+
+    expect(PayCardTransactionSchema.parse(declined)).toMatchObject({
+      status: "DECLINED",
+      declineReason: "Insufficient funds",
+    });
+  });
+
+  it.each(["CONFIRMED", "PENDING", "DECLINED", "REVERTED"])("reads a %s transaction", status => {
+    expect(PayCardTransactionSchema.parse({ ...documented, status }).status).toBe(status);
+  });
+
+  it("keeps the last four PAN digits and the processor transaction id", () => {
+    const parsed = PayCardTransactionSchema.parse(documented);
+
+    expect(parsed.panLast4).toBe(documented.panLast4);
+    expect(parsed.transactionId).toBe(documented.transactionId);
+    expect(parsed).not.toHaveProperty("cardId");
+  });
+
+  it("drops a PAN fragment that is not exactly four digits, without rejecting the transaction", () => {
+    const parsed = PayCardTransactionSchema.parse({ ...documented, panLast4: "918912345678" });
+
+    expect(parsed.id).toBe(documented.id);
+    expect(parsed.panLast4).toBeUndefined();
+  });
+
+  it("drops a last-four value that is not digits", () => {
+    expect(
+      PayCardTransactionSchema.parse({ ...documented, panLast4: "9A89" }).panLast4,
+    ).toBeUndefined();
+  });
+
+  it("keeps the funding asset amounts used by the transaction list", () => {
+    expect(PayCardTransactionSchema.parse(documented).fundingSources).toEqual([
+      {
+        currency: "usdc",
+        amount: "0.104201",
+        sign: "DEBIT",
+      },
+    ]);
+  });
+
+  it("accepts a transaction with no funding source", () => {
+    expect(
+      PayCardTransactionSchema.parse({ ...documented, fundingSources: undefined }).fundingSources,
+    ).toBeUndefined();
+  });
+
+  it("rejects an unknown funding source direction", () => {
+    expect(() =>
+      PayCardTransactionSchema.parse({
+        ...documented,
+        fundingSources: [{ ...documented.fundingSources[0], sign: "REFUND" }],
+      }),
+    ).toThrow();
+  });
+
+  it("keeps the amount as the string the provider sent, not a number", () => {
+    expect(PayCardTransactionSchema.parse(documented).amountInTransactionCurrency).toBe("0.79");
+  });
+
+  it("rejects a direction the wire contract does not name", () => {
+    expect(() => PayCardTransactionSchema.parse({ ...documented, sign: "REFUND" })).toThrow();
+  });
+
+  it.each(PAY_CARD_TRANSACTION_CATEGORIES)("reads a %s spend category", mccCategory => {
+    expect(PayCardTransactionSchema.parse({ ...documented, mccCategory }).mccCategory).toBe(
+      mccCategory,
+    );
+  });
+
+  it("reads a spend category the provider does not name as MISC", () => {
+    expect(
+      PayCardTransactionSchema.parse({ ...documented, mccCategory: "SHOPPING" }).mccCategory,
+    ).toBe("MISC");
+  });
+
+  it("keeps the whole page when one transaction carries an unnamed spend category", () => {
+    const page = [
+      { ...documented, mccCategory: "FOOD" },
+      { ...documented, id: "second", mccCategory: "SHOPPING" },
+    ];
+
+    expect(
+      PayCardTransactionsResponseSchema.parse(page).map(({ mccCategory }) => mccCategory),
+    ).toEqual(["FOOD", "MISC"]);
+  });
+});
+
+describe("PayCardTransactionsRequestSchema", () => {
+  it("takes no filters at all", () => {
+    expect(PayCardTransactionsRequestSchema.parse(undefined)).toBeUndefined();
+  });
+
+  it("takes a page on its own", () => {
+    expect(PayCardTransactionsRequestSchema.parse({ page: 2 })).toEqual({ page: 2 });
+  });
+
+  it("takes both dates together", () => {
+    const range = { dateFrom: "2026-01-01", dateTo: "2026-01-31" };
+
+    expect(PayCardTransactionsRequestSchema.parse(range)).toEqual(range);
+  });
+
+  it.each([{ dateFrom: "2026-01-01" }, { dateTo: "2026-01-31" }])(
+    "rejects %s, because the provider requires the pair",
+    range => {
+      expect(() => PayCardTransactionsRequestSchema.parse(range)).toThrow();
+    },
+  );
+
+  it("rejects a negative page", () => {
+    expect(() => PayCardTransactionsRequestSchema.parse({ page: -1 })).toThrow();
+  });
+});
+
+describe("PayCardWalletHistoryEntrySchema", () => {
+  // The provider's own documented example.
+  const withdrawal = {
+    name: "Credit withdrawal",
+    amount: "10.00",
+    currency: "usdc",
+    sign: "debit",
+    date: "2024-02-02T15:01:09.091Z",
+  };
+
+  it("reads the entry the provider documents", () => {
+    expect(PayCardWalletHistoryEntrySchema.parse(withdrawal)).toEqual(withdrawal);
+  });
+
+  it.each(["debit", "credit"])("reads a %s movement", sign => {
+    expect(PayCardWalletHistoryEntrySchema.parse({ ...withdrawal, sign }).sign).toBe(sign);
+  });
+
+  it("rejects the uppercase sign a card transaction uses", () => {
+    // The two endpoints disagree on case. Accepting both here would hide that from the caller
+    // that has to reconcile them.
+    expect(() => PayCardWalletHistoryEntrySchema.parse({ ...withdrawal, sign: "DEBIT" })).toThrow();
+  });
+
+  it("keeps the amount as the string the provider sent", () => {
+    expect(
+      PayCardWalletHistoryEntrySchema.parse({ ...withdrawal, amount: "0.104201" }).amount,
+    ).toBe("0.104201");
+  });
+
+  it("keeps the provider's own description, which is all it says about the movement", () => {
+    const purchase = { ...withdrawal, name: "Card purchase - Starbucks" };
+
+    expect(PayCardWalletHistoryEntrySchema.parse(purchase).name).toBe("Card purchase - Starbucks");
+  });
+});
+
+describe("PayCardWalletHistoryRequestSchema", () => {
+  it("reads a credit wallet without a currency", () => {
+    const request = { walletId: "w-1", walletType: "CREDIT" as const };
+
+    expect(PayCardWalletHistoryRequestSchema.parse(request)).toEqual(request);
+  });
+
+  it("requires the currency for an internal wallet", () => {
+    // The provider errors on an internal wallet asked for without one.
+    expect(() =>
+      PayCardWalletHistoryRequestSchema.parse({ walletId: "w-1", walletType: "INTERNAL" }),
+    ).toThrow();
+  });
+
+  it("reads an internal wallet with its currency", () => {
+    const request = { walletId: "w-1", walletType: "INTERNAL" as const, walletCurrency: "usdc" };
+
+    expect(PayCardWalletHistoryRequestSchema.parse(request)).toEqual(request);
+  });
+
+  it("takes a page", () => {
+    const request = { walletId: "w-1", walletType: "REWARD" as const, page: 3 };
+
+    expect(PayCardWalletHistoryRequestSchema.parse(request).page).toBe(3);
+  });
+
+  it("rejects a wallet type the provider does not serve", () => {
+    expect(() =>
+      PayCardWalletHistoryRequestSchema.parse({ walletId: "w-1", walletType: "SAVINGS" }),
+    ).toThrow();
+  });
+
+  it("rejects a request with no wallet to read", () => {
+    expect(() => PayCardWalletHistoryRequestSchema.parse({ walletType: "CREDIT" })).toThrow();
   });
 });

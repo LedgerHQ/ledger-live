@@ -1,7 +1,5 @@
 import React from "react";
 import { View } from "react-native";
-import Share from "react-native-share";
-import { captureRef } from "react-native-view-shot";
 import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { screen, waitFor, within } from "@tests/test-renderer";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
@@ -22,7 +20,6 @@ import {
   FEATURE_TOUR_ROW,
   holdDada,
   mockFullAssetCatalog,
-  payTabEthAccount,
   renderPayTab,
   renderRequestReceive,
   seedContacts,
@@ -433,21 +430,6 @@ describe("PayTab integration", () => {
       expect(screen.getByTestId("pay-request-receive")).toBeVisible();
       expect(screen.getByTestId("pay-request-receive-summary")).toBeVisible();
       expect(screen.getByText("Share")).toBeVisible();
-    });
-
-    it("should share a picture of the request card when Share is pressed", async () => {
-      const { user } = renderRequestReceive();
-
-      await user.press(await screen.findByText("Share"));
-
-      await waitFor(() => {
-        expect(captureRef).toHaveBeenCalledWith(expect.anything(), { format: "png" });
-        expect(Share.open).toHaveBeenCalledWith({
-          url: "file://mock.png",
-          message: payTabEthAccount.freshAddress,
-          failOnCancel: false,
-        });
-      });
     });
 
     it("should render an error when the account is missing", () => {

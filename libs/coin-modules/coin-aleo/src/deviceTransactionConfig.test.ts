@@ -4,7 +4,10 @@ import { TRANSACTION_TYPE } from "./constants";
 import aleoCoinConfig from "./config";
 import { getMockedAccount } from "./__tests__/fixtures/account.fixture";
 import { getMockedConfig } from "./__tests__/fixtures/config.fixture";
-import { getMockedTransaction } from "./__tests__/fixtures/transaction.fixture";
+import {
+  getMockedStakingTransaction,
+  getMockedTransaction,
+} from "./__tests__/fixtures/transaction.fixture";
 import type { TransactionStatus } from "./types";
 
 jest.mock("./config");
@@ -87,7 +90,7 @@ describe("getDeviceTransactionConfig", () => {
     });
   });
 
-  it("should always include the Amount field", async () => {
+  it("should include the Amount field for a public transfer", async () => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
       transaction: mockTransaction,
@@ -95,6 +98,44 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     expect(fields).toContainEqual({ type: "amount", label: "Amount" });
+  });
+
+  it.each([
+    ["Bond Public", TRANSACTION_TYPE.BOND_PUBLIC],
+    ["Unbond Public", TRANSACTION_TYPE.UNBOND_PUBLIC],
+    ["Claim Unbond Public", TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC],
+  ] as const)("should return method '%s' for staking mode '%s'", async (expectedMethod, mode) => {
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: getMockedStakingTransaction(mode),
+      status: mockStatus,
+    });
+
+    expect(fields).toContainEqual({ type: "text", label: "Method", value: expectedMethod });
+  });
+
+  it.each([TRANSACTION_TYPE.BOND_PUBLIC, TRANSACTION_TYPE.UNBOND_PUBLIC] as const)(
+    "should include the Amount field for staking mode '%s'",
+    async mode => {
+      const fields = await getDeviceTransactionConfig({
+        account: mockAccount,
+        transaction: getMockedStakingTransaction(mode),
+        status: mockStatus,
+      });
+
+      expect(fields).toContainEqual({ type: "amount", label: "Amount" });
+    },
+  );
+
+  it("should omit the Amount field for a claim", async () => {
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      transaction: getMockedStakingTransaction(TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC),
+      status: mockStatus,
+    });
+
+    expect(fields).not.toContainEqual({ type: "amount", label: "Amount" });
+    expect(fields.map(f => f.label)).toEqual(["Method", "From", "To", "Fees"]);
   });
 
   it("should include the Fees field when estimatedFees is non-zero and sponsorship is disabled", async () => {

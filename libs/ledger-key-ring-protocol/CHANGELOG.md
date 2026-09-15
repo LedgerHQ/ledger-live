@@ -1,5 +1,21 @@
 # @ledgerhq/live-wallet
 
+## 0.21.2
+
+### Patch Changes
+
+- Updated dependencies [[`5db7a7d`](https://github.com/LedgerHQ/ledger-live/commit/5db7a7dc517bb23d12532ae07cc947eddff6c10e)]:
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.12.0
+  - @ledgerhq/speculos-transport@0.10.14
+
+## 0.21.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5db7a7d`](https://github.com/LedgerHQ/ledger-live/commit/5db7a7dc517bb23d12532ae07cc947eddff6c10e)]:
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.12.0-next.0
+  - @ledgerhq/speculos-transport@0.10.14-next.0
+
 ## 0.21.1
 
 ### Patch Changes
@@ -281,25 +297,5 @@
   - @ledgerhq/live-network@2.6.6-next.0
   - @ledgerhq/hw-ledger-key-ring-protocol@0.10.7-next.0
   - @ledgerhq/hw-transport-mocker@6.34.5-next.0
-
-## 0.15.1
-
-### Patch Changes
-
-- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
-  - @ledgerhq/live-env@2.39.0
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.6
-  - @ledgerhq/live-network@2.6.5
-  - @ledgerhq/speculos-transport@0.10.5
-
-## 0.15.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`81ceb34`](https://github.com/LedgerHQ/ledger-live/commit/81ceb347c0b2167358c601a9922e2c7fa14a845b), [`9ab3a61`](https://github.com/LedgerHQ/ledger-live/commit/9ab3a6157abb3a382c3157eb292ce9d9d2c6df93), [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451)]:
-  - @ledgerhq/live-env@2.39.0-next.0
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.6-next.0
-  - @ledgerhq/live-network@2.6.5-next.0
-  - @ledgerhq/speculos-transport@0.10.5-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

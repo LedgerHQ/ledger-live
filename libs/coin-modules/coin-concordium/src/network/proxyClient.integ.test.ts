@@ -82,11 +82,14 @@ describe("proxyClient", () => {
     it("should return balance for existing account", async () => {
       const result = await getAccountBalance(config, currencyId, ADDRESS_WITH_BALANCE);
 
-      expect(result).toHaveProperty("finalizedBalance");
-      expect(result.finalizedBalance).toHaveProperty("accountAmount");
-      expect(result.finalizedBalance).toHaveProperty("accountAtDisposal");
-      expect(typeof result.finalizedBalance.accountAmount).toBe("string");
-      expect(typeof result.finalizedBalance.accountAtDisposal).toBe("string");
+      // Thrown rather than asserted: the field is absent only for an address
+      // that does not exist, and this one does, so its absence is a failure of
+      // the case under test and not a shape to tolerate.
+      const { finalizedBalance } = result;
+      if (!finalizedBalance) throw new Error("expected a funded account to have a balance");
+
+      expect(typeof finalizedBalance.accountAmount).toBe("string");
+      expect(typeof finalizedBalance.accountAtDisposal).toBe("string");
     });
 
     it("should return balance structure for pristine account", async () => {
@@ -101,6 +104,7 @@ describe("proxyClient", () => {
 
     it("should parse balance as valid numbers", async () => {
       const result = await getAccountBalance(config, currencyId, ADDRESS_WITH_BALANCE);
+      if (!result.finalizedBalance) throw new Error("expected a funded account to have a balance");
 
       const amount = BigInt(result.finalizedBalance.accountAmount);
       const atDisposal = BigInt(result.finalizedBalance.accountAtDisposal);

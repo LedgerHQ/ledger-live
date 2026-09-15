@@ -6,8 +6,10 @@ import {
   useLazyGetCardStatusQuery,
   useCreateCardDetailsTokenMutation,
 } from "@domain/api-card-management";
+import { BAANX_ASSET_LEDGER_IDS } from "@domain/entity-card-asset-mapping";
 import {
   useCardLinkedWallets,
+  type CardLinkedWalletBalance,
   type ResolveWalletCounterValue,
 } from "@features/flow-pay-card-wallets";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,11 +29,20 @@ import {
   selectPayCardHasSeenLoginIntro,
 } from "@features/flow-pay-card-auth/state";
 import {
+  markCardAddedToWallet,
+  resetCardAddedToWallet,
   resetCardOnboardingCompleted,
   selectHasCompletedCardOnboarding,
 } from "@features/flow-pay-card-widget/state";
+import { useCardOnboardingStatus } from "@features/flow-pay-card-widget/onboarding-status";
+import {
+  clearCardOnboardingStatusMock,
+  setCardOnboardingStatusMock,
+  type CardOnboardingStatusMock,
+} from "@domain/api-card-management/mock/card-onboarding-status";
 import { setMockOnboardingStepDone } from "@domain/api-card-management/mock";
 import type { DevToolsConfig } from "@devtools/registry";
+import { isRequestMockingEnabled } from "./isRequestMockingEnabled";
 import { usePayCardAuthProps } from "./usePayCardAuthProps";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
@@ -40,7 +51,6 @@ type OnboardingStep = PayCardToolProps["onboarding"]["steps"][number];
 type PayCardProbe = PayCardToolProps["interaction"]["probes"][number];
 
 export type UsePayCardToolPropsOptions = {
-  /** Pass `"native"` on mobile to include the `walletPay` onboarding step. */
   readonly platform?: "web" | "native";
   readonly openPayTab?: () => void;
   readonly openSecureBrowser?: PayCardToolProps["openSecureBrowser"];
@@ -52,7 +62,6 @@ const LEADING_ONBOARDING_STEPS: readonly OnboardingStep[] = [
   { id: "top-up-card", label: "Top up card", done: false },
 ];
 
-// Mobile-only, injected just before the final purchase step.
 const NATIVE_ONLY_STEP: OnboardingStep = {
   id: "apple-google-pay",
   label: "Apple/Google Pay",
@@ -71,23 +80,54 @@ function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
     : [...LEADING_ONBOARDING_STEPS, PURCHASE_STEP];
 }
 
-/**
- * The join needs a resolver, and this tool prices nothing. It is called for every wallet with a
- * balance and answers `null`, which the screen reports as unpriced.
- */
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
 
-/** Reads what an endpoint answered, whatever shape the failure arrives in. */
+const STEP_ANSWERS: Readonly<Partial<Record<string, keyof CardOnboardingStatusMock>>> = {
+  "create-account": "accountVerified",
+  "choose-card-type": "hasCard",
+  "top-up-card": "walletFunded",
+};
+
+/**
+ * The catalog as the tool lists it, in key order so a pair is easy to find by eye.
+ *
+ * A key the catalog holds no id for is dropped: the screen lists what resolves, and a row with a
+ * blank currency would read as a mapping that exists and is wrong.
+ */
+const CURRENCY_MAPPING_ROWS = Object.entries(BAANX_ASSET_LEDGER_IDS)
+  .flatMap(([key, ledgerId]) => (ledgerId === undefined ? [] : [{ key, ledgerId }]))
+  .sort((a, b) => a.key.localeCompare(b.key));
+
+type PayCardCombinedWallet = PayCardToolProps["balance"]["combinedWallets"][number];
+
+/**
+ * One joined wallet as the tool lists it.
+ *
+ * An unmapped asset has no Ledger currency, so its row has no `ledgerId` at all. That is the shape
+ * the transform and the join answer with, and repeating it here keeps a mapped pair distinguishable
+ * from an unmapped one by shape alone.
+ */
+function toCombinedWallet({
+  id,
+  address,
+  currency,
+  network,
+  priority,
+  ledgerId,
+  balance,
+}: CardLinkedWalletBalance): PayCardCombinedWallet {
+  const row = { id, address, currency, network, priority, balance };
+
+  return ledgerId === undefined ? row : { ...row, ledgerId };
+}
+
+const WALLET_STEP_ID = "apple-google-pay";
+
 function describeError(error: unknown): string {
   if (error === undefined || error === null) return "";
   return typeof error === "string" ? error : JSON.stringify(error, null, 2);
 }
 
-/**
- * Builds the Card / Pay tool's props from the host's feature-flag overrides and
- * a local onboarding-step debug state. Apps consume this instead of re-implementing
- * the wiring in each host.
- */
 export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): PayCardToolProps {
   const platform = options.platform ?? "web";
   const dispatch = useDispatch();
@@ -177,6 +217,66 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const onboarding = useMemo(() => ({ steps, setStepDone }), [steps, setStepDone]);
 
   const auth = usePayCardAuthProps({ openPayTab: options.openPayTab });
+  // Read when the screen asks for it, not when the tool mounts: these are Card endpoints, and a
+  // developer who opened DevTools for something else should not have a session sent to them. Both
+  // hosts mock them, so the screen works on either once it has asked.
+  const [onboardingRequested, setOnboardingRequested] = useState(false);
+  const onboardingStatus = useCardOnboardingStatus({ skip: !onboardingRequested });
+  const { data: derivedOnboarding, refresh: refreshStatus } = onboardingStatus;
+
+  const refreshCardOnboarding = useCallback(() => {
+    // The first call starts the reads by lifting the skip; `refresh` only re-asks once they exist.
+    setOnboardingRequested(true);
+    refreshStatus();
+  }, [refreshStatus]);
+
+  const setDerivedStepDone = useCallback(
+    (id: string, done: boolean) => {
+      if (id === WALLET_STEP_ID) {
+        dispatch(done ? markCardAddedToWallet() : resetCardAddedToWallet());
+        return;
+      }
+
+      const answer = STEP_ANSWERS[id];
+      if (answer === undefined) return;
+
+      setCardOnboardingStatusMock(answer, done);
+      refreshCardOnboarding();
+    },
+    [dispatch, refreshCardOnboarding],
+  );
+
+  const clearCardOnboardingMocks = useCallback(() => {
+    clearCardOnboardingStatusMock();
+    refreshCardOnboarding();
+  }, [refreshCardOnboarding]);
+
+  const cardOnboarding = useMemo(() => {
+    const isMockingEnabled = isRequestMockingEnabled();
+
+    return {
+      steps: derivedOnboarding.steps.map(step => ({
+        id: step.id,
+        isDone: step.isDone,
+        canToggle: step.id === WALLET_STEP_ID || (isMockingEnabled && step.id in STEP_ANSWERS),
+      })),
+      completedCount: derivedOnboarding.completedCount,
+      isFetching: onboardingStatus.isLoading,
+      error: onboardingStatus.isError ? "the account could not be read" : undefined,
+      raw: JSON.stringify(derivedOnboarding, null, 2),
+      refresh: refreshCardOnboarding,
+      setStepDone: setDerivedStepDone,
+      clearMocks: clearCardOnboardingMocks,
+      isMockingEnabled,
+    };
+  }, [
+    derivedOnboarding,
+    onboardingStatus.isLoading,
+    onboardingStatus.isError,
+    refreshCardOnboarding,
+    setDerivedStepDone,
+    clearCardOnboardingMocks,
+  ]);
 
   const [runCardStatus, cardStatus] = useLazyGetCardStatusQuery();
 
@@ -199,9 +299,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const { reset: resetCardDetails } = cardDetails;
   const details = useMemo(
     () => ({
-      // A live, single-use credential. RTK holds it in mutation state while this hook is mounted,
-      // so what the tool guarantees is narrower: it is never handed over as text, and `clear`
-      // resets it on the way out.
       imageUrl: cardDetails.data?.imageUrl,
       isFetching: cardDetails.isLoading,
       error: cardDetails.error === undefined ? undefined : describeError(cardDetails.error),
@@ -224,7 +321,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     [cardStatusProbe, details],
   );
 
-  // The wallets are read when the balance screen opens, not when the tool mounts.
   const [walletsRequested, setWalletsRequested] = useState(false);
   const skipWallets = !walletsRequested;
 
@@ -241,9 +337,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     refetchWallets();
   }, [refetchWallets]);
 
-  // `useCardLinkedWallets` hands back only the join, and reports no more than that something
-  // failed. Reading the same cache entries again costs no request and gives the tool both
-  // responses as they arrived, which is what the screen is for.
   const { data: linked, error: linkedError } = useGetCardLinkedWalletsQuery(undefined, {
     skip: skipWallets,
   });
@@ -267,16 +360,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       baanxWallets: internal ?? [],
       linkedWallets: linked ?? [],
       // Without the counter value, which this tool does not price.
-      combinedWallets: linkedWallets.wallets.map(
-        ({ id, address, currency, network, priority, balance: walletBalance }) => ({
-          id,
-          address,
-          currency,
-          network,
-          priority,
-          balance: walletBalance,
-        }),
-      ),
+      combinedWallets: linkedWallets.wallets.map(toCombinedWallet),
       isFetching: linkedWallets.isFetching,
       errors,
       load: loadWallets,
@@ -289,8 +373,10 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     () => ({
       flags,
       onboarding,
+      cardOnboarding,
       interaction,
       balance,
+      currencyMapping: CURRENCY_MAPPING_ROWS,
       hasSeenFeatureTour,
       resetPayCardFeatureTourSeen: resetFeatureTour,
       hasSeenReceiveVerifyHint,
@@ -299,12 +385,13 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetPayCardLoginIntroSeen: resetLoginIntro,
       hasCompletedCardOnboarding,
       resetCardOnboarding,
-      auth: platform === "native" ? auth : undefined,
+      auth,
       openSecureBrowser: options.openSecureBrowser,
     }),
     [
       flags,
       onboarding,
+      cardOnboarding,
       interaction,
       balance,
       hasSeenFeatureTour,
@@ -315,7 +402,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       resetLoginIntro,
       hasCompletedCardOnboarding,
       resetCardOnboarding,
-      platform,
       auth,
       options.openSecureBrowser,
     ],

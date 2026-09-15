@@ -1,7 +1,7 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runVoteCelo } from "@e2e/specs/delegate/delegate";
 
-const delegation = new Delegate(Account.CELO_1, "0.001", "GrassrootsEconomics");
+const delegation = new Delegate(Account.CELO_1, "0.001", "first-available");
 runVoteCelo(
   delegation,
   ["B2CQA-201"],

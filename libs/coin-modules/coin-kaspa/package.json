@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Ledger Kaspa Coin integration",
   "keywords": [
     "Ledger",
@@ -94,12 +94,13 @@
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.1.1",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "bip32": "4.0.0",
     "bip32-path": "^0.4.2",

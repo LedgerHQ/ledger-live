@@ -8,6 +8,7 @@ import {
   type ContactId,
 } from "@domain/entity-contact";
 import {
+  addressesMatch,
   createValidatingAddressEntryState,
   EMPTY_ADDRESS_ENTRY_STATE,
   requestAddressValidation,
@@ -23,6 +24,7 @@ import type {
   AddAddressFlowViewModel,
   AddAddressInputSource,
   AddAddressLabelState,
+  OtherContactAddress,
   PrefillAddAddressParams,
   PrefillAddAddressStartResult,
   ValidAddAddressEntryState,
@@ -32,6 +34,19 @@ const CLOSED_ADD_ADDRESS_FLOW_STATE = {
   status: "closed",
 } as const satisfies AddAddressFlowState;
 
+function findDuplicateContactName(
+  resolvedAddress: string,
+  otherContactsAddresses: readonly OtherContactAddress[],
+  excludeContactId: string,
+): string | null {
+  return (
+    otherContactsAddresses.find(
+      other =>
+        other.contactId !== excludeContactId && addressesMatch(other.address, resolvedAddress),
+    )?.contactName ?? null
+  );
+}
+
 const UNAVAILABLE_ADDRESS_VALIDATION: ContactsAddressValidationPort = {
   validateAddress: async () => ({ status: "unavailable" }),
 };
@@ -39,6 +54,7 @@ const UNAVAILABLE_ADDRESS_VALIDATION: ContactsAddressValidationPort = {
 export type UseAddAddressFlowViewModelOptions = Readonly<{
   addressValidation?: ContactsAddressValidationPort;
   manualValidationDebounceMs?: number;
+  otherContactsAddresses?: readonly OtherContactAddress[];
 }>;
 
 function createAddressLabelState(
@@ -97,6 +113,7 @@ function applyAddressEntryState(
 export function useAddAddressFlowViewModel({
   addressValidation = UNAVAILABLE_ADDRESS_VALIDATION,
   manualValidationDebounceMs = 0,
+  otherContactsAddresses = [],
 }: UseAddAddressFlowViewModelOptions = {}): AddAddressFlowViewModel {
   const [state, setState] = useState<AddAddressFlowState>(CLOSED_ADD_ADDRESS_FLOW_STATE);
   const validationRequestId = useRef(0);
@@ -146,6 +163,16 @@ export function useAddAddressFlowViewModel({
         return { status: "invalid_address", error: validationResult.status };
       }
 
+      const duplicateName = findDuplicateContactName(
+        validationResult.resolvedAddress,
+        otherContactsAddresses,
+        params.contact.id,
+      );
+      if (duplicateName !== null) {
+        setState(CLOSED_ADD_ADDRESS_FLOW_STATE);
+        return { status: "duplicate_address", contactName: duplicateName };
+      }
+
       const addressEntry: ValidAddAddressEntryState = {
         status: "valid",
         value: normalizedAddress,
@@ -172,7 +199,7 @@ export function useAddAddressFlowViewModel({
 
       return { status: "started" };
     },
-    [addressValidation, cancelAddressValidation],
+    [addressValidation, cancelAddressValidation, otherContactsAddresses],
   );
   const completeCurrencySelection = useCallback(
     (selectedContactId: ContactId, selection: AddAddressCurrencySelection) => {
@@ -209,6 +236,7 @@ export function useAddAddressFlowViewModel({
 
       const normalizedAddress = value.trim();
       const selectedCurrencyId = state.selectedCurrencyId;
+      const selectedContactId = state.selectedContactId;
       const requestId = validationRequestId.current + 1;
       validationRequestId.current = requestId;
 
@@ -244,16 +272,30 @@ export function useAddAddressFlowViewModel({
         return;
       }
 
+      let finalEntry = resolveAddressEntryState(value, inputMethod, validationResult);
+      if (finalEntry.status === "valid") {
+        const dup = findDuplicateContactName(
+          finalEntry.resolvedAddress,
+          otherContactsAddresses,
+          selectedContactId,
+        );
+        if (dup !== null) {
+          finalEntry = {
+            status: "invalid",
+            value,
+            resolvedAddress: null,
+            inputMethod: finalEntry.inputMethod,
+            error: "duplicate_address",
+            contactName: dup,
+          };
+        }
+      }
+
       setState(currentState =>
-        applyAddressEntryState(
-          currentState,
-          selectedCurrencyId,
-          resolveAddressEntryState(value, inputMethod, validationResult),
-          value,
-        ),
+        applyAddressEntryState(currentState, selectedCurrencyId, finalEntry, value),
       );
     },
-    [addressValidation, manualValidationDebounceMs, state],
+    [addressValidation, manualValidationDebounceMs, otherContactsAddresses, state],
   );
   const updateAddressLabel = useCallback((value: string) => {
     setState(currentState => {

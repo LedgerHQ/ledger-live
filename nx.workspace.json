@@ -456,6 +456,7 @@
     },
     "coverage": {
       "dependsOn": ["^build", "build"],
+      "inputs": ["default", "^default"],
       "outputs": [
         "{projectRoot}/coverage/lcov.info",
         "{projectRoot}/coverage/sonar-executionTests-report.xml"

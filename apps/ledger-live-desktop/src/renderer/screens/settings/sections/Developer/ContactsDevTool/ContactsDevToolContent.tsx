@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Divider, Switch } from "@ledgerhq/lumen-ui-react";
+import { Button, Divider, Switch, TextInput } from "@ledgerhq/lumen-ui-react";
 import {
   FeatureFlagPreview,
   FeatureParamRow,
@@ -29,6 +29,9 @@ export const ContactsDevToolContent = ({ expanded }: ContactsDevToolContentProps
     handleResetOverride,
     hasDismissedFeatureIntroduction,
     handleToggleFeatureIntroductionDismissed,
+    excludedCurrencyIdsInput,
+    setExcludedCurrencyIdsInput,
+    handleApplyExcludedCurrencyIds,
   } = useContactsDevToolViewModel();
 
   return (
@@ -74,6 +77,30 @@ export const ContactsDevToolContent = ({ expanded }: ContactsDevToolContentProps
                 onCustomFamiliesInputChange={setCustomFamiliesInput}
                 onApplyCustomFamilies={handleApplyCustomFamilies}
               />
+              <div
+                className={`flex flex-col gap-4 rounded-md bg-surface p-10 transition-opacity ${
+                  isEnabled ? "opacity-100" : "opacity-50"
+                }`}
+              >
+                <span className="body-3">Excluded currency IDs</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <TextInput
+                    aria-label="Excluded currency IDs"
+                    value={excludedCurrencyIdsInput}
+                    onChange={event => setExcludedCurrencyIdsInput(event.target.value)}
+                    placeholder="e.g. ethereum, bitcoin"
+                    disabled={!isEnabled}
+                  />
+                  <Button
+                    appearance="base"
+                    size="sm"
+                    onClick={handleApplyExcludedCurrencyIds}
+                    disabled={!isEnabled}
+                  >
+                    Apply
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
 

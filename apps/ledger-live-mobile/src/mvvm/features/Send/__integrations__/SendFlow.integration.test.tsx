@@ -534,7 +534,7 @@ describe("Send flow integration tests", () => {
 
     await user.press(await screen.findByRole("button", { name: "Add contact" }));
 
-    expect(await screen.findByText("Bitcoin isn't supported yet")).toBeVisible();
+    expect(await screen.findByText("Bitcoin is not supported yet")).toBeVisible();
     expect(
       screen.getByText(
         "You can't add a Bitcoin address to your contacts yet. We're adding more cryptos over time.",

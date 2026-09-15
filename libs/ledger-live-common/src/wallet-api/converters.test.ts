@@ -2,6 +2,9 @@ import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { serializeAccount } from "@ledgerhq/wallet-api-core";
+import aleoExtensions from "../families/aleo/bridgeExtensions";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
@@ -150,6 +153,19 @@ describe("resolveWalletApiSpendableBalance", () => {
     expect(result).toEqual(bridgeSpendableBalance);
   });
 
+  it("falls back to account.spendableBalance when the bridge returns undefined", async () => {
+    // Given
+    mockGetAccountBridge.mockResolvedValue({
+      getWalletApiSpendableBalance: jest.fn().mockReturnValue(undefined),
+    } as never);
+
+    // When
+    const result = await resolveWalletApiSpendableBalance(account);
+
+    // Then
+    expect(result).toEqual(account.spendableBalance);
+  });
+
   it("falls back to account.spendableBalance and logs when the bridge lookup fails", async () => {
     // Given
     mockGetAccountBridge.mockRejectedValue(new Error("unsupported family"));
@@ -165,6 +181,33 @@ describe("resolveWalletApiSpendableBalance", () => {
       expect.stringContaining("falling back to account.spendableBalance"),
       { error: "unsupported family" },
     );
+  });
+});
+
+// The crash this guards against only shows up once the three real pieces are chained: the family
+// extension, the converter funnel, and the wallet-api serializer that calls .toString() on what
+// they produce. Each one alone is green. Only the bridge lookup is stubbed, with the real
+// extension behind it.
+describe("wallet-api serialization of a drawer-built token account", () => {
+  it("serializes an Aleo ARC-22 token account that has no sub-account", async () => {
+    // Given: what the asset drawer builds for a token the user holds no sub-account for
+    const parentAccount = makeMainAccount("aleo-parent");
+    const tokenAccount = makeEmptyTokenAccount(
+      parentAccount,
+      mockTokenCurrency({ parentCurrencyId: getCryptoCurrencyById("aleo").id }),
+    );
+    mockGetAccountBridge.mockResolvedValue(aleoExtensions as never);
+
+    // When: the account.request / account.list handler shape (see react.ts)
+    const spendableBalance = await resolveWalletApiSpendableBalance(tokenAccount, parentAccount);
+    const walletApiAccount = {
+      ...accountToWalletAPIAccount(walletState, tokenAccount, parentAccount),
+      spendableBalance,
+    };
+
+    // Then: the real serializer must not blow up on an undefined balance
+    expect(() => serializeAccount(walletApiAccount)).not.toThrow();
+    expect(serializeAccount(walletApiAccount).spendableBalance).toBe("0");
   });
 });
 

@@ -2,14 +2,17 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "lib": ["ES2022", "dom"],
+    "lib": ["ES2022", "DOM"],
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": { "*": ["./*"] },
     "noEmit": true,
-    "types": ["jest", "node", "@testing-library/jest-dom"],
+    "types": ["jest", "node", "@testing-library/jest-dom"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"],
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.web.json" },
+    { "path": "./tsconfig.native.json" }
+  ]
 }

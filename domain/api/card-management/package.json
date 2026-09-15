@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-card-management",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Domain API client for Card Management: RTK Query endpoints injected into the shared cardApi service",
   "main": "src/index.ts",
@@ -8,6 +8,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./mock": "./src/onboardingStatus.mock.ts",
+    "./mock/card-onboarding-status": "./src/cardOnboardingStatus.mock.ts",
+    "./mock/card-session": "./src/cardMockSession.mock.ts",
+    "./mock/card-transactions": "./src/cardTransactions.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -19,8 +22,9 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/api/card-management"
   },
   "dependencies": {
-    "@shared/api-services": "workspace:*",
+    "@domain/entity-card-asset-mapping": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/api-services": "workspace:*",
     "zod": "catalog:"
   },
   "peerDependencies": {

@@ -1,5 +1,47 @@
 # @ledgerhq/coin-zcash
 
+## 0.7.0
+
+### Minor Changes
+
+- [#21355](https://github.com/LedgerHQ/ledger-live/pull/21355) [`fc74af8`](https://github.com/LedgerHQ/ledger-live/commit/fc74af8db6038afd89c64de356e67fe9ba4811a0) Thanks [@semeano](https://github.com/semeano)! - Offer the Zcash memo only to shielded recipients. A memo travels in a shielded output, so a transparent recipient could never receive one, yet the send flow showed the input for every Zcash address and made the user fill or skip it. Send descriptors can now distinguish static memo support from recipient-specific visibility, and a memo left over from an earlier shielded recipient is dropped when the recipient turns transparent, so it can no longer reach the transaction builder.
+
+- [#21355](https://github.com/LedgerHQ/ledger-live/pull/21355) [`5c23a76`](https://github.com/LedgerHQ/ledger-live/commit/5c23a7694a8304727c13d7383979d6a0660b1596) Thanks [@semeano](https://github.com/semeano)! - Reject a Zcash memo exceeding the ZIP-302 512-byte limit in getTransactionStatus
+
+- [#21502](https://github.com/LedgerHQ/ledger-live/pull/21502) [`86fdaa1`](https://github.com/LedgerHQ/ledger-live/commit/86fdaa1929eeaf42d6d3765ce206758f0422c631) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Bound transparent-input and Ironwood-note selection to the device's per-PCZT ceilings on both pools, so a send from an account holding more UTXOs or notes than the device can sign in one PCZT no longer produces an unsignable transaction. A send whose full balance covers the requested amount but whose device-safe selection does not now reports a distinct, actionable error instead of a plain insufficient-balance one.
+
+- [#21388](https://github.com/LedgerHQ/ledger-live/pull/21388) [`51a3d3e`](https://github.com/LedgerHQ/ledger-live/commit/51a3d3ef013a9310ed943a17a33ba69ea8d79a6d) Thanks [@pawell24](https://github.com/pawell24)! - Fix a transparent↔shielded transaction (shielding or de-shielding) being recorded twice in `account.operations` — once by the transparent leg's sync and once by the shielded leg's, for the same transaction hash. `reconcileLegOperations` now keeps only the transparent leg's record when both legs see the same hash.
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`0152cad`](https://github.com/LedgerHQ/ledger-live/commit/0152cade87e061bb2b56fd71f8a404c3dfed21e0), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783), [`6656f90`](https://github.com/LedgerHQ/ledger-live/commit/6656f90769c3419e1f121c0c2368eab4566e48ba)]:
+  - @ledgerhq/types-live@6.123.0
+  - @ledgerhq/ledger-wallet-framework@3.3.0
+  - @ledgerhq/live-env@4.0.0
+  - @ledgerhq/wallet-btc@0.4.0
+  - @ledgerhq/live-signer-zcash@0.10.0
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#21355](https://github.com/LedgerHQ/ledger-live/pull/21355) [`fc74af8`](https://github.com/LedgerHQ/ledger-live/commit/fc74af8db6038afd89c64de356e67fe9ba4811a0) Thanks [@semeano](https://github.com/semeano)! - Offer the Zcash memo only to shielded recipients. A memo travels in a shielded output, so a transparent recipient could never receive one, yet the send flow showed the input for every Zcash address and made the user fill or skip it. Send descriptors can now distinguish static memo support from recipient-specific visibility, and a memo left over from an earlier shielded recipient is dropped when the recipient turns transparent, so it can no longer reach the transaction builder.
+
+- [#21355](https://github.com/LedgerHQ/ledger-live/pull/21355) [`5c23a76`](https://github.com/LedgerHQ/ledger-live/commit/5c23a7694a8304727c13d7383979d6a0660b1596) Thanks [@semeano](https://github.com/semeano)! - Reject a Zcash memo exceeding the ZIP-302 512-byte limit in getTransactionStatus
+
+- [#21502](https://github.com/LedgerHQ/ledger-live/pull/21502) [`86fdaa1`](https://github.com/LedgerHQ/ledger-live/commit/86fdaa1929eeaf42d6d3765ce206758f0422c631) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Bound transparent-input and Ironwood-note selection to the device's per-PCZT ceilings on both pools, so a send from an account holding more UTXOs or notes than the device can sign in one PCZT no longer produces an unsignable transaction. A send whose full balance covers the requested amount but whose device-safe selection does not now reports a distinct, actionable error instead of a plain insufficient-balance one.
+
+- [#21388](https://github.com/LedgerHQ/ledger-live/pull/21388) [`51a3d3e`](https://github.com/LedgerHQ/ledger-live/commit/51a3d3ef013a9310ed943a17a33ba69ea8d79a6d) Thanks [@pawell24](https://github.com/pawell24)! - Fix a transparent↔shielded transaction (shielding or de-shielding) being recorded twice in `account.operations` — once by the transparent leg's sync and once by the shielded leg's, for the same transaction hash. `reconcileLegOperations` now keeps only the transparent leg's record when both legs see the same hash.
+
+### Patch Changes
+
+- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`0152cad`](https://github.com/LedgerHQ/ledger-live/commit/0152cade87e061bb2b56fd71f8a404c3dfed21e0), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783), [`6656f90`](https://github.com/LedgerHQ/ledger-live/commit/6656f90769c3419e1f121c0c2368eab4566e48ba)]:
+  - @ledgerhq/types-live@6.123.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.3.0-next.0
+  - @ledgerhq/live-env@4.0.0-next.0
+  - @ledgerhq/wallet-btc@0.4.0-next.0
+  - @ledgerhq/live-signer-zcash@0.10.0
+
 ## 0.6.0
 
 ### Minor Changes

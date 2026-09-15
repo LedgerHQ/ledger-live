@@ -2,12 +2,12 @@ import React from "react";
 import { render } from "@tests/test-renderer";
 import { LineChartScrubber } from "../LineChartScrubber";
 import type { LineChartPointTooltip, LineChartSeries } from "../types";
-import type { ScrubberTooltipContent } from "@ledgerhq/lumen-ui-rnative-visualization";
+import type { ScrubberTooltipContent } from "@ledgerhq/lumen-ui-rnative/visualization";
 
 let buildTooltip: ((dataIndex: number) => ScrubberTooltipContent) | undefined;
 let showBeacons: boolean | undefined;
 
-jest.mock("@ledgerhq/lumen-ui-rnative-visualization", () => ({
+jest.mock("@ledgerhq/lumen-ui-rnative/visualization", () => ({
   Scrubber: (props: { tooltip?: typeof buildTooltip; showBeacons?: boolean }) => {
     buildTooltip = props.tooltip;
     showBeacons = props.showBeacons;

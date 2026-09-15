@@ -37,7 +37,6 @@ const FF_LWD_WALLET_40_Q1 = {
     enabled: true,
     params: {
       tour: false,
-      q2Tour: false,
       lazyOnboarding: true,
       assetSection: false,
       brazePlacement: true,
@@ -57,7 +56,6 @@ export const FF_LWD_WALLET_40_Q2 = {
     enabled: true,
     params: {
       tour: false,
-      q2Tour: false,
       lazyOnboarding: true,
       assetSection: true,
       brazePlacement: true,
@@ -139,6 +137,19 @@ export const FF_STAKE_PROGRAMS_MODAL = {
   },
 } satisfies PartialFeatures;
 
+// Mina staking is unreleased, so the currency is absent from the remote stakePrograms list. The
+// account header only keeps a "Stake" action when getCanStakeUsingLedgerLive is true, so without
+// this the Earn button never renders.
+export const FF_MINA_STAKING_ENABLED = {
+  stakePrograms: {
+    enabled: true,
+    params: {
+      list: ["mina"],
+      redirects: {},
+    },
+  },
+} satisfies PartialFeatures;
+
 export const FF_NEW_SEND_FLOW_DISABLED = {
   newSendFlow: {
     enabled: false,
@@ -171,6 +182,7 @@ export const getMergedFeatureFlags = ({
     // explicit defaults
     onboardingWidget: { enabled: true },
     largeScreenUpsell: { enabled: false },
+    releaseTour: { enabled: false },
     lldModularDrawer: {
       enabled: true,
       params: {

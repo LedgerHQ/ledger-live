@@ -4,26 +4,15 @@ import { BigNumber } from "bignumber.js";
 import type { PaySuccessProps } from "@features/flow-pay-contact";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useContactsFeature } from "@features/platform-contacts";
 import { selectContacts, ContactIdSchema } from "@domain/entity-contact";
 import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { useSelector } from "~/context/hooks";
 import { localeSelector } from "~/reducers/settings";
-import { useMaybeAccountName } from "~/reducers/wallet";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowContext";
 import type { SendFlowNavigationProp } from "../../types";
-
-function formatApproximateBlockTime(seconds: number | undefined): string | undefined {
-  if (!seconds || seconds <= 0) return undefined;
-  if (seconds < 60) return `~${Math.round(seconds)}s`;
-  return `~${Math.round(seconds / 60)} min`;
-}
 
 export function usePaySuccessViewModel(): PaySuccessProps {
   const navigation = useNavigation<BaseNavigationComposite<SendFlowNavigationProp>>();
@@ -36,15 +25,6 @@ export function usePaySuccessViewModel(): PaySuccessProps {
   const account = state.account.account;
   const parentAccount = state.account.parentAccount;
   const currency = state.account.currency;
-
-  const mainAccount = useMemo(
-    () => (account ? getMainAccount(account, parentAccount ?? undefined) : null),
-    [account, parentAccount],
-  );
-  const networkCurrency = useMemo(
-    () => (mainAccount ? getAccountCurrency(mainAccount) : null),
-    [mainAccount],
-  );
 
   const recipient = useMemo(() => {
     const signedAddress = state.transaction.transaction?.recipient;
@@ -76,8 +56,6 @@ export function usePaySuccessViewModel(): PaySuccessProps {
     });
   }, [amountUnit, locale, state.transaction.transaction]);
 
-  const fromAccountName = useMaybeAccountName(account ?? undefined) ?? "";
-
   const optimisticOperation = state.operation.optimisticOperation;
   const concernedOperation =
     optimisticOperation?.subOperations?.find(op => op.accountId === account?.id) ??
@@ -97,26 +75,14 @@ export function usePaySuccessViewModel(): PaySuccessProps {
     ? {
         id: ContactIdSchema.parse(recipientHeader.contact.id),
         name: recipientHeader.contact.name,
-        isMe: false,
       }
     : undefined;
-
-  const networkIcon = networkCurrency
-    ? { ledgerId: networkCurrency.id, ticker: networkCurrency.ticker }
-    : undefined;
-
-  const estimatedTime =
-    networkCurrency?.type === "CryptoCurrency"
-      ? formatApproximateBlockTime(networkCurrency.blockAvgTime)
-      : undefined;
 
   return {
     recipient: matchedRecipient,
     recipientLabel: recipientHeader.label,
     amountFormatted,
-    fromAccountName,
-    networkIcon,
-    estimatedTime,
+    canViewTransaction: Boolean(account && concernedOperation),
     onViewTransaction,
     onClose: close,
   };

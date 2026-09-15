@@ -43,14 +43,21 @@ export function useRecipientScreenView({
 }: UseRecipientScreenViewProps) {
   const { recipientSearch } = useSendFlowData();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
-    useContactsFeature("mobile");
+  const {
+    isEnabled: isContactsFeatureEnabled,
+    eligibleAddressFamilies,
+    excludedCurrencyIds,
+  } = useContactsFeature("mobile");
   const { selectedContact } = useRecipientContactSelection();
   const { inputMethod, setInputMethod, setRecipientResolution, resetRecipientResolution } =
     useSendFlowTracking();
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const hasAddressBook = isEligibleAddressCurrency(eligibleAddressFamilies, currency);
+  const hasAddressBook = isEligibleAddressCurrency(
+    eligibleAddressFamilies,
+    currency,
+    excludedCurrencyIds,
+  );
   const sendFlowTrackingProperties = useMemo(
     () => getSendFlowTrackingProperties(account, parentAccount),
     [account, parentAccount],

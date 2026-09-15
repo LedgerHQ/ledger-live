@@ -24,8 +24,8 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   const navigate = useNavigate();
   const mainAccount = getMainAccount(account, parentAccount);
   const { cosmosResources } = mainAccount;
-  const earnRewardEnabled = canDelegate(mainAccount);
-  const hasDelegations = cosmosResources.delegations.length > 0;
+  const earnRewardEnabled = canDelegate(mainAccount) && !!cosmosResources;
+  const hasDelegations = (cosmosResources?.delegations.length ?? 0) > 0;
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
 
   const onClickStakekit = useCallback(() => {

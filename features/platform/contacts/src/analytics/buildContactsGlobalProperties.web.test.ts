@@ -12,11 +12,9 @@ describe("buildContactsGlobalProperties", () => {
 
     expect(
       buildContactsGlobalProperties({
-        ffAddressBookEnabled: true,
         contacts,
       }),
     ).toEqual({
-      ffAddressBookEnabled: true,
       contactsCount: 5,
       externalAddressesSavedCount: 3,
       myAddressesSavedCount: 3,
@@ -26,11 +24,9 @@ describe("buildContactsGlobalProperties", () => {
   it("returns zero counts when only Me is present without addresses", () => {
     expect(
       buildContactsGlobalProperties({
-        ffAddressBookEnabled: false,
         contacts: [mockMeContact()],
       }),
     ).toEqual({
-      ffAddressBookEnabled: false,
       contactsCount: 0,
       externalAddressesSavedCount: 0,
       myAddressesSavedCount: 0,
@@ -45,7 +41,6 @@ describe("buildContactsGlobalProperties", () => {
 
     expect(
       buildContactsGlobalProperties({
-        ffAddressBookEnabled: true,
         contacts,
       }),
     ).toMatchObject({

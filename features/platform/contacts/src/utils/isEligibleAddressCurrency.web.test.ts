@@ -40,4 +40,21 @@ describe("isEligibleAddressCurrency", () => {
     expect(isEligibleAddressCurrency(["evm"], undefined)).toBe(false);
     expect(isEligibleAddressCurrency([], ETHEREUM)).toBe(false);
   });
+
+  it("rejects an explicitly excluded network", () => {
+    expect(isEligibleAddressCurrency(["evm"], ETHEREUM, ["ethereum"])).toBe(false);
+    expect(isEligibleAddressCurrency(["evm"], SEI, ["sei_evm"])).toBe(false);
+  });
+
+  it("still accepts non-excluded networks when an exclusion list is present", () => {
+    expect(isEligibleAddressCurrency(["evm"], ETHEREUM, ["sei_evm"])).toBe(true);
+  });
+
+  it("rejects a token whose parent network is excluded", () => {
+    expect(
+      isEligibleAddressCurrency(["evm"], mockTokenCurrency({ parentCurrencyId: ETHEREUM.id }), [
+        "ethereum",
+      ]),
+    ).toBe(false);
+  });
 });

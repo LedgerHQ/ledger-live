@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { CardVisualView } from "./CardVisualView";
-import type { CardVisualViewProps, FormattedValue } from "../../types";
+import type { FormattedValue } from "../../types";
 
 const formatCountervalue = (value: number): FormattedValue => ({
   integerPart: String(Math.trunc(value)),
@@ -11,15 +11,14 @@ const formatCountervalue = (value: number): FormattedValue => ({
   currencyPosition: "start",
 });
 
-function renderCardVisual(props: Partial<CardVisualViewProps> = {}) {
+function renderCardVisual({ isFrozen = false }: { isFrozen?: boolean } = {}) {
   return render(
     <CardVisualView
       balance={100}
       formatCountervalue={formatCountervalue}
       balanceLabel="Balance"
       isLoading={false}
-      isFrozen={false}
-      {...props}
+      isFrozen={isFrozen}
     />,
   );
 }

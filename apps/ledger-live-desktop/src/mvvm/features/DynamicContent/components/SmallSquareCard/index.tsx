@@ -102,7 +102,7 @@ function CardMedia({ title, media, mediaType, filledMedia }: CardMediaProps) {
 
   return (
     <div
-      className="flex shrink-0 items-center justify-center"
+      className="flex min-h-0 shrink items-center justify-center"
       style={{
         height: MEDIA_TOP_PADDING_PX + MEDIA_SIZE_PX,
         paddingTop: MEDIA_TOP_PADDING_PX,
@@ -113,7 +113,7 @@ function CardMedia({ title, media, mediaType, filledMedia }: CardMediaProps) {
           src={media}
           alt={title ?? ""}
           draggable={false}
-          className={`block shrink-0 ${filledMedia ? "object-cover" : "object-contain"}`}
+          className={`block max-h-full shrink-0 ${filledMedia ? "object-cover" : "object-contain"}`}
           style={{ width: MEDIA_SIZE_PX, height: MEDIA_SIZE_PX }}
         />
       ) : null}
@@ -135,24 +135,24 @@ function CardText({ title, subDescription }: CardTextProps) {
       }}
     >
       <span
-        className={`flex w-full items-center justify-center truncate text-center body-2 text-base ${
+        className={`line-clamp-2 w-full break-words text-center body-2 text-base ${
           title ? "visible" : "invisible"
         }`}
-        style={{ height: TITLE_LINE_HEIGHT_PX }}
+        style={{ minHeight: TITLE_LINE_HEIGHT_PX }}
       >
         {title}
       </span>
-      <span
-        className={`flex w-full items-center justify-center truncate text-center body-3 text-muted ${
-          hasSubDescription ? "visible" : "invisible"
-        }`}
-        style={{
-          marginTop: TITLE_PRICE_GAP_PX,
-          height: PRICE_LINE_HEIGHT_PX,
-        }}
-      >
-        {subDescription}
-      </span>
+      {hasSubDescription ? (
+        <span
+          className="flex w-full items-center justify-center truncate text-center body-3 text-muted"
+          style={{
+            marginTop: TITLE_PRICE_GAP_PX,
+            height: PRICE_LINE_HEIGHT_PX,
+          }}
+        >
+          {subDescription}
+        </span>
+      ) : null}
     </div>
   );
 }

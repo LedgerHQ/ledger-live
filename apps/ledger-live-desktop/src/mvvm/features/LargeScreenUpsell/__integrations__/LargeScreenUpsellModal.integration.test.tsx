@@ -748,7 +748,8 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
             },
           },
         },
-        lwdWallet40: { enabled: true, params: { tour: false, q2Tour: true } },
+        lwdWallet40: { enabled: true, params: { tour: false } },
+        releaseTour: { enabled: true, params: { variant: "q2" } },
       }),
       settings: {
         hasCompletedOnboarding: true,
@@ -776,6 +777,52 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       expect.objectContaining({
         reason: "competing_app_start_modal",
         competitor: "q2_tour",
+      }),
+    );
+  });
+
+  it("should not open when a Q3 tour is competing", async () => {
+    renderMount({
+      ...withFlagOverrides({
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
+        lwdWallet40: { enabled: true, params: { tour: false } },
+        releaseTour: { enabled: true, params: { variant: "q3_a" } },
+      }),
+      settings: {
+        hasCompletedOnboarding: true,
+        hasSeenWalletV4Tour: true,
+        hasSeenQ2Tour: true,
+        hasSeenQ3Tour: false,
+        sharePersonalizedRecommandations: false,
+        devicesModelList: [DeviceModelId.nanoS],
+      },
+      postOnboarding: {
+        onboardingDate: "2026-01-01T00:00:00.000Z",
+      },
+      largeScreenUpsellModal: {
+        retriesModal: 0,
+        lastSeenAt: null,
+        session: "ready",
+      },
+      dialogs: {
+        GENERIC_AWARENESS_MODAL: false,
+      },
+    });
+
+    await expectModalNotOpen();
+    expect(track).toHaveBeenCalledWith(
+      "modal_blocked",
+      expect.objectContaining({
+        reason: "competing_app_start_modal",
+        competitor: "q3_tour",
       }),
     );
   });

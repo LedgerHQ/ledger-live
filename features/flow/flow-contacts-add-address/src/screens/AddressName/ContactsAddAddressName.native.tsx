@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Banner,
   BottomSheetHeader,
   BottomSheetView,
   Box,
   Button,
+  Link,
   Text,
   TextInput,
 } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
+import { useLocalizedUrl, useOpenLink } from "@shared/platform-linking";
+import { urls } from "../../urls";
 import type { AddAddressLabelState, AddAddressNameLabels } from "../../state/types";
 
 export type ContactsAddAddressNameProps = Readonly<{
@@ -30,6 +33,11 @@ export function ContactsAddAddressName({
   const validationMessage = addressLabel.validationError
     ? labels.validationErrors[addressLabel.validationError]
     : undefined;
+  const openLink = useOpenLink();
+  const localizedPrivacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy.native);
+  const handlePressPrivacyPolicy = useCallback(() => {
+    openLink(localizedPrivacyPolicyUrl);
+  }, [openLink, localizedPrivacyPolicyUrl]);
 
   return (
     <BottomSheetView
@@ -68,17 +76,31 @@ export function ContactsAddAddressName({
             description={labels.namingDisclaimer}
           />
         </Box>
-        <Button
-          testID="contacts-add-address-name-continue"
-          appearance="base"
-          size="lg"
-          isFull
-          disabled={addressLabel.status !== "valid"}
-          icon={LedgerLogo}
-          onPress={onContinue}
-        >
-          {labels.continueToReview}
-        </Button>
+        <Box lx={{ gap: "s16", alignItems: "center" }}>
+          {labels.privacyPolicy ? (
+            <Link
+              testID="contacts-add-address-name-privacy-policy"
+              appearance="base"
+              size="sm"
+              underline={false}
+              isExternal
+              onPress={handlePressPrivacyPolicy}
+            >
+              {labels.privacyPolicy}
+            </Link>
+          ) : null}
+          <Button
+            testID="contacts-add-address-name-continue"
+            appearance="base"
+            size="lg"
+            isFull
+            disabled={addressLabel.status !== "valid"}
+            icon={LedgerLogo}
+            onPress={onContinue}
+          >
+            {labels.continueToReview}
+          </Button>
+        </Box>
       </Box>
     </BottomSheetView>
   );

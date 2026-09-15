@@ -116,7 +116,9 @@ describe("@shared/live-env", () => {
     });
 
     it("parses a MOCK_SERVER_SESSION override from a JSON string", () => {
-      expect(setEnvUnsafe("MOCK_SERVER_SESSION", '{"devices":[{"device_type":"flex"}]}')).toBe(true);
+      expect(setEnvUnsafe("MOCK_SERVER_SESSION", '{"devices":[{"device_type":"flex"}]}')).toBe(
+        true,
+      );
       expect(getEnv("MOCK_SERVER_SESSION")).toEqual({ devices: [{ device_type: "flex" }] });
     });
 

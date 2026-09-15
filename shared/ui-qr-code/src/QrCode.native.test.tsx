@@ -63,5 +63,4 @@ describe("QrCode", () => {
     expect(getAllByTestId("styled-qr-code-dot")[0]).toHaveProp("fill", "#000000");
     expect(getAllByTestId("styled-qr-code-finder")[0]).toHaveProp("stroke", "#000000");
   });
-
 });

@@ -13,6 +13,7 @@ export async function getAmountFromUSD(
 ): Promise<number | null> {
   try {
     const { data } = await axios.get(COUNTERVALUES_URL, {
+      timeout: 10_000,
       params: {
         froms: currencyId,
         to: "USD",

@@ -17,6 +17,7 @@ const labels: AddAddressEntryLabels = {
   ensDisclaimer: "ENS names resolve to wallet addresses.",
   ensDisclaimerDescription:
     "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify.",
+  duplicateAddress: (contactName: string) => `This address is already used for ${contactName}.`,
 };
 
 const VALID_ADDRESS = ContactAddressValueSchema.parse("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");

@@ -3,8 +3,7 @@ import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import { bakers } from "@ledgerhq/coin-tezos/network/index";
-import type { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
-import { getCurrencyConfiguration } from "../../config";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import {
   isDelegationPosition,
   isFinalizablePosition,
@@ -22,9 +21,7 @@ export function useBakers(whitelistAddresses: string[]): Baker[] {
     bakers.listBakersWithDefault(whitelistAddresses),
   );
   useEffect(() => {
-    bakers
-      .listBakers(getCurrencyConfiguration<TezosCoinConfig>("tezos"), whitelistAddresses)
-      .then(setWhitelistedBakers);
+    bakers.listBakers(buildContext("tezos"), whitelistAddresses).then(setWhitelistedBakers);
   }, [whitelistAddresses]);
 
   return whitelistedBakers;
@@ -69,7 +66,7 @@ export function useBaker(addr: string): Baker | undefined {
     }
     let cancelled = false;
     bakers
-      .loadBaker(getCurrencyConfiguration<TezosCoinConfig>("tezos"), addr)
+      .loadBaker(buildContext("tezos"), addr)
       .then(b => {
         if (cancelled) return;
         setBaker(b);

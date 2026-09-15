@@ -32,6 +32,7 @@ export type ServerData =
     }
   | {
       type: "appLogs";
+      id: string;
       payload: string;
     }
   | {
@@ -40,18 +41,21 @@ export type ServerData =
     }
   | {
       type: "appFlags";
+      id: string;
       payload: string;
     }
   | {
       type: "appEnvs";
+      id: string;
       payload: string;
     }
   | {
       type: "ptxHandoff";
+      id: string;
       payload: string;
     }
   | { type: "ACK"; id: string }
-  | { type: "swapSetupDone" }
+  | { type: "swapSetupDone"; id: string }
   | { type: "swapLiveAppReady" }
   | { type: "earnLiveAppReady" };
 

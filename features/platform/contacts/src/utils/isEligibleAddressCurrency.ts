@@ -7,6 +7,7 @@ import { isContactDeviceCurrencySupported } from "../device/resolveContactDevice
 export function isEligibleAddressCurrency(
   eligibleFamilies: readonly string[],
   currency: CryptoCurrency | TokenCurrency | null | undefined,
+  excludedCurrencyIds: readonly string[] = [],
 ): boolean {
   if (!currency) {
     return false;
@@ -20,6 +21,7 @@ export function isEligibleAddressCurrency(
   return (
     network !== undefined &&
     eligibleFamilies.includes(network.family) &&
-    isContactDeviceCurrencySupported(network.id)
+    isContactDeviceCurrencySupported(network.id) &&
+    !excludedCurrencyIds.includes(network.id)
   );
 }

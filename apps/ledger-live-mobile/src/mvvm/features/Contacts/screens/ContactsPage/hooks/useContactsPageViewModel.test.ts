@@ -150,7 +150,7 @@ describe("useContactsPageViewModel", () => {
 
   it("should close the activation drawer when it is dismissed", () => {
     mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
-    const { result } = renderViewModelWithFeatureIntroductionDismissed();
+    const { result, store } = renderViewModelWithFeatureIntroductionDismissed();
 
     act(() => {
       result.current.ledgerSyncIntroduction.onActivate();
@@ -160,6 +160,25 @@ describe("useContactsPageViewModel", () => {
     });
 
     expect(result.current.ledgerSyncActivationDrawer.isOpen).toBe(false);
+    expect(store.getState().walletSync.returnsToEntryScreen).toBe(false);
+  });
+
+  it("should preserve the Contacts entry flow when navigating to Wallet Sync", () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
+    const { result, store } = renderViewModelWithFeatureIntroductionDismissed();
+
+    act(() => {
+      result.current.ledgerSyncIntroduction.onActivate();
+    });
+    act(() => {
+      result.current.ledgerSyncActivationDrawer.onNavigate();
+    });
+    act(() => {
+      result.current.ledgerSyncActivationDrawer.onClose();
+    });
+
+    expect(result.current.ledgerSyncActivationDrawer.isOpen).toBe(false);
+    expect(store.getState().walletSync.returnsToEntryScreen).toBe(true);
   });
 
   it("should close the Ledger Sync introduction when it is dismissed", () => {

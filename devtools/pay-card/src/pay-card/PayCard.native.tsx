@@ -12,12 +12,20 @@ import {
   Spot,
   Tag,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ChevronRight, CoinsCrypto, CreditCard } from "@ledgerhq/lumen-ui-rnative/symbols";
+import {
+  CheckmarkCircle,
+  ChevronRight,
+  Coins,
+  CoinsCrypto,
+  CreditCard,
+} from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 import { Interaction } from "../components/Interaction/Interaction";
 import { BalanceScreen } from "../components/Balance/Balance";
+import { CardOnboardingScreen } from "../components/CardOnboarding/CardOnboarding";
+import { CurrencyMappingScreen } from "../components/CurrencyMapping/CurrencyMapping";
 import { AuthSection } from "./AuthSection";
 import { ResultToast } from "./ResultToast";
 import { SecureBrowserSection } from "./SecureBrowserSection";
@@ -33,8 +41,10 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
     onboarding,
+    cardOnboarding,
     interaction,
     balance,
+    currencyMapping,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
     hasSeenReceiveVerifyHint,
@@ -43,12 +53,22 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     resetCardOnboarding,
     onNavigateToPortfolio,
     onNavigateToPayTab,
+    onNavigateToPaySuccess,
+    onNavigateToSendSuccess,
     hasSeenLoginIntro,
     resetPayCardLoginIntroSeen,
     auth,
     openSecureBrowser,
   } = props;
-  const [screen, setScreen] = useState<"tool" | "interaction" | "balance">("tool");
+  const hasQuickActions = Boolean(
+    onNavigateToPortfolio ||
+    onNavigateToPayTab ||
+    onNavigateToPaySuccess ||
+    onNavigateToSendSuccess,
+  );
+  const [screen, setScreen] = useState<
+    "tool" | "interaction" | "balance" | "onboarding" | "mapping"
+  >("tool");
 
   if (screen === "interaction") {
     return <Interaction {...interaction} onBack={() => setScreen("tool")} />;
@@ -56,6 +76,14 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
 
   if (screen === "balance") {
     return <BalanceScreen {...balance} onBack={() => setScreen("tool")} />;
+  }
+
+  if (screen === "onboarding") {
+    return <CardOnboardingScreen {...cardOnboarding} onBack={() => setScreen("tool")} />;
+  }
+
+  if (screen === "mapping") {
+    return <CurrencyMappingScreen rows={currencyMapping} onBack={() => setScreen("tool")} />;
   }
 
   return (
@@ -91,6 +119,35 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
               <Spot appearance="icon" icon={CoinsCrypto} />
               <ListItemContent>
                 <ListItemTitle>Balance</ListItemTitle>
+              </ListItemContent>
+            </ListItemLeading>
+            <ListItemTrailing>
+              <ChevronRight />
+            </ListItemTrailing>
+          </ListItem>
+
+          <ListItem
+            onPress={() => {
+              cardOnboarding.refresh();
+              setScreen("onboarding");
+            }}
+          >
+            <ListItemLeading>
+              <Spot appearance="icon" icon={CheckmarkCircle} />
+              <ListItemContent>
+                <ListItemTitle>Card onboarding</ListItemTitle>
+              </ListItemContent>
+            </ListItemLeading>
+            <ListItemTrailing>
+              <ChevronRight />
+            </ListItemTrailing>
+          </ListItem>
+
+          <ListItem onPress={() => setScreen("mapping")}>
+            <ListItemLeading>
+              <Spot appearance="icon" icon={Coins} />
+              <ListItemContent>
+                <ListItemTitle>Currency Mapping</ListItemTitle>
               </ListItemContent>
             </ListItemLeading>
             <ListItemTrailing>
@@ -181,7 +238,7 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
           onReset={resetCardOnboarding}
         />
 
-        {onNavigateToPortfolio || onNavigateToPayTab ? (
+        {hasQuickActions ? (
           <>
             <Divider />
             <Section title="Quick actions">
@@ -194,6 +251,16 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
                 {onNavigateToPayTab ? (
                   <Button appearance="gray" size="sm" onPress={onNavigateToPayTab}>
                     Go to Pay tab
+                  </Button>
+                ) : null}
+                {onNavigateToPaySuccess ? (
+                  <Button appearance="gray" size="sm" onPress={onNavigateToPaySuccess}>
+                    Pay contact success
+                  </Button>
+                ) : null}
+                {onNavigateToSendSuccess ? (
+                  <Button appearance="gray" size="sm" onPress={onNavigateToSendSuccess}>
+                    Send success
                   </Button>
                 ) : null}
               </Box>

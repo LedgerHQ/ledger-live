@@ -15,6 +15,7 @@ export type ContactsFeatureConfig = Readonly<{
   isEnabled: boolean;
   showNewBadge: boolean;
   eligibleAddressFamilies: readonly string[];
+  excludedCurrencyIds: readonly string[];
 }>;
 
 export type ContactsFeatureValue = Features["lwdContacts"] | Features["lwmContacts"];
@@ -22,12 +23,20 @@ export type ContactsFeatureValue = Features["lwdContacts"] | Features["lwmContac
 export type ContactsFeatureParams = Readonly<{
   newBadge: boolean;
   eligibleAddressFamilies: string[];
+  excludedCurrencyIds: string[];
 }>;
 
 export type ContactsFeatureValuePatch = Readonly<{
   enabled?: boolean;
   params?: Partial<ContactsFeatureParams>;
 }>;
+
+export function isContactsEnabledForCurrency(
+  config: ContactsFeatureConfig,
+  currencyId: string,
+): boolean {
+  return config.isEnabled && !config.excludedCurrencyIds.includes(currencyId);
+}
 
 export function resolveContactsFeatureConfig(
   feature: ContactsFeatureValue | null | undefined,
@@ -39,6 +48,7 @@ export function resolveContactsFeatureConfig(
     isEnabled,
     showNewBadge: isEnabled && params.newBadge,
     eligibleAddressFamilies: params.eligibleAddressFamilies,
+    excludedCurrencyIds: params.excludedCurrencyIds,
   };
 }
 
@@ -48,6 +58,7 @@ export function resolveContactsFeatureParams(params: unknown): ContactsFeaturePa
   return {
     newBadge: input?.newBadge === true,
     eligibleAddressFamilies: normalizeEligibleAddressFamilies(input?.eligibleAddressFamilies),
+    excludedCurrencyIds: normalizeExcludedCurrencyIds(input?.excludedCurrencyIds),
   };
 }
 
@@ -73,6 +84,10 @@ export function updateContactsFeatureValue(
         patchParams?.eligibleAddressFamilies === undefined
           ? params.eligibleAddressFamilies
           : normalizeEligibleAddressFamilies(patchParams.eligibleAddressFamilies),
+      excludedCurrencyIds:
+        patchParams?.excludedCurrencyIds === undefined
+          ? params.excludedCurrencyIds
+          : normalizeExcludedCurrencyIds(patchParams.excludedCurrencyIds),
     },
   };
 }
@@ -93,9 +108,13 @@ function normalizeEligibleAddressFamilies(value: unknown): string[] {
   return families.length > 0 ? families : [...DEFAULT_ELIGIBLE_ADDRESS_FAMILIES];
 }
 
-function toContactsFeatureParamsInput(
-  value: unknown,
-): Readonly<{ newBadge?: unknown; eligibleAddressFamilies?: unknown }> | undefined {
+function toContactsFeatureParamsInput(value: unknown):
+  | Readonly<{
+      newBadge?: unknown;
+      eligibleAddressFamilies?: unknown;
+      excludedCurrencyIds?: unknown;
+    }>
+  | undefined {
   if (!isRecord(value)) {
     return undefined;
   }
@@ -103,7 +122,16 @@ function toContactsFeatureParamsInput(
   return {
     newBadge: value.newBadge,
     eligibleAddressFamilies: value.eligibleAddressFamilies,
+    excludedCurrencyIds: value.excludedCurrencyIds,
   };
+}
+
+function normalizeExcludedCurrencyIds(value: unknown): string[] {
+  if (!Array.isArray(value) || !value.every(id => typeof id === "string")) {
+    return [];
+  }
+
+  return [...new Set(value.filter(Boolean))];
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

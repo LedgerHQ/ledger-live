@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
   ContactsLedgerSyncIntroductionContent,
   type ContactsLedgerSyncIntroductionContentProps,
@@ -21,11 +21,36 @@ export function ContactsLedgerSyncIntroductionSheet({
   onDismiss,
 }: ContactsLedgerSyncIntroductionSheetProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const skipNextCloseTracking = useRef(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      skipNextCloseTracking.current = false;
+    }
+  }, [isOpen]);
+
+  const handleActivate = useCallback(() => {
+    skipNextCloseTracking.current = true;
+    onActivate();
+  }, [onActivate]);
+
+  const handleDismiss = useCallback(() => {
+    skipNextCloseTracking.current = true;
+    onDismiss();
+  }, [onDismiss]);
+
+  const handleClose = useCallback(() => {
+    if (skipNextCloseTracking.current) {
+      skipNextCloseTracking.current = false;
+      return;
+    }
+    onDismiss();
+  }, [onDismiss]);
 
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
-      onClose={onDismiss}
+      onClose={handleClose}
       testID="contacts-ledger-sync-introduction-drawer"
       enableDynamicSizing
     >
@@ -36,8 +61,8 @@ export function ContactsLedgerSyncIntroductionSheet({
         activateLabel={activateLabel}
         dismissLabel={dismissLabel}
         bottomInset={bottomInset}
-        onActivate={onActivate}
-        onDismiss={onDismiss}
+        onActivate={handleActivate}
+        onDismiss={handleDismiss}
       />
     </QueuedBottomSheet>
   );

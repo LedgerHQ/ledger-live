@@ -8,21 +8,19 @@ Cross-platform Pay Card authentication flow for Ledger Wallet.
 ## Usage
 
 ```tsx
-import { CardLogin, CardMore } from "@features/flow-pay-card-auth";
+import { CardLogin, useCardLogout, useIsCardSignedIn } from "@features/flow-pay-card-auth";
 
 <CardLogin oauthConfig={oauthConfig} callback={callback} onTrackEvent={track} />
-<CardMore />;
 ```
 
-Two components, one for each direction, and each one decides whether it belongs on screen. `CardLogin`
-runs the whole login, and shows nothing once the card holder is signed in. `CardMore` does the
-opposite: it shows a `More` tile-button that opens the `More` sheet, and the sheet's `Logout` row ends
-the session. It shows nothing at all while nobody is signed in. A caller places both and passes
-`CardMore` nothing.
+`CardLogin` runs the whole login, and shows nothing once the card holder is signed in. Session
+teardown is `useCardLogout` — the More menu in
+[`@features/flow-pay-card-details`](../pay-card-details/README.md) calls it. `useIsCardSignedIn` is
+the same Redux flag both sides read.
 
-They agree through one Redux flag, `payCardAuth.isSignedIn`, because two machines would each hydrate the
-session and neither would agree with the other. The login machine writes the flag on entering `ready`,
-`idle` and `error`. `CardMore` writes it once a logout is through, and the login machine takes a
+They agree through `payCardAuth.isSignedIn`, because two machines would each hydrate the session and
+neither would agree with the other. The login machine writes the flag on entering `ready`, `idle`
+and `error`. Logout writes it once the session is through, and the login machine takes a
 `SESSION_ENDED` event to put the login back on offer.
 
 `oauthConfig` carries the OAuth client id, the redirect URI and the app's deep link. All three are
@@ -82,9 +80,10 @@ App composition and DevTools consume shared Pay Card entity state through
 | `payCardAuth` | `hasCard` and `isSignedIn` | **No.** It is runtime state, so it stays out of every persisted blob. |
 | `payCardLoginIntro` | `hasSeenLoginIntro` | **Yes**, in the shared `payCard` blob, beside the balance filter and the feature-tour flag. |
 
-`hasSeenLoginIntro` says whether the card holder has already seen the login intro sheet. The flag
-goes up only when a login this session started reaches `ready`, so neither a hydrated session nor a
-reset from the Pay Card devtool raises it. Other Pay Card UI state is owned by the flow it belongs
+`hasSeenLoginIntro` says whether the card holder has already logged in once. The machine raises the
+flag on entry to `persistingSession`, and only a code exchange reaches that state, so neither a
+hydrated session nor a reset from the Pay Card devtool raises it. A session that cannot be stored
+leaves the flag up, because the exchange already proved the holder has an account. Other Pay Card UI state is owned by the flow it belongs
 to: the balance filter by `@features/flow-pay-balance` and the feature-tour flag by
 `@features/flow-pay-feature-tour`.
 
@@ -92,10 +91,16 @@ The flag also picks what the login block says, from the app's `payTab.cardLogin.
 is `Crypto Card` either way, and on mobile it is a Lumen `Subheader` under the card face — the Pay
 Card flow no longer draws a section title of its own there:
 
-| `hasSeenLoginIntro` | Subtitle | Button | The press |
-| --- | --- | --- | --- |
-| Down | Get 1% cashback every time you spend | `Get card` | Opens the intro sheet |
-| Up | Log in to access your card | `Login` | Starts the login |
+| `hasSeenLoginIntro` | Headline | Subtitle | Button | The press |
+| --- | --- | --- | --- | --- |
+| Down, desktop | Get your crypto card | Get 1% cashback every time you spend | `Get card` | Opens the intro sheet |
+| Up, desktop | Log in to access your Card | You’ve been logged out for security | `Log in` | Starts the login |
+| Down, mobile | — | Get 1% cashback every time you spend | `Get card` | Opens the intro sheet |
+| Up, mobile | — | Log in to access your card | `Login` | Starts the login |
+
+`CardLoginView.web` draws the headline as an `h2`. `CardLoginView.native` drops it, so the mobile
+screen keeps its own two lines. Both locales still carry every `payTab.cardLogin.<stage>.title` key,
+because the view model resolves the key on both platforms.
 
 One press, one handler: `onLoginPress` reads the flag and either opens the sheet or sends `LOGIN`,
 and the sheet's own buttons send the same `LOGIN` afterwards.
@@ -130,8 +135,8 @@ import { CardLoginView } from "./CardLoginView";
 
 | Platform         | Files resolved                                        |
 | ---------------- | ----------------------------------------------------- |
-| Mobile (Re.Pack) | `CardLogin/index.native.tsx`, `CardMore/index.native.tsx` |
-| Desktop (Rspack) | `CardLogin/index.web.tsx`, `CardMore/index.web.tsx`  |
+| Mobile (Re.Pack) | `CardLogin/index.native.tsx` |
+| Desktop (Rspack) | `CardLogin/index.web.tsx` |
 
 ## Structure
 
@@ -142,7 +147,7 @@ pay-card-auth/
 ├── package.json                            # Package metadata and public exports
 └── src/
     ├── components/                         # Components shared by several screens
-    │   ├── CardLogin/
+    │   └── CardLogin/
     │   │   ├── __tests__/                   # View, opener and ViewModel tests
     │   │   ├── CardLoginIntroView.native.tsx # Native login intro bottom sheet
     │   │   ├── CardLoginIntroView.web.tsx   # Web login intro dialog
@@ -155,20 +160,9 @@ pay-card-auth/
     │   │   ├── payCardLoginIntro.webp       # The login intro hero image
     │   │   ├── types.ts                     # Component contracts
     │   │   └── useCardLoginViewModel.ts     # Shared state and orchestration
-    │   └── CardMore/
-    │       ├── __tests__/                    # View, ViewModel, sheet and row tests
-    │       ├── CardMoreRow.tsx               # One sheet row, shared by both platforms
-    │       ├── CardMoreRowParts.native.tsx   # Native Lumen row parts, and the row icons
-    │       ├── CardMoreRowParts.web.tsx      # Web Lumen row parts, and the row icons
-    │       ├── CardMoreSheet.native.tsx      # Native More bottom sheet
-    │       ├── CardMoreSheet.web.tsx         # Web More dialog
-    │       ├── CardMoreView.native.tsx       # Native signed-in UI, the More tile
-    │       ├── CardMoreView.web.tsx          # Web signed-in UI, the More tile
-    │       ├── index.native.tsx              # Native component container
-    │       ├── index.web.tsx                 # Web component container
-    │       ├── types.ts                      # Tile, row and sheet contracts
-    │       └── useCardMoreViewModel.ts       # Visibility, the sheet, and the logout
     ├── hooks/                              # Flow-local hooks
+    │   ├── useIsCardSignedIn.ts             # Reads `payCardAuth.isSignedIn`
+    │   └── useCardLogout.ts                 # Ends the Card session
     ├── router/                             # Flow-local routing
     ├── state/
     │   ├── __tests__/                      # Machine, store, parser and slice tests
@@ -181,6 +175,7 @@ pay-card-auth/
     │   ├── callbackUrl.ts                  # Reads `code` and `state` off a redirect URL
     │   ├── createCardLoginPorts.ts         # Binds the machine to RTK, the stores and the session
     │   ├── createCardLogoutPorts.ts        # Binds the logout to RTK and the session
+    │   ├── cardLogout.ts                   # runLogout / startLogout
     │   ├── crypto.native.ts                # CSPRNG and SHA-256 through expo-crypto
     │   ├── crypto.web.ts                   # CSPRNG and SHA-256 through WebCrypto
     │   ├── errors.ts                       # Error kinds, and the 401 test

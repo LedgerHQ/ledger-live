@@ -140,6 +140,39 @@ describe("useEditAddressAddressEntry", () => {
     });
   });
 
+  it("should mark a valid address as duplicate when it belongs to another contact", async () => {
+    const otherAddress = validAddress;
+    const validateAddress = jest
+      .fn<
+        ReturnType<ContactsAddressValidationPort["validateAddress"]>,
+        Parameters<ContactsAddressValidationPort["validateAddress"]>
+      >()
+      .mockResolvedValue({ status: "valid", resolvedAddress: otherAddress, isDomain: false });
+    const { result } = renderHook(() =>
+      useEditAddressAddressEntry({
+        addressValidation: createValidationPort(validateAddress),
+        currencyId,
+        currentAddress,
+        contactId: "contact-self",
+        isActive: true,
+        otherContactsAddresses: [
+          { contactId: "contact-other", contactName: "Alice", address: otherAddress },
+        ],
+      }),
+    );
+
+    await act(async () => {
+      result.current.onAddressChange(otherAddress, "manual");
+      await Promise.resolve();
+    });
+
+    expect(result.current.addressEntry).toMatchObject({
+      status: "invalid",
+      error: "duplicate_address",
+      contactName: "Alice",
+    });
+  });
+
   it("should keep the input editable when currencyId is missing", () => {
     const { result } = renderHook(() =>
       useEditAddressAddressEntry({
