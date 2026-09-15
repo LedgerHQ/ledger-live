@@ -1,7 +1,11 @@
 import { expect } from "@playwright/test";
 import { AppPage } from "tests/page/abstractClasses";
 import { ContactDetailPage } from "tests/page/contactDetail.page";
-import { ADD_CONTACT_PREFIX, ContactNameDialog } from "tests/page/dialog/contactName.dialog";
+import {
+  ADD_CONTACT_PREFIX,
+  ContactNameDialog,
+  RENAME_CONTACT_PREFIX,
+} from "tests/page/dialog/contactName.dialog";
 import { step } from "tests/misc/reporters/step";
 
 const ME_CONTACT_DISPLAY_NAME = "My addresses";
@@ -13,6 +17,12 @@ export class ContactsPage extends AppPage {
     this.page,
     ADD_CONTACT_PREFIX,
     "contacts-add-contact-save",
+  );
+
+  readonly renameDialog = new ContactNameDialog(
+    this.page,
+    RENAME_CONTACT_PREFIX,
+    "contacts-rename-contact-confirm",
   );
 
   private readonly pageRoot = this.page.getByTestId("contacts-page");
@@ -113,5 +123,13 @@ export class ContactsPage extends AppPage {
   async expectEmptyState() {
     await expect(this.addContactRow).toBeVisible();
     await expect(this.savedContactRows).toHaveCount(0);
+  }
+
+  @step("Rename the contact to $0")
+  async renameContact(name: string) {
+    await this.detail.clickEditAction();
+    await this.renameDialog.expectVisible();
+    await this.renameDialog.typeName(name);
+    await this.renameDialog.confirm();
   }
 }

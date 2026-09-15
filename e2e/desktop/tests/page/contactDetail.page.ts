@@ -1,15 +1,8 @@
 import { expect } from "@playwright/test";
 import { AppPage } from "tests/page/abstractClasses";
-import { ContactNameDialog, RENAME_CONTACT_PREFIX } from "tests/page/dialog/contactName.dialog";
 import { step } from "tests/misc/reporters/step";
 
 export class ContactDetailPage extends AppPage {
-  readonly renameDialog = new ContactNameDialog(
-    this.page,
-    RENAME_CONTACT_PREFIX,
-    "contacts-rename-contact-confirm",
-  );
-
   private readonly screen = this.page.getByTestId("contacts-detail-screen");
   private readonly name = this.page.getByTestId("contacts-detail-name");
   private readonly emptyState = this.page.getByTestId("contacts-detail-empty-state");
@@ -33,17 +26,9 @@ export class ContactDetailPage extends AppPage {
     await expect(this.emptyState).toBeVisible();
   }
 
-  @step("Open the rename contact dialog")
-  async openRenameDialog() {
+  @step("Click the edit action")
+  async clickEditAction() {
     await this.editAction.click();
-    await this.renameDialog.expectVisible();
-  }
-
-  @step("Rename the contact to $0")
-  async renameContact(name: string) {
-    await this.openRenameDialog();
-    await this.renameDialog.typeName(name);
-    await this.renameDialog.confirm();
   }
 
   @step("Open the delete contact confirmation")

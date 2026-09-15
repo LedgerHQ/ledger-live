@@ -78,6 +78,7 @@ test.describe("Contacts", () => {
       await app.contacts.expectScreenVisible();
       await app.contacts.expectMeContactDisplayed();
       await app.contacts.expectMeAddressCount(NO_ADDRESS_LABEL);
+      await app.contacts.expectEmptyState();
 
       await app.contacts.addContact(CONTACT_NAME);
 
@@ -90,7 +91,7 @@ test.describe("Contacts", () => {
       await app.contacts.detail.expectName(CONTACT_NAME);
       await app.contacts.detail.expectNoAddresses();
 
-      await app.contacts.detail.renameContact(RENAMED_CONTACT_NAME);
+      await app.contacts.renameContact(RENAMED_CONTACT_NAME);
       await app.contacts.detail.expectName(RENAMED_CONTACT_NAME);
 
       await app.contacts.expectScreenVisible();
