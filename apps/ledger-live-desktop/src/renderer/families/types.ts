@@ -7,6 +7,7 @@ import { Currency } from "@domain/entity-currency";
 import { CryptoCurrency, ExplorerView } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { Unit } from "@domain/entity-currency-unit";
+import type { Device } from "@ledgerhq/types-devices";
 import {
   Account,
   AnyMessage,
@@ -335,6 +336,37 @@ export type LLDCoinFamily<
    * Allow to override the "Amount" step in the Send modal.
    */
   SendStepAmount?: React.ComponentType<SendStepProps>;
+
+  /**
+   * Notice rendered on the new Send flow recipient step (e.g. Zcash shielded
+   * sync banner). The component owns its own gating and renders nothing when
+   * it does not apply.
+   *
+   * When it needs to prevent the recipient step from completing/advancing (e.g.
+   * the shielded sync is not complete, so signing could use an incomplete note
+   * set), it reports `onBlockedChange(true)` and `onBlockedChange(false)` once
+   * the block clears. Generic recipient code honors this flag to gate both the
+   * completion signal and forward navigation.
+   */
+  SendRecipientNotice?: React.ComponentType<{
+    account: A;
+    transaction: T;
+    onBlockedChange?: (blocked: boolean) => void;
+  }>;
+
+  /**
+   * Replace the on-device confirmation UI in the new Send flow signature step
+   * (e.g. Zcash showing amount instead of a shielded address). Renders
+   * `fallback` when the override does not apply.
+   */
+  SendDeviceSignatureRequested?: React.ComponentType<{
+    device: Device | null | undefined;
+    transaction: T;
+    unit: Unit;
+    currencyId: string;
+    onShown?: () => void;
+    fallback: React.ReactNode;
+  }>;
 
   /**
    * Allow to add a family-specific component above the recipient field in the

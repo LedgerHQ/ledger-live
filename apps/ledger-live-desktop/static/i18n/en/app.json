@@ -9524,6 +9524,9 @@
           "toPublic": "Self transfer to public balance",
           "unavailable": "Your private address will be available once Shielded is enabled for your account.",
           "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
+        },
+        "confirm": {
+          "privateTransaction": "Private transaction — verify amount on your device"
         }
       },
       "state": {

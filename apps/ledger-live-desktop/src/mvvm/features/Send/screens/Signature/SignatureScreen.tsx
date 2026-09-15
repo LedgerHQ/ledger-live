@@ -2,11 +2,14 @@ import React from "react";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { SimplifiedTransactionConfirm } from "./components/SimplifiedTransactionConfirm";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { useSignatureViewModel } from "./hooks/useSignatureViewModel";
 import { LockedDevicePrompt } from "./components/LockedDevicePrompt";
 import { PendingState } from "./components/PendingState";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Result = (
   props:
@@ -28,6 +31,7 @@ const Result = (
 export const SignatureScreen = () => {
   const {
     account,
+    parentAccount,
     transaction,
     action,
     request,
@@ -35,10 +39,17 @@ export const SignatureScreen = () => {
     finishWithError,
     onDeviceConfirmationShown,
   } = useSignatureViewModel();
+  const mainAccount = account ? getMainAccount(account, parentAccount) : undefined;
+  const familyName = mainAccount?.currency.family;
+  const DeviceSignatureRequested = useLLDCoinFamily(familyName).SendDeviceSignatureRequested;
+  const accountUnit = useMaybeAccountUnit(mainAccount);
 
   if (!account || !transaction || !request) {
     return null;
   }
+
+  const currency = getAccountCurrency(account);
+  const unit = accountUnit ?? currency.units[0];
 
   return (
     <DialogBody className="py-16">
@@ -54,9 +65,22 @@ export const SignatureScreen = () => {
             if (!device) return null;
             return <LockedDevicePrompt deviceModelId={device.modelId} onRetry={onRetry} />;
           }}
-          renderDeviceSignatureRequested={({ device }) => (
-            <SimplifiedTransactionConfirm device={device} onShown={onDeviceConfirmationShown} />
-          )}
+          renderDeviceSignatureRequested={({ device }) => {
+            const fallback = (
+              <SimplifiedTransactionConfirm device={device} onShown={onDeviceConfirmationShown} />
+            );
+            if (!DeviceSignatureRequested) return fallback;
+            return (
+              <DeviceSignatureRequested
+                device={device}
+                transaction={transaction}
+                unit={unit}
+                currencyId={currency.id}
+                onShown={onDeviceConfirmationShown}
+                fallback={fallback}
+              />
+            );
+          }}
         />
       </div>
     </DialogBody>
