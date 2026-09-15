@@ -86,8 +86,10 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const unit = useAccountUnit(account);
   if (account.type !== "Account") return null;
   const { spendableBalance: _spendableBalance, cosmosResources } = account;
-  const { delegatedBalance: _delegatedBalance, unbondingBalance: _unbondingBalance } =
-    cosmosResources;
+  const {
+    delegatedBalance: _delegatedBalance = new BigNumber(0),
+    unbondingBalance: _unbondingBalance = new BigNumber(0),
+  } = cosmosResources || {};
   const formatConfig = {
     disableRounding: false,
     alwaysShowSign: false,

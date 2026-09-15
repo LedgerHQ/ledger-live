@@ -108,6 +108,23 @@ describe("AccountBalanceSummaryFooter", () => {
       expect(screen.queryByText(DELEGATE_UNBONDING_BALANCE_TEXT)).not.toBeInTheDocument();
     });
 
+    it("should render without throwing when cosmosResources is undefined", () => {
+      mockGetCurrencyConfiguration({ disableDelegation: false });
+      mockFormatCurrencyUnit(DELEGATE_BALANCE, DELEGATE_UNBONDING_BALANCE);
+
+      const account = {
+        type: "Account",
+        cosmosResources: undefined,
+        currency: {
+          id: "babylon",
+        } as unknown as CryptoCurrency,
+      } as unknown as CosmosAccount;
+
+      expect(() => render(<AccountBalanceSummaryFooter account={account} />)).not.toThrow();
+      // no delegated resources → the undelegating section must not be shown
+      expect(screen.queryByText("Undelegating")).not.toBeInTheDocument();
+    });
+
     it("should render the undelegating tooltip without throwing for a testnet id that aliases to a mainnet chain (crypto_org_croeseid)", () => {
       mockGetCurrencyConfiguration({ disableDelegation: false });
 
