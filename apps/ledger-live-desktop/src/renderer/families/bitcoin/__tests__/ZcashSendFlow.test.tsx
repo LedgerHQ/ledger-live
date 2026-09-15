@@ -14,9 +14,19 @@ import {
 } from "LLD/features/Send/__mocks__/sendFlowTestUtils";
 import { SendWorkflow } from "LLD/features/Send";
 import { ZcashSyncNotice } from "../ZcashSyncNotice";
+import { ZcashAmountStepSync } from "../ZcashAmountStepSync";
 
 jest.mock("~/renderer/families/bitcoin/ZCashExportKeyFlowModal/sync", () => ({
   syncStateUpdater: jest.fn(() => ({ type: "test/syncStateUpdater" })),
+}));
+
+const mockStartShieldedSync = jest.fn();
+jest.mock("../useZcashShieldedSync", () => ({
+  useZcashShieldedSync: jest.fn(() => ({
+    startShieldedSync: mockStartShieldedSync,
+    stopShieldedSync: jest.fn(),
+    saveSyncState: jest.fn(),
+  })),
 }));
 
 describe("Zcash shielded send flow", () => {
@@ -97,7 +107,10 @@ describe("Zcash shielded send flow", () => {
   beforeEach(() => {
     resetSendFlowTestState("bitcoin");
     setMockBalanceTypeConfig(zcashBalanceTypeConfig);
-    setMockLLDCoinFamily({ SendRecipientNotice: ZcashSyncNotice });
+    setMockLLDCoinFamily({
+      SendRecipientNotice: ZcashSyncNotice,
+      SendAmountEffect: ZcashAmountStepSync,
+    });
   });
 
   it("shows sync banner on recipient screen when private sender and syncState=running", async () => {
@@ -190,5 +203,37 @@ describe("Zcash shielded send flow", () => {
     await navigateToAmountScreen(user, shieldedRecipient);
 
     expect(screen.getByTestId("send-amount-step")).toBeVisible();
+  }, 20000);
+
+  it("starts the shielded sync once on entering the amount step with the private pool, and does not restart it on an amount keystroke", async () => {
+    const shieldedRecipient =
+      "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
+    const account = createZcashAccount({ syncState: "complete" });
+    setMockTransaction(createMinimalBtcTransaction({ recipient: shieldedRecipient }));
+    const { user } = renderZcashSendFlow(account);
+
+    await screen.findByTestId("balance-type-screen");
+    await user.click(screen.getByTestId("balance-type-private"));
+
+    await navigateToAmountScreen(user, shieldedRecipient);
+    expect(mockStartShieldedSync).toHaveBeenCalledTimes(1);
+
+    await user.type(screen.getByTestId("send-amount-input"), "1");
+    expect(mockStartShieldedSync).toHaveBeenCalledTimes(1);
+  }, 20000);
+
+  it("does not start a shielded sync on entering the amount step with the public pool", async () => {
+    const account = createZcashAccount({ syncState: "complete" });
+    setMockTransaction(
+      createMinimalBtcTransaction({ recipient: "t1ZcashTransparentXXXXXXXXXXXXXXXXXXXXXX" }),
+    );
+    const { user } = renderZcashSendFlow(account);
+
+    await screen.findByTestId("balance-type-screen");
+    await user.click(screen.getByTestId("balance-type-public"));
+
+    await navigateToAmountScreen(user, "t1ZcashTransparentXXXXXXXXXXXXXXXXXXXXXX");
+
+    expect(mockStartShieldedSync).not.toHaveBeenCalled();
   }, 20000);
 });

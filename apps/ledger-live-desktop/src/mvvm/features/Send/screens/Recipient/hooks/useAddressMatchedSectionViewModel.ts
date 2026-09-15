@@ -141,6 +141,7 @@ function useAddressMatchedSectionViewModelInternal({
     isAddressComplete,
     hasBridgeError,
     isContactsFeatureEnabled,
+    matchedAccountAddress: searchResult.resolvedAddress,
   });
 
   if (!presentation) {

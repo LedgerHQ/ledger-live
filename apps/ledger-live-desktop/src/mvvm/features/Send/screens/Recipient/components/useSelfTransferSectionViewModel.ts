@@ -1,11 +1,10 @@
 import { useMemo, useCallback } from "react";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import type { BalanceTypeSelfTransferTarget } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientContinuation } from "../../../context/RecipientContinuationContext";
+import { getAccountSelfTransferTarget } from "../../../utils/selfTransferTarget";
 
 export type SelfTransferSectionViewModel = {
   target: BalanceTypeSelfTransferTarget;
@@ -23,13 +22,7 @@ export function useSelfTransferSectionViewModel(): SelfTransferSectionViewModel 
 
   const target = useMemo(() => {
     if (!account) return null;
-    const config = sendFeatures.getBalanceTypeConfig(getAccountCurrency(account));
-    return (
-      config?.getSelfTransferTarget({
-        account,
-        transaction: state.transaction.transaction,
-      }) ?? null
-    );
+    return getAccountSelfTransferTarget(account, state.transaction.transaction);
   }, [account, state.transaction.transaction]);
 
   const onSelfTransfer = useCallback(

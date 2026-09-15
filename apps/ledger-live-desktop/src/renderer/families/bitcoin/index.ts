@@ -11,8 +11,10 @@ import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import operationDetails from "./operationDetails";
 import AccountBodyHeader from "./AccountBodyHeader";
 import PostBroadcastEffect from "./ZcashPostBroadcastSync";
+import { ZcashAmountStepSync } from "./ZcashAmountStepSync";
 import { ZcashSyncNotice } from "./ZcashSyncNotice";
 import { ZcashTransactionConfirm } from "./ZcashTransactionConfirm";
+import { getAccountRecipientAddresses } from "./getAccountRecipientAddresses";
 import { BitcoinFamily } from "./types";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
@@ -36,11 +38,13 @@ const family: BitcoinFamily = {
   SendModalTitle,
   SendRecipientNotice: ZcashSyncNotice,
   SendDeviceSignatureRequested: ZcashTransactionConfirm,
+  getAccountRecipientAddresses,
   accountHeaderManageActions,
   AccountBalanceSummaryFooter,
   operationDetails,
   AccountBodyHeader,
   PostBroadcastEffect,
+  SendAmountEffect: ZcashAmountStepSync,
   handlesEditTransaction: ({ account, parentAccount, mainAccount, operation, featureFlags }) => {
     const isPending = !operation.blockHeight;
     const isCurrencySupported =

@@ -4,6 +4,7 @@ import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import { useConfirmationViewModel } from "./hooks/useConfirmationViewModel";
 import { ConfirmationBody } from "./components/ConfirmationBody";
 import { ConfirmationFooter } from "./components/ConfirmationFooter";
+import { FamilyPostBroadcastEffect } from "./components/FamilyPostBroadcastEffect";
 
 export const ConfirmationScreen = () => {
   const { t } = useTranslation();
@@ -11,6 +12,7 @@ export const ConfirmationScreen = () => {
 
   return (
     <>
+      <FamilyPostBroadcastEffect />
       <DialogBody className="py-16">
         <ConfirmationBody status={status} transactionError={transactionError ?? undefined} />
       </DialogBody>
