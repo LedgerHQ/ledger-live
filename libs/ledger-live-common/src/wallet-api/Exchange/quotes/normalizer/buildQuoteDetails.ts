@@ -1,5 +1,7 @@
+import BigNumber from "bignumber.js";
+
 import type { RawQuote } from "../service/types";
-import type { Quote } from "../types";
+import type { Quote, QuoteNetworkFeeAmount } from "../types";
 import type { FeeEstimate } from "./networkFeeEstimate";
 import { buildNetworkFees, buildPayoutNetworkFees } from "./networkFees";
 import { buildPermitData } from "./permitData";
@@ -46,6 +48,33 @@ export function buildQuoteDetails(
   if (feeEstimate?.approvalNetworkFee) {
     details.approvalNetworkFee = feeEstimate.approvalNetworkFee;
   }
+  const totalNetworkFee = buildTotalNetworkFee(feeEstimate);
+  if (totalNetworkFee) {
+    details.totalNetworkFee = totalNetworkFee;
+  }
 
   return details;
+}
+
+/**
+ * Build the user-visible network fee total from the structured fee parts.
+ */
+function buildTotalNetworkFee(
+  feeEstimate: FeeEstimate | undefined,
+): QuoteNetworkFeeAmount | undefined {
+  const estimatedNetworkFee = feeEstimate?.estimatedNetworkFee;
+  const approvalNetworkFee = feeEstimate?.approvalNetworkFee;
+  const currencyId = estimatedNetworkFee?.currencyId ?? approvalNetworkFee?.currencyId;
+  if (!currencyId) {
+    return undefined;
+  }
+
+  const estimated = new BigNumber(estimatedNetworkFee?.amount ?? 0);
+  const approval = new BigNumber(approvalNetworkFee?.amount ?? 0);
+  const amount = estimated.plus(approval);
+  if (!amount.gt(0)) {
+    return undefined;
+  }
+
+  return { amount: amount.toFixed(0), currencyId };
 }

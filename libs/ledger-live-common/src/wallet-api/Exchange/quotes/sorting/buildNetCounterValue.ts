@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 
-import type { Quote, QuoteEstimatedNetworkFee } from "../types";
+import type { Quote, QuoteNetworkFeeAmount } from "../types";
 
 export type NetCounterValueContext = {
   receiveCurrencyId: string;
@@ -9,7 +9,7 @@ export type NetCounterValueContext = {
 };
 
 function feeAmountAsDisplayValue(
-  fee: QuoteEstimatedNetworkFee | undefined,
+  fee: QuoteNetworkFeeAmount | undefined,
   feeCurrencyMagnitude: number | undefined,
 ): BigNumber {
   if (!fee || feeCurrencyMagnitude === undefined) {
@@ -26,20 +26,14 @@ export function buildNetCounterValue(quote: Quote, context: NetCounterValueConte
     receiveSpotPrice,
   );
 
-  const estimatedFee = feeAmountAsDisplayValue(
-    quote.quoteDetails.estimatedNetworkFee,
-    context.feeCurrencyMagnitude,
-  );
-  const approvalFee = feeAmountAsDisplayValue(
-    quote.quoteDetails.approvalNetworkFee,
+  const networkFee = feeAmountAsDisplayValue(
+    quote.quoteDetails.totalNetworkFee,
     context.feeCurrencyMagnitude,
   );
   const feeCurrencyId =
-    quote.quoteDetails.estimatedNetworkFee?.currencyId ??
-    quote.quoteDetails.approvalNetworkFee?.currencyId ??
-    quote.quoteDetails.networkFees.currencyId;
+    quote.quoteDetails.totalNetworkFee?.currencyId ?? quote.quoteDetails.networkFees.currencyId;
   const feeSpotPrice = context.spotPrices[feeCurrencyId] || 0;
-  const networkFeeCounterValue = estimatedFee.plus(approvalFee).times(feeSpotPrice);
+  const networkFeeCounterValue = networkFee.times(feeSpotPrice);
 
   return receiveCounterValue.minus(networkFeeCounterValue);
 }
