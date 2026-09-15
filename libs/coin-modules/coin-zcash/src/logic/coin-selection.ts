@@ -20,9 +20,6 @@ export const ZIP317_GRACE_ACTIONS = 2;
 export const ORCHARD_MIN_ACTIONS = 2;
 /** Minimum fee (grace actions * marginal fee). */
 export const ZIP317_MINIMUM_FEE = ZIP317_GRACE_ACTIONS * ZIP317_MARGINAL_FEE; // 10_000
-/** Change below this threshold is absorbed into the fee (avoids near-unspendable dust notes).
- * Set to marginal fee: spending a dust note costs at least one action (5k zats). */
-const DUST_THRESHOLD = ZIP317_MARGINAL_FEE;
 /** Maximum fee iteration rounds before giving up. */
 const MAX_ITERATIONS = 5;
 
@@ -184,21 +181,11 @@ export function selectTransparentInputs(
     return { totalInput, fee, changeAmount: new BigNumber(0) };
   }
 
-  // Absorb dust change into the fee to avoid a near-unspendable change note.
-  // Only for "transparent-to-shielded": a shielded change note below the dust
-  // threshold is barely spendable and the shielding fee model tolerates the
-  // absorbed value. For "transparent" (t→t) the native PCZT builder owns change
-  // creation and requires the fee to equal the ZIP-317 fee *exactly*, so the fee
-  // must never be inflated — any leftover stays as transparent change.
-  if (
-    transferType === "transparent-to-shielded" &&
-    changeAmount.gt(0) &&
-    changeAmount.lt(DUST_THRESHOLD)
-  ) {
-    fee = fee.plus(changeAmount);
-    changeAmount = new BigNumber(0);
-  }
-
+  // The native PCZT builder owns change creation for every transfer type this
+  // function serves -- "transparent" (t→t) on the V5 builder and
+  // "transparent-to-shielded" on the strict Ironwood (V6) builder alike -- and
+  // both require the fee to equal the ZIP-317 fee *exactly*. Any leftover below
+  // one action's worth stays as change; it must never be folded into the fee.
   return { totalInput, fee, changeAmount };
 }
 
@@ -254,20 +241,19 @@ export function selectNotes(
 
     if (totalInput.lt(target)) return undefined; // Insufficient balance
 
-    let changeAmount = totalInput.minus(amount).minus(fee);
-
-    // Absorb dust change into the fee to avoid creating near-unspendable notes.
-    if (changeAmount.gt(0) && changeAmount.lt(DUST_THRESHOLD)) {
-      fee = fee.plus(changeAmount);
-      changeAmount = new BigNumber(0);
-    }
+    // The native PCZT builder owns change creation and requires the fee to
+    // equal the ZIP-317 fee *exactly* for every Ironwood-bundle flow
+    // ("shielded", "shielded-to-transparent") -- any leftover below one
+    // action's worth stays as a change note; it must never be folded into
+    // the fee.
+    const changeAmount = totalInput.minus(amount).minus(fee);
 
     const hasChange = changeAmount.gt(0);
     const spendCount = selected.length;
     const newFee = computeShieldedSpendFee(spendCount, hasChange, transferType);
 
     if (newFee.lte(fee)) {
-      // Fee converged (or dust absorption made fee exceed the computed minimum)
+      // Fee converged: the layout priced at `fee` needs no more than `fee`.
       return { selectedNotes: selected, fee, changeAmount, totalInput };
     }
     fee = newFee; // Retry with updated fee
