@@ -3,4 +3,5 @@ import type { CardFormatters, CardProps as PayCardProps } from "@features/flow-p
 export interface CardViewModel {
   readonly formatters: Required<CardFormatters>;
   readonly login: PayCardProps["login"];
+  readonly unlock: NonNullable<PayCardProps["unlock"]>;
 }

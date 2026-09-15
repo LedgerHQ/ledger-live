@@ -17,10 +17,12 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
   CardVisual: () => <div data-testid="card-visual" />,
-  CardDetails: ({ cardVisual }: { cardVisual?: unknown }) => (
-    <div data-testid={cardVisual ? "card-details-with-visual" : "card-details"} />
+  CardDetails: ({ cardVisual, unlock }: { cardVisual?: unknown; unlock?: unknown }) => (
+    <div
+      data-testid={cardVisual ? "card-details-with-visual" : "card-details"}
+      data-unlock={unlock ? "granted" : "none"}
+    />
   ),
-  CardNumbers: () => <div data-testid="card-numbers" />,
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
@@ -115,10 +117,10 @@ describe("Card (web)", () => {
       expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
     });
 
-    it("does not show card numbers even when unlock is passed", () => {
+    it("does not mount the card details even when unlock is passed", () => {
       renderCard(<Card login={{ oauthConfig }} unlock={jest.fn()} />);
 
-      expect(screen.queryByTestId("card-numbers")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
     });
   });
 
@@ -163,18 +165,18 @@ describe("Card (web)", () => {
       renderCard(<Card login={{ oauthConfig, onTrackEvent }} />);
 
       expect(receivedTransactionTracker).toBe(onTrackEvent);
-      it("should hide card numbers when unlock is omitted", () => {
-        renderCard(<Card login={{ oauthConfig }} />);
+    });
 
-        expect(screen.queryByTestId("card-numbers")).not.toBeInTheDocument();
-      });
+    it("leaves the details block without an unlock when the host omits one", () => {
+      renderCard(<Card login={{ oauthConfig }} />);
 
-      it("should show card numbers when unlock is passed", () => {
-        renderCard(<Card login={{ oauthConfig }} unlock={jest.fn()} />);
+      expect(screen.getByTestId("card-details")).toHaveAttribute("data-unlock", "none");
+    });
 
-        expect(screen.getByTestId("card-numbers")).toBeVisible();
-        expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
-      });
+    it("hands the unlock to the details block when the host passes one", () => {
+      renderCard(<Card login={{ oauthConfig }} unlock={jest.fn()} />);
+
+      expect(screen.getByTestId("card-details")).toHaveAttribute("data-unlock", "granted");
     });
   });
 });
