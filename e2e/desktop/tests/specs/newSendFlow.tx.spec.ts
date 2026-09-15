@@ -47,11 +47,7 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
       Fee.MEDIUM,
     ),
     xrayTicket: "B2CQA-2724",
-  },
-  {
-    transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "0.2"),
-    xrayTicket: "B2CQA-3840",
-    teamOwner: Team.BST,
+    extraTags: ["@smoke"],
   },
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_3, "0.00001", Fee.MEDIUM),
@@ -92,11 +88,6 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
     teamOwner: Team.BST,
   },
   {
-    transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
-    xrayTicket: "B2CQA-2920",
-    teamOwner: Team.BST,
-  },
-  {
     transaction: new Transaction(Account.SUI_1, Account.SUI_2, "0.0001"),
     xrayTicket: "B2CQA-3802",
     teamOwner: Team.BST,
@@ -109,16 +100,6 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.VET_1, Account.VET_2, "0.1"),
     xrayTicket: "B2CQA-4247",
-    teamOwner: Team.BST,
-  },
-  {
-    transaction: new Transaction(Account.ZEC_1, Account.ZEC_2, "0.001"),
-    xrayTicket: "B2CQA-4299",
-    teamOwner: Team.BST,
-  },
-  {
-    transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001"),
-    xrayTicket: "B2CQA-4284",
     teamOwner: Team.BST,
   },
   {

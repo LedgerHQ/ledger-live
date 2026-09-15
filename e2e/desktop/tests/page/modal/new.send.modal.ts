@@ -14,11 +14,17 @@ export class NewSendModal extends Modal {
   readonly matchedAddressButtons = this.dialog
     .locator('[data-testid="send-matched-address-button"]')
     .filter({ visible: true });
+  readonly validationStatusMessage = this.dialog.getByTestId("address-validation-status");
+  readonly recipientErrorBanner = this.dialog.getByTestId("recipient-error-banner");
+  readonly recipientWarningBanner = this.dialog.getByTestId("recipient-warning-banner");
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
+  readonly amountErrorMessage = this.dialog.getByTestId("send-amount-message");
+  readonly quickActionMax = this.dialog.getByTestId("send-quick-actions-max");
   readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
   readonly reviewButton = this.dialog.getByTestId("send-review-button");
+  readonly getFundsButton = this.dialog.getByTestId("send-get-funds-button");
   readonly toggleInputModeButton = this.dialog.getByTestId("send-toggle-input-mode-button");
   readonly amountSecondaryValue = this.dialog.getByTestId("send-amount-secondary-value");
   readonly confirmationSuccessContent = this.dialog.getByTestId(
@@ -72,6 +78,32 @@ export class NewSendModal extends Modal {
     await button.click();
   }
 
+  @step("Verify that a recipient is accepted")
+  async expectAddressMatched() {
+    await expect(this.matchedAddressButtons.first()).toBeVisible();
+  }
+
+  @step("Verify recipient validation error: $0")
+  async expectRecipientError(message: string | RegExp) {
+    await expect(this.recipientErrorBanner).toContainText(message);
+  }
+
+  @step("Verify recipient validation warning: $0")
+  async expectRecipientWarning(message: string | RegExp) {
+    await expect(this.recipientWarningBanner).toContainText(message);
+  }
+
+  @step("Verify invalid address feedback")
+  async expectInvalidAddress() {
+    await expect(this.validationStatusMessage).toBeVisible();
+    await expect(this.matchedAddressButtons).toHaveCount(0);
+  }
+
+  @step("Verify that no recipient is accepted")
+  async expectNoAddressMatched() {
+    await expect(this.matchedAddressButtons).toHaveCount(0);
+  }
+
   @step("Type memo: $0")
   async typeMemo(memo: string) {
     await this.memoInput.waitFor({ state: "visible" });
@@ -115,6 +147,33 @@ export class NewSendModal extends Modal {
     await expect(this.amountInput).not.toHaveValue(`${amount}1`);
     await this.fillCryptoAmount(amount);
     await this.expectCryptoAmount(amount);
+  }
+
+  @step("Select maximum amount")
+  async selectMaxAmount() {
+    await this.quickActionMax.click();
+  }
+
+  @step("Verify review button is disabled")
+  async expectReviewDisabled() {
+    await expect(this.reviewButton).toBeDisabled();
+  }
+
+  // An insufficient funds error swaps the review CTA for an enabled "Get <ticker>" button.
+  @step("Verify the get funds CTA replaced the review button")
+  async expectGetFundsCta() {
+    await expect(this.getFundsButton).toBeVisible();
+    await expect(this.reviewButton).toHaveCount(0);
+  }
+
+  @step("Verify review button is enabled")
+  async expectReviewEnabled() {
+    await expect(this.reviewButton).toBeEnabled();
+  }
+
+  @step("Verify amount error: $0")
+  async expectAmountError(message: string | RegExp) {
+    await expect(this.amountErrorMessage).toContainText(message);
   }
 
   @step("Click review to proceed to signature")

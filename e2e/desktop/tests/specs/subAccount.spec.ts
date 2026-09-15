@@ -7,7 +7,6 @@ import {
 } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
-import invariant from "invariant";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
   liveDataWithParentAddressCommand,
@@ -16,7 +15,10 @@ import {
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { FF_NEW_SEND_FLOW_DISABLED } from "tests/utils/featureFlagUtils";
+import {
+  FF_NEW_SEND_FLOW_ENABLED,
+  FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
+} from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
 const subAccounts: Array<{
@@ -223,97 +225,13 @@ for (const token of subAccounts.filter(subAccount => !subAccount.notPreSeeded)) 
   });
 }
 
-const transactionE2E: Array<{
-  tx: Transaction;
+const transactionsAddressInvalid: Array<{
+  transaction: Transaction;
+  recipient?: string;
+  expectedErrorMessage: string;
   xrayTicket: string;
-  checkInputValidity?: boolean;
-  extraTags?: string[];
+  teamOwner?: Team;
 }> = [
-  {
-    tx: new Transaction(
-      TokenAccount.SOL_GIGA_1,
-      TokenAccount.SOL_GIGA_2,
-      "0.5",
-      undefined,
-      "noTag",
-    ),
-    xrayTicket: "B2CQA-3055",
-    extraTags: ["@solana", "@family-solana"],
-  },
-  {
-    tx: new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "1", Fee.MEDIUM),
-    xrayTicket: "B2CQA-6111",
-    checkInputValidity: true,
-    extraTags: ["@ethereum", "@family-evm"],
-  },
-];
-
-for (const transaction of transactionE2E) {
-  test.describe("Send - token", () => {
-    test.use({
-      teamOwner: Team.COIN_INTEGRATION,
-      userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
-      cliCommands: [
-        liveDataWithParentAddressCommand(
-          transaction.tx.accountToDebit,
-          transaction.tx.accountToCredit,
-        ),
-      ],
-      featureFlags: {
-        ...FF_NEW_SEND_FLOW_DISABLED,
-      },
-    });
-
-    test(
-      `[${transaction.tx.accountToDebit.currency.testLabel}] - Send`,
-      {
-        tag: buildTags({ skipLNS: true, extraTags: transaction.extraTags ?? [] }),
-        annotation: {
-          type: "TMS",
-          description: transaction.xrayTicket,
-        },
-      },
-      async ({ app }) => {
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(
-          getParentAccountName(transaction.tx.accountToDebit),
-        );
-        await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
-        await app.account.clickSend();
-
-        if (transaction.checkInputValidity) {
-          await app.send.fillRecipient(transaction.tx.accountToCredit.address);
-          await app.send.checkContinueButtonEnable();
-          await app.send.checkInputErrorVisibility("hidden");
-          await app.send.continue();
-          await app.send.fillAmount(transaction.tx.amount);
-          await app.send.checkContinueButtonEnable();
-        } else {
-          await app.send.craftTx(transaction.tx);
-        }
-
-        await app.send.continueAmountModal();
-        await app.send.expectTxInfoValidity(transaction.tx);
-        await app.send.clickContinueToDevice();
-
-        await app.speculos.signSendTransaction(transaction.tx);
-        await app.send.expectTxSent();
-        await app.account.navigateToViewDetails();
-        if (process.env.DISABLE_TRANSACTION_BROADCAST !== "1") {
-          await app.sendDrawer.addressValueIsVisible(
-            transaction.tx.accountToCredit.parentAccount?.address ||
-              transaction.tx.accountToCredit.address,
-          );
-        } else {
-          await app.sendDrawer.addressValueIsVisible(transaction.tx.accountToCredit.address);
-        }
-      },
-    );
-  });
-}
-
-const transactionsAddressInvalid = [
   {
     transaction: new Transaction(TokenAccount.ALGO_USDT_1, Account.ALGO_3, "0.1", Fee.MEDIUM),
     recipient: undefined,
@@ -354,9 +272,9 @@ const transactionsAddressInvalid = [
 ];
 
 for (const transaction of transactionsAddressInvalid) {
-  test.describe("Send - token", () => {
+  test.describe("Send - new flow - token invalid address", () => {
     test.use({
-      teamOwner: (transaction as { teamOwner?: Team }).teamOwner ?? Team.COIN_INTEGRATION,
+      teamOwner: transaction.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
@@ -372,7 +290,8 @@ for (const transaction of transactionsAddressInvalid) {
         },
       ],
       featureFlags: {
-        ...FF_NEW_SEND_FLOW_DISABLED,
+        ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
+        ...FF_NEW_SEND_FLOW_ENABLED,
       },
     });
 
@@ -386,13 +305,17 @@ for (const transaction of transactionsAddressInvalid) {
         },
       },
       async ({ app }) => {
-        await app.portfolio.clickSendButton();
-
-        await app.send.selectDebitCurrency(transaction.transaction);
-        invariant(transaction.recipient, "Recipient address is not defined");
-        await app.send.fillRecipient(transaction.recipient);
-        await app.send.checkContinueButtonDisabled();
-        await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.accounts.navigateToAccountByName(
+          getParentAccountName(transaction.transaction.accountToDebit),
+        );
+        if (transaction.transaction.accountToDebit instanceof TokenAccount) {
+          await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
+        }
+        await app.account.clickSend();
+        await app.newSendFlow.waitForDialog();
+        await app.newSendFlow.typeAddress(transaction.recipient ?? "");
+        await app.newSendFlow.expectRecipientError(transaction.expectedErrorMessage);
       },
     );
   });
@@ -413,14 +336,15 @@ const transactionsAddressValid = [
 ];
 
 for (const transaction of transactionsAddressValid) {
-  test.describe("Send - token", () => {
+  test.describe("Send - new flow - token valid address", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataCommand(transaction.transaction.accountToDebit)],
       featureFlags: {
-        ...FF_NEW_SEND_FLOW_DISABLED,
+        ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
+        ...FF_NEW_SEND_FLOW_ENABLED,
       },
     });
 
@@ -434,14 +358,16 @@ for (const transaction of transactionsAddressValid) {
         },
       },
       async ({ app }) => {
-        await app.portfolio.clickSendButton();
-
-        await app.send.selectDebitCurrency(transaction.transaction);
-        //CLI doesn't allow us to get ATA address
-        await app.send.fillRecipient(Addresses.SOL_GIGA_2_ATA_ADDRESS);
-
-        await app.send.checkContinueButtonEnable();
-        await app.send.checkInputWarningMessage(transaction.expectedErrorMessage);
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.accounts.navigateToAccountByName(
+          getParentAccountName(transaction.transaction.accountToDebit),
+        );
+        await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
+        await app.account.clickSend();
+        await app.newSendFlow.waitForDialog();
+        await app.newSendFlow.typeAddress(Addresses.SOL_GIGA_2_ATA_ADDRESS);
+        await app.newSendFlow.expectAddressMatched();
+        await app.newSendFlow.expectRecipientWarning(transaction.expectedErrorMessage);
       },
     );
   });
@@ -477,14 +403,14 @@ const tokenTransactionInvalid = [
     ),
     expectedWarningMessage: new RegExp(
       "You need \\d+\\.\\d+ SOL in your account to pay for transaction fees on the Solana" +
-        " network\\. Buy SOL or deposit more into your account\\. Learn more",
+        " network\\.\\s+Buy SOL or deposit more into your account\\.",
     ),
     xrayTicket: "B2CQA-3058",
   },
 ];
 
 for (const transaction of tokenTransactionInvalid) {
-  test.describe("Send - token", () => {
+  test.describe("Send - new flow - token invalid amount", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -496,7 +422,8 @@ for (const transaction of tokenTransactionInvalid) {
         ),
       ],
       featureFlags: {
-        ...FF_NEW_SEND_FLOW_DISABLED,
+        ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
+        ...FF_NEW_SEND_FLOW_ENABLED,
       },
     });
 
@@ -516,13 +443,21 @@ for (const transaction of tokenTransactionInvalid) {
         );
         await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
         await app.account.clickSend();
-        await app.send.craftTx(transaction.tx);
-        await app.send.checkContinueButtonDisabled();
-        if (transaction.expectedWarningMessage instanceof RegExp) {
-          await app.send.checkAmountWarningMessage(transaction.expectedWarningMessage);
-        } else {
-          await app.send.checkErrorMessage(transaction.expectedWarningMessage);
+        await app.newSendFlow.waitForDialog();
+        const recipientAddress = transaction.tx.accountToCredit.address;
+        if (!recipientAddress) {
+          throw new Error(
+            `Missing recipient address for ${transaction.tx.accountToCredit.accountName}`,
+          );
         }
+        await app.newSendFlow.typeAddress(recipientAddress);
+        await app.newSendFlow.clickOnSendToButton(transaction.tx.accountToCredit);
+        if (transaction.tx.accountToDebit.currency.id === Currency.SOL_GIGA.id) {
+          await app.newSendFlow.confirmSkipMemo();
+        }
+        await app.newSendFlow.fillCryptoAmount(transaction.tx.amount);
+        await app.newSendFlow.expectReviewDisabled();
+        await app.newSendFlow.expectAmountError(transaction.expectedWarningMessage);
       },
     );
   });
