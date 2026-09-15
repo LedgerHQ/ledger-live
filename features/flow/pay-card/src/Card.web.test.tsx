@@ -13,9 +13,11 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
+  CardVisual: () => <div data-testid="card-visual" />,
   CardDetails: ({ cardVisual }: { cardVisual?: unknown }) => (
     <div data-testid={cardVisual ? "card-details-with-visual" : "card-details"} />
   ),
+  CardNumbers: () => <div data-testid="card-numbers" />,
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
@@ -100,6 +102,12 @@ describe("Card (web)", () => {
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
     });
+
+    it("does not show card numbers even when unlock is passed", () => {
+      render(<Card title={title} login={{ oauthConfig }} unlock={jest.fn()} />);
+
+      expect(screen.queryByTestId("card-numbers")).not.toBeInTheDocument();
+    });
   });
 
   describe("once signed in", () => {
@@ -144,6 +152,19 @@ describe("Card (web)", () => {
       );
 
       expect(receivedTransactionFormatter).toBe(formatTransactionAmount);
+    });
+
+    it("should hide card numbers when unlock is omitted", () => {
+      render(<Card title={title} login={{ oauthConfig }} />);
+
+      expect(screen.queryByTestId("card-numbers")).not.toBeInTheDocument();
+    });
+
+    it("should show card numbers when unlock is passed", () => {
+      render(<Card title={title} login={{ oauthConfig }} unlock={jest.fn()} />);
+
+      expect(screen.getByTestId("card-numbers")).toBeVisible();
+      expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
     });
   });
 });
