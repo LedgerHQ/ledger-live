@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { selectFeature } from "@shared/feature-flags";
-import { Q3TourSection } from "../components/Q3TourSection";
-import { useWalletFeaturesDevToolViewModel } from "../hooks/useWalletFeaturesDevToolViewModel";
+import { Q3TourSection } from "../Q3TourSection";
+import { useReleaseToursDevToolViewModel } from "../useReleaseToursDevToolViewModel";
 import {
   hasSeenQ2TourSelector,
   hasSeenQ3TourSelector,
@@ -17,7 +17,7 @@ function Q3TourSetupHarness() {
     handleToggleQ3TourHasSeen,
     handleToggleQ3TourEnabled,
     handleQ3TourVariantChange,
-  } = useWalletFeaturesDevToolViewModel();
+  } = useReleaseToursDevToolViewModel();
 
   return (
     <Q3TourSection

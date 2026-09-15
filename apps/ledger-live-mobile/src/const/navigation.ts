@@ -66,6 +66,7 @@ export enum ScreenName {
   DebugLargeScreenUpsell = "DebugLargeScreenUpsell",
   DebugInstallSetOfApps = "DebugInstallSetOfApps",
   DebugFeatures = "DebugFeatures",
+  DebugStartTour = "DebugStartTour",
   DebugFetchCustomImage = "DebugFetchCustomImage",
   DebugFirmwareUpdate = "DebugFirmwareUpdate",
   DebugGenerators = "DebugGenerators",
