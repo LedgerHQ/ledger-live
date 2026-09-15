@@ -43,6 +43,10 @@ describe("generic-coin-framework NEAR bridge api", () => {
       expect(bridgeApi.stakingSupported).toBe(true);
     });
 
+    it("opts into the generic staking-positions account shape", () => {
+      expect(bridgeApi.usesStakingPositions).toBe(true);
+    });
+
     it("wires computeIntentType so the framework picks it up over its own whitelist", () => {
       expect(bridgeApi.computeIntentType).toBe(computeIntentType);
       expect(bridgeApi.computeIntentType?.({ mode: "withdraw" })).toBe("finalize_unstake");
