@@ -1,18 +1,21 @@
 import React from "react";
+import { CardActions } from "../CardActions/CardActions";
 import { CardArtwork } from "../CardArtwork/CardArtwork";
+import { CardFlip } from "../CardFlip/CardFlip";
 import { CardVisual } from "../CardVisual/CardVisual";
-import { Freeze } from "../Freeze/Freeze";
-import { More } from "../More/More";
+import { useRevealViewModel } from "../Reveal/useRevealViewModel";
 import type { CardDetailsProps } from "../../types";
 
-export function CardDetails({ cardVisual }: CardDetailsProps) {
+export function CardDetails({ cardVisual, unlock }: CardDetailsProps) {
+  const reveal = useRevealViewModel({ unlock });
+
   return (
     <div className="flex flex-col gap-16">
-      {cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
-      <div className="flex flex-row gap-8">
-        <Freeze />
-        <More />
-      </div>
+      <CardFlip
+        reveal={reveal}
+        cardFace={cardVisual ? <CardVisual {...cardVisual} /> : <CardArtwork />}
+      />
+      <CardActions reveal={reveal} />
     </div>
   );
 }

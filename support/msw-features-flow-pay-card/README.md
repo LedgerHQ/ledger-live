@@ -23,16 +23,24 @@ import {
   cardApiWrapper,
   listenToCardApi,
   makeCardApiStore,
+  revealCardDetailsHandler,
+  signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
 
-const server = listenToCardApi();
+const server = listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 ```
 
 `listenToCardApi` accepts optional default handlers (restored on `resetHandlers`). `cardApiWrapper`
-and `CardApiStoreProvider` only mount Redux — i18n and endpoint fixtures stay in the consumer.
+and `CardApiStoreProvider` only mount Redux — i18n and extra providers stay in the consumer.
+
+## Shared handlers
+
+- `signedInCardApiHandlers` — `GET /v1/card/status` and `GET /v1/user` for a holder whose card is
+  live, the baseline every card screen reads
+- `revealCardDetailsHandler` / `revealCardDetailsFailureHandler` — `POST /v1/card/details/token`,
+  the single-use token and image URL the Reveal tile flips the card face to
 
 ## What stays in the consumer
 
-- Endpoint URLs and response bodies for that flow
+- Endpoint URLs and response bodies only one flow reads
 - Extra providers (`I18nTestProvider`, theme, navigation)
-- Handlers that only one flow needs
