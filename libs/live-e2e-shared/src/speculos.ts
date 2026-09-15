@@ -681,6 +681,29 @@ export async function getDeviceLabelCoordinates(
   return { x: event.x, y: event.y };
 }
 
+async function pressFirstLabelFoundOnScreen(labels: string[]): Promise<string> {
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  const speculosAddress = getSpeculosAddress();
+  const response = await retryAxiosRequest(() =>
+    axios.get<ResponseData>(
+      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    ),
+  );
+
+  for (const label of labels) {
+    const action = response.data.events.find(e =>
+      e.text.toLowerCase().startsWith(label.toLowerCase()),
+    );
+    if (action) {
+      await pressAndRelease(action.text, action.x, action.y);
+      return action.text;
+    }
+  }
+
+  const shown = response.data.events.map(e => e.text).join(" | ");
+  throw new Error(`No action among [${labels.join(", ")}] on screen. It showed: ${shown}`);
+}
+
 export async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
   const speculosAddress = getSpeculosAddress();
   const response = await retryAxiosRequest(() =>
@@ -1323,6 +1346,12 @@ export const acceptEnableTransactionCheck = withDeviceController(
     },
 );
 
+const BLIND_SIGNING_WARNING_ACTIONS = [
+  DeviceLabels.ACCEPT_RISK,
+  DeviceLabels.CONTINUE_ANYWAY,
+  DeviceLabels.CONFIRM,
+];
+
 /**
  * Clears the "Blind signing ahead" warning, which the app raises only once blind signing is
  * enabled — the second half of [[enableBlindSigning]].
@@ -1338,7 +1367,7 @@ export const acceptBlindSigningWarning = withDeviceController(
       if (!displayed) return;
 
       if (isTouchDevice()) {
-        await pressAndRelease(DeviceLabels.CONFIRM);
+        await pressFirstLabelFoundOnScreen(BLIND_SIGNING_WARNING_ACTIONS);
         return;
       }
       await getButtonsController().both();
