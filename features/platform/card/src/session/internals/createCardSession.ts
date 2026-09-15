@@ -278,6 +278,13 @@ export function createCardSession(store: CardSessionStore) {
    */
   const setCardProviderAppId = (appId: string | null): Promise<void> => {
     recordProviderAppId(appId);
+    /**
+     * Recording a tenant starts a session replacement. The session on disk belongs to the tenant
+     * being left, so it stops being current here: a snapshot taken before this call is stale, and
+     * no later request can pair that token with the new routing. A login that then fails leaves the
+     * holder signed out rather than signed in against a tenant it no longer names.
+     */
+    beginSessionReplacement();
 
     return takeTurn(async () => {
       if (appId === null) {
