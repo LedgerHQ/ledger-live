@@ -157,7 +157,9 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.depositCurrencyTicker).toBe("ETH");
     expect(result.current.depositAccountName).not.toBeNull();
 
-    expect(result.current.amountText).toBe("");
+    // Switching the funding account keeps the amount the user already typed.
+    expect(result.current.amountText).toBe("42");
+    expect(result.current.depositAmount).toBe(42);
     expect(result.current.maxAmount).toBe(100);
   });
 
