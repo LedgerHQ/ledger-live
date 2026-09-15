@@ -1,6 +1,4 @@
 import { Step } from "jest-allure2-reporter/api";
-import { WebElement } from "detox/detox";
-import { WebElementHelpers } from "@e2e/helpers/elementHelpers";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 
 const MODAL_DISMISS_TIMEOUT_MS = 30_000;
@@ -8,7 +6,6 @@ const CONTINUE_READY_TIMEOUT_MS = 30_000;
 /** The partner prepares each transaction server-side, so the CTA stays disabled meanwhile. */
 const EXECUTION_STEP_TIMEOUT_MS = 240_000;
 const PROBE_TIMEOUT_MS = 2_000;
-/** The execution screen mounts before the partner's step state is rendered into it. */
 const STEP_STATE_TIMEOUT_MS = 30_000;
 
 const MAINNET_FUNDING_HINT =
@@ -91,9 +88,7 @@ export default class BorrowPage {
   async expectLoanToValue(percentage: string) {
     await waitWebElementByTestId(this.simulateLoanScreenId);
     const screenText = String(
-      await WebElementHelpers.getWebElementByTag("body").runScript(
-        (el: HTMLElement) => el.innerText,
-      ),
+      await getWebElementByTag("body").runScript((el: HTMLElement) => el.innerText),
     );
     if (!new RegExp(String.raw`Loan to Value[^\d]*${percentage}`).test(screenText)) {
       throw new Error(
@@ -121,7 +116,13 @@ export default class BorrowPage {
   @Step("Give approval and sign on device")
   async completeApprovalStep() {
     await waitWebElementByTestId(this.loanExecutionScreenId);
-    if (await this.alreadyDone(this.step1AccessApprovedId, this.giveApprovalButtonId)) return;
+    if (
+      await this.isStepAlreadyDoneOnceRendered(
+        this.step1AccessApprovedId,
+        this.giveApprovalButtonId,
+      )
+    )
+      return;
     await this.authorizeStep(this.giveApprovalButtonId, this.step1AccessApprovedId, () =>
       this.signContractTransaction(),
     );
@@ -208,24 +209,11 @@ export default class BorrowPage {
     ));
   }
 
-  /**
-   * Whether the step is already complete, settled once either marker renders so that a step
-   * still loading is not mistaken for one with nothing to sign.
-   */
-  private async alreadyDone(doneId: string, ctaId: string): Promise<boolean> {
+  private async isStepAlreadyDoneOnceRendered(doneId: string, ctaId: string): Promise<boolean> {
     return retryUntilTimeout(async () => {
-      if (await this.isPresent(getWebElementByTestId(doneId))) return true;
-      if (await this.isPresent(getWebElementByTestId(ctaId))) return false;
+      if (await isWebElementPresent(doneId)) return true;
+      if (await isWebElementPresent(ctaId)) return false;
       throw new Error(`neither '${doneId}' nor '${ctaId}' rendered on the execution screen`);
     }, STEP_STATE_TIMEOUT_MS);
-  }
-
-  private async isPresent(element: WebElement): Promise<boolean> {
-    try {
-      await element.runScript(el => el.innerText);
-      return true;
-    } catch {
-      return false;
-    }
   }
 }

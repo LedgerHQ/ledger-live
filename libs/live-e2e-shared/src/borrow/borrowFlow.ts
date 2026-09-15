@@ -214,10 +214,6 @@ async function close(
   console.log(`✔ ${opts.flow} complete (${loans.length} position(s))`);
 }
 
-/**
- * Boots the Speculos this flow owns. `startSpeculos` reads SEED / COINAPPS straight from
- * `process.env`, so those are prepared here rather than through live-env alone.
- */
 async function startOwnSpeculos(
   options: BorrowFlowOptions,
   specKey: string,
@@ -265,7 +261,6 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<string | vo
 
   try {
     if (ownSpeculos) {
-      // Assigned before the readiness poll so a failing poll still reaches stopSpeculos below.
       device = await startOwnSpeculos(options, specKey);
       // /acquire returns 202 with a sentinel port; the readiness poll is what publishes
       // SPECULOS_ADDRESS, without which everything resolves against 127.0.0.1.

@@ -1,4 +1,3 @@
-import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink, isAndroid } from "@e2e/helpers/commonHelpers";
 import { retryUntilTimeout } from "@e2e/utils/retry";
@@ -12,7 +11,7 @@ type Wallet40TabName = "home" | "swap" | "earn" | "card";
 
 export default class MainNavigationPage {
   // --- Wallet 4.0 bottom tabs ---
-  wallet40Tab = (tabName: Wallet40TabName) => element(by.id(`w40-tab-${tabName}`));
+  wallet40Tab = (tabName: Wallet40TabName) => getElementsById(`w40-tab-${tabName}`);
 
   // --- Wallet 4.0 top bar buttons ---
   topBarDiscoverId = "topbar-discover";
@@ -161,11 +160,11 @@ export default class MainNavigationPage {
 
   @Step("Expect Discover page visible")
   async expectDiscoverPageVisible() {
-    await detoxExpect(element(by.text(this.discoverHeaderTitle)).atIndex(0)).toBeVisible();
+    await detoxExpect(getElementByText(this.discoverHeaderTitle, 0)).toBeVisible();
   }
 
   @Step("Expect Notifications page visible")
   async expectNotificationsPageVisible() {
-    await detoxExpect(element(by.text(this.notificationsHeaderTitle)).atIndex(0)).toBeVisible();
+    await detoxExpect(getElementByText(this.notificationsHeaderTitle, 0)).toBeVisible();
   }
 }

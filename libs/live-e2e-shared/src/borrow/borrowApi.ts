@@ -33,11 +33,6 @@ function isThrottled(status: number): boolean {
   return status >= 500 || status === 403 || status === 429;
 }
 
-/**
- * Transient for a read. A 403 is excluded on purpose: on a GET it is far likelier a real
- * authorization failure than the edge throttle the writes see, and swallowing it here would
- * spend the whole polling budget and then report the action as a timeout.
- */
 function isTransientRead(status: number): boolean {
   return status >= 500 || status === 429;
 }

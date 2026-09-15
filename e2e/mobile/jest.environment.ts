@@ -257,6 +257,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       getWebElementsByIdAndText: WebElementHelpers.getWebElementsByIdAndText,
       getWebElementsText: WebElementHelpers.getWebElementsText,
       getWebElementText: WebElementHelpers.getWebElementText,
+      isWebElementPresent: WebElementHelpers.isWebElementPresent,
       scrollToWebElement: WebElementHelpers.scrollToWebElement,
       tapWebElementByElement: WebElementHelpers.tapWebElementByElement,
       tapWebElementByTestId: WebElementHelpers.tapWebElementByTestId,

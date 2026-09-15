@@ -1,4 +1,3 @@
-import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 
 export default class OperationPage {
@@ -15,18 +14,18 @@ export default class OperationPage {
 
   @Step("Expect at least one section header to be visible")
   async expectSectionHeaderVisible() {
-    await detoxExpect(element(by.id(this.sectionHeaderId)).atIndex(0)).toBeVisible();
+    await detoxExpect(getElementById(this.sectionHeaderId, 0)).toBeVisible();
   }
 
   @Step("Expect at least one operation item to be visible")
   async expectOperationItemVisible() {
-    await detoxExpect(element(by.id(this.operationItemId)).atIndex(0)).toBeVisible();
+    await detoxExpect(getElementById(this.operationItemId, 0)).toBeVisible();
   }
 
   @Step("Tap first operation item")
   async tapFirstOperationItem() {
     await scrollToId(this.operationItemId, this.operationsListId);
-    await tapByElement(element(by.id(this.operationItemId)).atIndex(0));
+    await tapById(this.operationItemId, 0);
   }
 
   @Step("Get operation counter value text")
