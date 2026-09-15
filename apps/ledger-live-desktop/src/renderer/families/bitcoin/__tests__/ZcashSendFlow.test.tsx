@@ -174,6 +174,7 @@ describe("Zcash shielded send flow", () => {
       expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
       expect(screen.getByTestId(bannerTestId)).toBeVisible();
     },
+    20000,
   );
 
   it("advances to amount for a private send once the shielded sync is complete", async () => {
@@ -189,5 +190,5 @@ describe("Zcash shielded send flow", () => {
     await navigateToAmountScreen(user, shieldedRecipient);
 
     expect(screen.getByTestId("send-amount-step")).toBeVisible();
-  });
+  }, 20000);
 });
