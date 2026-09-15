@@ -57,6 +57,35 @@ describe("createApi (integration)", () => {
       }
     });
 
+    // Immutable chain history, so these are stable assertions: at this height the account already
+    // held its VET but had not yet received any VTHO. Reading the head instead reports a non-zero
+    // VTHO, so a regression that drops the height fails here rather than returning a
+    // plausible-looking current balance.
+    const HISTORICAL_HEIGHT = 16407349;
+
+    it("getBalance reads the account as of a past height", async () => {
+      const [vet, vtho] = await api.getBalance(context, KNOWN_ADDRESS, {
+        height: HISTORICAL_HEIGHT,
+      });
+
+      expect(vet.value).toBe(10_000_000_000_000_000_000n);
+      expect(vtho.value).toBe(0n);
+    });
+
+    it("getBalance reads the genesis state for height 0", async () => {
+      const balances = await api.getBalance(context, KNOWN_ADDRESS, { height: 0 });
+
+      expect(balances.map(balance => balance.value)).toEqual([0n, 0n]);
+    });
+
+    it("getBalance without a height reads the chain head, not the past", async () => {
+      const [, vtho] = await api.getBalance(context, KNOWN_ADDRESS);
+
+      // VTHO accrues from the VET holding, so the head has moved on from the 0 at
+      // HISTORICAL_HEIGHT — evidence the two calls really hit different revisions.
+      expect(vtho.value).toBeGreaterThan(0n);
+    });
+
     it("lastBlock returns the latest confirmed block", async () => {
       const info = await api.lastBlock(context);
 
