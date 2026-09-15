@@ -1,10 +1,13 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { WalletAuthMissingBaseUrlError } from "@ledgerhq/auth";
-import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
+import type { AuthProvider } from "@shared/auth";
 import { setEnv } from "@shared/env";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
-import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  importTrustchainStoreState,
+  setLkrpEnvironment,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
@@ -108,7 +111,7 @@ describe("customCreateStore", () => {
         ),
       ).rejects.toMatchObject({ name: WalletAuthMissingBaseUrlError.name });
 
-      store.dispatch(setAuthEnvironment("PROD"));
+      store.dispatch(setLkrpEnvironment("PROD"));
       store.dispatch(
         importTrustchainStoreState({
           trustchain: null,
@@ -140,7 +143,7 @@ describe("customCreateStore", () => {
 
       const store = customCreateStore({ fetchRemoteFlags: null });
 
-      store.dispatch(setAuthEnvironment("STAGING"));
+      store.dispatch(setLkrpEnvironment("STAGING"));
 
       store.dispatch(setOverride({ key: "lwdAuth", value: { enabled: true } }));
       store.dispatch(
@@ -170,7 +173,7 @@ describe("customCreateStore", () => {
       );
 
       const store = customCreateStore({ fetchRemoteFlags: null });
-      store.dispatch(setAuthEnvironment("PROD"));
+      store.dispatch(setLkrpEnvironment("PROD"));
       store.dispatch(setOverride({ key: "lwdAuth", value: { enabled: true } }));
       store.dispatch(
         importTrustchainStoreState({

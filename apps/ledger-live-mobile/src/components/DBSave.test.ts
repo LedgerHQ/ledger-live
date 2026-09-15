@@ -1,4 +1,9 @@
-import { featureFlagsLense, payCardDbSaveSliceSelector, payCardPersistedSelector } from "./DBSave";
+import {
+  featureFlagsLense,
+  payCardDbSaveSliceSelector,
+  payCardPersistedSelector,
+  trustchainNotEquals,
+} from "./DBSave";
 import type { State } from "~/reducers/types";
 
 describe("featureFlagsLense", () => {
@@ -64,5 +69,32 @@ describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
     const next = { ...base, [slice]: {} } as unknown as State;
 
     expect(payCardDbSaveSliceSelector(next)).not.toBe(payCardDbSaveSliceSelector(base));
+  });
+});
+
+describe("trustchainNotEquals (mobile save trigger)", () => {
+  const trustchain = {
+    trustchain: null,
+    memberCredentials: null,
+  };
+  const state = { trustchain } as unknown as State;
+
+  it("does not re-trigger the save when only the LKRP environment changes", () => {
+    const withEnvironment = {
+      trustchain: { ...trustchain, environment: "STAGING" },
+    } as unknown as State;
+
+    expect(trustchainNotEquals(state, withEnvironment)).toBe(false);
+  });
+
+  it("re-triggers the save when member credentials change", () => {
+    const withMemberCredentials = {
+      trustchain: {
+        ...trustchain,
+        memberCredentials: { pubkey: "pubkey", privatekey: "privatekey" },
+      },
+    } as unknown as State;
+
+    expect(trustchainNotEquals(state, withMemberCredentials)).toBe(true);
   });
 });

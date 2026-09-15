@@ -15,6 +15,7 @@ import {
   exportWalletState,
 } from "~/renderer/reducers/wallet";
 import {
+  TrustchainHandlerType,
   trustchainStoreActionTypePrefix,
   trustchainStoreSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -91,7 +92,10 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
   if (action.type.startsWith(trustchainStoreActionTypePrefix)) {
     const res = next(action);
     const state = store.getState();
-    if (!state.application.isLocked) {
+    if (
+      action.type !== TrustchainHandlerType.TRUSTCHAIN_STORE_SET_ENVIRONMENT &&
+      !state.application.isLocked
+    ) {
       setKey("app", "trustchain", trustchainStoreSelector(state));
     }
     return res;

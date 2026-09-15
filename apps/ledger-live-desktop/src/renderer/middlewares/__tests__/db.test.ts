@@ -28,8 +28,14 @@ jest.mock("~/renderer/reducers/wallet", () => ({
 }));
 
 jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
+  TrustchainHandlerType: {
+    TRUSTCHAIN_STORE_SET_ENVIRONMENT: "TRUSTCHAIN_STORE_SET_ENVIRONMENT",
+  },
   trustchainStoreActionTypePrefix: "TRUSTCHAIN_STORE_",
-  trustchainStoreSelector: jest.fn(state => state.trustchain),
+  trustchainStoreSelector: jest.fn(state => ({
+    trustchain: state.trustchain.trustchain,
+    memberCredentials: state.trustchain.memberCredentials,
+  })),
 }));
 
 jest.mock("@domain/api-currency-token", () => ({
@@ -350,6 +356,17 @@ describe("DBMiddleware - trustchain branch", () => {
     runMiddleware([state, state], { type: "TRUSTCHAIN_STORE_IMPORT_STATE" });
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "trustchain", state.trustchain);
+  });
+
+  it("does not persist the trustchain when only the LKRP environment changes", () => {
+    const state = baseState();
+
+    runMiddleware([state, state], {
+      type: "TRUSTCHAIN_STORE_SET_ENVIRONMENT",
+      payload: { environment: "STAGING" },
+    });
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
   });
 
   it("does not persist the trustchain while the app is locked", () => {

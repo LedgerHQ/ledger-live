@@ -35,7 +35,7 @@ describe("useTrustchainSdk", () => {
       expect.not.objectContaining({ environment: expect.anything() }),
       expect.any(Function),
     );
-    expect(store.getState().authEnvironment).toBe("STAGING");
+    expect(store.getState().trustchain.environment).toBe("STAGING");
     expect(getSdk).toHaveBeenCalledTimes(1);
   });
 });

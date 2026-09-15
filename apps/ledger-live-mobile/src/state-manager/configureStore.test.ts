@@ -2,8 +2,11 @@ import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { WalletAuthMissingBaseUrlError } from "@ledgerhq/auth";
-import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
-import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import type { AuthProvider } from "@shared/auth";
+import {
+  importTrustchainStoreState,
+  setLkrpEnvironment,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
@@ -148,7 +151,7 @@ describe("mobile store", () => {
         ),
       ).rejects.toMatchObject({ name: WalletAuthMissingBaseUrlError.name });
 
-      store.dispatch(setAuthEnvironment("PROD"));
+      store.dispatch(setLkrpEnvironment("PROD"));
       store.dispatch(
         importTrustchainStoreState({
           trustchain: null,
@@ -179,7 +182,7 @@ describe("mobile store", () => {
       );
 
       const { store } = require("./configureStore");
-      store.dispatch(setAuthEnvironment("STAGING"));
+      store.dispatch(setLkrpEnvironment("STAGING"));
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
         importTrustchainStoreState({
@@ -211,7 +214,7 @@ describe("mobile store", () => {
       );
 
       const { store } = require("./configureStore");
-      store.dispatch(setAuthEnvironment("PROD"));
+      store.dispatch(setLkrpEnvironment("PROD"));
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
         importTrustchainStoreState({

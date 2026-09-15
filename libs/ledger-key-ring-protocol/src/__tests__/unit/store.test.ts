@@ -1,4 +1,11 @@
-import { importTrustchainStoreState, resetTrustchainStore, trustchainHandlers } from "../../store";
+import {
+  importTrustchainStoreState,
+  lkrpEnvironmentSelector,
+  resetTrustchainStore,
+  setLkrpEnvironment,
+  trustchainHandlers,
+  trustchainStoreSelector,
+} from "../../store";
 import type { MemberCredentials } from "../../types";
 
 describe("trustchain store", () => {
@@ -88,5 +95,121 @@ describe("trustchain store", () => {
     });
     expect(resetState.memberCredentials).not.toEqual(previousState.memberCredentials);
     expect(trustchainHandlers.TRUSTCHAIN_STORE_RESET(previousState, action)).toEqual(resetState);
+  });
+
+  it("should set the LKRP environment without changing the trustchain record", () => {
+    const state = {
+      trustchain: null,
+      memberCredentials: null,
+    };
+
+    expect(
+      trustchainHandlers.TRUSTCHAIN_STORE_SET_ENVIRONMENT(state, setLkrpEnvironment("STAGING")),
+    ).toEqual({
+      ...state,
+      environment: "STAGING",
+    });
+  });
+
+  it("should select the LKRP environment", () => {
+    expect(
+      lkrpEnvironmentSelector({
+        trustchain: {
+          trustchain: null,
+          memberCredentials: null,
+        },
+      }),
+    ).toBeNull();
+    expect(
+      lkrpEnvironmentSelector({
+        trustchain: {
+          trustchain: null,
+          memberCredentials: null,
+          environment: "STAGING",
+        },
+      }),
+    ).toBe("STAGING");
+  });
+
+  it("should preserve the LKRP environment when importing trustchain state", () => {
+    const state = {
+      trustchain: null,
+      memberCredentials: null,
+      environment: "STAGING" as const,
+    };
+    const action = importTrustchainStoreState({
+      trustchain: null,
+      memberCredentials: {
+        pubkey: "02e3311a12c450604725f02d1a775ef5cdb4a1b832eb41ac6b1302adbe92a612fc",
+        privatekey: "873f500bd20783224f7e78d4f8cce3d2bf69eb8008fbd697d20bbea31a721a03",
+      },
+    });
+
+    expect(trustchainHandlers.TRUSTCHAIN_STORE_IMPORT_STATE(state, action)).toEqual({
+      ...action.payload.trustchain,
+      environment: "STAGING",
+    });
+  });
+
+  it("should not restore the LKRP environment from persisted trustchain state", () => {
+    const persistedState = {
+      trustchain: null,
+      memberCredentials: {
+        pubkey: "02e3311a12c450604725f02d1a775ef5cdb4a1b832eb41ac6b1302adbe92a612fc",
+        privatekey: "873f500bd20783224f7e78d4f8cce3d2bf69eb8008fbd697d20bbea31a721a03",
+      },
+      environment: "STAGING" as const,
+    };
+    const action = importTrustchainStoreState(persistedState);
+
+    expect(
+      trustchainHandlers.TRUSTCHAIN_STORE_IMPORT_STATE(
+        {
+          trustchain: null,
+          memberCredentials: null,
+        },
+        action,
+      ),
+    ).toEqual({
+      trustchain: null,
+      memberCredentials: persistedState.memberCredentials,
+      environment: undefined,
+    });
+  });
+
+  it("should preserve the LKRP environment when resetting the trustchain", () => {
+    const state = {
+      trustchain: {
+        rootId: "root-id",
+        walletSyncEncryptionKey: "wallet-sync-encryption-key",
+        applicationPath: "m/0'/16'/0'",
+      },
+      memberCredentials: {
+        pubkey: "persisted-pubkey",
+        privatekey: "persisted-privatekey",
+      },
+      environment: "STAGING" as const,
+    };
+
+    const resetState = trustchainHandlers.TRUSTCHAIN_STORE_RESET(state, resetTrustchainStore());
+
+    expect(resetState.environment).toBe("STAGING");
+    expect(resetState.trustchain).toBeNull();
+    expect(resetState.memberCredentials).not.toEqual(state.memberCredentials);
+  });
+
+  it("should exclude the LKRP environment from the persisted trustchain store", () => {
+    expect(
+      trustchainStoreSelector({
+        trustchain: {
+          trustchain: null,
+          memberCredentials: null,
+          environment: "STAGING",
+        },
+      }),
+    ).toEqual({
+      trustchain: null,
+      memberCredentials: null,
+    });
   });
 });

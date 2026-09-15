@@ -7,9 +7,12 @@
 import { MemberCredentialsSchema, type MemberCredentials, type Trustchain } from "./types";
 import { initMemberCredentials } from "./utils";
 
+export type LkrpEnvironment = "STAGING" | "PROD";
+
 export type TrustchainStore = {
   trustchain: Trustchain | null;
   memberCredentials: MemberCredentials | null;
+  environment?: LkrpEnvironment;
 };
 
 export const INITIAL_STATE: TrustchainStore = {
@@ -28,6 +31,7 @@ export enum TrustchainHandlerType {
   TRUSTCHAIN_STORE_RESET = `${trustchainStoreActionTypePrefix}RESET`,
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN = `${trustchainStoreActionTypePrefix}SET_TRUSTCHAIN`,
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS = `${trustchainStoreActionTypePrefix}SET_MEMBER_CREDENTIALS`,
+  TRUSTCHAIN_STORE_SET_ENVIRONMENT = `${trustchainStoreActionTypePrefix}SET_ENVIRONMENT`,
 }
 
 export type TrustchainHandlersPayloads = {
@@ -35,6 +39,7 @@ export type TrustchainHandlersPayloads = {
   TRUSTCHAIN_STORE_RESET: { memberCredentials: MemberCredentials };
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN: { trustchain: Trustchain };
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
+  TRUSTCHAIN_STORE_SET_ENVIRONMENT: { environment: LkrpEnvironment };
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -51,17 +56,20 @@ export type TrustchainHandlers<PreciseKey = true> = Handlers<
 >;
 
 export const trustchainHandlers: TrustchainHandlers = {
-  TRUSTCHAIN_STORE_IMPORT_STATE: (_, { payload: { trustchain } }) => {
-    return trustchain;
+  TRUSTCHAIN_STORE_IMPORT_STATE: (state, { payload: { trustchain } }) => {
+    return { ...trustchain, environment: state.environment };
   },
-  TRUSTCHAIN_STORE_RESET: (_, { payload: { memberCredentials } }): TrustchainStore => {
-    return { ...INITIAL_STATE, memberCredentials };
+  TRUSTCHAIN_STORE_RESET: (state, { payload: { memberCredentials } }): TrustchainStore => {
+    return { ...state, trustchain: null, memberCredentials };
   },
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN: (state, { payload: { trustchain } }) => {
     return { ...state, trustchain };
   },
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: (state, { payload: { memberCredentials } }) => {
     return { ...state, memberCredentials };
+  },
+  TRUSTCHAIN_STORE_SET_ENVIRONMENT: (state, { payload: { environment } }) => {
+    return { ...state, environment };
   },
 };
 
@@ -70,9 +78,10 @@ export const trustchainHandlers: TrustchainHandlers = {
 export const importTrustchainStoreState = (persistedState?: TrustchainStore) => ({
   type: `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
   payload: {
-    trustchain: MemberCredentialsSchema.safeParse(persistedState?.memberCredentials).success
-      ? persistedState
-      : { ...INITIAL_STATE, memberCredentials: initMemberCredentials() },
+    trustchain:
+      persistedState && MemberCredentialsSchema.safeParse(persistedState.memberCredentials).success
+        ? persistedState
+        : { ...INITIAL_STATE, memberCredentials: initMemberCredentials() },
   },
 });
 
@@ -93,11 +102,20 @@ export const setMemberCredentials = (memberCredentials: MemberCredentials) => ({
   payload: { memberCredentials },
 });
 
+export const setLkrpEnvironment = (environment: LkrpEnvironment) => ({
+  type: `${trustchainStoreActionTypePrefix}SET_ENVIRONMENT`,
+  payload: { environment },
+});
+
 // Local Selectors
 // FIXME: these are not actually local Selector, a localSelector takes a TrustchainStore in param. we will need to rework this.
 
-export const trustchainStoreSelector = (state: { trustchain: TrustchainStore }): TrustchainStore =>
-  state.trustchain;
+export const trustchainStoreSelector = (state: {
+  trustchain: TrustchainStore;
+}): TrustchainStore => ({
+  trustchain: state.trustchain.trustchain,
+  memberCredentials: state.trustchain.memberCredentials,
+});
 
 export const trustchainSelector = (state: { trustchain: TrustchainStore }): Trustchain | null =>
   state.trustchain.trustchain;
@@ -105,3 +123,7 @@ export const trustchainSelector = (state: { trustchain: TrustchainStore }): Trus
 export const memberCredentialsSelector = (state: {
   trustchain: TrustchainStore;
 }): MemberCredentials | null => state.trustchain.memberCredentials;
+
+export const lkrpEnvironmentSelector = (state: {
+  trustchain: TrustchainStore;
+}): LkrpEnvironment | null => state.trustchain.environment ?? null;

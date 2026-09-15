@@ -218,7 +218,9 @@ export const payCardDbSaveSliceSelector = createSelector(
 );
 const payCardPersistedNotEquals = (a: State, b: State) =>
   !isEqual(payCardPersistedSelector(a), payCardPersistedSelector(b));
-const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
+export const trustchainNotEquals = (a: State, b: State) =>
+  a.trustchain.trustchain !== b.trustchain.trustchain ||
+  a.trustchain.memberCredentials !== b.trustchain.memberCredentials;
 const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
 
 const cryptoAssetsNotEquals = (a: State, b: State) =>

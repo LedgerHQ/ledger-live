@@ -1,10 +1,13 @@
 import Config from "react-native-config";
 import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
+import { authApiExtra } from "@shared/auth";
 import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
-import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  lkrpEnvironmentSelector,
+  type TrustchainStore,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import NetInfo from "@react-native-community/netinfo";
 import { Platform } from "react-native";
 import VersionNumber from "react-native-version-number";
@@ -112,7 +115,7 @@ export const store = configureStore({
                 {
                   clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
                   keycloakBaseUrl(): string | null {
-                    const environment = authEnvironmentSelector(store.getState());
+                    const environment = lkrpEnvironmentSelector(store.getState());
                     return environment && getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`);
                   },
                   keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
