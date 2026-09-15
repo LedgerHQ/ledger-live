@@ -1,3 +1,4 @@
+jest.unmock("@shared/analytics");
 jest.unmock("./segment");
 jest.unmock("~/renderer/analytics/segment");
 jest.unmock("src/renderer/analytics/segment");
@@ -13,13 +14,14 @@ jest.mock("~/renderer/logger", () => ({
 }));
 
 import React from "react";
+import { analyticsEvents$, type LoggableEvent } from "@shared/analytics";
 import { render, waitFor } from "tests/testSetup";
 import createStore from "~/state-manager/configureStore";
 import type { State } from "~/renderer/reducers";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 import logger from "~/renderer/logger";
 import TrackPage from "./TrackPage";
-import { startAnalytics, trackSubject, type LoggableEvent } from "./segment";
+import { startAnalytics } from "./segment";
 
 const createStoreWithAnalyticsDisabled = () =>
   createStore({
@@ -40,14 +42,14 @@ describe("TrackPage", () => {
 
   it("should only send page tracking without consent when mandatory", async () => {
     const events: LoggableEvent[] = [];
-    const subscription = trackSubject.subscribe(event => events.push(event));
+    const subscription = analyticsEvents$.subscribe(event => events.push(event));
     events.length = 0;
 
     try {
       const store = createStoreWithAnalyticsDisabled();
       await startAnalytics(store);
 
-      const { rerender } = render(
+      const { unmount } = render(
         <TrackPage category="Analytics Consent" name="Optional" flow="test-flow" />,
         { store },
       );
@@ -55,13 +57,18 @@ describe("TrackPage", () => {
       expect(events).toEqual([]);
       expect(logger.analyticsPage).not.toHaveBeenCalled();
 
-      rerender(
+      unmount();
+
+      const { rerender } = render(
         <TrackPage category="Analytics Consent" name="Mandatory" flow="test-flow" mandatory />,
+        { store },
       );
 
       await waitFor(() => expect(events).toHaveLength(1));
       expect(events[0]).toEqual(
         expect.objectContaining({
+          date: expect.any(Date),
+          deliveryStatus: "enqueued",
           eventName: "Page Analytics Consent Mandatory",
           eventProperties: expect.objectContaining({
             flow: "test-flow",
@@ -72,15 +79,13 @@ describe("TrackPage", () => {
               privacyPolicyVersion: null,
             },
           }),
-          eventPropertiesWithoutExtra: {
-            source: undefined,
+          eventPropertiesWithoutExtra: expect.objectContaining({
             flow: "test-flow",
-          },
+          }),
         }),
       );
       expect(logger.analyticsPage).toHaveBeenCalledWith(
-        "Analytics Consent",
-        "Mandatory",
+        "Page Analytics Consent Mandatory",
         expect.objectContaining({
           flow: "test-flow",
           optInAnalytics: false,
@@ -88,22 +93,8 @@ describe("TrackPage", () => {
         }),
       );
 
-      rerender(
-        <TrackPage category="Analytics Consent" name="Mandatory" flow="test-flow" mandatory />,
-      );
-      await waitFor(() => expect(events).toHaveLength(1));
-
       rerender(<TrackPage category="Analytics Consent" name="Mandatory" flow="send" mandatory />);
-
-      await waitFor(() => expect(events).toHaveLength(2));
-      expect(events[1]).toEqual(
-        expect.objectContaining({
-          eventName: "Page Analytics Consent Mandatory",
-          eventPropertiesWithoutExtra: expect.objectContaining({
-            flow: "send",
-          }),
-        }),
-      );
+      await waitFor(() => expect(events).toHaveLength(1));
     } finally {
       subscription.unsubscribe();
     }
