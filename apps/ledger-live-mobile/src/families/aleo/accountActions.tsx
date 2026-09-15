@@ -1,43 +1,78 @@
 import { i18n } from "~/context/Locale";
 import { IconsLegacy } from "@ledgerhq/native-ui";
+import type { ParamListBase, RouteProp } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
 import { NavigatorName, ScreenName } from "~/const";
-import type { ActionButtonEvent } from "~/components/FabActions";
+import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import ZeroBalanceDisabledModalContent from "~/components/FabActions/modals/ZeroBalanceDisabledModalContent";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const getMainActions = ({
   account,
   parentAccount,
+  parentRoute,
 }: {
   account: AleoAccount;
   parentAccount?: Account;
-}): ActionButtonEvent[] => [
-  {
-    id: "public_to_private",
-    label: i18n.t("aleo.accountActions.publicToPrivate"),
-    Icon: IconsLegacy.TransferMedium,
-    event: "button_clicked",
-    eventProperties: {
-      button: "public_to_private",
-      currency: "ALEO",
-      page: "Account Page",
-    },
-    disabled: !account.balance.gt(0),
-    modalOnDisabledClick: {
-      component: ZeroBalanceDisabledModalContent,
-    },
-    navigationParams: [
-      NavigatorName.SendFunds,
-      {
-        screen: ScreenName.AleoSendBalanceSelection,
-        params: { account, parentAccount, isSelfTransfer: true },
+  parentRoute?: RouteProp<ParamListBase, ScreenName>;
+}): ActionButtonEvent[] => {
+  const mainAccount = getMainAccount<AleoAccount>(account, parentAccount);
+  const transparentBalance = mainAccount.aleoResources?.transparentBalance;
+  const hasNoPublicFunds = !transparentBalance || transparentBalance.isZero();
+  const config = getAleoCurrencyConfigById(mainAccount.currency.id);
+  const stakeLabel = getStakeLabelLocaleBased();
+  const showStakingAction = !!config?.enableStaking && account.type === "Account";
+
+  return [
+    ...(showStakingAction
+      ? [
+          {
+            id: "stake",
+            label: i18n.t(stakeLabel),
+            Icon: IconsLegacy.CoinsMedium,
+            event: "button_clicked",
+            eventProperties: { button: "stake", currency: "ALEO", page: "Account Page" },
+            disabled: hasNoPublicFunds,
+            modalOnDisabledClick: { component: ZeroBalanceDisabledModalContent },
+            navigationParams: [
+              NavigatorName.AleoBondPublicFlow,
+              {
+                screen: ScreenName.AleoBondPublicSelectValidator,
+                params: { accountId: mainAccount.id, parentId: undefined, source: parentRoute },
+              },
+            ] satisfies NavigationParamsType,
+          },
+        ]
+      : []),
+    {
+      id: "public_to_private",
+      label: i18n.t("aleo.accountActions.publicToPrivate"),
+      Icon: IconsLegacy.TransferMedium,
+      event: "button_clicked",
+      eventProperties: {
+        button: "public_to_private",
+        currency: "ALEO",
+        page: "Account Page",
       },
-    ],
-  },
-];
+      disabled: !account.balance.gt(0),
+      modalOnDisabledClick: {
+        component: ZeroBalanceDisabledModalContent,
+      },
+      navigationParams: [
+        NavigatorName.SendFunds,
+        {
+          screen: ScreenName.AleoSendBalanceSelection,
+          params: { account, parentAccount, isSelfTransfer: true },
+        },
+      ] satisfies NavigationParamsType,
+    },
+  ];
+};
 
 const getExtraSendActionParams = ({
   account,
@@ -52,7 +87,7 @@ const getExtraSendActionParams = ({
       screen: ScreenName.AleoSendBalanceSelection,
       params: { account, parentAccount: parentAccount ?? undefined, isSelfTransfer: false },
     },
-  ],
+  ] satisfies NavigationParamsType,
 });
 
 const getAdditionalAssetActions = ({
@@ -92,7 +127,7 @@ const getAdditionalAssetActions = ({
               extra: { isSelfTransfer: true },
             },
           },
-    ],
+    ] satisfies NavigationParamsType,
   },
 ];
 
