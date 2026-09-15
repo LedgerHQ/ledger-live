@@ -7,6 +7,7 @@ import { CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
 
 let mockStatus: PayCardAuthStatus = "unknown";
 let receivedTransactionFormatters: CardTransactionFormatters | undefined;
+let receivedTransactionTracker: CardProps["login"]["onTrackEvent"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
@@ -25,8 +26,15 @@ jest.mock("@features/flow-pay-card-widget", () => ({
 }));
 
 jest.mock("@features/flow-pay-card-transactions", () => ({
-  CardTransactions: ({ formatters }: { formatters?: CardTransactionFormatters }) => {
+  CardTransactions: ({
+    formatters,
+    onTrackEvent,
+  }: {
+    formatters?: CardTransactionFormatters;
+    onTrackEvent?: CardProps["login"]["onTrackEvent"];
+  }) => {
     receivedTransactionFormatters = formatters;
+    receivedTransactionTracker = onTrackEvent;
     return <div data-testid="card-transactions" />;
   },
 }));
@@ -62,6 +70,7 @@ describe("Card (web)", () => {
   beforeEach(() => {
     mockStatus = "unknown";
     receivedTransactionFormatters = undefined;
+    receivedTransactionTracker = undefined;
   });
 
   it("always shows the host title", () => {
@@ -138,6 +147,14 @@ describe("Card (web)", () => {
 
       expect(receivedTransactionFormatters?.amount).toBe(transactionAmount);
       expect(receivedTransactionFormatters?.date).toBe(transactionDate);
+    });
+
+    it("hands the host tracker to the transactions list", () => {
+      const onTrackEvent = jest.fn();
+
+      renderCard(<Card login={{ oauthConfig, onTrackEvent }} />);
+
+      expect(receivedTransactionTracker).toBe(onTrackEvent);
     });
   });
 });

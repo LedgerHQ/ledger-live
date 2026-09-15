@@ -29,10 +29,12 @@ Hosts may pass `formatters.amount` and `formatters.date`. Amounts fall back to `
 Dates fall back to the runtime locale's medium date. Desktop should pass `useDateFormatter` so the
 region locale and Thai Gregorian calendar apply.
 
-On native, transaction rows can be selected through `onTransactionPress`. The native-only
-`CardTransactionDetail` shows the merchant, relative date and time, amount, status, masked card,
-funding source and copyable processor transaction ID. Its view model writes to the native clipboard,
-so the view stays free of side effects; hosts only provide locale-aware amount and date formatters.
+Transaction rows can be selected through `onTransactionPress`. On web, selecting one also opens a
+Lumen dialog; on native the host opens `CardTransactionDetail` in its own navigation shell. The
+detail shows the merchant, relative date and time, amount, status, masked card, funding source and
+copyable processor transaction ID. A platform-specific clipboard adapter keeps that side effect out
+of the view. Hosts only provide locale-aware amount and date formatters and, on web, the injected
+tracking callback.
 
 ## Mocked transactions
 

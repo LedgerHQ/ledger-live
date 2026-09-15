@@ -8,6 +8,7 @@ export function CardTransactionsView({
   title,
   transactions,
   formatters,
+  onTransactionPress,
 }: CardTransactionsScreenViewProps) {
   if (displayMode !== "list") {
     return null;
@@ -20,7 +21,11 @@ export function CardTransactionsView({
           <SubheaderTitle>{title}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
-      <List transactions={transactions} formatters={formatters} />
+      <List
+        transactions={transactions}
+        formatters={formatters}
+        onTransactionPress={onTransactionPress}
+      />
     </div>
   );
 }

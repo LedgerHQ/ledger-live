@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { ListItem } from "./ListItem";
@@ -52,5 +52,14 @@ describe("ListItem", () => {
     render(<ListItem item={item({ status: "DECLINED" })} />, { wrapper: cardApiWrapper() });
 
     expect(screen.queryByText("Declined")).not.toBeInTheDocument();
+  });
+
+  it("reports a row click", () => {
+    const onPress = jest.fn();
+    render(<ListItem item={item()} onPress={onPress} />, { wrapper: cardApiWrapper() });
+
+    fireEvent.click(screen.getByTestId(`card-transactions-item-${transaction.id}`));
+
+    expect(onPress).toHaveBeenCalledTimes(1);
   });
 });

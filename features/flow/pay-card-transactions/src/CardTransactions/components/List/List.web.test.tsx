@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { List } from "./List";
@@ -32,5 +32,20 @@ describe("List", () => {
         `card-transactions-item-${transactions[transactions.length - 1]?.transaction.id}`,
       ),
     ).toBeVisible();
+  });
+
+  it("reports the selected transaction", () => {
+    const transactions = itemsFromMock();
+    const onTransactionPress = jest.fn();
+
+    render(<List transactions={transactions} onTransactionPress={onTransactionPress} />, {
+      wrapper: cardApiWrapper(),
+    });
+
+    fireEvent.click(
+      screen.getByTestId(`card-transactions-item-${transactions[0]?.transaction.id}`),
+    );
+
+    expect(onTransactionPress).toHaveBeenCalledWith(transactions[0]);
   });
 });

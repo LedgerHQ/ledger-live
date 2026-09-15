@@ -5,6 +5,7 @@ export type CardTransactionsDisplayMode = "loading" | "error" | "empty" | "list"
 export type CardTransactionsProps = Readonly<{
   formatters?: CardTransactionFormatters;
   onTransactionPress?: (item: CardTransactionItem) => void;
+  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
 export type CardTransactionsScreenViewProps = Readonly<{

@@ -13,11 +13,7 @@ import {
   TooltipTrigger,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Copy, Information } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { CardTransactionDetailRow } from "./types";
-
-export type DetailRowProps = Readonly<{
-  row: CardTransactionDetailRow;
-}>;
+import type { DetailRowProps } from "./types";
 
 export function DetailRow({ row }: DetailRowProps) {
   return (
