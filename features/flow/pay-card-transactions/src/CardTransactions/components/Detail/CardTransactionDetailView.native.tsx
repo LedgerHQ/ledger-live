@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useCategoryVisual } from "../ListItem/useCategoryVisual";
-import { DetailRow } from "./DetailRow";
+import { DetailRow } from "../DetailRow";
 import type { CardTransactionDetailViewProps } from "./types";
 
 const CATEGORY_ICON_SIZE = 32;

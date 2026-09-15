@@ -18,11 +18,12 @@ export function ListItemView({
   fiatAmount,
   assetAmount,
   dateLabel,
+  onPress,
 }: ListItemViewProps) {
   const { Icon, backgroundStyle } = useCategoryVisual(category);
 
   return (
-    <LumenListItem className="px-0" data-testid={`card-transactions-item-${id}`}>
+    <LumenListItem data-testid={`card-transactions-item-${id}`} onClick={onPress}>
       <ListItemLeading>
         <div
           className="flex size-48 shrink-0 items-center justify-center rounded-full bg-(--category-bg) text-white dark:bg-(--category-bg-dark) dark:text-black"

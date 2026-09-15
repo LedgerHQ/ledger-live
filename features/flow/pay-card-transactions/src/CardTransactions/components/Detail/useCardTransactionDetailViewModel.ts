@@ -1,6 +1,6 @@
-import Clipboard from "@react-native-clipboard/clipboard";
 import type { PayCardTransaction } from "@domain/api-card-management";
 import { useTranslation } from "@shared/i18n";
+import { copyToClipboard } from "./copyToClipboard";
 import {
   formatFundingSources,
   formatMaskedPanLast4,
@@ -65,7 +65,7 @@ export function useCardTransactionDetailViewModel({
       label: t("payTab.cardTransactions.detail.transactionId"),
       value: processorTransactionId,
       copyLabel: t("payTab.cardTransactions.detail.copyTransactionId"),
-      onCopy: () => Clipboard.setString(processorTransactionId),
+      onCopy: () => copyToClipboard(processorTransactionId),
     });
   }
 
