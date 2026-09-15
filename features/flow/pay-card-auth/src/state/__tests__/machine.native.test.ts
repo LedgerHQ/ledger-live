@@ -47,6 +47,7 @@ function stubPorts(overrides: Partial<Ports> = {}): Ports {
     getUser: jest.fn(async () => user),
     setSignedIn: jest.fn(),
     markIntroSeen: jest.fn(),
+    setProviderAppId: jest.fn(),
     openHostedLogin: jest.fn(async () => ({
       type: "success",
       url: "ledgerlive://paytab?code=auth-code&app_id=app-value",
@@ -287,6 +288,43 @@ describe("cardLoginMachine login", () => {
       code: callback.code,
       codeVerifier: attempt.codeVerifier,
     });
+  });
+
+  it("records the provider app before the token exchange leaves", async () => {
+    // The exchange is the first request that has to reach the holder's own tenant, so the app id
+    // must be stored before it, not after.
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      openHostedLogin: jest.fn(async () => ({ type: "pending" })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+    await settledAt(actor, "awaitingCallback");
+
+    actor.send({ type: "CALLBACK_RECEIVED", ...callback, appId: "ledger-us" });
+
+    await settledAt(actor, "ready");
+    expect(ports.setProviderAppId).toHaveBeenCalledWith("ledger-us");
+    expect(ports.setProviderAppId.mock.invocationCallOrder[0]).toBeLessThan(
+      ports.exchangeAuthorizationCode.mock.invocationCallOrder[0],
+    );
+  });
+
+  it("forgets the provider app when the redirect named none", async () => {
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      openHostedLogin: jest.fn(async () => ({ type: "pending" })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+    await settledAt(actor, "awaitingCallback");
+
+    actor.send({ type: "CALLBACK_RECEIVED", ...callback });
+
+    await settledAt(actor, "ready");
+    expect(ports.setProviderAppId).toHaveBeenCalledWith(null);
   });
 
   it("starts a fresh attempt when the login is pressed again while it waits", async () => {

@@ -104,14 +104,20 @@ export function useCardLoginViewModel({
 
   const callbackCode = callback?.code;
   const callbackState = callback?.state;
+  const callbackAppId = callback?.appId;
 
   useEffect(() => {
     // A redirect that arrives while the screen is already open. The machine ignores it unless it is
     // waiting for one, so a repeat is harmless: the first callback wins.
     if (callbackCode) {
-      send({ type: "CALLBACK_RECEIVED", code: callbackCode, state: callbackState });
+      send({
+        type: "CALLBACK_RECEIVED",
+        code: callbackCode,
+        state: callbackState,
+        appId: callbackAppId,
+      });
     }
-  }, [callbackCode, callbackState, send]);
+  }, [callbackCode, callbackState, callbackAppId, send]);
 
   useEffect(() => {
     // `More` ended the session. `ready` raises the flag on entry, so a lowered flag while the
