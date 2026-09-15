@@ -23,20 +23,20 @@ function getCustomModule(client: WalletAPIClient) {
   };
 }
 
-function getWalletAPITransport(): Transport {
-  if (typeof window === "undefined") {
-    return {
-      onMessage: undefined,
-      send: () => {},
-    };
+export function TransportProvider({ children }: PropsWithChildren<object>) {
+  function getWalletAPITransport(): Transport {
+    if (typeof window === "undefined") {
+      return {
+        onMessage: undefined,
+        send: () => {},
+      };
+    }
+
+    const transport = new WindowMessageTransport();
+    transport.connect();
+    return transport;
   }
 
-  const transport = new WindowMessageTransport();
-  transport.connect();
-  return transport;
-}
-
-export function TransportProvider({ children }: PropsWithChildren<object>) {
   const eventHandlers = useMemo<EventHandlers>(() => {
     return {
       "event.custom.test": param => {
