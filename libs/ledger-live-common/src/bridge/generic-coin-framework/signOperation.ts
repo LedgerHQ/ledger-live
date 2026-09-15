@@ -40,10 +40,16 @@ export const genericSignOperation =
         const customFees = bigNumberToBigIntDeep({
           value: transaction.fees ?? new BigNumber(0),
           parameters: {
-            // A deliberate fee override — prepareTransaction sets this only when the user picks a custom
-            // fee. `value` above is the auto-resolved display fee, which a coin module must NOT treat as an
-            // override: TRON crafts its TRC20 `fee_limit` from an override, and pinning it to the net,
-            // energy-covered display fee (0 when the account has energy) reverts OUT_OF_ENERGY (LIVE-36865).
+            // The last estimation's telemetry, for a family that opted in — see
+            // `BridgeApi.forwardsFeeParametersToCraft` for why it is not always-on.
+            //
+            // Spread first, and every field below is written unconditionally, so the framework's own
+            // value wins any collision — including when it is `undefined`, which
+            // `bigNumberToBigIntDeep` then drops, leaving the key absent.
+            ...(bridgeApi.forwardsFeeParametersToCraft ? transaction.feeParameters : undefined),
+            // A deliberate fee override; `prepareTransaction` sets it only when the user picks a
+            // custom fee, and clears `feeParameters` on that path unless send-max forces an
+            // estimate too — so a module resolving a ceiling must prefer this over the spread.
             fees: transaction.customFees?.parameters?.fees,
             feesStrategy: transaction.feesStrategy ?? undefined,
             sponsored: transaction.sponsored,

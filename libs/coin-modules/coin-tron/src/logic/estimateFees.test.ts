@@ -2,6 +2,7 @@ import coinConfig, { type TronCoinConfig } from "../config";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import {
+  DEFAULT_TRC20_FEES_LIMIT,
   fetchTronAccount,
   getChainParameters,
   getTronAccountNetwork,
@@ -31,6 +32,8 @@ import { getBalance } from "./getBalance";
 import { getEnergyRentQuote } from "./energyRent";
 
 jest.mock("../network", () => ({
+  // Real value, not a mock: `estimateFees` computes the TRC-20 `fee_limit` ceiling from it.
+  DEFAULT_TRC20_FEES_LIMIT: 50000000,
   fetchTronAccount: jest.fn(),
   getChainParameters: jest.fn(),
   getTronAccountNetwork: jest.fn(),
@@ -586,6 +589,8 @@ describe("estimateFees", () => {
         bandwidthRequired: "350",
         bandwidthAvailable: "0",
         energyEstimated: false,
+        // The energy price is unknown on this path, so the ceiling falls back to the flat default.
+        feeLimit: String(DEFAULT_TRC20_FEES_LIMIT),
       });
     });
   });
@@ -613,7 +618,68 @@ describe("estimateFees", () => {
         // (5000 - 1000) free + 600 staked
         bandwidthAvailable: "4600",
         energyEstimated: true,
+        // 31_895 * energyFee(210) = 6_697_950 gross, under the default, so the default stands.
+        feeLimit: String(DEFAULT_TRC20_FEES_LIMIT),
       });
+    });
+
+    it("sizes the fee limit against the gross energy cost, not the fee the account will pay", async () => {
+      // LIVE-36865: the sender's energy covers the transfer, so the *fee* is 0 — but `fee_limit` is a
+      // ceiling on what the TVM may burn, and a 0 ceiling reverts OUT_OF_ENERGY.
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({
+          freeNetLimit: new BigNumber(10_000),
+          energyLimit: new BigNumber(1_000_000),
+        }),
+      );
+      mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
+
+      const result = await estimateFees(mockConfig, sendTrc20);
+
+      expect(result.value).toBe(0n);
+      expect(breakdownOf(result).feeLimit).toBe(String(DEFAULT_TRC20_FEES_LIMIT));
+    });
+
+    it("ratchets the fee limit above the default for a transfer that costs more than it", async () => {
+      // 400_000 * energyFee(210) = 84_000_000 gross, over the 50 TRX default — a cap at the default
+      // would revert.
+      mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
+      mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 400_000 });
+
+      const result = await estimateFees(mockConfig, sendTrc20);
+
+      expect(breakdownOf(result).feeLimit).toBe("84000000");
+    });
+
+    it("does not raise the fee limit off the energy sentinel when the simulation fails", async () => {
+      // A failed simulation sets `energyRequired` to the sender's pool + 1 so consumers read
+      // "insufficient" — a 1M-energy account would otherwise get a 210 TRX cap, not the 50 TRX
+      // default.
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({ energyLimit: new BigNumber(1_000_000) }),
+      );
+      mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
+      mockTriggerConstantContract.mockResolvedValue({
+        result: { result: false, code: "REVERT", message: "insufficient balance" },
+      });
+
+      const result = await estimateFees(mockConfig, sendTrc20);
+
+      const breakdown = breakdownOf(result);
+      expect(breakdown.energyEstimated).toBe(false);
+      expect(breakdown.energyRequired).toBe("1000001");
+      expect(breakdown.feeLimit).toBe(String(DEFAULT_TRC20_FEES_LIMIT));
+    });
+
+    it("omits the fee limit for a native send, which has no such field", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
+      mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
+
+      const result = await estimateFees(mockConfig, sendNative);
+
+      expect(breakdownOf(result).feeLimit).toBeUndefined();
     });
 
     it("marks the energy as unestimated and insufficient when the simulation reverts", async () => {
@@ -700,7 +766,19 @@ describe("estimateTronifyFees", () => {
     expect(result.parameters).toMatchObject({
       energyRequired: String(ENERGY_USED),
       energyEstimated: true,
+      // 31_895 * energyFee(210) = 6_697_950 gross, under the default, so the default stands.
+      feeLimit: String(DEFAULT_TRC20_FEES_LIMIT),
     });
+  });
+
+  it("sizes the fee limit from the rental simulation rather than the flat default", async () => {
+    // Rented energy that lands short or late still burns against this cap, so a transfer whose
+    // gross cost exceeds the default must raise it: 400_000 * energyFee(210) = 84_000_000.
+    mockTriggerConstantContract.mockResolvedValue({ energy_used: 400_000 });
+
+    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(breakdownOf(result).feeLimit).toBe("84000000");
   });
 
   it("should pass the raw estimateEnergy result as the energy pledge without a client-side minimum", async () => {
