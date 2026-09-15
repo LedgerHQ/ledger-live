@@ -36,6 +36,17 @@ function readCallbackState(state: unknown): string | undefined {
 }
 const CARD_TRANSACTION_DATE_FORMAT: Intl.DateTimeFormatOptions = { dateStyle: "medium" };
 
+/** The provider app the redirect named, carried the same way as the code. */
+function readCallbackAppId(state: unknown): string | undefined {
+  if (typeof state !== "object" || state === null) {
+    return undefined;
+  }
+
+  const appId = (state as { appId?: unknown }).appId;
+
+  return typeof appId === "string" && appId !== "" ? appId : undefined;
+}
+
 export function useCardViewModel(): CardViewModel {
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
@@ -86,11 +97,15 @@ export function useCardViewModel(): CardViewModel {
 
   // The code is what the exchange needs: PKCE ties it to the verifier the attempt store still holds.
   // The state, when the redirect carried one, only lets the flow recognize its own attempt's redirect.
+  // The app id names the provider tenant every later request has to reach.
   const callback: CardViewModel["login"]["callback"] = useMemo(() => {
     const code = readCallbackCode(state);
     const oauthState = readCallbackState(state);
+    const appId = readCallbackAppId(state);
 
-    return code ? { code, ...(oauthState ? { state: oauthState } : {}) } : null;
+    return code
+      ? { code, ...(oauthState ? { state: oauthState } : {}), ...(appId ? { appId } : {}) }
+      : null;
   }, [state]);
 
   useEffect(() => {
