@@ -4,6 +4,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   rnBleTransportIdentifier,
   rnHidTransportIdentifier,
+  speculosIdentifier,
   type DeviceBaseInfo,
   findMatchingOldDevice,
 } from "@ledgerhq/live-dmk-mobile";
@@ -116,6 +117,15 @@ function upsertKnownDevice(state: KnownDevicesState, device: KnownDevice) {
   state.knownDevices[existingDeviceIndex] = { ...device };
 }
 
+function isSameKnownDevice(a: KnownDevice, b: KnownDevice): boolean {
+  return (
+    a.id === b.id &&
+    a.name === b.name &&
+    a.deviceModelId === b.deviceModelId &&
+    a.transport === b.transport
+  );
+}
+
 function findMatchingKnownDevice(
   newDevice: KnownDevice,
   knownDevices: KnownDevice[],
@@ -124,7 +134,12 @@ function findMatchingKnownDevice(
     device => device.transport === newDevice.transport,
   );
 
-  if (newDevice.transport === rnHidTransportIdentifier) {
+  // Speculos, like USB, has no stable id to match on: the transport reports a fixed device id that
+  // differs from the one the e2e bridge registered, so matching on it would keep adding entries.
+  if (
+    newDevice.transport === rnHidTransportIdentifier ||
+    newDevice.transport === speculosIdentifier
+  ) {
     return (
       oldDevicesForTransport.find(device => device.deviceModelId === newDevice.deviceModelId) ??
       null
@@ -160,8 +175,23 @@ const knownDevicesSlice = createSlice({
         return;
       }
 
+      // The e2e bridge owns the Speculos entry and its URL-based compatibility id. Replacing it
+      // with the transport's fixed "SpeculosID" would change this list, restart device discovery,
+      // and disconnect the session that just completed.
+      if (deviceToUpdate.transport === speculosIdentifier) {
+        return;
+      }
+
+      const updatedDevice = { ...deviceToUpdate, ...newDevice };
+
+      // Consumers reconnect whenever the device list changes identity, so a redundant update would
+      // tear down the connection it was just told about.
+      if (isSameKnownDevice(deviceToUpdate, updatedDevice)) {
+        return;
+      }
+
       state.knownDevices = state.knownDevices.map(device =>
-        device.id === deviceToUpdate.id ? { ...device, ...newDevice } : device,
+        device.id === deviceToUpdate.id ? updatedDevice : device,
       );
     },
     removeKnownDevice: (state, action: PayloadAction<string>) => {

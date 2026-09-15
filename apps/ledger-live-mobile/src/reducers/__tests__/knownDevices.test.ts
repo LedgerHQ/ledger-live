@@ -1,4 +1,8 @@
-import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
+import {
+  rnBleTransportIdentifier,
+  rnHidTransportIdentifier,
+  speculosIdentifier,
+} from "@ledgerhq/live-dmk-mobile";
 import {
   DeviceModelId as DMKDeviceModelId,
   type DiscoveredDevice,
@@ -44,6 +48,13 @@ describe("knownDevices reducer", () => {
     name: "Nano S Plus",
     deviceModelId: DeviceModelId.nanoSP,
     transport: rnHidTransportIdentifier,
+  };
+
+  const speculos = {
+    id: "speculos|http://127.0.0.1:5000",
+    name: "http://127.0.0.1:5000",
+    deviceModelId: DeviceModelId.nanoX,
+    transport: speculosIdentifier,
   };
 
   const discoveredNanoX: DiscoveredDevice = {
@@ -154,6 +165,34 @@ describe("knownDevices reducer", () => {
 
       // THEN
       expect(nextState.knownDevices).toEqual([flex, updatedDevice]);
+    });
+
+    it("GIVEN an unchanged known device WHEN updating it THEN it keeps the same device list reference", () => {
+      // GIVEN
+      const state = { knownDevices: [flex, nanoX] };
+
+      // WHEN
+      const nextState = reducer(state, updateKnownDevice({ ...nanoX }));
+
+      // THEN
+      expect(nextState.knownDevices).toBe(state.knownDevices);
+    });
+
+    it("GIVEN an existing Speculos known device WHEN a connection reports its fixed id THEN it preserves the bridge-managed entry", () => {
+      // GIVEN
+      const state = { knownDevices: [flex, speculos] };
+      const updatedDevice = {
+        ...speculos,
+        id: "SpeculosID",
+        name: "Speculos - Ethereum",
+      };
+
+      // WHEN
+      const nextState = reducer(state, updateKnownDevice(updatedDevice));
+
+      // THEN
+      expect(nextState.knownDevices).toBe(state.knownDevices);
+      expect(nextState.knownDevices).toEqual([flex, speculos]);
     });
   });
 
