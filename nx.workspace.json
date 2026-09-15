@@ -207,6 +207,9 @@
         "env": "CARD_BAANX_HOSTED_UI"
       },
       {
+        "env": "CARD_BAANX_US_APP_ID"
+      },
+      {
         "env": "CARD_OAUTH_REDIRECT_URI"
       },
       {
