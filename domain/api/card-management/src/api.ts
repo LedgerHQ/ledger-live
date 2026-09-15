@@ -12,6 +12,8 @@ import {
   PayCardSessionSchema,
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
+  PayCardPinCssSchema,
+  PayCardPinTokenResponseSchema,
   PayCardSetPinTokenRequestSchema,
   PayCardSetPinTokenResponseSchema,
   PayCardStatusResponseSchema,
@@ -34,6 +36,8 @@ import type {
   PayCardSession,
   PayCardDetailsCss,
   PayCardDetailsToken,
+  PayCardPinCss,
+  PayCardPinToken,
   PayCardSetPinToken,
   PayCardSetPinTokenRequest,
   PayCardStatus,
@@ -183,6 +187,25 @@ export const cardManagementApi = cardApi
       }),
 
       /**
+       * The card's PIN, rendered by the provider as an image: the digits never reach the app as a
+       * value, so nothing here can log or store them.
+       *
+       * A mutation, and retained, for the same reasons as `createCardDetailsToken`: the token is
+       * spent once the image has been read, so the answer must never come from a cache, and
+       * `state.cardApi.mutations` keeps a tracked result. Dispatch with `{ track: false }`, or
+       * reset as soon as the image has loaded.
+       */
+      createCardPinToken: build.mutation<PayCardPinToken, PayCardPinCss | void>({
+        query: customCss => ({
+          url: "/v1/card/pin/token",
+          method: "POST",
+          ...(customCss ? { body: { customCss } } : {}),
+        }),
+        argSchema: PayCardPinCssSchema.optional(),
+        responseSchema: PayCardPinTokenResponseSchema,
+      }),
+
+      /**
        * Mints the URL of the provider's hosted page for setting or changing the card's PIN.
        *
        * A mutation for the same reasons as `createCardDetailsToken`: the token is spent when the
@@ -271,6 +294,7 @@ export const {
   useGetWalletHistoryQuery,
   useLazyGetWalletHistoryQuery,
   useCreateCardDetailsTokenMutation,
+  useCreateCardPinTokenMutation,
   useCreateCardSetPinTokenMutation,
   useLazyGetCardStatusQuery,
   useFreezeCardMutation,

@@ -13,6 +13,7 @@ import {
   useGetCardLinkedWalletsQuery,
   useGetCardOnboardingStatusQuery,
   useCreateCardDetailsTokenMutation,
+  useCreateCardPinTokenMutation,
   useCreateCardSetPinTokenMutation,
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
@@ -123,6 +124,7 @@ describe("cardManagementApi configuration", () => {
   it("injects exactly its own endpoints", () => {
     expect(Object.keys(cardManagementApi.endpoints).sort()).toEqual([
       "createCardDetailsToken",
+      "createCardPinToken",
       "createCardSetPinToken",
       "exchangeAuthorizationCode",
       "freezeCard",
@@ -170,6 +172,11 @@ describe("cardManagementApi configuration", () => {
   it("exposes createCardDetailsToken and its hook", () => {
     expect(cardManagementApi.endpoints.createCardDetailsToken).toBeDefined();
     expect(useCreateCardDetailsTokenMutation).toBeDefined();
+  });
+
+  it("exposes createCardPinToken and its hook", () => {
+    expect(cardManagementApi.endpoints.createCardPinToken).toBeDefined();
+    expect(useCreateCardPinTokenMutation).toBeDefined();
   });
 
   it("exposes createCardSetPinToken and its hook", () => {
@@ -994,6 +1001,112 @@ describe("cardManagementApi requests", () => {
       await store.dispatch(cardManagementApi.endpoints.createCardDetailsToken.initiate()).unwrap();
 
       expect(JSON.stringify(store.getState().cardApi.mutations)).toContain(detailsToken.token);
+    });
+  });
+
+  describe("createCardPinToken", () => {
+    const PIN_TOKEN_PATH = "/v1/card/pin/token";
+
+    // An all-zero token: a real-looking one trips secret scanning.
+    const pinToken = {
+      token: "00000000-0000-4000-8000-000000000000",
+      imageUrl: "https://card.test/details-image?token=00000000-0000-4000-8000-000000000000",
+    };
+
+    it("mints a token, and sends no body when no colour is asked for", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardPinToken.initiate(),
+      );
+
+      expectSessionRequest("POST", PIN_TOKEN_PATH);
+      expect(provider.sent().body).toBe("");
+      expect(result.data).toEqual(pinToken);
+    });
+
+    it("sends the colours the host asked for", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardPinToken.initiate({
+            backgroundColor: "#EFEFEF",
+            textColor: "#000000",
+          }),
+        )
+        .unwrap();
+
+      expect(JSON.parse(provider.sent().body)).toEqual({
+        customCss: { backgroundColor: "#EFEFEF", textColor: "#000000" },
+      });
+    });
+
+    it("rejects a colour that is not a hex value, and sends no request", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardPinToken.initiate({ textColor: "rebeccapurple" }),
+      );
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("drops a colour the contract does not declare, so the provider never sees it", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          // @ts-expect-error not one of the two colours this endpoint declares
+          cardManagementApi.endpoints.createCardPinToken.initiate({ panTextColor: "#000000" }),
+        )
+        .unwrap();
+
+      // The parsed arg is what reaches `query`, so an undeclared key never leaves the app.
+      expect(JSON.parse(provider.sent().body)).toEqual({ customCss: {} });
+    });
+
+    it("rejects an image url that is not https, which is loaded straight into an image", async () => {
+      provider.post(PIN_TOKEN_PATH, () =>
+        jsonResponse({ ...pinToken, imageUrl: "javascript:alert(1)" }),
+      );
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardPinToken.initiate(),
+      );
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
+    });
+
+    it("stores neither the token nor the image url when the caller does not track it", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardPinToken.initiate(undefined, { track: false }),
+        )
+        .unwrap();
+
+      const state = JSON.stringify(store.getState().cardApi);
+      expect(state).not.toContain(pinToken.token);
+      expect(state).not.toContain(pinToken.imageUrl);
+    });
+
+    it("leaves the token in redux when the caller tracks it, which is why callers must not", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.createCardPinToken.initiate()).unwrap();
+
+      expect(JSON.stringify(store.getState().cardApi.mutations)).toContain(pinToken.token);
     });
   });
 

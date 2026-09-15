@@ -13,6 +13,8 @@ import {
   PayCardSessionSchema,
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
+  PayCardPinCssSchema,
+  PayCardPinTokenResponseSchema,
   PayCardSetPinCssSchema,
   PayCardSetPinTokenRequestSchema,
   PayCardSetPinTokenResponseSchema,
@@ -67,6 +69,17 @@ export type PayCardWalletHistoryRequest = z.infer<typeof PayCardWalletHistoryReq
  * `{ track: false }` or reset as soon as the URL has been used.
  */
 export type PayCardDetailsToken = z.infer<typeof PayCardDetailsTokenResponseSchema>;
+
+export type PayCardPinCss = z.infer<typeof PayCardPinCssSchema>;
+
+/**
+ * The card's PIN as an image, so the digits never reach the app as a value.
+ *
+ * Single use and short-lived, like {@link PayCardDetailsToken}: the provider spends the token once
+ * the image has been read. Neither field may be logged or stored, so dispatch with
+ * `{ track: false }` or reset as soon as the image has loaded.
+ */
+export type PayCardPinToken = z.infer<typeof PayCardPinTokenResponseSchema>;
 
 export type PayCardSetPinCss = z.infer<typeof PayCardSetPinCssSchema>;
 
