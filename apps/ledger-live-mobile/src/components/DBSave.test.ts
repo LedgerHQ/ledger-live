@@ -26,6 +26,7 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
       payRequestVerifyHint: { hasSeenReceiveVerifyHint: true },
       payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
       payCardLoginIntro: { hasSeenLoginIntro: true },
+      payCardProviderApp: { providerAppId: "ledger-us" },
       payCardOnboardingWidget: { hasCompletedOnboarding: true },
     } as unknown as State;
 
@@ -36,6 +37,7 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
       hasSeenReceiveVerifyHint: true,
       balanceFilter: "ethereum/erc20/usd__coin",
       hasSeenLoginIntro: true,
+      providerAppId: "ledger-us",
       hasCompletedOnboarding: true,
     });
   });
@@ -47,6 +49,7 @@ describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
     payRequestVerifyHint: { hasSeenReceiveVerifyHint: false },
     payCardBalance: { balanceFilter: "all" },
     payCardLoginIntro: { hasSeenLoginIntro: false },
+    payCardProviderApp: { providerAppId: null },
     payCardOnboardingWidget: { hasCompletedOnboarding: false },
   } as unknown as State;
 
@@ -59,6 +62,7 @@ describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
     "payRequestVerifyHint",
     "payCardBalance",
     "payCardLoginIntro",
+    "payCardProviderApp",
     "payCardOnboardingWidget",
   ] as const)("re-triggers the save when only %s changes", slice => {
     const next = { ...base, [slice]: {} } as unknown as State;

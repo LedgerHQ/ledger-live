@@ -38,7 +38,10 @@ import { marketBannerStoreSelector } from "~/reducers/marketBanner";
 import { payCardBalancePersistedSelector } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourPersistedSelector } from "@features/flow-pay-feature-tour/state";
 import { payRequestVerifyHintPersistedSelector } from "@features/flow-pay-request/state";
-import { payCardLoginIntroPersistedSelector } from "@features/flow-pay-card-auth/state";
+import {
+  payCardLoginIntroPersistedSelector,
+  payCardProviderAppPersistedSelector,
+} from "@features/flow-pay-card-auth/state";
 import { payCardOnboardingWidgetPersistedSelector } from "@features/flow-pay-card-widget/state";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
@@ -193,6 +196,7 @@ export const payCardPersistedSelector = (state: State) => ({
   ...payRequestVerifyHintPersistedSelector(state),
   ...payCardBalancePersistedSelector(state),
   ...payCardLoginIntroPersistedSelector(state),
+  ...payCardProviderAppPersistedSelector(state),
   ...payCardOnboardingWidgetPersistedSelector(state),
 });
 
@@ -201,18 +205,21 @@ export const payCardDbSaveSliceSelector = createSelector(
   (state: State) => state.payCardFeatureTour,
   (state: State) => state.payRequestVerifyHint,
   (state: State) => state.payCardLoginIntro,
+  (state: State) => state.payCardProviderApp,
   (state: State) => state.payCardOnboardingWidget,
   (
     payCardBalance,
     payCardFeatureTour,
     payRequestVerifyHint,
     payCardLoginIntro,
+    payCardProviderApp,
     payCardOnboardingWidget,
   ) => ({
     payCardBalance,
     payCardFeatureTour,
     payRequestVerifyHint,
     payCardLoginIntro,
+    payCardProviderApp,
     payCardOnboardingWidget,
   }),
 );
