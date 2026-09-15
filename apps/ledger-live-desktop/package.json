@@ -182,6 +182,8 @@
     "@radix-ui/react-tooltip": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@segment/analytics-next": "1.84.1",
+    "@shared/analytics": "workspace:*",
+    "@shared/analytics-react": "workspace:*",
     "@shared/api-services": "workspace:^",
     "@shared/auth": "workspace:*",
     "@shared/cloud-sync": "workspace:^",
