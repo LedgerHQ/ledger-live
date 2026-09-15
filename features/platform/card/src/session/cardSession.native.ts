@@ -4,6 +4,8 @@ import { secureStore } from "./internals/secureStore.native";
 /** Native: the Card session lives in the iOS keychain and the Android keystore. */
 export const {
   cardSession,
+  setCardProviderAppId,
+  isCardUsEnv,
   getCardSessionToken,
   readCardSession,
   isCardSessionCurrent,
