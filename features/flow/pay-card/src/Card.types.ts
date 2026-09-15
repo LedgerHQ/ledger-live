@@ -1,5 +1,9 @@
 import type { CardLoginProps } from "@features/flow-pay-card-auth";
-import type { CardVisualProps, FormattedValue } from "@features/flow-pay-card-details";
+import type {
+  CardVisualProps,
+  FormattedValue,
+  UnlockForCardNumbers,
+} from "@features/flow-pay-card-details";
 import type {
   FormatCardTransactionAmount,
   FormatCardTransactionDate,
@@ -11,10 +15,13 @@ export type CardFormatters = Readonly<{
   transactionDate?: FormatCardTransactionDate;
 }>;
 
+export type { UnlockForCardNumbers };
+
 /** Host input for the Pay Card flow. */
 export type CardProps = {
   readonly login: CardLoginProps;
   readonly formatters?: CardFormatters;
+  readonly unlock?: UnlockForCardNumbers;
 };
 
 /**
@@ -34,4 +41,5 @@ export type CardViewProps = {
   readonly displayState: CardDisplayState;
   readonly cardVisual?: CardVisualProps;
   readonly formatters?: CardFormatters;
+  readonly unlock?: UnlockForCardNumbers;
 };
