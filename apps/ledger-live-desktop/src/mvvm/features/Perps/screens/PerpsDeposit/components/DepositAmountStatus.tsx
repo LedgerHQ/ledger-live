@@ -57,7 +57,9 @@ export function DepositAmountStatus({
   return (
     <div className="mb-40 flex flex-col items-center gap-8 text-center">
       <QuotedAmount formattedAmount={formattedAmount} isQuoteLoading={isQuoteLoading} />
-      {errorMessage ?? providerNotice}
+      <div className="flex min-h-40 items-center justify-center">
+        {errorMessage ?? providerNotice}
+      </div>
     </div>
   );
 }
