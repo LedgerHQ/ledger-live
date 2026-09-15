@@ -50,6 +50,7 @@ const TrackComponent = (props: TrackProps): null => {
         trackEventRef.current();
       });
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -57,6 +58,7 @@ const TrackComponent = (props: TrackProps): null => {
     lastSeenPropsRef.current = props;
     if (lastSeenProps === null || lastSeenProps === props) return;
     if (onUpdate) trackEventRef.current();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onUpdate, props]);
 
   return null;
