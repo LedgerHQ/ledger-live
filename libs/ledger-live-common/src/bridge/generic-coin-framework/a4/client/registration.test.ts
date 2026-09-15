@@ -28,8 +28,8 @@ describe("ensureA4Registered", () => {
       version: "v1",
     });
 
-    await ensureA4Registered(client, "acc-1", ["0xabc"]);
-    await ensureA4Registered(client, "acc-1", ["0xabc"]);
+    await ensureA4Registered(client, "acc-1", ["0xabc"], "ethereum");
+    await ensureA4Registered(client, "acc-1", ["0xabc"], "ethereum");
 
     expect(client.getAccount).toHaveBeenCalledTimes(1);
     expect(client.createAccount).not.toHaveBeenCalled();
@@ -47,8 +47,8 @@ describe("ensureA4Registered", () => {
       version: "v1",
     });
 
-    await ensureA4Registered(client, "acc-1", ["0xabc"]);
-    await ensureA4Registered(client, "acc-1", ["0xabc", "0xdef"]);
+    await ensureA4Registered(client, "acc-1", ["0xabc"], "ethereum");
+    await ensureA4Registered(client, "acc-1", ["0xabc", "0xdef"], "ethereum");
 
     expect(client.getAccount).toHaveBeenCalledTimes(2);
   });
@@ -61,12 +61,12 @@ describe("ensureA4Registered", () => {
         .mockResolvedValueOnce({ data: "acc-1", version: undefined });
       jest.mocked(client.addAddresses).mockResolvedValueOnce({ data: "acc-1", version: "v1" });
 
-      await ensureA4Registered(client, "acc-1", ["0xabc"]);
+      await ensureA4Registered(client, "acc-1", ["0xabc"], "ethereum");
 
       expect(client.createAccount).toHaveBeenCalledWith("acc-1");
       expect(client.addAddresses).toHaveBeenCalledWith("acc-1", ["0xabc"]);
 
-      await ensureA4Registered(client, "acc-1", ["0xabc"]);
+      await ensureA4Registered(client, "acc-1", ["0xabc"], "ethereum");
       expect(client.getAccount).toHaveBeenCalledTimes(1);
     });
   });
@@ -80,12 +80,12 @@ describe("ensureA4Registered", () => {
         .mockRejectedValueOnce(new A4HttpError("version mismatch", 412));
       jest.mocked(client.addAddresses).mockResolvedValueOnce({ data: "acc-1", version });
 
-      await ensureA4Registered(client, "acc-1", ["0xabc"]);
+      await ensureA4Registered(client, "acc-1", ["0xabc"], "ethereum");
 
       expect(client.addAddresses).toHaveBeenCalledWith("acc-1", ["0xabc"]);
       expect(client.getAccount).toHaveBeenCalledTimes(1);
 
-      await ensureA4Registered(client, "acc-1", ["0xabc"]);
+      await ensureA4Registered(client, "acc-1", ["0xabc"], "ethereum");
       expect(client.getAccount).toHaveBeenCalledTimes(1);
     });
 
@@ -96,8 +96,8 @@ describe("ensureA4Registered", () => {
         .mockRejectedValueOnce(new A4HttpError("version mismatch", 412));
       jest.mocked(client.addAddresses).mockResolvedValue({ data: "acc-1", version: "sv" });
 
-      await ensureA4Registered(client, "acc-1", ["0xabc"]);
-      await ensureA4Registered(client, "acc-1", ["0xabc"]);
+      await ensureA4Registered(client, "acc-1", ["0xabc"], "ethereum");
+      await ensureA4Registered(client, "acc-1", ["0xabc"], "ethereum");
 
       expect(client.getAccount).toHaveBeenCalledTimes(2);
     });
@@ -106,12 +106,16 @@ describe("ensureA4Registered", () => {
   it("swallows transport errors", async () => {
     jest.mocked(client.getAccount).mockRejectedValueOnce(new A4HttpError("network error"));
 
-    await expect(ensureA4Registered(client, "acc-1", ["0xabc"])).resolves.toBeUndefined();
+    await expect(
+      ensureA4Registered(client, "acc-1", ["0xabc"], "ethereum"),
+    ).resolves.toBeUndefined();
   });
 
   it("swallows unexpected status errors", async () => {
     jest.mocked(client.getAccount).mockRejectedValueOnce(new A4HttpError("server error", 500));
 
-    await expect(ensureA4Registered(client, "acc-1", ["0xabc"])).resolves.toBeUndefined();
+    await expect(
+      ensureA4Registered(client, "acc-1", ["0xabc"], "ethereum"),
+    ).resolves.toBeUndefined();
   });
 });

@@ -9,7 +9,9 @@ import { deriveA4AccountId } from "./a4/client/accountId";
 import { fetchA4Operations } from "./a4/client/operations";
 import { ensureA4Registered } from "./a4/client/registration";
 import { toA4Network, resolveA4BaseUrl } from "./a4/client/utils";
+import { toA4HttpError } from "./a4/client/errors";
 import { resolveA4ChainConfig } from "./a4/config";
+import { logA4 } from "./a4/log";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
@@ -372,10 +374,34 @@ async function registerWithA4(currencyId: string, address: string): Promise<void
     return;
   }
 
-  const a4AccountId = deriveA4AccountId(address);
-  const url = resolveA4BaseUrl(environment);
-  const client = new A4Client(url, a4Network);
-  return ensureA4Registered(client, a4AccountId, [address]);
+  try {
+    const a4AccountId = deriveA4AccountId(address);
+    const url = resolveA4BaseUrl(environment);
+    const client = new A4Client(url, a4Network);
+    await ensureA4Registered(client, a4AccountId, [address], a4Network);
+  } catch (e) {
+    logA4({
+      level: "error",
+      message: `A4 registration setup failed unexpectedly: ${e instanceof Error ? e.message : String(e)}`,
+      decision: "register_setup_error",
+      chain: a4Network,
+      error: e,
+    });
+  }
+}
+
+// Read-vs-delegate is a per-chain steady-state fact, not a per-sync event: logging it every sync
+// (syncs run frequently) would violate the "not spammy for common paths" requirement, so it's
+// logged once per chain per process instead.
+const loggedReadDecisions = new Set<string>();
+
+function logReadDecisionOnce(chain: string, decision: string, message: string): void {
+  const key = `${chain}:${decision}`;
+  if (loggedReadDecisions.has(key)) {
+    return;
+  }
+  loggedReadDecisions.add(key);
+  logA4({ level: "info", message, decision, chain, method: "listOperations" });
 }
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
@@ -414,11 +440,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       derivationMode,
     });
 
-    void registerWithA4(currency.id, address).catch(e => {
-      log("generic-coin-framework", "a4 registration error", {
-        error: e instanceof Error ? e.message : String(e),
-      });
-    });
+    void registerWithA4(currency.id, address);
     const validatorsPromise = bridgeApi.stakingSupported
       ? coinModuleApi
           .getValidators(context)
@@ -648,16 +670,32 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           a4AccountId,
           accountId,
           address,
+          a4Network,
           minHeight,
           a4ChainConfig.maxDcRoamRetries,
         )) as OperationCommon[];
+        logReadDecisionOnce(a4Network, "read_served_by_a4", "A4 is serving reads for this chain");
       } catch (e) {
-        log("generic-coin-framework", "a4 read failed, falling back to delegate", {
-          error: String(e),
+        const status = toA4HttpError(e).status;
+        logA4({
+          level: "warn",
+          message: `A4 read failed, falling back to delegate: ${e instanceof Error ? e.message : String(e)}`,
+          decision: "read_failover_to_delegate",
+          chain: a4Network,
+          method: "listOperations",
+          status,
+          error: e,
         });
         newOps = await delegateNewOps();
       }
     } else {
+      if (a4Network) {
+        logReadDecisionOnce(
+          a4Network,
+          "read_off_intentional",
+          "A4 read is off for this chain, delegate is used",
+        );
+      }
       newOps = await delegateNewOps();
     }
 

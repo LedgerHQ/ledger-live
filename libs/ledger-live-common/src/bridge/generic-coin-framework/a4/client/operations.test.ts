@@ -796,7 +796,15 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5);
+    const ops = await fetchA4Operations(
+      client,
+      "a4AccountId",
+      "liveAccountId",
+      "0xaddress",
+      "ethereum",
+      0,
+      5,
+    );
 
     expect(ops).toEqual([
       expect.objectContaining({ hash: "0xtx1" }),
@@ -808,7 +816,7 @@ describe("fetchA4Operations", () => {
     listOperationsSpy.mockRejectedValueOnce(new A4HttpError("server error", 500));
 
     await expect(
-      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5),
+      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", "ethereum", 0, 5),
     ).rejects.toThrow(A4HttpError);
     expect(jest.mocked(ensureA4Registered)).not.toHaveBeenCalled();
   });
@@ -817,7 +825,7 @@ describe("fetchA4Operations", () => {
     listOperationsSpy.mockRejectedValueOnce(new A4HttpError("account not ready", 422));
 
     await expect(
-      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5),
+      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", "ethereum", 0, 5),
     ).rejects.toThrow(A4HttpError);
     expect(jest.mocked(ensureA4Registered)).not.toHaveBeenCalled();
   });
@@ -830,13 +838,24 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5);
+    const ops = await fetchA4Operations(
+      client,
+      "a4AccountId",
+      "liveAccountId",
+      "0xaddress",
+      "ethereum",
+      0,
+      5,
+    );
 
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(1);
     expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(1);
-    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledWith(client, "a4AccountId", [
-      "0xaddress",
-    ]);
+    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledWith(
+      client,
+      "a4AccountId",
+      ["0xaddress"],
+      "ethereum",
+    );
     expect(ops).toEqual([expect.objectContaining({ hash: "0xtx1" })]);
   });
 
@@ -846,7 +865,7 @@ describe("fetchA4Operations", () => {
       .mockRejectedValueOnce(new A4HttpError("precondition failed", 412));
 
     await expect(
-      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 1),
+      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", "ethereum", 0, 1),
     ).rejects.toThrow(A4HttpError);
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(1);
     expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(1);
@@ -864,7 +883,15 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5);
+    const ops = await fetchA4Operations(
+      client,
+      "a4AccountId",
+      "liveAccountId",
+      "0xaddress",
+      "ethereum",
+      0,
+      5,
+    );
 
     expect(listOperationsSpy).toHaveBeenCalledTimes(3);
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(1);
@@ -888,7 +915,15 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5);
+    const ops = await fetchA4Operations(
+      client,
+      "a4AccountId",
+      "liveAccountId",
+      "0xaddress",
+      "ethereum",
+      0,
+      5,
+    );
 
     expect(listOperationsSpy).toHaveBeenCalledTimes(2);
     expect(ops).toEqual([expect.objectContaining({ hash: "0xtx-eth" })]);
@@ -903,7 +938,15 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5);
+    const ops = await fetchA4Operations(
+      client,
+      "a4AccountId",
+      "liveAccountId",
+      "0xaddress",
+      "ethereum",
+      0,
+      5,
+    );
 
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(2);
     expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(2);
@@ -914,7 +957,7 @@ describe("fetchA4Operations", () => {
     listOperationsSpy.mockRejectedValue(new A4HttpError("precondition failed", 412));
 
     await expect(
-      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 2),
+      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", "ethereum", 0, 2),
     ).rejects.toThrow(A4HttpError);
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(2);
     expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(2);
@@ -933,7 +976,15 @@ describe("withDcRoamRetry", () => {
 
   it("returns the result of fn on first success", async () => {
     const fn = jest.fn().mockResolvedValue("ok");
-    const result = await withDcRoamRetry(client, "a4id", "0xaddr", fn, 5);
+    const result = await withDcRoamRetry(
+      client,
+      "a4id",
+      "0xaddr",
+      "ethereum",
+      "listOperations",
+      fn,
+      5,
+    );
     expect(result).toBe("ok");
     expect(fn).toHaveBeenCalledTimes(1);
     expect(jest.mocked(clearA4RegistrationCache)).not.toHaveBeenCalled();
@@ -941,14 +992,18 @@ describe("withDcRoamRetry", () => {
 
   it("rethrows non-412 errors immediately without retrying", async () => {
     const fn = jest.fn().mockRejectedValue(new A4HttpError("server error", 500));
-    await expect(withDcRoamRetry(client, "a4id", "0xaddr", fn, 5)).rejects.toThrow(A4HttpError);
+    await expect(
+      withDcRoamRetry(client, "a4id", "0xaddr", "ethereum", "listOperations", fn, 5),
+    ).rejects.toThrow(A4HttpError);
     expect(fn).toHaveBeenCalledTimes(1);
     expect(jest.mocked(clearA4RegistrationCache)).not.toHaveBeenCalled();
   });
 
   it("retries on 412 up to maxRetries times, then rethrows", async () => {
     const fn = jest.fn().mockRejectedValue(new A4HttpError("precondition failed", 412));
-    await expect(withDcRoamRetry(client, "a4id", "0xaddr", fn, 3)).rejects.toThrow(A4HttpError);
+    await expect(
+      withDcRoamRetry(client, "a4id", "0xaddr", "ethereum", "listOperations", fn, 3),
+    ).rejects.toThrow(A4HttpError);
     expect(fn).toHaveBeenCalledTimes(4);
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(3);
     expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(3);
@@ -959,16 +1014,31 @@ describe("withDcRoamRetry", () => {
       .fn()
       .mockRejectedValueOnce(new A4HttpError("precondition failed", 412))
       .mockResolvedValueOnce("recovered");
-    const result = await withDcRoamRetry(client, "a4id", "0xaddr", fn, 5);
+    const result = await withDcRoamRetry(
+      client,
+      "a4id",
+      "0xaddr",
+      "ethereum",
+      "listOperations",
+      fn,
+      5,
+    );
     expect(result).toBe("recovered");
     expect(fn).toHaveBeenCalledTimes(2);
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(1);
-    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledWith(client, "a4id", ["0xaddr"]);
+    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledWith(
+      client,
+      "a4id",
+      ["0xaddr"],
+      "ethereum",
+    );
   });
 
   it("with maxRetries=0 rethrows on first 412 without re-registering", async () => {
     const fn = jest.fn().mockRejectedValue(new A4HttpError("precondition failed", 412));
-    await expect(withDcRoamRetry(client, "a4id", "0xaddr", fn, 0)).rejects.toThrow(A4HttpError);
+    await expect(
+      withDcRoamRetry(client, "a4id", "0xaddr", "ethereum", "listOperations", fn, 0),
+    ).rejects.toThrow(A4HttpError);
     expect(fn).toHaveBeenCalledTimes(1);
     expect(jest.mocked(clearA4RegistrationCache)).not.toHaveBeenCalled();
   });
