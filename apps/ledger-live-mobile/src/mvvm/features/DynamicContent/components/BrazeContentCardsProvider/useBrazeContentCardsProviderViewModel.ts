@@ -83,6 +83,10 @@ export function useBrazeContentCardsProviderViewModel() {
     subscriptionRef.current = null;
     pendingRefreshRef.current?.resolve();
     pendingRefreshRef.current = null;
+    lastFetchedCardsRef.current = null;
+    setLastFetchedCards(null);
+    setEligibilityEvaluations([]);
+    updateDynamicContentRef.current([]);
   }, []);
 
   const refreshContentCards = useCallback(() => {
