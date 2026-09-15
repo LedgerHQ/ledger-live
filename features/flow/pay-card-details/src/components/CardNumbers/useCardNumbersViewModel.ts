@@ -74,6 +74,7 @@ export function useCardNumbersViewModel({ unlock }: CardNumbersProps): CardNumbe
 
   return {
     status,
+    isRevealed: status === "revealed" && Boolean(imageUrl),
     imageUrl,
     onReveal,
     onHide,
