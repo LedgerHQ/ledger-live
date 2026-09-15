@@ -1,5 +1,6 @@
 import { getBlock as getBlockFromNetwork } from "../../network";
 import { createMockVechainContext, mockVechainConfig } from "../../test/context";
+import { NATIVE_ASSET } from "../account/getBalance";
 import { getBlock } from "./getBlock";
 
 jest.mock("../../network", () => ({ getBlock: jest.fn() }));
@@ -74,14 +75,14 @@ describe("getBlock", () => {
             type: "transfer",
             address: "0xsender",
             peer: "0xrecipient",
-            asset: { type: "native" },
+            asset: { type: "native", name: "VET" },
             amount: -BigInt("0x64"),
           },
           {
             type: "transfer",
             address: "0xrecipient",
             peer: "0xsender",
-            asset: { type: "native" },
+            asset: { type: "native", name: "VET" },
             amount: BigInt("0x64"),
           },
         ],
@@ -194,6 +195,44 @@ describe("getBlock", () => {
     const block = await getBlock(context, 10);
 
     expect(block.transactions[0].operations).toEqual([]);
+  });
+
+  it("gives every operation its own asset object", async () => {
+    jest.mocked(getBlockFromNetwork).mockResolvedValueOnce({
+      id: "0xabc",
+      number: 10,
+      timestamp: 1_700_000_000,
+      transactions: [
+        {
+          id: "0xtx6",
+          origin: "0xsender",
+          gasUsed: 36518,
+          paid: "0x100",
+          reverted: false,
+          outputs: [
+            {
+              contractAddress: null,
+              events: [VTHO_TRANSFER_EVENT],
+              transfers: [{ sender: "0xsender", recipient: "0xrecipient", amount: "0x64" }],
+            },
+          ],
+        },
+      ],
+    });
+
+    const block = await getBlock(context, 10);
+    const assets = block.transactions[0].operations.map(op => op.asset);
+
+    // Assets are copied per operation, so a consumer completing one in place (e.g. setting
+    // `assetOwner`) cannot corrupt the others, nor the module-level constants they came from.
+    expect(assets).toHaveLength(4);
+    for (const [i, asset] of assets.entries()) {
+      for (const other of assets.slice(i + 1)) {
+        expect(asset).not.toBe(other);
+      }
+    }
+    expect(assets[0]).not.toBe(NATIVE_ASSET);
+    expect(assets[0]).toEqual(NATIVE_ASSET);
   });
 
   it("marks a reverted transaction as failed", async () => {

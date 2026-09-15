@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-vechain": patch
+"@ledgerhq/coin-vechain": minor
 ---
 
 Report VTHO transfers and both sides of every transfer in `getBlock`
@@ -15,3 +15,17 @@ Each transfer also produced a single operation, for the recipient only. `BlockOp
 the signed impact on `address`, so a transfer is now reported once per side — negative for the
 sender, positive for the recipient — and an outgoing VET or VTHO transfer is no longer invisible to
 a block-based consumer.
+
+Native operations now carry the same `NATIVE_ASSET` (`{ type: "native", name: "VET" }`) that
+`getBalance` and `listOperations` already use, instead of a bare `{ type: "native" }`, so an asset
+is identified consistently across the module's outputs.
+
+**Consumer impact** — `getBlock` output changes shape for callers that were already consuming it,
+hence the minor rather than patch bump:
+
+- A transfer now yields two operations instead of one. Code that sums `operations[].amount` to get a
+  block's net flow now gets ~0, because each credit is cancelled by the matching debit; filter by
+  `address` (or by `amount > 0n`) before summing.
+- Blocks whose transactions are VTHO-only now report operations where they previously reported none,
+  so per-block operation counts increase.
+- Grouping native operations by structural asset equality must expect `name: "VET"` to be present.

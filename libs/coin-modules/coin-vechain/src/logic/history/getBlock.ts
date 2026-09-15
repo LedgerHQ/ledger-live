@@ -9,6 +9,7 @@ import { decodeVip180Transfer, isVip180Transfer } from "../../common-logic/vip18
 import type { VechainContext } from "../../config";
 import { getBlock as getBlockFromNetwork } from "../../network";
 import type { ApiResponseBlockOutput, ApiResponseBlockTransaction } from "../../types";
+import { NATIVE_ASSET } from "../account/getBalance";
 import { toBlockInfo } from "./getBlockInfo";
 
 // `assetOwner` is deliberately omitted: it identifies the account holding the token sub-account and
@@ -47,9 +48,7 @@ function toBlockTransaction(tx: ApiResponseBlockTransaction): BlockTransaction {
 
 function toBlockOperations(output: ApiResponseBlockOutput): BlockOperation[] {
   const vet = output.transfers.flatMap(transfer =>
-    signedPair(transfer.sender, transfer.recipient, BigInt(transfer.amount || "0"), {
-      type: "native",
-    }),
+    signedPair(transfer.sender, transfer.recipient, BigInt(transfer.amount || "0"), NATIVE_ASSET),
   );
 
   const vtho = output.events.flatMap(event => {
@@ -64,6 +63,11 @@ function toBlockOperations(output: ApiResponseBlockOutput): BlockOperation[] {
 /**
  * One operation per side of a transfer: `amount` is the signed impact on `address`, so a transfer
  * is reported twice — negative for the sender, positive for the recipient.
+ *
+ * `asset` is copied into each operation rather than shared: callers pass a module-level constant
+ * (`NATIVE_ASSET`, `VTHO_ASSET`), so handing out the same reference would let a consumer that
+ * completes an asset in place — setting `assetOwner`, as `vthoAsset(address)` does elsewhere in
+ * this module — mutate every other operation of every other block in the process.
  */
 function signedPair(
   sender: string,
@@ -72,7 +76,7 @@ function signedPair(
   asset: AssetInfo,
 ): BlockOperation[] {
   return [
-    { type: "transfer", address: sender, peer: recipient, asset, amount: -amount },
-    { type: "transfer", address: recipient, peer: sender, asset, amount },
+    { type: "transfer", address: sender, peer: recipient, asset: { ...asset }, amount: -amount },
+    { type: "transfer", address: recipient, peer: sender, asset: { ...asset }, amount },
   ];
 }
