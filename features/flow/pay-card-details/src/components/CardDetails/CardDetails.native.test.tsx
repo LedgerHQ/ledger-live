@@ -49,8 +49,19 @@ describe("CardDetails (native)", () => {
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
 
-    expect(await screen.findByText(CARD_COPY.freeze)).toBeVisible();
+    expect(await screen.findByText(CARD_COPY.numbersReveal)).toBeVisible();
+    expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
     expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
+  });
+
+  it("should flip the card and show Hide when View is pressed", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByText(CARD_COPY.numbersReveal));
+
+    expect(screen.getByTestId("card-numbers-flip")).toBeVisible();
+    expect(screen.getByText(CARD_COPY.numbersHide)).toBeVisible();
   });
 
   it("should navigate to More without opening another sheet", async () => {
