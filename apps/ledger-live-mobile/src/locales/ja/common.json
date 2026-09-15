@@ -234,6 +234,58 @@
       "title" : "セッションの有効期限が切れました",
       "description" : "Concordium ID アプリのセッションは終了しました。再度ペアリングしてください。"
     },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "ネットワーク手数料に必要なCCDが不足しています",
+      "description" : "ネットワーク手数料は送信するトークンではなく、CCDで支払われます。このアカウントにCCDを追加して、もう一度お試しください。"
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "このトークンの送金は一時停止されています",
+      "description" : "トークン発行者がすべての送金を一時停止しました。送金が再開されましたら、再度お試しいただけます。"
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "このアカウントではこのトークンを送信できません",
+      "description" : "トークン発行者が送信者を制限しているため、このアカウントは許可されていません。アクセスについては、トークン発行者にお問い合わせください。"
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "トークンの制限を認証できませんでした",
+      "description" : "このトークンの転送ルールを読み取れなかったため、転送が許可されているか確認できません。アカウントを再同期し、もう一度お試しください。"
+    },
+    "ConcordiumRecipientNotAllowed" : {
+      "title" : "このアドレスは、{{ticker}}を受け取ることができません。",
+      "description" : "トークン発行元によって承認されていません。承認はLedgerではなく、発行元によって管理されています。"
+    },
+    "ConcordiumRecipientDenied" : {
+      "title" : "このアドレスは{{ticker}}の受け取りが制限されています",
+      "description" : "トークン発行元がこのアドレスを制限しています。詳細は発行元にお問い合わせください。"
+    },
+    "ConcordiumRecipientRestrictionsUnverified" : {
+      "title" : "{{ticker}}の制限を認証できませんでした。",
+      "description" : "このアドレスが{{ticker}}を受け取れるかどうかを確認できなかったため、送金が許可されているか確認できません。接続を確認して、もう一度やり直してください。"
+    },
+    "ConcordiumRecipientNotFound" : {
+      "title" : "このアドレスはConcordium上に存在しません。",
+      "description" : "アドレスをご確認の上、もう一度お試しください。作成されたことのないアドレスに送金するとネットワーク上で失敗しますが、手数料は発生します。"
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "このトークンはLedgerデバイスで署名できません",
+      "description" : "このトークンは小数点以下{{decimals}}桁を使用しますが、お使いのデバイスがサポートしているのは最大{{maxDecimals}}桁です。受け取ることや保有することに影響はありません。"
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "このトークンはもうアカウントに存在しません",
+      "description" : "選択したトークンは利用できなくなりました。トランザクションを最初からやり直してください。"
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "このトランザクションを準備できません",
+      "description" : "トークンの詳細がLedgerデバイスの許容範囲外のため、トランザクションを構築できません。Ledgerサポートにご連絡ください。"
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "アプリのアップデートが必要です。",
+      "description" : "LedgerデバイスのConcordiumアプリは、トークン送金に対応していません。My Ledgerで更新し、もう一度お試しください。"
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "何か問題が発生しました。デバイスを再接続してください。",
+      "description" : "Concordiumアプリはトランザクションを処理できませんでした。問題が解決しない場合は、Ledgerサポートにお問い合わせください。"
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "問題が発生しました（エラー#1）",
       "description" : "以下のボタンを使ってログを保存し、Ledgerサポートに提供してください。"
@@ -1862,6 +1914,37 @@
       "cta" : "ウォレットに資金を追加する",
       "title" : "まずはウォレットへの入金から始めましょう",
       "subTitle" : "お好きな方法でLedger Walletに入金—送金、購入または現金をステーブルコインに交換。"
+    }
+  },
+  "q3WalletV4Tour" : {
+    "cta" : {
+      "start" : "見てみる",
+      "next" : "次へ",
+      "done" : "最新の状態です"
+    },
+    "intro" : {
+      "title" : "最新情報のクイックツアー",
+      "subTitle" : "送金、決済、運用などの新しい方法。"
+    },
+    "contact" : {
+      "title" : "長いアドレスとはもうお別れです",
+      "subTitle" : "新機能の連絡先をご紹介します。ウォレットアドレスに名前を付けて保存します。見つけやすく、送信も簡単に。"
+    },
+    "contactNoPay" : {
+      "title" : "連絡先が登場",
+      "subTitle" : "長いアドレスとはもうお別れです。ウォレットアドレスに名前を付けて保存します。見つけやすく、送信も簡単に。"
+    },
+    "pay" : {
+      "title" : "Payが登場",
+      "subTitle" : "暗号資産カードで、連絡先への支払い、お金の請求、キャッシュバックの受け取りができます。今なら、すべてを1つのタブで。"
+    },
+    "payNoCard" : {
+      "title" : "支払い機能が登場",
+      "subTitle" : "連絡先への支払いとお金の請求が、すべて1つのタブで行えます。"
+    },
+    "yield" : {
+      "title" : "暗号資産を保有したまま、プロジェクトの資金を調達。",
+      "subTitle" : "Yield.xyz（Powered by Morpho）を介し、Wrapped BTCを担保にしてステーブルコインを借りる。"
     }
   },
   "q2WalletV4Tour" : {
@@ -4614,7 +4697,7 @@
       "alreadyUsed" : "使用ずみ・{{date}}",
       "notInRecentHistory" : "最近の履歴にありません",
       "addressBookUnsupported" : {
-        "title" : "{{family}}にはまだ対応していません",
+        "title" : "{{family}}には、未対応です。",
         "description" : "{{family}}アドレスはまだ連絡先に追加できません。今後も暗号資産を随時追加していく予定です。"
       },
       "relativeDate" : {
@@ -4806,10 +4889,6 @@
       "toggleCurrency" : "通貨の切り替え"
     },
     "summary" : {
-      "solanaRawTransaction" : {
-        "title" : "ブラインド署名が必要です",
-        "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
-      },
       "subaccountsWarning" : "このアカウントのトークンを送付するには、このアカウントに{{ currency }}を追加する必要があります。",
       "tag" : "タグ（任意）",
       "validateTag" : "タグを検証",
@@ -9818,6 +9897,45 @@
       "cta" : "再試行"
     }
   },
+  "perpsReview" : {
+    "depositTitle" : "SwapKit経由で入金",
+    "depositSubtitle" : "パートナーであるSwapKitが、1回のトランザクションでスワップと入金を管理します。これらはすべて、Ledgerデバイスによって安全に保護されます。",
+    "swapDetailTitle" : "スワップの詳細",
+    "amountSendLabel" : "送付数量",
+    "amountReceiveLabel" : "受取数量",
+    "approximateValue" : "～{{value}}",
+    "depositDetailTitle" : "入金の詳細",
+    "depositAmountLabel" : "入金数量",
+    "depositReceiveLabel" : "受け取るアカウント",
+    "depositCTA" : "入金"
+  },
+  "perpsDepositSign" : {
+    "terms" : "このトランザクションに署名することにより、私は<termsLink>SwapKit by NEAR Intentsの利用規約</termsLink>に同意します。"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "取引に署名済み",
+    "description" : "ブロックチェーン上で確認され次第、{{currency}}を受け取ることができます。",
+    "viewTransaction" : "トランザクションを表示"
+  },
+  "perpsTransactionStatus" : {
+    "title" : "無期限先物に資金を追加",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "無期限先物に戻る"
+  },
+  "perpsDeposit" : {
+    "title" : "入金",
+    "inputDepositAmount" : "~{{value}}を入金",
+    "inputSubText" : "{{provider}}経由でスワップして入金",
+    "selectCurrencyTitle" : "{{currencyTicker}}で入金",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "アカウントがありません",
+    "review" : "確認",
+    "keypadDelete" : "最後の数字を削除",
+    "formErrors" : {
+      "amountExceedsBalance" : "残高不足",
+      "quoteUnavailable" : "{{provider}}から見積もりを取得できません。別の資産でお試しいただくか、しばらく経ってから再度お試しください。"
+    }
+  },
   "swapErrors" : {
     "incorrectCommandData" : {
       "title" : "コマンドデータが正しくありません",
@@ -10211,8 +10329,39 @@
     },
     "card" : {
       "title" : "暗号資産カード",
+      "placeholder" : "近日公開",
+      "details" : "詳細",
       "freeze" : "凍結",
-      "unfreeze" : "凍結解除"
+      "unfreeze" : "凍結解除",
+      "goBack" : "戻る",
+      "freezeConfirm" : {
+        "title" : "凍結すると、カードは使用できなくなります。",
+        "description" : "カードの凍結はいつでも解除できます。",
+        "confirm" : "今すぐ凍結",
+        "errorTitle" : "凍結に失敗しました"
+      },
+      "unfreezeConfirm" : {
+        "title" : "カードの凍結を解除しますか？",
+        "confirm" : "今すぐ凍結解除",
+        "errorTitle" : "凍結解除に失敗しました"
+      },
+      "confirmError" : {
+        "description" : "何か問題が発生しました。もう一度お試しください。",
+        "retry" : "再試行"
+      }
+    },
+    "cardTransactions" : {
+      "title" : "トランザクション",
+      "categories" : {
+        "SUBSCRIPTIONS" : "サブスクリプション",
+        "FOOD" : "食べ物",
+        "TRAVEL" : "旅行",
+        "ENTERTAINMENT" : "エンターテインメント",
+        "HEALTH" : "ヘルス",
+        "ATM" : "ATM",
+        "UTILITIES" : "ユーティリティ",
+        "MISC" : "その他"
+      }
     },
     "selectContact" : {
       "placeholder" : "連絡先を入力してください"
@@ -10307,6 +10456,14 @@
       "afterIntro" : {
         "description" : "カードにアクセスするにはログインしてください",
         "action" : "ログイン"
+      },
+      "errors" : {
+        "pkce_failed" : "ログインを開始できませんでした。もう一度お試しください。",
+        "browser_open_failed" : "ログインページを開くことができませんでした。もう一度お試しください。",
+        "missing_attempt" : "このログインは無効になりました。再度ログインしてください。",
+        "exchange_failed" : "ログインを完了できませんでした。もう一度お試しください。",
+        "persist_failed" : "セッションを保存できませんでした。もう一度お試しください。",
+        "fetch_user_failed" : "カードを読み込めませんでした。もう一度お試しください。"
       }
     },
     "cardLoginIntro" : {
@@ -10341,6 +10498,14 @@
       "addressPicker" : {
         "title" : "{{name}}のアドレスを選択",
         "addAddress" : "アドレスを追加"
+      },
+      "paySuccess" : {
+        "title" : "({{recipient}}) を支払いました",
+        "amount" : "数量",
+        "estimatedTime" : "推定時間",
+        "from" : "送付元",
+        "viewTransaction" : "トランザクションを表示",
+        "close" : "閉じる"
       }
     },
     "cardOnboarding" : {
@@ -10617,12 +10782,11 @@
     "addContact" : "連絡先を追加",
     "addAddress" : "アドレスを追加",
     "addYourAddress" : "アドレスを追加",
-    "searchPlaceholder" : "連絡先を検索",
+    "searchPlaceholder" : "名前で検索",
     "searchNoResults" : "連絡先が見つかりません",
     "addContactDrawer" : {
       "namePlaceholder" : "連絡先名",
-      "namingDisclaimer" : "プライバシー保護のため、フルネームや姓の入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S」",
-      "confirmName" : "名前を確定",
+      "namingDisclaimer" : "プライバシー保護のため、フルネームの入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S.」",
       "invalidNameError" : "特殊文字は使用できません。",
       "duplicateNameError" : "この連絡先名はすでに使用されています。"
     },
@@ -10636,20 +10800,23 @@
       "domainNotFound" : "このドメインのアドレスが見つかりません",
       "sanctionedAddress" : "このアドレスは制裁対象のため、使用できません。",
       "validationUnavailable" : "アドレスの検証は一時的にご利用いただけません。",
-      "ensDisclaimer" : "ENS名はウォレットアドレスに解決されます。続行する前に、解決されたアドレスを必ず認証してください。",
+      "ensDisclaimer" : "ENS名は変更されることがあります",
+      "ensDisclaimerDescription" : "ENS名は時間の経過に伴い、異なるアドレスを指し示す場合があります。お客様の資金がご自身で認証したアドレスにのみ確実に届くよう、現時点で基になるアドレスを保存します。",
       "sanctioned" : {
         "description" : "このアドレスは警告対象のため、送付が許可されていません",
         "learnMore" : "詳細はこちら"
-      }
+      },
+      "duplicateAddress" : "このアドレスは、すでに{{contactName}}に使用されています。"
     },
     "addAddressName" : {
       "title" : "アドレスに名前を付ける",
       "inputLabel" : "アドレス名",
-      "namingDisclaimer" : "必要な時に簡単に見つけられるよう、このアドレスに名前を付けることをお勧めします。これはお客様のみに表示されます。",
+      "namingDisclaimer" : "このアドレスに送信する際、この名前がLedgerデバイスに表示されます。見つけやすい名前を付けてください。",
       "continueToReview" : "確認に進む",
       "invalidLabel" : "特殊文字は使用できません。",
       "duplicateLabel" : "このアドレス名は、すでに使用されています。",
-      "labelTooLong" : "このアドレス名は長すぎます。"
+      "labelTooLong" : "このアドレス名は長すぎます。",
+      "privacyPolicy" : "Learn more about Ledger's Privacy Policy."
     },
     "addAddressReview" : {
       "title" : "アドレスを確認",
@@ -10663,10 +10830,7 @@
     "addressCount_one" : "{{count}}件のアドレス",
     "addressCount_other" : "{{count}}件のアドレス",
     "me" : {
-      "name" : "自分",
-      "addressCount_zero" : "0アドレス",
-      "addressCount_one" : "{{count}}アドレス",
-      "addressCount_other" : "{{count}}アドレス"
+      "myAddresses" : "マイアドレス"
     },
     "detail" : {
       "meDisplayName" : "{{name}}（自分）",
@@ -10697,7 +10861,7 @@
     "editContact" : {
       "title" : "連絡先を編集",
       "namePlaceholder" : "連絡先名",
-      "namingDisclaimer" : "プライバシー保護のため、フルネームや姓の入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S.」",
+      "namingDisclaimer" : "プライバシー保護のため、フルネームの入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S.」",
       "confirmName" : "名前を確定",
       "applyChanges" : "変更を適用",
       "invalidNameError" : "特殊文字は使用できません。"
@@ -10736,7 +10900,7 @@
     },
     "featureIntroduction" : {
       "title" : "「連絡先」のご紹介",
-      "primaryAction" : "今すぐチェック",
+      "primaryAction" : "今すぐ開始",
       "highlights" : {
         "saveAddresses" : {
           "title" : "任意の名前でアドレスを保存",
@@ -10747,7 +10911,7 @@
           "description" : "アドレスではなく、信頼できる名前を確認しましょう。"
         },
         "privateAcrossDevices" : {
-          "title" : "Ledger Wallet™経由で安全にチャージ",
+          "title" : "Ledgerデバイス間でプライバシーを保護",
           "description" : "Ledger Syncによりエンドツーエンドで暗号化。"
         }
       }
