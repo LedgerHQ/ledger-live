@@ -3,6 +3,7 @@ import { getSponsoredCoinApi } from "../../../bridge/generic-coin-framework/spon
 import type {
   EnergyRentOrder,
   EnergyRentRequest,
+  EnergyRentStatus,
   SponsoredCoinApi,
 } from "../../../bridge/generic-coin-framework/sponsored";
 import { SPONSORED_FAILURE_KIND, SPONSORED_PHASE } from "./types";
@@ -100,10 +101,10 @@ function reducer(state: SponsoredState, action: Action): SponsoredState {
         paymentTxId: action.error.paymentTxId ?? state.paymentTxId,
       };
     case "DELIVERY_FAILURE":
-      // TX A already succeeded — the energy just never arrived (an explicit provider failure rather
-      // than a poll timeout), the same user situation as a timeout: funds moved, contact support,
-      // retry re-crafts. So it shares the DELIVERY_FAILED kind — never RENT_PAYMENT, whose "funds
-      // were not moved" copy would be wrong here. paymentTxId (set at POLLING_START) survives the spread.
+      // Funds moved (or may have): an explicit provider delivery failure, or a submit rejection that
+      // reconciliation showed left the order paid/pending/unconfirmable. Either way "funds not moved"
+      // (RENT_PAYMENT) would be wrong, so it lands on DELIVERY_FAILED (funds moved, contact support).
+      // paymentTxId (set at POLLING_START) survives the spread.
       return {
         ...state,
         phase: SPONSORED_PHASE.FAILED,
@@ -248,15 +249,43 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
       // Seam resolution + submit share one failure surface (RENT_PAYMENT): a getSeam rejection or a
       // broadcast reject both land the flow in FAILED rather than escaping as an unhandled rejection.
       let seam: SponsoredCoinApi | null = null;
+      let submitAttempted = false;
       try {
         seam = await getSeam();
         // The device has already signed by the time we get here; a silent return would leave the
-        // flow parked on RENT_SIGNING forever. TX-A has not been submitted yet, so funds have not
-        // moved and SUBMIT_FAILURE (-> RENT_PAYMENT copy) is the truthful outcome.
+        // flow parked on RENT_SIGNING forever. If the seam is unavailable the submit never happens,
+        // so funds have not moved and SUBMIT_FAILURE (-> RENT_PAYMENT copy) is the truthful outcome.
         if (!seam) throw new Error("Sponsored send is unavailable for this account");
+        submitAttempted = true;
         await seam.submitEnergyRentPayment({ orderId: order.orderId, signedTransaction });
       } catch (error) {
-        dispatch({ type: "SUBMIT_FAILURE", error: error as Error });
+        // submitEnergyRentPayment asks the provider to broadcast TX-A, so a rejection here is
+        // ambiguous: the payment may already be on-chain. Reconcile before deciding — route to
+        // RENT_PAYMENT ("funds not moved", retry re-crafts a new paid order) ONLY when the order is
+        // definitively unpaid; a landed / unconfirmable payment goes to DELIVERY_FAILED
+        // ("funds moved, contact support") so a retry never silently pays twice. If the submit was
+        // never attempted (seam unavailable), funds truly did not move -> RENT_PAYMENT.
+        // NOTE (follow-up): DELIVERY_FAILED's own retry still re-crafts; a non-re-crafting
+        // "payment uncertain" state + resumable polling is the complete fix. See LIVE-32780 review.
+        let fundsMayHaveMoved = false;
+        const payer = requestRef.current?.payerAddress;
+        if (submitAttempted && seam && payer) {
+          try {
+            const status = await seam.getEnergyRentStatus({
+              orderId: order.orderId,
+              payerAddress: payer,
+            });
+            fundsMayHaveMoved = status !== "failed";
+          } catch {
+            // Can't confirm the payment did NOT land — assume it may have, to avoid a double charge.
+            fundsMayHaveMoved = true;
+          }
+        }
+        dispatch(
+          fundsMayHaveMoved
+            ? { type: "DELIVERY_FAILURE", error: error as Error }
+            : { type: "SUBMIT_FAILURE", error: error as Error },
+        );
         return;
       }
 
@@ -282,7 +311,22 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
       } catch (error) {
         const err = error as Error & { paymentTxId?: string };
         if (err?.name === "EnergyDelegationTimeoutError") {
-          dispatch({ type: "DELIVERY_TIMEOUT", error: err });
+          // A client-deadline timeout is not a definitive failure — the rented energy may still land.
+          // Reconcile once so a delivery that completed just after our deadline is salvaged (proceed
+          // to TX-C) instead of being reported failed and prompting a second paid rental.
+          // NOTE (follow-up): a still-pending order lands on DELIVERY_FAILED, whose retry re-crafts;
+          // the complete fix is a no-re-craft "payment uncertain" state + resumable polling.
+          let status: EnergyRentStatus | undefined;
+          try {
+            status = await seam.getEnergyRentStatus({ orderId: order.orderId, payerAddress });
+          } catch {
+            status = undefined;
+          }
+          if (status === "delivered") {
+            dispatch({ type: "DELIVERY_SUCCESS" });
+          } else {
+            dispatch({ type: "DELIVERY_TIMEOUT", error: err });
+          }
         } else {
           dispatch({ type: "DELIVERY_FAILURE", error: err });
         }

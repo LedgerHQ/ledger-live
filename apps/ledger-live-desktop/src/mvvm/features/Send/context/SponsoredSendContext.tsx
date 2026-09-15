@@ -18,7 +18,7 @@ import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-co
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
-import { useSendFlowData } from "./SendFlowContext";
+import { useSendFlowData, useSendFlowActions } from "./SendFlowContext";
 import { useSponsoredFee, type SponsoredFeeQuote } from "../hooks/useSponsoredFee";
 
 const SEAM_KIND = "local";
@@ -79,6 +79,7 @@ const SponsoredSendContext = createContext<SponsoredSendContextValue | null>(nul
  */
 export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNode }>) {
   const { state } = useSendFlowData();
+  const { transaction: transactionActions } = useSendFlowActions();
   const account = state.account.account;
   const parentAccount = state.account.parentAccount;
   const transaction = state.transaction.transaction;
@@ -100,6 +101,11 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       setIntent(null);
       return;
     }
+
+    // Identity-gate the intent: clear it up front on any transaction change so the previous intent
+    // never survives into the async rebuild window. Otherwise a quick edit + Review could enter
+    // sponsored signing (craftRent closes over `intent`) against the prior transaction's intent.
+    setIntent(null);
 
     (async () => {
       try {
@@ -148,8 +154,19 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
 
   const [selectedFeeOptionId, setSelectedFeeOptionId] = useState<SponsoredFeeOptionId>("standard");
 
-  const selectTronify = useCallback(() => setSelectedFeeOptionId("tronify"), []);
-  const selectStandard = useCallback(() => setSelectedFeeOptionId("standard"), []);
+  // Mark the transaction sponsored alongside the local selection: the generic signer copies
+  // `transaction.sponsored` into the optimistic operation, and `getPendingNativeSpent` skips the
+  // standard native fee only when that marker is true. Without it a successful sponsored send would
+  // phantom-lock a standard TRX fee on the parent account until the next sync. The marker is inert
+  // for crafting/estimation (coin-tron reads it nowhere), so toggling it has no fee side-effect.
+  const selectTronify = useCallback(() => {
+    setSelectedFeeOptionId("tronify");
+    transactionActions.updateTransaction(tx => ({ ...tx, sponsored: true }) as typeof tx);
+  }, [transactionActions]);
+  const selectStandard = useCallback(() => {
+    setSelectedFeeOptionId("standard");
+    transactionActions.updateTransaction(tx => ({ ...tx, sponsored: false }) as typeof tx);
+  }, [transactionActions]);
 
   // Single source of sponsored fee state: run once here so AMOUNT's nudge and the floating
   // FEE_PAYMENT selector both read the same result instead of each mounting their own instance

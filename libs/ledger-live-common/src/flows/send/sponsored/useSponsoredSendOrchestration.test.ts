@@ -103,9 +103,11 @@ test("buildEnergyRentRequest failure sets phase FAILED / failureKind RENT_PAYMEN
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
 });
 
-test("submit failure sets phase FAILED / failureKind RENT_PAYMENT", async () => {
+test("submit failure the provider confirms unpaid -> RENT_PAYMENT (safe to re-craft)", async () => {
   const seam = makeSeam({
     submitEnergyRentPayment: jest.fn().mockRejectedValue(new Error("submit boom")),
+    // Reconciliation after the ambiguous submit error confirms the order never got paid.
+    getEnergyRentStatus: jest.fn().mockResolvedValue("failed"),
   });
   mockGetSponsoredCoinApi.mockResolvedValue(seam);
 
@@ -120,8 +122,77 @@ test("submit failure sets phase FAILED / failureKind RENT_PAYMENT", async () => 
     await result.current.actions.startRentPayment({});
   });
 
+  expect(seam.getEnergyRentStatus).toHaveBeenCalledWith({ orderId: "o1", payerAddress: "TPayer" });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
+});
+
+test.each([["paid"], ["pending"], ["delivered"], ["unknown"]])(
+  "submit failure the provider reports as %s -> DELIVERY_FAILED (never re-craft as unpaid)",
+  async status => {
+    const seam = makeSeam({
+      submitEnergyRentPayment: jest.fn().mockRejectedValue(new Error("submit boom")),
+      getEnergyRentStatus: jest.fn().mockResolvedValue(status),
+    });
+    mockGetSponsoredCoinApi.mockResolvedValue(seam);
+
+    const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+    await act(async () => {
+      await result.current.actions.craftRent();
+    });
+    await act(async () => {
+      await result.current.actions.startRentPayment({});
+    });
+
+    expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
+    expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.DELIVERY_FAILED);
+  },
+);
+
+test("submit failure whose reconciliation also fails -> DELIVERY_FAILED (avoid double charge)", async () => {
+  const seam = makeSeam({
+    submitEnergyRentPayment: jest.fn().mockRejectedValue(new Error("submit boom")),
+    getEnergyRentStatus: jest.fn().mockRejectedValue(new Error("status boom")),
+  });
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+  await act(async () => {
+    await result.current.actions.craftRent();
+  });
+  await act(async () => {
+    await result.current.actions.startRentPayment({});
+  });
+
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
+  expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.DELIVERY_FAILED);
+});
+
+test("delivery timeout the provider then reports delivered -> proceeds to TRANSFER (salvaged)", async () => {
+  const timeoutError = Object.assign(new Error("timed out"), {
+    name: "EnergyDelegationTimeoutError",
+    paymentTxId: "tx-late",
+  });
+  const seam = makeSeam({
+    awaitEnergyDelivery: jest.fn().mockRejectedValue(timeoutError),
+    // The rented energy landed just after our client deadline.
+    getEnergyRentStatus: jest.fn().mockResolvedValue("delivered"),
+  });
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+  await act(async () => {
+    await result.current.actions.craftRent();
+  });
+  await act(async () => {
+    await result.current.actions.startRentPayment({});
+  });
+
+  expect(seam.getEnergyRentStatus).toHaveBeenCalledWith({ orderId: "o1", payerAddress: "TPayer" });
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
 });
 
 test("happy path: craft -> RENT_SIGNING, startRentPayment -> TRANSFER", async () => {

@@ -57,12 +57,16 @@ jest.mock("../../hooks/useSponsoredFee", () => ({
   useSponsoredFee: (...args: unknown[]) => mockUseSponsoredFee(...args),
 }));
 
+const mockUpdateTransaction = jest.fn();
 jest.mock("../SendFlowContext", () => ({
   useSendFlowData: jest.fn(() => ({
     state: {
       account: { account: mockAccount, parentAccount: null },
       transaction: { transaction: mockTransaction },
     },
+  })),
+  useSendFlowActions: jest.fn(() => ({
+    transaction: { updateTransaction: mockUpdateTransaction },
   })),
 }));
 
@@ -76,6 +80,7 @@ describe("SponsoredSendContext", () => {
     mockGetSponsoredCoinApi.mockClear();
     mockUseFeature.mockClear();
     mockUseSponsoredFee.mockClear();
+    mockUpdateTransaction.mockClear();
   });
 
   it("exposes useSponsoredFee's result (available/quote/savingsFiatFormatted/feeLoading)", () => {
@@ -112,11 +117,15 @@ describe("SponsoredSendContext", () => {
       result.current.selectTronify();
     });
     expect(result.current.selectedFeeOptionId).toBe("tronify");
+    // Marks the transaction sponsored so the optimistic op skips the standard native fee-lock.
+    expect(mockUpdateTransaction).toHaveBeenLastCalledWith(expect.any(Function));
+    expect(mockUpdateTransaction.mock.calls.at(-1)![0]({})).toEqual({ sponsored: true });
 
     await act(async () => {
       result.current.selectStandard();
     });
     expect(result.current.selectedFeeOptionId).toBe("standard");
+    expect(mockUpdateTransaction.mock.calls.at(-1)![0]({})).toEqual({ sponsored: false });
   });
 
   it("passes the orchestration's actions object through unchanged", () => {

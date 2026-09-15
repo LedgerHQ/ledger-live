@@ -986,4 +986,26 @@ describe("buildEnergyRentRequest", () => {
       "Energy rent requires a recipient",
     );
   });
+
+  // Same TRX-only guard estimateTronifyFees applies to the display quote: the order-creation path
+  // must also reject a non-TRX (Flow-2 USDT) quote before it reaches the ceiling / signing.
+  it("throws on a non-TRX quote rather than stamping a non-TRX ceiling", async () => {
+    mockGetEnergyRentQuote.mockResolvedValue({
+      ...trxQuote,
+      payCoinCode: "USDT",
+    } as unknown as Awaited<ReturnType<typeof getEnergyRentQuote>>);
+
+    await expect(buildEnergyRentRequest(sendTrc20)).rejects.toThrow(/unsupported payCoinCode/);
+  });
+
+  it("normalizes a lower-case TRX quote code into the approved ceiling", async () => {
+    mockGetEnergyRentQuote.mockResolvedValue({
+      ...trxQuote,
+      payCoinCode: "trx",
+    } as unknown as Awaited<ReturnType<typeof getEnergyRentQuote>>);
+
+    const request = await buildEnergyRentRequest(sendTrc20);
+
+    expect(request.maxPayCoinCode).toBe("TRX");
+  });
 });

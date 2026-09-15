@@ -171,7 +171,7 @@ describe("energyRent provider switch", () => {
 
   describe("craftEnergyRentTransaction", () => {
     it("returns the order id, unsigned transaction and payment amount", async () => {
-      const transaction = { visible: false, txID: "abc", raw_data: {}, raw_data_hex: "0x" };
+      const transaction = { visible: false, txID: "abc", raw_data: {}, raw_data_hex: "abcd" };
       mockedAddTronRentRecord.mockResolvedValueOnce({
         orderId: "order-1",
         transaction,
@@ -195,7 +195,7 @@ describe("energyRent provider switch", () => {
 
     const orderCosting = (payCoinAmt: string, payCoinCode = "TRX") => ({
       orderId: "order-1",
-      transaction: { visible: false, txID: "abc", raw_data: {}, raw_data_hex: "0x" },
+      transaction: { visible: false, txID: "abc", raw_data: {}, raw_data_hex: "abcd" },
       payCoinCode,
       payCoinAmt,
       purchaseEnergyFee: "3",
@@ -246,6 +246,23 @@ describe("energyRent provider switch", () => {
       await expect(
         craftEnergyRentTransaction({ ...request, maxPayCoinAmt: "12.5" }),
       ).rejects.toBeInstanceOf(TronifyApiError);
+    });
+
+    it.each([
+      ["a missing transaction", { ...orderCosting("1.0"), transaction: {} }],
+      [
+        "a non-hex raw_data_hex",
+        { ...orderCosting("1.0"), transaction: { txID: "abc", raw_data_hex: "nothex" } },
+      ],
+      [
+        "an empty txID",
+        { ...orderCosting("1.0"), transaction: { txID: "", raw_data_hex: "abcd" } },
+      ],
+      ["an empty orderId", { ...orderCosting("1.0"), orderId: "" }],
+    ])("rejects an order with %s (no signable payment)", async (_label, malformed) => {
+      mockedAddTronRentRecord.mockResolvedValueOnce(malformed as never);
+
+      await expect(craftEnergyRentTransaction(request)).rejects.toBeInstanceOf(TronifyApiError);
     });
   });
 

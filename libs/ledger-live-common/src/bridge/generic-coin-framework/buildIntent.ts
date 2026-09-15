@@ -1,10 +1,11 @@
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
 import { getAssetInfos } from "./prepareTransaction";
 import type { GenericTransaction } from "./types";
-import { transactionToIntent } from "./utils";
+import { getPendingTokenSpent, transactionToIntent } from "./utils";
 
 /**
  * Build the `TransactionIntent` for a generic-coin-framework transaction the same way
@@ -42,10 +43,16 @@ export async function buildGenericTransactionIntent(
 
   // Mirror prepareTransaction: a token max-send zeroes `amount`, but fee/energy estimation needs the
   // real spendable, so read it from the sub-account when `useAllAmount` is set on a token transfer.
+  // Subtract pending outgoing token ops (as prepareTransaction does) — optimistic pendingOperations
+  // don't hit spendableBalance until the next sync, so the raw balance would over-state what the
+  // prepared transaction can actually send and inflate the requested energy/quote/order.
   let amount = transaction.amount;
   if (transaction.useAllAmount && transaction.subAccountId) {
     const subAccount = account.subAccounts?.find(acc => acc.id === transaction.subAccountId);
-    if (subAccount) amount = subAccount.spendableBalance;
+    if (subAccount) {
+      const pendingTokenSpent = getPendingTokenSpent(subAccount.pendingOperations ?? []);
+      amount = BigNumber.max(0, subAccount.spendableBalance.minus(pendingTokenSpent));
+    }
   }
 
   return transactionToIntent(

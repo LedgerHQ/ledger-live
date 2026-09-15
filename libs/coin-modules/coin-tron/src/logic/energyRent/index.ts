@@ -60,7 +60,10 @@ function assertOrderWithinApprovedCost(request: EnergyRentRequest, order: Energy
       `Energy-rent cost ceiling "${maxPayCoinAmt}" has no approved coin code to compare against`,
     );
   }
-  if (order.payCoinCode !== maxPayCoinCode) {
+  // Case-insensitive: the approved code is normalized to upper case at the ceiling's source
+  // (buildEnergyRentRequest), so a differently-cased order code from the provider must not
+  // false-mismatch a genuinely matching denomination.
+  if (String(order.payCoinCode).toUpperCase() !== maxPayCoinCode.toUpperCase()) {
     throw new TronifyApiError(
       `Energy-rent order is priced in ${String(order.payCoinCode)}, but ${maxPayCoinCode} was approved`,
     );

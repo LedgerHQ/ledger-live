@@ -517,5 +517,13 @@ export async function buildEnergyRentRequest(intent: TronIntent): Promise<Energy
   // thing that can differ. A quote failure propagates: crafting without a ceiling is the unbounded
   // case the ceiling guards against, and the very next step calls the same backend anyway.
   const quote = await getEnergyRentQuote(request);
-  return { ...request, maxPayCoinAmt: quote.payCoinAmt, maxPayCoinCode: quote.payCoinCode };
+  // Only TRX-denominated rent is supported (Flow 1); reject a non-TRX quote before it reaches the
+  // ceiling and signing. Normalize the code so the ceiling compare (assertOrderWithinApprovedCost) is exact.
+  const payCoinCode = quote.payCoinCode;
+  if (typeof payCoinCode !== "string" || payCoinCode.toUpperCase() !== "TRX") {
+    throw new Error(
+      `Tronify returned unsupported payCoinCode: ${String(payCoinCode)}; only TRX is supported`,
+    );
+  }
+  return { ...request, maxPayCoinAmt: quote.payCoinAmt, maxPayCoinCode: payCoinCode.toUpperCase() };
 }
