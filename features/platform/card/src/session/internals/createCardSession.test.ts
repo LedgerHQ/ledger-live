@@ -805,6 +805,26 @@ describe("the provider app id", () => {
     expect(slots.has(CARD_SESSION_KEYS.providerAppId)).toBe(false);
   });
 
+  it("ends the session that was current when another tenant is recorded", async () => {
+    // A retry from `error` starts a login while the previous session is still on disk. A snapshot
+    // taken before that must not be sent, and the old token must not be served to a later request
+    // that would carry the new routing.
+    const { store } = fakeStore({
+      [CARD_SESSION_KEYS.accessToken]: session.accessToken,
+      [CARD_SESSION_KEYS.refreshToken]: session.refreshToken,
+    });
+    const { readCardSession, isCardSessionCurrent, setCardProviderAppId } =
+      createCardSession(store);
+    const snapshot = await readCardSession();
+    expect(snapshot.token).toBe(session.accessToken);
+    expect(isCardSessionCurrent(snapshot.sessionId)).toBe(true);
+
+    await setCardProviderAppId("LEDGERUS");
+
+    expect(isCardSessionCurrent(snapshot.sessionId)).toBe(false);
+    await expect(readCardSession()).resolves.toMatchObject({ token: null });
+  });
+
   it("keeps the app id across the session write that follows it", async () => {
     const { store } = fakeStore();
     const { cardSession, setCardProviderAppId, isCardUsEnv } = createCardSession(store);
