@@ -2977,4 +2977,49 @@ describe("genericGetAccountShape", () => {
       });
     });
   });
+
+  describe("family token account shapes", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    test("awaits buildTokenAccountShapes and hands the result to buildSubAccounts", async () => {
+      const shapes = { "0xmint": { frozen: true } };
+      const buildTokenAccountShapes = jest.fn(async () => shapes);
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        buildTokenAccountShapes,
+      }));
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: "tz1shapes", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(buildTokenAccountShapes).toHaveBeenCalledWith("tz1shapes");
+      expect(buildSubAccountsMock.mock.calls[0][0].familyShapes).toEqual(shapes);
+    });
+
+    test("passes no shapes when the bridge has no buildTokenAccountShapes hook", async () => {
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: "tz1noshapes", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(buildSubAccountsMock.mock.calls[0][0].familyShapes).toBeUndefined();
+    });
+  });
 });
