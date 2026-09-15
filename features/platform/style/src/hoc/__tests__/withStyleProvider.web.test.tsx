@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { ThemeProvider, useTheme } from "styled-components";
-import { withStyleProvider } from "../withStyleProvider";
+import { withStyleProvider } from "../withStyleProvider.web";
 
 const mockTheme = { colors: { brand: "ledger" } } as never;
 
