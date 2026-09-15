@@ -2,9 +2,7 @@
 import { basename } from "path";
 
 let platform, test, build, bundle, bundleSize;
-let testType = "mock";
 let cache = true;
-let shard = "";
 let target = "release";
 let filter = "";
 let outputFile = "";
@@ -19,7 +17,7 @@ const usage = (exitCode = 1) => {
   console.log(
     `Usage: ${basename(
       __filename,
-    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--bundle-size] [--cache | --no-cache] [--testType] [--shard] [--production]`,
+    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--bundle-size] [--cache | --no-cache] [--e2e] [--production] [-o --outputFile <path>]`,
   );
   process.exit(exitCode);
 };
@@ -63,14 +61,14 @@ const bundle_ios_with_cache = async () => {
 };
 
 const test_ios = async () => {
-  const result = await $`pnpm mobile ${testType}:test\
+  const result = await $`pnpm mobile e2e:test\
       -c ios.sim.${target} \
       --loglevel warn \
       --record-logs failing \
       --take-screenshots failing \
       --forceExit \
       --headless \
-      --retries ${testType === "mock" ? 1 : 2} \
+      --retries 2 \
       --cleanup \
       ${filteredArgs}`.nothrow();
   process.exitCode = result.exitCode;
@@ -81,14 +79,14 @@ const build_android = async () => {
 };
 
 const test_android = async () => {
-  const result = await $`pnpm mobile ${testType}:test \\
+  const result = await $`pnpm mobile e2e:test \\
       -c android.emu.${target} \\
       --loglevel warn \\
       --record-logs failing \\
       --take-screenshots failing \\
       --forceExit \\
       --headless \\
-      --retries ${testType === "mock" ? 1 : 2} \\
+      --retries 2 \\
       --cleanup \\
       ${filteredArgs}`.nothrow();
   process.exitCode = result.exitCode;
@@ -140,13 +138,10 @@ for (const argName in argv) {
     case "cache":
       cache = argv[argName];
       break;
+    // `--e2e` is accepted and ignored: it used to select between an `e2e` and a `mock` run mode,
+    // and every caller passes it. Callers are left alone rather than churned.
     case "_":
-      break;
     case "e2e":
-      testType = "e2e";
-      break;
-    case "shard":
-      shard = argv[argName];
       break;
     case "production":
       target = "prerelease";
@@ -167,20 +162,8 @@ for (const argName in argv) {
 
 const extraArgs = process.argv.slice(2).filter(arg => !arg.startsWith("-"));
 const filteredArgs = extraArgs.filter(arg => {
-  return (
-    arg !== "./scripts/e2e-ci.mjs" &&
-    arg !== "ios" &&
-    arg !== "android" &&
-    arg !== filter &&
-    arg !== shard
-  );
+  return arg !== "./scripts/e2e-ci.mjs" && arg !== "ios" && arg !== "android" && arg !== filter;
 });
-
-if (testType === "mock") {
-  if (shard) {
-    filteredArgs.push("--shard", shard);
-  }
-}
 
 if (outputFile) {
   filteredArgs.push("--json");

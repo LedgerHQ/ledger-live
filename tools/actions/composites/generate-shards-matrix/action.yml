@@ -54,8 +54,8 @@ runs:
       id: test-files
       shell: bash
       run: |
-        # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
-        # action keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
+        # The canonical script lives in e2e/mobile/. This action is pinned @develop but runs against
+        # the caller's checkout, so a ref cut before the move still resolves its own in-tree copy.
         SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
         [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
         TEST_FILES=$(node "$SHARD_TESTS" "${INPUTS_TEST_FILTER}" "${INPUTS_TEST_DIRECTORY}")
@@ -168,8 +168,8 @@ runs:
         SHARD_COUNT_ANDROID=${{ steps.shard-counts.outputs.SHARD_COUNT_ANDROID }}
         TEST_DIR="${INPUTS_TEST_DIRECTORY}"
 
-        # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
-        # action keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
+        # The canonical script lives in e2e/mobile/. This action is pinned @develop but runs against
+        # the caller's checkout, so a ref cut before the move still resolves its own in-tree copy.
         SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
         [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
 

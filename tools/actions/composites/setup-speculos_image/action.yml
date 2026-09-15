@@ -1,5 +1,5 @@
 name: "Setup Speculos Image and Coin Apps"
-description: "Uploading allure report to Allure Server"
+description: "Checks out coin-apps and pulls the Speculos image"
 inputs:
   coinapps_path:
     required: true

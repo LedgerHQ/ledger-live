@@ -7,8 +7,8 @@
 #   - categories.json, environment.properties, executor.json (metadata)
 #   - any file referenced as `attachments[].source` from a result/container JSON
 #
-# Then strips text/xml attachments (Native View Hierarchy, captured for AI
-# analysis only) — both the files in the copy and their entries in the JSONs.
+# text/xml attachments (Native View Hierarchy, captured for AI analysis only) are
+# left out of the copy entirely, and their entries are stripped from the JSONs.
 #
 # The source directory is left untouched: any downstream step (`Get summary`,
 # `build-ai-artifact.sh`, …) keeps seeing the full data.
@@ -45,6 +45,8 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 1
 fi
 
+started=$SECONDS
+
 rm -rf "$DST"
 mkdir -p "$DST"
 
@@ -62,61 +64,71 @@ for name in categories.json environment.properties executor.json; do
   fi
 done
 
-# 3) Attachments referenced from any result/container JSON. We honor whatever
-#    relative path is recorded (typically `attachments/<uuid>`, but other
-#    layouts are valid in the Allure format). Absolute and escaping paths are
-#    skipped defensively.
-src_abs=$(realpath -m -- "$SRC")
-attachments=0
-while IFS= read -r ref; do
-  [ -n "$ref" ] || continue
-  case "$ref" in /*) continue ;; esac
-  target=$(realpath -m -- "$SRC/$ref")
-  case "$target" in
-    "$src_abs"/*) ;;
-    *) continue ;;
+# Reject an attachment reference that is absolute or climbs out of the results
+# dir. Pure string work: a `..` path segment is the only way out, and the guard
+# stays stricter than canonicalising, because it never touches the filesystem.
+# Wrapping in slashes catches `..` at either end; `foo..bar` is left alone.
+ref_is_safe() {
+  case "$1" in
+    "" | /*) return 1 ;;
+    */../* | ../* | */..) return 1 ;;
   esac
-  if [ -f "$SRC/$ref" ] && [ ! -e "$DST/$ref" ]; then
-    mkdir -p "$DST/$(dirname "$ref")"
-    cp -p "$SRC/$ref" "$DST/$ref"
-    attachments=$((attachments + 1))
-  fi
-done < <(
+  return 0
+}
+
+refs=$(mktemp "${TMPDIR:-/tmp}/allure-refs.XXXXXX")
+drop=$(mktemp "${TMPDIR:-/tmp}/allure-drop.XXXXXX")
+keep=$(mktemp "${TMPDIR:-/tmp}/allure-keep.XXXXXX")
+copylist=$(mktemp "${TMPDIR:-/tmp}/allure-copy.XXXXXX")
+trap 'rm -f "$refs" "$drop" "$keep" "$copylist"' EXIT
+
+# 3) Collect every attachment reference and its type in ONE jq pass over all the
+#    JSONs, rather than spawning jq (and a path canonicaliser) per file.
+if [ "$results" -gt 0 ]; then
+  jq -r '
+    .. | objects | .attachments? // empty | .[]?
+    | select(.source != null)
+    | "\(.type // "")\t\(.source)"
+  ' "$DST"/*-result.json "$DST"/*-container.json | sort -u > "$refs"
+fi
+
+# A reference is dropped if it is typed text/xml anywhere, matching the previous
+# behaviour of copying everything and then deleting the text/xml files.
+awk -F'\t' '$1 == "text/xml" { print $2 }' "$refs" | sort -u > "$drop"
+awk -F'\t' '{ print $2 }' "$refs" | sort -u | comm -23 - "$drop" > "$keep"
+
+# 4) Copy the surviving attachments in a single streamed pass. We honor whatever
+#    relative path is recorded (typically `attachments/<uuid>`, but other layouts
+#    are valid in the Allure format), and tar recreates the directories for us —
+#    a per-file `dirname`/`mkdir`/`cp` trio costs thousands of processes here.
+while IFS= read -r ref; do
+  ref_is_safe "$ref" || continue
+  [ -f "$SRC/$ref" ] || continue
+  printf '%s\n' "$ref"
+done < "$keep" > "$copylist"
+
+attachments=$(wc -l < "$copylist" | tr -d ' ')
+if [ "$attachments" -gt 0 ]; then
+  tar -C "$SRC" -cf - -T "$copylist" | tar -C "$DST" -xf -
+fi
+
+# 5) Strip text/xml entries from the JSONs. Only the files that actually carry
+#    one are rewritten, so this touches a small fraction of the results.
+removed=$(wc -l < "$drop" | tr -d ' ')
+if [ "$removed" -gt 0 ]; then
   for json in "$DST"/*-result.json "$DST"/*-container.json; do
-    [ -f "$json" ] || continue
-    jq -r '[.. | objects | .attachments? // empty | .[]? | .source] | .[]' "$json"
-  done | sort -u
-)
-
-# 4) Drop text/xml attachments (Native View Hierarchy etc., AI-only payloads).
-#    Delete the files in the copy, then strip the entries from the JSONs.
-removed=0
-dst_abs=$(realpath -m -- "$DST")
-for json in "$DST"/*-result.json "$DST"/*-container.json; do
-  [ -f "$json" ] || continue
-
-  while IFS= read -r ref; do
-    [ -n "$ref" ] || continue
-    case "$ref" in /*) continue ;; esac
-    target=$(realpath -m -- "$DST/$ref")
-    case "$target" in
-      "$dst_abs"/*) ;;
-      *) continue ;;
-    esac
-    if [ -f "$target" ]; then
-      rm -f -- "$target"
-      removed=$((removed + 1))
-    fi
-  done < <(jq -r '[.. | objects | .attachments? // empty | .[]? | select(.type == "text/xml") | .source] | .[]' "$json")
-
-  tmp=$(mktemp "$DST/.prune.XXXXXX")
-  jq 'walk(if type == "object" and has("attachments") then .attachments |= map(select(.type != "text/xml")) else . end)' "$json" > "$tmp"
-  mv -f "$tmp" "$json"
-done
+    grep -q 'text/xml' "$json" || continue
+    tmp=$(mktemp "$DST/.prune.XXXXXX")
+    jq 'walk(if type == "object" and has("attachments") then .attachments |= map(select(.type != "text/xml")) else . end)' \
+      "$json" > "$tmp"
+    mv -f "$tmp" "$json"
+  done
+fi
 
 echo "Built Allure upload dir at '$DST':"
 echo "  result/container files: $results"
 echo "  attachments copied:     $attachments"
 echo "  text/xml stripped:      $removed"
+echo "  elapsed:                $((SECONDS - started))s"
 
 emit_path "$DST"

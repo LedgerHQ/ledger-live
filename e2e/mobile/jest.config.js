@@ -142,7 +142,7 @@ const config = {
 
   setupFilesAfterEnv: ["<rootDir>/setup.ts"],
   testMatch: ["<rootDir>/specs/**/*.spec.ts"],
-  // CI shards exclude `.skip.spec.ts` (apps/ledger-live-mobile/scripts/shard-tests.mjs).
+  // CI shards exclude `.skip.spec.ts` (e2e/tooling/filter/selectSpecs.mjs).
   testPathIgnorePatterns: ["\\.skip\\.spec\\.ts$"],
   testTimeout: 60_000 * 6,
   reporters: [
