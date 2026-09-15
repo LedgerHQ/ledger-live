@@ -435,6 +435,11 @@
           "viewInExplorer" : "エクスプローラーで表示",
           "copied" : "コピー済み"
         },
+        "earnBanner" : {
+          "title" : "最大{{apy}}％{{type}}を獲得",
+          "description" : "報酬獲得のチャンスを探る",
+          "button" : "探索"
+        },
         "accessibility" : {
           "copySwapId" : "スワップIDをコピー"
         }
@@ -682,26 +687,6 @@
   "postOnboardingDebugger" : {
     "buttonTitle" : "テスト"
   },
-  "vaultSigner" : {
-    "modal" : {
-      "title" : "Vaultを接続する",
-      "info" : "以下のフィールドに入力してLedger Vaultワークスペースアカウントを連携し、Ledger Walletからトランザクションを作成してください。「Settings（設定）」>「External wallet（外部ウォレット署名者）」に移動して情報を見つけます。",
-      "info_link" : "詳細はこちら",
-      "host" : {
-        "title" : "URLエンドポイント",
-        "placeholder" : "ws://localhost:3030"
-      },
-      "workspace" : {
-        "title" : "ワークスペース名",
-        "placeholder" : "ワークスペース"
-      },
-      "token" : {
-        "title" : "オペレーターAPIトークン",
-        "placeholder" : "トークン"
-      },
-      "submit" : "接続"
-    }
-  },
   "account" : {
     "subHeader" : {
       "moreInfo" : "詳細はこちら",
@@ -873,22 +858,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "支払いと受け取り",
-      "description" : "ステーブルコインは、暗号資産と実生活での決済のギャップを埋めます",
-      "cta" : "了解",
+      "title" : "すべての支払いを一箇所で管理",
+      "description" : "あらたに「支払い」タブが登場。日常のお金を使う様々な場面で、暗号資産を利用できるようになります。",
+      "cta" : "支払い機能を探索",
       "rows" : {
         "global" : {
-          "title" : "世界中での支払いと受け取り",
-          "description" : "低いネットワーク手数料の恩恵を受ける"
+          "title" : "連絡先に支払う",
+          "description" : "保存したアドレスに暗号資産を送金します。"
         },
         "volatility" : {
-          "title" : "最小限のボラティリティ",
-          "description" : "ステーブルコインは法定通貨に基づいています"
+          "title" : "支払いをリクエスト",
+          "description" : "連絡先に直接、資金の送金を依頼します。"
         },
         "card" : {
-          "title" : "カードでの決済で1％のキャッシュバックを獲得",
-          "description" : "USDC、USDT、BTC、ETHなどで支払う"
+          "title" : "暗号資産カードで世界中でお買い物",
+          "description" : "さらに、上限なしで1％のキャッシュバックを獲得。"
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "詳細",
+      "title" : "詳細",
+      "rows" : {
+        "managePin" : "PINコードの管理",
+        "accessBaanx" : "Baanxへのアクセス",
+        "help" : "ヘルプ",
+        "logout" : "ログアウト"
       }
     },
     "balance" : {
@@ -904,7 +899,49 @@
     },
     "card" : {
       "title" : "暗号資産カード",
-      "balanceLabel" : "残高"
+      "balanceLabel" : "残高",
+      "freeze" : "凍結",
+      "unfreeze" : "凍結解除",
+      "goBack" : "戻る",
+      "freezeConfirm" : {
+        "title" : "凍結すると、カードは使用できなくなります。",
+        "description" : "カードの凍結はいつでも解除できます。",
+        "confirm" : "今すぐ凍結する",
+        "errorTitle" : "凍結に失敗しました"
+      },
+      "unfreezeConfirm" : {
+        "title" : "カードの凍結を解除しますか？",
+        "confirm" : "今すぐ凍結を解除する",
+        "errorTitle" : "凍結解除に失敗しました"
+      },
+      "confirmError" : {
+        "description" : "何か問題が発生しました。もう一度お試しください。",
+        "retry" : "再試行"
+      }
+    },
+    "cardTransactions" : {
+      "title" : "トランザクション",
+      "categories" : {
+        "SUBSCRIPTIONS" : "サブスクリプション",
+        "FOOD" : "食べ物",
+        "TRAVEL" : "旅行",
+        "ENTERTAINMENT" : "娯楽",
+        "HEALTH" : "ヘルス",
+        "ATM" : "ATM",
+        "UTILITIES" : "公共料金",
+        "MISC" : "その他"
+      }
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "カードを設定する",
+        "allDone" : "これで準備完了です！"
+      },
+      "dialog" : {
+        "title" : "カードの登録を完了する",
+        "stepComplete" : "完了",
+        "gotIt" : "了解"
+      }
     },
     "contacts" : {
       "title" : "連絡先に支払う",
@@ -923,7 +960,20 @@
       "actions" : {
         "pay" : "連絡先に送信",
         "more" : "その他のオプション",
+        "viewContact" : "連絡先を表示",
         "viewTransactions" : "トランザクションを表示"
+      },
+      "addressPicker" : {
+        "title" : "{{name}}のアドレスを選択",
+        "addAddress" : "アドレスを追加"
+      },
+      "paySuccess" : {
+        "title" : "({{recipient}}) を支払いました",
+        "amount" : "数量",
+        "estimatedTime" : "推定時間",
+        "from" : "送付元",
+        "viewTransaction" : "トランザクションを表示",
+        "close" : "閉じる"
       }
     },
     "actions" : {
@@ -952,6 +1002,72 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "現金を送り、ステーブルコインを受け取る",
+      "description" : "現金を送金し、ステーブルコインをご利用のLedger Wallet™で直接受け取る。",
+      "createAccount" : "アカウントを作成",
+      "logIn" : "Noahにログイン",
+      "providedBy" : "提供：Noah",
+      "rows" : {
+        "bank" : {
+          "title" : "あらゆる銀行からの送金を受け取る",
+          "description" : "SEPAまたはACH経由で、給与、支払い、入金を受け取れます。"
+        },
+        "fees" : {
+          "title" : "隠れた手数料なし",
+          "description" : "銀行からブロックチェーンへ、0.25％の手数料で直接入金。"
+        },
+        "earn" : {
+          "title" : "今すぐお金を運用しましょう",
+          "description" : "ステーブルコインでスワップや利回りの獲得が可能です。"
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "暗号資産カード",
+      "beforeIntro" : {
+        "description" : "ご利用ごとに、1％のキャッシュバックを獲得",
+        "action" : "カードを入手",
+        "alreadyHaveCard" : "すでにカードをお持ちの方"
+      },
+      "afterIntro" : {
+        "description" : "カードにアクセスするにはログインしてください",
+        "action" : "ログイン"
+      },
+      "errors" : {
+        "pkce_failed" : "ログインを開始できませんでした。もう一度お試しください。",
+        "browser_open_failed" : "ログインページを開くことができませんでした。もう一度お試しください。",
+        "missing_attempt" : "このログインは無効になりました。再度ログインしてください。",
+        "exchange_failed" : "ログインを完了できませんでした。もう一度お試しください。",
+        "persist_failed" : "セッションを保存できませんでした。もう一度お試しください。",
+        "fetch_user_failed" : "お使いのカードを読み込めませんでした。もう一度お試しください。"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "暗号資産で支払って、キャッシュバック！",
+      "providedBy" : "Baanx提供のカード",
+      "createAccount" : "アカウントを作成",
+      "logIn" : "Baanxにログイン",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple PayまたはGoogle Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "上限なしの1％暗号資産キャッシュバック",
+          "description" : "USDC、USDT、またはBTCを利用した暗号資産カードでのすべての購入。"
+        },
+        "virtualCard" : {
+          "title" : "無料のバーチャルカード",
+          "description" : "{{wallet}}に追加して、すぐに利用可能。"
+        },
+        "topUp" : {
+          "title" : "Ledger Wallet経由で安全にチャージ",
+          "description" : "すべての送金をLedger署名用デバイスで承認。"
+        }
+      }
+    },
     "request" : {
       "title" : "リクエスト{{asset}}",
       "networkLabel" : "{{network}}ネットワーク",
@@ -962,6 +1078,10 @@
         "copied" : "コピー済み",
         "save" : "保存",
         "verify" : "認証する"
+      },
+      "verifyHint" : {
+        "message" : "共有する前に\nLedgerデバイスで\nアドレスを認証してください",
+        "gotIt" : "了解"
       },
       "verifyAddress" : {
         "introTitle" : "アドレスを認証する",
@@ -1602,10 +1722,6 @@
     "referralProgram" : {
       "title" : "紹介して$10を獲得",
       "description" : "ご友人の紹介に成功すると、お客様とご友人の両者が$10相当のBitcoinを獲得できます。"
-    },
-    "vaultSigner" : {
-      "title" : "Vault署名者モード",
-      "link" : "Vaultヘルプセンター"
     }
   },
   "signmessage" : {
@@ -2511,10 +2627,6 @@
         "title" : "デバイス"
       },
       "details" : {
-        "solanaRawTransaction" : {
-          "title" : "ブラインド署名が必要です",
-          "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
-        },
         "utxoLag" : "アカウントに大量のコインがあるため、このトランザクションの承認と署名には時間がかかる場合があります。",
         "subaccountsWarning" : "このアカウントのトークンを送金するには、このアカウントに{{ currency }}を補充する必要があります",
         "from" : "送付元",
@@ -2595,7 +2707,7 @@
     "addressMatched" : "アドレスが一致",
     "addressNotFound" : "住所が見つかりません",
     "alreadyUsed" : "使用ずみ・{{date}}",
-    "addressBookUnsupported" : "{{family}}にはまだ対応していません",
+    "addressBookUnsupported" : "{{family}}には、未対応です。",
     "recentSendWillAppear" : "最近の送付がこちらに表示されます",
     "contactsWillAppear" : "連絡先がここに表示されます。",
     "selectAddress" : "アドレスを選択",
@@ -2652,11 +2764,12 @@
       "walletNotExist" : "ウォレットが存在しません"
     },
     "skipMemo" : {
-      "title" : "{{memoLabel}}の追加をスキップしますか？",
-      "description" : "受取人が{{memoLabel}}を要求した場合、資産が失われる可能性があります",
+      "title" : "{{memoLabel}}なしで送信しますか？",
+      "description" : "受取人が{{memoLabel}}を要求した場合、資産が失われる可能性があります。",
       "notRequired" : "受取人は{{memoLabel}}を不要としていますか？",
-      "confirm" : "はい、スキップします",
-      "neverAskAgain" : "今後この警告を表示しない"
+      "confirm" : "はい、{{memoLabel}}なしで送信します",
+      "cancel" : "いいえ、戻る",
+      "neverAskAgain" : "次回から確認しない"
     },
     "tagHelp" : {
       "inputLabel" : "{{memoLabel}}を入力してください",
@@ -2724,6 +2837,34 @@
       "selectSufficientCoins" : "十分なコインを選択してください",
       "amountToSendInCurrency" : "送金金額 ({{ticker}})",
       "amountInputLabel" : "送付額"
+    },
+    "recipient" : {
+      "selfTransfer" : {
+        "title" : "自己送金",
+        "toPrivate" : {
+          "action" : "プライベート残高に送信",
+          "label" : "プライベート残高"
+        },
+        "toPublic" : {
+          "action" : "公開残高に送信",
+          "label" : "公開残高"
+        }
+      }
+    },
+    "balanceType" : {
+      "title" : "残高タイプを選択",
+      "transparent" : {
+        "title" : "公開残高",
+        "subtitle" : "透明性"
+      },
+      "shielded" : {
+        "title" : "プライベート残高",
+        "subtitle" : "シールド",
+        "pendingNotice" : "一部のシールドノートはまだ成熟中のため、使用できない可能性があります。"
+      },
+      "zeroBalance" : {
+        "warning" : "利用可能残高がありません"
+      }
     }
   },
   "releaseNotes" : {
@@ -5452,6 +5593,12 @@
       "enableLearnStagingUrlDesc" : "学習ページのステージングURLを有効にする。",
       "enableCountervaluesStaging" : "カウンターバリューAPI（ステージング）",
       "enableCountervaluesStagingDesc" : "プロダクション用ではなく、ステージング用のカウンターバリューAPIを使用します。",
+      "enableMockServerTransport" : "Mockサーバートランスポート",
+      "enableMockServerTransportDesc" : "デバイスの代わりにデバイスのMockサーバーに接続するには、Device Management Kitのモックサーバートランスポートを有効にします。MOCK_SERVER_TRANSPORT_URLが別の場所を指している場合を除き、共有Mockサーバーを使用します。適用するにはアプリの再起動が必要です。",
+      "mockServerStatus" : {
+        "connected" : "Mockサーバーに接続しました · クリックしてセッショントークンをコピー、右クリックして設定UIを開きます",
+        "disconnected" : "Mockサーバーに接続できません"
+      },
       "openOnboardingAppInstallDebug" : "オンボーディングアプリのインストールデバッグ画面を開く",
       "openOnboardingAppInstallDebugDesc" : "同期オンボーディングアプリのインストール手順の構成要素で画面を開きます"
     },
@@ -5554,10 +5701,6 @@
         "1559DeactivateGate" : {
           "title" : "EIP1559最低優先手数料ゲートを無効にする",
           "description" : "最低優先手数料なしでトランザクションを送信できます。これにより、トランザクションがメモリプールに永久にスタック（停滞）する可能性があります。"
-        },
-        "vaultSigner" : {
-          "title" : "Vault署名者",
-          "description" : "オペレーターAPIトークンを使ってLedger Vaultを署名者として使用する"
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "カスタム優先手数料ゲート",
@@ -7117,6 +7260,10 @@
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "残高を取得できませんでした",
+      "description" : "インターネット接続を確認して、もう一度お試しください。"
+    },
     "NotEnoughTransferAmount" : {
       "title" : "ニューロンにステーキングするには、最低1 ICPが必要です。"
     },
@@ -7316,6 +7463,12 @@
     "ZcashAmountBelowDustThreshold" : {
       "title" : "数量が少なすぎるため、ブロードキャストできません（最小{{minimumZatoshis}}ザトシ）"
     },
+    "ZcashMemoTooLong" : {
+      "title" : "メモは{{maxBytes}}バイトを超えることはできません"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "この数量は1回のトランザクションで送信するには大きすぎます。より少ない数量に分割して送信をお試しください。"
+    },
     "InvalidNonce" : {
       "title" : "ナンスは必須です"
     },
@@ -7428,6 +7581,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "先に以前のバリデーターからのステーキング解除を完了する必要があります"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "ステーキングするには少なすぎる数量です"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "まず、すべてのサブアカウントを空にしてください。"
@@ -7713,6 +7869,58 @@
     },
     "ConcordiumAddressVerificationFailedError" : {
       "title" : "アドレスの検証に失敗しました"
+    },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "ネットワーク手数料用のCCDが不足しています",
+      "description" : "ネットワーク手数料は送信するトークンではなく、CCDで支払われます。このアカウントにCCDを追加して、もう一度お試しください。"
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "このトークンの送金は一時停止されています",
+      "description" : "トークン発行元がすべての送金を一時停止しました。送金が再開されたら、もう一度お試しください。"
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "このアカウントからは、このトークンを送信できません",
+      "description" : "トークンの発行元が送信者を制限しており、このアカウントは許可されていません。アクセス権については、トークン発行元にお問い合わせください。"
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "トークンの制限を認証できませんでした",
+      "description" : "このトークンの送金ルールを読み取れなかったため、送金が許可されているか確認できません。アカウントを再同期して、もう一度お試しください。"
+    },
+    "ConcordiumRecipientNotAllowed" : {
+      "title" : "このアドレスは{{ticker}}を受け取ることができません。",
+      "description" : "トークン発行元によって承認されていません。承認はLedgerではなく、発行元によって管理されています。"
+    },
+    "ConcordiumRecipientDenied" : {
+      "title" : "このアドレスは{{ticker}}を受け取ることが制限されています",
+      "description" : "トークン発行元がこのアドレスを制限しています。詳細については発行元にお問い合わせください。"
+    },
+    "ConcordiumRecipientRestrictionsUnverified" : {
+      "title" : "{{ticker}}の制限を認証できませんでした。",
+      "description" : "このアドレスが{{ticker}}を受け取ることができるか確認できなかったため、送金が許可されているか確認できません。接続を確認して、もう一度やり直してください。"
+    },
+    "ConcordiumRecipientNotFound" : {
+      "title" : "このアドレスはConcordium上に存在しません",
+      "description" : "アドレスをご確認の上、もう一度お試しください。作成されたことのないアドレスに送金すると、ネットワーク上で失敗しますが、手数料は発生します。"
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "このトークンは、お使いのLedgerデバイスで署名できません",
+      "description" : "このトークンは小数点以下{{decimals}}桁を使用しますが、お使いのデバイスがサポートしているのは最大{{maxDecimals}}桁です。受け取ることや保有することに影響はありません。"
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "このトークンはもうアカウントに存在しません",
+      "description" : "選択したトークンは利用できなくなりました。トランザクションを最初からやり直してください。"
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "このトランザクションを準備できません",
+      "description" : "トークンの詳細がお使いのLedgerデバイスで受け入れ可能な範囲外であるため、トランザクションを構築できません。Ledgerサポートにご連絡ください。"
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "アプリのアップデートが必要です。",
+      "description" : "LedgerデバイスのConcordiumアプリはトークン転送をサポートしていません。My Ledgerで更新し、もう一度お試しください。"
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "何か問題が発生しました。デバイスを再接続してください。",
+      "description" : "Concordiumアプリはトランザクションを処理できませんでした。問題が解決しない場合は、Ledgerサポートにお問い合わせください。"
     },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
@@ -8111,6 +8319,104 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "UTXOの制約を超えるため、この数量は送信できません。"
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "ディゾルブ・ディレイが短すぎます",
+      "description_one" : "Internet Computerでは、最低{{minDays}}日間のディゾルブ・ディレイが必要です。",
+      "description_other" : "Internet Computerでは、最低{{minDays}}日間のディゾルブ・ディレイが必要です。"
+    },
+    "ICPInvalidDissolveDelayIncrease" : {
+      "title" : "日数が無効です",
+      "description" : "0より大きい整数の日数を入力してください。"
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "ディゾルブ・ディレイが長すぎます",
+      "description_one" : "Internet Computerでは、ニューロンのディゾルブ・ディレイの上限は{{maxDays}}日です。",
+      "description_other" : "Internet Computerでは、ニューロンのディゾルブ・ディレイの上限は{{maxDays}}日です。"
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "ディゾルブ・ディレイは短縮できません",
+      "description" : "ニューロンのディゾルブ・ディレイは延長のみ可能です。短縮するには、代わりにニューロンのディゾルブを開始してください。"
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "ニューロンが見つかりません",
+      "description" : "このニューロンは、最後に同期されたスナップショットに存在しません。ニューロンを同期して、もう一度お試しください。"
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "無効なプリンシパル",
+      "description" : "ホットキーは、有効なインターネットコンピュータのプリンシパルである必要があります。"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "ホットキーは既に追加されています",
+      "description" : "このプリンシパルは、すでにこのニューロンのホットキーです。"
+    },
+    "ICPHotKeyIsController" : {
+      "title" : "このプリンシパルは、すでにこのニューロンを管理しています。",
+      "description" : "別のプリンシパルを入力してください。ホットキーができるのは投票とフォローの設定のみですが、これらはコントローラーがすでに行うことができます。"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "数量が、このニューロンを分割できる範囲外です",
+      "description" : "元のニューロンと新しいニューロンの両方で、少なくとも1 ICPのステーキングと、移動する数量に対するネットワーク手数料を維持する必要があります。"
+    },
+    "ICPSpawnNotAllowed" : {
+      "title" : "このニューロンから生成できません",
+      "description" : "すでにスポーンしているニューロンは再度スポーンすることはできません。また、ネットワークの満期調整後、スポーンされた満期は少なくとも1 ICP残す必要があります。ニューロンを同期して、現在の状態を確認してください。"
+    },
+    "ICPStakeMaturityNotAllowed" : {
+      "title" : "このニューロンの満期はステーキングできません。",
+      "description" : "ニューロンがスポーンしている間、完全に溶解したあと、またはニューロンに満期がない場合は、満期をステーキングすることはできません。ニューロンを同期して、現在の状態を確認してください。"
+    },
+    "ICPFollowTopicNotAllowed" : {
+      "title" : "このトピックはフォローできません",
+      "description" : "Internet Computerがこのトピックを廃止したか、またはLedger Internet Computerアプリがこれに対するフォローの署名にまだ対応していません。別のトピックを選択してください。"
+    },
+    "ICPDisburseNotAllowed" : {
+      "title" : "このニューロンはディスバースできません",
+      "description" : "ニューロンは、完全にディゾルブされ、そのステーキングがネットワーク手数料を超えている場合に払い出すことができます。ニューロンを同期して、現在の状態を確認してください。"
+    },
+    "ICPTooManyHotKeys" : {
+      "title" : "ホットキーの制限に達しました",
+      "description" : "ニューロンは最大{{max}}個のホットキーを保持できます。別のものを追加するには、1つ削除してください。"
+    },
+    "ICPTopUpBelowMinimumStake" : {
+      "title" : "チャージ額が少なすぎます",
+      "description" : "トップアップ後、ニューロンの残高は1 ICPに達する必要があります。最終同期時点で、このニューロンにはさらに少なくとも{{missing}} ICPが必要です。より少額の送金はニューロンのアカウントで決済されますが、その後のトップアップによって最小額に達するまではカウントされません。"
+    },
+    "ICPStakeNotRefreshed" : {
+      "title" : "ステーキングは送金されましたが、ニューロンは更新されていません",
+      "description" : "ICPはニューロンのアカウントに送金されましたが、インターネットコンピュータのガバナンスは、それによるニューロンの更新を拒否しました。{{reason}} 何も失われることはありません。数量はニューロンのアカウントに残り、残高を少なくとも1 ICPにする次のトップアップに算入されます。Ledger Walletではまだそれを確認できないため、数量フィールドには依然として、前回の同期で示された不足分の全額が要求されます。"
+    },
+    "ICPStakeMemoNotRecoverable" : {
+      "title" : "このニューロンはトップアップできません",
+      "description" : "ニューロンのトップアップには、それを生成したトランザクションのメモが必要ですが、このアカウントの履歴には存在しません。ニューロンを生成したアカウントからトップアップしてください。"
+    },
+    "ICPCallUnconfirmed" : {
+      "title" : "結果は不明です",
+      "description" : "Internet Computerはリクエストを受け付けましたが、結果が返されなかったため、反映されたかどうかは不明です。再試行する前に、ニューロンを同期して確認してください。"
+    },
+    "ICPNeuronsNotRead" : {
+      "title" : "ニューロンが更新されませんでした",
+      "description" : "インターネットコンピューターからニューロンが返されなかったため、変更はありません。もう一度お試しください。"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "これにより、ICPが新しいニューロンにロックされます",
+      "description" : "ニューロンは最短のディゾルブ・ディレイから開始されますが、この期間は投票や報酬の獲得を行うには短すぎます。「Manage Neurons」からディレイを引き上げ、ステーキングが再び使用可能になるまで、ディレイが経過するのをお待ちください。"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "これはロックされたステーキングに追加されます",
+      "description" : "数量はニューロンの既存のステーキングに加算され、そのディゾルブ・ディレイに従うため、ニューロンがディゾルブされるまで使用できません。"
+    },
+    "ICPGovernanceRejected" : {
+      "title" : "ネットワークがこの操作を拒否しました。",
+      "description" : "インターネットコンピュータのガバナンスがリクエストを却下したため、ニューロンに変更はありません。ニューロンを同期して、現在の状態を確認してください。{{reason}}"
+    },
+    "ICPCallRejected" : {
+      "title" : "リクエストは承認されませんでした",
+      "description" : "Internet Computerは実行される前にリクエストを拒否したため、何も変更されませんでした。もう一度お試しください。{{reason}}"
+    },
+    "ICPInvalidPercentage" : {
+      "title" : "パーセンテージが範囲外です",
+      "description" : "1から100までの整数を入力してください。"
     }
   },
   "cryptoOrg" : {
@@ -8230,6 +8536,7 @@
             "inactiveTooltip" : "バリデータが見つかりません",
             "overstakedTooltip" : "このノードはステーキング量が過剰なため、APYが通常より低くなっています",
             "activeTooltip" : "委任した数量に対して報酬が発生します",
+            "fetchErrorTooltip" : "バリデーターデータを読み込めませんでした。もう一度お試しください。",
             "delegated" : "デリゲート",
             "rewards" : "報酬"
           },
@@ -8308,6 +8615,8 @@
             "newValidatorLabel" : "新しいデリゲート",
             "newValidatorSelectPlaceholder" : "バリデータを選択",
             "removedValidatorSelectPlaceholder" : "以前選択したバリデータは現在利用できません",
+            "unableToLoadSelectPlaceholder" : "バリデーターを読み込めません",
+            "loadingValidatorPlaceholder" : "バリデーターを読み込み中...",
             "newValidatorSelectNoOption" : "\"{{validatorName}}\"に一致するバリデーターがありません。",
             "amountLabel" : "再デリゲート額",
             "alert" : "Hederaのステーキングでは、残高のすべてがステーキングされます。流動性は完全に維持され、ロックアップ期間やスラッシングのリスクはありません。ステーキング報酬の発生開始まで、最大48時間かかる場合があります。",
@@ -8874,11 +9183,13 @@
     "emptyAssetList" : "資産が見つかりません",
     "selectAsset" : "暗号資産を選択",
     "selectNetwork" : "ネットワークを選択",
-    "unsupportedAssetTooltip" : "{{asset}}には未対応です。",
+    "unsupportedAssetTooltip" : "{{asset}}には、未対応です。",
     "unsupportedNetworkTooltip" : "{{network}}ネットワークには未対応です。",
+    "notAvailableYet" : "まだご利用いただけません",
     "selectAccount" : "アカウントを選択",
     "selectAccountPerpsTitle" : "Hyperliquidアカウントを選択",
-    "selectAccountPerpsDescription" : "無期限先物に資金を入金するには、Hyperliquidアカウントが必要です。続行するには追加してください。",
+    "selectAccountPerpsDescription" : "取引を行うために資金を入金するアカウントを選択してください。",
+    "selectAccountPerpsEmptyDescription" : "無期限先物に資金を入金するには、Hyperliquidアカウントが必要です。続行するには追加してください。",
     "selectDepositCurrencyTitle" : "入金する資産を選択",
     "selectDepositCurrencyDescription" : "対応しているどの資産でも利用できます。必要に応じて自動的にスワップされます。",
     "accountCount_one" : "{{count}}アカウント",
@@ -9123,7 +9434,7 @@
         "memo" : {
           "label" : "メモ (任意)",
           "placeholder" : "メモを入力",
-          "tooltip" : "このシールドトランザクションにプライベートメッセージを添付します。受取人のみが閲覧できます。最大512バイト。"
+          "tooltip" : "このシールドされた支払いに暗号化されたメモを追加します。受取人のみが閲覧できます。最大512バイト。"
         },
         "syncBanner" : {
           "stopped" : {
@@ -9146,15 +9457,15 @@
         "selfTransfer" : {
           "toPrivate" : "プライベート残高への自己送金",
           "toPublic" : "パブリック残高への自己送金",
-          "unavailable" : "プライベートアドレスはまだ利用できません。これを有効にするには、閲覧キーをエクスポートしてください。",
+          "unavailable" : "アカウントでシールドが有効になると、プライベートアドレスが利用可能になります。",
           "privacyWarning" : "これにより、シールドされた資金が、誰でも閲覧可能なアカウントのパブリックアドレスに紐付けられます。外部のプライベートアドレスに送信することで、これらは紐付けられないままになります。"
         }
       },
       "state" : {
-        "showBalance" : "残高を表示",
+        "showBalance" : "シールドを有効にする",
         "startSync" : "同期を開始",
         "stopSync" : "同期を停止",
-        "upToDate" : "最新の状態",
+        "upToDate" : "残高を更新",
         "lastSync" : "最終同期：{{date}}",
         "estimatedTimeRemaining" : "推定残り時間： {{hours}} : {{minutes}}",
         "syncFailed" : "プライベート残高の同期に失敗しました。"
@@ -9325,6 +9636,88 @@
         "errorTitle" : "プライベート同期に失敗しました。",
         "errorDesc" : "問題が発生しました。もう一度お試しください。"
       }
+    },
+    "bond" : {
+      "flow" : {
+        "title" : "ALEOをボンド",
+        "steps" : {
+          "validator" : {
+            "title" : "バリデーター",
+            "fetchError" : "バリデーターリストを読み込めませんでした。",
+            "totalStake" : "合計ステーキング量",
+            "rateAndCommission" : "{{rate}}％（推定）・ {{commission}}％の手数料",
+            "commissionOnly" : "{{commission}}％のコミッション",
+            "rowSubtitleClosed" : "バリデーターは新規のステーキングを受け付けていません。",
+            "rowSubtitleUnbonding" : "バリデーターはボンド解除中です。",
+            "unbondingTooltip" : "このバリデーターは、自身のステーキングを出金しています。その出金が請求されるまで、ネットワークはこのバリデーターへのすべての新規ステーキングを拒否します。",
+            "rowSubtitleEarnsNothing" : "バリデーターは報酬を獲得しません。",
+            "nonEarning" : {
+              "fullCommission" : "このバリデーターは100％のコミッションを徴収するため、デリゲーターの取り分はありません。",
+              "overConcentrated" : "このバリデーターは、ステーキングされたすべてのALEOの25％を超える量を保有しています。プロトコルはその上限を超える分に対して支払わないため、デリゲーターは報酬を獲得できません。"
+            },
+            "topUpOnly" : "Aleoでは、1アカウントにつき1つのバリデーターのみが許可されています。このバリデーターへのステーキングを追加するか、先にステーキング解除を行って別のバリデーターを選択することができます。"
+          },
+          "amount" : {
+            "title" : "数量",
+            "minimum" : "報酬を獲得するには、このバリデーターへのステーキング総額が少なくとも10,000 ALEOに達する必要があります。ステーキングできるのはパブリックのALEOのみです。ステーキングする場合は、まずプライベート残高をパブリックに変換してください。"
+          },
+          "connectDevice" : {
+            "title" : "デバイス",
+            "validatorLabel" : "バリデータ"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "broadcastError" : "債権を送信できませんでした。",
+            "success" : {
+              "title" : "ボンドを送信しました",
+              "text" : "債権を処理中です。",
+              "cta" : "詳細を表示"
+            }
+          }
+        }
+      }
+    },
+    "manage" : {
+      "headerAction" : "報酬獲得",
+      "title" : "ステーキングの管理",
+      "comingSoonTooltip" : "近日公開",
+      "bond" : {
+        "title" : "ボンド",
+        "description" : "ALEOをバリデーターにボンドして、報酬を獲得しましょう。"
+      },
+      "unbond" : {
+        "title" : "ボンド解除",
+        "description" : "ボンド中のALEOを解除します。ボンド解除期間の経過後、資金をご利用いただけます。"
+      },
+      "claim" : {
+        "title" : "申請",
+        "description" : "ボンド解除済みのALEOを利用可能残高に戻します。"
+      },
+      "unbondPendingTooltip" : "ステーキング解除の承認待ちです。Aleoは一度に1つのボンド解除ポジションのみをチェックするため、処理が完了するまでボンド解除はご利用いただけません。"
+    },
+    "unbond" : {
+      "flow" : {
+        "title" : "ALEOのボンド解除",
+        "steps" : {
+          "amount" : {
+            "title" : "数量",
+            "unbondableBanner" : "ボンド解除可能な最大数量は",
+            "belowMinimum" : "ボンド解除によってボンド中が{{minAmount}}未満になる場合、最小ステーキングを満たさなくなるため、代わりにボンド中残高すべてがボンド解除されます。"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "ボンド解除を送信しました",
+              "text" : "ボンド解除リクエストが送信されました。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "ボンド解除のトランザクションは署名されましたが、ブロードキャストできませんでした。"
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9380,6 +9773,39 @@
       "seeWhatsNew" : "新機能をチェック",
       "next" : "次へ",
       "gotIt" : "了解"
+    }
+  },
+  "q3Tour" : {
+    "slides" : {
+      "intro" : {
+        "title" : "最新情報のクイックツアー",
+        "description" : "送金、決済、運用などの新しい方法。"
+      },
+      "contact" : {
+        "title" : "長いアドレスとはもうお別れです。",
+        "description" : "新機能の連絡先をご紹介します。ウォレットアドレスに名前を付けて保存します。見つけやすく、送信も簡単に。"
+      },
+      "contactNoPay" : {
+        "title" : "連絡先の登場",
+        "description" : "長いアドレスとはもうお別れです。ウォレットアドレスに名前を付けて保存します。見つけやすく、送信も簡単に。"
+      },
+      "pay" : {
+        "title" : "支払い機能が登場",
+        "description" : "暗号資産カードで、連絡先への支払い、お金の請求、キャッシュバックの受け取りができます。今なら、すべてを1つのタブで。"
+      },
+      "payNoCard" : {
+        "title" : "支払い機能が登場",
+        "description" : "連絡先への支払いとお金の請求が、すべて1つのタブで行えます。"
+      },
+      "yield" : {
+        "title" : "暗号資産を保有したまま、プロジェクトの資金を調達。",
+        "description" : "Yield.xyz（Powered by Morpho）を介し、Wrapped BTCを担保にしてステーブルコインを借りる。"
+      }
+    },
+    "cta" : {
+      "start" : "見てみる",
+      "next" : "次へ",
+      "done" : "最新の状態です"
     }
   },
   "productTour" : {
@@ -9511,6 +9937,16 @@
           "title" : "Ledgerデバイスの準備中"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "Ledgerデバイスの準備中"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "Ledgerデバイスの準備中"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "連絡先の追加で使用したものと同じLedgerデバイスを使用してください",
@@ -9523,13 +9959,17 @@
         "appVersionTooLow" : {
           "title" : "アプリのアップデートが必要です。",
           "description" : "連絡先を保存するには、Ledgerデバイスのアプリをアップデートして、再度お試しください。"
+        },
+        "osVersionTooLow" : {
+          "title" : "Ledger OSアップデートが必要です",
+          "description" : "連絡先の名前を変更するには、Ledgerデバイスのオペレーティングシステムを更新して、再度お試しください。"
         }
       }
     },
     "title" : "お問い合せ",
     "addContact" : "連絡先を追加",
     "addAddress" : "アドレスを追加",
-    "addExternalAddress" : "外部アドレスを追加",
+    "addYourAddress" : "アドレスを追加",
     "addAddressEntry" : {
       "title" : "アドレスを入力",
       "addressPlaceholder" : "アドレスまたはENS",
@@ -9544,7 +9984,10 @@
         "learnMore" : "詳細はこちら"
       },
       "validationUnavailable" : "アドレスの検証は一時的にご利用いただけません。",
-      "ensDisclaimer" : "このENS名は、上記に表示されているアドレスに解決されます。"
+      "ensDisclaimer" : "ENS名は変更される可能性があります。",
+      "ensDisclaimerDescription" : "ENS名は、時間の経過とともに異なるアドレスを指す場合があります。お客様の資金が、認証したアドレスにのみ確実に届くよう、現在は元のアドレスを保存しています。",
+      "duplicateAddress" : "このアドレスはすでに{{contactName}}に使用されています。",
+      "privacyPolicy" : "Learn more about Ledger's Privacy Policy."
     },
     "addAddressName" : {
       "inputLabel" : "アドレス名",
@@ -9561,31 +10004,29 @@
       "currencyLabel" : "通貨",
       "networkLabel" : "ネットワーク",
       "nameLabel" : "アドレス名",
-      "continue" : "アドレスを確認",
-      "successTitle" : "アドレスを保存しました",
-      "close" : "閉じる"
+      "continue" : "アドレスを確認"
     },
     "addContactDrawer" : {
       "namePlaceholder" : "連絡先名",
-      "namingDisclaimer" : "プライバシー保護のため、フルネームや姓の入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S」",
+      "namingDisclaimer" : "プライバシー保護のため、フルネームの入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S.」",
       "invalidNameError" : "特殊文字は使用できません。",
       "duplicateNameError" : "この連絡先名はすでに使用されています。"
     },
-    "searchPlaceholder" : "連絡先を検索",
+    "searchPlaceholder" : "名前で検索",
     "searchNoResults" : "連絡先が見つかりません",
     "addressCount_zero" : "0件のアドレス",
     "addressCount_one" : "{{count}}件のアドレス",
     "addressCount_other" : "{{count}}件のアドレス",
     "me" : {
-      "name" : "自分"
+      "myAddresses" : "マイアドレス"
     },
     "detail" : {
       "meDisplayName" : "{{name}}（自分）",
       "ledgerWalletAddresses" : "Ledger Walletアドレス",
       "emptyState" : {
-        "meTitle" : "保存済みアドレスはありません",
+        "meTitle" : "自分のアドレスを保存",
         "contactTitle" : "{{name}}の保存済みアドレスはありません",
-        "meDescription" : "次回から名前で暗号資産を受け取れるように、ウォレットアドレスを保存してください。",
+        "meDescription" : "取引や他のウォレットで所有している外部アドレスを保存します。次回ご自身に送金する際、設定した名前がお使いのLedgerデバイスに表示されます。",
         "contactDescription" : "次回から名前で相手に送信できるように、相手のウォレットアドレスを保存してください。"
       }
     },
@@ -9627,12 +10068,6 @@
       "applyChanges" : "変更を適用",
       "invalidLabelError" : "特殊文字は使用できません。"
     },
-    "editSigner" : {
-      "title" : "デバイスで確定する",
-      "description" : "この変更を確定するには、Ledgerデバイスを接続してロック解除してください。",
-      "confirm" : "続行",
-      "cancel" : "キャンセル"
-    },
     "editSignerMismatch" : {
       "title" : "連絡先の追加で使用したものと同じLedgerデバイスを使用してください",
       "description" : "接続されたデバイスが一致しません。",
@@ -9640,13 +10075,14 @@
       "cancel" : "キャンセル"
     },
     "ledgerSyncIntroduction" : {
-      "description" : "連絡先はLedgerによってエンドツーエンドで暗号化され、デバイス間で同期されます。これをロック解除できるのはあなただけです。",
-      "activate" : "Ledger Syncをオンにする",
-      "dismiss" : "了解"
+      "title" : "連絡先を追加するには、ウォレットを同期してください",
+      "description" : "連絡先はエンドツーエンドで暗号化され、お使いのすべてのスマートフォンやコンピューターのLedger Wallet間で同期されます。",
+      "activate" : "ウォレットを同期する",
+      "dismiss" : "後で"
     },
     "featureIntroduction" : {
       "title" : "連絡先の登録機能のご紹介",
-      "primaryAction" : "今すぐチェック",
+      "primaryAction" : "今すぐ開始",
       "highlights" : {
         "saveAddresses" : {
           "title" : "任意の名前でアドレスを保存",
@@ -9657,7 +10093,7 @@
           "description" : "アドレスではなく、信頼できる名前を確認しましょう。"
         },
         "privateAcrossDevices" : {
-          "title" : "Ledger Wallet™経由で安全にチャージ",
+          "title" : "Ledgerデバイス間でプライバシーを保護",
           "description" : "Ledger Syncによりエンドツーエンドで暗号化。"
         }
       }
@@ -9934,6 +10370,26 @@
         "title" : "ICPをステーキング",
         "description" : "ICPをステーキングし、そのガバナンスに参加することで報酬を獲得します。",
         "cta" : "ICPをステーキング"
+      },
+      "confirmFollowing" : {
+        "title" : "フォローの確定",
+        "description" : "ニューロンの1つの投票力が低下しています。復元するには、フォロー設定を確認してください。",
+        "cta" : "フォローを確定"
+      },
+      "syncNeurons" : {
+        "title" : "ニューロンをリフレッシュ",
+        "description" : "ニューロンのデータが最新ではありません。更新するにはデバイスを接続してください。",
+        "cta" : "ニューロンを更新"
+      },
+      "lockNeurons" : {
+        "title" : "ディゾルブ・ディレイを増やす",
+        "description" : "ニューロンが投票を行って報酬を獲得するには、より長いディゾルブ・ディレイが必要です。",
+        "cta" : "ニューロンを管理する"
+      },
+      "addFollowees" : {
+        "title" : "報酬の獲得を始める",
+        "description" : "ご自身のニューロンが投票を行って報酬を獲得できるよう、ガバナンストピックで他のニューロンをフォローしてください。",
+        "cta" : "ニューロンを管理する"
       }
     },
     "headerManageActions" : {
@@ -9941,11 +10397,259 @@
         "title" : "ニューロンを管理する"
       }
     },
+    "duration" : {
+      "years_one" : "{{count}}年",
+      "years_other" : "{{count}}年",
+      "months_one" : "{{count}}か月",
+      "months_other" : "{{count}}か月",
+      "days_one" : "{{count}}日",
+      "days_other" : "{{count}}日間",
+      "hours_one" : "{{count}}時間",
+      "hours_other" : "{{count}}時間",
+      "minutes_one" : "{{count}}分",
+      "minutes_other" : "{{count}}分",
+      "lessThanAMinute" : "1分未満"
+    },
+    "neuronState" : {
+      "Locked" : "ロックされました",
+      "Dissolving" : "解除中",
+      "Dissolved" : "解除済み",
+      "Spawning" : "生成",
+      "Unknown" : "不明"
+    },
+    "common" : {
+      "neuronId" : "ニューロンID",
+      "stake" : "ステーキング",
+      "maturity" : "満期",
+      "dissolveDelay" : "解除遅延",
+      "state" : "都道府県",
+      "action" : "アクション",
+      "none" : "なし",
+      "disburse" : "放出",
+      "startDissolving" : "解除開始",
+      "stopDissolving" : "解除停止",
+      "enabled" : "有効",
+      "disabled" : "無効",
+      "enable" : "有効にする",
+      "disable" : "無効にする"
+    },
+    "manageNeuronFlow" : {
+      "title" : "ニューロンを管理する",
+      "device" : {
+        "title" : "デバイス"
+      },
+      "confirmation" : {
+        "title" : "確認",
+        "broadcastError" : "操作は署名されましたが、ネットワークに送信できませんでした。",
+        "backToNeurons" : "ニューロンに戻る",
+        "success" : {
+          "title" : "完了",
+          "default" : "ニューロンが更新されました。",
+          "list_neurons" : "ニューロンは最新です。",
+          "start_dissolving" : "ニューロンの解放が開始されました。",
+          "stop_dissolving" : "ニューロンの解放が停止しました。",
+          "disburse" : "ニューロンのステーキングがアカウントに払い戻されました。",
+          "set_dissolve_delay" : "ニューロンのディゾルブ・ディレイが設定されました。",
+          "increase_dissolve_delay" : "ニューロンのディゾルブ・ディレイが延長されました。",
+          "add_hot_key" : "ニューロンにホットキーが追加されました。",
+          "remove_hot_key" : "ニューロンからホットキーが削除されました。",
+          "follow" : "お客様のニューロンのフォロー設定が更新されました。",
+          "refresh_voting_power" : "ニューロンの投票力が更新されました。",
+          "stake_maturity" : "ニューロンの満期がステーキングされました。",
+          "auto_stake_maturity" : "自動満期ステーキングが更新されました。",
+          "spawn_neuron" : "満期から新しいニューロンが生成されています。",
+          "split_neuron" : "ニューロンが分割されました。",
+          "increase_stake" : "ニューロンのステーキングが増加しました。"
+        }
+      },
+      "listNeuron" : {
+        "title" : "ニューロン",
+        "empty" : "ニューロンはまだありません。ICPをステーキングして作成してください。",
+        "lastSynced" : "最終同期：{{date}}",
+        "sync" : "ニューロンを更新"
+      },
+      "manage" : {
+        "title" : "管理",
+        "neuron" : "ニューロン",
+        "hotKeyOnly" : "このニューロンのホットキーを保有しています。投票やフォローの設定はできますが、ステーキングを移動することはできません。",
+        "missingNeuron" : "このニューロンは、同期されたスナップショットに存在しません。ニューロンに戻り、同期して別のものを選択してください。",
+        "votingPower" : {
+          "title" : "投票権",
+          "tooltip" : "投票力によって、ガバナンスにおいてニューロンが持つ重みと、獲得できる報酬の量が決まります。",
+          "staked" : "ステーキング済み",
+          "increaseStake" : "ステーキングを増やす",
+          "state" : "状態",
+          "bonusValue" : "+{{percent}}％",
+          "ageBonus" : "経年ボーナス",
+          "ageBonusTooltip" : "ニューロンは経過するにつれて、最大+25％の投票力を獲得し、4年後に最大値に達します。",
+          "dissolveDelayBonus" : "ディゾルブ・ディレイボーナス：+{{percent}}",
+          "dissolveDelayBonusTooltip" : "ディゾルブ・ディレイを長くすると、最大+200％の投票力を獲得でき、2年で最大に達します。",
+          "noDissolveDelay" : "ディゾルブ・ディレイなし",
+          "setDissolveDelay" : "解放遅延の設定",
+          "increaseDissolveDelay" : "ディゾルブ・ディレイを増やす",
+          "decayStartsIn" : "投票力は{{duration}}後に減衰し始めます",
+          "decaying" : "投票力は減衰しています — {{duration}}でゼロになります",
+          "expired" : "投票パワーが失われました — フォロー設定がクリアされました",
+          "confirmFollowing" : "フォローを確定",
+          "confirmFollowingTooltip" : "少なくとも6ヶ月ごとにフォローを確認してください。そうしないと、ニューロンの投票力は徐々に失われます。"
+        },
+        "maturity" : {
+          "title" : "満期",
+          "tooltip" : "満期は、ニューロンが獲得する報酬です。ニューロンに再びステーキングするか、新しいニューロンにスポーンします。",
+          "available" : "利用可能な満期",
+          "staked" : "ステーキング済みの満期の報酬",
+          "stakedTooltip" : "満期はすでにニューロンにステーキングされています。これは投票力にカウントされ、新しいニューロンを生成することはできなくなりました。",
+          "stake" : "満期のステーキング",
+          "spawn" : "ニューロンを生成",
+          "autoStake" : "満期の自動ステーキング",
+          "autoStakeTooltip" : "有効にすると、満期は蓄積されるとニューロンに再びステーキングされます。"
+        },
+        "following" : {
+          "title" : "フォロー",
+          "tooltip" : "他のニューロンをフォローするニューロンは、そのニューロンと同様に投票するため、手動で投票することなく報酬を獲得できます。",
+          "count_one" : "{{count}}のトピック",
+          "count_other" : "{{count}}個のトピック",
+          "edit" : "ガバナンストピックでニューロンをフォローします。",
+          "follow" : "フォロー先を編集"
+        },
+        "hotKeys" : {
+          "title" : "ホットキー",
+          "tooltip" : "ホットキーは、あなたに代わって投票やフォローを設定できますが、ニューロンのステーキングを移動することはできません。",
+          "add" : "別のプリンシパルにホットキーのアクセス権を付与する",
+          "addAction" : "ホットキーを追加",
+          "remove" : "削除"
+        },
+        "advanced" : {
+          "title" : "アドバンス",
+          "split" : "このニューロンを2つに分割する",
+          "splitTooltip" : "元のニューロンと新しいニューロンの両方が、少なくとも最小ステーキング額である1 ICPを維持する必要があります。",
+          "splitAction" : "ニューロン分割"
+        }
+      },
+      "setDissolveDelay" : {
+        "title" : "解除遅延",
+        "setDescription" : "ニューロンがディゾルブするまでの期間を選択してください。{{min}}～{{max}}日。",
+        "increaseDescription" : "ニューロンのディゾルブ・ディレイを増やします。さらに最大{{remaining}}日追加して合計{{max}}日にすることができます。また、この値を引き下げることはできません。",
+        "days" : "日",
+        "resulting" : "新しいディゾルブ・ディレイ：{{duration}}",
+        "belowVotingThreshold" : "{{days}}日未満の場合、ニューロンは投票できず、報酬も獲得できません。"
+      },
+      "stakeMaturity" : {
+        "title" : "満期のステーキング",
+        "description" : "このニューロンの満期の一部を再度ステーキングして、投票権を増やします。",
+        "percentage" : "ステーキングするパーセンテージ",
+        "selected" : "ステーキングする数量"
+      },
+      "splitNeuron" : {
+        "title" : "ニューロン分割",
+        "description" : "このニューロンのステーキングの一部を新しいニューロンに移動します。新しいニューロンは、ディゾルブ・ディレイやエイジボーナスなしで開始されます。",
+        "amount" : "分割する数量",
+        "range" : "許容範囲："
+      },
+      "addHotKey" : {
+        "title" : "ホットキーを追加",
+        "description" : "別のプリンシパルに、このニューロンでの投票およびフォローの設定を行う権限を付与します。ステーキングを移動することは決してできません。",
+        "principal" : "プリンシパルID",
+        "ownPrincipal" : "このアカウントのプリンシパル",
+        "ownPrincipalHint" : "異なるプリンシパルを入力してください — 通常は、NNS DAppへのサインインに使用するものです。このアカウントはすでにこのニューロンを制御しているため、自身のプリンシパルを追加しても何も付与されません。"
+      },
+      "followTopic" : {
+        "title" : "トピック",
+        "description" : "フォローを変更したいガバナンストピックを選択してください。",
+        "followeeCount_one" : "{{count}}のフォロー対象",
+        "followeeCount_other" : "{{count}}のフォロー対象"
+      },
+      "selectFollowees" : {
+        "title" : "フォロー対象",
+        "description" : "お客様のニューロンは、これらのニューロンとまったく同じように{{topic}}について投票します。",
+        "neuronId" : "フォローするニューロンID",
+        "add" : "追加",
+        "remove" : "削除",
+        "empty" : "フォロー対象がまだありません。ニューロンはこのトピックに投票しません。",
+        "clearsFollowing" : "続行すると空のリストが送信され、このニューロンは{{topic}}上の誰のフォローも停止します。現在は{{count}}をフォローしています。",
+        "notANeuronId" : "ニューロンIDは数字のみです。",
+        "outOfRange" : "有効なニューロンIDではありません。",
+        "duplicate" : "このニューロンは、すでにこのトピックのフォロー対象です。",
+        "self" : "ニューロンは自分自身をフォローすることはできません。",
+        "unadded" : "「追加」を選択してこのニューロンIDを含めるか、フィールドをクリアしてください。",
+        "atCapacity" : "トピックがフォローできるニューロンは最大{{max}}個です。別のものを追加するには、1つ削除してください。"
+      }
+    },
+    "governanceTopic" : {
+      "Unspecified" : "その他すべてのトピック",
+      "NeuronManagement" : "ニューロン管理",
+      "ExchangeRate" : "取引レート",
+      "NetworkEconomics" : "ネットワーク経済",
+      "Governance" : "ガバナンス",
+      "NodeAdmin" : "ノード管理者",
+      "ParticipantManagement" : "参加者管理",
+      "SubnetManagement" : "サブネット管理",
+      "NetworkCanisterManagement" : "アプリケーションキャニスター管理",
+      "Kyc" : "本人確認手続き",
+      "NodeProviderRewards" : "ノードプロバイダー報酬",
+      "SnsDecentralizationSale" : "SNS分散型セール",
+      "IcOsVersionDeployment" : "IC OSバージョンの展開",
+      "IcOsVersionElection" : "IC OSバージョンの決定投票",
+      "SnsAndCommunityFund" : "SNS & コミュニティ資金",
+      "ApiBoundaryNodeManagement" : "API境界ノード管理",
+      "SubnetRental" : "サブネットレンタル",
+      "ProtocolCanisterManagement" : "プロトコルキャニスター管理",
+      "ServiceNervousSystemManagement" : "サービス神経系管理"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "フォローを確定",
+      "listTitle" : "ニューロン",
+      "description" : "フォローを確定すると、ニューロンの投票力がさらに6か月間復元されます。",
+      "timeUntilLoss" : "以下で失われる投票権",
+      "losing" : "{{duration}} — 電源が切れかけています",
+      "expired" : "すでに失われています",
+      "confirm" : "確認",
+      "empty" : "現在、承認クロックが作動しているニューロンはありません。"
+    },
     "summaryFooter" : {
       "stakedBalance" : "ステーキング済み残高",
       "stakedBalanceTooltip" : "現在ニューロンにステーキングされているICPトークンの合計量。ステーキングされたICPは投票報酬を獲得し、ガバナンスに使用できます。",
       "totalMaturity" : "満期の報酬合計",
       "totalMaturityTooltip" : "ステーキングで得られた報酬の合計（ステーキングおよび流動性ステーキングの満期分を含む）。これらの報酬は、再ステーキングすることも、流動的なICPとして受け取ることもできます。"
     }
+  },
+  "perpsReview" : {
+    "depositTitle" : "SwapKit経由の入金",
+    "depositSubtitle" : "パートナーのSwapKitが、スワップとデポジットを1つのトランザクションで管理します。これらはすべて、お使いのLedgerデバイスによって安全に保護されます。",
+    "swapDetailTitle" : "スワップの詳細",
+    "amountSendLabel" : "送付数量",
+    "amountReceiveLabel" : "受取数量",
+    "approximateValue" : "～{{value}}",
+    "depositDetailTitle" : "入金の詳細",
+    "depositAmountLabel" : "入金数量",
+    "depositReceiveLabel" : "受け取るアカウント",
+    "depositCTA" : "入金"
+  },
+  "perpsDeposit" : {
+    "title" : "入金",
+    "inputDepositAmount" : "~{{value}}を入金",
+    "inputSubText" : "{{provider}}経由でスワップして入金",
+    "selectCurrencyTitle" : "{{currencyTicker}}で入金",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "アカウントがありません",
+    "review" : "確認",
+    "formErrors" : {
+      "amountExceedsBalance" : "残高不足",
+      "quoteUnavailable" : "{{provider}}から見積もりを取得できません。別の資産でお試しいただくか、しばらく経ってから再度お試しください。"
+    }
+  },
+  "perpsDepositSign" : {
+    "a11yTitle" : "入金の署名",
+    "terms" : "このトランザクションに署名することで、私は<termsLink>SwapKit by NEAR Intentsの利用規約</termsLink>に同意します。"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "取引に署名済み",
+    "description" : "ブロックチェーン上で確認され次第、{{currency}}を受け取ることができます。",
+    "viewTransaction" : "トランザクションを表示"
+  },
+  "perpsTransactionStatus" : {
+    "dialogTitle" : "トランザクションの詳細",
+    "title" : "無期限先物に資金を追加",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
   }
 }
