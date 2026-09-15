@@ -239,6 +239,14 @@ describe("energyRent provider switch", () => {
         craftEnergyRentTransaction({ ...request, maxPayCoinAmt: "12.5", maxPayCoinCode: "TRX" }),
       ).rejects.toBeInstanceOf(TronifyApiError);
     });
+
+    it("rejects a ceiling amount that carries no approved coin code", async () => {
+      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0", "USDT"));
+
+      await expect(
+        craftEnergyRentTransaction({ ...request, maxPayCoinAmt: "12.5" }),
+      ).rejects.toBeInstanceOf(TronifyApiError);
+    });
   });
 
   describe("broadcastEnergyRentTransaction", () => {
