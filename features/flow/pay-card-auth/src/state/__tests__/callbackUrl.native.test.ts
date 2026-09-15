@@ -6,6 +6,7 @@ describe("parseCallbackUrl", () => {
   it("reads the code from the redirect", () => {
     expect(parseCallbackUrl(`${REDIRECT}?code=auth-code&app_id=app-value`)).toEqual({
       code: "auth-code",
+      appId: "app-value",
     });
   });
 
@@ -13,9 +14,10 @@ describe("parseCallbackUrl", () => {
     expect(parseCallbackUrl(`${REDIRECT}?code=a%2Bb`)).toEqual({ code: "a+b" });
   });
 
-  it("ignores the parameters the provider adds beside it", () => {
+  it("ignores the parameters the provider adds beside the ones it reads", () => {
     expect(parseCallbackUrl(`${REDIRECT}?app_id=app-value&code=auth-code&scope=card`)).toEqual({
       code: "auth-code",
+      appId: "app-value",
     });
   });
 
@@ -29,11 +31,26 @@ describe("parseCallbackUrl", () => {
     ).toEqual({
       code: "auth-code",
       state: "state-value",
+      appId: "app-value",
+    });
+  });
+
+  it("carries the provider app the redirect named", () => {
+    expect(parseCallbackUrl(`${REDIRECT}?code=auth-code&app_id=ledger-us`)).toEqual({
+      code: "auth-code",
+      appId: "ledger-us",
     });
   });
 
   it.each([
-    ["is missing", `${REDIRECT}?code=auth-code&app_id=app-value`],
+    ["is missing", `${REDIRECT}?code=auth-code`],
+    ["is empty", `${REDIRECT}?code=auth-code&app_id=`],
+  ])("reads the code alone when the app id %s", (_case, url) => {
+    expect(parseCallbackUrl(url)).toEqual({ code: "auth-code" });
+  });
+
+  it.each([
+    ["is missing", `${REDIRECT}?code=auth-code`],
     ["is empty", `${REDIRECT}?code=auth-code&state=`],
   ])("reads the code alone when the state %s", (_case, url) => {
     expect(parseCallbackUrl(url)).toEqual({ code: "auth-code" });
