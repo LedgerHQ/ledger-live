@@ -3,13 +3,20 @@ import { Keyboard } from "react-native";
 import { renderHook, act } from "@testing-library/react-native";
 import { useQueuedBottomSheet } from "./useQueuedBottomSheet";
 import type { BottomSheetStateHandlers } from "../contexts/QueuedBottomSheetsContext";
+import {
+  claimBottomSheetKeyboard,
+  resetBottomSheetKeyboardOwnership,
+} from "./bottomSheetKeyboardOwnership";
 
 const mockPresent = jest.fn();
 const mockDismiss = jest.fn();
+// Lumen hands back the same ref across renders. Handing back a new one would change the identity
+// of every callback built from it, re-running the open/close effect (and its cleanup) each render.
+const mockBottomSheetRef = { current: { present: mockPresent, dismiss: mockDismiss } };
 
 jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
   __esModule: true,
-  useBottomSheetRef: () => ({ current: { present: mockPresent, dismiss: mockDismiss } }),
+  useBottomSheetRef: () => mockBottomSheetRef,
 }));
 
 const mockRemoveBottomSheetFromQueue = jest.fn();
@@ -54,6 +61,7 @@ function setupBottomSheetStateCapture() {
 describe("useQueuedBottomSheet", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetBottomSheetKeyboardOwnership();
   });
 
   afterEach(() => {
@@ -690,6 +698,36 @@ describe("useQueuedBottomSheet", () => {
     renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
 
     signalOpen();
+    signalClose();
+
+    expect(dismissKeyboard).toHaveBeenCalled();
+  });
+
+  // Closing sheets hand off to the sheet that replaces them, which has already focused its field
+  // by the time this one finishes closing.
+  it("leaves the keyboard up when another sheet raised it", () => {
+    const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
+    jest.spyOn(Keyboard, "isVisible").mockReturnValue(true);
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+
+    renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+    signalOpen();
+    claimBottomSheetKeyboard("the-sheet-taking-over");
+    signalClose();
+
+    expect(dismissKeyboard).not.toHaveBeenCalled();
+  });
+
+  it("retracts the keyboard it raised itself", () => {
+    const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
+    jest.spyOn(Keyboard, "isVisible").mockReturnValue(true);
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+
+    const { result } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+    signalOpen();
+    claimBottomSheetKeyboard(result.current.sheetId);
     signalClose();
 
     expect(dismissKeyboard).toHaveBeenCalled();
