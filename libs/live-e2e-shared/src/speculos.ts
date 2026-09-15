@@ -887,6 +887,17 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   }
 });
 
+export const confirmContactAction = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
+  await pressUntilTextFound(DeviceLabels.CONFIRM);
+
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.CONFIRM);
+  } else {
+    await buttons.both();
+  }
+});
+
 export const activateExpertMode = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
 

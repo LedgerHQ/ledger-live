@@ -1,4 +1,4 @@
-import { generateContactName } from "@ledgerhq/live-e2e-shared/contacts";
+import { CONTACT_ADDRESS_DATASET, generateContactName } from "@ledgerhq/live-e2e-shared/contacts";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
@@ -37,15 +37,29 @@ const NO_ADDRESS_LABEL = "0 address";
 async function initApp(options: ApplicationOptions = {}) {
   await verifyLedgerSyncEnvironment();
   await app.init({
+    ...options,
     userdata: options.userdata ?? CONTACTS_USERDATA,
-    speculosApp: AppInfos.LS,
+    speculosApp: options.speculosApp ?? AppInfos.LS,
     featureFlags: { ...CONTACTS_FEATURE_FLAGS, ...options.featureFlags },
-    cliCommands: [
+    cliCommands: options.cliCommands ?? [
       ...app.ledgerSync.initializeEmptyTrustchain(),
       userdataPath => app.ledgerSync.saveTrustchainToUserdata(userdataPath),
     ],
   });
   await app.mainNavigation.waitForWallet40Ready();
+}
+
+async function initAppWithContactDevice() {
+  const trustchainCommands = [
+    ...app.ledgerSync.initializeEmptyTrustchain(),
+    (userdataPath?: string) => app.ledgerSync.saveTrustchainToUserdata(userdataPath),
+  ];
+
+  await initApp({
+    speculosApp: AppInfos.ETHEREUM,
+    cliCommands: [],
+    cliCommandsOnApp: trustchainCommands.map(cmd => ({ app: AppInfos.LS, cmd })),
+  });
 }
 
 /**
@@ -93,6 +107,63 @@ export function runCreateRenameDeleteContactTest(tmsLinks: string[], tags: strin
 
       await app.contacts.deleteContact(contactRowId);
 
+      await app.contacts.expectScreenVisible();
+      await app.contacts.expectSavedContactRemoved(contactRowId);
+      await app.contacts.expectEmptyState();
+    });
+  });
+}
+
+export function runCreateRenameDeleteContactWithAddressesTest(tmsLinks: string[], tags: string[]) {
+  describeIfNotNanoS("Contacts", () => {
+    setupLedgerSyncSeed();
+    cleanupLedgerSyncAfterAll();
+
+    beforeAll(async () => {
+      await initAppWithContactDevice();
+    });
+
+    setTeamOwner(Team.WALLET_XP);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+
+    it("Create, rename and delete a contact with addresses", async () => {
+      await app.mainNavigation.openMyWallet();
+      await app.myWallet.openContacts();
+      await app.contacts.addContact(CONTACT_NAME);
+      await app.contacts.expectSavedContactDisplayed(CONTACT_NAME);
+
+      const contactRowId = await app.contacts.getSavedContactRowId(CONTACT_NAME);
+      await app.contacts.openSavedContact(contactRowId);
+
+      for (const [index, addressData] of CONTACT_ADDRESS_DATASET.entries()) {
+        await app.contacts.detail.addAddress(addressData);
+        await app.speculos.confirmContactAction();
+        await app.contacts.detail.expectAddressSaved(addressData.savedValue, addressData.networkId);
+        await app.contacts.detail.expectAddressLabel(
+          addressData.savedValue,
+          addressData.addressLabel,
+        );
+        await app.contacts.detail.expectAddressCount(
+          `${index + 1} ${index === 0 ? "address" : "addresses"}`,
+        );
+      }
+
+      await app.contacts.detail.renameContact(RENAMED_CONTACT_NAME);
+      await app.contacts.detail.expectRenameDeviceConfirmation();
+      await app.speculos.confirmContactAction();
+      await app.contacts.detail.expectName(RENAMED_CONTACT_NAME);
+
+      const [addressToDelete] = CONTACT_ADDRESS_DATASET;
+      await app.contacts.detail.deleteAddress(addressToDelete.savedValue);
+      await app.contacts.detail.expectAddressCount("3 addresses");
+
+      await app.common.goToPreviousPage();
+      await app.contacts.expectScreenVisible();
+      await app.contacts.expectSavedContactRowName(contactRowId, RENAMED_CONTACT_NAME);
+      await app.contacts.expectSavedContactAddressCount(RENAMED_CONTACT_NAME, "3 addresses");
+
+      await app.contacts.deleteContact(contactRowId);
       await app.contacts.expectScreenVisible();
       await app.contacts.expectSavedContactRemoved(contactRowId);
       await app.contacts.expectEmptyState();
