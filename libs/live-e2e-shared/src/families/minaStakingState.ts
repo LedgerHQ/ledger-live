@@ -11,7 +11,7 @@ const { API_MINA_GRAPHQL_NODE, API_VALIDATORS_BASE_URL } = (
 ).infra;
 
 const DELEGATE_ACCOUNT_QUERY = `
-  query GetDelegateAccount($publicKey: String!) {
+  query GetDelegateAccount($publicKey: PublicKey!) {
     account(publicKey: $publicKey) {
       delegateAccount {
         publicKey
@@ -33,8 +33,10 @@ const PENDING_COMMANDS_QUERY = `
   }
 `;
 
-// The node answers the queries below in about 150 ms. A request still outstanding after this is a
-// hung socket, which without a timeout would hold the flow until the test runner kills it.
+// Not a latency budget — the node answers the queries below in about 150 ms. It bounds a socket
+// that stopped answering, which without it would hold the flow until the test runner kills it. The
+// value is the one the coin module allows this node (MINA_VALIDATORS_TIMEOUT), far enough above the
+// answer time that a load spike costs a slow read rather than a failed one.
 const MINA_NODE_TIMEOUT_MS = 30 * 1000;
 
 // The query the app builds its validator list from, so a validator picked here is one it offers.
