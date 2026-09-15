@@ -24,3 +24,12 @@ export const forgetAttempt = assignContext({
 export const clearErrorKind = assignContext({ errorKind: null });
 
 export const failPkce = assignContext({ errorKind: "pkce_failed" });
+
+/**
+ * Records the provider app the redirect named, before the token exchange leaves. The exchange is the
+ * first request that has to reach the holder's own tenant, and the redirect in hand is the only
+ * place that names it.
+ */
+export const publishProviderAppId = ({ context }: { context: CardLoginContext }) => {
+  context.ports.setProviderAppId(context.callback?.appId ?? null);
+};
