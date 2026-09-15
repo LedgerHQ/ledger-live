@@ -74,7 +74,7 @@
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "chalk": "^4.1.2",

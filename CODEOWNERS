@@ -60,7 +60,6 @@ apps/ledger-live-mobile/ios/                             @ledgerhq/platform
 # Platform — libs
 libs/**/logs/                                            @ledgerhq/platform
 libs/**/types-live/                                      @ledgerhq/platform
-libs/env/                                                @ledgerhq/platform
 libs/identities/                                         @ledgerhq/platform
 libs/ledger-key-ring-protocol/                           @ledgerhq/platform
 libs/hw-ledger-key-ring-protocol/                        @ledgerhq/platform
@@ -86,7 +85,6 @@ support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
 libs/live-countervalues/                                 @ledgerhq/wallet-xp
-libs/live-currency-format/                               @ledgerhq/wallet-xp
 libs/live-hooks/                                         @ledgerhq/wallet-xp
 libs/live-send/                                          @ledgerhq/wallet-xp
 libs/ui/                                                 @ledgerhq/wallet-xp
@@ -181,8 +179,6 @@ apps/ledger-live-mobile/src/components/DelegationDrawer.tsx         @ledgerhq/co
 apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
 libs/coin-*/                                                        @ledgerhq/coin-integration
 libs/ledger-wallet-framework/                                       @ledgerhq/coin-integration
-libs/domain-service/                                                @ledgerhq/coin-integration
-libs/evm-tools/                                                     @ledgerhq/coin-integration
 libs/ledger-live-common/src/bot/                                    @ledgerhq/coin-integration
 libs/ledger-live-common/src/bridge/                                 @ledgerhq/coin-integration
 libs/ledger-live-common/src/coin-modules/                           @ledgerhq/coin-integration
@@ -228,7 +224,6 @@ features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-bolos/                         @ledgerhq/coin-integration
-libs/live-config/                                        @ledgerhq/coin-integration
 libs/ethereum-provider/                                  @ledgerhq/coin-integration
 libs/wallet-btc/                                         @ledgerhq/coin-integration
 libs/wallet-framework-test-setup/                        @ledgerhq/coin-integration
@@ -645,7 +640,6 @@ apps/ledger-live-desktop/src/datadog/                 @ledgerhq/platform
 libs/ledger-live-common/src/featureFlags/defaultFeatures.ts
 libs/types-live/src/feature.ts
 libs/ledger-live-common/src/modularDrawer/hooks/useCurrenciesUnderFeatureFlag.ts
-libs/env/src/env.ts
 libs/ledger-live-common/src/__fixtures__/
 libs/ledger-live-common/src/__tests__/
 libs/**/errors/

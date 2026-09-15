@@ -111,9 +111,24 @@ catalogs:
     '@ledgerhq/dmk-ledger-wallet':
       specifier: 0.5.0
       version: 0.5.0
+    '@ledgerhq/domain-service':
+      specifier: 1.8.18
+      version: 1.8.18
+    '@ledgerhq/evm-tools':
+      specifier: 1.14.3
+      version: 1.14.3
     '@ledgerhq/hw-transport-mocker':
       specifier: 6.35.0
       version: 6.35.0
+    '@ledgerhq/live-config':
+      specifier: 3.8.0
+      version: 3.8.0
+    '@ledgerhq/live-currency-format':
+      specifier: 0.15.0
+      version: 0.15.0
+    '@ledgerhq/live-env':
+      specifier: 4.0.0
+      version: 4.0.0
     '@ledgerhq/live-network':
       specifier: 3.1.0
       version: 3.1.0
@@ -748,11 +763,11 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../libs/live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-currency-format':
-        specifier: workspace:^
-        version: link:../../libs/live-currency-format
+        specifier: 'catalog:'
+        version: 0.15.0
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../../libs/live-dmk-speculos
@@ -1087,8 +1102,8 @@ importers:
         specifier: 8.18.0
         version: 8.18.0
       '@ledgerhq/domain-service':
-        specifier: workspace:^
-        version: link:../../libs/domain-service
+        specifier: 'catalog:'
+        version: 1.8.18
       '@ledgerhq/ethereum-provider':
         specifier: workspace:^
         version: link:../../libs/ethereum-provider
@@ -1111,8 +1126,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../libs/live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-countervalues':
         specifier: workspace:^
         version: link:../../libs/live-countervalues
@@ -1120,8 +1135,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/live-countervalues-react
       '@ledgerhq/live-currency-format':
-        specifier: workspace:^
-        version: link:../../libs/live-currency-format
+        specifier: 'catalog:'
+        version: 0.15.0
       '@ledgerhq/live-dmk-desktop':
         specifier: workspace:^
         version: link:../../libs/live-dmk-desktop
@@ -1932,8 +1947,8 @@ importers:
         specifier: 8.18.0
         version: 8.18.0
       '@ledgerhq/domain-service':
-        specifier: workspace:^
-        version: link:../../libs/domain-service
+        specifier: 'catalog:'
+        version: 1.8.18
       '@ledgerhq/ethereum-provider':
         specifier: workspace:^
         version: link:../../libs/ethereum-provider
@@ -1956,8 +1971,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../libs/live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-countervalues':
         specifier: workspace:^
         version: link:../../libs/live-countervalues
@@ -1965,8 +1980,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/live-countervalues-react
       '@ledgerhq/live-currency-format':
-        specifier: workspace:^
-        version: link:../../libs/live-currency-format
+        specifier: 'catalog:'
+        version: 0.15.0
       '@ledgerhq/live-dmk-mobile':
         specifier: workspace:^
         version: link:../../libs/live-dmk-mobile
@@ -2713,8 +2728,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../libs/live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../../libs/live-dmk-shared
@@ -2905,8 +2920,8 @@ importers:
         specifier: 'catalog:'
         version: 1.2.4(@ledgerhq/device-management-kit@1.9.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(rxjs@7.8.2)
       '@ledgerhq/domain-service':
-        specifier: workspace:^
-        version: link:../../libs/domain-service
+        specifier: 'catalog:'
+        version: 1.8.18
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-eth
@@ -2923,8 +2938,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../libs/live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-countervalues':
         specifier: workspace:^
         version: link:../../libs/live-countervalues
@@ -3085,6 +3100,9 @@ importers:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
+      '@ledgerhq/live-env':
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -8642,8 +8660,8 @@ importers:
         specifier: workspace:^
         version: link:../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -8712,8 +8730,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -8785,8 +8803,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -8870,8 +8888,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -8958,8 +8976,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -9112,8 +9130,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -9191,8 +9209,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -9367,11 +9385,11 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -9470,8 +9488,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -9567,11 +9585,11 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -9661,8 +9679,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -9752,8 +9770,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -9834,8 +9852,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -10001,8 +10019,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -10189,8 +10207,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -10265,8 +10283,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -10532,8 +10550,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -10635,8 +10653,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -10738,8 +10756,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -10829,8 +10847,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -11069,8 +11087,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-signer-zcash':
         specifier: workspace:^
         version: link:../../live-signer-zcash
@@ -11206,8 +11224,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -11291,8 +11309,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -11364,8 +11382,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -11449,8 +11467,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -11516,8 +11534,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -11598,8 +11616,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -11674,8 +11692,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -11744,8 +11762,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -11881,8 +11899,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -11957,8 +11975,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -12027,8 +12045,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -12109,8 +12127,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -12191,8 +12209,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -12270,8 +12288,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -12337,8 +12355,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -12416,11 +12434,11 @@ importers:
         specifier: workspace:^
         version: link:../../ledger-live-common
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -12737,94 +12755,6 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
-  libs/domain-service:
-    dependencies:
-      '@ledgerhq/logs':
-        specifier: 'catalog:'
-        version: 6.19.0
-      '@ledgerhq/types-live':
-        specifier: workspace:^
-        version: link:../types-live
-      axios:
-        specifier: 'catalog:'
-        version: 1.13.5
-      eip55:
-        specifier: ^2.1.1
-        version: 2.1.1
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
-      react-dom:
-        specifier: 19.1.4
-        version: 19.1.4(react@19.1.4)
-    devDependencies:
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../support/test-quarantine
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@testing-library/dom':
-        specifier: 'catalog:'
-        version: 10.4.1
-      '@testing-library/jest-dom':
-        specifier: 'catalog:'
-        version: 6.9.1
-      '@testing-library/react':
-        specifier: 'catalog:'
-        version: 16.3.1(@testing-library/dom@10.4.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.0(@types/node@24.12.0)
-      jest-environment-jsdom:
-        specifier: 'catalog:'
-        version: 30.5.0
-      oxfmt:
-        specifier: 'catalog:'
-        version: 0.67.0
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.82.0
-      react-test-renderer:
-        specifier: 'catalog:'
-        version: 19.1.4(react@19.1.4)
-
-  libs/env:
-    devDependencies:
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../support/test-quarantine
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.0
-      oxfmt:
-        specifier: 'catalog:'
-        version: 0.67.0
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.82.0
-
   libs/ethereum-provider:
     dependencies:
       events:
@@ -12873,49 +12803,6 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.82.0
-
-  libs/evm-tools:
-    dependencies:
-      '@ethersproject/constants':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/hash':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
-      axios:
-        specifier: 'catalog:'
-        version: 1.13.5
-      crypto-js:
-        specifier: 4.2.0
-        version: 4.2.0
-    devDependencies:
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../support/test-quarantine
-      '@ledgerhq/types-live':
-        specifier: workspace:^
-        version: link:../types-live
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/crypto-js':
-        specifier: ^4.1.1
-        version: 4.2.2
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.0(@types/node@24.12.0)
 
   libs/exchange-module:
     dependencies:
@@ -13312,11 +13199,11 @@ importers:
         specifier: 8.18.0
         version: 8.18.0
       '@ledgerhq/domain-service':
-        specifier: workspace:^
-        version: link:../domain-service
+        specifier: 'catalog:'
+        version: 1.8.18
       '@ledgerhq/evm-tools':
-        specifier: workspace:^
-        version: link:../evm-tools
+        specifier: 'catalog:'
+        version: 1.14.3
       '@ledgerhq/hw-app-algorand':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-algorand
@@ -13390,8 +13277,8 @@ importers:
         specifier: ^0.8.1
         version: 0.8.2
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-countervalues':
         specifier: workspace:^
         version: link:../live-countervalues
@@ -13399,14 +13286,14 @@ importers:
         specifier: workspace:^
         version: link:../live-countervalues-react
       '@ledgerhq/live-currency-format':
-        specifier: workspace:^
-        version: link:../live-currency-format
+        specifier: 'catalog:'
+        version: 0.15.0
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-hooks':
         specifier: workspace:*
         version: link:../live-hooks
@@ -13910,14 +13797,14 @@ importers:
         specifier: 6.36.0
         version: 6.36.0
       '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../live-config
+        specifier: 'catalog:'
+        version: 3.8.0
       '@ledgerhq/live-currency-format':
-        specifier: workspace:^
-        version: link:../live-currency-format
+        specifier: 'catalog:'
+        version: 0.15.0
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -14389,11 +14276,11 @@ importers:
         specifier: ^5.7.0
         version: 5.7.0
       '@ledgerhq/domain-service':
-        specifier: workspace:^
-        version: link:../../../domain-service
+        specifier: 'catalog:'
+        version: 1.8.18
       '@ledgerhq/evm-tools':
-        specifier: workspace:^
-        version: link:../../../evm-tools
+        specifier: 'catalog:'
+        version: 1.14.3
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
@@ -14452,6 +14339,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -15219,51 +15109,14 @@ importers:
         specifier: ^10.4.0
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
-  libs/live-config:
-    dependencies:
-      lodash:
-        specifier: 'catalog:'
-        version: 4.17.21
-    devDependencies:
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../support/test-quarantine
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.0(@types/node@24.12.0)
-      jest-environment-jsdom:
-        specifier: 'catalog:'
-        version: 30.5.0
-      oxfmt:
-        specifier: 'catalog:'
-        version: 0.67.0
-      semver:
-        specifier: 'catalog:'
-        version: 7.7.3
-
   libs/live-countervalues:
     dependencies:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:*
-        version: link:../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
@@ -15356,34 +15209,6 @@ importers:
       react-dom:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
-
-  libs/live-currency-format:
-    dependencies:
-      bignumber.js:
-        specifier: 9.1.2
-        version: 9.1.2
-    devDependencies:
-      '@domain/entity-currency-crypto':
-        specifier: workspace:*
-        version: link:../../domain/entity/currency-crypto
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../support/test-quarantine
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.0(@types/node@24.12.0)
 
   libs/live-dmk-desktop:
     dependencies:
@@ -16184,8 +16009,8 @@ importers:
         specifier: workspace:^
         version: link:../live-dmk-shared
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
+        specifier: 'catalog:'
+        version: 4.0.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -16352,8 +16177,8 @@ importers:
         specifier: workspace:^
         version: link:../ledger-wallet-framework
       '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
+        specifier: 'catalog:'
+        version: 4.0.0
       '@types/bs58':
         specifier: 'catalog:'
         version: 4.0.4
@@ -16616,8 +16441,8 @@ importers:
   libs/transaction-observability:
     dependencies:
       '@ledgerhq/evm-tools':
-        specifier: workspace:^
-        version: link:../evm-tools
+        specifier: 'catalog:'
+        version: 1.14.3
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -17684,8 +17509,8 @@ importers:
   shared/env:
     dependencies:
       '@ledgerhq/live-env':
-        specifier: workspace:*
-        version: link:../../libs/env
+        specifier: 'catalog:'
+        version: 4.0.0
     devDependencies:
       '@jest/globals':
         specifier: 'catalog:'
@@ -21082,9 +20907,6 @@ packages:
   '@ethersproject/abstract-provider@5.8.0':
     resolution: {integrity: sha512-wC9SFcmh4UK0oKuLJQItoQdzS/qZ51EJegK6EmAWlh+OptpQ/npECOR3QqECd8iGHC0RJb4WKbVdSfif4ammrg==}
 
-  '@ethersproject/abstract-signer@5.7.0':
-    resolution: {integrity: sha512-a16V8bq1/Cz+TGCkE2OPMTOUDLS3grCpdjoJCYNnVBbdYEMSgKrU0+B90s8b6H+ByYTBZN7a3g76jdIJi7UfKQ==}
-
   '@ethersproject/abstract-signer@5.8.0':
     resolution: {integrity: sha512-N0XhZTswXcmIZQdYtUnd79VJzvEwXQw6PK0dTl9VoYrEBxxCPXqS0Eod7q5TNKRxe1/5WUMuR0u0nqTF/avdCA==}
 
@@ -21093,9 +20915,6 @@ packages:
 
   '@ethersproject/address@5.8.0':
     resolution: {integrity: sha512-GhH/abcC46LJwshoN+uBNoKVFPxUuZm6dA257z0vZkKmU1+t8xTn8oK7B9qrj8W2rFRMch4gbJl6PmVxjxBEBA==}
-
-  '@ethersproject/base64@5.7.0':
-    resolution: {integrity: sha512-Dr8tcHt2mEbsZr/mwTPIQAf3Ai0Bks/7gTw9dSqk1mQvhW3XvRlmDJr/4n+wg1JmCl16NZue17CDh8xb/vZ0sQ==}
 
   '@ethersproject/base64@5.8.0':
     resolution: {integrity: sha512-lN0oIwfkYj9LbPx4xEkie6rAMJtySbpOAFXSDVQaBnAzYfB4X2Qr+FXJGxMoc3Bxp2Sm8OwvzMrywxyw0gLjIQ==}
@@ -21123,9 +20942,6 @@ packages:
 
   '@ethersproject/hash@5.8.0':
     resolution: {integrity: sha512-ac/lBcTbEWW/VGJij0CNSw/wPcw9bSRgCB0AIBz8CvED/jfvDoV9hsIIiWfvWmFEi8RcXtlNwp2jv6ozWOsooA==}
-
-  '@ethersproject/keccak256@5.7.0':
-    resolution: {integrity: sha512-2UcPboeL/iW+pSg6vZ6ydF8tCnv3Iu/8tUmLLzWWGzxWKFFqOBQFLo6uLUv6BDrLgCDfN28RJ/wtByx+jZ4KBg==}
 
   '@ethersproject/keccak256@5.8.0':
     resolution: {integrity: sha512-A1pkKLZSz8pDaQ1ftutZoaN46I6+jvuqugx5KYNeQOPqq+JZ0Txm7dlWesCHB5cndJSu5vP2VKptKf7cksERng==}
@@ -22599,11 +22415,17 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.8.0
 
+  '@ledgerhq/domain-service@1.8.18':
+    resolution: {integrity: sha512-lJ+r7+hjH1C9uRq5Fkr7lMKY+z4o1kl2Huv4Su6iCasCmoWM0VDiyxhHV8Wm/4+qtlJbQkJw2gTjp0fTC8ekvA==}
+
   '@ledgerhq/errors@5.50.0':
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
 
   '@ledgerhq/errors@6.37.0':
     resolution: {integrity: sha512-T5yiKI5UX7ugeocdTF3TUsCIN2BH41Bio4ZeN410YFjFOf3es08n/5JyMzzKwzRgP0blG3HfBf7s7vJKqCSAeg==}
+
+  '@ledgerhq/evm-tools@1.14.3':
+    resolution: {integrity: sha512-pA18WpvtpM/MESCz4Tyg/8MD8kybZJyvYxtqK8lxvUcq6CHY+nxVb/D85URWGFmKkXQ3xmzRsR2bRdPsiwzEsg==}
 
   '@ledgerhq/hw-bolos@6.35.1':
     resolution: {integrity: sha512-+osQFmZAKv1JOMZPiYU3G8wgW/JqxA0HCe/Y/O+b72TyH0SOyiXybdyIc1//We6AUyrJ2CiG8cev3vPYfjsjwQ==}
@@ -22636,8 +22458,17 @@ packages:
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
+  '@ledgerhq/live-config@3.8.0':
+    resolution: {integrity: sha512-2cgFxVY+Mf2C2OyS6Jh+LxQyM0LIWWm4neZGP06i4cY4FPJC2KtiHBh9OATKPsd0u9bA0L9xA5tszyoY3LAQ6g==}
+
+  '@ledgerhq/live-currency-format@0.15.0':
+    resolution: {integrity: sha512-fpdZu2RQMFXGm6h5lmSzMB724L6MV2/NkRgPf8qzVwoHhNyqauD8P6/0HkR12YOCQvhZcNvmqMAaMNTCQWmnWg==}
+
   '@ledgerhq/live-env@2.31.0':
     resolution: {integrity: sha512-Hl5ldGa7lT7bKkNHruFepKhEWvb0hvjvQ1cXBbR7yp9I7EPceDXQt/uySOyaY41caWX0x27TUQIz3PVEv67HJA==}
+
+  '@ledgerhq/live-env@4.0.0':
+    resolution: {integrity: sha512-H4U9UcaKp1+rg1CqQfzy430pxhSGlRE6B+kj4oMd0YYepvqTzOzb1eT+Nr9TLN3o4ZIK6yTy9baco6O6McJAiQ==}
 
   '@ledgerhq/live-network@2.4.3':
     resolution: {integrity: sha512-o55Mas7QvjqlwFVX5CL8DVl199i8gTn6j9Ljj+2nPetrsKtIrf2mz6leiUAgB5opWU4VyZpxKn65hXv5VD0b0Q==}
@@ -22728,6 +22559,9 @@ packages:
     resolution: {integrity: sha512-FCOGVs28pTxYEom+Yr8skQ1QUyj1+sC0YDvE+Xk+DfXQx8FMRI1l41x+XT8ZGPNUh8kRTd0hsZc2lqVpxD6a8w==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.5.1
+
+  '@ledgerhq/types-live@6.123.0':
+    resolution: {integrity: sha512-XPP0t2ZZLbnA6PPP8+e97hPEZ0cxE0F7G2VqgRJD9ezrwBl1uovCrbysMg5o3RjFQqqQSQ/+l/sBZaxg6/DdZA==}
 
   '@ledgerhq/wallet-api-client-react@1.4.34':
     resolution: {integrity: sha512-u8boV3JGPwYjUax+KMGSL0wyI1St2nJCJKphAyc1hLyaeUajF2Dgu702vdftee619YPUkOpd7jxq/imgTAzaZQ==}
@@ -27208,9 +27042,6 @@ packages:
   '@types/create-hmac@1.1.3':
     resolution: {integrity: sha512-oDDSoBrAfdEPQuBpQp14y/ygUVU1IC6gq8Arm8IPP8TRC11AnLLYmpE3VvNUhPK/Ax3USGDjdE1Sc1LCIpf0NQ==}
 
-  '@types/crypto-js@4.2.2':
-    resolution: {integrity: sha512-sDOLlVbHhXpAUAL0YHDUUwDZf3iN4Bwi4W6a0W0b+QcAezUbRtH4FVb+9J4h+XFPW7l/gQ9F8qC7P+Ec4k8QVQ==}
-
   '@types/d3-array@3.2.2':
     resolution: {integrity: sha512-hOLWVbm7uRza0BYXpIIW5pxfrKe0W+D5lrFiAEYR+pb6w3N2SwSMaJbXdUfSEv+dT4MfHBLtn5js0LAWaO6otw==}
 
@@ -30479,7 +30310,6 @@ packages:
 
   crypto-js@4.2.0:
     resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
-    deprecated: Active development of CryptoJS has been discontinued. This library is no longer maintained.
 
   css-blank-pseudo@3.0.3:
     resolution: {integrity: sha512-VS90XWtsHGqoM0t4KpH053c4ehxZ2E6HtGI7x68YFV0pTo/QmkV/YFA+NnlvK8guxZVNWGQhVNJGC39Q8XF4OQ==}
@@ -45343,14 +45173,6 @@ snapshots:
       '@ethersproject/transactions': 5.8.0
       '@ethersproject/web': 5.8.0
 
-  '@ethersproject/abstract-signer@5.7.0':
-    dependencies:
-      '@ethersproject/abstract-provider': 5.8.0
-      '@ethersproject/bignumber': 5.8.0
-      '@ethersproject/bytes': 5.8.0
-      '@ethersproject/logger': 5.8.0
-      '@ethersproject/properties': 5.8.0
-
   '@ethersproject/abstract-signer@5.8.0':
     dependencies:
       '@ethersproject/abstract-provider': 5.8.0
@@ -45374,10 +45196,6 @@ snapshots:
       '@ethersproject/keccak256': 5.8.0
       '@ethersproject/logger': 5.8.0
       '@ethersproject/rlp': 5.8.0
-
-  '@ethersproject/base64@5.7.0':
-    dependencies:
-      '@ethersproject/bytes': 5.8.0
 
   '@ethersproject/base64@5.8.0':
     dependencies:
@@ -45413,15 +45231,15 @@ snapshots:
 
   '@ethersproject/hash@5.7.0':
     dependencies:
-      '@ethersproject/abstract-signer': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/base64': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/keccak256': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/strings': 5.7.0
+      '@ethersproject/abstract-signer': 5.8.0
+      '@ethersproject/address': 5.8.0
+      '@ethersproject/base64': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/keccak256': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/strings': 5.8.0
 
   '@ethersproject/hash@5.8.0':
     dependencies:
@@ -45434,11 +45252,6 @@ snapshots:
       '@ethersproject/logger': 5.8.0
       '@ethersproject/properties': 5.8.0
       '@ethersproject/strings': 5.8.0
-
-  '@ethersproject/keccak256@5.7.0':
-    dependencies:
-      '@ethersproject/bytes': 5.8.0
-      js-sha3: 0.8.0
 
   '@ethersproject/keccak256@5.8.0':
     dependencies:
@@ -48164,9 +47977,26 @@ snapshots:
       semver: 7.7.2
       xstate: 5.19.2
 
+  '@ledgerhq/domain-service@1.8.18':
+    dependencies:
+      '@ledgerhq/logs': 6.19.0
+      '@ledgerhq/types-live': 6.123.0
+      axios: 1.13.5
+      eip55: 2.1.1
+      react: 19.1.4
+      react-dom: 19.1.4(react@19.1.4)
+
   '@ledgerhq/errors@5.50.0': {}
 
   '@ledgerhq/errors@6.37.0': {}
+
+  '@ledgerhq/evm-tools@1.14.3':
+    dependencies:
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/hash': 5.8.0
+      '@ledgerhq/live-env': 4.0.0
+      axios: 1.13.5
+      crypto-js: 4.2.0
 
   '@ledgerhq/hw-bolos@6.35.1':
     dependencies:
@@ -48211,10 +48041,20 @@ snapshots:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
 
+  '@ledgerhq/live-config@3.8.0':
+    dependencies:
+      lodash: 4.17.21
+
+  '@ledgerhq/live-currency-format@0.15.0':
+    dependencies:
+      bignumber.js: 9.1.2
+
   '@ledgerhq/live-env@2.31.0':
     dependencies:
       rxjs: 7.8.2
       utility-types: 3.11.0
+
+  '@ledgerhq/live-env@4.0.0': {}
 
   '@ledgerhq/live-network@2.4.3':
     dependencies:
@@ -48723,6 +48563,11 @@ snapshots:
     dependencies:
       '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
+
+  '@ledgerhq/types-live@6.123.0':
+    dependencies:
+      bignumber.js: 9.1.2
+      rxjs: 7.8.2
 
   '@ledgerhq/wallet-api-client-react@1.4.34(@ton/crypto@3.3.0)(react@19.1.4)':
     dependencies:
@@ -54951,8 +54796,6 @@ snapshots:
   '@types/create-hmac@1.1.3':
     dependencies:
       '@types/node': 24.12.0
-
-  '@types/crypto-js@4.2.2': {}
 
   '@types/d3-array@3.2.2': {}
 
