@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "catalog:",
-    "@noble/hashes": "1.8.0",
+    "@noble/hashes": "catalog:",
     "bip32-path": "^0.4.2"
   },
   "devDependencies": {

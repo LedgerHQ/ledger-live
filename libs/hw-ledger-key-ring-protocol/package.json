@@ -21,7 +21,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "catalog:",
     "bip32": "^4.0.0",
-    "@noble/curves": "^1.9.7",
+    "@noble/curves": "catalog:",
     "create-hmac": "^1.1.7"
   },
   "devDependencies": {
@@ -32,7 +32,6 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "@types/secp256k1": "^4.0.6",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:"
   },
