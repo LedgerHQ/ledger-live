@@ -107,6 +107,11 @@ const teamCoinIntegration = {
     def: "https://earn.api.live.ledger.com/figment/solana/validators_summary",
     desc: "base url for validators.app validator summary",
   },
+  EARN_API_BASE_URL: {
+    parser: stringParser,
+    def: "https://earn.api.live.ledger.com",
+    desc: "base url for the Earn API",
+  },
   SOLANA_TESTNET_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
     def: "https://validators-solana.coin.ledger.com/api/v1/validators",

@@ -34,6 +34,8 @@ const STAKING_LIVE_APPS: Record<string, StakingMethod | undefined> = {
   "kiln-staking": undefined,
 };
 
+const STAKE_PROGRAM_APPS = new Set(["kiln-widget", "stakekit"]);
+
 // Own keys only. `in` and a bare index also answer for `toString` and `constructor`, which
 // would open the gate for a manifest of that name and report a function as the method.
 function entry(manifestId: string | undefined): StakingMethod | undefined | null {
@@ -46,6 +48,13 @@ function entry(manifestId: string | undefined): StakingMethod | undefined | null
 /** Whether a manifest's transactions belong in the earn funnel. */
 export function isStakingApp(manifestId: string | undefined): boolean {
   return entry(manifestId) !== null;
+}
+
+/** Whether a manifest belongs to either an Earn provider or a stakePrograms redirect. */
+export function isEarnMonitoringApp(manifestId: string | undefined): boolean {
+  return (
+    isStakingApp(manifestId) || (manifestId !== undefined && STAKE_PROGRAM_APPS.has(manifestId))
+  );
 }
 
 /** How the app stakes, when its manifest alone is enough to say. */

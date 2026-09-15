@@ -4,6 +4,7 @@
 import { Observable, Subject } from "rxjs";
 import { renderHook, act } from "@testing-library/react";
 import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
+import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 
 // The device-connection half is a whole state machine of its own; this test only cares that
 // the sign prompt appeared, so it is pinned to "device ready". The state object is a single
@@ -15,11 +16,18 @@ const READY = {
   inWrongDeviceForAccount: null,
   error: null,
 };
-const DEVICE_GONE = { ...READY, opened: false };
+type AppStateFixture = Omit<typeof READY, "inWrongDeviceForAccount"> & {
+  inWrongDeviceForAccount: { accountName: string } | null;
+};
+const DEVICE_GONE: AppStateFixture = { ...READY, opened: false };
+const WRONG_DEVICE: AppStateFixture = {
+  ...READY,
+  inWrongDeviceForAccount: { accountName: "Staking account" },
+};
 // Mutable so a test can take the device away mid-flow. Held as one object per state rather than
 // rebuilt per render: `device` is a dependency of the signing effect, so a fresh object each
 // render would resubscribe every render and drop events.
-const appState = { current: READY as typeof READY };
+const appState = { current: READY as AppStateFixture };
 
 jest.mock("./app", () => ({
   createAction: () => ({ useHook: () => appState.current, mapResult: () => null }),
@@ -88,6 +96,7 @@ describe("transaction device action — sign-prompt abandonment", () => {
       status: "failure",
       stage: TransactionStage.Sign,
       errorCategory: ErrorCategory.UserModalDismissed,
+      abandoned: true,
       earnTransactionType: "delegate",
       validators: ["pool1"],
     });
@@ -151,10 +160,7 @@ describe("transaction device action — sign-prompt abandonment", () => {
     });
   });
 
-  // A device unplugged after the prompt appeared is not the user declining. Reporting it as
-  // user_modal_dismissed would put a device failure in the wrong bucket, and the bridge seam
-  // already reports the transport error itself.
-  it("does not report a dismissal when the device became unavailable", async () => {
+  it("classifies an interrupted started attempt as a device error", async () => {
     const { rerender, unmount } = render();
     await flush();
 
@@ -167,15 +173,62 @@ describe("transaction device action — sign-prompt abandonment", () => {
     });
     unmount();
 
-    expect(events).toHaveLength(0);
+    expect(events).toEqual([
+      expect.objectContaining({
+        status: "failure",
+        errorCategory: ErrorCategory.DeviceDisconnected,
+        operationalOnly: true,
+      }),
+    ]);
   });
 
-  it("reports nothing when the prompt never appeared", async () => {
+  it("classifies a wrong account before signing starts as a device error", async () => {
+    appState.current = WRONG_DEVICE;
+    const { unmount } = render();
+    await flush();
+    unmount();
+
+    expect(events).toEqual([
+      expect.objectContaining({
+        status: "failure",
+        errorCategory: ErrorCategory.DeviceWrongAccount,
+        operationalOnly: true,
+      }),
+    ]);
+  });
+
+  it("closes a started attempt even when the prompt never appeared", async () => {
     const { unmount } = render();
     await flush();
 
     unmount();
 
-    expect(events).toHaveLength(0);
+    expect(events).toEqual([
+      expect.objectContaining({
+        status: "failure",
+        errorCategory: ErrorCategory.UserModalDismissed,
+        abandoned: true,
+        operationalOnly: true,
+      }),
+    ]);
+  });
+
+  it("provides the live-app manifest to the deferred mobile sign call", async () => {
+    let capturedManifestId: string | null | undefined;
+    signOperation.mockImplementation(() => {
+      capturedManifestId = liveBlindSigningReporter.getContext().liveAppContext;
+      return signEvents;
+    });
+
+    renderHook(() =>
+      createAction(jest.fn() as never).useHook(null, {
+        ...(txRequest as unknown as Record<string, unknown>),
+        manifestId: "stakekit",
+        manifestName: "StakeKit",
+      } as never),
+    );
+    await flush();
+
+    expect(capturedManifestId).toBe("stakekit");
   });
 });

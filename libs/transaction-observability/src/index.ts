@@ -3,6 +3,7 @@ export {
   TransactionPathway,
   TransactionStage,
   type CommonLogEvent,
+  type IntentLogEvent,
   type LogEvent,
   type TransactionLogger,
 } from "./logEvent";
@@ -17,13 +18,20 @@ export { getRawTransactionType, getStakeTarget, type TransactionLike } from "./t
 
 export { rememberSignContext, type SignContext } from "./signContext";
 
-export { isStakingApp, knownStakingApps, stakingMethodOf, type StakingMethod } from "./stakingApps";
+export {
+  isEarnMonitoringApp,
+  isStakingApp,
+  knownStakingApps,
+  stakingMethodOf,
+  type StakingMethod,
+} from "./stakingApps";
 
 export {
   buildBroadcastCommonEvent,
   buildSignCommonEvent,
   buildTransactionAbandonedEvent,
   buildTransactionFailureEvent,
+  buildTransactionIntentEvent,
   buildTransactionSuccessEvent,
   type BuildTransactionFailureParams,
 } from "./eventBuilders";
@@ -35,3 +43,15 @@ export {
 } from "./observer";
 
 export { toSegmentTrackEvent, type SegmentTrackEvent } from "./segmentEvent";
+
+export {
+  abandonPendingDappTxLifecycle,
+  clearPendingDappTxLifecycle,
+  sendTxLifecycle,
+  startDappTxLifecycle,
+  toTxLifecyclePayload,
+  type TxLifecycleFailureClass,
+  type TxLifecyclePath,
+  type TxLifecyclePayload,
+  type TxLifecyclePlatform,
+} from "./txLifecycle";

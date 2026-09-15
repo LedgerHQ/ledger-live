@@ -7,6 +7,7 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { track } from "~/renderer/analytics/segment";
+import { useDappLifecycleMonitoring } from "~/renderer/analytics/useDappLifecycleMonitoring";
 import { useGetSwapTrackingProperties } from "../exchange/Swap2/utils";
 
 export type LiveAppProps = {
@@ -30,6 +31,7 @@ export function LiveApp({ appId: propsAppId }: LiveAppProps) {
   } | null;
   const customDappUrl = (location as { customDappUrl?: string }).customDappUrl;
   const appId = propsAppId || routeParams.appId;
+  useDappLifecycleMonitoring(appId);
   const returnTo = useMemo<string | undefined>(() => {
     const params = new URLSearchParams(search);
     return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;

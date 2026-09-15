@@ -12,6 +12,7 @@ import {
   TransactionStage,
   type CommonLogEvent,
   type FailureLogEvent,
+  type IntentLogEvent,
   type SuccessLogEvent,
   type TransactionPathway,
 } from "./logEvent";
@@ -196,17 +197,26 @@ export function buildTransactionSuccessEvent(common: CommonLogEvent): SuccessLog
   return { status: "success", stage: TransactionStage.Broadcast, ...common };
 }
 
+export function buildTransactionIntentEvent(common: CommonLogEvent): IntentLogEvent {
+  return { status: "intent", stage: TransactionStage.Sign, ...common };
+}
+
 /**
- * Drop-off event: the user dismissed the sign prompt without confirming or erroring. That is
- * an unsubscribe rather than an error, so it is invisible to the bridge and comes from the
+ * Drop-off event: the signing surface ended without confirming or erroring. That is an
+ * unsubscribe rather than an error, so it is invisible to the bridge and comes from the
  * device-action layer.
  */
-export function buildTransactionAbandonedEvent(common: CommonLogEvent): FailureLogEvent {
+export function buildTransactionAbandonedEvent(
+  common: CommonLogEvent,
+  options: { operationalOnly?: boolean } = {},
+): FailureLogEvent {
   return {
     status: "failure",
     stage: TransactionStage.Sign,
     error: Object.assign(new Error("Sign prompt dismissed"), { name: "UserModalDismissed" }),
     errorCategory: ErrorCategory.UserModalDismissed,
+    abandoned: true,
+    operationalOnly: options.operationalOnly,
     ...common,
   };
 }

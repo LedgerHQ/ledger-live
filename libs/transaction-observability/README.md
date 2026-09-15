@@ -9,10 +9,10 @@ which each register an observer at startup.
 
 ## What this is for
 
-One event shape per outcome, per stage, across every earn flow — so that failures are countable
-two ways: **how many** at each stage, and **of what kind**. Both halves have to hold for the
-numbers to mean anything, which is why so much of this package is classification rather than
-plumbing:
+One event shape per intent or outcome, per stage, across every earn flow — so that failures are
+countable two ways: **how many** at each stage, and **of what kind**. Both halves have to hold
+for the numbers to mean anything, which is why so much of this package is classification rather
+than plumbing:
 
 - an outcome that cannot be attributed to a stage inflates or deflates a step of the funnel
 - an outcome whose cause collapses into `unknown` is counted but not actionable
@@ -81,14 +81,25 @@ That is deliberate rather than an oversight, because there is no single gate to 
 |---|---|
 | Segment / Mixpanel | the analytics opt-in (`trackingEnabled`) |
 | Datadog | the crash/error-reporting opt-in, plus its own feature flag |
+| Earn lifecycle monitoring | operational monitoring policy; no analytics opt-in |
 | a dev console logger | nothing — it never leaves the process |
 
 Those are **different user choices**. Someone can accept crash reporting and decline analytics,
 or the reverse, so a Datadog sink must not assume the Segment sink's gate.
 
-Today both transmitting observers forward through their host's `track`, whose first statement is
-the analytics-consent check, so consent is enforced without either observer implementing it.
-A future sink that talks to a service directly has to do its own check.
+The Segment observer forwards through its host's `track`, whose first statement is the
+analytics-consent check. The separate Earn lifecycle observer posts a count-only payload directly
+to `/v1/tx/lifecycle`; it never forwards raw errors, signatures, addresses, amounts, account ids,
+or user/device/session identifiers. Its independent rollout switch is
+`earnTxLifecycleMonitoring`.
+
+The lifecycle transport keeps one pending attempt per platform and path. It suppresses unpaired
+or duplicate terminals, deduplicates equivalent sign resubscriptions, and closes an unfinished
+dApp attempt as `failure/abandoned` when its host WebView is torn down.
+
+For an allow-listed dApp, opening the Ledger-controlled platform route is the intent boundary.
+That placeholder uses `currency_family: "other"` because the route may not expose an asset; the
+first classified sign enriches pending local state without posting a second intent.
 
 One thing to know if you ever reach for it: the hosts' `track(event, properties, mandatory)`
 takes a third argument that bypasses the consent check and swaps in a reduced property set. It

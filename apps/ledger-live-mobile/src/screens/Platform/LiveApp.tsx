@@ -13,6 +13,7 @@ import { ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
+import { useDappLifecycleMonitoring } from "~/analytics/useDappLifecycleMonitoring";
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
 
@@ -28,6 +29,8 @@ export function LiveApp({ route }: Props) {
 
   const dappUrl = customDappURL || customDappUrl;
   const manifest = useLiveAppManifest(appId, dappUrl);
+
+  useDappLifecycleMonitoring(appId);
 
   useEffect(() => {
     setParams({

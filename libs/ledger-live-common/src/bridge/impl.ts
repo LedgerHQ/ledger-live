@@ -35,6 +35,7 @@ import {
   buildBroadcastCommonEvent,
   buildSignCommonEvent,
   buildTransactionFailureEvent,
+  buildTransactionIntentEvent,
   buildTransactionSuccessEvent,
   emitTransactionEvent,
   rememberSignContext,
@@ -264,47 +265,56 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
       return mergeResults(blockchainTransactionStatus, commonTransactionStatus);
     },
     /**
-     * Transaction observability, sign stage. Only failures: a success here is not an outcome
-     * the funnel cares about, and abandoning the prompt is an unsubscribe rather than an
-     * error, so the device-action layer reports that instead.
+     * Transaction observability, sign stage. Starting a sign attempt is the lifecycle intent;
+     * failures are terminal, while a successful signature waits for broadcast to become terminal.
+     * Abandoning the prompt is an unsubscribe rather than an error, so the device-action layer
+     * reports that instead.
      *
      * The rich transaction is available (hence the exact action and the validators).
      * `broadcastConfig` is not, so the route *type* stays unknown until broadcast — but the
      * originating manifest comes from the live-app context, see below.
      */
-    signOperation: (arg0: Parameters<typeof bridge.signOperation>[0]) =>
-      bridge.signOperation(arg0).pipe(
-        // The signed operation is the same object `broadcast` is handed later, so remembering
-        // against it carries the transaction's own wording and target across the stages.
-        tap(event => {
-          if (event.type === "signed") {
-            rememberSignContext(
-              event.signedOperation,
-              arg0.account.currency.family,
-              arg0.transaction,
-              // A dApp's action is only read inside a known staking app, so the manifest has
-              // to travel with it — broadcast sees an `OUT` and could not recover it.
-              currentLiveAppManifestId(),
+    signOperation: (arg0: Parameters<typeof bridge.signOperation>[0]) => {
+      const manifestId = currentLiveAppManifestId();
+      const common = buildSignCommonEvent({
+        account: arg0.account,
+        mainAccount: arg0.account,
+        pathway: TransactionPathway.Unknown,
+        manifestId,
+        transaction: arg0.transaction,
+      });
+      emitTransactionEvent(buildTransactionIntentEvent(common));
+
+      try {
+        return bridge.signOperation(arg0).pipe(
+          // The signed operation is the same object `broadcast` is handed later, so remembering
+          // against it carries the transaction's own wording and target across the stages.
+          tap(event => {
+            if (event.type === "signed") {
+              rememberSignContext(
+                event.signedOperation,
+                arg0.account.currency.family,
+                arg0.transaction,
+                // A dApp's action is only read inside a known staking app, so the manifest has
+                // to travel with it — broadcast sees an `OUT` and could not recover it.
+                manifestId,
+              );
+            }
+          }),
+          catchError(error => {
+            emitTransactionEvent(
+              buildTransactionFailureEvent(common, { stage: TransactionStage.Sign, error }),
             );
-          }
-        }),
-        catchError(error => {
-          emitTransactionEvent(
-            buildTransactionFailureEvent(
-              buildSignCommonEvent({
-                account: arg0.account,
-                mainAccount: arg0.account,
-                // The manifest names the origin; the route type still needs `broadcastConfig`.
-                pathway: TransactionPathway.Unknown,
-                manifestId: currentLiveAppManifestId(),
-                transaction: arg0.transaction,
-              }),
-              { stage: TransactionStage.Sign, error },
-            ),
-          );
-          return throwError(() => error);
-        }),
-      ),
+            return throwError(() => error);
+          }),
+        );
+      } catch (error) {
+        emitTransactionEvent(
+          buildTransactionFailureEvent(common, { stage: TransactionStage.Sign, error }),
+        );
+        throw error;
+      }
+    },
     /**
      * Transaction observability, broadcast stage — where a staking transaction's success is
      * actually known. Fully attributed via `broadcastConfig.source`, but the action has to be

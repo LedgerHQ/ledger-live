@@ -195,7 +195,13 @@ describe("useUiHook - transaction.sign device-intent branching", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(
       NavigatorName.SignTransaction,
-      expect.objectContaining({ screen: ScreenName.SignTransactionSummary }),
+      expect.objectContaining({
+        screen: ScreenName.SignTransactionSummary,
+        params: expect.objectContaining({
+          manifestId: mockManifest.id,
+          manifestName: mockManifest.name,
+        }),
+      }),
     );
     expect(mockRequestDeviceIntentSign).not.toHaveBeenCalled();
   });
@@ -208,7 +214,14 @@ describe("useUiHook - transaction.sign device-intent branching", () => {
     await promise;
 
     expect(mockRequestDeviceIntentSign).toHaveBeenCalledWith(
-      expect.objectContaining({ account, transaction: preparedTx, onSuccess, onError }),
+      expect.objectContaining({
+        account,
+        transaction: preparedTx,
+        manifestId: mockManifest.id,
+        manifestName: mockManifest.name,
+        onSuccess,
+        onError,
+      }),
     );
     expect(mockNavigate).not.toHaveBeenCalled();
   });

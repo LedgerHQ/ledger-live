@@ -18,6 +18,7 @@ import {
   ErrorCategory,
   TransactionStage,
   toSegmentTrackEvent,
+  toTxLifecyclePayload,
   type LogEvent,
 } from "@ledgerhq/transaction-observability";
 
@@ -132,6 +133,7 @@ describe("wrapAccountBridge — transaction observability seam", () => {
     });
 
     expect(events[0].earnTransactionType).toBeUndefined();
+    expect(toTxLifecyclePayload(events[0], "desktop")).toBeNull();
   });
 
   test("signOperation: emits a sign failure, re-throws, and subscribes exactly once", async () => {
@@ -158,7 +160,13 @@ describe("wrapAccountBridge — transaction observability seam", () => {
     ).rejects.toBe(error);
 
     expect(subscribeCount).toBe(1);
+    expect(events).toHaveLength(2);
     expect(events[0]).toMatchObject({
+      status: "intent",
+      stage: TransactionStage.Sign,
+      earnTransactionType: "delegate",
+    });
+    expect(events[1]).toMatchObject({
       status: "failure",
       stage: TransactionStage.Sign,
       errorCategory: ErrorCategory.UserDeviceRefused,
@@ -169,7 +177,16 @@ describe("wrapAccountBridge — transaction observability seam", () => {
       pathway: "unknown",
     });
     // Signing never completed, so there is no payload to report.
-    expect(events[0]).not.toHaveProperty("txPayload");
+    expect(events[1]).not.toHaveProperty("txPayload");
+    expect(toTxLifecyclePayload(events[0], "desktop")).toMatchObject({
+      event: "tx_intent",
+      path: "native",
+    });
+    expect(toTxLifecyclePayload(events[1], "desktop")).toMatchObject({
+      event: "tx_terminal",
+      outcome: "failure",
+      failure_class: "user_cancel",
+    });
   });
 
   describe("sign-stage attribution from the live-app context", () => {
@@ -197,14 +214,18 @@ describe("wrapAccountBridge — transaction observability seam", () => {
     test("reports the manifest that started the signature", async () => {
       await withLiveAppContext(manifest("lido"), signFailure);
 
-      expect(events[0]).toMatchObject({ stage: TransactionStage.Sign, manifestId: "lido" });
+      expect(events.find(event => event.status === "failure")).toMatchObject({
+        stage: TransactionStage.Sign,
+        manifestId: "lido",
+      });
     });
 
     test("reports no manifest for a native in-app signature", async () => {
       await signFailure();
 
-      expect(events[0]).toMatchObject({ stage: TransactionStage.Sign });
-      expect(events[0].manifestId).toBeUndefined();
+      const failure = events.find(event => event.status === "failure");
+      expect(failure).toMatchObject({ stage: TransactionStage.Sign });
+      expect(failure?.manifestId).toBeUndefined();
     });
 
     // The reason this PR exists: the Earn live-app skip keys on the manifest, so without one it
@@ -212,14 +233,16 @@ describe("wrapAccountBridge — transaction observability seam", () => {
     test("an Earn live-app sign failure maps to no Segment event", async () => {
       await withLiveAppContext(manifest("earn"), signFailure);
 
-      expect(events[0].manifestId).toBe("earn");
-      expect(toSegmentTrackEvent(events[0])).toBeNull();
+      const failure = events.find(event => event.status === "failure");
+      expect(failure?.manifestId).toBe("earn");
+      expect(toSegmentTrackEvent(failure!)).toBeNull();
     });
 
     test("the same failure outside the Earn app still maps to an event", async () => {
       await withLiveAppContext(manifest("lido"), signFailure);
 
-      expect(toSegmentTrackEvent(events[0])).toMatchObject({
+      const failure = events.find(event => event.status === "failure");
+      expect(toSegmentTrackEvent(failure!)).toMatchObject({
         event: "earn_transaction_failed",
         properties: expect.objectContaining({ manifest_id: "lido" }),
       });
@@ -234,7 +257,11 @@ describe("wrapAccountBridge — transaction observability seam", () => {
       });
       await signFailure();
 
-      expect(events.map(e => e.manifestId)).toEqual(["inner", "outer", undefined]);
+      expect(events.filter(e => e.status === "failure").map(e => e.manifestId)).toEqual([
+        "inner",
+        "outer",
+        undefined,
+      ]);
     });
   });
 
@@ -278,7 +305,13 @@ describe("wrapAccountBridge — transaction observability seam", () => {
       broadcastConfig: coinModuleSource,
     });
 
+    expect(events).toHaveLength(2);
     expect(events[0]).toMatchObject({
+      status: "intent",
+      stage: TransactionStage.Sign,
+      earnTransactionType: "delegate",
+    });
+    expect(events[1]).toMatchObject({
       status: "success",
       earnTransactionType: "delegate",
       // The family's own wording, not the operation type it was flattened to.
@@ -288,9 +321,80 @@ describe("wrapAccountBridge — transaction observability seam", () => {
       // Attribution still comes from the broadcast, which is the only stage that knows it.
       pathway: "send",
     });
+    expect(events.map(event => toTxLifecyclePayload(event, "mobile"))).toEqual([
+      expect.objectContaining({ event: "tx_intent", path: "native" }),
+      expect.objectContaining({ event: "tx_terminal", path: "native", outcome: "success" }),
+    ]);
   });
 
-  test("signOperation: does not emit on sign success", async () => {
+  test("an allow-listed dapp emits intent and terminal while a generic dapp emits neither", async () => {
+    const ethereumAccount = {
+      id: "acc",
+      type: "Account",
+      currency: { id: "ethereum", family: "evm", ticker: "ETH" },
+    } as unknown as Account;
+    const dappSignedOperation = {
+      signature: "sig",
+      operation: {
+        type: "OUT",
+        extra: {},
+        recipients: ["0xcontract"],
+        transactionRaw: { data: "095ea7b3" },
+      },
+    } as never;
+    const bridge = makeBridge({
+      signOperation: jest.fn().mockReturnValue(
+        new Observable(subscriber => {
+          subscriber.next({ type: "signed", signedOperation: dappSignedOperation });
+          subscriber.complete();
+        }),
+      ),
+      broadcast: jest.fn().mockResolvedValue({ id: "op-1" }),
+    });
+    const wrapped = await wrapAccountBridge(bridge, "evm");
+
+    await withLiveAppContext({ id: "stakekit" } as AppManifest, async () => {
+      await lastValueFrom(
+        wrapped.signOperation({
+          account: ethereumAccount,
+          transaction: {
+            family: "ethereum",
+            recipient: "0xcontract",
+            data: "0x095ea7b3",
+          } as never,
+          deviceId: "device",
+        }),
+      );
+    });
+    await wrapped.broadcast({
+      account: ethereumAccount,
+      signedOperation: dappSignedOperation,
+      broadcastConfig: {
+        mevProtected: false,
+        source: { type: "dApp", name: "stakekit" },
+      },
+    });
+
+    expect(events.map(event => toTxLifecyclePayload(event, "desktop"))).toEqual([
+      expect.objectContaining({ event: "tx_intent", path: "dapp" }),
+      expect.objectContaining({ event: "tx_terminal", path: "dapp", outcome: "success" }),
+    ]);
+
+    events = [];
+    await withLiveAppContext({ id: "generic-dapp" } as AppManifest, async () => {
+      await lastValueFrom(
+        wrapped.signOperation({
+          account: ethereumAccount,
+          transaction: { family: "ethereum", data: "0x095ea7b3" } as never,
+          deviceId: "device",
+        }),
+      );
+    });
+
+    expect(events.map(event => toTxLifecyclePayload(event, "desktop"))).toEqual([null]);
+  });
+
+  test("signOperation: emits only intent on sign success", async () => {
     const bridge = makeBridge({
       signOperation: jest.fn().mockReturnValue(
         new Observable(subscriber => {
@@ -305,7 +409,9 @@ describe("wrapAccountBridge — transaction observability seam", () => {
       wrapped.signOperation({ account, transaction: {} as never, deviceId: "device" }),
     );
 
-    expect(events).toHaveLength(0);
+    expect(events).toEqual([
+      expect.objectContaining({ status: "intent", stage: TransactionStage.Sign }),
+    ]);
   });
 
   // The seam sits in the transaction path, so a broken analytics sink must never surface as

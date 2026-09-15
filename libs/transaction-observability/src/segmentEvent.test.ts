@@ -28,6 +28,30 @@ const refused = Object.assign(new Error("declined for 0xSENSITIVE_ADDR"), {
 });
 
 describe("toSegmentTrackEvent", () => {
+  it("does not forward lifecycle intents to Segment", () => {
+    expect(
+      toSegmentTrackEvent({
+        status: "intent",
+        stage: TransactionStage.Sign,
+        ...common,
+      }),
+    ).toBeNull();
+  });
+
+  it("does not forward lifecycle-only early abandonment to Segment", () => {
+    expect(
+      toSegmentTrackEvent({
+        status: "failure",
+        stage: TransactionStage.Sign,
+        error: new Error("not shown"),
+        errorCategory: ErrorCategory.UserModalDismissed,
+        abandoned: true,
+        operationalOnly: true,
+        ...common,
+      }),
+    ).toBeNull();
+  });
+
   // The analytics `flow` is the product funnel and is always "stake" — Ledger Wallet's word,
   // not the Earn live-app's. The route travels separately as `tx_pathway`. Pinned so a change
   // has to be intentional.

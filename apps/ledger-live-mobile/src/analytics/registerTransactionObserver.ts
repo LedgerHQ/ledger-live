@@ -1,4 +1,10 @@
-import { setTransactionObserver, toSegmentTrackEvent } from "@ledgerhq/transaction-observability";
+import {
+  sendTxLifecycle,
+  setTransactionObserver,
+  toSegmentTrackEvent,
+  toTxLifecyclePayload,
+} from "@ledgerhq/transaction-observability";
+import { getFeature } from "@ledgerhq/live-common/firebase/featureFlags";
 import { track } from "./segment";
 
 /**
@@ -9,4 +15,10 @@ import { track } from "./segment";
 setTransactionObserver(event => {
   const mapped = toSegmentTrackEvent(event);
   if (mapped) track(mapped.event, mapped.properties);
+});
+
+setTransactionObserver(event => {
+  if (!getFeature({ key: "earnTxLifecycleMonitoring" })?.enabled) return;
+  const payload = toTxLifecyclePayload(event, "mobile");
+  if (payload) sendTxLifecycle(payload);
 });

@@ -5,6 +5,7 @@ import {
   buildSignCommonEvent,
   buildTransactionAbandonedEvent,
   buildTransactionFailureEvent,
+  buildTransactionIntentEvent,
   buildTransactionSuccessEvent,
 } from "./eventBuilders";
 import { TransactionDataSource, TransactionPathway, TransactionStage } from "./logEvent";
@@ -80,6 +81,21 @@ describe("buildSignCommonEvent", () => {
       transaction: tx({ family: "cosmos", mode: "delegate", useAllAmount: true }),
     });
     expect(common.isSendMax).toBe(true);
+  });
+});
+
+describe("buildTransactionIntentEvent", () => {
+  it("marks a sign-stage common event as intent", () => {
+    const common = buildSignCommonEvent({
+      ...attribution(cardano),
+      transaction: tx({ family: "cardano", mode: "delegate" }),
+    });
+
+    expect(buildTransactionIntentEvent(common)).toMatchObject({
+      status: "intent",
+      stage: TransactionStage.Sign,
+      earnTransactionType: "delegate",
+    });
   });
 });
 

@@ -691,6 +691,8 @@ export function useUiHook({
               parentId: parentAccount ? parentAccount.id : undefined,
               appName: options?.hwAppId,
               dependencies: options?.dependencies,
+              manifestId: manifest.id,
+              manifestName: manifest.name,
               onSuccess,
               onError,
             },

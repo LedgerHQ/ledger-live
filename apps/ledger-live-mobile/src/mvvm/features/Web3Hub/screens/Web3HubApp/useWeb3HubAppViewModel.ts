@@ -6,6 +6,7 @@ import type { AppProps } from "LLM/features/Web3Hub/types";
 import { WebviewState } from "~/components/Web3AppWebview/types";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { useLocale } from "~/context/Locale";
+import { useDappLifecycleMonitoring } from "~/analytics/useDappLifecycleMonitoring";
 
 export const queryKey = (manifestId: string, locale: string) => [
   "web3hub/manifest",
@@ -35,6 +36,7 @@ export default function useWeb3HubAppViewModel(routeParams: AppProps["route"]["p
   }, [locale, queryParams, theme]);
 
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  useDappLifecycleMonitoring(manifestId);
 
   const [baseUrl, secure, initialLoad] = useMemo(() => {
     if (manifest?.params && "dappUrl" in manifest.params) {
