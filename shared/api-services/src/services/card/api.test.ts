@@ -243,6 +243,30 @@ describe("cardBaseQuery", () => {
     expect(sent.headers.get("x-us-env")).toBe("true");
   });
 
+  it("keeps the tenant of the token it carries when a login lands mid-request", async () => {
+    // A retry can start a new login while the previous session is still current. The header must
+    // stay with the token this request read, not follow the tenant the new login just recorded.
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
+    let isUsEnv = true;
+
+    const { api, store } = probeStore(
+      cardApiExtra(
+        buildExtra({
+          isCardUsEnv: () => isUsEnv,
+          // Stands in for the login that records another tenant: it runs after the snapshot is
+          // read and before the request leaves.
+          isCardSessionCurrent: () => {
+            isUsEnv = false;
+            return true;
+          },
+        }),
+      ),
+    );
+    await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(request(fetchSpy).headers.get("x-us-env")).toBe("true");
+  });
+
   it("reads the base url and the client key again on every request", async () => {
     // The debug settings change the two envs while the app runs. The store holds the accessors, so
     // the next request must carry the new values without a restart.
