@@ -77,7 +77,10 @@ function DetailsImage({
       <img
         src={imageUrl}
         alt={t("payTab.card.numbers.imageAlt")}
+        width={343}
+        height={193}
         referrerPolicy="no-referrer"
+        decoding="async"
         className="size-full object-cover"
         onError={onImageError}
       />

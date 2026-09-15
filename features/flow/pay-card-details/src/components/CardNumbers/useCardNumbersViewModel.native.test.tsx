@@ -114,6 +114,31 @@ describe("useCardNumbersViewModel", () => {
     expect(result.current.imageUrl).toBeUndefined();
   });
 
+  it("should reuse the cached image after hide without minting another token", async () => {
+    jest.mocked(preloadCardNumbersImage).mockClear();
+    let tokenCalls = 0;
+    server.use(
+      http.post(CARD_DETAILS_TOKEN_URL, () => {
+        tokenCalls += 1;
+        return HttpResponse.json(CARD_DETAILS);
+      }),
+    );
+    const { result } = await reveal();
+    await waitFor(() => expect(result.current.status).toBe("revealed"));
+
+    act(() => {
+      result.current.onHide();
+    });
+    await act(async () => {
+      await result.current.onReveal();
+    });
+
+    expect(result.current.status).toBe("revealed");
+    expect(result.current.imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
+    expect(tokenCalls).toBe(1);
+    expect(preloadCardNumbersImage).toHaveBeenCalledTimes(1);
+  });
+
   it("hides the numbers", async () => {
     const { result } = await reveal();
     await waitFor(() => expect(result.current.status).toBe("revealed"));

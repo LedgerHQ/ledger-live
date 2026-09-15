@@ -1,5 +1,5 @@
-import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import { Image, PixelRatio, StyleSheet, View, type LayoutChangeEvent } from "react-native";
 import Animated from "react-native-reanimated";
 import { useTranslation } from "@shared/i18n";
 import type { CardNumbersViewProps } from "../../types";
@@ -10,21 +10,32 @@ const FLIP_TRANSITION = {
   transitionTimingFunction: "ease-in-out",
 } as const;
 
+type PixelSize = Readonly<{ width: number; height: number }>;
+
 export function CardNumbersView({
   status,
   imageUrl,
   onImageError,
   cardFace,
 }: CardNumbersViewProps) {
+  const [pixelSize, setPixelSize] = useState<PixelSize>();
   const isRevealed = status === "revealed" && Boolean(imageUrl);
   const details = imageUrl ? (
-    <DetailsImage imageUrl={imageUrl} onImageError={onImageError} />
+    <DetailsImage imageUrl={imageUrl} pixelSize={pixelSize} onImageError={onImageError} />
   ) : null;
+
+  function onCardLayout({ nativeEvent }: LayoutChangeEvent) {
+    const scale = PixelRatio.get();
+    setPixelSize({
+      width: Math.round(nativeEvent.layout.width * scale),
+      height: Math.round(nativeEvent.layout.height * scale),
+    });
+  }
 
   if (cardFace) {
     return (
       <View testID="card-numbers">
-        <FlipCard isRevealed={isRevealed} cardFace={cardFace}>
+        <FlipCard isRevealed={isRevealed} cardFace={cardFace} onLayout={onCardLayout}>
           {details}
         </FlipCard>
       </View>
@@ -38,13 +49,15 @@ function FlipCard({
   isRevealed,
   cardFace,
   children,
+  onLayout,
 }: {
   readonly isRevealed: boolean;
   readonly cardFace: React.ReactNode;
   readonly children: React.ReactNode;
+  readonly onLayout: (event: LayoutChangeEvent) => void;
 }) {
   return (
-    <View>
+    <View onLayout={onLayout}>
       <Animated.View
         accessibilityElementsHidden={isRevealed}
         importantForAccessibility={isRevealed ? "no-hide-descendants" : "auto"}
@@ -77,18 +90,25 @@ function FlipCard({
 
 function DetailsImage({
   imageUrl,
+  pixelSize,
   onImageError,
 }: {
   readonly imageUrl: string;
+  readonly pixelSize?: PixelSize;
   readonly onImageError: () => void;
 }) {
   const { t } = useTranslation();
 
   return (
     <Image
-      source={{ uri: imageUrl }}
+      source={{
+        uri: imageUrl,
+        cache: "force-cache",
+        ...(pixelSize ?? {}),
+      }}
       accessibilityLabel={t("payTab.card.numbers.imageAlt")}
       resizeMode="cover"
+      resizeMethod="resize"
       onError={onImageError}
       style={styles.image}
     />
