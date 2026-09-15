@@ -10267,27 +10267,6 @@
       "iHaveACard": "I have a card"
     }
   },
-  "walletV4Tour": {
-    "title": "Discover your new portfolio",
-    "slides": {
-      "portfolio": {
-        "title": "A clearer view of your portfolio",
-        "description": "See your total balance at a glance, and tap “Today” to dive deeper."
-      },
-      "navigation": {
-        "title": "Access key actions faster",
-        "description": "Access Swap, Transfer, and Buy instantly. Find Earn and your Card in the bottom navigation."
-      },
-      "actions": {
-        "title": "View market trends instantly",
-        "description": "Quickly see what’s trending directly in your portfolio, and move from insights to action."
-      }
-    },
-    "cta": {
-      "continue": "Next",
-      "explore": "Discover my new portfolio"
-    }
-  },
   "mainNavigation": {
     "home": "Home",
     "swap": "Swap",
