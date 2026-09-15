@@ -21,6 +21,11 @@ let bridgeError: Error | undefined;
 const mockNavigate = jest.fn();
 const mockPopTo = jest.fn();
 
+// What the stubbed device screen was handed. `DeviceAction` renders nothing where the signature
+// prompt belongs unless the route carries a status, so what arrives here is the assertion.
+type DeviceProps = { route?: { params?: Record<string, unknown> } };
+let deviceProps: DeviceProps | undefined;
+
 // Stood in for so the gate can be tested without mounting DeviceAction, which starts talking to a
 // device the moment it renders.
 jest.mock("../components/ConnectDevice", () => {
@@ -28,7 +33,10 @@ jest.mock("../components/ConnectDevice", () => {
   const { View } = require("react-native");
   return {
     __esModule: true,
-    default: () => React.createElement(View, { testID: "icp-device-action" }),
+    default: (props: DeviceProps) => {
+      deviceProps = props;
+      return React.createElement(View, { testID: "icp-device-action" });
+    },
   };
 });
 
@@ -85,6 +93,7 @@ describe("neuron ConnectDevice", () => {
     errors = {};
     bridgePending = false;
     bridgeError = undefined;
+    deviceProps = undefined;
     mockNavigate.mockClear();
     mockPopTo.mockClear();
   });
@@ -94,6 +103,27 @@ describe("neuron ConnectDevice", () => {
 
     expect(screen.getByTestId("icp-device-action")).toBeVisible();
     expect(screen.queryByTestId("icp-blocked-action")).toBeNull();
+  });
+
+  /*
+   * The actions that go straight to the device — disburse, the dissolve toggles, refresh voting
+   * power, auto-stake, remove hot key — are routed with no status, and the signature prompt is not
+   * rendered without one. The status this screen computes to gate on is the one to hand down.
+   */
+  it("hands down the status the route never carried", () => {
+    renderScreen();
+
+    expect(deviceProps?.route?.params?.status).toBeDefined();
+  });
+
+  it("hands down the status on a refresh as well", () => {
+    neuron = undefined;
+    neuronId = undefined;
+    transactionType = "list_neurons";
+
+    renderScreen();
+
+    expect(deviceProps?.route?.params?.status).toBeDefined();
   });
 
   it("reports the bridge's objection instead of reaching the device", () => {

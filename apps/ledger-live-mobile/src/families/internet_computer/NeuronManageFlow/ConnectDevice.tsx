@@ -62,10 +62,15 @@ export default function ConnectDevice(props: Props) {
     [accountId, navigation, parentId],
   );
 
+  // The device screen reads its status out of the route, and every action that goes straight to the
+  // device puts none there — without one `DeviceAction` renders nothing at all where the signature
+  // prompt belongs. The status this wrapper already computed is the one those actions never carried.
+  const signing = { ...props, route: { ...route, params: { ...route.params, status } } };
+
   // `list_neurons` names no neuron, so there is nothing to gate. Keyed on the transaction rather
   // than on `neuronId`, which the list route carries over from whatever handed control back.
   if (transaction.type === "list_neurons") {
-    return <ICPConnectDevice {...props} category={CATEGORY} />;
+    return <ICPConnectDevice {...signing} category={CATEGORY} />;
   }
 
   if (!neuron) return <MissingNeuron onBackToList={backToList} />;
@@ -78,7 +83,7 @@ export default function ConnectDevice(props: Props) {
   if (bridgePending && !bridgeError) return renderLoading({ t });
 
   const objection = bridgeError ?? Object.values(status.errors)[0];
-  if (!objection) return <ICPConnectDevice {...props} category={CATEGORY} />;
+  if (!objection) return <ICPConnectDevice {...signing} category={CATEGORY} />;
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
