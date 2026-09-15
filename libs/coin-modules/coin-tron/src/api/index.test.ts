@@ -4,7 +4,7 @@ import {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
-import { createApi } from ".";
+import { createApi, createSponsoredSendApi } from ".";
 import coinConfig, { TronCoinConfig, TronContext } from "../config";
 import type { TronMemo, TronTxData } from "../types";
 import {
@@ -255,12 +255,23 @@ describe("createApi", () => {
   });
 });
 
-test("createApi exposes the energy-rent seam methods", () => {
+test("createApi does not carry the energy-rent seam methods (they live in createSponsoredSendApi)", () => {
   const api = createApi() as unknown as Record<string, unknown>;
-  expect(typeof api.craftEnergyRentTransaction).toBe("function");
-  expect(typeof api.submitEnergyRentPayment).toBe("function");
-  expect(typeof api.getEnergyRentStatus).toBe("function");
-  expect(typeof api.awaitEnergyDelivery).toBe("function");
-  expect(typeof api.estimateSponsoredFeeQuote).toBe("function");
-  expect(typeof api.buildEnergyRentRequest).toBe("function");
+  expect(api.craftEnergyRentTransaction).toBeUndefined();
+  expect(api.submitEnergyRentPayment).toBeUndefined();
+  expect(api.getEnergyRentStatus).toBeUndefined();
+  expect(api.awaitEnergyDelivery).toBeUndefined();
+  expect(api.estimateSponsoredFeeQuote).toBeUndefined();
+  expect(api.buildEnergyRentRequest).toBeUndefined();
+});
+
+test("createSponsoredSendApi exposes the energy-rent seam methods", () => {
+  const seam = createSponsoredSendApi() as unknown as Record<string, unknown>;
+  expect(typeof seam.listFeeOptions).toBe("function");
+  expect(typeof seam.craftEnergyRentTransaction).toBe("function");
+  expect(typeof seam.submitEnergyRentPayment).toBe("function");
+  expect(typeof seam.getEnergyRentStatus).toBe("function");
+  expect(typeof seam.awaitEnergyDelivery).toBe("function");
+  expect(typeof seam.estimateSponsoredFeeQuote).toBe("function");
+  expect(typeof seam.buildEnergyRentRequest).toBe("function");
 });

@@ -1,13 +1,16 @@
-import { getCoinModuleApi } from "./api";
+import { findCryptoCurrencyByNetwork } from "./utils";
+import { loadSponsoredApiForFamily } from "../../coin-modules/registry";
 import type { FeeOptionMeta } from "@ledgerhq/coin-module-framework/api/index";
 
 /**
  * Repo-local seam for sponsored sends (TRON Tronify energy rental). The coin-module contract lives
  * in the external @ledgerhq/coin-module-framework package, so these methods can't be declared on it
- * from here; they ride on coin-tron's concrete createApi() as extra members and are reached through
- * this presence-guarded accessor. Types are declared structurally (coin-tron's returns satisfy them)
- * so the generic bridge takes no dependency on a specific family. When the framework contract gains
- * these methods, replace this interface with the contract type — a lift-and-move.
+ * from here; a family exposes them through its own factory (coin-tron's createSponsoredSendApi),
+ * registered as the registry's `loadSponsoredApi` and reached through this accessor — the family's
+ * main coin-module api stays exactly the generic contract. Types are declared structurally (the
+ * family's factory return satisfies them) so the generic bridge takes no dependency on a specific
+ * family. When the framework contract gains these methods, replace this interface with the contract
+ * type — a lift-and-move.
  */
 /** The fee-option id coin-tron advertises for a Tronify-sponsored send (mirrors coin-tron's
  * `TRONIFY_FEE_OPTION_ID`); the app matches `listFeeOptions()` results against this without importing
@@ -51,31 +54,21 @@ export interface SponsoredCoinApi {
   ): Promise<void>;
 }
 
-const SEAM_METHODS = [
-  "listFeeOptions",
-  "estimateSponsoredFeeQuote",
-  "buildEnergyRentRequest",
-  "craftEnergyRentTransaction",
-  "submitEnergyRentPayment",
-  "getEnergyRentStatus",
-  "awaitEnergyDelivery",
-] as const;
-
 /**
  * Resolve the sponsored-send seam for a currency, or null when the family doesn't implement it
- * (every non-TRON module). Presence-guarded: every SEAM_METHODS entry must be a function.
+ * (every non-TRON module) — it has no `loadSponsoredApi` registered, so the registry resolves to
+ * undefined. Sponsored sends exist only through a family's local coin-module, so only `kind ===
+ * "local"` can yield one; any other kind returns null.
  *
- * `network`/`kind` mirror getCoinModuleApi's own params exactly (network id, plus "local" | the
- * network-coin-service kind) so this is a thin pass-through to the same resolver the rest of the
- * generic bridge uses. Pass the chain/network id (e.g. `mainAccount.currency.id`), not a token's
- * own currency id.
+ * `network`/`kind` mirror getCoinModuleApi's own params (network id, plus "local" | the
+ * network-coin-service kind). Pass the chain/network id, not a token's own currency id.
  */
 export async function getSponsoredCoinApi(
   network: string,
   kind: string,
 ): Promise<SponsoredCoinApi | null> {
-  const api = (await getCoinModuleApi(network, kind)) as Partial<SponsoredCoinApi> &
-    Record<string, unknown>;
-  const complete = SEAM_METHODS.every(m => typeof api[m] === "function");
-  return complete ? (api as unknown as SponsoredCoinApi) : null;
+  if (kind !== "local") return null;
+  const currency = findCryptoCurrencyByNetwork(network);
+  const createSponsoredApi = currency && (await loadSponsoredApiForFamily(currency.family));
+  return createSponsoredApi ? createSponsoredApi(currency.id) : null;
 }
