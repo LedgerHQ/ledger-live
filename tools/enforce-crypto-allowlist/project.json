@@ -1,0 +1,33 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "enforce-crypto-allowlist",
+  "projectType": "library",
+  "targets": {
+    "lint:crypto": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/tools/enforce-crypto-allowlist/**/*",
+        "{workspaceRoot}/pnpm-lock.yaml",
+        "{workspaceRoot}/pnpm-workspace.yaml",
+        "{workspaceRoot}/package.json",
+        "{workspaceRoot}/.npmrc",
+        "{workspaceRoot}/.pnpmfile.cjs",
+        "{workspaceRoot}/tools/pnpm-utils/**/*"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node tools/enforce-crypto-allowlist/validate.js"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/tools/enforce-crypto-allowlist/**/*"],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node --test tools/enforce-crypto-allowlist/validate.test.js"
+      }
+    }
+  }
+}
