@@ -892,6 +892,31 @@ describe("the provider app id", () => {
     expect(slots.has(CARD_SESSION_KEYS.refreshToken)).toBe(false);
   });
 
+  it("still persists the tenant when the session write advanced the generation first", async () => {
+    // The login does not await the record, so a busy queue can delay its turn until after `set`
+    // has advanced the generation. The turn must still write, or the tokens land with no routing.
+    const busy = deferred<void>();
+    const { store, slots } = fakeStore();
+    const api = createCardSession(store);
+    // Occupy the queue so the record's turn cannot run before `set` is called.
+    const blocked = api.cardSession.get();
+    store.read = jest.fn(async () => {
+      await busy.promise;
+      return null;
+    });
+
+    const recorded = api.setCardProviderAppId("LEDGERUS");
+    const committed = api.cardSession.set(session);
+    busy.resolve();
+    await blocked;
+    await recorded;
+    await committed;
+
+    expect(slots.get(CARD_SESSION_KEYS.providerAppId)).toBe("LEDGERUS");
+    expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe(session.accessToken);
+    expect(api.isCardUsEnv("LEDGERUS")).toBe(true);
+  });
+
   it("keeps the app id across the session write that follows it", async () => {
     const { store } = fakeStore();
     const { cardSession, setCardProviderAppId, isCardUsEnv } = createCardSession(store);
