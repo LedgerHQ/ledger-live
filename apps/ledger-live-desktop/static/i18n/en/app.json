@@ -9696,11 +9696,62 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public",
+      "stakedBalance": "Staked",
+      "stakedBalanceTooltip": "Balance that is bonded to a validator and earning rewards",
+      "unstakingBalance": "Unstaking",
+      "unstakingBalanceTooltip": "Balance that is unbonding and not yet claimable",
+      "claimableBalance": "Claimable",
+      "claimableBalanceTooltip": "Balance that has finished unbonding and can be claimed back to your available balance",
       "syncButton": {
         "startSync": "Start sync",
         "stopSync": "Stop sync",
         "syncAgain": "Sync again",
         "lastSync": "Last synced: {{date}}"
+      }
+    },
+    "stake": {
+      "table": {
+        "header": "Staking",
+        "status": "Status",
+        "validator": "Validator",
+        "amount": "Amount",
+        "staked": "Staked",
+        "rate": "Est. rewards rate",
+        "completion": "Completion",
+        "source": "Source",
+        "estimatedRate": "{{rate}}% est.",
+        "unknownValidator": "Unknown validator",
+        "manage": "Manage"
+      },
+      "status": {
+        "earningTooltip": "This position is earning rewards."
+      },
+      "nonEarning": {
+        "fullCommission": "This validator takes 100% commission, so you keep nothing.",
+        "overConcentrated": "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so you earn nothing.",
+        "leftCommittee": "This validator is no longer in the committee, so your stake earns nothing. Unstake and bond to another validator to start earning again."
+      },
+      "unstaking": {
+        "header": "Unstaking",
+        "headerTooltip": "Unbonded ALEO becomes claimable once the chain reaches the unbonding block height.",
+        "source": "Aleo",
+        "sourceTooltip": "Unbonded ALEO is held by the protocol until it is claimable, not by a validator. The chain does not record which validator it came from.",
+        "pendingTooltip": "Still unbonding - not yet claimable.",
+        "claimableTooltip": "Unbonding is complete. You can claim these funds.",
+        "settling": "Almost there…",
+        "settlingTooltip": "The unbonding period is over. Refreshing your balance - the claim will be available in a moment.",
+        "claimPending": "Claiming…",
+        "claimPendingTooltip": "Your claim has been sent and is waiting to be confirmed. These funds will land in your available balance shortly.",
+        "unbondPending": "Unstaking…",
+        "unbondPendingTooltip": "An unstake has been sent and is waiting to be confirmed. It changes this same unbonding position, so claiming is unavailable until it has gone through."
+      },
+      "claim": "Claim",
+      "claimableAtTooltip": "Claimable at block {{height}} (current block: {{current}})",
+      "blocksRemaining_one": "~{{count}} block left",
+      "blocksRemaining_other": "~{{count}} blocks left",
+      "emptyState": {
+        "description": "You can earn rewards by staking your {{name}}.",
+        "earnRewards": "Earn rewards"
       }
     },
     "operations": {

@@ -1,0 +1,60 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { lastBlock } from "@ledgerhq/live-common/families/aleo/logic";
+import useInterval from "~/renderer/hooks/useInterval";
+import { getAleoCurrencyConfig } from "../shared/utils";
+import { LIVE_BLOCK_HEIGHT_POLL_MS } from "../constants";
+
+type Options = {
+  fallbackHeight: number;
+  enabled: boolean;
+};
+
+/** Polling pauses while the tab is hidden, and network errors keep the last good value. */
+export function useAleoLiveBlockHeight(
+  currency: CryptoCurrency,
+  { fallbackHeight, enabled }: Options,
+): number {
+  const [liveHeight, setLiveHeight] = useState<number | null>(null);
+  const inFlight = useRef(false);
+  const cancelled = useRef(false);
+
+  const fetchHeight = useCallback(async () => {
+    if (!enabled || inFlight.current || document.hidden) return;
+    // The coin config lives in the currency configuration, not on the currency itself.
+    const config = getAleoCurrencyConfig(currency);
+    if (!config) return;
+    inFlight.current = true;
+    try {
+      const block = await lastBlock(config);
+      if (!cancelled.current) setLiveHeight(block.height);
+    } catch {
+      // Keep the last good value; the next tick will retry.
+    } finally {
+      inFlight.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currency.id, enabled]);
+
+  useInterval(fetchHeight, LIVE_BLOCK_HEIGHT_POLL_MS);
+
+  useEffect(() => {
+    if (!enabled) {
+      setLiveHeight(null);
+      return;
+    }
+    cancelled.current = false;
+    fetchHeight();
+    const onVisibilityChange = () => {
+      if (!document.hidden) fetchHeight();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      cancelled.current = true;
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [enabled, fetchHeight]);
+
+  return liveHeight != null ? Math.max(liveHeight, fallbackHeight) : fallbackHeight;
+}
