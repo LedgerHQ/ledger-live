@@ -12,6 +12,8 @@ let neuron: ICPNeuron | undefined;
 // Not a `renderScreen` argument: a default parameter is applied to an explicit `undefined` too, so
 // the list_neurons case below would have been handed the id it is meant to be missing.
 let neuronId: string | undefined;
+// The gate keys off this, so it is the axis the cases below vary.
+let transactionType: string;
 let errors: Record<string, Error>;
 let bridgePending: boolean;
 let bridgeError: Error | undefined;
@@ -38,7 +40,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   __esModule: true,
   default: () => ({
-    transaction: { family: "internet_computer", type: "disburse" },
+    transaction: { family: "internet_computer", type: transactionType },
     status: { errors, warnings: {} },
     bridgePending,
     bridgeError,
@@ -59,7 +61,7 @@ const renderScreen = () =>
           params: {
             accountId: "icp-1",
             neuronId,
-            transaction: { family: "internet_computer", type: "disburse" },
+            transaction: { family: "internet_computer", type: transactionType },
             device: { deviceId: "device-1" },
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -78,6 +80,7 @@ describe("neuron ConnectDevice", () => {
   beforeEach(() => {
     neuron = makeHealthyNeuron();
     neuronId = "1";
+    transactionType = "disburse";
     errors = {};
     bridgePending = false;
     bridgeError = undefined;
@@ -162,10 +165,38 @@ describe("neuron ConnectDevice", () => {
   it("lets a refresh that names no neuron straight through", () => {
     neuron = undefined;
     neuronId = undefined;
+    transactionType = "list_neurons";
 
     renderScreen();
 
     expect(screen.getByTestId("icp-device-action")).toBeVisible();
     expect(screen.queryByTestId("icp-missing-neuron-back-button")).toBeNull();
+  });
+
+  // The list route carries a neuronId when another flow hands control back, and Sync passes its
+  // own params on: read as the subject of the signing, that id would gate an account-wide refresh
+  // on a neuron it never named — and after a disburse the neuron is gone, so Sync would be the one
+  // thing that could clear the list and the one thing refused.
+  it("lets a refresh through when a neuronId was carried over with the route", () => {
+    neuron = undefined;
+    neuronId = "1";
+    transactionType = "list_neurons";
+
+    renderScreen();
+
+    expect(screen.getByTestId("icp-device-action")).toBeVisible();
+    expect(screen.queryByTestId("icp-missing-neuron-back-button")).toBeNull();
+  });
+
+  // The converse, and why the absent id is not the thing to read: a neuron-scoped command that
+  // arrives without one used to be waved through to the device with no validation at all.
+  it("gates a neuron-scoped command that arrived with no id", () => {
+    neuron = undefined;
+    neuronId = undefined;
+
+    renderScreen();
+
+    expect(screen.getByTestId("icp-missing-neuron-back-button")).toBeVisible();
+    expect(screen.queryByTestId("icp-device-action")).toBeNull();
   });
 });

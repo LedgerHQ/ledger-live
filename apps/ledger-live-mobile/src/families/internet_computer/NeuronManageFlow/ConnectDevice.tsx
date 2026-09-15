@@ -47,9 +47,9 @@ export default function ConnectDevice(props: Props) {
   invariant(account?.type === "Account", "internet_computer account required");
 
   const icpAccount = account as ICPAccount;
-  const { accountId, parentId, neuronId } = route.params;
-  // `useICPNeuronById` matches on the id as a string, so the empty string of a list_neurons route
-  // finds nothing — which is why the branch below returns before the result is read.
+  const { accountId, parentId, neuronId, transaction } = route.params;
+  // Read unconditionally because it is a hook. A refresh may still carry a neuronId from whatever
+  // handed control back, so the branch below returns before the result is read.
   const neuron = useICPNeuronById(icpAccount, neuronId ?? "");
   const bridge = useAccountBridge<Transaction>(icpAccount);
   const { status, bridgePending, bridgeError } = useBridgeTransaction<Transaction>(bridge, () => ({
@@ -62,8 +62,11 @@ export default function ConnectDevice(props: Props) {
     [accountId, navigation, parentId],
   );
 
-  // `list_neurons` refreshes the whole account and names no neuron, so there is nothing to gate.
-  if (neuronId === undefined) return <ICPConnectDevice {...props} category={CATEGORY} />;
+  // `list_neurons` names no neuron, so there is nothing to gate. Keyed on the transaction rather
+  // than on `neuronId`, which the list route carries over from whatever handed control back.
+  if (transaction.type === "list_neurons") {
+    return <ICPConnectDevice {...props} category={CATEGORY} />;
+  }
 
   if (!neuron) return <MissingNeuron onBackToList={backToList} />;
 
