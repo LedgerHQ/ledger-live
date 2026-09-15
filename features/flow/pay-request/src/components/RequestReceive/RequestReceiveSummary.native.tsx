@@ -1,7 +1,7 @@
-import React, { type Ref } from "react";
+import React, { type RefObject } from "react";
 import type { View } from "react-native";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
-import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
 import { QrCode } from "@shared/ui-qr-code";
 import { RequestReceiveAddress } from "./RequestReceiveAddress.native";
 import type { RequestReceiveIconProps, RequestReceiveProps } from "../../types";
@@ -29,10 +29,11 @@ export function RequestReceiveSummary({
   qrPayload,
   cardRef,
 }: RequestReceiveSummaryProps) {
+  const { theme } = useTheme();
+
   return (
     <Box
-      ref={cardRef as Ref<View>}
-      // captureRef needs a real native view; without this the snapshot is only the card background.
+      ref={cardRef as RefObject<View | null>}
       collapsable={false}
       lx={{
         alignItems: "center",
@@ -41,7 +42,8 @@ export function RequestReceiveSummary({
         padding: "s24",
         width: "full",
         backgroundColor: "surface",
-        borderRadius: "md",
+        borderRadius: "2xl",
+        overflow: "hidden",
       }}
       testID="pay-request-receive-summary"
     >
@@ -50,7 +52,7 @@ export function RequestReceiveSummary({
           {title}
         </Text>
         <Box
-          lx={{ flexDirection: "row", alignItems: "center", gap: "s6" }}
+          lx={{ flexDirection: "row", alignItems: "center", gap: "s8" }}
           testID="pay-request-receive-network"
         >
           {networkIcon ? (
@@ -67,32 +69,19 @@ export function RequestReceiveSummary({
           </Text>
         </Box>
       </Box>
-      <Box
-        lx={{
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "s24",
-          backgroundColor: "white",
-          borderRadius: "2xl",
-          borderWidth: "s1",
-          borderColor: "mutedSubtle",
-          boxShadow: "lg",
-        }}
-      >
-        <QrCode
-          value={qrPayload}
-          foregroundColor="#000000"
-          testID="pay-request-receive-qr-code"
-          centerContent={
-            <CryptoIcon
-              ledgerId={assetIcon.ledgerId}
-              ticker={assetIcon.ticker}
-              size={QR_CENTER_ICON_SIZE}
-              shape="circle"
-            />
-          }
-        />
-      </Box>
+      <QrCode
+        value={qrPayload}
+        foregroundColor={theme.colors.text.base}
+        testID="pay-request-receive-qr-code"
+        centerContent={
+          <CryptoIcon
+            ledgerId={assetIcon.ledgerId}
+            ticker={assetIcon.ticker}
+            size={QR_CENTER_ICON_SIZE}
+            shape="circle"
+          />
+        }
+      />
       <RequestReceiveAddress addressParts={addressParts} />
     </Box>
   );
