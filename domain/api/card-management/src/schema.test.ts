@@ -9,6 +9,9 @@ import {
   PayCardSessionResponseSchema,
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
+  PayCardSetPinCssSchema,
+  PayCardSetPinTokenRequestSchema,
+  PayCardSetPinTokenResponseSchema,
   PayCardStatusResponseSchema,
   PAY_CARD_TRANSACTION_CATEGORIES,
   PayCardTransactionSchema,
@@ -175,6 +178,91 @@ describe("PayCardDetailsCssSchema", () => {
   it("rejects a colour the provider would answer 422 for", () => {
     expect(() => PayCardDetailsCssSchema.parse({ cardTextColor: "white" })).toThrow();
     expect(() => PayCardDetailsCssSchema.parse({ cardTextColor: "#GGGGGG" })).toThrow();
+  });
+});
+
+describe("PayCardSetPinTokenResponseSchema", () => {
+  // The provider's example, with an all-zero token: a real-looking one trips secret scanning.
+  const setPinToken = {
+    token: "00000000-0000-4000-8000-000000000000",
+    hostedPageUrl:
+      "https://card.api.live.ledger.com/pin-direct/set?token=00000000-0000-4000-8000-000000000000",
+  };
+
+  it("reads the documented token response", () => {
+    expect(PayCardSetPinTokenResponseSchema.parse(setPinToken)).toEqual(setPinToken);
+  });
+
+  it("rejects a hosted page url that is not https, which the app would open", () => {
+    expect(() =>
+      PayCardSetPinTokenResponseSchema.parse({ ...setPinToken, hostedPageUrl: "" }),
+    ).toThrow();
+    expect(() =>
+      PayCardSetPinTokenResponseSchema.parse({
+        ...setPinToken,
+        hostedPageUrl: "http://card.api.live.ledger.com/pin-direct/set",
+      }),
+    ).toThrow();
+  });
+});
+
+describe("PayCardSetPinCssSchema", () => {
+  it("takes the documented colours and radii, and takes none at all", () => {
+    const css = {
+      backgroundColor: "#EFEFEF",
+      textColor: "#000000",
+      backgroundColorPrimary: "#000000",
+      textColorPrimary: "#FFFFFF",
+      pinBorderColor: "#000000",
+      buttonBorderRadius: 8,
+      pinBorderRadius: 4,
+    };
+
+    expect(PayCardSetPinCssSchema.parse(css)).toEqual(css);
+    expect(PayCardSetPinCssSchema.parse({})).toEqual({});
+  });
+
+  it("rejects a colour the provider would answer 422 for", () => {
+    expect(() => PayCardSetPinCssSchema.parse({ textColor: "white" })).toThrow();
+    expect(() => PayCardSetPinCssSchema.parse({ pinBorderColor: "#GGGGGG" })).toThrow();
+  });
+
+  it("rejects a radius that cannot be drawn", () => {
+    expect(() => PayCardSetPinCssSchema.parse({ buttonBorderRadius: -1 })).toThrow();
+    expect(() => PayCardSetPinCssSchema.parse({ pinBorderRadius: "4" })).toThrow();
+  });
+});
+
+describe("PayCardSetPinTokenRequestSchema", () => {
+  it("asks for a token with no argument at all", () => {
+    expect(PayCardSetPinTokenRequestSchema.parse(undefined)).toBeUndefined();
+    expect(PayCardSetPinTokenRequestSchema.parse({})).toEqual({});
+  });
+
+  it("takes a redirect destination, and an embedded page without one", () => {
+    const redirecting = { redirectUrl: "https://card.test/pin-done", isEmbedded: false };
+    expect(PayCardSetPinTokenRequestSchema.parse(redirecting)).toEqual(redirecting);
+    expect(PayCardSetPinTokenRequestSchema.parse({ isEmbedded: true })).toEqual({
+      isEmbedded: true,
+    });
+  });
+
+  it("rejects a destination for an embedded page, which would never navigate to it", () => {
+    expect(() =>
+      PayCardSetPinTokenRequestSchema.parse({
+        isEmbedded: true,
+        redirectUrl: "https://card.test/pin-done",
+      }),
+    ).toThrow();
+  });
+
+  it("rejects a destination that is not https", () => {
+    expect(() =>
+      PayCardSetPinTokenRequestSchema.parse({ redirectUrl: "http://card.test/pin-done" }),
+    ).toThrow();
+    expect(() =>
+      PayCardSetPinTokenRequestSchema.parse({ redirectUrl: "javascript:alert(1)" }),
+    ).toThrow();
   });
 });
 

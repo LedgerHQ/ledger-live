@@ -13,6 +13,7 @@ import {
   useGetCardLinkedWalletsQuery,
   useGetCardOnboardingStatusQuery,
   useCreateCardDetailsTokenMutation,
+  useCreateCardSetPinTokenMutation,
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
   useGetInternalWalletsQuery,
@@ -122,6 +123,7 @@ describe("cardManagementApi configuration", () => {
   it("injects exactly its own endpoints", () => {
     expect(Object.keys(cardManagementApi.endpoints).sort()).toEqual([
       "createCardDetailsToken",
+      "createCardSetPinToken",
       "exchangeAuthorizationCode",
       "freezeCard",
       "getCardLinkedWallets",
@@ -168,6 +170,11 @@ describe("cardManagementApi configuration", () => {
   it("exposes createCardDetailsToken and its hook", () => {
     expect(cardManagementApi.endpoints.createCardDetailsToken).toBeDefined();
     expect(useCreateCardDetailsTokenMutation).toBeDefined();
+  });
+
+  it("exposes createCardSetPinToken and its hook", () => {
+    expect(cardManagementApi.endpoints.createCardSetPinToken).toBeDefined();
+    expect(useCreateCardSetPinTokenMutation).toBeDefined();
   });
 
   it("exposes freezeCard and unfreezeCard with their hooks", () => {
@@ -987,6 +994,128 @@ describe("cardManagementApi requests", () => {
       await store.dispatch(cardManagementApi.endpoints.createCardDetailsToken.initiate()).unwrap();
 
       expect(JSON.stringify(store.getState().cardApi.mutations)).toContain(detailsToken.token);
+    });
+  });
+
+  describe("createCardSetPinToken", () => {
+    const SET_PIN_TOKEN_PATH = "/v1/card/set-pin/token";
+
+    // An all-zero token: a real-looking one trips secret scanning.
+    const setPinToken = {
+      token: "00000000-0000-4000-8000-000000000000",
+      hostedPageUrl: "https://card.test/pin-direct/set?token=00000000-0000-4000-8000-000000000000",
+    };
+
+    it("mints a token, and sends no body when the caller asks for nothing", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardSetPinToken.initiate(),
+      );
+
+      expectSessionRequest("POST", SET_PIN_TOKEN_PATH);
+      expect(provider.sent().body).toBe("");
+      expect(result.data).toEqual(setPinToken);
+    });
+
+    it("sends the destination and the styling the host asked for", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardSetPinToken.initiate({
+            redirectUrl: "https://card.test/pin-done",
+            customCss: { textColor: "#000000", pinBorderRadius: 4 },
+          }),
+        )
+        .unwrap();
+
+      expect(JSON.parse(provider.sent().body)).toEqual({
+        redirectUrl: "https://card.test/pin-done",
+        customCss: { textColor: "#000000", pinBorderRadius: 4 },
+      });
+    });
+
+    it("asks for the embedded page, which needs no destination", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(cardManagementApi.endpoints.createCardSetPinToken.initiate({ isEmbedded: true }))
+        .unwrap();
+
+      expect(JSON.parse(provider.sent().body)).toEqual({ isEmbedded: true });
+    });
+
+    it("rejects a destination for an embedded page, which would never navigate to it", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardSetPinToken.initiate({
+          isEmbedded: true,
+          // The pairing is part of the request type, so this also asserts the type refuses it.
+          // @ts-expect-error an embedded page posts a message instead of navigating
+          redirectUrl: "https://card.test/pin-done",
+        }),
+      );
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("rejects a destination that is not https, and sends no request", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardSetPinToken.initiate({
+          redirectUrl: "http://card.test/pin-done",
+        }),
+      );
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("rejects a hosted page url that is not https, which the app would open", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () =>
+        jsonResponse({ ...setPinToken, hostedPageUrl: "javascript:alert(1)" }),
+      );
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardSetPinToken.initiate(),
+      );
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
+    });
+
+    it("stores neither the token nor the hosted page url when the caller does not track it", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardSetPinToken.initiate(undefined, { track: false }),
+        )
+        .unwrap();
+
+      const state = JSON.stringify(store.getState().cardApi);
+      expect(state).not.toContain(setPinToken.token);
+      expect(state).not.toContain("pin-direct");
+    });
+
+    it("leaves the token in redux when the caller tracks it, which is why callers must not", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.createCardSetPinToken.initiate()).unwrap();
+
+      expect(JSON.stringify(store.getState().cardApi.mutations)).toContain(setPinToken.token);
     });
   });
 

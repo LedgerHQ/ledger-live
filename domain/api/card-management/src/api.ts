@@ -12,6 +12,8 @@ import {
   PayCardSessionSchema,
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
+  PayCardSetPinTokenRequestSchema,
+  PayCardSetPinTokenResponseSchema,
   PayCardStatusResponseSchema,
   PayCardTransactionsRequestSchema,
   PayCardTransactionsResponseSchema,
@@ -32,6 +34,8 @@ import type {
   PayCardSession,
   PayCardDetailsCss,
   PayCardDetailsToken,
+  PayCardSetPinToken,
+  PayCardSetPinTokenRequest,
   PayCardStatus,
   PayCardTransaction,
   PayCardTransactionsRequest,
@@ -178,6 +182,23 @@ export const cardManagementApi = cardApi
         responseSchema: PayCardDetailsTokenResponseSchema,
       }),
 
+      /**
+       * Mints the URL of the provider's hosted page for setting or changing the card's PIN.
+       *
+       * A mutation for the same reasons as `createCardDetailsToken`: the token is spent when the
+       * page is opened, so the answer must never be served from a cache. The URL carries the token,
+       * so dispatch with `{ track: false }` or reset once the page has been opened.
+       */
+      createCardSetPinToken: build.mutation<PayCardSetPinToken, PayCardSetPinTokenRequest | void>({
+        query: request => ({
+          url: "/v1/card/set-pin/token",
+          method: "POST",
+          ...(request ? { body: request } : {}),
+        }),
+        argSchema: PayCardSetPinTokenRequestSchema,
+        responseSchema: PayCardSetPinTokenResponseSchema,
+      }),
+
       freezeCard: build.mutation<PayCardFreezeStateResult, void>({
         query: () => ({
           url: "/v1/card/freeze",
@@ -250,6 +271,7 @@ export const {
   useGetWalletHistoryQuery,
   useLazyGetWalletHistoryQuery,
   useCreateCardDetailsTokenMutation,
+  useCreateCardSetPinTokenMutation,
   useLazyGetCardStatusQuery,
   useFreezeCardMutation,
   useUnfreezeCardMutation,
