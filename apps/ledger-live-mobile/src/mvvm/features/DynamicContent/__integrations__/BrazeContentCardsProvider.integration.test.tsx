@@ -1,4 +1,5 @@
 import Braze, { type ContentCard } from "@braze/react-native-sdk";
+import { BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS } from "@ledgerhq/live-common/braze/identityLifecycle";
 import { act, render } from "@tests/test-renderer";
 import React, { useEffect } from "react";
 import {
@@ -98,6 +99,74 @@ describe("BrazeContentCardsProvider", () => {
       onContentCardsUpdated({ cards: [] });
       await firstRefresh;
     });
+  });
+
+  it("should reject a hung refresh and ignore its late update", async () => {
+    const nativeSetTimeout = global.setTimeout.bind(global);
+    const nativeClearTimeout = global.clearTimeout.bind(global);
+    const refreshTimeouts = new Map<object, () => void>();
+    const setTimeoutSpy = jest.spyOn(global, "setTimeout").mockImplementation(((
+      handler: TimerHandler,
+      delay?: number,
+      ...args: unknown[]
+    ) => {
+      if (delay !== BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS) {
+        return nativeSetTimeout(handler as never, delay, ...args);
+      }
+
+      const timeoutId = {};
+      refreshTimeouts.set(timeoutId, () => {
+        if (typeof handler === "function") {
+          handler(...args);
+        }
+      });
+      return timeoutId as ReturnType<typeof setTimeout>;
+    }) as unknown as typeof setTimeout);
+    const clearTimeoutSpy = jest.spyOn(global, "clearTimeout").mockImplementation(timeoutId => {
+      if (refreshTimeouts.delete(timeoutId as object)) {
+        return;
+      }
+      nativeClearTimeout(timeoutId);
+    });
+
+    try {
+      let lifecycle = defaultLifecycle;
+      const { store, unmount } = render(
+        <BrazeContentCardsProvider>
+          <RefreshConsumer
+            onReady={value => {
+              lifecycle = value;
+            }}
+          />
+        </BrazeContentCardsProvider>,
+      );
+      const staleListener = mockedAddListener.mock.calls[0][1] as unknown as (
+        event: Braze.ContentCardsUpdatedEvent,
+      ) => void;
+      const refreshPromise = lifecycle.refreshContentCards();
+      void refreshPromise.catch(() => {});
+
+      await act(async () => {
+        for (const fireTimeout of refreshTimeouts.values()) {
+          fireTimeout();
+        }
+      });
+
+      await expect(refreshPromise).rejects.toThrow(
+        "Timed out waiting for Braze content cards refresh",
+      );
+      expect(store.getState().dynamicContent.isLoading).toBe(false);
+
+      await act(async () => {
+        staleListener({ cards: [contentCard] });
+      });
+
+      expect(store.getState().dynamicContent.mobileCards).toEqual([]);
+      unmount();
+    } finally {
+      setTimeoutSpy.mockRestore();
+      clearTimeoutSpy.mockRestore();
+    }
   });
 
   it("should ignore pre-wipe events and issue a new refresh after an identity reset", async () => {
