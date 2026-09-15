@@ -10768,6 +10768,41 @@
     "accountActions": {
       "publicToPrivate": "Convert"
     },
+    "bond": {
+      "stepperHeader": {
+        "validator": "Select validator",
+        "stepRange": "{{currentStep}} of {{totalSteps}}",
+        "amount": "Amount",
+        "selectDevice": "Select Device",
+        "connectDevice": "Connect Device"
+      },
+      "selectValidator": {
+        "fetchError": "Failed to load validators. Please try again.",
+        "metadataError": "We couldn't load validators metadata. You can still add to your stake.",
+        "lockedHint": "Aleo allows one validator per account. You can add to your stake with this validator, or unstake first to choose a different one.",
+        "closed": "Validator is closed to new stake",
+        "unbonding": "Validator is unbonding",
+        "totalStake": "Total stake",
+        "rateAndCommission": "{{rate}}% est. · {{commission}}% commission",
+        "commissionOnly": "{{commission}}% commission",
+        "earnsNothing": "Validator earns no rewards"
+      },
+      "amount": {
+        "available": "Available:",
+        "max": "Max",
+        "stakingAlert": "Your total stake with this validator must reach at least <minimum/> to earn rewards. Only public ALEO can be staked - convert your private balance to public first if you want to stake it.",
+        "minimumLabel": "Minimum bond amount",
+        "minimumTopUp": "Add at least <missing/> to reach the <total/> total stake needed to earn rewards.",
+        "belowMinimum": "Your public balance is <missing/> short of the <minimum/> minimum bond. Top up your public balance before staking.",
+        "changeValidator": "Choose another validator"
+      },
+      "validation": {
+        "success": {
+          "title": "Bond Submitted",
+          "description": "Your bond transaction is being processed on the Aleo network."
+        }
+      }
+    },
     "send": {
       "balanceSelection": {
         "title": "Select balance",
