@@ -19,6 +19,7 @@ import {
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
   useGetInternalWalletsQuery,
+  useGetRewardWalletQuery,
   useOrderCardMutation,
   useUnfreezeCardMutation,
 } from "./api";
@@ -65,6 +66,16 @@ const internalWalletsOnTheWire = [
     type: "INTERNAL",
   },
 ];
+
+const rewardWalletOnTheWire = {
+  id: "098aeb90-e7f7-4f81-bc2e-4963330122c5",
+  balance: "45.75",
+  currency: "usdc",
+  isWithdrawable: true,
+  type: "REWARD",
+};
+
+const { type: _rewardType, ...rewardWallet } = rewardWalletOnTheWire;
 
 const internalWallets = internalWalletsOnTheWire.map(({ type: _type, ...wallet }) => wallet);
 
@@ -132,6 +143,7 @@ describe("cardManagementApi configuration", () => {
       "getCardStatus",
       "getCardTransactions",
       "getInternalWallets",
+      "getRewardWallet",
       "getUser",
       "getWalletHistory",
       "linkWalletToCard",
@@ -192,7 +204,7 @@ describe("cardManagementApi configuration", () => {
     expect(useUnfreezeCardMutation).toBeDefined();
   });
 
-  it("exposes both wallet endpoints with their hooks", () => {
+  it("exposes the wallet endpoints with their hooks", () => {
     expect(cardManagementApi.endpoints.getInternalWallets).toBeDefined();
     expect(useGetInternalWalletsQuery).toBeDefined();
     expect(cardManagementApi.endpoints.getCardLinkedWallets).toBeDefined();
@@ -201,6 +213,8 @@ describe("cardManagementApi configuration", () => {
     expect(useLinkWalletToCardMutation).toBeDefined();
     expect(cardManagementApi.endpoints.updateCardWalletPriorities).toBeDefined();
     expect(useUpdateCardWalletPrioritiesMutation).toBeDefined();
+    expect(cardManagementApi.endpoints.getRewardWallet).toBeDefined();
+    expect(useGetRewardWalletQuery).toBeDefined();
   });
 
   it("registers under the shared cardApi reducer path", () => {
@@ -844,6 +858,50 @@ describe("cardManagementApi requests", () => {
       ).toBe("ACTIVE");
 
       subscription.unsubscribe();
+    });
+  });
+
+  describe("getRewardWallet", () => {
+    const REWARD_WALLET_PATH = "/v1/wallet/reward";
+
+    const readRewardWallet = () =>
+      makeStore("session-token").dispatch(cardManagementApi.endpoints.getRewardWallet.initiate());
+
+    it("reads the wallet the rewards are paid into", async () => {
+      provider.get(REWARD_WALLET_PATH, () => jsonResponse(rewardWalletOnTheWire));
+
+      const result = await readRewardWallet();
+
+      expectSessionRequest("GET", REWARD_WALLET_PATH);
+      expect(result.data).toEqual(rewardWallet);
+    });
+
+    it("keeps the balance a string, so its precision survives", async () => {
+      provider.get(REWARD_WALLET_PATH, () =>
+        jsonResponse({ ...rewardWalletOnTheWire, balance: "9007199254740993.000001" }),
+      );
+
+      const result = await readRewardWallet();
+
+      expect(result.data?.balance).toBe("9007199254740993.000001");
+    });
+
+    it("drops the keys the wire contract does not declare", async () => {
+      provider.get(REWARD_WALLET_PATH, () => jsonResponse(rewardWalletOnTheWire));
+
+      const result = await readRewardWallet();
+
+      expect(result.data).not.toHaveProperty("type");
+    });
+
+    it("rejects an answer that does not say whether the rewards can be withdrawn", async () => {
+      const { isWithdrawable: _isWithdrawable, ...withoutFlag } = rewardWalletOnTheWire;
+      provider.get(REWARD_WALLET_PATH, () => jsonResponse(withoutFlag));
+
+      const result = await readRewardWallet();
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
     });
   });
 
@@ -1518,6 +1576,4 @@ describe("cardManagementApi requests", () => {
       expect(provider.requests().length).toBe(before + 1);
     });
   });
-
- 
 });

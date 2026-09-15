@@ -32,6 +32,7 @@ shape and the reasons.
 | `freezeCard` | POST | `/v1/card/freeze` | Move an active card to `FROZEN` |
 | `unfreezeCard` | POST | `/v1/card/unfreeze` | Move a frozen card back to `ACTIVE` |
 | `getInternalWallets` | GET | `/v1/wallet/internal` | Read every custodial wallet, with balances |
+| `getRewardWallet` | GET | `/v1/wallet/reward` | Read the wallet the card's rewards are paid into |
 | `getCardLinkedWallets` | GET | `/v1/wallet/internal/card_linked` | Read the wallets funding the card, in charging order |
 | `linkWalletToCard` | POST | `/v1/wallet/internal/card_linked` | Link a custodial wallet to the card as a funding source |
 | `updateCardWalletPriorities` | PUT | `/v1/wallet/internal/card_linked/priority` | Rewrite the order the linked wallets are charged in |

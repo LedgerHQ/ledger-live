@@ -3,6 +3,7 @@ import { CARD_MANAGEMENT_TAGS, OAUTH2_TOKEN_PATH } from "./constants";
 import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
+  PayCardRewardWalletResponseSchema,
   PayCardLinkWalletRequestSchema,
   PayCardLinkWalletResponseSchema,
   PayCardLinkedWalletsResponseSchema,
@@ -39,6 +40,7 @@ import type {
   PayCardLogoutResult,
   PayCardOrderResult,
   PayCardRefreshSessionRequest,
+  PayCardRewardWallet,
   PayCardSession,
   PayCardDetailsCss,
   PayCardDetailsToken,
@@ -260,6 +262,14 @@ export const cardManagementApi = cardApi
         responseSchema: PayCardInternalWalletsResponseSchema,
       }),
 
+      getRewardWallet: build.query<PayCardRewardWallet, void>({
+        query: () => ({
+          url: "/v1/wallet/reward",
+          method: "GET",
+        }),
+        responseSchema: PayCardRewardWalletResponseSchema,
+      }),
+
       getCardLinkedWallets: build.query<PayCardLinkedWallet[], void>({
         query: () => ({
           url: "/v1/wallet/internal/card_linked",
@@ -348,6 +358,7 @@ export const {
   useFreezeCardMutation,
   useUnfreezeCardMutation,
   useGetInternalWalletsQuery,
+  useGetRewardWalletQuery,
   useGetCardLinkedWalletsQuery,
   useLinkWalletToCardMutation,
   useUpdateCardWalletPrioritiesMutation,
