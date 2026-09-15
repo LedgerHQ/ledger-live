@@ -158,12 +158,21 @@ export function createApi() {
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
   } satisfies CoinModuleImpl<TronCoinConfig, TronMemo, TronTxData>;
 
-  // Energy-rent seam (Tronify sponsored send): not yet part of CoinModuleApi, so these ride on the
-  // base object as extra members rather than through the `satisfies` check above, which enforces
-  // CoinModuleApi's exact key set and would reject them as excess properties. Reached only through
-  // the presence-guarded `getSponsoredCoinApi` accessor (generic-coin-framework/sponsored.ts).
+  return base;
+}
+
+/**
+ * Energy-rent seam (Tronify sponsored send) — kept OFF {@link createApi} so that factory stays
+ * exactly the generic `CoinModuleImpl` contract. Not part of `CoinModuleApi`, so it lives in its own
+ * factory, resolved through the registry's `loadSponsoredApi` and `getSponsoredCoinApi`.
+ *
+ * `listFeeOptions` is repeated here (it is also the generic-contract method in `createApi`) so the
+ * seam is self-contained for the app's sponsored fee picker; both delegate to the same logic layer.
+ */
+export function createSponsoredSendApi() {
   return {
-    ...base,
+    listFeeOptions: (intent: TransactionIntent<TronMemo, TronTxData>) =>
+      listFeeOptionsLogic(intent),
     // Context-free savings quote for the app-side fee nudge (no framework Context to build one).
     estimateSponsoredFeeQuote: (intent: TransactionIntent<TronMemo, TronTxData>) =>
       estimateSponsoredFeeQuote(intent),
