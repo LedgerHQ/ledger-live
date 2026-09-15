@@ -2,6 +2,7 @@ import fs from "fs";
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
@@ -10,13 +11,6 @@ import { buildTags } from "tests/utils/tagsUtils";
 // covers the other half -- enabling it and receiving in the same session.
 const account = Account.ZEC_1;
 const xrayTicket = "B2CQA-6606";
-
-// The address the device derives for the shared QA seed at 44'/133'/0'/0/6.
-// It has to be the real one: ZcashShieldedVerify compares the device's answer
-// against this persisted value, so a made-up address would make the spec pass
-// only while that verification is broken, and invert on the fix.
-const ZEC_1_SHIELDED_ADDRESS =
-  "u1rxupz6pfemaqnxkakpf846uf6euuaqhhgp7pf26he0c5k8xcm73e4khwj5fkmqe5rw58ppa4xevm3tny0sufvlywqngj2vus0g5rqt4j";
 
 /** Writes an already-activated private balance into the seeded userdata. */
 const seedPrivateInfo = async (userdataPath?: string) => {
@@ -27,12 +21,16 @@ const seedPrivateInfo = async (userdataPath?: string) => {
       `seedPrivateInfo: expected raw.data.accounts to be an array in ${userdataPath}`,
     );
   }
-  const acc = raw.data.accounts.find((a: { data: { id: string } }) =>
-    a.data.id.includes(account.currency.id),
+  // Exact match on (currencyId, index), not a currencyId substring: ZEC_1 and
+  // ZEC_2 share the same currencyId, so a substring match can silently seed
+  // the wrong account once both exist in userdata.
+  const acc = raw.data.accounts.find(
+    (a: { data: { currencyId?: string; index?: number } }) =>
+      a.data.currencyId === account.currency.id && a.data.index === account.index,
   );
   if (!acc) {
     throw new Error(
-      `seedPrivateInfo: no account matching "${account.currency.id}" in ${userdataPath}. Did liveDataCommand run first?`,
+      `seedPrivateInfo: no account matching currencyId "${account.currency.id}" and index ${account.index} in ${userdataPath}. Did liveDataCommand run first?`,
     );
   }
   // Only `shieldedAddress` drives the Receive block. The UFVK is left null and
@@ -47,7 +45,7 @@ const seedPrivateInfo = async (userdataPath?: string) => {
     estimatedTimeRemaining: { hours: 0, minutes: 0 },
     ufvk: null,
     birthday: "2026-08-01",
-    shieldedAddress: ZEC_1_SHIELDED_ADDRESS,
+    shieldedAddress: Addresses.ZEC_1_SHIELDED_ADDRESS,
     lastSyncTimestamp: null,
     lastProcessedBlock: null,
     transactions: [],
@@ -78,7 +76,7 @@ test.describe("Receive private address", () => {
       await app.account.clickReceive();
       await app.receive.continue();
       await app.receive.expectPrivateAddressBlockVisible();
-      await app.receive.expectValidPrivateAddress(ZEC_1_SHIELDED_ADDRESS);
+      await app.receive.expectValidPrivateAddress(Addresses.ZEC_1_SHIELDED_ADDRESS);
     },
   );
 });

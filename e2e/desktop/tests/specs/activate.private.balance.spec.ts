@@ -1,13 +1,11 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
+import { DeviceLabels } from "@ledgerhq/live-e2e-shared/enum/DeviceLabels";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { waitFor } from "@ledgerhq/live-e2e-shared/speculos";
 import { buildTags } from "tests/utils/tagsUtils";
-import { settleAfterDeviceStatusScreen } from "tests/utils/deviceStatusScreen";
-
-// The address the device derives for the shared QA seed at 44'/133'/0'/0/6.
-const ZEC_1_SHIELDED_ADDRESS =
-  "u1rxupz6pfemaqnxkakpf846uf6euuaqhhgp7pf26he0c5k8xcm73e4khwj5fkmqe5rw58ppa4xevm3tny0sufvlywqngj2vus0g5rqt4j";
 
 const accounts = [
   { account: Account.ZEC_1, xrayTicket: "B2CQA-4300", birthdayHeight: "2026-08-01" },
@@ -45,7 +43,7 @@ for (const account of accounts) {
 
         // The UFVK export ends on the device's status screen, which drops any APDU
         // sent while it is up (LIVE-37178). Settle before driving the device again.
-        await settleAfterDeviceStatusScreen();
+        await waitFor(DeviceLabels.ZCASH_IS_READY, 9);
 
         // The Receive step must now show the private address block, carrying the
         // address derived from the UFVK that was just exported from the device.
@@ -55,7 +53,7 @@ for (const account of accounts) {
         // Compare against the address the device derives for the shared QA seed,
         // not against whatever the UI just rendered: this is what makes the spec
         // assert the export-to-receive linkage rather than its own output.
-        await app.receive.expectValidPrivateAddress(ZEC_1_SHIELDED_ADDRESS);
+        await app.receive.expectValidPrivateAddress(Addresses.ZEC_1_SHIELDED_ADDRESS);
       },
     );
   });

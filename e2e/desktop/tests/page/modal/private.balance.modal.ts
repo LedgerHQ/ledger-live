@@ -29,15 +29,4 @@ export class PrivateBalanceModal extends Modal {
   async confirmUfvkExportedFromDevice() {
     await expect(this.finalMessage).toBeVisible();
   }
-
-  // Overrides Modal.close(). This flow keeps two step footers mounted at once
-  // (ZCashExportKeyFlowModal StepDevice.tsx:138 and StepConfirmation.tsx:86),
-  // each rendering a Button with data-testid="modal-close-button", so the base
-  // locator hits two elements inside the container and Playwright fails on
-  // strict mode. Scoping alone does not disambiguate them -- verified by running
-  // the spec without this override. Match the visible one by role instead.
-  @step("Close modal")
-  async close() {
-    await this.container.getByRole("button", { name: "Close" }).click();
-  }
 }

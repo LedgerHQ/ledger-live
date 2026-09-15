@@ -82,15 +82,12 @@ export class ReceiveModal extends Modal {
     await expect(this.privateAddressBlock).toBeVisible();
   }
 
-  @step("Read the private/shielded address displayed")
-  async getPrivateAddressDisplayed() {
-    const text = await this.privateAddressBlock.locator("#address-field").textContent();
-    return text ? text.split(" ")[0] : "";
-  }
-
   @step("Verify private/shielded address correctness $0")
   async expectValidPrivateAddress(address: string) {
-    expect(address).toMatch(/^u1[0-9a-z]+$/);
-    await expect(this.privateAddressBlock.locator("#address-field")).toHaveText(address);
+    const addressField = this.privateAddressBlock.locator("#address-field");
+    await expect(addressField).toHaveText(address);
+    const displayedText = (await addressField.textContent()) ?? "";
+    const displayedAddress = displayedText.split(" ")[0];
+    expect(displayedAddress).toMatch(/^u1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]{50,}$/);
   }
 }
