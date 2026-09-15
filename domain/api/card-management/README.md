@@ -27,6 +27,7 @@ shape and the reasons.
 | `getCardStatus` | GET | `/v1/card/status` | Read the ordered card's state and preview fields |
 | `getCardTransactions` | GET | `/v1/card/transactions` | Read the card's own transactions, newest first |
 | `createCardDetailsToken` | POST | `/v1/card/details/token` | Mint a single-use token and image URL showing PAN, CVV and expiry |
+| `createCardSetPinToken` | POST | `/v1/card/set-pin/token` | Mint a single-use token and URL for the hosted page that sets the PIN |
 | `freezeCard` | POST | `/v1/card/freeze` | Move an active card to `FROZEN` |
 | `unfreezeCard` | POST | `/v1/card/unfreeze` | Move a frozen card back to `ACTIVE` |
 | `getInternalWallets` | GET | `/v1/wallet/internal` | Read every custodial wallet, with balances |
