@@ -11,7 +11,7 @@ type Props = {
   neurons: readonly ICPNeuron[];
   renderNeuron: (neuron: ICPNeuron) => React.ReactNode;
   onPressNeuron?: (neuron: ICPNeuron) => void;
-  emptyState: React.ReactNode;
+  emptyState: string;
   header?: React.ReactNode;
   footer?: React.ReactNode;
 };
