@@ -107,10 +107,12 @@ function DepositForm({
             isInvalid={statusError !== null}
             testID="perps-deposit-amount-input"
           />
-          <QuotedAmount
-            formattedQuotedAmount={formattedQuotedAmount}
-            isQuoteLoading={isQuoteLoading}
-          />
+          <Box lx={{ minHeight: "s20", justifyContent: "center", alignItems: "center" }}>
+            <QuotedAmount
+              formattedQuotedAmount={formattedQuotedAmount}
+              isQuoteLoading={isQuoteLoading}
+            />
+          </Box>
           <AmountMessage statusError={statusError} depositAmount={depositAmount} />
         </Box>
 
