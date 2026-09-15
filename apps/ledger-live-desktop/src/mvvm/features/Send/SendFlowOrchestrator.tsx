@@ -5,8 +5,6 @@ import { useSendFlowBusinessLogic } from "./hooks/useSendFlowState";
 import { SEND_FLOW_CONFIG } from "./constants";
 import {
   canSkipRecipientStep,
-  hasDirectRecipient,
-  SEND_FLOW_SOURCE,
   SEND_FLOW_STEP,
   type SendFlowStep,
   type SendFlowInitParams,
@@ -31,10 +29,7 @@ function getInitialSendFlowStep(
   if (uiConfig.hasBalanceTypeStep) {
     return SEND_FLOW_STEP.BALANCE_TYPE;
   }
-  if (
-    (initParams?.source === SEND_FLOW_SOURCE.PAY && hasDirectRecipient(initParams)) ||
-    canSkipRecipientStep(initParams, uiConfig)
-  ) {
+  if (canSkipRecipientStep(initParams, uiConfig)) {
     return SEND_FLOW_STEP.AMOUNT;
   }
   return SEND_FLOW_STEP.RECIPIENT;

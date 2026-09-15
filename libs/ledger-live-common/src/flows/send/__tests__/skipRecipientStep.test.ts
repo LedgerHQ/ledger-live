@@ -1,4 +1,4 @@
-import { canSkipRecipientStep, hasDirectRecipient } from "../types";
+import { canSkipRecipientStep, hasDirectRecipient, SEND_FLOW_SOURCE } from "../types";
 
 describe("hasDirectRecipient", () => {
   it("should require skip and a non-empty recipient", () => {
@@ -16,6 +16,12 @@ describe("canSkipRecipientStep", () => {
   it("should skip only when the currency does not require a memo", () => {
     expect(canSkipRecipientStep(skip, { hasMemo: false })).toBe(true);
     expect(canSkipRecipientStep(skip, { hasMemo: true })).toBe(false);
+  });
+
+  it("should skip memo coins when Pay has a direct recipient", () => {
+    expect(canSkipRecipientStep({ ...skip, source: SEND_FLOW_SOURCE.PAY }, { hasMemo: true })).toBe(
+      true,
+    );
   });
 
   it("should not skip without a direct recipient", () => {

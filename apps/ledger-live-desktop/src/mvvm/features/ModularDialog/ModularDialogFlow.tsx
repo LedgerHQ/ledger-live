@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 import {
   getPerpsUiUseCase,
-  PAY_ACCOUNT_UI_USE_CASE,
   PERPS_UI_USE_CASE,
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import {
@@ -27,7 +26,12 @@ import SkeletonList from "./components/SkeletonList";
 import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";
 import { useModularDialogNavigation } from "./hooks/useModularDialogNavigation";
 import { useModularDialogRemoteData } from "./hooks/useModularDialogRemoteData";
-import { MODULAR_DIALOG_STEP, type ModularDialogFlowProps, type ModularDialogStep } from "./types";
+import {
+  MODULAR_DIALOG_STEP,
+  PAY_ACCOUNT_UI_USE_CASE,
+  type ModularDialogFlowProps,
+  type ModularDialogStep,
+} from "./types";
 
 const TRANSLATION_KEYS: Record<ModularDialogStep, string> = {
   [MODULAR_DIALOG_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",

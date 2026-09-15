@@ -9,8 +9,8 @@ import { openSendFlowDialog, type SendFlowParams } from "~/renderer/reducers/sen
 import { useNewSendFlowFeature } from "./useNewSendFlowFeature";
 import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
-import { PAY_ACCOUNT_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
+import { hasDirectRecipient, SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
+import { PAY_ACCOUNT_UI_USE_CASE } from "LLD/features/ModularDialog/types";
 import {
   closeDialog,
   openDialog,
@@ -39,16 +39,6 @@ type WorkflowParams = {
   startWithWarning?: boolean;
   source?: string;
 };
-
-function payAccountUiUseCase(
-  params: Pick<WorkflowParams, "source" | "recipient" | "skipRecipientStep">,
-) {
-  return params.source === SEND_FLOW_SOURCE.PAY &&
-    Boolean(params.recipient?.trim()) &&
-    params.skipRecipientStep === true
-    ? PAY_ACCOUNT_UI_USE_CASE
-    : undefined;
-}
 
 const toLegacyAmount = (amount?: string | BigNumber) =>
   typeof amount === "string" ? new BigNumber(amount) : amount;
@@ -94,7 +84,10 @@ export function useOpenSendFlow() {
                 currencies: [...(currencyIds ?? [])],
                 categories,
                 areCurrenciesFiltered: Boolean(currencyIds?.length),
-                uiUseCase: payAccountUiUseCase(flowParams),
+                uiUseCase:
+                  flowParams.source === SEND_FLOW_SOURCE.PAY && hasDirectRecipient(flowParams)
+                    ? PAY_ACCOUNT_UI_USE_CASE
+                    : undefined,
                 dialogConfiguration: SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION,
                 onAccountSelected: (account: AccountLike, parentAccount?: Account) => {
                   dispatch(closeDialog());

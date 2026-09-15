@@ -19,6 +19,8 @@ export const NAVIGATION_DIRECTION = {
 
 export type NavigationDirection = (typeof NAVIGATION_DIRECTION)[keyof typeof NAVIGATION_DIRECTION];
 
+export const PAY_ACCOUNT_UI_USE_CASE = "pay";
+
 export const MODULAR_DIALOG_STEP = {
   ASSET_SELECTION: "ASSET_SELECTION",
   NETWORK_SELECTION: "NETWORK_SELECTION",
