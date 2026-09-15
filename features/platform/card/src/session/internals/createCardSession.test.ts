@@ -743,8 +743,9 @@ describe("the provider app id", () => {
     expect(store.read).toHaveBeenCalledWith(CARD_SESSION_KEYS.providerAppId);
   });
 
-  it("asks the store again after a read that failed", async () => {
-    // A transient keychain failure must not be remembered as "this session has no tenant".
+  it("refuses the session read, then asks the store again, after a read that failed", async () => {
+    // A tenant we cannot read is not the default tenant. The base query turns this rejection into a
+    // failed request rather than sending an unrouted one, and the next request retries the read.
     const { store, slots } = fakeStore({ [CARD_SESSION_KEYS.providerAppId]: "LEDGERUS" });
     store.read = jest
       .fn()
@@ -752,7 +753,7 @@ describe("the provider app id", () => {
       .mockImplementation(async key => slots.get(key) ?? null);
     const { readCardSession, isCardUsEnv } = createCardSession(store);
 
-    await readCardSession();
+    await expect(readCardSession()).rejects.toThrow("keychain busy");
     expect(isCardUsEnv("LEDGERUS")).toBe(false);
 
     await readCardSession();

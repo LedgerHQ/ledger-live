@@ -60,8 +60,8 @@ export function createCardSession(store: CardSessionStore) {
         }
         isProviderAppIdHydrated = true;
       })
-      // A store that could not answer has not answered. The next request asks again.
-      .catch(() => undefined)
+      // The rejection is not swallowed: a request whose tenant we cannot read must fail rather than
+      // leave for the default one. Clearing the promise still lets the next request ask again.
       .finally(() => {
         providerAppIdHydration = null;
       });
