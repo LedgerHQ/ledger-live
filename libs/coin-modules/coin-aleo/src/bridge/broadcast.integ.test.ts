@@ -9,6 +9,7 @@ describe("Broadcast", () => {
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
       networkType: "mainnet",
+      defaultValidator: null,
       apiUrls: {
         node: "https://aleo.coin.ledger.com",
         sdk: "https://aleo-backend.api.live.ledger.com/network/mainnet",

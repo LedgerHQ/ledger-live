@@ -35,7 +35,7 @@ import aleoCoinConfig from "../config";
 import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
-  MIN_BOND_AMOUNT,
+  MIN_BOND_AMOUNT_MICROCREDITS,
   MIN_DELEGATOR_STAKE_MICROCREDITS,
   TRANSACTION_TYPE,
 } from "../constants";
@@ -365,12 +365,16 @@ async function handleTransferTransaction({
   } else if (
     transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC &&
     calculatedAmount.amount.gt(0) &&
-    calculatedAmount.amount.lt(MIN_BOND_AMOUNT)
+    calculatedAmount.amount.lt(MIN_BOND_AMOUNT_MICROCREDITS)
   ) {
     errors.amount = new AleoBondAmountTooLow(undefined, {
-      minAmount: formatCurrencyUnit(account.currency.units[0], new BigNumber(MIN_BOND_AMOUNT), {
-        showCode: true,
-      }),
+      minAmount: formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(MIN_BOND_AMOUNT_MICROCREDITS),
+        {
+          showCode: true,
+        },
+      ),
     });
   } else if (
     transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC &&

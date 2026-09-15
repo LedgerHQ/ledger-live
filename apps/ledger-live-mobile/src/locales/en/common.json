@@ -36,6 +36,7 @@
     "no": "No",
     "gotit": "Got it",
     "continue": "Continue",
+    "max": "Max",
     "retry": "Retry",
     "backTo": "Back to {{to}}",
     "done": "Done",
@@ -129,6 +130,26 @@
     "ldmkEnabled": "LDMK transport enabled"
   },
   "errors": {
+    "AleoAlreadyBondedElsewhere": {
+      "title": "You are already staking with another validator",
+      "description": "Aleo allows one validator per account. Unstake from {{bondedValidator}} before staking elsewhere."
+    },
+    "AleoBondAmountTooLow": {
+      "title": "Amount too low to stake",
+      "description": "The minimum staking amount is {{minAmount}}."
+    },
+    "AleoClosedValidator": {
+      "title": "This validator is closed",
+      "description": "This validator is not accepting new delegators. Choose an open validator to continue."
+    },
+    "AleoStakeAmountTooLow": {
+      "title": "Amount too low to stake",
+      "description": "You must have at least {{minAmount}} staked in total."
+    },
+    "AleoUnbondingValidator": {
+      "title": "This validator is unbonding",
+      "description": "This validator is withdrawing its own stake, so the network rejects new stake to it. Choose another validator to continue."
+    },
     "ZcashMemoTooLong": {
       "title": "Memo must not exceed {{maxBytes}} bytes"
     },
@@ -589,7 +610,8 @@
       "description": "The lock screen picture was previously deleted."
     },
     "InvalidAddress": {
-      "title": "This is not a valid {{currencyName}} address"
+      "title": "This is not a valid {{currencyName}} address",
+      "description": "Double-check the address and try again."
     },
     "InvalidNonce": {
       "title": "Nonce is required"
@@ -598,7 +620,8 @@
       "title": "Your account is already delegated to this validator"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
-      "title": "Destination and source accounts must not be the same."
+      "title": "Destination and source accounts must not be the same.",
+      "description": "Choose a different destination — it cannot be the same as the source account."
     },
     "InvalidRecipient": {
       "title": "Invalid recipient"
@@ -1006,7 +1029,8 @@
       "title": "The legacy address format is no longer supported"
     },
     "RecipientRequired": {
-      "title": "Recipient address is required"
+      "title": "Recipient address is required",
+      "description": "Enter a recipient address to continue."
     },
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
@@ -1400,6 +1424,10 @@
     },
     "AccountCreationFeeWarning": {
       "title": "This transaction will incur an account creation fee of {{fee}}"
+    },
+    "AmountRequired": {
+      "title": "Amount required",
+      "description": "Enter an amount to continue."
     },
     "AmountTooSmall": {
       "title": "Minimum required amount for this transaction is {{amount}}"
@@ -10568,6 +10596,39 @@
     },
     "accountActions": {
       "publicToPrivate": "Convert"
+    },
+    "bond": {
+      "stepperHeader": {
+        "validator": "Select validator",
+        "stepRange": "{{currentStep}} of {{totalSteps}}",
+        "amount": "Amount",
+        "selectDevice": "Select Device",
+        "connectDevice": "Connect Device"
+      },
+      "selectValidator": {
+        "fetchError": "Failed to load validators. Please try again.",
+        "lockedHint": "Aleo allows one validator per account. You can add to your stake with this validator, or unstake first to choose a different one.",
+        "closed": "Validator is closed to new stake",
+        "unbonding": "Validator is unbonding",
+        "totalStake": "Total stake",
+        "rateAndCommission": "{{rate}}% est. · {{commission}}% commission",
+        "commissionOnly": "{{commission}}% commission",
+        "earnsNothing": "Validator earns no rewards"
+      },
+      "amount": {
+        "available": "Available:",
+        "stakingAlert": "Your total stake with this validator must reach at least <minimum/> to earn rewards. Only public ALEO can be staked - convert your private balance to public first if you want to stake it.",
+        "minimumLabel": "Minimum bond amount",
+        "minimumTopUp": "Add at least <missing/> to reach the <total/> total stake needed to earn rewards.",
+        "belowMinimum": "Your public balance is <missing/> short of the <minimum/> minimum bond. Top up your public balance before staking.",
+        "changeValidator": "Choose another validator"
+      },
+      "validation": {
+        "success": {
+          "title": "Bond Submitted",
+          "description": "Your bond transaction is being processed on the Aleo network."
+        }
+      }
     },
     "send": {
       "balanceSelection": {
