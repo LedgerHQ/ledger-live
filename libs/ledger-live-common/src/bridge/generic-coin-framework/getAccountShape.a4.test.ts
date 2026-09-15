@@ -1,8 +1,12 @@
+import { log } from "@ledgerhq/logs";
 import { A4HttpError } from "./a4/client/errors";
 import { adaptA4OperationToLiveOperation } from "./a4/client/operations";
+import { toA4Network } from "./a4/client/utils";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { genericGetAccountShape } from "./getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+
+jest.mock("@ledgerhq/logs");
 
 const getSyncHashMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
@@ -216,5 +220,33 @@ describe("genericGetAccountShape - A4 read branch", () => {
     const [liveOp] = adaptA4OperationToLiveOperation(accountId, "0xabc", a4RawOp);
 
     expect(liveOp.id).toEqual(encodeOperationId(accountId, hash, liveOp.type));
+  });
+
+  it("logs read_served_by_a4 only once across repeated syncs for the same chain", async () => {
+    // loggedReadDecisions is a module-level Set in getAccountShape.ts that survives across it()
+    // blocks in this file, and earlier tests above already trigger it for "ethereum" (the mocked
+    // toA4Network default). Using a chain name unique to this test avoids colliding with that
+    // already-consumed dedupe key from prior tests. toA4Network is called twice per call() (once
+    // in registerWithA4, once in the read/delegate block), so mockReturnValue (not Once) is used
+    // to cover every call in both invocations rather than under-counting.
+    jest.mocked(toA4Network).mockReturnValue("dedup-test-chain");
+
+    await call();
+    await call();
+
+    // Every other module that could log here (registration, config, fetchA4Operations) is fully
+    // mocked out in this file, so this is the only log() call reachable across both syncs.
+    expect(jest.mocked(log).mock.calls).toEqual([
+      [
+        "a4",
+        "A4 is serving reads for this chain",
+        {
+          level: "info",
+          decision: "read_served_by_a4",
+          chain: "dedup-test-chain",
+          method: "listOperations",
+        },
+      ],
+    ]);
   });
 });
