@@ -25,6 +25,26 @@ export function createCardSession(store: CardSessionStore) {
 
   let sessionId = 0;
 
+  /**
+   * The provider app the login redirect named, mirrored in memory because the Card base query builds
+   * its headers synchronously and cannot await the store. `readCardSession` fills the mirror, and the
+   * base query awaits it before every authenticated request, so a platform that kept the session
+   * across a restart answers from its first request on. A request that carries no session either had
+   * the value set by the login a moment earlier, or follows an authenticated one that hydrated it.
+   */
+  let providerAppId: string | null = null;
+
+  let hasReadProviderAppId = false;
+
+  async function hydrateProviderAppId(): Promise<void> {
+    if (hasReadProviderAppId) {
+      return;
+    }
+
+    hasReadProviderAppId = true;
+    providerAppId = await store.read(CARD_SESSION_KEYS.providerAppId).catch(() => null);
+  }
+
   type InFlightRefresh = {
     failedAccessToken: string;
     promise: Promise<CardSessionRefreshResult>;
@@ -62,10 +82,13 @@ export function createCardSession(store: CardSessionStore) {
 
   async function removeSession(): Promise<void> {
     isCleared = true;
+    providerAppId = null;
+    hasReadProviderAppId = true;
 
     await store.remove(CARD_SESSION_KEYS.accessToken).catch(() => undefined);
     await store.remove(CARD_SESSION_KEYS.refreshToken).catch(() => undefined);
     await store.remove(CARD_SESSION_KEYS.lifetimes).catch(() => undefined);
+    await store.remove(CARD_SESSION_KEYS.providerAppId).catch(() => undefined);
   }
 
   async function readToken(key: string): Promise<string | null> {
@@ -219,10 +242,32 @@ export function createCardSession(store: CardSessionStore) {
 
   const get = (): Promise<StoredCardSession | null> => takeTurn(readSession);
 
+  /**
+   * Records the provider app for the session that is about to be granted. The mirror is set before
+   * the write, because the token exchange is the first request that has to reach the holder's own
+   * tenant and it leaves while this store call is still in flight.
+   */
+  const setCardProviderAppId = (appId: string | null): Promise<void> => {
+    providerAppId = appId;
+    hasReadProviderAppId = true;
+
+    return takeTurn(async () => {
+      if (appId === null) {
+        await store.remove(CARD_SESSION_KEYS.providerAppId).catch(() => undefined);
+        return;
+      }
+
+      await store.write(CARD_SESSION_KEYS.providerAppId, appId).catch(() => undefined);
+    });
+  };
+
+  const isCardUsEnv = (usAppId: string): boolean => usAppId !== "" && providerAppId === usAppId;
+
   const getCardSessionToken = (): Promise<string | null> => readAccessToken();
 
   const readCardSession = async (): Promise<CardSessionSnapshot> => {
     const id = sessionId;
+    await hydrateProviderAppId();
     const token = isCleared ? null : await store.read(CARD_SESSION_KEYS.accessToken);
     return { token, sessionId: id };
   };
@@ -261,6 +306,8 @@ export function createCardSession(store: CardSessionStore) {
 
   return {
     cardSession: { set, get, clear },
+    setCardProviderAppId,
+    isCardUsEnv,
     getCardSessionToken,
     readCardSession,
     isCardSessionCurrent,

@@ -486,6 +486,7 @@ describe("createCardSession renewal failures", () => {
       `remove:${CARD_SESSION_KEYS.accessToken}`,
       `remove:${CARD_SESSION_KEYS.refreshToken}`,
       `remove:${CARD_SESSION_KEYS.lifetimes}`,
+      `remove:${CARD_SESSION_KEYS.providerAppId}`,
     ]);
   });
 
@@ -685,5 +686,77 @@ describe("createCardSession session id", () => {
 
     await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
     expect(renew).not.toHaveBeenCalled();
+  });
+});
+
+describe("the provider app id", () => {
+  it("answers the US tenant from the value the login recorded", async () => {
+    const { store } = fakeStore();
+    const { setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+
+    await setCardProviderAppId("LEDGERUS");
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+    expect(isCardUsEnv("LEDGERUAT")).toBe(false);
+  });
+
+  it("answers before the store write settles", () => {
+    // The token exchange leaves while the write is still in flight, and it is the first request that
+    // has to reach the holder's own tenant.
+    const { store } = fakeStore();
+    const { setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+
+    void setCardProviderAppId("LEDGERUS");
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+  });
+
+  it("names no tenant while the US app id is not configured", async () => {
+    const { store } = fakeStore();
+    const { setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+
+    expect(isCardUsEnv("")).toBe(false);
+
+    await setCardProviderAppId(null);
+
+    expect(isCardUsEnv("")).toBe(false);
+  });
+
+  it("reads a stored app id back on the first session read", async () => {
+    // A platform that kept the session across a restart has no redirect to name the app again.
+    const { store } = fakeStore({
+      [CARD_SESSION_KEYS.accessToken]: session.accessToken,
+      [CARD_SESSION_KEYS.refreshToken]: session.refreshToken,
+      [CARD_SESSION_KEYS.providerAppId]: "LEDGERUS",
+    });
+    const { readCardSession, isCardUsEnv } = createCardSession(store);
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(false);
+
+    await readCardSession();
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+  });
+
+  it("forgets the app id with the session it belongs to", async () => {
+    const { store, slots } = fakeStore();
+    const { cardSession, setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+    await setCardProviderAppId("LEDGERUS");
+    await cardSession.set(session);
+
+    await cardSession.clear();
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(false);
+    expect(slots.has(CARD_SESSION_KEYS.providerAppId)).toBe(false);
+  });
+
+  it("keeps the app id across the session write that follows it", async () => {
+    const { store } = fakeStore();
+    const { cardSession, setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+
+    await setCardProviderAppId("LEDGERUS");
+    await cardSession.set(session);
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
   });
 });
