@@ -22,11 +22,6 @@ on:
         required: false
         type: boolean
         default: false
-      max-shards:
-        description: Max number of shards to use for detox tests (both ios and android)
-        required: false
-        type: number
-        default: 2
       skip-pod-checks:
         description: Whether to skip the pod lockfile checks
         required: false
@@ -58,8 +53,6 @@ on:
         required: false
       CARD_OAUTH_REDIRECT_URI:
         required: false
-      GH_BOT_APP_ID:
-        required: true
       GH_BOT_CLIENT_ID:
         required: true
       GH_BOT_PRIVATE_KEY:
@@ -87,25 +80,11 @@ on:
           If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
         type: string
         required: false
-      login:
-        description: The GitHub username that triggered the workflow
-        type: string
-        required: false
       macos-specificity-runner-label:
         description: The specificity runner label to run the tests on (e.g. performance-pool, performance-pool or runner)
         required: false
         type: string
         default: "general-pool"
-      production_firebase:
-        description: "Target Firebase Production env"
-        required: false
-        type: boolean
-        default: false
-      max-shards:
-        description: Max number of shards to use for detox tests (both ios and android)
-        required: false
-        type: number
-        default: 2
       skip-pod-checks:
         description: Whether to skip the pod lockfile checks
         required: false
@@ -116,14 +95,14 @@ permissions:
   contents: read
 
 env:
-  SHOULD_UPLOAD: ${{ (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
   cache-bucket: ll-nx-cache
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
-  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-  # Android AVD configuration (shared by determine-builds cache key + Detox Android job)
+  # Android AVD configuration. AVD_API and AVD_PROFILE must track the nightly
+  # (test-mobile-e2e-reusable.yml) so a green PR is evidence about the same Android.
+  # The Detox job overrides AVD_RAM_SIZE and AVD_OPTIONS for its own throughput.
   AVD_API: 36
   AVD_ARCH: x86_64
   AVD_PROFILE: pixel_9_pro
@@ -131,11 +110,7 @@ env:
   AVD_NAME: "Android_Emulator"
   AVD_CORES: 4
   AVD_RAM_SIZE: 5120
-  AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
-  MOBILE_ARTIFACTS_ROOT: apps/ledger-live-mobile/artifacts
-  E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
-  E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
 
 jobs:
   determine-builds:
@@ -153,13 +128,7 @@ jobs:
       ios_js_key: ${{ steps.cache-keys.outputs.ios_js_key }}
       android_native_key: ${{ steps.cache-keys.outputs.android_native_key }}
       android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
-      android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
-      ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
       pod_check_key: ${{ steps.cache-keys.outputs.pod_check_key }}
-      matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
-      matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
-      avd_cache_key: ${{ steps.cache-keys.outputs.avd_cache_key }}
-      avd_exists: ${{ steps.check-avd.outputs.cache-hit }}
       pod_lockfile_validated: ${{ steps.check-lockfile-status.outputs.cache-hit }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -169,8 +138,6 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             apps/ledger-live-mobile
-            e2e/mobile
-            e2e/tooling
             pnpm-lock.yaml
             .pnpmfile.cjs
             tools
@@ -180,22 +147,10 @@ jobs:
         id: cache-keys
         env:
           REF_NAME: ${{ github.ref_name }}
-          MAX_SHARDS: ${{ inputs.max-shards }}
-          MACOS_RUNNER_LABEL: ${{ inputs.macos-specificity-runner-label }}
-        run: |
-          PREFIX=""
-          if [ "$REF_NAME" = "develop" ]; then
-            PREFIX="develop/"
-          fi
-          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}-detox-native-android-3" >> $GITHUB_OUTPUT
-          HEAD_SHA=$(git rev-parse HEAD)
-          echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
-          echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=${PREFIX}android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${MAX_SHARDS}shards" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=${PREFIX}ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${MAX_SHARDS}shards-$MACOS_RUNNER_LABEL" >> $GITHUB_OUTPUT
-          echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> $GITHUB_OUTPUT
-          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
+          HASH_IOS_NATIVE: ${{ hashFiles('apps/ledger-live-mobile/ios') }}
+          HASH_ANDROID_NATIVE: ${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}
+          HASH_PODFILE: ${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}
+        run: bash tools/scripts/determine-mobile-cache-keys.sh
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -213,34 +168,6 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-
-      - name: Generate shards matrix and test files
-        id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
-        with:
-          test_directory: apps/ledger-live-mobile/e2e
-          event_name: ${{ github.event_name }}
-          ref: ${{ inputs.ref || github.ref_name }}
-          ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
-          android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
-          aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
-          cache_bucket: ${{ env.cache-bucket }}
-          aws_region: ${{ secrets.AWS_CACHE_REGION }}
-          max_shards: ${{ inputs.max-shards }}
-
-      - name: Check if Android AVD cache exists
-        id: check-avd
-        if: ${{ steps.generate-shards.outputs.matrix_android != '[]' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
-        with:
-          key: ${{ steps.cache-keys.outputs.avd_cache_key }}
-          accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
-          secretKey: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          bucket: ledger-live-cache
-          endpoint: ${{ secrets.R2_ENDPOINT }}
-          region: auto
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
@@ -408,18 +335,11 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      AVD_API: 35
-      AVD_ARCH: x86_64
-      AVD_PROFILE: pixel_7_pro
-      AVD_TARGET: google_apis
-      AVD_NAME: "Android_Emulator"
-      AVD_CORES: 4
       AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:latest
       SPECULOS_FIRMWARE_VERSION: 2.7.1
       SPECULOS_DEVICE: nanoX
-      COINAPPS: ${{ github.workspace }}/coin-apps
       USERDATA_CACHE_ENABLED: "true"
       E2E_GENERATED_USERDATA_DIR: ${{ format('{0}/e2e/userdata/generated', github.workspace) }}
     outputs:
@@ -432,25 +352,8 @@ jobs:
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
-      - name: setup JDK 17
-        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
-        with:
-          distribution: "zulu"
-          java-version: "17"
-
-      - name: Remove preinstalled cmdline-tools (force pinned install)
-        shell: bash
-        run: |
-          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-$HOME/.android/sdk}}"
-          if [ -d "$SDK/cmdline-tools" ]; then
-            echo "Removing $SDK/cmdline-tools so pinned cmdline-tools are not skipped."
-            rm -rf "$SDK/cmdline-tools" 2>/dev/null || sudo rm -rf "$SDK/cmdline-tools"
-          fi
-
-      - name: setup Android SDK
-        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
-        with:
-          packages: "platform-tools"
+      - name: Setup Android Environment
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -500,19 +403,6 @@ jobs:
           (cd /tmp/apk/; zip -r tmp.apk assets/index.android.bundle)
           /usr/local/lib/android/sdk/build-tools/34.0.0/zipalign -p 4 /tmp/apk/tmp.apk ${{ env.ANDROID_APK_PATH }}
           /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --ks-key-alias staging --key-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
-
-      - name: Enable Hardware Acceleration
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
-      - name: Fix emulator directory permissions
-        run: |
-          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-$HOME/.android/sdk}}"
-          if [ -d "$SDK/emulator" ]; then
-            sudo chown -R $(whoami):$(id -ng) "$SDK/emulator"
-          fi
 
       - name: Install dependencies
         run: |
@@ -586,41 +476,15 @@ jobs:
           avd_api: ${{ env.AVD_API }}
 
       - name: Boot Android Emulators in Background
+        env:
+          AVD_NAME: ${{ env.AVD_NAME }}
+          AVD_OPTIONS: ${{ env.AVD_OPTIONS }}
         run: |
           LOG_FILE="e2e/mobile/artifacts/emulator-boot.log"
           mkdir -p e2e/mobile/artifacts
-          nohup bash -c '
-            log() { echo "[$(date +%H:%M:%S)] $1"; }
-            ts() { while IFS= read -r line; do echo "[$(date +%H:%M:%S)] [$1] $line"; done; }
-
-            log "🛫 Starting emulators..."
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }}  2>&1 | ts "EMU1" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} 2>&1 | ts "EMU2" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} 2>&1 | ts "EMU3" &
-
-            log "⏳ Waiting for 3 emulators to connect..."
-            while [ "$(adb devices | grep -c emulator)" -lt 3 ]; do sleep 2; done
-            log "✅ 3 emulators connected"
-            log "⏳ Waiting for all emulators to finish booting..."
-            adb -s emulator-5554 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5554 booted"
-            adb -s emulator-5556 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5556 booted"
-            adb -s emulator-5558 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5558 booted"
-
-            log "✅ All 3 emulators are fully booted"
-          ' > "$LOG_FILE" 2>&1 &
+          nohup bash tools/scripts/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
-
-      - name: Setup Speculos image and Coin Apps
-        id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
-        with:
-          coinapps_path: ${{ env.COINAPPS }}
-          bot_id: ${{ secrets.GH_BOT_APP_ID }}
-          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Compute userdata cache key date
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
@@ -652,27 +516,14 @@ jobs:
 
       - name: Get smoke test files
         id: smoke-files
-        run: |
-          # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
-          # reusable keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
-          SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
-          [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
-          SMOKE_FILES=$(node "$SHARD_TESTS" "@smoke" "e2e/mobile")
-          if [ -z "$SMOKE_FILES" ]; then
-            echo "No smoke test files found — skipping smoke tests"
-            echo "has_tests=false" >> $GITHUB_OUTPUT
-          else
-            echo "has_tests=true" >> $GITHUB_OUTPUT
-            echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-            echo "$SMOKE_FILES" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
-            echo "Smoke test files: $SMOKE_FILES"
-          fi
+        run: bash tools/scripts/select-smoke-test-files.sh
 
       - name: Run Android Tests - Smoke Tests
         if: steps.smoke-files.outputs.has_tests == 'true'
         id: detox
         run: |
+          # SHARD_TEST_FILES must word-split into one argument per spec file.
+          # shellcheck disable=SC2086
           pnpm mobile e2e:ci -p android -t \
             --e2e \
             $SHARD_TEST_FILES \
@@ -681,6 +532,8 @@ jobs:
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
+          REMOTE_SPECULOS: "true"
           INPUT_E2E: "true"
           INPUTS_TEST_FILTER: "@smoke"
 
@@ -824,22 +677,7 @@ jobs:
 
       - name: Get smoke test files
         id: smoke-files
-        run: |
-          # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
-          # reusable keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
-          SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
-          [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
-          SMOKE_FILES=$(node "$SHARD_TESTS" "@smoke" "e2e/mobile")
-          if [ -z "$SMOKE_FILES" ]; then
-            echo "No smoke test files found — skipping smoke tests"
-            echo "has_tests=false" >> $GITHUB_OUTPUT
-          else
-            echo "has_tests=true" >> $GITHUB_OUTPUT
-            echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-            echo "$SMOKE_FILES" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
-            echo "Smoke test files: $SMOKE_FILES"
-          fi
+        run: bash tools/scripts/select-smoke-test-files.sh
 
       - name: Run iOS Tests - Smoke Tests
         if: steps.smoke-files.outputs.has_tests == 'true'
@@ -852,6 +690,8 @@ jobs:
           REMOTE_SPECULOS: "true"
           INPUTS_TEST_FILTER: "@smoke"
         run: |
+          # SHARD_TEST_FILES must word-split into one argument per spec file.
+          # shellcheck disable=SC2086
           pnpm mobile e2e:ci -p ios -t \
             --e2e \
             $SHARD_TEST_FILES \
