@@ -5,6 +5,7 @@ import type {
   ICPAccount,
   Transaction,
 } from "@ledgerhq/live-common/families/internet_computer/types";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
@@ -48,11 +49,15 @@ export default function StakingAmount({ navigation, route }: Props) {
       transaction: route.params.transaction,
     }));
 
+  // Debounced as the Send flow's amount step is: the transaction changes on every keystroke, and
+  // each change would otherwise cost a bridge call.
+  const debouncedTransaction = useDebounce(transaction, 500);
+
   useEffect(() => {
-    if (!transaction) return;
+    if (!debouncedTransaction) return;
     let cancelled = false;
     bridge
-      .estimateMaxSpendable({ account: icpAccount, transaction })
+      .estimateMaxSpendable({ account: icpAccount, transaction: debouncedTransaction })
       .then(estimate => {
         if (!cancelled) setMaxSpendable(estimate);
       })
@@ -62,7 +67,7 @@ export default function StakingAmount({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [bridge, icpAccount, transaction]);
+  }, [bridge, icpAccount, debouncedTransaction]);
 
   const onChange = useCallback(
     (amount: BigNumber) => updateTransaction(tx => ({ ...tx, amount })),

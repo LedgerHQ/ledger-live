@@ -1,5 +1,6 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction } from "@ledgerhq/live-common/families/internet_computer/types";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
 import React, { useCallback, useEffect, useState } from "react";
@@ -43,11 +44,15 @@ export default function IncreaseStake({ navigation, route }: Props) {
   const bridge = useAccountBridge<Transaction>(account);
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
 
+  // Debounced as the Send flow's amount step is: the transaction changes on every keystroke, and
+  // each change would otherwise cost a bridge call.
+  const debouncedTransaction = useDebounce(transaction, 500);
+
   useEffect(() => {
-    if (!transaction) return;
+    if (!debouncedTransaction) return;
     let cancelled = false;
     bridge
-      .estimateMaxSpendable({ account, transaction })
+      .estimateMaxSpendable({ account, transaction: debouncedTransaction })
       .then(estimate => {
         if (!cancelled) setMaxSpendable(estimate);
       })
@@ -57,7 +62,7 @@ export default function IncreaseStake({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [account, bridge, transaction]);
+  }, [account, bridge, debouncedTransaction]);
 
   const onChange = useCallback(
     (amount: BigNumber) => updateTransaction(tx => ({ ...tx, amount })),
