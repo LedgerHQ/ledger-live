@@ -1,6 +1,5 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 test.describe("Main navigation", () => {
@@ -19,8 +18,6 @@ test.describe("Main navigation", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.mainNavigation.validateTargetFromMainNavigation("home");
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
@@ -47,8 +44,6 @@ test.describe("Main navigation", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openNotificationCenter();
       await app.mainNavigation.clickActivityIndicator();
       await app.mainNavigation.openMyLedger();

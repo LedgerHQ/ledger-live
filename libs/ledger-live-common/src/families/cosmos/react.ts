@@ -46,7 +46,7 @@ export function useCosmosFamilyMappedDelegations(
   const { validators } = useCosmosFamilyPreloadData(currencyId);
 
   const delegations = account.cosmosResources?.delegations;
-  invariant(delegations, "cosmos: delegations is required");
+
   const unit = getAccountCurrency(account).units[0];
   return useMemo(() => {
     const mappedDelegations = mapDelegations(delegations || [], validators, unit);

@@ -41,7 +41,7 @@ export function ContactsAddContactContent({
         onPress={onConfirm}
         testID="contacts-add-contact-save"
       >
-        {labels.confirmName}
+        {labels.confirmAddContact}
       </Button>
     </Box>
   );

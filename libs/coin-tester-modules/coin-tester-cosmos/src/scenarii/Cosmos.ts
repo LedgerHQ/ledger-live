@@ -10,6 +10,8 @@ export const CosmosScenario = makeCosmosScenario({
   name: "Cosmos Hub Ledger Live transactions",
   currency: cosmos,
   hrp: "cosmos",
+  minGasPrice: 0.002,
+  staking: true,
   delegateLabel: "Delegate 100 ATOM",
   spawn: spawnGaiad,
   kill: killGaiad,

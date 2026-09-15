@@ -12,7 +12,7 @@ function renderSheet(props: Partial<ConfirmSheetProps> = {}) {
 
   const view = render(
     <ConfirmSheet
-      confirmState="idle"
+      confirmState="prompt"
       status="ACTIVE"
       onConfirm={onConfirm}
       onClose={onClose}

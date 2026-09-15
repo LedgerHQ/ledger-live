@@ -14,6 +14,7 @@ import {
   useContactsLedgerSyncMutationGuard,
   trackContactsLedgerSyncActivate,
   trackContactsLedgerSyncDismiss,
+  CONTACTS_FLOW,
 } from "@features/flow-contacts";
 import {
   isContactsLedgerSyncActivationRequired,
@@ -93,7 +94,7 @@ export function usePayTabContacts(
       title: t("contacts.addContact"),
       namePlaceholder: t("contacts.addContactDrawer.namePlaceholder"),
       namingDisclaimer: t("contacts.addContactDrawer.namingDisclaimer"),
-      confirmName: t("contacts.addContact"),
+      confirmAddContact: t("contacts.addContact"),
       nameValidationErrors: {
         [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.invalidNameError"),
         [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
@@ -116,7 +117,7 @@ export function usePayTabContacts(
     trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
     setIsLedgerSyncIntroductionRequested(false);
-    openDrawer({ startOnSyncMethod: true });
+    openDrawer({ startOnSyncMethod: true, analyticsFlow: CONTACTS_FLOW.CONTACTS });
   }, [analytics, dismissPendingIntent, openDrawer]);
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncDismiss(analytics);

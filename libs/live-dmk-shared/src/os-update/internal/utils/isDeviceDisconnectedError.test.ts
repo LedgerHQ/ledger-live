@@ -20,9 +20,9 @@ describe("isDeviceDisconnectedError", () => {
     });
 
     it("should return true when a nested error is a device-disconnected error", () => {
-      expect(
-        isDeviceDisconnectedError({ error: new DeviceDisconnectedWhileSendingError() }),
-      ).toBe(true);
+      expect(isDeviceDisconnectedError({ error: new DeviceDisconnectedWhileSendingError() })).toBe(
+        true,
+      );
     });
   });
 

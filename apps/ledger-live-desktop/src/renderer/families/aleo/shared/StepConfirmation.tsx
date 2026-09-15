@@ -47,9 +47,9 @@ const Container = styled(Box).attrs(() => ({
 // Widen only alongside the matching `aleo.<flow>.*` i18n subtree: a flow named here
 // without one renders raw keys.
 export type StakingConfirmationConfig = {
-  flow: "bond";
-  action: "bonding";
-  trackField: "validator";
+  flow: "bond" | "unbond";
+  action: "bonding" | "unbonding";
+  trackField: "validator" | "staker";
 };
 
 export function createStepConfirmation({ flow, action, trackField }: StakingConfirmationConfig) {

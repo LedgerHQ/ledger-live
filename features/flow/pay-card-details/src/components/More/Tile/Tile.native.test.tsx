@@ -26,18 +26,4 @@ describe("More Tile (native)", () => {
 
     expect(onMorePress).toHaveBeenCalledTimes(1);
   });
-
-  it("should render no sheet content while it is closed", () => {
-    renderTile();
-
-    expect(screen.getByTestId("more-sheet").props.accessibilityState.expanded).toBe(false);
-    expect(screen.queryByTestId("more-sheet-content")).toBeNull();
-  });
-
-  it("should render the sheet while it is open", () => {
-    renderTile({ isSheetOpen: true });
-
-    expect(screen.getByTestId("more-sheet").props.accessibilityState.expanded).toBe(true);
-    expect(screen.getByText("Manage PIN Code")).toBeVisible();
-  });
 });

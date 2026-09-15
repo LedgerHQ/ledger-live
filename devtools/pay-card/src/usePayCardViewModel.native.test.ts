@@ -27,6 +27,18 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
       setStepDone: jest.fn(),
       ...overrides.onboarding,
     },
+    cardOnboarding: {
+      steps: [],
+      completedCount: 0,
+      isFetching: false,
+      error: undefined,
+      raw: "{}",
+      refresh: jest.fn(),
+      setStepDone: jest.fn(),
+      clearMocks: jest.fn(),
+      isMockingEnabled: true,
+      ...overrides.cardOnboarding,
+    },
     interaction: {
       probes: [],
       details: {
@@ -48,6 +60,7 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
       refresh: jest.fn(),
       ...overrides.balance,
     },
+    currencyMapping: [{ key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" }],
     hasSeenFeatureTour: overrides.hasSeenFeatureTour ?? false,
     resetPayCardFeatureTourSeen: overrides.resetPayCardFeatureTourSeen ?? jest.fn(),
     hasSeenReceiveVerifyHint: overrides.hasSeenReceiveVerifyHint ?? false,

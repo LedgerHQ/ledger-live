@@ -1,7 +1,4 @@
-import {
-  openTransportReplayer,
-  RecordStore,
-} from "@ledgerhq/hw-transport-mocker";
+import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Cosmos from "../src/Cosmos";
 
 test("Comos init", async () => {

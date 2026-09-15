@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type {
   LineChartProps as LumenLineChartProps,
   Series,
-} from "@ledgerhq/lumen-ui-react-visualization";
+} from "@ledgerhq/lumen-ui-react/visualization";
 
 export type LineChartRange = "1d" | "1w" | "1m" | "6m" | "1y" | "5y" | "all";
 

@@ -1,27 +1,24 @@
 import { resetWalletSync, setDrawerVisibility } from "~/renderer/actions/walletSync";
 import {
-  AnalyticsFlow,
-  StepsOutsideFlow,
-  useLedgerSyncAnalytics,
+  setWalletSyncEntryFlow,
+  type WalletSyncFlow,
 } from "../../WalletSync/hooks/useLedgerSyncAnalytics";
-import { useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { walletSyncFakedSelector, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
+import { walletSyncFakedSelector } from "~/renderer/reducers/walletSync";
 import { useFlows } from "../../WalletSync/hooks/useFlows";
 
 export type OpenActivationDrawerOptions = Readonly<{
   startOnSyncMethod?: boolean;
+  analyticsFlow?: WalletSyncFlow;
 }>;
 
 export function useActivationDrawer(onboardingNewDevice?: boolean) {
   const dispatch = useDispatch();
   const { goToWelcomeScreenWalletSync, goToSyncMethodScreenWalletSync } = useFlows();
   const hasBeenFaked = useSelector(walletSyncFakedSelector);
-  const currentStep = useSelector(walletSyncStepSelector);
-  const hasFlowEvent = useMemo(() => !StepsOutsideFlow.includes(currentStep), [currentStep]);
-  const { onActionTrack } = useLedgerSyncAnalytics();
 
   const openDrawer = (options?: OpenActivationDrawerOptions) => {
+    setWalletSyncEntryFlow(options?.analyticsFlow);
     if (!hasBeenFaked) {
       if (options?.startOnSyncMethod) {
         goToSyncMethodScreenWalletSync();
@@ -35,13 +32,8 @@ export function useActivationDrawer(onboardingNewDevice?: boolean) {
   const closeDrawer = () => {
     if (hasBeenFaked) {
       dispatch(resetWalletSync());
-    } else {
-      onActionTrack({
-        button: "Close",
-        step: currentStep,
-        flow: hasFlowEvent ? AnalyticsFlow : undefined,
-      });
     }
+    setWalletSyncEntryFlow(undefined);
     dispatch(setDrawerVisibility(false));
   };
 

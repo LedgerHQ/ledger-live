@@ -4,6 +4,7 @@ import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
   PayCardLinkedWalletsResponseSchema,
+  PayCardLinkedWalletsCanonicalSchema,
   PayCardLogoutResponseSchema,
   PayCardOnboardingStatusResponseSchema,
   PayCardOrderResponseSchema,
@@ -12,9 +13,13 @@ import {
   PayCardDetailsCssSchema,
   PayCardDetailsTokenResponseSchema,
   PayCardStatusResponseSchema,
+  PayCardTransactionsRequestSchema,
+  PayCardTransactionsResponseSchema,
+  PayCardWalletHistoryRequestSchema,
+  PayCardWalletHistoryResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
-import { transformPayCardSessionResponse } from "./transforms";
+import { transformPayCardLinkedWallets, transformPayCardSessionResponse } from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
   PayCardFreezeStateResult,
@@ -28,6 +33,10 @@ import type {
   PayCardDetailsCss,
   PayCardDetailsToken,
   PayCardStatus,
+  PayCardTransaction,
+  PayCardTransactionsRequest,
+  PayCardWalletHistoryEntry,
+  PayCardWalletHistoryRequest,
   PayCardUser,
 } from "./types";
 
@@ -118,6 +127,40 @@ export const cardManagementApi = cardApi
       }),
 
       /**
+       * The card's own transactions, newest first.
+       *
+       * Paged by number and nothing else: the provider answers with a bare array, so a short page
+       * is how a caller learns it has reached the end.
+       */
+      getCardTransactions: build.query<PayCardTransaction[], PayCardTransactionsRequest>({
+        query: filters => ({
+          url: "/v1/card/transactions",
+          method: "GET",
+          params: filters,
+        }),
+        argSchema: PayCardTransactionsRequestSchema,
+        responseSchema: PayCardTransactionsResponseSchema,
+        providesTags: ["CardTransactions"],
+      }),
+
+      /**
+       * One wallet's own history, newest first, ten to a page.
+       *
+       * Asked for a single wallet: a card has several linked, so a caller that wants them all asks
+       * once per wallet.
+       */
+      getWalletHistory: build.query<PayCardWalletHistoryEntry[], PayCardWalletHistoryRequest>({
+        query: filters => ({
+          url: "/v1/wallet/history",
+          method: "GET",
+          params: filters,
+        }),
+        argSchema: PayCardWalletHistoryRequestSchema,
+        responseSchema: PayCardWalletHistoryResponseSchema,
+        providesTags: ["WalletHistory"],
+      }),
+
+      /**
        * A mutation, though it reads: the provider spends the token on first use, so the answer must
        * never be served from a cache, and a mutation is never cached.
        *
@@ -172,7 +215,9 @@ export const cardManagementApi = cardApi
           url: "/v1/wallet/internal/card_linked",
           method: "GET",
         }),
-        responseSchema: PayCardLinkedWalletsResponseSchema,
+        rawResponseSchema: PayCardLinkedWalletsResponseSchema,
+        transformResponse: transformPayCardLinkedWallets,
+        responseSchema: PayCardLinkedWalletsCanonicalSchema,
       }),
 
       getCardOnboardingStatus: build.query<PayCardOnboardingStatus, void>({
@@ -200,6 +245,10 @@ export const {
   useGetUserQuery,
   useOrderCardMutation,
   useGetCardStatusQuery,
+  useGetCardTransactionsQuery,
+  useLazyGetCardTransactionsQuery,
+  useGetWalletHistoryQuery,
+  useLazyGetWalletHistoryQuery,
   useCreateCardDetailsTokenMutation,
   useLazyGetCardStatusQuery,
   useFreezeCardMutation,

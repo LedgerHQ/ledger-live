@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-near",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Near Coin integration",
   "keywords": [
     "Ledger",
@@ -47,9 +47,10 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "near-api-js": "^3.0.2",
     "rxjs": "catalog:"

@@ -19,6 +19,7 @@ type NetworkWithUI = CryptoOrTokenCurrency & {
 type NetworkVirtualListProps = {
   networks: NetworkWithUI[];
   onClick: (networkId: string) => void;
+  onDisabledClick?: (network: NetworkWithUI) => void;
   selectableNetworkIdSet?: ReadonlySet<string>;
 };
 
@@ -28,6 +29,7 @@ const getNetworkId = (network: NetworkWithUI) =>
 export const NetworkVirtualList = ({
   networks,
   onClick,
+  onDisabledClick,
   selectableNetworkIdSet,
 }: NetworkVirtualListProps) => {
   const isUnavailableNetwork = useCallback(
@@ -55,10 +57,11 @@ export const NetworkVirtualList = ({
           apy={network.apy}
           disabled={selectableNetworkIdSet ? !selectableNetworkIdSet.has(networkId) : undefined}
           onClick={() => onClick(networkId)}
+          onDisabledClick={() => onDisabledClick?.(network)}
         />
       );
     },
-    [onClick, selectableNetworkIdSet],
+    [onClick, onDisabledClick, selectableNetworkIdSet],
   );
 
   const getItemHeight = useCallback(

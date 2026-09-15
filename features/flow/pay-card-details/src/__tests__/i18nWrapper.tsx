@@ -14,6 +14,19 @@ export const CARD_COPY = {
   unfreezeErrorTitle: "Unfreeze failed",
   errorDescription: "Something went wrong. Please try again.",
   retry: "Try again",
+  placeholder: "Coming soon",
+  details: "Details",
+} as const;
+
+export const MORE_COPY = {
+  tile: "More",
+  title: "More",
+  rows: {
+    managePin: "Manage PIN Code",
+    accessBaanx: "Access to Baanx",
+    help: "Help",
+    logout: "Logout",
+  },
 } as const;
 
 export const CARD_RESOURCES = {
@@ -24,6 +37,8 @@ export const CARD_RESOURCES = {
           freeze: CARD_COPY.freeze,
           unfreeze: CARD_COPY.unfreeze,
           goBack: CARD_COPY.goBack,
+          placeholder: CARD_COPY.placeholder,
+          details: CARD_COPY.details,
           freezeConfirm: {
             title: CARD_COPY.freezeTitle,
             description: CARD_COPY.freezeDescription,
@@ -39,6 +54,11 @@ export const CARD_RESOURCES = {
             description: CARD_COPY.errorDescription,
             retry: CARD_COPY.retry,
           },
+        },
+        cardMore: {
+          tile: MORE_COPY.tile,
+          title: MORE_COPY.title,
+          rows: MORE_COPY.rows,
         },
       },
     },

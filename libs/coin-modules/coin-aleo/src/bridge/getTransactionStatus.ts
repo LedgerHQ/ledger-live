@@ -24,6 +24,7 @@ import {
   getAvailableBalance,
   getRecordByCommitment,
   isPrivateTransaction,
+  isSelfStakingMode,
   isSelfTransferTransaction,
   isTokenTransaction,
   getAleoSubAccount,
@@ -269,7 +270,9 @@ async function handleTransferTransaction({
   const recipientError = await validateRecipient({
     account,
     recipient: transaction.recipient,
-    allowSelfTransfer,
+    // An unbond names the account as its own on-chain `staker`, so the own-address
+    // recipient is correct here rather than a destination-is-source mistake.
+    allowSelfTransfer: allowSelfTransfer || isSelfStakingMode(transaction),
   });
 
   if (recipientError) {

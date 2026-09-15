@@ -55,7 +55,6 @@ export type SignTransactionNavigatorParamList = {
     hideTotal?: boolean;
     appName?: string;
     dependencies?: string[];
-    isACRE?: boolean;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
@@ -75,7 +74,6 @@ export type SignTransactionNavigatorParamList = {
     status: TransactionStatus;
     appName?: string;
     dependencies?: string[];
-    isACRE?: boolean;
     analyticsPropertyFlow?: string;
   } & SharedParams;
   [ScreenName.SignTransactionValidationError]: {

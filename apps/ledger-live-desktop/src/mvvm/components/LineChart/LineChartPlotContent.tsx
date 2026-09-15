@@ -1,5 +1,5 @@
 import React from "react";
-import { LineChart as LumenLineChart } from "@ledgerhq/lumen-ui-react-visualization";
+import { LineChart as LumenLineChart } from "@ledgerhq/lumen-ui-react/visualization";
 import { LINE_CHART_DRAWING_INSET } from "./constants";
 import { LineChartPoints } from "./LineChartPoints";
 import { LineChartScrubber } from "./LineChartScrubber";

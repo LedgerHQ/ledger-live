@@ -16,15 +16,13 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-bolos",
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*"
+    "@ledgerhq/hw-transport": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -40,7 +38,7 @@
     "unimported": "unimported"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:*",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "documentation": "14.0.2",

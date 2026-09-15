@@ -11,7 +11,9 @@
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "test": "jest",
     "lint": "oxlint ./src",
-    "lint:fix": "pnpm lint --fix"
+    "lint:fix": "pnpm lint --fix",
+    "format": "oxfmt src tests",
+    "format:check": "oxfmt --check src tests"
   },
   "repository": {
     "type": "git",
@@ -27,18 +29,19 @@
   },
   "homepage": "https://github.com/coderofstuff/hw-app-kaspa#readme",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "bignumber.js": "^9.1.2",
     "bip32-path": "^0.4.2"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "ts-node": "^10.9.2"
   },
   "exports": {

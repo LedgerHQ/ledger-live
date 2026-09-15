@@ -2,7 +2,6 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
-import { addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
@@ -35,7 +34,6 @@ test.describe("Staking - Tezos", () => {
       annotation: { type: "TMS", description: "B2CQA-5915" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
 
@@ -70,7 +68,6 @@ test.describe("Staking - Tezos", () => {
       annotation: { type: "TMS", description: "B2CQA-5917" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       // Already delegated => opens MODAL_TEZOS_STAKE directly at the amount step.
@@ -99,7 +96,6 @@ test.describe("Staking - Tezos", () => {
       annotation: { type: "TMS", description: "B2CQA-5918" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       // Delegated + staked => the account page shows the staking section with the unstake menu.
@@ -126,7 +122,6 @@ test.describe("Staking - Tezos", () => {
       annotation: { type: "TMS", description: "B2CQA-5919" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.tezosUnstakeRequired.openChangeValidator();
@@ -149,7 +144,6 @@ test.describe("Staking - Tezos", () => {
       annotation: { type: "TMS", description: "B2CQA-5921" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.tezosUnstakeRequired.openStopDelegation();

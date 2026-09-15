@@ -3,6 +3,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { cardSession, readCardSession, refreshCardSession } from "@features/platform-card";
+import { payCardAuthSlice, selectIsSignedIn } from "@features/flow-pay-card-auth/state";
 import { cardApi } from "@shared/api-services";
 import { usePayCardAuthProps } from "./usePayCardAuthProps";
 
@@ -121,6 +122,97 @@ describe("usePayCardAuthProps", () => {
       const { result } = renderAuth();
 
       await waitFor(() => expect(result.current.sessionError).toBe("the user cancelled"));
+    });
+  });
+
+  describe("the mock session", () => {
+    const MOCK_SESSION = { accessToken: "at_mock_devtool", refreshToken: "rt_mock_devtool" };
+
+    function buildAuthStore() {
+      return configureStore({
+        reducer: {
+          [cardApi.reducerPath]: cardApi.reducer,
+          payCardAuth: payCardAuthSlice.reducer,
+        },
+        middleware: gdm => gdm().concat(cardApi.middleware),
+      });
+    }
+
+    async function renderWithAuthStore(store: ReturnType<typeof buildAuthStore>) {
+      const rendered = renderHook(() => usePayCardAuthProps(), {
+        wrapper: ({ children }: PropsWithChildren) => <Provider store={store}>{children}</Provider>,
+      });
+      await waitFor(() => expect(mockedGet).toHaveBeenCalled());
+      return rendered;
+    }
+
+    afterEach(() => {
+      delete process.env.ENABLE_MSW;
+    });
+
+    it("should be offered only while something answers the Card endpoints", async () => {
+      const { result, rerender } = await renderWithAuthStore(buildAuthStore());
+
+      expect(result.current.mockSession.available).toBe(false);
+
+      process.env.ENABLE_MSW = "true";
+      rerender();
+
+      expect(result.current.mockSession.available).toBe(true);
+    });
+
+    it("should sign a mock session in, and say so to the app", async () => {
+      process.env.ENABLE_MSW = "true";
+      const store = buildAuthStore();
+      const { result } = await renderWithAuthStore(store);
+
+      const lastResult = await runAndReadResult(
+        () => result.current.mockSession.signIn(),
+        result as AuthResult,
+      );
+
+      expect(mockedSet).toHaveBeenCalledWith(MOCK_SESSION);
+      expect(selectIsSignedIn(store.getState())).toBe(true);
+      expect(lastResult).toMatchObject({
+        message: "mock sign in → the app reads as signed in",
+        failed: false,
+      });
+    });
+
+    it("should write no session while nothing answers the Card endpoints", async () => {
+      const store = buildAuthStore();
+      const { result } = await renderWithAuthStore(store);
+
+      const lastResult = await runAndReadResult(
+        () => result.current.mockSession.signIn(),
+        result as AuthResult,
+      );
+
+      expect(mockedSet).not.toHaveBeenCalled();
+      expect(selectIsSignedIn(store.getState())).toBe(false);
+      expect(lastResult).toMatchObject({
+        message: "mock sign in → nothing is mocking the Card endpoints",
+        failed: false,
+      });
+    });
+
+    it("should end the session it holds, and say so to the app", async () => {
+      process.env.ENABLE_MSW = "true";
+      const store = buildAuthStore();
+      const { result } = await renderWithAuthStore(store);
+      await runAndReadResult(() => result.current.mockSession.signIn(), result as AuthResult);
+
+      const lastResult = await runAndReadResult(
+        () => result.current.signOut(),
+        result as AuthResult,
+      );
+
+      expect(mockedClear).toHaveBeenCalledTimes(1);
+      expect(selectIsSignedIn(store.getState())).toBe(false);
+      expect(lastResult).toMatchObject({
+        message: "sign out → the session is gone",
+        failed: false,
+      });
     });
   });
 

@@ -1,4 +1,8 @@
 import { allure } from "jest-allure2-reporter/api";
+import {
+  extractSwapInitError,
+  type SwapInitLogEntry,
+} from "@ledgerhq/live-e2e-shared/swapInitError";
 
 const stderrChunks: string[] = [];
 const originalStderrWrite = process.stderr.write.bind(process.stderr);
@@ -124,6 +128,21 @@ function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string {
   return lines.join("\n");
 }
 
+/** The fields of `@ledgerhq/logs`' `Log` that survive the bridge's JSON round-trip. */
+type AppLogRecord = { type?: string; message?: string; data?: unknown; date?: string };
+
+/** `data` is folded into the text so a signature nested inside it still matches. */
+function appLogsAsEntries(appLogs: unknown): SwapInitLogEntry[] {
+  if (typeof appLogs === "string") {
+    return appLogs.split("\n").map(line => ({ text: line }));
+  }
+  if (!Array.isArray(appLogs)) return [];
+  return appLogs.map((entry: AppLogRecord | null | undefined) => {
+    const data = entry?.data === undefined ? "" : ` ${JSON.stringify(entry.data)}`;
+    return { timestamp: entry?.date, level: entry?.type, text: `${entry?.message ?? ""}${data}` };
+  });
+}
+
 type ParsedLogsPayload = {
   appLogs?: unknown;
   appNetworkLogs?: unknown[];
@@ -145,6 +164,17 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
   // A raw (non-JSON) payload renders legibly as text/plain, not as one escaped JSON line.
   const appLogsValue = parsed.appLogs ?? logsPayload;
   const appLogsIsString = typeof appLogsValue === "string";
+
+  // Attached first: the failure message names this attachment (QAA-1521). Both sources are scanned
+  // because either side of the wallet-api call can be the one that breaks.
+  const swapInitError = extractSwapInitError([
+    ...appLogsAsEntries(appLogsValue),
+    ...(parsed.webviewConsoleLogs ?? []),
+  ]);
+  if (swapInitError) {
+    await allure.attachment("⚠️ Swap-init error", swapInitError, "text/plain");
+  }
+
   await allure.attachment(
     "App Logs",
     appLogsIsString ? appLogsValue : JSON.stringify(appLogsValue, null, 2),

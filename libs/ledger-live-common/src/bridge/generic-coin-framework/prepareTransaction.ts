@@ -9,6 +9,7 @@ import {
   getNativeSpendableAfterPending,
   getPendingTokenSpent,
   toGasOptionsFromUnknown,
+  toTransferFeeFromUnknown,
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
@@ -32,13 +33,16 @@ function assetInfosFallback(transaction: GenericTransaction): {
   };
 }
 
+function isNumericLike(value: unknown): value is bigint | number | string {
+  return typeof value === "bigint" || typeof value === "number" || typeof value === "string";
+}
+
 function propagateField(estimation: FeeEstimation, field: string, dest: GenericTransaction): void {
   const value = estimation?.parameters?.[field];
 
   switch (field) {
     case "type":
-      if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string")
-        return;
+      if (!isNumericLike(value)) return;
       dest[field] = Number(value.toString());
       return;
     case "gasPrice":
@@ -51,20 +55,23 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
         dest[field] = null;
         return;
       }
-      if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string")
-        return;
+      if (!isNumericLike(value)) return;
       dest[field] = new BigNumber(value.toString());
       return;
     case "storageLimit":
     case "gasLimit":
     case "additionalFees":
-      if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string")
-        return;
+      if (!isNumericLike(value)) return;
       dest[field] = new BigNumber(value.toString());
       return;
     case "gasOptions": {
       const gasOptions = toGasOptionsFromUnknown(value);
       if (gasOptions) dest.gasOptions = gasOptions;
+      return;
+    }
+    case "transferFee": {
+      const transferFee = toTransferFeeFromUnknown(value);
+      if (transferFee) dest.transferFee = transferFee;
       return;
     }
     default:
@@ -196,6 +203,7 @@ export function genericPrepareTransaction(
       // so the UI can render fee presets without ever fetching them itself.
       // Families that don't produce them leave this untouched.
       "gasOptions",
+      "transferFee",
     ];
 
     for (const field of fieldsToPropagate) {

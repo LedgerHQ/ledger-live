@@ -1,5 +1,5 @@
 import { MAINNET_GOVERNANCE_CANISTER_ID, MAINNET_LEDGER_CANISTER_ID } from "../consts";
-import { ICPCallUnconfirmed } from "../errors";
+import { ICPCallUnconfirmed, ICPNeuronsNotRead } from "../errors";
 import { broadcast } from "./broadcast";
 
 jest.mock("../api");
@@ -80,6 +80,39 @@ describe("broadcast routing", () => {
     expect(api.decodeManageNeuronReply).toHaveBeenCalled();
   });
 
+  // Without this the figures never leave the decoder, and the flow has to guess at the split from the
+  // percentage the user chose.
+  it("carries what the command reported about itself onto the operation", async () => {
+    const outcome = { maturityE8s: "200000000", stakedMaturityE8s: "300000000" };
+    (api.decodeManageNeuronReply as jest.Mock).mockReturnValue(outcome);
+
+    const op = await broadcast(
+      signed({
+        encodedSignedCallBlob: "aa",
+        encodedSignedReadStateBlob: "cc",
+        requestId: "dd",
+        methodName: "stake_maturity",
+      }),
+    );
+
+    expect((op.extra as any).outcome).toEqual(outcome);
+  });
+
+  it("leaves the operation alone for a command that reported nothing", async () => {
+    (api.decodeManageNeuronReply as jest.Mock).mockReturnValue(undefined);
+
+    const op = await broadcast(
+      signed({
+        encodedSignedCallBlob: "aa",
+        encodedSignedReadStateBlob: "cc",
+        requestId: "dd",
+        methodName: "start_dissolving",
+      }),
+    );
+
+    expect(op.extra).toEqual({});
+  });
+
   it("throws unconfirmed on an indeterminate manage_neuron reply (no false success / double-execute)", async () => {
     (api.readReplyFromCanister as jest.Mock).mockResolvedValue(null);
 
@@ -96,20 +129,22 @@ describe("broadcast routing", () => {
     expect(api.decodeManageNeuronReply).not.toHaveBeenCalled();
   });
 
-  it("tolerates an indeterminate list_neurons reply (idempotent read, no snapshot update)", async () => {
+  // Reporting this as a successful broadcast spent a signature and then told the user their neurons
+  // were up to date, with the snapshot untouched. Nothing was read, so say so.
+  it("reports an indeterminate list_neurons reply rather than an unchanged snapshot", async () => {
     (api.readReplyFromCanister as jest.Mock).mockResolvedValue(null);
 
-    const op = await broadcast(
-      signed({
-        encodedSignedCallBlob: "aa",
-        encodedSignedReadStateBlob: "cc",
-        requestId: "dd",
-        methodName: "list_neurons",
-      }),
-    );
-
+    await expect(
+      broadcast(
+        signed({
+          encodedSignedCallBlob: "aa",
+          encodedSignedReadStateBlob: "cc",
+          requestId: "dd",
+          methodName: "list_neurons",
+        }),
+      ),
+    ).rejects.toThrow(ICPNeuronsNotRead);
     expect(api.decodeListNeuronsReply).not.toHaveBeenCalled();
-    expect(op.extra).toEqual({});
   });
 
   it("decodes a list_neurons reply into the operation's neuron snapshot", async () => {

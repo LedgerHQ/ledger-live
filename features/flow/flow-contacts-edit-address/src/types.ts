@@ -73,6 +73,7 @@ export type ContactsEditAddressValidationLabels = Readonly<{
   validationUnavailable: string;
   ensDisclaimer: string;
   ensDisclaimerDescription: string;
+  duplicateAddress: (contactName: string) => string;
 }>;
 
 export type EditAddressAddressEntryPresentation = Readonly<{

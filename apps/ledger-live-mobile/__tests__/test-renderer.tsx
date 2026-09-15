@@ -58,6 +58,7 @@ import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/fea
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
 import { getEnv } from "@shared/env";
 import { coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
+import { LinkingProvider } from "@shared/platform-linking";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
@@ -312,11 +313,13 @@ function Providers({
   let providers = (
     <I18nextProvider i18n={i18n}>
       <I18nProvider i18n={i18n}>
-        <Provider store={store}>
-          <CountervaluesProviders store={store}>
-            <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
-          </CountervaluesProviders>
-        </Provider>
+        <LinkingProvider config={{ openExternal: () => {} }}>
+          <Provider store={store}>
+            <CountervaluesProviders store={store}>
+              <StyleProvider selectedPalette="dark">{extraProviders}</StyleProvider>
+            </CountervaluesProviders>
+          </Provider>
+        </LinkingProvider>
       </I18nProvider>
     </I18nextProvider>
   );

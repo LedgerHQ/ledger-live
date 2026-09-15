@@ -167,6 +167,7 @@ export function ModularDialogFlow({
             networksConfiguration={networkConfiguration}
             onNetworkSelected={handleNetworkSelected}
             selectedAssetId={selectedAsset?.id}
+            selectedAssetName={selectedAsset?.name}
             selectableNetworkIds={selectableNetworkIds}
           />
         );

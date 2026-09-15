@@ -6,6 +6,7 @@ import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
 import { A4Client } from "./a4/client/index";
 import { deriveA4AccountId } from "./a4/client/accountId";
+import { fetchA4Operations } from "./a4/client/operations";
 import { ensureA4Registered } from "./a4/client/registration";
 import { toA4Network, resolveA4BaseUrl } from "./a4/client/utils";
 import { resolveA4ChainConfig } from "./a4/config";
@@ -13,7 +14,12 @@ import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
 import { getAccountRawAssignHooks } from "./accountRawAssign";
-import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
+import {
+  adaptCoreOperationToLiveOperation,
+  cleanedOperation,
+  extractBalance,
+  optionalNumeric,
+} from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { paginateOperations } from "./paginateOperations";
@@ -23,6 +29,7 @@ import type {
   Account,
   AccountReadiness,
   StakingDelegation,
+  StakingPositionDetails,
   StakingResources,
   StakingUnbonding,
   TokenAccount,
@@ -63,17 +70,31 @@ function hasDeactivatingStake(balance: Balance): balance is Balance & {
   stake: Stake;
 } {
   const state = balance.stake?.state;
-  return state === "deactivating" || state === "withdrawable";
-}
-
-function hasStakeDelegate<T extends Balance & { stake: Stake }>(
-  balance: T,
-): balance is T & { stake: Stake & { delegate: string } } {
-  return typeof balance.stake.delegate === "string" && balance.stake.delegate.length > 0;
+  // `inactive` would otherwise fall through both lists and vanish from `stakingResources`.
+  return state === "deactivating" || state === "withdrawable" || state === "inactive";
 }
 
 function delegatedAmountForStakingResources(b: Balance): bigint {
   return b.stake?.amount ?? 0n;
+}
+
+function stakingPositionDetails(stake: Stake): StakingPositionDetails {
+  const details = stake.details ?? {};
+  const activeAmount = optionalNumeric(details.activeAmount);
+  const inactiveAmount = optionalNumeric(details.inactiveAmount);
+  const withdrawableAmount = optionalNumeric(details.withdrawableAmount);
+  const lockedReserve = optionalNumeric(details.lockedReserve);
+
+  // `!== undefined`, not truthiness: a zero amount is meaningful.
+  return {
+    ...(stake.uid ? { positionId: stake.uid } : {}),
+    ...(activeAmount !== undefined ? { activeAmount } : {}),
+    ...(inactiveAmount !== undefined ? { inactiveAmount } : {}),
+    ...(withdrawableAmount !== undefined ? { withdrawableAmount } : {}),
+    ...(lockedReserve !== undefined ? { lockedReserve } : {}),
+    ...(typeof details.canStake === "boolean" ? { canStake: details.canStake } : {}),
+    ...(typeof details.canWithdraw === "boolean" ? { canWithdraw: details.canWithdraw } : {}),
+  };
 }
 
 /**
@@ -522,14 +543,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         0n,
       );
 
-      const delegations: StakingDelegation[] = activeStakes.filter(hasStakeDelegate).map(b => {
+      const delegations: StakingDelegation[] = activeStakes.map(b => {
         const delegated: bigint = delegatedAmountForStakingResources(b);
         const rewarded: bigint = b.stake.amountRewarded ?? 0n;
         const validatorId = b.stake.details?.validatorId;
         const validatorName = b.stake.details?.validatorName;
         const sharesRaw = b.stake.details?.shares;
         return {
-          validatorAddress: b.stake.delegate,
+          ...stakingPositionDetails(b.stake),
+          validatorAddress: b.stake.delegate ?? "",
           amount: new BigNumber(delegated.toString()),
           pendingRewards: new BigNumber(rewarded.toString()),
           status: b.stake.state === "activating" ? "activating" : "bonded",
@@ -538,17 +560,23 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           ...(typeof sharesRaw === "bigint" ? { shares: new BigNumber(sharesRaw.toString()) } : {}),
         };
       });
-      const unbondings: StakingUnbonding[] = deactivatingStakes.filter(hasStakeDelegate).map(b => {
+      const unbondings: StakingUnbonding[] = deactivatingStakes.map(b => {
         const delegated: bigint = delegatedAmountForStakingResources(b);
         const validatorId = b.stake.details?.validatorId;
         const validatorName = b.stake.details?.validatorName;
         const withdrawId = b.stake.details?.withdrawId;
 
         return {
-          validatorAddress: b.stake.delegate,
+          ...stakingPositionDetails(b.stake),
+          validatorAddress: b.stake.delegate ?? "",
           amount: new BigNumber(delegated.toString()),
           completionDate: b.stake.stateUpdatedAt ?? new Date(),
-          status: b.stake.state === "withdrawable" ? "withdrawable" : "deactivating",
+          // `inactive` also covers an idle stake, so trust `actions` rather than the state.
+          status:
+            b.stake.state === "withdrawable" ||
+            b.stake.actions?.some(action => action === "withdraw")
+              ? "withdrawable"
+              : "deactivating",
           ...(typeof validatorId === "string" ? { validatorId } : {}),
           ...(typeof validatorName === "string" ? { validatorName } : {}),
           ...(typeof withdrawId === "number" ? { withdrawId } : {}),
@@ -580,22 +608,51 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // documents its own as volatile). Only the cursor varies from page to page below.
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
 
-    const newCoreOps = await paginateOperations(cursor =>
-      coinModuleApi.listOperations(context, address, {
-        minHeight,
-        cursor,
-        order: "desc",
-      }),
-    );
-    // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation ends
-    // up in the shape a restored one has — the family's `fromOperationExtraRaw` is the single
-    // definition of it. Loaded per sync rather than per operation; the registry caches the import.
-    const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
-    const newOps = newCoreOps
-      .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
-      .map(op =>
-        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
-      ) as OperationCommon[];
+    const a4Network = toA4Network(currency.id);
+    const a4ChainConfig = a4Network ? resolveA4ChainConfig(a4Network) : null;
+
+    // delegateNewOps is lazy: getAccountRawAssignHooks is only awaited when the coin-module path is taken
+    const delegateNewOps = async (): Promise<OperationCommon[]> => {
+      const coreOps = await paginateOperations(cursor =>
+        coinModuleApi.listOperations(context, address, { minHeight, cursor, order: "desc" }),
+      );
+      // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation
+      // ends up in the shape a restored one has — the family's `fromOperationExtraRaw` is the
+      // single definition of it. Loaded per sync rather than per operation; the registry caches the import.
+      const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
+      // Coin module returns NFT and failed-incoming ops; exclude them (A4 adapter handles this internally)
+      return coreOps
+        .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
+        .map(op =>
+          adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
+        ) as OperationCommon[];
+    };
+
+    let newOps: OperationCommon[];
+
+    if (a4Network && a4ChainConfig?.read) {
+      try {
+        const url = resolveA4BaseUrl(a4ChainConfig.environment);
+        const a4Client = new A4Client(url, a4Network);
+        const a4AccountId = deriveA4AccountId(address);
+        // NFT and failed-incoming filtering is handled inside adaptA4OperationToLiveOperation (returns [])
+        newOps = (await fetchA4Operations(
+          a4Client,
+          a4AccountId,
+          accountId,
+          address,
+          minHeight,
+          a4ChainConfig.maxDcRoamRetries,
+        )) as OperationCommon[];
+      } catch (e) {
+        log("generic-coin-framework", "a4 read failed, falling back to delegate", {
+          error: String(e),
+        });
+        newOps = await delegateNewOps();
+      }
+    } else {
+      newOps = await delegateNewOps();
+    }
 
     const newAssetOperations = newOps.filter(
       operation =>

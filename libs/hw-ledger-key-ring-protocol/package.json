@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-ledger-key-ring-protocol",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "private": true,
   "description": "Ledger Key Ring Protocol hardware layer",
   "keywords": [
@@ -19,7 +19,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "bip32": "^4.0.0",
     "@noble/curves": "^1.9.7",
     "create-hmac": "^1.1.7"

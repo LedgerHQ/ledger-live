@@ -748,7 +748,8 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
             },
           },
         },
-        lwdWallet40: { enabled: true, params: { tour: false, q2Tour: true } },
+        lwdWallet40: { enabled: true, params: { tour: false } },
+        releaseTour: { enabled: true, params: { variant: "q2" } },
       }),
       settings: {
         hasCompletedOnboarding: true,

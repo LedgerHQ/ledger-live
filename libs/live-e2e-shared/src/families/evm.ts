@@ -1,6 +1,7 @@
 import { Transaction } from "../models/Transaction";
 import {
   expectSpeculosEventsContain,
+  expectSpeculosEventsContainExactly,
   fetchCurrentScreenTexts,
   waitForReviewTransaction,
   pressUntilTextFound,
@@ -16,6 +17,7 @@ import {
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 import { Currency } from "../enum/Currency";
+import { TokenAccount } from "../enum/Account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 import { getEnv } from "@shared/env";
@@ -35,6 +37,18 @@ function validateTransactionData(tx: Transaction, events: string[]) {
     events,
     "Expected amount to be displayed on Speculos device",
   );
+
+  if (tx.accountToDebit instanceof TokenAccount) {
+    // The ticker, not the currency name: the ERC-20 descriptor sent to the device carries no
+    // name — it is { contractAddress, ticker, decimals, chainId, signature } (see hw-app-eth
+    // services/ledger/erc20.ts, provided via provideERC20TokenInformation) — so the ticker is
+    // the only token identity the device can render.
+    expectSpeculosEventsContainExactly(
+      tx.accountToDebit.currency.ticker,
+      events,
+      "Expected the token ticker to be displayed on Speculos device",
+    );
+  }
 
   if (shouldSkipRecipientDisplayValidation(tx)) {
     return;

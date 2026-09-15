@@ -14,5 +14,5 @@ export function SwapTransactionStatusDrawerBody({
 }: SwapTransactionStatusDrawerBodyProps) {
   const viewModel = useSwapTransactionStatusViewModel({ params, onClose });
 
-  return <SwapTransactionStatusView {...viewModel} />;
+  return <SwapTransactionStatusView {...viewModel} origin={params.origin} onClose={onClose} />;
 }

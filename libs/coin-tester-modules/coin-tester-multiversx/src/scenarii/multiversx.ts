@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
@@ -48,10 +47,7 @@ const ESDT_ENABLE_EPOCH = 2;
 // Set during setup (the identifier is only known after issuance), read by getTransactions.
 let scenarioToken: TokenCurrency;
 
-function makeScenarioTransactions(
-  address: string,
-  strategy: BridgeStrategy,
-): MultiversXScenarioTransaction[] {
+function makeScenarioTransactions(address: string): MultiversXScenarioTransaction[] {
   const usdcSubAccountId = encodeTokenAccountId(`js:2:elrond:${address}:`, scenarioToken);
 
   const sendEgld: MultiversXScenarioTransaction = {
@@ -100,14 +96,7 @@ function makeScenarioTransactions(
       // The ESDT transfer produces a new parent operation (fees paid in EGLD).
       expect(currentAccount.operations.length).toBeGreaterThan(previousAccount.operations.length);
       const currentSub = currentAccount.subAccounts?.find(sa => sa.id === usdcSubAccountId);
-      if (strategy === "legacy") {
-        // Legacy sync drops the sub-account once the ESDT balance reaches 0 (node prunes the
-        // storage entry), so spendableBalance is either 0 or the sub-account disappears.
-        if (currentSub) expect(currentSub.spendableBalance).toEqual(new BigNumber(0));
-      }
-      // generic-adapter: mergeSubAccounts (incremental sync) does not zero-out old
-      // sub-accounts absent from newSubAccounts when the node prunes the ESDT entry,
-      // so spendableBalance stays stale. Assert === 0 once mergeSubAccounts is fixed.
+      if (currentSub) expect(currentSub.spendableBalance).toEqual(new BigNumber(0));
     },
   };
 
@@ -194,7 +183,7 @@ export const scenarioMultiversx: Scenario<GenericTransaction, Account> = {
 
     return { account, accountBridge, currencyBridge };
   },
-  getTransactions: (address, strategy) => makeScenarioTransactions(address, strategy),
+  getTransactions: address => makeScenarioTransactions(address),
   beforeAll: account => {
     expect(account.balance.toString()).toEqual(INITIAL_EGLD_FUNDING);
     expect(account.operations.length).toEqual(0);

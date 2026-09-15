@@ -20,7 +20,7 @@ const labels = {
   title: "Add contact",
   namePlaceholder: "Contact name",
   namingDisclaimer: "Use a nickname.",
-  confirmName: "Confirm name",
+  confirmAddContact: "Add contact",
   nameValidationErrors: {
     [INVALID_CONTACT_NAME_ERROR_NAME]: "Invalid name",
     [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "Duplicate name",

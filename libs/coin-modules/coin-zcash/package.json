@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-zcash",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Ledger Zcash Coin integration (standalone coin-module)",
   "keywords": [
     "Ledger",
@@ -112,7 +112,7 @@
   },
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-signer-zcash": "workspace:^",

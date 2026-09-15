@@ -1,6 +1,11 @@
 import { render, screen, userEvent } from "@support/jest-devtools/native";
 import { AuthSection } from "./AuthSection";
-import type { PayCardAuthProps, PayCardMockResponse, PayCardRenewalMockProps } from "../types";
+import type {
+  PayCardAuthProps,
+  PayCardMockResponse,
+  PayCardMockSessionProps,
+  PayCardRenewalMockProps,
+} from "../types";
 
 const RESPONSES: readonly PayCardMockResponse[] = [
   { id: "pass", label: "Off", hint: "The mock stands aside." },
@@ -9,8 +14,9 @@ const RESPONSES: readonly PayCardMockResponse[] = [
 
 const SESSION = { accessToken: "at_fake_access_token", refreshToken: "rt_fake_refresh_token" };
 
-type AuthOverrides = Partial<Omit<PayCardAuthProps, "mock">> & {
+type AuthOverrides = Partial<Omit<PayCardAuthProps, "mock" | "mockSession">> & {
   mock?: Partial<PayCardRenewalMockProps>;
+  mockSession?: Partial<PayCardMockSessionProps>;
 };
 
 function buildAuth(overrides: AuthOverrides = {}): PayCardAuthProps {
@@ -24,6 +30,7 @@ function buildAuth(overrides: AuthOverrides = {}): PayCardAuthProps {
     breakAccessToken: jest.fn(),
     breakRefreshToken: jest.fn(),
     clearSession: jest.fn(),
+    signOut: jest.fn(),
     fetchUser: jest.fn(),
     ...overrides,
     mock: {
@@ -35,6 +42,11 @@ function buildAuth(overrides: AuthOverrides = {}): PayCardAuthProps {
       resetRenewals: jest.fn(),
       armUnauthorized: jest.fn(),
       ...overrides.mock,
+    },
+    mockSession: {
+      available: false,
+      signIn: jest.fn(),
+      ...overrides.mockSession,
     },
   };
 }
@@ -81,6 +93,15 @@ describe("AuthSection (native)", () => {
       render(<AuthSection auth={buildAuth({ sessionError: "denied", openPayTab: jest.fn() })} />);
 
       expect(screen.queryByText("Go to the Pay tab")).toBeNull();
+    });
+  });
+
+  describe("the mock session", () => {
+    it("should offer no mock sign in, because a mock session would outlive the mock", () => {
+      render(<AuthSection auth={buildAuth({ mockSession: { available: true } })} />);
+
+      expect(screen.queryByText("Mock sign in")).toBeNull();
+      expect(screen.queryByText("Sign out")).toBeNull();
     });
   });
 

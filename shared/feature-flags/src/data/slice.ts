@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction, type WritableDraft } from "@reduxjs/to
 import type { FeatureFlagsMeta } from "./middleware";
 import type { FeatureId, FeatureFlagsState, PartialFeatures } from "./schema";
 import { FEATURE_FLAGS_INITIAL_STATE } from "../constants";
-import { resolveFeature, resolveAll } from "./internals";
+import { resolveFeature, resolveAll } from "./internals/slice";
 
 const featureFlagsSlice = createSlice({
   name: "featureFlags",

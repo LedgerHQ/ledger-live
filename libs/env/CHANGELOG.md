@@ -1,5 +1,51 @@
 # @ledgerhq/live-env
 
+## 4.0.0
+
+### Major Changes
+
+- [#21409](https://github.com/LedgerHQ/ledger-live/pull/21409) [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove the `EnvTypes` registry
+
+  `injectDefinitions()` already moved every env-var default out of the framework, but `EnvTypes` stayed behind and kept the full list of env names and their types inside the library. It is gone, along with the `EnvName` / `EnvValue` exports and the typed `getEnv` / `setEnv` / `getEnvDefault` overloads built on it.
+
+  `getEnv(name)` and `getEnvDefault(name)` now return `any`, so existing call sites keep compiling. A consumer that wants typing declares the vars it reads and wraps the accessor:
+
+  ```ts
+  import { getEnv as getEnvUnsafe } from "@ledgerhq/live-env";
+
+  type Envs = { MY_TIMEOUT: number; MY_API_URL: string };
+
+  export const getEnv = <K extends keyof Envs>(name: K): Envs[K] =>
+    getEnvUnsafe(name);
+  ```
+
+### Minor Changes
+
+- [#21544](https://github.com/LedgerHQ/ledger-live/pull/21544) [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mark the whole public API deprecated and ship the migration guide. `getEnv`, `setEnv`, `setEnvUnsafe`, `getEnvDefault`, `getAllEnvs`, `injectDefinitions`, `changes`, the registry introspection helpers, the exported types and the `useEnv` hook now carry `@deprecated`. `libs/env/MIGRATION.md` documents the four exits every variable takes; `shared/env/MIGRATION.md` covers what that means inside ledger-live. No behaviour change.
+
+## 4.0.0-next.0
+
+### Major Changes
+
+- [#21409](https://github.com/LedgerHQ/ledger-live/pull/21409) [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove the `EnvTypes` registry
+
+  `injectDefinitions()` already moved every env-var default out of the framework, but `EnvTypes` stayed behind and kept the full list of env names and their types inside the library. It is gone, along with the `EnvName` / `EnvValue` exports and the typed `getEnv` / `setEnv` / `getEnvDefault` overloads built on it.
+
+  `getEnv(name)` and `getEnvDefault(name)` now return `any`, so existing call sites keep compiling. A consumer that wants typing declares the vars it reads and wraps the accessor:
+
+  ```ts
+  import { getEnv as getEnvUnsafe } from "@ledgerhq/live-env";
+
+  type Envs = { MY_TIMEOUT: number; MY_API_URL: string };
+
+  export const getEnv = <K extends keyof Envs>(name: K): Envs[K] =>
+    getEnvUnsafe(name);
+  ```
+
+### Minor Changes
+
+- [#21544](https://github.com/LedgerHQ/ledger-live/pull/21544) [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mark the whole public API deprecated and ship the migration guide. `getEnv`, `setEnv`, `setEnvUnsafe`, `getEnvDefault`, `getAllEnvs`, `injectDefinitions`, `changes`, the registry introspection helpers, the exported types and the `useEnv` hook now carry `@deprecated`. `libs/env/MIGRATION.md` documents the four exits every variable takes; `shared/env/MIGRATION.md` covers what that means inside ledger-live. No behaviour change.
+
 ## 3.2.0
 
 ### Minor Changes
@@ -301,21 +347,5 @@
 ### Minor Changes
 
 - [#17517](https://github.com/LedgerHQ/ledger-live/pull/17517) [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove debug Asset Detail FAB and its `DEBUG_ASSET_DETAIL_FAB` env toggle. Asset/market detail is now reachable from regular navigation entry points.
-
-## 2.35.0
-
-### Minor Changes
-
-- [#17096](https://github.com/LedgerHQ/ledger-live/pull/17096) [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb) Thanks [@ishaba](https://github.com/ishaba)! - Add GraphQL read-side transport for Sui (balances, stakes, lastBlock, checkpoint) behind the `suiGraphqlTransport` feature flag.
-
-- [#17236](https://github.com/LedgerHQ/ledger-live/pull/17236) [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c) Thanks [@deepyjr](https://github.com/deepyjr)! - Add debug FAB toggle to quickly open Asset Detail screen
-
-## 2.35.0-next.0
-
-### Minor Changes
-
-- [#17096](https://github.com/LedgerHQ/ledger-live/pull/17096) [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb) Thanks [@ishaba](https://github.com/ishaba)! - Add GraphQL read-side transport for Sui (balances, stakes, lastBlock, checkpoint) behind the `suiGraphqlTransport` feature flag.
-
-- [#17236](https://github.com/LedgerHQ/ledger-live/pull/17236) [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c) Thanks [@deepyjr](https://github.com/deepyjr)! - Add debug FAB toggle to quickly open Asset Detail screen
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

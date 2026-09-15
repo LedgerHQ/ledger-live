@@ -1,5 +1,5 @@
 import React from "react";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
+import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
 import { MoreIcon, MoreListItem } from "./MoreRowParts";
 import type { MoreRowId } from "../types";
 
@@ -12,7 +12,8 @@ describe("MoreRowParts (native)", () => {
     cleanup();
   });
 
-  it("calls the row handler when the list item is pressed", () => {
+  it("calls the row handler when the list item is pressed", async () => {
+    const user = userEvent.setup();
     const onPress = jest.fn();
     render(
       <MoreListItem rowId="logout" onPress={onPress}>
@@ -20,7 +21,7 @@ describe("MoreRowParts (native)", () => {
       </MoreListItem>,
     );
 
-    fireEvent.press(screen.getByTestId("more-row-logout"));
+    await user.press(screen.getByTestId("more-row-logout"));
 
     expect(onPress).toHaveBeenCalledTimes(1);
   });

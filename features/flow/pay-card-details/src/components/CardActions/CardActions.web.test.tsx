@@ -5,12 +5,12 @@ import { CardActions } from "./CardActions";
 import { useFreezeCardViewModel } from "../Freeze/useFreezeCardViewModel";
 import { useMoreViewModel } from "../More/useMoreViewModel";
 import { buildMoreViewProps } from "../More/fixtures";
-import type { TileProps } from "../../types";
+import type { FreezeViewModel } from "../../types";
 
 jest.mock("../Freeze/useFreezeCardViewModel", () => ({ useFreezeCardViewModel: jest.fn() }));
 jest.mock("../More/useMoreViewModel", () => ({ useMoreViewModel: jest.fn() }));
 
-const freeze: TileProps = {
+const freeze: FreezeViewModel = {
   status: "ACTIVE",
   isActionDisabled: false,
   confirmState: "closed",

@@ -22,13 +22,11 @@ export const CorruptedNestedAddressSchema = z
     }),
     index: z.number().optional(),
   })
-  .transform(
-    (entry): RecentAddress => ({
-      address: entry.address.address,
-      lastUsed: entry.address.lastUsed ?? Date.now(),
-      ensName: entry.address.ensName,
-    }),
-  );
+  .transform((entry): RecentAddress => ({
+    address: entry.address.address,
+    lastUsed: entry.address.lastUsed ?? Date.now(),
+    ensName: entry.address.ensName,
+  }));
 
 export const RecentAddressSchema = z.union([
   LegacyStringAddressSchema,

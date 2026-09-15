@@ -6,6 +6,7 @@ import {
   resolveContactDetailEditDeleteLabels,
   useContactDetailEditDeleteAnalytics,
   useContactDetailEditDeleteFlowBindings,
+  useContactsMeContact,
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
 import type { ContactsDeleteContactDrawerProps } from "@features/flow-contacts-delete-contact";
@@ -37,6 +38,7 @@ export function useContactDetailEditDeleteAdapter(
 ): ContactDetailEditDeleteFlowProps {
   const { t } = useTranslation();
   const analytics = useContactsAnalytics();
+  const meContact = useContactsMeContact();
   const ports = useContactsEditDeletePorts(deviceIntents);
   const { flow, renameViewModel } = useContactDetailEditDeleteFlowBindings({
     contactId,
@@ -56,14 +58,16 @@ export function useContactDetailEditDeleteAdapter(
     () => createContactDetailEditDeleteUiState(flow, renameViewModel, labels),
     [flow, labels, renameViewModel],
   );
-  const { onEdit, onDelete } = useContactDetailEditDeleteAnalytics(
+  const { onEdit, onDelete, onConfirmDelete, onValidateEdit } = useContactDetailEditDeleteAnalytics(
     analytics,
     {
       onEditPress: flow.onEditPress,
       onDeletePress: flow.onDeletePress,
       openDelete: flow.openDelete,
+      confirmDelete: flow.confirmDelete,
     },
     uiState.signerMismatch.isOpen,
+    contactId === meContact.id,
   );
 
   return {
@@ -76,8 +80,14 @@ export function useContactDetailEditDeleteAdapter(
       onDelete,
       onClose: flow.onCloseActionsMenu,
     },
-    renameDrawer: uiState.rename,
-    deleteDrawer: uiState.delete,
+    renameDrawer: {
+      ...uiState.rename,
+      onConfirm: async () => {
+        onValidateEdit();
+        await uiState.rename.onConfirm();
+      },
+    },
+    deleteDrawer: { ...uiState.delete, onConfirm: onConfirmDelete },
     signerMismatchSheet: uiState.signerMismatch,
   };
 }

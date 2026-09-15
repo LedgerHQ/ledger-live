@@ -1,38 +1,36 @@
-import type {
-  CardLoginOauthConfig,
-  PayCardAuthCallback,
-  PayCardLoginTrackEvent,
-} from "@features/flow-pay-card-auth";
+import type { CardLoginProps } from "@features/flow-pay-card-auth";
 import type { CardVisualProps, FormattedValue } from "@features/flow-pay-card-details";
+import type { FormatCardTransactionAmount } from "@features/flow-pay-card-transactions";
 
 /** Host input for the Pay Card flow. */
 export type CardProps = {
   readonly title: string;
-  readonly oauthConfig: CardLoginOauthConfig;
-  /**
-   * The OAuth redirect the app already parsed, when it has one. The app's router owns the deep link,
-   * so it hands the flow the `code` it received.
-   */
-  readonly callback?: PayCardAuthCallback | null;
+  readonly login: CardLoginProps;
   /**
    * Turns the (flow-owned) card balance into a value `AmountDisplay` can render. This is the one bit
    * the flow cannot build itself: it needs the app's locale and counter-value currency. Omit it and
    * the card falls back to the bare artwork.
    */
   readonly formatCountervalue?: (value: number) => FormattedValue;
-  /** Localized caption shown above the balance. i18n stays with the host, so the app passes the string. */
+  readonly formatTransactionAmount?: FormatCardTransactionAmount;
   readonly balanceLabel?: string;
-  readonly onTrackEvent?: PayCardLoginTrackEvent;
 };
 
-/** Props the presentational view renders, resolved by {@link useCardViewModel}. */
+/**
+ * Which of the three mutually exclusive faces the flow shows.
+ *
+ * - `resolving` — the login machine is still reading the stored session. Only the title and the bare
+ *   artwork show, so nothing flashes before the answer lands.
+ * - `signedOut` — nobody is signed in: the bare artwork sits above the login CTA.
+ * - `signedIn` — a live session: the card face, onboarding widget and card actions show, no login.
+ */
+export type CardDisplayState = "resolving" | "signedOut" | "signedIn";
+
 export type CardViewProps = {
   readonly title: string;
-  readonly oauthConfig: CardLoginOauthConfig;
-  readonly callback?: PayCardAuthCallback | null;
-  readonly onTrackEvent?: PayCardLoginTrackEvent;
-  /** True while a Card session is live. The title only shows to a signed-in card holder. */
-  readonly isSignedIn: boolean;
-  /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
+  readonly login: CardLoginProps;
+  /** Which face to show. The children are mutually exclusive, so the view switches on this. */
+  readonly displayState: CardDisplayState;
   readonly cardVisual?: CardVisualProps;
+  readonly formatTransactionAmount?: FormatCardTransactionAmount;
 };

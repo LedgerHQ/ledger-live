@@ -23,10 +23,16 @@ describe("createAuthorizeAttempt", () => {
     expect(mockedSha256Base64Url).toHaveBeenCalledTimes(1);
   });
 
-  it("draws one random value, and only the verifier", async () => {
+  it("draws a random value for the verifier and one for the attempt state", async () => {
     await createAuthorizeAttempt();
 
-    expect(mockedCreateRandomBase64Url).toHaveBeenCalledTimes(1);
+    expect(mockedCreateRandomBase64Url).toHaveBeenCalledTimes(2);
+  });
+
+  it("returns the attempt state the random draw produced", async () => {
+    const attempt = await createAuthorizeAttempt();
+
+    expect(attempt.state).toBe("random-16");
   });
 
   // 32 bytes give the 43 base64url characters RFC 7636 sets as the minimum verifier length.

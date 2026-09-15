@@ -14,6 +14,19 @@ export type NeuronDissolveState =
   | { DissolveDelaySeconds: bigint }
   | { WhenDissolvedTimestampSeconds: bigint };
 
+/**
+ * What a `manage_neuron` reply reported about the command it just ran, for the commands whose result
+ * the canister computes rather than the caller.
+ *
+ * Decimal strings, as everything else on an operation's `extra` is — that record is serialized, and
+ * bigint has no JSON form.
+ */
+export type NeuronCommandOutcome = {
+  /** StakeMaturity: the neuron's maturity totals after the split, both reported by the canister. */
+  maturityE8s?: string;
+  stakedMaturityE8s?: string;
+};
+
 // `topic` is the NNS Topic id (see KNOWN_TOPICS).
 export type Followee = {
   topic: number;
@@ -38,6 +51,17 @@ export type ICPNeuron = {
   hotKeys: string[];
   followees: Followee[];
   autoStakeMaturity: boolean;
+  // Periodic-confirmation fields. All three are optional on the wire and absent from neurons
+  // persisted before they were decoded, so every consumer must treat "missing" as "unknown" rather
+  // than as zero — see votingPowerNeedsRefresh.
+  votingPowerRefreshedTimestampSeconds?: bigint;
+  // Voting power the canister will actually count, after periodic-confirmation decay. Carried but
+  // not yet read: the screens quote potentialVotingPower, which is the figure the NNS dapp shows and
+  // the one a neuron regains by confirming. Kept decoded so the decayed figure is already persisted
+  // when a surface needs it, rather than waiting on another device-signed read.
+  decidingVotingPower?: bigint;
+  // Voting power ignoring decay. Equals the locally computed neuronPotentialVotingPower.
+  potentialVotingPower?: bigint;
 };
 
 // ---- Raw candid decode shapes (subset actually read by the wallet) ------------------------------
@@ -61,12 +85,18 @@ export type RawNeuron = {
   maturity_e8s_equivalent: bigint;
   staked_maturity_e8s_equivalent: [] | [bigint];
   auto_stake_maturity: [] | [boolean];
+  voting_power_refreshed_timestamp_seconds: [] | [bigint];
+  potential_voting_power: [] | [bigint];
+  deciding_voting_power: [] | [bigint];
 };
 
 export type RawNeuronInfo = {
   state: number;
   age_seconds: bigint;
   dissolve_delay_seconds: bigint;
+  voting_power_refreshed_timestamp_seconds: [] | [bigint];
+  potential_voting_power: [] | [bigint];
+  deciding_voting_power: [] | [bigint];
 };
 
 export type ListNeuronsResponse = {
@@ -90,6 +120,30 @@ const bigIntReviver = (_key: string, value: unknown): unknown =>
     ? BigInt((value as { $bigint: string }).$bigint)
     : value;
 
+/**
+ * Neurons as a bigint-tagged JSON string — the only form that survives the `JSON.stringify` the apps
+ * persist through.
+ *
+ * Shared by the account snapshot (`NeuronsData`) and by a `list_neurons` operation's `extra`, so the
+ * two cannot drift into encoding neurons differently.
+ */
+export const serializeNeurons = (neurons: ICPNeuron[]): string =>
+  JSON.stringify(neurons, bigIntReplacer);
+
+/**
+ * The inverse. Corrupt data yields an empty list rather than throwing: neurons are a cache that the
+ * next device-signed `list_neurons` repopulates, and losing it must not fail account deserialization.
+ */
+export const deserializeNeurons = (raw: string): ICPNeuron[] => {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw, bigIntReviver);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
 /** Neurons on an ICPAccount + last-refresh timestamp (drives re-fetch). Persisted via serialize/deserialize. */
 export class NeuronsData {
   constructor(
@@ -103,24 +157,13 @@ export class NeuronsData {
 
   serialize(): NeuronsDataRaw {
     return {
-      neurons: JSON.stringify(this.fullNeurons, bigIntReplacer),
+      neurons: serializeNeurons(this.fullNeurons),
       lastUpdated: this.lastUpdatedMSecs,
     };
   }
 
   static deserialize(raw: NeuronsDataRaw): NeuronsData {
-    // Corrupt persisted neuron data must not crash account (de)serialization — fall back to an empty
-    // snapshot, which the next device-signed list_neurons refresh repopulates.
-    let fullNeurons: ICPNeuron[] = [];
-    if (raw.neurons) {
-      try {
-        const parsed = JSON.parse(raw.neurons, bigIntReviver);
-        if (Array.isArray(parsed)) fullNeurons = parsed;
-      } catch {
-        fullNeurons = [];
-      }
-    }
     const lastUpdated = Number.isFinite(raw.lastUpdated) ? raw.lastUpdated : 0;
-    return new NeuronsData(fullNeurons, lastUpdated);
+    return new NeuronsData(deserializeNeurons(raw.neurons), lastUpdated);
   }
 }

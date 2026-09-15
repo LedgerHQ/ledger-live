@@ -12,14 +12,18 @@ const oauthConfig: CardLoginOauthConfig = {
 
 describe("buildAuthorizeUrl", () => {
   it("addresses the provider's authorize page", () => {
-    const { origin, pathname } = new URL(buildAuthorizeUrl(oauthConfig, "challenge-value"));
+    const { origin, pathname } = new URL(
+      buildAuthorizeUrl(oauthConfig, "challenge-value", "state-value"),
+    );
 
     expect(origin).toBe("https://dev.api.baanx.com");
     expect(pathname).toBe("/v1/auth/oauth2/authorize");
   });
 
   it("carries every value the provider needs, and nothing else", () => {
-    const { searchParams } = new URL(buildAuthorizeUrl(oauthConfig, "challenge-value"));
+    const { searchParams } = new URL(
+      buildAuthorizeUrl(oauthConfig, "challenge-value", "state-value"),
+    );
 
     expect(Object.fromEntries(searchParams)).toEqual({
       client_id: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6",
@@ -28,18 +32,19 @@ describe("buildAuthorizeUrl", () => {
       redirect_uri: "https://go.ledger.com/ledger/card-baanx",
       code_challenge: "challenge-value",
       code_challenge_method: "S256",
+      state: "state-value",
       prompt: "consent",
     });
   });
 
   it("never sends the verifier, only the challenge derived from it", () => {
-    const url = buildAuthorizeUrl(oauthConfig, "challenge-value");
+    const url = buildAuthorizeUrl(oauthConfig, "challenge-value", "state-value");
 
     expect(url).not.toContain("code_verifier");
   });
 
   it("encodes the redirect and the scope separators", () => {
-    const url = buildAuthorizeUrl(oauthConfig, "challenge-value");
+    const url = buildAuthorizeUrl(oauthConfig, "challenge-value", "state-value");
 
     // A raw `:` or `/` in the query would end the redirect at the provider's parser.
     expect(url).toContain("redirect_uri=https%3A%2F%2Fgo.ledger.com%2Fledger%2Fcard-baanx");
@@ -47,14 +52,22 @@ describe("buildAuthorizeUrl", () => {
   });
 
   it("keeps a base path on the API host", () => {
-    const url = buildAuthorizeUrl({ ...oauthConfig, apiUrl: "https://card.test/" }, "challenge");
+    const url = buildAuthorizeUrl(
+      { ...oauthConfig, apiUrl: "https://card.test/" },
+      "challenge",
+      "state-value",
+    );
 
     expect(new URL(url).pathname).toBe("/v1/auth/oauth2/authorize");
   });
 
   it("refuses to open a non-https authorize URL", () => {
     expect(() =>
-      buildAuthorizeUrl({ ...oauthConfig, apiUrl: "http://dev.api.baanx.com" }, "challenge"),
+      buildAuthorizeUrl(
+        { ...oauthConfig, apiUrl: "http://dev.api.baanx.com" },
+        "challenge",
+        "state-value",
+      ),
     ).toThrow();
   });
 });

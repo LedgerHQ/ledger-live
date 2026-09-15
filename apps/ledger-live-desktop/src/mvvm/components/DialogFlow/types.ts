@@ -4,6 +4,8 @@ import type { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/
 export type DialogFlowOptions = Readonly<{
   dialogBodyProps?: Omit<ComponentProps<typeof DialogBody>, "children">;
   dialogContentProps?: Omit<ComponentProps<typeof DialogContent>, "children">;
+  dialogFooter?: ReactNode;
+  dialogFooterClassName?: string;
   dialogHeaderProps?: Omit<ComponentProps<typeof DialogHeader>, "onBack" | "onClose">;
   hasBackButton?: boolean;
 }>;

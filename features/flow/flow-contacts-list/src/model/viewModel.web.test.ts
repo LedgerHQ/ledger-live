@@ -24,7 +24,7 @@ describe("createEmptyContactsListViewModel", () => {
 
   it("derives the initial and address count from Me", () => {
     const me = mockMeContact({
-      name: "Élodie",
+      name: "Алексей",
       addresses: [mockContactAddress()],
     });
 
@@ -32,8 +32,8 @@ describe("createEmptyContactsListViewModel", () => {
       displayMode: "empty",
       me: {
         contactId: "contact-me",
-        name: "Élodie (Me)",
-        initial: "É",
+        name: "Алексей (Me)",
+        initial: "А",
         addressCount: 1,
       },
     });
@@ -152,17 +152,17 @@ describe("createPopulatedContactsListViewModel", () => {
     const contacts = [
       me,
       mockContact({
-        id: "contact-elodie",
-        name: "Élodie",
+        id: "contact-alexei",
+        name: "Алексей",
         addresses: [mockContactAddress(), mockContactAddress({ id: "address-polygon" })],
       }),
     ];
 
     expect(createPopulatedContactsListViewModel(me, contacts).savedContacts).toEqual([
       {
-        contactId: "contact-elodie",
-        name: "Élodie",
-        initial: "É",
+        contactId: "contact-alexei",
+        name: "Алексей",
+        initial: "А",
         addressCount: 2,
       },
     ]);

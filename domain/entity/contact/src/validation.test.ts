@@ -39,29 +39,18 @@ describe("contact name validation", () => {
   it("reports the stable InvalidContactNameError name for a non-empty invalid draft name", () => {
     expect(getContactNameValidationError("Olive@2")).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
     expect(getContactNameValidationError("1Password")).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
+    expect(getContactNameValidationError("Élodie")).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
   });
 
   it("reports a duplicate name after trimming, normalizing, and folding case", () => {
-    const existingNames = [ContactNameSchema.parse("Élodie")];
+    const existingNames = [ContactNameSchema.parse("Алексей")];
 
-    expect(getContactNameValidationError(" e\u0301LODIE ", existingNames)).toBe(
+    expect(getContactNameValidationError(" алексей ", existingNames)).toBe(
       DUPLICATE_CONTACT_NAME_ERROR_NAME,
     );
-    expect(isValidContactName(" e\u0301LODIE ", existingNames)).toBe(false);
-    expect(normalizeContactNameForComparison(" Élodie ")).toBe(
-      normalizeContactNameForComparison("e\u0301LODIE"),
-    );
-  });
-
-  it("reports a duplicate name after trimming, normalizing, and folding case", () => {
-    const existingNames = [ContactNameSchema.parse("Élodie")];
-
-    expect(getContactNameValidationError(" e\u0301LODIE ", existingNames)).toBe(
-      DUPLICATE_CONTACT_NAME_ERROR_NAME,
-    );
-    expect(isValidContactName(" e\u0301LODIE ", existingNames)).toBe(false);
-    expect(normalizeContactNameForComparison(" Élodie ")).toBe(
-      normalizeContactNameForComparison("e\u0301LODIE"),
+    expect(isValidContactName(" алексей ", existingNames)).toBe(false);
+    expect(normalizeContactNameForComparison(" Алексей ")).toBe(
+      normalizeContactNameForComparison("алексей"),
     );
   });
 
@@ -87,8 +76,8 @@ describe("contact name validation", () => {
     expect(parseContactName("  Ben  ")).toBe("Ben");
   });
 
-  it("parseContactName returns a NFC-normalized name", () => {
-    expect(parseContactName(" E\u0301lodie ")).toBe("Élodie");
+  it("parseContactName returns a trimmed name", () => {
+    expect(parseContactName(" Алексей ")).toBe("Алексей");
   });
 });
 

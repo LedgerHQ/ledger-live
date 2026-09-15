@@ -17,15 +17,17 @@ function createAnalytics(): ContactsAnalyticsHelper {
 }
 
 describe("useContactDetailEditDeleteAnalytics", () => {
-  it("should track edit and delete button clicks", () => {
+  it("should track edit and confirmed delete button clicks", async () => {
     const analytics = createAnalytics();
     const onEditPress = jest.fn();
     const onDeletePress = jest.fn();
     const openDelete = jest.fn();
+    const confirmDelete = jest.fn();
     const { result } = renderHook(() =>
       useContactDetailEditDeleteAnalytics(
         analytics,
-        { onEditPress, onDeletePress, openDelete },
+        { onEditPress, onDeletePress, openDelete, confirmDelete },
+        false,
         false,
       ),
     );
@@ -36,11 +38,24 @@ describe("useContactDetailEditDeleteAnalytics", () => {
     act(() => {
       result.current.onDelete();
     });
+    act(() => {
+      result.current.onValidateEdit();
+    });
+    await act(async () => {
+      await result.current.onConfirmDelete();
+    });
 
     expect(analytics.trackEvent).toHaveBeenCalledWith(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
       source: CONTACTS_EVENT_SOURCE.CONTACT_DETAIL,
       button: CONTACTS_TRACKING_BUTTON.editContact,
       page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
+      isSelf: false,
+    });
+    expect(analytics.trackEvent).toHaveBeenCalledWith(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
+      source: CONTACTS_EVENT_SOURCE.CONTACT_DETAIL,
+      button: CONTACTS_TRACKING_BUTTON.validateEditContact,
+      page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
+      isSelf: false,
     });
     expect(analytics.trackEvent).toHaveBeenCalledWith(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
       source: CONTACTS_EVENT_SOURCE.CONTACT_DETAIL,
@@ -50,14 +65,20 @@ describe("useContactDetailEditDeleteAnalytics", () => {
     expect(onEditPress).toHaveBeenCalledTimes(1);
     expect(onDeletePress).toHaveBeenCalledTimes(1);
     expect(openDelete).toHaveBeenCalledTimes(1);
+    expect(confirmDelete).toHaveBeenCalledTimes(1);
   });
 
   it("should track signer mismatch errors once while the sheet is open", () => {
     const analytics = createAnalytics();
-    const flow = { onEditPress: jest.fn(), onDeletePress: jest.fn(), openDelete: jest.fn() };
+    const flow = {
+      onEditPress: jest.fn(),
+      onDeletePress: jest.fn(),
+      openDelete: jest.fn(),
+      confirmDelete: jest.fn(),
+    };
     const { rerender } = renderHook(
       ({ isSignerMismatchOpen }) =>
-        useContactDetailEditDeleteAnalytics(analytics, flow, isSignerMismatchOpen),
+        useContactDetailEditDeleteAnalytics(analytics, flow, isSignerMismatchOpen, false),
       { initialProps: { isSignerMismatchOpen: false } },
     );
 
@@ -76,10 +97,15 @@ describe("useContactDetailEditDeleteAnalytics", () => {
 
   it("should allow signer mismatch tracking again after the sheet closes", () => {
     const analytics = createAnalytics();
-    const flow = { onEditPress: jest.fn(), onDeletePress: jest.fn(), openDelete: jest.fn() };
+    const flow = {
+      onEditPress: jest.fn(),
+      onDeletePress: jest.fn(),
+      openDelete: jest.fn(),
+      confirmDelete: jest.fn(),
+    };
     const { rerender } = renderHook(
       ({ isSignerMismatchOpen }) =>
-        useContactDetailEditDeleteAnalytics(analytics, flow, isSignerMismatchOpen),
+        useContactDetailEditDeleteAnalytics(analytics, flow, isSignerMismatchOpen, false),
       { initialProps: { isSignerMismatchOpen: true } },
     );
 

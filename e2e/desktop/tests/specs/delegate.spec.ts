@@ -5,7 +5,6 @@ import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getEnv } from "@shared/env";
-import { addBugLink, addTmsLink, getDescription } from "tests/utils/allureUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
   liveDataCommand,
@@ -117,14 +116,12 @@ for (const account of e2eDelegationAccounts) {
           currencyId: account.delegate.account.currency.id,
           skipLNS: account.supportsLNS === false,
         }),
-        annotation: { type: "TMS", description: account.xrayTicket },
+        annotation: [
+          { type: "TMS", description: account.xrayTicket },
+          ...(account.bugTicket ? [{ type: "BUG", description: account.bugTicket }] : []),
+        ],
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        if (account.bugTicket) {
-          await addBugLink([account.bugTicket]);
-        }
-
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
 
@@ -185,8 +182,6 @@ test.describe("Delegate", () => {
       annotation: { type: "TMS", description: "B2CQA-3023" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
@@ -223,8 +218,6 @@ test.describe("Delegate", () => {
       annotation: { type: "TMS", description: "B2CQA-3020" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
@@ -268,8 +261,6 @@ test.describe("Delegate", () => {
       annotation: { type: "TMS", description: "B2CQA-2742" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
@@ -314,7 +305,6 @@ test.describe("Delegate", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
@@ -345,7 +335,6 @@ test.describe("Delegate", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
@@ -384,14 +373,12 @@ for (const validator of validators) {
           currencyId: validator.delegate.account.currency.id,
           skipLNS: validator.delegate.account.currency.id === Currency.MULTIVERS_X.id,
         }),
-        annotation: { type: "TMS", description: validator.xrayTicket },
+        annotation: [
+          { type: "TMS", description: validator.xrayTicket },
+          ...(validator.bugTicket ? [{ type: "BUG", description: validator.bugTicket }] : []),
+        ],
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        if (validator.bugTicket) {
-          await addBugLink([validator.bugTicket]);
-        }
-
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
 
@@ -460,7 +447,6 @@ test.describe("Select a validator", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.marketBanner.clickExploreMarketHeader();
       // The asset-discoverability Market has no search input and no per-row stake CTA: staking is
       // reached by opening the asset detail page. Both entry points open the same stake flow.
@@ -501,8 +487,6 @@ for (const currency of liveApps) {
         annotation: { type: "TMS", description: currency.xrayTicket },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(currency.delegate.account.accountName);
 
@@ -541,8 +525,6 @@ test.describe("Delegate", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(seiDelegation.account.accountName);
 
@@ -594,8 +576,6 @@ test.describe("Delegate - MINA", () => {
       annotation: { type: "TMS", description: "B2CQA-387" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
 
@@ -645,8 +625,6 @@ test.describe("Redelegate - MINA", () => {
       annotation: { type: "TMS", description: "B2CQA-387" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
 

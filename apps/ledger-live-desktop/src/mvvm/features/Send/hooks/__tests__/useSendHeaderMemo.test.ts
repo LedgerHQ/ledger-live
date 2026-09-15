@@ -113,6 +113,7 @@ describe("useSendHeaderMemo", () => {
     expect(setRecipient).toHaveBeenCalledWith({
       address: "rNewRecipient",
       ensName: undefined,
+      displayLabel: undefined,
       memo: { value: "", type: "NO_MEMO" },
     });
   });
@@ -132,6 +133,7 @@ describe("useSendHeaderMemo", () => {
     expect(setRecipient).toHaveBeenCalledWith({
       address: "rOldRecipient",
       ensName: undefined,
+      displayLabel: undefined,
       memo: { value: "123", type: undefined },
     });
   });

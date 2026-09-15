@@ -72,10 +72,7 @@ describe("Celo ledger service (index.ts)", () => {
 
     expect(mockedArrayify).toHaveBeenCalledWith("0xraw");
     expect(mockedRlp.decode).toHaveBeenCalledWith(payload.slice(1));
-    expect(mockedRlp.encode).toHaveBeenCalledWith([
-      ...fields.slice(0, 9),
-      ...fields.slice(10),
-    ]);
+    expect(mockedRlp.encode).toHaveBeenCalledWith([...fields.slice(0, 9), ...fields.slice(10)]);
     expect(mockedLedgerService.parseTransaction).toHaveBeenCalledWith("0x02deadbeef");
     expect(mockedKeccak256).toHaveBeenCalledWith(payload);
     expect(result).toMatchObject({
@@ -146,7 +143,11 @@ describe("Celo ledger service (index.ts)", () => {
     mockedKeccak256.mockReturnValue("0xhash");
     mockedLedgerService.resolveTransaction.mockResolvedValue(resolution as never);
 
-    const result = await ledgerServiceCelo.resolveTransaction(rawTxHex, loadConfig, resolutionConfig);
+    const result = await ledgerServiceCelo.resolveTransaction(
+      rawTxHex,
+      loadConfig,
+      resolutionConfig,
+    );
 
     expect(mockedLedgerService.resolveTransaction).toHaveBeenCalledWith(
       rawTxHex,
@@ -169,18 +170,7 @@ describe("Celo ledger service (index.ts)", () => {
     async (_label, feeCurrency) => {
       const rawTxHex = "7bbb";
       const payload = Uint8Array.from([0x7b, 0xbb]);
-      const fields = [
-        "0xa4ec",
-        "0x",
-        "0x09",
-        "0x64",
-        "0x5208",
-        "0x1",
-        "0x",
-        "0x",
-        [],
-        feeCurrency,
-      ];
+      const fields = ["0xa4ec", "0x", "0x09", "0x64", "0x5208", "0x1", "0x", "0x", [], feeCurrency];
       const loadConfig = {};
       const resolutionConfig = { nft: false, erc20: false, externalPlugins: false };
 

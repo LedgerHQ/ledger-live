@@ -26,8 +26,8 @@
   "main": "lib/Vet.js",
   "module": "lib-es/Vet.js",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport": "catalog:",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@vechain/sdk-core": "2.0.0"
   },
@@ -44,7 +44,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

@@ -1,17 +1,15 @@
-import React from "react";
 import { act, renderHook } from "@testing-library/react";
-import { I18nTestProvider } from "@shared/i18n/testing";
+import { I18nWrapper } from "../../__tests__/i18nWrapper";
 import { useMoreViewModel } from "./useMoreViewModel";
-import { MORE_RESOURCES } from "./fixtures";
 
 jest.mock("@domain/api-card-management", () => ({ useGetUserQuery: jest.fn() }));
-jest.mock("@features/flow-pay-card-auth", () => ({
+jest.mock("@features/flow-pay-card-auth/hooks", () => ({
   useIsCardSignedIn: jest.fn(),
   useCardLogout: jest.fn(),
 }));
 
 import { useGetUserQuery } from "@domain/api-card-management";
-import { useCardLogout, useIsCardSignedIn } from "@features/flow-pay-card-auth";
+import { useCardLogout, useIsCardSignedIn } from "@features/flow-pay-card-auth/hooks";
 
 const user = { id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301", verificationState: "VERIFIED" } as const;
 
@@ -19,10 +17,6 @@ type Setup = {
   isSignedIn?: boolean;
   hasUser?: boolean;
 };
-
-function wrapper({ children }: { children: React.ReactNode }) {
-  return <I18nTestProvider resources={MORE_RESOURCES}>{children}</I18nTestProvider>;
-}
 
 function renderWith({ isSignedIn = true, hasUser = true }: Setup = {}) {
   const logout = jest.fn();
@@ -33,7 +27,7 @@ function renderWith({ isSignedIn = true, hasUser = true }: Setup = {}) {
     data: hasUser ? user : undefined,
   } as unknown as ReturnType<typeof useGetUserQuery>);
 
-  const { result, rerender } = renderHook(() => useMoreViewModel(), { wrapper });
+  const { result, rerender } = renderHook(() => useMoreViewModel(), { wrapper: I18nWrapper });
 
   const signIn = (signedIn: boolean) =>
     act(() => {

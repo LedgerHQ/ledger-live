@@ -22,9 +22,11 @@ import {
 registerCoinModules(coinModuleLoaders);
 
 // Currencies exercised by the scenarios. Babylon (BABY) is x/epoching-wrapped;
-// Cosmos Hub (ATOM) is the canonical, non-wrapped cosmos chain.
+// Cosmos Hub (ATOM) is the canonical, non-wrapped cosmos chain; Gonka (GNK)
+// has no delegatable staking module (its validator set is PoC-driven).
 export const babylon = getCryptoCurrencyById("babylon");
 export const cosmos = getCryptoCurrencyById("cosmos");
+export const gonka = getCryptoCurrencyById("gonka");
 
 export interface CosmosBridges {
   currencyBridge: CurrencyBridge;

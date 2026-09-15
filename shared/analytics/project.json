@@ -1,0 +1,8 @@
+{
+  "name": "@shared/analytics",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

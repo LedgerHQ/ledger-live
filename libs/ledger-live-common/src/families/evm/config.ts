@@ -1377,7 +1377,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "none",
       },
-      nativeContracts: ["0x0000000000000000000000000000000000000000"],
+      nativeContracts: ["0x3600000000000000000000000000000000000000"],
       feeHistoryBlockCount: 1024,
       feeHistoryRewardPercentile: 60,
     },

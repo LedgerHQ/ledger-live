@@ -17,7 +17,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { track } from "~/renderer/analytics/segment";
 import { QueryKey } from "./type.hooks";
 import { useInstanceName } from "./useInstanceName";
-import { AnalyticsPage } from "./useLedgerSyncAnalytics";
+import {
+  AnalyticsFlow,
+  AnalyticsPage,
+  walletSyncEntryFlowProperties,
+} from "./useLedgerSyncAnalytics";
 import { saveSettings } from "~/renderer/actions/settings";
 import { useNavigate } from "react-router";
 
@@ -84,7 +88,9 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
     onSuccess(newTrustchain) {
       if (newTrustchain) {
         dispatch(setTrustchain(newTrustchain));
-        if (!trustchain) track("ledgersync_activated");
+        if (!trustchain) {
+          track("ledgersync_activated", walletSyncEntryFlowProperties(AnalyticsFlow));
+        }
       }
       if (sourcePage === AnalyticsPage.Onboarding) {
         dispatch(saveSettings({ hasCompletedOnboarding: true }));

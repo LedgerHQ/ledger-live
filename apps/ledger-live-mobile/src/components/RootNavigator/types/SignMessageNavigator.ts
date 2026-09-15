@@ -10,7 +10,6 @@ export type CommonParams = {
   dependencies?: string[];
   onConfirmationHandler?: (_: string) => void;
   onFailHandler?: (_: Error) => void;
-  isACRE?: boolean;
 };
 
 export type SignMessageNavigatorStackParamList = {

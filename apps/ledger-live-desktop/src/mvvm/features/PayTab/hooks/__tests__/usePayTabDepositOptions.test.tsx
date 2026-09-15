@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import { useOpenAssetFlow } from "../../../ModularDialog/hooks/useOpenAssetFlow";

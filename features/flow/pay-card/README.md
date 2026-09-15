@@ -12,8 +12,7 @@ Card leaf flows into a single entry point, mirroring the Contacts aggregate (`@f
 import { Card } from "@features/flow-pay-card";
 
 <Card
-  oauthConfig={oauthConfig}
-  callback={callback}
+  login={{ oauthConfig, callback }}
   formatCountervalue={formatCountervalue}
   balanceLabel={balanceLabel}
 />;
@@ -27,11 +26,14 @@ import { Card } from "@features/flow-pay-card";
   side by side on native).
 - `CardLogin` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md) — it shows while
   nobody is signed in, and `useCardLogout` ends the session from the More menu.
+- `CardTransactions` from [`@features/flow-pay-card-transactions`](../pay-card-transactions/README.md)
+  on web once signed in (the first page of card transactions, or nothing when the list is empty).
 
 The flow owns the (currently mocked) card balance, so hosts no longer assemble the visual themselves.
 They pass only the two things the flow cannot know: `formatCountervalue` (needs the app's locale and
-counter-value currency) and `balanceLabel` (i18n stays with the host). `oauthConfig` and `callback`
-come from `@features/flow-pay-card-auth`. Desktop mounts this flow in the Pay tab's right panel.
+counter-value currency) and `balanceLabel` (i18n stays with the host). Hosts pass `oauthConfig` and
+`callback` under `login` (`CardProps.login`); those come from `@features/flow-pay-card-auth`. Desktop
+mounts this flow in the Pay tab's right panel.
 
 ## MVVM
 

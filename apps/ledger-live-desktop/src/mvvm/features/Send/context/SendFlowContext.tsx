@@ -47,6 +47,7 @@ type ActionsContextValue = Readonly<{
   close: () => void;
   setAccountAndNavigate: (account: AccountLike, parentAccount?: Account) => void;
   setIsRecipientAddressComplete: (value: boolean) => void;
+  resetRecipient: () => void;
 }>;
 
 const SendFlowActionsContext = createContext<ActionsContextValue | null>(null);
@@ -85,6 +86,7 @@ export function SendFlowProvider({ value, children }: SendFlowProviderProps) {
       close: value.close,
       setAccountAndNavigate: value.setAccountAndNavigate,
       setIsRecipientAddressComplete: value.setIsRecipientAddressComplete,
+      resetRecipient: value.resetRecipient,
     }),
     [
       value.transaction,
@@ -93,6 +95,7 @@ export function SendFlowProvider({ value, children }: SendFlowProviderProps) {
       value.close,
       value.setAccountAndNavigate,
       value.setIsRecipientAddressComplete,
+      value.resetRecipient,
     ],
   );
 

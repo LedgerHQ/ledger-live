@@ -18,7 +18,7 @@ export const llmWalletSync = flagWith(
   {
     enabled: false,
     params: {
-      environment: "STAGING",
+      environment: "PROD",
       watchConfig: {},
       learnMoreLink: "",
     },

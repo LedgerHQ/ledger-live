@@ -1,13 +1,23 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
+import { useTranslation } from "@shared/i18n";
 import type {
   BankTransferHandoff,
   BankTransferIntroProps,
+  BankTransferIntroRowIcon,
   BankTransferIntroViewModel,
 } from "../../types";
 
 export const BANK_TRANSFER_INTRO_PAGE_EVENT = "Page cash to stable";
 export const BANK_TRANSFER_INTRO_PAGE = "cash to stable";
 export const BANK_TRANSFER_INTRO_FLOW = "C2S";
+
+const KEY_PREFIX = "payTab.bankTransferIntro";
+
+const ROWS: readonly { icon: BankTransferIntroRowIcon; key: string }[] = [
+  { icon: "Bank", key: "bank" },
+  { icon: "Coins", key: "fees" },
+  { icon: "Chart5", key: "earn" },
+];
 
 const TRACK_BUTTON = {
   createAccount: "create an account",
@@ -17,13 +27,14 @@ const TRACK_BUTTON = {
 
 export function useBankTransferIntroViewModel({
   isOpen,
-  labels,
   heroImage,
   bottomInset = 0,
   onBankTransfer,
   onClose,
   onTrackEvent,
 }: BankTransferIntroProps): BankTransferIntroViewModel {
+  const { t } = useTranslation();
+
   const onShown = useCallback(() => {
     onTrackEvent?.(BANK_TRANSFER_INTRO_PAGE_EVENT, { flow: BANK_TRANSFER_INTRO_FLOW });
   }, [onTrackEvent]);
@@ -65,15 +76,25 @@ export function useBankTransferIntroViewModel({
     onClose();
   }, [onClose]);
 
+  const rows = useMemo(
+    () =>
+      ROWS.map(({ icon, key }) => ({
+        icon,
+        title: t(`${KEY_PREFIX}.rows.${key}.title`),
+        description: t(`${KEY_PREFIX}.rows.${key}.description`),
+      })),
+    [t],
+  );
+
   return {
     isOpen,
-    title: labels.title,
-    description: labels.description,
-    createAccountLabel: labels.createAccountLabel,
-    logInLabel: labels.logInLabel,
-    providedBy: labels.providedBy,
+    title: t(`${KEY_PREFIX}.title`),
+    description: t(`${KEY_PREFIX}.description`),
+    createAccountLabel: t(`${KEY_PREFIX}.createAccount`),
+    logInLabel: t(`${KEY_PREFIX}.logIn`),
+    providedBy: t(`${KEY_PREFIX}.providedBy`),
     heroImage,
-    rows: labels.rows,
+    rows,
     bottomInset,
     onShown,
     onCreateAccountPress,
