@@ -1,5 +1,4 @@
 import { http, HttpResponse, passthrough } from "msw";
-import { getMockCardOnboardingStatus } from "@domain/api-card-management/mock";
 import {
   MOCK_CARD_DETAILS_IMAGE_URL,
   mockCardDetailsImage,
@@ -35,10 +34,6 @@ const handlers = [
 
     return isMockCardRequest(request) ? HttpResponse.json(mockPayCardStatus()) : passthrough();
   }),
-
-  http.get("*/v1/card/onboarding-status", ({ request }) =>
-    isMockCardRequest(request) ? HttpResponse.json(getMockCardOnboardingStatus()) : passthrough(),
-  ),
 
   http.get("*/v1/card/transactions", ({ request }) =>
     isMockCardRequest(request) ? HttpResponse.json(mockPayCardTransactions()) : passthrough(),

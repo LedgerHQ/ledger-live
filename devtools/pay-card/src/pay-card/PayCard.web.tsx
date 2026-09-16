@@ -29,7 +29,6 @@ import { AuthSection } from "./AuthSection";
 export function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
-    onboarding,
     cardOnboarding,
     interaction,
     balance,
@@ -163,34 +162,6 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
           checked={flags.ptxCardEnabled}
           onChange={flags.setPtxCardEnabled}
         />
-      </Section>
-
-      <Divider />
-
-      <Section title="Onboarding">
-        <div className="flex flex-col gap-2">
-          {onboarding.steps.map(step => (
-            <ToggleRow
-              key={step.id}
-              label={step.label}
-              checked={step.done}
-              onChange={() => onboarding.setStepDone(step.id, !step.done)}
-            />
-          ))}
-        </div>
-      </Section>
-
-      <Divider />
-
-      <Section title="Reset onboarding">
-        <div className="flex flex-wrap gap-8">
-          <Button appearance="gray" size="sm" onClick={() => onboarding.setStepDone("all", true)}>
-            Set all done
-          </Button>
-          <Button appearance="gray" size="sm" onClick={() => onboarding.setStepDone("all", false)}>
-            Reset all
-          </Button>
-        </div>
       </Section>
 
       <Divider />

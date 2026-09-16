@@ -12,16 +12,6 @@ function buildProps(): PayCardToolProps {
       setCardParam: jest.fn(),
       setPtxCardEnabled: jest.fn(),
     },
-    onboarding: {
-      steps: [
-        {
-          id: "step1",
-          label: "Step 1",
-          done: false,
-        },
-      ],
-      setStepDone: jest.fn(),
-    },
     cardOnboarding: {
       steps: [],
       completedCount: 0,
@@ -100,7 +90,6 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("Card interaction")).toBeTruthy();
     expect(screen.getByText("Balance")).toBeTruthy();
     expect(screen.getByText("Feature flags")).toBeTruthy();
-    expect(screen.getByText("Onboarding")).toBeTruthy();
     expect(screen.getByText("Feature tour")).toBeTruthy();
     expect(screen.getByText("Request verify hint")).toBeTruthy();
     expect(screen.getByText("Card login intro")).toBeTruthy();
@@ -518,29 +507,6 @@ describe("PayCard (native)", () => {
 
     expect(clear).toHaveBeenCalledTimes(1);
     expect(screen.getByText("Feature flags")).toBeTruthy();
-  });
-
-  it("wires onboarding actions", async () => {
-    const user = userEvent.setup();
-    const props = buildProps();
-    render(<PayCard {...props} />);
-
-    // Label is display-only; ToggleRow wires onChange on the Switch.
-    const switches = screen.getAllByRole("switch");
-    await user.press(switches[switches.length - 1]!);
-    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("step1", true);
-  });
-
-  it("sets every onboarding step at once, and resets them all", async () => {
-    const user = userEvent.setup();
-    const props = buildProps();
-    render(<PayCard {...props} />);
-
-    await user.press(screen.getByText("Set all done"));
-    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("all", true);
-
-    await user.press(screen.getByText("Reset all"));
-    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("all", false);
   });
 
   it("hides the auth sections and the toast on a host that builds no session controls", () => {

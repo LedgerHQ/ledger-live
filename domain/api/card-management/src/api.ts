@@ -10,7 +10,6 @@ import {
   PayCardWalletPrioritiesRequestSchema,
   PayCardWalletPrioritiesResponseSchema,
   PayCardLogoutResponseSchema,
-  PayCardOnboardingStatusResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
@@ -38,7 +37,6 @@ import type {
   PayCardWalletPrioritiesRequest,
   PayCardWalletPrioritiesResult,
   PayCardLogoutResult,
-  PayCardOnboardingStatus,
   PayCardOrderResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
@@ -322,15 +320,6 @@ export const cardManagementApi = cardApi
         // refetch is what resyncs that guess. Nothing is patched here.
         invalidatesTags: result => (result?.success ? ["CardLinkedWallets"] : []),
       }),
-
-      getCardOnboardingStatus: build.query<PayCardOnboardingStatus, void>({
-        query: () => ({
-          url: "/v1/card/onboarding-status",
-          method: "GET",
-        }),
-        responseSchema: PayCardOnboardingStatusResponseSchema,
-        providesTags: ["CardOnboardingStatus"],
-      }),
     }),
   });
 
@@ -362,7 +351,6 @@ export const {
   useGetCardLinkedWalletsQuery,
   useLinkWalletToCardMutation,
   useUpdateCardWalletPrioritiesMutation,
-  useGetCardOnboardingStatusQuery,
 } = cardManagementApi;
 
 async function patchCardStatus(

@@ -349,18 +349,6 @@ export const PayCardWalletPrioritiesResponseSchema = z.object({
   success: z.boolean(),
 });
 
-/** One onboarding step the card holder still has to complete, as the backend describes it. */
-export const PayCardOnboardingStepSchema = z.object({
-  id: z.string().min(1),
-  title: z.string().min(1),
-  description: z.string().min(1),
-  isDone: z.boolean(),
-});
-
-export const PayCardOnboardingStatusResponseSchema = z.object({
-  steps: z.array(PayCardOnboardingStepSchema),
-});
-
 /**
  * The wire wallet plus the Ledger currency its `currency`/`network` pair resolves to. Optional
  * because the catalog does not cover every asset the provider may answer with.

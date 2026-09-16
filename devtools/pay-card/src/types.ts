@@ -7,17 +7,6 @@ export interface PayCardFlagsProps {
   readonly setPtxCardEnabled: (value: boolean) => void;
 }
 
-export interface OnboardingStep {
-  readonly id: string;
-  readonly label: string;
-  readonly done: boolean;
-}
-
-export interface PayCardOnboardingProps {
-  readonly steps: readonly OnboardingStep[];
-  readonly setStepDone: (id: string, done: boolean) => void;
-}
-
 export interface PayCardSessionSnapshot {
   readonly accessToken: string;
   readonly refreshToken: string;
@@ -185,7 +174,6 @@ export interface PayCardOnboardingStatusProps {
 
 export interface PayCardToolProps {
   readonly flags: PayCardFlagsProps;
-  readonly onboarding: PayCardOnboardingProps;
   readonly cardOnboarding: PayCardOnboardingStatusProps;
   readonly interaction: PayCardInteractionProps;
   readonly balance: PayCardBalanceProps;

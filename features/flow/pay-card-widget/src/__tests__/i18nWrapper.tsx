@@ -7,8 +7,21 @@ export const CARD_ONBOARDING_COPY = {
   dialogTitle: "Complete your card",
   stepComplete: "Completed",
   gotIt: "Got it",
-  walletStepTitle: "Add to Apple/Google Pay",
-  walletStepDescription: "Pay with your phone in store",
+} as const;
+
+/** One title/description pair per real step id, keyed the way `useOnboardingSteps` looks them up. */
+export const CARD_ONBOARDING_STEP_COPY = {
+  "create-account": { title: "Create account step", description: "Create account description" },
+  "choose-card-type": {
+    title: "Choose card type step",
+    description: "Choose card type description",
+  },
+  "top-up-card": { title: "Top up card step", description: "Top up card description" },
+  "first-purchase": { title: "First purchase step", description: "First purchase description" },
+  "apple-google-pay": {
+    title: "Add to Apple/Google Pay",
+    description: "Pay with your phone in store",
+  },
 } as const;
 
 export const CARD_ONBOARDING_RESOURCES = {
@@ -25,9 +38,12 @@ export const CARD_ONBOARDING_RESOURCES = {
             stepComplete: CARD_ONBOARDING_COPY.stepComplete,
             gotIt: CARD_ONBOARDING_COPY.gotIt,
           },
-          walletStep: {
-            title: CARD_ONBOARDING_COPY.walletStepTitle,
-            description: CARD_ONBOARDING_COPY.walletStepDescription,
+          steps: {
+            createAccount: CARD_ONBOARDING_STEP_COPY["create-account"],
+            chooseCardType: CARD_ONBOARDING_STEP_COPY["choose-card-type"],
+            topUpCard: CARD_ONBOARDING_STEP_COPY["top-up-card"],
+            firstPurchase: CARD_ONBOARDING_STEP_COPY["first-purchase"],
+            appleGooglePay: CARD_ONBOARDING_STEP_COPY["apple-google-pay"],
           },
         },
       },

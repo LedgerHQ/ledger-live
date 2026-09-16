@@ -40,7 +40,6 @@ const PANEL_STYLE = { flex: 1 } as const;
 export function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
-    onboarding,
     cardOnboarding,
     interaction,
     balance,
@@ -177,38 +176,6 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
             checked={flags.ptxCardEnabled}
             onChange={flags.setPtxCardEnabled}
           />
-        </Section>
-
-        <Divider />
-
-        <Section title="Onboarding">
-          <Box lx={{ flexDirection: "column", gap: "s8" }}>
-            {onboarding.steps.map(step => (
-              <ToggleRow
-                key={step.id}
-                label={step.label}
-                checked={step.done}
-                onChange={() => onboarding.setStepDone(step.id, !step.done)}
-              />
-            ))}
-          </Box>
-        </Section>
-
-        <Divider />
-
-        <Section title="Reset onboarding">
-          <Box style={BUTTON_ROW_STYLE}>
-            <Button appearance="gray" size="sm" onPress={() => onboarding.setStepDone("all", true)}>
-              Set all done
-            </Button>
-            <Button
-              appearance="gray"
-              size="sm"
-              onPress={() => onboarding.setStepDone("all", false)}
-            >
-              Reset all
-            </Button>
-          </Box>
         </Section>
 
         <Divider />
