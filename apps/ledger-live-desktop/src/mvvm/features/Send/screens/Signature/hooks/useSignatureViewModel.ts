@@ -11,11 +11,14 @@ import {
   SEND_FLOW_STEP,
   type SendFlowCompletion,
 } from "@ledgerhq/live-common/flows/send/types";
+import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
+import { isContractDataDisabledError } from "../../../utils/contractDataError";
 import { selectIsBuyDeviceOpen } from "LLD/features/BuyDevice/buyDeviceDialog";
 import { hasOnboardedDeviceSelector, mevProtectionSelector } from "~/renderer/reducers/settings";
 import { broadcastLogger } from "~/datadog/logs";
@@ -78,15 +81,41 @@ export function useSignatureViewModel() {
     [reduxDispatch],
   );
 
+  // TX-C of the sponsored (Tronify) send is signed on this same SIGNATURE step, so its outcome has
+  // to be reported back to the orchestration that owns the sponsored state machine. Gated on the
+  // TRANSFER phase: an ordinary send runs through here too and must not touch that machine.
+  const { state: sponsoredState, actions: sponsoredActions } = useSponsoredSend();
+  const isSponsoredTransfer = sponsoredState.phase === SPONSORED_PHASE.TRANSFER;
+
   const onFinish = useCallback(
-    (completion: SendFlowCompletion) => {
+    (completion: SendFlowCompletion, error?: Error) => {
+      if (isSponsoredTransfer) {
+        if (completion === SEND_FLOW_COMPLETION.SUCCESS) {
+          sponsoredActions.onTransferSuccess();
+        } else {
+          // The rent is already paid, so a TX-C failure must land on SPONSORED_FAILURE rather than
+          // the generic confirmation, which would read as though the rent died with the transfer.
+          const failure = error ?? new Error("Sponsored transfer failed");
+          // A TX-C TRC-20 transfer is itself a contract-data signing op: a 0x6a80 refusal must be
+          // recorded as CONTRACT_DATA (its failure copy guides enabling contract data / blind
+          // signing) rather than a generic transfer failure. Retry resumes at TRANSFER either way,
+          // since the delegation already succeeded.
+          if (isContractDataDisabledError(failure)) {
+            sponsoredActions.setContractDataFailure(failure);
+          } else {
+            sponsoredActions.onTransferError(failure);
+          }
+          navigation.goToStep(SEND_FLOW_STEP.SPONSORED_FAILURE);
+          return;
+        }
+      }
       if (completion === SEND_FLOW_COMPLETION.SUCCESS && source === SEND_FLOW_SOURCE.PAY) {
         navigation.goToStep(SEND_FLOW_STEP.PAY_SUCCESS);
         return;
       }
       navigation.goToNextStep();
     },
-    [navigation, source],
+    [navigation, source, isSponsoredTransfer, sponsoredActions],
   );
 
   const { request, finishWithError, onDeviceActionResult } = useSendFlowSignatureCore({

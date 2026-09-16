@@ -9,6 +9,7 @@ import type {
 } from "@ledgerhq/live-common/flows/send/types";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowAmountReviewCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore";
+import { getNativeSpendableAfterPending } from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
 import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import type { AmountScreenViewModel } from "../types";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
@@ -19,6 +20,7 @@ import { useAmountScreenMessage } from "./useAmountScreenMessage";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
 import { track } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 
 type UseAmountScreenViewModelParams = Readonly<{
   account: AccountLike;
@@ -45,17 +47,30 @@ export function useAmountScreenViewModel({
 }: UseAmountScreenViewModelParams): AmountScreenViewModel {
   const { t } = useTranslation();
   const { navigation } = useFlowWizard();
+  const { selectedFeeOptionId, available, quote } = useSponsoredSend();
 
   const sendFlowTrackingProperties = useMemo(
     () => getSendFlowTrackingProperties(account, parentAccount),
     [account, parentAccount],
   );
 
+  // Tronify covers the network fee via rented energy, so the native NotEnoughGas (`gasLimit`) error
+  // validateIntent raises for a low-TRX TRC-20 send must not gate Review on the sponsored path once
+  // an affordable quote is loaded — that low-TRX account is exactly whom the feature serves. Strip
+  // only that one error for the review-gating core; every other validation error still blocks, and
+  // the unaffordable case is caught by `sponsoredFeeUnaffordable` below.
+  const sponsoredCoversNativeFee = selectedFeeOptionId === "tronify" && available && !!quote;
+  const reviewStatus = useMemo(() => {
+    if (!sponsoredCoversNativeFee || !status.errors?.gasLimit) return status;
+    const { gasLimit: _gasLimit, ...errors } = status.errors;
+    return { ...status, errors };
+  }, [sponsoredCoversNativeFee, status]);
+
   const amountReviewCore = useSendFlowAmountReviewCore({
     account,
     parentAccount,
     transaction,
-    status,
+    status: reviewStatus,
     bridgePending,
     transactionActions,
     labels: {
@@ -74,6 +89,14 @@ export function useAmountScreenViewModel({
     amountComputationPending,
     shouldPrepare,
   } = amountReviewCore;
+
+  const sponsoredFeeUnaffordable = useMemo(() => {
+    if (selectedFeeOptionId !== "tronify" || !available || !quote) return false;
+    // Compare against the pending-adjusted native balance, not the raw spendableBalance: optimistic
+    // pendingOperations don't hit spendableBalance until the next sync, so a pending native TRX send
+    // would otherwise leave Tronify enabled when the rent payment no longer fits.
+    return getNativeSpendableAfterPending(mainAccount).lt(new BigNumber(quote.value.toString()));
+  }, [selectedFeeOptionId, available, quote, mainAccount]);
 
   const amountInput = useAmountInput({
     account,
@@ -214,7 +237,10 @@ export function useAmountScreenViewModel({
     amountMessage,
     reviewLabel,
     reviewShowIcon,
-    reviewDisabled,
+    reviewDisabled: reviewDisabled || sponsoredFeeUnaffordable,
+    sponsoredFeeError: sponsoredFeeUnaffordable
+      ? t("newSendFlow.feePayment.insufficientFunds")
+      : null,
     reviewLoading: amountComputationPending,
     ...networkFees,
     feeSelector: {
