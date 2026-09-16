@@ -101,7 +101,10 @@ const assertShapeBothBuilt = (grpcBytes: Uint8Array, gqlBytes: Uint8Array, label
 
 // gRPC is the reference leg. It replaced JSON-RPC here after the Sui Foundation retired the public
 // mainnet fullnode (wk of 2026-07-20), which left this suite skipped with no runnable baseline.
-describe("createTransactionFor* parity (live mainnet)", () => {
+//
+// Disabled: every case compares a GraphQL build against the gRPC one, and the GraphQL transport is
+// being deprecated.
+describe.skip("createTransactionFor* parity (live mainnet)", () => {
   test("transfer: same TransactionData shape across transports", async () => {
     const transaction = {
       amount: new BigNumber("1000000"),
