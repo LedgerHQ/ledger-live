@@ -182,11 +182,39 @@ export async function buildSubAccounts({
  * bound rather than cutting a transaction in half, so a walk bounded at N can hand back up to N
  * plus one page, and all of that overshoot can belong to a single token.
  */
+/**
+ * Cuts at a transaction boundary, never inside one. A single hash can produce several token rows
+ * (a swap moving two assets, a batch), and `slice(0, max)` on a flat list can keep some of a
+ * transaction's rows and drop its siblings -- the account would then show half a transaction, and
+ * the parent watermark never refetches it. So the cut includes whole hash groups and overshoots
+ * the bound rather than splitting one, which is the rule `paginateOperations` already applies a
+ * level up when it returns the entire page that reached the bound.
+ */
 function boundOperations(subAccount: TokenAccount, maxOperations?: number): TokenAccount {
   if (maxOperations === undefined || subAccount.operations.length <= maxOperations) {
     return subAccount;
   }
-  const operations = subAccount.operations.slice(0, maxOperations);
+
+  let kept = 0;
+  while (kept < subAccount.operations.length) {
+    const hash = subAccount.operations[kept].hash;
+    let groupEnd = kept + 1;
+    // A falsy hash is its own group: grouping those together would make one giant group and
+    // retain everything, which is the opposite of what this function is for.
+    if (hash) {
+      while (
+        groupEnd < subAccount.operations.length &&
+        subAccount.operations[groupEnd].hash === hash
+      ) {
+        groupEnd++;
+      }
+    }
+    // Take the group that crosses the bound whole, then stop.
+    kept = groupEnd;
+    if (kept >= maxOperations) break;
+  }
+
+  const operations = subAccount.operations.slice(0, kept);
   return { ...subAccount, operations, operationsCount: operations.length };
 }
 
@@ -208,8 +236,10 @@ export function mergeSubAccounts(
     if (!existingSubAccount) return boundOperations(newSubAccount, maxOperations);
 
     const mergedOperations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
-    const operations =
-      maxOperations === undefined ? mergedOperations : mergedOperations.slice(0, maxOperations);
+    const { operations } = boundOperations(
+      { ...newSubAccount, operations: mergedOperations },
+      maxOperations,
+    );
     return {
       ...newSubAccount,
       operations,

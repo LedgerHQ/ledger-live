@@ -706,7 +706,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // stability across syncs -- bounding only the walk would still let the stored history grow
     // sync after sync, since `minHeight` resumes from the newest stored operation and `mergeOps`
     // appends.
-    const { maxOperations, pageSize } = resolveOperationHistoryBound(currency.id);
+    const { maxOperations, pageSize } = resolveOperationHistoryBound(currency.id, network);
 
     // delegateNewOps is lazy: getAccountRawAssignHooks is only awaited when the coin-module path is taken
     const delegateNewOps = async (): Promise<OperationCommon[]> => {
@@ -716,20 +716,19 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
             minHeight,
             cursor,
             order: "desc",
-            // Sent whenever a page size is resolved, independently of `maxOperations`. The two
-            // govern different things and must not be coupled: `limit` bounds what one page costs
-            // (the crash safety), `maxOperations` bounds how much history is retained (a product
-            // decision). Measured on the address from the out-of-memory report: with a page size of
-            // 100 the sync peaks flat at ~950 MB whatever the total bound (5 000 to 200 000
-            // operations, memory unchanged), while sending no `limit` puts the Ledger-explorer arm
-            // back on its exhaustive path and reproduces the crash. So gating `limit` on a retention
-            // figure would make crash safety unreachable without a product decision.
+            // Sent only to a family whose `limit` support is established, and independently of
+            // `maxOperations`. Those are two different gates. `limit` bounds what one page costs
+            // (crash safety) while `maxOperations` bounds what is retained (a product decision), so
+            // coupling them would put crash safety behind a product call -- measured on the address
+            // from the out-of-memory report, a page size of 100 holds the sync flat whatever the
+            // retention bound, and sending no `limit` puts the Ledger-explorer arm back on its
+            // exhaustive path and reproduces the crash.
             //
-            // The cost is deliberate: a `limit` flips several modules onto a distinct, limit-aware
-            // code path (coin-evm's etherscan arm runs a `limit + 1` probe, for instance), so this
-            // changes how every family fetches -- not what it retains, which only `maxOperations`
-            // affects.
-            limit: pageSize,
+            // But support is a real gate: the contract requires a module to *raise* when sent a
+            // `limit` it does not support, so sending one blindly fails the sync of every such
+            // family. Omitting the key entirely, rather than passing `undefined`, keeps the option
+            // absent for them -- which is their behaviour today.
+            ...(pageSize !== undefined ? { limit: pageSize } : {}),
           }),
         maxOperations,
       );
@@ -807,9 +806,16 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operations: newAssetOperations,
       getTokenFromAsset: bridgeApi.getTokenFromAsset,
     });
-    const subAccounts = syncFromScratch
-      ? newSubAccounts
-      : mergeSubAccounts(initialAccount?.subAccounts ?? [], newSubAccounts, maxOperations);
+    // A from-scratch sync goes through the same call with nothing stored, rather than around it:
+    // the bound has to apply to the sub-accounts this sync *creates* too. `paginateOperations`
+    // returns the whole page that reached the bound rather than splitting a transaction, so a walk
+    // bounded at N hands back up to N plus one page -- and all of that overshoot can belong to a
+    // single token.
+    const subAccounts = mergeSubAccounts(
+      syncFromScratch ? [] : (initialAccount?.subAccounts ?? []),
+      newSubAccounts,
+      maxOperations,
+    );
 
     const newOpsWithSubs = buildParentOperations(
       newSubAccounts,

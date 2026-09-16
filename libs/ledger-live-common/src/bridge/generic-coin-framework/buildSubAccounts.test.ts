@@ -834,6 +834,27 @@ describe("mergeSubAccounts", () => {
       expect(dai?.operationsCount).toBe(1);
     });
 
+    it("never splits a transaction: a hash group that crosses the bound is kept whole", () => {
+      // One transaction can produce several token rows (a swap moving two assets, a batch). Cutting
+      // at a row index could keep some of a hash's rows and drop its siblings, and the parent
+      // watermark never refetches that transaction — the account would show half of it forever.
+      const withHash = (id: string, hash: string, date: Date) => ({ id, hash, date });
+      const newSubAccounts = [
+        tokenAccount("usdc", [
+          withHash("a1", "0xaaa", new Date("2024-01-03")),
+          withHash("b1", "0xbbb", new Date("2024-01-02")),
+          withHash("b2", "0xbbb", new Date("2024-01-02")),
+          withHash("c1", "0xccc", new Date("2024-01-01")),
+        ] as any),
+      ];
+
+      // A bound of 2 lands inside the 0xbbb group; it is taken whole, overshooting to 3.
+      const merged = mergeSubAccounts([], newSubAccounts, 2);
+
+      expect(merged[0].operations.map(op => op.id)).toEqual(["a1", "b1", "b2"]);
+      expect(merged[0].operationsCount).toBe(3);
+    });
+
     it("is unbounded when maxOperations is undefined, identical to today's behaviour", () => {
       const oldSubAccounts = [
         tokenAccount("usdc", [{ id: "old-1", date: new Date("2024-01-01") }]),
