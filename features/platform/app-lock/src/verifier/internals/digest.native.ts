@@ -1,5 +1,7 @@
 import type { ScryptParams } from "@shared/password-verifier";
 import { scrypt } from "react-native-fast-crypto";
+// React Native has no Buffer global; the package brings its own rather than lean on the app's.
+import { Buffer } from "buffer";
 
 export const APP_LOCK_SCRYPT_PARAMS: ScryptParams = {
   cost: 16384,
@@ -7,8 +9,6 @@ export const APP_LOCK_SCRYPT_PARAMS: ScryptParams = {
   parallelization: 1,
   digestLength: 32,
 };
-
-export const APP_LOCK_SALT_LENGTH = 16;
 
 function encodePassword(password: string): Uint8Array {
   return new Uint8Array(Buffer.from(password, "utf8"));
@@ -39,8 +39,6 @@ export async function derivePasswordDigest(
 
 let derivations: Promise<unknown> = Promise.resolve();
 
-// One at a time: concurrent setups would interleave and could store a verifier whose salt belongs
-// to the other run, leaving a password that never opens.
 export function serialiseDerivation<T>(run: () => Promise<T>): Promise<T> {
   const next = derivations.then(run, run);
   derivations = next.then(
