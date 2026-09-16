@@ -296,17 +296,12 @@ describe("listOperations", () => {
       ).rejects.toThrow(/cursor is not supported/);
     });
 
-    it("accepts a limit and ignores it, returning the whole range rather than a short page", async () => {
-      // `limit` is a soft limit by contract, so ignoring it is licit and rejecting it is not --
-      // and the generic framework now sends one on every call, so rejecting it would fail every
-      // casper sync. Truncating to the limit would be worse still: there is no cursor to continue
-      // from, so the dropped operations would never be fetched again.
+    it("rejects a limit rather than silently truncating the history", async () => {
       serve(history(30));
 
-      const page = await listOperations(context, INDEXER_PUBLIC_KEY, { minHeight: 0, limit: 10 });
-
-      expect(page.items.length).toBeGreaterThan(10);
-      expect(page.next).toBeUndefined();
+      await expect(
+        listOperations(context, INDEXER_PUBLIC_KEY, { minHeight: 0, limit: 10 }),
+      ).rejects.toThrow(/limit is not supported/);
     });
   });
 });
