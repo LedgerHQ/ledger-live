@@ -303,7 +303,7 @@ export const cardLoginMachine = setup({
       entry: "forgetAttempt",
       on: {
         LOGIN: { target: "preparingAttempt" },
-        RETRY: { target: "fetchingUser" },
+        RETRY: { target: "fetchingUser", actions: "clearErrorKind" },
       },
     },
 

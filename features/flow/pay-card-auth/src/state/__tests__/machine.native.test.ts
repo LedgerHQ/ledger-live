@@ -728,6 +728,19 @@ describe("cardLoginMachine failures", () => {
     expect(ports.clearSession).not.toHaveBeenCalled();
   });
 
+  it("drops the error kind while the card is fetched again", async () => {
+    const ports = stubPorts({
+      hasSession: jest.fn(async () => true),
+      getUser: jest.fn(async () => Promise.reject({ status: "FETCH_ERROR" })),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "userFetchError");
+
+    actor.send({ type: "RETRY" });
+
+    expect(actor.getSnapshot().context.errorKind).toBeNull();
+  });
+
   it("keeps the signed-out flag unpublished while the card fails to load", async () => {
     const ports = stubPorts({
       hasSession: jest.fn(async () => true),
