@@ -40,11 +40,16 @@ jest.mock("../../../../hooks/useNetworkFees", () => ({
 }));
 
 jest.mock("@ledgerhq/live-currency-format", () => ({
+<<<<<<< HEAD
   formatCurrencyUnit: jest.fn(
     (unit: { code: string; magnitude: number }, value: { toNumber: () => number }) => {
       const float = value.toNumber() / Math.pow(10, unit.magnitude);
       return `${float.toFixed(2)} ${unit.code}`;
     },
+=======
+  formatCurrencyUnit: jest.fn((unit: { code: string }) =>
+    unit.code === "USDT" ? "0.12 USDT" : "1.50 TRX",
+>>>>>>> 7a82d029470 (feat(tron): add Tronify fee selection and savings display (LIVE-33403))
   ),
 }));
 
@@ -52,10 +57,13 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({
   getAccountCurrency: jest.fn((acc: { currency: unknown }) => acc.currency),
 }));
 
+<<<<<<< HEAD
 jest.mock("@ledgerhq/live-send", () => ({
   getSelectedBalanceTypeBalance: jest.fn(() => null),
 }));
 
+=======
+>>>>>>> 7a82d029470 (feat(tron): add Tronify fee selection and savings display (LIVE-33403))
 jest.mock("../../../../context/SponsoredSendContext", () => ({
   useSponsoredSend: jest.fn(),
 }));
@@ -303,10 +311,14 @@ describe("useAmountScreenViewModel", () => {
   describe("Tronify integration", () => {
     const tronifyParams = {
       parentAccount: mockTronAccount,
+<<<<<<< HEAD
       transaction: {
         ...baseTransaction,
         amount: new BigNumber(1_000_000),
       } as unknown as typeof baseTransaction,
+=======
+      transaction: { ...baseTransaction, amount: new BigNumber(1_000_000) } as unknown as typeof baseTransaction,
+>>>>>>> 7a82d029470 (feat(tron): add Tronify fee selection and savings display (LIVE-33403))
       status: createBaseStatus(),
       bridgePending: false,
       bridgeError: null,
@@ -374,8 +386,12 @@ describe("useAmountScreenViewModel", () => {
       if (!result.current.ready) throw new Error("view model should be ready");
 
       const fees = result.current.networkFees;
+<<<<<<< HEAD
       // Both fees are TRX-denominated; discounted = 120_000 / 10^6 = 0.12 TRX
       expect(fees.value).toBe("0.12 TRX");
+=======
+      expect(fees.value).toBe("0.12 USDT");
+>>>>>>> 7a82d029470 (feat(tron): add Tronify fee selection and savings display (LIVE-33403))
       expect(fees.secondaryValue).toBe("1.50 TRX");
       expect(fees.secondaryValueStrikethrough).toBe(true);
       expect(fees.strategyLabel).toBe("send.newSendFlow.feeSelector.viaTronify");
@@ -383,6 +399,7 @@ describe("useAmountScreenViewModel", () => {
       expect(fees.canOpenSelector).toBe(true);
     });
 
+<<<<<<< HEAD
     it("does not block Review when Tronify is selected with sufficient TRX balance", () => {
       (useSponsoredSend as jest.Mock).mockReturnValue(mockSponsoredSendAvailableTronify);
       // parentAccount (TRX) spendableBalance 50_000_000 > fee 120_000
@@ -390,6 +407,15 @@ describe("useAmountScreenViewModel", () => {
 
       const { result } = renderHook(() =>
         useAmountScreenViewModel({ ...tronifyParams, account: mockTokenAccount }),
+=======
+    it("does not block Review when Tronify is selected with sufficient balance", () => {
+      (useSponsoredSend as jest.Mock).mockReturnValue(mockSponsoredSendAvailableTronify);
+      // spendableBalance 10_000_000 > amount 1_000_000 + fee 120_000
+      const account = { ...mockTokenAccount, spendableBalance: new BigNumber(10_000_000) } as unknown as Account;
+
+      const { result } = renderHook(() =>
+        useAmountScreenViewModel({ ...tronifyParams, account }),
+>>>>>>> 7a82d029470 (feat(tron): add Tronify fee selection and savings display (LIVE-33403))
       );
 
       expect(result.current.ready).toBe(true);
@@ -399,6 +425,7 @@ describe("useAmountScreenViewModel", () => {
       expect(result.current.reviewButton.disabled).toBe(false);
     });
 
+<<<<<<< HEAD
     it("blocks Review when Tronify is selected with insufficient TRX balance", () => {
       (useSponsoredSend as jest.Mock).mockReturnValue(mockSponsoredSendAvailableTronify);
       // parentAccount TRX spendableBalance 50_000 < fee 120_000
@@ -414,6 +441,15 @@ describe("useAmountScreenViewModel", () => {
           parentAccount: lowTrxParent,
           account: mockTokenAccount,
         }),
+=======
+    it("blocks Review when Tronify is selected with insufficient balance", () => {
+      (useSponsoredSend as jest.Mock).mockReturnValue(mockSponsoredSendAvailableTronify);
+      // spendableBalance 100_000 < amount 1_000_000 + fee 120_000
+      const account = { ...mockTokenAccount, spendableBalance: new BigNumber(100_000) } as unknown as Account;
+
+      const { result } = renderHook(() =>
+        useAmountScreenViewModel({ ...tronifyParams, account }),
+>>>>>>> 7a82d029470 (feat(tron): add Tronify fee selection and savings display (LIVE-33403))
       );
 
       expect(result.current.ready).toBe(true);
@@ -423,6 +459,7 @@ describe("useAmountScreenViewModel", () => {
       expect(result.current.reviewButton.disabled).toBe(true);
     });
 
+<<<<<<< HEAD
     it("does not flag insufficientBalance when standard is selected regardless of TRX balance", () => {
       (useSponsoredSend as jest.Mock).mockReturnValue(mockSponsoredSendAvailableStandard);
       // low TRX balance that would fail the Tronify check if tronify were selected
@@ -438,6 +475,15 @@ describe("useAmountScreenViewModel", () => {
           parentAccount: lowTrxParent,
           account: mockTokenAccount,
         }),
+=======
+    it("does not flag insufficientBalance when standard is selected regardless of balance", () => {
+      (useSponsoredSend as jest.Mock).mockReturnValue(mockSponsoredSendAvailableStandard);
+      // low balance that would fail the Tronify check
+      const account = { ...mockTokenAccount, spendableBalance: new BigNumber(100_000) } as unknown as Account;
+
+      const { result } = renderHook(() =>
+        useAmountScreenViewModel({ ...tronifyParams, account }),
+>>>>>>> 7a82d029470 (feat(tron): add Tronify fee selection and savings display (LIVE-33403))
       );
 
       expect(result.current.ready).toBe(true);

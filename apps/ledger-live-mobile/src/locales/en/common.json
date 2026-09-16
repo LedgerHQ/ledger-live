@@ -5346,7 +5346,11 @@
       },
       "tronifyNudge": "Save {{savings}} with Tronify",
       "tronifySaved": "Saved {{savings}} with Tronify",
+<<<<<<< HEAD
       "tronifyInsufficientBalance": "Insufficient TRX balance to pay Tronify fee"
+=======
+      "tronifyInsufficientBalance": "Insufficient USDT balance to cover fee and amount"
+>>>>>>> 7a82d029470 (feat(tron): add Tronify fee selection and savings display (LIVE-33403))
     },
     "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
     "tooMuchUTXOBottomModal": {
