@@ -41,6 +41,16 @@ target 'ledgerlivemobile' do
   use_frameworks! :linkage => :static
   $RNFirebaseAsStaticFramework = true
 
+  # Prebuilt Zcash engine (C ABI) plus the native module that bridges it.
+  # The binaries are fetched by scripts/sync-zcash-ffi.sh rather than committed,
+  # so they are absent on a fresh checkout: the pod is conditional, and without
+  # it `NativeModules.ZcashFfiModule` is undefined and the JS layer reports the
+  # engine unavailable. See ios/ZcashFfiBridge/ZcashFfiBridge.podspec, which
+  # explains why the pod and the framework must not share a module name.
+  if File.exist?(File.join(__dir__, 'ZcashFfiBridge', 'ZcashFfiMobile.xcframework'))
+    pod 'ZcashFfiBridge', :path => './ZcashFfiBridge'
+  end
+
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
