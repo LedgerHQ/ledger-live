@@ -320,6 +320,55 @@ describe("History integration", () => {
     expect(screen.getByTestId("history-contact-scope")).toHaveTextContent(CONTACT_HISTORY_NAME);
     expect(screen.queryByTestId("history-table")).not.toBeInTheDocument();
   });
+
+  function renderHistoryWithPayTab(initialRoute = "/history") {
+    return render(<History />, {
+      initialRoute,
+      initialState: {
+        accounts: [BTC_ACCOUNT],
+        settings: AFTER_ONBOARDING_STATE,
+        ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
+      },
+    });
+  }
+
+  it("should hide the crypto and card switcher when the pay tab is disabled", async () => {
+    renderHistory();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("history-table-body")).toBeVisible();
+    });
+    expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
+  });
+
+  it("should show the crypto and card switcher when the pay tab is enabled", async () => {
+    renderHistoryWithPayTab();
+
+    expect(await screen.findByTestId("history-type-switcher")).toBeVisible();
+    expect(screen.getByTestId("history-tab-crypto")).toBeVisible();
+    expect(screen.getByTestId("history-tab-card")).toBeVisible();
+    expect(screen.getByTestId("history-table-body")).toBeVisible();
+  });
+
+  it("should show the signed-out card history when the card tab is selected", async () => {
+    renderHistoryWithPayTab("/history?tab=card");
+
+    expect(await screen.findByTestId("card-history-signed-out-state")).toBeVisible();
+    expect(screen.getByText("Log in to see your card transactions")).toBeVisible();
+    expect(screen.queryByTestId("history-table-body")).not.toBeInTheDocument();
+    expect(screen.getByTestId("history-actions-menu-button")).toBeVisible();
+  });
+
+  it("should switch from crypto history to signed-out card history", async () => {
+    const { user } = renderHistoryWithPayTab();
+
+    expect(await screen.findByTestId("history-table-body")).toBeVisible();
+
+    await user.click(screen.getByTestId("history-tab-card"));
+
+    expect(await screen.findByTestId("card-history-signed-out-state")).toBeVisible();
+    expect(screen.queryByTestId("history-table-body")).not.toBeInTheDocument();
+  });
 });
 
 describe("History export dialog integration", () => {

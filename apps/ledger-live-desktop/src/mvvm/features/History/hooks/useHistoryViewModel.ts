@@ -26,7 +26,13 @@ import type { HistoryTable, OperationRow, VirtualItem } from "../types";
 import { track } from "~/renderer/analytics/segment";
 import { parseHistoryBackPath } from "../utils/historyLocationState";
 import { usePopNavigationBack } from "LLD/utils/usePopNavigationBack";
-import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "../constants";
+import {
+  HISTORY_DUST_FILTER_THRESHOLD_USD,
+  HISTORY_TAB_CARD,
+  HISTORY_TAB_CRYPTO,
+  HISTORY_TAB_SEARCH_PARAM,
+  type HistoryTab,
+} from "../constants";
 
 export type HistoryViewModel = {
   showBackButton: boolean;
@@ -44,6 +50,9 @@ export type HistoryViewModel = {
   dustFilterThreshold: string;
   onToggleHideSmallValueTokenOperations: () => void;
   contact?: Contact;
+  showHistoryTypeSwitcher: boolean;
+  historyTab: HistoryTab;
+  onHistoryTabChange: (tab: HistoryTab) => void;
 };
 
 export function useHistoryViewModel(): HistoryViewModel {
@@ -57,8 +66,25 @@ export function useHistoryViewModel(): HistoryViewModel {
 
   const { showBackButton, navigateBack } = usePopNavigationBack(parseHistoryBackPath);
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const isPayTabEnabled = !!useFeature("lwdPayTab")?.enabled;
+  const showHistoryTypeSwitcher = isPayTabEnabled;
+  const historyTab: HistoryTab =
+    isPayTabEnabled && searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD
+      ? HISTORY_TAB_CARD
+      : HISTORY_TAB_CRYPTO;
+  const onHistoryTabChange = useCallback(
+    (tab: HistoryTab) => {
+      const next = new URLSearchParams(searchParams);
+      if (tab === HISTORY_TAB_CARD) {
+        next.set(HISTORY_TAB_SEARCH_PARAM, HISTORY_TAB_CARD);
+      } else {
+        next.delete(HISTORY_TAB_SEARCH_PARAM);
+      }
+      setSearchParams(next, { replace: true });
+    },
+    [searchParams, setSearchParams],
+  );
   const contactIdResult = ContactIdSchema.safeParse(searchParams.get("contactId"));
   const contactId = isPayTabEnabled && contactIdResult.success ? contactIdResult.data : undefined;
   const contact = useSelector(state =>
@@ -145,5 +171,8 @@ export function useHistoryViewModel(): HistoryViewModel {
     dustFilterThreshold,
     onToggleHideSmallValueTokenOperations,
     contact,
+    showHistoryTypeSwitcher,
+    historyTab,
+    onHistoryTabChange,
   };
 }
