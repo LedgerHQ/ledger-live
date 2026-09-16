@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { Box, Button, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
-import { Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { useTheme } from "styled-components/native";
+import { Button, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
 import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
@@ -12,6 +11,7 @@ import { isAleoAccount, isValidatorBondable } from "@ledgerhq/live-common/famili
 import type { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
 import type { Unit } from "@domain/entity-currency-unit";
 import Alert from "~/components/Alert";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Trans, useTranslation } from "~/context/Locale";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
@@ -29,28 +29,9 @@ type Props = BaseComposite<
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const [search, setSearch] = useState("");
   const { account } = useAccountScreen(route);
-  const styles = useStyleSheet(
-    theme => ({
-      root: { flex: 1, backgroundColor: theme.colors.bg.canvas },
-      centered: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        paddingHorizontal: theme.spacings.s24,
-      },
-      content: {
-        flex: 1,
-      },
-      footer: {
-        paddingHorizontal: theme.spacings.s16,
-        paddingTop: theme.spacings.s8,
-        paddingBottom: theme.spacings.s16,
-      },
-    }),
-    [],
-  );
 
   invariant(
     account && isAleoAccount(account) && account.type === "Account",
@@ -121,11 +102,13 @@ export default function SelectValidator({ navigation, route }: Props) {
     [navigation, route.params],
   );
 
+  const rootStyle = [styles.root, { backgroundColor: colors.background.main }];
+
   if (loading) {
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={rootStyle}>
         <View style={styles.centered} testID="aleo-bond-validator-list-loading">
-          <Spinner size={32} />
+          <InfiniteLoader size={32} />
         </View>
       </SafeAreaView>
     );
@@ -133,14 +116,14 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   if (error && validators.length === 0 && !lockedValidator) {
     return (
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView style={rootStyle}>
         <View style={styles.centered}>
-          <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
+          <Text variant="body" color="neutral.c70" textAlign="center">
             <Trans i18nKey="aleo.bond.selectValidator.fetchError" />
           </Text>
         </View>
         <View style={styles.footer}>
-          <Button appearance="base" size="lg" isFull onPress={onRetry}>
+          <Button type="main" size="large" onPress={onRetry}>
             {t("common.retry")}
           </Button>
         </View>
@@ -149,7 +132,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={rootStyle}>
       <TrackScreen
         category="BondPublicFlow"
         name="SelectValidator"
@@ -158,7 +141,7 @@ export default function SelectValidator({ navigation, route }: Props) {
         currency="aleo"
       />
       {lockedValidator ? (
-        <Box lx={{ paddingHorizontal: "s24", paddingVertical: "s12", gap: "s12" }}>
+        <View style={styles.hints}>
           <Alert type="primary">
             <Trans i18nKey="aleo.bond.selectValidator.lockedHint" />
           </Alert>
@@ -167,17 +150,17 @@ export default function SelectValidator({ navigation, route }: Props) {
               <Trans i18nKey="aleo.bond.selectValidator.metadataError" />
             </Alert>
           )}
-        </Box>
+        </View>
       ) : (
         <SelectValidatorSearchBox searchQuery={search} setSearchQuery={setSearch} />
       )}
       {missingLockedAddress ? (
         <View style={styles.content}>
-          <Box lx={{ paddingHorizontal: "s16", paddingVertical: "s12" }}>
-            <Text typography="body2SemiBold" lx={{ color: "base" }}>
+          <View style={styles.missingLocked}>
+            <Text variant="body" fontWeight="semiBold" color="neutral.c100">
               {shortAddressPreview(missingLockedAddress)}
             </Text>
-          </Box>
+          </View>
         </View>
       ) : (
         <FlatList
@@ -197,9 +180,8 @@ export default function SelectValidator({ navigation, route }: Props) {
       )}
       <View style={styles.footer}>
         <Button
-          appearance="base"
-          size="lg"
-          isFull
+          type="main"
+          size="large"
           onPress={onContinue}
           disabled={!canContinue}
           testID="aleo-bond-select-validator-continue"
@@ -225,28 +207,7 @@ function ValidatorRow({
   onPress: (validator: AleoValidator) => void;
 }>) {
   const { t } = useTranslation();
-  const styles = useStyleSheet(
-    theme => ({
-      row: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: theme.spacings.s16,
-        paddingVertical: theme.spacings.s12,
-        borderBottomWidth: theme.borderWidth.s1,
-        borderBottomColor: theme.colors.border.mutedSubtle,
-      },
-      rowSelected: { backgroundColor: theme.colors.bg.activeSubtle },
-      rowDisabled: { opacity: 0.5 },
-      info: { flex: 1 },
-      subtitle: {
-        flexDirection: "row",
-        alignItems: "center",
-      },
-      warningIcon: { marginRight: theme.spacings.s4 },
-      stats: { alignItems: "flex-end" },
-    }),
-    [],
-  );
+  const { colors } = useTheme();
   const { isOpen, isUnbonding, nonEarningReason, commissionPercent, stakeMicrocredits } = validator;
   const isDisabled = isLocked || !isValidatorBondable(validator);
 
@@ -293,29 +254,36 @@ function ValidatorRow({
       disabled={isDisabled}
     >
       <View
-        style={[styles.row, isSelected && styles.rowSelected, isDisabled && styles.rowDisabled]}
+        style={[
+          styles.row,
+          { borderBottomColor: colors.neutral.c30 },
+          isSelected && { backgroundColor: colors.primary.c20 },
+          isDisabled && styles.rowDisabled,
+        ]}
       >
         <View style={styles.info}>
-          <Text typography="body2SemiBold" lx={{ color: "base" }} numberOfLines={1}>
+          <Text variant="body" fontWeight="semiBold" color="neutral.c100" numberOfLines={1}>
             {validator.name || shortAddressPreview(validator.address)}
           </Text>
           {!!validator.name && (
-            <Text typography="body3" lx={{ color: "muted" }} numberOfLines={1}>
+            <Text variant="small" color="neutral.c70" numberOfLines={1}>
               {shortAddressPreview(validator.address)}
             </Text>
           )}
           <View style={styles.subtitle}>
-            {subtitle.warning && <Warning size={12} color="warning" style={styles.warningIcon} />}
-            <Text typography="body3" lx={{ color: subtitle.warning ? "warning" : "muted" }}>
+            {subtitle.warning && (
+              <IconsLegacy.WarningMedium size={12} color="warning.c70" style={styles.warningIcon} />
+            )}
+            <Text variant="small" color={subtitle.warning ? "warning.c70" : "neutral.c70"}>
               {subtitle.text}
             </Text>
           </View>
         </View>
         <View style={styles.stats}>
-          <Text typography="body3SemiBold" lx={{ color: "base" }} numberOfLines={1}>
+          <Text variant="small" fontWeight="semiBold" color="neutral.c100" numberOfLines={1}>
             <CurrencyUnitValue unit={unit} value={new BigNumber(stakeMicrocredits)} showCode />
           </Text>
-          <Text typography="body3" lx={{ color: "muted" }}>
+          <Text variant="small" color="neutral.c70">
             {t("aleo.bond.selectValidator.totalStake")}
           </Text>
         </View>
@@ -323,3 +291,55 @@ function ValidatorRow({
     </Touchable>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  centered: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 24,
+  },
+  content: {
+    flex: 1,
+  },
+  hints: {
+    marginHorizontal: 24,
+    marginVertical: 12,
+    gap: 12,
+  },
+  missingLocked: {
+    marginHorizontal: 16,
+    marginVertical: 12,
+  },
+  footer: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  rowDisabled: {
+    opacity: 0.5,
+  },
+  info: {
+    flex: 1,
+  },
+  subtitle: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  warningIcon: {
+    marginRight: 4,
+  },
+  stats: {
+    alignItems: "flex-end",
+  },
+});

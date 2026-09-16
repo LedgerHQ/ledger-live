@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen } from "~/analytics";
 import ValidateError from "~/components/ValidateError";
@@ -29,7 +29,7 @@ export default function ValidationError({ navigation, route }: Props) {
   }, [navigation]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="BondPublicFlow"
         name="ValidationError"

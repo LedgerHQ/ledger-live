@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "~/context/Locale";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { TrackScreen, track } from "~/analytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
@@ -51,7 +51,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   }, [ticker, validator, source]);
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="BondPublicFlow"
         name="ValidationSuccess"

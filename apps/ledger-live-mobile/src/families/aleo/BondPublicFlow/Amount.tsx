@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
-import { ScrollView, Switch, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { useTheme } from "styled-components/native";
+import { Button, Switch, Text } from "@ledgerhq/native-ui";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -29,51 +29,8 @@ type Props = BaseComposite<
 
 export default function Amount({ navigation, route }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
-  const styles = useStyleSheet(
-    theme => ({
-      root: {
-        flex: 1,
-      },
-      scroll: {
-        flex: 1,
-      },
-      content: {
-        flexGrow: 1,
-        paddingHorizontal: theme.spacings.s24,
-        paddingTop: theme.spacings.s16,
-      },
-      alert: {
-        marginBottom: theme.spacings.s16,
-      },
-      amountInputHeightGuard: {
-        flexShrink: 1,
-        minHeight: 160,
-      },
-      spacer: {
-        flexGrow: 1,
-      },
-      details: {
-        marginVertical: theme.spacings.s16,
-        paddingTop: theme.spacings.s12,
-        borderTopWidth: theme.borderWidth.s1,
-        borderTopColor: theme.colors.border.mutedSubtle,
-        gap: theme.spacings.s8,
-      },
-      detailsRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-      },
-      switchRow: { flexDirection: "row", alignItems: "center" },
-      footer: {
-        paddingHorizontal: theme.spacings.s16,
-        paddingBottom: theme.spacings.s16,
-        paddingTop: theme.spacings.s8,
-      },
-    }),
-    [],
-  );
 
   invariant(
     account && isAleoAccount(account) && account.type === "Account",
@@ -119,15 +76,15 @@ export default function Amount({ navigation, route }: Props) {
     [bridge, setTransaction, transaction],
   );
 
-  const toggleUseAllAmount = useCallback(() => {
-    if (!transaction) return;
-    setTransaction(
-      bridge.updateTransaction(transaction, {
-        amount: new BigNumber(0),
-        useAllAmount: !transaction.useAllAmount,
-      }),
-    );
-  }, [bridge, setTransaction, transaction]);
+  const setUseAllAmount = useCallback(
+    (useAllAmount: boolean) => {
+      if (!transaction) return;
+      setTransaction(
+        bridge.updateTransaction(transaction, { amount: new BigNumber(0), useAllAmount }),
+      );
+    },
+    [bridge, setTransaction, transaction],
+  );
 
   const onChangeValidator = useCallback(() => {
     navigation.navigate(ScreenName.AleoBondPublicSelectValidator, {
@@ -227,9 +184,9 @@ export default function Amount({ navigation, route }: Props) {
         </View>
         {showChangeValidator && (
           <Button
-            appearance="gray"
-            size="lg"
-            isFull
+            outline
+            type="main"
+            size="large"
             onPress={onChangeValidator}
             testID="aleo-bond-change-validator"
           >
@@ -237,31 +194,29 @@ export default function Amount({ navigation, route }: Props) {
           </Button>
         )}
         <View style={styles.spacer} />
-        <View style={styles.details}>
+        <View style={[styles.details, { borderTopColor: colors.neutral.c30 }]}>
           <View style={styles.detailsRow}>
-            <Text typography="body3" lx={{ color: "muted" }}>
+            <Text variant="small" color="neutral.c70">
               <Trans i18nKey="aleo.bond.amount.available" />{" "}
               <CurrencyUnitValue unit={unit} value={spendable} showCode />
             </Text>
             <View style={styles.switchRow}>
-              <Text typography="body3" lx={{ color: "muted", marginRight: "s8" }}>
+              <Text variant="small" color="neutral.c70" mr={3}>
                 <Trans i18nKey="aleo.bond.amount.max" />
               </Text>
               <Switch
-                value={!!useAllAmount}
-                onValueChange={toggleUseAllAmount}
+                checked={!!useAllAmount}
+                onChange={setUseAllAmount}
                 disabled={bridgePending}
-                accessibilityLabel={t("aleo.bond.amount.max")}
-                accessibilityState={{ disabled: bridgePending }}
                 testID="aleo-bond-use-all-amount"
               />
             </View>
           </View>
           <View style={styles.detailsRow}>
-            <Text typography="body3" lx={{ color: "muted" }}>
+            <Text variant="small" color="neutral.c70">
               <Trans i18nKey="send.summary.fees" />
             </Text>
-            <Text typography="body3SemiBold" lx={{ color: "base" }}>
+            <Text variant="small" fontWeight="semiBold" color="neutral.c100">
               {bridgePending ? (
                 "-"
               ) : (
@@ -271,7 +226,7 @@ export default function Amount({ navigation, route }: Props) {
           </View>
           {isTopUp ? (
             <View>
-              <Text typography="body3" lx={{ color: "muted" }}>
+              <Text variant="small" color="neutral.c70">
                 <Trans
                   i18nKey="aleo.bond.amount.minimumTopUp"
                   components={{
@@ -289,12 +244,13 @@ export default function Amount({ navigation, route }: Props) {
             </View>
           ) : (
             <View style={styles.detailsRow}>
-              <Text typography="body3" lx={{ color: "muted" }}>
+              <Text variant="small" color="neutral.c70">
                 <Trans i18nKey="aleo.bond.amount.minimumLabel" />
               </Text>
               <Text
-                typography="body3SemiBold"
-                lx={{ color: "base" }}
+                variant="small"
+                fontWeight="semiBold"
+                color="neutral.c100"
                 testID="aleo-bond-minimum-value"
               >
                 <CurrencyUnitValue unit={unit} value={minBondAmount} showCode />
@@ -305,17 +261,16 @@ export default function Amount({ navigation, route }: Props) {
       </ScrollView>
       <View style={styles.footer}>
         {bridgeError && (
-          <Text typography="body3" lx={{ color: "error", textAlign: "center", marginBottom: "s8" }}>
+          <Text variant="small" color="error.c60" textAlign="center" mb={3}>
             <TranslatedError error={bridgeError} />
           </Text>
         )}
         <Button
-          appearance="base"
-          size="lg"
-          isFull
+          type="main"
+          size="large"
           onPress={onContinue}
           disabled={continueDisabled}
-          loading={bridgePending}
+          pending={bridgePending}
           testID="aleo-bond-amount-continue"
         >
           {t("common.continue")}
@@ -324,3 +279,47 @@ export default function Amount({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
+  content: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
+    paddingTop: 16,
+  },
+  alert: {
+    marginBottom: 16,
+  },
+  amountInputHeightGuard: {
+    flexShrink: 1,
+    minHeight: 160,
+  },
+  spacer: {
+    flexGrow: 1,
+  },
+  details: {
+    marginVertical: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    gap: 8,
+  },
+  detailsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  switchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  footer: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    paddingTop: 8,
+  },
+});
