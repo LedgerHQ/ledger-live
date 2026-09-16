@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.21.0-next.1
+
+### Minor Changes
+
+- [#22042](https://github.com/LedgerHQ/ledger-live/pull/22042) [`351d14c`](https://github.com/LedgerHQ/ledger-live/commit/351d14c7ee9733e850abfbf4418058ed14e52c0e) Thanks [@smartling-github-connector](https://github.com/apps/smartling-github-connector)! - LWD 4.21.0 release notes
+
 ## 4.21.0-next.0
 
 ### Minor Changes
