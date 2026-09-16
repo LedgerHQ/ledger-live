@@ -234,6 +234,42 @@
       "title" : "Sessão expirada",
       "description" : "A sessão do aplicativo Concordium ID não está mais ativa. Por favor, emparelhe novamente."
     },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "CCD insuficiente para a taxa de rede",
+      "description" : "A taxa de rede é paga em CCD, não no token que você está enviando. Adicione CCD a esta conta e tente novamente."
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "As transferências estão pausadas para este token",
+      "description" : "O emissor do token pausou todas as transferências. Você pode tentar novamente assim que as transferências forem retomadas."
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "Esta conta não pode enviar este token",
+      "description" : "O emissor do token restringe quem pode enviá-lo, e esta conta não tem permissão. Entre em contato com o emissor do token para obter acesso."
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "Não foi possível verificar as restrições do token",
+      "description" : "Não foi possível ler as regras de transferência deste token, portanto, a transferência não pode ser confirmada como permitida. Ressincronize sua conta e tente novamente."
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "Este token não pode ser assinado no seu dispositivo Ledger",
+      "description" : "O token usa {{decimals}} casas decimais, e seu dispositivo suporta no máximo {{maxDecimals}}. Recebê-lo e guardá-lo não são afetados."
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "Este token não está mais em sua conta",
+      "description" : "O token selecionado não está mais disponível. Inicie a transação novamente."
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "Esta transação não pode ser preparada",
+      "description" : "Os detalhes do token estão fora do que seu dispositivo Ledger aceita, portanto a transação não pode ser construir. Entre em contato com o Suporte Ledger."
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "Atualização de aplicativo necessária",
+      "description" : "O aplicativo Concordium no seu dispositivo Ledger não suporta transferências de tokens. Atualize-o na Minha Ledger e tente novamente."
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "Algo deu errado. Reconecte seu dispositivo",
+      "description" : "O aplicativo Concordium não pôde processar a transação. Se o problema persistir, entre em contato com o Suporte Ledger."
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Algo deu errado (Erro nº 1)",
       "description" : "Salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
@@ -4806,10 +4842,6 @@
       "toggleCurrency" : "Alternar moeda"
     },
     "summary" : {
-      "solanaRawTransaction" : {
-        "title" : "Assinatura cega necessária",
-        "description" : "Não é possível verificar os detalhes da transação em seu dispositivo Ledger. Se você assiná-la, poderá perder todos os ativos. Assine somente se você confiar neste site."
-      },
       "subaccountsWarning" : "Você precisará recarregar esta conta com {{ currency }} a fim de enviar os tokens desta conta",
       "tag" : "Tag (Opcional)",
       "validateTag" : "Validar Tag",
@@ -9818,6 +9850,40 @@
       "cta" : "Tente novamente"
     }
   },
+  "perpsReview" : {
+    "depositTitle" : "Depositar via SwapKit",
+    "depositSubtitle" : "Nosso parceiro SwapKit gerencia sua troca e depósito em uma transação — tudo protegido pelo seu dispositivo Ledger.",
+    "swapDetailTitle" : "Detalhes da troca",
+    "amountSendLabel" : "Quantia a enviar",
+    "amountReceiveLabel" : "Quantia a receber",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "Detalhes do depósito",
+    "depositAmountLabel" : "Quantia do depósito",
+    "depositReceiveLabel" : "Conta para receber",
+    "depositCTA" : "Depositar"
+  },
+  "perpsDepositSign" : {
+    "terms" : "Ao assinar esta transação, aceito os <termsLink>T&C do SwapKit by NEAR Intents</termsLink>"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "Transação assinada",
+    "description" : "Receberá seu {{currency}} assim que for confirmado na blockchain",
+    "viewTransaction" : "Ver transação"
+  },
+  "perpsDeposit" : {
+    "title" : "Depositar",
+    "inputDepositAmount" : "Depositar ~{{value}}",
+    "inputSubText" : "Trocar e depositar via {{provider}}",
+    "selectCurrencyTitle" : "Depositar com {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "Nenhuma conta",
+    "review" : "Avaliação",
+    "keypadDelete" : "Apagar último dígito",
+    "formErrors" : {
+      "amountExceedsBalance" : "Saldo insuficiente",
+      "quoteUnavailable" : "Não foi possível obter uma cotação do {{provider}}SwapKit. Tente com um ativo diferente ou volte mais tarde."
+    }
+  },
   "swapErrors" : {
     "incorrectCommandData" : {
       "title" : "Dados de comando incorretos",
@@ -10211,8 +10277,38 @@
     },
     "card" : {
       "title" : "Cartão cripto",
+      "placeholder" : "Em breve",
+      "details" : "Detalhes",
       "freeze" : "Congelar",
-      "unfreeze" : "Descongelar"
+      "unfreeze" : "Descongelar",
+      "goBack" : "Voltar",
+      "freezeConfirm" : {
+        "title" : "Congelar significa que você não poderá mais usar o cartão",
+        "description" : "Você pode descongelar seu cartão a qualquer momento.",
+        "confirm" : "Congelar agora",
+        "errorTitle" : "Congelamento falhou"
+      },
+      "unfreezeConfirm" : {
+        "title" : "Descongelar seu cartão?",
+        "confirm" : "Descongelar agora",
+        "errorTitle" : "Falha ao descongelar"
+      },
+      "confirmError" : {
+        "description" : "Algo deu errado. Tente novamente.",
+        "retry" : "Tentar novamente"
+      }
+    },
+    "cardTransactions" : {
+      "categories" : {
+        "SUBSCRIPTIONS" : "Assinaturas",
+        "FOOD" : "Alimentação",
+        "TRAVEL" : "Viagens",
+        "ENTERTAINMENT" : "Entretenimento",
+        "HEALTH" : "Saúde",
+        "ATM" : "Caixa eletrônico",
+        "UTILITIES" : "Contas",
+        "MISC" : "Outros"
+      }
     },
     "selectContact" : {
       "placeholder" : "Digite o contato"
@@ -10341,6 +10437,14 @@
       "addressPicker" : {
         "title" : "Selecione o endereço de {{name}}",
         "addAddress" : "Adicionar endereço"
+      },
+      "paySuccess" : {
+        "title" : "Você pagou ({{recipient}})",
+        "amount" : "Quantia",
+        "estimatedTime" : "Tempo est.",
+        "from" : "De",
+        "viewTransaction" : "Ver transação",
+        "close" : "Fechar"
       }
     },
     "cardOnboarding" : {
@@ -10617,11 +10721,11 @@
     "addContact" : "Adicionar contato",
     "addAddress" : "Adicionar endereço",
     "addYourAddress" : "Adicionar seu endereço",
-    "searchPlaceholder" : "Buscar contato",
+    "searchPlaceholder" : "Pesquisar por nome",
     "searchNoResults" : "Nenhum contato encontrado",
     "addContactDrawer" : {
       "namePlaceholder" : "Nome do contato",
-      "namingDisclaimer" : "Por privacidade, evite nomes e sobrenomes completos. Use um apelido ou apenas o primeiro nome + inicial, por exemplo, 'John S'.",
+      "namingDisclaimer" : "Por privacidade, evite nomes completos. Use um apelido ou apenas o primeiro nome mais uma inicial, por exemplo: “João S”.",
       "confirmName" : "Confirmar nome",
       "invalidNameError" : "Não são permitidos caracteres especiais.",
       "duplicateNameError" : "Este nome de contato já está em uso."
@@ -10636,7 +10740,8 @@
       "domainNotFound" : "Nenhum endereço encontrado para esse domínio",
       "sanctionedAddress" : "Este endereço está sob sanção e não pode ser utilizado.",
       "validationUnavailable" : "A validação de endereço está temporariamente indisponível",
-      "ensDisclaimer" : "Nomes ENS resolvem para endereços de carteira. Sempre verifique o endereço resolvido antes de continuar.",
+      "ensDisclaimer" : "Os nomes ENS podem mudar",
+      "ensDisclaimerDescription" : "Nomes ENS podem apontar para endereços diferentes ao longo do tempo. Salvamos o endereço subjacente agora para garantir que seus fundos cheguem apenas ao endereço que você verificar.",
       "sanctioned" : {
         "description" : "Esse endereço foi identificado como suspeito e a Ledger não permite que você envie a ele",
         "learnMore" : "Saiba mais"
@@ -10645,7 +10750,7 @@
     "addAddressName" : {
       "title" : "Nomear endereço",
       "inputLabel" : "Nome do endereço",
-      "namingDisclaimer" : "Recomenda-se dar um nome a este endereço para encontrá-lo facilmente quando necessário. Ficará visível apenas para você.",
+      "namingDisclaimer" : "Este nome aparece em seu dispositivo Ledger ao enviar para este endereço. Defina um nome que facilite a localização.",
       "continueToReview" : "Continuar para revisar",
       "invalidLabel" : "Não são permitidos caracteres especiais.",
       "duplicateLabel" : "Este nome de endereço já está em uso para este contato.",
@@ -10663,10 +10768,7 @@
     "addressCount_one" : "{{count}} endereço",
     "addressCount_other" : "{{count}} endereços",
     "me" : {
-      "name" : "Eu",
-      "addressCount_zero" : "0 endereço",
-      "addressCount_one" : "{{count}} endereço",
-      "addressCount_other" : "{{count}} endereços"
+      "myAddresses" : "Meus endereços"
     },
     "detail" : {
       "meDisplayName" : "{{name}} (Eu)",
@@ -10697,7 +10799,7 @@
     "editContact" : {
       "title" : "Editar contato",
       "namePlaceholder" : "Nome do contato",
-      "namingDisclaimer" : "Por privacidade, evite nomes e sobrenomes completos. Use um apelido ou apenas o primeiro nome mais uma inicial, por exemplo: “João S”.",
+      "namingDisclaimer" : "Por privacidade, evite nomes completos. Use um apelido ou apenas o primeiro nome mais uma inicial, por exemplo: “João S”.",
       "confirmName" : "Confirmar nome",
       "applyChanges" : "Aplicar alterações",
       "invalidNameError" : "Não são permitidos caracteres especiais."
@@ -10736,7 +10838,7 @@
     },
     "featureIntroduction" : {
       "title" : "Apresentando Contatos",
-      "primaryAction" : "Explorar",
+      "primaryAction" : "Conhecer",
       "highlights" : {
         "saveAddresses" : {
           "title" : "Salvar endereços com um nome de sua escolha",
@@ -10747,7 +10849,7 @@
           "description" : "Veja um nome de sua confiança, não um endereço."
         },
         "privateAcrossDevices" : {
-          "title" : "Recarregue com segurança através da Ledger Wallet™",
+          "title" : "Privada em todos os seus dispositivos Ledger",
           "description" : "Criptografia de ponta a ponta com o Ledger Sync."
         }
       }
