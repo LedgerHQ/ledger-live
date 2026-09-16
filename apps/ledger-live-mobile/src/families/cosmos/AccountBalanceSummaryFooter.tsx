@@ -4,7 +4,7 @@ import { useTranslation } from "~/context/Locale";
 import BigNumber from "bignumber.js";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { CosmosAPI } from "@ledgerhq/live-common/families/cosmos/network":
+import { CosmosAPI } from "@ledgerhq/live-common/families/cosmos/network";
 import { Account } from "@ledgerhq/types-live";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { Unit } from "@domain/entity-currency-unit";

@@ -1,5 +1,5 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { type Transaction, getCosmosResources } from "@ledgerhq/live-common/families/cosmos/types";
+import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback } from "react";

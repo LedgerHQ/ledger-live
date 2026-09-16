@@ -14,7 +14,6 @@ import { openURL } from "~/renderer/linking";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { getCosmosResources } from "@ledgerhq/live-common/families/cosmos/types";
 
 const RewardImg = styled.img.attrs(() => ({
   src: Rewards,
