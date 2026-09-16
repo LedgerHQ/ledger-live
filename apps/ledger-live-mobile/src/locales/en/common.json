@@ -4861,7 +4861,18 @@
         "transfer": "The transfer failed after energy delivery. Please try again.",
         "retry": "Retry",
         "cancel": "Cancel"
-      }
+      },
+      "feeSelector": {
+        "title": "Select fees payment",
+        "subtitle": "Tronify is an independent third-party energy provider.",
+        "learnMore": "Learn more",
+        "regularTransfer": "Regular transfer",
+        "payWithTronify": "Pay with Tronify",
+        "viaTronify": "via Tronify"
+      },
+      "tronifyNudge": "Save {{savings}} with Tronify",
+      "tronifySaved": "Saved {{savings}} with Tronify",
+      "tronifyInsufficientBalance": "Insufficient USDT balance to cover fee and amount"
     },
     "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
     "tooMuchUTXOBottomModal": {

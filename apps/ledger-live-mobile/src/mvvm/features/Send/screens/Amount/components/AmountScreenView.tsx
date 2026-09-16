@@ -1,12 +1,14 @@
 import React, { useCallback } from "react";
 import { View } from "react-native";
-import { Button, Divider } from "@ledgerhq/lumen-ui-rnative";
+import { Button, Divider, useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { AmountInputSection } from "./AmountInputSection";
 import { QuickActionsRow } from "./QuickActionsRow";
 import { NetworkFeesRow } from "../../../components/NetworkFeesRow";
 import { NumberKeyboard } from "./NumberKeyboard";
+import { TronifyNudge } from "./TronifyNudge";
+import { TronifyFeeSelector } from "./TronifyFeeSelector";
 import type { AmountScreenViewModel } from "../types";
 import { useTranslation } from "~/context/Locale";
 
@@ -31,6 +33,16 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
     }),
     [],
   );
+
+  const tronifySelectorRef = useBottomSheetRef();
+  const openTronifySelector = useCallback(() => {
+    tronifySelectorRef.current?.present();
+  }, [tronifySelectorRef]);
+  const closeTronifySelector = useCallback(() => {
+    tronifySelectorRef.current?.dismiss();
+  }, [tronifySelectorRef]);
+
+  const { tronify } = viewModel.networkFees;
 
   const handleKeyPress = useCallback(
     (key: string) => {
@@ -65,7 +77,13 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
       </View>
 
       <View style={styles.middleSection}>
-        <NetworkFeesRow viewModel={viewModel.networkFees} />
+        <NetworkFeesRow
+          viewModel={viewModel.networkFees}
+          onSelectorOverride={tronify?.selected ? openTronifySelector : undefined}
+        />
+        {tronify ? (
+          <TronifyNudge viewModel={tronify} onOpenSelector={openTronifySelector} />
+        ) : null}
         <Divider />
 
         {viewModel.quickActions.show && (
@@ -95,6 +113,14 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
           {viewModel.reviewButton.loading ? "" : viewModel.reviewButton.label}
         </Button>
       </View>
+
+      {tronify ? (
+        <TronifyFeeSelector
+          bottomSheetRef={tronifySelectorRef}
+          viewModel={tronify}
+          onClose={closeTronifySelector}
+        />
+      ) : null}
     </View>
   );
 }

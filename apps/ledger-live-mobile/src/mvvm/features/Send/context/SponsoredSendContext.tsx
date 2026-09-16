@@ -123,10 +123,10 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     intent,
   });
 
-  // Mobile has no fee-picker UI: auto-activate Tronify when the seam says it's available,
-  // revert to standard when it becomes unavailable (e.g. account/currency not supported).
+  // Revert to standard when Tronify becomes unavailable (e.g. account changes, quote gone).
+  // Never auto-select tronify — the user must choose it explicitly (Donjon security review).
   useEffect(() => {
-    setSelectedFeeOptionId(available ? "tronify" : "standard");
+    if (!available) setSelectedFeeOptionId("standard");
   }, [available]);
 
   const counterValueCurrency = useSelector(counterValueCurrencySelector);

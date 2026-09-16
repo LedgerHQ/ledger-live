@@ -1,6 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import { useTranslation } from "~/context/Locale";
+import { useTranslation, useLocale } from "~/context/Locale";
+import { formatCurrencyUnit } from "@ledgerhq/live-currency-format";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type {
@@ -13,6 +15,8 @@ import type { AmountScreenMessage, AmountScreenViewModel } from "../types";
 import { useAmountInputController } from "./useAmountInputController";
 import { useQuickActions } from "./useQuickActions";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
+import type { TronifyFeesViewModel, NetworkFeesViewModel } from "../../../types";
 import {
   getAmountScreenRawMessage,
   isAmountInputDisabledByRecipientError,
@@ -96,6 +100,86 @@ export function useAmountScreenViewModel({
     onSelectCustomFees,
   });
 
+  // ─── Tronify fee-selector integration (LIVE-33403) ──────────────────────────
+  const { locale } = useLocale();
+  const {
+    selectedFeeOptionId,
+    selectTronify,
+    selectStandard,
+    available: tronifyAvailable,
+    quote: tronifyQuote,
+    savingsFiatFormatted,
+  } = useSponsoredSend();
+  const tronifySelected = selectedFeeOptionId === "tronify";
+
+  const tokenCurrency = useMemo(() => getAccountCurrency(account), [account]);
+  const mainAccountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
+
+  const discountedFeeFormatted = useMemo(() => {
+    if (!tronifyQuote) return null;
+    return formatCurrencyUnit(
+      tokenCurrency.units[0],
+      new BigNumber(tronifyQuote.value.toString()),
+      { showCode: true, disableRounding: false, locale },
+    );
+  }, [tronifyQuote, tokenCurrency, locale]);
+
+  const originalFeeFormatted = useMemo(() => {
+    if (!tronifyQuote) return null;
+    return formatCurrencyUnit(
+      mainAccountCurrency.units[0],
+      new BigNumber(tronifyQuote.originalValue.toString()),
+      { showCode: true, disableRounding: false, locale },
+    );
+  }, [tronifyQuote, mainAccountCurrency, locale]);
+
+  const tronifyInsufficientBalance = useMemo(() => {
+    if (!tronifySelected || !tronifyQuote || !transaction) return false;
+    const spendable = "spendableBalance" in account ? account.spendableBalance : null;
+    if (!spendable) return false;
+    const needed = transaction.amount.plus(new BigNumber(tronifyQuote.value.toString()));
+    return spendable.lt(needed);
+  }, [tronifySelected, tronifyQuote, transaction, account]);
+
+  const tronify = useMemo<TronifyFeesViewModel | null>(() => {
+    if (!tronifyAvailable) return null;
+    return {
+      available: tronifyAvailable,
+      selected: tronifySelected,
+      discountedFeeFormatted,
+      originalFeeFormatted,
+      savingsFiatFormatted,
+      onSelectTronify: selectTronify,
+      onSelectStandard: selectStandard,
+      insufficientBalance: tronifyInsufficientBalance,
+    };
+  }, [
+    tronifyAvailable,
+    tronifySelected,
+    discountedFeeFormatted,
+    originalFeeFormatted,
+    savingsFiatFormatted,
+    selectTronify,
+    selectStandard,
+    tronifyInsufficientBalance,
+  ]);
+
+  const finalNetworkFees = useMemo<NetworkFeesViewModel>(() => {
+    const base: NetworkFeesViewModel = { ...networkFees, tronify };
+    if (!tronifySelected || !discountedFeeFormatted) return base;
+    return {
+      ...base,
+      value: discountedFeeFormatted,
+      secondaryValue: originalFeeFormatted,
+      secondaryValueStrikethrough: true,
+      strategyLabel: t("send.newSendFlow.feeSelector.viaTronify"),
+      displayOptions: [],
+      canOpenSelector: true,
+      networkFeesInfo: null,
+    };
+  }, [networkFees, tronify, tronifySelected, discountedFeeFormatted, originalFeeFormatted, t]);
+  // ─────────────────────────────────────────────────────────────────────────────
+
   const amountInput = useAmountInputController({
     account,
     parentAccount,
@@ -144,7 +228,7 @@ export function useAmountScreenViewModel({
     [status],
   );
 
-  const reviewDisabled = coreReviewDisabled || amountInput.isTyping;
+  const reviewDisabled = coreReviewDisabled || amountInput.isTyping || tronifyInsufficientBalance;
 
   return useMemo(
     () => ({
@@ -160,7 +244,7 @@ export function useAmountScreenViewModel({
         onChangeText: amountInput.onChangeText,
         onToggleMode: amountInput.onToggleMode,
       },
-      networkFees,
+      networkFees: finalNetworkFees,
       quickActions: {
         actions: quickActions,
         show: mainAccount.balance.gt(0),
@@ -177,7 +261,7 @@ export function useAmountScreenViewModel({
     [
       amountInput,
       isAmountInputDisabled,
-      networkFees,
+      finalNetworkFees,
       quickActions,
       mainAccount.balance,
       reviewLabel,
