@@ -45,11 +45,10 @@ const ManageModal = ({ account, parentAccount, source, ...rest }: Data) => {
     unbondingHeight !== null &&
     unbondingHeight !== undefined &&
     account.blockHeight < unbondingHeight;
-  const claimTooltip = unbondingLocked
-    ? lockedTooltip
-    : isStillUnbonding
-      ? t("aleo.manage.stillUnbondingTooltip")
-      : t("aleo.manage.nothingToClaimTooltip");
+  const unclaimableTooltip = isStillUnbonding
+    ? t("aleo.manage.stillUnbondingTooltip")
+    : t("aleo.manage.nothingToClaimTooltip");
+  const claimTooltip = unbondingLocked ? lockedTooltip : unclaimableTooltip;
 
   const onSelectAction = useCallback(
     (onClose: () => void, name: keyof ModalData) => {
