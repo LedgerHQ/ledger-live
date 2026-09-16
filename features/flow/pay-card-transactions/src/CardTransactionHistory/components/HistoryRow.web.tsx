@@ -59,6 +59,7 @@ export function HistoryRow({ item, formatters, onRowClick }: HistoryRowProps) {
                         type="button"
                         className="inline-flex"
                         aria-label={row.fundingTooltipAriaLabel}
+                        onClick={event => event.stopPropagation()}
                       >
                         <Information size={16} aria-hidden />
                       </button>
