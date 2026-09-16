@@ -30,52 +30,17 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Install AWS CLI if needed
-      shell: bash
-      run: |
-        if ! command -v aws &> /dev/null; then
-          echo "Installing AWS CLI..."
-          curl -sS "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip -q awscliv2.zip
-          sudo ./aws/install --update
-          rm -rf awscliv2.zip aws
-          echo "✅ AWS CLI installed"
-        else
-          echo "✅ AWS CLI already available: $(aws --version)"
-        fi
-
     - name: Check if cache exists
       id: check-cache
       shell: bash
       run: |
-        CACHE_KEY="${INPUTS_KEY}"
-        BUCKET="${INPUTS_BUCKET}"
-        ENDPOINT="${INPUTS_ENDPOINT:-s3.${INPUTS_REGION}.amazonaws.com}"
-
-        echo "Checking for cache key: ${CACHE_KEY}"
-        echo "Bucket: ${BUCKET}"
-        echo "Endpoint: ${ENDPOINT}"
-
-        # Use head-object to check if the cache file exists
-        if aws s3api head-object \
-          --bucket "${BUCKET}" \
-          --key "${CACHE_KEY}/cache.tzst" \
-          --endpoint-url "https://${ENDPOINT}" \
-          --region "${INPUTS_REGION}" > /dev/null 2>&1; then
-          echo "cache-hit=true" >> $GITHUB_OUTPUT
-          echo "✅ Cache found: ${CACHE_KEY}/cache.tzst"
-        else
-          echo "cache-hit=false" >> $GITHUB_OUTPUT
-          echo "❌ Cache not found: ${CACHE_KEY}/cache.tzst"
-        fi
+        "$GITHUB_ACTION_PATH/../cache.sh" exists
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
         AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}
-
-        INPUTS_KEY: ${{ inputs.key }}
-
-        INPUTS_BUCKET: ${{ inputs.bucket }}
-
-        INPUTS_REGION: ${{ inputs.region }}
-        INPUTS_ENDPOINT: ${{ inputs.endpoint }}
+        AWS_REGION: ${{ inputs.region }}
+        CACHE_KEY: ${{ inputs.key }}
+        CACHE_BUCKET: ${{ inputs.bucket }}
+        CACHE_REGION: ${{ inputs.region }}
+        CACHE_ENDPOINT: ${{ inputs.endpoint }}

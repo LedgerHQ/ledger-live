@@ -61,7 +61,7 @@ runs:
           tools/nx
 
     - name: Setup the caches
-      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@perf/ci-cache-s5cmd-pzstd
       id: setup-caches
       with:
         skip-pnpm-cache: "true"
