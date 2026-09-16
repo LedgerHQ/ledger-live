@@ -320,6 +320,35 @@ export const PayCardLinkedWalletSchema = z.object({
 
 export const PayCardLinkedWalletsResponseSchema = z.array(PayCardLinkedWalletSchema);
 
+const PayCardWalletPrioritySchema = z.object({
+  addressId: z.string().min(1),
+  /**
+   * Lower is charged first. Kept as loose as the linked wallet's own `priority`, so an order read
+   * from the provider can be reordered and written back unchanged.
+   */
+  priority: z.number().finite(),
+});
+
+/**
+ * The whole charging order, not one wallet: the priorities have to be unique across the set, so
+ * they can only be decided together.
+ */
+export const PayCardWalletPrioritiesRequestSchema = z.object({
+  wallets: z
+    .array(PayCardWalletPrioritySchema)
+    .min(1)
+    .refine(wallets => new Set(wallets.map(wallet => wallet.priority)).size === wallets.length, {
+      message: "each wallet needs a priority of its own",
+    })
+    .refine(wallets => new Set(wallets.map(wallet => wallet.addressId)).size === wallets.length, {
+      message: "each wallet may be given a priority once",
+    }),
+});
+
+export const PayCardWalletPrioritiesResponseSchema = z.object({
+  success: z.boolean(),
+});
+
 /** One onboarding step the card holder still has to complete, as the backend describes it. */
 export const PayCardOnboardingStepSchema = z.object({
   id: z.string().min(1),

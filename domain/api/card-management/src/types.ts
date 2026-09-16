@@ -27,6 +27,8 @@ import {
   PayCardTransactionsRequestSchema,
   PayCardWalletHistoryEntrySchema,
   PayCardWalletHistoryRequestSchema,
+  PayCardWalletPrioritiesRequestSchema,
+  PayCardWalletPrioritiesResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 
@@ -118,6 +120,11 @@ export type PayCardLinkedWalletResponse = z.infer<typeof PayCardLinkedWalletSche
 
 /** The same wallet, resolved to its Ledger currency once so every consumer reads one answer. */
 export type PayCardLinkedWallet = z.infer<typeof PayCardLinkedWalletCanonicalSchema>;
+
+/** The charging order to write: every linked wallet, each with a priority of its own. */
+export type PayCardWalletPrioritiesRequest = z.infer<typeof PayCardWalletPrioritiesRequestSchema>;
+
+export type PayCardWalletPrioritiesResult = z.infer<typeof PayCardWalletPrioritiesResponseSchema>;
 
 export type PayCardOnboardingStep = z.infer<typeof PayCardOnboardingStepSchema>;
 
