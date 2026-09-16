@@ -119,7 +119,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_coreum: {
     type: "object",
     default: {
-      lcd: "https://coreum.coin.ledger.com",
+      lcd: "https://rest-coreum.ecostake.com",
       minGasPrice: 0.1,
       status: {
         type: "active",
