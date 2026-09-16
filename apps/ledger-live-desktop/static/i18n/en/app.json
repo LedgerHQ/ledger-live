@@ -2878,7 +2878,7 @@
       }
     },
     "balanceType": {
-      "title": "Select balance type",
+      "title": "Select balance",
       "transparent": {
         "title": "Public balance",
         "subtitle": "Transparent"
@@ -2886,6 +2886,7 @@
       "shielded": {
         "title": "Private balance",
         "subtitle": "Shielded",
+        "pendingNoticeTitle": "Funds maturing",
         "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
       },
       "zeroBalance": {
@@ -7530,6 +7531,14 @@
     },
     "ZcashSendTooLarge": {
       "title": "This amount is too large to send in one transaction: try sending it in smaller amounts"
+    },
+    "ZcashShieldedKeyMissing": {
+      "title": "Activate your private balance first",
+      "description": "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+    },
+    "ZcashNotesNotYetSpendable": {
+      "title": "These funds are not spendable yet",
+      "description": "Please try again in a few minutes"
     },
     "InvalidNonce": {
       "title": "Nonce is required"

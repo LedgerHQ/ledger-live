@@ -34,9 +34,13 @@ what joins the two. Mobile passes `PAY_TAB_DEEP_LINK`; desktop passes none, beca
 browser reports nothing back (LIVE-34740).
 
 `callback` carries the OAuth redirect, when the app already has one. The app's router owns the deep
-link, so it hands over the `code` and `state` it parsed. On mobile that is
-`ledgerlive://paytab?code=…&state=…`, which react-navigation turns into route params. Desktop does not
-pass it yet (LIVE-34740).
+link, so it hands over the `code`, the `state` and the `appId` it parsed. On mobile that is
+`ledgerlive://paytab?code=…&state=…&app_id=…`, which react-navigation turns into route params, under
+the provider's own spelling `app_id`. Desktop does not pass it yet (LIVE-34740).
+
+`appId` names the provider app the holder belongs to, and the redirect is the only place that says
+it. The flow records it beside the session, and the Card API compares it with `CARD_BAANX_US_APP_ID`
+on every request to decide whether to send `x-us-env` (LIVE-34972).
 
 ## The login
 

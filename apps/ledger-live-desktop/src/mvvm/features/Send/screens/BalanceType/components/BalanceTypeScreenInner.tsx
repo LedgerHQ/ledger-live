@@ -90,7 +90,8 @@ export function BalanceTypeScreenInner({ viewModel }: Readonly<Props>) {
           <Banner
             key={option.id}
             appearance="warning"
-            title={t(`newSendFlow.${option.translationKey}.pendingNotice`)}
+            title={t(`newSendFlow.${option.translationKey}.pendingNoticeTitle`)}
+            description={t(`newSendFlow.${option.translationKey}.pendingNotice`)}
             data-testid={`balance-type-${option.id}-pending-notice`}
           />
         ))}

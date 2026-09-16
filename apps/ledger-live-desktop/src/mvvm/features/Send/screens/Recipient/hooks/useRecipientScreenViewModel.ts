@@ -12,8 +12,10 @@ import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientScanner } from "../../../context/RecipientScannerContext";
 import { trackPage } from "~/renderer/analytics/segment";
+import { t } from "~/renderer/i18n/init";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
+import { getAccountSelfTransferTarget } from "../../../utils/selfTransferTarget";
 
 type RecipientScreenViewModelBase = Readonly<{
   ready: false;
@@ -87,12 +89,27 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
 
   const onAddressSelected = useCallback(
     (address: string, ensName?: string, goToNextStep?: boolean, memo?: Memo) => {
+      // A typed/pasted address can be the account's own self-transfer target (its
+      // other pool) without going through the self-transfer shortcut. Recognize it
+      // the same way the shortcut does, so it gets the same pool label and locks
+      // the transaction into self-transfer state (see `useSendFlowTransaction`'s
+      // `buildSelfTransferPatch`, which every recipient write passes through).
+      const selfTransferTarget = account
+        ? getAccountSelfTransferTarget(account, state.transaction.transaction)
+        : null;
+      const matchedSelfTransferTarget =
+        selfTransferTarget && selfTransferTarget.address.toLowerCase() === address.toLowerCase()
+          ? selfTransferTarget
+          : null;
+
       transaction.setRecipient({
         ...state.recipient,
         address,
         ensName,
-        displayLabel: undefined,
-        isSelfTransfer: false,
+        displayLabel: matchedSelfTransferTarget
+          ? t(`newSendFlow.${matchedSelfTransferTarget.translationKey}.label`)
+          : undefined,
+        isSelfTransfer: matchedSelfTransferTarget !== null,
         ...(memo ? { memo } : {}),
       });
 
@@ -100,7 +117,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
         navigation.goToNextStep();
       }
     },
-    [transaction, state.recipient, navigation],
+    [account, transaction, state.recipient, state.transaction.transaction, navigation],
   );
 
   if (!account || !currency || isScannerOpen) {

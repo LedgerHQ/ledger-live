@@ -213,6 +213,9 @@
         "env": "CARD_BAANX_LOGIN_MANIFEST_ID"
       },
       {
+        "env": "CARD_BAANX_US_APP_ID"
+      },
+      {
         "env": "CARD_OAUTH_REDIRECT_URI"
       },
       {
