@@ -13,6 +13,7 @@ describe("getPerpsUiUseCase", () => {
 
   it("claims nothing for another namespace or for no use case at all", () => {
     expect(getPerpsUiUseCase("swap:fund")).toBeUndefined();
+    expect(getPerpsUiUseCase("pay")).toBeUndefined();
     expect(getPerpsUiUseCase(undefined)).toBeUndefined();
   });
 });
