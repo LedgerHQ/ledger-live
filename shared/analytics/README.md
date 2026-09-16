@@ -138,7 +138,7 @@ setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
 await track("track", { theme: "light", sensitive: "from-enricher" });
 
 analyticsEvents$.subscribe((event) => {
-  console.log(event.eventProps);
+  console.log(event.eventProperties);
 });
 
 // { appVersion: "1.2.3", theme: "light" },

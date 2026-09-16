@@ -20,16 +20,16 @@ describe("publishEvent", () => {
   it("publishes a dated event to analyticsEvents$", () => {
     publishEvent({
       eventName: "Published",
-      eventProps: { foo: "bar", appVersion: "1.2.3" },
-      eventPropsWithoutExtra: { foo: "bar" },
+      eventProperties: { foo: "bar", appVersion: "1.2.3" },
+      eventPropertiesWithoutExtra: { foo: "bar" },
       deliveryStatus: "enqueued",
     });
 
     expect(events[0]).toEqual({
       date: expect.any(Date),
       eventName: "Published",
-      eventProps: { foo: "bar", appVersion: "1.2.3" },
-      eventPropsWithoutExtra: { foo: "bar" },
+      eventProperties: { foo: "bar", appVersion: "1.2.3" },
+      eventPropertiesWithoutExtra: { foo: "bar" },
       deliveryStatus: "enqueued",
     });
   });
@@ -43,8 +43,8 @@ describe("publishEvent", () => {
     expect(events[0]).toEqual({
       date: expect.any(Date),
       eventName: "Defaults",
-      eventProps: {},
-      eventPropsWithoutExtra: {},
+      eventProperties: {},
+      eventPropertiesWithoutExtra: {},
       deliveryStatus: "failed_filter",
     });
   });
@@ -52,8 +52,8 @@ describe("publishEvent", () => {
   it("forwards the delivery status", () => {
     publishEvent({
       eventName: "Status",
-      eventProps: { foo: "bar" },
-      eventPropsWithoutExtra: { foo: "bar" },
+      eventProperties: { foo: "bar" },
+      eventPropertiesWithoutExtra: { foo: "bar" },
       deliveryStatus: "failed_enrichment",
     });
 

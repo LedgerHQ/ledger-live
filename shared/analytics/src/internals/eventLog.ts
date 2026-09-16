@@ -7,19 +7,19 @@ export const analyticsEvents$ = eventLog.asObservable();
 
 export function publishEvent({
   eventName,
-  eventProps = {},
-  eventPropsWithoutExtra = {},
+  eventProperties = {},
+  eventPropertiesWithoutExtra = {},
   deliveryStatus,
 }: {
   eventName: string;
-  eventProps?: Props;
-  eventPropsWithoutExtra?: Props;
+  eventProperties?: Props;
+  eventPropertiesWithoutExtra?: Props;
   deliveryStatus: DeliveryStatus;
 }): void {
   eventLog.next({
     eventName,
-    eventProps,
-    eventPropsWithoutExtra,
+    eventProperties,
+    eventPropertiesWithoutExtra,
     date: new Date(),
     deliveryStatus,
   });

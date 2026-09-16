@@ -135,8 +135,8 @@ describe("trackEvent", () => {
       expect(events).toEqual([
         expect.objectContaining({
           eventName: "Unenrichable",
-          eventProps: { foo: "bar" },
-          eventPropsWithoutExtra: { foo: "bar" },
+          eventProperties: { foo: "bar" },
+          eventPropertiesWithoutExtra: { foo: "bar" },
           deliveryStatus: "failed_enrichment",
         }),
       ]);
@@ -155,8 +155,8 @@ describe("trackEvent", () => {
       expect(events).toEqual([
         expect.objectContaining({
           eventName: "Unenrichable",
-          eventProps: { foo: "bar" },
-          eventPropsWithoutExtra: { foo: "bar" },
+          eventProperties: { foo: "bar" },
+          eventPropertiesWithoutExtra: { foo: "bar" },
           deliveryStatus: "failed_enrichment",
         }),
       ]);
@@ -204,8 +204,8 @@ describe("trackEvent", () => {
       expect(events[0]).toEqual(
         expect.objectContaining({
           eventName: "Subject Event",
-          eventProps: { theme: "light", appVersion: "1.2.3" },
-          eventPropsWithoutExtra: { theme: "light" },
+          eventProperties: { theme: "light", appVersion: "1.2.3" },
+          eventPropertiesWithoutExtra: { theme: "light" },
         }),
       );
     });
@@ -224,8 +224,8 @@ describe("trackEvent", () => {
       expect(events).toEqual([
         expect.objectContaining({
           eventName: "Unenrichable",
-          eventProps: { theme: "light" },
-          eventPropsWithoutExtra: { theme: "light" },
+          eventProperties: { theme: "light" },
+          eventPropertiesWithoutExtra: { theme: "light" },
           deliveryStatus: "failed_enrichment",
         }),
       ]);

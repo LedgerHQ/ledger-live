@@ -13,8 +13,8 @@ export type DeliveryStatus =
 
 export type LoggableEvent = {
   eventName: string;
-  eventProps?: Props;
-  eventPropsWithoutExtra?: Props;
+  eventProperties?: Props;
+  eventPropertiesWithoutExtra?: Props;
   date: Date;
   deliveryStatus?: DeliveryStatus;
 };
