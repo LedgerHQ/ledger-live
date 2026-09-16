@@ -1,6 +1,7 @@
 import { ipcRenderer } from "electron";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { act } from "@testing-library/react";
+import { getEnvDefault, setEnv } from "@shared/env";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useCardHostedPageOpeners } from "../useCardHostedPageOpeners";
 
@@ -64,8 +65,8 @@ describe("useCardHostedPageOpeners", () => {
   });
 
   afterEach(() => {
-    delete process.env.CARD_BAANX_LOGIN_MANIFEST_ID;
-    delete process.env.CARD_BAANX_HOSTED_MANIFEST_ID;
+    setEnv("CARD_BAANX_LOGIN_MANIFEST_ID", getEnvDefault("CARD_BAANX_LOGIN_MANIFEST_ID"));
+    setEnv("CARD_BAANX_HOSTED_MANIFEST_ID", getEnvDefault("CARD_BAANX_HOSTED_MANIFEST_ID"));
   });
 
   describe("openHostedLogin", () => {
@@ -88,7 +89,7 @@ describe("useCardHostedPageOpeners", () => {
 
     it("takes the login manifest id the env carries", async () => {
       manifestsFrom({ other: { id: "other", url: "https://other.test" } });
-      process.env.CARD_BAANX_LOGIN_MANIFEST_ID = "other";
+      setEnv("CARD_BAANX_LOGIN_MANIFEST_ID", "other");
       const { result } = renderOpeners();
 
       await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
@@ -221,7 +222,7 @@ describe("useCardHostedPageOpeners", () => {
 
     it("takes the hosted manifest id the env carries", async () => {
       manifestsFrom({ other: { id: "other", url: "https://other.test" } });
-      process.env.CARD_BAANX_HOSTED_MANIFEST_ID = "other";
+      setEnv("CARD_BAANX_HOSTED_MANIFEST_ID", "other");
       const { result } = renderOpeners();
 
       await run(() => result.current.openHostedPage("/onboarding/signup"));
