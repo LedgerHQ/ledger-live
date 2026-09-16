@@ -6,6 +6,7 @@ export const CARD_MANAGEMENT_TAGS = [
   "CardStatus",
   "CardOnboardingStatus",
   "CardTransactions",
+  "CardLinkedWallets",
   "WalletHistory",
 ] as const;
 

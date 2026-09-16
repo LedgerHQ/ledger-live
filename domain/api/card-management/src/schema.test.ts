@@ -2,6 +2,9 @@ import {
   PayCardErrorResponseSchema,
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletSchema,
+  PayCardInternalWalletsResponseSchema,
+  PayCardLinkWalletRequestSchema,
+  PayCardLinkWalletResponseSchema,
   PayCardLinkedWalletSchema,
   PayCardLogoutResponseSchema,
   PayCardOnboardingStatusResponseSchema,
@@ -366,11 +369,31 @@ describe("PayCardInternalWalletSchema", () => {
     expect(PayCardInternalWalletSchema.parse(wallet).balance).toBe("125.50");
   });
 
-  it("drops the internal address id and the constant type the contract does not declare", () => {
-    const parsed = PayCardInternalWalletSchema.parse(wallet);
+  it("keeps the address id, which names the wallet when linking it to the card", () => {
+    expect(PayCardInternalWalletSchema.parse(wallet).addressId).toBe(
+      "0x0a4b21fa733e9aeaddbf070302a85c559de13c4c",
+    );
+  });
 
-    expect(parsed).not.toHaveProperty("addressId");
-    expect(parsed).not.toHaveProperty("type");
+  it("drops the constant type the contract does not declare", () => {
+    expect(PayCardInternalWalletSchema.parse(wallet)).not.toHaveProperty("type");
+  });
+
+  it("reads a wallet with no address id, which simply cannot be linked", () => {
+    const { addressId: _addressId, ...withoutAddressId } = wallet;
+    const parsed = PayCardInternalWalletSchema.parse(withoutAddressId);
+
+    expect(parsed.addressId).toBeUndefined();
+    expect(parsed.balance).toBe("125.50");
+  });
+
+  it("keeps the balances of the other wallets when one has no address id", () => {
+    const { addressId: _addressId, ...withoutAddressId } = documentedWallets[1];
+
+    const parsed = PayCardInternalWalletsResponseSchema.parse([wallet, withoutAddressId]);
+
+    expect(parsed).toHaveLength(2);
+    expect(parsed.map(entry => entry.balance)).toEqual(["125.50", "500.00"]);
   });
 
   it("keeps the address memo the chain needs", () => {
@@ -393,6 +416,29 @@ describe("PayCardInternalWalletSchema", () => {
 
   it("rejects an empty balance, which is not the same as zero", () => {
     expect(() => PayCardInternalWalletSchema.parse({ ...wallet, balance: "" })).toThrow();
+  });
+});
+
+describe("PayCardLinkWalletRequestSchema", () => {
+  it("takes the address id the internal wallets answer with", () => {
+    const request = { addressId: "0x0a4b21fa733e9aeaddbf070302a85c559de13c4c" };
+
+    expect(PayCardLinkWalletRequestSchema.parse(request)).toEqual(request);
+  });
+
+  it("rejects a request that names no wallet", () => {
+    expect(() => PayCardLinkWalletRequestSchema.parse({})).toThrow();
+    expect(() => PayCardLinkWalletRequestSchema.parse({ addressId: "" })).toThrow();
+  });
+});
+
+describe("PayCardLinkWalletResponseSchema", () => {
+  it("reads the documented flag", () => {
+    expect(PayCardLinkWalletResponseSchema.parse({ success: true })).toEqual({ success: true });
+  });
+
+  it("rejects an answer that does not say whether the link was made", () => {
+    expect(() => PayCardLinkWalletResponseSchema.parse({})).toThrow();
   });
 });
 

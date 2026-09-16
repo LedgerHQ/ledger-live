@@ -3,6 +3,8 @@ import { CARD_MANAGEMENT_TAGS, OAUTH2_TOKEN_PATH } from "./constants";
 import {
   PayCardFreezeStateResponseSchema,
   PayCardInternalWalletsResponseSchema,
+  PayCardLinkWalletRequestSchema,
+  PayCardLinkWalletResponseSchema,
   PayCardLinkedWalletsResponseSchema,
   PayCardLinkedWalletsCanonicalSchema,
   PayCardLogoutResponseSchema,
@@ -28,6 +30,8 @@ import type {
   PayCardAuthorizationCodeRequest,
   PayCardFreezeStateResult,
   PayCardInternalWallet,
+  PayCardLinkWalletRequest,
+  PayCardLinkWalletResult,
   PayCardLinkedWallet,
   PayCardLogoutResult,
   PayCardOnboardingStatus,
@@ -262,6 +266,27 @@ export const cardManagementApi = cardApi
         rawResponseSchema: PayCardLinkedWalletsResponseSchema,
         transformResponse: transformPayCardLinkedWallets,
         responseSchema: PayCardLinkedWalletsCanonicalSchema,
+        providesTags: ["CardLinkedWallets"],
+      }),
+
+      /**
+       * Links one custodial wallet to the card as a funding source.
+       *
+       * Answers `{ success: true }` and nothing else, so the linked set — and the charging order
+       * within it — only becomes observable once it is read again.
+       */
+      linkWalletToCard: build.mutation<PayCardLinkWalletResult, PayCardLinkWalletRequest>({
+        query: request => ({
+          url: "/v1/wallet/internal/card_linked",
+          method: "POST",
+          body: request,
+        }),
+        argSchema: PayCardLinkWalletRequestSchema,
+        responseSchema: PayCardLinkWalletResponseSchema,
+        // RTK Query invalidates a rejected mutation's tags too, and a refused link leaves the
+        // linked set exactly as it was. Unlike the freeze pair, nothing here was patched
+        // optimistically, so there is no local guess to resync.
+        invalidatesTags: (_result, error) => (error ? [] : ["CardLinkedWallets"]),
       }),
 
       getCardOnboardingStatus: build.query<PayCardOnboardingStatus, void>({
@@ -301,6 +326,7 @@ export const {
   useUnfreezeCardMutation,
   useGetInternalWalletsQuery,
   useGetCardLinkedWalletsQuery,
+  useLinkWalletToCardMutation,
   useGetCardOnboardingStatusQuery,
 } = cardManagementApi;
 

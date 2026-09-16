@@ -11,6 +11,7 @@ import {
   initiatePayCardLogout,
   useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
+  useLinkWalletToCardMutation,
   useGetCardOnboardingStatusQuery,
   useCreateCardDetailsTokenMutation,
   useCreateCardPinTokenMutation,
@@ -65,9 +66,7 @@ const internalWalletsOnTheWire = [
   },
 ];
 
-const internalWallets = internalWalletsOnTheWire.map(
-  ({ addressId: _addressId, type: _type, ...wallet }) => wallet,
-);
+const internalWallets = internalWalletsOnTheWire.map(({ type: _type, ...wallet }) => wallet);
 
 const linkedWallets = [
   {
@@ -136,6 +135,7 @@ describe("cardManagementApi configuration", () => {
       "getInternalWallets",
       "getUser",
       "getWalletHistory",
+      "linkWalletToCard",
       "logout",
       "orderCard",
       "refreshSession",
@@ -197,6 +197,8 @@ describe("cardManagementApi configuration", () => {
     expect(useGetInternalWalletsQuery).toBeDefined();
     expect(cardManagementApi.endpoints.getCardLinkedWallets).toBeDefined();
     expect(useGetCardLinkedWalletsQuery).toBeDefined();
+    expect(cardManagementApi.endpoints.linkWalletToCard).toBeDefined();
+    expect(useLinkWalletToCardMutation).toBeDefined();
   });
 
   it("exposes getCardOnboardingStatus and its hook", () => {
@@ -1307,6 +1309,95 @@ describe("cardManagementApi requests", () => {
 
       expect(result.data).toBeUndefined();
       expect(result.error).toBeDefined();
+    });
+  });
+
+  describe("linkWalletToCard", () => {
+    const LINKED_WALLETS_PATH = "/v1/wallet/internal/card_linked";
+
+    const addressId = "0x0a4b21fa733e9aeaddbf070302a85c559de13c4c";
+
+    it("links the wallet the caller named", async () => {
+      provider.post(LINKED_WALLETS_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId }),
+      );
+
+      expectSessionRequest("POST", LINKED_WALLETS_PATH);
+      expect(JSON.parse(provider.sent().body)).toEqual({ addressId });
+      expect(result.data).toEqual({ success: true });
+    });
+
+    it("rejects a request that names no wallet, and sends nothing", async () => {
+      provider.post(LINKED_WALLETS_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId: "" }),
+      );
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("does not compile, nor send, a request that names the wallet by `id`", async () => {
+      provider.post(LINKED_WALLETS_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        // @ts-expect-error `addressId` is the only key this request declares
+        cardManagementApi.endpoints.linkWalletToCard.initiate({ id: addressId }),
+      );
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("reads the linked wallets again once a link is made", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.post(LINKED_WALLETS_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      await store.dispatch(cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId }));
+      await flushPendingRequests();
+
+      // The POST, then exactly one re-read: the answer is only `{ success: true }`.
+      expect(provider.requests().length).toBe(before + 2);
+    });
+
+    it("hands a refusal the provider reports as success:false to the caller", async () => {
+      provider.post(LINKED_WALLETS_PATH, () => jsonResponse({ success: false }));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId }),
+      );
+
+      // A 200 is not an error, so the flag is the answer and the caller reads it.
+      expect(result.error).toBeUndefined();
+      expect(result.data).toEqual({ success: false });
+    });
+
+    it("keeps the linked wallets cached when the link fails", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.post(LINKED_WALLETS_PATH, () => errorResponse(422, "link refused"));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId }),
+      );
+      await flushPendingRequests();
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests().length).toBe(before + 1);
     });
   });
 
