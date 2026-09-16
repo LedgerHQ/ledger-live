@@ -54,8 +54,8 @@ class AddressCell extends PureComponent<AddressCellProps<Operation>> {
   }
 }
 
-const getI18nKey = (type: string) => {
-  switch (type) {
+const getI18nKey = (operation: Operation) => {
+  switch (operation.type) {
     case "SHIELDED_TX_SAPLING_IN":
     case "SHIELDED_TX_SAPLING_OUT":
       return "zcash.operationDetails.shieldedSaplingTx";
@@ -66,7 +66,9 @@ const getI18nKey = (type: string) => {
     case "SHIELDED_TX_IRONWOOD_OUT":
       return "zcash.operationDetails.shieldedIronwoodTx";
     default:
-      return null;
+      return (operation.extra as { zcashPrivate?: boolean } | undefined)?.zcashPrivate
+        ? "zcash.operationDetails.shieldedIronwoodTx"
+        : null;
   }
 };
 
@@ -77,8 +79,7 @@ const OperationDetailsExtra = ({
   account: Account;
   operation: Operation;
 }>) => {
-  const { type } = operation;
-  const i18nKey = getI18nKey(type);
+  const i18nKey = getI18nKey(operation);
 
   if (account.currency.id !== "zcash") {
     return null;

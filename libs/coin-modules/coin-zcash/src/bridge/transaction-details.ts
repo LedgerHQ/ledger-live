@@ -31,6 +31,8 @@ export type ResolvedTransactions = {
   transactions: TX[];
   /** Shielded addresses paid by each transaction, keyed by txid. */
   payeesByTxId: Map<string, string[]>;
+  /** Transactions whose transparent value entered a shielded pool. */
+  shieldingTxIds: Set<string>;
 };
 
 export type DetailsResolver = (
@@ -128,6 +130,7 @@ export async function resolveTransactionDetails(
   }
 
   const payeesByTxId = new Map<string, string[]>();
+  const shieldingTxIds = new Set<string>();
   let correctedFees = 0;
 
   const priced = transactions.map(tx => {
@@ -143,6 +146,7 @@ export async function resolveTransactionDetails(
     const fees = Number(fee);
     if (!Number.isFinite(fees) || fees === tx.fees) return tx;
 
+    if (tx.fees !== undefined && fees < tx.fees) shieldingTxIds.add(tx.id);
     correctedFees++;
     return { ...tx, fees };
   });
@@ -155,5 +159,5 @@ export async function resolveTransactionDetails(
     });
   }
 
-  return { transactions: priced, payeesByTxId };
+  return { transactions: priced, payeesByTxId, shieldingTxIds };
 }

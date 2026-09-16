@@ -99,6 +99,18 @@ describe("Zcash operationDetails", () => {
       expect(screen.queryByText("Transaction type")).not.toBeInTheDocument();
     });
 
+    it("should identify a shielding OUT operation as private", () => {
+      const operation = {
+        ...createOperation("OUT"),
+        extra: { zcashShielded: true, zcashPrivate: true },
+      } as never;
+
+      render(<OperationDetailsExtra account={zcashAccount} operation={operation} />);
+
+      expect(screen.getByText("Transaction type")).toBeInTheDocument();
+      expect(screen.getByText("🛡 Private (Ironwood)")).toBeInTheDocument();
+    });
+
     it("should not render a Memo section when extra.memo is absent", () => {
       const operation = {
         ...createOperation("SHIELDED_TX_IRONWOOD_OUT"),

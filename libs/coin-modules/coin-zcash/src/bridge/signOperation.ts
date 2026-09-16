@@ -220,6 +220,7 @@ export const buildSignOperation =
           date: new Date(),
           extra: {
             zcashShielded: true,
+            ...(transaction.transferType !== "transparent" && { zcashPrivate: true }),
             ...(ironwoodNullifiers.length > 0 && { shieldedNullifiers: ironwoodNullifiers }),
             ...(inputRefs.length > 0 && {
               inputs: inputRefs.map(r => `${r.hash}-${r.outputIndex}`),
