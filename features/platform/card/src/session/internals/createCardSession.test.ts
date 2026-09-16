@@ -486,6 +486,7 @@ describe("createCardSession renewal failures", () => {
       `remove:${CARD_SESSION_KEYS.accessToken}`,
       `remove:${CARD_SESSION_KEYS.refreshToken}`,
       `remove:${CARD_SESSION_KEYS.lifetimes}`,
+      `remove:${CARD_SESSION_KEYS.providerAppId}`,
     ]);
   });
 
@@ -685,5 +686,244 @@ describe("createCardSession session id", () => {
 
     await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
     expect(renew).not.toHaveBeenCalled();
+  });
+});
+
+describe("the provider app id", () => {
+  it("answers the US tenant from the value the login recorded", async () => {
+    const { store } = fakeStore();
+    const { setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+
+    await setCardProviderAppId("LEDGERUS");
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+    expect(isCardUsEnv("LEDGERUAT")).toBe(false);
+  });
+
+  it("answers before the store write settles", () => {
+    // The token exchange leaves while the write is still in flight, and it is the first request that
+    // has to reach the holder's own tenant.
+    const { store } = fakeStore();
+    const { setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+
+    void setCardProviderAppId("LEDGERUS");
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+  });
+
+  it("names no tenant while the US app id is not configured", async () => {
+    const { store } = fakeStore();
+    const { setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+
+    expect(isCardUsEnv("")).toBe(false);
+
+    await setCardProviderAppId(null);
+
+    expect(isCardUsEnv("")).toBe(false);
+  });
+
+  it("makes every concurrent request wait on the one hydration read", async () => {
+    // Two requests can land together on a cold native session. If the second one skipped the read
+    // because the first had started it, it would build headers with no tenant.
+    const read = deferred<string | null>();
+    const { store } = fakeStore({
+      [CARD_SESSION_KEYS.accessToken]: session.accessToken,
+      [CARD_SESSION_KEYS.refreshToken]: session.refreshToken,
+    });
+    store.read = jest.fn(async key =>
+      key === CARD_SESSION_KEYS.providerAppId ? read.promise : session.accessToken,
+    );
+    const { readCardSession, isCardUsEnv } = createCardSession(store);
+
+    const both = Promise.all([readCardSession(), readCardSession()]);
+    read.resolve("LEDGERUS");
+    await both;
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+    expect(store.read).toHaveBeenCalledWith(CARD_SESSION_KEYS.providerAppId);
+  });
+
+  it("refuses the session read, then asks the store again, after a read that failed", async () => {
+    // A tenant we cannot read is not the default tenant. The base query turns this rejection into a
+    // failed request rather than sending an unrouted one, and the next request retries the read.
+    const { store, slots } = fakeStore({ [CARD_SESSION_KEYS.providerAppId]: "LEDGERUS" });
+    store.read = jest
+      .fn()
+      .mockRejectedValueOnce(new Error("keychain busy"))
+      .mockImplementation(async key => slots.get(key) ?? null);
+    const { readCardSession, isCardUsEnv } = createCardSession(store);
+
+    await expect(readCardSession()).rejects.toThrow("keychain busy");
+    expect(isCardUsEnv("LEDGERUS")).toBe(false);
+
+    await readCardSession();
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+  });
+
+  it("keeps a login that lands mid-read over the value the store answers", async () => {
+    const read = deferred<string | null>();
+    const { store } = fakeStore();
+    store.read = jest.fn(async key =>
+      key === CARD_SESSION_KEYS.providerAppId ? read.promise : null,
+    );
+    const { readCardSession, setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+
+    const reading = readCardSession();
+    await setCardProviderAppId("LEDGERUS");
+    read.resolve("LEDGERUAT");
+    await reading;
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+  });
+
+  it("reads a stored app id back on the first session read", async () => {
+    // A platform that kept the session across a restart has no redirect to name the app again.
+    const { store } = fakeStore({
+      [CARD_SESSION_KEYS.accessToken]: session.accessToken,
+      [CARD_SESSION_KEYS.refreshToken]: session.refreshToken,
+      [CARD_SESSION_KEYS.providerAppId]: "LEDGERUS",
+    });
+    const { readCardSession, isCardUsEnv } = createCardSession(store);
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(false);
+
+    await readCardSession();
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
+  });
+
+  it("forgets the app id with the session it belongs to", async () => {
+    const { store, slots } = fakeStore();
+    const { cardSession, setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+    await setCardProviderAppId("LEDGERUS");
+    await cardSession.set(session);
+
+    await cardSession.clear();
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(false);
+    expect(slots.has(CARD_SESSION_KEYS.providerAppId)).toBe(false);
+  });
+
+  it("ends the session that was current when another tenant is recorded", async () => {
+    // A retry from `error` starts a login while the previous session is still on disk. A snapshot
+    // taken before that must not be sent, and the old token must not be served to a later request
+    // that would carry the new routing.
+    const { store } = fakeStore({
+      [CARD_SESSION_KEYS.accessToken]: session.accessToken,
+      [CARD_SESSION_KEYS.refreshToken]: session.refreshToken,
+    });
+    const { readCardSession, isCardSessionCurrent, setCardProviderAppId } =
+      createCardSession(store);
+    const snapshot = await readCardSession();
+    expect(snapshot.token).toBe(session.accessToken);
+    expect(isCardSessionCurrent(snapshot.sessionId)).toBe(true);
+
+    await setCardProviderAppId("LEDGERUS");
+
+    expect(isCardSessionCurrent(snapshot.sessionId)).toBe(false);
+    await expect(readCardSession()).resolves.toMatchObject({ token: null });
+  });
+
+  it("keeps the tenant of a newer login when a superseded session write cleans up", async () => {
+    // A renewal or a first login can still be writing its tokens when a second login records
+    // another tenant. The stale cleanup drops the tokens it wrote, but the tenant belongs to the
+    // newer login, and wiping the mirror would omit `x-us-env` for the rest of the process.
+    const hold = deferred<void>();
+    const { store, slots } = fakeStore();
+    let reachedAccessWrite!: () => void;
+    const atAccessWrite = new Promise<void>(resolve => {
+      reachedAccessWrite = resolve;
+    });
+    store.write = jest.fn(async (key, value) => {
+      slots.set(key, value);
+      if (key === CARD_SESSION_KEYS.accessToken) {
+        reachedAccessWrite();
+        await hold.promise;
+      }
+    });
+    const api = createCardSession(store);
+    await api.setCardProviderAppId("LEDGERUAT");
+
+    const superseded = api.cardSession.set(session);
+    await atAccessWrite;
+    const newer = api.setCardProviderAppId("LEDGERUS");
+    hold.resolve();
+
+    await expect(superseded).rejects.toBeInstanceOf(CardSessionNotStoredError);
+    await newer;
+    expect(api.isCardUsEnv("LEDGERUS")).toBe(true);
+    expect(slots.get(CARD_SESSION_KEYS.providerAppId)).toBe("LEDGERUS");
+  });
+
+  it("drops the persisted tokens when a replacement starts", async () => {
+    // A launch after a failed exchange must not find the previous tenant's tokens and resume them
+    // against the routing this login recorded.
+    const { store, slots } = fakeStore({
+      [CARD_SESSION_KEYS.accessToken]: session.accessToken,
+      [CARD_SESSION_KEYS.refreshToken]: session.refreshToken,
+      [CARD_SESSION_KEYS.providerAppId]: "LEDGERUAT",
+    });
+    const { setCardProviderAppId } = createCardSession(store);
+
+    await setCardProviderAppId("LEDGERUS");
+
+    expect(slots.has(CARD_SESSION_KEYS.accessToken)).toBe(false);
+    expect(slots.has(CARD_SESSION_KEYS.refreshToken)).toBe(false);
+    expect(slots.get(CARD_SESSION_KEYS.providerAppId)).toBe("LEDGERUS");
+  });
+
+  it("refuses to commit a session when the replacement was not persisted", async () => {
+    // The store now holds an unknown mix of the two sessions, so committing tokens onto it would
+    // leave a launch able to resume them with the wrong routing.
+    const { store, slots } = fakeStore();
+    store.write = jest.fn(async (key, value) => {
+      if (key === CARD_SESSION_KEYS.providerAppId) {
+        throw new Error("keychain refused");
+      }
+      slots.set(key, value);
+    });
+    const { setCardProviderAppId, cardSession } = createCardSession(store);
+
+    await setCardProviderAppId("LEDGERUS");
+
+    await expect(cardSession.set(session)).rejects.toBeInstanceOf(CardSessionNotStoredError);
+    expect(slots.has(CARD_SESSION_KEYS.accessToken)).toBe(false);
+    expect(slots.has(CARD_SESSION_KEYS.refreshToken)).toBe(false);
+  });
+
+  it("still persists the tenant when the session write advanced the generation first", async () => {
+    // The login does not await the record, so a busy queue can delay its turn until after `set`
+    // has advanced the generation. The turn must still write, or the tokens land with no routing.
+    const busy = deferred<void>();
+    const { store, slots } = fakeStore();
+    const api = createCardSession(store);
+    // Occupy the queue so the record's turn cannot run before `set` is called.
+    const blocked = api.cardSession.get();
+    store.read = jest.fn(async () => {
+      await busy.promise;
+      return null;
+    });
+
+    const recorded = api.setCardProviderAppId("LEDGERUS");
+    const committed = api.cardSession.set(session);
+    busy.resolve();
+    await blocked;
+    await recorded;
+    await committed;
+
+    expect(slots.get(CARD_SESSION_KEYS.providerAppId)).toBe("LEDGERUS");
+    expect(slots.get(CARD_SESSION_KEYS.accessToken)).toBe(session.accessToken);
+    expect(api.isCardUsEnv("LEDGERUS")).toBe(true);
+  });
+
+  it("keeps the app id across the session write that follows it", async () => {
+    const { store } = fakeStore();
+    const { cardSession, setCardProviderAppId, isCardUsEnv } = createCardSession(store);
+
+    await setCardProviderAppId("LEDGERUS");
+    await cardSession.set(session);
+
+    expect(isCardUsEnv("LEDGERUS")).toBe(true);
   });
 });
