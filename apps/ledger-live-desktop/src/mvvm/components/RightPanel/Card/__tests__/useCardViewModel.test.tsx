@@ -1,6 +1,6 @@
 import React from "react";
 import { MemoryRouter } from "react-router";
-import { renderHook } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import { useCardViewModel } from "../useCardViewModel";
 
 const mockNavigate = jest.fn();
@@ -77,5 +77,15 @@ describe("useCardViewModel", () => {
     const { result } = renderCardViewModel(null);
 
     await expect(result.current.unlock()).resolves.toBe(true);
+  });
+
+  it("opens card history with a back path to Pay", () => {
+    const { result } = renderCardViewModel(null);
+
+    act(() => result.current.onShowMore());
+
+    expect(mockNavigate).toHaveBeenCalledWith("/history?tab=card", {
+      state: { historyBackPath: "/paytab" },
+    });
   });
 });
