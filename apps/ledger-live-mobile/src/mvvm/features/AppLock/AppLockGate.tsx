@@ -10,11 +10,13 @@ import { AppState, Platform, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useAppLockHydration } from "./hooks/useAppLockHydration";
 import { useAppLockScheme } from "./hooks/useAppLockScheme";
+import { useLegacyPasswordMigration } from "./hooks/useLegacyPasswordMigration";
 import { UnlockScreen } from "./screens/Unlock";
 
 export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }>) {
   const dispatch = useDispatch();
   useAppLockHydration();
+  useLegacyPasswordMigration();
   const scheme = useAppLockScheme();
   const isRevamped = scheme === "revamped";
   const protection = useSelector(selectAppLock);

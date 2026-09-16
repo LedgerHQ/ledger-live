@@ -6,6 +6,7 @@ import {
   resetAppLock,
   setBiometricsEnabled,
   setHasPassword,
+  setNeedsLongerPassword,
   unlockApp,
 } from "./slice";
 
@@ -18,6 +19,7 @@ describe("appLockSlice", () => {
       hasPassword: false,
       biometricsEnabled: false,
       isLocked: false,
+      needsLongerPassword: false,
     });
   });
 
@@ -28,6 +30,7 @@ describe("appLockSlice", () => {
       hasPassword: true,
       biometricsEnabled: false,
       isLocked: false,
+      needsLongerPassword: false,
     });
 
     const withBoth = reduce(withPassword, setBiometricsEnabled(true));
@@ -39,6 +42,7 @@ describe("appLockSlice", () => {
       hasPassword: false,
       biometricsEnabled: true,
       isLocked: false,
+      needsLongerPassword: false,
     });
   });
 
@@ -51,6 +55,7 @@ describe("appLockSlice", () => {
       hasPassword: true,
       biometricsEnabled: false,
       isLocked: true,
+      needsLongerPassword: false,
     });
 
     expect(reduce(locked, unlockApp()).isLocked).toBe(false);
@@ -97,6 +102,13 @@ describe("appLockSlice", () => {
       reduce(hydrated, hydrateAppLock({ hasPassword: false, biometricsEnabled: false }))
         .hasPassword,
     ).toBe(true);
+  });
+
+  it("records that the migrated password is too short to keep", () => {
+    const migrated = reduce(reduce(undefined, setHasPassword(true)), setNeedsLongerPassword(true));
+
+    expect(migrated.needsLongerPassword).toBe(true);
+    expect(reduce(migrated, setNeedsLongerPassword(false)).needsLongerPassword).toBe(false);
   });
 
   it("releases a lock the removal raced, leaving nothing to unlock it", () => {
