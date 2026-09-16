@@ -251,6 +251,9 @@ jobs:
         run: |
           diff=$(git diff --exit-code > /dev/null && echo 0 || echo 1)
           echo "diff=$diff" >> $GITHUB_OUTPUT
+          if [ "$diff" = 1 ]; then
+            echo "::error::Generated ledgerjs documentation is out of date. Run 'pnpm exec nx run-many -t doc --projects=tag:scope:libs-ledgerjs' and commit the result."
+          fi
           exit $diff
 
   report:
@@ -296,7 +299,7 @@ jobs:
             };
 
             const summary = `### Test documentation files
-            ${statuses.doc.pass ? "Documentation files are fine" : "Documentation files are outdated"}
+            ${statuses.doc.pass ? "Documentation files are fine" : "Documentation files are outdated — run \`pnpm exec nx run-many -t doc --projects=tag:scope:libs-ledgerjs\` and commit the result"}
               - ${statuses.doc.pass ? "✅" : "❌"} **Test documentation files** ended with status \`${statuses.doc.status}\`
 
             ### Codecheck Libraries
@@ -314,22 +317,9 @@ jobs:
               - ${statuses.tests.pass ? "✅" : "❌"} **Test Libs** ended with status \`${statuses.tests.status}\`
             `;
 
-            const actions = [];
-
-            if (${{ needs.test-docs.outputs.fail == '1' }}) {
-              actions.push({
-                // 20 chars max
-                label: "Regen. Doc Files",
-                // 20 chars max
-                identifier: "regen_doc",
-                // 40 chars max
-                description: "Will regenerate doc files for ljs",
-              });
-            }
-
             const output = {
               summary,
-              actions
+              actions: [],
             };
 
             fs.writeFileSync("summary-libraries.json", JSON.stringify(output), "utf-8");
