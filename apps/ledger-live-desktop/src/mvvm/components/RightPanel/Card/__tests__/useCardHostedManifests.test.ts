@@ -32,7 +32,7 @@ describe("useCardHostedManifests", () => {
   it("falls back to the registered default ids", () => {
     renderHook(() => useCardHostedManifests());
 
-    expect(mockedManifest).toHaveBeenCalledWith("baanx-login-url");
-    expect(mockedManifest).toHaveBeenCalledWith("baanx-hosted-url");
+    expect(mockedManifest).toHaveBeenCalledWith("baanx-login-url-stg");
+    expect(mockedManifest).toHaveBeenCalledWith("baanx-hosted-url-stg");
   });
 });

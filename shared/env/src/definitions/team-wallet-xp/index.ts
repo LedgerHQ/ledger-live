@@ -42,12 +42,12 @@ const teamWalletXp = {
     desc: "Baanx hosted UI base URL; the intro opens its signup page in the secure browser",
   },
   CARD_BAANX_LOGIN_MANIFEST_ID: {
-    def: "baanx-login-url",
+    def: "baanx-login-url-stg",
     parser: stringParser,
     desc: "Live app manifest id that hosts the Baanx login page",
   },
   CARD_BAANX_HOSTED_MANIFEST_ID: {
-    def: "baanx-hosted-url",
+    def: "baanx-hosted-url-stg",
     parser: stringParser,
     desc: "Live app manifest id that hosts the Baanx card pages",
   },

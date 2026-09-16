@@ -25,11 +25,11 @@ const AUTHORIZE_URL =
 const LOGIN_MANIFEST_URL = "https://dev.api.baanx.test/v1/auth/oauth2/authorize";
 
 const CATALOG: Record<string, unknown> = {
-  "baanx-login-url": {
-    id: "baanx-login-url",
+  "baanx-login-url-stg": {
+    id: "baanx-login-url-stg",
     url: LOGIN_MANIFEST_URL,
   },
-  "baanx-hosted-url": { id: "baanx-hosted-url", url: "https://ledger.baanxapi.test" },
+  "baanx-hosted-url-stg": { id: "baanx-hosted-url-stg", url: "https://ledger.baanxapi.test" },
 };
 
 function manifestsFrom(catalog: Record<string, unknown>) {
@@ -75,12 +75,15 @@ describe("useCardHostedPageOpeners", () => {
 
       const answer = await act(async () => result.current.openHostedLogin(AUTHORIZE_URL));
 
-      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-login-url?returnTo=%2Fpaytab", {
-        state: {
-          goToURL:
-            "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/platform/baanx-login-url-stg?returnTo=%2Fpaytab",
+        {
+          state: {
+            goToURL:
+              "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
+          },
         },
-      });
+      );
       expect(answer).toEqual({ type: "pending" });
     });
 
@@ -134,12 +137,15 @@ describe("useCardHostedPageOpeners", () => {
       const error = await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
 
       expect(error).toBeNull();
-      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-login-url?returnTo=%2Fpaytab", {
-        state: {
-          goToURL:
-            "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/platform/baanx-login-url-stg?returnTo=%2Fpaytab",
+        {
+          state: {
+            goToURL:
+              "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
+          },
         },
-      });
+      );
     });
   });
 
@@ -149,9 +155,12 @@ describe("useCardHostedPageOpeners", () => {
 
       await run(() => result.current.openHostedPage("/kyc?step=2"));
 
-      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-hosted-url?returnTo=%2Fpaytab", {
-        state: { goToURL: "https://ledger.baanxapi.test/kyc?step=2" },
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
+        {
+          state: { goToURL: "https://ledger.baanxapi.test/kyc?step=2" },
+        },
+      );
       // The hosted page runs on the session the signed-in user already holds.
       expect(mockedInvoke).not.toHaveBeenCalled();
     });
@@ -161,9 +170,12 @@ describe("useCardHostedPageOpeners", () => {
 
       await run(() => result.current.openHostedPage("/onboarding/signup"));
 
-      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-hosted-url?returnTo=%2Fpaytab", {
-        state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" },
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
+        {
+          state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" },
+        },
+      );
     });
 
     it("ends the provider session on the hosted manifest before it opens the signup", async () => {
@@ -200,9 +212,12 @@ describe("useCardHostedPageOpeners", () => {
       const error = await run(() => result.current.openHostedPage("/onboarding/signup"));
 
       expect(error).toBeNull();
-      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-hosted-url?returnTo=%2Fpaytab", {
-        state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" },
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
+        {
+          state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" },
+        },
+      );
     });
 
     it("takes the hosted manifest id the env carries", async () => {
