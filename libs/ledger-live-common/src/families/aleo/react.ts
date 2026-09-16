@@ -786,6 +786,8 @@ export type AleoStakingPositionView = {
   validatorLabel: string;
   nonEarningReason: AleoNonEarningReason | undefined;
   estimatedRate: number | undefined;
+  validatorsLoading: boolean;
+  validatorsError: Error | null;
   unbondingBalance: BigNumber;
   unbondingHeight: number | null;
   claimableBalance: BigNumber;
@@ -839,6 +841,8 @@ export function useAleoStakingPosition(account: AleoAccount): AleoStakingPositio
       validatorLabel: validator?.name || bondedValidator || "",
       nonEarningReason,
       estimatedRate: nonEarningReason ? 0 : validator?.estimatedYearlyRewardsRate,
+      validatorsLoading: loading,
+      validatorsError: error,
       unbondingBalance,
       unbondingHeight: account.aleoResources?.unbondingHeight ?? null,
       claimableBalance: getClaimableStakingBalance(account),
@@ -850,7 +854,7 @@ export function useAleoStakingPosition(account: AleoAccount): AleoStakingPositio
       hasPendingUnbondingChange: hasPendingUnbond || hasPendingClaim,
       pendingKind,
     };
-  }, [account, bondedValidator, validator, committeeRead]);
+  }, [account, bondedValidator, validator, committeeRead, loading, error]);
 }
 
 /**
