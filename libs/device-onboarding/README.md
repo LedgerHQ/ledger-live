@@ -3,63 +3,66 @@
 > [!CAUTION]
 > **Status: UNSTABLE** — The shared onboarding API is under active development.
 
-Headless device-onboarding contracts and state-machine actors shared by Ledger Wallet Desktop
-and Ledger Wallet Mobile.
+Headless device onboarding shared by Ledger Wallet Desktop and Ledger Wallet Mobile. It drives a
+device from the moment the app has a DMK session on it to the moment the app knows what to open
+next, and contains no React, screens, navigation or transport of its own.
 
-## Boundaries
+Design and rationale live in the [technical plan](https://ledgerhq.atlassian.net/wiki/spaces/Engagement/pages/7354843176/1+Device+onboarding+shared+logic).
 
-The package owns device interactions and routing decisions. It contains no React, screens,
-navigation, analytics, or platform transport implementation. Each app supplies
-`DeviceOnboardingPorts`; the package never imports `live-dmk-desktop`, `live-dmk-mobile`, or a
-legacy onboarding flow.
+## What it does
 
-The app owns the DMK session lifecycle. It opens the session before starting the machine,
-passes the DMK instance into the machine, reconnects after a transport loss, and keeps the
-session open when the machine exits.
+- Reads the device and routes it: the legacy flow, the pre-seed checks, or an interrupted update
+- Runs the mandatory genuine check and the firmware check, and offers an available update
+- Shows the on-device waiting screen to an unseeded touchscreen while the checks run
+- Hands the OS update over to the app's own update flow, then re-reads the device
+- Handles a lock, a transport loss and a quit from any state
+- Reports where it got to, on a live session the app keeps using
 
-## Public API
+## Driving the machine
 
-- `DeviceOnboardingPorts` defines session lifecycle and legacy firmware-update boundaries.
-- `OnboardingEvent`, `DeviceOnboardingInput`, and `DeviceOnboardingContext` define the language
-  used by the future state machine.
-- `DeviceOnboardingOutput` identifies the connected device and the reason the machine exited.
-- `sessionListener` maps DMK session status changes to onboarding events.
-- `readDeviceState`, `genuineCheck`, `firmwareCheck`, `toggleEarlyCheck`, and `seedPolling` are the
-  actors the machine invokes to interrogate the device. Each reports through events only.
-- `withRetries` and `createRetryPolicy` back the retries of the first three, so a failure event
-  from them means the retries are exhausted. An actor accepts a `retryPolicy` to override them.
-- `ToggleEarlyCheckCommand` carries the `e0 03` APDU. DMK exposes no such command and the ticket
-  that was to add one was abandoned, so this is the one piece of device knowledge the package
-  holds on its own. It is meant to be deleted, not built on: import DMK's command once it ships.
+The app opens a DMK session, starts the machine on that device, and subscribes to it.
 
-`readDeviceState` reports `DEVICE_STATE_UNREADABLE` rather than a failure when the onboarding step
-is missing, since `isOnboarded` stays usable, and `seedPolling` stays quiet in that case. The
-catalogue version of DMK decodes no step, so that is the answer for every device until it does.
+```ts
+const actor = createActor(deviceOnboardingMachine, {
+  input: { dmk, ports, deviceId, deviceModelId, offerSync },
+}).start();
+```
 
-The step names in `OnboardingStep` are DMK's own, so reading one is a membership check and this
-package holds no copy of the decoding. The seed word count is validated the same way, against the
-three lengths the product supports.
+Screens render the current state and send the user's events: `CONTINUE`, `RETRY`, `SKIP`, `CLOSE`,
+`QUIT`, `USER_ACCEPT`, `USER_DECLINE`. The app pushes in what it alone observes: `LOCKED`,
+`UNLOCKED`, `TRANSPORT_LOST` and `SESSION_READY` from `sessionListener`, and
+`FIRMWARE_UPDATE_FLOW_CLOSED` when its OS update flow returns control.
 
-Every genuine check failure carries the raw failure DMK returned, as `FIRMWARE_UPDATE_AVAILABLE`
-carries `update`. The machine never reads it: `genuineFailed` is one state but not one screen, and
-an unreachable backend and a forced My Ledger provider both arrive as an `HttpFetchApiError`, so
-only the app, which holds the provider setting, can resolve which drawer to open.
+The app owns the session for the whole run — it opens it, reconnects after a transport loss, and
+keeps it open when the machine exits. The machine only reads `currentSessionId()`, and re-reads it
+on every device call, so a reconnection needs no restart.
 
-`toggleEarlyCheck` never fails: the on-device screen is a courtesy, so a device that left the
-welcome step, a firmware that does not know the APDU and a transport error all report
-`EARLY_CHECK_UNAVAILABLE` and leave the checks themselves still to run.
+The machine exits with the session id, the device, and one reason: `legacyFallback`,
+`resumeFirmwareUpdate`, `userQuit`, `offerLedgerSync` or `completed`.
 
-## What `src/device/` holds
+## Key exports / concepts
 
-Four files, none of them onboarding policy, each of them shared by two actors so that inlining one
-would mean writing it twice. `onboardingState.ts` sends `GetOsVersion` and reads the answer as a
-`DeviceOnboardingState`, answering `null` for as long as the onboarding step and the seed progress
-are absent from DMK's response type, and compares two of them for the poller. `deviceAction.ts`
-turns a device action, an observable of intermediate states, into the promise the retry helper can
-wrap. `errors.ts` tells a refusal, a lost secure channel and an unreachable catalogue apart by tag,
-since `HttpFetchApiError` and `WebSocketConnectionError` are not on DMK's barrel.
-`toggleEarlyCheckCommand.ts` is the `e0 03` command itself. Keeping them here is what lets
-`src/actors/` read as onboarding policy alone.
+- `deviceOnboardingMachine` — the flow. `machine.ts` is the graph, `context.ts` the bookkeeping
+- `DeviceOnboardingPorts` — the session lifecycle each app implements, and nothing else
+- `OnboardingEvent`, `DeviceOnboardingInput`, `DeviceOnboardingContext`, `DeviceOnboardingOutput` —
+  the language the machine and the screens speak
+- `rules.ts` — the pure decisions the transitions ask. Only the Nano SP and Nano X have a firmware
+  floor; the Nano S always takes the legacy flow
+- `actors/` — the only code that talks to the device: `readDeviceState`, `genuineCheck`,
+  `firmwareCheck`, `toggleEarlyCheck`, `seedPolling`. Each reports through events only
+- `withRetries`, `createRetryPolicy` — back the retries of the first three, so a failure event from
+  them means the retries are exhausted
+- `sessionListener` — maps DMK session status changes to onboarding events. The app owns the
+  subscription, since it owns the session
+- `ToggleEarlyCheckCommand` — the `e0 03` APDU, which DMK exposes no command for. Import DMK's own
+  once it ships
+- `device/` — what two actors each share, kept out of `actors/` so those read as onboarding policy
+
+## Usage context
+
+Consumed by `apps/ledger-live-desktop` and `apps/ledger-live-mobile`, which supply the port and
+render the screens. The package imports neither app, nor `live-dmk-desktop`, `live-dmk-mobile`, or
+any legacy onboarding flow.
 
 ## Validation
 
