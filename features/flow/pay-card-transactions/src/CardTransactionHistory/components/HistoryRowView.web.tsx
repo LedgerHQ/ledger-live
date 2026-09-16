@@ -11,21 +11,17 @@ import {
   TooltipTrigger,
 } from "@ledgerhq/lumen-ui-react";
 import { Information } from "@ledgerhq/lumen-ui-react/symbols";
-import type { CardTransactionFormatters, CardTransactionItem } from "../../types";
 import { StatusIcon } from "./StatusIcon";
-import { useHistoryRowViewModel } from "./useHistoryRowViewModel";
+import type { HistoryRowViewModel } from "./useHistoryRowViewModel";
 
-type HistoryRowProps = Readonly<{
-  item: CardTransactionItem;
-  formatters?: CardTransactionFormatters;
-  onRowClick: (item: CardTransactionItem) => void;
-}>;
+type HistoryRowViewProps = HistoryRowViewModel &
+  Readonly<{
+    onRowClick: () => void;
+  }>;
 
-export function HistoryRow({ item, formatters, onRowClick }: HistoryRowProps) {
-  const row = useHistoryRowViewModel(item, formatters);
-
+export function HistoryRowView({ onRowClick, ...row }: HistoryRowViewProps) {
   return (
-    <TableRow clickable onClick={() => onRowClick(item)} data-testid={`card-history-row-${row.id}`}>
+    <TableRow clickable onClick={onRowClick} data-testid={`card-history-row-${row.id}`}>
       <TableCell>
         <TableCellItem>
           <StatusIcon
