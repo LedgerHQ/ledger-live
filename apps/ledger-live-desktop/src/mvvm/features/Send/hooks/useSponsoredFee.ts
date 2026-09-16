@@ -151,7 +151,13 @@ export function useSponsoredFee({
         if (ignore) return;
         setQuote(result);
       } catch {
-        if (!ignore) setQuote(null);
+        // A failed quote leaves no basis for the amount flow to clear the native-fee error, so a
+        // low-TRX account could select Tronify and then dead-end at a disabled Review. Withdraw the
+        // option (not just the quote); the standard fee path always works (ADR-050).
+        if (!ignore) {
+          setAvailable(false);
+          setQuote(null);
+        }
       } finally {
         if (!ignore) setLoading(false);
       }

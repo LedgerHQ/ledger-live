@@ -86,10 +86,17 @@ describe("useFeePaymentViewModel", () => {
     expect(tronify?.savingsLabel).toBeNull();
   });
 
-  it("interpolates the fee currency ticker into the disclaimer", () => {
+  it("interpolates the fee currency ticker into the disclaimer when Tronify is selected", () => {
+    mockSponsoredSend.selectedFeeOptionId = "tronify";
     const { result } = renderHook(() => useFeePaymentViewModel());
 
     expect(result.current.disclaimer).toContain("TRX");
     expect(result.current.disclaimer).not.toContain("USDT");
+  });
+
+  it("shows no disclaimer for the Regular option (the Tronify fee copy does not apply)", () => {
+    const { result } = renderHook(() => useFeePaymentViewModel());
+
+    expect(result.current.disclaimer).toBe("");
   });
 });

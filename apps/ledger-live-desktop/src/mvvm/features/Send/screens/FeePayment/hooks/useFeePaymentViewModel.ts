@@ -73,7 +73,12 @@ export function useFeePaymentViewModel(): FeePaymentViewModel {
   return {
     title: t("newSendFlow.feePayment.title"),
     options,
-    disclaimer: t("newSendFlow.feePayment.disclaimer", { feeCurrency: feeCurrencyTicker }),
+    // The disclaimer names Tronify (the third-party energy provider), so it only applies to that
+    // option — the Regular option pays no Tronify fee. Empty otherwise; the view drops the element.
+    disclaimer:
+      selectedFeeOptionId === "tronify"
+        ? t("newSendFlow.feePayment.disclaimer", { feeCurrency: feeCurrencyTicker })
+        : "",
     onSelect,
   };
 }

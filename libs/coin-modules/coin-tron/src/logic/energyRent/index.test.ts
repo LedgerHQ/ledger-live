@@ -1,4 +1,4 @@
-import coinConfig from "../../config";
+import coinConfig, { type TronCoinConfig } from "../../config";
 import {
   addTronRentRecord,
   myPayOrder,
@@ -21,6 +21,9 @@ import {
 } from "./index";
 
 jest.mock("../../network/tronify", () => ({
+  // Keep the real getTronifyConfig (reads coin-config the tests set) so getEnergyProvider's
+  // configuration gate is exercised for real; only the network calls are stubbed.
+  ...jest.requireActual("../../network/tronify"),
   queryPreorderInfo: jest.fn(),
   addTronRentRecord: jest.fn(),
   uploadHash: jest.fn(),
@@ -81,6 +84,25 @@ describe("energyRent provider switch", () => {
         status: { type: "active" },
         explorer: { url: "https://tron.coin.ledger.com" },
       }));
+      expect(() => getEnergyProvider()).toThrow(EnergyRentProviderNotConfigured);
+    });
+
+    // Remote coin-config is unvalidated: a provider named "tronify" whose nested settings are absent
+    // or incomplete must not resolve, or the raw-signing gate would open with no configured provider.
+    it.each([
+      ["the tronify settings are absent", undefined],
+      ["the tronify settings are empty", {}],
+      ["the url is missing", { sourceFlag: "ll" }],
+      ["the sourceFlag is missing", { url: "https://open.tronify.io" }],
+    ])("throws when %s", (_label, tronify) => {
+      coinConfig.setCoinConfig(
+        () =>
+          ({
+            status: { type: "active" },
+            explorer: { url: "https://tron.coin.ledger.com" },
+            energyRent: { provider: "tronify", tronify },
+          }) as unknown as TronCoinConfig,
+      );
       expect(() => getEnergyProvider()).toThrow(EnergyRentProviderNotConfigured);
     });
   });
@@ -171,7 +193,7 @@ describe("energyRent provider switch", () => {
 
   describe("craftEnergyRentTransaction", () => {
     it("returns the order id, unsigned transaction and payment amount", async () => {
-      const transaction = { visible: false, txID: "abc", raw_data: {}, raw_data_hex: "0x" };
+      const transaction = { visible: false, txID: "abc", raw_data: {}, raw_data_hex: "abcd" };
       mockedAddTronRentRecord.mockResolvedValueOnce({
         orderId: "order-1",
         transaction,
@@ -195,7 +217,7 @@ describe("energyRent provider switch", () => {
 
     const orderCosting = (payCoinAmt: string, payCoinCode = "TRX") => ({
       orderId: "order-1",
-      transaction: { visible: false, txID: "abc", raw_data: {}, raw_data_hex: "0x" },
+      transaction: { visible: false, txID: "abc", raw_data: {}, raw_data_hex: "abcd" },
       payCoinCode,
       payCoinAmt,
       purchaseEnergyFee: "3",
@@ -246,6 +268,30 @@ describe("energyRent provider switch", () => {
       await expect(
         craftEnergyRentTransaction({ ...request, maxPayCoinAmt: "12.5" }),
       ).rejects.toBeInstanceOf(TronifyApiError);
+    });
+
+    it.each([
+      ["a missing transaction", { ...orderCosting("1.0"), transaction: {} }],
+      [
+        "a non-hex raw_data_hex",
+        {
+          ...orderCosting("1.0"),
+          transaction: { txID: "abc", raw_data: {}, raw_data_hex: "nothex" },
+        },
+      ],
+      [
+        "an empty txID",
+        { ...orderCosting("1.0"), transaction: { txID: "", raw_data: {}, raw_data_hex: "abcd" } },
+      ],
+      [
+        "a missing raw_data",
+        { ...orderCosting("1.0"), transaction: { txID: "abc", raw_data_hex: "abcd" } },
+      ],
+      ["an empty orderId", { ...orderCosting("1.0"), orderId: "" }],
+    ])("rejects an order with %s (no signable payment)", async (_label, malformed) => {
+      mockedAddTronRentRecord.mockResolvedValueOnce(malformed as never);
+
+      await expect(craftEnergyRentTransaction(request)).rejects.toBeInstanceOf(TronifyApiError);
     });
   });
 

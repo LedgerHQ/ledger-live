@@ -8,6 +8,7 @@ import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useRawTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
+import { isContractDataDisabledError } from "../../../utils/contractDataError";
 
 /**
  * Structural mirror of coin-tron's Tronify wire types (network/tronify/types.ts). Declared locally
@@ -43,17 +44,6 @@ export type SponsoredRentSignatureResult =
  */
 export function recoverDeviceSignature(rawDataHex: string, combinedSignature: string): string {
   return combinedSignature.slice(4 + rawDataHex.length);
-}
-
-/**
- * TRON has no named "contract data disabled" error (hw-app-trx only stubs status 0x6a80); match the
- * raw status code the same way the existing 0x6985 user-reject case is matched in hw/actions/transaction.ts.
- */
-function isContractDataDisabledError(error: Error): boolean {
-  return (
-    (error as { name?: string }).name === "TransportStatusError" &&
-    (error as { statusCode?: number }).statusCode === 0x6a80
-  );
 }
 
 export type SponsoredRentSignatureViewModel = Readonly<{
