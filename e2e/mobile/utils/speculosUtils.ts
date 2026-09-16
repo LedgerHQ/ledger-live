@@ -299,7 +299,9 @@ export async function takeSpeculosScreenshot() {
 
 export async function registerSpeculos(speculosPort: number) {
   const speculosAddress = process.env.SPECULOS_ADDRESS;
-  await device.reverseTcpPort(speculosPort);
+  if (!isSpeculosRemote()) {
+    await device.reverseTcpPort(speculosPort);
+  }
   process.env.SPECULOS_API_PORT = speculosPort.toString();
   delete process.env.DEVICE_PROXY_URL;
   CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
@@ -355,10 +357,12 @@ export async function registerKnownSpeculos(speculosPort: number) {
 export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string) {
   const speculosPort = await deleteSpeculos(deviceId);
   if (speculosPort) {
-    try {
-      await device.unreverseTcpPort(speculosPort);
-    } catch (e) {
-      log.warn(`unreverseTcpPort(${speculosPort}) failed: ${sanitizeError(e)}`);
+    if (!isSpeculosRemote()) {
+      try {
+        await device.unreverseTcpPort(speculosPort);
+      } catch (e) {
+        log.warn(`unreverseTcpPort(${speculosPort}) failed: ${sanitizeError(e)}`);
+      }
     }
     await removeKnownSpeculos(getKnownSpeculosAddress(speculosPort));
     await waitForBridgeEnv("DEVICE_PROXY_URL", "");
