@@ -6,6 +6,7 @@ import { mobileWallet } from "./mobileWallet.native";
 import type { CardLoginProps } from "./types";
 
 export function CardLogin({
+  children,
   oauthConfig,
   callback,
   openHostedLogin,
@@ -21,5 +22,5 @@ export function CardLogin({
     onTrackEvent,
   });
 
-  return login ? <CardLoginView {...login} /> : null;
+  return login ? <CardLoginView {...login}>{children}</CardLoginView> : <>{children}</>;
 }

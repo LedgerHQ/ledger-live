@@ -1,3 +1,5 @@
+import type { ComponentProps, ReactNode } from "react";
+import type { InfoState } from "@shared/ui-info-state";
 import type {
   CardLoginOauthConfig,
   OpenCardHostedPage,
@@ -8,6 +10,8 @@ import type {
 export type PayCardLoginTrackEvent = (event: string, params: Record<string, unknown>) => void;
 
 export type CardLoginProps = {
+  /** What the login shows beside itself while no error holds the panel. */
+  readonly children?: ReactNode;
   readonly oauthConfig: CardLoginOauthConfig;
   /**
    * The redirect the app received, when it has one. The app's router owns the deep link, so it hands
@@ -62,10 +66,31 @@ export type CardLoginCopy = Readonly<{
   alreadyHaveCardLabel: string | null;
 }>;
 
+/** The spot icon each platform hands the panel, from its own Lumen symbols. */
+export type CardAuthErrorIcon = Extract<
+  ComponentProps<typeof InfoState>,
+  { preset: "spot" }
+>["spotProps"]["icon"];
+
+/** What the panel says. The icon is the view's to supply, because its type is per platform. */
+export type CardAuthErrorCopy = Readonly<{
+  title: string;
+  description: string;
+  ctaLabel: string;
+  onRetry: () => void;
+}>;
+
+export type CardAuthErrorProps = CardAuthErrorCopy & {
+  readonly icon: CardAuthErrorIcon;
+  readonly children?: ReactNode;
+};
+
 export type CardLoginViewProps = CardLoginCopy & {
   /** True while the machine works. The login action is not pressable then. */
   readonly isLoading: boolean;
-  readonly errorMessage: string | null;
+  /** Set when the panel owns the screen. It replaces the login block and `children` together. */
+  readonly error: CardAuthErrorCopy | null;
+  readonly children?: ReactNode;
   readonly onLoginPress: () => void;
   readonly onAlreadyHaveCardPress: () => void;
   readonly intro: CardLoginIntroViewProps;

@@ -1,5 +1,7 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
+import { NetworkWarning } from "@ledgerhq/lumen-ui-react/symbols";
+import { CardAuthError } from "./CardAuthError";
 import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
 
@@ -9,13 +11,19 @@ export function CardLoginView({
   loginLabel,
   alreadyHaveCardLabel,
   isLoading,
-  errorMessage,
+  error,
+  children,
   onLoginPress,
   onAlreadyHaveCardPress,
   intro,
 }: CardLoginViewProps) {
+  if (error) {
+    return <CardAuthError icon={NetworkWarning} {...error} />;
+  }
+
   return (
     <>
+      {children}
       <div className="flex flex-col gap-24 text-center">
         <div className="flex flex-col gap-12">
           <h2 className="heading-2-semi-bold text-base">{headline}</h2>
@@ -43,7 +51,6 @@ export function CardLoginView({
               {alreadyHaveCardLabel}
             </Button>
           ) : null}
-          {errorMessage ? <span className="body-3 text-error">{errorMessage}</span> : null}
         </div>
       </div>
       <CardLoginIntroView {...intro} />

@@ -5,6 +5,7 @@ import { CardLoginView } from "../CardLoginView.native";
 import type { CardLoginIntroViewProps } from "../types";
 
 jest.mock("@shared/ui-queued-bottom-sheet", () => ({
+  ...jest.requireActual("@shared/ui-queued-bottom-sheet"),
   QueuedBottomSheet: ({ children, testID }: { children: React.ReactNode; testID?: string }) => (
     <View testID={testID}>{children}</View>
   ),
@@ -26,7 +27,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   description: "Log in to access your card",
   loginLabel: "Login",
   isLoading: false,
-  errorMessage: null,
+  error: null,
   onLoginPress: jest.fn(),
   intro,
 };
@@ -67,9 +68,17 @@ describe("CardLoginView (Native)", () => {
     expect(onLoginPress).toHaveBeenCalledTimes(1);
   });
 
-  it("should render a login error when provided", () => {
-    renderCardLoginView({ errorMessage: "Unable to start login. Please try again." });
+  it("should replace the login block with the error panel", () => {
+    renderCardLoginView({
+      error: {
+        title: "Login could not start",
+        description: "Please try again.",
+        ctaLabel: "Try again",
+        onRetry: jest.fn(),
+      },
+    });
 
-    expect(screen.getByText("Unable to start login. Please try again.")).toBeTruthy();
+    expect(screen.getByText("Login could not start")).toBeTruthy();
+    expect(screen.queryByLabelText("Login")).toBeNull();
   });
 });

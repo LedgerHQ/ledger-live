@@ -6,8 +6,9 @@ import {
   SubheaderDescription,
   SubheaderRow,
   SubheaderTitle,
-  Text,
 } from "@ledgerhq/lumen-ui-rnative";
+import { NetworkWarning } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { CardAuthError } from "./CardAuthError";
 import { CardLoginIntroView } from "./CardLoginIntroView";
 import type { CardLoginViewProps } from "./types";
 
@@ -21,10 +22,15 @@ export function CardLoginView({
   description,
   loginLabel,
   isLoading,
-  errorMessage,
+  error,
+  children,
   onLoginPress,
   intro,
 }: CardLoginNativeViewProps) {
+  if (error) {
+    return <CardAuthError icon={NetworkWarning} {...error} />;
+  }
+
   return (
     <>
       <Box
@@ -51,12 +57,8 @@ export function CardLoginView({
             {loginLabel}
           </Button>
         </Box>
-        {errorMessage ? (
-          <Text typography="body3" lx={{ color: "error", alignSelf: "flex-end" }}>
-            {errorMessage}
-          </Text>
-        ) : null}
       </Box>
+      {children}
       <CardLoginIntroView {...intro} />
     </>
   );

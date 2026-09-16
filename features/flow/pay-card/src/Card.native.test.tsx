@@ -8,7 +8,9 @@ import { I18nWrapper } from "./__tests__/i18nWrapper";
 const mockUseCardAuthStatus = jest.fn<PayCardAuthStatus, []>();
 
 jest.mock("@features/flow-pay-card-auth", () => ({
-  CardLogin: () => <View testID="card-login" />,
+  CardLogin: ({ children }: { children?: React.ReactNode }) => (
+    <View testID="card-login">{children}</View>
+  ),
   useCardAuthStatus: () => mockUseCardAuthStatus(),
 }));
 

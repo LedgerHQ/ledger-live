@@ -10,7 +10,9 @@ let receivedTransactionFormatters: CardTransactionFormatters | undefined;
 let receivedTransactionTracker: CardProps["login"]["onTrackEvent"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
-  CardLogin: () => <div data-testid="card-login" />,
+  CardLogin: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="card-login">{children}</div>
+  ),
   useCardAuthStatus: () => mockStatus,
 }));
 

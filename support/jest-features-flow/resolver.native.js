@@ -1,4 +1,4 @@
-const NATIVE_FEATURE_PACKAGE_PATTERN = /^@features\//;
+const NATIVE_FEATURE_PACKAGE_PATTERN = /^@(features|shared)\//;
 
 module.exports = (request, options) => {
   const conditions = NATIVE_FEATURE_PACKAGE_PATTERN.test(request)

@@ -21,7 +21,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   loginLabel: "Login",
   alreadyHaveCardLabel: null,
   isLoading: false,
-  errorMessage: null,
+  error: null,
   onLoginPress: jest.fn(),
   onAlreadyHaveCardPress: jest.fn(),
   intro,
@@ -82,11 +82,17 @@ describe("CardLoginView (Web)", () => {
     expect(screen.queryByRole("button", { name: "I already have a card" })).toBeNull();
   });
 
-  it("should render a login error when provided", () => {
+  it("should replace the login block with the error panel", () => {
     renderCardLoginView({
-      errorMessage: "Unable to start login. Please try again.",
+      error: {
+        title: "Login could not start",
+        description: "Please try again.",
+        ctaLabel: "Try again",
+        onRetry: jest.fn(),
+      },
     });
 
-    expect(screen.getByText("Unable to start login. Please try again.")).toBeVisible();
+    expect(screen.getByText("Login could not start")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Login" })).toBeNull();
   });
 });

@@ -32,9 +32,9 @@ export function CardView({
         </>
       ) : (
         <>
-          <CardArtwork />
-
-          <CardLogin key={login.oauthConfig.apiUrl} {...login} />
+          <CardLogin key={login.oauthConfig.apiUrl} {...login}>
+            <CardArtwork />
+          </CardLogin>
         </>
       )}
     </section>
