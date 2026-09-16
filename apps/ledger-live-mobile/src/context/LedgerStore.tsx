@@ -107,7 +107,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         marketListConfigState,
         marketBannerState,
         payCardState,
-        trustchainStore,
+        trustchainProd,
+        trustchainStaging,
         walletStore,
         protect,
         initialCountervalues,
@@ -128,7 +129,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getMarketListConfig, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketBannerState, MAX_RETRIES, RETRY_DELAY),
         retry(getPayCardState, MAX_RETRIES, RETRY_DELAY),
-        retry(getTrustchainState, MAX_RETRIES, RETRY_DELAY),
+        retry(() => getTrustchainState("PROD"), MAX_RETRIES, RETRY_DELAY),
+        retry(() => getTrustchainState("STAGING"), MAX_RETRIES, RETRY_DELAY),
         retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY),
         retry(getProtect, MAX_RETRIES, RETRY_DELAY),
         retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
@@ -212,7 +214,9 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(restorePayCardOnboardingWidget(payCardState));
       }
 
-      store.dispatch(importTrustchainStoreState(trustchainStore));
+      store.dispatch(
+        importTrustchainStoreState({ PROD: trustchainProd, STAGING: trustchainStaging }),
+      );
 
       if (walletStore) {
         importWalletState(walletStore)(store.dispatch);

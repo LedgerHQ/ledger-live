@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type {
   MemberCredentials,
   Trustchain,
@@ -42,6 +42,12 @@ export function useTrustchainViewModel(props: TrustchainDevToolProps) {
     () => liveState?.trustchain ?? null,
   );
   const [members, setMembers] = useState<TrustchainMember[] | null>(null);
+
+  useEffect(() => {
+    setMemberCredentials(liveState?.memberCredentials ?? null);
+    setTrustchain(liveState?.trustchain ?? null);
+    setMembers(null);
+  }, [liveState?.memberCredentials, liveState?.trustchain, trustchainApiBaseUrl]);
 
   const writeMemberCredentials = useCallback(
     (mc: MemberCredentials | null) => {

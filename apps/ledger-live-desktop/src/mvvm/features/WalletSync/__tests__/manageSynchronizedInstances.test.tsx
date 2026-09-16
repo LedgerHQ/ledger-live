@@ -40,11 +40,14 @@ describe("manageSynchronizedInstances", () => {
           instances: INSTANCES,
         },
         trustchain: {
-          trustchain: simpleTrustChain,
-          memberCredentials: {
-            pubkey: "currentInstance",
-            privatekey: "privatekey",
+          PROD: {
+            trustchain: simpleTrustChain,
+            memberCredentials: {
+              pubkey: "currentInstance",
+              privatekey: "privatekey",
+            },
           },
+          STAGING: null,
         },
       },
     });

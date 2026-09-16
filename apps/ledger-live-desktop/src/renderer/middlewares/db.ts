@@ -15,9 +15,9 @@ import {
   exportWalletState,
 } from "~/renderer/reducers/wallet";
 import {
-  TrustchainHandlerType,
+  lkrpEnvironments,
   trustchainStoreActionTypePrefix,
-  trustchainStoreSelector,
+  trustchainStorageKey,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   extractPersistedCALFromState,
@@ -90,13 +90,16 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
   }
 
   if (action.type.startsWith(trustchainStoreActionTypePrefix)) {
+    const oldState = store.getState();
     const res = next(action);
-    const state = store.getState();
-    if (
-      action.type !== TrustchainHandlerType.TRUSTCHAIN_STORE_SET_ENVIRONMENT &&
-      !state.application.isLocked
-    ) {
-      setKey("app", "trustchain", trustchainStoreSelector(state));
+    const newState = store.getState();
+    if (!newState.application.isLocked) {
+      for (const environment of lkrpEnvironments) {
+        const record = newState.trustchain[environment];
+        if (record && record !== oldState.trustchain[environment]) {
+          setKey("app", trustchainStorageKey[environment], record);
+        }
+      }
     }
     return res;
   }

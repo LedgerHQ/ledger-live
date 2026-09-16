@@ -7,7 +7,13 @@ import { useTrustchainDevToolProps } from "./useTrustchainDevToolProps";
 const TRUSTCHAIN = { rootId: "root", walletSyncEncryptionKey: "key", applicationPath: "path" };
 const MEMBER_CREDENTIALS = { pubkey: "pub", privatekey: "priv" };
 
-function buildStore(trustchainState?: { trustchain: unknown; memberCredentials: unknown }) {
+type TrustchainState = {
+  environment?: "PROD" | "STAGING";
+  PROD: { trustchain: unknown; memberCredentials: unknown } | null;
+  STAGING: { trustchain: unknown; memberCredentials: unknown } | null;
+};
+
+function buildStore(trustchainState: TrustchainState = { PROD: null, STAGING: null }) {
   return configureStore({
     reducer: {
       trustchain: (state = trustchainState ?? null) => state,
@@ -33,11 +39,29 @@ describe("useTrustchainDevToolProps", () => {
   });
 
   it("should return trustchain and memberCredentials from store", () => {
-    const store = buildStore({ trustchain: TRUSTCHAIN, memberCredentials: MEMBER_CREDENTIALS });
+    const store = buildStore({
+      PROD: { trustchain: TRUSTCHAIN, memberCredentials: MEMBER_CREDENTIALS },
+      STAGING: null,
+    });
     const { result } = renderHook(
       () => useTrustchainDevToolProps(mockCreateSdk, "http://trustchain.test"),
       { wrapper: withStore(store) },
     );
+    expect(result.current.liveState!.trustchain).toEqual(TRUSTCHAIN);
+    expect(result.current.liveState!.memberCredentials).toEqual(MEMBER_CREDENTIALS);
+  });
+
+  it("should return trustchain and memberCredentials from the active environment", () => {
+    const store = buildStore({
+      environment: "STAGING",
+      PROD: null,
+      STAGING: { trustchain: TRUSTCHAIN, memberCredentials: MEMBER_CREDENTIALS },
+    });
+    const { result } = renderHook(
+      () => useTrustchainDevToolProps(mockCreateSdk, "http://trustchain.test"),
+      { wrapper: withStore(store) },
+    );
+
     expect(result.current.liveState!.trustchain).toEqual(TRUSTCHAIN);
     expect(result.current.liveState!.memberCredentials).toEqual(MEMBER_CREDENTIALS);
   });

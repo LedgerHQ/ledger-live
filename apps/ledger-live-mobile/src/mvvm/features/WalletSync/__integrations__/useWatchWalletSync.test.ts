@@ -16,10 +16,14 @@ const INITIAL_STATE = withFlagOverrides(
   state => ({
     ...state,
     trustchain: {
-      trustchain: simpleTrustChain,
-      memberCredentials: {
-        pubkey: "currentInstance",
-        privatekey: "privatekey",
+      environment: "STAGING",
+      PROD: state.trustchain.PROD,
+      STAGING: {
+        trustchain: simpleTrustChain,
+        memberCredentials: {
+          pubkey: "currentInstance",
+          privatekey: "privatekey",
+        },
       },
     },
     settings: {

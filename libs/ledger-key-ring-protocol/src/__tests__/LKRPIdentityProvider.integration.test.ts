@@ -5,7 +5,13 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import type { Challenge as ChallengeJson, WeakChallengeSignature } from "../api";
 import { LkrpIdentityProvider } from "../LKRPIdentityProvider";
-import { getInitialStore, importTrustchainStoreState, type TrustchainStore } from "../store";
+import {
+  getInitialStore,
+  importTrustchainStoreState,
+  trustchainHandlers,
+  trustchainStoreSelector,
+  type TrustchainState,
+} from "../store";
 import type { MemberCredentials } from "../types";
 import { credentialForPubKey, initMemberCredentials, liveAuthentication } from "../utils";
 import { CHALLENGE } from "../__mocks__/challenge";
@@ -72,13 +78,15 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
 
     const store = configureStore({
       reducer: {
-        trustchain: (
-          state = getInitialStore(),
-          action: { type: string; payload?: { trustchain?: TrustchainStore } },
-        ) => action.payload?.trustchain ?? state,
+        trustchain: (state: TrustchainState = getInitialStore(), action: { type: string }) => {
+          const handler = trustchainHandlers[action.type as keyof typeof trustchainHandlers];
+          return handler ? handler(state, action as never) : state;
+        },
       },
     });
-    const lkrpIdentityProvider = new LkrpIdentityProvider(() => store.getState().trustchain);
+    const lkrpIdentityProvider = new LkrpIdentityProvider(() =>
+      trustchainStoreSelector(store.getState()),
+    );
     const request = {
       challenge: { tlv: CHALLENGE.tlv, json: CHALLENGE.json },
       clientId: CLIENT_ID,
@@ -92,7 +100,9 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
     expect(endpoints.lkrpAuth).not.toHaveBeenCalled();
 
     store.dispatch(
-      importTrustchainStoreState({ trustchain: null, memberCredentials: MEMBER_CREDENTIALS }),
+      importTrustchainStoreState({
+        PROD: { trustchain: null, memberCredentials: MEMBER_CREDENTIALS },
+      }),
     );
     await lkrpIdentityProvider.authenticate(request);
     expect(await endpoints.lkrpAuth.mock.calls[0][0].request.json()).toHaveProperty(
@@ -102,7 +112,9 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
 
     const updatedMemberCredentials = initMemberCredentials();
     store.dispatch(
-      importTrustchainStoreState({ trustchain: null, memberCredentials: updatedMemberCredentials }),
+      importTrustchainStoreState({
+        PROD: { trustchain: null, memberCredentials: updatedMemberCredentials },
+      }),
     );
     await lkrpIdentityProvider.authenticate(request);
     expect(await endpoints.lkrpAuth.mock.calls[1][0].request.json()).toHaveProperty(

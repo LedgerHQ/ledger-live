@@ -8,6 +8,7 @@ import {
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@shared/env";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import { selectContacts } from "@domain/entity-contact";
 import { buildContactsGlobalProperties } from "@features/platform-contacts";
@@ -93,7 +94,7 @@ const getLedgerSyncAttributes = (state: State) => {
 
   return {
     hasLedgerSync: !!walletSync?.enabled,
-    ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+    ledgerSyncActivated: !!trustchainSelector(state)?.rootId,
     ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
   };
 };

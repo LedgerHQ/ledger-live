@@ -134,14 +134,16 @@ describe("useEntryPoint", () => {
         ...INITIAL_STATE,
         trustchain: {
           ...INITIAL_STATE.trustchain,
-          trustchain: {
-            rootId: "rootId",
-            applicationPath: "applicationPath",
-            walletSyncEncryptionKey: "walletSyncEncryptionKey",
-          },
-          memberCredentials: {
-            privatekey: "privatekey",
-            pubkey: "pubkey",
+          STAGING: {
+            trustchain: {
+              rootId: "rootId",
+              applicationPath: "applicationPath",
+              walletSyncEncryptionKey: "walletSyncEncryptionKey",
+            },
+            memberCredentials: {
+              privatekey: "privatekey",
+              pubkey: "pubkey",
+            },
           },
         },
       },
@@ -156,14 +158,16 @@ describe("useEntryPoint", () => {
         ...INITIAL_STATE,
         trustchain: {
           ...INITIAL_STATE.trustchain,
-          trustchain: {
-            rootId: "rootId",
-            applicationPath: "applicationPath",
-            walletSyncEncryptionKey: "walletSyncEncryptionKey",
-          },
-          memberCredentials: {
-            privatekey: "privatekey",
-            pubkey: "pubkey",
+          STAGING: {
+            trustchain: {
+              rootId: "rootId",
+              applicationPath: "applicationPath",
+              walletSyncEncryptionKey: "walletSyncEncryptionKey",
+            },
+            memberCredentials: {
+              privatekey: "privatekey",
+              pubkey: "pubkey",
+            },
           },
         },
       },

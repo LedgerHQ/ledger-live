@@ -6,6 +6,7 @@ import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import {
   lkrpEnvironmentSelector,
+  trustchainStoreSelector,
   type TrustchainStore,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
@@ -139,8 +140,8 @@ const customCreateStore = ({
                     disablePkce: true,
                   },
                   {
-                    provider: new LkrpIdentityProvider(
-                      (): TrustchainStore => store.getState().trustchain,
+                    provider: new LkrpIdentityProvider((): TrustchainStore =>
+                      trustchainStoreSelector(store.getState()),
                     ),
                   },
                 ),

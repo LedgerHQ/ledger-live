@@ -7,6 +7,7 @@ import { createClient, SegmentClient, UserTraits } from "@segment/analytics-reac
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   getFocusedRouteNameFromRoute,
   ParamListBase,
@@ -209,7 +210,7 @@ const getLedgerSyncAttributes = (state: State) => {
 
   return {
     hasLedgerSync: !!ledgerSync?.enabled,
-    ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+    ledgerSyncActivated: !!trustchainSelector(state)?.rootId,
     ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
   };
 };

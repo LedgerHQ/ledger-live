@@ -35,7 +35,11 @@ describe("ManageYourBackup", () => {
       initialState: {
         walletSync: walletSyncActivatedState,
         trustchain: {
-          trustchain: simpleTrustChain,
+          PROD: {
+            trustchain: simpleTrustChain,
+            memberCredentials: null,
+          },
+          STAGING: null,
         },
       },
     });

@@ -12,7 +12,7 @@ import {
   Trustchain,
   TrustchainMember,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { getInitialStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { INITIAL_TRUSTCHAIN_STORE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import useEnv from "../useEnv";
 import Expand from "./Expand";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
@@ -65,7 +65,7 @@ const App = () => {
     defaultContext.applicationId,
   );
 
-  const [trustchainState, setTrustchainState] = useState(getInitialStore);
+  const [trustchainState, setTrustchainState] = useState(INITIAL_TRUSTCHAIN_STORE);
   const { memberCredentials, trustchain } = trustchainState;
   const setMemberCredentials = useCallback(
     (memberCredentials: MemberCredentials | null) =>

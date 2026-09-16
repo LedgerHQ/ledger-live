@@ -125,6 +125,7 @@ describe("db (app namespace allow list + keepLegacy)", () => {
 
     const persisted = getWrittenData();
     expectEncryptedAttributes(persisted);
+    expect(persisted.trustchainStaging).toBeUndefined();
 
     readFileMock.mockResolvedValueOnce(appJson(persisted));
     db.init(testDir);
@@ -147,7 +148,29 @@ describe("db (app namespace allow list + keepLegacy)", () => {
 
     expect(await db.hasBeenDecrypted()).toBe(true);
     expect(typeof (await db.getKey("app", "trustchain", undefined))).toBe("object");
+    expect(await db.getKey("app", "trustchainStaging", undefined)).toBeUndefined();
     expect(typeof (await db.getKey("app", "wallet", undefined))).toBe("object");
+  });
+
+  it("encrypts and decrypts the staging trustchain when present", async () => {
+    const trustchainStaging = {
+      version: 1.1,
+      trustchain: null,
+      memberCredentials: { pubkey: "pubkey", privatekey: "privatekey" },
+    };
+    readFileMock.mockResolvedValueOnce(appJson({ settings: { loaded: true }, trustchainStaging }));
+    await db.load("app");
+
+    await db.setEncryptionKey("test-password");
+    const persisted = getWrittenData();
+    expect(typeof persisted.trustchainStaging).toBe("string");
+
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+    await db.load("app");
+    await db.setEncryptionKey("test-password");
+
+    expect(await db.getKey("app", "trustchainStaging", undefined)).toEqual(trustchainStaging);
   });
 
   it("uses in-memory values when encrypting paths that are already set", async () => {
@@ -173,6 +196,8 @@ describe("db (app namespace allow list + keepLegacy)", () => {
 
     await db.removeEncryptionKey();
 
-    expectUnencryptedAttributes(getWrittenData());
+    const persisted = getWrittenData();
+    expectUnencryptedAttributes(persisted);
+    expect(persisted.trustchainStaging).toBeUndefined();
   });
 });

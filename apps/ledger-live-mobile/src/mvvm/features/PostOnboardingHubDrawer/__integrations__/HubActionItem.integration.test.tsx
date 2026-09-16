@@ -25,10 +25,13 @@ function withLedgerSyncActive(state: State): State {
     ...state,
     trustchain: {
       ...state.trustchain,
-      trustchain: {
-        rootId: "rootId",
-        applicationPath: "applicationPath",
-        walletSyncEncryptionKey: "walletSyncEncryptionKey",
+      PROD: {
+        trustchain: {
+          rootId: "rootId",
+          applicationPath: "applicationPath",
+          walletSyncEncryptionKey: "walletSyncEncryptionKey",
+        },
+        memberCredentials: null,
       },
     },
   };

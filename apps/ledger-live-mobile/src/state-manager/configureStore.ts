@@ -6,6 +6,7 @@ import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import {
   lkrpEnvironmentSelector,
+  trustchainStoreSelector,
   type TrustchainStore,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import NetInfo from "@react-native-community/netinfo";
@@ -122,8 +123,8 @@ export const store = configureStore({
                   disablePkce: true,
                 },
                 {
-                  provider: new LkrpIdentityProvider(
-                    (): TrustchainStore => store.getState().trustchain,
+                  provider: new LkrpIdentityProvider((): TrustchainStore =>
+                    trustchainStoreSelector(store.getState()),
                   ),
                   createPkcePair: createPkcePairWithExpoCrypto,
                 },

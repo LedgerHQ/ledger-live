@@ -155,12 +155,15 @@ describe("useFinishOnboardingState", () => {
           postOnboardingInProgress: true,
         },
         trustchain: {
-          trustchain: {
-            rootId: "root-id",
-            applicationPath: "application-path",
-            walletSyncEncryptionKey: "encryption-key",
+          PROD: {
+            trustchain: {
+              rootId: "root-id",
+              applicationPath: "application-path",
+              walletSyncEncryptionKey: "encryption-key",
+            },
+            memberCredentials: null,
           },
-          memberCredentials: null,
+          STAGING: null,
         },
       },
     });

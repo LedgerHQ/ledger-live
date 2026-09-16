@@ -7,20 +7,43 @@
 import { MemberCredentialsSchema, type MemberCredentials, type Trustchain } from "./types";
 import { initMemberCredentials } from "./utils";
 
+export const TRUSTCHAIN_STORE_VERSION = 1.1;
+
 export type LkrpEnvironment = "STAGING" | "PROD";
 
 export type TrustchainStore = {
+  version?: number;
   trustchain: Trustchain | null;
   memberCredentials: MemberCredentials | null;
-  environment?: LkrpEnvironment;
 };
 
-export const INITIAL_STATE: TrustchainStore = {
+export type TrustchainState = {
+  environment?: LkrpEnvironment;
+  PROD: TrustchainStore | null;
+  STAGING: TrustchainStore | null;
+};
+
+export type PersistedTrustchainState = Pick<TrustchainState, "PROD" | "STAGING">;
+
+export const trustchainStorageKey = {
+  PROD: "trustchain",
+  STAGING: "trustchainStaging",
+} as const satisfies Record<LkrpEnvironment, string>;
+
+export const lkrpEnvironments = Object.keys(trustchainStorageKey) as LkrpEnvironment[];
+
+export const INITIAL_TRUSTCHAIN_STORE: TrustchainStore = {
+  version: TRUSTCHAIN_STORE_VERSION,
   trustchain: null,
   memberCredentials: null,
 };
 
-export const getInitialStore = (): TrustchainStore => {
+export const INITIAL_STATE: TrustchainState = {
+  PROD: null,
+  STAGING: null,
+};
+
+export const getInitialStore = (): TrustchainState => {
   return INITIAL_STATE;
 };
 
@@ -35,7 +58,7 @@ export enum TrustchainHandlerType {
 }
 
 export type TrustchainHandlersPayloads = {
-  TRUSTCHAIN_STORE_IMPORT_STATE: { trustchain: TrustchainStore };
+  TRUSTCHAIN_STORE_IMPORT_STATE: PersistedTrustchainState;
   TRUSTCHAIN_STORE_RESET: { memberCredentials: MemberCredentials };
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN: { trustchain: Trustchain };
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
@@ -50,40 +73,89 @@ type Handlers<State, Types, PreciseKey = true> = {
 };
 
 export type TrustchainHandlers<PreciseKey = true> = Handlers<
-  TrustchainStore,
+  TrustchainState,
   TrustchainHandlersPayloads,
   PreciseKey
 >;
 
+function initializeStagingState(state: TrustchainState): TrustchainState {
+  const { environment, PROD, STAGING } = state;
+
+  // STAGING is initialized only when the SDK selected it, PROD credentials are available,
+  // and no staging record was loaded from storage.
+  if (environment !== "STAGING" || !PROD || STAGING) return state;
+
+  // Version 1.1 migration
+  // Before storage was split, a staging trustchain could be stored under the production key.
+  if (PROD.trustchain && !PROD.version) {
+    const migrated = { ...PROD, version: TRUSTCHAIN_STORE_VERSION };
+    return { ...state, PROD: migrated, STAGING: migrated };
+  }
+
+  // A new staging environment reuses the local member identity but owns its trustchain data.
+  return {
+    ...state,
+    STAGING: {
+      version: TRUSTCHAIN_STORE_VERSION,
+      trustchain: null,
+      memberCredentials: PROD.memberCredentials,
+    },
+  };
+}
+
+function updateActiveStore(
+  state: TrustchainState,
+  update: (store: TrustchainStore) => TrustchainStore,
+): TrustchainState {
+  const environment = state.environment ?? "PROD";
+  const activeStore = state[environment];
+  if (!activeStore) return state;
+  return { ...state, [environment]: update(activeStore) };
+}
+
 export const trustchainHandlers: TrustchainHandlers = {
-  TRUSTCHAIN_STORE_IMPORT_STATE: (state, { payload: { trustchain } }) => {
-    return { ...trustchain, environment: state.environment };
+  TRUSTCHAIN_STORE_IMPORT_STATE: (state, { payload: { PROD, STAGING } }) => {
+    return initializeStagingState({ ...state, PROD, STAGING });
   },
-  TRUSTCHAIN_STORE_RESET: (state, { payload: { memberCredentials } }): TrustchainStore => {
-    return { ...state, trustchain: null, memberCredentials };
+  TRUSTCHAIN_STORE_RESET: (state, { payload: { memberCredentials } }) => {
+    return updateActiveStore(state, store => ({
+      ...store,
+      trustchain: null,
+      memberCredentials,
+    }));
   },
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN: (state, { payload: { trustchain } }) => {
-    return { ...state, trustchain };
+    return updateActiveStore(state, store => ({ ...store, trustchain }));
   },
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: (state, { payload: { memberCredentials } }) => {
-    return { ...state, memberCredentials };
+    return updateActiveStore(state, store => ({ ...store, memberCredentials }));
   },
   TRUSTCHAIN_STORE_SET_ENVIRONMENT: (state, { payload: { environment } }) => {
-    return { ...state, environment };
+    return initializeStagingState({ ...state, environment });
   },
 };
 
 // actions
 
-export const importTrustchainStoreState = (persistedState?: TrustchainStore) => ({
-  type: `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
-  payload: {
-    trustchain:
-      persistedState && MemberCredentialsSchema.safeParse(persistedState.memberCredentials).success
-        ? persistedState
-        : { ...INITIAL_STATE, memberCredentials: initMemberCredentials() },
-  },
-});
+function hasValidMemberCredentials(store: TrustchainStore | null | undefined) {
+  return MemberCredentialsSchema.safeParse(store?.memberCredentials).success;
+}
+
+export const importTrustchainStoreState = (persistedState?: Partial<PersistedTrustchainState>) => {
+  const PROD =
+    persistedState?.PROD && hasValidMemberCredentials(persistedState.PROD)
+      ? persistedState.PROD
+      : { ...INITIAL_TRUSTCHAIN_STORE, memberCredentials: initMemberCredentials() };
+  const STAGING =
+    persistedState?.STAGING && hasValidMemberCredentials(persistedState.STAGING)
+      ? persistedState.STAGING
+      : null;
+
+  return {
+    type: `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
+    payload: { PROD, STAGING },
+  };
+};
 
 export const resetTrustchainStore = () => ({
   type: `${trustchainStoreActionTypePrefix}RESET`,
@@ -110,20 +182,21 @@ export const setLkrpEnvironment = (environment: LkrpEnvironment) => ({
 // Local Selectors
 // FIXME: these are not actually local Selector, a localSelector takes a TrustchainStore in param. we will need to rework this.
 
-export const trustchainStoreSelector = (state: {
-  trustchain: TrustchainStore;
-}): TrustchainStore => ({
-  trustchain: state.trustchain.trustchain,
-  memberCredentials: state.trustchain.memberCredentials,
-});
+export const trustchainRecordSelector =
+  (environment: LkrpEnvironment) =>
+  (state: { trustchain: TrustchainState }): TrustchainStore | null =>
+    state.trustchain[environment];
 
-export const trustchainSelector = (state: { trustchain: TrustchainStore }): Trustchain | null =>
-  state.trustchain.trustchain;
+export const trustchainStoreSelector = (state: { trustchain: TrustchainState }): TrustchainStore =>
+  state.trustchain[state.trustchain.environment ?? "PROD"] ?? INITIAL_TRUSTCHAIN_STORE;
+
+export const trustchainSelector = (state: { trustchain: TrustchainState }): Trustchain | null =>
+  trustchainStoreSelector(state).trustchain;
 
 export const memberCredentialsSelector = (state: {
-  trustchain: TrustchainStore;
-}): MemberCredentials | null => state.trustchain.memberCredentials;
+  trustchain: TrustchainState;
+}): MemberCredentials | null => trustchainStoreSelector(state).memberCredentials;
 
 export const lkrpEnvironmentSelector = (state: {
-  trustchain: TrustchainStore;
+  trustchain: TrustchainState;
 }): LkrpEnvironment | null => state.trustchain.environment ?? null;

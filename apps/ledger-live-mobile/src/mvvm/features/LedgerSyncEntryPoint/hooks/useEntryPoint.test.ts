@@ -36,8 +36,9 @@ const entryPointsVisibleState = withFlagOverrides(
       ],
     },
     trustchain: {
-      trustchain: null,
-      memberCredentials: null,
+      environment: "STAGING",
+      PROD: null,
+      STAGING: null,
     },
   }),
 );
@@ -146,14 +147,16 @@ describe("useEntryPoint", () => {
           ...newState,
           trustchain: {
             ...newState.trustchain,
-            trustchain: {
-              rootId: "rootId",
-              applicationPath: "applicationPath",
-              walletSyncEncryptionKey: "walletSyncEncryptionKey",
-            },
-            memberCredentials: {
-              privatekey: "privatekey",
-              pubkey: "pubkey",
+            STAGING: {
+              trustchain: {
+                rootId: "rootId",
+                applicationPath: "applicationPath",
+                walletSyncEncryptionKey: "walletSyncEncryptionKey",
+              },
+              memberCredentials: {
+                privatekey: "privatekey",
+                pubkey: "pubkey",
+              },
             },
           },
         };
@@ -171,14 +174,16 @@ describe("useEntryPoint", () => {
           ...newState,
           trustchain: {
             ...newState.trustchain,
-            trustchain: {
-              rootId: "rootId",
-              applicationPath: "applicationPath",
-              walletSyncEncryptionKey: "walletSyncEncryptionKey",
-            },
-            memberCredentials: {
-              privatekey: "privatekey",
-              pubkey: "pubkey",
+            STAGING: {
+              trustchain: {
+                rootId: "rootId",
+                applicationPath: "applicationPath",
+                walletSyncEncryptionKey: "walletSyncEncryptionKey",
+              },
+              memberCredentials: {
+                privatekey: "privatekey",
+                pubkey: "pubkey",
+              },
             },
           },
         };

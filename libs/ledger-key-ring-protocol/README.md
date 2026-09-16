@@ -16,7 +16,7 @@ Ledger Key Ring Protocol layer.
 credentials:
 
 ```ts
-const provider = new LkrpIdentityProvider(() => store.getState().trustchain);
+const provider = new LkrpIdentityProvider(() => trustchainStoreSelector(store.getState()));
 ```
 
 The callback may return the credentials directly or as a promise, allowing headless

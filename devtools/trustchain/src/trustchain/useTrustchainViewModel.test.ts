@@ -74,4 +74,36 @@ describe("useTrustchainViewModel", () => {
     expect(result.current.trustchain).toEqual(trustchain);
     expect(result.current.memberCredentials).toEqual(memberCredentials);
   });
+
+  it("updates trustchain state when the active environment changes", () => {
+    const prodTrustchain = {
+      rootId: "prod-root",
+      walletSyncEncryptionKey: "prod-key",
+      applicationPath: "prod-path",
+    };
+    const stagingTrustchain = {
+      rootId: "staging-root",
+      walletSyncEncryptionKey: "staging-key",
+      applicationPath: "staging-path",
+    };
+    const prodCredentials = { pubkey: "prod-pub", privatekey: "prod-priv" };
+    const stagingCredentials = { pubkey: "staging-pub", privatekey: "staging-priv" };
+    const { result, rerender } = renderHook(({ props }) => useTrustchainViewModel(props), {
+      initialProps: {
+        props: buildProps({
+          liveState: { trustchain: prodTrustchain, memberCredentials: prodCredentials },
+        }),
+      },
+    });
+
+    rerender({
+      props: buildProps({
+        liveState: { trustchain: stagingTrustchain, memberCredentials: stagingCredentials },
+        trustchainApiBaseUrl: "http://trustchain.staging.test",
+      }),
+    });
+
+    expect(result.current.trustchain).toBe(stagingTrustchain);
+    expect(result.current.memberCredentials).toBe(stagingCredentials);
+  });
 });

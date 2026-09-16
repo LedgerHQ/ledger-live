@@ -1,6 +1,6 @@
 import {
   getInitialStore,
-  TrustchainStore,
+  TrustchainState,
   trustchainHandlers,
   TrustchainHandlersPayloads,
   TrustchainHandlers,
@@ -8,7 +8,7 @@ import {
 import { handleActions } from "redux-actions";
 
 export default handleActions<
-  TrustchainStore,
+  TrustchainState,
   TrustchainHandlersPayloads[keyof TrustchainHandlersPayloads]
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 >(trustchainHandlers as unknown as TrustchainHandlers<false>, getInitialStore());

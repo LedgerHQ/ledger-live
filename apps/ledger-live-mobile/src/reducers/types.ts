@@ -23,7 +23,7 @@ import {
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
 import type { WalletState } from "./wallet";
-import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import type { TrustchainState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/TabSection";
 import type { BorrowState } from "./borrow";
@@ -489,7 +489,7 @@ export type State = LLMRTKApiState & {
   payCardLoginIntro: PayCardLoginIntroState;
   settings: SettingsState;
   toasts: ToastState;
-  trustchain: TrustchainStore;
+  trustchain: TrustchainState;
   wallet: WalletState;
   walletconnect: WalletConnectState;
   walletSync: WalletSyncState;

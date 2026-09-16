@@ -36,8 +36,9 @@ export const INITIAL_STATE = {
     },
   }),
   trustchain: {
-    trustchain: null,
-    memberCredentials: null,
+    environment: "STAGING" as const,
+    PROD: null,
+    STAGING: null,
   },
 };
 

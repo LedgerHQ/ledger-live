@@ -3,6 +3,11 @@
 "@shared/auth": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
+"@ledgerhq/live-e2e-shared": minor
+"ledger-live-mobile-e2e-tests": minor
+"@devtools/bindings": minor
+"@devtools/trustchain": minor
+"@ledgerhq/web-tools": minor
 ---
 
-Move the LKRP environment state into the trustchain store
+Scope trustchain persistence by LKRP environment

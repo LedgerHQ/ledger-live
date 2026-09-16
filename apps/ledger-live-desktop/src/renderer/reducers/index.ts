@@ -16,7 +16,7 @@ import wallet from "./wallet";
 import type { WalletState } from "./wallet";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
-import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { TrustchainState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@shared/env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import modularDialog, { ModularDialogState } from "./modularDialog";
@@ -88,7 +88,7 @@ export type State = LLDRTKApiState & {
   onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
   settings: SettingsState;
-  trustchain: TrustchainStore;
+  trustchain: TrustchainState;
   UI: UIState;
   wallet: WalletState;
   walletSync: WalletSyncState;

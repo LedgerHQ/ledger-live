@@ -1,4 +1,8 @@
-import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  trustchainRecordSelector,
+  type LkrpEnvironment,
+  type TrustchainStore,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { largeScreenUpsellModalSelector } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { exportWalletState, walletStateExportShouldDiffer } from "~/reducers/wallet";
@@ -218,9 +222,16 @@ export const payCardDbSaveSliceSelector = createSelector(
 );
 const payCardPersistedNotEquals = (a: State, b: State) =>
   !isEqual(payCardPersistedSelector(a), payCardPersistedSelector(b));
-export const trustchainNotEquals = (a: State, b: State) =>
-  a.trustchain.trustchain !== b.trustchain.trustchain ||
-  a.trustchain.memberCredentials !== b.trustchain.memberCredentials;
+export const trustchainNotEquals = (environment: LkrpEnvironment) => (a: State, b: State) =>
+  a.trustchain[environment] !== b.trustchain[environment];
+const trustchainProdSelector = trustchainRecordSelector("PROD");
+const trustchainStagingSelector = trustchainRecordSelector("STAGING");
+const trustchainProdNotEquals = trustchainNotEquals("PROD");
+const trustchainStagingNotEquals = trustchainNotEquals("STAGING");
+const saveTrustchainProd = (store: TrustchainStore | null) =>
+  store ? saveTrustchainState("PROD", store) : Promise.resolve();
+const saveTrustchainStaging = (store: TrustchainStore | null) =>
+  store ? saveTrustchainState("STAGING", store) : Promise.resolve();
 const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
 
 const cryptoAssetsNotEquals = (a: State, b: State) =>
@@ -335,11 +346,20 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
-    stateSelector: (state: State) => state.trustchain,
-    save: saveTrustchainState,
+    stateSelector: trustchainProdSelector,
+    save: saveTrustchainProd,
     throttle: 500,
-    getChangesStats: trustchainNotEquals,
-    lense: trustchainStoreSelector,
+    getChangesStats: trustchainProdNotEquals,
+    lense: trustchainProdSelector,
+    saveAtStart: true,
+  });
+
+  useDBSaveEffect({
+    stateSelector: trustchainStagingSelector,
+    save: saveTrustchainStaging,
+    throttle: 500,
+    getChangesStats: trustchainStagingNotEquals,
+    lense: trustchainStagingSelector,
     saveAtStart: true,
   });
 

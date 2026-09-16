@@ -73,28 +73,54 @@ describe("payCardDbSaveSliceSelector (mobile save trigger)", () => {
 });
 
 describe("trustchainNotEquals (mobile save trigger)", () => {
-  const trustchain = {
+  const PROD = {
+    version: 1.1,
     trustchain: null,
     memberCredentials: null,
   };
-  const state = { trustchain } as unknown as State;
+  const state = {
+    trustchain: { environment: "PROD", PROD, STAGING: null },
+  } as unknown as State;
 
   it("does not re-trigger the save when only the LKRP environment changes", () => {
     const withEnvironment = {
-      trustchain: { ...trustchain, environment: "STAGING" },
+      trustchain: { environment: "STAGING", PROD, STAGING: null },
     } as unknown as State;
 
-    expect(trustchainNotEquals(state, withEnvironment)).toBe(false);
+    expect(trustchainNotEquals("PROD")(state, withEnvironment)).toBe(false);
+    expect(trustchainNotEquals("STAGING")(state, withEnvironment)).toBe(false);
   });
 
-  it("re-triggers the save when member credentials change", () => {
-    const withMemberCredentials = {
+  it("re-triggers only the PROD save when the PROD record changes", () => {
+    const withProdCredentials = {
       trustchain: {
-        ...trustchain,
-        memberCredentials: { pubkey: "pubkey", privatekey: "privatekey" },
+        environment: "PROD",
+        PROD: {
+          ...PROD,
+          memberCredentials: { pubkey: "pubkey", privatekey: "privatekey" },
+        },
+        STAGING: null,
       },
     } as unknown as State;
 
-    expect(trustchainNotEquals(state, withMemberCredentials)).toBe(true);
+    expect(trustchainNotEquals("PROD")(state, withProdCredentials)).toBe(true);
+    expect(trustchainNotEquals("STAGING")(state, withProdCredentials)).toBe(false);
+  });
+
+  it("re-triggers only the STAGING save when the STAGING record changes", () => {
+    const withStagingCredentials = {
+      trustchain: {
+        environment: "STAGING",
+        PROD,
+        STAGING: {
+          version: 1.1,
+          trustchain: null,
+          memberCredentials: { pubkey: "pubkey", privatekey: "privatekey" },
+        },
+      },
+    } as unknown as State;
+
+    expect(trustchainNotEquals("PROD")(state, withStagingCredentials)).toBe(false);
+    expect(trustchainNotEquals("STAGING")(state, withStagingCredentials)).toBe(true);
   });
 });

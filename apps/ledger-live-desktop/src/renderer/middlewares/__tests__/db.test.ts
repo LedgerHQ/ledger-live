@@ -28,14 +28,9 @@ jest.mock("~/renderer/reducers/wallet", () => ({
 }));
 
 jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
-  TrustchainHandlerType: {
-    TRUSTCHAIN_STORE_SET_ENVIRONMENT: "TRUSTCHAIN_STORE_SET_ENVIRONMENT",
-  },
+  lkrpEnvironments: ["PROD", "STAGING"],
   trustchainStoreActionTypePrefix: "TRUSTCHAIN_STORE_",
-  trustchainStoreSelector: jest.fn(state => ({
-    trustchain: state.trustchain.trustchain,
-    memberCredentials: state.trustchain.memberCredentials,
-  })),
+  trustchainStorageKey: { PROD: "trustchain", STAGING: "trustchainStaging" },
 }));
 
 jest.mock("@domain/api-currency-token", () => ({
@@ -348,35 +343,88 @@ describe("DBMiddleware - trustchain branch", () => {
   });
 
   it("persists the trustchain on TRUSTCHAIN_STORE_* actions when the app is unlocked", () => {
-    const state: FakeState = {
+    const PROD = {
+      version: 1.1,
+      trustchain: { rootId: "root-id" },
+      memberCredentials: { pubkey: "ab" },
+    };
+    const before: FakeState = {
       ...baseState(),
-      trustchain: { trustchain: { rootId: "root-id" }, memberCredentials: { pubkey: "ab" } },
+      trustchain: { PROD: null, STAGING: null },
+    };
+    const after: FakeState = {
+      ...before,
+      trustchain: { PROD, STAGING: null },
     };
 
-    runMiddleware([state, state], { type: "TRUSTCHAIN_STORE_IMPORT_STATE" });
+    runMiddleware([before, after], { type: "TRUSTCHAIN_STORE_IMPORT_STATE" });
 
-    expect(mockedSetKey).toHaveBeenCalledWith("app", "trustchain", state.trustchain);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "trustchain", PROD);
   });
 
   it("does not persist the trustchain when only the LKRP environment changes", () => {
-    const state = baseState();
+    const PROD = {
+      version: 1.1,
+      trustchain: { rootId: "root-id" },
+      memberCredentials: { pubkey: "ab" },
+    };
+    const before: FakeState = {
+      ...baseState(),
+      trustchain: { PROD, STAGING: null },
+    };
+    const after: FakeState = {
+      ...before,
+      trustchain: { environment: "PROD", PROD, STAGING: null },
+    };
 
-    runMiddleware([state, state], {
+    runMiddleware([before, after], {
       type: "TRUSTCHAIN_STORE_SET_ENVIRONMENT",
-      payload: { environment: "STAGING" },
+      payload: { environment: "PROD" },
     });
 
     expect(mockedSetKey).not.toHaveBeenCalled();
   });
 
-  it("does not persist the trustchain while the app is locked", () => {
-    const state: FakeState = {
+  it("persists both trustchain records when the environment action performs the migration", () => {
+    const legacy = {
+      trustchain: { rootId: "root-id" },
+      memberCredentials: { pubkey: "ab" },
+    };
+    const migrated = { ...legacy, version: 1.1 };
+    const before: FakeState = {
       ...baseState(),
-      application: { isLocked: true },
-      trustchain: { trustchain: null, memberCredentials: { pubkey: "ab" } },
+      trustchain: { PROD: legacy, STAGING: null },
+    };
+    const after: FakeState = {
+      ...before,
+      trustchain: { environment: "STAGING", PROD: migrated, STAGING: migrated },
     };
 
-    runMiddleware([state, state], { type: "TRUSTCHAIN_STORE_IMPORT_STATE" });
+    runMiddleware([before, after], {
+      type: "TRUSTCHAIN_STORE_SET_ENVIRONMENT",
+      payload: { environment: "STAGING" },
+    });
+
+    expect(mockedSetKey).toHaveBeenCalledTimes(2);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "trustchain", migrated);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "trustchainStaging", migrated);
+  });
+
+  it("does not persist the trustchain while the app is locked", () => {
+    const before: FakeState = {
+      ...baseState(),
+      application: { isLocked: true },
+      trustchain: { PROD: null, STAGING: null },
+    };
+    const after: FakeState = {
+      ...before,
+      trustchain: {
+        PROD: { trustchain: null, memberCredentials: { pubkey: "ab" } },
+        STAGING: null,
+      },
+    };
+
+    runMiddleware([before, after], { type: "TRUSTCHAIN_STORE_IMPORT_STATE" });
 
     expect(mockedSetKey).not.toHaveBeenCalled();
   });

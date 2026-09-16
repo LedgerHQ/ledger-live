@@ -154,8 +154,10 @@ describe("mobile store", () => {
       store.dispatch(setLkrpEnvironment("PROD"));
       store.dispatch(
         importTrustchainStoreState({
-          trustchain: null,
-          memberCredentials: MEMBER_CREDENTIALS,
+          PROD: {
+            trustchain: null,
+            memberCredentials: MEMBER_CREDENTIALS,
+          },
         }),
       );
 
@@ -186,8 +188,10 @@ describe("mobile store", () => {
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
         importTrustchainStoreState({
-          trustchain: null,
-          memberCredentials: MEMBER_CREDENTIALS,
+          PROD: {
+            trustchain: null,
+            memberCredentials: MEMBER_CREDENTIALS,
+          },
         }),
       );
 
@@ -218,12 +222,14 @@ describe("mobile store", () => {
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
         importTrustchainStoreState({
-          trustchain: {
-            rootId: TRUSTCHAIN_ID,
-            walletSyncEncryptionKey: "wallet-sync-encryption-key",
-            applicationPath: "m/0'/16'/0'",
+          PROD: {
+            trustchain: {
+              rootId: TRUSTCHAIN_ID,
+              walletSyncEncryptionKey: "wallet-sync-encryption-key",
+              applicationPath: "m/0'/16'/0'",
+            },
+            memberCredentials: MEMBER_CREDENTIALS,
           },
-          memberCredentials: MEMBER_CREDENTIALS,
         }),
       );
 
