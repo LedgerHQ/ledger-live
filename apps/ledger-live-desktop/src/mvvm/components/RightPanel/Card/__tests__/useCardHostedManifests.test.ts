@@ -1,6 +1,6 @@
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
-import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
-import { renderHook, withFlagOverrides } from "tests/testSetup";
+import { getEnvDefault, setEnv } from "@shared/env";
+import { renderHook } from "tests/testSetup";
 import { useCardHostedManifests } from "../useCardHostedManifests";
 
 jest.mock("@ledgerhq/live-common/wallet-api/useLiveAppManifest", () => ({
@@ -9,46 +9,30 @@ jest.mock("@ledgerhq/live-common/wallet-api/useLiveAppManifest", () => ({
 
 const mockedManifest = jest.mocked(useLiveAppManifest);
 
-function renderManifests(params?: Record<string, string>) {
-  return renderHook(() => useCardHostedManifests(), {
-    initialState: withFlagOverrides({
-      lwdPayTab: { enabled: true, params: { card: true, ...params } },
-    }),
-  });
-}
-
 describe("useCardHostedManifests", () => {
   beforeEach(() => {
     mockedManifest.mockClear();
   });
 
-  it("reads the manifest ids the flag overrides", () => {
-    renderManifests({
-      baanx_login_manifest_id: "custom-login",
-      baanx_hosted_manifest_id: "custom-hosted",
-    });
+  afterEach(() => {
+    setEnv("CARD_BAANX_LOGIN_MANIFEST_ID", getEnvDefault("CARD_BAANX_LOGIN_MANIFEST_ID"));
+    setEnv("CARD_BAANX_HOSTED_MANIFEST_ID", getEnvDefault("CARD_BAANX_HOSTED_MANIFEST_ID"));
+  });
+
+  it("reads the manifest ids the env carries", () => {
+    setEnv("CARD_BAANX_LOGIN_MANIFEST_ID", "custom-login");
+    setEnv("CARD_BAANX_HOSTED_MANIFEST_ID", "custom-hosted");
+
+    renderHook(() => useCardHostedManifests());
 
     expect(mockedManifest).toHaveBeenCalledWith("custom-login");
     expect(mockedManifest).toHaveBeenCalledWith("custom-hosted");
   });
 
-  it("falls back to the registered default ids when a remote flag omits them", () => {
-    // A remote or overridden flag replaces the whole params object, so `card: true` alone must not
-    // leave the manifest lookups undefined. Seed `resolved` raw: `withFlagOverrides` would merge
-    // FEATURE_FLAGS_DEFAULTS.lwdPayTab.params and skip both `??` fallbacks.
-    renderHook(() => useCardHostedManifests(), {
-      initialState: {
-        featureFlags: {
-          ...FEATURE_FLAGS_INITIAL_STATE,
-          resolved: {
-            ...FEATURE_FLAGS_DEFAULTS,
-            lwdPayTab: { enabled: true, params: { card: true } },
-          },
-        },
-      },
-    });
+  it("falls back to the registered default ids", () => {
+    renderHook(() => useCardHostedManifests());
 
-    expect(mockedManifest).toHaveBeenCalledWith("baanx-login-url-stg");
-    expect(mockedManifest).toHaveBeenCalledWith("baanx-hosted-url-stg");
+    expect(mockedManifest).toHaveBeenCalledWith("baanx-login-url");
+    expect(mockedManifest).toHaveBeenCalledWith("baanx-hosted-url");
   });
 });

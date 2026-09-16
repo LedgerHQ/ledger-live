@@ -1,6 +1,7 @@
 import { ipcRenderer } from "electron";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { act } from "@testing-library/react";
+import { getEnvDefault, setEnv } from "@shared/env";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useCardHostedPageOpeners } from "../useCardHostedPageOpeners";
 
@@ -24,11 +25,11 @@ const AUTHORIZE_URL =
 const LOGIN_MANIFEST_URL = "https://dev.api.baanx.test/v1/auth/oauth2/authorize";
 
 const CATALOG: Record<string, unknown> = {
-  "baanx-login-url-stg": {
-    id: "baanx-login-url-stg",
+  "baanx-login-url": {
+    id: "baanx-login-url",
     url: LOGIN_MANIFEST_URL,
   },
-  "baanx-hosted-url-stg": { id: "baanx-hosted-url-stg", url: "https://ledger.baanxapi.test" },
+  "baanx-hosted-url": { id: "baanx-hosted-url", url: "https://ledger.baanxapi.test" },
 };
 
 function manifestsFrom(catalog: Record<string, unknown>) {
@@ -38,10 +39,10 @@ function manifestsFrom(catalog: Record<string, unknown>) {
   );
 }
 
-function renderOpeners(params?: Record<string, string>) {
+function renderOpeners() {
   return renderHook(() => useCardHostedPageOpeners(), {
     initialState: withFlagOverrides({
-      lwdPayTab: { enabled: true, params: { card: true, ...params } },
+      lwdPayTab: { enabled: true, params: { card: true } },
     }),
   });
 }
@@ -63,27 +64,30 @@ describe("useCardHostedPageOpeners", () => {
     manifestsFrom(CATALOG);
   });
 
+  afterEach(() => {
+    setEnv("CARD_BAANX_LOGIN_MANIFEST_ID", getEnvDefault("CARD_BAANX_LOGIN_MANIFEST_ID"));
+    setEnv("CARD_BAANX_HOSTED_MANIFEST_ID", getEnvDefault("CARD_BAANX_HOSTED_MANIFEST_ID"));
+  });
+
   describe("openHostedLogin", () => {
     it("opens the authorize page on the login manifest, and keeps the query", async () => {
       const { result } = renderOpeners();
 
       const answer = await act(async () => result.current.openHostedLogin(AUTHORIZE_URL));
 
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/platform/baanx-login-url-stg?returnTo=%2Fpaytab",
-        {
-          state: {
-            goToURL:
-              "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
-          },
+      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-login-url?returnTo=%2Fpaytab", {
+        state: {
+          goToURL:
+            "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
         },
-      );
+      });
       expect(answer).toEqual({ type: "pending" });
     });
 
-    it("takes the login manifest id the flag carries", async () => {
+    it("takes the login manifest id the env carries", async () => {
       manifestsFrom({ other: { id: "other", url: "https://other.test" } });
-      const { result } = renderOpeners({ baanx_login_manifest_id: "other" });
+      setEnv("CARD_BAANX_LOGIN_MANIFEST_ID", "other");
+      const { result } = renderOpeners();
 
       await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
 
@@ -130,15 +134,12 @@ describe("useCardHostedPageOpeners", () => {
       const error = await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
 
       expect(error).toBeNull();
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/platform/baanx-login-url-stg?returnTo=%2Fpaytab",
-        {
-          state: {
-            goToURL:
-              "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
-          },
+      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-login-url?returnTo=%2Fpaytab", {
+        state: {
+          goToURL:
+            "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
         },
-      );
+      });
     });
   });
 
@@ -148,10 +149,9 @@ describe("useCardHostedPageOpeners", () => {
 
       await run(() => result.current.openHostedPage("/kyc?step=2"));
 
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
-        { state: { goToURL: "https://ledger.baanxapi.test/kyc?step=2" } },
-      );
+      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-hosted-url?returnTo=%2Fpaytab", {
+        state: { goToURL: "https://ledger.baanxapi.test/kyc?step=2" },
+      });
       // The hosted page runs on the session the signed-in user already holds.
       expect(mockedInvoke).not.toHaveBeenCalled();
     });
@@ -161,10 +161,9 @@ describe("useCardHostedPageOpeners", () => {
 
       await run(() => result.current.openHostedPage("/onboarding/signup"));
 
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
-        { state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" } },
-      );
+      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-hosted-url?returnTo=%2Fpaytab", {
+        state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" },
+      });
     });
 
     it("ends the provider session on the hosted manifest before it opens the signup", async () => {
@@ -201,15 +200,15 @@ describe("useCardHostedPageOpeners", () => {
       const error = await run(() => result.current.openHostedPage("/onboarding/signup"));
 
       expect(error).toBeNull();
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/platform/baanx-hosted-url-stg?returnTo=%2Fpaytab",
-        { state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" } },
-      );
+      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-hosted-url?returnTo=%2Fpaytab", {
+        state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" },
+      });
     });
 
-    it("takes the hosted manifest id the flag carries", async () => {
+    it("takes the hosted manifest id the env carries", async () => {
       manifestsFrom({ other: { id: "other", url: "https://other.test" } });
-      const { result } = renderOpeners({ baanx_hosted_manifest_id: "other" });
+      setEnv("CARD_BAANX_HOSTED_MANIFEST_ID", "other");
+      const { result } = renderOpeners();
 
       await run(() => result.current.openHostedPage("/onboarding/signup"));
 
