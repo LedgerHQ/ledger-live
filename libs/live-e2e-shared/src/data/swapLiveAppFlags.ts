@@ -49,19 +49,14 @@ export const quoteCardProviderNameSelector = (providerName: string): string =>
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
-// Both presets name the provider. Unpinned runs also accept the short copy, which
-// Firebase still serves today.
+// Both served flag values name the provider in the CTA.
 export const quoteCardCtaPattern = ({
   providerUiName,
   approvalRequired = false,
-  pinned = false,
 }: {
   providerUiName: string;
   approvalRequired?: boolean;
-  pinned?: boolean;
 }): RegExp => {
   const verbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
-  const withProvider = `(?:${verbs}) with ${escapeRegExp(providerUiName)}`;
-  const short = approvalRequired ? "Continue" : "Review";
-  return new RegExp(pinned ? `^${withProvider}$` : `^(?:${short}|${withProvider})$`, "i");
+  return new RegExp(`^(?:${verbs}) with ${escapeRegExp(providerUiName)}$`, "i");
 };

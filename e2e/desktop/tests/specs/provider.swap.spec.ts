@@ -81,7 +81,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
 
         await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
         await app.swap.selectSpecificProvider(provider);
-        // Approval was ensured above, so the CTA reads "Review".
+        // Approval was ensured above, so no approval verb is expected.
         await app.swap.checkQuoteCardCta(provider.uiName);
 
         await app.swap.clickExchangeButton(provider.name);
@@ -128,10 +128,6 @@ test.describe("Swap - landing page", () => {
     ],
   });
 
-  test.afterEach(async ({ app }) => {
-    await app.swap.clearFlagOverrides();
-  });
-
   // One case per value the ptxLumenQuoteCard A/B test serves. Both values render the same CTA
   // copy, so the card variant is the only difference the tests can see.
   for (const preset of swapFlagPresetNames) {
@@ -144,8 +140,6 @@ test.describe("Swap - landing page", () => {
         annotation: { type: "TMS", description: "B2CQA-2918, B2CQA-2327" },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         // Pin before the flow: the override needs the live app loaded, and the remount
         // that applies it clears the form.
         await app.swap.goAndWaitForSwapToBeReady(() =>

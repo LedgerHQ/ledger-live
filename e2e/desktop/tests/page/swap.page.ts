@@ -60,7 +60,6 @@ export class SwapPage extends WebViewAppPage {
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
   private readonly toAccountAmountInput = "to-account-amount-input";
   private readonly fromAccountAmountInactive = "from-account-amount-inactive";
-  private flagPresetPinned = false;
   private providerContainerSelector = (provider: string) =>
     `[data-testid^="quote-container-${provider}"]`;
   private providerContainerInfoSelector = (provider: string, suffix: string) =>
@@ -125,12 +124,11 @@ export class SwapPage extends WebViewAppPage {
 
   // Only the loaded page can write its localStorage, and the atom reads the key once.
   // reopenSwap must leave swap and come back: a webview reload closes the page target.
+  // Every test gets a fresh user data directory, so nothing has to clear the key.
   @step("Pin swap live app feature flags: $0")
   async applyFlagPreset(preset: SwapFlagPreset, reopenSwap: () => Promise<void>) {
     const webview = await this.getWebView();
     const payload = swapFlagPresetPayload(preset);
-    // Mark before the write: a rejected evaluate can still leave the override behind.
-    this.flagPresetPinned = true;
     await webview.evaluate(({ key, value }) => localStorage.setItem(key, value), {
       key: SWAP_FLAG_OVERRIDES_KEY,
       value: payload,
@@ -149,16 +147,6 @@ export class SwapPage extends WebViewAppPage {
     await expect
       .poll(() => webview.evaluate(key => localStorage.getItem(key), SWAP_FLAG_OVERRIDES_KEY))
       .toBe(payload);
-  }
-
-  // The override outlives the test. A failed test can leave no webview, and waiting
-  // 60s for one would hide the real failure.
-  @step("Clear swap live app feature flag overrides")
-  async clearFlagOverrides() {
-    this.flagPresetPinned = false;
-    const webview = this._webviewPage;
-    if (!webview || webview.isClosed()) return;
-    await webview.evaluate(key => localStorage.removeItem(key), SWAP_FLAG_OVERRIDES_KEY);
   }
 
   @step("Check quote card variant: $0")
@@ -186,9 +174,7 @@ export class SwapPage extends WebViewAppPage {
     await expect(buttonLocator).toBeEnabled();
     const actualButtonText = (await buttonLocator.textContent())?.trim() ?? "";
 
-    expect(actualButtonText).toMatch(
-      quoteCardCtaPattern({ providerUiName, approvalRequired, pinned: this.flagPresetPinned }),
-    );
+    expect(actualButtonText).toMatch(quoteCardCtaPattern({ providerUiName, approvalRequired }));
   }
 
   @step("Get provider list")

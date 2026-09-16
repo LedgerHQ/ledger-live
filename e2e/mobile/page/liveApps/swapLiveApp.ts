@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { log } from "detox";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -30,8 +31,17 @@ const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - qu
 // Set on the window before a reload, so its absence proves a fresh document.
 const FLAG_RELOAD_MARKER = "__swapE2eFlagReload";
 
-// Each attempt reopens the live app, so keep the budget short.
-const CLEAR_FLAG_OVERRIDES_TIMEOUT = 30_000;
+// One bounded reopen, because cleanup runs on tests that already failed.
+const CLEAR_FLAG_OVERRIDES_TIMEOUT = 20_000;
+
+// The app drops the get-quotes CTA once it has quotes.
+const GET_QUOTES_CTA_TIMEOUT = 15_000;
+
+// A disabled CTA is already rendered when the form did not validate.
+const DISABLED_CTA_PROBE_TIMEOUT = 5_000;
+
+const describeError = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
 
 // Some drivers wrap a runScript result in { result }, as getValueByWebTestId does.
 const parseScriptJson = (raw: unknown): unknown => {
@@ -96,8 +106,8 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Expect swap live app form")
-  async expectSwapLiveAppForm() {
-    await waitWebElementByTestId(this.fromSelector);
+  async expectSwapLiveAppForm(timeout = DEFAULT_TIMEOUT) {
+    await waitWebElementByTestId(this.fromSelector, { timeout });
     await detoxExpect(getWebElementByTestId(this.fromSelector)).toExist();
     await detoxExpect(getWebElementByTestId(this.toSelector)).toExist();
   }
@@ -137,15 +147,21 @@ export default class SwapLiveAppPage {
   }
 
   // Take any suffix, but never the disabled CTA.
-  // The app drops the CTA once it has quotes.
+  // A missing CTA is normal, because the app drops it once it has quotes.
+  // A CTA that stays disabled is a form failure, so name it here.
   @Step("Tap get quotes button")
   async tapGetQuotesButton() {
     await getValueByWebTestId(this.toAmountInput);
     const cta = getWebElementByCssSelector(
       `[data-testid^='${this.getQuotesButton}']:not([data-testid^='${this.quotesButtonDisabled}'])`,
     );
-    if (await waitWebElement(cta, DEFAULT_TIMEOUT, false)) {
+    if (await waitWebElement(cta, GET_QUOTES_CTA_TIMEOUT, false)) {
       await tapWebElementByElement(cta);
+      return;
+    }
+    const disabled = getWebElementByCssSelector(`[data-testid^='${this.quotesButtonDisabled}']`);
+    if (await waitWebElement(disabled, DISABLED_CTA_PROBE_TIMEOUT, false)) {
+      throw new Error("Get quotes CTA stayed disabled: the swap form did not validate");
     }
   }
 
@@ -189,10 +205,10 @@ export default class SwapLiveAppPage {
   }
 
   // Detox has no webview reload, so a deeplink round trip remounts the live app.
-  private async reopenSwapLiveApp() {
+  private async reopenSwapLiveApp(timeout = DEFAULT_TIMEOUT) {
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.swap.openViaDeeplink();
-    await this.expectSwapLiveAppForm();
+    await this.expectSwapLiveAppForm(timeout);
   }
 
   // Open the live app first: only the loaded page can write its localStorage.
@@ -203,14 +219,18 @@ export default class SwapLiveAppPage {
     const payload = swapFlagPresetPayload(preset);
     // Mark before the write: a rejected script can still leave the override behind.
     this.flagPresetPinned = true;
-    await this.swapMainContainerWebElement.runScript(
-      (_el: HTMLElement, key: string, value: string, marker: string) => {
-        localStorage.setItem(key, value);
-        Object.assign(window, { [marker]: true });
-        setTimeout(() => location.reload(), 0);
-      },
-      [SWAP_FLAG_OVERRIDES_KEY, payload, FLAG_RELOAD_MARKER],
-    );
+    // The reload can destroy the context before the result crosses the bridge.
+    // expectFlagPresetLoaded is the real check, so a reject here is not a failure.
+    await this.swapMainContainerWebElement
+      .runScript(
+        (_el: HTMLElement, key: string, value: string, marker: string) => {
+          localStorage.setItem(key, value);
+          Object.assign(window, { [marker]: true });
+          setTimeout(() => location.reload(), 0);
+        },
+        [SWAP_FLAG_OVERRIDES_KEY, payload, FLAG_RELOAD_MARKER],
+      )
+      .catch(error => log.warn(`Flag preset script did not return: ${describeError(error)}`));
     await this.expectFlagPresetLoaded(payload);
     await this.expectSwapLiveAppForm();
   }
@@ -230,13 +250,14 @@ export default class SwapLiveAppPage {
     });
   }
 
-  // The override survives an app relaunch, so a failed clear must fail the run.
-  // Reopen the live app first: a failed test can leave any screen on top.
+  // The override survives an app relaunch, so cleanup reopens the live app.
+  // A throw here would stack a second error on an already failed test.
+  // Keep the pin flag on a miss, so the next test still clears the key.
   @Step("Clear swap live app feature flag overrides")
   async clearFlagOverrides() {
     if (!this.flagPresetPinned) return;
-    await retryUntilTimeout(async () => {
-      await this.reopenSwapLiveApp();
+    try {
+      await this.reopenSwapLiveApp(CLEAR_FLAG_OVERRIDES_TIMEOUT);
       const stored = parseScriptJson(
         await this.swapMainContainerWebElement.runScript(
           (_el: HTMLElement, key: string) => {
@@ -247,9 +268,10 @@ export default class SwapLiveAppPage {
         ),
       );
       jestExpect(stored).toBeNull();
-    }, CLEAR_FLAG_OVERRIDES_TIMEOUT);
-    // Assertions stay strict while the override is still in place.
-    this.flagPresetPinned = false;
+      this.flagPresetPinned = false;
+    } catch (error) {
+      log.warn(`Swap flag override not cleared: ${describeError(error)}`);
+    }
   }
 
   @Step("Check quote card variant: {{{0}}}")
@@ -414,11 +436,7 @@ export default class SwapLiveAppPage {
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
 
     jestExpect(actualButtonText).toMatch(
-      quoteCardCtaPattern({
-        providerUiName: provider,
-        approvalRequired,
-        pinned: this.flagPresetPinned,
-      }),
+      quoteCardCtaPattern({ providerUiName: provider, approvalRequired }),
     );
   }
 

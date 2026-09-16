@@ -234,7 +234,8 @@ for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason }
         const provider = await app.swap.selectExchangeWithoutKyc(swap);
         swap.setProvider(provider);
         await ensureTokenApproval(fromAccount, provider, minAmount);
-        // Approval was ensured above (a no-op for native assets), so the CTA reads "Review".
+        // Approval was ensured above, a no-op for native assets.
+        // So the CTA needs no approval verb.
         await app.swap.checkQuoteCardCta(provider.uiName);
 
         if (provider.app) {

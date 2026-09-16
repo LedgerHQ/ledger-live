@@ -159,6 +159,8 @@ export function runSwapLandingPageTest(
 
     // One case per value the ptxLumenQuoteCard A/B test serves. Both values render the same CTA
     // copy, so the card variant is the only difference the tests can see.
+    // Both cases share the beforeAll launch. applyFlagPreset overwrites the key,
+    // so case 2 does not depend on the cleanup of case 1.
     for (const preset of swapFlagPresetNames) {
       const variant = quoteCardVariantByPreset[preset];
 
