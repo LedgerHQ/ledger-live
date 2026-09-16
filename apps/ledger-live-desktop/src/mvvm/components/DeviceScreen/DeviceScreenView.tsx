@@ -36,7 +36,10 @@ export function DeviceScreenView({ viewModel }: DeviceScreenViewProps) {
 
   return (
     <div
-      className={cn(reachableUnderModalOverlay, "flex flex-col rounded-md bg-canvas-muted")}
+      className={cn(
+        reachableUnderModalOverlay,
+        "flex w-208 shrink-0 flex-col rounded-md bg-canvas-muted",
+      )}
       onPointerDown={keepModalsOpen}
       data-testid="device-screen"
     >
