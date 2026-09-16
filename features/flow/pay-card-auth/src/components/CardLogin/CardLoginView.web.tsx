@@ -12,7 +12,6 @@ export function CardLoginView({
   alreadyHaveCardLabel,
   isLoading,
   error,
-  children,
   onLoginPress,
   onAlreadyHaveCardPress,
   intro,
@@ -23,7 +22,6 @@ export function CardLoginView({
 
   return (
     <>
-      {children}
       <div className="flex flex-col gap-24 text-center">
         <div className="flex flex-col gap-12">
           <h2 className="heading-2-semi-bold text-base">{headline}</h2>

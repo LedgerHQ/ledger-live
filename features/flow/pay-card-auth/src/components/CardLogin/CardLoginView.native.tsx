@@ -23,7 +23,6 @@ export function CardLoginView({
   loginLabel,
   isLoading,
   error,
-  children,
   onLoginPress,
   intro,
 }: CardLoginNativeViewProps) {
@@ -58,7 +57,6 @@ export function CardLoginView({
           </Button>
         </Box>
       </Box>
-      {children}
       <CardLoginIntroView {...intro} />
     </>
   );
