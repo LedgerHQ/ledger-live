@@ -3,11 +3,11 @@
 "@ledgerhq/speculos-transport": minor
 "@ledgerhq/live-e2e-shared": minor
 "@ledgerhq/live-cli": minor
-"@ledgerhq/hw-app-canton": patch
-"@ledgerhq/hw-app-solana": patch
-"@ledgerhq/hw-app-btc": patch
-"@shared/env": patch
-"@ledgerhq/ledger-key-ring-protocol": patch
+"@ledgerhq/hw-app-canton": minor
+"@ledgerhq/hw-app-solana": minor
+"@ledgerhq/hw-app-btc": minor
+"@shared/env": minor
+"@ledgerhq/ledger-key-ring-protocol": minor
 ---
 
 Converge on a single Speculos transport and stop resolving Speculos config through the env singleton

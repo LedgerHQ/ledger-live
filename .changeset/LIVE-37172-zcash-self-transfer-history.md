@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-zcash": patch
+"@ledgerhq/coin-zcash": minor
 ---
 
 Report both legs of a Zcash self-transfer in the account history

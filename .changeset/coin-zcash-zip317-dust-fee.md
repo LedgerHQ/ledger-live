@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-zcash": patch
+"@ledgerhq/coin-zcash": minor
 ---
 
 Fix an incorrect fee on shielded and shielding sends when the leftover change was small enough to

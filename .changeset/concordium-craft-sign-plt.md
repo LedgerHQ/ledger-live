@@ -1,8 +1,8 @@
 ---
 "@ledgerhq/coin-concordium": minor
-"@ledgerhq/live-signer-concordium": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/live-signer-concordium": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Craft and sign PLT transfers

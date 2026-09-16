@@ -1,7 +1,7 @@
 ---
 "@ledgerhq/coin-concordium": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Check a PLT recipient against the token's allow and deny lists before signing

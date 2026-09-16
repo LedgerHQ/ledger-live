@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-cosmos": patch
-"@ledgerhq/live-signer-cosmos": patch
+"@ledgerhq/coin-cosmos": minor
+"@ledgerhq/live-signer-cosmos": minor
 ---
 
 fix(cosmos): add the gonka chain and always send the HRP to the signer

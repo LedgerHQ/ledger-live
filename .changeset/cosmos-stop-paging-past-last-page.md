@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-cosmos": patch
+"@ledgerhq/coin-cosmos": minor
 ---
 
 Stop discarding a cosmos transaction history when one page of it fails.

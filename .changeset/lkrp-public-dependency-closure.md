@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/ledger-key-ring-protocol": patch
+"@ledgerhq/ledger-key-ring-protocol": minor
 ---
 
 Make the LKRP dependency closure publishable

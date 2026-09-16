@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-concordium": patch
+"@ledgerhq/coin-concordium": minor
 ---
 
 Report Concordium fee errors under a key the send flow renders

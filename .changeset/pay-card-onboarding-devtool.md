@@ -3,7 +3,7 @@
 "@features/flow-pay-card-widget": minor
 "@devtools/pay-card": minor
 "@devtools/bindings": minor
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 Show and drive the derived card onboarding status from the Card / Pay devtool.

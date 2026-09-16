@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-vechain": patch
+"@ledgerhq/coin-vechain": minor
 ---
 
 listOperations no longer advertises a next cursor, and honours the requested order

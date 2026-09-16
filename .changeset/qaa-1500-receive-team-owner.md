@@ -1,6 +1,6 @@
 ---
-"ledger-live-desktop-e2e-tests": patch
-"ledger-live-mobile-e2e-tests": patch
+"ledger-live-desktop-e2e-tests": minor
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 Give the receive verify-address tests back to Coin-integration (QAA-1500)

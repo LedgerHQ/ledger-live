@@ -1,6 +1,6 @@
 ---
 "@features/flow-pay-request": minor
-"@features/flow-pay-contact": patch
+"@features/flow-pay-contact": minor
 "live-mobile": minor
 ---
 

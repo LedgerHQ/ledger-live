@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/live-e2e-shared": patch
-"ledger-live-mobile-e2e-tests": patch
-"ledger-live-desktop-e2e-tests": patch
+"@ledgerhq/live-e2e-shared": minor
+"ledger-live-mobile-e2e-tests": minor
+"ledger-live-desktop-e2e-tests": minor
 ---
 
 Surface the swap-init root cause on mobile E2E failures

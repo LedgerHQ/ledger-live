@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 "@devtools/pay-card": minor
 "@devtools/bindings": minor
 "@features/flow-pay-card-auth": minor

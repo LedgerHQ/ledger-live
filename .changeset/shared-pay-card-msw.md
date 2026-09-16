@@ -1,6 +1,6 @@
 ---
 "@support/msw-features-flow-pay-card": minor
-"@features/flow-pay-card-details": patch
+"@features/flow-pay-card-details": minor
 ---
 
 Share the Pay Card MSW test store across card flows.

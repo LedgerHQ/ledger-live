@@ -1,7 +1,7 @@
 ---
 "@ledgerhq/live-common": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 add balance-type pool selection step to Zcash send flow

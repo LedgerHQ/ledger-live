@@ -1,8 +1,8 @@
 ---
 "@ledgerhq/coin-concordium": minor
 "@ledgerhq/concordium-core": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Validate PLT transfers and fix estimateMaxSpendable for tokens

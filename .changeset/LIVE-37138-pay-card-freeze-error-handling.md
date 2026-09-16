@@ -3,7 +3,7 @@
 "@domain/api-card-management": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
-"@shared/ui-queued-bottom-sheet": patch
+"@shared/ui-queued-bottom-sheet": minor
 ---
 
 Add freeze/unfreeze confirmation error handling with retry

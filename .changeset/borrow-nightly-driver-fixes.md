@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/live-e2e-shared": patch
-"ledger-live-mobile-e2e-tests": patch
+"@ledgerhq/live-e2e-shared": minor
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 Fix the nightly mobile borrow e2e run.

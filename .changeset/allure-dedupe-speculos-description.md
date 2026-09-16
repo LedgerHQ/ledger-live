@@ -1,5 +1,5 @@
 ---
-"ledger-live-mobile-e2e-tests": patch
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 Stop the Allure test description from repeating the `SPECULOS App: <name> (<version>)` block once
