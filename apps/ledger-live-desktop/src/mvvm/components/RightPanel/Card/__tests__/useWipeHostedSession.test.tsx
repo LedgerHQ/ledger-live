@@ -19,8 +19,8 @@ jest.mock("@ledgerhq/live-common/wallet-api/useLiveAppManifest", () => ({
 const mockedInvoke = jest.mocked(ipcRenderer.invoke);
 const mockedManifest = jest.mocked(useLiveAppManifest);
 
-const LOGIN_ID = "baanx-login-url-stg";
-const HOSTED_ID = "baanx-hosted-url-stg";
+const LOGIN_ID = "baanx-login-url";
+const HOSTED_ID = "baanx-hosted-url";
 
 const LOGIN_MANIFEST = {
   id: LOGIN_ID,
@@ -57,7 +57,7 @@ describe("useWipeHostedSessionOnSignInChange", () => {
     manifestsFrom(CATALOG);
   });
 
-  it("ends the provider session on each manifest the flag names", () => {
+  it("ends the provider session on each manifest the env names", () => {
     const { store } = renderHook(() => useWipeHostedSessionOnSignInChange());
 
     signIn(store, true);
