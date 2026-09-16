@@ -1,44 +1,20 @@
-import BigNumber from "bignumber.js";
 import React from "react";
 import { render, screen, userEvent } from "tests/testSetup";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
-import { ALEO_MAIN_ACCOUNT } from "../__mocks__/account.mock";
+import {
+  ALEO_BONDED_ACCOUNT,
+  ALEO_CLAIMABLE_ACCOUNT,
+  ALEO_MAIN_ACCOUNT,
+  ALEO_UNBONDING_ACCOUNT,
+  withPendingOperations,
+} from "../__mocks__/account.mock";
 import { AleoCustomModal } from "../constants";
 import ManageModal from "./ManageModal";
 
 jest.mock("@ledgerhq/crypto-icons", () => ({ CryptoIcon: jest.fn() }));
 
-const pendingOperation = (type: OperationType): Operation =>
-  ({
-    id: `pending-${type}`,
-    hash: "",
-    type,
-    value: new BigNumber(1),
-    fee: new BigNumber(1),
-    senders: [],
-    recipients: [],
-    accountId: ALEO_MAIN_ACCOUNT.id,
-    date: new Date(),
-    blockHash: null,
-    blockHeight: null,
-    extra: {},
-  }) as unknown as Operation;
-
-const account = ({
-  bonded = 0,
-  pendingOperations = [],
-}: { bonded?: number; pendingOperations?: Operation[] } = {}): AleoAccount => ({
-  ...ALEO_MAIN_ACCOUNT,
-  pendingOperations,
-  aleoResources: {
-    ...ALEO_MAIN_ACCOUNT.aleoResources!,
-    bondedBalance: new BigNumber(bonded),
-  },
-});
-
-function setup(acc: AleoAccount = account()) {
+function setup(acc: AleoAccount = ALEO_MAIN_ACCOUNT) {
   const modalsDiv = document.createElement("div");
   modalsDiv.id = "modals";
   document.body.appendChild(modalsDiv);
@@ -62,34 +38,32 @@ afterEach(() => {
 
 describe("Aleo ManageModal", () => {
   it("hands over to the bond flow when the bond row is clicked", async () => {
-    const acc = account();
-    const { store } = setup(acc);
+    const { store } = setup(ALEO_MAIN_ACCOUNT);
 
     await userEvent.click(await screen.findByTestId("aleo-bond-button"));
 
     expect(store.getState().modals[AleoCustomModal.BOND_PUBLIC]).toEqual({
       isOpened: true,
-      data: { account: acc },
+      data: { account: ALEO_MAIN_ACCOUNT },
     });
     expect(store.getState().modals[AleoCustomModal.MANAGE]?.isOpened).toBeFalsy();
   });
 
   describe("unbond row", () => {
     it("hands over to the unbond flow when there is a bonded position", async () => {
-      const acc = account({ bonded: 20_000_000_000 });
-      const { store } = setup(acc);
+      const { store } = setup(ALEO_BONDED_ACCOUNT);
 
       await userEvent.click(await screen.findByTestId("aleo-unbond-button"));
 
       expect(store.getState().modals[AleoCustomModal.UNBOND]).toEqual({
         isOpened: true,
-        data: { account: acc },
+        data: { account: ALEO_BONDED_ACCOUNT },
       });
       expect(store.getState().modals[AleoCustomModal.MANAGE]?.isOpened).toBeFalsy();
     });
 
     it("stays disabled with nothing bonded", async () => {
-      setup(account({ bonded: 0 }));
+      setup(ALEO_MAIN_ACCOUNT);
 
       expect(await screen.findByTestId("aleo-unbond-button")).toBeDisabled();
     });
@@ -98,35 +72,65 @@ describe("Aleo ManageModal", () => {
     // figures carry no optimistic adjustment — so a second unbond has to be closed off on the
     // pending pool rather than on the balances, which still show the pre-broadcast position.
     it("stays disabled while an unbond is pending, bonded balance notwithstanding", async () => {
-      setup(account({ bonded: 20_000_000_000, pendingOperations: [pendingOperation("UNBOND")] }));
+      setup(withPendingOperations(ALEO_BONDED_ACCOUNT, "UNBOND"));
 
       expect(await screen.findByTestId("aleo-unbond-button")).toBeDisabled();
     });
 
     it("is unaffected by an unrelated pending operation", async () => {
-      setup(account({ bonded: 20_000_000_000, pendingOperations: [pendingOperation("OUT")] }));
+      setup(withPendingOperations(ALEO_BONDED_ACCOUNT, "OUT"));
 
       expect(await screen.findByTestId("aleo-unbond-button")).toBeEnabled();
     });
   });
 
   describe("claim row", () => {
-    it("is still disabled: the flow is not built yet", async () => {
-      setup(account({ bonded: 20_000_000_000 }));
+    it("hands over to the claim flow once the unbonding period has elapsed", async () => {
+      const { store } = setup(ALEO_CLAIMABLE_ACCOUNT);
+
+      await userEvent.click(await screen.findByTestId("aleo-claim-button"));
+
+      expect(store.getState().modals[AleoCustomModal.CLAIM_UNBOND]).toEqual({
+        isOpened: true,
+        data: { account: ALEO_CLAIMABLE_ACCOUNT },
+      });
+      expect(store.getState().modals[AleoCustomModal.MANAGE]?.isOpened).toBeFalsy();
+    });
+
+    it("stays disabled while the unbonding position is still counting down", async () => {
+      setup(ALEO_UNBONDING_ACCOUNT);
 
       expect(await screen.findByTestId("aleo-claim-button")).toBeDisabled();
     });
 
-    it("opens no flow when clicked", async () => {
-      const { store } = setup(account({ bonded: 20_000_000_000 }));
+    it("stays disabled with nothing unbonding", async () => {
+      setup(ALEO_BONDED_ACCOUNT);
 
-      await userEvent.click(await screen.findByTestId("aleo-claim-button"));
-
-      const openedModals = Object.entries(store.getState().modals)
-        .filter(([, state]) => state?.isOpened)
-        .map(([name]) => name);
-
-      expect(openedModals).toEqual([AleoCustomModal.MANAGE]);
+      expect(await screen.findByTestId("aleo-claim-button")).toBeDisabled();
     });
+
+    it("stays disabled while a claim is pending", async () => {
+      setup(withPendingOperations(ALEO_CLAIMABLE_ACCOUNT, "WITHDRAW_UNBONDED"));
+
+      expect(await screen.findByTestId("aleo-claim-button")).toBeDisabled();
+    });
+
+    it("stays disabled while an unbond is pending", async () => {
+      setup(withPendingOperations(ALEO_CLAIMABLE_ACCOUNT, "UNBOND"));
+
+      expect(await screen.findByTestId("aleo-claim-button")).toBeDisabled();
+    });
+
+    it("is unaffected by an unrelated pending operation", async () => {
+      setup(withPendingOperations(ALEO_CLAIMABLE_ACCOUNT, "OUT"));
+
+      expect(await screen.findByTestId("aleo-claim-button")).toBeEnabled();
+    });
+  });
+
+  it("disables the unbond row while a claim is pending", async () => {
+    setup(withPendingOperations(ALEO_BONDED_ACCOUNT, "WITHDRAW_UNBONDED"));
+
+    expect(await screen.findByTestId("aleo-unbond-button")).toBeDisabled();
   });
 });

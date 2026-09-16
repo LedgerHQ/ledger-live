@@ -4,7 +4,7 @@ import type {
   AleoTokenAccount,
   AleoUnspentRecord,
 } from "@ledgerhq/live-common/families/aleo/types";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { aleoCurrency, aleoTokenCurrency } from "./currency.mock";
 
@@ -42,6 +42,47 @@ export const ALEO_BONDED_ACCOUNT: AleoAccount = {
     bondedBalance: new BigNumber(20_000_000_000),
   },
 };
+
+export const ALEO_CLAIMABLE_ACCOUNT: AleoAccount = {
+  ...ALEO_MAIN_ACCOUNT,
+  blockHeight: 1_000,
+  aleoResources: {
+    ...ALEO_MAIN_ACCOUNT.aleoResources!,
+    unbondingBalance: new BigNumber(15_000_000_000),
+    unbondingHeight: 900,
+  },
+};
+
+export const ALEO_UNBONDING_ACCOUNT: AleoAccount = {
+  ...ALEO_CLAIMABLE_ACCOUNT,
+  aleoResources: {
+    ...ALEO_CLAIMABLE_ACCOUNT.aleoResources!,
+    unbondingHeight: 1_100,
+  },
+};
+
+export const aleoPendingOperation = (type: OperationType): Operation => ({
+  id: `pending-${type}`,
+  hash: "",
+  type,
+  value: new BigNumber(1),
+  fee: new BigNumber(1),
+  senders: [],
+  recipients: [],
+  accountId: ALEO_MAIN_ACCOUNT.id,
+  date: new Date(),
+  blockHash: null,
+  blockHeight: null,
+  extra: {},
+});
+
+export const withPendingOperations = <A extends AleoAccount>(
+  account: A,
+  ...types: OperationType[]
+): A => ({
+  ...account,
+  pendingOperations: types.map(aleoPendingOperation),
+});
 
 export const ALEO_TOKEN_ACCOUNT: AleoTokenAccount = {
   type: "TokenAccount",
