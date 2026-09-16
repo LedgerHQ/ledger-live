@@ -3,7 +3,6 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { getClaimableStakingBalance } from "@ledgerhq/live-common/families/aleo/utils";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Alert from "~/renderer/components/Alert";
@@ -26,11 +25,9 @@ const InputRight = styled(Box).attrs(() => ({
 }))``;
 
 const StepSummary = ({ account, parentAccount, error, status }: StepProps) => {
-  const aleoAccount = (account ?? undefined) as AleoAccount | undefined;
-  const unit = useMaybeAccountUnit(aleoAccount);
-  const claimable = aleoAccount ? getClaimableStakingBalance(aleoAccount) : null;
+  const unit = useMaybeAccountUnit(account ?? undefined);
+  const claimable = account ? getClaimableStakingBalance(account) : null;
 
-  if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 
   return (
@@ -44,6 +41,7 @@ const StepSummary = ({ account, parentAccount, error, status }: StepProps) => {
       />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
+      {status.errors.amount ? <ErrorBanner error={status.errors.amount} /> : null}
       {!status.errors.amount && status.errors.fees ? (
         <ErrorBanner error={status.errors.fees} />
       ) : null}

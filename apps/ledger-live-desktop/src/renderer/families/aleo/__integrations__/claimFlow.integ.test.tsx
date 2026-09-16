@@ -90,7 +90,7 @@ describe("Aleo claim flow — full modal", () => {
     });
   }, 20000);
 
-  it("prepares the transaction with no amount and the account as its own staker", async () => {
+  it("prepares the transaction with the account as its own staker", async () => {
     setupModal();
 
     await waitFor(() => expect(prepareTransactionSpy).toHaveBeenCalled());

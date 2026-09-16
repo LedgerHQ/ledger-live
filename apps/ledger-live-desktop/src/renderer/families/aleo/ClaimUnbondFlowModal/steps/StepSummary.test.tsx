@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import React from "react";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
+import { AleoNoClaimableUnbondedFunds } from "@ledgerhq/live-common/families/aleo/errors";
 import { render, screen, userEvent } from "tests/testSetup";
 import i18n from "~/renderer/i18n/init";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
@@ -87,27 +88,32 @@ describe("Aleo claim StepSummary", () => {
     expect(screen.getByTestId("error-banner")).toHaveTextContent("NotEnoughBalance");
   });
 
+  // The flow has no `AmountField` to carry `errors.amount`, so the step has to render it or the
+  // reason Continue is disabled never reaches the screen.
+  it("surfaces the amount error when nothing has matured", () => {
+    setup(StepSummary, withStatusErrors({ amount: new AleoNoClaimableUnbondedFunds() }));
+
+    expect(screen.getByTestId("error-banner")).toHaveTextContent("AleoNoClaimableUnbondedFunds");
+  });
+
   it("hides the fee error while the amount itself is also invalid", () => {
     setup(
       StepSummary,
-      withStatusErrors({ amount: new NotEnoughBalance(), fees: new Error("fee") }),
+      withStatusErrors({
+        amount: new AleoNoClaimableUnbondedFunds(),
+        fees: new NotEnoughBalance(),
+      }),
     );
 
-    expect(screen.queryByTestId("error-banner")).not.toBeInTheDocument();
+    const banners = screen.getAllByTestId("error-banner");
+    expect(banners).toHaveLength(1);
+    expect(banners[0]).toHaveTextContent("AleoNoClaimableUnbondedFunds");
   });
 
   it("shows the fee error on its own once the amount is valid", () => {
     setup(StepSummary, withStatusErrors({ fees: new NotEnoughBalance() }));
 
     expect(screen.getByTestId("error-banner")).toHaveTextContent("NotEnoughBalance");
-  });
-
-  it("renders nothing without a status", () => {
-    const { container } = setup(StepSummary, {
-      status: undefined as unknown as StepProps["status"],
-    });
-
-    expect(container).toBeEmptyDOMElement();
   });
 });
 

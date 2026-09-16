@@ -30,14 +30,26 @@ const ManageModal = ({ account, parentAccount, source, ...rest }: Data) => {
 
   const hasPendingUnbond = hasPendingOperationType(account, "UNBOND");
   const hasPendingClaim = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
-  const hasPendingUnbondingChange = hasPendingUnbond || hasPendingClaim;
+  const unbondingLocked = hasPendingUnbond || hasPendingClaim;
   const canUnbond =
-    (account.aleoResources?.bondedBalance ?? new BigNumber(0)).gt(0) && !hasPendingUnbondingChange;
-  const canClaim = getClaimableStakingBalance(account).gt(0) && !hasPendingUnbondingChange;
+    (account.aleoResources?.bondedBalance ?? new BigNumber(0)).gt(0) && !unbondingLocked;
+  const canClaim = getClaimableStakingBalance(account).gt(0) && !unbondingLocked;
 
-  const pendingTooltip = hasPendingUnbond
+  const lockedTooltip = hasPendingUnbond
     ? t("aleo.manage.unbondPendingTooltip")
     : t("aleo.manage.claimPendingTooltip");
+
+  const { unbondingBalance, unbondingHeight } = account.aleoResources ?? {};
+  const isStillUnbonding =
+    !!unbondingBalance?.gt(0) &&
+    unbondingHeight !== null &&
+    unbondingHeight !== undefined &&
+    account.blockHeight < unbondingHeight;
+  const claimTooltip = unbondingLocked
+    ? lockedTooltip
+    : isStillUnbonding
+      ? t("aleo.manage.stillUnbondingTooltip")
+      : t("aleo.manage.nothingToClaimTooltip");
 
   const onSelectAction = useCallback(
     (onClose: () => void, name: keyof ModalData) => {
@@ -75,14 +87,14 @@ const ManageModal = ({ account, parentAccount, source, ...rest }: Data) => {
                 </S.InfoWrapper>
               </S.ManageButton>
               <ToolTip
-                content={pendingTooltip}
-                enabled={hasPendingUnbondingChange}
+                content={lockedTooltip}
+                enabled={unbondingLocked}
                 containerStyle={{ width: "100%" }}
               >
                 <S.ManageButton
                   data-testid="aleo-unbond-button"
                   disabled={!canUnbond}
-                  onClick={() => canUnbond && onSelectAction(onClose, "MODAL_ALEO_UNBOND")}
+                  onClick={() => onSelectAction(onClose, "MODAL_ALEO_UNBOND")}
                 >
                   <S.IconWrapper>
                     <UnbondIcon size={16} />
@@ -98,14 +110,14 @@ const ManageModal = ({ account, parentAccount, source, ...rest }: Data) => {
                 </S.ManageButton>
               </ToolTip>
               <ToolTip
-                content={pendingTooltip}
-                enabled={hasPendingUnbondingChange}
+                content={claimTooltip}
+                enabled={!canClaim}
                 containerStyle={{ width: "100%" }}
               >
                 <S.ManageButton
                   data-testid="aleo-claim-button"
                   disabled={!canClaim}
-                  onClick={() => canClaim && onSelectAction(onClose, "MODAL_ALEO_CLAIM_UNBOND")}
+                  onClick={() => onSelectAction(onClose, "MODAL_ALEO_CLAIM_UNBOND")}
                 >
                   <S.IconWrapper>
                     <ClaimRewardIcon size={16} />

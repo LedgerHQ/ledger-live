@@ -1,5 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
+import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import { StepId, StepProps, St } from "./types";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
@@ -35,6 +36,6 @@ export default createStakingFlowBody<StepId>({
   initialStepId: "summary",
   title: "aleo.claim.flow.title",
   trackCloseEvent: "CloseModalClaimUnbond",
-  mode: "claim_unbond_public",
+  mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
   initialRecipient: account => account.freshAddress,
 });

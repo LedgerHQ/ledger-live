@@ -46,13 +46,21 @@ const Container = styled(Box).attrs(() => ({
 
 // Widen only alongside the matching `aleo.<flow>.*` i18n subtree: a flow named here
 // without one renders raw keys.
+type StakingFlow = "bond" | "unbond" | "claim";
+
 export type StakingConfirmationConfig = {
-  flow: "bond" | "unbond" | "claim";
-  action: "bonding" | "unbonding" | "claiming";
+  flow: StakingFlow;
   trackField: "validator" | "staker";
 };
 
-export function createStepConfirmation({ flow, action, trackField }: StakingConfirmationConfig) {
+const ACTIONS: Record<StakingFlow, string> = {
+  bond: "bonding",
+  unbond: "unbonding",
+  claim: "claiming",
+};
+
+export function createStepConfirmation({ flow, trackField }: StakingConfirmationConfig) {
+  const action = ACTIONS[flow];
   const i18nPrefix = `aleo.${flow}.flow.steps.confirmation`;
   const flowLabel = `${flow[0].toUpperCase()}${flow.slice(1)} Flow`;
   const category = `${flow[0].toUpperCase()}${flow.slice(1)} ALEO`;

@@ -1018,7 +1018,7 @@ describe("getTransactionStatus", () => {
           stakingTransaction(TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC),
         );
 
-        expect(status.errors.amount?.message).toMatch(/no unbonded funds to claim/);
+        expect(status.errors.amount?.name).toBe("AleoNoClaimableUnbondedFunds");
       });
 
       it("resolves no amount for use-all, rather than the whole transparent balance", async () => {

@@ -61,7 +61,15 @@ export const ALEO_UNBONDING_ACCOUNT: AleoAccount = {
   },
 };
 
-export const aleoPendingOperation = (type: OperationType): Operation => ({
+export const ALEO_BONDED_CLAIMABLE_ACCOUNT: AleoAccount = {
+  ...ALEO_CLAIMABLE_ACCOUNT,
+  aleoResources: {
+    ...ALEO_CLAIMABLE_ACCOUNT.aleoResources!,
+    bondedBalance: new BigNumber(20_000_000_000),
+  },
+};
+
+const aleoPendingOperation = (type: OperationType): Operation => ({
   id: `pending-${type}`,
   hash: "",
   type,
@@ -76,12 +84,12 @@ export const aleoPendingOperation = (type: OperationType): Operation => ({
   extra: {},
 });
 
-export const withPendingOperations = <A extends AleoAccount>(
+export const withPendingOperation = <A extends AleoAccount>(
   account: A,
-  ...types: OperationType[]
+  type: OperationType,
 ): A => ({
   ...account,
-  pendingOperations: types.map(aleoPendingOperation),
+  pendingOperations: [aleoPendingOperation(type)],
 });
 
 export const ALEO_TOKEN_ACCOUNT: AleoTokenAccount = {
