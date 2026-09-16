@@ -1,6 +1,9 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
-import { type CosmosAccount, getCosmosResources } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  type CosmosAccount,
+  getCosmosResources,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";

@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";

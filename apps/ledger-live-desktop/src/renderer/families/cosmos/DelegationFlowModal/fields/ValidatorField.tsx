@@ -1,6 +1,5 @@
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import {
-  CosmosDelegation,
   CosmosValidatorItem,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cosmos/types";
