@@ -10,7 +10,7 @@ import {
   validateCallback,
 } from "./actors";
 import { clearErrorKind, failPkce, forgetAttempt, publishProviderAppId } from "./actions";
-import { isUnauthorizedError } from "./errors";
+import { isStaleRequestError, isUnauthorizedError } from "./errors";
 import { hasErrorKind, shouldResumeAuthenticated } from "./guards";
 import type { CardLoginContext, CardLoginEvent, CardLoginMachineInput } from "./types";
 
@@ -269,8 +269,12 @@ export const cardLoginMachine = setup({
             target: "clearingAttempt",
             actions: assign({ clearSession: true }),
           },
+          {
+            guard: ({ event }) => isStaleRequestError(event.error),
+            target: "idle",
+          },
           // Network or backend trouble. The session stays, so a retry does not force a new login.
-          { target: "error", actions: assign({ errorKind: "fetch_user_failed" }) },
+          { target: "userFetchError", actions: assign({ errorKind: "fetch_user_failed" }) },
         ],
       },
     },
@@ -280,18 +284,26 @@ export const cardLoginMachine = setup({
         src: "clearAttempt",
         input: ({ context }) => ({ ports: context.ports, clearSession: context.clearSession }),
         onDone: [
-          { guard: "hasErrorKind", target: "error" },
+          { guard: "hasErrorKind", target: "authError" },
           { guard: "shouldResumeAuthenticated", target: "authenticated" },
           { target: "idle" },
         ],
       },
     },
 
-    error: {
+    authError: {
       entry: ["forgetAttempt", "publishSignedOut"],
       on: {
         LOGIN: { target: "preparingAttempt" },
         RETRY: { target: "preparingAttempt" },
+      },
+    },
+
+    userFetchError: {
+      entry: "forgetAttempt",
+      on: {
+        LOGIN: { target: "preparingAttempt" },
+        RETRY: { target: "fetchingUser" },
       },
     },
 
