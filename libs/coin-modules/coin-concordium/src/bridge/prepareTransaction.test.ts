@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import {
   AccountAddress,
   encodePltTransferOperations,
-  PLT_MAX_MEMO_SIZE,
+  MAX_MEMO_LENGTH,
 } from "@ledgerhq/concordium-core";
 import {
   createFixtureAccount,
@@ -32,7 +32,7 @@ const blobSize = (recipient: string, amount: number | bigint, decimals = 6, memo
     recipient: AccountAddress.fromBase58(recipient),
     amount: BigInt(amount),
     decimals,
-    ...(memo ? { memo: Buffer.from(memo, "utf-8") } : {}),
+    ...(memo ? { memo } : {}),
   }).length;
 
 const tokenAccountFor = (account: ReturnType<typeof createFixtureAccount>) =>
@@ -284,7 +284,8 @@ describe("prepareTransaction", () => {
       expect(result).not.toHaveProperty("energy");
     });
 
-    // 200 bytes of memo, which the second assertion shows the size must grow by.
+    // The first assertion pins the size to the encoder's own output, framing
+    // included; the second is what proves the memo was not simply dropped.
     it("counts the memo toward the priced size", async () => {
       const { account, subAccount } = withTokenSubAccount();
       const memo = "x".repeat(200);
@@ -324,7 +325,7 @@ describe("prepareTransaction", () => {
       const { account, subAccount } = withTokenSubAccount();
       const tx = createFixtureTransaction({
         subAccountId: subAccount.id,
-        memo: "x".repeat(PLT_MAX_MEMO_SIZE + 1),
+        memo: "x".repeat(MAX_MEMO_LENGTH + 1),
       });
 
       expect(await prepareTransaction(account, tx)).toBe(tx);

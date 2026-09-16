@@ -8,7 +8,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
-import { MAX_MEMO_LENGTH, PLT_MAX_DECIMALS, PLT_MAX_MEMO_SIZE } from "@ledgerhq/concordium-core";
+import { MAX_MEMO_LENGTH, PLT_MAX_DECIMALS } from "@ledgerhq/concordium-core";
 import {
   createFixtureAccount,
   createFixtureTokenAccount,
@@ -710,7 +710,7 @@ describe("getTransactionStatus", () => {
 
     it("rejects a memo past the chain's limit", async () => {
       const { account, subAccount } = withToken();
-      const memo = "x".repeat(PLT_MAX_MEMO_SIZE + 1);
+      const memo = "x".repeat(MAX_MEMO_LENGTH + 1);
 
       const status = await getTransactionStatus(account, tokenTx(subAccount.id, { memo }));
 
@@ -722,7 +722,7 @@ describe("getTransactionStatus", () => {
 
       const status = await getTransactionStatus(
         account,
-        tokenTx(subAccount.id, { memo: "x".repeat(PLT_MAX_MEMO_SIZE) }),
+        tokenTx(subAccount.id, { memo: "x".repeat(MAX_MEMO_LENGTH) }),
       );
 
       expect(status.errors).toEqual({});
@@ -748,7 +748,7 @@ describe("getTransactionStatus", () => {
       const status = await getTransactionStatus(account, tokenTx(subAccount.id, { memo }));
 
       expect(status.errors.memo).toBeInstanceOf(ConcordiumMemoTooLong);
-      expect(memo.length).toBeLessThanOrEqual(PLT_MAX_MEMO_SIZE);
+      expect(memo.length).toBeLessThanOrEqual(MAX_MEMO_LENGTH);
     });
 
     // The second assertion is the point: one problem, one field.
@@ -757,17 +757,29 @@ describe("getTransactionStatus", () => {
 
       const status = await getTransactionStatus(
         account,
-        tokenTx(subAccount.id, { memo: "x".repeat(PLT_MAX_MEMO_SIZE + 1) }),
+        tokenTx(subAccount.id, { memo: "x".repeat(MAX_MEMO_LENGTH + 1) }),
       );
 
       expect(status.errors.memo).toBeInstanceOf(ConcordiumMemoTooLong);
       expect(status.errors.amount).toBeUndefined();
     });
 
-    // 254 against 256 — close enough to conflate, and different limits on
-    // different transaction types.
-    it("does not use the CCD memo limit", async () => {
-      expect(PLT_MAX_MEMO_SIZE).not.toBe(MAX_MEMO_LENGTH);
+    // Both memos are a CBOR text string inside the chain's `Memo`, under the
+    // same 256-byte cap, so one constant serves both paths.
+    it("uses the same memo limit as the CCD path", async () => {
+      const { account, subAccount } = withToken();
+
+      const atLimit = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { memo: "x".repeat(MAX_MEMO_LENGTH) }),
+      );
+      const overLimit = await getTransactionStatus(
+        account,
+        tokenTx(subAccount.id, { memo: "x".repeat(MAX_MEMO_LENGTH + 1) }),
+      );
+
+      expect(atLimit.errors.memo).toBeUndefined();
+      expect(overLimit.errors.memo).toBeInstanceOf(ConcordiumMemoTooLong);
     });
 
     it("still validates the recipient", async () => {
@@ -805,7 +817,7 @@ describe("getTransactionStatus", () => {
 
       const status = await getTransactionStatus(
         account,
-        tokenTx(subAccount.id, { fee: null, memo: "a".repeat(PLT_MAX_MEMO_SIZE + 1) }),
+        tokenTx(subAccount.id, { fee: null, memo: "a".repeat(MAX_MEMO_LENGTH + 1) }),
       );
 
       expect(status.errors.memo).toBeInstanceOf(ConcordiumMemoTooLong);
