@@ -22,7 +22,6 @@ type Props = {
   t: TFunction;
   account: Account;
   status: TransactionStatus;
-  delegations: CosmosDelegation[];
   onChangeValidator: (a: { address: string }) => void;
   chosenVoteAccAddr: string;
 };

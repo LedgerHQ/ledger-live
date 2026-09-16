@@ -22,8 +22,6 @@ export default function StepDelegation({
   t,
 }: StepProps) {
   invariant(transaction && transaction.validators, "transaction required");
-  const cosmosResources = getCosmosResources(account);
-  const delegations = cosmosResources?.delegations ?? [];
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const updateValidator = useCallback(
     ({ address }: { address: string }) => {
@@ -59,7 +57,6 @@ export default function StepDelegation({
         account={account}
         status={status}
         t={t}
-        delegations={delegations}
         onChangeValidator={updateValidator}
         chosenVoteAccAddr={chosenVoteAccAddr}
       />

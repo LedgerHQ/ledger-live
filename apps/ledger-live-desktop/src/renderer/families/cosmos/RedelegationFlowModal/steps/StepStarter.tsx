@@ -23,8 +23,7 @@ const RewardImg = styled.img.attrs(() => ({
   height: auto;
 `;
 export default function StepStarter({ account, transaction }: StepProps) {
-  const cosmosResources = getCosmosResources(account);
-  invariant(account && cosmosResources && transaction, "account and transaction required");
+  invariant(account && transaction, "account and transaction required");
   const crypto = cryptoFactory(account.currency.id);
   return (
     <Box flow={4}>
