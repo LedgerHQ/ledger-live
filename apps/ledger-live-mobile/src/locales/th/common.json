@@ -234,6 +234,42 @@
       "title" : "เซสชันหมดอายุ",
       "description" : "เซสชันแอป Concordium ID หมดอายุการใช้งานแล้ว กรุณาจับคู่อีกครั้ง"
     },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "มี CCD ไม่เพียงพอสำหรับค่าธรรมเนียมเครือข่าย",
+      "description" : "ค่าธรรมเนียมเครือข่ายนั้นจะต้องจ่ายเป็น CCD เสมอ ไม่ใช่โทเคนที่คุณกำลังทำการส่งในธุรกรรมนี้ เพิ่ม CCD ไปยังบัญชีนี้แล้วลองอีกครั้ง"
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "การโอนโทเคนนี้ถูกระงับชั่วคราว",
+      "description" : "ผู้ออกโทเคนได้ระงับการโอนทั้งหมดไว้ชั่วคราว คุณสามารถลองใหม่อีกครั้งเมื่อการโอนกลับมาทำงานได้ตามปกติ"
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "บัญชีนี้ไม่สามารถส่งโทเคนนี้ได้",
+      "description" : "ผู้ออกโทเคนได้จำกัดสิทธิ์ว่าใครสามารถส่งได้บ้าง และบัญชีนี้ไม่ได้รับอนุญาตให้ทำเช่นนั้น กรุณาติดต่อผู้ออกโทเคนเพื่อขอสิทธิ์"
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "ไม่สามารถทำการยืนยันข้อจำกัดของโทเคนนี้ได้",
+      "description" : "เนื่องจากไม่สามารถอ่านกฎการโอนของโทเคนนี้ได้ จึงไม่สามารถยืนยันได้ว่าการโอนนี้ได้รับอนุญาต โปรดซิงค์บัญชีของคุณใหม่แล้วลองอีกครั้ง"
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "ไม่สามารถลงนามโทเคนนี้บนอุปกรณ์ Ledger ของคุณได้",
+      "description" : "โทเคนนี้ใช้จำนวนทศนิยม {{decimals}} ตำแหน่ง แต่อุปกรณ์ของคุณรองรับได้สูงสุด {{maxDecimals}} ตำแหน่งเท่านั้น การรับและการถือครองเหรียญนั้นไม่ได้รับผลกระทบแต่อย่างใด"
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "โทเคนนี้ไม่ได้อยู่ในบัญชีของคุณแล้ว",
+      "description" : "โทเคนที่คุณเลือกนั้นไม่สามารถใช้งาน โปรดเริ่มทำธุรกรรมอีกครั้ง"
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "ไม่สามารถเตรียมธุรกรรมนี้ได้",
+      "description" : "เนื่องจากรายละเอียดของโทเคนอยู่นอกเหนือขีดจำกัดที่อุปกรณ์ Ledger ของคุณยอมรับได้ จึงไม่สามารถสร้างธุรกรรมนี้ได้ โปรดติดต่อ Ledger Support"
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "ต้องอัปเดตแอป",
+      "description" : "แอป Concordium บนอุปกรณ์ Ledger ของคุณยังไม่รองรับการโอนโทเคน อัปเดตใน \"Ledger ของฉัน\" แล้วลองอีกครั้ง"
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "มีบางอย่างผิดปกติ โปรดเชื่อมต่ออุปกรณ์ของคุณอีกครั้ง",
+      "description" : "แอป Concordium ไม่สามารถประมวลผลธุรกรรมได้ หากยังพบปัญหา โปรดติดต่อ Ledger Support"
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "มีบางอย่างผิดพลาด (ข้อผิดพลาด #1)",
       "description" : "โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
@@ -4806,10 +4842,6 @@
       "toggleCurrency" : "สลับสกุลเงิน"
     },
     "summary" : {
-      "solanaRawTransaction" : {
-        "title" : "จำเป็นต้องมีการ Blind Signing",
-        "description" : "คุณไม่สามารถตรวจสอบรายละเอียดธุรกรรมบนอุปกรณ์ Ledger ของคุณได้ หากคุณเซ็น คุณอาจสูญเสียสินทรัพย์ของคุณทั้งหมด เซ็นก็ต่อเมื่อคุณไว้ใจเว็บไซต์นี้เท่านั้น"
-      },
       "subaccountsWarning" : "คุณจะต้องเติมสกุลเงิน {{ currency }} ในบัญชีนี้เพื่อส่งโทเคนของบัญชีนี้",
       "tag" : "แท็ก (ใส่หรือไม่ก็ได้)",
       "validateTag" : "ตรวจสอบแท็ก",
@@ -9818,6 +9850,40 @@
       "cta" : "ลองอีกครั้ง"
     }
   },
+  "perpsReview" : {
+    "depositTitle" : "ฝากผ่าน SwapKit",
+    "depositSubtitle" : "ผู้ให้บริการ SwapKit จะจัดการสวอปและฝากเงินของคุณในธุรกรรมเดียว โดยมีอุปกรณ์ Ledger ของคุณคอยรักษาความปลอดภัยทั้งหมด",
+    "swapDetailTitle" : "รายละเอียดการสวอป",
+    "amountSendLabel" : "จำนวนที่ส่ง",
+    "amountReceiveLabel" : "จำนวนที่จะได้รับ",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "รายละเอียดการฝาก",
+    "depositAmountLabel" : "จำนวนเงินฝาก",
+    "depositReceiveLabel" : "บัญชีผู้รับ",
+    "depositCTA" : "ฝาก"
+  },
+  "perpsDepositSign" : {
+    "terms" : "เมื่อลงนามในธุรกรรมนี้ ฉันยอมรับ <termsLink>ข้อกำหนดและเงื่อนไขของ SwapKit by NEAR Intents</termsLink>"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "ลงนามธุรกรรมสำเร็จแล้ว",
+    "description" : "คุณจะได้รับ {{currency}} ของคุณเมื่อได้รับการยืนยันบนบล็อกเชน",
+    "viewTransaction" : "ดูธุรกรรม"
+  },
+  "perpsDeposit" : {
+    "title" : "ฝาก",
+    "inputDepositAmount" : "ฝาก {{value}}",
+    "inputSubText" : "สวอปและฝากผ่าน {{provider}}",
+    "selectCurrencyTitle" : "ฝากด้วย {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "ไม่มีบัญชี",
+    "review" : "ตรวจสอบ",
+    "keypadDelete" : "ลบหลักสุดท้าย",
+    "formErrors" : {
+      "amountExceedsBalance" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
+      "quoteUnavailable" : "ไม่สามารถรับโควตจาก {{provider}} ได้ โปรดลองใช้สินทรัพย์อื่นหรือกลับมาใหม่ในภายหลัง"
+    }
+  },
   "swapErrors" : {
     "incorrectCommandData" : {
       "title" : "ข้อมูลคำสั่งไม่ถูกต้อง",
@@ -10211,8 +10277,38 @@
     },
     "card" : {
       "title" : "บัตรคริปโต",
+      "placeholder" : "เร็ว ๆ นี้",
+      "details" : "รายละเอียด",
       "freeze" : "ระงับบัตรชั่วคราว",
-      "unfreeze" : "ยกเลิกการระงับบัตร"
+      "unfreeze" : "ยกเลิกการระงับบัตร",
+      "goBack" : "ย้อนกลับ",
+      "freezeConfirm" : {
+        "title" : "การระงับบัตรชั่วคราว หมายความว่า คุณจะไม่สามารถใช้บัตรได้",
+        "description" : "คุณสามารถยกเลิกการระงับบัตรของคุณได้ทุกเมื่อ",
+        "confirm" : "ระงับบัตรชั่วคราว",
+        "errorTitle" : "การระงับบัตรชั่วคราวล้มเหลว"
+      },
+      "unfreezeConfirm" : {
+        "title" : "ยกเลิกการระงับบัตรของคุณ?",
+        "confirm" : "ยกเลิกการระงับบัตร",
+        "errorTitle" : "การยกเลิกการระงับบัตรล้มเหลว"
+      },
+      "confirmError" : {
+        "description" : "มีบางอย่างผิดปกติ โปรดลองอีกครั้ง",
+        "retry" : "ลองอีกครั้ง"
+      }
+    },
+    "cardTransactions" : {
+      "categories" : {
+        "SUBSCRIPTIONS" : "การสมัครสมาชิก",
+        "FOOD" : "อาหาร",
+        "TRAVEL" : "เดินทาง",
+        "ENTERTAINMENT" : "บันเทิง",
+        "HEALTH" : "สุขภาพ",
+        "ATM" : "ATM",
+        "UTILITIES" : "สาธารณูปโภค",
+        "MISC" : "อื่น ๆ"
+      }
     },
     "selectContact" : {
       "placeholder" : "ป้อนรายชื่อ"
@@ -10341,6 +10437,14 @@
       "addressPicker" : {
         "title" : "เลือกที่อยู่คริปโตของ {{name}}",
         "addAddress" : "เพิ่มที่อยู่"
+      },
+      "paySuccess" : {
+        "title" : "คุณได้จ่ายเงิน ({{recipient}}) เรียบร้อยแล้ว",
+        "amount" : "จำนวน",
+        "estimatedTime" : "เวลาโดยประมาณ",
+        "from" : "จาก",
+        "viewTransaction" : "ดูธุรกรรม",
+        "close" : "ปิด"
       }
     },
     "cardOnboarding" : {
@@ -10617,11 +10721,11 @@
     "addContact" : "เพิ่มรายชื่อ",
     "addAddress" : "เพิ่มที่อยู่",
     "addYourAddress" : "เพิ่มที่อยู่คริปโตของคุณ",
-    "searchPlaceholder" : "ค้นหารายชื่อ",
+    "searchPlaceholder" : "ค้นหาด้วยชื่อ",
     "searchNoResults" : "ไม่พบรายชื่อ",
     "addContactDrawer" : {
       "namePlaceholder" : "ตั้งชื่อรายชื่อ",
-      "namingDisclaimer" : "เพื่อความเป็นส่วนตัว โปรดหลีกเลี่ยงการใช้ชื่อ-นามสกุลเต็ม แนะนำให้ใช้ชื่อเล่นหรือชื่อจริง + อักษรย่อ เช่น 'John S'",
+      "namingDisclaimer" : "เพื่อความเป็นส่วนตัว โปรดหลีกเลี่ยงการใช้ชื่อและนามสกุลเต็ม แนะนำให้ใช้ชื่อเล่นหรือชื่อจริง + อักษรย่อ เช่น 'John S.'",
       "confirmName" : "ยืนยันชื่อ",
       "invalidNameError" : "ไม่อนุญาตให้ใช้อักขระพิเศษ",
       "duplicateNameError" : "ชื่อผู้ติดต่อนี้มีการใช้งานอยู่แล้ว"
@@ -10636,7 +10740,8 @@
       "domainNotFound" : "ไม่พบที่อยู่คริปโตสำหรับโดเมนนี้",
       "sanctionedAddress" : "ที่อยู่คริปโตนี้ถูกคว่ำบาตรและไม่สามารถใช้งานได้",
       "validationUnavailable" : "การตรวจสอบที่อยู่คริปโตไม่สามารถใช้งานได้ชั่วคราว",
-      "ensDisclaimer" : "ENS จะได้รับการแปลงเป็นที่อยู่คริปโตของวอลเล็ต ตรวจสอบที่อยู่คริปโตที่แปลงแล้วเสมอก่อนดำเนินการต่อ",
+      "ensDisclaimer" : "ชื่อ ENS สามารถเปลี่ยนแปลงที่อยู่ได้เสมอ",
+      "ensDisclaimerDescription" : "ชื่อ ENS เดียวกันนี้อาจชี้ไปยังที่อยู่ที่แตกต่างกันไปตามช่วงเวลาที่ผ่านไป เราได้ทำการบันทึกที่อยู่จริงที่อยู่เบื้องหลัง ENS ไว้แล้ว เพื่อให้มั่นใจว่าเงินของคุณจะถูกส่งถึงเฉพาะที่อยู่คริปโตที่คุณได้ทำการยืนยันไว้เท่านั้น",
       "sanctioned" : {
         "description" : "Ledger ไม่อนุญาตให้ส่งไปยังที่อยู่นี้ เนื่องจากถูกระบุว่าไม่ปลอดภัย",
         "learnMore" : "เรียนรู้เพิ่มเติม"
@@ -10645,7 +10750,7 @@
     "addAddressName" : {
       "title" : "ตั้งชื่อที่อยู่คริปโต",
       "inputLabel" : "ชื่อที่อยู่",
-      "namingDisclaimer" : "เราขอแนะนำให้คุณตั้งชื่อให้กับที่อยู่นี้ เพื่อให้สามารถค้นหาได้ง่ายเมื่อจำเป็นต้องใช้งาน โดยชื่อนี้จะแสดงให้เห็นเฉพาะคุณเท่านั้น",
+      "namingDisclaimer" : "ชื่อที่คุณตั้งนี้จะปรากฏบนอุปกรณ์ Ledger ของคุณเมื่อคุณส่งไปยังที่อยู่คริปโตนี้ ตั้งชื่อเพื่อให้ค้นหาได้ง่าย",
       "continueToReview" : "ดำเนินการต่อเพื่อตรวจสอบ",
       "invalidLabel" : "ห้ามใช้อักขระพิเศษ",
       "duplicateLabel" : "มีการใช้ชื่อนี้กับที่อยู่คริปโตอื่นแล้ว",
@@ -10663,10 +10768,7 @@
     "addressCount_one" : "{{count}} ที่อยู่คริปโต",
     "addressCount_other" : "{{count}} ที่อยู่คริปโต",
     "me" : {
-      "name" : "ที่อยู่ของฉัน",
-      "addressCount_zero" : "0 ที่อยู่คริปโต",
-      "addressCount_one" : "{{count}} ที่อยู่",
-      "addressCount_other" : "{{count}} ที่อยู่"
+      "myAddresses" : "ที่อยู่คริปโตของฉัน"
     },
     "detail" : {
       "meDisplayName" : "{{name}} (ฉัน)",
@@ -10697,7 +10799,7 @@
     "editContact" : {
       "title" : "แก้ไขรายชื่อ",
       "namePlaceholder" : "ตั้งชื่อรายชื่อ",
-      "namingDisclaimer" : "เพื่อความเป็นส่วนตัว โปรดหลีกเลี่ยงการใช้ชื่อ-นามสกุลเต็ม แนะนำให้ใช้ชื่อเล่นหรือชื่อจริง + อักษรย่อ เช่น 'John S.'",
+      "namingDisclaimer" : "เพื่อความเป็นส่วนตัว โปรดหลีกเลี่ยงการใช้ชื่อและนามสกุลเต็ม แนะนำให้ใช้ชื่อเล่นหรือชื่อจริง + อักษรย่อ เช่น 'John S.'",
       "confirmName" : "ยืนยันชื่อ",
       "applyChanges" : "บันทึกการเปลี่ยนแปลง",
       "invalidNameError" : "ห้ามใช้อักขระพิเศษ"
@@ -10736,7 +10838,7 @@
     },
     "featureIntroduction" : {
       "title" : "เปิดตัวฟีเจอร์รายชื่อ",
-      "primaryAction" : "ดูเลย",
+      "primaryAction" : "ลองเลย",
       "highlights" : {
         "saveAddresses" : {
           "title" : "บันทึกที่อยู่คริปโตด้วยชื่อที่คุณเลือก",
@@ -10747,7 +10849,7 @@
           "description" : "เห็นชื่อที่คุณเชื่อถือ ไม่ใช่ที่อยู่คริปโต"
         },
         "privateAcrossDevices" : {
-          "title" : "เติมเงินผ่านแอป Ledger Wallet™ ได้อย่างปลอดภัย",
+          "title" : "เป็นส่วนตัวบนทุกอุปกรณ์ Ledger ของคุณ",
           "description" : "ได้รับการเข้ารหัสแบบครบวงจรด้วยฟีเจอร์ Ledger Sync"
         }
       }
