@@ -13,4 +13,5 @@ runSwapLandingPageTest(
   swapTestConfig.toAccount,
   swapTestConfig.tmsLinks,
   swapTestConfig.tags,
+  "lumenQuoteCardEnabled",
 );

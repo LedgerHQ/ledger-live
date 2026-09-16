@@ -10,7 +10,7 @@ import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import {
   quoteCardVariantByPreset,
-  swapFlagPresetNames,
+  type SwapFlagPreset,
 } from "@ledgerhq/live-e2e-shared/data/swapLiveAppFlags";
 import type { SwapTransactionStatusDetails } from "@e2e/page/drawer/swapTransactionStatus.drawer";
 
@@ -124,12 +124,17 @@ export function runSwapWithDifferentSeedTest(
   });
 }
 
+// One spec file per value the ptxLumenQuoteCard A/B test serves.
+// Each file owns its launch, so neither case depends on the other.
 export function runSwapLandingPageTest(
   fromAccount: Account,
   toAccount: Account,
   tmsLinks: string[],
   tags: string[],
+  preset: SwapFlagPreset,
 ) {
+  const variant = quoteCardVariantByPreset[preset];
+
   describe("Swap - landing page", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
@@ -157,36 +162,30 @@ export function runSwapLandingPageTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    // One case per value the ptxLumenQuoteCard A/B test serves. Both values render the same CTA
-    // copy, so the card variant is the only difference the tests can see.
-    // Both cases share the beforeAll launch. applyFlagPreset overwrites the key,
-    // so case 2 does not depend on the cleanup of case 1.
-    for (const preset of swapFlagPresetNames) {
-      const variant = quoteCardVariantByPreset[preset];
+    // Both values render the same CTA copy, so the card variant is the only
+    // difference the tests can see.
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer on the ${variant} quote card`, async () => {
+      await app.swapLiveApp.applyFlagPreset(preset);
 
-      it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer on the ${variant} quote card`, async () => {
-        await app.swapLiveApp.applyFlagPreset(preset);
+      const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
+      const swap = new Swap(fromAccount, toAccount, minAmount);
 
-        const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
-        const swap = new Swap(fromAccount, toAccount, minAmount);
+      await performSwapUntilQuoteSelectionStep(
+        swap.accountToDebit,
+        swap.accountToCredit,
+        minAmount,
+      );
+      const providerList = await app.swapLiveApp.getProviderList();
+      await app.swapLiveApp.checkQuoteCardVariant(variant);
+      await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
+      await app.swapLiveApp.checkBestOffer(providerList);
 
-        await performSwapUntilQuoteSelectionStep(
-          swap.accountToDebit,
-          swap.accountToCredit,
-          minAmount,
-        );
-        const providerList = await app.swapLiveApp.getProviderList();
-        await app.swapLiveApp.checkQuoteCardVariant(variant);
-        await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
-        await app.swapLiveApp.checkBestOffer(providerList);
-
-        await app.mainNavigation.openPortfolioViaDeeplink();
-        await app.swap.openViaDeeplink();
-        await app.swapLiveApp.expectSwapLiveAppForm();
-        await app.swapLiveApp.checkAssetFromMatchesAccount(fromAccount);
-        await app.swapLiveApp.checkAssetToMatchesAccount(toAccount);
-      });
-    }
+      await app.mainNavigation.openPortfolioViaDeeplink();
+      await app.swap.openViaDeeplink();
+      await app.swapLiveApp.expectSwapLiveAppForm();
+      await app.swapLiveApp.checkAssetFromMatchesAccount(fromAccount);
+      await app.swapLiveApp.checkAssetToMatchesAccount(toAccount);
+    });
   });
 }
 
