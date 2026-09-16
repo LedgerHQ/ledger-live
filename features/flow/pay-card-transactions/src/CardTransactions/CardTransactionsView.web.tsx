@@ -21,7 +21,9 @@ export function CardTransactionsView({
     return null;
   }
 
-  const preview = transactions.slice(0, CARD_TRANSACTIONS_PREVIEW_LIMIT);
+  const preview = onShowMore
+    ? transactions.slice(0, CARD_TRANSACTIONS_PREVIEW_LIMIT)
+    : transactions;
   const showMore = Boolean(onShowMore) && transactions.length > CARD_TRANSACTIONS_PREVIEW_LIMIT;
 
   return (

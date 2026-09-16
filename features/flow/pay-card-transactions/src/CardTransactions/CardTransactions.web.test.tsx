@@ -53,6 +53,7 @@ describe("CardTransactions", () => {
     expect(screen.getByTestId("card-transactions-subheader")).toBeVisible();
     expect(screen.getByText(SECTION_TITLE)).toBeVisible();
     expect(screen.getByText("NETFLIX.COM")).toBeVisible();
+    expect(screen.getAllByTestId(/^card-transactions-item-/)).toHaveLength(page.length);
   });
 
   it("shows only the preview and calls onShowMore from the subheader", async () => {
