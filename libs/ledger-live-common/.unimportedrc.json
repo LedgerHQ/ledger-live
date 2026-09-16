@@ -144,6 +144,7 @@
     "src/families/near/constants.ts",
     "src/families/near/logic.ts",
     "src/families/near/react.ts",
+    "src/families/near/signer.ts",
     "src/families/near/types.ts",
     "src/families/sui/logic.ts",
     "src/families/sui/react.ts",
