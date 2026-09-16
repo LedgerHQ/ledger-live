@@ -5,6 +5,7 @@ import useEnv from "@features/platform-env";
 import { useContactsFeature } from "@features/platform-contacts";
 import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
+import { usePayCardAssets } from "../../hooks/usePayCardAssets";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import type { FeatureTourProps } from "@features/flow-pay-feature-tour";
 import { navigateToCardHistory } from "LLM/features/OperationsHistory/utils/navigateToCardHistory";
@@ -82,11 +83,14 @@ export function usePayTabViewModel() {
     [],
   );
 
+  const cardAssets = usePayCardAssets();
+
   return {
     top,
     bottom: bottom + insets.bottom,
     login,
     unlock: unlockCardNumbers,
+    cardAssets,
     featureTour,
     balance,
     actionTiles,
