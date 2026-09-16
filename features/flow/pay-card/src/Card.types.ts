@@ -22,6 +22,7 @@ export type CardProps = {
   readonly login: CardLoginProps;
   readonly formatters?: CardFormatters;
   readonly unlock?: UnlockForReveal;
+  readonly onShowMore?: () => void;
 };
 
 /**
@@ -42,4 +43,5 @@ export type CardViewProps = {
   readonly cardVisual?: CardVisualProps;
   readonly formatters?: CardFormatters;
   readonly unlock?: UnlockForReveal;
+  readonly onShowMore?: () => void;
 };

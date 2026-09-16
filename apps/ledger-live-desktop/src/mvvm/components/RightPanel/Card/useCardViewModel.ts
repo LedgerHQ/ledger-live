@@ -8,6 +8,8 @@ import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
+import { HISTORY_TAB_CARD, HISTORY_TAB_SEARCH_PARAM } from "LLD/features/History/constants";
+import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { useWipeHostedSessionOnSignInChange } from "./useWipeHostedSession";
@@ -119,9 +121,17 @@ export function useCardViewModel(): CardViewModel {
   // its callers: the flow already treats a `false` as "the holder declined" and stays hidden.
   const unlock = useCallback(() => Promise.resolve(true), []);
 
+  const onShowMore = useCallback(() => {
+    navigate(
+      `/history?${HISTORY_TAB_SEARCH_PARAM}=${HISTORY_TAB_CARD}`,
+      buildNavigationBackState("historyBackPath", pathname),
+    );
+  }, [navigate, pathname]);
+
   return {
     formatters,
     login,
     unlock,
+    onShowMore,
   };
 }

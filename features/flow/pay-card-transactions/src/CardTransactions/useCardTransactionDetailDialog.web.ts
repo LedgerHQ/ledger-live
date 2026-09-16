@@ -1,6 +1,9 @@
 import { useCallback, useState } from "react";
 import type { PayCardTransaction } from "@domain/api-card-management";
-import { transactionClickedProperties } from "../logic/transactionClickedProperties";
+import {
+  transactionClickedProperties,
+  type CardTransactionClickedPage,
+} from "../logic/transactionClickedProperties";
 import type { CardTransactionItem } from "../types";
 import type { CardTransactionsProps } from "./types";
 
@@ -13,19 +16,19 @@ type CardTransactionDetailDialogViewModel = Readonly<{
 export function useCardTransactionDetailDialog({
   onTransactionPress,
   onTrackEvent,
-}: Pick<
-  CardTransactionsProps,
-  "onTransactionPress" | "onTrackEvent"
->): CardTransactionDetailDialogViewModel {
+  page = "Pay",
+}: Pick<CardTransactionsProps, "onTransactionPress" | "onTrackEvent"> & {
+  page?: CardTransactionClickedPage;
+}): CardTransactionDetailDialogViewModel {
   const [selectedTransaction, setSelectedTransaction] = useState<PayCardTransaction>();
 
   const openTransaction = useCallback(
     (item: CardTransactionItem) => {
       onTransactionPress?.(item);
-      onTrackEvent?.("transaction_clicked", transactionClickedProperties(item.transaction));
+      onTrackEvent?.("transaction_clicked", transactionClickedProperties(item.transaction, page));
       setSelectedTransaction(item.transaction);
     },
-    [onTransactionPress, onTrackEvent],
+    [onTransactionPress, onTrackEvent, page],
   );
 
   const closeTransaction = useCallback(() => {

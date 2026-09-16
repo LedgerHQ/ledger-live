@@ -12,6 +12,7 @@ export function CardView({
   cardVisual,
   formatters,
   unlock,
+  onShowMore,
 }: CardViewProps) {
   return (
     <section aria-label={title} className="flex flex-col gap-16">
@@ -26,6 +27,7 @@ export function CardView({
               date: formatters?.transactionDate,
             }}
             onTrackEvent={login.onTrackEvent}
+            onShowMore={onShowMore}
           />
         </>
       ) : (
