@@ -11,7 +11,6 @@ describe("CardNumbersUnlockDialog", () => {
         isOpen
         mode="create"
         isSubmitting={false}
-        isBusy={false}
         onSubmit={onSubmit}
         onCancel={onCancel}
       />,
@@ -31,7 +30,6 @@ describe("CardNumbersUnlockDialog", () => {
         isOpen
         mode="verify"
         isSubmitting={false}
-        isBusy={false}
         onSubmit={onSubmit}
         onCancel={jest.fn()}
       />,
@@ -50,7 +48,6 @@ describe("CardNumbersUnlockDialog", () => {
         isOpen
         mode="verify"
         isSubmitting={false}
-        isBusy={false}
         onSubmit={onSubmit}
         onCancel={jest.fn()}
       />,
@@ -68,7 +65,6 @@ describe("CardNumbersUnlockDialog", () => {
         mode="verify"
         error="Incorrect password"
         isSubmitting={false}
-        isBusy={false}
         onSubmit={jest.fn()}
         onCancel={jest.fn()}
       />,
@@ -85,7 +81,6 @@ describe("CardNumbersUnlockDialog", () => {
         mode="verify"
         error="Incorrect password"
         isSubmitting={false}
-        isBusy={false}
         onSubmit={onSubmit}
         onCancel={jest.fn()}
       />,
@@ -104,7 +99,6 @@ describe("CardNumbersUnlockDialog", () => {
         isOpen
         mode="verify"
         isSubmitting={false}
-        isBusy={false}
         onSubmit={jest.fn()}
         onCancel={onCancel}
       />,
@@ -121,8 +115,7 @@ describe("CardNumbersUnlockDialog", () => {
       <CardNumbersUnlockDialog
         isOpen
         mode="verify"
-        isSubmitting={false}
-        isBusy
+        isSubmitting
         onSubmit={jest.fn()}
         onCancel={onCancel}
       />,

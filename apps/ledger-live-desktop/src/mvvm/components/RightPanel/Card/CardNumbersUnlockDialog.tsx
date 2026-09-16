@@ -23,7 +23,6 @@ function CardNumbersUnlockForm({
   mode,
   error,
   isSubmitting,
-  isBusy,
   onSubmit,
   onCancel,
 }: CardNumbersUnlockDialogState) {
@@ -36,7 +35,7 @@ function CardNumbersUnlockForm({
     <Dialog
       open
       onOpenChange={open => {
-        if (!open && !isBusy) onCancel();
+        if (!open && !isSubmitting) onCancel();
       }}
     >
       <DialogContent data-testid="card-numbers-unlock-dialog">
@@ -53,7 +52,7 @@ function CardNumbersUnlockForm({
               <DialogHeader
                 density="expanded"
                 title={t("password.setPassword.title")}
-                onClose={isBusy ? undefined : onCancel}
+                onClose={isSubmitting ? undefined : onCancel}
               />
               <DialogBody className="flex flex-col gap-16">
                 <p className="body-3 text-muted">{t("password.setPassword.desc")}</p>
@@ -77,7 +76,7 @@ function CardNumbersUnlockForm({
                 />
               </DialogBody>
               <DialogFooter>
-                <Button appearance="gray" type="button" disabled={isBusy} onClick={onCancel}>
+                <Button appearance="gray" type="button" disabled={isSubmitting} onClick={onCancel}>
                   {t("common.cancel")}
                 </Button>
                 <Button appearance="base" type="submit" loading={isSubmitting}>
@@ -92,7 +91,7 @@ function CardNumbersUnlockForm({
               <DialogHeader
                 density="expanded"
                 title={t("payTab.card.numbers.unlockTitle")}
-                onClose={isBusy ? undefined : onCancel}
+                onClose={isSubmitting ? undefined : onCancel}
               />
               <DialogBody className="flex flex-col gap-16">
                 <TextInput
@@ -109,7 +108,7 @@ function CardNumbersUnlockForm({
                 />
               </DialogBody>
               <DialogFooter>
-                <Button appearance="gray" type="button" disabled={isBusy} onClick={onCancel}>
+                <Button appearance="gray" type="button" disabled={isSubmitting} onClick={onCancel}>
                   {t("common.cancel")}
                 </Button>
                 <Button appearance="base" type="submit" loading={isSubmitting}>

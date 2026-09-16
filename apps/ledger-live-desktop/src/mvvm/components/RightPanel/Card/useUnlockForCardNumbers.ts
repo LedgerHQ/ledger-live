@@ -13,14 +13,32 @@ export type CardNumbersUnlockDialogState = Readonly<{
   mode: CardNumbersUnlockMode;
   error?: string;
   isSubmitting: boolean;
-  isBusy: boolean;
   onSubmit: (password: string, confirmPassword: string) => void | Promise<void>;
   onCancel: () => void;
 }>;
 
-type UnlockResolve = ((ok: boolean) => void) | null;
+type PasswordUnlockValidationError = "required" | "mismatch";
 
-const SHOW_LOADING_AFTER_MS = 500;
+const VALIDATION_ERROR_KEYS: Record<PasswordUnlockValidationError, string> = {
+  required: "payTab.card.numbers.passwordRequired",
+  mismatch: "payTab.card.numbers.passwordMismatch",
+};
+
+function validateCardNumbersPassword(
+  mode: CardNumbersUnlockMode,
+  password: string,
+  confirmPassword: string,
+): PasswordUnlockValidationError | undefined {
+  if (!password) {
+    return "required";
+  }
+  if (mode === "create" && password !== confirmPassword) {
+    return "mismatch";
+  }
+  return undefined;
+}
+
+type UnlockResolve = (ok: boolean) => void;
 
 export function useUnlockForCardNumbers(): {
   unlock: UnlockForReveal;
@@ -29,94 +47,63 @@ export function useUnlockForCardNumbers(): {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasPassword = useSelector(hasPasswordSelector);
-  const [resolveUnlock, setResolveUnlock] = useState<UnlockResolve>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string>();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isBusy, setIsBusy] = useState(false);
-  const inFlightRef = useRef(false);
-  const loadingTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const resolveUnlockRef = useRef<UnlockResolve>(null);
+  const resolveRef = useRef<UnlockResolve | null>(null);
 
   const mode: CardNumbersUnlockMode = hasPassword ? "verify" : "create";
 
   useEffect(() => {
     return () => {
-      if (loadingTimerRef.current !== undefined) {
-        clearTimeout(loadingTimerRef.current);
-        loadingTimerRef.current = undefined;
-      }
-      resolveUnlockRef.current?.(false);
-      resolveUnlockRef.current = null;
+      resolveRef.current?.(false);
+      resolveRef.current = null;
     };
-  }, []);
-
-  const stopSubmitting = useCallback(() => {
-    if (loadingTimerRef.current !== undefined) {
-      clearTimeout(loadingTimerRef.current);
-      loadingTimerRef.current = undefined;
-    }
-    inFlightRef.current = false;
-    setIsBusy(false);
-    setIsSubmitting(false);
   }, []);
 
   const unlock = useCallback<UnlockForReveal>(
     () =>
       new Promise(resolve => {
-        stopSubmitting();
         setError(undefined);
-        resolveUnlockRef.current = resolve;
-        setResolveUnlock(() => resolve);
+        setIsSubmitting(false);
+        resolveRef.current = resolve;
+        setIsOpen(true);
       }),
-    [stopSubmitting],
+    [],
   );
 
-  const finish = useCallback(
-    (ok: boolean) => {
-      resolveUnlockRef.current = null;
-      setResolveUnlock((current: UnlockResolve) => {
-        current?.(ok);
-        return null;
-      });
-      setError(undefined);
-      stopSubmitting();
-    },
-    [stopSubmitting],
-  );
+  const finish = useCallback((ok: boolean) => {
+    resolveRef.current?.(ok);
+    resolveRef.current = null;
+    setError(undefined);
+    setIsOpen(false);
+  }, []);
 
   const onCancel = useCallback(() => {
-    if (inFlightRef.current) {
+    if (isSubmitting) {
       return;
     }
     finish(false);
-  }, [finish]);
+  }, [finish, isSubmitting]);
 
   const onSubmit = useCallback(
     async (password: string, confirmPassword: string) => {
-      if (inFlightRef.current) {
+      if (isSubmitting) {
         return;
       }
 
-      inFlightRef.current = true;
-      setIsBusy(true);
-      loadingTimerRef.current = setTimeout(() => {
-        setIsSubmitting(true);
-      }, SHOW_LOADING_AFTER_MS);
+      const validationError = validateCardNumbersPassword(mode, password, confirmPassword);
+      if (validationError) {
+        setError(t(VALIDATION_ERROR_KEYS[validationError]));
+        return;
+      }
 
+      setIsSubmitting(true);
       try {
-        if (!password) {
-          setError(t("payTab.card.numbers.passwordRequired"));
-          return;
-        }
-
         if (mode === "create") {
-          if (password !== confirmPassword) {
-            setError(t("payTab.card.numbers.passwordMismatch"));
-            return;
-          }
           await setEncryptionKey(password);
-          finish(true);
           dispatch(setHasPassword(true));
+          finish(true);
           return;
         }
 
@@ -134,20 +121,19 @@ export function useUnlockForCardNumbers(): {
           ),
         );
       } finally {
-        stopSubmitting();
+        setIsSubmitting(false);
       }
     },
-    [dispatch, finish, mode, stopSubmitting, t],
+    [dispatch, finish, isSubmitting, mode, t],
   );
 
   return {
     unlock,
     dialog: {
-      isOpen: resolveUnlock !== null,
+      isOpen,
       mode,
       error,
       isSubmitting,
-      isBusy,
       onSubmit,
       onCancel,
     },

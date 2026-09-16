@@ -60,10 +60,6 @@ describe("useUnlockForCardNumbers", () => {
     isEncryptionKeyCorrectMock.mockResolvedValue(true);
   });
 
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   it("should open the set-password dialog when there is no password", async () => {
     const { result } = renderUnlock(false);
 
@@ -198,7 +194,7 @@ describe("useUnlockForCardNumbers", () => {
     expect(result.current.dialog.isOpen).toBe(true);
   });
 
-  it("should keep the error on screen while the user tries again", async () => {
+  it("should keep the error on screen while the retry is in flight", async () => {
     let resolveRetry: ((ok: boolean) => void) | undefined;
     isEncryptionKeyCorrectMock.mockResolvedValueOnce(false).mockImplementation(
       () =>
@@ -217,16 +213,8 @@ describe("useUnlockForCardNumbers", () => {
     });
     expect(result.current.dialog.error).toBe("Incorrect password");
 
-    jest.useFakeTimers();
     act(() => {
-      result.current.dialog.onSubmit("wrong", "");
-    });
-
-    expect(result.current.dialog.isSubmitting).toBe(false);
-    expect(result.current.dialog.error).toBe("Incorrect password");
-
-    act(() => {
-      jest.advanceTimersByTime(500);
+      void result.current.dialog.onSubmit("wrong", "");
     });
 
     expect(result.current.dialog.isSubmitting).toBe(true);
@@ -257,7 +245,7 @@ describe("useUnlockForCardNumbers", () => {
     act(() => {
       void result.current.dialog.onSubmit("secret", "secret");
     });
-    expect(result.current.dialog.isBusy).toBe(true);
+    expect(result.current.dialog.isSubmitting).toBe(true);
 
     act(() => {
       result.current.dialog.onCancel();
@@ -317,7 +305,7 @@ describe("useUnlockForCardNumbers", () => {
     await expect(unlocked).resolves.toBe(false);
   });
 
-  it("should not flip loading on after the panel unmounts during save", async () => {
+  it("should not update state after the panel unmounts mid-save", async () => {
     let resolveSave: (() => void) | undefined;
     setEncryptionKeyMock.mockImplementation(
       () =>
@@ -332,7 +320,6 @@ describe("useUnlockForCardNumbers", () => {
       unlocked = result.current.unlock();
     });
 
-    jest.useFakeTimers();
     act(() => {
       void result.current.dialog.onSubmit("secret", "secret");
     });
@@ -340,10 +327,6 @@ describe("useUnlockForCardNumbers", () => {
     unmount();
 
     await expect(unlocked).resolves.toBe(false);
-
-    act(() => {
-      jest.advanceTimersByTime(500);
-    });
 
     await act(async () => {
       resolveSave?.();
