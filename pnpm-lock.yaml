@@ -915,6 +915,9 @@ importers:
       '@domain/entity-analytics-consent':
         specifier: workspace:*
         version: link:../../domain/entity/analytics-consent
+      '@domain/entity-card-asset-mapping':
+        specifier: workspace:^
+        version: link:../../domain/entity/card-asset-mapping
       '@domain/entity-client-identity':
         specifier: workspace:*
         version: link:../../domain/entity/client-identity
@@ -996,6 +999,9 @@ importers:
       '@features/flow-pay-card':
         specifier: workspace:^
         version: link:../../features/flow/pay-card
+      '@features/flow-pay-card-assets':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-card-assets
       '@features/flow-pay-card-auth':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-auth

@@ -898,6 +898,11 @@
       }
     },
     "card": {
+      "assets": {
+        "title": "Assets",
+        "empty": "No assets yet",
+        "error": "Couldn't load assets"
+      },
       "title": "Crypto card",
       "balanceLabel": "Balance",
       "freeze": "Freeze",
@@ -3114,9 +3119,7 @@
           "validator": {
             "title": "Staking Providers"
           },
-          "connectDevice": {
-            "title": "Device"
-          },
+          "connectDevice": { "title": "Device" },
           "confirmation": {
             "title": "Confirmation",
             "success": {
@@ -9904,7 +9907,9 @@
             "unbondableBanner": "Maximum unbondable amount is",
             "belowMinimum": "If unbonding would leave less than {{minAmount}} bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met."
           },
-          "connectDevice": { "title": "Device" },
+          "connectDevice": {
+            "title": "Device"
+          },
           "confirmation": {
             "title": "Confirmation",
             "success": {
