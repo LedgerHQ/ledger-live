@@ -16,7 +16,7 @@ import {
   type SuccessLogEvent,
   type TransactionPathway,
 } from "./logEvent";
-import { deriveEarnTransactionType, type EarnTransactionType } from "./earnTransactionType";
+import type { EarnTransactionType } from "./earnTransactionType";
 import { deriveFromOperationType } from "./operationType";
 import { getStakeTarget, type TransactionLike } from "./transactionShape";
 import { isStakingApp, stakingMethodOf } from "./stakingApps";

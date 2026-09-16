@@ -130,6 +130,25 @@ const reducer = (state: State, e: Event): State => {
   }
 };
 
+/**
+ * Why the attempt ended when the device layer, not the user, interrupted it. The wrong device
+ * carries no error of its own, and a disconnection can surface as a non-Error value.
+ */
+function interruptionErrorOf(
+  inWrongDeviceForAccount: AppState["inWrongDeviceForAccount"],
+  error: unknown,
+): Error {
+  if (inWrongDeviceForAccount) {
+    return Object.assign(new Error("Wrong device for account"), { name: "WrongDeviceForAccount" });
+  }
+
+  if (error instanceof Error) return error;
+
+  return Object.assign(new Error("Device disconnected"), {
+    name: "DisconnectedDeviceDuringOperation",
+  });
+}
+
 export const createAction = (
   connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
 ): TransactionAction => {
@@ -221,14 +240,7 @@ export const createAction = (
 
     useEffect(() => {
       if (!device || !opened || inWrongDeviceForAccount || error) {
-        const interruptionError = inWrongDeviceForAccount
-          ? Object.assign(new Error("Wrong device for account"), { name: "WrongDeviceForAccount" })
-          : error instanceof Error
-            ? error
-            : Object.assign(new Error("Device disconnected"), {
-                name: "DisconnectedDeviceDuringOperation",
-              });
-        failInterruptedAttempt(interruptionError);
+        failInterruptedAttempt(interruptionErrorOf(inWrongDeviceForAccount, error));
         setState(initialState);
         // The attempt ended without the user dismissing anything — the device went away, or was
         // the wrong one. Clearing the refs stops that being reported later as a dismissal, and

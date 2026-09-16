@@ -40,9 +40,7 @@ const STAKE_PROGRAM_APPS = new Set(["kiln-widget", "stakekit"]);
 // would open the gate for a manifest of that name and report a function as the method.
 function entry(manifestId: string | undefined): StakingMethod | undefined | null {
   if (manifestId === undefined) return null;
-  return Object.prototype.hasOwnProperty.call(STAKING_LIVE_APPS, manifestId)
-    ? STAKING_LIVE_APPS[manifestId]
-    : null;
+  return Object.hasOwn(STAKING_LIVE_APPS, manifestId) ? STAKING_LIVE_APPS[manifestId] : null;
 }
 
 /** Whether a manifest's transactions belong in the earn funnel. */
