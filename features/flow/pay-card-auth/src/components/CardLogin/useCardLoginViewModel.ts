@@ -260,9 +260,13 @@ export function useCardLoginViewModel({
     : snapshot.context.errorKind;
 
   const onRetry = useCallback(() => {
-    setHasSignupFailed(false);
+    if (hasSignupFailed) {
+      openSignup();
+      return;
+    }
+
     send({ type: snapshot.value === "userFetchError" ? "RETRY" : "LOGIN" });
-  }, [send, snapshot.value]);
+  }, [hasSignupFailed, openSignup, send, snapshot.value]);
 
   const error = useMemo<CardAuthErrorCopy | null>(() => {
     if (!errorKind) {

@@ -81,4 +81,20 @@ describe("CardLoginView (Native)", () => {
     expect(screen.getByText("Login could not start")).toBeTruthy();
     expect(screen.queryByLabelText("Login")).toBeNull();
   });
+
+  it("should call onRetry when the panel action is pressed", () => {
+    const onRetry = jest.fn();
+    renderCardLoginView({
+      error: {
+        title: "Login could not start",
+        description: "Please try again.",
+        ctaLabel: "Try again",
+        onRetry,
+      },
+    });
+
+    fireEvent.press(screen.getByTestId("card-auth-error-cta"));
+
+    expect(onRetry).toHaveBeenCalledTimes(1);
+  });
 });

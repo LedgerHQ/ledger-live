@@ -405,6 +405,20 @@ describe("useCardLoginViewModel intro", () => {
     await waitFor(() => expect(result.current?.error?.title).toBe("The login page could not open"));
   });
 
+  it("retries the signup page from the panel, instead of starting a login", async () => {
+    const openHostedPage = jest.fn().mockRejectedValue(new Error("no manifest"));
+    const { result } = await renderIdleLogin(store, "both", undefined, openHostedPage);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+    await waitFor(() => expect(result.current?.error).not.toBeNull());
+
+    act(() => result.current?.error?.onRetry());
+
+    await waitFor(() => expect(openHostedPage).toHaveBeenCalledTimes(2));
+    expect(mockPorts.createAttempt).not.toHaveBeenCalled();
+  });
+
   it("reports a browser that refuses the signup page", async () => {
     mockPorts.openHostedLogin.mockRejectedValueOnce(new Error("no browser"));
     const { result } = await renderIdleLogin(store);
