@@ -55,15 +55,15 @@ const sub = analyticsEvents$.subscribe((event) => myDebug.push(event));
 const unsubscribe = () => sub.unsubscribe();
 ```
 
-### Track
+## Functions
+
+### Tracking
 
 `track` emits events with a payload of props, e.g.
 
 ```ts
 track("Your Event", { foo: "bar" });
 ```
-
-### Track Page
 
 `trackPage` emits events named `Page ${category} ${name}` and a payload of props.
 
@@ -75,15 +75,35 @@ trackPage({
 });
 ```
 
-### Enabling and mandatory
+### Enabling analytics
 
 Tracking is off until enabled explicitly with `setEnabledFn`.
 
-In the example above it is switched on by default but more often you will store user consent in some dynamic state. In this case, pass a selector for that state, e.g.
+In the example above it is switched on by default. Often you will store user consent in some dynamic state, in this case pass a selector for that state to `setEnabledFn`, e.g.
 
 ```ts
 setEnabledFn(() => myAnalyticsEnabledSelector(store.getState()));
 ```
+
+Mandatory events can be used to bypass the `enabled` state. See [Additional options](#additional-options) below.
+
+`trackPage` emits events named `Page ${category} ${name}`. Use `updateRoutes` and `refreshSource` to keep route refs in sync for subsequent `page` and `source` props on other events.
+
+```ts
+trackPage(
+  "Modal send",
+  "step recipient",
+  { flow: "send" },
+  {
+    updateRoutes: true,
+    refreshSource: true,
+  },
+);
+
+trackPage("Mandatory Page", null, null, { mandatory: true });
+```
+
+Use `avoidDuplicates: true` when a screen component may remount and emit the same page event twice.
 
 ### Async and await
 
@@ -97,26 +117,6 @@ await trackPage({ category: "Market" });
 ```
 
 The registered analytics client may be sync or async.
-
-### Page views
-
-`trackPage` emits events named `Page ${category} ${name}`. Use `updateRoutes` and `refreshSource` to keep route refs in sync for subsequent `page` and `source` props on other events.
-
-```ts
-trackPage(
-  "Modal send",
-  "step recipient",
-  { flow: "send" },
-  {
-    updateRoutes: true,
-    refreshSource: true,
-  }
-);
-
-trackPage("Mandatory Page", null, null, { mandatory: true });
-```
-
-Use `avoidDuplicates: true` when a screen component may remount and emit the same page event twice.
 
 ### Flush
 
@@ -161,7 +161,7 @@ Tracking routes are used in analytics to provide props like `page` and `source`.
 > [!Note]
 > Exporting the raw refs is **interim** – [LIVE-36002](https://ledgerhq.atlassian.net/browse/LIVE-36002) narrows this to a function-only API. Also, names are overly-varied (`screenRef`, `routeName` and `trackingSource`) – [LIVE-37304](https://ledgerhq.atlassian.net/browse/LIVE-37304) addresses ambigious names and duplicate logic
 
-### Additional options
+## Additional options
 
 ```ts
 // Track options
@@ -175,15 +175,10 @@ trackPage(
     mandatory: true,
     refreshSource: true,
     updateRoutes: true,
-  }
+  },
 );
 ```
 
-#### General options – for `track` and `trackPage`
-
 - `mandatory` – for events that do not require consent and should always be sent
-
-#### Route options: for `trackPage`
-
 - `avoidDuplicates` - to avoid resend the same event when a component mounts repeatedly
 - `updateRoutes` and `refreshSource` – to keep `page` and `source` values up to data
