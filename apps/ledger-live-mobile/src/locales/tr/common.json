@@ -220,7 +220,7 @@
       "description" : ""
     },
     "ConcordiumInsufficientFunds" : {
-      "title" : "Üzgünüz, fon miktarı yetersiz"
+      "title" : "Üzgünüz, bakiye yetersiz"
     },
     "ConcordiumMemoTooLong" : {
       "title" : "Memo, azami uzunluğu aşıyor",
@@ -233,6 +233,42 @@
     "ConcordiumSessionExpiredError" : {
       "title" : "Oturumun süresi doldu",
       "description" : "Concordium ID Uygulaması oturumu artık geçerli değil. Lütfen tekrar eşleyin."
+    },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "Ağ ücreti için yeterli CCD yok",
+      "description" : "Ağ ücreti, gönderdiğiniz token ile değil, CCD ile ödenir. Bu hesaba CCD ekleyin ve tekrar deneyin."
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "Bu token için transferler duraklatıldı",
+      "description" : "Token ihraççısı tüm transferleri duraklattı. Transferler yeniden başladığında tekrar deneyebilirsiniz."
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "Bu hesap bu token'ı gönderemez",
+      "description" : "Token ihraççısı bu token'ı kimlerin gönderebileceğini kısıtlıyor ve bu hesaba izin verilmiyor. Erişim için token ihraççısıyla iletişime geçin."
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "Token kısıtlamaları doğrulanamadı",
+      "description" : "Bu token'ın transfer kuralları okunamadı, bu nedenle transfer izni onaylanamıyor. Lütfen hesabınızı yeniden senkronize edin ve tekrar deneyin."
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "Bu token Ledger cihazınızda imzalanamaz",
+      "description" : "Token {{decimals}} ondalık basamak kullanıyor ve cihazınız en fazla {{maxDecimals}} basamak destekliyor. Token'ı alma ve saklama eylemleri bundan etkilenmez."
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "Bu token artık hesabınızda değil",
+      "description" : "Seçtiğiniz token artık mevcut değil. Lütfen işlemi yeniden başlatın."
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "Bu işlem hazırlanamıyor",
+      "description" : "Token'ın bilgileri Ledger cihazınızın kabul ettiği değerlerin dışında, bu nedenle işlem oluşturulamıyor. Lütfen Ledger Destek ile iletişime geçin."
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "Uygulama güncellemesi gerekli",
+      "description" : "Ledger cihazınızdaki Concordium uygulaması, token transferlerini desteklemiyor. My Ledger'da uygulamayı güncelleyin ve tekrar deneyin."
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "Bir hata oluştu. Lütfen cihazınızı yeniden bağlayın",
+      "description" : "Concordium uygulaması işlemi gerçekleştiremedi. Sorun devam ederse lütfen Ledger Destek ile iletişime geçin."
     },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Bir hata oluştu (Error #1)",
@@ -251,7 +287,7 @@
       "description" : "Bu hesap, bu işlemi imzalamak için yetkili değil."
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
-      "title" : "Yetersiz fon miktarı",
+      "title" : "Yetersiz bakiye",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
     "CosmosBroadcastCodeUnknownRequest" : {
@@ -271,7 +307,7 @@
       "description" : "Lütfen adresi kontrol edin ve tekrar deneyin."
     },
     "CosmosBroadcastCodeInsufficientCoins" : {
-      "title" : "Yetersiz fon miktarı",
+      "title" : "Yetersiz bakiye",
       "description" : "Lütfen hesaptaki fon miktarını arttırın."
     },
     "CosmosBroadcastCodeInvalidCoins" : {
@@ -682,7 +718,7 @@
       "title" : "Kalan yetki devri miktarı en az {{formattedAmount}} olmalıdır"
     },
     "NotEnoughVTHO" : {
-      "title" : "Üzgünüz, VTHO fon miktarı yetersiz",
+      "title" : "Üzgünüz, VTHO bakiyesi yetersiz",
       "description" : "Hesabınızdaki VTHO miktarının yeterli olduğundan lütfen emin olun."
     },
     "MustBeVechain" : {
@@ -702,7 +738,7 @@
       "description" : "Stake etmeyi etkinleştirebilmeniz için en az {{minStake}} {{currency}} gerekir"
     },
     "NotEnoughBalance" : {
-      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "title" : "Üzgünüz, bakiye yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
     "UnexpectedGetBalanceError" : {
@@ -1136,7 +1172,7 @@
       "title" : "Seçilen Stellar varlığı bulunamadı"
     },
     "StellarNotEnoughNativeBalance" : {
-      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "title" : "Üzgünüz, bakiye yetersiz",
       "description" : "Hesapta işlem ücretini karşılayacak kadar fon olduğundan lütfen emin olun"
     },
     "StellarFeeSmallerThanRecommended" : {
@@ -1146,7 +1182,7 @@
       "title" : "Minimum işlem ücreti 0,00001 XLM'dir"
     },
     "StellarNotEnoughNativeBalanceToAddTrustline" : {
-      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "title" : "Üzgünüz, bakiye yetersiz",
       "description" : "Hesapta yeni trustline'ı karşılayacak kadar fon olduğundan lütfen emin olun"
     },
     "StellarMuxedAccountNotExist" : {
@@ -1346,7 +1382,7 @@
       "title" : "Ücretlerin hesaplanması için ana hesapta yeterli miktarda fon (GRAM) yok. Gerekli minimum bakiye 0,1 GRAM'dır."
     },
     "TonMinimumRequired" : {
-      "title" : "Yetersiz fon miktarı. Gerekli minimum bakiye 0,02 GRAM'dır."
+      "title" : "Yetersiz bakiye.Gerekli minimum bakiye 0,02 GRAM'dır."
     },
     "BackupAppDataError" : {
       "title" : "Uygulama verileri yedeklenirken hata oluştu"
@@ -4806,10 +4842,6 @@
       "toggleCurrency" : "Para birimini değiştir"
     },
     "summary" : {
-      "solanaRawTransaction" : {
-        "title" : "Kör imzalama gerekir",
-        "description" : "İşlem ayrıntılarını Ledger cihazınızda doğrulayamazsınız. İşlemi imzalarsanız tüm varlıklarınızı kaybedebilirsiniz. Ancak ve ancak web sitesine güveniyorsanız imzalayın."
-      },
       "subaccountsWarning" : "Bu hesabın token'larını göndermek için bu hesabı {{ currency }} ile doldurmanız gerekir",
       "tag" : "Etiket (İsteğe Bağlı)",
       "validateTag" : "Etiketi onayla",
@@ -6213,7 +6245,7 @@
         "revoke" : "İptal et"
       },
       "delegationUnavailable" : {
-        "title" : "Yetersiz Kilitli Fon Miktarı"
+        "title" : "Yetersiz Kilitli Bakiye"
       },
       "manageMultipleVoteWarning" : "Bu oyu yönetmeden önce, aynı doğrulayıcı grubundaki diğer oyları Etkinleştirmeli ya da İptal Etmelisiniz."
     },
@@ -9818,6 +9850,40 @@
       "cta" : "Tekrar dene"
     }
   },
+  "perpsReview" : {
+    "depositTitle" : "SwapKit aracılığıyla yatırın",
+    "depositSubtitle" : "Sağlayıcımız SwapKit, takas ve yatırma işlemlerinizi tek bir işlem üzerinden yönetir ve tüm bu süreç Ledger cihazınız tarafından güvence altına alınır.",
+    "swapDetailTitle" : "Takas bilgileri",
+    "amountSendLabel" : "Gönderilecek tutar",
+    "amountReceiveLabel" : "Alınacak tutar",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "Yatırma bilgileri",
+    "depositAmountLabel" : "Yatırma tutarı",
+    "depositReceiveLabel" : "Alıcı hesap",
+    "depositCTA" : "Yatır"
+  },
+  "perpsDepositSign" : {
+    "terms" : "Bu işlemi imzalayarak <termsLink>SwapKit by NEAR Intents Hüküm ve Koşullarını</termsLink> kabul ediyorum."
+  },
+  "perpsTransactionSigned" : {
+    "title" : "İşlem imzalandı",
+    "description" : "İşlem blok zinciri üzerinde onaylandıktan sonra {{currency}} varlıklarınız hesabınıza geçecektir",
+    "viewTransaction" : "İşlemi görüntüle"
+  },
+  "perpsDeposit" : {
+    "title" : "Yatırın",
+    "inputDepositAmount" : "~{{value}} yatırın",
+    "inputSubText" : "{{provider}} ile takas edin ve yatırın",
+    "selectCurrencyTitle" : "{{currencyTicker}} ile yatırın",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "Hesap yok",
+    "review" : "İncele",
+    "keypadDelete" : "Son rakamı sil",
+    "formErrors" : {
+      "amountExceedsBalance" : "Yetersiz bakiye",
+      "quoteUnavailable" : "{{provider}} üzerinden fiyat teklifi alamıyoruz. Farklı bir varlıkla deneyin veya daha sonra tekrar deneyin."
+    }
+  },
   "swapErrors" : {
     "incorrectCommandData" : {
       "title" : "Yanlış komut verisi",
@@ -10211,8 +10277,38 @@
     },
     "card" : {
       "title" : "Kripto kartı",
+      "placeholder" : "Çok yakında",
+      "details" : "Ayrıntılar",
       "freeze" : "Dondur",
-      "unfreeze" : "Çöz"
+      "unfreeze" : "Çöz",
+      "goBack" : "Geri dön",
+      "freezeConfirm" : {
+        "title" : "Dondurmak, kartı artık kullanamayacağınız anlamına gelir.",
+        "description" : "Kartınızı dilediğiniz zaman kullanıma açabilirsiniz.",
+        "confirm" : "Şimdi dondur",
+        "errorTitle" : "Dondurma başarısız oldu"
+      },
+      "unfreezeConfirm" : {
+        "title" : "Kartınız kullanıma açılsın mı?",
+        "confirm" : "Şimdi kullanıma aç",
+        "errorTitle" : "Kullanıma açma başarısız oldu"
+      },
+      "confirmError" : {
+        "description" : "Bir hata oluştu. Lütfen tekrar deneyin.",
+        "retry" : "Tekrar deneyin"
+      }
+    },
+    "cardTransactions" : {
+      "categories" : {
+        "SUBSCRIPTIONS" : "Abonelikler",
+        "FOOD" : "Yemek",
+        "TRAVEL" : "Seyahat",
+        "ENTERTAINMENT" : "Eğlence",
+        "HEALTH" : "Sağlık",
+        "ATM" : "ATM",
+        "UTILITIES" : "Yardımcı Araçlar",
+        "MISC" : "Diğer"
+      }
     },
     "selectContact" : {
       "placeholder" : "Kişi girin"
@@ -10341,6 +10437,14 @@
       "addressPicker" : {
         "title" : "{{name}} için adres seçin",
         "addAddress" : "Adres ekle"
+      },
+      "paySuccess" : {
+        "title" : "{{recipient}} kişisine ödeme yaptınız:",
+        "amount" : "Tutar",
+        "estimatedTime" : "Tahmini süre",
+        "from" : "Kaynak",
+        "viewTransaction" : "İşlemi görüntüle",
+        "close" : "Kapat"
       }
     },
     "cardOnboarding" : {
@@ -10617,11 +10721,11 @@
     "addContact" : "Kişi ekle",
     "addAddress" : "Adres ekle",
     "addYourAddress" : "Adresinizi ekleyin",
-    "searchPlaceholder" : "Kişi ara",
+    "searchPlaceholder" : "İsme göre ara",
     "searchNoResults" : "Kişi bulunamadı",
     "addContactDrawer" : {
       "namePlaceholder" : "Kişi adı",
-      "namingDisclaimer" : "Gizlilik için ad ve soyadların tamamını kullanmaktan kaçının. Bir takma ad veya yalnızca ad + baş harf kullanın, örn. \"John S\".",
+      "namingDisclaimer" : "Gizlilik için tam ad kullanmaktan kaçının. Bir takma ad veya yalnızca ad + soyadın baş harfi kombinasyonunu kullanın, ör. \"John S.\"",
       "confirmName" : "Adı onayla",
       "invalidNameError" : "Özel karakterlere izin verilmez.",
       "duplicateNameError" : "Bu kişi adı zaten kullanımda."
@@ -10636,7 +10740,8 @@
       "domainNotFound" : "Bu alan için adres bulunamadı",
       "sanctionedAddress" : "Bu adres yaptırım listesindedir ve kullanılamaz.",
       "validationUnavailable" : "Adres doğrulaması geçici olarak kullanılamıyor",
-      "ensDisclaimer" : "ENS adları cüzdan adreslerine çözümlenir. Devam etmeden önce çözümlenen adresi her zaman doğrulayın.",
+      "ensDisclaimer" : "ENS isimleri değişebilir",
+      "ensDisclaimerDescription" : "ENS adları zaman içinde farklı adresleri temsil edebilir. Bakiyenizin yalnızca sizin doğruladığınız adrese ulaşmasını garanti altına almak amacıyla mevcut adresi şimdi kaydediyoruz.",
       "sanctioned" : {
         "description" : "Bu adres işaretlenmiş ve Ledger bu adrese gönderim yapamıyor.",
         "learnMore" : "Daha fazla bilgi"
@@ -10645,7 +10750,7 @@
     "addAddressName" : {
       "title" : "Adresi adlandırın",
       "inputLabel" : "Adres adı",
-      "namingDisclaimer" : "Gerektiğinde kolayca bulabilmeniz için bu adrese bir isim vermenizi öneririz. Bu isim yalnızca sizin tarafınızdan görülebilecektir.",
+      "namingDisclaimer" : "Bu isim, bu adrese gönderim yaptığınızda Ledger cihazınızda görünür. Kolayca bulmanızı sağlayacak bir isim verin.",
       "continueToReview" : "İnceleme adımına geç",
       "invalidLabel" : "Özel karakterler desteklenmez.",
       "duplicateLabel" : "Bu adres adı bu kişi için zaten kullanılıyor.",
@@ -10663,10 +10768,7 @@
     "addressCount_one" : "{{count}} adres",
     "addressCount_other" : "{{count}} adres",
     "me" : {
-      "name" : "Ben",
-      "addressCount_zero" : "0 adres",
-      "addressCount_one" : "{{count}} adres",
-      "addressCount_other" : "{{count}} adres"
+      "myAddresses" : "Adreslerim"
     },
     "detail" : {
       "meDisplayName" : "{{name}} (Ben)",
@@ -10697,7 +10799,7 @@
     "editContact" : {
       "title" : "Kişiyi düzenle",
       "namePlaceholder" : "Kişi adı",
-      "namingDisclaimer" : "Gizlilik için ad ve soyadın tamamını kullanmaktan kaçının. Bir takma ad veya yalnızca ad+soyadın baş harfini kullanın, ör. 'John S.'",
+      "namingDisclaimer" : "Gizlilik için tam ad kullanmaktan kaçının. Bir takma ad veya yalnızca ad + soyadın baş harfi kombinasyonunu kullanın, ör. \"John S.\"",
       "confirmName" : "Adı onayla",
       "applyChanges" : "Değişiklikleri uygula",
       "invalidNameError" : "Özel karakterler desteklenmez."
@@ -10736,7 +10838,7 @@
     },
     "featureIntroduction" : {
       "title" : "Karşınızda Kişiler",
-      "primaryAction" : "Hemen keşfet",
+      "primaryAction" : "Hemen deneyin",
       "highlights" : {
         "saveAddresses" : {
           "title" : "Adresleri seçtiğiniz bir isimle kaydedin",
@@ -10747,7 +10849,7 @@
           "description" : "Bir adresi değil, güvendiğiniz bir ismi görün."
         },
         "privateAcrossDevices" : {
-          "title" : "Ledger Wallet™ ile güvenli bir şekilde bakiye yükleyin",
+          "title" : "Tüm Ledger cihazlarınızda gizli kalır",
           "description" : "Ledger Sync ile uçtan uca şifrelenir."
         }
       }
