@@ -87,7 +87,9 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 2`] = `
       "accountId": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain",
       "blockHash": "0x00fa5b35f158cee280b6be35b4ada7669951035a79806244aaa11e5d2764d5bd",
       "blockHeight": 16407349,
-      "extra": {},
+      "extra": {
+        "gasPayer": "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
+      },
       "fee": "210000000000000000",
       "hash": "0xe113f82af98a24c6f2473802f8673f0d69eed1c0f51a5a87d3cc6b8cf96ccfd6",
       "id": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain-0xe113f82af98a24c6f2473802f8673f0d69eed1c0f51a5a87d3cc6b8cf96ccfd6-IN",
@@ -106,7 +108,9 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 2`] = `
       "accountId": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvip180%2Fvtho",
       "blockHash": "0x00fa5b4ee2eca5cf65907e3695bbea044cd1f78224534dc0ba02526890055ecc",
       "blockHeight": 16407374,
-      "extra": {},
+      "extra": {
+        "gasPayer": "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
+      },
       "fee": "365180000000000000",
       "hash": "0x5fdd7191c4d476a8e86060d516366e87421f65667b9b3c14c33a740c04921b10",
       "id": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvip180%2Fvtho-0x5fdd7191c4d476a8e86060d516366e87421f65667b9b3c14c33a740c04921b10-IN",
@@ -125,7 +129,9 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 2`] = `
       "accountId": "js:2:vechain:0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86:vechain",
       "blockHash": "0x00fa5b547b0d542ba8e62a85aa99cf355f1b2a70bd34e3949f889b0856776e05",
       "blockHeight": 16407380,
-      "extra": {},
+      "extra": {
+        "gasPayer": "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
+      },
       "fee": "210000000000000000",
       "hash": "0xa4096186f2d58ecc68e6ea11c9757ef5bd78b21b87d73b4618eb6fd3508431ec",
       "id": "js:2:vechain:0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86:vechain-0xa4096186f2d58ecc68e6ea11c9757ef5bd78b21b87d73b4618eb6fd3508431ec-IN",
