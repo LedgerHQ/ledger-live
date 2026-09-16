@@ -97,10 +97,10 @@ describe("mapSnapshotToViewModel", () => {
     ).toBeNull();
   });
 
-  it("shows no message while there is no error", () => {
+  it("shows no panel while there is no error", () => {
     expect(
       mapSnapshotToViewModel("idle", null, copy, onLoginPress, onAlreadyHaveCardPress, intro)
-        ?.errorMessage,
+        ?.error,
     ).toBeNull();
   });
 
@@ -111,17 +111,24 @@ describe("mapSnapshotToViewModel", () => {
     ).toBe(intro);
   });
 
-  it("shows the message it was handed", () => {
+  it("hands the panel copy straight through", () => {
+    const error = {
+      title: "The login page could not open",
+      description: "Please try again.",
+      ctaLabel: "Try again",
+      onRetry: jest.fn(),
+    };
+
     const login = mapSnapshotToViewModel(
       "authError",
-      "The login page could not open. Please try again.",
+      error,
       copy,
       onLoginPress,
       onAlreadyHaveCardPress,
       intro,
     );
 
-    expect(login?.errorMessage).toBe("The login page could not open. Please try again.");
+    expect(login?.error).toBe(error);
   });
 });
 
@@ -399,9 +406,7 @@ describe("useCardLoginViewModel intro", () => {
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
 
-    await waitFor(() =>
-      expect(result.current?.errorMessage).toBe("The login page could not open. Please try again."),
-    );
+    await waitFor(() => expect(result.current?.error?.title).toBe("The login page could not open"));
   });
 
   it("reports a browser that refuses the signup page", async () => {
@@ -411,7 +416,7 @@ describe("useCardLoginViewModel intro", () => {
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
 
-    await waitFor(() => expect(result.current?.errorMessage).not.toBeNull());
+    await waitFor(() => expect(result.current?.error).not.toBeNull());
   });
 
   it("clears the signup error when the login starts", async () => {
@@ -420,12 +425,12 @@ describe("useCardLoginViewModel intro", () => {
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
-    await waitFor(() => expect(result.current?.errorMessage).not.toBeNull());
+    await waitFor(() => expect(result.current?.error).not.toBeNull());
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("logIn"));
 
-    await waitFor(() => expect(result.current?.errorMessage).toBeNull());
+    await waitFor(() => expect(result.current?.error).toBeNull());
   });
 
   it("drops a second action press, so one press starts one login", async () => {
@@ -666,7 +671,9 @@ describe("useCardLoginViewModel errors", () => {
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("logIn"));
 
-    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.pkce_failed));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.pkce_failed.title),
+    );
   });
 
   it("shows the translated message for browser_open_failed", async () => {
@@ -677,7 +684,7 @@ describe("useCardLoginViewModel errors", () => {
     act(() => result.current?.intro.onActionPress("logIn"));
 
     await waitFor(() =>
-      expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.browser_open_failed),
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.browser_open_failed.title),
     );
   });
 
@@ -693,7 +700,9 @@ describe("useCardLoginViewModel errors", () => {
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("logIn"));
 
-    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.exchange_failed));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.exchange_failed.title),
+    );
   });
 
   it("shows the translated message for persist_failed", async () => {
@@ -708,7 +717,9 @@ describe("useCardLoginViewModel errors", () => {
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("logIn"));
 
-    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.persist_failed));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.persist_failed.title),
+    );
   });
 
   it("shows the translated message for missing_attempt", async () => {
@@ -725,7 +736,9 @@ describe("useCardLoginViewModel errors", () => {
       { wrapper: withProviders(store) },
     );
 
-    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.missing_attempt));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.missing_attempt.title),
+    );
   });
 
   it("shows the translated message for fetch_user_failed", async () => {
@@ -742,7 +755,7 @@ describe("useCardLoginViewModel errors", () => {
     );
 
     await waitFor(() =>
-      expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.fetch_user_failed),
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.fetch_user_failed.title),
     );
   });
 });

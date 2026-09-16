@@ -10,7 +10,9 @@ const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError
 let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
-  CardLogin: () => <View testID="card-login" />,
+  CardLogin: ({ children }: { children?: React.ReactNode }) => (
+    <View testID="card-login">{children}</View>
+  ),
   useCardAuthStatus: () => mockUseCardAuthStatus(),
 }));
 

@@ -13,6 +13,7 @@ import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors"
 import { selectIsSignedIn } from "../../state/selectors";
 import { setPendingLoginType } from "../../state/slice";
 import type {
+  CardAuthErrorCopy,
   CardLoginCopy,
   CardLoginIntroActionId,
   CardLoginIntroRowIcon,
@@ -57,7 +58,7 @@ const TRACK_BUTTON = {
  */
 export function mapSnapshotToViewModel(
   value: CardLoginStateValue,
-  errorMessage: string | null,
+  error: CardAuthErrorCopy | null,
   copy: CardLoginCopy,
   onLoginPress: () => void,
   onAlreadyHaveCardPress: () => void,
@@ -78,7 +79,7 @@ export function mapSnapshotToViewModel(
       value !== "authError" &&
       value !== "userFetchError" &&
       value !== "awaitingCallback",
-    errorMessage,
+    error,
     onLoginPress,
     onAlreadyHaveCardPress,
     intro,
@@ -135,11 +136,7 @@ export function useCardLoginViewModel({
     }
   }, [isSignedIn, snapshot.value, send]);
 
-  const isIntroOpen =
-    isIntroRequested &&
-    (snapshot.value === "idle" ||
-      snapshot.value === "authError" ||
-      snapshot.value === "userFetchError");
+  const isIntroOpen = isIntroRequested && snapshot.value === "idle";
 
   // Both ways to Baanx go through here: signing up and logging in alike need the app protected
   // first, and a host that declines leaves the card where it was rather than carrying on.
@@ -285,9 +282,31 @@ export function useCardLoginViewModel({
     ? "browser_open_failed"
     : snapshot.context.errorKind;
 
+  const onRetry = useCallback(() => {
+    setHasSignupFailed(false);
+    send({ type: snapshot.value === "userFetchError" ? "RETRY" : "LOGIN" });
+  }, [send, snapshot.value]);
+
+  const error = useMemo<CardAuthErrorCopy | null>(() => {
+    if (!errorKind) {
+      return null;
+    }
+
+    return {
+      title: t(`${LOGIN_KEY_PREFIX}.errors.${errorKind}.title`),
+      description: t(`${LOGIN_KEY_PREFIX}.errors.${errorKind}.description`),
+      ctaLabel: t(
+        `${LOGIN_KEY_PREFIX}.errors.${
+          errorKind === "fetch_user_failed" ? "retryUser" : "retryLogin"
+        }`,
+      ),
+      onRetry,
+    };
+  }, [errorKind, t, onRetry]);
+
   return mapSnapshotToViewModel(
     snapshot.value,
-    errorKind ? t(`${LOGIN_KEY_PREFIX}.errors.${errorKind}`) : null,
+    error,
     copy,
     onLoginPress,
     onAlreadyHaveCardPress,
