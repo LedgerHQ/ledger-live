@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useSearchParams } from "react-router";
+import { useLocation, useSearchParams } from "react-router";
 import {
   formatSmallValueOperationsThreshold,
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
@@ -57,15 +57,9 @@ export type HistoryViewModel = {
 
 export function useHistoryViewModel(): HistoryViewModel {
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    return () => {
-      dispatch(markOperationsAsSeen());
-    };
-  }, [dispatch]);
-
   const { showBackButton, navigateBack } = usePopNavigationBack(parseHistoryBackPath);
 
+  const { state: locationState } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const isPayTabEnabled = !!useFeature("lwdPayTab")?.enabled;
   const showHistoryTypeSwitcher = isPayTabEnabled;
@@ -73,6 +67,15 @@ export function useHistoryViewModel(): HistoryViewModel {
     isPayTabEnabled && searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD
       ? HISTORY_TAB_CARD
       : HISTORY_TAB_CRYPTO;
+
+  useEffect(() => {
+    return () => {
+      if (historyTab === HISTORY_TAB_CRYPTO) {
+        dispatch(markOperationsAsSeen());
+      }
+    };
+  }, [dispatch, historyTab]);
+
   const onHistoryTabChange = useCallback(
     (tab: HistoryTab) => {
       const next = new URLSearchParams(searchParams);
@@ -81,9 +84,9 @@ export function useHistoryViewModel(): HistoryViewModel {
       } else {
         next.delete(HISTORY_TAB_SEARCH_PARAM);
       }
-      setSearchParams(next, { replace: true });
+      setSearchParams(next, { replace: true, state: locationState });
     },
-    [searchParams, setSearchParams],
+    [locationState, searchParams, setSearchParams],
   );
   const contactIdResult = ContactIdSchema.safeParse(searchParams.get("contactId"));
   const contactId = isPayTabEnabled && contactIdResult.success ? contactIdResult.data : undefined;
