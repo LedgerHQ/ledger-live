@@ -11,7 +11,6 @@ import type { Account } from "@ledgerhq/types-live";
 
 jest.mock("@ledgerhq/live-common/bridge/generic-coin-framework/sponsored", () => ({
   getSponsoredCoinApi: jest.fn(),
-  SPONSORED_FEE_OPTION_ID: "tronify",
 }));
 
 const mockedGetSponsoredCoinApi = jest.mocked(getSponsoredCoinApi);
@@ -34,6 +33,10 @@ function fakeSeam(overrides: Partial<SponsoredCoinApi>): SponsoredCoinApi {
     submitEnergyRentPayment: jest.fn(),
     getEnergyRentStatus: jest.fn(),
     awaitEnergyDelivery: jest.fn(),
+    isEnergyDelivered: jest.fn(),
+    getEnergyRentSignaturePayload: jest.fn(),
+    buildSignedEnergyRentTransaction: jest.fn(),
+    nativeRentAmount: jest.fn(),
     ...overrides,
   };
 }

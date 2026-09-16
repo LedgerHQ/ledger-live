@@ -207,6 +207,10 @@ function fakeSponsoredSeam(overrides: Partial<SponsoredCoinApi> = {}): Sponsored
     submitEnergyRentPayment: jest.fn().mockResolvedValue(undefined),
     getEnergyRentStatus: jest.fn().mockResolvedValue("pending"),
     awaitEnergyDelivery: jest.fn().mockResolvedValue(undefined),
+    isEnergyDelivered: jest.fn().mockResolvedValue(false),
+    getEnergyRentSignaturePayload: jest.fn(),
+    buildSignedEnergyRentTransaction: jest.fn(),
+    nativeRentAmount: jest.fn(),
     ...overrides,
   };
 }
@@ -270,9 +274,15 @@ jest.mock("@ledgerhq/live-common/bridge/generic-coin-framework/buildIntent", () 
 const initialMockOrchestrationState: SponsoredState = {
   phase: SPONSORED_PHASE.RENT_SIGNING,
   order: null,
+  toSign: null,
+  reservedNativeAmount: null,
+  payerAddress: null,
+  receiverAddress: null,
+  energyNeeded: null,
   paymentTxId: null,
   failureKind: null,
   failureError: null,
+  contractDataResumePhase: SPONSORED_PHASE.RENT_SIGNING,
 };
 let mockOrchestrationState: SponsoredState = initialMockOrchestrationState;
 let mockOrchestrationSetState: ((state: SponsoredState) => void) | null = null;

@@ -430,7 +430,7 @@ test.each([["paid"], ["pending"], ["delivered"], ["unknown"]])(
       await result.current.actions.craftRent();
     });
     await act(async () => {
-      await result.current.actions.startRentPayment({});
+      await result.current.actions.startRentPayment("sig");
     });
 
     expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -451,7 +451,7 @@ test("submit failure whose reconciliation also fails -> DELIVERY_FAILED (avoid d
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment({});
+    await result.current.actions.startRentPayment("sig");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -476,7 +476,7 @@ test("delivery timeout the provider then reports delivered -> proceeds to TRANSF
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment({});
+    await result.current.actions.startRentPayment("sig");
   });
 
   expect(seam.getEnergyRentStatus).toHaveBeenCalledWith({ orderId: "o1", payerAddress: "TPayer" });

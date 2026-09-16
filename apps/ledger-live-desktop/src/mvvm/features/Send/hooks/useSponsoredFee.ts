@@ -3,10 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
-import {
-  getSponsoredCoinApi,
-  SPONSORED_FEE_OPTION_ID,
-} from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
+import { getSponsoredCoinApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
@@ -18,6 +15,11 @@ import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
  * `SponsoredFeeQuote` shape (bridge/generic-coin-framework/sponsored.ts) so consumers don't take a
  * dependency on that internal seam type. */
 export type SponsoredFeeQuote = { value: bigint; originalValue: bigint; savings: bigint };
+
+// Id coin-tron's listFeeOptions tags the energy-rent option with (its TRONIFY_FEE_OPTION_ID). Mirrored
+// as a literal because apps can't import a coin-module directly and the generic seam no longer
+// re-exports it; must stay in sync with @ledgerhq/coin-tron's TRONIFY_FEE_OPTION_ID ("tronify").
+const SPONSORED_FEE_OPTION_ID = "tronify";
 
 type UseSponsoredFeeParams = Readonly<{
   account: AccountLike;

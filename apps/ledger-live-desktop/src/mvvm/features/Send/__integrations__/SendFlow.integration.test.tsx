@@ -877,7 +877,7 @@ describe("Send Flow Integration", () => {
   describe("Sponsored send (TRON Tronify)", () => {
     const tronAccount = createTronAccount();
     // Known constant used to build the TX-A device signature the way coin-tron's combine() actually
-    // shapes it (see recoverDeviceSignature: combined.slice(4 + rawDataHex.length)).
+    // shapes it (see coin-tron's recoverDeviceSignature: combined.slice(4 + rawDataHex.length)).
     const rawDataHex = "0a02abcd";
     const rentOrder = {
       orderId: "order-1",
@@ -948,7 +948,7 @@ describe("Send Flow Integration", () => {
       // never reached from this test; fakeSponsoredSeam's defaults for those fields are unused.
       setMockSponsoredSeam({ listFeeOptions, estimateSponsoredFeeQuote });
 
-      renderSendFlow(tronAccount, {}, { flags: { gasSponsorship: { enabled: true } } });
+      renderSendFlow(tronAccount, {}, [], { flags: { gasSponsorship: { enabled: true } } });
       // Not the `user` renderSendFlow returns: under fake timers, userEvent needs
       // advanceTimers wired to its own event-loop advance or user.type/click hang forever.
       const user = userEvent.setup({
@@ -967,14 +967,15 @@ describe("Send Flow Integration", () => {
         device: {},
       });
       await act(async () => {
-        setMockOrchestrationState({ order: rentOrder });
+        setMockOrchestrationState({ order: rentOrder, toSign: rawDataHex, paymentTxId: "tx-a-id" });
       });
 
-      // Proves the signature recovered from the TX-A device result is what reaches the rent-payment
-      // action — the stand-in for asserting the seam's submitEnergyRentPayment call, which now lives
-      // inside the mocked-out orchestration and is never exercised from this test.
+      // Proves the combined device signature reaches the rent-payment action untouched — recovery of
+      // the raw device signature from it now happens inside the family seam
+      // (buildSignedEnergyRentTransaction), which lives inside the mocked-out orchestration and is
+      // never exercised from this test.
       expect(mockSponsoredOrchestrationActions.startRentPayment).toHaveBeenCalledWith(
-        expect.objectContaining({ signature: ["SIGA"] }),
+        "0008" + rawDataHex + "SIGA",
         "tx-a-id",
       );
 
@@ -1005,7 +1006,7 @@ describe("Send Flow Integration", () => {
         .mockResolvedValue({ value: 1000n, originalValue: 5000n, savings: 4000n });
       setMockSponsoredSeam({ listFeeOptions, estimateSponsoredFeeQuote });
 
-      renderSendFlow(tronAccount, {}, { flags: { gasSponsorship: { enabled: true } } });
+      renderSendFlow(tronAccount, {}, [], { flags: { gasSponsorship: { enabled: true } } });
       const user = userEvent.setup({
         advanceTimers: jest.advanceTimersByTime,
         pointerEventsCheck: 0,
@@ -1019,10 +1020,10 @@ describe("Send Flow Integration", () => {
         device: {},
       });
       await act(async () => {
-        setMockOrchestrationState({ order: rentOrder });
+        setMockOrchestrationState({ order: rentOrder, toSign: rawDataHex, paymentTxId: "tx-a-id" });
       });
       expect(mockSponsoredOrchestrationActions.startRentPayment).toHaveBeenCalledWith(
-        expect.objectContaining({ signature: ["SIGA"] }),
+        "0008" + rawDataHex + "SIGA",
         "tx-a-id",
       );
 

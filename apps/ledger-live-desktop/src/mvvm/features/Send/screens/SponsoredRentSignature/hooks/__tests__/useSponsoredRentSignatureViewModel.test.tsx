@@ -2,7 +2,6 @@ import { renderHook, act } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import {
   useSponsoredRentSignatureViewModel,
-  recoverDeviceSignature,
   type SponsoredRentSignatureResult,
 } from "../useSponsoredRentSignatureViewModel";
 
@@ -35,6 +34,7 @@ const mockActions = {
 let mockSponsoredState: {
   phase: string;
   order: { orderId: string; transaction: unknown; payCoinCode: string; payCoinAmt: string } | null;
+  toSign: string | null;
   paymentTxId: string | null;
   failureKind: string | null;
   failureError: Error | null;
@@ -65,19 +65,13 @@ function makeOrder() {
   };
 }
 
-describe("recoverDeviceSignature", () => {
-  it("strips the 4-hex-digit length prefix and the echoed raw_data_hex (coin-tron combine.ts format)", () => {
-    const combined = "0008" + rawDataHex + "SIGHEX";
-    expect(recoverDeviceSignature(rawDataHex, combined)).toBe("SIGHEX");
-  });
-});
-
 describe("useSponsoredRentSignatureViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockSponsoredState = {
       phase: "RENT_SIGNING",
       order: null,
+      toSign: null,
       paymentTxId: null,
       failureKind: null,
       failureError: null,
@@ -106,8 +100,10 @@ describe("useSponsoredRentSignatureViewModel", () => {
     expect(mockCraftRent).not.toHaveBeenCalled();
   });
 
-  it("rebuilds the Tronify-signed payload from the combined device signature and starts the rent payment", () => {
+  it("passes the combined device signature and the signed-against paymentTxId to startRentPayment", () => {
     mockSponsoredState.order = makeOrder();
+    mockSponsoredState.toSign = rawDataHex;
+    mockSponsoredState.paymentTxId = "tx-a-id";
     const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
 
     const combinedSignature = "0008" + rawDataHex + "SIGHEX";
@@ -121,10 +117,7 @@ describe("useSponsoredRentSignatureViewModel", () => {
     });
 
     expect(mockStartRentPayment).toHaveBeenCalledTimes(1);
-    expect(mockStartRentPayment).toHaveBeenCalledWith(
-      { ...orderTransaction, signature: ["SIGHEX"] },
-      "tx-a-id",
-    );
+    expect(mockStartRentPayment).toHaveBeenCalledWith(combinedSignature, "tx-a-id");
   });
 
   it("routes a contract-data-disabled refusal to setContractDataFailure and never starts the rent payment", () => {
@@ -141,8 +134,26 @@ describe("useSponsoredRentSignatureViewModel", () => {
     });
 
     expect(mockSetContractDataFailure).toHaveBeenCalledTimes(1);
-    expect(mockSetContractDataFailure).toHaveBeenCalledWith(contractDataError);
+    // paymentTxId is null in the initial state → undefined passed to let the reducer reject stale callbacks
+    expect(mockSetContractDataFailure).toHaveBeenCalledWith(contractDataError, undefined);
     expect(mockStartRentPayment).not.toHaveBeenCalled();
+  });
+
+  it("passes the current paymentTxId to setContractDataFailure so stale sign errors are rejected", () => {
+    mockSponsoredState.order = makeOrder();
+    mockSponsoredState.paymentTxId = "tx-a-id";
+    const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    const contractDataError = Object.assign(new Error("contract data disabled"), {
+      name: "TransportStatusError",
+      statusCode: 0x6a80,
+    });
+
+    act(() => {
+      result.current.onResult({ transactionSignError: contractDataError });
+    });
+
+    expect(mockSetContractDataFailure).toHaveBeenCalledWith(contractDataError, "tx-a-id");
   });
 
   it("leaves any other sign error to DeviceAction's own retry UI (no contract-data failure, no rent payment)", () => {

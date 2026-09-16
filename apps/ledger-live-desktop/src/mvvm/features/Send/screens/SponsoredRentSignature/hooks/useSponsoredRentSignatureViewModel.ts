@@ -10,20 +10,6 @@ import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { isContractDataDisabledError } from "../../../utils/contractDataError";
 
-/**
- * Structural mirror of coin-tron's Tronify wire types (network/tronify/types.ts). Declared locally
- * rather than imported: `EnergyRentOrder.transaction` is deliberately `unknown` at the seam boundary
- * (bridge/generic-coin-framework/sponsored.ts) and coin-tron's own types are internal to that package.
- */
-type TronifyUnsignedTransaction = Readonly<{
-  visible: boolean;
-  txID: string;
-  raw_data: Record<string, unknown>;
-  raw_data_hex: string;
-}>;
-
-type TronifySignedTransaction = TronifyUnsignedTransaction & Readonly<{ signature: string[] }>;
-
 export type SponsoredRentSignatureRequest = Readonly<{
   account: AccountLike;
   parentAccount: Account | null;
@@ -34,17 +20,6 @@ export type SponsoredRentSignatureRequest = Readonly<{
 export type SponsoredRentSignatureResult =
   | Readonly<{ signedOperation: SignedOperation | undefined | null; device: Device }>
   | Readonly<{ transactionSignError: Error }>;
-
-/**
- * Inverse of coin-tron's `combine(tx, [sig])` =
- * `${tx.length.toString(16).padStart(4, "0")}${tx}${sig}` (see
- * libs/coin-modules/coin-tron/src/logic/combine.ts). The generic raw-sign path returns that combined
- * string as `signedOperation.signature`; recover the raw device signature by dropping the 4-hex-digit
- * length prefix and the echoed `raw_data_hex`.
- */
-export function recoverDeviceSignature(rawDataHex: string, combinedSignature: string): string {
-  return combinedSignature.slice(4 + rawDataHex.length);
-}
 
 export type SponsoredRentSignatureViewModel = Readonly<{
   isCrafting: boolean;
@@ -104,35 +79,37 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
   const action = useRawTransactionAction();
 
   const request = useMemo<SponsoredRentSignatureRequest | null>(() => {
-    if (!account || !order) return null;
-    const tx = order.transaction as TronifyUnsignedTransaction;
+    // `toSign` is the family-derived signable hex (coin-tron's raw_data_hex), put on state at
+    // CRAFT_SUCCESS so the platform never has to reach into the opaque `order.transaction`.
+    if (!account || !state.toSign) return null;
     return {
       account,
       parentAccount: parentAccount ?? null,
-      transaction: tx.raw_data_hex,
+      transaction: state.toSign,
       broadcast: false,
     };
-  }, [account, parentAccount, order]);
+  }, [account, parentAccount, state.toSign]);
 
   const onResult = useCallback(
     (result: SponsoredRentSignatureResult) => {
       if ("signedOperation" in result) {
         if (!result.signedOperation || !order || hasSubmittedRef.current) return;
         hasSubmittedRef.current = true;
-        const tx = order.transaction as TronifyUnsignedTransaction;
-        const sig = recoverDeviceSignature(tx.raw_data_hex, result.signedOperation.signature);
-        const signedTransaction: TronifySignedTransaction = { ...tx, signature: [sig] };
-        actions.startRentPayment(signedTransaction, tx.txID);
+        // The generic raw-sign path returns the device's combined signature; the orchestration hands
+        // it to the family seam (buildSignedEnergyRentTransaction) to rebuild TX-A, so pass it through
+        // as-is. Pass the paymentTxId we signed against so a signature from a since-recrafted order is
+        // rejected instead of broadcast against the new one.
+        actions.startRentPayment(result.signedOperation.signature, state.paymentTxId ?? undefined);
       } else if ("transactionSignError" in result) {
         const error = result.transactionSignError;
         if (isContractDataDisabledError(error)) {
-          actions.setContractDataFailure(error);
+          actions.setContractDataFailure(error, state.paymentTxId ?? undefined);
         }
         // Any other sign error (user reject, locked, wrong app) is left to <DeviceAction>'s own
         // inline error+retry UI — it does not need SPONSORED_FAILURE, only a retry.
       }
     },
-    [order, actions],
+    [order, actions, state.paymentTxId],
   );
 
   // Phase -> navigation: this screen owns RENT_SIGNING/IDLE; POLLING and FAILED (any failureKind,
