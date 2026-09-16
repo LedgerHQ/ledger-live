@@ -435,6 +435,11 @@
           "viewInExplorer" : "Tarayıcıda görüntüle",
           "copied" : "Kopyalandı"
         },
+        "earnBanner" : {
+          "title" : "%{{apy}} {{type}} oranına kadar kazanın",
+          "description" : "Getiri fırsatlarını keşfedin",
+          "button" : "Keşfet"
+        },
         "accessibility" : {
           "copySwapId" : "Takas kimliğini kopyala"
         }
@@ -682,26 +687,6 @@
   "postOnboardingDebugger" : {
     "buttonTitle" : "Test"
   },
-  "vaultSigner" : {
-    "modal" : {
-      "title" : "Vault'u bağlayın",
-      "info" : "Aşağıdaki alanları doldurarak Ledger Vault çalışma alanı hesaplarınızı bağlayın ve Ledger Wallet kaynaklı işlemler oluşturun. Bilgilere “Ayarlar” > “Üçüncü taraf cüzdanı imzalayıcısı” kısmından ulaşabilirsiniz.",
-      "info_link" : "Daha fazla bilgi",
-      "host" : {
-        "title" : "URL Uç Noktası",
-        "placeholder" : "ws://localhost:3030"
-      },
-      "workspace" : {
-        "title" : "Çalışma alanı adı",
-        "placeholder" : "çalışma alanı"
-      },
-      "token" : {
-        "title" : "Operatör API Belirteci",
-        "placeholder" : "Token"
-      },
-      "submit" : "Bağlan"
-    }
-  },
   "account" : {
     "subHeader" : {
       "moreInfo" : "Daha fazla bilgi",
@@ -873,22 +858,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "Ödeme yapın ve ödeme alın",
-      "description" : "Stabil coin'ler, kripto dünyası ile gerçek hayattaki günlük harcamalarınız arasında bir köprü kurar",
-      "cta" : "Anladım",
+      "title" : "Tüm ödemeleriniz tek bir yerde",
+      "description" : "Kriptonuzu günlük para anlarına hazır hâle getiren yeni Pay sekmenizle tanışın.",
+      "cta" : "Pay'i Keşfet",
       "rows" : {
         "global" : {
-          "title" : "Küresel çapta ödeme yapın ve ödeme alın",
-          "description" : "Düşük ağ ücretlerinden yararlanın"
+          "title" : "Kişilerinize ödeme yapın",
+          "description" : "Kayıtlı adreslere kripto gönderin."
         },
         "volatility" : {
-          "title" : "Düşük volatilite",
-          "description" : "Stabil coin'ler, itibari paraya çıpalanır"
+          "title" : "Ödeme talep edin",
+          "description" : "Kişilerden doğrudan size bakiye göndermelerini isteyin."
         },
         "card" : {
-          "title" : "Kartla harcama yapın ve %1 para iadesi alın",
-          "description" : "USDC, USDT, BTC, ETH ve daha fazlasıyla ödeme yapın"
+          "title" : "Kripto kartı ile dünya çapında alışveriş yapın",
+          "description" : "Ve sınırsız %1 para iadesi kazanın."
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "Daha fazlası",
+      "title" : "Daha fazlası",
+      "rows" : {
+        "managePin" : "PIN kodunu yönet",
+        "accessBaanx" : "Baanx'e eriş",
+        "help" : "Yardım",
+        "logout" : "Oturumu kapat"
       }
     },
     "balance" : {
@@ -904,7 +899,73 @@
     },
     "card" : {
       "title" : "Kripto kartı",
-      "balanceLabel" : "Bakiye"
+      "balanceLabel" : "Bakiye",
+      "freeze" : "Dondur",
+      "unfreeze" : "Çöz",
+      "goBack" : "Geri dön",
+      "freezeConfirm" : {
+        "title" : "Dondurmak, kartı artık kullanamayacağınız anlamına gelir.",
+        "description" : "Kartınızı dilediğiniz zaman kullanıma açabilirsiniz.",
+        "confirm" : "Şimdi dondur",
+        "errorTitle" : "Dondurma başarısız oldu"
+      },
+      "unfreezeConfirm" : {
+        "title" : "Kartınız kullanıma açılsın mı?",
+        "confirm" : "Şimdi kullanıma aç",
+        "errorTitle" : "Kullanıma açma başarısız oldu"
+      },
+      "confirmError" : {
+        "description" : "Bir hata oluştu. Lütfen tekrar deneyin.",
+        "retry" : "Tekrar deneyin"
+      },
+      "numbers" : {
+        "reveal" : "Görüntüle",
+        "hide" : "Gizle",
+        "failed" : "Kart numaraları yüklenemedi",
+        "imageAlt" : "Kart numaraları"
+      }
+    },
+    "cardTransactions" : {
+      "title" : "İşlemler",
+      "categories" : {
+        "SUBSCRIPTIONS" : "Abonelikler",
+        "FOOD" : "Yemek",
+        "TRAVEL" : "Seyahat",
+        "ENTERTAINMENT" : "Eğlence",
+        "HEALTH" : "Sağlık",
+        "ATM" : "ATM",
+        "UTILITIES" : "Hizmetler",
+        "MISC" : "Diğer"
+      },
+      "detail" : {
+        "amount" : "Tutar",
+        "status" : "Durum",
+        "card" : "Kart",
+        "cardInfo" : "Bu ödeme için kullanılan kartın son dört hanesi.",
+        "fundingSource" : "Fonlama kaynağı",
+        "transactionId" : "İşlem Kimliği (TxID)",
+        "copyTransactionId" : "İşlem kimliğini kopyala",
+        "today" : "Bugün {{time}}",
+        "yesterday" : "Dün {{time}}",
+        "dateTime" : "{{date}} {{time}}",
+        "statusValues" : {
+          "CONFIRMED" : "Onaylandı",
+          "PENDING" : "Beklemede",
+          "DECLINED" : "Reddedildi",
+          "REVERTED" : "Geri döndürüldü"
+        }
+      }
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "Kartınızı kurun",
+        "allDone" : "Her şey hazır!"
+      },
+      "dialog" : {
+        "title" : "Kart kurulumunu tamamlayın",
+        "stepComplete" : "Tamamlandı",
+        "gotIt" : "Anladım"
+      }
     },
     "contacts" : {
       "title" : "Kişiye ödeme yapın",
@@ -913,17 +974,30 @@
         "addContact" : "Kişi ekle"
       },
       "table" : {
-        "name" : "Name",
-        "addresses" : "Addresses",
-        "transactions" : "Transactions",
-        "transactionCount_zero" : "No transaction",
-        "transactionCount_one" : "{{count}} transaction",
-        "transactionCount_other" : "{{count}} transactions"
+        "name" : "İsim",
+        "addresses" : "Adresler",
+        "transactions" : "İşlemler",
+        "transactionCount_zero" : "İşlem yok",
+        "transactionCount_one" : "{{count}} işlem",
+        "transactionCount_other" : "{{count}} işlem"
       },
       "actions" : {
-        "pay" : "Send to contact",
-        "more" : "More options",
-        "viewTransactions" : "View transactions"
+        "pay" : "Kişiye gönder",
+        "more" : "Daha fazla seçenek",
+        "viewContact" : "Kişiyi görüntüle",
+        "viewTransactions" : "İşlemi görüntüle"
+      },
+      "addressPicker" : {
+        "title" : "{{name}} için adres seçin",
+        "addAddress" : "Adres ekle"
+      },
+      "paySuccess" : {
+        "title" : "{{recipient}} kişisine ödeme yaptınız:",
+        "amount" : "Tutar",
+        "estimatedTime" : "Tahmini süre",
+        "from" : "Kaynak",
+        "viewTransaction" : "İşlemi görüntüle",
+        "close" : "Kapat"
       }
     },
     "actions" : {
@@ -952,6 +1026,74 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "Nakit gönderin, stabil coin alın",
+      "description" : "Nakit transfer edin ve stabil coin'leri doğrudan Ledger Wallet™'ınıza alın.",
+      "createAccount" : "Hesap oluştur",
+      "logIn" : "Noah'a giriş yapın",
+      "providedBy" : "Bir Noah hizmeti",
+      "rows" : {
+        "bank" : {
+          "title" : "Dilediğiniz bankadan transfer alın",
+          "description" : "SEPA veya ACH üzerinden maaş, ödeme ve mevduat alın."
+        },
+        "fees" : {
+          "title" : "Gizli ücret yok",
+          "description" : "Bankadan doğrudan blok zincirine %0,25 ücretle."
+        },
+        "earn" : {
+          "title" : "Paranız hemen sizin için çalışsın",
+          "description" : "Stabil coin'inizle takas yapabilir veya kazanç elde edebilirsiniz."
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "Kripto Kartı",
+      "beforeIntro" : {
+        "title" : "Kripto kartınızı alın",
+        "description" : "Her harcamanızda %1 para iadesi alın",
+        "action" : "Kart al",
+        "alreadyHaveCard" : "Zaten bir kartım var"
+      },
+      "afterIntro" : {
+        "title" : "Kartınıza erişmek için giriş yapın",
+        "description" : "Güvenlik nedeniyle oturumunuz kapatıldı",
+        "action" : "Oturum aç"
+      },
+      "errors" : {
+        "pkce_failed" : "Oturum açma işlemi başlatılamadı. Lütfen tekrar deneyin.",
+        "browser_open_failed" : "Oturum açma sayfası açılamadı. Lütfen tekrar deneyin.",
+        "missing_attempt" : "Bu giriş bilgileri artık geçerli değil. Lütfen tekrar oturum açın.",
+        "exchange_failed" : "Oturum açma işlemi tamamlanamadı. Lütfen tekrar deneyin.",
+        "persist_failed" : "Oturumunuz kaydedilemedi. Lütfen tekrar deneyin.",
+        "fetch_user_failed" : "Kartınız yüklenemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "Kripto harcayın, para iadesi alın",
+      "providedBy" : "Kart bir Baanx hizmetidir",
+      "createAccount" : "Bir hesap oluştur",
+      "logIn" : "Baanx'e giriş yap",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay veya Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "Sınırsız %1 kripto para iadesi",
+          "description" : "USDC, USDT veya BTC ile yapılan tüm kripto kartı alışverişlerinde."
+        },
+        "virtualCard" : {
+          "title" : "Ücretsiz sanal kart",
+          "description" : "{{wallet}} cüzdanına ekleyin; anında hazır."
+        },
+        "topUp" : {
+          "title" : "Ledger Wallet ile güvenli bir şekilde bakiye yükleyin",
+          "description" : "Her transfer Ledger imzalayıcınız ile onaylanır."
+        }
+      }
+    },
     "request" : {
       "title" : "{{asset}} talep et",
       "networkLabel" : "{{network}} ağı",
@@ -962,6 +1104,10 @@
         "copied" : "Kopyalandı",
         "save" : "Kaydet",
         "verify" : "Doğrula"
+      },
+      "verifyHint" : {
+        "message" : "Paylaşmadan önce\nLedger cihazınızda\nadresinizi doğrulayın",
+        "gotIt" : "Anladım"
       },
       "verifyAddress" : {
         "introTitle" : "Adresinizi doğrulayın",
@@ -1602,10 +1748,6 @@
     "referralProgram" : {
       "title" : "Referans olup $10 kazanın",
       "description" : "Bir arkadaşınızla referans programına katılın, ikiniz de $10 değerinde Bitcoin kazanın."
-    },
-    "vaultSigner" : {
-      "title" : "Vault imzalayıcı modu",
-      "link" : "Vault Yardım Merkezi"
     }
   },
   "signmessage" : {
@@ -2511,10 +2653,6 @@
         "title" : "Cihaz"
       },
       "details" : {
-        "solanaRawTransaction" : {
-          "title" : "Kör imzalama gerekir",
-          "description" : "İşlem ayrıntılarını Ledger cihazınızda doğrulayamazsınız. İşlemi imzalarsanız tüm varlıklarınızı kaybedebilirsiniz. Ancak ve ancak web sitesine güveniyorsanız imzalayın."
-        },
         "utxoLag" : "Hesapta yüksek miktarda coin bulunduğu için bu işlemin doğrulanması ve imzalanması uzun sürebilir.",
         "subaccountsWarning" : "Bu hesabın token'larını göndermek için bu hesabı {{ currency }} ile doldurmanız gerekir",
         "from" : "Gönderici",
@@ -2652,11 +2790,12 @@
       "walletNotExist" : "Böyle bir cüzdan yok"
     },
     "skipMemo" : {
-      "title" : "{{memoLabel}} ekleme atlansın mı?",
+      "title" : "{{memoLabel}} olmadan gönderilsin mi?",
       "description" : "Alıcı bir {{memoLabel}} gerektiriyorsa varlığınız kaybolabilir.",
       "notRequired" : "Alıcı tarafından {{memoLabel}} gerekli kılınmamış mı?",
-      "confirm" : "Evet, atla",
-      "neverAskAgain" : "Bu uyarıyı tekrar gösterme"
+      "confirm" : "Evet, {{memoLabel}}olmadan gönder",
+      "cancel" : "Hayır, geri dön",
+      "neverAskAgain" : "Bir daha sorma"
     },
     "tagHelp" : {
       "inputLabel" : "{{memoLabel}} gir",
@@ -2724,6 +2863,35 @@
       "selectSufficientCoins" : "Yeterli miktarda coin seçin",
       "amountToSendInCurrency" : "({{ticker}}) olarak gönderilecek tutar",
       "amountInputLabel" : "Gönderilecek tutar"
+    },
+    "recipient" : {
+      "selfTransfer" : {
+        "title" : "Kendine transfer",
+        "toPrivate" : {
+          "action" : "Gizli bakiyeye gönder",
+          "label" : "Gizli bakiye"
+        },
+        "toPublic" : {
+          "action" : "Açık bakiyeye gönder",
+          "label" : "Açık bakiye"
+        }
+      }
+    },
+    "balanceType" : {
+      "title" : "Select balance",
+      "transparent" : {
+        "title" : "Açık bakiye",
+        "subtitle" : "Şeffaf"
+      },
+      "shielded" : {
+        "title" : "Gizli bakiye",
+        "subtitle" : "Korumalı",
+        "pendingNoticeTitle" : "Funds maturing",
+        "pendingNotice" : "Bazı korumalı notlar hâlâ vade ödülü üretme sürecinde olduğundan henüz harcanamayabilir"
+      },
+      "zeroBalance" : {
+        "warning" : "Mevcut bakiye yok"
+      }
     }
   },
   "releaseNotes" : {
@@ -3471,7 +3639,7 @@
       "estYield" : "tahmini getiri",
       "activeTooltip" : "Yetkisi devredilen tutarlar üzerinden ödül kazanırsınız",
       "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız",
-      "minSafeWarning" : "Yetersiz fon miktarı",
+      "minSafeWarning" : "Yetersiz bakiye",
       "flow" : {
         "title" : "Yetki Devredin",
         "steps" : {
@@ -4183,7 +4351,7 @@
       "inactiveTooltip" : "Stake’i durdurulan miktarlar ödül kazandırmaz",
       "commission" : "Komisyon",
       "totalStake" : "Toplam Stake",
-      "minSafeWarning" : "Yetersiz fon miktarı",
+      "minSafeWarning" : "Yetersiz bakiye",
       "reserveWarning" : "Gelecekte staking’inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} APT bulundurduğunuzdan lütfen emin olun",
       "flow" : {
         "title" : "Stake edin",
@@ -4426,7 +4594,7 @@
         "activeTooltip" : "Yetkisi devredilen tutar ödül üretiyor",
         "activatingTooltip" : "Yetki devrinde kullanılan tutarlar sonraki epoch'ta ödül üretmeye başlayacak",
         "inactiveTooltip" : "Yetki devri iptal edilen tutarlar üzerinden ödül kazanamazsınız",
-        "minSafeWarning" : "Yetersiz fon miktarı",
+        "minSafeWarning" : "Yetersiz bakiye",
         "commission" : "Komisyon",
         "totalStake" : "Toplam stake",
         "flow" : {
@@ -4623,7 +4791,7 @@
       "inactiveTooltip" : "Stake’i iptal edilen miktarlar ödül kazandırmaz",
       "commission" : "Komisyon",
       "totalStake" : "Toplam Stake",
-      "minSafeWarning" : "Yetersiz fon miktarı",
+      "minSafeWarning" : "Yetersiz bakiye",
       "flow" : {
         "title" : "Stake edin",
         "steps" : {
@@ -4759,7 +4927,7 @@
       "inactiveTooltip" : "Yetkisi devredilen tutar ödül üretmiyor",
       "commission" : "Komisyon",
       "totalStake" : "Toplam Yetki Devri",
-      "minSafeWarning" : "Yetersiz fon miktarı",
+      "minSafeWarning" : "Yetersiz bakiye",
       "flow" : {
         "title" : "Yetki Devredin",
         "steps" : {
@@ -5317,7 +5485,7 @@
         "applyFamilies" : "Uygula",
         "contactsData" : "Kişi verileri",
         "loadPopulatedContacts" : "Örnek kişileri yükle",
-        "loadFromSendHistory" : "Load contacts from send history",
+        "loadFromSendHistory" : "Gönderim geçmişinden kişileri yükle",
         "resetContacts" : "Kişileri sıfırla",
         "resetOverride" : "Uygulamayı sıfırla",
         "featureIntroduction" : {
@@ -5452,6 +5620,12 @@
       "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin.",
       "enableCountervaluesStaging" : "Karşı değerler API'ı test ortamı",
       "enableCountervaluesStagingDesc" : "Sonuç yerine test ortamı karşı değerler API’ını kullanın.",
+      "enableMockServerTransport" : "Mock sunucu aktarımı",
+      "enableMockServerTransportDesc" : "Fiziksel bir cihaz yerine bir cihaz mock sunucusuna bağlanmak için Device Management Kit mock sunucu aktarımını etkinleştirin. MOCK_SERVER_TRANSPORT_URL farklı bir adresi işaret etmediği sürece paylaşılan mock sunucusunu kullanır. Bu işlemin geçerli olması için uygulamanın yeniden başlatılması gerekir.",
+      "mockServerStatus" : {
+        "connected" : "Mock sunucu bağlandı · oturum token'ını kopyalamak için tıklayın, yapılandırma arayüzünü açmak için sağ tıklayın",
+        "disconnected" : "Mock sunucuya ulaşılamıyor"
+      },
       "openOnboardingAppInstallDebug" : "İlk uygulama kurulumu hata ayıklama ekranını açın",
       "openOnboardingAppInstallDebugDesc" : "İlk uygulama kurulumunu senkronize etme adımındaki bileşenlerin yer aldığı bir ekranı açın"
     },
@@ -5554,10 +5728,6 @@
         "1559DeactivateGate" : {
           "title" : "EIP1559 minimum öncelik ücreti kapısını devre dışı bırak",
           "description" : "Bu, bir işlemin herhangi bir minimum öncelik ücreti beklenmeden gönderilmesini sağlar. İşlemin mempool'da sonsuza dek takılı kalmasına da yol açabilir."
-        },
-        "vaultSigner" : {
-          "title" : "Vault İmzalayıcısı",
-          "description" : "Operatör API belirteciyle Ledger Vault'u bir imzalayıcı olarak kullanın"
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "Özel öncelik ücreti kapısı",
@@ -6858,7 +7028,7 @@
       "description" : "Bu hesap bu işlemi imzalamak için yetkili değil"
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
-      "title" : "Yetersiz fon miktarı",
+      "title" : "Yetersiz bakiye",
       "description" : "Kullanılan hesapta yeterli bakiye olduğundan emin olun ve tekrar deneyin"
     },
     "CosmosBroadcastCodeUnknownRequest" : {
@@ -7091,7 +7261,7 @@
       "description" : "İşlem ücretlerini ödemek için lütfen hesabınıza bir miktar EGLD gönderin."
     },
     "NotEnoughVTHO" : {
-      "title" : "Üzgünüz, VTHO fon miktarı yetersiz",
+      "title" : "Üzgünüz, VTHO bakiyesi yetersiz",
       "description" : "Hesabınızdaki VTHO miktarının yeterli olduğundan lütfen emin olun."
     },
     "MustBeVechain" : {
@@ -7114,8 +7284,12 @@
       "description" : "En az {{minStake}} {{currency}} stake etmeniz gerekir."
     },
     "NotEnoughBalance" : {
-      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "title" : "Üzgünüz, bakiye yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "UnexpectedGetBalanceError" : {
+      "title" : "Bakiyeniz doğrulanamadı",
+      "description" : "Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin."
     },
     "NotEnoughTransferAmount" : {
       "title" : "Bir nörona bakiye stake etmek için en az 1 ICP gereklidir."
@@ -7316,6 +7490,20 @@
     "ZcashAmountBelowDustThreshold" : {
       "title" : "Tutar, yayımlanmak için çok az (en az {{minimumZatoshis}} zatoshi gerekir)"
     },
+    "ZcashMemoTooLong" : {
+      "title" : "Memo {{maxBytes}} baytı aşmamalıdır"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "Bu tutar tek bir işlemde gönderilemeyecek kadar büyük; daha küçük tutarlarla göndermeyi deneyin"
+    },
+    "ZcashShieldedKeyMissing" : {
+      "title" : "Activate your private balance first",
+      "description" : "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+    },
+    "ZcashNotesNotYetSpendable" : {
+      "title" : "These funds are not spendable yet",
+      "description" : "Please try again in a few minutes"
+    },
     "InvalidNonce" : {
       "title" : "Nonce gerekiyor"
     },
@@ -7428,6 +7616,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "Öncelikle önceki doğrulayıcınız ile stake durdurma işleminin tamamlanması gerekir."
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "Bu tutar stake etmek için çok düşük."
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Lütfen önce tüm alt hesapları boşaltın"
@@ -7701,7 +7892,7 @@
       "description" : "Memo’nuz {{memoLength}} bayt, ancak izin verilen maksimum boyut {{maxLength}} bayttır. Memo boyutunu lütfen küçültün."
     },
     "ConcordiumInsufficientFunds" : {
-      "title" : "Üzgünüz, fon miktarı yetersiz"
+      "title" : "Üzgünüz, bakiye yetersiz"
     },
     "ConcordiumPairingExpiredError" : {
       "title" : "Eşleme süresi doldu",
@@ -7713,6 +7904,58 @@
     },
     "ConcordiumAddressVerificationFailedError" : {
       "title" : "Adres doğrulama başarısız"
+    },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "Ağ ücreti için yeterli CCD yok",
+      "description" : "Ağ ücreti, gönderdiğiniz token ile değil, CCD ile ödenir. Bu hesaba CCD ekleyin ve tekrar deneyin."
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "Bu token için transferler duraklatıldı",
+      "description" : "Token ihraççısı tüm transferleri duraklattı. Transferler yeniden başladığında tekrar deneyebilirsiniz."
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "Bu hesap bu token'ı gönderemez",
+      "description" : "Token ihraççısı bu token'ı kimlerin gönderebileceğini kısıtlıyor ve bu hesaba izin verilmiyor. Erişim için token ihraççısıyla iletişime geçin."
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "Token kısıtlamaları doğrulanamadı",
+      "description" : "Bu token'ın transfer kuralları okunamadığı için transfer izni doğrulanamıyor. Lütfen hesabınızı yeniden senkronize edin ve tekrar deneyin."
+    },
+    "ConcordiumRecipientNotAllowed" : {
+      "title" : "Bu adres {{ticker}} alamaz",
+      "description" : "Token ihraççısı tarafından onaylanmadı. Onay, Ledger tarafından değil, ihraççı tarafından yönetilir."
+    },
+    "ConcordiumRecipientDenied" : {
+      "title" : "Bu adresin {{ticker}} alması kısıtlanmıştır",
+      "description" : "Token ihraççısı bu adresi kısıtladı. Ayrıntılar için ihraççıyla iletişime geçin."
+    },
+    "ConcordiumRecipientRestrictionsUnverified" : {
+      "title" : "{{ticker}} kısıtlamaları doğrulanamadı",
+      "description" : "Bu adresin {{ticker}} alıp alamayacağı kontrol edilemedi, bu nedenle transfer izni onaylanamıyor. Lütfen bağlantınızı kontrol edin ve tekrar deneyin."
+    },
+    "ConcordiumRecipientNotFound" : {
+      "title" : "Bu adres Concordium'da bulunmuyor",
+      "description" : "Adresi kontrol edin ve tekrar deneyin. Hiç oluşturulmamış bir adrese gönderim yapmak ağ üzerinde başarısızlıkla sonuçlanır ve buna rağmen ağ ücreti kesilir."
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "Bu token Ledger cihazınızda imzalanamaz",
+      "description" : "Token {{decimals}} ondalık basamak kullanıyor ve cihazınız en fazla {{maxDecimals}} basamak destekliyor. Token'ı alma ve saklama eylemleri bundan etkilenmez."
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "Bu token artık hesabınızda değil",
+      "description" : "Seçtiğiniz token artık mevcut değil. Lütfen işlemi yeniden başlatın."
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "Bu işlem hazırlanamıyor",
+      "description" : "Token'ın bilgileri Ledger cihazınızın kabul ettiği değerlerin dışında, bu nedenle işlem oluşturulamıyor. Lütfen Ledger Destek ile iletişime geçin."
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "Uygulama güncellemesi gerekli",
+      "description" : "Ledger cihazınızdaki Concordium uygulaması, token transferlerini desteklemiyor. My Ledger'da uygulamayı güncelleyin ve tekrar deneyin."
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "Bir hata oluştu. Lütfen cihazınızı yeniden bağlayın",
+      "description" : "Concordium uygulaması işlemi gerçekleştiremedi. Sorun devam ederse lütfen Ledger Destek ile iletişime geçin."
     },
     "StacksMemoTooLong" : {
       "title" : "Memo çok fazla uzun"
@@ -7733,7 +7976,7 @@
       "title" : "Seçilen Stellar varlığı bulunamadı"
     },
     "StellarNotEnoughNativeBalance" : {
-      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "title" : "Üzgünüz, bakiye yetersiz",
       "description" : "Hesapta işlem ücretini karşılayacak kadar fon olduğundan lütfen emin olun"
     },
     "StellarFeeSmallerThanRecommended" : {
@@ -7743,7 +7986,7 @@
       "title" : "Minimum işlem ücreti 0,00001 XLM'dir"
     },
     "StellarNotEnoughNativeBalanceToAddTrustline" : {
-      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "title" : "Üzgünüz, bakiye yetersiz",
       "description" : "Hesapta yeni trustline'ı karşılayacak kadar fon olduğundan lütfen emin olun"
     },
     "StellarMuxedAccountNotExist" : {
@@ -7897,7 +8140,7 @@
       "title" : "Ücretlerin hesaplanması için ana hesapta yeterli miktarda fon (GRAM) yok. Gerekli minimum bakiye 0,1 GRAM'dır."
     },
     "TonMinimumRequired" : {
-      "title" : "Yetersiz fon miktarı. Gerekli minimum bakiye 0,02 GRAM'dır."
+      "title" : "Yetersiz bakiye.Gerekli minimum bakiye 0,02 GRAM'dır."
     },
     "AleoAmountRecordRequired" : {
       "title" : "Tutar için geçerli bir özel kayıt seçin.",
@@ -8111,6 +8354,108 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "Miktar, UTXO kısıtlamaları için fazla büyük."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "Çözülme süresi çok kısa",
+      "description_one" : "Internet Computer, en az {{minDays}} günlük bir çözülme süresi gerektirir.",
+      "description_other" : "Internet Computer, en az {{minDays}} günlük bir çözülme süresi gerektirir."
+    },
+    "ICPInvalidDissolveDelayIncrease" : {
+      "title" : "Geçersiz gün sayısı",
+      "description" : "Sıfırdan büyük bir tam sayı ile gün sayısı girin."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "Çözülme süresi çok uzun",
+      "description_one" : "Internet Computer, bir nöronun çözülme süresini en fazla {{maxDays}} gün ile sınırlandırır.",
+      "description_other" : "Internet Computer, bir nöronun çözülme süresini en fazla {{maxDays}} gün ile sınırlandırır."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "Çözülme süresi kısaltılamaz",
+      "description" : "Bir nöronun çözülme süresi yalnızca artırılabilir. Süreyi kısaltmak için nöronu çözmeye başlayın."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "Nöron bulunamadı",
+      "description" : "Bu nöron, son senkronize edilen durumunuzda bulunmuyor. Nöronlarınızı senkronize edin ve tekrar deneyin."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "Geçersiz principal",
+      "description" : "Bir sıcak anahtar, geçerli bir Internet Computer principal'ı olmalıdır."
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "Sıcak anahtar zaten eklendi",
+      "description" : "Bu principal, bu nöronda zaten bir sıcak anahtardır."
+    },
+    "ICPHotKeyIsController" : {
+      "title" : "Bu principal zaten nöronu kontrol ediyor.",
+      "description" : "Farklı bir principal girin. Bir sıcak anahtar yalnızca oy kullanabilir ve takip ayarlarını belirleyebilir; denetleyici bu işlemleri zaten yapabiliyor."
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "Tutar, bu nöronun bölünebileceği aralığın dışında",
+      "description" : "Hem orijinal nöronun hem de yeni nöronun en az 1 ICP'yi stake edilmiş hâlde tutması ve taşınan miktar üzerinden alınan ağ ücretini karşılaması gerekir."
+    },
+    "ICPSpawnNotAllowed" : {
+      "title" : "Bu nörondan yeni nöron oluşturulamıyor",
+      "description" : "Halihazırda oluşturma işlemi gerçekleştiren bir nöron yeniden oluşturulamaz ve oluşturulan vade ödülü, ağın vade ödülü ayarlamasından sonra geride en az 1 ICP bırakmalıdır. Nöronlarınızın güncel durumunu görmek için onları senkronize edin."
+    },
+    "ICPStakeMaturityNotAllowed" : {
+      "title" : "Bu nöronun vade ödülü stake edilemez",
+      "description" : "Nöronunuz oluşturulma aşamasındayken, kilit tamamen çözüldüğünde veya hesabınızda hiç vade ödülü payı kalmadığında yeniden stake işlemi yapamazsınız. Nöronlarınızın en güncel durumunu görüntülemek için nöronlarınızı senkronize edin."
+    },
+    "ICPFollowTopicNotAllowed" : {
+      "title" : "Bu konu takip edilemiyor",
+      "description" : "Internet Computer bu konuyu kullanımdan kaldırdı veya Ledger Internet Computer uygulaması bu konu için takip işlemini henüz imzalayamıyor. Başka bir konu seçin."
+    },
+    "ICPDisburseNotAllowed" : {
+      "title" : "Bu nöron dağıtılamaz",
+      "description" : "Nöronunuzun kilidi tamamen çözüldüğünde ve stake edilen miktarınız ağ işlem ücretini aştığında varlıklarınızı hesabınıza çekebilirsiniz. Nöronlarınızın en güncel durumunu görüntülemek için uygulamanızı senkronize edin."
+    },
+    "ICPTooManyHotKeys" : {
+      "title" : "Sıcak anahtar sınırına ulaşıldı",
+      "description" : "Bir nöron en fazla {{max}} sıcak anahtar barındırabilir. Yeni bir tane eklemek için birini kaldırın."
+    },
+    "ICPTopUpBelowMinimumStake" : {
+      "title" : "Yükleme miktarı çok düşük",
+      "description" : "Bakiye ekleme işleminden sonra bir nöronun bakiyesi 1 ICP seviyesine ulaşmalıdır. Son senkronizasyon itibarıyla bu nöronun en az {{missing}} ICP tutarına daha ihtiyacı vardır. Daha küçük miktardaki bir transfer nöronun hesabına yerleşir ancak daha sonraki bir bakiye ekleme işlemi minimum seviyeye ulaşana kadar hesaba katılmaz."
+    },
+    "ICPStakeNotRefreshed" : {
+      "title" : "Stake transfer edildi, nöron güncellenmedi",
+      "description" : "ICP transferiniz nöron hesabınıza ulaştı fakat Internet Computer yönetişim sistemi bu transferi baz alarak nöronunuzu güncellemeyi reddetti. {{reason}} Endişelenmenize gerek yok: gönderdiğiniz tutar nöron hesabınızda güvenle durur ve toplam bakiyeyi en az 1 ICP seviyesine ulaştıracak bir sonraki fon ekleme işleminize otomatik olarak dahil edilir. Ledger Wallet bu güncel bakiyeyi henüz tespit edemediğinden, tutar alanı son senkronizasyonda görünen eksik tutarın tamamını sizden istemeye devam edecektir."
+    },
+    "ICPStakeMemoNotRecoverable" : {
+      "title" : "Bu nörona bakiye yüklenemez",
+      "description" : "Bir nörona bakiye yüklemek, onu oluşturan işlemin memosunu gerektirir ve bu memo, bu hesabın geçmişinde bulunmuyor. Nörona, onu oluşturan hesaptan bakiye yükleyin."
+    },
+    "ICPCallUnconfirmed" : {
+      "title" : "Sonuç bilinmiyor",
+      "description" : "Internet Computer talebi kabul etti ancak bir sonuç döndürmedi; bu nedenle işlem gerçekleşmiş veya gerçekleşmemiş olabilir. Tekrar denemeden önce durumu kontrol etmek için nöronlarınızı senkronize edin."
+    },
+    "ICPNeuronsNotRead" : {
+      "title" : "Nöronlar yenilenmedi",
+      "description" : "Internet Computer ağı nöron bilgilerinizi yükleyemediği için bir değişiklik yapılmadı. Lütfen tekrar deneyin."
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "Bu, ICP varlıklarınızı yeni bir nöronda kilitler.",
+      "description" : "Nöron, oy kullanmak veya ödül kazanmak için çok kısa olan en düşük çözülme süresiyle başlatılır. Bu süreyi Nöronları Yönet menüsünden artırın ve stake edilen tutarın yeniden harcanabilir hâle gelmesi için bu sürenin dolmasını beklemeniz gerektiğini göz önünde bulundurun."
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "Bu işlem, kilitli bir stake tutarına ekleme yapar.",
+      "description" : "İlgili tutar, nöronun mevcut stake miktarına katılır ve onun çözülme süresine tabi olur; dolayısıyla nöron tamamen çözülene kadar harcanabilir duruma gelmez."
+    },
+    "ICPGovernanceRejected" : {
+      "title" : "Ağ bu işlemi reddetti",
+      "description" : "Internet Computer yönetişimi talebi reddetti, bu nedenle nöron değişmedi. Güncel durumlarını görmek için nöronlarınızı senkronize edin. {{reason}}"
+    },
+    "ICPCallRejected" : {
+      "title" : "Talep kabul edilmedi",
+      "description" : "Internet Computer, talebi çalıştırılmadan önce reddetti, bu yüzden hiçbir şey değişmedi. Lütfen tekrar deneyin. {{reason}}"
+    },
+    "ICPInvalidPercentage" : {
+      "title" : "Yüzde aralık dışında",
+      "description" : "1 ile 100 arasında bir tam sayı girin."
+    },
+    "CurrencyRegionRestrictedError" : {
+      "title" : "{{currencyName}} bölgenizde kullanılamıyor",
+      "description" : "{{currencyName}} erişimi bölgenizde kısıtlanmıştır."
     }
   },
   "cryptoOrg" : {
@@ -8230,6 +8575,7 @@
             "inactiveTooltip" : "Doğrulayıcı bulunamadı",
             "overstakedTooltip" : "Bu düğümde çok fazla staking yapılıyor, APY optimum seviyeden düşük",
             "activeTooltip" : "Yetki devrinde kullanılan tutar üzerinden ödüller kazanırsınız",
+            "fetchErrorTooltip" : "Doğrulayıcı verileri yüklenemedi. Lütfen tekrar deneyin.",
             "delegated" : "Yetki devredildi",
             "rewards" : "Ödüller"
           },
@@ -8308,6 +8654,8 @@
             "newValidatorLabel" : "Yeni yetkili",
             "newValidatorSelectPlaceholder" : "Doğrulayıcı seçin",
             "removedValidatorSelectPlaceholder" : "Daha önce seçilen doğrulayıcı artık kullanılabilir durumda değil",
+            "unableToLoadSelectPlaceholder" : "Doğrulayıcılar yüklenemiyor",
+            "loadingValidatorPlaceholder" : "Doğrulayıcılar yükleniyor...",
             "newValidatorSelectNoOption" : "\"{{validatorName}}\" isimli bir doğrulayıcı yok",
             "amountLabel" : "Yetkisi devredilecek tutar",
             "alert" : "Hedera’da staking yapılırken tüm bakiyeniz stake edilir. Tüm bakiyeniz tamamen likit kalır ve kilitlenme dönemine veya ceza kesintisi risklerine maruz kalmaz. Staking ödüllerinin başlaması için 48 saat kadar beklemeniz gerekebilir.",
@@ -8874,11 +9222,13 @@
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
-    "unsupportedAssetTooltip" : "{{asset}} isn't supported yet.",
-    "unsupportedNetworkTooltip" : "{{network}} network isn't supported yet.",
+    "unsupportedAssetTooltip" : "{{asset}} henüz desteklenmiyor",
+    "unsupportedNetworkTooltip" : "{{network}} ağı henüz desteklenmiyor",
+    "notAvailableYet" : "Henüz mevcut değil",
     "selectAccount" : "Hesap seçin",
     "selectAccountPerpsTitle" : "Hyperliquid hesabı seçin",
-    "selectAccountPerpsDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
+    "selectAccountPerpsDescription" : "İşlemlerinizi gerçekleştirmek için bakiye yatırmak istediğiniz hesabı seçin",
+    "selectAccountPerpsEmptyDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
     "selectDepositCurrencyTitle" : "Yatırılacak varlığı seçin",
     "selectDepositCurrencyDescription" : "Desteklenen herhangi bir varlık kullanılabilir. Gerekirse otomatik olarak takas edilecektir.",
     "accountCount_one" : "{{count}} hesap",
@@ -8908,6 +9258,11 @@
       },
       "cta" : "Tekrar dene"
     }
+  },
+  "perpsAccountBanner" : {
+    "title" : "Hyperliquid hesabı hakkında",
+    "description" : "Bu hesap sürekli vadeli (perpetual) alım satım işlemleriyle bağlantılıdır. Bu hesap üzerinde standart transfer eylemleri desteklenmemektedir",
+    "cta" : "Perpetual işlemleri aç"
   },
   "portfolio" : {
     "title" : "Ana Sayfa",
@@ -9123,7 +9478,7 @@
         "memo" : {
           "label" : "Memo (isteğe bağlı)",
           "placeholder" : "Bir memo girin",
-          "tooltip" : "Bu korumalı işleme gizli bir mesaj ekleyin. Bunu yalnızca alıcı okuyabilir. En fazla 512 bayt."
+          "tooltip" : "Bu korumalı ödemeye şifrelenmiş bir memo ekleyin. Bunu yalnızca alıcı okuyabilir. En fazla 512 bayt."
         },
         "syncBanner" : {
           "stopped" : {
@@ -9146,15 +9501,18 @@
         "selfTransfer" : {
           "toPrivate" : "Kendi gizli bakiyenize transfer",
           "toPublic" : "Kendi açık bakiyenize transer",
-          "unavailable" : "Gizli adresiniz henüz kullanılabilir değil. Bunu etkinleştirmek için görüntüleme anahtarınızı dışa aktarın.",
+          "unavailable" : "Hesabınız için Koruma özelliği etkinleştirildiğinde gizli adresiniz kullanılabilir olacaktır.",
           "privacyWarning" : "Bu işlem, korumalı fonlarınızı, hesabınızın herkes tarafından görülebilen açık adresiyle ilişkilendirir. Harici bir gizli adrese gönderim yapmak ise bu fonların birbiriyle ilişkisiz kalmasını sağlar."
+        },
+        "confirm" : {
+          "privateTransaction" : "Gizli işlem – tutarı cihazınızda doğrulayın"
         }
       },
       "state" : {
-        "showBalance" : "Bakiyeyi göster",
+        "showBalance" : "Korumalı adresleri etkinleştirin",
         "startSync" : "Senkronizasyonu başlat",
         "stopSync" : "Senkronizasyonu durdur",
-        "upToDate" : "Güncel",
+        "upToDate" : "Bakiyeyi güncelle",
         "lastSync" : "Son senkronizasyon: {{date}}",
         "estimatedTimeRemaining" : "Tahmini kalan süre: {{hours}}:{{minutes}}",
         "syncFailed" : "Gizli bakiye senkronizasyonu başarısız oldu"
@@ -9325,6 +9683,88 @@
         "errorTitle" : "Gizli bakiye senkronizasyonu başarısız oldu.",
         "errorDesc" : "Bir şeyler yanlış gitti, lütfen tekrar deneyin."
       }
+    },
+    "bond" : {
+      "flow" : {
+        "title" : "ALEO bağlayın",
+        "steps" : {
+          "validator" : {
+            "title" : "Doğrulayıcı",
+            "fetchError" : "Doğrulayıcı listesi yüklenemedi.",
+            "totalStake" : "Toplam stake",
+            "rateAndCommission" : "Tahmini %{{rate}} · %{{commission}} komisyon",
+            "commissionOnly" : "%{{commission}} komisyon",
+            "rowSubtitleClosed" : "Doğrulayıcı yeni stake işlemlerine kapalı",
+            "rowSubtitleUnbonding" : "Doğrulayıcının bağı çözülüyor",
+            "unbondingTooltip" : "Bu doğrulayıcı kendi stake'ini çekiyor. Ağ, bu çekim tamamlanana kadar kendisine yapılan her yeni stake işlemini reddeder.",
+            "rowSubtitleEarnsNothing" : "Doğrulayıcı ödül kazanmaz",
+            "nonEarning" : {
+              "fullCommission" : "Bu doğrulayıcı %100 komisyon alır, bu nedenle yetki devredenlere hiçbir ödül kalmaz.",
+              "overConcentrated" : "Bu doğrulayıcı, stake edilen tüm ALEO varlıklarının yüzde 25'inden fazlasını elinde tutmaktadır. Protokol bu üst sınırın üzerinde herhangi bir ödeme yapmaz, bu nedenle yetki devredenler getiri elde edemez."
+            },
+            "topUpOnly" : "Aleo, hesap başına bir doğrulayıcıya izin verir. Bu doğrulayıcıdaki stake miktarınızı artırabilir veya farklı birini seçmek için önce stake etmeyi durdurabilirsiniz."
+          },
+          "amount" : {
+            "title" : "Tutar",
+            "minimum" : "Ödül kazanmaya başlamak için bu doğrulayıcıdaki toplam stake miktarınızın en az 10.000 ALEO'ya ulaşması gerekir. Yalnızca herkese açık ALEO ile staking yapılabilir: stake etmek istiyorsanız önce gizli bakiyenizi herkese açık bakiyeye dönüştürün."
+          },
+          "connectDevice" : {
+            "title" : "Cihaz",
+            "validatorLabel" : "Doğrulayıcı"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "broadcastError" : "Bağlanan bakiye gönderilemedi",
+            "success" : {
+              "title" : "Bağlanan bakiye gönderildi",
+              "text" : "Bağlanan bakiye işleniyor",
+              "cta" : "Ayrıntıları gör"
+            }
+          }
+        }
+      }
+    },
+    "manage" : {
+      "headerAction" : "Kazan",
+      "title" : "Stake'inizi yönetin",
+      "comingSoonTooltip" : "Çok yakında",
+      "bond" : {
+        "title" : "Bağla",
+        "description" : "Ödül kazanmak için ALEO'nuzu bir doğrulayıcıya bağlayın."
+      },
+      "unbond" : {
+        "title" : "Çöz",
+        "description" : "Bağlı ALEO'nuzun bağını çözün. Bakiye, çözülme sürecinden sonra kullanılabilir olacaktır."
+      },
+      "claim" : {
+        "title" : "Ödülleri topla",
+        "description" : "Çözülmüş ALEO varlıklarınızı kullanılabilir bakiyenize geri aktarmak için talep edin."
+      },
+      "unbondPendingTooltip" : "Stake durdurma onay bekliyor. Aleo aynı anda yalnızca bir bağ çözme pozisyonunu takip eder; bu nedenle, bu işlem gerçekleşene kadar bağ çözme işlemi kullanılamaz."
+    },
+    "unbond" : {
+      "flow" : {
+        "title" : "ALEO varlıklarınızı çözün",
+        "steps" : {
+          "amount" : {
+            "title" : "Tutar",
+            "unbondableBanner" : "Maksimum çözülebilir tutar:",
+            "belowMinimum" : "Eğer çözme işlemi geride {{minAmount}} miktarından daha az bağlı varlık bırakacaksa, minimum stake şartı artık sağlanamayacağı için bunun yerine bağlı bakiyenizin tamamı çözülme işlemine tabi tutulur."
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Çözme talebi gönderildi",
+              "text" : "Çözme talebiniz yayınlandı.",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "Çözme işleminiz imzalandı ancak yayımlanamadı."
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9380,6 +9820,39 @@
       "seeWhatsNew" : "Yenilikleri gör",
       "next" : "İleri",
       "gotIt" : "Anladım"
+    }
+  },
+  "q3Tour" : {
+    "slides" : {
+      "intro" : {
+        "title" : "Yeniliklere hızlı bir bakış",
+        "description" : "Göndermenin, harcamanın, kazanmanın ve daha fazlasının yeni yollarını keşfedin."
+      },
+      "contact" : {
+        "title" : "Uzun adreslere veda edin",
+        "description" : "Karşınızda Kişiler Cüzdan adreslerini isimlerle kaydedin. Bulması kolay, göndermesi kolay."
+      },
+      "contactNoPay" : {
+        "title" : "Kişiler ile tanışın",
+        "description" : "Uzun adreslere veda edin Cüzdan adreslerini isimlerle kaydedin. Bulması kolay, göndermesi kolay."
+      },
+      "pay" : {
+        "title" : "Ödeme ile tanışın",
+        "description" : "Kişilerinize ödeme yapın, para talep edin ve kripto kartı ile para iadesi kazanın. Şimdi tümünü tek sekmeden yapın."
+      },
+      "payNoCard" : {
+        "title" : "Ödeme ile tanışın",
+        "description" : "Kişilerinize ödeme yapın ve para talep edin; hepsi tek bir sekme üzerinden."
+      },
+      "yield" : {
+        "title" : "Kriptonuzu elinizde tutun, projelerinizi finanse edin",
+        "description" : "Morpho hizmetiyle ve Yield.xyz aracılığıyla, wrapped BTC varlıklarınızı teminat olarak kullanıp stabil coin kredisi alın."
+      }
+    },
+    "cta" : {
+      "start" : "Bir göz atın",
+      "next" : "İleri",
+      "done" : "Tamamen güncelsiniz"
     }
   },
   "productTour" : {
@@ -9511,6 +9984,16 @@
           "title" : "Ledger cihazınız hazırlanıyor"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "Ledger cihazınız hazırlanıyor"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "Ledger cihazınız hazırlanıyor"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "Bu kişiyi eklerken kullandığınız aynı Ledger cihazını kullanın",
@@ -9523,13 +10006,17 @@
         "appVersionTooLow" : {
           "title" : "Uygulama güncellemesi gerekli",
           "description" : "Kişileri kaydetmek için Ledger cihazınızdaki uygulamayı güncelleyin, ardından tekrar deneyin."
+        },
+        "osVersionTooLow" : {
+          "title" : "Ledger OS güncellemesi gerekli",
+          "description" : "Kişileri yeniden adlandırmak için Ledger cihazınızın işletim sistemini güncelleyin, ardından tekrar deneyin."
         }
       }
     },
     "title" : "Kişiler",
     "addContact" : "Kişi ekle",
     "addAddress" : "Adres ekle",
-    "addExternalAddress" : "Harici adres ekle",
+    "addYourAddress" : "Adresinizi ekleyin",
     "addAddressEntry" : {
       "title" : "Adresi girin",
       "addressPlaceholder" : "Adres veya ENS",
@@ -9544,7 +10031,10 @@
         "learnMore" : "Daha fazla bilgi"
       },
       "validationUnavailable" : "Adres doğrulaması geçici olarak kullanılamıyor",
-      "ensDisclaimer" : "Bu ENS adı, yukarıda gösterilen adrese çözümlenir."
+      "ensDisclaimer" : "ENS isimleri değişebilir",
+      "ensDisclaimerDescription" : "ENS adları zaman içinde farklı adresleri temsil edebilir. Bakiyenizin yalnızca sizin doğruladığınız adrese ulaşmasını garanti altına almak amacıyla mevcut adresi şimdi kaydediyoruz.",
+      "duplicateAddress" : "Bu adres zaten {{contactName}} için kullanılıyor.",
+      "privacyPolicy" : "Ledger'ın Gizlilik Politikası hakkında daha fazla bilgi edinin."
     },
     "addAddressName" : {
       "inputLabel" : "Adres adı",
@@ -9561,31 +10051,29 @@
       "currencyLabel" : "Para birimi",
       "networkLabel" : "Ağ",
       "nameLabel" : "Adres adı",
-      "continue" : "Adresi onayla",
-      "successTitle" : "Adres kaydedildi",
-      "close" : "Kapat"
+      "continue" : "Adresi onayla"
     },
     "addContactDrawer" : {
       "namePlaceholder" : "Kişi adı",
-      "namingDisclaimer" : "Gizlilik için ad ve soyadın tamamını kullanmaktan kaçının. Bir takma ad veya yalnızca ad+soyadın baş harfini kullanın, ör. \"John S\".",
+      "namingDisclaimer" : "Gizlilik için tam ad kullanmaktan kaçının. Bir takma ad veya yalnızca ad + soyadın baş harfi kombinasyonunu kullanın, ör. \"John S.\"",
       "invalidNameError" : "Özel karakterlere izin verilmez.",
       "duplicateNameError" : "Bu kişi adı zaten kullanımda."
     },
-    "searchPlaceholder" : "Kişi ara",
+    "searchPlaceholder" : "İsme göre ara",
     "searchNoResults" : "Kişi bulunamadı",
     "addressCount_zero" : "0 adres",
     "addressCount_one" : "{{count}} adres",
     "addressCount_other" : "{{count}} adres",
     "me" : {
-      "name" : "Ben"
+      "myAddresses" : "Adreslerim"
     },
     "detail" : {
       "meDisplayName" : "{{name}} (Ben)",
       "ledgerWalletAddresses" : "Ledger Wallet adresleri",
       "emptyState" : {
-        "meTitle" : "Sizin için kayıtlı adres bulunmuyor",
+        "meTitle" : "Kendi adreslerinizi kaydedin",
         "contactTitle" : "{{name}} için kayıtlı adres bulunmuyor",
-        "meDescription" : "Bir sonraki işleminizde doğrudan isimle kripto almak için cüzdan adreslerinizi kaydedin.",
+        "meDescription" : "Borsalarda veya diğer cüzdanlarda size ait olan harici adresleri kaydedin. Kendinize yapacağınız bir sonraki gönderimde, Ledger cihazınız belirlediğiniz ismi gösterecektir.",
         "contactDescription" : "Bir sonraki işlemde onlara isimleriyle gönderim yapabilmek için cüzdan adreslerini kaydedin"
       }
     },
@@ -9627,12 +10115,6 @@
       "applyChanges" : "Değişiklikleri uygula",
       "invalidLabelError" : "Özel karakterler desteklenmez."
     },
-    "editSigner" : {
-      "title" : "Cihazınızda onaylayın",
-      "description" : "Bu değişikliği onaylamak için Ledger cihazınızı bağlayın ve kilidini açın.",
-      "confirm" : "Devam",
-      "cancel" : "İptal et"
-    },
     "editSignerMismatch" : {
       "title" : "Bu kişiyi eklerken kullandığınız aynı Ledger cihazını kullanın",
       "description" : "Bağlı cihaz eşleşmiyor.",
@@ -9640,24 +10122,25 @@
       "cancel" : "İptal et"
     },
     "ledgerSyncIntroduction" : {
-      "description" : "Kişileriniz, Ledger cihazınız ile uçtan uca şifrelenir ve cihazlarınız arasında senkronize edilir; bunların kilidini yalnızca siz açabilirsiniz.",
-      "activate" : "Ledger Sync'i etkinleştir",
-      "dismiss" : "Anladım"
+      "title" : "Bir kişi eklemek için cüzdanınızı senkronize edin",
+      "description" : "Kişiler uçtan uca şifrelenmiştir ve tüm telefonlarınız ile bilgisayarlarınızdaki Ledger Wallet genelinde senkronize edilir.",
+      "activate" : "Cüzdanınızı senkronize edin",
+      "dismiss" : "Şimdi değil"
     },
     "featureIntroduction" : {
       "title" : "Karşınızda Kişiler",
-      "primaryAction" : "Explore now",
+      "primaryAction" : "Hemen deneyin",
       "highlights" : {
         "saveAddresses" : {
-          "title" : "Save addresses by a name you choose",
-          "description" : "Exchanges, friends, your own external accounts."
+          "title" : "Adresleri seçtiğiniz bir isimle kaydedin",
+          "description" : "Borsalar, arkadaşlar, kendi harici hesaplarınız."
         },
         "sendToRightAddress" : {
           "title" : "Doğru adrese gönderin",
-          "description" : "See a name you trust, not an address."
+          "description" : "Bir adresi değil, güvendiğiniz bir ismi görün."
         },
         "privateAcrossDevices" : {
-          "title" : "Securely top up via Ledger Wallet™",
+          "title" : "Tüm Ledger cihazlarınızda gizli kalır",
           "description" : "Ledger Sync ile uçtan uca şifrelenir."
         }
       }
@@ -9934,6 +10417,26 @@
         "title" : "ICP Stake Edin",
         "description" : "ICP stake edip yönetişimine katılarak ödüller kazanın.",
         "cta" : "ICP Stake Et"
+      },
+      "confirmFollowing" : {
+        "title" : "Takibinizi onaylayın",
+        "description" : "Nöronlarınızdan biri oylama gücü kaybediyor. Geri yüklemek için takip ayarlarını onaylayın.",
+        "cta" : "Takibi onayla"
+      },
+      "syncNeurons" : {
+        "title" : "Nöronlarınızı yenileyin",
+        "description" : "Nöron verileriniz güncel değil. Yenilemek için cihazınızı bağlayın.",
+        "cta" : "Nöronları yenileyin"
+      },
+      "lockNeurons" : {
+        "title" : "Çözülme sürenizi artırın",
+        "description" : "Bir nöronun oy kullanabilmesi ve ödül kazanabilmesi için daha uzun bir çözülme süresine ihtiyacı vardır.",
+        "cta" : "Nöronları yönet"
+      },
+      "addFollowees" : {
+        "title" : "Ödül kazanmaya başlayın",
+        "description" : "Nöronunuzun oy kullanması ve ödül kazanması için yönetişim konularında diğer nöronları takip edin.",
+        "cta" : "Nöronları yönet"
       }
     },
     "headerManageActions" : {
@@ -9941,11 +10444,259 @@
         "title" : "Nöronları Yönetin"
       }
     },
+    "duration" : {
+      "years_one" : "{{count}} yıl",
+      "years_other" : "{{count}} yıl",
+      "months_one" : "{{count}} ay",
+      "months_other" : "{{count}} ay",
+      "days_one" : "{{count}} gün",
+      "days_other" : "{{count}} gün",
+      "hours_one" : "{{count}} saat",
+      "hours_other" : "{{count}} saat",
+      "minutes_one" : "{{count}} dakika",
+      "minutes_other" : "{{count}} dakika",
+      "lessThanAMinute" : "Bir dakikadan az"
+    },
+    "neuronState" : {
+      "Locked" : "Kilitlendi",
+      "Dissolving" : "Çözülüyor",
+      "Dissolved" : "Çözüldü",
+      "Spawning" : "Oluşturuluyor",
+      "Unknown" : "Bilinmiyor"
+    },
+    "common" : {
+      "neuronId" : "Nöron Kimliği",
+      "stake" : "Stake edin",
+      "maturity" : "Vade Ödülü",
+      "dissolveDelay" : "Çözme süresi",
+      "state" : "Durum",
+      "action" : "Eylem",
+      "none" : "Yok",
+      "disburse" : "Dağıt",
+      "startDissolving" : "Çözmeye saşla",
+      "stopDissolving" : "Çözmeyi durdur",
+      "enabled" : "Etkin",
+      "disabled" : "Devre dışı",
+      "enable" : "Etkinleştir",
+      "disable" : "Devre dışı bırak"
+    },
+    "manageNeuronFlow" : {
+      "title" : "Nöronları yönetin",
+      "device" : {
+        "title" : "Cihaz"
+      },
+      "confirmation" : {
+        "title" : "Onaylayın",
+        "broadcastError" : "İşleminiz imzalandı ancak ağa gönderilemedi.",
+        "backToNeurons" : "Nöronlara geri dön",
+        "success" : {
+          "title" : "Tamam",
+          "default" : "Nöronunuz güncellendi.",
+          "list_neurons" : "Nöronlarınız güncel.",
+          "start_dissolving" : "Nöronunuz çözülmeye başladı.",
+          "stop_dissolving" : "Nöronunuz çözülmeyi durdurdu.",
+          "disburse" : "Nöronunuzun stake tutarı hesabınıza aktarıldı.",
+          "set_dissolve_delay" : "Nöronunuzun çözülme süresi belirlendi.",
+          "increase_dissolve_delay" : "Nöronunuzun çözülme süresi artırıldı.",
+          "add_hot_key" : "Sıcak anahtar, nöronunuza eklendi.",
+          "remove_hot_key" : "Sıcak anahtar, nöronunuzdan kaldırıldı.",
+          "follow" : "Nöronunuzun takip ayarları güncellendi.",
+          "refresh_voting_power" : "Nöronunuzun oylama gücü yenilendi.",
+          "stake_maturity" : "Nöronunuzun vade ödülü stake edildi.",
+          "auto_stake_maturity" : "Otomatik vade ödülü stake etme güncellendi.",
+          "spawn_neuron" : "Vade ödülünüzden yeni bir nöron oluşuyor.",
+          "split_neuron" : "Nöronunuz bölündü.",
+          "increase_stake" : "Nöronunuzun stake miktarı artırıldı."
+        }
+      },
+      "listNeuron" : {
+        "title" : "Nöronlar",
+        "empty" : "Henüz hiçbir nöronunuz yok. Bir tane oluşturmak için ICP stake edin.",
+        "lastSynced" : "Son senkronizasyon: {{date}}",
+        "sync" : "Nöronları yenileyin"
+      },
+      "manage" : {
+        "title" : "Yönetin",
+        "neuron" : "Nöron",
+        "hotKeyOnly" : "Bu nöronda bir sıcak anahtar bulunduruyorsunuz. Oy kullanabilir ve takip ayarlarını belirleyebilirsiniz ancak stake'ini taşıyamazsınız.",
+        "missingNeuron" : "Bu nöron artık senkronize edilmiş anlık görüntünüzde yer almamaktadır. Başka bir seçim yapmak için nöronlarınıza geri dönün ve senkronizasyon işlemini gerçekleştirin.",
+        "votingPower" : {
+          "title" : "Oylama gücü",
+          "tooltip" : "Oylama gücü, nöronunuzun yönetişimde ne kadar ağırlığa sahip olduğunu ve ne kadar ödül kazandığını belirler.",
+          "staked" : "Stake edildi",
+          "increaseStake" : "Stake'i artır",
+          "state" : "Durum",
+          "bonusValue" : "+%{{percent}}",
+          "ageBonus" : "Dönem bonusu",
+          "ageBonusTooltip" : "Bir nöron yaşlandıkça +%25'e kadar oylama gücü kazanır ve dört yılın sonunda maksimum güce ulaşır.",
+          "dissolveDelayBonus" : "Çözülme süresi bonusu: +%{{percent}}",
+          "dissolveDelayBonusTooltip" : "Daha uzun bir çözülme süresi +%200'e kadar oylama gücü kazandırır ve iki yılın sonunda maksimum seviyeye ulaşır.",
+          "noDissolveDelay" : "Çözülme süresi yok",
+          "setDissolveDelay" : "Çözme süresini belirleyin",
+          "increaseDissolveDelay" : "Çözülme süresini artırın",
+          "decayStartsIn" : "Oylama gücü {{duration}} içinde azalmaya başlayacak",
+          "decaying" : "Oylama gücü azalıyor – {{duration}} içinde sıfıra ulaşacak",
+          "expired" : "Oylama gücü kaybedildi: takipler temizlendi",
+          "confirmFollowing" : "Takibi onaylayın",
+          "confirmFollowingTooltip" : "Takip etme durumunuzu en az altı ayda bir onaylayın, aksi takdirde nöronunuz oylama gücünü kademeli olarak kaybeder."
+        },
+        "maturity" : {
+          "title" : "Vade Ödülü",
+          "tooltip" : "Vade ödülü, bir nöronun biriktirdiği ödüldür. Onu tekrar nörona stake edin veya yeni bir nöron oluşturun.",
+          "available" : "Kullanılabilir vade ödülü",
+          "staked" : "Stake edilmiş vade ödülü",
+          "stakedTooltip" : "Vade ödülü zaten nörona stake edilmiş. Bu tutar, oylama gücüne dahil edilir ve artık yeni bir nöronda kullanılamaz.",
+          "stake" : "Vade ödüllerini stake edin",
+          "spawn" : "Nöron oluşturun",
+          "autoStake" : "Otomatik vade ödülü stake etme",
+          "autoStakeTooltip" : "Etkinleştirildiğinde, vade ödülü biriktikçe nörona geri stake edilir."
+        },
+        "following" : {
+          "title" : "Takip",
+          "tooltip" : "Başka nöronları takip eden bir nöron, onlarla aynı yönde oy kullanır; manuel olarak oy kullanmaya gerek kalmadan ödül kazanmasını sağlayan sistem budur.",
+          "count_one" : "{{count}} konu",
+          "count_other" : "{{count}} konu",
+          "edit" : "Bir yönetişim konusunda nöronları takip et",
+          "follow" : "Takipleri düzenle"
+        },
+        "hotKeys" : {
+          "title" : "Sıcak anahtarlar",
+          "tooltip" : "Bir sıcak anahtar sizin adınıza oy kullanabilir ve takipleri belirleyebilir, ancak bir nöronun stake'ini asla taşıyamaz.",
+          "add" : "Başka bir principal'a sıcak anahtar erişimi yetkisi verin",
+          "addAction" : "Sıcak anahtar ekle",
+          "remove" : "Kaldır"
+        },
+        "advanced" : {
+          "title" : "Gelişmiş",
+          "split" : "Bu nöronu ikiye böl",
+          "splitTooltip" : "Hem orijinal hem de yeni nöron, en az 1 ICP olan minimum stake miktarını korumalıdır.",
+          "splitAction" : "Nöronu böl"
+        }
+      },
+      "setDissolveDelay" : {
+        "title" : "Çözme süresi",
+        "setDescription" : "Nöronun ne kadar sürede çözüleceğini seçin. {{min}} ila {{max}} gün arasında.",
+        "increaseDescription" : "Nöronun çözülme süresine ekleme yapın. Toplam {{max}} güne ulaşacak şekilde en fazla {{remaining}} gün daha ekleyebilirsiniz ve bu süre asla kısaltılamaz.",
+        "days" : "Gün",
+        "resulting" : "Yeni çözülme süresi: {{duration}}",
+        "belowVotingThreshold" : "Nöron, {{days}} günün altında oy kullanamaz ve ödül kazanamaz."
+      },
+      "stakeMaturity" : {
+        "title" : "Vade ödüllerini stake edin",
+        "description" : "Bu nöronun vade ödülünün bir kısmını tekrar kendisine stake ederek oy gücünü artırın.",
+        "percentage" : "Stake edilecek yüzde",
+        "selected" : "Stake edilecek tutar:"
+      },
+      "splitNeuron" : {
+        "title" : "Nöronu bölün",
+        "description" : "Bu nöronun stake'inin bir kısmını yeni bir nörona taşıyın. Yeni nöron, çözülme süresi veya süre bonusu olmadan başlar.",
+        "amount" : "Ayrılacak tutar",
+        "range" : "İzin verilen aralık:"
+      },
+      "addHotKey" : {
+        "title" : "Sıcak anahtar ekleyin",
+        "description" : "Başka bir principal'a bu nöronda oy kullanma ve takip ayarlarını belirleme izni verin. Stake'i hiçbir zaman taşıyamaz.",
+        "principal" : "Principal kimliği",
+        "ownPrincipal" : "Bu hesabın principal'ı",
+        "ownPrincipalHint" : "Farklı bir principal girin; bu genellikle NNS dapp üzerinde oturum açarken kullandığınız adrestir. Bu hesap zaten nöronu kontrol etmektedir, dolayısıyla kendi principal değerini eklemek herhangi bir yetki sağlamaz."
+      },
+      "followTopic" : {
+        "title" : "Konu",
+        "description" : "Takip durumunu değiştirmek istediğiniz yönetişim konusunu seçin.",
+        "followeeCount_one" : "{{count}} takip edilen",
+        "followeeCount_other" : "{{count}} takip edilen"
+      },
+      "selectFollowees" : {
+        "title" : "Takip edilenler",
+        "description" : "Nöronunuz, {{topic}} konusunda tıpkı bu nöronlar gibi oy kullanacaktır.",
+        "neuronId" : "Takip edilecek Nöron Kimliği",
+        "add" : "Ekle",
+        "remove" : "Kaldır",
+        "empty" : "Henüz takip edilen yok. Nöronunuz bu konuda oy kullanmayacak.",
+        "clearsFollowing" : "İşleme devam etmek sisteme boş bir liste gönderir ve bu nöronun {{topic}} konusunda herhangi birini takip etmesini durdurur. Şu anda takip edilenler: {{count}}.",
+        "notANeuronId" : "Bir nöron kimliği yalnızca rakamlardan oluşur.",
+        "outOfRange" : "Bu, geçerli bir nöron kimliği değildir.",
+        "duplicate" : "Bu nöron bu konuda zaten takip ediliyor.",
+        "self" : "Bir nöron kendisini takip edemez.",
+        "unadded" : "Bu nöron kimliğini dahil etmek için Ekle butonunu uygulayın veya alanı temizleyin.",
+        "atCapacity" : "Bir konu en fazla {{max}} nöronu takip edebilir. Yeni bir tane eklemek için birini kaldırın."
+      }
+    },
+    "governanceTopic" : {
+      "Unspecified" : "Tüm diğer konular",
+      "NeuronManagement" : "Nöron yönetimi",
+      "ExchangeRate" : "Takas kuru",
+      "NetworkEconomics" : "Ağ ekonomisi",
+      "Governance" : "Yönetişim",
+      "NodeAdmin" : "Node yöneticisi",
+      "ParticipantManagement" : "Katılımcı yönetimi",
+      "SubnetManagement" : "Alt ağ yönetimi",
+      "NetworkCanisterManagement" : "Uygulama canister yönetimi",
+      "Kyc" : "KYC",
+      "NodeProviderRewards" : "Node sağlayıcısı ödülleri",
+      "SnsDecentralizationSale" : "SNS merkeziyetsizlik satışı",
+      "IcOsVersionDeployment" : "IC OS sürüm dağıtımı",
+      "IcOsVersionElection" : "IC OS sürüm seçimi",
+      "SnsAndCommunityFund" : "SNS ve Topluluk Fonu",
+      "ApiBoundaryNodeManagement" : "API sınır node'u yönetimi",
+      "SubnetRental" : "Alt ağ kiralama",
+      "ProtocolCanisterManagement" : "Protokol canister yönetimi",
+      "ServiceNervousSystemManagement" : "Service Nervous System yönetimi"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "Takibi onaylayın",
+      "listTitle" : "Nöronlar",
+      "description" : "Takip ayarlarınızı doğruladığınızda, nöronunuzun oy gücü önümüzdeki altı ay boyunca geçerli olacak şekilde eski hâline döner.",
+      "timeUntilLoss" : "Oylama gücünün kaybedileceği süre",
+      "losing" : "{{duration}} — şu anda güç kaybediyor",
+      "expired" : "Zaten kaybedildi",
+      "confirm" : "Onayla",
+      "empty" : "Şu anda nöronlarınızın hiçbirinde onay geri sayımı aktif değil."
+    },
     "summaryFooter" : {
       "stakedBalance" : "Stake Bakiyesi",
       "stakedBalanceTooltip" : "Şu anda nöronlara stake edilen toplam ICP token'ı miktarı. Stake edilen ICP’ler oylama ödülleri kazanabilir ve yönetişim için kullanılabilir.",
       "totalMaturity" : "Toplam Birikmiş Ödül Miktarı",
       "totalMaturityTooltip" : "Staking vadesi ve likidite vadesi kapsamındakiler de dâhil olmak üzere staking kapsamında biriken toplam ödül tutarı. Bu ödüller tekrar stake edilebilir veya likit ICP olarak alınabilir."
     }
+  },
+  "perpsReview" : {
+    "depositTitle" : "SwapKit aracılığıyla Yatırın",
+    "depositSubtitle" : "Sağlayıcımız SwapKit, takas ve yatırma işlemlerinizi tek bir işlem üzerinden yönetir ve tüm bu süreç Ledger cihazınız tarafından güvence altına alınır.",
+    "swapDetailTitle" : "Takas bilgileri",
+    "amountSendLabel" : "Gönderilecek tutar",
+    "amountReceiveLabel" : "Alınacak tutar",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "Yatırma bilgileri",
+    "depositAmountLabel" : "Yatırma tutarı",
+    "depositReceiveLabel" : "Alıcı hesap",
+    "depositCTA" : "Yatır"
+  },
+  "perpsDeposit" : {
+    "title" : "Yatırın",
+    "inputDepositAmount" : "~{{value}} yatırın",
+    "inputSubText" : "{{provider}} ile takas edin ve yatırın",
+    "selectCurrencyTitle" : "{{currencyTicker}} ile yatırın",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "Hesap yok",
+    "review" : "İncele",
+    "formErrors" : {
+      "amountExceedsBalance" : "Yetersiz bakiye",
+      "quoteUnavailable" : "{{provider}} üzerinden fiyat teklifi alamıyoruz. Farklı bir varlıkla deneyin veya daha sonra tekrar deneyin."
+    }
+  },
+  "perpsDepositSign" : {
+    "a11yTitle" : "Yatırma işlemini imzalayın",
+    "terms" : "Bu işlemi imzalayarak <termsLink>SwapKit by NEAR Intents Hüküm ve Koşullarını</termsLink> kabul ediyorum"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "İşlem imzalandı",
+    "description" : "İşlem blok zinciri üzerinde onaylandıktan sonra {{currency}} varlıklarınız hesabınıza geçecektir",
+    "viewTransaction" : "İşlemi görüntüle"
+  },
+  "perpsTransactionStatus" : {
+    "dialogTitle" : "İşlem bilgileri",
+    "title" : "Sürekli Vadeli İşlemlerinizi Fonlayın",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
   }
 }
