@@ -13,7 +13,6 @@ import {
   useGetCardLinkedWalletsQuery,
   useLinkWalletToCardMutation,
   useUpdateCardWalletPrioritiesMutation,
-  useGetCardOnboardingStatusQuery,
   useCreateCardDetailsTokenMutation,
   useCreateCardPinTokenMutation,
   useCreateCardSetPinTokenMutation,
@@ -130,7 +129,6 @@ describe("cardManagementApi configuration", () => {
       "exchangeAuthorizationCode",
       "freezeCard",
       "getCardLinkedWallets",
-      "getCardOnboardingStatus",
       "getCardStatus",
       "getCardTransactions",
       "getInternalWallets",
@@ -203,11 +201,6 @@ describe("cardManagementApi configuration", () => {
     expect(useLinkWalletToCardMutation).toBeDefined();
     expect(cardManagementApi.endpoints.updateCardWalletPriorities).toBeDefined();
     expect(useUpdateCardWalletPrioritiesMutation).toBeDefined();
-  });
-
-  it("exposes getCardOnboardingStatus and its hook", () => {
-    expect(cardManagementApi.endpoints.getCardOnboardingStatus).toBeDefined();
-    expect(useGetCardOnboardingStatusQuery).toBeDefined();
   });
 
   it("registers under the shared cardApi reducer path", () => {
@@ -1526,50 +1519,5 @@ describe("cardManagementApi requests", () => {
     });
   });
 
-  describe("getCardOnboardingStatus", () => {
-    const ONBOARDING_STATUS_PATH = "/v1/card/onboarding-status";
-
-    const onboardingStatus = {
-      steps: [
-        {
-          id: "kyc",
-          title: "Verify your identity",
-          description: "Complete KYC verification to activate your card.",
-          isDone: true,
-        },
-        {
-          id: "address",
-          title: "Add shipping address",
-          description: "Tell us where to send your physical card.",
-          isDone: false,
-        },
-      ],
-    };
-
-    it("reads the onboarding steps", async () => {
-      provider.get(ONBOARDING_STATUS_PATH, () => jsonResponse(onboardingStatus));
-
-      const store = makeStore("session-token");
-      const result = await store.dispatch(
-        cardManagementApi.endpoints.getCardOnboardingStatus.initiate(),
-      );
-
-      expectSessionRequest("GET", ONBOARDING_STATUS_PATH);
-      expect(result.data).toEqual(onboardingStatus);
-    });
-
-    it("rejects a step whose done flag is not a boolean", async () => {
-      provider.get(ONBOARDING_STATUS_PATH, () =>
-        jsonResponse({ steps: [{ ...onboardingStatus.steps[0], isDone: "yes" }] }),
-      );
-
-      const store = makeStore("session-token");
-      const result = await store.dispatch(
-        cardManagementApi.endpoints.getCardOnboardingStatus.initiate(),
-      );
-
-      expect(result.data).toBeUndefined();
-      expect(result.error).toBeDefined();
-    });
-  });
+ 
 });

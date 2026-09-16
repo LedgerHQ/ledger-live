@@ -52,31 +52,11 @@ describe("usePayCardToolProps", () => {
     store = buildStore();
   });
 
-  it("exposes desktop onboarding steps and default flag values", () => {
+  it("exposes default flag values", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
-    expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "create-account",
-      "choose-card-type",
-      "top-up-card",
-      "first-purchase",
-    ]);
     expect(result.current.flags.payTabEnabled).toBe(false);
     expect(result.current.flags.ptxCardEnabled).toBe(false);
-  });
-
-  it("includes apple-google-pay step when platform is native", () => {
-    const { result } = renderHook(() => usePayCardToolProps({ platform: "native" }), {
-      wrapper: withStore(store),
-    });
-
-    expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "create-account",
-      "choose-card-type",
-      "top-up-card",
-      "apple-google-pay",
-      "first-purchase",
-    ]);
   });
 
   it("setPayTabEnabled overrides lwdPayTab on web", () => {
@@ -146,22 +126,6 @@ describe("usePayCardToolProps", () => {
 
     expect(store.getState().featureFlags.overrides.ptxCard?.enabled).toBe(true);
     expect(result.current.flags.ptxCardEnabled).toBe(true);
-  });
-
-  it("setStepDone toggles a single step and supports resetting all", () => {
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
-
-    act(() => {
-      result.current.onboarding.setStepDone("choose-card-type", true);
-    });
-    expect(result.current.onboarding.steps.find(step => step.id === "choose-card-type")?.done).toBe(
-      true,
-    );
-
-    act(() => {
-      result.current.onboarding.setStepDone("all", false);
-    });
-    expect(result.current.onboarding.steps.every(step => !step.done)).toBe(true);
   });
 
   it("reports no balance until the screen asks for one", () => {

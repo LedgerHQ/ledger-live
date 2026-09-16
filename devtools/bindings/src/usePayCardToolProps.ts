@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import {
-  cardManagementApi,
   useGetCardLinkedWalletsQuery,
   useGetInternalWalletsQuery,
   useLazyGetCardStatusQuery,
@@ -40,13 +39,11 @@ import {
   setCardOnboardingStatusMock,
   type CardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
-import { setMockOnboardingStepDone } from "@domain/api-card-management/mock";
 import type { DevToolsConfig } from "@devtools/registry";
 import { isRequestMockingEnabled } from "./isRequestMockingEnabled";
 import { usePayCardAuthProps } from "./usePayCardAuthProps";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
-type OnboardingStep = PayCardToolProps["onboarding"]["steps"][number];
 
 type PayCardProbe = PayCardToolProps["interaction"]["probes"][number];
 
@@ -55,30 +52,6 @@ export type UsePayCardToolPropsOptions = {
   readonly openPayTab?: () => void;
   readonly openSecureBrowser?: PayCardToolProps["openSecureBrowser"];
 };
-
-const LEADING_ONBOARDING_STEPS: readonly OnboardingStep[] = [
-  { id: "create-account", label: "Create account", done: true },
-  { id: "choose-card-type", label: "Choose card type", done: false },
-  { id: "top-up-card", label: "Top up card", done: false },
-];
-
-const NATIVE_ONLY_STEP: OnboardingStep = {
-  id: "apple-google-pay",
-  label: "Apple/Google Pay",
-  done: false,
-};
-
-const PURCHASE_STEP: OnboardingStep = {
-  id: "first-purchase",
-  label: "First purchase",
-  done: false,
-};
-
-function initialSteps(platform: "web" | "native"): readonly OnboardingStep[] {
-  return platform === "native"
-    ? [...LEADING_ONBOARDING_STEPS, NATIVE_ONLY_STEP, PURCHASE_STEP]
-    : [...LEADING_ONBOARDING_STEPS, PURCHASE_STEP];
-}
 
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
 
@@ -135,8 +108,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const payTab = useFeature(payTabKey);
   const ptxCard = useFeature("ptxCard");
 
-  const [steps, setSteps] = useState<readonly OnboardingStep[]>(() => initialSteps(platform));
-
   const payTabEnabled = !!payTab?.enabled;
   const cardParam = !!payTab?.params?.card;
   const ptxCardEnabled = !!ptxCard?.enabled;
@@ -186,22 +157,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     dispatch(resetCardOnboardingCompleted());
   }, [dispatch]);
 
-  const setStepDone = useCallback(
-    (id: string, done: boolean) => {
-      setSteps(current => {
-        if (id === "all") {
-          return current.map(step => (step.done === done ? step : { ...step, done }));
-        }
-        return current.map(step =>
-          step.id === id && step.done !== done ? { ...step, done } : step,
-        );
-      });
-      setMockOnboardingStepDone(id, done);
-      dispatch(cardManagementApi.util.invalidateTags(["CardOnboardingStatus"]));
-    },
-    [dispatch],
-  );
-
   const flags = useMemo(
     () => ({
       payTabEnabled,
@@ -213,8 +168,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     }),
     [payTabEnabled, cardParam, ptxCardEnabled, setPayTabEnabled, setCardParam, setPtxCardEnabled],
   );
-
-  const onboarding = useMemo(() => ({ steps, setStepDone }), [steps, setStepDone]);
 
   const auth = usePayCardAuthProps({ openPayTab: options.openPayTab });
   // Read when the screen asks for it, not when the tool mounts: these are Card endpoints, and a
@@ -372,7 +325,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   return useMemo(
     () => ({
       flags,
-      onboarding,
       cardOnboarding,
       interaction,
       balance,
@@ -390,7 +342,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     }),
     [
       flags,
-      onboarding,
       cardOnboarding,
       interaction,
       balance,

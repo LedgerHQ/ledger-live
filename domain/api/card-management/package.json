@@ -7,7 +7,6 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./mock": "./src/onboardingStatus.mock.ts",
     "./mock/card-details-token": "./src/cardDetailsToken.mock.ts",
     "./mock/card-onboarding-status": "./src/cardOnboardingStatus.mock.ts",
     "./mock/card-session": "./src/cardMockSession.mock.ts",

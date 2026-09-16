@@ -8,8 +8,6 @@ import {
   PayCardLinkedWalletSchema,
   PayCardLinkedWalletCanonicalSchema,
   PayCardLogoutResponseSchema,
-  PayCardOnboardingStatusResponseSchema,
-  PayCardOnboardingStepSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
@@ -126,6 +124,3 @@ export type PayCardWalletPrioritiesRequest = z.infer<typeof PayCardWalletPriorit
 
 export type PayCardWalletPrioritiesResult = z.infer<typeof PayCardWalletPrioritiesResponseSchema>;
 
-export type PayCardOnboardingStep = z.infer<typeof PayCardOnboardingStepSchema>;
-
-export type PayCardOnboardingStatus = z.infer<typeof PayCardOnboardingStatusResponseSchema>;

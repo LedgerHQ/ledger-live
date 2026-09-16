@@ -1,9 +1,9 @@
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
-import { CARD_ONBOARDING_COPY } from "../../__tests__/i18nWrapper";
+import { CARD_ONBOARDING_COPY, CARD_ONBOARDING_STEP_COPY } from "../../__tests__/i18nWrapper";
 import { createRenderWidget, setQuery, stepsWith, stepsWithIds } from "./__tests__/shared";
 
-jest.mock("@domain/api-card-management", () => ({
-  useGetCardOnboardingStatusQuery: jest.fn(),
+jest.mock("../../onboardingStatus", () => ({
+  useCardOnboardingStatus: jest.fn(),
 }));
 
 const renderWidget = createRenderWidget(render);
@@ -64,14 +64,16 @@ describe("CardOnboardingWidget (integration)", () => {
 
     expect(screen.getByText(CARD_ONBOARDING_COPY.dialogTitle)).toBeVisible();
     expect(screen.getByText(CARD_ONBOARDING_COPY.stepComplete)).toBeVisible();
-    expect(screen.getByText("Step 1")).toBeVisible();
-    expect(screen.getByTestId("pay-card-onboarding-step-step-2").props.disabled).toBe(true);
+    expect(screen.getByText(CARD_ONBOARDING_STEP_COPY["choose-card-type"].title)).toBeVisible();
+    expect(screen.getByTestId("pay-card-onboarding-step-top-up-card").props.disabled).toBe(true);
     expect(screen.queryByText(CARD_ONBOARDING_COPY.gotIt)).toBeNull();
   });
 
-  it("should add the wallet step before the first purchase", async () => {
+  it("should render the wallet step wherever the derived steps place it", async () => {
     const user = userEvent.setup();
-    setQuery({ data: { steps: stepsWithIds("top-up-card", "first-purchase") } });
+    setQuery({
+      data: { steps: stepsWithIds("top-up-card", "apple-google-pay", "first-purchase") },
+    });
     renderWidget();
     await openWidget(user);
 
@@ -86,12 +88,16 @@ describe("CardOnboardingWidget (integration)", () => {
 
   it("should label the wallet step with the mobile copy", async () => {
     const user = userEvent.setup();
-    setQuery({ data: { steps: stepsWithIds("top-up-card", "first-purchase") } });
+    setQuery({
+      data: { steps: stepsWithIds("top-up-card", "apple-google-pay", "first-purchase") },
+    });
     renderWidget();
     await openWidget(user);
 
-    expect(screen.getByText(CARD_ONBOARDING_COPY.walletStepTitle)).toBeVisible();
-    expect(screen.getByText(CARD_ONBOARDING_COPY.walletStepDescription)).toBeVisible();
+    expect(screen.getByText(CARD_ONBOARDING_STEP_COPY["apple-google-pay"].title)).toBeVisible();
+    expect(
+      screen.getByText(CARD_ONBOARDING_STEP_COPY["apple-google-pay"].description),
+    ).toBeVisible();
   });
 
   it("should close the dialog from the sheet dismiss control", async () => {
@@ -105,21 +111,22 @@ describe("CardOnboardingWidget (integration)", () => {
     expect(screen.queryByText(CARD_ONBOARDING_COPY.dialogTitle)).toBeNull();
   });
 
-  it("should mark the wallet step done once it is pressed", async () => {
+  it("should mark the wallet step done in the store once it is pressed", async () => {
+    // useCardOnboardingStatus is mocked statically for this suite (see setQuery), so pressing the
+    // step cannot be observed via a re-render here; that reactivity is covered by
+    // useCardOnboardingStatus.native.test.ts. This only checks the dispatch the dialog wires up.
     const user = userEvent.setup();
-    const steps = stepsWithIds("top-up-card", "first-purchase").map(step => ({
+    const steps = stepsWithIds("top-up-card", "apple-google-pay", "first-purchase").map(step => ({
       ...step,
       isDone: step.id === "top-up-card",
     }));
     setQuery({ data: { steps } });
-    renderWidget();
+    const { store } = renderWidget();
     await openWidget(user);
-
-    expect(screen.getAllByText(CARD_ONBOARDING_COPY.stepComplete)).toHaveLength(1);
 
     await user.press(screen.getByTestId("pay-card-onboarding-step-apple-google-pay"));
 
-    expect(screen.getAllByText(CARD_ONBOARDING_COPY.stepComplete)).toHaveLength(2);
+    expect(store.getState().payCardOnboardingWidget.hasAddedCardToWallet).toBe(true);
   });
 
   it("should hide the widget after got-it completes onboarding", async () => {

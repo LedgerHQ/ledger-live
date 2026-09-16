@@ -1,51 +1,44 @@
 import React, { type FC, type ReactElement, type ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
-import {
-  useGetCardOnboardingStatusQuery,
-  type PayCardOnboardingStep,
-} from "@domain/api-card-management";
+import type { CardOnboardingStep, CardOnboardingStepId } from "../../../onboardingStatus";
+import { useCardOnboardingStatus } from "../../../onboardingStatus";
 import { I18nWrapper } from "../../../__tests__/i18nWrapper";
 import { payCardOnboardingWidgetSlice } from "../../../state";
 import { CardOnboardingWidget } from "../CardOnboardingWidget";
 
-const mockedQuery = jest.mocked(useGetCardOnboardingStatusQuery);
-type QueryResult = ReturnType<typeof useGetCardOnboardingStatusQuery>;
+const mockedStatus = jest.mocked(useCardOnboardingStatus);
+type StatusResult = ReturnType<typeof useCardOnboardingStatus>;
 
-type RenderWidget = (
-  ui: ReactElement,
-  options: { wrapper: FC<{ children: ReactNode }> },
-) => unknown;
+type RenderWidget = (ui: ReactElement, options: { wrapper: FC<{ children: ReactNode }> }) => object;
 
 export function setQuery(state: {
-  data?: { steps: PayCardOnboardingStep[] };
+  data?: { steps: CardOnboardingStep[] };
   isLoading?: boolean;
   isError?: boolean;
 }) {
-  mockedQuery.mockReturnValue({
-    data: state.data,
+  const steps = state.data?.steps ?? [];
+  mockedStatus.mockReturnValue({
+    data: { steps, completedCount: steps.filter(step => step.isDone).length },
     isLoading: state.isLoading ?? false,
     isError: state.isError ?? false,
-    refetch: jest.fn(),
-  } as unknown as QueryResult);
+    refresh: jest.fn(),
+  } as unknown as StatusResult);
 }
 
-export function stepsWith(...done: boolean[]): PayCardOnboardingStep[] {
-  return done.map((isDone, index) => ({
-    id: `step-${index}`,
-    title: `Step ${index}`,
-    description: `Description ${index}`,
-    isDone,
-  }));
+const REAL_STEP_IDS: readonly CardOnboardingStepId[] = [
+  "create-account",
+  "choose-card-type",
+  "top-up-card",
+  "first-purchase",
+];
+
+export function stepsWith(...done: boolean[]): CardOnboardingStep[] {
+  return done.map((isDone, index) => ({ id: REAL_STEP_IDS[index], isDone }));
 }
 
-export function stepsWithIds(...ids: string[]): PayCardOnboardingStep[] {
-  return ids.map(id => ({
-    id,
-    title: `Title ${id}`,
-    description: `Description ${id}`,
-    isDone: false,
-  }));
+export function stepsWithIds(...ids: CardOnboardingStepId[]): CardOnboardingStep[] {
+  return ids.map(id => ({ id, isDone: false }));
 }
 
 export function createRenderWidget(render: RenderWidget) {
@@ -63,6 +56,6 @@ export function createRenderWidget(render: RenderWidget) {
       </Provider>
     );
 
-    return render(<CardOnboardingWidget />, { wrapper });
+    return { ...render(<CardOnboardingWidget />, { wrapper }), store };
   };
 }

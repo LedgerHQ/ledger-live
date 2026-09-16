@@ -10562,9 +10562,27 @@
         "stepComplete": "Complete",
         "gotIt": "Got it"
       },
-      "walletStep": {
-        "title": "Add to Apple/Google Pay",
-        "description": "Pay with your phone in store"
+      "steps": {
+        "createAccount": {
+          "title": "Create your account",
+          "description": "Verify your identity to get started"
+        },
+        "chooseCardType": {
+          "title": "Choose your card type",
+          "description": "Pick between virtual and physical"
+        },
+        "topUpCard": {
+          "title": "Top up your card",
+          "description": "Add funds using USDC, USDT, BTC or more"
+        },
+        "firstPurchase": {
+          "title": "Make your first purchase",
+          "description": "Pay online or in store"
+        },
+        "appleGooglePay": {
+          "title": "Add to Apple/Google Pay",
+          "description": "Pay with your phone in store"
+        }
       }
     }
   },

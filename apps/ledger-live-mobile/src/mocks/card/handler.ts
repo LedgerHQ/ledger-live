@@ -1,5 +1,4 @@
 import { http, HttpResponse, passthrough, delay } from "msw";
-import { getMockCardOnboardingStatus } from "@domain/api-card-management/mock";
 import {
   isMockCardRequest,
   MOCK_CARD_ACCESS_TOKEN_PREFIX,
@@ -140,9 +139,6 @@ const handlers = [
     return HttpResponse.json(MOCK_CARD_STATUS);
   }),
 
-  http.get("*/v1/card/onboarding-status", ({ request }) =>
-    isMockCardRequest(request) ? HttpResponse.json(getMockCardOnboardingStatus()) : passthrough(),
-  ),
   http.get("*/v1/card/transactions", ({ request }) =>
     isMockCardRequest(request) ? HttpResponse.json(mockPayCardTransactions()) : passthrough(),
   ),
