@@ -6,6 +6,7 @@ export * from "./ldmkPolkadotSigner";
 export * from "./ldmkSolanaSigner";
 export * from "./ldmkSolanaSignerIsTxcActive";
 export * from "./ldmkTransport";
+export * from "./ldmkTronSigner";
 export * from "./ldmkXrpSigner";
 export * from "./llmNanoSDeprecation";
 export * from "./myLedgerDisplayAppDeveloperName";

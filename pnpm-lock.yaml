@@ -105,6 +105,9 @@ catalogs:
     '@ledgerhq/device-signer-kit-solana':
       specifier: 1.13.3
       version: 1.13.3
+    '@ledgerhq/device-signer-kit-tron':
+      specifier: 0.3.0
+      version: 0.3.0
     '@ledgerhq/device-signer-kit-xrp':
       specifier: 0.2.0
       version: 0.2.0
@@ -13910,6 +13913,9 @@ importers:
       '@ledgerhq/live-signer-solana':
         specifier: workspace:^
         version: link:../live-signer-solana
+      '@ledgerhq/live-signer-tron':
+        specifier: workspace:^
+        version: link:../live-signer-tron
       '@ledgerhq/live-signer-xrp':
         specifier: workspace:^
         version: link:../live-signer-xrp
@@ -16733,6 +16739,55 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+
+  libs/live-signer-tron:
+    dependencies:
+      '@ledgerhq/context-module':
+        specifier: 2.6.0
+        version: 2.6.0(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.10.0(rxjs@7.8.2)
+      '@ledgerhq/device-signer-kit-tron':
+        specifier: 'catalog:'
+        version: 0.3.0(@ledgerhq/context-module@2.6.0(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))
+      '@ledgerhq/hw-app-trx':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-trx
+      '@ledgerhq/hw-transport':
+        specifier: 6.36.0
+        version: 6.36.0
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@ledgerhq/disable-network-setup':
+        specifier: workspace:^
+        version: link:../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -22813,6 +22868,12 @@ packages:
     resolution: {integrity: sha512-3njwO5/n2Pgtc/RCPpLFMraQDJUDlZqSuNfYLwwy9mQejOCx8AUlN/rVq6Z01dryRrQXXoyt/j5ec7KEHzeAWg==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.10.0
+
+  '@ledgerhq/device-signer-kit-tron@0.3.0':
+    resolution: {integrity: sha512-qBCDG4RiMlf5vqaRfq+P3M/06GosvemtOkUKsG6zqy7ZDmGxH00/pyAIJ2RZ1cN8cr3jvubgVZ731fyaMziYZQ==}
+    peerDependencies:
+      '@ledgerhq/context-module': 2.6.0
+      '@ledgerhq/device-management-kit': ^1.9.1
 
   '@ledgerhq/device-signer-kit-xrp@0.2.0':
     resolution: {integrity: sha512-7tRV20TvSVWjy1iRALzWf+1RGrDlwVlAsW+SUzeMc0vTed26967gdW0fXjN489kEmxxfTU2EIkIsIf7SuI8qcA==}
@@ -45920,6 +45981,19 @@ snapshots:
       - fastestsmallesttextencoderdecoder
       - typescript
       - utf-8-validate
+
+  '@ledgerhq/device-signer-kit-tron@0.3.0(@ledgerhq/context-module@2.6.0(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/context-module': 2.6.0(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))
+      '@ledgerhq/device-contacts-kit': 0.5.0(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 1.10.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))
+      '@noble/hashes': 1.8.0
+      bs58: 6.0.0
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      xstate: 5.19.2
 
   '@ledgerhq/device-signer-kit-xrp@0.2.0(@ledgerhq/device-management-kit@1.10.0(rxjs@7.8.2))':
     dependencies:
