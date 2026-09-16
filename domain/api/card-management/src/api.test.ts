@@ -12,6 +12,7 @@ import {
   useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
   useLinkWalletToCardMutation,
+  useUpdateCardWalletPrioritiesMutation,
   useGetCardOnboardingStatusQuery,
   useCreateCardDetailsTokenMutation,
   useCreateCardPinTokenMutation,
@@ -106,7 +107,7 @@ const makeStore = (sessionToken: string | null = null, overrides: Partial<CardAp
       }).concat(cardApi.middleware),
   });
 
-function expectSessionRequest(method: "GET" | "POST", path: string) {
+function expectSessionRequest(method: "GET" | "POST" | "PUT", path: string) {
   const sent = provider.sent();
 
   expect(sent.method).toBe(method);
@@ -140,6 +141,7 @@ describe("cardManagementApi configuration", () => {
       "orderCard",
       "refreshSession",
       "unfreezeCard",
+      "updateCardWalletPriorities",
     ]);
   });
 
@@ -199,6 +201,8 @@ describe("cardManagementApi configuration", () => {
     expect(useGetCardLinkedWalletsQuery).toBeDefined();
     expect(cardManagementApi.endpoints.linkWalletToCard).toBeDefined();
     expect(useLinkWalletToCardMutation).toBeDefined();
+    expect(cardManagementApi.endpoints.updateCardWalletPriorities).toBeDefined();
+    expect(useUpdateCardWalletPrioritiesMutation).toBeDefined();
   });
 
   it("exposes getCardOnboardingStatus and its hook", () => {
@@ -1399,6 +1403,121 @@ describe("cardManagementApi requests", () => {
 
       const result = await store.dispatch(
         cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId }),
+      );
+      await flushPendingRequests();
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests().length).toBe(before + 1);
+    });
+  });
+
+  describe("updateCardWalletPriorities", () => {
+    const PRIORITY_PATH = "/v1/wallet/internal/card_linked/priority";
+    const LINKED_WALLETS_PATH = "/v1/wallet/internal/card_linked";
+
+    const order = {
+      wallets: [
+        { addressId: "0x0a4b21fa733e9aeaddbf070302a85c559de13c4c", priority: 1 },
+        { addressId: "7c1839ee-918e-4787-b74f-deeb48ead58b", priority: 2 },
+      ],
+    };
+
+    const reorder = (request: typeof order) =>
+      makeStore("session-token").dispatch(
+        cardManagementApi.endpoints.updateCardWalletPriorities.initiate(request),
+      );
+
+    it("puts the whole order, wallets named by their address id", async () => {
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: true }));
+
+      const result = await reorder(order);
+
+      expectSessionRequest("PUT", PRIORITY_PATH);
+      expect(JSON.parse(provider.sent().body)).toEqual(order);
+      expect(result.data).toEqual({ success: true });
+    });
+
+    it("rejects two wallets sharing a priority, and sends nothing", async () => {
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: true }));
+
+      const result = await reorder({
+        wallets: [
+          { addressId: order.wallets[0].addressId, priority: 1 },
+          { addressId: order.wallets[1].addressId, priority: 1 },
+        ],
+      });
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("rejects the same wallet given two priorities, and sends nothing", async () => {
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: true }));
+
+      const result = await reorder({
+        wallets: [
+          { addressId: order.wallets[0].addressId, priority: 1 },
+          { addressId: order.wallets[0].addressId, priority: 2 },
+        ],
+      });
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("rejects an order with no wallets in it, and sends nothing", async () => {
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: true }));
+
+      const result = await reorder({ wallets: [] });
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("keeps the order cached when the provider refuses with success:false", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: false }));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.updateCardWalletPriorities.initiate(order),
+      );
+      await flushPendingRequests();
+
+      // A 200 is not an error, so the flag is the answer — and it says the order did not change.
+      expect(result.error).toBeUndefined();
+      expect(result.data).toEqual({ success: false });
+      expect(provider.requests().length).toBe(before + 1);
+    });
+
+    it("reads the linked wallets again once the order is rewritten", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      await store.dispatch(cardManagementApi.endpoints.updateCardWalletPriorities.initiate(order));
+      await flushPendingRequests();
+
+      // The PUT, then exactly one re-read.
+      expect(provider.requests().length).toBe(before + 2);
+    });
+
+    it("keeps the order cached when the rewrite fails", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.put(PRIORITY_PATH, () => errorResponse(422, "reorder refused"));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.updateCardWalletPriorities.initiate(order),
       );
       await flushPendingRequests();
 

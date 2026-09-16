@@ -24,6 +24,8 @@ import {
   PayCardTransactionsResponseSchema,
   PayCardWalletHistoryEntrySchema,
   PayCardWalletHistoryRequestSchema,
+  PayCardWalletPrioritiesRequestSchema,
+  PayCardWalletPrioritiesResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 import { documentedPayCardTransaction } from "./cardTransactions.mock";
@@ -308,6 +310,78 @@ describe("PayCardSetPinTokenRequestSchema", () => {
     expect(() =>
       PayCardSetPinTokenRequestSchema.parse({ redirectUrl: "javascript:alert(1)" }),
     ).toThrow();
+  });
+});
+
+describe("PayCardWalletPrioritiesRequestSchema", () => {
+  const order = {
+    wallets: [
+      { addressId: "0x0a4b21fa733e9aeaddbf070302a85c559de13c4c", priority: 1 },
+      { addressId: "7c1839ee-918e-4787-b74f-deeb48ead58b", priority: 2 },
+    ],
+  };
+
+  it("takes an order where every wallet has a priority of its own", () => {
+    expect(PayCardWalletPrioritiesRequestSchema.parse(order)).toEqual(order);
+  });
+
+  it("takes the priorities a linked wallet can already answer with, so an order round-trips", () => {
+    const fromTheProvider = {
+      wallets: [
+        { addressId: order.wallets[0].addressId, priority: 0 },
+        { addressId: order.wallets[1].addressId, priority: 1.5 },
+      ],
+    };
+
+    expect(PayCardWalletPrioritiesRequestSchema.parse(fromTheProvider)).toEqual(fromTheProvider);
+  });
+
+  it("rejects two wallets sharing a priority, saying which rule failed", () => {
+    expect(
+      () =>
+        PayCardWalletPrioritiesRequestSchema.parse({
+          wallets: [
+            { addressId: order.wallets[0].addressId, priority: 1 },
+            { addressId: order.wallets[1].addressId, priority: 1 },
+          ],
+        }),
+      // The message is all a caller gets back, so it is the only way to tell the rules apart.
+    ).toThrow(/each wallet needs a priority of its own/);
+  });
+
+  it("rejects the same wallet given two priorities, saying which rule failed", () => {
+    expect(() =>
+      PayCardWalletPrioritiesRequestSchema.parse({
+        wallets: [
+          { addressId: order.wallets[0].addressId, priority: 1 },
+          { addressId: order.wallets[0].addressId, priority: 2 },
+        ],
+      }),
+    ).toThrow(/each wallet may be given a priority once/);
+  });
+
+  it("rejects an order with no wallets in it", () => {
+    expect(() => PayCardWalletPrioritiesRequestSchema.parse({ wallets: [] })).toThrow();
+  });
+
+  it("rejects a wallet that names no address id", () => {
+    expect(() =>
+      PayCardWalletPrioritiesRequestSchema.parse({
+        wallets: [{ id: order.wallets[0].addressId, priority: 1 }],
+      }),
+    ).toThrow();
+  });
+});
+
+describe("PayCardWalletPrioritiesResponseSchema", () => {
+  it("reads the documented flag", () => {
+    expect(PayCardWalletPrioritiesResponseSchema.parse({ success: true })).toEqual({
+      success: true,
+    });
+  });
+
+  it("rejects an answer that does not say whether the order was written", () => {
+    expect(() => PayCardWalletPrioritiesResponseSchema.parse({})).toThrow();
   });
 });
 
