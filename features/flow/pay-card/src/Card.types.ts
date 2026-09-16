@@ -8,6 +8,7 @@ import type {
   FormatCardTransactionAmount,
   FormatCardTransactionDate,
 } from "@features/flow-pay-card-transactions";
+import type { CardAssetsProps } from "./CardAssets";
 
 export type CardFormatters = Readonly<{
   countervalue?: (value: number) => FormattedValue;
@@ -20,6 +21,8 @@ export type { UnlockForReveal };
 /** Host input for the Pay Card flow. */
 export type CardProps = {
   readonly login: CardLoginProps;
+  /** The funding wallets, priced by the host. Omitted where the host does not list them. */
+  readonly assets?: CardAssetsProps;
   readonly formatters?: CardFormatters;
   readonly unlock?: UnlockForReveal;
   readonly onShowMore?: () => void;
@@ -41,6 +44,7 @@ export type CardViewProps = {
   /** Which face to show. The children are mutually exclusive, so the view switches on this. */
   readonly displayState: CardDisplayState;
   readonly cardVisual?: CardVisualProps;
+  readonly assets?: CardAssetsProps;
   readonly formatters?: CardFormatters;
   readonly unlock?: UnlockForReveal;
   readonly onShowMore?: () => void;

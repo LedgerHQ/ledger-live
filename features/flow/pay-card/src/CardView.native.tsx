@@ -3,6 +3,7 @@ import { Subheader, SubheaderRow, SubheaderTitle, Box } from "@ledgerhq/lumen-ui
 import { CardLogin } from "@features/flow-pay-card-auth";
 import { CardArtwork, CardDetails } from "@features/flow-pay-card-details";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
+import { CardAssets } from "./CardAssets";
 import type { CardViewProps } from "./Card.types";
 
 export function CardView({
@@ -10,6 +11,7 @@ export function CardView({
   login,
   displayState,
   cardVisual,
+  assets,
   formatters,
   onShowMore,
 }: CardViewProps) {
@@ -25,6 +27,7 @@ export function CardView({
           <CardOnboardingWidget />
           <CardDetails
             cardVisual={cardVisual}
+            assets={assets ? <CardAssets {...assets} /> : null}
             formatters={{
               amount: formatters?.transactionAmount,
               date: formatters?.transactionDate,

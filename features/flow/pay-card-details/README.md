@@ -42,6 +42,11 @@ import { CardDetails } from "@features/flow-pay-card-details";
 <CardDetails cardVisual={cardVisual} />;
 ```
 
+Native hosts can also pass `assets`: whatever it holds is rendered in the sheet's overview, between
+the card actions and the transactions, which is where the design lists the card's funding wallets.
+The node comes from the host because the list itself lives in
+[`@features/flow-pay-card`](../pay-card/README.md), above this package.
+
 `CardVisual` composes the `CardArtwork` (card face) with the balance overlay. `CardArtwork` is also
 exported on its own for consumers that only need the card face. Hosts mount `CardDetails` and pass
 `cardVisual` to overlay the balance, or omit it for the bare artwork. On web that keeps freeze, More,

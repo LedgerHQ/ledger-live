@@ -8,6 +8,7 @@ const MOCK_CARD_BALANCE = 100;
 
 export function useCardViewModel({
   login,
+  assets,
   formatters,
   unlock,
   onShowMore,
@@ -29,6 +30,7 @@ export function useCardViewModel({
     login,
     displayState,
     cardVisual,
+    assets,
     formatters,
     unlock,
     onShowMore,

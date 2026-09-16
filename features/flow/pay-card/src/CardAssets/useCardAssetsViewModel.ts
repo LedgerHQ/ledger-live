@@ -2,33 +2,43 @@ import { useMemo } from "react";
 import { useTranslation } from "@shared/i18n";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
-import type { CardAssetRow, CardAssetsStatus, CardAssetsViewModel } from "./types";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CardAssetRow, CardAssetsProps, CardAssetsStatus, CardAssetsViewModel } from "./types";
 
 const KEY_PREFIX = "payTab.card.assets";
-
-const NO_CURRENCIES: ReadonlyMap<string, CryptoOrTokenCurrency> = new Map();
 
 export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
   const ticker = currency.toUpperCase();
   return balance === null ? ticker : `${balance} ${ticker}`;
 }
 
-export function useCardAssetsViewModel(): CardAssetsViewModel {
+export function useCardAssetsViewModel({
+  currencies,
+  priceWallet,
+  formatCountervalue,
+}: CardAssetsProps): CardAssetsViewModel {
   const { t } = useTranslation();
   const isSignedIn = useIsCardSignedIn();
   const { wallets, isLoading, isError } = useCardLinkedWallets({
-    currencies: NO_CURRENCIES,
+    currencies,
     skip: !isSignedIn,
   });
 
   const rows = useMemo<readonly CardAssetRow[]>(
     () =>
-      wallets.map(({ id, balance, currency }) => ({
-        id,
-        cryptoAmount: formatCardAssetCryptoAmount(balance, currency),
-      })),
-    [wallets],
+      wallets.map(({ id, balance, currency, ledgerId, ledgerCurrency }) => {
+        const countervalue =
+          ledgerCurrency && balance !== null ? priceWallet(ledgerCurrency, balance) : null;
+
+        return {
+          id,
+          name: ledgerCurrency?.name ?? currency.toUpperCase(),
+          ticker: ledgerCurrency?.ticker ?? currency.toUpperCase(),
+          ledgerId: ledgerId ?? "",
+          cryptoAmount: formatCardAssetCryptoAmount(balance, currency),
+          countervalue: countervalue === null ? null : formatCountervalue(countervalue),
+        };
+      }),
+    [wallets, priceWallet, formatCountervalue],
   );
 
   const status = useMemo<CardAssetsStatus>(() => {

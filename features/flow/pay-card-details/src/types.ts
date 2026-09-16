@@ -24,6 +24,8 @@ export type CardVisualViewProps = CardVisualProps &
 export type CardDetailsProps = Readonly<{
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   cardVisual?: CardVisualProps;
+  /** Native only: what the sheet lists between the card actions and the transactions. */
+  assets?: ReactNode;
   /** Native only: the Details sheet overview lists the card's transactions. */
   formatters?: CardTransactionFormatters;
   onTrackEvent?: CardTrackEvent;
