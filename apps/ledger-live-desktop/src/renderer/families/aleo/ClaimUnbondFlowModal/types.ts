@@ -1,7 +1,7 @@
 import { Step } from "~/renderer/components/Stepper";
 import type { StakingStepProps } from "../shared/createStakingFlowBody";
 
-export type StepId = "validator" | "amount" | "connectDevice" | "confirmation";
+export type StepId = "summary" | "connectDevice" | "confirmation";
 
 export type StepProps = Readonly<StakingStepProps>;
 

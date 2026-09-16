@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { Transaction, AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+import { Transaction } from "@ledgerhq/live-common/families/aleo/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
@@ -24,7 +24,7 @@ export default function StepValidator({
   const [attempt, setAttempt] = useState(0);
 
   // Body.tsx has already seeded `recipient` with the bonded validator.
-  const lockedTo = (account as AleoAccount).aleoResources?.bondedValidator ?? null;
+  const lockedTo = account.aleoResources?.bondedValidator ?? null;
 
   const onSelect = useCallback(
     (address: string) =>

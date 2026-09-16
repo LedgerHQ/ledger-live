@@ -97,6 +97,7 @@ import {
   sumStakedBalance,
   toStakingResources,
   isSelfTransferTransaction,
+  isSelfStakingMode,
   isPublicTransaction,
   isPrivateTransaction,
   isTokenTransaction,
@@ -1915,6 +1916,17 @@ describe("isPublicTransaction", () => {
     const transaction = getMockedTransaction({ mode });
 
     expect(isPublicTransaction(transaction)).toBe(expected);
+  });
+});
+
+describe("isSelfStakingMode", () => {
+  it.each([
+    [true, TRANSACTION_TYPE.UNBOND_PUBLIC],
+    [true, TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC],
+    [false, TRANSACTION_TYPE.BOND_PUBLIC],
+    [false, TRANSACTION_TYPE.TRANSFER_PUBLIC],
+  ] as const)("should return %s for mode '%s'", (expected, mode) => {
+    expect(isSelfStakingMode({ mode })).toBe(expected);
   });
 });
 

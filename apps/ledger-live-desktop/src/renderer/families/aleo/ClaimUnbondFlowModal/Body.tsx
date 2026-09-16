@@ -2,7 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import { StepId, StepProps, St } from "./types";
-import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
+import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { createStakingFlowBody, StakingFlowData } from "../shared/createStakingFlowBody";
@@ -11,21 +11,21 @@ export type Data = StakingFlowData;
 
 const steps: Array<St> = [
   {
-    id: "amount",
-    label: <Trans i18nKey="aleo.unbond.flow.steps.amount.title" />,
-    component: StepAmount,
+    id: "summary",
+    label: <Trans i18nKey="aleo.claim.flow.steps.summary.title" />,
+    component: StepSummary,
     noScroll: true,
-    footer: StepAmountFooter,
+    footer: StepSummaryFooter,
   },
   {
     id: "connectDevice",
-    label: <Trans i18nKey="aleo.unbond.flow.steps.connectDevice.title" />,
+    label: <Trans i18nKey="aleo.claim.flow.steps.connectDevice.title" />,
     component: GenericStepConnectDevice,
-    onBack: ({ transitionTo }: StepProps) => transitionTo("amount"),
+    onBack: ({ transitionTo }: StepProps) => transitionTo("summary"),
   },
   {
     id: "confirmation",
-    label: <Trans i18nKey="aleo.unbond.flow.steps.confirmation.title" />,
+    label: <Trans i18nKey="aleo.claim.flow.steps.confirmation.title" />,
     component: StepConfirmation,
     footer: StepConfirmationFooter,
   },
@@ -33,11 +33,9 @@ const steps: Array<St> = [
 
 export default createStakingFlowBody<StepId>({
   steps,
-  initialStepId: "amount",
-  title: "aleo.unbond.flow.title",
-  trackCloseEvent: "CloseModalUnbond",
-  mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
-  // `recipient` carries the on-chain `staker`, which is always the account itself.
-  // prepareTransaction re-pins it, so this is only a sensible starting value.
+  initialStepId: "summary",
+  title: "aleo.claim.flow.title",
+  trackCloseEvent: "CloseModalClaimUnbond",
+  mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
   initialRecipient: account => account.freshAddress,
 });

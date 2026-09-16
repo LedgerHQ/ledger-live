@@ -8251,6 +8251,10 @@
     "AleoApiConfigurationResetError": {
       "title": "Record scanner configuration was reset, please sync your account again."
     },
+    "AleoNoClaimableUnbondedFunds": {
+      "title": "No unbonded ALEO to claim yet",
+      "description": "Unbonded ALEO becomes claimable once its unbonding period has elapsed. Come back once it has."
+    },
     "BackupAppDataError": {
       "title": "Error during app data backup"
     },
@@ -9779,6 +9783,9 @@
         "errorDesc": "Something went wrong, please try again"
       }
     },
+    "operationTypes": {
+      "WITHDRAW_UNBONDED": "Claim"
+    },
     "bond": {
       "flow": {
         "title": "Bond ALEO",
@@ -9822,7 +9829,6 @@
     "manage": {
       "headerAction": "Earn",
       "title": "Manage staking",
-      "comingSoonTooltip": "Coming soon.",
       "bond": {
         "title": "Bond",
         "description": "Bond your ALEO to a validator to earn rewards."
@@ -9835,7 +9841,10 @@
         "title": "Claim",
         "description": "Claim your unbonded ALEO back to your available balance."
       },
-      "unbondPendingTooltip": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding is unavailable until it has gone through."
+      "unbondPendingTooltip": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "claimPendingTooltip": "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "stillUnbondingTooltip": "Your unbonded ALEO is still in its unbonding period. You can claim it once the period has elapsed.",
+      "nothingToClaimTooltip": "You have no unbonded ALEO to claim. Unbond some of your stake first."
     },
     "unbond": {
       "flow": {
@@ -9855,6 +9864,28 @@
               "cta": "View details"
             },
             "broadcastError": "Your unbond transaction was signed but could not be broadcast."
+          }
+        }
+      }
+    },
+    "claim": {
+      "flow": {
+        "title": "Claim ALEO",
+        "steps": {
+          "summary": {
+            "title": "Summary",
+            "info": "This claims all ALEO whose unbonding period has elapsed back to your account.",
+            "claimableAmountLabel": "Claimable amount"
+          },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Claim submitted",
+              "text": "Your claim has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your claim transaction was signed but could not be broadcast."
           }
         }
       }

@@ -1030,6 +1030,8 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
       return account.aleoResources?.transparentBalance ?? new BigNumber(0);
     case TRANSACTION_TYPE.UNBOND_PUBLIC:
       return account.aleoResources?.bondedBalance ?? new BigNumber(0);
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return getClaimableStakingBalance(account);
     // spending private native balance
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC: {
@@ -1060,8 +1062,6 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
         }),
       );
     }
-    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
-      return getClaimableStakingBalance(account);
     default:
       // @ts-expect-error - runtime check to ensure all transaction types are handled
       throw new Error(`aleo: unsupported tx mode for balance calculation: ${transaction.mode}`);

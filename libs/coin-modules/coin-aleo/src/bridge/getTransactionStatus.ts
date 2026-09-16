@@ -44,6 +44,7 @@ import {
   AleoAmountTooLargeForTransaction,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
+  AleoNoClaimableUnbondedFunds,
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
 } from "../errors";
@@ -415,7 +416,7 @@ async function handleTransferTransaction({
   if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
     // Nothing to compare against — only whether anything has matured.
     if (availableBalance.lte(0)) {
-      errors.amount = new Error("You have no unbonded funds to claim yet.");
+      errors.amount = new AleoNoClaimableUnbondedFunds();
     }
   } else if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance();

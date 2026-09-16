@@ -53,3 +53,11 @@ export class AleoAmountTooLargeForTransaction extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class AleoNoClaimableUnbondedFunds extends Error {
+  override name = "AleoNoClaimableUnbondedFunds";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "AleoNoClaimableUnbondedFunds");
+    if (fields) Object.assign(this, fields);
+  }
+}

@@ -1,8 +1,8 @@
 import { createStepConfirmation } from "../../shared/StepConfirmation";
 
 const { StepConfirmation, StepConfirmationFooter } = createStepConfirmation({
-  flow: "bond",
-  trackField: "validator",
+  flow: "claim",
+  trackField: "staker",
 });
 
 export { StepConfirmationFooter };
