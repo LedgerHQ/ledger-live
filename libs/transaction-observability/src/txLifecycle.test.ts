@@ -1,4 +1,3 @@
-import { setEnv } from "@shared/env";
 import { ErrorCategory } from "./errorCategory";
 import {
   TransactionDataSource,
@@ -160,8 +159,8 @@ describe("sendTxLifecycle", () => {
   let fetchSpy: jest.SpiedFunction<typeof fetch>;
 
   beforeEach(() => {
-    setEnv("EARN_API_BASE_URL", "https://earn.example.test/");
-    setEnv("LEDGER_CLIENT_VERSION", "ll/test");
+    process.env.EARN_API_BASE_URL = "https://earn.example.test/";
+    process.env.LEDGER_CLIENT_VERSION = "ll/test";
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null));
   });
 
@@ -174,6 +173,8 @@ describe("sendTxLifecycle", () => {
     });
     abandonPendingDappTxLifecycle("desktop");
     fetchSpy.mockRestore();
+    delete process.env.EARN_API_BASE_URL;
+    delete process.env.LEDGER_CLIENT_VERSION;
   });
 
   const payload: TxLifecyclePayload = {

@@ -1,4 +1,3 @@
-import { getEnv } from "@shared/env";
 import { ErrorCategory } from "./errorCategory";
 import { TransactionPathway, type LogEvent } from "./logEvent";
 import { isEarnMonitoringApp } from "./stakingApps";
@@ -57,12 +56,18 @@ const CURRENCY_FAMILIES = new Set<TxLifecyclePayload["currency_family"]>([
   "other",
 ]);
 
+const FAMILY_ALIASES: Record<string, TxLifecyclePayload["currency_family"]> = {
+  evm: "ethereum",
+  elrond: "multiversx",
+};
+
 function normalizeFamily(family: string): TxLifecyclePayload["currency_family"] {
   const lower = family.toLowerCase();
-  const alias = lower === "evm" ? "ethereum" : lower === "elrond" ? "multiversx" : lower;
-  return CURRENCY_FAMILIES.has(alias as TxLifecyclePayload["currency_family"])
-    ? (alias as TxLifecyclePayload["currency_family"])
-    : "other";
+  const alias = FAMILY_ALIASES[lower];
+  if (alias) return alias;
+
+  const candidate = lower as TxLifecyclePayload["currency_family"];
+  return CURRENCY_FAMILIES.has(candidate) ? candidate : "other";
 }
 
 function resolvePath(event: LogEvent): TxLifecyclePath | undefined {
@@ -143,6 +148,18 @@ export function toTxLifecyclePayload(
 }
 
 const TX_LIFECYCLE_PATH = "/v1/tx/lifecycle";
+const DEFAULT_EARN_API_BASE_URL = "https://earn.api.live.ledger.com";
+
+/**
+ * `@shared/env` is being sunset, so the endpoint follows the `process.env` override convention
+ * wallet-cli already uses for this same backend (`wallet/earn/config.ts`) rather than adding a
+ * registry entry. Staging is reachable by setting the variable at boot.
+ */
+function earnApiBaseUrl(): string {
+  const base = process.env.EARN_API_BASE_URL || DEFAULT_EARN_API_BASE_URL;
+  return base.replace(/\/+$/, "");
+}
+
 const pendingLifecycle = new Map<string, TxLifecyclePayloadBase>();
 
 function lifecycleKey(payload: Pick<TxLifecyclePayloadBase, "path" | "platform">): string {
@@ -192,11 +209,11 @@ export function sendTxLifecycle(payload: TxLifecyclePayload): void {
     pendingLifecycle.delete(key);
   }
 
-  const baseUrl = getEnv("EARN_API_BASE_URL");
+  const baseUrl = earnApiBaseUrl();
   if (!baseUrl) return;
 
   try {
-    void fetch(`${baseUrl.replace(/\/$/, "")}${TX_LIFECYCLE_PATH}`, {
+    void fetch(`${baseUrl}${TX_LIFECYCLE_PATH}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -240,7 +257,9 @@ export function startDappTxLifecycle(
     return;
   }
 
-  const appVersion = getEnv("LEDGER_CLIENT_VERSION");
+  // Every host sets this alongside the `LEDGER_CLIENT_VERSION` env read the sign events carry, so
+  // the placeholder intent reports the same string as the terminal that closes it.
+  const appVersion = process.env.LEDGER_CLIENT_VERSION;
   sendTxLifecycle({
     schema_version: 1,
     event: "tx_intent",
