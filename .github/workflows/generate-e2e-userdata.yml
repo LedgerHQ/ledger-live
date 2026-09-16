@@ -122,6 +122,7 @@ jobs:
           echo "Generating desktop app.json userdata into: $E2E_GENERATED_USERDATA_DIR (base: $BASE_USERDATA)"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
+            # shellcheck disable=SC2086
             pnpm --filter ledger-live-desktop-e2e-tests run generate:appjson -- --base "$BASE_USERDATA" --coin $GEN_COINS
           else
             echo "Generating for all coins"
@@ -140,6 +141,7 @@ jobs:
           echo "Generating address cache (account-based coins) into: $E2E_GENERATED_USERDATA_DIR"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
+            # shellcheck disable=SC2086
             pnpm --filter ledger-live-desktop-e2e-tests run generate:addresses -- --coin $GEN_COINS
           else
             echo "Generating for all account-based coins"
@@ -156,6 +158,7 @@ jobs:
           echo "Generating UTXO address cache (bitcoin family, Cardano, Kaspa) into: $E2E_GENERATED_USERDATA_DIR"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
+            # shellcheck disable=SC2086
             pnpm --filter ledger-live-desktop-e2e-tests run generate:utxo-addresses -- --coin $GEN_COINS
           else
             echo "Generating for all UTXO-based coins"
@@ -258,6 +261,7 @@ jobs:
           echo "Generating mobile app.json userdata into: $E2E_GENERATED_USERDATA_DIR (base: $BASE_USERDATA)"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
+            # shellcheck disable=SC2086
             pnpm --filter ledger-live-desktop-e2e-tests run generate:appjson -- --base "$BASE_USERDATA" --coin $GEN_COINS
           else
             echo "Generating for all coins"
@@ -276,6 +280,7 @@ jobs:
           echo "Generating address cache (account-based coins) into: $E2E_GENERATED_USERDATA_DIR"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
+            # shellcheck disable=SC2086
             pnpm --filter ledger-live-desktop-e2e-tests run generate:addresses -- --coin $GEN_COINS
           else
             echo "Generating for all account-based coins"
@@ -292,6 +297,7 @@ jobs:
           echo "Generating UTXO address cache (bitcoin family, Cardano, Kaspa) into: $E2E_GENERATED_USERDATA_DIR"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
+            # shellcheck disable=SC2086
             pnpm --filter ledger-live-desktop-e2e-tests run generate:utxo-addresses -- --coin $GEN_COINS
           else
             echo "Generating for all UTXO-based coins"
