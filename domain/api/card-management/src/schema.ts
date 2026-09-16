@@ -286,9 +286,29 @@ export const PayCardInternalWalletSchema = z.object({
   address: z.string().min(1),
   // Nullish because a wallet with no memo answers with the key absent, others with `null`.
   addressMemo: z.string().min(1).nullish(),
+  /**
+   * Names the wallet when linking it to the card.
+   *
+   * Optional because the response is an array: one item missing the field would fail the whole
+   * parse, so requiring it here would cost a caller every balance to protect a link it may never
+   * make. {@link PayCardLinkWalletRequestSchema} requires it, which is where it is needed.
+   */
+  addressId: z.string().min(1).optional(),
 });
 
 export const PayCardInternalWalletsResponseSchema = z.array(PayCardInternalWalletSchema);
+
+/**
+ * Links one custodial wallet to the card, named by the `addressId` the internal wallets answer
+ * with. Not the wallet's `id`: the two agree on some wallets and not others.
+ */
+export const PayCardLinkWalletRequestSchema = z.object({
+  addressId: z.string().min(1),
+});
+
+export const PayCardLinkWalletResponseSchema = z.object({
+  success: z.boolean(),
+});
 
 export const PayCardLinkedWalletSchema = z.object({
   id: z.string().min(1),
