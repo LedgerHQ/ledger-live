@@ -340,6 +340,7 @@ describe("History integration", () => {
     expect(await screen.findByText("No transactions yet")).toBeVisible();
     expect(screen.getByTestId("history-contact-scope")).toHaveTextContent(CONTACT_HISTORY_NAME);
     expect(screen.queryByTestId("history-table")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
   });
 
   function renderHistoryWithPayTab(initialRoute = "/history") {
