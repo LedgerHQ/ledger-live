@@ -144,6 +144,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadLocalApi: () =>
       import("../families/cosmos/coinModuleApi").then(m => m.createLocalCosmosApi),
     loadBridgeApi: () => import("../families/cosmos/bridge/api").then(m => m.default),
+    loadSigner: () => import("../families/cosmos/signer").then(m => m.default),
   },
   {
     family: "evm",

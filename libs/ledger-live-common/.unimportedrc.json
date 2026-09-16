@@ -525,6 +525,7 @@
     "src/families/cosmos/descriptor/memo.ts",
     "src/families/cosmos/getVotesCount.ts",
     "src/families/cosmos/setup.ts",
+    "src/families/cosmos/signer.ts",
     "src/families/cosmos/walletApiAdapter.ts",
     "src/families/evm/descriptor/index.ts",
     "src/families/evm/descriptor/send/descriptor.ts",
