@@ -208,6 +208,26 @@ function withRecoveredRecipients(
   return recipients === op.recipients && extra === op.extra ? op : { ...op, recipients, extra };
 }
 
+/**
+ * `mergeOps` keeps a stored operation when `sameOp` agrees, and `sameOp` does
+ * not compare `extra`. Stamp `zcashPrivate` onto the matching stored id so a
+ * fee-corrected OUT whose recipients already match still receives the marker.
+ */
+function withPrivateMarker(fetched: BtcOperation[], operations: BtcOperation[]): BtcOperation[] {
+  const privateIds = new Set<string>();
+  for (const op of fetched) {
+    if ((op.extra as ZcashOperationExtra | undefined)?.zcashPrivate) privateIds.add(op.id);
+  }
+  if (privateIds.size === 0) return operations;
+
+  return operations.map(op => {
+    if (!privateIds.has(op.id) || (op.extra as ZcashOperationExtra | undefined)?.zcashPrivate) {
+      return op;
+    }
+    return { ...op, extra: { ...op.extra, zcashPrivate: true } };
+  });
+}
+
 type AccountInputs = {
   /** Every address the transaction spends from, ours or not. */
   senders: Set<string>;
@@ -483,7 +503,10 @@ export async function performTransparentSync(
     .map(op => withRecoveredRecipients(op, accountAddresses, destinations));
 
   const newUniqueOperations = deduplicateOperations(newOperations);
-  const _operations = mergeOps(oldOperations, newUniqueOperations);
+  const _operations = withPrivateMarker(
+    newUniqueOperations,
+    mergeOps(oldOperations, newUniqueOperations) as BtcOperation[],
+  );
   const operations = removeReplaced(_operations as BtcOperation[]);
   const balanceOperations = removeReplaced(_operations as BtcOperation[], Date.now(), true);
   const keptOperationHashes = new Set(balanceOperations.map(op => op.hash));

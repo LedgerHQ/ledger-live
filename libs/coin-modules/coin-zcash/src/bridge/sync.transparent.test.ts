@@ -469,6 +469,45 @@ describe("performTransparentSync", () => {
     ]);
   });
 
+  it("stamps the private marker onto a stored OUT whose fee and recipients already match", async () => {
+    getAccountTransactions.mockResolvedValue({ txs: [shieldingTx()] });
+    getZCashClient.mockResolvedValue({
+      transactionDetails: jest.fn(async () => [{ txid: "tx-shield", fee: "15000", payees: [] }]),
+    });
+    const account = {
+      id: "js:2:zcash:xpub6DZ:",
+      bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+      privateInfo: privateInfo({ shieldedAddress: "u1ownshielded" }),
+    };
+    const [fetched] =
+      (
+        await performTransparentSync(
+          info({ initialAccount: { ...account, operations: [] } }),
+          signerContext,
+        )
+      ).operations ?? [];
+    const { zcashPrivate: _, ...restExtra } = (fetched.extra ?? {}) as {
+      zcashPrivate?: boolean;
+    };
+    const stored = { ...fetched, extra: { ...restExtra, memo: "keep-me" } };
+
+    const operations =
+      (
+        await performTransparentSync(
+          info({ initialAccount: { ...account, operations: [stored] } }),
+          signerContext,
+        )
+      ).operations ?? [];
+
+    expect(operations).toMatchObject([
+      {
+        type: "OUT",
+        recipients: [CHANGE],
+        extra: { zcashPrivate: true, memo: "keep-me" },
+      },
+    ]);
+  });
+
   // The payee the chain reports is who the transaction actually paid; a
   // shielded note coming back to the account in the same transaction is its
   // change, not its destination.
