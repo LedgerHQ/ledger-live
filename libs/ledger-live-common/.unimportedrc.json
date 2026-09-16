@@ -472,6 +472,7 @@
     "src/families/aleo/privateSyncProgress.ts",
     "src/families/aleo/react.ts",
     "src/families/aleo/setup.ts",
+    "src/families/aleo/state-manager/api.ts",
     "src/families/aleo/types.ts",
     "src/families/aleo/utils.ts",
     "src/families/algorand/descriptor/index.ts",

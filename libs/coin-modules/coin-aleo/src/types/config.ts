@@ -14,6 +14,7 @@ export type AleoConfig = {
   enableStaking: boolean;
   useEncryptedProve: boolean;
   recordPickingStrategy: RecordPickingStrategy;
+  liveBlockHeightPollMs: number;
 };
 
 export type AleoCoinConfig = CurrencyConfig & AleoConfig;

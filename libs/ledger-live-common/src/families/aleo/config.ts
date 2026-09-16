@@ -55,6 +55,12 @@ const ENABLE_TOKENS = false;
  */
 const ENABLE_STAKING = false;
 
+/**
+ * How often the chain tip is re-read while a staking countdown is on screen. Aleo blocks land
+ * every few seconds, so this only has to be fine-grained enough for the countdown to look alive.
+ */
+const LIVE_BLOCK_HEIGHT_POLL_MS = 10_000;
+
 export const aleoConfig: Record<string, ConfigInfo> = {
   config_currency_aleo: {
     type: "object",
@@ -74,6 +80,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       enableStaking: ENABLE_STAKING,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
       recordPickingStrategy: RECORD_PICKING_STRATEGY,
+      liveBlockHeightPollMs: LIVE_BLOCK_HEIGHT_POLL_MS,
     },
   },
   config_currency_aleo_testnet: {
@@ -94,6 +101,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       enableStaking: ENABLE_STAKING,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
       recordPickingStrategy: RECORD_PICKING_STRATEGY,
+      liveBlockHeightPollMs: LIVE_BLOCK_HEIGHT_POLL_MS,
     },
   },
 };

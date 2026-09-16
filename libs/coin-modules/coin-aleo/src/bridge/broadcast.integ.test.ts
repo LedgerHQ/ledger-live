@@ -20,6 +20,7 @@ describe("Broadcast", () => {
       enableStaking: false,
       useEncryptedProve: true,
       recordPickingStrategy: "manual",
+      liveBlockHeightPollMs: 10_000,
     }));
   });
 
