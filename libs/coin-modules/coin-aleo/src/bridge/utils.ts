@@ -5,33 +5,40 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { OperationType } from "@ledgerhq/types-live";
-import { parseTransactionFields, resolveTransactionAmount, toBlockDate } from "../logic/utils";
+import {
+  parseTransactionFields,
+  resolveStakingOperationType,
+  resolveTransactionAmount,
+  toBlockDate,
+} from "../logic/utils";
 import type { AleoOperation, AleoPublicTransaction, EnrichedPrivateRecord } from "../types";
 
 export const toBridgeOperation = (
   ledgerAccountId: string,
   rawTx: AleoPublicTransaction,
   address: string,
-  isTokenTx?: boolean,
+  bondArguments?: { validator: string; amount: BigNumber },
 ): AleoOperation => {
-  const value = resolveTransactionAmount(rawTx);
+  const amount = resolveTransactionAmount(rawTx);
   const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
     rawTx,
     address,
   );
+  const stakingType = resolveStakingOperationType(rawTx);
+  const value = stakingType ? new BigNumber(fee) : amount;
 
-  if (value.isNaN() || value.isNegative()) {
+  if (amount.isNaN() || amount.isNegative()) {
     log("aleo/toBridgeOperation", `Invalid raw transaction details for ${address}`, rawTx);
   }
 
-  if (value.isZero() && rawTx.function_id.includes("transfer")) {
+  if (amount.isZero() && rawTx.function_id.includes("transfer")) {
     log("aleo/toBridgeOperation", `Zero value transaction for ${address}`, rawTx);
   }
 
   return {
     id: encodeOperationId(ledgerAccountId, rawTx.transaction_id, type),
-    recipients: [rawTx.recipient_address],
-    senders: [rawTx.sender_address],
+    recipients: stakingType ? [] : [rawTx.recipient_address],
+    senders: stakingType ? [] : [rawTx.sender_address],
     value,
     type,
     hasFailed,
@@ -44,7 +51,13 @@ export const toBridgeOperation = (
     extra: {
       functionId: rawTx.function_id,
       transactionType,
-      ...(isTokenTx && { programId: rawTx.program_id }),
+      programId: rawTx.program_id,
+      ...(bondArguments && {
+        validator: bondArguments.validator,
+        stakedAmount: bondArguments.amount,
+      }),
+      // unbond_public is the one staking call whose amount the indexer publishes.
+      ...(stakingType === "UNBOND" && { stakedAmount: amount }),
     },
   };
 };
