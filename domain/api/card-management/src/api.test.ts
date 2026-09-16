@@ -1370,17 +1370,23 @@ describe("cardManagementApi requests", () => {
       expect(provider.requests().length).toBe(before + 2);
     });
 
-    it("hands a refusal the provider reports as success:false to the caller", async () => {
+    it("keeps the linked wallets cached when the provider refuses with success:false", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
       provider.post(LINKED_WALLETS_PATH, () => jsonResponse({ success: false }));
 
       const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
       const result = await store.dispatch(
         cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId }),
       );
+      await flushPendingRequests();
 
-      // A 200 is not an error, so the flag is the answer and the caller reads it.
+      // A 200 is not an error, so the flag is the answer — and it says no link was made.
       expect(result.error).toBeUndefined();
       expect(result.data).toEqual({ success: false });
+      expect(provider.requests().length).toBe(before + 1);
     });
 
     it("keeps the linked wallets cached when the link fails", async () => {

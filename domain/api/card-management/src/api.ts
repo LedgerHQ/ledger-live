@@ -283,10 +283,11 @@ export const cardManagementApi = cardApi
         }),
         argSchema: PayCardLinkWalletRequestSchema,
         responseSchema: PayCardLinkWalletResponseSchema,
-        // RTK Query invalidates a rejected mutation's tags too, and a refused link leaves the
-        // linked set exactly as it was. Unlike the freeze pair, nothing here was patched
-        // optimistically, so there is no local guess to resync.
-        invalidatesTags: (_result, error) => (error ? [] : ["CardLinkedWallets"]),
+        // Only a made link invalidates. RTK Query invalidates a rejected mutation's tags too,
+        // and a `success: false` answer is not rejected at all, yet neither changed the linked
+        // set. `result` is undefined on an error, so this covers both. Unlike the freeze pair,
+        // nothing here was patched optimistically, so there is no local guess to resync.
+        invalidatesTags: result => (result?.success ? ["CardLinkedWallets"] : []),
       }),
 
       getCardOnboardingStatus: build.query<PayCardOnboardingStatus, void>({
