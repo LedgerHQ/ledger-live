@@ -9,5 +9,5 @@ export default createDualPlatformKnipConfig({
     "src/screens/AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry.types.web.ts",
     "src/screens/AddressName/components/Input/ContactsAddAddressNameInput.web.tsx",
   ],
-  additionalIgnoreDependencies: ["@shared/platform-linking"],
+  additionalIgnoreDependencies: ["@shared/linking"],
 });

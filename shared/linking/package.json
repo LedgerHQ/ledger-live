@@ -1,5 +1,5 @@
 {
-  "name": "@shared/platform-linking",
+  "name": "@shared/linking",
   "version": "0.1.0",
   "private": true,
   "description": "Cross-platform external link opening with URL safety, localization, and tracking",
@@ -17,7 +17,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/platform-linking"
+    "unimported": "pnpm knip --directory ../.. -W shared/linking"
   },
   "peerDependencies": {
     "react": ">=19.0.0"

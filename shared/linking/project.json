@@ -1,5 +1,5 @@
 {
-  "name": "@shared/platform-linking",
+  "name": "@shared/linking",
   "targets": {
     "build": {
       "executor": "nx:noop"
