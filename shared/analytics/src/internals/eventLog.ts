@@ -14,13 +14,13 @@ export function publishAnalyticsEvent({
   eventName: string;
   eventProperties?: Props;
   eventPropertiesWithoutExtra?: Props;
-  deliveryStatus: DeliveryStatus;
+  deliveryStatus?: DeliveryStatus;
 }): void {
   eventLog.next({
     eventName,
     eventProperties,
     eventPropertiesWithoutExtra,
     date: new Date(),
-    deliveryStatus,
+    ...(deliveryStatus !== undefined ? { deliveryStatus } : {}),
   });
 }

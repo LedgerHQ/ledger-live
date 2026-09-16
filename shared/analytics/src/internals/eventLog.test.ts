@@ -59,4 +59,20 @@ describe("publishAnalyticsEvent", () => {
 
     expect(events[0].deliveryStatus).toBe("failed_enrichment");
   });
+
+  it("omits deliveryStatus when the caller does not provide one", () => {
+    publishAnalyticsEvent({
+      eventName: "[Identify]",
+      eventProperties: { userIdPresent: true },
+      eventPropertiesWithoutExtra: { userIdPresent: true },
+    });
+
+    expect(events[0]).toEqual({
+      date: expect.any(Date),
+      eventName: "[Identify]",
+      eventProperties: { userIdPresent: true },
+      eventPropertiesWithoutExtra: { userIdPresent: true },
+    });
+    expect("deliveryStatus" in events[0]).toBe(false);
+  });
 });
