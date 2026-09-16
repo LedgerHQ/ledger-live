@@ -3,7 +3,7 @@ import { TableGroupHeaderRow } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
 
 type DayHeaderProps = Readonly<{
-  day: Date;
+  day?: Date;
   columnCount: number;
   formatDay?: (date: Date) => string;
 }>;
@@ -19,6 +19,10 @@ function isSameCalendarDay(left: Date, right: Date): boolean {
 export function DayHeader({ day, columnCount, formatDay }: DayHeaderProps) {
   const { t } = useTranslation();
   const label = useMemo(() => {
+    if (!day) {
+      return t("payTab.cardTransactions.history.unknownDate");
+    }
+
     const now = new Date();
     if (isSameCalendarDay(day, now)) {
       return t("payTab.cardTransactions.history.today");

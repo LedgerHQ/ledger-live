@@ -2,7 +2,7 @@ import type { CardTransactionItem } from "../types";
 import { parseCardTransactionDate } from "../CardTransactions/components/ListItem/formatCardTransactionItem";
 
 export type CardHistoryDayGroup = Readonly<{
-  day: Date;
+  day?: Date;
   items: readonly CardTransactionItem[];
 }>;
 
@@ -18,10 +18,8 @@ export function groupCardHistoryItems(
 
   for (const item of items) {
     const parsed = parseCardTransactionDate(item.transaction.dateTime);
-    if (!parsed) continue;
-
-    const day = startOfDay(parsed);
-    const dayKey = day.toISOString();
+    const day = parsed ? startOfDay(parsed) : undefined;
+    const dayKey = day?.toISOString() ?? "unknown";
 
     if (dayKey !== currentKey) {
       groups.push({ day, items: [item] });

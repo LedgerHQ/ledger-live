@@ -23,8 +23,12 @@ export function HistoryTableBody({
   return (
     <TableBody>
       {groups.map(group => (
-        <React.Fragment key={group.day.toISOString()}>
-          <DayHeader day={group.day} columnCount={COLUMN_COUNT} formatDay={formatDay} />
+        <React.Fragment key={group.day?.toISOString() ?? "unknown"}>
+          <DayHeader
+            day={group.day}
+            columnCount={COLUMN_COUNT}
+            formatDay={formatDay ?? formatters?.date}
+          />
           {group.items.map(item => (
             <HistoryRow
               key={item.transaction.id}

@@ -50,6 +50,7 @@ const CARD_TRANSACTIONS_RESOURCES = {
           history: {
             today: "Today",
             yesterday: "Yesterday",
+            unknownDate: "Date unavailable",
             columns: {
               transaction: "Transaction",
               fundingSources: "Funding sources",

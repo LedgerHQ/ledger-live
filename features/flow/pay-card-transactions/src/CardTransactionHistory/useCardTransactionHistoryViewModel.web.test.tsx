@@ -28,7 +28,7 @@ describe("useCardTransactionHistoryViewModel", () => {
     await waitFor(() => expect(result.current.uiState.kind).toBe("empty"));
   });
 
-  it("should group transactions by day when the list is ready", async () => {
+  it("should expose every transaction when the list is ready", async () => {
     const page = mockPayCardTransactions();
     server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
 
