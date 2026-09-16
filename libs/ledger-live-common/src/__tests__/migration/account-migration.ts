@@ -207,7 +207,6 @@ const testSyncAccount = async (account: Account) => {
   const outputContent = JSON.stringify(response, null, 3);
 
   if (!noEmit) {
-    // also used in account-migration.yml to know which input file to use
     const { stdout } = await exec("git rev-parse --short HEAD");
     const outputFilePath = outputFolderPath
       ? `${outputFolderPath}/${stdout.trim()}.json`
