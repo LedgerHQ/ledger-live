@@ -1,13 +1,9 @@
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useCategoryVisual } from "./ListItem/useCategoryVisual";
-import type { PayCardTransactionCategory } from "@domain/api-card-management";
+import type { CategoryIconProps } from "./CategoryIcon.types";
 
-export type CategoryIconProps = Readonly<{
-  category: PayCardTransactionCategory;
-  categoryLabel: string;
-  size?: 40 | 48;
-}>;
+export type { CategoryIconProps };
 
 export function CategoryIcon({ category, categoryLabel, size = 48 }: CategoryIconProps) {
   const { Icon, backgroundColor, iconColor } = useCategoryVisual(category);
