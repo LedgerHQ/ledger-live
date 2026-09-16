@@ -1,3 +1,4 @@
+jest.unmock("@shared/analytics");
 jest.unmock("./segment");
 jest.unmock("~/renderer/analytics/segment");
 jest.unmock("src/renderer/analytics/segment");
@@ -13,13 +14,14 @@ jest.mock("~/renderer/logger", () => ({
 }));
 
 import React from "react";
+import { analyticsEvents$, type LoggableEvent } from "@shared/analytics";
 import { render, waitFor } from "tests/testSetup";
 import createStore from "~/state-manager/configureStore";
 import type { State } from "~/renderer/reducers";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 import logger from "~/renderer/logger";
 import TrackPage from "./TrackPage";
-import { startAnalytics, trackSubject, type LoggableEvent } from "./segment";
+import { startAnalytics } from "./segment";
 
 const createStoreWithAnalyticsDisabled = () =>
   createStore({
@@ -40,7 +42,7 @@ describe("TrackPage", () => {
 
   it("should only send page tracking without consent when mandatory", async () => {
     const events: LoggableEvent[] = [];
-    const subscription = trackSubject.subscribe(event => events.push(event));
+    const subscription = analyticsEvents$.subscribe(event => events.push(event));
     events.length = 0;
 
     try {
@@ -68,9 +70,7 @@ describe("TrackPage", () => {
           date: expect.any(Date),
           deliveryStatus: "enqueued",
           eventName: "Page Analytics Consent Mandatory",
-          eventProps: {
-            date: expect.any(Date),
-            deliveryStatus: "enqueued",
+          eventProperties: expect.objectContaining({
             flow: "test-flow",
             optInAnalytics: false,
             optInPersonalRecommendations: false,
@@ -78,11 +78,10 @@ describe("TrackPage", () => {
               consentDate: null,
               privacyPolicyVersion: null,
             },
-          },
-          eventPropsWithoutExtra: {
-            source: undefined,
+          }),
+          eventPropertiesWithoutExtra: expect.objectContaining({
             flow: "test-flow",
-          },
+          }),
         }),
       );
       expect(logger.analyticsPage).toHaveBeenCalledWith(

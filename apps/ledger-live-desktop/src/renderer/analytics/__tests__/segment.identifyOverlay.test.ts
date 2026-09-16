@@ -1,3 +1,4 @@
+jest.unmock("@shared/analytics");
 jest.unmock("../segment");
 jest.unmock("~/renderer/analytics/segment");
 jest.unmock("src/renderer/analytics/segment");
@@ -24,11 +25,12 @@ jest.mock("~/renderer/logger", () => ({
 }));
 
 import type { Subscription } from "rxjs";
+import { analyticsEvents$, type LoggableEvent } from "@shared/analytics";
 import { waitFor } from "tests/testSetup";
 import createStore from "~/state-manager/configureStore";
 import type { State } from "~/renderer/reducers";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
-import { startAnalytics, trackSubject, updateIdentify, type LoggableEvent } from "../segment";
+import { startAnalytics, updateIdentify } from "../segment";
 
 const identifyOverlayEvent = {
   eventName: "[Identify]",
@@ -55,7 +57,7 @@ describe("segment identify overlay (LIVE-35849)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     logged = [];
-    subscription = trackSubject.subscribe(event => logged.push(event));
+    subscription = analyticsEvents$.subscribe(event => logged.push(event));
     logged.length = 0;
   });
 

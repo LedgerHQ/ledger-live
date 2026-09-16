@@ -2,7 +2,7 @@ import { AnalyticsBrowser } from "@segment/analytics-next";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { getEnv } from "@shared/env";
 import {
-  analyticsEvents$,
+  publishAnalyticsEvent,
   setAnalytics,
   setEnabledFn,
   setExtraPropsFn,
@@ -47,9 +47,6 @@ const getContext = () => ({
 let storeInstance: ReduxStore | null | undefined;
 let analyticsInstance: AnalyticsBrowser | null = null;
 
-export type { LoggableEvent } from "@shared/analytics";
-export const trackSubject = analyticsEvents$;
-
 setAnalytics({
   track: (event, props) => {
     analyticsInstance?.track(event, props, { context: getContext() });
@@ -90,11 +87,10 @@ function getAnalytics(): AnalyticsBrowser | null {
 
 const publishIdentifyOverlay = (userIdPresent: boolean, failed: boolean) => {
   const overlayProperties = failed ? { userIdPresent, failed: true } : { userIdPresent };
-  trackSubject.next({
+  publishAnalyticsEvent({
     eventName: "[Identify]",
     eventProperties: overlayProperties,
     eventPropertiesWithoutExtra: overlayProperties,
-    date: new Date(),
   });
 };
 
