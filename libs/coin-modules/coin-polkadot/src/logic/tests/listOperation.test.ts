@@ -1,12 +1,12 @@
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js"; // Assuming BigNumber is used for value and fee
-import { type PolkadotCoinConfig } from "../config";
-import { PolkadotOperation, PolkadotOperationExtra } from "../types";
-import { listOperations } from "./listOperations";
+import { type PolkadotCoinConfig } from "../../config";
+import { PolkadotOperation, PolkadotOperationExtra } from "../../types";
+import { listOperations } from "../listOperations";
 
 const config = {} as PolkadotCoinConfig;
 const mockGetOperations = jest.fn();
-jest.mock("../network", () => {
+jest.mock("../../network", () => {
   return {
     getOperations: (
       _config: PolkadotCoinConfig,

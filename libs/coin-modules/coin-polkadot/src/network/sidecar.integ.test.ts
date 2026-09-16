@@ -42,16 +42,6 @@ const CURRENCY_CONFIGS = {
     // Asset Hub Polkadot uses SS58 prefix 0, so a polkadot-format address is required.
     testAddress: "163WJAxWrQzsAVEZdn2w6mq4gmT4FmEgvCfex3uEEUHTE9GL",
   },
-  westend: {
-    currency: getCryptoCurrencyById("westend"),
-    config: {
-      status: { type: "active" as const },
-      sidecar: { url: "https://polkadot-westend-rest-api.coin.ledger.com/v1/rc" },
-      node: { url: "https://polkadot-westend-fullnodes.api.live.ledger.com" },
-      indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_westend" },
-    },
-    testAddress: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-  },
   assethub_westend: {
     currency: getCryptoCurrencyById("assethub_westend"),
     config: {

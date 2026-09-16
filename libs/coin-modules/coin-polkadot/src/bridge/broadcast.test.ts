@@ -14,7 +14,7 @@ jest.mock("../network", () => {
 });
 
 const logicBroadcastMock = jest.fn();
-jest.mock("../logic", () => {
+jest.mock("../logic/broadcast", () => {
   return {
     broadcast: (_config: PolkadotCoinConfig, signature: string, currencyId?: string) =>
       logicBroadcastMock(signature, currencyId),
