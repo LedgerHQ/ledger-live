@@ -1,3 +1,4 @@
+import { VTHO_ADDRESS } from "@vechain/sdk-core";
 import { getBlock as getBlockFromNetwork } from "../../network";
 import { createMockVechainContext, mockVechainConfig } from "../../test/context";
 import { NATIVE_ASSET } from "../account/getBalance";
@@ -7,7 +8,6 @@ jest.mock("../../network", () => ({ getBlock: jest.fn() }));
 
 const context = createMockVechainContext();
 
-const VTHO_ADDRESS = "0x0000000000000000000000000000456e65726779";
 const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 
 // Verbatim from mainnet block 16407374, tx
