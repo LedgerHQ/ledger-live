@@ -1,5 +1,6 @@
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
+import { VTHO_ADDRESS } from "@vechain/sdk-core";
 import type { VechainCurrencyConfig } from "../config";
 import { createApi } from "./index";
 import { createMockVechainContext } from "../test/context";
@@ -75,6 +76,44 @@ describe("createApi (integration)", () => {
       expect(info.height).toBe(knownHeight);
       expect(block.info).toEqual(info);
       expect(Array.isArray(block.transactions)).toBe(true);
+    });
+
+    // Regression pin (LIVE-37036). Block 16407374 is final, so its contents never change: both of
+    // its transactions move VTHO only — Thor reports `transfers: []` and a VIP-180 `Transfer` log on
+    // the VTHO contract — which the transfers-only mapping returned as empty `operations`. Asserting
+    // against the live chain (not a fixture) is what makes this fail if the mapping regresses.
+    it("reports VTHO-only transactions of a known historical block", async () => {
+      const block = await api.getBlock(context, 16407374);
+
+      expect(block.transactions).toHaveLength(2);
+
+      const tx = block.transactions.find(
+        t => t.hash === "0x5fdd7191c4d476a8e86060d516366e87421f65667b9b3c14c33a740c04921b10",
+      );
+
+      // Two operations for the single VTHO movement: the signed impact on each side. Reading
+      // through `?.` also asserts the transaction is present: `undefined` fails this comparison.
+      expect(tx?.operations).toEqual([
+        {
+          type: "transfer",
+          address: "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
+          peer: "0x0fe6688548f0c303932bb197b0a96034f1d74dba",
+          asset: { type: "token", assetReference: VTHO_ADDRESS, name: "VTHO" },
+          amount: -BigInt("10000000000000000000"),
+        },
+        {
+          type: "transfer",
+          address: "0x0fe6688548f0c303932bb197b0a96034f1d74dba",
+          peer: "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
+          asset: { type: "token", assetReference: VTHO_ADDRESS, name: "VTHO" },
+          amount: BigInt("10000000000000000000"),
+        },
+      ]);
+
+      // No transaction in this block is left without operations — the shape of the original bug.
+      for (const transaction of block.transactions) {
+        expect(transaction.operations.length).toBeGreaterThan(0);
+      }
     });
 
     it("listOperations returns a page shape for a known address", async () => {
