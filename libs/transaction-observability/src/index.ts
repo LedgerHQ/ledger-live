@@ -47,6 +47,7 @@ export { toSegmentTrackEvent, type SegmentTrackEvent } from "./segmentEvent";
 export {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,
+  clearPendingTxLifecycle,
   sendTxLifecycle,
   startDappTxLifecycle,
   toTxLifecyclePayload,

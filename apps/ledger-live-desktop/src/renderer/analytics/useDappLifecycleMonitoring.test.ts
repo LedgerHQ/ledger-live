@@ -1,28 +1,31 @@
-import { renderHook } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
+import {
+  abandonPendingDappTxLifecycle,
+  clearPendingTxLifecycle,
+  startDappTxLifecycle,
+} from "@ledgerhq/transaction-observability";
 import { useDappLifecycleMonitoring } from "./useDappLifecycleMonitoring";
 
-const mockGetFeature = jest.fn();
-const mockStart = jest.fn();
-const mockAbandon = jest.fn();
-const mockClear = jest.fn();
-
-jest.mock("@ledgerhq/live-common/firebase/featureFlags", () => ({
-  getFeature: mockGetFeature,
-}));
 jest.mock("@ledgerhq/transaction-observability", () => ({
-  startDappTxLifecycle: mockStart,
-  abandonPendingDappTxLifecycle: mockAbandon,
-  clearPendingDappTxLifecycle: mockClear,
+  ...jest.requireActual("@ledgerhq/transaction-observability"),
+  startDappTxLifecycle: jest.fn(),
+  abandonPendingDappTxLifecycle: jest.fn(),
+  clearPendingTxLifecycle: jest.fn(),
 }));
+
+const mockStart = jest.mocked(startDappTxLifecycle);
+const mockAbandon = jest.mocked(abandonPendingDappTxLifecycle);
+const mockClear = jest.mocked(clearPendingTxLifecycle);
 
 describe("useDappLifecycleMonitoring", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetFeature.mockReturnValue({ enabled: true });
   });
 
   it("starts and abandons a desktop dapp lifecycle", () => {
-    const { unmount } = renderHook(() => useDappLifecycleMonitoring("stakekit"));
+    const { unmount } = renderHook(() => useDappLifecycleMonitoring("stakekit"), {
+      initialState: withFlagOverrides({ earnTxLifecycleMonitoring: { enabled: true } }),
+    });
 
     expect(mockStart).toHaveBeenCalledWith("desktop", "stakekit");
 
@@ -32,14 +35,15 @@ describe("useDappLifecycleMonitoring", () => {
   });
 
   it("does not emit and clears pending state when disabled", () => {
-    mockGetFeature.mockReturnValue({ enabled: false });
-    const { unmount } = renderHook(() => useDappLifecycleMonitoring("stakekit"));
+    const { unmount } = renderHook(() => useDappLifecycleMonitoring("stakekit"), {
+      initialState: withFlagOverrides({ earnTxLifecycleMonitoring: { enabled: false } }),
+    });
 
     expect(mockStart).not.toHaveBeenCalled();
+    expect(mockClear).toHaveBeenCalledWith("desktop");
 
     unmount();
 
     expect(mockAbandon).not.toHaveBeenCalled();
-    expect(mockClear).toHaveBeenCalledWith("desktop");
   });
 });

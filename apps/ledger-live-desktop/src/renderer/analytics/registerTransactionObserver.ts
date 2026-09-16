@@ -1,4 +1,5 @@
 import {
+  clearPendingTxLifecycle,
   sendTxLifecycle,
   setTransactionObserver,
   toSegmentTrackEvent,
@@ -21,7 +22,10 @@ setTransactionObserver(event => {
 });
 
 setTransactionObserver(event => {
-  if (!getFeature({ key: "earnTxLifecycleMonitoring" })?.enabled) return;
+  if (!getFeature({ key: "earnTxLifecycleMonitoring" })?.enabled) {
+    clearPendingTxLifecycle("desktop");
+    return;
+  }
   const payload = toTxLifecyclePayload(event, "desktop");
   if (payload) sendTxLifecycle(payload);
 });

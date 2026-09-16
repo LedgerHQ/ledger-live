@@ -9,6 +9,7 @@ import {
 import {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,
+  clearPendingTxLifecycle,
   sendTxLifecycle,
   startDappTxLifecycle,
   toTxLifecyclePayload,
@@ -263,6 +264,22 @@ describe("sendTxLifecycle", () => {
     fetchSpy.mockClear();
 
     abandonPendingDappTxLifecycle("desktop");
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("clears native and dapp pending attempts without posting", () => {
+    sendTxLifecycle(payload);
+    sendTxLifecycle({ ...payload, path: "dapp" });
+    fetchSpy.mockClear();
+
+    clearPendingTxLifecycle("desktop");
+    abandonPendingDappTxLifecycle("desktop");
+    sendTxLifecycle({
+      ...payload,
+      event: "tx_terminal",
+      outcome: "success",
+    });
 
     expect(fetchSpy).not.toHaveBeenCalled();
   });

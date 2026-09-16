@@ -227,6 +227,11 @@ export function clearPendingDappTxLifecycle(platform: TxLifecyclePlatform): void
   pendingLifecycle.delete(lifecycleKey({ platform, path: "dapp" }));
 }
 
+export function clearPendingTxLifecycle(platform: TxLifecyclePlatform): void {
+  pendingLifecycle.delete(lifecycleKey({ platform, path: "native" }));
+  pendingLifecycle.delete(lifecycleKey({ platform, path: "dapp" }));
+}
+
 export function startDappTxLifecycle(
   platform: TxLifecyclePlatform,
   manifestId: string | undefined,

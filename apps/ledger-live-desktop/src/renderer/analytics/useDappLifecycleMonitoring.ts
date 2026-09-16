@@ -1,23 +1,27 @@
-import { useEffect } from "react";
-import { getFeature } from "@ledgerhq/live-common/firebase/featureFlags";
+import { useEffect, useRef } from "react";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   abandonPendingDappTxLifecycle,
-  clearPendingDappTxLifecycle,
+  clearPendingTxLifecycle,
   startDappTxLifecycle,
 } from "@ledgerhq/transaction-observability";
 
 export function useDappLifecycleMonitoring(manifestId: string | undefined): void {
+  const enabled = useFeature("earnTxLifecycleMonitoring")?.enabled ?? false;
+  const enabledRef = useRef(enabled);
+  enabledRef.current = enabled;
+
   useEffect(() => {
-    if (getFeature({ key: "earnTxLifecycleMonitoring" })?.enabled) {
-      startDappTxLifecycle("desktop", manifestId);
+    if (!enabled) {
+      clearPendingTxLifecycle("desktop");
+      return;
     }
 
+    startDappTxLifecycle("desktop", manifestId);
     return () => {
-      if (getFeature({ key: "earnTxLifecycleMonitoring" })?.enabled) {
+      if (enabledRef.current) {
         abandonPendingDappTxLifecycle("desktop");
-      } else {
-        clearPendingDappTxLifecycle("desktop");
       }
     };
-  }, [manifestId]);
+  }, [enabled, manifestId]);
 }

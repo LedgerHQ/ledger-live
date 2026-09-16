@@ -8,16 +8,16 @@
  */
 const track = jest.fn();
 const mockSendTxLifecycle = jest.fn();
-const mockGetFeature = jest.fn(() => ({ enabled: true }));
 jest.mock("./segment", () => ({ track: (...args: unknown[]) => track(...args) }));
 jest.mock("@ledgerhq/live-common/firebase/featureFlags", () => ({
-  getFeature: mockGetFeature,
+  getFeature: jest.fn(() => ({ enabled: true })),
 }));
 jest.mock("@ledgerhq/transaction-observability", () => ({
   ...jest.requireActual("@ledgerhq/transaction-observability"),
   sendTxLifecycle: (...args: unknown[]) => mockSendTxLifecycle(...args),
 }));
 
+import { getFeature } from "@ledgerhq/live-common/firebase/featureFlags";
 import {
   emitTransactionEvent,
   TransactionDataSource,
@@ -26,8 +26,9 @@ import {
   type LogEvent,
 } from "@ledgerhq/transaction-observability";
 
-// Importing the module is what registers the observer. It must come after the mock above.
 import "./registerTransactionObserver";
+
+const mockGetFeature = jest.mocked(getFeature);
 
 const stakingEvent = (over: Partial<Record<string, unknown>> = {}) =>
   ({
@@ -51,7 +52,8 @@ describe("mobile transaction observer", () => {
   beforeEach(() => {
     track.mockClear();
     mockSendTxLifecycle.mockClear();
-    mockGetFeature.mockClear();
+    mockGetFeature.mockReset();
+    mockGetFeature.mockReturnValue({ enabled: true });
   });
 
   it("forwards a staking outcome to Segment", () => {
@@ -64,7 +66,6 @@ describe("mobile transaction observer", () => {
       flow: "stake",
       tx_pathway: "send",
       transaction_type: "delegate",
-      // Solana's own wording survives to the broadcast event through correlation.
       raw_transaction_type: "stake.createAccount",
       input_currency: "sol",
       network: "solana",
@@ -89,7 +90,7 @@ describe("mobile transaction observer", () => {
   });
 
   it("keeps Segment independent when lifecycle monitoring is disabled", () => {
-    mockGetFeature.mockReturnValueOnce({ enabled: false });
+    mockGetFeature.mockReturnValue({ enabled: false });
 
     emitTransactionEvent(stakingEvent());
 
