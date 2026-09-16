@@ -31,8 +31,8 @@ const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - qu
 // Set on the window before a reload, so its absence proves a fresh document.
 const FLAG_RELOAD_MARKER = "__swapE2eFlagReload";
 
-// One bounded reopen, because cleanup runs on tests that already failed.
-const CLEAR_FLAG_OVERRIDES_TIMEOUT = 20_000;
+// Budget per reopen step, because cleanup runs on tests that already failed.
+const CLEAR_FLAG_OVERRIDES_TIMEOUT = 10_000;
 
 // The app drops the get-quotes CTA once it has quotes.
 const GET_QUOTES_CTA_TIMEOUT = 15_000;
@@ -205,9 +205,10 @@ export default class SwapLiveAppPage {
   }
 
   // Detox has no webview reload, so a deeplink round trip remounts the live app.
+  // Every step takes the budget, so the reopen cannot run past three of them.
   private async reopenSwapLiveApp(timeout = DEFAULT_TIMEOUT) {
-    await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.swap.openViaDeeplink();
+    await app.mainNavigation.openPortfolioViaDeeplink(timeout);
+    await app.swap.openViaDeeplink(undefined, timeout);
     await this.expectSwapLiveAppForm(timeout);
   }
 
