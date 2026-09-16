@@ -30,6 +30,12 @@ const mockedUseSelector = jest.mocked(useSelector);
 
 const REAL_USER_ID = UserId.fromString("11111111-1111-1111-1111-111111111111");
 
+const consentTransitionOptions = {
+  prepareForIdentityTransition: expect.any(Function),
+  refreshContentCards: expect.any(Function),
+  shouldAbort: expect.any(Function),
+};
+
 const defaultNotifications = {
   areNotificationsAllowed: true,
   announcementsCategory: true,
@@ -90,10 +96,7 @@ describe("HookNotifications", () => {
         isTrackedUser: false,
         userId: REAL_USER_ID,
       },
-      {
-        prepareForIdentityTransition: expect.any(Function),
-        refreshContentCards: expect.any(Function),
-      },
+      consentTransitionOptions,
     );
   });
 
@@ -111,10 +114,7 @@ describe("HookNotifications", () => {
         isTrackedUser: true,
         userId: REAL_USER_ID,
       },
-      {
-        prepareForIdentityTransition: expect.any(Function),
-        refreshContentCards: expect.any(Function),
-      },
+      consentTransitionOptions,
     );
   });
 
@@ -321,10 +321,7 @@ describe("HookNotifications", () => {
         isTrackedUser: false,
         userId: REAL_USER_ID,
       },
-      {
-        prepareForIdentityTransition: expect.any(Function),
-        refreshContentCards: expect.any(Function),
-      },
+      consentTransitionOptions,
     );
 
     mockSelectors({ isTrackedUser: true, userId: REAL_USER_ID });
@@ -342,10 +339,7 @@ describe("HookNotifications", () => {
         isTrackedUser: true,
         userId: REAL_USER_ID,
       },
-      {
-        prepareForIdentityTransition: expect.any(Function),
-        refreshContentCards: expect.any(Function),
-      },
+      consentTransitionOptions,
     );
     expect(mockedUpdateUserPreferences).toHaveBeenCalledWith(defaultNotifications, true, {
       brazeOptOutIdentityCleanup: true,
@@ -372,10 +366,7 @@ describe("HookNotifications", () => {
         isTrackedUser: true,
         userId: REAL_USER_ID,
       },
-      {
-        prepareForIdentityTransition: expect.any(Function),
-        refreshContentCards: expect.any(Function),
-      },
+      consentTransitionOptions,
     );
 
     mockSelectors({ isTrackedUser: false, userId: REAL_USER_ID });
@@ -393,14 +384,38 @@ describe("HookNotifications", () => {
         isTrackedUser: false,
         userId: REAL_USER_ID,
       },
-      {
-        prepareForIdentityTransition: expect.any(Function),
-        refreshContentCards: expect.any(Function),
-      },
+      consentTransitionOptions,
     );
     expect(mockedUpdateUserPreferences).toHaveBeenCalledWith(defaultNotifications, false, {
       brazeOptOutIdentityCleanup: true,
     });
+  });
+
+  it("should not identify the previous user when logout happens during an in-flight opt-in", async () => {
+    let completeTransition: () => void = () => {};
+    mockedApplyBrazeConsentTransition.mockImplementationOnce(
+      () =>
+        new Promise<void>(resolve => {
+          completeTransition = resolve;
+        }),
+    );
+    mockSelectors({ isTrackedUser: false, userId: REAL_USER_ID });
+    const { rerender } = render(<HookNotifications />);
+
+    mockSelectors({ isTrackedUser: true, userId: REAL_USER_ID });
+    rerender(<HookNotifications />);
+    mockedStart.mockClear();
+    mockedUpdateUserPreferences.mockClear();
+
+    mockSelectors({ isTrackedUser: true, userId: DUMMY_USER_ID });
+    rerender(<HookNotifications />);
+
+    await act(async () => {
+      completeTransition();
+    });
+
+    expect(mockedStart).not.toHaveBeenCalled();
+    expect(mockedUpdateUserPreferences).not.toHaveBeenCalled();
   });
 
   it("should write notification preferences directly once a transition has settled", async () => {

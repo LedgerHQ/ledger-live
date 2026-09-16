@@ -27,6 +27,8 @@ const HookNotifications = () => {
   const retryCountRef = useRef(0);
   const identityUntrustedRef = useRef(false);
   const syncBrazeIdentityRef = useRef<() => void>(() => {});
+  const userIdRef = useRef(userId);
+  userIdRef.current = userId;
   const [syncedEpoch, setSyncedEpoch] = useState(0);
 
   const syncBrazeIdentity = useCallback(() => {
@@ -48,10 +50,11 @@ const HookNotifications = () => {
     if (!identitySync) return;
 
     if (identitySync.isConsentTransition) {
+      const shouldAbort = () => isDummyUserId(userIdRef.current);
       trackBrazeConsentTransition({
         transition: applyBrazeConsentTransition(
           { isTrackedUser, userId },
-          { prepareForIdentityTransition, refreshContentCards },
+          { prepareForIdentityTransition, refreshContentCards, shouldAbort },
         ),
         currentIdentity,
         userIdsMatch,
@@ -62,6 +65,7 @@ const HookNotifications = () => {
         identityUntrustedRef,
         syncBrazeIdentity: () => syncBrazeIdentityRef.current(),
         onIdentitySynced: () => setSyncedEpoch(epoch => epoch + 1),
+        isCurrent: () => !shouldAbort(),
       });
       return;
     }
