@@ -93,7 +93,10 @@ jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
 }));
 
 const buildSubAccountsMock = jest.fn();
-const mergeSubAccountsMock = jest.fn();
+// Defaults to passing the freshly built sub-accounts through, which is what the real function does
+// when nothing is stored. Without it the scratch path — which now goes through the bounded merge
+// rather than around it — would see `undefined`.
+const mergeSubAccountsMock = jest.fn((...args: any[]) => args[1] ?? []);
 jest.mock("../buildSubAccounts", () => ({
   adoptStoredSubAccountIds: jest.requireActual("../buildSubAccounts").adoptStoredSubAccountIds,
   buildSubAccounts: (...a: any[]) => buildSubAccountsMock(...a),
@@ -276,7 +279,10 @@ describe("genericGetAccountShape", () => {
 
       expect(result.subAccounts).toHaveLength(1);
       expect(result.subAccounts[0].id).toBe("framework-id");
-      expect(mergeSubAccountsMock).not.toHaveBeenCalled();
+      // A scratch rebuild goes through the same bounded merge with *nothing* stored, rather than
+      // around it, so the retention bound applies to the sub-accounts this sync creates. Passing
+      // an empty old list is what keeps a vanished token from being carried over.
+      expect(mergeSubAccountsMock).toHaveBeenCalledWith([], expect.anything(), undefined);
     });
 
     it("contributes nothing when the bridge has no getAssetFromToken hook", async () => {
