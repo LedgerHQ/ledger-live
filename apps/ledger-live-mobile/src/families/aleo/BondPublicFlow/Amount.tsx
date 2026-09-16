@@ -46,9 +46,8 @@ export default function Amount({ navigation, route }: Props) {
 
   const bridge = useAccountBridge<AleoTransaction>(account, parentAccount);
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
-    bridge,
-    () => {
+  const { transaction, updateTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(bridge, () => {
       const created = bridge.createTransaction(mainAccount);
       // The withdrawal address is always the account itself and is never offered as a choice.
       const prepared = bridge.updateTransaction(created, {
@@ -62,28 +61,26 @@ export default function Amount({ navigation, route }: Props) {
         parentAccount: parentAccount ?? undefined,
         transaction: prepared,
       };
-    },
-  );
+    });
 
   const effectiveSpendable = spendable.minus(status.estimatedFees);
   const belowMinimum = effectiveSpendable.lt(minBondAmount);
 
   const onChange = useCallback(
     (amount: BigNumber) => {
-      if (!transaction || amount.isNaN()) return;
-      setTransaction(bridge.updateTransaction(transaction, { amount, useAllAmount: false }));
+      if (amount.isNaN()) return;
+      updateTransaction(prev => bridge.updateTransaction(prev, { amount, useAllAmount: false }));
     },
-    [bridge, setTransaction, transaction],
+    [bridge, updateTransaction],
   );
 
   const setUseAllAmount = useCallback(
     (useAllAmount: boolean) => {
-      if (!transaction) return;
-      setTransaction(
-        bridge.updateTransaction(transaction, { amount: new BigNumber(0), useAllAmount }),
+      updateTransaction(prev =>
+        bridge.updateTransaction(prev, { amount: new BigNumber(0), useAllAmount }),
       );
     },
-    [bridge, setTransaction, transaction],
+    [bridge, updateTransaction],
   );
 
   const onChangeValidator = useCallback(() => {
@@ -96,11 +93,11 @@ export default function Amount({ navigation, route }: Props) {
   }, [navigation, route.params]);
 
   const onContinue = useCallback(() => {
-    if (!transaction) return;
     navigation.navigate(ScreenName.AleoBondPublicSelectDevice, {
       accountId: route.params.accountId,
       parentId: route.params.parentId,
-      transaction,
+      // The screen renders nothing until the bridge transaction exists, so it is set here.
+      transaction: transaction as AleoTransaction,
       status,
       source: route.params.source,
     });

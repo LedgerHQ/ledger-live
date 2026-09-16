@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, View } from "react-native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { useTheme } from "styled-components/native";
-import { Button, IconsLegacy, Text } from "@ledgerhq/native-ui";
+import { Box, Button, IconsLegacy, SearchInput, Text } from "@ledgerhq/native-ui";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
 import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
@@ -20,7 +20,6 @@ import Touchable from "~/components/Touchable";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import SelectValidatorSearchBox from "~/families/tron/VoteFlow/01-SelectValidator/SearchBox";
 import type { AleoBondPublicFlowParamList } from "./types";
 
 type Props = BaseComposite<
@@ -152,7 +151,17 @@ export default function SelectValidator({ navigation, route }: Props) {
           )}
         </View>
       ) : (
-        <SelectValidatorSearchBox searchQuery={search} setSearchQuery={setSearch} />
+        <Box mx={6} mt={3} mb={4}>
+          <SearchInput
+            returnKeyType="search"
+            maxLength={50}
+            onChange={setSearch}
+            placeholder={t("common.search")}
+            value={search}
+            numberOfLines={1}
+            testID="delegation-search-pool-input"
+          />
+        </Box>
       )}
       {missingLockedAddress ? (
         <View style={styles.content}>

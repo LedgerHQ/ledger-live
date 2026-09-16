@@ -172,9 +172,9 @@ describe("Aleo bond flow (integration)", () => {
 
     await user.press(await screen.findByTestId("device-item-mock"));
 
-    // Signing and broadcasting exceed waitFor's 1s default.
+    expect(await screen.findByTestId("device-action-loading")).toBeVisible();
     await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible(), {
-      timeout: 10_000,
+      timeout: 5_000,
     });
   });
 
