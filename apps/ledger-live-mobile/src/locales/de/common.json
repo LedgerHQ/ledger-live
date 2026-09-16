@@ -234,6 +234,42 @@
       "title" : "Sitzung abgelaufen",
       "description" : "Die Concordium ID App-Sitzung ist nicht mehr aktiv. Bitte kopple erneut."
     },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "Nicht genügend CCD für die Netzwerkgebühr",
+      "description" : "Die Netzwerkgebühr wird in CCD bezahlt, nicht in dem Token, den du sendest. Füge diesem Konto CCD hinzu und versuche es erneut."
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "Transfers für diesen Token sind pausiert",
+      "description" : "Der Token-Herausgeber hat alle Transfers pausiert. Du kannst es erneut versuchen, sobald die Transfers wieder aufgenommen werden."
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "Dieses Konto kann diesen Token nicht senden",
+      "description" : "Der Token-Herausgeber schränkt ein, wer diesen senden darf, und dieses Konto ist nicht zugelassen. Kontaktiere den Token-Herausgeber, um Zugriff zu erhalten."
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "Token-Beschränkungen konnten nicht bestätigt werden",
+      "description" : "Die Transferregeln dieses Tokens konnten nicht gelesen werden, sodass der Transfer nicht als zulässig bestätigt werden kann. Bitte synchronisiere dein Konto neu und versuche es erneut."
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "Dieses Token kann auf deinem Ledger-Gerät nicht signiert werden",
+      "description" : "Das Token verwendet {{decimals}} Dezimalstellen und dein Gerät unterstützt maximal {{maxDecimals}}. Das Empfangen und Halten sind davon nicht betroffen."
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "Dieses Token befindet sich nicht mehr in deinem Konto",
+      "description" : "Das von dir ausgewählte Token ist nicht mehr verfügbar. Bitte starte die Transaktion erneut."
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "Diese Transaktion kann nicht vorbereitet werden",
+      "description" : "Die Details des Tokens liegen außerhalb dessen, was dein Ledger-Gerät akzeptiert, sodass die Transaktion nicht erstellt werden kann. Bitte kontaktiere den Ledger-Kundenservice."
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "App-Update erforderlich",
+      "description" : "Die Concordium-App auf deinem Ledger-Gerät unterstützt keine Token-Transfers. Aktualisiere diese in My Ledger und versuche es erneut."
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "Ein Problem ist aufgetreten. Bitte schließe dein Gerät erneut an.",
+      "description" : "Die Concordium-App konnte die Transaktion nicht verarbeiten. Wenn das Problem weiterhin besteht, kontaktiere bitte den Ledger-Kundenservice."
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Etwas ist schief gelaufen (Fehler 1)",
       "description" : "Bitte speichere deine Logdateien über die nachstehende Schaltfläche und leite sie dann an den Ledger-Kundenservice weiter."
@@ -4806,10 +4842,6 @@
       "toggleCurrency" : "Währung umschalten"
     },
     "summary" : {
-      "solanaRawTransaction" : {
-        "title" : "Blindsignatur erforderlich",
-        "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
-      },
       "subaccountsWarning" : "Du musst dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu versenden",
       "tag" : "Markierung (optional)",
       "validateTag" : "Markierung validieren",
@@ -9818,6 +9850,40 @@
       "cta" : "Wiederholen"
     }
   },
+  "perpsReview" : {
+    "depositTitle" : "Einzahlung via SwapKit",
+    "depositSubtitle" : "Der Anbieter SwapKit verwaltet deinen Swap und deine Einzahlung in einer Transaktion – alles gesichert durch dein Ledger-Gerät.",
+    "swapDetailTitle" : "Swap-Details",
+    "amountSendLabel" : "Zu sendender Betrag",
+    "amountReceiveLabel" : "Empfangener Betrag",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "Einzahlungsdetails",
+    "depositAmountLabel" : "Einzahlungsbetrag",
+    "depositReceiveLabel" : "Empfangskonto",
+    "depositCTA" : "Einzahlung"
+  },
+  "perpsDepositSign" : {
+    "terms" : "Durch das Signieren dieser Transaktion akzeptiere ich die <termsLink>AGB von SwapKit by NEAR Intents</termsLink>"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "Transaktion signiert",
+    "description" : "Du erhältst dein {{currency}}, sobald die Bestätigung auf der Blockchain erfolgt ist",
+    "viewTransaction" : "Transaktion anzeigen"
+  },
+  "perpsDeposit" : {
+    "title" : "Einzahlung",
+    "inputDepositAmount" : "Einzahlung {{value}}",
+    "inputSubText" : "Swappen und Einzahlen via {{provider}}",
+    "selectCurrencyTitle" : "Einzahlung mit {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "Kein Konto",
+    "review" : "Prüfen",
+    "keypadDelete" : "Letzte Ziffer löschen",
+    "formErrors" : {
+      "amountExceedsBalance" : "Unzureichendes Guthaben",
+      "quoteUnavailable" : "Wir können kein Angebot von {{provider}} SwapKit erhalten. Versuche es mit einem anderen Asset oder komm später wieder."
+    }
+  },
   "swapErrors" : {
     "incorrectCommandData" : {
       "title" : "Fehlerhafte Befehlsdaten",
@@ -10211,8 +10277,38 @@
     },
     "card" : {
       "title" : "Krypto-Karte",
+      "placeholder" : "Bald verfügbar",
+      "details" : "Details",
       "freeze" : "Sperren",
-      "unfreeze" : "Entsperren"
+      "unfreeze" : "Entsperren",
+      "goBack" : "Zurückgehen",
+      "freezeConfirm" : {
+        "title" : "Sperren bedeutet, dass du die Karte nicht mehr verwenden kannst.",
+        "description" : "Du kannst deine Karte jederzeit wieder entsperren.",
+        "confirm" : "Jetzt sperren",
+        "errorTitle" : "Freeze fehlgeschlagen"
+      },
+      "unfreezeConfirm" : {
+        "title" : "Deine Karte entsperren?",
+        "confirm" : "Jetzt entsperren",
+        "errorTitle" : "Entsperren fehlgeschlagen"
+      },
+      "confirmError" : {
+        "description" : "Ein Problem ist aufgetreten. Bitte versuche es erneut.",
+        "retry" : "Wiederholen"
+      }
+    },
+    "cardTransactions" : {
+      "categories" : {
+        "SUBSCRIPTIONS" : "Abonnements",
+        "FOOD" : "Essen",
+        "TRAVEL" : "Reisen",
+        "ENTERTAINMENT" : "Unterhaltung",
+        "HEALTH" : "Gesundheit",
+        "ATM" : "Geldautomat",
+        "UTILITIES" : "Nebenkosten",
+        "MISC" : "Sonstiges"
+      }
     },
     "selectContact" : {
       "placeholder" : "Kontakt eingeben"
@@ -10341,6 +10437,14 @@
       "addressPicker" : {
         "title" : "Adresse von {{name}} auswählen",
         "addAddress" : "Adresse hinzufügen"
+      },
+      "paySuccess" : {
+        "title" : "Du hast ({{recipient}}) bezahlt",
+        "amount" : "Betrag",
+        "estimatedTime" : "Geschätzte Zeit",
+        "from" : "Von",
+        "viewTransaction" : "Transaktion anzeigen",
+        "close" : "Schließen"
       }
     },
     "cardOnboarding" : {
@@ -10617,11 +10721,11 @@
     "addContact" : "Kontakt hinzufügen",
     "addAddress" : "Adresse hinzufügen",
     "addYourAddress" : "Deine Adresse hinzufügen",
-    "searchPlaceholder" : "Kontakt suchen",
+    "searchPlaceholder" : "Nach Namen suchen",
     "searchNoResults" : "Kein Kontakt gefunden",
     "addContactDrawer" : {
       "namePlaceholder" : "Kontaktname",
-      "namingDisclaimer" : "Vermeide zum Schutz deiner Privatsphäre vollständige Vor- und Nachnamen. Verwende einen Spitznamen oder nur einen Vornamen + Initial, z. B. „John S“.",
+      "namingDisclaimer" : "Vermeide zum Schutz deiner Privatsphäre vollständige Namen. Verwende einen Spitznamen oder nur einen Vornamen + Initial, z. B. „John S.“",
       "confirmName" : "Namen bestätigen",
       "invalidNameError" : "Sonderzeichen sind nicht erlaubt.",
       "duplicateNameError" : "Dieser Kontaktname wird bereits verwendet."
@@ -10636,7 +10740,8 @@
       "domainNotFound" : "Für diese Domain wurde keine Adresse gefunden",
       "sanctionedAddress" : "Diese Adresse ist sanktioniert und kann nicht verwendet werden.",
       "validationUnavailable" : "Adressvalidierung ist vorübergehend nicht verfügbar",
-      "ensDisclaimer" : "ENS-Namen werden in Wallet-Adressen aufgelöst. Bestätige immer die aufgelöste Adresse, bevor du fortfährst.",
+      "ensDisclaimer" : "ENS-Namen können sich ändern",
+      "ensDisclaimerDescription" : "ENS-Namen können im Laufe der Zeit auf verschiedene Adressen verweisen. Wir speichern jetzt die zugrunde liegende Adresse, um sicherzustellen, dass dein Guthaben nur die Adresse erreicht, die du bestätigst.",
       "sanctioned" : {
         "description" : "Diese Adresse wurde gemeldet und Ledger erlaubt keine Überweisungen an sie",
         "learnMore" : "Weitere Informationen"
@@ -10645,7 +10750,7 @@
     "addAddressName" : {
       "title" : "Adresse benennen",
       "inputLabel" : "Adressname",
-      "namingDisclaimer" : "Wir empfehlen, dieser Adresse einen Namen zu geben, um sie bei Bedarf leicht wiederzufinden. Er wird nur für dich sichtbar sein.",
+      "namingDisclaimer" : "Dieser Name erscheint beim Senden an diese Adresse auf deinem Ledger-Gerät. Vergebe einen Namen, der leicht zu finden ist.",
       "continueToReview" : "Überprüfung fortsetzen",
       "invalidLabel" : "Sonderzeichen sind nicht erlaubt.",
       "duplicateLabel" : "Dieser Adresse wird bereits für diesen Kontakt verwendet.",
@@ -10663,10 +10768,7 @@
     "addressCount_one" : "{{count}} Adresse",
     "addressCount_other" : "{{count}} Adressen",
     "me" : {
-      "name" : "Ich",
-      "addressCount_zero" : "0 Adresse",
-      "addressCount_one" : "{{count}} Adresse",
-      "addressCount_other" : "{{count}} Adressen"
+      "myAddresses" : "Meine Adressen"
     },
     "detail" : {
       "meDisplayName" : "{{name}} (Ich)",
@@ -10697,7 +10799,7 @@
     "editContact" : {
       "title" : "Kontakt bearbeiten",
       "namePlaceholder" : "Kontaktname",
-      "namingDisclaimer" : "Vermeide zum Schutz deiner Privatsphäre vollständige Vor- und Nachnamen. Verwende einen Spitznamen oder nur einen Vornamen + Initial, z. B. „John S.“",
+      "namingDisclaimer" : "Vermeide zum Schutz deiner Privatsphäre vollständige Namen. Verwende einen Spitznamen oder nur einen Vornamen + Initial, z. B. „John S.“",
       "confirmName" : "Namen bestätigen",
       "applyChanges" : "Änderungen übernehmen",
       "invalidNameError" : "Sonderzeichen sind nicht erlaubt."
@@ -10736,7 +10838,7 @@
     },
     "featureIntroduction" : {
       "title" : "Wir stellen vor: Kontakte",
-      "primaryAction" : "Jetzt entdecken",
+      "primaryAction" : "Jetzt ausprobieren",
       "highlights" : {
         "saveAddresses" : {
           "title" : "Speichere Adressen unter einem Namen deiner Wahl",
@@ -10747,7 +10849,7 @@
           "description" : "Sehe einen Namen dem du vertraust, nicht eine Adresse."
         },
         "privateAcrossDevices" : {
-          "title" : "Sicher aufladen über Ledger Wallet™",
+          "title" : "Privat auf deinen Ledger-Geräten",
           "description" : "Ende-zu-Ende-verschlüsselt mit Ledger Sync."
         }
       }
