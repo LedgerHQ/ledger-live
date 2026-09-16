@@ -22,14 +22,21 @@ export type OperationHistoryBound = {
    */
   maxOperations: number | undefined;
   /**
-   * The per-request page size for the paginated `listOperations` walk. Distinct from
-   * `maxOperations` and independent of it: this bounds what one request costs, `maxOperations`
-   * bounds how much the walk keeps. Always resolved (defaulting to `DEFAULT_PAGE_SIZE`) and
-   * always turned into a `limit` at the call site, whatever `maxOperations` says -- page cost is
-   * crash safety, retention is a product decision, and gating the first on the second would make
-   * crash safety unreachable without one.
+   * The per-request page size for the paginated `listOperations` walk, or `undefined` to send no
+   * `limit` at all.
+   *
+   * Distinct from `maxOperations` and independent of it: this bounds what one request costs,
+   * `maxOperations` bounds how much the walk keeps. It is deliberately *not* gated on
+   * `maxOperations` -- page cost is crash safety, retention is a product decision, and gating the
+   * first on the second would put crash safety behind a product call.
+   *
+   * It *is* gated on the family supporting `limit`, which is a different question. The contract is
+   * explicit: "implementation must raise a 'not supported' error if limit is set and not
+   * supported". So sending one to a module that does not support it is a caller bug that fails the
+   * sync, not a soft hint the module may ignore. Absent per-module declaration, the caller only
+   * sends a `limit` where support has been verified -- see `DEFAULT_PAGE_SIZE_BY_FAMILY`.
    */
-  pageSize: number;
+  pageSize: number | undefined;
 };
 
 // A bound is meaningful only as a positive operation count; anything else (zero, negative,
@@ -37,10 +44,35 @@ export type OperationHistoryBound = {
 // substitutes the global value, or the shipped safety ceiling.
 const MaxOperationsSchema = z.number().int().positive().optional().catch(undefined);
 
+/**
+ * The largest page size that may be sent to a module on this path.
+ *
+ * A page size is not a free dial: it is forwarded verbatim as `listOperations`' `limit`, and a
+ * module may reject a value it cannot serve. `coin-tron` throws above 200 (its indexer's own
+ * ceiling), so a remote payload of 250 would fail every tron sync -- a config value taking a whole
+ * family down. A very large value is the other failure: a module that honours it materialises one
+ * enormous page, which is precisely the per-page cost this setting exists to bound.
+ *
+ * 200 is the smallest ceiling among the modules currently routed here, so it is the only value
+ * safe for all of them. It is a floor-of-ceilings, not a measurement, and it is the wrong shape of
+ * answer: the right one is for a module to declare what it can serve, which is what rule 5 of the
+ * pagination-contract ADR proposes. Until that exists, clamping here keeps a remote value from
+ * breaking a family.
+ */
+const MAX_PAGE_SIZE = 200;
+
 // Same shape of validation as above, but a page size never degrades to "no limit" -- an absent or
 // hostile value falls back to `DEFAULT_PAGE_SIZE` instead, since sending no limit at all is exactly
-// the legacy exhaustive-fetch behaviour this bound exists to avoid.
-const PageSizeSchema = z.number().int().positive().optional().catch(undefined);
+// the legacy exhaustive-fetch behaviour this bound exists to avoid. A value above what every routed
+// module can serve is clamped rather than rejected: the intent ("use large pages") is honourable and
+// worth honouring as far as it safely can be.
+const PageSizeSchema = z
+  .number()
+  .int()
+  .positive()
+  .transform(size => Math.min(size, MAX_PAGE_SIZE))
+  .optional()
+  .catch(undefined);
 
 const OperationHistoryBoundEntrySchema = z
   .object({
@@ -123,17 +155,35 @@ export const operationHistoryConfig: ConfigSchema = {
  * peak-memory budget and what the explorer tolerates; an absent or hostile configured value must
  * degrade to this constant, never to something larger.
  */
-export const DEFAULT_PAGE_SIZE = 100;
+/**
+ * Shipped page size per coin-framework family, and the list of families we will send a `limit` to
+ * at all. A family absent here receives no `limit`, which is exactly today's behaviour for it.
+ *
+ * Only `evm` is listed, because it is the only family whose `limit` support and page cost have been
+ * measured: 100 records per page completed a full walk of the account from the out-of-memory report
+ * with every request served, where 500 drew 503s and 504s within about thirty requests. Adding a
+ * family here is a claim about that family, so it wants the same evidence -- not an assumption that
+ * because the option exists the module honours it. Several do not: they raise, as the contract
+ * tells them to.
+ *
+ * A remote per-currency or global `pageSize` still overrides this, for a family whose support is
+ * established later without waiting for a release.
+ */
+export const DEFAULT_PAGE_SIZE_BY_FAMILY: Readonly<Record<string, number>> = Object.freeze({
+  evm: 100,
+});
 
 /**
  * Resolved when the remote config is unavailable, malformed, or hostile. It carries the safety
  * ceiling rather than no ceiling: a missing config must not reopen the out-of-memory crash the
  * ceiling exists to prevent. Only a remote payload that parses can lower or lift it.
  */
-const FALLBACK: OperationHistoryBound = Object.freeze({
-  maxOperations: DEFAULT_MAX_OPERATIONS,
-  pageSize: DEFAULT_PAGE_SIZE,
-});
+function fallbackFor(family: string): OperationHistoryBound {
+  return {
+    maxOperations: DEFAULT_MAX_OPERATIONS,
+    pageSize: DEFAULT_PAGE_SIZE_BY_FAMILY[family],
+  };
+}
 
 let warnedConfigMissing = false;
 
@@ -152,26 +202,29 @@ let warnedConfigMissing = false;
  * never to unbounded: a config that cannot be read must not reopen the out-of-memory crash the
  * ceiling exists to prevent. Only a payload that parses can lower or raise it.
  */
-export function resolveOperationHistoryBound(currencyId: string): OperationHistoryBound {
+export function resolveOperationHistoryBound(
+  currencyId: string,
+  family: string,
+): OperationHistoryBound {
   try {
     const raw = LiveConfig.getValueByKey("config_generic_operation_history");
 
     const parsed = OperationHistoryBoundConfigSchema.safeParse(raw);
-    if (!parsed.success) return FALLBACK;
+    if (!parsed.success) return fallbackFor(family);
 
     const { maxOperations: globalMax, pageSize: globalPageSize, networks } = parsed.data;
     const entry = networks[currencyId];
     const maxOperations = entry?.maxOperations ?? globalMax ?? DEFAULT_MAX_OPERATIONS;
-    const pageSize = entry?.pageSize ?? globalPageSize ?? DEFAULT_PAGE_SIZE;
+    const pageSize = entry?.pageSize ?? globalPageSize ?? DEFAULT_PAGE_SIZE_BY_FAMILY[family];
 
     return { maxOperations, pageSize };
   } catch {
-    if (warnedConfigMissing) return FALLBACK;
+    if (warnedConfigMissing) return fallbackFor(family);
     warnedConfigMissing = true;
     log(
       "generic-coin-framework",
       "config_generic_operation_history not set in LiveConfig - falling back to the default operation history ceiling",
     );
-    return FALLBACK;
+    return fallbackFor(family);
   }
 }
