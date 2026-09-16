@@ -9957,6 +9957,11 @@
       "title": "No transactions yet",
       "description": "Come back later to see your transactions."
     },
+    "tabs": {
+      "crypto": "Crypto",
+      "card": "Card",
+      "accessibilityLabel": "Transaction history type"
+    },
     "actionsBar": {
       "csv": "Export",
       "more": "Transaction history options",
