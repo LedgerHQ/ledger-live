@@ -1,5 +1,13 @@
 # @ledgerhq/coin-tron
 
+## 8.1.0-next.0
+
+### Minor Changes
+
+- [#21887](https://github.com/LedgerHQ/ledger-live/pull/21887) [`a62261e`](https://github.com/LedgerHQ/ledger-live/commit/a62261e2e63218affcd3690a70b5a42f355a48a4) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Tell the user a currency is unavailable in their region instead of showing a generic balance error, and bump coin-module-framework to 9.1.0 for the typed checkRegionRestriction flag
+
+- [#21686](https://github.com/LedgerHQ/ledger-live/pull/21686) [`46340c1`](https://github.com/LedgerHQ/ledger-live/commit/46340c151a0d7854c65e78af3a7e6d839c349e3a) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-tron): remove `ledger-wallet-framework` dependency
+
 ## 8.0.0
 
 ### Major Changes

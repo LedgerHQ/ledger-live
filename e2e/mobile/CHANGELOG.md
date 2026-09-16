@@ -1,5 +1,97 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.39.0-next.0
+
+### Minor Changes
+
+- [#21716](https://github.com/LedgerHQ/ledger-live/pull/21716) [`641fdb7`](https://github.com/LedgerHQ/ledger-live/commit/641fdb7b392aff50d4bfa206e2435f75cb610227) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Let the mobile Ledger Sync e2e suites run against the PROD trustchain during a release validation. The environment now reaches the app as a Detox launch arg, which the e2e bridge applies before the app tree mounts — the only point where the trustchain SDK singleton can still be pinned — so it no longer has to be refused outright.
+
+- [#21413](https://github.com/LedgerHQ/ledger-live/pull/21413) [`bd3d8c4`](https://github.com/LedgerHQ/ledger-live/commit/bd3d8c40fed36706147c9aede6d2618776ffd53c) Thanks [@jeportie](https://github.com/jeportie)! - Stop the Allure test description from repeating the `SPECULOS App: <name> (<version>)` block once
+  per Speculos (re)launch. `jest-allure2-reporter`'s `allure.description()` appends rather than
+  replaces — each call pushes a paragraph that the reporter joins with a blank line — and
+  `launchSpeculos()` emits one on every invocation, so a test whose setup retried three times printed
+  the same block four times. The mobile reporter config now drops verbatim-duplicate paragraphs before
+  joining, keeping the first of each; blocks for genuinely different apps (a swap lists one per
+  currency plus Exchange and its dependencies) all differ, so they are untouched. `descriptionHtml` is
+  deduplicated the same way, since it appends identically.
+
+  Also stops `executeCliCommands` from tearing down and relaunching Speculos after its _final_ failed
+  attempt. Its two siblings, `executeCliCommandsOnApp` and `setupMainSpeculosApp`, already guard that
+  re-setup with `attempt < maxRetries`; without the guard the loop pays for one more
+  acquire/release cycle it will never use, and a failure inside that re-setup escapes the retry loop
+  and replaces the real `lastError` in the reported message.
+
+- [#21894](https://github.com/LedgerHQ/ledger-live/pull/21894) [`ca6dd3a`](https://github.com/LedgerHQ/ledger-live/commit/ca6dd3a81b3453808e22794ad416a10658c5e3d4) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Fix the nightly mobile borrow e2e run.
+
+  `BorrowPage.expectStepDone` reached for detox's `device` global, which a page object is not
+  loaded with, so the first signed step threw `ReferenceError: device is not defined` after its
+  transaction had already gone out — and every retry then found the approval step complete and
+  failed on its "not yet done" precondition. Granting Morpho access is account state rather than
+  per-loan state, so that step now passes through when it is already granted.
+
+  The Speculos driver gained the Ethereum app's blind-signing setting, without which Morpho
+  calldata is answered with `6a80` and no review is ever drawn, plus the risk warning that
+  enabling it puts in front of the review. Transaction Check now stops waiting as soon as that
+  warning appears instead of spending its whole budget on it.
+
+  The borrow driver also floors the keyless RPC's priority-fee suggestion so its broadcasts get
+  mined, keeps the fee cap proportional to the base fee so the node's up-front reservation stays
+  within the account balance, retries reads the RPC's archive-restricted backends reject, polls
+  for the receipt rather than watching whole blocks for a replacement, waits for a remote
+  Speculos to be ready so its address is published, and reports the partner's reason for a
+  rejected action instead of only the status line.
+
+- [#21595](https://github.com/LedgerHQ/ledger-live/pull/21595) [`a18539e`](https://github.com/LedgerHQ/ledger-live/commit/a18539e885fdfe379c77623a448256fb4602b6c0) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Read the sub-account id from the screen in `navigateToSubAccount` instead of rebuilding it. Rebuilding meant hardcoding one of the two id formats in the wild: an account synced before the generic coin framework keeps the format it was stored under, a newer one gets `encodeTokenAccountId`. The helper now opens the sub-account from the flat accounts list and returns the id the app gave it, with an identity assertion that does not depend on the id it just read.
+
+  `navigateToTokenInAccount` expands the token list when the "see more" button is present. The list shows three tokens while collapsed, so a fourth one was never on screen to scroll to. Adds a `testID` to that button in `SubAccountsList`.
+
+- [#21702](https://github.com/LedgerHQ/ledger-live/pull/21702) [`654199a`](https://github.com/LedgerHQ/ledger-live/commit/654199ad52f8dce63fc46cd826d11f90c533b804) Thanks [@jeportie](https://github.com/jeportie)! - Surface the swap-init root cause on mobile E2E failures
+
+  When the device stalls on "Exchange app is ready", `waitForReviewTransaction` appends a hint telling
+  the reader to open the "⚠️ Swap-init error" attachment. That hint lives in shared code and is
+  emitted on both platforms, but the attachment was produced by the desktop harness only, so on
+  mobile it pointed at something that never existed.
+
+  The extraction now lives in `@ledgerhq/live-e2e-shared/swapInitError` and both harnesses use it.
+  Mobile attaches the result first, scanning the app logs and the webview console together, because
+  the failure can surface on either side of the wallet-api call. Desktop delegates to the shared
+  function and keeps its previous output.
+
+- [#21807](https://github.com/LedgerHQ/ledger-live/pull/21807) [`96d6c1a`](https://github.com/LedgerHQ/ledger-live/commit/96d6c1af0048108952ac2a5183127816baa478bc) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Give the receive verify-address tests back to Coin-integration (QAA-1500)
+
+  `1d62665e5e9` moved `receive.address.spec.ts` off Wallet XP but carved XRP and
+  Tezos out to `Team.BST` — on desktop through two `teamOwner` overrides, on mobile
+  through `BST_VERIFY_ADDRESS_CURRENCIES`. Every test split from B2CQA-249 and
+  B2CQA-651 belongs to Coin-integration, so both carve-outs go, and with them the
+  now-dead `teamOwner?` field on `ReceiveTestCase`.
+
+  Ownership feeds Allure's `owner`/`parentSuite`/`feature` and the `team` CI
+  dropdown, which `e2e/tooling/filter/teamSpecs.mjs` resolves by grepping
+  `Team.<MEMBER>` per spec _file_ — so a single `Team.BST` line pulled the whole
+  file into `team=bst`. `--list-teams` now reports `bst` at 9 desktop spec files
+  instead of 10 and 120 mobile instead of 130, with `coin-integration` unchanged.
+
+  Mobile also linked only the B2CQA-249-family key for eight of the ten currencies
+  while desktop linked both families. The missing B2CQA-651-family keys (2687, 2688,
+  2689, 2690, 2691, 2693, 2694, 2696) are added so both suites report the same Xray
+  tests.
+
+- [#21878](https://github.com/LedgerHQ/ledger-live/pull/21878) [`c2d5d6a`](https://github.com/LedgerHQ/ledger-live/commit/c2d5d6ae477d616cd9ef61d45595ffa62cdfb126) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Scroll the portfolio hero back into view before asserting on it (QAA-1571)
+
+  Android detaches off-screen FlatList rows from the native view hierarchy, so once
+  the portfolio list is scrolled past its first row the balance and the quick-action
+  CTAs are absent rather than under-visible, and no wait recovers them. The nightly
+  hierarchy dumps show the list arriving ~1194px down — the exact height of that row
+  — with `market-banner-container` as the first attached child at y=54 instead of
+  y=1248, which is why `quick-actions-ctas` and `portfolio-balance-normal` timed out
+  on Android while iOS stayed green.
+
+  Every portfolio accessor that targets the balance or the quick actions now scrolls
+  the list up to its own target first, via `scrollToId(target, list, undefined, "up")`.
+  Visibility thresholds and timeouts are unchanged. Detox's `scrollTo("top")` is not
+  usable here: the list's pull-to-refresh control means the action never reports a top
+  edge and force-breaks its loop.
+
 ## 0.38.0
 
 ### Minor Changes

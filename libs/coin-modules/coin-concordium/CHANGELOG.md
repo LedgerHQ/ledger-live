@@ -1,5 +1,85 @@
 # @ledgerhq/coin-concordium
 
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#21630](https://github.com/LedgerHQ/ledger-live/pull/21630) [`738c0d8`](https://github.com/LedgerHQ/ledger-live/commit/738c0d8a1357e96713bfc0d7a40ca403b5290c35) Thanks [@amaslakov](https://github.com/amaslakov)! - Report PLT transfers in the history of the token sub-account they moved
+
+  `tokenUpdate` transactions were parsed away, so a PLT transfer showed nowhere.
+  They now become operations on the token sub-account, valued in the token rather
+  than in the CCD a native transfer folds its fee into. The fee stays on the
+  parent account as a separate operation, typed from whether the account actually
+  paid one, so that an outgoing transfer is charged for it exactly once and an
+  incoming one is charged nothing. A `tokenUpdate` that is not a transfer, such as
+  a mint or a pause, still records the CCD it cost the account that paid. The
+  `api/` surface describes these operations as the token they moved instead of as
+  the native asset. Accounts now carry a `syncHash` covering the CAL and the token
+  flag, so enabling tokens re-reads the history rather than leaving earlier
+  transfers behind the sync watermark.
+
+  Reading that history now follows the proxy's cursor to the end instead of
+  stopping at the first page, so an account with more transactions than one page
+  holds no longer loses the rest of them, and a failed page reports the failure
+  rather than passing for the end of the history. Pages are read at the size the
+  proxy actually allows, and rewards are excluded from the request, having only
+  ever been fetched and discarded. The account keeps what a re-read returns rather
+  than merging it over what was already stored, which is what lets a correction
+  reach an operation recorded by an earlier version.
+
+  A rejected transfer is recorded rather than dropped. The proxy reports one
+  without any of its transfer fields, so it used to parse to nothing and the CCD
+  it cost the sender went unaccounted for; it now appears as a failed operation
+  worth its fee, matching what a rejected token transfer already did. Neither
+  reports an empty address as a counterparty any more.
+
+- [#21720](https://github.com/LedgerHQ/ledger-live/pull/21720) [`05cb97c`](https://github.com/LedgerHQ/ledger-live/commit/05cb97c6986755d87d4c0b3df3d8b4daf9ba77df) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Craft and sign PLT transfers
+
+  `craftPltTransaction` builds a `TokenUpdate` payload from the CAL-resolved token id, the
+  CAL unit magnitude as the amount's exponent, and the energy persisted at estimation time,
+  and `signOperation` routes a transaction carrying a token sub-account to it. The signer
+  interface widens to `AnyTransaction`; its body already serialized both kinds. A PLT send
+  now reports the CCD fee on the parent account and the token amount on the sub-account,
+  matching the pair sync builds once the transfer is indexed. `updateTransaction` drops the
+  persisted energy alongside the fee, so a re-selected token cannot inherit the previous
+  token's energy limit. Adds the English error strings for the two signer failures this path
+  can surface.
+
+  Signing on a device needs the PLT-capable Concordium app; until it ships, an attempt
+  surfaces as a translated "update your Concordium app" error. PLT sub-accounts remain behind
+  the `enableTokens` config switch.
+
+- [#21679](https://github.com/LedgerHQ/ledger-live/pull/21679) [`251af57`](https://github.com/LedgerHQ/ledger-live/commit/251af57e7412e493deaecddf627e3967ba044c09) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Report Concordium fee errors under a key the send flow renders
+
+  `getTransactionStatus` filed fee errors under `errors.fee`, which no file in the
+  desktop `modals/Send/` tree reads, so an unpriced transfer greyed out Continue with
+  no message. They are now reported under `amount`, after the checks for the states
+  that leave a PLT fee unset, so the specific cause still wins.
+
+- [#21634](https://github.com/LedgerHQ/ledger-live/pull/21634) [`b30f903`](https://github.com/LedgerHQ/ledger-live/commit/b30f903f592c0bafba74a1784d98b9d605c18ccb) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Validate PLT transfers and fix estimateMaxSpendable for tokens
+
+  `getTransactionStatus` checks a PLT amount against the token sub-account and its fee
+  against the CCD at the parent's disposal, and blocks on token state and device limits.
+  `estimateMaxSpendable` returns the full token balance instead of subtracting µCCD fees.
+  A PLT fee is priced from the buffered energy, so it covers the deposit the chain
+  requires. `concordium-core` lowers the PLT decimals ceiling to 18. Adds the English
+  error strings.
+
+- [#21869](https://github.com/LedgerHQ/ledger-live/pull/21869) [`4c314f4`](https://github.com/LedgerHQ/ledger-live/commit/4c314f4035581de1affaba8419cd062359251c2f) Thanks [@amaslakov](https://github.com/amaslakov)! - Check a PLT recipient against the token's allow and deny lists before signing
+
+  A transfer the lists refuse is rejected on chain after the user has signed and paid the
+  fee, so `getTransactionStatus` now resolves the recipient's standing and reports it under
+  the recipient field. The token's own state is read first, and a token declaring neither
+  list never looks the recipient up. An undecodable state or a failed lookup blocks as
+  unverifiable rather than passing as allowed. Adds the English error strings.
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`b30f903`](https://github.com/LedgerHQ/ledger-live/commit/b30f903f592c0bafba74a1784d98b9d605c18ccb), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/types-live@6.124.0-next.0
+  - @ledgerhq/concordium-core@0.7.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
+
 ## 1.2.0
 
 ### Minor Changes

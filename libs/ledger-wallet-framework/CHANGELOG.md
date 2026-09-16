@@ -1,5 +1,23 @@
 # @ledgerhq/ledger-wallet-framework
 
+## 3.4.0-next.0
+
+### Minor Changes
+
+- [#21596](https://github.com/LedgerHQ/ledger-live/pull/21596) [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Carry a chain's staking positions through the generic coin framework, and keep sub-accounts
+  aligned with what the chain reports:
+
+  - an unbonding position with no validator is no longer dropped from the account's list
+  - `extractBalances` rebuilds staking positions, so a family validating a staking intent finds them
+  - a position reads as withdrawable only when the chain offers a withdraw on it
+  - `mergeSubAccounts` keeps only the sub-accounts the chain still reports, instead of letting a pruned one survive with a stale balance
+  - a pending operation shows the user's memo only on a plain transfer
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb)]:
+  - @ledgerhq/types-live@6.124.0-next.0
+
 ## 3.3.0
 
 ### Minor Changes

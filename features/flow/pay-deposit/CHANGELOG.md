@@ -1,5 +1,17 @@
 # @features/flow-pay-deposit
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#22023](https://github.com/LedgerHQ/ledger-live/pull/22023) [`0f4b55e`](https://github.com/LedgerHQ/ledger-live/commit/0f4b55e46459492e880a8e5e118b570a934ce4d7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Polish Pay tab UI: square network icons, verify-address icon size, deposit dialog inset, header/balance spacing, and move card title/balance copy into the flow.
+
+### Patch Changes
+
+- Updated dependencies [[`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf)]:
+  - @shared/ui-queued-bottom-sheet@0.4.0-next.0
+  - @shared/i18n@0.2.0
+
 ## 0.3.1
 
 ### Patch Changes

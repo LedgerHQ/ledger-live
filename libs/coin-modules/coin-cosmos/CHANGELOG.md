@@ -1,5 +1,39 @@
 # @ledgerhq/coin-cosmos
 
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#21924](https://github.com/LedgerHQ/ledger-live/pull/21924) [`cdb273b`](https://github.com/LedgerHQ/ledger-live/commit/cdb273b068df78cd5a0dbd4281fb79f22e0a7506) Thanks [@qperrot](https://github.com/qperrot)! - Fix account view crash when cosmos `cosmosResources` is undefined by handling missing resources gracefully in the delegation hook and account UI components
+
+- [#20869](https://github.com/LedgerHQ/ledger-live/pull/20869) [`54fce77`](https://github.com/LedgerHQ/ledger-live/commit/54fce77bfa46c3d42d3e39b80804258a91d910f2) Thanks [@henri-ly](https://github.com/henri-ly)! - Stop discarding a cosmos transaction history when one page of it fails.
+
+  `CosmosAPI.fetchAllTransactions` pages until the accumulated tx count reaches the response's `total`. Any page that failed propagated to the surrounding catch, which returned an empty array — so a single bad page reported the account as having no history at all. Two causes are live on mainnet today: a page past the last one, when a node serves fewer transactions than its `total` counts (`failed to search for txs: page should be within [1, N] range`), and a transaction the node can no longer decode (`unable to resolve type URL /tendermint.liquidity.v1beta1.MsgDepositWithinBatch: tx parse error`, permanent on cosmoshub for accounts holding pre-removal liquidity-module txs). Both are answered as HTTP 500 and retried twice by the network layer. A failing page now ends the walk and keeps the pages already fetched.
+
+  Also in `fetchTransactions`: an empty result serialized as `null` instead of `[]` is read as an empty list, and `total` is coerced to a number — the endpoint returns the uint64 as a string, while the declared type said `number`.
+
+  The loop also stops on an empty page. It only advances on the transactions it receives, so a node that answers 200 with an empty page while still counting more in `total` — rather than the 500 above — never reached the exit condition and paged that node indefinitely.
+
+- [#21719](https://github.com/LedgerHQ/ledger-live/pull/21719) [`bb2f03e`](https://github.com/LedgerHQ/ledger-live/commit/bb2f03e41b96b8f95f239acea75428657cdd64fe) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - fix(cosmos): add the gonka chain and always send the HRP to the signer
+
+  Adds the Gonka chain to the Cosmos coin module's chain factory. Fixes the Cosmos
+  signer to send the chain's address prefix to the device on every coin type
+  instead of only coin type 60 — the gate was safe while 118 was the only other
+  option, but a chain on any other coin type (Gonka is on 1200) could not sign
+  through the DMK signer. Chains whose device app is not app-cosmos opt out via
+  the new `signWithPrefix` chain parameter: `crypto_org` and `crypto_org_croeseid`
+  run the separate "Cronos POS Chain" app on coin type 394 and keep omitting the
+  field, so no shipping chain's sign APDU changes. Renames `CosmosSigner.sign`'s
+  third parameter from `transactionType` to `hrp`, matching what it actually
+  carries. Also treats a zero fee as loaded rather than missing on the send path,
+  so a zero-fee chain can send a transaction and use its full spendable balance.
+
+### Patch Changes
+
+- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
+  - @ledgerhq/types-live@6.124.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
+
 ## 1.2.0
 
 ### Minor Changes

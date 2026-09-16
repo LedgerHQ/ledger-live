@@ -1,5 +1,54 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.41.0-next.0
+
+### Minor Changes
+
+- [#21385](https://github.com/LedgerHQ/ledger-live/pull/21385) [`3fd487f`](https://github.com/LedgerHQ/ledger-live/commit/3fd487fd4ac0caf94cdeca50349b82fdfdd95776) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Add desktop E2E for the post-onboarding hub mock flow (LIVE-31322).
+
+- [#21980](https://github.com/LedgerHQ/ledger-live/pull/21980) [`c8829aa`](https://github.com/LedgerHQ/ledger-live/commit/c8829aa1506573ce3358899b6aa884e110207dba) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Replace hand-rolled polling loops in the desktop E2E page objects with `expect.poll`.
+
+- [#21702](https://github.com/LedgerHQ/ledger-live/pull/21702) [`654199a`](https://github.com/LedgerHQ/ledger-live/commit/654199ad52f8dce63fc46cd826d11f90c533b804) Thanks [@jeportie](https://github.com/jeportie)! - Surface the swap-init root cause on mobile E2E failures
+
+  When the device stalls on "Exchange app is ready", `waitForReviewTransaction` appends a hint telling
+  the reader to open the "⚠️ Swap-init error" attachment. That hint lives in shared code and is
+  emitted on both platforms, but the attachment was produced by the desktop harness only, so on
+  mobile it pointed at something that never existed.
+
+  The extraction now lives in `@ledgerhq/live-e2e-shared/swapInitError` and both harnesses use it.
+  Mobile attaches the result first, scanning the app logs and the webview console together, because
+  the failure can surface on either side of the wallet-api call. Desktop delegates to the shared
+  function and keeps its previous output.
+
+- [#21807](https://github.com/LedgerHQ/ledger-live/pull/21807) [`96d6c1a`](https://github.com/LedgerHQ/ledger-live/commit/96d6c1af0048108952ac2a5183127816baa478bc) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Give the receive verify-address tests back to Coin-integration (QAA-1500)
+
+  `1d62665e5e9` moved `receive.address.spec.ts` off Wallet XP but carved XRP and
+  Tezos out to `Team.BST` — on desktop through two `teamOwner` overrides, on mobile
+  through `BST_VERIFY_ADDRESS_CURRENCIES`. Every test split from B2CQA-249 and
+  B2CQA-651 belongs to Coin-integration, so both carve-outs go, and with them the
+  now-dead `teamOwner?` field on `ReceiveTestCase`.
+
+  Ownership feeds Allure's `owner`/`parentSuite`/`feature` and the `team` CI
+  dropdown, which `e2e/tooling/filter/teamSpecs.mjs` resolves by grepping
+  `Team.<MEMBER>` per spec _file_ — so a single `Team.BST` line pulled the whole
+  file into `team=bst`. `--list-teams` now reports `bst` at 9 desktop spec files
+  instead of 10 and 120 mobile instead of 130, with `coin-integration` unchanged.
+
+  Mobile also linked only the B2CQA-249-family key for eight of the ten currencies
+  while desktop linked both families. The missing B2CQA-651-family keys (2687, 2688,
+  2689, 2690, 2691, 2693, 2694, 2696) are added so both suites report the same Xray
+  tests.
+
+### Patch Changes
+
+- Updated dependencies [[`e09211c`](https://github.com/LedgerHQ/ledger-live/commit/e09211c3477dc91530c2670a0b34b29fb8d3d943), [`16a454f`](https://github.com/LedgerHQ/ledger-live/commit/16a454fa79be46df6aec3c50ad40407f36dfdea9), [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`ca6dd3a`](https://github.com/LedgerHQ/ledger-live/commit/ca6dd3a81b3453808e22794ad416a10658c5e3d4), [`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`935deee`](https://github.com/LedgerHQ/ledger-live/commit/935deee22297be7ea806866c9c4514d1a20c9ae5), [`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4), [`cdb273b`](https://github.com/LedgerHQ/ledger-live/commit/cdb273b068df78cd5a0dbd4281fb79f22e0a7506), [`9e37f58`](https://github.com/LedgerHQ/ledger-live/commit/9e37f58a84f7ee9585142c0a8ac767da58b6d06f), [`06b5db9`](https://github.com/LedgerHQ/ledger-live/commit/06b5db9dd2b49bbbf256e9376d67f9c64b3a1a4d), [`7e44af4`](https://github.com/LedgerHQ/ledger-live/commit/7e44af495eccab1fac4b0808d6729a595b610c69), [`7050652`](https://github.com/LedgerHQ/ledger-live/commit/70506520dafbccca4e014ac30d75647a5b7fe7d0), [`7bfbb69`](https://github.com/LedgerHQ/ledger-live/commit/7bfbb69b29d66d1b908cddd4b7cad893f77a8ebc), [`60655cd`](https://github.com/LedgerHQ/ledger-live/commit/60655cdf828eebdddd515d52c8fc5876ea50baf8), [`8146728`](https://github.com/LedgerHQ/ledger-live/commit/814672815a08dd57160d3aa4c28e92c3f508807e), [`b30a8cd`](https://github.com/LedgerHQ/ledger-live/commit/b30a8cd8acfeabb444cd7e2acb1ac5eaa959b221), [`a62261e`](https://github.com/LedgerHQ/ledger-live/commit/a62261e2e63218affcd3690a70b5a42f355a48a4), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`654199a`](https://github.com/LedgerHQ/ledger-live/commit/654199ad52f8dce63fc46cd826d11f90c533b804), [`d1a8cb2`](https://github.com/LedgerHQ/ledger-live/commit/d1a8cb2403bbe6771dfee3e43fbc4c4df61d4c7c), [`903c180`](https://github.com/LedgerHQ/ledger-live/commit/903c1802ea5d4cc3fe1bfe5609b8cf3871152cf0), [`a6a7a94`](https://github.com/LedgerHQ/ledger-live/commit/a6a7a946b1c1dbdda1cfa2c049f536f7235ddde2), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9), [`c72a646`](https://github.com/LedgerHQ/ledger-live/commit/c72a646d28a4a5d144808f4a99e80d7788895603), [`c6a569d`](https://github.com/LedgerHQ/ledger-live/commit/c6a569d5848e6c0fd7973cb5ab7241b39d47f77b), [`a9f0a51`](https://github.com/LedgerHQ/ledger-live/commit/a9f0a51f20cf3e7b038cc6e5762557e93760a37e), [`a17ef12`](https://github.com/LedgerHQ/ledger-live/commit/a17ef128d44c9ca9bc85c3c8b8d691981c5e638f), [`2eb6f5c`](https://github.com/LedgerHQ/ledger-live/commit/2eb6f5c7b3a7694a028bfe62279102188aeac028), [`d1d26de`](https://github.com/LedgerHQ/ledger-live/commit/d1d26def09d28102238b31b684d1745c4f1ad8cc)]:
+  - @ledgerhq/live-common@38.0.0-next.0
+  - @shared/feature-flags@0.23.0-next.0
+  - @ledgerhq/live-e2e-shared@0.12.0-next.0
+  - @ledgerhq/live-cli@26.5.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.11.0-next.0
+  - @shared/env@0.7.0-next.0
+
 ## 0.40.0
 
 ### Minor Changes

@@ -1,9 +1,11 @@
 {
   "name": "@ledgerhq/live-send",
-  "version": "0.0.1",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "Shared Ledger Wallet send-flow helpers extracted from live-common",
-  "keywords": ["Ledger"],
+  "keywords": [
+    "Ledger"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"

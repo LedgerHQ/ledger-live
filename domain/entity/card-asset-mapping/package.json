@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-card-asset-mapping",
-  "version": "0.5.0",
+  "version": "0.6.0-next.0",
   "private": true,
   "description": "Maps a card provider's asset onto the Ledger currency it is (one catalog per provider)",
   "main": "src/index.ts",

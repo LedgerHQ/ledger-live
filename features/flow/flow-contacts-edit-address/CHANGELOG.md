@@ -1,5 +1,13 @@
 # @features/flow-contacts-edit-address
 
+## 0.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`16a454f`](https://github.com/LedgerHQ/ledger-live/commit/16a454fa79be46df6aec3c50ad40407f36dfdea9), [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`632dd93`](https://github.com/LedgerHQ/ledger-live/commit/632dd9368616a97581d037f1503b2b16f567c02a), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d)]:
+  - @features/platform-contacts@0.7.0-next.0
+  - @domain/entity-contact@0.9.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes
