@@ -45,6 +45,13 @@ describe("useCardViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/paytab", { replace: true, state: null });
   });
 
+  it("hands it the provider app id alongside the code, when the deep link carried one", () => {
+    const { result } = renderCardViewModel({ code: "auth-code", appId: "app-value" });
+
+    expect(result.current.login.callback).toEqual({ code: "auth-code", appId: "app-value" });
+    expect(mockNavigate).toHaveBeenCalledWith("/paytab", { replace: true, state: null });
+  });
+
   it("hands it no callback when the deep link brought no code", () => {
     const { result } = renderCardViewModel(null);
 
