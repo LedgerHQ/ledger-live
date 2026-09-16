@@ -81,25 +81,18 @@ function toApiOperations(tx: NativeTransfer, accountHash: string): Operation[] {
  * List an account's native CSPR transfers, newest first, down to `minHeight`.
  *
  * The indexer has no server-side filter or cursor: `minHeight` is applied while walking the feed,
- * and a cursor would mean re-walking from page 1 on every page, so it is rejected. This function
- * always returns the whole range in one page and never hands back a `next`.
- *
- * `limit` is **accepted and ignored**. It is documented as a soft limit -- a module "may return
- * less or more" -- so ignoring it is within contract while rejecting it is not. Honouring it would
- * be worse than ignoring it here: with no cursor to continue from, returning a short page would
- * silently drop every operation past the cut, and the caller's next sync resumes above that point
- * and never comes back for them. A caller that needs its per-page cost bounded cannot get it from
- * this module; what it can bound is the total it keeps, after this page returns.
+ * and `cursor` / `limit` would mean re-walking from page 1 on every page, so they are rejected.
  */
 export async function listOperations(
   context: CasperContext,
   address: string,
-  { minHeight, cursor, order }: ListOperationsOptions,
+  { minHeight, cursor, limit, order }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
   if (order !== undefined && order !== "desc") {
     throw new Error(`casper: listOperations order "${order}" is not supported`);
   }
   if (cursor !== undefined) throw new Error("casper: listOperations cursor is not supported");
+  if (limit !== undefined) throw new Error("casper: listOperations limit is not supported");
 
   const config = await context.config();
   const accountHash = casperAccountHashFromPublicKey(address);
