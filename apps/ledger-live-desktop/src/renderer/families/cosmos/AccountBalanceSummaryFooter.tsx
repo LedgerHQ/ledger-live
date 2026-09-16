@@ -17,6 +17,7 @@ import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import { getCosmosResources } from "@ledgerhq/live-common/families/cosmos/types";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -85,11 +86,11 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   const unit = useAccountUnit(account);
   if (account.type !== "Account") return null;
-  const { spendableBalance: _spendableBalance, cosmosResources } = account;
+  const { spendableBalance: _spendableBalance } = account;
   const {
     delegatedBalance: _delegatedBalance = new BigNumber(0),
     unbondingBalance: _unbondingBalance = new BigNumber(0),
-  } = cosmosResources || {};
+  } = getCosmosResources(account) || {};
   const formatConfig = {
     disableRounding: false,
     alwaysShowSign: false,

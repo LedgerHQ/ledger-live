@@ -11,9 +11,10 @@ import Rewards from "~/renderer/images/rewards.svg";
 import Alert from "~/renderer/components/Alert";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { getCosmosResources } from "@ledgerhq/live-common/families/cosmos/types";
 
 const RewardImg = styled.img.attrs(() => ({
   src: Rewards,
@@ -22,7 +23,8 @@ const RewardImg = styled.img.attrs(() => ({
   height: auto;
 `;
 export default function StepStarter({ account, transaction }: StepProps) {
-  invariant(account && account.cosmosResources && transaction, "account and transaction required");
+  const cosmosResources = getCosmosResources(account);
+  invariant(account && cosmosResources && transaction, "account and transaction required");
   const crypto = cryptoFactory(account.currency.id);
   return (
     <Box flow={4}>

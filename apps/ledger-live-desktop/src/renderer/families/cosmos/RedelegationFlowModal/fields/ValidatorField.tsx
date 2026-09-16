@@ -8,12 +8,13 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";
 import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
-import {
+import type {
   CosmosAccount,
   CosmosValidatorItem,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+
 const ValidatorsSection = styled(Box)`
   width: 100%;
   height: 100%;
@@ -31,12 +32,10 @@ export default function ValidatorField({
   const currencyId = account.currency.id.toLowerCase();
   const [search, setSearch] = useState("");
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
-  const { cosmosResources } = account;
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
   );
-  invariant(cosmosResources, "cosmosResources required");
   const unit = useAccountUnit(account);
   const fromValidatorAddress = transaction.sourceValidator;
   const sortedFilteredValidators = validators.filter(

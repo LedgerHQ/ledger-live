@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
-import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { type CosmosAccount, getCosmosResources } from "@ledgerhq/live-common/families/cosmos/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,7 +23,7 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   const label = useGetStakeLabelLocaleBased();
   const navigate = useNavigate();
   const mainAccount = getMainAccount(account, parentAccount);
-  const { cosmosResources } = mainAccount;
+  const cosmosResources = getCosmosResources(mainAccount);
   const earnRewardEnabled = canDelegate(mainAccount) && !!cosmosResources;
   const hasDelegations = (cosmosResources?.delegations.length ?? 0) > 0;
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
