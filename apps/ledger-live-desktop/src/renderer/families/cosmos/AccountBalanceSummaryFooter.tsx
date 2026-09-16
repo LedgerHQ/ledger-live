@@ -11,7 +11,10 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-import { type CosmosAccount, getCosmosResources } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  type CosmosAccount,
+  getCosmosResources,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import { CosmosAPI } from "@ledgerhq/live-common/families/cosmos/network";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { TokenAccount } from "@ledgerhq/types-live";
