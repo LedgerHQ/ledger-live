@@ -182,10 +182,26 @@ describe("transaction device action — sign-prompt abandonment", () => {
     ]);
   });
 
-  it("classifies a wrong account before signing starts as a device error", async () => {
+  it("does not close a dapp or native attempt when the wrong account is connected before signing", async () => {
     appState.current = WRONG_DEVICE;
     const { unmount } = render();
     await flush();
+    unmount();
+
+    expect(events).toEqual([]);
+  });
+
+  it("classifies a wrong account after signing starts as a device error", async () => {
+    const { rerender, unmount } = render();
+    await flush();
+
+    act(() => signEvents.next({ type: "device-signature-requested" }));
+
+    appState.current = WRONG_DEVICE;
+    await act(async () => {
+      rerender();
+      await Promise.resolve();
+    });
     unmount();
 
     expect(events).toEqual([

@@ -204,21 +204,18 @@ export const createAction = (
       }
     }, []);
 
-    const failInterruptedAttempt = useCallback(
-      (interruptionError: Error, allowUnstarted: boolean) => {
-        if (!(attemptStartedRef.current || allowUnstarted) || settledRef.current) return;
+    const failInterruptedAttempt = useCallback((interruptionError: Error) => {
+      if (!attemptStartedRef.current || settledRef.current) return;
 
-        settledRef.current = true;
-        emitTransactionEvent({
-          ...buildTransactionFailureEvent(buildCommonRef.current(), {
-            stage: TransactionStage.Sign,
-            error: interruptionError,
-          }),
-          operationalOnly: true,
-        });
-      },
-      [],
-    );
+      settledRef.current = true;
+      emitTransactionEvent({
+        ...buildTransactionFailureEvent(buildCommonRef.current(), {
+          stage: TransactionStage.Sign,
+          error: interruptionError,
+        }),
+        operationalOnly: true,
+      });
+    }, []);
 
     useEffect(() => () => abandonAttempt(), [abandonAttempt]);
 
@@ -231,7 +228,7 @@ export const createAction = (
             : Object.assign(new Error("Device disconnected"), {
                 name: "DisconnectedDeviceDuringOperation",
               });
-        failInterruptedAttempt(interruptionError, Boolean(inWrongDeviceForAccount || error));
+        failInterruptedAttempt(interruptionError);
         setState(initialState);
         // The attempt ended without the user dismissing anything — the device went away, or was
         // the wrong one. Clearing the refs stops that being reported later as a dismissal, and

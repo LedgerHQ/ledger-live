@@ -181,6 +181,7 @@ describe("wrapAccountBridge — transaction observability seam", () => {
     expect(toTxLifecyclePayload(events[0], "desktop")).toMatchObject({
       event: "tx_intent",
       path: "native",
+      currency_family: "other",
     });
     expect(toTxLifecyclePayload(events[1], "desktop")).toMatchObject({
       event: "tx_terminal",

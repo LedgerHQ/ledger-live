@@ -77,7 +77,7 @@ describe("desktop transaction observer", () => {
       event: "tx_terminal",
       path: "native",
       platform: "desktop",
-      currency_family: "cardano",
+      currency_family: "other",
       currency_id: "cardano",
       network: "cardano",
       app_version: "llc/test",
