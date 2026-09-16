@@ -6,6 +6,7 @@ import { useContactsFeature } from "@features/platform-contacts";
 import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
+import { useCountervalueFormatter } from "../../hooks/useCountervalueFormatter";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import type { FeatureTourProps } from "@features/flow-pay-feature-tour";
 import { navigateToCardHistory } from "LLM/features/OperationsHistory/utils/navigateToCardHistory";
@@ -85,12 +86,20 @@ export function usePayTabViewModel() {
 
   const cardAssets = usePayCardAssets();
 
+  // Without a countervalue formatter the flow shows the bare artwork instead of the card's balance.
+  const formatCountervalue = useCountervalueFormatter();
+  const cardFormatters: CardProps["formatters"] = useMemo(
+    () => ({ countervalue: formatCountervalue }),
+    [formatCountervalue],
+  );
+
   return {
     top,
     bottom: bottom + insets.bottom,
     login,
     unlock: unlockCardNumbers,
     cardAssets,
+    cardFormatters,
     featureTour,
     balance,
     actionTiles,
