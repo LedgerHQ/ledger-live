@@ -25,7 +25,7 @@ export function groupCardHistoryItems(
       groups.push({ day, items: [item] });
       currentKey = dayKey;
     } else {
-      const current = groups[groups.length - 1];
+      const current = groups.at(-1);
       if (!current) continue;
       groups[groups.length - 1] = { day: current.day, items: [...current.items, item] };
     }

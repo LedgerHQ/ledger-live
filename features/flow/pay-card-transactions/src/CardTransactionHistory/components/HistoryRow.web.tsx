@@ -12,16 +12,14 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { Information } from "@ledgerhq/lumen-ui-react/symbols";
 import { StatusIcon } from "./StatusIcon";
-import type { HistoryRowViewModel } from "./useHistoryRowViewModel";
+import { useHistoryRowViewModel } from "./useHistoryRowViewModel";
+import type { HistoryRowProps } from "./types";
 
-type HistoryRowViewProps = HistoryRowViewModel &
-  Readonly<{
-    onRowClick: () => void;
-  }>;
+export function HistoryRow({ item, formatters, onRowClick }: HistoryRowProps) {
+  const row = useHistoryRowViewModel(item, formatters);
 
-export function HistoryRowView({ onRowClick, ...row }: HistoryRowViewProps) {
   return (
-    <TableRow clickable onClick={onRowClick} data-testid={`card-history-row-${row.id}`}>
+    <TableRow clickable onClick={() => onRowClick(item)} data-testid={`card-history-row-${row.id}`}>
       <TableCell>
         <TableCellItem>
           <StatusIcon

@@ -1,7 +1,14 @@
-import React from "react";
+import React, { type ReactNode } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
-import type { StatusMessageProps } from "./types";
+
+export type StatusMessageProps = Readonly<{
+  spot: ReactNode;
+  titleKey: string;
+  descriptionKey: string;
+  testId: string;
+  action?: Readonly<{ labelKey: string; testId: string; onClick: () => void }>;
+}>;
 
 export function StatusMessage({
   spot,

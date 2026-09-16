@@ -8,27 +8,13 @@ import {
   formatMerchantName,
   formatSignedAmount,
 } from "../../CardTransactions/components/ListItem/formatCardTransactionItem";
-
-export type HistoryRowViewModel = Readonly<{
-  id: string;
-  merchant: string;
-  category: PayCardTransaction["mccCategory"];
-  categoryLabel: string;
-  status: PayCardTransaction["status"];
-  time: string;
-  statusLabel?: string;
-  statusLabelTone?: "error" | "muted";
-  fundingLabel?: string;
-  fundingTooltip?: string;
-  fundingTooltipAriaLabel?: string;
-  amount: string;
-}>;
+import type { HistoryRowViewProps } from "./types";
 
 const UNSUCCESSFUL_STATUSES = new Set<PayCardTransaction["status"]>(["DECLINED", "REVERTED"]);
 
 function statusLabelToneFor(
   status: PayCardTransaction["status"],
-): HistoryRowViewModel["statusLabelTone"] {
+): HistoryRowViewProps["statusLabelTone"] {
   if (status === "DECLINED") return "error";
   if (status === "REVERTED") return "muted";
   return undefined;
@@ -37,7 +23,7 @@ function statusLabelToneFor(
 export function useHistoryRowViewModel(
   item: CardTransactionItem,
   formatters?: CardTransactionFormatters,
-): HistoryRowViewModel {
+): HistoryRowViewProps {
   const { t } = useTranslation();
   const { transaction, categoryLabel } = item;
 

@@ -3,8 +3,7 @@ import { Skeleton, Spot, Table, TableRoot } from "@ledgerhq/lumen-ui-react";
 import { CreditCard } from "@ledgerhq/lumen-ui-react/symbols";
 import { HistoryTableBody } from "./components/HistoryTableBody";
 import { HistoryTableHeader } from "./components/HistoryTableHeader";
-import { StatusMessage } from "./components/StatusMessage";
-import type { StatusMessageProps } from "./components/StatusMessage/types";
+import { StatusMessage, type StatusMessageProps } from "./components/StatusMessage";
 import type { CardTransactionHistoryViewProps } from "./types";
 
 function createPayCta(

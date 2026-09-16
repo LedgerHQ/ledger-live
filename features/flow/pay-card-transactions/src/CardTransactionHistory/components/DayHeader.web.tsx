@@ -1,20 +1,13 @@
 import React, { useMemo } from "react";
 import { TableGroupHeaderRow } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
+import { isSameCalendarDay } from "../../CardTransactions/components/ListItem/formatCardTransactionItem";
 
 type DayHeaderProps = Readonly<{
   day?: Date;
   columnCount: number;
   formatDay?: (date: Date) => string;
 }>;
-
-function isSameCalendarDay(left: Date, right: Date): boolean {
-  return (
-    left.getFullYear() === right.getFullYear() &&
-    left.getMonth() === right.getMonth() &&
-    left.getDate() === right.getDate()
-  );
-}
 
 export function DayHeader({ day, columnCount, formatDay }: DayHeaderProps) {
   const { t } = useTranslation();
