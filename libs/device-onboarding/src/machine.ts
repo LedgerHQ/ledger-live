@@ -37,6 +37,7 @@ export const deviceOnboardingMachine = setup({
       }),
     deviceNotGenuine: ({ context }) => currentVerdict(context)?.isGenuine === false,
     canShowEarlyCheck: ({ context }) =>
+      !context.checksPaused &&
       isTouchscreen(context.deviceModelId) &&
       !context.isOnboarded &&
       currentVerdict(context) === null,
@@ -61,7 +62,7 @@ export const deviceOnboardingMachine = setup({
   on: {
     LOCKED: { target: ".deviceLocked", actions: "leaveEarlyCheckScreen" },
     TRANSPORT_LOST: { target: ".awaitingSession", actions: "leaveEarlyCheckScreen" },
-    QUIT: ".exitOnboarding",
+    QUIT: ".quitting",
   },
   output: ({ context, event }) => exitContract(context, event.output),
   states: {
@@ -234,6 +235,28 @@ export const deviceOnboardingMachine = setup({
 
     deviceLocked: { on: { UNLOCKED: "readingState" } },
     awaitingSession: { on: { SESSION_READY: "readingState" } },
+
+    quitting: {
+      always: [
+        { guard: "onEarlyCheckScreen", target: "leavingOnQuit" },
+        { target: "exitOnboarding" },
+      ],
+    },
+
+    leavingOnQuit: {
+      invoke: {
+        src: "toggleEarlyCheck",
+        input: ({ context }) => ({
+          dmk: context.dmk,
+          sessionId: context.ports.currentSessionId(),
+          toggle: EarlyCheckToggle.Exit,
+        }),
+      },
+      on: {
+        EARLY_CHECK_TOGGLED: { target: "exitOnboarding", actions: "leaveEarlyCheckScreen" },
+        EARLY_CHECK_UNAVAILABLE: { target: "exitOnboarding", actions: "leaveEarlyCheckScreen" },
+      },
+    },
 
     legacyFallback: { type: "final", output: { reason: "legacyFallback" } satisfies ExitOutput },
     bootloaderRecovery: {

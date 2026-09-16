@@ -37,8 +37,9 @@ The app owns the session for the whole run — it opens it, reconnects after a t
 keeps it open when the machine exits. The machine only reads `currentSessionId()`, and re-reads it
 on every device call, so a reconnection needs no restart.
 
-The machine exits with the session id, the device, and one reason: `legacyFallback`,
-`resumeFirmwareUpdate`, `userQuit`, `offerLedgerSync` or `completed`.
+Every exit carries the session id, the device, and one reason. This phase reaches
+`legacyFallback`, `resumeFirmwareUpdate` and `userQuit`; `offerLedgerSync` and `completed` land
+with the setup phase.
 
 ## Key exports / concepts
 

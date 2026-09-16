@@ -189,6 +189,35 @@ describe("the on-device waiting screen", () => {
     expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
   });
 
+  it("is not shown again to a device that comes back with its checks paused", async () => {
+    const { actor, fake } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [deviceRefusal],
+    });
+
+    actor.send({ type: "CLOSE" });
+    await settle();
+    actor.send({ type: "LOCKED" });
+    actor.send({ type: "UNLOCKED" });
+    await settle();
+
+    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter]);
+    expect(stateOf(actor)).toBe("checksIdle");
+  });
+
+  it("is dismissed when the user leaves on the onboarding cross", async () => {
+    const { actor, fake } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [deviceRefusal],
+    });
+
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
+    expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
+  });
+
   it("is shown again to a device that relocked before its checks were done", async () => {
     const { actor, fake } = await start({
       osVersion: [os(unseeded)],
@@ -668,6 +697,7 @@ describe("global handlers", () => {
 
     await reach(actor, state);
     actor.send({ type: "QUIT" });
+    await settle();
 
     expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
   });
