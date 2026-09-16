@@ -34,11 +34,8 @@ const FLAG_RELOAD_MARKER = "__swapE2eFlagReload";
 // Budget per reopen step, because cleanup runs on tests that already failed.
 const CLEAR_FLAG_OVERRIDES_TIMEOUT = 10_000;
 
-// The app drops the get-quotes CTA once it has quotes.
-const GET_QUOTES_CTA_TIMEOUT = 15_000;
-
-// A disabled CTA is already rendered when the form did not validate.
-const DISABLED_CTA_PROBE_TIMEOUT = 5_000;
+// Probe budget, because the app can drop the get-quotes CTA.
+const GET_QUOTES_CTA_PROBE_TIMEOUT = 15_000;
 
 const describeError = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
@@ -147,22 +144,20 @@ export default class SwapLiveAppPage {
   }
 
   // Take any suffix, but never the disabled CTA.
-  // A missing CTA is normal, because the app drops it once it has quotes.
-  // A CTA that stays disabled is a form failure, so name it here.
+  // A missing CTA is normal after the quotes load.
+  // A CTA that stays disabled is a form failure.
   @Step("Tap get quotes button")
   async tapGetQuotesButton() {
     await getValueByWebTestId(this.toAmountInput);
-    const cta = getWebElementByCssSelector(
+    const renderedCta = getWebElementByCssSelector(`[data-testid^='${this.getQuotesButton}']`);
+    if (!(await waitWebElement(renderedCta, GET_QUOTES_CTA_PROBE_TIMEOUT, false))) return;
+    const enabledCta = getWebElementByCssSelector(
       `[data-testid^='${this.getQuotesButton}']:not([data-testid^='${this.quotesButtonDisabled}'])`,
     );
-    if (await waitWebElement(cta, GET_QUOTES_CTA_TIMEOUT, false)) {
-      await tapWebElementByElement(cta);
-      return;
-    }
-    const disabled = getWebElementByCssSelector(`[data-testid^='${this.quotesButtonDisabled}']`);
-    if (await waitWebElement(disabled, DISABLED_CTA_PROBE_TIMEOUT, false)) {
+    if (!(await waitWebElement(enabledCta, DEFAULT_TIMEOUT, false))) {
       throw new Error("Get quotes CTA stayed disabled: the swap form did not validate");
     }
+    await tapWebElementByElement(enabledCta);
   }
 
   @Step("Verify get quotes CTA is hidden")
