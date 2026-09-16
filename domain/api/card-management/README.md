@@ -10,6 +10,7 @@ shared `cardApi` service (`@shared/api-services`, `services/card`) rather than d
 - `schema.ts` — zod wire contracts for the responses below.
 - `types.ts` — the inferred response types and the request arguments each endpoint takes.
 - `transforms.ts` — maps a validated wire response onto its canonical shape.
+- `transactionsPaging.ts` — where the transaction history ends, and how its pages join.
 - `constants.ts` — `CARD_MANAGEMENT_TAGS` and the OAuth2 token path.
 - `*.mock.ts` — wire-shaped answers for the apps' MSW workers, behind the `./mock/*` exports.
 
@@ -25,7 +26,7 @@ shape and the reasons.
 | `getUser` | GET | `/v1/user` | Read the account id and verification state |
 | `orderCard` | POST | `/v1/card/order` | Order a virtual card |
 | `getCardStatus` | GET | `/v1/card/status` | Read the ordered card's state and preview fields |
-| `getCardTransactions` | GET | `/v1/card/transactions` | Read the card's own transactions, newest first |
+| `getCardTransactions` | GET | `/v1/card/transactions` | Read the card's own transactions, newest first, one page at a time |
 | `createCardDetailsToken` | POST | `/v1/card/details/token` | Mint a single-use token and image URL showing PAN, CVV and expiry |
 | `createCardPinToken` | POST | `/v1/card/pin/token` | Mint a single-use token and image URL showing the PIN |
 | `createCardSetPinToken` | POST | `/v1/card/set-pin/token` | Mint a single-use token and URL for the hosted page that sets the PIN |
@@ -38,6 +39,21 @@ shape and the reasons.
 | `unlinkWalletFromCard` | DELETE | `/v1/wallet/internal/card_linked` | Drop a wallet as a funding source, leaving it and its funds alone |
 | `updateCardWalletPriorities` | PUT | `/v1/wallet/internal/card_linked/priority` | Rewrite the order the linked wallets are charged in |
 | `getWalletHistory` | GET | `/v1/wallet/history` | Read one wallet's own history, newest first |
+
+## Paging the transaction history
+
+`getCardTransactions` is an infinite query. The provider answers a bare array and answers a page
+past the end with an empty one, so an empty page is the end. No page size is documented, so a short
+page is indistinguishable from a full one and is read past: a history that exactly fills its last
+page costs one further request, which comes back empty.
+
+`joinCardTransactionsPages` puts the pages back together, newest first, dropping repeats. Both
+matter because a purchase landing between two reads shifts the paging down: one transaction can
+arrive on two consecutive pages, and a later page can carry something newer than anything on the
+first. Every caller reading the pages as one list joins them through it.
+
+`page` is not a filter: it is the query's page param. `PayCardTransactionsRequest` is the filters
+alone, and `PayCardTransactionsPageRequestSchema` validates the pair RTK Query actually sends.
 
 ## OAuth2 grants
 

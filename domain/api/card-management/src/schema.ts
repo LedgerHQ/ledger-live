@@ -226,8 +226,7 @@ export const PayCardTransactionSchema = z.object({
 
 export const PayCardTransactionsResponseSchema = z.array(PayCardTransactionSchema);
 
-const PayCardTransactionFiltersSchema = z.object({
-  page: z.number().int().nonnegative().optional(),
+const PayCardTransactionFilterFieldsSchema = z.object({
   searchKey: z.string().min(1).optional(),
   mccCategories: z.string().min(1).optional(),
 });
@@ -236,24 +235,40 @@ const PayCardTransactionFiltersSchema = z.object({
  * The provider requires `dateFrom` and `dateTo` together, so neither is useful alone: one without
  * the other is a filter the backend rejects.
  *
+ * `page` is not here: it is the infinite query's page param, not a filter a caller passes.
+ *
  * A union rather than a refinement, so the rule is in the inferred type as well: a caller cannot
  * write a filter that only fails once it is sent.
  */
-export const PayCardTransactionsRequestSchema = z
-  .union(
-    [
-      PayCardTransactionFiltersSchema.extend({
-        dateFrom: z.string().min(1),
-        dateTo: z.string().min(1),
-      }),
-      PayCardTransactionFiltersSchema.extend({
-        dateFrom: z.undefined().optional(),
-        dateTo: z.undefined().optional(),
-      }),
-    ],
-    { error: "dateFrom and dateTo go together" },
-  )
-  .optional();
+const PayCardTransactionsFilterSchema = z.union(
+  [
+    PayCardTransactionFilterFieldsSchema.extend({
+      dateFrom: z.string().min(1),
+      dateTo: z.string().min(1),
+    }),
+    PayCardTransactionFilterFieldsSchema.extend({
+      dateFrom: z.undefined().optional(),
+      dateTo: z.undefined().optional(),
+    }),
+  ],
+  { error: "dateFrom and dateTo go together" },
+);
+
+export const PayCardTransactionsRequestSchema = PayCardTransactionsFilterSchema.optional();
+
+/**
+ * What the transactions endpoint validates before a request goes out.
+ *
+ * An infinite query is handed the filters and the page it is reading as one pair, so the pair is
+ * what `argSchema` sees — validating the filters alone would reject every request.
+ *
+ * `queryArg` is a union with `undefined` rather than an optional key: RTK Query always sends the
+ * key, and a schema that makes it optional does not satisfy the type it is checked against.
+ */
+export const PayCardTransactionsPageRequestSchema = z.object({
+  queryArg: z.union([PayCardTransactionsFilterSchema, z.undefined()]),
+  pageParam: z.number().int().nonnegative(),
+});
 
 /**
  * One entry of a wallet's own history.
