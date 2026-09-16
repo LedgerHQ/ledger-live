@@ -225,7 +225,7 @@ catalog:
   "@ledgerhq/coin-hypercore": 2.0.1
   "@ledgerhq/coin-module-framework": 9.1.0
   "@ledgerhq/coin-stellar": 9.7.2
-  "@ledgerhq/coin-tezos": 10.2.6
+  "@ledgerhq/coin-tezos": 11.0.0
   "@ledgerhq/coin-xrp": 10.1.1
   detox: 20.51.3
 
