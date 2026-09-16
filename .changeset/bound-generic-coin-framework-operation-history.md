@@ -15,13 +15,18 @@ an engineering bound, not a retention policy: a lower per-currency or global `ma
 remotely overrides it at any time, and the ceiling counts raw operations as modules emit them —
 before filtering and before grouping by transaction — so it is not a count of rows a user sees.
 
-The module's paginated `listOperations` walk is now always given a `limit`, sized from a
-configurable per-page size (falling back to a safe default). This is independent of the bound
-above: a `limit` bounds what a single page costs, the bound governs how much history is retained.
-Without it the walk's first "page" could be the entire history in one unbounded call, and no
-ceiling would get a chance to stop it before memory ran out. Note that a `limit` flips several
-modules onto a distinct, limit-aware fetch path, so this changes how every family fetches — not
-what it retains.
+The walk now sends a per-page `limit` to the families whose support for it is established — today
+only evm, whose page cost was measured. This is independent of the bound above: a `limit` bounds
+what a single page costs, the bound governs how much history is retained. Without it the walk's
+first "page" can be the entire history in one unbounded call, and no ceiling gets a chance to stop
+it before memory runs out.
+
+It is sent per family rather than to everyone because the contract requires a module to *raise* a
+"not supported" error when sent a `limit` it cannot honour — several do. Sending one blindly would
+fail the sync of every such family. A family absent from the shipped list receives no `limit` and
+therefore behaves exactly as it does today; a remote per-currency value can establish one without
+waiting for a release. The consequence to keep in mind: the per-page protection covers evm only,
+while the retention bound covers every family.
 
 Fix a truncation bug in the same walk, independent of everything above: it used to stop as soon as
 a page came back empty, even when the module handed back a cursor to keep going. That shape is
