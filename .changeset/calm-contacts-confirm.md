@@ -6,4 +6,4 @@
 "@features/flow-contacts": patch
 ---
 
-Add mobile E2E coverage for creating, renaming and deleting a contact with EVM addresses, and let device intents run against Speculos by registering it as a discoverable transport.
+Add mobile E2E coverage for creating, renaming and deleting a contact with EVM addresses, and let device intents run against Speculos by registering it as a discoverable transport. The spec stays skipped until the Speculos catalog ships the Ethereum app version the contacts device flows require.
