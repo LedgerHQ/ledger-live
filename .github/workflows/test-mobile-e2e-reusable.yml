@@ -341,12 +341,12 @@ jobs:
           )
 
           if [ "$EVENT_NAME" = "schedule" ]; then
-            echo "ios_device=${PLATFORM_DEVICE[ios]}"           >> $GITHUB_OUTPUT
-            echo "android_device=${PLATFORM_DEVICE[android]}"  >> $GITHUB_OUTPUT
+            echo "ios_device=${PLATFORM_DEVICE[ios]}"           >> "$GITHUB_OUTPUT"
+            echo "android_device=${PLATFORM_DEVICE[android]}"  >> "$GITHUB_OUTPUT"
           else
             INPUT_DEVICE="$SPECULOS_DEVICE_INPUT"
-            echo "ios_device=$INPUT_DEVICE"     >> $GITHUB_OUTPUT
-            echo "android_device=$INPUT_DEVICE" >> $GITHUB_OUTPUT
+            echo "ios_device=$INPUT_DEVICE"     >> "$GITHUB_OUTPUT"
+            echo "android_device=$INPUT_DEVICE" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Write summary
@@ -388,7 +388,7 @@ jobs:
           echo "- **Android Feature Flags:** $ANDROID_FEATURE_FLAGS"
           echo "- **iOS Feature Flags:** $IOS_FEATURE_FLAGS"
           echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
-          } >> $GITHUB_STEP_SUMMARY
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate feature flags JSON input
         shell: bash
@@ -397,6 +397,7 @@ jobs:
           if [ -z "$raw" ]; then
             exit 0
           fi
+          # shellcheck disable=SC2016
           node -e '
             try {
               JSON.parse(process.argv[1]);
@@ -416,19 +417,21 @@ jobs:
           if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
-          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           HEAD_SHA=$(git rev-parse HEAD)
-          echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
-          echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           # QAA-1509: this cache carries /usr/local/lib/android/sdk/emulator/, so the
           # emulator binary every shard runs is whichever one sdkmanager installed the
           # last time this key changed -- the setup job is skipped while the object
           # exists. Bump the trailing version to force a rebuild onto a current
           # emulator; the one pinned since AVD_API went to 36 segfaults mid-run.
-          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v9" >> $GITHUB_OUTPUT
+          {
+            echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}"
+            echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}"
+            echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios"
+            echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android"
+            echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2"
+            echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2"
+            echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v9"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Prepare test filter
         id: test-filter
@@ -680,9 +683,11 @@ jobs:
 
       - name: Set shard test files from pre-computed matrix
         run: |
-          echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-          echo "${{ matrix.files }}" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          {
+            echo "SHARD_TEST_FILES<<EOF"
+            echo "${{ matrix.files }}"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: JFrog npm auth
@@ -752,7 +757,7 @@ jobs:
         run: |
           set -o pipefail
           IOS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes[-1].version // "unknown"' || echo "unknown")
-          echo "DEVICE_INFO=${{ env.IOS_SIMULATOR_DEVICE }} (iOS $IOS_VERSION)" >> $GITHUB_ENV
+          echo "DEVICE_INFO=${{ env.IOS_SIMULATOR_DEVICE }} (iOS $IOS_VERSION)" >> "$GITHUB_ENV"
 
       - name: Compute userdata cache key date
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
@@ -793,7 +798,9 @@ jobs:
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
-        run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+        run: |
+          # shellcheck disable=SC2086,SC2046
+          pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
@@ -816,7 +823,7 @@ jobs:
         id: set-output
         if: ${{ !cancelled() }}
         run: |
-          echo "status_${{ matrix.shard }}=${{ steps.run-ios.outcome }}" >> $GITHUB_OUTPUT
+          echo "status_${{ matrix.shard }}=${{ steps.run-ios.outcome }}" >> "$GITHUB_OUTPUT"
 
   detox-tests-android:
     name: Android E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
@@ -898,9 +905,11 @@ jobs:
 
       - name: Set shard test files from pre-computed matrix
         run: |
-          echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-          echo "${{ matrix.files }}" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          {
+            echo "SHARD_TEST_FILES<<EOF"
+            echo "${{ matrix.files }}"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Setup Android Environment
@@ -1023,7 +1032,7 @@ jobs:
       - name: Get Android device info
         run: |
           DEVICE_NAME=$(echo '${{ env.AVD_PROFILE }}' | sed 's/_/ /g; s/\b\w/\U&/g')
-          echo "DEVICE_INFO=${DEVICE_NAME} (Android ${{ env.AVD_API }})" >> $GITHUB_ENV
+          echo "DEVICE_INFO=${DEVICE_NAME} (Android ${{ env.AVD_API }})" >> "$GITHUB_ENV"
 
       - name: Compute userdata cache key date
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
@@ -1063,7 +1072,9 @@ jobs:
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
-        run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+        run: |
+          # shellcheck disable=SC2086,SC2046
+          pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Stop emulator watchdog
         if: always()
@@ -1081,8 +1092,8 @@ jobs:
           WEDGES="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-wedges.log"
           if [ -s "$WEDGES" ]; then
             {
-              echo "### ⚠️ An emulator wedged during this shard"
-              echo "Frozen RSS + idle process state: the device was lost before any test noticed."
+            echo "### ⚠️ An emulator wedged during this shard"
+            echo "Frozen RSS + idle process state: the device was lost before any test noticed."
               echo '```'
               cat "$WEDGES"
               echo '```'
@@ -1097,8 +1108,8 @@ jobs:
             # Same default as the boot/watch scripts, which is what actually ran.
             TOTAL="$(wc -w <<<"${EMULATOR_SERIALS:-emulator-5554 emulator-5556 emulator-5558}" | tr -d ' ')"
             {
-              echo "### ❌ Emulator died during this shard"
-              echo "**Lost:** \`${LOST}\`  |  **Devices affected:** $(awk '{print $2}' "$DEATHS" | sort -u | wc -l | tr -d ' ') of ${TOTAL}"
+            echo "### ❌ Emulator died during this shard"
+            echo "**Lost:** \`${LOST}\`  |  **Devices affected:** $(awk '{print $2}' "$DEATHS" | sort -u | wc -l | tr -d ' ') of ${TOTAL}"
               echo
               echo '```'
               cat "$DEATHS"
@@ -1113,7 +1124,7 @@ jobs:
                 echo "_Re-run with \`emulator_diagnostics: true\` for coredumps and host forensics._"
               fi
               echo
-              echo "Test failures after this point are not meaningful - see QAA-1497."
+            echo "Test failures after this point are not meaningful - see QAA-1497."
               if [ -s "$WATCHLOG" ]; then
                 echo
                 echo "<details><summary>Watchdog log (last 20 lines)</summary>"
@@ -1126,7 +1137,7 @@ jobs:
               fi
             } >> "$GITHUB_STEP_SUMMARY"
             while read -r line; do
-              echo "::error title=Emulator died (QAA-1497)::$line"
+            echo "::error title=Emulator died (QAA-1497)::$line"
             done < "$DEATHS"
           else
             echo "✅ No emulator disappeared during this shard." >> "$GITHUB_STEP_SUMMARY"
@@ -1218,7 +1229,7 @@ jobs:
         id: set-output
         if: ${{ !cancelled() }}
         run: |
-          echo "status_${{ matrix.shard }}=${{ steps.run-android.outcome }}" >> $GITHUB_OUTPUT
+          echo "status_${{ matrix.shard }}=${{ steps.run-android.outcome }}" >> "$GITHUB_OUTPUT"
 
   allure-report-ios:
     name: Allure Report iOS

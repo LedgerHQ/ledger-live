@@ -187,15 +187,17 @@ jobs:
           if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
-          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}-detox-native-android-3" >> $GITHUB_OUTPUT
           HEAD_SHA=$(git rev-parse HEAD)
-          echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
-          echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=${PREFIX}android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${MAX_SHARDS}shards" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=${PREFIX}ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${MAX_SHARDS}shards-$MACOS_RUNNER_LABEL" >> $GITHUB_OUTPUT
-          echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> $GITHUB_OUTPUT
-          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
+          {
+            echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-3"
+            echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}-detox-native-android-3"
+            echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios"
+            echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android"
+            echo "android_timing_cache_key=${PREFIX}android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${MAX_SHARDS}shards"
+            echo "ios_timing_cache_key=${PREFIX}ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${MAX_SHARDS}shards-$MACOS_RUNNER_LABEL"
+            echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated"
+            echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -511,7 +513,7 @@ jobs:
         run: |
           SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-$HOME/.android/sdk}}"
           if [ -d "$SDK/emulator" ]; then
-            sudo chown -R $(whoami):$(id -ng) "$SDK/emulator"
+            sudo chown -R "$(whoami):$(id -ng)" "$SDK/emulator"
           fi
 
       - name: Install dependencies
@@ -589,6 +591,7 @@ jobs:
         run: |
           LOG_FILE="e2e/mobile/artifacts/emulator-boot.log"
           mkdir -p e2e/mobile/artifacts
+          # shellcheck disable=SC2016
           nohup bash -c '
             log() { echo "[$(date +%H:%M:%S)] $1"; }
             ts() { while IFS= read -r line; do echo "[$(date +%H:%M:%S)] [$1] $line"; done; }
@@ -660,12 +663,14 @@ jobs:
           SMOKE_FILES=$(node "$SHARD_TESTS" "@smoke" "e2e/mobile")
           if [ -z "$SMOKE_FILES" ]; then
             echo "No smoke test files found — skipping smoke tests"
-            echo "has_tests=false" >> $GITHUB_OUTPUT
+            echo "has_tests=false" >> "$GITHUB_OUTPUT"
           else
-            echo "has_tests=true" >> $GITHUB_OUTPUT
-            echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-            echo "$SMOKE_FILES" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
+            echo "has_tests=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "SHARD_TEST_FILES<<EOF"
+              echo "$SMOKE_FILES"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
             echo "Smoke test files: $SMOKE_FILES"
           fi
 
@@ -673,6 +678,7 @@ jobs:
         if: steps.smoke-files.outputs.has_tests == 'true'
         id: detox
         run: |
+          # shellcheck disable=SC2086
           pnpm mobile e2e:ci -p android -t \
             --e2e \
             $SHARD_TEST_FILES \
@@ -832,12 +838,14 @@ jobs:
           SMOKE_FILES=$(node "$SHARD_TESTS" "@smoke" "e2e/mobile")
           if [ -z "$SMOKE_FILES" ]; then
             echo "No smoke test files found — skipping smoke tests"
-            echo "has_tests=false" >> $GITHUB_OUTPUT
+            echo "has_tests=false" >> "$GITHUB_OUTPUT"
           else
-            echo "has_tests=true" >> $GITHUB_OUTPUT
-            echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
-            echo "$SMOKE_FILES" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
+            echo "has_tests=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "SHARD_TEST_FILES<<EOF"
+              echo "$SMOKE_FILES"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
             echo "Smoke test files: $SMOKE_FILES"
           fi
 
@@ -852,6 +860,7 @@ jobs:
           REMOTE_SPECULOS: "true"
           INPUTS_TEST_FILTER: "@smoke"
         run: |
+          # shellcheck disable=SC2086
           pnpm mobile e2e:ci -p ios -t \
             --e2e \
             $SHARD_TEST_FILES \
