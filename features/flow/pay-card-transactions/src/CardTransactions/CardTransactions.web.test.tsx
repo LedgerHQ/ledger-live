@@ -55,6 +55,23 @@ describe("CardTransactions", () => {
     expect(screen.getByText("NETFLIX.COM")).toBeVisible();
   });
 
+  it("shows only the preview and calls onShowMore from the subheader", async () => {
+    const page = mockPayCardTransactions();
+    const onShowMore = jest.fn();
+    server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
+
+    render(<CardTransactions onShowMore={onShowMore} />, {
+      wrapper: cardApiWrapper({ signedIn: true }),
+    });
+
+    await waitFor(() => expect(screen.getByTestId("card-transactions-list")).toBeVisible());
+    expect(screen.getAllByTestId(/^card-transactions-item-/)).toHaveLength(3);
+
+    fireEvent.click(screen.getByTestId("card-transactions-subheader"));
+
+    expect(onShowMore).toHaveBeenCalledTimes(1);
+  });
+
   it("opens a transaction dialog from a row and tracks the click", async () => {
     const page = mockPayCardTransactions();
     const onTrackEvent = jest.fn();
