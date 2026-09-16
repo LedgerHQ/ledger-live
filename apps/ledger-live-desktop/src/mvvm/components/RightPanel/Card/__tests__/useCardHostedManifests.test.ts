@@ -1,5 +1,4 @@
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
-import { getEnvDefault, setEnv } from "@shared/env";
 import { renderHook } from "tests/testSetup";
 import { useCardHostedManifests } from "../useCardHostedManifests";
 
@@ -15,13 +14,13 @@ describe("useCardHostedManifests", () => {
   });
 
   afterEach(() => {
-    setEnv("CARD_BAANX_LOGIN_MANIFEST_ID", getEnvDefault("CARD_BAANX_LOGIN_MANIFEST_ID"));
-    setEnv("CARD_BAANX_HOSTED_MANIFEST_ID", getEnvDefault("CARD_BAANX_HOSTED_MANIFEST_ID"));
+    delete process.env.CARD_BAANX_LOGIN_MANIFEST_ID;
+    delete process.env.CARD_BAANX_HOSTED_MANIFEST_ID;
   });
 
   it("reads the manifest ids the env carries", () => {
-    setEnv("CARD_BAANX_LOGIN_MANIFEST_ID", "custom-login");
-    setEnv("CARD_BAANX_HOSTED_MANIFEST_ID", "custom-hosted");
+    process.env.CARD_BAANX_LOGIN_MANIFEST_ID = "custom-login";
+    process.env.CARD_BAANX_HOSTED_MANIFEST_ID = "custom-hosted";
 
     renderHook(() => useCardHostedManifests());
 
@@ -29,7 +28,7 @@ describe("useCardHostedManifests", () => {
     expect(mockedManifest).toHaveBeenCalledWith("custom-hosted");
   });
 
-  it("falls back to the registered default ids", () => {
+  it("falls back to the staging ids when the env carries none", () => {
     renderHook(() => useCardHostedManifests());
 
     expect(mockedManifest).toHaveBeenCalledWith("baanx-login-url-stg");

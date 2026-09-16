@@ -41,16 +41,6 @@ const teamWalletXp = {
     parser: stringParser,
     desc: "Baanx hosted UI base URL; the intro opens its signup page in the secure browser",
   },
-  CARD_BAANX_LOGIN_MANIFEST_ID: {
-    def: "baanx-login-url-stg",
-    parser: stringParser,
-    desc: "Live app manifest id that hosts the Baanx login page",
-  },
-  CARD_BAANX_HOSTED_MANIFEST_ID: {
-    def: "baanx-hosted-url-stg",
-    parser: stringParser,
-    desc: "Live app manifest id that hosts the Baanx card pages",
-  },
   CARD_OAUTH_REDIRECT_URI: {
     def: "https://go.ledger.com/ledger/card-baanx",
     parser: stringParser,
