@@ -53,8 +53,10 @@ jest.mock("./accountRawAssign", () => ({
 }));
 
 const inferSubOperationsMock = jest.fn();
+const buildSubOperationIndexMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
   inferSubOperations: (...a: any[]) => inferSubOperationsMock(...a),
+  buildSubOperationIndex: (...a: any[]) => buildSubOperationIndexMock(...a),
 }));
 
 const buildSubAccountsMock = jest.fn();
@@ -124,6 +126,10 @@ describe("genericGetAccountShape - A4 read branch", () => {
     mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
     cleanedOperationMock.mockImplementation((op: any) => op);
     inferSubOperationsMock.mockReturnValue([]);
+    // Parent operations look their sub-operations up in this index instead of rescanning the
+    // sub-accounts per hash; an empty index is this suite's "no sub-operations" case, the same
+    // thing `inferSubOperations` returning [] used to express.
+    buildSubOperationIndexMock.mockReturnValue(new Map());
     buildSubAccountsMock.mockReturnValue([]);
     mergeSubAccountsMock.mockImplementation((_old: any[], subs: any[]) => subs ?? []);
     listOperationsMock.mockResolvedValue({ items: [], next: undefined });
