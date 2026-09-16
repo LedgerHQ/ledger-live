@@ -359,6 +359,25 @@ export const NativeElementHelpers = {
     return attributes;
   },
 
+  /**
+   * Text of every mounted element matching `id`, top to bottom.
+   *
+   * `frame` is in screen coordinate space on both platforms, so the result is the order the user
+   * reads rather than the order the matcher happened to return. Only mounted elements are
+   * reported: a virtualized list has to be walked to cover rows beyond the render window.
+   */
+  async getTextsInScreenOrder(id: string | RegExp): Promise<string[]> {
+    const attributes = await retryUntilTimeout(async () =>
+      NativeElementHelpers.getElementsById(id).getAttributes(),
+    );
+    const matched = "elements" in attributes ? [...attributes.elements] : [attributes];
+
+    return matched
+      .toSorted((left, right) => left.frame.y - right.frame.y)
+      .map(({ text }) => text ?? "")
+      .filter(text => text.length > 0);
+  },
+
   async getTextOfElement(id: string | RegExp, index = 0): Promise<string> {
     const attributes = await retryUntilTimeout(async () =>
       NativeElementHelpers.getElementById(id, index).getAttributes(),
