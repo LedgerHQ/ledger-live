@@ -116,9 +116,11 @@ permissions:
   contents: read
 
 env:
+  SHOULD_UPLOAD: ${{ (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
   cache-bucket: ll-nx-cache
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
+  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
   # Android AVD configuration (shared by determine-builds cache key + Detox Android job)
@@ -131,6 +133,7 @@ env:
   AVD_RAM_SIZE: 5120
   AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  MOBILE_ARTIFACTS_ROOT: apps/ledger-live-mobile/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
 
@@ -418,6 +421,7 @@ jobs:
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:latest
       SPECULOS_FIRMWARE_VERSION: 2.7.1
       SPECULOS_DEVICE: nanoX
+      COINAPPS: ${{ github.workspace }}/coin-apps
       USERDATA_CACHE_ENABLED: "true"
       E2E_GENERATED_USERDATA_DIR: ${{ format('{0}/e2e/userdata/generated', github.workspace) }}
     outputs:
@@ -587,7 +591,7 @@ jobs:
         run: |
           LOG_FILE="e2e/mobile/artifacts/emulator-boot.log"
           mkdir -p e2e/mobile/artifacts
-          # shellcheck disable=SC2016 # the backgrounded inner shell expands these, not this one
+          # shellcheck disable=SC2016
           nohup bash -c '
             log() { echo "[$(date +%H:%M:%S)] $1"; }
             ts() { while IFS= read -r line; do echo "[$(date +%H:%M:%S)] [$1] $line"; done; }
@@ -612,6 +616,14 @@ jobs:
           ' > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
+
+      - name: Setup Speculos image and Coin Apps
+        id: setup-speculos
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        with:
+          coinapps_path: ${{ env.COINAPPS }}
+          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Compute userdata cache key date
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
@@ -666,7 +678,7 @@ jobs:
         if: steps.smoke-files.outputs.has_tests == 'true'
         id: detox
         run: |
-          # shellcheck disable=SC2086 # SHARD_TEST_FILES word-splits into one argument per spec file
+          # shellcheck disable=SC2086
           pnpm mobile e2e:ci -p android -t \
             --e2e \
             $SHARD_TEST_FILES \
@@ -675,8 +687,6 @@ jobs:
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
-          REMOTE_SPECULOS: "true"
           INPUT_E2E: "true"
           INPUTS_TEST_FILTER: "@smoke"
 
@@ -850,7 +860,7 @@ jobs:
           REMOTE_SPECULOS: "true"
           INPUTS_TEST_FILTER: "@smoke"
         run: |
-          # shellcheck disable=SC2086 # SHARD_TEST_FILES word-splits into one argument per spec file
+          # shellcheck disable=SC2086
           pnpm mobile e2e:ci -p ios -t \
             --e2e \
             $SHARD_TEST_FILES \

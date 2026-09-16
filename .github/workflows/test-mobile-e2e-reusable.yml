@@ -393,7 +393,7 @@ jobs:
           if [ -z "$raw" ]; then
             exit 0
           fi
-          # shellcheck disable=SC2016 # the JS body must reach node unexpanded; $raw is passed as argv
+          # shellcheck disable=SC2016
           node -e '
             try {
               JSON.parse(process.argv[1]);
@@ -795,7 +795,7 @@ jobs:
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
         run: |
-          # shellcheck disable=SC2086,SC2046 # deliberate: per-spec word-split, and no empty --production arg
+          # shellcheck disable=SC2086,SC2046
           pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
@@ -1062,7 +1062,7 @@ jobs:
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
         run: |
-          # shellcheck disable=SC2086,SC2046 # deliberate: per-spec word-split, and no empty --production arg
+          # shellcheck disable=SC2086,SC2046
           pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Stop emulator watchdog
