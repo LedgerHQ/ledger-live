@@ -5,7 +5,7 @@ import {
   toSegmentTrackEvent,
   toTxLifecyclePayload,
 } from "@ledgerhq/transaction-observability";
-import { getFeature } from "@ledgerhq/live-common/firebase/featureFlags";
+import { isEarnTxLifecycleMonitoringEnabled } from "./earnTxLifecycleFlag";
 import { track } from "./segment";
 
 /**
@@ -22,7 +22,7 @@ setTransactionObserver(event => {
 });
 
 setTransactionObserver(event => {
-  if (!getFeature({ key: "earnTxLifecycleMonitoring" })?.enabled) {
+  if (!isEarnTxLifecycleMonitoringEnabled()) {
     clearPendingTxLifecycle("desktop");
     return;
   }

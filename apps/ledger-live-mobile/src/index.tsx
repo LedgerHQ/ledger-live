@@ -67,6 +67,7 @@ import { useTrackFundsReceived } from "LLM/features/Analytics/hooks/useTrackFund
 import { updateIdentify } from "./analytics";
 import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
+import { setEarnTxLifecycleFlagReader } from "~/analytics/earnTxLifecycleFlag";
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
@@ -126,6 +127,9 @@ setAnalyticsFeatureFlagMethod(
   ((key: FeatureId) => selectFeature(store.getState(), key) ?? null) as Parameters<
     typeof setAnalyticsFeatureFlagMethod
   >[0],
+);
+setEarnTxLifecycleFlagReader(
+  () => selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false,
 );
 
 const styles = StyleSheet.create({

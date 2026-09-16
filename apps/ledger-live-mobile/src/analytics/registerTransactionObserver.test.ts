@@ -9,15 +9,11 @@
 const track = jest.fn();
 const mockSendTxLifecycle = jest.fn();
 jest.mock("./segment", () => ({ track: (...args: unknown[]) => track(...args) }));
-jest.mock("@ledgerhq/live-common/firebase/featureFlags", () => ({
-  getFeature: jest.fn(() => ({ enabled: true })),
-}));
 jest.mock("@ledgerhq/transaction-observability", () => ({
   ...jest.requireActual("@ledgerhq/transaction-observability"),
   sendTxLifecycle: (...args: unknown[]) => mockSendTxLifecycle(...args),
 }));
 
-import { getFeature } from "@ledgerhq/live-common/firebase/featureFlags";
 import {
   emitTransactionEvent,
   TransactionDataSource,
@@ -26,9 +22,11 @@ import {
   type LogEvent,
 } from "@ledgerhq/transaction-observability";
 
+import { setEarnTxLifecycleFlagReader } from "./earnTxLifecycleFlag";
+
 import "./registerTransactionObserver";
 
-const mockGetFeature = jest.mocked(getFeature);
+let lifecycleEnabled = true;
 
 const stakingEvent = (over: Partial<Record<string, unknown>> = {}) =>
   ({
@@ -52,9 +50,10 @@ describe("mobile transaction observer", () => {
   beforeEach(() => {
     track.mockClear();
     mockSendTxLifecycle.mockClear();
-    mockGetFeature.mockReset();
-    mockGetFeature.mockReturnValue({ enabled: true });
+    lifecycleEnabled = true;
+    setEarnTxLifecycleFlagReader(() => lifecycleEnabled);
   });
+  afterEach(() => setEarnTxLifecycleFlagReader(null));
 
   it("forwards a staking outcome to Segment", () => {
     emitTransactionEvent(stakingEvent());
@@ -90,7 +89,7 @@ describe("mobile transaction observer", () => {
   });
 
   it("keeps Segment independent when lifecycle monitoring is disabled", () => {
-    mockGetFeature.mockReturnValue({ enabled: false });
+    lifecycleEnabled = false;
 
     emitTransactionEvent(stakingEvent());
 
