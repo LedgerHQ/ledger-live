@@ -73,7 +73,7 @@ export function formatCardTransactionTime(dateTime: string): string {
   return date ? formatTimeOfDay(date) : dateTime;
 }
 
-function isSameCalendarDay(left: Date, right: Date): boolean {
+export function isSameCalendarDay(left: Date, right: Date): boolean {
   return (
     left.getFullYear() === right.getFullYear() &&
     left.getMonth() === right.getMonth() &&
