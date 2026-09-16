@@ -1,7 +1,7 @@
-import tronGetAddress from "./getAddress";
-import type { TronSignature, TronSigner } from "./types";
-import Trx from "@ledgerhq/hw-app-trx";
 import Transport from "@ledgerhq/hw-transport";
+import tronGetAddress from "./getAddress";
+import { createSigner as createTronSigner } from "./setup";
+import type { TronSignature, TronSigner } from "./types";
 import type { CoinFrameworkSigner } from "../../bridge/generic-coin-framework/types";
 import { type CreateSigner, executeWithSigner } from "../../bridge/setup";
 
@@ -15,15 +15,17 @@ type TronDeviceSignOptions = {
 };
 
 /**
- * coin-tron's `TronSigner` is the device contract (it mirrors `hw-app-trx`), while the generic coin
- * framework signs through `signTransaction(path, rawTxHex, options)` and calls `getAddress` with an
- * options object rather than a boolean. This signer satisfies both.
+ * `TronSigner` is the device contract (it mirrors `hw-app-trx`), while the generic coin framework
+ * signs through `signTransaction(path, rawTxHex, options)` and calls `getAddress` with an options
+ * object rather than a boolean. This signer satisfies both.
  *
  * `SignerContext<S>` erases the signer's shape at the framework's call sites, so a mismatch here is
  * not a type error — it is a runtime failure at signing time. Both adaptations are load-bearing:
  * without `signTransaction` every signature throws, and forwarding the options object straight into
  * `getAddress`'s `boolDisplay` sets P1=0x01, which makes the app ask the user to confirm their
  * address in the middle of signing.
+ *
+ * Which signer is behind it — DMK or legacy — is `setup.ts`'s call.
  */
 type TronFrameworkSigner = TronSigner & {
   signTransaction(
@@ -34,22 +36,19 @@ type TronFrameworkSigner = TronSigner & {
 };
 
 export const createSigner: CreateSigner<TronFrameworkSigner> = (transport: Transport) => {
-  const trx = new Trx(transport);
-
-  const sign = (path: string, rawTxHex: string, tokenSignatures: string[]) =>
-    trx.signTransaction(path, rawTxHex, tokenSignatures);
+  const tron = createTronSigner(transport);
 
   return {
     getAddress: (path: string, boolDisplay?: boolean | { verify?: boolean }) =>
-      trx.getAddress(path, typeof boolDisplay === "boolean" ? boolDisplay : !!boolDisplay?.verify),
-    sign,
+      tron.getAddress(path, typeof boolDisplay === "boolean" ? boolDisplay : !!boolDisplay?.verify),
+    sign: (path, rawTxHex, tokenSignatures) => tron.sign(path, rawTxHex, tokenSignatures),
     signTransaction: (path, rawTxHex, options) => {
       // app-tron needs the token's CAL signature to clear-sign a TRC-10 token's name and decimals.
       // TRC-20 transfers are ordinary contract calls, which need no token signature.
       const token = options?.token;
       const tokenSignatures =
         token?.id.startsWith("tron/trc10/") && token.ledgerSignature ? [token.ledgerSignature] : [];
-      return sign(path, rawTxHex, tokenSignatures);
+      return tron.sign(path, rawTxHex, tokenSignatures);
     },
   };
 };

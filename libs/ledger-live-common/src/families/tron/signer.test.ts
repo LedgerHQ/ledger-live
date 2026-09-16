@@ -56,6 +56,14 @@ describe("tron signer adapter", () => {
     });
   });
 
+  describe("sign", () => {
+    it("passes the device-level token signatures straight through", async () => {
+      await signer().sign("44'/195'/0'/0/0", "abcd", ["cafe"]);
+
+      expect(signTransaction).toHaveBeenCalledWith("44'/195'/0'/0/0", "abcd", ["cafe"]);
+    });
+  });
+
   describe("getAddress", () => {
     it("does not ask the device to display the address when the framework passes its options object", async () => {
       // `signOperation.ts` passes `{ derivationMode }` — an object carrying no `verify` at all, which

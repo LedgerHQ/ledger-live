@@ -107,6 +107,7 @@ import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setu
 import { LinkingProviderWrapper } from "~/components/LinkingProviderWrapper";
 import { setPolkadotLdmkEnabled } from "@ledgerhq/live-common/families/polkadot/setup";
 import { setXrpLdmkEnabled } from "@ledgerhq/live-common/families/xrp/setup";
+import { setTronLdmkEnabled } from "@ledgerhq/live-common/families/tron/setup";
 import { resolveSuiTransport, setSuiTransport } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 import { useAutoFinishPostOnboarding } from "LLM/features/PostOnboarding/hooks/useAutoFinishPostOnboarding";
@@ -167,6 +168,7 @@ function App() {
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
   const ldmkPolkadotSignerFeatureFlag = useFeature("ldmkPolkadotSigner");
   const ldmkXrpSignerFeatureFlag = useFeature("ldmkXrpSigner");
+  const ldmkTronSignerFeatureFlag = useFeature("ldmkTronSigner");
   const suiTransportFeatureFlag = useFeature("suiTransport");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
@@ -215,6 +217,12 @@ function App() {
       setXrpLdmkEnabled(ldmkXrpSignerFeatureFlag.enabled);
     }
   }, [ldmkXrpSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkTronSignerFeatureFlag?.enabled === "boolean") {
+      setTronLdmkEnabled(ldmkTronSignerFeatureFlag.enabled);
+    }
+  }, [ldmkTronSignerFeatureFlag]);
 
   useEffect(() => {
     setSuiTransport(resolveSuiTransport(suiTransportFeatureFlag));
