@@ -61,56 +61,59 @@ catalogs:
       specifier: 2.0.6
       version: 2.0.6
     '@ledgerhq/device-contacts-kit':
-      specifier: 0.4.1
-      version: 0.4.1
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-management-kit':
-      specifier: 1.9.0
-      version: 1.9.0
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-mockserver-client':
-      specifier: 1.3.0
-      version: 1.3.0
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-signer-kit-aleo':
-      specifier: 0.4.0
-      version: 0.4.0
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-signer-kit-concordium':
-      specifier: 0.5.0
-      version: 0.5.0
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-signer-kit-cosmos':
-      specifier: 1.0.1
-      version: 1.0.1
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-signer-kit-ethereum':
-      specifier: 1.18.0
-      version: 1.18.0
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-signer-kit-hyperliquid':
-      specifier: 0.0.0-hyperliquid-unified-20260728150448
-      version: 0.0.0-hyperliquid-unified-20260728150448
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-signer-kit-icp':
-      specifier: 0.2.0
-      version: 0.2.0
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-signer-kit-solana':
-      specifier: 1.13.0
-      version: 1.13.0
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+    '@ledgerhq/device-signer-kit-tron':
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-signer-kit-xrp':
-      specifier: 0.2.0
-      version: 0.2.0
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-transport-kit-mockserver':
-      specifier: 1.1.1
-      version: 1.1.1
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-transport-kit-react-native-ble':
-      specifier: 1.3.2
-      version: 1.3.2
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-transport-kit-react-native-hid':
-      specifier: 1.0.4
-      version: 1.0.4
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-transport-kit-speculos':
-      specifier: 1.2.1
-      version: 1.2.1
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/device-transport-kit-web-hid':
-      specifier: 1.2.4
-      version: 1.2.4
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/dmk-ledger-wallet':
-      specifier: 0.5.0
-      version: 0.5.0
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/hw-transport-mocker':
       specifier: 6.35.0
       version: 6.35.0
@@ -139,8 +142,8 @@ catalogs:
       specifier: 0.6.0
       version: 0.6.0
     '@ledgerhq/speculos-device-controller':
-      specifier: 0.3.0
-      version: 0.3.0
+      specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
     '@ledgerhq/wallet-api-client':
       specifier: 1.15.3
       version: 1.15.3
@@ -566,7 +569,7 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
   '@ledgerhq/devices': 8.18.0
   '@ledgerhq/hw-transport': 6.36.0
-  '@ledgerhq/context-module': 2.5.0
+  '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
   tslib: 2.6.2
   '@ethersproject/providers>ws': 7.5.10
   elliptic: 6.6.1
@@ -576,7 +579,7 @@ overrides:
   ethers: 6.15.0
   bignumber.js: 9.1.2
   '@radix-ui/react-slot': ^1.2.4
-  '@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils': 1.1.3
+  '@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
   '@ton/ton>zod': 4.3.6
   jest-environment-node: 30.5.0
   jest-mock: 30.5.0
@@ -590,7 +593,7 @@ overrides:
   expect: 30.5.0
   pretty-format@^30.0.0: 30.5.0
 
-packageExtensionsChecksum: sha256-URDZkX/cZOxeA5EuBamAG/cwb/sXOIcYg7e9jJO2gm8=
+packageExtensionsChecksum: sha256-2VVGxXZiQ9/8GBBI7eVxV7PplNj1jyarBEbuJeDCGaI=
 
 pnpmfileChecksum: sha256-B0h7Mo0jLDDHyZV29yOs7LApxEzIDsL0Eq3E4zsxGrg=
 
@@ -1090,17 +1093,17 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-zcash
       '@ledgerhq/context-module':
-        specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.6(@ledgerhq/lumen-design-core@0.1.28)(@ledgerhq/lumen-ui-react@0.1.58(@ledgerhq/lumen-design-core@0.1.28)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -1926,8 +1929,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/context-module':
-        specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.6(@ledgerhq/lumen-design-core@0.1.28)(@ledgerhq/lumen-ui-rnative@0.1.61(5f3e9d764d3b791d88ad8febf4dabb6a))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -1936,13 +1939,13 @@ importers:
         version: link:../../libs/device-core
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
-        version: 1.0.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -2698,14 +2701,14 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-solana
       '@ledgerhq/context-module':
-        specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/hw-app-exchange':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-exchange
@@ -2912,10 +2915,10 @@ importers:
         version: 2.0.6(@ledgerhq/lumen-design-core@0.1.28)(@ledgerhq/lumen-ui-react@0.1.58(@ledgerhq/lumen-design-core@0.1.28)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 'catalog:'
-        version: 1.2.4(@ledgerhq/device-management-kit@1.9.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(rxjs@7.8.2)
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../libs/domain-service
@@ -8050,10 +8053,10 @@ importers:
         version: link:../feature-flags
       '@ledgerhq/device-contacts-kit':
         specifier: 'catalog:'
-        version: 0.4.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
@@ -8066,7 +8069,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.1.58(@ledgerhq/lumen-design-core@0.1.28)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -8294,7 +8297,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8487,7 +8490,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -12650,7 +12653,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -13109,16 +13112,16 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-speculos':
         specifier: 'catalog:'
-        version: 1.2.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.0
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -13318,17 +13321,17 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
       '@ledgerhq/context-module':
-        specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../device-core
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -13464,6 +13467,9 @@ importers:
       '@ledgerhq/live-signer-solana':
         specifier: workspace:^
         version: link:../live-signer-solana
+      '@ledgerhq/live-signer-tron':
+        specifier: workspace:^
+        version: link:../live-signer-tron
       '@ledgerhq/live-signer-xrp':
         specifier: workspace:^
         version: link:../live-signer-xrp
@@ -14487,7 +14493,7 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
@@ -15346,16 +15352,16 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-mockserver-client':
         specifier: 'catalog:'
-        version: 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/device-transport-kit-mockserver':
         specifier: 'catalog:'
-        version: 1.1.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 'catalog:'
-        version: 1.2.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
@@ -15422,10 +15428,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 'catalog:'
-        version: 1.3.2(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -15450,7 +15456,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
-        version: 1.0.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -15503,11 +15509,11 @@ importers:
   libs/live-dmk-shared:
     dependencies:
       '@ledgerhq/context-module':
-        specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/dmk-ledger-wallet':
         specifier: 'catalog:'
-        version: 0.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
@@ -15535,7 +15541,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -15586,10 +15592,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-speculos':
         specifier: 'catalog:'
-        version: 1.2.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
@@ -15598,7 +15604,7 @@ importers:
         version: 6.19.0
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -15656,7 +15662,7 @@ importers:
         version: link:../device-core
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -15686,7 +15692,7 @@ importers:
         version: 6.19.0
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
@@ -15866,14 +15872,14 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-aleo
       '@ledgerhq/context-module':
-        specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-aleo':
         specifier: 'catalog:'
-        version: 0.4.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
@@ -16016,14 +16022,14 @@ importers:
         specifier: workspace:^
         version: link:../concordium-core
       '@ledgerhq/context-module':
-        specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-concordium':
         specifier: 'catalog:'
-        version: 0.5.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
@@ -16063,10 +16069,10 @@ importers:
         version: link:../coin-modules/coin-cosmos
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-cosmos':
         specifier: 'catalog:'
-        version: 1.0.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/hw-app-cosmos':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-cosmos
@@ -16120,14 +16126,14 @@ importers:
   libs/live-signer-evm:
     dependencies:
       '@ledgerhq/context-module':
-        specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-eth
@@ -16182,10 +16188,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-hyperliquid':
         specifier: 'catalog:'
-        version: 0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -16231,10 +16237,10 @@ importers:
         version: link:../coin-modules/coin-internet_computer
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-icp':
         specifier: 'catalog:'
-        version: 0.2.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
@@ -16279,14 +16285,14 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-solana
       '@ledgerhq/context-module':
-        specifier: 2.5.0
-        version: 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 'catalog:'
-        version: 1.13.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(@typescript/typescript6@6.0.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(@typescript/typescript6@6.0.2)
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -16361,14 +16367,63 @@ importers:
         specifier: ^10.4.0
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
+  libs/live-signer-tron:
+    dependencies:
+      '@ledgerhq/context-module':
+        specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/device-signer-kit-tron':
+        specifier: 'catalog:'
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/hw-app-trx':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-trx
+      '@ledgerhq/hw-transport':
+        specifier: 6.36.0
+        version: 6.36.0
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@ledgerhq/disable-network-setup':
+        specifier: workspace:^
+        version: link:../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+
   libs/live-signer-xrp:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-xrp':
         specifier: 'catalog:'
-        version: 0.2.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@ledgerhq/hw-app-xrp':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-xrp
@@ -16411,10 +16466,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.9.0(rxjs@7.8.2)
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-zcash':
-        specifier: 0.6.0
-        version: 0.6.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+        specifier: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+        version: 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -22439,10 +22494,10 @@ packages:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/context-module@2.5.0':
-    resolution: {integrity: sha512-oN9kh4i6/PFFNk7prXYk3TVkxPYUMx8fYyxHJ4wtvWacI+yOYCT8SyKmzIVs8dEyqEG/Da8HMySEnQJ46H4tkA==}
+  '@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-4oFQJSvaTiueeOA1P1n+Mub8sHQ2chbJwHgTw2/ZVuEuO55WDWS1/64cV287IlxBYvVjErp2ZdaTxPnRfrFe0Q==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.8.0
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
   '@ledgerhq/crypto-icons@2.0.6':
     resolution: {integrity: sha512-tcvtdkIr6q+pzL+o2RygVRU89ZBNU6aDx3CFA4JoDkCT6Amny/8FhmkRY3d18poBcGSGtsHcfh11iAF1xx26lg==}
@@ -22465,114 +22520,115 @@ packages:
       react-native:
         optional: true
 
-  '@ledgerhq/device-contacts-kit@0.4.0':
-    resolution: {integrity: sha512-Mq6HaXlPi5d08s2RRmCABkIfLT7uoxc/JdoIo3e9IWayimoMfQb7UhgiTL5Dwck//oXrV+66ID6nkjiSu4Auzg==}
+  '@ledgerhq/device-contacts-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-REItg+OUMvzgdfeXX4Yq4sAdDMuKocdzucuwf6bQlEzErYGdiY5q5rIJlCuQ+Gq2vXT63+PIjcIOgyLdSvMqVw==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.9.0
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/device-contacts-kit@0.4.1':
-    resolution: {integrity: sha512-eRC7B8cTeVS7eaNZyrVvSrHGHSiTusOYCrnxhYGn1Hg76KQehG7jk/vyGkk30qh5i/XrU8qQvCSIbADSq5J5jQ==}
-    peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.9.0
-
-  '@ledgerhq/device-management-kit@1.9.0':
-    resolution: {integrity: sha512-M9M8Uy8c6diJ0pdK/85oP1u2+S6iO8WQcQ8V5FCWu/LyjXKrmTakQ9GRwWYNOp79nbcO+oXcLxJpvZtvpgquIg==}
+  '@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-goFe3zfb3YfpbNR+IgPALthdoxXY09ba/IbAvDnaQwecScS3Aoy13xB/iz3cqFMISrY961n9HtjyL5A1ve9HKA==}
     peerDependencies:
       rxjs: 7.8.2
 
-  '@ledgerhq/device-mockserver-client@1.3.0':
-    resolution: {integrity: sha512-XZN954bxa7Q3vl9lNqgoxeCs2zyC3UU1AI4/ByT2nQz1v78elU5Mqt4/nuny32HGezzXndH413kld91nIMJYTA==}
+  '@ledgerhq/device-mockserver-client@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-QOn9la5j/kc5QAWK4Ju7Ep3P4cnIGZuZjdAug+9lwqlzsGlFrBb2QngUDApF7NAS2PYQl/2pMgRts96qbNry8Q==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.9.0
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/device-signer-kit-aleo@0.4.0':
-    resolution: {integrity: sha512-GeWvln9TY/EAVxnxmMTPITxOstZLD5tiwupFih2avIayoeYa3Q8Gh8gkW77wd/Sd9oQLmwLQByHdcwRmMcSLrQ==}
+  '@ledgerhq/device-signer-kit-aleo@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-nD/SLw7FJUj4r2kWf5vdHwfhkgRCxNM98QQTX07hggVXUinMppTdXtSYp9GJAWZX2pmxER9F2UcU6kCLr1tsnA==}
     peerDependencies:
-      '@ledgerhq/context-module': 2.5.0
-      '@ledgerhq/device-management-kit': ^1.6.0
+      '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/device-signer-kit-concordium@0.5.0':
-    resolution: {integrity: sha512-INuy0FEnfnsPwiXvozJnH3SlsA1srtYgyu8lRY19w+4pi5i34Yz/Ou9b9SPU1q6qR0VqD9x2D1CpV13Dg80VSA==}
+  '@ledgerhq/device-signer-kit-concordium@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-rRnSlqIYZ4v5vDpSVFA1rMZONifgcZ5NH//p9CrAaqtHNz0pDn9T1Ebfd8rcGr45Iv09Vd7/TPlbAs5w5ZZiQg==}
     peerDependencies:
-      '@ledgerhq/context-module': 2.5.0
-      '@ledgerhq/device-management-kit': ^1.9.0
+      '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/device-signer-kit-cosmos@1.0.1':
-    resolution: {integrity: sha512-822hk0ef7/ELTTi+mIPO+hX5MHLiZ6M8oMWz1eQOfoemcGiVxtiqLsodDKJ60GVmOVP6X6eoqihdrAomS6EvZQ==}
+  '@ledgerhq/device-signer-kit-cosmos@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-8UxnQYsDGZgkHlMTz3YM3S8kQktYUTsWq5ZEXJ9W975CFmSMZ7EDIj1JObjGsL0fR1ZlP7iZAOMpaw5Gbr2uTA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.5.1
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/device-signer-kit-ethereum@1.18.0':
-    resolution: {integrity: sha512-qMfQF9+idZ8bjWF2GmKZh9TkmT5viAZnL91/837qZq5QAdGn/4DmROvxUnM6mzuwcB5pg5C/QBGj4dF+EGj+bQ==}
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-IW8tZRI/Zy5GEY1sci4ItzXzb7zSWMNTS4WGP4lsbbjlNTHppPHe8lql6r/tmYnn+0ylXRHnNdQMZ6YI5j4yWw==}
     peerDependencies:
-      '@ledgerhq/context-module': 2.5.0
-      '@ledgerhq/device-management-kit': ^1.9.0
+      '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-unified-20260728150448':
-    resolution: {integrity: sha512-QJJG47HeKEw3rH1PINtRTjxFmpA2/NJl7Ae3dzEXT4yvHDHCHaoCX494GGueS9/I4dKeifCA75pNK5WJ7e5A5A==}
+  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-r476MFvTTIyDx6fsrW4Sy3AWYlEnf3q6LebEMtozAb6WfYaNIH3mvJHgJ6l3Qt8RntRglzpwfbWwvlysJdXR5g==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-hyperliquid-unified-20260728150448
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/device-signer-kit-icp@0.2.0':
-    resolution: {integrity: sha512-jdRmiMeK0Y+vATuMXs9vsY35C8dg8dHlEtiHM6l+NnRpHvWDKKnwju9kRUwgpb2THKSC+dJmk4LYX7jm4rC4dw==}
+  '@ledgerhq/device-signer-kit-icp@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-gWDJQEViB5JLNmTrzJodK/uqD5zuvnnvhIhvNsoIOMElrrhw+xMNNWGAfD0E/5Lxl6FIDVw9oZu3HiLNWULyig==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.7.1
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/device-signer-kit-solana@1.13.0':
-    resolution: {integrity: sha512-rP1entTQsavEbhsOuKhsB5hS4JTs0BM5U1jdD+6iVbgghxy4NYESjS0Szq+iq7JI48EdyX65JE4rhz6WAoRHOQ==}
+  '@ledgerhq/device-signer-kit-solana@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-ELHsuBMrtyuKgWlRcrFoJ6vSCSoGwbApiDuif2qgM9JRTRge34D314NuGYGEQN/sAbzqyme1Gfy41E/L7k1K5Q==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.8.0
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/device-signer-kit-xrp@0.2.0':
-    resolution: {integrity: sha512-7tRV20TvSVWjy1iRALzWf+1RGrDlwVlAsW+SUzeMc0vTed26967gdW0fXjN489kEmxxfTU2EIkIsIf7SuI8qcA==}
+  '@ledgerhq/device-signer-kit-tron@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-jHUoHZPe+apsMKQBhx+RyT3HcVaoPmq6WS4mK7Lfhwf9SoDRZmYUdaxy7PdyNtlbGWevR1L05ssKeBc6qmit8A==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.9.0
+      '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/device-signer-kit-zcash@0.6.0':
-    resolution: {integrity: sha512-RASZEFtPKW+PY8N8Q5NMUT3OF3PkVX0UGLS05GKpbkS5w1eGwtsbXXcgv67oR1DwtJpfPW+98ifdWi42RHalHw==}
+  '@ledgerhq/device-signer-kit-xrp@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-9udvEfyckumZdzfWc4z+Rc5PIGUOhBQYo1SqUGqr5qFGDZErHCCJiTI6qjyH+b/le/wOxxIdc301z7jhFjBsOg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.7.1
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/device-transport-kit-mockserver@1.1.1':
-    resolution: {integrity: sha512-lAi0nlz9mIIxf+c+F6ZrCLWdPeYZzpIKm2qWCrsF4vVjt0bp7Ikn+I4D8xUCvB/lCZMWXSyz9wL556Q+BlLOKw==}
+  '@ledgerhq/device-signer-kit-zcash@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-TvA3kAfm560Ws1EeribYDvDRi3MnDOgberf+SJHYQYzNKTuYsrItpY9RcHaKtszN3Ukec7NUfNlGL8uxZeLqDg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.9.0
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+
+  '@ledgerhq/device-transport-kit-mockserver@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-SpXUJYa9CJb2VmWRM3cYBaRkIbsjz+XFVcEe5KyFEJHUly5YSmH353XJQ6BLD2JpB2VXXy0cIB3Tu0TXizHhRA==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2':
-    resolution: {integrity: sha512-NX/Ml23AR/8iQ5pUPQqum3qjQpValxNhZSbp+Zm/lSl8W0HETLMFK03w/4lj2nfPjiwBy3U+uPhzYNDzdROYQg==}
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-aKaYXK1oIUBfhULPaSUUNBV4tmE9i4tOrqnul6qgm8kqG0XzW3FqYA0Aq2XQGk0f0AiXJd2wjjtxkE0qvo3/MQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.0.0
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
       react-native: '>0.74.1'
       react-native-ble-plx: 3.4.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.4':
-    resolution: {integrity: sha512-JxseV3KaoNsHGrXi/cwzh/MZ0mzkGOiuft3jPkdmg40y4PU7V5/8JODcFfluNqIn3n5T3nALtH1HZd9/Nj33Og==}
+  '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-n1Ph3t8GtyEB9aIW04JEHiwPPV5JINWa2VaPHoYSvaxZ6Ex+tcASJ60XGRWyBMqpKVY6oXnLwF9X4ant+qrguA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.7.0
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
       react-native: '>0.74.1'
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-speculos@1.2.1':
-    resolution: {integrity: sha512-lowqaGWtum+KrLgayz5Fu35Ep0AgtBMKo9FJoQ82ilNGli/PxSa4RqLLeWh/+L3CQtpyW8/89pBqSURQyldaYw==}
+  '@ledgerhq/device-transport-kit-speculos@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-mt2o+rm21J6vQsydKmPlQXLHoaFzNsl76VpbUj6Fs0D/kzY9rcIlQZ5tvQ4JFXDFEm2BKJgvpT830Oony2hwVg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.5.1
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-web-hid@1.2.4':
-    resolution: {integrity: sha512-VMwkZ6QTUJpj4fS45ihnqdcNrJFDI58kg/KGKCDVhsknSZAe52R0JoH9yRqryemjL0eeo11Yj2KifXM8dNpsDA==}
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-ChW6UPnn2hwjL0bdq1IB4UGspNw4fdHJwdhriqt/TcgXVoz2ftfRIXNIoZmpzV27vp7oxp+IC1YuFiMyOu5vMQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.7.0
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
       rxjs: 7.8.2
 
   '@ledgerhq/devices@8.18.0':
     resolution: {integrity: sha512-90qS23wtqdviis+8pDWRbgyp4jE4YLK24CyAmH79rLySaPbgEJX5mZzbEKlDQ6cXvSA/51Z2/PtzmlAi26rzug==}
 
-  '@ledgerhq/dmk-ledger-wallet@0.5.0':
-    resolution: {integrity: sha512-FL4jAnglkPxFAyI2JvXDRX2wG2RqsVsJS+qV8I8njJFfIO+1pnIeAY/XMRMPpspQlwTlslvc5PeEUVRgR9ECdA==}
+  '@ledgerhq/dmk-ledger-wallet@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-Sy80KlNeicX0yek+BVdnaJeD6v+B3XOPrxhntl9Whu9hB0bYgKWJ398Ms0ROsYGMDlsql6FZQtZVLhAIM11baQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.8.0
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
   '@ledgerhq/errors@5.50.0':
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
@@ -22684,25 +22740,15 @@ packages:
   '@ledgerhq/psbtv2@0.6.0':
     resolution: {integrity: sha512-kIU6lPK66GHmowswsVEhlAWbUoJIeBpVi70GQYggDVKZWvV8Zc65tQbSO7cS+n/3D4hUVK0Mlr9wTvGjRiCr2g==}
 
-  '@ledgerhq/signer-utils@0.0.0-hyperliquid-unified-20260728150448':
-    resolution: {integrity: sha512-TqKmLH2kHeJn8ZgrLjjz3fhV4q8FeUnTkJ3VPLk5TUxdEy4pDHGzlIET4pe+GwdYEunFpXDGaifJlI7xR0Vjrg==}
+  '@ledgerhq/signer-utils@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-co4JT+vY3YJk2EeOdXrak3AvwgGkRI54BAaRK249n9+sXyvynJGxcK/7QhZ2UXJuMEvTjtSWcYnAZ24qYtKhxg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-hyperliquid-unified-20260728150448
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
-  '@ledgerhq/signer-utils@1.1.3':
-    resolution: {integrity: sha512-3Y1ove1TyMVuCTKxM1eB9QMXpmrnYVjRc0fEPr5F+I6YJ0DX/yRc+t38ZFJw6m/IkVl8NN1TtmDyaFWJb+xXnQ==}
+  '@ledgerhq/speculos-device-controller@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
+    resolution: {integrity: sha512-SJDrof8FIBuBLQIiY7CUJhdblfdw0W1PrKYXedvxqzUZGE1aRTb6jsMKnQcZlL13y+RT0kQpYQdIDU/4LJQEdg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.2.0
-
-  '@ledgerhq/signer-utils@1.3.0':
-    resolution: {integrity: sha512-qe+HQMgZxq6SPv8ghvlq4c33RchUwlf1qE/qp7MtUGPbKGAqD/0PKNyzx05sKLpmA8m6YZdtndHH4CEkikzqSQ==}
-    peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.7.1
-
-  '@ledgerhq/speculos-device-controller@0.3.0':
-    resolution: {integrity: sha512-FCOGVs28pTxYEom+Yr8skQ1QUyj1+sC0YDvE+Xk+DfXQx8FMRI1l41x+XT8ZGPNUh8kRTd0hsZc2lqVpxD6a8w==}
-    peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.5.1
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
 
   '@ledgerhq/wallet-api-client-react@1.4.34':
     resolution: {integrity: sha512-u8boV3JGPwYjUax+KMGSL0wyI1St2nJCJKphAyc1hLyaeUajF2Dgu702vdftee619YPUkOpd7jxq/imgTAzaZQ==}
@@ -23167,7 +23213,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -47718,9 +47763,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       bs58: 6.0.0
       crypto-js: 4.2.0
       ethers: 6.15.0
@@ -47797,27 +47842,17 @@ snapshots:
       '@ledgerhq/lumen-ui-rnative': 0.1.61(5f3e9d764d3b791d88ad8febf4dabb6a)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
 
-  '@ledgerhq/device-contacts-kit@0.4.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-contacts-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       semver: 7.7.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-contacts-kit@0.4.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
-    dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      inversify: 7.5.1(reflect-metadata@0.2.2)
-      purify-ts: 2.1.0
-      reflect-metadata: 0.2.2
-      semver: 7.7.2
-      xstate: 5.19.2
-
-  '@ledgerhq/device-management-kit@1.9.0':
+  '@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -47833,7 +47868,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@1.9.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)':
+  '@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -47850,7 +47885,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)':
+  '@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -47867,46 +47902,46 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-mockserver-client@1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-mockserver-client@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       purify-ts: 2.1.0
 
-  '@ledgerhq/device-signer-kit-aleo@0.4.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-aleo@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-concordium@0.5.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-concordium@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-cosmos@1.0.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-cosmos@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-ethereum@1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-contacts-kit': 0.4.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/device-contacts-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       ethers: 6.15.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
@@ -47917,11 +47952,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-ethereum@1.18.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-contacts-kit': 0.4.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-contacts-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       ethers: 6.15.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
@@ -47932,11 +47967,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -47945,20 +47980,20 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-icp@0.2.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-icp@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-solana@1.13.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(@typescript/typescript6@6.0.2)':
+  '@ledgerhq/device-signer-kit-solana@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(@typescript/typescript6@6.0.2)':
     dependencies:
-      '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@solana/web3.js': 1.99.0(@typescript/typescript6@6.0.2)
       bs58: 6.0.0
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -47973,36 +48008,46 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-xrp@0.2.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-tron@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/context-module@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-zcash@0.6.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-xrp@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      xstate: 5.19.2
+
+  '@ledgerhq/device-signer-kit-zcash@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@noble/hashes': 1.8.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-transport-kit-mockserver@1.1.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-mockserver@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/device-mockserver-client': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/device-mockserver-client': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       js-base64: 3.9.3
       purify-ts: 2.1.0
@@ -48011,42 +48056,42 @@ snapshots:
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(react@19.1.4)
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-speculos@1.2.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-speculos@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-web-hid@1.2.4(@ledgerhq/device-management-kit@1.9.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-web-hid@1.2.4(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.2
@@ -48056,10 +48101,10 @@ snapshots:
     dependencies:
       semver: 7.7.3
 
-  '@ledgerhq/dmk-ledger-wallet@0.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/dmk-ledger-wallet@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))
       pako: 2.1.0
       purify-ts: 2.1.0
       rxjs: 7.8.2
@@ -48606,24 +48651,14 @@ snapshots:
       bitcoinjs-lib: 6.1.7
       varuint-bitcoin: 1.1.2
 
-  '@ledgerhq/signer-utils@0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       semver: 7.7.2
 
-  '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
+  '@ledgerhq/speculos-device-controller@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(@ledgerhq/device-management-kit@0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      semver: 7.7.2
-
-  '@ledgerhq/signer-utils@1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
-    dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      semver: 7.7.2
-
-  '@ledgerhq/speculos-device-controller@0.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
-    dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
 
   '@ledgerhq/wallet-api-client-react@1.4.34(@ton/crypto@3.3.0)(react@19.1.4)':

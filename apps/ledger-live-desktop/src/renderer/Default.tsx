@@ -68,6 +68,7 @@ import {
 } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import { setXrpLdmkEnabled } from "@ledgerhq/live-common/families/xrp/setup";
+import { setTronLdmkEnabled } from "@ledgerhq/live-common/families/tron/setup";
 import { resolveSuiTransport, setSuiTransport } from "@ledgerhq/live-common/families/sui/setup";
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
@@ -375,6 +376,7 @@ export default function Default() {
   const ldmkSolanaSignerIsTxcActiveFeatureFlag = useFeature("ldmkSolanaSignerIsTxcActive");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
   const ldmkXrpSignerFeatureFlag = useFeature("ldmkXrpSigner");
+  const ldmkTronSignerFeatureFlag = useFeature("ldmkTronSigner");
   const suiTransportFeatureFlag = useFeature("suiTransport");
 
   const dmk = useDeviceManagementKit();
@@ -416,6 +418,12 @@ export default function Default() {
       setXrpLdmkEnabled(ldmkXrpSignerFeatureFlag.enabled);
     }
   }, [ldmkXrpSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkTronSignerFeatureFlag?.enabled === "boolean") {
+      setTronLdmkEnabled(ldmkTronSignerFeatureFlag.enabled);
+    }
+  }, [ldmkTronSignerFeatureFlag]);
 
   useEffect(() => {
     setSuiTransport(resolveSuiTransport(suiTransportFeatureFlag));

@@ -345,6 +345,9 @@ const getLdmkAndSyncFlags = () => ({
   ldmkCosmosSigner: analyticsFeatureFlagMethod?.("ldmkCosmosSigner") ?? {
     enabled: false,
   },
+  ldmkTronSigner: analyticsFeatureFlagMethod?.("ldmkTronSigner") ?? {
+    enabled: false,
+  },
 });
 
 const getAccountsWithFunds = (accounts: ReturnType<typeof accountsSelector>) =>
@@ -401,7 +404,7 @@ const extraProperties = async (store: AppStore) => {
   });
   const contactsFeature = analyticsFeatureFlagMethod?.("lwmContacts") ?? { enabled: false };
   const lastDevice = devices.at(-1) || bleDevices.at(-1);
-  const { ldmkTransport, ldmkConnectApp, ldmkSolanaSigner, ldmkCosmosSigner } =
+  const { ldmkTransport, ldmkConnectApp, ldmkSolanaSigner, ldmkCosmosSigner, ldmkTronSigner } =
     getLdmkAndSyncFlags();
   const deviceInfo = lastDevice
     ? {
@@ -537,6 +540,7 @@ const extraProperties = async (store: AppStore) => {
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
+    isLDMKTronSignerEnabled: ldmkTronSigner?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,
