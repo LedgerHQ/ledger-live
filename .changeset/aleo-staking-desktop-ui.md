@@ -1,4 +1,5 @@
 ---
+"@ledgerhq/coin-aleo": minor
 "@ledgerhq/live-common": minor
 "ledger-live-desktop": minor
 ---

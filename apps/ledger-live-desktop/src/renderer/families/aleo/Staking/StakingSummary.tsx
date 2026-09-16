@@ -10,7 +10,7 @@ import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import type { AleoStakingPosition } from "./useStakingPosition";
+import type { AleoStakingPosition } from "@ledgerhq/live-common/families/aleo/react";
 
 type Props = {
   account: AleoAccount;

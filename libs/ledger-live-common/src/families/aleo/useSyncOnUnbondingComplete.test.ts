@@ -1,14 +1,20 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../../__tests__/test-helpers/dom-polyfill";
 import { renderHook } from "@testing-library/react";
-import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { useGetLastBlockHeightQuery } from "@ledgerhq/live-common/families/aleo/state-manager/api";
-import { MAX_UNBONDING_SYNC_ATTEMPTS, UNBONDING_SYNC_PRIORITY } from "../constants";
-import { useSyncOnUnbondingComplete } from "./useSyncOnUnbondingComplete";
+import { useBridgeSync } from "../../bridge/react";
+import { useGetLastBlockHeightQuery } from "./state-manager/api";
+import { MAX_UNBONDING_SYNC_ATTEMPTS, UNBONDING_SYNC_PRIORITY } from "./constants";
+import { useSyncOnUnbondingComplete } from "./react";
 
-jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
-  useBridgeSync: jest.fn(),
-}));
-jest.mock("@ledgerhq/live-common/families/aleo/state-manager/api", () => ({
+jest.mock("../../bridge/react", () => ({ useBridgeSync: jest.fn() }));
+jest.mock("./state-manager/api", () => ({
+  aleoApi: { reducerPath: "aleoApi" },
   useGetLastBlockHeightQuery: jest.fn(),
+}));
+jest.mock("../../config/index", () => ({
+  getCurrencyConfiguration: jest.fn(() => ({ liveBlockHeightPollMs: 10_000 })),
 }));
 
 const mockUseBridgeSync = jest.mocked(useBridgeSync);
@@ -19,7 +25,7 @@ const CURRENCY_ID = "aleo";
 
 /** One successful chain-tip poll, which is what the hook counts as a retry tick. */
 const poll = (fulfilledTimeStamp: number | undefined) =>
-  mockUseQuery.mockReturnValue({ fulfilledTimeStamp } as ReturnType<
+  mockUseQuery.mockReturnValue({ fulfilledTimeStamp } as unknown as ReturnType<
     typeof useGetLastBlockHeightQuery
   >);
 

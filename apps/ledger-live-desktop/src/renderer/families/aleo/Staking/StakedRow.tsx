@@ -12,7 +12,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { openURL } from "~/renderer/linking";
 import { Column, Ellipsis, SubLabel, Wrapper } from "../blocks/Staking";
 import StatusIcon from "./StatusIcon";
-import type { AleoStakingPosition } from "./useStakingPosition";
+import type { AleoStakingPosition } from "@ledgerhq/live-common/families/aleo/react";
 
 type Props = {
   account: AleoAccount;

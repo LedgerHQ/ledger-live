@@ -13,6 +13,8 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../../hw/connect
 import connectApp from "../../hw/connectApp";
 import type { Device } from "../../hw/actions/types";
 import { getAccountBridge } from "../../bridge";
+import { useBridgeSync } from "../../bridge/react";
+import { getCurrencyConfiguration } from "../../config/index";
 import {
   createAction,
   getViewKeyExec,
@@ -21,7 +23,9 @@ import {
   type ViewKeysByAccountId,
 } from "./hw/getViewKey/index";
 import {
+  getClaimableStakingBalance,
   getStrategyConfig,
+  hasPendingOperationType,
   isAleoAccount,
   isAleoTransaction,
   isPrivateTransaction,
@@ -30,6 +34,7 @@ import {
 } from "./utils";
 import type {
   AleoAccount,
+  AleoCoinConfig,
   AleoTokenAccount,
   AleoUnspentRecord,
   AleoValidator,
@@ -38,9 +43,10 @@ import type {
 import { getValidators } from "@ledgerhq/coin-aleo/logic";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
 import {
-  LIVE_BLOCK_HEIGHT_POLL_MS,
   MANDATORY_SYNC_POLLING_DELAY,
+  MAX_UNBONDING_SYNC_ATTEMPTS,
   PROGRESS_THROTTLE_INTERVAL_MS,
+  UNBONDING_SYNC_PRIORITY,
 } from "./constants";
 import { useGetLastBlockHeightQuery } from "./state-manager/api";
 
@@ -627,6 +633,28 @@ export function useAleoValidators(currency: CryptoCurrency): UseAleoValidatorsRe
   return { validators, loading, error };
 }
 
+/**
+ * The one chain-tip subscription. Every consumer goes through here so they land on the same
+ * cache entry with the same options, which is what makes RTK Query run a single polling loop
+ * for all of them. Polling pauses while the app is unfocused and a failed poll keeps the last
+ * good height, both from the query cache rather than from a timer of our own.
+ */
+function useAleoChainTip(currencyId: string, enabled: boolean) {
+  const pollingInterval = useMemo(() => {
+    try {
+      return getCurrencyConfiguration<AleoCoinConfig>(currencyId).liveBlockHeightPollMs;
+    } catch {
+      return undefined;
+    }
+  }, [currencyId]);
+
+  return useGetLastBlockHeightQuery(currencyId, {
+    skip: !enabled,
+    pollingInterval,
+    skipPollingIfUnfocused: true,
+  });
+}
+
 export type UseAleoLiveBlockHeightOptions = {
   /** The account's last synced height, returned until the chain tip is known. */
   fallbackHeight: number;
@@ -634,21 +662,116 @@ export type UseAleoLiveBlockHeightOptions = {
 };
 
 /**
- * Chain tip, polled by RTK Query while `enabled`.
- *
- * The polling pauses while the app is unfocused and a failed poll keeps the last good height,
- * both of which come from the query cache rather than from a timer of our own. The result never
- * goes backwards from `fallbackHeight`, so a lagging tip can't grow a countdown.
+ * Chain tip as a height, never below `fallbackHeight` so a lagging node can't grow a countdown.
  */
 export function useAleoLiveBlockHeight(
   currencyId: string,
   { fallbackHeight, enabled }: UseAleoLiveBlockHeightOptions,
 ): number {
-  const { data } = useGetLastBlockHeightQuery(currencyId, {
-    skip: !enabled,
-    pollingInterval: LIVE_BLOCK_HEIGHT_POLL_MS,
-    skipPollingIfUnfocused: true,
-  });
+  const { data } = useAleoChainTip(currencyId, enabled);
 
   return data != null ? Math.max(data, fallbackHeight) : fallbackHeight;
+}
+
+/**
+ * Requests account syncs while the chain has passed the unbonding height but the account has
+ * not caught up yet.
+ *
+ * Every claimable decision — the bridge's included — reads `account.blockHeight`, which only
+ * moves on a sync. So the gap is closed by syncing rather than by reading the live height in
+ * more places, which would offer a claim the flow then refuses.
+ *
+ * The retry cadence is the chain-tip poll: each fresh tip is one sync attempt, so there is no
+ * second timer to keep in step.
+ */
+export function useSyncOnUnbondingComplete(
+  accountId: string,
+  currencyId: string,
+  enabled: boolean,
+): void {
+  const sync = useBridgeSync();
+  const { fulfilledTimeStamp } = useAleoChainTip(currencyId, enabled);
+  const attemptsLeft = useRef(MAX_UNBONDING_SYNC_ATTEMPTS);
+
+  useEffect(() => {
+    if (!enabled) {
+      attemptsLeft.current = MAX_UNBONDING_SYNC_ATTEMPTS;
+      return;
+    }
+    if (attemptsLeft.current <= 0) return;
+    attemptsLeft.current -= 1;
+
+    sync({
+      type: "SYNC_ONE_ACCOUNT",
+      accountId,
+      priority: UNBONDING_SYNC_PRIORITY,
+      reason: "aleo-unbonding-complete",
+    });
+    // `fulfilledTimeStamp` is the tick: unused in the body, it changes once per successful
+    // chain-tip poll and that is exactly when the next attempt is due.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled, accountId, sync, fulfilledTimeStamp]);
+}
+
+export type AleoNonEarningReason = NonNullable<AleoValidator["nonEarningReason"]> | "leftCommittee";
+
+export type AleoStakingPosition = {
+  bondedBalance: BigNumber;
+  bondedValidator: string | null;
+  validatorLabel: string;
+  nonEarningReason: AleoNonEarningReason | undefined;
+  /**
+   * Estimated net yearly rate as a fraction (0.07 = 7%). Undefined when it could not be
+   * derived; `0` is a real value meaning "earns nothing" — never conflate the two.
+   */
+  estimatedRate: number | undefined;
+  unbondingBalance: BigNumber;
+  unbondingHeight: number | null;
+  claimableBalance: BigNumber;
+  hasBonded: boolean;
+  hasUnbonding: boolean;
+  hasPendingUnbond: boolean;
+  hasPendingClaim: boolean;
+  hasPendingUnbondingChange: boolean;
+};
+
+/** Everything the staking views read off an account, resolved against the validator list. */
+export function useAleoStakingPosition(account: AleoAccount): AleoStakingPosition {
+  const { validators, loading } = useAleoValidators(account.currency);
+
+  const bondedBalance = account.aleoResources?.bondedBalance ?? new BigNumber(0);
+  const unbondingBalance = account.aleoResources?.unbondingBalance ?? new BigNumber(0);
+  const unbondingHeight = account.aleoResources?.unbondingHeight ?? null;
+  const claimableBalance = getClaimableStakingBalance(account);
+  const bondedValidator = account.aleoResources?.bondedValidator ?? null;
+
+  const validator = useMemo(
+    () => (bondedValidator ? validators.find(item => item.address === bondedValidator) : undefined),
+    [validators, bondedValidator],
+  );
+
+  const hasBonded = bondedBalance.gt(0);
+  const hasPendingUnbond = hasPendingOperationType(account, "UNBOND");
+  const hasPendingClaim = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
+
+  const nonEarningReason: AleoNonEarningReason | undefined =
+    loading || !hasBonded ? undefined : validator ? validator.nonEarningReason : "leftCommittee";
+
+  const estimatedRate = nonEarningReason ? 0 : validator?.estimatedYearlyRewardsRate;
+
+  return {
+    bondedBalance,
+    bondedValidator,
+    validatorLabel: validator?.name || bondedValidator || "",
+    nonEarningReason,
+    estimatedRate,
+    unbondingBalance,
+    unbondingHeight,
+    claimableBalance,
+    hasBonded,
+    hasUnbonding: unbondingBalance.gt(0),
+    hasPendingUnbond,
+    hasPendingClaim,
+    hasPendingUnbondingChange: hasPendingUnbond || hasPendingClaim,
+  };
 }

@@ -2,7 +2,11 @@ import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
-import { useAleoLiveBlockHeight } from "@ledgerhq/live-common/families/aleo/react";
+import {
+  useAleoLiveBlockHeight,
+  useSyncOnUnbondingComplete,
+  type AleoStakingPosition,
+} from "@ledgerhq/live-common/families/aleo/react";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box/Box";
@@ -12,9 +16,7 @@ import TableContainer, { HeaderWrapper, TableHeader } from "~/renderer/component
 import ToolTip from "~/renderer/components/Tooltip";
 import ClockIcon from "~/renderer/icons/Clock";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { useSyncOnUnbondingComplete } from "../hooks/useSyncOnUnbondingComplete";
 import { Claim, Column, Ellipsis, TableLine, Wrapper } from "../blocks/Staking";
-import type { AleoStakingPosition } from "./useStakingPosition";
 
 const COLUMNS = [
   "aleo.stake.table.source",

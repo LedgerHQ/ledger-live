@@ -4,7 +4,7 @@ import { Icons } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-import type { AleoNonEarningReason } from "./useStakingPosition";
+import type { AleoNonEarningReason } from "@ledgerhq/live-common/families/aleo/react";
 
 const StatusIcon = ({
   nonEarningReason,

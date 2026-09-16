@@ -9,5 +9,7 @@ export const MANDATORY_SYNC_POLLING_DELAY = 3000;
 /** Minimum time (ms) between progress state updates in the hook to avoid flooding React renders. */
 export const PROGRESS_THROTTLE_INTERVAL_MS = 500;
 
-/** How often the chain tip is re-read while a staking countdown is on screen. */
-export const LIVE_BLOCK_HEIGHT_POLL_MS = 10_000;
+/** How many syncs a settled unbonding is worth before we stop asking the bridge to catch up. */
+export const MAX_UNBONDING_SYNC_ATTEMPTS = 3;
+/** Below the 100 that device flows set with `SyncSkipUnderPriority`: never resync mid-signing. */
+export const UNBONDING_SYNC_PRIORITY = 10;

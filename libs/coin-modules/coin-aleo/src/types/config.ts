@@ -14,6 +14,8 @@ export type AleoConfig = {
   enableStaking: boolean;
   useEncryptedProve: boolean;
   recordPickingStrategy: RecordPickingStrategy;
+  /** How often (ms) the chain tip is re-read while a staking countdown is on screen. */
+  liveBlockHeightPollMs: number;
 };
 
 export type AleoCoinConfig = CurrencyConfig & AleoConfig;
