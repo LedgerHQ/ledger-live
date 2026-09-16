@@ -435,6 +435,11 @@
           "viewInExplorer" : "ดูใน Explorer",
           "copied" : "คัดลอกแล้ว"
         },
+        "earnBanner" : {
+          "title" : "รับผลตอบแทนสูงสุด {{apy}}% {{type}}",
+          "description" : "สำรวจโอกาสในการสร้างรายได้",
+          "button" : "สำรวจ"
+        },
         "accessibility" : {
           "copySwapId" : "คัดลอกสวอป ID"
         }
@@ -682,26 +687,6 @@
   "postOnboardingDebugger" : {
     "buttonTitle" : "ทดสอบ"
   },
-  "vaultSigner" : {
-    "modal" : {
-      "title" : "เชื่อมต่อกับ Vault",
-      "info" : "เชื่อมโยงกับบัญชีเวิร์คสเปซ Ledger Vault ของคุณและทำธุรกรรมทางแอป Ledger Wallet โดยกรอกข้อมูลในช่องด้านล่าง ดูข้อมูลเพิ่มเติมที่ \"การตั้งค่า\" แล้วไปที่ \"ผู้ลงชื่อ External Wallet\"",
-      "info_link" : "เรียนรู้เพิ่มเติม",
-      "host" : {
-        "title" : "URL Endpoint",
-        "placeholder" : "ws://localhost:3030"
-      },
-      "workspace" : {
-        "title" : "ชื่อเวิร์คสเปซ",
-        "placeholder" : "เวิร์คสเปซ"
-      },
-      "token" : {
-        "title" : "API Token ของผู้ให้บริการ",
-        "placeholder" : "โทเคน"
-      },
-      "submit" : "เชื่อมต่อ"
-    }
-  },
   "account" : {
     "subHeader" : {
       "moreInfo" : "ข้อมูลเพิ่มเติม",
@@ -873,22 +858,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "ใช้จ่ายและรับเงิน",
-      "description" : "สเตเบิลคอยน์ช่วยลดช่องว่างระหว่างคริปโตกับการใช้จ่ายจริงในชีวิตประจำวัน",
-      "cta" : "เข้าใจแล้ว",
+      "title" : "การชำระเงินทั้งหมดของคุณในที่เดียว",
+      "description" : "พบกับแท็บ 'จ่ายเงิน' ใหม่ ให้คุณใช้จ่ายคริปโตได้ง่าย ๆ ในชีวิตประจำวัน",
+      "cta" : "สำรวจฟีเจอร์ 'จ่ายเงิน'",
       "rows" : {
         "global" : {
-          "title" : "ใช้จ่ายและรับเงินได้ทั่วโลก",
-          "description" : "พร้อมรับประโยชน์จากค่าธรรมเนียมเครือข่ายที่ต่ำ"
+          "title" : "ชำระเงินให้คนในรายชื่อของคุณ",
+          "description" : "ส่งคริปโตไปยังที่อยู่คริปโตที่บันทึกไว้"
         },
         "volatility" : {
-          "title" : "ความผันผวนต่ำ",
-          "description" : "เพราะมูลค่าของสเตเบิลคอยน์อิงตามเงินสกุลทั่วไป"
+          "title" : "ขอรับการชำระเงิน",
+          "description" : "ขอให้คนในรายชื่อส่งเงินให้คุณ"
         },
         "card" : {
-          "title" : "ใช้จ่ายผ่านบัตรและรับเครดิตเงินคืน 1%",
-          "description" : "จ่ายได้ด้วย USDC, USDT, BTC, ETH และอื่น ๆ"
+          "title" : "ช้อปทั่วโลกด้วยบัตรคริปโต",
+          "description" : "และรับเครดิตเงินคืน 1% แบบไม่จำกัด"
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "เพิ่มเติม",
+      "title" : "เพิ่มเติม",
+      "rows" : {
+        "managePin" : "จัดการรหัส PIN",
+        "accessBaanx" : "ไปที่ Baanx",
+        "help" : "ขอความช่วยเหลือ",
+        "logout" : "ออกจากระบบ"
       }
     },
     "balance" : {
@@ -904,7 +899,48 @@
     },
     "card" : {
       "title" : "บัตรคริปโต",
-      "balanceLabel" : "ยอดคงเหลือในบัญชี"
+      "balanceLabel" : "ยอดคงเหลือในบัญชี",
+      "freeze" : "ระงับบัตรชั่วคราว",
+      "unfreeze" : "ยกเลิกการระงับบัตร",
+      "goBack" : "ย้อนกลับ",
+      "freezeConfirm" : {
+        "title" : "การระงับบัตรชั่วคราว หมายความว่า คุณจะไม่สามารถใช้บัตรได้",
+        "description" : "คุณสามารถยกเลิกการระงับบัตรของคุณได้ทุกเมื่อ",
+        "confirm" : "ระงับบัตรชั่วคราว",
+        "errorTitle" : "การระงับบัตรชั่วคราวล้มเหลว"
+      },
+      "unfreezeConfirm" : {
+        "title" : "ยกเลิกการระงับบัตรของคุณ?",
+        "confirm" : "ยกเลิกการระงับบัตร",
+        "errorTitle" : "การยกเลิกการระงับบัตรล้มเหลว"
+      },
+      "confirmError" : {
+        "description" : "มีบางอย่างผิดปกติ โปรดลองอีกครั้ง",
+        "retry" : "ลองอีกครั้ง"
+      }
+    },
+    "cardTransactions" : {
+      "categories" : {
+        "SUBSCRIPTIONS" : "การสมัครสมาชิก",
+        "FOOD" : "อาหาร",
+        "TRAVEL" : "เดินทาง",
+        "ENTERTAINMENT" : "บันเทิง",
+        "HEALTH" : "สุขภาพ",
+        "ATM" : "ATM",
+        "UTILITIES" : "สาธารณูปโภค",
+        "MISC" : "อื่น ๆ"
+      }
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "ตั้งค่าบัตรของคุณ",
+        "allDone" : "เสร็จเรียบร้อยแล้ว!"
+      },
+      "dialog" : {
+        "title" : "ตั้งค่าบัตรของคุณให้เสร็จสิ้น",
+        "stepComplete" : "เสร็จเรียบร้อยแล้ว",
+        "gotIt" : "เข้าใจแล้ว"
+      }
     },
     "contacts" : {
       "title" : "ชำระเงิน",
@@ -923,7 +959,20 @@
       "actions" : {
         "pay" : "ส่งไปยังรายชื่อ",
         "more" : "ตัวเลือกเพิ่มเติม",
+        "viewContact" : "ดูรายชื่อ",
         "viewTransactions" : "ดูธุรกรรม"
+      },
+      "addressPicker" : {
+        "title" : "เลือกที่อยู่คริปโตของ {{name}}",
+        "addAddress" : "เพิ่มที่อยู่"
+      },
+      "paySuccess" : {
+        "title" : "คุณได้จ่ายเงิน ({{recipient}}) เรียบร้อยแล้ว",
+        "amount" : "จำนวน",
+        "estimatedTime" : "เวลาโดยประมาณ",
+        "from" : "จาก",
+        "viewTransaction" : "ดูธุรกรรม",
+        "close" : "ปิด"
       }
     },
     "actions" : {
@@ -952,6 +1001,63 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "แปลงเงินสดเป็นสเตเบิลคอยน์",
+      "description" : "แปลงเงินสดเป็นสเตเบิลคอยน์เข้าแอป Ledger Wallet™ โดยตรง",
+      "createAccount" : "สร้างบัญชี",
+      "logIn" : "เข้าสู่ระบบ Noah",
+      "providedBy" : "ให้บริการโดย Noah",
+      "rows" : {
+        "bank" : {
+          "title" : "รับเงินโอนจากทุกธนาคาร",
+          "description" : "รับเงินเดือน รายการชำระเงิน และเงินฝากผ่าน SEPA หรือ ACH"
+        },
+        "fees" : {
+          "title" : "ไม่มีค่าธรรมเนียมแฝง",
+          "description" : "โอนตรงจากธนาคารสู่บล็อกเชน ค่าธรรมเนียมเพียง 0.25%"
+        },
+        "earn" : {
+          "title" : "ให้เงินทำงานแทนคุณได้ทันที",
+          "description" : "คุณสามารถสวอปหรือสร้างรายได้จากสเตเบิลคอยน์ของคุณ"
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "บัตรคริปโต",
+      "beforeIntro" : {
+        "description" : "รับเครดิตเงินคืน 1% ทุกครั้งที่ใช้จ่าย",
+        "action" : "สมัครบัตร"
+      },
+      "afterIntro" : {
+        "description" : "เข้าสู่ระบบเพื่อดูข้อมูลบัตรของคุณ",
+        "action" : "เข้าสู่ระบบ"
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "ใช้จ่ายด้วยคริปโต แล้วรับเครดิตเงินคืน",
+      "providedBy" : "บัตรให้บริการโดย Baanx",
+      "createAccount" : "สร้างบัญชี",
+      "logIn" : "เข้าสู่ระบบ Baanx",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay หรือ Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "เครดิตเงินคืนคริปโต 1% แบบไม่จำกัด",
+          "description" : "สำหรับการซื้อผ่านบัตรคริปโตทั้งหมดด้วย USDC, USDT หรือ BTC"
+        },
+        "virtualCard" : {
+          "title" : "ได้รับ Virtual Card ฟรี",
+          "description" : "เพิ่มลงใน {{wallet}} และพร้อมใช้งานทันที"
+        },
+        "topUp" : {
+          "title" : "เติมเงินผ่านแอป Ledger Wallet™ ได้อย่างปลอดภัย",
+          "description" : "อนุมัติทุกการโอนด้วยอุปกรณ์ลงนาม Ledger ของคุณ"
+        }
+      }
+    },
     "request" : {
       "title" : "ส่งคำขอ {{asset}}",
       "networkLabel" : "เครือข่าย {{network}}",
@@ -962,6 +1068,10 @@
         "copied" : "คัดลอกแล้ว",
         "save" : "บันทึก",
         "verify" : "ตรวจสอบ"
+      },
+      "verifyHint" : {
+        "message" : "ตรวจสอบที่อยู่คริปโตบน\nอุปกรณ์ Ledger ของคุณ\nก่อนแชร์",
+        "gotIt" : "เข้าใจแล้ว"
       },
       "verifyAddress" : {
         "introTitle" : "ตรวจสอบที่อยู่คริปโตของคุณ",
@@ -1602,10 +1712,6 @@
     "referralProgram" : {
       "title" : "แนะนำเพื่อนแล้วรับ 10 USD",
       "description" : "แนะนำเพื่อนสำเร็จแล้วคุณทั้งคู่จะได้รับ Bitcoin มูลค่า $10 USD"
-    },
-    "vaultSigner" : {
-      "title" : "โหมด Vault Signer",
-      "link" : "ศูนย์ช่วยเหลือ Vault"
     }
   },
   "signmessage" : {
@@ -2511,10 +2617,6 @@
         "title" : "อุปกรณ์"
       },
       "details" : {
-        "solanaRawTransaction" : {
-          "title" : "จำเป็นต้องมีการ Blind Signing",
-          "description" : "คุณไม่สามารถตรวจสอบรายละเอียดธุรกรรมบนอุปกรณ์ Ledger ของคุณได้ หากคุณเซ็น คุณอาจสูญเสียสินทรัพย์ของคุณทั้งหมด เซ็นก็ต่อเมื่อคุณไว้ใจเว็บไซต์นี้เท่านั้น"
-        },
         "utxoLag" : "ธุรกรรมนี้อาจใช้เวลานานในการตรวจสอบและลงนามเนื่องจากบัญชีมีเหรียญจำนวนมาก",
         "subaccountsWarning" : "คุณจะต้องเติมสกุลเงิน {{ currency }} ในบัญชีนี้เพื่อส่งโทเคนของบัญชีนี้",
         "from" : "จาก",
@@ -2652,11 +2754,12 @@
       "walletNotExist" : "ไม่พบวอลเล็ตนี้"
     },
     "skipMemo" : {
-      "title" : "ข้ามการเพิ่ม {{memoLabel}}?",
-      "description" : "สินทรัพย์อาจหายไป หากผู้รับต้องการ {{memoLabel}} ในการรับ",
+      "title" : "ส่งโดยไม่มี {{memoLabel}} ?",
+      "description" : "สินทรัพย์อาจสูญหาย หากผู้รับต้องการ {{memoLabel}} ในการรับ",
       "notRequired" : "ผู้รับไม่จำเป็นต้องมี {{memoLabel}} ใช่หรือไม่?",
-      "confirm" : "ใช่! ข้ามขั้นตอนนี้",
-      "neverAskAgain" : "ไม่ต้องแสดงการแจ้งเตือนนี้อีก"
+      "confirm" : "ใช่! ส่งโดยไม่มี {{memoLabel}}",
+      "cancel" : "ไม่! ย้อนกลับ",
+      "neverAskAgain" : "ไม่ต้องถามอีก"
     },
     "tagHelp" : {
       "inputLabel" : "ป้อน {{memoLabel}}",
@@ -5452,6 +5555,12 @@
       "enableLearnStagingUrlDesc" : "เปิดใช้งาน Staging URL สำหรับหน้าการเรียนรู้",
       "enableCountervaluesStaging" : "สภาพแวดล้อมทดสอบแบบ Countervalues API Staging",
       "enableCountervaluesStagingDesc" : "ใช้การสร้างสภาพแวดล้อมทดสอบแบบ Countervalues API Staging แทน Production",
+      "enableMockServerTransport" : "Mock Server Transport (รับส่งข้อมูลกับเซิร์ฟเวอร์จำลอง)",
+      "enableMockServerTransportDesc" : "เปิดใช้งาน Mock Server Transport ของ Device Management Kit เพื่อเชื่อมต่อกับเซิร์ฟเวอร์จำลองของอุปกรณ์แทนอุปกรณ์จริง ใช้เซิร์ฟเวอร์จำลองที่แชร์ร่วมกัน เว้นแต่ MOCK_SERVER_TRANSPORT_URL จะชี้ไปยังตำแหน่งอื่น คุณจำเป็นต้องรีสตาร์ทแอปเพื่อให้การเปลี่ยนแปลงมีผล",
+      "mockServerStatus" : {
+        "connected" : "เชื่อมต่อเซิร์ฟเวอร์จำลองแล้ว · คลิกเพื่อคัดลอกโทเคนของเซสชัน คลิกขวาเพื่อทำกำหนดค่า UI",
+        "disconnected" : "ไม่สามารถเข้าถึงเซิร์ฟเวอร์จำลองได้"
+      },
       "openOnboardingAppInstallDebug" : "เปิดหน้าจอ Debug การติดตั้งแอปสำหรับการเข้าร่วม",
       "openOnboardingAppInstallDebugDesc" : "เปิดหน้าจอที่มีส่วนประกอบจากขั้นตอนการติดตั้งแอปสำหรับการเข้าร่วมในการซิงค์"
     },
@@ -5554,10 +5663,6 @@
         "1559DeactivateGate" : {
           "title" : "ปิดใช้งานเกต Priority Fee ขั้นต่ำสำหรับ EIP1559",
           "description" : "วิธีนี้อนุญาตให้ทำธุรกรรมได้โดยไม่ต้องจ่าย Priority Fee ขั้นต่ำ ซึ่งอาจส่งผลให้ธุรกรรมติดอยู่ใน Mempool ถาวร"
-        },
-        "vaultSigner" : {
-          "title" : "Vault Signer",
-          "description" : "ใช้ Ledger Vault เป็นผู้ลงชื่อด้วยโทเคน API ของผู้ให้บริการของคุณ"
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "เกต Priority Fee ที่กำหนดเอง",
@@ -7117,6 +7222,10 @@
       "title" : "ขออภัย เงินทุนไม่พอ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "ไม่สามารถดึงข้อมูลยอดคงเหลือในบัญชีของคุณได้",
+      "description" : "โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองอีกครั้ง"
+    },
     "NotEnoughTransferAmount" : {
       "title" : "ต้องมีอย่างน้อย 1 ICP เพื่อสเตคเป็น Neuron ได้"
     },
@@ -7316,6 +7425,12 @@
     "ZcashAmountBelowDustThreshold" : {
       "title" : "จำนวนน้อยเกินไปที่จะบรอดแคสต์ (ขั้นต่ำ {{minimumZatoshis}} Satoshis)"
     },
+    "ZcashMemoTooLong" : {
+      "title" : "Memo ต้องไม่เกิน {{maxBytes}} ไบต์"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "จำนวนนี้ใหญ่เกินไปที่จะส่งในธุรกรรมเดียว ลองแบ่งส่งเป็นจำนวนย่อยหลายครั้งแทน"
+    },
     "InvalidNonce" : {
       "title" : "จำเป็นต้องมีตัวเลข Nonce"
     },
@@ -7428,6 +7543,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "การยกเลิกการสเตคจากผู้ตรวจสอบก่อนหน้าต้องเสร็จสิ้นก่อน"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "มีจำนวนนี้น้อยกว่าที่จะสามารถสเตคได้"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "โปรดล้างบัญชีย่อยทั้งหมดก่อน"
@@ -7713,6 +7831,42 @@
     },
     "ConcordiumAddressVerificationFailedError" : {
       "title" : "การตรวจสอบที่อยู่ล้มเหลว"
+    },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "มี CCD ไม่เพียงพอสำหรับค่าธรรมเนียมเครือข่าย",
+      "description" : "ค่าธรรมเนียมเครือข่ายนั้นจะต้องจ่ายเป็น CCD เสมอ ไม่ใช่โทเคนที่คุณกำลังทำการส่งในธุรกรรมนี้ เพิ่ม CCD ไปยังบัญชีนี้แล้วลองอีกครั้ง"
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "การโอนโทเคนนี้ถูกระงับชั่วคราว",
+      "description" : "ผู้ออกโทเคนได้ระงับการโอนทั้งหมดไว้ชั่วคราว คุณสามารถลองใหม่อีกครั้งเมื่อการโอนกลับมาทำงานได้ตามปกติ"
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "บัญชีนี้ไม่สามารถส่งโทเคนนี้ได้",
+      "description" : "ผู้ออกโทเคนได้จำกัดสิทธิ์ว่าใครสามารถส่งได้บ้าง และบัญชีนี้ไม่ได้รับอนุญาตให้ทำเช่นนั้น กรุณาติดต่อผู้ออกโทเคนเพื่อขอสิทธิ์"
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "ไม่สามารถทำการยืนยันข้อจำกัดของโทเคนนี้ได้",
+      "description" : "เนื่องจากไม่สามารถอ่านกฎการโอนของโทเคนนี้ได้ จึงไม่สามารถยืนยันได้ว่าการโอนนี้ได้รับอนุญาต โปรดซิงค์บัญชีของคุณใหม่แล้วลองอีกครั้ง"
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "ไม่สามารถลงนามโทเคนนี้บนอุปกรณ์ Ledger ของคุณได้",
+      "description" : "โทเคนนี้ใช้จำนวนทศนิยม {{decimals}} ตำแหน่ง แต่อุปกรณ์ของคุณรองรับได้สูงสุด {{maxDecimals}} ตำแหน่งเท่านั้น การรับและการถือครองเหรียญนั้นไม่ได้รับผลกระทบแต่อย่างใด"
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "โทเคนนี้ไม่ได้อยู่ในบัญชีของคุณแล้ว",
+      "description" : "โทเคนที่คุณเลือกไม่สามารถใช้งานได้อีกต่อไป โปรดเริ่มทำธุรกรรมอีกครั้ง"
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "ไม่สามารถเตรียมธุรกรรมนี้ได้",
+      "description" : "เนื่องจากรายละเอียดของโทเคนอยู่นอกเหนือขีดจำกัดที่อุปกรณ์ Ledger ของคุณยอมรับได้ จึงไม่สามารถสร้างธุรกรรมนี้ได้ โปรดติดต่อ Ledger Support"
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "ต้องอัปเดตแอป",
+      "description" : "แอป Concordium บนอุปกรณ์ Ledger ของคุณยังไม่รองรับการโอนโทเคน อัปเดตใน \"Ledger ของฉัน\" แล้วลองอีกครั้ง"
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "มีบางอย่างผิดปกติ โปรดเชื่อมต่ออุปกรณ์ของคุณอีกครั้ง",
+      "description" : "แอป Concordium ไม่สามารถประมวลผลธุรกรรมได้ หากยังพบปัญหา โปรดติดต่อ Ledger Support"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo ยาวมากเกินไป"
@@ -8111,6 +8265,104 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "จำนวนคริปโตมากเกินกว่าที่ UTXO รองรับ"
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "Dissolve Delay สั้นเกินไป",
+      "description_one" : "Internet Computer กำหนดให้มี Dissolve Delay อย่างน้อย {{minDays}} วัน",
+      "description_other" : "Internet Computer กำหนดให้มี Dissolve Delay อย่างน้อย {{minDays}} วัน"
+    },
+    "ICPInvalidDissolveDelayIncrease" : {
+      "title" : "จำนวนวันไม่ถูกต้อง",
+      "description" : "กรุณากรอกจำนวนวันเต็มที่มากกว่า 0"
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "Dissolve Delay ยาวเกินไป",
+      "description_one" : "Internet Computer จำกัด Dissolve Delay ของ Neuron ไว้ที่ {{maxDays}} วัน",
+      "description_other" : "Internet Computer จำกัด Dissolve Delay ของ Neuron ไว้ที่ {{maxDays}} วัน"
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "ไม่สามารถลด Dissolve Delay ได้",
+      "description" : "สามารถเพิ่มระยะเวลา Dissolve Delay ของ Neuron ได้เท่านั้น หากต้องการให้สั้นลง ให้ทำการ Dissolve Neuron แทน"
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "ไม่พบ Neuron",
+      "description" : "ไม่พบ Neuron นี้ในสถานะของระบบล่าสุดที่คุณซิงค์ ซิงค์ Neuron ของคุณแล้วลองอีกครั้ง"
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "Principal ไม่ถูกต้อง",
+      "description" : "Hot Key ต้องเป็น Principal ของ Internet Computer ที่ถูกต้อง"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "เพิ่ม Hot Key แล้ว",
+      "description" : "Principal นี้เป็น Hot Key ของ Neuron นี้อยู่แล้ว"
+    },
+    "ICPHotKeyIsController" : {
+      "title" : "Principal นี้ควบคุม Neuron อยู่แล้ว",
+      "description" : "ป้อน Principal อื่น Hot Key ทำได้เพียงโหวตและตั้งค่าการติดตาม ซึ่งผู้ควบคุมสามารถทำได้อยู่แล้ว"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "จำนวนนี้อยู่นอกนอบเขตที่ Neuron นี้สามารถทำการแยกได้",
+      "description" : "ทั้ง Neuron เดิมและ Neuron ใหม่ต้องสเตค ICP ไว้อย่างน้อย 1 ICP บวกค่าธรรมเนียมเครือข่ายสำหรับจำนวนที่ทำการย้าย"
+    },
+    "ICPSpawnNotAllowed" : {
+      "title" : "ไม่สามารถ Spawn จาก Neuron นี้ได้",
+      "description" : "Neuron ที่กำลังดำเนินการ Spawn อยู่แล้วไม่สามารถทำการ Spawn ซ้ำได้อีกครั้ง และ Maturity ที่ทำการ Spawn จะต้องเหลืออย่างน้อย 1 ICP หลังจากการหัก Maturity ของเครือข่ายเรียบร้อยแล้ว ซิงค์ Neuron ของคุณเพื่อดูสถานะปัจจุบัน"
+    },
+    "ICPStakeMaturityNotAllowed" : {
+      "title" : "ไม่สามารถสเตค Maturity ของ Neuron นี้ได้",
+      "description" : "ไม่สามารถสเตค Maturity ได้ในขณะที่ Neuron กำลัง Spawn อยู่ หรือเมื่อ Neuron ได้ Dissolve เสร็จสิ้นแล้ว หรือเมื่อ Neuron ไม่มี Maturity เหลืออยู่ ซิงค์ Neuron ของคุณเพื่อดูสถานะปัจจุบัน"
+    },
+    "ICPFollowTopicNotAllowed" : {
+      "title" : "ไม่สามารถติดตามหัวข้อนี้ได้",
+      "description" : "Internet Computer ได้เลิกใช้งานหัวข้อนี้แล้ว หรือแอป Internet Computer ของ Ledger ยังไม่สามารถลงนามการติดตามในหัวข้อนี้ได้ เลือกหัวข้ออื่น"
+    },
+    "ICPDisburseNotAllowed" : {
+      "title" : "ยังไม่สามารถถอน Neuron นี้ได้",
+      "description" : "จะสามารถถอน Neuron ได้เมื่อละลายโดยสมบูรณ์แล้ว และมียอดสเตคมากกว่าค่าธรรมเนียมเครือข่าย ซิงค์ Neuron ของคุณเพื่อดูสถานะปัจจุบัน"
+    },
+    "ICPTooManyHotKeys" : {
+      "title" : "ถึงขีดจำกัดของ Hot Key แล้ว",
+      "description" : "Neuron สามารถมี Hot Key ได้สูงสุด {{max}} รายการ กรุณาลบรายการหนึ่งออกเพื่อเพิ่มอีกรายการเข้ามา"
+    },
+    "ICPTopUpBelowMinimumStake" : {
+      "title" : "ยอดเติมเงินน้อยเกินไป",
+      "description" : "ยอดคงเหลือของ Neuron จะต้องมีจำนวนถึง 1 ICP หลังจากที่ทำการเติมเงินเข้าไปแล้ว จากการซิงค์ล่าสุด Neuron นี้ยังต้องการอีกอย่างน้อย {{missing}} ICP การโอนเงินจำนวนน้อยกว่าจำนวนขั้นต่ำจะเข้าไปอยู่ในบัญชีของ Neuron แต่จะไม่ถูกนับรวมจนกว่าจะมีการเติมเงินครั้งต่อไปที่มีจำนวนถึงขั้นต่ำที่กำหนด"
+    },
+    "ICPStakeNotRefreshed" : {
+      "title" : "ทำการโอนสเตคแล้ว แต่ Neuron ไม่ได้รับการอัปเดต",
+      "description" : "ICP ถูกโอนไปยังบัญชีของ Neuron แล้ว แต่การกำกับดูแลของ Internet Computer ปฏิเสธที่จะทำการอัปเดต Neuron ในบัญชีดังกล่าว {{reason}} ไม่มีอะไรสูญหาย: จำนวนเงินยังคงอยู่ในบัญชีของ Neuron และจะได้รับการนับรวมสำหรับการเติมเงินครั้งถัดไปที่ทำให้ยอดคงเหลือถึงอย่างน้อย 1 ICP แอป Ledger Wallet ยังไม่สามารถมองเห็นยอดนั้นได้ในขณะนี้ ดังนั้นช่องจำนวนจึงยังระบุจำนวนทั้งหมดที่ยังขาดอยู่ตามที่แสดงในการซิงค์ครั้งล่าสุด"
+    },
+    "ICPStakeMemoNotRecoverable" : {
+      "title" : "ไม่สามารถเติมยอดให้กับ Neuron นี้ได้",
+      "description" : "การท็อปอัพ Neuron ต้องใช้ Memo จากธุรกรรมที่ใช้สร้าง และข้อมูลนี้ไม่อยู่ในประวัติของบัญชีนี้ ให้ท็อปอัพจากบัญชีที่ใช้สร้าง Neuron"
+    },
+    "ICPCallUnconfirmed" : {
+      "title" : "ไม่สามารถระบุผลลัพธ์ได้",
+      "description" : "ระบบ Internet Computer ยอมรับคำขอแล้วแต่ไม่ได้ส่งผลลัพธ์ตอบกลับมา จึงอาจจะดำเนินการเรียบร้อยแล้วหรือไม่ก็ได้ ซิงค์ Neuron ของคุณเพื่อตรวจสอบก่อนลองใหม่อีกครั้ง"
+    },
+    "ICPNeuronsNotRead" : {
+      "title" : "ไม่ได้รีเฟรช Neuron",
+      "description" : "The อินเทอร์เน็ต Computer ไม่ได้ส่งคืน Neuron ของคุณ ดังนั้นจึงไม่มีการเปลี่ยนแปลง โปรดลองอีกครั้ง"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "การดำเนินการนี้จะล็อก ICP ของคุณไว้ใน Neuron ใหม่",
+      "description" : "Neuron เริ่มต้นด้วย Dissolve Delay ที่สั้นที่สุด ซึ่งสั้นเกินกว่าจะโหวตหรือรับรางวัลได้ ปรับเพิ่มขึ้นจาก Manage Neuron และเตรียมรอจนกว่าจะสิ้นสุดระยะเวลาหน่วงก่อนที่สเตคจะสามารถนำกลับมาใช้จ่ายได้อีกครั้ง"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "นี่จะเป็นการเพิ่มไปยังสเตคที่ล็อกไว้",
+      "description" : "จำนวนดังกล่าวจะรวมเข้ากับสเตคที่มีอยู่ของ Neuron และเป็นไปตาม Dissolve Delay จึงไม่สามารถนำไปใช้จ่ายได้จนกว่า Neuron จะสลายตัว"
+    },
+    "ICPGovernanceRejected" : {
+      "title" : "เครือข่ายปฏิเสธการดำเนินการนี้",
+      "description" : "การกำกับดูแลของ Internet Computer ปฏิเสธคำขอ ดังนั้น Neuron จึงไม่มีการเปลี่ยนแปลง ซิงค์ Neuron ของคุณเพื่อดู State ปัจจุบัน {{reason}}"
+    },
+    "ICPCallRejected" : {
+      "title" : "คำขอไม่ได้รับการยอมรับ",
+      "description" : "ระบบ Internet Computer ปฏิเสธคำขอก่อนจะเรียกใช้งาน จึงไม่มีอะไรเปลี่ยนแปลง โปรดลองอีกครั้ง {{reason}}"
+    },
+    "ICPInvalidPercentage" : {
+      "title" : "เปอร์เซ็นต์อยู่นอกช่วงที่กำหนด",
+      "description" : "ป้อนจำนวนเต็มระหว่าง 1 ถึง 100"
     }
   },
   "cryptoOrg" : {
@@ -8230,6 +8482,7 @@
             "inactiveTooltip" : "ไม่พบผู้ตรวจสอบ",
             "overstakedTooltip" : "มีการสเตคมากเกินไปในโหนดนี้ ทำให้อัตราผลตอบแทนต่อปี (APY) ต่ำกว่าค่าที่เหมาะสม",
             "activeTooltip" : "จำนวนที่ Delegate จะส่งผลต่อจำนวน Reward ที่ได้",
+            "fetchErrorTooltip" : "ไม่สามารถโหลดข้อมูลของผู้ตรวจสอบได้ โปรดลองอีกครั้ง",
             "delegated" : "Delegate เรียบร้อยแล้ว",
             "rewards" : "Reward"
           },
@@ -8308,6 +8561,8 @@
             "newValidatorLabel" : "การ Delegate ใหม่",
             "newValidatorSelectPlaceholder" : "เลือกผู้ตรวจสอบ",
             "removedValidatorSelectPlaceholder" : "ไม่มีผู้ตรวจสอบที่เลือกไว้ก่อนหน้า",
+            "unableToLoadSelectPlaceholder" : "ไม่สามารถโหลดผู้ตรวจสอบได้",
+            "loadingValidatorPlaceholder" : "กำลังโหลดผู้ตรวจสอบ...",
             "newValidatorSelectNoOption" : "ไม่มีผู้ตรวจสอบที่ \"{{validatorName}}\" ใช้ได้",
             "amountLabel" : "จำนวนที่จะ Redelegate",
             "alert" : "เมื่อสเตคใน Hedera ยอดคงเหลือในบัญชีทั้งหมดของคุณจะถูกนำไปสเตคด้วย โดยยอดทั้งหมดจะยังคงสภาพคล่องไว้ และไม่ต้องเสี่ยงกับช่วงล็อกอัปหรือการลงโทษผ่านวิธี Slashing สำหรับ Reward จากการสเตค คุณสามารถเริ่มรับได้ในไม่เกิน 48 ชั่วโมง",
@@ -8876,9 +9131,11 @@
     "selectNetwork" : "เลือกเครือข่าย",
     "unsupportedAssetTooltip" : "ขณะนี้ยังไม่รองรับ {{asset}}",
     "unsupportedNetworkTooltip" : "ขณะนี้ยังไม่รองรับเครือข่าย {{network}}",
+    "notAvailableYet" : "ยังไม่พร้อมใช้งาน",
     "selectAccount" : "เลือกบัญชี",
     "selectAccountPerpsTitle" : "เลือกบัญชี Hyperliquid",
-    "selectAccountPerpsDescription" : "หากต้องการเติมเงินทุนสำหรับสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps) คุณต้องมีบัญชี Hyperliquid เพิ่มบัญชีเพื่อดำเนินการต่อ",
+    "selectAccountPerpsDescription" : "เลือกบัญชีที่คุณต้องการฝากเงินทุนเพื่อทำการซื้อขาย",
+    "selectAccountPerpsEmptyDescription" : "หากต้องการเติมเงินทุนสำหรับสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps) คุณต้องมีบัญชี Hyperliquid เพิ่มบัญชีเพื่อดำเนินการต่อ",
     "selectDepositCurrencyTitle" : "เลือกสินทรัพย์ที่จะฝาก",
     "selectDepositCurrencyDescription" : "สามารถใช้สินทรัพย์ใดรับรองก็ได้ ระบบจะสวอปให้โดยอัตโนมัติหากจำเป็น",
     "accountCount_one" : "{{count}} บัญชี",
@@ -9123,7 +9380,7 @@
         "memo" : {
           "label" : "Memo (ไม่บังคับ)",
           "placeholder" : "ป้อน Memo",
-          "tooltip" : "แนบข้อความส่วนตัวกับธุรกรรมที่ได้รับการปกป้องนี้ เฉพาะผู้รับเท่านั้นที่สามารถอ่านได้ สูงสุด 512 ไบต์"
+          "tooltip" : "เพิ่ม Memo ที่ได้รับการเข้ารหัสให้กับการชำระเงินที่ได้รับการปกป้อง (Shielded Payment) นี้ เฉพาะผู้รับเท่านั้นที่สามารถอ่านได้ สูงสุด 512 ไบต์"
         },
         "syncBanner" : {
           "stopped" : {
@@ -9146,15 +9403,15 @@
         "selfTransfer" : {
           "toPrivate" : "โอนด้วยตัวเองไปยังยอดคงเหลือส่วนตัว",
           "toPublic" : "โอนด้วยตัวเองไปยังยอดคงเหลือสาธารณะ",
-          "unavailable" : "ที่อยู่คริปโตส่วนตัวของคุณยังไม่พร้อมใช้งาน ส่งออก View Key ของคุณเพื่อเปิดใช้งาน",
+          "unavailable" : "ที่อยู่คริปโตส่วนตัวของคุณจะพร้อมใช้งานหลังเปิดใช้งาน Shielded สำหรับบัญชีของคุณ",
           "privacyWarning" : "การส่งธุรกรรมนี้จะเชื่อมโยงเงินทุนที่ได้รับการปกป้องของคุณเข้ากับ Public Address ของบัญชีคุณ ซึ่งทุกคนสามารถมองเห็นได้ การส่งไปยังที่อยู่คริปโตภายนอกที่เป็นส่วนตัวจะช่วยป้องกันไม่ให้มีการเชื่อมโยงกับบัญชีสาธารณะของคุณ"
         }
       },
       "state" : {
-        "showBalance" : "แสดงยอดคงเหลือในบัญชี",
+        "showBalance" : "เปิดใช้งาน Shielded",
         "startSync" : "เริ่มซิงค์",
         "stopSync" : "หยุดการซิงค์",
-        "upToDate" : "เป็นปัจจุบัน",
+        "upToDate" : "อัปเดตยอดคงเหลือในบัญชี",
         "lastSync" : "ซิงค์ล่าสุด: {{date}}",
         "estimatedTimeRemaining" : "เวลาที่เหลือโดยประมาณ: {{hours}}:{{minutes}}",
         "syncFailed" : "การซิงค์ยอดคงเหลือส่วนตัวล้มเหลว"
@@ -9324,6 +9581,88 @@
         "desc" : "โปรดรอสักครู่",
         "errorTitle" : "การซิงค์ข้อมูลแบบส่วนตัวล้มเหลว",
         "errorDesc" : "มีบางอย่างผิดพลาด โปรดลองอีกครั้ง"
+      }
+    },
+    "bond" : {
+      "flow" : {
+        "title" : "ผูกมัด ALEO",
+        "steps" : {
+          "validator" : {
+            "title" : "ผู้ตรวจสอบ",
+            "fetchError" : "ไม่สามารถโหลดรายการผู้ตรวจสอบได้",
+            "totalStake" : "ยอดสเตคทั้งหมด",
+            "rateAndCommission" : "ประมาณ {{rate}}% · คอมมิชชัน {{commission}}%",
+            "commissionOnly" : "คอมมิชชัน {{commission}}%",
+            "rowSubtitleClosed" : "ผู้ตรวจสอบรายนี้ได้ปิดรับสเตคใหม่แล้ว",
+            "rowSubtitleUnbonding" : "ผู้ตรวจสอบอยู่ระหว่างการยกเลิกการผูกมัด",
+            "unbondingTooltip" : "ผู้ตรวจสอบรายนี้กำลังถอนสเตคของตัวเอง เครือข่ายจึงปฏิเสธสเตคใหม่ทุกรายการจนกว่าจะมีการเคลมการถอนดังกล่าว",
+            "rowSubtitleEarnsNothing" : "ผู้ตรวจสอบรายนี้ไม่ได้รับรางวัลใด ๆ",
+            "nonEarning" : {
+              "fullCommission" : "เนื่องจากมีการเก็บค่าคอมมิชชันสูงถึง 100% ส่งผลให้ผู้มอบสิทธิ์ทุกรายไม่ได้รับผลตอบแทนใด ๆ เลย",
+              "overConcentrated" : "ผู้ตรวจสอบรายนี้ถือ ALEO ที่สเตคไว้มากกว่า 25% ของทั้งหมด โพรโทคอลจึงไม่จ่ายผลตอบแทนเมื่อเกินเพดานดังกล่าว ส่งผลให้ผู้มอบสิทธิ์ไม่ได้รับผลตอบแทนใด ๆ เลย"
+            },
+            "topUpOnly" : "Aleo อนุญาตให้มีผู้ตรวจสอบหนึ่งรายต่อหนึ่งบัญชี คุณสามารถเพิ่มยอดสเตคของคุณกับผู้ตรวจสอบนี้ หรือยกเลิกการสเตคก่อนเพื่อเลือกผู้ตรวจสอบรายอื่น"
+          },
+          "amount" : {
+            "title" : "จำนวน",
+            "minimum" : "คุณต้องมียอดสเตครวมถึง 10,000 ALEO กับผู้ตรวจสอบรายนี้จึงจะสามารถได้รับรางวัลตอบแทน เฉพาะ ALEO สาธารณะเท่านั้นที่สามารถนำไปสเตคได้ แปลงยอดคงเหลือส่วนตัวของคุณให้เป็นสาธารณะก่อนหากคุณต้องการสเตค"
+          },
+          "connectDevice" : {
+            "title" : "อุปกรณ์",
+            "validatorLabel" : "ผู้ตรวจสอบ"
+          },
+          "confirmation" : {
+            "title" : "การยืนยัน",
+            "broadcastError" : "ไม่สามารถส่งการผูกมัดของคุณได้",
+            "success" : {
+              "title" : "ส่งการผูกมัดเรียบร้อยแล้ว",
+              "text" : "การผูกมัดของคุณอยู่ระหว่างดำเนินการ",
+              "cta" : "ดูรายละเอียด"
+            }
+          }
+        }
+      }
+    },
+    "manage" : {
+      "headerAction" : "สร้างรายได้",
+      "title" : "จัดการสเตคกิ้ง",
+      "comingSoonTooltip" : "เร็ว ๆ นี้",
+      "bond" : {
+        "title" : "ผูกมัด",
+        "description" : "ผูกมัด ALEO ของคุณกับผู้ตรวจสอบเพื่อรับรางวัล"
+      },
+      "unbond" : {
+        "title" : "ยกเลิกการผูกมัดสินทรัพย์",
+        "description" : "ยกเลิกการผูกมัด ALEO ที่ผูกมัดของคุณ เงินทุนจะพร้อมใช้งานหลังสิ้นสุดระยะเวลายกเลิกการผูกมัด"
+      },
+      "claim" : {
+        "title" : "เรียกคืน",
+        "description" : "เรียกคืน ALEO ของคุณที่เลิกผูกมัดแล้วกลับเข้ายอดคงเหลือที่พร้อมใช้งาน"
+      },
+      "unbondPendingTooltip" : "มีการยกเลิกสเตคที่กำลังรอการยืนยันอยู่ในขณะนี้ เนื่องจาก Aleo สามารถติดตามการยกเลิกสเตคได้เพียงครั้งละหนึ่งรายการเท่านั้น การยกเลิกสเตคเพิ่มเติมจึงไม่สามารถทำได้จนกว่ารายการนี้จะเสร็จสิ้น"
+    },
+    "unbond" : {
+      "flow" : {
+        "title" : "ยกเลิกสเตค ALEO",
+        "steps" : {
+          "amount" : {
+            "title" : "จำนวน",
+            "unbondableBanner" : "จำนวนสูงสุดที่สามารถยกเลิกสเตคได้คือ",
+            "belowMinimum" : "หากการยกเลิกสเตคจะทำให้เหลือส่วนที่สเตคน้อยกว่า {{minAmount}} ยอดคงเหลือในบัญชีที่สเตคทั้งหมดของคุณจะเปลี่ยนเป็นไม่มีการสเตคแทน เนื่องจากไม่เป็นไปตามเกณฑ์สเตคขั้นต่ำอีกต่อไป"
+          },
+          "connectDevice" : {
+            "title" : "อุปกรณ์"
+          },
+          "confirmation" : {
+            "title" : "การยืนยัน",
+            "success" : {
+              "title" : "ส่งคำขอยกเลิกสเตคแล้ว",
+              "text" : "เผยแพร่คำขอยกเลิกสเตคของคุณแล้ว",
+              "cta" : "ดูรายละเอียด"
+            },
+            "broadcastError" : "ธุรกรรมการยกเลิกสเตคของคุณได้รับการลงนามเสร็จสมบูรณ์แล้ว แต่ระบบยังไม่สามารถทำการเผยแพร่ธุรกรรมนี้ได้ในขณะนี้"
+          }
+        }
       }
     }
   },
@@ -9511,6 +9850,16 @@
           "title" : "กำลังเตรียมอุปกรณ์ Ledger ของคุณ"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "กำลังเตรียมอุปกรณ์ Ledger ของคุณ"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "กำลังเตรียมอุปกรณ์ Ledger ของคุณ"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "ใช้อุปกรณ์ Ledger เครื่องเดียวกับที่ใช้เพิ่มรายชื่อนี้",
@@ -9523,13 +9872,17 @@
         "appVersionTooLow" : {
           "title" : "ต้องอัปเดตแอป",
           "description" : "อัปเดตแอปบนอุปกรณ์ Ledger ของคุณเพื่อบันทึกรายชื่อ แล้วลองอีกครั้ง"
+        },
+        "osVersionTooLow" : {
+          "title" : "จำเป็นต้องมีการอัปเดต Ledger OS ก่อน",
+          "description" : "อัปเดตระบบปฏิบัติการของอุปกรณ์ Ledger ของคุณเพื่อแก้ไขชื่อในรายชื่อ แล้วลองใหม่"
         }
       }
     },
     "title" : "รายชื่อ",
     "addContact" : "เพิ่มรายชื่อ",
     "addAddress" : "เพิ่มที่อยู่",
-    "addExternalAddress" : "เพิ่มที่อยู่จากวอลเล็ตภายนอก",
+    "addYourAddress" : "เพิ่มที่อยู่คริปโตของคุณ",
     "addAddressEntry" : {
       "title" : "ป้อนที่อยู่คริปโต",
       "addressPlaceholder" : "ที่อยู่คริปโต หรือ ENS",
@@ -9544,7 +9897,8 @@
         "learnMore" : "เรียนรู้เพิ่มเติม"
       },
       "validationUnavailable" : "การตรวจสอบความถูกต้องของที่อยู่คริปโตไม่สามารถใช้งานได้ชั่วคราว",
-      "ensDisclaimer" : "ENS นี้จะได้รับการแปลงเป็นที่อยู่คริปโตที่แสดงอยู่ด้านบน"
+      "ensDisclaimer" : "ชื่อ ENS สามารถเปลี่ยนแปลงที่อยู่ได้เสมอ",
+      "ensDisclaimerDescription" : "ชื่อ ENS เดียวกันนี้อาจชี้ไปยังที่อยู่ที่แตกต่างกันไปตามช่วงเวลาที่ผ่านไป เราได้ทำการบันทึกที่อยู่จริงที่อยู่เบื้องหลัง ENS ไว้แล้ว เพื่อให้มั่นใจว่าเงินของคุณจะถูกส่งถึงเฉพาะที่อยู่คริปโตที่คุณได้ทำการยืนยันไว้เท่านั้น"
     },
     "addAddressName" : {
       "inputLabel" : "ชื่อที่อยู่",
@@ -9561,31 +9915,29 @@
       "currencyLabel" : "สกุลเงิน",
       "networkLabel" : "เครือข่าย",
       "nameLabel" : "ชื่อที่อยู่",
-      "continue" : "ยืนยันที่อยู่คริปโต",
-      "successTitle" : "บันทึกที่อยู่คริปโตแล้ว",
-      "close" : "ปิด"
+      "continue" : "ยืนยันที่อยู่คริปโต"
     },
     "addContactDrawer" : {
       "namePlaceholder" : "ตั้งชื่อรายชื่อ",
-      "namingDisclaimer" : "เพื่อความเป็นส่วนตัว โปรดหลีกเลี่ยงการใช้ชื่อ-นามสกุลเต็ม แนะนำให้ใช้ชื่อเล่นหรือชื่อจริง + อักษรย่อ เช่น 'John S'",
+      "namingDisclaimer" : "เพื่อความเป็นส่วนตัว โปรดหลีกเลี่ยงการใช้ชื่อและนามสกุลเต็ม แนะนำให้ใช้ชื่อเล่นหรือชื่อจริง + อักษรย่อ เช่น 'John S.'",
       "invalidNameError" : "ไม่อนุญาตให้ใช้อักขระพิเศษ",
       "duplicateNameError" : "ชื่อผู้ติดต่อนี้มีการใช้งานอยู่แล้ว"
     },
-    "searchPlaceholder" : "ค้นหารายชื่อ",
+    "searchPlaceholder" : "ค้นหาด้วยชื่อ",
     "searchNoResults" : "ไม่พบรายชื่อ",
     "addressCount_zero" : "ไม่มีที่อยู่คริปโต",
     "addressCount_one" : "{{count}} ที่อยู่คริปโต",
     "addressCount_other" : "{{count}} ที่อยู่คริปโต",
     "me" : {
-      "name" : "ที่อยู่ของฉัน"
+      "myAddresses" : "ที่อยู่คริปโตของฉัน"
     },
     "detail" : {
       "meDisplayName" : "{{name}} (ฉัน)",
       "ledgerWalletAddresses" : "ที่อยู่คริปโตของแอป Ledger Wallet",
       "emptyState" : {
-        "meTitle" : "ไม่มีที่อยู่คริปโตที่บันทึกไว้สำหรับคุณ",
+        "meTitle" : "บันทึกที่อยู่คริปโตของคุณเอง",
         "contactTitle" : "ไม่มีที่อยู่คริปโตที่บันทึกไว้สำหรับ {{name}}",
-        "meDescription" : "บันทึกที่อยู่วอลเล็ตของคุณเก็บไว้ เพื่อให้ครั้งถัดไปคุณสามารถรับคริปโตด้วยชื่อได้ทันที",
+        "meDescription" : "บันทึกที่อยู่ภายนอกที่คุณมีบน Exchange หรือวอลเล็ตอื่น ๆ ครั้งต่อไปเมื่อคุณส่งหาตัวเอง อุปกรณ์ Ledger จะแสดงชื่อที่คุณตั้งไว้",
         "contactDescription" : "บันทึกที่อยู่วอลเล็ตของพวกเขาเก็บไว้ เพื่อให้ครั้งถัดไปคุณสามารถส่งหาด้วยชื่อได้ทันที"
       }
     },
@@ -9627,12 +9979,6 @@
       "applyChanges" : "บันทึกการเปลี่ยนแปลง",
       "invalidLabelError" : "ห้ามใช้อักขระพิเศษ"
     },
-    "editSigner" : {
-      "title" : "ยืนยันบนอุปกรณ์ของคุณ",
-      "description" : "เชื่อมต่อและปลดล็อกอุปกรณ์ Ledger ของคุณเพื่อยืนยันการเปลี่ยนแปลงนี้",
-      "confirm" : "ดำเนินการต่อ",
-      "cancel" : "ยกเลิก"
-    },
     "editSignerMismatch" : {
       "title" : "ใช้อุปกรณ์ Ledger เดียวกันที่คุณใช้เพิ่มรายชื่อนี้",
       "description" : "อุปกรณ์ที่เชื่อมต่อไม่ตรงกัน",
@@ -9640,13 +9986,14 @@
       "cancel" : "ยกเลิก"
     },
     "ledgerSyncIntroduction" : {
-      "description" : "รายชื่อติดต่อของคุณได้รับการเข้ารหัสแบบต้นทางถึงปลายทาง (End-to-End Encrypted) ด้วย Ledger ของคุณ และซิงค์กับอุปกรณ์ต่าง ๆ ของคุณ โดยมีเพียงคุณเท่านั้นที่สามารถปลดล็อกได้",
-      "activate" : "เปิด Ledger Sync",
-      "dismiss" : "เข้าใจแล้ว"
+      "title" : "ซิงค์วอลเล็ตของคุณเพื่อเพิ่มรายชื่อ",
+      "description" : "รายชื่อได้รับการเข้ารหัสแบบต้นทางถึงปลายทาง และซิงค์ข้อมูลกับแอป Ledger Wallet บนโทรศัพท์และคอมพิวเตอร์ทุกเครื่องของคุณ",
+      "activate" : "ซิงค์วอลเล็ตของฉัน",
+      "dismiss" : "ไม่ใช่ตอนนี้"
     },
     "featureIntroduction" : {
       "title" : "ขอแนะนำรายชื่อ",
-      "primaryAction" : "ดูเลย",
+      "primaryAction" : "ลองเลย",
       "highlights" : {
         "saveAddresses" : {
           "title" : "บันทึกที่อยู่คริปโตด้วยชื่อที่คุณเลือก",
@@ -9657,7 +10004,7 @@
           "description" : "เห็นชื่อที่คุณเชื่อถือ ไม่ใช่ที่อยู่คริปโต"
         },
         "privateAcrossDevices" : {
-          "title" : "เติมเงินผ่านแอป Ledger Wallet™ ได้อย่างปลอดภัย",
+          "title" : "เป็นส่วนตัวบนทุกอุปกรณ์ Ledger ของคุณ",
           "description" : "ได้รับการเข้ารหัสแบบครบวงจรด้วยฟีเจอร์ Ledger Sync"
         }
       }
@@ -9934,6 +10281,26 @@
         "title" : "สเตค ICP",
         "description" : "สเตค (Stake) และรับ Reward ด้วยการเข้าร่วมในการกำกับดูแลที่มี",
         "cta" : "สเตค ICP"
+      },
+      "confirmFollowing" : {
+        "title" : "ยืนยันการติดตามของคุณ",
+        "description" : "หนึ่งใน Neuron ของคุณกำลังสูญเสียอำนาจการโหวต ยืนยันการติดตามเพื่อกู้คืน",
+        "cta" : "ยืนยันการติดตาม"
+      },
+      "syncNeurons" : {
+        "title" : "รีเฟรช Neuron ของคุณ",
+        "description" : "ข้อมูล Neuron ของคุณไม่เป็นปัจจุบัน เชื่อมต่ออุปกรณ์ของคุณเพื่อรีเฟรช",
+        "cta" : "รีเฟรช Neuron"
+      },
+      "lockNeurons" : {
+        "title" : "เพิ่ม Dissolve Delay ของคุณ",
+        "description" : "Neuron จำเป็นต้องมี Dissolve Delay ที่ยาวขึ้น จึงจะสามารถโหวตและรับรางวัลได้",
+        "cta" : "จัดการ Neuron"
+      },
+      "addFollowees" : {
+        "title" : "เริ่มสร้างรายได้",
+        "description" : "ติดตาม Neuron อื่น ๆ ในหัวข้อการกำกับดูแล เพื่อให้ Neuron ของคุณสามารถโหวตและรับรางวัลได้",
+        "cta" : "จัดการ Neuron"
       }
     },
     "headerManageActions" : {
@@ -9941,11 +10308,259 @@
         "title" : "จัดการ Neuron"
       }
     },
+    "duration" : {
+      "years_one" : "{{count}} ปี",
+      "years_other" : "{{count}} ปี",
+      "months_one" : "{{count}} เดือน",
+      "months_other" : "{{count}} เดือน",
+      "days_one" : "{{count}} วัน",
+      "days_other" : "{{count}} วัน",
+      "hours_one" : "{{count}} ชั่วโมง",
+      "hours_other" : "{{count}} ชั่วโมง",
+      "minutes_one" : "{{count}} นาที",
+      "minutes_other" : "{{count}} นาที",
+      "lessThanAMinute" : "ไม่ถึง 1 นาที"
+    },
+    "neuronState" : {
+      "Locked" : "ถูกล็อก",
+      "Dissolving" : "กำลังยกเลิก",
+      "Dissolved" : "ยกเลิกแล้ว",
+      "Spawning" : "กำลังสร้าง",
+      "Unknown" : "ไม่รู้จัก"
+    },
+    "common" : {
+      "neuronId" : "Neuron ID",
+      "stake" : "สเตค",
+      "maturity" : "Reward",
+      "dissolveDelay" : "Dissolve Delay",
+      "state" : "State",
+      "action" : "การดำเนินการ",
+      "none" : "ไม่มี",
+      "disburse" : "จ่าย",
+      "startDissolving" : "เริ่มการยกเลิก",
+      "stopDissolving" : "หยุดการยกเลิก",
+      "enabled" : "เปิดใช้งานแล้ว",
+      "disabled" : "ปิดใช้งานแล้ว",
+      "enable" : "เปิดใช้งาน",
+      "disable" : "ปิดใช้งาน"
+    },
+    "manageNeuronFlow" : {
+      "title" : "จัดการ Neuron",
+      "device" : {
+        "title" : "อุปกรณ์"
+      },
+      "confirmation" : {
+        "title" : "การยืนยัน",
+        "broadcastError" : "การดำเนินการของคุณได้รับการลงนามแล้ว แต่ยังไม่สามารถส่งไปยังเครือข่ายได้",
+        "backToNeurons" : "กลับไปยัง Neuron",
+        "success" : {
+          "title" : "เสร็จสิ้น",
+          "default" : "อัปเดต Neuron ของคุณเรียบร้อยแล้ว",
+          "list_neurons" : "Neuron ของคุณเป็นปัจจุบันแล้ว",
+          "start_dissolving" : "Neuron ของคุณเริ่มนับถอยหลังที่จะปลดล็อกแล้ว",
+          "stop_dissolving" : "Neuron ของคุณได้หยุดนับถอยหลังที่จะปลดล็อกแล้ว",
+          "disburse" : "ยอดสเตคของ Neuron ได้โอนเข้าบัญชีคุณแล้ว",
+          "set_dissolve_delay" : "ตั้งค่า Dissolve Delay สำหรับ Neuron ของคุณเรียบร้อยแล้ว",
+          "increase_dissolve_delay" : "Dissolve Delay ของ Neuron ของคุณเพิ่มขึ้นแล้ว",
+          "add_hot_key" : "เพิ่ม Hot Key ไปยัง Neuron ของคุณแล้ว",
+          "remove_hot_key" : "ลบ Hot Key ออกจาก Neuron ของคุณแล้ว",
+          "follow" : "การติดตาม Neuron ของคุณได้รับการอัปเดตแล้ว",
+          "refresh_voting_power" : "สิทธิ์การโหวต Neuron ของคุณได้รับการรีเฟรชแล้ว",
+          "stake_maturity" : "ยอด Maturity ของ Neuron ของคุณได้รับการสเตคแล้ว",
+          "auto_stake_maturity" : "อัปเดตการสเตคกิ้ง Maturity โดยอัตโนมัติแล้ว",
+          "spawn_neuron" : "Neuron ใหม่กำลังสร้างขึ้นจากยอด Maturity ของคุณ",
+          "split_neuron" : "Neuron ของคุณได้รับการแยกออกมาแล้ว",
+          "increase_stake" : "จำนวนสเตค Neuron ของคุณได้เพิ่มขึ้นแล้ว"
+        }
+      },
+      "listNeuron" : {
+        "title" : "Neuron",
+        "empty" : "คุณยังไม่มี Neuron สเตค ICP เพื่อสร้าง Neuron",
+        "lastSynced" : "ซิงค์ล่าสุด: {{date}}",
+        "sync" : "รีเฟรช Neuron"
+      },
+      "manage" : {
+        "title" : "จัดการ",
+        "neuron" : "Neuron",
+        "hotKeyOnly" : "คุณกำลังถือ Hot Key ของ Neuron นี้ ทำให้คุณสามารถโหวตและตั้งค่าการติดตามได้ แต่ไม่สามารถย้ายยอดสเตคได้",
+        "missingNeuron" : "Neuron นี้ไม่อยู่ในสถานะของระบบที่ซิงค์ของคุณอีกต่อไป กลับไปที่ Neuron ของคุณและซิงค์เพื่อเลือกอันอื่น",
+        "votingPower" : {
+          "title" : "สิทธิ์การโหวต",
+          "tooltip" : "สิทธิ์การโหวตเป็นตัวตัดสินว่า Neuron ของคุณมีน้ำหนักเสียงมากเพียงใดในการกำกับดูแล รวมถึงจำนวนรางวัลที่จะได้รับ",
+          "staked" : "สเตคแล้ว",
+          "increaseStake" : "เพิ่มจำนวนที่จะสเตค",
+          "state" : "สถานะปัจจุบัน",
+          "bonusValue" : "+{{percent}}%",
+          "ageBonus" : "Age Bonus",
+          "ageBonusTooltip" : "Neuron จะได้รับสิทธิ์การโหวตเพิ่มขึ้นสูงสุด +25% ตามอายุที่เพิ่มขึ้น และจะถึงระดับสูงสุดหลังจาก 4 ปี",
+          "dissolveDelayBonus" : "Dissolve Delay Bonus +{{percent}}%",
+          "dissolveDelayBonusTooltip" : "Dissolve Delay ที่นานขึ้นจะได้รับพลังในการโหวตสูงสุดถึง +200% โดยจะถึงระดับสูงสุดเมื่อครบ 2 ปี",
+          "noDissolveDelay" : "ไม่มีการตั้งค่า Dissolve Delay",
+          "setDissolveDelay" : "ตั้งค่า Dissolve Delay",
+          "increaseDissolveDelay" : "เพิ่ม Dissolve Delay",
+          "decayStartsIn" : "สิทธิ์การโหวตจะเริ่มลดลงใน {{duration}}",
+          "decaying" : "สิทธิ์การโหวตกำลังลดลง โดยจะเหลือ 0 ใน {{duration}}",
+          "expired" : "สูญเสียสิทธิ์การโหวต และได้ทำการล้างการติดตามแล้ว",
+          "confirmFollowing" : "ยืนยันการติดตาม",
+          "confirmFollowingTooltip" : "ยืนยันการติดตามอย่างน้อยทุก 6 เดือน มิฉะนั้น Neuron ของคุณจะค่อย ๆ สูญเสียสิทธิ์การโหวต"
+        },
+        "maturity" : {
+          "title" : "Reward",
+          "tooltip" : "Maturity คือรางวัลที่ Neuron สะสมได้ คุณสเตคกลับเข้า Neuron เดิม หรือแยกสร้างออกเป็น Neuron ใหม่ก็ได้",
+          "available" : "Maturity ที่พร้อมใช้งาน",
+          "staked" : "Staked Maturity",
+          "stakedTooltip" : "Maturity ได้รับการสเตคใน Neuron แล้ว โดยระบบจะนับรวมเข้ากับสิทธิ์การโหวต และไม่สามารถสร้างเป็น Neuron ใหม่ได้อีกต่อไป",
+          "stake" : "ผลตอบแทนการสเตค (Stake maturity)",
+          "spawn" : "สร้าง Neuron",
+          "autoStake" : "การสเตคกิ้ง Maturity โดยอัตโนมัติ",
+          "autoStakeTooltip" : "เมื่อเปิดใช้งาน Maturity จะถูกสเตคกลับเข้า Neuron โดยอัตโนมัติตามที่สะสมไว้"
+        },
+        "following" : {
+          "title" : "การติดตาม",
+          "tooltip" : "Neuron ที่ตั้งค่าติดตาม Neuron อื่นจะลงคะแนนโหวตตามไปด้วย ซึ่งเป็นวิธีที่ทำให้ได้รับรางวัลโดยไม่ต้องโหวตเอง",
+          "count_one" : "{{count}} หัวข้อ",
+          "count_other" : "{{count}} หัวข้อ",
+          "edit" : "ติดตาม Neuron ในหัวข้อการกำกับดูแล",
+          "follow" : "แก้ไขการติดตาม"
+        },
+        "hotKeys" : {
+          "title" : "Hot Key",
+          "tooltip" : "Hot key สามารถโหวตและตั้งค่าการติดตามแทนคุณได้ แต่จะไม่สามารถย้ายสเตค Neuron ได้",
+          "add" : "มอบสิทธิ์การเข้าถึงแบบ Hot key ให้กับ Principal อื่น",
+          "addAction" : "เพิ่ม Hot Key",
+          "remove" : "ลบออก"
+        },
+        "advanced" : {
+          "title" : "ขั้นสูง",
+          "split" : "แบ่ง Neuron นี้ออกเป็น 2 ส่วน",
+          "splitTooltip" : "ทั้ง Neuron เดิมและ Neuron ใหม่ต้องรักษายอดสเตคขั้นต่ำให้เป็นอย่างน้อย 1 ICP",
+          "splitAction" : "แยก Neuron"
+        }
+      },
+      "setDissolveDelay" : {
+        "title" : "Dissolve Delay",
+        "setDescription" : "เลือกระยะเวลาที่ Neuron จะใช้ในการ Dissolve ระหว่าง {{min}} ถึง {{max}} วัน",
+        "increaseDescription" : "เพิ่ม Dissolve Delay ของ Neuron คุณสามารถเพิ่มได้อีกสูงสุด {{remaining}} วัน รวมเป็น {{max}} และไม่สามารถปรับลดลงได้",
+        "days" : "วัน",
+        "resulting" : "Dissolve Delay ใหม่: {{duration}}",
+        "belowVotingThreshold" : "หากต่ำกว่า {{days}} วัน Neuron จะไม่สามารถโหวตและไม่สามารถรับรางวัลได้"
+      },
+      "stakeMaturity" : {
+        "title" : "ผลตอบแทนการสเตค (Stake maturity)",
+        "description" : "สเตคส่วนหนึ่งของ Maturity จาก Neuron นี้กลับเข้าไป เพื่อเพิ่มสิทธิ์การโหวต",
+        "percentage" : "เปอร์เซ็นต์ที่จะสเตค",
+        "selected" : "จำนวนที่จะสเตค:"
+      },
+      "splitNeuron" : {
+        "title" : "แยก Neuron",
+        "description" : "ย้ายสเตคบางส่วนของ Neuron นี้ไปยัง Neuron ใหม่ Neuron ใหม่จะเริ่มต้นโดยไม่มี Dissolve Delay หรือ Age Bonus",
+        "amount" : "จำนวนที่จะแยกออก",
+        "range" : "ช่วงที่อนุญาต:"
+      },
+      "addHotKey" : {
+        "title" : "เพิ่ม Hot Key",
+        "description" : "มอบสิทธิ์ให้ Principal อื่นในการโหวตและตั้งค่าการติดตามของ Neuron นี้ โดยจะไม่สามารถย้ายการสเตคได้",
+        "principal" : "Principal ID",
+        "ownPrincipal" : "Principal ของบัญชีนี้",
+        "ownPrincipalHint" : "ป้อน Principal อื่น โดยปกติจะเป็นตัวที่คุณใช้ลงชื่อเข้าใช้งานบน NNS DApp บัญชีนี้ควบคุม Neuron นี้อยู่แล้ว ดังนั้นการเพิ่ม Principal ของตัวเองจึงไม่มีผลใดๆ"
+      },
+      "followTopic" : {
+        "title" : "หัวข้อ",
+        "description" : "เลือกหัวข้อการกำกับดูแลที่คุณต้องการเปลี่ยนการติดตาม",
+        "followeeCount_one" : "{{count}} ผู้ที่ติดตาม",
+        "followeeCount_other" : "{{count}} ผู้ที่ติดตาม"
+      },
+      "selectFollowees" : {
+        "title" : "ผู้ที่ติดตาม",
+        "description" : "Neuron ของคุณจะโหวตใน {{topic}} เหมือนกับที่ Neuron เหล่านี้โหวตทุกประการ",
+        "neuronId" : "Neuron ID ที่ต้องการติดตาม",
+        "add" : "เพิ่ม",
+        "remove" : "ลบออก",
+        "empty" : "ยังไม่มีผู้ที่คุณติดตาม Neuron ของคุณจะไม่โหวตในหัวข้อนี้",
+        "clearsFollowing" : "การดำเนินการต่อจะส่งแสดงรายการว่าง ซึ่งจะทำให้ Neuron นี้หยุดติดตามทุกคนบน {{topic}} ขณะนี้กำลังติดตาม {{count}}",
+        "notANeuronId" : "Neuron ID ต้องเป็นตัวเลขเท่านั้น",
+        "outOfRange" : "Neuron ID นี้ไม่ถูกต้อง",
+        "duplicate" : "Neuron นี้ได้รับการติดตามในหัวข้อนี้อยู่แล้ว",
+        "self" : "Neuron ไม่สามารถติดตามตัวเองได้",
+        "unadded" : "เลือก \"เพิ่ม\" เพื่อใส่ Neuron ID หรือล้างข้อมูลในช่อง",
+        "atCapacity" : "แต่ละหัวข้อสามารถติดตามได้สูงสุด {{max}} Neuron กรุณาลบรายการหนึ่งออกเพื่อเพิ่มอีกรายการเข้ามา"
+      }
+    },
+    "governanceTopic" : {
+      "Unspecified" : "หัวข้ออื่น ๆ ทั้งหมด",
+      "NeuronManagement" : "การจัดการ Neuron",
+      "ExchangeRate" : "อัตราแลกเปลี่ยน",
+      "NetworkEconomics" : "เศรษฐศาสตร์เครือข่าย",
+      "Governance" : "การกำกับดูแล",
+      "NodeAdmin" : "ผู้ดูแลโหนด",
+      "ParticipantManagement" : "การจัดการผู้เข้าร่วม",
+      "SubnetManagement" : "การจัดการเครือข่ายย่อย (Subnet)",
+      "NetworkCanisterManagement" : "การจัดการสัญญาอัจฉริยะ Canister ของแอปพลิเคชัน",
+      "Kyc" : "KYC",
+      "NodeProviderRewards" : "รางวัลสำหรับผู้ให้บริการโหนด",
+      "SnsDecentralizationSale" : "การเปิดขายโทเคนต่อสาธารณะ (SNS Decentralization Sale)",
+      "IcOsVersionDeployment" : "การนำเวอร์ชัน IC OS ไปใช้งาน",
+      "IcOsVersionElection" : "การโหวตอนุมัติเวอร์ชันของ IC OS",
+      "SnsAndCommunityFund" : "เงินทุนของ SNS และชุมชน",
+      "ApiBoundaryNodeManagement" : "การจัดการ API Boundary Node",
+      "SubnetRental" : "การเช่าเครือข่ายย่อย (Subnet Rental)",
+      "ProtocolCanisterManagement" : "การจัดการสัญญาอัจฉริยะของ ICP (Canister) ของโพรโทคอล",
+      "ServiceNervousSystemManagement" : "การจัดการ Service Nervous System"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "ยืนยันการติดตาม",
+      "listTitle" : "Neuron",
+      "description" : "การยืนยันการติดตามจะคืนสิทธิ์การโหวตให้ Neuron ไปอีก 6 เดือน",
+      "timeUntilLoss" : "สิทธิ์การโหวตจะหมดใน",
+      "losing" : "{{duration}} กำลังจะสูญเสียสิทธิ์การโหวตหมด",
+      "expired" : "หมดสิทธิ์การโหวตแล้ว",
+      "confirm" : "ยืนยัน",
+      "empty" : "ขณะนี้ไม่มี Neuron ของคุณที่ต้องรอยืนยัน"
+    },
     "summaryFooter" : {
       "stakedBalance" : "จำนวนที่สเตคแล้ว",
       "stakedBalanceTooltip" : "จำนวนโทเคน ICP ทั้งหมดที่สเตคไว้ใน Neuron ในปัจจุบัน ICP ที่สเตคแล้วจะได้รับ Reward จากการโหวต และสามารถใช้สำหรับการกำกับดูแลได้",
       "totalMaturity" : "Reward ทั้งหมดที่ได้รับ",
       "totalMaturityTooltip" : "Reward ที่สะสมทั้งหมดจากสเตคกิ้ง ซึ่งรวมทั้งผลตอบแทนจากการสเตค และผลตอบแทนจาก Liquid Maturity สามารถสเตค Reward เหล่านี้อีกครั้ง หรือจะเคลมเป็น Liquid ICP ก็ได้"
     }
+  },
+  "perpsReview" : {
+    "depositTitle" : "ฝากผ่าน SwapKit",
+    "depositSubtitle" : "ผู้ให้บริการ SwapKit จะจัดการสวอปและฝากเงินของคุณในธุรกรรมเดียว โดยมีอุปกรณ์ Ledger ของคุณคอยรักษาความปลอดภัยทั้งหมด",
+    "swapDetailTitle" : "รายละเอียดการสวอป",
+    "amountSendLabel" : "จำนวนที่ส่ง",
+    "amountReceiveLabel" : "จำนวนที่จะได้รับ",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "รายละเอียดการฝาก",
+    "depositAmountLabel" : "จำนวนเงินฝาก",
+    "depositReceiveLabel" : "บัญชีผู้รับ",
+    "depositCTA" : "ฝาก"
+  },
+  "perpsDeposit" : {
+    "title" : "ฝาก",
+    "inputDepositAmount" : "ฝาก {{value}}",
+    "inputSubText" : "สวอปและฝากผ่าน {{provider}}",
+    "selectCurrencyTitle" : "ฝากด้วย {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "ไม่มีบัญชี",
+    "review" : "ตรวจสอบ",
+    "formErrors" : {
+      "amountExceedsBalance" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
+      "quoteUnavailable" : "ไม่สามารถรับโควตจาก {{provider}} ได้ โปรดลองใช้สินทรัพย์อื่นหรือกลับมาใหม่ในภายหลัง"
+    }
+  },
+  "perpsDepositSign" : {
+    "a11yTitle" : "การลงนามเพื่อฝากเงิน",
+    "terms" : "เมื่อลงนามในธุรกรรมนี้ ฉันยอมรับ <termsLink>ข้อกำหนดและเงื่อนไขของ SwapKit by NEAR Intents</termsLink>"
+  },
+  "perpsTransactionSigned" : {
+    "title" : "ลงนามธุรกรรมสำเร็จแล้ว",
+    "description" : "คุณจะได้รับ {{currency}} ของคุณเมื่อได้รับการยืนยันบนบล็อกเชน",
+    "viewTransaction" : "ดูธุรกรรม"
+  },
+  "perpsTransactionStatus" : {
+    "dialogTitle" : "รายละเอียดธุรกรรม",
+    "title" : "เติมเงินในสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perpetuals)",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
   }
 }
