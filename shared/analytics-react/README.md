@@ -1,6 +1,8 @@
 # @shared/analytics-react
 
-> [!CAUTION] > **Status: UNSTABLE** — New package for LIVE-37158; API may change before app wiring lands.
+> [!CAUTION]
+>
+> **Status: UNSTABLE** — New package for LIVE-37158; API may change before app wiring lands.
 
 React lifecycle adapters for the shared analytics pipeline. Use this package in React-based apps.
 For the React-free tracking core, see [`@shared/analytics`](../analytics/).

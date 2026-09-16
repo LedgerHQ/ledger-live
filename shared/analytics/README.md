@@ -161,7 +161,7 @@ Tracking routes are used in analytics to provide props like `page` and `source`.
 > [!Note]
 > Exporting the raw refs is **interim** – [LIVE-36002](https://ledgerhq.atlassian.net/browse/LIVE-36002) narrows this to a function-only API. Also, names are overly-varied (`screenRef`, `routeName` and `trackingSource`) – [LIVE-37304](https://ledgerhq.atlassian.net/browse/LIVE-37304) addresses ambigious names and duplicate logic
 
-## Anayltics Events
+## Analytics Events
 
 `analyticsEvents$` provides `.pipe` and `.subscribe` for reading events logged by analytics.
 
