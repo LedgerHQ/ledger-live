@@ -69,16 +69,25 @@ describe("TrackPage", () => {
     expect(track).toHaveBeenCalledTimes(1);
   });
 
-  it("sends nothing more when re-rendered with a changed property", async () => {
-    const { rerender } = render(<TrackPage category="Portfolio" balance={1} />);
+  it("sends another page event when re-rendered with a changed property", async () => {
+    const { rerender } = render(<TrackPage category="Market" currencyId={"btc"} />);
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
     });
-    rerender(<TrackPage category="Portfolio" balance={2} />);
 
-    expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith("Page Portfolio", {
-      balance: 1,
+    expect(track).toHaveBeenLastCalledWith("Page Market", {
+      currencyId: "btc",
+    });
+
+    rerender(<TrackPage category="Market" currencyId={"eth"} />);
+
+    await waitFor(() => {
+      expect(track).toHaveBeenCalledTimes(2);
+    });
+
+    expect(track).toHaveBeenLastCalledWith("Page Market", {
+      currencyId: "eth",
+      source: "Market",
     });
   });
 
@@ -92,15 +101,19 @@ describe("TrackPage", () => {
     expect(track).toHaveBeenCalledTimes(1);
   });
 
-  it("sends nothing more when the category changes on a mounted component", async () => {
+  it("sends another page event when the category changes on a mounted component", async () => {
     const { rerender } = render(<TrackPage category="Portfolio" />);
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
     });
     rerender(<TrackPage category="Market" />);
 
-    expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith("Page Portfolio", {});
+    await waitFor(() => {
+      expect(track).toHaveBeenCalledTimes(2);
+    });
+    expect(track).toHaveBeenLastCalledWith("Page Market", {
+      source: "Portfolio",
+    });
   });
 
   it("sends a single page event when StrictMode mounts the component twice", async () => {
@@ -119,6 +132,26 @@ describe("TrackPage", () => {
 
     await waitFor(() => {
       expect(track).toHaveBeenCalledWith("Page Analytics Consent Mandatory", {});
+    });
+  });
+
+  it("sends a mandatory page event when mandatory becomes true on rerender", async () => {
+    setEnabledFn(() => false);
+
+    const { rerender } = render(
+      <TrackPage category="Analytics Consent" name="Mandatory" flow="test-flow" />,
+    );
+    expect(track).not.toHaveBeenCalled();
+
+    rerender(
+      <TrackPage category="Analytics Consent" name="Mandatory" flow="test-flow" mandatory />,
+    );
+
+    await waitFor(() => {
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+    expect(track).toHaveBeenCalledWith("Page Analytics Consent Mandatory", {
+      flow: "test-flow",
     });
   });
 

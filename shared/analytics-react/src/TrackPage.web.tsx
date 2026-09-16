@@ -9,9 +9,17 @@ export type TrackPageProps = {
   [key: string]: unknown;
 };
 
+function getPagePropertiesKey(properties: Record<string, unknown>): string {
+  try {
+    return JSON.stringify(properties);
+  } catch {
+    return "";
+  }
+}
+
 /**
- * On mount, tracks an event named `Page ${category}${name ? " " + name : ""}`. A page view belongs
- * to the mount: later prop changes never emit a second event, so render one `<TrackPage>` per page.
+ * Tracks an event named `Page ${category}${name ? " " + name : ""}` whenever
+ * category, name, extra properties, refreshSource, or mandatory change.
  */
 const TrackPageComponent = ({
   category,
@@ -20,16 +28,21 @@ const TrackPageComponent = ({
   mandatory = false,
   ...props
 }: TrackPageProps): null => {
-  const firstRender = useRef(true);
+  const propertiesKey = getPagePropertiesKey(props);
+  const lastSignatureRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-
-      trackPage({ category, name, props }, { updateRoutes: true, refreshSource, mandatory });
+    const signature = `${category}|${name ?? ""}|${propertiesKey}|${refreshSource}|${mandatory}`;
+    if (lastSignatureRef.current === signature) {
+      return;
     }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    lastSignatureRef.current = signature;
+
+    trackPage(
+      { category, name, props: propertiesKey ? JSON.parse(propertiesKey) : undefined },
+      { updateRoutes: true, refreshSource, mandatory },
+    );
+  }, [category, name, propertiesKey, refreshSource, mandatory]);
 
   return null;
 };
