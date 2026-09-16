@@ -25,11 +25,11 @@ describe("useCardTransactionsScreenViewModel", () => {
       wrapper: cardApiWrapper({ signedIn: true }),
     });
 
-    expect(result.current.displayMode).toBe("loading");
+    expect(result.current.displayState).toBe("loading");
 
     send(mockPayCardTransactions());
 
-    await waitFor(() => expect(result.current.displayMode).toBe("list"));
+    await waitFor(() => expect(result.current.displayState).toBe("ready"));
   });
 
   it("uses empty when the provider answers with no transactions", async () => {
@@ -39,7 +39,7 @@ describe("useCardTransactionsScreenViewModel", () => {
       wrapper: cardApiWrapper({ signedIn: true }),
     });
 
-    await waitFor(() => expect(result.current.displayMode).toBe("empty"));
+    await waitFor(() => expect(result.current.displayState).toBe("empty"));
     expect(result.current.transactions).toEqual([]);
   });
 
@@ -54,10 +54,10 @@ describe("useCardTransactionsScreenViewModel", () => {
       wrapper: cardApiWrapper({ signedIn: true }),
     });
 
-    await waitFor(() => expect(result.current.displayMode).toBe("error"));
+    await waitFor(() => expect(result.current.displayState).toBe("error"));
   });
 
-  it("uses list when the provider answers with transactions", async () => {
+  it("uses ready when the provider answers with transactions", async () => {
     const page = mockPayCardTransactions();
     server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
 
@@ -65,7 +65,7 @@ describe("useCardTransactionsScreenViewModel", () => {
       wrapper: cardApiWrapper({ signedIn: true }),
     });
 
-    await waitFor(() => expect(result.current.displayMode).toBe("list"));
+    await waitFor(() => expect(result.current.displayState).toBe("ready"));
     expect(result.current.title).toBe("Transactions");
     expect(result.current.transactions).toHaveLength(page.length);
   });

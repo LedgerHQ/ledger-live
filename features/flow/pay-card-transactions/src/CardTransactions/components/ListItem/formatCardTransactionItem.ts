@@ -52,7 +52,7 @@ export function formatCardTransactionDate(
   dateTime: string,
   formatDate: FormatCardTransactionDate = defaultFormatDate,
 ): string {
-  const date = parseTransactionDate(dateTime);
+  const date = parseCardTransactionDate(dateTime);
 
   return date ? formatDate(date) : dateTime;
 }
@@ -61,10 +61,16 @@ export function formatMaskedPanLast4(panLast4: string): string {
   return `***${panLast4}`;
 }
 
-function parseTransactionDate(dateTime: string): Date | undefined {
+export function parseCardTransactionDate(dateTime: string): Date | undefined {
   const date = new Date(dateTime);
 
   return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
+export function formatCardTransactionTime(dateTime: string): string {
+  const date = parseCardTransactionDate(dateTime);
+
+  return date ? formatTimeOfDay(date) : dateTime;
 }
 
 function isSameCalendarDay(left: Date, right: Date): boolean {
@@ -94,7 +100,7 @@ export function formatTransactionDetailDateTime(
   formatDate: FormatCardTransactionDate = defaultFormatDate,
   now: Date = new Date(),
 ): string {
-  const date = parseTransactionDate(dateTime);
+  const date = parseCardTransactionDate(dateTime);
   if (!date) return dateTime;
 
   const time = formatTimeOfDay(date);

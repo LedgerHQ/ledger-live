@@ -4,4 +4,5 @@ export interface CardViewModel {
   readonly formatters: Required<CardFormatters>;
   readonly login: PayCardProps["login"];
   readonly unlock: NonNullable<PayCardProps["unlock"]>;
+  readonly onShowMore: () => void;
 }

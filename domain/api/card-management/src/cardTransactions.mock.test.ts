@@ -30,6 +30,19 @@ describe("mockPayCardTransactions", () => {
     expect(transactions.some(({ fundingSources }) => fundingSources.length > 1)).toBe(true);
   });
 
+  it("covers every status, so each one can be seen in a list", () => {
+    const statuses = mockPayCardTransactions().map(({ status }) => status);
+
+    expect(new Set(statuses)).toEqual(new Set(["CONFIRMED", "PENDING", "DECLINED", "REVERTED"]));
+  });
+
+  it("explains why the declined one was declined", () => {
+    const declined = mockPayCardTransactions().filter(({ status }) => status === "DECLINED");
+
+    expect(declined).toHaveLength(1);
+    expect(declined[0].declineReason).not.toBe("");
+  });
+
   it("keeps the provider's documented charge as the miscellaneous one", () => {
     const misc = mockPayCardTransactions().find(({ mccCategory }) => mccCategory === "MISC");
 

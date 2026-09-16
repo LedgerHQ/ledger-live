@@ -5,13 +5,13 @@ import { List } from "./components/List";
 import type { CardTransactionsScreenViewProps } from "./types";
 
 export function CardTransactionsView({
-  displayMode,
+  displayState,
   title,
   transactions,
   formatters,
   onTransactionPress,
 }: CardTransactionsScreenViewProps) {
-  if (displayMode !== "list") {
+  if (displayState !== "ready") {
     return null;
   }
 
