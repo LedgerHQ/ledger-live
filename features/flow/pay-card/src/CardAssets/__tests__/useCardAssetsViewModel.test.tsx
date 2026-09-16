@@ -29,8 +29,6 @@ function stubWallets(
     isLoading: false,
     isError: false,
     isFetching: false,
-    total: 0,
-    isPartialTotal: false,
     refetch: jest.fn(),
     ...overrides,
   });
