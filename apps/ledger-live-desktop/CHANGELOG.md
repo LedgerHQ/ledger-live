@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.21.0-next.2
+
+### Minor Changes
+
+- [#22088](https://github.com/LedgerHQ/ledger-live/pull/22088) [`ac2901d`](https://github.com/LedgerHQ/ledger-live/commit/ac2901d8727d0038f7d56e40962538397bfe97b6) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the sidebar navigation bottom edge no longer aligning with the page content
+
 ## 4.21.0-next.1
 
 ### Minor Changes
