@@ -1,25 +1,51 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
+import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
+import type { CardLinkedWalletBalance } from "@features/flow-pay-card-wallets";
 import type { CardFormatters, CardProps } from "./Card.types";
 import { CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
 
 let mockStatus: PayCardAuthStatus = "unknown";
+type StubbedLinkedWallets = {
+  wallets: readonly Pick<
+    CardLinkedWalletBalance,
+    "id" | "balance" | "currency" | "ledgerId" | "ledgerCurrency"
+  >[];
+  isLoading: boolean;
+  isFetching: boolean;
+  isError: boolean;
+  refetch: () => void;
+};
+
+const mockUseCardLinkedWallets = jest.fn<StubbedLinkedWallets, []>(() => ({
+  wallets: [],
+  isLoading: false,
+  isFetching: false,
+  isError: false,
+  refetch: jest.fn(),
+}));
 let receivedTransactionFormatters: CardTransactionFormatters | undefined;
 let receivedTransactionTracker: CardProps["login"]["onTrackEvent"];
+
+jest.mock("@features/flow-pay-card-wallets", () => ({
+  useCardLinkedWallets: () => mockUseCardLinkedWallets(),
+}));
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
   useCardAuthStatus: () => mockStatus,
+  useIsCardSignedIn: () => mockStatus === "signedIn",
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
   CardVisual: () => <div data-testid="card-visual" />,
-  CardDetails: ({ cardVisual, unlock }: { cardVisual?: unknown; unlock?: unknown }) => (
+  CardDetails: ({ cardVisual, unlock }: { cardVisual?: { balance: number }; unlock?: unknown }) => (
     <div
       data-testid={cardVisual ? "card-details-with-visual" : "card-details"}
+      data-balance={cardVisual?.balance}
       data-unlock={unlock ? "granted" : "none"}
     />
   ),
@@ -145,6 +171,53 @@ describe("Card (web)", () => {
       expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
+    });
+
+    it("shows what the funding wallets are worth on the card face", () => {
+      const usdc = CryptoOrTokenCurrencySchema.parse({
+        type: "TokenCurrency",
+        id: "ethereum/erc20/usd__coin",
+        parentCurrencyId: "ethereum",
+        contractAddress: "0x0000000000000000000000000000000000000000",
+        tokenType: "erc20",
+        name: "USD Coin",
+        ticker: "USDC",
+        units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+      });
+      mockUseCardLinkedWallets.mockReturnValue({
+        wallets: [
+          {
+            id: "w-1",
+            balance: "12.50",
+            currency: "usdc",
+            ledgerId: usdc.id,
+            ledgerCurrency: usdc,
+          },
+          { id: "w-2", balance: "1.00", currency: "usdc", ledgerId: usdc.id, ledgerCurrency: usdc },
+        ],
+        isLoading: false,
+        isFetching: false,
+        isError: false,
+        refetch: jest.fn(),
+      });
+
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          formatters={formatters}
+          assets={{
+            currencies: new Map([[usdc.id, usdc]]),
+            priceWallet: () => 1250,
+            formatCountervalue: String,
+          }}
+        />,
+      );
+
+      // Both wallets priced at 1250, so the face carries their sum and not one of them.
+      expect(screen.getByTestId("card-details-with-visual")).toHaveAttribute(
+        "data-balance",
+        "2500",
+      );
     });
 
     it("hands the transaction formatters to the transactions list", () => {

@@ -2,7 +2,8 @@ import { renderHook } from "@testing-library/react";
 import type { CardLinkedWalletBalance } from "@features/flow-pay-card-wallets";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 import { I18nWrapper, CARD_ASSETS_COPY } from "./i18nWrapper";
-import { formatCardAssetCryptoAmount, useCardAssetsViewModel } from "../useCardAssetsViewModel";
+import { useCardAssetsViewModel } from "../useCardAssetsViewModel";
+import { formatCardAssetCryptoAmount } from "../useCardPricedWallets";
 
 const mockUseIsCardSignedIn = jest.fn();
 const mockUseCardLinkedWallets = jest.fn();

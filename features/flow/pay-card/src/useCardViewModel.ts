@@ -1,10 +1,8 @@
 import { useMemo } from "react";
 import { useCardAuthStatus } from "@features/flow-pay-card-auth";
 import { useTranslation } from "@shared/i18n";
+import { useCardPricedWallets } from "./CardAssets/useCardPricedWallets";
 import type { CardDisplayState, CardProps, CardViewProps } from "./Card.types";
-
-/** Mock card balance shown until the real balance API is wired (see LIVE-35427 follow-up). */
-const MOCK_CARD_BALANCE = 100;
 
 export function useCardViewModel({
   login,
@@ -19,11 +17,13 @@ export function useCardViewModel({
   const isSignedIn = status === "signedIn";
   const formatCountervalue = formatters?.countervalue;
   const balanceLabel = t("payTab.card.balanceLabel");
+  // The card's balance is what its funding wallets are worth; the provider reports no total.
+  const { total, isLoading } = useCardPricedWallets(assets, isSignedIn);
 
   const cardVisual = useMemo<CardViewProps["cardVisual"]>(() => {
     if (!isSignedIn || !formatCountervalue) return undefined;
-    return { balance: MOCK_CARD_BALANCE, formatCountervalue, balanceLabel };
-  }, [isSignedIn, formatCountervalue, balanceLabel]);
+    return { balance: total, formatCountervalue, balanceLabel, isLoading };
+  }, [isSignedIn, formatCountervalue, balanceLabel, total, isLoading]);
 
   return {
     title: t("payTab.card.title"),

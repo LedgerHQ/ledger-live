@@ -34,7 +34,9 @@ import { Card } from "@features/flow-pay-card";
 - `CardTransactions` from [`@features/flow-pay-card-transactions`](../pay-card-transactions/README.md)
   on web once signed in (the first page of card transactions, or nothing when the list is empty).
 
-The flow owns the (currently mocked) card balance, so hosts no longer assemble the visual themselves.
+The balance on the card face is what the funding wallets are worth: the provider reports no total,
+so the flow sums the wallets it could price. A wallet nothing could price adds nothing, so the
+balance can understate what the card holds.
 They pass a `formatters` object for what only the app knows: `countervalue` (locale and
 counter-value currency), and on web `transactionAmount` / `transactionDate` so the history uses the
 same amount and date formatters as the rest of the app (`useDateFormatter` on Desktop). `balanceLabel`

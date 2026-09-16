@@ -10,6 +10,7 @@ import {
 import { CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { FLIP_MS } from "../Reveal/useRevealViewModel";
 import { CardDetails } from "./CardDetails";
+import type { CardVisualProps } from "../../types";
 
 listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 
@@ -63,6 +64,29 @@ describe("CardDetails (native)", () => {
     await user.press(screen.getByLabelText(CARD_COPY.details));
 
     expect(await screen.findByTestId("card-assets")).toBeVisible();
+  });
+
+  it("should carry the same balance on the sheet's card face as on the tab's", async () => {
+    const user = userEvent.setup();
+    const cardVisual: CardVisualProps = {
+      balance: 2500,
+      balanceLabel: "Balance",
+      formatCountervalue: (value: number) => ({
+        integerPart: String(value),
+        decimalPart: "00",
+        currencyText: "$",
+        decimalSeparator: ".",
+        currencyPosition: "start",
+      }),
+    };
+    render(<CardDetails onTrackEvent={jest.fn()} cardVisual={cardVisual} />, { wrapper: Wrapper });
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+
+    // One face in the tab, one in the sheet, and the balance is the same on both.
+    const amounts = await screen.findAllByTestId("card-visual-amount");
+    expect(amounts).toHaveLength(2);
+    expect(amounts.map(amount => amount.props.value)).toEqual([2500, 2500]);
   });
 
   it("should keep the details sheet content hidden when Details has not been pressed", () => {

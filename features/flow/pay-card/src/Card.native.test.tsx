@@ -3,9 +3,32 @@ import { cleanup, render, screen } from "@testing-library/react-native";
 import { View } from "react-native";
 import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
 import type { CardProps } from "./Card.types";
+import type { CardLinkedWalletBalance } from "@features/flow-pay-card-wallets";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
 
 const mockUseCardAuthStatus = jest.fn<PayCardAuthStatus, []>();
+type StubbedLinkedWallets = {
+  wallets: readonly Pick<
+    CardLinkedWalletBalance,
+    "id" | "balance" | "currency" | "ledgerId" | "ledgerCurrency"
+  >[];
+  isLoading: boolean;
+  isFetching: boolean;
+  isError: boolean;
+  refetch: () => void;
+};
+
+const mockUseCardLinkedWallets = jest.fn<StubbedLinkedWallets, []>(() => ({
+  wallets: [],
+  isLoading: false,
+  isFetching: false,
+  isError: false,
+  refetch: jest.fn(),
+}));
+
+jest.mock("@features/flow-pay-card-wallets", () => ({
+  useCardLinkedWallets: () => mockUseCardLinkedWallets(),
+}));
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <View testID="card-login" />,
