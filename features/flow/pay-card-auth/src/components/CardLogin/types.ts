@@ -88,9 +88,8 @@ export type CardAuthErrorProps = CardAuthErrorCopy & {
 export type CardLoginViewProps = CardLoginCopy & {
   /** True while the machine works. The login action is not pressable then. */
   readonly isLoading: boolean;
-  /** Set when the panel owns the screen. It replaces the login block and `children` together. */
+  /** Set when the panel owns the screen. It replaces the login block and the caller's children. */
   readonly error: CardAuthErrorCopy | null;
-  readonly children?: ReactNode;
   readonly onLoginPress: () => void;
   readonly onAlreadyHaveCardPress: () => void;
   readonly intro: CardLoginIntroViewProps;

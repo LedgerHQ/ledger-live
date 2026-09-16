@@ -22,5 +22,10 @@ export function CardLogin({
     onTrackEvent,
   });
 
-  return login ? <CardLoginView {...login}>{children}</CardLoginView> : <>{children}</>;
+  return (
+    <>
+      {login?.error ? null : children}
+      {login ? <CardLoginView {...login} /> : null}
+    </>
+  );
 }
