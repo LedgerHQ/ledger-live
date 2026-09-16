@@ -89,6 +89,61 @@ function toRequest(tx: TX): TransactionDetailsRequest | null {
   return { txid: tx.id, height, prevouts };
 }
 
+const isEstablished = (txid: string, ufvk?: string) =>
+  feeByTxId.has(txid) && (ufvk === undefined || payeesByKey.has(payeeKey(txid, ufvk)));
+
+/** The transactions still to be asked about, one request per txid. */
+function pendingRequests(transactions: TX[], ufvk?: string): TransactionDetailsRequest[] {
+  const requests = new Map<string, TransactionDetailsRequest>();
+  for (const tx of transactions) {
+    if (isEstablished(tx.id, ufvk) || requests.has(tx.id)) continue;
+    const request = toRequest(tx);
+    if (request) requests.set(tx.id, request);
+  }
+  return [...requests.values()];
+}
+
+/** Remembers what came back; a failed fetch leaves the explorer's numbers standing. */
+async function establishDetails(
+  requests: TransactionDetailsRequest[],
+  resolveDetails: DetailsResolver,
+  ufvk?: string,
+): Promise<void> {
+  try {
+    for (const { txid, fee, payees } of await resolveDetails(requests)) {
+      feeByTxId.set(txid, fee);
+      if (ufvk !== undefined) payeesByKey.set(payeeKey(txid, ufvk), payees);
+    }
+  } catch (error) {
+    log(ZCASH_LOG_TYPE, "could not resolve transactions, keeping what the explorer reported", {
+      requested: requests.length,
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+function payeesFor(txid: string, ufvk?: string): string[] {
+  if (ufvk === undefined) return [];
+  return payeesByKey.get(payeeKey(txid, ufvk)) ?? [];
+}
+
+/**
+ * The fee to write on a transaction, or `null` when there is none to write.
+ *
+ * A fee that does not read as a finite number is not an answer: writing it on
+ * the transaction would carry NaN into the operation value and on into the
+ * balance, where it is far harder to trace back than a stale fee.
+ */
+function recoveredFee(tx: TX): number | null {
+  const fee = feeByTxId.get(tx.id);
+  if (fee === undefined || fee === null) return null;
+
+  const fees = Number(fee);
+  if (!Number.isFinite(fees) || fees === tx.fees) return null;
+
+  return fees;
+}
+
 /**
  * Returns the transactions with accurate fees, plus the shielded payees found
  * along the way. Any transaction that could not be resolved keeps the fee it
@@ -104,47 +159,19 @@ export async function resolveTransactionDetails(
   resolveDetails: DetailsResolver,
   ufvk?: string,
 ): Promise<ResolvedTransactions> {
-  const isEstablished = (txid: string) =>
-    feeByTxId.has(txid) && (ufvk === undefined || payeesByKey.has(payeeKey(txid, ufvk)));
-
-  const toResolve = new Map<string, TransactionDetailsRequest>();
-  for (const tx of transactions) {
-    if (isEstablished(tx.id) || toResolve.has(tx.id)) continue;
-    const request = toRequest(tx);
-    if (request) toResolve.set(tx.id, request);
-  }
-
-  if (toResolve.size > 0) {
-    try {
-      const results = await resolveDetails([...toResolve.values()]);
-      for (const { txid, fee, payees } of results) {
-        feeByTxId.set(txid, fee);
-        if (ufvk !== undefined) payeesByKey.set(payeeKey(txid, ufvk), payees);
-      }
-    } catch (error) {
-      log(ZCASH_LOG_TYPE, "could not resolve transactions, keeping what the explorer reported", {
-        requested: toResolve.size,
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
-  }
+  const requests = pendingRequests(transactions, ufvk);
+  if (requests.length > 0) await establishDetails(requests, resolveDetails, ufvk);
 
   const payeesByTxId = new Map<string, string[]>();
   const shieldingTxIds = new Set<string>();
   let correctedFees = 0;
 
   const priced = transactions.map(tx => {
-    const payees = ufvk === undefined ? undefined : payeesByKey.get(payeeKey(tx.id, ufvk));
-    if (payees?.length) payeesByTxId.set(tx.id, payees);
+    const payees = payeesFor(tx.id, ufvk);
+    if (payees.length) payeesByTxId.set(tx.id, payees);
 
-    const fee = feeByTxId.get(tx.id);
-    if (fee === undefined || fee === null) return tx;
-
-    // A fee that does not read as a finite number is not an answer: writing it
-    // on the transaction would carry NaN into the operation value and on into
-    // the balance, where it is far harder to trace back than a stale fee.
-    const fees = Number(fee);
-    if (!Number.isFinite(fees) || fees === tx.fees) return tx;
+    const fees = recoveredFee(tx);
+    if (fees === null) return tx;
 
     if (tx.fees !== undefined && fees < tx.fees) shieldingTxIds.add(tx.id);
     correctedFees++;
