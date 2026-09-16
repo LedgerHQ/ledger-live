@@ -13,4 +13,4 @@
  * ```
  */
 
-export { analyticsEvents$ } from "./internals/eventLog";
+export { analyticsEvents$, publishAnalyticsEvent } from "./internals/eventLog";

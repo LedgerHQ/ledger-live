@@ -1,5 +1,5 @@
 import type { LoggableEvent } from "../types";
-import { analyticsEvents$, publishEvent } from "./eventLog";
+import { analyticsEvents$, publishAnalyticsEvent } from "./eventLog";
 
 const events: LoggableEvent[] = [];
 let sub: ReturnType<typeof analyticsEvents$.subscribe>;
@@ -16,9 +16,9 @@ beforeEach(() => {
   events.length = 0;
 });
 
-describe("publishEvent", () => {
+describe("publishAnalyticsEvent", () => {
   it("publishes a dated event to analyticsEvents$", () => {
-    publishEvent({
+    publishAnalyticsEvent({
       eventName: "Published",
       eventProperties: { foo: "bar", appVersion: "1.2.3" },
       eventPropertiesWithoutExtra: { foo: "bar" },
@@ -35,7 +35,7 @@ describe("publishEvent", () => {
   });
 
   it("defaults absent payloads to empty objects", () => {
-    publishEvent({
+    publishAnalyticsEvent({
       eventName: "Defaults",
       deliveryStatus: "failed_filter",
     });
@@ -50,7 +50,7 @@ describe("publishEvent", () => {
   });
 
   it("forwards the delivery status", () => {
-    publishEvent({
+    publishAnalyticsEvent({
       eventName: "Status",
       eventProperties: { foo: "bar" },
       eventPropertiesWithoutExtra: { foo: "bar" },

@@ -1,7 +1,7 @@
 import { applyPropsFilter, resolveExtraProps } from "../registry";
 import type { EventType, Props } from "../types";
 import { deliver } from "./deliver";
-import { publishEvent } from "./eventLog";
+import { publishAnalyticsEvent } from "./eventLog";
 
 type TrackEvent = {
   kind: EventType;
@@ -16,7 +16,7 @@ export async function trackEvent({ kind, eventName, props, mandatory = false }: 
   try {
     filteredProps = applyPropsFilter(props);
   } catch {
-    publishEvent({ eventName, deliveryStatus: "failed_filter" });
+    publishAnalyticsEvent({ eventName, deliveryStatus: "failed_filter" });
     return;
   }
 
@@ -25,7 +25,7 @@ export async function trackEvent({ kind, eventName, props, mandatory = false }: 
   try {
     extraProps = (await resolveExtraProps(mandatory)) ?? {};
   } catch {
-    publishEvent({
+    publishAnalyticsEvent({
       eventName,
       eventProperties: filteredProps,
       eventPropertiesWithoutExtra: filteredProps,
@@ -39,7 +39,7 @@ export async function trackEvent({ kind, eventName, props, mandatory = false }: 
   try {
     filteredExtras = applyPropsFilter({ ...props, ...extraProps });
   } catch {
-    publishEvent({ eventName, deliveryStatus: "failed_filter" });
+    publishAnalyticsEvent({ eventName, deliveryStatus: "failed_filter" });
     return;
   }
 

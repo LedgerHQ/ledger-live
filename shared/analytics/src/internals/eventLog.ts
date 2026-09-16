@@ -5,7 +5,7 @@ const eventLog = new ReplaySubject<LoggableEvent>(30);
 
 export const analyticsEvents$ = eventLog.asObservable();
 
-export function publishEvent({
+export function publishAnalyticsEvent({
   eventName,
   eventProperties = {},
   eventPropertiesWithoutExtra = {},

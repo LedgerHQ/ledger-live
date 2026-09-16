@@ -1,6 +1,6 @@
 import { getAnalytics } from "../registry";
 import type { DeliveryStatus, EventType, Props } from "../types";
-import { publishEvent } from "./eventLog";
+import { publishAnalyticsEvent } from "./eventLog";
 
 type Delivery = {
   type: EventType;
@@ -16,7 +16,7 @@ export async function deliver({
   eventPropertiesWithoutExtra,
 }: Delivery): Promise<void> {
   const publish = (deliveryStatus: DeliveryStatus) =>
-    publishEvent({
+    publishAnalyticsEvent({
       eventName,
       eventProperties,
       eventPropertiesWithoutExtra,
