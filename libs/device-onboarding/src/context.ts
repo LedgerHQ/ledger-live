@@ -1,11 +1,12 @@
 import { assign } from "xstate";
-import type {
-  DeviceOnboardingContext,
-  DeviceOnboardingExitReason,
-  DeviceOnboardingInput,
-  DeviceOnboardingOutput,
-  GenuineVerdict,
-  OnboardingEvent,
+import {
+  isSetupStep,
+  type DeviceOnboardingContext,
+  type DeviceOnboardingExitReason,
+  type DeviceOnboardingInput,
+  type DeviceOnboardingOutput,
+  type GenuineVerdict,
+  type OnboardingEvent,
 } from "./types";
 
 export type ExitOutput = { reason: DeviceOnboardingExitReason };
@@ -16,6 +17,7 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     lastDeviceState: null,
     firmwareVersion: null,
     isOnboarded: false,
+    onboardedOnEntry: null,
     genuineVerdict: null,
     secureConnectionRequested: false,
     lastGenuineFailure: null,
@@ -51,7 +53,7 @@ export function exitContract(
 const update = assign<DeviceOnboardingContext, OnboardingEvent, undefined, OnboardingEvent, never>;
 
 export const contextActions = {
-  rememberDeviceState: update(({ event }) => {
+  rememberDeviceState: update(({ context, event }) => {
     if (event.type !== "DEVICE_STATE_READ") {
       return {};
     }
@@ -59,10 +61,11 @@ export const contextActions = {
     return {
       lastDeviceState: event.state,
       isOnboarded: event.state.isOnboarded,
+      onboardedOnEntry: context.onboardedOnEntry ?? event.state.isOnboarded,
       firmwareVersion: event.firmwareVersion,
     };
   }),
-  rememberUnreadableDeviceState: update(({ event }) => {
+  rememberUnreadableDeviceState: update(({ context, event }) => {
     if (event.type !== "DEVICE_STATE_UNREADABLE") {
       return {};
     }
@@ -70,6 +73,7 @@ export const contextActions = {
     return {
       lastDeviceState: null,
       isOnboarded: event.isOnboarded,
+      onboardedOnEntry: context.onboardedOnEntry ?? event.isOnboarded,
       firmwareVersion: event.firmwareVersion,
     };
   }),
@@ -117,4 +121,17 @@ export const contextActions = {
   }),
   pauseChecks: update({ checksPaused: true }),
   resumeChecks: update({ checksPaused: false }),
+  rememberSetupStep: update(({ context, event }) => {
+    if (event.type !== "STEP_CHANGED") {
+      return {};
+    }
+
+    return {
+      lastDeviceState: event.state,
+      currentSetupStep: isSetupStep(event.state.currentOnboardingStep)
+        ? event.state.currentOnboardingStep
+        : context.currentSetupStep,
+    };
+  }),
+  forgetSetupProgress: update({ currentSetupStep: null }),
 };

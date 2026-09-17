@@ -29,6 +29,34 @@ export const OnboardingStep = {
 
 export type OnboardingStep = (typeof OnboardingStep)[keyof typeof OnboardingStep];
 
+const welcomeSteps = new Set<OnboardingStep>([
+  OnboardingStep.WelcomeScreen1,
+  OnboardingStep.WelcomeScreen2,
+  OnboardingStep.WelcomeScreen3,
+  OnboardingStep.WelcomeScreen4,
+  OnboardingStep.WelcomeScreenReminder,
+]);
+
+const setupSteps = new Set<OnboardingStep>([
+  OnboardingStep.ChooseName,
+  OnboardingStep.Pin,
+  OnboardingStep.SetupChoice,
+  OnboardingStep.SetupChoiceRestore,
+  OnboardingStep.NewDevice,
+  OnboardingStep.NewDeviceConfirming,
+  OnboardingStep.RestoreSeed,
+  OnboardingStep.RecoverRestore,
+  OnboardingStep.RestoreCharon,
+]);
+
+export function isWelcomeStep(step: OnboardingStep): boolean {
+  return welcomeSteps.has(step);
+}
+
+export function isSetupStep(step: OnboardingStep): boolean {
+  return setupSteps.has(step);
+}
+
 export type SeedPhraseWordCount = 12 | 18 | 24;
 
 /**
@@ -119,6 +147,7 @@ export type DeviceOnboardingContext = DeviceOnboardingInput & {
   lastDeviceState: DeviceOnboardingState | null;
   firmwareVersion: string | null;
   isOnboarded: boolean;
+  onboardedOnEntry: boolean | null;
   genuineVerdict: GenuineVerdict | null;
   secureConnectionRequested: boolean;
   lastGenuineFailure: GenuineFailureReport | null;

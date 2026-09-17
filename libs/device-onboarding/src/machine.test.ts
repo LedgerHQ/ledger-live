@@ -24,7 +24,7 @@ import {
   type ScriptedCommand,
 } from "./tests/fakeDmk";
 import { createOsVersionResponse, type OsVersionResponseOptions } from "./tests/osVersionResponse";
-import type { AvailableFirmwareUpdate } from "./types";
+import { OnboardingStep, type AvailableFirmwareUpdate, type DeviceOnboardingState } from "./types";
 
 const unseeded: OsVersionResponseOptions = {
   onboardingState: "welcome-screen-1",
@@ -702,16 +702,20 @@ describe("the end of the checks", () => {
     expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
 
     actor.send({ type: "CONTINUE" });
+    await settle();
 
-    expect(stateOf(actor)).toBe("deviceSetup");
+    expect(stateOf(actor)).toBe("waiting");
+    actor.stop();
   });
 
   it("sends a device that still has to be set up to the setup phase", async () => {
     const { actor } = await start({ osVersion: [os(unseeded)], ...passingChecks });
 
     actor.send({ type: "CONTINUE" });
+    await settle();
 
-    expect(stateOf(actor)).toBe("deviceSetup");
+    expect(stateOf(actor)).toBe("waiting");
+    actor.stop();
   });
 
   it("offers Ledger Sync to a device that was already onboarded on entry", async () => {
@@ -722,7 +726,7 @@ describe("the end of the checks", () => {
 
     actor.send({ type: "CONTINUE" });
 
-    expect(stateOf(actor)).toBe("syncOffer");
+    expect(exitOf(actor)).toMatchObject({ reason: "offerLedgerSync" });
   });
 
   it("ends an already onboarded device without the offer when sync is not on the table", async () => {
@@ -730,7 +734,7 @@ describe("the end of the checks", () => {
 
     actor.send({ type: "CONTINUE" });
 
-    expect(stateOf(actor)).toBe("done");
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 });
 
@@ -823,6 +827,198 @@ describe("global handlers", () => {
   });
 });
 
+describe("device setup", () => {
+  it("waits for the device to leave welcome instead of guessing naming or pin", async () => {
+    const { actor } = await enterSetup();
+
+    expect(stateOf(actor)).toBe("waiting");
+    expect(actor.getSnapshot().context.currentSetupStep).toBeNull();
+    actor.stop();
+  });
+
+  it("follows a new seed on a touchscreen, then exits without offering Ledger Sync", async () => {
+    const { actor } = await enterSetup({ offerSync: true });
+
+    await follow(actor, [
+      OnboardingStep.ChooseName,
+      OnboardingStep.Pin,
+      OnboardingStep.SetupChoice,
+      OnboardingStep.NewDevice,
+      OnboardingStep.NewDeviceConfirming,
+    ]);
+
+    actor.send(stepChanged(OnboardingStep.Ready));
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.ports.closeSession).not.toHaveBeenCalled();
+  });
+
+  it("skips naming on a nano and still reaches done", async () => {
+    const { actor } = await enterSetup({ deviceModelId: DeviceModelId.NANO_X });
+
+    await follow(actor, [OnboardingStep.Pin, OnboardingStep.SetupChoice, OnboardingStep.NewDevice]);
+    actor.send(stepChanged(OnboardingStep.Ready));
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("advances the word index while restoring a recovery phrase", async () => {
+    const { actor } = await enterSetup();
+
+    await follow(actor, [
+      OnboardingStep.Pin,
+      OnboardingStep.SetupChoice,
+      OnboardingStep.SetupChoiceRestore,
+    ]);
+    actor.send(stepChanged(OnboardingStep.RestoreSeed, { seedWordIndex: 0 }));
+    actor.send(stepChanged(OnboardingStep.RestoreSeed, { seedWordIndex: 7 }));
+
+    expect(stateOf(actor)).toBe("restoreWords");
+    expect(actor.getSnapshot().context.lastDeviceState?.seedWordIndex).toBe(7);
+
+    actor.send(stepChanged(OnboardingStep.Ready));
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("follows a Recover restore to done", async () => {
+    const { actor } = await enterSetup();
+
+    await follow(actor, [
+      OnboardingStep.Pin,
+      OnboardingStep.SetupChoice,
+      OnboardingStep.SetupChoiceRestore,
+      OnboardingStep.RecoverRestore,
+    ]);
+    actor.send(stepChanged(OnboardingStep.Ready));
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("follows a Recovery Key restore to done", async () => {
+    const { actor } = await enterSetup();
+
+    await follow(actor, [
+      OnboardingStep.Pin,
+      OnboardingStep.SetupChoice,
+      OnboardingStep.SetupChoiceRestore,
+      OnboardingStep.RestoreCharon,
+    ]);
+    actor.send(stepChanged(OnboardingStep.Ready));
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("returns to routing when the device goes back to welcome after setup has started", async () => {
+    const { actor } = await enterSetup();
+
+    actor.send(stepChanged(OnboardingStep.Pin));
+    actor.send(stepChanged(OnboardingStep.WelcomeScreen1));
+    await settle();
+
+    expect(stateOf(actor)).toBe("checksSucceeded");
+    expect(actor.getSnapshot().context.currentSetupStep).toBeNull();
+    actor.stop();
+  });
+
+  it("stays put on a step it does not map, until the device is ready", async () => {
+    const { actor } = await enterSetup();
+
+    actor.send(stepChanged(OnboardingStep.Pin));
+    actor.send(stepChanged(OnboardingStep.SafetyWarning));
+
+    expect(stateOf(actor)).toBe("pin");
+
+    actor.send(stepChanged(OnboardingStep.Ready));
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("never offers Ledger Sync to a device that was just seeded", async () => {
+    const { actor } = await enterSetup({ offerSync: true });
+
+    actor.send(stepChanged(OnboardingStep.Pin));
+    actor.send(stepChanged(OnboardingStep.Ready));
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("still treats a device as unseeded on CONTINUE after a seed appears mid-setup", async () => {
+    const { actor } = await start(
+      {
+        osVersion: [os(unseeded), os({ ...unseeded, onboardingState: "pin", isOnboarded: true })],
+        ...passingChecks,
+      },
+      { offerSync: true },
+    );
+
+    actor.send({ type: "CONTINUE" });
+    await settle();
+    actor.send(stepChanged(OnboardingStep.Pin, { isOnboarded: true }));
+    actor.send({ type: "LOCKED" });
+    actor.send({ type: "UNLOCKED" });
+    await settle();
+    actor.send({ type: "CONTINUE" });
+    await settle();
+
+    expect(actor.getSnapshot().status).not.toBe("done");
+    expect(stateOf(actor)).toBe("pin");
+    expect(actor.getSnapshot().context.onboardedOnEntry).toBe(false);
+    actor.stop();
+  });
+
+  it("reads the session id at exit, not the one the machine started with", async () => {
+    const ports = rebindingPorts();
+    const { actor } = await enterSetup({ ports });
+
+    ports.rebind();
+    actor.send(stepChanged(OnboardingStep.Ready));
+
+    expect(exitOf(actor)).toEqual({
+      sessionId: "session-after-update",
+      device: { id: "device", modelId: DeviceModelId.FLEX },
+      reason: "completed",
+    });
+  });
+
+  it("leaves the session open on the Ledger Sync exit too", async () => {
+    const ports = rebindingPorts();
+    const { actor } = await start(
+      { osVersion: [os(seeded)], ...passingChecks },
+      { offerSync: true, ports },
+    );
+
+    ports.rebind();
+    actor.send({ type: "CONTINUE" });
+
+    expect(exitOf(actor)).toEqual({
+      sessionId: "session-after-update",
+      device: { id: "device", modelId: DeviceModelId.FLEX },
+      reason: "offerLedgerSync",
+    });
+    expect(ports.closeSession).not.toHaveBeenCalled();
+  });
+
+  it("polls the device for the whole setup phase and stops once it has exited", async () => {
+    const { actor, fake } = await start({ osVersion: [os(unseeded)], ...passingChecks });
+    const commandsAfterChecks = fake.sendCommand.mock.calls.length;
+
+    actor.send({ type: "CONTINUE" });
+    await settle();
+
+    expect(fake.sendCommand.mock.calls.length).toBeGreaterThan(commandsAfterChecks);
+
+    actor.send(stepChanged(OnboardingStep.Ready));
+    const commandsOnceDone = fake.sendCommand.mock.calls.length;
+
+    jest.useFakeTimers();
+    await jest.advanceTimersByTimeAsync(3_000);
+    jest.useRealTimers();
+
+    expect(fake.sendCommand.mock.calls.length).toBe(commandsOnceDone);
+  });
+});
+
 type OnboardingActor = Actor<typeof deviceOnboardingMachine>;
 
 type ReboundPorts = DeviceOnboardingPorts & { rebind(): void };
@@ -850,6 +1046,54 @@ async function start(
   await settle();
 
   return { actor, fake };
+}
+
+async function enterSetup(
+  overrides: Partial<{
+    deviceModelId: DeviceModelId;
+    offerSync: boolean;
+    ports: DeviceOnboardingPorts;
+  }> = {},
+): Promise<{ actor: OnboardingActor; fake: FakeOnboardingDmk }> {
+  const needsNanoFirmware =
+    overrides.deviceModelId === DeviceModelId.NANO_X ||
+    overrides.deviceModelId === DeviceModelId.NANO_SP;
+  const started = await start(
+    {
+      osVersion: [os(needsNanoFirmware ? { ...unseeded, seVersion: "2.4.0" } : unseeded)],
+      ...passingChecks,
+    },
+    overrides,
+  );
+
+  started.actor.send({ type: "CONTINUE" });
+  await settle();
+
+  return started;
+}
+
+async function follow(actor: OnboardingActor, steps: OnboardingStep[]): Promise<void> {
+  for (const step of steps) {
+    actor.send(stepChanged(step));
+  }
+}
+
+function stepChanged(
+  currentOnboardingStep: OnboardingStep,
+  extras: Partial<DeviceOnboardingState> = {},
+) {
+  return {
+    type: "STEP_CHANGED" as const,
+    state: {
+      isOnboarded: false,
+      isInRecoveryMode: false,
+      managerAllowed: false,
+      currentOnboardingStep,
+      seedWordIndex: 0,
+      seedPhraseWordCount: 24 as const,
+      ...extras,
+    },
+  };
 }
 
 function fixedPorts(): DeviceOnboardingPorts {

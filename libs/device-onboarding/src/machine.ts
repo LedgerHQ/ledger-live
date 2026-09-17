@@ -2,6 +2,7 @@ import { setup } from "xstate";
 import { firmwareCheck } from "./actors/firmwareCheck";
 import { genuineCheck } from "./actors/genuineCheck";
 import { readDeviceState } from "./actors/readDeviceState";
+import { seedPolling } from "./actors/seedPolling";
 import { toggleEarlyCheck } from "./actors/toggleEarlyCheck";
 import {
   contextActions,
@@ -12,12 +13,21 @@ import {
 } from "./context";
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
 import { isTouchscreen, requiresLegacyFlow } from "./rules";
-import type {
-  DeviceOnboardingContext,
-  DeviceOnboardingInput,
-  DeviceOnboardingOutput,
-  OnboardingEvent,
+import {
+  isWelcomeStep,
+  OnboardingStep,
+  type DeviceOnboardingContext,
+  type DeviceOnboardingInput,
+  type DeviceOnboardingOutput,
+  type OnboardingEvent,
 } from "./types";
+
+function stepIs(...steps: OnboardingStep[]) {
+  const matching = new Set(steps);
+
+  return ({ event }: { event: OnboardingEvent }) =>
+    event.type === "STEP_CHANGED" && matching.has(event.state.currentOnboardingStep);
+}
 
 const stopsHere = {};
 
@@ -28,7 +38,7 @@ export const deviceOnboardingMachine = setup({
     input: {} as DeviceOnboardingInput,
     output: {} as DeviceOnboardingOutput,
   },
-  actors: { readDeviceState, genuineCheck, firmwareCheck, toggleEarlyCheck },
+  actors: { readDeviceState, genuineCheck, firmwareCheck, toggleEarlyCheck, seedPolling },
   actions: contextActions,
   guards: {
     requiresLegacyFlow: ({ context }) =>
@@ -55,7 +65,21 @@ export const deviceOnboardingMachine = setup({
       currentVerdict(context)?.isGenuine === true && context.firmwareChecked,
     onEarlyCheckScreen: ({ context }) => context.onEarlyCheckScreen,
     isOnboarded: ({ context }) => context.isOnboarded,
+    onboardedOnEntry: ({ context }) => context.onboardedOnEntry === true,
     offerSync: ({ context }) => context.offerSync,
+    deviceRestarted: ({ context, event }) =>
+      event.type === "STEP_CHANGED" &&
+      isWelcomeStep(event.state.currentOnboardingStep) &&
+      context.currentSetupStep !== null,
+    deviceIsReady: stepIs(OnboardingStep.Ready),
+    stepNaming: stepIs(OnboardingStep.ChooseName),
+    stepPin: stepIs(OnboardingStep.Pin),
+    stepSetupChoice: stepIs(OnboardingStep.SetupChoice),
+    stepNewSeed: stepIs(OnboardingStep.NewDevice, OnboardingStep.NewDeviceConfirming),
+    stepRestoreChoice: stepIs(OnboardingStep.SetupChoiceRestore),
+    stepRestoreWords: stepIs(OnboardingStep.RestoreSeed),
+    stepRestoreRecover: stepIs(OnboardingStep.RecoverRestore),
+    stepRestoreRecoveryKey: stepIs(OnboardingStep.RestoreCharon),
   },
 }).createMachine({
   id: "deviceOnboarding",
@@ -220,7 +244,7 @@ export const deviceOnboardingMachine = setup({
         checksSucceeded: {
           on: {
             CONTINUE: [
-              { guard: "isOnboarded", target: "#deviceOnboarding.onboardedExit" },
+              { guard: "onboardedOnEntry", target: "#deviceOnboarding.onboardedExit" },
               { target: "#deviceOnboarding.deviceSetup" },
             ],
           },
@@ -232,10 +256,56 @@ export const deviceOnboardingMachine = setup({
       always: [{ guard: "offerSync", target: "syncOffer" }, { target: "done" }],
     },
 
-    // The setup phase and the two exits it reaches are LIVE-36064.
-    deviceSetup: {},
-    syncOffer: {},
-    done: {},
+    deviceSetup: {
+      initial: "waiting",
+      invoke: {
+        src: "seedPolling",
+        input: ({ context }) => ({
+          dmk: context.dmk,
+          sessionId: context.ports.currentSessionId(),
+        }),
+      },
+      on: {
+        STEP_CHANGED: [
+          {
+            guard: "deviceRestarted",
+            target: "#deviceOnboarding.routing",
+            actions: ["rememberSetupStep", "forgetSetupProgress"],
+          },
+          {
+            guard: "deviceIsReady",
+            target: "#deviceOnboarding.done",
+            actions: "rememberSetupStep",
+          },
+          { guard: "stepNaming", target: ".naming", actions: "rememberSetupStep" },
+          { guard: "stepPin", target: ".pin", actions: "rememberSetupStep" },
+          { guard: "stepSetupChoice", target: ".setupChoice", actions: "rememberSetupStep" },
+          { guard: "stepNewSeed", target: ".newSeed", actions: "rememberSetupStep" },
+          { guard: "stepRestoreChoice", target: ".restoreChoice", actions: "rememberSetupStep" },
+          { guard: "stepRestoreWords", target: ".restoreWords", actions: "rememberSetupStep" },
+          { guard: "stepRestoreRecover", target: ".restoreRecover", actions: "rememberSetupStep" },
+          {
+            guard: "stepRestoreRecoveryKey",
+            target: ".restoreRecoveryKey",
+            actions: "rememberSetupStep",
+          },
+          { actions: "rememberSetupStep" },
+        ],
+      },
+      states: {
+        waiting: {},
+        naming: {},
+        pin: {},
+        setupChoice: {},
+        newSeed: {},
+        restoreChoice: {},
+        restoreWords: {},
+        restoreRecover: {},
+        restoreRecoveryKey: {},
+      },
+    },
+    syncOffer: { type: "final", output: { reason: "offerLedgerSync" } satisfies ExitOutput },
+    done: { type: "final", output: { reason: "completed" } satisfies ExitOutput },
 
     deviceLocked: { on: { UNLOCKED: "readingState" } },
     awaitingSession: {
