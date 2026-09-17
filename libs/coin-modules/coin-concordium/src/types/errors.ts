@@ -79,15 +79,43 @@ export class ConcordiumTokenPaused extends Error {
 }
 
 /**
+ * The token enforces an allow list and the sender is not on it.
+ *
+ * Distinct from {@link ConcordiumAccountDenied} because the remedy the user is
+ * told differs: one is approval to request, the other a restriction to query.
+ * Both are the issuer's to change — the module exposes `removeDenyList` as well
+ * as `removeAllowList` — so the split is about what to tell the user, not about
+ * what can be undone.
+ */
+export class ConcordiumAccountNotAllowed extends Error {
+  override name = "ConcordiumAccountNotAllowed";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ConcordiumAccountNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/**
+ * The token enforces a deny list and the sender is on it.
+ */
+export class ConcordiumAccountDenied extends Error {
+  override name = "ConcordiumAccountDenied";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ConcordiumAccountDenied");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/**
  * The token enforces an allow list and the recipient is not on it, which
  * includes a recipient the token has never written state for: membership
  * requires a write, so absence is "not approved".
  *
  * Distinct from the sender-side errors because the user's remedy is to change
  * the recipient, not to get themselves approved. Kept apart from
- * {@link ConcordiumRecipientDenied} because the recipient lookup reads the raw
- * account state and can name which rule refused, unlike the sender check — see
- * {@link ConcordiumTokenTransferNotPermitted}.
+ * {@link ConcordiumRecipientDenied} because the remedy the user is told differs,
+ * as it does for {@link ConcordiumAccountNotAllowed} and
+ * {@link ConcordiumAccountDenied}.
  */
 export class ConcordiumRecipientNotAllowed extends Error {
   override name = "ConcordiumRecipientNotAllowed";
@@ -200,13 +228,12 @@ export class ConcordiumAppOutdatedError extends Error {
 }
 
 /**
- * The sender may not transfer this token, and the stored state cannot say which
- * rule refused them.
+ * The sender may not transfer this token and the cause is not known.
  *
- * `getAccountListStatus` folds "absent from an allow list" and "present on a
- * deny list" into one verdict, and only that verdict is persisted, so naming
- * either cause would assert something unproven. Reporting the cause means
- * widening the stored `transferStatus` first.
+ * The fallback of the three sender-side errors, and no longer the usual answer:
+ * it covers a stored verdict that predates the cause being carried, and any
+ * value off the union. {@link ConcordiumAccountNotAllowed} and {@link ConcordiumAccountDenied}
+ * name the cause when the verdict has it.
  */
 export class ConcordiumTokenTransferNotPermitted extends Error {
   override name = "ConcordiumTokenTransferNotPermitted";

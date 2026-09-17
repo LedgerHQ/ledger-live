@@ -10,6 +10,8 @@ import en from "../../../../../static/i18n/en/app.json";
  */
 const PLT_ERRORS = [
   "ConcordiumTokenPaused",
+  "ConcordiumAccountNotAllowed",
+  "ConcordiumAccountDenied",
   "ConcordiumRecipientNotAllowed",
   "ConcordiumRecipientDenied",
   "ConcordiumRecipientRestrictionsUnverified",
@@ -65,6 +67,16 @@ describe("concordium PLT error translations", () => {
     expect(errors.ConcordiumTokenTransferNotPermitted?.title).not.toEqual(
       errors.ConcordiumTokenRestrictionsUnverified?.title,
     );
+  });
+
+  it("gives each of the three sender-side verdicts its own title", () => {
+    const titles = [
+      errors.ConcordiumAccountNotAllowed?.title,
+      errors.ConcordiumAccountDenied?.title,
+      errors.ConcordiumTokenTransferNotPermitted?.title,
+    ];
+
+    expect(new Set(titles).size).toBe(titles.length);
   });
 
   // The fee is paid in CCD from the parent account, so copy that reads as a token shortfall sends

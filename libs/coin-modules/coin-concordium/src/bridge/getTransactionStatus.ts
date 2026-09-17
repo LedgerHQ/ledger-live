@@ -30,6 +30,8 @@ import type {
   TransactionStatus,
 } from "../types";
 import {
+  ConcordiumAccountDenied,
+  ConcordiumAccountNotAllowed,
   ConcordiumInsufficientCcdForFee,
   ConcordiumInsufficientFunds,
   ConcordiumInvalidPltPayloadError,
@@ -122,24 +124,35 @@ function validateRecipient(transaction: Transaction, account: Account): Error | 
 }
 
 /**
- * Folds the token's own restrictions into one blocking error.
+ * Turns the token's own restrictions into a blocking error, naming the cause when
+ * the stored verdict carries it.
  *
- * Pause is read before the verdict because sync folds it in: `resolveTransferStatus`
- * returns `"blocked"` for a paused token, so the verdict alone cannot mean "a
- * list refused you".
+ * Pause is read first, from its own flag: `resolveTransferStatus` collapses a
+ * paused token to `"blocked"`, so the verdict alone cannot mean "a list refused
+ * you".
  *
- * The verdict does not say which list refused the sender, so the cause is not
- * reported — see {@link ConcordiumTokenTransferNotPermitted}.
- *
- * Gates on `!== "allowed"` rather than `=== "blocked"`, so a value from a
- * corrupted store or a newer app version blocks instead of passing.
+ * Only `"allowed"` passes. Every other value blocks, including one off the union
+ * — a corrupted store or a newer app version must not read as permission. An
+ * account synced before the cause was carried stores `"blocked"` and falls to
+ * {@link ConcordiumTokenTransferNotPermitted}, which names no cause.
  */
 function validateTokenPolicy(state: ConcordiumTokenResources | undefined): Error | undefined {
   if (!state) return new ConcordiumTokenRestrictionsUnverified();
   if (state.paused === true) return new ConcordiumTokenPaused();
-  if (state.transferStatus === "allowed") return undefined;
-  if (state.transferStatus === "unknown") return new ConcordiumTokenRestrictionsUnverified();
-  return new ConcordiumTokenTransferNotPermitted();
+
+  switch (state.transferStatus) {
+    case "allowed":
+      return undefined;
+    case "unknown":
+      return new ConcordiumTokenRestrictionsUnverified();
+    case "notAllowed":
+      return new ConcordiumAccountNotAllowed();
+    case "denied":
+      return new ConcordiumAccountDenied();
+    case "blocked":
+    default:
+      return new ConcordiumTokenTransferNotPermitted();
+  }
 }
 
 /**

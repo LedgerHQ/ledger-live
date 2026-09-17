@@ -1,4 +1,6 @@
 import {
+  ConcordiumAccountDenied,
+  ConcordiumAccountNotAllowed,
   ConcordiumAppOutdatedError,
   ConcordiumInsufficientCcdForFee,
   ConcordiumInvalidPltPayloadError,
@@ -8,6 +10,8 @@ import {
   ConcordiumRecipientRestrictionsUnverified,
   ConcordiumSignerProtocolError,
   ConcordiumTokenPaused,
+  ConcordiumTokenRestrictionsUnverified,
+  ConcordiumTokenTransferNotPermitted,
 } from "./errors";
 
 // The PLT signer errors are constructed in live-signer-concordium, a separate
@@ -43,11 +47,15 @@ describe("types/errors — PLT signer errors", () => {
 describe("types/errors — PLT transfer errors", () => {
   const pltErrors = [
     ConcordiumTokenPaused,
+    ConcordiumAccountNotAllowed,
+    ConcordiumAccountDenied,
     ConcordiumRecipientNotAllowed,
     ConcordiumRecipientDenied,
     ConcordiumRecipientRestrictionsUnverified,
     ConcordiumInsufficientCcdForFee,
     ConcordiumRecipientNotFound,
+    ConcordiumTokenTransferNotPermitted,
+    ConcordiumTokenRestrictionsUnverified,
   ];
   const cases = pltErrors.map(ErrorClass => [ErrorClass.name, ErrorClass] as const);
 

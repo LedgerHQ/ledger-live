@@ -387,26 +387,23 @@ export interface PltAccountToken {
  * send must treat it as a blocker and say the restrictions could not be
  * verified, rather than letting the transfer reach the chain to be rejected.
  */
-export type PltListStatus = "allowed" | "blocked" | "unknown";
-
-/**
- * The same check before it is folded, naming which rule refused.
- *
- * {@link PltListStatus} exists because the sender's verdict is persisted and
- * only the verdict is, so its cause cannot be recovered later. The recipient is
- * resolved from a live lookup at the moment it is reported, so the cause is
- * still in hand — and the send flow shows a different message for each.
- */
 export type PltListVerdict = "allowed" | "notAllowed" | "denied" | "unknown";
 
 /**
- * Whether this account may transfer a token: pause state and both list rules
- * folded into one verdict, resolved once by the producer.
+ * Whether this account may transfer a token, as persisted on the parent account.
  *
- * Gate on `!== "allowed"`, not `=== "blocked"` — a value from a corrupted store
- * or a newer app version is off-union, and only the first form fails closed.
+ * Carries the list verdict unfolded, so the send path can say whether the issuer
+ * can grant access or has withdrawn it — the two need different copy and only
+ * this value survives to the moment the message is shown.
+ *
+ * `"blocked"` is the cause-less form. It covers a paused token, and any account
+ * synced before the cause was carried, whose stored value is this string.
+ *
+ * Gate on `=== "allowed"` to pass, never on `=== "blocked"` to block: a value
+ * from a corrupted store or a newer app version is off-union, and only the first
+ * form fails closed.
  */
-export type PltTransferStatus = "allowed" | "blocked" | "unknown";
+export type PltTransferStatus = PltListVerdict | "blocked";
 
 /**
  * Details of a token-module rejection, carried by a `TokenUpdateTransactionFailed`

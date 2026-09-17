@@ -19,6 +19,8 @@ import {
   VALID_ADDRESS_2,
 } from "../test/fixtures";
 import {
+  ConcordiumAccountDenied,
+  ConcordiumAccountNotAllowed,
   ConcordiumInsufficientCcdForFee,
   ConcordiumInsufficientFunds,
   ConcordiumInvalidPltPayloadError,
@@ -591,18 +593,40 @@ describe("getTransactionStatus", () => {
       expect(status.errors).toEqual({});
     });
 
-    // A paused token's verdict is also `"blocked"`, so order decides this one.
-    it("reports a paused token as paused, not as a list rejection", async () => {
-      const { account, subAccount } = withToken({
-        tokenState: { transferStatus: "blocked", paused: true },
-      });
+    // Pause is read from its own flag, so it wins whatever the verdict says —
+    // including a verdict that names a list.
+    it.each(["blocked", "notAllowed", "denied"] as const)(
+      "reports a paused token as paused over a %s verdict",
+      async transferStatus => {
+        const { account, subAccount } = withToken({
+          tokenState: { transferStatus, paused: true },
+        });
+
+        const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+        expect(status.errors.sender).toBeInstanceOf(ConcordiumTokenPaused);
+      },
+    );
+
+    it("names an allow list as the cause", async () => {
+      const { account, subAccount } = withToken({ tokenState: { transferStatus: "notAllowed" } });
 
       const status = await getTransactionStatus(account, tokenTx(subAccount.id));
 
-      expect(status.errors.sender).toBeInstanceOf(ConcordiumTokenPaused);
+      expect(status.errors.sender).toBeInstanceOf(ConcordiumAccountNotAllowed);
     });
 
-    it("blocks a rejected sender without naming which list refused them", async () => {
+    it("names a deny list as the cause", async () => {
+      const { account, subAccount } = withToken({ tokenState: { transferStatus: "denied" } });
+
+      const status = await getTransactionStatus(account, tokenTx(subAccount.id));
+
+      expect(status.errors.sender).toBeInstanceOf(ConcordiumAccountDenied);
+    });
+
+    // What an account synced before the cause was carried has stored. It still
+    // blocks, and still says nothing it cannot support.
+    it("blocks a stored verdict that carries no cause", async () => {
       const { account, subAccount } = withToken({ tokenState: { transferStatus: "blocked" } });
 
       const status = await getTransactionStatus(account, tokenTx(subAccount.id));
