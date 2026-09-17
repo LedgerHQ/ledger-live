@@ -152,6 +152,7 @@ const EarlySecurityChecks = ({
     setFirmwareUpdateStatus(SoftwareCheckStatus.inactive);
     setAvailableFirmwareVersion("");
     setCompletionLoading(false);
+    setShouldListInstalledApps(false);
     installedAppsRef.current = [];
     firmwareUpdateCompletedRef.current = false;
     withAppsToReinstallRef.current = false;

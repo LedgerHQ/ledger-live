@@ -140,6 +140,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
       setFwUpdateInterrupted(null);
       setAppsToRestoreAfterFwUpdate([]);
       setIsRestoringAppsAfterFwUpdate(false);
+      setToggleOnboardingEarlyCheckType(null);
     }
   }, [device, notifyOnboardingEarlyCheckShouldReset]);
 
