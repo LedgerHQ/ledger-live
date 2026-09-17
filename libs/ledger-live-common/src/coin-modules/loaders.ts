@@ -131,6 +131,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "xion",
       "zenrock",
       "babylon",
+      "gonka",
     ],
     loadSetup: () => import("../families/cosmos/setup"),
     loadTransaction: () => import("@ledgerhq/coin-cosmos/transaction").then(m => m.default),
