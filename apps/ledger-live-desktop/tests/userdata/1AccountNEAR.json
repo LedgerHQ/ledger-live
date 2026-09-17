@@ -1,0 +1,174 @@
+{
+  "data": {
+    "PLAYWRIGHT_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2042-01-01"
+      }
+    },
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "counterValue": "USD",
+      "language": "en",
+      "locale": "en-US",
+      "theme": null,
+      "region": null,
+      "orderAccounts": "balance|desc",
+      "countervalueFirst": false,
+      "autoLockTimeout": 10,
+      "selectedTimeRange": "month",
+      "currenciesSettings": {},
+      "pairExchanges": {},
+      "developerMode": false,
+      "loaded": true,
+      "shareAnalytics": true,
+      "sentryLogs": true,
+      "lastUsedVersion": "99.99.99",
+      "dismissedBanners": [],
+      "accountsViewMode": "list",
+      "nftsViewMode": "list",
+      "showAccountsHelperBanner": true,
+      "hideEmptyTokenAccounts": false,
+      "filterTokenOperationsZeroAmount": true,
+      "sidebarCollapsed": false,
+      "discreetMode": false,
+      "preferredDeviceModel": "nanoX",
+      "hasInstalledApps": true,
+      "lastSeenDevice": {
+        "modelId": "nanoX",
+        "deviceInfo": {
+          "version": "2.2.2",
+          "mcuVersion": "2.30",
+          "seVersion": "2.2.2",
+          "majMin": "2.2",
+          "providerName": null,
+          "targetId": 855638020,
+          "hasDevFirmware": false,
+          "seTargetId": 855638020,
+          "isOSU": false,
+          "isBootloader": false,
+          "isRecoveryMode": false,
+          "managerAllowed": false,
+          "pinValidated": true,
+          "onboarded": true,
+          "bootloaderVersion": "1.16",
+          "hardwareVersion": 0,
+          "languageId": 1
+        },
+        "apps": []
+      },
+      "devicesModelList": ["nanoX"],
+      "lastSeenCustomImage": {
+        "hex": "",
+        "hash": ""
+      },
+      "blacklistedTokenIds": [],
+      "swapAcceptedProviders": [],
+      "supportedCounterValues": [],
+      "onboardingRelaunched": false,
+      "hasAnsweredRecommendedBanner": false,
+      "hasAnsweredLanguageAvailable": false,
+      "starredMarketCoins": [],
+      "overriddenFeatureFlags": {},
+      "featureFlagsButtonVisible": false,
+      "marketCounterCurrency": null,
+      "customImageBackup": null,
+      "postOnboardingActionCompleted": [],
+      "notifications": {
+        "areNotificationsAllowed": false
+      }
+    },
+    "user": {
+      "id": "near-e2e-test-user"
+    },
+    "announcements": {
+      "announcements": [],
+      "seenIds": [],
+      "lastUpdateTime": 1695123863229
+    },
+    "accounts": [
+      {
+        "data": {
+          "id": "mock:1:near:ahtziri.near:",
+          "seedIdentifier": "ahtziri.near",
+          "name": "NEAR 1",
+          "starred": true,
+          "used": true,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "ahtziri.near",
+          "freshAddressPath": "44'/397'/0'/0'/0'",
+          "blockHeight": 120000000,
+          "creationDate": "2023-01-01T00:00:00.000Z",
+          "operationsCount": 3,
+          "operations": [
+            {
+              "id": "mock:1:near:ahtziri.near:-AABBCCDDEEFF00112233445566778899AABBCCDDEEFF00112233445566778899-IN",
+              "hash": "AABBCCDDEEFF00112233445566778899AABBCCDDEEFF00112233445566778899",
+              "type": "IN",
+              "senders": ["sender.near"],
+              "recipients": ["ahtziri.near"],
+              "accountId": "mock:1:near:ahtziri.near:",
+              "blockHash": null,
+              "blockHeight": "119999990",
+              "extra": {},
+              "date": "2024-01-15T10:00:00.000Z",
+              "value": "2000000000000000000000000",
+              "fee": "1000000000000000000000"
+            },
+            {
+              "id": "mock:1:near:ahtziri.near:-1122334455667788991011121314151617181920212223242526272829303132-STAKE",
+              "hash": "1122334455667788991011121314151617181920212223242526272829303132",
+              "type": "STAKE",
+              "senders": ["ahtziri.near"],
+              "recipients": ["figment.poolv1.near"],
+              "accountId": "mock:1:near:ahtziri.near:",
+              "blockHash": null,
+              "blockHeight": "119999950",
+              "extra": {},
+              "date": "2024-01-10T10:00:00.000Z",
+              "value": "500000000000000000000000",
+              "fee": "1000000000000000000000"
+            },
+            {
+              "id": "mock:1:near:ahtziri.near:-FFEEDDCCBBAA00112233445566778899AABBCCDDEEFF00112233445566778899-OUT",
+              "hash": "FFEEDDCCBBAA00112233445566778899AABBCCDDEEFF00112233445566778899",
+              "type": "OUT",
+              "senders": ["ahtziri.near"],
+              "recipients": ["recipient.near"],
+              "accountId": "mock:1:near:ahtziri.near:",
+              "blockHash": null,
+              "blockHeight": "119999900",
+              "extra": {},
+              "date": "2024-01-05T10:00:00.000Z",
+              "value": "100000000000000000000000",
+              "fee": "1000000000000000000000"
+            }
+          ],
+          "pendingOperations": [],
+          "subAccounts": [],
+          "balance": "3500000000000000000000000",
+          "spendableBalance": "2874000000000000000000000",
+          "blockHeight": 120000000,
+          "currencyId": "near",
+          "nearResources": {
+            "stakedBalance": "500000000000000000000000",
+            "pendingBalance": "0",
+            "availableBalance": "0",
+            "storageUsageBalance": "126000000000000000000000",
+            "stakingPositions": [
+              {
+                "validatorId": "figment.poolv1.near",
+                "staked": "500000000000000000000000",
+                "available": "0",
+                "pending": "0"
+              }
+            ]
+          },
+          "swapHistory": [],
+          "syncDate": "2024-01-16T00:00:00.000Z"
+        },
+        "version": 1
+      }
+    ]
+  }
+}

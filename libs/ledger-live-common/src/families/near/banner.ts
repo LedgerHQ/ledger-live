@@ -1,6 +1,6 @@
 import { getCurrentNearPreloadData } from "@ledgerhq/coin-near/preload";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/coin-near/constants";
-import { canStake, canUnstake } from "@ledgerhq/coin-near/logic";
+import { canStake, canUnstake, getNearStakingPositions } from "@ledgerhq/coin-near/logic";
 import type { NearAccount, NearValidatorItem } from "@ledgerhq/coin-near/types";
 
 export interface AccountBannerState {
@@ -10,18 +10,21 @@ export interface AccountBannerState {
   ledgerValidator: NearValidatorItem | undefined;
 }
 
-export function getAccountBannerState(account: NearAccount): AccountBannerState {
-  // Group current validator
-  const nearResources = account.nearResources ? account.nearResources : { stakingPositions: [] };
+/**
+ * `knownValidators` lets the caller supply the list it already fetched through the generic API.
+ * The generic bridge never runs `preload()`, so the legacy cache is empty under that route and the
+ * banner would never find the Ledger validator; callers on the legacy route can omit the argument
+ * and keep reading the preload cache.
+ */
+export function getAccountBannerState(
+  account: NearAccount,
+  knownValidators?: NearValidatorItem[],
+): AccountBannerState {
+  const delegations = getNearStakingPositions(account);
 
-  const delegations = nearResources?.stakingPositions.map(delegation => {
-    return delegation;
-  });
-
-  // Get ledger validator data
-  const { validators } = getCurrentNearPreloadData() ?? {
-    validators: [],
-  };
+  const validators = knownValidators?.length
+    ? knownValidators
+    : (getCurrentNearPreloadData()?.validators ?? []);
 
   const ledgerValidator = validators.find(
     validator => validator.validatorAddress === FIGMENT_NEAR_VALIDATOR_ADDRESS,

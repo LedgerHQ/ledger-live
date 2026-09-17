@@ -18,15 +18,22 @@ jobs:
     name: "Validate PR conventions"
     # Skip on forks — GITHUB_TOKEN on forks has no write access to post comments
     if: ${{ !github.event.pull_request.head.repo.fork }}
-    runs-on: ubuntu-latest
+    runs-on: ledger-wallet-2cpu-aws-public
     permissions:
       contents: read
+      id-token: write # needed for the OIDC login to JFrog
       pull-requests: write # needed for Danger to post PR review comments
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
+
+      # Before the pnpm setup so pnpm itself is fetched through JFrog, not public npm.
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.4.0

@@ -142,6 +142,15 @@ describe("CardDetailsSheet (native)", () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
+  it("should offer a way back to the overview from more", async () => {
+    const { onBack, onClose, pressBack } = renderSheet({ route: { name: "more" } });
+
+    await pressBack();
+
+    expect(onBack).toHaveBeenCalledTimes(1);
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
   it("should offer no way back from the overview", () => {
     renderSheet();
 

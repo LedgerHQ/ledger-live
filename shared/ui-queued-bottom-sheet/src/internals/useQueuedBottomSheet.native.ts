@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Keyboard } from "react-native";
 import { BottomSheetProps, useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
 import {
@@ -7,6 +7,10 @@ import {
 } from "../contexts/QueuedBottomSheetsContext";
 import { useQueuedBottomSheetAdapters } from "./adaptersContext";
 import { useBottomSheetBackgroundToneRequests } from "./useBottomSheetBackgroundToneRequests";
+import {
+  isBottomSheetKeyboardOwnedByAnother,
+  releaseBottomSheetKeyboard,
+} from "./bottomSheetKeyboardOwnership";
 
 interface UseQueuedBottomSheetProps {
   isRequestingToBeOpened?: boolean;
@@ -17,6 +21,7 @@ interface UseQueuedBottomSheetProps {
   onBackdropPress?: () => void;
   onModalHide?: () => void;
   preventBackdropClick?: boolean;
+  restoreOnFocus?: boolean;
 }
 
 type BottomSheetState = "idle" | "open" | "dismissing";
@@ -32,7 +37,9 @@ export function useQueuedBottomSheet({
   onBackdropPress,
   onModalHide,
   preventBackdropClick,
+  restoreOnFocus = false,
 }: UseQueuedBottomSheetProps) {
+  const sheetId = useId();
   const adapters = useQueuedBottomSheetAdapters();
   const logRef = useRef(adapters.log);
   logRef.current = adapters.log;
@@ -47,6 +54,9 @@ export function useQueuedBottomSheet({
   const bottomSheetInQueueRef = useRef<BottomSheetInQueue | undefined>(undefined);
   const bottomSheetRef = useBottomSheetRef();
   const isFocused = adapters.useIsScreenFocused();
+  // Read from the effect cleanup below, which runs after the render that took the focus away.
+  const isFocusedRef = useRef(isFocused);
+  isFocusedRef.current = isFocused;
   const areBottomSheetsLocked = adapters.useAreBottomSheetsLocked();
   const backgroundComponent: BottomSheetProps["backgroundComponent"] = backgroundTone
     ? adapters.backgroundComponentByTone?.[backgroundTone]
@@ -95,8 +105,9 @@ export function useQueuedBottomSheet({
   const settleClosed = useCallback(() => {
     clearDismissFallback();
     stateRef.current = "idle";
+    releaseBottomSheetKeyboard(sheetId);
     cleanupQueue();
-  }, [clearDismissFallback, cleanupQueue]);
+  }, [clearDismissFallback, cleanupQueue, sheetId]);
 
   const beginDismissing = useCallback(() => {
     stateRef.current = "dismissing";
@@ -117,11 +128,20 @@ export function useQueuedBottomSheet({
   // out makes the underlying bottom sheet re-evaluate its position mid-close, which can leave it
   // mounted at the closed position. Retracting the keyboard as soon as a close begins keeps the
   // closing layout stable.
+  //
+  // `Keyboard.dismiss()` is global though: on a hand-off the sheet taking over has already focused
+  // its field by the time this one finishes closing, so skip the dismiss unless we raised the
+  // keyboard ourselves.
   const dismissKeyboard = useCallback(() => {
-    if (Keyboard.isVisible()) {
-      Keyboard.dismiss();
+    if (!Keyboard.isVisible()) return;
+
+    if (isBottomSheetKeyboardOwnedByAnother(sheetId)) {
+      logBottomSheet("Keyboard was raised by another sheet - leaving it up");
+      return;
     }
-  }, []);
+
+    Keyboard.dismiss();
+  }, [logBottomSheet, sheetId]);
 
   // Closing a sheet often also clears the reason the sheet queued behind it wanted to be open, so
   // by the time the queue promotes us our consumer may no longer want us. Presenting anyway leaves
@@ -161,6 +181,22 @@ export function useQueuedBottomSheet({
 
     bottomSheetRef.current?.dismiss();
     onCloseRef.current?.();
+  }, [beginDismissing, bottomSheetRef, cleanupQueue, dismissKeyboard, logBottomSheet]);
+
+  // A screen losing focus is not the user dismissing the drawer. Under `restoreOnFocus` the
+  // consumer is not told, so it keeps requesting the drawer and the effect below presents it again
+  // once the screen is focused. The later onDismiss sees a sheet already dismissing, so it reports
+  // nothing either.
+  const hideWhileUnfocused = useCallback(() => {
+    if (stateRef.current !== "open") {
+      cleanupQueue();
+      return;
+    }
+
+    logBottomSheet("Hiding drawer - screen not focused");
+    beginDismissing();
+    dismissKeyboard();
+    bottomSheetRef.current?.dismiss();
   }, [beginDismissing, bottomSheetRef, cleanupQueue, dismissKeyboard, logBottomSheet]);
 
   // Adds this drawer to the queue. The queue decides when to actually open/close it via the
@@ -249,6 +285,11 @@ export function useQueuedBottomSheet({
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
+      if (restoreOnFocus) {
+        hideWhileUnfocused();
+        return;
+      }
+
       logBottomSheet("Closing drawer - screen not focused");
       handleClose();
       return;
@@ -258,6 +299,11 @@ export function useQueuedBottomSheet({
       enqueueBottomSheet();
 
       return () => {
+        if (restoreOnFocus && !isFocusedRef.current) {
+          hideWhileUnfocused();
+          return;
+        }
+
         logBottomSheet("Effect cleanup - closing drawer");
         handleClose();
       };
@@ -267,6 +313,8 @@ export function useQueuedBottomSheet({
     isForcingToBeOpened,
     isRequestingToBeOpened,
     handleClose,
+    hideWhileUnfocused,
+    restoreOnFocus,
     enqueueBottomSheet,
     logBottomSheet,
     reopenCheckSignal,
@@ -276,11 +324,13 @@ export function useQueuedBottomSheet({
     return () => {
       logBottomSheet("Component unmounting - cleaning up");
       clearDismissFallback();
+      releaseBottomSheetKeyboard(sheetId);
       cleanupQueue();
     };
-  }, [cleanupQueue, clearDismissFallback, logBottomSheet]);
+  }, [cleanupQueue, clearDismissFallback, logBottomSheet, sheetId]);
 
   return {
+    sheetId,
     bottomSheetRef,
     areBottomSheetsLocked,
     handleUserClose,

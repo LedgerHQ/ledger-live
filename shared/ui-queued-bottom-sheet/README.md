@@ -14,14 +14,15 @@ src/
   components/                 ← public UI (`index.native` + `QueuedBottomSheet.native`)
   contexts/                   ← public React contexts
   hooks/                      ← public hooks
+  keyboard[.native].ts        ← platform-aware keyboard hook entry
   internals/                  ← package-private (not re-exported)
   testing/                    ← test double, exposed as `./testing` (see Testing)
   index.ts                    ← default stub (QueuedBottomSheet throws outside RN)
   index.native.ts             ← RN entry (unsuffixed imports; resolved via moduleSuffixes)
 ```
 
-- `package.json` `exports` expose `"."` (`react-native` → `index.native.ts`), `"./testing"` and
-  `"./testing/module-mock"`.
+- `package.json` `exports` expose `"."` (`react-native` → `index.native.ts`), `"./keyboard"`,
+  `"./testing"` and `"./testing/module-mock"`.
 - RN-only package: `tsconfig.json` is platform-agnostic and `tsconfig.native.json` adds
   `moduleSuffixes: [".native", ""]`. There are no `.web` files or a web tsconfig.
 - Barrels import unsuffixed paths (`./QueuedBottomSheet/QueuedBottomSheet`); `moduleSuffixes`
@@ -43,6 +44,8 @@ The package must not depend on `libs/*`, Redux, or React Navigation. App-specifi
 
 Adapters default to a no-op set (unlocked, focused, no gradient, no logging), so the package works without any wiring. Pass a **stable** adapters object (module scope or `useMemo`) — the adapter functions are called as hooks per sheet.
 
+A sheet whose screen loses focus is closed and reported through `onClose`, like any other close, so its consumer stops requesting it. Pass `restoreOnFocus` when the sheet is expected back after a round trip to another screen: the sheet is then hidden without reporting a close, and it is presented again once the screen is focused.
+
 ## Exports (native)
 
 | Export                                                           | Description                                                         |
@@ -54,7 +57,46 @@ Adapters default to a no-op set (unlocked, focused, no gradient, no logging), so
 | `IsInBottomSheetContext` / `IsInBottomSheetProvider`             | Know whether a subtree is inside a bottom sheet                     |
 | `BottomSheetBackgroundContext`                                   | Descendants request a status-tone background                        |
 | `useBottomSheetBackgroundTone`                                   | Descendants request a status-tone background on the enclosing sheet |
+| `useBottomSheetFooterInset`                                      | Reserve space occupied by a sticky sheet footer                     |
+| `@shared/ui-queued-bottom-sheet/keyboard`                        | Platform-aware keyboard hook entry                                  |
+| `useBottomSheetKeyboardAwareInput` (from `/keyboard`)            | A plain `TextInput` lets the enclosing sheet react to the keyboard  |
 | `QueuedBottomSheetAdapters` / `defaultQueuedBottomSheetAdapters` | Adapter contract and defaults                                       |
+
+## Keyboard
+
+Lumen inputs must register their focus with gorhom. Keep keyboard-sensitive actions in `footer`,
+and reserve its measured height with `useBottomSheetFooterInset` when content can overlap it.
+
+```tsx
+import { useBottomSheetKeyboardAwareInput } from "@shared/ui-queued-bottom-sheet/keyboard";
+
+function SheetInput() {
+  const inputRef = useRef<TextInput>(null);
+  const inputProps = useBottomSheetKeyboardAwareInput(inputRef);
+  const footerInset = useBottomSheetFooterInset();
+
+  return (
+    <BottomSheetView style={{ paddingBottom: footerInset }}>
+      <TextInput ref={inputRef} {...inputProps} />
+    </BottomSheetView>
+  );
+}
+
+<QueuedBottomSheet
+  isRequestingToBeOpened={isOpen}
+  onClose={close}
+  snapPoints="fullWithOffset"
+  footer={<Button onPress={save}>{t("common.save")}</Button>}
+>
+  <SheetInput />
+</QueuedBottomSheet>
+```
+
+Do not pad dynamically sized content with the keyboard height: changing the measured content makes
+the sheet re-snap while the keyboard animates.
+
+The keyboard offset is applied by gorhom on iOS and by the footer itself on Android, where gorhom
+hands that job to the window resize the manifest asks for.
 
 ## Usage
 

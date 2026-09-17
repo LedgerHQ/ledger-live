@@ -10,6 +10,7 @@ import { getAccountListStatus, isDecodedPltState } from "../network/plt";
 import { baseOperation, toOperation } from "./operations";
 import type {
   ConcordiumAccount,
+  ConcordiumOperation,
   ConcordiumResources,
   ConcordiumTokenResources,
   PltAccountToken,
@@ -162,18 +163,29 @@ function buildTokenAccount(
  *
  * A zero fee stays `NONE`, which also keeps an incoming transfer out of the
  * parent's history: `NONE` operations are dropped from every list.
+ *
+ * A reject cause rides this operation rather than the token one because this is
+ * the operation that always exists. `operationsForToken` builds a sub-account
+ * operation only for a token resolved from `accountTokens` and found in the CAL,
+ * and a `NonExistentTokenId` rejection names, by definition, a token that is
+ * neither — so the cause would never reach a screen. The memo is left off: it
+ * belongs to the transfer, which is the sub-account's row.
  */
-export function buildParentOperation(op: RawOperation, accountId: string): Operation {
+export function buildParentOperation(op: RawOperation, accountId: string): ConcordiumOperation {
   const fee = new BigNumber(op.fee);
   const paysFee = fee.isGreaterThan(0);
 
-  return baseOperation(
+  const parent = baseOperation(
     op,
     accountId,
     paysFee ? "FEES" : "NONE",
     // `FEES` is an outgoing type, so this value is what gets debited from CCD.
     paysFee ? fee : new BigNumber(0),
   );
+
+  return op.rejectCode === undefined
+    ? parent
+    : { ...parent, extra: { pltRejectCode: op.rejectCode } };
 }
 
 /**

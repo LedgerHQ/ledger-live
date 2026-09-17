@@ -128,8 +128,8 @@ function validateRecipient(transaction: Transaction, account: Account): Error | 
  * returns `"blocked"` for a paused token, so the verdict alone cannot mean "a
  * list refused you".
  *
- * Neither {@link ConcordiumAccountNotAllowed} nor {@link ConcordiumAccountDenied}
- * is reachable from here — see {@link ConcordiumTokenTransferNotPermitted}.
+ * The verdict does not say which list refused the sender, so the cause is not
+ * reported — see {@link ConcordiumTokenTransferNotPermitted}.
  *
  * Gates on `!== "allowed"` rather than `=== "blocked"`, so a value from a
  * corrupted store or a newer app version blocks instead of passing.

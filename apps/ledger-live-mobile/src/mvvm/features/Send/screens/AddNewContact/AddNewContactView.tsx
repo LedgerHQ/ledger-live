@@ -7,6 +7,7 @@ import {
   type QueuedDrawerFlowOptions,
   type QueuedDrawerFlowScreenRegistry,
 } from "LLM/components/QueuedDrawerFlow";
+import { ContactsAddContactFooter } from "@features/flow-contacts-add-contact";
 import { AddContactView } from "LLM/features/Send/screens/AddContact/AddContactView";
 import { SelectContactStep } from "LLM/features/Send/screens/AddToExistingContact/SelectContactStep";
 import useLedgerSyncEntryPointViewModel from "LLM/features/LedgerSyncEntryPoint/useLedgerSyncEntryPointViewModel";
@@ -151,13 +152,8 @@ export function AddNewContactView({
       options: CHOOSER_STEP_OPTIONS,
     },
     contact: {
-      content: (
-        <ContactNameStep
-          {...contactDrawer}
-          bottomOffset={keyboardBottomOffset}
-          isVisible={isDrawerOpen}
-        />
-      ),
+      content: <ContactNameStep {...contactDrawer} isVisible={isDrawerOpen} />,
+      footer: <ContactsAddContactFooter {...contactDrawer} />,
       options: CONTACT_STEP_OPTIONS,
     },
     select: {

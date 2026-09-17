@@ -63,7 +63,6 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-network": "catalog:",
-    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@noble/curves": "catalog:",
     "@noble/hashes": "catalog:",

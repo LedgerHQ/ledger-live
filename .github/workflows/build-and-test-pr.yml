@@ -361,6 +361,26 @@ jobs:
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
 
+  # Intentionally absent from ok's needs: a bundle report must not block a merge.
+  rsdoctor:
+    name: "Rsdoctor"
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+      issues: read
+      actions: read
+    needs: determine-affected
+    if: ${{ (contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')) && !github.event.pull_request.head.repo.fork }}
+    uses: LedgerHQ/ledger-live/.github/workflows/rsdoctor-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
   notify-e2e-required:
     name: "Notify E2E Required"
     permissions:

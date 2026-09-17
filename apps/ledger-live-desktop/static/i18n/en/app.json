@@ -2121,6 +2121,13 @@
     "details": "{{ currency }} details",
     "multipleAddresses": "Why multiple addresses?",
     "extra": {
+      "pltReject": {
+        "title": "Reason",
+        "nonExistentToken": "This token doesn't exist on Concordium.",
+        "recipientNotFound": "The recipient account doesn't exist on Concordium.",
+        "insufficientBalance": "The account didn't hold enough of the token.",
+        "rejected": "Concordium refused this operation."
+      },
       "frozenAmount": "Frozen amount",
       "unfreezeAmount": "Unfreeze amount",
       "votes": "Votes ({{number}})",

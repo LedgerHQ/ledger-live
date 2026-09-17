@@ -218,3 +218,7 @@ export type StakingAccount = Account & { stakingResources: StakingResources };
 export type StakingAccountRaw = AccountRaw & {
   stakingResources: StakingResourcesRaw;
 };
+
+export function isStakingAccountRaw(accountRaw: AccountRaw): accountRaw is StakingAccountRaw {
+  return "stakingResources" in accountRaw;
+}
