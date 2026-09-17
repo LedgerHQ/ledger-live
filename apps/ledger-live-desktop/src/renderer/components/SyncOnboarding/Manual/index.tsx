@@ -61,11 +61,8 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const [isBootloader, setIsBootloader] = useState(false);
   // Needed because `device` object can be null or changed if disconnected/reconnected
   const [lastSeenDevice, setLastSeenDevice] = useState<Device | null>(device ?? null);
-  useEffect(() => {
-    if (device) {
-      setLastSeenDevice(device);
-    }
-  }, [device]);
+  // Tracks the connected device's identity across renders. See DONJON-1409.
+  const previousDeviceIdRef = useRef<string | null>(device?.deviceId ?? null);
 
   const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
 
@@ -124,6 +121,27 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     resetPollingStates();
     setMustRecoverIfBootloader(true);
   }, [resetPollingStates]);
+
+  useEffect(() => {
+    if (!device) return;
+
+    const previousDeviceId = previousDeviceIdRef.current;
+    const deviceChanged = previousDeviceId !== null && previousDeviceId !== device.deviceId;
+    previousDeviceIdRef.current = device.deviceId;
+
+    setLastSeenDevice(device);
+
+    if (deviceChanged) {
+      // Device identity changed since the last render. See DONJON-1409.
+      log("SyncOnboarding", "Device identity changed, resetting onboarding state");
+      notifyOnboardingEarlyCheckShouldReset();
+      setIsInitialRunOfSecurityChecks(true);
+      setDeviceDetectedOnboarded(false);
+      setFwUpdateInterrupted(null);
+      setAppsToRestoreAfterFwUpdate([]);
+      setIsRestoringAppsAfterFwUpdate(false);
+    }
+  }, [device, notifyOnboardingEarlyCheckShouldReset]);
 
   const restartChecksAfterUpdate = useCallback(() => {
     setIsInitialRunOfSecurityChecks(false);
