@@ -15,8 +15,8 @@
   },
   "sideEffects": false,
   "scripts": {
-    "lint": "oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm exec oxfmt -c ../../libs/oxc-live-libs/.oxfmtrc.json ./src && oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
+    "lint": "oxlint src",
+    "lint:fix": "pnpm exec oxfmt -c ../../libs/oxc-live-libs/.oxfmtrc.json ./src && oxlint src --fix --quiet",
     "format": "pnpm exec oxfmt -c ../../libs/oxc-live-libs/.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../libs/oxc-live-libs/.oxfmtrc.json ./src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",

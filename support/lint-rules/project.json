@@ -3,6 +3,15 @@
   "targets": {
     "build": {
       "executor": "nx:noop"
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{projectRoot}/src/**/*"],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node --test support/lint-rules/src/suffix-imports.test.js"
+      }
     }
   }
 }

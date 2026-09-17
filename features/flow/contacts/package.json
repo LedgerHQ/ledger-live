@@ -20,6 +20,8 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",

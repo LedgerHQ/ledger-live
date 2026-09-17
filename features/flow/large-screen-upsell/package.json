@@ -16,6 +16,8 @@
   "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.web.json",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",

@@ -12,6 +12,8 @@
   "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
     "unimported": "pnpm knip --directory ../../.. -W features/platform/env"
   },
   "dependencies": {

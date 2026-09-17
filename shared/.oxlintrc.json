@@ -1,0 +1,25 @@
+{
+  "$schema": "../node_modules/oxlint/configuration_schema.json",
+  // Platform variants are carried by file names and resolved by configuration: moduleSuffixes in
+  // tsc, moduleFileExtensions in jest, resolve.extensions in rspack, preferNativePlatform in
+  // Re.Pack. A suffix in the specifier is redundant, hides cross-platform contamination from tsc,
+  // and rots on a rename. See docs/tsconfig-in-ddd.md.
+  //
+  // jsPlugins is a path relative to THIS file. Do not reach it through `extends`: an inherited
+  // relative jsPlugins path is re-based onto the extending config and fails to resolve.
+  "jsPlugins": ["../support/lint-rules/src/suffix-imports"],
+  "categories": {
+    "correctness": "off",
+    "suspicious": "off",
+    "pedantic": "off"
+  },
+  "rules": {
+    "suffix-imports/no-platform-suffix": "error"
+  },
+  // Packages still carrying platform-suffixed specifiers. Each is cleaned up in its own PR, which
+  // deletes its entry here, so this list is the remaining work.
+  "overrides": [
+    { "files": ["ui-info-state/src/**"], "rules": { "suffix-imports/no-platform-suffix": "off" } },
+    { "files": ["ui-qr-code/src/**"], "rules": { "suffix-imports/no-platform-suffix": "off" } }
+  ]
+}

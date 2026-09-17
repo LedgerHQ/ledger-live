@@ -1,0 +1,8 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../libs/oxc-live-libs/.oxlintrc.json"],
+  "jsPlugins": ["../../support/lint-rules/src/suffix-imports"],
+  "rules": {
+    "suffix-imports/no-platform-suffix": "error"
+  }
+}

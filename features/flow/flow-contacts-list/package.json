@@ -19,6 +19,8 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
     "test": "jest",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-list/knip.web.config.mjs -W features/flow/flow-contacts-list --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-list/knip.native.config.mjs -W features/flow/flow-contacts-list --tsConfig tsconfig.native.json"

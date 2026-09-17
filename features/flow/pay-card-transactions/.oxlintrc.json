@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["../../../support/lint-rules/src/suffix-imports"],
   "env": {
     "browser": true,
     "es6": true,
@@ -22,6 +23,8 @@
     "pedantic": "off"
   },
   "rules": {
+    // Off until this package is cleaned up in its own PR, which flips it back to "error".
+    "suffix-imports/no-platform-suffix": "off",
     "eslint/no-unused-vars": "warn",
     "eslint/no-empty-pattern": "warn",
     "eslint/no-constant-binary-expression": "warn",

@@ -1,0 +1,9 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../libs/oxc-live-libs/.oxlintrc.json"],
+  "jsPlugins": ["../../support/lint-rules/src/suffix-imports"],
+  "rules": {
+    // Off until this package is cleaned up in its own PR, which flips it back to "error".
+    "suffix-imports/no-platform-suffix": "off"
+  }
+}
