@@ -57,13 +57,11 @@ async function renderRevealed(unlock: () => Promise<boolean> = () => Promise.res
   return rendered;
 }
 
-async function finishFlip(reveal: () => { onImageLoad: () => void }) {
+async function finishFlip(reveal: () => { onImageLoad: () => void; status: string }) {
   act(() => {
     reveal().onImageLoad();
   });
-  await act(async () => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-  });
+  await waitFor(() => expect(reveal().status).toBe("revealed"));
 }
 
 describe("useRevealViewModel", () => {
@@ -221,6 +219,18 @@ describe("useRevealViewModel", () => {
 
     expect(reveal().status).toBe("idle");
     expect(reveal().imageUrl).toBeUndefined();
+  });
+
+  it("ignores a late image error after hide", async () => {
+    const { reveal } = await renderRevealed();
+
+    act(() => {
+      reveal().onHide();
+      reveal().onImageError();
+    });
+
+    expect(reveal().status).toBe("idle");
+    expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
   });
 
   it("ignores a late image load after hide", async () => {

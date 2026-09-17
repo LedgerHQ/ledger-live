@@ -21,6 +21,7 @@ export function CardFlip({ reveal, cardFace }: CardFlipProps) {
           "relative h-[195px] w-full transition-transform duration-500 [transform-style:preserve-3d] motion-reduce:transition-none",
           isRevealed ? "[transform:rotateY(180deg)]" : "[transform:rotateY(0deg)]",
         )}
+        data-testid="card-flip-face"
       >
         <div className="absolute inset-0 [backface-visibility:hidden]" aria-hidden={isRevealed}>
           {cardFace}

@@ -56,9 +56,9 @@ describe("CardDetails (web)", () => {
       image.dispatchEvent(new Event("load"));
     });
 
-    expect(screen.getByRole("button", { name: CARD_COPY.numbersReveal })).toBeVisible();
     expect(
       await screen.findByRole("button", { name: CARD_COPY.numbersHide }, { timeout: 1500 }),
     ).toBeVisible();
+    expect(screen.queryByRole("button", { name: CARD_COPY.numbersReveal })).not.toBeInTheDocument();
   });
 });

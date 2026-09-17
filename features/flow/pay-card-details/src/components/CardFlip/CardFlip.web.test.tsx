@@ -60,7 +60,12 @@ describe("CardFlip (web)", () => {
 
   it("should report a failed load when the details image errors", async () => {
     const onImageError = jest.fn();
-    renderFlip({ isRevealed: true, imageUrl: IMAGE_URL, onImageLoad: jest.fn(), onImageError });
+    renderFlip({
+      isRevealed: true,
+      imageUrl: IMAGE_URL,
+      onImageLoad: jest.fn(),
+      onImageError,
+    });
 
     await act(async () => {
       screen

@@ -5,6 +5,7 @@ import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
 import { CARD_FACE_BORDER, CARD_GRADIENT_END } from "../CardArtwork/cardColors";
 import type { CardFlipProps } from "../../types";
+
 const FLIP_TRANSITION = {
   transitionProperty: "transform",
   transitionDuration: 500,

@@ -79,8 +79,8 @@ describe("CardDetails (native)", () => {
     });
 
     expect(screen.getByLabelText(CARD_COPY.numbersImageAlt)).toBeVisible();
-    expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
     expect(await screen.findByText(CARD_COPY.numbersHide, {}, { timeout: 1500 })).toBeVisible();
+    expect(screen.queryByText(CARD_COPY.numbersReveal)).not.toBeOnTheScreen();
 
     await user.press(screen.getByText(CARD_COPY.numbersHide));
 

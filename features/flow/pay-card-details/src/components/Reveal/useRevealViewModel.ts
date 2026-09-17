@@ -23,14 +23,6 @@ export function useRevealViewModel({
   const inFlight = useRef(false);
   const generation = useRef(0);
 
-  useEffect(() => {
-    if (status !== "flipping") {
-      return;
-    }
-    const timer = setTimeout(() => setStatus("revealed"), FLIP_MS);
-    return () => clearTimeout(timer);
-  }, [status]);
-
   const onHide = useCallback(() => {
     generation.current += 1;
     inFlight.current = false;
@@ -47,10 +39,23 @@ export function useRevealViewModel({
     });
   }, []);
 
+  // CSS flip is 500ms and Reanimated has no transitionend — Hide waits for that settle.
+  useEffect(() => {
+    if (status === "flipping") {
+      const timer = setTimeout(() => setStatus("revealed"), FLIP_MS);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
+
   const onImageError = useCallback(() => {
-    inFlight.current = false;
-    setImageUrl(undefined);
-    setStatus("failed");
+    setStatus(current => {
+      if (current !== "loading" && current !== "flipping" && current !== "revealed") {
+        return current;
+      }
+      inFlight.current = false;
+      setImageUrl(undefined);
+      return "failed";
+    });
   }, []);
 
   const onReveal = useCallback(async () => {
