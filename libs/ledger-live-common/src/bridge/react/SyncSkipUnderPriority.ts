@@ -6,6 +6,12 @@ type Instance = {
 };
 
 const SyncSkipUnderPriorityInstances: Array<Instance> = [];
+
+export const getSyncSkipUnderPriority = (): number =>
+  SyncSkipUnderPriorityInstances.length === 0
+    ? -1
+    : Math.max(...SyncSkipUnderPriorityInstances.map(i => i.priority));
+
 export const SyncSkipUnderPriority = ({ priority }: { priority: number }) => {
   const sync = useBridgeSync();
   useEffect(() => {
@@ -17,13 +23,9 @@ export const SyncSkipUnderPriority = ({ priority }: { priority: number }) => {
     const update = () => {
       // among all the available priorities, we set the highest
       // if there is no longer SyncSkipUnderPriority mounted, we go back to -1
-      const priority =
-        SyncSkipUnderPriorityInstances.length === 0
-          ? -1
-          : Math.max(...SyncSkipUnderPriorityInstances.map(i => i.priority));
       sync({
         type: "SET_SKIP_UNDER_PRIORITY",
-        priority,
+        priority: getSyncSkipUnderPriority(),
       });
     };
 

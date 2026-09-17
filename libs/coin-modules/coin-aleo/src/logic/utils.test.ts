@@ -95,6 +95,8 @@ import {
   getOperationDetailsExtraFields,
   getAvailableBalance,
   getClaimableStakingBalance,
+  getUnbondingDisplayState,
+  getUnstakingBalance,
   sumStakedBalance,
   toStakingResources,
   isSelfTransferTransaction,
@@ -1877,6 +1879,85 @@ describe("getClaimableStakingBalance", () => {
     const brokenAccount = getMockedAccount({ blockHeight: 999, aleoResources: undefined });
 
     expect(getClaimableStakingBalance(brokenAccount)).toStrictEqual(new BigNumber(0));
+  });
+});
+
+describe("getUnstakingBalance", () => {
+  const unbondingBalance = new BigNumber(5_000);
+
+  const accountAt = (blockHeight: number, unbondingHeight: number | null) =>
+    getMockedAccount({
+      blockHeight,
+      aleoResources: { ...mockAleoResources, unbondingBalance, unbondingHeight },
+    });
+
+  it("is the whole unbonding entry while none of it is claimable", () => {
+    expect(getUnstakingBalance(accountAt(249, 250))).toStrictEqual(unbondingBalance);
+  });
+
+  it("is zero once the entry became claimable", () => {
+    expect(getUnstakingBalance(accountAt(250, 250))).toStrictEqual(new BigNumber(0));
+  });
+
+  it("is zero without an unbonding entry", () => {
+    const account = getMockedAccount({
+      blockHeight: 249,
+      aleoResources: {
+        ...mockAleoResources,
+        unbondingBalance: new BigNumber(0),
+        unbondingHeight: null,
+      },
+    });
+
+    expect(getUnstakingBalance(account)).toStrictEqual(new BigNumber(0));
+  });
+});
+
+describe("getUnbondingDisplayState", () => {
+  const UNBONDING_HEIGHT = 1_000;
+
+  const stateOf = (overrides: {
+    claimableBalance?: BigNumber;
+    unbondingHeight?: number | null;
+    syncedHeight: number;
+    currentHeight: number;
+  }) =>
+    getUnbondingDisplayState({
+      unbondingHeight: UNBONDING_HEIGHT,
+      claimableBalance: new BigNumber(0),
+      ...overrides,
+    });
+
+  it("reports claimable once the synced height has produced a claimable balance", () => {
+    expect(
+      stateOf({
+        claimableBalance: new BigNumber(5_000),
+        syncedHeight: UNBONDING_HEIGHT + 1,
+        currentHeight: UNBONDING_HEIGHT + 1,
+      }),
+    ).toEqual({ isClaimable: true, isCountingDown: false, isSettling: false, blocksLeft: 0 });
+  });
+
+  it("counts down in blocks while the chain has not reached the unbonding height", () => {
+    expect(
+      stateOf({ syncedHeight: UNBONDING_HEIGHT - 40, currentHeight: UNBONDING_HEIGHT - 10 }),
+    ).toEqual({ isClaimable: false, isCountingDown: true, isSettling: false, blocksLeft: 10 });
+  });
+
+  it("reports settling when the live height passed the unbonding height but the sync has not", () => {
+    expect(
+      stateOf({ syncedHeight: UNBONDING_HEIGHT - 5, currentHeight: UNBONDING_HEIGHT + 2 }),
+    ).toEqual({ isClaimable: false, isCountingDown: true, isSettling: true, blocksLeft: 0 });
+  });
+
+  it("reports nothing to display without an unbonding entry", () => {
+    expect(
+      stateOf({
+        unbondingHeight: null,
+        syncedHeight: UNBONDING_HEIGHT,
+        currentHeight: UNBONDING_HEIGHT,
+      }),
+    ).toEqual({ isClaimable: false, isCountingDown: false, isSettling: false, blocksLeft: null });
   });
 });
 

@@ -60,6 +60,12 @@ const ENABLE_TOKENS = false;
  */
 const ENABLE_STAKING = false;
 
+/** Both are required on the config, so these only stand in until it has loaded. */
+export const LIVE_BLOCK_HEIGHT_POLL_MS = 10_000;
+
+/** Once spent, a settled unbonding entry is left to the background sync to pick up. */
+export const MAX_UNBONDING_SYNC_ATTEMPTS = 3;
+
 // Figment runs a different address on each network, both named "Figment" in the committee
 // validator-metadata, so each network needs its own.
 const MAINNET_DEFAULT_VALIDATOR = "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t";
@@ -85,6 +91,8 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       enableStaking: ENABLE_STAKING,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
       recordPickingStrategy: RECORD_PICKING_STRATEGY,
+      liveBlockHeightPollMs: LIVE_BLOCK_HEIGHT_POLL_MS,
+      maxUnbondingSyncAttempts: MAX_UNBONDING_SYNC_ATTEMPTS,
     },
   },
   config_currency_aleo_testnet: {
@@ -106,6 +114,8 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       enableStaking: ENABLE_STAKING,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
       recordPickingStrategy: RECORD_PICKING_STRATEGY,
+      liveBlockHeightPollMs: LIVE_BLOCK_HEIGHT_POLL_MS,
+      maxUnbondingSyncAttempts: MAX_UNBONDING_SYNC_ATTEMPTS,
     },
   },
 };

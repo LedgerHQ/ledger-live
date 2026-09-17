@@ -74,6 +74,7 @@ import type {
   AleoStakingResources,
   AleoStakingMode,
   AleoValidator,
+  AleoUnbondingDisplayState,
   AleoValidatorNonEarningReason,
 } from "../types";
 
@@ -1003,6 +1004,59 @@ export function getClaimableStakingBalance(account: AleoAccount): BigNumber {
 }
 
 /**
+ * The locked part of an unbonding entry. {@link getClaimableStakingBalance} is all-or-nothing, so
+ * the two never overlap.
+ */
+export function getUnstakingBalance(account: AleoAccount): BigNumber {
+  const unbondingBalance = account.aleoResources?.unbondingBalance ?? new BigNumber(0);
+  return unbondingBalance.minus(getClaimableStakingBalance(account));
+}
+
+/**
+ * Whether the unbonding entry is still waiting on the account's own height. Needs no live chain
+ * tip, so callers can use it to decide whether reading that tip is worth it at all.
+ */
+export function isUnbondingCountingDown({
+  unbondingHeight,
+  claimableBalance,
+  syncedHeight,
+}: {
+  unbondingHeight: number | null;
+  claimableBalance: BigNumber;
+  syncedHeight: number;
+}): boolean {
+  return !claimableBalance.gt(0) && unbondingHeight !== null && unbondingHeight > syncedHeight;
+}
+
+/**
+ * `syncedHeight` decides claimability, because the bridge validates the claim against that same
+ * height. `currentHeight` is the live chain tip and only drives the blocks the user reads.
+ * `isSettling` is the gap: chain past the height, account not yet caught up.
+ */
+export function getUnbondingDisplayState({
+  unbondingHeight,
+  claimableBalance,
+  syncedHeight,
+  currentHeight,
+}: {
+  unbondingHeight: number | null;
+  claimableBalance: BigNumber;
+  syncedHeight: number;
+  currentHeight: number;
+}): AleoUnbondingDisplayState {
+  const isClaimable = claimableBalance.gt(0);
+  const isCountingDown = isUnbondingCountingDown({
+    unbondingHeight,
+    claimableBalance,
+    syncedHeight,
+  });
+  const blocksLeft = unbondingHeight !== null ? Math.max(0, unbondingHeight - currentHeight) : null;
+  const isSettling = !isClaimable && blocksLeft === 0;
+
+  return { isClaimable, isCountingDown, isSettling, blocksLeft };
+}
+
+/**
  * True while an operation of that type is still in the pending pool.
  *
  * The staking figures in `aleoResources` are read straight from the `credits.aleo` mappings
@@ -1556,6 +1610,11 @@ export function estimateGrossRate(
   return totalSupplyCredits.multipliedBy(ANNUAL_INFLATION_RATE).dividedBy(totalStakeCredits);
 }
 
+/** Below this, `credits.aleo` pays the delegator nothing whatever its validator does. */
+export function isDelegatorBelowMinimum(delegatorStakeMicrocredits: BigNumber): boolean {
+  return delegatorStakeMicrocredits.isLessThan(MIN_DELEGATOR_STAKE_MICROCREDITS);
+}
+
 /**
  * Why a validator pays its delegators nothing, or null when it pays. The single source
  * of truth for these rules: {@link estimateNetRate} collapses all of them to a rate of
@@ -1622,8 +1681,7 @@ export function estimateNetRate({
   if (!commissionPercent.isFinite() || commissionPercent.isLessThan(0)) return null;
 
   const delegatorBelowMinimum =
-    delegatorStakeMicrocredits !== undefined &&
-    delegatorStakeMicrocredits.isLessThan(MIN_DELEGATOR_STAKE_MICROCREDITS);
+    delegatorStakeMicrocredits !== undefined && isDelegatorBelowMinimum(delegatorStakeMicrocredits);
   const nonEarningReason = getValidatorNonEarningReason({
     totalStakeMicrocredits,
     validatorStakeMicrocredits,

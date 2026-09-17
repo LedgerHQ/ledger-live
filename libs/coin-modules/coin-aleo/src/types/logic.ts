@@ -66,6 +66,13 @@ export type AleoValidator = {
   nonEarningReason?: AleoValidatorNonEarningReason;
 };
 
+export type AleoUnbondingDisplayState = {
+  isClaimable: boolean;
+  isCountingDown: boolean;
+  isSettling: boolean;
+  blocksLeft: number | null;
+};
+
 export type AleoStakingPosition = {
   bondedBalance: BigNumber;
   bondedValidator: string | null;
