@@ -2,5 +2,11 @@
   "extends": [
     "./tsconfig.json",
     "@support/ts-features-flow/web"
-  ]
+  ],
+  "compilerOptions": {
+    "types": [
+      "jest",
+      "@testing-library/jest-dom"
+    ]
+  }
 }

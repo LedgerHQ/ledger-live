@@ -1,7 +1,8 @@
 # support/
 
 > [!CAUTION]
-> **Status: UNSTABLE** — The layer was just introduced; only the jest preset below exists so far.
+> **Status: UNSTABLE** — the layer is still being rolled out. `apps/`, `libs/ledgerjs`, `libs/ui`,
+> `libs/coin-modules`, `e2e/`, `tools/` and `tests/` have not moved yet and keep their own configs.
 
 Development-only tooling: shared test, TypeScript, lint and format configuration. Packages here
 never ship runtime code, and consumers depend on them through `devDependencies` only.
@@ -21,25 +22,82 @@ See [ADR: Shared Tooling Configuration via `support/` Packages](https://ledgerhq
 
 ## Naming
 
-`support/<name>` → `@support/<name>`, following `{tool}-{preset}`.
+`support/<tool>-<layer>` → `@support/<tool>-<layer>`.
 
-Two kinds of preset:
+**There is one axis, and it is the layer.** A package picks its layer once and uses that same suffix
+for every tool, so `features/flow/contacts` consumes `ts-features-flow` + `lint-features-flow` +
+`jest-features-flow`. The tool segment is `ts` / `lint` / `fmt` / `jest`, never the vendor's name, so
+replacing oxlint or oxfmt later costs nothing.
 
-- **Runtime presets** are defined by the execution environment a package targets: `base` (universal),
-  `web` (browser, and the Electron renderer), `react-native`, `node`.
-- **Product presets** are defined by what a group of packages *does* rather than what it targets,
-  e.g. `coin`, `domain`, `features-flow`, `devtools`. A product preset must build on a runtime
-  preset, must not redefine baseline options, and must document which packages it applies to.
+Earlier attempts mixed a *layer* axis with a *runtime* axis (`base`, `web`, `react-native`, `node`)
+and stalled three times, because you could not tell from a name which axis a package was on.
+**Platform is not an axis.** A layer preset that needs it exposes `.`, `./web` and `./native`
+subpaths instead — and lint needs none at all: there is no platform dimension anywhere in the repo's
+oxlint configuration.
 
 ## Packages
 
 | Package | Applies to |
 | --- | --- |
+| [`fmt-base`](./fmt-base) | every migrated layer — the repo's single oxfmt preset |
 | [`jest-devtools`](./jest-devtools) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
 | [`jest-features-flow`](./jest-features-flow) | `features/flow/*` — dual web/native jest preset plus Lumen passthrough stubs |
 | [`jest-shared`](./jest-shared) | `shared/*` — flat node preset for logic packages, dual web/native and native-only presets for UI packages |
-| [`lint-rules`](./lint-rules) | monorepo-wide custom ESLint rules |
+| [`lint-base`](./lint-base) | the root of the lint preset chain, and the repo's custom oxlint JS plugin |
+| [`lint-devtools`](./lint-devtools) | `devtools/*` |
+| [`lint-domain`](./lint-domain) | `domain/entity/*`, `domain/api/*` |
+| [`lint-features-flow`](./lint-features-flow) | `features/flow/*` |
+| [`lint-features-platform`](./lint-features-platform) | `features/platform/*` |
+| [`lint-libs`](./lint-libs) | the 50 `libs/*` packages that used `libs/oxc-live-libs` |
+| [`lint-shared`](./lint-shared) | `shared/*` |
+| [`lint-support`](./lint-support) | `support/*` |
 | [`msw-features-flow-pay-card`](./msw-features-flow-pay-card) | `features/flow/pay-card-*` — MSW + RTK Query test store and server |
+| [`ts-base`](./ts-base) | the root of the tsconfig chain; `tsconfig.base.json` is a shim over it |
+| [`ts-devtools`](./ts-devtools) | `devtools/*` |
+| [`ts-domain`](./ts-domain) | `domain/entity/*`, `domain/api/*` |
+| [`ts-features-flow`](./ts-features-flow) | `features/flow/*` |
+| [`ts-features-platform`](./ts-features-platform) | `features/platform/*` |
+| [`ts-shared`](./ts-shared) | `shared/*` |
+
+## How a consumer uses them
+
+A migrated package carries **no lint or format config file at all**. Each lint preset ships a `bin`
+that pnpm links into the consumer's `node_modules/.bin`, and that bin runs oxlint with `-c` pointing
+at the preset's own config:
+
+```jsonc
+{
+  "scripts": {
+    "lint": "lint-features-flow src",
+    "lint:fix": "lint-features-flow src --fix",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check"
+  },
+  "devDependencies": {
+    "@support/lint-features-flow": "workspace:*",
+    "@support/fmt-base": "workspace:*"
+  }
+}
+```
+
+A one-rule deviation goes on the command line rather than into a new config file, e.g.
+`lint-libs ./src -A no-console`. Extra format excludes use oxfmt's `!` positionals, e.g.
+`fmt-base src '!src/generated/**'`.
+
+tsconfig still needs a file per package, because that is how TypeScript is told where the preset is:
+
+```jsonc
+// tsconfig.json
+{ "extends": "@support/ts-features-flow", "references": [{ "path": "./tsconfig.web.json" }] }
+// tsconfig.web.json — package root first, platform layer over it
+{ "extends": ["./tsconfig.json", "@support/ts-features-flow/web"] }
+```
+
+Order matters: the platform layer must come **last** so its `moduleSuffixes`, `include` and
+`exclude` win, and the package's own root must come **first** so its deviations survive.
+
+`tools/scripts/validate-lint-presets.mjs` and `tools/scripts/validate-tsconfig-presets.mts` enforce
+both shapes in CI.
 
 ## Adding a package
 
@@ -48,6 +106,7 @@ Follow [docs/new-library.md](../docs/new-library.md), then:
 - Add a row to the table above.
 - Add a `CODEOWNERS` entry.
 - If the entry points sit outside `src/`, add a `workspaces` entry to `knip.json`.
+- If it is a lint preset, add its layer to `MIGRATED` in `tools/scripts/validate-lint-presets.mjs`.
 
 An override that shows up in more than one consumer belongs in a preset instead. Keeping the override
 in the consumer is fine when it is genuinely package-specific — but it is visible in the diff, so it
