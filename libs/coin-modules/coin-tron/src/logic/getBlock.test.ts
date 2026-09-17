@@ -197,6 +197,169 @@ describe("getBlock", () => {
     });
   });
 
+  // Same transaction as the /operations regression: block 85277401 holds a TRC20 deployed and
+  // minted in one go, whose transfer exists only as an event log.
+  it("should map a TRC20 minted by a contract creation to transfer operations", async () => {
+    const deployerHex = "41679c8dd7488038252f935ca3465fbc94d29a940f";
+
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 85277401, timestamp: 1786503237000 } },
+      transactions: [
+        {
+          txID: "4d8f740330ec0c2158cd29db807c98b2c8ba11f7217e645d5c4421106138a399",
+          raw_data: {
+            contract: [
+              {
+                type: "CreateSmartContract",
+                parameter: {
+                  value: {
+                    owner_address: deployerHex,
+                    new_contract: { name: "Token", origin_address: deployerHex },
+                  },
+                },
+              },
+            ],
+          },
+          ret: [{ contractRet: "SUCCESS", fee: 57131600 }],
+        },
+      ],
+    });
+    mockGetTransactionInfoByBlockNum.mockResolvedValue([
+      {
+        id: "4d8f740330ec0c2158cd29db807c98b2c8ba11f7217e645d5c4421106138a399",
+        fee: 57131600,
+        contract_address: "411fd80baee7c53e92e69447ff8c48d6b3a008572f",
+        log: [
+          {
+            address: "1fd80baee7c53e92e69447ff8c48d6b3a008572f",
+            topics: [
+              "ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0000000000000000000000000000000000000000000000000000000000000000",
+              "000000000000000000000000679c8dd7488038252f935ca3465fbc94d29a940f",
+            ],
+            data: "00000000000000000000000000000000000004ee2d6d415b85acef8100000000",
+          },
+        ],
+      },
+    ]);
+
+    const result = await getBlock(mockConfig, 85277401);
+    const amount = BigInt("100000000000000000000000000000000");
+
+    expect(result.transactions).toHaveLength(1);
+    // The deployer paid for the deployment; the mint itself comes from the zero address.
+    expect(result.transactions[0].feesPayer).toBe(encode58Check(deployerHex));
+    expect(result.transactions[0].operations).toEqual([
+      {
+        type: "transfer",
+        address: encode58Check("41" + "0".repeat(40)),
+        peer: encode58Check(deployerHex),
+        asset: { type: "trc20", assetReference: "TCsam7uH3NbYLpKMCAayquN4Qwm3q717qu" },
+        amount: -amount,
+      },
+      {
+        type: "transfer",
+        address: encode58Check(deployerHex),
+        peer: encode58Check("41" + "0".repeat(40)),
+        asset: { type: "trc20", assetReference: "TCsam7uH3NbYLpKMCAayquN4Qwm3q717qu" },
+        amount,
+      },
+    ]);
+  });
+
+  it("should map every constructor mint of a contract creation, not just the first", async () => {
+    const deployerHex = "41679c8dd7488038252f935ca3465fbc94d29a940f";
+    const transferTopic = "ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+    const mintedTo = "000000000000000000000000679c8dd7488038252f935ca3465fbc94d29a940f";
+    const amountData = "0000000000000000000000000000000000000000000000000000000000000064";
+
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      transactions: [
+        {
+          txID: "tx1",
+          raw_data: {
+            contract: [
+              {
+                type: "CreateSmartContract",
+                parameter: {
+                  value: { owner_address: deployerHex, new_contract: { name: "Token" } },
+                },
+              },
+            ],
+          },
+          ret: [{ contractRet: "SUCCESS" }],
+        },
+      ],
+    });
+    mockGetTransactionInfoByBlockNum.mockResolvedValue([
+      {
+        id: "tx1",
+        fee: 0,
+        log: [
+          {
+            address: "1fd80baee7c53e92e69447ff8c48d6b3a008572f",
+            topics: [transferTopic, "0".repeat(64), mintedTo],
+            data: amountData,
+          },
+          {
+            address: "a614f803b6fd780986a42c78ec9c7f77e6ded13c",
+            topics: [transferTopic, "0".repeat(64), mintedTo],
+            data: amountData,
+          },
+        ],
+      },
+    ]);
+
+    const result = await getBlock(mockConfig, 100);
+
+    expect(result.transactions[0].operations).toHaveLength(4);
+    expect(
+      result.transactions[0].operations.map(
+        op => (op as { asset: { assetReference: string } }).asset.assetReference,
+      ),
+    ).toEqual([
+      "TCsam7uH3NbYLpKMCAayquN4Qwm3q717qu",
+      "TCsam7uH3NbYLpKMCAayquN4Qwm3q717qu",
+      "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    ]);
+  });
+
+  it("should map a contract creation with no token event to a plain operation", async () => {
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      transactions: [
+        {
+          txID: "tx1",
+          raw_data: {
+            contract: [
+              {
+                type: "CreateSmartContract",
+                parameter: {
+                  value: {
+                    owner_address: "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+                    new_contract: { name: "Whatever" },
+                  },
+                },
+              },
+            ],
+          },
+          ret: [{ contractRet: "SUCCESS" }],
+        },
+      ],
+    });
+
+    const result = await getBlock(mockConfig, 100);
+
+    expect(result.transactions[0].operations).toEqual([
+      { type: "other", operationType: "NONE", contractType: "CreateSmartContract" },
+    ]);
+  });
+
   it("should map TriggerSmartContract without transfer data to other operations", async () => {
     (getBlockWithTransactions as jest.Mock).mockResolvedValue({
       blockID: "blockhash",

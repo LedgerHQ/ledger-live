@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import type { TransactionLogAPI } from "./types";
 
 // see: https://solidity.readthedocs.io/en/v0.6.1/abi-spec.html#function-selector-and-argument-encoding
 // Use toString(16) on BigNumber to preserve full uint256 precision (avoid toNumber() which is limited to 2^53).
@@ -78,6 +79,104 @@ export const abiDecodeTrc20Transfer = (data: string): Trc20TransferData | null =
   if (amount.isNaN()) return null;
 
   return { to, amount };
+};
+
+/**
+ * topic0 of `Transfer(address,address,uint256)` — keccak256 of the event signature.
+ * Every TRC20 transfer emits it, including the ones minted from a contract's constructor.
+ */
+export const TRC20_TRANSFER_EVENT_TOPIC =
+  "ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+
+/** topic0 of `Approval(address,address,uint256)`. */
+export const TRC20_APPROVAL_EVENT_TOPIC =
+  "8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925";
+
+const TRC20_TOKEN_EVENT_TOPICS = new Set([TRC20_TRANSFER_EVENT_TOPIC, TRC20_APPROVAL_EVENT_TOPIC]);
+
+/**
+ * Event logs carry addresses EVM-style — 20 bytes, no `41` prefix, and left-padded to 32 bytes
+ * inside a topic. TRON hex addresses keep the prefix, so put it back on the trailing 20 bytes.
+ */
+const toTronHexAddress = (hexAddress: string): string => {
+  const clean = hexAddress.toLowerCase().replace(/^0x/, "");
+  if (clean.length < 40 || !HEX_REGEX.test(clean)) return "";
+  return "41" + clean.slice(-40);
+};
+
+type Trc20TokenEventLog = {
+  /** TRON hex address (`41` + 20 bytes) of the token contract that emitted the event. */
+  contractAddress: string;
+  from: string;
+  to: string;
+};
+
+const decodeTrc20TokenEventLog = (log: TransactionLogAPI): Trc20TokenEventLog | null => {
+  const [topic, fromTopic, toTopic] = log.topics ?? [];
+  if (!topic || !TRC20_TOKEN_EVENT_TOPICS.has(topic.toLowerCase())) return null;
+  if (!fromTopic || !toTopic || !log.address) return null;
+
+  const contractAddress = toTronHexAddress(log.address);
+  const from = toTronHexAddress(fromTopic);
+  const to = toTronHexAddress(toTopic);
+  if (!contractAddress || !from || !to) return null;
+
+  return { contractAddress, from, to };
+};
+
+export type Trc20TransferLog = Trc20TokenEventLog & { amount: BigNumber };
+
+/**
+ * Decodes a `Transfer(address,address,uint256)` event log: the token contract, both parties and
+ * the amount. Returns null for any other event.
+ */
+export const decodeTrc20TransferLog = (log: TransactionLogAPI): Trc20TransferLog | null => {
+  if (log.topics?.[0]?.toLowerCase() !== TRC20_TRANSFER_EVENT_TOPIC) return null;
+
+  const event = decodeTrc20TokenEventLog(log);
+  if (!event) return null;
+
+  const data = (log.data ?? "").replace(/^0x/, "");
+  if (!data || !HEX_REGEX.test(data)) return null;
+
+  const amount = new BigNumber(data, 16);
+  if (amount.isNaN()) return null;
+
+  return { ...event, amount };
+};
+
+/**
+ * Recovers the TRC20 contract address from a transaction's event logs.
+ *
+ * The logs are the one source that holds it in every case: a transfer minted inside a contract's
+ * constructor (`CreateSmartContract`) has no `contract_address` parameter to read it from, and an
+ * unindexed token has no TronGrid `token_info.address` either — but the `Transfer` event is always
+ * emitted by the token contract itself.
+ *
+ * `participants` narrows the choice when a transaction touches several tokens; when nothing
+ * matches, a transaction emitting a single token's events is still unambiguous. Anything else
+ * returns undefined rather than guessing.
+ *
+ * @returns the TRON hex address (`41` + 20 bytes) of the token contract, or undefined
+ */
+export const trc20ContractAddressFromLogs = (
+  logs: TransactionLogAPI[] | undefined,
+  participants: { from?: string; to?: string } = {},
+): string | undefined => {
+  const events = (logs ?? [])
+    .map(decodeTrc20TokenEventLog)
+    .filter((event): event is Trc20TokenEventLog => event !== null);
+  if (events.length === 0) return undefined;
+
+  const matching = events.filter(
+    event =>
+      (!participants.from || event.from === participants.from) &&
+      (!participants.to || event.to === participants.to),
+  );
+  const candidates = matching.length > 0 ? matching : events;
+
+  const addresses = new Set(candidates.map(event => event.contractAddress));
+  return addresses.size === 1 ? candidates[0].contractAddress : undefined;
 };
 
 export const hexToAscii = (hex: string): string => Buffer.from(hex, "hex").toString("ascii");
