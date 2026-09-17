@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM"],
@@ -9,10 +9,7 @@
     "moduleSuffixes": [".web", ""],
     "paths": { "*": ["./*"] },
     "noEmit": true,
-    "types": ["jest", "@testing-library/jest-dom"],
-    "noImplicitAny": false,
-    "noImplicitThis": false,
-    "isolatedModules": false
+    "types": ["jest", "@testing-library/jest-dom"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "lib"]
