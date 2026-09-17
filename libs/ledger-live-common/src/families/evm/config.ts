@@ -1375,7 +1375,8 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         uri: "https://arc.coin.ledger.com",
       },
       explorer: {
-        type: "none",
+        type: "blockscout",
+        uri: "https://proxyblockscout.api.live.ledger.com/5042/api",
       },
       nativeContracts: ["0x3600000000000000000000000000000000000000"],
       feeHistoryBlockCount: 1024,
