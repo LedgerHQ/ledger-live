@@ -16,8 +16,8 @@ export default class ContactNameDrawer {
   confirmButton = () => getElementById(this.confirmButtonId());
 
   @Step("Expect the contact name drawer visible")
-  async expectVisible() {
-    await waitForFullyVisibleById(this.contentId());
+  async expectVisible(visibilityPercentage = 100) {
+    await detoxExpect(getElementById(this.contentId())).toBeVisible(visibilityPercentage);
   }
 
   @Step("Type contact name: {{0}}")
@@ -37,8 +37,8 @@ export default class ContactNameDrawer {
   }
 
   @Step("Expect the confirm action fully visible")
-  async expectConfirmFullyVisible() {
-    await waitForFullyVisibleById(this.confirmButtonId());
+  async expectConfirmFullyVisible(visibilityPercentage = 100) {
+    await detoxExpect(getElementById(this.confirmButtonId())).toBeVisible(visibilityPercentage);
   }
 
   @Step("Confirm the contact name")
