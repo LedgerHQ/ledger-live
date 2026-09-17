@@ -34,7 +34,6 @@ import CustomCALRefInput from "./CustomCALRefInput";
 import EnvVariableOverride from "./EnvVariableOverride";
 import ModularDrawerDevTool from "./ModularDrawer";
 import CryptoAssetsListDevTool from "./CryptoAssetsList";
-import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 import AppJsonImporter from "./AppJsonImporter";
 import CustomLockScreenTester from "./CustomLockScreenTester";
 import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
@@ -174,7 +173,6 @@ const Default = () => {
       <DeviceIntentExecutorDevTool />
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />
-      <MockAccountGeneratorSection />
       <AppJsonImporter />
     </Body>
   );

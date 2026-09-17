@@ -11,8 +11,10 @@ import {
   useFeatureFlagsToolProps,
   usePayCardToolProps,
   useEnvDevToolProps,
+  useMockAccountsToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
+import type { Account } from "@ledgerhq/types-live";
 import { openHostedLoginInSecureBrowser } from "@features/flow-pay-card-auth";
 import { useCurrenciesByIds } from "@features/platform-currencies";
 import { BAANX_LEDGER_CURRENCY_IDS } from "@domain/entity-card-asset-mapping";
@@ -20,6 +22,11 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
+import { useDispatch, useStore } from "~/context/hooks";
+import { replaceAccounts } from "~/actions/accounts";
+import { exportSelector } from "~/reducers/accounts";
+import { saveAccounts } from "~/db";
+import { reboot } from "~/actions/appstate";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
 type BaseNavigation = NativeStackNavigationProp<
@@ -31,6 +38,8 @@ type BaseNavigation = NativeStackNavigationProp<
 export function useDevToolsScreenViewModel() {
   const navigation = useNavigation<BaseNavigation>();
   const tabNavigation = navigation.getParent(BASE_NAVIGATOR_ID) ?? navigation;
+  const dispatch = useDispatch();
+  const store = useStore();
   const featureFlagsProps = useFeatureFlagsToolProps();
 
   const onNavigateToPortfolio = useCallback(() => {
@@ -85,6 +94,27 @@ export function useDevToolsScreenViewModel() {
     ],
   );
   const envToolProps = useEnvDevToolProps();
+
+  const onApplyAccounts = useCallback(
+    async (accounts: Account[]) => {
+      dispatch(replaceAccounts(accounts));
+      await saveAccounts(await exportSelector(store.getState()));
+      dispatch(reboot());
+    },
+    [dispatch, store],
+  );
+
+  const onClearAccounts = useCallback(async () => {
+    dispatch(replaceAccounts([]));
+    await saveAccounts(await exportSelector(store.getState()));
+    dispatch(reboot());
+  }, [dispatch, store]);
+
+  const mockAccountsToolProps = useMockAccountsToolProps({
+    onApplyAccounts,
+    onClearAccounts,
+  });
+
   const { theme } = useTheme();
   const { bottom } = useSafeAreaInsets();
   const { wire, wireState } = useDevToolsRelay();
@@ -94,8 +124,9 @@ export function useDevToolsScreenViewModel() {
       { id: "feature-flags", config: featureFlagsProps },
       { id: "env", config: envToolProps },
       { id: "pay-card", config: payCardToolProps },
+      { id: "mock-accounts", config: mockAccountsToolProps },
     ],
-    [featureFlagsProps, envToolProps, payCardToolProps],
+    [featureFlagsProps, envToolProps, payCardToolProps, mockAccountsToolProps],
   );
 
   const screenOptions: NativeStackNavigationOptions = useMemo(() => {

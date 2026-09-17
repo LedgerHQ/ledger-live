@@ -84,8 +84,6 @@ export enum ScreenName {
   DebugQ3WalletV4Tour = "DebugQ3WalletV4Tour",
   DebugTermsOfUse = "DebugTermsOfUse",
   DebugVideos = "DebugVideos",
-  DebugMockGenerateAccounts = "DebugMockGenerateAccounts",
-  DebugMockGenerateAccountsByType = "DebugMockGenerateAccountsByType",
   DebugModularAssetDrawer = "DebugModularAssetDrawer",
   DebugNetwork = "DebugNetwork",
   DebugPayContactSuccess = "DebugPayContactSuccess",

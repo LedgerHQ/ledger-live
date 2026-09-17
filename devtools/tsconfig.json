@@ -5,6 +5,7 @@
     { "path": "./shell" },
     { "path": "./feature-flags/" },
     { "path": "./pay-card" },
+    { "path": "./mock-accounts" },
     { "path": "./trustchain" },
     { "path": "./cloud-sync" },
     { "path": "./registry" },
