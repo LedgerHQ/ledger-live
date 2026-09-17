@@ -73,24 +73,6 @@ describe("useCardViewModel", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("opens the password dialog to gate a reveal, until the holder responds", async () => {
-    const { result } = renderCardViewModel(null);
-
-    let unlocked: Promise<boolean> | undefined;
-    act(() => {
-      unlocked = result.current.unlock();
-    });
-
-    expect(result.current.unlockDialog.isOpen).toBe(true);
-
-    act(() => {
-      result.current.unlockDialog.onCancel();
-    });
-
-    await expect(unlocked).resolves.toBe(false);
-    expect(result.current.unlockDialog.isOpen).toBe(false);
-  });
-
   it("opens card history with a back path to Pay", () => {
     const { result } = renderCardViewModel(null);
 

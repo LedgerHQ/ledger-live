@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { UnlockForReveal } from "@features/flow-pay-card-details";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -7,135 +7,107 @@ import { isEncryptionKeyCorrect, setEncryptionKey } from "~/renderer/storage";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 
 export type CardNumbersUnlockMode = "create" | "verify";
+export type CardNumbersUnlockPhase = "closed" | "open" | "submitting";
+export type CardNumbersUnlockOutcome = "allowReveal" | "cancelReveal";
+type CardNumbersPasswordCheck = "correct" | "incorrect";
 
 export type CardNumbersUnlockDialogState = Readonly<{
-  isOpen: boolean;
+  phase: CardNumbersUnlockPhase;
   mode: CardNumbersUnlockMode;
   error?: string;
-  isSubmitting: boolean;
   onSubmit: (password: string, confirmPassword: string) => void | Promise<void>;
   onCancel: () => void;
 }>;
 
-type PasswordUnlockValidationError = "required" | "mismatch";
+const ignoreOutcome = (_outcome: CardNumbersUnlockOutcome) => {};
 
-const VALIDATION_ERROR_KEYS: Record<PasswordUnlockValidationError, string> = {
-  required: "payTab.card.numbers.passwordRequired",
-  mismatch: "payTab.card.numbers.passwordMismatch",
-};
-
-function validateCardNumbersPassword(
-  mode: CardNumbersUnlockMode,
-  password: string,
-  confirmPassword: string,
-): PasswordUnlockValidationError | undefined {
-  if (!password) {
-    return "required";
-  }
-  if (mode === "create" && password !== confirmPassword) {
-    return "mismatch";
-  }
-  return undefined;
-}
-
-type UnlockResolve = (ok: boolean) => void;
-
-export function useUnlockForCardNumbers(): {
+export const useUnlockForCardNumbers = (): {
   unlock: UnlockForReveal;
   dialog: CardNumbersUnlockDialogState;
-} {
+} => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasPassword = useSelector(hasPasswordSelector);
-  const [isOpen, setIsOpen] = useState(false);
+  const [phase, setPhase] = useState<CardNumbersUnlockPhase>("closed");
   const [error, setError] = useState<string>();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const resolveRef = useRef<UnlockResolve | null>(null);
+  // Next complete() lands here. Idle = ignoreOutcome (nobody waiting).
+  const settle = useRef(ignoreOutcome);
 
   const mode: CardNumbersUnlockMode = hasPassword ? "verify" : "create";
 
-  useEffect(() => {
-    return () => {
-      resolveRef.current?.(false);
-      resolveRef.current = null;
-    };
-  }, []);
+  const complete = (outcome: CardNumbersUnlockOutcome) => {
+    settle.current(outcome);
+    settle.current = ignoreOutcome;
+    setError(undefined);
+    setPhase("closed");
+  };
 
-  const unlock = useCallback<UnlockForReveal>(
-    () =>
-      new Promise(resolve => {
-        setError(undefined);
-        setIsSubmitting(false);
-        resolveRef.current = resolve;
-        setIsOpen(true);
-      }),
+  useEffect(
+    () => () => {
+      // Card left the tree. Fail the open unlock() so reveal does not hang.
+      settle.current("cancelReveal");
+      settle.current = ignoreOutcome;
+    },
     [],
   );
 
-  const finish = useCallback((ok: boolean) => {
-    resolveRef.current?.(ok);
-    resolveRef.current = null;
-    setError(undefined);
-    setIsOpen(false);
-  }, []);
+  const unlock: UnlockForReveal = () =>
+    new Promise(done => {
+      // Second View while a dialog is already up: fail the first Promise.
+      settle.current("cancelReveal");
+      // Next complete() resolves this Promise. allowReveal → true for the shared VM.
+      settle.current = outcome => done(outcome === "allowReveal");
+      setError(undefined);
+      setPhase("open");
+    });
 
-  const onCancel = useCallback(() => {
-    if (isSubmitting) {
+  const onCancel = () => {
+    if (phase === "submitting") return;
+    complete("cancelReveal");
+  };
+
+  const onSubmit = async (password: string, confirmPassword: string) => {
+    if (phase === "submitting") return;
+
+    if (!password) {
+      setError(t("payTab.card.numbers.passwordRequired"));
       return;
     }
-    finish(false);
-  }, [finish, isSubmitting]);
 
-  const onSubmit = useCallback(
-    async (password: string, confirmPassword: string) => {
-      if (isSubmitting) {
-        return;
-      }
+    if (mode === "create" && password !== confirmPassword) {
+      setError(t("payTab.card.numbers.passwordMismatch"));
+      return;
+    }
 
-      const validationError = validateCardNumbersPassword(mode, password, confirmPassword);
-      if (validationError) {
-        setError(t(VALIDATION_ERROR_KEYS[validationError]));
-        return;
-      }
-
-      setIsSubmitting(true);
-      try {
-        if (mode === "create") {
-          await setEncryptionKey(password);
-          dispatch(setHasPassword(true));
-          finish(true);
-          return;
-        }
-
-        if (!(await isEncryptionKeyCorrect(password))) {
+    setPhase("submitting");
+    try {
+      if (mode === "verify") {
+        const passwordCheck: CardNumbersPasswordCheck = (await isEncryptionKeyCorrect(password))
+          ? "correct"
+          : "incorrect";
+        if (passwordCheck === "incorrect") {
           setError(t("payTab.card.numbers.passwordIncorrect"));
           return;
         }
-        finish(true);
-      } catch {
-        setError(
-          t(
-            mode === "create"
-              ? "payTab.card.numbers.passwordCreateFailed"
-              : "payTab.card.numbers.passwordUnavailable",
-          ),
-        );
-      } finally {
-        setIsSubmitting(false);
+      } else {
+        await setEncryptionKey(password);
+        dispatch(setHasPassword(true));
       }
-    },
-    [dispatch, finish, isSubmitting, mode, t],
-  );
+      complete("allowReveal");
+    } catch {
+      if (mode === "verify") {
+        setError(t("payTab.card.numbers.passwordUnavailable"));
+      }
+      if (mode === "create") {
+        setError(t("payTab.card.numbers.passwordCreateFailed"));
+      }
+    } finally {
+      setPhase(current => (current === "submitting" ? "open" : current));
+    }
+  };
 
   return {
     unlock,
-    dialog: {
-      isOpen,
-      mode,
-      error,
-      isSubmitting,
-      onSubmit,
-      onCancel,
-    },
+    dialog: { phase, mode, error, onSubmit, onCancel },
   };
-}
+};

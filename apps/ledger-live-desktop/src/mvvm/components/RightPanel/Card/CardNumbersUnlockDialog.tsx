@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import type { CardNumbersUnlockDialogState } from "./useUnlockForCardNumbers";
 
 export function CardNumbersUnlockDialog(props: CardNumbersUnlockDialogState) {
-  if (!props.isOpen) {
+  if (props.phase === "closed") {
     return null;
   }
 
@@ -20,9 +20,9 @@ export function CardNumbersUnlockDialog(props: CardNumbersUnlockDialogState) {
 }
 
 function CardNumbersUnlockForm({
+  phase,
   mode,
   error,
-  isSubmitting,
   onSubmit,
   onCancel,
 }: CardNumbersUnlockDialogState) {
@@ -30,15 +30,17 @@ function CardNumbersUnlockForm({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const passwordInputRef = useRef<HTMLInputElement>(null);
+  const isCreate = mode === "create";
+  const busy = phase === "submitting";
 
   return (
     <Dialog
       open
       onOpenChange={open => {
-        if (!open && !isSubmitting) onCancel();
+        if (!open && !busy) onCancel();
       }}
     >
-      <DialogContent data-testid="card-numbers-unlock-dialog">
+      <DialogContent aria-describedby={isCreate ? "card-unlock-copy" : undefined}>
         <form
           onSubmit={event => {
             event.preventDefault();
@@ -47,76 +49,56 @@ function CardNumbersUnlockForm({
             });
           }}
         >
-          {mode === "create" ? (
-            <>
-              <DialogHeader
-                density="expanded"
-                title={t("password.setPassword.title")}
-                onClose={isSubmitting ? undefined : onCancel}
+          <DialogHeader
+            density="expanded"
+            title={
+              isCreate ? t("password.setPassword.title") : t("payTab.card.numbers.unlockTitle")
+            }
+            onClose={busy ? undefined : onCancel}
+          />
+          <DialogBody className="flex flex-col gap-16">
+            {isCreate ? (
+              <p id="card-unlock-copy" className="body-3 text-muted">
+                {t("password.setPassword.desc")}
+              </p>
+            ) : null}
+            <TextInput
+              ref={passwordInputRef}
+              type="password"
+              autoFocus
+              hideClearButton
+              disabled={busy}
+              className={isCreate ? undefined : "mt-[2px]"}
+              label={
+                isCreate
+                  ? t("password.inputFields.newPassword.label")
+                  : t("password.inputFields.currentPassword.label")
+              }
+              value={password}
+              onChange={event => setPassword(event.target.value)}
+              helperText={error}
+              status={error ? "error" : undefined}
+            />
+            {isCreate ? (
+              <TextInput
+                type="password"
+                hideClearButton
+                disabled={busy}
+                label={t("password.inputFields.confirmPassword.label")}
+                value={confirmPassword}
+                onChange={event => setConfirmPassword(event.target.value)}
+                status={error ? "error" : undefined}
               />
-              <DialogBody className="flex flex-col gap-16">
-                <p className="body-3 text-muted">{t("password.setPassword.desc")}</p>
-                <TextInput
-                  ref={passwordInputRef}
-                  type="password"
-                  autoFocus
-                  hideClearButton
-                  label={t("password.inputFields.newPassword.label")}
-                  value={password}
-                  onChange={event => setPassword(event.target.value)}
-                  helperText={error}
-                  status={error ? "error" : undefined}
-                />
-                <TextInput
-                  type="password"
-                  hideClearButton
-                  label={t("password.inputFields.confirmPassword.label")}
-                  value={confirmPassword}
-                  onChange={event => setConfirmPassword(event.target.value)}
-                />
-              </DialogBody>
-              <DialogFooter>
-                <Button appearance="gray" type="button" disabled={isSubmitting} onClick={onCancel}>
-                  {t("common.cancel")}
-                </Button>
-                <Button appearance="base" type="submit" loading={isSubmitting}>
-                  {t("common.save")}
-                </Button>
-              </DialogFooter>
-            </>
-          ) : null}
-
-          {mode === "verify" ? (
-            <>
-              <DialogHeader
-                density="expanded"
-                title={t("payTab.card.numbers.unlockTitle")}
-                onClose={isSubmitting ? undefined : onCancel}
-              />
-              <DialogBody className="flex flex-col gap-16">
-                <TextInput
-                  ref={passwordInputRef}
-                  type="password"
-                  autoFocus
-                  hideClearButton
-                  className="mt-[2px]"
-                  label={t("password.inputFields.currentPassword.label")}
-                  value={password}
-                  onChange={event => setPassword(event.target.value)}
-                  helperText={error}
-                  status={error ? "error" : undefined}
-                />
-              </DialogBody>
-              <DialogFooter>
-                <Button appearance="gray" type="button" disabled={isSubmitting} onClick={onCancel}>
-                  {t("common.cancel")}
-                </Button>
-                <Button appearance="base" type="submit" loading={isSubmitting}>
-                  {t("common.confirm")}
-                </Button>
-              </DialogFooter>
-            </>
-          ) : null}
+            ) : null}
+          </DialogBody>
+          <DialogFooter>
+            <Button appearance="gray" type="button" disabled={busy} onClick={onCancel}>
+              {t("common.cancel")}
+            </Button>
+            <Button appearance="base" type="submit" disabled={busy}>
+              {isCreate ? t("common.save") : t("common.confirm")}
+            </Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
