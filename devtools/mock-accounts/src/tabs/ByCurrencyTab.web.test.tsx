@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@support/jest-devtools/web";
 import { ByCurrencyTab } from "./ByCurrencyTab";
 import type { ByCurrencySectionViewModel } from "../hooks/useByCurrencySectionViewModel";
-import type { CryptoCurrency } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 jest.mock("@ledgerhq/crypto-icons", () => ({
   CryptoIcon: ({ ticker }: { ticker: string }) => <span data-testid={`icon-${ticker}`} />,

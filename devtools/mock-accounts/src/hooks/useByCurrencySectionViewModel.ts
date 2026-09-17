@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
-import type { CryptoCurrency } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { GenerateByCurrencyOptions, GenerateEmptyOptions } from "../types";
 
 const ALL_CURRENCIES = listSupportedCurrencies().sort((a, b) => a.name.localeCompare(b.name));

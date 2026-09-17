@@ -24,7 +24,6 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/types-live": "workspace:^",
     "lodash": "catalog:",
     "uuid": "8.3.2"
   },

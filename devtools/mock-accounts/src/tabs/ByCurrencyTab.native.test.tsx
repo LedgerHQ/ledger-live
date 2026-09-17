@@ -1,7 +1,7 @@
 import { render, screen, userEvent } from "@support/jest-devtools/native";
 import { ByCurrencyTab } from "./ByCurrencyTab";
 import type { ByCurrencySectionViewModel } from "../hooks/useByCurrencySectionViewModel";
-import type { CryptoCurrency } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 jest.mock("@ledgerhq/crypto-icons/native", () => ({
   __esModule: true,
