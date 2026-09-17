@@ -10,7 +10,7 @@ import { FreezeAction } from "../../Freeze/Tile/FreezeAction";
 import { MoreAction } from "../../More/Tile/MoreAction";
 import { CardFlip } from "../../CardFlip/CardFlip";
 import { useRevealViewModel } from "../../Reveal/useRevealViewModel";
-import type { RevealViewModel, UnlockForReveal } from "../../../types";
+import type { RevealViewModel } from "../../../types";
 import type { OverviewSceneProps } from "./types";
 
 type OverviewActionsProps = Omit<
@@ -72,7 +72,7 @@ function OverviewActions({
   );
 }
 
-function OverviewLayout({
+export function OverviewScene({
   cardVisual,
   freezeViewModel,
   moreViewModel,
@@ -80,8 +80,10 @@ function OverviewLayout({
   onMorePress,
   onTransactionPress,
   formatters,
-  reveal,
-}: OverviewSceneProps & { readonly reveal: RevealViewModel | null }) {
+  unlock,
+}: OverviewSceneProps) {
+  const reveal = useRevealViewModel({ unlock });
+
   return (
     <Box lx={{ gap: "s16" }} testID="card-details-overview">
       <CardFlip reveal={reveal} cardFace={<CardFace cardVisual={cardVisual} />} />
@@ -99,22 +101,6 @@ function OverviewLayout({
         onTransactionPress={item => onTransactionPress(item.transaction)}
       />
     </Box>
-  );
-}
-
-function OverviewWithReveal({
-  unlock,
-  ...props
-}: OverviewSceneProps & { readonly unlock: UnlockForReveal }) {
-  const reveal = useRevealViewModel({ unlock });
-  return <OverviewLayout {...props} unlock={unlock} reveal={reveal} />;
-}
-
-export function OverviewScene(props: OverviewSceneProps) {
-  return props.unlock ? (
-    <OverviewWithReveal {...props} unlock={props.unlock} />
-  ) : (
-    <OverviewLayout {...props} reveal={null} />
   );
 }
 
