@@ -5,7 +5,14 @@ import { CardArtwork, CardDetails } from "@features/flow-pay-card-details";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import type { CardViewProps } from "./Card.types";
 
-export function CardView({ title, login, displayState, cardVisual, formatters }: CardViewProps) {
+export function CardView({
+  title,
+  login,
+  displayState,
+  cardVisual,
+  formatters,
+  onShowMore,
+}: CardViewProps) {
   return (
     <Box lx={{ flex: 1, gap: "s16" }}>
       {displayState === "signedIn" ? (
@@ -23,6 +30,7 @@ export function CardView({ title, login, displayState, cardVisual, formatters }:
               date: formatters?.transactionDate,
             }}
             onTrackEvent={login.onTrackEvent}
+            onShowMore={onShowMore}
           />
         </>
       ) : (

@@ -11,6 +11,7 @@ export type OverviewSceneProps = Readonly<{
   onFreezePress: () => void;
   onMorePress: () => void;
   onTransactionPress: (transaction: PayCardTransaction) => void;
+  onShowMore?: () => void;
   formatters?: CardTransactionFormatters;
 }>;
 

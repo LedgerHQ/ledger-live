@@ -43,6 +43,7 @@ export function OverviewScene({
   onFreezePress,
   onMorePress,
   onTransactionPress,
+  onShowMore,
   formatters,
 }: OverviewSceneProps) {
   return (
@@ -59,6 +60,7 @@ export function OverviewScene({
       <CardTransactions
         formatters={formatters}
         onTransactionPress={item => onTransactionPress(item.transaction)}
+        onShowMore={onShowMore}
       />
     </Box>
   );

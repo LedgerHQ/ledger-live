@@ -12,6 +12,7 @@ export function useCardDetailsViewModel({
   cardVisual,
   formatters,
   onTrackEvent,
+  onShowMore,
 }: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -54,6 +55,7 @@ export function useCardDetailsViewModel({
       onFreezePress,
       onMorePress,
       onTransactionPress,
+      onShowMore,
       formatters,
     },
     freeze: { viewModel: freezeViewModel },
