@@ -7,7 +7,7 @@ import type {
   TransactionQueryParams,
   WalletProxyTransaction,
 } from "../../types";
-import { decodeMemo } from "./memo";
+import { decodeMemo, decodePltMemo } from "./memo";
 
 const DEFAULT_PAGE_SIZE = 100;
 
@@ -165,7 +165,7 @@ function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOpera
     // The token amount alone: the fee is CCD and belongs to the parent
     // operation, so folding it in here would put µCCD into a token balance.
     value: tokenTransferAmount.value,
-    memo: tx.details.memo ? decodeMemo(tx.details.memo, tx.transactionHash) : undefined,
+    memo: tx.details.memo ? decodePltMemo(tx.details.memo, tx.transactionHash) : undefined,
     failed: false,
     tokenId,
     decimals: tokenTransferAmount.decimals,

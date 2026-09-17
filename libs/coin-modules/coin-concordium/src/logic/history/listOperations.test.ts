@@ -239,6 +239,20 @@ describe("parseTransaction, PLT", () => {
     expect(parseTransaction(tx, VALID_ADDRESS)!.memo).toBe("decoded memo");
   });
 
+  // Only the PLT decoder has this fallback, so this is what pins the PLT path to
+  // `decodePltMemo` rather than to the CCD decoder, which drops what it cannot
+  // parse. Memos written before the wallet encoded its content arrive this way.
+  it("falls back to raw text for a memo that is not CBOR", () => {
+    const { decodeMemoFromCbor } = jest.requireMock("@ledgerhq/concordium-core");
+    decodeMemoFromCbor.mockImplementation(() => {
+      throw new Error("not CBOR");
+    });
+    const memo = Buffer.from("invoice 42", "utf8").toString("hex");
+    const tx = { ...outgoingTx, details: { ...outgoingTx.details, memo } };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)!.memo).toBe("invoice 42");
+  });
+
   it("returns null when the address is neither source nor destination", () => {
     expect(parseTransaction(outgoingTx, "someone-else")).toBeNull();
   });

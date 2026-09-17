@@ -457,7 +457,13 @@ export interface WalletProxyTransactionDetails {
   transferAmount?: string;
   transferSource?: string;
   transferDestination?: string;
-  memo?: string; // Present for transferWithMemo and for tokenUpdate transactions
+  /**
+   * Hex-encoded. Present for both `transferWithMemo` and `tokenUpdate`, but not
+   * the same bytes: a CCD memo keeps its CBOR header, while a PLT memo arrives
+   * without its `CborMemo` tag, so nothing here says whether the content is
+   * CBOR or raw. Decode each with the matching helper in `logic/history/memo.ts`.
+   */
+  memo?: string;
   tokenId?: string; // Present for tokenUpdate
   tokenTransferAmount?: PltTokenAmount; // Present for tokenUpdate. Named `tokenAmount` by /v0/submissionStatus.
   rejectReason?: string; // Localized prose. Not a mapping key.
