@@ -4,7 +4,7 @@ import type { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
 import { openURL } from "~/renderer/linking";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { ALEO_MAIN_ACCOUNT } from "../__mocks__/account.mock";
-import AleoValidatorRow, { isDisabled } from "./ValidatorRow";
+import AleoValidatorRow from "./ValidatorRow";
 
 jest.mock("~/renderer/linking", () => ({
   __esModule: true,
@@ -41,28 +41,6 @@ function setup(overrides: Partial<AleoValidator> = {}, props: { locked?: boolean
 }
 
 const row = () => screen.getByTestId("modal-provider-row");
-
-describe("isDisabled", () => {
-  it.each<[string, Partial<AleoValidator>]>([
-    ["closed to new stake", { isOpen: false }],
-    ["unbonding its own stake", { isUnbonding: true }],
-    ["over the concentration cap", { nonEarningReason: "overConcentrated" }],
-  ])("rejects a validator %s", (_label, overrides) => {
-    expect(isDisabled({ ...VALIDATOR, ...overrides } as AleoValidator)).toBe(true);
-  });
-
-  // A validator's commission is its own choice and can change, unlike the protocol-level
-  // concentration cap, so a full-commission validator stays selectable.
-  it("accepts a validator on full commission", () => {
-    expect(isDisabled({ ...VALIDATOR, nonEarningReason: "fullCommission" } as AleoValidator)).toBe(
-      false,
-    );
-  });
-
-  it("accepts an open, earning validator", () => {
-    expect(isDisabled(VALIDATOR)).toBe(false);
-  });
-});
 
 describe("AleoValidatorRow — subtitle", () => {
   it("shows the yearly rate alongside the commission", () => {

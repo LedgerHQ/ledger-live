@@ -115,7 +115,7 @@ export const MIN_DELEGATOR_STAKE_MICROCREDITS = 10_000 * MICROCREDITS_PER_CREDIT
 
 // credits.aleo `bond_public` rejects a bond of less than one credit outright, independently of
 // the delegator total above.
-export const MIN_BOND_AMOUNT = MICROCREDITS_PER_CREDIT;
+export const MIN_BOND_AMOUNT_MICROCREDITS = MICROCREDITS_PER_CREDIT;
 
 // snarkVM `block_reward_v2` adds a coinbase share and transaction fees on top, so
 // rates derived from this alone are a lower bound.
