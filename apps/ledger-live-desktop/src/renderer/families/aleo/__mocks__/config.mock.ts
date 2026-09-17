@@ -25,4 +25,6 @@ export const mockAleoCoinConfig: AleoCoinConfig = {
   enableTokens: false,
   enableStaking: false,
   recordPickingStrategy: "manual",
+  liveBlockHeightPollMs: 10_000,
+  maxUnbondingSyncAttempts: 3,
 };
