@@ -75,7 +75,7 @@ export default function StepValidators({
     if (!found) return;
 
     return { address: found.validatorAddress, amount: found.amount };
-  }, [account, transaction.sourceValidator, cosmosResources]);
+  }, [transaction.sourceValidator, cosmosResources]);
   const updateRedelegation = useCallback(
     (newTransaction: Partial<NonNullable<StepProps["transaction"]>>) => {
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
