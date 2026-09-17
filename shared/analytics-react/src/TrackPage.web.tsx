@@ -38,10 +38,7 @@ const TrackPageComponent = ({
     }
     lastSignatureRef.current = signature;
 
-    trackPage(
-      { category, name, props: propertiesKey ? JSON.parse(propertiesKey) : undefined },
-      { updateRoutes: true, refreshSource, mandatory },
-    );
+    trackPage({ category, name, props }, { updateRoutes: true, refreshSource, mandatory });
   }, [category, name, propertiesKey, refreshSource, mandatory]);
 
   return null;
