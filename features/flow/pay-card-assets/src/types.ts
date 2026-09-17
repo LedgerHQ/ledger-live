@@ -1,6 +1,8 @@
 export type CardAssetRow = Readonly<{
   id: string;
-  cryptoAmount: string;
+  ticker: string;
+  cryptoAmount: string | null;
+  ledgerId?: string;
 }>;
 
 export type CardAssetsStatus = "loading" | "error" | "empty" | "ready";

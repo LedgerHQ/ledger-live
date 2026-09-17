@@ -11,9 +11,15 @@ const KEY_PREFIX = "payTab.card.assets";
 
 const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
 
-export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
-  const ticker = currency.toUpperCase();
-  return balance === null ? ticker : `${balance} ${ticker}`;
+export function formatCardAssetTicker(currency: string): string {
+  return currency.toUpperCase();
+}
+
+export function formatCardAssetCryptoAmount(
+  balance: string | null,
+  currency: string,
+): string | null {
+  return balance === null ? null : `${balance} ${formatCardAssetTicker(currency)}`;
 }
 
 export function useCardAssetsViewModel(): CardAssetsViewModel {
@@ -26,9 +32,11 @@ export function useCardAssetsViewModel(): CardAssetsViewModel {
 
   const rows = useMemo<readonly CardAssetRow[]>(
     () =>
-      wallets.map(({ id, balance, currency }) => ({
+      wallets.map(({ id, balance, currency, ledgerId }) => ({
         id,
+        ticker: formatCardAssetTicker(currency),
         cryptoAmount: formatCardAssetCryptoAmount(balance, currency),
+        ledgerId,
       })),
     [wallets],
   );

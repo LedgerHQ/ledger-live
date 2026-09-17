@@ -1,6 +1,10 @@
 import { renderHook } from "@testing-library/react";
 import { I18nWrapper, CARD_ASSETS_COPY } from "./i18nWrapper";
-import { formatCardAssetCryptoAmount, useCardAssetsViewModel } from "../useCardAssetsViewModel";
+import {
+  formatCardAssetCryptoAmount,
+  formatCardAssetTicker,
+  useCardAssetsViewModel,
+} from "../useCardAssetsViewModel";
 
 const mockUseIsCardSignedIn = jest.fn();
 const mockUseCardLinkedWallets = jest.fn();
@@ -19,6 +23,7 @@ function stubWallets(
       id: string;
       balance: string | null;
       currency: string;
+      ledgerId?: string;
     }[];
     isLoading: boolean;
     isError: boolean;
@@ -40,13 +45,19 @@ function renderViewModel() {
   return renderHook(() => useCardAssetsViewModel(), { wrapper: I18nWrapper });
 }
 
+describe("formatCardAssetTicker", () => {
+  it("should uppercase the currency", () => {
+    expect(formatCardAssetTicker("usdc")).toBe("USDC");
+  });
+});
+
 describe("formatCardAssetCryptoAmount", () => {
   it("should pair a balance with an uppercased ticker", () => {
     expect(formatCardAssetCryptoAmount("125.40", "usdc")).toBe("125.40 USDC");
   });
 
-  it("should keep the ticker when the balance is missing", () => {
-    expect(formatCardAssetCryptoAmount(null, "usdt")).toBe("USDT");
+  it("should return null when the balance is missing", () => {
+    expect(formatCardAssetCryptoAmount(null, "usdt")).toBeNull();
   });
 });
 
@@ -66,7 +77,7 @@ describe("useCardAssetsViewModel", () => {
     expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(expect.objectContaining({ skip: true }));
   });
 
-  it("should fetch wallets once signed in", () => {
+  it("should fetch linked wallets once signed in", () => {
     renderViewModel();
 
     expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(expect.objectContaining({ skip: false }));
@@ -108,7 +119,12 @@ describe("useCardAssetsViewModel", () => {
   it("should map linked wallets to crypto-amount rows", () => {
     stubWallets({
       wallets: [
-        { id: "w-usdc", balance: "125.40", currency: "usdc" },
+        {
+          id: "w-usdc",
+          balance: "125.40",
+          currency: "usdc",
+          ledgerId: "ethereum/erc20/usd_coin",
+        },
         { id: "w-usdt", balance: null, currency: "usdt" },
       ],
     });
@@ -117,8 +133,13 @@ describe("useCardAssetsViewModel", () => {
 
     expect(result.current.status).toBe("ready");
     expect(result.current.rows).toEqual([
-      { id: "w-usdc", cryptoAmount: "125.40 USDC" },
-      { id: "w-usdt", cryptoAmount: "USDT" },
+      {
+        id: "w-usdc",
+        ticker: "USDC",
+        cryptoAmount: "125.40 USDC",
+        ledgerId: "ethereum/erc20/usd_coin",
+      },
+      { id: "w-usdt", ticker: "USDT", cryptoAmount: null },
     ]);
   });
 });
