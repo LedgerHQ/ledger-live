@@ -255,9 +255,13 @@ export function useCardLoginViewModel({
     [isIntroOpen, t, introRows, introActions, onIntroActionPress, onIntroClose],
   );
 
+  const isMachineErrorState = snapshot.value === "authError" || snapshot.value === "userFetchError";
+
   const errorKind: PayCardLoginErrorKind | null = hasSignupFailed
     ? "browser_open_failed"
-    : snapshot.context.errorKind;
+    : isMachineErrorState
+      ? snapshot.context.errorKind
+      : null;
 
   const onRetry = useCallback(() => {
     if (hasSignupFailed) {

@@ -686,6 +686,31 @@ describe("useCardLoginViewModel errors", () => {
     );
   });
 
+  it("holds the panel back until the cleanup after a failed step has finished", async () => {
+    let finishCleanup = () => {};
+    mockPorts.clearAttempt.mockReturnValueOnce(
+      new Promise<void>(resolve => {
+        finishCleanup = resolve;
+      }),
+    );
+    mockPorts.saveAttempt.mockRejectedValueOnce(new Error("no store"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(mockPorts.clearAttempt).toHaveBeenCalled());
+    expect(result.current?.error).toBeNull();
+
+    await act(async () => {
+      finishCleanup();
+    });
+
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.pkce_failed.title),
+    );
+  });
+
   it("shows the translated message for browser_open_failed", async () => {
     mockPorts.openHostedLogin.mockRejectedValueOnce(new Error("no browser"));
     const { result } = await renderIdleLogin(store);
