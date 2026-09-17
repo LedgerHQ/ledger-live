@@ -132,7 +132,7 @@ jobs:
       - name: Get affected packages and paths
         id: nx-affected
         if: ${{ env.IS_SMARTLING != 'true' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@ci/test-image
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD
