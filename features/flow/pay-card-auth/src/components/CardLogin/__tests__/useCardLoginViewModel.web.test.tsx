@@ -42,7 +42,7 @@ const intro: CardLoginIntroViewProps = {
 };
 
 describe("mapSnapshotToViewModel", () => {
-  it.each(["idle", "error", "awaitingCallback"] as const)(
+  it.each(["idle", "authError", "userFetchError", "awaitingCallback"] as const)(
     "offers the login action in %s",
     value => {
       const login = mapSnapshotToViewModel(
@@ -112,7 +112,7 @@ describe("mapSnapshotToViewModel", () => {
 
   it("shows the message it was handed", () => {
     const login = mapSnapshotToViewModel(
-      "error",
+      "authError",
       "The login page could not open. Please try again.",
       copy,
       onLoginPress,
