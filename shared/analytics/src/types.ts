@@ -11,12 +11,15 @@ export type DeliveryStatus =
   | "skipped_no_store"
   | "skipped_no_token";
 
-export type LoggableEvent = {
+export type AnalyticsEvent = {
   eventName: string;
   eventProperties?: Props;
   eventPropertiesWithoutExtra?: Props;
-  date: Date;
   deliveryStatus?: DeliveryStatus;
+};
+
+export type LoggableEvent = AnalyticsEvent & {
+  date: Date;
 };
 
 export interface Analytics {
