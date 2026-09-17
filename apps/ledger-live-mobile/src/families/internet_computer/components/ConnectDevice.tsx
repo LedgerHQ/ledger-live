@@ -42,6 +42,15 @@ type Props = (
 };
 
 /**
+ * What the broadcast throws for a stake whose transfer settled but whose claim did not follow: the
+ * claim was refused, or no reply ever came. Either way the ICP has left the account. A governance
+ * call raises the same "unconfirmed" with nothing transferred, and is typed NONE, which the fold
+ * skips. Matched by name because that is all the screen gets: a connection dropped during the
+ * claim arrives as a plain Error this cannot place.
+ */
+const TRANSFER_SETTLED = new Set(["ICPCallUnconfirmed", "ICPStakeNotRefreshed"]);
+
+/**
  * ICP's own signing screen, in place of the shared `~/screens/ConnectDevice`.
  *
  * The shared one folds a broadcast operation in with `addPendingOperation` only. That is enough for
@@ -100,6 +109,17 @@ export default function ICPConnectDevice({ navigation, route, category }: Props)
             // Normalised here because this is where a throw becomes a screen: TranslatedError
             // keys off `name`, and logger.critical expects an Error.
             const error = caught instanceof Error ? caught : new Error(String(caught));
+            // Filing the operation stops the account reading as though nothing was sent — without it
+            // a stake that lands here leaves an empty snapshot, and the account page offers to stake
+            // again. Deliberately without the transaction, which would replay onto the snapshot a
+            // command the canister refused, or may never have run.
+            if (TRANSFER_SETTLED.has(error.name)) {
+              applyNeuronOperation(
+                dispatch,
+                mainAccount,
+                payload.signedOperation.operation as InternetComputerOperation,
+              );
+            }
             if (
               error.name !== "UserRefusedOnDevice" &&
               error.name !== "TransactionRefusedOnDevice"
