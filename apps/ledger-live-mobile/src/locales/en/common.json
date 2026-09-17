@@ -3231,6 +3231,13 @@
       "UPDATE_ACCOUNT": "Updated account"
     }
   },
+  "history": {
+    "tabs": {
+      "crypto": "Crypto",
+      "card": "Card",
+      "accessibilityLabel": "Transaction history type"
+    }
+  },
   "operationsList": {
     "to": "To",
     "from": "From",
@@ -10414,6 +10421,7 @@
       "history": {
         "today": "Today",
         "yesterday": "Yesterday",
+        "unknownDate": "Date unavailable",
         "columns": {
           "transaction": "Transaction",
           "fundingSources": "Funding sources",

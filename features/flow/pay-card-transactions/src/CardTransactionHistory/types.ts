@@ -11,7 +11,7 @@ export type CardTransactionHistoryProps = Readonly<{
 }>;
 
 export type CardTransactionHistoryViewProps = Readonly<{
-  uiState: CardTransactionHistoryUiState;
+  displayState: CardTransactionHistoryUiState;
   formatters?: CardTransactionFormatters;
   formatDay?: (date: Date) => string;
   onRowClick: (item: CardTransactionItem) => void;

@@ -1,20 +1,23 @@
 import React from "react";
-import { CategoryIcon } from "../../CardTransactions/components/CategoryIcon";
-import { DotIcon, getDotIconProps, Spinner } from "@ledgerhq/lumen-ui-react";
-import { Close } from "@ledgerhq/lumen-ui-react/symbols";
+import { DotIcon } from "@ledgerhq/lumen-ui-rnative";
+import { Close, Refresh } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { PayCardTransaction, PayCardTransactionCategory } from "@domain/api-card-management";
+import { CategoryIcon } from "../../CardTransactions/components/CategoryIcon";
 import { getCardStatusAppearance } from "./getCardStatusAppearance";
 
-const MEDIA_SIZE = 40;
+const DOT_SIZE = 20;
 
 type StatusIconProps = Readonly<{
   category: PayCardTransactionCategory;
   categoryLabel: string;
   status: PayCardTransaction["status"];
+  iconSize: 40 | 48;
 }>;
 
-export function StatusIcon({ category, categoryLabel, status }: StatusIconProps) {
-  const categoryIcon = <CategoryIcon category={category} categoryLabel={categoryLabel} size={40} />;
+export function StatusIcon({ category, categoryLabel, status, iconSize }: StatusIconProps) {
+  const categoryIcon = (
+    <CategoryIcon category={category} categoryLabel={categoryLabel} size={iconSize} />
+  );
   const appearance = getCardStatusAppearance(status);
 
   if (!appearance) {
@@ -23,9 +26,9 @@ export function StatusIcon({ category, categoryLabel, status }: StatusIconProps)
 
   return (
     <DotIcon
-      icon={status === "DECLINED" ? Close : Spinner}
+      icon={status === "DECLINED" ? Close : Refresh}
       appearance={appearance}
-      size={getDotIconProps("mediaImage", MEDIA_SIZE).size}
+      size={DOT_SIZE}
       pin="top-end"
     >
       {categoryIcon}

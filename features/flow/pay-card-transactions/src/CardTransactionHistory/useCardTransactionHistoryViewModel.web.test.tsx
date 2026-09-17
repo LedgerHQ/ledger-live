@@ -15,7 +15,7 @@ describe("useCardTransactionHistoryViewModel", () => {
       wrapper: cardApiWrapper({ signedIn: false }),
     });
 
-    expect(result.current.uiState.kind).toBe("signedOut");
+    expect(result.current.displayState.kind).toBe("signedOut");
   });
 
   it("should use empty when the signed-in holder has no transactions", async () => {
@@ -25,7 +25,7 @@ describe("useCardTransactionHistoryViewModel", () => {
       wrapper: cardApiWrapper({ signedIn: true }),
     });
 
-    await waitFor(() => expect(result.current.uiState.kind).toBe("empty"));
+    await waitFor(() => expect(result.current.displayState.kind).toBe("empty"));
   });
 
   it("should expose every transaction when the list is ready", async () => {
@@ -36,13 +36,13 @@ describe("useCardTransactionHistoryViewModel", () => {
       wrapper: cardApiWrapper({ signedIn: true }),
     });
 
-    await waitFor(() => expect(result.current.uiState.kind).toBe("ready"));
+    await waitFor(() => expect(result.current.displayState.kind).toBe("ready"));
 
-    const uiState = result.current.uiState;
-    if (uiState.kind !== "ready") {
-      throw new Error("expected ready uiState");
+    const displayState = result.current.displayState;
+    if (displayState.kind !== "ready") {
+      throw new Error("expected ready displayState");
     }
 
-    expect(uiState.groups.flatMap(({ items }) => items)).toHaveLength(page.length);
+    expect(displayState.groups.flatMap(({ items }) => items)).toHaveLength(page.length);
   });
 });

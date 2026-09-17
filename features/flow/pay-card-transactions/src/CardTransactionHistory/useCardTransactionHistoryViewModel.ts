@@ -16,7 +16,7 @@ export function useCardTransactionHistoryViewModel({
   const isSignedIn = useIsCardSignedIn();
   const { transactions, isLoading, isError } = useCardTransactionsViewModel();
   const groups = useMemo(() => groupCardHistoryItems(transactions), [transactions]);
-  const uiState = useMemo(
+  const displayState = useMemo(
     () =>
       resolveCardTransactionHistoryUiState({
         isSignedIn,
@@ -28,7 +28,7 @@ export function useCardTransactionHistoryViewModel({
   );
 
   return {
-    uiState,
+    displayState,
     formatters,
     formatDay,
     onRowClick,
