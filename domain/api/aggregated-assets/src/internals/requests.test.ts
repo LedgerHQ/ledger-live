@@ -7,11 +7,12 @@ import type { RawApiResponse } from "../schema";
  * which leaves the underlying @ledgerhq/live-env unresolvable.
  */
 jest.mock("@shared/env", () => ({
-  getEnv: jest.fn((name: string) =>
-    name === "DADA_API_STAGING"
+  getEnv: jest.fn((name: string) => {
+    if (name === "DADA_GRAVITEE_API_KEY") return "";
+    return name === "DADA_API_STAGING"
       ? "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada"
-      : "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada",
-  ),
+      : "https://dada.api.ledger.com/v1";
+  }),
 }));
 
 const params = (overrides: Partial<GetAssetsDataParams> = {}): GetAssetsDataParams => ({
@@ -31,15 +32,11 @@ const emptyRaw: RawApiResponse = {
 
 describe("resolveBaseUrl", () => {
   it("uses the prod url by default", () => {
-    expect(resolveBaseUrl({})).toBe(
-      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada",
-    );
+    expect(resolveBaseUrl({})).toBe("https://dada.api.ledger.com/v1");
   });
 
   it("uses the prod url when isStaging is false", () => {
-    expect(resolveBaseUrl({ isStaging: false })).toBe(
-      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada",
-    );
+    expect(resolveBaseUrl({ isStaging: false })).toBe("https://dada.api.ledger.com/v1");
   });
 
   it("uses the staging url when isStaging is true", () => {
@@ -62,9 +59,7 @@ describe("fetchAssetsPage", () => {
   it("targets the /assets path on the resolved base url", async () => {
     await fetchAssetsPage(baseQuery, params());
 
-    expect(request().url).toBe(
-      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
-    );
+    expect(request().url).toBe("https://dada.api.ledger.com/v1/assets");
   });
 
   it("passes the query params to the base query rather than building a url", async () => {

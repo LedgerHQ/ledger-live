@@ -21,10 +21,7 @@ const handlers = [
     "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
     assetsHandler,
   ),
-  http.get(
-    "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
-    assetsHandler,
-  ),
+  http.get("https://dada.api.ledger.com/v1/assets", assetsHandler),
   http.get("https://ledger.statuspage.io/api/v2/summary.json", () => {
     return HttpResponse.json(mockLedgerStatus);
   }),

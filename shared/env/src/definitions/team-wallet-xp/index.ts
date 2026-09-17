@@ -17,9 +17,9 @@ const teamWalletXp = {
     desc: "Dynamic Assets Data Aggregator API Staging (via Gravitee gateway)",
   },
   DADA_API_PROD: {
-    def: "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada",
+    def: "https://dada.api.ledger.com/v1",
     parser: stringParser,
-    desc: "Dynamic Assets Data Aggregator API Prod (via Gravitee gateway)",
+    desc: "Dynamic Assets Data Aggregator API Prod",
   },
   DADA_GRAVITEE_API_KEY: {
     def: "",

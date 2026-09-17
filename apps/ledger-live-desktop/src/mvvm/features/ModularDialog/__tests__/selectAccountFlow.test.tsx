@@ -177,10 +177,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
         "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
         () => new Promise(() => {}),
       ),
-      http.get(
-        "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
-        () => new Promise(() => {}),
-      ),
+      http.get("https://dada.api.ledger.com/v1/assets", () => new Promise(() => {})),
     );
 
     try {
@@ -229,9 +226,8 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
         "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
         () => HttpResponse.json(null, { status: 500 }),
       ),
-      http.get(
-        "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
-        () => HttpResponse.json(null, { status: 500 }),
+      http.get("https://dada.api.ledger.com/v1/assets", () =>
+        HttpResponse.json(null, { status: 500 }),
       ),
     );
 

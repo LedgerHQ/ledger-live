@@ -104,13 +104,10 @@ function installCapturedMarketHandlers(marketRequests: string[], dadaRequests: s
         return HttpResponse.json({});
       },
     ),
-    http.get(
-      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
-      ({ request }) => {
-        dadaRequests.push(request.url);
-        return HttpResponse.json({});
-      },
-    ),
+    http.get("https://dada.api.ledger.com/v1/assets", ({ request }) => {
+      dadaRequests.push(request.url);
+      return HttpResponse.json({});
+    }),
   );
 }
 

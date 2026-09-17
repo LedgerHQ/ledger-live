@@ -18,7 +18,10 @@ export function allSettled<T>(promises: Promise<T>[]): Promise<SettledResult<T>[
   );
 }
 
-const ALLOWED_DADA_HOSTS = new Set(["gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com"]);
+const ALLOWED_DADA_HOSTS = new Set([
+  "dada.api.ledger.com",
+  "gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com",
+]);
 
 /** Guards against a mis-resolved base url before any request is built from it. */
 export function assertDadaApiHost(baseUrl: string): void {

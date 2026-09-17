@@ -4,9 +4,9 @@
  * never resolved — this test only reads a static property.
  */
 jest.mock("@shared/env", () => ({
-  getEnv: jest
-    .fn()
-    .mockReturnValue("https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada"),
+  getEnv: jest.fn((key: string) =>
+    key === "DADA_GRAVITEE_API_KEY" ? "" : "https://dada.api.ledger.com/v1",
+  ),
 }));
 
 import { configureStore } from "@reduxjs/toolkit";
@@ -212,9 +212,7 @@ const stocksArgs = { ...defaultArgs, category: AssetCategory.Stocks };
 
 describe("fetchAllAssetCurrencyIdsByCategory", () => {
   beforeEach(() => {
-    getEnvMock.mockReturnValue(
-      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada",
-    );
+    getEnvMock.mockReturnValue("https://dada.api.ledger.com/v1");
   });
 
   afterEach(() => {
@@ -328,9 +326,7 @@ describe("requests issued through the store", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
 
     fetchSpy.mockRestore();
-    getEnvMock.mockReturnValue(
-      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada",
-    );
+    getEnvMock.mockReturnValue("https://dada.api.ledger.com/v1");
   });
 
   /*

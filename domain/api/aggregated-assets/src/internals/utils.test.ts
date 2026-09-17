@@ -154,12 +154,16 @@ describe("emptyAssetsData", () => {
 });
 
 describe("assertDadaApiHost", () => {
-  it("allows the known DADA host", () => {
+  it("allows the new Gravitee gateway host", () => {
     expect(() =>
       assertDadaApiHost(
         "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
       ),
     ).not.toThrow();
+  });
+
+  it("allows the still-live prod host", () => {
+    expect(() => assertDadaApiHost("https://dada.api.ledger.com/assets")).not.toThrow();
   });
 
   /*
@@ -170,7 +174,6 @@ describe("assertDadaApiHost", () => {
     "https://evil.example.com/assets",
     "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com.evil.example.com/assets",
     "https://ledger.com/assets",
-    "https://dada.api.ledger.com/assets",
     "https://dada.api.ledger-test.com/assets",
   ])("blocks %s", href => {
     expect(() => assertDadaApiHost(href)).toThrow(/untrusted host/);

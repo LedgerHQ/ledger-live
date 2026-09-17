@@ -25,10 +25,7 @@ function captureDadaRequests(): string[] {
       "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
       handler,
     ),
-    http.get(
-      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
-      handler,
-    ),
+    http.get("https://dada.api.ledger.com/v1/assets", handler),
   );
 
   return requests;

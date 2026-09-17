@@ -15,7 +15,7 @@ import {
 
 const DADA_API_URLS = [
   "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
-  "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+  "https://dada.api.ledger.com/v1/assets",
 ];
 
 const setupDadaApiError = () => {

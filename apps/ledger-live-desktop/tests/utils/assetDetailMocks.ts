@@ -1,8 +1,7 @@
 import { server, http, HttpResponse } from "tests/server";
 
 export const MARKET_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
-export const DADA_ENDPOINT =
-  "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets";
+export const DADA_ENDPOINT = "https://dada.api.ledger.com/v1/assets";
 
 const emptyDadaPayload = () => ({
   cryptoAssets: {},
