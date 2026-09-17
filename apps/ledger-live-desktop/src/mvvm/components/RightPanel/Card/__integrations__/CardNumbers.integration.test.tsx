@@ -2,7 +2,7 @@ import React from "react";
 import { mockPayCardDetailsToken } from "@domain/api-card-management/mock/card-details-token";
 import { getEnv } from "@shared/env";
 import { http, HttpResponse, server } from "tests/server";
-import { act, render, screen } from "tests/testSetup";
+import { act, fireEvent, render, screen } from "tests/testSetup";
 import { isEncryptionKeyCorrect, setEncryptionKey } from "~/renderer/storage";
 import { Card } from "../Card";
 
@@ -18,6 +18,13 @@ function renderCard(hasPassword: boolean) {
   return render(<Card />, {
     initialState: { ...signedIn, application: { hasPassword } },
   });
+}
+
+async function revealCardNumbers() {
+  const image = await screen.findByRole("img", { name: "Card numbers", hidden: true });
+  fireEvent.load(image);
+  expect(await screen.findByRole("img", { name: "Card numbers" })).toBeVisible();
+  expect(await screen.findByRole("button", { name: "Hide" }, { timeout: 1500 })).toBeVisible();
 }
 
 describe("Card numbers unlock", () => {
@@ -42,7 +49,7 @@ describe("Card numbers unlock", () => {
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     expect(setEncryptionKeyMock).toHaveBeenCalledWith("secret");
-    expect(await screen.findByRole("img", { name: "Card numbers" })).toBeVisible();
+    await revealCardNumbers();
   });
 
   it("should show the card numbers once the user enters their password", async () => {
@@ -68,7 +75,7 @@ describe("Card numbers unlock", () => {
     });
 
     expect(isEncryptionKeyCorrectMock).toHaveBeenCalledWith("secret");
-    expect(await screen.findByRole("img", { name: "Card numbers" })).toBeVisible();
+    await revealCardNumbers();
   });
 
   it("should ask for a password when Save is empty", async () => {
@@ -121,7 +128,7 @@ describe("Card numbers unlock", () => {
     await user.click(await screen.findByRole("button", { name: "View" }));
     await user.type(await screen.findByLabelText("Current password"), "secret");
     await user.click(screen.getByRole("button", { name: "Confirm" }));
-    expect(await screen.findByRole("img", { name: "Card numbers" })).toBeVisible();
+    await revealCardNumbers();
 
     await user.click(screen.getByRole("button", { name: "Hide" }));
 
