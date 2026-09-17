@@ -80,18 +80,9 @@ export async function paginateOperations<T>(
 
     if (!next) return items;
 
-    if (maxOperations !== undefined && items.length >= maxOperations) {
-      log(
-        "generic-coin-framework",
-        "listOperations walk stopped: operation-history bound reached",
-        {
-          maxOperations,
-          collected: items.length,
-        },
-      );
-      return items;
-    }
-
+    // Checked before the bound: a module that stalls its cursor exactly on the page that reaches
+    // `maxOperations` would otherwise pass for a clean bounded truncation, and the stall -- a
+    // state this framework cannot legitimately be in -- would go unreported for that one page.
     if (followed.has(next)) {
       log("generic-coin-framework", "listOperations cursor cycled", {
         cursor,
@@ -103,6 +94,18 @@ export async function paginateOperations<T>(
       throw new Error(
         `paginateOperations: cursor ${next} was served twice -- the ${items.length} operations collected so far are a fragment, not a complete history`,
       );
+    }
+
+    if (maxOperations !== undefined && items.length >= maxOperations) {
+      log(
+        "generic-coin-framework",
+        "listOperations walk stopped: operation-history bound reached",
+        {
+          maxOperations,
+          collected: items.length,
+        },
+      );
+      return items;
     }
 
     if (consecutiveEmptyPages >= EMPTY_PAGE_BUDGET) {
