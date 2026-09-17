@@ -9,9 +9,9 @@ export function CardFlip({ reveal, cardFace }: CardFlipProps) {
     return <>{cardFace}</>;
   }
 
-  const { isRevealed, imageUrl, onImageError } = reveal;
+  const { isRevealed, imageUrl, onImageLoad, onImageError } = reveal;
   const details = imageUrl ? (
-    <DetailsImage imageUrl={imageUrl} onImageError={onImageError} />
+    <DetailsImage imageUrl={imageUrl} onImageLoad={onImageLoad} onImageError={onImageError} />
   ) : null;
 
   return (
@@ -38,16 +38,18 @@ export function CardFlip({ reveal, cardFace }: CardFlipProps) {
 
 function DetailsImage({
   imageUrl,
+  onImageLoad,
   onImageError,
 }: {
   readonly imageUrl: string;
+  readonly onImageLoad: () => void;
   readonly onImageError: () => void;
 }) {
   const { t } = useTranslation();
 
   return (
     <div
-      className="size-full h-[195px] w-full overflow-hidden rounded-lg border border-muted-subtle"
+      className="size-full h-[195px] w-full overflow-hidden rounded-lg border border-muted p-2"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <img
@@ -57,7 +59,8 @@ function DetailsImage({
         height={193}
         referrerPolicy="no-referrer"
         decoding="async"
-        className="size-full object-cover"
+        className="size-full object-contain"
+        onLoad={onImageLoad}
         onError={onImageError}
       />
     </div>

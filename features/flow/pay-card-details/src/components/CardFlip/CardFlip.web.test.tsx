@@ -23,6 +23,7 @@ describe("CardFlip (web)", () => {
     renderFlip({
       isRevealed: true,
       imageUrl: IMAGE_URL,
+      onImageLoad: jest.fn(),
       onImageError: jest.fn(),
     });
 
@@ -36,6 +37,7 @@ describe("CardFlip (web)", () => {
     renderFlip({
       isRevealed: false,
       imageUrl: undefined,
+      onImageLoad: jest.fn(),
       onImageError: jest.fn(),
     });
 
@@ -47,6 +49,7 @@ describe("CardFlip (web)", () => {
     renderFlip({
       isRevealed: false,
       imageUrl: IMAGE_URL,
+      onImageLoad: jest.fn(),
       onImageError: jest.fn(),
     });
 
@@ -57,7 +60,7 @@ describe("CardFlip (web)", () => {
 
   it("should report a failed load when the details image errors", () => {
     const onImageError = jest.fn();
-    renderFlip({ isRevealed: true, imageUrl: IMAGE_URL, onImageError });
+    renderFlip({ isRevealed: true, imageUrl: IMAGE_URL, onImageLoad: jest.fn(), onImageError });
 
     fireEvent.error(screen.getByRole("img", { name: CARD_COPY.numbersImageAlt }));
 

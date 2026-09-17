@@ -1,5 +1,5 @@
 import React from "react";
-import { screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
   CARD_DETAILS_IMAGE_URL,
@@ -49,10 +49,13 @@ describe("CardDetails (web)", () => {
 
     await userEvent.click(screen.getByRole("button", { name: CARD_COPY.numbersReveal }));
 
-    expect(await screen.findByRole("img", { name: CARD_COPY.numbersImageAlt })).toHaveAttribute(
-      "src",
-      CARD_DETAILS_IMAGE_URL,
-    );
-    expect(screen.getByRole("button", { name: CARD_COPY.numbersHide })).toBeVisible();
+    const image = await screen.findByRole("img", { name: CARD_COPY.numbersImageAlt, hidden: true });
+    expect(image).toHaveAttribute("src", CARD_DETAILS_IMAGE_URL);
+    fireEvent.load(image);
+
+    expect(screen.getByRole("button", { name: CARD_COPY.numbersReveal })).toBeVisible();
+    expect(
+      await screen.findByRole("button", { name: CARD_COPY.numbersHide }, { timeout: 1500 }),
+    ).toBeVisible();
   });
 });

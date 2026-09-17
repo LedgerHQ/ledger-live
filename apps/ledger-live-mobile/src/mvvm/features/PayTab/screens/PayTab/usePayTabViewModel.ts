@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useRoute, type RouteProp } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useEnv from "@features/platform-env";
@@ -64,6 +64,8 @@ export function usePayTabViewModel() {
     [oauthConfig, callback, balance.onTrackEvent],
   );
 
+  const unlock = useCallback(async () => true, []);
+
   const featureTour: FeatureTourProps = useMemo(
     () => ({
       onTrackScreen: (page: string) => track(page),
@@ -76,6 +78,7 @@ export function usePayTabViewModel() {
     top,
     bottom: bottom + insets.bottom,
     login,
+    unlock,
     featureTour,
     balance,
     actionTiles,
