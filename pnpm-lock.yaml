@@ -17486,6 +17486,9 @@ importers:
       '@shared/analytics':
         specifier: workspace:*
         version: link:../analytics
+      lodash:
+        specifier: 'catalog:'
+        version: 4.17.21
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -17517,6 +17520,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/lodash':
+        specifier: 'catalog:'
+        version: 4.17.21
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.14
