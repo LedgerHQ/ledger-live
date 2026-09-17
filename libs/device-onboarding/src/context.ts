@@ -76,9 +76,9 @@ export const contextActions = {
   enterEarlyCheckScreen: update({ onEarlyCheckScreen: true }),
   leaveEarlyCheckScreen: update({ onEarlyCheckScreen: false }),
   rememberSecureConnectionRequested: update({ secureConnectionRequested: true }),
+  forgetSecureConnectionRequested: update({ secureConnectionRequested: false }),
   rememberGenuineChecked: update(({ context }) => ({
     genuineVerdict: { sessionId: context.ports.currentSessionId(), isGenuine: true },
-    secureConnectionRequested: false,
     lastGenuineFailure: null,
   })),
   rememberGenuineFailure: update(({ context, event }) => {
@@ -93,11 +93,10 @@ export const contextActions = {
 
     return {
       genuineVerdict: verdict,
-      secureConnectionRequested: false,
       lastGenuineFailure: { kind: event.type, failure: event.failure },
     };
   }),
-  clearGenuineFailure: update({ lastGenuineFailure: null, checksPaused: false }),
+  forgetGenuineFailure: update({ lastGenuineFailure: null }),
   rememberFirmwareChecked: update({ firmwareChecked: true, availableFirmwareUpdate: null }),
   rememberAvailableUpdate: update(({ event }) => {
     if (event.type !== "FIRMWARE_UPDATE_AVAILABLE") {
@@ -106,11 +105,7 @@ export const contextActions = {
 
     return { availableFirmwareUpdate: event.update };
   }),
-  forgetUpdatedDevice: update({
-    firmwareChecked: false,
-    availableFirmwareUpdate: null,
-    onEarlyCheckScreen: false,
-  }),
+  forgetFirmwareCheck: update({ firmwareChecked: false, availableFirmwareUpdate: null }),
   carryAttestationThroughReboot: update(({ context }) => {
     const { genuineVerdict } = context;
 

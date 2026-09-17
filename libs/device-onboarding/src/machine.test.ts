@@ -189,6 +189,23 @@ describe("the on-device waiting screen", () => {
     expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
   });
 
+  it("is still dismissed when the device locked halfway through the checks", async () => {
+    const { actor, fake } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [genuine],
+      firmwareCheck: [updateAvailable],
+    });
+
+    actor.send({ type: "LOCKED" });
+    actor.send({ type: "UNLOCKED" });
+    await settle();
+    actor.send({ type: "USER_DECLINE" });
+    await settle();
+
+    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
+    expect(stateOf(actor)).toBe("checksSucceeded");
+  });
+
   it("is not shown again to a device that comes back with its checks paused", async () => {
     const { actor, fake } = await start({
       osVersion: [os(unseeded)],
@@ -306,6 +323,21 @@ describe("the genuine check", () => {
     expect(actor.getSnapshot().context.secureConnectionRequested).toBe(true);
     expect(stateOf(actor)).toBe("genuineCheck");
   });
+
+  it.each(["LOCKED", "TRANSPORT_LOST", "QUIT"] as const)(
+    "takes that request back on %s, which leaves the check with no one to answer it",
+    async type => {
+      const { actor } = await start({
+        osVersion: [os(unseeded)],
+        genuineCheck: [secureConnectionPrompt],
+      });
+
+      actor.send({ type });
+      await settle();
+
+      expect(actor.getSnapshot().context.secureConnectionRequested).toBe(false);
+    },
+  );
 
   it("runs again on a retry, and clears the failure it is retrying", async () => {
     const { actor, fake } = await start({
@@ -478,6 +510,48 @@ describe("the firmware check", () => {
 
     expect(stateOf(actor)).toBe("checksSucceeded");
   });
+
+  it("runs again on the device that came back on another session", async () => {
+    const ports = rebindingPorts();
+    const { actor, fake } = await start(
+      {
+        osVersion: [os(unseeded)],
+        genuineCheck: [genuine, genuine],
+        firmwareCheck: [upToDate, upToDate],
+      },
+      { ports },
+    );
+
+    ports.rebind();
+    actor.send({ type: "TRANSPORT_LOST" });
+    actor.send({ type: "SESSION_READY" });
+    await settle();
+
+    expect(fake.firmwareCheckRuns()).toBe(2);
+    expect(stateOf(actor)).toBe("checksSucceeded");
+  });
+
+  it("never hands the update it found to the device that replaced that one", async () => {
+    const ports = rebindingPorts();
+    const { actor } = await start(
+      {
+        osVersion: [os(unseeded)],
+        genuineCheck: [genuine, genuine],
+        firmwareCheck: [updateAvailable, upToDate],
+      },
+      { ports },
+    );
+
+    expect(stateOf(actor)).toBe("firmwareUpdateOffered");
+
+    ports.rebind();
+    actor.send({ type: "TRANSPORT_LOST" });
+    actor.send({ type: "SESSION_READY" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("checksSucceeded");
+    expect(actor.getSnapshot().context.availableFirmwareUpdate).toBeNull();
+  });
 });
 
 describe("the firmware handover", () => {
@@ -563,6 +637,17 @@ describe("the firmware handover", () => {
     expect(fake.genuineCheckRuns()).toBe(1);
   });
 
+  it("cannot be left on the onboarding cross while the app is flashing the device", async () => {
+    const { actor } = await start(handoverScript([os(unseeded)]));
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("firmwareUpdateDelegated");
+  });
+
   it("keeps the attestation across the reboot of the update it ran itself", async () => {
     const ports = rebindingPorts();
     const { actor, fake } = await start(
@@ -579,14 +664,14 @@ describe("the firmware handover", () => {
     expect(stateOf(actor)).toBe("checksSucceeded");
   });
 
-  it("does not dismiss a screen the reboot already took down", async () => {
+  it("dismisses the on-device screen a cancelled update left up", async () => {
     const { actor, fake } = await start(
       handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
     );
 
     await handOverAndReturn(actor);
 
-    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter]);
+    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
     expect(stateOf(actor)).toBe("checksSucceeded");
   });
 
@@ -683,6 +768,29 @@ describe("global handlers", () => {
     actor.send({ type: "SESSION_READY" });
     await settle();
 
+    expect(stateOf(actor)).toBe("checksSucceeded");
+  });
+
+  it("starts over on a new session, rather than holding a failure the user dismissed", async () => {
+    const ports = rebindingPorts();
+    const { actor, fake } = await start(
+      {
+        osVersion: [os(unseeded)],
+        genuineCheck: [deviceRefusal, genuine],
+        firmwareCheck: [upToDate],
+      },
+      { ports },
+    );
+
+    actor.send({ type: "CLOSE" });
+    await settle();
+    ports.rebind();
+    actor.send({ type: "TRANSPORT_LOST" });
+    actor.send({ type: "SESSION_READY" });
+    await settle();
+
+    expect(fake.genuineCheckRuns()).toBe(2);
+    expect(actor.getSnapshot().context.lastGenuineFailure).toBeNull();
     expect(stateOf(actor)).toBe("checksSucceeded");
   });
 

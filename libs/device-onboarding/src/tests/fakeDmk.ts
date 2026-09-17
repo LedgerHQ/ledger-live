@@ -137,6 +137,7 @@ export type FakeOnboardingDmk = {
   executeDeviceAction: jest.Mock;
   earlyCheckToggles(): number[];
   genuineCheckRuns(): number;
+  firmwareCheckRuns(): number;
 };
 
 export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeOnboardingDmk {
@@ -197,9 +198,13 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
     sendCommand,
     executeDeviceAction,
     earlyCheckToggles: () => [...toggles],
-    genuineCheckRuns: () =>
-      executeDeviceAction.mock.calls.filter(
-        ([{ deviceAction }]) => deviceAction instanceof GenuineCheckDeviceAction,
-      ).length,
+    genuineCheckRuns: () => runsOf(true),
+    firmwareCheckRuns: () => runsOf(false),
   };
+
+  function runsOf(genuine: boolean): number {
+    return executeDeviceAction.mock.calls.filter(
+      ([{ deviceAction }]) => deviceAction instanceof GenuineCheckDeviceAction === genuine,
+    ).length;
+  }
 }

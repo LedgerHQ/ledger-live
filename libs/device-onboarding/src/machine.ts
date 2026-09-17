@@ -19,6 +19,8 @@ import type {
   OnboardingEvent,
 } from "./types";
 
+const stopsHere = {};
+
 export const deviceOnboardingMachine = setup({
   types: {
     context: {} as DeviceOnboardingContext,
@@ -60,8 +62,8 @@ export const deviceOnboardingMachine = setup({
   context: ({ input }) => initialContext(input),
   initial: "readingState",
   on: {
-    LOCKED: { target: ".deviceLocked", actions: "leaveEarlyCheckScreen" },
-    TRANSPORT_LOST: { target: ".awaitingSession", actions: "leaveEarlyCheckScreen" },
+    LOCKED: ".deviceLocked",
+    TRANSPORT_LOST: ".awaitingSession",
     QUIT: ".quitting",
   },
   output: ({ context, event }) => exitContract(context, event.output),
@@ -125,6 +127,7 @@ export const deviceOnboardingMachine = setup({
               sessionId: context.ports.currentSessionId(),
             }),
           },
+          exit: "forgetSecureConnectionRequested",
           on: {
             ALLOW_SECURE_CONNECTION_REQUESTED: { actions: "rememberSecureConnectionRequested" },
             GENUINE_CHECK_PASSED: { target: "checksIdle", actions: "rememberGenuineChecked" },
@@ -137,7 +140,7 @@ export const deviceOnboardingMachine = setup({
 
         genuineFailed: {
           on: {
-            RETRY: { target: "genuineCheck", actions: "clearGenuineFailure" },
+            RETRY: { target: "genuineCheck", actions: ["forgetGenuineFailure", "resumeChecks"] },
             CLOSE: { target: "checksIdle", actions: "pauseChecks" },
           },
         },
@@ -179,11 +182,12 @@ export const deviceOnboardingMachine = setup({
 
         firmwareUpdateDelegated: {
           on: {
-            LOCKED: { actions: "leaveEarlyCheckScreen" },
-            TRANSPORT_LOST: { actions: "leaveEarlyCheckScreen" },
+            LOCKED: stopsHere,
+            TRANSPORT_LOST: stopsHere,
+            QUIT: stopsHere,
             FIRMWARE_UPDATE_FLOW_CLOSED: {
               target: "#deviceOnboarding.readingState",
-              actions: ["forgetUpdatedDevice", "carryAttestationThroughReboot"],
+              actions: ["forgetFirmwareCheck", "carryAttestationThroughReboot"],
             },
           },
         },
@@ -234,7 +238,14 @@ export const deviceOnboardingMachine = setup({
     done: {},
 
     deviceLocked: { on: { UNLOCKED: "readingState" } },
-    awaitingSession: { on: { SESSION_READY: "readingState" } },
+    awaitingSession: {
+      on: {
+        SESSION_READY: {
+          target: "readingState",
+          actions: ["forgetFirmwareCheck", "forgetGenuineFailure", "resumeChecks"],
+        },
+      },
+    },
 
     quitting: {
       always: [

@@ -30,12 +30,16 @@ const actor = createActor(deviceOnboardingMachine, {
 
 Screens render the current state and send the user's events: `CONTINUE`, `RETRY`, `SKIP`, `CLOSE`,
 `QUIT`, `USER_ACCEPT`, `USER_DECLINE`. The app pushes in what it alone observes: `LOCKED`,
-`UNLOCKED`, `TRANSPORT_LOST` and `SESSION_READY` from `sessionListener`, and
-`FIRMWARE_UPDATE_FLOW_CLOSED` when its OS update flow returns control.
+`UNLOCKED` and `TRANSPORT_LOST` from `sessionListener`, and `FIRMWARE_UPDATE_FLOW_CLOSED` when its
+OS update flow returns control.
 
 The app owns the session for the whole run — it opens it, reconnects after a transport loss, and
 keeps it open when the machine exits. The machine only reads `currentSessionId()`, and re-reads it
 on every device call, so a reconnection needs no restart.
+
+`SESSION_READY` is the app's to send, and nothing else unblocks `awaitingSession`. A listener
+subscribed to a dead session cannot announce the next one, so after a `TRANSPORT_LOST` the app calls
+`openSession()`, restarts `sessionListener` on the new id, and only then sends `SESSION_READY`.
 
 Every exit carries the session id, the device, and one reason. This phase reaches
 `legacyFallback`, `resumeFirmwareUpdate` and `userQuit`; `offerLedgerSync` and `completed` land
