@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useRoute, type RouteProp } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useEnv from "@features/platform-env";
@@ -16,6 +16,10 @@ import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayme
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
 import { track } from "~/analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
+
+async function unlockCardNumbers() {
+  return true;
+}
 
 export function usePayTabViewModel() {
   const { top, bottom } = useNavigationBarHeights();
@@ -64,8 +68,6 @@ export function usePayTabViewModel() {
     [oauthConfig, callback, balance.onTrackEvent],
   );
 
-  const unlock = useCallback(async () => true, []);
-
   const featureTour: FeatureTourProps = useMemo(
     () => ({
       onTrackScreen: (page: string) => track(page),
@@ -78,7 +80,7 @@ export function usePayTabViewModel() {
     top,
     bottom: bottom + insets.bottom,
     login,
-    unlock,
+    unlock: unlockCardNumbers,
     featureTour,
     balance,
     actionTiles,
