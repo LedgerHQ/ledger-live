@@ -521,6 +521,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "gonka",
+    ticker: "GNK",
+    name: "Gonka",
+    family: "cosmos",
+    color: "#242424",
+    decimals: 9,
+  },
+  {
+    type: "CryptoCurrency",
     id: "avalanche_c_chain",
     ticker: "AVAX",
     name: "Avalanche C-Chain",
