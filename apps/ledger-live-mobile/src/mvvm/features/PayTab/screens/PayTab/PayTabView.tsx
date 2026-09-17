@@ -27,6 +27,7 @@ type PayTabViewProps = {
   readonly isContactsEnabled: boolean;
   readonly depositOptions: DepositOptionsProps;
   readonly bankTransferIntro: BankTransferIntroProps;
+  readonly onShowMore: () => void;
 };
 
 export function PayTabView({
@@ -41,6 +42,7 @@ export function PayTabView({
   isContactsEnabled,
   depositOptions,
   bankTransferIntro,
+  onShowMore,
 }: PayTabViewProps) {
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
@@ -54,7 +56,7 @@ export function PayTabView({
           <Balance {...balance} actionTiles={actionTiles} />
           {isContactsEnabled && <Contacts {...contacts} />}
           <ContactAddressPicker {...contactAddressPicker} />
-          <Card login={login} />
+          <Card login={login} onShowMore={onShowMore} />
           <FeatureTour {...featureTour} />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />

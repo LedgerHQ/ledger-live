@@ -1826,6 +1826,12 @@ importers:
       '@features/flow-pay-card-auth':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-auth
+      '@features/flow-pay-card-details':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-card-details
+      '@features/flow-pay-card-transactions':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-card-transactions
       '@features/flow-pay-card-widget':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-widget
@@ -7144,6 +7150,9 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
+      '@shared/ui-queued-bottom-sheet':
+        specifier: workspace:*
+        version: link:../../../shared/ui-queued-bottom-sheet
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
@@ -65285,7 +65294,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
