@@ -15651,6 +15651,9 @@ importers:
       '@features/platform-wallet-sync':
         specifier: workspace:^
         version: link:../../features/platform/wallet-sync
+      '@ledgerhq/coin-zcash':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-zcash
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../device-core
