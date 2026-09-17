@@ -16,19 +16,8 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 // Net value of a quote as shown on screen: amount received minus network fees (both in fiat).
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
-// swap-live-app renders two quote card markups behind its own `ptxLumenQuoteCard` flag, which
-// e2e can neither read nor force. Only the provider-name testid prefix and the CTA label differ.
-type QuoteCardVariant = "legacy" | "lumen";
-
 export default class SwapLiveAppPage {
-  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX: Record<QuoteCardVariant, string> = {
-    legacy: "compact-quote-card-provider-name-",
-    lumen: "lumen-quote-card-provider-name-",
-  };
-  // Common to both prefixes above, so it matches whichever variant is live.
-  private static readonly QUOTE_CARD_PROVIDER_NAME_SUFFIX = "quote-card-provider-name-";
-
-  private quoteCardVariant: QuoteCardVariant | null = null;
+  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -150,7 +139,7 @@ export default class SwapLiveAppPage {
     const providersList = (await this.getProviderList()).filter(
       name => name !== SwapProvider.LIFI.uiName,
     );
-    const prefix = await this.resolveProviderNamePrefix();
+    const prefix = SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX;
 
     for (const providerName of providersList) {
       const provider = SwapProvider.getByUiName(providerName);
@@ -163,32 +152,6 @@ export default class SwapLiveAppPage {
       }
     }
     throw new Error("No single-app exchange providers found");
-  }
-
-  // Throws while no card is rendered rather than latching onto "legacy": no Lumen cards is
-  // indistinguishable from no cards at all. Callers retry or have already waited for a card.
-  @Step("Resolve active quote card variant")
-  private async resolveQuoteCardVariant(): Promise<QuoteCardVariant> {
-    if (!this.quoteCardVariant) {
-      const renderedCards = await getWebElementsText(
-        this.swapMainContainerWebElement,
-        `[data-testid*='${SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_SUFFIX}']`,
-      );
-      if (renderedCards.length === 0) {
-        throw new Error("No quote card rendered yet: cannot resolve the quote card variant");
-      }
-      const lumenCards = await getWebElementsText(
-        this.swapMainContainerWebElement,
-        `[data-testid^='${SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX.lumen}']`,
-      );
-      this.quoteCardVariant = lumenCards.length > 0 ? "lumen" : "legacy";
-    }
-    return this.quoteCardVariant;
-  }
-
-  @Step("Resolve active quote card provider-name testid prefix")
-  private async resolveProviderNamePrefix(): Promise<string> {
-    return SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX[await this.resolveQuoteCardVariant()];
   }
 
   @Step("Wait for quotes countdown to be stable")
@@ -250,7 +213,7 @@ export default class SwapLiveAppPage {
 
     return await retryUntilTimeout(async () => {
       const numberOfQuotesText = await getWebElementText(this.numberOfQuotes);
-      const prefix = await this.resolveProviderNamePrefix();
+      const prefix = SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX;
       const providerList = await getWebElementsText(
         this.swapMainContainerWebElement,
         `[data-testid^='${prefix}']`,
@@ -326,32 +289,31 @@ export default class SwapLiveAppPage {
         }),
       ).toExist();
     }
-    await this.checkQuoteCardCta(providerList[0]);
+    await this.checkQuoteCardCtaLabel(providerList[0]);
   }
 
-  // approvalRequired must reflect real allowance state — see isTokenApprovalExpected
-  // in swapUtils.ts, rather than guessing it here.
-  @Step("Check exchange CTA text: {{{0}}}")
-  async checkQuoteCardCta(provider: string, approvalRequired = false): Promise<void> {
+  // Only asserts the CTA testid is present and usable; ignores its label so an
+  // A/B-tested label cannot fail callers that only need the button to exist.
+  @Step("Check exchange CTA presence: {{{0}}}")
+  async checkQuoteCardCtaPresence(provider: string): Promise<string> {
     if (!SwapProvider.getNameByUiName(provider)) {
       throw new Error(`Unknown provider UI name: "${provider}"`);
     }
     const selector = this.providerExecuteButtonCss(provider);
     const button = getWebElementByCssSelector(selector);
     await waitWebElement(button);
+    return selector;
+  }
+
+  // approvalRequired must reflect real allowance state — see isTokenApprovalExpected
+  // in swapUtils.ts, rather than guessing it here.
+  @Step("Check exchange CTA text: {{{0}}}")
+  async checkQuoteCardCtaLabel(provider: string, approvalRequired = false): Promise<void> {
+    const selector = await this.checkQuoteCardCtaPresence(provider);
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
-
-    if ((await this.resolveQuoteCardVariant()) === "lumen") {
-      // The Lumen CTA is a fixed "Review"/"Continue" — it never interpolates the provider name.
-      const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
-      jestExpect(actualButtonText).toMatch(expected);
-    } else {
-      const ctaVerbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
-      jestExpect(actualButtonText).toMatch(
-        new RegExp(`^(${ctaVerbs}) with ${escapeRegExp(provider)}$`, "i"),
-      );
-    }
+    const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
+    jestExpect(actualButtonText).toMatch(expected);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
@@ -574,7 +536,7 @@ export default class SwapLiveAppPage {
     if (!providerName) {
       throw new Error(`Unknown provider UI name: "${provider}"`);
     }
-    const providerTestId = `${await this.resolveProviderNamePrefix()}${providerName}`;
+    const providerTestId = `${SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX}${providerName}`;
     await waitWebElementByTestId(providerTestId);
     await tapWebElementByTestId(providerTestId);
   }
@@ -583,7 +545,7 @@ export default class SwapLiveAppPage {
   async goToProviderLiveApp(provider: string) {
     const button = getWebElementByCssSelector(this.providerExecuteButtonCss(provider));
     await detoxExpect(button).toExist();
-    await app.swapLiveApp.checkQuoteCardCta(provider);
+    await app.swapLiveApp.checkQuoteCardCtaPresence(provider);
     await app.swapLiveApp.tapExecuteSwap(provider);
   }
 
