@@ -73,7 +73,6 @@ export default function SplitNeuron({ navigation, route }: Props) {
             onChange={onChange}
             value={amount}
             error={amount.gt(0) ? status.errors.amount : null}
-            warning={status.warnings.amount}
             testID="icp-split-amount-input"
           />
           <Flex flexDirection="row" alignItems="center" justifyContent="center" style={{ gap: 6 }}>

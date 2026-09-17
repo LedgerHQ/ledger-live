@@ -1,9 +1,8 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction } from "@ledgerhq/live-common/families/internet_computer/types";
-import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { TrackScreen } from "~/analytics";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import KeyboardView from "~/components/KeyboardView";
@@ -14,6 +13,7 @@ import { useTranslation } from "~/context/Locale";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import ActionFooter from "../components/ActionFooter";
+import { useMaxSpendable } from "../useMaxSpendable";
 import { useNeuronAction } from "./useNeuronAction";
 import MissingNeuron from "./MissingNeuron";
 import type { InternetComputerNeuronManageFlowParamList } from "./types";
@@ -42,27 +42,7 @@ export default function IncreaseStake({ navigation, route }: Props) {
   } = useNeuronAction(navigation, route);
   const unit = useAccountUnit(account);
   const bridge = useAccountBridge<Transaction>(account);
-  const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
-
-  // Debounced as the Send flow's amount step is: the transaction changes on every keystroke, and
-  // each change would otherwise cost a bridge call.
-  const debouncedTransaction = useDebounce(transaction, 500);
-
-  useEffect(() => {
-    if (!debouncedTransaction) return;
-    let cancelled = false;
-    bridge
-      .estimateMaxSpendable({ account, transaction: debouncedTransaction })
-      .then(estimate => {
-        if (!cancelled) setMaxSpendable(estimate);
-      })
-      // The figure is a hint beside the input and the bridge validates the amount regardless, so a
-      // failed estimate just leaves the hint unrendered rather than faulting the screen.
-      .catch((error: Error) => console.warn("[ICP] max spendable estimate failed", error));
-    return () => {
-      cancelled = true;
-    };
-  }, [account, bridge, debouncedTransaction]);
+  const maxSpendable = useMaxSpendable(bridge, account, transaction);
 
   const onChange = useCallback(
     (amount: BigNumber) => updateTransaction(tx => ({ ...tx, amount })),
@@ -91,7 +71,6 @@ export default function IncreaseStake({ navigation, route }: Props) {
             onChange={onChange}
             value={amount}
             error={amount.gt(0) ? status.errors.amount : null}
-            warning={status.warnings.amount}
             testID="icp-increase-stake-amount-input"
           />
           <Flex flexDirection="row" justifyContent="space-between">

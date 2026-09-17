@@ -43,14 +43,12 @@ export type InternetComputerStakingFlowParamList = {
     status?: TransactionStatus;
     device: Device;
     appName?: string;
-    selectDeviceLink?: boolean;
     analyticsPropertyFlow?: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.InternetComputerStakingValidationSuccess]: {
     accountId: string;
     parentId?: string;
-    deviceId?: string;
     transaction: Transaction;
     result: Operation;
     source?: RouteProp<ParamListBase, ScreenName>;
@@ -58,7 +56,6 @@ export type InternetComputerStakingFlowParamList = {
   [ScreenName.InternetComputerStakingValidationError]: {
     accountId: string;
     parentId?: string;
-    deviceId?: string;
     transaction: Transaction;
     error: Error;
     // Whether the device produced a signature: a request that was never sent is always safe to retry.

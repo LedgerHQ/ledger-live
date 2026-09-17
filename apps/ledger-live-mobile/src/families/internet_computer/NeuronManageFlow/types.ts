@@ -65,15 +65,12 @@ export type InternetComputerNeuronManageFlowParamList = {
   [ScreenName.InternetComputerNeuronConnectDevice]: NeuronSigningRoute & {
     device: Device;
     appName?: string;
-    selectDeviceLink?: boolean;
     analyticsPropertyFlow?: string;
   };
   [ScreenName.InternetComputerNeuronValidationSuccess]: NeuronSigningRoute & {
-    deviceId?: string;
     result: Operation;
   };
   [ScreenName.InternetComputerNeuronValidationError]: NeuronSigningRoute & {
-    deviceId?: string;
     error: Error;
     // Whether the device produced a signature: a request that was never sent is always safe to retry.
     signed?: boolean;
