@@ -140,12 +140,8 @@ test.describe("Swap - landing page", () => {
         annotation: { type: "TMS", description: "B2CQA-2918, B2CQA-2327" },
       },
       async ({ app }) => {
-        // Pin before the flow: the override needs the live app loaded, and the reload
-        // that applies it clears the form.
-        await app.swap.goAndWaitForSwapToBeReady(() =>
-          app.mainNavigation.openTargetFromMainNavigation("swap"),
-        );
-        await app.swap.applyFlagPreset(preset);
+        // Declare the variant before the flow: the first swap open applies it.
+        app.swap.setFlagPreset(preset);
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
 

@@ -4,13 +4,10 @@ import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "@e2e/utils/retry";
-import { DEFAULT_TIMEOUT } from "@e2e/helpers/elementHelpers";
-import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
+import { DEFAULT_TIMEOUT, parseScriptJson } from "@e2e/helpers/elementHelpers";
+import { escapeRegExp, floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import {
-  QUOTE_CARD_PROVIDER_NAME_FRAGMENT,
-  quoteCardCtaPattern,
-  quoteCardProviderNameSelector,
-  quoteCardVariantPrefix,
+  otherQuoteCardVariant,
   SWAP_FLAG_OVERRIDES_KEY,
   swapFlagPresetPayload,
   type QuoteCardVariant,
@@ -21,9 +18,35 @@ import {
 // before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
 
-// Provider UI names (e.g. "Swaps.xyz", "LI.FI") can contain regex metacharacters. Escape them
-// before embedding in a RegExp so they match literally instead of altering the pattern.
-const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// swap-live-app's quote card DOM. Intentionally duplicated in the other suite's swap page
+// object: each suite owns its own locators. Keep both in sync when swap-live-app changes.
+const QUOTE_CARD_PROVIDER_NAME_FRAGMENT = "quote-card-provider-name-";
+
+// Contains-match finds any card, a prefix pins one ptxLumenQuoteCard variant.
+const quoteCardVariantPrefix: Record<QuoteCardVariant, string> = {
+  legacy: `compact-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
+  lumen: `lumen-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
+};
+
+// Anchor the id: `moonpay` is a prefix of `moonpay_trade`, so a bare contains-match lets one
+// provider's card answer for the other. Cards may still append a rate-type suffix, hence the
+// second clause, which only matches on a `-` boundary.
+const quoteCardProviderNameSelector = (providerName: string): string => {
+  const fragment = `${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${providerName.toLowerCase()}`;
+  return `[data-testid$='${fragment}'],[data-testid*='${fragment}-']`;
+};
+
+// Safe because every swap spec pins the flag: both presets name the provider in the CTA.
+const quoteCardCtaPattern = ({
+  providerUiName,
+  approvalRequired = false,
+}: {
+  providerUiName: string;
+  approvalRequired?: boolean;
+}): RegExp => {
+  const verbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
+  return new RegExp(`^(?:${verbs}) with ${escapeRegExp(providerUiName)}$`, "i");
+};
 
 // Net value of a quote as shown on screen: amount received minus network fees (both in fiat).
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
@@ -31,25 +54,18 @@ const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - qu
 // Set on the window before a reload, so its absence proves a fresh document.
 const FLAG_RELOAD_MARKER = "__swapE2eFlagReload";
 
-// Budget per reopen step, because cleanup runs on tests that already failed.
-const CLEAR_FLAG_OVERRIDES_TIMEOUT = 10_000;
-
 // Probe budget, because the app can drop the get-quotes CTA.
 const GET_QUOTES_CTA_PROBE_TIMEOUT = 15_000;
+
+// The quotes are already loaded when the variant is checked, so a miss is a real failure
+// rather than a slow render: fail fast instead of burning the default minute.
+const QUOTE_CARD_VARIANT_TIMEOUT = 10_000;
 
 const describeError = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
-// Some drivers wrap a runScript result in { result }, as getValueByWebTestId does.
-const parseScriptJson = (raw: unknown): unknown => {
-  const value = raw !== null && typeof raw === "object" && "result" in raw ? raw["result"] : raw;
-  return JSON.parse(String(value));
-};
-
 export default class SwapLiveAppPage {
   private static readonly QUOTE_CARD_PROVIDER_NAMES = `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}']`;
-
-  private flagPresetPinned = false;
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -209,12 +225,12 @@ export default class SwapLiveAppPage {
 
   // Open the live app first: only the loaded page can write its localStorage.
   // Detox has no reload, so the page reloads itself and rereads the key.
+  // beforeAllFunctionSwap calls this once per spec file, so no test asserts against a card
+  // variant Firebase chose for it, and nothing has to clear the key afterwards.
   @Step("Pin swap live app feature flags: {{{0}}}")
   async applyFlagPreset(preset: SwapFlagPreset) {
     await this.reopenSwapLiveApp();
     const payload = swapFlagPresetPayload(preset);
-    // Mark before the write: a rejected script can still leave the override behind.
-    this.flagPresetPinned = true;
     // The reload can destroy the context before the result crosses the bridge.
     // expectFlagPresetLoaded is the real check, so a reject here is not a failure.
     await this.swapMainContainerWebElement
@@ -246,30 +262,8 @@ export default class SwapLiveAppPage {
     });
   }
 
-  // The override survives an app relaunch, so cleanup reopens the live app.
-  // A throw here would stack a second error on an already failed test.
-  // Keep the pin flag on a miss, so the next test still clears the key.
-  @Step("Clear swap live app feature flag overrides")
-  async clearFlagOverrides() {
-    if (!this.flagPresetPinned) return;
-    try {
-      await this.reopenSwapLiveApp(CLEAR_FLAG_OVERRIDES_TIMEOUT);
-      const stored = parseScriptJson(
-        await this.swapMainContainerWebElement.runScript(
-          (_el: HTMLElement, key: string) => {
-            localStorage.removeItem(key);
-            return JSON.stringify(localStorage.getItem(key));
-          },
-          [SWAP_FLAG_OVERRIDES_KEY],
-        ),
-      );
-      jestExpect(stored).toBeNull();
-      this.flagPresetPinned = false;
-    } catch (error) {
-      log.warn(`Swap flag override not cleared: ${describeError(error)}`);
-    }
-  }
-
+  // Assert the other variant is absent too: checking only the expected one passes just as
+  // happily when the override never reached the app and Firebase served that variant anyway.
   @Step("Check quote card variant: {{{0}}}")
   async checkQuoteCardVariant(variant: QuoteCardVariant) {
     await retryUntilTimeout(async () => {
@@ -277,8 +271,16 @@ export default class SwapLiveAppPage {
         this.swapMainContainerWebElement,
         `[data-testid^='${quoteCardVariantPrefix[variant]}']`,
       );
-      jestExpect(cards.length).toBeGreaterThan(0);
-    });
+      const otherCards = await getWebElementsText(
+        this.swapMainContainerWebElement,
+        `[data-testid^='${quoteCardVariantPrefix[otherQuoteCardVariant(variant)]}']`,
+      );
+      // One assertion, so a wrong variant reports both counts instead of just the miss.
+      jestExpect({ found: cards.length > 0, other: otherCards.length }).toEqual({
+        found: true,
+        other: 0,
+      });
+    }, QUOTE_CARD_VARIANT_TIMEOUT);
   }
 
   @Step("Wait for quotes countdown to be stable")

@@ -28,6 +28,16 @@ function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
   );
 }
 
+// Some drivers wrap a runScript result in { result }, as getValueByWebTestId unwraps below.
+// Callers that return JSON from runScript go through here so the quirk stays in one place.
+export const parseScriptJson = (raw: unknown): unknown => {
+  const value = raw !== null && typeof raw === "object" && "result" in raw ? raw["result"] : raw;
+  if (typeof value !== "string") {
+    throw new TypeError(`Expected a JSON string from runScript, got ${typeof value}`);
+  }
+  return JSON.parse(value);
+};
+
 const scroller = new PageScroller();
 
 export const DEFAULT_TIMEOUT = 60000;
@@ -489,7 +499,9 @@ export const WebElementHelpers = {
     try {
       return await WebElementHelpers.waitWebElement(webElement, timeout, true);
     } catch (e) {
-      const message = `Web element '${id}' not found after ${timeout}ms: ${e instanceof Error ? e.message : String(e)}`;
+      const message = `Web element '${id}' not found after ${timeout}ms: ${
+        e instanceof Error ? e.message : String(e)
+      }`;
       if (options?.throwOnTimeout ?? true) {
         throw new Error(message);
       }

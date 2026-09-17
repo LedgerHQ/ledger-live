@@ -1,10 +1,17 @@
+// Fixture data for the swap-live-app ptxLumenQuoteCard A/B test: which flag value a spec runs
+// against, and how to write it. The DOM that goes with it (testid prefixes, CTA copy) lives in
+// each suite's swap page object, because locators belong to the page object.
+
 // swap-live-app merges this localStorage key over its Firebase flags.
 export const SWAP_FLAG_OVERRIDES_KEY = "feature-flag-overrides";
 
 export type QuoteCardVariant = "legacy" | "lumen";
 
+// TODO(LIVE-37173): when ptxLumenQuoteCard is retired, delete this module and the
+// quoteCardVariantPrefix helpers in both swap page objects. SWAP_FLAG_OVERRIDES_KEY is the one
+// part that outlives the experiment: it pins any swap-live-app flag.
 // The two values the A/B test serves. The merge is shallow per key, so a preset holds the
-// whole flag object. `variant` is tracking only.
+// whole flag object.
 export const swapFlagPresets = {
   lumenQuoteCardDisabled: { ptxLumenQuoteCard: { enabled: false } },
   lumenQuoteCardEnabled: {
@@ -17,11 +24,13 @@ export const swapFlagPresets = {
 
 export type SwapFlagPreset = keyof typeof swapFlagPresets;
 
-// One test case per entry, so the order here is the order the cases run in.
-export const swapFlagPresetNames: SwapFlagPreset[] = [
-  "lumenQuoteCardDisabled",
-  "lumenQuoteCardEnabled",
-];
+// Every swap spec pins a preset, so no test asserts against a card Firebase chose for it.
+// This arm keeps the provider name in the CTA, which quoteCardCtaPattern requires; other
+// Lumen arms render a bare "Review" and would fail every CTA check.
+export const DEFAULT_SWAP_FLAG_PRESET: SwapFlagPreset = "lumenQuoteCardEnabled";
+
+// Derived, so a new preset always gets a test case.
+export const swapFlagPresetNames = Object.keys(swapFlagPresets) as SwapFlagPreset[];
 
 export const swapFlagPresetPayload = (preset: SwapFlagPreset): string =>
   JSON.stringify(swapFlagPresets[preset]);
@@ -32,31 +41,6 @@ export const quoteCardVariantByPreset: Record<SwapFlagPreset, QuoteCardVariant> 
   lumenQuoteCardEnabled: "lumen",
 };
 
-// Contains-match finds any card, a prefix pins one variant.
-export const QUOTE_CARD_PROVIDER_NAME_FRAGMENT = "quote-card-provider-name-";
-
-export const quoteCardVariantPrefix: Record<QuoteCardVariant, string> = {
-  legacy: `compact-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
-  lumen: `lumen-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
-};
-
-// Cards can append to the provider id, so use contains.
-// Swap quotes only name MoonPay Trade, so no id collides.
-export const quoteCardProviderNameSelector = (providerName: string): string =>
-  `[data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${providerName.toLowerCase()}']`;
-
-// Provider UI names (e.g. "LI.FI") can carry regex metacharacters.
-const escapeRegExp = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-
-// Both served flag values name the provider in the CTA.
-export const quoteCardCtaPattern = ({
-  providerUiName,
-  approvalRequired = false,
-}: {
-  providerUiName: string;
-  approvalRequired?: boolean;
-}): RegExp => {
-  const verbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
-  return new RegExp(`^(?:${verbs}) with ${escapeRegExp(providerUiName)}$`, "i");
-};
+// The variant a pinned test must NOT see, so the check can assert its absence too.
+export const otherQuoteCardVariant = (variant: QuoteCardVariant): QuoteCardVariant =>
+  variant === "lumen" ? "legacy" : "lumen";

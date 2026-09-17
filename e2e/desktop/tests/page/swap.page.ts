@@ -13,11 +13,10 @@ import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { expectAmountCloseTo } from "tests/utils/amountUtils";
+import { escapeRegExp } from "@ledgerhq/live-e2e-shared/data/regexes";
 import {
-  QUOTE_CARD_PROVIDER_NAME_FRAGMENT,
-  quoteCardCtaPattern,
-  quoteCardProviderNameSelector,
-  quoteCardVariantPrefix,
+  DEFAULT_SWAP_FLAG_PRESET,
+  otherQuoteCardVariant,
   SWAP_FLAG_OVERRIDES_KEY,
   swapFlagPresetPayload,
   type QuoteCardVariant,
@@ -27,6 +26,36 @@ import {
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
+
+// swap-live-app's quote card DOM. Intentionally duplicated in the other suite's swap page
+// object: each suite owns its own locators. Keep both in sync when swap-live-app changes.
+const QUOTE_CARD_PROVIDER_NAME_FRAGMENT = "quote-card-provider-name-";
+
+// Contains-match finds any card, a prefix pins one ptxLumenQuoteCard variant.
+const quoteCardVariantPrefix: Record<QuoteCardVariant, string> = {
+  legacy: `compact-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
+  lumen: `lumen-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
+};
+
+// Anchor the id: `moonpay` is a prefix of `moonpay_trade`, so a bare contains-match lets one
+// provider's card answer for the other. Cards may still append a rate-type suffix, hence the
+// second clause, which only matches on a `-` boundary.
+const quoteCardProviderNameSelector = (providerName: string): string => {
+  const fragment = `${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${providerName.toLowerCase()}`;
+  return `[data-testid$='${fragment}'],[data-testid*='${fragment}-']`;
+};
+
+// Safe because every swap spec pins the flag: both presets name the provider in the CTA.
+const quoteCardCtaPattern = ({
+  providerUiName,
+  approvalRequired = false,
+}: {
+  providerUiName: string;
+  approvalRequired?: boolean;
+}): RegExp => {
+  const verbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
+  return new RegExp(`^(?:${verbs}) with ${escapeRegExp(providerUiName)}$`, "i");
+};
 
 // Set on the window before a reload, so its absence proves a fresh document.
 const FLAG_RELOAD_MARKER = "__swapE2eFlagReload";
@@ -63,6 +92,8 @@ export class SwapPage extends WebViewAppPage {
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
   private readonly toAccountAmountInput = "to-account-amount-input";
   private readonly fromAccountAmountInactive = "from-account-amount-inactive";
+  private pendingFlagPreset: SwapFlagPreset = DEFAULT_SWAP_FLAG_PRESET;
+  private flagPresetApplied = false;
   private providerContainerSelector = (provider: string) =>
     `[data-testid^="quote-container-${provider}"]`;
   private providerContainerInfoSelector = (provider: string, suffix: string) =>
@@ -125,14 +156,26 @@ export class SwapPage extends WebViewAppPage {
     await this.maxSpendableToggle.click();
   }
 
+  // The landing-page tests pick a variant; every other swap spec runs the pinned default, so
+  // Firebase never decides which card an assertion sees. Call before the first swap open.
+  setFlagPreset(preset: SwapFlagPreset) {
+    this.pendingFlagPreset = preset;
+    this.flagPresetApplied = false;
+  }
+
   // Only the loaded page can write its localStorage.
   // A route change kept the same document on CI.
   // The reload makes the atom reread the key.
   // Fresh user data clears the key per test.
+  // goAndWaitForSwapToBeReady runs this on the first swap open of a test, before any form
+  // input, so the reload costs nothing.
   @step("Pin swap live app feature flags: $0")
-  async applyFlagPreset(preset: SwapFlagPreset) {
+  private async applyFlagPreset(preset: SwapFlagPreset) {
     const webview = await this.getWebView();
     const payload = swapFlagPresetPayload(preset);
+    // Mark before the write: a rejected evaluate can still leave the override behind, and a
+    // retry would reload the app out from under the test.
+    this.flagPresetApplied = true;
     // The reload can kill the context before evaluate returns.
     await webview
       .evaluate(
@@ -176,12 +219,20 @@ export class SwapPage extends WebViewAppPage {
       .toEqual({ stored: payload, reloaded: true });
   }
 
+  // Assert the other variant is absent too: checking only the expected one passes just as
+  // happily when the override never reached the app and Firebase served that variant anyway.
   @step("Check quote card variant: $0")
   async checkQuoteCardVariant(variant: QuoteCardVariant) {
     const webview = await this.getWebView();
+    const hint = `Expected the ${variant} quote card. If both variants fail, check that swap-live-app still reads "${SWAP_FLAG_OVERRIDES_KEY}".`;
     await expect(
       webview.locator(`[data-testid^='${quoteCardVariantPrefix[variant]}']`).first(),
+      hint,
     ).toBeVisible();
+    await expect(
+      webview.locator(`[data-testid^='${quoteCardVariantPrefix[otherQuoteCardVariant(variant)]}']`),
+      hint,
+    ).toHaveCount(0);
   }
 
   // approvalRequired must reflect real allowance state: false for native assets,
@@ -670,6 +721,12 @@ export class SwapPage extends WebViewAppPage {
       surface === "embedded" ? this.embeddedSwapContainer : this.fullSwapContainer;
     await swapContainer.waitFor();
     await this.getWebView();
+
+    // Pin on the first swap open of the test, so no spec asserts against a card variant
+    // Firebase chose for it. Later opens short-circuit: the key already survives in place.
+    if (!this.flagPresetApplied) {
+      await this.applyFlagPreset(this.pendingFlagPreset);
+    }
   }
 
   @step("Open swap via deeplink: $0")

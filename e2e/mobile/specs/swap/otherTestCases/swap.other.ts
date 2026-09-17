@@ -124,15 +124,17 @@ export function runSwapWithDifferentSeedTest(
   });
 }
 
+export type SwapLandingPageConfig = {
+  fromAccount: Account;
+  toAccount: Account;
+  tmsLinks: string[];
+  tags: string[];
+};
+
 // One spec file per value the ptxLumenQuoteCard A/B test serves.
 // Each file owns its launch, so neither case depends on the other.
-export function runSwapLandingPageTest(
-  fromAccount: Account,
-  toAccount: Account,
-  tmsLinks: string[],
-  tags: string[],
-  preset: SwapFlagPreset,
-) {
+export function runSwapLandingPageTest(config: SwapLandingPageConfig, preset: SwapFlagPreset) {
+  const { fromAccount, toAccount, tmsLinks, tags } = config;
   const variant = quoteCardVariantByPreset[preset];
 
   describe("Swap - landing page", () => {
@@ -141,6 +143,7 @@ export function runSwapLandingPageTest(
       await beforeAllFunctionSwap({
         userdata: "skip-onboarding",
         speculosApp: AppInfos.EXCHANGE,
+        flagPreset: preset,
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
@@ -154,10 +157,6 @@ export function runSwapLandingPageTest(
       });
     });
 
-    afterEach(async () => {
-      await app.swapLiveApp.clearFlagOverrides();
-    });
-
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
@@ -165,8 +164,6 @@ export function runSwapLandingPageTest(
     // Both values render the same CTA copy, so the card variant is the only
     // difference the tests can see.
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer on the ${variant} quote card`, async () => {
-      await app.swapLiveApp.applyFlagPreset(preset);
-
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
