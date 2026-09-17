@@ -38,6 +38,7 @@ export function QueuedBottomSheet({
   noCloseButton,
   preventBackdropClick,
   hideHandle,
+  restoreOnFocus,
   children,
   snapPoints = ["70%", "90%"],
   enableDynamicSizing = false,
@@ -69,6 +70,7 @@ export function QueuedBottomSheet({
     onBackdropPress,
     onModalHide,
     preventBackdropClick,
+    restoreOnFocus,
   });
 
   const [footerHeight, setFooterHeight] = useState(0);

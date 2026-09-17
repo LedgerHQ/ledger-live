@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { createElement, useState, type ReactNode } from "react";
 import { Keyboard } from "react-native";
 import { renderHook, act } from "@testing-library/react-native";
 import { useQueuedBottomSheet } from "./useQueuedBottomSheet";
+import { QueuedBottomSheetAdaptersProvider } from "./adaptersContext";
+import { defaultQueuedBottomSheetAdapters, type QueuedBottomSheetAdapters } from "../adapters";
 import type { BottomSheetStateHandlers } from "../contexts/QueuedBottomSheetsContext";
 import {
   claimBottomSheetKeyboard,
@@ -750,5 +752,77 @@ describe("useQueuedBottomSheet", () => {
     });
 
     expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
+  });
+
+  describe("a screen losing focus", () => {
+    function renderFocusAware(props: { onClose: () => void; restoreOnFocus?: boolean }) {
+      let isFocused = true;
+      const adapters: QueuedBottomSheetAdapters = {
+        ...defaultQueuedBottomSheetAdapters,
+        useIsScreenFocused: () => isFocused,
+      };
+      const wrapper = ({ children }: { children: ReactNode }) =>
+        createElement(QueuedBottomSheetAdaptersProvider, { value: adapters }, children);
+
+      const rendered = renderHook(
+        () => useQueuedBottomSheet({ isRequestingToBeOpened: true, ...props }),
+        { wrapper },
+      );
+
+      return {
+        ...rendered,
+        setFocused: (next: boolean) => {
+          isFocused = next;
+          rendered.rerender(undefined);
+        },
+      };
+    }
+
+    it("reports a close, so the consumer forgets it wanted the drawer", () => {
+      const onClose = jest.fn();
+      const { signalOpen } = setupBottomSheetStateCapture();
+      const { setFocused } = renderFocusAware({ onClose });
+
+      signalOpen();
+      setFocused(false);
+
+      expect(mockDismiss).toHaveBeenCalled();
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("only hides the drawer under restoreOnFocus, leaving the consumer's request standing", () => {
+      const onClose = jest.fn();
+      const { signalOpen } = setupBottomSheetStateCapture();
+      const { result, setFocused } = renderFocusAware({ onClose, restoreOnFocus: true });
+
+      signalOpen();
+      setFocused(false);
+
+      expect(mockDismiss).toHaveBeenCalled();
+      expect(onClose).not.toHaveBeenCalled();
+
+      // The dismissal lands after the screen is gone, and reports nothing either.
+      act(() => {
+        result.current.handleDismiss();
+      });
+
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("queues the drawer again under restoreOnFocus once the screen is focused", () => {
+      const { signalOpen } = setupBottomSheetStateCapture();
+      const { result, setFocused } = renderFocusAware({ onClose: jest.fn(), restoreOnFocus: true });
+
+      signalOpen();
+      setFocused(false);
+      act(() => {
+        result.current.handleDismiss();
+      });
+      setFocused(true);
+      signalOpen();
+
+      expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(2);
+      expect(mockPresent).toHaveBeenCalledTimes(2);
+    });
   });
 });

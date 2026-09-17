@@ -37,6 +37,12 @@ export type QueuedBottomSheetProps = Readonly<{
   onModalHide?: () => void;
   /** Prevent closing via backdrop press. */
   preventBackdropClick?: boolean;
+  /**
+   * Treats the close a screen losing focus causes as a hide rather than as a dismissal: the drawer
+   * goes away without reporting {@link onClose}, so a consumer that keeps requesting it gets it
+   * back when its screen is focused again. Off by default, which reports every close alike.
+   */
+  restoreOnFocus?: boolean;
   /** Snap points for the bottom sheet. */
   snapPoints?: BottomSheetProps["snapPoints"];
   /** Enable dynamic sizing based on content. */

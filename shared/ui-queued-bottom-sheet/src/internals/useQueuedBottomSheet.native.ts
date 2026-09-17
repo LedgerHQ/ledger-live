@@ -21,6 +21,7 @@ interface UseQueuedBottomSheetProps {
   onBackdropPress?: () => void;
   onModalHide?: () => void;
   preventBackdropClick?: boolean;
+  restoreOnFocus?: boolean;
 }
 
 type BottomSheetState = "idle" | "open" | "dismissing";
@@ -36,6 +37,7 @@ export function useQueuedBottomSheet({
   onBackdropPress,
   onModalHide,
   preventBackdropClick,
+  restoreOnFocus = false,
 }: UseQueuedBottomSheetProps) {
   const sheetId = useId();
   const adapters = useQueuedBottomSheetAdapters();
@@ -52,6 +54,9 @@ export function useQueuedBottomSheet({
   const bottomSheetInQueueRef = useRef<BottomSheetInQueue | undefined>(undefined);
   const bottomSheetRef = useBottomSheetRef();
   const isFocused = adapters.useIsScreenFocused();
+  // Read from the effect cleanup below, which runs after the render that took the focus away.
+  const isFocusedRef = useRef(isFocused);
+  isFocusedRef.current = isFocused;
   const areBottomSheetsLocked = adapters.useAreBottomSheetsLocked();
   const backgroundComponent: BottomSheetProps["backgroundComponent"] = backgroundTone
     ? adapters.backgroundComponentByTone?.[backgroundTone]
@@ -178,6 +183,22 @@ export function useQueuedBottomSheet({
     onCloseRef.current?.();
   }, [beginDismissing, bottomSheetRef, cleanupQueue, dismissKeyboard, logBottomSheet]);
 
+  // A screen losing focus is not the user dismissing the drawer. Under `restoreOnFocus` the
+  // consumer is not told, so it keeps requesting the drawer and the effect below presents it again
+  // once the screen is focused. The later onDismiss sees a sheet already dismissing, so it reports
+  // nothing either.
+  const hideWhileUnfocused = useCallback(() => {
+    if (stateRef.current !== "open") {
+      cleanupQueue();
+      return;
+    }
+
+    logBottomSheet("Hiding drawer - screen not focused");
+    beginDismissing();
+    dismissKeyboard();
+    bottomSheetRef.current?.dismiss();
+  }, [beginDismissing, bottomSheetRef, cleanupQueue, dismissKeyboard, logBottomSheet]);
+
   // Adds this drawer to the queue. The queue decides when to actually open/close it via the
   // open/close state handlers.
   const enqueueBottomSheet = useCallback(() => {
@@ -264,6 +285,11 @@ export function useQueuedBottomSheet({
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
+      if (restoreOnFocus) {
+        hideWhileUnfocused();
+        return;
+      }
+
       logBottomSheet("Closing drawer - screen not focused");
       handleClose();
       return;
@@ -273,6 +299,11 @@ export function useQueuedBottomSheet({
       enqueueBottomSheet();
 
       return () => {
+        if (restoreOnFocus && !isFocusedRef.current) {
+          hideWhileUnfocused();
+          return;
+        }
+
         logBottomSheet("Effect cleanup - closing drawer");
         handleClose();
       };
@@ -282,6 +313,8 @@ export function useQueuedBottomSheet({
     isForcingToBeOpened,
     isRequestingToBeOpened,
     handleClose,
+    hideWhileUnfocused,
+    restoreOnFocus,
     enqueueBottomSheet,
     logBottomSheet,
     reopenCheckSignal,
