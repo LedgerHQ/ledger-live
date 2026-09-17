@@ -28,6 +28,7 @@ export type CardDetailsProps = Readonly<{
   formatters?: CardTransactionFormatters;
   onTrackEvent?: CardTrackEvent;
   unlock?: UnlockForReveal;
+  onShowMore?: () => void;
 }>;
 
 export type CardDetailsViewProps = CardDetailsProps &
