@@ -66,7 +66,7 @@ function DetailsImage({
 
   return (
     <Box
-      lx={{ padding: "s2", borderRadius: "lg", borderWidth: "s1" }}
+      lx={{ padding: "s1", borderRadius: "lg", borderWidth: "s1" }}
       style={[
         styles.imageFrame,
         { backgroundColor: CARD_GRADIENT_END, borderColor: CARD_FACE_BORDER },
