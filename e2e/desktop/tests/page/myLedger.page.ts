@@ -25,22 +25,15 @@ export class MyLedgerPage extends AppPage {
   private readonly updateAllButton = this.page.getByTestId("manager-update-all-apps-button");
   private readonly updateAllProgressBar = this.page.getByTestId("manager-update-all-progress-bar");
 
-  private readonly renameContainer = this.page.getByTestId("device-rename-container");
-  private readonly deviceNameInput = this.page.getByTestId("current-device-name-input");
-  private readonly deviceRenamed = this.page.getByTestId("device-renamed");
-
   private readonly changeLanguageButton = this.page.getByTestId("manager-change-language-button");
   private readonly languageInstallation = this.page.getByTestId(
     "device-language-installation-container",
   );
   private readonly languageOption = (language: string) =>
     this.page.getByTestId(`manager-language-option-${language}`);
+  private readonly installLanguageButton = this.page.getByTestId("install-language-button");
 
   private readonly customImageButton = this.page.getByTestId("manager-custom-image-button");
-  private readonly removeImageContainer = this.page.getByTestId("device-remove-image-container");
-  private readonly closeImageRemoval = this.page.getByTestId(
-    "close-device-custom-image-removal-button",
-  );
 
   private readonly updateFirmwareButton = this.page.getByTestId("manager-update-firmware-button");
 
@@ -127,30 +120,18 @@ export class MyLedgerPage extends AppPage {
     await expect(this.updateAllProgressBar).toBeHidden();
   }
 
-  @step("Rename the device to $0")
-  async renameDevice(name: string) {
-    await this.renameContainer.click();
-    await this.deviceNameInput.fill(name);
-    await this.deviceNameInput.press("Enter");
-    await expect(this.deviceRenamed).toBeVisible();
-  }
-
+  /** Selecting an option only stages it; the drawer installs on its own submit. */
   @step("Change the device language to $0")
   async changeDeviceLanguage(language: string) {
     await this.changeLanguageButton.click();
     await expect(this.languageInstallation).toBeVisible();
     await this.languageOption(language).click();
+    await this.installLanguageButton.click();
   }
 
   @step("Open the custom lock screen manager")
   async openCustomLockScreen() {
     await this.customImageButton.click();
-  }
-
-  @step("Remove the custom lock screen")
-  async removeCustomLockScreen() {
-    await expect(this.removeImageContainer).toBeVisible();
-    await this.closeImageRemoval.click();
   }
 
   @step("Expect a firmware update to be offered")
