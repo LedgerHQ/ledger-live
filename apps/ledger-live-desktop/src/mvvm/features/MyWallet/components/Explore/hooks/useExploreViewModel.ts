@@ -22,7 +22,7 @@ type ExploreViewModel = {
 export function useExploreViewModel(): ExploreViewModel {
   const { t } = useTranslation();
   const url = useLocalizedUrl(urls.exploreLedgerDevices);
-  const { variant, discount, handleCTAClick, tracking } = useLNSUpsellBannerModel("profile");
+  const { variant, discount, handleCTAClick, copyKeys } = useLNSUpsellBannerModel("profile");
 
   const handleClick = useCallback(() => {
     openURL(url, "button_clicked", {
@@ -31,14 +31,13 @@ export function useExploreViewModel(): ExploreViewModel {
     });
   }, [url]);
 
-  const copyKey = tracking === "opted_out" ? "lnsUpsell.opted_out" : "lnsUpsell.profile";
   const upsell: ProfileUpsell | null =
     variant.type === "none"
       ? null
       : {
-          title: t(`${copyKey}.title`),
-          description: t(`${copyKey}.description`, { discount }),
-          cta: t("lnsUpsell.profile.cta"),
+          title: t(copyKeys.title),
+          description: t(copyKeys.description, { discount }),
+          cta: t(copyKeys.cta),
           onClick: handleCTAClick,
         };
 

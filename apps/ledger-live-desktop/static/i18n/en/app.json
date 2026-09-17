@@ -9254,7 +9254,11 @@
     "opted_in": {
       "title": "See more. Sign safer",
       "description": "Upgrade and get {{discount}}% off.",
-      "cta": "Upgrade my Ledger"
+      "cta": "Upgrade my Ledger",
+      "nanoS": {
+        "title": "Ledger Nano S Upgrade Program",
+        "description": "Unlock new OS and security features. Get {{discount}}% off."
+      }
     },
     "opted_out": {
       "title": "More security. More control",
@@ -9264,7 +9268,11 @@
     "profile": {
       "title": "Upgrade your Device",
       "description": "Bigger screen, better security. Enjoy {{discount}}%.",
-      "cta": "Explore"
+      "cta": "Explore",
+      "nanoS": {
+        "title": "Ledger Nano S Upgrade Program",
+        "description": "Unlock new OS and security features. Get {{discount}}% off."
+      }
     }
   },
   "largeScreenUpsellModal": {
