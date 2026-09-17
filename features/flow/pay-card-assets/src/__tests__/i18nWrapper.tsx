@@ -5,6 +5,9 @@ export const CARD_ASSETS_COPY = {
   title: "Assets",
   empty: "No assets yet",
   error: "Couldn't load assets",
+  manage: "Manage",
+  manageTitle: "Manage assets",
+  add: "Add asset",
 } as const;
 
 export const CARD_ASSETS_RESOURCES = {
@@ -16,6 +19,9 @@ export const CARD_ASSETS_RESOURCES = {
             title: CARD_ASSETS_COPY.title,
             empty: CARD_ASSETS_COPY.empty,
             error: CARD_ASSETS_COPY.error,
+            manage: CARD_ASSETS_COPY.manage,
+            manageTitle: CARD_ASSETS_COPY.manageTitle,
+            add: CARD_ASSETS_COPY.add,
           },
         },
       },

@@ -903,7 +903,10 @@
       "assets": {
         "title": "Assets",
         "empty": "No assets yet",
-        "error": "Couldn't load assets"
+        "error": "Couldn't load assets",
+        "manage": "Manage",
+        "manageTitle": "Manage assets",
+        "add": "Add asset"
       },
       "freeze": "Freeze",
       "unfreeze": "Unfreeze",

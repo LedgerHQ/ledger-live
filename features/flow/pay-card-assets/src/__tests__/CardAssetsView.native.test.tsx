@@ -11,6 +11,12 @@ const ready: CardAssetsViewModel = {
   rows: [{ id: "w-usdc", ticker: "USDC", cryptoAmount: "125.40 USDC" }],
   emptyLabel: CARD_ASSETS_COPY.empty,
   errorLabel: CARD_ASSETS_COPY.error,
+  manageLabel: CARD_ASSETS_COPY.manage,
+  manageTitle: CARD_ASSETS_COPY.manageTitle,
+  addAssetLabel: CARD_ASSETS_COPY.add,
+  isManageOpen: false,
+  onManagePress: jest.fn(),
+  onManageClose: jest.fn(),
 };
 
 describe("CardAssetsView (native)", () => {

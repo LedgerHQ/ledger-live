@@ -1,5 +1,5 @@
 import React from "react";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { CardAssetsView } from "../CardAssetsView.web";
 import { CARD_ASSETS_COPY } from "./i18nWrapper";
 import type { CardAssetsViewModel } from "../types";
@@ -14,6 +14,12 @@ const ready: CardAssetsViewModel = {
   ],
   emptyLabel: CARD_ASSETS_COPY.empty,
   errorLabel: CARD_ASSETS_COPY.error,
+  manageLabel: CARD_ASSETS_COPY.manage,
+  manageTitle: CARD_ASSETS_COPY.manageTitle,
+  addAssetLabel: CARD_ASSETS_COPY.add,
+  isManageOpen: false,
+  onManagePress: jest.fn(),
+  onManageClose: jest.fn(),
 };
 
 describe("CardAssetsView (web)", () => {
@@ -52,5 +58,32 @@ describe("CardAssetsView (web)", () => {
     expect(screen.getByText("USDC")).toBeVisible();
     expect(screen.getByText("125.40 USDC")).toBeVisible();
     expect(screen.getByText("USDT")).toBeVisible();
+  });
+
+  it("should open the manage dialog with the same linked wallets", () => {
+    render(<CardAssetsView {...ready} isManageOpen />);
+
+    expect(screen.getByTestId("card-assets-manage-dialog")).toBeVisible();
+    expect(screen.getByText(CARD_ASSETS_COPY.manageTitle)).toBeVisible();
+    expect(screen.getAllByText("USDC")).toHaveLength(2);
+  });
+
+  it("should call onAddAsset when Add asset is pressed", () => {
+    const onAddAsset = jest.fn();
+    const onManageClose = jest.fn();
+
+    render(
+      <CardAssetsView
+        {...ready}
+        isManageOpen
+        onAddAsset={onAddAsset}
+        onManageClose={onManageClose}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.add }));
+
+    expect(onManageClose).toHaveBeenCalledTimes(1);
+    expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
 });

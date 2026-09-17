@@ -1,11 +1,11 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "@shared/i18n";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import {
   useCardLinkedWallets,
   type ResolveWalletCounterValue,
 } from "@features/flow-pay-card-wallets";
-import type { CardAssetRow, CardAssetsStatus, CardAssetsViewModel } from "./types";
+import type { CardAssetRow, CardAssetsProps, CardAssetsStatus, CardAssetsViewModel } from "./types";
 
 const KEY_PREFIX = "payTab.card.assets";
 
@@ -22,9 +22,10 @@ export function formatCardAssetCryptoAmount(
   return balance === null ? null : `${balance} ${formatCardAssetTicker(currency)}`;
 }
 
-export function useCardAssetsViewModel(): CardAssetsViewModel {
+export function useCardAssetsViewModel({ onAddAsset }: CardAssetsProps = {}): CardAssetsViewModel {
   const { t } = useTranslation();
   const isSignedIn = useIsCardSignedIn();
+  const [isManageOpen, setIsManageOpen] = useState(false);
   const { wallets, isLoading, isError } = useCardLinkedWallets({
     resolveCounterValue: NO_COUNTER_VALUE,
     skip: !isSignedIn,
@@ -48,6 +49,9 @@ export function useCardAssetsViewModel(): CardAssetsViewModel {
     return "ready";
   }, [isLoading, isError, rows.length]);
 
+  const onManagePress = useCallback(() => setIsManageOpen(true), []);
+  const onManageClose = useCallback(() => setIsManageOpen(false), []);
+
   return useMemo(
     () => ({
       isVisible: isSignedIn,
@@ -56,7 +60,14 @@ export function useCardAssetsViewModel(): CardAssetsViewModel {
       rows,
       emptyLabel: t(`${KEY_PREFIX}.empty`),
       errorLabel: t(`${KEY_PREFIX}.error`),
+      manageLabel: t(`${KEY_PREFIX}.manage`),
+      manageTitle: t(`${KEY_PREFIX}.manageTitle`),
+      addAssetLabel: t(`${KEY_PREFIX}.add`),
+      isManageOpen,
+      onManagePress,
+      onManageClose,
+      onAddAsset,
     }),
-    [isSignedIn, t, status, rows],
+    [isSignedIn, t, status, rows, isManageOpen, onManagePress, onManageClose, onAddAsset],
   );
 }

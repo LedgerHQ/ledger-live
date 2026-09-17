@@ -1,7 +1,8 @@
 import React from "react";
 import { CardAssetsView } from "./CardAssetsView";
+import type { CardAssetsProps } from "./types";
 import { useCardAssetsViewModel } from "./useCardAssetsViewModel";
 
-export function CardAssets() {
-  return <CardAssetsView {...useCardAssetsViewModel()} />;
+export function CardAssets(props: CardAssetsProps = {}) {
+  return <CardAssetsView {...useCardAssetsViewModel(props)} />;
 }

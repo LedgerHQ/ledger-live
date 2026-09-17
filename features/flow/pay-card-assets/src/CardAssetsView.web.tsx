@@ -1,5 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
   ListItem,
   ListItemContent,
   ListItemLeading,
@@ -39,6 +44,59 @@ function CardAssetListItem({ id, ticker, cryptoAmount, ledgerId }: CardAssetRow)
   );
 }
 
+function ManageAssetsDialog({
+  isOpen,
+  title,
+  rows,
+  addAssetLabel,
+  onClose,
+  onAddAsset,
+}: Readonly<{
+  isOpen: boolean;
+  title: string;
+  rows: readonly CardAssetRow[];
+  addAssetLabel: string;
+  onClose: () => void;
+  onAddAsset?: () => void;
+}>) {
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) onClose();
+    },
+    [onClose],
+  );
+
+  const handleAddAsset = useCallback(() => {
+    onClose();
+    onAddAsset?.();
+  }, [onAddAsset, onClose]);
+
+  if (!isOpen) {
+    return null;
+  }
+
+  return (
+    <Dialog open onOpenChange={handleOpenChange}>
+      <DialogContent data-testid="card-assets-manage-dialog">
+        <DialogHeader density="compact" onClose={onClose} />
+        <DialogBody className="flex flex-col gap-16">
+          <span className="heading-3-semi-bold text-base">{title}</span>
+          <div className="flex w-full flex-col gap-8">
+            {rows.map(row => (
+              <CardAssetListItem key={row.id} {...row} />
+            ))}
+          </div>
+          {onAddAsset ? (
+            <Button appearance="base" size="lg" className="w-full" onClick={handleAddAsset}>
+              {addAssetLabel}
+            </Button>
+          ) : null}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function CardAssetsView({
   isVisible,
   title,
@@ -46,6 +104,13 @@ export function CardAssetsView({
   rows,
   emptyLabel,
   errorLabel,
+  manageLabel,
+  manageTitle,
+  addAssetLabel,
+  isManageOpen,
+  onManagePress,
+  onManageClose,
+  onAddAsset,
 }: CardAssetsViewModel) {
   if (!isVisible) {
     return null;
@@ -56,6 +121,9 @@ export function CardAssetsView({
       <Subheader>
         <SubheaderRow>
           <SubheaderTitle>{title}</SubheaderTitle>
+          <Button appearance="no-background" size="sm" onClick={onManagePress}>
+            {manageLabel}
+          </Button>
         </SubheaderRow>
       </Subheader>
       {status === "error" ? <p className="body-2 text-muted">{errorLabel}</p> : null}
@@ -67,6 +135,14 @@ export function CardAssetsView({
           ))}
         </div>
       ) : null}
+      <ManageAssetsDialog
+        isOpen={isManageOpen}
+        title={manageTitle}
+        rows={rows}
+        addAssetLabel={addAssetLabel}
+        onClose={onManageClose}
+        onAddAsset={onAddAsset}
+      />
     </div>
   );
 }

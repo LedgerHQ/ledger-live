@@ -1,5 +1,5 @@
 import React from "react";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 import { CardAssets } from "../CardAssets";
 
@@ -37,8 +37,8 @@ function stubWallets(
   });
 }
 
-function renderCardAssets() {
-  return render(<CardAssets />, { wrapper: I18nWrapper });
+function renderCardAssets(onAddAsset?: () => void) {
+  return render(<CardAssets onAddAsset={onAddAsset} />, { wrapper: I18nWrapper });
 }
 
 describe("CardAssets (web)", () => {
@@ -75,5 +75,20 @@ describe("CardAssets (web)", () => {
     expect(screen.getByText("USDC")).toBeVisible();
     expect(screen.getByText("125.40 USDC")).toBeVisible();
     expect(screen.getByText("USDT")).toBeVisible();
+  });
+
+  it("should open manage and call onAddAsset when Add asset is pressed", () => {
+    const onAddAsset = jest.fn();
+    stubWallets({
+      wallets: [{ id: "w-usdc", balance: "125.40", currency: "usdc" }],
+    });
+
+    renderCardAssets(onAddAsset);
+
+    fireEvent.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
+    expect(screen.getByText(CARD_ASSETS_COPY.manageTitle)).toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.add }));
+    expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
 });
