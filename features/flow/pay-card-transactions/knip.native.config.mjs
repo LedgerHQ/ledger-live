@@ -8,6 +8,5 @@ export default createDualPlatformKnipConfig({
     "src/index.ts",
     "src/exports.ts",
     "src/CardTransactionHistory/components/types.ts",
-    "src/CardTransactionHistory/components/useHistoryRowViewModel.ts",
   ],
 });

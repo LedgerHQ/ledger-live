@@ -1,7 +1,7 @@
 import React from "react";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
-import { render, withFlagOverrides } from "@tests/test-renderer";
+import { render, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { screen, track } from "~/analytics";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
@@ -124,6 +124,41 @@ describe("OperationsList", () => {
           renderTrailing: expect.any(Function),
         }),
       }),
+    );
+  });
+
+  it("shows card history without crypto-only controls when the Card tab is selected", async () => {
+    const { getByTestId, queryByTestId, user } = renderOperationsListWithNavigation(
+      { setOptions: mockSetOptions, dispatch: jest.fn() },
+      {
+        overrideInitialState: withFlagOverrides(
+          {
+            lwmDustFiltering: { enabled: true },
+            lwmPayTab: { enabled: true },
+          },
+          stateWithAccountsAndOperations,
+        ),
+      },
+    );
+
+    jest.mocked(track).mockClear();
+    await user.press(getByTestId("history-tab-card"));
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "card",
+      page: "OperationsList",
+    });
+    expect(getByTestId("card-history-signed-out-state")).toBeVisible();
+    expect(queryByTestId("operations-list-section-list")).toBeNull();
+    expect(queryByTestId("bottom-fade-gradient")).toBeNull();
+    await waitFor(() =>
+      expect(mockSetOptions).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          lumenNavBar: expect.objectContaining({
+            renderTrailing: undefined,
+          }),
+        }),
+      ),
     );
   });
 
