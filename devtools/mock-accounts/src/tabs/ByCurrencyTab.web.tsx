@@ -77,7 +77,9 @@ export function ByCurrencyTab({ vm }: Props) {
                   </div>
                 </ListItemContent>
                 <ListItemTrailing>
-                  <Checkbox checked={checked} onCheckedChange={() => vm.toggleCurrency(c.id)} />
+                  <div onClick={e => e.stopPropagation()}>
+                    <Checkbox checked={checked} onCheckedChange={() => vm.toggleCurrency(c.id)} />
+                  </div>
                 </ListItemTrailing>
               </ListItem>
             );

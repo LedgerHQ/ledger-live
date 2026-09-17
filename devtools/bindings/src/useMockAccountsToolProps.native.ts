@@ -46,7 +46,7 @@ const TESTNET_CURRENCIES = allCurrencies.filter(c => !!c.isTestnetFor);
 async function resolveTokens(tokenIds: string[]): Promise<TokenCurrency[]> {
   const store = getCryptoAssetsStore();
   const resolved = await Promise.all(tokenIds.map(id => store.findTokenById(id)));
-  return resolved.filter((t): t is TokenCurrency => t !== null);
+  return resolved.filter((t): t is TokenCurrency => t != null);
 }
 
 export function useMockAccountsToolProps(
