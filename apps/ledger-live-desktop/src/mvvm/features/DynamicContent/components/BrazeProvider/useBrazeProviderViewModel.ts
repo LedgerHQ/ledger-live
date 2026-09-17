@@ -13,9 +13,9 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { getBrazeConfig } from "~/braze-setup";
-import { applyBrazeConsentTransition } from "~/renderer/braze/applyBrazeConsentTransition";
-import { resolveDesktopBrazeUserId } from "~/renderer/braze/brazeIdentity";
-import { requireBrazeLifecycleMethod } from "~/renderer/braze/brazeWebSdkLifecycle";
+import { applyBrazeConsentTransition } from "LLD/features/DynamicContent/utils/applyBrazeConsentTransition";
+import { resolveDesktopBrazeUserId } from "LLD/features/DynamicContent/utils/brazeIdentity";
+import { requireBrazeLifecycleMethod } from "LLD/features/DynamicContent/utils/brazeWebSdkLifecycle";
 import { publishDesktopContentCards } from "~/renderer/hooks/useBraze";
 import {
   clearDismissedContentCards,
