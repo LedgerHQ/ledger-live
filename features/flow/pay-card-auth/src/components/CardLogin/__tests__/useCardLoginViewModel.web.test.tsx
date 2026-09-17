@@ -405,7 +405,7 @@ describe("useCardLoginViewModel intro", () => {
     await waitFor(() => expect(result.current?.error?.title).toBe("The login page could not open"));
   });
 
-  it("retries the signup page from the panel, instead of starting a login", async () => {
+  it("puts the login back on offer from the signup panel, and starts nothing", async () => {
     const openHostedPage = jest.fn().mockRejectedValue(new Error("no manifest"));
     const { result } = await renderIdleLogin(store, "both", undefined, openHostedPage);
 
@@ -415,7 +415,8 @@ describe("useCardLoginViewModel intro", () => {
 
     act(() => result.current?.error?.onRetry());
 
-    await waitFor(() => expect(openHostedPage).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(result.current?.error).toBeNull());
+    expect(openHostedPage).toHaveBeenCalledTimes(1);
     expect(mockPorts.createAttempt).not.toHaveBeenCalled();
   });
 
@@ -711,7 +712,7 @@ describe("useCardLoginViewModel errors", () => {
     );
   });
 
-  it("starts a fresh login from the panel of a machine error", async () => {
+  it("puts the login back on offer from the panel of a machine error, and starts nothing", async () => {
     mockPorts.saveAttempt.mockRejectedValueOnce(new Error("no store"));
     const { result } = await renderIdleLogin(store);
 
@@ -724,7 +725,9 @@ describe("useCardLoginViewModel errors", () => {
 
     act(() => result.current?.error?.onRetry());
 
-    await waitFor(() => expect(mockPorts.createAttempt).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(result.current?.error).toBeNull());
+    expect(result.current?.isLoading).toBe(false);
+    expect(mockPorts.createAttempt).toHaveBeenCalledTimes(1);
   });
 
   it("shows the translated message for browser_open_failed", async () => {

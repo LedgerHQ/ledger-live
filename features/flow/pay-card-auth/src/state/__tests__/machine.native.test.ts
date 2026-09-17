@@ -471,7 +471,7 @@ describe("cardLoginMachine login", () => {
     expect(actor.getSnapshot().context.errorKind).toBeNull();
   });
 
-  it("starts a new attempt when the user retries", async () => {
+  it("puts the login back on offer when the user retries, and starts nothing", async () => {
     const ports = stubPorts({
       loadAttempt: jest.fn(async () => attempt),
       openHostedLogin: jest.fn(async () => {
@@ -485,8 +485,9 @@ describe("cardLoginMachine login", () => {
 
     actor.send({ type: "RETRY" });
 
-    await waitFor(actor, snapshot => snapshot.context.errorKind === null);
-    expect(ports.createAttempt).toHaveBeenCalledTimes(2);
+    await settledAt(actor, "idle");
+    expect(actor.getSnapshot().context.errorKind).toBeNull();
+    expect(ports.createAttempt).toHaveBeenCalledTimes(1);
   });
 });
 
