@@ -416,8 +416,11 @@ const extraProperties = (store: ReduxStore) => {
 };
 
 setAnalytics({
-  track: (event, props) => {
-    analyticsInstance?.track(event, props, { context: getContext() });
+  track: async (event, props) => {
+    if (!analyticsInstance) {
+      return "skipped_no_client";
+    }
+    await analyticsInstance.track(event, props, { context: getContext() });
   },
   log: (type: EventType, event, props) => {
     switch (type) {

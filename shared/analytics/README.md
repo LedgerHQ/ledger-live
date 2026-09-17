@@ -34,7 +34,10 @@ setPropsFilter((props) => myFilter(props));
 
 // register tracking client and logger
 setAnalytics({
-  track: (event, props) => segment.track(event, props),
+  track: async (event, props) => {
+    if (!segment) return "skipped_no_client";
+    await segment.track(event, props);
+  },
   log: console.log,
   flush: () => segment.flush(),
   closeAndFlush: () => segment.closeAndFlush(),
@@ -111,7 +114,13 @@ await track("My Crucial Event", { foo: "bar" });
 await trackPage({ category: "Market" });
 ```
 
-The registered analytics client may be sync or async.
+`deliver` **awaits** the registered `Analytics.track`. Return its promise (or `async`/`await` the vendor SDK). Discarding that promise makes every call look `enqueued` and leaves SDK rejections unobserved.
+
+- no registered client → `skipped_no_client`
+- return `"skipped_no_client"` when the SDK instance is missing
+- resolve `void` → `enqueued` (do **not** return the SDK payload — it is not a `DeliveryStatus`)
+- return another `DeliveryStatus` to override
+- throw or reject → `failed_tracking`
 
 ### Flush
 
@@ -158,7 +167,7 @@ Tracking routes are used in analytics to provide props like `page` and `source`.
 
 ## Analytics Events
 
-`analyticsEvents$` provides `.pipe` and `.subscribe` for reading events logged by analytics.
+`analyticsEvents$` provides `.pipe` and `.subscribe` for reading events logged by analytics. Each event includes `deliveryStatus` (`enqueued`, `failed_tracking`, `skipped_no_client`, and related skip/fail values).
 
 `publishAnalyticsEvent` (DEPRECATED) – this function allows events to be pushed to the `analyticsEvents$` observable directly. Today it is here to support unmigrated behaviour around `updateIdentify` but for more events client apps should use the events pushed to `analyticsEvents$` by the internal workings of the package.
 

@@ -65,7 +65,7 @@ describe("TrackPage", () => {
       expect(events[0]).toEqual(
         expect.objectContaining({
           date: expect.any(Date),
-          deliveryStatus: "enqueued",
+          deliveryStatus: "skipped_no_client",
           eventName: "Page Analytics Consent Mandatory",
           eventProperties: expect.objectContaining({
             flow: "test-flow",
