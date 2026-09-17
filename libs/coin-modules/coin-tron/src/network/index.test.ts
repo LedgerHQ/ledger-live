@@ -733,6 +733,50 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
     // not necessarily the token that moved — labelling with it would name the wrong token for a
     // deployment that transfers some other one. `logic/getBlock` reads the same transactions under
     // the same rule, so both endpoints report a token transfer only on unambiguous log evidence.
+    // A transaction can approve one token and transfer another between the same two parties; the
+    // approval's owner/spender say nothing about which token moved.
+    it("ignores an Approval of another token when resolving the transfer", async () => {
+      const approvalOfAnotherToken = {
+        address: "a614f803b6fd780986a42c78ec9c7f77e6ded13c",
+        topics: [
+          "8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+          ...transactionInfo.log[0].topics.slice(1),
+        ],
+        data: transactionInfo.log[0].data,
+      };
+      mockConstructorMintPage({
+        ...transactionInfo,
+        log: [approvalOfAnotherToken, transactionInfo.log[0]],
+      });
+
+      const result = await fetchTronAccountTxsPage(mockConfig, deployerBase58, {
+        limit: 100,
+        minTimestamp: 0,
+        order: "asc",
+      });
+
+      expect(result.trc20Txs.txs[0].tokenAddress).toBe(trc20Base58);
+    });
+
+    it("leaves the token address unset when only an Approval names a token", async () => {
+      const approvalOnly = {
+        ...transactionInfo.log[0],
+        topics: [
+          "8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+          ...transactionInfo.log[0].topics.slice(1),
+        ],
+      };
+      mockConstructorMintPage({ ...transactionInfo, log: [approvalOnly] });
+
+      const result = await fetchTronAccountTxsPage(mockConfig, deployerBase58, {
+        limit: 100,
+        minTimestamp: 0,
+        order: "asc",
+      });
+
+      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+    });
+
     it("leaves the token address unset when the logs do not name one token", async () => {
       const otherTokenLog = {
         ...transactionInfo.log[0],

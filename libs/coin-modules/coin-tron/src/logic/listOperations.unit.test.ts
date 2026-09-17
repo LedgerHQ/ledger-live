@@ -112,6 +112,31 @@ describe("listOperations", () => {
     expect(result.items.map(op => op.id)).toEqual(["tx-resolved"]);
   });
 
+  it("should not fetch blocks for a page of only unresolvable token operations", async () => {
+    // Dropping happens before the block fan-out, so a page of transactions that are all dropped
+    // costs no block request — historical sync over spam airdrops stays cheap.
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: [], hasNextPage: false },
+      trc20Txs: {
+        txs: [
+          {
+            txID: "tx-unresolved",
+            tokenType: "trc20",
+            value: new BigNumber(1),
+            date: new Date("2023-01-01T00:00:00Z"),
+            blockHeight: 100,
+          },
+        ],
+        hasNextPage: false,
+      },
+    });
+
+    const result = await listOperations(config, mockAddress, defaultOptions);
+
+    expect(result.items).toEqual([]);
+    expect(getBlock).not.toHaveBeenCalled();
+  });
+
   it("should handle empty transactions on first page (no cursor)", async () => {
     (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
       nativeTxs: { txs: [], hasNextPage: false },

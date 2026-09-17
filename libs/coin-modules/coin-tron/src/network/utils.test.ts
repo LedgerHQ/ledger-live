@@ -205,7 +205,27 @@ describe("decodeTrc20TransferLog", () => {
 
   it("returns null when the log carries no amount", () => {
     expect(decodeTrc20TransferLog({ ...constructorMintLog, data: "" })).toBeNull();
+    expect(decodeTrc20TransferLog({ ...constructorMintLog, data: undefined })).toBeNull();
+  });
+
+  // A `uint256` is exactly one 32-byte ABI slot. Anything else is a malformed (or forged) log,
+  // and parsing it would fabricate an amount out of an untrusted contract's output.
+  it("returns null unless the amount is exactly one 32-byte ABI slot", () => {
     expect(decodeTrc20TransferLog({ ...constructorMintLog, data: "not-hex" })).toBeNull();
+    expect(decodeTrc20TransferLog({ ...constructorMintLog, data: "1" })).toBeNull();
+    expect(
+      decodeTrc20TransferLog({ ...constructorMintLog, data: "64".padStart(63, "0") }),
+    ).toBeNull();
+    expect(
+      decodeTrc20TransferLog({
+        ...constructorMintLog,
+        data: constructorMintLog.data + "0".repeat(64),
+      }),
+    ).toBeNull();
+    expect(
+      decodeTrc20TransferLog({ ...constructorMintLog, data: "0x" + constructorMintLog.data })
+        ?.amount,
+    ).toEqual(new BigNumber("100000000000000000000000000000000"));
   });
 
   it("returns null when the indexed parties are missing", () => {
@@ -215,22 +235,47 @@ describe("decodeTrc20TransferLog", () => {
   });
 });
 
-describe("trc20ContractAddressFromLogs", () => {
-  it("returns the emitting contract of the matching Transfer event", () => {
-    expect(
-      trc20ContractAddressFromLogs([constructorMintLog], { from: zeroAddressHex, to: minterHex }),
-    ).toBe(trc20ContractHex);
-  });
+const approvalLogOf = (log: typeof constructorMintLog, address = log.address) => ({
+  ...log,
+  address,
+  topics: [TRC20_APPROVAL_EVENT_TOPIC, ...log.topics.slice(1)],
+});
 
-  it("returns the only token of the transaction when no event matches the parties", () => {
+describe("trc20ContractAddressFromLogs", () => {
+  const mintParties = { from: zeroAddressHex, to: minterHex };
+
+  it("returns the emitting contract of the record's own event", () => {
     expect(
-      trc20ContractAddressFromLogs([constructorMintLog], {
-        from: "41a614f803b6fd780986a42c78ec9c7f77e6ded13c",
+      trc20ContractAddressFromLogs([constructorMintLog], { kind: "Transfer", ...mintParties }),
+    ).toBe(trc20ContractHex);
+    expect(
+      trc20ContractAddressFromLogs([approvalLogOf(constructorMintLog)], {
+        kind: "Approval",
+        ...mintParties,
       }),
     ).toBe(trc20ContractHex);
   });
 
-  it("picks the matching token when the transaction touches several", () => {
+  // A transaction can approve token A and transfer token B between the same two parties. The
+  // approval says nothing about which token moved, so it must never name the transfer's asset.
+  it("ignores an event of the other kind, even between the record's parties", () => {
+    const approvalOfAnotherToken = approvalLogOf(
+      constructorMintLog,
+      "a614f803b6fd780986a42c78ec9c7f77e6ded13c",
+    );
+
+    expect(
+      trc20ContractAddressFromLogs([approvalOfAnotherToken, constructorMintLog], {
+        kind: "Transfer",
+        ...mintParties,
+      }),
+    ).toBe(trc20ContractHex);
+    expect(
+      trc20ContractAddressFromLogs([approvalOfAnotherToken], { kind: "Transfer", ...mintParties }),
+    ).toBeUndefined();
+  });
+
+  it("picks the token whose event is between the record's parties", () => {
     const otherToken = {
       ...constructorMintLog,
       address: "a614f803b6fd780986a42c78ec9c7f77e6ded13c",
@@ -243,37 +288,54 @@ describe("trc20ContractAddressFromLogs", () => {
 
     expect(
       trc20ContractAddressFromLogs([constructorMintLog, otherToken], {
-        from: zeroAddressHex,
-        to: minterHex,
+        kind: "Transfer",
+        ...mintParties,
       }),
     ).toBe(trc20ContractHex);
   });
 
-  it("returns undefined rather than guessing between several unmatched tokens", () => {
+  it("returns undefined when no event is between the record's parties", () => {
+    expect(
+      trc20ContractAddressFromLogs([constructorMintLog], {
+        kind: "Transfer",
+        from: "41a614f803b6fd780986a42c78ec9c7f77e6ded13c",
+        to: minterHex,
+      }),
+    ).toBeUndefined();
+  });
+
+  it("returns undefined rather than guessing between two tokens moved between the same parties", () => {
     const otherToken = {
       ...constructorMintLog,
       address: "a614f803b6fd780986a42c78ec9c7f77e6ded13c",
     };
 
-    expect(trc20ContractAddressFromLogs([constructorMintLog, otherToken])).toBeUndefined();
-  });
-
-  it("returns undefined when there is no token event at all", () => {
-    expect(trc20ContractAddressFromLogs(undefined)).toBeUndefined();
-    expect(trc20ContractAddressFromLogs([])).toBeUndefined();
     expect(
-      trc20ContractAddressFromLogs([{ ...constructorMintLog, topics: ["deadbeef"] }]),
+      trc20ContractAddressFromLogs([constructorMintLog, otherToken], {
+        kind: "Transfer",
+        ...mintParties,
+      }),
     ).toBeUndefined();
   });
 
-  it("also reads the token out of an Approval event", () => {
+  it("returns undefined when a party is unknown, since nothing can be correlated", () => {
     expect(
-      trc20ContractAddressFromLogs([
-        {
-          ...constructorMintLog,
-          topics: [TRC20_APPROVAL_EVENT_TOPIC, ...constructorMintLog.topics.slice(1)],
-        },
-      ]),
-    ).toBe(trc20ContractHex);
+      trc20ContractAddressFromLogs([constructorMintLog], {
+        kind: "Transfer",
+        from: zeroAddressHex,
+      }),
+    ).toBeUndefined();
+    expect(
+      trc20ContractAddressFromLogs([constructorMintLog], { kind: "Transfer" }),
+    ).toBeUndefined();
+  });
+
+  it("returns undefined when there is no token event at all", () => {
+    const parties = { kind: "Transfer" as const, ...mintParties };
+    expect(trc20ContractAddressFromLogs(undefined, parties)).toBeUndefined();
+    expect(trc20ContractAddressFromLogs([], parties)).toBeUndefined();
+    expect(
+      trc20ContractAddressFromLogs([{ ...constructorMintLog, topics: ["deadbeef"] }], parties),
+    ).toBeUndefined();
   });
 });

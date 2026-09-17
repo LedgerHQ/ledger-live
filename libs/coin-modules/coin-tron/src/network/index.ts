@@ -560,9 +560,11 @@ export async function getTransactionInfoById(
  * The event logs are the only source consulted, which is the same rule `logic/getBlock` applies to
  * the very same transactions: the receipt's `contract_address` names the contract the transaction
  * created or called, which is not necessarily the token that moved, and a deployment transferring
- * some *other* token would be labelled with the wrong one. A transaction whose logs do not name
- * one token unambiguously therefore keeps no token address, and the operation is dropped
- * downstream rather than mislabelled.
+ * some *other* token would be labelled with the wrong one. The log has to be an event of the
+ * record's own kind between the record's own parties, so that approving token A while
+ * transferring token B cannot label the transfer with A. A transaction whose logs do not name one
+ * token unambiguously therefore keeps no token address, and the operation is dropped downstream
+ * rather than mislabelled.
  */
 async function resolveMissingTokenAddresses(
   config: TronCoinConfig,
@@ -590,6 +592,9 @@ async function withTokenAddressFromReceipt(
   if (!info) return tx;
 
   const contractAddressHex = trc20ContractAddressFromLogs(info.log, {
+    // The record's own event: an `Approval`'s owner/spender do not identify a transferred token,
+    // so a transfer is only ever resolved from a `Transfer` event, and vice versa.
+    kind: tx.type === "ContractApproval" ? "Approval" : "Transfer",
     from: tx.from ? decode58Check(tx.from) : undefined,
     to: tx.to ? decode58Check(tx.to) : undefined,
   });
