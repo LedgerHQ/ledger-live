@@ -1,3 +1,4 @@
+import { useFeature } from "@features/platform-feature-flags";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import {
   useTotalMaturity,
@@ -90,7 +91,11 @@ function ICPBalanceSummaryFooter({ account }: Readonly<{ account: ICPAccount }>)
 }
 
 export default function AccountBalanceSummaryFooter({ account }: Props) {
-  if (account.type !== "Account") return null;
+  // Behind the same flag as the banner and the account actions, so switching the rollout off takes
+  // everything it put on the account page with it — this included, for a user whose snapshot a
+  // refresh had already filled while it was on.
+  const llmIcpStaking = useFeature("llmIcpStaking");
+  if (!llmIcpStaking?.enabled || account.type !== "Account") return null;
   return <ICPBalanceSummaryFooter account={account as ICPAccount} />;
 }
 

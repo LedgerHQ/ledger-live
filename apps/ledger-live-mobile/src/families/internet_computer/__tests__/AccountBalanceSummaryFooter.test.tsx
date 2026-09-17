@@ -5,7 +5,12 @@ import React from "react";
 import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
 import { ICP_UNIT, makeICPAccount, makeNeuron } from "./testUtils";
 
+let flagEnabled = true;
+
 jest.mock("LLM/hooks/useAccountUnit", () => ({ useAccountUnit: () => ICP_UNIT }));
+jest.mock("@features/platform-feature-flags", () => ({
+  useFeature: () => ({ enabled: flagEnabled }),
+}));
 
 const ICP = 100_000_000n;
 
@@ -13,6 +18,18 @@ const renderFooter = (neurons: ICPNeuron[]) =>
   render(<AccountBalanceSummaryFooter account={makeICPAccount({ neurons })} />);
 
 describe("AccountBalanceSummaryFooter", () => {
+  beforeEach(() => {
+    flagEnabled = true;
+  });
+
+  // The snapshot outlives the rollout: a refresh made while the flag was on stays on the account
+  // after it is turned off, and the footer must not be the one piece of the rollout left showing.
+  it("stays hidden while the staking flag is off, even with a stake to show", () => {
+    flagEnabled = false;
+
+    expect(renderFooter([makeNeuron({ cachedNeuronStakeE8s: ICP })]).toJSON()).toBeNull();
+  });
+
   it("shows nothing when the account has no neurons", () => {
     expect(renderFooter([]).toJSON()).toBeNull();
   });
