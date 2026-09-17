@@ -11,19 +11,20 @@ export type UnlockViewModel = Readonly<{
   onPasswordChange: (password: string) => void;
   onUnlock: () => void;
   onRetryBiometrics: () => void;
-  onForgotPassword: () => void;
+  onForgotPassword?: () => void;
 }>;
 
 export type UseUnlockViewModelOptions = Readonly<{
   onVerify: (password: string) => Promise<UnlockOutcome>;
   canRetryBiometrics: boolean;
   onRetryBiometrics: () => void;
-  onForgotPassword: () => void;
+  onForgotPassword?: () => void;
 }>;
 
 export type UnlockViewProps = UnlockViewModel &
   Readonly<{
     hasFailed?: boolean;
+    isAppActive?: boolean;
     logo?: React.ReactNode;
     topInset?: number;
     bottomInset?: number;

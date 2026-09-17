@@ -10,6 +10,7 @@ import {
 } from "./internals/digest.native";
 import {
   clearPasswordVerifier,
+  hasStoredVerifier,
   readPasswordVerifier,
   writePasswordVerifier,
 } from "./internals/store.native";
@@ -45,6 +46,10 @@ export function storeNewPassword(password: string, salt: Uint8Array): Promise<vo
       createPasswordVerifier({ digest, salt, scrypt: APP_LOCK_SCRYPT_PARAMS }),
     );
   });
+}
+
+export function hasPasswordVerifier(): Promise<boolean> {
+  return hasStoredVerifier();
 }
 
 export function checkPassword(password: string): Promise<PasswordCheck> {

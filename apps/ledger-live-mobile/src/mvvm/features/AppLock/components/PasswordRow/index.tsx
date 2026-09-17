@@ -4,9 +4,13 @@ import SettingsRow from "~/components/SettingsRow";
 import { useTranslation } from "~/context/Locale";
 import usePasswordRowViewModel from "./usePasswordRowViewModel";
 
-export function AppLockPasswordRow(): React.JSX.Element {
+export function AppLockPasswordRow(): React.JSX.Element | null {
   const { t } = useTranslation();
-  const { hasPassword, onValueChange } = usePasswordRowViewModel();
+  const { isHydrated, hasPassword, onValueChange } = usePasswordRowViewModel();
+
+  if (!isHydrated) {
+    return null;
+  }
 
   return (
     <SettingsRow

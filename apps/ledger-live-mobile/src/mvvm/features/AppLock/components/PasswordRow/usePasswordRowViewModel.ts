@@ -1,4 +1,4 @@
-import { selectHasPassword } from "@features/platform-app-lock";
+import { selectHasPassword, selectIsHydrated } from "@features/platform-app-lock";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
 import { track } from "~/analytics";
@@ -6,12 +6,14 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 
 export type PasswordRowViewModel = Readonly<{
+  isHydrated: boolean;
   hasPassword: boolean;
   onValueChange: (enabled: boolean) => void;
 }>;
 
 function usePasswordRowViewModel(): PasswordRowViewModel {
   const { navigate } = useNavigation();
+  const isHydrated = useSelector(selectIsHydrated);
   const hasPassword = useSelector(selectHasPassword);
 
   const onValueChange = useCallback(
@@ -27,7 +29,7 @@ function usePasswordRowViewModel(): PasswordRowViewModel {
     [navigate],
   );
 
-  return { hasPassword, onValueChange };
+  return { isHydrated, hasPassword, onValueChange };
 }
 
 export default usePasswordRowViewModel;

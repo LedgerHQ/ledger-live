@@ -1,5 +1,11 @@
 import { createPasswordVerifier, type ScryptParams } from "@shared/password-verifier";
-import { deserialisePasswordVerifier, serialisePasswordVerifier } from "./store.native";
+import {
+  deserialisePasswordVerifier,
+  hasStoredVerifier,
+  serialisePasswordVerifier,
+} from "./store.native";
+
+const keychain = jest.requireMock("react-native-keychain");
 
 jest.mock("react-native-keychain", () => ({
   ACCESSIBLE: { WHEN_UNLOCKED_THIS_DEVICE_ONLY: "AccessibleWhenUnlockedThisDeviceOnly" },
@@ -78,5 +84,41 @@ describe("password verifier codec", () => {
     ],
   ])("treats %s as unreadable rather than throwing", (_case, raw) => {
     expect(deserialisePasswordVerifier(raw)).toBeNull();
+  });
+});
+
+describe("hasStoredVerifier", () => {
+  it("is false when the keychain holds no record", async () => {
+    keychain.getGenericPassword.mockResolvedValue(false);
+
+    await expect(hasStoredVerifier()).resolves.toBe(false);
+  });
+
+  it("is true for a stored verifier", async () => {
+    keychain.getGenericPassword.mockResolvedValue({
+      service: "app-lock",
+      username: "app-lock",
+      password: serialisePasswordVerifier(verifier),
+    });
+
+    await expect(hasStoredVerifier()).resolves.toBe(true);
+  });
+
+  // Existence, not readability: reading an unparsable record as "no protection" would let the user
+  // straight in, so this predicate must not deserialise.
+  it("is true for a record it cannot parse", async () => {
+    keychain.getGenericPassword.mockResolvedValue({
+      service: "app-lock",
+      username: "app-lock",
+      password: "}{",
+    });
+
+    await expect(hasStoredVerifier()).resolves.toBe(true);
+  });
+
+  it("rejects when the keychain cannot be read, so hydration fails closed", async () => {
+    keychain.getGenericPassword.mockRejectedValue(new Error("keychain unavailable"));
+
+    await expect(hasStoredVerifier()).rejects.toThrow("keychain unavailable");
   });
 });

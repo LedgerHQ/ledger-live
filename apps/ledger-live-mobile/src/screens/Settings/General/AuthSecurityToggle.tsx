@@ -1,7 +1,7 @@
-import { useFeature } from "@features/platform-feature-flags";
 import { Switch } from "@ledgerhq/native-ui";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppLockPasswordRow } from "LLM/features/AppLock/components/PasswordRow";
+import { useAppLockScheme } from "LLM/features/AppLock/hooks/useAppLockScheme";
 import React, { useCallback, useState } from "react";
 import { track } from "~/analytics";
 import SettingsRow from "~/components/SettingsRow";
@@ -56,11 +56,15 @@ function LegacyAuthSecurityToggle() {
 }
 
 export default function AuthSecurityToggle() {
-  const isRevampEnabled = useFeature("lwmPasswordRevamp")?.enabled ?? false;
+  const scheme = useAppLockScheme();
+
+  if (scheme === undefined) {
+    return <BiometricsRow />;
+  }
 
   return (
     <>
-      {isRevampEnabled ? <AppLockPasswordRow /> : <LegacyAuthSecurityToggle />}
+      {scheme === "revamped" ? <AppLockPasswordRow /> : <LegacyAuthSecurityToggle />}
       <BiometricsRow />
     </>
   );
