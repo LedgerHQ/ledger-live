@@ -9,16 +9,16 @@ const rootConfig = require("./knip.json");
  * @param {{
  *   packagePath: string;
  *   platform: "native" | "web";
- *   entry: string[];
+ *   entry?: string[];
  *   additionalProjectExcludes?: string[];
  *   additionalIgnoreDependencies?: string[];
  * }} options
  * `additionalProjectExcludes` values must omit the leading `!`.
+ * Omit `entry` when `package.json` already lists the platform entry (`main` / `exports`).
  * @example
  * createDualPlatformKnipConfig({
  *   packagePath: "features/flow/example",
  *   platform: "web",
- *   entry: ["src/index.ts"],
  * });
  */
 export function createDualPlatformKnipConfig({
@@ -36,13 +36,15 @@ export function createDualPlatformKnipConfig({
       : { "native.ts": passThrough, "native.tsx": passThrough };
   const workspace = {
     ...rootConfig.workspaces[packagePath],
-    entry,
     project: [
       "src/**/*",
       platformProjectExclude,
       ...additionalProjectExcludes.map(pattern => `!${pattern}`),
     ],
   };
+  if (entry) {
+    workspace.entry = entry;
+  }
 
   if (additionalIgnoreDependencies.length > 0) {
     workspace.ignoreDependencies = [
