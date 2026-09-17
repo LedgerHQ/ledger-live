@@ -28,12 +28,23 @@ const quoteCardVariantPrefix: Record<QuoteCardVariant, string> = {
   lumen: `lumen-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
 };
 
-// Anchor the id: `moonpay` is a prefix of `moonpay_trade`, so a bare contains-match lets one
-// provider's card answer for the other. Cards may still append a rate-type suffix, hence the
-// second clause, which only matches on a `-` boundary.
+// Contains-match, because a card can render a longer id than the catalogue one: `oneinch`
+// does, so an end-anchor matched nothing and selectSpecificProvider timed out in CI.
+// A bare contains-match would then let `moonpay` answer for `moonpay_trade`, so subtract
+// every other catalogue id that starts with this one.
 const quoteCardProviderNameSelector = (providerName: string): string => {
-  const fragment = `${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${providerName.toLowerCase()}`;
-  return `[data-testid$='${fragment}'],[data-testid*='${fragment}-']`;
+  const id = providerName.toLowerCase();
+  const fragment = `${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${id}`;
+  const collidingIds = Object.values(SwapProvider)
+    .filter((provider): provider is SwapProvider => provider instanceof SwapProvider)
+    .map(provider => provider.name.toLowerCase())
+    .filter(other => other !== id && other.startsWith(id));
+  return (
+    `[data-testid*='${fragment}']` +
+    collidingIds
+      .map(other => `:not([data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${other}'])`)
+      .join("")
+  );
 };
 
 // Safe because every swap spec pins the flag: both presets name the provider in the CTA.

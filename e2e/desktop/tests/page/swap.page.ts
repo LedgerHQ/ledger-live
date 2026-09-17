@@ -27,6 +27,10 @@ import {
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
 
+// The pinned flag remounts the live app over the network. The default expect timeout is
+// too short for that: 5 specs flaked waiting for the form to come back in CI.
+const FLAG_RELOAD_TIMEOUT = 90_000;
+
 // swap-live-app's quote card DOM. Intentionally duplicated in the other suite's swap page
 // object: each suite owns its own locators. Keep both in sync when swap-live-app changes.
 const QUOTE_CARD_PROVIDER_NAME_FRAGMENT = "quote-card-provider-name-";
@@ -37,12 +41,23 @@ const quoteCardVariantPrefix: Record<QuoteCardVariant, string> = {
   lumen: `lumen-${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}`,
 };
 
-// Anchor the id: `moonpay` is a prefix of `moonpay_trade`, so a bare contains-match lets one
-// provider's card answer for the other. Cards may still append a rate-type suffix, hence the
-// second clause, which only matches on a `-` boundary.
+// Contains-match, because a card can render a longer id than the catalogue one: `oneinch`
+// does, so an end-anchor matched nothing and selectSpecificProvider timed out in CI.
+// A bare contains-match would then let `moonpay` answer for `moonpay_trade`, so subtract
+// every other catalogue id that starts with this one.
 const quoteCardProviderNameSelector = (providerName: string): string => {
-  const fragment = `${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${providerName.toLowerCase()}`;
-  return `[data-testid$='${fragment}'],[data-testid*='${fragment}-']`;
+  const id = providerName.toLowerCase();
+  const fragment = `${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${id}`;
+  const collidingIds = Object.values(SwapProvider)
+    .filter((provider): provider is SwapProvider => provider instanceof SwapProvider)
+    .map(provider => provider.name.toLowerCase())
+    .filter(other => other !== id && other.startsWith(id));
+  return (
+    `[data-testid*='${fragment}']` +
+    collidingIds
+      .map(other => `:not([data-testid*='${QUOTE_CARD_PROVIDER_NAME_FRAGMENT}${other}'])`)
+      .join("")
+  );
 };
 
 // Safe because every swap spec pins the flag: both presets name the provider in the CTA.
@@ -194,7 +209,9 @@ export class SwapPage extends WebViewAppPage {
     this._webviewPage = undefined;
     await this.expectFlagPresetLoaded(payload);
     const reloaded = await this.getWebView();
-    await expect(reloaded.getByTestId(this.fromAccountCoinSelector)).toBeVisible();
+    await expect(reloaded.getByTestId(this.fromAccountCoinSelector)).toBeVisible({
+      timeout: FLAG_RELOAD_TIMEOUT,
+    });
   }
 
   // Tells a lost write apart from stale flags.
@@ -214,7 +231,10 @@ export class SwapPage extends WebViewAppPage {
             )
             .catch(() => null);
         },
-        { message: "The swap live app did not reload with the pinned flag overrides" },
+        {
+          message: "The swap live app did not reload with the pinned flag overrides",
+          timeout: FLAG_RELOAD_TIMEOUT,
+        },
       )
       .toEqual({ stored: payload, reloaded: true });
   }
