@@ -43,8 +43,8 @@ catalogs:
       specifier: 5.4.0
       version: 5.4.0
     '@ledgerhq/coin-hypercore':
-      specifier: 2.0.1
-      version: 2.0.1
+      specifier: 3.0.0
+      version: 3.0.0
     '@ledgerhq/coin-module-framework':
       specifier: 9.1.0
       version: 9.1.0
@@ -13301,7 +13301,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 2.0.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
+        version: 3.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -22454,11 +22454,10 @@ packages:
       '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/coin-hypercore@2.0.1':
-    resolution: {integrity: sha512-2aen8CL/sAszgeiHZjKBOH6ECIkh49mD+/qT2Wg52fEDILB0k8RwOaStmO0yaW0hZl36r4bkwrW1YWfGBr/XVQ==}
+  '@ledgerhq/coin-hypercore@3.0.0':
+    resolution: {integrity: sha512-nwxUxDggq/IjFcI/VbUFPMLRKq0IaZWZ774eSVOkEome4UUW5xiK0ktt5DxC5/MsQoTG6qoQytlwyR+wXa6Ozg==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
-      '@ledgerhq/logs': ^6.17.0
 
   '@ledgerhq/coin-module-framework@8.5.0':
     resolution: {integrity: sha512-wIEcjk0BZAsDTEIgYEyiTsoeP0J6GXkVVUHfzzIZ8/n+mWCIhu2K0JDoKHNi2sovteCd6Mxw+aoLk/9kmI6e4w==}
@@ -47701,11 +47700,10 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-hypercore@2.0.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-hypercore@3.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
     dependencies:
-      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+      '@ledgerhq/coin-module-framework': 9.1.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
-      '@ledgerhq/logs': 6.19.0
 
   '@ledgerhq/coin-module-framework@8.5.0':
     dependencies:
@@ -65221,9 +65219,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
@@ -65270,7 +65266,9 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.83.7
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   metro-core@0.81.5:
     dependencies:
