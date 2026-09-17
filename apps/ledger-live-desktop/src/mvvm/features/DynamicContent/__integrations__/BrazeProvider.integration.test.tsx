@@ -4,11 +4,16 @@ import {
   identitiesSlice,
   initialIdentitiesState,
 } from "@domain/entity-client-identity";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { BRAZE_CONTENT_CARDS_REFRESH_TIMEOUT_MS } from "@ledgerhq/live-common/braze/identityLifecycle";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import * as braze from "@braze/web-sdk";
 import React, { useEffect } from "react";
 import { act, render, withFlagOverrides } from "tests/testSetup";
-import { setDeveloperMode, setShareAnalytics } from "~/renderer/actions/settings";
+import { replaceAccounts } from "~/renderer/actions/accounts";
+import { saveSettings, setDeveloperMode, setShareAnalytics } from "~/renderer/actions/settings";
+import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { LocationContentCard, Platform } from "~/types/dynamicContent";
 import { BrazeProvider, useBraze } from "../components/BrazeProvider";
 
@@ -60,6 +65,7 @@ function renderProvider(ui: React.ReactElement, { isTrackedUser }: { isTrackedUs
         userId: REAL_USER_ID,
       },
       settings: {
+        ...INITIAL_STATE,
         shareAnalytics: isTrackedUser,
         sharePersonalizedRecommandations: false,
         dismissedContentCards: {},
@@ -525,6 +531,170 @@ describe("BrazeProvider", () => {
         appVersion: undefined,
       }),
     );
+    unmount();
+  });
+
+  it("should publish cards that have no required states", async () => {
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <div />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const onContentCardsUpdated = mockedSubscribeToContentCardsUpdates.mock.calls[0][0];
+    await act(async () => {
+      onContentCardsUpdated(mockContentCards([desktopCard]));
+    });
+
+    expect(store.getState().dynamicContent.desktopCards).toEqual([
+      expect.objectContaining({ id: "wallet-card" }),
+    ]);
+    unmount();
+  });
+
+  it("should keep unmet requiredStates cards out of Redux", async () => {
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <div />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const onContentCardsUpdated = mockedSubscribeToContentCardsUpdates.mock.calls[0][0];
+    await act(async () => {
+      onContentCardsUpdated(
+        mockContentCards([
+          {
+            ...desktopCard,
+            extras: { ...desktopCard.extras, requiredStates: "hasStax" },
+          },
+        ]),
+      );
+    });
+
+    expect(store.getState().dynamicContent.desktopCards).toEqual([]);
+    unmount();
+  });
+
+  it("should re-evaluate cached cards when app eligibility changes without another refresh", async () => {
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <div />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const onContentCardsUpdated = mockedSubscribeToContentCardsUpdates.mock.calls[0][0];
+    await act(async () => {
+      onContentCardsUpdated(
+        mockContentCards([
+          {
+            id: "onboard-card",
+            extras: {
+              location: LocationContentCard.Portfolio,
+              platform: Platform.Desktop,
+              requiredStates: "isOnboarded",
+            },
+          },
+          {
+            id: "stax-card",
+            extras: {
+              location: LocationContentCard.Portfolio,
+              platform: Platform.Desktop,
+              requiredStates: "hasStax",
+            },
+          },
+          {
+            id: "funds-card",
+            extras: {
+              location: LocationContentCard.Portfolio,
+              platform: Platform.Desktop,
+              requiredStates: "hasFunds",
+            },
+          },
+        ]),
+      );
+    });
+
+    expect(store.getState().dynamicContent.desktopCards).toEqual([]);
+    const refreshCountAfterFetch = mockedRequestContentCardsRefresh.mock.calls.length;
+
+    await act(async () => {
+      store.dispatch(saveSettings({ hasCompletedOnboarding: true }));
+    });
+    expect(store.getState().dynamicContent.desktopCards.map(card => card.id)).toEqual([
+      "onboard-card",
+    ]);
+
+    await act(async () => {
+      store.dispatch(saveSettings({ devicesModelList: [DeviceModelId.stax] }));
+    });
+    expect(store.getState().dynamicContent.desktopCards.map(card => card.id)).toEqual([
+      "onboard-card",
+      "stax-card",
+    ]);
+
+    await act(async () => {
+      store.dispatch(
+        replaceAccounts([
+          genAccount("funded-eth", {
+            currency: getCryptoCurrencyById("ethereum"),
+            operationsSize: 1,
+          }),
+        ]),
+      );
+    });
+    expect(store.getState().dynamicContent.desktopCards.map(card => card.id)).toEqual([
+      "onboard-card",
+      "stax-card",
+      "funds-card",
+    ]);
+    expect(mockedRequestContentCardsRefresh).toHaveBeenCalledTimes(refreshCountAfterFetch);
+    unmount();
+  });
+
+  it("should not re-publish the last fetch after dummy identity clears the cache", async () => {
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <div />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const onContentCardsUpdated = mockedSubscribeToContentCardsUpdates.mock.calls[0][0];
+    await act(async () => {
+      onContentCardsUpdated(mockContentCards([desktopCard]));
+    });
+    expect(store.getState().dynamicContent.desktopCards).toEqual([
+      expect.objectContaining({ id: "wallet-card" }),
+    ]);
+
+    await act(async () => {
+      store.dispatch(identitiesSlice.actions.importFromLegacy({ userId: DUMMY_ID_STR }));
+    });
+    expect(store.getState().dynamicContent.desktopCards).toEqual([]);
+
+    await act(async () => {
+      store.dispatch(saveSettings({ hasCompletedOnboarding: true }));
+    });
+    expect(store.getState().dynamicContent.desktopCards).toEqual([]);
     unmount();
   });
 });
