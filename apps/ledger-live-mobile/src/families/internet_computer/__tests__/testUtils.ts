@@ -3,6 +3,8 @@ import {
   NeuronState,
   type ICPAccount,
   type ICPNeuron,
+  type InternetComputerOperation,
+  type InternetComputerOperationExtra,
 } from "@ledgerhq/live-common/families/internet_computer/types";
 import BigNumber from "bignumber.js";
 
@@ -41,10 +43,12 @@ export const makeICPAccount = ({
   neurons = [],
   spendableBalance = new BigNumber(0),
   lastUpdatedMSecs = Date.now(),
+  pendingOperations = [],
 }: {
   neurons?: ICPNeuron[];
   spendableBalance?: BigNumber;
   lastUpdatedMSecs?: number;
+  pendingOperations?: InternetComputerOperation[];
 } = {}): ICPAccount =>
   ({
     type: "Account",
@@ -54,8 +58,12 @@ export const makeICPAccount = ({
     spendableBalance,
     balance: spendableBalance,
     operations: [],
-    pendingOperations: [],
+    pendingOperations,
     neurons: { fullNeurons: neurons, lastUpdatedMSecs },
   }) as unknown as ICPAccount;
+
+/** An operation carrying only the `extra` its reader cares about. */
+export const makeOperation = (extra: InternetComputerOperationExtra): InternetComputerOperation =>
+  ({ id: "op", hash: "hash", type: "OUT", date: new Date(), extra }) as InternetComputerOperation;
 
 export const ICP_UNIT = { code: "ICP", magnitude: 8, name: "ICP" };

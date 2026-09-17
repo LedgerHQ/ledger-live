@@ -3,13 +3,16 @@ import {
   NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE,
   SECONDS_IN_DAY,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
-import type { ICPNeuron } from "@ledgerhq/live-common/families/internet_computer/types";
+import type {
+  ICPNeuron,
+  InternetComputerOperation,
+} from "@ledgerhq/live-common/families/internet_computer/types";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import React from "react";
 import { NavigatorName, ScreenName } from "~/const";
 import AccountBodyHeader from "../AccountBodyHeader";
-import { makeHealthyNeuron, makeICPAccount, makeNeuron } from "./testUtils";
+import { makeHealthyNeuron, makeICPAccount, makeNeuron, makeOperation } from "./testUtils";
 
 let flagEnabled = true;
 const mockNavigate = jest.fn();
@@ -26,10 +29,20 @@ const ENOUGH_TO_STAKE = new BigNumber(100_010_000);
 
 const renderBanner = (
   neurons: ICPNeuron[],
-  { spendableBalance = ENOUGH_TO_STAKE, lastUpdatedMSecs = Date.now() } = {},
+  {
+    spendableBalance = ENOUGH_TO_STAKE,
+    lastUpdatedMSecs = Date.now(),
+    pendingOperations = [],
+  }: {
+    spendableBalance?: BigNumber;
+    lastUpdatedMSecs?: number;
+    pendingOperations?: InternetComputerOperation[];
+  } = {},
 ) =>
   render(
-    <AccountBodyHeader account={makeICPAccount({ neurons, spendableBalance, lastUpdatedMSecs })} />,
+    <AccountBodyHeader
+      account={makeICPAccount({ neurons, spendableBalance, lastUpdatedMSecs, pendingOperations })}
+    />,
   );
 
 // Matched exactly: the stakeICP description opens with the same words as its CTA.
@@ -81,6 +94,40 @@ describe("ICP stake banner", () => {
       screen: ScreenName.InternetComputerStakingStarted,
       params: expect.objectContaining({ accountId: expect.any(String) }),
     });
+  });
+
+  /*
+   * A create_neuron cannot fill the neuron snapshot — only a device-signed list_neurons can — so a
+   * user who has just staked comes back to an account that still reads as having no neurons. Asking
+   * them to stake again is the one thing the banner must not do while the first stake is unaccounted
+   * for, so the marker the broadcast left on the operation redirects it to the refresh.
+   */
+  it("asks for a refresh, not a second stake, while a broadcast stake has no neuron yet", () => {
+    renderBanner([], { pendingOperations: [makeOperation({ methodName: "create_neuron" })] });
+
+    expect(screen.getByText(/out of date/, { exact: false })).toBeVisible();
+    expect(screen.queryByText("Stake ICP", { exact: true })).toBeNull();
+
+    pressCta("Refresh neurons");
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.InternetComputerNeuronManageFlow, {
+      screen: ScreenName.InternetComputerNeuronList,
+      params: expect.objectContaining({ accountId: expect.any(String) }),
+    });
+  });
+
+  // The id is set only once claim_or_refresh has confirmed the neuron, so it is the stronger of the
+  // two markers and worth recognising on its own.
+  it("recognises the stake from the neuron id the broadcast returned", () => {
+    renderBanner([], { pendingOperations: [makeOperation({ createdNeuronId: "42" })] });
+
+    expect(screen.getByText(/out of date/, { exact: false })).toBeVisible();
+  });
+
+  it("still invites a first stake when the only pending operation is a plain send", () => {
+    renderBanner([], { pendingOperations: [makeOperation({ memo: "1" })] });
+
+    expect(screen.getByText("Stake ICP", { exact: true })).toBeVisible();
   });
 
   it("asks for a refresh when the neuron snapshot has gone stale", () => {

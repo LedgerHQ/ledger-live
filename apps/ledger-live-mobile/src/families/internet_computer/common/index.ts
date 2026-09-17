@@ -2,6 +2,7 @@ import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { applyNeuronCommand } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import { reassignOperationType } from "@ledgerhq/live-common/families/internet_computer/utils";
 import {
+  isInternetComputerOperationExtra,
   NeuronsData,
   type ICPAccount,
   type InternetComputerOperation,
@@ -70,3 +71,23 @@ export const applyNeuronOperation = (
     }),
   );
 };
+
+/**
+ * Whether a stake this session broadcast is still waiting to become a visible neuron.
+ *
+ * A successful `create_neuron` returns `extra.createdNeuronId`, but nothing can turn that into a
+ * neuron: only a device-signed `list_neurons` fills the snapshot. So the account keeps an empty one
+ * and reads as never having staked, which is how a freshly staked user is shown "Stake ICP" again.
+ *
+ * Pending operations only, and it expires: `addPendingOperation` writes nowhere else, and the synced
+ * transfer that follows is rebuilt from the explorer carrying `extra: { memo }` alone. Confirming
+ * does not end it — `shouldRetainPendingOperation` discards an ICP operation on age alone, these
+ * having no `transactionSequenceNumber` — so the marker lasts OPERATION_OPTIMISTIC_RETENTION, thirty
+ * minutes, from the broadcast. Long enough for the trip back to the account page, which is the point.
+ */
+export const hasStakeAwaitingNeurons = (account: ICPAccount): boolean =>
+  (account.pendingOperations ?? []).some(operation => {
+    const { extra } = operation;
+    if (!isInternetComputerOperationExtra(extra)) return false;
+    return extra.createdNeuronId !== undefined || extra.methodName === "create_neuron";
+  });
