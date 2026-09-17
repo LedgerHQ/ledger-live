@@ -14,11 +14,9 @@ on:
         required: true
         type: choice
         options:
-          - regen-pods
-          - regen-doc
           - generate-screenshots
           - full-lld-tests
-        default: regen-pods
+        default: generate-screenshots
       login:
         description: "GitHub login (defaults to the user running the workflow)"
         required: false
@@ -74,8 +72,6 @@ jobs:
             }
 
             const COMMANDS = {
-              'regen-pods': { workflow: 'regen-pods.yml', inputs: (r, n, l, c) => ({ ref: r, number: n, login: l, commentId: c }) },
-              'regen-doc': { workflow: 'regen-doc.yml', inputs: (r, n, l, c) => ({ ref: r, number: n, login: l, commentId: c }) },
               'generate-screenshots': { workflow: 'generate-screenshots.yml', inputs: (r, n, l, c) => ({ ref: r, number: n, login: l, commentId: c }) },
               'full-lld-tests': { workflow: 'test-desktop-reusable.yml', inputs: (r, n, l) => ({ ref: r, login: l }) },
             };
