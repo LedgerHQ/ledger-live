@@ -49,8 +49,8 @@ catalogs:
       specifier: 9.1.0
       version: 9.1.0
     '@ledgerhq/coin-stellar':
-      specifier: 9.6.1
-      version: 9.6.1
+      specifier: 9.7.2
+      version: 9.7.2
     '@ledgerhq/coin-tezos':
       specifier: 10.2.6
       version: 10.2.6
@@ -12061,7 +12061,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 9.6.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
+        version: 9.7.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -12077,9 +12077,6 @@ importers:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.1.0(axios@1.13.5)
-      '@ledgerhq/logs':
-        specifier: 'catalog:'
-        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
@@ -13322,7 +13319,7 @@ importers:
         version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 9.6.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)
+        version: 9.7.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/coin-sui':
         specifier: workspace:^
         version: link:../coin-modules/coin-sui
@@ -22452,11 +22449,10 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
-  '@ledgerhq/coin-stellar@9.6.1':
-    resolution: {integrity: sha512-9ySQqPIU9JTizOKZwtOJ3mLL0trkGvKyNfI/WAx8QI99QoNEqUdg3qL3f0TEyhY4z/uQqQ8FxwM+8y5W9Uptvg==}
+  '@ledgerhq/coin-stellar@9.7.2':
+    resolution: {integrity: sha512-qUF5qv5QoznJfebS4eE0vsTO2r3CFd6t9LIi/M3rPUcxcgVtTBdTV6maZ3z2EOCh5Nxd7ouhc4DSrjWQHZfKSg==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
-      '@ledgerhq/logs': ^6.17.0
 
   '@ledgerhq/coin-tezos@10.2.6':
     resolution: {integrity: sha512-8jb0AV7IILGm3lfETD1bjWfP/JpKpGdZpJx+vIXUDANdDtMaLQ5+QNtba0X+RcnzgV0CStb+ZrORCFnlyFiBrQ==}
@@ -47712,12 +47708,11 @@ snapshots:
       axios: 1.13.5
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-stellar@9.6.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))(@ledgerhq/logs@6.19.0)':
+  '@ledgerhq/coin-stellar@9.7.2(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
-      '@ledgerhq/coin-module-framework': 8.5.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+      '@ledgerhq/coin-module-framework': 9.1.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
-      '@ledgerhq/logs': 6.19.0
       '@stellar/stellar-sdk': 14.0.0
       bignumber.js: 9.1.2
 
