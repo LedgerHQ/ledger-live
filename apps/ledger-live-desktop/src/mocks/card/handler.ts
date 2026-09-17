@@ -7,12 +7,14 @@ import {
 import { isMockCardRequest } from "@domain/api-card-management/mock/card-session";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
-  mockPayCardInternalWallets,
-  mockPayCardLinkedWallets,
   mockPayCardStatus,
   mockPayCardUser,
   readCardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
+import {
+  mockPayCardInternalWallets,
+  mockPayCardLinkedWallets,
+} from "@domain/api-card-management/mock/card-wallets";
 
 const handlers = [
   http.get("*/v1/user", ({ request }) => {

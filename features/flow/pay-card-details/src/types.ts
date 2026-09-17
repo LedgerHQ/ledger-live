@@ -26,7 +26,7 @@ export type CardDetailsProps = Readonly<{
   cardVisual?: CardVisualProps;
   /** Native only: what the sheet lists between the card actions and the transactions. */
   assets?: ReactNode;
-  /** Native only: the Details sheet overview lists the card's transactions. */
+  /** Formats the reward wallet amount, and, natively, the transactions the overview lists. */
   formatters?: CardTransactionFormatters;
   onTrackEvent?: CardTrackEvent;
   unlock?: UnlockForReveal;

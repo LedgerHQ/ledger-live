@@ -11,6 +11,7 @@
     "./mock/card-onboarding-status": "./src/cardOnboardingStatus.mock.ts",
     "./mock/card-session": "./src/cardMockSession.mock.ts",
     "./mock/card-transactions": "./src/cardTransactions.mock.ts",
+    "./mock/card-wallets": "./src/cardWallets.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

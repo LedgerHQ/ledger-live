@@ -10415,6 +10415,9 @@
         "hide": "Hide",
         "failed": "Couldn't load card numbers",
         "imageAlt": "Card numbers"
+      },
+      "reward": {
+        "title": "Total cashback"
       }
     },
     "cardTransactions": {
