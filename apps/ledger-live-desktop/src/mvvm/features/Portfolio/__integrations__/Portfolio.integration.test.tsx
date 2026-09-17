@@ -22,7 +22,8 @@ import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 import { mockStocksResponse } from "@domain/api-aggregated-assets/mock/stocks";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
-const DADA_API_ENDPOINT = "https://dada.api.ledger-test.com/v1/assets";
+const DADA_API_ENDPOINT =
+  "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets";
 
 const mockNavigate = jest.fn();
 

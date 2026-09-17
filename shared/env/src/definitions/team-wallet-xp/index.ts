@@ -12,14 +12,19 @@ const teamWalletXp = {
     desc: "Ledger countervalues API (staging)",
   },
   DADA_API_STAGING: {
-    def: "https://dada.api.ledger-test.com/v1",
+    def: "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada",
     parser: stringParser,
-    desc: "Dynamic Assets Data Aggregator API Staging",
+    desc: "Dynamic Assets Data Aggregator API Staging (via Gravitee gateway)",
   },
   DADA_API_PROD: {
-    def: "https://dada.api.ledger.com/v1",
+    def: "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada",
     parser: stringParser,
-    desc: "Dynamic Assets Data Aggregator API Prod",
+    desc: "Dynamic Assets Data Aggregator API Prod (via Gravitee gateway)",
+  },
+  DADA_GRAVITEE_API_KEY: {
+    def: "",
+    parser: stringParser,
+    desc: "API key sent as x-gravitee-api-key on every DADA request through the Gravitee gateway",
   },
   CMC_API_URL: {
     def: "https://proxycmc.api.live.ledger.com/v3",

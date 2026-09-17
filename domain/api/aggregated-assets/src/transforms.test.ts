@@ -3,7 +3,9 @@ import { assetsDataApi } from "./api";
 import type { RawApiResponse } from "./schema";
 
 jest.mock("@shared/env", () => ({
-  getEnv: jest.fn().mockReturnValue("https://dada.api.ledger.com/v1"),
+  getEnv: jest
+    .fn()
+    .mockReturnValue("https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada"),
 }));
 
 /*
@@ -148,7 +150,9 @@ describe("transformAssetsResponse, via getAssetData", () => {
   it("targets the /assets path on the resolved base url", async () => {
     await getAssetData(raw());
 
-    expect(requestedUrl(fetchSpy.mock.calls[0])).toContain("https://dada.api.ledger.com/v1/assets");
+    expect(requestedUrl(fetchSpy.mock.calls[0])).toContain(
+      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+    );
   });
 });
 

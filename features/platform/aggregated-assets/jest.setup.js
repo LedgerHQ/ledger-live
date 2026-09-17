@@ -7,7 +7,7 @@ require("@testing-library/jest-dom");
 jest.mock("@shared/env", () => ({
   getEnv: jest.fn(name =>
     name === "DADA_API_STAGING"
-      ? "https://dada.api.ledger-test.com/v1"
-      : "https://dada.api.ledger.com/v1",
+      ? "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada"
+      : "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada",
   ),
 }));

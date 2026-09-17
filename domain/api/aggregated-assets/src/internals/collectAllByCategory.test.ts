@@ -9,8 +9,8 @@ import type { RawApiResponse } from "../schema";
 jest.mock("@shared/env", () => ({
   getEnv: jest.fn((name: string) =>
     name === "DADA_API_STAGING"
-      ? "https://dada.api.ledger-test.com/v1"
-      : "https://dada.api.ledger.com/v1",
+      ? "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada"
+      : "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada",
   ),
 }));
 
@@ -66,7 +66,9 @@ describe("collectAllByCategory", () => {
     await collectAllByCategory(queryArg, baseQuery, tickersOf);
 
     const { url, params } = requests()[0];
-    expect(url).toBe("https://dada.api.ledger.com/v1/assets");
+    expect(url).toBe(
+      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+    );
     expect(params).toMatchObject({
       categories: "stocks",
       product: "llm",
@@ -110,7 +112,9 @@ describe("collectAllByCategory", () => {
 
     await collectAllByCategory({ ...queryArg, isStaging: true }, baseQuery, tickersOf);
 
-    expect(requests()[0].url).toBe("https://dada.api.ledger-test.com/v1/assets");
+    expect(requests()[0].url).toBe(
+      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+    );
   });
 
   /*

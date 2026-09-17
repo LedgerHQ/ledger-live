@@ -97,14 +97,20 @@ function installCapturedMarketHandlers(marketRequests: string[], dadaRequests: s
       const pageSize = 10;
       return HttpResponse.json(filteredData.slice(page * pageSize, (page + 1) * pageSize));
     }),
-    http.get("https://dada.api.ledger-test.com/v1/assets", ({ request }) => {
-      dadaRequests.push(request.url);
-      return HttpResponse.json({});
-    }),
-    http.get("https://dada.api.ledger.com/v1/assets", ({ request }) => {
-      dadaRequests.push(request.url);
-      return HttpResponse.json({});
-    }),
+    http.get(
+      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+      ({ request }) => {
+        dadaRequests.push(request.url);
+        return HttpResponse.json({});
+      },
+    ),
+    http.get(
+      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+      ({ request }) => {
+        dadaRequests.push(request.url);
+        return HttpResponse.json({});
+      },
+    ),
   );
 }
 

@@ -19,7 +19,7 @@ import { http, HttpResponse } from "msw";
 import { mockAssets } from "./dada/mockAssets";
 
 export default [
-  http.get("https://dada.api.ledger-test.com/v1/assets", () => {
+  http.get("https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets", () => {
     return HttpResponse.json(mockAssets);
   }),
 ];

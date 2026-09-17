@@ -17,8 +17,14 @@ const assetsHandler = ({ request }: { request: Request }) => {
 };
 
 const handlers = [
-  http.get("https://dada.api.ledger-test.com/v1/assets", assetsHandler),
-  http.get("https://dada.api.ledger.com/v1/assets", assetsHandler),
+  http.get(
+    "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+    assetsHandler,
+  ),
+  http.get(
+    "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+    assetsHandler,
+  ),
   http.get("https://ledger.statuspage.io/api/v2/summary.json", () => {
     return HttpResponse.json(mockLedgerStatus);
   }),

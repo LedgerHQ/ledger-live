@@ -268,7 +268,12 @@ describe.each(DRAWER_VARIANTS)(
     });
 
     it("should display generic error when a Backend error occurs", async () => {
-      server.use(http.get("https://dada.api.ledger.com/v1/assets", () => HttpResponse.error()));
+      server.use(
+        http.get(
+          "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+          () => HttpResponse.error(),
+        ),
+      );
       const { getByText, user } = render(<ModularDrawerSharedNavigator />, renderOptions);
       advanceTimers();
 
