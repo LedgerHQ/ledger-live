@@ -362,12 +362,12 @@ export default class SwapLiveAppPage {
       throw new Error(`No parsable quote found for provider ${provider}`);
     }
 
-    const parseAmount = (amount: string) => Number.parseFloat(amount.replace(/,/g, ""));
+    const parseAmount = (amount: string) => Number.parseFloat(amount.replaceAll(",", ""));
 
     return {
       provider,
       fees: parseAmount(feesMatch[1]),
-      rate: parseAmount(usdAmounts[usdAmounts.length - 1]),
+      rate: parseAmount(usdAmounts.at(-1) ?? ""),
     };
   }
 
