@@ -165,7 +165,7 @@ on:
         default: ""
     secrets:
       SPECULINHO_URL:
-        description: Base URL for the Speculinho operator (remote Speculos on iOS E2E). Repository secret; pass via secrets inherit when reusing this workflow.
+        description: Base URL for the Speculinho operator (remote Speculos, both platforms). Repository secret; pass via secrets inherit when reusing this workflow.
         required: false
       ALLURE_LEDGER_LIVE_PASSWORD:
         required: false
@@ -219,13 +219,10 @@ env:
   cache-bucket: ll-nx-cache
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-x86_64-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
-  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}-androidTest.apk
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
   SPECULOS_IMAGE_TAG_ANDROID: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
   SPECULOS_IMAGE_TAG_IOS: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-83978f0' || 'latest' }}
-  COINAPPS: ${{ github.workspace }}/coin-apps
-  SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
   ANDROID_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   IOS_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
@@ -292,7 +289,6 @@ jobs:
           client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           repositories: |
-            coin-apps
             ledger-live
           permission-contents: read
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -999,15 +995,6 @@ jobs:
           echo "ℹ️ Emulator liveness watchdog started."
         shell: bash
 
-      - name: Setup Speculos image and Coin Apps
-        id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
-        timeout-minutes: 20
-        with:
-          coinapps_path: ${{ env.COINAPPS }}
-          bot_id: ${{ secrets.GH_BOT_CLIENT_ID }}
-          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-
       - name: Build e2e dependencies (CLI + libs)
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
@@ -1061,6 +1048,8 @@ jobs:
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
+          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
+          REMOTE_SPECULOS: "true"
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
