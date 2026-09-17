@@ -1,13 +1,19 @@
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
+import type { Operation } from "@ledgerhq/types-live";
 import accountActions from "../accountActions";
-import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
+import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT_1, makeAleoAccount } from "../__mocks__/account.mock";
 import { aleoCurrency } from "../__mocks__/currency.mock";
+import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
 import { NavigatorName, ScreenName } from "~/const";
 import ZeroBalanceDisabledModalContent from "~/components/FabActions/modals/ZeroBalanceDisabledModalContent";
 
 jest.mock("@ledgerhq/native-ui", () => ({
-  IconsLegacy: { TransferMedium: "TransferMedium" },
+  IconsLegacy: { TransferMedium: "TransferMedium", CoinsMedium: "CoinsMedium" },
+}));
+
+jest.mock("@ledgerhq/live-common/families/aleo/config", () => ({
+  getAleoCurrencyConfigById: jest.fn(),
 }));
 
 jest.mock("~/components/FabActions/modals/ZeroBalanceDisabledModalContent", () => ({
@@ -18,6 +24,19 @@ jest.mock("~/components/FabActions/modals/ZeroBalanceDisabledModalContent", () =
 jest.mock("~/context/Locale", () => ({
   i18n: { t: (key: string) => key },
 }));
+
+const mockGetAleoConfig = jest.mocked(getAleoCurrencyConfigById);
+
+const mockStakingEnabled = (enableStaking: boolean) =>
+  mockGetAleoConfig.mockReturnValue({
+    status: { type: "active" },
+    enableStaking,
+  } as ReturnType<typeof getAleoCurrencyConfigById>);
+
+beforeEach(() => {
+  mockGetAleoConfig.mockReset();
+  mockStakingEnabled(false);
+});
 
 describe("accountActions.getMainActions", () => {
   it("returns a single publicToPrivate action with correct shape", () => {
@@ -65,9 +84,95 @@ describe("accountActions.getMainActions", () => {
   });
 });
 
+const findStake = (account = ALEO_ACCOUNT_1) =>
+  accountActions.getMainActions({ account }).find(action => action.id === "stake");
+
+describe("accountActions.getMainActions and the enableStaking flag", () => {
+  it("omits the stake action when staking is disabled", () => {
+    expect(
+      accountActions.getMainActions({ account: ALEO_ACCOUNT_1 }).map(action => action.id),
+    ).toEqual(["public_to_private"]);
+  });
+
+  it("omits the stake action when the currency configuration cannot be resolved", () => {
+    mockGetAleoConfig.mockReturnValue(undefined);
+
+    expect(findStake()).toBeUndefined();
+  });
+
+  it("returns the stake action first when staking is enabled", () => {
+    mockStakingEnabled(true);
+
+    const actions = accountActions.getMainActions({ account: ALEO_ACCOUNT_1 });
+
+    expect(actions.map(action => action.id)).toEqual(["stake", "public_to_private"]);
+    expect(actions[0].navigationParams).toEqual([
+      NavigatorName.AleoBondPublicFlow,
+      {
+        screen: ScreenName.AleoBondPublicSelectValidator,
+        params: { accountId: ALEO_ACCOUNT_1.id, parentId: undefined },
+      },
+    ]);
+  });
+
+  it("disables the stake action when the account holds no public funds", () => {
+    mockStakingEnabled(true);
+
+    const action = findStake(makeAleoAccount({ transparentBalance: new BigNumber(0) }));
+
+    expect(action?.disabled).toBe(true);
+    expect(action?.modalOnDisabledClick?.component).toBe(ZeroBalanceDisabledModalContent);
+  });
+
+  it("enables the stake action when the account holds public funds", () => {
+    mockStakingEnabled(true);
+
+    const action = findStake(makeAleoAccount({ transparentBalance: new BigNumber(2_000_000) }));
+
+    expect(action?.disabled).toBe(false);
+  });
+
+  it("disables the stake action while a bond is pending, without the zero-balance modal", () => {
+    mockStakingEnabled(true);
+    const funded = makeAleoAccount({ transparentBalance: new BigNumber(2_000_000) });
+
+    const action = findStake({
+      ...funded,
+      pendingOperations: [{ type: "BOND" } as Operation],
+    });
+
+    expect(action?.disabled).toBe(true);
+    expect(action?.modalOnDisabledClick).toBeUndefined();
+  });
+
+  describe("on a token account", () => {
+    const funded = makeAleoAccount({ transparentBalance: new BigNumber(2_000_000) });
+    const tokenActions = () =>
+      accountActions.getMainActions({
+        account: ALEO_TOKEN_ACCOUNT_1 as unknown as typeof funded,
+        parentAccount: funded,
+      });
+
+    it("reads the configuration off the main account instead of throwing", () => {
+      mockStakingEnabled(true);
+
+      expect(tokenActions).not.toThrow();
+      expect(mockGetAleoConfig).toHaveBeenCalledWith(funded.currency.id);
+    });
+
+    it("offers no stake action, since only the main account can bond", () => {
+      mockStakingEnabled(true);
+
+      expect(tokenActions().map(action => action.id)).toEqual(["public_to_private"]);
+    });
+  });
+});
+
 describe("accountActions.getExtraSendActionParams", () => {
   it("returns navigationParams pointing to AleoSendBalanceSelection with isSelfTransfer: false", () => {
-    const result = accountActions.getExtraSendActionParams({ account: ALEO_ACCOUNT_1 });
+    const result = accountActions.getExtraSendActionParams({
+      account: ALEO_ACCOUNT_1,
+    });
 
     expect(result.navigationParams).toEqual([
       NavigatorName.SendFunds,
