@@ -96,6 +96,7 @@ export function OverviewScene({
       />
 
       {assets}
+
       <Reward formatters={formatters} />
 
       <CardTransactions
