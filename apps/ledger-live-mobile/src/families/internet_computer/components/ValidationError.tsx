@@ -38,31 +38,23 @@ type Props = Readonly<
     /** Analytics action: the transaction type this flow was signing when it failed. */
     action?: string;
     /**
-     * Where to send a user whose attempt must not be repeated. Only the manage flow supplies one —
-     * its neuron list is where Refresh neurons lives, which is what establishes what actually
-     * happened. Closing the staking flow lands on the account page, which carries the same entry
-     * point as a banner.
+     * Where to send a user whose attempt must not be repeated. Both flows supply one, and both land
+     * on the neuron list: it holds Refresh neurons, the only thing that establishes what the command
+     * actually did. Optional because a flow that offered no such destination would still render —
+     * Close alone, which is what the staking flow used to do.
      */
     onBackToList?: () => void;
+    /**
+     * Where each transaction type retries, for the flow this screen is serving.
+     *
+     * Supplied by the wrapper rather than held here, because a retry target is only reachable from
+     * the navigator that registers it: every entry is a screen in one flow's own stack. Keyed on the
+     * runtime `command` alone, a map declared here would have let a future staking transaction type
+     * reuse a manage-flow key and `popTo` a screen the staking navigator has never heard of.
+     */
+    retryScreens?: Partial<Record<ICPTransactionType, ScreenName>>;
   }
 >;
-
-/**
- * The screen that collected each action's input, so a value the user needs to change can be changed.
- * Anything absent took no input and retries at the device screen, which is one step back.
- */
-const RETRY_SCREEN: Partial<Record<ICPTransactionType, ScreenName>> = {
-  increase_stake: ScreenName.InternetComputerNeuronIncreaseStake,
-  set_dissolve_delay: ScreenName.InternetComputerNeuronSetDissolveDelay,
-  increase_dissolve_delay: ScreenName.InternetComputerNeuronSetDissolveDelay,
-  stake_maturity: ScreenName.InternetComputerNeuronStakeMaturity,
-  split_neuron: ScreenName.InternetComputerNeuronSplit,
-  add_hot_key: ScreenName.InternetComputerNeuronAddHotKey,
-  // Back to the followee list rather than the topic picker: the topic is already chosen and the list
-  // it holds is what a retry is likely to be correcting.
-  follow: ScreenName.InternetComputerNeuronFollowees,
-  refresh_voting_power: ScreenName.InternetComputerNeuronRefreshVotingPower,
-};
 
 /**
  * Errors that say the command did not take effect: the canister refused it, or the replica refused
@@ -97,6 +89,7 @@ export default function ICPValidationError({
   category,
   action,
   onBackToList,
+  retryScreens,
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -107,7 +100,7 @@ export default function ICPValidationError({
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
-  const retryScreen = command && RETRY_SCREEN[command];
+  const retryScreen = command && retryScreens?.[command];
   // `popTo`, not `navigate`, which pushes a second copy of the screen rather than returning to it.
   // The params travel because `popTo` replaces the target's own, and because the screen need not be
   // in the stack at all: a confirmation reached from a neuron goes straight to the device, so its

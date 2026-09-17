@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import React from "react";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import NeuronValidationError from "../NeuronManageFlow/ValidationError";
 import StakingValidationError from "../StakingFlow/ValidationError";
 
@@ -8,7 +8,8 @@ const goBack = jest.fn();
 const navigate = jest.fn();
 const popTo = jest.fn();
 const pop = jest.fn();
-const navigation = { goBack, navigate, popTo, getParent: () => ({ pop }) };
+const replace = jest.fn();
+const navigation = { goBack, navigate, popTo, getParent: () => ({ pop, replace }) };
 
 jest.mock("~/components/PreventNativeBack", () => {
   const React = require("react");
@@ -47,6 +48,7 @@ describe("ValidationError", () => {
     navigate.mockClear();
     popTo.mockClear();
     pop.mockClear();
+    replace.mockClear();
   });
 
   it("shows the error both flows arrived with", () => {
@@ -71,6 +73,15 @@ describe("ValidationError", () => {
     renderStaking({ error: named("UserRefusedOnDevice"), transaction: { type: "create_neuron" } });
 
     expect(screen.getByText("Retry")).toBeVisible();
+  });
+
+  // Where a retry is safe the flow is not over, so the staking failure keeps Retry and does not also
+  // offer an exit that would discard it.
+  it("keeps a retryable staking failure inside its own flow", () => {
+    renderStaking({ error: named("UserRefusedOnDevice"), transaction: { type: "create_neuron" } });
+
+    expect(screen.getByText("Retry")).toBeVisible();
+    expect(screen.queryByText("Back to neurons")).toBeNull();
   });
 });
 
@@ -161,6 +172,21 @@ describe("ValidationError retry routing", () => {
     expect(goBack).toHaveBeenCalled();
     expect(popTo).not.toHaveBeenCalled();
   });
+
+  /*
+   * The retry targets are screens in the manage navigator, so only that flow supplies them. A map
+   * keyed on the transaction type alone would have let a staking transaction reuse a manage-flow key
+   * and `popTo` a screen the staking navigator never registered; the staking flow retries in place
+   * instead.
+   */
+  it("never pops the staking flow to a screen only the manage flow registers", () => {
+    renderStaking({ error: named("ICPCallRejected"), transaction: { type: "increase_stake" } });
+
+    fireEvent.press(screen.getByText("Retry"));
+
+    expect(popTo).not.toHaveBeenCalled();
+    expect(goBack).toHaveBeenCalled();
+  });
 });
 
 /*
@@ -173,6 +199,7 @@ describe("ValidationError withholding an unsafe retry", () => {
     goBack.mockClear();
     navigate.mockClear();
     popTo.mockClear();
+    replace.mockClear();
   });
 
   it("withholds Retry when a non-repeatable command may already have run", () => {
@@ -259,17 +286,30 @@ describe("ValidationError withholding an unsafe retry", () => {
     expect(screen.getByText("Retry")).toBeVisible();
   });
 
-  // The staking flow supplies no fallback: closing it lands on the account page, which carries the
-  // same entry point as a banner. Withholding Retry must not leave a dead button behind.
-  it("leaves the staking flow with Close alone", () => {
+  /*
+   * The staking flow used to supply no fallback, on the argument that closing it lands on the account
+   * page, which carries the same entry point as a banner. That argument was wrong: a create_neuron
+   * leaves the neuron snapshot empty, so the banner the user lands on still reads "Stake ICP" and the
+   * only exit from an unaccounted-for stake invited a second one. The neuron list holds Refresh
+   * neurons, the one thing that settles whether the first took effect.
+   */
+  it("sends a refused staking retry to the neurons, not back to the stake banner", () => {
     renderStaking({
       error: named("ICPCallUnconfirmed"),
       transaction: { type: "create_neuron" },
       signed: true,
+      accountId: "account-1",
     });
 
     expect(screen.queryByText("Retry")).toBeNull();
-    expect(screen.queryByText("Back to neurons")).toBeNull();
     expect(screen.getByText("Close")).toBeVisible();
+
+    fireEvent.press(screen.getByText("Back to neurons"));
+
+    // A sibling navigator, so this leaves the staking flow rather than moving inside it.
+    expect(replace).toHaveBeenCalledWith(NavigatorName.InternetComputerNeuronManageFlow, {
+      screen: ScreenName.InternetComputerNeuronList,
+      params: { accountId: "account-1", parentId: undefined },
+    });
   });
 });
