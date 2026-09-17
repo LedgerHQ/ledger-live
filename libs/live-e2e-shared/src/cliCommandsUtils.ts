@@ -239,10 +239,10 @@ export function seedZcashPrivateInfo(account: Account, shieldedAddress: string) 
     }
     const raw = JSON.parse(fs.readFileSync(userdataPath, "utf-8"));
     if (typeof raw?.data?.accounts === "string") {
-      throw new Error("encrypted ledger live data is not supported");
+      throw new TypeError("encrypted ledger live data is not supported");
     }
     if (!Array.isArray(raw?.data?.accounts)) {
-      throw new Error(
+      throw new TypeError(
         `seedZcashPrivateInfo: expected raw.data.accounts to be an array in ${userdataPath}, got ${JSON.stringify(raw?.data)}`,
       );
     }
