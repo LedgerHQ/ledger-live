@@ -6533,6 +6533,12 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  features/flow/lint-spike-deep:
+    devDependencies:
+      '@support/lint-base':
+        specifier: workspace:*
+        version: link:../../../support/lint-base
+
   features/flow/market-banner:
     devDependencies:
       '@gorhom/bottom-sheet':
@@ -18409,8 +18415,11 @@ importers:
         specifier: 19.1.4
         version: 19.1.4
 
-  support/lint-rules:
+  support/lint-base:
     devDependencies:
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -18705,6 +18714,12 @@ importers:
       danger:
         specifier: 13.0.10
         version: 13.0.10
+
+  tools/lint-spike-shallow:
+    devDependencies:
+      '@support/lint-base':
+        specifier: workspace:*
+        version: link:../../support/lint-base
 
   tools/nx-plugins/generators:
     devDependencies:
@@ -23356,7 +23371,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}

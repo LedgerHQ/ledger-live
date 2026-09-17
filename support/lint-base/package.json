@@ -1,0 +1,21 @@
+{
+  "name": "@support/lint-base",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Baseline oxlint preset and the repo's custom oxlint JS plugin",
+  "exports": {
+    ".": "./oxlint.config.mts",
+    "./runner": "./runner.mjs",
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "lint-base": "./bin/lint-base.mjs"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}
