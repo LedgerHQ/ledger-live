@@ -19,6 +19,12 @@ describe("coinModuleLoaders smoke test", () => {
       });
     }
   }
+
+  it("registers the Cosmos signer", () => {
+    const loader = coinModuleLoaders.find(({ family }) => family === "cosmos");
+
+    expect(loader?.loadSigner).toBeDefined();
+  });
 });
 
 // What the asset drawer hands to the wallet-api for a token the user has no sub-account for:

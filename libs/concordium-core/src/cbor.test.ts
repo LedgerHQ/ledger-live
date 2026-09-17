@@ -155,7 +155,85 @@ describe("CBOR memo encoding/decoding", () => {
     it("should throw for invalid CBOR (wrong header)", () => {
       const buffer = Buffer.from([0x40, 0x48, 0x65, 0x6c, 0x6c, 0x6f]);
       expect(() => decodeMemoFromCbor(buffer)).toThrow(
-        "Invalid CBOR: expected text string (major type 3), got header byte 0x40",
+        "Invalid CBOR: expected a text string or integer, got header byte 0x40",
+      );
+    });
+
+    // The device's CCD screen displays these three major types and rejects the
+    // rest. The smallest negative integer is the one value where the two differ:
+    // the device has no integer wide enough and renders it as
+    // "-18446744073709551615 - 1", where BigInt prints it exactly.
+    it.each([
+      ["a small unsigned integer", "0c", "12"],
+      ["a 1-byte unsigned integer", "1864", "100"],
+      ["a 2-byte unsigned integer", "1903e8", "1000"],
+      ["an 8-byte unsigned integer", "1bffffffffffffffff", "18446744073709551615"],
+      ["a small negative integer", "29", "-10"],
+      ["a 1-byte negative integer", "3863", "-100"],
+      ["the smallest negative integer", "3bffffffffffffffff", "-18446744073709551616"],
+    ])("decodes %s", (_label, hex, expected) => {
+      expect(decodeMemoFromCbor(Buffer.from(hex, "hex"))).toBe(expected);
+    });
+
+    // The value must be the whole buffer, so raw bytes that open with a
+    // plausible header are rejected rather than read as a prefix: "abc" is
+    // 61 62 63, whose first byte claims one character and leaves 63 over.
+    it.each([
+      ["a text string", "616263"],
+      ["an integer", "0c00"],
+    ])("rejects trailing bytes after %s", (_label, hex) => {
+      expect(() => decodeMemoFromCbor(Buffer.from(hex, "hex"))).toThrow(/trailing byte/);
+    });
+
+    // The collision the option exists for, asserted in both directions.
+    it.each([
+      ["0", "-17"],
+      ["7", "-24"],
+    ])("reads the digit %p as an integer when they are allowed", (text, asInteger) => {
+      expect(decodeMemoFromCbor(Buffer.from(text, "utf8"))).toBe(asInteger);
+    });
+
+    it.each(["0", "1", "2", "7"])("refuses the digit %p when integers are off", text => {
+      expect(() => decodeMemoFromCbor(Buffer.from(text, "utf8"), { allowIntegers: false })).toThrow(
+        /expected a text string,/,
+      );
+    });
+
+    // RFC 8949 §3.1 requires a text string to hold valid UTF-8, so these are
+    // malformed CBOR rather than text to sanitize downstream.
+    it.each([
+      ["a text string of invalid bytes", "63fffefd"],
+      ["a truncated multi-byte sequence", "62c3c3"],
+      ["a lone surrogate in CESU-8", "63eda080"],
+    ])("rejects %s", (_label, hex) => {
+      expect(() => decodeMemoFromCbor(Buffer.from(hex, "hex"))).toThrow(/not valid UTF-8/);
+    });
+
+    it("keeps a valid multi-byte text string", () => {
+      expect(decodeMemoFromCbor(encodeMemoToCbor("réservé 🇫🇷"))).toBe("réservé 🇫🇷");
+    });
+
+    it("still decodes a text string when integers are off", () => {
+      expect(decodeMemoFromCbor(encodeMemoToCbor("send with memo"), { allowIntegers: false })).toBe(
+        "send with memo",
+      );
+    });
+
+    // What strictness cannot separate: raw text whose first character encodes
+    // exactly the number of characters that follow. "ab" is 61 62 — also a
+    // complete one-character text string holding "b".
+    it.each([
+      ["ab", "b"],
+      ["bye", "ye"],
+      ["cash", "ash"],
+    ])("reads raw %p as CBOR, which it also validly is", (raw, asCbor) => {
+      expect(decodeMemoFromCbor(Buffer.from(raw, "utf8"))).toBe(asCbor);
+    });
+
+    // The device refuses these too, gating on `cbor_value_is_length_known`.
+    it("rejects an indefinite-length text string", () => {
+      expect(() => decodeMemoFromCbor(Buffer.from("7f6161ff", "hex"))).toThrow(
+        /unsupported additional information 31/,
       );
     });
 

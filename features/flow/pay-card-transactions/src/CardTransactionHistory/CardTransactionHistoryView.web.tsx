@@ -16,14 +16,14 @@ function createPayCta(
 }
 
 export function CardTransactionHistoryView({
-  uiState,
+  displayState,
   formatters,
   formatDay,
   onRowClick,
   onGoToPay,
   cardVisual,
 }: CardTransactionHistoryViewProps) {
-  switch (uiState.kind) {
+  switch (displayState.kind) {
     case "signedOut":
       return (
         <StatusMessage
@@ -80,7 +80,7 @@ export function CardTransactionHistoryView({
           <div className="min-h-0 scrollbar-custom flex-1 overflow-auto scrollbar-gutter-auto">
             <Table data-testid="card-history-table-body">
               <HistoryTableBody
-                groups={uiState.groups}
+                groups={displayState.groups}
                 formatters={formatters}
                 formatDay={formatDay}
                 onRowClick={onRowClick}

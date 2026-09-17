@@ -63,7 +63,10 @@ export const PayCardStatusResponseSchema = z.object({
   panLast4: z.string().min(1),
   status: z.enum(["ACTIVE", "FROZEN", "BLOCKED", "INACTIVE"]),
   type: z.enum(["VIRTUAL", "PHYSICAL", "METAL"]),
+  /** Whether this card may be frozen at all, as opposed to `status` saying whether it is. */
+  isFreezable: z.boolean().optional(),
   orderedAt: z.string().min(1),
+  cardAddedToDigitalWallet: z.boolean().optional(),
 });
 
 /** Hex colours the provider paints the details image with. Its own defaults apply when omitted. */

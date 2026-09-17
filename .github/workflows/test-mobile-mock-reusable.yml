@@ -17,11 +17,6 @@ on:
         description: Ref to checkout
         required: false
         type: string
-      skip-bundle-size-reporting:
-        description: Whether to skip the bundle size reporting
-        required: false
-        type: boolean
-        default: false
       max-shards:
         description: Max number of shards to use for detox tests (both ios and android)
         required: false
@@ -59,8 +54,6 @@ on:
       CARD_OAUTH_REDIRECT_URI:
         required: false
       GH_BOT_APP_ID:
-        required: true
-      GH_BOT_CLIENT_ID:
         required: true
       GH_BOT_PRIVATE_KEY:
         required: true
@@ -357,40 +350,6 @@ jobs:
       CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
       CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
       NX_KEY: ${{ secrets.NX_KEY }}
-
-  report-bundle-sizes:
-    name: "Build Mobile > Report Bundle Sizes"
-    runs-on: [ubuntu-22.04]
-    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != ''
-    needs: [build-ios, build-android]
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
-          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-          permission-contents: read
-          permission-pull-requests: write
-      - name: Create mobile metafile
-        run: |
-          echo "{
-              \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
-              \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
-          }" > mobile.metafile.json
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
-        if: ${{ !inputs.skip-bundle-size-reporting }}
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
-          baseBranch: ${{ 'develop' }}
-          prNumber: ${{ github.event.number}}
-          mode: mobile
-      - name: Upload mobile metafile
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: mobile.metafile.json
-          path: mobile.metafile.json
-          overwrite: true
 
   detox-ui-e2e-android:
     name: "Android UI E2E Smoke Tests"

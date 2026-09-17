@@ -44,9 +44,9 @@ live-signer-concordium ←── @ledgerhq/concordium-core ──→ coin-concor
 
 - `encodeMemoToCbor(memo: string): Buffer` — Encode memo string to CBOR text string
 - `memoEncodedSize(memo: string): number` — CBOR-encoded byte length without allocating (useful for size checks before encoding)
-- `decodeMemoFromCbor(cborEncoded: Buffer): string` — Decode CBOR-encoded memo
+- `decodeMemoFromCbor(cborEncoded: Buffer, options?: { allowIntegers?: boolean }): string` — Decode a CBOR-encoded memo: a text string, or an integer as a decimal string. The value must fill the buffer. Pass `allowIntegers: false` where the caller falls back to reading the bytes as raw text
 - `MAX_MEMO_LENGTH` — Maximum memo length before CBOR encoding (254 bytes)
-- `MAX_CBOR_SIZE` — Maximum CBOR-encoded CCD memo size (256 bytes)
+- `MAX_CBOR_SIZE` — Maximum CBOR-encoded memo size, either transfer kind (256 bytes)
 - `PLT_CBOR_MAX_SIZE` — Maximum PLT operations blob (512 bytes)
 - `PLT_TOKEN_ID_MIN_LENGTH` / `PLT_TOKEN_ID_MAX_LENGTH` — Token id bounds (1..128 bytes)
 
@@ -69,11 +69,14 @@ in places; the tighter bound wins.
 - `encodePltTransferOperations(transfer): Buffer` — The CBOR operations blob, `array(1) [ map(1) { "transfer": … } ]`
 - `encodePltAmount(amount, decimals): Buffer` — `tag 4([-decimals, amount])`
 - `encodePltAddress(address, includeCoinInfo?): Buffer` — `tag 40307({? 1: tag 40305({1: 919}), 3: bstr(32)})`
-- `encodePltMemo(memo, tagged?): Buffer` — Bare byte string, or wrapped in tag 24
+- `encodePltMemo(memo: string): Buffer` — `tag 24(bstr(CBOR text string))`
 
 > [!IMPORTANT]
-> A PLT memo is **bytes**, not text. Do not use `encodeMemoToCbor`, which is the
-> CCD memo helper and emits a CBOR text string.
+> A PLT memo carries the same CBOR text string a CCD memo does, bounded by the
+> same `MAX_MEMO_LENGTH`; only the envelope differs. On chain the memo is a
+> `CborMemo`, where tag 24 declares the content to be CBOR and its absence
+> declares it raw. The node strips that wrapper when it emits the transfer
+> event, so a reader cannot tell which variant was signed.
 
 ### Utils (`src/utils.ts`)
 

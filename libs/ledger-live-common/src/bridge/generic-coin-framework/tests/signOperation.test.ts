@@ -172,6 +172,10 @@ describe("genericSignOperation", () => {
       expect.anything(),
       expect.objectContaining({ familyOwnedSignOption: { id: "asset-1", ledgerSignature: "sig" } }),
     );
+    expect(mockSigner.getAddress).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ familyOwnedSignOption: { id: "asset-1", ledgerSignature: "sig" } }),
+    );
   });
 
   it("keeps the account's derivationMode when the family declares one of its own", async () => {

@@ -1,6 +1,6 @@
-import { log } from "@ledgerhq/logs";
 import { computeA4AccountVersion } from "./accountVersion";
 import { toA4HttpError } from "./errors";
+import { logA4 } from "../log";
 import type { A4Client } from "./index";
 
 const registrationCache = new Set<string>();
@@ -14,14 +14,42 @@ async function register(
   accountId: string,
   addresses: string[],
   key: string,
+  chain: string,
 ): Promise<void> {
   try {
     await client.createAccount(accountId);
-    await client.addAddresses(accountId, addresses);
-    registrationCache.add(key);
   } catch (rawErr) {
     const err = toA4HttpError(rawErr);
-    log("a4", `registration failed for ${accountId}: ${err.message}`);
+    logA4({
+      level: "warn",
+      message: `A4 createAccount failed: ${err.message}`,
+      decision: "register_create_failed",
+      chain,
+      status: err.status,
+      error: err,
+    });
+    return;
+  }
+
+  try {
+    await client.addAddresses(accountId, addresses);
+    registrationCache.add(key);
+    logA4({
+      level: "info",
+      message: "A4 account created",
+      decision: "register_created",
+      chain,
+    });
+  } catch (rawErr) {
+    const err = toA4HttpError(rawErr);
+    logA4({
+      level: "warn",
+      message: `A4 addAddresses failed: ${err.message}`,
+      decision: "register_add_addresses_failed",
+      chain,
+      status: err.status,
+      error: err,
+    });
   }
 }
 
@@ -31,17 +59,36 @@ async function reconcile(
   addresses: string[],
   key: string,
   version: string,
+  chain: string,
 ): Promise<void> {
   try {
     const { version: sv } = await client.addAddresses(accountId, addresses);
     if (sv === version) {
       registrationCache.add(key);
+      logA4({
+        level: "info",
+        message: "A4 account reconciled",
+        decision: "register_reconciled",
+        chain,
+      });
     } else {
-      log("a4", `reconcile: server settled at ${sv}, expected ${version}, will retry on next sync`);
+      logA4({
+        level: "warn",
+        message: "A4 reconcile version mismatch, will retry on next sync",
+        decision: "register_reconcile_pending",
+        chain,
+      });
     }
   } catch (rawErr) {
     const err = toA4HttpError(rawErr);
-    log("a4", `addAddresses failed for ${accountId}: ${err.message}`);
+    logA4({
+      level: "warn",
+      message: `A4 reconcile failed: ${err.message}`,
+      decision: "register_reconcile_failed",
+      chain,
+      status: err.status,
+      error: err,
+    });
   }
 }
 
@@ -49,6 +96,7 @@ export async function ensureA4Registered(
   client: A4Client,
   accountId: string,
   addresses: string[],
+  chain: string,
 ): Promise<void> {
   const version = computeA4AccountVersion(addresses);
   const key = `${accountId}:${version}`;
@@ -60,24 +108,44 @@ export async function ensureA4Registered(
   try {
     await client.getAccount(accountId, version);
     registrationCache.add(key);
+    logA4({
+      level: "info",
+      message: "A4 account already up to date",
+      decision: "register_up_to_date",
+      chain,
+    });
   } catch (rawErr) {
     const err = toA4HttpError(rawErr);
 
     if (err.status === undefined) {
-      log("a4", `registration transport error for ${accountId}: ${err.message}`);
+      logA4({
+        level: "warn",
+        message: `A4 registration transport error: ${err.message}`,
+        decision: "register_transport_error",
+        chain,
+        status: err.status,
+        error: err,
+      });
       return;
     }
 
     if (err.status === 404) {
-      await register(client, accountId, addresses, key);
+      await register(client, accountId, addresses, key, chain);
       return;
     }
 
     if (err.status === 412) {
-      await reconcile(client, accountId, addresses, key, version);
+      await reconcile(client, accountId, addresses, key, version, chain);
       return;
     }
 
-    log("a4", `unexpected A4 error (status ${err.status}) for ${accountId}: ${err.message}`);
+    logA4({
+      level: "error",
+      message: `A4 registration unexpected error (status ${err.status}): ${err.message}`,
+      decision: "register_unexpected_status",
+      chain,
+      status: err.status,
+      error: err,
+    });
   }
 }
