@@ -28,6 +28,9 @@ import {
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
 
+// Set on the window before a reload, so its absence proves a fresh document.
+const FLAG_RELOAD_MARKER = "__swapE2eFlagReload";
+
 type SwapSurface = "full" | "embedded";
 
 type PercentageKey = "25%" | "50%" | "75%";
@@ -122,31 +125,55 @@ export class SwapPage extends WebViewAppPage {
     await this.maxSpendableToggle.click();
   }
 
-  // Only the loaded page can write its localStorage, and the atom reads the key once.
-  // reopenSwap must leave swap and come back: a webview reload closes the page target.
-  // Every test gets a fresh user data directory, so nothing has to clear the key.
+  // Only the loaded page can write its localStorage.
+  // A route change kept the same document on CI.
+  // The reload makes the atom reread the key.
+  // Fresh user data clears the key per test.
   @step("Pin swap live app feature flags: $0")
-  async applyFlagPreset(preset: SwapFlagPreset, reopenSwap: () => Promise<void>) {
+  async applyFlagPreset(preset: SwapFlagPreset) {
     const webview = await this.getWebView();
     const payload = swapFlagPresetPayload(preset);
-    await webview.evaluate(({ key, value }) => localStorage.setItem(key, value), {
-      key: SWAP_FLAG_OVERRIDES_KEY,
-      value: payload,
-    });
+    // The reload can kill the context before evaluate returns.
+    await webview
+      .evaluate(
+        ({ key, value, marker }) => {
+          localStorage.setItem(key, value);
+          Object.assign(window, { [marker]: true });
+          setTimeout(() => location.reload(), 0);
+        },
+        { key: SWAP_FLAG_OVERRIDES_KEY, value: payload, marker: FLAG_RELOAD_MARKER },
+      )
+      .catch((error: unknown) => {
+        console.warn(`Swap flag preset script did not return: ${String(error)}`);
+      });
 
-    // The remount reads the key again on the new page.
-    await this.goAndWaitForSwapToBeReady(reopenSwap);
-    const reopened = await this.getWebView();
-    await expect(reopened.getByTestId(this.fromAccountCoinSelector)).toBeVisible();
-    await this.expectFlagPresetStored(reopened, payload);
+    // The reload detaches the page target.
+    this._webviewPage = undefined;
+    await this.expectFlagPresetLoaded(payload);
+    const reloaded = await this.getWebView();
+    await expect(reloaded.getByTestId(this.fromAccountCoinSelector)).toBeVisible();
   }
 
-  // A lost override would make checkQuoteCardVariant fail for an unclear reason.
-  @step("Check that the swap flag override survived the reopen")
-  private async expectFlagPresetStored(webview: Page, payload: string) {
+  // Tells a lost write apart from stale flags.
+  @step("Check that the live app reloaded with the overrides")
+  private async expectFlagPresetLoaded(payload: string) {
     await expect
-      .poll(() => webview.evaluate(key => localStorage.getItem(key), SWAP_FLAG_OVERRIDES_KEY))
-      .toBe(payload);
+      .poll(
+        async () => {
+          const webview = await this.getWebView();
+          return webview
+            .evaluate(
+              ({ key, marker }) => ({
+                stored: localStorage.getItem(key),
+                reloaded: !(marker in window),
+              }),
+              { key: SWAP_FLAG_OVERRIDES_KEY, marker: FLAG_RELOAD_MARKER },
+            )
+            .catch(() => null);
+        },
+        { message: "The swap live app did not reload with the pinned flag overrides" },
+      )
+      .toEqual({ stored: payload, reloaded: true });
   }
 
   @step("Check quote card variant: $0")
