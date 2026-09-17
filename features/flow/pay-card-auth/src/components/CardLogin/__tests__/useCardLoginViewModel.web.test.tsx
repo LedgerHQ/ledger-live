@@ -711,6 +711,22 @@ describe("useCardLoginViewModel errors", () => {
     );
   });
 
+  it("starts a fresh login from the panel of a machine error", async () => {
+    mockPorts.saveAttempt.mockRejectedValueOnce(new Error("no store"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.pkce_failed.title),
+    );
+    expect(result.current?.error?.ctaLabel).toBe(ERROR_MESSAGES.retryLogin);
+
+    act(() => result.current?.error?.onRetry());
+
+    await waitFor(() => expect(mockPorts.createAttempt).toHaveBeenCalledTimes(2));
+  });
+
   it("shows the translated message for browser_open_failed", async () => {
     mockPorts.openHostedLogin.mockRejectedValueOnce(new Error("no browser"));
     const { result } = await renderIdleLogin(store);
@@ -792,5 +808,29 @@ describe("useCardLoginViewModel errors", () => {
     await waitFor(() =>
       expect(result.current?.error?.title).toBe(ERROR_MESSAGES.fetch_user_failed.title),
     );
+  });
+
+  it("retries only the card fetch from the panel of a failed user load", async () => {
+    mockPorts.hasSession.mockResolvedValue(true);
+    mockPorts.getUser.mockRejectedValueOnce({ status: "FETCH_ERROR" });
+    const { result } = renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.fetch_user_failed.title),
+    );
+    expect(result.current?.error?.ctaLabel).toBe(ERROR_MESSAGES.retryUser);
+
+    act(() => result.current?.error?.onRetry());
+
+    await waitFor(() => expect(mockPorts.getUser).toHaveBeenCalledTimes(2));
+    expect(mockPorts.createAttempt).not.toHaveBeenCalled();
   });
 });
