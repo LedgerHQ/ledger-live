@@ -264,7 +264,15 @@
     },
     "ConcordiumTokenTransferNotPermitted": {
       "title": "This account cannot send this token",
-      "description": "The token issuer restricts who may send it, and this account is not permitted. Contact the token issuer for access."
+      "description": "The token issuer restricts who may send it. Contact the token issuer for details."
+    },
+    "ConcordiumAccountNotAllowed": {
+      "title": "This account hasn't been approved to send this token",
+      "description": "The token issuer keeps a list of approved senders, and this account is not on it. Approval is managed by the issuer, not by Ledger."
+    },
+    "ConcordiumAccountDenied": {
+      "title": "This account is restricted from sending this token",
+      "description": "The token issuer has restricted this account. Contact the issuer for details."
     },
     "ConcordiumTokenRestrictionsUnverified": {
       "title": "Token restrictions could not be verified",

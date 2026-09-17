@@ -6,7 +6,7 @@ import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { log } from "@ledgerhq/logs";
 import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getAccountListStatus, isDecodedPltState } from "../network/plt";
+import { getAccountListVerdict, isDecodedPltState } from "../network/plt";
 import { baseOperation, toOperation } from "./operations";
 import type {
   ConcordiumAccount,
@@ -189,10 +189,13 @@ export function buildParentOperation(op: RawOperation, accountId: string): Conco
 }
 
 /**
- * Folds pause state and both list rules into the single verdict the send path
- * reads.
+ * Resolves the verdict the send path reads, with pause folded in.
  *
- * Not interchangeable with `getAccountListStatus`, which answers only the list
+ * Pause collapses to `"blocked"` because it is not a list cause, and the send
+ * path reports it from the separate `paused` flag anyway. Everything else keeps
+ * the list cause, which is the whole point of persisting this value.
+ *
+ * Not interchangeable with `getAccountListVerdict`, which answers only the list
  * half. The two share a shape, so assigning one to the other compiles and would
  * let a paused token through.
  */
@@ -200,7 +203,7 @@ function resolveTransferStatus(entry: PltAccountToken): PltTransferStatus {
   const moduleState = entry.token.tokenState.moduleState;
   if (!isDecodedPltState(moduleState)) return "unknown";
   if (moduleState.paused === true) return "blocked";
-  return getAccountListStatus(entry);
+  return getAccountListVerdict(entry);
 }
 
 /**

@@ -233,7 +233,9 @@ describe("roundtrip serialization", () => {
       ipIdentity: 30,
       tokens: {
         PLT: { transferStatus: "allowed", paused: false },
-        "EUR.e": { transferStatus: "blocked", paused: true },
+        "EUR.e": { transferStatus: "denied", paused: false },
+        "USD.e": { transferStatus: "notAllowed" },
+        PAUSED: { transferStatus: "blocked", paused: true },
         UNKNOWN: { transferStatus: "unknown" },
       },
     };

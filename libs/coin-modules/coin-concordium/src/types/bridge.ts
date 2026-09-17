@@ -104,7 +104,7 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw;
  */
 export type ConcordiumTokenResources = {
   transferStatus: PltTransferStatus;
-  /** Display fact only. Absent means the module never declared it, not `false`. */
+  /** Reported before any list cause. Absent means the module never declared it, not `false`. */
   paused?: boolean;
 };
 
