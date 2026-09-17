@@ -338,12 +338,23 @@ export const claimOrRefreshNeuronFromAccount = async (
     sender: content.sender,
     ingress_expiry: content.ingress_expiry,
   };
-  const reply = await readReplyFromCanister(
-    Buffer.from(Cbor.encode({ content })),
-    Buffer.from(Cbor.encode({ content: readStateContent })),
-    MAINNET_GOVERNANCE_CANISTER_ID,
-    requestIdHex,
-  );
+  // The claim only ever runs after the transfer settled, so a rejected claim call leaves the same
+  // state as one governance answered with an error: the ICP is in the neuron's account, unclaimed.
+  // It is reported as that rather than as a rejected call, which reads as "nothing ran" — true of
+  // the claim, false of the transfer, and what would get the user offered a retry that stakes twice.
+  let reply: ArrayBuffer | null;
+  try {
+    reply = await readReplyFromCanister(
+      Buffer.from(Cbor.encode({ content })),
+      Buffer.from(Cbor.encode({ content: readStateContent })),
+      MAINNET_GOVERNANCE_CANISTER_ID,
+      requestIdHex,
+    );
+  } catch (error) {
+    if (!(error instanceof ICPCallRejected)) throw error;
+    const reason = typeof error.reason === "string" ? error.reason : "";
+    throw new ICPStakeNotRefreshed(reason || "ICPStakeNotRefreshed", { reason });
+  }
   // Indeterminate (outage only, after polling): the caller decides — a create/top-up surfaces it as
   // unconfirmed rather than reporting success (the transfer already happened).
   if (!reply) return undefined;

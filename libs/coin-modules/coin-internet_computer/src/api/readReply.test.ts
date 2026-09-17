@@ -213,6 +213,18 @@ describe("claimOrRefreshNeuronFromAccount", () => {
     await expect(attempt).rejects.toMatchObject({ reason: "denied" });
   });
 
+  // A claim the network rejected leaves the same state as one governance refused: the transfer
+  // settled, the neuron is unclaimed. Reported as a rejected call it would read as "nothing ran" and
+  // be offered a retry — a second transfer.
+  it("reports a rejected claim call as a settled transfer left unclaimed", async () => {
+    (Certificate.create as jest.Mock).mockResolvedValue(certWith("rejected"));
+    respondingWith({ status: "rejected", certificate: new Uint8Array([1]) });
+
+    const attempt = claimOrRefreshNeuronFromAccount(Principal.anonymous(), 5n);
+    await expect(attempt).rejects.toThrow(ICPStakeNotRefreshed);
+    await expect(attempt).rejects.toMatchObject({ reason: "boom" });
+  });
+
   it("returns undefined when the result is indeterminate (polling exhausted)", async () => {
     jest.useFakeTimers();
     try {

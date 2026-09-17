@@ -176,8 +176,9 @@ export class ICPTopUpBelowMinimumStake extends Error {
   }
 }
 
-// The stake transfer settled, but governance refused to claim or refresh the neuron from it: the
-// ICP sits in the neuron's account, unclaimed. `reason` carries the canister's own text.
+// The stake transfer settled, but the neuron was not claimed or refreshed from it — governance
+// refused, or the claim call itself was rejected: the ICP sits in the neuron's account, unclaimed.
+// `reason` carries the network's own text.
 export class ICPStakeNotRefreshed extends Error {
   override name = "ICPStakeNotRefreshed";
   [key: string]: unknown;
