@@ -1,5 +1,6 @@
 import { Switch } from "@ledgerhq/native-ui";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { AppLockBiometricsRow } from "LLM/features/AppLock/components/BiometricsRow";
 import { AppLockPasswordRow } from "LLM/features/AppLock/components/PasswordRow";
 import { useAppLockScheme } from "LLM/features/AppLock/hooks/useAppLockScheme";
 import React, { useCallback, useState } from "react";
@@ -59,12 +60,18 @@ export default function AuthSecurityToggle() {
   const scheme = useAppLockScheme();
 
   if (scheme === undefined) {
-    return <BiometricsRow />;
+    return null;
   }
 
-  return (
+  // Both rows move together: the legacy biometrics row is disabled until a password exists.
+  return scheme === "revamped" ? (
     <>
-      {scheme === "revamped" ? <AppLockPasswordRow /> : <LegacyAuthSecurityToggle />}
+      <AppLockPasswordRow />
+      <AppLockBiometricsRow />
+    </>
+  ) : (
+    <>
+      <LegacyAuthSecurityToggle />
       <BiometricsRow />
     </>
   );

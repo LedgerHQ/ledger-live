@@ -1,5 +1,6 @@
 import {
   resolveAppLockScheme,
+  selectBiometricsEnabled,
   selectHasPassword,
   selectIsHydrated,
   type AppLockScheme,
@@ -12,7 +13,15 @@ import { useSelector } from "~/context/hooks";
 export function useAppLockScheme(): AppLockScheme | undefined {
   const isRevampEnabled = useFeature("lwmPasswordRevamp")?.enabled ?? false;
   const isHydrated = useSelector(selectIsHydrated);
-  const hasStoredVerifier = useSelector(selectHasPassword);
+  const hasPassword = useSelector(selectHasPassword);
+  const biometricsEnabled = useSelector(selectBiometricsEnabled);
 
-  return isHydrated ? resolveAppLockScheme({ hasStoredVerifier, isRevampEnabled }) : undefined;
+  // Biometrics counts as stored protection too, or a user with it alone falls back to a path that
+  // neither locks the app nor can turn their protection off.
+  return isHydrated
+    ? resolveAppLockScheme({
+        hasStoredProtection: hasPassword || biometricsEnabled,
+        isRevampEnabled,
+      })
+    : undefined;
 }

@@ -1640,7 +1640,15 @@
       "forgotPassword": "Forgot your password?",
       "retryBiometrics": "Use biometrics",
       "failed": "We couldn't check your password. Please try again.",
-      "cta": "Confirm"
+      "cta": "Confirm",
+      "biometricsPrompt": "Unlock Ledger Wallet"
+    },
+    "biometrics": {
+      "title": "{{biometricsType}}",
+      "desc": "Unlock the app with {{biometricsType}}.",
+      "prompt": "Confirm {{biometricsType}} to use it for unlocking",
+      "disablePrompt": "Confirm {{biometricsType}} to stop using it for unlocking",
+      "useDeviceCredential": "Use PIN"
     },
     "deactivatePassword": {
       "title": "Deactivate password",

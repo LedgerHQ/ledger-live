@@ -3,8 +3,13 @@ import {
   type UnlockOutcome,
   type UnlockViewModel,
 } from "@features/flow-app-lock";
-import { checkPassword, selectBiometricsEnabled, unlockApp } from "@features/platform-app-lock";
-import { useCallback, useState } from "react";
+import {
+  checkPassword,
+  selectBiometricsEnabled,
+  selectHasPassword,
+  unlockApp,
+} from "@features/platform-app-lock";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useBiometricUnlock } from "../../hooks/useBiometricUnlock";
 import { useIsAppActive } from "../../hooks/useIsAppActive";
@@ -13,17 +18,43 @@ import { useKeyboardInset } from "../../hooks/useKeyboardInset";
 type UnlockScreenViewModel = UnlockViewModel &
   Readonly<{
     hasFailed: boolean;
+    hasPassword: boolean;
+    isAwaitingBiometrics: boolean;
     isAppActive: boolean;
     keyboardHeight: number;
   }>;
 
 function useUnlockScreenViewModel(): UnlockScreenViewModel {
   const dispatch = useDispatch();
+  const hasPassword = useSelector(selectHasPassword);
   const biometricsEnabled = useSelector(selectBiometricsEnabled);
   const { runBiometricUnlock } = useBiometricUnlock();
   const isAppActive = useIsAppActive();
   const keyboardHeight = useKeyboardInset();
   const [hasFailed, setHasFailed] = useState(false);
+  const [isAwaitingBiometrics, setIsAwaitingBiometrics] = useState(biometricsEnabled);
+  const isPromptingRef = useRef(false);
+
+  // Asked for before the screen draws a field: biometrics first, the password as the fallback.
+  useEffect(() => {
+    if (!isAwaitingBiometrics || !isAppActive || isPromptingRef.current) {
+      return;
+    }
+
+    isPromptingRef.current = true;
+
+    void runBiometricUnlock().then(unlocked => {
+      isPromptingRef.current = false;
+
+      if (!unlocked) {
+        setIsAwaitingBiometrics(false);
+      }
+    });
+  }, [isAppActive, isAwaitingBiometrics, runBiometricUnlock]);
+
+  const onRetryBiometrics = useCallback(() => {
+    setIsAwaitingBiometrics(true);
+  }, []);
 
   const onVerify = useCallback(
     async (password: string): Promise<UnlockOutcome> => {
@@ -49,9 +80,11 @@ function useUnlockScreenViewModel(): UnlockScreenViewModel {
     ...useUnlockViewModel({
       onVerify,
       canRetryBiometrics: biometricsEnabled,
-      onRetryBiometrics: runBiometricUnlock,
+      onRetryBiometrics,
     }),
     hasFailed,
+    hasPassword,
+    isAwaitingBiometrics,
     isAppActive,
     keyboardHeight,
   };

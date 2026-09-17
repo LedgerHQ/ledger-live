@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { AppState } from "react-native";
 
 export function useIsAppActive(): boolean {
-  const [isActive, setIsActive] = useState(() => AppState.currentState === "active");
+  // Unknown counts as active, as in the gate: on a cold start nothing would release the prompt.
+  const [isActive, setIsActive] = useState(() => (AppState.currentState ?? "active") === "active");
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", nextState =>

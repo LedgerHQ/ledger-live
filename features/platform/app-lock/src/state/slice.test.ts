@@ -68,16 +68,35 @@ describe("appLockSlice", () => {
 
   it("lets a setup that beat the boot read stand", () => {
     const afterSetup = reduce(undefined, setHasPassword(true));
-    const afterLateRead = reduce(afterSetup, hydrateAppLock(false));
+    const afterLateRead = reduce(
+      afterSetup,
+      hydrateAppLock({ hasPassword: false, biometricsEnabled: false }),
+    );
 
     expect(afterLateRead.hasPassword).toBe(true);
     expect(afterLateRead.isHydrated).toBe(true);
   });
 
-  it("hydrates once, ignoring a second read", () => {
-    const hydrated = reduce(undefined, hydrateAppLock(true));
+  it("restores biometrics read back from the keychain", () => {
+    const hydrated = reduce(
+      undefined,
+      hydrateAppLock({ hasPassword: false, biometricsEnabled: true }),
+    );
 
-    expect(reduce(hydrated, hydrateAppLock(false)).hasPassword).toBe(true);
+    expect(hydrated.biometricsEnabled).toBe(true);
+    expect(hydrated.isHydrated).toBe(true);
+  });
+
+  it("hydrates once, ignoring a second read", () => {
+    const hydrated = reduce(
+      undefined,
+      hydrateAppLock({ hasPassword: true, biometricsEnabled: false }),
+    );
+
+    expect(
+      reduce(hydrated, hydrateAppLock({ hasPassword: false, biometricsEnabled: false }))
+        .hasPassword,
+    ).toBe(true);
   });
 
   it("releases a lock the removal raced, leaving nothing to unlock it", () => {

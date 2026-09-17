@@ -16,3 +16,10 @@ export type BiometricsPromptResult =
   | Readonly<{ status: "cancelled" }>
   | Readonly<{ status: "failed" }>
   | Readonly<{ status: "lockedOut" }>;
+
+export type BiometricsPromptLabels = Readonly<{
+  reason: string;
+  /** iOS fallback title, and the Android negative button below API 30. */
+  fallback: string;
+  cancel: string;
+}>;

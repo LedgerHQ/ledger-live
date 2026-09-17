@@ -9,3 +9,4 @@ export * from "./errors";
 export * from "./password";
 export * from "./promptError";
 export * from "./scheme";
+export * from "./staleProtection";

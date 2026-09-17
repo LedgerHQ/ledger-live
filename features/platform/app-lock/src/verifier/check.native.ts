@@ -48,6 +48,10 @@ export function storeNewPassword(password: string, salt: Uint8Array): Promise<vo
   });
 }
 
+export function clearStoredPassword(): Promise<void> {
+  return serialiseDerivation(() => clearPasswordVerifier());
+}
+
 export function hasPasswordVerifier(): Promise<boolean> {
   return hasStoredVerifier();
 }
