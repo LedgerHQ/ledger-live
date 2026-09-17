@@ -1,3 +1,4 @@
+import "./mockAppLockCrypto";
 import React from "react";
 import { View } from "react-native";
 import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";

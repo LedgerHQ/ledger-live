@@ -14,6 +14,7 @@ import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
+import { useUnlockForCardNumbers } from "LLM/features/PayTab/hooks/useUnlockForCardNumbers";
 import { track } from "~/analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
@@ -64,6 +65,8 @@ export function usePayTabViewModel() {
     [oauthConfig, callback, balance.onTrackEvent],
   );
 
+  const { unlock, dialog: unlockDialog } = useUnlockForCardNumbers();
+
   const featureTour: FeatureTourProps = useMemo(
     () => ({
       onTrackScreen: (page: string) => track(page),
@@ -76,6 +79,8 @@ export function usePayTabViewModel() {
     top,
     bottom: bottom + insets.bottom,
     login,
+    unlock,
+    unlockDialog,
     featureTour,
     balance,
     actionTiles,

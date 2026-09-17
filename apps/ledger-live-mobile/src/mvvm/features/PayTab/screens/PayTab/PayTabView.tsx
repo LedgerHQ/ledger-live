@@ -1,5 +1,7 @@
 import React from "react";
 import { Card, type CardProps } from "@features/flow-pay-card";
+import { CardNumbersUnlockDialog } from "LLM/features/PayTab/components/CardNumbersUnlockDialog";
+import type { CardNumbersUnlockDialogState } from "LLM/features/PayTab/hooks/useUnlockForCardNumbers";
 import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-feature-tour";
 import { Balance, type ActionTilesProps, type BalanceData } from "@features/flow-pay-balance";
 import { BankTransferIntro, type BankTransferIntroProps } from "@features/flow-pay-bank-transfer";
@@ -19,6 +21,8 @@ type PayTabViewProps = {
   readonly top: number;
   readonly bottom: number;
   readonly login: CardProps["login"];
+  readonly unlock: NonNullable<CardProps["unlock"]>;
+  readonly unlockDialog: CardNumbersUnlockDialogState;
   readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
@@ -33,6 +37,8 @@ export function PayTabView({
   top,
   bottom,
   login,
+  unlock,
+  unlockDialog,
   featureTour,
   balance,
   actionTiles,
@@ -54,7 +60,8 @@ export function PayTabView({
           <Balance {...balance} actionTiles={actionTiles} />
           {isContactsEnabled && <Contacts {...contacts} />}
           <ContactAddressPicker {...contactAddressPicker} />
-          <Card login={login} />
+          <Card login={login} unlock={unlock} />
+          <CardNumbersUnlockDialog {...unlockDialog} />
           <FeatureTour {...featureTour} />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />
