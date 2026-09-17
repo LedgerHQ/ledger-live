@@ -194,6 +194,7 @@ catalog:
   "@types/qrcode": 1.5.5
   zod: 4.3.6
   semver: 7.7.3
+  "@types/numeral": 2.0.5
   "@types/semver": 7.7.1
   "@types/ws": ^8.5.10
   undici: 7.18.2
