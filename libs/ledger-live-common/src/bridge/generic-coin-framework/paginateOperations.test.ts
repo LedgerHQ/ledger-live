@@ -23,6 +23,17 @@ beforeEach(() => {
 });
 
 describe("paginateOperations", () => {
+  it("fails on a stalled cursor even when that page reaches the bound, rather than passing it off as a clean truncation", async () => {
+    // The bound is a legitimate stop; a repeated cursor never is. Checking the bound first would
+    // report this module as well-behaved for the one page where it stalls.
+    await expect(
+      paginateOperations(
+        pages({ items: [op("a")], next: "c1" }, { items: [op("b")], next: "c1" }),
+        2,
+      ),
+    ).rejects.toThrow("was served twice");
+  });
+
   it("continues past an empty page as long as the cursor still advances (coin-stellar's and coin-xrp's shape: a filtered page can legitimately be empty)", async () => {
     const items = await paginateOperations(
       pages(
