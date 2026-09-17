@@ -3,6 +3,7 @@ import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { cardManagementApi } from "@domain/api-card-management";
 import { DETAILS_IMAGE_CSS } from "../CardArtwork/cardColors";
+import { usePrefersReducedMotion } from "./usePrefersReducedMotion";
 import type { CardDetailsProps, RevealStatus, RevealViewModel } from "../../types";
 
 type CardApiState = {
@@ -13,6 +14,7 @@ const useCardApiDispatch =
   useDispatch.withTypes<ThunkDispatch<CardApiState, unknown, UnknownAction>>();
 
 export const FLIP_MS = 500;
+export const LOAD_TIMEOUT_MS = 15_000;
 
 export function useRevealViewModel({
   unlock,
@@ -22,6 +24,9 @@ export function useRevealViewModel({
   const [imageUrl, setImageUrl] = useState<string>();
   const inFlight = useRef(false);
   const generation = useRef(0);
+  const imageUrlRef = useRef(imageUrl);
+  imageUrlRef.current = imageUrl;
+  const reduceMotion = usePrefersReducedMotion();
 
   const onHide = useCallback(() => {
     generation.current += 1;
@@ -29,7 +34,10 @@ export function useRevealViewModel({
     setStatus("idle");
   }, []);
 
-  const onImageLoad = useCallback(() => {
+  const onImageLoad = useCallback((loadedUrl?: string) => {
+    if (loadedUrl !== undefined && loadedUrl !== imageUrlRef.current) {
+      return;
+    }
     setStatus(current => {
       if (current !== "loading") {
         return current;
@@ -39,12 +47,28 @@ export function useRevealViewModel({
     });
   }, []);
 
-  // CSS flip is 500ms and Reanimated has no transitionend — Hide waits for that settle.
   useEffect(() => {
     if (status === "flipping") {
-      const timer = setTimeout(() => setStatus("revealed"), FLIP_MS);
+      const timer = setTimeout(() => setStatus("revealed"), reduceMotion ? 0 : FLIP_MS);
       return () => clearTimeout(timer);
     }
+  }, [reduceMotion, status]);
+
+  useEffect(() => {
+    if (status !== "loading") {
+      return;
+    }
+    const timer = setTimeout(() => {
+      setStatus(current => {
+        if (current !== "loading") {
+          return current;
+        }
+        inFlight.current = false;
+        setImageUrl(undefined);
+        return "failed";
+      });
+    }, LOAD_TIMEOUT_MS);
+    return () => clearTimeout(timer);
   }, [status]);
 
   const onImageError = useCallback(() => {

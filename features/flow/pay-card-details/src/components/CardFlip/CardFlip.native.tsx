@@ -60,7 +60,7 @@ function DetailsImage({
   onImageError,
 }: {
   readonly imageUrl: string;
-  readonly onImageLoad: () => void;
+  readonly onImageLoad: (loadedUrl?: string) => void;
   readonly onImageError: () => void;
 }) {
   const { t } = useTranslation();
@@ -77,7 +77,7 @@ function DetailsImage({
         source={{ uri: imageUrl, cache: "reload" }}
         accessibilityLabel={t("payTab.card.numbers.imageAlt")}
         resizeMode="contain"
-        onLoad={onImageLoad}
+        onLoad={() => onImageLoad(imageUrl)}
         onError={onImageError}
         style={styles.image}
       />

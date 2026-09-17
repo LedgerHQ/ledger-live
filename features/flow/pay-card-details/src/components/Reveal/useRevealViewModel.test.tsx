@@ -12,7 +12,7 @@ import {
   revealCardDetailsFailureHandler,
   revealCardDetailsHandler,
 } from "@support/msw-features-flow-pay-card";
-import { FLIP_MS, useRevealViewModel } from "./useRevealViewModel";
+import { FLIP_MS, LOAD_TIMEOUT_MS, useRevealViewModel } from "./useRevealViewModel";
 
 const server = listenToCardApi();
 
@@ -267,5 +267,90 @@ describe("useRevealViewModel", () => {
 
     expect(reveal().status).toBe("failed");
     expect(reveal().imageUrl).toBeUndefined();
+  });
+
+  it("ignores a stale image load from a previous reveal", async () => {
+    const { reveal } = await renderRevealed();
+    act(() => {
+      reveal().onHide();
+    });
+
+    const tokenWait = deferred<void>();
+    server.use(
+      http.post(CARD_DETAILS_TOKEN_URL, async () => {
+        await tokenWait.promise;
+        return HttpResponse.json(CARD_DETAILS);
+      }),
+    );
+    act(() => {
+      void reveal().onReveal();
+    });
+    await waitFor(() => expect(reveal().status).toBe("loading"));
+
+    act(() => {
+      reveal().onImageLoad(CARD_DETAILS_IMAGE_URL);
+    });
+
+    expect(reveal().status).toBe("loading");
+    expect(reveal().isRevealed).toBe(false);
+
+    await act(async () => {
+      tokenWait.resolve();
+    });
+  });
+
+  it("fails when reveal stays loading for 15s", async () => {
+    const tokenWait = deferred<void>();
+    server.use(
+      http.post(CARD_DETAILS_TOKEN_URL, async () => {
+        await tokenWait.promise;
+        return HttpResponse.json(CARD_DETAILS);
+      }),
+    );
+    const { reveal } = renderReveal(() => Promise.resolve(true));
+
+    jest.useFakeTimers();
+    try {
+      act(() => {
+        void reveal().onReveal();
+      });
+      act(() => {
+        jest.advanceTimersByTime(LOAD_TIMEOUT_MS);
+      });
+
+      expect(reveal().status).toBe("failed");
+      expect(reveal().imageUrl).toBeUndefined();
+    } finally {
+      jest.useRealTimers();
+      tokenWait.resolve();
+    }
+  });
+
+  it("shows Hide as soon as the image loads when reduced motion is on", async () => {
+    window.matchMedia = jest.fn().mockImplementation(query => ({
+      matches: query === "(prefers-reduced-motion: reduce)",
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    }));
+
+    const { reveal } = renderReveal(() => Promise.resolve(true));
+    await act(async () => {
+      await reveal().onReveal();
+    });
+    await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
+
+    jest.useFakeTimers();
+    try {
+      act(() => {
+        reveal().onImageLoad();
+      });
+      act(() => {
+        jest.advanceTimersByTime(0);
+      });
+    } finally {
+      jest.useRealTimers();
+    }
+
+    expect(reveal().status).toBe("revealed");
   });
 });
