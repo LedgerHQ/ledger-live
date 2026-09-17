@@ -1,11 +1,7 @@
 import {
-  ConcordiumAccountDenied,
-  ConcordiumAccountNotAllowed,
   ConcordiumAppOutdatedError,
   ConcordiumInsufficientCcdForFee,
   ConcordiumInvalidPltPayloadError,
-  ConcordiumNonExistentTokenId,
-  ConcordiumPltTransferRejected,
   ConcordiumRecipientDenied,
   ConcordiumRecipientNotAllowed,
   ConcordiumRecipientNotFound,
@@ -42,20 +38,16 @@ describe("types/errors — PLT signer errors", () => {
   });
 });
 
-// The token-state errors are raised by the pre-send checks and the broadcast
-// ones by the reject-reason mapping, so nothing constructs them here either.
+// Raised by the pre-send checks in `bridge/` and `logic/`, which cover the
+// conditions. This block covers only what those call sites rely on.
 describe("types/errors — PLT transfer errors", () => {
   const pltErrors = [
     ConcordiumTokenPaused,
-    ConcordiumAccountNotAllowed,
-    ConcordiumAccountDenied,
     ConcordiumRecipientNotAllowed,
     ConcordiumRecipientDenied,
     ConcordiumRecipientRestrictionsUnverified,
     ConcordiumInsufficientCcdForFee,
-    ConcordiumNonExistentTokenId,
     ConcordiumRecipientNotFound,
-    ConcordiumPltTransferRejected,
   ];
   const cases = pltErrors.map(ErrorClass => [ErrorClass.name, ErrorClass] as const);
 

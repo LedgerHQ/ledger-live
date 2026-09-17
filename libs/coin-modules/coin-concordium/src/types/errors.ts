@@ -79,28 +79,6 @@ export class ConcordiumTokenPaused extends Error {
 }
 
 /**
- * The token enforces an allow list and the sender is not on it.
- */
-export class ConcordiumAccountNotAllowed extends Error {
-  override name = "ConcordiumAccountNotAllowed";
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ConcordiumAccountNotAllowed");
-    if (fields) Object.assign(this, fields);
-  }
-}
-
-/**
- * The token enforces a deny list and the sender is on it.
- */
-export class ConcordiumAccountDenied extends Error {
-  override name = "ConcordiumAccountDenied";
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ConcordiumAccountDenied");
-    if (fields) Object.assign(this, fields);
-  }
-}
-
-/**
  * The token enforces an allow list and the recipient is not on it, which
  * includes a recipient the token has never written state for: membership
  * requires a write, so absence is "not approved".
@@ -172,40 +150,12 @@ export class ConcordiumInsufficientCcdForFee extends Error {
 }
 
 /**
- * The signed `token_id` does not exist on chain. Chain-level, so it is reported
- * against the whole transaction rather than one operation.
- */
-export class ConcordiumNonExistentTokenId extends Error {
-  override name = "ConcordiumNonExistentTokenId";
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ConcordiumNonExistentTokenId");
-    if (fields) Object.assign(this, fields);
-  }
-}
-
-/**
  * The recipient account could not be resolved on chain (`addressNotFound`).
  */
 export class ConcordiumRecipientNotFound extends Error {
   override name = "ConcordiumRecipientNotFound";
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message ?? "ConcordiumRecipientNotFound");
-    if (fields) Object.assign(this, fields);
-  }
-}
-
-/**
- * The token module rejected the transfer for a reason that cannot be narrowed
- * further.
- *
- * The catch-all for the broadcast mapping. It covers unrecognised module reject
- * types and, unavoidably, `operationNotPermitted` — see
- * {@link mapPltRejectReason} for why that one cannot be discriminated.
- */
-export class ConcordiumPltTransferRejected extends Error {
-  override name = "ConcordiumPltTransferRejected";
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ConcordiumPltTransferRejected");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -253,10 +203,10 @@ export class ConcordiumAppOutdatedError extends Error {
  * The sender may not transfer this token, and the stored state cannot say which
  * rule refused them.
  *
- * Deliberately not {@link ConcordiumAccountNotAllowed} or
- * {@link ConcordiumAccountDenied}: `getAccountListStatus` folds "absent from an
- * allow list" and "present on a deny list" into one verdict, and only that
- * verdict is persisted, so naming either cause would assert something unproven.
+ * `getAccountListStatus` folds "absent from an allow list" and "present on a
+ * deny list" into one verdict, and only that verdict is persisted, so naming
+ * either cause would assert something unproven. Reporting the cause means
+ * widening the stored `transferStatus` first.
  */
 export class ConcordiumTokenTransferNotPermitted extends Error {
   override name = "ConcordiumTokenTransferNotPermitted";
