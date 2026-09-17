@@ -1,6 +1,5 @@
 import React from "react";
 import { VISA_LOGO_PATH } from "./assets/visaLogoPath";
-import { CARD_FACE_TEXT } from "./cardColors";
 import { CARD_GRADIENT } from "./cardGradient";
 import halftoneLeft from "./assets/halftoneLeft.svg";
 import halftoneRight from "./assets/halftoneRight.svg";
@@ -14,7 +13,7 @@ export function CardArtwork() {
   return (
     <div
       data-testid="card-artwork"
-      className="relative h-[195px] w-full overflow-hidden rounded-lg border border-muted"
+      className="relative h-[195px] w-full overflow-hidden rounded-lg border border-muted-subtle"
       style={{ backgroundImage: CARD_GRADIENT }}
     >
       <div
@@ -49,7 +48,7 @@ export function CardArtwork() {
           preserveAspectRatio="none"
           viewBox="0 0 53.49 17.2803"
         >
-          <path d={VISA_LOGO_PATH} fill={CARD_FACE_TEXT} />
+          <path d={VISA_LOGO_PATH} fill="white" />
         </svg>
       </div>
     </div>
