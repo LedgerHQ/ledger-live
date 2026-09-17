@@ -18,7 +18,7 @@ import {
 
 const baseDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)));
 
-function loadTimingData(platform, testRootDir) {
+export function loadTimingData(platform, testRootDir) {
   try {
     const timingFile = path.join(testRootDir, "artifacts", `e2e-test-results-${platform}.json`);
     if (fs.existsSync(timingFile)) {
@@ -52,7 +52,7 @@ function loadTimingData(platform, testRootDir) {
   return {};
 }
 
-function distributeFilesByTiming(files, timingData, shardIndex, shardTotal) {
+export function distributeFilesByTiming(files, timingData, shardIndex, shardTotal) {
   if (!timingData.testResults || Object.keys(timingData.testResults).length === 0) {
     if (shardTotal <= 0) return [];
     // Spread tests across shards when timing is unavailable.
