@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useReducedMotion } from "react-native-reanimated";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useEnv from "@features/platform-env";
@@ -23,6 +24,7 @@ async function unlockCardNumbers() {
 }
 
 export function usePayTabViewModel() {
+  const reduceMotion = Boolean(useReducedMotion());
   const { top, bottom } = useNavigationBarHeights();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
@@ -87,6 +89,7 @@ export function usePayTabViewModel() {
     bottom: bottom + insets.bottom,
     login,
     unlock: unlockCardNumbers,
+    reduceMotion,
     featureTour,
     balance,
     actionTiles,

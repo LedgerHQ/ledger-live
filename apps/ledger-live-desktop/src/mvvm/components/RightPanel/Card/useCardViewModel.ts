@@ -14,6 +14,7 @@ import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { useWipeHostedSessionOnSignInChange } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
+import { usePrefersReducedMotion } from "./usePrefersReducedMotion";
 import { useUnlockForCardNumbers } from "./useUnlockForCardNumbers";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
@@ -134,6 +135,7 @@ export function useCardViewModel(): CardViewModel {
   );
 
   const { unlock, dialog: unlockDialog } = useUnlockForCardNumbers();
+  const reduceMotion = usePrefersReducedMotion();
 
   const onShowMore = useCallback(() => {
     navigate(
@@ -146,6 +148,7 @@ export function useCardViewModel(): CardViewModel {
     formatters,
     login,
     unlock,
+    reduceMotion,
     unlockDialog,
     onShowMore,
   };

@@ -3,7 +3,6 @@ import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { cardManagementApi } from "@domain/api-card-management";
 import { DETAILS_IMAGE_CSS } from "../CardArtwork/cardColors";
-import { usePrefersReducedMotion } from "./usePrefersReducedMotion";
 import type { CardDetailsProps, RevealStatus, RevealViewModel } from "../../types";
 
 type CardApiState = {
@@ -18,7 +17,8 @@ export const LOAD_TIMEOUT_MS = 15_000;
 
 export function useRevealViewModel({
   unlock,
-}: Pick<CardDetailsProps, "unlock">): RevealViewModel | null {
+  reduceMotion = false,
+}: Pick<CardDetailsProps, "unlock" | "reduceMotion">): RevealViewModel | null {
   const dispatch = useCardApiDispatch();
   const [status, setStatus] = useState<RevealStatus>("idle");
   const [imageUrl, setImageUrl] = useState<string>();
@@ -26,7 +26,6 @@ export function useRevealViewModel({
   const generation = useRef(0);
   const imageUrlRef = useRef(imageUrl);
   imageUrlRef.current = imageUrl;
-  const reduceMotion = usePrefersReducedMotion();
 
   const onHide = useCallback(() => {
     generation.current += 1;

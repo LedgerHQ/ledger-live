@@ -14,6 +14,7 @@ export type OverviewSceneProps = Readonly<{
   onShowMore?: () => void;
   formatters?: CardTransactionFormatters;
   unlock?: UnlockForReveal;
+  reduceMotion?: boolean;
 }>;
 
 export type FreezeSceneProps = Readonly<{

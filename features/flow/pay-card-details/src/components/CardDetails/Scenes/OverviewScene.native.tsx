@@ -15,7 +15,7 @@ import type { OverviewSceneProps } from "./types";
 
 type OverviewActionsProps = Omit<
   OverviewSceneProps,
-  "cardVisual" | "onTransactionPress" | "formatters" | "unlock"
+  "cardVisual" | "onTransactionPress" | "formatters" | "unlock" | "reduceMotion"
 > &
   Readonly<{
     reveal: RevealViewModel | null;
@@ -82,8 +82,9 @@ export function OverviewScene({
   onShowMore,
   formatters,
   unlock,
+  reduceMotion,
 }: OverviewSceneProps) {
-  const reveal = useRevealViewModel({ unlock });
+  const reveal = useRevealViewModel({ unlock, reduceMotion });
 
   return (
     <Box lx={{ gap: "s16" }} testID="card-details-overview">

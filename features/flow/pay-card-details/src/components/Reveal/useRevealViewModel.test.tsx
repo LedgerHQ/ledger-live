@@ -28,14 +28,16 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-function renderReveal(unlock?: () => Promise<boolean>) {
+function renderReveal(unlock?: () => Promise<boolean>, reduceMotion = false) {
   const store = makeCardApiStore();
 
   function Wrapper({ children }: PropsWithChildren) {
     return <CardApiStoreProvider store={store}>{children}</CardApiStoreProvider>;
   }
 
-  const { result } = renderHook(() => useRevealViewModel({ unlock }), { wrapper: Wrapper });
+  const { result } = renderHook(() => useRevealViewModel({ unlock, reduceMotion }), {
+    wrapper: Wrapper,
+  });
 
   function reveal() {
     if (!result.current) {
@@ -327,13 +329,7 @@ describe("useRevealViewModel", () => {
   });
 
   it("shows Hide as soon as the image loads when reduced motion is on", async () => {
-    window.matchMedia = jest.fn().mockImplementation(query => ({
-      matches: query === "(prefers-reduced-motion: reduce)",
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-    }));
-
-    const { reveal } = renderReveal(() => Promise.resolve(true));
+    const { reveal } = renderReveal(() => Promise.resolve(true), true);
     await act(async () => {
       await reveal().onReveal();
     });

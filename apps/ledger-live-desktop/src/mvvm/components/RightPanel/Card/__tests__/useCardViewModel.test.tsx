@@ -56,6 +56,7 @@ describe("useCardViewModel", () => {
     const { result } = renderCardViewModel(null);
 
     expect(result.current.login.callback).toBeNull();
+    expect(result.current.reduceMotion).toBe(false);
   });
 
   it.each([{ code: "" }, { code: 42 }, { other: "value" }])(
