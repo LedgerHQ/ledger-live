@@ -67,6 +67,17 @@ describe("CardDetails (native)", () => {
     expect(screen.getByTestId("card-details-more-content")).toBeVisible();
   });
 
+  it("should return to the overview when leaving More through back", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByLabelText(MORE_COPY.tile));
+    await user.press(screen.getByTestId("card-details-sheet-back"));
+
+    expect(screen.getByTestId("card-details-overview")).toBeVisible();
+    expect(screen.queryByTestId("card-details-more-content")).toBeNull();
+  });
+
   it("should navigate to freeze confirmation without opening another sheet", async () => {
     const { user } = renderCardDetails();
 
