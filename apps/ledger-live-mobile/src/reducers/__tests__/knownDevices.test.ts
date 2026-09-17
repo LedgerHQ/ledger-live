@@ -1,4 +1,8 @@
-import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
+import {
+  rnBleTransportIdentifier,
+  rnHidTransportIdentifier,
+  speculosIdentifier,
+} from "@ledgerhq/live-dmk-mobile";
 import {
   DeviceModelId as DMKDeviceModelId,
   type DiscoveredDevice,
@@ -44,6 +48,13 @@ describe("knownDevices reducer", () => {
     name: "Nano S Plus",
     deviceModelId: DeviceModelId.nanoSP,
     transport: rnHidTransportIdentifier,
+  };
+
+  const speculos = {
+    id: "speculos|http://127.0.0.1:5000",
+    name: "http://127.0.0.1:5000",
+    deviceModelId: DeviceModelId.nanoX,
+    transport: speculosIdentifier,
   };
 
   const discoveredNanoX: DiscoveredDevice = {
@@ -155,6 +166,22 @@ describe("knownDevices reducer", () => {
       // THEN
       expect(nextState.knownDevices).toEqual([flex, updatedDevice]);
     });
+
+    it("GIVEN an existing Speculos known device WHEN a connection reports its fixed id THEN it updates that entry instead of adding one", () => {
+      // GIVEN
+      const state = { knownDevices: [flex, speculos] };
+      const updatedDevice = {
+        ...speculos,
+        id: "SpeculosID",
+        name: "Speculos - Ethereum",
+      };
+
+      // WHEN
+      const nextState = reducer(state, updateKnownDevice(updatedDevice));
+
+      // THEN
+      expect(nextState.knownDevices).toEqual([flex, updatedDevice]);
+    });
   });
 
   describe("removeKnownDevice", () => {
@@ -176,7 +203,10 @@ describe("knownDevices reducer", () => {
       const state = { knownDevices: [nanoX, flex] };
 
       // WHEN
-      const nextState = reducer(state, removeKnownDevices(["ble-id", "usb-id"]));
+      const nextState = reducer(
+        state,
+        removeKnownDevices(["ble-id", "usb-id"])
+      );
 
       // THEN
       expect(nextState.knownDevices).toEqual([]);
@@ -191,11 +221,14 @@ describe("knownDevices reducer", () => {
       // WHEN
       const nextState = reducer(
         state,
-        saveKnownDeviceName({ deviceId: "ble-id", name: "Renamed" }),
+        saveKnownDeviceName({ deviceId: "ble-id", name: "Renamed" })
       );
 
       // THEN
-      expect(nextState.knownDevices).toEqual([{ ...nanoX, name: "Renamed" }, flex]);
+      expect(nextState.knownDevices).toEqual([
+        { ...nanoX, name: "Renamed" },
+        flex,
+      ]);
     });
   });
 
@@ -204,7 +237,9 @@ describe("knownDevices reducer", () => {
       // GIVEN
       const state = INITIAL_STATE;
       const action = importBle({
-        knownDevices: [{ id: "legacy-ble-id", name: "Legacy", modelId: DeviceModelId.nanoX }],
+        knownDevices: [
+          { id: "legacy-ble-id", name: "Legacy", modelId: DeviceModelId.nanoX },
+        ],
       });
 
       // WHEN
@@ -237,7 +272,9 @@ describe("knownDevices reducer", () => {
       // GIVEN
       const state = { knownDevices: [flex] };
       const action = importBle({
-        knownDevices: [{ id: "legacy-ble-id", name: "Legacy", modelId: DeviceModelId.nanoX }],
+        knownDevices: [
+          { id: "legacy-ble-id", name: "Legacy", modelId: DeviceModelId.nanoX },
+        ],
       });
 
       // WHEN

@@ -2,6 +2,12 @@ export { DeviceManagementKitBLETransport } from "./transport/DeviceManagementKit
 export { DeviceManagementKitHIDTransport } from "./transport/DeviceManagementKitHIDTransport";
 export { DeviceManagementKitHTTPProxyTransport } from "./transport/DeviceManagementKitHTTPProxyTransport";
 export {
+  buildSpeculosLegacyDeviceId,
+  speculosTargetSubject,
+  type SpeculosTarget,
+} from "./transport/SpeculosDmkTransport";
+export { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
+export {
   USB_COMPAT_DEVICE_ID_PREFIX,
   buildUsbCompatDeviceId,
   isUsbCompatDeviceId,

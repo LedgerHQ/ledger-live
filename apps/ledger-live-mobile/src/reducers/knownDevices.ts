@@ -4,11 +4,18 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   rnBleTransportIdentifier,
   rnHidTransportIdentifier,
+  speculosIdentifier,
   type DeviceBaseInfo,
   findMatchingOldDevice,
 } from "@ledgerhq/live-dmk-mobile";
-import { dmkToLedgerDeviceIdMap, type KnownDevice } from "@ledgerhq/live-dmk-shared";
-import type { BleImportBlePayload, BleSaveDeviceNamePayload } from "~/actions/types";
+import {
+  dmkToLedgerDeviceIdMap,
+  type KnownDevice,
+} from "@ledgerhq/live-dmk-shared";
+import type {
+  BleImportBlePayload,
+  BleSaveDeviceNamePayload,
+} from "~/actions/types";
 import { BleActionTypes } from "~/actions/types";
 import type { DeviceLike, State } from "~/reducers/types";
 
@@ -49,14 +56,18 @@ export function mapBleDeviceToKnownDevice(device: DeviceLike): KnownDevice {
 
 export function mapDeviceToKnownDevice(device: Device): KnownDevice {
   return {
-    transport: device.wired ? rnHidTransportIdentifier : rnBleTransportIdentifier,
+    transport: device.wired
+      ? rnHidTransportIdentifier
+      : rnBleTransportIdentifier,
     deviceModelId: device.modelId,
     id: device.deviceId,
     name: device.deviceName ?? null,
   };
 }
 
-export function mapDiscoveredDeviceToKnownDevice(device: DiscoveredDevice): KnownDevice {
+export function mapDiscoveredDeviceToKnownDevice(
+  device: DiscoveredDevice
+): KnownDevice {
   return {
     transport: device.transport,
     deviceModelId: dmkToLedgerDeviceIdMap[device.deviceModel.model],
@@ -66,7 +77,7 @@ export function mapDiscoveredDeviceToKnownDevice(device: DiscoveredDevice): Know
 }
 
 export function mapKnownDeviceToPersistedKnownDevice(
-  device: KnownDevice,
+  device: KnownDevice
 ): PersistedKnownDevice | null {
   if (device.transport === rnBleTransportIdentifier) {
     return {
@@ -86,7 +97,7 @@ export function mapKnownDeviceToPersistedKnownDevice(
 }
 
 export function mapPersistedKnownDeviceToKnownDevice(
-  device: Omit<KnownDevice, "transport"> & { transport: string },
+  device: Omit<KnownDevice, "transport"> & { transport: string }
 ): KnownDevice | null {
   if (device.transport === "rnble") {
     return {
@@ -106,7 +117,9 @@ export function mapPersistedKnownDeviceToKnownDevice(
 }
 
 function upsertKnownDevice(state: KnownDevicesState, device: KnownDevice) {
-  const existingDeviceIndex = state.knownDevices.findIndex(d => d.id === device.id);
+  const existingDeviceIndex = state.knownDevices.findIndex(
+    (d) => d.id === device.id
+  );
 
   if (existingDeviceIndex === -1) {
     state.knownDevices.push({ ...device });
@@ -118,27 +131,35 @@ function upsertKnownDevice(state: KnownDevicesState, device: KnownDevice) {
 
 function findMatchingKnownDevice(
   newDevice: KnownDevice,
-  knownDevices: KnownDevice[],
+  knownDevices: KnownDevice[]
 ): KnownDevice | null {
   const oldDevicesForTransport = knownDevices.filter(
-    device => device.transport === newDevice.transport,
+    (device) => device.transport === newDevice.transport
   );
 
-  if (newDevice.transport === rnHidTransportIdentifier) {
+  // Speculos, like USB, has no stable id to match on: the transport reports a fixed device id that
+  // differs from the one the e2e bridge registered, so matching on it would keep adding entries.
+  if (
+    newDevice.transport === rnHidTransportIdentifier ||
+    newDevice.transport === speculosIdentifier
+  ) {
     return (
-      oldDevicesForTransport.find(device => device.deviceModelId === newDevice.deviceModelId) ??
-      null
+      oldDevicesForTransport.find(
+        (device) => device.deviceModelId === newDevice.deviceModelId
+      ) ?? null
     );
   }
 
   const matchingOldDevice = findMatchingOldDevice(
     mapKnownDeviceToDeviceBaseInfo(newDevice),
-    oldDevicesForTransport.map(mapKnownDeviceToDeviceBaseInfo),
+    oldDevicesForTransport.map(mapKnownDeviceToDeviceBaseInfo)
   );
 
   return (
     (matchingOldDevice &&
-      oldDevicesForTransport.find(device => device.id === matchingOldDevice.deviceId)) ??
+      oldDevicesForTransport.find(
+        (device) => device.id === matchingOldDevice.deviceId
+      )) ??
     null
   );
 }
@@ -147,37 +168,48 @@ const knownDevicesSlice = createSlice({
   name: "knownDevices",
   initialState: INITIAL_STATE,
   reducers: {
-    importKnownDevices: (_state, action: PayloadAction<KnownDevicesState>) => action.payload,
+    importKnownDevices: (_state, action: PayloadAction<KnownDevicesState>) =>
+      action.payload,
     addKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
       upsertKnownDevice(state, action.payload);
     },
     updateKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
       const newDevice = action.payload;
-      const deviceToUpdate = findMatchingKnownDevice(newDevice, state.knownDevices);
+      const deviceToUpdate = findMatchingKnownDevice(
+        newDevice,
+        state.knownDevices
+      );
 
       if (!deviceToUpdate) {
         upsertKnownDevice(state, newDevice);
         return;
       }
 
-      state.knownDevices = state.knownDevices.map(device =>
-        device.id === deviceToUpdate.id ? { ...device, ...newDevice } : device,
+      state.knownDevices = state.knownDevices.map((device) =>
+        device.id === deviceToUpdate.id ? { ...device, ...newDevice } : device
       );
     },
     removeKnownDevice: (state, action: PayloadAction<string>) => {
-      state.knownDevices = state.knownDevices.filter(device => device.id !== action.payload);
+      state.knownDevices = state.knownDevices.filter(
+        (device) => device.id !== action.payload
+      );
     },
     removeKnownDevices: (state, action: PayloadAction<string[]>) => {
-      state.knownDevices = state.knownDevices.filter(device => !action.payload.includes(device.id));
+      state.knownDevices = state.knownDevices.filter(
+        (device) => !action.payload.includes(device.id)
+      );
     },
-    saveKnownDeviceName: (state, action: PayloadAction<BleSaveDeviceNamePayload>) => {
+    saveKnownDeviceName: (
+      state,
+      action: PayloadAction<BleSaveDeviceNamePayload>
+    ) => {
       const { deviceId, name } = action.payload;
-      state.knownDevices = state.knownDevices.map(device =>
-        device.id === deviceId ? { ...device, name } : device,
+      state.knownDevices = state.knownDevices.map((device) =>
+        device.id === deviceId ? { ...device, name } : device
       );
     },
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder.addMatcher(
       (action): action is PayloadAction<BleImportBlePayload> =>
         action.type === BleActionTypes.BLE_IMPORT,
@@ -187,8 +219,10 @@ const knownDevicesSlice = createSlice({
           return;
         }
 
-        state.knownDevices = payload.knownDevices.map(mapBleDeviceToKnownDevice);
-      },
+        state.knownDevices = payload.knownDevices.map(
+          mapBleDeviceToKnownDevice
+        );
+      }
     );
   },
 });
@@ -203,11 +237,12 @@ export const {
 } = knownDevicesSlice.actions;
 
 export const exportSelector = (state: State): PersistedKnownDevicesState => ({
-  knownDevices: state.knownDevices.knownDevices.flatMap(device => {
+  knownDevices: state.knownDevices.knownDevices.flatMap((device) => {
     const persistedDevice = mapKnownDeviceToPersistedKnownDevice(device);
     return persistedDevice ? [persistedDevice] : [];
   }),
 });
-export const knownDevicesSelector = (state: State) => state.knownDevices.knownDevices;
+export const knownDevicesSelector = (state: State) =>
+  state.knownDevices.knownDevices;
 
 export default knownDevicesSlice.reducer;
