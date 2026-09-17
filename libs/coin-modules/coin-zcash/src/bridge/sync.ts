@@ -146,6 +146,13 @@ type ShieldedDestinations = {
  * from the sync that follows the scan which found its note. Until then the
  * account that signed it reads its own optimistic operation instead (see
  * `reconcileConfirmedPendingOperations`).
+ *
+ * Known gap: `hasTransparentInputs` is only reported by scanners recent enough
+ * to have carried it (see its doc in `network/types.ts`). A `SHIELDED_TX_INTERNAL`
+ * transaction recorded before then reads it as `undefined`, so it is silently
+ * left out of `credited` -- an account restored from that older scan keeps
+ * naming the change address for a shielding send it already made, until a
+ * fresh shielded scan re-reports the transaction with the field set.
  */
 function shieldedCredits(account: ZcashAccount | undefined): Set<string> {
   const credited = new Set<string>();

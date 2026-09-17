@@ -469,6 +469,54 @@ describe("performTransparentSync", () => {
     ]);
   });
 
+  // A restored account starts out exactly like the unscanned case above; once
+  // the shielded leg catches up and credits the transaction, the next tick
+  // must replace the stored operation rather than keep reporting change.
+  it("moves the recipient from the change address to the shielded one once the shielded leg credits the transaction", async () => {
+    getAccountTransactions.mockResolvedValue({ txs: [shieldingTx()] });
+    getZCashClient.mockResolvedValue({
+      transactionDetails: jest.fn(async () => [{ txid: "tx-shield", fee: "15000", payees: [] }]),
+    });
+    const account = {
+      id: "js:2:zcash:xpub6DZ:",
+      bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+    };
+
+    const uncredited =
+      (
+        await performTransparentSync(
+          info({
+            initialAccount: {
+              ...account,
+              operations: [],
+              privateInfo: privateInfo({ shieldedAddress: "u1ownshielded" }),
+            },
+          }),
+          signerContext,
+        )
+      ).operations ?? [];
+    expect(uncredited).toMatchObject([{ type: "OUT", recipients: [CHANGE] }]);
+
+    const credited =
+      (
+        await performTransparentSync(
+          info({
+            initialAccount: {
+              ...account,
+              operations: uncredited,
+              privateInfo: privateInfo({
+                shieldedAddress: "u1ownshielded",
+                transactions: [selfShieldingTx("tx-shield")],
+              }),
+            },
+          }),
+          signerContext,
+        )
+      ).operations ?? [];
+
+    expect(credited).toMatchObject([{ type: "OUT", recipients: ["u1ownshielded"] }]);
+  });
+
   it("stamps the private marker onto a stored OUT whose fee and recipients already match", async () => {
     getAccountTransactions.mockResolvedValue({ txs: [shieldingTx()] });
     getZCashClient.mockResolvedValue({
