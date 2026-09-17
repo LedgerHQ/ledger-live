@@ -15,7 +15,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/cloud-sync"
+    "unimported": "pnpm knip --directory ../.. -W shared/cloud-sync",
+    "lint": "lint-shared src",
+    "lint:fix": "lint-shared src --fix",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check"
   },
   "dependencies": {
     "base64-js": "1",
@@ -28,6 +32,10 @@
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/fmt-base": "workspace:*",
+    "@support/jest-shared": "workspace:*",
+    "@support/lint-shared": "workspace:*",
+    "@support/ts-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
@@ -36,7 +44,6 @@
     "@types/ws": "^8.5.3",
     "jest": "catalog:",
     "msw": "catalog:",
-    "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "typescript": "catalog:"
   }
 }

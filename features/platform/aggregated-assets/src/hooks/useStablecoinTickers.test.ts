@@ -4,8 +4,7 @@
 
 import { renderHook } from "@testing-library/react";
 import { useStablecoinTickers } from "./useStablecoinTickers";
-import { useGetAssetsByCategoryQuery } from "@domain/api-aggregated-assets";
-import { AssetCategory } from "@domain/api-aggregated-assets";
+import { AssetCategory, useGetAssetsByCategoryQuery } from "@domain/api-aggregated-assets";
 
 jest.mock("@domain/api-aggregated-assets", () => ({
   ...jest.requireActual("@domain/api-aggregated-assets"),

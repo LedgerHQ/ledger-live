@@ -1,0 +1,8 @@
+{
+  "name": "@support/lint-support",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

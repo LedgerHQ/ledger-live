@@ -12,14 +12,15 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/env/knip.web.config.mjs -W devtools/env --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/env/knip.native.config.mjs -W devtools/env --tsConfig tsconfig.native.json"
+    "lint": "lint-devtools src",
+    "unimported": "pnpm knip --directory ../.. -c devtools/env/knip.web.config.mjs -W devtools/env --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/env/knip.native.config.mjs -W devtools/env --tsConfig tsconfig.native.json",
+    "lint:fix": "lint-devtools src --fix"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -41,6 +42,9 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-devtools": "workspace:*",
+    "@support/ts-devtools": "workspace:*"
   }
 }

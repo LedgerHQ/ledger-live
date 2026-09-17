@@ -15,7 +15,11 @@
     "unimported": "pnpm knip --directory ../../.. -W features/platform/wallet-sync",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "lint": "lint-features-platform src",
+    "lint:fix": "lint-features-platform src --fix",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check"
   },
   "dependencies": {
     "@shared/cloud-sync": "workspace:^",
@@ -24,6 +28,9 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-features-platform": "workspace:*",
+    "@support/ts-features-platform": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

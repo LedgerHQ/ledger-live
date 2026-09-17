@@ -1,0 +1,18 @@
+{
+  "name": "@support/lint-devtools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Lint preset for devtools/* packages",
+  "exports": {
+    ".": "./oxlint.config.mts",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "lint-devtools": "./bin/lint-devtools.mjs"
+  },
+  "devDependencies": {
+    "@support/lint-base": "workspace:*",
+    "oxlint": "catalog:"
+  }
+}

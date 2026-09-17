@@ -1,0 +1,8 @@
+{
+  "name": "@support/ts-features-flow",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -1,8 +1,11 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "moduleSuffixes": [".native", ""]
-  },
-  "include": ["src/**/*", "**/*.d.ts"],
-  "exclude": ["node_modules", "src/**/*.web.*", "src/index.ts"]
+  "extends": [
+    "./tsconfig.json",
+    "@support/ts-features-flow/native"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/**/*.web.*",
+    "src/index.ts"
+  ]
 }

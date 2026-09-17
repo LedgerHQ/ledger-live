@@ -1,0 +1,9 @@
+{
+  "name": "@support/lint-libs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./oxlint.config.mts", "./package.json": "./package.json" },
+  "bin": { "lint-libs": "./bin/lint-libs.mjs" },
+  "devDependencies": { "@support/lint-base": "workspace:*", "oxlint": "catalog:" }
+}

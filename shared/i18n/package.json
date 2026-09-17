@@ -12,13 +12,15 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/i18n"
+    "unimported": "pnpm knip --directory ../.. -W shared/i18n",
+    "lint": "lint-shared src",
+    "lint:fix": "lint-shared src --fix"
   },
   "dependencies": {
     "i18next": "catalog:",
@@ -29,7 +31,10 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/fmt-base": "workspace:*",
     "@support/jest-shared": "workspace:*",
+    "@support/lint-shared": "workspace:*",
+    "@support/ts-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

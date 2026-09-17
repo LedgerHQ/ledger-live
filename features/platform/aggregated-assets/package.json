@@ -15,7 +15,11 @@
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage --passWithNoTests",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/aggregated-assets"
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/aggregated-assets",
+    "lint": "lint-features-platform src",
+    "lint:fix": "lint-features-platform src --fix",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check"
   },
   "dependencies": {
     "@domain/api-aggregated-assets": "workspace:*",
@@ -33,6 +37,9 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/env": "workspace:*",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-features-platform": "workspace:*",
+    "@support/ts-features-platform": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

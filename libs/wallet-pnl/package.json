@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/wallet-pnl",
   "version": "0.7.11",
-  "description": "Ledger Live wallet-pnl module – per-asset and portfolio Profit & Loss using Average Cost Basis (ACB)",
+  "description": "Ledger Live wallet-pnl module \u2013 per-asset and portfolio Profit & Loss using Average Cost Basis (ACB)",
   "keywords": [
     "Ledger"
   ],
@@ -51,7 +51,9 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-libs": "workspace:*"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -59,10 +61,10 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
-    "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
-    "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
+    "lint": "lint-libs ./src",
+    "lint:fix": "lint-libs ./src --fix",
+    "format": "fmt-base ./src",
+    "format:check": "fmt-base ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "coverage": "jest --coverage"

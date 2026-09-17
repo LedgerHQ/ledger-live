@@ -22,8 +22,8 @@
     "build": "tsc --project tsconfig.prod.json",
     "watch": "tsc --watch --project tsconfig.prod.json",
     "watch:es": "pnpm watch",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "lint-libs ./src",
+    "lint:fix": "lint-libs ./src --fix",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "pnpm knip --directory ../.. -W libs/live-dmk-mobile",
     "coverage": "jest --coverage",
@@ -45,6 +45,7 @@
   "devDependencies": {
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/lint-libs": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

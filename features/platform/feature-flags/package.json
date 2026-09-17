@@ -16,7 +16,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/feature-flags"
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/feature-flags",
+    "lint": "lint-features-platform src",
+    "lint:fix": "lint-features-platform src --fix",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check"
   },
   "dependencies": {
     "@shared/feature-flags": "workspace:^",
@@ -29,6 +33,9 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-features-platform": "workspace:*",
+    "@support/ts-features-platform": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

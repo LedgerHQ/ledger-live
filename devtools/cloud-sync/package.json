@@ -15,8 +15,8 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "pnpm run test:web && pnpm run test:native",
     "test:web": "jest --config jest.config.js",
@@ -25,8 +25,9 @@
     "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/cloud-sync/knip.web.config.mjs -W devtools/cloud-sync --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/cloud-sync/knip.native.config.mjs -W devtools/cloud-sync --tsConfig tsconfig.native.json"
+    "lint": "lint-devtools src",
+    "unimported": "pnpm knip --directory ../.. -c devtools/cloud-sync/knip.web.config.mjs -W devtools/cloud-sync --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/cloud-sync/knip.native.config.mjs -W devtools/cloud-sync --tsConfig tsconfig.native.json",
+    "lint:fix": "lint-devtools src --fix"
   },
   "dependencies": {
     "@shared/cloud-sync": "workspace:^"
@@ -68,7 +69,10 @@
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "tailwind-merge": "catalog:",
-    "react-test-renderer": "catalog:"
+    "react-test-renderer": "catalog:",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-devtools": "workspace:*",
+    "@support/ts-devtools": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19",

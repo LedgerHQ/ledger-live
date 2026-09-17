@@ -1,0 +1,17 @@
+{
+  "name": "@support/fmt-base",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The repo's single oxfmt preset",
+  "exports": {
+    ".": "./oxfmt.config.mts",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "fmt-base": "./bin/fmt-base.mjs"
+  },
+  "devDependencies": {
+    "oxfmt": "catalog:"
+  }
+}

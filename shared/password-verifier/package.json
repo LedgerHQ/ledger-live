@@ -11,22 +11,27 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/password-verifier"
+    "unimported": "pnpm knip --directory ../.. -W shared/password-verifier",
+    "lint": "lint-shared src",
+    "lint:fix": "lint-shared src --fix"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/fmt-base": "workspace:*",
+    "@support/jest-shared": "workspace:*",
+    "@support/lint-shared": "workspace:*",
+    "@support/ts-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "typescript": "catalog:"
   }
 }

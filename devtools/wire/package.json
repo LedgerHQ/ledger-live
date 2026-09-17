@@ -2,18 +2,19 @@
   "name": "@devtools/wire",
   "version": "0.5.0",
   "private": true,
-  "description": "Store-aware protocol builders and transport assembly for DevTools host ⇄ tool communication",
+  "description": "Store-aware protocol builders and transport assembly for DevTools host \u21c4 tool communication",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src jest.config.js",
-    "format:check": "oxfmt src jest.config.js --check",
+    "format": "fmt-base src jest.config.js",
+    "format:check": "fmt-base src jest.config.js --check",
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -W devtools/wire"
+    "lint": "lint-devtools src",
+    "unimported": "pnpm knip --directory ../.. -W devtools/wire",
+    "lint:fix": "lint-devtools src --fix"
   },
   "dependencies": {
     "@devtools/protocols": "workspace:*",
@@ -25,6 +26,9 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-devtools": "workspace:*",
+    "@support/ts-devtools": "workspace:*"
   }
 }

@@ -1,0 +1,18 @@
+{
+  "name": "@support/lint-features-platform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Lint preset for features/platform/* packages",
+  "exports": {
+    ".": "./oxlint.config.mts",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "lint-features-platform": "./bin/lint-features-platform.mjs"
+  },
+  "devDependencies": {
+    "@support/lint-base": "workspace:*",
+    "oxlint": "catalog:"
+  }
+}

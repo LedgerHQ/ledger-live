@@ -16,12 +16,14 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-introduction/knip.web.config.mjs -W features/flow/flow-contacts-introduction --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-introduction/knip.native.config.mjs -W features/flow/flow-contacts-introduction --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-introduction/knip.web.config.mjs -W features/flow/flow-contacts-introduction --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-introduction/knip.native.config.mjs -W features/flow/flow-contacts-introduction --tsConfig tsconfig.native.json",
+    "lint": "lint-features-flow src",
+    "lint:fix": "lint-features-flow src --fix"
   },
   "dependencies": {
     "class-variance-authority": "catalog:",
@@ -46,9 +48,12 @@
     }
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@support/fmt-base": "workspace:*",
+    "@support/jest-features-flow": "workspace:*",
+    "@support/lint-features-flow": "workspace:*",
+    "@support/ts-features-flow": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

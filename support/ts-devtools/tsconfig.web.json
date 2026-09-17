@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "moduleSuffixes": [
+      ".web",
+      ""
+    ]
+  },
+  "include": [
+    "${configDir}/src/**/*",
+    "${configDir}/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "${configDir}/src/**/*.native.*",
+    "${configDir}/src/**/native.ts"
+  ]
+}

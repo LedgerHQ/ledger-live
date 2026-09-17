@@ -15,13 +15,15 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.web.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.native.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.web.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.native.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.native.json",
+    "lint": "lint-features-platform src",
+    "lint:fix": "lint-features-platform src --fix"
   },
   "dependencies": {
     "@features/platform-style": "workspace:^"
@@ -63,7 +65,10 @@
   "devDependencies": {
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@support/fmt-base": "workspace:*",
     "@support/jest-features-flow": "workspace:*",
+    "@support/lint-features-platform": "workspace:*",
+    "@support/ts-features-platform": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

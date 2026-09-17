@@ -1,15 +1,19 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/ts-shared",
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "noEmit": true,
-    "moduleSuffixes": [".native", ""],
-    "types": ["jest"]
+    "lib": [
+      "ES2022"
+    ],
+    "moduleSuffixes": [
+      ".native",
+      ""
+    ]
   },
-  "include": ["src/**/*", "**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*",
+    "**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,0 +1,14 @@
+{
+  "name": "@support/ts-domain",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript config preset for domain/* packages (platform-agnostic)",
+  "exports": {
+    ".": "./tsconfig.json",
+    "./tsconfig.json": "./tsconfig.json",
+    "./package.json": "./package.json"
+  },
+  "devDependencies": {
+    "@support/ts-base": "workspace:*"
+  }
+}

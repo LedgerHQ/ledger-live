@@ -1,0 +1,12 @@
+{
+  "name": "@support/ts-base",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monorepo base TypeScript config, extended by the root tsconfig.base.json and every ts-* layer preset",
+  "exports": {
+    ".": "./tsconfig.json",
+    "./tsconfig.json": "./tsconfig.json",
+    "./package.json": "./package.json"
+  },
+  "devDependencies": {}
+}

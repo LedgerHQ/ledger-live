@@ -1,8 +1,6 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "moduleSuffixes": [".web", ""]
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/**/*.native.*"]
+  "extends": [
+    "./tsconfig.json",
+    "@support/ts-features-flow/web"
+  ]
 }

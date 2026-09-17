@@ -13,13 +13,17 @@
   "scripts": {
     "test": "node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint ./",
-    "lint:fix": "oxlint ./ --fix --quiet"
+    "lint": "lint-support src",
+    "lint:fix": "lint-support src --fix",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check"
   },
   "devDependencies": {
     "@jest/reporters": "catalog:",
     "@jest/test-result": "catalog:",
     "@playwright/test": "catalog:",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-support": "workspace:*",
     "@types/node": "catalog:",
     "jest": "catalog:",
     "typescript": "catalog:"

@@ -11,13 +11,15 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/verify-address-intent"
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/verify-address-intent",
+    "lint": "lint-features-platform src",
+    "lint:fix": "lint-features-platform src --fix"
   },
   "dependencies": {
     "@features/platform-device-intent": "workspace:^"
@@ -28,6 +30,9 @@
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-features-platform": "workspace:*",
+    "@support/ts-features-platform": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

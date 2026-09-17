@@ -1,17 +1,16 @@
 {
-  "extends": "../../../tsconfig.base.json",
+  "extends": "@support/ts-features-platform",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "lib": ["ES2022", "DOM"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "noEmit": true,
-    "types": ["jest"]
+    "types": [
+      "jest"
+    ]
   },
-  "files": [],
   "references": [
-    { "path": "./tsconfig.web.json" },
-    { "path": "./tsconfig.native.json" }
+    {
+      "path": "./tsconfig.web.json"
+    },
+    {
+      "path": "./tsconfig.native.json"
+    }
   ]
 }

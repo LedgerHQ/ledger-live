@@ -23,12 +23,14 @@
   "dependencies": {},
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-libs": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "oxlint": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -36,10 +38,10 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
-    "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
-    "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
+    "lint": "lint-libs ./src",
+    "lint:fix": "lint-libs ./src --fix",
+    "format": "fmt-base ./src",
+    "format:check": "fmt-base ./src --check",
     "test": "jest",
     "coverage": "jest --coverage",
     "typecheck": "tsc --noEmit --customConditions node",

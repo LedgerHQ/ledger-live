@@ -1,14 +1,24 @@
 {
-  "extends": "../../../tsconfig.base.json",
+  "extends": "@support/ts-features-platform",
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "paths": { "*": ["./*"] },
-    "noEmit": true,
-    "types": ["jest", "node"]
+    "lib": [
+      "ES2022"
+    ],
+    "paths": {
+      "*": [
+        "./*"
+      ]
+    },
+    "types": [
+      "jest",
+      "node"
+    ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
 }

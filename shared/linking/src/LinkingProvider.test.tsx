@@ -1,6 +1,5 @@
-import React, { type ReactNode } from "react";
+import React, { act, type ReactNode } from "react";
 import ReactDOM from "react-dom/client";
-import { act } from "react";
 import { LinkingProvider, useOpenLink, useLocalizedUrl } from "./LinkingProvider";
 import type { LinkingConfig } from "./types";
 

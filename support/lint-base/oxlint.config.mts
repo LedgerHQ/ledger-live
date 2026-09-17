@@ -1,16 +1,94 @@
-import { defineConfig } from "oxlint";
 import { fileURLToPath } from "node:url";
+import { defineConfig } from "oxlint";
 
+// The root of the lint preset chain. Every `@support/lint-*` preset extends this object, so the
+// baseline is written once and a layer preset only records where it differs.
+//
+// Most of what follows is *demotions*. oxlint's `correctness` category is an error by default and
+// contains the React Compiler rules, which this codebase treats as advice rather than as a build
+// break. Every layer that lints today had already reached that conclusion on its own; collecting
+// the decisions here is what lets a previously-unlinted layer switch lint on without going red.
+//
+// `jsPlugins` is resolved from this file's own URL, so a consumer at any depth inherits a working
+// absolute path and never names the plugin itself.
 export default defineConfig({
-  plugins: ["typescript", "import"],
+  env: { browser: true, es6: true, node: true },
+  plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
   jsPlugins: [fileURLToPath(new URL("./src/suffix-imports.js", import.meta.url))],
-  categories: { correctness: "error" },
+  ignorePatterns: ["*.js", "*.cjs", "*.mjs", "node_modules"],
+  categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   rules: {
-    "typescript/no-explicit-any": "error",
-    "suffix-imports/no-platform-suffix": "error",
+    // Named by four or more layers today, at the value the majority chose. `no-explicit-any` is
+    // the floor: the layers that want it fatal raise it themselves.
+    "eslint/no-console": ["error", { allow: ["warn", "error"] }],
+    "eslint/no-empty-pattern": "warn",
+    "eslint/no-unused-vars": "warn",
+    "import/no-duplicates": "error",
+    "import/no-named-as-default": "off",
+    "typescript/no-deprecated": "error",
+    "typescript/no-explicit-any": "warn",
+    "unicorn/no-useless-fallback-in-spread": "off",
+    "unicorn/no-useless-spread": "off",
+
+    // React Compiler rules. They ship in `correctness`, they fire in the hundreds across the repo,
+    // and no layer enforces them; every React-bearing config demotes the ones it has met.
+    "react/globals": "warn",
+    "react/immutability": "warn",
+    "react/jsx-key": "warn",
+    "react/no-did-mount-set-state": "warn",
+    "react/preserve-manual-memoization": "warn",
+    "react/purity": "warn",
+    "react/refs": "warn",
+    "react/set-state-in-effect": "warn",
+    "react/set-state-in-render": "warn",
+    "react/static-components": "warn",
+    "react/use-memo": "warn",
+    "react/display-name": "off",
+    // Every app and package compiles JSX with the automatic runtime, so React is never in scope.
+    "react/react-in-jsx-scope": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+
+    // Advisory test-style rules. Without these the previously-unlinted layers go red on test
+    // style alone: `jest/require-to-throw-message` is 129 errors in domain/ by itself.
+    "jest/expect-expect": "warn",
+    "jest/no-conditional-expect": "warn",
+    "jest/no-disabled-tests": "warn",
+    "jest/require-to-throw-message": "warn",
+    "jest/valid-title": "warn",
+
+    // jsx-a11y assumes the DOM. These two are the ones that misfire on React Native.
+    "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/no-autofocus": "off",
+
+    // Demoted or disabled identically by every config that names them.
+    "eslint/no-constant-binary-expression": "warn",
+    "eslint/no-unsafe-optional-chaining": "off",
+    "eslint/no-unused-expressions": "warn",
+    "eslint/no-useless-rename": "warn",
+    "import/namespace": "warn",
+    "oxc/const-comparisons": "warn",
+    "typescript/no-non-null-assertion": "off",
+    "unicorn/no-new-array": "off",
+    "unicorn/no-array-sort": "off",
+
+    // Declared so any layer can flip it on without naming a plugin path. Only lint-devtools
+    // enforces it today; the platform-suffix epic turns it on layer by layer, with its waiver
+    // list living here as `**/`-prefixed globs (see README).
+    "suffix-imports/no-platform-suffix": "off",
   },
   overrides: [
-    { files: ["**/spike-waived/**"], rules: { "typescript/no-explicit-any": "off" } },
-    { files: ["spike/consumer/src/**"], rules: { "eslint/no-debugger": "off" } },
+    {
+      files: ["**/*.test.{ts,tsx}", "**/__tests__/**"],
+      env: { jest: true },
+      plugins: ["jest"],
+      rules: { "typescript/no-explicit-any": "warn" },
+    },
+    {
+      // jsx-a11y encodes DOM and ARIA semantics. On React Native `role` is an ordinary prop with
+      // its own vocabulary, and components define their own `role` too, so the rule misfires.
+      files: ["**/*.native.*"],
+      rules: { "jsx-a11y/aria-role": "off" },
+    },
   ],
 });

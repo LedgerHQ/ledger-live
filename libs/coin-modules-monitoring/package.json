@@ -7,8 +7,8 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "rslib build && node scripts/postbuild.mjs",
-    "lint": "oxlint ./src",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "lint-libs ./src -A no-console",
+    "lint:fix": "lint-libs ./src -A no-console --fix",
     "test": "jest",
     "typecheck": "tsc --project ./tsconfig.json --noEmit --customConditions node",
     "start": "node lib/cli.js",
@@ -32,6 +32,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@rslib/core": "catalog:",
+    "@support/lint-libs": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/command-line-args": "5.2.3",

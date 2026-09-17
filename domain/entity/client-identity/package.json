@@ -16,7 +16,11 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "check-export-rules": "node scripts/check-export-rules.mjs",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/client-identity"
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/client-identity",
+    "lint": "lint-domain src",
+    "lint:fix": "lint-domain src --fix",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
@@ -25,10 +29,13 @@
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@types/node": "catalog:",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-domain": "workspace:*",
+    "@support/ts-domain": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/uuid": "^9.0.0",
     "jest": "catalog:",
     "typescript": "catalog:"

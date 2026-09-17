@@ -21,12 +21,14 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check",
     "typecheck": "tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "lint": "lint-shared src",
+    "lint:fix": "lint-shared src --fix"
   },
   "dependencies": {
     "uuid": "8.3.2"
@@ -56,6 +58,10 @@
     "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/fmt-base": "workspace:*",
+    "@support/jest-shared": "workspace:*",
+    "@support/lint-shared": "workspace:*",
+    "@support/ts-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/react-native": "catalog:",
@@ -68,7 +74,6 @@
     "react-native": "catalog:",
     "react-native-safe-area-context": "catalog:",
     "react-test-renderer": "catalog:",
-    "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "typescript": "catalog:"
   }
 }

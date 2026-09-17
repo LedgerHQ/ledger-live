@@ -18,7 +18,11 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "lint": "lint-features-platform src",
+    "lint:fix": "lint-features-platform src --fix",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check"
   },
   "dependencies": {
     "@domain/api-currency-token": "workspace:^",
@@ -35,6 +39,9 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/feature-flags": "workspace:^",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-features-platform": "workspace:*",
+    "@support/ts-features-platform": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

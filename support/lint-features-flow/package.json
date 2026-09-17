@@ -1,0 +1,18 @@
+{
+  "name": "@support/lint-features-flow",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Lint preset for features/flow/* packages",
+  "exports": {
+    ".": "./oxlint.config.mts",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "lint-features-flow": "./bin/lint-features-flow.mjs"
+  },
+  "devDependencies": {
+    "@support/lint-base": "workspace:*",
+    "oxlint": "catalog:"
+  }
+}

@@ -2,7 +2,7 @@
   "name": "@devtools/shell",
   "version": "0.9.3",
   "private": true,
-  "description": "Ledger Live DevTools — cross-platform debug component",
+  "description": "Ledger Live DevTools \u2014 cross-platform debug component",
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
@@ -15,8 +15,8 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src jest",
-    "format:check": "oxfmt src jest --check",
+    "format": "fmt-base src jest",
+    "format:check": "fmt-base src jest --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "pnpm run test:web && pnpm run test:native",
     "test:native": "jest --config jest.native.config.js",
@@ -25,8 +25,9 @@
     "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/shell/knip.web.config.mjs -W devtools/shell --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/shell/knip.native.config.mjs -W devtools/shell --tsConfig tsconfig.native.json"
+    "lint": "lint-devtools src",
+    "unimported": "pnpm knip --directory ../.. -c devtools/shell/knip.web.config.mjs -W devtools/shell --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/shell/knip.native.config.mjs -W devtools/shell --tsConfig tsconfig.native.json",
+    "lint:fix": "lint-devtools src --fix"
   },
   "dependencies": {
     "@devtools/registry": "workspace:*"
@@ -148,6 +149,9 @@
     "react-test-renderer": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:",
-    "jest-sonar": "0.2.16"
+    "jest-sonar": "0.2.16",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-devtools": "workspace:*",
+    "@support/ts-devtools": "workspace:*"
   }
 }

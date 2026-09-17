@@ -52,15 +52,21 @@ function listPackages() {
   return out;
 }
 
-// Turns `oxlint -c ../x/.oxlintrc.json ./src && pnpm lint:tailwind` into the oxlint argv. The `&&`
-// tail is dropped: it is the tailwind eslint sidecar, which this snapshot does not cover.
-function oxlintArgs(script) {
+// Resolves a package's `lint` script to something runnable with `-f json`. Two shapes exist: a
+// direct `oxlint ...` call, and a `@support/lint-*` preset bin linked into the package's own
+// node_modules/.bin, which forwards its arguments straight to oxlint. The `&& pnpm lint:tailwind`
+// tail is dropped either way: that is the tailwind eslint sidecar, which this snapshot does not
+// cover.
+function lintInvocation(script, pkgDir) {
   const head = script.split("&&")[0].trim();
   const tokens = head.match(/'[^']*'|"[^"]*"|\S+/g) ?? [];
-  if (tokens[0] !== "oxlint" && tokens[0] !== "pnpm") return null;
-  const start = tokens.indexOf("oxlint");
-  if (start === -1) return null;
-  return tokens.slice(start + 1).map(t => t.replace(/^['"]|['"]$/g, ""));
+  if (tokens.length === 0) return null;
+  const stripped = tokens.map(t => t.replace(/^['"]|['"]$/g, ""));
+  const start = stripped.indexOf("oxlint");
+  if (start !== -1) return { bin: oxlintCli, args: stripped.slice(start + 1) };
+  const presetBin = join(pkgDir, "node_modules", ".bin", stripped[0]);
+  if (existsSync(presetBin)) return { bin: presetBin, args: stripped.slice(1) };
+  return null;
 }
 
 function snapshot() {
@@ -74,12 +80,17 @@ function snapshot() {
     }
     const script = manifest.scripts?.lint;
     if (!script) continue;
-    const args = oxlintArgs(script);
-    if (!args) {
+    const invocation = lintInvocation(script, pkg.dir);
+    if (!invocation) {
       result[pkg.rel] = { script, error: "unparsed" };
       continue;
     }
-    const run = spawnSync(process.execPath, [oxlintCli, ...args, "-f", "json"], {
+    // A preset bin is a pnpm shell shim, not a JS file, so it is spawned directly; the raw oxlint
+    // CLI still goes through node.
+    const direct = invocation.bin !== oxlintCli;
+    const cmd = direct ? invocation.bin : process.execPath;
+    const argv = direct ? invocation.args : [invocation.bin, ...invocation.args];
+    const run = spawnSync(cmd, [...argv, "-f", "json"], {
       cwd: pkg.dir,
       encoding: "utf8",
       maxBuffer: 256 * 1024 * 1024,

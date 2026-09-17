@@ -1,14 +1,16 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/ts-devtools",
   "compilerOptions": {
-    "lib": ["ES2022", "DOM"],
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "moduleSuffixes": [".web", ""],
-    "noEmit": true,
-    "types": ["jest"]
+    "moduleSuffixes": [
+      ".web",
+      ""
+    ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

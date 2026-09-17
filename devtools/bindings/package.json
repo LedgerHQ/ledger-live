@@ -12,13 +12,14 @@
   "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/bindings/knip.web.config.mjs -W devtools/bindings --tsConfig tsconfig.json && pnpm knip --directory ../.. -c devtools/bindings/knip.native.config.mjs -W devtools/bindings --tsConfig tsconfig.json"
+    "lint": "lint-devtools src",
+    "unimported": "pnpm knip --directory ../.. -c devtools/bindings/knip.web.config.mjs -W devtools/bindings --tsConfig tsconfig.json && pnpm knip --directory ../.. -c devtools/bindings/knip.native.config.mjs -W devtools/bindings --tsConfig tsconfig.json",
+    "lint:fix": "lint-devtools src --fix"
   },
   "dependencies": {
     "@devtools/env": "workspace:*",
@@ -58,6 +59,9 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-devtools": "workspace:*",
+    "@support/ts-devtools": "workspace:*"
   }
 }

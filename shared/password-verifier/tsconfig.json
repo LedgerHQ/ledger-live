@@ -1,13 +1,15 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/ts-shared",
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "noEmit": true,
-    "types": ["jest"]
+    "lib": [
+      "ES2022"
+    ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
 }

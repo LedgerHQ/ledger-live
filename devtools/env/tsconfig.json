@@ -1,17 +1,14 @@
 {
-    "extends": "../../tsconfig.base.json",
-    "compilerOptions": {
-        "lib": ["ES2022", "DOM"],
-        "target": "ES2022",
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "jsx": "react-jsx",
-        "noEmit": true,
-        "types": []
+  "extends": "@support/ts-devtools",
+  "compilerOptions": {
+    "types": []
+  },
+  "references": [
+    {
+      "path": "./tsconfig.web.json"
     },
-    "files": [],
-    "references": [
-        { "path": "./tsconfig.web.json" },
-        { "path": "./tsconfig.native.json" }
-    ]
+    {
+      "path": "./tsconfig.native.json"
+    }
+  ]
 }

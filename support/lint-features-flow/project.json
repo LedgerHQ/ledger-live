@@ -1,0 +1,8 @@
+{
+  "name": "@support/lint-features-flow",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

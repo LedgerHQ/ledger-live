@@ -17,13 +17,15 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -c shared/ui-info-state/knip.web.config.mjs -W shared/ui-info-state --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c shared/ui-info-state/knip.native.config.mjs -W shared/ui-info-state --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../.. -c shared/ui-info-state/knip.web.config.mjs -W shared/ui-info-state --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c shared/ui-info-state/knip.native.config.mjs -W shared/ui-info-state --tsConfig tsconfig.native.json",
+    "lint": "lint-shared src",
+    "lint:fix": "lint-shared src --fix"
   },
   "dependencies": {
     "@shared/ui-queued-bottom-sheet": "workspace:*",
@@ -51,7 +53,10 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/fmt-base": "workspace:*",
     "@support/jest-shared": "workspace:*",
+    "@support/lint-shared": "workspace:*",
+    "@support/ts-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

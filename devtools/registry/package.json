@@ -7,14 +7,15 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
+    "format": "fmt-base src",
+    "format:check": "fmt-base src --check",
     "add-tool": "nx g @ledgerhq/generators:devtool && oxfmt src",
     "reformat": "nx g @ledgerhq/generators:reformat-devtool-registry && oxfmt src",
     "typecheck": "tsc --noEmit",
     "coverage": "echo \"no tests in @devtools/registry\"",
-    "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -W devtools/registry"
+    "lint": "lint-devtools src",
+    "unimported": "pnpm knip --directory ../.. -W devtools/registry",
+    "lint:fix": "lint-devtools src --fix"
   },
   "dependencies": {
     "zod": "catalog:",
@@ -31,6 +32,9 @@
     "@types/react": "catalog:",
     "react": "catalog:",
     "typescript": "catalog:",
-    "@ledgerhq/generators": "workspace:*"
+    "@ledgerhq/generators": "workspace:*",
+    "@support/fmt-base": "workspace:*",
+    "@support/lint-devtools": "workspace:*",
+    "@support/ts-devtools": "workspace:*"
   }
 }

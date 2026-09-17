@@ -1,4 +1,4 @@
-import { createElement, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { contactsSlice } from "@domain/entity-contact";
@@ -12,6 +12,6 @@ export function makeContactsWrapper(
   });
 
   return function Wrapper({ children }: { readonly children: ReactNode }) {
-    return createElement(Provider, { store, children });
+    return <Provider store={store}>{children}</Provider>;
   };
 }

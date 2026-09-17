@@ -60,7 +60,8 @@
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "jest": "catalog:"
+    "jest": "catalog:",
+    "@support/lint-libs": "workspace:*"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -68,8 +69,8 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "lint-libs ./src",
+    "lint:fix": "lint-libs ./src --fix",
     "test": "jest",
     "coverage": "jest --coverage",
     "unimported": "unimported"
