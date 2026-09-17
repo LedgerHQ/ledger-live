@@ -5,12 +5,23 @@ export const CARD_LOGIN_INTRO_RESOURCES = {
         cardLogin: {
           title: "Crypto Card",
           beforeIntro: {
+            title: "Get your crypto card",
             description: "Get 1% cashback every time you spend",
             action: "Get card",
+            alreadyHaveCard: "I already have a card",
           },
           afterIntro: {
-            description: "Log in to access your card",
-            action: "Login",
+            title: "Log in to access your Card",
+            description: "You’ve been logged out for security",
+            action: "Log in",
+          },
+          errors: {
+            pkce_failed: "Login could not start. Please try again.",
+            browser_open_failed: "The login page could not open. Please try again.",
+            missing_attempt: "This login is no longer valid. Please log in again.",
+            exchange_failed: "Login could not be completed. Please try again.",
+            persist_failed: "Your session could not be saved. Please try again.",
+            fetch_user_failed: "Your card could not be loaded. Please try again.",
           },
         },
         cardLoginIntro: {

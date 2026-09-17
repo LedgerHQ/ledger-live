@@ -240,9 +240,15 @@ export type PublicKeyAccountsResponse = Array<{
 /**
  * Response from /v2/accBalance/{address}
  * Wallet-proxy returns balance information including CCD balance, PLT balance, and cooldowns
+ *
+ * `finalizedBalance` is absent for an address that does not exist on chain: the
+ * proxy answers `200` with a bare `{}` rather than a 404, so a caller reading
+ * through it without a guard throws a `TypeError` instead of learning that the
+ * account is unknown. Verified against testnet with a checksum-valid address
+ * that was never created.
  */
 export interface AccountBalanceResponse {
-  finalizedBalance: {
+  finalizedBalance?: {
     accountAmount: string; // Total balance in microCCD
     accountAtDisposal: string; // Available balance in microCCD (after cooldowns/reserves)
     accountCooldowns: Array<{
@@ -382,6 +388,16 @@ export interface PltAccountToken {
  * verified, rather than letting the transfer reach the chain to be rejected.
  */
 export type PltListStatus = "allowed" | "blocked" | "unknown";
+
+/**
+ * The same check before it is folded, naming which rule refused.
+ *
+ * {@link PltListStatus} exists because the sender's verdict is persisted and
+ * only the verdict is, so its cause cannot be recovered later. The recipient is
+ * resolved from a live lookup at the moment it is reported, so the cause is
+ * still in hand — and the send flow shows a different message for each.
+ */
+export type PltListVerdict = "allowed" | "notAllowed" | "denied" | "unknown";
 
 /**
  * Whether this account may transfer a token: pause state and both list rules

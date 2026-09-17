@@ -1,15 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useGetCardOnboardingStatusQuery,
-  type PayCardOnboardingStep,
-} from "@domain/api-card-management";
 import { markCardOnboardingCompleted, selectHasCompletedCardOnboarding } from "../../state";
-import { useOnboardingSteps } from "./useOnboardingSteps";
+import { useCardOnboardingStatus } from "../../onboardingStatus";
+import { useOnboardingSteps, type CardOnboardingStepWithCopy } from "./useOnboardingSteps";
 
 export type CardOnboardingViewModelResult = {
   readonly isOpen: boolean;
-  readonly steps: PayCardOnboardingStep[];
+  readonly steps: CardOnboardingStepWithCopy[];
   readonly completedCount: number;
   readonly totalCount: number;
   readonly onboardingCompleted: boolean;
@@ -21,17 +18,15 @@ export type CardOnboardingViewModelResult = {
   readonly handleGotIt: () => void;
 };
 
-const NO_STEPS: readonly PayCardOnboardingStep[] = [];
-
 export function useCardOnboardingViewModel(): CardOnboardingViewModelResult {
   const [isOpen, setIsOpen] = useState(false);
-  const { data, isLoading, isError } = useGetCardOnboardingStatusQuery();
+  const { data, isLoading, isError } = useCardOnboardingStatus();
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(selectHasCompletedCardOnboarding);
 
-  const steps = useOnboardingSteps(data?.steps ?? NO_STEPS);
-  const completedCount = useMemo(() => steps.filter(s => s.isDone).length, [steps]);
-  const totalCount = steps.length;
+  const steps = useOnboardingSteps(data.steps);
+  const completedCount = data.completedCount;
+  const totalCount = data.steps.length;
   const onboardingCompleted = totalCount > 0 && completedCount === totalCount;
 
   const handleOpen = useCallback(() => setIsOpen(true), []);

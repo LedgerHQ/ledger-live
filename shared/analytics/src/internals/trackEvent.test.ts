@@ -49,7 +49,7 @@ describe("trackEvent", () => {
       setAnalytics(analyticsClient);
       setExtraPropsFn(() => ({ appVersion: "1.2.3" }));
 
-      await trackEvent("track", "Sync Event", {});
+      await trackEvent({ kind: "track", eventName: "Sync Event", props: {} });
 
       expect(analyticsClient.track).toHaveBeenCalledWith("Sync Event", {
         appVersion: "1.2.3",
@@ -67,7 +67,7 @@ describe("trackEvent", () => {
           }),
       );
 
-      const pending = trackEvent("track", "Async Event", {});
+      const pending = trackEvent({ kind: "track", eventName: "Async Event", props: {} });
 
       expect(analyticsClient.track).not.toHaveBeenCalled();
       resolveExtras({ appVersion: "1.2.3" });
@@ -83,7 +83,7 @@ describe("trackEvent", () => {
       const extraProps = jest.fn(() => ({}));
       setExtraPropsFn(extraProps);
 
-      await trackEvent("track", "Stateful", {});
+      await trackEvent({ kind: "track", eventName: "Stateful", props: {} });
 
       expect(extraProps).toHaveBeenCalledWith();
     });
@@ -93,7 +93,11 @@ describe("trackEvent", () => {
       setAnalytics(analyticsClient);
       setExtraPropsFn(() => ({ platform: "desktop" }));
 
-      await trackEvent("track", "Collision", { platform: "caller-supplied" });
+      await trackEvent({
+        kind: "track",
+        eventName: "Collision",
+        props: { platform: "caller-supplied" },
+      });
 
       expect(analyticsClient.track).toHaveBeenCalledWith("Collision", {
         platform: "desktop",
@@ -105,7 +109,12 @@ describe("trackEvent", () => {
       setAnalytics(analyticsClient);
       setMandatoryExtraPropsFn(() => ({ mandatory: "props" }));
 
-      await trackEvent("track", "Mandatory Event", { flow: "onboarding" }, { mandatory: true });
+      await trackEvent({
+        kind: "track",
+        eventName: "Mandatory Event",
+        props: { flow: "onboarding" },
+        mandatory: true,
+      });
 
       expect(analyticsClient.track).toHaveBeenCalledWith("Mandatory Event", {
         flow: "onboarding",
@@ -118,7 +127,9 @@ describe("trackEvent", () => {
       setAnalytics(analyticsClient);
       setExtraPropsFn(() => Promise.reject(new Error("permission read failed")));
 
-      await expect(trackEvent("track", "Unenrichable", { foo: "bar" })).resolves.toBeUndefined();
+      await expect(
+        trackEvent({ kind: "track", eventName: "Unenrichable", props: { foo: "bar" } }),
+      ).resolves.toBeUndefined();
 
       expect(analyticsClient.track).not.toHaveBeenCalled();
       expect(events).toEqual([
@@ -138,7 +149,7 @@ describe("trackEvent", () => {
         throw new Error("permission read failed");
       });
 
-      await trackEvent("track", "Unenrichable", { foo: "bar" });
+      await trackEvent({ kind: "track", eventName: "Unenrichable", props: { foo: "bar" } });
 
       expect(analyticsClient.track).not.toHaveBeenCalled();
       expect(events).toEqual([
@@ -158,7 +169,11 @@ describe("trackEvent", () => {
       setAnalytics(analyticsClient);
       setPropsFilter(scrubSensitive);
 
-      await trackEvent("track", "Tracking Event", { sensitive: "data to filter", theme: "light" });
+      await trackEvent({
+        kind: "track",
+        eventName: "Tracking Event",
+        props: { sensitive: "data to filter", theme: "light" },
+      });
 
       expect(analyticsClient.track).toHaveBeenCalledWith("Tracking Event", {
         theme: "light",
@@ -171,7 +186,7 @@ describe("trackEvent", () => {
       setExtraPropsFn(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
       setPropsFilter(scrubSensitive);
 
-      await trackEvent("track", "Enriched Event", { theme: "light" });
+      await trackEvent({ kind: "track", eventName: "Enriched Event", props: { theme: "light" } });
 
       expect(analyticsClient.track).toHaveBeenCalledWith("Enriched Event", {
         theme: "light",
@@ -184,7 +199,7 @@ describe("trackEvent", () => {
       setExtraPropsFn(() => ({ sensitive: "from-enricher", appVersion: "1.2.3" }));
       setPropsFilter(scrubSensitive);
 
-      await trackEvent("track", "Subject Event", { theme: "light" });
+      await trackEvent({ kind: "track", eventName: "Subject Event", props: { theme: "light" } });
 
       expect(events[0]).toEqual(
         expect.objectContaining({
@@ -200,7 +215,11 @@ describe("trackEvent", () => {
       setExtraPropsFn(() => Promise.reject(new Error("permission read failed")));
       setPropsFilter(scrubSensitive);
 
-      await trackEvent("track", "Unenrichable", { sensitive: "data to filter", theme: "light" });
+      await trackEvent({
+        kind: "track",
+        eventName: "Unenrichable",
+        props: { sensitive: "data to filter", theme: "light" },
+      });
 
       expect(events).toEqual([
         expect.objectContaining({
@@ -219,7 +238,7 @@ describe("trackEvent", () => {
         throw new Error("filter failed");
       });
 
-      await trackEvent("track", "Filtered Event", { theme: "light" });
+      await trackEvent({ kind: "track", eventName: "Filtered Event", props: { theme: "light" } });
 
       expect(analyticsClient.track).not.toHaveBeenCalled();
       expect(events).toEqual([
@@ -241,7 +260,11 @@ describe("trackEvent", () => {
         return scrubSensitive(props);
       });
 
-      await trackEvent("track", "Enriched Filter Failure", { theme: "light" });
+      await trackEvent({
+        kind: "track",
+        eventName: "Enriched Filter Failure",
+        props: { theme: "light" },
+      });
 
       expect(analyticsClient.track).not.toHaveBeenCalled();
       expect(events).toEqual([

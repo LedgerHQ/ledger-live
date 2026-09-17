@@ -1,9 +1,9 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { CARD_ONBOARDING_COPY } from "../../__tests__/i18nWrapper";
+import { CARD_ONBOARDING_COPY, CARD_ONBOARDING_STEP_COPY } from "../../__tests__/i18nWrapper";
 import { createRenderWidget, setQuery, stepsWith, stepsWithIds } from "./__tests__/shared";
 
-jest.mock("@domain/api-card-management", () => ({
-  useGetCardOnboardingStatusQuery: jest.fn(),
+jest.mock("../../onboardingStatus", () => ({
+  useCardOnboardingStatus: jest.fn(),
 }));
 
 const renderWidget = createRenderWidget(render);
@@ -65,20 +65,28 @@ describe("CardOnboardingWidget (integration)", () => {
 
     expect(screen.getByRole("heading", { name: CARD_ONBOARDING_COPY.dialogTitle })).toBeVisible();
     expect(screen.getByText(CARD_ONBOARDING_COPY.stepComplete)).toBeVisible();
-    expect(screen.getByRole("button", { name: /Step 1/ })).toBeVisible();
-    expect(screen.queryByRole("button", { name: /Step 2/ })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: new RegExp(CARD_ONBOARDING_STEP_COPY["choose-card-type"].title),
+      }),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("button", {
+        name: new RegExp(CARD_ONBOARDING_STEP_COPY["top-up-card"].title),
+      }),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: CARD_ONBOARDING_COPY.gotIt }),
     ).not.toBeInTheDocument();
   });
 
-  it("should show the backend steps without adding the wallet step", () => {
+  it("should show the derived steps without adding the wallet step on web", () => {
     setQuery({ data: { steps: stepsWithIds("top-up-card", "first-purchase") } });
     renderWidget();
     openWidget();
 
-    expect(screen.getByText("Title top-up-card")).toBeVisible();
-    expect(screen.getByText("Title first-purchase")).toBeVisible();
+    expect(screen.getByText(CARD_ONBOARDING_STEP_COPY["top-up-card"].title)).toBeVisible();
+    expect(screen.getByText(CARD_ONBOARDING_STEP_COPY["first-purchase"].title)).toBeVisible();
     expect(screen.queryByText(/Apple\/Google Pay/)).not.toBeInTheDocument();
   });
 

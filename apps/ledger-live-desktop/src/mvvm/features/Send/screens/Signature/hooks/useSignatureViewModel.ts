@@ -105,6 +105,7 @@ export function useSignatureViewModel() {
 
   return {
     account,
+    parentAccount,
     transaction,
     action,
     request,

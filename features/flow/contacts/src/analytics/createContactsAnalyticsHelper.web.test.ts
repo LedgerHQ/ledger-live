@@ -14,7 +14,6 @@ import {
 } from "./createContactsAnalyticsHelper";
 
 const globalProperties = {
-  ffAddressBookEnabled: true,
   contactsCount: 2,
   externalAddressesSavedCount: 1,
   myAddressesSavedCount: 1,
@@ -127,7 +126,6 @@ describe("Contacts analytics payload shapes", () => {
         ...globalProperties,
         source: CONTACTS_EVENT_SOURCE.SEARCH,
         page: CONTACTS_PAGE_PROPERTY.CONTACTS,
-        queryLength: 3,
         hasResults: true,
       },
     };
@@ -253,7 +251,7 @@ describe("Contacts analytics payload shapes", () => {
 
     for (const payload of payloads) {
       const properties = "properties" in payload ? payload.properties : undefined;
-      expect(properties?.ffAddressBookEnabled).toBe(true);
+      expect(properties?.contactsCount).toBe(2);
       expect(properties?.source).toBeDefined();
       expect(Object.keys(properties ?? {})).not.toContain("contact_name");
       expect(Object.keys(properties ?? {})).not.toContain("address_label");

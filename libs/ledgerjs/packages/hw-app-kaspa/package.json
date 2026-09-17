@@ -29,12 +29,12 @@
   },
   "homepage": "https://github.com/coderofstuff/hw-app-kaspa#readme",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "bignumber.js": "^9.1.2",
     "bip32-path": "^0.4.2"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

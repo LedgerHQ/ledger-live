@@ -1,3 +1,4 @@
+import { zcashBalanceTypeConfig } from "./balanceType";
 import { descriptor } from "./index";
 
 // Vectors shared with coin-zcash's `logic/address.test.ts`.
@@ -52,5 +53,11 @@ describe("zcash send descriptor", () => {
 
   it("allows self-transfer", () => {
     expect(descriptor.send.selfTransfer).toBe("free");
+  });
+
+  // Declaring the pools is what adds the balance-type step to the send flow; their own
+  // behavior is covered in `balanceType.test.ts`.
+  it("declares its two balance pools", () => {
+    expect(descriptor.send.balanceType).toBe(zcashBalanceTypeConfig);
   });
 });

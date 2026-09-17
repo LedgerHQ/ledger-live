@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-filecoin",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Ledger Filecoin Coin integration",
   "keywords": [
     "Ledger",
@@ -105,13 +105,14 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@zondax/cbor": "v8.1.0-zondax-no-bigint",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "ethers": "catalog:",
     "invariant": "^2.2.2",
@@ -130,7 +131,6 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
-    "axios": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"

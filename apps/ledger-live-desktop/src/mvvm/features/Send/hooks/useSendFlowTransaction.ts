@@ -1,7 +1,10 @@
 import { useCallback, useMemo } from "react";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { buildRecipientTransactionPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type {
   SendFlowTransactionState,
@@ -13,6 +16,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 type UseSendFlowTransactionParams = Readonly<{
   account: AccountLike | null;
   parentAccount: Account | null;
+  initialRecipient?: string;
 }>;
 
 type UseSendFlowTransactionResult = Readonly<{
@@ -23,6 +27,7 @@ type UseSendFlowTransactionResult = Readonly<{
 export function useSendFlowTransaction({
   account,
   parentAccount,
+  initialRecipient,
 }: UseSendFlowTransactionParams): UseSendFlowTransactionResult {
   const bridge = useAccountBridgeOrNull<Transaction>(account, parentAccount);
   const {
@@ -35,7 +40,21 @@ export function useSendFlowTransaction({
     setAccount,
   } = useBridgeTransaction(bridge, () => {
     if (!account) return {};
-    return { account, parentAccount: parentAccount ?? undefined };
+    if (!bridge?.createTransaction || !initialRecipient) {
+      return { account, parentAccount: parentAccount ?? undefined };
+    }
+
+    try {
+      const created = bridge.createTransaction(getMainAccount(account, parentAccount));
+      let transaction = bridge.updateTransaction(created, { recipient: initialRecipient });
+      if (account.type !== "Account") {
+        transaction = { ...transaction, subAccountId: account.id };
+      }
+
+      return { account, parentAccount: parentAccount ?? undefined, transaction };
+    } catch {
+      return { account, parentAccount: parentAccount ?? undefined };
+    }
   });
 
   const setTransaction = useCallback(
@@ -52,10 +71,15 @@ export function useSendFlowTransaction({
     (recipient: RecipientData) => {
       if (!account || !transaction || !bridge) return;
 
-      const updates = buildRecipientTransactionPatch(
-        transaction,
-        recipient,
-      ) as Partial<Transaction>;
+      const balanceTypeConfig = sendFeatures.getBalanceTypeConfig(getAccountCurrency(account));
+      const updates = {
+        ...buildRecipientTransactionPatch(transaction, recipient),
+        // Every recipient write passes here, so a coin holding self-transfer state has it
+        // set by the shortcut that prefills its own pool and cleared by anything else.
+        ...balanceTypeConfig?.buildSelfTransferPatch({
+          isSelfTransfer: recipient.isSelfTransfer === true,
+        }),
+      } as Partial<Transaction>;
 
       bridgeSetTransaction(bridge.updateTransaction(transaction, updates));
     },

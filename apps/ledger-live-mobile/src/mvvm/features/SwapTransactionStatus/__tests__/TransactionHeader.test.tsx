@@ -43,6 +43,36 @@ describe("TransactionHeader", () => {
     ).toBeVisible();
   });
 
+  it("should name the perps deposit and keep the swapped pair on its own line", () => {
+    render(
+      <TransactionHeader
+        sendCurrency={bitcoin}
+        receiveCurrency={ethereum}
+        createdAt={new Date(2024, 0, 2, 15, 4).getTime()}
+        locale="en-US"
+        origin="perps"
+      />,
+    );
+
+    expect(screen.getByText("Fund Perpetuals")).toBeVisible();
+    expect(screen.getByText("BTC → ETH")).toBeVisible();
+    expect(screen.queryByText("Swap BTC → ETH")).toBeNull();
+  });
+
+  it("should keep the swap title when no origin is given", () => {
+    render(
+      <TransactionHeader
+        sendCurrency={bitcoin}
+        receiveCurrency={ethereum}
+        createdAt={new Date(2024, 0, 2, 15, 4).getTime()}
+        locale="en-US"
+      />,
+    );
+
+    expect(screen.getByText("Swap BTC → ETH")).toBeVisible();
+    expect(screen.queryByTestId("swap-transaction-currencies")).toBeNull();
+  });
+
   it("should render token icons without a parent network badge", () => {
     render(
       <TransactionHeader
@@ -60,5 +90,11 @@ describe("TransactionHeader", () => {
     render(<TransactionHeader locale="en-US" />);
 
     expect(screen.queryByText("Swap BTC → ETH")).toBeNull();
+  });
+
+  it("should name the perps deposit before the currencies resolve", () => {
+    render(<TransactionHeader locale="en-US" origin="perps" />);
+
+    expect(screen.getByText("Fund Perpetuals")).toBeVisible();
   });
 });

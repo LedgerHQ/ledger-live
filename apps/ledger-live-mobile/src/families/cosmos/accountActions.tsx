@@ -19,7 +19,7 @@ const getMainActions = ({
   parentAccount?: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
-  const delegationDisabled = !canDelegate(account);
+  const delegationDisabled = !canDelegate(account) || !account.cosmosResources;
   const label = getStakeLabelLocaleBased();
   const startWithValidator =
     account.cosmosResources && account.cosmosResources?.delegations.length > 0;

@@ -6,6 +6,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Contact } from "@domain/entity-contact";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { BalanceTypeConfig } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { SendWorkflow } from "../index";
 
 export { screen, waitFor };
@@ -26,6 +27,8 @@ let mockDeviceActionResult: unknown = null;
 let mockScannedCode = "";
 let mockContacts: readonly Contact[] = [];
 let mockContactsFeatureEnabled = false;
+let mockBalanceTypeConfig: BalanceTypeConfig | null = null;
+let mockCoinFamily: Record<string, unknown> = {};
 
 const mockSetTransaction = jest.fn();
 const mockUpdateTransaction = jest.fn();
@@ -38,6 +41,7 @@ const mockRecentAddressesStore = {
 
 export const VALID_EVM_RECIPIENT = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd";
 export const VALID_BTC_RECIPIENT = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+export const VALID_XRP_RECIPIENT = "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh";
 
 export const createResolvedStatus = (
   errors: Record<string, Error> = {},
@@ -147,6 +151,14 @@ export const setMockContacts = (contacts: readonly Contact[], isEnabled = true) 
   mockContactsFeatureEnabled = isEnabled;
 };
 
+export const setMockBalanceTypeConfig = (config: BalanceTypeConfig | null) => {
+  mockBalanceTypeConfig = config;
+};
+
+export const setMockLLDCoinFamily = (family: Record<string, unknown> = {}) => {
+  mockCoinFamily = family;
+};
+
 export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   jest.clearAllMocks();
   resetBridgeState(family);
@@ -154,7 +166,13 @@ export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   setMockBridgeRecipientValidation({ errors: {}, warnings: {}, isLoading: false });
   setMockScannedCode("");
   setMockContacts([], false);
+  setMockBalanceTypeConfig(null);
+  setMockLLDCoinFamily();
 };
+
+jest.mock("~/renderer/families", () => ({
+  useLLDCoinFamily: () => mockCoinFamily,
+}));
 
 jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
   marketApi: {
@@ -208,6 +226,7 @@ const mockGetTransactionStatus = jest.fn(() => Promise.resolve(mockStatus));
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getAccountBridge: jest.fn(() => {
     const bridge = {
+      createTransaction: () => ({ ...mockTransaction }),
       updateTransaction: mockBridgeUpdateTransaction,
       prepareTransaction: mockPrepareTransaction,
       getTransactionStatus: mockGetTransactionStatus,
@@ -227,6 +246,7 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
 jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
   getAccountBridge: jest.fn(() => {
     const bridge = {
+      createTransaction: () => ({ ...mockTransaction }),
       updateTransaction: mockBridgeUpdateTransaction,
       prepareTransaction: mockPrepareTransaction,
       getTransactionStatus: mockGetTransactionStatus,
@@ -255,6 +275,18 @@ jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => ({
 jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation", () => ({
   useBridgeRecipientValidation: jest.fn(() => mockBridgeRecipientValidation),
 }));
+
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/bridge/descriptor/send/features");
+  return {
+    ...actual,
+    sendFeatures: {
+      ...actual.sendFeatures,
+      hasBalanceTypeStep: jest.fn(() => mockBalanceTypeConfig !== null),
+      getBalanceTypeConfig: jest.fn(() => mockBalanceTypeConfig),
+    },
+  };
+});
 
 jest.mock("@features/platform-contacts", () => ({
   ...jest.requireActual("@features/platform-contacts"),
@@ -332,6 +364,7 @@ jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
 
 const ethCurrency = getCryptoCurrencyById("ethereum");
 const btcCurrency = getCryptoCurrencyById("bitcoin");
+const xrpCurrency = getCryptoCurrencyById("ripple");
 
 export const createEthereumAccount = (overrides?: Partial<Account>): Account => {
   const account = genAccount("send-integration-test");
@@ -355,6 +388,19 @@ export const createBitcoinAccount = (overrides?: Partial<Account>): Account => {
     balance: new BigNumber("100000000"),
     spendableBalance: new BigNumber("100000000"),
     currency: btcCurrency,
+    ...overrides,
+  };
+};
+
+export const createRippleAccount = (overrides?: Partial<Account>): Account => {
+  const account = genAccount("send-ripple-integration-test", { currency: xrpCurrency });
+  return {
+    ...account,
+    id: "mock-ripple-account-id",
+    freshAddress: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+    balance: new BigNumber("100000000"),
+    spendableBalance: new BigNumber("100000000"),
+    currency: xrpCurrency,
     ...overrides,
   };
 };

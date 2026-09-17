@@ -20,9 +20,12 @@ import {
   PLT_TOKEN_ID_MIN_LENGTH,
 } from "@ledgerhq/concordium-core";
 import coinConfig from "../config";
+import { resolveSendAmount } from "./amount";
 import { effectivePltAmount } from "./tokens";
+import { checkRecipientRestrictions } from "../logic/transaction/pltRecipientRestrictions";
 import type {
   ConcordiumAccount,
+  ConcordiumCoinConfig,
   ConcordiumTokenResources,
   Transaction,
   TransactionStatus,
@@ -215,15 +218,20 @@ function validatePayloadSize(
  * to the parent's CCD, so an account can hold enough of the token and still
  * fail on the fee. `totalSpent` is therefore the token amount alone.
  *
- * No network call: every value comes from what sync already persisted.
+ * Every value about the *sender* comes from what sync already persisted. The
+ * recipient's standing under the token's lists cannot: it is another account's
+ * state, which no sync of this account fetches, so it needs a lookup here. See
+ * {@link checkRecipientRestrictions} for why it is here rather than in
+ * `prepareTransaction`.
  */
-function getTokenTransactionStatus(
+async function getTokenTransactionStatus(
+  config: ConcordiumCoinConfig,
   account: Account,
   transaction: Transaction,
   subAccount: TokenAccount,
   estimatedFees: BigNumber,
   reserveAmount: BigNumber,
-): TransactionStatus {
+): Promise<TransactionStatus> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
@@ -231,12 +239,29 @@ function getTokenTransactionStatus(
   const decimals = subAccount.token.units[0]?.magnitude;
   const tokenState = (account as ConcordiumAccount).concordiumResources?.tokens?.[tokenId];
 
-  const amount = transaction.useAllAmount
-    ? subAccount.spendableBalance
-    : new BigNumber(transaction.amount);
+  const amount = resolveSendAmount({
+    account,
+    transaction,
+    tokenAccount: subAccount,
+    estimatedFees,
+  });
   const totalSpent = amount;
 
   const recipientError = validateRecipient(transaction, account);
+
+  // Gated on the address being usable at all, which covers empty, malformed and
+  // self-transfer without restating any of them: there is nothing to look up
+  // until the field holds an address, and the sender's own standing is already
+  // reported under `sender`.
+  const restrictionsError = recipientError
+    ? undefined
+    : await checkRecipientRestrictions({
+        config,
+        currencyId: account.currency.id,
+        recipient: transaction.recipient,
+        tokenId,
+        ticker: subAccount.token.ticker,
+      });
 
   const memoError = transaction.memo ? validatePltMemo(transaction.memo) : undefined;
 
@@ -267,7 +292,7 @@ function getTokenTransactionStatus(
       feeError ??
       validateCcdForFee(account, estimatedFees, reserveAmount) ??
       sizeError,
-    recipient: recipientError,
+    recipient: recipientError ?? restrictionsError,
   });
 
   Object.assign(errors, { memo: memoError });
@@ -332,13 +357,15 @@ export const getTransactionStatus: AccountBridge<
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
+  const config = coinConfig.getCoinConfig(account.currency.id);
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber(coinConfig.getCoinConfig(account.currency.id).minReserve);
+  const reserveAmount = new BigNumber(config.minReserve);
   const estimatedFees = new BigNumber(transaction.fee || 0);
 
   const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
   if (subAccount?.type === "TokenAccount") {
     return getTokenTransactionStatus(
+      config,
       account,
       transaction,
       subAccount,
@@ -361,9 +388,12 @@ export const getTransactionStatus: AccountBridge<
   }
 
   // Calculate amount based on useAllAmount flag
-  const amount = transaction.useAllAmount
-    ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
-    : new BigNumber(transaction.amount);
+  const amount = resolveSendAmount({
+    account,
+    transaction,
+    tokenAccount: undefined,
+    estimatedFees,
+  });
 
   const totalSpent = amount.plus(estimatedFees);
 

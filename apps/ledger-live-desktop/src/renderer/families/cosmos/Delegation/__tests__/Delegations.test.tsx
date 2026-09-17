@@ -64,6 +64,48 @@ describe("Cosmos Delegations Component", () => {
     expect(screen.getByText("You can earn ATOM rewards by delegating your assets.")).toBeVisible();
   });
 
+  it("should render without throwing when cosmosResources is undefined", () => {
+    (getCurrencyConfiguration as jest.Mock).mockReturnValue({ disableDelegation: false });
+
+    const accountWithoutResources = {
+      ...mockCosmosAccount,
+      cosmosResources: undefined,
+    } as unknown as CosmosAccount;
+
+    expect(() =>
+      render(<Delegations account={accountWithoutResources} />, {
+        initialState: {
+          settings: {
+            ...INITIAL_STATE,
+          },
+        },
+      }),
+    ).not.toThrow();
+    expect(screen.getByText("You can earn ATOM rewards by delegating your assets.")).toBeVisible();
+  });
+
+  it("should disable the Earn rewards CTA when cosmosResources is undefined even with a spendable balance", () => {
+    (getCurrencyConfiguration as jest.Mock).mockReturnValue({ disableDelegation: false });
+
+    // positive spendable balance would make canDelegate() true; without cosmosResources the
+    // delegation flow (info modal → Next → delegate) would crash, so the CTA must stay disabled.
+    const accountWithBalanceNoResources = {
+      ...mockCosmosAccount,
+      spendableBalance: BigNumber(1_000_000),
+      cosmosResources: undefined,
+    } as unknown as CosmosAccount;
+
+    render(<Delegations account={accountWithBalanceNoResources} />, {
+      initialState: {
+        settings: {
+          ...INITIAL_STATE,
+        },
+      },
+    });
+
+    expect(screen.getByText("Earn rewards").closest("button")).toBeDisabled();
+  });
+
   it("should not render Delegations component when we disable delegations", async () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (getCurrencyConfiguration as jest.Mock).mockReturnValue({

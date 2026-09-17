@@ -1,10 +1,3 @@
-/**
- * Feature-flag controls surfaced by the tool.
- *
- * `payTabEnabled` drives the Pay tab flag (`lwdPayTab` / `lwmPayTab`) and
- * `cardParam` its `params.card` sub-flag; `ptxCardEnabled` drives the legacy
- * `ptxCard` flag.
- */
 export interface PayCardFlagsProps {
   readonly payTabEnabled: boolean;
   readonly cardParam: boolean;
@@ -12,24 +5,6 @@ export interface PayCardFlagsProps {
   readonly setPayTabEnabled: (value: boolean) => void;
   readonly setCardParam: (value: boolean) => void;
   readonly setPtxCardEnabled: (value: boolean) => void;
-}
-
-/** A single Card onboarding step that can be marked done or not. */
-export interface OnboardingStep {
-  readonly id: string;
-  readonly label: string;
-  readonly done: boolean;
-}
-
-/**
- * Card onboarding controls.
- *
- * Exposes the onboarding steps so each one can be toggled done/not-done to
- * force the app into a given point of the onboarding flow.
- */
-export interface PayCardOnboardingProps {
-  readonly steps: readonly OnboardingStep[];
-  readonly setStepDone: (id: string, done: boolean) => void;
 }
 
 export interface PayCardSessionSnapshot {
@@ -53,6 +28,11 @@ export interface PayCardRenewalMockProps {
   readonly armUnauthorized: () => void;
 }
 
+export interface PayCardMockSessionProps {
+  readonly available: boolean;
+  readonly signIn: () => void;
+}
+
 export interface PayCardActionResult {
   readonly id: number;
   readonly message: string;
@@ -69,17 +49,17 @@ export interface PayCardAuthProps {
   readonly breakAccessToken: () => void;
   readonly breakRefreshToken: () => void;
   readonly clearSession: () => void;
+  readonly signOut: () => void;
   readonly fetchUser: () => void;
   readonly openPayTab?: () => void;
   readonly mock: PayCardRenewalMockProps;
+  readonly mockSession: PayCardMockSessionProps;
 }
 
-/** One Card endpoint the tool can call on demand, with the last thing it returned. */
 export interface PayCardProbe {
   readonly id: string;
   readonly label: string;
   readonly isFetching: boolean;
-  /** The last response, pretty-printed. `undefined` until the probe has been run. */
   readonly result: string | undefined;
   readonly error: string | undefined;
   readonly run: () => void;
@@ -110,16 +90,11 @@ export interface PayCardDetailsImageProps {
   readonly clear: () => void;
 }
 
-/**
- * Card interaction controls: call the signed-in cardholder's endpoints and read back what they
- * answer, so the data can be checked without a screen to render it.
- */
 export interface PayCardInteractionProps {
   readonly probes: readonly PayCardProbe[];
   readonly details: PayCardDetailsImageProps;
 }
 
-/** One wallet exactly as `GET /v1/wallet/internal` answered. */
 export interface PayCardBaanxWallet {
   readonly id: string;
   readonly balance: string;
@@ -129,7 +104,6 @@ export interface PayCardBaanxWallet {
   readonly addressMemo?: string | null;
 }
 
-/** One wallet exactly as `GET /v1/wallet/internal/card_linked` answered. */
 export interface PayCardLinkedWallet {
   readonly id: string;
   readonly address: string;
@@ -137,17 +111,26 @@ export interface PayCardLinkedWallet {
   readonly network: string;
   /** Charging order. The wallets are listed in it. */
   readonly priority: number;
+  /** The Ledger currency the pair above resolves to, absent when the catalog does not cover it. */
+  readonly ledgerId?: string;
 }
 
-/** One item of the join the app builds from the two responses above. */
 export interface PayCardCombinedWallet {
   readonly id: string;
   readonly address: string;
   readonly currency: string;
   readonly network: string;
   readonly priority: number;
+  readonly ledgerId?: string;
   /** `null` when no Baanx wallet matched this link, and while they are still being read. */
   readonly balance: string | null;
+}
+
+/** One row of the Card asset catalog: what the provider calls an asset, and what Ledger calls it. */
+export interface PayCardCurrencyMappingRow {
+  /** The `{currency}.{network}` id the catalog is keyed on. */
+  readonly key: string;
+  readonly ledgerId: string;
 }
 
 export interface PayCardBalanceError {
@@ -155,31 +138,19 @@ export interface PayCardBalanceError {
   readonly detail: string;
 }
 
-/**
- * What the two wallet endpoints answered, and the join the app builds from them.
- *
- * All three are shown side by side and unformatted: the screen exists to compare what the provider
- * sent with what the app made of it.
- */
 export interface PayCardBalanceProps {
-  /** Raw `GET /v1/wallet/internal`. */
   readonly baanxWallets: readonly PayCardBaanxWallet[];
-  /** Raw `GET /v1/wallet/internal/card_linked`. */
   readonly linkedWallets: readonly PayCardLinkedWallet[];
-  /** What the app joins the two into. */
   readonly combinedWallets: readonly PayCardCombinedWallet[];
   readonly isFetching: boolean;
   readonly errors: readonly PayCardBalanceError[];
-  /** Starts the wallet queries. The screen calls this when it opens. */
   readonly load: () => void;
   readonly refresh: () => void;
 }
 
 export type PayCardOpenSecureBrowser = (url: string) => Promise<string>;
 
-/** One step of the onboarding status the app works out from the Card endpoints. */
 export interface PayCardOnboardingStatusStep {
-  /** What the app keys the step on. There is no copy: the status carries ids, not labels. */
   readonly id: string;
   readonly isDone: boolean;
   /**
@@ -189,44 +160,25 @@ export interface PayCardOnboardingStatusStep {
   readonly canToggle: boolean;
 }
 
-/**
- * The onboarding status the app works out from the Card endpoints, and how to drive it.
- *
- * The steps are worked out from several endpoints rather than fetched, so a step is set by mocking
- * the answer behind it: the host intercepts that endpoint and the step follows on the next read.
- * The raw answer is shown so a wrong step can be traced to the response behind it.
- */
 export interface PayCardOnboardingStatusProps {
   readonly steps: readonly PayCardOnboardingStatusStep[];
   readonly completedCount: number;
   readonly isFetching: boolean;
   readonly error: string | undefined;
-  /** The derived answer, pretty-printed. Always present: every step has an answer to show. */
   readonly raw: string;
   readonly refresh: () => void;
-  /** Mocks the answer behind one step, then re-reads it. Ignored for a step nothing answers. */
   readonly setStepDone: (id: string, done: boolean) => void;
-  /** Drops every mocked answer, so the endpoints reach the provider again. */
   readonly clearMocks: () => void;
-  /**
-   * Whether the host is intercepting requests at all. Mocking is started by an env var, so without
-   * it a toggle would set an answer nothing ever reads.
-   */
   readonly isMockingEnabled: boolean;
 }
 
-/**
- * Props contract for the Card / Pay DevTool.
- *
- * Built by `@devtools/bindings` (`usePayCardToolProps`) from the host's Redux
- * state and actions. The component never reads app state directly.
- */
 export interface PayCardToolProps {
   readonly flags: PayCardFlagsProps;
-  readonly onboarding: PayCardOnboardingProps;
   readonly cardOnboarding: PayCardOnboardingStatusProps;
   readonly interaction: PayCardInteractionProps;
   readonly balance: PayCardBalanceProps;
+  /** The whole Card asset catalog, so a mapping gap can be read against it. */
+  readonly currencyMapping: readonly PayCardCurrencyMappingRow[];
   /** Whether the user has already seen the Pay feature tour. */
   readonly hasSeenFeatureTour: boolean;
   /** Resets the feature tour so it plays again on the next Pay visit. */

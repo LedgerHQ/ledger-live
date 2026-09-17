@@ -21,7 +21,7 @@ export type ContactsAddContactContentLabels = Readonly<{
   title: string;
   namePlaceholder: string;
   namingDisclaimer: string;
-  confirmName: string;
+  confirmAddContact: string;
   nameValidationErrors: Readonly<Record<ContactNameValidationErrorName, string>>;
 }>;
 

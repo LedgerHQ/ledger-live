@@ -17,11 +17,13 @@ The package uses the standard React Native file extension convention:
 
 | File | Used by |
 |---|---|
-| `StyleProvider.tsx` | Web (desktop, web-tools) |
+| `StyleProvider.web.tsx` | Web (desktop, web-tools) |
 | `StyleProvider.native.tsx` | Mobile (React Native) |
-| `useTheme.ts` | Web |
+| `useTheme.web.ts` | Web |
 | `useTheme.native.ts` | Mobile |
-| `withStyleProvider.tsx` | Web |
+| `useThemeVariant.web.ts` | Web |
+| `useThemeVariant.native.ts` | Mobile |
+| `withStyleProvider.web.tsx` | Web |
 | `withStyleProvider.native.tsx` | Mobile |
 
 ## Boundary

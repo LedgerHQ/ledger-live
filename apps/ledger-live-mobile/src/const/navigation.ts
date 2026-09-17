@@ -66,6 +66,7 @@ export enum ScreenName {
   DebugLargeScreenUpsell = "DebugLargeScreenUpsell",
   DebugInstallSetOfApps = "DebugInstallSetOfApps",
   DebugFeatures = "DebugFeatures",
+  DebugStartTour = "DebugStartTour",
   DebugFetchCustomImage = "DebugFetchCustomImage",
   DebugFirmwareUpdate = "DebugFirmwareUpdate",
   DebugGenerators = "DebugGenerators",
@@ -78,7 +79,6 @@ export enum ScreenName {
   DebugWallet40 = "DebugWallet40",
   DebugContacts = "DebugContacts",
   DebugDevTools = "DebugDevTools",
-  DebugWalletV4Tour = "DebugWalletV4Tour",
   DebugProductTour = "DebugProductTour",
   DebugQ2WalletV4Tour = "DebugQ2WalletV4Tour",
   DebugQ3WalletV4Tour = "DebugQ3WalletV4Tour",
@@ -447,6 +447,12 @@ export enum ScreenName {
   AleoNoAccountsAdded = "AleoNoAccountsAdded",
   AleoSendBalanceSelection = "AleoSendBalanceSelection",
   AleoMandatoryPrivateSync = "AleoMandatoryPrivateSync",
+  AleoBondPublicSelectValidator = "AleoBondPublicSelectValidator",
+  AleoBondPublicAmount = "AleoBondPublicAmount",
+  AleoBondPublicSelectDevice = "AleoBondPublicSelectDevice",
+  AleoBondPublicConnectDevice = "AleoBondPublicConnectDevice",
+  AleoBondPublicValidationError = "AleoBondPublicValidationError",
+  AleoBondPublicValidationSuccess = "AleoBondPublicValidationSuccess",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
@@ -791,6 +797,8 @@ export enum NavigatorName {
   HederaUndelegationFlow = "HederaUndelegationFlow",
   HederaRedelegationFlow = "HederaRedelegationFlow",
   HederaClaimRewardsFlow = "HederaClaimRewardsFlow",
+  // Aleo
+  AleoBondPublicFlow = "AleoBondPublicFlow",
   // SUI
   SuiDelegateFlow = "SuiDelegationFlow",
   SuiUndelegateFlow = "SuiUndelegateFlow",

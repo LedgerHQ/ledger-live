@@ -55,6 +55,7 @@ type UseSendFlowBusinessLogicResult = Readonly<{
   recipient: RecipientData | null;
   isRecipientAddressComplete: boolean;
   setIsRecipientAddressComplete: (value: boolean) => void;
+  resetRecipient: () => void;
   setAccountAndNavigate: (account: AccountLike, parentAccount?: Account) => void;
   source?: string;
 }>;
@@ -113,6 +114,13 @@ export function useSendFlowBusinessLogic({
     [transactionHook.actions],
   );
 
+  const resetRecipient = useCallback(() => {
+    setRecipient(null);
+    setRecipientSearchValue("");
+    setIsRecipientAddressComplete(false);
+    transactionHook.actions.setRecipient({ address: "" });
+  }, [transactionHook.actions]);
+
   useEffect(() => {
     const directRecipient = canSkipRecipientStep(initParams, uiConfig)
       ? initParams?.recipient
@@ -133,6 +141,7 @@ export function useSendFlowBusinessLogic({
     handleRecipientSet,
     initParams?.recipient,
     initParams?.skipRecipientStep,
+    initParams?.source,
     transactionHook.state.transaction,
     uiConfig,
   ]);
@@ -187,6 +196,7 @@ export function useSendFlowBusinessLogic({
       recipient,
       isRecipientAddressComplete,
       setIsRecipientAddressComplete,
+      resetRecipient,
       setAccountAndNavigate,
       source: initParams?.source,
     }),
@@ -199,6 +209,7 @@ export function useSendFlowBusinessLogic({
       recipientSearch,
       recipient,
       isRecipientAddressComplete,
+      resetRecipient,
       setAccountAndNavigate,
       initParams?.source,
     ],

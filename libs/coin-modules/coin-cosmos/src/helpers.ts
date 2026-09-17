@@ -24,5 +24,6 @@ export function isAccountEmpty({
   cosmosResources,
   balance,
 }: Pick<CosmosAccount, "cosmosResources" | "balance">) {
+  if (!cosmosResources) return false;
   return cosmosResources.sequence === 0 && balance.isZero();
 }

@@ -15,6 +15,7 @@ import {
 import {
   CheckmarkCircle,
   ChevronRight,
+  Coins,
   CoinsCrypto,
   CreditCard,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -24,6 +25,7 @@ import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 import { Interaction } from "../components/Interaction/Interaction";
 import { BalanceScreen } from "../components/Balance/Balance";
 import { CardOnboardingScreen } from "../components/CardOnboarding/CardOnboarding";
+import { CurrencyMappingScreen } from "../components/CurrencyMapping/CurrencyMapping";
 import { AuthSection } from "./AuthSection";
 import { ResultToast } from "./ResultToast";
 import { SecureBrowserSection } from "./SecureBrowserSection";
@@ -38,10 +40,10 @@ const PANEL_STYLE = { flex: 1 } as const;
 export function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
-    onboarding,
     cardOnboarding,
     interaction,
     balance,
+    currencyMapping,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
     hasSeenReceiveVerifyHint,
@@ -63,7 +65,9 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPaySuccess ||
     onNavigateToSendSuccess,
   );
-  const [screen, setScreen] = useState<"tool" | "interaction" | "balance" | "onboarding">("tool");
+  const [screen, setScreen] = useState<
+    "tool" | "interaction" | "balance" | "onboarding" | "mapping"
+  >("tool");
 
   if (screen === "interaction") {
     return <Interaction {...interaction} onBack={() => setScreen("tool")} />;
@@ -75,6 +79,10 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
 
   if (screen === "onboarding") {
     return <CardOnboardingScreen {...cardOnboarding} onBack={() => setScreen("tool")} />;
+  }
+
+  if (screen === "mapping") {
+    return <CurrencyMappingScreen rows={currencyMapping} onBack={() => setScreen("tool")} />;
   }
 
   return (
@@ -133,6 +141,18 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
               <ChevronRight />
             </ListItemTrailing>
           </ListItem>
+
+          <ListItem onPress={() => setScreen("mapping")}>
+            <ListItemLeading>
+              <Spot appearance="icon" icon={Coins} />
+              <ListItemContent>
+                <ListItemTitle>Currency Mapping</ListItemTitle>
+              </ListItemContent>
+            </ListItemLeading>
+            <ListItemTrailing>
+              <ChevronRight />
+            </ListItemTrailing>
+          </ListItem>
         </Section>
 
         <Divider />
@@ -156,38 +176,6 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
             checked={flags.ptxCardEnabled}
             onChange={flags.setPtxCardEnabled}
           />
-        </Section>
-
-        <Divider />
-
-        <Section title="Onboarding">
-          <Box lx={{ flexDirection: "column", gap: "s8" }}>
-            {onboarding.steps.map(step => (
-              <ToggleRow
-                key={step.id}
-                label={step.label}
-                checked={step.done}
-                onChange={() => onboarding.setStepDone(step.id, !step.done)}
-              />
-            ))}
-          </Box>
-        </Section>
-
-        <Divider />
-
-        <Section title="Reset onboarding">
-          <Box style={BUTTON_ROW_STYLE}>
-            <Button appearance="gray" size="sm" onPress={() => onboarding.setStepDone("all", true)}>
-              Set all done
-            </Button>
-            <Button
-              appearance="gray"
-              size="sm"
-              onPress={() => onboarding.setStepDone("all", false)}
-            >
-              Reset all
-            </Button>
-          </Box>
         </Section>
 
         <Divider />

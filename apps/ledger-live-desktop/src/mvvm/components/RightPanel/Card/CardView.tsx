@@ -7,25 +7,14 @@ export interface CardViewProps {
   readonly viewModel: CardViewModel;
 }
 
-/**
- * CardView
- * Right-panel content for the Pay tab: the Pay Card container framing the card visual and the
- * authentication controls.
- */
 export const CardView = ({ viewModel }: CardViewProps) => {
-  const { title, formatCountervalue, balanceLabel, oauthConfig, onTrackEvent } = viewModel;
+  const { formatters, login, unlock, onShowMore } = viewModel;
 
   return (
-    <div className="flex h-full flex-col pb-32">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden pb-32">
       <PayCardContainer>
-        <div className="p-16">
-          <PayCard
-            title={title}
-            oauthConfig={oauthConfig}
-            formatCountervalue={formatCountervalue}
-            balanceLabel={balanceLabel}
-            onTrackEvent={onTrackEvent}
-          />
+        <div className="scrollbar-none min-h-0 flex-1 overflow-y-auto p-16">
+          <PayCard login={login} formatters={formatters} unlock={unlock} onShowMore={onShowMore} />
         </div>
       </PayCardContainer>
     </div>

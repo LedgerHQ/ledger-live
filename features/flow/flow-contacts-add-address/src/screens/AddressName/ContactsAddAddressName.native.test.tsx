@@ -9,6 +9,14 @@ import {
 } from "@domain/entity-contact";
 import type { AddAddressLabelState, AddAddressNameLabels } from "../../state/types";
 import { ContactsAddAddressName } from "./ContactsAddAddressName";
+import { urls } from "../../urls";
+
+const mockOpenLink = jest.fn();
+
+jest.mock("@shared/linking", () => ({
+  useOpenLink: () => mockOpenLink,
+  useLocalizedUrl: (url: string) => url,
+}));
 
 const labels: AddAddressNameLabels = {
   title: "Name address",
@@ -24,6 +32,10 @@ const labels: AddAddressNameLabels = {
 };
 
 describe("ContactsAddAddressName", () => {
+  beforeEach(() => {
+    mockOpenLink.mockClear();
+  });
+
   it("should render the default label with an enabled review action", () => {
     const onChangeText = jest.fn();
     const onContinue = jest.fn();
@@ -146,5 +158,43 @@ describe("ContactsAddAddressName", () => {
       ...(helperText === undefined ? {} : { helperText, status: "error" }),
     });
     expect(screen.getByTestId("contacts-add-address-name-continue").props.disabled).toBe(true);
+  });
+
+  it("should not render the privacy policy link when label is absent", () => {
+    render(
+      <ContactsAddAddressName
+        addressLabel={{
+          status: "valid",
+          value: "Ethereum",
+          label: ContactAddressLabelSchema.parse("Ethereum"),
+          validationError: null,
+        }}
+        labels={labels}
+        onChangeText={jest.fn()}
+        onContinue={jest.fn()}
+      />,
+    );
+
+    expect(screen.queryByTestId("contacts-add-address-name-privacy-policy")).toBeNull();
+  });
+
+  it("should render and open the privacy policy link for MeContact", () => {
+    render(
+      <ContactsAddAddressName
+        addressLabel={{
+          status: "valid",
+          value: "Ethereum",
+          label: ContactAddressLabelSchema.parse("Ethereum"),
+          validationError: null,
+        }}
+        labels={{ ...labels, privacyPolicy: "Learn more about Ledger's Privacy Policy." }}
+        onChangeText={jest.fn()}
+        onContinue={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-add-address-name-privacy-policy")).toBeTruthy();
+    fireEvent.press(screen.getByTestId("contacts-add-address-name-privacy-policy"));
+    expect(mockOpenLink).toHaveBeenCalledWith(urls.privacyPolicy.native);
   });
 });

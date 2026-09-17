@@ -6,6 +6,7 @@ import {
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
   type Contact,
+  type ContactAddress,
 } from "@domain/entity-contact";
 import { createContactCreationPort } from "@features/flow-contacts-add-contact";
 import {
@@ -13,6 +14,7 @@ import {
   useContactsLedgerSyncMutationGuard,
   trackContactsLedgerSyncActivate,
   trackContactsLedgerSyncDismiss,
+  CONTACTS_FLOW,
 } from "@features/flow-contacts";
 import {
   isContactsLedgerSyncActivationRequired,
@@ -31,15 +33,15 @@ import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { usePayTabContactOperations } from "./usePayTabContactOperations";
 import { renderPayContactAddresses } from "../components/PayContactAddresses";
 
-const noopSelectAddress = () => undefined;
-
 export type UsePayTabContactsResult = Readonly<{
   contacts: ContactsProps;
   ledgerSyncIntroduction: ContactsLedgerSyncIntroductionDialogProps;
   contactAddressPicker: ContactAddressPickerProps;
 }>;
 
-export function usePayTabContacts(): UsePayTabContactsResult {
+export function usePayTabContacts(
+  onSelectAddress: (address: ContactAddress) => void,
+): UsePayTabContactsResult {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -58,7 +60,7 @@ export function usePayTabContacts(): UsePayTabContactsResult {
   );
   const { open: openContactAddressPicker, contactAddressPicker } = useContactAddressPickerViewModel(
     {
-      onSelectAddress: noopSelectAddress,
+      onSelectAddress,
       onAddNewAddress: onAddContactAddress,
     },
   );
@@ -92,7 +94,7 @@ export function usePayTabContacts(): UsePayTabContactsResult {
       title: t("contacts.addContact"),
       namePlaceholder: t("contacts.addContactDrawer.namePlaceholder"),
       namingDisclaimer: t("contacts.addContactDrawer.namingDisclaimer"),
-      confirmName: t("contacts.addContact"),
+      confirmAddContact: t("contacts.addContact"),
       nameValidationErrors: {
         [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.invalidNameError"),
         [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
@@ -115,7 +117,7 @@ export function usePayTabContacts(): UsePayTabContactsResult {
     trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
     setIsLedgerSyncIntroductionRequested(false);
-    openDrawer({ startOnSyncMethod: true });
+    openDrawer({ startOnSyncMethod: true, analyticsFlow: CONTACTS_FLOW.CONTACTS });
   }, [analytics, dismissPendingIntent, openDrawer]);
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncDismiss(analytics);

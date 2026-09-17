@@ -56,12 +56,16 @@ export function useNewSendFlowFeature() {
     return account ? getMainAccount(account, parentAccount ?? null).currency.id : undefined;
   };
 
+  const getCurrencyFromAccount = (account?: AccountLike, parentAccount?: Account | null) =>
+    account ? getMainAccount(account, parentAccount ?? null).currency : undefined;
+
   return {
     feature,
     isEnabled: feature?.enabled ?? false,
     isEnabledForFamily,
     getFamilyFromAccount,
     getCurrencyIdFromAccount,
+    getCurrencyFromAccount,
     allowedFamilies,
     excludedCurrencyIds,
   };

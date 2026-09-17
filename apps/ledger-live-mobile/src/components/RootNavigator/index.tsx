@@ -10,10 +10,12 @@ import { RootStackParamList } from "./types/RootNavigator";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
 import { StartupTimeMarker } from "../../StartupTimeMarker";
 import { useSuppressQ2TourForNewUsers } from "LLM/features/Q2WalletV4Tour/hooks/useSuppressQ2TourForNewUsers";
+import { useSuppressQ3TourForNewUsers } from "LLM/features/Q3WalletV4Tour/hooks/useSuppressQ3TourForNewUsers";
 
 export default function RootNavigator() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   useSuppressQ2TourForNewUsers();
+  useSuppressQ3TourForNewUsers();
   const goToOnboarding = !hasCompletedOnboarding && !Config.SKIP_ONBOARDING;
 
   return (

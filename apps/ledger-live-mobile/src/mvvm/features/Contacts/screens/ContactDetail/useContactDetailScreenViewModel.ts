@@ -21,6 +21,8 @@ import {
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
   trackContactsAddAddressClick,
+  trackContactsLedgerSyncActivate,
+  trackContactsLedgerSyncDismiss,
 } from "@features/flow-contacts";
 import {
   isContactsLedgerSyncActivationRequired,
@@ -35,8 +37,10 @@ import { getMinVersion } from "@ledgerhq/live-common/apps/support";
 import {
   createMeDisplayNameFormatter,
   resolveEligibleAddressCurrencyIds,
+  useContacts,
   useContactsFeature,
   useContactsMeContact,
+  type OtherContactAddress,
 } from "@features/platform-contacts";
 import {
   useContactsIntentsOrchestrator,
@@ -115,7 +119,15 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     onClose: onCloseAddressDetail,
   } = useContactAddressDetailDialog(populatedContactDetail);
   const contact = populatedContactDetail?.contact ?? emptyContact;
+  const allContacts = useContacts();
   const addressValidation = useContactsAddressValidationAdapter();
+  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
+    () =>
+      allContacts.flatMap(c =>
+        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
+      ),
+    [allContacts],
+  );
   const eligibleNetworkIds = useMemo(
     () =>
       resolveEligibleAddressCurrencyIds(eligibleAddressFamilies, undefined, excludedCurrencyIds),
@@ -135,6 +147,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   } = useAddAddressFlowViewModel({
     addressValidation,
     manualValidationDebounceMs: MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS,
+    otherContactsAddresses: allContactsAddresses,
   });
   const completeAddressConfirmation = useCallback(
     async (flowState: Extract<AddAddressFlowState, { status: "confirmationRequired" }>) => {
@@ -233,14 +246,16 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     });
   }, [navigation]);
   const onActivateLedgerSync = useCallback(() => {
+    trackContactsLedgerSyncActivate(analytics);
     dismissPendingIntent();
     setIsLedgerSyncIntroductionOpen(false);
     openLedgerSyncActivationDrawer();
-  }, [dismissPendingIntent, openLedgerSyncActivationDrawer]);
+  }, [analytics, dismissPendingIntent, openLedgerSyncActivationDrawer]);
   const onDismissLedgerSyncIntroduction = useCallback(() => {
+    trackContactsLedgerSyncDismiss(analytics);
     dismissPendingIntent();
     setIsLedgerSyncIntroductionOpen(false);
-  }, [dismissPendingIntent]);
+  }, [analytics, dismissPendingIntent]);
   useEffect(() => {
     if (!isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
       dismissPendingIntent();

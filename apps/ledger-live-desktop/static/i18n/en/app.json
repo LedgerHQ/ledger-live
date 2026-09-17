@@ -917,6 +917,73 @@
       "confirmError": {
         "description": "Something went wrong. Please try again.",
         "retry": "Try again"
+      },
+      "numbers": {
+        "reveal": "View",
+        "hide": "Hide",
+        "failed": "Couldn't load card numbers",
+        "imageAlt": "Card numbers",
+        "unlockTitle": "Enter your password",
+        "passwordRequired": "Password required",
+        "passwordMismatch": "Passwords don't match",
+        "passwordIncorrect": "Incorrect password",
+        "passwordUnavailable": "Couldn't check your password",
+        "passwordCreateFailed": "Couldn't set your password"
+      }
+    },
+    "cardTransactions": {
+      "title": "Transactions",
+      "categories": {
+        "SUBSCRIPTIONS": "Subscriptions",
+        "FOOD": "Food",
+        "TRAVEL": "Travel",
+        "ENTERTAINMENT": "Entertainment",
+        "HEALTH": "Health",
+        "ATM": "ATM",
+        "UTILITIES": "Utilities",
+        "MISC": "Other"
+      },
+      "detail": {
+        "amount": "Amount",
+        "status": "Status",
+        "card": "Card",
+        "cardInfo": "The last four digits of the card used for this payment.",
+        "fundingSource": "Funding source",
+        "transactionId": "Transaction ID",
+        "copyTransactionId": "Copy transaction ID",
+        "today": "Today {{time}}",
+        "yesterday": "Yesterday {{time}}",
+        "dateTime": "{{date}} {{time}}",
+        "statusValues": {
+          "CONFIRMED": "Confirmed",
+          "PENDING": "Pending",
+          "DECLINED": "Declined",
+          "REVERTED": "Reverted"
+        }
+      },
+      "history": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "unknownDate": "Date unavailable",
+        "columns": {
+          "transaction": "Transaction",
+          "fundingSources": "Funding sources",
+          "amount": "Amount"
+        },
+        "paidWithAssets": "Paid with {{count}} assets",
+        "goToPay": "Go to Pay",
+        "signedOut": {
+          "title": "Log in to see your card transactions",
+          "description": "Your card activity appears here once you’re logged in."
+        },
+        "empty": {
+          "title": "No card transactions yet",
+          "description": "Come back later to see your card transactions."
+        },
+        "error": {
+          "title": "Couldn't load card transactions",
+          "description": "Check your connection and try again."
+        }
       }
     },
     "cardOnboarding": {
@@ -928,6 +995,28 @@
         "title": "Complete your card",
         "stepComplete": "Completed",
         "gotIt": "Got it"
+      },
+      "steps": {
+        "createAccount": {
+          "title": "Create your account",
+          "description": "Verify your identity to get started"
+        },
+        "chooseCardType": {
+          "title": "Choose your card type",
+          "description": "Pick between virtual and physical"
+        },
+        "topUpCard": {
+          "title": "Top up your card",
+          "description": "Add funds using USDC, USDT, BTC or more"
+        },
+        "firstPurchase": {
+          "title": "Make your first purchase",
+          "description": "Pay online or in store"
+        },
+        "appleGooglePay": {
+          "title": "Add to Apple/Google Pay",
+          "description": "Pay with your phone in store"
+        }
       }
     },
     "contacts": {
@@ -1013,12 +1102,23 @@
     "cardLogin": {
       "title": "Crypto Card",
       "beforeIntro": {
+        "title": "Get your crypto card",
         "description": "Get 1% cashback every time you spend",
-        "action": "Get card"
+        "action": "Get card",
+        "alreadyHaveCard": "I already have a card"
       },
       "afterIntro": {
-        "description": "Log in to access your card",
-        "action": "Login"
+        "title": "Log in to access your Card",
+        "description": "You’ve been logged out for security",
+        "action": "Log in"
+      },
+      "errors": {
+        "pkce_failed": "Login could not start. Please try again.",
+        "browser_open_failed": "The login page could not open. Please try again.",
+        "missing_attempt": "This login is no longer valid. Please log in again.",
+        "exchange_failed": "Login could not be completed. Please try again.",
+        "persist_failed": "Your session could not be saved. Please try again.",
+        "fetch_user_failed": "Your card could not be loaded. Please try again."
       }
     },
     "cardLoginIntro": {
@@ -2815,6 +2915,35 @@
       "selectSufficientCoins": "Select sufficient coins",
       "amountToSendInCurrency": "Amount to send in {{ticker}}",
       "amountInputLabel": "Amount to send"
+    },
+    "recipient": {
+      "selfTransfer": {
+        "title": "Self transfer",
+        "toPrivate": {
+          "action": "Send to private balance",
+          "label": "Private balance"
+        },
+        "toPublic": {
+          "action": "Send to public balance",
+          "label": "Public balance"
+        }
+      }
+    },
+    "balanceType": {
+      "title": "Select balance",
+      "transparent": {
+        "title": "Public balance",
+        "subtitle": "Transparent"
+      },
+      "shielded": {
+        "title": "Private balance",
+        "subtitle": "Shielded",
+        "pendingNoticeTitle": "Funds maturing",
+        "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
+      },
+      "zeroBalance": {
+        "warning": "No available balance"
+      }
     }
   },
   "releaseNotes": {
@@ -7455,6 +7584,14 @@
     "ZcashSendTooLarge": {
       "title": "This amount is too large to send in one transaction: try sending it in smaller amounts"
     },
+    "ZcashShieldedKeyMissing": {
+      "title": "Activate your private balance first",
+      "description": "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+    },
+    "ZcashNotesNotYetSpendable": {
+      "title": "These funds are not spendable yet",
+      "description": "Please try again in a few minutes"
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },
@@ -7872,6 +8009,22 @@
       "title": "Token restrictions could not be verified",
       "description": "This token's transfer rules could not be read, so the transfer cannot be confirmed as allowed. Please resync your account and try again."
     },
+    "ConcordiumRecipientNotAllowed": {
+      "title": "This address can't receive {{ticker}}",
+      "description": "It hasn't been approved by the token issuer. Approval is managed by the issuer, not by Ledger."
+    },
+    "ConcordiumRecipientDenied": {
+      "title": "This address is restricted from receiving {{ticker}}",
+      "description": "The token issuer has restricted this address. Contact the issuer for details."
+    },
+    "ConcordiumRecipientRestrictionsUnverified": {
+      "title": "{{ticker}} restrictions could not be verified",
+      "description": "Whether this address may receive {{ticker}} could not be checked, so the transfer cannot be confirmed as allowed. Please check your connection and try again."
+    },
+    "ConcordiumRecipientNotFound": {
+      "title": "This address doesn't exist on Concordium",
+      "description": "Check the address and try again. Sending to an address that was never created fails on the network and still costs a fee."
+    },
     "ConcordiumUnsupportedTokenDecimals": {
       "title": "This token cannot be signed on your Ledger device",
       "description": "The token uses {{decimals}} decimal places, and your device supports at most {{maxDecimals}}. Receiving and holding it are unaffected."
@@ -8103,6 +8256,30 @@
     },
     "AleoApiConfigurationResetError": {
       "title": "Record scanner configuration was reset, please sync your account again."
+    },
+    "AleoNoClaimableUnbondedFunds": {
+      "title": "No unbonded ALEO to claim yet",
+      "description": "Unbonded ALEO becomes claimable once its unbonding period has elapsed. Come back once it has."
+    },
+    "AleoAlreadyBondedElsewhere": {
+      "title": "Already staking with {{bondedValidator}}. Unstake before changing validator.",
+      "description": "Aleo allows one validator per account. Unstake from {{bondedValidator}} before staking elsewhere."
+    },
+    "AleoBondAmountTooLow": {
+      "title": "You must stake at least {{minAmount}} at a time.",
+      "description": "The minimum staking amount is {{minAmount}}."
+    },
+    "AleoClosedValidator": {
+      "title": "This validator is not accepting new delegators.",
+      "description": "This validator is not accepting new delegators. Choose an open validator to continue."
+    },
+    "AleoStakeAmountTooLow": {
+      "title": "Staking requires a total of at least {{minAmount}}.",
+      "description": "You must have at least {{minAmount}} staked in total."
+    },
+    "AleoUnbondingValidator": {
+      "title": "This validator is unbonding.",
+      "description": "This validator is withdrawing its own stake, so the network rejects new stake to it. Choose another validator to continue."
     },
     "BackupAppDataError": {
       "title": "Error during app data backup"
@@ -8387,6 +8564,10 @@
     "ICPInvalidPercentage": {
       "title": "Percentage out of range",
       "description": "Enter a whole number between 1 and 100."
+    },
+    "CurrencyRegionRestrictedError": {
+      "title": "{{currencyName}} is not available in your region",
+      "description": "Access to {{currencyName}} is restricted in your region."
     }
   },
   "cryptoOrg": {
@@ -9157,6 +9338,7 @@
     "unsupportedNetworkTooltip": "{{network}} network is not supported yet",
     "notAvailableYet": "Not available yet",
     "selectAccount": "Select account",
+    "selectAccountToPayFrom": "Select account to pay from",
     "selectAccountPerpsTitle": "Select Hyperliquid account",
     "selectAccountPerpsDescription": "Select an account you want to deposit funds into to place your trades",
     "selectAccountPerpsEmptyDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
@@ -9189,6 +9371,11 @@
       },
       "cta": "Try again"
     }
+  },
+  "perpsAccountBanner": {
+    "title": "About Hyperliquid account",
+    "description": "This account is related to Perpetual trading. Transactional actions are not supported for this account",
+    "cta": "Open Perps"
   },
   "portfolio": {
     "title": "Home",
@@ -9429,6 +9616,9 @@
           "toPublic": "Self transfer to public balance",
           "unavailable": "Your private address will be available once Shielded is enabled for your account.",
           "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
+        },
+        "confirm": {
+          "privateTransaction": "Private transaction — verify amount on your device"
         }
       },
       "state": {
@@ -9596,6 +9786,13 @@
         "private": "Private"
       }
     },
+    "operationDetails": {
+      "extra": {
+        "validator": "Validator",
+        "bondedAmount": "Staked amount",
+        "unbondedAmount": "Unstaked amount"
+      }
+    },
     "send": {
       "stepRecipient": {
         "selectLabel": "Send from"
@@ -9611,6 +9808,9 @@
         "errorTitle": "Private sync failed",
         "errorDesc": "Something went wrong, please try again"
       }
+    },
+    "operationTypes": {
+      "WITHDRAW_UNBONDED": "Claim"
     },
     "bond": {
       "flow": {
@@ -9655,7 +9855,6 @@
     "manage": {
       "headerAction": "Earn",
       "title": "Manage staking",
-      "comingSoonTooltip": "Coming soon.",
       "bond": {
         "title": "Bond",
         "description": "Bond your ALEO to a validator to earn rewards."
@@ -9668,7 +9867,10 @@
         "title": "Claim",
         "description": "Claim your unbonded ALEO back to your available balance."
       },
-      "unbondPendingTooltip": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding is unavailable until it has gone through."
+      "unbondPendingTooltip": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "claimPendingTooltip": "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "stillUnbondingTooltip": "Your unbonded ALEO is still in its unbonding period. You can claim it once the period has elapsed.",
+      "nothingToClaimTooltip": "You have no unbonded ALEO to claim. Unbond some of your stake first."
     },
     "unbond": {
       "flow": {
@@ -9691,6 +9893,28 @@
           }
         }
       }
+    },
+    "claim": {
+      "flow": {
+        "title": "Claim ALEO",
+        "steps": {
+          "summary": {
+            "title": "Summary",
+            "info": "This claims all ALEO whose unbonding period has elapsed back to your account.",
+            "claimableAmountLabel": "Claimable amount"
+          },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Claim submitted",
+              "text": "Your claim has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your claim transaction was signed but could not be broadcast."
+          }
+        }
+      }
     }
   },
   "updater": {
@@ -9698,26 +9922,6 @@
     "downloadProgress": "{{progress}}%",
     "errorTryAgain": "Error during update. Try again",
     "installAndRelaunch": "New update. Install and relaunch"
-  },
-  "walletV4Tour": {
-    "slides": {
-      "portfolio": {
-        "title": "A clearer view of your portfolio",
-        "description": "See your total balance at a glance, and tap \"Today\" to dive deeper."
-      },
-      "navigation": {
-        "title": "Access key actions faster",
-        "description": "Access Receive, Buy, Sell, and Send actions instantly."
-      },
-      "actions": {
-        "title": "View market trends instantly",
-        "description": "Quickly see what's trending directly in your portfolio, and move from insights to action."
-      }
-    },
-    "cta": {
-      "continue": "Continue",
-      "explore": "Explore my new portfolio"
-    }
   },
   "q2Tour": {
     "slides": {
@@ -9746,6 +9950,39 @@
       "seeWhatsNew": "See what's new",
       "next": "Next",
       "gotIt": "Got it"
+    }
+  },
+  "q3Tour": {
+    "slides": {
+      "intro": {
+        "title": "A quick tour of the latest",
+        "description": "New ways to send, spend, earn, and more."
+      },
+      "contact": {
+        "title": "Say goodbye to long addresses",
+        "description": "Introducing Contacts. Save wallet addresses with names. Easy to find, easy to send."
+      },
+      "contactNoPay": {
+        "title": "Say hello to Contacts",
+        "description": "Say goodbye to long addresses. Save wallet addresses with names. Easy to find, easy to send."
+      },
+      "pay": {
+        "title": "Say hello to Pay",
+        "description": "Pay contacts, request money, and get cashback with crypto card. Now, all via one tab."
+      },
+      "payNoCard": {
+        "title": "Say hello to Pay",
+        "description": "Pay contacts and request money, all via one tab."
+      },
+      "yield": {
+        "title": "Keep your crypto, finance your projects",
+        "description": "Borrow stablecoins using wrapped BTC as collateral via Yield.xyz powered by Morpho."
+      }
+    },
+    "cta": {
+      "start": "Take a look",
+      "next": "Next",
+      "done": "All caught up"
     }
   },
   "productTour": {
@@ -9798,6 +10035,11 @@
     "emptyState": {
       "title": "No transactions yet",
       "description": "Come back later to see your transactions."
+    },
+    "tabs": {
+      "crypto": "Crypto",
+      "card": "Card",
+      "accessibilityLabel": "Transaction history type"
     },
     "actionsBar": {
       "csv": "Export",
@@ -9925,7 +10167,9 @@
       },
       "validationUnavailable": "Address validation is temporarily unavailable.",
       "ensDisclaimer": "ENS names can change",
-      "ensDisclaimerDescription": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify."
+      "ensDisclaimerDescription": "ENS names can point to different addresses over time. We save the underlying address now to ensure your funds only reach the address you verify.",
+      "duplicateAddress": "This address is already used for {{contactName}}.",
+      "privacyPolicy": "Learn more about Ledger's Privacy Policy."
     },
     "addAddressName": {
       "inputLabel": "Address name",

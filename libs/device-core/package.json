@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-core",
-  "version": "0.11.14",
+  "version": "0.11.15",
   "private": true,
   "description": "Ledger Live device core module",
   "license": "Apache-2.0",
@@ -19,12 +19,12 @@
   "types": "lib/index.d.ts",
   "module": "lib-es/index.js",
   "dependencies": {
-    "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/devices": "catalog:",
+    "@ledgerhq/hw-transport": "catalog:",
+    "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
-    "@noble/hashes": "1.8.0",
+    "@noble/hashes": "catalog:",
     "semver": "catalog:"
   },
   "devDependencies": {
@@ -37,6 +37,7 @@
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "@types/sha.js": "^2.4.4",
+    "axios": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

@@ -4,7 +4,6 @@ import { mockDomMeasurements } from "LLD/features/__tests__/shared";
 import { importLLDCoinFamily } from "~/renderer/families";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import BondPublicFlowModal from "../BondPublicFlowModal";
-import { DEFAULT_ALEO_VALIDATOR } from "../constants";
 import { ALEO_MAIN_ACCOUNT } from "../__mocks__/account.mock";
 import { mockAleoCoinConfig } from "../__mocks__/config.mock";
 import { mockSignedOperation } from "../__mocks__/signedOperation.mock";
@@ -49,7 +48,7 @@ const mockUseAleoValidators = jest.mocked(useAleoValidators);
 // non-earning reason and the rows below get demoted and re-sorted, silently changing what
 // the assertions mean.
 const FIGMENT = {
-  address: DEFAULT_ALEO_VALIDATOR.mainnet,
+  address: mockAleoCoinConfig.defaultValidator ?? "",
   name: "Figment",
   stakeMicrocredits: 63_051_013_000_000,
   isOpen: true,
@@ -165,29 +164,17 @@ describe("Aleo bond flow — full modal", () => {
 });
 
 describe("Aleo bond flow — validator pre-selection", () => {
-  it("seeds the transaction with the default validator when nothing is bonded", async () => {
+  it("seeds the transaction with the configured default validator when nothing is bonded", async () => {
     setupModal();
 
     await waitFor(() => expect(prepareTransactionSpy).toHaveBeenCalled());
 
     const [, transaction] = prepareTransactionSpy.mock.calls.at(-1)!;
-    expect(transaction.recipient).toBe(DEFAULT_ALEO_VALIDATOR.mainnet);
+    expect(transaction.recipient).toBe(mockAleoCoinConfig.defaultValidator);
     expect(transaction.mode).toBe("bond_public");
   });
 
-  it("seeds the testnet default validator on testnet", async () => {
-    mockGetAleoCurrencyConfig.mockReturnValue({ ...mockAleoCoinConfig, networkType: "testnet" });
-
-    setupModal();
-
-    await waitFor(() => expect(prepareTransactionSpy).toHaveBeenCalled());
-
-    const [, transaction] = prepareTransactionSpy.mock.calls.at(-1)!;
-    expect(transaction.recipient).toBe(DEFAULT_ALEO_VALIDATOR.testnet);
-    expect(transaction.recipient).not.toBe(DEFAULT_ALEO_VALIDATOR.mainnet);
-  });
-
-  it("seeds nothing when the network cannot be resolved", async () => {
+  it("seeds nothing when the currency configuration cannot be resolved", async () => {
     mockGetAleoCurrencyConfig.mockReturnValue(undefined);
 
     setupModal();

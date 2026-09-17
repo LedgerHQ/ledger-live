@@ -49,15 +49,15 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   const dispatch = useDispatch();
   const { cosmosResources } = account;
   const {
-    delegations,
+    delegations = [],
     pendingRewardsBalance: _pendingRewardsBalance,
     /** $FlowFixMe */
-    unbondings,
-  } = cosmosResources;
+    unbondings = [],
+  } = cosmosResources || {};
 
   const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
   const validatorUrl = useLocalizedUrl(urls.ledgerValidator);
-  const delegationEnabled = canDelegate(account);
+  const delegationEnabled = canDelegate(account) && !!cosmosResources;
   const mappedDelegations = useCosmosFamilyMappedDelegations(account);
   const currencyId = account.currency.id;
   const { validators } = useCosmosFamilyPreloadData(currencyId);
@@ -128,7 +128,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   );
   const hasDelegations = delegations.length > 0;
   const hasUnbondings = unbondings && unbondings.length > 0;
-  const hasRewards = _pendingRewardsBalance.gt(0);
+  const hasRewards = _pendingRewardsBalance?.gt(0) ?? false;
   const crypto = cryptoFactory(account.currency.id);
   return (
     <>

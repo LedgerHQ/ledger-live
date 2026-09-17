@@ -35,7 +35,7 @@ export function ContactsAddContactContent({
         onClick={() => void onConfirm()}
         data-testid="contacts-add-contact-save"
       >
-        {labels.confirmName}
+        {labels.confirmAddContact}
       </Button>
     </div>
   );

@@ -131,6 +131,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "xion",
       "zenrock",
       "babylon",
+      "gonka",
     ],
     loadSetup: () => import("../families/cosmos/setup"),
     loadTransaction: () => import("@ledgerhq/coin-cosmos/transaction").then(m => m.default),
@@ -310,6 +311,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadSetup: () => import("../families/near/setup"),
     loadLocalApi: () => import("../families/near/coinModuleApi").then(m => m.createLocalNearApi),
     loadBridgeApi: () => import("../families/near/bridge/api").then(m => m.default),
+    loadSigner: () => import("../families/near/signer").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-near/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-near/deviceTransactionConfig").then(m => m.default),

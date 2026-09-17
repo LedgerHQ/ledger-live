@@ -20,6 +20,7 @@ import {
 } from "@ledgerhq/live-common/flows/send/types";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../../../context/SendFlowContext";
+import { useRecipientContinuation } from "../../../context/RecipientContinuationContext";
 import { useAddressValidation } from "./useAddressValidation";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
@@ -51,6 +52,7 @@ export function useRecipientAddressModalViewModel({
   recipientSupportsDomain,
 }: UseRecipientAddressModalViewModelProps) {
   const { recipientSearch, state } = useSendFlowData();
+  const { isFamilyRecipientBlocked } = useRecipientContinuation();
   const contacts = useContacts();
   const [doNotAskAgainSkipMemo] = useDoNotAskAgainSkipMemo();
   const {
@@ -197,6 +199,10 @@ export function useRecipientAddressModalViewModel({
 
   const continueWithAddress = useCallback(
     (address: string, ensName?: string) => {
+      // A family notice can block advancing (e.g. Zcash shielded sync not complete).
+      // Refuse to navigate so a private send can't reach amount/signature early.
+      if (isFamilyRecipientBlocked) return;
+
       if (hasMemo && !hasFilledMemo) {
         if (doNotAskAgainSkipMemo) {
           onAddressSelected(address, ensName, true, { value: "", type: "NO_MEMO" });
@@ -210,7 +216,14 @@ export function useRecipientAddressModalViewModel({
 
       onAddressSelected(address, ensName, true);
     },
-    [doNotAskAgainSkipMemo, hasFilledMemo, hasMemo, navigation, onAddressSelected],
+    [
+      doNotAskAgainSkipMemo,
+      hasFilledMemo,
+      hasMemo,
+      isFamilyRecipientBlocked,
+      navigation,
+      onAddressSelected,
+    ],
   );
 
   const handleAddressSelect = useCallback(
@@ -325,6 +338,7 @@ export function useRecipientAddressModalViewModel({
   });
 
   const shouldHideRegularSearchState = showContactSearchResult || selectedContact !== undefined;
+  const whenRegularSearchVisible = (flag: boolean) => !shouldHideRegularSearchState && flag;
   const addressMatchedSectionViewModel = useAddressMatchedSectionViewModel({
     searchResult: result,
     searchValue: recipientSearch.value,
@@ -337,11 +351,12 @@ export function useRecipientAddressModalViewModel({
     isContactsFeatureEnabled,
     hasAddressBook,
     addressBookFamilyName: mainAccount.currency.name,
+    isBlocked: isFamilyRecipientBlocked,
   });
 
   return {
     searchValue: recipientSearch.value,
-    isLoading: !shouldHideRegularSearchState && isLoading,
+    isLoading: whenRegularSearchVisible(isLoading),
     result,
     showInitialState,
     showContactsList,
@@ -365,18 +380,16 @@ export function useRecipientAddressModalViewModel({
     memoDefaultOption,
     memoMaxLength,
     ...searchState,
-    showSearchResults: !shouldHideRegularSearchState && searchState.showSearchResults,
-    showMatchedAddress: !shouldHideRegularSearchState && searchState.showMatchedAddress,
-    showAddressValidationError:
-      !shouldHideRegularSearchState && searchState.showAddressValidationError,
-    showEmptyState: !shouldHideRegularSearchState && searchState.showEmptyState,
-    showBridgeSenderError: !shouldHideRegularSearchState && searchState.showBridgeSenderError,
-    showSanctionedBanner: !shouldHideRegularSearchState && searchState.showSanctionedBanner,
-    showBridgeRecipientError: !shouldHideRegularSearchState && searchState.showBridgeRecipientError,
-    showBridgeRecipientWarning:
-      !shouldHideRegularSearchState && searchState.showBridgeRecipientWarning,
-    isAddressComplete: !shouldHideRegularSearchState && searchState.isAddressComplete,
+    showSearchResults: whenRegularSearchVisible(searchState.showSearchResults),
+    showMatchedAddress: whenRegularSearchVisible(searchState.showMatchedAddress),
+    showAddressValidationError: whenRegularSearchVisible(searchState.showAddressValidationError),
+    showEmptyState: whenRegularSearchVisible(searchState.showEmptyState),
+    showBridgeSenderError: whenRegularSearchVisible(searchState.showBridgeSenderError),
+    showSanctionedBanner: whenRegularSearchVisible(searchState.showSanctionedBanner),
+    showBridgeRecipientError: whenRegularSearchVisible(searchState.showBridgeRecipientError),
+    showBridgeRecipientWarning: whenRegularSearchVisible(searchState.showBridgeRecipientWarning),
+    isAddressComplete: whenRegularSearchVisible(searchState.isAddressComplete),
     isAddressValid:
-      isAlreadyValidatedRecipient || (!shouldHideRegularSearchState && searchState.isAddressValid),
+      isAlreadyValidatedRecipient || whenRegularSearchVisible(searchState.isAddressValid),
   };
 }

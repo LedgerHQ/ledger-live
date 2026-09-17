@@ -61,6 +61,8 @@ type Props = {
   renderAccountSummary?: () => ReactNode;
   onSwitchAccountCurrency: () => void;
   parentAccount?: Account;
+  /** Rendered between the account name and balance block and the graph itself. */
+  belowHeader?: ReactNode;
 };
 
 const timeRangeMapped = {
@@ -77,6 +79,7 @@ function AccountGraphCard({
   history,
   counterValueCurrency,
   useCounterValue,
+  belowHeader,
   renderAccountSummary,
   onSwitchAccountCurrency,
   valueChange,
@@ -152,6 +155,7 @@ function AccountGraphCard({
         parentAccount={parentAccount}
         currency={currency}
       />
+      {belowHeader}
       {account.type === "TokenAccount" && tokensWithUnsupportedGraph.includes(account.token.id) ? (
         <GraphPlaceholder />
       ) : (

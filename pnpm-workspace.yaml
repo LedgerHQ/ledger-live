@@ -29,8 +29,8 @@ catalog:
   "@commitlint/types": 21.2.0
   "@jest/globals": 30.5.0
   "@ledgerhq/context-module": 2.5.0
-  "@ledgerhq/crypto-icons": "2.0.4"
-  "@ledgerhq/device-contacts-kit": 0.4.0
+  "@ledgerhq/crypto-icons": "2.0.6"
+  "@ledgerhq/device-contacts-kit": 0.4.1
   "@ledgerhq/device-management-kit": 1.9.0
   "@ledgerhq/dmk-ledger-wallet": 0.5.0
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
@@ -50,9 +50,16 @@ catalog:
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
   "@ledgerhq/speculos-device-controller": 0.3.0
   "@ledgerhq/logs": 6.19.0
+  "@ledgerhq/auth": 0.1.0
+  "@ledgerhq/devices": 8.18.0
+  "@ledgerhq/hw-transport": 6.36.0
+  "@ledgerhq/hw-transport-mocker": 6.35.0
+  "@ledgerhq/live-network": 3.1.0
+  "@ledgerhq/live-promise": 0.4.0
+  "@ledgerhq/psbtv2": 0.6.0
   "@ledgerhq/lumen-design-core": 0.1.28
-  "@ledgerhq/lumen-ui-react": 0.1.57
-  "@ledgerhq/lumen-ui-rnative": 0.1.60
+  "@ledgerhq/lumen-ui-react": 0.1.58
+  "@ledgerhq/lumen-ui-rnative": 0.1.61
   "@ledgerhq/lumen-utils-shared": 0.1.12
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.15.3
@@ -78,6 +85,7 @@ catalog:
   "@react-native-community/cli": 18.0.1
   "@react-native-community/cli-platform-android": 18.0.1
   "@react-native-community/cli-platform-ios": 18.0.1
+  "@react-native-clipboard/clipboard": 1.16.2
   # Expo
   expo: 54.0.33
   expo-constants: 18.0.13
@@ -128,12 +136,15 @@ catalog:
   babel-jest: 30.5.0
   bs58: ^4.0.1
   bs58check: ^2.1.2
+  buffer: 6.0.3
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   electron: 43.1.1
   eslint-plugin-better-tailwindcss: 4.0.0-beta.3
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
+  "@noble/curves": 1.9.7
+  "@noble/hashes": 1.8.0
   "@solana/spl-token": ^0.4.14
   "@solana/web3.js": ^1.99.0
   "@polkadot/api": 16.5.4
@@ -160,6 +171,7 @@ catalog:
   react-dom: 19.1.4
   react-i18next: 16.5.0
   react-native-config: 1.5.3
+  react-native-fast-crypto: "3"
   react-native-keychain: 10.0.0
   react-native-reanimated: 4.3.0
   react-native-worklets: 0.8.1
@@ -209,9 +221,9 @@ catalog:
   oxlint: 1.82.0
   oxfmt: 0.67.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 5.3.2
+  "@ledgerhq/coin-evm": 5.3.6
   "@ledgerhq/coin-hypercore": 2.0.1
-  "@ledgerhq/coin-module-framework": 8.5.0
+  "@ledgerhq/coin-module-framework": 9.1.0
   "@ledgerhq/coin-stellar": 9.6.1
   "@ledgerhq/coin-tezos": 10.2.6
   "@ledgerhq/coin-xrp": 10.1.1

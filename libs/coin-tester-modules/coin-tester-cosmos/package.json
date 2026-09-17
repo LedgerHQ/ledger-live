@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-cosmos",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "private": true,
   "description": "Ledger Cosmos Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -9,6 +9,7 @@
     "LedgerWallet",
     "Cosmos",
     "Babylon",
+    "Gonka",
     "Testing"
   ],
   "repository": {
@@ -39,6 +40,11 @@
       "@ledgerhq/source": "./src/scenarii/Cosmos.ts",
       "require": "./lib/scenarii/Cosmos.js",
       "default": "./lib-es/scenarii/Cosmos.js"
+    },
+    "./scenarii/Gonka": {
+      "@ledgerhq/source": "./src/scenarii/Gonka.ts",
+      "require": "./lib/scenarii/Gonka.js",
+      "default": "./lib-es/scenarii/Gonka.js"
     },
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",

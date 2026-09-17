@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { View } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
@@ -40,7 +40,7 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const route = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTabRequestReceive>>();
   const { account } = useAccountScreen(route);
   const currency = route.params.currency;
-  const cardRef = useRef<ComponentRef<typeof View>>(null);
+  const cardRef = useRef<View>(null);
   const { openIntro, verifyAddress, dieActive, onReady, onExit } = usePayTabVerifyAddress(
     onTrackEvent,
     goBack,

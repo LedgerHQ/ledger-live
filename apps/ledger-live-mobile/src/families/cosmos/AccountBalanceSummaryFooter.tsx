@@ -31,7 +31,8 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const info = useInfo(account);
   const { spendableBalance, cosmosResources } = account;
-  const { delegatedBalance, unbondingBalance } = cosmosResources || {};
+  const { delegatedBalance = new BigNumber(0), unbondingBalance = new BigNumber(0) } =
+    cosmosResources || {};
   const unit = useAccountUnit(account);
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);

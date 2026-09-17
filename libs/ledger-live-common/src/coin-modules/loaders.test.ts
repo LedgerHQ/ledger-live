@@ -4,6 +4,8 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { registerAllCoins } from "./load-all-coins";
+import { isCurrencySupported } from "./registry";
 import { coinModuleLoaders } from "./loaders";
 
 describe("coinModuleLoaders smoke test", () => {
@@ -51,5 +53,25 @@ describe("getWalletApiSpendableBalance contract", () => {
     }
 
     expect(offenders).toEqual([]);
+  });
+});
+
+describe("gonka registration", () => {
+  it("registers gonka as a supported cosmos currency", () => {
+    const cosmosLoader = coinModuleLoaders.find(loader => loader.family === "cosmos");
+
+    expect(cosmosLoader?.supportedCoins).toContain("gonka");
+  });
+
+  it("is a supported currency once all coins are registered", () => {
+    registerAllCoins();
+
+    expect(isCurrencySupported(getCryptoCurrencyById("gonka"))).toBe(true);
+  });
+
+  it("resolves to the cosmos family", () => {
+    registerAllCoins();
+
+    expect(getCryptoCurrencyById("gonka").family).toBe("cosmos");
   });
 });

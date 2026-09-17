@@ -11,6 +11,7 @@ shared `cardApi` service (`@shared/api-services`, `services/card`) rather than d
 - `types.ts` — the inferred response types and the request arguments each endpoint takes.
 - `transforms.ts` — maps a validated wire response onto its canonical shape.
 - `constants.ts` — `CARD_MANAGEMENT_TAGS` and the OAuth2 token path.
+- `*.mock.ts` — wire-shaped answers for the apps' MSW workers, behind the `./mock/*` exports.
 
 Every endpoint is declarative: `query`, never `queryFn`, with the schemas and the transform doing the
 rest. [`.agents/skills/card-endpoint-shape`](.agents/skills/card-endpoint-shape/SKILL.md) has the
@@ -26,10 +27,15 @@ shape and the reasons.
 | `getCardStatus` | GET | `/v1/card/status` | Read the ordered card's state and preview fields |
 | `getCardTransactions` | GET | `/v1/card/transactions` | Read the card's own transactions, newest first |
 | `createCardDetailsToken` | POST | `/v1/card/details/token` | Mint a single-use token and image URL showing PAN, CVV and expiry |
+| `createCardPinToken` | POST | `/v1/card/pin/token` | Mint a single-use token and image URL showing the PIN |
+| `createCardSetPinToken` | POST | `/v1/card/set-pin/token` | Mint a single-use token and URL for the hosted page that sets the PIN |
 | `freezeCard` | POST | `/v1/card/freeze` | Move an active card to `FROZEN` |
 | `unfreezeCard` | POST | `/v1/card/unfreeze` | Move a frozen card back to `ACTIVE` |
 | `getInternalWallets` | GET | `/v1/wallet/internal` | Read every custodial wallet, with balances |
+| `getRewardWallet` | GET | `/v1/wallet/reward` | Read the wallet the card's rewards are paid into |
 | `getCardLinkedWallets` | GET | `/v1/wallet/internal/card_linked` | Read the wallets funding the card, in charging order |
+| `linkWalletToCard` | POST | `/v1/wallet/internal/card_linked` | Link a custodial wallet to the card as a funding source |
+| `updateCardWalletPriorities` | PUT | `/v1/wallet/internal/card_linked/priority` | Rewrite the order the linked wallets are charged in |
 | `getWalletHistory` | GET | `/v1/wallet/history` | Read one wallet's own history, newest first |
 
 ## OAuth2 grants

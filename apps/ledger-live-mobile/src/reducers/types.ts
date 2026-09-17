@@ -38,6 +38,7 @@ import type { AppLockState } from "@features/platform-app-lock";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import type { TransferDrawerState } from "./transferDrawer";
 import type { SwapTransactionStatusDrawerState } from "./swapTransactionStatusDrawer";
+import type { CurrencyRegionRestrictedDrawerState } from "./currencyRegionRestrictedDrawer";
 import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
 import type { SendFlowState } from "./sendFlow";
 import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
@@ -315,7 +316,6 @@ export type SettingsState = {
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
-  hasSeenWalletV4Tour: boolean;
   hasDismissedContactsFeatureIntroduction: boolean;
   productTourCompleted: boolean;
   hasSeenQ2WalletV4Tour: boolean;
@@ -476,6 +476,7 @@ export type State = LLMRTKApiState & {
   rebornBuyDeviceDrawer: RebornBuyDeviceDrawerState;
   transferDrawer: TransferDrawerState;
   swapTransactionStatusDrawer: SwapTransactionStatusDrawerState;
+  currencyRegionRestrictedDrawer: CurrencyRegionRestrictedDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   postOnboardingHubDrawer: PostOnboardingHubDrawerState;

@@ -6,6 +6,8 @@ import type {
   Account,
   AccountLike,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
   OperationType,
   TokenAccount,
 } from "@ledgerhq/types-live";
@@ -31,6 +33,7 @@ import {
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   MAX_VALIDATOR_STAKE_SHARE,
   MICROCREDITS_PER_CREDIT,
+  MIN_BOND_AMOUNT_MICROCREDITS,
   MIN_DELEGATOR_STAKE_MICROCREDITS,
   PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
@@ -51,7 +54,9 @@ import type {
   Intent,
   AleoTransactionIntentData,
   AleoPublicTransaction,
+  AleoOperation,
   AleoOperationExtra,
+  AleoOperationExtraRaw,
   TransactionPublic,
   TransactionPrivate,
   AleoCoinConfig,
@@ -68,6 +73,7 @@ import type {
   AleoStakingPosition,
   AleoStakingResources,
   AleoStakingMode,
+  AleoValidator,
   AleoValidatorNonEarningReason,
 } from "../types";
 
@@ -285,7 +291,9 @@ export function parseTransactionFields(rawTx: AleoPublicTransaction, address: st
   const blockHash = rawTx.block_hash;
 
   if (rawTx.program_id === PROGRAM_ID.CREDITS) {
-    type = address === rawTx.recipient_address ? "IN" : "OUT";
+    // The indexer blanks both sides of a staking call, so no address comparison can type it.
+    type =
+      resolveStakingOperationType(rawTx) ?? (address === rawTx.recipient_address ? "IN" : "OUT");
   }
 
   const transactionType = determineTransactionType(rawTx.function_id, type);
@@ -357,15 +365,19 @@ export const toPublicOperation = ({
     !rawTx.recipient_address && hasOwnedRecord
       ? address
       : rawTx.recipient_address || (resolvedRecipient ?? "");
-  const type = resolveOperationType(rawTx, address, sender, recipient);
+  const stakingType = resolveStakingOperationType(rawTx);
+  const type = stakingType ?? resolveOperationType(rawTx, address, sender, recipient);
+  const value = stakingType ? new BigNumber(rawTx.fee) : resolveTransactionAmount(rawTx);
 
   return {
     id: hash,
     type,
-    senders: [sender],
-    recipients: [recipient],
-    value: BigInt(resolveTransactionAmount(rawTx).toFixed(0)),
+    senders: stakingType ? [] : [sender],
+    recipients: stakingType ? [] : [recipient],
+    value: BigInt(value.toFixed(0)),
     asset: toOperationAsset(rawTx.program_id, tokenTypeByProgramName),
+    // No `validator`/`stakedAmount`: those cost one request per bond (see resolveBondArguments),
+    // which the api path does not spend.
     details: {
       functionId: rawTx.function_id,
       transactionType: determineTransactionType(rawTx.function_id, type),
@@ -563,6 +575,33 @@ export function getStakingOperationType(functionName: string): OperationType | u
     : undefined;
 }
 
+/** Another program may expose a same-named function; only credits.aleo staking counts. */
+export function resolveStakingOperationType(
+  rawTx: AleoPublicTransaction,
+): OperationType | undefined {
+  return rawTx.program_id === PROGRAM_ID.CREDITS
+    ? getStakingOperationType(rawTx.function_id)
+    : undefined;
+}
+
+export function isStakingOperation(op: AleoOperation): boolean {
+  const { functionId, programId } = op.extra ?? {};
+  if (functionId === undefined) return false;
+
+  return programId === PROGRAM_ID.CREDITS && getStakingOperationType(functionId) !== undefined;
+}
+
+/** `functionId` works as the discriminant because no other family's extra carries one. */
+export function isAleoOperationExtra(extra: OperationExtra): extra is AleoOperationExtra {
+  return isRecord(extra) && "functionId" in extra;
+}
+
+export function isAleoOperationExtraRaw(
+  extraRaw: OperationExtraRaw,
+): extraRaw is AleoOperationExtraRaw {
+  return isRecord(extraRaw) && "functionId" in extraRaw;
+}
+
 export function isPublicTokenTransaction(transaction: Pick<Transaction, "mode">): boolean {
   return (
     transaction.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC ||
@@ -581,9 +620,12 @@ export function isTokenTransaction(transaction: Pick<Transaction, "mode">): bool
   return isPublicTokenTransaction(transaction) || isPrivateTokenTransaction(transaction);
 }
 
-/** Unbonding moves funds within the account itself, so the recipient is the sender. */
+/** Unbond and claim move funds within the account itself, so the recipient is the sender. */
 export function isSelfStakingMode(transaction: Pick<Transaction, "mode">): boolean {
-  return transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC;
+  return (
+    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC
+  );
 }
 
 export function isSelfTransferTransaction(
@@ -602,6 +644,8 @@ export function isPublicTransaction(transaction: Transaction): transaction is Tr
     transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
     transaction.mode === TRANSACTION_TYPE.TRANSFER_PUBLIC ||
     transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC ||
     isPublicTokenTransaction(transaction)
   );
 }
@@ -915,7 +959,8 @@ export function fromHex<T>(txHex: string): T {
   return JSON.parse(Buffer.from(txHex, "hex").toString());
 }
 
-// this function is used to extract the fields that should be displayed in the operation details
+// `validator` is absent by design: this renders as plain text on both platforms, while desktop
+// shows it as a truncated, copyable address.
 export const getOperationDetailsExtraFields = (
   extra: AleoOperationExtra,
 ): OperationDetailsExtraField[] => {
@@ -987,6 +1032,8 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
       return account.aleoResources?.transparentBalance ?? new BigNumber(0);
     case TRANSACTION_TYPE.UNBOND_PUBLIC:
       return account.aleoResources?.bondedBalance ?? new BigNumber(0);
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return getClaimableStakingBalance(account);
     // spending private native balance
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC: {
@@ -1105,6 +1152,7 @@ export function createTransactionIntent({
   switch (transaction.mode) {
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
       return base;
 
     case TRANSACTION_TYPE.BOND_PUBLIC:
@@ -1535,6 +1583,19 @@ export function getValidatorNonEarningReason({
 }
 
 /**
+ * Whether a delegator may bond to this validator. A full-commission validator stays
+ * bondable — it pays nothing, which the picker warns about, but the network accepts
+ * the stake; a closed, unbonding or over-concentrated one does not.
+ */
+export function isValidatorBondable(
+  validator: Pick<AleoValidator, "isOpen" | "isUnbonding" | "nonEarningReason">,
+): boolean {
+  return (
+    validator.isOpen && !validator.isUnbonding && validator.nonEarningReason !== "overConcentrated"
+  );
+}
+
+/**
  * What a delegator can expect from one validator: the gross network rate less that
  * validator's commission, as a fraction (0.07 = 7%). A **lower bound** — every surface
  * showing it must label it an estimate.
@@ -1573,4 +1634,18 @@ export function estimateNetRate({
   const keptShare = new BigNumber(1).minus(commissionPercent.dividedBy(100));
 
   return grossRate.multipliedBy(keptShare);
+}
+
+/**
+ * The smallest bond a delegator may submit given what is already bonded: enough for the
+ * projected total to clear MIN_DELEGATOR_STAKE_MICROCREDITS, never below the absolute
+ * MIN_BOND_AMOUNT_MICROCREDITS floor. Mirrors the two amount checks in
+ * `getTransactionStatus`.
+ */
+export function getMinBondAmount(bondedBalance: BigNumber = new BigNumber(0)): BigNumber {
+  const missingForDelegatorMinimum = new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS).minus(
+    bondedBalance,
+  );
+
+  return BigNumber.max(MIN_BOND_AMOUNT_MICROCREDITS, missingForDelegatorMinimum);
 }

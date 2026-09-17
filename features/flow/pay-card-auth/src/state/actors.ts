@@ -33,18 +33,19 @@ export const prepareAttempt = fromPromise(
     input,
   }: {
     input: { ports: CardLoginPorts; oauthConfig: CardLoginOauthConfig };
-  }): Promise<{ loginUrl: string }> => {
-    const { codeVerifier, codeChallenge } = await input.ports.createAttempt();
+  }): Promise<{ loginUrl: string; state: string }> => {
+    const { codeVerifier, codeChallenge, state } = await input.ports.createAttempt();
     await input.ports.saveAttempt({ codeVerifier });
 
     // Only the challenge leaves the device. The verifier stays in the store until the token exchange.
-    return { loginUrl: buildAuthorizeUrl(input.oauthConfig, codeChallenge) };
+    return { loginUrl: buildAuthorizeUrl(input.oauthConfig, codeChallenge, state), state };
   },
 );
 
 /**
- * Opens the OS browser and reports the redirect it stopped on. A dismissal and a redirect without a
- * code are the same answer here: no callback, so the attempt ends without a message.
+ * Opens the hosted login and reports the redirect it stopped on. A dismissal and a redirect without a
+ * code are the same answer here: no callback, so the attempt ends without a message. `isPending` is
+ * the third answer, and it asks the machine to keep the attempt and wait for the app's deep link.
  */
 export const openHostedLogin = fromPromise(
   async ({
@@ -58,7 +59,10 @@ export const openHostedLogin = fromPromise(
 
     const result = await input.ports.openHostedLogin(input.loginUrl, input.deepLink);
 
-    return { callback: result.type === "success" ? parseCallbackUrl(result.url) : null };
+    return {
+      callback: result.type === "success" ? parseCallbackUrl(result.url) : null,
+      isPending: result.type === "pending",
+    };
   },
 );
 

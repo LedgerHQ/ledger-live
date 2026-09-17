@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "@shared/i18n";
-import type { PayCardOnboardingStep } from "@domain/api-card-management";
+import type { CardOnboardingStepWithCopy } from "../CardOnboardingWidget/useOnboardingSteps";
 import { markCardAddedToWallet } from "../../state";
 import { getStepIconId } from "./getStepIconId";
 import type {
@@ -26,7 +26,7 @@ const STEP_ACTIONS: Record<string, () => void> = {
 
 type Params = {
   isOpen: boolean;
-  steps: PayCardOnboardingStep[];
+  steps: CardOnboardingStepWithCopy[];
   completedCount: number;
   totalCount: number;
   onClose: () => void;

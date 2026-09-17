@@ -30,7 +30,6 @@ import {
 import { accountsSelector } from "~/reducers/accounts";
 import { rebootIdSelector } from "~/reducers/appstate";
 import LocaleProvider, { i18n } from "~/context/Locale";
-import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { store } from "~/state-manager/configureStore";
@@ -102,6 +101,7 @@ import {
   setSolanaTxcEnabled,
 } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
+import { LinkingProviderWrapper } from "~/components/LinkingProviderWrapper";
 import { setXrpLdmkEnabled } from "@ledgerhq/live-common/families/xrp/setup";
 import { resolveSuiTransport, setSuiTransport } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
@@ -379,16 +379,16 @@ export default class Root extends Component {
                   {/* Two providers, one instance: `I18nextProvider` serves the app's own
                     react-i18next call sites, `I18nProvider` serves the DDD packages through
                     `@shared/i18n`. */}
-                  <I18nextProvider i18n={i18n}>
-                    <I18nProvider i18n={i18n}>
-                      <LocaleProvider>
-                        <PlatformAppProviderWrapper>
-                          <SafeAreaProvider>
-                            <ModalSystemPrimer />
-                            <StylesProvider>
-                              <StyledStatusBar />
-                              <NavBarColorHandler />
-                              <AuthPass>
+                  <LinkingProviderWrapper>
+                    <I18nextProvider i18n={i18n}>
+                      <I18nProvider i18n={i18n}>
+                        <LocaleProvider>
+                          <PlatformAppProviderWrapper>
+                            <SafeAreaProvider>
+                              <ModalSystemPrimer />
+                              <StylesProvider>
+                                <StyledStatusBar />
+                                <NavBarColorHandler />
                                 <GestureHandlerRootView style={styles.root}>
                                   <WaitForAppReady currencyInitialized={currencyInitialized}>
                                     <AppProviders initialCountervalues={initialCountervalues}>
@@ -402,13 +402,13 @@ export default class Root extends Component {
                                     </AppProviders>
                                   </WaitForAppReady>
                                 </GestureHandlerRootView>
-                              </AuthPass>
-                            </StylesProvider>
-                          </SafeAreaProvider>
-                        </PlatformAppProviderWrapper>
-                      </LocaleProvider>
-                    </I18nProvider>
-                  </I18nextProvider>
+                              </StylesProvider>
+                            </SafeAreaProvider>
+                          </PlatformAppProviderWrapper>
+                        </LocaleProvider>
+                      </I18nProvider>
+                    </I18nextProvider>
+                  </LinkingProviderWrapper>
                 </QueuedBottomSheetsProvider>
               </BrazeContentCardsProvider>
             </RebootProvider>

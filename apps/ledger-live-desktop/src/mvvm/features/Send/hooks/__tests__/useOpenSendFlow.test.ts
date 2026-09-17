@@ -1,6 +1,10 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AssetCategory } from "@domain/api-aggregated-assets";
+import {
+  isZcashShieldedEnabled,
+  setZcashShieldedEnabled,
+} from "@ledgerhq/live-common/bridge/zcashRouting";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useOpenSendFlow } from "../useOpenSendFlow";
 
@@ -75,6 +79,7 @@ describe("useOpenSendFlow", () => {
     expect(store.getState().modularDialog.dialogParams?.categories).toEqual([
       AssetCategory.Stablecoins,
     ]);
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBeUndefined();
 
     store.getState().modularDialog.dialogParams?.onAccountSelected?.(account);
 
@@ -131,10 +136,52 @@ describe("useOpenSendFlow", () => {
     });
 
     result.current({
+      source: "Pay",
       currencyIds: ["bitcoin"],
       recipient,
       skipRecipientStep: true,
     });
+
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBe("pay");
+
+    store.getState().modularDialog.dialogParams?.onAccountSelected?.(account);
+
+    expect(store.getState().sendFlow.data?.params).toEqual(
+      expect.objectContaining({
+        account,
+        recipient,
+        skipRecipientStep: true,
+        source: "Pay",
+      }),
+    );
+  });
+
+  it("should not use the Pay account header when another flow prefills the recipient", () => {
+    const account = genAccount("send-contacts-account-selection", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const { result, store } = renderHook(() => useOpenSendFlow(), {
+      initialState: {
+        ...withFlagOverrides({
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["bitcoin"], excludedCurrencyIds: [] },
+          },
+        }),
+        accounts: [account],
+      },
+    });
+
+    const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+
+    result.current({
+      currencyIds: ["bitcoin"],
+      recipient,
+      skipRecipientStep: true,
+    });
+
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBeUndefined();
+
     store.getState().modularDialog.dialogParams?.onAccountSelected?.(account);
 
     expect(store.getState().sendFlow.data?.params).toEqual(
@@ -144,5 +191,89 @@ describe("useOpenSendFlow", () => {
         skipRecipientStep: true,
       }),
     );
+    expect(store.getState().sendFlow.data?.params).not.toEqual(
+      expect.objectContaining({ source: "Pay" }),
+    );
+  });
+
+  it("should not use the Pay account header when Pay has a recipient but does not skip", () => {
+    const account = genAccount("send-pay-recipient-no-skip", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const { result, store } = renderHook(() => useOpenSendFlow(), {
+      initialState: {
+        ...withFlagOverrides({
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["bitcoin"], excludedCurrencyIds: [] },
+          },
+        }),
+        accounts: [account],
+      },
+    });
+
+    result.current({
+      source: "Pay",
+      currencyIds: ["bitcoin"],
+      recipient: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+    });
+
+    expect(store.getState().modularDialog.dialogParams?.uiUseCase).toBeUndefined();
+  });
+
+  describe("balance-type routing override", () => {
+    const previousShieldedEnabled = isZcashShieldedEnabled();
+
+    afterEach(() => {
+      setZcashShieldedEnabled(previousShieldedEnabled);
+    });
+
+    it("should open the new send flow for an excluded currency when its family is allowed and it has a balance type step", () => {
+      setZcashShieldedEnabled(true);
+      const account = genAccount("send-zcash-balance-type", {
+        currency: getCryptoCurrencyById("zcash"),
+      });
+
+      const { result, store } = renderHook(() => useOpenSendFlow(), {
+        initialState: {
+          ...withFlagOverrides({
+            newSendFlow: {
+              enabled: true,
+              params: { families: ["bitcoin"], excludedCurrencyIds: ["zcash"] },
+            },
+          }),
+          accounts: [account],
+        },
+      });
+
+      result.current({ account });
+
+      expect(store.getState().sendFlow.isOpen).toBe(true);
+      expect(store.getState().modals.MODAL_SEND?.isOpened).not.toBe(true);
+    });
+
+    it("should keep the legacy send modal when a currency has a balance type step but its family is not allowed", () => {
+      setZcashShieldedEnabled(true);
+      const account = genAccount("send-zcash-family-not-allowed", {
+        currency: getCryptoCurrencyById("zcash"),
+      });
+
+      const { result, store } = renderHook(() => useOpenSendFlow(), {
+        initialState: {
+          ...withFlagOverrides({
+            newSendFlow: {
+              enabled: true,
+              params: { families: ["evm"], excludedCurrencyIds: [] },
+            },
+          }),
+          accounts: [account],
+        },
+      });
+
+      result.current({ account });
+
+      expect(store.getState().sendFlow.isOpen).toBe(false);
+      expect(store.getState().modals.MODAL_SEND?.isOpened).toBe(true);
+    });
   });
 });

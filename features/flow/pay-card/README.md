@@ -12,9 +12,8 @@ Card leaf flows into a single entry point, mirroring the Contacts aggregate (`@f
 import { Card } from "@features/flow-pay-card";
 
 <Card
-  oauthConfig={oauthConfig}
-  callback={callback}
-  formatCountervalue={formatCountervalue}
+  login={{ oauthConfig, callback }}
+  formatters={{ countervalue, transactionAmount, transactionDate }}
   balanceLabel={balanceLabel}
 />;
 ```
@@ -23,15 +22,20 @@ import { Card } from "@features/flow-pay-card";
 
 - The card face from [`@features/flow-pay-card-details`](../pay-card-details/README.md): `CardVisual`
   once the host provides a countervalue formatter and a balance label, the bare `CardArtwork`
-  otherwise. Freeze and More also come from that package (`CardActions` on web; `Freeze` and `More`
-  side by side on native).
+  otherwise. Freeze and More also come from that package (`CardDetails` on both platforms).
 - `CardLogin` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md) — it shows while
   nobody is signed in, and `useCardLogout` ends the session from the More menu.
+- `CardTransactions` from [`@features/flow-pay-card-transactions`](../pay-card-transactions/README.md)
+  on web once signed in (the first page of card transactions, or nothing when the list is empty).
 
 The flow owns the (currently mocked) card balance, so hosts no longer assemble the visual themselves.
-They pass only the two things the flow cannot know: `formatCountervalue` (needs the app's locale and
-counter-value currency) and `balanceLabel` (i18n stays with the host). `oauthConfig` and `callback`
-come from `@features/flow-pay-card-auth`. Desktop mounts this flow in the Pay tab's right panel.
+They pass a `formatters` object for what only the app knows: `countervalue` (locale and
+counter-value currency), and on web `transactionAmount` / `transactionDate` so the history uses the
+same amount and date formatters as the rest of the app (`useDateFormatter` on Desktop). `balanceLabel`
+stays with the host because of i18n; the flow resolves its own card title through `@shared/i18n`.
+Hosts pass `oauthConfig` and `callback` under `login`
+(`CardProps.login`); those come from `@features/flow-pay-card-auth`. Desktop mounts this flow in the
+Pay tab's right panel.
 
 ## MVVM
 

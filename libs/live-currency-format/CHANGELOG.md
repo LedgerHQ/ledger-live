@@ -1,5 +1,17 @@
 # @ledgerhq/live-currency-format
 
+## 0.15.0
+
+### Minor Changes
+
+- [#21616](https://github.com/LedgerHQ/ledger-live/pull/21616) [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate `BIG_NUMBER_DECIMAL_PLACES` off `@ledgerhq/live-env`: every call site now inlines the constant and the definition is removed. `@ledgerhq/live-currency-format` drops its `@ledgerhq/live-env` dependency altogether.
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#21616](https://github.com/LedgerHQ/ledger-live/pull/21616) [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate `BIG_NUMBER_DECIMAL_PLACES` off `@ledgerhq/live-env`: every call site now inlines the constant and the definition is removed. `@ledgerhq/live-currency-format` drops its `@ledgerhq/live-env` dependency altogether.
+
 ## 0.14.3
 
 ### Patch Changes
@@ -180,24 +192,5 @@
 
 - Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9)]:
   - @ledgerhq/live-env@2.37.0
-
-## 0.9.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`5fc817a`](https://github.com/LedgerHQ/ledger-live/commit/5fc817a5ee316396a327e5b10eccd8314bfb2df5), [`65f87d9`](https://github.com/LedgerHQ/ledger-live/commit/65f87d938ac4158e0ae706593d2a46561097f5a9)]:
-  - @ledgerhq/live-env@2.37.0-next.0
-
-## 0.9.0
-
-### Minor Changes
-
-- [#17662](https://github.com/LedgerHQ/ledger-live/pull/17662) [`bb25536`](https://github.com/LedgerHQ/ledger-live/commit/bb2553672eca7fc9a8e5b9c9b9869792b604a06a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Centralize price formatting with consistent digit rules (2/6 fractional digits) and threshold marker for tiny variations
-
-### Patch Changes
-
-- Updated dependencies [[`839537d`](https://github.com/LedgerHQ/ledger-live/commit/839537d42f9c2bf87ad0faf64e51966250976055), [`2eabd7f`](https://github.com/LedgerHQ/ledger-live/commit/2eabd7f56680e1399926a96b4bdeaf628e435999)]:
-  - @ledgerhq/types-cryptoassets@7.37.0
-  - @ledgerhq/live-env@2.36.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

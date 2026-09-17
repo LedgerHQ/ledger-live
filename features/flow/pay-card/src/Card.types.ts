@@ -1,28 +1,28 @@
+import type { CardLoginProps } from "@features/flow-pay-card-auth";
 import type {
-  CardLoginOauthConfig,
-  PayCardAuthCallback,
-  PayCardLoginTrackEvent,
-} from "@features/flow-pay-card-auth";
-import type { CardVisualProps, FormattedValue } from "@features/flow-pay-card-details";
+  CardVisualProps,
+  FormattedValue,
+  UnlockForReveal,
+} from "@features/flow-pay-card-details";
+import type {
+  FormatCardTransactionAmount,
+  FormatCardTransactionDate,
+} from "@features/flow-pay-card-transactions";
+
+export type CardFormatters = Readonly<{
+  countervalue?: (value: number) => FormattedValue;
+  transactionAmount?: FormatCardTransactionAmount;
+  transactionDate?: FormatCardTransactionDate;
+}>;
+
+export type { UnlockForReveal };
 
 /** Host input for the Pay Card flow. */
 export type CardProps = {
-  readonly title: string;
-  readonly oauthConfig: CardLoginOauthConfig;
-  /**
-   * The OAuth redirect the app already parsed, when it has one. The app's router owns the deep link,
-   * so it hands the flow the `code` it received.
-   */
-  readonly callback?: PayCardAuthCallback | null;
-  /**
-   * Turns the (flow-owned) card balance into a value `AmountDisplay` can render. This is the one bit
-   * the flow cannot build itself: it needs the app's locale and counter-value currency. Omit it and
-   * the card falls back to the bare artwork.
-   */
-  readonly formatCountervalue?: (value: number) => FormattedValue;
-  /** Localized caption shown above the balance. i18n stays with the host, so the app passes the string. */
-  readonly balanceLabel?: string;
-  readonly onTrackEvent?: PayCardLoginTrackEvent;
+  readonly login: CardLoginProps;
+  readonly formatters?: CardFormatters;
+  readonly unlock?: UnlockForReveal;
+  readonly onShowMore?: () => void;
 };
 
 /**
@@ -35,14 +35,13 @@ export type CardProps = {
  */
 export type CardDisplayState = "resolving" | "signedOut" | "signedIn";
 
-/** Props the presentational view renders, resolved by {@link useCardViewModel}. */
 export type CardViewProps = {
   readonly title: string;
-  readonly oauthConfig: CardLoginOauthConfig;
-  readonly callback?: PayCardAuthCallback | null;
-  readonly onTrackEvent?: PayCardLoginTrackEvent;
+  readonly login: CardLoginProps;
   /** Which face to show. The children are mutually exclusive, so the view switches on this. */
   readonly displayState: CardDisplayState;
-  /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   readonly cardVisual?: CardVisualProps;
+  readonly formatters?: CardFormatters;
+  readonly unlock?: UnlockForReveal;
+  readonly onShowMore?: () => void;
 };

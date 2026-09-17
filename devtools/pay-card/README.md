@@ -2,8 +2,10 @@
 
 The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place.
 
-The shared panel has four sections: **Feature flags**, **Onboarding** (toggle each step done or
-not-done), **Reset onboarding** and **Feature tour** (seen state plus a reset).
+The shared panel has: **Card Debug** (a list linking to Card Status / Card interaction, Balance &
+Wallets, **Card onboarding** — a full screen showing the real, derived onboarding steps, with
+mock-answer toggles when request mocking is on — and Currency Mapping), **Feature flags**, and
+**Feature tour** / **Onboarding completed** (seen state plus a reset, each).
 
 The native panel adds **Request verify hint** (seen state plus a reset) and, when the host supplies
 navigation, **Quick actions** (Portfolio / Pay tab / Pay contact success / Send success). It also
@@ -11,11 +13,15 @@ adds a **Secure browser** section: a URL field and one button, which opens that 
 browser the hosted login uses. The host supplies the action, so a host without such a browser
 shows no section.
 
-When the host builds the `auth` prop, the native panel adds four more sections at the top:
-**Auth session** (the stored tokens, or why the secure store refused a read), **Device secure
-storage** (read the tokens, damage one, or clear the session), **Send API requests** (renew the
-session, or get the user) and **MSW Auth Renewal Mock** (what the mocked
-token endpoint answers, plus a count of the renewals). A toast reports what each action answered.
+When the host builds the `auth` prop, both panels add a **Card session** section: stored tokens,
+sign-out, and a user fetch. On Desktop, with `pnpm desktop start:msw`, that section can also sign
+in a mock session so Card surfaces work without the hosted login. Native never offers that, because
+the session lives in the Keychain.
+
+The native panel then adds three more sections: **Device secure storage** (read the tokens, damage
+one, or clear the session), **Send API requests** (renew the session, or get the user) and **MSW
+Auth Renewal Mock** (what the mocked token endpoint answers, plus a count of the renewals). A toast
+reports what each action answered.
 
 ## Import boundary
 
@@ -28,11 +34,8 @@ import PayCard, { type PayCardToolProps } from "@devtools/pay-card";
 ```
 
 - `PayCard` (default export) — the React component rendered by the shell.
-- `PayCardToolProps` — the props contract the host (via bindings) must satisfy, with its parts
-  `PayCardFlagsProps`, `PayCardOnboardingProps` and `OnboardingStep`.
-- `usePayCardViewModel` / `PayCardViewModel` — onboarding progress derived from those props, plus
-  `toggleStep` and `setAllSteps`.
-- `formatId` — turns a step id into a label: `"kyc-check"` → `"Kyc check"`.
+- `PayCardToolProps` — the props contract the host (via bindings) must satisfy, with its part
+  `PayCardFlagsProps`.
 
 ## Props contract
 
@@ -46,26 +49,43 @@ interface PayCardToolProps {
     setCardParam: (value: boolean) => void;
     setPtxCardEnabled: (value: boolean) => void;
   };
-  onboarding: {
+  // The real, derived onboarding status — signals read from getUser/getCardStatus/
+  // getCardLinkedWallets, joined onto the step list. Backs the "Card onboarding" screen.
+  cardOnboarding: {
     steps: readonly {
       id: string;
-      label: string;
-      done: boolean;
+      isDone: boolean;
+      // False while nothing can answer the step yet (e.g. the purchase step).
+      canToggle: boolean;
     }[];
-    // id "all" applies `done` to every step — the "Reset onboarding" button relies on it
+    completedCount: number;
+    isFetching: boolean;
+    error: string | undefined;
+    // The derived status, printed for inspection.
+    raw: string;
+    refresh: () => void;
+    // Sets the mock answer a step reads from (accountVerified/hasCard/walletFunded), or the phone
+    // wallet flag directly. A no-op for an id nothing can answer yet.
     setStepDone: (id: string, done: boolean) => void;
+    // Clears every mocked answer, handing the endpoints back to the real provider.
+    clearMocks: () => void;
+    isMockingEnabled: boolean;
   };
   hasSeenFeatureTour: boolean;
   resetPayCardFeatureTourSeen: () => void;
   hasSeenReceiveVerifyHint: boolean;
   resetReceiveVerifyHintSeen: () => void;
+  // Whether the card onboarding widget has been permanently dismissed (all steps done + Got it).
+  hasCompletedCardOnboarding: boolean;
+  resetCardOnboarding: () => void;
   onNavigateToPortfolio?: () => void;
   onNavigateToPayTab?: () => void;
   onNavigateToPaySuccess?: () => void;
   onNavigateToSendSuccess?: () => void;
-  // Native only, and optional: absent on a host that does not build the Card session controls,
-  // which hides the four auth sections. `PayCardAuthProps` in `src/types.ts` gives the full shape:
-  // the session, the action handlers and the mock controls.
+  // Optional: absent on a host that does not build the Card session controls, which hides them.
+  // Desktop uses this for mock sign-in (when request mocking is on) and sign-out. Native uses the
+  // same prop for the full session / secure-storage / renewal sections. `PayCardAuthProps` in
+  // `src/types.ts` gives the full shape.
   auth?: PayCardAuthProps;
   // Native only, and optional: absent on a host with no secure browser, which hides the section.
   // Answers one line about what came back, and the panel prints it under the button.
@@ -82,7 +102,6 @@ pay-card/
 └── src/
     ├── pay-card/          # PayCard.web.tsx / PayCard.native.tsx (default-exported component)
     ├── components/        # Section / row primitives, each with .web/.native variants
-    ├── usePayCardViewModel.ts  # shared view model: onboarding progress + step helpers
     ├── types.ts           # PayCardToolProps and its parts
     ├── index.ts           # public exports + `export default PayCard;`
     └── index.native.ts    # native entry point

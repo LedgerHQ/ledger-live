@@ -3,6 +3,7 @@ jest.mock("./internals/trackEvent", () => ({
 }));
 
 import { setEnabledFn } from "./registry";
+import { currentRouteNameRef } from "./screenRefs";
 import { trackEvent } from "./internals/trackEvent";
 import { track } from "./track";
 
@@ -13,6 +14,7 @@ const register = () => {
 beforeEach(() => {
   jest.mocked(trackEvent).mockReset();
   setEnabledFn(() => true);
+  currentRouteNameRef.current = undefined;
 });
 
 describe("track", () => {
@@ -21,12 +23,12 @@ describe("track", () => {
 
     track("Analytics Event", { event: "props" });
 
-    expect(trackEvent).toHaveBeenCalledWith(
-      "track",
-      "Analytics Event",
-      { event: "props" },
-      { mandatory: false },
-    );
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "track",
+      eventName: "Analytics Event",
+      props: { event: "props" },
+      mandatory: false,
+    });
   });
 
   it("does not delegate when tracking is disabled", () => {
@@ -44,12 +46,12 @@ describe("track", () => {
 
     track("Analytics Consent", { flow: "onboarding" }, { mandatory: true });
 
-    expect(trackEvent).toHaveBeenCalledWith(
-      "track",
-      "Analytics Consent",
-      { flow: "onboarding" },
-      { mandatory: true },
-    );
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "track",
+      eventName: "Analytics Consent",
+      props: { flow: "onboarding" },
+      mandatory: true,
+    });
   });
 
   it("returns a promise that settles when trackEvent resolves", async () => {
@@ -85,5 +87,33 @@ describe("track", () => {
 
     expect(result).toBeUndefined();
     expect(trackEvent).not.toHaveBeenCalled();
+  });
+
+  it("injects the current tracking page if it has been set", () => {
+    register();
+    currentRouteNameRef.current = "Page Market";
+
+    track("Analytics Event", { event: "props" });
+
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "track",
+      eventName: "Analytics Event",
+      props: { page: "Page Market", event: "props" },
+      mandatory: false,
+    });
+  });
+
+  it("allows caller to override page prop", () => {
+    register();
+    currentRouteNameRef.current = "Page from ref";
+
+    track("Analytics Event", { page: "Page from event", event: "props" });
+
+    expect(trackEvent).toHaveBeenCalledWith({
+      kind: "track",
+      eventName: "Analytics Event",
+      props: { page: "Page from event", event: "props" },
+      mandatory: false,
+    });
   });
 });

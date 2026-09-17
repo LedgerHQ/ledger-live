@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
-import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import {
   useBankTransferIntroAdapter,
@@ -13,7 +13,9 @@ import {
   type PayCardTrackEvent,
   type UseDepositOptionsAdapter,
 } from "@features/flow-pay-deposit";
-import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
+import { useDispatch } from "LLD/hooks/redux";
+import { openModal } from "~/renderer/actions/modals";
+import { useOpenAssetAndAccount } from "../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 const DEPOSIT_PAGE = "Pay";
 
@@ -27,12 +29,20 @@ export function usePayTabDepositOptions(
   onTrackEvent: PayCardTrackEvent | undefined,
 ): UsePayTabDepositOptions {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { openAssetAndAccount } = useOpenAssetAndAccount();
 
-  const { openAssetFlow } = useOpenAssetFlow(
-    { location: ModularDrawerLocation.ADD_ACCOUNT },
-    DEPOSIT_PAGE,
-    "MODAL_RECEIVE",
-    { shouldUseReceiveOptions: false },
+  const onReceive = useCallback(
+    (account: AccountLike, parentAccount?: Account) => {
+      dispatch(
+        openModal("MODAL_RECEIVE", {
+          account,
+          parentAccount,
+          shouldUseReceiveOptions: false,
+        }),
+      );
+    },
+    [dispatch],
   );
 
   const onBankTransfer = useCallback(
@@ -63,11 +73,14 @@ export function usePayTabDepositOptions(
           navigate("/exchange", { state: { mode: "buy", returnTo: "/paytab" } });
           break;
         case "receive":
-          openAssetFlow(undefined, undefined, DEPOSIT_CATEGORIES);
+          openAssetAndAccount({
+            categories: DEPOSIT_CATEGORIES,
+            onSuccess: onReceive,
+          });
           break;
       }
     },
-    [openBankTransferIntro, navigate, openAssetFlow],
+    [openBankTransferIntro, navigate, openAssetAndAccount, onReceive],
   );
 
   const { open, depositOptions } = useDepositOptionsAdapter({

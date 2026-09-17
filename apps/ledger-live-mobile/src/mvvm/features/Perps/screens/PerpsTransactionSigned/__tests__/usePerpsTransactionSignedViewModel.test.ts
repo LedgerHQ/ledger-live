@@ -41,7 +41,11 @@ describe("usePerpsTransactionSignedViewModel", () => {
 
     expect(goBack).toHaveBeenCalled();
     expect(mockDispatch).toHaveBeenCalledWith(
-      openSwapTransactionStatusDrawer({ swapId: "swap-1", provider: "swapkit" }),
+      openSwapTransactionStatusDrawer({
+        swapId: "swap-1",
+        provider: "swapkit",
+        origin: "perps",
+      }),
     );
   });
 

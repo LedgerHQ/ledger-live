@@ -94,6 +94,55 @@ describe("getRecipientMatchPresentation", () => {
     expect(result?.kind).toBe("matched-ledger-account");
   });
 
+  it("recognizes an exact match via matchedAccountAddress when it differs from the account's fresh address (e.g. a shielded address)", () => {
+    const shieldedAddress = "u1shielded";
+
+    const result = getRecipientMatchPresentation({
+      searchResult: createSearchResult({
+        accountName: "Private balance",
+        resolvedAddress: shieldedAddress,
+        matchedAccounts: [
+          {
+            account: { freshAddress: "t1transparent" } as Account,
+            accountName: undefined,
+            accountBalance: undefined,
+            accountBalanceFormatted: undefined,
+          },
+        ],
+      }),
+      searchValue: shieldedAddress,
+      isContactsFeatureEnabled: true,
+      isAddressComplete: true,
+      matchedAccountAddress: shieldedAddress,
+    });
+
+    expect(result?.kind).toBe("recipient-card");
+  });
+
+  it("keeps the legacy partial match when matchedAccountAddress is not provided, unchanged from before", () => {
+    const shieldedAddress = "u1shielded";
+
+    const result = getRecipientMatchPresentation({
+      searchResult: createSearchResult({
+        accountName: "Private balance",
+        resolvedAddress: shieldedAddress,
+        matchedAccounts: [
+          {
+            account: { freshAddress: "t1transparent" } as Account,
+            accountName: undefined,
+            accountBalance: undefined,
+            accountBalanceFormatted: undefined,
+          },
+        ],
+      }),
+      searchValue: shieldedAddress,
+      isContactsFeatureEnabled: true,
+      isAddressComplete: true,
+    });
+
+    expect(result?.kind).toBe("matched-ledger-account");
+  });
+
   it("returns a disabled Ledger account suggestion for a bridge error", () => {
     const result = getRecipientMatchPresentation({
       searchResult: createSearchResult({

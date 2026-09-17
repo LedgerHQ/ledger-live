@@ -57,10 +57,10 @@ describe("Contacts add contact drawer integration", () => {
     await user.type(input, "Coinbase 1");
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Confirm name" })).toBeEnabled();
+      expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
     });
 
-    await user.press(screen.getByRole("button", { name: "Confirm name" }));
+    await user.press(screen.getByTestId("contacts-add-contact-save"));
 
     await waitFor(() => {
       expect(screen.getByText("Coinbase 1")).toBeVisible();
@@ -88,13 +88,13 @@ describe("Contacts add contact drawer integration", () => {
     fireEvent.changeText(input, " ada ");
 
     expect(screen.getByText("This contact name is already in use.")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Confirm name" })).toBeDisabled();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
 
     fireEvent.changeText(input, "Ben");
 
     await waitFor(() => {
       expect(screen.queryByText("This contact name is already in use.")).toBeNull();
-      expect(screen.getByRole("button", { name: "Confirm name" })).toBeEnabled();
+      expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
     });
   });
 
@@ -130,7 +130,7 @@ describe("Contacts add contact drawer integration", () => {
 
     await user.press(screen.getByTestId("contacts-add-contact-header"));
     await user.type(screen.getByTestId("contacts-add-contact-name-input"), "Ada");
-    await user.press(screen.getByRole("button", { name: "Confirm name" }));
+    await user.press(screen.getByTestId("contacts-add-contact-save"));
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-search-input")).toHaveProp("value", "");

@@ -11,11 +11,15 @@ import {
   initiatePayCardLogout,
   useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
-  useGetCardOnboardingStatusQuery,
+  useLinkWalletToCardMutation,
+  useUpdateCardWalletPrioritiesMutation,
   useCreateCardDetailsTokenMutation,
+  useCreateCardPinTokenMutation,
+  useCreateCardSetPinTokenMutation,
   useGetCardStatusQuery,
   useLazyGetCardStatusQuery,
   useGetInternalWalletsQuery,
+  useGetRewardWalletQuery,
   useOrderCardMutation,
   useUnfreezeCardMutation,
 } from "./api";
@@ -27,6 +31,8 @@ import {
   jsonResponse,
   mockCardProvider,
 } from "./cardProvider.mock";
+import { documentedPayCardTransaction } from "./cardTransactions.mock";
+import { PayCardTransactionSchema } from "./schema";
 
 const provider = mockCardProvider();
 
@@ -61,9 +67,17 @@ const internalWalletsOnTheWire = [
   },
 ];
 
-const internalWallets = internalWalletsOnTheWire.map(
-  ({ addressId: _addressId, type: _type, ...wallet }) => wallet,
-);
+const rewardWalletOnTheWire = {
+  id: "098aeb90-e7f7-4f81-bc2e-4963330122c5",
+  balance: "45.75",
+  currency: "usdc",
+  isWithdrawable: true,
+  type: "REWARD",
+};
+
+const { type: _rewardType, ...rewardWallet } = rewardWalletOnTheWire;
+
+const internalWallets = internalWalletsOnTheWire.map(({ type: _type, ...wallet }) => wallet);
 
 const linkedWallets = [
   {
@@ -93,6 +107,7 @@ const makeStore = (sessionToken: string | null = null, overrides: Partial<CardAp
           extraArgument: cardApiExtra({
             getCardApiBaseUrl: () => CARD_API_BASE_URL,
             getCardBaanxClientKey: () => "client-key",
+            isCardUsEnv: () => false,
             readCardSession: () => Promise.resolve({ token: sessionToken, sessionId: 1 }),
             isCardSessionCurrent: () => true,
             refreshCardSession: () => Promise.resolve({ kind: "session-replaced" as const }),
@@ -102,7 +117,7 @@ const makeStore = (sessionToken: string | null = null, overrides: Partial<CardAp
       }).concat(cardApi.middleware),
   });
 
-function expectSessionRequest(method: "GET" | "POST", path: string) {
+function expectSessionRequest(method: "GET" | "POST" | "PUT", path: string) {
   const sent = provider.sent();
 
   expect(sent.method).toBe(method);
@@ -120,19 +135,23 @@ describe("cardManagementApi configuration", () => {
   it("injects exactly its own endpoints", () => {
     expect(Object.keys(cardManagementApi.endpoints).sort()).toEqual([
       "createCardDetailsToken",
+      "createCardPinToken",
+      "createCardSetPinToken",
       "exchangeAuthorizationCode",
       "freezeCard",
       "getCardLinkedWallets",
-      "getCardOnboardingStatus",
       "getCardStatus",
       "getCardTransactions",
       "getInternalWallets",
+      "getRewardWallet",
       "getUser",
       "getWalletHistory",
+      "linkWalletToCard",
       "logout",
       "orderCard",
       "refreshSession",
       "unfreezeCard",
+      "updateCardWalletPriorities",
     ]);
   });
 
@@ -168,6 +187,16 @@ describe("cardManagementApi configuration", () => {
     expect(useCreateCardDetailsTokenMutation).toBeDefined();
   });
 
+  it("exposes createCardPinToken and its hook", () => {
+    expect(cardManagementApi.endpoints.createCardPinToken).toBeDefined();
+    expect(useCreateCardPinTokenMutation).toBeDefined();
+  });
+
+  it("exposes createCardSetPinToken and its hook", () => {
+    expect(cardManagementApi.endpoints.createCardSetPinToken).toBeDefined();
+    expect(useCreateCardSetPinTokenMutation).toBeDefined();
+  });
+
   it("exposes freezeCard and unfreezeCard with their hooks", () => {
     expect(cardManagementApi.endpoints.freezeCard).toBeDefined();
     expect(useFreezeCardMutation).toBeDefined();
@@ -175,16 +204,17 @@ describe("cardManagementApi configuration", () => {
     expect(useUnfreezeCardMutation).toBeDefined();
   });
 
-  it("exposes both wallet endpoints with their hooks", () => {
+  it("exposes the wallet endpoints with their hooks", () => {
     expect(cardManagementApi.endpoints.getInternalWallets).toBeDefined();
     expect(useGetInternalWalletsQuery).toBeDefined();
     expect(cardManagementApi.endpoints.getCardLinkedWallets).toBeDefined();
     expect(useGetCardLinkedWalletsQuery).toBeDefined();
-  });
-
-  it("exposes getCardOnboardingStatus and its hook", () => {
-    expect(cardManagementApi.endpoints.getCardOnboardingStatus).toBeDefined();
-    expect(useGetCardOnboardingStatusQuery).toBeDefined();
+    expect(cardManagementApi.endpoints.linkWalletToCard).toBeDefined();
+    expect(useLinkWalletToCardMutation).toBeDefined();
+    expect(cardManagementApi.endpoints.updateCardWalletPriorities).toBeDefined();
+    expect(useUpdateCardWalletPrioritiesMutation).toBeDefined();
+    expect(cardManagementApi.endpoints.getRewardWallet).toBeDefined();
+    expect(useGetRewardWalletQuery).toBeDefined();
   });
 
   it("registers under the shared cardApi reducer path", () => {
@@ -439,24 +469,10 @@ describe("cardManagementApi requests", () => {
 
   describe("getCardTransactions", () => {
     const TRANSACTIONS_PATH = "/v1/card/transactions";
-
-    const transaction = {
-      id: "100a99cf-f4d3-4fa1-9be9-2e9828b20ebb",
-      dateTime: "2024-10-14T10:44:36.276Z",
-      sign: "DEBIT",
-      merchantNameLocation: "WWW.ALIEXPRESS.COM, LONDON",
-      mccCategory: "MISC",
-      status: "CONFIRMED",
-      declineReason: "",
-      transactionCurrency: "EUR",
-      amountInTransactionCurrency: "0.79",
-      feesInTransactionCurrency: "0",
-      originalCurrency: "USD",
-      amountInOriginalCurrency: "0.85",
-    };
+    const transaction = PayCardTransactionSchema.parse(documentedPayCardTransaction);
 
     it("reads the transactions with the bearer token and the client key", async () => {
-      provider.get(TRANSACTIONS_PATH, () => jsonResponse([transaction]));
+      provider.get(TRANSACTIONS_PATH, () => jsonResponse([documentedPayCardTransaction]));
 
       const store = makeStore("session-token");
       const result = await store.dispatch(
@@ -845,6 +861,50 @@ describe("cardManagementApi requests", () => {
     });
   });
 
+  describe("getRewardWallet", () => {
+    const REWARD_WALLET_PATH = "/v1/wallet/reward";
+
+    const readRewardWallet = () =>
+      makeStore("session-token").dispatch(cardManagementApi.endpoints.getRewardWallet.initiate());
+
+    it("reads the wallet the rewards are paid into", async () => {
+      provider.get(REWARD_WALLET_PATH, () => jsonResponse(rewardWalletOnTheWire));
+
+      const result = await readRewardWallet();
+
+      expectSessionRequest("GET", REWARD_WALLET_PATH);
+      expect(result.data).toEqual(rewardWallet);
+    });
+
+    it("keeps the balance a string, so its precision survives", async () => {
+      provider.get(REWARD_WALLET_PATH, () =>
+        jsonResponse({ ...rewardWalletOnTheWire, balance: "9007199254740993.000001" }),
+      );
+
+      const result = await readRewardWallet();
+
+      expect(result.data?.balance).toBe("9007199254740993.000001");
+    });
+
+    it("drops the keys the wire contract does not declare", async () => {
+      provider.get(REWARD_WALLET_PATH, () => jsonResponse(rewardWalletOnTheWire));
+
+      const result = await readRewardWallet();
+
+      expect(result.data).not.toHaveProperty("type");
+    });
+
+    it("rejects an answer that does not say whether the rewards can be withdrawn", async () => {
+      const { isWithdrawable: _isWithdrawable, ...withoutFlag } = rewardWalletOnTheWire;
+      provider.get(REWARD_WALLET_PATH, () => jsonResponse(withoutFlag));
+
+      const result = await readRewardWallet();
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
+    });
+  });
+
   describe("getInternalWallets", () => {
     const INTERNAL_WALLETS_PATH = "/v1/wallet/internal";
 
@@ -1002,6 +1062,234 @@ describe("cardManagementApi requests", () => {
     });
   });
 
+  describe("createCardPinToken", () => {
+    const PIN_TOKEN_PATH = "/v1/card/pin/token";
+
+    // An all-zero token: a real-looking one trips secret scanning.
+    const pinToken = {
+      token: "00000000-0000-4000-8000-000000000000",
+      imageUrl: "https://card.test/details-image?token=00000000-0000-4000-8000-000000000000",
+    };
+
+    it("mints a token, and sends no body when no colour is asked for", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardPinToken.initiate(),
+      );
+
+      expectSessionRequest("POST", PIN_TOKEN_PATH);
+      expect(provider.sent().body).toBe("");
+      expect(result.data).toEqual(pinToken);
+    });
+
+    it("sends the colours the host asked for", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardPinToken.initiate({
+            backgroundColor: "#EFEFEF",
+            textColor: "#000000",
+          }),
+        )
+        .unwrap();
+
+      expect(JSON.parse(provider.sent().body)).toEqual({
+        customCss: { backgroundColor: "#EFEFEF", textColor: "#000000" },
+      });
+    });
+
+    it("rejects a colour that is not a hex value, and sends no request", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardPinToken.initiate({ textColor: "rebeccapurple" }),
+      );
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("drops a colour the contract does not declare, so the provider never sees it", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          // @ts-expect-error not one of the two colours this endpoint declares
+          cardManagementApi.endpoints.createCardPinToken.initiate({ panTextColor: "#000000" }),
+        )
+        .unwrap();
+
+      // The parsed arg is what reaches `query`, so an undeclared key never leaves the app.
+      expect(JSON.parse(provider.sent().body)).toEqual({ customCss: {} });
+    });
+
+    it("rejects an image url that is not https, which is loaded straight into an image", async () => {
+      provider.post(PIN_TOKEN_PATH, () =>
+        jsonResponse({ ...pinToken, imageUrl: "javascript:alert(1)" }),
+      );
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardPinToken.initiate(),
+      );
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
+    });
+
+    it("stores neither the token nor the image url when the caller does not track it", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardPinToken.initiate(undefined, { track: false }),
+        )
+        .unwrap();
+
+      const state = JSON.stringify(store.getState().cardApi);
+      expect(state).not.toContain(pinToken.token);
+      expect(state).not.toContain(pinToken.imageUrl);
+    });
+
+    it("leaves the token in redux when the caller tracks it, which is why callers must not", async () => {
+      provider.post(PIN_TOKEN_PATH, () => jsonResponse(pinToken));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.createCardPinToken.initiate()).unwrap();
+
+      expect(JSON.stringify(store.getState().cardApi.mutations)).toContain(pinToken.token);
+    });
+  });
+
+  describe("createCardSetPinToken", () => {
+    const SET_PIN_TOKEN_PATH = "/v1/card/set-pin/token";
+
+    // An all-zero token: a real-looking one trips secret scanning.
+    const setPinToken = {
+      token: "00000000-0000-4000-8000-000000000000",
+      hostedPageUrl: "https://card.test/pin-direct/set?token=00000000-0000-4000-8000-000000000000",
+    };
+
+    it("mints a token, and sends no body when the caller asks for nothing", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardSetPinToken.initiate(),
+      );
+
+      expectSessionRequest("POST", SET_PIN_TOKEN_PATH);
+      expect(provider.sent().body).toBe("");
+      expect(result.data).toEqual(setPinToken);
+    });
+
+    it("sends the destination and the styling the host asked for", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardSetPinToken.initiate({
+            redirectUrl: "https://card.test/pin-done",
+            customCss: { textColor: "#000000", pinBorderRadius: 4 },
+          }),
+        )
+        .unwrap();
+
+      expect(JSON.parse(provider.sent().body)).toEqual({
+        redirectUrl: "https://card.test/pin-done",
+        customCss: { textColor: "#000000", pinBorderRadius: 4 },
+      });
+    });
+
+    it("asks for the embedded page, which needs no destination", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(cardManagementApi.endpoints.createCardSetPinToken.initiate({ isEmbedded: true }))
+        .unwrap();
+
+      expect(JSON.parse(provider.sent().body)).toEqual({ isEmbedded: true });
+    });
+
+    it("rejects a destination for an embedded page, which would never navigate to it", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardSetPinToken.initiate({
+          isEmbedded: true,
+          // The pairing is part of the request type, so this also asserts the type refuses it.
+          // @ts-expect-error an embedded page posts a message instead of navigating
+          redirectUrl: "https://card.test/pin-done",
+        }),
+      );
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("rejects a destination that is not https, and sends no request", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardSetPinToken.initiate({
+          redirectUrl: "http://card.test/pin-done",
+        }),
+      );
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("rejects a hosted page url that is not https, which the app would open", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () =>
+        jsonResponse({ ...setPinToken, hostedPageUrl: "javascript:alert(1)" }),
+      );
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.createCardSetPinToken.initiate(),
+      );
+
+      expect(result.data).toBeUndefined();
+      expect(result.error).toBeDefined();
+    });
+
+    it("stores neither the token nor the hosted page url when the caller does not track it", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      await store
+        .dispatch(
+          cardManagementApi.endpoints.createCardSetPinToken.initiate(undefined, { track: false }),
+        )
+        .unwrap();
+
+      const state = JSON.stringify(store.getState().cardApi);
+      expect(state).not.toContain(setPinToken.token);
+      expect(state).not.toContain("pin-direct");
+    });
+
+    it("leaves the token in redux when the caller tracks it, which is why callers must not", async () => {
+      provider.post(SET_PIN_TOKEN_PATH, () => jsonResponse(setPinToken));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.createCardSetPinToken.initiate()).unwrap();
+
+      expect(JSON.stringify(store.getState().cardApi.mutations)).toContain(setPinToken.token);
+    });
+  });
+
   describe("getCardLinkedWallets", () => {
     const LINKED_WALLETS_PATH = "/v1/wallet/internal/card_linked";
 
@@ -1010,13 +1298,44 @@ describe("cardManagementApi requests", () => {
         cardManagementApi.endpoints.getCardLinkedWallets.initiate(),
       );
 
-    it("reads the wallets funding the card", async () => {
+    it("reads the wallets funding the card, each resolved to its Ledger currency", async () => {
       provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
 
       const result = await readLinkedWallets();
 
       expectSessionRequest("GET", LINKED_WALLETS_PATH);
-      expect(result.data).toEqual(linkedWallets);
+      // The wire fields, plus the Ledger currency each wallet's asset resolves to.
+      expect(result.data).toEqual(
+        linkedWallets.map(wallet => ({ ...wallet, ledgerId: expect.any(String) })),
+      );
+    });
+
+    it("resolves each wallet to its Ledger currency, so no consumer has to map it again", async () => {
+      provider.get(LINKED_WALLETS_PATH, () =>
+        jsonResponse([
+          { ...linkedWallets[0], currency: "usdc", network: "ethereum", priority: 0 },
+          { ...linkedWallets[0], id: "w-btc", currency: "btc", network: "bitcoin", priority: 1 },
+        ]),
+      );
+
+      const result = await readLinkedWallets();
+
+      expect(result.data?.map(({ ledgerId }) => ledgerId)).toEqual([
+        "ethereum/erc20/usd__coin",
+        "bitcoin",
+      ]);
+    });
+
+    it("leaves an asset the catalog does not cover unresolved rather than guessing one", async () => {
+      provider.get(LINKED_WALLETS_PATH, () =>
+        jsonResponse([{ ...linkedWallets[0], currency: "bxx", network: "ethereum" }]),
+      );
+
+      const result = await readLinkedWallets();
+
+      const [wallet] = result.data ?? [];
+      // Absent rather than set to `undefined`, which is what the optional field promises.
+      expect(wallet && "ledgerId" in wallet).toBe(false);
     });
 
     it("keeps a priority of zero, which is the first wallet charged", async () => {
@@ -1048,50 +1367,213 @@ describe("cardManagementApi requests", () => {
     });
   });
 
-  describe("getCardOnboardingStatus", () => {
-    const ONBOARDING_STATUS_PATH = "/v1/card/onboarding-status";
+  describe("linkWalletToCard", () => {
+    const LINKED_WALLETS_PATH = "/v1/wallet/internal/card_linked";
 
-    const onboardingStatus = {
-      steps: [
-        {
-          id: "kyc",
-          title: "Verify your identity",
-          description: "Complete KYC verification to activate your card.",
-          isDone: true,
-        },
-        {
-          id: "address",
-          title: "Add shipping address",
-          description: "Tell us where to send your physical card.",
-          isDone: false,
-        },
+    const addressId = "0x0a4b21fa733e9aeaddbf070302a85c559de13c4c";
+
+    it("links the wallet the caller named", async () => {
+      provider.post(LINKED_WALLETS_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId }),
+      );
+
+      expectSessionRequest("POST", LINKED_WALLETS_PATH);
+      expect(JSON.parse(provider.sent().body)).toEqual({ addressId });
+      expect(result.data).toEqual({ success: true });
+    });
+
+    it("rejects a request that names no wallet, and sends nothing", async () => {
+      provider.post(LINKED_WALLETS_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId: "" }),
+      );
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("does not compile, nor send, a request that names the wallet by `id`", async () => {
+      provider.post(LINKED_WALLETS_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        // @ts-expect-error `addressId` is the only key this request declares
+        cardManagementApi.endpoints.linkWalletToCard.initiate({ id: addressId }),
+      );
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("reads the linked wallets again once a link is made", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.post(LINKED_WALLETS_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      await store.dispatch(cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId }));
+      await flushPendingRequests();
+
+      // The POST, then exactly one re-read: the answer is only `{ success: true }`.
+      expect(provider.requests().length).toBe(before + 2);
+    });
+
+    it("keeps the linked wallets cached when the provider refuses with success:false", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.post(LINKED_WALLETS_PATH, () => jsonResponse({ success: false }));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId }),
+      );
+      await flushPendingRequests();
+
+      // A 200 is not an error, so the flag is the answer — and it says no link was made.
+      expect(result.error).toBeUndefined();
+      expect(result.data).toEqual({ success: false });
+      expect(provider.requests().length).toBe(before + 1);
+    });
+
+    it("keeps the linked wallets cached when the link fails", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.post(LINKED_WALLETS_PATH, () => errorResponse(422, "link refused"));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId }),
+      );
+      await flushPendingRequests();
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests().length).toBe(before + 1);
+    });
+  });
+
+  describe("updateCardWalletPriorities", () => {
+    const PRIORITY_PATH = "/v1/wallet/internal/card_linked/priority";
+    const LINKED_WALLETS_PATH = "/v1/wallet/internal/card_linked";
+
+    const order = {
+      wallets: [
+        { addressId: "0x0a4b21fa733e9aeaddbf070302a85c559de13c4c", priority: 1 },
+        { addressId: "7c1839ee-918e-4787-b74f-deeb48ead58b", priority: 2 },
       ],
     };
 
-    it("reads the onboarding steps", async () => {
-      provider.get(ONBOARDING_STATUS_PATH, () => jsonResponse(onboardingStatus));
-
-      const store = makeStore("session-token");
-      const result = await store.dispatch(
-        cardManagementApi.endpoints.getCardOnboardingStatus.initiate(),
+    const reorder = (request: typeof order) =>
+      makeStore("session-token").dispatch(
+        cardManagementApi.endpoints.updateCardWalletPriorities.initiate(request),
       );
 
-      expectSessionRequest("GET", ONBOARDING_STATUS_PATH);
-      expect(result.data).toEqual(onboardingStatus);
+    it("puts the whole order, wallets named by their address id", async () => {
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: true }));
+
+      const result = await reorder(order);
+
+      expectSessionRequest("PUT", PRIORITY_PATH);
+      expect(JSON.parse(provider.sent().body)).toEqual(order);
+      expect(result.data).toEqual({ success: true });
     });
 
-    it("rejects a step whose done flag is not a boolean", async () => {
-      provider.get(ONBOARDING_STATUS_PATH, () =>
-        jsonResponse({ steps: [{ ...onboardingStatus.steps[0], isDone: "yes" }] }),
-      );
+    it("rejects two wallets sharing a priority, and sends nothing", async () => {
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: true }));
+
+      const result = await reorder({
+        wallets: [
+          { addressId: order.wallets[0].addressId, priority: 1 },
+          { addressId: order.wallets[1].addressId, priority: 1 },
+        ],
+      });
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("rejects the same wallet given two priorities, and sends nothing", async () => {
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: true }));
+
+      const result = await reorder({
+        wallets: [
+          { addressId: order.wallets[0].addressId, priority: 1 },
+          { addressId: order.wallets[0].addressId, priority: 2 },
+        ],
+      });
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("rejects an order with no wallets in it, and sends nothing", async () => {
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: true }));
+
+      const result = await reorder({ wallets: [] });
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("keeps the order cached when the provider refuses with success:false", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: false }));
 
       const store = makeStore("session-token");
-      const result = await store.dispatch(
-        cardManagementApi.endpoints.getCardOnboardingStatus.initiate(),
-      );
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
 
-      expect(result.data).toBeUndefined();
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.updateCardWalletPriorities.initiate(order),
+      );
+      await flushPendingRequests();
+
+      // A 200 is not an error, so the flag is the answer — and it says the order did not change.
+      expect(result.error).toBeUndefined();
+      expect(result.data).toEqual({ success: false });
+      expect(provider.requests().length).toBe(before + 1);
+    });
+
+    it("reads the linked wallets again once the order is rewritten", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.put(PRIORITY_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      await store.dispatch(cardManagementApi.endpoints.updateCardWalletPriorities.initiate(order));
+      await flushPendingRequests();
+
+      // The PUT, then exactly one re-read.
+      expect(provider.requests().length).toBe(before + 2);
+    });
+
+    it("keeps the order cached when the rewrite fails", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.put(PRIORITY_PATH, () => errorResponse(422, "reorder refused"));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.updateCardWalletPriorities.initiate(order),
+      );
+      await flushPendingRequests();
+
       expect(result.error).toBeDefined();
+      expect(provider.requests().length).toBe(before + 1);
     });
   });
 });

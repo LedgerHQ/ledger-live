@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -159,12 +159,13 @@
     "@ledgerhq/hw-app-sui": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@mysten/signers": "1.0.1",
     "@mysten/sui": "2.23.1",
     "@protobuf-ts/grpcweb-transport": "2.11.1",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "gql.tada": "^1.9.2",
     "lodash": "catalog:",
@@ -172,7 +173,7 @@
   },
   "devDependencies": {
     "@gql.tada/internal": "1.0.9",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

@@ -6,6 +6,7 @@ import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.m
 import {
   createBitcoinAccount,
   createEthereumAccount,
+  createRippleAccount,
   createMinimalBtcTransaction,
   createMinimalEvmTransaction,
   createResolvedStatus,
@@ -18,6 +19,7 @@ import {
   screen,
   waitFor,
   setMockBridgeRecipientValidation,
+  setMockBalanceTypeConfig,
   setMockScannedCode,
   setMockContacts,
   setMockStatus,
@@ -25,17 +27,26 @@ import {
   setMockTransaction,
   VALID_BTC_RECIPIENT,
   VALID_EVM_RECIPIENT,
+  VALID_XRP_RECIPIENT,
 } from "../__mocks__/sendFlowTestUtils";
 
 describe("Send Flow Integration", () => {
   const ethereumAccount = createEthereumAccount();
   const bitcoinAccount = createBitcoinAccount();
+  const rippleAccount = createRippleAccount();
 
   beforeEach(() => {
     resetSendFlowTestState("evm");
   });
 
   describe("Recipient step", () => {
+    it("should start on recipient for a regular send", async () => {
+      renderSendFlow(ethereumAccount);
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+    });
+
     it("should start on amount when opened from a contact", async () => {
       renderSendFlow(ethereumAccount, {
         recipient: VALID_EVM_RECIPIENT,
@@ -46,6 +57,23 @@ describe("Send Flow Integration", () => {
       expect(screen.getByTestId("send-amount-input")).toBeVisible();
     });
 
+    it("should start on amount when opened from Pay", async () => {
+      const { user } = renderSendFlow(ethereumAccount, {
+        recipient: VALID_EVM_RECIPIENT,
+        skipRecipientStep: true,
+        source: "Pay",
+      });
+
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+      expect(screen.getByTestId("send-edit-recipient-button")).toBeVisible();
+      await waitFor(() => expect(screen.getByDisplayValue("0xabcdef...cdefabcd")).toBeVisible());
+      expect(screen.queryByTestId("send-recipient-card-send")).not.toBeInTheDocument();
+
+      await user.type(screen.getByTestId("send-amount-input"), "1");
+
+      expect(screen.queryByText(/recipientrequired/i)).not.toBeInTheDocument();
+    });
+
     it("should keep the recipient step when a direct recipient is empty", async () => {
       renderSendFlow(ethereumAccount, {
         recipient: "   ",
@@ -53,6 +81,43 @@ describe("Send Flow Integration", () => {
       });
 
       expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+    });
+
+    it("should keep the recipient step when Pay has no recipient", async () => {
+      renderSendFlow(ethereumAccount, { source: "Pay" });
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+    });
+
+    it("should start on amount when Pay opens a memo currency", async () => {
+      const { user } = renderSendFlow(rippleAccount, {
+        recipient: VALID_XRP_RECIPIENT,
+        skipRecipientStep: true,
+        source: "Pay",
+      });
+
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+      expect(screen.getByTestId("send-amount-input")).toBeVisible();
+      expect(screen.getByTestId("send-edit-recipient-button")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-input")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("send-memo-input")).not.toBeInTheDocument();
+      await waitFor(() => expect(screen.getByDisplayValue("rHb9CJAW...4bwdtyTh")).toBeVisible());
+
+      await user.type(screen.getByTestId("send-amount-input"), "1");
+
+      expect(screen.queryByText(/recipientrequired/i)).not.toBeInTheDocument();
+    });
+
+    it("should keep the recipient step when a contact skip opens a memo currency", async () => {
+      renderSendFlow(rippleAccount, {
+        recipient: VALID_XRP_RECIPIENT,
+        skipRecipientStep: true,
+      });
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue(VALID_XRP_RECIPIENT);
       expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
     });
 
@@ -651,6 +716,90 @@ describe("Send Flow Integration", () => {
 
       expect(await screen.findByTestId("send-coin-control-footer")).toBeVisible();
       expect(await screen.findByTestId("send-get-funds-button")).toBeVisible();
+    });
+  });
+
+  describe("BalanceType step", () => {
+    const balanceTypeConfig = {
+      getOptions: jest.fn(() => [
+        {
+          id: "public",
+          translationKey: "balanceType.transparent",
+          balance: new BigNumber(1000),
+          hasPendingBalance: false,
+          icon: "check" as const,
+        },
+        {
+          id: "private",
+          translationKey: "balanceType.shielded",
+          balance: new BigNumber(2000),
+          hasPendingBalance: false,
+          icon: "lock" as const,
+        },
+      ]),
+      getSelectedOptionId: jest.fn((transaction: unknown) => {
+        if (typeof transaction !== "object" || transaction === null || !("sender" in transaction)) {
+          return null;
+        }
+        const sender = transaction.sender;
+        return typeof sender === "string" ? sender : null;
+      }),
+      buildSelectionPatch: jest.fn((id: string) => ({ sender: id })),
+      getSelfTransferTarget: jest.fn(() => null),
+      buildSelfTransferPatch: jest.fn(() => ({})),
+      getSelectableBalance: jest.fn(({ optionId }: { optionId: string }) =>
+        optionId === "private" ? new BigNumber(2000) : new BigNumber(1000),
+      ),
+    };
+
+    beforeEach(() => {
+      resetSendFlowTestState("evm");
+      setMockBalanceTypeConfig(balanceTypeConfig);
+    });
+
+    it("should show the balance-type screen as the first step when the currency has a balance type config", async () => {
+      renderSendFlow(ethereumAccount);
+
+      expect(await screen.findByTestId("balance-type-screen")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-input")).not.toBeInTheDocument();
+    });
+
+    it("should navigate to the recipient screen after the user selects a pool", async () => {
+      const { user } = renderSendFlow(ethereumAccount);
+      await screen.findByTestId("balance-type-screen");
+
+      await user.click(screen.getByTestId("balance-type-public"));
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("balance-type-screen")).not.toBeInTheDocument();
+    });
+
+    it("should skip the balance-type step and start at recipient when there is no balance type config", async () => {
+      setMockBalanceTypeConfig(null);
+      renderSendFlow(ethereumAccount);
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("balance-type-screen")).not.toBeInTheDocument();
+    });
+
+    it("should clear the recipient when the user goes back and selects a different pool", async () => {
+      const { user } = renderSendFlow(ethereumAccount);
+      await screen.findByTestId("balance-type-screen");
+      await user.click(screen.getByTestId("balance-type-public"));
+
+      await navigateToAmountScreen(user, VALID_EVM_RECIPIENT);
+
+      await user.click(screen.getByRole("button", { name: /back/i }));
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue(VALID_EVM_RECIPIENT);
+
+      await user.click(screen.getByRole("button", { name: /back/i }));
+      expect(await screen.findByTestId("balance-type-screen")).toBeVisible();
+
+      await user.click(screen.getByTestId("balance-type-private"));
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue("");
     });
   });
 });

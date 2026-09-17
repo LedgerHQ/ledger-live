@@ -1,4 +1,6 @@
 import { useState } from "react";
+import type { PayCardTransaction } from "@domain/api-card-management";
+import { transactionClickedProperties } from "@features/flow-pay-card-transactions";
 import { useTranslation } from "@shared/i18n";
 import { useFreezeCardViewModel } from "../Freeze/useFreezeCardViewModel";
 import { useMoreViewModel } from "../More/useMoreViewModel";
@@ -6,7 +8,11 @@ import { useCardDetailsNavigation } from "./Scenes/navigation";
 import type { CardDetailsSceneProps } from "./Scenes/types";
 import type { CardDetailsProps, CardDetailsViewProps } from "../../types";
 
-export function useCardDetailsViewModel({ cardVisual }: CardDetailsProps): CardDetailsViewProps {
+export function useCardDetailsViewModel({
+  cardVisual,
+  formatters,
+  onTrackEvent,
+}: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { route, goTo, goBack } = useCardDetailsNavigation();
@@ -20,6 +26,11 @@ export function useCardDetailsViewModel({ cardVisual }: CardDetailsProps): CardD
 
   const onMorePress = () => {
     goTo({ name: "more" });
+  };
+
+  const onTransactionPress = (transaction: PayCardTransaction) => {
+    onTrackEvent?.("transaction_clicked", transactionClickedProperties(transaction));
+    goTo({ name: "transaction", transaction });
   };
 
   const openSheet = () => {
@@ -36,9 +47,19 @@ export function useCardDetailsViewModel({ cardVisual }: CardDetailsProps): CardD
 
   const scene: CardDetailsSceneProps = {
     route,
-    overview: { cardVisual, freezeViewModel, moreViewModel, onFreezePress, onMorePress },
+    overview: {
+      cardVisual,
+      freezeViewModel,
+      moreViewModel,
+      onFreezePress,
+      onMorePress,
+      onTransactionPress,
+      formatters,
+    },
     freeze: { viewModel: freezeViewModel },
     more: moreViewModel ? { viewModel: moreViewModel } : null,
+    transaction:
+      route.name === "transaction" ? { transaction: route.transaction, formatters } : null,
   };
 
   return {
@@ -49,5 +70,6 @@ export function useCardDetailsViewModel({ cardVisual }: CardDetailsProps): CardD
     scene,
     onDetailsPress: openSheet,
     onSheetClose: closeSheet,
+    onSceneBack: goBack,
   };
 }

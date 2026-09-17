@@ -1,5 +1,5 @@
 import React, { type PropsWithChildren } from "react";
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
@@ -52,31 +52,11 @@ describe("usePayCardToolProps", () => {
     store = buildStore();
   });
 
-  it("exposes desktop onboarding steps and default flag values", () => {
+  it("exposes default flag values", () => {
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
 
-    expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "create-account",
-      "choose-card-type",
-      "top-up-card",
-      "first-purchase",
-    ]);
     expect(result.current.flags.payTabEnabled).toBe(false);
     expect(result.current.flags.ptxCardEnabled).toBe(false);
-  });
-
-  it("includes apple-google-pay step when platform is native", () => {
-    const { result } = renderHook(() => usePayCardToolProps({ platform: "native" }), {
-      wrapper: withStore(store),
-    });
-
-    expect(result.current.onboarding.steps.map(step => step.id)).toEqual([
-      "create-account",
-      "choose-card-type",
-      "top-up-card",
-      "apple-google-pay",
-      "first-purchase",
-    ]);
   });
 
   it("setPayTabEnabled overrides lwdPayTab on web", () => {
@@ -148,22 +128,6 @@ describe("usePayCardToolProps", () => {
     expect(result.current.flags.ptxCardEnabled).toBe(true);
   });
 
-  it("setStepDone toggles a single step and supports resetting all", () => {
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
-
-    act(() => {
-      result.current.onboarding.setStepDone("choose-card-type", true);
-    });
-    expect(result.current.onboarding.steps.find(step => step.id === "choose-card-type")?.done).toBe(
-      true,
-    );
-
-    act(() => {
-      result.current.onboarding.setStepDone("all", false);
-    });
-    expect(result.current.onboarding.steps.every(step => !step.done)).toBe(true);
-  });
-
   it("reports no balance until the screen asks for one", () => {
     const store = buildStore();
     const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
@@ -195,6 +159,22 @@ describe("usePayCardToolProps", () => {
     act(() => result.current.balance.refresh());
 
     expect(result.current.balance.isFetching).toBe(true);
+  });
+
+  it("hands the tool the whole asset catalog, in key order", () => {
+    const store = buildStore();
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    const { currencyMapping } = result.current;
+    const keys = currencyMapping.map(({ key }) => key);
+
+    expect(keys).toEqual([...keys].sort());
+    expect(currencyMapping).toContainEqual({
+      key: "usdc.ethereum",
+      ledgerId: "ethereum/erc20/usd__coin",
+    });
+    // Every row names a currency: an entry with no id would read as a mapped asset that is not.
+    expect(currencyMapping.every(({ ledgerId }) => ledgerId.length > 0)).toBe(true);
   });
 
   it("exposes hasSeenFeatureTour from the payCard slice", () => {
@@ -282,6 +262,19 @@ describe("usePayCardToolProps", () => {
     afterEach(() => {
       clearCardOnboardingStatusMock();
       delete process.env.MSW_ENABLED;
+    });
+
+    it("reads the status on either host, once the screen asks for it", async () => {
+      const store = buildStore();
+      // No platform: the desktop tool, which is where the read used to be skipped outright.
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      // Nothing is asked for until the screen opens, so DevTools does not send a session anywhere.
+      expect(result.current.cardOnboarding.isFetching).toBe(false);
+
+      act(() => result.current.cardOnboarding.refresh());
+
+      await waitFor(() => expect(result.current.cardOnboarding.isFetching).toBe(true));
     });
 
     it("sets the answer behind a step rather than the step itself", () => {

@@ -6,7 +6,7 @@ export class InvalidContactNameError extends ContactError {
   override name = "InvalidContactNameError" as const;
 
   constructor() {
-    super("Expected letters, spaces, apostrophes, or hyphens");
+    super("Expected letters, spaces, or digits");
   }
 }
 

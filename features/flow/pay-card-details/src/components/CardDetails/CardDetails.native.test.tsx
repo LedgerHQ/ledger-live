@@ -1,23 +1,30 @@
 import React, { type PropsWithChildren } from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import { SignedInCardApiProviders, listenToSignedInCardApi } from "../../__tests__/cardApiStore";
+import {
+  cardApiWrapper,
+  listenToCardApi,
+  signedInCardApiHandlers,
+} from "@support/msw-features-flow-pay-card";
 import { CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardDetails } from "./CardDetails";
 
-listenToSignedInCardApi();
+listenToCardApi(signedInCardApiHandlers);
+
+const StoreWrapper = cardApiWrapper({ signedIn: true });
 
 function Wrapper({ children }: PropsWithChildren) {
   return (
-    <SignedInCardApiProviders>
+    <StoreWrapper>
       <I18nWrapper>{children}</I18nWrapper>
-    </SignedInCardApiProviders>
+    </StoreWrapper>
   );
 }
 
-function renderCardDetails() {
+function renderCardDetails(onTrackEvent = jest.fn()) {
   return {
     user: userEvent.setup(),
-    ...render(<CardDetails />, { wrapper: Wrapper }),
+    onTrackEvent,
+    ...render(<CardDetails onTrackEvent={onTrackEvent} />, { wrapper: Wrapper }),
   };
 }
 
@@ -41,9 +48,7 @@ describe("CardDetails (native)", () => {
     expect(screen.queryByText(CARD_COPY.freeze)).toBeNull();
   });
 
-  // TODO: userEvent.press does not fire onPress on custom Lumen host elements.
-  // Fix tracked in: https://github.com/LedgerHQ/ledger-live/pull/21814
-  it.skip("should open the details sheet when Details is pressed", async () => {
+  it("should open the details sheet when Details is pressed", async () => {
     const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
@@ -52,7 +57,7 @@ describe("CardDetails (native)", () => {
     expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 
-  it.skip("should navigate to More without opening another sheet", async () => {
+  it("should navigate to More without opening another sheet", async () => {
     const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
@@ -62,8 +67,7 @@ describe("CardDetails (native)", () => {
     expect(screen.getByTestId("card-details-more-content")).toBeVisible();
   });
 
-  // TODO: same as above — userEvent.press on custom Lumen host elements.
-  it.skip("should navigate to freeze confirmation without opening another sheet", async () => {
+  it("should navigate to freeze confirmation without opening another sheet", async () => {
     const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
@@ -73,8 +77,7 @@ describe("CardDetails (native)", () => {
     expect(screen.getByTestId("card-details-freeze-content")).toBeVisible();
   });
 
-  // TODO: same as above — userEvent.press on custom Lumen host elements.
-  it.skip("should return to the overview when the freeze confirmation is cancelled", async () => {
+  it("should return to the overview when the freeze confirmation is cancelled", async () => {
     const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
@@ -83,5 +86,43 @@ describe("CardDetails (native)", () => {
 
     expect(screen.getByTestId("card-details-overview")).toBeVisible();
     expect(screen.queryByTestId("card-details-freeze-content")).toBeNull();
+  });
+
+  it("should open the selected transaction in the same sheet and track the click", async () => {
+    const { user, onTrackEvent } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByText("NETFLIX.COM"));
+
+    expect(screen.getByTestId("card-details-transaction-content")).toBeVisible();
+    expect(onTrackEvent).toHaveBeenCalledWith("transaction_clicked", {
+      category: "card",
+      transaction: "out",
+      page: "Pay",
+      cardFundSourceAsset: "USDC",
+    });
+  });
+
+  it("should return to the overview when leaving transaction details through back", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByText("NETFLIX.COM"));
+    await user.press(screen.getByTestId("card-details-sheet-back"));
+
+    expect(screen.getByTestId("card-details-overview")).toBeVisible();
+    expect(screen.queryByTestId("card-details-transaction-content")).toBeNull();
+  });
+
+  it("should reopen on the overview after transaction details are dismissed", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByText("NETFLIX.COM"));
+    await user.press(screen.getByTestId("card-details-sheet-dismiss"));
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+
+    expect(screen.getByTestId("card-details-overview")).toBeVisible();
+    expect(screen.queryByTestId("card-details-transaction-content")).toBeNull();
   });
 });

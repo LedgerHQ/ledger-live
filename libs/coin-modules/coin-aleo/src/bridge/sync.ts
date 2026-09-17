@@ -21,6 +21,7 @@ import {
   extractViewKey,
   isProvableApiConfigured,
   isRecordScannerReady,
+  isStakingOperation,
   splitPrivateAndPublicOperations,
   resolveConfig,
   sumStakedBalance,
@@ -98,8 +99,8 @@ export async function performPublicSync(
   // Migration: if tokens were never synced (legacy account) or were previously disabled,
   // reset the cursor to 0 so the full history is re-fetched and all operations get
   // program id populated in a single pass — no extra network call needed.
-  const isTokenMigrationRequired =
-    config.enableTokens && initialAccount?.aleoResources?.hasMigratedPublicTokens !== true;
+  const { hasMigratedPublicTokens, hasMigratedStaking } = initialAccount?.aleoResources ?? {};
+  const isTokenMigrationRequired = config.enableTokens && hasMigratedPublicTokens !== true;
 
   // Sync hash tracks CAL + blacklist; only meaningful when tokens are enabled.
   // When disabled, preserve the stored hash so CAL changes don't trigger unnecessary full re-syncs.
@@ -108,13 +109,31 @@ export async function performPublicSync(
     : initialAccount?.syncHash;
   const shouldSyncFromScratch = !initialAccount || syncHash !== initialAccount?.syncHash;
 
-  const allOldOperations = shouldSyncFromScratch ? [] : (initialAccount?.operations ?? []);
+  const allOldOperations = (
+    shouldSyncFromScratch ? [] : (initialAccount?.operations ?? [])
+  ) as AleoOperation[];
 
   // Keep public and private ops separate so each cursor is derived from the correct op type.
   // Mixing them risks using a private op's blockHeight as the public sync cursor.
-  const [oldPrivateOps, oldPublicOps] = splitPrivateAndPublicOperations(allOldOperations);
+  const [oldPrivateOps, oldPublicOpsRaw] = splitPrivateAndPublicOperations(allOldOperations) as [
+    AleoOperation[],
+    AleoOperation[],
+  ];
+
+  // While staking is off the cached staking rows are dropped and the marker cleared, yet the
+  // cursor stays past the history that drop removed. Turning staking back on has to rewind it
+  // to 0, or that history is never fetched again.
+  const isStakingMigrationRequired = config.enableStaking && hasMigratedStaking !== true;
+  const shouldKeepCachedStakingOps = config.enableStaking && hasMigratedStaking === true;
+
+  const oldPublicOps = shouldKeepCachedStakingOps
+    ? oldPublicOpsRaw
+    : oldPublicOpsRaw.filter(op => !isStakingOperation(op));
+
   const lastBlockHeight =
-    shouldSyncFromScratch || isTokenMigrationRequired ? 0 : (oldPublicOps[0]?.blockHeight ?? 0);
+    shouldSyncFromScratch || isTokenMigrationRequired || isStakingMigrationRequired
+      ? 0
+      : (oldPublicOps[0]?.blockHeight ?? 0);
 
   const latestAccountPublicOperations = await listOperations({
     config,
@@ -135,9 +154,7 @@ export async function performPublicSync(
   // Already-patched ops have modified senders/recipients that differ from raw API data.
   // Filter them from the incoming ops — mergeOps then simply keeps the patched version
   // from oldPublicOps untouched, and no patch-restoration pass is needed.
-  const patchedOpIds = new Set(
-    (oldPublicOps as AleoOperation[]).filter(op => op.extra?.patched).map(op => op.id),
-  );
+  const patchedOpIds = new Set(oldPublicOps.filter(op => op.extra?.patched).map(op => op.id));
 
   const filteredLatestPublicOperations = latestAccountPublicOperations.operations.filter(
     op => !patchedOpIds.has(op.id),
@@ -150,7 +167,7 @@ export async function performPublicSync(
   // Empty when shouldSyncFromScratch = true because allOldOperations is reset above.
   // Private ops for removed CAL tokens are cleared this way; private sync rebuilds
   // the rest from scratch on the next emission.
-  const preservedPrivateOps = oldPrivateOps as AleoOperation[];
+  const preservedPrivateOps = oldPrivateOps;
 
   const preservedPrivateBalance = initialAccount?.aleoResources?.privateBalance ?? null;
   const stakingResources = stakingPosition ? toStakingResources(stakingPosition) : {};
@@ -211,6 +228,7 @@ export async function performPublicSync(
       lastPrivateSyncDate: initialAccount?.aleoResources?.lastPrivateSyncDate ?? null,
       ...stakingResources,
       ...(config.enableTokens && { hasMigratedPublicTokens: true }),
+      ...(config.enableStaking && { hasMigratedStaking: true }),
     },
   };
 }
@@ -340,6 +358,16 @@ export async function performPrivateSync({
   // freshSyncHash being defined means this is a chained public→private run (not standalone).
   const publicSyncWasFromScratch =
     freshSyncHash !== undefined && freshSyncHash !== initialAccount.syncHash;
+  // Not `freshSyncHash`: that is only a fresh value while tokens are enabled, and is otherwise
+  // the stored hash — undefined on an account that never had one.
+  const publicSyncRanThisCycle = freshTransparentBalance !== undefined;
+
+  // The migration itself runs in the public sync, so only a chained run may report it happened.
+  // Staking being off has to clear the marker, since this run strips the cached staking rows:
+  // keeping it would let a later re-enable skip the migration and never re-fetch them.
+  const hasMigratedStaking =
+    config.enableStaking &&
+    (publicSyncRanThisCycle || initialAccount.aleoResources?.hasMigratedStaking === true);
   const allOldOperations = publicSyncWasFromScratch ? [] : (initialAccount.operations ?? []);
   const [oldPrivateOps] = splitPrivateAndPublicOperations(allOldOperations);
   const lastPrivateBlockHeight = publicSyncWasFromScratch
@@ -538,9 +566,12 @@ export async function performPrivateSync({
     operations.sort((a, b) => b.date.getTime() - a.date.getTime());
   }
 
-  const finalOperations = config.enableTokens
-    ? operations
-    : operations.filter(op => (op.subOperations ?? []).length === 0);
+  const finalOperations = operations.filter(op => {
+    const isTokenOp = (op.subOperations ?? []).length > 0;
+    if (isTokenOp && !config.enableTokens) return false;
+    if (isStakingOperation(op) && !config.enableStaking) return false;
+    return true;
+  });
 
   onProgress?.(PROGRESS_DONE);
 
@@ -566,6 +597,7 @@ export async function performPrivateSync({
         hasMigratedPublicTokens: true,
         hasMigratedPrivateTokens: true,
       }),
+      ...(hasMigratedStaking && { hasMigratedStaking: true }),
     },
   };
 }

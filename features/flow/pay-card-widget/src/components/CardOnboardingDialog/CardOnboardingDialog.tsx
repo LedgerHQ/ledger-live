@@ -1,11 +1,11 @@
 import React from "react";
 import { CardOnboardingDialogView } from "./CardOnboardingDialogView";
 import { useCardOnboardingDialogViewModel } from "./useCardOnboardingDialogViewModel";
-import type { PayCardOnboardingStep } from "@domain/api-card-management";
+import type { CardOnboardingStepWithCopy } from "../CardOnboardingWidget/useOnboardingSteps";
 
 type Props = {
   isOpen: boolean;
-  steps: PayCardOnboardingStep[];
+  steps: CardOnboardingStepWithCopy[];
   completedCount: number;
   totalCount: number;
   onClose: () => void;

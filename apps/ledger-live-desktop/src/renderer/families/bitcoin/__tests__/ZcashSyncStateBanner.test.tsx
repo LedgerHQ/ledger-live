@@ -74,6 +74,12 @@ describe("ZcashSyncStateBanner", () => {
     expect(screen.getByTestId("zcash-resume-sync-button")).toBeInTheDocument();
   });
 
+  it("ready state (post-export, not yet synced) + private sender renders the same warning banner as stopped", () => {
+    renderBanner(buildAccount({ syncState: "ready" }), "private");
+    expect(screen.getByTestId("zcash-sync-banner-stopped")).toBeInTheDocument();
+    expect(screen.getByTestId("zcash-resume-sync-button")).toBeInTheDocument();
+  });
+
   it("stopped state with a recorded sync error renders the failed banner instead, distinguishing it from a manual stop", () => {
     renderBanner(buildAccount({ syncState: "stopped", lastSyncError: "timeout" }), "private");
     expect(screen.getByTestId("zcash-sync-banner-failed")).toBeInTheDocument();

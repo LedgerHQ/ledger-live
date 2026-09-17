@@ -99,6 +99,7 @@ const commonConfig = {
     __DATADOG_ENV__: null,
     __PRERELEASE__: "null",
     __CHANNEL__: "null",
+    __BUILD_ENVS__: {},
   },
   moduleNameMapper,
   testPathIgnorePatterns,

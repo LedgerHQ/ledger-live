@@ -5,9 +5,16 @@ import { openHostedLoginInBrowser } from "./openHostedLogin.web";
 import { mobileWallet } from "./mobileWallet.web";
 import type { CardLoginProps } from "./types";
 
-export function CardLogin({ oauthConfig, callback, onTrackEvent }: CardLoginProps) {
+export function CardLogin({
+  oauthConfig,
+  callback,
+  openHostedLogin,
+  openHostedPage,
+  onTrackEvent,
+}: CardLoginProps) {
   const login = useCardLoginViewModel({
-    openHostedLogin: openHostedLoginInBrowser,
+    openHostedLogin: openHostedLogin ?? openHostedLoginInBrowser,
+    openHostedPage,
     mobileWallet,
     oauthConfig,
     callback,

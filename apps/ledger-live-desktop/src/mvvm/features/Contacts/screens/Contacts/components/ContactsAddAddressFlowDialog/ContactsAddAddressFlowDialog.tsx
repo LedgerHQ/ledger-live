@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { Button, Link } from "@ledgerhq/lumen-ui-react";
+import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
+import { useLocalizedUrl, useOpenLink } from "@shared/linking";
 import { DialogFlow, type DialogFlowScreenRegistry } from "LLD/components/DialogFlow";
 import { ModularDialogFlow } from "LLD/features/ModularDialog/ModularDialogFlow";
 import {
@@ -6,12 +9,14 @@ import {
   resolveAddAddressWebFlowStep,
   shouldUseAddAddressFlowBackNavigation,
   type AddAddressWebFlowStep,
+  urls as contactsUrls,
 } from "@features/flow-contacts-add-address";
 import type { ContactsAddAddressFlowDialogProps } from "./types";
 
 export function ContactsAddAddressFlowDialog({
   state,
   entryLabels,
+  privacyLink,
   sanctionedAddressBanner,
   nameLabels,
   reviewLabels,
@@ -23,11 +28,49 @@ export function ContactsAddAddressFlowDialog({
   onBack,
   onClose,
 }: ContactsAddAddressFlowDialogProps): React.JSX.Element | null {
+  const openLink = useOpenLink();
+  const localizedPrivacyPolicyUrl = useLocalizedUrl(contactsUrls.privacyPolicy.desktop);
+  const handlePressPrivacyPolicy = useCallback(() => {
+    if (privacyLink) openLink(localizedPrivacyPolicyUrl);
+  }, [openLink, privacyLink, localizedPrivacyPolicyUrl]);
+
   if (state.status === "closed") {
     return null;
   }
 
   const isSelectingCurrency = state.status === "selectingCurrency";
+  const isConfirmEnabled =
+    state.status === "enteringAddress" &&
+    state.addressEntry.status === "valid" &&
+    state.addressLabel.status === "valid";
+  const footer = (
+    <div className="flex flex-col items-center w-full pb-24">
+      <Button
+        appearance="base"
+        className="w-full"
+        data-testid="contacts-add-address-confirm"
+        disabled={!isConfirmEnabled}
+        icon={LedgerLogo}
+        onClick={onContinueFromAddressDetails}
+        size="lg"
+      >
+        {entryLabels.confirmAddress}
+      </Button>
+      {privacyLink ? (
+        <Link
+          appearance="base"
+          className="cursor-pointer mt-24"
+          data-testid="contacts-add-address-privacy-policy"
+          underline={false}
+          isExternal
+          size="sm"
+          onClick={handlePressPrivacyPolicy}
+        >
+          {privacyLink.label}
+        </Link>
+      ) : null}
+    </div>
+  );
 
   return (
     <ModularDialogFlow fillAvailableHeight={isSelectingCurrency} onClose={onClose}>
@@ -65,6 +108,9 @@ export function ContactsAddAddressFlowDialog({
           address: {
             content: flowContent,
             options: {
+              dialogFooter: footer,
+              dialogFooterClassName:
+                "bg-gradient-to-b from-canvas-sheet-transparent to-canvas-sheet",
               dialogHeaderProps: { density: "expanded", title: entryLabels.title },
               hasBackButton: true,
             },

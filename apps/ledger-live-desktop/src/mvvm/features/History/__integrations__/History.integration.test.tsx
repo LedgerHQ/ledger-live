@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { cleanup, render, screen, waitFor, within, withFlagOverrides } from "tests/testSetup";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -55,6 +55,11 @@ jest.mock("~/renderer/hooks/useExportOperationsCsv");
 const mockedUseExportOperationsCsv = jest.mocked(useExportOperationsCsv);
 
 const mockedUseNavigate = jest.mocked(useNavigate);
+
+function LocationSearch() {
+  const { search } = useLocation();
+  return <output data-testid="history-location-search">{search}</output>;
+}
 
 type ExportHookArgs = {
   onSuccess?: () => void;
@@ -124,6 +129,22 @@ describe("History integration", () => {
     unmount();
 
     expect(store.getState().history.lastSeenOperationDate).not.toBeNull();
+  });
+
+  it("does not mark crypto operations as seen when leaving card history", () => {
+    const { unmount, store } = render(<History />, {
+      initialRoute: "/history?tab=card",
+      initialState: {
+        accounts: [BTC_ACCOUNT],
+        settings: AFTER_ONBOARDING_STATE,
+        history: { lastSeenOperationDate: null },
+        ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
+      },
+    });
+
+    unmount();
+
+    expect(store.getState().history.lastSeenOperationDate).toBeNull();
   });
 
   it("should render the table header columns", async () => {
@@ -319,6 +340,68 @@ describe("History integration", () => {
     expect(await screen.findByText("No transactions yet")).toBeVisible();
     expect(screen.getByTestId("history-contact-scope")).toHaveTextContent(CONTACT_HISTORY_NAME);
     expect(screen.queryByTestId("history-table")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
+  });
+
+  function renderHistoryWithPayTab(initialRoute = "/history") {
+    return render(
+      <>
+        <History />
+        <LocationSearch />
+      </>,
+      {
+        initialRoute,
+        initialState: {
+          accounts: [BTC_ACCOUNT],
+          settings: AFTER_ONBOARDING_STATE,
+          ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
+        },
+      },
+    );
+  }
+
+  it("should hide the crypto and card switcher when the pay tab is disabled", async () => {
+    renderHistory();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("history-table-body")).toBeVisible();
+    });
+    expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
+  });
+
+  it("should show the crypto and card switcher when the pay tab is enabled", async () => {
+    renderHistoryWithPayTab();
+
+    expect(await screen.findByTestId("history-type-switcher")).toBeVisible();
+    expect(screen.getByTestId("history-tab-crypto")).toBeVisible();
+    expect(screen.getByTestId("history-tab-card")).toBeVisible();
+    expect(screen.getByTestId("history-table-body")).toBeVisible();
+  });
+
+  it("should show the signed-out card history when the card tab is selected", async () => {
+    renderHistoryWithPayTab("/history?tab=card");
+
+    expect(await screen.findByTestId("card-history-signed-out-state")).toBeVisible();
+    expect(screen.getByText("Log in to see your card transactions")).toBeVisible();
+    expect(screen.queryByTestId("history-table-body")).not.toBeInTheDocument();
+    expect(screen.getByTestId("history-actions-menu-button")).toBeVisible();
+  });
+
+  it("should switch from crypto history to signed-out card history", async () => {
+    const { user } = renderHistoryWithPayTab();
+
+    expect(await screen.findByTestId("history-table-body")).toBeVisible();
+
+    await user.click(screen.getByTestId("history-tab-card"));
+
+    expect(await screen.findByTestId("card-history-signed-out-state")).toBeVisible();
+    expect(screen.queryByTestId("history-table-body")).not.toBeInTheDocument();
+    expect(screen.getByTestId("history-location-search")).toHaveTextContent("?tab=card");
+
+    await user.click(screen.getByTestId("history-tab-crypto"));
+
+    expect(await screen.findByTestId("history-table-body")).toBeVisible();
+    expect(screen.getByTestId("history-location-search")).toBeEmptyDOMElement();
   });
 });
 

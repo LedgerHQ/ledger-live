@@ -477,6 +477,78 @@ describe("postSync", () => {
   });
 });
 
+// LIVE-37172. End of the pipeline for the flow the ticket reports: "private
+// balance" + "Self transfer" de-shields to the account's own transparent address.
+// Exercises the real shielded reducer rather than hand-built operations, so the
+// operation type under test is the one `getTxType` actually derives.
+describe("de-shielding self-transfer", () => {
+  const TXID = "a1b2c3selfdeshield";
+  const SENT = new BigNumber(10_000_000);
+  const FEE = new BigNumber(20_000);
+
+  // No transparent input (the value comes from Ironwood notes), the whole
+  // transparent output paid to an address of ours, change back as an internal note.
+  const selfDeshieldTx = {
+    id: TXID,
+    hex: "00",
+    blockHeight: 3_425_900,
+    blockHash: "hash",
+    timestamp: 1_757_000_000,
+    fee: FEE,
+    transparentOut: SENT,
+    hasTransparentInputs: false,
+    decryptedData: {
+      orchard_outputs: [],
+      sapling_outputs: [],
+      ironwood_outputs: [
+        { amount: new BigNumber(5_000_000), memo: "", transfer_type: "internal", isSpent: false },
+      ],
+    },
+  } as unknown as ShieldedTransaction;
+
+  // What the transparent leg records for that same transaction: `mapTxToOperations`
+  // only emits an "OUT" for a transaction funded by a transparent input, and a
+  // de-shielding send has none -- so from the transparent pool's own point of view
+  // this is an inflow like any other.
+  const transparentIn = {
+    id: `acc-1-${TXID}-IN`,
+    hash: TXID,
+    accountId: "acc-1",
+    type: "IN",
+    value: SENT,
+    fee: new BigNumber(0),
+    senders: [],
+    recipients: ["t1ourOwnFreshAddress"],
+    blockHeight: 3_425_900,
+    blockHash: "hash",
+    date: new Date(1_757_000_000 * 1000),
+    extra: {},
+  } as unknown as BtcOperation;
+
+  it("reports the send as well as the receipt", () => {
+    const shielded = reduceShieldedSyncResult(
+      { processedOperations: [], accountUpdate: { operations: [transparentIn] } },
+      { transactions: [selfDeshieldTx], processedBlocks: 1, remainingBlocks: 0 },
+      infoWith({ lastProcessedBlock: 3_425_899 }),
+      "acc-1",
+    );
+
+    const sent = (shielded.accountUpdate.operations as BtcOperation[]).find(
+      op => op.hash === TXID && op.type === "SHIELDED_TX_IRONWOOD_OUT",
+    );
+    // Same convention as every other outgoing operation: the value includes the fee.
+    expect(sent?.value.toFixed()).toBe(SENT.plus(FEE).toFixed());
+
+    const latest = { transparent: [transparentIn], shielded: [] as BtcOperation[] };
+    const reconciled = reconcileLegOperations(latest, "shielded", shielded.accountUpdate);
+
+    expect((reconciled.operations as BtcOperation[]).map(op => op.type).sort()).toEqual([
+      "IN",
+      "SHIELDED_TX_IRONWOOD_OUT",
+    ]);
+  });
+});
+
 describe("reconcileLegOperations", () => {
   const op = (overrides: Partial<BtcOperation>): BtcOperation =>
     ({
@@ -497,13 +569,11 @@ describe("reconcileLegOperations", () => {
 
   const freshLatest = () => ({ transparent: [] as BtcOperation[], shielded: [] as BtcOperation[] });
 
-  // A t->z shield (or z->t deshield) is one real transaction, but the transparent
-  // and shielded legs sync independently and each only knows its own domain (see
-  // this function's own doc comment) -- so each leg produces its own operation for
-  // the very same transaction hash. Naive concatenation of the two legs' buckets
-  // would show it twice in `account.operations`; this is the one place both
-  // buckets are available together, so it is the only place that can catch it.
-  it("keeps only the transparent leg's operation when both legs record the same transaction hash", () => {
+  // Two records of the same transaction collapse only when they report the SAME
+  // direction -- one payment the two legs each saw from their own side. Here a
+  // shield paying someone else: the transparent leg debits the UTXOs, the shielded
+  // leg sees the note it created through the outgoing viewing key.
+  it("keeps only the transparent leg's operation when both legs record the same leg of a transaction", () => {
     const latest = freshLatest();
 
     const transparentResult = reconcileLegOperations(latest, "transparent", {
@@ -513,12 +583,54 @@ describe("reconcileLegOperations", () => {
 
     const shieldedResult = reconcileLegOperations(latest, "shielded", {
       operations: [
-        op({ id: "tx-1-SHIELDED_TX_IRONWOOD_IN", hash: "tx-1", type: "SHIELDED_TX_IRONWOOD_IN" }),
+        op({ id: "tx-1-SHIELDED_TX_IRONWOOD_OUT", hash: "tx-1", type: "SHIELDED_TX_IRONWOOD_OUT" }),
       ],
     } as Partial<ZcashAccount>);
 
     expect(shieldedResult.operations).toHaveLength(1);
     expect((shieldedResult.operations as BtcOperation[])[0].type).toBe("OUT");
+  });
+
+  // LIVE-37172. De-shielding to one's own transparent address moves value between
+  // two pools of the same account: the transparent leg credits ("IN"), the shielded
+  // leg debits ("_OUT"). Two legs of one movement, not one event counted twice --
+  // collapsing them by hash left the send showing only as "Received".
+  it("keeps both legs of a de-shielding self-transfer", () => {
+    const latest = freshLatest();
+
+    reconcileLegOperations(latest, "shielded", {
+      operations: [
+        op({ id: "tx-1-SHIELDED_TX_IRONWOOD_OUT", hash: "tx-1", type: "SHIELDED_TX_IRONWOOD_OUT" }),
+      ],
+    } as Partial<ZcashAccount>);
+    const transparentResult = reconcileLegOperations(latest, "transparent", {
+      operations: [op({ id: "tx-1-IN", hash: "tx-1", type: "IN" })],
+    } as Partial<ZcashAccount>);
+
+    expect((transparentResult.operations as BtcOperation[]).map(o => o.type).sort()).toEqual([
+      "IN",
+      "SHIELDED_TX_IRONWOOD_OUT",
+    ]);
+  });
+
+  // The mirror: shielding to one's own shielded address debits transparently and
+  // credits the pool.
+  it("keeps both legs of a shielding self-transfer", () => {
+    const latest = freshLatest();
+
+    reconcileLegOperations(latest, "transparent", {
+      operations: [op({ id: "tx-1-OUT", hash: "tx-1", type: "OUT" })],
+    } as Partial<ZcashAccount>);
+    const shieldedResult = reconcileLegOperations(latest, "shielded", {
+      operations: [
+        op({ id: "tx-1-SHIELDED_TX_IRONWOOD_IN", hash: "tx-1", type: "SHIELDED_TX_IRONWOOD_IN" }),
+      ],
+    } as Partial<ZcashAccount>);
+
+    expect((shieldedResult.operations as BtcOperation[]).map(o => o.type).sort()).toEqual([
+      "OUT",
+      "SHIELDED_TX_IRONWOOD_IN",
+    ]);
   });
 
   it("keeps both legs' operations when they record different transaction hashes", () => {
@@ -546,26 +658,25 @@ describe("reconcileLegOperations", () => {
       ],
     } as Partial<ZcashAccount>);
     const transparentResult = reconcileLegOperations(latest, "transparent", {
-      operations: [op({ id: "tx-1-IN", hash: "tx-1", type: "IN" })],
+      operations: [op({ id: "tx-1-OUT", hash: "tx-1", type: "OUT" })],
     } as Partial<ZcashAccount>);
 
     expect(transparentResult.operations).toHaveLength(1);
-    expect((transparentResult.operations as BtcOperation[])[0].type).toBe("IN");
+    expect((transparentResult.operations as BtcOperation[])[0].type).toBe("OUT");
   });
 
   // The shielded record is the only one carrying a memo (see
   // `convertShieldedTransactionsToOperations`) -- dropping it outright for a
-  // shared-hash transaction would silently lose the memo attached to a
-  // shielding/de-shielding send.
+  // superseded record would silently lose the memo attached to a shielding send.
   it("copies the shielded twin's memo onto the surviving transparent operation", () => {
     const latest = freshLatest();
 
     reconcileLegOperations(latest, "shielded", {
       operations: [
         op({
-          id: "tx-1-SHIELDED_TX_IRONWOOD_IN",
+          id: "tx-1-SHIELDED_TX_IRONWOOD_OUT",
           hash: "tx-1",
-          type: "SHIELDED_TX_IRONWOOD_IN",
+          type: "SHIELDED_TX_IRONWOOD_OUT",
           extra: { memo: "thanks for shielding" } as ZcashOperationExtra,
         }),
       ],
@@ -586,9 +697,9 @@ describe("reconcileLegOperations", () => {
     reconcileLegOperations(latest, "shielded", {
       operations: [
         op({
-          id: "tx-1-SHIELDED_TX_IRONWOOD_IN",
+          id: "tx-1-SHIELDED_TX_IRONWOOD_OUT",
           hash: "tx-1",
-          type: "SHIELDED_TX_IRONWOOD_IN",
+          type: "SHIELDED_TX_IRONWOOD_OUT",
           extra: { memo: "shielded memo" } as ZcashOperationExtra,
         }),
       ],
@@ -606,6 +717,33 @@ describe("reconcileLegOperations", () => {
 
     expect((transparentResult.operations as BtcOperation[])[0].extra).toEqual({
       memo: "transparent memo",
+    });
+  });
+
+  // A memo on a self-transfer belongs to the shielded leg, which survives: copying
+  // it onto the transparent leg too would print the same memo on both rows.
+  it("leaves the memo on the shielded leg when both legs survive", () => {
+    const latest = freshLatest();
+
+    reconcileLegOperations(latest, "shielded", {
+      operations: [
+        op({
+          id: "tx-1-SHIELDED_TX_IRONWOOD_OUT",
+          hash: "tx-1",
+          type: "SHIELDED_TX_IRONWOOD_OUT",
+          extra: { memo: "to myself" } as ZcashOperationExtra,
+        }),
+      ],
+    } as Partial<ZcashAccount>);
+    const transparentResult = reconcileLegOperations(latest, "transparent", {
+      operations: [op({ id: "tx-1-IN", hash: "tx-1", type: "IN", extra: {} })],
+    } as Partial<ZcashAccount>);
+
+    const operations = transparentResult.operations as BtcOperation[];
+    expect(operations).toHaveLength(2);
+    expect(operations.find(o => o.type === "IN")?.extra).toEqual({});
+    expect(operations.find(o => o.type === "SHIELDED_TX_IRONWOOD_OUT")?.extra).toEqual({
+      memo: "to myself",
     });
   });
 });

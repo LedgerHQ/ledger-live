@@ -6,7 +6,7 @@ import {
   KeycloakTokenResponseSchema,
   WalletAuthInvalidAuthorizationError,
   WalletAuthInvalidTokenError,
-} from "@ledgerhq/ledger-auth";
+} from "@ledgerhq/auth";
 
 export type StatusAPIResponse = {
   name: string;

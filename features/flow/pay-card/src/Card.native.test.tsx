@@ -1,14 +1,15 @@
 import React from "react";
-import { render, screen } from "@testing-library/react-native";
+import { cleanup, render, screen } from "@testing-library/react-native";
 import { View } from "react-native";
 import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
 import type { CardProps } from "./Card.types";
+import { I18nWrapper } from "./__tests__/i18nWrapper";
 
-let mockStatus: PayCardAuthStatus = "unknown";
+const mockUseCardAuthStatus = jest.fn<PayCardAuthStatus, []>();
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <View testID="card-login" />,
-  useCardAuthStatus: () => mockStatus,
+  useCardAuthStatus: () => mockUseCardAuthStatus(),
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
@@ -24,31 +25,37 @@ jest.mock("@features/flow-pay-card-widget", () => ({
 
 import { Card } from "./Card";
 
-const title = "Crypto card";
+function renderCard(card: React.ReactElement) {
+  return render(card, { wrapper: I18nWrapper });
+}
 
-const oauthConfig: CardProps["oauthConfig"] = {
+const oauthConfig: CardProps["login"]["oauthConfig"] = {
   apiUrl: "https://card.example",
   clientId: "client-id",
   hostedUiUrl: "https://hosted.example",
   redirectUri: "https://card.example/callback",
 };
 
-const formatCountervalue: CardProps["formatCountervalue"] = (value: number) => ({
-  integerPart: String(value),
-  decimalPart: "00",
-  currencyText: "$",
-  decimalSeparator: ".",
-  currencyPosition: "start",
-});
+const formatters: CardProps["formatters"] = {
+  countervalue: (value: number) => ({
+    integerPart: String(value),
+    decimalPart: "00",
+    currencyText: "$",
+    decimalSeparator: ".",
+    currencyPosition: "start",
+  }),
+};
 
 describe("Card (native)", () => {
+  afterEach(cleanup);
+
   beforeEach(() => {
-    mockStatus = "unknown";
+    mockUseCardAuthStatus.mockReturnValue("unknown");
   });
 
   describe("while resolving the session", () => {
     it("shows only the bare artwork, holding back the widget and card details", () => {
-      render(<Card title={title} oauthConfig={oauthConfig} />);
+      renderCard(<Card login={{ oauthConfig }} />);
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-onboarding-widget")).toBeNull();
@@ -58,26 +65,19 @@ describe("Card (native)", () => {
 
   describe("while signed out", () => {
     beforeEach(() => {
-      mockStatus = "signedOut";
+      mockUseCardAuthStatus.mockReturnValue("signedOut");
     });
 
     it("shows the bare artwork above the login, with no card details", () => {
-      render(<Card title={title} oauthConfig={oauthConfig} />);
+      renderCard(<Card login={{ oauthConfig }} />);
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.getByTestId("card-login")).toBeVisible();
       expect(screen.queryByTestId("card-details")).toBeNull();
     });
 
-    it("never builds the balance overlay, even when the host provides a formatter and label", () => {
-      render(
-        <Card
-          title={title}
-          oauthConfig={oauthConfig}
-          formatCountervalue={formatCountervalue}
-          balanceLabel="Balance"
-        />,
-      );
+    it("never builds the balance overlay, even when the host provides a formatter", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.queryByTestId("card-details-with-visual")).toBeNull();
@@ -86,11 +86,11 @@ describe("Card (native)", () => {
 
   describe("once signed in", () => {
     beforeEach(() => {
-      mockStatus = "signedIn";
+      mockUseCardAuthStatus.mockReturnValue("signedIn");
     });
 
     it("shows the widget and the card details, with no login or bare artwork", () => {
-      render(<Card title={title} oauthConfig={oauthConfig} />);
+      renderCard(<Card login={{ oauthConfig }} />);
 
       expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("card-details")).toBeVisible();
@@ -98,15 +98,8 @@ describe("Card (native)", () => {
       expect(screen.queryByTestId("card-artwork")).toBeNull();
     });
 
-    it("hands the card visual to the details block once the host provides a formatter and label", () => {
-      render(
-        <Card
-          title={title}
-          oauthConfig={oauthConfig}
-          formatCountervalue={formatCountervalue}
-          balanceLabel="Balance"
-        />,
-      );
+    it("hands the card visual to the details block once the host provides a formatter", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
 
       expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
       expect(screen.queryByTestId("card-details")).toBeNull();

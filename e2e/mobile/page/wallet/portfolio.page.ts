@@ -19,6 +19,9 @@ export default class PortfolioPage {
   portfolioSettingsId = "topbar-settings";
   myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
   portfolioListIdRegex = new RegExp(`portfolio-screen|${this.readOnlyItemsId}`);
+  portfolioScrollableListIdRegex = new RegExp(
+    `^(${this.accountsListView}|${this.emptyPortfolioListId})$`,
+  );
   addAccountCta = "add-account-cta";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";
   showAllAssetsButton = "assets-button";
@@ -108,6 +111,18 @@ export default class PortfolioPage {
     }
   }
 
+  /**
+   * The balance and the quick-action row live in the portfolio list's first row, which Android
+   * detaches from the view hierarchy once the list is scrolled past it — the target is then absent,
+   * not merely under-visible, and no wait recovers it.
+   *
+   * Detox's `scrollTo("top")` force-breaks on this list: its pull-to-refresh control means the
+   * action never reports a top edge.
+   */
+  private async ensureHeroVisible(targetId: string) {
+    await scrollToId(targetId, this.portfolioScrollableListIdRegex, undefined, "up");
+  }
+
   @Step("Expect balance to be visible")
   async expectBalanceToBeVisible() {
     await detoxExpect(getElementById(this.analyticsBalanceAmountId)).toBeVisible();
@@ -115,6 +130,7 @@ export default class PortfolioPage {
 
   @Step("Expect total balance value {{{0}}}")
   async expectTotalBalanceCounterValue(counterValue: string) {
+    await this.ensureHeroVisible(this.portfolioBalanceNormal);
     await waitForElementById(this.portfolioBalanceNormal);
     const label = await getLabelOfElement(this.portfolioBalanceAmount);
     jestExpect(label).toContain(counterValue);
@@ -125,6 +141,7 @@ export default class PortfolioPage {
     if (await isAggregatedAssetsEnabled()) {
       return;
     } else {
+      await this.ensureHeroVisible(this.portfolioBalanceAnalyticsPill);
       await waitForElementById(this.portfolioBalanceAnalyticsPill);
     }
   }
@@ -195,6 +212,7 @@ export default class PortfolioPage {
 
   @Step("Check quick action buttons visibility")
   async checkQuickActionButtonsVisibility() {
+    await this.ensureHeroVisible(this.quickActionsCtasContainerId);
     await waitForElementById(this.quickActionTransferButtonV4);
     await waitForElementById(this.quickActionSwapButtonV4);
     await waitForElementById(this.quickActionBuyButtonV4);
@@ -344,21 +362,24 @@ export default class PortfolioPage {
 
   @Step("Check quick action transfer button visibility")
   async checkQuickActionTransferButtonVisibility() {
+    await this.ensureHeroVisible(this.quickActionTransferButtonV4);
     await waitForElementById(this.quickActionTransferButtonV4);
   }
 
   @Step("Check quick action swap button visibility")
   async checkQuickActionSwapButtonVisibility() {
+    await this.ensureHeroVisible(this.quickActionSwapButtonV4);
     await waitForElementById(this.quickActionSwapButtonV4);
   }
 
   @Step("Check quick action buy button visibility")
   async checkQuickActionBuyButtonVisibility() {
+    await this.ensureHeroVisible(this.quickActionBuyButtonV4);
     await waitForElementById(this.quickActionBuyButtonV4);
   }
 
-  // The row mounts only after portfolio data resolves (QAA-1524).
   private async waitForQuickActionsSettled() {
+    await this.ensureHeroVisible(this.quickActionsCtasContainerId);
     await waitForFullyVisibleById(this.quickActionsCtasContainerId);
   }
 
@@ -381,21 +402,25 @@ export default class PortfolioPage {
   }
   @Step("Check no balance title visibility")
   async checkNoBalanceTitleVisibility() {
+    await this.ensureHeroVisible(this.portfolioBalanceNoAccount);
     await waitForElementById(this.portfolioBalanceNoAccount);
   }
 
   @Step("Check normal balance title visibility")
   async checkNormalBalanceTitleVisibility() {
+    await this.ensureHeroVisible(this.portfolioBalanceNormal);
     await waitForElementById(this.portfolioBalanceNormal);
   }
 
   @Step("Check portfolio balance analytics pill visibility")
   async checkPortfolioBalanceAnalyticsPillVisibility() {
+    await this.ensureHeroVisible(this.portfolioBalanceAnalyticsPill);
     await waitForElementById(this.portfolioBalanceAnalyticsPill);
   }
 
   @Step("Tap on portfolio balance analytics pill")
   async tapPortfolioBalanceAnalyticsPill() {
+    await this.ensureHeroVisible(this.portfolioBalanceAnalyticsPill);
     await tapById(this.portfolioBalanceAnalyticsPill);
   }
 

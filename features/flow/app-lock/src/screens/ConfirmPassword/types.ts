@@ -1,12 +1,3 @@
-import type { PasswordFieldLabels } from "../../components/PasswordField";
-
-export type ConfirmPasswordLabels = PasswordFieldLabels &
-  Readonly<{
-    minLengthHelper: string;
-    mismatchError: string;
-    confirmLabel: string;
-  }>;
-
 export type ConfirmPasswordViewModel = Readonly<{
   password: string;
   isConfirmEnabled: boolean;
@@ -22,7 +13,6 @@ export type UseConfirmPasswordViewModelOptions = Readonly<{
 
 export type ConfirmPasswordViewProps = ConfirmPasswordViewModel &
   Readonly<{
-    labels: ConfirmPasswordLabels;
-    errorText?: string;
+    hasSaveFailed?: boolean;
     keyboardHeight?: number;
   }>;

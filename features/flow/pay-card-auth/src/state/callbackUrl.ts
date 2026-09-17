@@ -8,8 +8,9 @@ import type { PayCardAuthCallback } from "./types";
  * `ledgerlive://paytab?code=…` is not a hierarchical URL, so `URL` cannot be trusted to expose its
  * query. The query is read from the string itself.
  *
- * The redirect also carries `app_id`, which nothing here needs: PKCE already ties the code to the
- * verifier on disk.
+ * `state` is carried over when the provider echoed one, so the machine can tell a redirect from the
+ * attempt it is waiting on from one left over from an attempt already abandoned. `app_id` names the
+ * provider app the holder belongs to, and the redirect is the only place that says it.
  */
 export function parseCallbackUrl(url: string): PayCardAuthCallback | null {
   const query = url.slice(url.indexOf("?") + 1);
@@ -17,7 +18,14 @@ export function parseCallbackUrl(url: string): PayCardAuthCallback | null {
     return null;
   }
 
-  const code = new URLSearchParams(query).get("code");
+  const params = new URLSearchParams(query);
+  const code = params.get("code");
+  if (!code) {
+    return null;
+  }
 
-  return code ? { code } : null;
+  const state = params.get("state");
+  const appId = params.get("app_id");
+
+  return { code, ...(state ? { state } : {}), ...(appId ? { appId } : {}) };
 }

@@ -1,6 +1,7 @@
 import { cardManagementApi } from "@domain/api-card-management";
 import { cardSession, getCardSessionToken } from "@features/platform-card";
 import { createCardLoginPorts, type CardLoginDispatch } from "../createCardLoginPorts";
+import { markPayCardLoginIntroSeen } from "../loginIntroSlice";
 import type { OpenHostedLogin } from "../types";
 
 jest.mock("@features/platform-card", () => ({
@@ -92,6 +93,16 @@ describe("createCardLoginPorts", () => {
       await persisted;
 
       expect(dispatch).toHaveBeenCalledWith(cardManagementApi.util.resetApiState());
+    });
+  });
+
+  describe("markIntroSeen", () => {
+    it("dispatches the action that raises the persisted flag", () => {
+      const { ports, dispatch } = buildPorts();
+
+      ports.markIntroSeen();
+
+      expect(dispatch).toHaveBeenCalledWith(markPayCardLoginIntroSeen());
     });
   });
 });

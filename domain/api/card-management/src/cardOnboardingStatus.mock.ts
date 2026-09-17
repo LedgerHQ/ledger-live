@@ -53,6 +53,8 @@ export function clearCardOnboardingStatusMock(): void {
 }
 
 const MOCK_WALLET_ID = "11111111-1111-4111-8111-111111111111";
+/** Deliberately not {@link MOCK_WALLET_ID}: the link is made by `addressId`, and the two differ. */
+const MOCK_WALLET_ADDRESS_ID = "0x2222222222222222222222222222222222222222";
 
 export function mockPayCardUser(verified: boolean): PayCardUser {
   return {
@@ -82,6 +84,7 @@ export function mockPayCardInternalWallets(funded: boolean): readonly PayCardInt
       currency: "usdc",
       address: "0x0000000000000000000000000000000000000000",
       addressMemo: null,
+      addressId: MOCK_WALLET_ADDRESS_ID,
     },
   ];
 }

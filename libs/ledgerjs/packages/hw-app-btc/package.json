@@ -63,11 +63,11 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/logs": "catalog:",
-    "@ledgerhq/psbtv2": "workspace:^",
-    "@noble/curves": "1.9.7",
-    "@noble/hashes": "1.8.0",
+    "@ledgerhq/psbtv2": "catalog:",
+    "@noble/curves": "catalog:",
+    "@noble/hashes": "catalog:",
     "bip32-path": "^0.4.2",
     "bitcoinjs-lib": "^6.1.7",
     "bs58": "catalog:",
@@ -76,7 +76,7 @@
     "semver": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

@@ -1,8 +1,19 @@
 import BigNumber from "bignumber.js";
-import { adaptA4OperationToLiveOperation, listA4OperationsPage, parseA4Asset } from "./operations";
+import {
+  adaptA4OperationToLiveOperation,
+  fetchA4Operations,
+  parseA4Asset,
+  withDcRoamRetry,
+} from "./operations";
+import { A4HttpError } from "./errors";
+import { clearA4RegistrationCache, ensureA4Registered } from "./registration";
 import type { A4OperationView } from "./types";
 import { A4Client } from "./index";
-import { paginateOperations } from "../../paginateOperations";
+
+jest.mock("./registration", () => ({
+  ensureA4Registered: jest.fn().mockResolvedValue(undefined),
+  clearA4RegistrationCache: jest.fn(),
+}));
 
 describe("parseA4Asset", () => {
   it("returns native for 'native'", () => {
@@ -749,124 +760,216 @@ describe("adaptA4OperationToLiveOperation", () => {
   });
 });
 
-describe("listA4OperationsPage", () => {
+describe("fetchA4Operations", () => {
+  const makeA4Op = (hash: string): A4OperationView => ({
+    block: { hash: "0xblock", height: 100, time: "2024-01-01T00:00:00Z" },
+    tx: { hash },
+    assets: { native: "500" },
+    events: {},
+    failed: false,
+    fees: "0",
+    feeAsset: "native",
+  });
+
   let client: A4Client;
   let listOperationsSpy: jest.SpyInstance;
 
   beforeEach(() => {
     client = new A4Client("https://a4.test", "ethereum");
     listOperationsSpy = jest.spyOn(client, "listOperations");
+    jest.mocked(clearA4RegistrationCache).mockReset();
+    jest.mocked(ensureA4Registered).mockReset().mockResolvedValue(undefined);
   });
 
   afterEach(() => {
     listOperationsSpy.mockRestore();
   });
 
-  it("returns next=undefined when nextToken is absent", async () => {
-    listOperationsSpy.mockResolvedValueOnce({
-      data: { items: [], nextToken: undefined },
-      version: undefined,
-    });
-    const page = await listA4OperationsPage(client, "accountId", "0xaddress", { minHeight: 0 });
-    expect(page.next).toBeUndefined();
-  });
-
-  it("returns next=nextToken when present", async () => {
-    listOperationsSpy.mockResolvedValueOnce({
-      data: { items: [], nextToken: "cursor123" },
-      version: undefined,
-    });
-    const page = await listA4OperationsPage(client, "accountId", "0xaddress", { minHeight: 0 });
-    expect(page.next).toEqual("cursor123");
-  });
-
-  it("drains two pages when used with paginateOperations", async () => {
-    const a4Op1: A4OperationView = {
-      block: { hash: "0xb1", height: 100, time: "2024-01-01T00:00:00Z" },
-      tx: { hash: "0xtx1" },
-      assets: { native: "500" },
-      events: {},
-      failed: false,
-      fees: "0",
-      feeAsset: "native",
-    };
-    const a4Op2: A4OperationView = {
-      block: { hash: "0xb2", height: 99, time: "2024-01-01T00:00:00Z" },
-      tx: { hash: "0xtx2" },
-      assets: { native: "300" },
-      events: {},
-      failed: false,
-      fees: "0",
-      feeAsset: "native",
-    };
-
+  it("drains all pages and returns ops from each", async () => {
     listOperationsSpy
       .mockResolvedValueOnce({
-        data: { items: [a4Op1], nextToken: "page2token" },
+        data: { items: [makeA4Op("0xtx1")], nextToken: "page2" },
         version: undefined,
       })
       .mockResolvedValueOnce({
-        data: { items: [a4Op2], nextToken: undefined },
+        data: { items: [makeA4Op("0xtx2")], nextToken: undefined },
         version: undefined,
       });
 
-    const ops = await paginateOperations(cursor =>
-      listA4OperationsPage(client, "accountId", "0xaddress", { minHeight: 0, cursor }),
-    );
+    const ops = await fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5);
 
-    expect(listOperationsSpy).toHaveBeenCalledTimes(2);
-    expect(listOperationsSpy).toHaveBeenNthCalledWith(1, "accountId", {
-      blocks: [0, "latest"],
-      order: "DESC",
-      token: undefined,
-    });
-    expect(listOperationsSpy).toHaveBeenNthCalledWith(2, "accountId", {
-      blocks: [0, "latest"],
-      order: "DESC",
-      token: "page2token",
-    });
     expect(ops).toEqual([
       expect.objectContaining({ hash: "0xtx1" }),
       expect.objectContaining({ hash: "0xtx2" }),
     ]);
   });
 
-  it("second sync uses updated minHeight to skip already-fetched blocks", async () => {
-    const a4Op: A4OperationView = {
-      block: { hash: "0xb1", height: 100, time: "2024-01-01T00:00:00Z" },
-      tx: { hash: "0xtx1" },
-      assets: { native: "500" },
-      events: {},
-      failed: false,
-      fees: "0",
-      feeAsset: "native",
+  it("throws on 5xx so the caller can fall back to the delegate", async () => {
+    listOperationsSpy.mockRejectedValueOnce(new A4HttpError("server error", 500));
+
+    await expect(
+      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5),
+    ).rejects.toThrow(A4HttpError);
+    expect(jest.mocked(ensureA4Registered)).not.toHaveBeenCalled();
+  });
+
+  it("throws on 422 so the caller can fall back to the delegate", async () => {
+    listOperationsSpy.mockRejectedValueOnce(new A4HttpError("account not ready", 422));
+
+    await expect(
+      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5),
+    ).rejects.toThrow(A4HttpError);
+    expect(jest.mocked(ensureA4Registered)).not.toHaveBeenCalled();
+  });
+
+  it("on 412: clears the registration cache, re-registers on the new DC, retries from page 1, returns ops", async () => {
+    listOperationsSpy
+      .mockRejectedValueOnce(new A4HttpError("precondition failed", 412))
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx1")], nextToken: undefined },
+        version: undefined,
+      });
+
+    const ops = await fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5);
+
+    expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledWith(client, "a4AccountId", [
+      "0xaddress",
+    ]);
+    expect(ops).toEqual([expect.objectContaining({ hash: "0xtx1" })]);
+  });
+
+  it("on 412: rethrows if the retry also fails, so the caller falls back to the delegate", async () => {
+    listOperationsSpy
+      .mockRejectedValueOnce(new A4HttpError("precondition failed", 412))
+      .mockRejectedValueOnce(new A4HttpError("precondition failed", 412));
+
+    await expect(
+      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 1),
+    ).rejects.toThrow(A4HttpError);
+    expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(1);
+  });
+
+  it("on 412 mid-pagination: discards partial results and restarts from page 1 after re-registration", async () => {
+    listOperationsSpy
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx1")], nextToken: "page2" },
+        version: undefined,
+      })
+      .mockRejectedValueOnce(new A4HttpError("precondition failed", 412))
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx1")], nextToken: undefined },
+        version: undefined,
+      });
+
+    const ops = await fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5);
+
+    expect(listOperationsSpy).toHaveBeenCalledTimes(3);
+    expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(1);
+    expect(ops).toEqual([expect.objectContaining({ hash: "0xtx1" })]);
+  });
+
+  it("continues draining pages when a page contains only NFT ops (all adapted to [])", async () => {
+    const nftOp: A4OperationView = {
+      ...makeA4Op("0xtx-nft"),
+      tx: { hash: "0xtx-nft", details: { ledgerOpType: "NFT_IN" } },
     };
 
-    listOperationsSpy.mockResolvedValueOnce({
-      data: { items: [a4Op], nextToken: undefined },
-      version: undefined,
-    });
-    const firstSyncOps = await paginateOperations(cursor =>
-      listA4OperationsPage(client, "accountId", "0xaddress", { minHeight: 0, cursor }),
-    );
+    listOperationsSpy
+      .mockResolvedValueOnce({
+        data: { items: [nftOp], nextToken: "page2" },
+        version: undefined,
+      })
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx-eth")], nextToken: undefined },
+        version: undefined,
+      });
 
-    const lastBlockHeight = firstSyncOps[0].blockHeight ?? 0;
+    const ops = await fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5);
 
-    listOperationsSpy.mockResolvedValueOnce({
-      data: { items: [], nextToken: undefined },
-      version: undefined,
-    });
-    await paginateOperations(cursor =>
-      listA4OperationsPage(client, "accountId", "0xaddress", {
-        minHeight: lastBlockHeight + 1,
-        cursor,
-      }),
-    );
+    expect(listOperationsSpy).toHaveBeenCalledTimes(2);
+    expect(ops).toEqual([expect.objectContaining({ hash: "0xtx-eth" })]);
+  });
 
-    expect(listOperationsSpy).toHaveBeenLastCalledWith("accountId", {
-      blocks: [101, "latest"],
-      order: "DESC",
-      token: undefined,
-    });
+  it("on two consecutive 412 roams followed by success: retries twice and returns ops", async () => {
+    listOperationsSpy
+      .mockRejectedValueOnce(new A4HttpError("precondition failed", 412))
+      .mockRejectedValueOnce(new A4HttpError("precondition failed", 412))
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx1")], nextToken: undefined },
+        version: undefined,
+      });
+
+    const ops = await fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 5);
+
+    expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(2);
+    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(2);
+    expect(ops).toEqual([expect.objectContaining({ hash: "0xtx1" })]);
+  });
+
+  it("rethrows when maxDcRoamRetries is exhausted", async () => {
+    listOperationsSpy.mockRejectedValue(new A4HttpError("precondition failed", 412));
+
+    await expect(
+      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", 0, 2),
+    ).rejects.toThrow(A4HttpError);
+    expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(2);
+    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(2);
+    expect(listOperationsSpy).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe("withDcRoamRetry", () => {
+  let client: A4Client;
+
+  beforeEach(() => {
+    client = new A4Client("https://a4.test", "ethereum");
+    jest.mocked(clearA4RegistrationCache).mockReset();
+    jest.mocked(ensureA4Registered).mockReset().mockResolvedValue(undefined);
+  });
+
+  it("returns the result of fn on first success", async () => {
+    const fn = jest.fn().mockResolvedValue("ok");
+    const result = await withDcRoamRetry(client, "a4id", "0xaddr", fn, 5);
+    expect(result).toBe("ok");
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(clearA4RegistrationCache)).not.toHaveBeenCalled();
+  });
+
+  it("rethrows non-412 errors immediately without retrying", async () => {
+    const fn = jest.fn().mockRejectedValue(new A4HttpError("server error", 500));
+    await expect(withDcRoamRetry(client, "a4id", "0xaddr", fn, 5)).rejects.toThrow(A4HttpError);
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(clearA4RegistrationCache)).not.toHaveBeenCalled();
+  });
+
+  it("retries on 412 up to maxRetries times, then rethrows", async () => {
+    const fn = jest.fn().mockRejectedValue(new A4HttpError("precondition failed", 412));
+    await expect(withDcRoamRetry(client, "a4id", "0xaddr", fn, 3)).rejects.toThrow(A4HttpError);
+    expect(fn).toHaveBeenCalledTimes(4);
+    expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(3);
+    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(3);
+  });
+
+  it("returns result when fn succeeds after one 412", async () => {
+    const fn = jest
+      .fn()
+      .mockRejectedValueOnce(new A4HttpError("precondition failed", 412))
+      .mockResolvedValueOnce("recovered");
+    const result = await withDcRoamRetry(client, "a4id", "0xaddr", fn, 5);
+    expect(result).toBe("recovered");
+    expect(fn).toHaveBeenCalledTimes(2);
+    expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledWith(client, "a4id", ["0xaddr"]);
+  });
+
+  it("with maxRetries=0 rethrows on first 412 without re-registering", async () => {
+    const fn = jest.fn().mockRejectedValue(new A4HttpError("precondition failed", 412));
+    await expect(withDcRoamRetry(client, "a4id", "0xaddr", fn, 0)).rejects.toThrow(A4HttpError);
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(clearA4RegistrationCache)).not.toHaveBeenCalled();
   });
 });

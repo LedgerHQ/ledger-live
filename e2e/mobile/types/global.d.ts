@@ -104,6 +104,7 @@ declare global {
   var getWebElementsByIdAndText: typeof WebElementHelpers.getWebElementsByIdAndText;
   var getWebElementsText: typeof WebElementHelpers.getWebElementsText;
   var getWebElementText: typeof WebElementHelpers.getWebElementText;
+  var isWebElementPresent: typeof WebElementHelpers.isWebElementPresent;
   var scrollToWebElement: typeof WebElementHelpers.scrollToWebElement;
   var tapWebElementByElement: typeof WebElementHelpers.tapWebElementByElement;
   var tapWebElementByTestId: typeof WebElementHelpers.tapWebElementByTestId;

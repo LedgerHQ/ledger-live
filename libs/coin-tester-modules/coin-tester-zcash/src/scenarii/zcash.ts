@@ -28,6 +28,8 @@ import {
   assertIronwoodBalanceDelta,
   assertTransparentBalanceDelta,
   ironwoodBalance,
+  newOperationOfType,
+  newOperationTypes,
   transparentBalance,
 } from "../assert";
 import { EXPLORER_ORIGIN, startIndexer, stopIndexer } from "../indexer";
@@ -149,8 +151,16 @@ const makeScenarioTransactions = (): ZcashScenarioTransaction[] => {
     useAllAmount: true,
     recipient: shieldedRecipientAddress,
     expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(latestOperation.type).toBe("OUT");
+      // This shields to the account's OWN shielded address, i.e. the send flow's
+      // "Self transfer": one transaction debiting the transparent pool and
+      // crediting the shielded one. Each leg records its own operation and both
+      // are real events, so both are kept -- see `reconcileLegOperations`
+      // (coin-zcash/bridge/sync.ts) and LIVE-37172.
+      expect(newOperationTypes(previousAccount, currentAccount)).toEqual([
+        "OUT",
+        "SHIELDED_TX_IRONWOOD_IN",
+      ]);
+      const latestOperation = newOperationOfType(previousAccount, currentAccount, "OUT");
 
       const inputCount = previousAccount.bitcoinResources.utxos.length;
       const expectedFee = computeShieldingFee(inputCount, 1);
@@ -179,17 +189,21 @@ const makeScenarioTransactions = (): ZcashScenarioTransaction[] => {
       // small amount, so exactly 1 spend is consumed and change comes back as a
       // new Ironwood note -- i.e. hasChange is always true here.
       const expectedFee = computeShieldedSpendFee(1, true, "shielded-to-transparent");
-      const [latestOperation] = currentAccount.operations;
-      // "IN", not "OUT": mapTxToOperations (coin-zcash's own transparent-leg
-      // bookkeeping, sync.ts) only records "OUT" when the transaction is
-      // *funded by a transparent input* (`fundedByAccount`) -- a de-shielding
-      // send has none (it spends Ironwood notes), so from the transparent
-      // pool's own perspective this legitimately looks like an inflow arriving
-      // from nowhere, exactly like any other incoming transfer. The shielded
-      // spend side is accounted for separately, via ironwoodBalance below --
-      // there is no discrete "OUT" operation for it (empirically confirmed).
-      expect(latestOperation.type).toBe("IN");
-      expect(latestOperation.fee.toFixed()).toBe(expectedFee.toFixed());
+      // De-shielding to the account's own transparent address, the mirror of the
+      // shielding self-transfer above. The transparent leg records an "IN" and not
+      // an "OUT" because `mapTxToOperations` only emits an "OUT" for a transaction
+      // funded by a transparent input, which a de-shielding send has none of; the
+      // shielded leg records the spend that paid for it. Both are kept (LIVE-37172).
+      expect(newOperationTypes(previousAccount, currentAccount)).toEqual([
+        "IN",
+        "SHIELDED_TX_IRONWOOD_OUT",
+      ]);
+      const credit = newOperationOfType(previousAccount, currentAccount, "IN");
+      const spend = newOperationOfType(previousAccount, currentAccount, "SHIELDED_TX_IRONWOOD_OUT");
+      expect(credit.fee.toFixed()).toBe(expectedFee.toFixed());
+      // The amount the history reports as sent follows the outgoing convention
+      // everywhere else in the app: what left the pool, fee included.
+      expect(spend.value.toFixed()).toBe(Z_TO_T_AMOUNT.plus(expectedFee).toFixed());
 
       assertTransparentBalanceDelta(previousAccount, currentAccount, Z_TO_T_AMOUNT);
       assertIronwoodBalanceDelta(
@@ -278,12 +292,24 @@ const makeScenarioTransactions = (): ZcashScenarioTransaction[] => {
         false,
         "shielded-to-transparent",
       );
-      const [latestOperation] = currentAccount.operations;
-      // "IN", same reasoning as scenarioShieldedToTransparent above: no
-      // transparent input funds this transaction, so mapTxToOperations
-      // records the transparent-leg credit as an inflow regardless of how
-      // many Ironwood notes fund it.
-      expect(latestOperation.type).toBe("IN");
+      // Same two legs as scenarioShieldedToTransparent above -- the note count
+      // funding the spend changes the fee, not the shape of what is recorded.
+      //
+      // The pool named on the spend leg is ORCHARD here, not IRONWOOD, and that is
+      // the code's current answer rather than the true one: `useAllAmount` leaves
+      // no change, so this transaction has no shielded output at all, and
+      // `getTxType` (coin-zcash/bridge/operations.ts) infers the pool from the
+      // outputs it can see -- falling back to Orchard when there are none. Which
+      // pool was actually drained is not derivable from the decrypted data: the
+      // scan reports spent nullifiers for a whole block range
+      // (`spentKnownNullifiers`), never attributed to the transaction that spent
+      // them. A pre-existing mislabel, invisible until this operation started
+      // being kept; asserted as-is so the day it is fixed, this line says so.
+      expect(newOperationTypes(previousAccount, currentAccount)).toEqual([
+        "IN",
+        "SHIELDED_TX_ORCHARD_OUT",
+      ]);
+      const latestOperation = newOperationOfType(previousAccount, currentAccount, "IN");
       expect(latestOperation.fee.toFixed()).toBe(expectedFee.toFixed());
 
       assertTransparentBalanceDelta(
@@ -399,19 +425,21 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
   },
   afterAll: async account => {
     // Deterministic total, but NOT simply "one operation per transaction":
-    // 1 (the initial coinbase receipt from setup()) + 1 (t→t) + 1 (t→z) +
-    // 1 (z→t) + 1 (z→z) + (NOTE_COUNT_TARGET - 1) (the splits, pure Ironwood,
-    // 1 each) + 1 (the final sweep, itself a z→t).
+    // 1 (the initial coinbase receipt from setup()) + 1 (t→t) + 2 (t→z) +
+    // 2 (z→t) + 1 (z→z) + (NOTE_COUNT_TARGET - 1) (the splits, pure Ironwood,
+    // 1 each) + 2 (the final sweep, itself a z→t).
     //
     // A mixed-pool transaction (t→z, z→t) is synced by both the transparent
     // leg (`mapTxToOperations`, sync.ts) and the shielded leg
     // (`convertShieldedTransactionsToOperations`), each producing its own
-    // operation for the same transaction hash -- `reconcileLegOperations`
-    // (sync.ts) is what keeps only the transparent leg's record for a hash
-    // both legs see, so this total has exactly one entry per transaction, not
-    // two for every t→z/z→t. An exact match (not a lower bound) still catches
-    // any regression that reintroduces a duplicate, or drops a real operation.
-    expect(account.operations.length).toBe(5 + NOTE_COUNT_TARGET);
+    // operation for the same transaction hash. Every such transaction here is a
+    // self-transfer between the account's own pools, so its two records report
+    // opposite directions and `reconcileLegOperations` (sync.ts) keeps both --
+    // it only collapses two records of the same direction, which would be one
+    // payment seen twice. Hence 2 entries for each of the three cross-pool
+    // transactions. An exact match (not a lower bound) still catches any
+    // regression that reintroduces a duplicate, or drops a real operation.
+    expect(account.operations.length).toBe(8 + NOTE_COUNT_TARGET);
     stopIndexer();
   },
   teardown: async () => {

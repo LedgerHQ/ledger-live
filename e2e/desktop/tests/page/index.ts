@@ -51,6 +51,7 @@ import { UndelegateModal } from "tests/page/modal/undelegate.modal";
 import { MarketCoinPage } from "tests/page/marketCoin.page";
 import { CryptoAssetsPage } from "tests/page/cryptoAssets.page";
 import { TopBarSearch } from "tests/page/topBarSearch.page";
+import { ContactsPage } from "tests/page/contacts.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -92,6 +93,7 @@ export class Application extends PageHolder {
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public marketBanner = new MarketBannerPage(this.page);
   public myWallet = new MyWalletPage(this.page);
+  public contacts = new ContactsPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);
   public swapTransactionStatusDialog = new SwapTransactionStatusDialog(this.page);
   private trustchainPage: TrustchainPage | undefined;

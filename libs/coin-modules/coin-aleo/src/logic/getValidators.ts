@@ -7,6 +7,7 @@ import {
   estimateNetRate,
   getValidatorNonEarningReason,
   isRecord,
+  isValidatorBondable,
   parseTotalSupply,
   resolveConfig,
 } from "./utils";
@@ -49,10 +50,6 @@ function isValidValidatorMetadataResponse(value: unknown): value is AleoValidato
   if (!isRecord(value)) return false;
 
   return Object.values(value).every(entry => typeof entry === "string");
-}
-
-function isAcceptingNewStakes(validator: Pick<AleoValidator, "isOpen" | "isUnbonding">) {
-  return validator.isOpen && !validator.isUnbonding;
 }
 
 /**
@@ -124,8 +121,8 @@ export const getValidators = makeLRUCache(
         };
       })
       .sort((left, right) => {
-        const leftBondable = isAcceptingNewStakes(left);
-        if (leftBondable !== isAcceptingNewStakes(right)) {
+        const leftBondable = isValidatorBondable(left);
+        if (leftBondable !== isValidatorBondable(right)) {
           return leftBondable ? -1 : 1;
         }
 

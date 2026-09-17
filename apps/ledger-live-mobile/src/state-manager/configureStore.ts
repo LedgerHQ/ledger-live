@@ -2,7 +2,7 @@ import Config from "react-native-config";
 import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
-import { AuthSDK } from "@ledgerhq/ledger-auth";
+import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import NetInfo from "@react-native-community/netinfo";
@@ -34,6 +34,7 @@ import {
 import {
   configureCardSessionRenewal,
   isCardSessionCurrent,
+  isCardUsEnv,
   readCardSession,
   refreshCardSession,
 } from "@features/platform-card";
@@ -41,11 +42,29 @@ import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import {
   createFeatureFlagsMiddleware,
   selectFeature,
+  type FeatureFlagsReadFailure,
   type PartialFeatures,
 } from "@shared/feature-flags";
-import { fetchRemoteFlags } from "~/firebase/remoteConfig";
+import { fetchRemoteFlags, readCachedFlags } from "~/firebase/remoteConfig";
 import { sleepingListener } from "./sleepingListener";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
+
+/**
+ * Reports only the failures that actually degrade the session. A warm failure is routine: the
+ * previously read values stay in place and the next poll retries. A cold one means the app is
+ * running on compiled defaults, which is a misconfigured session rather than a passing network
+ * blip, and is precisely the signal whose absence let a staging leak run unnoticed for a whole
+ * release cycle.
+ *
+ * `console.error` because it is the level the monitoring tools intercept. Deliberately not the
+ * app's `logger.critical`, which despite its name falls back to `console.log` outside
+ * `DEBUG_ERROR` builds and so would make this *less* visible than a plain warning. Desktop uses
+ * `logger.critical` instead, because there it really is the Datadog path.
+ */
+function reportFeatureFlagsReadFailure(error: unknown, { stage, isCold }: FeatureFlagsReadFailure) {
+  if (!isCold) return;
+  console.error(`Feature flags: ${stage} read failed, resolving on compiled defaults`, error);
+}
 
 export const store = configureStore({
   reducer: reducers,
@@ -73,6 +92,7 @@ export const store = configureStore({
               // Read on every request, so the debug settings can change them without a restart.
               getCardApiBaseUrl: () => getEnv("CARD_BAANX_API_URL"),
               getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
+              isCardUsEnv: () => isCardUsEnv(getEnv("CARD_BAANX_US_APP_ID")),
               readCardSession,
               isCardSessionCurrent,
               refreshCardSession,
@@ -125,8 +145,10 @@ export const store = configureStore({
             appVersion: VersionNumber.appVersion ?? undefined,
             envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
           },
+          readCachedFlags,
           fetchRemoteFlags,
           getAppLanguage: languageSelector,
+          onRemoteFlagsError: reportFeatureFlagsReadFailure,
         }),
       )
       .concat(sleepingListener.middleware),

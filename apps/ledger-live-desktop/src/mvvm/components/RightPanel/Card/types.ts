@@ -1,10 +1,10 @@
-import type { CardProps as PayCardProps } from "@features/flow-pay-card";
-import type { FormattedValue } from "@features/flow-pay-card-details";
+import type { CardFormatters, CardProps as PayCardProps } from "@features/flow-pay-card";
+import type { CardNumbersUnlockDialogState } from "./useUnlockForCardNumbers";
 
 export interface CardViewModel {
-  readonly title: string;
-  readonly formatCountervalue: (value: number) => FormattedValue;
-  readonly balanceLabel: string;
-  readonly oauthConfig: PayCardProps["oauthConfig"];
-  readonly onTrackEvent: PayCardProps["onTrackEvent"];
+  readonly formatters: Required<CardFormatters>;
+  readonly login: PayCardProps["login"];
+  readonly unlock: NonNullable<PayCardProps["unlock"]>;
+  readonly unlockDialog: CardNumbersUnlockDialogState;
+  readonly onShowMore: () => void;
 }

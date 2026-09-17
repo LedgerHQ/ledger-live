@@ -1,5 +1,10 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+
+jest.mock("@shared/linking", () => ({
+  useOpenLink: () => jest.fn(),
+  useLocalizedUrl: (url: string) => url,
+}));
 import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   ContactAddressLabelSchema,
@@ -26,6 +31,7 @@ const entryLabels: AddAddressEntryLabels = {
   validationUnavailable: "Address validation is unavailable",
   ensDisclaimer: "ENS disclaimer",
   ensDisclaimerDescription: "ENS names can change over time.",
+  duplicateAddress: (contactName: string) => `This address is already used for ${contactName}.`,
 };
 const nameLabels: AddAddressNameLabels = {
   title: "Address name",

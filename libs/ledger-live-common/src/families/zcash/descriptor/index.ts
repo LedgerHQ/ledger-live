@@ -1,4 +1,5 @@
 import type { CoinDescriptor } from "../../../bridge/descriptor/types";
+import { zcashBalanceTypeConfig } from "./balanceType";
 import { memo } from "./memo";
 
 // ZIP-317 defines one conventional fee computed from the transaction's action
@@ -13,5 +14,6 @@ export const descriptor: CoinDescriptor = {
       hasCoinControl: false,
     },
     selfTransfer: "free",
+    balanceType: zcashBalanceTypeConfig,
   },
 };

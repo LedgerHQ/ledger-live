@@ -129,6 +129,26 @@
     "ldmkEnabled": "LDMK transport enabled"
   },
   "errors": {
+    "AleoAlreadyBondedElsewhere": {
+      "title": "Already staking with {{bondedValidator}}. Unstake before changing validator.",
+      "description": "Aleo allows one validator per account. Unstake from {{bondedValidator}} before staking elsewhere."
+    },
+    "AleoBondAmountTooLow": {
+      "title": "You must stake at least {{minAmount}} at a time.",
+      "description": "The minimum staking amount is {{minAmount}}."
+    },
+    "AleoClosedValidator": {
+      "title": "This validator is not accepting new delegators.",
+      "description": "This validator is not accepting new delegators. Choose an open validator to continue."
+    },
+    "AleoStakeAmountTooLow": {
+      "title": "Staking requires a total of at least {{minAmount}}.",
+      "description": "You must have at least {{minAmount}} staked in total."
+    },
+    "AleoUnbondingValidator": {
+      "title": "This validator is unbonding.",
+      "description": "This validator is withdrawing its own stake, so the network rejects new stake to it. Choose another validator to continue."
+    },
     "ZcashMemoTooLong": {
       "title": "Memo must not exceed {{maxBytes}} bytes"
     },
@@ -249,6 +269,22 @@
     "ConcordiumTokenRestrictionsUnverified": {
       "title": "Token restrictions could not be verified",
       "description": "This token's transfer rules could not be read, so the transfer cannot be confirmed as allowed. Please resync your account and try again."
+    },
+    "ConcordiumRecipientNotAllowed": {
+      "title": "This address can't receive {{ticker}}",
+      "description": "It hasn't been approved by the token issuer. Approval is managed by the issuer, not by Ledger."
+    },
+    "ConcordiumRecipientDenied": {
+      "title": "This address is restricted from receiving {{ticker}}",
+      "description": "The token issuer has restricted this address. Contact the issuer for details."
+    },
+    "ConcordiumRecipientRestrictionsUnverified": {
+      "title": "{{ticker}} restrictions could not be verified",
+      "description": "Whether this address may receive {{ticker}} could not be checked, so the transfer cannot be confirmed as allowed. Please check your connection and try again."
+    },
+    "ConcordiumRecipientNotFound": {
+      "title": "This address doesn't exist on Concordium",
+      "description": "Check the address and try again. Sending to an address that was never created fails on the network and still costs a fee."
     },
     "ConcordiumUnsupportedTokenDecimals": {
       "title": "This token cannot be signed on your Ledger device",
@@ -1409,6 +1445,9 @@
     "AccountCreationFeeWarning": {
       "title": "This transaction will incur an account creation fee of {{fee}}"
     },
+    "AmountRequired": {
+      "title": "Enter an amount to continue."
+    },
     "AmountTooSmall": {
       "title": "Minimum required amount for this transaction is {{amount}}"
     },
@@ -1421,6 +1460,10 @@
     },
     "UtxoLimitReachedError": {
       "title": "Amount too large for UTXO constraints."
+    },
+    "CurrencyRegionRestrictedError": {
+      "title": "{{currencyName}} is not available in your region",
+      "description": "Access to {{currencyName}} is restricted in your region."
     }
   },
   "crash": {
@@ -1590,6 +1633,20 @@
       "description": "You'll need this password each time you open the app. If you lose it, reinstall the app and restore your wallet.",
       "mismatch": "Passwords don't match",
       "saveFailed": "We couldn't save your password. Please try again.",
+      "cta": "Confirm"
+    },
+    "unlock": {
+      "wrongPassword": "Incorrect password",
+      "forgotPassword": "Forgot your password?",
+      "retryBiometrics": "Use biometrics",
+      "failed": "We couldn't check your password. Please try again.",
+      "cta": "Confirm"
+    },
+    "deactivatePassword": {
+      "title": "Deactivate password",
+      "description": "Enter your password to deactivate it.",
+      "wrongPassword": "Incorrect password",
+      "failed": "We couldn't deactivate your password. Please try again.",
       "cta": "Confirm"
     }
   },
@@ -1898,6 +1955,37 @@
       "cta": "Fund your wallet",
       "title": "Start by funding your wallet",
       "subTitle": "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins."
+    }
+  },
+  "q3WalletV4Tour": {
+    "cta": {
+      "start": "Take a look",
+      "next": "Next",
+      "done": "All caught up"
+    },
+    "intro": {
+      "title": "A quick tour of the latest",
+      "subTitle": "New ways to send, spend, earn, and more."
+    },
+    "contact": {
+      "title": "Say goodbye to long addresses",
+      "subTitle": "Introducing Contacts. Save wallet addresses with names. Easy to find, easy to send."
+    },
+    "contactNoPay": {
+      "title": "Say hello to Contacts",
+      "subTitle": "Say goodbye to long addresses. Save wallet addresses with names. Easy to find, easy to send."
+    },
+    "pay": {
+      "title": "Say hello to Pay",
+      "subTitle": "Pay contacts, request money, and get cashback with crypto card. Now, all via one tab."
+    },
+    "payNoCard": {
+      "title": "Say hello to Pay",
+      "subTitle": "Pay contacts and request money, all via one tab."
+    },
+    "yield": {
+      "title": "Keep your crypto, finance your projects",
+      "subTitle": "Borrow stablecoins using wrapped BTC as collateral via Yield.xyz powered by Morpho."
     }
   },
   "q2WalletV4Tour": {
@@ -2928,6 +3016,11 @@
       "installCTA": "Secure my crypto",
       "skipCTA": "Maybe later"
     }
+  },
+  "perpsAccountBanner": {
+    "title": "About Hyperliquid account",
+    "description": "This account is related to Perpetual trading. Transactional actions are not supported for this account",
+    "cta": "Open Perps"
   },
   "portfolio": {
     "totalBalance": "Total balance",
@@ -9877,6 +9970,11 @@
     "description": "You'll receive your {{currency}} once confirmed on the blockchain",
     "viewTransaction": "View transaction"
   },
+  "perpsTransactionStatus": {
+    "title": "Fund Perpetuals",
+    "currencies": "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps": "Return to Perps"
+  },
   "perpsDeposit": {
     "title": "Deposit",
     "inputDepositAmount": "Deposit ~{{value}}",
@@ -10212,27 +10310,6 @@
       "iHaveACard": "I have a card"
     }
   },
-  "walletV4Tour": {
-    "title": "Discover your new portfolio",
-    "slides": {
-      "portfolio": {
-        "title": "A clearer view of your portfolio",
-        "description": "See your total balance at a glance, and tap “Today” to dive deeper."
-      },
-      "navigation": {
-        "title": "Access key actions faster",
-        "description": "Access Swap, Transfer, and Buy instantly. Find Earn and your Card in the bottom navigation."
-      },
-      "actions": {
-        "title": "View market trends instantly",
-        "description": "Quickly see what’s trending directly in your portfolio, and move from insights to action."
-      }
-    },
-    "cta": {
-      "continue": "Next",
-      "explore": "Discover my new portfolio"
-    }
-  },
   "mainNavigation": {
     "home": "Home",
     "swap": "Swap",
@@ -10303,6 +10380,60 @@
       "confirmError": {
         "description": "Something went wrong. Please try again.",
         "retry": "Try again"
+      }
+    },
+    "cardTransactions": {
+      "title": "Transactions",
+      "categories": {
+        "SUBSCRIPTIONS": "Subscriptions",
+        "FOOD": "Food",
+        "TRAVEL": "Travel",
+        "ENTERTAINMENT": "Entertainment",
+        "HEALTH": "Health",
+        "ATM": "ATM",
+        "UTILITIES": "Utilities",
+        "MISC": "Other"
+      },
+      "detail": {
+        "amount": "Amount",
+        "status": "Status",
+        "card": "Card",
+        "cardInfo": "The last four digits of the card used for this payment.",
+        "fundingSource": "Funding source",
+        "transactionId": "Transaction ID",
+        "copyTransactionId": "Copy transaction ID",
+        "today": "Today {{time}}",
+        "yesterday": "Yesterday {{time}}",
+        "dateTime": "{{date}} {{time}}",
+        "statusValues": {
+          "CONFIRMED": "Confirmed",
+          "PENDING": "Pending",
+          "DECLINED": "Declined",
+          "REVERTED": "Reverted"
+        }
+      },
+      "history": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "columns": {
+          "transaction": "Transaction",
+          "fundingSources": "Funding sources",
+          "amount": "Amount"
+        },
+        "paidWithAssets": "Paid with {{count}} assets",
+        "goToPay": "Go to Pay",
+        "signedOut": {
+          "title": "Log in to see your card transactions",
+          "description": "Your card activity appears here once you’re logged in."
+        },
+        "empty": {
+          "title": "No card transactions yet",
+          "description": "Come back later to see your card transactions."
+        },
+        "error": {
+          "title": "Couldn't load card transactions",
+          "description": "Check your connection and try again."
+        }
       }
     },
     "selectContact": {
@@ -10392,12 +10523,22 @@
     "cardLogin": {
       "title": "Crypto Card",
       "beforeIntro": {
+        "title": "Get your crypto card",
         "description": "Get 1% cashback every time you spend",
         "action": "Get card"
       },
       "afterIntro": {
+        "title": "Log in to access your Card",
         "description": "Log in to access your card",
         "action": "Login"
+      },
+      "errors": {
+        "pkce_failed": "Login could not start. Please try again.",
+        "browser_open_failed": "The login page could not open. Please try again.",
+        "missing_attempt": "This login is no longer valid. Please log in again.",
+        "exchange_failed": "Login could not be completed. Please try again.",
+        "persist_failed": "Your session could not be saved. Please try again.",
+        "fetch_user_failed": "Your card could not be loaded. Please try again."
       }
     },
     "cardLoginIntro": {
@@ -10452,9 +10593,27 @@
         "stepComplete": "Complete",
         "gotIt": "Got it"
       },
-      "walletStep": {
-        "title": "Add to Apple/Google Pay",
-        "description": "Pay with your phone in store"
+      "steps": {
+        "createAccount": {
+          "title": "Create your account",
+          "description": "Verify your identity to get started"
+        },
+        "chooseCardType": {
+          "title": "Choose your card type",
+          "description": "Pick between virtual and physical"
+        },
+        "topUpCard": {
+          "title": "Top up your card",
+          "description": "Add funds using USDC, USDT, BTC or more"
+        },
+        "firstPurchase": {
+          "title": "Make your first purchase",
+          "description": "Pay online or in store"
+        },
+        "appleGooglePay": {
+          "title": "Add to Apple/Google Pay",
+          "description": "Pay with your phone in store"
+        }
       }
     }
   },
@@ -10610,6 +10769,41 @@
     "accountActions": {
       "publicToPrivate": "Convert"
     },
+    "bond": {
+      "stepperHeader": {
+        "validator": "Select validator",
+        "stepRange": "{{currentStep}} of {{totalSteps}}",
+        "amount": "Amount",
+        "selectDevice": "Select Device",
+        "connectDevice": "Connect Device"
+      },
+      "selectValidator": {
+        "fetchError": "Failed to load validators. Please try again.",
+        "metadataError": "We couldn't load validators metadata. You can still add to your stake.",
+        "lockedHint": "Aleo allows one validator per account. You can add to your stake with this validator, or unstake first to choose a different one.",
+        "closed": "Validator is closed to new stake",
+        "unbonding": "Validator is unbonding",
+        "totalStake": "Total stake",
+        "rateAndCommission": "{{rate}}% est. · {{commission}}% commission",
+        "commissionOnly": "{{commission}}% commission",
+        "earnsNothing": "Validator earns no rewards"
+      },
+      "amount": {
+        "available": "Available:",
+        "max": "Max",
+        "stakingAlert": "Your total stake with this validator must reach at least <minimum/> to earn rewards. Only public ALEO can be staked - convert your private balance to public first if you want to stake it.",
+        "minimumLabel": "Minimum bond amount",
+        "minimumTopUp": "Add at least <missing/> to reach the <total/> total stake needed to earn rewards.",
+        "belowMinimum": "Your public balance is <missing/> short of the <minimum/> minimum bond. Top up your public balance before staking.",
+        "changeValidator": "Choose another validator"
+      },
+      "validation": {
+        "success": {
+          "title": "Bond Submitted",
+          "description": "Your bond transaction is being processed on the Aleo network."
+        }
+      }
+    },
     "send": {
       "balanceSelection": {
         "title": "Select balance",
@@ -10726,7 +10920,6 @@
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names. Use a nickname or just a first name + initial, e.g. 'John S.'",
-      "confirmName": "Confirm name",
       "invalidNameError": "Special characters are not allowed.",
       "duplicateNameError": "This contact name is already in use."
     },
@@ -10745,7 +10938,8 @@
       "sanctioned": {
         "description": "This address has been flagged and Ledger doesn't allow sending to it",
         "learnMore": "Learn more"
-      }
+      },
+      "duplicateAddress": "This address is already used for {{contactName}}."
     },
     "addAddressName": {
       "title": "Name address",
@@ -10754,7 +10948,8 @@
       "continueToReview": "Continue to review",
       "invalidLabel": "Special characters are not allowed.",
       "duplicateLabel": "This address name is already used for this contact.",
-      "labelTooLong": "This address name is too long."
+      "labelTooLong": "This address name is too long.",
+      "privacyPolicy": "Learn more about Ledger's Privacy Policy."
     },
     "addAddressReview": {
       "title": "Review address",

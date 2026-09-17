@@ -31,8 +31,8 @@ instead of the env registry, so neither package depends on `@shared/env` any mor
 `@ledgerhq/live-cli` drops the `SPECULOS_APDU_PORT` / `SPECULOS_BUTTON_PORT` / `SPECULOS_HOST`
 websocket branch; use `SPECULOS_API_PORT`. The Canton integration test, the Solana smoke script and the
 disabled BTC integration test move to `@ledgerhq/live-dmk-speculos`, and the dead
-`hw-transport-node-speculos` devDependency is dropped from `coin-kaspa`, `hw-app-kaspa`, `hw-app-helium`,
-`hw-app-icon` and `ledger-wallet-framework`.
+`hw-transport-node-speculos` devDependency is dropped from `coin-kaspa`, `hw-app-kaspa`, `hw-app-icon`
+and `ledger-wallet-framework`.
 
 `@ledgerhq/ledger-key-ring-protocol` declared `@ledgerhq/speculos-transport` and
 `@ledgerhq/hw-transport-mocker` as runtime `dependencies` even though both are only reachable from

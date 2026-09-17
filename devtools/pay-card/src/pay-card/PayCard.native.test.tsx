@@ -12,16 +12,6 @@ function buildProps(): PayCardToolProps {
       setCardParam: jest.fn(),
       setPtxCardEnabled: jest.fn(),
     },
-    onboarding: {
-      steps: [
-        {
-          id: "step1",
-          label: "Step 1",
-          done: false,
-        },
-      ],
-      setStepDone: jest.fn(),
-    },
     cardOnboarding: {
       steps: [],
       completedCount: 0,
@@ -52,6 +42,7 @@ function buildProps(): PayCardToolProps {
       load: jest.fn(),
       refresh: jest.fn(),
     },
+    currencyMapping: [{ key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" }],
     hasSeenFeatureTour: false,
     resetPayCardFeatureTourSeen: jest.fn(),
     hasSeenReceiveVerifyHint: false,
@@ -74,6 +65,7 @@ function buildAuth(): NonNullable<PayCardToolProps["auth"]> {
     breakAccessToken: jest.fn(),
     breakRefreshToken: jest.fn(),
     clearSession: jest.fn(),
+    signOut: jest.fn(),
     fetchUser: jest.fn(),
     mock: {
       available: false,
@@ -83,6 +75,10 @@ function buildAuth(): NonNullable<PayCardToolProps["auth"]> {
       renewals: 0,
       resetRenewals: jest.fn(),
       armUnauthorized: jest.fn(),
+    },
+    mockSession: {
+      available: false,
+      signIn: jest.fn(),
     },
   };
 }
@@ -94,7 +90,6 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("Card interaction")).toBeTruthy();
     expect(screen.getByText("Balance")).toBeTruthy();
     expect(screen.getByText("Feature flags")).toBeTruthy();
-    expect(screen.getByText("Onboarding")).toBeTruthy();
     expect(screen.getByText("Feature tour")).toBeTruthy();
     expect(screen.getByText("Request verify hint")).toBeTruthy();
     expect(screen.getByText("Card login intro")).toBeTruthy();
@@ -244,7 +239,15 @@ describe("PayCard (native)", () => {
 
   // The second link has no Baanx wallet behind it, which is what the join has to show.
   const linkedWallets = [
-    { id: "w-usdc", address: "0xusdc", currency: "usdc", network: "ethereum", priority: 0 },
+    {
+      id: "w-usdc",
+      address: "0xusdc",
+      currency: "usdc",
+      network: "ethereum",
+      priority: 0,
+      ledgerId: "ethereum/erc20/usd__coin",
+    },
+    // Resolved to nothing, so the screen has to say the pair is unmapped rather than blank.
     { id: "w-sol", address: "sol-addr", currency: "sol", network: "solana", priority: 1 },
   ];
 
@@ -353,6 +356,17 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("solana")).toBeTruthy();
   });
 
+  it("shows the Ledger currency each link resolved to, and says when one did not", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} balance={{ ...props.balance, linkedWallets }} />);
+
+    await user.press(screen.getByText("Balance"));
+
+    expect(screen.getByText("ethereum/erc20/usd__coin")).toBeTruthy();
+    expect(screen.getByText("undefined — this pair is not mapped")).toBeTruthy();
+  });
+
   it("says a joined row has no balance rather than showing it as zero", async () => {
     const user = userEvent.setup();
     const props = buildProps();
@@ -363,6 +377,39 @@ describe("PayCard (native)", () => {
     expect(screen.getByText("0. usdc / ethereum")).toBeTruthy();
     expect(screen.getByText("1. sol / solana")).toBeTruthy();
     expect(screen.getByText("null — still reading, or no Baanx wallet matched")).toBeTruthy();
+  });
+
+  it("lists the whole currency mapping, so a gap can be read against it", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(
+      <PayCard
+        {...props}
+        currencyMapping={[
+          { key: "btc.bitcoin", ledgerId: "bitcoin" },
+          { key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" },
+        ]}
+      />,
+    );
+
+    await user.press(screen.getByText("Currency Mapping"));
+
+    expect(screen.getByText("currency.network")).toBeTruthy();
+    expect(screen.getByText("btc.bitcoin")).toBeTruthy();
+    expect(screen.getByText("bitcoin")).toBeTruthy();
+    expect(screen.getByText("usdc.ethereum")).toBeTruthy();
+    expect(screen.getByText("ethereum/erc20/usd__coin")).toBeTruthy();
+  });
+
+  it("returns to the tool from the mapping table", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    await user.press(screen.getByText("Currency Mapping"));
+    await user.press(screen.getByText("Back"));
+
+    expect(screen.getByText("Card Debug")).toBeTruthy();
   });
 
   it("shows which endpoint failed and what it answered", async () => {
@@ -460,29 +507,6 @@ describe("PayCard (native)", () => {
 
     expect(clear).toHaveBeenCalledTimes(1);
     expect(screen.getByText("Feature flags")).toBeTruthy();
-  });
-
-  it("wires onboarding actions", async () => {
-    const user = userEvent.setup();
-    const props = buildProps();
-    render(<PayCard {...props} />);
-
-    // Label is display-only; ToggleRow wires onChange on the Switch.
-    const switches = screen.getAllByRole("switch");
-    await user.press(switches[switches.length - 1]!);
-    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("step1", true);
-  });
-
-  it("sets every onboarding step at once, and resets them all", async () => {
-    const user = userEvent.setup();
-    const props = buildProps();
-    render(<PayCard {...props} />);
-
-    await user.press(screen.getByText("Set all done"));
-    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("all", true);
-
-    await user.press(screen.getByText("Reset all"));
-    expect(props.onboarding.setStepDone).toHaveBeenCalledWith("all", false);
   });
 
   it("hides the auth sections and the toast on a host that builds no session controls", () => {

@@ -11,7 +11,8 @@ import { usePayTabViewModel } from "./usePayTabViewModel";
 const Stack = createNativeStackNavigator<PayTabNavigatorParamList>();
 
 function PayTabViewModelProbe() {
-  const { oauthConfig, callback } = usePayTabViewModel();
+  const { login } = usePayTabViewModel();
+  const { oauthConfig, callback } = login;
 
   return (
     <>
@@ -81,9 +82,20 @@ describe("usePayTabViewModel", () => {
     );
   });
 
+  it("should hand the login flow the provider app the redirect named", () => {
+    // React-navigation hands over the provider's own spelling. A rename or an omission here would
+    // silently stop every US request from carrying `x-us-env`.
+    renderViewModel({ code: "auth-code", app_id: "LEDGERUS" });
+
+    expect(screen.getByTestId("oauth-callback")).toHaveTextContent(
+      JSON.stringify({ code: "auth-code", appId: "LEDGERUS" }),
+    );
+  });
+
   it.each([
     ["there are no params", undefined],
     ["the code is missing", {}],
+    ["the code is missing but an app id is not", { app_id: "LEDGERUS" }],
   ])("should report no redirect when %s", (_case, params) => {
     renderViewModel(params);
 

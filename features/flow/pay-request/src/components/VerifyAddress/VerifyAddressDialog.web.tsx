@@ -59,7 +59,7 @@ export function VerifyAddressDialog({
         <DialogHeader density="compact" onClose={onClose} />
         <DialogBody className="flex flex-col gap-24" data-testid={contentTestId}>
           <div className="flex flex-col items-center gap-12 text-center">
-            <Spot appearance="icon" icon={icon} size={56} />
+            <Spot appearance="icon" icon={icon} size={72} />
             <h2 className="heading-4-semi-bold text-base">{title}</h2>
             {description ? <p className="body-2 text-muted">{description}</p> : null}
           </div>
