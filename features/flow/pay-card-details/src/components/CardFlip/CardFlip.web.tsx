@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "@ledgerhq/lumen-utils-shared";
 import { useTranslation } from "@shared/i18n";
-import { CARD_GRADIENT } from "../CardArtwork/cardGradient.web";
+import { DETAILS_IMAGE_CSS } from "../CardArtwork/cardColors";
 import type { CardFlipProps } from "../../types";
 
 export function CardFlip({ reveal, cardFace }: CardFlipProps) {
@@ -50,8 +50,8 @@ function DetailsImage({
 
   return (
     <div
-      className="size-full h-[195px] w-full overflow-hidden rounded-lg border border-muted"
-      style={{ backgroundImage: CARD_GRADIENT }}
+      className="size-full h-[195px] w-full overflow-hidden rounded-lg border border-muted p-1"
+      style={{ backgroundColor: DETAILS_IMAGE_CSS.cardBackgroundColor }}
     >
       <img
         src={imageUrl}
@@ -60,7 +60,7 @@ function DetailsImage({
         height={193}
         referrerPolicy="no-referrer"
         decoding="async"
-        className="size-full object-cover"
+        className="size-full object-contain"
         onLoad={onImageLoad}
         onError={onImageError}
       />
