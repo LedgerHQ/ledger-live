@@ -2,9 +2,9 @@ import { useCallback, useState } from "react";
 import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
 import { setDrawerVisibility, setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { Flow, Step, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
 import {
   trustchainSelector,
   memberCredentialsSelector,
@@ -33,6 +33,7 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
   const dispatch = useDispatch();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
+  const store = useStore();
   const sdk = useTrustchainSdk();
   const featureWalletSync = useFeature("lldWalletSync");
   const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
@@ -76,6 +77,13 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
       }
       if (e?.name === "InvalidDigitsError") {
         dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
+      }
+      if (e?.name === "QRCodeProtocolError") {
+        if (walletSyncStepSelector(store.getState()) === Step.SynchronizeWithQRCode) {
+          startQRCodeProcessing();
+        } else {
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
+        }
       }
       if (e?.name === "NoTrustchainInitialized") {
         dispatch(setFlow({ flow: Flow.Synchronize, step: Step.UnbackedError }));
