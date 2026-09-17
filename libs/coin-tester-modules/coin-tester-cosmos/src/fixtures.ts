@@ -59,7 +59,6 @@ export const makeAccount = (
       delegatedBalance: new BigNumber(0),
       pendingRewardsBalance: new BigNumber(0),
       unbondingBalance: new BigNumber(0),
-      withdrawAddress: "",
       sequence: 0,
     },
   };
