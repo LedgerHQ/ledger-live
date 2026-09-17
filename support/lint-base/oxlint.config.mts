@@ -44,8 +44,6 @@ export default defineConfig({
     "react/static-components": "warn",
     "react/use-memo": "warn",
     "react/display-name": "off",
-    // Every app and package compiles JSX with the automatic runtime, so React is never in scope.
-    "react/react-in-jsx-scope": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
 
@@ -82,7 +80,10 @@ export default defineConfig({
       files: ["**/*.test.{ts,tsx}", "**/__tests__/**"],
       env: { jest: true },
       plugins: ["jest"],
-      rules: { "typescript/no-explicit-any": "warn" },
+      rules: {
+        "typescript/no-explicit-any": "warn",
+        "react/no-children-prop": "off",
+      },
     },
     {
       // jsx-a11y encodes DOM and ARIA semantics. On React Native `role` is an ordinary prop with

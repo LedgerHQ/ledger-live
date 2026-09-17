@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { createElement, type ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
@@ -30,7 +30,7 @@ function makeWrapper(contacts: ReturnType<typeof contactsSlice.getInitialState>[
   });
 
   return function Wrapper({ children }: { readonly children: ReactNode }) {
-    return <Provider store={store}>{children}</Provider>;
+    return createElement(Provider, { store, children });
   };
 }
 
