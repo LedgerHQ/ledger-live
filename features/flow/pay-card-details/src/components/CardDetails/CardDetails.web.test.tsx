@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, screen } from "@testing-library/react";
+import { act, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
   CARD_DETAILS_IMAGE_URL,
@@ -47,11 +47,14 @@ describe("CardDetails (web)", () => {
       </Wrapper>,
     );
 
-    await userEvent.click(screen.getByRole("button", { name: CARD_COPY.numbersReveal }));
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: CARD_COPY.numbersReveal }));
 
     const image = await screen.findByRole("img", { name: CARD_COPY.numbersImageAlt, hidden: true });
     expect(image).toHaveAttribute("src", CARD_DETAILS_IMAGE_URL);
-    fireEvent.load(image);
+    await act(async () => {
+      image.dispatchEvent(new Event("load"));
+    });
 
     expect(screen.getByRole("button", { name: CARD_COPY.numbersReveal })).toBeVisible();
     expect(

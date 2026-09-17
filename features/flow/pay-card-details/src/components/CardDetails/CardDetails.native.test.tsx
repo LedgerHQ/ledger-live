@@ -1,5 +1,5 @@
 import React, { type PropsWithChildren } from "react";
-import { fireEvent, render, screen, userEvent } from "@testing-library/react-native";
+import { act, render, screen, userEvent } from "@testing-library/react-native";
 import {
   cardApiWrapper,
   listenToCardApi,
@@ -74,7 +74,9 @@ describe("CardDetails (native)", () => {
     const image = await screen.findByLabelText(CARD_COPY.numbersImageAlt, {
       includeHiddenElements: true,
     });
-    fireEvent(image, "load");
+    await act(() => {
+      image.props.onLoad();
+    });
 
     expect(screen.getByLabelText(CARD_COPY.numbersImageAlt)).toBeVisible();
     expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();

@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { CARD_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardFlip } from "./CardFlip";
 import type { CardFlipProps } from "../../types";
@@ -58,11 +58,15 @@ describe("CardFlip (web)", () => {
     ).toBeInTheDocument();
   });
 
-  it("should report a failed load when the details image errors", () => {
+  it("should report a failed load when the details image errors", async () => {
     const onImageError = jest.fn();
     renderFlip({ isRevealed: true, imageUrl: IMAGE_URL, onImageLoad: jest.fn(), onImageError });
 
-    fireEvent.error(screen.getByRole("img", { name: CARD_COPY.numbersImageAlt }));
+    await act(async () => {
+      screen
+        .getByRole("img", { name: CARD_COPY.numbersImageAlt })
+        .dispatchEvent(new Event("error"));
+    });
 
     expect(onImageError).toHaveBeenCalledTimes(1);
   });
