@@ -1742,6 +1742,9 @@ importers:
       '@domain/entity-analytics-consent':
         specifier: workspace:*
         version: link:../../domain/entity/analytics-consent
+      '@domain/entity-card-asset-mapping':
+        specifier: workspace:*
+        version: link:../../domain/entity/card-asset-mapping
       '@domain/entity-client-identity':
         specifier: workspace:*
         version: link:../../domain/entity/client-identity
@@ -3205,6 +3208,9 @@ importers:
       '@domain/entity-card-asset-mapping':
         specifier: workspace:*
         version: link:../../domain/entity/card-asset-mapping
+      '@domain/entity-currency':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency
       '@features/flow-pay-card-auth':
         specifier: workspace:*
         version: link:../../features/flow/pay-card-auth
@@ -6788,6 +6794,9 @@ importers:
 
   features/flow/pay-card:
     dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:^
+        version: link:../../../domain/entity/currency
       '@features/flow-pay-card-auth':
         specifier: workspace:^
         version: link:../pay-card-auth
@@ -7262,6 +7271,9 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:^
         version: link:../../../domain/api/card-management
+      '@domain/entity-currency':
+        specifier: workspace:^
+        version: link:../../../domain/entity/currency
     devDependencies:
       '@support/jest-features-flow':
         specifier: workspace:*
@@ -7333,6 +7345,9 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:^
         version: link:../../../domain/api/card-management
+      '@domain/entity-currency':
+        specifier: workspace:^
+        version: link:../../../domain/entity/currency
       '@features/flow-pay-card-wallets':
         specifier: workspace:^
         version: link:../pay-card-wallets
@@ -17486,6 +17501,9 @@ importers:
       '@shared/analytics':
         specifier: workspace:*
         version: link:../analytics
+      lodash:
+        specifier: 'catalog:'
+        version: 4.17.21
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -17517,6 +17535,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/lodash':
+        specifier: 'catalog:'
+        version: 4.17.21
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.14

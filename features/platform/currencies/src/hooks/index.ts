@@ -1,5 +1,6 @@
 export * from "./useCryptoCurrencyById";
 export * from "./useCurrencyById";
+export * from "./useCurrenciesByIds";
 export * from "./useFeatureFlaggedCurrencies";
 export * from "./useSupportedCurrencies";
 export * from "./useTokenByAddressInCurrency";

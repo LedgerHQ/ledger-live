@@ -6,10 +6,10 @@ import {
   useCreateCardDetailsTokenMutation,
 } from "@domain/api-card-management";
 import { BAANX_ASSET_LEDGER_IDS } from "@domain/entity-card-asset-mapping";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
   useCardLinkedWallets,
   type CardLinkedWalletBalance,
-  type ResolveWalletCounterValue,
 } from "@features/flow-pay-card-wallets";
 import { useDispatch, useSelector } from "react-redux";
 import { setOverride } from "@shared/feature-flags";
@@ -51,9 +51,11 @@ export type UsePayCardToolPropsOptions = {
   readonly platform?: "web" | "native";
   readonly openPayTab?: () => void;
   readonly openSecureBrowser?: PayCardToolProps["openSecureBrowser"];
+  /** Resolves each wallet's Ledger id to a currency; the catalog is the app's. */
+  readonly currencies?: ReadonlyMap<string, CryptoOrTokenCurrency>;
 };
 
-const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
+const NO_CURRENCIES: ReadonlyMap<string, CryptoOrTokenCurrency> = new Map();
 
 const STEP_ANSWERS: Readonly<Partial<Record<string, keyof CardOnboardingStatusMock>>> = {
   "create-account": "accountVerified",
@@ -88,8 +90,17 @@ function toCombinedWallet({
   priority,
   ledgerId,
   balance,
+  ledgerCurrency,
 }: CardLinkedWalletBalance): PayCardCombinedWallet {
-  const row = { id, address, currency, network, priority, balance };
+  const row = {
+    id,
+    address,
+    currency,
+    network,
+    priority,
+    balance,
+    ledgerCurrencyId: ledgerCurrency?.id ?? null,
+  };
 
   return ledgerId === undefined ? row : { ...row, ledgerId };
 }
@@ -278,7 +289,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const skipWallets = !walletsRequested;
 
   const linkedWallets = useCardLinkedWallets({
-    resolveCounterValue: NO_COUNTER_VALUE,
+    currencies: options.currencies ?? NO_CURRENCIES,
     skip: skipWallets,
   });
 
@@ -312,7 +323,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     () => ({
       baanxWallets: internal ?? [],
       linkedWallets: linked ?? [],
-      // Without the counter value, which this tool does not price.
       combinedWallets: linkedWallets.wallets.map(toCombinedWallet),
       isFetching: linkedWallets.isFetching,
       errors,

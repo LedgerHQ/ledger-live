@@ -76,3 +76,39 @@ after `HandshakeCompletionSucceeded`:
 
 Either way the outcome is the same: the newcomer ends up as a member and receives the
 `Trustchain` object, with the local store updated.
+
+## Sequence enforcement
+
+Each side runs its messages through a single-use state machine
+([`protocol.ts`](../../libs/ledger-key-ring-protocol/src/qrcode/protocol.ts)) covering both what
+it receives and what it sends. A message is only accepted at the one point of the sequence where
+it is expected:
+
+```text
+init → initiated → challenged → pin-exchanged → authenticated → … → finished
+```
+
+| State | Next message | Host | Candidate |
+|---|---|---|---|
+| `init` | `InitiateHandshake` | receives | sends |
+| `initiated` | `HandshakeChallenge` | sends | receives |
+| `challenged` | `CompleteHandshakeChallenge` | receives | sends |
+| `pin-exchanged` | `HandshakeCompletionSucceeded` | sends | receives |
+| `authenticated` | `TrustchainShareCredential` / `TrustchainRequestCredential` | receives | sends |
+
+The handshake being symmetric, the candidate runs the same table with every direction flipped.
+From `authenticated` on, the remaining states (`credential-shared`, `credential-requested`,
+`credential-returned`) follow the two branches of [the symmetric case](#the-symmetric-case), and
+only the side that owns the Trustchain reaches the `TrustchainAddedMember` it sends.
+
+The host binds the publisher of the first message it accepts — an `InitiateHandshake`, whose
+`publisher` must be the `ephemeral_public_key` it carries — and every later message must repeat
+it; the candidate likewise only accepts the publisher encoded in the scanned URL. A duplicate,
+out-of-order or foreign message rejects with a `QRCodeProtocolError` and closes the WebSocket —
+`addMember` is never called and no `Trustchain` is disclosed before the `authenticated` state.
+
+Every encrypted frame is decrypted before it is acted upon, including the two that carry nothing
+(`HandshakeCompletionSucceeded`, `TrustchainRequestCredential`): opening a frame is what proves it
+comes from the peer holding the session key rather than from the relay. `Failure` is the one
+message that is neither encrypted nor authenticated, so it is only taken from `pin-exchanged` on,
+the states from which a side can legitimately emit one.

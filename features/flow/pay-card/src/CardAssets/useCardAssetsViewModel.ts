@@ -1,15 +1,13 @@
 import { useMemo } from "react";
 import { useTranslation } from "@shared/i18n";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
-import {
-  useCardLinkedWallets,
-  type ResolveWalletCounterValue,
-} from "@features/flow-pay-card-wallets";
+import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
 import type { CardAssetRow, CardAssetsStatus, CardAssetsViewModel } from "./types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 const KEY_PREFIX = "payTab.card.assets";
 
-const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
+const NO_CURRENCIES: ReadonlyMap<string, CryptoOrTokenCurrency> = new Map();
 
 export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
   const ticker = currency.toUpperCase();
@@ -20,7 +18,7 @@ export function useCardAssetsViewModel(): CardAssetsViewModel {
   const { t } = useTranslation();
   const isSignedIn = useIsCardSignedIn();
   const { wallets, isLoading, isError } = useCardLinkedWallets({
-    resolveCounterValue: NO_COUNTER_VALUE,
+    currencies: NO_CURRENCIES,
     skip: !isSignedIn,
   });
 

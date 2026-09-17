@@ -28,6 +28,7 @@ const combinedWallets = [
     priority: 0,
     ledgerId: "ethereum/erc20/usd__coin",
     balance: "125.40",
+    ledgerCurrencyId: "ethereum/erc20/usd__coin",
   },
   {
     id: "w-sol",
@@ -36,6 +37,7 @@ const combinedWallets = [
     network: "solana",
     priority: 1,
     balance: null,
+    ledgerCurrencyId: null,
   },
 ];
 
@@ -228,9 +230,10 @@ describe("PayCard (web)", () => {
     // A link the catalog does not cover says so rather than showing an empty currency.
     expect(screen.getAllByText("undefined — this pair is not mapped").length).toBe(2);
     // And a link with no Baanx wallet behind it says that too.
-    expect(
-      screen.getByText("null — still reading, or no Baanx wallet matched"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("null — still reading, or no Baanx wallet matched")).toBeVisible();
+    // The linked response, the joined row's ledgerId, and the currency resolved from it.
+    expect(screen.getAllByText("ethereum/erc20/usd__coin")).toHaveLength(3);
+    expect(screen.getByText("null — unmapped asset, or CAL has not answered")).toBeVisible();
   });
 
   it("refreshes the wallets from the screen, and returns to the tool", () => {
