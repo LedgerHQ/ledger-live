@@ -19,6 +19,7 @@ type PayTabViewProps = {
   readonly top: number;
   readonly bottom: number;
   readonly login: CardProps["login"];
+  readonly unlock: NonNullable<CardProps["unlock"]>;
   readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
@@ -33,6 +34,7 @@ export function PayTabView({
   top,
   bottom,
   login,
+  unlock,
   featureTour,
   balance,
   actionTiles,
@@ -54,7 +56,7 @@ export function PayTabView({
           <Balance {...balance} actionTiles={actionTiles} />
           {isContactsEnabled && <Contacts {...contacts} />}
           <ContactAddressPicker {...contactAddressPicker} />
-          <Card login={login} />
+          <Card login={login} unlock={unlock} />
           <FeatureTour {...featureTour} />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />
