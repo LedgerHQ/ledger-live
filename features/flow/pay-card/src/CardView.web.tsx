@@ -22,7 +22,11 @@ export function CardView({
         <>
           <CardOnboardingWidget />
           <CardDetails cardVisual={cardVisual} unlock={unlock} />
-          <CardAssets />
+          <CardAssets
+            onAddAsset={() => {
+              void login.openHostedPage?.("/");
+            }}
+          />
           <CardTransactions
             formatters={{
               amount: formatters?.transactionAmount,

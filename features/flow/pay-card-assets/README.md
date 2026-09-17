@@ -14,12 +14,13 @@ while nobody is signed in (`useIsCardSignedIn` from
 ```tsx
 import { CardAssets } from "@features/flow-pay-card-assets";
 
-<CardAssets />;
+<CardAssets onAddAsset={() => openHostedPage("/")} />;
 ```
 
 Public API is the container. Desktop lists each linked wallet as icon + ticker, with `balance` +
-ticker on the trailing side (`125.40 USDC`; no trailing amount when unknown). Native still renders
-`null`.
+ticker on the trailing side (`125.40 USDC`; no trailing amount when unknown). Manage opens a dialog
+of the same list; Add asset calls `onAddAsset` (desktop Card uses this to open Baanx). Native still
+renders `null`.
 
 ## MVVM
 

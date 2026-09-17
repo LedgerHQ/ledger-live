@@ -43,8 +43,13 @@ jest.mock("@features/flow-pay-card-transactions", () => ({
   },
 }));
 
+let receivedOnAddAsset: (() => void) | undefined;
+
 jest.mock("@features/flow-pay-card-assets", () => ({
-  CardAssets: () => <div data-testid="card-assets" />,
+  CardAssets: ({ onAddAsset }: { onAddAsset?: () => void }) => {
+    receivedOnAddAsset = onAddAsset;
+    return <div data-testid="card-assets" />;
+  },
 }));
 
 import { Card } from "./Card";
@@ -79,6 +84,7 @@ describe("Card (web)", () => {
     mockStatus = "unknown";
     receivedTransactionFormatters = undefined;
     receivedTransactionTracker = undefined;
+    receivedOnAddAsset = undefined;
   });
 
   it("always shows the card title", () => {
@@ -172,6 +178,15 @@ describe("Card (web)", () => {
       renderCard(<Card login={{ oauthConfig, onTrackEvent }} />);
 
       expect(receivedTransactionTracker).toBe(onTrackEvent);
+    });
+
+    it("should open Baanx at / when Add asset is pressed", () => {
+      const openHostedPage = jest.fn();
+
+      renderCard(<Card login={{ oauthConfig, openHostedPage }} />);
+      receivedOnAddAsset?.();
+
+      expect(openHostedPage).toHaveBeenCalledWith("/");
     });
 
     it("leaves the details block without an unlock when the host omits one", () => {
