@@ -1,9 +1,8 @@
-import fs from "fs";
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
-import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { liveDataCommand, seedZcashPrivateInfo } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
 // Covers the returning user: an account whose private balance is already
@@ -12,53 +11,16 @@ import { buildTags } from "tests/utils/tagsUtils";
 const account = Account.ZEC_1;
 const xrayTicket = "B2CQA-6606";
 
-/** Writes an already-activated private balance into the seeded userdata. */
-const seedPrivateInfo = async (userdataPath?: string) => {
-  if (!userdataPath) return;
-  const raw = JSON.parse(fs.readFileSync(userdataPath, "utf-8"));
-  if (!Array.isArray(raw?.data?.accounts)) {
-    throw new Error(
-      `seedPrivateInfo: expected raw.data.accounts to be an array in ${userdataPath}`,
-    );
-  }
-  // Exact match on (currencyId, index), not a currencyId substring: ZEC_1 and
-  // ZEC_2 share the same currencyId, so a substring match can silently seed
-  // the wrong account once both exist in userdata.
-  const acc = raw.data.accounts.find(
-    (a: { data: { currencyId?: string; index?: number } }) =>
-      a.data.currencyId === account.currency.id && a.data.index === account.index,
-  );
-  if (!acc) {
-    throw new Error(
-      `seedPrivateInfo: no account matching currencyId "${account.currency.id}" and index ${account.index} in ${userdataPath}. Did liveDataCommand run first?`,
-    );
-  }
-  // Only `shieldedAddress` drives the Receive block. The UFVK is left null and
-  // the sync disabled so this fixture cannot feed a malformed viewing key to
-  // any scanning path, rather than relying on none being reachable.
-  acc.data.privateInfo = {
-    orchardBalance: "0",
-    saplingBalance: "0",
-    ironwoodBalance: "0",
-    syncState: "disabled",
-    progress: 0,
-    estimatedTimeRemaining: { hours: 0, minutes: 0 },
-    ufvk: null,
-    birthday: "2026-08-01",
-    shieldedAddress: Addresses.ZEC_1_SHIELDED_ADDRESS,
-    lastSyncTimestamp: null,
-    lastProcessedBlock: null,
-    transactions: [],
-  };
-  fs.writeFileSync(userdataPath, JSON.stringify(raw));
-};
-
 test.describe("Receive private address", () => {
   test.use({
     teamOwner: Team.BST,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account, { postSeedHook: seedPrivateInfo })],
+    cliCommands: [
+      liveDataCommand(account, {
+        postSeedHook: seedZcashPrivateInfo(account, Addresses.ZEC_1_SHIELDED_ADDRESS),
+      }),
+    ],
     featureFlags: { zcashShielded: { enabled: true } },
   });
 

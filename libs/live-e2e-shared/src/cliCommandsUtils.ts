@@ -19,6 +19,8 @@ import { setEnv } from "@shared/env";
 import { runWithCrossProcessLock } from "./crossProcessLock";
 import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
+import { ZCASH_TEST_PRIVATE_INFO } from "./families/zcash";
+import type { ZcashPrivateInfoRaw } from "@ledgerhq/coin-zcash/network/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
@@ -220,6 +222,44 @@ export const addEmptyAccountCommand = (account: Account, options?: LiveDataComma
       fs.writeFileSync(userdataPath, JSON.stringify(raw), "utf-8");
     }
   });
+
+/**
+ * Seeds an already-activated Zcash private balance onto the account
+ * liveDataCommand just added. Pass as a postSeedHook:
+ * liveDataCommand(account, { postSeedHook: seedZcashPrivateInfo(account, shieldedAddress) }).
+ *
+ * Matches on (currencyId, index) rather than a currencyId substring -- Zcash
+ * test accounts (ZEC_1, ZEC_2) share the same currencyId, so a substring
+ * match can silently seed the wrong one.
+ */
+export function seedZcashPrivateInfo(account: Account, shieldedAddress: string) {
+  return async (userdataPath?: string): Promise<void> => {
+    if (!userdataPath) {
+      throw new Error("seedZcashPrivateInfo requires a userdataPath");
+    }
+    const raw = JSON.parse(fs.readFileSync(userdataPath, "utf-8"));
+    if (typeof raw?.data?.accounts === "string") {
+      throw new Error("encrypted ledger live data is not supported");
+    }
+    if (!Array.isArray(raw?.data?.accounts)) {
+      throw new Error(
+        `seedZcashPrivateInfo: expected raw.data.accounts to be an array in ${userdataPath}, got ${JSON.stringify(raw?.data)}`,
+      );
+    }
+    const entry = raw.data.accounts.find(
+      (a: { data?: { currencyId?: string; index?: number } }) =>
+        a?.data?.currencyId === account.currency.id && a?.data?.index === account.index,
+    );
+    if (!entry) {
+      throw new Error(
+        `seedZcashPrivateInfo: no account matching currencyId "${account.currency.id}" and index ${account.index} in ${userdataPath}. Did liveDataCommand run first?`,
+      );
+    }
+    const privateInfo: ZcashPrivateInfoRaw = { ...ZCASH_TEST_PRIVATE_INFO, shieldedAddress };
+    entry.data.privateInfo = privateInfo;
+    fs.writeFileSync(userdataPath, JSON.stringify(raw), "utf-8");
+  };
+}
 
 export const liveDataWithAddressCommand = (
   account: Account | TokenAccount,
