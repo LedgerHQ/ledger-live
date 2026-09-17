@@ -221,7 +221,7 @@ catalog:
   oxlint: 1.82.0
   oxfmt: 0.67.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 5.3.6
+  "@ledgerhq/coin-evm": 5.4.1
   "@ledgerhq/coin-hypercore": 2.0.1
   "@ledgerhq/coin-module-framework": 9.1.0
   "@ledgerhq/coin-stellar": 9.6.1
