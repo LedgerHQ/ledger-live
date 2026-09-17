@@ -18,6 +18,11 @@ beforeAll(async () => {
 
 const mockT = ((key: string) => key) as TFunction;
 
+// Orchard-only unified address, as a shielded destination recovered by the
+// shielded leg of a send would read.
+const SHIELDED_ADDRESS =
+  "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
+
 const ZCASH_OPERATION_TYPES = [
   "SHIELDED_TX_SAPLING_IN",
   "SHIELDED_TX_SAPLING_OUT",
@@ -208,6 +213,64 @@ describe("addressCell", () => {
       expect(container).not.toHaveTextContent(address);
     });
   });
+
+  // A send into a shielded pool keeps the OUT type while its recipient is the
+  // shielded address the shielded leg recovered.
+  describe("Zcash private OUT operations", () => {
+    it("should show asterisks instead of a shielded recipient when discreet mode is on", () => {
+      const operation = createOperation("OUT", { recipients: [SHIELDED_ADDRESS] });
+
+      const AddressCell = addressCell["OUT"];
+
+      const { container } = render(<AddressCell operation={operation} currency={zcashCurrency} />, {
+        initialState: {
+          settings: {
+            discreetMode: true,
+          },
+        },
+      });
+
+      const asterisks = "*".repeat(SHIELDED_ADDRESS.length);
+      expect(screen.getByText(asterisks)).toBeInTheDocument();
+      expect(container).not.toHaveTextContent(SHIELDED_ADDRESS);
+    });
+
+    it("should show the shielded recipient when discreet mode is off", () => {
+      const operation = createOperation("OUT", { recipients: [SHIELDED_ADDRESS] });
+
+      const AddressCell = addressCell["OUT"];
+
+      const { container } = render(<AddressCell operation={operation} currency={zcashCurrency} />, {
+        initialState: {
+          settings: {
+            discreetMode: false,
+          },
+        },
+      });
+
+      expect(container).toHaveTextContent(SHIELDED_ADDRESS);
+    });
+
+    it("should show a transparent recipient of an OUT even when discreet mode is on", () => {
+      const address = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+      const operation = createOperation("OUT", { recipients: [address] });
+
+      const AddressCell = addressCell["OUT"];
+
+      const { container } = render(
+        <AddressCell operation={operation} currency={bitcoinCurrency} />,
+        {
+          initialState: {
+            settings: {
+              discreetMode: true,
+            },
+          },
+        },
+      );
+
+      expect(container).toHaveTextContent(address);
+    });
+  });
 });
 
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
@@ -273,6 +336,81 @@ describe("splitAddress", () => {
         expect(container).not.toHaveTextContent(address);
       },
     );
+  });
+
+  describe("Zcash private OUT operations", () => {
+    it("should show asterisks for the shielded recipient line when discreet mode is on", () => {
+      const operation = createOperation("OUT", { recipients: [SHIELDED_ADDRESS] });
+
+      const { container } = render(
+        <DataList
+          lines={[SHIELDED_ADDRESS]}
+          t={mockT}
+          cryptoCurrency={zcashCurrency}
+          operation={operation}
+        />,
+        {
+          initialState: {
+            settings: {
+              discreetMode: true,
+            },
+          },
+        },
+      );
+
+      expect(container).toHaveTextContent("*".repeat(SHIELDED_ADDRESS.length));
+      expect(container).not.toHaveTextContent(SHIELDED_ADDRESS);
+    });
+
+    it("should show the shielded recipient line when discreet mode is off", () => {
+      const operation = createOperation("OUT", { recipients: [SHIELDED_ADDRESS] });
+
+      const { container } = render(
+        <DataList
+          lines={[SHIELDED_ADDRESS]}
+          t={mockT}
+          cryptoCurrency={zcashCurrency}
+          operation={operation}
+        />,
+        {
+          initialState: {
+            settings: {
+              discreetMode: false,
+            },
+          },
+        },
+      );
+
+      expect(container).toHaveTextContent(SHIELDED_ADDRESS);
+    });
+
+    // The senders of such a send are transparent addresses the chain already
+    // publishes, and the drawer renders them from the same OUT operation.
+    it("should show the transparent sender lines of the same operation", () => {
+      const senderAddress = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
+      const operation = createOperation("OUT", {
+        senders: [senderAddress],
+        recipients: [SHIELDED_ADDRESS],
+      });
+
+      const { container } = render(
+        <DataList
+          lines={[senderAddress]}
+          t={mockT}
+          cryptoCurrency={zcashCurrency}
+          operation={operation}
+        />,
+        {
+          initialState: {
+            settings: {
+              discreetMode: true,
+            },
+          },
+        },
+      );
+
+      expect(container).toHaveTextContent(senderAddress);
+    });
   });
 
   describe("Bitcoin IN and OUT operations", () => {
