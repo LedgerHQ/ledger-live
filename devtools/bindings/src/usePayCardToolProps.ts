@@ -35,6 +35,14 @@ import {
 } from "@features/flow-pay-card-widget/state";
 import { useCardOnboardingStatus } from "@features/flow-pay-card-widget/onboarding-status";
 import {
+  addCardAssetFixture,
+  clearCardAssetsMock,
+  readCardAssetsMock,
+  removeCardAssetFixture,
+  setCardAssetsMockEmpty,
+  setCardAssetsMockLoaded,
+} from "@domain/api-card-management/mock/card-assets";
+import {
   clearCardOnboardingStatusMock,
   setCardOnboardingStatusMock,
   type CardOnboardingStatusMock,
@@ -61,25 +69,12 @@ const STEP_ANSWERS: Readonly<Partial<Record<string, keyof CardOnboardingStatusMo
   "top-up-card": "walletFunded",
 };
 
-/**
- * The catalog as the tool lists it, in key order so a pair is easy to find by eye.
- *
- * A key the catalog holds no id for is dropped: the screen lists what resolves, and a row with a
- * blank currency would read as a mapping that exists and is wrong.
- */
 const CURRENCY_MAPPING_ROWS = Object.entries(BAANX_ASSET_LEDGER_IDS)
   .flatMap(([key, ledgerId]) => (ledgerId === undefined ? [] : [{ key, ledgerId }]))
   .sort((a, b) => a.key.localeCompare(b.key));
 
 type PayCardCombinedWallet = PayCardToolProps["balance"]["combinedWallets"][number];
 
-/**
- * One joined wallet as the tool lists it.
- *
- * An unmapped asset has no Ledger currency, so its row has no `ledgerId` at all. That is the shape
- * the transform and the join answer with, and repeating it here keeps a mapped pair distinguishable
- * from an unmapped one by shape alone.
- */
 function toCombinedWallet({
   id,
   address,
@@ -297,6 +292,37 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     skip: skipWallets,
   });
 
+  const [assetsFixtureTick, setAssetsFixtureTick] = useState(0);
+  const applyAssetsFixture = useCallback(
+    (write: () => void) => {
+      write();
+      setAssetsFixtureTick(tick => tick + 1);
+      refreshWallets();
+    },
+    [refreshWallets],
+  );
+
+  const fixture = useMemo(() => {
+    const pinned = readCardAssetsMock();
+
+    return {
+      isMockingEnabled: isRequestMockingEnabled(),
+      preset: pinned?.preset ?? ("none" as const),
+      wallets: pinned?.wallets ?? [],
+      catalog: CURRENCY_MAPPING_ROWS,
+      applyEmpty: () => applyAssetsFixture(setCardAssetsMockEmpty),
+      applyLoaded: () => applyAssetsFixture(setCardAssetsMockLoaded),
+      addAsset: (draft: {
+        currency: string;
+        network: string;
+        balance: string;
+        unknownBalance: boolean;
+      }) => applyAssetsFixture(() => addCardAssetFixture(draft)),
+      removeAsset: (id: string) => applyAssetsFixture(() => removeCardAssetFixture(id)),
+      clear: () => applyAssetsFixture(clearCardAssetsMock),
+    };
+  }, [applyAssetsFixture, assetsFixtureTick]);
+
   const errors = useMemo(
     () =>
       [
@@ -318,8 +344,9 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       errors,
       load: loadWallets,
       refresh: refreshWallets,
+      fixture,
     }),
-    [internal, linked, linkedWallets, errors, loadWallets, refreshWallets],
+    [internal, linked, linkedWallets, errors, loadWallets, refreshWallets, fixture],
   );
 
   return useMemo(

@@ -8,7 +8,15 @@ const ready: CardAssetsViewModel = {
   isVisible: true,
   title: CARD_ASSETS_COPY.title,
   status: "ready",
-  rows: [{ id: "w-usdc", cryptoAmount: "125.40 USDC" }],
+  rows: [
+    {
+      id: "w-usdc",
+      name: "USD Coin",
+      ticker: "USDC",
+      cryptoAmount: "125.40 USDC",
+      fiatAmount: "$125.40",
+    },
+  ],
   emptyLabel: CARD_ASSETS_COPY.empty,
   errorLabel: CARD_ASSETS_COPY.error,
 };
@@ -17,7 +25,7 @@ describe("CardAssetsView (native)", () => {
   it("should render nothing until the mobile list is implemented", () => {
     render(<CardAssetsView {...ready} />);
 
-    expect(screen.queryByText(CARD_ASSETS_COPY.title)).toBeNull();
-    expect(screen.queryByText("125.40 USDC")).toBeNull();
+    expect(screen.queryByText(CARD_ASSETS_COPY.title)).not.toBeOnTheScreen();
+    expect(screen.queryByText("125.40 USDC")).not.toBeOnTheScreen();
   });
 });

@@ -19,7 +19,7 @@ export function combineCardLinkedWallets({
   const balanceById = new Map(internal.map(wallet => [wallet.id, wallet.balance]));
 
   const counterValueFor = (
-    wallet: Readonly<{ currency: string; network: string }>,
+    wallet: Readonly<{ currency: string; network: string; ledgerId?: string }>,
     balance: string,
   ): number | null => {
     const resolved = resolveCounterValue(wallet, balance);
@@ -27,11 +27,12 @@ export function combineCardLinkedWallets({
   };
 
   const wallets: CardLinkedWalletBalance[] = linked
-    // `linked` is the cache entry: never sort it in place.
     .slice()
     .sort((a, b) => a.priority - b.priority)
     .map(({ id, address, currency, network, priority, ledgerId }) => {
       const balance = balanceById.get(id) ?? null;
+      const priced =
+        ledgerId === undefined ? { currency, network } : { currency, network, ledgerId };
 
       return {
         id,
@@ -39,11 +40,9 @@ export function combineCardLinkedWallets({
         currency,
         network,
         priority,
-        // Carried through, and left off when the link had none: an unmapped asset is a wallet
-        // without a `ledgerId`, not one holding `undefined`.
         ...(ledgerId === undefined ? {} : { ledgerId }),
         balance,
-        counterValue: balance === null ? null : counterValueFor({ currency, network }, balance),
+        counterValue: balance === null ? null : counterValueFor(priced, balance),
       };
     });
 

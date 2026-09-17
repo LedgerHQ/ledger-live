@@ -1,5 +1,5 @@
 export type ResolveWalletCounterValue = (
-  wallet: Readonly<{ currency: string; network: string }>,
+  wallet: Readonly<{ currency: string; network: string; ledgerId?: string }>,
   balance: string,
 ) => number | null;
 

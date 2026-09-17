@@ -13,6 +13,7 @@ import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { useWipeHostedSessionOnSignInChange } from "./useWipeHostedSession";
+import { useCardWalletCounterValue } from "./useCardWalletCounterValue";
 import type { CardViewModel } from "./types";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
@@ -69,14 +70,16 @@ export function useCardViewModel(): CardViewModel {
     [locale],
   );
   const formatTransactionDate = useDateFormatter(CARD_TRANSACTION_DATE_FORMAT);
+  const resolveWalletCounterValue = useCardWalletCounterValue();
 
   const formatters = useMemo(
     () => ({
       countervalue: formatCountervalue,
+      resolveWalletCounterValue,
       transactionAmount: formatTransactionAmount,
       transactionDate: formatTransactionDate,
     }),
-    [formatCountervalue, formatTransactionAmount, formatTransactionDate],
+    [formatCountervalue, resolveWalletCounterValue, formatTransactionAmount, formatTransactionDate],
   );
 
   // Read with `useEnv`, and not with `getEnv`: a tester sets these in the debug settings, and the

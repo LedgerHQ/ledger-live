@@ -138,6 +138,35 @@ export interface PayCardBalanceError {
   readonly detail: string;
 }
 
+export type PayCardAssetsFixturePreset = "none" | "empty" | "loaded" | "custom";
+
+export type PayCardAssetsFixtureDraft = {
+  readonly currency: string;
+  readonly network: string;
+  readonly balance: string;
+  readonly unknownBalance: boolean;
+};
+
+export type PayCardAssetsFixtureWallet = {
+  readonly id: string;
+  readonly currency: string;
+  readonly network: string;
+  readonly balance: string | null;
+};
+
+export interface PayCardAssetsFixtureProps {
+  readonly isMockingEnabled: boolean;
+  readonly preset: PayCardAssetsFixturePreset;
+  readonly wallets: readonly PayCardAssetsFixtureWallet[];
+  /** Baanx catalog pairs (`currency.network`). The only extra option is unmapped. */
+  readonly catalog: readonly PayCardCurrencyMappingRow[];
+  readonly applyEmpty: () => void;
+  readonly applyLoaded: () => void;
+  readonly addAsset: (draft: PayCardAssetsFixtureDraft) => void;
+  readonly removeAsset: (id: string) => void;
+  readonly clear: () => void;
+}
+
 export interface PayCardBalanceProps {
   readonly baanxWallets: readonly PayCardBaanxWallet[];
   readonly linkedWallets: readonly PayCardLinkedWallet[];
@@ -146,6 +175,7 @@ export interface PayCardBalanceProps {
   readonly errors: readonly PayCardBalanceError[];
   readonly load: () => void;
   readonly refresh: () => void;
+  readonly fixture?: PayCardAssetsFixtureProps;
 }
 
 export type PayCardOpenSecureBrowser = (url: string) => Promise<string>;

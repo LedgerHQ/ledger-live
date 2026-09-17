@@ -7,6 +7,7 @@ import type {
   PayCardLinkedWallet,
 } from "../../types";
 import { Section } from "../Section/Section";
+import { AssetsFixture } from "../AssetsFixture/AssetsFixture";
 
 export interface BalanceScreenProps extends PayCardBalanceProps {
   readonly onBack: () => void;
@@ -76,6 +77,7 @@ export function BalanceScreen({
   combinedWallets,
   isFetching,
   errors,
+  fixture,
   onBack,
   refresh,
 }: BalanceScreenProps) {
@@ -94,6 +96,8 @@ export function BalanceScreen({
           aria-label="Refresh"
         />
       </div>
+
+      {fixture ? <AssetsFixture {...fixture} /> : null}
 
       {errors.map(({ endpoint, detail }) => (
         <div key={endpoint} className="flex flex-col gap-4 px-16">

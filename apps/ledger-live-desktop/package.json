@@ -77,7 +77,7 @@
     "@domain/entity-account": "workspace:^",
     "@domain/entity-account-alias": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
-    "@domain/entity-analytics-consent": "workspace:*",
+    "@domain/entity-card-asset-mapping": "workspace:*",
     "@domain/entity-client-identity": "workspace:*",
     "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency": "workspace:^",

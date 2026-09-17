@@ -8,6 +8,8 @@ import { CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
 let mockStatus: PayCardAuthStatus = "unknown";
 let receivedTransactionFormatters: CardTransactionFormatters | undefined;
 let receivedTransactionTracker: CardProps["login"]["onTrackEvent"];
+let receivedAssetFormatter: CardFormatters["countervalue"];
+let receivedAssetResolver: CardFormatters["resolveWalletCounterValue"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
@@ -43,6 +45,20 @@ jest.mock("@features/flow-pay-card-transactions", () => ({
   },
 }));
 
+jest.mock("@features/flow-pay-card-assets", () => ({
+  CardAssets: ({
+    formatCountervalue,
+    resolveCounterValue,
+  }: {
+    formatCountervalue?: CardFormatters["countervalue"];
+    resolveCounterValue?: CardFormatters["resolveWalletCounterValue"];
+  }) => {
+    receivedAssetFormatter = formatCountervalue;
+    receivedAssetResolver = resolveCounterValue;
+    return <div data-testid="card-assets" />;
+  },
+}));
+
 import { Card } from "./Card";
 
 const title = CARD_TITLE;
@@ -75,6 +91,8 @@ describe("Card (web)", () => {
     mockStatus = "unknown";
     receivedTransactionFormatters = undefined;
     receivedTransactionTracker = undefined;
+    receivedAssetFormatter = undefined;
+    receivedAssetResolver = undefined;
   });
 
   it("always shows the card title", () => {
@@ -92,6 +110,7 @@ describe("Card (web)", () => {
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-assets")).not.toBeInTheDocument();
     });
   });
 
@@ -108,6 +127,7 @@ describe("Card (web)", () => {
       expect(screen.queryByTestId("card-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-assets")).not.toBeInTheDocument();
     });
 
     it("never builds the balance overlay, even when the host provides a formatter", () => {
@@ -129,11 +149,12 @@ describe("Card (web)", () => {
       mockStatus = "signedIn";
     });
 
-    it("shows the widget and the card details, with no login or bare artwork", () => {
+    it("shows the widget, card details, CardAssets, and transactions, with no login or bare artwork", () => {
       renderCard(<Card login={{ oauthConfig }} />);
 
       expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("card-details")).toBeVisible();
+      expect(screen.getByTestId("card-assets")).toBeVisible();
       expect(screen.getByTestId("card-transactions")).toBeVisible();
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
@@ -145,6 +166,20 @@ describe("Card (web)", () => {
       expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
+    });
+
+    it("hands the host countervalue formatter to CardAssets", () => {
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+
+      expect(receivedAssetFormatter).toBe(formatters.countervalue);
+    });
+
+    it("hands the host wallet countervalue resolver to CardAssets", () => {
+      const resolveWalletCounterValue = jest.fn(() => 10);
+
+      renderCard(<Card login={{ oauthConfig }} formatters={{ resolveWalletCounterValue }} />);
+
+      expect(receivedAssetResolver).toBe(resolveWalletCounterValue);
     });
 
     it("hands the transaction formatters to the transactions list", () => {

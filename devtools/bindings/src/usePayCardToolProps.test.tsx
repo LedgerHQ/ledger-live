@@ -18,6 +18,10 @@ import {
 } from "@features/flow-pay-card-auth/state";
 import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
 import {
+  clearCardAssetsMock,
+  readCardAssetsMock,
+} from "@domain/api-card-management/mock/card-assets";
+import {
   clearCardOnboardingStatusMock,
   readCardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
@@ -50,6 +54,11 @@ describe("usePayCardToolProps", () => {
 
   beforeEach(() => {
     store = buildStore();
+  });
+
+  afterEach(() => {
+    clearCardAssetsMock();
+    delete process.env.MSW_ENABLED;
   });
 
   it("exposes default flag values", () => {
@@ -354,6 +363,38 @@ describe("usePayCardToolProps", () => {
       expect(togglable).toContain("top-up-card");
       // Nothing answers the purchase step yet, so it stays read-only.
       expect(togglable).not.toContain("first-purchase");
+    });
+  });
+
+  describe("assets fixtures", () => {
+    it("pins the empty and loaded wallet answers", () => {
+      process.env.MSW_ENABLED = "true";
+      const store = buildStore();
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      expect(result.current.balance.fixture?.preset).toBe("none");
+
+      act(() => {
+        result.current.balance.fixture?.applyEmpty();
+      });
+      expect(readCardAssetsMock()?.preset).toBe("empty");
+      expect(result.current.balance.fixture?.preset).toBe("empty");
+
+      act(() => {
+        result.current.balance.fixture?.applyLoaded();
+      });
+      expect(readCardAssetsMock()?.wallets.length).toBeGreaterThan(1);
+      expect(result.current.balance.fixture?.preset).toBe("loaded");
+
+      act(() => {
+        result.current.balance.fixture?.addAsset({
+          currency: "sol",
+          network: "solana",
+          balance: "2",
+          unknownBalance: false,
+        });
+      });
+      expect(result.current.balance.fixture?.preset).toBe("custom");
     });
   });
 });
