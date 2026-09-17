@@ -639,6 +639,7 @@ describe("cardLoginMachine failures", () => {
     await settledAt(actor, "idle");
     expect(actor.getSnapshot().context.errorKind).toBeNull();
     expect(ports.clearSession).not.toHaveBeenCalled();
+    expect(ports.setSignedIn).toHaveBeenLastCalledWith(false);
   });
 
   it("forgets the cached user when a 401 ends the session", async () => {
