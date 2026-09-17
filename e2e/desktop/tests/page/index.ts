@@ -17,6 +17,7 @@ import { LedgerSyncDrawer } from "tests/page/drawer/ledger.sync.drawer";
 import { LiveApp } from "tests/page/liveApp.page";
 import { LockscreenPage } from "tests/page/lockscreen.page";
 import { MarketPage } from "tests/page/market.page";
+import { MyLedgerPage } from "tests/page/myLedger.page";
 import { Modal } from "tests/component/modal.component";
 import { OperationDrawer } from "tests/page/drawer/operation.drawer";
 import { PageHolder } from "tests/page/abstractClasses";
@@ -79,6 +80,7 @@ export class Application extends PageHolder {
   public scanAccountsDrawer = new ModularScanAccountsDrawer(this.page);
   public operationDrawer = new OperationDrawer(this.page);
   public password = new PasswordlockModal(this.page);
+  public myLedger = new MyLedgerPage(this.page);
   public portfolio = new PortfolioPage(this.page);
   public onboarding = new OnboardingPage(this.page);
   public postOnboarding = new PostOnboardingPage(this.page);
