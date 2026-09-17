@@ -21,7 +21,10 @@ export function CardView({
       {displayState === "signedIn" ? (
         <>
           <CardOnboardingWidget />
-          <CardDetails cardVisual={cardVisual} />
+          <CardDetails
+            cardVisual={cardVisual}
+            formatters={{ amount: formatters?.transactionAmount }}
+          />
           <CardTransactions
             formatters={{
               amount: formatters?.transactionAmount,

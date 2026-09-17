@@ -944,6 +944,9 @@
           }
         }
       },
+      "reward": {
+        "title": "Total cashback"
+      },
       "numbers": {
         "reveal": "View",
         "hide": "Hide",
