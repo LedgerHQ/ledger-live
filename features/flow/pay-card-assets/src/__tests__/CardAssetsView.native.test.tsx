@@ -8,7 +8,15 @@ const ready: CardAssetsViewModel = {
   isVisible: true,
   title: CARD_ASSETS_COPY.title,
   status: "ready",
-  rows: [{ id: "w-usdc", cryptoAmount: "125.40 USDC" }],
+  rows: [
+    {
+      id: "w-usdc",
+      name: "USD Coin",
+      ticker: "USDC",
+      cryptoAmount: "125.40 USDC",
+      fiatAmount: "$125.40",
+    },
+  ],
   emptyLabel: CARD_ASSETS_COPY.empty,
   errorLabel: CARD_ASSETS_COPY.error,
 };
