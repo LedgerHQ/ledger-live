@@ -1,8 +1,9 @@
 import { Step } from "jest-allure2-reporter/api";
 import { removeSpeculosAndDeregisterKnownSpeculos } from "@e2e/utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { isIos, openDeeplink } from "@e2e/helpers/commonHelpers";
-import { device } from "detox";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
+import { delay, isIos, openDeeplink } from "@e2e/helpers/commonHelpers";
+import { device, log } from "detox";
 import { DEFAULT_TIMEOUT } from "@e2e/helpers/elementHelpers";
 import ErrorPage from "@e2e/page/error.page";
 import { isAggregatedAssetsEnabled } from "@e2e/utils/featureFlagUtils";
@@ -151,12 +152,47 @@ export default class CommonPage {
     await tapById(this.proceedButtonId);
   }
 
+  /**
+   * Retries a Detox sync toggle: a just-abandoned withTimeout action can leave the bridge with a
+   * phantom in-flight request that this call collides with.
+   * @param swallow When true, logs and gives up after exhausting retries instead of throwing.
+   */
+  private async retryDetoxSync(
+    action: () => Promise<void>,
+    label: string,
+    swallow: boolean,
+  ): Promise<void> {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        await action();
+        return;
+      } catch (error) {
+        const message = sanitizeError(error).message;
+        if (attempt === 3) {
+          if (!swallow) throw error;
+          log.error(`${label} failed after ${attempt} attempts, giving up: ${message}`);
+          return;
+        }
+        log.warn(`${label} failed (attempt ${attempt}/3), retrying: ${message}`);
+        await delay(1_000);
+      }
+    }
+  }
+
   async disableSynchronizationForiOS() {
-    if (isIos()) await device.disableSynchronization();
+    if (isIos()) await this.disableSynchronization();
+  }
+
+  async disableSynchronization() {
+    await this.retryDetoxSync(
+      () => device.disableSynchronization(),
+      "disableSynchronization",
+      false,
+    );
   }
 
   async enableSynchronization() {
-    await device.enableSynchronization();
+    await this.retryDetoxSync(() => device.enableSynchronization(), "enableSynchronization", true);
   }
 
   @Step("Press on see all operations button")
