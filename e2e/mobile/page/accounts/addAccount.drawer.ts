@@ -1,10 +1,10 @@
-import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
 import CommonPage from "@e2e/page/common.page";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { checkForErrorModals } from "@e2e/helpers/errorHelpers";
 import { TIMEOUT } from "@e2e/utils/timeouts";
+import { withTimeout } from "@e2e/utils/withTimeout";
 
 // Short enough that retryUntilTimeout's own budget still allows a re-tap; the default 60s would
 // consume the whole budget in a single attempt.
@@ -52,19 +52,29 @@ export default class AddAccountDrawer extends CommonPage {
     const startTime = Date.now();
 
     // disable sync to avoid Detox hanging during busy account discovery and UI animations
-    await device.disableSynchronization();
+    await this.disableSynchronization();
     try {
       while (Date.now() - startTime < ACCOUNT_DISCOVERY_TIMEOUT) {
-        if (await IsIdVisible(this.continueButtonId, TIMEOUT.medium)) {
+        const visible = await withTimeout(
+          IsIdVisible(this.continueButtonId, TIMEOUT.medium),
+          TIMEOUT.large,
+          "waitAccountsDiscovery:continueButton",
+        );
+        if (visible) {
           return;
         }
-        await checkForErrorModals(TIMEOUT.xxsmall, "Account discovery failed");
+        await withTimeout(
+          checkForErrorModals(TIMEOUT.xxsmall, "Account discovery failed"),
+          TIMEOUT.small,
+          "waitAccountsDiscovery:errorModal",
+          { rethrow: true },
+        );
       }
       throw new Error(
         `Account discovery timed out after ${ACCOUNT_DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
       );
     } finally {
-      await device.enableSynchronization();
+      await this.enableSynchronization();
     }
   }
 
