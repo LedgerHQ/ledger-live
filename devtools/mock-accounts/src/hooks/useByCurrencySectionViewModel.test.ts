@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { useByCurrencySectionViewModel } from "./useByCurrencySectionViewModel";
 
-jest.mock("@ledgerhq/live-common/currencies/index", () => ({
+jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({
   listSupportedCurrencies: () => [
     { id: "bitcoin", name: "Bitcoin", ticker: "BTC" },
     { id: "ethereum", name: "Ethereum", ticker: "ETH" },

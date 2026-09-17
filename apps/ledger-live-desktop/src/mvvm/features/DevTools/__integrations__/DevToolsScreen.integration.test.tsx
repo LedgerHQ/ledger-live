@@ -27,6 +27,7 @@ jest.mock("@devtools/bindings", () => ({
   useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
   usePayCardToolProps: () => ({ marker: "pay-card-props" }),
   useEnvDevToolProps: () => ({ marker: "env-props" }),
+  useMockAccountsToolProps: () => ({ marker: "mock-accounts-props" }),
   useProdToggle: () => ({
     useProd: false,
     setUseProd: jest.fn(),
@@ -66,6 +67,7 @@ describe("DevToolsScreen", () => {
           { id: "feature-flags", config: { marker: "ff-props" } },
           { id: "env", config: { marker: "env-props" } },
           { id: "pay-card", config: { marker: "pay-card-props" } },
+          { id: "mock-accounts", config: { marker: "mock-accounts-props" } },
           { id: "trustchain", config: { marker: "trustchain-props" } },
           { id: "cloud-sync", config: { marker: "cloud-sync-props" } },
         ],
