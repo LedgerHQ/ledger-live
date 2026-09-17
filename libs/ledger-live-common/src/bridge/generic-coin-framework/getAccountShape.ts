@@ -27,6 +27,7 @@ import {
   buildSubOperationIndex,
   type SubOperationIndex,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
+import { boundByTransaction } from "./boundByTransaction";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { paginateOperations } from "./paginateOperations";
 import type {
@@ -530,10 +531,25 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // whose `BalanceOptions` has neither field and ship as a silent no-op -- verified, not feared.
     // Written this way the compiler enforces the cross-repo ordering: this file does not build
     // until a coin-module-framework carrying both options is in the catalog.
-    const balanceOptions: BalanceOptions = { ...bridgeApi.balanceOptions };
-    if (knownAssets?.length) {
-      balanceOptions.knownAssets = knownAssets;
-      balanceOptions.fromHeight = minHeight;
+    // `getBalance` is called with no options at all unless the family declares some. Several
+    // modules routed through this framework reject *any* options object outright -- coin-tron and
+    // coin-casper wrap their `getBalance` in `rejectBalanceOptions`, which throws on a truthy
+    // value, `{}` included -- so building an object unconditionally would fail their every sync.
+    // A family that declares `balanceOptions` accepts the parameter by construction, which makes
+    // it the one place the resume fields can be attached safely; today that is evm alone, the
+    // only family whose module reads them.
+    //
+    // Assigned onto a typed object rather than spread into a literal. A spread of a conditional
+    // object escapes excess-property checking, so the resume would compile against a coin module
+    // whose `BalanceOptions` has neither field and ship as a silent no-op -- verified, not feared.
+    // Written this way the compiler enforces the cross-repo ordering: this file does not build
+    // until a coin-module-framework carrying both options is in the catalog.
+    let balanceOptions: BalanceOptions | undefined = bridgeApi.balanceOptions;
+    if (balanceOptions && knownAssets?.length) {
+      const resumed: BalanceOptions = { ...balanceOptions };
+      resumed.knownAssets = knownAssets;
+      resumed.fromHeight = minHeight;
+      balanceOptions = resumed;
     }
 
     const balancePromise = coinModuleApi
@@ -760,6 +776,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           a4Network,
           minHeight,
           a4ChainConfig.maxDcRoamRetries,
+          // The same walk bound the delegate gets: this path paginates too, and without it a
+          // large A4-backed account materialises its whole history before the store bound below
+          // ever runs.
+          maxOperations,
         )) as OperationCommon[];
         logReadDecisionOnce(a4Network, "read_served_by_a4", "A4 is serving reads for this chain");
       } catch (e) {
@@ -842,9 +862,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     ) as OperationCommon[];
     // Store bound: `mergeOps` returns newest-first (its own contract), so keeping the head keeps
     // the newest -- this also keeps `minHeight` correct on the next sync, since it derives from
-    // the newest stored operation, which the head slice always retains.
-    const operations =
-      maxOperations === undefined ? mergedOperations : mergedOperations.slice(0, maxOperations);
+    // the newest stored operation, which the head always retains. Cut on transactions rather than
+    // on a row index: `buildParentOperations` emits two top-level rows for a self-send, and a flat
+    // slice at that boundary would persist one and lose its sibling for good.
+    const operations = boundByTransaction(mergedOperations, maxOperations);
     const stakingEnabled =
       bridgeApi.stakingSupported ?? (delegationsCount > 0 || unbondingsCount > 0);
     let stakingShape: {

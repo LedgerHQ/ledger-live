@@ -6,6 +6,8 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { genericGetAccountShape } from "./getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
+import { DEFAULT_MAX_OPERATIONS } from "./operationHistoryBound";
+
 jest.mock("@ledgerhq/logs");
 
 const getSyncHashMock = jest.fn();
@@ -158,6 +160,17 @@ describe("genericGetAccountShape - A4 read branch", () => {
 
     expect(fetchA4OperationsMock).toHaveBeenCalledTimes(1);
     expect(listOperationsMock).not.toHaveBeenCalled();
+  });
+
+  it("passes the walk bound to the A4 pagination, not only to the coin-module delegate", async () => {
+    fetchA4OperationsMock.mockResolvedValue([]);
+
+    await call();
+
+    // The bound is the 7th argument. Without it this path paginates unbounded and materialises a
+    // whole history in memory before the store bound below it ever runs -- and A4 read is enabled
+    // for Ethereum, so the account that produced the out-of-memory report reaches it.
+    expect(fetchA4OperationsMock.mock.calls[0][6]).toBe(DEFAULT_MAX_OPERATIONS);
   });
 
   it("falls back to the coin-module delegate when fetchA4Operations throws with status 5xx", async () => {

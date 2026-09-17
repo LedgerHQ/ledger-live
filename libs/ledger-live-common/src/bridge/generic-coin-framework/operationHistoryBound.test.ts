@@ -137,6 +137,35 @@ describe("resolveOperationHistoryBound", () => {
     });
   });
 
+  describe("hostile-but-valid values", () => {
+    it("clamps a remote maxOperations above the shipped ceiling instead of honouring it", () => {
+      // A valid 10 000 000 is the failure the malformed-payload guards do not catch: the walk
+      // accumulates up to the bound, so a number far above the measured ceiling reopens the
+      // out-of-memory crash this setting exists to prevent. The remote knob may lower the bound,
+      // never raise it.
+      mockGetValueByKey.mockReturnValue({ maxOperations: 10_000_000, networks: {} });
+      expect(resolveOperationHistoryBound("ethereum", "evm").maxOperations).toBe(
+        DEFAULT_MAX_OPERATIONS,
+      );
+
+      mockGetValueByKey.mockReturnValue({ networks: { ethereum: { maxOperations: 10_000_000 } } });
+      expect(resolveOperationHistoryBound("ethereum", "evm").maxOperations).toBe(
+        DEFAULT_MAX_OPERATIONS,
+      );
+    });
+
+    it("does not let a global page size reach a family whose module raises on a limit", () => {
+      // One remote value set to tune evm would otherwise start sending a `limit` to casper and
+      // every other unlisted family, taking them all down at once. A per-currency entry stays the
+      // explicit opt-in, because it names the currency and cannot be collateral.
+      mockGetValueByKey.mockReturnValue({ pageSize: 150, networks: {} });
+
+      expect(resolveOperationHistoryBound("casper", "casper").pageSize).toBeUndefined();
+      expect(resolveOperationHistoryBound("tezos", "tezos").pageSize).toBeUndefined();
+      expect(resolveOperationHistoryBound("ethereum", "evm").pageSize).toBe(150);
+    });
+  });
+
   describe("pageSize resolution", () => {
     it("sends no page size to a family whose limit support is not established", () => {
       // The contract requires a module to *raise* when sent a `limit` it does not support, so an

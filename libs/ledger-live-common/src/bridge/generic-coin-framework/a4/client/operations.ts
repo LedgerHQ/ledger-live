@@ -321,6 +321,7 @@ export async function fetchA4Operations(
   chain: string,
   minHeight: number,
   maxDcRoamRetries: number,
+  maxOperations?: number,
 ): Promise<Operation[]> {
   const fetchRawPage = (cursor: string | undefined) =>
     client
@@ -335,7 +336,7 @@ export async function fetchA4Operations(
     a4AccountId,
     address,
     chain,
-    () => paginateOperations(fetchRawPage).then(adapt),
+    () => paginateOperations(fetchRawPage, maxOperations).then(adapt),
     maxDcRoamRetries,
   );
 }

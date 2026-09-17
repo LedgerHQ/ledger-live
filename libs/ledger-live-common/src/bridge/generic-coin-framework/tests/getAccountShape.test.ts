@@ -3446,6 +3446,10 @@ describe("genericGetAccountShape", () => {
       getBridgeApiMock.mockImplementation(() => ({
         ...defaultBridgeApi(),
         getAssetFromToken: getAssetFromTokenMock,
+        // Declaring `balanceOptions` is what marks a family as accepting the parameter at all,
+        // and therefore the resume fields; evm declares one, which is why it is the family that
+        // gets them.
+        balanceOptions: {},
       }));
     });
 
@@ -3501,6 +3505,27 @@ describe("genericGetAccountShape", () => {
       const options = getBalanceMock.mock.calls[0][2];
       expect(options.fromHeight).toBeUndefined();
       expect(options.knownAssets).toBeUndefined();
+    });
+
+    it("calls a family that declares no balance options with none at all, tokens or not", async () => {
+      // coin-tron and coin-casper wrap `getBalance` in `rejectBalanceOptions`, which throws on any
+      // truthy options value -- `{}` included. So a family that declares no `balanceOptions` must
+      // keep receiving `undefined`, even for an account whose sub-accounts would otherwise produce
+      // a `knownAssets` list. Both are routed through this framework, and tron holds TRC20 tokens.
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: getAssetFromTokenMock,
+      }));
+
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "sync-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [subAccount("0xaaa")],
+      });
+
+      expect(getBalanceMock.mock.calls[0][2]).toBeUndefined();
     });
   });
 });

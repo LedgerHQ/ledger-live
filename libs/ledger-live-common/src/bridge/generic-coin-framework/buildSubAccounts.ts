@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { boundByTransaction } from "./boundByTransaction";
 import {
   emptyHistoryCache,
   encodeTokenAccountId,
@@ -183,38 +184,14 @@ export async function buildSubAccounts({
  * plus one page, and all of that overshoot can belong to a single token.
  */
 /**
- * Cuts at a transaction boundary, never inside one. A single hash can produce several token rows
- * (a swap moving two assets, a batch), and `slice(0, max)` on a flat list can keep some of a
- * transaction's rows and drop its siblings -- the account would then show half a transaction, and
- * the parent watermark never refetches it. So the cut includes whole hash groups and overshoots
- * the bound rather than splitting one, which is the rule `paginateOperations` already applies a
- * level up when it returns the entire page that reached the bound.
+ * Applies the shared transaction-boundary cut to one sub-account, keeping `operationsCount` in
+ * step with what was retained. The rule itself, and why a whole hash group survives the cut, is
+ * documented on {@link boundByTransaction}.
  */
 function boundOperations(subAccount: TokenAccount, maxOperations?: number): TokenAccount {
-  if (maxOperations === undefined || subAccount.operations.length <= maxOperations) {
-    return subAccount;
-  }
+  const operations = boundByTransaction(subAccount.operations, maxOperations);
+  if (operations === subAccount.operations) return subAccount;
 
-  let kept = 0;
-  while (kept < subAccount.operations.length) {
-    const hash = subAccount.operations[kept].hash;
-    let groupEnd = kept + 1;
-    // A falsy hash is its own group: grouping those together would make one giant group and
-    // retain everything, which is the opposite of what this function is for.
-    if (hash) {
-      while (
-        groupEnd < subAccount.operations.length &&
-        subAccount.operations[groupEnd].hash === hash
-      ) {
-        groupEnd++;
-      }
-    }
-    // Take the group that crosses the bound whole, then stop.
-    kept = groupEnd;
-    if (kept >= maxOperations) break;
-  }
-
-  const operations = subAccount.operations.slice(0, kept);
   return { ...subAccount, operations, operationsCount: operations.length };
 }
 

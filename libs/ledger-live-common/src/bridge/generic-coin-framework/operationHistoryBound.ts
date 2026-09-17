@@ -42,7 +42,19 @@ export type OperationHistoryBound = {
 // A bound is meaningful only as a positive operation count; anything else (zero, negative,
 // a non-number) degrades to "absent" rather than to an accidental truncation -- the resolver then
 // substitutes the global value, or the shipped safety ceiling.
-const MaxOperationsSchema = z.number().int().positive().optional().catch(undefined);
+//
+// A valid but oversized value is clamped rather than honoured, for the same reason the page size
+// is: the shipped ceiling is the largest figure measured to complete a sync on the account from
+// the out-of-memory report, and the walk accumulates up to it in memory. A remote 10 000 000 is a
+// perfectly valid number that reopens the crash, so the remote knob can lower the bound and never
+// raise it -- raising it is a release, behind a measurement.
+const MaxOperationsSchema = z
+  .number()
+  .int()
+  .positive()
+  .transform(max => Math.min(max, DEFAULT_MAX_OPERATIONS))
+  .optional()
+  .catch(undefined);
 
 /**
  * The largest page size that may be sent to a module on this path.
@@ -215,7 +227,15 @@ export function resolveOperationHistoryBound(
     const { maxOperations: globalMax, pageSize: globalPageSize, networks } = parsed.data;
     const entry = networks[currencyId];
     const maxOperations = entry?.maxOperations ?? globalMax ?? DEFAULT_MAX_OPERATIONS;
-    const pageSize = entry?.pageSize ?? globalPageSize ?? DEFAULT_PAGE_SIZE_BY_FAMILY[family];
+    // The global page size applies only to a family already known to support `limit`. Without
+    // that gate, a global value set to tune evm would start sending a `limit` to casper and every
+    // other family whose module raises on it -- one remote setting taking down several families,
+    // which is exactly what the per-family list exists to prevent. A per-currency entry stays the
+    // explicit opt-in for an unlisted family: it names the currency, so it cannot be collateral.
+    const familyDefault = DEFAULT_PAGE_SIZE_BY_FAMILY[family];
+    const pageSize =
+      entry?.pageSize ??
+      (familyDefault !== undefined ? (globalPageSize ?? familyDefault) : undefined);
 
     return { maxOperations, pageSize };
   } catch {

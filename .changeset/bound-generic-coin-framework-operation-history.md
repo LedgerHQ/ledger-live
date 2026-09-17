@@ -7,6 +7,19 @@ xrp, stellar, tezos, tron, casper). The retained operations are always the most 
 stable across repeated syncs, and the bound is resolved per currency through remote config rather
 than hardcoded.
 
+The bound applies **per operation list** — the parent history, and each token sub-account's — not
+as one budget shared across them. It is a memory and stability bound on each list a sync persists,
+not an aggregate retention figure for the account. Within one sync the aggregate is bounded anyway,
+since the walk itself stops at the bound before any list is built. A remotely configured value can
+only **lower** the ceiling, never raise it: the shipped figure is the largest measured to complete
+a sync on the account from the report, so raising it goes through a release, behind a measurement.
+
+Each cut falls on a **transaction boundary**, never inside one. A single hash can carry several
+rows — two top-level rows for a self-send, several token rows for a swap or a batch — and cutting
+between them would persist half a transaction that the next sync's watermark never goes back to
+refetch. Siblings are found by hash rather than by adjacency, because operations sharing a block
+share its date and can interleave.
+
 It ships with a **safety ceiling** rather than unbounded: a sync that accumulates without any
 ceiling cannot complete on a very large account — measured at roughly 2 KB of live heap per
 retained operation, which on the account from the out-of-memory report extrapolates past 16 GB.
@@ -20,6 +33,11 @@ only evm, whose page cost was measured. This is independent of the bound above: 
 what a single page costs, the bound governs how much history is retained. Without it the walk's
 first "page" can be the entire history in one unbounded call, and no ceiling gets a chance to stop
 it before memory runs out.
+
+A remote **global** page size reaches only the families already known to support `limit`; an
+unlisted family still needs its own per-currency entry to opt in. Otherwise one value set to tune
+evm would start sending a `limit` to every unlisted family at once, which is precisely what the
+per-family list exists to prevent.
 
 It is sent per family rather than to everyone because the contract requires a module to *raise* a
 "not supported" error when sent a `limit` it cannot honour — several do. Sending one blindly would
