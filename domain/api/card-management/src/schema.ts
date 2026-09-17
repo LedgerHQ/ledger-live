@@ -320,6 +320,21 @@ export const PayCardLinkedWalletSchema = z.object({
 
 export const PayCardLinkedWalletsResponseSchema = z.array(PayCardLinkedWalletSchema);
 
+/**
+ * The wallet the card's rewards are paid into.
+ *
+ * One per holder, and the provider answers it as an object rather than a list. The balance stays a
+ * string for the same reason the custodial wallets' balance does: a decimal that survives the wire
+ * should not be rounded into a number on the way in.
+ */
+export const PayCardRewardWalletResponseSchema = z.object({
+  id: z.string().min(1),
+  balance: z.string().min(1),
+  currency: z.string().min(1),
+  /** Whether the holder may move these funds out, which the provider decides per programme. */
+  isWithdrawable: z.boolean(),
+});
+
 const PayCardWalletPrioritySchema = z.object({
   addressId: z.string().min(1),
   /**

@@ -7,6 +7,7 @@ import {
   PayCardLinkWalletResponseSchema,
   PayCardLinkedWalletSchema,
   PayCardLogoutResponseSchema,
+  PayCardRewardWalletResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardDetailsCssSchema,
@@ -552,6 +553,48 @@ describe("PayCardLinkedWalletSchema", () => {
 
   it("rejects a linked wallet with no network, which would not identify the asset", () => {
     expect(() => PayCardLinkedWalletSchema.parse({ ...linked, network: "" })).toThrow();
+  });
+});
+
+describe("PayCardRewardWalletResponseSchema", () => {
+  // The provider's own example response.
+  const documented = {
+    id: "098aeb90-e7f7-4f81-bc2e-4963330122c5",
+    balance: "45.75",
+    currency: "usdc",
+    isWithdrawable: true,
+  };
+
+  it("reads the documented wallet", () => {
+    expect(PayCardRewardWalletResponseSchema.parse(documented)).toEqual(documented);
+  });
+
+  it("keeps the balance a string, so its precision survives", () => {
+    const precise = { ...documented, balance: "9007199254740993.000001" };
+
+    expect(PayCardRewardWalletResponseSchema.parse(precise).balance).toBe(
+      "9007199254740993.000001",
+    );
+  });
+
+  it("drops the keys the wire contract does not declare", () => {
+    expect(PayCardRewardWalletResponseSchema.parse({ ...documented, type: "REWARD" })).toEqual(
+      documented,
+    );
+  });
+
+  it("rejects an answer that does not say whether the rewards can be withdrawn", () => {
+    const { isWithdrawable: _isWithdrawable, ...withoutFlag } = documented;
+
+    expect(() => PayCardRewardWalletResponseSchema.parse(withoutFlag)).toThrow();
+  });
+
+  it("rejects a wallet with no id, balance or currency", () => {
+    expect(() => PayCardRewardWalletResponseSchema.parse({ ...documented, id: "" })).toThrow();
+    expect(() => PayCardRewardWalletResponseSchema.parse({ ...documented, balance: "" })).toThrow();
+    expect(() =>
+      PayCardRewardWalletResponseSchema.parse({ ...documented, currency: "" }),
+    ).toThrow();
   });
 });
 
