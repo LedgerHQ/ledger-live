@@ -7,6 +7,10 @@ import {
 import { isMockCardRequest } from "@domain/api-card-management/mock/card-session";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
+  internalWalletsFromCardAssetsMock,
+  linkedWalletsFromCardAssetsMock,
+} from "@domain/api-card-management/mock/card-assets";
+import {
   mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
   mockPayCardStatus,
@@ -48,6 +52,11 @@ const handlers = [
   ),
 
   http.get("*/v1/wallet/internal", ({ request }) => {
+    const assets = internalWalletsFromCardAssetsMock();
+    if (assets !== undefined) {
+      return HttpResponse.json(assets);
+    }
+
     const { walletFunded } = readCardOnboardingStatusMock();
     if (walletFunded !== undefined) {
       return HttpResponse.json(mockPayCardInternalWallets(walletFunded));
@@ -59,6 +68,11 @@ const handlers = [
   }),
 
   http.get("*/v1/wallet/internal/card_linked", ({ request }) => {
+    const assets = linkedWalletsFromCardAssetsMock();
+    if (assets !== undefined) {
+      return HttpResponse.json(assets);
+    }
+
     const { walletFunded } = readCardOnboardingStatusMock();
 
     return walletFunded === undefined && !isMockCardRequest(request)

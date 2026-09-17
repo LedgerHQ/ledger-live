@@ -3,7 +3,8 @@
 The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place.
 
 The shared panel has: **Card Debug** (a list linking to Card Status / Card interaction, Balance &
-Wallets, **Card onboarding** — a full screen showing the real, derived onboarding steps, with
+Wallets — including **Assets fixtures** (Empty / Loaded / add any currency+network, when MSW is
+on) — **Card onboarding** — a full screen showing the real, derived onboarding steps, with
 mock-answer toggles when request mocking is on — and Currency Mapping), **Feature flags**, and
 **Feature tour** / **Onboarding completed** (seen state plus a reset, each).
 

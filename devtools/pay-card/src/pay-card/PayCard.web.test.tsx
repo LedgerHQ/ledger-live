@@ -262,4 +262,30 @@ describe("PayCard (web)", () => {
     expect(screen.getByText("GET /v1/wallet/internal")).toBeInTheDocument();
     expect(screen.getByText("401 unauthorized")).toBeInTheDocument();
   });
+
+  it("applies empty, loaded and custom asset fixtures from Balance & Wallets", () => {
+    const fixture = {
+      isMockingEnabled: true,
+      preset: "none" as const,
+      wallets: [],
+      catalog: [{ key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" }],
+      applyEmpty: jest.fn(),
+      applyLoaded: jest.fn(),
+      addAsset: jest.fn(),
+      removeAsset: jest.fn(),
+      clear: jest.fn(),
+    };
+    render(<PayCard {...buildProps()} balance={{ ...buildProps().balance, fixture }} />);
+
+    fireEvent.click(screen.getByText("Balance & Wallets"));
+    fireEvent.click(screen.getByText("Empty"));
+    fireEvent.click(screen.getByText("Loaded"));
+    fireEvent.click(screen.getByText("Add asset"));
+
+    expect(fixture.applyEmpty).toHaveBeenCalledTimes(1);
+    expect(fixture.applyLoaded).toHaveBeenCalledTimes(1);
+    expect(fixture.addAsset).toHaveBeenCalledWith(
+      expect.objectContaining({ currency: "usdc", network: "ethereum" }),
+    );
+  });
 });

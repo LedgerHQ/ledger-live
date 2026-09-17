@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./mock/card-details-token": "./src/cardDetailsToken.mock.ts",
+    "./mock/card-assets": "./src/cardAssets.mock.ts",
     "./mock/card-onboarding-status": "./src/cardOnboardingStatus.mock.ts",
     "./mock/card-session": "./src/cardMockSession.mock.ts",
     "./mock/card-transactions": "./src/cardTransactions.mock.ts",

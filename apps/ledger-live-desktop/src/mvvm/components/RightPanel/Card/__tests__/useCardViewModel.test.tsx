@@ -10,6 +10,10 @@ jest.mock("react-router", () => ({
   useNavigate: () => mockNavigate,
 }));
 
+jest.mock("../useCardWalletCounterValue", () => ({
+  useCardWalletCounterValue: () => () => null,
+}));
+
 // The harness router takes a path only, and this view model reads router state.
 function atPayTabWith(state: unknown) {
   return function Wrapper({ children }: { children: React.ReactNode }) {

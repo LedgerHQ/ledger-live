@@ -8,9 +8,11 @@ import type {
   FormatCardTransactionAmount,
   FormatCardTransactionDate,
 } from "@features/flow-pay-card-transactions";
+import type { ResolveWalletCounterValue } from "@features/flow-pay-card-assets";
 
 export type CardFormatters = Readonly<{
   countervalue?: (value: number) => FormattedValue;
+  resolveWalletCounterValue?: ResolveWalletCounterValue;
   transactionAmount?: FormatCardTransactionAmount;
   transactionDate?: FormatCardTransactionDate;
 }>;

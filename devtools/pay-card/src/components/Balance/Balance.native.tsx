@@ -8,6 +8,7 @@ import type {
   PayCardLinkedWallet,
 } from "../../types";
 import { Section } from "../Section/Section";
+import { AssetsFixture } from "../AssetsFixture/AssetsFixture";
 
 export interface BalanceScreenProps extends PayCardBalanceProps {
   readonly onBack: () => void;
@@ -90,6 +91,7 @@ export function BalanceScreen({
   combinedWallets,
   isFetching,
   errors,
+  fixture,
   onBack,
   refresh,
 }: BalanceScreenProps) {
@@ -108,6 +110,8 @@ export function BalanceScreen({
           accessibilityLabel="Refresh"
         />
       </Box>
+
+      {fixture ? <AssetsFixture {...fixture} /> : null}
 
       {errors.map(({ endpoint, detail }) => (
         <Box key={endpoint} lx={{ gap: "s4", paddingHorizontal: "s16" }}>
