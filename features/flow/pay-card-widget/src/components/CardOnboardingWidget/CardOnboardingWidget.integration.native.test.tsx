@@ -6,12 +6,16 @@ import {
   CARD_ONBOARDING_STEP_COPY,
   CARD_WALLET_PAY_COPY,
 } from "../../__tests__/i18nWrapper";
+import { useGetCardStatusQuery } from "@domain/api-card-management";
 import { createRenderWidget, setQuery, stepsWith, stepsWithIds } from "./__tests__/shared";
 
 jest.mock("../../onboardingStatus", () => ({
   useCardOnboardingStatus: jest.fn(),
 }));
 
+jest.mock("@domain/api-card-management", () => ({ useGetCardStatusQuery: jest.fn() }));
+
+const refetchCardStatus = jest.fn();
 const renderWidget = createRenderWidget(render);
 
 type User = ReturnType<typeof userEvent.setup>;
@@ -23,6 +27,10 @@ async function openWidget(user: User) {
 describe("CardOnboardingWidget (integration)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(useGetCardStatusQuery).mockReturnValue({
+      refetch: refetchCardStatus,
+      data: undefined,
+    } as unknown as ReturnType<typeof useGetCardStatusQuery>);
   });
 
   afterEach(() => {
@@ -141,14 +149,15 @@ describe("CardOnboardingWidget (integration)", () => {
       isDone: step.id === "top-up-card",
     }));
     setQuery({ data: { steps } });
-    const { store } = renderWidget();
+    renderWidget();
     await openWidget(user);
 
     await user.press(screen.getByTestId("pay-card-onboarding-step-apple-google-pay"));
 
     expect(screen.getByTestId("pay-card-add-to-wallet-instructions")).toBeVisible();
     expect(screen.getByText(CARD_ONBOARDING_ADD_TO_WALLET_COPY.ios.cta)).toBeVisible();
-    expect(store.getState().payCardOnboardingWidget.hasAddedCardToWallet).toBe(false);
+    // Opening the scene answers nothing: only the provider does, and it has not been re-asked.
+    expect(refetchCardStatus).not.toHaveBeenCalled();
   });
 
   it("should return to onboarding after opening the wallet", async () => {
@@ -158,13 +167,13 @@ describe("CardOnboardingWidget (integration)", () => {
       isDone: step.id === "top-up-card",
     }));
     setQuery({ data: { steps } });
-    const { store } = renderWidget();
+    renderWidget();
     await openWidget(user);
     await user.press(screen.getByTestId("pay-card-onboarding-step-apple-google-pay"));
 
     await user.press(screen.getByTestId("pay-card-add-to-wallet-cta"));
 
-    expect(store.getState().payCardOnboardingWidget.hasAddedCardToWallet).toBe(true);
+    expect(refetchCardStatus).toHaveBeenCalledTimes(1);
     expect(screen.queryByTestId("pay-card-add-to-wallet-instructions")).toBeNull();
     expect(screen.getByText(CARD_ONBOARDING_COPY.dialogTitle)).toBeVisible();
   });
@@ -210,7 +219,7 @@ describe("CardOnboardingWidget (integration)", () => {
   it("should hide the widget after got-it completes onboarding", async () => {
     const user = userEvent.setup();
     setQuery({ data: { steps: stepsWith(true) } });
-    renderWidget({ hasAddedCardToWallet: true });
+    renderWidget();
 
     expect(screen.getByTestId("pay-card-onboarding-widget-card").props.title).toBe(
       CARD_ONBOARDING_COPY.widgetAllDone,

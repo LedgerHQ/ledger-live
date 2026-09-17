@@ -58,4 +58,14 @@ describe("the mocked responses", () => {
     expect(mockPayCardUser(true).verificationState).toBe("VERIFIED");
     expect(mockPayCardUser(false).verificationState).not.toBe("VERIFIED");
   });
+  it.each([true, false])("answers the phone wallet flag when asked to: %s", added => {
+    const status = mockPayCardStatus(added);
+
+    expect(status.cardAddedToDigitalWallet).toBe(added);
+    expect(PayCardStatusResponseSchema.safeParse(status).success).toBe(true);
+  });
+
+  it("leaves the phone wallet flag off when unasked, as a tenant that does not answer for it", () => {
+    expect(mockPayCardStatus()).not.toHaveProperty("cardAddedToDigitalWallet");
+  });
 });
