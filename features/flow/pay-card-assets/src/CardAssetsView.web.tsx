@@ -77,10 +77,9 @@ function ManageAssetsDialog({
 
   return (
     <Dialog open onOpenChange={handleOpenChange}>
-      <DialogContent data-testid="card-assets-manage-dialog">
-        <DialogHeader density="compact" onClose={onClose} />
+      <DialogContent>
+        <DialogHeader density="expanded" title={title} onClose={onClose} />
         <DialogBody className="flex flex-col gap-16">
-          <span className="heading-3-semi-bold text-base">{title}</span>
           <div className="flex w-full flex-col gap-8">
             {rows.map(row => (
               <CardAssetListItem key={row.id} {...row} />
@@ -107,7 +106,7 @@ export function CardAssetsView({
   manageLabel,
   manageTitle,
   addAssetLabel,
-  isManageOpen,
+  manage,
   onManagePress,
   onManageClose,
   onAddAsset,
@@ -136,7 +135,7 @@ export function CardAssetsView({
         </div>
       ) : null}
       <ManageAssetsDialog
-        isOpen={isManageOpen}
+        isOpen={manage === "open"}
         title={manageTitle}
         rows={rows}
         addAssetLabel={addAssetLabel}

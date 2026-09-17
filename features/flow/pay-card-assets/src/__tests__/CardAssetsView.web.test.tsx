@@ -17,7 +17,7 @@ const ready: CardAssetsViewModel = {
   manageLabel: CARD_ASSETS_COPY.manage,
   manageTitle: CARD_ASSETS_COPY.manageTitle,
   addAssetLabel: CARD_ASSETS_COPY.add,
-  isManageOpen: false,
+  manage: "closed",
   onManagePress: jest.fn(),
   onManageClose: jest.fn(),
 };
@@ -61,10 +61,9 @@ describe("CardAssetsView (web)", () => {
   });
 
   it("should open the manage dialog with the same linked wallets", () => {
-    render(<CardAssetsView {...ready} isManageOpen />);
+    render(<CardAssetsView {...ready} manage="open" />);
 
-    expect(screen.getByTestId("card-assets-manage-dialog")).toBeVisible();
-    expect(screen.getByText(CARD_ASSETS_COPY.manageTitle)).toBeVisible();
+    expect(screen.getByRole("heading", { name: CARD_ASSETS_COPY.manageTitle })).toBeVisible();
     expect(screen.getAllByText("USDC")).toHaveLength(2);
   });
 
@@ -75,7 +74,7 @@ describe("CardAssetsView (web)", () => {
     render(
       <CardAssetsView
         {...ready}
-        isManageOpen
+        manage="open"
         onAddAsset={onAddAsset}
         onManageClose={onManageClose}
       />,

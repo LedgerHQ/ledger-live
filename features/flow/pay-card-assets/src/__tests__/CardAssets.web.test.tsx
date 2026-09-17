@@ -86,7 +86,7 @@ describe("CardAssets (web)", () => {
     renderCardAssets(onAddAsset);
 
     fireEvent.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
-    expect(screen.getByText(CARD_ASSETS_COPY.manageTitle)).toBeVisible();
+    expect(screen.getByRole("heading", { name: CARD_ASSETS_COPY.manageTitle })).toBeVisible();
 
     fireEvent.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.add }));
     expect(onAddAsset).toHaveBeenCalledTimes(1);

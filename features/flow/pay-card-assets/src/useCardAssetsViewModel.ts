@@ -25,7 +25,7 @@ export function formatCardAssetCryptoAmount(
 export function useCardAssetsViewModel({ onAddAsset }: CardAssetsProps = {}): CardAssetsViewModel {
   const { t } = useTranslation();
   const isSignedIn = useIsCardSignedIn();
-  const [isManageOpen, setIsManageOpen] = useState(false);
+  const [manage, setManage] = useState<"closed" | "open">("closed");
   const { wallets, isLoading, isError } = useCardLinkedWallets({
     resolveCounterValue: NO_COUNTER_VALUE,
     skip: !isSignedIn,
@@ -49,8 +49,8 @@ export function useCardAssetsViewModel({ onAddAsset }: CardAssetsProps = {}): Ca
     return "ready";
   }, [isLoading, isError, rows.length]);
 
-  const onManagePress = useCallback(() => setIsManageOpen(true), []);
-  const onManageClose = useCallback(() => setIsManageOpen(false), []);
+  const onManagePress = useCallback(() => setManage("open"), []);
+  const onManageClose = useCallback(() => setManage("closed"), []);
 
   return useMemo(
     () => ({
@@ -63,11 +63,11 @@ export function useCardAssetsViewModel({ onAddAsset }: CardAssetsProps = {}): Ca
       manageLabel: t(`${KEY_PREFIX}.manage`),
       manageTitle: t(`${KEY_PREFIX}.manageTitle`),
       addAssetLabel: t(`${KEY_PREFIX}.add`),
-      isManageOpen,
+      manage,
       onManagePress,
       onManageClose,
       onAddAsset,
     }),
-    [isSignedIn, t, status, rows, isManageOpen, onManagePress, onManageClose, onAddAsset],
+    [isSignedIn, t, status, rows, manage, onManagePress, onManageClose, onAddAsset],
   );
 }

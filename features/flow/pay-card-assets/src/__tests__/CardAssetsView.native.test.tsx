@@ -14,7 +14,7 @@ const ready: CardAssetsViewModel = {
   manageLabel: CARD_ASSETS_COPY.manage,
   manageTitle: CARD_ASSETS_COPY.manageTitle,
   addAssetLabel: CARD_ASSETS_COPY.add,
-  isManageOpen: false,
+  manage: "closed",
   onManagePress: jest.fn(),
   onManageClose: jest.fn(),
 };

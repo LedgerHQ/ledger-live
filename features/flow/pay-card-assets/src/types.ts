@@ -21,7 +21,7 @@ export type CardAssetsViewModel = Readonly<{
   manageLabel: string;
   manageTitle: string;
   addAssetLabel: string;
-  isManageOpen: boolean;
+  manage: "closed" | "open";
   onManagePress: () => void;
   onManageClose: () => void;
   onAddAsset?: () => void;
