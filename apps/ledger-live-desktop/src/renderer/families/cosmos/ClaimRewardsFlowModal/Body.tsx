@@ -23,10 +23,11 @@ import StepClaimRewards, { StepClaimRewardsFooter } from "./steps/StepClaimRewar
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import type {
-  CosmosAccount,
-  Transaction as CosmosTransaction,
-} from "@ledgerhq/coin-cosmos/types/index";
+import {
+  type CosmosAccount,
+  type Transaction as CosmosTransaction,
+  getCosmosResources,
+} from "@ledgerhq/live-common/families/cosmos/types";
 
 export type Data = {
   account: CosmosAccount;
@@ -89,10 +90,11 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgePending,
   } = useBridgeTransaction(bridge, () => {
     const { account, validatorAddress } = params;
-    invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
+    const cosmosResources = getCosmosResources(account);
+    invariant(account && cosmosResources, "cosmos: account and cosmos resources required");
 
     // preselect validator either one from params or the first one available on the list
-    const validators = account.cosmosResources.delegations
+    const validators = cosmosResources.delegations
       .filter(d =>
         validatorAddress ? d.validatorAddress === validatorAddress : d.pendingRewards.gt(0),
       )

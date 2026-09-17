@@ -26,9 +26,11 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
 import {
-  CosmosAccount,
-  Transaction as CosmosTransaction,
+  type CosmosAccount,
+  type Transaction as CosmosTransaction,
+  getCosmosResources,
 } from "@ledgerhq/live-common/families/cosmos/types";
+
 export type Data = {
   account: CosmosAccount;
   validatorAddress: string | undefined | null;
@@ -107,10 +109,9 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(bridge, () => {
-    invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
-    const source = account.cosmosResources?.delegations.find(
-      d => d.validatorAddress === validatorAddress,
-    );
+    const cosmosResources = getCosmosResources(account);
+    invariant(account && cosmosResources, "cosmos: account and cosmos resources required");
+    const source = cosmosResources?.delegations.find(d => d.validatorAddress === validatorAddress);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "redelegate",

@@ -22,8 +22,9 @@ import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
 import {
-  CosmosAccount,
-  Transaction as CosmosTransaction,
+  type CosmosAccount,
+  type Transaction as CosmosTransaction,
+  getCosmosResources,
 } from "@ledgerhq/live-common/families/cosmos/types";
 
 export type Data = {
@@ -74,8 +75,9 @@ function Body({
     bridgePending,
     status,
   } = useBridgeTransaction(bridge, () => {
-    invariant(accountProp.cosmosResources, "cosmos: account and cosmos resources required");
-    const delegations = accountProp.cosmosResources.delegations || [];
+    const cosmosResources = getCosmosResources(accountProp);
+    invariant(cosmosResources, "cosmos: account and cosmos resources required");
+    const delegations = cosmosResources.delegations || [];
     const initTx = bridge.createTransaction(accountProp);
     const newTx = {
       mode: "undelegate" as const,

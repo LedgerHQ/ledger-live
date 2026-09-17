@@ -11,9 +11,12 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { CosmosAPI } from "@ledgerhq/coin-cosmos/network/Cosmos";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import {
+  type CosmosAccount,
+  getCosmosResources,
+} from "@ledgerhq/live-common/families/cosmos/types";
+import { CosmosAPI } from "@ledgerhq/live-common/families/cosmos/network";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
@@ -85,11 +88,11 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   const unit = useAccountUnit(account);
   if (account.type !== "Account") return null;
-  const { spendableBalance: _spendableBalance, cosmosResources } = account;
+  const { spendableBalance: _spendableBalance } = account;
   const {
     delegatedBalance: _delegatedBalance = new BigNumber(0),
     unbondingBalance: _unbondingBalance = new BigNumber(0),
-  } = cosmosResources || {};
+  } = getCosmosResources(account) || {};
   const formatConfig = {
     disableRounding: false,
     alwaysShowSign: false,

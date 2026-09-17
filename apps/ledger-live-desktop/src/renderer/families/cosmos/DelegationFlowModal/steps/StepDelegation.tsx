@@ -1,5 +1,5 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback } from "react";
@@ -22,8 +22,6 @@ export default function StepDelegation({
   t,
 }: StepProps) {
   invariant(transaction && transaction.validators, "transaction required");
-  const { cosmosResources } = account;
-  const delegations = cosmosResources.delegations || [];
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const updateValidator = useCallback(
     ({ address }: { address: string }) => {
@@ -59,7 +57,6 @@ export default function StepDelegation({
         account={account}
         status={status}
         t={t}
-        delegations={delegations}
         onChangeValidator={updateValidator}
         chosenVoteAccAddr={chosenVoteAccAddr}
       />

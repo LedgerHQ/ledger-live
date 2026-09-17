@@ -23,14 +23,14 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { useNavigate } from "react-router";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { getAccountUrl } from "~/renderer/utils";
+import { CosmosAccount, getCosmosResources } from "@ledgerhq/live-common/families/cosmos/types";
 
 type DelegationActionsModalName =
   | "MODAL_COSMOS_CLAIM_REWARDS"
@@ -47,7 +47,7 @@ const Wrapper = styled(Box).attrs(() => ({
 const Delegation = ({ account }: { account: CosmosAccount }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { cosmosResources } = account;
+  const cosmosResources = getCosmosResources(account);
   const {
     delegations = [],
     pendingRewardsBalance: _pendingRewardsBalance,
