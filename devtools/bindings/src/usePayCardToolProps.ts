@@ -61,6 +61,7 @@ const STEP_ANSWERS: Readonly<Partial<Record<string, keyof CardOnboardingStatusMo
   "create-account": "accountVerified",
   "choose-card-type": "hasCard",
   "top-up-card": "walletFunded",
+  "apple-google-pay": "cardAddedToDigitalWallet",
 };
 
 /**
@@ -196,7 +197,8 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const setDerivedStepDone = useCallback(
     (id: string, done: boolean) => {
-      if (id === WALLET_STEP_ID) {
+      // Without mocking there is no answer to write, so the wallet step stays on the device.
+      if (id === WALLET_STEP_ID && !isRequestMockingEnabled()) {
         dispatch(done ? markCardAddedToWallet() : resetCardAddedToWallet());
         return;
       }

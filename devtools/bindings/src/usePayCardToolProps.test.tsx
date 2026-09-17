@@ -383,6 +383,31 @@ describe("usePayCardToolProps", () => {
       expect(readCardOnboardingStatusMock()).toEqual({});
     });
 
+    it("writes the phone wallet answer to the mock while mocking is on, not to the device", () => {
+      process.env.MSW_ENABLED = "true";
+      const store = buildStore();
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      act(() => {
+        result.current.cardOnboarding.setStepDone("apple-google-pay", true);
+      });
+
+      expect(readCardOnboardingStatusMock()).toEqual({ cardAddedToDigitalWallet: true });
+      expect(store.getState().payCardOnboardingWidget.hasAddedCardToWallet).toBe(false);
+    });
+
+    it("hands the phone wallet step back to the provider when the answer is cleared", () => {
+      process.env.MSW_ENABLED = "true";
+      const store = buildStore();
+      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+      act(() => {
+        result.current.cardOnboarding.setStepDone("apple-google-pay", false);
+      });
+
+      expect(readCardOnboardingStatusMock()).toEqual({ cardAddedToDigitalWallet: false });
+    });
+
     it("ignores a step nothing answers, so the purchase step cannot be forced", () => {
       const store = buildStore();
       const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });

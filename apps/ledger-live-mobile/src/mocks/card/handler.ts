@@ -127,13 +127,16 @@ const handlers = [
   }),
 
   http.get("*/v1/card/status", ({ request }) => {
-    const { hasCard } = readCardOnboardingStatusMock();
-    if (hasCard !== undefined) {
-      // No card is an absent one, not an empty one: the step reads "has the provider answered with
-      // a card at all", and a 404 is how it answers that it has not.
-      return hasCard
-        ? HttpResponse.json(mockPayCardStatus())
-        : HttpResponse.json({ message: "No card ordered" }, { status: 404 });
+    const { hasCard, cardAddedToDigitalWallet } = readCardOnboardingStatusMock();
+    // No card is an absent one, not an empty one: the step reads "has the provider answered with
+    // a card at all", and a 404 is how it answers that it has not.
+    if (hasCard === false) {
+      return HttpResponse.json({ message: "No card ordered" }, { status: 404 });
+    }
+
+    // Also mocked for the wallet answer alone, so that step can be held without holding the card.
+    if (hasCard === true || cardAddedToDigitalWallet !== undefined) {
+      return HttpResponse.json(mockPayCardStatus(cardAddedToDigitalWallet));
     }
 
     if (!isMockCardRequest(request)) {

@@ -15,6 +15,12 @@ export type CardOnboardingSourcesParams = {
 
 export type CardOnboardingSources = {
   readonly signals: CardOnboardingSignals<CardOnboardingProviderStepId>;
+  /**
+   * Whether the card sits in the phone's wallet, or `undefined` from a tenant that does not answer
+   * for it. Not a signal: a step nothing answered is for the platform to decide, and only mobile
+   * lists this one.
+   */
+  readonly cardAddedToDigitalWallet: boolean | undefined;
   readonly isLoading: boolean;
   readonly isError: boolean;
   readonly refresh: () => void;
@@ -66,6 +72,7 @@ export function useCardOnboardingSources({
 
   return {
     signals,
+    cardAddedToDigitalWallet: cardStatus.data?.cardAddedToDigitalWallet,
     refresh,
     // `isFetching` on all three, not `isLoading`: a query reports `isLoading` only while it has no
     // data, so after the first read a refetch would have looked idle.
