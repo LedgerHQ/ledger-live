@@ -1,4 +1,14 @@
-<!-- Create all pull requests in Draft. Automated checks must pass before making your pull request "Ready for review". See CONTRIBUTING.md for guidelines. -->
+<!--
+
+  Create all pull requests in Draft. Before making your pull request "Ready for review":
+
+      - Automated checks must pass
+      - Copilot review should be requested
+      - All Copilot comments should be addressed
+
+  See CONTRIBUTING.md for full details
+
+-->
 
 ### 📝 Description
 
