@@ -4,7 +4,7 @@
 
       - Automated checks must pass
       - Copilot review should be requested
-      - All Copilot comments should be addressed
+      - All Copilot comments should be addressed or explicitly dismissed, and all threads resolved
 
   See CONTRIBUTING.md for full details
 
