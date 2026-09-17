@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/coin-modules/registry";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { GenerateByCurrencyOptions, GenerateEmptyOptions } from "../types";
 

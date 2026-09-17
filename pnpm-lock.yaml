@@ -339,9 +339,6 @@ catalogs:
     '@types/node':
       specifier: 24.12.0
       version: 24.12.0
-    '@types/numeral':
-      specifier: 2.0.5
-      version: 2.0.5
     '@types/qrcode':
       specifier: 1.5.5
       version: 1.5.5
@@ -13961,15 +13958,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/numeral':
-        specifier: 'catalog:'
-        version: 2.0.5
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.14
-      '@types/semver':
-        specifier: 'catalog:'
-        version: 7.7.1
       '@types/uuid':
         specifier: ^8.3.4
         version: 8.3.4

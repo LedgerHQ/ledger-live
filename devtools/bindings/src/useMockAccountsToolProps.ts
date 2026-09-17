@@ -4,7 +4,7 @@ import sample from "lodash/sample";
 import BigNumber from "bignumber.js";
 import { genMockAccount } from "@ledgerhq/live-common/mock/account";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/coin-modules/registry";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { useStocksData, selectTopStocks } from "@features/platform-aggregated-assets";

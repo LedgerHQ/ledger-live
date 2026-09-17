@@ -5,7 +5,7 @@ import VersionNumber from "react-native-version-number";
 import { genMockAccount } from "@ledgerhq/live-common/mock/account";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/coin-modules/registry";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useTokenById } from "@features/platform-currencies";
 import { useStocksData, selectTopStocks } from "@features/platform-aggregated-assets";
