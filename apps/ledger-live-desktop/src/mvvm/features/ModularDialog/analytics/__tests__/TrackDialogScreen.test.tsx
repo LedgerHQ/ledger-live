@@ -3,7 +3,7 @@ import { render } from "tests/testSetup";
 import TrackDialogScreen from "../TrackDialogScreen";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { MODULAR_DIALOG_PAGE_NAME } from "../modularDialog.types";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 
 describe("TrackDialogScreen", () => {
   beforeEach(() => {
@@ -17,12 +17,12 @@ describe("TrackDialogScreen", () => {
     render(<TrackDialogScreen page={page} />, { initialState: { modularDialog: params } });
 
     expect(trackPage).toHaveBeenCalledWith(
-      "Asset Selection",
-      undefined,
-      { flow: "flowtest", source: "sourcetest" },
-      true,
-      true,
-      false,
+      {
+        category: "Asset Selection",
+        name: undefined,
+        props: { flow: "flowtest", source: "sourcetest" },
+      },
+      { updateRoutes: true, refreshSource: true, mandatory: false },
     );
   });
 
@@ -38,16 +38,21 @@ describe("TrackDialogScreen", () => {
     });
 
     expect(trackPage).toHaveBeenCalledWith(
-      "Asset Selection",
-      undefined,
       {
-        asset_component_features: { apy: false, balance: false, filter: true, market_trend: false },
-        flow: "flowtest",
-        source: "sourcetest",
+        category: "Asset Selection",
+        name: undefined,
+        props: {
+          asset_component_features: {
+            apy: false,
+            balance: false,
+            filter: true,
+            market_trend: false,
+          },
+          flow: "flowtest",
+          source: "sourcetest",
+        },
       },
-      true,
-      true,
-      false,
+      { updateRoutes: true, refreshSource: true, mandatory: false },
     );
   });
 
@@ -63,20 +68,20 @@ describe("TrackDialogScreen", () => {
     });
 
     expect(trackPage).toHaveBeenCalledWith(
-      "Network Selection",
-      undefined,
       {
-        flow: "flowtest",
-        network_component_features: {
-          numberOfAccounts: true,
-          numberOfAccountsAndApy: false,
-          balance: false,
+        category: "Network Selection",
+        name: undefined,
+        props: {
+          flow: "flowtest",
+          network_component_features: {
+            numberOfAccounts: true,
+            numberOfAccountsAndApy: false,
+            balance: false,
+          },
+          source: "sourcetest",
         },
-        source: "sourcetest",
       },
-      true,
-      true,
-      false,
+      { updateRoutes: true, refreshSource: true, mandatory: false },
     );
   });
 });
