@@ -36,9 +36,7 @@ export function useByTypeSectionViewModel({
 
   const isValid = includeCryptos || includeStablecoins || includeStocks;
   const isReady =
-    isValid &&
-    (!includeStablecoins || !stablecoinsLoading) &&
-    (!includeStocks || !stocksLoading);
+    isValid && (!includeStablecoins || !stablecoinsLoading) && (!includeStocks || !stocksLoading);
 
   const onToggleCryptos = useCallback((v: boolean) => {
     setIncludeCryptos(v);

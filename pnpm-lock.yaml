@@ -3655,6 +3655,9 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../libs/types-live
       lodash:
         specifier: 'catalog:'
         version: 4.17.21
