@@ -1,5 +1,5 @@
 import { ReplaySubject } from "rxjs";
-import type { LoggableEvent } from "../types";
+import type { AnalyticsEvent, LoggableEvent } from "../types";
 
 const eventLog = new ReplaySubject<LoggableEvent>(30);
 
