@@ -91,16 +91,11 @@ Mandatory events can be used to bypass the `enabled` state. See [Additional opti
 
 ```ts
 trackPage(
-  "Modal send",
-  "step recipient",
-  { flow: "send" },
-  {
-    updateRoutes: true,
-    refreshSource: true,
-  },
+  { category: "Modal send", name: "step recipient", props: { flow: "send" } },
+  { updateRoutes: true, refreshSource: true },
 );
 
-trackPage("Mandatory Page", null, null, { mandatory: true });
+trackPage({ category: "Mandatory Page" }, { mandatory: true });
 ```
 
 Use `avoidDuplicates: true` when a screen component may remount and emit the same page event twice.
