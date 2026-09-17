@@ -138,7 +138,7 @@ export class SwapPage extends WebViewAppPage {
     const buttonLocator = await this.checkQuoteCardCtaPresence(providerUiName);
     const actualButtonText = (await buttonLocator.textContent())?.trim() ?? "";
     const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
-    expect(actualButtonText).toMatch(expected);
+    expect.soft(actualButtonText).toMatch(expected);
   }
 
   @step("Get provider list")
