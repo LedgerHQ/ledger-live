@@ -165,6 +165,19 @@ describe("RefreshVotingPower", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
+  // The canister numbers neurons from zero, and `0n` is falsy: guarding the confirm button with
+  // `!neuron.id` disabled a real neuron permanently, with no way for the user to restore its power.
+  it("confirms a neuron whose id is zero", () => {
+    neurons = [makeHealthyNeuron({ id: 0n })];
+
+    renderScreen();
+    const confirm = screen.getByTestId("icp-confirm-following-0");
+
+    expect(confirm).not.toBeDisabled();
+    fireEvent.press(confirm);
+    expect(mockNavigate).toHaveBeenCalled();
+  });
+
   // One Confirm per row, so a fixed testID would collide and `getBy*` would throw on two.
   it("names each confirm control after its own neuron", () => {
     neurons = [refreshedDaysAgo(7n, 200), refreshedDaysAgo(8n, 200)];
