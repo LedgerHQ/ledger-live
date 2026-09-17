@@ -148,6 +148,44 @@ describe("PayCardStatusResponseSchema", () => {
       PayCardStatusResponseSchema.parse({ ...cardStatus, type: "SOMETHING_ELSE" }),
     ).toThrow();
   });
+
+  it("reads whether the card may be frozen, which `status` does not say", () => {
+    expect(
+      PayCardStatusResponseSchema.parse({ ...cardStatus, isFreezable: true }).isFreezable,
+    ).toBe(true);
+    expect(
+      PayCardStatusResponseSchema.parse({ ...cardStatus, isFreezable: false }).isFreezable,
+    ).toBe(false);
+  });
+
+  it("leaves both new flags undefined for a tenant that omits them", () => {
+    const parsed = PayCardStatusResponseSchema.parse(cardStatus);
+
+    expect(parsed.isFreezable).toBeUndefined();
+    expect(parsed.cardAddedToDigitalWallet).toBeUndefined();
+  });
+
+  it("rejects a freezable flag that is not a boolean", () => {
+    expect(() =>
+      PayCardStatusResponseSchema.parse({ ...cardStatus, isFreezable: "true" }),
+    ).toThrow();
+  });
+
+  it("reads whether the card was added to a phone wallet", () => {
+    const added = { ...cardStatus, cardAddedToDigitalWallet: true };
+
+    expect(PayCardStatusResponseSchema.parse(added).cardAddedToDigitalWallet).toBe(true);
+    expect(
+      PayCardStatusResponseSchema.parse({ ...cardStatus, cardAddedToDigitalWallet: false })
+        .cardAddedToDigitalWallet,
+    ).toBe(false);
+  });
+
+  it("rejects a phone wallet flag that is not a boolean", () => {
+    expect(() =>
+      PayCardStatusResponseSchema.parse({ ...cardStatus, cardAddedToDigitalWallet: "false" }),
+    ).toThrow();
+  });
 });
 
 describe("PayCardDetailsTokenResponseSchema", () => {
