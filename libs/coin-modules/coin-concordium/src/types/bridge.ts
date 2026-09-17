@@ -2,6 +2,7 @@ import type {
   Account,
   AccountRaw,
   CurrencyBridge,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -10,11 +11,52 @@ import type {
 import type { BigNumber } from "bignumber.js";
 import type { Observable } from "rxjs";
 import type { PltTransferStatus } from "./network";
+import { isPltRejectCode, type PltRejectCode } from "./operation";
 import type {
   ConcordiumOnboardProgress,
   ConcordiumOnboardResult,
   ConcordiumPairingProgress,
 } from "./onboard";
+
+/**
+ * What this family puts on `Operation.extra`.
+ *
+ * `Operation` leaves `extra` as `unknown`, which cannot be read from without a
+ * cast, so a renderer needs this type to see either field. Both are plain
+ * strings and survive the framework's own serialization, so no
+ * `toOperationExtraRaw` hook is involved.
+ */
+export type ConcordiumOperationExtra = {
+  memo?: string;
+  pltRejectCode?: PltRejectCode;
+};
+
+export type ConcordiumOperation = Operation<ConcordiumOperationExtra>;
+
+/**
+ * Reads the fields a renderer displays, keeping only what is safe to show.
+ *
+ * `extra` has been written to disk and read back by the time a renderer sees it,
+ * so nothing about its shape is guaranteed. An object memo throws as a React
+ * child, an empty one renders a titled row with nothing in it, and the reject
+ * code becomes a translation key — so an unrecognised code has to be dropped
+ * rather than looked up.
+ *
+ * Shared by both apps so the two cannot drift on what they consider displayable.
+ */
+export function readOperationExtra(extra: unknown): ConcordiumOperationExtra {
+  const fields = (typeof extra === "object" && extra !== null ? extra : {}) as Record<
+    string,
+    unknown
+  >;
+  const memo = typeof fields.memo === "string" && fields.memo.length > 0 ? fields.memo : undefined;
+  const code = isPltRejectCode(fields.pltRejectCode) ? fields.pltRejectCode : undefined;
+
+  return {
+    ...(memo === undefined ? {} : { memo }),
+    ...(code === undefined ? {} : { pltRejectCode: code }),
+  };
+}
 
 export interface ConcordiumCurrencyBridge extends CurrencyBridge {
   pairWalletConnect: (

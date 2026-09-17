@@ -2,7 +2,18 @@ import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import type { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
-import type { RawOperation } from "../types";
+import type { ConcordiumOperation, ConcordiumOperationExtra, RawOperation } from "../types";
+
+/**
+ * Spread conditionally rather than assigned: `exactOptionalPropertyTypes` is on,
+ * so an explicit `undefined` does not satisfy an optional field.
+ */
+function operationExtra(op: RawOperation): ConcordiumOperationExtra {
+  return {
+    ...(op.memo === undefined ? {} : { memo: op.memo }),
+    ...(op.rejectCode === undefined ? {} : { pltRejectCode: op.rejectCode }),
+  };
+}
 
 /**
  * The fields every operation this family builds shares. `type` and `value` are
@@ -14,7 +25,7 @@ export function baseOperation(
   accountId: string,
   type: OperationType,
   value: BigNumber,
-): Operation {
+): ConcordiumOperation {
   return {
     id: encodeOperationId(accountId, op.hash, type),
     hash: op.hash,
@@ -34,10 +45,15 @@ export function baseOperation(
   };
 }
 
-export function toOperation(op: RawOperation, accountId: string): Operation {
+/**
+ * Returns `ConcordiumOperation` so this write is checked against the type the
+ * renderers read; annotating it `Operation` would leave `extra` as `unknown` and
+ * a mistyped key would compile on both sides.
+ */
+export function toOperation(op: RawOperation, accountId: string): ConcordiumOperation {
   return {
     ...baseOperation(op, accountId, op.type, new BigNumber(op.value)),
-    extra: op.memo ? { memo: op.memo } : {},
+    extra: operationExtra(op),
   };
 }
 

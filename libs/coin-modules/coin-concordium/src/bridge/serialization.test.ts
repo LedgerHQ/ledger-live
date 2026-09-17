@@ -351,6 +351,31 @@ describe("mapRawOperationToBridgeOperation", () => {
     expect((result.extra as Record<string, unknown>)?.memo).toBeUndefined();
   });
 
+  it("should include the PLT reject cause in extra when present", () => {
+    const raw = createRawOperation({ rejectCode: "insufficientBalance" });
+    const result = mapRawOperationToBridgeOperation(raw, ACCOUNT_ID);
+
+    expect((result.extra as Record<string, unknown>)?.pltRejectCode).toBe("insufficientBalance");
+  });
+
+  it("should not include the PLT reject cause in extra when absent", () => {
+    const result = mapRawOperationToBridgeOperation(createRawOperation(), ACCOUNT_ID);
+
+    expect((result.extra as Record<string, unknown>)?.pltRejectCode).toBeUndefined();
+  });
+
+  // `extra` is the only per-operation slot, so one field must not shadow the other.
+  it("should carry a memo and a reject cause together", () => {
+    const raw = createRawOperation({ memo: "test memo", rejectCode: "rejected" });
+    const extra = mapRawOperationToBridgeOperation(raw, ACCOUNT_ID).extra as Record<
+      string,
+      unknown
+    >;
+
+    expect(extra.memo).toBe("test memo");
+    expect(extra.pltRejectCode).toBe("rejected");
+  });
+
   it("should map IN operations correctly", () => {
     const raw = createRawOperation({ type: "IN", value: "2000000", fee: "0" });
     const result = mapRawOperationToBridgeOperation(raw, ACCOUNT_ID);
