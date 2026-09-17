@@ -3277,6 +3277,13 @@
     },
     "details": "{{ currency }} details",
     "extra": {
+      "pltReject": {
+        "title": "Reason",
+        "nonExistentToken": "This token doesn't exist on Concordium.",
+        "recipientNotFound": "The recipient account doesn't exist on Concordium.",
+        "insufficientBalance": "The account didn't hold enough of the token.",
+        "rejected": "Concordium refused this operation."
+      },
       "transferId": "Transfer ID (Memo)",
       "resource": "Resource",
       "validator": "Validator",

@@ -8,6 +8,7 @@ import type {
   WalletProxyTransaction,
 } from "../../types";
 import { decodeMemo, decodePltMemo } from "./memo";
+import { pltRejectCode } from "./pltRejectCode";
 
 const DEFAULT_PAGE_SIZE = 100;
 
@@ -116,7 +117,12 @@ function parseRejectedTokenUpdate(
 ): RawOperation | null {
   if (!isFeePayer(tx)) return null;
 
-  return feeOnlyOperation(tx, address, true, rejectedTokenId(tx));
+  const operation = feeOnlyOperation(tx, address, true, rejectedTokenId(tx));
+  const rejectCode = pltRejectCode(tx.details.rawRejectReason);
+
+  // Set conditionally so a reason this layer cannot narrow leaves the field
+  // absent, rather than claiming a cause by defaulting to one.
+  return rejectCode === undefined ? operation : { ...operation, rejectCode };
 }
 
 /** Bounded because it only ever selects a power of ten to divide the amount by. */

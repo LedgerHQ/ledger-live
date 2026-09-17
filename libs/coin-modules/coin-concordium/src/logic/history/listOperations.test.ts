@@ -358,6 +358,43 @@ describe("parseTransaction, PLT", () => {
 
       expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
     });
+
+    it("carries the cause the reason narrows to", () => {
+      const tx: WalletProxyTransaction = {
+        ...rejectedTx,
+        details: {
+          ...rejectedTx.details,
+          rawRejectReason: {
+            tag: "TokenUpdateTransactionFailed",
+            contents: { tokenId: "trUSDT", type: "tokenBalanceInsufficient" },
+          },
+        },
+      };
+
+      expect(parseTransaction(tx, VALID_ADDRESS)!.rejectCode).toBe("insufficientBalance");
+    });
+
+    it("carries the generic cause for a module reason it cannot narrow", () => {
+      expect(parseTransaction(rejectedTx, VALID_ADDRESS)!.rejectCode).toBe("rejected");
+    });
+
+    // `failed` already says the transfer did not happen. A PLT cause on a
+    // failure the chain attributed elsewhere would explain the wrong thing.
+    it("leaves the cause absent when the reason is not a PLT one", () => {
+      const tx: WalletProxyTransaction = {
+        ...rejectedTx,
+        details: {
+          ...rejectedTx.details,
+          rawRejectReason: { tag: "InvalidNonce" },
+        },
+      };
+
+      expect(parseTransaction(tx, VALID_ADDRESS)!.rejectCode).toBeUndefined();
+    });
+
+    it("leaves the cause absent on a successful transfer", () => {
+      expect(parseTransaction(outgoingTx, VALID_ADDRESS)!.rejectCode).toBeUndefined();
+    });
   });
 });
 
