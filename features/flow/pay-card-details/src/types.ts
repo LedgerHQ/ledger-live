@@ -102,7 +102,7 @@ export type RevealViewModel = Readonly<{
   imageUrl: string | undefined;
   onReveal: () => Promise<void>;
   onHide: () => void;
-  onImageLoad: () => void;
+  onImageLoad: (loadedUrl?: string) => void;
   onImageError: () => void;
 }>;
 

@@ -43,7 +43,7 @@ function DetailsImage({
   onImageError,
 }: {
   readonly imageUrl: string;
-  readonly onImageLoad: () => void;
+  readonly onImageLoad: (loadedUrl?: string) => void;
   readonly onImageError: () => void;
 }) {
   const { t } = useTranslation();
@@ -61,7 +61,7 @@ function DetailsImage({
         referrerPolicy="no-referrer"
         decoding="async"
         className="size-full object-contain"
-        onLoad={onImageLoad}
+        onLoad={() => onImageLoad(imageUrl)}
         onError={onImageError}
       />
     </div>
