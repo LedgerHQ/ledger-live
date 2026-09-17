@@ -35,7 +35,7 @@ const BUTTON_ROW_STYLE = {
 } as const;
 const PANEL_STYLE = { flex: 1 } as const;
 
-export function PayCard(props: Readonly<PayCardToolProps>) {
+function PayCard(props: Readonly<PayCardToolProps>) {
   const {
     flags,
     onboarding,
