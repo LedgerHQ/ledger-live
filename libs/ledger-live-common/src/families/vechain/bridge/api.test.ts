@@ -109,4 +109,12 @@ describe("vechain bridge api", () => {
       });
     });
   });
+
+  describe("fees currency", () => {
+    it("declares VTHO as the currency VeChain charges gas in", () => {
+      // Gas is always paid in VTHO, never in VET, so the framework must not fold the fee into a
+      // VET operation's value nor render it with the VET unit.
+      expect(vechainBridge(vechain).feesCurrencyId).toBe("vechain/vip180/vtho");
+    });
+  });
 });

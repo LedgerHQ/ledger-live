@@ -29,6 +29,8 @@ import { mockVechainConfig } from "../test/context";
 
 const { ABIEvent, Hex, VIP180_ABI } = jest.requireMock("@vechain/sdk-core");
 
+const GAS_PAYER = "0xcf130b42ae31c4931298b4b1c0f1d974b8732957";
+
 const mockedGetFees = jest.mocked(getFees);
 const mockedEncodeOperationId = jest.mocked(encodeOperationId);
 const mockedABIEvent = ABIEvent;
@@ -69,7 +71,10 @@ describe("mapVetTransfersToOperations", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedGetFees.mockResolvedValue(new BigNumber("21000000000000000"));
+    mockedGetFees.mockResolvedValue({
+      fees: new BigNumber("21000000000000000"),
+      gasPayer: GAS_PAYER,
+    });
     mockedEncodeOperationId.mockImplementation(
       (accountId, hash, type) => `${accountId}${hash}${type}`,
     );
@@ -96,7 +101,7 @@ describe("mapVetTransfersToOperations", () => {
       blockHash: "0xblock123",
       accountId: mockAccountId,
       date: new Date(1640995200 * 1000),
-      extra: {},
+      extra: { gasPayer: GAS_PAYER },
     });
   });
 
@@ -121,7 +126,7 @@ describe("mapVetTransfersToOperations", () => {
       blockHash: "0xblock456",
       accountId: mockAccountId,
       date: new Date(1640995260 * 1000),
-      extra: {},
+      extra: { gasPayer: GAS_PAYER },
     });
   });
 
@@ -217,7 +222,10 @@ describe("mapTokenTransfersToOperations", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedGetFees.mockResolvedValue(new BigNumber("37000000000000000"));
+    mockedGetFees.mockResolvedValue({
+      fees: new BigNumber("37000000000000000"),
+      gasPayer: GAS_PAYER,
+    });
     mockedEncodeOperationId.mockImplementation(
       (accountId, hash, type) => `${accountId}${hash}${type}`,
     );
@@ -246,7 +254,7 @@ describe("mapTokenTransfersToOperations", () => {
       blockHash: "0xblock789",
       accountId: mockAccountId,
       date: new Date(1640995320 * 1000),
-      extra: {},
+      extra: { gasPayer: GAS_PAYER },
     });
   });
 
@@ -373,5 +381,76 @@ describe("mapTokenTransfersToOperations", () => {
 
     expect(result[0].senders[0]).toBe("0x5034aa590125b64023a0262112b98d72e3c8e40e");
     expect(result[0].recipients[0]).toBe("0x742d35cc6634c0532925a3b8d0b251d8c1743ec4");
+  });
+});
+
+describe("gas payer propagation", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedEncodeOperationId.mockReturnValue("op-id");
+    mockedGetFees.mockResolvedValue({
+      fees: new BigNumber("21000000000000000"),
+      gasPayer: GAS_PAYER,
+    });
+  });
+
+  it("carries the receipt gas payer onto a mapped VET operation", async () => {
+    const [operation] = await mapVetTransfersToOperations(
+      mockVechainConfig,
+      [
+        {
+          sender: "0x5034aa590125b64023a0262112b98d72e3c8e40e",
+          recipient: "0x742d35Cc6634C0532925a3b8D0B251d8c1743eC4",
+          amount: "1000000000000000000",
+          meta: {
+            blockID: "0xblock123",
+            blockNumber: 12345,
+            blockTimestamp: 1640995200,
+            txID: "0xtx123",
+            txOrigin: "0x5034aa590125b64023a0262112b98d72e3c8e40e",
+            clauseIndex: 0,
+          },
+        },
+      ],
+      "vechain:1:0x123:",
+      "0x742d35Cc6634C0532925a3b8D0B251d8c1743eC4",
+    );
+
+    expect(operation.extra).toEqual({ gasPayer: GAS_PAYER });
+  });
+
+  it("carries the receipt gas payer onto a mapped VTHO operation", async () => {
+    mockedHex.of.mockImplementation((v: string) => v);
+    mockedABIEvent.parseLog.mockReturnValue({
+      eventName: "Transfer",
+      args: {
+        from: "0x5034aa590125b64023a0262112b98d72e3c8e40e",
+        to: "0x742d35Cc6634C0532925a3b8D0B251d8c1743eC4",
+        value: BigInt("1000000000000000000"),
+      },
+    });
+
+    const [operation] = await mapTokenTransfersToOperations(
+      mockVechainConfig,
+      [
+        {
+          address: "0x0000000000000000000000000000456e65726779",
+          topics: ["0xtopic0"],
+          data: "0xdata",
+          meta: {
+            blockID: "0xblock123",
+            blockNumber: 12345,
+            blockTimestamp: 1640995200,
+            txID: "0xtx123",
+            txOrigin: "0x5034aa590125b64023a0262112b98d72e3c8e40e",
+            clauseIndex: 0,
+          },
+        },
+      ],
+      "vechain:1:0x123:",
+      "0x742d35Cc6634C0532925a3b8D0B251d8c1743eC4",
+    );
+
+    expect(operation.extra).toEqual({ gasPayer: GAS_PAYER });
   });
 });

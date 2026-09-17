@@ -10,6 +10,8 @@ import { fetchA4Operations } from "./a4/client/operations";
 import { ensureA4Registered } from "./a4/client/registration";
 import { toA4Network, resolveA4BaseUrl } from "./a4/client/utils";
 import { resolveA4ChainConfig } from "./a4/config";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { getCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
@@ -618,6 +620,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const a4Network = toA4Network(currency.id);
     const a4ChainConfig = a4Network ? resolveA4ChainConfig(a4Network) : null;
 
+    // A chain that bills gas in another asset (VeChain: VTHO for a VET account) declares it here;
+    // resolved the same way `fromAccountRaw` resolves a persisted `feesCurrencyId`. Hoisted out of
+    // `delegateNewOps` because the account shape below reads `feesCurrency` too.
+    const feesCurrency = bridgeApi.feesCurrencyId
+      ? (getCurrenciesResolver().findCryptoCurrencyById(bridgeApi.feesCurrencyId) ??
+        (await getCryptoAssetsStore().findTokenById(bridgeApi.feesCurrencyId)))
+      : undefined;
+    const feesAreNative = !feesCurrency;
+
     // delegateNewOps is lazy: getAccountRawAssignHooks is only awaited when the coin-module path is taken
     const delegateNewOps = async (): Promise<OperationCommon[]> => {
       const coreOps = await paginateOperations(cursor =>
@@ -631,7 +642,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       return coreOps
         .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
         .map(op =>
-          adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
+          adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra, { feesAreNative }),
         ) as OperationCommon[];
     };
 
@@ -749,6 +760,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       subAccounts,
       operationsCount: operations.length,
       syncHash,
+      // key omitted rather than set to undefined, like `readiness` below: `jsHelpers` merges
+      // `{ ...account, ...shape }`, so writing `undefined` would clear a persisted value.
+      ...(feesCurrency ? { feesCurrency } : {}),
       // key omitted rather than set to undefined: jsHelpers merges `{ ...a, ...shape }`, so a failed
       // readiness lookup retains the last persisted value instead of clearing it.
       ...(readiness !== undefined ? { readiness } : {}),
