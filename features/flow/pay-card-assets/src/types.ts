@@ -1,6 +1,24 @@
+export type CardAssetFormattedValue = Readonly<{
+  integerPart: string;
+  decimalPart?: string;
+  currencyText: string;
+  decimalSeparator: string;
+  currencyPosition: "start" | "end";
+}>;
+
+export type FormatCardAssetCountervalue = (value: number) => CardAssetFormattedValue;
+
+export type CardAssetsProps = Readonly<{
+  formatCountervalue?: FormatCardAssetCountervalue;
+}>;
+
 export type CardAssetRow = Readonly<{
   id: string;
-  cryptoAmount: string;
+  name: string;
+  ticker: string;
+  cryptoAmount: string | null;
+  fiatAmount: string | null;
+  ledgerId?: string;
 }>;
 
 export type CardAssetsStatus = "loading" | "error" | "empty" | "ready";

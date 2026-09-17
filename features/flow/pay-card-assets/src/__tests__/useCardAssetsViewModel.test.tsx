@@ -1,6 +1,13 @@
 import { renderHook } from "@testing-library/react";
 import { I18nWrapper, CARD_ASSETS_COPY } from "./i18nWrapper";
-import { formatCardAssetCryptoAmount, useCardAssetsViewModel } from "../useCardAssetsViewModel";
+import type { FormatCardAssetCountervalue } from "../types";
+import {
+  formatCardAssetCryptoAmount,
+  formatCardAssetFiatAmount,
+  formatCardAssetName,
+  formatCardAssetTicker,
+  useCardAssetsViewModel,
+} from "../useCardAssetsViewModel";
 
 const mockUseIsCardSignedIn = jest.fn();
 const mockUseCardLinkedWallets = jest.fn();
@@ -19,6 +26,8 @@ function stubWallets(
       id: string;
       balance: string | null;
       currency: string;
+      counterValue: number | null;
+      ledgerId?: string;
     }[];
     isLoading: boolean;
     isError: boolean;
@@ -36,17 +45,54 @@ function stubWallets(
   });
 }
 
-function renderViewModel() {
-  return renderHook(() => useCardAssetsViewModel(), { wrapper: I18nWrapper });
+const formatCountervalue: FormatCardAssetCountervalue = value => ({
+  integerPart: String(Math.trunc(value)),
+  decimalPart: "00",
+  currencyText: "$",
+  decimalSeparator: ".",
+  currencyPosition: "start",
+});
+
+function renderViewModel(format?: FormatCardAssetCountervalue) {
+  return renderHook(() => useCardAssetsViewModel({ formatCountervalue: format }), {
+    wrapper: I18nWrapper,
+  });
 }
+
+describe("formatCardAssetTicker", () => {
+  it("should uppercase the currency", () => {
+    expect(formatCardAssetTicker("usdc")).toBe("USDC");
+  });
+});
+
+describe("formatCardAssetName", () => {
+  it("should map known tickers to the catalog display name", () => {
+    expect(formatCardAssetName("usdc")).toBe("USD Coin");
+  });
+
+  it("should fall back to the ticker when the currency is unknown", () => {
+    expect(formatCardAssetName("xyz")).toBe("XYZ");
+  });
+});
+
+describe("formatCardAssetFiatAmount", () => {
+  it("should stringify a formatted preferred-currency value", () => {
+    expect(formatCardAssetFiatAmount(125.4, formatCountervalue)).toBe("$125.00");
+  });
+
+  it("should return null when there is no countervalue or formatter", () => {
+    expect(formatCardAssetFiatAmount(null, formatCountervalue)).toBeNull();
+    expect(formatCardAssetFiatAmount(125.4)).toBeNull();
+  });
+});
 
 describe("formatCardAssetCryptoAmount", () => {
   it("should pair a balance with an uppercased ticker", () => {
     expect(formatCardAssetCryptoAmount("125.40", "usdc")).toBe("125.40 USDC");
   });
 
-  it("should keep the ticker when the balance is missing", () => {
-    expect(formatCardAssetCryptoAmount(null, "usdt")).toBe("USDT");
+  it("should return null when the balance is missing", () => {
+    expect(formatCardAssetCryptoAmount(null, "usdt")).toBeNull();
   });
 });
 
@@ -66,7 +112,7 @@ describe("useCardAssetsViewModel", () => {
     expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(expect.objectContaining({ skip: true }));
   });
 
-  it("should fetch wallets once signed in", () => {
+  it("should fetch linked wallets once signed in", () => {
     renderViewModel();
 
     expect(mockUseCardLinkedWallets).toHaveBeenCalledWith(expect.objectContaining({ skip: false }));
@@ -105,20 +151,39 @@ describe("useCardAssetsViewModel", () => {
     });
   });
 
-  it("should map linked wallets to crypto-amount rows", () => {
+  it("should map linked wallets to name, ticker, fiat, and crypto rows", () => {
     stubWallets({
       wallets: [
-        { id: "w-usdc", balance: "125.40", currency: "usdc" },
-        { id: "w-usdt", balance: null, currency: "usdt" },
+        {
+          id: "w-usdc",
+          balance: "125.40",
+          currency: "usdc",
+          counterValue: 125.4,
+          ledgerId: "ethereum/erc20/usd_coin",
+        },
+        { id: "w-btc", balance: "0.012", currency: "btc", counterValue: null },
       ],
     });
 
-    const { result } = renderViewModel();
+    const { result } = renderViewModel(formatCountervalue);
 
     expect(result.current.status).toBe("ready");
     expect(result.current.rows).toEqual([
-      { id: "w-usdc", cryptoAmount: "125.40 USDC" },
-      { id: "w-usdt", cryptoAmount: "USDT" },
+      {
+        id: "w-usdc",
+        name: "USD Coin",
+        ticker: "USDC",
+        cryptoAmount: "125.40 USDC",
+        fiatAmount: "$125.00",
+        ledgerId: "ethereum/erc20/usd_coin",
+      },
+      {
+        id: "w-btc",
+        name: "Bitcoin",
+        ticker: "BTC",
+        cryptoAmount: "0.012 BTC",
+        fiatAmount: null,
+      },
     ]);
   });
 });

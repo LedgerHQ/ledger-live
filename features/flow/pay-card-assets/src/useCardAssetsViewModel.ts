@@ -1,22 +1,70 @@
 import { useMemo } from "react";
 import { useTranslation } from "@shared/i18n";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
-import {
-  useCardLinkedWallets,
-  type ResolveWalletCounterValue,
-} from "@features/flow-pay-card-wallets";
-import type { CardAssetRow, CardAssetsStatus, CardAssetsViewModel } from "./types";
+import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
+import type {
+  CardAssetFormattedValue,
+  CardAssetRow,
+  CardAssetsProps,
+  CardAssetsStatus,
+  CardAssetsViewModel,
+  FormatCardAssetCountervalue,
+} from "./types";
 
 const KEY_PREFIX = "payTab.card.assets";
 
-const NO_COUNTER_VALUE: ResolveWalletCounterValue = () => null;
+const CARD_ASSET_NAMES: Readonly<Record<string, string>> = {
+  BTC: "Bitcoin",
+  ETH: "Ethereum",
+  SOL: "Solana",
+  XRP: "XRP",
+  LTC: "Litecoin",
+  USDC: "USD Coin",
+  USDT: "Tether",
+};
 
-export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
-  const ticker = currency.toUpperCase();
-  return balance === null ? ticker : `${balance} ${ticker}`;
+const NO_COUNTER_VALUE = () => null;
+
+export function formatCardAssetTicker(currency: string): string {
+  return currency.toUpperCase();
 }
 
-export function useCardAssetsViewModel(): CardAssetsViewModel {
+export function formatCardAssetName(currency: string): string {
+  const ticker = formatCardAssetTicker(currency);
+  return CARD_ASSET_NAMES[ticker] ?? ticker;
+}
+
+export function formatCardAssetCryptoAmount(
+  balance: string | null,
+  currency: string,
+): string | null {
+  return balance === null ? null : `${balance} ${formatCardAssetTicker(currency)}`;
+}
+
+export function formatCardAssetFiatAmount(
+  counterValue: number | null,
+  formatCountervalue?: FormatCardAssetCountervalue,
+): string | null {
+  if (counterValue === null || formatCountervalue === undefined) {
+    return null;
+  }
+  return stringifyFormattedValue(formatCountervalue(counterValue));
+}
+
+function stringifyFormattedValue({
+  integerPart,
+  decimalPart,
+  currencyText,
+  decimalSeparator,
+  currencyPosition,
+}: CardAssetFormattedValue): string {
+  const amount = decimalPart ? `${integerPart}${decimalSeparator}${decimalPart}` : integerPart;
+  return currencyPosition === "start" ? `${currencyText}${amount}` : `${amount}${currencyText}`;
+}
+
+export function useCardAssetsViewModel({
+  formatCountervalue,
+}: CardAssetsProps = {}): CardAssetsViewModel {
   const { t } = useTranslation();
   const isSignedIn = useIsCardSignedIn();
   const { wallets, isLoading, isError } = useCardLinkedWallets({
@@ -26,11 +74,15 @@ export function useCardAssetsViewModel(): CardAssetsViewModel {
 
   const rows = useMemo<readonly CardAssetRow[]>(
     () =>
-      wallets.map(({ id, balance, currency }) => ({
+      wallets.map(({ id, balance, currency, counterValue, ledgerId }) => ({
         id,
+        name: formatCardAssetName(currency),
+        ticker: formatCardAssetTicker(currency),
         cryptoAmount: formatCardAssetCryptoAmount(balance, currency),
+        fiatAmount: formatCardAssetFiatAmount(counterValue, formatCountervalue),
+        ledgerId,
       })),
-    [wallets],
+    [wallets, formatCountervalue],
   );
 
   const status = useMemo<CardAssetsStatus>(() => {
