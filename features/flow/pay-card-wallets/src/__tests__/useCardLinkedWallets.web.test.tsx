@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { useCardLinkedWallets } from "../hooks/useCardLinkedWallets";
-import type { ResolveWalletCounterValue } from "../types";
+import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 
 const mockGetCardLinkedWallets = jest.fn();
 const mockGetInternalWallets = jest.fn();
@@ -16,11 +16,39 @@ const internalWallets = [
 ];
 
 const linkedWallets = [
-  { id: "w-usdt", address: "0xusdt", currency: "usdt", network: "ethereum", priority: 2 },
-  { id: "w-usdc", address: "0xusdc", currency: "usdc", network: "ethereum", priority: 1 },
+  {
+    id: "w-usdt",
+    address: "0xusdt",
+    currency: "usdt",
+    network: "ethereum",
+    priority: 2,
+    ledgerId: "ethereum/erc20/usd_tether__erc20_",
+  },
+  {
+    id: "w-usdc",
+    address: "0xusdc",
+    currency: "usdc",
+    network: "ethereum",
+    priority: 1,
+    ledgerId: "ethereum/erc20/usd__coin",
+  },
 ];
 
-const resolveCounterValue: ResolveWalletCounterValue = (_wallet, balance) => Number(balance);
+const currencies = new Map(
+  ["ethereum/erc20/usd__coin", "ethereum/erc20/usd_tether__erc20_"].map(id => [
+    id,
+    CryptoOrTokenCurrencySchema.parse({
+      type: "TokenCurrency",
+      id,
+      parentCurrencyId: "ethereum",
+      contractAddress: "0x0000000000000000000000000000000000000000",
+      tokenType: "erc20",
+      name: id,
+      ticker: "TKN",
+      units: [{ name: id, code: "TKN", magnitude: 6 }],
+    }),
+  ]),
+);
 
 type QueryStub = Readonly<{
   data?: unknown;
@@ -60,20 +88,18 @@ beforeEach(() => {
 });
 
 describe("useCardLinkedWallets", () => {
-  it("joins both reads into wallets in charging order, with a counter-value total", () => {
+  it("joins both reads into wallets in charging order", () => {
     stubQueries({ data: linkedWallets }, { data: internalWallets });
 
-    const { result } = renderHook(() => useCardLinkedWallets({ resolveCounterValue }));
+    const { result } = renderHook(() => useCardLinkedWallets({ currencies }));
 
     expect(result.current.wallets.map(({ id }) => id)).toEqual(["w-usdc", "w-usdt"]);
-    expect(result.current.total).toBe(135.4);
-    expect(result.current.isPartialTotal).toBe(false);
   });
 
   it("subscribes to both endpoints, and skips neither by default", () => {
     stubQueries({ data: linkedWallets }, { data: internalWallets });
 
-    renderHook(() => useCardLinkedWallets({ resolveCounterValue }));
+    renderHook(() => useCardLinkedWallets({ currencies }));
 
     expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, { skip: false });
     expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, { skip: false });
@@ -82,18 +108,17 @@ describe("useCardLinkedWallets", () => {
   it("passes skip through to both, so a signed-out host provokes no 401", () => {
     stubQueries({}, {});
 
-    const { result } = renderHook(() => useCardLinkedWallets({ resolveCounterValue, skip: true }));
+    const { result } = renderHook(() => useCardLinkedWallets({ currencies, skip: true }));
 
     expect(mockGetCardLinkedWallets).toHaveBeenCalledWith(undefined, { skip: true });
     expect(mockGetInternalWallets).toHaveBeenCalledWith(undefined, { skip: true });
     expect(result.current.wallets).toEqual([]);
-    expect(result.current.total).toBe(0);
   });
 
   it("reads as loading while either read is in flight", () => {
     stubQueries({ isLoading: true }, { data: internalWallets });
 
-    const { result } = renderHook(() => useCardLinkedWallets({ resolveCounterValue }));
+    const { result } = renderHook(() => useCardLinkedWallets({ currencies }));
 
     expect(result.current.isLoading).toBe(true);
   });
@@ -101,7 +126,7 @@ describe("useCardLinkedWallets", () => {
   it("reads as failed when either read failed", () => {
     stubQueries({ data: linkedWallets }, { isError: true });
 
-    const { result } = renderHook(() => useCardLinkedWallets({ resolveCounterValue }));
+    const { result } = renderHook(() => useCardLinkedWallets({ currencies }));
 
     expect(result.current.isError).toBe(true);
   });
@@ -109,11 +134,10 @@ describe("useCardLinkedWallets", () => {
   it("joins on whatever has arrived: a link whose balances are still in flight reads as null", () => {
     stubQueries({ data: linkedWallets }, { isLoading: true });
 
-    const { result } = renderHook(() => useCardLinkedWallets({ resolveCounterValue }));
+    const { result } = renderHook(() => useCardLinkedWallets({ currencies }));
 
     expect(result.current.wallets).toHaveLength(2);
     expect(result.current.wallets.every(({ balance }) => balance === null)).toBe(true);
-    expect(result.current.isPartialTotal).toBe(true);
   });
 
   it("refetches both endpoints", () => {
@@ -122,7 +146,7 @@ describe("useCardLinkedWallets", () => {
       { data: internalWallets },
     );
 
-    const { result } = renderHook(() => useCardLinkedWallets({ resolveCounterValue }));
+    const { result } = renderHook(() => useCardLinkedWallets({ currencies }));
     result.current.refetch();
 
     expect(linkedRefetch).toHaveBeenCalledTimes(1);
@@ -132,7 +156,7 @@ describe("useCardLinkedWallets", () => {
   it("does not refetch while skipped, so a pull-to-refresh cannot undo it", () => {
     const { linkedRefetch, internalRefetch } = stubQueries({}, {});
 
-    const { result } = renderHook(() => useCardLinkedWallets({ resolveCounterValue, skip: true }));
+    const { result } = renderHook(() => useCardLinkedWallets({ currencies, skip: true }));
     result.current.refetch();
 
     expect(linkedRefetch).not.toHaveBeenCalled();
@@ -142,7 +166,7 @@ describe("useCardLinkedWallets", () => {
   it("keeps refetch stable across renders, so consumers memoizing on it are not rebuilt", () => {
     stubQueries({ data: linkedWallets }, { data: internalWallets });
 
-    const { result, rerender } = renderHook(() => useCardLinkedWallets({ resolveCounterValue }));
+    const { result, rerender } = renderHook(() => useCardLinkedWallets({ currencies }));
     const first = result.current.refetch;
     rerender();
 
@@ -152,7 +176,7 @@ describe("useCardLinkedWallets", () => {
   it("keeps the whole result stable across renders when nothing changed", () => {
     stubQueries({ data: linkedWallets }, { data: internalWallets });
 
-    const { result, rerender } = renderHook(() => useCardLinkedWallets({ resolveCounterValue }));
+    const { result, rerender } = renderHook(() => useCardLinkedWallets({ currencies }));
     const first = result.current;
     rerender();
 
@@ -166,7 +190,7 @@ describe("useCardLinkedWallets", () => {
       { data: internalWallets, isFetching: false },
     );
 
-    const { result } = renderHook(() => useCardLinkedWallets({ resolveCounterValue }));
+    const { result } = renderHook(() => useCardLinkedWallets({ currencies }));
 
     expect(result.current.isFetching).toBe(true);
     expect(result.current.isLoading).toBe(false);

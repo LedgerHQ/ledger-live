@@ -27,7 +27,8 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-card-wallets"
   },
   "dependencies": {
-    "@domain/api-card-management": "workspace:^"
+    "@domain/api-card-management": "workspace:^",
+    "@domain/entity-currency": "workspace:^"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",

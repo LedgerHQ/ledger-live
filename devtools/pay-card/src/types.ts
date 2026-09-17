@@ -124,6 +124,8 @@ export interface PayCardCombinedWallet {
   readonly ledgerId?: string;
   /** `null` when no Baanx wallet matched this link, and while they are still being read. */
   readonly balance: string | null;
+  /** The resolved Ledger currency's id. `null` while unresolved or when the asset is unmapped. */
+  readonly ledgerCurrencyId: string | null;
 }
 
 /** One row of the Card asset catalog: what the provider calls an asset, and what Ledger calls it. */
