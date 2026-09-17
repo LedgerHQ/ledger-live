@@ -96,7 +96,7 @@ export type FreezeViewModel = ConfirmSheetProps &
     onOpenConfirm: () => void;
   }>;
 
-export type RevealStatus = "idle" | "loading" | "revealed" | "failed";
+export type RevealStatus = "idle" | "loading" | "flipping" | "revealed" | "failed";
 
 export type RevealViewModel = Readonly<{
   status: RevealStatus;
@@ -104,15 +104,13 @@ export type RevealViewModel = Readonly<{
   imageUrl: string | undefined;
   onReveal: () => Promise<void>;
   onHide: () => void;
+  onImageLoad: () => void;
   onImageError: () => void;
 }>;
 
-export type RevealTileProps = Pick<
-  RevealViewModel,
-  "status" | "isRevealed" | "onReveal" | "onHide"
->;
+export type RevealTileProps = Pick<RevealViewModel, "status" | "onReveal" | "onHide">;
 
 export type CardFlipProps = Readonly<{
-  reveal: Pick<RevealViewModel, "isRevealed" | "imageUrl" | "onImageError"> | null;
+  reveal: Pick<RevealViewModel, "isRevealed" | "imageUrl" | "onImageLoad" | "onImageError"> | null;
   cardFace: ReactNode;
 }>;
