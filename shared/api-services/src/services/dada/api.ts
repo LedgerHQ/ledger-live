@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { DADA_REDUCER_PATH } from "./constants";
+import { getEnv } from "@shared/env";
+import { DADA_REDUCER_PATH, HEADER_X_GRAVITEE_API_KEY } from "./constants";
 
 /**
  * Endpoint-less DADA api. Register it in the store; use cases add endpoints and tags to this same
@@ -15,7 +16,16 @@ import { DADA_REDUCER_PATH } from "./constants";
  */
 export const dadaApi = createApi({
   reducerPath: DADA_REDUCER_PATH,
-  baseQuery: fetchBaseQuery({ baseUrl: "" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "",
+    prepareHeaders: headers => {
+      const apiKey = getEnv("DADA_GRAVITEE_API_KEY");
+      if (apiKey) {
+        headers.set(HEADER_X_GRAVITEE_API_KEY, apiKey);
+      }
+      return headers;
+    },
+  }),
   tagTypes: [],
   endpoints: () => ({}),
 });

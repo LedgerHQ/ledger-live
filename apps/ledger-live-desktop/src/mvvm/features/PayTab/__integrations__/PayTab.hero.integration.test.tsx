@@ -16,7 +16,7 @@ import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import { onboardedState, tourSeenState, UNISWAP } from "./fixtures";
 
 const DADA_URLS = [
-  "https://dada.api.ledger-test.com/v1/assets",
+  "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
   "https://dada.api.ledger.com/v1/assets",
 ];
 

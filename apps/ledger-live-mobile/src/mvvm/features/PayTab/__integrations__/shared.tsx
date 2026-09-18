@@ -135,7 +135,7 @@ function SendFundsScreen({
 }
 
 const DADA_URLS = [
-  "https://dada.api.ledger-test.com/v1/assets",
+  "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
   "https://dada.api.ledger.com/v1/assets",
 ];
 

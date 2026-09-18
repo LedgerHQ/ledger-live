@@ -3,7 +3,9 @@ import { assetsDataApi } from "./api";
 import type { RawApiResponse } from "./schema";
 
 jest.mock("@shared/env", () => ({
-  getEnv: jest.fn().mockReturnValue("https://dada.api.ledger.com/v1"),
+  getEnv: jest.fn((key: string) =>
+    key === "DADA_GRAVITEE_API_KEY" ? "" : "https://dada.api.ledger.com/v1",
+  ),
 }));
 
 /*

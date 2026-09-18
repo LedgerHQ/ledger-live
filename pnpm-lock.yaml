@@ -17672,6 +17672,9 @@ importers:
       '@shared/auth':
         specifier: workspace:^
         version: link:../auth
+      '@shared/env':
+        specifier: workspace:*
+        version: link:../env
       zod:
         specifier: 'catalog:'
         version: 4.3.6
