@@ -113,11 +113,16 @@ describe("usePayCardAssets", () => {
   });
 
   it("registers every card currency against the counter value, so their rates are polled", () => {
-    const { result } = renderAssets();
-    const tracked = result.current.tracked.map(pairId);
+    renderAssets();
 
-    expect(tracked).toContain(pairId({ from: usdc, to: USD }));
-    expect(tracked).toContain(pairId({ from: BITCOIN, to: USD }));
+    // Asserted on what the hook hands the store, not on the store itself: the tracking subject is
+    // module state that outlives a test, so reading it would make this depend on what ran first.
+    const registered = jest.mocked(addExtraSessionTrackingPairs).mock.calls[0]?.[0] ?? [];
+
+    expect(registered.map(pairId)).toEqual([
+      pairId({ from: usdc, to: USD }),
+      pairId({ from: BITCOIN, to: USD }),
+    ]);
   });
 
   it("registers a currency once, though a refetched token comes back as a new object", () => {
