@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import type { LedgerSyncContactGroupDescriptor } from "../contacts";
 import { LedgerSyncCliHelper } from "./helper";
 import type { LedgerSyncAccountDescriptor } from "./testData";
 
@@ -30,6 +31,12 @@ export function pushAccountsToTrustchain(
   accountNames: Record<string, string> = {},
 ): LedgerSyncCliCommand {
   return () => LedgerSyncCliHelper.pushAccountsToTrustchain(descriptors, accountNames);
+}
+
+export function pushContactsToTrustchain(
+  contactGroups: LedgerSyncContactGroupDescriptor[],
+): LedgerSyncCliCommand {
+  return () => LedgerSyncCliHelper.pushContactsToTrustchain(contactGroups);
 }
 
 export function addTrustchainMember(name: string): LedgerSyncCliCommand {

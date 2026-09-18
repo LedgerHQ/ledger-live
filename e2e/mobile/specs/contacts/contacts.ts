@@ -1,5 +1,10 @@
-import { generateContactName } from "@ledgerhq/live-e2e-shared/contacts";
+import {
+  SEEDED_CONTACT_NAMES,
+  createSeededContactGroups,
+  generateContactName,
+} from "@ledgerhq/live-e2e-shared/contacts";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 import {
@@ -36,7 +41,9 @@ const KEYBOARD_RENAMED_CONTACT_NAME = generateContactName();
 const NO_ADDRESS_LABEL = "0 address";
 
 /** Boots the app already a member of a freshly created trustchain, skipping the activation UI. */
-async function initApp(options: ApplicationOptions = {}) {
+async function initApp(
+  options: ApplicationOptions & { seedCommands?: LedgerSyncCliCommand[] } = {},
+) {
   await verifyLedgerSyncEnvironment();
   await app.init({
     userdata: options.userdata ?? CONTACTS_USERDATA,
@@ -44,6 +51,7 @@ async function initApp(options: ApplicationOptions = {}) {
     featureFlags: { ...CONTACTS_FEATURE_FLAGS, ...options.featureFlags },
     cliCommands: [
       ...app.ledgerSync.initializeEmptyTrustchain(),
+      ...(options.seedCommands ?? []),
       userdataPath => app.ledgerSync.saveTrustchainToUserdata(userdataPath),
     ],
   });
@@ -151,6 +159,56 @@ export function runContactsKeyboardTest(tmsLinks: string[], tags: string[]) {
 
       await renameDrawer.confirm();
       await app.contacts.detail.expectName(KEYBOARD_RENAMED_CONTACT_NAME);
+    });
+  });
+}
+
+/**
+ * B2CQA-6240. Contacts are pulled from a pre-seeded Ledger Sync document rather than created in
+ * the UI, so browse/search starts from a populated list the app must sort alphabetically.
+ */
+export function runBrowseAndSearchContactsTest(tmsLinks: string[], tags: string[]) {
+  describeIfNotNanoS("Contacts", () => {
+    setupLedgerSyncSeed();
+    cleanupLedgerSyncAfterAll();
+
+    beforeAll(async () => {
+      await initApp({
+        seedCommands: [app.ledgerSync.pushContactsToTrustchain(createSeededContactGroups())],
+      });
+    });
+
+    setTeamOwner(Team.WALLET_XP);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+
+    it("Browse and search contacts", async () => {
+      const sortedContactNames = SEEDED_CONTACT_NAMES.toSorted((left, right) =>
+        left.localeCompare(right),
+      );
+      const firstContactName = sortedContactNames[0];
+      const searchedContactName = sortedContactNames[sortedContactNames.length - 3];
+
+      await app.mainNavigation.openMyWallet();
+      await app.myWallet.openContacts();
+      await app.contacts.expectSavedContactDisplayed(firstContactName);
+      await app.contacts.expectMeContactDisplayed();
+      await app.contacts.expectSavedContactsInOrder(sortedContactNames);
+
+      await app.contacts.search(searchedContactName);
+      await app.contacts.expectSavedContactDisplayed(searchedContactName);
+      await app.contacts.expectSavedContactNotDisplayed(firstContactName);
+      await app.contacts.expectMeContactHidden();
+
+      const contactRowId = await app.contacts.getSavedContactRowId(searchedContactName);
+      await app.contacts.openSavedContact(contactRowId);
+      await app.contacts.detail.expectName(searchedContactName);
+
+      await app.common.goToPreviousPage();
+      await app.contacts.expectScreenVisible();
+      await app.contacts.clearSearch();
+      await app.contacts.expectMeContactDisplayed();
+      await app.contacts.expectSavedContactsInOrder(sortedContactNames);
     });
   });
 }
