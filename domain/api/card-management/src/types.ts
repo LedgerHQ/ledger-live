@@ -20,6 +20,7 @@ import {
   PayCardSetPinTokenRequestSchema,
   PayCardSetPinTokenResponseSchema,
   PayCardStatusResponseSchema,
+  PayCardTransactionCashbackSchema,
   PayCardTransactionCategorySchema,
   PayCardTransactionFundingSourceSchema,
   PayCardTransactionSchema,
@@ -53,6 +54,8 @@ export type PayCardDetailsCss = z.infer<typeof PayCardDetailsCssSchema>;
 export type PayCardTransactionCategory = z.infer<typeof PayCardTransactionCategorySchema>;
 
 export type PayCardTransactionFundingSource = z.infer<typeof PayCardTransactionFundingSourceSchema>;
+
+export type PayCardTransactionCashback = z.infer<typeof PayCardTransactionCashbackSchema>;
 
 export type PayCardTransaction = z.infer<typeof PayCardTransactionSchema>;
 

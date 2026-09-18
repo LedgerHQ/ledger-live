@@ -43,6 +43,28 @@ describe("mockPayCardTransactions", () => {
     expect(declined[0].declineReason).not.toBe("");
   });
 
+  it("pairs every settled charge with the cashback it earned", () => {
+    const settled = mockPayCardTransactions().filter(
+      ({ status }) => status !== "DECLINED" && status !== "REVERTED",
+    );
+
+    expect(settled.length).toBeGreaterThan(1);
+    for (const { cashback } of settled) {
+      expect(cashback).toMatchObject({ currency: "BXX", status: "EARNED" });
+      expect(Number(cashback?.amount)).toBeGreaterThan(0);
+      expect(Number(cashback?.fiatAmount)).toBeGreaterThan(0);
+    }
+  });
+
+  it("leaves a charge that never settled without a cashback", () => {
+    const unearned = mockPayCardTransactions().filter(
+      ({ status }) => status === "DECLINED" || status === "REVERTED",
+    );
+
+    expect(unearned).toHaveLength(2);
+    expect(unearned.every(({ cashback }) => cashback === undefined)).toBe(true);
+  });
+
   it("keeps the provider's documented charge as the miscellaneous one", () => {
     const misc = mockPayCardTransactions().find(({ mccCategory }) => mccCategory === "MISC");
 
