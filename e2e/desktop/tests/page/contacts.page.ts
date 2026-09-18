@@ -18,7 +18,11 @@ export class ContactsPage extends AppPage {
   private readonly meAddressCount = this.page.getByTestId("contacts-me-address-count");
   private readonly addContactHeaderButton = this.page.getByTestId("contacts-add-contact-header");
   private readonly addContactRow = this.page.getByTestId("contacts-add-contact");
+  private readonly searchInput = this.page.getByTestId("contacts-list-search");
+  private readonly meRow = this.page.getByTestId("contacts-me-row");
+  private readonly savedContactsScroll = this.page.getByTestId("contacts-list-scroll");
   private readonly savedContactRows = this.page.getByTestId(/^contacts-saved-row-/);
+  private readonly savedContactNames = this.page.getByTestId(SAVED_CONTACT_NAME_TEST_ID);
 
   private savedContactName(name: string) {
     return this.page.getByTestId(SAVED_CONTACT_NAME_TEST_ID).filter({ hasText: name });
@@ -44,6 +48,33 @@ export class ContactsPage extends AppPage {
   @step("Expect Me contact displayed")
   async expectMeContactDisplayed() {
     await expect(this.meName).toHaveText(ME_CONTACT_DISPLAY_NAME);
+  }
+
+  /** Me only survives a search when it matches the query itself — see `createContactsSearchViewModel`. */
+  @step("Expect Me contact hidden")
+  async expectMeContactHidden() {
+    await expect(this.meRow).toBeHidden();
+  }
+
+  @step("Expect Me pinned above the saved contacts")
+  async expectMePinnedAboveSavedContacts() {
+    await expect(this.meRow).toBeVisible();
+    await expect(this.savedContactRows.first()).toBeVisible();
+
+    const meBox = await this.meRow.boundingBox();
+    const firstSavedContactBox = await this.savedContactRows.first().boundingBox();
+    if (!meBox || !firstSavedContactBox) {
+      throw new Error("Me and the first saved contact should have bounding boxes");
+    }
+    expect(meBox.y).toBeLessThan(firstSavedContactBox.y);
+
+    await this.savedContactsScroll.evaluate(element => element.scrollTo(0, element.scrollHeight));
+    await expect(this.meRow).toBeVisible();
+    const meBoxAfterScroll = await this.meRow.boundingBox();
+    if (!meBoxAfterScroll) {
+      throw new Error("Me contact should have a bounding box after scrolling");
+    }
+    expect(meBoxAfterScroll.y).toBe(meBox.y);
   }
 
   @step("Expect Me contact address count to show $0")
@@ -79,6 +110,11 @@ export class ContactsPage extends AppPage {
     await expect(this.savedContactName(name)).toBeVisible();
   }
 
+  @step("Expect saved contacts in alphabetical order")
+  async expectSavedContactsInOrder(names: readonly string[]) {
+    await expect(this.savedContactNames).toHaveText([...names]);
+  }
+
   @step("Expect contact $0 address count to show $1")
   async expectSavedContactAddressCount(name: string, expectedLabel: string) {
     const contactId = await this.getSavedContactId(name);
@@ -111,6 +147,16 @@ export class ContactsPage extends AppPage {
   async expectEmptyState() {
     await expect(this.addContactRow).toBeVisible();
     await expect(this.savedContactRows).toHaveCount(0);
+  }
+
+  @step("Search contacts for $0")
+  async search(name: string) {
+    await this.searchInput.fill(name);
+  }
+
+  @step("Clear the contacts search")
+  async clearSearch() {
+    await this.searchInput.fill("");
   }
 
   @step("Rename the contact to $0")
