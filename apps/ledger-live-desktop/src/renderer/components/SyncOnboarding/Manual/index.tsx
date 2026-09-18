@@ -379,6 +379,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   } else if (currentStep === "early-security-check" && lastSeenDevice) {
     stepContent = (
       <EarlySecurityChecks
+        key={lastSeenDevice.deviceId}
         device={lastSeenDevice}
         isDeviceConnected={!!device}
         onComplete={notifyOnboardingEarlyCheckEnded}
@@ -392,6 +393,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   } else if (currentStep === "companion" && lastSeenDevice) {
     stepContent = (
       <SyncOnboardingCompanion
+        key={lastSeenDevice.deviceId}
         device={lastSeenDevice}
         notifySyncOnboardingShouldReset={notifyOnboardingEarlyCheckShouldReset}
         onLostDevice={onLostDevice}
