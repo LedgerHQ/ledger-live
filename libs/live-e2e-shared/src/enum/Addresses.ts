@@ -15,4 +15,8 @@ export enum Addresses {
   EVM_SPARE = "0x000000000000000000000000000000000000dEaD",
   /** Tron black-hole address, same purpose as `EVM_SPARE`. */
   TRON_SPARE = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb",
+  // The address the device derives for the shared QA seed at 44'/133'/0'/0/6
+  // (Account.ZEC_1). Shielded-address verification compares the device's
+  // answer against this persisted value, so it must stay the real one.
+  ZEC_1_SHIELDED_ADDRESS = "u1rxupz6pfemaqnxkakpf846uf6euuaqhhgp7pf26he0c5k8xcm73e4khwj5fkmqe5rw58ppa4xevm3tny0sufvlywqngj2vus0g5rqt4j",
 }
