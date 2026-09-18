@@ -10,12 +10,15 @@ import {
   type BrazePendingRefresh,
   type SyncedBrazeIdentity,
 } from "@ledgerhq/live-common/braze/identityLifecycle";
+import type { EligibilityContext } from "@ledgerhq/live-common/braze/localEligibility";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { getBrazeConfig } from "~/braze-setup";
 import { applyBrazeConsentTransition } from "LLD/features/DynamicContent/utils/applyBrazeConsentTransition";
 import { resolveDesktopBrazeUserId } from "LLD/features/DynamicContent/utils/brazeIdentity";
 import { requireBrazeLifecycleMethod } from "LLD/features/DynamicContent/utils/brazeWebSdkLifecycle";
+import { filterEligibleContentCards } from "LLD/features/DynamicContent/utils/filterEligibleContentCards";
+import { useBrazeEligibilityContext } from "LLD/features/DynamicContent/hooks/useBrazeEligibilityContext";
 import { publishDesktopContentCards } from "~/renderer/hooks/useBraze";
 import {
   clearDismissedContentCards,
@@ -62,6 +65,10 @@ export function useBrazeProviderViewModel() {
 
   const contentCardsDismissedRef = useRef(contentCardsDismissed);
   contentCardsDismissedRef.current = contentCardsDismissed;
+  const eligibilityContext = useBrazeEligibilityContext();
+  const eligibilityContextRef = useRef(eligibilityContext);
+  eligibilityContextRef.current = eligibilityContext;
+  const lastFetchedCardsRef = useRef<braze.ContentCards | null>(null);
 
   const subscriptionIdRef = useRef<string | null>(null);
   const pendingRefreshRef = useRef<BrazePendingRefresh | null>(null);
@@ -76,15 +83,33 @@ export function useBrazeProviderViewModel() {
   const lifecycleGenerationRef = useRef(0);
   const [sdkReady, setSdkReady] = useState(false);
 
+  const publishEligibleCards = useCallback(
+    (cards: braze.ContentCards, context: EligibilityContext) => {
+      const dismissedCardIds = Object.keys(contentCardsDismissedRef.current ?? {});
+      const { eligibleCards } = filterEligibleContentCards(
+        cards.cards.filter(
+          (card): card is braze.Card & { id: string } => typeof card.id === "string",
+        ),
+        context,
+      );
+      publishDesktopContentCards(
+        dispatch,
+        { ...cards, cards: eligibleCards } as braze.ContentCards,
+        dismissedCardIds,
+      );
+    },
+    [dispatch],
+  );
+
   const handleContentCardsUpdated = useCallback(
     (cards: braze.ContentCards, subscriptionEpoch: number) => {
       if (subscriptionEpoch !== subscriptionEpochRef.current) return;
 
       const pendingRefresh = pendingRefreshRef.current;
-      const dismissedCardIds = Object.keys(contentCardsDismissedRef.current ?? {});
 
       try {
-        publishDesktopContentCards(dispatch, cards, dismissedCardIds);
+        lastFetchedCardsRef.current = cards;
+        publishEligibleCards(cards, eligibilityContextRef.current);
         pendingRefresh?.resolve();
       } catch (error) {
         pendingRefresh?.reject(error);
@@ -93,7 +118,7 @@ export function useBrazeProviderViewModel() {
         pendingRefreshRef.current = null;
       }
     },
-    [dispatch],
+    [publishEligibleCards],
   );
 
   const ensureSubscription = useCallback(() => {
@@ -115,6 +140,7 @@ export function useBrazeProviderViewModel() {
     }
     pendingRefreshRef.current?.reject(new Error("Braze content cards refresh cancelled"));
     pendingRefreshRef.current = null;
+    lastFetchedCardsRef.current = null;
   }, []);
 
   const ensureSessionStarted = useCallback(() => {
@@ -283,6 +309,12 @@ export function useBrazeProviderViewModel() {
   useEffect(() => {
     syncBrazeIdentity();
   }, [syncBrazeIdentity]);
+
+  useEffect(() => {
+    const cards = lastFetchedCardsRef.current;
+    if (!cards) return;
+    publishEligibleCards(cards, eligibilityContext);
+  }, [eligibilityContext, publishEligibleCards]);
 
   useEffect(() => {
     dispatch(clearDismissedContentCards({ now: new Date() }));
