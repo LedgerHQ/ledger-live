@@ -6,12 +6,15 @@ import {
 import { mockPayCardDetailsToken } from "@domain/api-card-management/mock/card-details-token";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
-  mockPayCardInternalWallets,
-  mockPayCardLinkedWallets,
   mockPayCardStatus,
   mockPayCardUser,
   readCardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
+import {
+  mockPayCardInternalWallets,
+  mockPayCardLinkedWallets,
+  mockPayCardRewardWallet,
+} from "@domain/api-card-management/mock/card-wallets";
 import { createCardMockState } from "./state";
 
 const state = createCardMockState();
@@ -169,6 +172,10 @@ const handlers = [
       ? passthrough()
       : HttpResponse.json(mockPayCardLinkedWallets());
   }),
+
+  http.get("*/v1/wallet/reward", ({ request }) =>
+    isMockCardRequest(request) ? HttpResponse.json(mockPayCardRewardWallet()) : passthrough(),
+  ),
 ];
 
 export default handlers;

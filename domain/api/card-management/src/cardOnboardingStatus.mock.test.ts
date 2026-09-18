@@ -1,14 +1,6 @@
-import {
-  PayCardInternalWalletsResponseSchema,
-  PayCardLinkedWalletsResponseSchema,
-  PayCardStatusResponseSchema,
-  PayCardUserResponseSchema,
-} from "./schema";
-import { transformPayCardLinkedWallets } from "./transforms";
+import { PayCardStatusResponseSchema, PayCardUserResponseSchema } from "./schema";
 import {
   clearCardOnboardingStatusMock,
-  mockPayCardInternalWallets,
-  mockPayCardLinkedWallets,
   mockPayCardStatus,
   mockPayCardUser,
   readCardOnboardingStatusMock,
@@ -60,62 +52,10 @@ describe("the mocked responses", () => {
     expect(PayCardUserResponseSchema.safeParse(mockPayCardUser(true)).success).toBe(true);
     expect(PayCardUserResponseSchema.safeParse(mockPayCardUser(false)).success).toBe(true);
     expect(PayCardStatusResponseSchema.safeParse(mockPayCardStatus()).success).toBe(true);
-    expect(
-      PayCardInternalWalletsResponseSchema.safeParse(mockPayCardInternalWallets(true)).success,
-    ).toBe(true);
-    expect(PayCardLinkedWalletsResponseSchema.safeParse(mockPayCardLinkedWallets()).success).toBe(
-      true,
-    );
   });
 
   it("verifies the account only when asked to", () => {
     expect(mockPayCardUser(true).verificationState).toBe("VERIFIED");
     expect(mockPayCardUser(false).verificationState).not.toBe("VERIFIED");
-  });
-
-  it("describes the same wallets in both answers, because the join keys them by id", () => {
-    const internalIds = mockPayCardInternalWallets(true).map(({ id }) => id);
-    const linkedIds = mockPayCardLinkedWallets().map(({ id }) => id);
-
-    // Every wallet is linked, so the join drops none of them and shows no unmatched link.
-    expect(internalIds).toEqual(linkedIds);
-    expect(new Set(internalIds).size).toBe(internalIds.length);
-  });
-
-  it("names each wallet for the link by an id of its own, which is not the wallet's", () => {
-    const wallets = mockPayCardInternalWallets(true);
-    const addressIds = wallets.map(({ addressId }) => addressId);
-
-    // The link request keys on `addressId`, and a duplicate would make a mocked link ambiguous.
-    expect(addressIds.every(addressId => addressId !== undefined)).toBe(true);
-    expect(new Set(addressIds).size).toBe(wallets.length);
-    expect(wallets.every(({ id, addressId }) => addressId !== id)).toBe(true);
-  });
-
-  it("answers with more than one wallet, so a row is read against its neighbours", () => {
-    expect(mockPayCardLinkedWallets()).toHaveLength(3);
-  });
-
-  it("links them in the order they are answered, which is the order they are charged", () => {
-    expect(mockPayCardLinkedWallets().map(({ priority }) => priority)).toEqual([0, 1, 2]);
-  });
-
-  it("resolves every wallet to a Ledger currency, so the join carries three card assets", () => {
-    const assets = transformPayCardLinkedWallets(mockPayCardLinkedWallets());
-
-    // An asset the Baanx catalog does not cover arrives without a `ledgerId` and prices as unknown.
-    expect(assets.every(({ ledgerId }) => ledgerId !== undefined)).toBe(true);
-    // Three distinct currencies, or the rows would all price alike and the total hide a mistake.
-    expect(new Set(assets.map(({ ledgerId }) => ledgerId)).size).toBe(3);
-  });
-
-  it("funds every wallet only when asked to, and empties them all otherwise", () => {
-    for (const { balance } of mockPayCardInternalWallets(true)) {
-      expect(Number(balance)).toBeGreaterThan(0);
-    }
-
-    for (const { balance } of mockPayCardInternalWallets(false)) {
-      expect(Number(balance)).toBe(0);
-    }
   });
 });

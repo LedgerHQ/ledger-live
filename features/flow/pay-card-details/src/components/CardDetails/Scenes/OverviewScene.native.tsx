@@ -10,6 +10,7 @@ import { MoreAction } from "../../More/Tile/MoreAction";
 import { CardFlip } from "../../CardFlip/CardFlip";
 import { useRevealViewModel } from "../../Reveal/useRevealViewModel";
 import type { RevealViewModel } from "../../../types";
+import { Reward } from "../../Reward/Reward";
 import type { OverviewSceneProps } from "./types";
 
 type OverviewActionsProps = Omit<
@@ -98,6 +99,7 @@ export function OverviewScene({
       />
 
       {assets}
+      <Reward formatters={formatters} />
 
       <CardTransactions
         formatters={formatters}
