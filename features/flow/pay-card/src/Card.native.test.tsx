@@ -6,6 +6,7 @@ import type { CardProps } from "./Card.types";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
 
 const mockUseCardAuthStatus = jest.fn<PayCardAuthStatus, []>();
+const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError: false }));
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <View testID="card-login" />,
@@ -28,6 +29,7 @@ jest.mock("@features/flow-pay-card-widget", () => ({
 
 jest.mock("@features/flow-pay-card-assets", () => ({
   CardAssets: () => <View testID="card-assets" />,
+  useCardWalletsTotal: () => mockUseWalletsTotal(),
 }));
 
 import { Card } from "./Card";
@@ -106,7 +108,17 @@ describe("Card (native)", () => {
     });
 
     it("hands the card visual to the details block once the host provides a formatter", () => {
-      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          formatters={formatters}
+          assets={{
+            currencies: new Map(),
+            priceWallet: () => null,
+            formatCountervalue: String,
+          }}
+        />,
+      );
 
       expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
       expect(screen.queryByTestId("card-details")).toBeNull();
