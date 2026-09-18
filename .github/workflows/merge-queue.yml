@@ -19,7 +19,7 @@ permissions:
 jobs:
   determine-affected:
     name: "Affected"
-    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@ci/test-image
     with:
       head_branch: ${{ github.event.merge_group.head_ref }}
       base_branch: ${{ github.event.merge_group.base_ref }}
@@ -31,7 +31,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -54,7 +54,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -73,7 +73,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -91,7 +91,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'libs') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -109,7 +109,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'features') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -127,7 +127,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'shared') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -145,7 +145,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'domain') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -163,7 +163,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'devtools') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -181,7 +181,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'support') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -199,7 +199,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -213,7 +213,7 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@ci/test-image
     with:
       skip-ci-sast: true
 
@@ -224,7 +224,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -240,7 +240,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ contains(needs.determine-affected.outputs.paths, 'e2e/desktop') }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@ci/test-image
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}

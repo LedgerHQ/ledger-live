@@ -18,7 +18,7 @@ jobs:
     name: "Validate PR conventions"
     # Skip on forks — GITHUB_TOKEN on forks has no write access to post comments
     if: ${{ !github.event.pull_request.head.repo.fork }}
-    runs-on: ledger-wallet-2cpu-aws-public
+    runs-on: ledger-live-test
     permissions:
       contents: read
       id-token: write # needed for the OIDC login to JFrog
@@ -31,20 +31,9 @@ jobs:
 
       # Before the pnpm setup so pnpm itself is fetched through JFrog, not public npm.
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/test-image
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.4.0
-        with:
-          version: 10.24.0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
 
       - name: Install dependencies
         run: pnpm i --filter @tools/danger... --frozen-lockfile --ignore-scripts

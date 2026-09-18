@@ -11,6 +11,7 @@ self-hosted-runner:
     - general-pool
     - qaa
     - public-ledgerhq-shared-small
+    - ledger-live-test
   paths:
     .github/workflows/*.yml: ~
     tools/actions/**/*.yml: ~
