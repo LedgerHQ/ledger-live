@@ -13,7 +13,8 @@ import { useNavigate } from "react-router";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
 import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecutor";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
+import { track } from "~/renderer/analytics/segment";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
 import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import PayTab from "LLD/features/PayTab";
@@ -194,12 +195,8 @@ describe("PayTab integration", () => {
     });
 
     expect(mockedTrackPage).toHaveBeenCalledWith(
-      "Pay",
-      undefined,
-      expect.objectContaining({ balance_filter: "all" }),
-      expect.anything(),
-      expect.anything(),
-      expect.anything(),
+      { category: "Pay", name: undefined, props: { balance_filter: "all" } },
+      { mandatory: false, refreshSource: true, updateRoutes: true },
     );
   });
 

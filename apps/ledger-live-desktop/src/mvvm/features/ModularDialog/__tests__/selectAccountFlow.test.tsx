@@ -4,7 +4,8 @@ import * as reduxHooks from "LLD/hooks/redux";
 import { act, render, screen, waitFor } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import { closeDialog } from "~/renderer/reducers/modularDialog";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
+import { track } from "~/renderer/analytics/segment";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import {
   ARB_ACCOUNT,
@@ -407,21 +408,21 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
     expect(trackPage).toHaveBeenNthCalledWith(
       1,
-      "Asset Selection",
-      undefined,
       {
-        asset_component_features: {
-          apy: false,
-          balance: false,
-          filter: false,
-          market_trend: false,
+        category: "Asset Selection",
+        name: undefined,
+        props: {
+          asset_component_features: {
+            apy: false,
+            balance: false,
+            filter: false,
+            market_trend: false,
+          },
+          flow: "flowTest",
+          source: "sourceTest",
         },
-        flow: "flowTest",
-        source: "sourceTest",
       },
-      true,
-      true,
-      false,
+      { mandatory: false, refreshSource: true, updateRoutes: true },
     );
   });
 
