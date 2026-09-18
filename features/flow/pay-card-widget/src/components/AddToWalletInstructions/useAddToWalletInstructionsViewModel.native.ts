@@ -15,7 +15,7 @@ export type AddToWalletInstructionsViewProps = {
   readonly steps: readonly string[];
   readonly ctaLabel: string;
   readonly ctaIcon: WalletPlatformIcon;
-  readonly onPressCta: () => void;
+  readonly onPressCta: () => Promise<void>;
 };
 
 type Params = {
@@ -31,10 +31,12 @@ export function useAddToWalletInstructionsViewModel({
   const { i18nKey, icon } = getWalletPlatform();
   const ctaIcon = WALLET_CTA_ICON[icon];
 
-  const onPressCta = useCallback(() => {
+  const onPressCta = useCallback(async () => {
+    // Leaves the instructions on screen when the wallet cannot be reached, so they stay actionable.
+    if (!(await openWalletApp())) return;
+
     dispatch(markCardAddedToWallet());
     onDone();
-    void openWalletApp();
   }, [dispatch, onDone]);
 
   return {
