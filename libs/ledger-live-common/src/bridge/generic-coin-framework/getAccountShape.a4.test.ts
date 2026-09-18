@@ -167,10 +167,12 @@ describe("genericGetAccountShape - A4 read branch", () => {
 
     await call();
 
-    // The bound is the 7th argument. Without it this path paginates unbounded and materialises a
-    // whole history in memory before the store bound below it ever runs -- and A4 read is enabled
-    // for Ethereum, so the account that produced the out-of-memory report reaches it.
-    expect(fetchA4OperationsMock.mock.calls[0][6]).toBe(DEFAULT_MAX_OPERATIONS);
+    // Asserted as the last argument rather than by index: a parameter was inserted ahead of it
+    // once already, and an index that silently drifts onto a neighbour is worse than no test.
+    // Without the bound this path paginates unbounded and materialises a whole history before the
+    // store bound below it ever runs -- and A4 read is enabled for Ethereum, so the account that
+    // produced the out-of-memory report reaches it.
+    expect(fetchA4OperationsMock.mock.calls[0].at(-1)).toBe(DEFAULT_MAX_OPERATIONS);
   });
 
   it("falls back to the coin-module delegate when fetchA4Operations throws with status 5xx", async () => {
