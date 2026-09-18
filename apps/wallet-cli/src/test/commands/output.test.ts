@@ -9,14 +9,23 @@ const HUMAN_DEVICE_ERROR_EXIT = path.resolve(
   "../helpers/human-device-error-exit.ts",
 );
 
+/**
+ * The child's environment, with `FORCE_COLOR` removed.
+ *
+ * `NO_COLOR` is what keeps the assertions free of escape codes, but Bun ignores it when
+ * `FORCE_COLOR` is also set and prints a warning with a full stack trace to stderr. Agent shells
+ * and some CI runners set `FORCE_COLOR`, so inheriting it turns eight lines of runtime noise into
+ * a test failure that has nothing to do with the CLI's own output.
+ */
+function childEnv(): Record<string, string | undefined> {
+  const { FORCE_COLOR: _ignored, ...rest } = process.env;
+  return { ...rest, CLAUDECODE: "1", NO_COLOR: "1" };
+}
+
 describe("output command handling", () => {
   it("human output exits with the WalletCliDeviceError exit code", async () => {
     const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_EXIT], {
-      env: {
-        ...process.env,
-        CLAUDECODE: "1",
-        NO_COLOR: "1",
-      },
+      env: childEnv(),
       stdin: "ignore",
       stdout: "pipe",
       stderr: "pipe",
@@ -33,7 +42,7 @@ describe("output command handling", () => {
 
   it("human output points at the JSON view and stays within 3 lines (LIVE-31394)", async () => {
     const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_EXIT], {
-      env: { ...process.env, CLAUDECODE: "1", NO_COLOR: "1" },
+      env: childEnv(),
       stdin: "ignore",
       stdout: "pipe",
       stderr: "pipe",
