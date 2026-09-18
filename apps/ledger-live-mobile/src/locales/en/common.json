@@ -10843,6 +10843,43 @@
         }
       }
     },
+    "stake": {
+      "sectionTitle": "Staking",
+      "staked": "Staked",
+      "unstaking": "Unstaking",
+      "claimable": "Claimable",
+      "estimatedRate": "{{rate}}% est.",
+      "fallbackValidator": "Aleo",
+      "status": {
+        "earning": "Earning rewards",
+        "unknown": "Status unavailable"
+      },
+      "nonEarning": {
+        "fullCommission": "This validator takes 100% commission, so you keep nothing.",
+        "overConcentrated": "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so you earn nothing.",
+        "leftCommittee": "This validator is no longer in the committee, so your stake earns nothing. Unstake and bond to another validator to start earning again.",
+        "ownStakeBelowMinimum": "Your stake is below the 10,000 ALEO minimum, so it earns nothing. Add to it to start earning again."
+      },
+      "emptyState": {
+        "description": "You can earn rewards by staking your {{name}}.",
+        "cta": "Earn rewards"
+      },
+      "unstakingRow": {
+        "settling": "Almost there\u2026",
+        "claimPending": "Claiming\u2026",
+        "unbondPending": "Unstaking\u2026",
+        "blocksRemaining_one": "~{{count}} block left",
+        "blocksRemaining_other": "~{{count}} blocks left"
+      }
+    },
+    "manage": {
+      "bond": "Bond",
+      "status": "Status",
+      "estimatedRate": "Est. rewards rate",
+      "unbondPendingInfo": "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "claimPendingInfo": "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "unlockBlock": "Unlocks at block"
+    },
     "send": {
       "balanceSelection": {
         "title": "Select balance",
@@ -10887,6 +10924,10 @@
     },
     "balancesSection": "Balances",
     "info": {
+      "available": {
+        "title": "Available balance",
+        "description": "The balance you can spend right now: transparent funds plus any private records already synced. Staked and unstaking amounts are not included."
+      },
       "transparent": {
         "title": "Transparent balance",
         "description": "The publicly visible balance on the Aleo network. This amount can be sent or received directly and is visible to anyone."
@@ -10894,6 +10935,18 @@
       "private": {
         "title": "Private balance",
         "description": "The shielded balance on the Aleo network. This balance is only visible to you and requires proof generation for private transactions."
+      },
+      "staked": {
+        "title": "Staked",
+        "description": "The amount currently bonded to a validator. It earns rewards but cannot be spent until you unstake it and the unbonding period ends."
+      },
+      "unstaking": {
+        "title": "Unstaking",
+        "description": "The amount you have unstaked that is still locked. It stops earning rewards immediately and becomes claimable once the unbonding period ends."
+      },
+      "claimable": {
+        "title": "Claimable",
+        "description": "The unstaked amount whose unbonding period has ended. Claim it to move it back to your available balance."
       }
     },
     "account": {

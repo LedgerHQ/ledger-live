@@ -10,6 +10,7 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import type { ModalInfo } from "~/modals/Info";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
 import InfoModal from "~/modals/Info";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
@@ -17,7 +18,7 @@ import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 import SectionTitle from "~/screens/WalletCentricSections/SectionTitle";
 import PrivateSyncButton from "./PrivateSyncButton";
 
-type InfoName = "transparent" | "private";
+type InfoName = "available" | "transparent" | "private";
 
 function AleoBalanceSummary({
   account,
@@ -31,7 +32,9 @@ function AleoBalanceSummary({
   const info = useMemo(() => getInfo(t), [t]);
   const unit = useAccountUnit(account);
 
+  const config = getAleoCurrencyConfigById(mainAccount.currency.id);
   const isTokenAccount = account.type === "TokenAccount";
+  const stakingEnabled = !!config?.enableStaking;
   const transparentBalance = isTokenAccount
     ? account.transparentBalance
     : (account.aleoResources?.transparentBalance ?? BigNumber(0));
@@ -58,6 +61,15 @@ function AleoBalanceSummary({
           data={infoName ? info[infoName] : []}
         />
         <Box style={{ flexDirection: "row" }}>
+          {stakingEnabled && (
+            <InfoItem
+              title={t("aleo.info.available.title")}
+              onPress={onPressInfoCreator("available")}
+              value={
+                <CurrencyUnitValue unit={unit} value={account.spendableBalance} disableRounding />
+              }
+            />
+          )}
           <InfoItem
             title={t("aleo.info.transparent.title")}
             onPress={onPressInfoCreator("transparent")}
@@ -106,6 +118,12 @@ export default function AccountBalanceHeader({
 
 function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
   return {
+    available: [
+      {
+        title: t("aleo.info.available.title"),
+        description: t("aleo.info.available.description"),
+      },
+    ],
     transparent: [
       {
         title: t("aleo.info.transparent.title"),

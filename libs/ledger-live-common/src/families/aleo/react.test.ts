@@ -2095,6 +2095,26 @@ describe("useAleoStakingPosition", () => {
       await act(async () => {});
       expect(result.current.nonEarningReason).toBeUndefined();
     });
+
+    it("reports the fetch as loading so views can skeleton instead of guessing", () => {
+      jest.mocked(getValidators).mockReturnValue(new Promise(() => {}));
+
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
+
+      expect(result.current.validatorsLoading).toBe(true);
+      expect(result.current.validatorsError).toBeNull();
+    });
+
+    it("hands the fetch error to views so they can stop claiming a status", async () => {
+      const error = new Error("offline");
+      jest.mocked(getValidators).mockRejectedValue(error);
+
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
+
+      await act(async () => {});
+      expect(result.current.validatorsLoading).toBe(false);
+      expect(result.current.validatorsError).toBe(error);
+    });
   });
 
   describe("pendingKind", () => {
