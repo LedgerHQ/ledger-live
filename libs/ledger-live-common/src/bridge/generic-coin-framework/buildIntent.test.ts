@@ -10,7 +10,11 @@ jest.mock("./api", () => ({ getCoinModuleApi: jest.fn() }));
 jest.mock("./api/context", () => ({ buildContext: jest.fn(() => ({ config: jest.fn() })) }));
 jest.mock("./bridge", () => ({ getBridgeApi: jest.fn() }));
 jest.mock("./prepareTransaction", () => ({ getAssetInfos: jest.fn() }));
-jest.mock("./utils", () => ({ transactionToIntent: jest.fn(() => ({ type: "send" })) }));
+jest.mock("./utils", () => ({
+  transactionToIntent: jest.fn(() => ({ type: "send" })),
+  // Returns the pending-token spend to subtract; 0 for these fixtures (no pending ops).
+  getPendingTokenSpent: jest.fn(() => 0),
+}));
 
 const mockGetCoinModuleApi = getCoinModuleApi as jest.Mock;
 const mockBuildContext = buildContext as jest.Mock;

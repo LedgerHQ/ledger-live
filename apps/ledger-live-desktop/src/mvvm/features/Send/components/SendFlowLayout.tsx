@@ -18,6 +18,7 @@ import { getSendFlowTrackingProperties } from "../utils/tracking";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
 import { getSendFlowTrackingPage } from "../utils/contactTracking";
+import { useSponsoredPhaseNavigator } from "../hooks/useSponsoredPhaseNavigator";
 
 type SendFlowLayoutProps = Readonly<{
   isOpen: boolean;
@@ -26,6 +27,9 @@ type SendFlowLayoutProps = Readonly<{
 
 export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
+  // Owns phase -> step navigation for the sponsored send from one persistent mount; inert for an
+  // ordinary send (phase stays IDLE).
+  useSponsoredPhaseNavigator();
   const { state } = useSendFlowData();
   const { recipientType } = useSendFlowTracking();
   const { selectedContact } = useRecipientContactSelection();

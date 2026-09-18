@@ -394,7 +394,7 @@ describe("useSignatureViewModel", () => {
     expect(mockNavigation.goToNextStep).toHaveBeenCalledTimes(1);
   });
 
-  test("routes a TX-C failure to SPONSORED_FAILURE with the error, not to confirmation", () => {
+  test("reports a TX-C failure to the orchestration and stops, without advancing to confirmation", () => {
     mockSponsoredPhase = SPONSORED_PHASE.TRANSFER;
     mockState.account.currency = null;
     const error = new Error("transfer boom");
@@ -404,8 +404,10 @@ describe("useSignatureViewModel", () => {
 
     ref.current?.finishWithError(error);
 
+    // The failure dispatch moves the phase to FAILED; useSponsoredPhaseNavigator does the routing to
+    // SPONSORED_FAILURE, so this VM only reports the outcome and must not advance to confirmation.
     expect(mockSponsoredActions.onTransferError).toHaveBeenCalledWith(error);
-    expect(mockNavigation.goToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.SPONSORED_FAILURE);
+    expect(mockNavigation.goToStep).not.toHaveBeenCalled();
     expect(mockNavigation.goToNextStep).not.toHaveBeenCalled();
   });
 });
