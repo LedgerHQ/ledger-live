@@ -220,6 +220,8 @@
     "@sbaiahmed1/react-native-blur": "4.5.5",
     "@segment/analytics-react-native": "2.24.0",
     "@segment/sovran-react-native": "1.1.4",
+    "@shared/analytics": "workspace:*",
+    "@shared/analytics-react": "workspace:*",
     "@shared/api-services": "workspace:^",
     "@shared/auth": "workspace:*",
     "@shared/cloud-sync": "workspace:^",

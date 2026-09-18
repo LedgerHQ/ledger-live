@@ -16,6 +16,9 @@ const deliveryStatusColor: Record<AnalyticsDeliveryStatus, string> = {
   skipped_no_client: "red",
   skipped_no_store: "red",
   failed: "red",
+  failed_tracking: "red",
+  failed_enrichment: "red",
+  failed_filter: "red",
 };
 
 const Event: React.FC<Props> = ({
