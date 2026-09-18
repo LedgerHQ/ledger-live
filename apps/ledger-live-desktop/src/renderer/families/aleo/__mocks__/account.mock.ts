@@ -7,6 +7,7 @@ import type {
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { aleoCurrency, aleoTokenCurrency } from "./currency.mock";
+import { ALEO_VALIDATOR_ADDRESS } from "./validator.mock";
 
 export const ALEO_ACCOUNT_1 = { ...genAccount("aleo-1", { currency: aleoCurrency }), index: 0 };
 export const ALEO_ACCOUNT_2 = { ...genAccount("aleo-2", { currency: aleoCurrency }), index: 1 };
@@ -35,11 +36,14 @@ export const ALEO_MAIN_ACCOUNT: AleoAccount = {
   },
 };
 
+// `bondedValidator` comes from the same `credits.aleo` mapping as `bondedBalance`, so a bonded
+// position always names its validator — a mock without one is a state the chain cannot produce.
 export const ALEO_BONDED_ACCOUNT: AleoAccount = {
   ...ALEO_MAIN_ACCOUNT,
   aleoResources: {
     ...ALEO_MAIN_ACCOUNT.aleoResources!,
     bondedBalance: new BigNumber(20_000_000_000),
+    bondedValidator: ALEO_VALIDATOR_ADDRESS,
   },
 };
 
@@ -66,6 +70,7 @@ export const ALEO_BONDED_CLAIMABLE_ACCOUNT: AleoAccount = {
   aleoResources: {
     ...ALEO_CLAIMABLE_ACCOUNT.aleoResources!,
     bondedBalance: new BigNumber(20_000_000_000),
+    bondedValidator: ALEO_VALIDATOR_ADDRESS,
   },
 };
 
