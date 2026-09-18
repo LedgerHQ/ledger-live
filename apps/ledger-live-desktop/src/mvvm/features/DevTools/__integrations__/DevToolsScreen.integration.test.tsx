@@ -12,6 +12,7 @@ jest.mock("@devtools/transport-panel", () => ({
 }));
 
 const devToolsSpy = jest.fn();
+const payCardToolPropsSpy = jest.fn();
 jest.mock("@devtools/shell", () => ({
   DevTools: (props: { config: unknown; onClose: () => void }) => {
     devToolsSpy(props);
@@ -25,7 +26,10 @@ jest.mock("@devtools/shell", () => ({
 
 jest.mock("@devtools/bindings", () => ({
   useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
-  usePayCardToolProps: () => ({ marker: "pay-card-props" }),
+  usePayCardToolProps: (options: unknown) => {
+    payCardToolPropsSpy(options);
+    return { marker: "pay-card-props" };
+  },
   useEnvDevToolProps: () => ({ marker: "env-props" }),
   useProdToggle: () => ({
     useProd: false,
@@ -71,6 +75,17 @@ describe("DevToolsScreen", () => {
         ],
       }),
     );
+  });
+
+  it("hands the pay-card tool the resolved card currencies, so its wallets carry one", () => {
+    render(<DevToolsScreen />);
+
+    // The coins resolve from the crypto registry without a request, so the map is never empty.
+    const [options] = payCardToolPropsSpy.mock.calls[0] ?? [];
+    const currencies = (options as { currencies?: ReadonlyMap<string, unknown> } | undefined)
+      ?.currencies;
+
+    expect(currencies?.get("bitcoin")).toBeDefined();
   });
 
   it("navigates back when DevTools requests close", async () => {
