@@ -104,7 +104,6 @@ export function CardAssetDetailsDialog({
                           key={item.transaction.id}
                           item={item}
                           formatters={formatters}
-                          assetCode={asset.currency}
                           onPress={() => setInspected(item)}
                         />
                       ))}

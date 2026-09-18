@@ -48,15 +48,6 @@ describe("ListItem", () => {
     expect(formatAmount).toHaveBeenNthCalledWith(2, "-13.0214", "usdc", "crypto");
   });
 
-  it("labels the crypto line Value when the row is asset-scoped", () => {
-    render(<ListItem item={item()} assetCode="usdc" valueLabel="Value" />, {
-      wrapper: cardApiWrapper(),
-    });
-
-    expect(screen.getByText("-12.99 EUR")).toBeVisible();
-    expect(screen.getByText("Value · -13.0214 USDC")).toBeVisible();
-  });
-
   it("does not show the transaction status", () => {
     render(<ListItem item={item({ status: "DECLINED" })} />, { wrapper: cardApiWrapper() });
 

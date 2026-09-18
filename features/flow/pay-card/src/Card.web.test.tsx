@@ -31,7 +31,6 @@ jest.mock("@features/flow-pay-card-widget", () => ({
 
 jest.mock("@features/flow-pay-card-assets", () => ({
   CardAssets: () => <div data-testid="card-assets" />,
-  CardAssetDetailsDialogPreview: () => <div data-testid="card-asset-details-preview" />,
 }));
 
 jest.mock("@features/flow-pay-card-transactions", () => ({

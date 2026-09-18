@@ -36,17 +36,6 @@ export function formatFundingSources(
     .join(" · ");
 }
 
-export function formatFundingSourceForAsset(
-  fundingSources: readonly PayCardTransactionFundingSource[] | undefined,
-  assetCode: string,
-  formatAmount?: FormatCardTransactionAmount,
-): string | undefined {
-  return formatFundingSources(
-    fundingSources?.filter(source => source.currency.toUpperCase() === assetCode.toUpperCase()),
-    formatAmount,
-  );
-}
-
 export function formatMerchantName(merchantNameLocation: string): string {
   const locationSeparator = merchantNameLocation.lastIndexOf(",");
   if (locationSeparator === -1) return merchantNameLocation;
