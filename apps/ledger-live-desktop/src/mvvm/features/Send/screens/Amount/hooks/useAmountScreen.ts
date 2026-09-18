@@ -14,6 +14,7 @@ import { trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 import { openURL } from "~/renderer/linking";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 
 type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;
@@ -46,6 +47,11 @@ export function useAmountScreen(): AmountScreenViewModel {
   const location = useLocation();
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
+  const {
+    selectedFeeOptionId,
+    available: sponsoredAvailable,
+    intentReady: sponsoredIntentReady,
+  } = useSponsoredSend();
 
   const trackingProperties = useMemo(
     () => ({
@@ -130,8 +136,18 @@ export function useAmountScreen(): AmountScreenViewModel {
   );
 
   const onReview = useCallback(() => {
+    if (selectedFeeOptionId === "tronify" && sponsoredAvailable) {
+      // `available` is sticky across the async intent rebuild, so it can read true while the intent is
+      // momentarily null; don't enter rent-signing until the rebuilt intent is ready or craftRent runs
+      // against a null intent. Falling through to standard SIGNATURE would be wrong too — the transaction
+      // still carries sponsored:true, so its native fee would be dropped from pending locking. The Review
+      // button shows loading while not ready (useAmountScreenViewModel).
+      if (!sponsoredIntentReady) return;
+      navigation.goToStep(SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE);
+      return;
+    }
     navigation.goToStep(SEND_FLOW_STEP.SIGNATURE);
-  }, [navigation]);
+  }, [navigation, selectedFeeOptionId, sponsoredAvailable, sponsoredIntentReady]);
 
   const onSelectCoinControl = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.COIN_CONTROL);
