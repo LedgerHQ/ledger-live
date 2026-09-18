@@ -48,8 +48,20 @@ describe("cryptoFactory test", () => {
     const chain = cryptoFactory("gonka");
     expect(chain.prefix).toBe("gonka");
     expect(chain.validatorPrefix).toBe("gonkavaloper");
+    // The endpoint reaches the chain instance through config enrichment (chain/chain.ts).
+    expect(chain.lcd).toBe("https://gonka.coin.ledger.com");
+    // Still 0 with the config entry in place — guards against a future entry
+    // re-introducing the family default.
     expect(chain.minGasPrice).toBe(0);
     expect(chain.ledgerValidator).toBeUndefined();
+  });
+
+  it("should keep gonka's configuration free of staking and of a Ledger validator", () => {
+    const gonkaDefault = cosmosConfig.config_currency_gonka.default as Record<string, unknown>;
+    expect(gonkaDefault).toMatchObject({
+      disableDelegation: true,
+    });
+    expect("ledgerValidator" in gonkaDefault).toBe(false);
   });
 
   it("should opt crypto_org out of sending the prefix on the sign APDU", () => {

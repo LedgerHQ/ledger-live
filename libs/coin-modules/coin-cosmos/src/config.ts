@@ -190,6 +190,20 @@ export const cosmosConfig: CosmosConfig = {
       disableDelegation: true,
     },
   },
+  config_currency_gonka: {
+    type: "object",
+    default: {
+      // The chain's FeeParams.MinGasPriceNgonka consensus parameter is 0; the family default
+      // of 0.0025 would price transfers the chain never charges.
+      lcd: "https://gonka.coin.ledger.com",
+      minGasPrice: 0,
+      status: {
+        type: "active",
+      },
+      // The runtime rejects delegation messages, so no staking is offered.
+      disableDelegation: true,
+    },
+  },
 };
 
 export type CosmosCoinConfig = CurrencyConfig & CosmosConfig;
