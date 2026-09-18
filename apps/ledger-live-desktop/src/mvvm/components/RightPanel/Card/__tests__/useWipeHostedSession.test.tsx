@@ -131,6 +131,7 @@ describe("useWipeHostedSession", () => {
     rerender();
 
     expectBothManifestsWiped();
+    expect(mockedInvoke).toHaveBeenCalledTimes(2);
   });
 
   it("still wipes once the manifests resolve, after a toggle that netted no change", () => {

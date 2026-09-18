@@ -5,10 +5,6 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import logger from "~/renderer/logger";
 import { useCardHostedManifests } from "./useCardHostedManifests";
 
-const WIPE_ON_PAY_TAB_ENTER = true;
-
-const MANIFEST_COUNT = 2;
-
 let hostedSessionWipe: Promise<void> = Promise.resolve();
 
 /** Best effort on purpose: a provider session left behind must never hold the login back. */
@@ -31,28 +27,28 @@ export function useWipeHostedSession(): void {
   const isSignedIn = useIsCardSignedIn();
   const { login, hosted } = useCardHostedManifests();
   const lastSeenSignedIn = useRef(isSignedIn);
-  // Set on any sign-in change seen before the manifests resolved, so a second change during that
-  // same wait (e.g. sign in then out again) still wipes once they do, instead of netting out to
-  // "nothing changed" and losing both.
-  const hasPendingWipe = useRef(WIPE_ON_PAY_TAB_ENTER);
+  const wipedManifestUrls = useRef(new Set<string>());
 
   useEffect(() => {
     if (lastSeenSignedIn.current !== isSignedIn) {
       lastSeenSignedIn.current = isSignedIn;
-      hasPendingWipe.current = true;
+      wipedManifestUrls.current.clear();
     }
 
-    const resolvedManifests = [login, hosted].filter(
-      (manifest): manifest is LiveAppManifest => !!manifest,
+    const manifestsToWipe = [login, hosted].filter(
+      (manifest): manifest is LiveAppManifest =>
+        !!manifest && !wipedManifestUrls.current.has(String(manifest.url)),
     );
 
-    if (!hasPendingWipe.current || resolvedManifests.length === 0) {
+    if (manifestsToWipe.length === 0) {
       return;
     }
 
-    hasPendingWipe.current = resolvedManifests.length < MANIFEST_COUNT;
+    for (const manifest of manifestsToWipe) {
+      wipedManifestUrls.current.add(String(manifest.url));
+    }
 
-    hostedSessionWipe = Promise.all(resolvedManifests.map(wipeHostedSessionForManifest))
+    hostedSessionWipe = Promise.all(manifestsToWipe.map(wipeHostedSessionForManifest))
       .then(() => undefined)
       .catch(() => undefined);
   }, [isSignedIn, login, hosted]);
