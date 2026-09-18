@@ -19,6 +19,14 @@
  *   the same block can interleave. Walking neighbours would miss the sibling sitting one row past
  *   another transaction's.
  *
+ * Holding both at once means the cut can only ever move *outwards*: it starts at the bound and is
+ * pushed to the furthest row of every transaction it has admitted, which may pull in rows of
+ * transactions that were below it, whose own furthest rows push it further again. Filtering the
+ * admitted hashes instead of extending the cut would satisfy the second property and break the
+ * first: `[h1, h2, h3, h1]` bounded at 2 would keep `[h1, h2, h1]` and drop `h3`, which is
+ * *newer* than the `h1` row it kept -- a hole above the oldest retained operation, the exact
+ * failure this is meant to prevent.
+ *
  * The bound is therefore a floor rather than a ceiling: the returned list can exceed
  * `maxOperations` by the tail of the transactions crossing it. That is the same rule
  * `paginateOperations` applies a level up when it returns the entire page that reached the bound.
@@ -32,11 +40,21 @@ export function boundByTransaction<T extends { hash: string }>(
 ): T[] {
   if (maxOperations === undefined || operations.length <= maxOperations) return operations;
 
-  const keptHashes = new Set<string>();
-  for (let i = 0; i < maxOperations; i++) {
+  const furthestRowOf = new Map<string, number>();
+  for (let i = 0; i < operations.length; i++) {
     const { hash } = operations[i];
-    if (hash) keptHashes.add(hash);
+    if (hash) furthestRowOf.set(hash, i);
   }
 
-  return operations.filter((op, index) => index < maxOperations || keptHashes.has(op.hash));
+  // `end` is re-read on every iteration, so a row admitted by an extension gets its own
+  // transaction extended in turn -- the iteration the two properties above require.
+  let end = maxOperations;
+  for (let i = 0; i < end; i++) {
+    const { hash } = operations[i];
+    if (!hash) continue;
+    const furthest = furthestRowOf.get(hash) as number;
+    if (furthest >= end) end = furthest + 1;
+  }
+
+  return operations.slice(0, end);
 }
