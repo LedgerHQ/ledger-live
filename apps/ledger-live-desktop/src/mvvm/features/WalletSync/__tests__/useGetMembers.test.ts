@@ -1,5 +1,6 @@
 import { renderHook, waitFor } from "tests/testSetup";
 import { useGetMembers } from "../hooks/useGetMembers";
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { simpleTrustChain } from "./shared";
 

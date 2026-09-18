@@ -4,6 +4,7 @@ import { AccountRaw, type PostOnboardingState } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BleState, SettingsState } from "~/reducers/types";
 import type { PayCardPersistedState } from "~/db";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { Contact } from "@domain/entity-contact";
 import { Subject, Observable } from "rxjs";
@@ -132,8 +133,9 @@ export const removeImageExecMock = (): Observable<RemoveImageEvent> =>
   mockDeviceEventSubject as Observable<RemoveImageEvent>;
 export const installLanguageExecMock = (): Observable<InstallLanguageEvent> =>
   mockDeviceEventSubject as Observable<InstallLanguageEvent>;
-export const completeExchangeExecMock = (): Observable<CompleteExchangeRequestEvent> =>
-  mockDeviceEventSubject as Observable<CompleteExchangeRequestEvent>;
+export const completeExchangeExecMock =
+  (): Observable<CompleteExchangeRequestEvent> =>
+    mockDeviceEventSubject as Observable<CompleteExchangeRequestEvent>;
 export const renameDeviceExecMock = (): Observable<RenameDeviceEvent> =>
   mockDeviceEventSubject as Observable<RenameDeviceEvent>;
 /* eslint-enable @typescript-eslint/consistent-type-assertions */

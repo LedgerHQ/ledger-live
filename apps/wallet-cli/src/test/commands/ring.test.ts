@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, mock } from "bun:test";
+// LKRP_MIGRATION: protocol errors → @shared/lkrp; QR scan/PIN/WS errors → @features/platform-lkrp-qr.
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";

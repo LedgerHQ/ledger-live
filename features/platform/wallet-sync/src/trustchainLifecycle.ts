@@ -2,6 +2,7 @@ import { TrustchainLifecycle, getCloudSyncApi, makeCipher } from "@shared/cloud-
 
 export const liveSlug = "live";
 
+// LKRP_MIGRATION: Cloud Sync rotation stays here; protocol identity comes from @shared/lkrp then public ts-libs. JWT/withAuth stay in cloud-sync.
 export function trustchainLifecycle({
   cloudSyncApiBaseUrl,
   getCurrentWSState,

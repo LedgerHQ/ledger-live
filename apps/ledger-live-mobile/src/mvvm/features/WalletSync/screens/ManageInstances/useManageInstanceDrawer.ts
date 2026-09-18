@@ -2,6 +2,8 @@ import { useState, useCallback } from "react";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import { useGetMembers } from "../../hooks/useGetMembers";
 import { UseQueryResult } from "@tanstack/react-query";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { memberCredentialsSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector } from "~/context/hooks";

@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
 import { pubkeyFromPrivatekey, encryptData, decryptData, hexToBytes } from "./crypto";
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 
 const SERVICE = APP_NAME;

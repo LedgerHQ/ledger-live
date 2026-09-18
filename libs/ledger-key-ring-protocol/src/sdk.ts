@@ -12,6 +12,8 @@ import {
   TrustchainLifecycle,
   GetOrCreateTrustchainCallbacks,
 } from "./types";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import {
   crypto,
   Challenge,
@@ -43,6 +45,8 @@ import {
 type WithJwt = <T>(job: (jwt: JWT) => Promise<T>) => Promise<T>;
 type WithDevice = <T>(job: (device: Device) => Promise<T>) => Promise<T>;
 
+// Migration target: protocol orchestration moves behind @shared/lkrp ports; JWT remains outside it.
+// See https://github.com/LedgerHQ/architecture-as-code/pull/380.
 export class SDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
   private hwDeviceProvider: HWDeviceProvider;

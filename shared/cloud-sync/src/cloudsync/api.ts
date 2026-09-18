@@ -36,7 +36,9 @@ const schemaAtomicPostResponse = z.discriminatedUnion("status", [
 export type APISyncUpdateResponse = z.infer<typeof schemaAtomicPostResponse>;
 
 /**
- * Satisfies the error contract documented in @ledgerhq/ledger-key-ring-protocol's `auth.ts`:
+ * LKRP_MIGRATION: JWT recovery contract stays in @shared/cloud-sync (status + backend message).
+ * Do not pull @ledgerhq/ledger-key-ring-protocol auth.ts here; SDK JWT stays out of protocol.
+ * Satisfies the error contract documented in the legacy lib's `auth.ts`:
  * a numeric `status` plus the backend's verbatim `message`. Both are required for JWT recovery —
  * dropping either turns a recoverable expired token into a surfaced 401.
  */

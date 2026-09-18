@@ -1,6 +1,9 @@
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
 // Local structural interfaces mirroring @ledgerhq/ledger-key-ring-protocol types.
 // Keeping lkrp out of this package's runtime deps avoids pulling in its native
 // addon chain (tiny-secp256k1 etc.) into domain build targets.
+// Migration target: share protocol identity with @shared/lkrp; JWT, withAuth and the Ledger Sync
+// encryption key remain owned here.
 
 export type JWT = {
   accessToken: string;

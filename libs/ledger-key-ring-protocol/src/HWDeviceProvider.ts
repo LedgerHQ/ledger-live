@@ -1,5 +1,6 @@
 import { from, lastValueFrom } from "rxjs";
 import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { ApduDevice } from "@ledgerhq/hw-ledger-key-ring-protocol/ApduDevice";
 import { StatusCodes } from "@ledgerhq/hw-transport";
 import { crypto, device } from "@ledgerhq/hw-ledger-key-ring-protocol";
@@ -8,6 +9,8 @@ import { genericWithJWT } from "./auth";
 import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks, WithDevice } from "./types";
 import { TrustchainNotAllowed } from "./errors";
 
+// Migration target: adapt hardware and Trusted App implementations to @shared/lkrp's optional
+// LkrpDeviceLayer. Authentication remains a separate concern.
 export class HWDeviceProvider {
   /**
    * TODO withDevice should be imported statically from @ledgerhq/live-common/hw/deviceAccess

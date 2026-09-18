@@ -5,6 +5,8 @@ import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSync
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { TinyCard } from "../../components/TinyCard";
 import { useInstances } from "./useInstances";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { memberCredentialsSelector } from "@ledgerhq/ledger-key-ring-protocol/store";

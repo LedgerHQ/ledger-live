@@ -1,4 +1,8 @@
 import React, { useCallback, useState } from "react";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: QR host/candidate → @features/platform-lkrp-qr with an injected pairing transport.
+// LKRP_MIGRATION: protocol errors → @shared/lkrp; QR scan/PIN/WS errors → @features/platform-lkrp-qr.
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { TextInput } from "@ledgerhq/lumen-ui-react";

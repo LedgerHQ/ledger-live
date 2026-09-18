@@ -1,6 +1,8 @@
 import { useLayoutEffect, useMemo } from "react";
 import { getEnv } from "@shared/env";
 import { authEnvironmentSelector, setAuthEnvironment, type AuthEnvironment } from "@shared/auth";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { trustchainLifecycle } from "@features/platform-wallet-sync";
@@ -14,6 +16,8 @@ import { useInstanceName } from "./useInstanceName";
 let sdkInstance: TrustchainSDK | null = null;
 let instanceEnvironment: AuthEnvironment | null = null;
 
+// Migration seam: this app composition root will provide Wallet adapters to
+// @features/platform-lkrp instead of constructing the legacy SDK directly.
 export function useTrustchainSdk() {
   const featureWalletSync = useFeature("lldWalletSync");
   const environment: AuthEnvironment =

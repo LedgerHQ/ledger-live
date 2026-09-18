@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 import GeneralSettings from "~/screens/Settings/General";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import WalletSyncNavigator from "../WalletSyncNavigator";

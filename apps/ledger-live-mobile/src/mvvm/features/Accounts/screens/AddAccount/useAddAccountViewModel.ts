@@ -9,6 +9,7 @@ import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/ty
 import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 import { blockPasswordLock } from "~/actions/appstate";
 import { useSelector, useDispatch } from "~/context/hooks";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature } from "@features/platform-feature-flags";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";

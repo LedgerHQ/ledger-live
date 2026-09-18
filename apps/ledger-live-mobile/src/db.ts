@@ -27,6 +27,7 @@ import {
   type PersistedKnownDevicesState,
 } from "./reducers/knownDevices";
 import type { FeatureFlagsState } from "@shared/feature-flags";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "~/reducers/wallet";
 import { type PersistedCAL } from "@domain/api-currency-token";

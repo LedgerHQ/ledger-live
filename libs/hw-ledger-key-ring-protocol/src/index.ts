@@ -19,8 +19,11 @@ export {
   Permissions,
 } from "./CommandBlock";
 export { APDU, TRUSTCHAIN_APP_NAME } from "./ApduDevice";
+// LKRP_MIGRATION: APDU/TLV stay in the injected LkrpDeviceLayer; TRUSTCHAIN_APP_NAME
+// is mirrored by @features/platform-lkrp until the hardware adapter owns it.
 export { CommandStreamEncoder } from "./CommandStreamEncoder";
 export { CommandStreamDecoder } from "./CommandStreamDecoder";
+// LKRP_MIGRATION: encode/decode become @shared/lkrp createCommandStreamCodec (then public ts-libs).
 export { Challenge, PubKeyCredential } from "./SeedId";
 export { StreamTree } from "./StreamTree";
 export { SoftwareDevice };

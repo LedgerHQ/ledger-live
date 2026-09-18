@@ -13,6 +13,7 @@ import {
 } from "~/renderer/actions/walletSync";
 import { useNavigate } from "react-router";
 import styled, { useTheme } from "styled-components";
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { FlowOptions } from "LLD/features/WalletSync/hooks/useFlows";
 import { useTranslation } from "react-i18next";

@@ -1,3 +1,6 @@
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
+// LKRP_MIGRATION: protocol errors → @shared/lkrp; QR scan/PIN/WS errors → @features/platform-lkrp-qr.
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import {
   memberCredentialsSelector,
   setTrustchain,

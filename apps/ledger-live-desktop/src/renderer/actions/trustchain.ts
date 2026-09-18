@@ -1,3 +1,4 @@
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getKey } from "~/renderer/storage";
 import { ThunkResult } from "./types";

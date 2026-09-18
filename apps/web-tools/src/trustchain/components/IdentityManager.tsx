@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { TrustchainSDKContext } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { TrustchainStore, getInitialStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 

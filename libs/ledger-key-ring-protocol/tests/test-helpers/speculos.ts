@@ -79,6 +79,7 @@ export type SpeculosDevice = {
  *
  * Only `exchange` is implemented: the base class builds `send` on top of it,
  * which is all `@ledgerhq/hw-ledger-key-ring-protocol`'s ApduDevice uses.
+ * LKRP_MIGRATION: APDU/Speculos stay in the injected LkrpDeviceLayer; this harness is not part of the public ts-libs SDK.
  */
 export class SpeculosApduTransport extends Transport {
   private readonly datasource: HttpSpeculosDatasource;
@@ -290,7 +291,10 @@ export async function createSpeculosDevice(params: SpeculosDeviceParams): Promis
 
   devices[id] = { process: child, destroy };
 
-  return { id, transport: new SpeculosApduTransport(`http://127.0.0.1:${apiPort}`) };
+  return {
+    id,
+    transport: new SpeculosApduTransport(`http://127.0.0.1:${apiPort}`),
+  };
 }
 
 /** Stops and removes a device created by {@link createSpeculosDevice}. */

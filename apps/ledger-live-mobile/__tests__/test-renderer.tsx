@@ -4,6 +4,7 @@ import { payCardBalanceInitialState } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import { payRequestVerifyHintInitialState } from "@features/flow-pay-request/state";
 import { initialIdentitiesState } from "@domain/entity-client-identity";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";

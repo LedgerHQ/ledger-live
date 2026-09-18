@@ -2,6 +2,7 @@ import React from "react";
 
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import GenericFollowInstructionsDrawer from "../FollowInstructions";
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useRemoveMember } from "../../hooks/useRemoveMember";
 

@@ -3,6 +3,10 @@ import { setupServer } from "msw/node";
 import { WalletAuthMissingBaseUrlError } from "@ledgerhq/auth";
 import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
 import { setEnv } from "@shared/env";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
+// LKRP_MIGRATION: utils / liveAuthentication → keystore + LedgerAuth; do not keep hex private keys.
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";

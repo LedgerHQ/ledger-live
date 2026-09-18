@@ -1,6 +1,7 @@
 import { useSelector } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
 import { useFeature } from "@features/platform-feature-flags";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { lastSeenDeviceSelector, lastOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/types-devices";

@@ -1,3 +1,4 @@
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { ContactsLedgerSyncStatus } from "@features/flow-contacts-introduction";
 import { useFeature } from "@features/platform-feature-flags";

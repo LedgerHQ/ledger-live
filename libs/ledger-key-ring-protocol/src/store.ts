@@ -3,6 +3,8 @@
  * The Trustchain store is a store that contains the data related to trustchain.
  * It essentially is the client's credentials that are only stored on the
  * client side and the trustchain returned by the backend.
+ *
+ * LKRP_MIGRATION: store → @domain/entity-trustchain. Do not keep private keys in the persisted state.
  */
 import { MemberCredentialsSchema, type MemberCredentials, type Trustchain } from "./types";
 import { initMemberCredentials } from "./utils";
@@ -34,7 +36,9 @@ export type TrustchainHandlersPayloads = {
   TRUSTCHAIN_STORE_IMPORT_STATE: { trustchain: TrustchainStore };
   TRUSTCHAIN_STORE_RESET: { memberCredentials: MemberCredentials };
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN: { trustchain: Trustchain };
-  TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
+  TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: {
+    memberCredentials: MemberCredentials;
+  };
 };
 
 type Handlers<State, Types, PreciseKey = true> = {

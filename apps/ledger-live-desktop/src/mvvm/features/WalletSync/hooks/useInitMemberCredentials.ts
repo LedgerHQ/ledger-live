@@ -1,3 +1,4 @@
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import {
   memberCredentialsSelector,
   setMemberCredentials,

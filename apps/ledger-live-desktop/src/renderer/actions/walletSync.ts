@@ -1,3 +1,4 @@
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { ChangeFlowPayload } from "../reducers/walletSync";
 

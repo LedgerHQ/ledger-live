@@ -1,5 +1,7 @@
 import { renderHook } from "@tests/test-renderer";
 import { useLifeCycle } from "../useLifeCycle";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
+// LKRP_MIGRATION: protocol errors → @shared/lkrp; QR scan/PIN/WS errors → @features/platform-lkrp-qr.
 import {
   TrustchainEjected,
   TrustchainNotAllowed,

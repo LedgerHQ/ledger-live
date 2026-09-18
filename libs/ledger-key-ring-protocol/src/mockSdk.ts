@@ -10,6 +10,8 @@ import {
   TrustchainSDK,
   TrustchainSDKContext,
 } from "./types";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { Permissions } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { TrustchainEjected } from "./errors";
 import getApi from "./api";

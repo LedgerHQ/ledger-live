@@ -33,6 +33,7 @@ export type Trustchain = {
   rootId: string;
   /**
    * The secret used to encrypt/decrypt the wallet sync data
+   * LKRP_MIGRATION: walletSyncEncryptionKey stays Cloud Sync; @shared/lkrp Trustchain is protocol identity only.
    */
   walletSyncEncryptionKey: string;
   /**

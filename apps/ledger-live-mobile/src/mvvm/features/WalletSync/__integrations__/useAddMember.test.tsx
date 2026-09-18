@@ -4,6 +4,7 @@ import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { useAddMember } from "../hooks/useAddMember";
 import { SceneKind } from "../hooks/useFollowInstructionDrawer";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+// LKRP_MIGRATION: protocol errors → @shared/lkrp; QR scan/PIN/WS errors → @features/platform-lkrp-qr.
 import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { track } from "~/analytics";
 import { AnalyticsEvents } from "../Analytics/enums";
