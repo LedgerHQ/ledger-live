@@ -6,6 +6,7 @@ module.exports = {
   // Native modules a flow imports transitively (react-native-keychain) read this at module eval.
   NativeModules: {
     AppleWalletModule: { openPaymentSetup: jest.fn(() => Promise.resolve()) },
+    GoogleWalletModule: { openWallet: jest.fn(() => Promise.resolve()) },
   },
   StyleSheet: {
     create: styles => styles,

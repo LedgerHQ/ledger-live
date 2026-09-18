@@ -30,6 +30,11 @@ export const CARD_ONBOARDING_ADD_TO_WALLET_COPY = {
     step2: "Select Debit or Credit Card",
     step3: "Follow the instructions",
     cta: "Go to Apple Wallet",
+    error: {
+      title: "Apple Wallet couldn’t be opened",
+      description: "Make sure Apple Pay is available on this device, then try again.",
+      action: "Try again",
+    },
   },
   android: {
     title: "Add to Google Pay",
@@ -37,7 +42,13 @@ export const CARD_ONBOARDING_ADD_TO_WALLET_COPY = {
     step2: "Choose Payment card, then select New Credit or Debit Card.",
     step3: "Follow the instructions.",
     cta: "Go to Google Wallet",
+    error: {
+      title: "Google Wallet couldn’t be opened",
+      description: "Google Wallet may not be installed or may be disabled.",
+      action: "Open Google Play",
+    },
   },
+  error: { back: "Back to instructions" },
 } as const;
 
 export const CARD_ADD_TO_WALLET_CTA_COPY = "Add to {{wallet}} Pay";
