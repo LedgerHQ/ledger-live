@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tester-zcash
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`153959b`](https://github.com/LedgerHQ/ledger-live/commit/153959be64daf83b3cbbac4707c40258b8a00769)]:
+  - @ledgerhq/live-common@37.6.1
+
+## 0.1.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`153959b`](https://github.com/LedgerHQ/ledger-live/commit/153959be64daf83b3cbbac4707c40258b8a00769)]:
+  - @ledgerhq/live-common@37.6.1-hotfix.0
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,5 +1,27 @@
 # web-tools
 
+## 0.56.1
+
+### Patch Changes
+
+- Updated dependencies [[`153959b`](https://github.com/LedgerHQ/ledger-live/commit/153959be64daf83b3cbbac4707c40258b8a00769), [`b9c7dea`](https://github.com/LedgerHQ/ledger-live/commit/b9c7dea591b6e0292a4452d29253738c0c67e29a)]:
+  - @ledgerhq/live-common@37.6.1
+  - @ledgerhq/ledger-key-ring-protocol@0.21.3
+
+## 0.56.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`153959b`](https://github.com/LedgerHQ/ledger-live/commit/153959be64daf83b3cbbac4707c40258b8a00769)]:
+  - @ledgerhq/live-common@37.6.1-hotfix.0
+
+## 0.56.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b9c7dea`](https://github.com/LedgerHQ/ledger-live/commit/b9c7dea591b6e0292a4452d29253738c0c67e29a)]:
+  - @ledgerhq/ledger-key-ring-protocol@0.21.3-hotfix.0
+
 ## 0.56.0
 
 ### Minor Changes

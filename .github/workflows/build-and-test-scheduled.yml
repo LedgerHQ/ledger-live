@@ -1,12 +1,14 @@
-name: "[All Platforms] - Build and Test - Push"
+name: "[All Platforms] - Build and Test - Scheduled"
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - release
-      - hotfix
+  schedule:
+    # Hourly, 09:00-18:00 Paris on weekdays (08:00-17:00 once CET resumes - cron is UTC only).
+    - cron: "0 7-16 * * 1-5"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -18,7 +20,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -30,6 +31,8 @@ jobs:
       CARD_BAANX_CLIENT_KEY: ${{ secrets.CARD_BAANX_CLIENT_KEY }}
       CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
       CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
+      GH_BOT_CLIENT_ID: ${{ secrets.GH_BOT_CLIENT_ID }}
+      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       NX_KEY: ${{ secrets.NX_KEY }}
 
   test-desktop:
@@ -37,7 +40,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
@@ -60,7 +62,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -76,7 +77,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -91,7 +91,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
@@ -107,6 +106,7 @@ jobs:
       CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
       CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
       GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
+      GH_BOT_CLIENT_ID: ${{ secrets.GH_BOT_CLIENT_ID }}
       GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       NX_KEY: ${{ secrets.NX_KEY }}
       R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -117,6 +117,7 @@ jobs:
       SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
     with:
       macos-specificity-runner-label: "general-pool"
+      skip-bundle-size-reporting: true
       max-shards: 2
       skip-pod-checks: "true"
 
@@ -126,7 +127,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -143,7 +143,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -158,7 +157,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -173,7 +171,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -188,7 +185,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -203,7 +199,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -218,46 +213,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
-    secrets:
-      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
-      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-      NX_KEY: ${{ secrets.NX_KEY }}
-
-  build-web-tools:
-    name: "Build Web Tools"
-    permissions:
-      id-token: write
-      contents: read
-      pull-requests: write
-    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
-    secrets:
-      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
-      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-      NX_KEY: ${{ secrets.NX_KEY }}
-      VERCEL_LEDGER_WALLET_TEAM_ID: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
-      VERCEL_LEDGER_WALLET_TOKEN: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
-      VERCEL_PROJECT_WEBTOOLS: ${{ secrets.VERCEL_PROJECT_WEBTOOLS }}
-    with:
-      vercel-production: ${{ github.ref_name == 'develop' && 'true' || 'false' }}
-
-  rsdoctor:
-    name: "Rsdoctor"
-    permissions:
-      id-token: write
-      contents: read
-      pull-requests: write
-      issues: read
-      actions: read
-    if: ${{ contains(fromJson('["develop", "main"]'), github.ref_name) }}
-    uses: LedgerHQ/ledger-live/.github/workflows/rsdoctor-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -271,7 +227,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -286,7 +241,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -298,7 +252,6 @@ jobs:
 
   test-additional:
     name: "Test Additional"
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
     permissions:
       security-events: write
@@ -309,7 +262,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -324,7 +276,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    if: ${{ github.ref_name != 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -334,9 +285,8 @@ jobs:
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
 
-  # Final Check required
-  ok:
-    name: "OK"
+  report:
+    name: "Report"
     needs:
       - build-desktop
       - test-desktop
@@ -350,16 +300,92 @@ jobs:
       - test-devtools
       - test-support
       - test-design-system
-      - build-web-tools
-      - rsdoctor
       - test-cli
       - build-wallet-cli
       - test-additional
       - test-mobile-e2e-lint
       - test-desktop-e2e-lint
     runs-on: ubuntu-22.04
-    if: always() && !cancelled()
+    timeout-minutes: 5
+    if: ${{ !cancelled() && contains(needs.*.result, 'failure') }}
     steps:
-      - name: Check result
-        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
-        run: exit 1
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        name: prepare status
+        env:
+          NEEDS_JSON: ${{ toJson(needs) }}
+          REF_NAME: ${{ github.ref_name }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          SERVER_URL: ${{ github.server_url }}
+          SHA: ${{ github.sha }}
+        with:
+          script: |
+            const fs = require("fs");
+
+            const lanes = {
+              "build-desktop": "Build Desktop",
+              "test-desktop": "Desktop E2E & Mock Tests",
+              "codecheck-desktop": "Desktop Lint & Unit Tests",
+              "test-mobile": "Test Mobile",
+              "build-test-mobile": "Build & Test Mobile",
+              "test-libraries": "Test Libraries",
+              "test-features": "Test Features",
+              "test-shared": "Test Shared",
+              "test-domain": "Test Domain",
+              "test-devtools": "Test DevTools",
+              "test-support": "Test Support",
+              "test-design-system": "Test UI Libs",
+              "test-cli": "Test CLI",
+              "build-wallet-cli": "Build Wallet CLI",
+              "test-additional": "Test Additional",
+              "test-mobile-e2e-lint": "Mobile E2E Lint & Typecheck",
+              "test-desktop-e2e-lint": "Desktop E2E Lint & Typecheck",
+            };
+
+            const needs = JSON.parse(process.env.NEEDS_JSON || "{}");
+            const refName = process.env.REF_NAME;
+            const runUrl = `${process.env.SERVER_URL}/${process.env.REPOSITORY}/actions/runs/${process.env.RUN_ID}`;
+            const sha = (process.env.SHA || "").slice(0, 7);
+
+            const failed = Object.entries(lanes)
+              .filter(([id]) => needs[id]?.result === "failure")
+              .map(([, name]) => `❌ ${name}`);
+
+            const slackPayload = {
+              channel: "C05FKJ7DFAP",
+              text: `[Alert] Repo health check failed on ${refName}`,
+              blocks: [
+                {
+                  type: "header",
+                  text: {
+                    type: "plain_text",
+                    text: `:warning: [Alert] Repo health check failed on ${refName}`,
+                    emoji: true,
+                  },
+                },
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: failed.join("\n"),
+                  },
+                },
+                { type: "divider" },
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: `\`${sha}\`\n<${runUrl}|Workflow run>`,
+                  },
+                },
+              ],
+            };
+
+            fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
+
+      - name: post to live-repo-health slack channel
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          payload-file-path: ${{ github.workspace }}/payload-slack-content.json
