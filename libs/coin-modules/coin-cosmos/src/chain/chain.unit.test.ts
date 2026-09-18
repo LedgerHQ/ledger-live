@@ -60,8 +60,15 @@ describe("cryptoFactory test", () => {
     const gonkaDefault = cosmosConfig.config_currency_gonka.default as Record<string, unknown>;
     expect(gonkaDefault).toMatchObject({
       disableDelegation: true,
+      // The declared feature set is transfers only: staking must not appear here either.
+      status: { features: [{ id: "blockchain_txs", type: "active" }] },
     });
     expect("ledgerValidator" in gonkaDefault).toBe(false);
+
+    const featureIds = (
+      (gonkaDefault.status as { features?: { id: string }[] }).features ?? []
+    ).map(f => f.id);
+    expect(featureIds).not.toContain("staking_txs");
   });
 
   it("should opt crypto_org out of sending the prefix on the sign APDU", () => {

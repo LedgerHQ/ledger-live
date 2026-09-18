@@ -199,8 +199,10 @@ export const cosmosConfig: CosmosConfig = {
       minGasPrice: 0,
       status: {
         type: "active",
+        // Declares the supported set: transfers only. The runtime rejects delegation messages,
+        // so staking is absent here and gated in the UI by `disableDelegation` below.
+        features: [{ id: "blockchain_txs", type: "active" }],
       },
-      // The runtime rejects delegation messages, so no staking is offered.
       disableDelegation: true,
     },
   },
