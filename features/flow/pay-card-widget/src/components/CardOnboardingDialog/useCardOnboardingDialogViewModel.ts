@@ -18,7 +18,6 @@ function toStepStatus(isDone: boolean, isFirstUndone: boolean): StepStatus {
 const STEP_ACTIONS: Record<string, () => void> = {
   "create-account": noop,
   "choose-card-type": noop,
-  "top-up-card": noop,
   "first-purchase": noop,
 };
 
@@ -30,6 +29,7 @@ type Params = {
   onClose: () => void;
   onboardingCompleted: boolean;
   handleGotIt: () => void;
+  onTopUp?: () => void;
 };
 
 export type CardOnboardingDialogViewProps = {
@@ -54,6 +54,7 @@ export function useCardOnboardingDialogViewModel({
   onClose,
   onboardingCompleted,
   handleGotIt,
+  onTopUp,
 }: Params): CardOnboardingDialogViewProps {
   const { t } = useTranslation();
   const dialogTitle = t("payTab.cardOnboarding.dialog.title");
@@ -67,8 +68,12 @@ export function useCardOnboardingDialogViewModel({
   }, [onClose]);
 
   const stepActions = useMemo<Record<string, () => void>>(
-    () => ({ ...STEP_ACTIONS, "apple-google-pay": () => setIsAddToWalletSceneOpen(true) }),
-    [],
+    () => ({
+      ...STEP_ACTIONS,
+      "top-up-card": onTopUp ?? noop,
+      "apple-google-pay": () => setIsAddToWalletSceneOpen(true),
+    }),
+    [onTopUp],
   );
 
   const options = useMemo<CardOnboardingOptionViewProps[]>(() => {

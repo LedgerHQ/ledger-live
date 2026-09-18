@@ -5,21 +5,23 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import logger from "~/renderer/logger";
 import { useCardHostedManifests } from "./useCardHostedManifests";
 
+const WIPE_ON_PAY_TAB_ENTER = true;
+
 /** Best effort on purpose: a provider session left behind must never hold the login back. */
-export function wipeHostedSessionForManifest(manifest: LiveAppManifest): Promise<void> {
+function wipeHostedSessionForManifest(manifest: LiveAppManifest): Promise<void> {
   return ipcRenderer
     .invoke("clearCardHostedSessionData", [String(manifest.url)])
     .catch(logger.error);
 }
 
-export function useWipeHostedSessionOnSignInChange(): void {
+export function useWipeHostedSession(): void {
   const isSignedIn = useIsCardSignedIn();
   const { login, hosted } = useCardHostedManifests();
   const lastSeenSignedIn = useRef(isSignedIn);
   // Set on any sign-in change seen before the manifests resolved, so a second change during that
   // same wait (e.g. sign in then out again) still wipes once they do, instead of netting out to
   // "nothing changed" and losing both.
-  const hasPendingWipe = useRef(false);
+  const hasPendingWipe = useRef(WIPE_ON_PAY_TAB_ENTER);
 
   useEffect(() => {
     if (lastSeenSignedIn.current !== isSignedIn) {

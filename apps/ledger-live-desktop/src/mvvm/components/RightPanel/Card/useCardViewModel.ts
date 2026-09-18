@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
+import { buildTopUpPath } from "@features/flow-pay-card-auth";
+import { readCardUsEnv } from "@features/platform-card";
 import useEnv from "@features/platform-env";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -11,7 +13,7 @@ import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { usePayCardAssets } from "./usePayCardAssets";
-import { useWipeHostedSessionOnSignInChange } from "./useWipeHostedSession";
+import { useWipeHostedSession } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
@@ -76,6 +78,7 @@ export function useCardViewModel(): CardViewModel {
   const apiUrl = useEnv("CARD_BAANX_API_URL");
   const clientId = useEnv("CARD_BAANX_CLIENT_KEY");
   const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
+  const usAppId = useEnv("CARD_BAANX_US_APP_ID");
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
   const oauthConfig: CardViewModel["login"]["oauthConfig"] = useMemo(
@@ -113,7 +116,16 @@ export function useCardViewModel(): CardViewModel {
 
   const { openHostedLogin, openHostedPage } = useCardHostedPageOpeners();
 
-  useWipeHostedSessionOnSignInChange();
+  const onTopUp = useCallback(async () => {
+    try {
+      const isUsCardHolder = await readCardUsEnv(usAppId);
+      await openHostedPage(buildTopUpPath(isUsCardHolder ? usAppId : null));
+    } catch {
+      console.warn("[card] the top up page did not open");
+    }
+  }, [openHostedPage, usAppId]);
+
+  useWipeHostedSession();
 
   const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
     track(event, params);
@@ -138,5 +150,6 @@ export function useCardViewModel(): CardViewModel {
     assets,
     login,
     onShowMore,
+    onTopUp,
   };
 }

@@ -347,6 +347,11 @@ export function createCardSession(store: CardSessionStore) {
 
   const isCardUsEnv = (usAppId: string): boolean => usAppId !== "" && providerAppId === usAppId;
 
+  const readCardUsEnv = async (usAppId: string): Promise<boolean> => {
+    await hydrateProviderAppId();
+    return isCardUsEnv(usAppId);
+  };
+
   const getCardSessionToken = (): Promise<string | null> => readAccessToken();
 
   const readCardSession = async (): Promise<CardSessionSnapshot> => {
@@ -392,6 +397,7 @@ export function createCardSession(store: CardSessionStore) {
     cardSession: { set, get, clear },
     setCardProviderAppId,
     isCardUsEnv,
+    readCardUsEnv,
     getCardSessionToken,
     readCardSession,
     isCardSessionCurrent,
