@@ -7,7 +7,7 @@ import {
   revealCardDetailsHandler,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
-import { CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
+import { ADD_TO_WALLET_COPY, CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { FLIP_MS } from "../Reveal/useRevealViewModel";
 import { CardDetails } from "./CardDetails";
 import type { CardVisualProps } from "../../types";
@@ -97,6 +97,16 @@ describe("CardDetails (native)", () => {
     expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
     expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
     expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
+  });
+
+  it("should open add-to-wallet instructions from the details footer", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByTestId("pay-card-add-to-wallet-cta-entry"));
+
+    expect(await screen.findByTestId("card-details-add-to-wallet-content")).toBeVisible();
+    expect(screen.getByText(ADD_TO_WALLET_COPY.title)).toBeVisible();
   });
 
   it("should show the card numbers image after View", async () => {

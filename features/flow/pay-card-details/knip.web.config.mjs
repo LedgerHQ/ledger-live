@@ -6,4 +6,6 @@ export default createDualPlatformKnipConfig({
   packagePath: "features/flow/pay-card-details",
   platform: "web",
   entry: [],
+  additionalProjectExcludes: ["src/components/CardArtwork/cardColors.ts"],
+  additionalIgnoreDependencies: ["@features/flow-pay-card-widget"],
 });
