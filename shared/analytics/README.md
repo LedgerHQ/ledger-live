@@ -167,7 +167,7 @@ Tracking routes are used in analytics to provide props like `page` and `source`.
 
 ## Analytics Events
 
-`analyticsEvents$` provides `.pipe` and `.subscribe` for reading events logged by analytics. Each event includes `deliveryStatus` (`enqueued`, `failed_tracking`, `skipped_no_client`, and related skip/fail values).
+`analyticsEvents$` provides `.pipe` and `.subscribe` for reading events logged by analytics. Events emitted by the tracking pipeline include `deliveryStatus` (`enqueued`, `failed_tracking`, `skipped_no_client`, and related skip/fail values); manually published compatibility events may omit it.
 
 `publishAnalyticsEvent` (DEPRECATED) – this function allows events to be pushed to the `analyticsEvents$` observable directly. Today it is here to support unmigrated behaviour around `updateIdentify` but for more events client apps should use the events pushed to `analyticsEvents$` by the internal workings of the package.
 
