@@ -126,7 +126,7 @@ export class DeviceManagementKitTransport extends Transport {
             tracer.trace(`[listen] device added ${id}`);
             observer.next({
               type: "add",
-              descriptor: "",
+              descriptor: device.id,
               device: device,
               // @ts-expect-error types are not matching
               deviceModel: {
@@ -141,7 +141,7 @@ export class DeviceManagementKitTransport extends Transport {
             tracer.trace(`[listen] device removed ${id}`);
             observer.next({
               type: "remove",
-              descriptor: "",
+              descriptor: device.id,
               device: device,
               // @ts-expect-error types are not matching
               deviceModel: {
@@ -171,7 +171,7 @@ export class DeviceManagementKitTransport extends Transport {
       tracer.trace(`[listen] device added ${id}`);
       observer.next({
         type: "add",
-        descriptor: "",
+        descriptor: device.id,
         device: device,
         // @ts-expect-error types are not matching
         deviceModel: {
@@ -185,7 +185,7 @@ export class DeviceManagementKitTransport extends Transport {
       tracer.trace(`[listen] device removed ${id}`);
       observer.next({
         type: "remove",
-        descriptor: "",
+        descriptor: device.id,
         device: device,
         // @ts-expect-error types are not matching
         deviceModel: {
