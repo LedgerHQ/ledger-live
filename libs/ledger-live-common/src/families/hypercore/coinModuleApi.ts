@@ -1,4 +1,4 @@
-import { createApi as createHypercoreApi } from "@ledgerhq/coin-hypercore/api/index";
+import { createApi as createHypercoreApi } from "@ledgerhq/coin-hypercore/api";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 
