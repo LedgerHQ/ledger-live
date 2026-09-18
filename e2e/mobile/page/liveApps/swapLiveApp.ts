@@ -17,7 +17,7 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
 export default class SwapLiveAppPage {
-  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
+  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX = "compact-quote-card-provider-name-";
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -312,8 +312,8 @@ export default class SwapLiveAppPage {
     const selector = await this.checkQuoteCardCtaPresence(provider);
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
-    const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
-    jestExpect(actualButtonText).toMatch(expected);
+    const ctaVerb = approvalRequired ? "Approve spending" : "Swap";
+    jestExpect(actualButtonText).toBe(`${ctaVerb} with ${provider}`);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')

@@ -28,7 +28,7 @@ export class SwapPage extends WebViewAppPage {
     __dirname,
     "../artifacts/ledgerwallet-swap-history.csv",
   );
-  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
+  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX = "compact-quote-card-provider-name-";
   private static readonly AMOUNT_LABEL_SUFFIX = "amount-label";
   private static readonly FIAT_AMOUNT_LABEL_SUFFIX = "fiatAmount-label";
   private static readonly NETWORK_FEES_HEADING_SUFFIX = "networkFees-heading";
@@ -136,9 +136,8 @@ export class SwapPage extends WebViewAppPage {
   @step("Check exchange CTA text: $0")
   async checkQuoteCardCtaLabel(providerUiName: string, approvalRequired = false): Promise<void> {
     const buttonLocator = await this.checkQuoteCardCtaPresence(providerUiName);
-    const actualButtonText = (await buttonLocator.textContent())?.trim() ?? "";
-    const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
-    expect.soft(actualButtonText).toMatch(expected);
+    const ctaVerb = approvalRequired ? "Approve spending" : "Swap";
+    await expect.soft(buttonLocator).toHaveText(`${ctaVerb} with ${providerUiName}`);
   }
 
   @step("Get provider list")
