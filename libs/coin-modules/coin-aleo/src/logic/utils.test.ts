@@ -1935,19 +1935,37 @@ describe("getUnbondingDisplayState", () => {
         syncedHeight: UNBONDING_HEIGHT + 1,
         currentHeight: UNBONDING_HEIGHT + 1,
       }),
-    ).toEqual({ isClaimable: true, isCountingDown: false, isSettling: false, blocksLeft: 0 });
+    ).toEqual({
+      isClaimable: true,
+      isCountingDown: false,
+      isSettling: false,
+      blocksLeft: 0,
+      currentHeight: UNBONDING_HEIGHT + 1,
+    });
   });
 
   it("counts down in blocks while the chain has not reached the unbonding height", () => {
     expect(
       stateOf({ syncedHeight: UNBONDING_HEIGHT - 40, currentHeight: UNBONDING_HEIGHT - 10 }),
-    ).toEqual({ isClaimable: false, isCountingDown: true, isSettling: false, blocksLeft: 10 });
+    ).toEqual({
+      isClaimable: false,
+      isCountingDown: true,
+      isSettling: false,
+      blocksLeft: 10,
+      currentHeight: UNBONDING_HEIGHT - 10,
+    });
   });
 
   it("reports settling when the live height passed the unbonding height but the sync has not", () => {
     expect(
       stateOf({ syncedHeight: UNBONDING_HEIGHT - 5, currentHeight: UNBONDING_HEIGHT + 2 }),
-    ).toEqual({ isClaimable: false, isCountingDown: true, isSettling: true, blocksLeft: 0 });
+    ).toEqual({
+      isClaimable: false,
+      isCountingDown: true,
+      isSettling: true,
+      blocksLeft: 0,
+      currentHeight: UNBONDING_HEIGHT + 2,
+    });
   });
 
   it("reports nothing to display without an unbonding entry", () => {
@@ -1957,7 +1975,13 @@ describe("getUnbondingDisplayState", () => {
         syncedHeight: UNBONDING_HEIGHT,
         currentHeight: UNBONDING_HEIGHT,
       }),
-    ).toEqual({ isClaimable: false, isCountingDown: false, isSettling: false, blocksLeft: null });
+    ).toEqual({
+      isClaimable: false,
+      isCountingDown: false,
+      isSettling: false,
+      blocksLeft: null,
+      currentHeight: UNBONDING_HEIGHT,
+    });
   });
 });
 

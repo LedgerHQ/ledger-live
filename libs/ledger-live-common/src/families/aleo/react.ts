@@ -783,7 +783,7 @@ type AleoPendingStakingKind = "claim" | "unbond";
 export type AleoStakingPositionView = {
   bondedBalance: BigNumber;
   bondedValidator: string | null;
-  validatorLabel: string;
+  validatorLabel: string | null;
   nonEarningReason: AleoNonEarningReason | undefined;
   estimatedRate: number | undefined;
   validatorsLoading: boolean;
@@ -838,7 +838,7 @@ export function useAleoStakingPosition(account: AleoAccount): AleoStakingPositio
     return {
       bondedBalance,
       bondedValidator,
-      validatorLabel: validator?.name || bondedValidator || "",
+      validatorLabel: validator?.name ?? null,
       nonEarningReason,
       estimatedRate: nonEarningReason ? 0 : validator?.estimatedYearlyRewardsRate,
       validatorsLoading: loading,

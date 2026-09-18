@@ -5,6 +5,7 @@ import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
 import type { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { ALEO_MAIN_ACCOUNT } from "../__mocks__/account.mock";
+import { aleoValidator } from "../__mocks__/validator.mock";
 import ValidatorPicker from "./ValidatorPicker";
 
 jest.mock("@ledgerhq/live-common/families/aleo/react", () => ({
@@ -14,22 +15,13 @@ jest.mock("@ledgerhq/live-common/families/aleo/react", () => ({
 
 const mockUseAleoValidators = jest.mocked(useAleoValidators);
 
-const FIGMENT: AleoValidator = {
-  address: "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t",
-  name: "Figment",
-  stakeMicrocredits: 63_051_013_000_000,
-  isOpen: true,
-  isUnbonding: false,
-  commissionPercent: 10,
-  estimatedYearlyRewardsRate: 0.062,
-} as AleoValidator;
+const FIGMENT = aleoValidator();
 
-const OTHER: AleoValidator = {
-  ...FIGMENT,
+const OTHER = aleoValidator({
   address: "aleo1vfukg8ky2mhfprw63000000000000000000000000000000000000000q",
   name: "Other Validator",
   stakeMicrocredits: 162_243_084_000_000,
-} as AleoValidator;
+});
 
 const setValidators = (
   validators: AleoValidator[],
