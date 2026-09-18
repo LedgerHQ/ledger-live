@@ -171,10 +171,6 @@ describe("useCardHostedPageOpeners", () => {
   });
 
   describe("the wipe of the pay tab entry", () => {
-    afterEach(() => {
-      mockedInvoke.mockReset();
-    });
-
     it("holds the navigation back until the wipe of every manifest has settled", async () => {
       const settleWipes: ((value: unknown) => void)[] = [];
       mockedInvoke.mockImplementationOnce(() => new Promise(resolve => settleWipes.push(resolve)));
@@ -198,7 +194,12 @@ describe("useCardHostedPageOpeners", () => {
 
     it("waits for the later wipe that a sign-in change queues during that wait", async () => {
       const settleWipes: ((value: unknown) => void)[] = [];
-      mockedInvoke.mockImplementation(() => new Promise(resolve => settleWipes.push(resolve)));
+      const holdWipe = () => new Promise(resolve => settleWipes.push(resolve));
+      mockedInvoke
+        .mockImplementationOnce(holdWipe)
+        .mockImplementationOnce(holdWipe)
+        .mockImplementationOnce(holdWipe)
+        .mockImplementationOnce(holdWipe);
       const { result, store } = renderOpenersWithWipe();
 
       const opening = result.current.openHostedPage("/topup");

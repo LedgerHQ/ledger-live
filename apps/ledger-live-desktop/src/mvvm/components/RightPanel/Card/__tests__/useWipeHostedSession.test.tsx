@@ -117,13 +117,15 @@ describe("useWipeHostedSession", () => {
     expectBothManifestsWiped();
   });
 
-  it("waits for the second manifest, rather than spending the wipe on the first", () => {
+  it("wipes the manifest that resolved first, and the other one as soon as it follows", () => {
     manifestsFrom({});
     const { rerender } = renderHook(() => useWipeHostedSession());
 
     manifestsFrom({ [LOGIN_ID]: LOGIN_MANIFEST });
     rerender();
-    expect(mockedInvoke).not.toHaveBeenCalled();
+
+    expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [LOGIN_MANIFEST.url]);
+    expect(mockedInvoke).toHaveBeenCalledTimes(1);
 
     manifestsFrom(CATALOG);
     rerender();

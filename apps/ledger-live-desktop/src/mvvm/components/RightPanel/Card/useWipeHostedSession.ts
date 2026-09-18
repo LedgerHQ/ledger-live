@@ -7,6 +7,8 @@ import { useCardHostedManifests } from "./useCardHostedManifests";
 
 const WIPE_ON_PAY_TAB_ENTER = true;
 
+const MANIFEST_COUNT = 2;
+
 let hostedSessionWipe: Promise<void> = Promise.resolve();
 
 /** Best effort on purpose: a provider session left behind must never hold the login back. */
@@ -16,9 +18,7 @@ function wipeHostedSessionForManifest(manifest: LiveAppManifest): Promise<void> 
     .catch(logger.error);
 }
 
-/** The provider webview must open on a wiped session, never on the one the wipe still holds. */
 export async function whenHostedSessionWiped(): Promise<void> {
-  // A sign-in change during the wait queues a later batch, and that one must settle here too.
   let awaited: Promise<void> | undefined;
 
   while (awaited !== hostedSessionWipe) {
@@ -42,17 +42,18 @@ export function useWipeHostedSession(): void {
       hasPendingWipe.current = true;
     }
 
-    // Both manifests are needed: consuming the pending wipe on the first one to resolve would
-    // leave the other one's session standing until the next sign-in change.
-    if (!hasPendingWipe.current || !login || !hosted) {
+    const resolvedManifests = [login, hosted].filter(
+      (manifest): manifest is LiveAppManifest => !!manifest,
+    );
+
+    if (!hasPendingWipe.current || resolvedManifests.length === 0) {
       return;
     }
 
-    hasPendingWipe.current = false;
+    hasPendingWipe.current = resolvedManifests.length < MANIFEST_COUNT;
 
-    // The main process runs the wipes in the order they arrive, so the newest batch settles last.
-    hostedSessionWipe = Promise.all([login, hosted].map(wipeHostedSessionForManifest)).then(
-      () => undefined,
-    );
+    hostedSessionWipe = Promise.all(resolvedManifests.map(wipeHostedSessionForManifest))
+      .then(() => undefined)
+      .catch(() => undefined);
   }, [isSignedIn, login, hosted]);
 }
