@@ -918,6 +918,27 @@
         "description": "Something went wrong. Please try again.",
         "retry": "Try again"
       },
+      "assets": {
+        "title": "Assets",
+        "empty": "No assets yet",
+        "error": "Couldn't load assets",
+        "details": {
+          "topUp": "Top up",
+          "withdraw": "Withdraw",
+          "transactions": "Transactions"
+        },
+        "withdraw": {
+          "title": "You'll be redirected to Baanx",
+          "description": "Withdraw funds from your Baanx account to your Ledger wallet address.",
+          "continue": "Continue"
+        },
+        "history": {
+          "columns": {
+            "amount": "Amount",
+            "value": "Value"
+          }
+        }
+      },
       "numbers": {
         "reveal": "View",
         "hide": "Hide",

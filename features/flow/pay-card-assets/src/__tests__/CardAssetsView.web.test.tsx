@@ -6,11 +6,14 @@ import type { CardAssetsViewModel } from "../types";
 
 const usdc = {
   id: "w-usdc",
+  currency: "usdc",
+  network: "ethereum",
   name: "USD Coin",
   ticker: "USDC",
   ledgerId: "ethereum/erc20/usd__coin",
   cryptoAmount: "125.40 USDC",
   countervalue: "$125.40",
+  countervalueAmount: 125.4,
 };
 
 const ready: CardAssetsViewModel = {
@@ -20,6 +23,24 @@ const ready: CardAssetsViewModel = {
   rows: [usdc],
   emptyLabel: CARD_ASSETS_COPY.empty,
   errorLabel: CARD_ASSETS_COPY.error,
+  dialogState: "closed",
+  selectedAsset: null,
+  selectedAssetTransactions: [],
+  dialogCopy: {
+    topUp: "Top up",
+    withdraw: "Withdraw",
+    transactions: "Transactions",
+    withdrawTitle: "You'll be redirected to Baanx",
+    withdrawDescription: "Withdraw funds from your Baanx account to your Ledger wallet address.",
+    continue: "Continue",
+  },
+  onAssetPress: jest.fn(),
+  onDialogClose: jest.fn(),
+  onTopUpPress: jest.fn(),
+  onWithdrawPress: jest.fn(),
+  onWithdrawClose: jest.fn(),
+  onShowHistoryPress: jest.fn(),
+  onWithdrawContinue: jest.fn(),
 };
 
 describe("CardAssetsView (web)", () => {
@@ -52,11 +73,14 @@ describe("CardAssetsView (web)", () => {
           usdc,
           {
             id: "w-btc",
+            currency: "btc",
+            network: "bitcoin",
             name: "Bitcoin",
             ticker: "BTC",
             ledgerId: "bitcoin",
             cryptoAmount: "0.5 BTC",
             countervalue: "$9,900.00",
+            countervalueAmount: 9900,
           },
         ]}
       />,
