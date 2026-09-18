@@ -13,6 +13,7 @@ export type OverviewSceneProps = Readonly<{
   onFreezePress: () => void;
   onMorePress: () => void;
   onTransactionPress: (transaction: PayCardTransaction) => void;
+  onAddToWalletPress: () => void;
   onShowMore?: () => void;
   formatters?: CardTransactionFormatters;
 }>;
@@ -30,10 +31,15 @@ export type TransactionSceneProps = Readonly<{
   formatters?: CardTransactionFormatters;
 }>;
 
+export type AddToWalletSceneProps = Readonly<{
+  onDone: () => void;
+}>;
+
 export type CardDetailsSceneProps = Readonly<{
   route: CardDetailsRoute;
   overview: OverviewSceneProps;
   freeze: FreezeSceneProps;
   more: MoreSceneProps | null;
+  addToWallet: AddToWalletSceneProps;
   transaction: TransactionSceneProps | null;
 }>;

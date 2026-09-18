@@ -9,5 +9,6 @@ export const CARD_DETAILS_SCENES: Record<
   overview: { sizing: "full", hasBackButton: false },
   freeze: { sizing: "dynamic", hasBackButton: false },
   more: { sizing: "dynamic", hasBackButton: true },
+  addToWallet: { sizing: "dynamic", hasBackButton: true },
   transaction: { sizing: "full", hasBackButton: true },
 };

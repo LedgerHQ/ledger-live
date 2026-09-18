@@ -7208,6 +7208,9 @@ importers:
       '@features/flow-pay-card-transactions':
         specifier: workspace:*
         version: link:../pay-card-transactions
+      '@features/flow-pay-card-widget':
+        specifier: workspace:*
+        version: link:../pay-card-widget
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.13(react@19.1.4)
@@ -18450,6 +18453,9 @@ importers:
       '@features/flow-pay-card-auth':
         specifier: workspace:*
         version: link:../../features/flow/pay-card-auth
+      '@features/flow-pay-card-widget':
+        specifier: workspace:*
+        version: link:../../features/flow/pay-card-widget
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
