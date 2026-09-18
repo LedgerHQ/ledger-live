@@ -107,6 +107,7 @@ describe("Card (native)", () => {
 
       expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("card-details")).toBeVisible();
+      expect(screen.getByTestId("card-add-to-wallet-cta")).toBeVisible();
       expect(screen.queryByTestId("card-login")).toBeNull();
       expect(screen.queryByTestId("card-artwork")).toBeNull();
     });
