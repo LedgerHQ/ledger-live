@@ -20,6 +20,21 @@ function renderCard(hasPassword: boolean) {
   });
 }
 
+async function loadCardNumbersImage() {
+  const image = await screen.findByRole("img", { name: "Card numbers", hidden: true });
+  jest.useFakeTimers();
+  try {
+    await act(async () => {
+      image.dispatchEvent(new Event("load"));
+    });
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+  } finally {
+    jest.useRealTimers();
+  }
+}
+
 describe("Card numbers unlock", () => {
   const setEncryptionKeyMock = jest.mocked(setEncryptionKey);
   const isEncryptionKeyCorrectMock = jest.mocked(isEncryptionKeyCorrect);
@@ -42,7 +57,8 @@ describe("Card numbers unlock", () => {
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     expect(setEncryptionKeyMock).toHaveBeenCalledWith("secret");
-    expect(await screen.findByRole("img", { name: "Card numbers" })).toBeVisible();
+    await loadCardNumbersImage();
+    expect(screen.getByRole("img", { name: "Card numbers" })).toBeVisible();
   });
 
   it("should show the card numbers once the user enters their password", async () => {
@@ -68,7 +84,8 @@ describe("Card numbers unlock", () => {
     });
 
     expect(isEncryptionKeyCorrectMock).toHaveBeenCalledWith("secret");
-    expect(await screen.findByRole("img", { name: "Card numbers" })).toBeVisible();
+    await loadCardNumbersImage();
+    expect(screen.getByRole("img", { name: "Card numbers" })).toBeVisible();
   });
 
   it("should ask for a password when Save is empty", async () => {
@@ -121,7 +138,8 @@ describe("Card numbers unlock", () => {
     await user.click(await screen.findByRole("button", { name: "View" }));
     await user.type(await screen.findByLabelText("Current password"), "secret");
     await user.click(screen.getByRole("button", { name: "Confirm" }));
-    expect(await screen.findByRole("img", { name: "Card numbers" })).toBeVisible();
+    await loadCardNumbersImage();
+    expect(screen.getByRole("img", { name: "Card numbers" })).toBeVisible();
 
     await user.click(screen.getByRole("button", { name: "Hide" }));
 
