@@ -1,5 +1,7 @@
+import { Platform } from "react-native";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
 import {
+  CARD_ONBOARDING_ADD_TO_WALLET_COPY,
   CARD_ONBOARDING_COPY,
   CARD_ONBOARDING_STEP_COPY,
   CARD_WALLET_PAY_COPY,
@@ -104,6 +106,23 @@ describe("CardOnboardingWidget (integration)", () => {
     ).toBeVisible();
   });
 
+  it("should label the wallet step with the Google Pay copy on Android", async () => {
+    const originalOS = Platform.OS;
+    Platform.OS = "android";
+    try {
+      const user = userEvent.setup();
+      setQuery({
+        data: { steps: stepsWithIds("top-up-card", "apple-google-pay", "first-purchase") },
+      });
+      renderWidget();
+      await openWidget(user);
+
+      expect(screen.getByText(CARD_WALLET_PAY_COPY.Google)).toBeVisible();
+    } finally {
+      Platform.OS = originalOS;
+    }
+  });
+
   it("should close the dialog from the sheet dismiss control", async () => {
     const user = userEvent.setup();
     setQuery({ data: { steps: stepsWith(true, false) } });
@@ -115,10 +134,7 @@ describe("CardOnboardingWidget (integration)", () => {
     expect(screen.queryByText(CARD_ONBOARDING_COPY.dialogTitle)).toBeNull();
   });
 
-  it("should mark the wallet step done in the store once it is pressed", async () => {
-    // useCardOnboardingStatus is mocked statically for this suite (see setQuery), so pressing the
-    // step cannot be observed via a re-render here; that reactivity is covered by
-    // useCardOnboardingStatus.native.test.ts. This only checks the dispatch the dialog wires up.
+  it("should open the wallet instructions scene without marking the step done", async () => {
     const user = userEvent.setup();
     const steps = stepsWithIds("top-up-card", "apple-google-pay", "first-purchase").map(step => ({
       ...step,
@@ -130,7 +146,65 @@ describe("CardOnboardingWidget (integration)", () => {
 
     await user.press(screen.getByTestId("pay-card-onboarding-step-apple-google-pay"));
 
+    expect(screen.getByTestId("pay-card-add-to-wallet-instructions")).toBeVisible();
+    expect(screen.getByText(CARD_ONBOARDING_ADD_TO_WALLET_COPY.ios.cta)).toBeVisible();
+    expect(store.getState().payCardOnboardingWidget.hasAddedCardToWallet).toBe(false);
+  });
+
+  it("should return to onboarding after opening the wallet", async () => {
+    const user = userEvent.setup();
+    const steps = stepsWithIds("top-up-card", "apple-google-pay", "first-purchase").map(step => ({
+      ...step,
+      isDone: step.id === "top-up-card",
+    }));
+    setQuery({ data: { steps } });
+    const { store } = renderWidget();
+    await openWidget(user);
+    await user.press(screen.getByTestId("pay-card-onboarding-step-apple-google-pay"));
+
+    await user.press(screen.getByTestId("pay-card-add-to-wallet-cta"));
+
     expect(store.getState().payCardOnboardingWidget.hasAddedCardToWallet).toBe(true);
+    expect(screen.queryByTestId("pay-card-add-to-wallet-instructions")).toBeNull();
+    expect(screen.getByText(CARD_ONBOARDING_COPY.dialogTitle)).toBeVisible();
+  });
+
+  it("should return to onboarding from the wallet instructions back button", async () => {
+    const user = userEvent.setup();
+    const steps = stepsWithIds("top-up-card", "apple-google-pay", "first-purchase").map(step => ({
+      ...step,
+      isDone: step.id === "top-up-card",
+    }));
+    setQuery({ data: { steps } });
+    renderWidget();
+    await openWidget(user);
+    await user.press(screen.getByTestId("pay-card-onboarding-step-apple-google-pay"));
+
+    await user.press(screen.getByTestId("pay-card-onboarding-sheet-back"));
+
+    expect(screen.queryByTestId("pay-card-add-to-wallet-instructions")).toBeNull();
+    expect(screen.getByText(CARD_ONBOARDING_COPY.dialogTitle)).toBeVisible();
+  });
+
+  it("should show the Android wallet copy when pressing the step on Android", async () => {
+    const originalOS = Platform.OS;
+    Platform.OS = "android";
+    try {
+      const user = userEvent.setup();
+      const steps = stepsWithIds("top-up-card", "apple-google-pay", "first-purchase").map(step => ({
+        ...step,
+        isDone: step.id === "top-up-card",
+      }));
+      setQuery({ data: { steps } });
+      renderWidget();
+      await openWidget(user);
+
+      await user.press(screen.getByTestId("pay-card-onboarding-step-apple-google-pay"));
+
+      expect(screen.getByText(CARD_ONBOARDING_ADD_TO_WALLET_COPY.android.title)).toBeVisible();
+    } finally {
+      Platform.OS = originalOS;
+    }
   });
 
   it("should hide the widget after got-it completes onboarding", async () => {
