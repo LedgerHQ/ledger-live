@@ -216,6 +216,7 @@ jobs:
     permissions:
       contents: read
       security-events: write
+      id-token: write
     uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
     with:
       skip-ci-sast: true
