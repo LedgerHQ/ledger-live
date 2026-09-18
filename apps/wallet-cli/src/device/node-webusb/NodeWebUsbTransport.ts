@@ -43,6 +43,7 @@ import {
   recordScanCompleted,
   recordUsbAccessFailure,
   recordUsbAccessSuccess,
+  resetUsbAccessDiagnostics,
 } from "../usb-access-diagnostics";
 
 export const nodeWebUsbIdentifier: TransportIdentifier = "NODE-WEBUSB";
@@ -398,6 +399,11 @@ export class NodeWebUsbTransport implements Transport {
 
   private async scanLedgerWebUsbDevices(): Promise<ScannedWebUsbDevice[]> {
     const collected: ScannedWebUsbDevice[] = [];
+    // Scan facts describe one scan, not the process. Discovery rescans on every attach, detach and
+    // poll tick, so without this a Ledger seen once stays "seen" forever: unplug it and the next
+    // empty scan is classified `unknown` instead of `device_not_present`, and a refusal recorded
+    // against a device that has since gone away keeps claiming the host is blocking USB.
+    resetUsbAccessDiagnostics();
     let natives: ReturnType<NodeWebUsbTransportPlatform["getDeviceList"]>;
     try {
       natives = this._platformBindings.getDeviceList();

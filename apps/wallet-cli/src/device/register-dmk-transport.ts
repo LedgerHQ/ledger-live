@@ -67,6 +67,27 @@ export class DeviceDiscoveryFailedError extends Error {
   }
 }
 
+/**
+ * Opening the session failed after a device had already been discovered.
+ *
+ * Distinct from `OpeningConnectionError`, which `NodeWebUsbApduSender` also raises for ordinary
+ * mid-session APDU transfers ("Device not connected", a bad `transferIn`/`transferOut` status).
+ * That tag therefore cannot tell "we never got the device open" from "the link broke mid-command",
+ * so the initial failure is named here instead and `classifyDeviceError` matches this (LIVE-31394).
+ */
+export class DeviceConnectionFailedError extends Error {
+  constructor(cause?: unknown) {
+    // Keep the underlying message. This wrapper exists to give the failure a name the classifier
+    // can match, not to replace what the device stack said went wrong.
+    super(
+      (cause instanceof Error ? cause.message : undefined) ??
+        "Could not open a session with the Ledger.",
+      cause === undefined ? undefined : { cause },
+    );
+    this.name = "DeviceConnectionFailedError";
+  }
+}
+
 /** @internal Test seam — install before the CLI starts (e.g. from dmk-intercept.ts) to bypass USB discovery. */
 export function _setTestDmkTransport(t: WalletCliDmkTransport | null): void {
   _testTransport = t;
@@ -195,10 +216,14 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
   if (!device) {
     throw new DeviceDiscoveryFailedError();
   }
-  const sessionId = await dmk.connect({
-    device,
-    sessionRefresherOptions: { isRefresherDisabled: true },
-  });
+  const sessionId = await dmk
+    .connect({
+      device,
+      sessionRefresherOptions: { isRefresherDisabled: true },
+    })
+    .catch((cause: unknown) => {
+      throw new DeviceConnectionFailedError(cause);
+    });
 
   const sessionState = await firstValueFrom(dmk.getDeviceSessionState({ sessionId })).catch(
     () => null,

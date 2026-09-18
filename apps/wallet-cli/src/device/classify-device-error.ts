@@ -25,19 +25,21 @@ export type ClassifyContext = {
 
 const TRANSPORT_FRAMING_TAGS = new Set(["ReceiverApduError", "UnknownDeviceExchangeError"]);
 /** DMK/wallet-cli errors that mean "could not reach the device over USB", cause unattributed. */
-const USB_UNREACHABLE_NAMES = new Set(["DeviceDiscoveryFailedError"]);
+const USB_UNREACHABLE_NAMES = new Set([
+  "DeviceDiscoveryFailedError",
+  "DeviceConnectionFailedError",
+]);
 /**
  * Matched by `_tag`, because DMK's connection errors extend `GeneralDmkError` (which implements
- * `DmkError`) rather than `Error` — they carry no `name` at all. Note `OpeningConnectionError`
- * declares `_tag = "ConnectionOpeningError"`: the tag and the class name are transposed, and the
- * tag is typed as a plain `string`, so both spellings are listed to survive that being corrected
- * upstream.
+ * `DmkError`) rather than `Error` — they carry no `name` at all.
+ *
+ * `OpeningConnectionError` is deliberately absent despite naming the case we want.
+ * `NodeWebUsbApduSender` reuses it for ordinary mid-session transfers ("Device not connected", a
+ * bad `transferIn`/`transferOut` status), so matching it here would drag a broken APDU exchange
+ * into USB attribution and report it as a timeout with a host-side cause. The initial failure is
+ * wrapped as `DeviceConnectionFailedError` at its source instead, which is unambiguous.
  */
-const USB_UNREACHABLE_TAGS = new Set([
-  "ConnectionOpeningError",
-  "OpeningConnectionError",
-  "NoAccessibleDeviceError",
-]);
+const USB_UNREACHABLE_TAGS = new Set(["NoAccessibleDeviceError"]);
 const APP_NOT_INSTALLED_OPEN_APP_CODES = new Set(["670a", "6807"]);
 
 function hasTag(error: unknown, tag: string): boolean {
@@ -183,8 +185,12 @@ export function resolveUsbTimeoutLikelyCause(
  * A timeout state carrying an attribution, with the field omitted when we have nothing to say.
  * `unknown` is the envelope's default (see `output.ts`), so leaving it out keeps the state minimal
  * rather than asserting ignorance.
+ *
+ * Exported for callers that build a timeout state without going through `classifyDeviceError`,
+ * such as a command's own rxjs `--device-timeout`: they must not hand-roll `{ code: "timeout" }`
+ * or the failure loses its attribution.
  */
-function usbTimeoutState(ctx: ClassifyContext, error?: unknown): DeviceState {
+export function usbTimeoutState(ctx: ClassifyContext, error?: unknown): DeviceState {
   const likelyCause = resolveUsbTimeoutLikelyCause(ctx, error);
   return likelyCause === "unknown" ? { code: "timeout" } : { code: "timeout", likelyCause };
 }

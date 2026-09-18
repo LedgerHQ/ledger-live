@@ -13,7 +13,7 @@ import { ManagerDeviceLockedError } from "@ledgerhq/live-common/errors";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { EmptyError } from "rxjs";
 import { classifyDeviceError } from "./classify-device-error";
-import { DeviceDiscoveryFailedError } from "./register-dmk-transport";
+import { DeviceConnectionFailedError, DeviceDiscoveryFailedError } from "./register-dmk-transport";
 import {
   recordLedgerVendorSeen,
   recordScanCompleted,
@@ -192,14 +192,23 @@ describe("USB failure attribution (LIVE-31394)", () => {
     expect(classifyDeviceError(discoveryFailure())).toEqual({ code: "timeout" });
   });
 
-  it("recognises a real DMK OpeningConnectionError instance", () => {
+  it("leaves a mid-session OpeningConnectionError out of USB attribution", () => {
+    // NodeWebUsbApduSender raises OpeningConnectionError for ordinary transfers too ("Device not
+    // connected", a bad transferIn/transferOut status). Matching that tag would turn a broken APDU
+    // exchange into a timeout blamed on the host, so it stays on the unknown fallthrough.
     recordScanCompleted();
     recordLedgerVendorSeen();
     recordUsbAccessFailure(new Error("LIBUSB_ERROR_ACCESS"));
-    // Constructed from the real class, not a hand-made shape: its `_tag` is
-    // "ConnectionOpeningError" (transposed vs the class name) and it has no `name`, so a matcher
-    // written against the class name silently never fires.
-    expect(classifyDeviceError(new OpeningConnectionError(new Error("boom")))).toEqual({
+    const midSession = new OpeningConnectionError("Device not connected");
+    expect(classifyDeviceError(midSession)).toEqual({ code: "unknown", cause: midSession });
+  });
+
+  it("attributes a failure to open the session, which is unambiguous", () => {
+    // The initial open is wrapped at its source precisely because the DMK tag is not specific.
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    recordUsbAccessFailure(new Error("LIBUSB_ERROR_ACCESS"));
+    expect(classifyDeviceError(new DeviceConnectionFailedError(new Error("nope")))).toEqual({
       code: "timeout",
       likelyCause: "sandbox_blocking_usb",
     });

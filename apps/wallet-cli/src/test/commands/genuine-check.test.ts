@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { Observable } from "rxjs";
 import type { GetGenuineCheckFromDeviceIdResult } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { runCli } from "../helpers/cli-runner";
+import { WALLET_CLI_SKILL_DOCS_URL } from "../../device/usb-timeout-hints";
 
 let genuineCheckImpl: () => Observable<GetGenuineCheckFromDeviceIdResult>;
 
@@ -116,6 +117,11 @@ describe("genuine-check command (mock DMK)", () => {
         // Published as the stable identifier the agent skill documents (LIVE-31394); the internal
         // state code stays "timeout".
         code: "USB_TIMEOUT",
+        // The command's own rxjs deadline still goes through USB attribution, so the envelope
+        // carries the same diagnostic contract as a failure raised by the device stack.
+        likely_cause: expect.any(String),
+        user_hint: expect.any(String),
+        docs: WALLET_CLI_SKILL_DOCS_URL,
       },
     });
   });

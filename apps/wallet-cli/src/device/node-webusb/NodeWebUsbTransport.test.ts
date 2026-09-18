@@ -3054,6 +3054,37 @@ describe("USB access diagnostics recording (LIVE-31394)", () => {
     await transport.destroy();
   });
 
+  it("forgets a Ledger that was unplugged between scans", async () => {
+    // Discovery rescans on attach, detach and poll ticks. Scan facts that survive into the next
+    // scan turn an unplugged device into `unknown` instead of `device_not_present`.
+    let devices: unknown[] = [createNativeLedgerDevice()];
+    const webUsbDevice = createWebUsbLedgerDevice();
+    const transport = createTestTransport(
+      undefined,
+      undefined,
+      createPlatformBindings({
+        platform: "linux",
+        getDeviceList: () => devices as never[],
+        createWebUsbDevice: async () => webUsbDevice as never,
+      }),
+    );
+
+    collectDeviceEmissions(transport);
+    await waitFor(() => {
+      expect(readUsbAccessDiagnostics().ledgerVendorSeen).toBe(true);
+    });
+
+    devices = [];
+    await transport.updateTransportDiscoveredDevices();
+
+    const diagnostics = readUsbAccessDiagnostics();
+    expect(diagnostics.scanCompleted).toBe(true);
+    expect(diagnostics.ledgerVendorSeen).toBe(false);
+    expect(diagnostics.failure).toBeUndefined();
+
+    await transport.destroy();
+  });
+
   it("records a completed scan that saw no Ledger, without inventing a failure", async () => {
     const transport = createTestTransport(
       undefined,
