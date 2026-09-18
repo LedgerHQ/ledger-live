@@ -37,6 +37,14 @@ export const documentedPayCardTransaction = {
       dateTime: "2024-10-14T10:44:36.288Z",
     },
   ],
+  cashback: {
+    amount: "0.000104",
+    currency: "BXX",
+    fiatAmount: "0.01",
+    fiatCurrency: "EUR",
+    ratePercent: "2",
+    status: "EARNED" as const,
+  },
 };
 
 const MERCHANT_BY_CATEGORY = {
@@ -108,10 +116,34 @@ const STATUS_BY_CATEGORY = {
   PayCardTransaction["status"]
 >;
 
+/** The rate every derived charge earns at. MISC keeps the documented charge's own `"2"` verbatim. */
+const CASHBACK_RATE_PERCENT = 1;
+
+/** BXX per unit of fiat, taken from the documented pair so the two cashback amounts agree. */
+const MOCK_BXX_PER_FIAT = 0.0104;
+
+/** The statuses a mocked charge carries no cashback on, so an absent one is covered too. */
+const UNEARNED_STATUSES = new Set<PayCardTransaction["status"]>(["DECLINED", "REVERTED"]);
+
+function mockCashback(fiatAmount: string) {
+  // Rounded first, so the token amount is the fiat one converted rather than a third figure.
+  const earned = ((Number(fiatAmount) * CASHBACK_RATE_PERCENT) / 100).toFixed(2);
+
+  return {
+    amount: (Number(earned) * MOCK_BXX_PER_FIAT).toFixed(6),
+    currency: documentedPayCardTransaction.cashback.currency,
+    fiatAmount: earned,
+    fiatCurrency: documentedPayCardTransaction.transactionCurrency,
+    ratePercent: String(CASHBACK_RATE_PERCENT),
+    status: documentedPayCardTransaction.cashback.status,
+  };
+}
+
 /**
  * A wire-shaped page for the apps' MSW workers: the provider's documented charge, repeated once per
  * spend category, so a transaction list can be seen without a funded card. One category carries
- * each non-confirmed status, so the pending, reverted and declined treatments are visible too.
+ * each non-confirmed status, so the pending, reverted and declined treatments are visible too, and
+ * the two that never settled carry no cashback.
  */
 export function mockPayCardTransactions() {
   return PAY_CARD_TRANSACTION_CATEGORIES.map((mccCategory, index) => {
@@ -136,6 +168,9 @@ export function mockPayCardTransactions() {
         ...source,
         sign: "DEBIT" as const,
       })),
+      // `undefined` keeps every mocked charge one shape, and the key does not survive JSON, so the
+      // served page is indistinguishable from one that carries no cashback at all.
+      cashback: UNEARNED_STATUSES.has(status) ? undefined : mockCashback(payment.fiatAmount),
     };
   });
 }

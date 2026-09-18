@@ -7,7 +7,6 @@ import type { CardDetailsSceneProps } from "./components/CardDetails/Scenes/type
 export type { FormattedValue };
 
 export type CardTrackEvent = (event: string, params: Record<string, unknown>) => void;
-export type UnlockForReveal = () => Promise<boolean>;
 
 export type CardVisualProps = Readonly<{
   balance: number;
@@ -24,10 +23,12 @@ export type CardVisualViewProps = CardVisualProps &
 export type CardDetailsProps = Readonly<{
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   cardVisual?: CardVisualProps;
-  /** Native only: the Details sheet overview lists the card's transactions. */
+  /** Native only: what the sheet lists between the card actions and the transactions. */
+  assets?: ReactNode;
+  /** Formats the reward wallet amount, and, natively, the transactions the overview lists. */
   formatters?: CardTransactionFormatters;
   onTrackEvent?: CardTrackEvent;
-  unlock?: UnlockForReveal;
+  onShowMore?: () => void;
 }>;
 
 export type CardDetailsViewProps = CardDetailsProps &
@@ -93,23 +94,22 @@ export type FreezeViewModel = ConfirmSheetProps &
     onOpenConfirm: () => void;
   }>;
 
-export type RevealStatus = "idle" | "loading" | "revealed" | "failed";
+export type RevealStatus = "idle" | "loading" | "flipping" | "revealed" | "failed";
 
 export type RevealViewModel = Readonly<{
   status: RevealStatus;
   isRevealed: boolean;
+  canHide: boolean;
   imageUrl: string | undefined;
   onReveal: () => Promise<void>;
   onHide: () => void;
+  onImageLoad: () => void;
   onImageError: () => void;
 }>;
 
-export type RevealTileProps = Pick<
-  RevealViewModel,
-  "status" | "isRevealed" | "onReveal" | "onHide"
->;
+export type RevealTileProps = Pick<RevealViewModel, "status" | "canHide" | "onReveal" | "onHide">;
 
 export type CardFlipProps = Readonly<{
-  reveal: Pick<RevealViewModel, "isRevealed" | "imageUrl" | "onImageError"> | null;
+  reveal: Pick<RevealViewModel, "isRevealed" | "imageUrl" | "onImageLoad" | "onImageError"> | null;
   cardFace: ReactNode;
 }>;

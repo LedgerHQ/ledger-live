@@ -20,6 +20,7 @@ export const CARD_COPY = {
   numbersHide: "Hide",
   numbersFailed: "Couldn't load card numbers",
   numbersImageAlt: "Card numbers",
+  reward: "Total cashback",
 } as const;
 
 export const MORE_COPY = {
@@ -95,6 +96,9 @@ export const CARD_RESOURCES = {
             hide: CARD_COPY.numbersHide,
             failed: CARD_COPY.numbersFailed,
             imageAlt: CARD_COPY.numbersImageAlt,
+          },
+          reward: {
+            title: CARD_COPY.reward,
           },
         },
         cardMore: {

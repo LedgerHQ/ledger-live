@@ -130,12 +130,15 @@ describe("LNSUpsellBanner", () => {
       { deviceModelId: DeviceModelId.nanoSP, analyticsValue: "lnsp" as const },
       { deviceModelId: DeviceModelId.nanoX, analyticsValue: "lnx" as const },
     ])(
-      "should render for $deviceModelId once its cooldown has elapsed",
+      "should render shared copy for $deviceModelId once its cooldown has elapsed",
       ({ deviceModelId, analyticsValue }) => {
         renderBanner({
           devicesModelList: [deviceModelId],
           onboardingDate: daysAgoIso(30),
         });
+
+        expect(screen.getByText("See more. Sign safer")).toBeVisible();
+        expect(screen.getByText(`Upgrade and get ${DEFAULT_DISCOUNT_PERCENT}% off.`)).toBeVisible();
         fireEvent.click(screen.getByText("Upgrade my Ledger"));
 
         expectUpgradeClickTracking(bannerPageName, {
@@ -212,11 +215,26 @@ describe("LNSUpsellBanner", () => {
       expectUpgradeClickTracking(bannerPageName, OPTED_IN_ANALYTICS_PROPS);
     });
 
+    it("should render the signed-off LNS copy for opted-in nanoS users", () => {
+      renderBanner({});
+
+      expect(screen.getByText("Ledger Nano S Upgrade Program")).toBeVisible();
+      expect(
+        screen.getByText(
+          `Unlock new OS and security features. Get ${DEFAULT_DISCOUNT_PERCENT}% off.`,
+        ),
+      ).toBeVisible();
+    });
+
     it("should render Lumen MediaBanner and track click when lwdWallet40 brazePlacement is on", () => {
       renderBanner({ brazePlacement: true });
 
-      expect(screen.getByText("See more. Sign safer")).toBeVisible();
-      expect(screen.getByText(`Upgrade and get ${DEFAULT_DISCOUNT_PERCENT}% off.`)).toBeVisible();
+      expect(screen.getByText("Ledger Nano S Upgrade Program")).toBeVisible();
+      expect(
+        screen.getByText(
+          `Unlock new OS and security features. Get ${DEFAULT_DISCOUNT_PERCENT}% off.`,
+        ),
+      ).toBeVisible();
 
       fireEvent.click(screen.getByTestId("lns-upsell-media-banner"));
 

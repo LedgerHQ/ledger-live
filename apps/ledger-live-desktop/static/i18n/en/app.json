@@ -898,6 +898,11 @@
       }
     },
     "card": {
+      "assets": {
+        "title": "Assets",
+        "empty": "No assets yet",
+        "error": "Couldn't load assets"
+      },
       "title": "Crypto card",
       "balanceLabel": "Balance",
       "freeze": "Freeze",
@@ -917,6 +922,27 @@
       "confirmError": {
         "description": "Something went wrong. Please try again.",
         "retry": "Try again"
+      },
+      "assets": {
+        "title": "Assets",
+        "empty": "No assets yet",
+        "error": "Couldn't load assets",
+        "details": {
+          "topUp": "Top up",
+          "withdraw": "Withdraw",
+          "transactions": "Transactions"
+        },
+        "withdraw": {
+          "title": "You'll be redirected to Baanx",
+          "description": "Withdraw funds from your Baanx account to your Ledger wallet address.",
+          "continue": "Continue"
+        },
+        "history": {
+          "columns": {
+            "amount": "Amount",
+            "value": "Value"
+          }
+        }
       },
       "numbers": {
         "reveal": "View",
@@ -2121,6 +2147,13 @@
     "details": "{{ currency }} details",
     "multipleAddresses": "Why multiple addresses?",
     "extra": {
+      "pltReject": {
+        "title": "Reason",
+        "nonExistentToken": "This token doesn't exist on Concordium.",
+        "recipientNotFound": "The recipient account doesn't exist on Concordium.",
+        "insufficientBalance": "The account didn't hold enough of the token.",
+        "rejected": "Concordium refused this operation."
+      },
       "frozenAmount": "Frozen amount",
       "unfreezeAmount": "Unfreeze amount",
       "votes": "Votes ({{number}})",
@@ -2851,7 +2884,7 @@
     },
     "tagHelp": {
       "inputLabel": "Enter {{memoLabel}}",
-      "description": "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} memo may result in a loss of funds."
+      "description": "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} may result in a loss of funds."
     },
     "networkFeesInFiat": "Network fees in {{currency}}",
     "feesAmount": "Fees amount ({{unit}})",
@@ -3107,9 +3140,7 @@
           "validator": {
             "title": "Staking Providers"
           },
-          "connectDevice": {
-            "title": "Device"
-          },
+          "connectDevice": { "title": "Device" },
           "confirmation": {
             "title": "Confirmation",
             "success": {
@@ -7027,6 +7058,9 @@
     },
     "xrp": {
       "memo": "Tag"
+    },
+    "zcash": {
+      "memoTooltip": "A {{memoLabel}} is optional when sending {{currency}}. It is encrypted and only the recipient can read it. Some exchanges require one to identify your transaction."
     }
   },
   "errors": {
@@ -8003,7 +8037,15 @@
     },
     "ConcordiumTokenTransferNotPermitted": {
       "title": "This account cannot send this token",
-      "description": "The token issuer restricts who may send it, and this account is not permitted. Contact the token issuer for access."
+      "description": "The token issuer restricts who may send it. Contact the token issuer for details."
+    },
+    "ConcordiumAccountNotAllowed": {
+      "title": "This account hasn't been approved to send this token",
+      "description": "The token issuer keeps a list of approved senders, and this account is not on it. Approval is managed by the issuer, not by Ledger."
+    },
+    "ConcordiumAccountDenied": {
+      "title": "This account is restricted from sending this token",
+      "description": "The token issuer has restricted this account. Contact the issuer for details."
     },
     "ConcordiumTokenRestrictionsUnverified": {
       "title": "Token restrictions could not be verified",
@@ -9239,7 +9281,11 @@
     "opted_in": {
       "title": "See more. Sign safer",
       "description": "Upgrade and get {{discount}}% off.",
-      "cta": "Upgrade my Ledger"
+      "cta": "Upgrade my Ledger",
+      "nanoS": {
+        "title": "Ledger Nano S Upgrade Program",
+        "description": "Unlock new OS and security features. Get {{discount}}% off."
+      }
     },
     "opted_out": {
       "title": "More security. More control",
@@ -9249,7 +9295,11 @@
     "profile": {
       "title": "Upgrade your Device",
       "description": "Bigger screen, better security. Enjoy {{discount}}%.",
-      "cta": "Explore"
+      "cta": "Explore",
+      "nanoS": {
+        "title": "Ledger Nano S Upgrade Program",
+        "description": "Unlock new OS and security features. Get {{discount}}% off."
+      }
     }
   },
   "largeScreenUpsellModal": {
@@ -9616,9 +9666,6 @@
           "toPublic": "Self transfer to public balance",
           "unavailable": "Your private address will be available once Shielded is enabled for your account.",
           "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
-        },
-        "confirm": {
-          "privateTransaction": "Private transaction — verify amount on your device"
         }
       },
       "state": {
@@ -9881,7 +9928,9 @@
             "unbondableBanner": "Maximum unbondable amount is",
             "belowMinimum": "If unbonding would leave less than {{minAmount}} bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met."
           },
-          "connectDevice": { "title": "Device" },
+          "connectDevice": {
+            "title": "Device"
+          },
           "confirmation": {
             "title": "Confirmation",
             "success": {

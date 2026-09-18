@@ -1,3 +1,4 @@
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 import {
   isAppBackgrounded,
   isAppLockConfigured,
@@ -19,6 +20,7 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
   const isRevamped = scheme === "revamped";
   const protection = useSelector(selectAppLock);
   const isLocked = useSelector(selectIsLocked);
+  const { dismissAll } = useBottomSheetModal();
   const [hasDecidedInitialLock, setHasDecidedInitialLock] = useState(false);
 
   const lockIfConfigured = useCallback(() => {
@@ -35,6 +37,13 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
     lockIfConfigured();
     setHasDecidedInitialLock(true);
   }, [hasDecidedInitialLock, lockIfConfigured, scheme]);
+
+  // A sheet the app left open sits in a host above this gate, so it would show through the lock.
+  useEffect(() => {
+    if (isLocked) {
+      dismissAll();
+    }
+  }, [dismissAll, isLocked]);
 
   useEffect(() => {
     // Protection may have been enabled while the app was already backgrounded.
@@ -82,12 +91,12 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     flex: 1,
   },
+  // No zIndex: lifting the overlay paints the lock over the sheet the unlock screen raises.
   overlay: {
     bottom: 0,
     left: 0,
     position: "absolute",
     right: 0,
     top: 0,
-    zIndex: 10,
   },
 });

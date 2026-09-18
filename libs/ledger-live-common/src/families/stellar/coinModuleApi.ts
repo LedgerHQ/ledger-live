@@ -1,4 +1,4 @@
-import { createApi as createStellarApi } from "@ledgerhq/coin-stellar/api/index";
+import { createApi as createStellarApi } from "@ledgerhq/coin-stellar/api";
 import type { CoinModuleApi, Memo, StringMemo } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 

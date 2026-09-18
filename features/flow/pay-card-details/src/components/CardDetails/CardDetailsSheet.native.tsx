@@ -36,6 +36,9 @@ export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetails
       noCloseButton={isPending}
       preventBackdropClick={isPending}
       enablePanDownToClose={!isPending}
+      // Show more leaves for the host's transaction history, and the sheet is expected back when
+      // the user returns: a screen losing focus must not read as the user closing the sheet.
+      restoreOnFocus
       hasBackButton={canGoBack}
       onBack={canGoBack ? onBack : undefined}
       {...sizingProps}

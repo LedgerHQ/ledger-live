@@ -3,6 +3,7 @@ import { useGetCardStatusQuery, useGetUserQuery } from "@domain/api-card-managem
 import { useCardLinkedWallets } from "@features/flow-pay-card-wallets";
 import { hasPositiveBalance, type CardOnboardingSignals } from "./deriveCardOnboardingStatus";
 import type { CardOnboardingProviderStepId } from "./steps";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export type CardOnboardingSourcesParams = {
   /**
@@ -19,7 +20,7 @@ export type CardOnboardingSources = {
   readonly refresh: () => void;
 };
 
-const NO_COUNTER_VALUE = () => null;
+const NO_CURRENCIES: ReadonlyMap<string, CryptoOrTokenCurrency> = new Map();
 
 /**
  * Asks the Card endpoints what they can answer about onboarding.
@@ -33,7 +34,7 @@ export function useCardOnboardingSources({
 }: CardOnboardingSourcesParams = {}): CardOnboardingSources {
   const user = useGetUserQuery(undefined, { skip });
   const cardStatus = useGetCardStatusQuery(undefined, { skip });
-  const linkedWallets = useCardLinkedWallets({ resolveCounterValue: NO_COUNTER_VALUE, skip });
+  const linkedWallets = useCardLinkedWallets({ currencies: NO_CURRENCIES, skip });
 
   const signals = useMemo(
     () => ({

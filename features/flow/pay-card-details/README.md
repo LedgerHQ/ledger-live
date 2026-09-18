@@ -12,12 +12,13 @@ Session teardown uses `useCardLogout` from [`@features/flow-pay-card-auth`](../p
 
 ## Usage
 
-Every host mounts a single `CardDetails`. Pass `unlock` to let the holder reveal the card numbers:
+Every host mounts a single `CardDetails`. On web the holder can reveal the card numbers from View
+with no host gate — the package fetches the details image itself:
 
 ```tsx
 import { CardDetails } from "@features/flow-pay-card-details";
 
-<CardDetails cardVisual={cardVisual} unlock={unlock} />
+<CardDetails cardVisual={cardVisual} />
 ```
 
 Native hosts mount a single `CardDetails`. Two buttons — a disabled placeholder and **Details** —
@@ -42,14 +43,18 @@ import { CardDetails } from "@features/flow-pay-card-details";
 <CardDetails cardVisual={cardVisual} />;
 ```
 
+Native hosts can also pass `assets`: whatever it holds is rendered in the sheet's overview, between
+the card actions and the transactions, which is where the design lists the card's funding wallets.
+The node comes from the host because the list itself lives in
+[`@features/flow-pay-card`](../pay-card/README.md), above this package.
+
 `CardVisual` composes the `CardArtwork` (card face) with the balance overlay. `CardArtwork` is also
 exported on its own for consumers that only need the card face. Hosts mount `CardDetails` and pass
 `cardVisual` to overlay the balance, or omit it for the bare artwork. On web that keeps freeze, More,
 and View inline; on native freeze and More live in the Details bottom sheet.
 
 On web `CardDetails` owns one reveal view model and passes it to `CardFlip` and `CardActions`.
-Omit `unlock` and that value is `null`: the face never flips and `CardActions` lays out Freeze
-and More alone.
+Mobile confirm for View is a later sheet; the shared reveal view model has no password unlock.
 
 Hide only drops the status, not the image URL. The card takes a flip to turn back, and clearing
 the URL there would empty the face the moment the rotation starts; the next reveal clears it

@@ -1,6 +1,6 @@
 # Monorepo DDD Re-architecture
 
-> **Status: in progress.** This is the target architecture the repo is migrating toward. New code in `domain/`, `features/`, and `shared/` follows these rules today. `libs/` remains the default for new shared code until the migration is complete.
+> **Status: default.** This is where new code goes. `libs/` is [legacy](#legacy-libs): maintained, not grown.
 
 Source of truth: [Confluence — Guideline Monorepo DDD Re-architecture](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117)
 
@@ -18,11 +18,15 @@ shared  (10%)  — agnostic primitives
 ### `apps/`
 Platform-specific entry points: observability, analytics, routing, screens. Desktop and mobile do not necessarily share the same screens — each app assembles `features/flow` packages into its own screens.
 
+`apps/` is also the only place allowed to import both legacy and new code.
+
 ### `features/`
 Split into two sub-layers:
 
-- **`features/platform/`** — Non-Functional Requirements at feature level. Invisible to users (no screens, no global routing). Hooks, selectors, cross-feature domain-aware helpers, React glue. _e.g. `@features/platform-feature-flags`, `@features/platform-coin-loader`._
+- **`features/platform/`** — Non-Functional Requirements at feature level. Invisible to users (no screens, no global routing). Hooks, selectors, cross-feature domain-aware helpers, React glue, headless logic shared by both apps. _e.g. `@features/platform-feature-flags`, `@features/platform-coin-loader`._
 - **`features/flow/`** — User-facing features shared across both apps. UI components with business context, local state, user-facing logic. Each app composes these into its own screens.
+
+`features/platform/` is where the cross-cutting glue goes, rather than `libs/ledger-live-common`.
 
 See [features/README.md](../features/README.md) for details.
 
@@ -51,7 +55,38 @@ lets `features/*` and `domain/*` resolve their own copy without depending on an 
 apps  →  features/flow  →  features/platform  →  domain  →  shared
 ```
 
-Each layer may only import from layers below it. `shared`, `domain`, and `features` must **not** import from `libs/` — the new-arch core stays legacy-free. Legacy `libs/` may consume new-arch packages as migration glue, but only via injection at the app composition root.
+Each layer may only import from layers below it. `shared`, `domain`, and `features` must **not**
+import from `libs/` — the new-arch core stays legacy-free. Enforced by
+[`tools/nx-plugins/enforce-boundaries`](../tools/nx-plugins/enforce-boundaries).
+
+---
+
+## Legacy `libs/`
+
+Still built and released, but not where new code goes.
+
+| Path | Status | What to do |
+| --- | --- | --- |
+| `libs/ui/**` | Frozen, to be dropped | Use Lumen (`@ledgerhq/lumen-ui-react`, `@ledgerhq/lumen-ui-rnative`, `@ledgerhq/lumen-design-core`). |
+| `libs/ledgerjs/**` | Frozen, moving to [ts-libs](https://github.com/LedgerHQ/ts-libs) | Never add a package. New device interaction uses the DMK. |
+| `libs/ledger-live-common` | Deprecated | No new features. Glue is still possible, but prefer `features/platform/`. |
+| other `libs/*` | To migrate | Maintain; move code out when you touch it. |
+
+---
+
+## Crossing the frontier
+
+New code cannot import legacy code, but the product still has to work. In order of preference:
+
+1. **Declare the contract on the new side.** The new package defines the types it needs and takes the
+   implementation as an argument — see
+   [`shared/cloud-sync/src/trustchain-types.ts`](../shared/cloud-sync/src/trustchain-types.ts). Such
+   types are temporary: they die with the migration.
+2. **Glue in `apps/`.** Only apps may import both sides. Keep it in the composition root.
+3. **Legacy consumes new.** Never the reverse. For a published legacy package, inject the private
+   new-arch package at the app composition root.
+
+Never re-export a legacy type from a new-arch barrel.
 
 ---
 

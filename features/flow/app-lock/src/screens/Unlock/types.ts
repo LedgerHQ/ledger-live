@@ -24,6 +24,10 @@ export type UseUnlockViewModelOptions = Readonly<{
 export type UnlockViewProps = UnlockViewModel &
   Readonly<{
     hasFailed?: boolean;
+    /** False for a user protected by biometrics alone: there is no field to draw. */
+    hasPassword?: boolean;
+    isAwaitingBiometrics?: boolean;
+    isForgotPasswordOpen?: boolean;
     isAppActive?: boolean;
     logo?: React.ReactNode;
     topInset?: number;

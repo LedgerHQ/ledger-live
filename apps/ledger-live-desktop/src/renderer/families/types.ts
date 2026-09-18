@@ -364,20 +364,6 @@ export type LLDCoinFamily<
   getAccountRecipientAddresses?: (account: A) => string[];
 
   /**
-   * Replace the on-device confirmation UI in the new Send flow signature step
-   * (e.g. Zcash showing amount instead of a shielded address). Renders
-   * `fallback` when the override does not apply.
-   */
-  SendDeviceSignatureRequested?: React.ComponentType<{
-    device: Device | null | undefined;
-    transaction: T;
-    unit: Unit;
-    currencyId: string;
-    onShown?: () => void;
-    fallback: React.ReactNode;
-  }>;
-
-  /**
    * Allow to add a family-specific component above the recipient field in the
    * Send modal (e.g. Zcash transparent/shielded "transfer from" selector).
    * The component is responsible for its own gating (feature flags, currency

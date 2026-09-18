@@ -36,6 +36,7 @@ export function mapDeviceState(response: GetOsVersionResponse): ReadDeviceStateE
   }
 
   const state = readOnboardingState(response);
+  const firmwareVersion = response.seVersion;
 
   if (state === null) {
     const flags = response.secureElementFlags;
@@ -44,10 +45,11 @@ export function mapDeviceState(response: GetOsVersionResponse): ReadDeviceStateE
       type: "DEVICE_STATE_UNREADABLE",
       isOnboarded: flags.isOnboarded,
       isInRecoveryMode: flags.isInRecoveryMode,
+      firmwareVersion,
     };
   }
 
-  return { type: "DEVICE_STATE_READ", state };
+  return { type: "DEVICE_STATE_READ", state, firmwareVersion };
 }
 
 export const readDeviceState = fromCallback<ReadDeviceStateEvent, ReadDeviceStateInput>(

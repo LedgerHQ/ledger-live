@@ -25,4 +25,5 @@ export const concordium = currency({
     },
   ],
   keywords: ["concordium"],
+  tokenTypes: ["plt"],
 });

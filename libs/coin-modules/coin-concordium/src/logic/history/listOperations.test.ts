@@ -239,6 +239,20 @@ describe("parseTransaction, PLT", () => {
     expect(parseTransaction(tx, VALID_ADDRESS)!.memo).toBe("decoded memo");
   });
 
+  // Only the PLT decoder has this fallback, so this is what pins the PLT path to
+  // `decodePltMemo` rather than to the CCD decoder, which drops what it cannot
+  // parse. Memos written before the wallet encoded its content arrive this way.
+  it("falls back to raw text for a memo that is not CBOR", () => {
+    const { decodeMemoFromCbor } = jest.requireMock("@ledgerhq/concordium-core");
+    decodeMemoFromCbor.mockImplementation(() => {
+      throw new Error("not CBOR");
+    });
+    const memo = Buffer.from("invoice 42", "utf8").toString("hex");
+    const tx = { ...outgoingTx, details: { ...outgoingTx.details, memo } };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)!.memo).toBe("invoice 42");
+  });
+
   it("returns null when the address is neither source nor destination", () => {
     expect(parseTransaction(outgoingTx, "someone-else")).toBeNull();
   });
@@ -343,6 +357,43 @@ describe("parseTransaction, PLT", () => {
       };
 
       expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+    });
+
+    it("carries the cause the reason narrows to", () => {
+      const tx: WalletProxyTransaction = {
+        ...rejectedTx,
+        details: {
+          ...rejectedTx.details,
+          rawRejectReason: {
+            tag: "TokenUpdateTransactionFailed",
+            contents: { tokenId: "trUSDT", type: "tokenBalanceInsufficient" },
+          },
+        },
+      };
+
+      expect(parseTransaction(tx, VALID_ADDRESS)!.rejectCode).toBe("insufficientBalance");
+    });
+
+    it("carries the generic cause for a module reason it cannot narrow", () => {
+      expect(parseTransaction(rejectedTx, VALID_ADDRESS)!.rejectCode).toBe("rejected");
+    });
+
+    // `failed` already says the transfer did not happen. A PLT cause on a
+    // failure the chain attributed elsewhere would explain the wrong thing.
+    it("leaves the cause absent when the reason is not a PLT one", () => {
+      const tx: WalletProxyTransaction = {
+        ...rejectedTx,
+        details: {
+          ...rejectedTx.details,
+          rawRejectReason: { tag: "InvalidNonce" },
+        },
+      };
+
+      expect(parseTransaction(tx, VALID_ADDRESS)!.rejectCode).toBeUndefined();
+    });
+
+    it("leaves the cause absent on a successful transfer", () => {
+      expect(parseTransaction(outgoingTx, VALID_ADDRESS)!.rejectCode).toBeUndefined();
     });
   });
 });

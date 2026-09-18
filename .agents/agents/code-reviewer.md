@@ -22,6 +22,7 @@ Pay special attention to:
 - `.agents/skills/codeownership/SKILL.md` — Team-split convention: multi-team files should be split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; suggest this when a touched file clearly involves many teams
 - `.agents/skills/knip-migration/SKILL.md` — Dead-code detection is moving to `knip`, which needs explicit (non-`./*`) `package.json#exports`; new packages must use explicit exports + knip, not `.unimportedrc.json`
 - `.agents/skills/console-log/SKILL.md` — Console logging levels: `console.error` is forwarded to monitoring tools as an error event; flag any new `console.error` that isn't an illegal/unexpected state
+- `.agents/skills/configuration/SKILL.md` — Where a configuration value belongs; flag any new `@shared/env` / `@ledgerhq/live-env` definition or call site (`getEnv`, `getEnvDefault`, `useEnv`, `setEnv`, `setEnvUnsafe`, `injectDefinitions`), including in tests, and any real secret added to an app `.env` file
 
 ## Review Scope
 
@@ -41,7 +42,7 @@ By default, review unstaged changes from `git diff`. The user may specify differ
 - **New dependency in `package.json`**: must not duplicate an existing capability; peer compatibility must be verified; link to [bundlephobia](https://bundlephobia.com) with size impact.
 - **`pnpm-lock.yaml` diff**: Flag unrelated version bumps, mass reformatting, or entries not explained by the PR's `package.json` changes. The lockfile diff should be entirely explainable by the stated dependency changes.
 - **Translations**: Only edit `apps/ledger-live-desktop/static/i18n/en/app.json` (desktop) or `apps/ledger-live-mobile/src/locales/en/common.json` (mobile). No other locale files.
-- **Don't add to live-common**: `libs/ledger-live-common/` is maintenance-only — bugfixes and edits to existing code are fine, but flag new features/folders/top-level modules added there. New shared code goes to a new `libs/*` package (that is expected, not a smell) — but the new package's `package.json` **must** contain `"private": true` to prepare for the domain transition; flag it if missing.
+- **New code goes in the DDD layers**, not `libs/` — flag it unless it matches one of the exceptions in `docs/new-library.md`. `libs/ui/` and `libs/ledgerjs/` are frozen; `libs/ledger-live-common/` takes no new features.
 - **`domain/` packages**: no `@ledgerhq/` scope, every `package.json` must have `"private": true`, no subdirectories other than `entity/` and `api/`. For the full conventions, also read `domain/entity/README.md` and `domain/api/README.md`.
 - **`shared/` packages**: no `@ledgerhq/` scope, `"private": true`, no dependencies on `domain/` packages. For the full conventions, also read `shared/README.md`.
 - Sonar issues: complexity, duplication, security hotspots

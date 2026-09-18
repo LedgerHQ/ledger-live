@@ -148,6 +148,44 @@ describe("PayCardStatusResponseSchema", () => {
       PayCardStatusResponseSchema.parse({ ...cardStatus, type: "SOMETHING_ELSE" }),
     ).toThrow();
   });
+
+  it("reads whether the card may be frozen, which `status` does not say", () => {
+    expect(
+      PayCardStatusResponseSchema.parse({ ...cardStatus, isFreezable: true }).isFreezable,
+    ).toBe(true);
+    expect(
+      PayCardStatusResponseSchema.parse({ ...cardStatus, isFreezable: false }).isFreezable,
+    ).toBe(false);
+  });
+
+  it("leaves both new flags undefined for a tenant that omits them", () => {
+    const parsed = PayCardStatusResponseSchema.parse(cardStatus);
+
+    expect(parsed.isFreezable).toBeUndefined();
+    expect(parsed.cardAddedToDigitalWallet).toBeUndefined();
+  });
+
+  it("rejects a freezable flag that is not a boolean", () => {
+    expect(() =>
+      PayCardStatusResponseSchema.parse({ ...cardStatus, isFreezable: "true" }),
+    ).toThrow();
+  });
+
+  it("reads whether the card was added to a phone wallet", () => {
+    const added = { ...cardStatus, cardAddedToDigitalWallet: true };
+
+    expect(PayCardStatusResponseSchema.parse(added).cardAddedToDigitalWallet).toBe(true);
+    expect(
+      PayCardStatusResponseSchema.parse({ ...cardStatus, cardAddedToDigitalWallet: false })
+        .cardAddedToDigitalWallet,
+    ).toBe(false);
+  });
+
+  it("rejects a phone wallet flag that is not a boolean", () => {
+    expect(() =>
+      PayCardStatusResponseSchema.parse({ ...cardStatus, cardAddedToDigitalWallet: "false" }),
+    ).toThrow();
+  });
 });
 
 describe("PayCardDetailsTokenResponseSchema", () => {
@@ -668,6 +706,63 @@ describe("PayCardTransactionSchema", () => {
         fundingSources: [{ ...documented.fundingSources[0], sign: "REFUND" }],
       }),
     ).toThrow();
+  });
+
+  it("keeps the cashback the transaction earned", () => {
+    expect(PayCardTransactionSchema.parse(documented).cashback).toEqual({
+      amount: "0.000104",
+      currency: "BXX",
+      fiatAmount: "0.01",
+      fiatCurrency: "EUR",
+      ratePercent: "2",
+      status: "EARNED",
+    });
+  });
+
+  it("accepts a transaction that earned no cashback", () => {
+    expect(
+      PayCardTransactionSchema.parse({ ...documented, cashback: undefined }).cashback,
+    ).toBeUndefined();
+  });
+
+  it("reads a cashback status this schema does not name", () => {
+    const cashback = { ...documented.cashback, status: "REVERSED" };
+
+    expect(PayCardTransactionSchema.parse({ ...documented, cashback }).cashback?.status).toBe(
+      "REVERSED",
+    );
+  });
+
+  it("drops a cashback missing its amounts, without rejecting the transaction", () => {
+    const parsed = PayCardTransactionSchema.parse({
+      ...documented,
+      cashback: { status: "EARNED" },
+    });
+
+    expect(parsed.id).toBe(documented.id);
+    expect(parsed.cashback).toBeUndefined();
+  });
+
+  it("drops a key the cashback contract does not declare", () => {
+    const cashback = { ...documented.cashback, campaignId: "winter-2024" };
+
+    expect(PayCardTransactionSchema.parse({ ...documented, cashback }).cashback).not.toHaveProperty(
+      "campaignId",
+    );
+  });
+
+  it.each([null, "EARNED", 0])("drops a cashback that is not an object (%p)", cashback => {
+    const parsed = PayCardTransactionSchema.parse({ ...documented, cashback });
+
+    expect(parsed.id).toBe(documented.id);
+    expect(parsed.cashback).toBeUndefined();
+  });
+
+  it("keeps both cashback amounts as the strings the provider sent, not numbers", () => {
+    const parsed = PayCardTransactionSchema.parse(documented);
+
+    expect(parsed.cashback?.amount).toBe("0.000104");
+    expect(parsed.cashback?.fiatAmount).toBe("0.01");
   });
 
   it("keeps the amount as the string the provider sent, not a number", () => {

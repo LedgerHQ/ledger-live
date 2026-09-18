@@ -20,7 +20,7 @@ export function LNSUpsellBanner({ location, ...boxProps }: Props) {
 function View({
   location,
   variant,
-  tracking,
+  copyKeys,
   discount,
   handleCTAClick,
   imageUrl,
@@ -42,8 +42,8 @@ function View({
         {...boxProps}
       >
         <LNSUpsellMediaBanner
-          title={t(`lnsUpsell.${tracking}.title`)}
-          description={t(`lnsUpsell.${tracking}.description`, { discount })}
+          title={t(copyKeys.title)}
+          description={t(copyKeys.description, { discount })}
           imageUrl={imageUrl}
           onClick={handleCTAClick}
         />
@@ -56,15 +56,15 @@ function View({
       return (
         <BannerCard
           {...boxProps}
-          title={t(`lnsUpsell.${tracking}.title`)}
+          title={t(copyKeys.title)}
           description={
-            <Trans i18nKey={`lnsUpsell.${tracking}.description`} values={{ discount }}>
+            <Trans i18nKey={copyKeys.description} values={{ discount }}>
               <Text color="primary.c80" />
             </Trans>
           }
           cta={
             <Button variant="main" outline={false}>
-              {t(`lnsUpsell.${tracking}.cta`)}
+              {t(copyKeys.cta)}
             </Button>
           }
           image={imageUrl}
@@ -77,15 +77,15 @@ function View({
       return (
         <NotificationCard
           {...boxProps}
-          title={t(`lnsUpsell.${tracking}.title`)}
+          title={t(copyKeys.title)}
           description={
-            <Trans i18nKey={`lnsUpsell.${tracking}.description`} values={{ discount }}>
+            <Trans i18nKey={copyKeys.description} values={{ discount }}>
               <span />
             </Trans>
           }
           cta={
             <Link alignSelf="start" color="primary.c80" size="small">
-              {t(`lnsUpsell.${tracking}.cta`)}
+              {t(copyKeys.cta)}
               <Icons.ExternalLink size="S" style={{ marginLeft: "8px", verticalAlign: "middle" }} />
             </Link>
           }

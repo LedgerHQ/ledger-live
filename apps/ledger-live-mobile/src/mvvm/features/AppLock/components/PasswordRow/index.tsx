@@ -2,11 +2,11 @@ import { Switch } from "@ledgerhq/native-ui";
 import React from "react";
 import SettingsRow from "~/components/SettingsRow";
 import { useTranslation } from "~/context/Locale";
-import usePasswordRowViewModel from "./usePasswordRowViewModel";
+import useAppLockPasswordRowViewModel from "./useAppLockPasswordRowViewModel";
 
 export function AppLockPasswordRow(): React.JSX.Element | null {
   const { t } = useTranslation();
-  const { isHydrated, hasPassword, onValueChange } = usePasswordRowViewModel();
+  const { isHydrated, hasPassword, onValueChange } = useAppLockPasswordRowViewModel();
 
   if (!isHydrated) {
     return null;

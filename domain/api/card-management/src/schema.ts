@@ -63,7 +63,10 @@ export const PayCardStatusResponseSchema = z.object({
   panLast4: z.string().min(1),
   status: z.enum(["ACTIVE", "FROZEN", "BLOCKED", "INACTIVE"]),
   type: z.enum(["VIRTUAL", "PHYSICAL", "METAL"]),
+  /** Whether this card may be frozen at all, as opposed to `status` saying whether it is. */
+  isFreezable: z.boolean().optional(),
   orderedAt: z.string().min(1),
+  cardAddedToDigitalWallet: z.boolean().optional(),
 });
 
 /** Hex colours the provider paints the details image with. Its own defaults apply when omitted. */
@@ -168,6 +171,25 @@ export const PayCardTransactionFundingSourceSchema = z.object({
 });
 
 /**
+ * What the transaction earned back, in the reward token and in the card's own currency.
+ *
+ * Both amounts stay strings for the same reason every other amount here does: a decimal that
+ * survived the wire should not be rounded into a number on the way in. `ratePercent` is the rate
+ * that produced them, so a caller can show the rate without recomputing it from the pair.
+ *
+ * `status` stays a plain string rather than an enum, so an accrual state this schema has not seen
+ * arrives with its amounts intact instead of costing the whole cashback.
+ */
+export const PayCardTransactionCashbackSchema = z.object({
+  amount: z.string().min(1),
+  currency: z.string().min(1),
+  fiatAmount: z.string().min(1),
+  fiatCurrency: z.string().min(1),
+  ratePercent: z.string().min(1),
+  status: z.string().min(1),
+});
+
+/**
  * One card transaction, narrowed to the list and the transaction detail sheet.
  *
  * The response also carries the provider card id, the MCC number, conversion and ECB rates, and
@@ -198,6 +220,7 @@ export const PayCardTransactionSchema = z.object({
   originalCurrency: z.string().min(1),
   amountInOriginalCurrency: z.string().min(1),
   fundingSources: z.array(PayCardTransactionFundingSourceSchema).optional(),
+  cashback: PayCardTransactionCashbackSchema.optional().catch(undefined),
 });
 
 export const PayCardTransactionsResponseSchema = z.array(PayCardTransactionSchema);

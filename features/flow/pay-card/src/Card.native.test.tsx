@@ -14,13 +14,20 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <View testID="card-artwork" />,
-  CardDetails: ({ cardVisual }: { cardVisual?: unknown }) => (
-    <View testID={cardVisual ? "card-details-with-visual" : "card-details"} />
+  CardDetails: ({ cardVisual, assets }: { cardVisual?: unknown; assets?: unknown }) => (
+    <View
+      testID={cardVisual ? "card-details-with-visual" : "card-details"}
+      accessibilityLabel={assets ? "details-with-assets" : "details-without-assets"}
+    />
   ),
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
   CardOnboardingWidget: () => <View testID="card-onboarding-widget" />,
+}));
+
+jest.mock("@features/flow-pay-card-assets", () => ({
+  CardAssets: () => <View testID="card-assets" />,
 }));
 
 import { Card } from "./Card";
@@ -104,6 +111,29 @@ describe("Card (native)", () => {
       expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
       expect(screen.queryByTestId("card-details")).toBeNull();
       expect(screen.queryByTestId("card-login")).toBeNull();
+    });
+
+    it("hands the assets list to the details block, which shows it in its sheet", () => {
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          assets={{
+            currencies: new Map(),
+            priceWallet: () => null,
+            formatCountervalue: String,
+          }}
+        />,
+      );
+
+      // Handed to the details block, not rendered beside it: the sheet is where the design lists
+      // the assets.
+      expect(screen.getByLabelText("details-with-assets")).toBeTruthy();
+    });
+
+    it("leaves the details block without a list when the host passes no assets", () => {
+      renderCard(<Card login={{ oauthConfig }} />);
+
+      expect(screen.getByLabelText("details-without-assets")).toBeTruthy();
     });
   });
 });

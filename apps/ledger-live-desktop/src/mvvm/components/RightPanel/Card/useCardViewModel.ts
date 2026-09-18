@@ -1,20 +1,18 @@
 import { useCallback, useEffect, useMemo } from "react";
-import BigNumber from "bignumber.js";
 import { useLocation, useNavigate } from "react-router";
-import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import type { FormattedValue } from "@features/flow-pay-card-details";
 import useEnv from "@features/platform-env";
 import { useSelector } from "LLD/hooks/redux";
-import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import { localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
+import { useCountervalueFormatter } from "LLD/hooks/useCountervalueFormatter";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { HISTORY_TAB_CARD, HISTORY_TAB_SEARCH_PARAM } from "LLD/features/History/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
+import { usePayCardAssets } from "./usePayCardAssets";
 import { useWipeHostedSessionOnSignInChange } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
-import { useUnlockForCardNumbers } from "./useUnlockForCardNumbers";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
 function readCallbackCode(state: unknown): string | undefined {
@@ -54,14 +52,7 @@ export function useCardViewModel(): CardViewModel {
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const locale = useSelector(localeSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const unit = counterValueCurrency.units[0];
-
-  const formatCountervalue = useCallback(
-    (value: number): FormattedValue =>
-      formatCurrencyUnitFragment(unit, new BigNumber(value), { locale, showCode: true }),
-    [unit, locale],
-  );
+  const formatCountervalue = useCountervalueFormatter();
 
   const formatTransactionAmount = useCallback<
     NonNullable<CardViewModel["formatters"]["transactionAmount"]>
@@ -133,8 +124,6 @@ export function useCardViewModel(): CardViewModel {
     [oauthConfig, callback, openHostedLogin, openHostedPage, onTrackEvent],
   );
 
-  const { unlock, dialog: unlockDialog } = useUnlockForCardNumbers();
-
   const onShowMore = useCallback(() => {
     navigate(
       `/history?${HISTORY_TAB_SEARCH_PARAM}=${HISTORY_TAB_CARD}`,
@@ -142,11 +131,12 @@ export function useCardViewModel(): CardViewModel {
     );
   }, [navigate, pathname]);
 
+  const assets = usePayCardAssets();
+
   return {
     formatters,
+    assets,
     login,
-    unlock,
-    unlockDialog,
     onShowMore,
   };
 }

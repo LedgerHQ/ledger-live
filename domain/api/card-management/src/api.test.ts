@@ -650,6 +650,18 @@ describe("cardManagementApi requests", () => {
       expect(result.data).toEqual(cardStatus);
     });
 
+    it("keeps both new flags, which is what the devtool's Card Status probe prints", async () => {
+      provider.get("/v1/card/status", () =>
+        jsonResponse({ ...cardStatus, isFreezable: true, cardAddedToDigitalWallet: false }),
+      );
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(cardManagementApi.endpoints.getCardStatus.initiate());
+
+      expect(result.data?.isFreezable).toBe(true);
+      expect(result.data?.cardAddedToDigitalWallet).toBe(false);
+    });
+
     it("fails with 404 when the user never ordered a card", async () => {
       provider.get("/v1/card/status", () => errorResponse(404, "Card not found"));
 

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo, type ComponentType } from "react";
-import { useDustFilteringFeature } from "@features/platform-feature-flags";
+import { useDustFilteringFeature, useFeature } from "@features/platform-feature-flags";
 import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   formatSmallValueOperationsThreshold,
@@ -23,7 +23,11 @@ import { parseLastSeenMs } from "LLM/features/OperationsHistory/utils/unreadOper
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useOperationsSections } from "./hooks/useOperationsSections";
-import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "LLM/features/OperationsHistory/constants";
+import {
+  HISTORY_DUST_FILTER_THRESHOLD_USD,
+  HISTORY_TAB_CRYPTO,
+  type HistoryTab,
+} from "LLM/features/OperationsHistory/constants";
 
 export type { OperationsListSection } from "./hooks/useOperationsSections";
 
@@ -36,12 +40,18 @@ export type OperationsHistoryDustFilterOption = Readonly<{
 const INITIAL_OP_COUNT = 50;
 const OP_COUNT_INCREMENT = 50;
 
-export function useOperationsListViewModel(accountIds?: string[]) {
+export function useOperationsListViewModel(
+  accountIds?: string[],
+  initialHistoryTab: HistoryTab = HISTORY_TAB_CRYPTO,
+) {
   const dispatch = useDispatch();
   const allAccounts = useSelector(shallowAccountsSelector);
   const allFlattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
   const [isOptionsSheetOpen, setOptionsSheetOpen] = useState(false);
+  const [historyTab, setHistoryTab] = useState<HistoryTab>(initialHistoryTab);
+  const isPayTabEnabled = !!useFeature("lwmPayTab")?.enabled;
+  const showHistoryTypeSwitcher = isPayTabEnabled && !accountIds?.length;
   const { isEnabled: isDustFilterFeatureEnabled } = useDustFilteringFeature("mobile");
   const userHideSmallValueTokenOperations = useSelector(
     hideSmallValueTokenOperationsEnabledSelector,
@@ -165,6 +175,14 @@ export function useOperationsListViewModel(accountIds?: string[]) {
     }
   }, [isDustFilterFeatureEnabled]);
   const closeOptionsSheet = useCallback(() => setOptionsSheetOpen(false), []);
+  const onHistoryTabChange = useCallback((tab: HistoryTab) => {
+    track("button_clicked", {
+      button: tab,
+      page: "OperationsList",
+    });
+    setHistoryTab(tab);
+  }, []);
+
   const onToggleHideSmallValueTokenOperations = useCallback(() => {
     if (!isDustFilterFeatureEnabled) return;
 
@@ -195,5 +213,10 @@ export function useOperationsListViewModel(accountIds?: string[]) {
     isDustFilterFeatureEnabled,
     dustFilterOption,
     onToggleHideSmallValueTokenOperations,
+    showHistoryTypeSwitcher,
+    historyTab,
+    onHistoryTabChange,
   };
 }
+
+export type OperationsListViewModel = ReturnType<typeof useOperationsListViewModel>;

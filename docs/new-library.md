@@ -4,11 +4,15 @@ This document covers the requirements and conventions for any new internal packa
 
 ## Where to add new code
 
-New shared code goes in a new **`libs/*` package** (e.g. a self-contained utility, a coin module under `libs/coin-modules/`).
+New code goes in a DDD package — `shared/`, `domain/entity/`, `domain/api/`, `features/platform/` or
+`features/flow/`, whichever is the lowest layer that can own the concern. `support/` for
+development-only tooling.
 
-> **`libs/ledger-live-common` is in maintenance mode.** Bugfixes and edits to existing code are fine; new features, folders, or top-level modules are not.
-
-The repo is moving toward a DDD layout (`domain/`, `features/`, `shared/`); it is not yet the default for new code — use `libs/` today. See [docs/ddd-monorepo-architecture.md](./ddd-monorepo-architecture.md) for the target architecture.
+`libs/` is [legacy](./ddd-monorepo-architecture.md#legacy-libs). Three exceptions still land there:
+a new coin module or its coin-tester; a package published to npm (DDD packages are all
+`"private": true`); a proportionate fix in an existing legacy package. `libs/ui/` and
+`libs/ledgerjs/` are frozen. `libs/ledger-live-common` takes no new features, and code extracted
+from it goes to the DDD layers, not to a new `libs/*` package.
 
 ## Package checklist
 
@@ -59,7 +63,7 @@ The repo is moving toward a DDD layout (`domain/`, `features/`, `shared/`); it i
 | `features/platform/` | `@features/platform-<name>` | `@features/platform-feature-flags` |
 | `features/flow/` | `@features/flow-<name>` | `@features/flow-wallet` |
 | `support/` | `@support/<name>` | `@support/jest-devtools` |
-| `libs/` | `@ledgerhq/<name>` | `@ledgerhq/coin-evm` |
+| `libs/` (legacy) | `@ledgerhq/<name>` | `@ledgerhq/coin-evm` |
 
 Keep names short and self-describing. No cross-package relative imports — always use the npm package name.
 

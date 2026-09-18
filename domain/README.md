@@ -2,7 +2,7 @@
 
 > Part of the [DDD monorepo architecture](../docs/ddd-monorepo-architecture.md).
 
-Business domain packages — the foundation of the emerging DDD layout. This model is still maturing and is not yet the default home for new code: use it only when the work clearly fits, otherwise add a new `libs/*` package.
+Business domain packages — the foundation of the DDD layout.
 
 ## Layers
 

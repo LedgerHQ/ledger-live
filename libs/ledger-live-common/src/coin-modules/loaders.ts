@@ -145,6 +145,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadLocalApi: () =>
       import("../families/cosmos/coinModuleApi").then(m => m.createLocalCosmosApi),
     loadBridgeApi: () => import("../families/cosmos/bridge/api").then(m => m.default),
+    loadSigner: () => import("../families/cosmos/signer").then(m => m.default),
   },
   {
     family: "evm",
@@ -225,7 +226,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => import("../families/evm/bridge/mock").then(m => m.default),
     loadSigner: () => import("../families/evm/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/evm/bridge/api").then(m => m.default),
-    loadAccountRawAssign: () => import("../families/evm/accountRawAssign").then(m => m.default),
+    loadAccountRawAssign: () =>
+      import("../bridge/generic-coin-framework/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/evm/bridgeExtensions").then(m => m.default),
   },
   {
@@ -316,6 +318,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-near/deviceTransactionConfig").then(m => m.default),
     loadAccount: () => import("@ledgerhq/coin-near/account").then(m => m.default),
+    loadMockBridge: () => import("../families/near/bridge/mock").then(m => m.default),
   },
   {
     family: "polkadot",

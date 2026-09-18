@@ -3,14 +3,14 @@ import { Box, Button, LinearGradient } from "@ledgerhq/lumen-ui-rnative";
 import { CardArtwork } from "../CardArtwork/CardArtwork";
 import { CardVisual } from "../CardVisual/CardVisual";
 import { CardDetailsSheet } from "./CardDetailsSheet";
+import { CARD_FADE } from "../CardArtwork/cardColors";
 import type { CardDetailsViewProps } from "../../types";
 
 const CARD_FADE_HEIGHT = "55%";
-const CARD_FADE_COLOR = "#000000";
 
 const CARD_FADE_STOPS = [
-  { color: CARD_FADE_COLOR, offset: 0, opacity: 0 },
-  { color: CARD_FADE_COLOR, offset: 1, opacity: 1 },
+  { color: CARD_FADE, offset: 0, opacity: 0 },
+  { color: CARD_FADE, offset: 1, opacity: 1 },
 ];
 
 export function CardDetailsView({

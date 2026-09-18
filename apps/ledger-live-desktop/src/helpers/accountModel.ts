@@ -112,7 +112,6 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
             delegatedBalance: new BigNumber(0),
             pendingRewardsBalance: new BigNumber(0),
             unbondingBalance: new BigNumber(0),
-            withdrawAddress: raw.freshAddress,
             sequence: 0,
           },
         };

@@ -1,12 +1,14 @@
-import { useMemo } from "react";
-import { useRoute, type RouteProp } from "@react-navigation/native";
+import { useCallback, useMemo } from "react";
+import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useEnv from "@features/platform-env";
 import { useContactsFeature } from "@features/platform-contacts";
 import type { ScreenName } from "~/const";
 import type { CardProps } from "@features/flow-pay-card";
+import { usePayCardAssets } from "../../hooks/usePayCardAssets";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import type { FeatureTourProps } from "@features/flow-pay-feature-tour";
+import { navigateToCardHistory } from "LLM/features/OperationsHistory/utils/navigateToCardHistory";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
@@ -20,6 +22,7 @@ import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 export function usePayTabViewModel() {
   const { top, bottom } = useNavigationBarHeights();
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
   const balance = usePayCardBalance();
@@ -64,6 +67,10 @@ export function usePayTabViewModel() {
     [oauthConfig, callback, balance.onTrackEvent],
   );
 
+  const onShowMore = useCallback(() => {
+    navigateToCardHistory(navigation);
+  }, [navigation]);
+
   const featureTour: FeatureTourProps = useMemo(
     () => ({
       onTrackScreen: (page: string) => track(page),
@@ -72,10 +79,13 @@ export function usePayTabViewModel() {
     [],
   );
 
+  const cardAssets = usePayCardAssets();
+
   return {
     top,
     bottom: bottom + insets.bottom,
     login,
+    cardAssets,
     featureTour,
     balance,
     actionTiles,
@@ -84,5 +94,6 @@ export function usePayTabViewModel() {
     isContactsEnabled,
     depositOptions: deposit.depositOptions,
     bankTransferIntro: deposit.bankTransferIntro,
+    onShowMore,
   };
 }

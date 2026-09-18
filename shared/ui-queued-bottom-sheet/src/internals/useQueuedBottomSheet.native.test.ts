@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { createElement, useState, type ReactNode } from "react";
 import { Keyboard } from "react-native";
 import { renderHook, act } from "@testing-library/react-native";
 import { useQueuedBottomSheet } from "./useQueuedBottomSheet";
+import { QueuedBottomSheetAdaptersProvider } from "./adaptersContext";
+import { defaultQueuedBottomSheetAdapters, type QueuedBottomSheetAdapters } from "../adapters";
 import type { BottomSheetStateHandlers } from "../contexts/QueuedBottomSheetsContext";
+import {
+  claimBottomSheetKeyboard,
+  resetBottomSheetKeyboardOwnership,
+} from "./bottomSheetKeyboardOwnership";
 
 const mockPresent = jest.fn();
 const mockDismiss = jest.fn();
+// Lumen hands back the same ref across renders. Handing back a new one would change the identity
+// of every callback built from it, re-running the open/close effect (and its cleanup) each render.
+const mockBottomSheetRef = { current: { present: mockPresent, dismiss: mockDismiss } };
 
 jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
   __esModule: true,
-  useBottomSheetRef: () => ({ current: { present: mockPresent, dismiss: mockDismiss } }),
+  useBottomSheetRef: () => mockBottomSheetRef,
 }));
 
 const mockRemoveBottomSheetFromQueue = jest.fn();
@@ -54,6 +63,7 @@ function setupBottomSheetStateCapture() {
 describe("useQueuedBottomSheet", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetBottomSheetKeyboardOwnership();
   });
 
   afterEach(() => {
@@ -695,6 +705,36 @@ describe("useQueuedBottomSheet", () => {
     expect(dismissKeyboard).toHaveBeenCalled();
   });
 
+  // Closing sheets hand off to the sheet that replaces them, which has already focused its field
+  // by the time this one finishes closing.
+  it("leaves the keyboard up when another sheet raised it", () => {
+    const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
+    jest.spyOn(Keyboard, "isVisible").mockReturnValue(true);
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+
+    renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+    signalOpen();
+    claimBottomSheetKeyboard("the-sheet-taking-over");
+    signalClose();
+
+    expect(dismissKeyboard).not.toHaveBeenCalled();
+  });
+
+  it("retracts the keyboard it raised itself", () => {
+    const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
+    jest.spyOn(Keyboard, "isVisible").mockReturnValue(true);
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+
+    const { result } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+    signalOpen();
+    claimBottomSheetKeyboard(result.current.sheetId);
+    signalClose();
+
+    expect(dismissKeyboard).toHaveBeenCalled();
+  });
+
   it("does not reopen after dismiss when it is no longer requested (normal close)", () => {
     const { signalOpen, signalClose } = setupBottomSheetStateCapture();
     let isRequestingToBeOpened = true;
@@ -712,5 +752,77 @@ describe("useQueuedBottomSheet", () => {
     });
 
     expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
+  });
+
+  describe("a screen losing focus", () => {
+    function renderFocusAware(props: { onClose: () => void; restoreOnFocus?: boolean }) {
+      let isFocused = true;
+      const adapters: QueuedBottomSheetAdapters = {
+        ...defaultQueuedBottomSheetAdapters,
+        useIsScreenFocused: () => isFocused,
+      };
+      const wrapper = ({ children }: { children: ReactNode }) =>
+        createElement(QueuedBottomSheetAdaptersProvider, { value: adapters }, children);
+
+      const rendered = renderHook(
+        () => useQueuedBottomSheet({ isRequestingToBeOpened: true, ...props }),
+        { wrapper },
+      );
+
+      return {
+        ...rendered,
+        setFocused: (next: boolean) => {
+          isFocused = next;
+          rendered.rerender(undefined);
+        },
+      };
+    }
+
+    it("reports a close, so the consumer forgets it wanted the drawer", () => {
+      const onClose = jest.fn();
+      const { signalOpen } = setupBottomSheetStateCapture();
+      const { setFocused } = renderFocusAware({ onClose });
+
+      signalOpen();
+      setFocused(false);
+
+      expect(mockDismiss).toHaveBeenCalled();
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("only hides the drawer under restoreOnFocus, leaving the consumer's request standing", () => {
+      const onClose = jest.fn();
+      const { signalOpen } = setupBottomSheetStateCapture();
+      const { result, setFocused } = renderFocusAware({ onClose, restoreOnFocus: true });
+
+      signalOpen();
+      setFocused(false);
+
+      expect(mockDismiss).toHaveBeenCalled();
+      expect(onClose).not.toHaveBeenCalled();
+
+      // The dismissal lands after the screen is gone, and reports nothing either.
+      act(() => {
+        result.current.handleDismiss();
+      });
+
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("queues the drawer again under restoreOnFocus once the screen is focused", () => {
+      const { signalOpen } = setupBottomSheetStateCapture();
+      const { result, setFocused } = renderFocusAware({ onClose: jest.fn(), restoreOnFocus: true });
+
+      signalOpen();
+      setFocused(false);
+      act(() => {
+        result.current.handleDismiss();
+      });
+      setFocused(true);
+      signalOpen();
+
+      expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(2);
+      expect(mockPresent).toHaveBeenCalledTimes(2);
+    });
   });
 });

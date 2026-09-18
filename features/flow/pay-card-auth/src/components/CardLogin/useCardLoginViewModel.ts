@@ -70,7 +70,11 @@ export function mapSnapshotToViewModel(
   return {
     ...copy,
     // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
-    isLoading: value !== "idle" && value !== "error" && value !== "awaitingCallback",
+    isLoading:
+      value !== "idle" &&
+      value !== "authError" &&
+      value !== "userFetchError" &&
+      value !== "awaitingCallback",
     errorMessage,
     onLoginPress,
     onAlreadyHaveCardPress,
@@ -127,7 +131,11 @@ export function useCardLoginViewModel({
     }
   }, [isSignedIn, snapshot.value, send]);
 
-  const isIntroOpen = isIntroRequested && (snapshot.value === "idle" || snapshot.value === "error");
+  const isIntroOpen =
+    isIntroRequested &&
+    (snapshot.value === "idle" ||
+      snapshot.value === "authError" ||
+      snapshot.value === "userFetchError");
 
   const startLogin = useCallback(() => {
     setHasSignupFailed(false);

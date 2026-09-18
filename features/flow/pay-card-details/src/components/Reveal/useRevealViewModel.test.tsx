@@ -12,7 +12,7 @@ import {
   revealCardDetailsFailureHandler,
   revealCardDetailsHandler,
 } from "@support/msw-features-flow-pay-card";
-import { useRevealViewModel } from "./useRevealViewModel";
+import { FLIP_MS, useRevealViewModel } from "./useRevealViewModel";
 
 const server = listenToCardApi();
 
@@ -28,44 +28,84 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-function renderReveal(unlock?: () => Promise<boolean>) {
+function renderReveal() {
   const store = makeCardApiStore();
 
   function Wrapper({ children }: PropsWithChildren) {
     return <CardApiStoreProvider store={store}>{children}</CardApiStoreProvider>;
   }
 
-  const { result } = renderHook(() => useRevealViewModel({ unlock }), { wrapper: Wrapper });
+  const { result } = renderHook(() => useRevealViewModel(), { wrapper: Wrapper });
 
   function reveal() {
-    if (!result.current) {
-      throw new Error("the hook published no reveal view model");
-    }
     return result.current;
   }
 
   return { store, result, reveal };
 }
 
-async function renderRevealed(unlock: () => Promise<boolean> = () => Promise.resolve(true)) {
-  const rendered = renderReveal(unlock);
+async function renderRevealed() {
+  const rendered = renderReveal();
   await act(async () => {
     await rendered.reveal().onReveal();
   });
+  await waitFor(() => expect(rendered.reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
+  finishFlip(rendered.reveal);
   return rendered;
 }
 
-describe("useRevealViewModel", () => {
-  it("publishes no reveal when the host granted no unlock", () => {
-    const { result } = renderReveal();
+function finishFlip(reveal: () => { onImageLoad: () => void }) {
+  jest.useFakeTimers();
+  try {
+    act(() => {
+      reveal().onImageLoad();
+    });
+    act(() => {
+      jest.advanceTimersByTime(FLIP_MS);
+    });
+  } finally {
+    jest.useRealTimers();
+  }
+}
 
-    expect(result.current).toBeNull();
+describe("useRevealViewModel", () => {
+  it("keeps loading until the details image loads", async () => {
+    const { reveal } = renderReveal();
+
+    await act(async () => {
+      await reveal().onReveal();
+    });
+
+    await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
+    expect(reveal().status).toBe("loading");
+    expect(reveal().isRevealed).toBe(false);
+
+    act(() => {
+      reveal().onImageLoad();
+    });
+
+    expect(reveal().status).toBe("flipping");
+    expect(reveal().isRevealed).toBe(true);
   });
 
-  it("reveals the image after unlock succeeds", async () => {
+  it("shows Hide after the flip finishes", async () => {
+    const { reveal } = renderReveal();
+
+    await act(async () => {
+      await reveal().onReveal();
+    });
+    await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
+
+    expect(reveal().status).toBe("loading");
+    finishFlip(reveal);
+    expect(reveal().status).toBe("revealed");
+    expect(reveal().canHide).toBe(true);
+  });
+
+  it("reveals the image after the token request succeeds", async () => {
     const { reveal, store } = await renderRevealed();
 
-    await waitFor(() => expect(reveal().status).toBe("revealed"));
+    expect(reveal().status).toBe("revealed");
     expect(reveal().isRevealed).toBe(true);
     expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
     const state = JSON.stringify(store.getState());
@@ -73,17 +113,15 @@ describe("useRevealViewModel", () => {
     expect(state).not.toContain("details-image");
   });
 
-  it("stays idle when unlock is cancelled", async () => {
-    const { reveal } = await renderRevealed(() => Promise.resolve(false));
-
-    expect(reveal().status).toBe("idle");
-    expect(reveal().isRevealed).toBe(false);
-    expect(reveal().imageUrl).toBeUndefined();
-  });
-
-  it("shows loading while unlock is pending", async () => {
-    const unlockWait = deferred<boolean>();
-    const { reveal } = renderReveal(() => unlockWait.promise);
+  it("shows loading while the token request is pending", async () => {
+    const tokenWait = deferred<void>();
+    server.use(
+      http.post(CARD_DETAILS_TOKEN_URL, async () => {
+        await tokenWait.promise;
+        return HttpResponse.json(CARD_DETAILS);
+      }),
+    );
+    const { reveal } = renderReveal();
 
     act(() => {
       void reveal().onReveal();
@@ -92,24 +130,29 @@ describe("useRevealViewModel", () => {
     expect(reveal().status).toBe("loading");
 
     await act(async () => {
-      unlockWait.resolve(true);
+      tokenWait.resolve();
     });
 
-    await waitFor(() => expect(reveal().status).toBe("revealed"));
+    await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
+    finishFlip(reveal);
+    expect(reveal().status).toBe("revealed");
     expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
   });
 
   it("sets failed when the token request fails", async () => {
     server.use(revealCardDetailsFailureHandler);
-    const { reveal } = await renderRevealed();
+    const { reveal } = renderReveal();
 
-    await waitFor(() => expect(reveal().status).toBe("failed"));
+    await act(async () => {
+      await reveal().onReveal();
+    });
+
+    expect(reveal().status).toBe("failed");
     expect(reveal().imageUrl).toBeUndefined();
   });
 
   it("hides the numbers, keeping the spent image for the flip back", async () => {
     const { reveal } = await renderRevealed();
-    await waitFor(() => expect(reveal().status).toBe("revealed"));
 
     act(() => {
       reveal().onHide();
@@ -122,7 +165,6 @@ describe("useRevealViewModel", () => {
 
   it("clears the spent image the moment the next reveal starts", async () => {
     const { reveal } = await renderRevealed();
-    await waitFor(() => expect(reveal().status).toBe("revealed"));
     act(() => {
       reveal().onHide();
     });
@@ -154,7 +196,7 @@ describe("useRevealViewModel", () => {
         return HttpResponse.json(CARD_DETAILS);
       }),
     );
-    const { reveal } = renderReveal(() => Promise.resolve(true));
+    const { reveal } = renderReveal();
 
     act(() => {
       void reveal().onReveal();
@@ -171,6 +213,35 @@ describe("useRevealViewModel", () => {
 
     expect(reveal().status).toBe("idle");
     expect(reveal().imageUrl).toBeUndefined();
+  });
+
+  it("ignores a late image error after hide", async () => {
+    const { reveal } = await renderRevealed();
+
+    act(() => {
+      reveal().onHide();
+      reveal().onImageError();
+    });
+
+    expect(reveal().status).toBe("idle");
+    expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
+  });
+
+  it("ignores a late image load after hide", async () => {
+    const { reveal } = renderReveal();
+
+    await act(async () => {
+      await reveal().onReveal();
+    });
+    await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
+
+    act(() => {
+      reveal().onHide();
+      reveal().onImageLoad();
+    });
+
+    expect(reveal().status).toBe("idle");
+    expect(reveal().isRevealed).toBe(false);
   });
 
   it("sets failed when the details image errors", async () => {

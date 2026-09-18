@@ -16,9 +16,21 @@ import {
   SplitAddressProps,
 } from "~/renderer/components/OperationsList/AddressCellShared";
 import { ZCASH_SHIELDED_TX_TYPES } from "@ledgerhq/coin-zcash/network/types";
+import { isZcashShieldedAddress } from "@ledgerhq/coin-zcash/logic/address";
 import type { AddressCellProps } from "~/renderer/families/types";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
+
+/**
+ * A send paying into a shielded pool stays typed `OUT` -- its transparent leg
+ * is all an explorer sees of it -- while the shielded leg recovers the address
+ * it really paid. Discreet mode owes that address the masking it gives a
+ * `SHIELDED_TX_*` operation, so what earns masking on an `OUT` is the address
+ * itself being shielded; a transparent recipient, of Zcash or of any other
+ * currency of the family, keeps the unmasked rendering it has always had.
+ */
+const shouldMask = (operation: Operation, value: string) =>
+  ZCASH_SHIELDED_TX_TYPES.includes(operation.type) || isZcashShieldedAddress(value);
 
 class AddressCell extends PureComponent<AddressCellProps<Operation>> {
   render() {
@@ -34,13 +46,14 @@ class AddressCell extends PureComponent<AddressCellProps<Operation>> {
       case "SHIELDED_TX_SAPLING_OUT":
       case "SHIELDED_TX_ORCHARD_OUT":
       case "SHIELDED_TX_IRONWOOD_OUT":
+      case "OUT":
         value = operation.recipients[0];
         break;
     }
 
     return value ? (
       <Cell>
-        {ZCASH_SHIELDED_TX_TYPES.includes(operation.type) ? (
+        {shouldMask(operation, value) ? (
           <Discreet replace={"*".repeat(value.length)}>
             <Address value={value} />
           </Discreet>
@@ -54,8 +67,8 @@ class AddressCell extends PureComponent<AddressCellProps<Operation>> {
   }
 }
 
-const getI18nKey = (type: string) => {
-  switch (type) {
+const getI18nKey = (operation: Operation) => {
+  switch (operation.type) {
     case "SHIELDED_TX_SAPLING_IN":
     case "SHIELDED_TX_SAPLING_OUT":
       return "zcash.operationDetails.shieldedSaplingTx";
@@ -66,7 +79,9 @@ const getI18nKey = (type: string) => {
     case "SHIELDED_TX_IRONWOOD_OUT":
       return "zcash.operationDetails.shieldedIronwoodTx";
     default:
-      return null;
+      return (operation.extra as { zcashPrivate?: boolean } | undefined)?.zcashPrivate
+        ? "zcash.operationDetails.shieldedIronwoodTx"
+        : null;
   }
 };
 
@@ -77,8 +92,7 @@ const OperationDetailsExtra = ({
   account: Account;
   operation: Operation;
 }>) => {
-  const { type } = operation;
-  const i18nKey = getI18nKey(type);
+  const i18nKey = getI18nKey(operation);
 
   if (account.currency.id !== "zcash") {
     return null;
@@ -123,6 +137,19 @@ const SplitAddressComponent = (props: SplitAddressProps) => {
   return <SplitAddress {...newProps} />;
 };
 
+/**
+ * The drawer hands each address line to this component on its own, so an `OUT`
+ * -- where only some lines are shielded -- decides line by line: the recovered
+ * shielded destination is masked, the transparent senders it was paid from are
+ * left as the chain already publishes them.
+ */
+const OutSplitAddressComponent = (props: SplitAddressProps) =>
+  isZcashShieldedAddress(props.value) ? (
+    <SplitAddressComponent {...props} />
+  ) : (
+    <SplitAddress {...props} />
+  );
+
 export default {
   addressCell: {
     SHIELDED_TX_SAPLING_IN: AddressCell,
@@ -131,6 +158,7 @@ export default {
     SHIELDED_TX_ORCHARD_OUT: AddressCell,
     SHIELDED_TX_IRONWOOD_IN: AddressCell,
     SHIELDED_TX_IRONWOOD_OUT: AddressCell,
+    OUT: AddressCell,
   },
   OperationDetailsExtra,
   splitAddress: {
@@ -140,5 +168,6 @@ export default {
     SHIELDED_TX_ORCHARD_OUT: SplitAddressComponent,
     SHIELDED_TX_IRONWOOD_IN: SplitAddressComponent,
     SHIELDED_TX_IRONWOOD_OUT: SplitAddressComponent,
+    OUT: OutSplitAddressComponent,
   },
 };

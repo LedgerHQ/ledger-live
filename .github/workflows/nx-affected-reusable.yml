@@ -11,11 +11,16 @@ on:
         description: "Head branch"
         type: string
         required: true
-      skip_nx_cache:
-        description: "Skip Nx task cache when computing affected projects (e.g. external fork workflows)"
+      close_smartling_pr:
+        description: "Close Smartling translation pull requests instead of computing affected projects. Internal pull requests only."
         type: boolean
         required: false
         default: false
+    secrets:
+      GH_BOT_APP_ID:
+        required: false
+      GH_BOT_PRIVATE_KEY:
+        required: false
     outputs:
       packages:
         description: "Newline-separated list of affected packages"
@@ -30,15 +35,66 @@ permissions:
 jobs:
   nx-affected:
     name: "Determine Affected (Nx)"
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-2cpu-aws-public
+    permissions:
+      contents: read
+      id-token: write # needed for the OIDC login to JFrog
     outputs:
       packages: ${{ steps.nx-affected.outputs.packages }}
       paths: ${{ steps.nx-affected.outputs.paths }}
     steps:
+      - name: Check for a Smartling branch
+        if: ${{ inputs.close_smartling_pr }}
+        env:
+          HEAD_BRANCH: ${{ inputs.head_branch }}
+        run: |
+          branch="${HEAD_BRANCH#refs/heads/}"
+          case "$branch" in
+            smartling-content-updated*|smartling-translation-completed*)
+              echo "IS_SMARTLING=true" >> "$GITHUB_ENV"
+              ;;
+          esac
+
+      - name: Generate token
+        id: generate-token
+        if: ${{ env.IS_SMARTLING == 'true' }}
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        with:
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Close the Smartling pull request
+        if: ${{ env.IS_SMARTLING == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        run: gh pr close "$PR_NUMBER" -R "$REPOSITORY" --delete-branch
+
       - name: Checkout head branch
+        if: ${{ env.IS_SMARTLING != 'true' }}
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
+      # Node and pnpm come from mise.toml, so the versions this job runs cannot drift from the
+      # ones the repo pins. This also writes nx.cache-config.json.
+      - name: Setup the caches
+        if: ${{ env.IS_SMARTLING != 'true' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Before the install so every package is fetched through JFrog, not public npm.
+      - name: JFrog npm auth
+        if: ${{ env.IS_SMARTLING != 'true' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
       - name: Fetch base branch
+        if: ${{ env.IS_SMARTLING != 'true' }}
         env:
           BASE_BRANCH: ${{ inputs.base_branch }}
         run: |
@@ -46,6 +102,7 @@ jobs:
 
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         id: clean-refs
+        if: ${{ env.IS_SMARTLING != 'true' }}
         env:
           HEAD_BRANCH_INPUT: ${{ inputs.head_branch }}
           BASE_BRANCH_INPUT: ${{ inputs.base_branch }}
@@ -61,29 +118,13 @@ jobs:
             core.exportVariable("base_branch", newBaseBranch);
             core.setOutput("base_ref", "origin/" + newBaseBranch);
 
-      - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version-file: ".nvmrc"
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
-        with:
-          version: 10.24.0
-
       - name: Install dev dependencies for root workspace
+        if: ${{ env.IS_SMARTLING != 'true' }}
         run: pnpm i --frozen-lockfile -D -F "ledger-live" --ignore-scripts
-
-      - name: Skip Nx cache for job
-        if: ${{ inputs.skip_nx_cache }}
-        shell: bash
-        run: echo "NX_SKIP_NX_CACHE=true" >> "$GITHUB_ENV"
-
-      - name: Setup nx config
-        run: pnpm nx:write-cache-config
 
       - name: Get affected packages and paths
         id: nx-affected
+        if: ${{ env.IS_SMARTLING != 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}

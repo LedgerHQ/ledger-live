@@ -10,8 +10,10 @@ import type { CardDetailsProps, CardDetailsViewProps } from "../../types";
 
 export function useCardDetailsViewModel({
   cardVisual,
+  assets,
   formatters,
   onTrackEvent,
+  onShowMore,
 }: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -49,11 +51,13 @@ export function useCardDetailsViewModel({
     route,
     overview: {
       cardVisual,
+      assets,
       freezeViewModel,
       moreViewModel,
       onFreezePress,
       onMorePress,
       onTransactionPress,
+      onShowMore,
       formatters,
     },
     freeze: { viewModel: freezeViewModel },

@@ -7,6 +7,8 @@ import { useTranslatedBridgeError } from "../../hooks/useTranslatedBridgeError";
 
 type MemoValueInputProps = Readonly<{
   currencyId: string;
+  /** Ticker shown in the help text (ex "ZEC"). Falls back to the currency id. */
+  currencyTicker?: string;
   value: string;
   maxLength?: number;
   /** When "tag", input is restricted to digits only (ex XRP, Casper). */
@@ -22,6 +24,7 @@ type MemoValueInputProps = Readonly<{
 
 function MemoValueInputComponent({
   currencyId,
+  currencyTicker,
   value,
   maxLength,
   memoType,
@@ -60,8 +63,8 @@ function MemoValueInputComponent({
           </TooltipTrigger>
           <TooltipContent>
             <div className="max-h-[160px] max-w-256 text-center">
-              {t("newSendFlow.tagHelp.description", {
-                currency: currencyId,
+              {t([`families.${currencyId}.memoTooltip`, "newSendFlow.tagHelp.description"], {
+                currency: currencyTicker ?? currencyId,
                 memoLabel,
               })}
             </div>

@@ -1,14 +1,17 @@
 import React, { type PropsWithChildren } from "react";
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { View } from "react-native";
+import { act, render, screen, userEvent } from "@testing-library/react-native";
 import {
   cardApiWrapper,
   listenToCardApi,
+  revealCardDetailsHandler,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
 import { CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
+import { FLIP_MS } from "../Reveal/useRevealViewModel";
 import { CardDetails } from "./CardDetails";
 
-listenToCardApi(signedInCardApiHandlers);
+listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 
 const StoreWrapper = cardApiWrapper({ signedIn: true });
 
@@ -20,7 +23,7 @@ function Wrapper({ children }: PropsWithChildren) {
   );
 }
 
-function renderCardDetails(onTrackEvent = jest.fn()) {
+function renderCardDetails({ onTrackEvent = jest.fn() }: { onTrackEvent?: jest.Mock } = {}) {
   return {
     user: userEvent.setup(),
     onTrackEvent,
@@ -42,6 +45,20 @@ describe("CardDetails (native)", () => {
     expect(screen.getByLabelText(CARD_COPY.placeholder).props.disabled).toBe(true);
   });
 
+  it("should list the assets the host passes inside the sheet, under the card actions", async () => {
+    const user = userEvent.setup();
+    render(<CardDetails onTrackEvent={jest.fn()} assets={<View testID="card-assets" />} />, {
+      wrapper: Wrapper,
+    });
+
+    // The Pay tab shows the card face alone: the list belongs to the sheet the design draws.
+    expect(screen.queryByTestId("card-assets")).toBeNull();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+
+    expect(await screen.findByTestId("card-assets")).toBeVisible();
+  });
+
   it("should keep the details sheet content hidden when Details has not been pressed", () => {
     renderCardDetails();
 
@@ -53,8 +70,40 @@ describe("CardDetails (native)", () => {
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
 
-    expect(await screen.findByText(CARD_COPY.freeze)).toBeVisible();
+    expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
+    expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
     expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
+  });
+
+  it("should show the card numbers image after View", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByText(CARD_COPY.numbersReveal));
+
+    const image = await screen.findByLabelText(CARD_COPY.numbersImageAlt, {
+      includeHiddenElements: true,
+    });
+    jest.useFakeTimers();
+    try {
+      await act(() => {
+        image.props.onLoad();
+      });
+      act(() => {
+        jest.advanceTimersByTime(FLIP_MS);
+      });
+    } finally {
+      jest.useRealTimers();
+    }
+
+    expect(screen.getByLabelText(CARD_COPY.numbersImageAlt)).toBeVisible();
+    expect(screen.getByText(CARD_COPY.numbersHide)).toBeVisible();
+    expect(screen.queryByText(CARD_COPY.numbersReveal)).not.toBeOnTheScreen();
+
+    await user.press(screen.getByText(CARD_COPY.numbersHide));
+
+    expect(screen.queryByLabelText(CARD_COPY.numbersImageAlt)).not.toBeOnTheScreen();
+    expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
   });
 
   it("should navigate to More without opening another sheet", async () => {
@@ -65,6 +114,17 @@ describe("CardDetails (native)", () => {
 
     expect(screen.getByText(MORE_COPY.rows.managePin)).toBeVisible();
     expect(screen.getByTestId("card-details-more-content")).toBeVisible();
+  });
+
+  it("should return to the overview when leaving More through back", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByLabelText(MORE_COPY.tile));
+    await user.press(screen.getByTestId("card-details-sheet-back"));
+
+    expect(screen.getByTestId("card-details-overview")).toBeVisible();
+    expect(screen.queryByTestId("card-details-more-content")).toBeNull();
   });
 
   it("should navigate to freeze confirmation without opening another sheet", async () => {

@@ -65,6 +65,10 @@ function CombinedWallet({ wallet }: { readonly wallet: PayCardCombinedWallet }) 
         label="balance"
         value={wallet.balance ?? "null — still reading, or no Baanx wallet matched"}
       />
+      <Field
+        label="ledgerCurrencyId"
+        value={wallet.ledgerCurrencyId ?? "null — unmapped asset, or CAL has not answered"}
+      />
       <Field label="address" value={wallet.address} />
     </div>
   );
