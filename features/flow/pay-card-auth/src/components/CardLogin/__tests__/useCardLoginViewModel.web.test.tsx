@@ -182,6 +182,7 @@ async function renderIdleLogin(
   mobileWallet: MobileWallet = "both",
   onTrackEvent?: jest.Mock,
   openHostedPage?: jest.Mock,
+  requestProtection?: jest.Mock,
 ) {
   const rendered = renderHook(
     () =>
@@ -191,6 +192,7 @@ async function renderIdleLogin(
         mobileWallet,
         oauthConfig,
         onTrackEvent,
+        requestProtection,
       }),
     { wrapper: withProviders(store) },
   );
@@ -740,5 +742,96 @@ describe("useCardLoginViewModel errors", () => {
     await waitFor(() =>
       expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.fetch_user_failed),
     );
+  });
+});
+
+describe("protecting the app before either way to the provider", () => {
+  let store: ReturnType<typeof buildStore>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    store = buildStore();
+    mockPorts.hasSession.mockResolvedValue(false);
+  });
+
+  it("logs in once the app is protected", async () => {
+    const requestProtection = jest.fn().mockResolvedValue(true);
+    const { result } = await renderIdleLogin(
+      store,
+      "both",
+      undefined,
+      undefined,
+      requestProtection,
+    );
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
+    expect(requestProtection).toHaveBeenCalledTimes(1);
+  });
+
+  it("holds the login where the app is left unprotected", async () => {
+    const requestProtection = jest.fn().mockResolvedValue(false);
+    const { result } = await renderIdleLogin(
+      store,
+      "both",
+      undefined,
+      undefined,
+      requestProtection,
+    );
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(requestProtection).toHaveBeenCalledTimes(1));
+    expect(mockPorts.openHostedLogin).not.toHaveBeenCalled();
+    expect(mockPorts.createAttempt).not.toHaveBeenCalled();
+  });
+
+  it("opens the signup page once the app is protected", async () => {
+    const requestProtection = jest.fn().mockResolvedValue(true);
+    const openHostedPage = jest.fn().mockResolvedValue(undefined);
+    const { result } = await renderIdleLogin(
+      store,
+      "both",
+      undefined,
+      openHostedPage,
+      requestProtection,
+    );
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+
+    await waitFor(() => expect(openHostedPage).toHaveBeenCalledWith("/onboarding/signup"));
+    expect(requestProtection).toHaveBeenCalledTimes(1);
+  });
+
+  it("holds the signup where the app is left unprotected", async () => {
+    const requestProtection = jest.fn().mockResolvedValue(false);
+    const openHostedPage = jest.fn().mockResolvedValue(undefined);
+    const { result } = await renderIdleLogin(
+      store,
+      "both",
+      undefined,
+      openHostedPage,
+      requestProtection,
+    );
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+
+    await waitFor(() => expect(requestProtection).toHaveBeenCalledTimes(1));
+    expect(openHostedPage).not.toHaveBeenCalled();
+    expect(mockPorts.openHostedLogin).not.toHaveBeenCalled();
+  });
+
+  it("carries on unprompted where the host has no app lock to ask about", async () => {
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
   });
 });
