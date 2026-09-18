@@ -8,6 +8,7 @@ export function CardHistory({
   formatDay,
   onTrackEvent,
   onGoToPay,
+  asset,
 }: CardHistoryViewModel) {
   return (
     <CardTransactionHistory
@@ -15,6 +16,7 @@ export function CardHistory({
       formatDay={formatDay}
       onTrackEvent={onTrackEvent}
       onGoToPay={onGoToPay}
+      asset={asset}
       cardVisual={<CardArtwork />}
     />
   );

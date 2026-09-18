@@ -41,9 +41,7 @@ export function useCardAssetsViewModel({
     () =>
       selectedAsset?.ledgerId
         ? transactions
-            .filter(item =>
-              isCardTransactionFundedBy(item, selectedAsset.currency, selectedAsset.network),
-            )
+            .filter(item => isCardTransactionFundedBy(item, selectedAsset.ledgerId))
             .sort((a, b) => b.transaction.dateTime.localeCompare(a.transaction.dateTime))
             .slice(0, RECENT_TRANSACTIONS_SHOWN)
         : [],

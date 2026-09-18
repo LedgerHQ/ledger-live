@@ -41,6 +41,13 @@ export function HistoryRow({ item, formatters, onRowClick }: HistoryRowProps) {
         </TableCellItem>
       </TableCell>
       <TableCell align="end">
+        <TableCellItem align="end">
+          <TableCellContent>
+            <TableCellContentTitle>{row.cashback}</TableCellContentTitle>
+          </TableCellContent>
+        </TableCellItem>
+      </TableCell>
+      <TableCell align="end">
         {row.fundingLabel ? (
           <TableCellItem align="end">
             <TableCellContent>

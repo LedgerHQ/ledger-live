@@ -11,6 +11,9 @@ export function HistoryTableHeader() {
         <TableHeaderCell data-testid="card-history-column-transaction">
           {t("payTab.cardTransactions.history.columns.transaction")}
         </TableHeaderCell>
+        <TableHeaderCell align="end" data-testid="card-history-column-cashback">
+          {t("payTab.cardTransactions.history.columns.cashback")}
+        </TableHeaderCell>
         <TableHeaderCell align="end" data-testid="card-history-column-funding">
           {t("payTab.cardTransactions.history.columns.fundingSources")}
         </TableHeaderCell>

@@ -4,6 +4,8 @@ import type { CardTransactionHistoryUiState } from "./cardTransactionHistoryUiSt
 
 export type CardTransactionHistoryProps = Readonly<{
   formatters?: CardTransactionFormatters;
+  /** Ledger currency id of the card asset to scope the history to, e.g. `bitcoin`. */
+  asset?: string;
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
   formatDay?: (date: Date) => string;
   onGoToPay?: () => void;

@@ -26,9 +26,9 @@ const btc = item([{ currency: "btc", amount: "0.004", sign: "DEBIT" }]);
 
 describe("isCardTransactionFundedBy", () => {
   it("should keep the selected asset and drop every other one", () => {
-    expect(isCardTransactionFundedBy(usdc, "usdc", "ethereum")).toBe(true);
-    expect(isCardTransactionFundedBy(btc, "usdc", "ethereum")).toBe(false);
-    expect(isCardTransactionFundedBy(btc, "btc", "bitcoin")).toBe(true);
+    expect(isCardTransactionFundedBy(usdc, "ethereum/erc20/usd__coin")).toBe(true);
+    expect(isCardTransactionFundedBy(btc, "ethereum/erc20/usd__coin")).toBe(false);
+    expect(isCardTransactionFundedBy(btc, "bitcoin")).toBe(true);
   });
 
   it("should list a transaction under each of the assets that funded it", () => {
@@ -37,18 +37,17 @@ describe("isCardTransactionFundedBy", () => {
       { currency: "eth", amount: "0.01", sign: "DEBIT" },
     ]);
 
-    expect(isCardTransactionFundedBy(paidWithTwoAssets, "usdc", "ethereum")).toBe(true);
-    expect(isCardTransactionFundedBy(paidWithTwoAssets, "eth", "ethereum")).toBe(true);
-    expect(isCardTransactionFundedBy(paidWithTwoAssets, "btc", "bitcoin")).toBe(false);
+    expect(isCardTransactionFundedBy(paidWithTwoAssets, "ethereum/erc20/usd__coin")).toBe(true);
+    expect(isCardTransactionFundedBy(paidWithTwoAssets, "ethereum")).toBe(true);
+    expect(isCardTransactionFundedBy(paidWithTwoAssets, "bitcoin")).toBe(false);
   });
 
-  it("should match nothing for a pair the catalog does not cover", () => {
-    expect(isCardTransactionFundedBy(usdc, "usdc")).toBe(true);
-    expect(isCardTransactionFundedBy(usdc, "usdc", "polygon")).toBe(false);
-    expect(isCardTransactionFundedBy(usdc, "doge")).toBe(false);
+  it("should match nothing for a Ledger id the catalog does not cover", () => {
+    expect(isCardTransactionFundedBy(usdc, "polygon/erc20/usd__coin")).toBe(false);
+    expect(isCardTransactionFundedBy(usdc, "dogecoin")).toBe(false);
   });
 
   it("should drop a transaction the provider sent no funding sources for", () => {
-    expect(isCardTransactionFundedBy(item(), "usdc", "ethereum")).toBe(false);
+    expect(isCardTransactionFundedBy(item(), "ethereum/erc20/usd__coin")).toBe(false);
   });
 });

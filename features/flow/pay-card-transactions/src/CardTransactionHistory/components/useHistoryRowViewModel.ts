@@ -12,6 +12,9 @@ import type { HistoryRowViewProps } from "./types";
 
 const UNSUCCESSFUL_STATUSES = new Set<PayCardTransaction["status"]>(["DECLINED", "REVERTED"]);
 
+// The provider does not send per-transaction cashback yet, so the column reads as no value.
+const NO_CASHBACK = "—";
+
 function statusLabelToneFor(
   status: PayCardTransaction["status"],
 ): HistoryRowViewProps["statusLabelTone"] {
@@ -42,6 +45,7 @@ export function useHistoryRowViewModel(
       categoryLabel,
       status: transaction.status,
       time: timeLabel,
+      cashback: NO_CASHBACK,
       statusLabel: isUnsuccessful ? statusLabel : undefined,
       statusLabelTone: isUnsuccessful ? statusLabelToneFor(transaction.status) : undefined,
       fundingLabel: hasMultipleFundingSources

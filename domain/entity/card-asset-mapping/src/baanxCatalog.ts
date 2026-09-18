@@ -42,6 +42,27 @@ export function baanxAssetLedgerId(currency: string, network: string): string | 
   return BAANX_ASSET_LEDGER_IDS[assetMappingKey(currency, network)];
 }
 
+/** The provider asset codes behind each Ledger id, read off the catalog rather than listed twice. */
+const BAANX_CURRENCIES_BY_LEDGER_ID: ReadonlyMap<string, ReadonlySet<string>> = Object.entries(
+  BAANX_ASSET_LEDGER_IDS,
+).reduce(
+  (byLedgerId, [key, ledgerId]) =>
+    ledgerId
+      ? byLedgerId.set(ledgerId, (byLedgerId.get(ledgerId) ?? new Set()).add(key.split(".")[0]))
+      : byLedgerId,
+  new Map<string, Set<string>>(),
+);
+
+/**
+ * Whether `currency`, as a card provider names it, is the asset `ledgerId` stands for.
+ *
+ * The way back from a Ledger id, for a caller that only has the provider's asset code: a funding
+ * source keeps `currency` and no `network`, so the code is the only join a cached transaction has.
+ */
+export function isBaanxAssetCurrency(ledgerId: string, currency: string): boolean {
+  return BAANX_CURRENCIES_BY_LEDGER_ID.get(ledgerId)?.has(currency.trim().toLowerCase()) ?? false;
+}
+
 /** Every distinct Ledger id the catalog resolves to. */
 export const BAANX_LEDGER_CURRENCY_IDS: readonly string[] = [
   ...new Set(Object.values(BAANX_ASSET_LEDGER_IDS).filter((id): id is string => id !== undefined)),
