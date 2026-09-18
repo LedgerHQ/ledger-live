@@ -1,7 +1,7 @@
 # @features/flow-pay-card-wallets
 
 > [!CAUTION]
-> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+> **Status: UNSTABLE** — Under active development.
 
 The custodial wallets funding the Pay card: which ones are linked, what they hold, and which Ledger
 currency each one is.

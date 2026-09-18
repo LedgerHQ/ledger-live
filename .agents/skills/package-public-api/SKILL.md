@@ -94,7 +94,7 @@ src/
 └── internals.ts      # whatever schema.ts should not expose
 ```
 
-See [ddd-structure-flow](../ddd-structure-flow/SKILL.md) for where the package itself belongs.
+See [structure-flow](../structure-flow/SKILL.md) for where the package itself belongs.
 
 ## Reviewing
 
