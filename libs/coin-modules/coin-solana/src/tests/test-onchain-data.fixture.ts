@@ -24,7 +24,7 @@ export const testOnChainData = {
     // Step 3 (Nov 2026):      2,575 × 328 =   844,600
     // Step 4 (Nov 2026):      1,322 × 328 =   433,616
     // Step 5 (Nov 2026):        696 × 328 =   228,288
-    stakeAccountRentExempt: 2_077_224, // Step 1 active on mainnet; update to current step when SIMD-0437 advances
+    stakeAccountRentExempt: 1_666_240, // Step 2 active on mainnet; update to current step when SIMD-0437 advances
     // SIMD-0437 progressively reduces system account rent (128 bytes overhead only):
     // Step 0 (pre-SIMD-0437): 6,960 × 128 = 890,880
     // Step 1 (Sep 2026):      6,333 × 128 = 810,624
@@ -32,7 +32,7 @@ export const testOnChainData = {
     // Step 3 (Nov 2026):      2,575 × 128 = 329,600
     // Step 4 (Nov 2026):      1,322 × 128 = 169,216
     // Step 5 (Nov 2026):        696 × 128 =  89,088
-    systemAccountRentExempt: 810_624, // Step 1 active on mainnet; update to current step when SIMD-0437 advances
+    systemAccountRentExempt: 650_240, // Step 2 active on mainnet; update to current step when SIMD-0437 advances
     lamportsPerSignature: 5000,
   },
   // ---  maybe outdated or not real, fine for tests ---
