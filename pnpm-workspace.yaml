@@ -28,27 +28,28 @@ catalog:
   "@commitlint/prompt-cli": 21.2.0
   "@commitlint/types": 21.2.0
   "@jest/globals": 30.5.0
-  "@ledgerhq/context-module": 2.5.0
+  "@ledgerhq/context-module": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
   "@ledgerhq/crypto-icons": "2.0.6"
-  "@ledgerhq/device-contacts-kit": 0.4.1
-  "@ledgerhq/device-management-kit": 1.9.0
-  "@ledgerhq/dmk-ledger-wallet": 0.5.0
-  "@ledgerhq/device-signer-kit-aleo": 0.4.0
-  "@ledgerhq/device-signer-kit-concordium": 0.5.0
-  "@ledgerhq/device-signer-kit-ethereum": 1.18.0
-  "@ledgerhq/device-signer-kit-hyperliquid": 0.0.0-hyperliquid-unified-20260728150448
-  "@ledgerhq/device-signer-kit-solana": 1.13.0
-  "@ledgerhq/device-signer-kit-cosmos": 1.0.1
-  "@ledgerhq/device-signer-kit-icp": 0.2.0
-  "@ledgerhq/device-signer-kit-xrp": 0.2.0
-  "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
-  "@ledgerhq/device-transport-kit-react-native-hid": 1.0.4
-  "@ledgerhq/device-mockserver-client": 1.3.0
-  "@ledgerhq/device-transport-kit-mockserver": 1.1.1
-  "@ledgerhq/device-transport-kit-speculos": 1.2.1
-  "@ledgerhq/signer-utils": 1.2.0
-  "@ledgerhq/device-transport-kit-web-hid": 1.2.4
-  "@ledgerhq/speculos-device-controller": 0.3.0
+  "@ledgerhq/device-contacts-kit": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-management-kit": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/dmk-ledger-wallet": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-signer-kit-aleo": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-signer-kit-concordium": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-signer-kit-ethereum": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-signer-kit-hyperliquid": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-signer-kit-solana": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-signer-kit-cosmos": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-signer-kit-icp": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-signer-kit-tron": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-signer-kit-xrp": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-transport-kit-react-native-ble": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-transport-kit-react-native-hid": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-mockserver-client": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-transport-kit-mockserver": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-transport-kit-speculos": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/signer-utils": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/device-transport-kit-web-hid": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
+  "@ledgerhq/speculos-device-controller": 0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044
   "@ledgerhq/logs": 6.19.0
   "@ledgerhq/auth": 0.1.0
   "@ledgerhq/devices": 8.18.0

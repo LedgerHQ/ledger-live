@@ -74,6 +74,7 @@ shared-lib:
   - libs/live-signer-canton/**/*
   - libs/live-signer-evm/**/*
   - libs/live-signer-solana/**/*
+  - libs/live-signer-tron/**/*
   - libs/live-signer-xrp/**/*
   - libs/live-wallet/**/*
   - libs/speculos-transport/**/*

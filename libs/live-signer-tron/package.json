@@ -1,12 +1,13 @@
 {
-  "name": "@ledgerhq/live-signer-zcash",
-  "version": "0.10.0",
+  "name": "@ledgerhq/live-signer-tron",
+  "version": "0.1.0",
   "private": true,
-  "description": "Ledger Hardware Wallet ZCash Application API",
+  "description": "Ledger Hardware Wallet Tron Application API",
   "keywords": [
     "Ledger",
     "LedgerWallet",
-    "zcash",
+    "tron",
+    "trx",
     "NanoS",
     "Blue",
     "Hardware Wallet"
@@ -18,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-signer-zcash",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-signer-tron",
   "publishConfig": {
     "access": "public"
   },
@@ -27,21 +28,12 @@
   "types": "lib-es/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/device-signer-kit-zcash": "0.0.0-feat-dsdk-1527-tron-clear-signing-tester-20260917094044",
+    "@ledgerhq/device-signer-kit-tron": "catalog:",
+    "@ledgerhq/hw-app-trx": "workspace:^",
+    "@ledgerhq/hw-transport": "catalog:",
     "rxjs": "catalog:"
-  },
-  "devDependencies": {
-    "@ledgerhq/test-quarantine": "workspace:*",
-    "@ledgerhq/types-live": "workspace:^",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
-    "@types/jest": "catalog:",
-    "@types/node": "catalog:",
-    "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0",
-    "ws": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -52,7 +44,19 @@
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../.. -W libs/live-signer-tron"
+  },
+  "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "rimraf": "^4.4.1",
+    "ts-node": "^10.4.0"
   },
   "exports": {
     ".": {
@@ -63,12 +67,6 @@
     },
     "./lib-es/*": "./lib-es/*.js",
     "./lib/*": "./lib/*.js",
-    "./*": {
-      "@ledgerhq/source": "./src/*.ts",
-      "import": "./lib-es/*.js",
-      "require": "./lib/*.js",
-      "default": "./lib/*.js"
-    },
     "./package.json": "./package.json"
   }
 }
