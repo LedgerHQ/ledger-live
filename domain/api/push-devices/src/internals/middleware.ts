@@ -20,7 +20,7 @@ export function clearLastFailureTime(): void {
 export interface SyncMiddlewareConfig<State = unknown> {
   /**
    * The Push Devices Service URL. An empty string disables sync.
-   * Pass `getEnv("PUSH_DEVICES_SERVICE_URL")` at store setup time.
+   * Pass the app `.env` value (`PUSH_DEVICES_SERVICE_URL`) at store setup time.
    */
   pushDevicesServiceUrl: string;
 
