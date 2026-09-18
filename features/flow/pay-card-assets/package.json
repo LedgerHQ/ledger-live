@@ -30,6 +30,7 @@
   "dependencies": {
     "@domain/entity-currency": "workspace:^",
     "@features/flow-pay-card-auth": "workspace:^",
+    "@features/flow-pay-card-transactions": "workspace:^",
     "@features/flow-pay-card-wallets": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@shared/i18n": "workspace:*"

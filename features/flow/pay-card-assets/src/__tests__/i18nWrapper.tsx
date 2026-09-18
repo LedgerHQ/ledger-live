@@ -5,6 +5,13 @@ export const CARD_ASSETS_COPY = {
   title: "Assets",
   empty: "No assets yet",
   error: "Couldn't load assets",
+  topUp: "Top up",
+  withdraw: "Withdraw",
+  transactions: "Transactions",
+  value: "Value",
+  withdrawTitle: "You'll be redirected to Baanx",
+  withdrawDescription: "Withdraw funds from your Baanx account to your Ledger wallet address.",
+  continue: "Continue",
 } as const;
 
 export const CARD_ASSETS_RESOURCES = {
@@ -16,6 +23,32 @@ export const CARD_ASSETS_RESOURCES = {
             title: CARD_ASSETS_COPY.title,
             empty: CARD_ASSETS_COPY.empty,
             error: CARD_ASSETS_COPY.error,
+            details: {
+              topUp: CARD_ASSETS_COPY.topUp,
+              withdraw: CARD_ASSETS_COPY.withdraw,
+              transactions: CARD_ASSETS_COPY.transactions,
+            },
+            withdraw: {
+              title: CARD_ASSETS_COPY.withdrawTitle,
+              description: CARD_ASSETS_COPY.withdrawDescription,
+              continue: CARD_ASSETS_COPY.continue,
+            },
+            history: {
+              columns: {
+                amount: "Amount",
+                value: CARD_ASSETS_COPY.value,
+              },
+            },
+          },
+        },
+        cardTransactions: {
+          categories: { MISC: "Other" },
+          history: {
+            columns: {
+              transaction: "Transaction",
+              fundingSources: "Cashback",
+              amount: "Amount",
+            },
           },
         },
       },

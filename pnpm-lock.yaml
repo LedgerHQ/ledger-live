@@ -6885,6 +6885,9 @@ importers:
       '@features/flow-pay-card-auth':
         specifier: workspace:^
         version: link:../pay-card-auth
+      '@features/flow-pay-card-transactions':
+        specifier: workspace:^
+        version: link:../pay-card-transactions
       '@features/flow-pay-card-wallets':
         specifier: workspace:^
         version: link:../pay-card-wallets
@@ -7275,6 +7278,9 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:^
         version: link:../../../domain/api/card-management
+      '@domain/entity-card-asset-mapping':
+        specifier: workspace:^
+        version: link:../../../domain/entity/card-asset-mapping
       '@features/flow-pay-card-auth':
         specifier: workspace:*
         version: link:../pay-card-auth

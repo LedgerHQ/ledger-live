@@ -17,6 +17,7 @@ export function ListItemView({
   categoryLabel,
   fiatAmount,
   assetAmount,
+  valueLabel,
   dateLabel,
   onPress,
 }: ListItemViewProps) {
@@ -32,7 +33,11 @@ export function ListItemView({
       <ListItemTrailing>
         <ListItemContent lx={{ alignItems: "flex-end" }}>
           <ListItemTitle>{fiatAmount}</ListItemTitle>
-          {assetAmount ? <ListItemDescription>{assetAmount}</ListItemDescription> : null}
+          {assetAmount ? (
+            <ListItemDescription>
+              {valueLabel ? `${valueLabel} · ${assetAmount}` : assetAmount}
+            </ListItemDescription>
+          ) : null}
         </ListItemContent>
       </ListItemTrailing>
     </LumenListItem>

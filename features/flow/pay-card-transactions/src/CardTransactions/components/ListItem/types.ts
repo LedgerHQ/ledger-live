@@ -4,6 +4,9 @@ import type { CardTransactionItem, CardTransactionFormatters } from "../../../ty
 export type ListItemProps = Readonly<{
   item: CardTransactionItem;
   formatters?: CardTransactionFormatters;
+  /** Provider asset code: the crypto line is that source only, labelled Value. */
+  assetCode?: string;
+  valueLabel?: string;
   onPress?: () => void;
 }>;
 
@@ -14,6 +17,7 @@ export type ListItemViewProps = Readonly<{
   categoryLabel: string;
   fiatAmount: string;
   assetAmount?: string;
+  valueLabel?: string;
   dateLabel: string;
   onPress?: () => void;
 }>;
