@@ -8,7 +8,7 @@ import type {
   FormatCardTransactionAmount,
   FormatCardTransactionDate,
 } from "@features/flow-pay-card-transactions";
-import type { CardAssetsProps } from "./CardAssets";
+import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 
 export type CardFormatters = Readonly<{
   countervalue?: (value: number) => FormattedValue;
