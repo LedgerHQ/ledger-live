@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -21,7 +21,6 @@ export default function StepValidator({
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
-  const [attempt, setAttempt] = useState(0);
 
   // Body.tsx has already seeded `recipient` with the bonded validator.
   const lockedTo = account.aleoResources?.bondedValidator ?? null;
@@ -48,12 +47,10 @@ export default function StepValidator({
         </Alert>
       )}
       <ValidatorPicker
-        key={attempt}
         currency={account.currency}
         selected={transaction.recipient || ""}
         lockedTo={lockedTo}
         onSelect={onSelect}
-        onRetry={() => setAttempt(n => n + 1)}
       />
     </Box>
   );

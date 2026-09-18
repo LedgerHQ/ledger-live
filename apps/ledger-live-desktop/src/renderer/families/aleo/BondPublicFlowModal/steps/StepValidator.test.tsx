@@ -55,6 +55,7 @@ beforeEach(() => {
     validators: [FIGMENT, OTHER],
     loading: false,
     error: null,
+    refetch: jest.fn(),
   });
 });
 
