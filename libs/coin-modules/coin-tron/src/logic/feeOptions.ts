@@ -8,6 +8,7 @@ import {
   TRX_UNIT,
 } from "./constants";
 import { estimateFees } from "./estimateFees";
+import { getEnergyProvider } from "./energyRent";
 import { validateAddress } from "./validateAddress";
 
 type TronIntent = TransactionIntent<TronMemo, TronTxData>;
@@ -29,7 +30,7 @@ const standardOnly = (): FeeOptionMeta[] => [feeOption(STANDARD_FEE_OPTION_ID)];
  * only, no amounts. The Tronify energy-rent option is offered alongside the standard TRX burn only
  * when all of the following hold:
  *   - the intent is a TRC-20 transfer (Tronify covers nothing else — never native or TRC-10 sends),
- *   - the Tronify provider is activated in remote coin-config (its `energyRent` block is present),
+ *   - a fully-configured Tronify provider resolves from remote coin-config (getEnergyProvider's predicate),
  *   - the standard path would actually burn TRX (the sender lacks the staked energy/bandwidth to
  *     send for free — otherwise Tronify saves nothing).
  *
@@ -50,9 +51,11 @@ export async function listFeeOptions(intent: TronIntent): Promise<FeeOptionMeta[
 
     const config = coinConfig.getCoinConfig();
 
-    // Activation gate: Tronify is offered only when configured in remote coin-config. Presence of the
-    // `energyRent` block is the activation switch — the same source `getEnergyProvider` dispatches on.
-    if (!config.energyRent) return standardOnly();
+    // Activation gate: offer Tronify only when a fully-configured provider resolves — the same predicate
+    // getEnergyProvider dispatches on (provider name + required url/sourceFlag). A malformed energyRent
+    // block (missing url/sourceFlag, unknown provider) degrades to standard-only here instead of
+    // advertising an option that only fails later in estimate/craft.
+    getEnergyProvider();
 
     // Offer Tronify only when the standard path would burn TRX. The standard estimate folds energy,
     // bandwidth and activation into one value; `value === 0n` means the sender covers the transfer
@@ -65,9 +68,9 @@ export async function listFeeOptions(intent: TronIntent): Promise<FeeOptionMeta[
     // Availability is best-effort: any failure degrades to the standard-only list. `listFeeOptions`
     // is the one CoinModuleApi method that receives no framework Context, so there is no injected
     // logger to report through here — the fallback is intentionally silent.
-    // TODO(follow-up): once the framework passes a Context to `listFeeOptions`, log the swallowed
+    // Follow-up LIVE-34996: once the framework passes a Context to `listFeeOptions`, log the swallowed
     // error via `context.logger` instead of staying silent (and migrate the rest of coin-tron off the
-    // direct `@ledgerhq/logs` import). See the LIVE-34996 review thread.
+    // direct `@ledgerhq/logs` import).
     return standardOnly();
   }
 }
