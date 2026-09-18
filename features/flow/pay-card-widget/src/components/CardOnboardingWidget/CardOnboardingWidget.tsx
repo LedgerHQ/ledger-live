@@ -3,7 +3,11 @@ import { CardOnboardingWidgetCard } from "../CardOnboardingWidgetCard/CardOnboar
 import { CardOnboardingDialog } from "../CardOnboardingDialog/CardOnboardingDialog";
 import { useCardOnboardingViewModel } from "./useCardOnboardingViewModel";
 
-export function CardOnboardingWidget() {
+type CardOnboardingWidgetProps = {
+  readonly onTopUp?: () => void;
+};
+
+export function CardOnboardingWidget({ onTopUp }: CardOnboardingWidgetProps) {
   const {
     isOpen,
     steps,
@@ -36,6 +40,7 @@ export function CardOnboardingWidget() {
         onClose={handleClose}
         onboardingCompleted={onboardingCompleted}
         handleGotIt={handleGotIt}
+        onTopUp={onTopUp}
       />
     </>
   );

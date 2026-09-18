@@ -91,9 +91,6 @@ describe("useCardHostedPageOpeners", () => {
 
       await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
 
-      expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [
-        "https://other.test",
-      ]);
       expect(mockNavigate).toHaveBeenCalledWith("/platform/other?returnTo=%2Fpaytab", {
         state: {
           goToURL:
@@ -102,44 +99,13 @@ describe("useCardHostedPageOpeners", () => {
       });
     });
 
-    it("ends the provider session on the login manifest before it navigates", async () => {
-      // A cold start reaches the login without a sign-in change, so this is the only wipe the
-      // provider gets before it may sign the previous holder straight back in.
-      let settleWipe!: (value: unknown) => void;
-      mockedInvoke.mockImplementationOnce(
-        () =>
-          new Promise(resolve => {
-            settleWipe = resolve;
-          }),
-      );
+    it("asks for no wipe of its own, since the entry of the pay tab already ended the session", async () => {
       const { result } = renderOpeners();
 
-      const opening = result.current.openHostedLogin(AUTHORIZE_URL);
+      await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
 
-      expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [LOGIN_MANIFEST_URL]);
-      expect(mockNavigate).not.toHaveBeenCalled();
-
-      settleWipe(undefined);
-      await act(async () => {
-        await opening;
-      });
-
+      expect(mockedInvoke).not.toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledTimes(1);
-    });
-
-    it("opens the login anyway when the wipe fails", async () => {
-      mockedInvoke.mockRejectedValueOnce(new Error("the session is not reachable"));
-      const { result } = renderOpeners();
-
-      const error = await run(() => result.current.openHostedLogin(AUTHORIZE_URL));
-
-      expect(error).toBeNull();
-      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-login-url?returnTo=%2Fpaytab", {
-        state: {
-          goToURL:
-            "https://dev.api.baanx.test/v1/auth/oauth2/authorize?client_id=key&code_challenge=challenge",
-        },
-      });
     });
   });
 
@@ -166,43 +132,13 @@ describe("useCardHostedPageOpeners", () => {
       });
     });
 
-    it("ends the provider session on the hosted manifest before it opens the signup", async () => {
-      // A signup reached after a restart never crosses a sign-in change, so this is the only wipe
-      // standing between the previous holder's session and the new applicant.
-      let settleWipe!: (value: unknown) => void;
-      mockedInvoke.mockImplementationOnce(
-        () =>
-          new Promise(resolve => {
-            settleWipe = resolve;
-          }),
-      );
+    it("asks for no wipe before the signup, since the entry of the pay tab ended the session", async () => {
       const { result } = renderOpeners();
 
-      const opening = result.current.openHostedPage("/onboarding/signup");
+      await run(() => result.current.openHostedPage("/onboarding/signup"));
 
-      expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [
-        "https://ledger.baanxapi.test",
-      ]);
-      expect(mockNavigate).not.toHaveBeenCalled();
-
-      settleWipe(undefined);
-      await act(async () => {
-        await opening;
-      });
-
+      expect(mockedInvoke).not.toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledTimes(1);
-    });
-
-    it("opens the signup anyway when the wipe fails", async () => {
-      mockedInvoke.mockRejectedValueOnce(new Error("the session is not reachable"));
-      const { result } = renderOpeners();
-
-      const error = await run(() => result.current.openHostedPage("/onboarding/signup"));
-
-      expect(error).toBeNull();
-      expect(mockNavigate).toHaveBeenCalledWith("/platform/baanx-hosted-url?returnTo=%2Fpaytab", {
-        state: { goToURL: "https://ledger.baanxapi.test/onboarding/signup" },
-      });
     });
 
     it("takes the hosted manifest id the env carries", async () => {

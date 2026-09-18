@@ -793,6 +793,18 @@ describe("the provider app id", () => {
     expect(isCardUsEnv("LEDGERUS")).toBe(true);
   });
 
+  it("answers the US tenant on its own, with no session read before it", async () => {
+    const { store } = fakeStore({
+      [CARD_SESSION_KEYS.accessToken]: session.accessToken,
+      [CARD_SESSION_KEYS.refreshToken]: session.refreshToken,
+      [CARD_SESSION_KEYS.providerAppId]: "LEDGERUS",
+    });
+    const { readCardUsEnv } = createCardSession(store);
+
+    await expect(readCardUsEnv("LEDGERUS")).resolves.toBe(true);
+    await expect(readCardUsEnv("LEDGERUAT")).resolves.toBe(false);
+  });
+
   it("forgets the app id with the session it belongs to", async () => {
     const { store, slots } = fakeStore();
     const { cardSession, setCardProviderAppId, isCardUsEnv } = createCardSession(store);

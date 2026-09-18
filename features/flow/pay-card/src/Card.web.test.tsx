@@ -1,5 +1,5 @@
 import React from "react";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { CardFormatters, CardProps } from "./Card.types";
@@ -35,6 +35,12 @@ jest.mock("@features/flow-pay-card-details", () => ({
       />
     );
   },
+  CardTopUpButton: ({ onTopUp }: { onTopUp?: () => void }) =>
+    onTopUp ? (
+      <button type="button" data-testid="card-top-up" onClick={onTopUp}>
+        Top up
+      </button>
+    ) : null,
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
@@ -139,6 +145,12 @@ describe("Card (web)", () => {
       renderCard(<Card login={{ oauthConfig }} />);
 
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
+    });
+
+    it("shows no top up button, even when the host wires one", () => {
+      renderCard(<Card login={{ oauthConfig }} onTopUp={jest.fn()} />);
+
+      expect(screen.queryByTestId("card-top-up")).not.toBeInTheDocument();
     });
   });
 
@@ -268,6 +280,21 @@ describe("Card (web)", () => {
       renderCard(<Card login={{ oauthConfig, onTrackEvent }} />);
 
       expect(receivedTransactionTracker).toBe(onTrackEvent);
+    });
+
+    it("opens the top up from the button the host wired", () => {
+      const onTopUp = jest.fn();
+
+      renderCard(<Card login={{ oauthConfig }} onTopUp={onTopUp} />);
+      fireEvent.click(screen.getByTestId("card-top-up"));
+
+      expect(onTopUp).toHaveBeenCalledTimes(1);
+    });
+
+    it("shows no top up button when the host wires none", () => {
+      renderCard(<Card login={{ oauthConfig }} />);
+
+      expect(screen.queryByTestId("card-top-up")).not.toBeInTheDocument();
     });
   });
 });
