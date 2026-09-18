@@ -6,6 +6,8 @@ import type { CardHistoryDayGroup } from "../groupCardHistoryItems";
 import { DayHeader } from "./DayHeader";
 import { HistoryRow } from "./HistoryRow";
 
+const COLUMN_COUNT = 3;
+
 type HistoryTableBodyProps = Readonly<{
   groups: readonly CardHistoryDayGroup[];
   formatters?: CardTransactionFormatters;
@@ -23,15 +25,13 @@ export function HistoryTableBody({
   formatDay,
   onRowClick,
 }: HistoryTableBodyProps) {
-  const columnCount = 3;
-
   return (
     <TableBody>
       {groups.map(group => (
         <React.Fragment key={group.day?.toISOString() ?? "unknown"}>
           <DayHeader
             day={group.day}
-            columnCount={columnCount}
+            columnCount={COLUMN_COUNT}
             formatDay={formatDay ?? formatters?.date}
           />
           {group.items.map(item => (
