@@ -263,6 +263,7 @@
     "@ledgerhq/prune-changelogs": "0.0.0"
   },
   "changesets": [
+    "live-32988-cardano-fw-808",
     "lkrp-qrcode-protocol-state-machine"
   ]
 }
