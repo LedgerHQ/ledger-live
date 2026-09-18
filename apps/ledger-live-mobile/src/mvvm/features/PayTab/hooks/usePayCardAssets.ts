@@ -6,7 +6,7 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { BAANX_LEDGER_CURRENCY_IDS } from "@domain/entity-card-asset-mapping";
 import { useCurrenciesByIds } from "@features/platform-currencies";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
-import type { CardAssetsProps } from "@features/flow-pay-card";
+import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import {
