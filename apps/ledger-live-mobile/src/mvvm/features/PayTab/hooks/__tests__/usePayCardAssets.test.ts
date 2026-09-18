@@ -26,6 +26,12 @@ jest.mock("@features/platform-currencies", () => ({
   useCurrenciesByIds: jest.fn(),
 }));
 
+jest.mock("~/actions/general", () => {
+  const actual = jest.requireActual<typeof import("~/actions/general")>("~/actions/general");
+
+  return { ...actual, addExtraSessionTrackingPairs: jest.fn(actual.addExtraSessionTrackingPairs) };
+});
+
 jest.mock("@features/flow-pay-card-auth", () => ({
   ...jest.requireActual("@features/flow-pay-card-auth"),
   useIsCardSignedIn: jest.fn(),
@@ -34,7 +40,7 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 import { useCurrenciesByIds } from "@features/platform-currencies";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import { BAANX_LEDGER_CURRENCY_IDS } from "@domain/entity-card-asset-mapping";
-import { useExtraSessionTrackingPair } from "~/actions/general";
+import { addExtraSessionTrackingPairs, useExtraSessionTrackingPair } from "~/actions/general";
 import { usePayCardAssets } from "../usePayCardAssets";
 
 function withRates(state: State): State {
@@ -68,6 +74,7 @@ describe("usePayCardAssets", () => {
   beforeEach(() => {
     jest.mocked(useIsCardSignedIn).mockReturnValue(true);
     jest.mocked(useCurrenciesByIds).mockClear();
+    jest.mocked(addExtraSessionTrackingPairs).mockClear();
     jest.mocked(useCurrenciesByIds).mockReturnValue(
       new Map<string, CryptoOrTokenCurrency>([
         [usdc.id, usdc],
@@ -117,14 +124,22 @@ describe("usePayCardAssets", () => {
     const { result, rerender } = renderAssets();
     const before = result.current.tracked.length;
 
-    // The store behind `addExtraSessionTrackingPair` compares currencies by reference, and it
-    // outlives the screen, so a duplicate would be polled for the rest of the session.
+    // The store outlives the screen, so a duplicate would be polled for the rest of the session,
+    // and a refetched token is a new object the store must still recognise.
     jest
       .mocked(useCurrenciesByIds)
       .mockReturnValue(new Map<string, CryptoOrTokenCurrency>([[usdc.id, { ...usdc }]]));
     rerender(undefined);
 
     expect(result.current.tracked).toHaveLength(before);
+  });
+
+  it("hands the whole catalog over in one call, so the store publishes once", () => {
+    renderAssets();
+
+    // A call per currency would notify every subscriber that many times on mount.
+    expect(addExtraSessionTrackingPairs).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(addExtraSessionTrackingPairs).mock.calls[0]?.[0]).toHaveLength(2);
   });
 
   it("formats a counter value in the user's currency", () => {

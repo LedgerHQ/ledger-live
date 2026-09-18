@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { BAANX_LEDGER_CURRENCY_IDS } from "@domain/entity-card-asset-mapping";
 import { useCurrenciesByIds } from "@features/platform-currencies";
@@ -9,11 +8,7 @@ import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
-import {
-  addExtraSessionTrackingPair,
-  useCalculateCountervalueCallback,
-  useExtraSessionTrackingPair,
-} from "~/actions/general";
+import { addExtraSessionTrackingPairs, useCalculateCountervalueCallback } from "~/actions/general";
 import { useFiatFormatter } from "./useFiatFormatter";
 
 const NO_IDS: readonly string[] = [];
@@ -25,21 +20,19 @@ export function usePayCardAssets(): CardAssetsProps {
   // charged to every Pay tab visitor.
   const isSignedIn = useIsCardSignedIn();
   const currencies = useCurrenciesByIds(isSignedIn ? BAANX_LEDGER_CURRENCY_IDS : NO_IDS);
-  const trackedPairs = useExtraSessionTrackingPair();
 
   // The app polls rates only for assets the user has an account in, and a card wallet rarely is.
+  // Handed over as one set: a call per currency would notify every subscriber that many times.
   useEffect(() => {
-    // Compared by `pairId` against what is tracked, because the store compares currencies by
-    // reference and a token refetched from CAL comes back as a new object.
-    const tracked = new Set(trackedPairs.map(pairId));
+    const startDate = new Date();
+    const pairs = [...currencies.values()].map(currency => ({
+      from: currency,
+      to: counterValueCurrency,
+      startDate,
+    }));
 
-    for (const currency of currencies.values()) {
-      const pair = { from: currency, to: counterValueCurrency, startDate: new Date() };
-      if (tracked.has(pairId(pair))) continue;
-
-      addExtraSessionTrackingPair(pair);
-    }
-  }, [currencies, counterValueCurrency, trackedPairs]);
+    addExtraSessionTrackingPairs(pairs);
+  }, [currencies, counterValueCurrency]);
 
   const priceWallet = useCallback(
     (currency: CryptoOrTokenCurrency, balance: string): number | null => {
