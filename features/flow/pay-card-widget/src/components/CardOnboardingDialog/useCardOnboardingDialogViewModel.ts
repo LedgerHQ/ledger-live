@@ -1,9 +1,7 @@
-import { useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "@shared/i18n";
 import type { CardOnboardingStepWithCopy } from "../CardOnboardingWidget/useOnboardingSteps";
-import { markCardAddedToWallet } from "../../state";
-import { getStepIconId } from "./getStepIconId";
+import { getStepIcon } from "./getStepIcon";
 import type {
   CardOnboardingOptionViewProps,
   StepStatus,
@@ -44,6 +42,8 @@ export type CardOnboardingDialogViewProps = {
   readonly handleClose: () => void;
   readonly onboardingCompleted: boolean;
   readonly handleGotIt: () => void;
+  readonly isAddToWalletSceneOpen: boolean;
+  readonly onCloseAddToWalletScene: () => void;
 };
 
 export function useCardOnboardingDialogViewModel({
@@ -56,13 +56,19 @@ export function useCardOnboardingDialogViewModel({
   handleGotIt,
 }: Params): CardOnboardingDialogViewProps {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const dialogTitle = t("payTab.cardOnboarding.dialog.title");
   const gotItLabel = t("payTab.cardOnboarding.dialog.gotIt");
 
+  const [isAddToWalletSceneOpen, setIsAddToWalletSceneOpen] = useState(false);
+  const onCloseAddToWalletScene = useCallback(() => setIsAddToWalletSceneOpen(false), []);
+  const handleClose = useCallback(() => {
+    setIsAddToWalletSceneOpen(false);
+    onClose();
+  }, [onClose]);
+
   const stepActions = useMemo<Record<string, () => void>>(
-    () => ({ ...STEP_ACTIONS, "apple-google-pay": () => dispatch(markCardAddedToWallet()) }),
-    [dispatch],
+    () => ({ ...STEP_ACTIONS, "apple-google-pay": () => setIsAddToWalletSceneOpen(true) }),
+    [],
   );
 
   const options = useMemo<CardOnboardingOptionViewProps[]>(() => {
@@ -76,7 +82,7 @@ export function useCardOnboardingDialogViewModel({
           ? t("payTab.cardOnboarding.dialog.stepComplete")
           : step.description,
         status,
-        iconId: getStepIconId(step.id),
+        iconId: getStepIcon(step.id),
         onAction: stepActions[step.id] ?? noop,
       };
     });
@@ -89,8 +95,10 @@ export function useCardOnboardingDialogViewModel({
     options,
     completedCount,
     totalCount,
-    handleClose: onClose,
+    handleClose,
     onboardingCompleted,
     handleGotIt,
+    isAddToWalletSceneOpen,
+    onCloseAddToWalletScene,
   };
 }

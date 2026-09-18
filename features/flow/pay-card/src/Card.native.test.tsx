@@ -32,6 +32,10 @@ jest.mock("@features/flow-pay-card-assets", () => ({
   useCardWalletsTotal: () => mockUseWalletsTotal(),
 }));
 
+jest.mock("@features/flow-pay-card-widget/native", () => ({
+  AddToWalletCtaWithBottomSheet: () => <View testID="card-add-to-wallet-cta" />,
+}));
+
 import { Card } from "./Card";
 
 function renderCard(card: React.ReactElement) {
@@ -103,6 +107,7 @@ describe("Card (native)", () => {
 
       expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("card-details")).toBeVisible();
+      expect(screen.getByTestId("card-add-to-wallet-cta")).toBeVisible();
       expect(screen.queryByTestId("card-login")).toBeNull();
       expect(screen.queryByTestId("card-artwork")).toBeNull();
     });
