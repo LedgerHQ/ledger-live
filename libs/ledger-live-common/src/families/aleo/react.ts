@@ -594,11 +594,10 @@ export const useAleoPrivateSync = ({
   return { isSyncing, progress, error, start, stop };
 };
 
-const NO_VALIDATORS: AleoValidator[] = [];
-
 export interface UseAleoValidatorsResult {
   validators: AleoValidator[];
   loading: boolean;
+  fetching: boolean;
   error: Error | null;
   refetch: () => void;
 }
@@ -606,13 +605,18 @@ export interface UseAleoValidatorsResult {
 export function useAleoValidators(currency: CryptoCurrency): UseAleoValidatorsResult {
   // Not `data`: it sticks to the previous network's committee across a currency switch.
   const { currentData, isFetching, error, refetch } = useGetValidatorsQuery(currency.id, {
+    // `getValidators` is LRU-cached on the same TTL, so refetching on mount re-reads that cache
     refetchOnMountOrArgChange: true,
   });
   const hasNoData = currentData === undefined;
 
+  // RTK Query freezes what it caches, so a picker sorting in place would throw on `currentData`.
+  const validators = useMemo(() => (currentData ? [...currentData] : []), [currentData]);
+
   return {
-    validators: currentData ?? NO_VALIDATORS,
+    validators,
     loading: hasNoData && isFetching,
+    fetching: isFetching,
     error: hasNoData && error instanceof Error ? error : null,
     refetch,
   };

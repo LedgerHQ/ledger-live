@@ -1450,6 +1450,7 @@ describe("useAleoValidators", () => {
     expect(result.current).toEqual({
       validators: [],
       loading: true,
+      fetching: true,
       error: null,
       refetch: expect.any(Function),
     });
@@ -1458,6 +1459,7 @@ describe("useAleoValidators", () => {
     expect(result.current).toEqual({
       validators: [validator],
       loading: false,
+      fetching: false,
       error: null,
       refetch: expect.any(Function),
     });
@@ -1475,6 +1477,7 @@ describe("useAleoValidators", () => {
     expect(second.result.current).toEqual({
       validators: [validator],
       loading: false,
+      fetching: true,
       error: null,
       refetch: expect.any(Function),
     });
@@ -1482,6 +1485,29 @@ describe("useAleoValidators", () => {
     // Let the on-mount refetch settle inside act, so its dispatch does not land
     // after the test has finished.
     await act(async () => {});
+  });
+
+  it("clears `fetching` once the background refetch lands, so the spinner goes away", async () => {
+    jest.mocked(getValidators).mockResolvedValue([validator]);
+
+    const first = validatorsOf(mockCurrency);
+    await waitFor(() => expect(first.result.current.loading).toBe(false));
+    first.unmount();
+
+    const second = validatorsOf(mockCurrency);
+    expect(second.result.current.fetching).toBe(true);
+
+    await waitFor(() => expect(second.result.current.fetching).toBe(false));
+  });
+
+  it("hands out a mutable copy, so a picker sorting in place does not throw on the frozen cache", async () => {
+    const second = { ...validator, address: "aleo1second" };
+    jest.mocked(getValidators).mockResolvedValue([validator, second]);
+
+    const { result } = validatorsOf(mockCurrency);
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(() => result.current.validators.reverse()).not.toThrow();
   });
 
   it("surfaces a fetch failure as an empty list when there is nothing cached to fall back on", async () => {
@@ -2119,12 +2145,10 @@ describe("useAleoStakingPosition", () => {
       const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
 
       // The rejection has to reach the store before "blames no one" means anything.
-      await waitFor(() => expect(getValidators).toHaveBeenCalledTimes(1));
-      await act(async () => {});
+      await waitFor(() => expect(result.current.validatorsError).toBe(error));
 
       expect(result.current.nonEarningReason).toBeUndefined();
       expect(result.current.validatorsLoading).toBe(false);
-      expect(result.current.validatorsError).toBe(error);
     });
 
     it("reports the fetch as loading so views can skeleton instead of guessing", () => {
@@ -2142,9 +2166,8 @@ describe("useAleoStakingPosition", () => {
 
       const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
 
-      await act(async () => {});
+      await waitFor(() => expect(result.current.validatorsError).toBe(error));
       expect(result.current.validatorsLoading).toBe(false);
-      expect(result.current.validatorsError).toBe(error);
     });
   });
 

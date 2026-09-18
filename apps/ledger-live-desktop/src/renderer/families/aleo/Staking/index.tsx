@@ -5,7 +5,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { useAleoStakingPosition } from "@ledgerhq/live-common/families/aleo/react";
-import { hasPendingOperationType } from "@ledgerhq/live-common/families/aleo/utils";
+import { isFirstBondPending } from "@ledgerhq/live-common/families/aleo/utils";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box/Box";
 import Button from "~/renderer/components/Button";
@@ -38,9 +38,7 @@ const Staking = ({ account }: { account: AleoAccount }) => {
   const dispatch = useDispatch();
   const position = useAleoStakingPosition(account);
 
-  // Aleo holds one bonded position per account: a second bond sent while one is pending is a fee
-  // spent on a transaction the chain will reject.
-  const bondPending = hasPendingOperationType(account, "BOND");
+  const hasFirstBondPending = isFirstBondPending(account);
 
   const onEarnRewards = useCallback(() => {
     dispatch(openModal(AleoCustomModal.BOND_PUBLIC, { account }));
@@ -88,8 +86,8 @@ const Staking = ({ account }: { account: AleoAccount }) => {
               </Text>
             </Box>
             <Box>
-              <ToolTip content={bondPending ? t("aleo.stake.bondPendingTooltip") : null}>
-                <Button primary small disabled={bondPending} onClick={onEarnRewards}>
+              <ToolTip content={hasFirstBondPending ? t("aleo.stake.bondPendingTooltip") : null}>
+                <Button primary small disabled={hasFirstBondPending} onClick={onEarnRewards}>
                   <Box horizontal flow={1} alignItems="center">
                     <IconChartLine size={12} />
                     <Box>

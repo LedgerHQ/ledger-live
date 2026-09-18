@@ -101,8 +101,7 @@ const OperationDetailsExtra = ({
                 unit={unit}
                 disableRounding
                 showCode
-                fontSize={4}
-                color="neutral.c70"
+                color="neutral.c80"
               />
             </Box>
           </OpDetailsData>

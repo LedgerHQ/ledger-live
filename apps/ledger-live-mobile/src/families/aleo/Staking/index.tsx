@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useAleoStakingPosition } from "@ledgerhq/live-common/families/aleo/react";
 import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
-import { isAleoAccount } from "@ledgerhq/live-common/families/aleo/utils";
+import { isAleoAccount, isFirstBondPending } from "@ledgerhq/live-common/families/aleo/utils";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
@@ -54,6 +54,8 @@ function Staking({ account }: Readonly<{ account: AleoAccount }>) {
   }, [onStake]);
 
   if (!position.hasBonded && !position.hasUnbonding) {
+    const hasFirstBondPending = isFirstBondPending(account);
+
     return (
       <Flex mx={6} testID="aleo-staking-empty-state">
         <AccountDelegationInfo
@@ -62,9 +64,21 @@ function Staking({ account }: Readonly<{ account: AleoAccount }>) {
           image={<IlluRewards style={styles.illustration} />}
           infoUrl={urls.stakingRewards}
           infoTitle={t("aleo.stake.sectionTitle")}
+          disabled={hasFirstBondPending}
           onPress={onStake}
           ctaTitle={t("aleo.stake.emptyState.cta")}
         />
+        {hasFirstBondPending && (
+          <Text
+            testID="aleo-staking-bond-pending"
+            variant="small"
+            color="neutral.c70"
+            textAlign="center"
+            mt={3}
+          >
+            {t("aleo.stake.emptyState.bondPending")}
+          </Text>
+        )}
       </Flex>
     );
   }
@@ -112,8 +126,7 @@ function Staking({ account }: Readonly<{ account: AleoAccount }>) {
         <Flex mt={position.hasBonded ? 3 : 0}>
           <AccountSectionLabel name={t("aleo.stake.unstaking")} />
           <StakingRow
-            label={label}
-            loading={position.validatorsLoading}
+            label={unit.name}
             amount={
               <CurrencyUnitValue
                 unit={unit}

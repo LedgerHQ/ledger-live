@@ -11,6 +11,7 @@ import { getAleoCurrencyConfig } from "../shared/utils";
 import { initSendSubjects, subjectRefs, prepareTransactionSpy } from "../__mocks__/bridge.mock";
 import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
 import type { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
+import { aleoValidator } from "../__mocks__/validator.mock";
 
 jest.mock("../shared/utils", () => ({
   ...jest.requireActual("../shared/utils"),
@@ -47,24 +48,13 @@ const mockUseAleoValidators = jest.mocked(useAleoValidators);
 // Open, not unbonding and earning: give any of a closed flag, an unbonding flag or a
 // non-earning reason and the rows below get demoted and re-sorted, silently changing what
 // the assertions mean.
-const FIGMENT = {
-  address: mockAleoCoinConfig.defaultValidator ?? "",
-  name: "Figment",
-  stakeMicrocredits: 63_051_013_000_000,
-  isOpen: true,
-  isUnbonding: false,
-  commissionPercent: 10,
-  estimatedYearlyRewardsRate: 0.062,
-};
-const OTHER = {
+const DEFAULT_VALIDATOR = aleoValidator({ address: mockAleoCoinConfig.defaultValidator ?? "" });
+const OTHER = aleoValidator({
   address: "aleo1vfukg8ky2mhfprw63000000000000000000000000000000000000000q",
   name: "Other Validator",
   stakeMicrocredits: 162_243_084_000_000,
-  isOpen: true,
-  isUnbonding: false,
-  commissionPercent: 10,
   estimatedYearlyRewardsRate: 0.061,
-};
+});
 
 beforeEach(async () => {
   mockDomMeasurements();
@@ -75,8 +65,9 @@ beforeEach(async () => {
   // Deliberately listed with Figment second, so a passing assertion cannot be an
   // artifact of it happening to be first.
   mockUseAleoValidators.mockReturnValue({
-    validators: [OTHER, FIGMENT],
+    validators: [OTHER, DEFAULT_VALIDATOR],
     loading: false,
+    fetching: false,
     error: null,
     refetch: jest.fn(),
   });
@@ -224,8 +215,9 @@ describe("Aleo bond flow — validator pre-selection", () => {
 describe("Aleo bond flow — a validator that is itself unbonding", () => {
   beforeEach(() => {
     mockUseAleoValidators.mockReturnValue({
-      validators: [{ ...OTHER, isUnbonding: true }, FIGMENT],
+      validators: [{ ...OTHER, isUnbonding: true }, DEFAULT_VALIDATOR],
       loading: false,
+      fetching: false,
       error: null,
       refetch: jest.fn(),
     });
@@ -243,7 +235,7 @@ describe("Aleo bond flow — a validator that is itself unbonding", () => {
     await clickValidatorRow("Other Validator");
 
     expect(await screen.findByTestId("selected-validator")).toHaveTextContent("Figment");
-    expect(prepareTransactionSpy.mock.calls.at(-1)![1].recipient).toBe(FIGMENT.address);
+    expect(prepareTransactionSpy.mock.calls.at(-1)![1].recipient).toBe(DEFAULT_VALIDATOR.address);
   });
 });
 
@@ -252,8 +244,9 @@ describe("Aleo bond flow — a validator that is itself unbonding", () => {
 describe("Aleo bond flow — a default that turns out to be unpickable", () => {
   const seedDefaultAs = (state: Partial<AleoValidator>) =>
     mockUseAleoValidators.mockReturnValue({
-      validators: [OTHER, { ...FIGMENT, ...state }],
+      validators: [OTHER, { ...DEFAULT_VALIDATOR, ...state }],
       loading: false,
+      fetching: false,
       error: null,
       refetch: jest.fn(),
     });
@@ -277,9 +270,10 @@ describe("Aleo bond flow — a default that turns out to be unpickable", () => {
     mockUseAleoValidators.mockReturnValue({
       validators: [
         { ...OTHER, isUnbonding: true },
-        { ...FIGMENT, isUnbonding: true },
+        { ...DEFAULT_VALIDATOR, isUnbonding: true },
       ],
       loading: false,
+      fetching: false,
       error: null,
       refetch: jest.fn(),
     });
@@ -287,13 +281,14 @@ describe("Aleo bond flow — a default that turns out to be unpickable", () => {
     setupModal();
 
     await waitFor(() => expect(prepareTransactionSpy).toHaveBeenCalled());
-    expect(prepareTransactionSpy.mock.calls.at(-1)![1].recipient).toBe(FIGMENT.address);
+    expect(prepareTransactionSpy.mock.calls.at(-1)![1].recipient).toBe(DEFAULT_VALIDATOR.address);
   });
 
   it("keeps a bonded validator that is unbonding, rather than switching away from it", async () => {
     mockUseAleoValidators.mockReturnValue({
-      validators: [OTHER, { ...FIGMENT, isUnbonding: true }],
+      validators: [OTHER, { ...DEFAULT_VALIDATOR, isUnbonding: true }],
       loading: false,
+      fetching: false,
       error: null,
       refetch: jest.fn(),
     });
@@ -301,13 +296,13 @@ describe("Aleo bond flow — a default that turns out to be unpickable", () => {
       ...ALEO_MAIN_ACCOUNT,
       aleoResources: {
         ...ALEO_MAIN_ACCOUNT.aleoResources,
-        bondedValidator: FIGMENT.address,
+        bondedValidator: DEFAULT_VALIDATOR.address,
       },
     };
 
     setupModal(bonded as typeof ALEO_MAIN_ACCOUNT);
 
     await waitFor(() => expect(prepareTransactionSpy).toHaveBeenCalled());
-    expect(prepareTransactionSpy.mock.calls.at(-1)![1].recipient).toBe(FIGMENT.address);
+    expect(prepareTransactionSpy.mock.calls.at(-1)![1].recipient).toBe(DEFAULT_VALIDATOR.address);
   });
 });

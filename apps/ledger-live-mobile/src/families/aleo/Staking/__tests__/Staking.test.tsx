@@ -85,7 +85,7 @@ const STAKED_AMOUNT = new BigNumber(20_000_000_000);
 // its own id or it would be handed the previous test's seed instead of loading.
 let currencyIdCounter = 0;
 
-function pendingOperation(type: "UNBOND" | "WITHDRAW_UNBONDED"): Operation {
+function pendingOperation(type: "BOND" | "UNBOND" | "WITHDRAW_UNBONDED"): Operation {
   return { type } as unknown as Operation;
 }
 
@@ -171,6 +171,29 @@ describe("Staking section", () => {
       screen: ScreenName.AleoBondPublicSelectValidator,
       params: { accountId: ALEO_ACCOUNT_1.id },
     });
+    await flushValidators();
+  });
+
+  it("blocks the empty state call to action while a first bond is pending", async () => {
+    render(<Staking account={makeAccount({ pendingOperations: [pendingOperation("BOND")] })} />);
+
+    fireEvent.press(screen.getByText("Earn rewards"));
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+    await flushValidators();
+  });
+
+  it("says why the empty state call to action is blocked", async () => {
+    render(<Staking account={makeAccount({ pendingOperations: [pendingOperation("BOND")] })} />);
+
+    expect(screen.getByTestId("aleo-staking-bond-pending")).toBeOnTheScreen();
+    await flushValidators();
+  });
+
+  it("leaves the reason off when nothing is pending", async () => {
+    render(<Staking account={makeAccount()} />);
+
+    expect(screen.queryByTestId("aleo-staking-bond-pending")).toBeNull();
     await flushValidators();
   });
 
@@ -268,7 +291,7 @@ describe("Staking section", () => {
 
     render(<Staking account={account} />);
 
-    expect(screen.getByTestId("aleo-unstaking-row-sub")).toHaveTextContent("Unstaking\u2026");
+    expect(screen.getByTestId("aleo-unstaking-row-sub")).toHaveTextContent("Unstaking...");
     await flushValidators();
   });
 
@@ -409,7 +432,7 @@ describe("Staking section", () => {
 
     render(<Staking account={account} />);
 
-    await waitFor(() => expect(screen.getAllByText("Validator One")).toHaveLength(2));
+    await waitFor(() => expect(screen.getAllByText("Validator One")).toHaveLength(1));
     expect(screen.getByTestId("aleo-staked-row-amount")).toHaveTextContent("20,000.912345 ALEO");
     expect(screen.getByTestId("aleo-unstaking-row-amount")).toHaveTextContent("5.123456 ALEO");
 
@@ -433,7 +456,7 @@ describe("Staking section", () => {
     expect(screen.queryByTestId("aleo-status-earning")).toBeNull();
 
     await act(async () => resolveValidators([makeValidator()]));
-    expect(screen.getByText("Validator One")).toBeOnTheScreen();
+    expect(await screen.findByText("Validator One")).toBeOnTheScreen();
     expect(screen.getByTestId("aleo-status-earning")).toBeOnTheScreen();
   });
 
@@ -463,7 +486,7 @@ describe("Staking section", () => {
 
     render(<Staking account={account} />);
 
-    expect(screen.getByTestId("aleo-unstaking-row-sub")).toHaveTextContent("Almost there\u2026");
+    expect(screen.getByTestId("aleo-unstaking-row-sub")).toHaveTextContent("Almost there...");
     await flushValidators();
   });
 });

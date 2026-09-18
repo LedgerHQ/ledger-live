@@ -155,6 +155,7 @@ describe("Aleo bond flow (integration)", () => {
     mockUseAleoValidators.mockReturnValue({
       validators: MOCK_VALIDATORS,
       loading: false,
+      fetching: false,
       error: null,
       refetch: mockRefetch,
     });
@@ -196,6 +197,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [],
         loading: true,
+        fetching: true,
         error: null,
         refetch: mockRefetch,
       });
@@ -218,6 +220,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [{ ...MOCK_VALIDATORS[0], name: undefined }],
         loading: false,
+        fetching: false,
         error: null,
         refetch: mockRefetch,
       });
@@ -239,6 +242,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [{ ...MOCK_VALIDATORS[0], isOpen: false }, SECOND_VALIDATOR],
         loading: false,
+        fetching: false,
         error: null,
         refetch: mockRefetch,
       });
@@ -260,6 +264,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [MOCK_VALIDATORS[0], SECOND_VALIDATOR],
         loading: false,
+        fetching: false,
         error: null,
         refetch: mockRefetch,
       });
@@ -289,6 +294,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [SECOND_VALIDATOR],
         loading: false,
+        fetching: false,
         error: null,
         refetch: mockRefetch,
       });
@@ -314,6 +320,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [],
         loading: false,
+        fetching: false,
         error: new Error("boom"),
         refetch: mockRefetch,
       });
@@ -339,6 +346,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [],
         loading: false,
+        fetching: false,
         error: new Error("boom"),
         refetch: mockRefetch,
       });
@@ -361,6 +369,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [MOCK_VALIDATORS[0]],
         loading: false,
+        fetching: false,
         error: new Error("boom"),
         refetch: mockRefetch,
       });
@@ -380,6 +389,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [],
         loading: true,
+        fetching: true,
         error: null,
         refetch: mockRefetch,
       });
@@ -399,6 +409,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: MOCK_VALIDATORS,
         loading: false,
+        fetching: false,
         error: new Error("boom"),
         refetch: mockRefetch,
       });
@@ -417,6 +428,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [{ ...MOCK_VALIDATORS[0], isOpen: false }, SECOND_VALIDATOR],
         loading: false,
+        fetching: false,
         error: null,
         refetch: mockRefetch,
       });
@@ -433,6 +445,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [],
         loading: false,
+        fetching: false,
         error: new Error("boom"),
         refetch: mockRefetch,
       });
@@ -453,6 +466,7 @@ describe("Aleo bond flow (integration)", () => {
       mockUseAleoValidators.mockReturnValue({
         validators: [MOCK_VALIDATORS[0], SECOND_VALIDATOR],
         loading: false,
+        fetching: false,
         error: null,
         refetch: mockRefetch,
       });

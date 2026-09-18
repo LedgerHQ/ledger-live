@@ -48,7 +48,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   // always wins over the state seeded when the screen mounted.
   const selectedAddress = lockedValidator ?? selected;
 
-  const { validators, loading, error, refetch } = useAleoValidators(account.currency);
+  const { validators, fetching, error, refetch } = useAleoValidators(account.currency);
 
   useEffect(() => {
     if (lockedValidator) return;
@@ -97,7 +97,7 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const rootStyle = [styles.root, { backgroundColor: colors.background.main }];
 
-  if (loading) {
+  if (fetching) {
     return (
       <SafeAreaView style={rootStyle}>
         <View style={styles.centered} testID="aleo-bond-validator-list-loading">

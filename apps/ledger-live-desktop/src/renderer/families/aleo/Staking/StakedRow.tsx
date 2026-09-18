@@ -33,14 +33,10 @@ const StakedRow = ({ account, position }: Props) => {
     validatorsError,
   } = position;
 
-  // The name, the status and the rate all come off the validator list, so none of them has an
-  // answer until it has been read — and each would otherwise show a wrong one: a generic name, a
-  // green tick, a dash that reads as "this validator pays nothing we can quote".
-  const committeeUnread = validatorsLoading || validatorsError !== null;
-
-  // The list names the validator; the address is all the account itself carries. Falling back to
-  // the address here would put it in the name slot as well as in the sublabel below.
-  const name = validatorLabel ?? t("aleo.stake.table.unknownValidator");
+  // address only stands in for the name once the list fetch has failed for good
+  const shortAddress = bondedValidator ? shortAddressPreview(bondedValidator) : null;
+  const addressAsName = validatorsError !== null && !validatorLabel ? shortAddress : null;
+  const name = validatorLabel || addressAsName || t("aleo.stake.table.unknownValidator");
 
   const onExternalLink = useCallback(() => {
     if (!bondedValidator) return;
@@ -50,26 +46,38 @@ const StakedRow = ({ account, position }: Props) => {
   }, [account.currency, bondedValidator]);
 
   const renderRate = () => {
-    if (committeeUnread) return <PlaceholderLine width={48} data-testid="aleo-rate-unknown" />;
+    if (validatorsLoading) return <PlaceholderLine width={48} data-testid="aleo-rate-unknown" />;
     if (estimatedRate === undefined) return "-";
     return t("aleo.stake.table.estimatedRate", { rate: (estimatedRate * 100).toFixed(1) });
+  };
+
+  const renderName = () => {
+    if (validatorsLoading) {
+      return <PlaceholderLine width={90} data-testid="aleo-validator-unknown" />;
+    }
+
+    if (!addressAsName) {
+      return <Ellipsis>{name}</Ellipsis>;
+    }
+
+    return (
+      <ToolTip content={bondedValidator}>
+        <Ellipsis>{addressAsName}</Ellipsis>
+      </ToolTip>
+    );
   };
 
   return (
     <Wrapper>
       <Column strong clickable={!!bondedValidator} onClick={onExternalLink}>
         <Box mr={2}>
-          <FirstLetterIcon label={committeeUnread ? "" : name} />
+          <FirstLetterIcon label={validatorsLoading ? "" : name} />
         </Box>
         <Box style={{ minWidth: 0 }}>
-          {committeeUnread ? (
-            <PlaceholderLine width={90} data-testid="aleo-validator-unknown" />
-          ) : (
-            <Ellipsis>{name}</Ellipsis>
-          )}
-          {bondedValidator ? (
+          {renderName()}
+          {bondedValidator && !addressAsName ? (
             <ToolTip content={bondedValidator}>
-              <SubLabel>{shortAddressPreview(bondedValidator)}</SubLabel>
+              <SubLabel>{shortAddress}</SubLabel>
             </ToolTip>
           ) : null}
         </Box>

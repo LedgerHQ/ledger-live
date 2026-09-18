@@ -7,7 +7,6 @@ import { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
 import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
 import { isValidatorBondable } from "@ledgerhq/live-common/families/aleo/utils";
 import BigSpinner from "~/renderer/components/BigSpinner";
-import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
@@ -30,7 +29,7 @@ type Props = Readonly<{
 export default function ValidatorPicker({ currency, selected, lockedTo, onSelect }: Props) {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(true);
-  const { validators, loading, error, refetch } = useAleoValidators(currency);
+  const { validators, fetching, error, refetch } = useAleoValidators(currency);
 
   useEffect(() => {
     if (lockedTo) return;
@@ -95,20 +94,7 @@ export default function ValidatorPicker({ currency, selected, lockedTo, onSelect
     );
   }
 
-  if (error && validators.length === 0) {
-    return (
-      <Box flow={3} alignItems="flex-start" data-testid="validator-fetch-error">
-        <Alert type="warning">
-          <Trans i18nKey="aleo.bond.flow.steps.validator.fetchError" />
-        </Alert>
-        <Button primary onClick={refetch}>
-          <Trans i18nKey="common.retry" />
-        </Button>
-      </Box>
-    );
-  }
-
-  if (loading && validators.length === 0) {
+  if (fetching) {
     return (
       <ValidatorsFieldContainer>
         <Box
@@ -119,6 +105,28 @@ export default function ValidatorPicker({ currency, selected, lockedTo, onSelect
           data-testid="validator-list-loading"
         >
           <BigSpinner size={35} />
+        </Box>
+      </ValidatorsFieldContainer>
+    );
+  }
+
+  if (error && validators.length === 0) {
+    return (
+      <ValidatorsFieldContainer>
+        <Box
+          p={3}
+          flow={3}
+          alignItems="center"
+          justifyContent="center"
+          style={{ minHeight: LIST_HEIGHT }}
+          data-testid="validator-fetch-error"
+        >
+          <Text ff="Inter|Medium" fontSize={4} color="neutral.c70" textAlign="center">
+            <Trans i18nKey="aleo.bond.flow.steps.validator.fetchError" />
+          </Text>
+          <Button primary onClick={refetch}>
+            <Trans i18nKey="common.retry" />
+          </Button>
         </Box>
       </ValidatorsFieldContainer>
     );

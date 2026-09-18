@@ -4,6 +4,7 @@ import { Trans } from "react-i18next";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/aleo/types";
+import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
@@ -57,13 +58,24 @@ export default function StepValidator({
 }
 
 export function StepValidatorFooter({
+  account,
   transitionTo,
   status,
   bridgePending,
   transaction,
   onClose,
 }: StepProps) {
-  const canNext = !bridgePending && !!transaction?.recipient && !status.errors.recipient;
+  invariant(account, "account required");
+  const { validators } = useAleoValidators(account.currency);
+
+  // recipient defaults from config, so it can be set before the user has seen any validator
+  const lockedTo = account.aleoResources?.bondedValidator ?? null;
+  const recipient = transaction?.recipient ?? "";
+  const shown = lockedTo
+    ? recipient === lockedTo
+    : validators.some(({ address }) => address === recipient);
+  const canNext = !bridgePending && !!recipient && shown && !status.errors.recipient;
+
   return (
     <Box horizontal>
       <Button mr={1} onClick={onClose}>

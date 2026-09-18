@@ -66,8 +66,6 @@ export const LIVE_BLOCK_HEIGHT_POLL_MS = 10_000;
 /** Once spent, a settled unbonding entry is left to the background sync to pick up. */
 export const MAX_UNBONDING_SYNC_ATTEMPTS = 3;
 
-// Figment runs a different address on each network, both named "Figment" in the committee
-// validator-metadata, so each network needs its own.
 const MAINNET_DEFAULT_VALIDATOR = "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t";
 const TESTNET_DEFAULT_VALIDATOR = "aleo1l7avejc23yv6e8nx4udjwz89dw6mg95dzsp936hf77yuhnjywv9syl0ywc";
 
