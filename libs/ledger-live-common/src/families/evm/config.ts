@@ -625,7 +625,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       explorer: {
         type: "blockscout",
-        uri: "https://optimism.blockscout.com/api",
+        uri: "https://proxyblockscout.api.live.ledger.com/10/api",
       },
     },
   },
@@ -694,8 +694,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         uri: "https://metis.coin.ledger.com",
       },
       explorer: {
-        type: "blockscout",
-        uri: "https://andromeda-explorer.metis.io/api",
+        type: "none",
       },
     },
   },
@@ -1165,7 +1164,10 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       chainId: 534352,
       name: "Scroll",
       node: { type: "external", uri: "https://scroll.coin.ledger.com" },
-      explorer: { type: "blockscout", uri: "https://scroll.blockscout.com/api" },
+      explorer: {
+        type: "blockscout",
+        uri: "https://proxyblockscout.api.live.ledger.com/534352/api",
+      },
     },
   },
   config_currency_shape: {
@@ -1191,7 +1193,10 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       chainId: 1514,
       name: "Story",
       node: { type: "external", uri: "https://story.coin.ledger.com" },
-      explorer: { type: "blockscout", uri: "https://www.storyscan.io/api" },
+      explorer: {
+        type: "blockscout",
+        uri: "https://proxyblockscout.api.live.ledger.com/1514/api",
+      },
     },
   },
   config_currency_etherlink: {
