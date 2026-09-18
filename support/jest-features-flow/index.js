@@ -34,14 +34,8 @@ const nativeMocks = {
   "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "mocks/passthrough-native.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-native.js"),
   "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),
-  "^@shared/ui-queued-bottom-sheet$": path.join(
-    __dirname,
-    "../../shared/ui-queued-bottom-sheet/src/testing/moduleMock.ts",
-  ),
-  "^@shared/ui-queued-bottom-sheet/keyboard$": path.join(
-    __dirname,
-    "../../shared/ui-queued-bottom-sheet/src/testing/moduleMock.ts",
-  ),
+  "^@shared/ui-queued-bottom-sheet$": "@shared/ui-queued-bottom-sheet/testing/module-mock",
+  "^@shared/ui-queued-bottom-sheet/keyboard$": "@shared/ui-queued-bottom-sheet/testing/module-mock",
 };
 
 /**
