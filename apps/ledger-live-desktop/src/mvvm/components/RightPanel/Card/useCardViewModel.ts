@@ -7,6 +7,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import { useCountervalueFormatter } from "LLD/hooks/useCountervalueFormatter";
+import logger from "~/renderer/logger";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { HISTORY_TAB_CARD, HISTORY_TAB_SEARCH_PARAM } from "LLD/features/History/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
@@ -120,8 +121,8 @@ export function useCardViewModel(): CardViewModel {
     try {
       const isUsCardHolder = await readCardUsEnv(usAppId);
       await openHostedPage(buildTopUpPath(isUsCardHolder ? usAppId : null));
-    } catch {
-      console.warn("[card] the top up page did not open");
+    } catch (error) {
+      logger.warn("[card] the top up page did not open", error);
     }
   }, [openHostedPage, usAppId]);
 

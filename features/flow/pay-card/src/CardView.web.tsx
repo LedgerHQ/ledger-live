@@ -39,9 +39,11 @@ export function CardView({
             onTrackEvent={login.onTrackEvent}
             onShowMore={onShowMore}
           />
-          <div className="sticky bottom-0 mt-auto bg-canvas py-16">
-            <CardTopUpButton onTopUp={onTopUp} />
-          </div>
+          {onTopUp ? (
+            <div className="sticky bottom-0 mt-auto bg-canvas py-16">
+              <CardTopUpButton onTopUp={onTopUp} />
+            </div>
+          ) : null}
         </>
       ) : (
         <>
