@@ -8,7 +8,7 @@ import {
   SidecarValidatorsParamStatus,
   IValidator,
 } from "../types";
-import getApiPromise, { getStakingApiPromise } from "./apiPromise";
+import getApiPromise from "./apiPromise";
 
 /**
  * Fetch a list of validators with some info and indentity.
@@ -26,16 +26,12 @@ export const fetchValidators = async (
   addresses?: SidecarValidatorsParamAddresses,
   currency?: CryptoCurrency,
 ): Promise<SidecarValidators> => {
-  const [api, stakingApi] = await Promise.all([
-    getApiPromise(currency),
-    getStakingApiPromise(currency),
-  ]);
+  const api = await getApiPromise(currency);
 
   const [activeOpt, allStashes, elected] = await Promise.all([
     // staking can be undefined if the currency is not supported
-    stakingApi.query.staking?.activeEra?.(),
-    stakingApi.derive.staking?.stashes?.(),
-    // Session validators must come from the currency's own node, not the Asset Hub.
+    api.query.staking?.activeEra?.(),
+    api.derive.staking?.stashes?.(),
     api.query.session?.validators?.(),
   ]);
 
@@ -74,10 +70,9 @@ export const fetchValidators = async (
       .filter(address => selected.includes(address.toString()));
   }
 
-  const validatorsCommissions = await getValidatorCommissions(stakingApi, selected);
-  const validatorsExposure = await getValidatorsExposure(stakingApi, activeEra, selected);
-  const maxNominatorRewardedPerValidator =
-    stakingApi.consts?.staking?.maxExposurePageSize.toNumber();
+  const validatorsCommissions = await getValidatorCommissions(api, selected);
+  const validatorsExposure = await getValidatorsExposure(api, activeEra, selected);
+  const maxNominatorRewardedPerValidator = api.consts?.staking?.maxExposurePageSize.toNumber();
   return selected.map(validator => {
     const commission = validatorsCommissions[validator] || "";
     const exposure = validatorsExposure[validator] || null;

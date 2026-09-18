@@ -49,7 +49,6 @@ const CURRENCY_CONFIGS = {
       sidecar: { url: "https://polkadot-westend-rest-api.coin.ledger.com/v1/rc" },
       node: { url: "https://polkadot-westend-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_westend" },
-      assetHub: { nodeUrl: "https://polkadot-westend-asset-hub-fullnodes.api.live.ledger.com" },
     },
     testAddress: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
   },
@@ -74,7 +73,12 @@ describe("sidecar integration test", () => {
       });
 
       describe("getValidators", () => {
-        it(`returns expected result with ${currencyId}`, async () => {
+        // Westend relay-chain staking has migrated to Asset Hub and is no longer supported:
+        // the relay node no longer exposes the staking pallet, so `getValidators` returns an
+        // empty array here. `assethub_westend` (below) is the supported chain and keeps this
+        // assertion.
+        const test = currencyId === "westend" ? it.skip : it;
+        test(`returns expected result with ${currencyId}`, async () => {
           const result = await getValidators(undefined, currency);
 
           expect(result).toEqual(

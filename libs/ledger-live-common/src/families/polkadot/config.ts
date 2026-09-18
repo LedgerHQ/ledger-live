@@ -71,10 +71,6 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       indexer: {
         url: "https://explorers.api.live.ledger.com/blockchain/dot_westend",
       },
-      // Westend's staking pallet migrated to its Asset Hub; storage reads are redirected there.
-      assetHub: {
-        nodeUrl: "https://polkadot-westend-asset-hub-fullnodes.api.live.ledger.com",
-      },
     },
   },
   config_currency_assethub_westend: {
