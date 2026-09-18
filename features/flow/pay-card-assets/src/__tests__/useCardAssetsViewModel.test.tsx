@@ -15,11 +15,15 @@ jest.mock("@features/flow-pay-card-wallets", () => ({
   useCardLinkedWallets: (...args: unknown[]) => mockUseCardLinkedWallets(...args),
 }));
 
+jest.mock("@features/flow-pay-card-transactions", () => ({
+  useCardTransactionsViewModel: () => ({ transactions: [] }),
+}));
+
 function stubWallets(
   overrides: Partial<{
     wallets: readonly Pick<
       CardLinkedWalletBalance,
-      "id" | "balance" | "currency" | "ledgerId" | "ledgerCurrency"
+      "id" | "balance" | "currency" | "network" | "ledgerId" | "ledgerCurrency"
     >[];
     isLoading: boolean;
     isError: boolean;
@@ -128,10 +132,11 @@ describe("useCardAssetsViewModel", () => {
           id: "w-usdc",
           balance: "125.40",
           currency: "usdc",
+          network: "ethereum",
           ledgerId: "ethereum/erc20/usd__coin",
           ledgerCurrency: USDC,
         },
-        { id: "w-usdt", balance: null, currency: "usdt" },
+        { id: "w-usdt", balance: null, currency: "usdt", network: "ethereum" },
       ],
     });
 
@@ -141,21 +146,27 @@ describe("useCardAssetsViewModel", () => {
     expect(result.current.rows).toEqual([
       {
         id: "w-usdc",
+        currency: "usdc",
+        network: "ethereum",
         name: "USD Coin",
         ticker: "USDC",
         ledgerId: "ethereum/erc20/usd__coin",
         cryptoAmount: "125.40 USDC",
         countervalue: "$12540",
+        countervalueAmount: 12540,
       },
       // Nothing maps this one and it has no balance, so the asset code stands in for the name and
       // the host's resolver is never asked.
       {
         id: "w-usdt",
+        currency: "usdt",
+        network: "ethereum",
         name: "USDT",
         ticker: "USDT",
         ledgerId: "",
         cryptoAmount: "USDT",
         countervalue: null,
+        countervalueAmount: null,
       },
     ]);
     expect(priceWallet).toHaveBeenCalledWith(USDC, "125.40");

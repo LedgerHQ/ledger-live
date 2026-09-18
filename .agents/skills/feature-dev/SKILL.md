@@ -17,7 +17,7 @@ You are helping a developer implement a new feature for Ledger Wallet applicatio
 
 New features must be implemented in `src/mvvm/` following the MVVM architecture (`.agents/skills/mvvm-architecture/SKILL.md`).
 
-Shared logic extracted out of an app goes to a new `libs/*` package; never add new features/folders to `libs/ledger-live-common`.
+Shared logic extracted out of an app goes to the DDD layers (`shared/`, `domain/`, `features/`), not to `libs/`.
 
 ## Core Principles
 
