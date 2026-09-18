@@ -217,6 +217,11 @@ describe("cardManagementApi configuration", () => {
     expect(useGetRewardWalletQuery).toBeDefined();
   });
 
+  it("exposes getRewardWallet and its hook", () => {
+    expect(cardManagementApi.endpoints.getRewardWallet).toBeDefined();
+    expect(useGetRewardWalletQuery).toBeDefined();
+  });
+
   it("registers under the shared cardApi reducer path", () => {
     const store = makeStore();
 

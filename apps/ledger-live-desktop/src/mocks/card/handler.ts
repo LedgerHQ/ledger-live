@@ -14,6 +14,7 @@ import {
 import {
   mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
+  mockPayCardRewardWallet,
 } from "@domain/api-card-management/mock/card-wallets";
 
 const handlers = [
@@ -67,6 +68,10 @@ const handlers = [
       ? passthrough()
       : HttpResponse.json(mockPayCardLinkedWallets());
   }),
+
+  http.get("*/v1/wallet/reward", ({ request }) =>
+    isMockCardRequest(request) ? HttpResponse.json(mockPayCardRewardWallet()) : passthrough(),
+  ),
 
   // Never let a fake bearer reach an unmocked provider endpoint.
   http.all("*/v1/*", ({ request }) =>
