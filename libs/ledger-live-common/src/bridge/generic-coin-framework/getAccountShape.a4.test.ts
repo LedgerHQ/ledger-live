@@ -6,6 +6,8 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { genericGetAccountShape } from "./getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
+import { DEFAULT_MAX_OPERATIONS } from "./operationHistoryBound";
+
 jest.mock("@ledgerhq/logs");
 
 const getSyncHashMock = jest.fn();
@@ -53,8 +55,10 @@ jest.mock("./accountRawAssign", () => ({
 }));
 
 const inferSubOperationsMock = jest.fn();
+const buildSubOperationIndexMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
   inferSubOperations: (...a: any[]) => inferSubOperationsMock(...a),
+  buildSubOperationIndex: (...a: any[]) => buildSubOperationIndexMock(...a),
 }));
 
 const buildSubAccountsMock = jest.fn();
@@ -124,6 +128,10 @@ describe("genericGetAccountShape - A4 read branch", () => {
     mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
     cleanedOperationMock.mockImplementation((op: any) => op);
     inferSubOperationsMock.mockReturnValue([]);
+    // Parent operations look their sub-operations up in this index instead of rescanning the
+    // sub-accounts per hash; an empty index is this suite's "no sub-operations" case, the same
+    // thing `inferSubOperations` returning [] used to express.
+    buildSubOperationIndexMock.mockReturnValue(new Map());
     buildSubAccountsMock.mockReturnValue([]);
     mergeSubAccountsMock.mockImplementation((_old: any[], subs: any[]) => subs ?? []);
     listOperationsMock.mockResolvedValue({ items: [], next: undefined });
@@ -152,6 +160,19 @@ describe("genericGetAccountShape - A4 read branch", () => {
 
     expect(fetchA4OperationsMock).toHaveBeenCalledTimes(1);
     expect(listOperationsMock).not.toHaveBeenCalled();
+  });
+
+  it("passes the walk bound to the A4 pagination, not only to the coin-module delegate", async () => {
+    fetchA4OperationsMock.mockResolvedValue([]);
+
+    await call();
+
+    // Asserted as the last argument rather than by index: a parameter was inserted ahead of it
+    // once already, and an index that silently drifts onto a neighbour is worse than no test.
+    // Without the bound this path paginates unbounded and materialises a whole history before the
+    // store bound below it ever runs -- and A4 read is enabled for Ethereum, so the account that
+    // produced the out-of-memory report reaches it.
+    expect(fetchA4OperationsMock.mock.calls[0].at(-1)).toBe(DEFAULT_MAX_OPERATIONS);
   });
 
   it("falls back to the coin-module delegate when fetchA4Operations throws with status 5xx", async () => {
