@@ -778,6 +778,47 @@ describe("estimateTronifyFees", () => {
     );
   });
 
+  // extraTrxNum's wire range is discontinuous: 0 or [0.8, 500]. A value in the gap or above the max
+  // must fall back to the default rather than reach the order API.
+  it.each([[0.1], [0.5], [600], [500.5]])(
+    "should reject an out-of-range coin-config rentalExtraTrx (%p) and use the default",
+    async invalidExtraTrx => {
+      coinConfig.setCoinConfig(() => ({
+        status: { type: "active" },
+        explorer: { url: "https://tron.coin.ledger.com" },
+        energyRent: {
+          provider: "tronify",
+          tronify: {
+            url: "https://open.tronify.io",
+            sourceFlag: "ledgerLive",
+            rentalExtraTrx: invalidExtraTrx,
+          },
+        },
+      }));
+
+      await estimateTronifyFees(mockConfig, sendTrc20);
+
+      expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+        expect.objectContaining({ extraTrx: 0.8 }),
+      );
+    },
+  );
+
+  it("should accept a coin-config rentalExtraTrx of 0 (no bandwidth top-up)", async () => {
+    coinConfig.setCoinConfig(() => ({
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: {
+        provider: "tronify",
+        tronify: { url: "https://open.tronify.io", sourceFlag: "ledgerLive", rentalExtraTrx: 0 },
+      },
+    }));
+
+    await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(expect.objectContaining({ extraTrx: 0 }));
+  });
+
   it("should compute savings as originalValue - value", async () => {
     const result = await estimateTronifyFees(mockConfig, sendTrc20);
 
@@ -985,5 +1026,27 @@ describe("buildEnergyRentRequest", () => {
     await expect(buildEnergyRentRequest({ ...sendTrc20, recipient: "" })).rejects.toThrow(
       "Energy rent requires a recipient",
     );
+  });
+
+  // Same TRX-only guard estimateTronifyFees applies to the display quote: the order-creation path
+  // must also reject a non-TRX (Flow-2 USDT) quote before it reaches the ceiling / signing.
+  it("throws on a non-TRX quote rather than stamping a non-TRX ceiling", async () => {
+    mockGetEnergyRentQuote.mockResolvedValue({
+      ...trxQuote,
+      payCoinCode: "USDT",
+    } as unknown as Awaited<ReturnType<typeof getEnergyRentQuote>>);
+
+    await expect(buildEnergyRentRequest(sendTrc20)).rejects.toThrow(/unsupported payCoinCode/);
+  });
+
+  it("normalizes a lower-case TRX quote code into the approved ceiling", async () => {
+    mockGetEnergyRentQuote.mockResolvedValue({
+      ...trxQuote,
+      payCoinCode: "trx",
+    } as unknown as Awaited<ReturnType<typeof getEnergyRentQuote>>);
+
+    const request = await buildEnergyRentRequest(sendTrc20);
+
+    expect(request.maxPayCoinCode).toBe("TRX");
   });
 });

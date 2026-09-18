@@ -267,12 +267,18 @@ jest.mock("@ledgerhq/live-common/bridge/generic-coin-framework/buildIntent", () 
 // timer/act() interaction while still exercising the real desktop screens + routing. The real
 // orchestration's own phase transitions are covered by its unit tests
 // (libs/ledger-live-common/src/flows/send/sponsored/useSponsoredSendOrchestration.test.ts).
+// Starts at IDLE, exactly like the real orchestration's initialState: the shared
+// useSponsoredPhaseNavigator (mounted in SendFlowLayout) routes on every phase that maps to a step,
+// so a non-IDLE default would jump every flow — sponsored or not — to a sponsored screen on mount.
+// Tests step the phase explicitly via setMockOrchestrationState once they reach the sponsored path.
 const initialMockOrchestrationState: SponsoredState = {
-  phase: SPONSORED_PHASE.RENT_SIGNING,
+  phase: SPONSORED_PHASE.IDLE,
   order: null,
+  payerAddress: null,
   paymentTxId: null,
   failureKind: null,
   failureError: null,
+  contractDataResumePhase: SPONSORED_PHASE.RENT_SIGNING,
 };
 let mockOrchestrationState: SponsoredState = initialMockOrchestrationState;
 let mockOrchestrationSetState: ((state: SponsoredState) => void) | null = null;

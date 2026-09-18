@@ -81,6 +81,16 @@ export function useSponsoredFee({
       return;
     }
 
+    // Intent is null while SponsoredSendContext rebuilds it after every transaction change. Skip
+    // fee-option discovery in that window: listFeeOptions(null) resolves to standard-only, which would
+    // flip `available` false and let the context revert the user's Tronify selection to standard.
+    // Preserve availability (sticky, per below); only drop the now-stale quote until the rebuilt intent.
+    if (intent == null) {
+      setQuote(null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     // Clear the prior intent's savings so a consumer never renders a stale amount while the new
     // quote is still resolving (availability stays sticky until re-resolved, to avoid nudge flicker).
@@ -151,7 +161,13 @@ export function useSponsoredFee({
         if (ignore) return;
         setQuote(result);
       } catch {
-        if (!ignore) setQuote(null);
+        // A failed quote leaves no basis for the amount flow to clear the native-fee error, so a
+        // low-TRX account could select Tronify and then dead-end at a disabled Review. Withdraw the
+        // option (not just the quote); the standard fee path always works (ADR-050).
+        if (!ignore) {
+          setAvailable(false);
+          setQuote(null);
+        }
       } finally {
         if (!ignore) setLoading(false);
       }
