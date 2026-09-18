@@ -5,6 +5,7 @@ import { HWDeviceProvider } from "../../HWDeviceProvider";
 import { TrustchainNotAllowed } from "../../errors";
 import { WithDevice } from "../../types";
 
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 jest.mock("@ledgerhq/hw-ledger-key-ring-protocol", () => ({
   crypto: {},
   device: { apdu: jest.fn() },

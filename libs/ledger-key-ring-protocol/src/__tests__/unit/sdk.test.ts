@@ -1,6 +1,7 @@
 import { DefaultBodyType, http, HttpResponse, PathParams, StrictRequest } from "msw";
 import { setupServer } from "msw/node";
 import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import {
   AddMember,
   CommandBlock,

@@ -58,6 +58,7 @@ const transformIncludePatterns = [
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */
+// LKRP_MIGRATION: replace this legacy LKRP import with the new DDD/ts-libs split. See shared/lkrp/README.md.
 module.exports = {
   /** CI sets `JEST_MAX_WORKERS` (e.g. `100%`); local default leaves laptops headroom. */
   maxWorkers: process.env.JEST_MAX_WORKERS || "50%",

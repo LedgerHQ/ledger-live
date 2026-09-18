@@ -3,6 +3,7 @@ import { DescriptorEventType } from "@ledgerhq/hw-transport";
 import { AccountRaw, type PostOnboardingState } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BleState, SettingsState } from "~/reducers/types";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Subject, Observable } from "rxjs";
 

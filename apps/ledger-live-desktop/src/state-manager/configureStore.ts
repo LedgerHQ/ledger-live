@@ -3,6 +3,8 @@ import { UnknownAction } from "redux";
 import { AuthSDK } from "@ledgerhq/auth";
 import { getEnv } from "@shared/env";
 import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
+// LKRP_MIGRATION: LkrpIdentityProvider → @features/platform-lkrp createLkrpIdentityProvider.
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {

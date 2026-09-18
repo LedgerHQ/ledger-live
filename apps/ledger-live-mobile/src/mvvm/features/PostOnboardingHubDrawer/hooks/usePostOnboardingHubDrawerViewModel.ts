@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";

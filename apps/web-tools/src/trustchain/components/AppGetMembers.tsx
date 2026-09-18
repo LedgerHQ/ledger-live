@@ -1,4 +1,6 @@
 import React, { useCallback } from "react";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import {
   JWT,
   MemberCredentials,

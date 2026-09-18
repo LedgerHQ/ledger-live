@@ -1,5 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { setNetworkState } from "@ledgerhq/live-network";

@@ -51,6 +51,7 @@ import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { importMarket } from "~/actions/market";
 import { importMarketListConfig } from "~/reducers/market";
 import { importMarketBannerState } from "~/reducers/marketBanner";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "~/reducers/wallet";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";

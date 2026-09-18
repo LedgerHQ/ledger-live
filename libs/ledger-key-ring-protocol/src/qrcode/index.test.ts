@@ -2,6 +2,8 @@ import type { AddressInfo } from "net";
 import { createQRCodeHostInstance, createQRCodeCandidateInstance } from ".";
 import WebSocket from "ws";
 import { convertKeyPairToLiveCredentials } from "../utils";
+// LKRP_MIGRATION: QR host/candidate → @features/platform-lkrp-qr with an injected pairing transport.
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { MessageCipher, makeCipher, makeMessageCipher } from "./cipher";
 import {

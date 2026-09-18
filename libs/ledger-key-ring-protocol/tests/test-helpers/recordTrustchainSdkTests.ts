@@ -4,6 +4,9 @@ import { setupServer } from "msw/node";
 import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { createSpeculosDevice, releaseSpeculosDevice } from "./speculos";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: TRUSTCHAIN_APP_NAME → @features/platform-lkrp constants until the HW adapter owns it.
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { crypto, TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { setNetworkState } from "@ledgerhq/live-network";
 import { TRUSTCHAIN_API_STAGING } from "./config";

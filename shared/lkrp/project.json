@@ -1,0 +1,8 @@
+{
+  "name": "@shared/lkrp",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import { track } from "~/renderer/analytics/segment";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch } from "LLD/hooks/redux";
 import { ErrorType } from "./type.hooks";

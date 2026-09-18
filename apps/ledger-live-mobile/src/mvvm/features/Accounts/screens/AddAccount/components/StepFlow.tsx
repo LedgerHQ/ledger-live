@@ -18,6 +18,7 @@ import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 import ScannedInvalidQrCode from "LLM/features/WalletSync/screens/Synchronize/ScannedInvalidQrCode";
 import ScannedOldImportQrCode from "LLM/features/WalletSync/screens/Synchronize/ScannedOldImportQrCode";
 import { useSelector } from "~/context/hooks";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 type Props = {

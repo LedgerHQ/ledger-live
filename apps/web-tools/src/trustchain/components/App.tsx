@@ -7,6 +7,9 @@ import {
   TooltipContent,
 } from "@ledgerhq/lumen-ui-react";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import {
   MemberCredentials,
   Trustchain,

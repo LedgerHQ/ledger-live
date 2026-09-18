@@ -1,4 +1,8 @@
 import { useCallback, useState, useRef } from "react";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
+// LKRP_MIGRATION: QR host/candidate → @features/platform-lkrp-qr with an injected pairing transport.
+// LKRP_MIGRATION: protocol errors → @shared/lkrp; QR scan/PIN/WS errors → @features/platform-lkrp-qr.
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";

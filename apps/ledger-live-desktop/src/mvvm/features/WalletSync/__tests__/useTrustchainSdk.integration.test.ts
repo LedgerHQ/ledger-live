@@ -2,6 +2,7 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { getEnv, setEnv } from "@shared/env";
 import { selectRemoteFlagsReady } from "@shared/feature-flags";
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
 import type { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";

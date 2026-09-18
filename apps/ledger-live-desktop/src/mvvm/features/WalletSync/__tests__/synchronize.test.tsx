@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen, act } from "tests/testSetup";
+// LKRP_MIGRATION: QR host/candidate → @features/platform-lkrp-qr with an injected pairing transport.
 import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import { WalletSyncTestApp, simpleTrustChain, walletSyncActivatedState } from "./shared";
 

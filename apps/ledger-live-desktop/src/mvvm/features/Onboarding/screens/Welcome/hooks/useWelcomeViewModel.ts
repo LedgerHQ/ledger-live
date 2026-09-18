@@ -14,6 +14,7 @@ import { urls } from "~/config/urls";
 import { useAnalyticsOptInPrompt } from "LLD/features/AnalyticsOptInPrompt/hooks/useCommonLogic";
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
