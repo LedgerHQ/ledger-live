@@ -1,4 +1,6 @@
 import React from "react";
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";

@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, act } from "@tests/test-renderer";
 import { INITIAL_TEST, WalletSyncSettingsNavigator } from "./shared";
+// LKRP_MIGRATION: QR host/candidate → @features/platform-lkrp-qr with an injected pairing transport.
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import { Code } from "react-native-vision-camera";
 

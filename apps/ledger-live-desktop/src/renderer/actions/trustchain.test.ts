@@ -1,3 +1,5 @@
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
+// LKRP_MIGRATION: utils / liveAuthentication → keystore + LedgerAuth; do not keep hex private keys.
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { trustchainStoreActionTypePrefix } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initMemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/utils";

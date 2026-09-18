@@ -1,3 +1,4 @@
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useTrustchainSdk } from "../hooks/useTrustchainSdk";

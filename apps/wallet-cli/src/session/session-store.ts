@@ -3,6 +3,7 @@ import { stateDir } from "@bunli/utils";
 import { join } from "node:path";
 import { chmodSync, mkdirSync } from "node:fs";
 import { z } from "zod";
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import type { Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { serializeV1 } from "../shared/accountDescriptor";

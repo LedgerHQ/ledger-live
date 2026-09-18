@@ -7,6 +7,7 @@ import pick from "lodash/pick";
 import fs from "fs/promises";
 import { getEnv } from "@shared/env";
 import { NoDBPathGiven, DBWrongPassword } from "../../errors";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { INITIAL_STATE as trustchainInitialState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   exportWalletState,

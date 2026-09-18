@@ -1,3 +1,6 @@
+// LKRP_MIGRATION: getSdk / TrustchainSDK → @features/platform-lkrp createLkrpSdk (inject crypto, keystore, HTTP backend, optional device).
+// LKRP_MIGRATION: QR host/candidate → @features/platform-lkrp-qr with an injected pairing transport.
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { Permissions, crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import WebSocket from "isomorphic-ws";
 import { MemberCredentials, Trustchain, TrustchainMember } from "../types";
@@ -24,6 +27,8 @@ import {
 import { log } from "@ledgerhq/logs";
 import { z } from "zod";
 
+// Migration target: this Wallet-owned pairing protocol moves to @features/platform-lkrp-qr;
+// camera, PIN and rendering concerns remain in app flows.
 const version = 1;
 
 const CLOSE_TIMEOUT = 100; // just enough time for the onerror to appear before onclose

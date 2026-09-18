@@ -35,9 +35,12 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 
 # Platform — domain
 /domain/                                                 @ledgerhq/platform
+/domain/entity/trustchain/                               @ledgerhq/platform
 
 # Platform — features
 /features/                                               @ledgerhq/platform
+/features/platform/lkrp/                                 @ledgerhq/platform
+/features/platform/lkrp-qr/                              @ledgerhq/platform
 
 # Platform — shared
 /shared/                                                 @ledgerhq/platform
@@ -53,6 +56,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/cloud-sync/                                      @ledgerhq/platform
 /shared/cloud-sync-module/                               @ledgerhq/platform
 /shared/env/                                             @ledgerhq/platform
+/shared/lkrp/                                            @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform

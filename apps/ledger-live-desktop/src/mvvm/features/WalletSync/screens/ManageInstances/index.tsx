@@ -8,6 +8,7 @@ import DeviceActionInstanceStep from "./02-DeviceActionInstanceStep";
 import DeleteInstanceWithTrustchain from "./03-DeleteInstanceWithTrustchain";
 import DeletionFinalStep from "./04-DeletionFinalStep";
 import { DeletionError, ErrorReason } from "./04-DeletionError";
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import DeletionErrorFinalStep from "./04-DeletionFinalErrorStep";
 

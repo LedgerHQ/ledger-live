@@ -1,5 +1,6 @@
 import { defineCommand } from "@bunli/core";
 import { createInterface } from "node:readline";
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { Spinner } from "yocto-spinner";
 import { Session, trustchainFromMeta, type TrustchainMeta } from "../../session/session-store";

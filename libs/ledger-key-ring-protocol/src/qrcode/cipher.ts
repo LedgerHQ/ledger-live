@@ -1,4 +1,5 @@
 import Base64 from "base64-js";
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { DecryptedPayload, Encrypted, ExtractEncryptedPayloads, Message } from "./types";
 import { InvalidEncryptionKeyError } from "../errors";

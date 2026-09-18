@@ -1,3 +1,4 @@
+// LKRP_MIGRATION: Trustchain / MemberCredentials → @shared/lkrp (opaque key handle; no walletSyncEncryptionKey).
 import type { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Session, type TrustchainMeta, trustchainFromMeta } from "../session/session-store";
 import { loadMemberCredentials } from "./keychain";

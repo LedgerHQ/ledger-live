@@ -10,6 +10,7 @@ import {
   getAllFeatureFlags,
 } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
+// LKRP_MIGRATION: store → @domain/entity-trustchain (selectors, persist, reset). Stop storing private keys.
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";

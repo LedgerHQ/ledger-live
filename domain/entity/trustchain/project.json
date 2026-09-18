@@ -1,0 +1,8 @@
+{
+  "name": "@domain/entity-trustchain",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

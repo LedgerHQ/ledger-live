@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-lkrp-qr",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

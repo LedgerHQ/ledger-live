@@ -1,3 +1,4 @@
+// LKRP_MIGRATION: hw crypto/codec/device → @shared/lkrp ports (LkrpCrypto, codec, LkrpDeviceLayer). features/domain/shared must not import libs/*.
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { makeCipher } from "./cipher";
 import { InvalidEncryptionKeyError } from "../errors";
