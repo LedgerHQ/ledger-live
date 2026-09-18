@@ -44,6 +44,15 @@ The host machine cannot be trusted: malware can swap a clipboard, intercept the 
 
 The Claude Code sandbox blocks USB syscalls by default, so any wallet-cli command that needs the device hardware can't reach it from inside the sandbox - that's why device-touching commands require `dangerouslyDisableSandbox: true`. Commands that only hit Ledger's backend don't need USB and don't need the bypass.
 
+**How the CLI diagnoses it.** wallet-cli cannot detect "I am sandboxed" - there is no syscall for that. It infers it from one signal only: the OS refused access to a device it had already enumerated. On Linux, libusb enumerates by reading sysfs, which a sandbox permits, and only needs the `/dev/bus/usb` node to *open* the device - so "seen but not openable" means the host blocked us. That inference is reported as `likely_cause: "sandbox_blocking_usb"` - `likely`, not certain, because a missing udev rule on Linux produces the same refusal with no sandbox involved.
+
+Consequences worth knowing:
+
+- `agent_hint` is emitted whenever the cause is host-side. No environment sniffing is involved - there is no agent detection anywhere in the CLI. Its text is conditional ("If you are running this through Claude Code, Codex CLI, Cursor, or another sandboxed agent..."), so it reads correctly for a human as well - and an agent whose environment wallet-cli cannot recognise, which is the case that most needs the bypass instruction, still receives it. `user_hint` covers the terminal case alongside it.
+- A **busy** device (`LIBUSB_ERROR_BUSY`, e.g. Ledger Live holding the interface) is never reported as `sandbox_blocking_usb`. It falls back to `unknown`, because "disable your sandbox" is bad advice when the fix is to quit Ledger Live.
+- The discovery wait is 60 s and is **not** shortened by `--device-timeout`, which bounds the unlock/confirm wait only.
+- An unplugged device is reported as `error.code: "disconnected"` (exit 3), not `USB_TIMEOUT`, but it still carries `likely_cause: "device_not_present"` and the `docs` link - so `likely_cause` is the field to read on any USB failure, whichever code came with it.
+
 ---
 
 ## Device contention

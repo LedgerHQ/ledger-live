@@ -5,6 +5,7 @@ import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError"
 import { TimeoutError, timeout } from "rxjs";
 import { createCommandOutput } from "../output";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
+import { usbTimeoutState } from "../device/classify-device-error";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import { withDmkDeviceSession } from "../session/bridge-device-session";
 import { deviceTimeoutOption, outputOption, resolveOutputFormat } from "./inputs";
@@ -21,7 +22,12 @@ class NonGenuineDeviceError extends Error {
 
 function mapGenuineCheckError(error: unknown): unknown {
   if (error instanceof TimeoutError) {
-    return new WalletCliDeviceError({ code: "timeout" }, { cause: error });
+    // The rxjs deadline fires without an error from the device stack, but the USB evidence is
+    // still on record, so the envelope can name a cause instead of an unattributed timeout.
+    return new WalletCliDeviceError(
+      usbTimeoutState({ expectedApp: "Ledger dashboard", rejectedContext: "open_app" }),
+      { cause: error },
+    );
   }
   if (isCounterfeitError(error)) {
     return new NonGenuineDeviceError();

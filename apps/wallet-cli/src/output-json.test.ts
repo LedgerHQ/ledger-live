@@ -3,6 +3,9 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO } from "./test/helpers/cal-fixtures";
+import type { DeviceState } from "./device/device-state";
+import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
+import { WALLET_CLI_SKILL_DOCS_URL } from "./device/usb-timeout-hints";
 
 const { createCommandOutput } = await import("./output");
 
@@ -416,6 +419,70 @@ describe("JsonCommandOutput", () => {
         message: "No quotes available",
         provider_errors: [providerError],
       },
+    });
+  });
+
+  describe("USB failure diagnostics (LIVE-31394)", () => {
+    function failWith(state: DeviceState) {
+      const out = createCommandOutput("json", { command: "genuine-check", network: "device" });
+      expect(() => out.fail(new WalletCliDeviceError(state))).toThrow(CliProcessExitError);
+      const line = parseLines().at(-1) as { error: Record<string, unknown> };
+      return line.error;
+    }
+
+    it("publishes the timeout state as the stable USB_TIMEOUT wire code", () => {
+      expect(failWith({ code: "timeout" }).code).toBe("USB_TIMEOUT");
+    });
+
+    it("carries the fields LIVE-31394 specifies for a host-blocked USB failure", () => {
+      const error = failWith({ code: "timeout", likelyCause: "sandbox_blocking_usb" });
+      expect(error.message).toBe("Timed out talking to the Ledger over USB.");
+      expect(error.likely_cause).toBe("sandbox_blocking_usb");
+      expect(error.agent_hint).toContain("dangerouslyDisableSandbox: true");
+      expect(error.user_hint).toContain("no other process");
+      expect(error.agent_hint).toContain(WALLET_CLI_SKILL_DOCS_URL);
+      expect(error.docs).toBe(WALLET_CLI_SKILL_DOCS_URL);
+    });
+
+    it("defaults likely_cause to unknown rather than omitting the field", () => {
+      expect(failWith({ code: "timeout" }).likely_cause).toBe("unknown");
+    });
+
+    it("omits agent_hint when the cause is not host-side, but still links the docs", () => {
+      const error = failWith({ code: "timeout", likelyCause: "device_not_present" });
+      expect(error).not.toHaveProperty("agent_hint");
+      expect(error.user_hint).toBeString();
+      expect(error.docs).toBe(WALLET_CLI_SKILL_DOCS_URL);
+    });
+
+    it("diagnoses an unplugged device, which is not published as a timeout at all", () => {
+      // The commonest USB failure of all. It keeps exit code 3 and its own wire code, so gating the
+      // diagnostics on `code === "timeout"` used to omit them from exactly the case the agent skill
+      // tells agents to read `likely_cause` for.
+      const error = failWith({ code: "disconnected", likelyCause: "device_not_present" });
+      expect(error.code).toBe("disconnected");
+      expect(error.likely_cause).toBe("device_not_present");
+      expect(error.user_hint).toContain("Plug the Ledger");
+      expect(error.docs).toBe(WALLET_CLI_SKILL_DOCS_URL);
+      expect(error).not.toHaveProperty("agent_hint");
+    });
+
+    it("leaves an ordinary disconnect undiagnosed rather than inventing a cause", () => {
+      // A mid-operation disconnect carries no attribution; dressing it up as `unknown` would train
+      // consumers to read fields that say nothing.
+      const error = failWith({ code: "disconnected" });
+      expect(error.code).toBe("disconnected");
+      for (const field of ["likely_cause", "agent_hint", "user_hint", "docs"]) {
+        expect(error).not.toHaveProperty(field);
+      }
+    });
+
+    it("leaks none of the diagnostic fields onto a non-USB device error", () => {
+      const error = failWith({ code: "rejected", context: "sign" });
+      expect(error.code).toBe("rejected");
+      for (const field of ["likely_cause", "agent_hint", "user_hint", "docs"]) {
+        expect(error).not.toHaveProperty(field);
+      }
     });
   });
 });
