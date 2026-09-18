@@ -10404,6 +10404,7 @@
       "title": "Crypto card",
       "placeholder": "Coming soon",
       "details": "Details",
+      "addToWallet": "Add to {{wallet}} Pay",
       "freeze": "Freeze",
       "unfreeze": "Unfreeze",
       "goBack": "Go back",
@@ -10662,8 +10663,24 @@
           "description": "Pay online or in store"
         },
         "appleGooglePay": {
-          "title": "Add to Apple/Google Pay",
+          "title": "Add to {{wallet}} Pay",
           "description": "Pay with your phone in store"
+        }
+      },
+      "addToWallet": {
+        "ios": {
+          "title": "Add to Apple Pay",
+          "step1": "Go to Apple Wallet app and tap add (+)",
+          "step2": "Select Debit or Credit Card",
+          "step3": "Follow the instructions",
+          "cta": "Go to Apple Wallet"
+        },
+        "android": {
+          "title": "Add to Google Pay",
+          "step1": "Go to Google Wallet app and tap add.",
+          "step2": "Choose Payment card, then select New Credit or Debit Card.",
+          "step3": "Follow the instructions.",
+          "cta": "Go to Google Wallet"
         }
       }
     }

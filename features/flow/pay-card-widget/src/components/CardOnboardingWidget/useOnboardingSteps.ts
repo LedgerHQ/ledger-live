@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "@shared/i18n";
 import type { CardOnboardingStep, CardOnboardingStepId } from "../../onboardingStatus";
+import { getWalletPlatform } from "../getWalletPlatform";
 
 export type CardOnboardingStepWithCopy = {
   readonly id: CardOnboardingStepId;
@@ -47,7 +48,10 @@ export function useOnboardingSteps(
     () =>
       steps.map(({ id, isDone }) => ({
         id,
-        title: t(STEP_COPY[id].titleKey),
+        title:
+          id === "apple-google-pay"
+            ? t(STEP_COPY[id].titleKey, { wallet: getWalletPlatform().brand })
+            : t(STEP_COPY[id].titleKey),
         description: t(STEP_COPY[id].descriptionKey),
         isDone,
       })),

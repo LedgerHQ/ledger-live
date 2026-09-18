@@ -1,5 +1,9 @@
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
-import { CARD_ONBOARDING_COPY, CARD_ONBOARDING_STEP_COPY } from "../../__tests__/i18nWrapper";
+import {
+  CARD_ONBOARDING_COPY,
+  CARD_ONBOARDING_STEP_COPY,
+  CARD_WALLET_PAY_COPY,
+} from "../../__tests__/i18nWrapper";
 import { createRenderWidget, setQuery, stepsWith, stepsWithIds } from "./__tests__/shared";
 
 jest.mock("../../onboardingStatus", () => ({
@@ -94,7 +98,7 @@ describe("CardOnboardingWidget (integration)", () => {
     renderWidget();
     await openWidget(user);
 
-    expect(screen.getByText(CARD_ONBOARDING_STEP_COPY["apple-google-pay"].title)).toBeVisible();
+    expect(screen.getByText(CARD_WALLET_PAY_COPY.Apple)).toBeVisible();
     expect(
       screen.getByText(CARD_ONBOARDING_STEP_COPY["apple-google-pay"].description),
     ).toBeVisible();
