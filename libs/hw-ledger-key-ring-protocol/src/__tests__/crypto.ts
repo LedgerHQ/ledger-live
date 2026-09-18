@@ -10,6 +10,23 @@ describe("Sodium wrapper tester", () => {
     expect(crypto.to_hex(shared1)).toBe(crypto.to_hex(shared2));
   });
 
+  // Ground truth produced by OpenSSL (node:crypto createECDH("secp256k1").computeSecret),
+  // which returns the x coordinate of the shared point — the same value ecdh() must yield.
+  it("should compute the ECDH shared secret expected by OpenSSL", async () => {
+    const kp = crypto.keypairFromSecretKey(
+      crypto.from_hex("c9afa9d845ba75166b5c215767b1d6934e50c3db36e89b127b8a622b120f6721"),
+    );
+    const peerPublicKey = crypto.from_hex(
+      "02b07ba9dca9523b7ef4bd97703d43d20399eb698e194704791a25ce77a400df99",
+    );
+    expect(crypto.to_hex(kp.publicKey)).toBe(
+      "032c8c31fc9f990c6b55e3865a184a4ce50e09481f2eaeb3e60ec1cea13a6ae645",
+    );
+    expect(crypto.to_hex(await crypto.ecdh(kp, peerPublicKey))).toBe(
+      "5901e50df01cabddee57179fdd531b31a517409891c43a9a0fdf062d1f62beed",
+    );
+  });
+
   it("should encrypt a message and decrypt using the same symmetric key", async () => {
     //const message = "Hello world!"
     const message = await crypto.randomBytes(64);

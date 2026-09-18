@@ -1,4 +1,5 @@
-import { computeInputSighash, type TxForSighash } from "./signer";
+import { parseExtendedPublicKey } from "@ledgerhq/coin-kaspa/logic/kaspaAddresses";
+import { buildKaspaXpub, computeInputSighash, type TxForSighash } from "./signer";
 
 // Ground truth for these fixtures isn't a literal vector published by rusty-kaspa (its own
 // sighash.rs test suite is differential — it only checks that changing a field changes the
@@ -138,5 +139,31 @@ describe("computeInputSighash", () => {
     expect(Buffer.from(computeInputSighash(base, 0, otherScript)).toString("hex")).not.toBe(
       baseline,
     );
+  });
+});
+
+// The 99-byte layout is coin-kaspa's contract, so the round-trip through its own parser is the
+// assertion that matters: a compressed (33-byte) point would make the buffer 67 bytes and throw,
+// and a swapped x/y would surface as a different compressed key. The generator point is used as
+// the fixture because its coordinates are published in SEC2, independent of any curve library.
+describe("buildKaspaXpub", () => {
+  const COMPRESSED_G = "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798";
+  const UNCOMPRESSED_G =
+    "0479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798" +
+    "483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8";
+  const CHAIN_CODE = "00".repeat(31) + "2a";
+
+  it("serializes the uncompressed point and chain code", () => {
+    const xpub = buildKaspaXpub(Buffer.from(COMPRESSED_G, "hex"), Buffer.from(CHAIN_CODE, "hex"));
+    expect(xpub).toBe(`41${UNCOMPRESSED_G}20${CHAIN_CODE}`);
+  });
+
+  it("round-trips through coin-kaspa's parseExtendedPublicKey", () => {
+    const xpub = buildKaspaXpub(Buffer.from(COMPRESSED_G, "hex"), Buffer.from(CHAIN_CODE, "hex"));
+    const parsed = parseExtendedPublicKey(Buffer.from(xpub, "hex"));
+
+    expect(parsed.compressedPublicKey.toString("hex")).toBe(COMPRESSED_G);
+    expect(parsed.uncompressedPublicKey.toString("hex")).toBe(UNCOMPRESSED_G);
+    expect(parsed.chainCode.toString("hex")).toBe(CHAIN_CODE);
   });
 });

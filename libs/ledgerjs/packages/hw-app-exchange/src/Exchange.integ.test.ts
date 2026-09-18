@@ -490,7 +490,7 @@ async function appExchangeDatasetTest(signFormat: PartnerSignFormat) {
   let privKey;
   do {
     privKey = randomBytes(32);
-  } while (!secp256k1.utils.isValidPrivateKey(privKey));
+  } while (!secp256k1.utils.isValidSecretKey(privKey));
   // The expected public should not be compressed and be a full 64 length (with R and S)
   const isCompressed = false;
   const pubKey = secp256k1.getPublicKey(privKey, isCompressed);
@@ -517,7 +517,7 @@ async function appExchangeDataset(signFormat: PartnerSignFormat) {
     "hex",
   );
   // Verify public key by trying to create Point from it
-  secp256k1.ProjectivePoint.fromHex(pubKey);
+  secp256k1.Point.fromBytes(pubKey);
 
   const partnerInfo = {
     name: "SWAP_TEST",
@@ -544,7 +544,7 @@ async function appExchangeSellDataset(signFormat: PartnerSignFormat) {
     "hex",
   );
   // Verify public key by trying to create Point from it
-  secp256k1.ProjectivePoint.fromHex(pubKey);
+  secp256k1.Point.fromBytes(pubKey);
 
   const partnerInfo = {
     name: "SELL_TEST",
@@ -632,7 +632,7 @@ async function signMessage(
   const hash = new Uint8Array(hashBuffer);
 
   const signature = secp256k1.sign(hash, privKey, { prehash: false });
-  const sig = signature.toCompactRawBytes();
+  const sig = signature.toBytes("compact");
   if (sigFormat === "der") {
     return convertSignatureToDER(sig);
   }
@@ -640,7 +640,7 @@ async function signMessage(
 }
 
 function convertSignatureToDER(sig: Uint8Array): Buffer {
-  return Buffer.from(secp256k1.Signature.fromCompact(sig).toDERRawBytes());
+  return Buffer.from(secp256k1.Signature.fromBytes(sig, "compact").toBytes("der"));
 }
 
 // Convert raw buffer to a JWS compatible one: '.'+base64Url(raw)
@@ -649,7 +649,7 @@ function convertToJWSPayload(raw: Buffer): Buffer {
 }
 
 function convertSignatureFromDER(sig: Uint8Array): Buffer {
-  return Buffer.from(secp256k1.Signature.fromDER(sig).toCompactRawBytes());
+  return Buffer.from(secp256k1.Signature.fromBytes(sig, "der").toBytes("compact"));
 }
 
 function bip32asBuffer(path: string): Buffer {
