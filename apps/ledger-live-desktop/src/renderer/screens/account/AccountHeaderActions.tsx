@@ -51,6 +51,7 @@ import { useStake } from "LLD/hooks/useStake";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
 import { getSendFlowTrackingProperties } from "LLD/features/Send/utils/tracking";
+import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -306,13 +307,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     });
     setTrackingSource(pageName);
     navigate("/swap", {
-      state: {
+      state: buildSwapNavigationState({
         defaultCurrency: currency,
-        defaultAccountId: account.id,
-        defaultParentAccountId: parentAccount?.id,
-        defaultAmountFrom: "0",
-        from: location.pathname,
-      },
+        fromPath: location.pathname,
+        account,
+        parentAccount: parentAccount ?? undefined,
+      }),
     });
   }, [
     currency,
