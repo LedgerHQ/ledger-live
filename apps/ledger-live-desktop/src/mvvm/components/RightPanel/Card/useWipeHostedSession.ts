@@ -7,11 +7,18 @@ import { useCardHostedManifests } from "./useCardHostedManifests";
 
 const WIPE_ON_PAY_TAB_ENTER = true;
 
+let hostedSessionWipe: Promise<void> = Promise.resolve();
+
 /** Best effort on purpose: a provider session left behind must never hold the login back. */
 function wipeHostedSessionForManifest(manifest: LiveAppManifest): Promise<void> {
   return ipcRenderer
     .invoke("clearCardHostedSessionData", [String(manifest.url)])
     .catch(logger.error);
+}
+
+/** The provider webview must open on a wiped session, never on the one the wipe still holds. */
+export function whenHostedSessionWiped(): Promise<void> {
+  return hostedSessionWipe;
 }
 
 export function useWipeHostedSession(): void {
@@ -37,8 +44,9 @@ export function useWipeHostedSession(): void {
 
     hasPendingWipe.current = false;
 
-    for (const manifest of [login, hosted]) {
-      void wipeHostedSessionForManifest(manifest);
-    }
+    // The main process runs the wipes in the order they arrive, so the newest batch settles last.
+    hostedSessionWipe = Promise.all([login, hosted].map(wipeHostedSessionForManifest)).then(
+      () => undefined,
+    );
   }, [isSignedIn, login, hosted]);
 }

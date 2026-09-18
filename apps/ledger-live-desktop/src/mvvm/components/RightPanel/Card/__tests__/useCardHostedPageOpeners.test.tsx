@@ -4,6 +4,7 @@ import { act } from "@testing-library/react";
 import { getEnvDefault, setEnv } from "@shared/env";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useCardHostedPageOpeners } from "../useCardHostedPageOpeners";
+import { useWipeHostedSession } from "../useWipeHostedSession";
 
 const mockNavigate = jest.fn();
 
@@ -45,6 +46,20 @@ function renderOpeners() {
       lwdPayTab: { enabled: true, params: { card: true } },
     }),
   });
+}
+
+function renderOpenersWithWipe() {
+  return renderHook(
+    () => {
+      useWipeHostedSession();
+      return useCardHostedPageOpeners();
+    },
+    {
+      initialState: withFlagOverrides({
+        lwdPayTab: { enabled: true, params: { card: true } },
+      }),
+    },
+  );
 }
 
 async function run(action: () => Promise<unknown>) {
@@ -151,6 +166,29 @@ describe("useCardHostedPageOpeners", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/platform/other?returnTo=%2Fpaytab", {
         state: { goToURL: "https://other.test/onboarding/signup" },
       });
+    });
+  });
+
+  describe("the wipe of the pay tab entry", () => {
+    it("holds the navigation back until the wipe of every manifest has settled", async () => {
+      const settleWipes: ((value: unknown) => void)[] = [];
+      mockedInvoke.mockImplementationOnce(() => new Promise(resolve => settleWipes.push(resolve)));
+      mockedInvoke.mockImplementationOnce(() => new Promise(resolve => settleWipes.push(resolve)));
+      const { result } = renderOpenersWithWipe();
+
+      expect(settleWipes).toHaveLength(2);
+
+      const opening = result.current.openHostedPage("/topup");
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+
+      settleWipes[0](undefined);
+      settleWipes[1](undefined);
+      await act(async () => {
+        await opening;
+      });
+
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
     });
   });
 
