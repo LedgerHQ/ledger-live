@@ -15,6 +15,7 @@ Design and rationale live in the [technical plan](https://ledgerhq.atlassian.net
 - Runs the mandatory genuine check and the firmware check, and offers an available update
 - Shows the on-device waiting screen to an unseeded touchscreen while the checks run
 - Hands the OS update over to the app's own update flow, then re-reads the device
+- Follows naming, PIN, seed creation and restore by reading the onboarding step — it never sets them
 - Handles a lock, a transport loss and a quit from any state
 - Reports where it got to, on a live session the app keeps using
 
@@ -41,9 +42,10 @@ on every device call, so a reconnection needs no restart.
 subscribed to a dead session cannot announce the next one, so after a `TRANSPORT_LOST` the app calls
 `openSession()`, restarts `sessionListener` on the new id, and only then sends `SESSION_READY`.
 
-Every exit carries the session id, the device, and one reason. This phase reaches
-`legacyFallback`, `resumeFirmwareUpdate` and `userQuit`; `offerLedgerSync` and `completed` land
-with the setup phase.
+Every exit carries the session id, the device, and one reason. `completed` is a finished setup or an
+already-onboarded device with nothing left to offer. `offerLedgerSync` is only for a device that was
+already seeded when the flow started, and only when the app passed `offerSync`. The session stays
+open. Other reasons: `legacyFallback`, `resumeFirmwareUpdate`, `userQuit`.
 
 ## Key exports / concepts
 
