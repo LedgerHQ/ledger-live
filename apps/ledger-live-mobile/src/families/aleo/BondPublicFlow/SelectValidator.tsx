@@ -48,7 +48,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   // always wins over the state seeded when the screen mounted.
   const selectedAddress = lockedValidator ?? selected;
 
-  const { validators, loading, error } = useAleoValidators(account.currency);
+  const { validators, loading, error, refetch } = useAleoValidators(account.currency);
 
   useEffect(() => {
     if (lockedValidator) return;
@@ -95,12 +95,6 @@ export default function SelectValidator({ navigation, route }: Props) {
     });
   }, [navigation, route.params, selectedAddress]);
 
-  // Remounting re-runs the fetch, which drops its cached rejection.
-  const onRetry = useCallback(
-    () => navigation.replace(ScreenName.AleoBondPublicSelectValidator, route.params),
-    [navigation, route.params],
-  );
-
   const rootStyle = [styles.root, { backgroundColor: colors.background.main }];
 
   if (loading) {
@@ -122,7 +116,7 @@ export default function SelectValidator({ navigation, route }: Props) {
           </Text>
         </View>
         <View style={styles.footer}>
-          <Button type="main" size="large" onPress={onRetry}>
+          <Button type="main" size="large" onPress={refetch}>
             {t("common.retry")}
           </Button>
         </View>

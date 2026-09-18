@@ -78,6 +78,7 @@ beforeEach(async () => {
     validators: [OTHER, FIGMENT],
     loading: false,
     error: null,
+    refetch: jest.fn(),
   });
 });
 
@@ -226,6 +227,7 @@ describe("Aleo bond flow — a validator that is itself unbonding", () => {
       validators: [{ ...OTHER, isUnbonding: true }, FIGMENT],
       loading: false,
       error: null,
+      refetch: jest.fn(),
     });
   });
 
@@ -253,6 +255,7 @@ describe("Aleo bond flow — a default that turns out to be unpickable", () => {
       validators: [OTHER, { ...FIGMENT, ...state }],
       loading: false,
       error: null,
+      refetch: jest.fn(),
     });
 
   it.each<[string, Partial<AleoValidator>]>([
@@ -278,6 +281,7 @@ describe("Aleo bond flow — a default that turns out to be unpickable", () => {
       ],
       loading: false,
       error: null,
+      refetch: jest.fn(),
     });
 
     setupModal();
@@ -291,6 +295,7 @@ describe("Aleo bond flow — a default that turns out to be unpickable", () => {
       validators: [OTHER, { ...FIGMENT, isUnbonding: true }],
       loading: false,
       error: null,
+      refetch: jest.fn(),
     });
     const bonded = {
       ...ALEO_MAIN_ACCOUNT,

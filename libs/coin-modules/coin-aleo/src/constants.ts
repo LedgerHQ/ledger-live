@@ -123,3 +123,6 @@ export const ANNUAL_INFLATION_RATE = 0.05;
 
 // A validator above this share of total stake earns zero, not a reduced rate.
 export const MAX_VALIDATOR_STAKE_SHARE = 0.25;
+
+// Short enough that a validator that has just closed is not offered for long.
+export const ALEO_VALIDATORS_CACHE_MINUTES = 5;

@@ -25,19 +25,12 @@ type Props = Readonly<{
   selected: string;
   lockedTo: string | null;
   onSelect: (address: string) => void;
-  onRetry: () => void;
 }>;
 
-export default function ValidatorPicker({
-  currency,
-  selected,
-  lockedTo,
-  onSelect,
-  onRetry,
-}: Props) {
+export default function ValidatorPicker({ currency, selected, lockedTo, onSelect }: Props) {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(true);
-  const { validators, loading, error } = useAleoValidators(currency);
+  const { validators, loading, error, refetch } = useAleoValidators(currency);
 
   useEffect(() => {
     if (lockedTo) return;
@@ -108,7 +101,7 @@ export default function ValidatorPicker({
         <Alert type="warning">
           <Trans i18nKey="aleo.bond.flow.steps.validator.fetchError" />
         </Alert>
-        <Button primary onClick={onRetry}>
+        <Button primary onClick={refetch}>
           <Trans i18nKey="common.retry" />
         </Button>
       </Box>

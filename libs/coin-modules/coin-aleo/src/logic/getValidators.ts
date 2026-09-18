@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import { ALEO_VALIDATORS_CACHE_MINUTES } from "../constants";
 import { apiClient } from "../network/api";
 import { getUnbondingValidators } from "../network/utils";
 import {
@@ -18,8 +19,7 @@ import type {
 } from "../types/api";
 import type { AleoValidator } from "../types";
 
-// Short enough that a validator that has just closed is not offered for long.
-const VALIDATORS_CACHE = minutes(5, 2);
+const VALIDATORS_CACHE = minutes(ALEO_VALIDATORS_CACHE_MINUTES, 2);
 
 const isStakeMicrocredits = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value) && value >= 0;

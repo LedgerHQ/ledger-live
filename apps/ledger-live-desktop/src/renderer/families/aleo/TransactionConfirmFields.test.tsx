@@ -27,6 +27,7 @@ beforeEach(() => {
     ],
     loading: false,
     error: null,
+    refetch: jest.fn(),
   });
 });
 
