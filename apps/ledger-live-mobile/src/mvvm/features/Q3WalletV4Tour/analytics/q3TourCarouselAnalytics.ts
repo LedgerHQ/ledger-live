@@ -4,7 +4,7 @@ import type {
   WalletV4TourAnalyticsContext,
 } from "LLM/components/WalletV4TourDrawer";
 import type { Q3TourVariant } from "../Drawer/const";
-import { PAGE_TRACKING_Q3_WALLET_V4_TOUR, Q3_TOUR_CONTENT_ID } from "./const";
+import { PAGE_TRACKING_Q3_TOUR, Q3_TOUR_CONTENT_ID } from "./const";
 
 type CtaPosition = "primary" | "secondary";
 
@@ -15,7 +15,7 @@ export const createQ3WalletV4TourAnalytics = (
   totalSteps: number,
   variant: Q3TourVariant,
 ): WalletV4TourAnalytics => {
-  const page = PAGE_TRACKING_Q3_WALLET_V4_TOUR;
+  const page = PAGE_TRACKING_Q3_TOUR;
   const ctaPosition: CtaPosition = "primary";
 
   const getContext = (slideIndex: number, stepName: string): WalletV4TourAnalyticsContext =>

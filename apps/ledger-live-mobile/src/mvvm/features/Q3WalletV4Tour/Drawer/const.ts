@@ -1,6 +1,6 @@
 import type { Features } from "@shared/feature-flags";
 import type { WalletV4Tour, WalletV4TourSlide } from "LLM/components/WalletV4TourDrawer";
-import { PAGE_TRACKING_Q3_WALLET_V4_TOUR } from "../analytics/const";
+import { PAGE_TRACKING_Q3_TOUR } from "../analytics/const";
 import contactDark from "./assets/contact-dark.webp";
 import contactLight from "./assets/contact-light.webp";
 import introDark from "./assets/intro-dark.webp";
@@ -12,7 +12,7 @@ import payNoCardLight from "./assets/pay-nocard-light.webp";
 import yieldDark from "./assets/yield-dark.webp";
 import yieldLight from "./assets/yield-light.webp";
 
-export { PAGE_TRACKING_Q3_WALLET_V4_TOUR };
+export { PAGE_TRACKING_Q3_TOUR };
 
 type ReleaseTourVariant = NonNullable<NonNullable<Features["releaseTour"]["params"]>["variant"]>;
 
@@ -70,7 +70,7 @@ const yieldSlide: WalletV4TourSlide = {
 };
 
 const q3TourBase: Omit<WalletV4Tour, "slides"> = {
-  page: PAGE_TRACKING_Q3_WALLET_V4_TOUR,
+  page: PAGE_TRACKING_Q3_TOUR,
   testID: "q3-wallet-v4-tour-slides-container",
   copy: {
     startKey: "q3WalletV4Tour.cta.start",

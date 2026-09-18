@@ -1,5 +1,5 @@
 import { screen, track } from "~/analytics";
-import { getQ3TourStepName, PAGE_TRACKING_Q3_WALLET_V4_TOUR } from "../const";
+import { getQ3TourStepName, PAGE_TRACKING_Q3_TOUR } from "../const";
 import { createQ3WalletV4TourAnalytics } from "../q3TourCarouselAnalytics";
 
 jest.mock("~/analytics", () => ({
@@ -19,7 +19,7 @@ describe("createQ3WalletV4TourAnalytics", () => {
     const context = analytics.getContext(1, "Say goodbye to long addresses");
 
     expect(context).toEqual({
-      page: PAGE_TRACKING_Q3_WALLET_V4_TOUR,
+      page: PAGE_TRACKING_Q3_TOUR,
       contentId: "q3-tour",
       variant: "q3_a",
       step: 2,
@@ -30,7 +30,7 @@ describe("createQ3WalletV4TourAnalytics", () => {
     analytics.trackInitialStep(analytics.getContext(0, "A quick tour of the latest"));
 
     expect(screen).toHaveBeenCalledWith(
-      PAGE_TRACKING_Q3_WALLET_V4_TOUR,
+      PAGE_TRACKING_Q3_TOUR,
       undefined,
       expect.objectContaining({
         contentId: "q3-tour",
@@ -53,7 +53,7 @@ describe("createQ3WalletV4TourAnalytics", () => {
       expect.objectContaining({
         button: "continue",
         ctaPosition: "primary",
-        page: PAGE_TRACKING_Q3_WALLET_V4_TOUR,
+        page: PAGE_TRACKING_Q3_TOUR,
         contentId: "q3-tour",
         variant: "q3_a",
       }),
