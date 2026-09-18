@@ -7,7 +7,6 @@ import type { CardDetailsSceneProps } from "./components/CardDetails/Scenes/type
 export type { FormattedValue };
 
 export type CardTrackEvent = (event: string, params: Record<string, unknown>) => void;
-export type UnlockForReveal = () => Promise<boolean>;
 
 export type CardVisualProps = Readonly<{
   balance: number;
@@ -29,7 +28,6 @@ export type CardDetailsProps = Readonly<{
   /** Formats the reward wallet amount, and, natively, the transactions the overview lists. */
   formatters?: CardTransactionFormatters;
   onTrackEvent?: CardTrackEvent;
-  unlock?: UnlockForReveal;
   onShowMore?: () => void;
 }>;
 

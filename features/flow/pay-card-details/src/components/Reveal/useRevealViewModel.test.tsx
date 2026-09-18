@@ -28,27 +28,24 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-function renderReveal(unlock?: () => Promise<boolean>) {
+function renderReveal() {
   const store = makeCardApiStore();
 
   function Wrapper({ children }: PropsWithChildren) {
     return <CardApiStoreProvider store={store}>{children}</CardApiStoreProvider>;
   }
 
-  const { result } = renderHook(() => useRevealViewModel({ unlock }), { wrapper: Wrapper });
+  const { result } = renderHook(() => useRevealViewModel(), { wrapper: Wrapper });
 
   function reveal() {
-    if (!result.current) {
-      throw new Error("the hook published no reveal view model");
-    }
     return result.current;
   }
 
   return { store, result, reveal };
 }
 
-async function renderRevealed(unlock: () => Promise<boolean> = () => Promise.resolve(true)) {
-  const rendered = renderReveal(unlock);
+async function renderRevealed() {
+  const rendered = renderReveal();
   await act(async () => {
     await rendered.reveal().onReveal();
   });
@@ -72,14 +69,8 @@ function finishFlip(reveal: () => { onImageLoad: () => void }) {
 }
 
 describe("useRevealViewModel", () => {
-  it("publishes no reveal when the host granted no unlock", () => {
-    const { result } = renderReveal();
-
-    expect(result.current).toBeNull();
-  });
-
   it("keeps loading until the details image loads", async () => {
-    const { reveal } = renderReveal(() => Promise.resolve(true));
+    const { reveal } = renderReveal();
 
     await act(async () => {
       await reveal().onReveal();
@@ -98,7 +89,7 @@ describe("useRevealViewModel", () => {
   });
 
   it("shows Hide after the flip finishes", async () => {
-    const { reveal } = renderReveal(() => Promise.resolve(true));
+    const { reveal } = renderReveal();
 
     await act(async () => {
       await reveal().onReveal();
@@ -111,7 +102,7 @@ describe("useRevealViewModel", () => {
     expect(reveal().canHide).toBe(true);
   });
 
-  it("reveals the image after unlock succeeds", async () => {
+  it("reveals the image after the token request succeeds", async () => {
     const { reveal, store } = await renderRevealed();
 
     expect(reveal().status).toBe("revealed");
@@ -122,20 +113,15 @@ describe("useRevealViewModel", () => {
     expect(state).not.toContain("details-image");
   });
 
-  it("stays idle when unlock is cancelled", async () => {
-    const { reveal } = renderReveal(() => Promise.resolve(false));
-    await act(async () => {
-      await reveal().onReveal();
-    });
-
-    expect(reveal().status).toBe("idle");
-    expect(reveal().isRevealed).toBe(false);
-    expect(reveal().imageUrl).toBeUndefined();
-  });
-
-  it("shows loading while unlock is pending", async () => {
-    const unlockWait = deferred<boolean>();
-    const { reveal } = renderReveal(() => unlockWait.promise);
+  it("shows loading while the token request is pending", async () => {
+    const tokenWait = deferred<void>();
+    server.use(
+      http.post(CARD_DETAILS_TOKEN_URL, async () => {
+        await tokenWait.promise;
+        return HttpResponse.json(CARD_DETAILS);
+      }),
+    );
+    const { reveal } = renderReveal();
 
     act(() => {
       void reveal().onReveal();
@@ -144,7 +130,7 @@ describe("useRevealViewModel", () => {
     expect(reveal().status).toBe("loading");
 
     await act(async () => {
-      unlockWait.resolve(true);
+      tokenWait.resolve();
     });
 
     await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
@@ -155,7 +141,7 @@ describe("useRevealViewModel", () => {
 
   it("sets failed when the token request fails", async () => {
     server.use(revealCardDetailsFailureHandler);
-    const { reveal } = renderReveal(() => Promise.resolve(true));
+    const { reveal } = renderReveal();
 
     await act(async () => {
       await reveal().onReveal();
@@ -210,7 +196,7 @@ describe("useRevealViewModel", () => {
         return HttpResponse.json(CARD_DETAILS);
       }),
     );
-    const { reveal } = renderReveal(() => Promise.resolve(true));
+    const { reveal } = renderReveal();
 
     act(() => {
       void reveal().onReveal();
@@ -242,7 +228,7 @@ describe("useRevealViewModel", () => {
   });
 
   it("ignores a late image load after hide", async () => {
-    const { reveal } = renderReveal(() => Promise.resolve(true));
+    const { reveal } = renderReveal();
 
     await act(async () => {
       await reveal().onReveal();

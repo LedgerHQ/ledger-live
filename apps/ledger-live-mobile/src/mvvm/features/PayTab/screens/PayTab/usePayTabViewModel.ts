@@ -19,10 +19,6 @@ import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequ
 import { track } from "~/analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
-async function unlockCardNumbers() {
-  return true;
-}
-
 export function usePayTabViewModel() {
   const { top, bottom } = useNavigationBarHeights();
   const insets = useSafeAreaInsets();
@@ -89,7 +85,6 @@ export function usePayTabViewModel() {
     top,
     bottom: bottom + insets.bottom,
     login,
-    unlock: unlockCardNumbers,
     cardAssets,
     featureTour,
     balance,

@@ -30,21 +30,10 @@ describe("CardDetails (web)", () => {
     expect(await screen.findByRole("button", { name: MORE_COPY.tile })).toBeVisible();
   });
 
-  it("should keep View off the row when the host granted no unlock", async () => {
-    renderWeb(
-      <Wrapper>
-        <CardDetails />
-      </Wrapper>,
-    );
-
-    expect(await screen.findByRole("button", { name: CARD_COPY.freeze })).toBeVisible();
-    expect(screen.queryByRole("button", { name: CARD_COPY.numbersReveal })).not.toBeInTheDocument();
-  });
-
   it("should flip the card face to the numbers image once the user views them", async () => {
     renderWeb(
       <Wrapper>
-        <CardDetails unlock={() => Promise.resolve(true)} />
+        <CardDetails />
       </Wrapper>,
     );
 

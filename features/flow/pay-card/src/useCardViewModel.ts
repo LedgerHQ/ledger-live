@@ -10,7 +10,6 @@ export function useCardViewModel({
   login,
   assets,
   formatters,
-  unlock,
   onShowMore,
 }: CardProps): CardViewProps {
   const { t } = useTranslation();
@@ -32,7 +31,6 @@ export function useCardViewModel({
     cardVisual,
     assets,
     formatters,
-    unlock,
     onShowMore,
   };
 }

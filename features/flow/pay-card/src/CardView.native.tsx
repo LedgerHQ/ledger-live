@@ -14,7 +14,6 @@ export function CardView({
   assets,
   formatters,
   onShowMore,
-  unlock,
 }: CardViewProps) {
   return (
     <Box lx={{ flex: 1, gap: "s16" }}>
@@ -35,7 +34,6 @@ export function CardView({
             }}
             onTrackEvent={login.onTrackEvent}
             onShowMore={onShowMore}
-            unlock={unlock}
           />
         </>
       ) : (
