@@ -663,6 +663,17 @@ export const WebElementHelpers = {
     return webElementText;
   },
 
+  async isWebElementPresent(id: string, options?: { index?: number }): Promise<boolean> {
+    try {
+      await WebElementHelpers.getWebElementByTestId(id, { index: options?.index }).runScript(
+        el => el.innerText,
+      );
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
   async isWebElementEnabled(element: WebElement) {
     const isEnabled = await element.runScript(
       (el: HTMLButtonElement | HTMLInputElement, android: boolean) => {

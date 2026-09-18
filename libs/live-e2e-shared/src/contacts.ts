@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 // Every separator a user can type. The straight `'` is excluded: iOS rewrites it to `’` on input.
-const CONTACT_NAME_FORMAT_SAMPLE = "O’Neil-Zoé";
+const CONTACT_NAME_FORMAT_SAMPLE = "O’Neil-Zoe";
 
 /**
  * Valid contact name, unique per call — duplicates are rejected on save.

@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-lazy-onboarding-banner",
-  "version": "0.3.0",
+  "version": "0.4.0-next.0",
   "private": true,
   "description": "Cross-platform lazy onboarding banner decision, CTA and session state",
   "main": "src/index.ts",
@@ -20,7 +20,7 @@
     "format:check": "oxfmt src --check",
     "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",

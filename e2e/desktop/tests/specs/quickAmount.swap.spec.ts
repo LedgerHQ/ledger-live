@@ -4,8 +4,6 @@ import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { parseBalanceAmount } from "tests/utils/amountUtils";
 import { expect } from "@playwright/test";
@@ -89,8 +87,6 @@ test.describe("Swap - quick amount buttons", () => {
       annotation: { type: "TMS", description: "B2CQA-5582" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       for (const { fromAccount, fromAccountId, toAccountId } of swapMaxBalancePairs) {
         await test.step(`Currency: ${fromAccount.currency.name}`, async () => {
           await openSwapPairViaDeeplink(app, fromAccountId, toAccountId);
@@ -114,8 +110,6 @@ test.describe("Swap - quick amount buttons", () => {
       annotation: { type: "TMS", description: "B2CQA-5582" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       const { fromAccountId, toAccountId } = swapMaxBalancePairs[0];
       await openSwapPairViaDeeplink(app, fromAccountId, toAccountId);
 
@@ -132,8 +126,6 @@ test.describe("Swap - quick amount buttons", () => {
       annotation: { type: "TMS", description: "B2CQA-5582" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       for (const { fromAccountId, toAccountId } of swapMaxBalancePairs) {
         await openSwapPairViaDeeplink(app, fromAccountId, toAccountId);
 
@@ -182,8 +174,6 @@ test.describe("Swap - quick amount buttons", () => {
       annotation: { type: "TMS", description: "B2CQA-5582" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await performSwapUntilQuoteSelectionStep(app, new Swap(fromAccount, toAccount, ""), "");
 
       expect(await app.swap.isMaxToggleEnabled()).toBe(false);
@@ -228,8 +218,6 @@ test.describe("Swap - quick amount buttons", () => {
       annotation: { type: "TMS", description: "B2CQA-5582" },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await performSwapUntilQuoteSelectionStep(app, new Swap(fromAccount, toAccount, ""), "");
 
       expect(await app.swap.isMaxToggleEnabled()).toBe(false);

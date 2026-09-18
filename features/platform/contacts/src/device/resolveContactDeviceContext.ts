@@ -2,7 +2,15 @@ import type { ContactAddress } from "@domain/entity-contact";
 import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { ContactsDeviceInitializationInput } from "./types";
 
-const SUPPORTED_MANAGER_APP_NAMES = new Set(["Ethereum", "Tron"]);
+/**
+ * The Contacts kit keys its family table by coin app, so the app to open is a
+ * property of the family rather than of the network: EVM networks with an explicit
+ * EIP-155 chain ID register through Ethereum, told apart by that chain ID.
+ */
+const CONTACT_DEVICE_APP_BY_FAMILY: Readonly<Record<string, string>> = {
+  evm: "Ethereum",
+  tron: "Tron",
+};
 
 export class UnsupportedContactDeviceCurrencyError extends Error {
   override name = "UnsupportedContactDeviceCurrencyError" as const;
@@ -24,18 +32,30 @@ export const CONTACTS_DASHBOARD_INITIALIZATION_INPUT: ContactsDeviceInitializati
   requireLatestFirmware: false,
 };
 
+type ContactDeviceCurrency = Readonly<{
+  currency: CryptoCurrency;
+  appName: string;
+  chainId: string | number;
+}>;
+
 function findContactDeviceCurrency(
   currencyId: ContactAddress["currencyId"],
-): CryptoCurrency | undefined {
+): ContactDeviceCurrency | undefined {
   const currency =
     findCryptoCurrencyById(currencyId) ?? findCryptoCurrencyById(currencyId.split("/")[0]);
+  if (currency === undefined) {
+    return undefined;
+  }
 
-  return currency !== undefined && SUPPORTED_MANAGER_APP_NAMES.has(currency.managerAppName)
-    ? currency
-    : undefined;
+  const appName = CONTACT_DEVICE_APP_BY_FAMILY[currency.family];
+  const chainId =
+    currency.family === "evm" ? currency.ethereumLikeInfo?.chainId : currency.coinType;
+
+  return appName === undefined || chainId === undefined
+    ? undefined
+    : { currency, appName, chainId };
 }
 
-/** The Contacts kit keys its family table by coin app, and several EVM networks ship their own. */
 export function isContactDeviceCurrencySupported(
   currencyId: ContactAddress["currencyId"],
 ): boolean {
@@ -45,17 +65,17 @@ export function isContactDeviceCurrencySupported(
 export function resolveContactDeviceContext(
   currencyId: ContactAddress["currencyId"],
 ): ContactDeviceContext {
-  const currency = findContactDeviceCurrency(currencyId);
+  const resolved = findContactDeviceCurrency(currencyId);
 
-  if (currency === undefined) {
+  if (resolved === undefined) {
     throw new UnsupportedContactDeviceCurrencyError(currencyId);
   }
 
   return {
-    blockchainFamily: currency.family,
-    chainId: currency.ethereumLikeInfo?.chainId ?? currency.coinType,
+    blockchainFamily: resolved.currency.family,
+    chainId: resolved.chainId,
     initializationInput: {
-      appName: currency.managerAppName,
+      appName: resolved.appName,
       dependencies: [],
       requireLatestFirmware: false,
     },

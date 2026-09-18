@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-market-banner",
-  "version": "0.10.0",
+  "version": "0.11.0-next.0",
   "private": true,
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -19,6 +19,7 @@
     "lint:ci": "oxlint src --quiet && pnpm lint:tailwind",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet && pnpm lint:tailwind",
     "lint:tailwind": "eslint --no-eslintrc -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",

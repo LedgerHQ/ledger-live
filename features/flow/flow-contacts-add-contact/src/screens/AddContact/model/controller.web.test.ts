@@ -68,19 +68,11 @@ describe("createAddContactController", () => {
     expect(createContact).toHaveBeenCalledWith({ name: "Olivia" });
   });
 
-  it("normalizes a contact name before calling the creation port", async () => {
-    const createContact = jest.fn(async ({ name }) =>
-      contact({
-        id: "contact-elodie",
-        isMe: false,
-        name,
-        addresses: [],
-      }),
-    );
+  it("rejects a contact name with diacritics before calling the creation port", async () => {
+    const createContact = jest.fn();
     const controller = createAddContactController(stubContactCreationPort(createContact));
 
-    await controller.save(" E\u0301lodie ");
-
-    expect(createContact).toHaveBeenCalledWith({ name: "Élodie" });
+    await expect(controller.save(" E\u0301lodie ")).rejects.toThrow();
+    expect(createContact).not.toHaveBeenCalled();
   });
 });

@@ -33,13 +33,15 @@ export const CONCORDIUM_ENERGY = {
 } as const;
 
 /**
- * Buffer added to a PLT fee estimate, as a percentage of the proxy's figure.
+ * Buffer added to the energy of a PLT fee estimate, as a percentage. The fee is
+ * then priced from the buffered energy rather than buffered in its own right —
+ * see `estimateTokenFees`.
  *
  * Energy is a ceiling, not a charge: the chain bills actual execution, so the
  * buffer costs the user nothing while absorbing any drift between preparing the
  * transaction and submitting it.
  *
- * A percentage rather than a float multiplier because energy and cost are both
- * bigints, and a float would need rounding rules of its own.
+ * A percentage rather than a float multiplier because the energy is a bigint,
+ * and a float would need rounding rules of its own.
  */
 export const PLT_ENERGY_BUFFER_PERCENT = BigInt(20);

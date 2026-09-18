@@ -435,6 +435,11 @@
           "viewInExplorer" : "탐색기에서 보기",
           "copied" : "복사됨"
         },
+        "earnBanner" : {
+          "title" : "최대 수익 {{apy}}% {{type}}",
+          "description" : "수익 창출 기회 둘러보기",
+          "button" : "탐색"
+        },
         "accessibility" : {
           "copySwapId" : "스왑 ID 복사"
         }
@@ -682,26 +687,6 @@
   "postOnboardingDebugger" : {
     "buttonTitle" : "테스트"
   },
-  "vaultSigner" : {
-    "modal" : {
-      "title" : "Ledger Vault 연결하기",
-      "info" : "아래 필드를 작성하여 Ledger Vault 워크스페이스 계정을 연결하고 Ledger Wallet에서 트랜잭션을 생성하세요. 설정 > 외부 지갑 서명인에서 정보를 찾으세요.",
-      "info_link" : "자세히 알아보기",
-      "host" : {
-        "title" : "URL 엔드포인트",
-        "placeholder" : "ws://localhost:3030"
-      },
-      "workspace" : {
-        "title" : "워크스페이스 이름",
-        "placeholder" : "워크스페이스"
-      },
-      "token" : {
-        "title" : "운영자 API 토큰",
-        "placeholder" : "토큰"
-      },
-      "submit" : "연결"
-    }
-  },
   "account" : {
     "subHeader" : {
       "moreInfo" : "자세한 정보",
@@ -873,22 +858,32 @@
   },
   "payTab" : {
     "featureTour" : {
-      "title" : "결제 및 송금 받기",
-      "description" : "스테이블코인으로 암호화폐와 실생활 결제의 경계를 허물어 보세요.",
-      "cta" : "확인",
+      "title" : "모든 결제를 한 곳에서",
+      "description" : "새로운 결제 탭에서 크립토를 일상 속 결제에 바로 사용해 보세요.",
+      "cta" : "결제 탭 둘러보기",
       "rows" : {
         "global" : {
-          "title" : "전 세계 어디서나 결제 및 송금 받기",
-          "description" : "저렴한 네트워크 수수료 혜택"
+          "title" : "저장된 주소로 보내기",
+          "description" : "저장된 주소로 암호화폐를 보낼 수 있습니다."
         },
         "volatility" : {
-          "title" : "가격 변동성 최소화",
-          "description" : "스테이블코인은 법정화폐를 기반으로 합니다."
+          "title" : "결제 요청",
+          "description" : "주소록에 저장된 상대에게 바로 입금을 요청할 수 있습니다."
         },
         "card" : {
-          "title" : "카드로 결제하고 1% 캐시백 받기",
-          "description" : "USDC, USDT, BTC, ETH 등 다양한 자산 결제를 지원합니다"
+          "title" : "크립토 카드로 전 세계 어디서나 자유롭게 쇼핑",
+          "description" : "제한 없는 1% 캐시백 혜택까지 누려보세요."
         }
+      }
+    },
+    "cardMore" : {
+      "tile" : "더 보기",
+      "title" : "더 보기",
+      "rows" : {
+        "managePin" : "PIN 코드 관리",
+        "accessBaanx" : "Baanx 액세스",
+        "help" : "도움말",
+        "logout" : "로그아웃"
       }
     },
     "balance" : {
@@ -904,7 +899,73 @@
     },
     "card" : {
       "title" : "크립토 카드",
-      "balanceLabel" : "잔액"
+      "balanceLabel" : "잔액",
+      "freeze" : "동결",
+      "unfreeze" : "동결 해제",
+      "goBack" : "돌아가기",
+      "freezeConfirm" : {
+        "title" : "카드를 동결하면 더 이상 사용할 수 없습니다.",
+        "description" : "카드 동결은 언제든지 해제할 수 있습니다.",
+        "confirm" : "지금 동결하기",
+        "errorTitle" : "동결 실패"
+      },
+      "unfreezeConfirm" : {
+        "title" : "카드를 동결 해제하시겠습니까?",
+        "confirm" : "동결 해제하기",
+        "errorTitle" : "동결 해제 실패"
+      },
+      "confirmError" : {
+        "description" : "문제가 발생했습니다. 다시 시도하세요.",
+        "retry" : "다시 시도하세요"
+      },
+      "numbers" : {
+        "reveal" : "보기",
+        "hide" : "숨기기",
+        "failed" : "카드 번호를 불러올 수 없습니다",
+        "imageAlt" : "카드 번호"
+      }
+    },
+    "cardTransactions" : {
+      "title" : "Transactions",
+      "categories" : {
+        "SUBSCRIPTIONS" : "Subscriptions",
+        "FOOD" : "Food",
+        "TRAVEL" : "Travel",
+        "ENTERTAINMENT" : "Entertainment",
+        "HEALTH" : "Health",
+        "ATM" : "ATM",
+        "UTILITIES" : "Utilities",
+        "MISC" : "Other"
+      },
+      "detail" : {
+        "amount" : "Amount",
+        "status" : "Status",
+        "card" : "Card",
+        "cardInfo" : "The last four digits of the card used for this payment.",
+        "fundingSource" : "Funding source",
+        "transactionId" : "Transaction ID",
+        "copyTransactionId" : "Copy transaction ID",
+        "today" : "Today {{time}}",
+        "yesterday" : "Yesterday {{time}}",
+        "dateTime" : "{{date}} {{time}}",
+        "statusValues" : {
+          "CONFIRMED" : "Confirmed",
+          "PENDING" : "Pending",
+          "DECLINED" : "Declined",
+          "REVERTED" : "Reverted"
+        }
+      }
+    },
+    "cardOnboarding" : {
+      "widget" : {
+        "title" : "카드 설정하기",
+        "allDone" : "설정이 모두 완료되었습니다."
+      },
+      "dialog" : {
+        "title" : "카드 설정을 완료하세요",
+        "stepComplete" : "완료",
+        "gotIt" : "확인"
+      }
     },
     "contacts" : {
       "title" : "저장된 주소로 보내기",
@@ -923,7 +984,20 @@
       "actions" : {
         "pay" : "저장된 주소로 보내기",
         "more" : "더 보기",
+        "viewContact" : "주소록 보기",
         "viewTransactions" : "트랜잭션 보기"
+      },
+      "addressPicker" : {
+        "title" : "{{name}} 주소 선택",
+        "addAddress" : "주소 추가"
+      },
+      "paySuccess" : {
+        "title" : "지불 완료({{recipient}})",
+        "amount" : "금액",
+        "estimatedTime" : "예상 시간",
+        "from" : "사용 자산",
+        "viewTransaction" : "트랜잭션 보기",
+        "close" : "닫기"
       }
     },
     "actions" : {
@@ -952,6 +1026,74 @@
         }
       }
     },
+    "bankTransferIntro" : {
+      "title" : "현금을 스테이블코인으로 바로",
+      "description" : "현금을 이체하고 Ledger Wallet™으로 스테이블코인을 바로 받아보세요.",
+      "createAccount" : "계정 생성하기",
+      "logIn" : "Noah 로그인",
+      "providedBy" : "Noah 제공 서비스",
+      "rows" : {
+        "bank" : {
+          "title" : "모든 은행 이체 지원",
+          "description" : "SEPA 또는 ACH를 통해 급여, 결제 대금, 입금까지 한번에."
+        },
+        "fees" : {
+          "title" : "숨겨진 수수료 없음",
+          "description" : "수수료 0.25%로 은행에서 블록체인으로 바로 연결."
+        },
+        "earn" : {
+          "title" : "보유 자산을 바로 활용",
+          "description" : "스테이블코인 스왑 등으로 수익 창출 가능."
+        }
+      }
+    },
+    "cardLogin" : {
+      "title" : "크립토 카드",
+      "beforeIntro" : {
+        "title" : "Get your crypto card",
+        "description" : "결제할 때마다 1% 캐시백 혜택이 지급됩니다",
+        "action" : "카드 발급받기",
+        "alreadyHaveCard" : "이미 카드가 있습니다"
+      },
+      "afterIntro" : {
+        "title" : "Log in to access your Card",
+        "description" : "You’ve been logged out for security",
+        "action" : "Log in"
+      },
+      "errors" : {
+        "pkce_failed" : "로그인을 시작할 수 없습니다. 다시 시도하세요.",
+        "browser_open_failed" : "로그인 페이지를 열 수 없습니다. 다시 시도하세요.",
+        "missing_attempt" : "이 로그인은 더 이상 유효하지 않습니다. 다시 로그인해 주세요.",
+        "exchange_failed" : "로그인을 완료할 수 없습니다. 다시 시도하세요.",
+        "persist_failed" : "세션을 저장하지 못했습니다. 다시 시도하세요.",
+        "fetch_user_failed" : "카드를 불러올 수 없습니다. 다시 시도하세요."
+      }
+    },
+    "cardLoginIntro" : {
+      "title" : "암호화폐로 결제하면 캐시백이 혜택이",
+      "providedBy" : "Baanx 제공 서비스",
+      "createAccount" : "계정 생성하기",
+      "logIn" : "Baanx 로그인",
+      "wallets" : {
+        "applePay" : "Apple Pay",
+        "googlePay" : "Google Pay",
+        "both" : "Apple Pay 또는 Google Pay"
+      },
+      "rows" : {
+        "cashback" : {
+          "title" : "무제한 1% 암호화폐 캐시백",
+          "description" : "USDC, USDT, BTC를 사용하는 모든 크립토 카드 결제에 적용됩니다."
+        },
+        "virtualCard" : {
+          "title" : "무료 가상 카드 발급",
+          "description" : "{{wallet}}에 추가하고 결제에 바로 사용해 보세요."
+        },
+        "topUp" : {
+          "title" : "Ledger Wallet™에서 안전하게 충전",
+          "description" : "모든 이체는 사용자의 Ledger 사이너로 안전하게 승인됩니다."
+        }
+      }
+    },
     "request" : {
       "title" : "{{asset}} 요청",
       "networkLabel" : "{{network}} 네트워크",
@@ -962,6 +1104,10 @@
         "copied" : "복사됨",
         "save" : "저장",
         "verify" : "확인"
+      },
+      "verifyHint" : {
+        "message" : "공유하기 전에\n사용 중인 Ledger 장치에서\n주소를 확인하세요",
+        "gotIt" : "확인"
       },
       "verifyAddress" : {
         "introTitle" : "주소를 확인하세요",
@@ -1602,10 +1748,6 @@
     "referralProgram" : {
       "title" : "추천하고 $10를 받으세요",
       "description" : "친구를 추천하면 두 분 모두에게 $10 상당의 비트코인을 제공합니다."
-    },
-    "vaultSigner" : {
-      "title" : "Vault 서명인 모드",
-      "link" : "Vault 지원 센터"
     }
   },
   "signmessage" : {
@@ -2511,10 +2653,6 @@
         "title" : "장치"
       },
       "details" : {
-        "solanaRawTransaction" : {
-          "title" : "블라인드 서명 필요",
-          "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
-        },
         "utxoLag" : "계정에 코인 수가 많아 트랜잭션 확인 및 서명에 시간이 오래 소요될 수 있습니다.",
         "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
         "from" : "수신",
@@ -2595,7 +2733,7 @@
     "addressMatched" : "주소 일치함",
     "addressNotFound" : "주소를 찾을 수 없음",
     "alreadyUsed" : "이미 사용됨 · {{date}}",
-    "addressBookUnsupported" : "{{family}}: 아직 지원되지 않습니다",
+    "addressBookUnsupported" : "{{family}} 미지원",
     "recentSendWillAppear" : "최근 전송 내역이 여기에 표시됩니다",
     "contactsWillAppear" : "주소록이 여기에 표시됩니다",
     "selectAddress" : "주소 선택",
@@ -2652,11 +2790,12 @@
       "walletNotExist" : "지갑이 존재하지 않습니다"
     },
     "skipMemo" : {
-      "title" : "{{memoLabel}} 입력을 건너뛰시겠습니까?",
+      "title" : "{{memoLabel}} 없이 보내시겠어요?",
       "description" : "수령인이 {{memoLabel}} 입력을 요구하는 경우, 자산을 분실할 수 있습니다.",
       "notRequired" : "수령인이 {{memoLabel}}를 요청하지 않나요?",
-      "confirm" : "네, 건너뛸게요",
-      "neverAskAgain" : "이 경고 메시지를 다시 표시하지 않기"
+      "confirm" : "네, {{memoLabel}} 없이 전송하기",
+      "cancel" : "아니요, 돌아가기",
+      "neverAskAgain" : "다시 묻지 않기"
     },
     "tagHelp" : {
       "inputLabel" : "{{memoLabel}} 입력",
@@ -2724,6 +2863,35 @@
       "selectSufficientCoins" : "충분한 코인을 선택하세요",
       "amountToSendInCurrency" : "보낼 수량({{ticker}})",
       "amountInputLabel" : "전송 금액"
+    },
+    "recipient" : {
+      "selfTransfer" : {
+        "title" : "Self transfer",
+        "toPrivate" : {
+          "action" : "Send to private balance",
+          "label" : "Private balance"
+        },
+        "toPublic" : {
+          "action" : "Send to public balance",
+          "label" : "Public balance"
+        }
+      }
+    },
+    "balanceType" : {
+      "title" : "Select balance",
+      "transparent" : {
+        "title" : "Public balance",
+        "subtitle" : "Transparent"
+      },
+      "shielded" : {
+        "title" : "Private balance",
+        "subtitle" : "Shielded",
+        "pendingNoticeTitle" : "Funds maturing",
+        "pendingNotice" : "Some shielded notes are still maturing and may not be spendable yet"
+      },
+      "zeroBalance" : {
+        "warning" : "No available balance"
+      }
     }
   },
   "releaseNotes" : {
@@ -5452,6 +5620,12 @@
       "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다.",
       "enableCountervaluesStaging" : "Countervalues API 스테이징",
       "enableCountervaluesStagingDesc" : "프로덕션 대신 스테이징 Countervalues API를 사용하세요.",
+      "enableMockServerTransport" : "Mock 서버 전송",
+      "enableMockServerTransportDesc" : "실제 장치 대신 장치 Mock 서버에 연결하도록 Device Management Kit Mock 서버 트랜스포트를 활성화합니다. MOCK_SERVER_TRANSPORT_URL이 다른 위치를 지정하지 않는 한 공유 Mock 서버를 사용합니다. 변경 사항을 적용하려면 앱을 다시 시작해야 합니다.",
+      "mockServerStatus" : {
+        "connected" : "Mock 서버 연결됨 - 클릭하여 세션 토큰 복사, 우클릭하여 설정 UI 열기",
+        "disconnected" : "Mock 서버에 연결할 수 없음"
+      },
       "openOnboardingAppInstallDebug" : "온보딩 앱 설치 디버그 화면 열기",
       "openOnboardingAppInstallDebugDesc" : "동기화 온보딩 앱 설치 단계의 구성 요소가 있는 화면을 엽니다."
     },
@@ -5554,10 +5728,6 @@
         "1559DeactivateGate" : {
           "title" : "EIP1559 최소 우선 수수료 게이트 비활성화",
           "description" : "이를 통해 예상되는 최소 우선 수수료 없이 트랜잭션을 전송할 수 있습니다. 이로 인해 트랜잭션이 멤풀에서 영원히 대기 상태로 멈출 수 있습니다."
-        },
-        "vaultSigner" : {
-          "title" : "Vault 서명인",
-          "description" : "운영자 API 토큰으로 Ledger Vault를 서명인으로 사용하세요"
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "개인 맞춤형 우선 수수료 게이트",
@@ -7117,6 +7287,10 @@
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
+    "UnexpectedGetBalanceError" : {
+      "title" : "잔액을 불러올 수 없습니다",
+      "description" : "인터넷 연결을 확인하고 다시 시도하세요."
+    },
     "NotEnoughTransferAmount" : {
       "title" : "뉴런 스테이킹을 위해서는 최소 1 ICP 이상이 필요합니다."
     },
@@ -7316,6 +7490,20 @@
     "ZcashAmountBelowDustThreshold" : {
       "title" : "최소 송금액({{minimumZatoshis}} Zatoshi)보다 작아 전송이 불가능합니다."
     },
+    "ZcashMemoTooLong" : {
+      "title" : "메모는 {{maxBytes}} 바이트를 초과할 수 없습니다"
+    },
+    "ZcashSendTooLarge" : {
+      "title" : "한 번에 전송할 수 있는 최대 금액을 초과했습니다. 금액을 여러 번에 나누어 전송하세요."
+    },
+    "ZcashShieldedKeyMissing" : {
+      "title" : "Activate your private balance first",
+      "description" : "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+    },
+    "ZcashNotesNotYetSpendable" : {
+      "title" : "These funds are not spendable yet",
+      "description" : "Please try again in a few minutes"
+    },
     "InvalidNonce" : {
       "title" : "논스가 필요합니다"
     },
@@ -7428,6 +7616,9 @@
     },
     "TezosStakeBlockedByPendingUnstake" : {
       "title" : "이전 검증인으로부터 진행 중인 언스테이킹 절차가 먼저 완료되어야 합니다"
+    },
+    "TezosStakeAmountTooSmall" : {
+      "title" : "최소 금액을 충족하지 않아 스테이킹이 불가합니다."
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "먼저 부계정을 모두 비워주세요"
@@ -7713,6 +7904,58 @@
     },
     "ConcordiumAddressVerificationFailedError" : {
       "title" : "주소 인증 실패"
+    },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "네트워크 수수료를 지불할 CCD가 부족합니다",
+      "description" : "네트워크 수수료는 전송하는 토큰이 아닌 CCD로 지불됩니다. 이 계정에 CCD를 추가하고 다시 시도하세요."
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "이 토큰의 전송이 일시 중지되었습니다",
+      "description" : "토큰 발행자가 모든 전송을 일시 중단했습니다. 전송이 재개되면 다시 시도할 수 있습니다."
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "이 토큰을 전송할 수 없는 계정입니다",
+      "description" : "토큰 발행자가 전송 가능 대상을 제한하고 있으며, 이 계정에는 권한이 없습니다. 액세스 권한에 대해서는 토큰 발행자에게 문의하세요."
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "토큰 관련 제한 사항을 확인할 수 없습니다",
+      "description" : "이 토큰의 전송 규칙을 읽을 수 없어 전송 허용 여부를 확인할 수 없습니다. 계정을 다시 동기화한 후 다시 시도해 주세요."
+    },
+    "ConcordiumRecipientNotAllowed" : {
+      "title" : "This address can't receive {{ticker}}",
+      "description" : "It hasn't been approved by the token issuer. Approval is managed by the issuer, not by Ledger."
+    },
+    "ConcordiumRecipientDenied" : {
+      "title" : "This address is restricted from receiving {{ticker}}",
+      "description" : "The token issuer has restricted this address. Contact the issuer for details."
+    },
+    "ConcordiumRecipientRestrictionsUnverified" : {
+      "title" : "{{ticker}} restrictions could not be verified",
+      "description" : "Whether this address may receive {{ticker}} could not be checked, so the transfer cannot be confirmed as allowed. Please check your connection and try again."
+    },
+    "ConcordiumRecipientNotFound" : {
+      "title" : "This address doesn't exist on Concordium",
+      "description" : "Check the address and try again. Sending to an address that was never created fails on the network and still costs a fee."
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "이 토큰은 사용자의 Ledger 장치에서 서명할 수 없습니다",
+      "description" : "이 토큰은 소수점 이하 {{decimals}}자리를 사용하며, 사용 중인 장치는 최대 {{maxDecimals}}자리까지만 지원합니다. 수신 및 보관에는 영향을 미치지 않습니다."
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "이 토큰은 더 이상 계정에 존재하지 않습니다.",
+      "description" : "선택한 토큰을 더 이상 사용할 수 없습니다. 트랜잭션을 다시 시작해 주세요."
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "이 트랜잭션을 준비할 수 없습니다",
+      "description" : "토큰 세부 정보가 사용자의 Ledger 장치에서 허용하는 범위를 벗어나므로 트랜잭션을 생성할 수 없습니다. Ledger 지원팀으로 문의해 주세요"
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "앱 업데이트가 필요합니다",
+      "description" : "Ledger 장치에 설치된 Concordium 앱은 토큰 전송을 지원하지 않습니다. 내 Ledger에서 업데이트하고 다시 시도하세요."
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
+      "description" : "Concordium 앱에서 트랜잭션을 처리할 수 없었습니다. 문제가 지속되면 Ledger 지원팀으로 문의하세요."
     },
     "StacksMemoTooLong" : {
       "title" : "메모 길이가 너무 깁니다"
@@ -8111,6 +8354,108 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "UTXO 제한을 초과하는 수량입니다."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "해제 대기 기간이 너무 짧습니다",
+      "description_one" : "Internet Computer는 최소 {{minDays}}일의 해제 대기 기간이 필요합니다.",
+      "description_other" : "Internet Computer는 최소 {{minDays}}일의 해제 대기 기간이 필요합니다."
+    },
+    "ICPInvalidDissolveDelayIncrease" : {
+      "title" : "유효하지 않은 입력값",
+      "description" : "0보다 큰 정수(일 단위)를 입력해 주세요."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "해제 대기 기간이 너무 깁니다",
+      "description_one" : "Internet Computer는 뉴런의 해제 대기 기간을 최대 {{maxDays}}일로 제한합니다.",
+      "description_other" : "Internet Computer는 뉴런의 해제 대기 기간을 최대 {{maxDays}}일로 제한합니다."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "해제 대기 기간은 단축할 수 없습니다",
+      "description" : "뉴런의 해제 대기 기간은 늘릴 수만 있습니다. 단축하려면 대신 뉴런 해제를 시작해 주세요."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "뉴런을 찾을 수 없습니다",
+      "description" : "최근 동기화된 스냅샷에 이 뉴런이 없습니다. 뉴런을 동기화한 후 다시 시도해 주세요."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "유효하지 않은 프린시펄(principal)",
+      "description" : "핫키는 유효한 Internet Computer 프린시펄이어야 합니다."
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "이미 추가된 핫키입니다",
+      "description" : "이 프린시펄은 이미 해당 뉴런의 핫키로 등록되어 있습니다."
+    },
+    "ICPHotKeyIsController" : {
+      "title" : "이 프린시펄은 이미 뉴런을 관리하고 있습니다.",
+      "description" : "다른 프린시펄을 입력하세요. 핫키는 투표 및 팔로우 설정만 가능하며, 해당 기능은 이미 컨트롤러 권한으로 수행할 수 있습니다."
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "해당 뉴런이 분할할 수 있는 수량 범위를 벗어났습니다.",
+      "description" : "기존 뉴런과 새 뉴런 모두 최소 1 ICP를 스테이킹 상태로 유지해야 하며, 이동되는 수량에 대한 네트워크 수수료가 추가로 필요합니다."
+    },
+    "ICPSpawnNotAllowed" : {
+      "title" : "이 뉴런에서는 생성할 수 없습니다.",
+      "description" : "이미 생성 중인 뉴런에서는 다시 생성할 수 없으며, 생성된 누적 보상은 네트워크의 누적 보상 조정 후 최소 1 ICP를 남겨두어야 합니다. 뉴런을 동기화하여 현재 상태를 확인하세요."
+    },
+    "ICPStakeMaturityNotAllowed" : {
+      "title" : "이 뉴런의 누적 보상을 예치할 수 없습니다.",
+      "description" : "뉴런이 생성 중이거나 완전히 해제된 경우, 또는 누적 보상이 전혀 없는 경우에는 이를 예치할 수 없습니다. 뉴런을 동기화하여 현재 상태를 확인하세요."
+    },
+    "ICPFollowTopicNotAllowed" : {
+      "title" : "이 주제는 팔로우할 수 없습니다",
+      "description" : "Internet Computer에서 이 주제를 폐기했거나, Ledger Internet Computer 앱이 아직 해당 주제에 대한 팔로우 서명을 지원하지 않습니다. 다른 주제를 선택하세요."
+    },
+    "ICPDisburseNotAllowed" : {
+      "title" : "이 뉴런의 예치금을 회수할 수 없습니다.",
+      "description" : "뉴런이 완전히 잠금 해제되고 예치금이 네트워크 수수료보다 많은 경우에만 출금할 수 있습니다. 뉴런을 동기화하여 현재 상태를 확인하세요."
+    },
+    "ICPTooManyHotKeys" : {
+      "title" : "핫키 등록 한도 초과",
+      "description" : "뉴런은 최대 {{max}}개의 핫키를 보유할 수 있습니다. 새로운 핫키를 추가하려면 기존 핫키를 하나 제거하세요."
+    },
+    "ICPTopUpBelowMinimumStake" : {
+      "title" : "추가 예치 금액 부족",
+      "description" : "추가 예치 후 뉴런 수량은 최소 1 ICP 이상이어야 합니다. 마지막 동기화 기준, 이 뉴런에는 최소 {{missing}} ICP가 더 필요합니다. 최소 기준에 미달하는 금액을 전송해도 뉴런 계정에는 입금되지만, 추후 추가 예치를 통해 최소 잔액 조건을 충족할 때까지는 예치금으로 반영되지 않습니다."
+    },
+    "ICPStakeNotRefreshed" : {
+      "title" : "예치금은 전송되었으나 뉴런이 업데이트되지 않았습니다",
+      "description" : "ICP가 뉴런 계정으로 전송되었으나, Internet Computer 거버넌스에서 이를 반영한 뉴런 업데이트를 거부했습니다. {{reason}} 보낸 자산은 안전합니다. 해당 금액은 뉴런 계정에 그대로 보관되며, 총잔액을 1 ICP 이상으로 채우는 다음 추가 예치 시 합산되어 반영됩니다. Ledger Wallet에서는 아직 해당 입금 내역을 확인할 수 없으므로, 금액 입력란에는 최근 동기화 기준으로 확인된 전체 부족분이 계속 표시됩니다."
+    },
+    "ICPStakeMemoNotRecoverable" : {
+      "title" : "이 뉴런에는 자산을 추가할 수 없습니다.",
+      "description" : "뉴런에 자산을 추가하려면 해당 뉴런을 생성한 트랜잭션의 메모가 필요하지만, 현재 계정 내역에는 해당 메모가 없습니다. 뉴런을 생성했던 계정에서 자산을 추가해 주세요."
+    },
+    "ICPCallUnconfirmed" : {
+      "title" : "처리 결과 알 수 없음",
+      "description" : "Internet Computer가 요청을 접수했으나 결과를 반환하지 않아, 정상 반영 여부를 확인할 수 없습니다. 다시 시도하기 전에 뉴런을 동기화하여 상태를 확인해 주세요."
+    },
+    "ICPNeuronsNotRead" : {
+      "title" : "뉴런 정보를 새로 불러오지 못했습니다",
+      "description" : "Internet Computer 네트워크에서 뉴런 정보를 가져오지 못해 변경 사항이 적용되지 않았습니다. 다시 시도해 주세요."
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "새로운 뉴런에 ICP를 락업합니다",
+      "description" : "뉴런의 기본 락업 해제 기간이 너무 짧아 투표 참여나 보상 수령이 불가능합니다. 'Manage Neurons(뉴런 관리)'에서 락업 해제 기간을 늘려주세요. 스테이킹된 자산은 해당 해제 기간이 지나야만 다시 출금하거나 사용할 수 있습니다."
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "기존 락업된 스테이킹 물량에 추가합니다",
+      "description" : "이 수량은 뉴런의 기존 스테이킹 자산에 합산되며 동일한 락업 해제 기간이 적용됩니다. 따라서 락업 해제가 완료될 때까지는 사용할 수 없습니다."
+    },
+    "ICPGovernanceRejected" : {
+      "title" : "네트워크에서 해당 요청을 거부했습니다",
+      "description" : "Internet Computer 거버넌스에서 요청을 거부하여 뉴런 상태가 유지되었습니다. 뉴런을 동기화하여 현재 상태를 확인하세요. {{reason}}"
+    },
+    "ICPCallRejected" : {
+      "title" : "요청이 처리되지 않았습니다",
+      "description" : "Internet Computer 네트워크가 실행 전에 요청을 거부하여 변경 사항이 없습니다. 다시 시도해 주세요. {{reason}}"
+    },
+    "ICPInvalidPercentage" : {
+      "title" : "범위 초과",
+      "description" : "1에서 100 사이의 정수를 입력해 주세요."
+    },
+    "CurrencyRegionRestrictedError" : {
+      "title" : "{{currencyName}} is not available in your region",
+      "description" : "Access to {{currencyName}} is restricted in your region."
     }
   },
   "cryptoOrg" : {
@@ -8230,6 +8575,7 @@
             "inactiveTooltip" : "검증인을 찾을 수 없습니다",
             "overstakedTooltip" : "이 노드는 스테이킹 한도를 초과하여 연간 수익률이 최적 수준보다 낮습니다",
             "activeTooltip" : "위임된 수량이 보상을 생성합니다",
+            "fetchErrorTooltip" : "검증인 데이터를 불러올 수 없습니다. 다시 시도하세요.",
             "delegated" : "위임됨",
             "rewards" : "보상"
           },
@@ -8308,6 +8654,8 @@
             "newValidatorLabel" : "새로운 위임",
             "newValidatorSelectPlaceholder" : "검증인 선택",
             "removedValidatorSelectPlaceholder" : "이전에 선택한 검증인을 더 이상 이용할 수 없습니다.",
+            "unableToLoadSelectPlaceholder" : "검증인 목록을 불러올 수 없습니다",
+            "loadingValidatorPlaceholder" : "검증인 목록 불러오는 중...",
             "newValidatorSelectNoOption" : "'{{validatorName}}'와/과 일치하는 검증인이 없습니다",
             "amountLabel" : "재위임할 금액",
             "alert" : "헤데라에서 스테이킹하는 경우, 남아 있는 전체 수량이 스테이킹되고, 온전히 유동적인 상태를 유지해 락업 기간이나 슬래싱 리스크가 없습니다. 스테이킹 보상이 시작되기까지 최대 48시간을 대기해야 할 수 있습니다.",
@@ -8874,11 +9222,13 @@
     "emptyAssetList" : "자산을 찾을 수 없습니다",
     "selectAsset" : "자산 선택",
     "selectNetwork" : "네트워크 선택",
-    "unsupportedAssetTooltip" : "{{asset}}은(는) 아직 지원되지 않습니다.",
-    "unsupportedNetworkTooltip" : "{{network}} 네트워크는 아직 지원되지 않습니다.",
+    "unsupportedAssetTooltip" : "{{asset}} 미지원",
+    "unsupportedNetworkTooltip" : "{{network}} 네트워크는 아직 지원되지 않습니다",
+    "notAvailableYet" : "지원 예정",
     "selectAccount" : "계정 선택",
     "selectAccountPerpsTitle" : "Hyperliquid 계정 선택",
-    "selectAccountPerpsDescription" : "무기한 선물에 자산을 예치하려면 Hyperliquid 계정이 필요합니다. 계속하려면 계정을 추가하세요.",
+    "selectAccountPerpsDescription" : "거래를 시작하려면 입금 계좌를 선택해 주세요",
+    "selectAccountPerpsEmptyDescription" : "무기한 선물 거래 자금을 입금하려면 Hyperliquid 계정이 필요합니다. 먼저 계정을 추가하세요.",
     "selectDepositCurrencyTitle" : "입금할 자산 선택",
     "selectDepositCurrencyDescription" : "지원되는 모든 자산을 사용할 수 있습니다. 필요한 경우 자동으로 스왑됩니다.",
     "accountCount_one" : "{{count}}개 계정",
@@ -8908,6 +9258,11 @@
       },
       "cta" : "다시 시도하세요"
     }
+  },
+  "perpsAccountBanner" : {
+    "title" : "About Hyperliquid account",
+    "description" : "This account is related to Perpetual trading. Transactional actions are not supported for this account",
+    "cta" : "Open Perps"
   },
   "portfolio" : {
     "title" : "홈",
@@ -9123,7 +9478,7 @@
         "memo" : {
           "label" : "메모(선택)",
           "placeholder" : "메모 입력",
-          "tooltip" : "이 보호된 트랜잭션에 비공개 메시지를 첨부합니다. 수신자만 읽을 수 있습니다. (최대 512바이트)"
+          "tooltip" : "이 보호된 결제 트랜잭션에 암호화된 메모를 추가합니다. 수신자만 확인할 수 있습니다. (최대 512바이트)"
         },
         "syncBanner" : {
           "stopped" : {
@@ -9146,15 +9501,18 @@
         "selfTransfer" : {
           "toPrivate" : "비공개 수량(내 계정)으로 전송",
           "toPublic" : "공개 수량(내 계정)으로 전송",
-          "unavailable" : "아직 비공개 주소를 사용할 수 없습니다. 이 기능을 활성화하려면 뷰 키를 내보내기 하세요.",
+          "unavailable" : "계정에서 Shielded 기능이 활성화되면 비공개 주소를 사용하실 수 있습니다.",
           "privacyWarning" : "이 작업을 진행하면 쉴디드 자금이 누구나 볼 수 있는 공개 주소에 연결됩니다. 외부 비공개 주소로 송금해야만 익명성이 안전하게 유지됩니다."
+        },
+        "confirm" : {
+          "privateTransaction" : "Private transaction — verify amount on your device"
         }
       },
       "state" : {
-        "showBalance" : "잔액 보기",
+        "showBalance" : "Shielded 활성화",
         "startSync" : "동기화 시작",
         "stopSync" : "동기화 중지",
-        "upToDate" : "최신",
+        "upToDate" : "수량 업데이트",
         "lastSync" : "마지막 동기화: {{date}}",
         "estimatedTimeRemaining" : "남은 예상 시간: {{hours}}:{{minutes}}",
         "syncFailed" : "비공개 수량 동기화 실패"
@@ -9325,6 +9683,88 @@
         "errorTitle" : "비공개 수량 동기화 실패",
         "errorDesc" : "문제가 발생했습니다. 잠시 후 다시 시도하세요"
       }
+    },
+    "bond" : {
+      "flow" : {
+        "title" : "ALEO 본딩",
+        "steps" : {
+          "validator" : {
+            "title" : "검증인",
+            "fetchError" : "검증인 목록을 불러올 수 없습니다.",
+            "totalStake" : "총 스테이킹",
+            "rateAndCommission" : "{{rate}}% 예상 · {{commission}}% 수수료",
+            "commissionOnly" : "{{commission}}% 수수료",
+            "rowSubtitleClosed" : "검증인의 신규 예치가 마감되었습니다.",
+            "rowSubtitleUnbonding" : "검증인이 언본딩 중입니다",
+            "unbondingTooltip" : "이 검증인은 본인의 예치금을 출금하는 중입니다. 해당 출금액 수령이 완료될 때까지 네트워크는 이 검증인에 대한 모든 신규 예치를 거부합니다.",
+            "rowSubtitleEarnsNothing" : "검증인 보상 없음",
+            "nonEarning" : {
+              "fullCommission" : "이 검증인은 수수료를 100% 부과하므로 위임자에게 분배되는 보상이 없습니다.",
+              "overConcentrated" : "이 검증인은 전체 예치된 ALEO의 25% 이상을 보유하고 있습니다. 프로토콜은 해당 한도를 초과하는 수량에 대해 보상을 지급하지 않으므로 위임자가 받을 보상이 없습니다."
+            },
+            "topUpOnly" : "Aleo는 계정당 하나의 검증인만 허용합니다. 현재 검증인에게 예치금을 추가하거나, 먼저 예치를 해제한 후 다른 검증인을 선택할 수 있습니다."
+          },
+          "amount" : {
+            "title" : "수량",
+            "minimum" : "보상을 받으려면 이 검증인에게 예치한 총 수량이 최소 10,000 ALEO 이상이어야 합니다. 공개 ALEO만 스테이킹할 수 있습니다. 스테이킹을 하려면 먼저 비공개 수량을 공개 수량으로 전환해 주세요."
+          },
+          "connectDevice" : {
+            "title" : "장치",
+            "validatorLabel" : "검증인"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "broadcastError" : "본딩 요청을 전송할 수 없습니다.",
+            "success" : {
+              "title" : "본딩 요청 전송 완료",
+              "text" : "본딩 요청을 처리하고 있습니다.",
+              "cta" : "세부사항 보기"
+            }
+          }
+        }
+      }
+    },
+    "manage" : {
+      "headerAction" : "수익 창출",
+      "title" : "스테이킹 관리",
+      "comingSoonTooltip" : "곧 공개 예정",
+      "bond" : {
+        "title" : "본딩",
+        "description" : "ALEO를 검증인에게 본딩하고 보상을 받으세요."
+      },
+      "unbond" : {
+        "title" : "본딩 해제",
+        "description" : "본딩된 ALEO를 해제합니다. 자산은 언본딩 기간이 지난 후 자산을 사용할 수 있습니다."
+      },
+      "claim" : {
+        "title" : "수령",
+        "description" : "본딩 해제된 ALEO를 사용 가능한 잔액으로 가져옵니다."
+      },
+      "unbondPendingTooltip" : "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding is unavailable until it has gone through."
+    },
+    "unbond" : {
+      "flow" : {
+        "title" : "Unbond ALEO",
+        "steps" : {
+          "amount" : {
+            "title" : "Amount",
+            "unbondableBanner" : "Maximum unbondable amount is",
+            "belowMinimum" : "If unbonding would leave less than {{minAmount}} bonded, your entire bonded balance is unbonded instead, because the minimum stake would no longer be met."
+          },
+          "connectDevice" : {
+            "title" : "Device"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Unbond submitted",
+              "text" : "Your unbonding request has been broadcast.",
+              "cta" : "View details"
+            },
+            "broadcastError" : "Your unbond transaction was signed but could not be broadcast."
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9380,6 +9820,39 @@
       "seeWhatsNew" : "새로운 소식 살펴보기",
       "next" : "다음",
       "gotIt" : "확인"
+    }
+  },
+  "q3Tour" : {
+    "slides" : {
+      "intro" : {
+        "title" : "최신 업데이트 둘러보기",
+        "description" : "새로운 전송, 결제, 수익 창출 방법을 만나보세요."
+      },
+      "contact" : {
+        "title" : "복잡하고 긴 주소는 이제 그만",
+        "description" : "주소록 기능을 소개합니다 지갑 주소를 이름과 함께 저장하여 쉽게 검색하고, 쉽게 전송하세요."
+      },
+      "contactNoPay" : {
+        "title" : "주소록 기능을 만나보세요",
+        "description" : "복잡하고 긴 주소는 이제 안녕! 지갑 주소를 이름과 함께 저장하여 쉽게 검색하고, 쉽게 전송하세요."
+      },
+      "pay" : {
+        "title" : "페이(Pay) 기능을 소개합니다",
+        "description" : "주소록에 저장된 주소로 송금하거나 결제를 요청하고 암호화폐 카드로 캐시백을 받아보세요. 이제 탭 하나로 모두 해결하세요."
+      },
+      "payNoCard" : {
+        "title" : "페이(Pay) 기능을 소개합니다",
+        "description" : "하나의 탭에서 주소록 결제와 결제 요청까지, 간편하게 이용하세요."
+      },
+      "yield" : {
+        "title" : "암호화폐는 그대로 보유하면서 자산 유동성을 누려보세요",
+        "description" : "Morpho 기반의 Yield.xyz를 통해 랩핑된 비트코인(WBTC)을 담보로 제공하고 스테이블코인을 대출받을 수 있습니다."
+      }
+    },
+    "cta" : {
+      "start" : "지금 확인하기",
+      "next" : "다음",
+      "done" : "모두 확인했습니다"
     }
   },
   "productTour" : {
@@ -9511,6 +9984,16 @@
           "title" : "Ledger 장치 준비 중"
         }
       },
+      "renameContact" : {
+        "pending" : {
+          "title" : "Ledger 장치 준비 중"
+        }
+      },
+      "editExternalAddress" : {
+        "pending" : {
+          "title" : "Ledger 장치 준비 중"
+        }
+      },
       "errors" : {
         "wrongDevice" : {
           "title" : "주소록 추가 시 사용한 것과 동일한 Ledger 장치를 사용하세요.",
@@ -9523,13 +10006,17 @@
         "appVersionTooLow" : {
           "title" : "앱 업데이트가 필요합니다",
           "description" : "주소록에 저장하려면 Ledger 장치에서 앱을 업데이트하고 다시 시도하세요."
+        },
+        "osVersionTooLow" : {
+          "title" : "Ledger OS 업데이트 필요",
+          "description" : "이름을 변경하려면 Ledger 기기의 운영 체제를 업데이트한 후 다시 시도하세요."
         }
       }
     },
     "title" : "주소록",
     "addContact" : "주소록 추가",
     "addAddress" : "주소 추가",
-    "addExternalAddress" : "외부 주소 추가",
+    "addYourAddress" : "주소 추가",
     "addAddressEntry" : {
       "title" : "주소 입력",
       "addressPlaceholder" : "주소 또는 ENS",
@@ -9544,7 +10031,10 @@
         "learnMore" : "자세히 알아보기"
       },
       "validationUnavailable" : "일시적으로 주소를 확인할 수 없습니다.",
-      "ensDisclaimer" : "이 ENS 이름은 상단에 표시된 주소로 연결됩니다."
+      "ensDisclaimer" : "ENS 이름은 변경될 수 있습니다",
+      "ensDisclaimerDescription" : "ENS 이름에 연결된 주소는 추후 변경될 수 있습니다. 자산이 사용자가 확인한 주소로만 정확히 전송될 수 있도록, 현재 연결된 실제 지갑 주소를 저장해 두세요.",
+      "duplicateAddress" : "This address is already used for {{contactName}}.",
+      "privacyPolicy" : "Learn more about Ledger's Privacy Policy."
     },
     "addAddressName" : {
       "inputLabel" : "주소 별칭",
@@ -9561,31 +10051,29 @@
       "currencyLabel" : "통화",
       "networkLabel" : "네트워크",
       "nameLabel" : "주소 별칭",
-      "continue" : "주소 확인",
-      "successTitle" : "주소가 저장되었습니다",
-      "close" : "닫기"
+      "continue" : "주소 확인"
     },
     "addContactDrawer" : {
       "namePlaceholder" : "이름",
-      "namingDisclaimer" : "개인 정보 보호를 위해 성과 이름을 모두 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
+      "namingDisclaimer" : "개인 정보 보호를 위해 본명을 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
       "invalidNameError" : "특수 문자는 허용되지 않습니다.",
       "duplicateNameError" : "이미 주소록에 등록된 이름입니다."
     },
-    "searchPlaceholder" : "주소록 검색",
+    "searchPlaceholder" : "이름으로 검색",
     "searchNoResults" : "검색 결과가 없습니다",
     "addressCount_zero" : "0개 주소",
     "addressCount_one" : "{{count}}개 주소",
     "addressCount_other" : "{{count}}개 주소",
     "me" : {
-      "name" : "나"
+      "myAddresses" : "내 주소"
     },
     "detail" : {
       "meDisplayName" : "{{name}}(내 주소)",
       "ledgerWalletAddresses" : "Ledger Wallet 주소",
       "emptyState" : {
-        "meTitle" : "등록된 주소가 없습니다",
+        "meTitle" : "내 주소 저장하기",
         "contactTitle" : "저장된 {{name}}님의 주소가 없습니다",
-        "meDescription" : "다음번에는 이름만으로 암호화폐를 받을 수 있도록 지갑 주소를 저장하세요.",
+        "meDescription" : "거래소나 다른 지갑에서 사용 중인 본인의 외부 주소를 미리 저장해 두는 유용한 기능입니다. 주소를 저장해 두면 다음 번에 본인에게 전송할 때, 복잡한 주소 대신 Ledger 장치 화면에 직접 지정한 이름이 표시됩니다.",
         "contactDescription" : "다음번에는 이름만으로 송금할 수 있도록 상대방의 지갑 주소를 저장하세요"
       }
     },
@@ -9627,12 +10115,6 @@
       "applyChanges" : "변경 사항 적용",
       "invalidLabelError" : "특수 문자는 허용되지 않습니다."
     },
-    "editSigner" : {
-      "title" : "장치에서 확인",
-      "description" : "이 변경 사항을 확인하려면 Ledger 장치를 연결하고 잠금을 해제하세요.",
-      "confirm" : "계속",
-      "cancel" : "취소"
-    },
     "editSignerMismatch" : {
       "title" : "이 연락처를 추가할 때 사용한 것과 동일한 Ledger 장치를 사용하세요.",
       "description" : "연결된 장치가 일치하지 않습니다.",
@@ -9640,13 +10122,14 @@
       "cancel" : "취소"
     },
     "ledgerSyncIntroduction" : {
-      "description" : "연락처는 Ledger 장치를 통해 종단간 암호화되어 모든 장치에 동기화되며, 오직 사용자 본인만 잠금을 해제할 수 있습니다.",
-      "activate" : "Ledger Sync 활성화하기",
-      "dismiss" : "확인"
+      "title" : "주소록에 추가하려면 지갑을 동기화하세요",
+      "description" : "주소록은 종단간 암호화되어 모든 휴대폰과 컴퓨터의 Ledger Wallet에서 동기화됩니다.",
+      "activate" : "지갑 동기화",
+      "dismiss" : "나중에 하기"
     },
     "featureIntroduction" : {
       "title" : "주소록 기능을 소개합니다",
-      "primaryAction" : "지금 살펴보기",
+      "primaryAction" : "지금 시작하기",
       "highlights" : {
         "saveAddresses" : {
           "title" : "원하는 이름으로 주소 저장",
@@ -9657,7 +10140,7 @@
           "description" : "복잡한 주소 대신 신뢰하는 내가 아는 이름이 표시됩니다."
         },
         "privateAcrossDevices" : {
-          "title" : "Ledger Wallet™으로 안전하게 충전",
+          "title" : "모든 Ledger 장치에서 비공개로 유지",
           "description" : "Ledger Sync를 통해 엔드투엔드로 암호화를 지원합니다."
         }
       }
@@ -9934,6 +10417,26 @@
         "title" : "ICP 스테이킹",
         "description" : "ICP를 스테이킹하고 거버넌스에 참여해 보상을 받으세요.",
         "cta" : "ICP 스테이킹"
+      },
+      "confirmFollowing" : {
+        "title" : "팔로잉 확인",
+        "description" : "보유 중인 뉴런 하나의 투표권(Voting power)이 감소하고 있습니다. 투표권을 복구하려면 팔로잉 상태를 확인해 주세요.",
+        "cta" : "팔로잉 확인"
+      },
+      "syncNeurons" : {
+        "title" : "뉴런 새로 고침",
+        "description" : "뉴런 데이터가 최신 상태가 아닙니다. 장치를 연결하여 새로고침하세요.",
+        "cta" : "뉴런 새로고침"
+      },
+      "lockNeurons" : {
+        "title" : "해제 대기 기간 늘리기",
+        "description" : "투표에 참여하여 보상을 얻으려면 뉴런의 해제 대기 기간을 더 늘려야 합니다.",
+        "cta" : "뉴런 관리"
+      },
+      "addFollowees" : {
+        "title" : "보상 적립을 시작하세요",
+        "description" : "거버넌스 안건에 대해 다른 뉴런을 팔로우하여 자동 투표에 참여하고 보상을 획득하세요.",
+        "cta" : "뉴런 관리"
       }
     },
     "headerManageActions" : {
@@ -9941,11 +10444,259 @@
         "title" : "뉴런 관리"
       }
     },
+    "duration" : {
+      "years_one" : "{{count}}년",
+      "years_other" : "{{count}}년",
+      "months_one" : "{{count}}개월",
+      "months_other" : "{{count}}개월",
+      "days_one" : "{{count}}일",
+      "days_other" : "{{count}}일",
+      "hours_one" : "{{count}}시간",
+      "hours_other" : "{{count}}시간",
+      "minutes_one" : "{{count}}분",
+      "minutes_other" : "{{count}}분",
+      "lessThanAMinute" : "1분 미만"
+    },
+    "neuronState" : {
+      "Locked" : "잠금",
+      "Dissolving" : "해제 중",
+      "Dissolved" : "해제 완료",
+      "Spawning" : "생성 중",
+      "Unknown" : "알 수 없음"
+    },
+    "common" : {
+      "neuronId" : "뉴런 ID",
+      "stake" : "스테이킹",
+      "maturity" : "누적 보상",
+      "dissolveDelay" : "해제 대기 기간",
+      "state" : "상태",
+      "action" : "작업 선택",
+      "none" : "없음",
+      "disburse" : "인출",
+      "startDissolving" : "해제 시작",
+      "stopDissolving" : "해제 중지",
+      "enabled" : "활성화됨",
+      "disabled" : "비활성화됨",
+      "enable" : "활성화",
+      "disable" : "비활성화"
+    },
+    "manageNeuronFlow" : {
+      "title" : "뉴런 관리",
+      "device" : {
+        "title" : "장치"
+      },
+      "confirmation" : {
+        "title" : "확인",
+        "broadcastError" : "작업이 서명되었으나 네트워크로 전송되지 않았습니다.",
+        "backToNeurons" : "뉴런으로 돌아가기",
+        "success" : {
+          "title" : "완료",
+          "default" : "뉴런이 업데이트되었습니다.",
+          "list_neurons" : "뉴런이 최신 상태입니다.",
+          "start_dissolving" : "뉴런의 잠금 해제가 시작되었습니다.",
+          "stop_dissolving" : "뉴런의 잠금 해제가 중단되었습니다.",
+          "disburse" : "뉴런의 스테이킹 자산이 계정으로 반환되었습니다.",
+          "set_dissolve_delay" : "뉴런 해제 대기 기간이 설정되었습니다.",
+          "increase_dissolve_delay" : "뉴런 해제 대기 기간이 연장되었습니다.",
+          "add_hot_key" : "뉴런에 핫키가 추가되었습니다.",
+          "remove_hot_key" : "뉴런에서 핫키가 제거되었습니다.",
+          "follow" : "뉴런 팔로잉 상태가 업데이트되었습니다.",
+          "refresh_voting_power" : "뉴런의 투표권이 업데이트되었습니다.",
+          "stake_maturity" : "뉴런 누적 보상이 스테이킹되었습니다.",
+          "auto_stake_maturity" : "자동 누적 보상 스테이킹 설정이 업데이트되었습니다.",
+          "spawn_neuron" : "누적 보상으로 새로운 뉴런이 생성하고 있습니다.",
+          "split_neuron" : "뉴런이 분할되었습니다.",
+          "increase_stake" : "뉴런의 스테이킹 수량이 증가했습니다."
+        }
+      },
+      "listNeuron" : {
+        "title" : "뉴런",
+        "empty" : "아직 보유 중인 뉴런이 없습니다. ICP를 스테이킹하여 뉴런을 생성하세요.",
+        "lastSynced" : "마지막 동기화: {{date}}",
+        "sync" : "뉴런 새로고침"
+      },
+      "manage" : {
+        "title" : "관리",
+        "neuron" : "뉴런",
+        "hotKeyOnly" : "이 뉴런의 핫키를 보유하고 있습니다. 투표 및 팔로우 설정은 가능하지만, 스테이킹된 자산을 이동할 수는 없습니다.",
+        "missingNeuron" : "이 뉴런은 현재 동기화된 정보에 존재하지 않습니다. 뉴런 목록으로 돌아가 동기화를 진행한 후 다시 선택하세요.",
+        "votingPower" : {
+          "title" : "투표권",
+          "tooltip" : "투표권은 거버넌스에서 뉴런이 갖는 의결권의 비중과 획득하는 보상 수량을 결정합니다.",
+          "staked" : "스테이킹 완료",
+          "increaseStake" : "스테이킹 증액",
+          "state" : "상태",
+          "bonusValue" : "+{{percent}}%",
+          "ageBonus" : "장기 보유 보너스(Age Bonus)",
+          "ageBonusTooltip" : "뉴런은 경과 시간(연령)에 따라 투표권이 최대 +25%까지 증가하며, 4년이 지나면 최대치에 도달합니다.",
+          "dissolveDelayBonus" : "해제 대기 보너스: +{{percent}}%",
+          "dissolveDelayBonusTooltip" : "해제 대기 기간이 길수록 투표권이 최대 +200%까지 증가하며, 2년 설정 시 최대치에 도달합니다.",
+          "noDissolveDelay" : "해제 대기 기간 없음",
+          "setDissolveDelay" : "해제 대기 기간 설정",
+          "increaseDissolveDelay" : "해제 대기 기간 늘리기",
+          "decayStartsIn" : "{{duration}} 후 투표권 감소가 시작됩니다",
+          "decaying" : "투표권 감소 중 — {{duration}}후 0에 도달합니다",
+          "expired" : "투표권 상실 — 팔로잉 설정이 초기화되었습니다",
+          "confirmFollowing" : "팔로잉 확인",
+          "confirmFollowingTooltip" : "최소 6개월마다 팔로잉 상태를 확인해야 합니다. 그렇지 않으면 뉴런의 투표권이 점차 감소합니다."
+        },
+        "maturity" : {
+          "title" : "누적 보상",
+          "tooltip" : "누적 보상(Maturity)은 뉴런에 적립되는 보상입니다. 기존 뉴런에 다시 스테이킹하거나 새 뉴런으로 생성(Spawn)할 수 있습니다.",
+          "available" : "이용 가능한 누적 보상",
+          "staked" : "스테이킹된 누적 보상",
+          "stakedTooltip" : "누적 보상이 이미 뉴런에 스테이킹되었습니다. 해당 보상은 투표권에 반영되며, 더 이상 새 뉴런으로 생성할 수 없습니다.",
+          "stake" : "누적 보상 스테이킹",
+          "spawn" : "새 뉴런 생성",
+          "autoStake" : "누적 보상 자동 스테이킹",
+          "autoStakeTooltip" : "활성화하면 보상이 적립되는 대로 기존 뉴런에 자동으로 다시 스테이킹됩니다."
+        },
+        "following" : {
+          "title" : "팔로잉",
+          "tooltip" : "다른 뉴런을 팔로우하면 해당 뉴런의 투표를 그대로 따라가므로, 직접 투표하지 않고도 보상을 얻을 수 있습니다.",
+          "count_one" : "{{count}}개 주제",
+          "count_other" : "{{count}}개 주제",
+          "edit" : "거버넌스 주제별 뉴런 팔로우",
+          "follow" : "팔로잉 편집"
+        },
+        "hotKeys" : {
+          "title" : "핫키",
+          "tooltip" : "핫키는 본인을 대신해 투표하고 팔로잉을 설정할 수 있지만, 뉴런의 스테이킹 자산을 이동할 수는 없습니다.",
+          "add" : "다른 프린시펄에 핫키 권한 부여",
+          "addAction" : "핫키 추가",
+          "remove" : "제거"
+        },
+        "advanced" : {
+          "title" : "고급 설정",
+          "split" : "이 뉴런을 둘로 분할",
+          "splitTooltip" : "기존 뉴런과 새 뉴런 모두 최소 1 ICP의 스테이킹 수량을 유지해야 합니다.",
+          "splitAction" : "뉴런 분할"
+        }
+      },
+      "setDissolveDelay" : {
+        "title" : "해제 대기 기간",
+        "setDescription" : "뉴런이 해제되는 데 걸리는 기간을 선택해 주세요. {{min}}에서 {{max}}일 사이로 설정할 수 있습니다.",
+        "increaseDescription" : "뉴런의 해제 대기 기간에 추가합니다. 최대 {{remaining}} 일을 더 추가하여 총 {{max}}일로 설정할 수 있습니다. 한 번 연장한 기간은 다시 단축할 수 없습니다.",
+        "days" : "일",
+        "resulting" : "새 해제 대기 기간: {{duration}}",
+        "belowVotingThreshold" : "{{days}}일 미만인 뉴런은 투표에 참여할 수 없으며 보상도 지급되지 않습니다."
+      },
+      "stakeMaturity" : {
+        "title" : "누적 보상 스테이킹",
+        "description" : "이 뉴런의 누적 보상(Maturity) 일부를 다시 스테이킹하여 투표권을 늘립니다.",
+        "percentage" : "스테이킹할 비율",
+        "selected" : "스테이킹할 수량:"
+      },
+      "splitNeuron" : {
+        "title" : "뉴런 분할",
+        "description" : "이 뉴런의 스테이킹 수량 일부를 새 뉴런으로 이동합니다. 새 뉴런은 해제 대기 기간이나 에이징 보너스가 없는 상태로 시작됩니다.",
+        "amount" : "분할할 수량",
+        "range" : "허용 범위:"
+      },
+      "addHotKey" : {
+        "title" : "핫키 추가",
+        "description" : "다른 프린시펄에 이 뉴런에 대한 투표 및 팔로우 설정 권한을 부여합니다. 스테이킹한 자산은 이동이 불가능합니다.",
+        "principal" : "프린시펄 ID",
+        "ownPrincipal" : "이 계정의 프린시펄",
+        "ownPrincipalHint" : "다른 프린시펄을 입력하세요. 보통 NNS 앱 로그인 시 사용하는 프린시펄입니다. 이 계정은 이미 해당 뉴런을 제어하고 있으므로, 동일한 프린시펄을 등록해도 추가 권한이 부여되지 않습니다."
+      },
+      "followTopic" : {
+        "title" : "주제",
+        "description" : "팔로우 설정을 변경할 거버넌스 주제를 선택하세요.",
+        "followeeCount_one" : "{{count}} 팔로잉",
+        "followeeCount_other" : "{{count}} 팔로잉"
+      },
+      "selectFollowees" : {
+        "title" : "팔로잉",
+        "description" : "{{topic}} 주제에 대해 선택한 뉴런들과 동일하게 투표 진행",
+        "neuronId" : "팔로우할 뉴런 ID",
+        "add" : "추가",
+        "remove" : "제거",
+        "empty" : "아직 팔로우 중인 뉴런이 없습니다. 이 주제에 대해 내 뉴런이 투표를 진행하지 않습니다.",
+        "clearsFollowing" : "계속 진행하면 목록이 비워지며, 이 뉴런은 {{topic}}에 대해 더 이상 다른 대상을 팔로우하지 않습니다. 현재 팔로잉: {{count}}",
+        "notANeuronId" : "뉴런 ID는 숫자만 입력 가능합니다.",
+        "outOfRange" : "올바른 뉴런 ID가 아닙니다.",
+        "duplicate" : "해당 주제에 대해 이미 팔로우 중인 뉴런입니다.",
+        "self" : "뉴런은 자기 자신을 팔로우할 수 없습니다.",
+        "unadded" : "이 뉴런 ID를 포함하려면 '추가'를 선택하거나 입력란을 비워주세요.",
+        "atCapacity" : "하나의 주제에서는 최대 {{max}} 개의 뉴런을 팔로우할 수 있습니다. 다른 항목을 추가하려면 하나를 제거하세요."
+      }
+    },
+    "governanceTopic" : {
+      "Unspecified" : "기타 모든 토픽",
+      "NeuronManagement" : "뉴런 관리",
+      "ExchangeRate" : "환율",
+      "NetworkEconomics" : "네트워크 경제",
+      "Governance" : "거버넌스",
+      "NodeAdmin" : "노드 관리자",
+      "ParticipantManagement" : "참여자 관리",
+      "SubnetManagement" : "서브넷 관리",
+      "NetworkCanisterManagement" : "애플리케이션 캐니스터 관리",
+      "Kyc" : "KYC 인증",
+      "NodeProviderRewards" : "노드 제공자 보상",
+      "SnsDecentralizationSale" : "SNS 탈중앙화 세일",
+      "IcOsVersionDeployment" : "IC OS 버전 배포",
+      "IcOsVersionElection" : "IC OS 버전 선출",
+      "SnsAndCommunityFund" : "SNS & 커뮤니티 펀드",
+      "ApiBoundaryNodeManagement" : "API 바운더리 노드 관리",
+      "SubnetRental" : "서브넷 대여",
+      "ProtocolCanisterManagement" : "프로토콜 캐니스터 관리",
+      "ServiceNervousSystemManagement" : "서비스 신경계 관리"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "팔로잉 확인",
+      "listTitle" : "뉴런",
+      "description" : "팔로잉 상태를 확인하면 뉴런의 투표권이 향후 6개월간 다시 유지됩니다.",
+      "timeUntilLoss" : "투표 권한 상실까지 남은 시간",
+      "losing" : "{{duration}} — 현재 투표권 감소 중",
+      "expired" : "이미 상실됨",
+      "confirm" : "확인",
+      "empty" : "현재 팔로잉 확인 대기 중인 뉴런이 없습니다."
+    },
     "summaryFooter" : {
       "stakedBalance" : "스테이킹 수량",
       "stakedBalanceTooltip" : "현재 뉴런에 스테이킹된 ICP 토큰의 총 수량입니다. 스테이킹된 ICP는 투표 보상을 받으며, 거버넌스에 사용될 수 있습니다.",
       "totalMaturity" : "총 누적 보상",
       "totalMaturityTooltip" : "스테이킹으로 누적된 총 보상에는 스테이킹된 보상과 유동 누적 보상이 모두 포함됩니다. 이렇게 누적된 보상은 리스테이킹하거나 Liquid ICP로 전환할 수 있습니다."
     }
+  },
+  "perpsReview" : {
+    "depositTitle" : "SwapKit로 입금",
+    "depositSubtitle" : "SwapKit은 단 한 번의 트랜잭션으로 스왑과 입금을 모두 처리합니다. 모든 과정은 Ledger 장치로 안전하게 보호됩니다.",
+    "swapDetailTitle" : "스왑 상세 정보",
+    "amountSendLabel" : "보낼 수량",
+    "amountReceiveLabel" : "받을 수량",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "입금 상세 정보",
+    "depositAmountLabel" : "입금 수량",
+    "depositReceiveLabel" : "전송 받을 계정",
+    "depositCTA" : "입금"
+  },
+  "perpsDeposit" : {
+    "title" : "입금",
+    "inputDepositAmount" : "{{value}} 예치",
+    "inputSubText" : "{{provider}}로 스왑 및 입금",
+    "selectCurrencyTitle" : "{{currencyTicker}}로 입금",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "계정 없음",
+    "review" : "검토",
+    "formErrors" : {
+      "amountExceedsBalance" : "보유 수량 부족",
+      "quoteUnavailable" : "{{provider}}에서 견적을 불러올 수 없습니다. 다른 자산을 사용하거나 나중에 다시 시도하세요."
+    }
+  },
+  "perpsDepositSign" : {
+    "a11yTitle" : "입금 서명",
+    "terms" : "이 트랜잭션에 서명함으로써 <termsLink>NEAR Intents의 SwapKit 이용약관(T&C)</termsLink>에 동의합니다."
+  },
+  "perpsTransactionSigned" : {
+    "title" : "트랜잭션 서명 완료",
+    "description" : "블록체인 네트워크에서 승인이 완료되면 {{currency}} 입금이 진행됩니다.",
+    "viewTransaction" : "트랜잭션 보기"
+  },
+  "perpsTransactionStatus" : {
+    "dialogTitle" : "트랜잭션 세부 사항",
+    "title" : "증거금 입금",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}"
   }
 }

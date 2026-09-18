@@ -60,10 +60,7 @@ test("coin-* eager imports — must be zero outside allowed zones", () => {
 });
 
 test("families/* eager imports — must be zero outside allowed zones", () => {
-  // Tracked exceptions not yet fixed — shrink this list as tickets close.
-  const KNOWN: Record<string, string> = {
-    "ledger-live-common/src/families/bitcoin/ACRESetup.ts": "LIVE-29411",
-  };
+  const KNOWN: Record<string, string> = {};
   const violations: Record<string, string[]> = {};
   for (const [file, info] of Object.entries(metafileInputs)) {
     const src = rel(file);

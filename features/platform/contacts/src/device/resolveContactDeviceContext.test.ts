@@ -70,15 +70,31 @@ describe("resolveContactDeviceContext", () => {
     expect(resolve).toThrow(UnsupportedContactDeviceCurrencyError);
   });
 
-  it("GIVEN an EVM network running its own app WHEN resolving its context THEN it rejects the currency", () => {
+  it("GIVEN an EVM network shipping its own app WHEN resolving its context THEN it still registers through Ethereum", () => {
     // GIVEN
-    const currencyId = ContactCurrencyIdSchema.parse("ethereum_classic");
+    const currencyId = ContactCurrencyIdSchema.parse("sei_evm");
 
     // WHEN
-    const resolve = () => resolveContactDeviceContext(currencyId);
+    const context = resolveContactDeviceContext(currencyId);
 
     // THEN
-    expect(resolve).toThrow(UnsupportedContactDeviceCurrencyError);
+    expect(context).toEqual({
+      blockchainFamily: "evm",
+      chainId: 1329,
+      initializationInput: {
+        appName: "Ethereum",
+        dependencies: [],
+        requireLatestFirmware: false,
+      },
+    });
+  });
+
+  it("GIVEN an EVM network without an EIP-155 chain ID WHEN resolving its context THEN it rejects the currency", () => {
+    const currencyId = ContactCurrencyIdSchema.parse("poa");
+
+    expect(() => resolveContactDeviceContext(currencyId)).toThrow(
+      UnsupportedContactDeviceCurrencyError,
+    );
   });
 });
 
@@ -88,7 +104,10 @@ describe("isContactDeviceCurrencySupported", () => {
     ["polygon", true],
     ["base/erc20/usd_coin", true],
     ["tron", true],
-    ["ethereum_classic", false],
+    ["ethereum_classic", true],
+    ["sei_evm", true],
+    ["poa", false],
+    ["gochain", false],
     ["bitcoin", false],
   ])("GIVEN %s THEN it reports %s", (currencyId, isSupported) => {
     expect(isContactDeviceCurrencySupported(ContactCurrencyIdSchema.parse(currencyId))).toBe(

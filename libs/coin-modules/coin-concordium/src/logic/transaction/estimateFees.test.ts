@@ -102,6 +102,21 @@ describe("estimateTokenFees", () => {
     });
   });
 
+  // At energy 1001 and rate 2, buffering each half independently gives a fee of
+  // 2403 against a deposit of 2404 — one µCCD short of its own header.
+  it("prices the buffered energy rather than buffering the cost", async () => {
+    getTransactionCost.mockResolvedValue({ cost: "2002", energy: 1001 });
+
+    const result = await estimateTokenFees(config, CURRENCY_ID, {
+      tokenId: "t-USDT",
+      listOperationsSize: 42,
+    });
+
+    expect(result.energy).toBe(BigInt(1202));
+    expect(result.cost).toBe(BigInt(2404));
+    expect(result.cost).toBeGreaterThan(applyEnergyBuffer(BigInt(2002)));
+  });
+
   // Both halves carry the buffer, or the fee shown and the energy signed drift
   // apart and the device contradicts the wallet.
   it("buffers cost and energy alike", async () => {

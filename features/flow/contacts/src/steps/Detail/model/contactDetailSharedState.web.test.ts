@@ -1,10 +1,11 @@
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
+import { createMeDisplayNameFormatter } from "@features/platform-contacts";
 import {
   createContactDetailLedgerWalletAccountsIntent,
   createContactDetailSharedState,
 } from "./contactDetailSharedState";
 
-const formatMeDisplayName = (name: string) => `${name} (Me)`;
+const formatMeDisplayName = createMeDisplayNameFormatter("My addresses", name => `${name} (Me)`);
 
 describe("createContactDetailLedgerWalletAccountsIntent", () => {
   it("returns the ledger wallet accounts intent for Me", () => {
@@ -22,7 +23,7 @@ describe("createContactDetailSharedState", () => {
   it("exposes the default Me display name and zero external addresses", () => {
     expect(createContactDetailSharedState(mockMeContact(), formatMeDisplayName)).toEqual({
       contact: mockMeContact(),
-      displayName: "Me",
+      displayName: "My addresses",
       addressCount: 0,
       ledgerWalletAccountsIntent: { type: "open-ledger-wallet-accounts" },
     });

@@ -5,27 +5,26 @@ import {
 } from "@features/flow-app-lock";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useState } from "react";
-import { useTranslation } from "~/context/Locale";
 import { usePasswordSetup } from "../../hooks/usePasswordSetup";
 import type { PasswordAddFlowNavigatorProps } from "../../types";
 
-type ConfirmPasswordScreenViewModel = ConfirmPasswordViewModel & Readonly<{ errorText?: string }>;
+type ConfirmPasswordScreenViewModel = ConfirmPasswordViewModel &
+  Readonly<{ hasSaveFailed: boolean }>;
 
 function useConfirmPasswordScreenViewModel(): ConfirmPasswordScreenViewModel {
-  const { t } = useTranslation();
   const navigation = useNavigation<PasswordAddFlowNavigatorProps["navigation"]>();
   const draft = usePasswordDraft();
   const { savePassword } = usePasswordSetup();
-  const [errorText, setErrorText] = useState<string | undefined>(undefined);
+  const [hasSaveFailed, setHasSaveFailed] = useState(false);
 
   const onConfirmed = useCallback(
     async (password: string) => {
-      setErrorText(undefined);
+      setHasSaveFailed(false);
 
       try {
         await savePassword(password);
       } catch {
-        setErrorText(t("appLock.confirmPassword.saveFailed"));
+        setHasSaveFailed(true);
         return;
       }
 
@@ -33,7 +32,7 @@ function useConfirmPasswordScreenViewModel(): ConfirmPasswordScreenViewModel {
       // The parent, not this stack: goBack() here would land on the enter-password step.
       navigation.getParent()?.goBack();
     },
-    [draft, navigation, savePassword, t],
+    [draft, navigation, savePassword],
   );
 
   const { onPasswordChange, ...viewModel } = useConfirmPasswordViewModel({ onConfirmed });
@@ -41,13 +40,13 @@ function useConfirmPasswordScreenViewModel(): ConfirmPasswordScreenViewModel {
   // A mismatch returns before onConfirmed, so typing is what clears a previous save failure.
   const onFieldChange = useCallback(
     (next: string) => {
-      setErrorText(undefined);
+      setHasSaveFailed(false);
       onPasswordChange(next);
     },
     [onPasswordChange],
   );
 
-  return { ...viewModel, onPasswordChange: onFieldChange, errorText };
+  return { ...viewModel, onPasswordChange: onFieldChange, hasSaveFailed };
 }
 
 export default useConfirmPasswordScreenViewModel;

@@ -47,7 +47,6 @@ export function useContactsListPageAnalytics({
       analytics.trackEvent(CONTACTS_TRACK_EVENTS.SEARCH_QUERY, {
         source: CONTACTS_EVENT_SOURCE.SEARCH,
         page: CONTACTS_PAGE_PROPERTY.CONTACTS,
-        queryLength: trimmedQuery.length,
         hasResults: searchHasResults,
       });
     }, 500);

@@ -1,3 +1,4 @@
+import { cardManagementApi } from "@domain/api-card-management";
 import {
   CardSessionNotStoredError,
   type CardRenewalDispatch,
@@ -20,6 +21,8 @@ const loginSession: StoredCardSession = {
   accessToken: "at_login",
   refreshToken: "rt_login",
 };
+
+const logoutAction = () => undefined;
 
 function fakeStore(initial: Record<string, string> = {}) {
   const slots = new Map(Object.entries(initial));
@@ -55,6 +58,7 @@ function logText(spy: jest.SpyInstance): string {
 type SetupOptions = {
   initial?: Record<string, string>;
   renew?: () => Promise<StoredCardSession>;
+  logout?: () => Promise<unknown>;
   install?: boolean;
 };
 
@@ -63,9 +67,12 @@ function setup(options: SetupOptions = {}) {
   const renew = jest.fn<Promise<StoredCardSession>, []>(
     options.renew ?? (async () => renewedSession),
   );
+  const logout = jest.fn(options.logout ?? (async () => ({ success: true })));
   const onCardSessionEnded = jest.fn();
 
-  const dispatch = jest.fn(() => ({ unwrap: renew }));
+  const dispatch = jest.fn((action: unknown) => ({
+    unwrap: action === logoutAction ? logout : renew,
+  }));
   const api = createCardSession(store);
 
   if (options.install !== false) {
@@ -90,6 +97,7 @@ function setup(options: SetupOptions = {}) {
     slots,
     writes,
     renew,
+    logout,
     onCardSessionEnded,
     snapshot,
     sessionId,
@@ -104,14 +112,15 @@ function liveSession(): Record<string, string> {
   };
 }
 
-let warn: jest.SpyInstance;
+let logoutInitiate: jest.SpyInstance;
 
 beforeEach(() => {
-  warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+  logoutInitiate = jest.spyOn(cardManagementApi.endpoints.logout, "initiate");
+  logoutInitiate.mockReturnValue(logoutAction);
 });
 
 afterEach(() => {
-  warn.mockRestore();
+  logoutInitiate.mockRestore();
 });
 
 describe("createCardSession storage", () => {
@@ -446,14 +455,51 @@ describe("createCardSession renewal failures", () => {
   it.each(failures)(
     "ends the session and publishes signed-out after $name",
     async ({ options }) => {
-      const { renewNow, slots, onCardSessionEnded } = setup(options);
+      const { renewNow, slots, logout, onCardSessionEnded } = setup(options);
 
       await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
       expect(slots.size).toBe(0);
+      expect(logout).toHaveBeenCalledTimes(1);
+      expect(logoutInitiate).toHaveBeenCalledWith({}, { track: false });
+      expect(JSON.stringify(logoutInitiate.mock.calls[0]?.[0])).not.toContain("at_token");
       expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
-      expect(warn).toHaveBeenCalled();
     },
   );
+
+  it("asks Baanx to end the session before removing the local tokens", async () => {
+    const order: string[] = [];
+    const { renewNow, store } = setup({
+      initial: liveSession(),
+      renew: async () => Promise.reject(new Error("the provider answered 400")),
+      logout: async () => {
+        order.push("logout");
+      },
+    });
+    jest.mocked(store.remove).mockImplementation(async key => {
+      order.push(`remove:${key}`);
+    });
+
+    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
+
+    expect(order).toEqual([
+      "logout",
+      `remove:${CARD_SESSION_KEYS.accessToken}`,
+      `remove:${CARD_SESSION_KEYS.refreshToken}`,
+      `remove:${CARD_SESSION_KEYS.lifetimes}`,
+    ]);
+  });
+
+  it("does not let a stalled Baanx logout block local cleanup", async () => {
+    const { renewNow, slots, onCardSessionEnded } = setup({
+      initial: liveSession(),
+      renew: async () => Promise.reject(new Error("the provider answered 400")),
+      logout: () => new Promise(() => undefined),
+    });
+
+    await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
+    expect(slots.size).toBe(0);
+    expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
+  });
 
   it("ends the session when the app installed no renewal", async () => {
     const { renewNow, slots } = setup({
@@ -463,7 +509,6 @@ describe("createCardSession renewal failures", () => {
 
     await expect(renewNow()).resolves.toEqual({ kind: "session-ended" });
     expect(slots.size).toBe(0);
-    expect(warn).toHaveBeenCalled();
   });
 
   it("ends the session when a renewed session cannot be stored", async () => {
@@ -489,7 +534,6 @@ describe("createCardSession renewal failures", () => {
 
     expect(result).toEqual({ kind: "session-ended" });
     expect(JSON.stringify(result)).not.toContain("sensitive-token");
-    expect(logText(warn)).not.toContain("sensitive-token");
   });
 
   it("spends the refresh token once, because the first failure ended the session", async () => {

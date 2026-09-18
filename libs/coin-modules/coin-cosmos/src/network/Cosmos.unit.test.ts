@@ -355,6 +355,99 @@ describe("CosmosApi", () => {
       // sender + recipient
       expect(txs.length).toEqual(simulatedTotal * 2);
     });
+
+    // Both messages are real, captured from cosmoshub/injective mainnet LCDs.
+    it.each([
+      [
+        "a page past the last",
+        "failed to search for txs: page should be within [1, 1] range, given 2",
+      ],
+      [
+        "a tx the node cannot decode",
+        "unable to resolve type URL /tendermint.liquidity.v1beta1.MsgDepositWithinBatch: tx parse error",
+      ],
+    ])("keeps the pages already fetched when %s fails", async (_label, message) => {
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.50.1" } },
+          });
+        }
+        if (networkOptions.url.includes("page=1")) {
+          return Promise.resolve({
+            data: {
+              total: "50",
+              tx_responses: [{ txhash: "a" }, { txhash: "b" }, { txhash: "c" }],
+            },
+          });
+        }
+        return Promise.reject(new Error(message));
+      });
+
+      const txs = await cosmosApi.getTransactions("address", 10);
+
+      // kept, not dropped to []
+      expect(txs.length).toEqual(6);
+    });
+
+    it("does not stop early when the node caps the page size below the requested limit", async () => {
+      // CometBFT clamps per_page to 100, so asking for 150 yields short-but-not-last pages.
+      const simulatedTotal = 250;
+      const serverCap = 100;
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.50.1" } },
+          });
+        }
+        const page = Number(networkOptions.url.split("page=")[1].split("&")[0]);
+        const served = Math.max(0, Math.min(serverCap, simulatedTotal - (page - 1) * serverCap));
+        return Promise.resolve({
+          data: {
+            total: String(simulatedTotal),
+            tx_responses: Array.from({ length: served }, (_, i) => ({ txhash: `${page}_${i}` })),
+          },
+        });
+      });
+
+      const txs = await cosmosApi.getTransactions("address", 150);
+
+      // sender + recipient, not truncated at the first short page
+      expect(txs.length).toEqual(simulatedTotal * 2);
+    });
+
+    it("stops instead of looping forever when a node serves an empty page under its own total", async () => {
+      // `total` is the index's count; a node can serve fewer than it counts and answer 200 with
+      // `tx_responses: null` rather than 500. The loop only advances on txs, so no progress here
+      // means it never reaches `total`. The cap below stands in for "forever".
+      const callCap = 20;
+      let pageFetches = 0;
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.50.1" } },
+          });
+        }
+        pageFetches += 1;
+        if (pageFetches > callCap) return Promise.reject(new Error("looped past the cap"));
+        const page = Number(networkOptions.url.split("page=")[1].split("&")[0]);
+        return Promise.resolve({
+          data: {
+            total: "50",
+            tx_responses: page === 1 ? [{ txhash: "a" }, { txhash: "b" }] : null,
+          },
+        });
+      });
+
+      const txs = await cosmosApi.getTransactions("address", 100);
+
+      // one full page + one empty page, per stream
+      expect(pageFetches).toEqual(4);
+      expect(txs).toEqual([{ txhash: "a" }, { txhash: "b" }, { txhash: "a" }, { txhash: "b" }]);
+    });
   });
 
   describe("getTransactionsPage", () => {
@@ -636,7 +729,8 @@ describe("CosmosApi", () => {
     };
     const expectedTxs = {
       txs: mockNetworkTxsResponse.tx_responses,
-      total: "1",
+      // the wire payload carries "1" as a string; fetchTransactions normalizes it
+      total: 1,
     };
     it("should fetch a pre v0.47 payload", async () => {
       const params = new URLSearchParams({
@@ -671,6 +765,16 @@ describe("CosmosApi", () => {
       // using as object to access private method
       const result = await cosmosApi["fetchTransactions"](params);
       expect(result).toEqual(expectedTxs);
+    });
+    it("normalizes a null tx_responses to an empty array", async () => {
+      // An empty history comes back as `tx_responses: null`; unguarded, `concat(null)` would
+      // push a literal null into the tx list.
+      // @ts-expect-error method is mocked
+      network.mockResolvedValue({ data: { tx_responses: null, pagination: null, total: "0" } });
+
+      const result = await cosmosApi["fetchTransactions"](new URLSearchParams());
+
+      expect(result).toEqual({ txs: [], total: 0 });
     });
   });
 

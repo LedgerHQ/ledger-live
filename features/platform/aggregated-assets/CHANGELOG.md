@@ -1,5 +1,13 @@
 # @features/platform-aggregated-assets
 
+## 0.5.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-aggregated-assets@0.5.1-next.0
+  - @features/platform-env@0.3.1-next.0
+
 ## 0.5.2
 
 ### Patch Changes

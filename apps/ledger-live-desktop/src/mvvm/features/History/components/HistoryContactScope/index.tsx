@@ -8,7 +8,7 @@ export function HistoryContactScope({ contact }: Props) {
   return (
     <span className="inline-flex items-center gap-8 body-1" data-testid="history-contact-scope">
       {contact.name}
-      <ContactAvatar contactId={contact.id} name={contact.name} isMe={contact.isMe} size="sm" />
+      <ContactAvatar contactId={contact.id} name={contact.name} isMe={contact.isMe} size="xs" />
     </span>
   );
 }

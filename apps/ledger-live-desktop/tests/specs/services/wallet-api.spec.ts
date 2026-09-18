@@ -361,7 +361,6 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await modal.waitForModalToAppear();
 
     // Step Recipient
-    await expect(page.getByText("Blind signing required")).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Device
@@ -409,7 +408,6 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await modal.waitForModalToAppear();
 
     // Step Recipient
-    await expect(page.getByText("Blind signing required")).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Device
@@ -470,7 +468,6 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await modal.waitForModalToAppear();
 
     // Step Recipient
-    await expect(page.getByText("Blind signing required")).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Device
@@ -554,7 +551,6 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await modal.waitForModalToAppear();
 
     // Step Recipient
-    await expect(page.getByText("Blind signing required")).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Device

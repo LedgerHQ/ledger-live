@@ -2,26 +2,38 @@ import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
+import { AppLockPasswordModifyNavigator } from "LLM/features/AppLock/ModifyNavigator";
+import { useFeature } from "@features/platform-feature-flags";
 import { ScreenName } from "~/const";
 import PasswordRemove from "~/screens/Settings/General/PasswordRemove";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { PasswordModifyFlowParamList } from "./types/PasswordModifyFlowNavigator";
 
-const Stack = createNativeStackNavigator<PasswordModifyFlowParamList>();
+const LegacyStack = createNativeStackNavigator<PasswordModifyFlowParamList>();
 
-export default function PasswordModifyFlowNavigator() {
+function LegacyPasswordModifyFlowNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
-    <Stack.Navigator screenOptions={stackNavigationConfig}>
-      <Stack.Screen
+    <LegacyStack.Navigator screenOptions={stackNavigationConfig}>
+      <LegacyStack.Screen
         name={ScreenName.PasswordRemove}
         component={PasswordRemove}
         options={{
           title: t("auth.confirmPassword.title"),
         }}
       />
-    </Stack.Navigator>
+    </LegacyStack.Navigator>
+  );
+}
+
+export default function PasswordModifyFlowNavigator() {
+  const isRevampEnabled = useFeature("lwmPasswordRevamp")?.enabled ?? false;
+
+  return isRevampEnabled ? (
+    <AppLockPasswordModifyNavigator />
+  ) : (
+    <LegacyPasswordModifyFlowNavigator />
   );
 }

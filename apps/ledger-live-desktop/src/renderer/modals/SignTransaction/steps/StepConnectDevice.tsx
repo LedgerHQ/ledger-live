@@ -18,7 +18,6 @@ export default function StepConnectDevice({
   onTransactionSigned,
   manifestId,
   manifestName,
-  isACRE,
   location,
 }: StepProps) {
   const connectDependencies = useMemo(() => {
@@ -50,7 +49,6 @@ export default function StepConnectDevice({
         dependencies={connectDependencies}
         manifestId={manifestId}
         manifestName={manifestName}
-        isACRE={isACRE}
         requireLatestFirmware={!isSwapDisableAppsInstall()}
         location={location}
       />

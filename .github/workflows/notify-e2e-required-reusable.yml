@@ -108,6 +108,7 @@ jobs:
               section += `- Select "Run workflow"\n`;
               section += `- Branch: \`${branch}\`\n`;
               section += `- Device: ${device}\n`;
+              section += `- **Filter by team:** pick your team in the \`team\` dropdown to run only its specs\n`;
               if (isTargeted) {
                 section += `- **Filter by coin:** Use the coin filter to test only \`${coins}\`\n`;
               }

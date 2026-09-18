@@ -25,6 +25,10 @@ describe("buildSignupUrl", () => {
     expect(pathname).toBe("/onboarding/signup");
   });
 
+  it("refuses a config that names no hosted UI", () => {
+    expect(() => buildSignupUrl({ ...oauthConfig, hostedUiUrl: undefined })).toThrow(/no base URL/);
+  });
+
   it("refuses a hosted UI that is not https", () => {
     expect(() => buildSignupUrl({ ...oauthConfig, hostedUiUrl: "http://hosted.test" })).toThrow(
       /must be https/,

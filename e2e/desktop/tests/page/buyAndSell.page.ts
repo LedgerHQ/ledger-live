@@ -9,7 +9,6 @@ import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/buySell";
 import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 import { doubleDecodeGoToURL } from "tests/utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "tests/utils/getAccountAddressesUtils";
-import { waitFor } from "tests/utils/waitFor";
 import { ModularDialog } from "tests/page/dialog/modular.dialog";
 import { getModularSelectorFromInstance } from "tests/utils/modularSelectorUtils";
 
@@ -353,21 +352,26 @@ export class BuyAndSellPage extends WebViewAppPage {
   private async waitForGoToUrl(): Promise<string> {
     let stableUrl: string | undefined;
 
-    await waitFor(
-      async () => {
-        const goToUrls = this.webviewUrlHistory.filter(url =>
-          url.toLowerCase().includes("gotourl"),
-        );
-        const latest = goToUrls.at(-1);
-        if (latest !== undefined && latest === stableUrl) {
-          return true; // last gotourl unchanged since previous check → settled
-        }
-        stableUrl = latest;
-        return false;
-      },
-      200,
-      10_000,
-    );
+    // Settled means the latest gotourl is unchanged since the previous check: the webview
+    // can navigate several times before landing on the provider URL.
+    await expect
+      .poll(
+        () => {
+          const goToUrls = this.webviewUrlHistory.filter(url =>
+            url.toLowerCase().includes("gotourl"),
+          );
+          const latest = goToUrls.at(-1);
+          if (latest !== undefined && latest === stableUrl) return true;
+          stableUrl = latest;
+          return false;
+        },
+        {
+          timeout: 10_000,
+          intervals: [200],
+          message: "No settled GoTo URL found in webviewUrlHistory after waiting.",
+        },
+      )
+      .toBe(true);
 
     if (!stableUrl) throw new Error("No GoTo URL found in webviewUrlHistory after waiting.");
     return stableUrl;

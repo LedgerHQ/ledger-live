@@ -1,3 +1,5 @@
+import type { OperationType } from "@ledgerhq/types-live";
+
 export const ALEO_DUMMY_ADDRESS = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
 
 export const PROGRAM_ID = {
@@ -26,6 +28,14 @@ export const TRANSACTION_TYPE = {
   UNBOND_PUBLIC: "unbond_public",
   CLAIM_UNBOND_PUBLIC: "claim_unbond_public",
 } as const;
+
+// The three staking modes are named exactly after the credits.aleo functions they call, so this
+// one table serves both a mode on the craft path and a `function_id` read back from the indexer.
+export const STAKING_OPERATION_TYPE = {
+  [TRANSACTION_TYPE.BOND_PUBLIC]: "BOND",
+  [TRANSACTION_TYPE.UNBOND_PUBLIC]: "UNBOND",
+  [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC]: "WITHDRAW_UNBONDED",
+} as const satisfies Record<string, OperationType>;
 
 export const FEE_INTENT_TYPES = new Set(["fee_public", "fee_private"]);
 
@@ -102,6 +112,10 @@ export const MICROCREDITS_PER_CREDIT = 1_000_000;
 
 // Below this bonded total the protocol pays a delegator nothing at all.
 export const MIN_DELEGATOR_STAKE_MICROCREDITS = 10_000 * MICROCREDITS_PER_CREDIT;
+
+// credits.aleo `bond_public` rejects a bond of less than one credit outright, independently of
+// the delegator total above.
+export const MIN_BOND_AMOUNT = MICROCREDITS_PER_CREDIT;
 
 // snarkVM `block_reward_v2` adds a coinbase share and transaction fees on top, so
 // rates derived from this alone are a lower bound.

@@ -66,6 +66,7 @@ import {
   SettingsSetDoNotAskAgainSkipMemoPayload,
   SettingsSetProductTourCompletedPayload,
   SettingsSetHasSeenQ2WalletV4TourPayload,
+  SettingsSetHasSeenQ3WalletV4TourPayload,
   SettingsSetAnalyticsConsentInfoPayload,
   SettingsSetHasClickedRecoverPayload,
 } from "./types";
@@ -299,6 +300,10 @@ export const setProductTourCompleted = createAction<SettingsSetProductTourComple
 
 export const setHasSeenQ2WalletV4Tour = createAction<SettingsSetHasSeenQ2WalletV4TourPayload>(
   SettingsActionTypes.SET_HAS_SEEN_Q2_WALLET_V4_TOUR,
+);
+
+export const setHasSeenQ3WalletV4Tour = createAction<SettingsSetHasSeenQ3WalletV4TourPayload>(
+  SettingsActionTypes.SET_HAS_SEEN_Q3_WALLET_V4_TOUR,
 );
 
 export const setHasClickedRecover = createAction<SettingsSetHasClickedRecoverPayload>(

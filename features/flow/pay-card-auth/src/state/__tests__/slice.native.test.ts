@@ -1,5 +1,10 @@
 import { payCardAuthSlice, payCardAuthInitialState, setHasCard, setSignedIn } from "../slice";
-import { selectPayCardAuth, selectHasCard, selectIsSignedIn } from "../selectors";
+import {
+  selectPayCardAuth,
+  selectHasCard,
+  selectCardAuthStatus,
+  selectIsSignedIn,
+} from "../selectors";
 
 const reducer = payCardAuthSlice.reducer;
 const root = (state = payCardAuthInitialState) => ({ payCardAuth: state });
@@ -19,25 +24,28 @@ describe("payCardAuth slice", () => {
     expect(reducer(withCard, setHasCard(false))).toEqual(payCardAuthInitialState);
   });
 
-  it("initializes signed out", () => {
-    expect(payCardAuthInitialState.isSignedIn).toBe(false);
+  it("initializes with an unresolved status", () => {
+    expect(payCardAuthInitialState.status).toBe("unknown");
   });
 
-  it("sets isSignedIn", () => {
+  it("maps a signed-in report onto the status", () => {
     const state = reducer(undefined, setSignedIn(true));
-    expect(state).toEqual({ ...payCardAuthInitialState, isSignedIn: true });
+    expect(state).toEqual({ ...payCardAuthInitialState, status: "signedIn" });
   });
 
-  it("clears isSignedIn", () => {
+  it("maps a signed-out report onto the status", () => {
     const signedIn = reducer(undefined, setSignedIn(true));
-    expect(reducer(signedIn, setSignedIn(false))).toEqual(payCardAuthInitialState);
+    expect(reducer(signedIn, setSignedIn(false))).toEqual({
+      ...payCardAuthInitialState,
+      status: "signedOut",
+    });
   });
 
-  it("keeps the two flags apart", () => {
-    // `hasCard` says the user owns a card. `isSignedIn` says a session is live. Neither implies
-    // the other.
+  it("keeps the card flag and the session status apart", () => {
+    // `hasCard` says the user owns a card. The status says where the session stands. Neither
+    // implies the other.
     const state = reducer(reducer(undefined, setHasCard(true)), setSignedIn(false));
-    expect(state).toEqual({ hasCard: true, isSignedIn: false });
+    expect(state).toEqual({ hasCard: true, status: "signedOut" });
   });
 });
 
@@ -52,8 +60,15 @@ describe("payCardAuth selectors", () => {
     expect(selectHasCard(root(reducer(undefined, setHasCard(true))))).toBe(true);
   });
 
-  it("selectIsSignedIn reflects the flag", () => {
+  it("selectCardAuthStatus reflects the tri-state", () => {
+    expect(selectCardAuthStatus(root())).toBe("unknown");
+    expect(selectCardAuthStatus(root(reducer(undefined, setSignedIn(true))))).toBe("signedIn");
+    expect(selectCardAuthStatus(root(reducer(undefined, setSignedIn(false))))).toBe("signedOut");
+  });
+
+  it("selectIsSignedIn is true only for a live session", () => {
     expect(selectIsSignedIn(root())).toBe(false);
+    expect(selectIsSignedIn(root(reducer(undefined, setSignedIn(false))))).toBe(false);
     expect(selectIsSignedIn(root(reducer(undefined, setSignedIn(true))))).toBe(true);
   });
 });

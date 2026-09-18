@@ -172,50 +172,61 @@ describe("AccountHeaderManageActions", () => {
       expect(store.getState().modals[AleoCustomModal.MANAGE]?.isOpened).toBeFalsy();
     });
 
-    it("opens the manage modal from an empty token account whose main account has funds", () => {
+    it.each([
+      ["with balance", ALEO_TOKEN_ACCOUNT],
+      ["that is empty", { ...ALEO_TOKEN_ACCOUNT, balance: new BigNumber(0), operationsCount: 0 }],
+    ])("is absent on a token account %s", (_label, tokenAccount) => {
       mockGetAleoCurrencyConfig.mockReturnValue({ ...mockAleoCoinConfig, enableStaking: true });
 
-      const emptyTokenAccount = {
-        ...ALEO_TOKEN_ACCOUNT,
-        balance: new BigNumber(0),
-        operationsCount: 0,
-      };
-      const { result, store } = renderHook(() =>
-        hook({ account: emptyTokenAccount, parentAccount: ALEO_MAIN_ACCOUNT }),
+      const { result } = renderHook(() =>
+        hook({ account: tokenAccount, parentAccount: ALEO_MAIN_ACCOUNT }),
       );
-      const action = result.current?.find(item => item.key === "AleoBond");
 
-      expect(result.current?.find(item => item.key === "Self transfer")?.disabled).toBe(true);
-      expect(action?.disabled).toBeFalsy();
-
-      act(() => {
-        action?.onClick();
-      });
-
-      expect(store.getState().modals[AleoCustomModal.MANAGE]?.isOpened).toBe(true);
-      expect(store.getState().modals.MODAL_NO_FUNDS_STAKE?.isOpened).toBeFalsy();
+      expect(result.current?.find(item => item.key === "AleoBond")).toBeUndefined();
+      expect(result.current?.find(item => item.key === "Self transfer")).toBeDefined();
     });
 
-    // The manage modal drives the bond flow off the main account, so a token account must
-    // not reach it as the `account` — the bond spends native ALEO. And once the account has
-    // been switched, no parent goes with it: forwarding the original would land the same
-    // account in both fields, which NoFundsStake passes on to its receive and buy flows.
-    it("opens the manage modal on the main account alone, even from a token account", () => {
+    it("opens the bond flow directly when nothing is bonded", () => {
       mockGetAleoCurrencyConfig.mockReturnValue({ ...mockAleoCoinConfig, enableStaking: true });
 
       const { result, store } = renderHook(() =>
-        hook({ account: ALEO_TOKEN_ACCOUNT, parentAccount: ALEO_MAIN_ACCOUNT }),
+        hook({ account: ALEO_MAIN_ACCOUNT, parentAccount: null }),
       );
-      const action = result.current?.find(item => item.key === "AleoBond");
 
       act(() => {
-        action?.onClick();
+        result.current?.find(item => item.key === "AleoBond")?.onClick();
+      });
+
+      expect(store.getState().modals[AleoCustomModal.BOND_PUBLIC]).toEqual({
+        isOpened: true,
+        data: { account: ALEO_MAIN_ACCOUNT },
+      });
+      expect(store.getState().modals[AleoCustomModal.MANAGE]?.isOpened).toBeFalsy();
+    });
+
+    it("opens the manage modal once the account is bonded to a validator", () => {
+      mockGetAleoCurrencyConfig.mockReturnValue({ ...mockAleoCoinConfig, enableStaking: true });
+
+      const bondedAccount = {
+        ...ALEO_MAIN_ACCOUNT,
+        aleoResources: {
+          ...ALEO_MAIN_ACCOUNT.aleoResources!,
+          bondedValidator: "aleo1validator",
+        },
+      };
+      const { result, store } = renderHook(() =>
+        hook({ account: bondedAccount, parentAccount: null }),
+      );
+
+      act(() => {
+        result.current?.find(item => item.key === "AleoBond")?.onClick();
       });
 
       expect(store.getState().modals[AleoCustomModal.MANAGE]).toEqual({
         isOpened: true,
-        data: { account: ALEO_MAIN_ACCOUNT },
+        data: { account: bondedAccount },
       });
+      expect(store.getState().modals[AleoCustomModal.BOND_PUBLIC]?.isOpened).toBeFalsy();
     });
   });
 });

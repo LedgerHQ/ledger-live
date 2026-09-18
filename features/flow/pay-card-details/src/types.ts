@@ -1,41 +1,115 @@
+import type { ReactNode } from "react";
+import type { PayCardStatus } from "@domain/api-card-management";
+import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
+import type { CardDetailsSceneProps } from "./components/CardDetails/Scenes/types";
 
-// Shared with the host (`AmountDisplay` formatter contract).
 export type { FormattedValue };
 
-/** Host props for the card visual (artwork + balance overlay). Props-only, i18n-agnostic. */
-export type CardVisualProps = Readonly<{
-  /** Raw countervalue amount (e.g. 100). Formatting is delegated to {@link formatCountervalue}. */
-  balance: number;
-  /** Turns a raw number into a {@link FormattedValue} for `AmountDisplay`. */
-  formatCountervalue: (value: number) => FormattedValue;
+export type CardTrackEvent = (event: string, params: Record<string, unknown>) => void;
+export type UnlockForReveal = () => Promise<boolean>;
 
+export type CardVisualProps = Readonly<{
+  balance: number;
+  formatCountervalue: (value: number) => FormattedValue;
   balanceLabel: string;
   isLoading?: boolean;
 }>;
 
-export type CardVisualViewProps = CardVisualProps;
+export type CardVisualViewProps = CardVisualProps &
+  Readonly<{
+    isFrozen: boolean;
+  }>;
 
-export type FreezeCardViewProps = Readonly<{
-  isFrozen: boolean;
-  /** `true` when card status is BLOCKED — disables all freeze/unfreeze actions. */
-  isBlocked: boolean;
-  isStatusLoading: boolean;
-  isFreezeLoading: boolean;
-  isUnfreezeLoading: boolean;
-  isFreezeError: boolean;
-  isUnfreezeError: boolean;
-  onFreeze: () => void;
-  onUnfreeze: () => void;
+export type CardDetailsProps = Readonly<{
+  /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
+  cardVisual?: CardVisualProps;
+  /** Native only: the Details sheet overview lists the card's transactions. */
+  formatters?: CardTransactionFormatters;
+  onTrackEvent?: CardTrackEvent;
+  unlock?: UnlockForReveal;
 }>;
 
-export type FreezeViewProps = Pick<
-  FreezeCardViewProps,
-  | "isFrozen"
-  | "isBlocked"
-  | "isStatusLoading"
-  | "isFreezeLoading"
-  | "isUnfreezeLoading"
-  | "onFreeze"
-  | "onUnfreeze"
+export type CardDetailsViewProps = CardDetailsProps &
+  Readonly<{
+    placeholderLabel: string;
+    detailsLabel: string;
+    isSheetOpen: boolean;
+    scene: CardDetailsSceneProps;
+    onDetailsPress: () => void;
+    onSheetClose: () => void;
+    onSceneBack: () => void;
+  }>;
+
+export type CardDetailsSheetProps = Readonly<{
+  isOpen: boolean;
+  scene: CardDetailsSceneProps;
+  onClose: () => void;
+  /** Returns to the overview from a scene the registry gives a back button. */
+  onBack: () => void;
+}>;
+
+/**
+ * Lifecycle of the freeze/unfreeze confirmation:
+ * - `closed`: not shown
+ * - `prompt`: shown, awaiting the user's confirmation
+ * - `pending`: the freeze/unfreeze request is in flight
+ * - `error`: the request failed and the confirmation stays open to report it
+ */
+export type ConfirmState = "closed" | "prompt" | "pending" | "error";
+
+type ConfirmProps = Readonly<{
+  status: PayCardStatus["status"] | undefined;
+  onConfirm: () => void;
+  onClose: () => void;
+}>;
+
+export type ConfirmErrorProps = ConfirmProps;
+
+export type ConfirmPromptProps = ConfirmProps &
+  Readonly<{
+    isPending: boolean;
+  }>;
+
+export type ConfirmBodyProps = Readonly<{
+  appearance: "error" | "info";
+  titleKey: string;
+  descriptionKey?: string;
+  descriptionTestID?: string;
+  confirmLabelKey: string;
+  isPending?: boolean;
+  onConfirm: () => void;
+  onClose: () => void;
+}>;
+
+export type ConfirmSheetProps = ConfirmProps &
+  Readonly<{
+    confirmState: ConfirmState;
+  }>;
+
+export type FreezeViewModel = ConfirmSheetProps &
+  Readonly<{
+    isActionDisabled: boolean;
+    onOpenConfirm: () => void;
+  }>;
+
+export type RevealStatus = "idle" | "loading" | "revealed" | "failed";
+
+export type RevealViewModel = Readonly<{
+  status: RevealStatus;
+  isRevealed: boolean;
+  imageUrl: string | undefined;
+  onReveal: () => Promise<void>;
+  onHide: () => void;
+  onImageError: () => void;
+}>;
+
+export type RevealTileProps = Pick<
+  RevealViewModel,
+  "status" | "isRevealed" | "onReveal" | "onHide"
 >;
+
+export type CardFlipProps = Readonly<{
+  reveal: Pick<RevealViewModel, "isRevealed" | "imageUrl" | "onImageError"> | null;
+  cardFace: ReactNode;
+}>;

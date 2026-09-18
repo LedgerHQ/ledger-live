@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "7.2.1",
+  "version": "7.2.2-next.0",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
@@ -140,7 +140,7 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@polkadot/api": "catalog:",
@@ -150,6 +150,7 @@
     "@polkadot/types-known": "catalog:",
     "@polkadot/util": "catalog:",
     "@polkadot/util-crypto": "catalog:",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.2",
     "rxjs": "catalog:"

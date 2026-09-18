@@ -36,6 +36,7 @@ import { I18nextProvider } from "react-i18next";
 import { I18nProvider } from "@shared/i18n";
 import i18n from "~/renderer/i18n/init";
 import { setZcashShieldedEnabled } from "@ledgerhq/live-common/families/zcash/setup";
+import { LinkingProviderWrapper } from "~/renderer/components/LinkingProviderWrapper";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -129,7 +130,9 @@ const App = ({ store, initialCountervalues }: Props) => {
       <I18nextProvider i18n={i18n}>
         <I18nProvider i18n={i18n}>
           <Provider store={store}>
-            <InnerApp initialCountervalues={initialCountervalues} />
+            <LinkingProviderWrapper>
+              <InnerApp initialCountervalues={initialCountervalues} />
+            </LinkingProviderWrapper>
           </Provider>
         </I18nProvider>
       </I18nextProvider>

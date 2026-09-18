@@ -20,6 +20,8 @@ const labels: AddAddressEntryLabels = {
   sanctionedAddress: "This address is sanctioned and cannot be used.",
   validationUnavailable: "Address validation is temporarily unavailable.",
   ensDisclaimer: "ENS disclaimer",
+  ensDisclaimerDescription: "ENS names can change over time.",
+  duplicateAddress: (contactName: string) => `This address is already used for ${contactName}.`,
 };
 const RESOLVED_ADDRESS = ContactAddressValueSchema.parse(
   "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",

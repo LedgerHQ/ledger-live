@@ -38,6 +38,8 @@ const borrowSetupOptions = { nanoAppCatalogPath: NANO_APP_CATALOG_PATH };
       // Sets SWAP_DISABLE_APPS_INSTALL: without it connectApp quits the Ethereum app to reach the
       // dashboard, which terminates the single-app Speculos container.
       await swapSetup();
+      // Morpho calldata has no clear-signing descriptor, and Speculos NVRAM is per-container.
+      await app.speculos.enableBlindSigning();
       await app.mainNavigation.openPortfolioViaDeeplink();
     }, BORROW_TIMEOUT_MS);
 

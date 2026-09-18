@@ -46,6 +46,22 @@ async function disconnectAllSpeculosSessions() {
   await DeviceManagementKitTransportSpeculos.disconnectAll();
 }
 
+function overrideLedgerSyncEnvironment() {
+  const environment = LaunchArguments.value()["ledger_sync_environment"];
+  if (environment !== "PROD" && environment !== "STAGING") return;
+
+  log(`[E2E Bridge Client]: Ledger Sync environment=${environment}`);
+  store.dispatch(
+    setOverride({
+      key: "llmWalletSync",
+      value: {
+        enabled: false,
+        params: { environment, watchConfig: {}, learnMoreLink: "" },
+      },
+    }),
+  );
+}
+
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
   const mock = LaunchArguments.value()["mock"];
@@ -59,6 +75,7 @@ export function init() {
     Config.MOCK = "";
   }
   setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
+  overrideLedgerSyncEnvironment();
 
   initAppNetworkLogging();
 
@@ -168,6 +185,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         });
         postMessage({
           type: "appLogs",
+          id: msg.id,
           payload,
         });
         break;
@@ -175,6 +193,7 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "getPtxHandoff": {
         postMessage({
           type: "ptxHandoff",
+          id: msg.id,
           payload: ptxHandoffStore.take() ?? "",
         });
         break;
@@ -185,6 +204,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         );
         postMessage({
           type: "appFlags",
+          id: msg.id,
           payload,
         });
         break;
@@ -193,6 +213,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         const payload = JSON.stringify(getAllEnvs());
         postMessage({
           type: "appEnvs",
+          id: msg.id,
           payload,
         });
         break;
@@ -239,7 +260,7 @@ async function onMessage(event: WebSocketMessageEvent) {
           "SWAP_API_BASE",
           msg.swapApiBase ?? "https://global.api.stg.ledger-test.com/swap/v5",
         );
-        postMessage({ type: "swapSetupDone" });
+        postMessage({ type: "swapSetupDone", id: msg.id });
         break;
       default:
         break;

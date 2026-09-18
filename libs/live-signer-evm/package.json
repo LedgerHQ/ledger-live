@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-evm",
-  "version": "0.23.1",
+  "version": "0.23.2-next.0",
   "private": true,
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
@@ -32,7 +32,7 @@
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/hw-app-eth": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "rxjs": "catalog:"

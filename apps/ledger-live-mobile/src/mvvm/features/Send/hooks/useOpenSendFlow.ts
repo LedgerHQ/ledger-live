@@ -140,6 +140,7 @@ export function useOpenSendFlow({
             fromMAD: true,
             recipient: prefilledRecipient,
             skipRecipientStep,
+            source: sourceScreenName,
           },
         });
         return;
@@ -170,6 +171,7 @@ export function useOpenSendFlow({
       isEnabledForFamily,
       navigateToLegacyRecipient,
       navigation,
+      sourceScreenName,
     ],
   );
 

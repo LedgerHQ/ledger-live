@@ -52,7 +52,7 @@ type SpeculinhoStatusResponse = {
 };
 
 function buildAcquirePayload(deviceParams: DeviceParams, runId: string, seed: string) {
-  const { model, firmware, appName, appVersion, dependencies } = deviceParams;
+  const { model, firmware, appName, appVersion, dependencies, pki } = deviceParams;
   const device = reverseModelMap[model];
   if (!device) {
     throw new Error(`[speculosCI] Unsupported device model for Speculinho: ${String(model)}`);
@@ -82,8 +82,8 @@ function buildAcquirePayload(deviceParams: DeviceParams, runId: string, seed: st
     run_id: runId,
     speculos_version: tag,
     ...(libraries?.length ? { libraries } : {}),
-    /** Matches legacy workflow `additional_args` / local Docker Detox (`-p`). */
-    extra_args: ["-p"],
+    /** Speculos PKI flag, same as the local Docker provider. */
+    extra_args: pki ? ["-p"] : [],
   };
 }
 

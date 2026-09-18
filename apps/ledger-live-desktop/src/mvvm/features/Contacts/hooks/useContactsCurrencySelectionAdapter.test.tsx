@@ -34,7 +34,9 @@ describe("useContactsCurrencySelectionAdapter", () => {
         assets: { leftElement: "undefined", rightElement: "undefined" },
         networks: { leftElement: "undefined", rightElement: "undefined" },
       },
+      flow: "contacts",
       presentation: "embedded",
+      source: "contacts",
     });
   });
 

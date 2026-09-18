@@ -184,6 +184,7 @@ export function createRendererConfig(
             path.resolve(lldRoot, "..", "..", "shared"),
             path.resolve(lldRoot, "..", "..", "devtools"),
             path.resolve(lldRoot, "..", "..", "domain"),
+            path.resolve(lldRoot, "..", "..", "libs"),
           ],
           exclude: /node_modules/,
           loader: "builtin:swc-loader",

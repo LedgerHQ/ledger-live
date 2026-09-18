@@ -1,4 +1,5 @@
 import { Expiry, requestIdOf, SubmitRequestType } from "@dfinity/agent";
+import { IDL } from "@dfinity/candid";
 import { AccountIdentifier, SubAccount } from "@dfinity/ledger-icp";
 import { Principal } from "@dfinity/principal";
 import { sha256 } from "@noble/hashes/sha256";
@@ -14,6 +15,24 @@ import { derivePrincipalFromPubkey } from "./crypto";
 
 const governanceCanisterId = () => Principal.fromText(MAINNET_GOVERNANCE_CANISTER_ID);
 
+const NeuronIdArg = IDL.Record({ id: IDL.Nat64 });
+
+/**
+ * `manage_neuron` request type for Split, narrowed to the one field the device app parses.
+ *
+ * The app validates the candid *type table*, not just the value, and refuses a `Split` record that
+ * does not hold exactly one field (Zondax `nns_parser.c`, `readCommandSplit`), so the canister's
+ * current two-field `Split` cannot be signed at all. Omitting `memo` changes nothing that is sent:
+ * it is `opt` and we always send it absent, and candid subtyping has the canister read it as `null`.
+ */
+const SPLIT_ARG_TYPE = IDL.Record({
+  id: IDL.Opt(NeuronIdArg),
+  command: IDL.Opt(IDL.Variant({ Split: IDL.Record({ amount_e8s: IDL.Nat64 }) })),
+  neuron_id_or_subaccount: IDL.Opt(
+    IDL.Variant({ Subaccount: IDL.Vec(IDL.Nat8), NeuronId: NeuronIdArg }),
+  ),
+});
+
 const buildGovernanceCall = (
   methodName: string,
   arg: ArrayBuffer,
@@ -27,7 +46,8 @@ const buildGovernanceCall = (
   ingress_expiry: new Expiry(DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS),
 });
 
-// `manage_neuron` command variant per op (vendored ManageNeuronCommandRequest). Candid `opt` = `[]` | `[value]`.
+// `manage_neuron` command variant per op (vendored ManageNeuronCommandRequest, bar Split — see
+// SPLIT_ARG_TYPE). Candid `opt` = `[]` | `[value]`.
 const buildManageNeuronCommand = (transaction: Transaction, nowSeconds: number): unknown => {
   switch (transaction.type) {
     case "start_dissolving":
@@ -133,7 +153,7 @@ const buildManageNeuronCommand = (transaction: Transaction, nowSeconds: number):
           "[ICP](buildManageNeuronCommand) split_neuron requires an integer amount in e8s",
         );
       }
-      return { Split: { amount_e8s: BigInt(transaction.amount.toFixed(0)), memo: [] } };
+      return { Split: { amount_e8s: BigInt(transaction.amount.toFixed(0)) } };
     }
     case "follow": {
       const followees = (transaction.followeesIds ?? []).map(id => {
@@ -170,13 +190,18 @@ export const buildManageNeuronArg = (
   };
 };
 
+/** Every command but Split encodes against the canister's own interface. */
+const manageNeuronArgTypes = (transaction: Transaction): IDL.Type[] =>
+  transaction.type === "split_neuron"
+    ? [SPLIT_ARG_TYPE]
+    : getCanisterIdlFunc(governanceIdlFactory, "manage_neuron").argTypes;
+
 /** Unsigned `manage_neuron` update call for a neuron operation. */
 export const createUnsignedNeuronCommandTransaction = (
   transaction: Transaction,
   pubKey: string,
 ): UnsignedTransaction => {
-  const func = getCanisterIdlFunc(governanceIdlFactory, "manage_neuron");
-  const arg = encodeCanisterIdlFunc(func, [buildManageNeuronArg(transaction)]);
+  const arg = IDL.encode(manageNeuronArgTypes(transaction), [buildManageNeuronArg(transaction)]);
   return buildGovernanceCall("manage_neuron", arg, pubKey);
 };
 

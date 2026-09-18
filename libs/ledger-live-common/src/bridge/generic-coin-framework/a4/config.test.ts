@@ -24,6 +24,7 @@ describe("resolveA4ChainConfig", () => {
         read: false,
         register: false,
         environment: "prd",
+        maxDcRoamRetries: 5,
       });
     });
 
@@ -33,6 +34,7 @@ describe("resolveA4ChainConfig", () => {
         read: false,
         register: false,
         environment: "prd",
+        maxDcRoamRetries: 5,
       });
     });
   });
@@ -44,6 +46,7 @@ describe("resolveA4ChainConfig", () => {
         read: false,
         register: false,
         environment: "prd",
+        maxDcRoamRetries: 5,
       });
     });
 
@@ -53,6 +56,7 @@ describe("resolveA4ChainConfig", () => {
         read: false,
         register: false,
         environment: "prd",
+        maxDcRoamRetries: 5,
       });
     });
   });
@@ -70,7 +74,12 @@ describe("resolveA4ChainConfig", () => {
       "returns read:%s register:%s for entry %j",
       (read, register, entry) => {
         mockGetValueByKey.mockReturnValue({ environment: "prd", chains: { ethereum: entry } });
-        expect(resolveA4ChainConfig("ethereum")).toEqual({ read, register, environment: "prd" });
+        expect(resolveA4ChainConfig("ethereum")).toEqual({
+          read,
+          register,
+          environment: "prd",
+          maxDcRoamRetries: 5,
+        });
       },
     );
   });
@@ -90,6 +99,7 @@ describe("resolveA4ChainConfig", () => {
         read: false,
         register: true,
         environment: resolved,
+        maxDcRoamRetries: 5,
       });
     });
 
@@ -102,6 +112,7 @@ describe("resolveA4ChainConfig", () => {
         read: false,
         register: true,
         environment: "ppr",
+        maxDcRoamRetries: 5,
       });
     });
 
@@ -114,7 +125,38 @@ describe("resolveA4ChainConfig", () => {
         read: false,
         register: true,
         environment: "prd",
+        maxDcRoamRetries: 5,
       });
+    });
+  });
+
+  describe("maxDcRoamRetries", () => {
+    it("defaults to 5 when absent from the config", () => {
+      mockGetValueByKey.mockReturnValue({
+        environment: "prd",
+        chains: { ethereum: { registerOnly: true } },
+      });
+      expect(resolveA4ChainConfig("ethereum").maxDcRoamRetries).toBe(5);
+    });
+
+    it("uses the explicit value from the config", () => {
+      mockGetValueByKey.mockReturnValue({
+        environment: "prd",
+        maxDcRoamRetries: 3,
+        chains: { ethereum: { registerOnly: true } },
+      });
+      expect(resolveA4ChainConfig("ethereum").maxDcRoamRetries).toBe(3);
+    });
+
+    it("falls back to 5 for a non-integer value without disabling the chain", () => {
+      mockGetValueByKey.mockReturnValue({
+        environment: "prd",
+        maxDcRoamRetries: "many",
+        chains: { ethereum: { registerOnly: true } },
+      });
+      const result = resolveA4ChainConfig("ethereum");
+      expect(result.maxDcRoamRetries).toBe(5);
+      expect(result.register).toBe(true);
     });
   });
 });
@@ -125,6 +167,7 @@ describe("a4Config", () => {
       type: "object",
       default: {
         environment: "prd",
+        maxDcRoamRetries: 5,
         chains: {
           adi: { enabled: false, registerOnly: true },
           arbitrum: { enabled: false, registerOnly: true },

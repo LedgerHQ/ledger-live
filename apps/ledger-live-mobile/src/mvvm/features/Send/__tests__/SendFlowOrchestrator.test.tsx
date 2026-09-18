@@ -61,6 +61,7 @@ function createStepRegistry(): StepRegistry<SendFlowStep> {
     [SEND_FLOW_STEP.COIN_CONTROL]: () => null,
     [SEND_FLOW_STEP.SIGNATURE]: () => null,
     [SEND_FLOW_STEP.CONFIRMATION]: () => null,
+    [SEND_FLOW_STEP.PAY_SUCCESS]: () => null,
   };
 }
 
@@ -75,6 +76,7 @@ function createFlowConfig(overrides?: Partial<SendFlowConfig>): SendFlowConfig {
       SEND_FLOW_STEP.CONFIRMATION,
     ],
     stepConfigs: {
+      [SEND_FLOW_STEP.BALANCE_TYPE]: { id: SEND_FLOW_STEP.BALANCE_TYPE, canGoBack: false },
       [SEND_FLOW_STEP.RECIPIENT]: {
         id: SEND_FLOW_STEP.RECIPIENT,
         canGoBack: false,

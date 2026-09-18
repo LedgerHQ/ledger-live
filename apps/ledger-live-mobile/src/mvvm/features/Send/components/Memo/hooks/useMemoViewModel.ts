@@ -39,8 +39,14 @@ export function useMemoViewModel({ address, hasMemo, onSkip }: UseMemoViewModelP
     (memo: Memo) => {
       if (!address) return;
       const prev = recipientRef.current;
-      const ensName = prev?.address === address ? prev.ensName : undefined;
-      transaction.setRecipient({ address, ensName, memo });
+      const isSameAddress = prev?.address === address;
+      const ensName = isSameAddress ? prev?.ensName : undefined;
+      transaction.setRecipient({
+        address,
+        ensName,
+        memo,
+        displayLabel: isSameAddress ? prev?.displayLabel : undefined,
+      });
     },
     [transaction, address],
   );

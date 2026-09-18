@@ -34,11 +34,11 @@ const Ellipsis = styled.div`
   white-space: nowrap;
 `;
 
-type Action = { key: "redelegate" | "undelegate"; label: string };
+type Action = { key: "redelegate" | "undelegate"; label: string; testId: string };
 
 const ManageDropDownItem = ({ item, isActive }: { item: Action; isActive: boolean }) => (
   <ToolTip content={null} containerStyle={{ maxWidth: "100%" }}>
-    <DropDownItem isActive={isActive}>
+    <DropDownItem isActive={isActive} data-testid={item.testId}>
       <Box horizontal alignItems="center" justifyContent="center">
         <Text ff="Inter|SemiBold">{item.label}</Text>
       </Box>
@@ -52,13 +52,21 @@ type Props = {
   onUndelegate: () => void;
 };
 
-export function Row({ account, onRedelegate, onUndelegate }: Props) {
+export function Row({ account, onRedelegate, onUndelegate }: Readonly<Props>) {
   const { t } = useTranslation();
   const unit = useAccountUnit(account);
 
   const actions: Action[] = [
-    { key: "redelegate", label: t("mina.delegation.redelegate") },
-    { key: "undelegate", label: t("mina.delegation.undelegate") },
+    {
+      key: "redelegate",
+      label: t("mina.delegation.redelegate"),
+      testId: "mina-staking-redelegate-item",
+    },
+    {
+      key: "undelegate",
+      label: t("mina.delegation.undelegate"),
+      testId: "mina-staking-unstake-item",
+    },
   ];
   const { delegateInfo } = account.resources ?? {};
 
@@ -95,7 +103,7 @@ export function Row({ account, onRedelegate, onUndelegate }: Props) {
       <Column>
         <DropDown items={actions} renderItem={ManageDropDownItem} onChange={onSelect}>
           {() => (
-            <Box flex="1" horizontal alignItems="center">
+            <Box flex="1" horizontal alignItems="center" data-testid="mina-staking-manage-button">
               <Trans i18nKey="common.manage" />
               <div style={{ transform: "rotate(90deg)" }}>
                 <ChevronRight size={16} />

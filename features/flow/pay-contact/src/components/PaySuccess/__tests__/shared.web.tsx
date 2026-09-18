@@ -9,7 +9,7 @@ export const PAY_SUCCESS_RESOURCES: I18nTestProviderProps["resources"] = {
       payTab: {
         contacts: {
           paySuccess: {
-            title: "You paid ({{recipient}}) {{amount}}",
+            title: "You paid ({{recipient}})",
             amount: "Amount",
             estimatedTime: "Est. time",
             from: "From",

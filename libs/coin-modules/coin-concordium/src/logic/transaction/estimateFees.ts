@@ -17,10 +17,11 @@ export interface PltFeeParams {
 }
 
 /**
- * Applies {@link PLT_ENERGY_BUFFER_PERCENT}, rounding up.
+ * Applies {@link PLT_ENERGY_BUFFER_PERCENT} to an energy figure, rounding up.
  *
  * Rounding up rather than truncating keeps a small estimate from losing its
- * buffer entirely to integer division.
+ * buffer entirely to integer division. The cost is not buffered with this: it is
+ * derived from the buffered energy instead — see {@link estimateTokenFees}.
  */
 export function applyEnergyBuffer(value: bigint): bigint {
   const scale = BigInt(100);
@@ -80,8 +81,20 @@ export async function estimateTokenFees(
     tokenOperationTypeCount: { transfer: 1 },
   });
 
-  return {
-    cost: applyEnergyBuffer(BigInt(result.cost)),
-    energy: applyEnergyBuffer(BigInt(result.energy)),
-  };
+  const energy = BigInt(result.energy);
+  const cost = BigInt(result.cost);
+  const bufferedEnergy = applyEnergyBuffer(energy);
+
+  // The fee has to fund the buffered energy, not merely carry the same buffer.
+  // The chain deposits `ceil(rate * headerEnergy)` (`Types.hs` `computeCost`) and
+  // compares that against the account's available amount, so buffering cost and
+  // energy independently can leave the fee a few µCCD short of the header it is
+  // paired with. Scaling by the proxy's own ratio is a safe upper bound, because
+  // `cost` is already `ceil(rate * energy)` and so `cost / energy >= rate`.
+  const bufferedCost =
+    energy === BigInt(0)
+      ? applyEnergyBuffer(cost)
+      : (cost * bufferedEnergy + energy - BigInt(1)) / energy;
+
+  return { cost: bufferedCost, energy: bufferedEnergy };
 }

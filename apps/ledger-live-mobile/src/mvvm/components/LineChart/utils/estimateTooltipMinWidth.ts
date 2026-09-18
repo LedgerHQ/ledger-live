@@ -13,7 +13,7 @@ import type { LineChartPointTooltip } from "../types";
  * Over-estimating only widens the box slightly; it never clips.
  *
  * The structural constants below mirror `DefaultScrubberTooltip` in
- * `@ledgerhq/lumen-ui-rnative-visualization` (PADDING_X, LABEL_VALUE_GAP). The
+ * `@ledgerhq/lumen-ui-rnative/visualization` (PADDING_X, LABEL_VALUE_GAP). The
  * per-character width is an upper bound for the `body4` sans font used by the
  * tooltip (covering `$`, digits and capitals).
  */

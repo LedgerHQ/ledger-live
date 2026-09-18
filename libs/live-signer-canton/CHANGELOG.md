@@ -1,5 +1,13 @@
 # @ledgerhq/live-signer-canton
 
+## 0.9.20-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4)]:
+  - @ledgerhq/hw-app-canton@0.13.0-next.0
+  - @ledgerhq/coin-canton@1.1.2-next.0
+
 ## 0.9.19
 
 ### Patch Changes
@@ -148,26 +156,5 @@
   - @ledgerhq/devices@8.17.0
   - @ledgerhq/hw-transport@6.35.6
   - @ledgerhq/hw-app-canton@0.12.5
-
-## 0.9.10-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`1e17c12`](https://github.com/LedgerHQ/ledger-live/commit/1e17c127178a871b665b25d6f4208d4613826dd1), [`df96477`](https://github.com/LedgerHQ/ledger-live/commit/df964774bdaccd897e5e7414c172e9c26ff21f67)]:
-  - @ledgerhq/coin-canton@0.28.0-next.0
-  - @ledgerhq/devices@8.17.0-next.0
-  - @ledgerhq/hw-transport@6.35.6-next.0
-  - @ledgerhq/hw-app-canton@0.12.5-next.0
-
-## 0.9.9
-
-### Patch Changes
-
-- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`ebda9d8`](https://github.com/LedgerHQ/ledger-live/commit/ebda9d88805501f4c2c03fef0fe24f116a8a2a6c), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`e441ffe`](https://github.com/LedgerHQ/ledger-live/commit/e441ffe805540c793be02f9d8b350ef41585ddf5)]:
-  - @ledgerhq/errors@6.37.0
-  - @ledgerhq/devices@8.16.0
-  - @ledgerhq/coin-canton@0.27.0
-  - @ledgerhq/hw-app-canton@0.12.4
-  - @ledgerhq/hw-transport@6.35.5
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

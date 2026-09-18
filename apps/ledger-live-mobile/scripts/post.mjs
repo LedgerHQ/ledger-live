@@ -114,10 +114,6 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
     await fs.promises.writeFile(".env", str, "utf8");
   }
 
-  if (process.env["DEBUG_RNDEBUGGER"] == "1") {
-    await $`rndebugger-open`;
-  }
-
   if (os.platform() === "darwin") {
     try {
       await which("bundle");

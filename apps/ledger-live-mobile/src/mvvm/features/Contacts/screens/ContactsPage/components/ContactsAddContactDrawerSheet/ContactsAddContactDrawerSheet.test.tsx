@@ -36,7 +36,7 @@ function createViewModel(
       namePlaceholder: "Contact name",
       namingDisclaimer:
         "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
-      confirmName: "Confirm name",
+      confirmAddContact: "Add contact",
       nameValidationErrors: {
         InvalidContactNameError: "Special characters are not allowed.",
         DuplicateContactNameError: "This contact name is already in use.",
@@ -81,10 +81,12 @@ describe("ContactsAddContactDrawerSheet", () => {
   it("should render the name form with the Figma copy and character limit", () => {
     render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
 
-    expect(screen.getByText("Add contact")).toBeVisible();
+    const [drawerTitle, saveLabel] = screen.getAllByText("Add contact");
+    expect(drawerTitle).toBeVisible();
+    expect(saveLabel).toBeVisible();
     expect(screen.getByText(/For privacy, avoid full names and surnames/)).toBeVisible();
     expect(screen.getByText("0/32")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Confirm name" })).toBeDisabled();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
   });
 
   it("should hold the name field focus back until the drawer has finished opening", () => {
@@ -112,7 +114,7 @@ describe("ContactsAddContactDrawerSheet", () => {
       "accessibilityLiveRegion",
       "polite",
     );
-    expect(screen.getByRole("button", { name: "Confirm name" })).toBeEnabled();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
   });
 
   it("should render the shared validation error and disable confirmation", () => {
@@ -128,7 +130,7 @@ describe("ContactsAddContactDrawerSheet", () => {
       "accessibilityLiveRegion",
       "polite",
     );
-    expect(screen.getByRole("button", { name: "Confirm name" })).toBeDisabled();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
   });
 
   it("should make the name input non-editable while saving", () => {
@@ -163,7 +165,7 @@ describe("ContactsAddContactDrawerSheet", () => {
     );
 
     expect(screen.getByText("3/32")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Confirm name" })).toBeEnabled();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
 
     await user.press(screen.getByTestId("bottom-sheet-header-close-button"));
     expect(onClose).toHaveBeenCalledTimes(1);

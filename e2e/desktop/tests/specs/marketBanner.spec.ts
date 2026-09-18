@@ -2,8 +2,6 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { expect } from "@playwright/test";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { coinDetailUrlPattern } from "tests/utils/urlUtils";
 
@@ -23,7 +21,6 @@ test.describe("Market banner", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.marketBanner.expectMarketBannerToBeVisible();
       await app.marketBanner.expectFearAndGreedCardToBeVisible();

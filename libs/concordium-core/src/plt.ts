@@ -58,18 +58,29 @@ const MAX_SIGNIFICAND = 2n ** 64n - 1n;
  *
  * The chain caps this independently of the CBOR budget, so the 512-byte budget
  * is not a sufficient check: a 400-byte memo fits it and still fails on chain.
+ *
+ * The device signs the full length. `app_sizes.h` sizes `APP_PLT_CBOR_MAX` for
+ * "~260B memo (4B header + 256B payload)" and its PLT handler rejects no memo
+ * for its length, so this is the only cap that applies.
  */
-const MAX_MEMO_SIZE = 256;
+export const PLT_MAX_MEMO_SIZE = 256;
 
 /**
  * Largest number of decimals a PLT amount may carry.
  *
- * The chain accepts up to 255, but the device is tighter: it holds the exponent
- * in a signed byte and rejects a raw negative-integer argument above 127, which
- * caps the exponent at -128. Take the tighter bound, so a payload we accept
- * locally is one both sides accept.
+ * The chain accepts up to 255. Two device limits are tighter, and this is the
+ * tighter of those two: the app rejects an amount whose exponent magnitude
+ * exceeds 18 with `0x6B11 ERROR_PLT_UNSUPPORTED_DECIMALS`. The CBOR encoding
+ * imposes a separate ceiling of 128 — the exponent is a signed byte, so a raw
+ * negative-integer argument above 127 does not fit — but a payload can satisfy
+ * that and still be refused for its decimals.
+ *
+ * A token declaring more than 18 decimals is therefore legal on chain and
+ * unsignable on Ledger. Rejecting it here keeps the encoder from building a
+ * payload the device will refuse; LIVE-28334 rejects it earlier still, in
+ * transaction status, so the user learns before plugging in.
  */
-const MAX_DECIMALS = 128;
+export const PLT_MAX_DECIMALS = 18;
 
 /**
  * A PLT transfer, in the terms the wallet holds it.
@@ -110,7 +121,8 @@ export interface PltTransfer {
  * The exponent is the negated decimals, so it is always `<= 0`. Both the device
  * and the chain reject a positive exponent.
  *
- * @throws If `amount` is negative or exceeds 64 bits, or `decimals` is outside 0..128
+ * @throws If `amount` is negative or exceeds 64 bits, or `decimals` is outside
+ * 0..{@link PLT_MAX_DECIMALS}
  */
 export function encodePltAmount(amount: bigint, decimals: number): Buffer {
   if (amount < 0n) {
@@ -119,8 +131,8 @@ export function encodePltAmount(amount: bigint, decimals: number): Buffer {
   if (amount > MAX_SIGNIFICAND) {
     throw new Error(`PLT amount ${amount} exceeds the unsigned 64-bit range`);
   }
-  if (!Number.isInteger(decimals) || decimals < 0 || decimals > MAX_DECIMALS) {
-    throw new Error(`PLT decimals must be an integer in 0..${MAX_DECIMALS}, got ${decimals}`);
+  if (!Number.isInteger(decimals) || decimals < 0 || decimals > PLT_MAX_DECIMALS) {
+    throw new Error(`PLT decimals must be an integer in 0..${PLT_MAX_DECIMALS}, got ${decimals}`);
   }
 
   return encodeCborTag(
@@ -164,9 +176,9 @@ export function encodePltAddress(address: AccountAddress, includeCoinInfo = fals
  * @throws If the memo exceeds the chain's 256-byte limit
  */
 export function encodePltMemo(memo: Buffer, tagged = false): Buffer {
-  if (memo.length > MAX_MEMO_SIZE) {
+  if (memo.length > PLT_MAX_MEMO_SIZE) {
     throw new Error(
-      `PLT memo is ${memo.length} bytes, exceeding the chain limit of ${MAX_MEMO_SIZE}`,
+      `PLT memo is ${memo.length} bytes, exceeding the chain limit of ${PLT_MAX_MEMO_SIZE}`,
     );
   }
 

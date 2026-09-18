@@ -14,6 +14,13 @@ import { isUnauthorizedError } from "./errors";
 import { hasErrorKind, shouldResumeAuthenticated } from "./guards";
 import type { CardLoginContext, CardLoginEvent, CardLoginMachineInput } from "./types";
 
+function isRedirectForCurrentAttempt(
+  redirectState: string | undefined,
+  attemptState: string | null,
+): boolean {
+  return redirectState === undefined || redirectState === attemptState;
+}
+
 export const cardLoginMachine = setup({
   types: {
     context: {} as CardLoginContext,
@@ -39,11 +46,16 @@ export const cardLoginMachine = setup({
     clearErrorKind,
     failPkce,
     /**
-     * `CardMore` is a separate component with no machine, so it cannot read this snapshot. These two
+     * `More` is a separate component with no machine, so it cannot read this snapshot. These two
      * publish the answer it needs through a port, on entry, which keeps the flag and the state in step.
      */
     publishSignedIn: ({ context }) => context.ports.setSignedIn(true),
     publishSignedOut: ({ context }) => context.ports.setSignedIn(false),
+    /**
+     * Only a code exchange reaches this, so a resumed session never raises the flag. It runs in the
+     * transition, not in an effect: `ready` signs the holder in, which unmounts CardLogin at once.
+     */
+    markIntroSeen: ({ context }) => context.ports.markIntroSeen(),
   },
 }).createMachine({
   id: "cardLogin",
@@ -52,6 +64,7 @@ export const cardLoginMachine = setup({
     oauthConfig: input.oauthConfig,
     callback: input.callback ?? null,
     loginUrl: null,
+    attemptState: null,
     session: null,
     errorKind: null,
     clearSession: false,
@@ -108,7 +121,10 @@ export const cardLoginMachine = setup({
           // The provider hosts the authorize page, so the actor builds the URL and nothing is asked
           // of the backend first. One step fewer, and one fewer way for a login to fail.
           target: "awaitingHostedLogin",
-          actions: assign({ loginUrl: ({ event }) => event.output.loginUrl }),
+          actions: assign({
+            loginUrl: ({ event }) => event.output.loginUrl,
+            attemptState: ({ event }) => event.output.state,
+          }),
         },
         // The attempt may already be stored, because the URL is built after the write. `clearingAttempt`
         // wipes it and then reads the error kind, which sends this to `error`.
@@ -127,10 +143,17 @@ export const cardLoginMachine = setup({
         }),
         onDone: [
           {
-            guard: ({ event }) => event.output.callback !== null,
+            // Same rule as the deep link below, when the source can answer it: a redirect that
+            // carries a `state` for another attempt is not the one this invoke opened. A source that
+            // cannot supply `state` at all still gets through on its `code` alone.
+            guard: ({ context, event }) =>
+              event.output.callback !== null &&
+              isRedirectForCurrentAttempt(event.output.callback.state, context.attemptState),
             target: "validatingCallback",
             actions: assign({ callback: ({ event }) => event.output.callback }),
           },
+          // The attempt has to outlive this step: the deep link carries the redirect in its own time.
+          { guard: ({ event }) => event.output.isPending, target: "awaitingCallback" },
           // Dismissed. The user left on purpose, so no message follows them back.
           { target: "clearingAttempt" },
         ],
@@ -140,13 +163,34 @@ export const cardLoginMachine = setup({
         },
       },
       on: {
-        // The app forwarded the deep link before the browser reported it. First one wins.
+        // The app forwarded the deep link before the browser reported it. First one wins. A stray
+        // redirect from an attempt already abandoned answers `state` for a different attempt, so it
+        // fails the guard and is dropped: this invoke keeps waiting on its own attempt undisturbed.
         CALLBACK_RECEIVED: {
+          guard: ({ context, event }) =>
+            isRedirectForCurrentAttempt(event.state, context.attemptState),
           target: "validatingCallback",
           actions: assign({
             callback: ({ event }) => ({ code: event.code }),
           }),
         },
+      },
+    },
+
+    awaitingCallback: {
+      on: {
+        // Same guard, same reason: the redirect this state is waiting on is the one whose `state`
+        // matches the attempt that is still current, not one left over from an attempt retried away.
+        CALLBACK_RECEIVED: {
+          guard: ({ context, event }) =>
+            isRedirectForCurrentAttempt(event.state, context.attemptState),
+          target: "validatingCallback",
+          actions: assign({
+            callback: ({ event }) => ({ code: event.code }),
+          }),
+        },
+        // The redirect may never arrive, so a second press mints a fresh attempt instead of wedging.
+        LOGIN: { target: "preparingAttempt" },
       },
     },
 
@@ -187,6 +231,7 @@ export const cardLoginMachine = setup({
     },
 
     persistingSession: {
+      entry: "markIntroSeen",
       invoke: {
         src: "persistSession",
         input: ({ context }) => ({ ports: context.ports, session: context.session }),
@@ -245,7 +290,7 @@ export const cardLoginMachine = setup({
 
     ready: {
       entry: "publishSignedIn",
-      // `CardMore` ended the session, and it owns that whole journey. Nothing is left to undo here,
+      // `More` ended the session, and it owns that whole journey. Nothing is left to undo here,
       // so this only puts the login back on offer.
       on: { SESSION_ENDED: { target: "idle" } },
     },

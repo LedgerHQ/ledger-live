@@ -38,12 +38,12 @@ export function PaySuccessHero({
       ) : (
         <Avatar size={AVATAR_SIZE} aria-hidden />
       )}
-      <p className="heading-3-semi-bold text-center">
-        {t("payTab.contacts.paySuccess.title", {
-          recipient: recipientLabel,
-          amount: amountFormatted,
-        })}
-      </p>
+      <div className="flex flex-col items-center gap-8">
+        <h3 className="text-center heading-3-semi-bold">
+          {t("payTab.contacts.paySuccess.title", { recipient: recipientLabel })}
+        </h3>
+        <h3 className="text-center heading-3-semi-bold">{amountFormatted}</h3>
+      </div>
     </div>
   );
 }

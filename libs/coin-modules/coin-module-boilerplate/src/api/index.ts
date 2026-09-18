@@ -9,16 +9,14 @@ import {
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import BigNumber from "bignumber.js";
 import { type BoilerplateCoinConfig } from "../config";
-import {
-  broadcast,
-  combine,
-  craftTransaction,
-  estimateFees,
-  getBalance,
-  getNextValidSequence,
-  lastBlock,
-  listOperations,
-} from "../logic";
+import { broadcast } from "../logic/broadcast";
+import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
+import { estimateFees } from "../logic/estimateFees";
+import { getBalance } from "../logic/getBalance";
+import { getNextSequence } from "../logic/getNextSequence";
+import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
 
 // Checked against CoinModuleImpl with `satisfies` rather than annotated as it: a module lists the
 // methods it implements and simply omits the capabilities the chain does not have. `satisfies` keeps
@@ -43,7 +41,7 @@ export function createApi() {
 }
 
 async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
-  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
+  const nextSequenceNumber = await getNextSequence(transactionIntent.sender);
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
     {

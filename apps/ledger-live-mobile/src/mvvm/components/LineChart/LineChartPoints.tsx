@@ -1,5 +1,5 @@
 import React from "react";
-import { Point } from "@ledgerhq/lumen-ui-rnative-visualization";
+import { Point } from "@ledgerhq/lumen-ui-rnative/visualization";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { LINE_CHART_POINT_SIZE } from "./constants";
 import { resolveMarkerColor } from "./utils/resolveMarkerColor";

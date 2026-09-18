@@ -1,5 +1,12 @@
 # @devtools/shell
 
+## 0.9.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/registry@0.4.3-next.0
+
 ## 0.9.2
 
 ### Patch Changes
@@ -171,38 +178,5 @@
 
 - Updated dependencies []:
   - @devtools/registry@0.1.6-next.0
-
-## 0.5.0
-
-### Minor Changes
-
-- [#19205](https://github.com/LedgerHQ/ledger-live/pull/19205) [`3711e2b`](https://github.com/LedgerHQ/ledger-live/commit/3711e2bfdcc0be2cdb7c8d4567242fb14875ab1c) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Prepare shell and components for LWD wiring. Add onClose to shell props and a back arrow in the sidebar. In feature-flags, replace the sidebar with a dialog.
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.5
-
-## 0.5.0-next.0
-
-### Minor Changes
-
-- [#19205](https://github.com/LedgerHQ/ledger-live/pull/19205) [`3711e2b`](https://github.com/LedgerHQ/ledger-live/commit/3711e2bfdcc0be2cdb7c8d4567242fb14875ab1c) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Prepare shell and components for LWD wiring. Add onClose to shell props and a back arrow in the sidebar. In feature-flags, replace the sidebar with a dialog.
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.5-next.0
-
-## 0.4.0
-
-### Minor Changes
-
-- [#18547](https://github.com/LedgerHQ/ledger-live/pull/18547) [`4973a36`](https://github.com/LedgerHQ/ledger-live/commit/4973a3648b64c9110f42dcacfdc559f4e7186885) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add mobile ui for devtools/shell. A screen to choose a tool category, one for tools and one for the tool itself
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.4
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -19,12 +19,15 @@ import { CustomFeesScreen } from "./screens/CustomFees/CustomFeesScreen";
 import { CoinControlScreen } from "./screens/CoinControl/CoinControlScreen";
 import { SkipMemoConfirmationScreen } from "./screens/SkipMemoConfirmation/SkipMemoConfirmationScreen";
 import { PaySuccessScreen } from "./screens/PaySuccess/PaySuccessScreen";
+import { BalanceTypeScreen } from "./screens/BalanceType/BalanceTypeScreen";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import { SendFlowTrackingProvider } from "./context/SendFlowTrackingContext";
 import { AddNewContactHeaderProvider } from "./context/AddNewContactHeaderContext";
 import { RecipientContactSelectionProvider } from "./context/RecipientContactSelectionContext";
+import { RecipientContinuationProvider } from "./context/RecipientContinuationContext";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
+  [SEND_FLOW_STEP.BALANCE_TYPE]: BalanceTypeScreen,
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION]: SkipMemoConfirmationScreen,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
@@ -81,7 +84,9 @@ export function SendWorkflow({ onClose, params, isOpen }: SendWorkflowProps) {
       <SendFlowTrackingProvider>
         <AddNewContactHeaderProvider>
           <RecipientContactSelectionProvider>
-            <SendFlowLayout isOpen={isOpen} onClose={handleClose} />
+            <RecipientContinuationProvider>
+              <SendFlowLayout isOpen={isOpen} onClose={handleClose} />
+            </RecipientContinuationProvider>
           </RecipientContactSelectionProvider>
         </AddNewContactHeaderProvider>
       </SendFlowTrackingProvider>

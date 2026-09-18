@@ -55,7 +55,7 @@ const ZcashSyncStateBanner = ({ account, sender }: Props) => {
     );
   }
 
-  if (syncState === "stopped" || syncState === "disabled") {
+  if (syncState === "stopped" || syncState === "disabled" || syncState === "ready") {
     return (
       <Alert type="warning" mt={4} data-testid="zcash-sync-banner-stopped">
         <Box horizontal alignItems="center" justifyContent="space-between">
@@ -122,7 +122,6 @@ const ZcashSyncStateBanner = ({ account, sender }: Props) => {
     );
   }
 
-  // syncState === "complete" | "ready" → no banner
   return null;
 };
 

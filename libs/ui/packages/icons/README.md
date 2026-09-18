@@ -7,17 +7,7 @@
 
 ### A collection of Ledger-flavoured icons
 
-#### This package contains a collection of React and React Native icon components.
-
-## Installation
-
-**Note:** Do not install this package directly if your project is using `@ledgerhq/react-ui` or `@ledgerhq/native-ui`. Both packages include `icons-ui` as a depedency and the icon components are re-exported and are accessible from there.
-
-### Package
-
-```sh
-npm i @ledgerhq/icons-ui
-```
+#### This internal package contains a collection of React and React Native icon components.
 
 ## Usage
 

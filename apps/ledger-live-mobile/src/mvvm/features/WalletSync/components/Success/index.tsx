@@ -2,6 +2,7 @@ import { Box, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
+import { useWalletSyncTrackingFlow } from "../../hooks/useLedgerSyncAnalytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useFeature } from "@features/platform-feature-flags";
@@ -33,10 +34,11 @@ export function Success({
 }: Props) {
   const { colors } = useTheme();
   const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
+  const trackingFlow = useWalletSyncTrackingFlow();
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
       <PreventNativeBack />
-      <TrackScreen name={analyticsPage} />
+      <TrackScreen name={analyticsPage} flow={trackingFlow} />
       <Flex
         flexDirection="column"
         alignItems="center"

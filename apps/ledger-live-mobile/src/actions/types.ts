@@ -316,6 +316,7 @@ export enum SettingsActionTypes {
   SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION = "SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION",
   SET_PRODUCT_TOUR_COMPLETED = "SET_PRODUCT_TOUR_COMPLETED",
   SET_HAS_SEEN_Q2_WALLET_V4_TOUR = "SET_HAS_SEEN_Q2_WALLET_V4_TOUR",
+  SET_HAS_SEEN_Q3_WALLET_V4_TOUR = "SET_HAS_SEEN_Q3_WALLET_V4_TOUR",
   SET_DO_NOT_ASK_AGAIN_SKIP_MEMO = "SET_DO_NOT_ASK_AGAIN_SKIP_MEMO",
   DEPRECATION_DO_NOT_REMIND = "DEPRECATION_DO_NOT_REMIND",
   SET_ANALYTICS_CONSENT_INFO = "SET_ANALYTICS_CONSENT_INFO",
@@ -405,6 +406,7 @@ export type SettingsSetHasDismissedContactsFeatureIntroductionPayload =
 export type SettingsSetDoNotAskAgainSkipMemoPayload = SettingsState["doNotAskAgainSkipMemo"];
 export type SettingsSetProductTourCompletedPayload = SettingsState["productTourCompleted"];
 export type SettingsSetHasSeenQ2WalletV4TourPayload = SettingsState["hasSeenQ2WalletV4Tour"];
+export type SettingsSetHasSeenQ3WalletV4TourPayload = SettingsState["hasSeenQ3WalletV4Tour"];
 export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
 export type SettingsClearDismissedContentCardsPayload = string[];
 export type SettingsSetFromLedgerSyncOnboardingPayload = boolean;
@@ -476,6 +478,7 @@ export type SettingsPayload =
   | SettingsSetDoNotAskAgainSkipMemoPayload
   | SettingsSetProductTourCompletedPayload
   | SettingsSetHasSeenQ2WalletV4TourPayload
+  | SettingsSetHasSeenQ3WalletV4TourPayload
   | SettingsSetHasClickedRecoverPayload;
 
 // === WALLET CONNECT ACTIONS ===

@@ -1,5 +1,42 @@
 # @devtools/pay-card
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#21569](https://github.com/LedgerHQ/ledger-live/pull/21569) [`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Resolve a card-linked wallet to the Ledger currency it holds.
+
+  - New `@domain/entity-card-asset-mapping` maps a card provider's `{currency}.{network}` id onto a Ledger currency id. `baanxCatalog.ts` holds Baanx's, covering USDT, USDC, BTC, ETH, XRP, SOL and LTC; a second provider is a second catalog beside it.
+  - Several of Baanx's keys map onto one currency: its docs name the chain, its sandbox has answered with the ticker repeated, and both resolve.
+  - `getCardLinkedWallets` attaches `ledgerId` in its transform, so every consumer reads one answer rather than mapping again.
+  - The join and the devtool carry it through; an unmapped pair has no `ledgerId` at all rather than resolving to a wrong currency.
+  - A "Currency Mapping" screen in the devtool lists the whole catalog, scrollable both ways, so a gap can be read against it.
+
+- [#21949](https://github.com/LedgerHQ/ledger-live/pull/21949) [`41f7dc9`](https://github.com/LedgerHQ/ledger-live/commit/41f7dc963ac7329e5ec07236c85e322a56476be7) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Give the desktop devtool the screens the mobile one has.
+
+  - "Card Status" runs the endpoint probes and requests the rendered card details.
+  - "Card onboarding" shows each derived step, the count and the answer it was worked out from. The status is read when the screen asks for it rather than when the tool mounts, and on either host: both apps mock the Card endpoints now, so refreshing and toggling work on desktop too.
+  - "Currency Mapping" lists the asset catalog, scrollable sideways so a long Ledger id is not truncated.
+
+- [#21941](https://github.com/LedgerHQ/ledger-live/pull/21941) [`fbfdc3f`](https://github.com/LedgerHQ/ledger-live/commit/fbfdc3f5767a4dfbbf79de16fe9bcc61f9b5b941) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Show the card's wallets in the desktop devtool.
+
+  - "Balance & Wallets" opens the same three sections the mobile tool shows: the two provider responses and the join the app builds from them.
+  - The web `Section` takes the same tint as the native one, so the three lists stay told apart.
+  - Desktop already hands the tool its balance props, so nothing in the app changes.
+
+- [#21195](https://github.com/LedgerHQ/ledger-live/pull/21195) [`cef83ae`](https://github.com/LedgerHQ/ledger-live/commit/cef83ae58ffc5529bebda292737502e78e3b7522) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Add Card session and MSW renewal controls to the Card / Pay DevTool.
+
+- [#21918](https://github.com/LedgerHQ/ledger-live/pull/21918) [`fcc2ac4`](https://github.com/LedgerHQ/ledger-live/commit/fcc2ac4c5ed270fb63df4c0079068ad6dac94612) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Sign a mock Card session in and out from the Pay Card DevTool, and answer the Card endpoints from the desktop MSW worker, so the Card surfaces can be reached without the hosted login.
+
+- [#21626](https://github.com/LedgerHQ/ledger-live/pull/21626) [`eddc89e`](https://github.com/LedgerHQ/ledger-live/commit/eddc89e7b86a13aeedfc0ae4956c2dcd08494e5f) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Show and drive the derived card onboarding status from the Card / Pay devtool.
+
+  - A "Card onboarding" screen: a `Stepper` for the count, every step by the id the app keys it on, and the derived answer printed raw so a step can be traced to the response behind it.
+  - Each step a request decides carries a toggle. It sets what that endpoint answers, so the step follows on the next read and holds until it is cleared. The phone wallet step is answered on the device; the purchase step is read-only while nothing answers it.
+  - An endpoint answers from the provider until its toggle is used, so one step can be held while the rest stay real, and "Use the real answers" hands them all back.
+  - `@domain/api-card-management/mock/card-onboarding-status` holds those answers and the responses that carry them; the mobile MSW handlers read it before falling back to what they answered before.
+  - Mocking is started by an env var, so without it the screen says so instead of offering a toggle that would set an answer nothing reads.
+  - The hook gains `refresh`, which re-asks all three sources: the screen asks on open and on demand.
+
 ## 0.5.0
 
 ### Minor Changes

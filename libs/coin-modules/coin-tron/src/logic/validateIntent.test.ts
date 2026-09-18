@@ -6,7 +6,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/ledger-wallet-framework/errors";
+} from "@ledgerhq/coin-module-framework/errors";
 import BigNumber from "bignumber.js";
 import type { TronMemo, TronResources, TronTxData } from "../types";
 import {

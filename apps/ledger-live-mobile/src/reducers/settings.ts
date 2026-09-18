@@ -81,6 +81,7 @@ import type {
   SettingsSetDoNotAskAgainSkipMemoPayload,
   SettingsSetProductTourCompletedPayload,
   SettingsSetHasSeenQ2WalletV4TourPayload,
+  SettingsSetHasSeenQ3WalletV4TourPayload,
   SettingsSetAnalyticsConsentInfoPayload,
   SettingsSetHasClickedRecoverPayload,
   SettingsHideSmallValueTokenOperationsPayload,
@@ -182,6 +183,7 @@ export const INITIAL_STATE: SettingsState = {
   hasDismissedContactsFeatureIntroduction: false,
   productTourCompleted: false,
   hasSeenQ2WalletV4Tour: false,
+  hasSeenQ3WalletV4Tour: false,
   doNotAskAgainSkipMemo: false,
   hasClickedRecover: false,
   deprecationDoNotRemind: [],
@@ -689,6 +691,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     hasSeenQ2WalletV4Tour: (action as Action<SettingsSetHasSeenQ2WalletV4TourPayload>).payload,
   }),
 
+  [SettingsActionTypes.SET_HAS_SEEN_Q3_WALLET_V4_TOUR]: (state, action) => ({
+    ...state,
+    hasSeenQ3WalletV4Tour: (action as Action<SettingsSetHasSeenQ3WalletV4TourPayload>).payload,
+  }),
+
   [SettingsActionTypes.SET_HAS_CLICKED_RECOVER]: (state, action) => ({
     ...state,
     hasClickedRecover: (action as Action<SettingsSetHasClickedRecoverPayload>).payload,
@@ -973,5 +980,6 @@ export const hasDismissedContactsFeatureIntroductionSelector = (state: State) =>
 export const doNotAskAgainSkipMemoSelector = (state: State) => state.settings.doNotAskAgainSkipMemo;
 export const productTourCompletedSelector = (state: State) => state.settings.productTourCompleted;
 export const hasSeenQ2WalletV4TourSelector = (state: State) => state.settings.hasSeenQ2WalletV4Tour;
+export const hasSeenQ3WalletV4TourSelector = (state: State) => state.settings.hasSeenQ3WalletV4Tour;
 export const analyticsConsentInfoSelector = (state: State) => state.settings.analyticsConsentInfo;
 export const hasClickedRecoverSelector = (state: State) => state.settings.hasClickedRecover;

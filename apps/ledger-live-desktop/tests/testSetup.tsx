@@ -23,6 +23,7 @@ import { I18nProvider } from "@shared/i18n";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import { config } from "react-transition-group";
+import { LinkingProvider } from "@shared/platform-linking";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
 import type { ReduxStore } from "~/state-manager/configureStore";
@@ -179,15 +180,17 @@ function Providers({
     <I18nextProvider i18n={i18n}>
       <I18nProvider i18n={i18n}>
         <QueryClientProvider client={queryClient}>
-          <Provider store={store}>
-            {skipRouter ? (
-              routerContent
-            ) : (
-              <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
-                {routerContent}
-              </MemoryRouter>
-            )}
-          </Provider>
+          <LinkingProvider config={{ openExternal: () => {} }}>
+            <Provider store={store}>
+              {skipRouter ? (
+                routerContent
+              ) : (
+                <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
+                  {routerContent}
+                </MemoryRouter>
+              )}
+            </Provider>
+          </LinkingProvider>
         </QueryClientProvider>
       </I18nProvider>
     </I18nextProvider>
@@ -377,6 +380,44 @@ function renderHookWithLiveAppProvider<Result, Props>(
     }),
   };
 }
+
+/**
+ * Install fake timers for a suite that drives a component's own `setTimeout`.
+ *
+ * Only `setTimeout`/`clearTimeout` are faked. Faking the rest is not safe here: rxjs'
+ * `asyncScheduler` (behind `throttleTime`, `debounceTime`, …) drives itself off
+ * `setInterval`, and React's `act` yields through `setImmediate` — fake either and a suite
+ * that mounts a real hook spins until the jest worker runs out of memory.
+ *
+ * Caveat, and why this is opt-in per suite rather than global: MSW keeps undici installed
+ * for every suite, and undici's internal fast-clock timer calls `.unref()` on whatever
+ * `setTimeout` returned (its own guard only covers `null`). @sinonjs/fake-timers hands out
+ * bare numeric ids under jsdom, so ticking the fake clock while that timer is pending
+ * throws `fastNowTimeout?.unref is not a function`. Its handle shape is chosen when jest
+ * builds the clock, before any setup file runs, so it cannot be corrected from here. A
+ * suite that ticks the clock across a long `waitFor` budget while the app is doing HTTP
+ * should shorten the delay at its source instead — see the OnboardModal suites.
+ *
+ * Call `jest.useRealTimers()` in `afterEach`.
+ */
+export const useComponentFakeTimers = () =>
+  jest.useFakeTimers({
+    doNotFake: [
+      "Date",
+      "hrtime",
+      "nextTick",
+      "performance",
+      "queueMicrotask",
+      "requestAnimationFrame",
+      "cancelAnimationFrame",
+      "requestIdleCallback",
+      "cancelIdleCallback",
+      "setImmediate",
+      "clearImmediate",
+      "setInterval",
+      "clearInterval",
+    ],
+  });
 
 // Override act to suppress deprecation warnings for synchronous usage
 // eslint-disable-next-line @typescript-eslint/no-deprecated

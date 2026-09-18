@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { useFreezeCardViewModel } from "./useFreezeCardViewModel";
 
 jest.mock("@domain/api-card-management", () => ({
@@ -14,16 +14,27 @@ import {
   type PayCardStatus,
 } from "@domain/api-card-management";
 
-function setupMocks({
-  status = "ACTIVE" as PayCardStatus["status"] | null,
+type Setup = {
+  status?: PayCardStatus["status"] | null;
+  isStatusLoading?: boolean;
+  rejects?: boolean;
+  onResolved?: () => void;
+};
+
+function mutationTrigger(rejects: boolean) {
+  return jest.fn(() => ({
+    unwrap: () => (rejects ? Promise.reject(new Error("nope")) : Promise.resolve(undefined)),
+  }));
+}
+
+function renderWith({
+  status = "ACTIVE",
   isStatusLoading = false,
-  isFreezeLoading = false,
-  isFreezeError = false,
-  isUnfreezeLoading = false,
-  isUnfreezeError = false,
-} = {}) {
-  const freeze = jest.fn();
-  const unfreeze = jest.fn();
+  rejects = false,
+  onResolved,
+}: Setup = {}) {
+  const freeze = mutationTrigger(rejects);
+  const unfreeze = mutationTrigger(rejects);
 
   jest.mocked(useGetCardStatusQuery).mockReturnValue({
     data: status
@@ -34,19 +45,13 @@ function setupMocks({
 
   jest
     .mocked(useFreezeCardMutation)
-    .mockReturnValue([
-      freeze,
-      { isLoading: isFreezeLoading, isError: isFreezeError },
-    ] as unknown as ReturnType<typeof useFreezeCardMutation>);
+    .mockReturnValue([freeze] as unknown as ReturnType<typeof useFreezeCardMutation>);
 
   jest
     .mocked(useUnfreezeCardMutation)
-    .mockReturnValue([
-      unfreeze,
-      { isLoading: isUnfreezeLoading, isError: isUnfreezeError },
-    ] as unknown as ReturnType<typeof useUnfreezeCardMutation>);
+    .mockReturnValue([unfreeze] as unknown as ReturnType<typeof useUnfreezeCardMutation>);
 
-  return { freeze, unfreeze };
+  return { freeze, unfreeze, ...renderHook(() => useFreezeCardViewModel(onResolved)) };
 }
 
 describe("useFreezeCardViewModel", () => {
@@ -54,72 +59,130 @@ describe("useFreezeCardViewModel", () => {
     jest.clearAllMocks();
   });
 
-  it("returns isFrozen: false when status is ACTIVE", () => {
-    setupMocks({ status: "ACTIVE" });
-    const { result } = renderHook(() => useFreezeCardViewModel());
-    expect(result.current.isFrozen).toBe(false);
+  it.each(["ACTIVE", "FROZEN", "BLOCKED", "INACTIVE"] as const)(
+    "exposes the %s card status",
+    status => {
+      expect(renderWith({ status }).result.current.status).toBe(status);
+    },
+  );
+
+  it.each(["ACTIVE", "FROZEN"] as const)("keeps the action available on a %s card", status => {
+    expect(renderWith({ status }).result.current.isActionDisabled).toBe(false);
   });
 
-  it("returns isFrozen: true when status is FROZEN", () => {
-    setupMocks({ status: "FROZEN" });
-    const { result } = renderHook(() => useFreezeCardViewModel());
-    expect(result.current.isFrozen).toBe(true);
+  it.each([
+    ["the card is blocked", { status: "BLOCKED" }],
+    ["the card status has not arrived yet", { status: null, isStatusLoading: true }],
+  ] as const)("makes the action unavailable when %s", (_reason, setup) => {
+    expect(renderWith(setup).result.current.isActionDisabled).toBe(true);
   });
 
-  it("returns isFrozen: true (optimistic) while freeze mutation is loading", () => {
-    setupMocks({ status: "ACTIVE", isFreezeLoading: true });
-    const { result } = renderHook(() => useFreezeCardViewModel());
-    expect(result.current.isFrozen).toBe(true);
+  it("starts with the confirmation closed", () => {
+    expect(renderWith().result.current.confirmState).toBe("closed");
   });
 
-  it("returns isFrozen: false (optimistic) while unfreeze mutation is loading", () => {
-    setupMocks({ status: "FROZEN", isUnfreezeLoading: true });
-    const { result } = renderHook(() => useFreezeCardViewModel());
-    expect(result.current.isFrozen).toBe(false);
+  it("opens the confirmation on request", () => {
+    const { result } = renderWith();
+
+    act(() => result.current.onOpenConfirm());
+
+    expect(result.current.confirmState).toBe("prompt");
   });
 
-  it("returns isBlocked: true when status is BLOCKED", () => {
-    setupMocks({ status: "BLOCKED" });
-    const { result } = renderHook(() => useFreezeCardViewModel());
-    expect(result.current.isBlocked).toBe(true);
+  it("closes the confirmation when it is dismissed", () => {
+    const { result } = renderWith();
+
+    act(() => result.current.onOpenConfirm());
+    act(() => result.current.onClose());
+
+    expect(result.current.confirmState).toBe("closed");
   });
 
-  it("returns isBlocked: false for non-BLOCKED statuses", () => {
-    setupMocks({ status: "ACTIVE" });
-    const { result } = renderHook(() => useFreezeCardViewModel());
-    expect(result.current.isBlocked).toBe(false);
-  });
+  it("freezes an unfrozen card and closes the confirmation", async () => {
+    const { freeze, unfreeze, result } = renderWith({ status: "ACTIVE" });
 
-  it("calls freeze mutation when onFreeze is invoked", () => {
-    const { freeze } = setupMocks({ status: "ACTIVE" });
-    const { result } = renderHook(() => useFreezeCardViewModel());
-    result.current.onFreeze();
+    act(() => result.current.onOpenConfirm());
+    await act(async () => result.current.onConfirm());
+
     expect(freeze).toHaveBeenCalledTimes(1);
+    expect(unfreeze).not.toHaveBeenCalled();
+    expect(result.current.confirmState).toBe("closed");
   });
 
-  it("calls unfreeze mutation when onUnfreeze is invoked", () => {
-    const { unfreeze } = setupMocks({ status: "FROZEN" });
-    const { result } = renderHook(() => useFreezeCardViewModel());
-    result.current.onUnfreeze();
+  it("unfreezes a frozen card and closes the confirmation", async () => {
+    const { freeze, unfreeze, result } = renderWith({ status: "FROZEN" });
+
+    act(() => result.current.onOpenConfirm());
+    await act(async () => result.current.onConfirm());
+
     expect(unfreeze).toHaveBeenCalledTimes(1);
+    expect(freeze).not.toHaveBeenCalled();
+    expect(result.current.confirmState).toBe("closed");
   });
 
-  it("exposes isFreezeError: true when freeze mutation errored", () => {
-    setupMocks({ isFreezeError: true });
-    const { result } = renderHook(() => useFreezeCardViewModel());
-    expect(result.current.isFreezeError).toBe(true);
+  it("keeps the confirmation open on a failed request so it can report the error", async () => {
+    const { result } = renderWith({ rejects: true });
+
+    act(() => result.current.onOpenConfirm());
+    await act(async () => result.current.onConfirm());
+
+    expect(result.current.confirmState).toBe("error");
   });
 
-  it("exposes isUnfreezeError: true when unfreeze mutation errored", () => {
-    setupMocks({ isUnfreezeError: true });
-    const { result } = renderHook(() => useFreezeCardViewModel());
-    expect(result.current.isUnfreezeError).toBe(true);
+  it("reports that the confirmation resolved when it is dismissed", () => {
+    const onResolved = jest.fn();
+    const { result } = renderWith({ onResolved });
+
+    act(() => result.current.onOpenConfirm());
+    act(() => result.current.onClose());
+
+    expect(onResolved).toHaveBeenCalledTimes(1);
   });
 
-  it("exposes isStatusLoading: true while card status query is loading", () => {
-    setupMocks({ isStatusLoading: true, status: null });
-    const { result } = renderHook(() => useFreezeCardViewModel());
-    expect(result.current.isStatusLoading).toBe(true);
-    expect(result.current.isFrozen).toBe(false);
+  it("reports that the confirmation resolved once the mutation succeeds", async () => {
+    const onResolved = jest.fn();
+    const { result } = renderWith({ onResolved });
+
+    act(() => result.current.onOpenConfirm());
+    await act(async () => result.current.onConfirm());
+
+    expect(onResolved).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not report resolution while the confirmation stays open on an error", async () => {
+    const onResolved = jest.fn();
+    const { result } = renderWith({ rejects: true, onResolved });
+
+    act(() => result.current.onOpenConfirm());
+    await act(async () => result.current.onConfirm());
+
+    expect(onResolved).not.toHaveBeenCalled();
+  });
+
+  it("retries from the error state", async () => {
+    const { freeze, result } = renderWith({ rejects: true });
+
+    act(() => result.current.onOpenConfirm());
+    await act(async () => result.current.onConfirm());
+    await act(async () => result.current.onConfirm());
+
+    expect(freeze).toHaveBeenCalledTimes(2);
+    expect(result.current.confirmState).toBe("error");
+  });
+
+  it("locks the tile while the request is in flight", async () => {
+    const { result } = renderWith();
+
+    act(() => result.current.onOpenConfirm());
+
+    let confirming: Promise<void>;
+    act(() => {
+      confirming = result.current.onConfirm() as unknown as Promise<void>;
+    });
+
+    expect(result.current.confirmState).toBe("pending");
+    expect(result.current.isActionDisabled).toBe(true);
+
+    await act(async () => confirming);
   });
 });

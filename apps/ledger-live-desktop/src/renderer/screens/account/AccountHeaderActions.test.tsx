@@ -152,5 +152,7 @@ describe("AccountHeaderActions — family slot / fallback logic", () => {
       expect(screen.queryByTestId("receive-account-action-button")).not.toBeInTheDocument(),
     );
     expect(screen.queryByTestId("send-button")).not.toBeInTheDocument();
+    // The whole row is gone, not just its buttons: an empty wrapper would still carry its spacing.
+    expect(screen.queryByTestId("account-buttons-group")).not.toBeInTheDocument();
   });
 });

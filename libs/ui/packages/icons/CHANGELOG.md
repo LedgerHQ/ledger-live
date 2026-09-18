@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.21.0-next.0
+
+### Minor Changes
+
+- [#21787](https://github.com/LedgerHQ/ledger-live/pull/21787) [`e3535da`](https://github.com/LedgerHQ/ledger-live/commit/e3535da7e5c884f8ada75eff52c0c4538142fffb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mark the deprecated design system packages as private so they stop being published to npm, and drop their npm installation instructions
+
 ## 0.20.0
 
 ### Minor Changes

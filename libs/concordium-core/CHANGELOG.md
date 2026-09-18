@@ -1,5 +1,18 @@
 # @ledgerhq/concordium-core
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#21634](https://github.com/LedgerHQ/ledger-live/pull/21634) [`b30f903`](https://github.com/LedgerHQ/ledger-live/commit/b30f903f592c0bafba74a1784d98b9d605c18ccb) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Validate PLT transfers and fix estimateMaxSpendable for tokens
+
+  `getTransactionStatus` checks a PLT amount against the token sub-account and its fee
+  against the CCD at the parent's disposal, and blocks on token state and device limits.
+  `estimateMaxSpendable` returns the full token balance instead of subtracting µCCD fees.
+  A PLT fee is priced from the buffered energy, so it covers the deposit the chain
+  requires. `concordium-core` lowers the PLT decimals ceiling to 18. Adds the English
+  error strings.
+
 ## 0.6.0
 
 ### Minor Changes

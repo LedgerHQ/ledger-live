@@ -5,10 +5,8 @@ import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
 import { useFeature } from "@features/platform-feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import {
-  useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
-  useTrackingPairForAccounts,
-} from "@ledgerhq/live-countervalues-react";
+import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@ledgerhq/live-countervalues-react";
+import { useTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/useTrackingPairForAccounts";
 import { resolveTrackingPairs } from "@ledgerhq/live-countervalues/logic";
 import {
   flattenSortAccounts,

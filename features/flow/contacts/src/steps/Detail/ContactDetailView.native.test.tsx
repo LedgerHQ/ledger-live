@@ -2,6 +2,7 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { createMeDisplayNameFormatter } from "@features/platform-contacts";
 import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
 import type { ContactDetailLabels } from "./types";
@@ -15,7 +16,7 @@ const labels: ContactDetailLabels = {
   emptyMeDescription: "Save external addresses for Me.",
   emptyContactDescription: () => "Save their wallet addresses to send to them by name next time",
   ledgerWalletAddresses: "Ledger Wallet addresses",
-  formatMeDisplayName: name => `${name} (Me)`,
+  formatMeDisplayName: createMeDisplayNameFormatter("My addresses", name => `${name} (Me)`),
   formatAddressCount: count => `${count} address`,
 };
 
@@ -39,7 +40,7 @@ describe("ContactDetailPage", () => {
     render(<ContactDetailView {...meDetailProps} contact={mockMeContact()} />);
 
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
-    expect(screen.getByText("Me")).toBeVisible();
+    expect(screen.getByText("My addresses")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add your address");
     expect(screen.getByTestId("contacts-detail-ledger-wallet-addresses")).toHaveTextContent(
       "Ledger Wallet addresses",

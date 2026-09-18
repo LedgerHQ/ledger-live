@@ -1,4 +1,7 @@
+import { sleep } from "@ledgerhq/live-e2e-shared";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
+import { getFlags } from "@e2e/bridge/server";
 
 import type { PartialFeatures } from "@shared/feature-flags";
 
@@ -43,17 +46,36 @@ export const LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS: PartialFeatures = {
   lwmLedgerSyncOptimisation: { enabled: true },
 };
 
-/**
- * The app builds its trustchain SDK on first render and keeps it in a module singleton, so the
- * environment it boots with is the only one it will ever use — an override sent to a running app
- * moves the flag but not the SDK. Pointing the CLI elsewhere would leave the two on different
- * backends and surface as an empty trustchain rather than an error, so refuse it up front.
- */
-function assertSupportedEnvironment() {
-  if (ledgerSyncEnvironment !== "STAGING") {
+const ENVIRONMENT_READ_TIMEOUT_MS = 30_000;
+const ENVIRONMENT_READ_POLL_MS = 1_000;
+
+/** `getFlags` returns "" when the bridge has not connected yet, so poll before believing it. */
+async function readAppLedgerSyncEnvironment() {
+  const deadline = Date.now() + ENVIRONMENT_READ_TIMEOUT_MS;
+
+  while (Date.now() < deadline) {
+    const rawFlags = await getFlags();
+    if (rawFlags) {
+      return parseExtraFeatureFlags<PartialFeatures>(rawFlags).llmWalletSync?.params?.environment;
+    }
+    await sleep(ENVIRONMENT_READ_POLL_MS);
+  }
+
+  throw new Error(
+    `Ledger Sync: the app never answered \`getFlags\` within ${ENVIRONMENT_READ_TIMEOUT_MS / 1_000}s, ` +
+      "so its environment could not be checked. " +
+      "The bridge is down — look for a launch or connection failure above.",
+  );
+}
+
+/** Call before `app.init`: once a suite has pushed its own flags, this reads them back to itself. */
+export async function verifyLedgerSyncEnvironment() {
+  const appEnvironment = await readAppLedgerSyncEnvironment();
+
+  if (appEnvironment !== ledgerSyncEnvironment) {
     throw new Error(
-      `Ledger Sync: mobile can only run against STAGING, got ${ledgerSyncEnvironment}. ` +
-        "The app pins its trustchain SDK at boot, so LEDGER_SYNC_ENVIRONMENT cannot move it.",
+      `Ledger Sync: the app booted on ${appEnvironment}, the e2e CLI targets ${ledgerSyncEnvironment}. ` +
+        "Both sides must share a backend: the trustchain mints the JWT cloud-sync validates.",
     );
   }
 }
@@ -65,7 +87,6 @@ function assertSupportedEnvironment() {
 export function setupLedgerSyncSeed() {
   let previousSeed: string | undefined;
   beforeAll(() => {
-    assertSupportedEnvironment();
     previousSeed = app.ledgerSync.useGeneratedSeed();
   });
   afterAll(() => {

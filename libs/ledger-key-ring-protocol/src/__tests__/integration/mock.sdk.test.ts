@@ -1,12 +1,10 @@
 import path from "path";
 import fs from "fs";
 import { RecordStore, TransportReplayer } from "@ledgerhq/hw-transport-mocker";
-import { getEnv, setEnv } from "@shared/env";
+import { TRUSTCHAIN_API_STAGING } from "../../../tests/test-helpers/config";
 import { ScenarioOptions } from "../../../tests/test-helpers/types";
 import { getSdk } from "../..";
 import { WithDevice } from "../../types";
-
-setEnv("MOCK", "true");
 
 const nonMockableScenarios = [
   "randomMemberTryToDestroy", // can't simulate seed<>trustchain relationship
@@ -34,11 +32,11 @@ fs.readdirSync(scenarioFolder).forEach(file => {
         withDevice,
         sdkForName: (name, opts) =>
           getSdk(
-            !!getEnv("MOCK"),
+            true, // this suite always exercises the mock SDK
             {
               applicationId: opts?.applicationId ?? 16,
               name,
-              apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+              apiBaseUrl: TRUSTCHAIN_API_STAGING,
             },
             withDevice,
           ),

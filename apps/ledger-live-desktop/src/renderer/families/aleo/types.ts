@@ -4,6 +4,12 @@ import type {
   TransactionStatus,
   AleoOperation,
 } from "@ledgerhq/live-common/families/aleo/types";
-import type { LLDCoinFamily } from "../types";
+import type { FieldComponentProps, LLDCoinFamily } from "../types";
 
 export type AleoFamily = LLDCoinFamily<AleoAccount, Transaction, TransactionStatus, AleoOperation>;
+
+export type AleoFieldComponentProps = FieldComponentProps<
+  AleoAccount,
+  Transaction,
+  TransactionStatus
+>;

@@ -105,6 +105,7 @@ function Earn({ route }: Props) {
         : undefined,
     [stableSavingsFlag],
   );
+  const deviceIntentSignEnabled = useFeature("llmWalletApiDeviceIntentSign")?.enabled ?? false;
 
   const shouldDisplayBackgroundCanvas = useMemo(
     () => shouldDisplayEarnBackgroundCanvas(params?.intent, swapToEarnFlag?.enabled ?? false),
@@ -139,6 +140,7 @@ function Earn({ route }: Props) {
       uiVersion: "v1",
       ...restParams,
       ...Object.fromEntries(searchParams.entries()),
+      llmWalletApiDeviceIntentSignEnabled: deviceIntentSignEnabled ? "true" : "false",
     };
 
     return {
@@ -157,6 +159,7 @@ function Earn({ route }: Props) {
     ethDepositCohort,
     swapToEarnParam,
     stableSavingsParam,
+    deviceIntentSignEnabled,
     params,
     searchParams,
   ]);

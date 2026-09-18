@@ -1,6 +1,5 @@
 import React from "react";
-import { AddressInput, Banner, Button, TextInput } from "@ledgerhq/lumen-ui-react";
-import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
+import { AddressInput, Banner, TextInput } from "@ledgerhq/lumen-ui-react";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import { SanctionedAddressBanner } from "../../../../components/SanctionedAddressBanner/SanctionedAddressBanner";
 import type { ContactsAddAddressEntryWebViewProps } from "../ContactsAddAddressEntry/ContactsAddAddressEntry.types";
@@ -16,11 +15,9 @@ export function ContactsAddAddressEntryView({
   addressLabel,
   nameLabels,
   nameValidationMessage,
-  isConfirmEnabled,
   onChange,
   onPaste,
   onAddressLabelChange,
-  onConfirm,
 }: ContactsAddAddressEntryWebViewProps): React.JSX.Element {
   return (
     <div className="flex flex-col gap-24">
@@ -64,21 +61,11 @@ export function ContactsAddAddressEntryView({
         <Banner
           appearance="info"
           data-testid="contacts-add-address-ens-disclaimer"
-          description={labels.ensDisclaimer}
+          title={labels.ensDisclaimer}
+          description={labels.ensDisclaimerDescription}
         />
       ) : null}
       {sanctionedAddressBanner ? <SanctionedAddressBanner {...sanctionedAddressBanner} /> : null}
-      <Button
-        appearance="base"
-        className="w-full"
-        data-testid="contacts-add-address-confirm"
-        disabled={!isConfirmEnabled}
-        icon={LedgerLogo}
-        onClick={onConfirm}
-        size="lg"
-      >
-        {labels.confirmAddress}
-      </Button>
     </div>
   );
 }

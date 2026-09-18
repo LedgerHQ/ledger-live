@@ -1,5 +1,12 @@
 # @shared/ui-info-state
 
+## 0.2.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`de19b3e`](https://github.com/LedgerHQ/ledger-live/commit/de19b3e4e56a0c28fcc1a3ca929059e84fc7bebf)]:
+  - @shared/ui-queued-bottom-sheet@0.4.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

@@ -158,11 +158,19 @@ export async function swapSetup() {
 }
 
 export async function waitSwapReady() {
-  return fetchData({ type: "waitSwapReady", id: uniqueId() }, RESPONSE_TIMEOUT * 3);
+  return fetchData(
+    { type: "waitSwapReady", id: uniqueId() },
+    RESPONSE_TIMEOUT * 3,
+    "waitSwapReady",
+  );
 }
 
 export async function waitEarnReady() {
-  return fetchData({ type: "waitEarnReady", id: uniqueId() }, RESPONSE_TIMEOUT * 3);
+  return fetchData(
+    { type: "waitEarnReady", id: uniqueId() },
+    RESPONSE_TIMEOUT * 3,
+    "waitEarnReady",
+  );
 }
 
 export async function getLogs() {
@@ -182,20 +190,24 @@ export async function getPtxHandoff() {
   return fetchData({ type: "getPtxHandoff", id: uniqueId() });
 }
 
-async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
+async function fetchData(
+  message: MessageData,
+  timeout = RESPONSE_TIMEOUT,
+  correlationKey: string = message.id,
+): Promise<string> {
   return new Promise<string>(resolve => {
     postMessage(message);
     const timeoutId = setTimeout(() => {
-      global.pendingCallbacks?.delete(message.type);
+      global.pendingCallbacks?.delete(correlationKey);
       delete webSocket.messages[message.id];
       console.warn(`Timeout while waiting for ${message.type}`);
       resolve("");
     }, timeout);
 
-    global.pendingCallbacks.set(message.type, {
+    global.pendingCallbacks.set(correlationKey, {
       callback: (data: string) => {
         clearTimeout(timeoutId);
-        global.pendingCallbacks?.delete(message.type);
+        global.pendingCallbacks?.delete(correlationKey);
         resolve(data);
       },
     });
@@ -235,19 +247,13 @@ function onMessage(messageStr: string) {
       webSocket.e2eBridgeServer.next(msg);
       break;
     case "appLogs":
-      resolvePending("getLogs", msg.payload);
-      break;
     case "ptxHandoff":
-      resolvePending("getPtxHandoff", msg.payload);
-      break;
     case "appFlags":
-      resolvePending("getFlags", msg.payload);
-      break;
     case "appEnvs":
-      resolvePending("getEnvs", msg.payload);
+      resolvePending(msg.id, msg.payload);
       break;
     case "swapSetupDone":
-      resolvePending("swapSetup", "swapSetup done");
+      resolvePending(msg.id, "swapSetup done");
       break;
     case "swapLiveAppReady":
       resolvePending("waitSwapReady", "Swap Live App is ready");

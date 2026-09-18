@@ -11,7 +11,8 @@ import { usePayTabViewModel } from "./usePayTabViewModel";
 const Stack = createNativeStackNavigator<PayTabNavigatorParamList>();
 
 function PayTabViewModelProbe() {
-  const { oauthConfig, callback } = usePayTabViewModel();
+  const { login } = usePayTabViewModel();
+  const { oauthConfig, callback } = login;
 
   return (
     <>

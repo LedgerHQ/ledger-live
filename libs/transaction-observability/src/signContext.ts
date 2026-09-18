@@ -31,9 +31,9 @@ export type SignContext = {
  * speed-up still correlates.
  *
  * Identity is lost when a signed operation is serialised and rehydrated — the wallet-api
- * `transaction.sign` route across the webview boundary, or one persisted and broadcast later
- * — and ACRE signs outside the wrapper entirely. Those miss and fall back to the operation
- * type, which is why {@link deriveFromOperationType} is still load-bearing.
+ * `transaction.sign` route across the webview boundary, or one persisted and broadcast later.
+ * Those miss and fall back to the operation type, which is why
+ * {@link deriveFromOperationType} is still load-bearing.
  */
 const contexts = new WeakMap<object, SignContext>();
 

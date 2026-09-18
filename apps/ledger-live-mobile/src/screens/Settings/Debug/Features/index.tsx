@@ -36,6 +36,12 @@ export default function Features() {
   return (
     <SettingsNavigationScrollView>
       <SettingsRow
+        title="Start Tour"
+        desc="Open Product Tour, Q2, and Q3 debug drawers"
+        iconLeft={<IconsLegacy.NewsMedium size={24} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugStartTour)}
+      />
+      <SettingsRow
         title="Swap"
         desc="Enable/disable swap providers"
         iconLeft={<IconsLegacy.TradeMedium size={24} color="black" />}

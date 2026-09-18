@@ -1,4 +1,9 @@
-import type { CardLoginOauthConfig, OpenHostedLogin, PayCardAuthCallback } from "../../state/types";
+import type {
+  CardLoginOauthConfig,
+  OpenCardHostedPage,
+  OpenHostedLogin,
+  PayCardAuthCallback,
+} from "../../state/types";
 
 export type PayCardLoginTrackEvent = (event: string, params: Record<string, unknown>) => void;
 
@@ -9,6 +14,8 @@ export type CardLoginProps = {
    * the flow the `code` and `state` it already parsed.
    */
   readonly callback?: PayCardAuthCallback | null;
+  readonly openHostedLogin?: OpenHostedLogin;
+  readonly openHostedPage?: OpenCardHostedPage;
   readonly onTrackEvent?: PayCardLoginTrackEvent;
 };
 
@@ -47,8 +54,12 @@ export type CardLoginIntroViewProps = Readonly<{
 
 export type CardLoginCopy = Readonly<{
   title: string;
+  /** The heading the login block carries itself, under the host heading. */
+  headline: string;
   description: string;
   loginLabel: string;
+  /** `null` once the intro has been seen, because the login action is the login by then. */
+  alreadyHaveCardLabel: string | null;
 }>;
 
 export type CardLoginViewProps = CardLoginCopy & {
@@ -56,11 +67,12 @@ export type CardLoginViewProps = CardLoginCopy & {
   readonly isLoading: boolean;
   readonly errorMessage: string | null;
   readonly onLoginPress: () => void;
+  readonly onAlreadyHaveCardPress: () => void;
   readonly intro: CardLoginIntroViewProps;
 };
 
 /**
  * `null` once the card holder is signed in, because the login has nothing left to offer then.
- * `CardMore` takes over at that point, and it reads the same flag to know it.
+ * `More` takes over at that point, and it reads the same flag to know it.
  */
 export type CardLoginViewModel = CardLoginViewProps | null;

@@ -1,5 +1,28 @@
 # @ledgerhq/live-signer-cosmos
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#21719](https://github.com/LedgerHQ/ledger-live/pull/21719) [`bb2f03e`](https://github.com/LedgerHQ/ledger-live/commit/bb2f03e41b96b8f95f239acea75428657cdd64fe) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - fix(cosmos): add the gonka chain and always send the HRP to the signer
+
+  Adds the Gonka chain to the Cosmos coin module's chain factory. Fixes the Cosmos
+  signer to send the chain's address prefix to the device on every coin type
+  instead of only coin type 60 — the gate was safe while 118 was the only other
+  option, but a chain on any other coin type (Gonka is on 1200) could not sign
+  through the DMK signer. Chains whose device app is not app-cosmos opt out via
+  the new `signWithPrefix` chain parameter: `crypto_org` and `crypto_org_croeseid`
+  run the separate "Cronos POS Chain" app on coin type 394 and keep omitting the
+  field, so no shipping chain's sign APDU changes. Renames `CosmosSigner.sign`'s
+  third parameter from `transactionType` to `hrp`, matching what it actually
+  carries. Also treats a zero fee as loaded rather than missing on the send path,
+  so a zero-fee chain can send a transaction and use its full spendable balance.
+
+### Patch Changes
+
+- Updated dependencies [[`cdb273b`](https://github.com/LedgerHQ/ledger-live/commit/cdb273b068df78cd5a0dbd4281fb79f22e0a7506), [`54fce77`](https://github.com/LedgerHQ/ledger-live/commit/54fce77bfa46c3d42d3e39b80804258a91d910f2), [`bb2f03e`](https://github.com/LedgerHQ/ledger-live/commit/bb2f03e41b96b8f95f239acea75428657cdd64fe)]:
+  - @ledgerhq/coin-cosmos@1.3.0-next.0
+
 ## 0.4.9
 
 ### Patch Changes
@@ -151,32 +174,5 @@
   - @ledgerhq/coin-cosmos@0.38.0
   - @ledgerhq/hw-transport@6.35.6
   - @ledgerhq/hw-app-cosmos@6.36.6
-
-## 0.4.0-next.0
-
-### Minor Changes
-
-- [#18814](https://github.com/LedgerHQ/ledger-live/pull/18814) [`fa0123a`](https://github.com/LedgerHQ/ledger-live/commit/fa0123a1da7b053d58afab498266cf830958e2ff) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate remaining lint scripts from ESLint to oxlint and drop Prettier (oxfmt is now the sole formatter)
-
-### Patch Changes
-
-- Updated dependencies [[`3cb6159`](https://github.com/LedgerHQ/ledger-live/commit/3cb615918166922059304724f560c566d2671ac3), [`c5763f6`](https://github.com/LedgerHQ/ledger-live/commit/c5763f6171f49d2b9e679b982804e68843800450), [`1e17c12`](https://github.com/LedgerHQ/ledger-live/commit/1e17c127178a871b665b25d6f4208d4613826dd1), [`607b032`](https://github.com/LedgerHQ/ledger-live/commit/607b03228d5e648a0611c316c6ab71a60365f349)]:
-  - @ledgerhq/coin-cosmos@0.38.0-next.0
-  - @ledgerhq/hw-transport@6.35.6-next.0
-  - @ledgerhq/hw-app-cosmos@6.36.6-next.0
-
-## 0.3.0
-
-### Minor Changes
-
-- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
-
-### Patch Changes
-
-- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`64b8071`](https://github.com/LedgerHQ/ledger-live/commit/64b8071125821693ef325a32a9437c75ecbe2f06), [`9dc9a1f`](https://github.com/LedgerHQ/ledger-live/commit/9dc9a1f6e9767a3056d88d63a36d5e20bc305f48), [`e93a936`](https://github.com/LedgerHQ/ledger-live/commit/e93a9367e61d8f060849782c7b5b95371979faf2), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292)]:
-  - @ledgerhq/errors@6.37.0
-  - @ledgerhq/coin-cosmos@0.37.0
-  - @ledgerhq/hw-app-cosmos@6.36.5
-  - @ledgerhq/hw-transport@6.35.5
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

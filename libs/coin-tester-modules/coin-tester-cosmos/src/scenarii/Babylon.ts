@@ -11,6 +11,8 @@ export const BabylonScenario = makeCosmosScenario({
   name: "Babylon Ledger Live transactions",
   currency: babylon,
   hrp: "bbn",
+  minGasPrice: 0.002,
+  staking: true,
   delegateLabel: "Delegate 100 BABY (wrapped via x/epoching)",
   spawn: spawnBabylond,
   kill: killBabylond,

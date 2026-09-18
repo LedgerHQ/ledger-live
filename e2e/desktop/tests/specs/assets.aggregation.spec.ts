@@ -2,8 +2,6 @@ import { test } from "tests/fixtures/common";
 import { expect } from "@playwright/test";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
@@ -35,8 +33,6 @@ test.describe("Asset aggregation", () => {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.portfolio.assetsView.expectSingleAggregatedRow("stablecoins", "USD Coin");
@@ -72,8 +68,6 @@ test.describe("Asset aggregation", () => {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
@@ -119,8 +113,6 @@ test.describe("Asset aggregation", () => {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         const ticker = Currency.BTC.ticker;
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
@@ -173,8 +165,6 @@ test.describe("Asset aggregation", () => {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.ETH);

@@ -410,9 +410,22 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     </FadeInButtonsContainer>
   );
 
+  const hasActions =
+    manageActions.length > 0 ||
+    canStakeUsingPlatformApp ||
+    availableOnSwap ||
+    availableOnBuy ||
+    availableOnSell ||
+    canSendResult ||
+    canReceive(mainAccount, undefined);
+
+  const isAccountEmpty = bridge.isAccountEmpty(account);
+
+  if (!isAccountEmpty && !hasActions) return null;
+
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2} mt={15}>
-      {bridge.isAccountEmpty(account) ? null : NonEmptyAccountHeader}
+      {isAccountEmpty ? null : NonEmptyAccountHeader}
     </Box>
   );
 };

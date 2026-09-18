@@ -2,8 +2,6 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { TokenAccount, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED } from "tests/utils/featureFlagUtils";
@@ -67,6 +65,21 @@ export type NewSendFlowEntry = {
   xrayTicket: string;
   bugTicket?: string;
   teamOwner?: Team;
+  /**
+   * When set, the amount input is asserted to pin the currency's decimal magnitude: an exact
+   * round-trip, plus one decimal deeper rejected. Only meaningful when the amount already
+   * fills the currency's magnitude — otherwise the deeper value is legitimately accepted.
+   */
+  verifyAmountPrecision?: boolean;
+  /**
+   * When set, the operation-details amount is asserted to equal `tx.amount` exactly.
+   *
+   * Not valid for families whose operation value is `amount + fee` — bitcoin, polkadot,
+   * cardano, internet_computer, zcash, sui, aptos all build their optimistic operation that
+   * way, and with broadcast disabled the drawer renders that optimistic value. Enable it per
+   * entry, on entries that have actually been run.
+   */
+  verifyOperationAmount?: boolean;
 };
 
 export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
@@ -98,17 +111,15 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
         }${validMemoTag ? " with memo" : ""}`,
         {
           tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-          annotation: { type: "TMS", description: entry.xrayTicket },
+          annotation: [
+            { type: "TMS", description: entry.xrayTicket },
+            ...(entry.bugTicket ? [{ type: "BUG", description: entry.bugTicket }] : []),
+          ],
         },
         async ({ app }) => {
           const isTokenTransaction = tx.accountToDebit instanceof TokenAccount;
 
           const requiresMemoStep = family ? MEMO_STEP_FAMILIES.has(family) : false;
-
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          if (entry.bugTicket) {
-            await addBugLink([entry.bugTicket]);
-          }
 
           await app.mainNavigation.openTargetFromMainNavigation("accounts");
 
@@ -140,6 +151,9 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
           }
 
           await app.newSendFlow.fillCryptoAmount(tx.amount);
+          if (entry.verifyAmountPrecision) {
+            await app.newSendFlow.expectAmountMagnitude(tx.amount);
+          }
 
           if (tx.speed) {
             await app.newSendFlow.selectFeePreset(tx.speed);
@@ -153,6 +167,9 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
 
           await app.newSendFlow.clickViewDetails();
           await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
+          if (entry.verifyOperationAmount) {
+            await app.sendDrawer.expectAmountVisible(tx.amount);
+          }
           if (validMemoTag && tx.accountToDebit.currency.id === Currency.SOL.id) {
             await app.sendDrawer.expectMemoVisible(validMemoTag);
           }

@@ -1,9 +1,25 @@
 # @devtools/pay-card
 
-The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place:
-**Feature flags**, **Onboarding** (toggle each step done or not-done), **Reset onboarding**,
-**Feature tour** (seen state plus a reset), **Request verify hint** (seen state plus a reset),
-and optional **Quick actions** (Portfolio / Pay) when the host passes navigation callbacks.
+The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place.
+
+The shared panel has four sections: **Feature flags**, **Onboarding** (toggle each step done or
+not-done), **Reset onboarding** and **Feature tour** (seen state plus a reset).
+
+The native panel adds **Request verify hint** (seen state plus a reset) and, when the host supplies
+navigation, **Quick actions** (Portfolio / Pay tab / Pay contact success / Send success). It also
+adds a **Secure browser** section: a URL field and one button, which opens that URL in the secure
+browser the hosted login uses. The host supplies the action, so a host without such a browser
+shows no section.
+
+When the host builds the `auth` prop, both panels add a **Card session** section: stored tokens,
+sign-out, and a user fetch. On Desktop, with `pnpm desktop start:msw`, that section can also sign
+in a mock session so Card surfaces work without the hosted login. Native never offers that, because
+the session lives in the Keychain.
+
+The native panel then adds three more sections: **Device secure storage** (read the tokens, damage
+one, or clear the session), **Send API requests** (renew the session, or get the user) and **MSW
+Auth Renewal Mock** (what the mocked token endpoint answers, plus a count of the renewals). A toast
+reports what each action answered.
 
 ## Import boundary
 
@@ -49,6 +65,16 @@ interface PayCardToolProps {
   resetReceiveVerifyHintSeen: () => void;
   onNavigateToPortfolio?: () => void;
   onNavigateToPayTab?: () => void;
+  onNavigateToPaySuccess?: () => void;
+  onNavigateToSendSuccess?: () => void;
+  // Optional: absent on a host that does not build the Card session controls, which hides them.
+  // Desktop uses this for mock sign-in (when request mocking is on) and sign-out. Native uses the
+  // same prop for the full session / secure-storage / renewal sections. `PayCardAuthProps` in
+  // `src/types.ts` gives the full shape.
+  auth?: PayCardAuthProps;
+  // Native only, and optional: absent on a host with no secure browser, which hides the section.
+  // Answers one line about what came back, and the panel prints it under the button.
+  openSecureBrowser?: (url: string) => Promise<string>;
 }
 ```
 

@@ -67,7 +67,8 @@ export function ContactsRenameAddressDialog({
             <Banner
               appearance="info"
               data-testid="contacts-edit-address-ens-disclaimer"
-              description={labels.addressValidation.ensDisclaimer}
+              title={labels.addressValidation.ensDisclaimer}
+              description={labels.addressValidation.ensDisclaimerDescription}
             />
           ) : null}
           <TextInput

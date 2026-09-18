@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import type {
-  BankTransferIntroLabels,
+  BankTransferHandoff,
   BankTransferIntroProps,
   BankTransferIntroViewModel,
   PayCardTrackEvent,
@@ -8,10 +8,9 @@ import type {
 import { useBankTransferIntroViewModel } from "./useBankTransferIntroViewModel";
 
 export type UseBankTransferIntroAdapterParams = Readonly<{
-  labels: BankTransferIntroLabels;
   heroImage?: BankTransferIntroProps["heroImage"];
   bottomInset?: number;
-  onBankTransfer: BankTransferIntroProps["onBankTransfer"];
+  onBankTransfer: (handoff: BankTransferHandoff) => void;
   onTrackEvent?: PayCardTrackEvent;
 }>;
 
@@ -22,7 +21,6 @@ export type UseBankTransferIntroAdapter = Readonly<{
   BankTransferIntroViewModel;
 
 export function useBankTransferIntroAdapter({
-  labels,
   heroImage,
   bottomInset,
   onBankTransfer,
@@ -35,7 +33,6 @@ export function useBankTransferIntroAdapter({
 
   const bankTransferIntro: BankTransferIntroProps = {
     isOpen,
-    labels,
     heroImage,
     bottomInset,
     onBankTransfer,

@@ -15,6 +15,7 @@ const assignContext = assign<CardLoginContext, CardLoginEvent, undefined, CardLo
 export const forgetAttempt = assignContext({
   callback: null,
   loginUrl: null,
+  attemptState: null,
   session: null,
   clearSession: false,
   resumeAuthenticated: false,

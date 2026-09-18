@@ -49,6 +49,17 @@ export class ICPDissolveDelayLTCurrent extends Error {
   }
 }
 
+// The amount to add to a dissolve delay is not a whole number of days above zero. Distinct from
+// ICPDissolveDelayLTMin: the network minimum is not what was violated — nothing was entered to add.
+export class ICPInvalidDissolveDelayIncrease extends Error {
+  override name = "ICPInvalidDissolveDelayIncrease";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPInvalidDissolveDelayIncrease");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 // Referenced neuron is absent from the account's synced neuron set.
 export class ICPNeuronNotFound extends Error {
   override name = "ICPNeuronNotFound";
@@ -78,12 +89,100 @@ export class ICPHotKeyAlreadyExists extends Error {
   }
 }
 
+// The canister accepts the controller as a hot key; it just grants nothing, since the controller can
+// already vote and set following.
+export class ICPHotKeyIsController extends Error {
+  override name = "ICPHotKeyIsController";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPHotKeyIsController");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 // Split would leave less than the minimum stake on either resulting neuron.
 export class ICPSplitNotAllowed extends Error {
   override name = "ICPSplitNotAllowed";
   [key: string]: unknown;
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "ICPSplitNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The neuron is spawning, so the canister refuses to spawn from it, or its maturity would not clear
+// the minimum stake after modulation.
+export class ICPSpawnNotAllowed extends Error {
+  override name = "ICPSpawnNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPSpawnNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The canister refuses stake_maturity on a spawning or a dissolved neuron, and there is nothing to
+// stake without maturity.
+export class ICPStakeMaturityNotAllowed extends Error {
+  override name = "ICPStakeMaturityNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPStakeMaturityNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The topic is outside FOLLOWABLE_TOPICS: one the canister has retired, or one the Ledger ICP app
+// refuses to sign a follow on. The pickers never offer these, so this catches a transaction
+// assembled some other way before it costs a signature.
+export class ICPFollowTopicNotAllowed extends Error {
+  override name = "ICPFollowTopicNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPFollowTopicNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The neuron is not dissolved, or its stake is at or under the ledger fee, so the transfer disburse
+// makes cannot be funded: the ledger refuses it after the signature.
+export class ICPDisburseNotAllowed extends Error {
+  override name = "ICPDisburseNotAllowed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPDisburseNotAllowed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The neuron already holds the canister's maximum of hot keys (passed as { max } at throw time).
+export class ICPTooManyHotKeys extends Error {
+  override name = "ICPTooManyHotKeys";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPTooManyHotKeys");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The top-up would leave the neuron's balance under the minimum stake, which refresh_neuron refuses
+// once the transfer has settled ({ missing } is the shortfall in ICP, as of the last read).
+export class ICPTopUpBelowMinimumStake extends Error {
+  override name = "ICPTopUpBelowMinimumStake";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPTopUpBelowMinimumStake");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The stake transfer settled, but governance refused to claim or refresh the neuron from it: the
+// ICP sits in the neuron's account, unclaimed. `reason` carries the canister's own text.
+export class ICPStakeNotRefreshed extends Error {
+  override name = "ICPStakeNotRefreshed";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPStakeNotRefreshed");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -104,6 +203,17 @@ export class ICPCallUnconfirmed extends Error {
   [key: string]: unknown;
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "ICPCallUnconfirmed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// A list_neurons read returned no reply. Distinct from ICPCallUnconfirmed: a read has no effect to
+// be unsure about, so the neurons are simply unchanged and asking again is safe.
+export class ICPNeuronsNotRead extends Error {
+  override name = "ICPNeuronsNotRead";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPNeuronsNotRead");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -133,6 +243,28 @@ export class ICPInvalidPercentage extends Error {
   [key: string]: unknown;
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "ICPInvalidPercentage");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The governance canister ran the command and refused it. The call reached the network, so this is
+// not a delivery failure — its `reason` field carries the canister's own text (empty if it gave none).
+export class ICPGovernanceRejected extends Error {
+  override name = "ICPGovernanceRejected";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPGovernanceRejected");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The replica rejected the ingress message, so the call never executed. Distinct from
+// ICPGovernanceRejected: nothing ran, and from ICPCallUnconfirmed: the outcome is known.
+export class ICPCallRejected extends Error {
+  override name = "ICPCallRejected";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPCallRejected");
     if (fields) Object.assign(this, fields);
   }
 }

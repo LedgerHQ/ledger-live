@@ -972,6 +972,14 @@ const isShieldedOperation = (op: BtcOperation): boolean =>
   (ZCASH_SHIELDED_TX_TYPES as readonly string[]).includes(op.type);
 
 /**
+ * Identifies one leg of one transaction: the hash plus the direction the value
+ * moved in. Every operation type either ends in `IN` (`IN`, `SHIELDED_TX_*_IN`)
+ * or is outgoing; `SHIELDED_TX_INTERNAL` never reaches here, since it is typed
+ * `NONE` and so belongs to neither bucket.
+ */
+const legKey = (op: BtcOperation): string => `${op.hash}-${op.type.endsWith("IN") ? "IN" : "OUT"}`;
+
+/**
  * Both legs anchor to the same pre-tick `initialAccount.operations` snapshot and each
  * re-emits it merged with only its own new finds (see `performTransparentSync` and
  * `reduceShieldedSyncResult`), so every emission from either leg carries a mix of fresh
@@ -991,25 +999,40 @@ export function reconcileLegOperations(
     leg === "shielded" ? isShieldedOperation(op) : !isShieldedOperation(op),
   );
 
-  // A t→z shield or z→t deshield is one transaction that both legs sync
-  // independently and each records as its own operation for the same `hash`
-  // (different `type`): the transparent leg's IN/OUT already carries the full
-  // value moved (see `mapTxToOperations`), so the shielded leg's record of that
-  // same hash is a duplicate, not a second real event -- dropped here (the only
-  // place both legs' buckets are available together) rather than shown twice in
-  // `account.operations`. The shielded record is the only one carrying a memo
+  // A cross-pool transaction is synced by both legs, each recording its own
+  // operation for the same `hash`. Whether those two records are one event seen
+  // twice or two real events is decided by their DIRECTION, not by the hash:
+  //
+  //  - same direction (a t→z shield paying someone else: the transparent leg
+  //    debits the UTXOs, the shielded leg sees the note it created through the
+  //    outgoing viewing key) -- one payment, and the transparent record already
+  //    carries the full value moved (see `mapTxToOperations`), so the shielded
+  //    twin is a duplicate and is dropped here, the only place both legs'
+  //    buckets are available together;
+  //  - opposite directions (a self-transfer: de-shielding to one's own
+  //    transparent address is an `IN` transparently and a `_OUT` in the pool it
+  //    drained, shielding to one's own shielded address the reverse) -- two real
+  //    legs of one movement, both kept, the way a self-send is reported
+  //    everywhere else. Collapsing them by hash is what left a Zcash self-transfer
+  //    showing only the leg that received (LIVE-37172).
+  //
+  // The shielded record is the only one carrying a memo
   // (`convertShieldedTransactionsToOperations`; the transparent leg's `extra`
-  // only ever has UTXO inputs), so that memo is copied onto the surviving
-  // transparent operation before the shielded one is dropped -- otherwise a
-  // memo attached to a shielding/de-shielding send would silently vanish.
-  const shieldedByHash = new Map(latest.shielded.map(op => [op.hash, op]));
+  // only ever has UTXO inputs), so a dropped twin's memo is copied onto the
+  // transparent operation that supersedes it -- otherwise a memo attached to a
+  // shielding send would silently vanish. A twin that survives keeps its own
+  // memo, and copying it over would print it on both rows.
+  const transparentLegKeys = new Set(latest.transparent.map(legKey));
+  const supersededByHash = new Map(
+    latest.shielded.filter(op => transparentLegKeys.has(legKey(op))).map(op => [op.hash, op]),
+  );
   const transparent = latest.transparent.map(op => {
-    const twinMemo = (shieldedByHash.get(op.hash)?.extra as ZcashOperationExtra | undefined)?.memo;
+    const twinMemo = (supersededByHash.get(op.hash)?.extra as ZcashOperationExtra | undefined)
+      ?.memo;
     if (!twinMemo || (op.extra as ZcashOperationExtra | undefined)?.memo) return op;
     return { ...op, extra: { ...(op.extra as ZcashOperationExtra | undefined), memo: twinMemo } };
   });
-  const transparentHashes = new Set(latest.transparent.map(op => op.hash));
-  const shielded = latest.shielded.filter(op => !transparentHashes.has(op.hash));
+  const shielded = latest.shielded.filter(op => !transparentLegKeys.has(legKey(op)));
 
   return {
     ...result,

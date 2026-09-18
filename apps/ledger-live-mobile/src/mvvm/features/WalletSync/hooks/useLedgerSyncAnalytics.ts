@@ -1,4 +1,7 @@
+import { CONTACTS_FLOW, type ContactsFlow } from "@features/flow-contacts";
 import { track } from "~/analytics";
+import { useSelector } from "~/context/hooks";
+import { returnsToEntryScreenSelector } from "~/reducers/walletSync";
 
 export enum AnalyticsPage {
   ActivateLedgerSync = "Activate Ledger Sync",
@@ -68,9 +71,17 @@ type OnClickTrack = {
   hasFlow?: boolean;
 };
 
+export type WalletSyncFlow = AnalyticsFlow | ContactsFlow;
+
+export function useWalletSyncTrackingFlow(): WalletSyncFlow {
+  const returnsToEntryScreen = useSelector(returnsToEntryScreenSelector);
+  return returnsToEntryScreen ? CONTACTS_FLOW.CONTACTS : AnalyticsFlow.LedgerSync;
+}
+
 export function useLedgerSyncAnalytics() {
+  const trackingFlow = useWalletSyncTrackingFlow();
   const onClickTrack = ({ button, page, hasFlow = false }: OnClickTrack) => {
-    track("button_clicked", { button, page, flow: hasFlow ? AnalyticsFlow.LedgerSync : undefined });
+    track("button_clicked", { button, page, flow: hasFlow ? trackingFlow : undefined });
   };
 
   return { onClickTrack };

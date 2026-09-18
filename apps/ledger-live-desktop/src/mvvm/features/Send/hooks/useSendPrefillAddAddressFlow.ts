@@ -16,11 +16,14 @@ import {
   useContactsIntentsOrchestrator,
   type ContactsDeviceIntentExecutorProps,
 } from "@features/platform-contacts/device";
-import { CONTACTS_EVENT_SOURCE } from "@features/flow-contacts";
+import {
+  buildContactsSaveAddressClickProperties,
+  CONTACTS_EVENT_SOURCE,
+} from "@features/flow-contacts";
 import {
   buildContactsGlobalProperties,
   useContacts,
-  useContactsFeature,
+  type OtherContactAddress,
 } from "@features/platform-contacts";
 import {
   isPrefillAddAddressFlowOpen,
@@ -80,7 +83,6 @@ export function useSendPrefillAddAddressFlow({
   const { navigation } = useFlowWizard<SendFlowStep>();
   const { state, recipientSearch } = useSendFlowData();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
   const { inputMethod, markContactSaved } = useSendFlowTracking();
   const { setState: setHeaderState } = useAddNewContactHeaderController();
   const [isOpeningAddressFlow, setIsOpeningAddressFlow] = useState(false);
@@ -92,6 +94,13 @@ export function useSendPrefillAddAddressFlow({
     intents: contactsIntentLWDDefinitions,
     getLiveConfigMinVersion: getMinVersion,
   });
+  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
+    () =>
+      contacts.flatMap(c =>
+        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
+      ),
+    [contacts],
+  );
   const {
     state: addressFlowState,
     startWithPrefilled,
@@ -99,17 +108,19 @@ export function useSendPrefillAddAddressFlow({
     continueFromName,
     goBack,
     close,
-  } = useAddAddressFlowViewModel({ addressValidation });
+  } = useAddAddressFlowViewModel({
+    addressValidation,
+    otherContactsAddresses: allContactsAddresses,
+  });
   const isAddressPhase = isPrefillAddAddressFlowOpen(addressFlowState);
   const trackingProperties = useMemo(
     () => ({
       ...getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
       ...buildContactsGlobalProperties({
-        ffAddressBookEnabled: isContactsFeatureEnabled,
         contacts,
       }),
     }),
-    [contacts, isContactsFeatureEnabled, state.account.account, state.account.parentAccount],
+    [contacts, state.account.account, state.account.parentAccount],
   );
 
   const trackedAddressPhaseRef = useRef("");
@@ -299,6 +310,9 @@ export function useSendPrefillAddAddressFlow({
       sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
       validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
       ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
+      ensDisclaimerDescription: t("contacts.addAddressEntry.ensDisclaimerDescription"),
+      duplicateAddress: (contactName: string) =>
+        t("contacts.addAddressEntry.duplicateAddress", { contactName }),
     }),
     [t],
   );
@@ -356,6 +370,15 @@ export function useSendPrefillAddAddressFlow({
           if (!addressFlowState.displayContext) {
             return;
           }
+          track(
+            "button_clicked",
+            buildContactsSaveAddressClickProperties(trackingProperties, {
+              page: "address review",
+              network: addressFlowState.displayContext.network.networkId,
+              asset: addressFlowState.selectedCurrencyId,
+              inputMethod,
+            }),
+          );
           trackPage("Modal send - address signing device", null, {
             ...trackingProperties,
             network: addressFlowState.displayContext.network.networkId,

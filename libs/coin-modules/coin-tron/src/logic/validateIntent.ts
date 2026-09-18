@@ -12,7 +12,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/ledger-wallet-framework/errors";
+} from "@ledgerhq/coin-module-framework/errors";
 import type { TronCoinConfig } from "../config";
 import BigNumber from "bignumber.js";
 import sumBy from "lodash/sumBy";

@@ -1,3 +1,4 @@
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
 import { STAKING_REWARD_ACCOUNT_ID } from "../constants";
@@ -19,6 +20,7 @@ import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedMirrorNode } from "../test/fixtures/validator.fixture";
 import hederaCoinConfig from "../config";
 import type { HederaMirrorCoinTransfer, HederaMirrorTransaction } from "../types";
+import network from "@ledgerhq/live-network";
 import { apiClient } from "./api";
 import { hgraphClient } from "./hgraph";
 import { rpcClient } from "./rpc";
@@ -29,12 +31,17 @@ import {
   createTransactionId,
   enrichERC20Transfers,
   getERC20BalancesForAccountV2,
+  getCurrencyToUSDRate,
   getHederaValidators,
   parseTransfers,
   safeParseAccountId,
   toEVMAddress,
 } from "./utils";
 
+jest.mock("@ledgerhq/live-network", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
 jest.mock("./api");
 jest.mock("./hgraph");
 jest.mock("./rpc", () => ({
@@ -1049,6 +1056,29 @@ describe("network utils", () => {
       });
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe("getCurrencyToUSDRate", () => {
+    beforeEach(() => {
+      getCurrencyToUSDRate.reset();
+    });
+
+    it("reads LEDGER_COUNTERVALUES_API lazily, so setEnv at runtime is honoured", async () => {
+      const original = getEnv("LEDGER_COUNTERVALUES_API");
+      setEnv("LEDGER_COUNTERVALUES_API", "https://example.test");
+
+      (network as jest.Mock).mockResolvedValueOnce({ data: { hedera: 0.07 } });
+
+      await getCurrencyToUSDRate(mockCurrency);
+
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("https://example.test"),
+        }),
+      );
+
+      setEnv("LEDGER_COUNTERVALUES_API", original);
     });
   });
 });

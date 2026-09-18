@@ -1,7 +1,7 @@
 import type {
   Address,
+  AnyTransaction,
   CredentialDeploymentTransaction,
-  Transaction,
   SigningResult,
 } from "@ledgerhq/concordium-core";
 import type { ConcordiumNetwork } from "./config";
@@ -28,7 +28,7 @@ export interface ConcordiumSigner {
   getPublicKey(path: string, confirm?: boolean): Promise<string>;
 
   /**
-   * Sign a transaction (Transfer or TransferWithMemo).
+   * Sign a transaction (Transfer, TransferWithMemo or TokenUpdate).
    * Routes to the appropriate signing method based on transaction type.
    * Returns both signature and serialized transaction.
    *
@@ -36,7 +36,7 @@ export interface ConcordiumSigner {
    * display only when the firmware supports it; not part of the canonical
    * signed bytes.
    */
-  signTransaction(tx: Transaction, path: string, maxFee: bigint): Promise<SigningResult>;
+  signTransaction(tx: AnyTransaction, path: string, maxFee: bigint): Promise<SigningResult>;
 
   /**
    * Sign a credential deployment transaction (hw-app format).

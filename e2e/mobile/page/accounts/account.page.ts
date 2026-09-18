@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
 import { VISIBILITY_PROBE_TIMEOUT } from "@e2e/helpers/elementHelpers";
@@ -36,9 +37,8 @@ export default class AccountPage {
   accountRenameRow = () => getElementById("account-settings-rename-row");
   getSpecificOperation = (operationType: string) =>
     getElementByIdAndText(this.operationRowRegexp, operationType, 0);
-  subAccountId = (account: Account) =>
-    `js:2:${account.currency.id}:${account.parentAccount ? account.parentAccount.address : account.address}:${account.currency.id}Sub+${account.address}`;
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
+  expandTokenListId = "enabled-account-expand-token-list";
 
   @Step("Wait for account screen and verify account name {{{0}}}")
   async waitAndVerifyAccountName(accountName: string) {
@@ -202,16 +202,49 @@ export default class AccountPage {
   @Step("Navigate to token in account {{{0.accountName}}}")
   async navigateToTokenInAccount(subAccount: Account) {
     const subAccountId = this.baseSubAccountRow + subAccount.currency.ticker;
-    await this.scrollToSubAccount(subAccountId);
+    try {
+      await this.scrollToSubAccount(subAccountId);
+    } catch {
+      await revealForTap(this.expandTokenListId, { container: this.accountScreenScrollView });
+      await tapById(this.expandTokenListId);
+      await this.scrollToSubAccount(subAccountId);
+    }
     await tapById(subAccountId);
   }
 
   @Step("Navigate to sub account {{{0.accountName}}}")
   async navigateToSubAccount(account: AccountType) {
-    const subAccountId = this.subAccountId(account);
+    const { parentAccount } = account;
+    invariant(parentAccount, `${account.accountName} has no parent account`);
+
+    const parentAddress = parentAccount.address;
+    invariant(parentAddress, `${parentAccount.accountName} has no address`);
+
     await this.openViaDeeplink();
-    await this.goToAccountById(subAccountId);
-    await waitForElement(this.accountGraph(subAccountId));
+    await this.goToAccountByName(parentAccount.accountName);
+    await this.navigateToTokenInAccount(account);
+
+    const graphIdRegexp = new RegExp(`^${this.accountGraphId("")}.+\\+.+`);
+    await waitForElementById(graphIdRegexp, undefined, { checkVisibility: false });
+    const graphCount = await countElements(getElementsById(graphIdRegexp));
+    let graphId: string | undefined;
+    for (let index = 0; index < graphCount; index++) {
+      const graph = getElementById(graphIdRegexp, index);
+      try {
+        await detoxExpect(graph).toBeVisible();
+        graphId = (await getIdOfElement(graph)).replace(this.accountGraphId(""), "");
+        break;
+      } catch {
+        continue;
+      }
+    }
+    invariant(graphId, `no visible account graph after opening ${account.accountName}`);
+
+    invariant(
+      graphId.includes(parentAddress),
+      `expected a sub-account of ${parentAccount.accountName}, landed on ${graphId}`,
+    );
+    return graphId;
   }
 
   @Step("Scroll to history and click on last operation {{{0}}}")

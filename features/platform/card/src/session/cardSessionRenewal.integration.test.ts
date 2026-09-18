@@ -12,6 +12,7 @@ import type { CardRenewalDispatch } from "./types";
 
 const BASE_URL = "https://card.test";
 const TOKEN_PATH = "/v1/auth/oauth2/token";
+const LOGOUT_PATH = "/v1/auth/logout";
 const USER = {
   id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
   verificationState: "VERIFIED",
@@ -83,7 +84,10 @@ function routeFetch(routes: {
 }) {
   return jest.spyOn(globalThis, "fetch").mockImplementation(async input => {
     const url = input instanceof Request ? input.url : String(input);
-    return url.endsWith(TOKEN_PATH) ? routes.token() : routes.user();
+    if (url.endsWith(TOKEN_PATH)) {
+      return routes.token();
+    }
+    return url.endsWith(LOGOUT_PATH) ? json({ success: true }) : routes.user();
   });
 }
 
@@ -92,6 +96,11 @@ async function grantBody(spy: jest.SpyInstance): Promise<unknown> {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const sent = call?.[0] as Request;
   return sent.json();
+}
+
+function requestForPath(spy: jest.SpyInstance, path: string): Request | undefined {
+  const call = spy.mock.calls.find(([input]) => String(input?.url ?? input).endsWith(path));
+  return call?.[0];
 }
 
 const flushTimers = () => new Promise(resolve => setTimeout(resolve, 0));
@@ -164,9 +173,41 @@ describe("the Card session renewal, end to end", () => {
     await expect(request.unwrap()).rejects.toMatchObject({ status: 401 });
     expect(onCardSessionEnded).toHaveBeenCalledTimes(1);
     await expect(session.cardSession.get()).resolves.toBeNull();
-
+    const logoutRequest = requestForPath(fetchSpy, LOGOUT_PATH);
+    expect(logoutRequest?.method).toBe("POST");
+    expect(logoutRequest?.headers.get("authorization")).toBe("Bearer at_old");
     await flushTimers();
+    expect(logoutRequest?.signal.aborted).toBe(false);
     expect(store.getState()[cardApi.reducerPath].queries).toEqual({});
+  });
+
+  it("logs out the rotated session when storing it fails", async () => {
+    fetchSpy = routeFetch({
+      user: () => json({ message: "unauthorized" }, 401),
+      token: () =>
+        json({
+          access_token: "at_new",
+          expires_in: 3600,
+          refresh_token: "rt_new",
+        }),
+    });
+    const sessionStore = memoryStore();
+    const { session, store } = setup(sessionStore);
+    await session.cardSession.set({
+      accessToken: "at_old",
+      refreshToken: "rt_old",
+    });
+    sessionStore.write = async () => {
+      throw new Error("the keychain refused the rotated session");
+    };
+
+    await expect(
+      store.dispatch(cardManagementApi.endpoints.getUser.initiate()).unwrap(),
+    ).rejects.toMatchObject({ status: 401 });
+
+    expect(requestForPath(fetchSpy, LOGOUT_PATH)?.headers.get("authorization")).toBe(
+      "Bearer at_new",
+    );
   });
 
   it("ends the session when the token endpoint answers 5xx", async () => {

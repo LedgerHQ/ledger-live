@@ -1,5 +1,17 @@
 # @ledgerhq/react-ui
 
+## 0.55.0-next.0
+
+### Minor Changes
+
+- [#21787](https://github.com/LedgerHQ/ledger-live/pull/21787) [`e3535da`](https://github.com/LedgerHQ/ledger-live/commit/e3535da7e5c884f8ada75eff52c0c4538142fffb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mark the deprecated design system packages as private so they stop being published to npm, and drop their npm installation instructions
+
+### Patch Changes
+
+- Updated dependencies [[`e3535da`](https://github.com/LedgerHQ/ledger-live/commit/e3535da7e5c884f8ada75eff52c0c4538142fffb)]:
+  - @ledgerhq/ui-shared@0.6.0-next.0
+  - @ledgerhq/icons-ui@0.21.0-next.0
+
 ## 0.54.0
 
 ### Minor Changes
@@ -143,19 +155,5 @@
 ### Minor Changes
 
 - [#13721](https://github.com/LedgerHQ/ledger-live/pull/13721) [`740c280`](https://github.com/LedgerHQ/ledger-live/commit/740c280dc82408ebab09b104e3d1b4327fe17739) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - feat(lwd): upgrade styled-components to v6, refactored relevant code"
-
-## 0.44.1
-
-### Patch Changes
-
-- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d)]:
-  - @ledgerhq/icons-ui@0.19.0
-
-## 0.44.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`c8edd4c`](https://github.com/LedgerHQ/ledger-live/commit/c8edd4cb0996c96548fa4d6166d78e8d1a50ef2d)]:
-  - @ledgerhq/icons-ui@0.19.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

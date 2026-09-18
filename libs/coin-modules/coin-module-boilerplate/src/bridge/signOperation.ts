@@ -4,7 +4,9 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { combine, craftTransaction, getNextValidSequence } from "../logic";
+import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
+import { getNextSequence } from "../logic/getNextSequence";
 import { Transaction, BoilerplateSigner } from "../types";
 
 export const buildSignOperation =
@@ -21,7 +23,7 @@ export const buildSignOperation =
             type: "device-signature-requested",
           });
 
-          const nextSequenceNumber = await getNextValidSequence(account.freshAddress);
+          const nextSequenceNumber = await getNextSequence(account.freshAddress);
 
           const signature = await signerContext(deviceId, async signer => {
             const { freshAddressPath: derivationPath } = account;

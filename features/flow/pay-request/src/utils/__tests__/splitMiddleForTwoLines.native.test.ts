@@ -11,7 +11,7 @@ function lineLengths(address: string) {
 }
 
 describe("splitMiddleForTwoLines", () => {
-  it("keeps about 55% of the address on the second line", () => {
+  it("keeps about 51% of the address on the second line", () => {
     for (const address of [
       "0x1234567890abcdef1234567890abcdef12345678",
       "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq0dxpg8ndv0hqm",
@@ -20,7 +20,7 @@ describe("splitMiddleForTwoLines", () => {
       const [first, second] = lineLengths(address);
 
       expect(first).toBeLessThan(second);
-      expect(second / address.length).toBeGreaterThanOrEqual(0.55);
+      expect(second / address.length).toBeGreaterThanOrEqual(0.51);
     }
   });
 

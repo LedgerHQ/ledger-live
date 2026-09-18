@@ -9,7 +9,7 @@
 import crypto from "node:crypto";
 import type {
   Address,
-  Transaction,
+  AnyTransaction,
   CredentialDeploymentTransaction,
   SigningResult,
 } from "@ledgerhq/concordium-core";
@@ -87,7 +87,7 @@ export function createMockSigner(keyPair: ConcordiumTestKeyPair): ConcordiumSign
     },
 
     signTransaction: async (
-      tx: Transaction,
+      tx: AnyTransaction,
       path: string,
       _maxFee: bigint,
     ): Promise<SigningResult> => {

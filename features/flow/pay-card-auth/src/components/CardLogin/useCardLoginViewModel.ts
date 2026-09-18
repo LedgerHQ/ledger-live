@@ -3,12 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useMachine } from "@xstate/react";
 import type { SnapshotFrom } from "xstate";
 import { useTranslation } from "@shared/i18n";
-import { buildSignupUrl } from "../../state/buildSignupUrl";
+import { buildSignupUrl, SIGNUP_PATH } from "../../state/buildSignupUrl";
 import { createCardLoginPorts, type CardLoginDispatch } from "../../state/createCardLoginPorts";
 import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
 import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors";
-import { markPayCardLoginIntroSeen } from "../../state/loginIntroSlice";
 import { selectIsSignedIn } from "../../state/selectors";
 import type {
   CardLoginCopy,
@@ -20,16 +19,6 @@ import type {
 } from "./types";
 
 type CardLoginStateValue = SnapshotFrom<typeof cardLoginMachine>["value"];
-
-/** Hardcoded English until the Pay tab gets its copy keys. */
-const ERROR_MESSAGES: Record<PayCardLoginErrorKind, string> = {
-  pkce_failed: "Login could not start. Please try again.",
-  browser_open_failed: "The login page could not open. Please try again.",
-  missing_attempt: "This login is no longer valid. Please log in again.",
-  exchange_failed: "Login could not be completed. Please try again.",
-  persist_failed: "Your session could not be saved. Please try again.",
-  fetch_user_failed: "Your card could not be loaded. Please try again.",
-};
 
 const LOGIN_KEY_PREFIX = "payTab.cardLogin";
 
@@ -52,6 +41,7 @@ export const CARD_LOGIN_INTRO_FLOW = "card";
 
 const TRACK_BUTTON = {
   getCard: "get card",
+  alreadyHaveCard: "i already have a card",
   login: "login",
   createAccount: "create an account",
   logIn: "log in to baanx",
@@ -64,38 +54,43 @@ const TRACK_BUTTON = {
  */
 export function mapSnapshotToViewModel(
   value: CardLoginStateValue,
-  errorKind: PayCardLoginErrorKind | null,
+  errorMessage: string | null,
   copy: CardLoginCopy,
   onLoginPress: () => void,
+  onAlreadyHaveCardPress: () => void,
   intro: CardLoginIntroViewProps,
 ): CardLoginViewModel {
-  // The card holder is signed in, so there is no login left to offer. `CardMore` holds the screen.
-  if (value === "ready") {
+  // Nothing to offer yet. `hydrating` is still reading the stored session, so a login CTA here would
+  // flash for a holder who turns out to be signed in; `ready` means they already are, and `More`
+  // holds the screen.
+  if (value === "hydrating" || value === "ready") {
     return null;
   }
 
   return {
     ...copy,
-    isLoading: value !== "idle" && value !== "error",
-    errorMessage: errorKind ? ERROR_MESSAGES[errorKind] : null,
+    // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
+    isLoading: value !== "idle" && value !== "error" && value !== "awaitingCallback",
+    errorMessage,
     onLoginPress,
+    onAlreadyHaveCardPress,
     intro,
   };
 }
 
 export function useCardLoginViewModel({
   openHostedLogin,
+  openHostedPage,
   mobileWallet,
   oauthConfig,
   callback,
   onTrackEvent,
 }: CardLoginViewModelParams): CardLoginViewModel {
+  const { t } = useTranslation();
   const dispatch = useDispatch<CardLoginDispatch>();
   const isSignedIn = useSelector(selectIsSignedIn);
-  const { t } = useTranslation();
   const hasSeenLoginIntro = useSelector(selectPayCardHasSeenLoginIntro);
   const [isIntroRequested, setIsIntroRequested] = useState(false);
-  const [hasStartedLogin, setHasStartedLogin] = useState(false);
   const [hasSignupFailed, setHasSignupFailed] = useState(false);
 
   const ports = useMemo(
@@ -107,33 +102,29 @@ export function useCardLoginViewModel({
     input: { ports, oauthConfig, callback },
   });
 
+  const callbackCode = callback?.code;
+  const callbackState = callback?.state;
+
   useEffect(() => {
     // A redirect that arrives while the screen is already open. The machine ignores it unless it is
     // waiting for one, so a repeat is harmless: the first callback wins.
-    if (callback) {
-      send({ type: "CALLBACK_RECEIVED", code: callback.code });
+    if (callbackCode) {
+      send({ type: "CALLBACK_RECEIVED", code: callbackCode, state: callbackState });
     }
-  }, [callback, send]);
+  }, [callbackCode, callbackState, send]);
 
   useEffect(() => {
-    // `CardMore` ended the session. `ready` raises the flag on entry, so a lowered flag while the
+    // `More` ended the session. `ready` raises the flag on entry, so a lowered flag while the
     // machine still reads `ready` can only come from there, and this puts the login back on offer.
     if (!isSignedIn && snapshot.value === "ready") {
       send({ type: "SESSION_ENDED" });
     }
   }, [isSignedIn, snapshot.value, send]);
 
-  useEffect(() => {
-    if (snapshot.value === "ready" && hasStartedLogin) {
-      dispatch(markPayCardLoginIntroSeen());
-    }
-  }, [snapshot.value, hasStartedLogin, dispatch]);
-
   const isIntroOpen = isIntroRequested && (snapshot.value === "idle" || snapshot.value === "error");
 
   const startLogin = useCallback(() => {
     setHasSignupFailed(false);
-    setHasStartedLogin(true);
     send({ type: "LOGIN" });
   }, [send]);
 
@@ -142,12 +133,16 @@ export function useCardLoginViewModel({
 
     void (async () => {
       try {
+        if (openHostedPage) {
+          await openHostedPage(SIGNUP_PATH);
+          return;
+        }
         await openHostedLogin(buildSignupUrl(oauthConfig), oauthConfig.deepLink);
       } catch {
         setHasSignupFailed(true);
       }
     })();
-  }, [openHostedLogin, oauthConfig]);
+  }, [openHostedPage, openHostedLogin, oauthConfig]);
 
   const trackCta = useCallback(
     (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
@@ -161,7 +156,7 @@ export function useCardLoginViewModel({
   );
 
   const onLoginPress = useCallback(() => {
-    if (hasSeenLoginIntro) {
+    if (snapshot.value === "awaitingCallback" || hasSeenLoginIntro) {
       trackCta(TRACK_BUTTON.login);
       startLogin();
       return;
@@ -169,7 +164,12 @@ export function useCardLoginViewModel({
     trackCta(TRACK_BUTTON.getCard);
     onTrackEvent?.(CARD_LOGIN_INTRO_PAGE_EVENT, { flow: CARD_LOGIN_INTRO_FLOW });
     setIsIntroRequested(true);
-  }, [hasSeenLoginIntro, onTrackEvent, startLogin, trackCta]);
+  }, [hasSeenLoginIntro, onTrackEvent, snapshot.value, startLogin, trackCta]);
+
+  const onAlreadyHaveCardPress = useCallback(() => {
+    trackCta(TRACK_BUTTON.alreadyHaveCard);
+    startLogin();
+  }, [startLogin, trackCta]);
 
   const onIntroActionPress = useCallback(
     (id: CardLoginIntroActionId) => {
@@ -222,8 +222,12 @@ export function useCardLoginViewModel({
 
     return {
       title: t(`${LOGIN_KEY_PREFIX}.title`),
+      headline: t(`${LOGIN_KEY_PREFIX}.${stage}.title`),
       description: t(`${LOGIN_KEY_PREFIX}.${stage}.description`),
       loginLabel: t(`${LOGIN_KEY_PREFIX}.${stage}.action`),
+      alreadyHaveCardLabel: hasSeenLoginIntro
+        ? null
+        : t(`${LOGIN_KEY_PREFIX}.beforeIntro.alreadyHaveCard`),
     };
   }, [t, hasSeenLoginIntro]);
 
@@ -240,11 +244,16 @@ export function useCardLoginViewModel({
     [isIntroOpen, t, introRows, introActions, onIntroActionPress, onIntroClose],
   );
 
+  const errorKind: PayCardLoginErrorKind | null = hasSignupFailed
+    ? "browser_open_failed"
+    : snapshot.context.errorKind;
+
   return mapSnapshotToViewModel(
     snapshot.value,
-    hasSignupFailed ? "browser_open_failed" : snapshot.context.errorKind,
+    errorKind ? t(`${LOGIN_KEY_PREFIX}.errors.${errorKind}`) : null,
     copy,
     onLoginPress,
+    onAlreadyHaveCardPress,
     intro,
   );
 }

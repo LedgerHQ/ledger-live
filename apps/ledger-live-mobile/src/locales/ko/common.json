@@ -234,6 +234,58 @@
       "title" : "세션 만료",
       "description" : "Concordium ID 앱 세션이 만료되었습니다. 다시 페어링해 주세요."
     },
+    "ConcordiumInsufficientCcdForFee" : {
+      "title" : "네트워크 수수료를 지불할 CCD가 부족합니다",
+      "description" : "네트워크 수수료는 전송하는 토큰이 아닌 CCD로 지불됩니다. 이 계정에 CCD를 추가하고 다시 시도하세요."
+    },
+    "ConcordiumTokenPaused" : {
+      "title" : "이 토큰의 전송이 일시 중지되었습니다",
+      "description" : "토큰 발행자가 모든 전송을 일시 중단했습니다. 전송이 재개되면 다시 시도할 수 있습니다."
+    },
+    "ConcordiumTokenTransferNotPermitted" : {
+      "title" : "이 토큰을 전송할 수 없는 계정입니다",
+      "description" : "토큰 발행자가 전송 가능 대상을 제한하고 있으며, 이 계정에는 권한이 없습니다. 액세스 권한에 대해서는 토큰 발행자에게 문의하세요."
+    },
+    "ConcordiumTokenRestrictionsUnverified" : {
+      "title" : "토큰 관련 제한 사항을 확인할 수 없습니다",
+      "description" : "이 토큰의 전송 규칙을 읽을 수 없어 전송 허용 여부를 확인할 수 없습니다. 계정을 다시 동기화한 후 다시 시도해 주세요."
+    },
+    "ConcordiumRecipientNotAllowed" : {
+      "title" : "This address can't receive {{ticker}}",
+      "description" : "It hasn't been approved by the token issuer. Approval is managed by the issuer, not by Ledger."
+    },
+    "ConcordiumRecipientDenied" : {
+      "title" : "This address is restricted from receiving {{ticker}}",
+      "description" : "The token issuer has restricted this address. Contact the issuer for details."
+    },
+    "ConcordiumRecipientRestrictionsUnverified" : {
+      "title" : "{{ticker}} restrictions could not be verified",
+      "description" : "Whether this address may receive {{ticker}} could not be checked, so the transfer cannot be confirmed as allowed. Please check your connection and try again."
+    },
+    "ConcordiumRecipientNotFound" : {
+      "title" : "This address doesn't exist on Concordium",
+      "description" : "Check the address and try again. Sending to an address that was never created fails on the network and still costs a fee."
+    },
+    "ConcordiumUnsupportedTokenDecimals" : {
+      "title" : "이 토큰은 사용자의 Ledger 장치에서 서명할 수 없습니다",
+      "description" : "이 토큰은 소수점 이하 {{decimals}}자리를 사용하며, 사용 중인 장치는 최대 {{maxDecimals}}자리까지만 지원합니다. 수신 및 보관에는 영향을 미치지 않습니다."
+    },
+    "ConcordiumTokenAccountUnavailable" : {
+      "title" : "이 토큰은 더 이상 계정에 존재하지 않습니다.",
+      "description" : "선택한 토큰을 더 이상 사용할 수 없습니다. 트랜잭션을 다시 시작해 주세요."
+    },
+    "ConcordiumInvalidPltPayloadError" : {
+      "title" : "이 트랜잭션을 준비할 수 없습니다",
+      "description" : "토큰 세부 정보가 사용자의 Ledger 장치에서 허용하는 범위를 벗어나므로 트랜잭션을 생성할 수 없습니다. Ledger 지원팀으로 문의해 주세요"
+    },
+    "ConcordiumAppOutdatedError" : {
+      "title" : "앱 업데이트가 필요합니다",
+      "description" : "Ledger 장치에 설치된 Concordium 앱은 토큰 전송을 지원하지 않습니다. 내 Ledger에서 업데이트하고 다시 시도하세요."
+    },
+    "ConcordiumSignerProtocolError" : {
+      "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
+      "description" : "Concordium 앱에서 트랜잭션을 처리할 수 없었습니다. 문제가 지속되면 Ledger 지원팀으로 문의하세요."
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "문제가 발생했습니다(오류 #1)",
       "description" : "아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
@@ -706,8 +758,8 @@
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
     "UnexpectedGetBalanceError" : {
-      "title" : "Your balance could not be retrieved",
-      "description" : "Please check your internet connection and try again."
+      "title" : "잔액을 불러올 수 없습니다",
+      "description" : "인터넷 연결을 확인하고 다시 시도하세요."
     },
     "UnstakeNotEnoughStakedBalanceLeft" : {
       "title" : "{{maxAmount}} 이상 언스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 언스테이킹됩니다.",
@@ -969,7 +1021,7 @@
       "title" : "이전 검증인으로부터 진행 중인 언스테이킹 절차가 먼저 완료되어야 합니다"
     },
     "TezosStakeAmountTooSmall" : {
-      "title" : "This amount is too small to stake"
+      "title" : "최소 금액을 충족하지 않아 스테이킹이 불가합니다."
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "먼저 부계정을 모두 비워주세요"
@@ -1385,6 +1437,10 @@
     },
     "UtxoLimitReachedError" : {
       "title" : "UTXO 제한을 초과하는 수량입니다."
+    },
+    "CurrencyRegionRestrictedError" : {
+      "title" : "{{currencyName}} is not available in your region",
+      "description" : "Access to {{currencyName}} is restricted in your region."
     }
   },
   "crash" : {
@@ -1555,6 +1611,13 @@
       "mismatch" : "패스워드가 일치하지 않습니다",
       "saveFailed" : "패스워드를 저장하지 못했습니다. 다시 시도해 주세요.",
       "cta" : "확인"
+    },
+    "deactivatePassword" : {
+      "title" : "Deactivate password",
+      "description" : "Enter your password to deactivate it.",
+      "wrongPassword" : "Incorrect password",
+      "failed" : "We couldn't deactivate your password. Please try again.",
+      "cta" : "Confirm"
     }
   },
   "auth" : {
@@ -1862,6 +1925,37 @@
       "cta" : "자산 입금하기",
       "title" : "자산을 입금하고 시작하세요",
       "subTitle" : "간편한 암호화폐 전송과 매수는 물론 Cash-to-Stablecoin 옵션까지, 원하는 방식으로 Ledger Wallet에 자산을 추가하세요."
+    }
+  },
+  "q3WalletV4Tour" : {
+    "cta" : {
+      "start" : "둘러보기",
+      "next" : "다음",
+      "done" : "모두 확인했습니다"
+    },
+    "intro" : {
+      "title" : "최신 업데이트 둘러보기",
+      "subTitle" : "전송, 결제, 수익 창출 방법까지, 다양한 기능을 만나보세요"
+    },
+    "contact" : {
+      "title" : "복잡하고 긴 주소는 이제 그만",
+      "subTitle" : "주소록 기능을 소개합니다 지갑 주소를 이름과 함께 저장해 보세요. 쉽게 찾고, 간편하게 전송하세요."
+    },
+    "contactNoPay" : {
+      "title" : "주소록 기능을 만나보세요",
+      "subTitle" : "복잡하고 긴 주소는 이제 안녕! 지갑 주소를 이름과 함께 저장해 보세요. 쉽게 찾고, 간편하게 전송하세요."
+    },
+    "pay" : {
+      "title" : "페이(Pay) 기능을 소개합니다",
+      "subTitle" : "주소록에 저장된 주소로 송금하거나 결제를 요청하고, 암호화폐 카드로 받는 캐시백까지. 이제 하나의 탭에서 모두 해결하세요."
+    },
+    "payNoCard" : {
+      "title" : "페이(Pay) 기능을 소개합니다",
+      "subTitle" : "하나의 탭에서 주소록 결제와 결제 요청까지, 간편하게 이용하세요."
+    },
+    "yield" : {
+      "title" : "암호화폐는 그대로 보유하면서 자산 유동성을 누려보세요",
+      "subTitle" : "Morpho 기반의 Yield.xyz를 통해 랩핑된 비트코인(WBTC)을 담보로 제공하고 스테이블코인을 대출받을 수 있습니다."
     }
   },
   "q2WalletV4Tour" : {
@@ -2892,6 +2986,11 @@
       "installCTA" : "자산 보호 시작하기",
       "skipCTA" : "다음에 결정하기"
     }
+  },
+  "perpsAccountBanner" : {
+    "title" : "About Hyperliquid account",
+    "description" : "This account is related to Perpetual trading. Transactional actions are not supported for this account",
+    "cta" : "Open Perps"
   },
   "portfolio" : {
     "totalBalance" : "총 잔액",
@@ -4614,7 +4713,7 @@
       "alreadyUsed" : "이미 사용됨 · {{date}}",
       "notInRecentHistory" : "최근 거래 내역에 없음",
       "addressBookUnsupported" : {
-        "title" : "{{family}} 주소는 아직 지원되지 않습니다",
+        "title" : "{{family}} 미지원",
         "description" : "{{family}} 주소는 아직 주소록에 추가할 수 없습니다. 지속적으로 지원 자산을 추가해 나갈 예정입니다."
       },
       "relativeDate" : {
@@ -4806,10 +4905,6 @@
       "toggleCurrency" : "통화 변경"
     },
     "summary" : {
-      "solanaRawTransaction" : {
-        "title" : "블라인드 서명 필요",
-        "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
-      },
       "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
       "tag" : "태그(옵션)",
       "validateTag" : "태그 검증",
@@ -9818,6 +9913,45 @@
       "cta" : "다시 시도하세요"
     }
   },
+  "perpsReview" : {
+    "depositTitle" : "SwapKit로 입금",
+    "depositSubtitle" : "SwapKit은 단 한 번의 트랜잭션으로 스왑과 입금을 모두 처리합니다. 모든 과정은 Ledger 장치로 안전하게 보호됩니다.",
+    "swapDetailTitle" : "스왑 상세 정보",
+    "amountSendLabel" : "보낼 수량",
+    "amountReceiveLabel" : "받을 수량",
+    "approximateValue" : "~{{value}}",
+    "depositDetailTitle" : "입금 상세 정보",
+    "depositAmountLabel" : "입금 수량",
+    "depositReceiveLabel" : "전송 받을 계정",
+    "depositCTA" : "입금"
+  },
+  "perpsDepositSign" : {
+    "terms" : "이 트랜잭션에 서명함으로써 <termsLink>NEAR Intents의 SwapKit 이용약관(T&C)</termsLink>에 동의합니다."
+  },
+  "perpsTransactionSigned" : {
+    "title" : "트랜잭션 서명 완료",
+    "description" : "블록체인 네트워크에서 승인이 완료되면 {{currency}} 입금이 진행됩니다.",
+    "viewTransaction" : "트랜잭션 보기"
+  },
+  "perpsTransactionStatus" : {
+    "title" : "증거금 입금",
+    "currencies" : "{{sendTicker}} → {{receiveTicker}}",
+    "returnToPerps" : "무기한 선물로 돌아가기"
+  },
+  "perpsDeposit" : {
+    "title" : "입금",
+    "inputDepositAmount" : "{{value}} 예치",
+    "inputSubText" : "{{provider}}로 스왑 및 입금",
+    "selectCurrencyTitle" : "{{currencyTicker}}로 입금",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "계정 없음",
+    "review" : "검토",
+    "keypadDelete" : "마지막 자리 삭제",
+    "formErrors" : {
+      "amountExceedsBalance" : "보유 수량 부족",
+      "quoteUnavailable" : "{{provider}}에서 견적을 불러올 수 없습니다. 다른 자산을 사용하거나 나중에 다시 시도하세요."
+    }
+  },
   "swapErrors" : {
     "incorrectCommandData" : {
       "title" : "잘못된 명령 데이터",
@@ -10211,8 +10345,57 @@
     },
     "card" : {
       "title" : "크립토 카드",
+      "placeholder" : "곧 공개 예정",
+      "details" : "상세 정보",
       "freeze" : "동결",
-      "unfreeze" : "동결 해제"
+      "unfreeze" : "동결 해제",
+      "goBack" : "돌아가기",
+      "freezeConfirm" : {
+        "title" : "카드를 동결하면 더 이상 사용할 수 없습니다.",
+        "description" : "카드 동결은 언제든지 해제할 수 있습니다.",
+        "confirm" : "지금 동결하기",
+        "errorTitle" : "동결 실패"
+      },
+      "unfreezeConfirm" : {
+        "title" : "카드를 동결 해제하시겠습니까?",
+        "confirm" : "동결 해제하기",
+        "errorTitle" : "동결 해제 실패"
+      },
+      "confirmError" : {
+        "description" : "문제가 발생했습니다. 다시 시도하세요.",
+        "retry" : "다시 시도하세요"
+      }
+    },
+    "cardTransactions" : {
+      "title" : "Transactions",
+      "categories" : {
+        "SUBSCRIPTIONS" : "Subscriptions",
+        "FOOD" : "Food",
+        "TRAVEL" : "Travel",
+        "ENTERTAINMENT" : "Entertainment",
+        "HEALTH" : "Health",
+        "ATM" : "ATM",
+        "UTILITIES" : "Utilities",
+        "MISC" : "Other"
+      },
+      "detail" : {
+        "amount" : "Amount",
+        "status" : "Status",
+        "card" : "Card",
+        "cardInfo" : "The last four digits of the card used for this payment.",
+        "fundingSource" : "Funding source",
+        "transactionId" : "Transaction ID",
+        "copyTransactionId" : "Copy transaction ID",
+        "today" : "Today {{time}}",
+        "yesterday" : "Yesterday {{time}}",
+        "dateTime" : "{{date}} {{time}}",
+        "statusValues" : {
+          "CONFIRMED" : "Confirmed",
+          "PENDING" : "Pending",
+          "DECLINED" : "Declined",
+          "REVERTED" : "Reverted"
+        }
+      }
     },
     "selectContact" : {
       "placeholder" : "주소 또는 이름 입력"
@@ -10301,12 +10484,22 @@
     "cardLogin" : {
       "title" : "크립토 카드",
       "beforeIntro" : {
+        "title" : "Get your crypto card",
         "description" : "결제할 때마다 1% 캐시백 혜택이 지급됩니다",
         "action" : "카드 발급받기"
       },
       "afterIntro" : {
+        "title" : "Log in to access your Card",
         "description" : "카드에 액세스하려면 로그인하세요",
         "action" : "로그인"
+      },
+      "errors" : {
+        "pkce_failed" : "로그인을 시작할 수 없습니다. 다시 시도하세요.",
+        "browser_open_failed" : "로그인 페이지를 열 수 없습니다. 다시 시도하세요.",
+        "missing_attempt" : "이 로그인은 더 이상 유효하지 않습니다. 다시 로그인해 주세요.",
+        "exchange_failed" : "로그인을 완료할 수 없습니다. 다시 시도하세요.",
+        "persist_failed" : "세션을 저장하지 못했습니다. 다시 시도하세요.",
+        "fetch_user_failed" : "카드를 불러올 수 없습니다. 다시 시도하세요."
       }
     },
     "cardLoginIntro" : {
@@ -10341,6 +10534,14 @@
       "addressPicker" : {
         "title" : "{{name}} 주소 선택",
         "addAddress" : "주소 추가"
+      },
+      "paySuccess" : {
+        "title" : "지불 완료({{recipient}})",
+        "amount" : "금액",
+        "estimatedTime" : "예상 시간",
+        "from" : "사용 자산",
+        "viewTransaction" : "트랜잭션 보기",
+        "close" : "닫기"
       }
     },
     "cardOnboarding" : {
@@ -10617,12 +10818,11 @@
     "addContact" : "주소록 추가",
     "addAddress" : "주소 추가",
     "addYourAddress" : "주소 추가",
-    "searchPlaceholder" : "주소록 검색",
+    "searchPlaceholder" : "이름으로 검색",
     "searchNoResults" : "검색 결과가 없습니다",
     "addContactDrawer" : {
       "namePlaceholder" : "이름",
-      "namingDisclaimer" : "개인 정보 보호를 위해 성과 이름을 모두 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
-      "confirmName" : "이름 확인",
+      "namingDisclaimer" : "개인 정보 보호를 위해 본명을 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
       "invalidNameError" : "특수 문자는 허용되지 않습니다.",
       "duplicateNameError" : "이미 주소록에 등록된 이름입니다."
     },
@@ -10636,20 +10836,23 @@
       "domainNotFound" : "이 도메인과 관련하여 발견된 주소가 없습니다",
       "sanctionedAddress" : "이 주소는 제재 대상이므로 사용할 수 없습니다.",
       "validationUnavailable" : "주소 확인 기능을 일시적으로 사용할 수 없습니다",
-      "ensDisclaimer" : "ENS 이름은 지갑 주소로 연결됩니다. 계속 진행하기 전 연결된 주소를 항상 확인하세요.",
+      "ensDisclaimer" : "ENS 이름은 변경될 수 있습니다",
+      "ensDisclaimerDescription" : "ENS 이름에 연결된 주소는 추후 변경될 수 있습니다. 자산이 사용자가 확인한 주소로만 정확히 전송될 수 있도록, 현재 연결된 실제 지갑 주소를 저장해 두세요.",
       "sanctioned" : {
         "description" : "이 주소는 위험이 감지된 주소로 분류되어 Ledger는 해당 주소로의 전송을 허용하지 않습니다.",
         "learnMore" : "자세히 알아보기"
-      }
+      },
+      "duplicateAddress" : "This address is already used for {{contactName}}."
     },
     "addAddressName" : {
       "title" : "주소 별칭 설정",
       "inputLabel" : "주소 별칭",
-      "namingDisclaimer" : "필요할 때 쉽게 찾을 수 있도록 이 주소에 별칭을 설정하세요. 설정한 이름은 본인에게만 표시됩니다.",
+      "namingDisclaimer" : "해당 주소로 송금할 때 Ledger 장치에 표시되는 이름입니다. 쉽게 식별할 수 있는 별칭을 지정해 주세요.",
       "continueToReview" : "검토 계속하기",
       "invalidLabel" : "특수 문자는 허용되지 않습니다.",
       "duplicateLabel" : "해당 연락처에서 이미 사용 중인 주소 별칭입니다.",
-      "labelTooLong" : "주소명이 길이 제한을 초과합니다."
+      "labelTooLong" : "주소명이 길이 제한을 초과합니다.",
+      "privacyPolicy" : "Learn more about Ledger's Privacy Policy."
     },
     "addAddressReview" : {
       "title" : "주소 검토",
@@ -10663,10 +10866,7 @@
     "addressCount_one" : "{{count}}개 주소",
     "addressCount_other" : "{{count}}개 주소",
     "me" : {
-      "name" : "나",
-      "addressCount_zero" : "주소 0개",
-      "addressCount_one" : "주소 {{count}}개",
-      "addressCount_other" : "주소 {{count}}개"
+      "myAddresses" : "내 주소"
     },
     "detail" : {
       "meDisplayName" : "{{name}}(내 주소)",
@@ -10697,7 +10897,7 @@
     "editContact" : {
       "title" : "주소록 수정",
       "namePlaceholder" : "이름",
-      "namingDisclaimer" : "개인 정보 보호를 위해 성과 이름을 모두 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
+      "namingDisclaimer" : "개인 정보 보호를 위해 본명을 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
       "confirmName" : "이름 확인",
       "applyChanges" : "변경 사항 적용",
       "invalidNameError" : "특수 문자는 허용되지 않습니다."
@@ -10736,7 +10936,7 @@
     },
     "featureIntroduction" : {
       "title" : "주소록 기능을 소개합니다",
-      "primaryAction" : "지금 살펴보기",
+      "primaryAction" : "지금 시작하기",
       "highlights" : {
         "saveAddresses" : {
           "title" : "원하는 이름으로 주소 저장",
@@ -10747,7 +10947,7 @@
           "description" : "복잡한 주소 대신 신뢰하는 내가 아는 이름이 표시됩니다."
         },
         "privateAcrossDevices" : {
-          "title" : "Ledger Wallet™으로 안전하게 충전",
+          "title" : "모든 Ledger 장치에서 비공개로 유지",
           "description" : "Ledger Sync를 통해 엔드투엔드로 암호화를 지원합니다."
         }
       }

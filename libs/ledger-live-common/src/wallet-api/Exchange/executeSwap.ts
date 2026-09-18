@@ -265,6 +265,8 @@ export async function executeSwap(
     // tx.amount should be BigNumber
     tx.amount = new BigNumber(tx.amount);
 
+    let succeeded = false;
+
     return new Promise((resolve, reject) =>
       uiSwap({
         exchangeParams: {
@@ -293,6 +295,8 @@ export async function executeSwap(
           ...(correlationId && { correlationId }),
         },
         onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
+          succeeded = true;
+
           tracking.completeExchangeSuccess({
             ...trackingParams,
             currency: transaction.family,
@@ -314,6 +318,11 @@ export async function executeSwap(
           resolve({ operationHash, swapId });
         },
         onCancel: error => {
+          // A late/stale cancel arriving after the swap already succeeded
+          // (e.g. a DrawerClosedError racing the success callback) must not
+          // report the swap as cancelled once it's already been accepted.
+          if (succeeded) return;
+
           const {
             name: rawErrorName,
             message: rawErrorMessage,
