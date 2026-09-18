@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import type { Balance, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import {
@@ -28,6 +29,8 @@ import {
 } from "../types/errors";
 import { defaultTronResources } from "./tronResources";
 import { validateIntent } from "./validateIntent";
+
+const mockLogger: Logger = jest.fn();
 
 const mockEstimateFees = jest.fn();
 jest.mock("./estimateFees", () => ({
@@ -131,7 +134,9 @@ describe("validateIntent", () => {
   });
 
   it("accepts a valid native send", async () => {
-    const result = await validateIntent(mockConfig, makeIntent(), [nativeBalance(10_000_000n)]);
+    const result = await validateIntent(mockLogger, mockConfig, makeIntent(), [
+      nativeBalance(10_000_000n),
+    ]);
     expect(result.errors).toEqual({});
     expect(result.amount).toBe(1_000_000n);
     expect(result.estimatedFees).toBe(270_000n);
@@ -139,17 +144,29 @@ describe("validateIntent", () => {
   });
 
   it("uses customFees when provided", async () => {
-    const result = await validateIntent(mockConfig, makeIntent(), [nativeBalance(10_000_000n)], {
-      value: 500_000n,
-    });
+    const result = await validateIntent(
+      mockLogger,
+      mockConfig,
+      makeIntent(),
+      [nativeBalance(10_000_000n)],
+      {
+        value: 500_000n,
+      },
+    );
     expect(result.estimatedFees).toBe(500_000n);
   });
 
   it("skips the estimation when customFees already carry their own parameters", async () => {
-    const result = await validateIntent(mockConfig, makeIntent(), [nativeBalance(10_000_000n)], {
-      value: 500_000n,
-      parameters: { energyRequired: "0", energyAvailable: "0" },
-    });
+    const result = await validateIntent(
+      mockLogger,
+      mockConfig,
+      makeIntent(),
+      [nativeBalance(10_000_000n)],
+      {
+        value: 500_000n,
+        parameters: { energyRequired: "0", energyAvailable: "0" },
+      },
+    );
 
     expect(result.estimatedFees).toBe(500_000n);
     expect(mockEstimateFees).not.toHaveBeenCalled();
@@ -162,6 +179,7 @@ describe("validateIntent", () => {
     // `getTransactionStatus` for any TRC-20 send with a custom fee.
     const intent = makeIntent({ asset: { type: "trc20", assetReference: TRC20_ADDRESS } });
     const result = await validateIntent(
+      mockLogger,
       mockConfig,
       intent,
       [nativeBalance(10_000_000n), trc20Balance(5n)],
@@ -178,10 +196,16 @@ describe("validateIntent", () => {
   it("skips the estimation for a native send whose fee the caller already supplied", async () => {
     // Only the TRC-20 energy warning reads the breakdown, so on every other asset an estimate whose
     // value `customFees` overrides is several RPC calls for a result nothing reads.
-    const result = await validateIntent(mockConfig, makeIntent(), [nativeBalance(10_000_000n)], {
-      value: 500_000n,
-      parameters: { feesStrategy: "medium" },
-    });
+    const result = await validateIntent(
+      mockLogger,
+      mockConfig,
+      makeIntent(),
+      [nativeBalance(10_000_000n)],
+      {
+        value: 500_000n,
+        parameters: { feesStrategy: "medium" },
+      },
+    );
 
     expect(result.estimatedFees).toBe(500_000n);
     expect(mockEstimateFees).not.toHaveBeenCalled();
@@ -192,32 +216,42 @@ describe("validateIntent", () => {
       asset: { type: "trc20", assetReference: "contract-address" },
     });
 
-    const result = await validateIntent(mockConfig, intent, [nativeBalance(10_000_000n)], {
-      value: 500_000n,
-      parameters: { feesStrategy: "medium" },
-    });
+    const result = await validateIntent(
+      mockLogger,
+      mockConfig,
+      intent,
+      [nativeBalance(10_000_000n)],
+      {
+        value: 500_000n,
+        parameters: { feesStrategy: "medium" },
+      },
+    );
 
     expect(result.estimatedFees).toBe(500_000n);
   });
 
   describe("recipient validation", () => {
     it("rejects an empty recipient", async () => {
-      const result = await validateIntent(mockConfig, makeIntent({ recipient: "" }), [
+      const result = await validateIntent(mockLogger, mockConfig, makeIntent({ recipient: "" }), [
         nativeBalance(10_000_000n),
       ]);
       expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
     });
 
     it("rejects when sender equals recipient", async () => {
-      const result = await validateIntent(mockConfig, makeIntent({ recipient: SENDER }), [
-        nativeBalance(10_000_000n),
-      ]);
+      const result = await validateIntent(
+        mockLogger,
+        mockConfig,
+        makeIntent({ recipient: SENDER }),
+        [nativeBalance(10_000_000n)],
+      );
       expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
     });
 
     it("rejects a malformed recipient address", async () => {
       mockValidateAddress.mockResolvedValueOnce(false);
       const result = await validateIntent(
+        mockLogger,
         mockConfig,
         makeIntent({ recipient: "not-a-real-address" }),
         [nativeBalance(10_000_000n)],
@@ -228,16 +262,19 @@ describe("validateIntent", () => {
 
   describe("native amount validation", () => {
     it("rejects a zero amount when not useAllAmount", async () => {
-      const result = await validateIntent(mockConfig, makeIntent({ amount: 0n }), [
+      const result = await validateIntent(mockLogger, mockConfig, makeIntent({ amount: 0n }), [
         nativeBalance(10_000_000n),
       ]);
       expect(result.errors.amount).toBeInstanceOf(AmountRequired);
     });
 
     it("rejects when balance is insufficient for amount + fees", async () => {
-      const result = await validateIntent(mockConfig, makeIntent({ amount: 10_000_000n }), [
-        nativeBalance(10_000_000n),
-      ]);
+      const result = await validateIntent(
+        mockLogger,
+        mockConfig,
+        makeIntent({ amount: 10_000_000n }),
+        [nativeBalance(10_000_000n)],
+      );
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
     });
 
@@ -245,12 +282,18 @@ describe("validateIntent", () => {
       const balances: Balance[] = [
         { value: 10_000_000n, locked: 9_000_000n, asset: { type: "native" } },
       ];
-      const result = await validateIntent(mockConfig, makeIntent({ amount: 1_500_000n }), balances);
+      const result = await validateIntent(
+        mockLogger,
+        mockConfig,
+        makeIntent({ amount: 1_500_000n }),
+        balances,
+      );
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
     });
 
     it("computes amount = available - fees when useAllAmount", async () => {
       const result = await validateIntent(
+        mockLogger,
         mockConfig,
         makeIntent({ amount: 0n, useAllAmount: true }),
         [nativeBalance(10_000_000n)],
@@ -262,6 +305,7 @@ describe("validateIntent", () => {
 
     it("surfaces NotEnoughBalance and NotEnoughGas when useAllAmount but fees exceed balance", async () => {
       const result = await validateIntent(
+        mockLogger,
         mockConfig,
         makeIntent({ amount: 0n, useAllAmount: true }),
         [nativeBalance(100_000n)],
@@ -284,7 +328,7 @@ describe("validateIntent", () => {
     });
 
     it("accepts a valid token send", async () => {
-      const result = await validateIntent(mockConfig, tokenIntent, [
+      const result = await validateIntent(mockLogger, mockConfig, tokenIntent, [
         nativeBalance(10_000_000n),
         trc20Balance(5_000_000n),
       ]);
@@ -293,7 +337,7 @@ describe("validateIntent", () => {
     });
 
     it("rejects when token balance is insufficient", async () => {
-      const result = await validateIntent(mockConfig, tokenIntent, [
+      const result = await validateIntent(mockLogger, mockConfig, tokenIntent, [
         nativeBalance(10_000_000n),
         trc20Balance(500n),
       ]);
@@ -301,7 +345,7 @@ describe("validateIntent", () => {
     });
 
     it("surfaces fee shortfall on gasLimit (NotEnoughGas), not on amount, for token sends", async () => {
-      const result = await validateIntent(mockConfig, tokenIntent, [
+      const result = await validateIntent(mockLogger, mockConfig, tokenIntent, [
         nativeBalance(100n),
         trc20Balance(5_000_000n),
       ]);
@@ -311,6 +355,7 @@ describe("validateIntent", () => {
 
     it("sets amount = full token balance when useAllAmount", async () => {
       const result = await validateIntent(
+        mockLogger,
         mockConfig,
         { ...tokenIntent, amount: 0n, useAllAmount: true },
         [nativeBalance(10_000_000n), trc20Balance(7_500_000n)],
@@ -330,7 +375,7 @@ describe("validateIntent", () => {
         },
       });
 
-      const result = await validateIntent(mockConfig, tokenIntent, [
+      const result = await validateIntent(mockLogger, mockConfig, tokenIntent, [
         nativeBalance(10_000_000n),
         trc20Balance(5_000_000n),
       ]);
@@ -351,6 +396,7 @@ describe("validateIntent", () => {
       });
 
       const result = await validateIntent(
+        mockLogger,
         mockConfig,
         tokenIntent,
         [nativeBalance(10_000_000n), trc20Balance(5_000_000n)],
@@ -373,7 +419,7 @@ describe("validateIntent", () => {
         },
       });
 
-      const result = await validateIntent(mockConfig, tokenIntent, [
+      const result = await validateIntent(mockLogger, mockConfig, tokenIntent, [
         nativeBalance(0n),
         trc20Balance(5_000_000n),
       ]);
@@ -386,7 +432,9 @@ describe("validateIntent", () => {
 
   describe("fee warning", () => {
     it("warns with the formatted fee amount when a fee is owed", async () => {
-      const result = await validateIntent(mockConfig, makeIntent(), [nativeBalance(10_000_000n)]);
+      const result = await validateIntent(mockLogger, mockConfig, makeIntent(), [
+        nativeBalance(10_000_000n),
+      ]);
 
       expect(result.warnings.fee).toBeInstanceOf(TronUnexpectedFees);
       // formatCurrencyUnit separates amount and code with a non-breaking space, hence the \s.
@@ -396,13 +444,15 @@ describe("validateIntent", () => {
     it("does not warn when the transaction is free", async () => {
       mockEstimateFees.mockResolvedValue({ value: 0n });
 
-      const result = await validateIntent(mockConfig, makeIntent(), [nativeBalance(10_000_000n)]);
+      const result = await validateIntent(mockLogger, mockConfig, makeIntent(), [
+        nativeBalance(10_000_000n),
+      ]);
 
       expect(result.warnings.fee).toBeUndefined();
     });
 
     it("skips estimation entirely once a recipient error is known", async () => {
-      const result = await validateIntent(mockConfig, makeIntent({ recipient: "" }), [
+      const result = await validateIntent(mockLogger, mockConfig, makeIntent({ recipient: "" }), [
         nativeBalance(10_000_000n),
       ]);
 
@@ -414,6 +464,7 @@ describe("validateIntent", () => {
   describe("locked balance", () => {
     it("does not let frozen TRX pay the fee", async () => {
       const result = await validateIntent(
+        mockLogger,
         mockConfig,
         makeIntent({ amount: 0n, useAllAmount: true }),
         [{ value: 10_000_000n, locked: 9_900_000n, asset: { type: "native" } }],
@@ -428,6 +479,7 @@ describe("validateIntent", () => {
   describe("staking modes", () => {
     it("does not require a recipient for freeze", async () => {
       const result = await validateIntent(
+        mockLogger,
         mockConfig,
         makeStakingIntent("freeze", { resource: "BANDWIDTH" }, { amount: 5_000_000n }),
         [nativeBalance(10_000_000n)],
@@ -454,6 +506,7 @@ describe("validateIntent", () => {
         );
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent(mode, {
             resource: "BANDWIDTH",
@@ -468,6 +521,7 @@ describe("validateIntent", () => {
 
     it("rejects a freeze below 1 TRX", async () => {
       const result = await validateIntent(
+        mockLogger,
         mockConfig,
         makeStakingIntent("freeze", { resource: "BANDWIDTH" }, { amount: 999_999n }),
         [nativeBalance(10_000_000n)],
@@ -481,9 +535,12 @@ describe("validateIntent", () => {
         makeResources({ unwithdrawnReward: new BigNumber(5_000) }),
       );
 
-      const result = await validateIntent(mockConfig, makeStakingIntent("claimReward"), [
-        nativeBalance(10_000_000n),
-      ]);
+      const result = await validateIntent(
+        mockLogger,
+        mockConfig,
+        makeStakingIntent("claimReward"),
+        [nativeBalance(10_000_000n)],
+      );
 
       expect(result.amount).toBe(0n);
       // Only the fee leaves the account.
@@ -499,6 +556,7 @@ describe("validateIntent", () => {
         );
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("unfreeze", { resource: "BANDWIDTH" }, { amount: 2_000_000n }),
           [nativeBalance(10_000_000n)],
@@ -515,6 +573,7 @@ describe("validateIntent", () => {
         );
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("unfreeze", { resource: "ENERGY" }, { amount: 2_000_000n }),
           [nativeBalance(10_000_000n)],
@@ -536,6 +595,7 @@ describe("validateIntent", () => {
         );
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("legacyUnfreeze", { resource: "BANDWIDTH" }),
           [nativeBalance(10_000_000n)],
@@ -555,6 +615,7 @@ describe("validateIntent", () => {
         );
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("legacyUnfreeze", { resource: "BANDWIDTH" }),
           [nativeBalance(10_000_000n)],
@@ -565,6 +626,7 @@ describe("validateIntent", () => {
 
       it("rejects when nothing is frozen under the legacy scheme", async () => {
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("legacyUnfreeze", { resource: "ENERGY" }),
           [nativeBalance(10_000_000n)],
@@ -577,6 +639,7 @@ describe("validateIntent", () => {
     describe("withdrawExpireUnfreeze", () => {
       it("rejects when nothing is unfreezing", async () => {
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("withdrawExpireUnfreeze"),
           [nativeBalance(10_000_000n)],
@@ -597,6 +660,7 @@ describe("validateIntent", () => {
         );
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("withdrawExpireUnfreeze"),
           [nativeBalance(10_000_000n)],
@@ -617,6 +681,7 @@ describe("validateIntent", () => {
         );
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("withdrawExpireUnfreeze"),
           [nativeBalance(10_000_000n)],
@@ -628,9 +693,12 @@ describe("validateIntent", () => {
 
     describe("claimReward", () => {
       it("rejects when there is nothing to claim", async () => {
-        const result = await validateIntent(mockConfig, makeStakingIntent("claimReward"), [
-          nativeBalance(10_000_000n),
-        ]);
+        const result = await validateIntent(
+          mockLogger,
+          mockConfig,
+          makeStakingIntent("claimReward"),
+          [nativeBalance(10_000_000n)],
+        );
 
         expect(result.errors.reward).toBeInstanceOf(TronNoReward);
       });
@@ -644,9 +712,12 @@ describe("validateIntent", () => {
           }),
         );
 
-        const result = await validateIntent(mockConfig, makeStakingIntent("claimReward"), [
-          nativeBalance(10_000_000n),
-        ]);
+        const result = await validateIntent(
+          mockLogger,
+          mockConfig,
+          makeStakingIntent("claimReward"),
+          [nativeBalance(10_000_000n)],
+        );
 
         expect(result.errors.reward).toBeInstanceOf(TronRewardNotAvailable);
         expect(result.errors.reward).toMatchObject({
@@ -662,9 +733,12 @@ describe("validateIntent", () => {
           }),
         );
 
-        const result = await validateIntent(mockConfig, makeStakingIntent("claimReward"), [
-          nativeBalance(10_000_000n),
-        ]);
+        const result = await validateIntent(
+          mockLogger,
+          mockConfig,
+          makeStakingIntent("claimReward"),
+          [nativeBalance(10_000_000n)],
+        );
 
         expect(result.errors.reward).toBeUndefined();
       });
@@ -677,9 +751,12 @@ describe("validateIntent", () => {
       it("rejects an empty vote list", async () => {
         withPower(10);
 
-        const result = await validateIntent(mockConfig, makeStakingIntent("vote", { votes: [] }), [
-          nativeBalance(10_000_000n),
-        ]);
+        const result = await validateIntent(
+          mockLogger,
+          mockConfig,
+          makeStakingIntent("vote", { votes: [] }),
+          [nativeBalance(10_000_000n)],
+        );
 
         expect(result.errors.vote).toBeInstanceOf(TronVoteRequired);
       });
@@ -688,6 +765,7 @@ describe("validateIntent", () => {
         withPower(10);
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("vote", {
             votes: [{ name: "impostor", address: RECIPIENT, voteCount: 1 }],
@@ -702,6 +780,7 @@ describe("validateIntent", () => {
         withPower(10);
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("vote", { votes: [{ name: "sr", address: SR_ADDRESS, voteCount: 0 }] }),
           [nativeBalance(10_000_000n)],
@@ -714,6 +793,7 @@ describe("validateIntent", () => {
         withPower(5);
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("vote", { votes: [{ name: "sr", address: SR_ADDRESS, voteCount: 6 }] }),
           [nativeBalance(10_000_000n)],
@@ -726,6 +806,7 @@ describe("validateIntent", () => {
         withPower(10);
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent("vote", { votes: [{ name: "sr", address: SR_ADDRESS, voteCount: 7 }] }),
           [nativeBalance(10_000_000n)],
@@ -740,6 +821,7 @@ describe("validateIntent", () => {
         mockGetDelegatedResource.mockResolvedValue(new BigNumber(1_000_000));
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent(
             "unDelegateResource",
@@ -756,6 +838,7 @@ describe("validateIntent", () => {
         mockGetDelegatedResource.mockResolvedValue(new BigNumber(2_000_000));
 
         const result = await validateIntent(
+          mockLogger,
           mockConfig,
           makeStakingIntent(
             "unDelegateResource",

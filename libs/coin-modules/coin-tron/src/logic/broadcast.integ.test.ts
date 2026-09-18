@@ -1,7 +1,10 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import { TronWeb } from "tronweb";
 import { broadcast } from "./broadcast";
 import coinConfig from "../config";
+
+const mockLogger: Logger = jest.fn();
 
 const mockConfig = {
   status: { type: "active" },
@@ -29,6 +32,8 @@ describe("Broadcast", () => {
     );
     const signed = await tronWeb.trx.sign(tx, sender.privateKey);
 
-    await expect(broadcast(mockConfig, signed)).rejects.toThrow(/CONTRACT_VALIDATE_ERROR/);
+    await expect(broadcast(mockLogger, mockConfig, signed)).rejects.toThrow(
+      /CONTRACT_VALIDATE_ERROR/,
+    );
   });
 });

@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
@@ -39,6 +40,8 @@ jest.mock("../network", () => ({
   withdrawExpireUnfreezeTronTransaction: jest.fn(),
 }));
 
+const mockLogger: Logger = jest.fn();
+
 const mockConfig = {
   status: { type: "active" },
   explorer: { url: "https://tron.coin.ledger.com" },
@@ -65,11 +68,15 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    const { transaction: result } = await craftTransaction(mockConfig, transactionIntent);
+    const { transaction: result } = await craftTransaction(
+      mockLogger,
+      mockConfig,
+      transactionIntent,
+    );
 
     expect(decode58Check).toHaveBeenCalledWith("recipient");
     expect(decode58Check).toHaveBeenCalledWith("sender");
-    expect(craftStandardTransaction).toHaveBeenCalledWith(mockConfig, {
+    expect(craftStandardTransaction).toHaveBeenCalledWith(mockLogger, mockConfig, {
       tokenAddress: undefined,
       recipientAddress: "recipient",
       senderAddress: "sender",
@@ -100,11 +107,16 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    const { transaction: result } = await craftTransaction(mockConfig, transactionIntent);
+    const { transaction: result } = await craftTransaction(
+      mockLogger,
+      mockConfig,
+      transactionIntent,
+    );
 
     expect(decode58Check).toHaveBeenCalledWith("recipient");
     expect(decode58Check).toHaveBeenCalledWith("sender");
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockLogger,
       mockConfig,
       "contractAddress",
       "recipient",
@@ -132,9 +144,14 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    const { transaction: result } = await craftTransaction(mockConfig, transactionIntent, {
-      value: 0n,
-    });
+    const { transaction: result } = await craftTransaction(
+      mockLogger,
+      mockConfig,
+      transactionIntent,
+      {
+        value: 0n,
+      },
+    );
 
     expect(craftStandardTransaction).toHaveBeenCalled();
     expect(craftTrc20Transaction).not.toHaveBeenCalled();
@@ -159,11 +176,12 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(mockConfig, transactionIntent, {
+    await craftTransaction(mockLogger, mockConfig, transactionIntent, {
       value: customFees,
       parameters: { fees: customFees },
     });
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockLogger,
       mockConfig,
       "contractAddress",
       undefined,
@@ -192,11 +210,12 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(mockConfig, transactionIntent, {
+    await craftTransaction(mockLogger, mockConfig, transactionIntent, {
       value: customFees,
       parameters: { fees: customFees },
     });
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockLogger,
       mockConfig,
       "contractAddress",
       undefined,
@@ -225,11 +244,12 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(mockConfig, transactionIntent, {
+    await craftTransaction(mockLogger, mockConfig, transactionIntent, {
       value: customFees,
       parameters: { fees: customFees },
     });
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockLogger,
       mockConfig,
       "contractAddress",
       undefined,
@@ -257,10 +277,11 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(mockConfig, transactionIntent);
+    await craftTransaction(mockLogger, mockConfig, transactionIntent);
     // `undefined` here, not the default: `craftTrc20Transaction` owns the `?? DEFAULT_TRC20_FEES_LIMIT`
     // fallback, so the default is asserted in the network + integ tests, not mocked away here.
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockLogger,
       mockConfig,
       "contractAddress",
       undefined,
@@ -291,8 +312,9 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(mockConfig, transactionIntent, { value: 0n });
+    await craftTransaction(mockLogger, mockConfig, transactionIntent, { value: 0n });
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockLogger,
       mockConfig,
       "contractAddress",
       undefined,
@@ -308,6 +330,7 @@ describe("craftTransaction", () => {
     async (customFees: bigint) => {
       await expect(
         craftTransaction(
+          mockLogger,
           mockConfig,
           {
             intentType: "transaction",
@@ -362,11 +385,13 @@ describe("craftTransaction", () => {
 
     it("crafts a freeze from the amount and the TxData resource", async () => {
       const { transaction } = await craftTransaction(
+        mockLogger,
         mockConfig,
         stakingIntent("freeze", { resource: "BANDWIDTH", duration: 3 }, { amount: 5_000_000n }),
       );
 
       expect(freezeTronTransaction).toHaveBeenCalledWith(
+        mockLogger,
         mockConfig,
         SENDER,
         new BigNumber(5_000_000),
@@ -377,11 +402,13 @@ describe("craftTransaction", () => {
 
     it("crafts an unfreeze from the amount and the TxData resource", async () => {
       await craftTransaction(
+        mockLogger,
         mockConfig,
         stakingIntent("unfreeze", { resource: "ENERGY" }, { amount: 2_000_000n }),
       );
 
       expect(unfreezeTronTransaction).toHaveBeenCalledWith(
+        mockLogger,
         mockConfig,
         SENDER,
         new BigNumber(2_000_000),
@@ -390,31 +417,41 @@ describe("craftTransaction", () => {
     });
 
     it("crafts a vote from the TxData vote list", async () => {
-      await craftTransaction(mockConfig, stakingIntent("vote", { votes: VOTES }));
+      await craftTransaction(mockLogger, mockConfig, stakingIntent("vote", { votes: VOTES }));
 
-      expect(voteTronSuperRepresentatives).toHaveBeenCalledWith(mockConfig, SENDER, VOTES);
+      expect(voteTronSuperRepresentatives).toHaveBeenCalledWith(
+        mockLogger,
+        mockConfig,
+        SENDER,
+        VOTES,
+      );
     });
 
     it("crafts a vote with an empty list when the TxData carries none", async () => {
-      await craftTransaction(mockConfig, stakingIntent("vote"));
+      await craftTransaction(mockLogger, mockConfig, stakingIntent("vote"));
 
-      expect(voteTronSuperRepresentatives).toHaveBeenCalledWith(mockConfig, SENDER, []);
+      expect(voteTronSuperRepresentatives).toHaveBeenCalledWith(mockLogger, mockConfig, SENDER, []);
     });
 
     it("crafts a claimReward from the sender alone", async () => {
-      await craftTransaction(mockConfig, stakingIntent("claimReward"));
+      await craftTransaction(mockLogger, mockConfig, stakingIntent("claimReward"));
 
-      expect(claimRewardTronTransaction).toHaveBeenCalledWith(mockConfig, SENDER);
+      expect(claimRewardTronTransaction).toHaveBeenCalledWith(mockLogger, mockConfig, SENDER);
     });
 
     it("crafts a withdrawExpireUnfreeze from the sender alone", async () => {
-      await craftTransaction(mockConfig, stakingIntent("withdrawExpireUnfreeze"));
+      await craftTransaction(mockLogger, mockConfig, stakingIntent("withdrawExpireUnfreeze"));
 
-      expect(withdrawExpireUnfreezeTronTransaction).toHaveBeenCalledWith(mockConfig, SENDER);
+      expect(withdrawExpireUnfreezeTronTransaction).toHaveBeenCalledWith(
+        mockLogger,
+        mockConfig,
+        SENDER,
+      );
     });
 
     it("crafts an unDelegateResource towards the recipient", async () => {
       await craftTransaction(
+        mockLogger,
         mockConfig,
         stakingIntent(
           "unDelegateResource",
@@ -423,7 +460,7 @@ describe("craftTransaction", () => {
         ),
       );
 
-      expect(unDelegateResourceTransaction).toHaveBeenCalledWith(mockConfig, {
+      expect(unDelegateResourceTransaction).toHaveBeenCalledWith(mockLogger, mockConfig, {
         ownerAddress: SENDER,
         receiverAddress: RECIPIENT,
         amount: new BigNumber(1_000_000),
@@ -433,11 +470,12 @@ describe("craftTransaction", () => {
 
     it("crafts a legacyUnfreeze with a receiver when reclaiming a delegation", async () => {
       await craftTransaction(
+        mockLogger,
         mockConfig,
         stakingIntent("legacyUnfreeze", { resource: "BANDWIDTH" }, { recipient: RECIPIENT }),
       );
 
-      expect(legacyUnfreezeTronTransaction).toHaveBeenCalledWith(mockConfig, {
+      expect(legacyUnfreezeTronTransaction).toHaveBeenCalledWith(mockLogger, mockConfig, {
         ownerAddress: SENDER,
         resource: "BANDWIDTH",
         receiverAddress: RECIPIENT,
@@ -446,11 +484,12 @@ describe("craftTransaction", () => {
 
     it("crafts a legacyUnfreeze without a receiver when there is no recipient", async () => {
       await craftTransaction(
+        mockLogger,
         mockConfig,
         stakingIntent("legacyUnfreeze", { resource: "BANDWIDTH" }),
       );
 
-      expect(legacyUnfreezeTronTransaction).toHaveBeenCalledWith(mockConfig, {
+      expect(legacyUnfreezeTronTransaction).toHaveBeenCalledWith(mockLogger, mockConfig, {
         ownerAddress: SENDER,
         resource: "BANDWIDTH",
         receiverAddress: undefined,
@@ -458,9 +497,9 @@ describe("craftTransaction", () => {
     });
 
     it("rejects an unknown mode rather than signing it as a plain transfer", async () => {
-      await expect(craftTransaction(mockConfig, stakingIntent("notAMode"))).rejects.toThrow(
-        /unsupported Tron intent type/,
-      );
+      await expect(
+        craftTransaction(mockLogger, mockConfig, stakingIntent("notAMode")),
+      ).rejects.toThrow(/unsupported Tron intent type/);
       expect(craftStandardTransaction).not.toHaveBeenCalled();
     });
 
@@ -469,6 +508,7 @@ describe("craftTransaction", () => {
 
       await expect(
         craftTransaction(
+          mockLogger,
           mockConfig,
           stakingIntent("freeze", { resource: "BANDWIDTH" }, { amount: 5_000_000n }),
         ),

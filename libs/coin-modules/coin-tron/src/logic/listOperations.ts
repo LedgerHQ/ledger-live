@@ -1,6 +1,6 @@
 import { Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
-import { log } from "@ledgerhq/logs";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import uniqBy from "lodash/uniqBy";
 import type { TronCoinConfig } from "../config";
 import { fetchTronAccountTxsPage, getBlock } from "../network";
@@ -37,6 +37,7 @@ export type ListOperationsOptions = {
 };
 
 export async function listOperations(
+  logger: Logger,
   config: TronCoinConfig,
   address: string,
   options: ListOperationsOptions,
@@ -60,7 +61,7 @@ export async function listOperations(
   // Fetch native and TRC20 transactions in parallel from TronGrid.
   // Both endpoints are queried with the same timestamp bounds to ensure
   // we can properly merge and sort them chronologically.
-  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(config, address, {
+  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(logger, config, address, {
     limit,
     minTimestamp: fetchMinTimestamp,
     maxTimestamp: fetchMaxTimestamp,
@@ -96,7 +97,7 @@ export async function listOperations(
   // blocks are fetched, so a page of only-unresolvable transactions costs no block request.
   const emittableTxs = pageTxs.filter(tx => {
     if (!hasUnresolvedTokenReference(tx)) return true;
-    log("tron-error", `dropping ${tx.tokenType} operation without asset reference`, {
+    logger("tron-error", `dropping ${tx.tokenType} operation without asset reference`, {
       txID: tx.txID,
     });
     return false;
@@ -110,7 +111,7 @@ export async function listOperations(
   );
 
   await promiseAllBatched(5, uniqueHeights, async height => {
-    const fetchedBlock = await getBlock(config, height);
+    const fetchedBlock = await getBlock(logger, config, height);
     blocksByHeight.set(height, fetchedBlock);
   });
 

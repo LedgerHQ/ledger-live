@@ -1,12 +1,13 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import network from "@ledgerhq/live-network";
 import coinConfig, { type TronCoinConfig } from "../config";
 import { getBlock } from "./getBlock";
 import { listOperations } from "./listOperations";
 
 jest.mock("@ledgerhq/live-network/network");
-jest.mock("@ledgerhq/logs");
 
 const mockedNetwork = network as jest.MockedFunction<typeof network>;
+const mockLogger: Logger = jest.fn();
 
 const TRON_BASE_URL = "https://tron-test.example.com";
 const config = {
@@ -127,12 +128,12 @@ describe("token asset consistency between listOperations and getBlock", () => {
   });
 
   async function bothEndpoints() {
-    const page = await listOperations(config, deployer, {
+    const page = await listOperations(mockLogger, config, deployer, {
       limit: 100,
       minTimestamp: 0,
       order: "asc",
     });
-    const block = await getBlock(config, blockHeight);
+    const block = await getBlock(mockLogger, config, blockHeight);
     return { operations: page.items, blockOperations: block.transactions[0].operations };
   }
 
