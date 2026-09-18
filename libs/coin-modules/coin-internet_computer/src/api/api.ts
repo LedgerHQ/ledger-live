@@ -25,7 +25,12 @@ import {
   MAINNET_LEDGER_CANISTER_ID,
 } from "../consts";
 import { redactPrincipals } from "../common-logic/redact";
-import { ICPCallRejected, ICPGovernanceRejected, ICPStakeNotRefreshed } from "../errors";
+import {
+  ICPCallRejected,
+  ICPGovernanceRejected,
+  ICPNodeRefused,
+  ICPStakeNotRefreshed,
+} from "../errors";
 import { getAgent } from "../network/agent";
 import {
   decodeCanisterIdlFunc,
@@ -105,11 +110,20 @@ export const fetchBlockHeight = async (): Promise<BigNumber> => {
   return BigNumber(decoded.chain_length.toString());
 };
 
+/**
+ * Submit an envelope to the node and return the body it answered with, or `null` when it gave none.
+ *
+ * `null` is not a failure. A 202 means the node took the call but had no certificate for it within
+ * its window; a 5xx that the answer was lost, the call possibly not. Either way the call can still
+ * execute, and only a read of its status can say — the caller polls where it holds a signed
+ * read-state envelope, and reports the outcome unknown where it does not. A 4xx is the one answer
+ * that settles it: the node never took the message.
+ */
 export const broadcastTxn = async (
   payload: Buffer,
   canisterId: string,
   type: "call" | "read_state",
-) => {
+): Promise<Uint8Array | null> => {
   log("debug", `[ICP] Broadcasting ${type} to ${canisterId}, body: ${payload.toString("hex")}`);
   // The IC serves the synchronous call on v3 but read_state only on v2 (there is no v3 read_state).
   const version = type === "read_state" ? "v2" : "v3";
@@ -122,10 +136,15 @@ export const broadcastTxn = async (
   });
 
   if (res.status === 200) {
-    return new Uint8Array(await res.arrayBuffer());
+    const body = await res.arrayBuffer();
+    return body.byteLength > 0 ? new Uint8Array(body) : null;
   }
-
-  throw new Error(`Failed to broadcast transaction: ${await res.text()}`);
+  if (res.status >= 400 && res.status < 500) {
+    throw new ICPNodeRefused(`Failed to broadcast transaction: ${await res.text()}`, {
+      status: res.status,
+    });
+  }
+  return null;
 };
 
 export const ensureTransferCallAccepted = async (
@@ -270,8 +289,8 @@ const terminalReply = async (
 
 /**
  * Submit a signed update call and return its reply. The v3 `/call` endpoint may answer synchronously
- * with the terminal certificate; otherwise we poll the signed read-state envelope with bounded
- * backoff until `replied` or `rejected`. Throws on a rejected call. Returns null (indeterminate) if
+ * with the terminal certificate, or with none at all; otherwise we poll the signed read-state
+ * envelope with bounded backoff until `replied` or `rejected`. Throws on a rejected call. Returns null (indeterminate) if
  * no terminal status arrives within the window; the caller decides how to handle it — idempotent
  * reads/claims may retry, non-idempotent governance ops must surface it as unconfirmed (not success).
  */
@@ -286,19 +305,23 @@ export const readReplyFromCanister = async (
   const rootKey = await getRootKey();
 
   const callRes = await broadcastTxn(callBlob, canisterIdStr, "call");
-  const top = Cbor.decode<{ status?: string; certificate?: ArrayBuffer | Uint8Array }>(
-    toArrayBuffer(callRes),
-  );
-  if (top.certificate) {
-    const reply = await terminalReply(top.certificate, canisterId, requestId, rootKey);
-    if (reply) return reply;
+  if (callRes) {
+    const top = Cbor.decode<{ status?: string; certificate?: ArrayBuffer | Uint8Array }>(
+      toArrayBuffer(callRes),
+    );
+    if (top.certificate) {
+      const reply = await terminalReply(top.certificate, canisterId, requestId, rootKey);
+      if (reply) return reply;
+    }
   }
 
-  // Poll the same request id via read-state until terminal, or give up (indeterminate).
+  // Poll the same request id via read-state until terminal, or give up (indeterminate). Reached
+  // with no answer at all when the node took the call but could not certify it in time.
   if (!readStateBlob) return null;
   for (let attempt = 0; attempt < READ_STATE_POLL_ATTEMPTS; attempt += 1) {
     await delay(READ_STATE_POLL_INTERVAL_MS);
     const readStateRes = await broadcastTxn(readStateBlob, canisterIdStr, "read_state");
+    if (!readStateRes) continue;
     const { certificate } = Cbor.decode<{ certificate: ArrayBuffer | Uint8Array }>(
       toArrayBuffer(readStateRes),
     );

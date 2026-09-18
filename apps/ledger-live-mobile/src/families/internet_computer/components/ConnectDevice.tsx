@@ -42,13 +42,14 @@ type Props = (
 };
 
 /**
- * What the broadcast throws for a stake whose transfer settled but whose claim did not follow: the
- * claim was refused, or its outcome is unknown — no reply, or a failure on the way to one, which
- * the coin module folds into the same name (broadcast.ts). Either way the ICP has left the
- * account, so a plain Error here means the transfer itself failed. A governance call raises the
- * same "unconfirmed" with nothing transferred, and is typed NONE, which the fold skips.
+ * What the broadcast throws for a stake whose ICP may have left the account with no neuron to show
+ * for it: the transfer went out without a certified answer, or settled and the claim then failed —
+ * refused, or with its outcome unknown. The coin module folds every such failure into these two
+ * names (broadcast.ts), so anything else here means the transfer itself was refused, by the node
+ * or by the ledger. A governance call raises the same "unconfirmed" with nothing transferred, and
+ * is typed NONE, which the fold skips.
  */
-const TRANSFER_SETTLED = new Set(["ICPCallUnconfirmed", "ICPStakeNotRefreshed"]);
+const STAKE_UNRESOLVED = new Set(["ICPCallUnconfirmed", "ICPStakeNotRefreshed"]);
 
 /**
  * ICP's own signing screen, in place of the shared `~/screens/ConnectDevice`.
@@ -113,7 +114,7 @@ export default function ICPConnectDevice({ navigation, route, category }: Props)
             // a stake that lands here leaves an empty snapshot, and the account page offers to stake
             // again. Deliberately without the transaction, which would replay onto the snapshot a
             // command the canister refused, or may never have run.
-            if (TRANSFER_SETTLED.has(error.name)) {
+            if (STAKE_UNRESOLVED.has(error.name)) {
               applyNeuronOperation(
                 dispatch,
                 mainAccount,

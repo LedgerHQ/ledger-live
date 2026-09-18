@@ -1,5 +1,10 @@
 import { MAINNET_GOVERNANCE_CANISTER_ID, MAINNET_LEDGER_CANISTER_ID } from "../consts";
-import { ICPCallUnconfirmed, ICPNeuronsNotRead, ICPStakeNotRefreshed } from "../errors";
+import {
+  ICPCallUnconfirmed,
+  ICPNeuronsNotRead,
+  ICPNodeRefused,
+  ICPStakeNotRefreshed,
+} from "../errors";
 import { broadcast } from "./broadcast";
 
 jest.mock("../api");
@@ -98,6 +103,73 @@ describe("broadcast routing", () => {
         }),
       ),
     ).rejects.toThrow(ICPStakeNotRefreshed);
+  });
+
+  // Without a certified answer the transfer may still go through; a failure would send the user
+  // back to stake again with a fresh nonce. A neuron transfer is therefore reported as unconfirmed
+  // — the node took it without certifying, or the connection dropped — while a refusal, which says
+  // the message was never taken, stays the failure it is.
+  it("reports a neuron transfer the node took without certifying as unconfirmed", async () => {
+    (api.broadcastTxn as jest.Mock).mockResolvedValueOnce(null);
+
+    await expect(
+      broadcast(
+        signed({
+          encodedSignedCallBlob: "aa",
+          transferRequestIdHex: "bb",
+          methodName: "create_neuron",
+          stakeNonce: "42",
+        }),
+      ),
+    ).rejects.toThrow(ICPCallUnconfirmed);
+    expect(api.ensureTransferCallAccepted).not.toHaveBeenCalled();
+    expect(api.claimOrRefreshNeuronFromAccount).not.toHaveBeenCalled();
+  });
+
+  it("reports a neuron transfer whose submission failed as unconfirmed, keeping the cause", async () => {
+    const dropped = new TypeError("Network request failed");
+    (api.broadcastTxn as jest.Mock).mockRejectedValueOnce(dropped);
+
+    const attempt = broadcast(
+      signed({
+        encodedSignedCallBlob: "aa",
+        transferRequestIdHex: "bb",
+        methodName: "create_neuron",
+        stakeNonce: "42",
+      }),
+    );
+
+    await expect(attempt).rejects.toThrow(ICPCallUnconfirmed);
+    await expect(attempt).rejects.toMatchObject({ cause: dropped });
+  });
+
+  it("passes a refusal of a neuron transfer through", async () => {
+    (api.broadcastTxn as jest.Mock).mockRejectedValueOnce(
+      new ICPNodeRefused("Failed to broadcast transaction: expired", { status: 403 }),
+    );
+
+    await expect(
+      broadcast(
+        signed({
+          encodedSignedCallBlob: "aa",
+          transferRequestIdHex: "bb",
+          methodName: "create_neuron",
+          stakeNonce: "42",
+        }),
+      ),
+    ).rejects.toThrow(ICPNodeRefused);
+  });
+
+  // A plain send has no stake to record and a flow of its own: it keeps reporting a failure.
+  it("keeps a plain send the node took without certifying a failure", async () => {
+    (api.broadcastTxn as jest.Mock).mockResolvedValueOnce(null);
+
+    const attempt = broadcast(
+      signed({ encodedSignedCallBlob: "aa", transferRequestIdHex: "bb", methodName: "send" }),
+    );
+
+    await expect(attempt).rejects.toThrow(/no certificate/);
+    await expect(attempt).rejects.not.toBeInstanceOf(ICPCallUnconfirmed);
   });
 
   // The transfer itself failing is the one failure that stays generic: nothing moved.

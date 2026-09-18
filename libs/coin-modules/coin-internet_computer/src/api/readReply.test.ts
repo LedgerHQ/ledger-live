@@ -108,6 +108,30 @@ describe("readReplyFromCanister", () => {
     expect(out).toBeNull();
   });
 
+  // A 202 is the node taking the call without a certificate to show for it yet. It used to be
+  // reported as a failed broadcast — for a call that, as often as not, went on to execute.
+  it("polls when the node took the call but had no certificate for it", async () => {
+    (Certificate.create as jest.Mock).mockResolvedValue(certWith("replied", encStr("LATE")));
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValueOnce({ status: 202, arrayBuffer: async () => new ArrayBuffer(0) }) // /call
+      .mockResolvedValue({
+        status: 200,
+        arrayBuffer: async () => Cbor.encode({ certificate: new Uint8Array([2]) }), // read_state
+      });
+    (global as unknown as { fetch: unknown }).fetch = fetchMock;
+
+    const out = await readReplyFromCanister(
+      Buffer.from("00", "hex"),
+      Buffer.from("01", "hex"),
+      CANISTER,
+      REQ_ID_HEX,
+    );
+
+    expect(out && new TextDecoder().decode(out)).toBe("LATE");
+    expect(fetchMock.mock.calls[1][0]).toContain("read_state");
+  }, 10000);
+
   it("polls the read-state envelope until a terminal reply arrives", async () => {
     (Certificate.create as jest.Mock)
       .mockResolvedValueOnce(certWith("processing")) // sync cert: not yet terminal

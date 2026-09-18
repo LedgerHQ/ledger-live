@@ -64,10 +64,10 @@ const renderScreen = () =>
 
 /*
  * A broadcast that throws skips the fold entirely, so nothing records that the device signed at all.
- * For a stake that is wrong whenever the failure came after the transfer — a claim governance
- * refused, or one that never answered: the ICP has already left the account, which then reads as
- * never having staked. That is what puts "Stake ICP" back in front of a user whose ICP may already
- * be in a neuron.
+ * For a stake that is wrong whenever the ICP may have moved — a transfer the node took without
+ * certifying, or one that settled and was then not claimed: the account reads as never having
+ * staked, which is what puts "Stake ICP" back in front of a user whose ICP may already be in a
+ * neuron's account.
  */
 describe("ICP signing screen, broadcast failures", () => {
   beforeEach(() => {
@@ -76,7 +76,7 @@ describe("ICP signing screen, broadcast failures", () => {
   });
 
   it.each(["ICPCallUnconfirmed", "ICPStakeNotRefreshed"])(
-    "records a stake whose transfer settled before %s, so the account does not read as untouched",
+    "records a stake whose ICP may have moved, on %s, so the account does not read as untouched",
     async name => {
       broadcastResult = () => Promise.reject(makeError(name));
 
@@ -91,7 +91,7 @@ describe("ICP signing screen, broadcast failures", () => {
   );
 
   // The ledger refusing the transfer arrives as a plain Error, and nothing has moved. Nothing that
-  // fails past the settled transfer reaches here as one: the coin module reports it as
+  // leaves the ICP's whereabouts open reaches here as one: the coin module reports it as
   // ICPStakeNotRefreshed or ICPCallUnconfirmed (broadcast.ts).
   it("records nothing when the ledger refused the transfer", async () => {
     broadcastResult = () => Promise.reject(new Error('{"InsufficientFunds":{"balance":"0"}}'));

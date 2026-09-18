@@ -198,9 +198,9 @@ export class ICPStakeMemoNotRecoverable extends Error {
   }
 }
 
-// A call was submitted but its outcome is unknown: no terminal status was observed, or — for the
-// claim behind a settled stake transfer — the attempt failed before one could be read, in which
-// case `cause` carries that failure.
+// A call was submitted but its outcome is unknown: no terminal status was observed, or — for a stake
+// transfer, or the claim behind one — the attempt failed before one could be read, in which case
+// `cause` carries that failure.
 export class ICPCallUnconfirmed extends Error {
   override name = "ICPCallUnconfirmed";
   [key: string]: unknown;
@@ -268,6 +268,18 @@ export class ICPCallRejected extends Error {
   [key: string]: unknown;
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "ICPCallRejected");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The node answered a submission with a 4xx (carried as `status`): it never took the message, so
+// nothing ran. Distinct from a dropped connection, a 202 or a 5xx, after which the message may
+// still execute.
+export class ICPNodeRefused extends Error {
+  override name = "ICPNodeRefused";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPNodeRefused");
     if (fields) Object.assign(this, fields);
   }
 }

@@ -11,7 +11,12 @@ import {
 } from "../api";
 import { toNeuronsData } from "../common-logic/neuron";
 import { MAINNET_GOVERNANCE_CANISTER_ID, MAINNET_LEDGER_CANISTER_ID } from "../consts";
-import { ICPCallUnconfirmed, ICPNeuronsNotRead, ICPStakeNotRefreshed } from "../errors";
+import {
+  ICPCallUnconfirmed,
+  ICPNeuronsNotRead,
+  ICPNodeRefused,
+  ICPStakeNotRefreshed,
+} from "../errors";
 import { derivePrincipalFromPubkey } from "../logic/crypto";
 import { TRANSFER_TYPES, Transaction } from "../types";
 
@@ -47,6 +52,37 @@ const isGovernanceRawData = (data: unknown): data is GovernanceRawData =>
   typeof (data as GovernanceRawData).encodedSignedReadStateBlob === "string" &&
   typeof (data as GovernanceRawData).requestId === "string" &&
   typeof (data as GovernanceRawData).methodName === "string";
+
+/**
+ * Submit the signed ledger transfer and check that the ledger accepted it.
+ *
+ * Only a certified answer settles the question either way. Without one — the node answered 202 or
+ * 5xx, or the connection dropped — the transfer may still go through, and reporting a failure makes
+ * the account read as though nothing moved. For a neuron transfer that means offering the stake
+ * again with a fresh nonce: a second neuron, not a claim of the first. So it is reported as
+ * unconfirmed, and the app records the stake until a sync says. A plain send keeps the failure it
+ * has always reported; its flow is not this module's to change. A refusal settles it the other way
+ * — the node never took the message — and stays a failure for both.
+ */
+const submitTransfer = async (rawData: TransferRawData): Promise<void> => {
+  const neuronTransfer = NEURON_TRANSFER_TYPES.has(rawData.methodName);
+  let callResponse: Uint8Array | null;
+  try {
+    callResponse = await broadcastTxn(
+      Buffer.from(rawData.encodedSignedCallBlob, "hex"),
+      MAINNET_LEDGER_CANISTER_ID,
+      "call",
+    );
+  } catch (error) {
+    if (!neuronTransfer || error instanceof ICPNodeRefused) throw error;
+    throw new ICPCallUnconfirmed("ICPCallUnconfirmed", { cause: error });
+  }
+  if (!callResponse) {
+    if (neuronTransfer) throw new ICPCallUnconfirmed();
+    throw new Error("Failed to broadcast transaction: the node returned no certificate");
+  }
+  await ensureTransferCallAccepted(callResponse, rawData.transferRequestIdHex);
+};
 
 /**
  * Claim or refresh the neuron behind a transfer that has already settled, returning its id.
@@ -87,12 +123,7 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
 
   // Ledger-canister transfer (plain send, neuron creation, neuron top-up).
   if (isTransferRawData(rawData)) {
-    const callResponse = await broadcastTxn(
-      Buffer.from(rawData.encodedSignedCallBlob, "hex"),
-      MAINNET_LEDGER_CANISTER_ID,
-      "call",
-    );
-    await ensureTransferCallAccepted(callResponse, rawData.transferRequestIdHex);
+    await submitTransfer(rawData);
 
     // Creation and top-up complete by claiming/refreshing the neuron from the settled transfer.
     if (NEURON_TRANSFER_TYPES.has(rawData.methodName)) {
