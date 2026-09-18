@@ -13,6 +13,7 @@
     },
     "./onboarding-status": "./src/onboardingStatus/index.ts",
     "./state": "./src/state/index.ts",
+    "./native": "./src/nativeExports.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

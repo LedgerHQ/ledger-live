@@ -19,4 +19,9 @@ module.exports = {
     isVisible: () => false,
     dismiss: () => {},
   },
+  Linking: {
+    openURL: jest.fn(() => Promise.resolve()),
+    sendIntent: jest.fn(() => Promise.resolve()),
+    openSettings: jest.fn(() => Promise.resolve()),
+  },
 };
