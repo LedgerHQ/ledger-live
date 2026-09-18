@@ -1,5 +1,6 @@
 import { stringify } from "querystring";
 import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
@@ -41,13 +42,14 @@ import {
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
   TransactionInfoByBlockNumAPI,
+  TransactionInfoTronAPI,
   TransactionResponseTronAPI,
   TransactionTronAPI,
   Trc20API,
   TriggerConstantContractParams,
   TriggerConstantContractResponse,
 } from "./types";
-import { abiEncodeTrc20Transfer, hexToAscii } from "./utils";
+import { abiEncodeTrc20Transfer, hexToAscii, trc20ContractAddressFromLogs } from "./utils";
 
 const getBaseApiUrl = (config: TronCoinConfig): string => config.explorer.url;
 
@@ -530,6 +532,83 @@ export async function getTransactionInfoByBlockNum(
   );
 }
 
+/**
+ * Transaction receipt: the event logs and the created/called contract address, neither of which
+ * the account transaction endpoints return.
+ */
+export async function getTransactionInfoById(
+  config: TronCoinConfig,
+  txId: string,
+): Promise<TransactionInfoTronAPI | undefined> {
+  const info = await post<{ value: string }, TransactionInfoTronAPI>(
+    config,
+    `/wallet/gettransactioninfobyid`,
+    { value: txId },
+  );
+  // TronGrid answers `{}` for a transaction it does not know (yet).
+  return info?.id ? info : undefined;
+}
+
+/**
+ * A TRC20 transfer minted inside a contract's constructor reaches us with no token address at all:
+ * TronGrid has no `token_info` for a contract created in that very transaction, and a
+ * `CreateSmartContract` carries a `new_contract` parameter rather than the `contract_address` the
+ * formatter reads. The transaction's own receipt still holds it — the `Transfer` event is emitted
+ * by the token contract — so recover it from there instead of shipping a token operation whose
+ * `assetReference` is empty.
+ *
+ * The event logs are the only source consulted, which is the same rule `logic/getBlock` applies to
+ * the very same transactions: the receipt's `contract_address` names the contract the transaction
+ * created or called, which is not necessarily the token that moved, and a deployment transferring
+ * some *other* token would be labelled with the wrong one. The log has to be an event of the
+ * record's own kind between the record's own parties, so that approving token A while
+ * transferring token B cannot label the transfer with A. A transaction whose logs do not name one
+ * token unambiguously therefore keeps no token address, and the operation is dropped downstream
+ * rather than mislabelled.
+ */
+async function resolveMissingTokenAddresses(
+  config: TronCoinConfig,
+  txs: TrongridTxInfo[],
+): Promise<TrongridTxInfo[]> {
+  if (!txs.some(isMissingTokenAddress)) return txs;
+
+  return promiseAllBatched(3, txs, async tx =>
+    isMissingTokenAddress(tx) ? withTokenAddressFromReceipt(config, tx) : tx,
+  );
+}
+
+function isMissingTokenAddress(tx: TrongridTxInfo): boolean {
+  return tx.tokenType === "trc20" && !tx.tokenAddress;
+}
+
+async function withTokenAddressFromReceipt(
+  config: TronCoinConfig,
+  tx: TrongridTxInfo,
+): Promise<TrongridTxInfo> {
+  const info = await getTransactionInfoById(config, tx.txID).catch(error => {
+    log("tron-error", `could not fetch transaction info for ${tx.txID}`, { error });
+    return undefined;
+  });
+  if (!info) return tx;
+
+  const contractAddressHex = trc20ContractAddressFromLogs(info.log, {
+    // The record's own event: an `Approval`'s owner/spender do not identify a transferred token,
+    // so a transfer is only ever resolved from a `Transfer` event, and vice versa.
+    kind: tx.type === "ContractApproval" ? "Approval" : "Transfer",
+    from: tx.from ? decode58Check(tx.from) : undefined,
+    to: tx.to ? decode58Check(tx.to) : undefined,
+  });
+  if (!contractAddressHex) return tx;
+
+  const tokenAddress = encode58Check(contractAddressHex);
+  return {
+    ...tx,
+    tokenAddress,
+    // `tokenId` mirrors `tokenAddress` for a TRC20 transfer, and stays unset for an approval.
+    tokenId: tx.type === "TriggerSmartContract" ? tokenAddress : tx.tokenId,
+  };
+}
+
 async function getAllTransactions<T>(
   config: TronCoinConfig,
   initialUrl: string,
@@ -667,7 +746,10 @@ export async function fetchTronAccountTxsPage(
       .map(tx => formatTrongridTxResponse(tx, addr => accountNamesCache(config, addr))),
   );
 
-  const trc20TxsFormatted = compact(trc20Result.results.map(formatTrongridTrc20TxResponse));
+  const trc20TxsFormatted = await resolveMissingTokenAddresses(
+    config,
+    compact(trc20Result.results.map(formatTrongridTrc20TxResponse)),
+  );
   const trc20TxIds = new Set(trc20TxsFormatted.map(t => t.txID));
   const nativeDeduped = compact(nativeTxsFormatted)
     .filter(tx => !trc20TxIds.has(tx.txID))
@@ -776,8 +858,9 @@ export async function fetchTronAccountTxs(
     }
   }
 
-  const trc20Txs = compact(
-    (await getTrc20TxsWithRetry(null, 3)).map(formatTrongridTrc20TxResponse),
+  const trc20Txs = await resolveMissingTokenAddresses(
+    config,
+    compact((await getTrc20TxsWithRetry(null, 3)).map(formatTrongridTrc20TxResponse)),
   );
   const trc20TxIds = new Set(trc20Txs.map(t => t.txID));
   const nativeDeduped = compact(nativeTxs)

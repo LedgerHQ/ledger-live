@@ -279,6 +279,40 @@ describe("listOperations", () => {
     }, 30000);
   });
 
+  describe("TRC20 minted by a contract creation — Account TKR49PGYukacpKXwLYSWdup63napXQeXCE", () => {
+    // https://tronscan.org/#/address/TKR49PGYukacpKXwLYSWdup63napXQeXCE
+    // Spam airdrop: the token contract is deployed and mints to its victim in one transaction, so
+    // TronGrid reports the transfer with an empty `token_info` and a `CreateSmartContract` detail.
+    // The token address is only in the transaction's `Transfer` event log.
+    const testingAccount = "TKR49PGYukacpKXwLYSWdup63napXQeXCE";
+    let minTimestamp: number;
+
+    beforeAll(async () => {
+      const block = await getBlock(config, 85277401);
+      minTimestamp = block.time?.getTime() ?? 0;
+    });
+
+    it("should return the mint with the created token as assetReference", async () => {
+      // https://tronscan.org/#/transaction/4d8f740330ec0c2158cd29db807c98b2c8ba11f7217e645d5c4421106138a399
+      const txHash = "4d8f740330ec0c2158cd29db807c98b2c8ba11f7217e645d5c4421106138a399";
+      const options: ListOperationsOptions = { limit: 100, minTimestamp, order: "asc" };
+      const result = await listOperations(config, testingAccount, options);
+      const operation = result.items.find(op => op.tx.hash === txHash);
+      expect(operation).toMatchObject({
+        type: "IN",
+        value: BigInt("100000000000000000000000000000000"),
+        senders: ["T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb"],
+        recipients: [testingAccount],
+        asset: {
+          type: "trc20",
+          assetReference: "TCsam7uH3NbYLpKMCAayquN4Qwm3q717qu",
+          assetOwner: testingAccount,
+        },
+        tx: expect.objectContaining({ hash: txHash, failed: false }),
+      });
+    }, 60000);
+  });
+
   describe("TriggerSmartContract transactions with internal_transactions", () => {
     describe("failed transaction — Account TR5mooRXZweiEJwoZ2VB8mDGfLLHHSLx2z", () => {
       // https://tronscan.org/#/address/TR5mooRXZweiEJwoZ2VB8mDGfLLHHSLx2z

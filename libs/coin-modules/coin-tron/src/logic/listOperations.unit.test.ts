@@ -12,8 +12,11 @@ jest.mock("../network", () => ({
 }));
 
 jest.mock("../network/trongrid/trongrid-adapters", () => ({
+  ...jest.requireActual("../network/trongrid/trongrid-adapters"),
   fromTrongridTxInfoToOperation: jest.fn(),
 }));
+
+const TRC20_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 
 describe("listOperations", () => {
   const mockAddress = "tronExampleAddress";
@@ -68,6 +71,70 @@ describe("listOperations", () => {
     });
     expect(result.items).toHaveLength(2);
     expect(result.next).toBeUndefined();
+  });
+
+  it("should drop a token operation whose asset reference could not be resolved", async () => {
+    // A `trc10`/`trc20` asset with no `assetReference` names no token: consumers cannot resolve
+    // it, and typing it native would report a token amount as TRX.
+    const mockTxs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "tx-resolved",
+        tokenType: "trc20",
+        tokenAddress: TRC20_CONTRACT,
+        value: new BigNumber(1),
+        date: new Date("2023-01-01T00:00:00Z"),
+        blockHeight: 100,
+      },
+      {
+        txID: "tx-unresolved",
+        tokenType: "trc20",
+        value: new BigNumber(2),
+        date: new Date("2023-01-01T01:00:00Z"),
+        blockHeight: 100,
+      },
+      {
+        txID: "tx-unresolved-trc10",
+        tokenType: "trc10",
+        value: new BigNumber(3),
+        date: new Date("2023-01-01T02:00:00Z"),
+        blockHeight: 100,
+      },
+    ];
+
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: [], hasNextPage: false },
+      trc20Txs: { txs: mockTxs, hasNextPage: false },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({ id: tx.txID }));
+
+    const result = await listOperations(config, mockAddress, defaultOptions);
+
+    expect(result.items.map(op => op.id)).toEqual(["tx-resolved"]);
+  });
+
+  it("should not fetch blocks for a page of only unresolvable token operations", async () => {
+    // Dropping happens before the block fan-out, so a page of transactions that are all dropped
+    // costs no block request — historical sync over spam airdrops stays cheap.
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: [], hasNextPage: false },
+      trc20Txs: {
+        txs: [
+          {
+            txID: "tx-unresolved",
+            tokenType: "trc20",
+            value: new BigNumber(1),
+            date: new Date("2023-01-01T00:00:00Z"),
+            blockHeight: 100,
+          },
+        ],
+        hasNextPage: false,
+      },
+    });
+
+    const result = await listOperations(config, mockAddress, defaultOptions);
+
+    expect(result.items).toEqual([]);
+    expect(getBlock).not.toHaveBeenCalled();
   });
 
   it("should handle empty transactions on first page (no cursor)", async () => {

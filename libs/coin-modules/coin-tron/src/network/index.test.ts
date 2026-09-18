@@ -26,6 +26,7 @@ import {
   getLastBlock,
   getNextVotingDate,
   getTransactionInfoByBlockNum,
+  getTransactionInfoById,
   getTronAccountNetwork,
   getTronSuperRepresentativeData,
   getTronSuperRepresentatives,
@@ -479,6 +480,22 @@ describe("getLastBlock / getBlock / getBlockWithTransactions / getTransactionInf
     expect(result).toEqual([{ id: "tx1" }]);
     expect(mockedNetwork).toHaveBeenCalledWith(expect.objectContaining({ data: { num: 5 } }));
   });
+
+  it("getTransactionInfoById returns the receipt of a known transaction", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ id: "tx1", contract_address: "41ab" }));
+
+    await expect(getTransactionInfoById(mockConfig, "tx1")).resolves.toEqual({
+      id: "tx1",
+      contract_address: "41ab",
+    });
+    expect(mockedNetwork).toHaveBeenCalledWith(expect.objectContaining({ data: { value: "tx1" } }));
+  });
+
+  it("getTransactionInfoById returns undefined for the empty body of an unknown transaction", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+
+    await expect(getTransactionInfoById(mockConfig, "unknown")).resolves.toBeUndefined();
+  });
 });
 
 describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
@@ -618,6 +635,204 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
     expect(result.nativeTxs.txs.map(t => t.txID)).toEqual(["tx-native"]);
     expect(result.trc20Txs.txs.map(t => t.txID)).toEqual(["tx-smart-success"]);
     expect(result.trc20Txs.hasNextPage).toBe(true);
+  });
+
+  // Regression — tx 4d8f740330ec0c2158cd29db807c98b2c8ba11f7217e645d5c4421106138a399, a TRC20
+  // deployed and minted to its victim in one transaction. TronGrid has no `token_info` for a
+  // contract created in that very transaction, and a `CreateSmartContract` has no
+  // `contract_address` parameter either, so the token address exists only in the receipt's log.
+  describe("TRC20 minted by a contract creation", () => {
+    const txID = "4d8f740330ec0c2158cd29db807c98b2c8ba11f7217e645d5c4421106138a399";
+    const deployerBase58 = "TKR49PGYukacpKXwLYSWdup63napXQeXCE";
+    const deployerHex = "41679c8dd7488038252f935ca3465fbc94d29a940f";
+    const zeroAddressBase58 = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb";
+    const trc20Base58 = "TCsam7uH3NbYLpKMCAayquN4Qwm3q717qu";
+    const trc20Hex = "411fd80baee7c53e92e69447ff8c48d6b3a008572f";
+
+    const constructorMintTrc20Tx = {
+      transaction_id: txID,
+      token_info: {},
+      block_timestamp: 1786503237000,
+      from: zeroAddressBase58,
+      to: deployerBase58,
+      detail: {
+        ret: [{ contractRet: "SUCCESS", fee: 57131600 }],
+        txID,
+        blockNumber: 85277401,
+        raw_data: {
+          contract: [
+            {
+              parameter: {
+                value: {
+                  owner_address: deployerHex,
+                  new_contract: { name: "Token", origin_address: deployerHex },
+                },
+                type_url: "type.googleapis.com/protocol.CreateSmartContract",
+              },
+              type: "CreateSmartContract",
+            },
+          ],
+        },
+      },
+      type: "Transfer",
+      value: "100000000000000000000000000000000",
+    };
+
+    const transactionInfo = {
+      id: txID,
+      fee: 57131600,
+      blockNumber: 85277401,
+      contract_address: trc20Hex,
+      receipt: { result: "SUCCESS" },
+      log: [
+        {
+          address: "1fd80baee7c53e92e69447ff8c48d6b3a008572f",
+          topics: [
+            "ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0000000000000000000000000000000000000000000000000000000000000000",
+            "000000000000000000000000679c8dd7488038252f935ca3465fbc94d29a940f",
+          ],
+          data: "00000000000000000000000000000000000004ee2d6d415b85acef8100000000",
+        },
+      ],
+    };
+
+    function mockConstructorMintPage(info: object = transactionInfo) {
+      mockedNetwork
+        .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
+        .mockResolvedValueOnce(mockResponse({ data: [constructorMintTrc20Tx], meta: {} }))
+        .mockResolvedValueOnce(mockResponse(info));
+    }
+
+    it("recovers the token address from the transaction's Transfer log", async () => {
+      mockConstructorMintPage();
+
+      const result = await fetchTronAccountTxsPage(mockConfig, deployerBase58, {
+        limit: 100,
+        minTimestamp: 0,
+        order: "asc",
+      });
+
+      expect(result.trc20Txs.txs).toHaveLength(1);
+      expect(result.trc20Txs.txs[0]).toMatchObject({
+        txID,
+        tokenType: "trc20",
+        tokenAddress: trc20Base58,
+        tokenId: trc20Base58,
+      });
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "POST",
+          url: `${TRON_BASE_URL}/wallet/gettransactioninfobyid`,
+          data: { value: txID },
+        }),
+      );
+    });
+
+    // The receipt's `contract_address` is the contract the transaction created or called, which is
+    // not necessarily the token that moved — labelling with it would name the wrong token for a
+    // deployment that transfers some other one. `logic/getBlock` reads the same transactions under
+    // the same rule, so both endpoints report a token transfer only on unambiguous log evidence.
+    // A transaction can approve one token and transfer another between the same two parties; the
+    // approval's owner/spender say nothing about which token moved.
+    it("ignores an Approval of another token when resolving the transfer", async () => {
+      const approvalOfAnotherToken = {
+        address: "a614f803b6fd780986a42c78ec9c7f77e6ded13c",
+        topics: [
+          "8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+          ...transactionInfo.log[0].topics.slice(1),
+        ],
+        data: transactionInfo.log[0].data,
+      };
+      mockConstructorMintPage({
+        ...transactionInfo,
+        log: [approvalOfAnotherToken, transactionInfo.log[0]],
+      });
+
+      const result = await fetchTronAccountTxsPage(mockConfig, deployerBase58, {
+        limit: 100,
+        minTimestamp: 0,
+        order: "asc",
+      });
+
+      expect(result.trc20Txs.txs[0].tokenAddress).toBe(trc20Base58);
+    });
+
+    it("leaves the token address unset when only an Approval names a token", async () => {
+      const approvalOnly = {
+        ...transactionInfo.log[0],
+        topics: [
+          "8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+          ...transactionInfo.log[0].topics.slice(1),
+        ],
+      };
+      mockConstructorMintPage({ ...transactionInfo, log: [approvalOnly] });
+
+      const result = await fetchTronAccountTxsPage(mockConfig, deployerBase58, {
+        limit: 100,
+        minTimestamp: 0,
+        order: "asc",
+      });
+
+      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+    });
+
+    it("leaves the token address unset when the logs do not name one token", async () => {
+      const otherTokenLog = {
+        ...transactionInfo.log[0],
+        address: "a614f803b6fd780986a42c78ec9c7f77e6ded13c",
+      };
+      mockConstructorMintPage({ ...transactionInfo, log: [transactionInfo.log[0], otherTokenLog] });
+
+      const result = await fetchTronAccountTxsPage(mockConfig, deployerBase58, {
+        limit: 100,
+        minTimestamp: 0,
+        order: "asc",
+      });
+
+      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+    });
+
+    it("does not fall back to the created contract address when the receipt has no logs", async () => {
+      mockConstructorMintPage({ ...transactionInfo, log: [] });
+
+      const result = await fetchTronAccountTxsPage(mockConfig, deployerBase58, {
+        limit: 100,
+        minTimestamp: 0,
+        order: "asc",
+      });
+
+      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+    });
+
+    it("leaves the token address unset when the receipt cannot be read", async () => {
+      mockedNetwork
+        .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
+        .mockResolvedValueOnce(mockResponse({ data: [constructorMintTrc20Tx], meta: {} }))
+        .mockRejectedValueOnce(new Error("trongrid is down"));
+
+      const result = await fetchTronAccountTxsPage(mockConfig, deployerBase58, {
+        limit: 100,
+        minTimestamp: 0,
+        order: "asc",
+      });
+
+      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+    });
+
+    it("does not look up a receipt when the token address is already known", async () => {
+      mockedNetwork
+        .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
+        .mockResolvedValueOnce(mockResponse({ data: [validTrc20Tx], meta: {} }));
+
+      await fetchTronAccountTxsPage(mockConfig, senderBase58, {
+        limit: 100,
+        minTimestamp: 0,
+        order: "asc",
+      });
+
+      expect(mockedNetwork).toHaveBeenCalledTimes(2);
+    });
   });
 
   it("fetchTronAccountTxsPage forwards maxTimestamp param when provided", async () => {
