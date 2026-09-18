@@ -409,7 +409,7 @@ describe("Staking section", () => {
 
     render(<Staking account={account} />);
 
-    await waitFor(() => expect(screen.getAllByText("Validator One")).toHaveLength(2));
+    await waitFor(() => expect(screen.getAllByText("Validator One")).toHaveLength(1));
     expect(screen.getByTestId("aleo-staked-row-amount")).toHaveTextContent("20,000.912345 ALEO");
     expect(screen.getByTestId("aleo-unstaking-row-amount")).toHaveTextContent("5.123456 ALEO");
 
@@ -433,7 +433,7 @@ describe("Staking section", () => {
     expect(screen.queryByTestId("aleo-status-earning")).toBeNull();
 
     await act(async () => resolveValidators([makeValidator()]));
-    expect(screen.getByText("Validator One")).toBeOnTheScreen();
+    expect(await screen.findByText("Validator One")).toBeOnTheScreen();
     expect(screen.getByTestId("aleo-status-earning")).toBeOnTheScreen();
   });
 

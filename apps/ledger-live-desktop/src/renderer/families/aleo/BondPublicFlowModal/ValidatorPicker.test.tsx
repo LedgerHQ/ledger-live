@@ -23,6 +23,8 @@ const OTHER = aleoValidator({
   stakeMicrocredits: 162_243_084_000_000,
 });
 
+const refetch = jest.fn();
+
 const setValidators = (
   validators: AleoValidator[],
   extra: { loading?: boolean; error?: Error | null } = {},
@@ -31,30 +33,30 @@ const setValidators = (
     validators,
     loading: false,
     error: null,
+    refetch,
     ...extra,
   });
 
 beforeEach(() => {
+  refetch.mockClear();
   mockDomMeasurements();
   setValidators([FIGMENT, OTHER]);
 });
 
 function setup(props: Partial<React.ComponentProps<typeof ValidatorPicker>> = {}) {
   const onSelect = jest.fn();
-  const onRetry = jest.fn();
   const utils = render(
     <ValidatorPicker
       currency={ALEO_MAIN_ACCOUNT.currency}
       selected={FIGMENT.address}
       lockedTo={null}
       onSelect={onSelect}
-      onRetry={onRetry}
       {...props}
     />,
     { initialState: { settings: AFTER_ONBOARDING_STATE } },
   );
 
-  return { ...utils, onSelect, onRetry };
+  return { ...utils, onSelect };
 }
 
 describe("ValidatorPicker — list states", () => {
@@ -79,11 +81,11 @@ describe("ValidatorPicker — list states", () => {
   it("offers a retry when the fetch failed with nothing to show", async () => {
     setValidators([], { error: new Error("boom") });
 
-    const { onRetry } = setup();
+    setup();
 
     expect(screen.getByTestId("validator-fetch-error")).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Retry" }));
-    expect(onRetry).toHaveBeenCalledTimes(1);
+    expect(refetch).toHaveBeenCalledTimes(1);
   });
 
   // A stale list is more useful than an error screen, so an error alongside one is ignored.

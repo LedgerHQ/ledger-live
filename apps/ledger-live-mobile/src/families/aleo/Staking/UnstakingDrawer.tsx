@@ -10,8 +10,7 @@ import type { AleoStakingPositionView } from "@ledgerhq/live-common/families/ale
 import DelegationDrawer, { type Action, type FieldType } from "~/components/DelegationDrawer";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { makeValidatorImage } from "./ValidatorImage";
-import { useValidatorFields } from "./useValidatorFields";
-import { getUnbondingStatusLabel, getValidatorLabel } from "./utils";
+import { getUnbondingStatusLabel } from "./utils";
 
 /** Claim arrives with its own flow in LIVE-32812. */
 const NO_ACTIONS: Action[] = [];
@@ -28,14 +27,12 @@ export default function UnstakingDrawer({ account, position, unbonding, isOpen, 
   const { t } = useTranslation();
   const unit = useAccountUnit(account);
   const { unbondingBalance, unbondingHeight, claimableBalance } = position;
-  const label = getValidatorLabel(t, position);
 
-  const validatorFields = useValidatorFields(account, position);
-  const ValidatorImage = useMemo(() => makeValidatorImage(label), [label]);
+  // unbonding funds aren't tied to a validator anymore
+  const ValidatorImage = useMemo(() => makeValidatorImage(unit.name), [unit.name]);
 
   const data = useMemo<FieldType[]>(() => {
     const fields: FieldType[] = [
-      ...validatorFields,
       {
         label: t("aleo.manage.status"),
         Component: (
@@ -69,7 +66,7 @@ export default function UnstakingDrawer({ account, position, unbonding, isOpen, 
     }
 
     return fields;
-  }, [t, unit, position, unbonding, validatorFields, unbondingHeight, claimableBalance]);
+  }, [t, unit, position, unbonding, unbondingHeight, claimableBalance]);
 
   return (
     <DelegationDrawer

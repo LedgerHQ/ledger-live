@@ -123,16 +123,13 @@ describe("StakedRow", () => {
     });
   });
 
-  // Each of these cells answers off the validator list, so until it has been read none of them has
-  // an answer — and a dash or a generic name is an answer, not the absence of one.
-  describe("while the validator list has not been read", () => {
-    const UNREAD: Partial<AleoStakingPositionView>[] = [
-      { validatorsLoading: true },
-      { validatorsError: new Error("boom") },
-    ];
+  // Each of these cells answers off the validator list, so while it is still in flight none of
+  // them has an answer — and a dash or a generic name is an answer, not the absence of one.
+  describe("while the validator list is still being read", () => {
+    const loading = { validatorsLoading: true };
 
-    it.each(UNREAD)("withholds the rate (%o)", overrides => {
-      renderRow({ estimatedRate: undefined, ...overrides });
+    it("withholds the rate", () => {
+      renderRow({ estimatedRate: undefined, ...loading });
 
       expect(screen.getByTestId("aleo-rate-unknown")).toBeVisible();
       expect(screen.queryByText("-")).not.toBeInTheDocument();
@@ -140,13 +137,60 @@ describe("StakedRow", () => {
 
     // The name arrives with the list too, so falling back to "Unknown validator" here would
     // accuse the validator of having left the committee for as long as the fetch takes.
-    it.each(UNREAD)("withholds the validator name, keeping its address (%o)", overrides => {
-      renderRow({ validatorLabel: null, ...overrides });
+    it("withholds the validator name, keeping its address", () => {
+      renderRow({ validatorLabel: null, ...loading });
 
       expect(screen.getByTestId("aleo-validator-unknown")).toBeVisible();
       expect(
         screen.queryByText(i18n.t("aleo.stake.table.unknownValidator")),
       ).not.toBeInTheDocument();
+      expect(screen.getByText(shortAddressPreview(ALEO_VALIDATOR_ADDRESS))).toBeVisible();
+    });
+  });
+
+  // A failed read is final: withholding the cells then leaves the row unreadable for good, so it
+  // falls back to what the account itself carries.
+  describe("when the validator list could not be read", () => {
+    const failed = { validatorsError: new Error("boom") };
+
+    it("shows the rate as a dash rather than a placeholder", () => {
+      renderRow({ estimatedRate: undefined, ...failed });
+
+      expect(screen.queryByTestId("aleo-rate-unknown")).not.toBeInTheDocument();
+      expect(screen.getByText("-")).toBeVisible();
+    });
+
+    it("names the validator by its address, showing it once", () => {
+      renderRow({ validatorLabel: null, ...failed });
+
+      const label = screen.getByText(shortAddressPreview(ALEO_VALIDATOR_ADDRESS));
+
+      expect(screen.queryByTestId("aleo-validator-unknown")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(i18n.t("aleo.stake.table.unknownValidator")),
+      ).not.toBeInTheDocument();
+      expect(label.closest("[data-tooltip]")).toHaveAttribute(
+        "data-tooltip",
+        ALEO_VALIDATOR_ADDRESS,
+      );
+    });
+
+    // A sync can land the bonded balance before the mapping saying which validator holds it, so
+    // there is not always an address to stand in for the name.
+    it("says the validator is unknown when the account carries no address either", () => {
+      renderRow({ validatorLabel: null, bondedValidator: null, ...failed });
+
+      expect(screen.getByText(i18n.t("aleo.stake.table.unknownValidator"))).toBeVisible();
+      expect(
+        screen.queryByText(shortAddressPreview(ALEO_VALIDATOR_ADDRESS)),
+      ).not.toBeInTheDocument();
+    });
+
+    // The name is only unavailable because the list is: a name already in hand still stands.
+    it("keeps a name the list did give, with the address under it", () => {
+      renderRow(failed);
+
+      expect(screen.getByText("Figment")).toBeVisible();
       expect(screen.getByText(shortAddressPreview(ALEO_VALIDATOR_ADDRESS))).toBeVisible();
     });
   });
