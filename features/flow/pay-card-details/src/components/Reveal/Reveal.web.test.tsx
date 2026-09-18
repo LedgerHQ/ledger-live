@@ -12,10 +12,9 @@ function renderReveal(props: Partial<RevealTileProps> = {}) {
   return {
     onReveal,
     onHide,
-    ...render(
-      <Reveal status="idle" isRevealed={false} onReveal={onReveal} onHide={onHide} {...props} />,
-      { wrapper: I18nWrapper },
-    ),
+    ...render(<Reveal status="idle" onReveal={onReveal} onHide={onHide} {...props} />, {
+      wrapper: I18nWrapper,
+    }),
   };
 }
 
@@ -42,13 +41,13 @@ describe("Reveal (web)", () => {
   });
 
   it("should show Hide when numbers are visible", () => {
-    renderReveal({ isRevealed: true });
+    renderReveal({ status: "revealed" });
 
     expect(screen.getByRole("button", { name: CARD_COPY.numbersHide })).toBeVisible();
   });
 
   it("should hide the image when the user clicks Hide", async () => {
-    const { onHide, onReveal } = renderReveal({ isRevealed: true });
+    const { onHide, onReveal } = renderReveal({ status: "revealed" });
 
     await userEvent.click(screen.getByRole("button", { name: CARD_COPY.numbersHide }));
 
