@@ -8,7 +8,6 @@ export const CARD_ASSETS_COPY = {
   topUp: "Top up",
   withdraw: "Withdraw",
   transactions: "Transactions",
-  value: "Value",
   withdrawTitle: "You'll be redirected to Baanx",
   withdrawDescription: "Withdraw funds from your Baanx account to your Ledger wallet address.",
   continue: "Continue",
@@ -32,12 +31,6 @@ export const CARD_ASSETS_RESOURCES = {
               title: CARD_ASSETS_COPY.withdrawTitle,
               description: CARD_ASSETS_COPY.withdrawDescription,
               continue: CARD_ASSETS_COPY.continue,
-            },
-            history: {
-              columns: {
-                amount: "Amount",
-                value: CARD_ASSETS_COPY.value,
-              },
             },
           },
         },

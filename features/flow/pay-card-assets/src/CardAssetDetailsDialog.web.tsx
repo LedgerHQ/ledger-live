@@ -105,7 +105,6 @@ export function CardAssetDetailsDialog({
                           item={item}
                           formatters={formatters}
                           assetCode={asset.currency}
-                          valueLabel={copy.value}
                           onPress={() => setInspected(item)}
                         />
                       ))}

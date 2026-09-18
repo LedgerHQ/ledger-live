@@ -111,7 +111,6 @@ export function CardAssetDetailsDialogPreview({
         topUp: t(`${KEY_PREFIX}.details.topUp`),
         withdraw: t(`${KEY_PREFIX}.details.withdraw`),
         transactions: t(`${KEY_PREFIX}.details.transactions`),
-        value: t(`${KEY_PREFIX}.history.columns.value`),
         withdrawTitle: t(`${KEY_PREFIX}.withdraw.title`),
         withdrawDescription: t(`${KEY_PREFIX}.withdraw.description`),
         continue: t(`${KEY_PREFIX}.withdraw.continue`),

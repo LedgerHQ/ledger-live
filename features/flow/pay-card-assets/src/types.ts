@@ -48,7 +48,6 @@ export type CardAssetDialogCopy = Readonly<{
   topUp: string;
   withdraw: string;
   transactions: string;
-  value: string;
   withdrawTitle: string;
   withdrawDescription: string;
   continue: string;

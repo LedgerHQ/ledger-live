@@ -109,6 +109,8 @@ describe("CardAssets (web)", () => {
     // Funded by USDC; the ETH one is not.
     expect(await screen.findByTestId("card-transactions-item-uniqlo-usdc")).toBeVisible();
     expect(screen.queryByTestId("card-transactions-item-dentist-eth")).not.toBeInTheDocument();
+    expect(screen.getByText("-324.4332 USDC")).toBeVisible();
+    expect(screen.queryByText(/Value ·/)).not.toBeInTheDocument();
   });
 
   it("should open the transaction detail dialog from a row", async () => {
