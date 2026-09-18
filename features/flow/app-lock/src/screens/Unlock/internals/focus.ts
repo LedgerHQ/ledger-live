@@ -1,6 +1,7 @@
 export type PasswordFieldFocusState = Readonly<{
   hasPassword: boolean;
   isAwaitingBiometrics: boolean;
+  isForgotPasswordOpen: boolean;
   isAppActive: boolean;
 }>;
 
@@ -9,7 +10,8 @@ export type PasswordFieldFocusState = Readonly<{
 export function shouldFocusPasswordField({
   hasPassword,
   isAwaitingBiometrics,
+  isForgotPasswordOpen,
   isAppActive,
 }: PasswordFieldFocusState): boolean {
-  return hasPassword && !isAwaitingBiometrics && isAppActive;
+  return hasPassword && !isAwaitingBiometrics && !isForgotPasswordOpen && isAppActive;
 }

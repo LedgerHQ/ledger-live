@@ -19,6 +19,8 @@ type UnlockScreenViewModel = UnlockViewModel &
   Readonly<{
     hasFailed: boolean;
     hasPassword: boolean;
+    isForgotPasswordOpen: boolean;
+    onForgotPasswordClose: () => void;
     isAwaitingBiometrics: boolean;
     isAppActive: boolean;
     keyboardHeight: number;
@@ -33,6 +35,7 @@ function useUnlockScreenViewModel(): UnlockScreenViewModel {
   const keyboardHeight = useKeyboardInset();
   const [hasFailed, setHasFailed] = useState(false);
   const [isAwaitingBiometrics, setIsAwaitingBiometrics] = useState(biometricsEnabled);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const isPromptingRef = useRef(false);
 
   // Asked for before the screen draws a field: biometrics first, the password as the fallback.
@@ -54,6 +57,14 @@ function useUnlockScreenViewModel(): UnlockScreenViewModel {
 
   const onRetryBiometrics = useCallback(() => {
     setIsAwaitingBiometrics(true);
+  }, []);
+
+  const onForgotPassword = useCallback(() => {
+    setIsForgotPasswordOpen(true);
+  }, []);
+
+  const onForgotPasswordClose = useCallback(() => {
+    setIsForgotPasswordOpen(false);
   }, []);
 
   const onVerify = useCallback(
@@ -81,9 +92,12 @@ function useUnlockScreenViewModel(): UnlockScreenViewModel {
       onVerify,
       canRetryBiometrics: biometricsEnabled,
       onRetryBiometrics,
+      onForgotPassword,
     }),
     hasFailed,
     hasPassword,
+    isForgotPasswordOpen,
+    onForgotPasswordClose,
     isAwaitingBiometrics,
     isAppActive,
     keyboardHeight,

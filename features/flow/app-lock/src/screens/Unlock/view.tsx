@@ -20,6 +20,7 @@ export function UnlockView({
   hasFailed = false,
   hasPassword = true,
   isAwaitingBiometrics = false,
+  isForgotPasswordOpen = false,
   isAppActive = true,
   logo,
   topInset = 0,
@@ -32,12 +33,16 @@ export function UnlockView({
   const canFocusField = shouldFocusPasswordField({
     hasPassword,
     isAwaitingBiometrics,
+    isForgotPasswordOpen,
     isAppActive,
   });
 
   useEffect(() => {
     if (canFocusField) {
       fieldRef.current?.focus();
+    } else {
+      fieldRef.current?.blur();
+      Keyboard.dismiss();
     }
   }, [canFocusField]);
 
@@ -114,7 +119,12 @@ export function UnlockView({
           onPress={onForgotPassword}
           testID="app-lock-unlock-forgot-password"
         >
-          <Text lx={{ textAlign: "center", textDecorationLine: "underline" }}>
+          <Text
+            typography="body2SemiBold"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            lx={{ color: "muted", textAlign: "center", textDecorationLine: "underline" }}
+          >
             {t("appLock.unlock.forgotPassword")}
           </Text>
         </Pressable>
