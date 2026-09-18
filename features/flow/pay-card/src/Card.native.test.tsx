@@ -26,6 +26,10 @@ jest.mock("@features/flow-pay-card-widget", () => ({
   CardOnboardingWidget: () => <View testID="card-onboarding-widget" />,
 }));
 
+jest.mock("@features/flow-pay-card-assets", () => ({
+  CardAssets: () => <View testID="card-assets" />,
+}));
+
 import { Card } from "./Card";
 
 function renderCard(card: React.ReactElement) {

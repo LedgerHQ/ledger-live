@@ -142,6 +142,7 @@ features/flow/pay-bank-transfer/                         @ledgerhq/wallet-xp
 features/flow/pay-feature-tour/                          @ledgerhq/wallet-xp
 features/flow/pay-request/                               @ledgerhq/wallet-xp
 features/flow/pay-card-details/                          @ledgerhq/wallet-xp
+features/flow/pay-card-assets/                           @ledgerhq/wallet-xp
 features/flow/pay-card-wallets/                          @ledgerhq/wallet-xp
 features/flow/pay-card-widget/                           @ledgerhq/wallet-xp
 features/flow/pay-card-transactions/                       @ledgerhq/wallet-xp

@@ -29,6 +29,10 @@ jest.mock("@features/flow-pay-card-widget", () => ({
   CardOnboardingWidget: () => <div data-testid="card-onboarding-widget" />,
 }));
 
+jest.mock("@features/flow-pay-card-assets", () => ({
+  CardAssets: () => <div data-testid="card-assets" />,
+}));
+
 jest.mock("@features/flow-pay-card-transactions", () => ({
   CardTransactions: ({
     formatters,
