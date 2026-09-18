@@ -342,7 +342,7 @@ describe("DeviceIntentExecutor (unit)", () => {
       const mockConfig = makeMockPlatformConfig();
       const onConnected = jest.fn();
       const onClose = jest.fn();
-      const deviceConnectionParams = { acceptedDeviceModelIds: [] };
+      const deviceConnectionParams = { acceptedDeviceModelIds: [], disableAutoConnect: false };
       const props = makeUnitProps(
         {
           phase: "deviceConnection",

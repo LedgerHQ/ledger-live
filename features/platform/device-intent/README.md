@@ -52,6 +52,7 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
   - [Job completion contract](#job-completion-contract)
   - [Changing `deviceInitializationInput` and `intent` together](#changing-deviceinitializationinput-and-intent-together)
   - [Observability: callbacks](#observability-callbacks)
+  - [Restarting on a different device](#restarting-on-a-different-device)
   - [Cancelling an intent](#cancelling-an-intent)
   - [Enabling / disabling](#enabling--disabling)
   - [Idle state and `lastIntentSnapshot`](#idle-state-and-lastintentsnapshot)
@@ -1222,10 +1223,32 @@ The executor reports progress and lifecycle changes through callback props:
 | `onIntentJobStateChanged(jobState)` | Optional. The running job's observable emits a new `JobState` value (UI / observability only).                                                            |
 | `onIntentJobComplete()`             | Optional. The job observable completes (no more emissions). The executor transitions to `idle`.                                                           |
 | `onIntentJobError(error)`           | Optional. The job observable errors. The executor transitions to `executingIntentError`.                                                                  |
+| `onExecutorStopped()`               | Optional. The executor is destroyed: the component unmounts, or `enabled` flips to `false`. See below.                                                    |
 
 All callbacks use refs internally, so the executor always calls the **latest**
 version of each callback without needing to be recreated when the callback
 identity changes.
+
+##### `onExecutorStopped` and job teardown
+
+The executor terminates the running job on several paths, and only some of them
+end the operation. It tears a job down and **stays alive** when it leaves intent
+execution — handling a device disconnection, or restarting into device
+connection — and in each of those the current intent is kept, so a later run of
+the same job can still report an outcome.
+
+`onExecutorStopped` fires only on the paths where the executor itself goes away
+and no later run is possible. A caller awaiting an intent outcome (e.g. holding
+a promise it resolves from `onResult`) must settle it here, and must **not**
+settle on job teardown alone: doing so rejects the caller before a retry has
+had its chance, and the retry's eventual result is then discarded as a late
+duplicate.
+
+> [!WARNING]
+> The callback is unmount-scoped, so an effect that mounts, cleans up and
+> remounts — React `StrictMode`'s double-invoke — reports a stop for a job that
+> is about to run again. Neither wallet app enables `StrictMode` today; enabling
+> it would need this revisited.
 
 #### Intent-level callbacks (on `Intent`)
 
@@ -1265,6 +1288,48 @@ derived address) run before a cross-cutting executor callback reads it.
 Intent-level callbacks are useful for orchestrating multi-intent flows where
 each phase needs its own reaction logic, while executor-level callbacks handle
 cross-cutting concerns (updating global state, logging, debug UI).
+
+### Restarting on a different device
+
+A job whose failure is "this is the wrong device" can send the executor back to
+the connection phase, keeping the current intent. Call the `restartExecutor`
+param the job receives — surface it in a `JobState` so the component can offer
+it as a CTA, the way `device-rejected` states carry a `retry`:
+
+```typescript
+const job: Job<MyState, MyInput> = ({ input, restartExecutor }) =>
+  runDeviceAction(input).pipe(
+    map(state =>
+      state.type === "wrong-device" && restartExecutor
+        ? { ...state, reconnect: restartExecutor }
+        : state,
+    ),
+  );
+```
+
+The executor then:
+
+- disconnects the DMK session of the device it is leaving,
+- tears the job down (see [`onExecutorStopped`](#onexecutorstopped-and-job-teardown):
+  this is a teardown that keeps the operation alive, so awaiting callers must not
+  settle),
+- re-enters device connection with **auto-connect suppressed** — no reusing a live
+  session, no preselecting the only known device, no connecting to a lone
+  discovery — because every one of those would land back on the refused device.
+  Suppression stays on for the rest of the executor's life. Tapping a device still
+  connects: that choice is explicit.
+- runs the same job again once the new device is connected and initialised.
+
+Only accepted while a job is running or from idle. `restartExecutor` is optional
+precisely because a host may have no connection phase to return to (the CLI
+drives jobs directly); guard on it and offer no CTA when it is absent.
+
+> [!NOTE]
+> Desktop identifies known devices by model, not by unit
+> (`knownDevices.ts`: WebHID exposes no stable per-device id worth persisting), so
+> two devices of the same model are one entry in the picker. The restart cannot
+> exclude the refused unit there — it can only stop connecting to it on the
+> executor's own initiative, leaving the choice to the user.
 
 ### Cancelling an intent
 

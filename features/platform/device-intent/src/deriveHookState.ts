@@ -1,6 +1,7 @@
 import type React from "react";
 import type { ConnectedDevice } from "@ledgerhq/device-management-kit";
 import type {
+  DeviceConnectionComponentParams,
   DeviceConnectionParams,
   DeviceConnectionResult,
   DeviceExtractedContext,
@@ -22,7 +23,7 @@ export type IntentExecutionSnapshot<JobState, ExtraProps> = {
 export type DeviceIntentExecutorHookState<JobState, _Input, ExtraProps, InitInput> =
   | {
       phase: "deviceConnection";
-      deviceConnectionParams: DeviceConnectionParams;
+      deviceConnectionParams: DeviceConnectionComponentParams;
       onConnected: (result: DeviceConnectionResult) => void;
       onClose: () => void;
     }
@@ -94,7 +95,12 @@ export function deriveHookState<JobState, Input, ExtraProps, InitInput>(
     case "connectingDevice":
       return {
         phase: "deviceConnection",
-        deviceConnectionParams: params.deviceConnectionParams,
+        // Built here rather than taken from the caller's prop, so the executor
+        // stays the only owner of `disableAutoConnect`.
+        deviceConnectionParams: {
+          ...params.deviceConnectionParams,
+          disableAutoConnect: executorState.disableAutoConnect,
+        },
         onConnected: params.onConnected,
         onClose: params.onUserCancel,
       };

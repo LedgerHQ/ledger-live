@@ -17,6 +17,8 @@ import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices 
 export type ConnectDeviceInput = {
   knownDevices: Array<KnownDevice>;
   acceptedDeviceModelIds?: Array<DeviceModelId>;
+  /** See {@link ConnectDeviceStateMachineInput.disableAutoConnect}. */
+  disableAutoConnect?: boolean;
   dmk: DeviceManagementKit;
   onConnected: (result: DeviceConnectionResult) => void;
 };

@@ -81,21 +81,33 @@ export function RegisterExternalAddressComponentLWD({
       );
     }
 
-    case "existing-group-verification-failed":
+    case "existing-group-verification-failed": {
+      const reconnect = jobState.reconnect;
+      const cancelCta = {
+        label: t("common.cancel"),
+        onPress: onClose,
+        testID: "contacts-register-external-address-wrong-device-cancel",
+      };
       return (
         <InfoState
           preset="info"
           size="hug"
           title={t("contacts.deviceIntents.errors.wrongDevice.title")}
           description={t("contacts.deviceIntents.errors.wrongDevice.description")}
-          primaryCta={{
-            label: t("common.cancel"),
-            onPress: onClose,
-            testID: "contacts-register-external-address-wrong-device-cancel",
-          }}
+          primaryCta={
+            reconnect
+              ? {
+                  label: t("contacts.deviceIntents.errors.wrongDevice.connectDifferentDevice"),
+                  onPress: reconnect,
+                  testID: "contacts-register-external-address-wrong-device-reconnect",
+                }
+              : cancelCta
+          }
+          secondaryCta={reconnect ? cancelCta : undefined}
           testID="contacts-register-external-address-wrong-device"
         />
       );
+    }
 
     case "invalid-input":
     case "unsupported-operation":

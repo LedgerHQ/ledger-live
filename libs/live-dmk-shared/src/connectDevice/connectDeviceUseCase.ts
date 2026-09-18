@@ -27,6 +27,8 @@ export type ConnectDeviceUseCaseInput<
 > = {
   knownDevices: Array<KnownDevice>;
   acceptedDeviceModelIds?: Array<DeviceModelId>;
+  /** See {@link ConnectDeviceStateMachineInput.disableAutoConnect}. */
+  disableAutoConnect?: boolean;
   dmk: DeviceManagementKit;
   deviceDiscoveryService: DeviceDiscoveryService<TDiscoveryError>;
   matchDiscoveredDevices: ConnectDeviceMatchDiscoveredDevices;

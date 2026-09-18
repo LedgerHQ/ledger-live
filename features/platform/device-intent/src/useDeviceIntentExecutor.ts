@@ -44,6 +44,8 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, 
   onIntentJobCompleteRef.current = props.onIntentJobComplete;
   const onIntentJobErrorRef = useRef(props.onIntentJobError);
   onIntentJobErrorRef.current = props.onIntentJobError;
+  const onExecutorStoppedRef = useRef(props.onExecutorStopped);
+  onExecutorStoppedRef.current = props.onExecutorStopped;
 
   // -- Creation-time prop refs --
   // The SM is created once when `enabled` becomes true, using these refs to
@@ -70,6 +72,7 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, 
   > | null>(null);
   const [executorState, setExecutorState] = useState<ExecutorState>({
     type: "connectingDevice",
+    disableAutoConnect: false,
   });
   const [latestJobState, setLatestJobState] = useState<JobState | undefined>(undefined);
   const [connectionResult, setConnectionResult] = useState<DeviceConnectionResult | null>(null);
@@ -144,27 +147,42 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, 
     smRef.current = createStateMachine();
   }
 
+  // False for a SM that never ran — one built by a render React threw away, or
+  // none at all because `enabled` started out false — so neither reports a stop.
+  const hasStartedSmRef = useRef(false);
+
+  const reportExecutorStopped = useCallback(() => {
+    if (!hasStartedSmRef.current) return;
+    hasStartedSmRef.current = false;
+    onExecutorStoppedRef.current?.();
+  }, []);
+
   useLayoutEffect(() => {
     if (!props.enabled) {
       smRef.current?.stop();
       smRef.current = null;
-      setExecutorState({ type: "connectingDevice" });
+      setExecutorState({ type: "connectingDevice", disableAutoConnect: false });
       setConnectionResult(null);
       setLatestJobState(undefined);
       lastIntentSnapshotRef.current = null;
+      reportExecutorStopped();
       return;
     }
 
     const sm = smRef.current ?? createStateMachine();
     smRef.current = sm;
     sm.start();
+    hasStartedSmRef.current = true;
+    // On an `enabled` flip React runs this before the branch above, whose own call
+    // is then a no-op, so the stop is reported exactly once.
     return () => {
       sm.stop();
       if (smRef.current === sm) {
         smRef.current = null;
       }
+      reportExecutorStopped();
     };
-  }, [createStateMachine, props.enabled]);
+  }, [createStateMachine, props.enabled, reportExecutorStopped]);
 
   // ---- 5. Device disconnection monitoring effect ----
 
