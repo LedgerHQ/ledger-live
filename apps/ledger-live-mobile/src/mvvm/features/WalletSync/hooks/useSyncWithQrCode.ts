@@ -77,7 +77,7 @@ export const useSyncWithQrCode = () => {
         } else if (eName === "ScannedInvalidQrCode") {
           setCurrentStep(Steps.ScannedInvalidQrCode);
           return;
-        } else if (eName === "InvalidDigitsError") {
+        } else if (eName === "InvalidDigitsError" || eName === "QRCodeProtocolError") {
           setCurrentStep(Steps.SyncError);
           return;
         } else if (eName === "NoTrustchainInitialized") {
