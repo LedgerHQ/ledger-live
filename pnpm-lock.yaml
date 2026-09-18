@@ -1832,6 +1832,9 @@ importers:
       '@features/flow-pay-card':
         specifier: workspace:^
         version: link:../../features/flow/pay-card
+      '@features/flow-pay-card-assets':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-card-assets
       '@features/flow-pay-card-auth':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-auth
