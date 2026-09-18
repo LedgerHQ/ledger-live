@@ -17,7 +17,8 @@ export function useCardTransactionHistoryViewModel({
 }: CardTransactionHistoryProps &
   Pick<CardTransactionHistoryViewProps, "onRowClick">): CardTransactionHistoryViewProps {
   const isSignedIn = useIsCardSignedIn();
-  const { transactions, isLoading, isError } = useCardTransactionsViewModel();
+  const { transactions, isLoading, isError, loadMore, isLoadingMore } =
+    useCardTransactionsViewModel();
   const scopedTransactions = useMemo(
     () =>
       asset ? transactions.filter(item => isCardTransactionFundedBy(item, asset)) : transactions,
@@ -46,5 +47,7 @@ export function useCardTransactionHistoryViewModel({
     onRowClick,
     onGoToPay: onGoToPay ? handleGoToPay : undefined,
     cardVisual,
+    onLoadMore: loadMore,
+    isLoadingMore,
   };
 }
