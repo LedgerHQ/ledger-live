@@ -2,9 +2,11 @@
 
 > [!WARNING]
 > **Status: DEPRECATED** — `@ledgerhq/live-env` is being sunset. Do not add env var definitions and
-> do not add call sites. To take an existing one out, read **[MIGRATION.md](./MIGRATION.md)**:
-> every variable exits as a feature flag, an inline constant, `process.env` at the point of use,
-> or a parameter the caller passes in.
+> do not add call sites. To take an existing one out, read
+> **[docs/configuration.md](https://github.com/LedgerHQ/ledger-live/blob/develop/docs/configuration.md)**.
+> It maps every kind of value to its home — a feature flag, an inline constant, `process.env` at
+> the point of use, the app's `.env` file, a bundler define, the app's settings slice, or a
+> parameter the caller passes in.
 >
 > The package still works exactly as documented below until the last call site is gone.
 

@@ -3,7 +3,7 @@
 Catalog of every external network service contacted by **Ledger Live Desktop (LLD)** and **Ledger Live Mobile (LLM)** — plus services whose domain is baked into a third-party SDK we ship.
 
 > [!IMPORTANT]
-> **Keep this file up to date.** Whenever a service is added, removed, or its domain/management changes (new entry in [`libs/env/src/env.ts`](/libs/env/src/env.ts), a new hardcoded endpoint, a coin-module config change, or a new SDK dependency that phones home), add/update its row in the matching **scope** section below. See [Maintenance](#maintenance).
+> **Keep this file up to date.** Whenever a service is added, removed, or its domain/management changes (a new endpoint, a coin-module config change, or a new SDK dependency that phones home), add/update its row in the matching **scope** section below. See [Maintenance](#maintenance).
 
 ## How to read this doc
 
@@ -21,7 +21,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 
 | Keyword        | Meaning                                                                           |
 | -------------- | --------------------------------------------------------------------------------- |
-| `env`          | Defined in [`libs/env/src/env.ts`](/libs/env/src/env.ts), overridable at runtime. |
+| `env`          | Defined in the deprecated env registry, see [configuration](/docs/configuration.md). |
 | `coin-config`  | Default in a coin/family config, overridable via Firebase remote config.          |
 | `feature-flag` | Gated/configured by a Firebase feature flag.                                      |
 | `code`         | Literal in our source.                                                            |
@@ -199,10 +199,9 @@ URLs the app hands to the OS browser (`openURL` / `Linking.openURL`) — **not**
 
 ## Maintenance
 
-This catalog is **inferred from the codebase** ([`libs/env/src/env.ts`](/libs/env/src/env.ts), coin/family configs, hardcoded endpoints, SDK defaults) and must be kept current:
+This catalog is **inferred from the codebase** (the env registry, coin/family configs, hardcoded endpoints, SDK defaults) and must be kept current:
 
-- **New env service** in [`libs/env/src/env.ts`](/libs/env/src/env.ts) → add a row in the matching scope section, under the owning team's separator.
-- **New hardcoded endpoint** (coin module, family config, app) → add a row linking the source.
+- **New endpoint** (coin module, family config, app, service config) → add a row in the matching scope section, under the owning team's separator, linking the source. [/docs/configuration.md](/docs/configuration.md) says where the value itself belongs.
 - **New SDK dependency** that contacts a fixed domain → add it under Third-party, mark `SDK`.
 - **Removed/renamed service** → remove or update the row.
 

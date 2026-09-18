@@ -3,8 +3,8 @@
 > [!WARNING]
 > **Status: DEPRECATED** — sunset together with `@ledgerhq/live-env`
 > ([LIVE-36894](https://ledgerhq.atlassian.net/browse/LIVE-36894)). Do not add a definition and do
-> not add a call site. See **[MIGRATION.md](./MIGRATION.md)** for how each kind of variable exits
-> here, and [`libs/env/MIGRATION.md`](../../libs/env/MIGRATION.md) for the four exits themselves.
+> not add a call site. See **[/docs/configuration.md](../../docs/configuration.md)** for the home
+> each kind of value takes and how to migrate an existing one.
 
 Workspace-private DDD layer for Ledger Live environment variables.
 
