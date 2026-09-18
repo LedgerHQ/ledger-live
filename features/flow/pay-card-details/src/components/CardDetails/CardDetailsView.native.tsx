@@ -45,9 +45,11 @@ export function CardDetailsView({
           lx={{ flexDirection: "row", gap: "s8", padding: "s16", position: "absolute" }}
           style={{ bottom: 0, left: 0, right: 0 }}
         >
-          <Box lx={{ flex: 1 }}>
-            <CardTopUpButton onTopUp={onTopUp} />
-          </Box>
+          {onTopUp ? (
+            <Box lx={{ flex: 1 }}>
+              <CardTopUpButton onTopUp={onTopUp} />
+            </Box>
+          ) : null}
           <Button
             appearance="gray"
             size="lg"
