@@ -92,6 +92,16 @@ function toCrafted({ raw_data_hex: rawDataHex }: { raw_data_hex?: string }): Cra
   return { transaction: rawDataHex };
 }
 
+// `FeeEstimation.parameters` is `Record<string, unknown>`, and the generic layer carries it over a
+// channel that JSON-normalises every numeric to a decimal string, so a fee figure can arrive as a
+// bigint (a direct caller) or as a string (the wallet).
+const toFeeAmount = (value: unknown): bigint | undefined => {
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number" && Number.isInteger(value)) return BigInt(value);
+  if (typeof value === "string" && /^-?\d+$/.test(value)) return BigInt(value);
+  return undefined;
+};
+
 async function craftSend(
   config: TronCoinConfig,
   transactionIntent: TransactionIntent<TronMemo, TronTxData>,
@@ -101,14 +111,26 @@ async function craftSend(
   const { amount, asset, recipient, sender, expiration } = transactionIntent;
 
   if (asset.type === "trc20" && asset.assetReference) {
-    // `fee_limit` caps what the TVM may burn for energy, not a charge — unused energy is never taken —
-    // so it must cover the worst-case burn. Only a deliberate override sets it, and the framework marks
-    // one with `customFees.parameters.fees` (see the generic `signOperation`); it is honoured verbatim,
-    // including a below-default or `0` cap (VSD-5287/LIVE-36391). `customFees.value` alone is the
-    // auto-resolved display fee — net of the account's own energy and `0` when energy is covered — so
-    // pinning `fee_limit` to it reverts OUT_OF_ENERGY (LIVE-36865). Absent an override,
-    // `craftTrc20Transaction` applies its `DEFAULT_TRC20_FEES_LIMIT` ceiling.
-    const fees = customFees?.parameters?.fees !== undefined ? customFees?.value : undefined;
+    // `fee_limit` caps what the TVM may burn for energy, not a charge — unused energy is never
+    // taken — so it must cover the worst-case burn. Three sources, in descending precedence:
+    //
+    // 1. `parameters.fees` — a deliberate override, which the wallet sets only when the user picks
+    //    a custom fee. Wins over the estimate's ceiling because the two can arrive together
+    //    (a custom fee with send-max still estimates, to resolve the max amount).
+    // 2. `parameters.feeLimit` — the ceiling `estimateFees` published for this transaction. The
+    //    wallet's auto path, where `value` is the net display fee: `0` once the account's own
+    //    energy covers the transfer, so pinning the ceiling to it reverts OUT_OF_ENERGY
+    //    (LIVE-36865).
+    // 3. `customFees.value` — the cap a direct caller chose (coin-service `/transaction/encode`,
+    //    and any other client of this module). Honoured verbatim, below the default or `0`
+    //    included: the trade-off is the caller's to make and a silent override breaks a signer
+    //    that re-parses the crafted blob and compares (VSD-5287/TSD-11634).
+    //
+    // With none of the three, `craftTrc20Transaction` applies its `DEFAULT_TRC20_FEES_LIMIT`.
+    const fees =
+      toFeeAmount(customFees?.parameters?.fees) ??
+      toFeeAmount(customFees?.parameters?.feeLimit) ??
+      customFees?.value;
     if (fees !== undefined && (fees < 0n || fees > BigInt(Number.MAX_SAFE_INTEGER))) {
       throw new Error(
         `fees must be between 0 and ${Number.MAX_SAFE_INTEGER} (Typescript Number type value limit)`,

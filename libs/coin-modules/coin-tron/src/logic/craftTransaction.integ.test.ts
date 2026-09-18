@@ -142,7 +142,7 @@ describe("Testing craftTransaction function", () => {
         amount,
         data: { type: "tron" },
       },
-      { value: 0n, parameters: { fees: 0n } },
+      { value: 0n },
     );
 
     const decodeResult = await decodeTransaction(result);
@@ -170,10 +170,11 @@ describe("Testing craftTransaction function", () => {
     expect(decodeResult.raw_data.fee_limit).toBeUndefined();
   });
 
-  it("should default the fee limit for an auto-resolved fee with no override marker for a TRC20 transaction", async () => {
-    // LIVE-36865: the generic framework passes the net display fee as customFees.value on every send,
-    // with no override marker; that value is 0 for an energy-covered account. Without the marker it must
-    // NOT pin the fee_limit to 0 — the default ceiling applies, otherwise the tx reverts OUT_OF_ENERGY.
+  it("should cap a TRC20 transaction at the ceiling the estimate published, not its net fee", async () => {
+    // LIVE-36865: the wallet passes the net display fee as customFees.value on every send, and that
+    // is 0 for an energy-covered account. `fee_limit` is a ceiling, not a charge, so it comes from
+    // `parameters.feeLimit` — the ceiling estimateFees published next to the fee. Pinning it to the
+    // net value reverts OUT_OF_ENERGY on chain.
     const amount = BigInt(20);
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
@@ -192,7 +193,7 @@ describe("Testing craftTransaction function", () => {
         amount,
         data: { type: "tron" },
       },
-      { value: 0n },
+      { value: 0n, parameters: { feeLimit: String(DEFAULT_TRC20_FEES_LIMIT) } },
     );
 
     const decodeResult = await decodeTransaction(result);
@@ -203,6 +204,38 @@ describe("Testing craftTransaction function", () => {
         }),
       }),
     );
+  });
+
+  it("should put a bare customFees.value in the fee limit for a TRC20 transaction", async () => {
+    // The contract every direct caller relies on: `customFees` present means "use this", so a lone
+    // `value` is the cap. coin-service's `/v1/tron/transaction/encode` sends exactly this shape, and
+    // its non-regression test for TSD-11634 asserts this exact number — a signer that re-parses the
+    // crafted blob rejects the transaction when the two disagree. Distinct from
+    // DEFAULT_TRC20_FEES_LIMIT so a missed override is obvious.
+    const customFees = 12345678n;
+    const amount = BigInt(20);
+    const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+    const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
+
+    const { transaction: result } = await craftTransaction(
+      mockConfig,
+      {
+        intentType: "transaction",
+        type: "send",
+        asset: {
+          type: "trc20",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        },
+        sender,
+        recipient,
+        amount,
+        data: { type: "tron" },
+      },
+      { value: customFees },
+    );
+
+    const decodeResult = await decodeTransaction(result);
+    expect(decodeResult.raw_data.fee_limit).toBe(Number(customFees));
   });
 
   it("should pass a custom fee below the default straight through for a TRC20 transaction", async () => {
@@ -225,7 +258,7 @@ describe("Testing craftTransaction function", () => {
         amount,
         data: { type: "tron" },
       },
-      { value: customFees, parameters: { fees: customFees } },
+      { value: customFees },
     );
 
     const decodeResult = await decodeTransaction(result);
