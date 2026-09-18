@@ -1,10 +1,7 @@
 import { Linking, Platform } from "react-native";
 
-/**
- * `shoebox://` is Apple Wallet's (undocumented but long-standing) scheme. `wallet://` comes second
- * because it is not Apple-exclusive: any installed app may claim it.
- */
-const IOS_WALLET_URLS = ["shoebox://", "wallet://"];
+/** `wallet://` is the current Apple Wallet scheme; `shoebox://` is the older one it replaced. */
+const IOS_WALLET_URLS = ["wallet://", "shoebox://"];
 
 /** Scheme registered by the Google Wallet app (`com.google.android.apps.walletnfcrel`). */
 const ANDROID_WALLET_URLS = ["comgooglewallet://"];

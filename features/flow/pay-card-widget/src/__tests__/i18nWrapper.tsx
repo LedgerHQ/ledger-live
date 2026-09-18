@@ -32,7 +32,7 @@ export const CARD_ONBOARDING_ADD_TO_WALLET_COPY = {
     cta: "Go to Apple Wallet",
   },
   android: {
-    title: "Add your card to Google Pay",
+    title: "Add to Google Pay",
     step1: "Go to Google Wallet app and tap add.",
     step2: "Choose Payment card, then select New Credit or Debit Card.",
     step3: "Follow the instructions.",

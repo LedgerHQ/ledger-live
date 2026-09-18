@@ -14,16 +14,16 @@ describe("openWalletApp", () => {
     await openWalletApp();
 
     expect(Linking.openURL).toHaveBeenCalledTimes(1);
-    expect(Linking.openURL).toHaveBeenCalledWith("shoebox://");
+    expect(Linking.openURL).toHaveBeenCalledWith("wallet://");
     expect(Linking.openSettings).not.toHaveBeenCalled();
   });
 
-  it("tries the second Apple Wallet scheme when the first one is unhandled", async () => {
+  it("tries the older Apple Wallet scheme when the current one is unhandled", async () => {
     jest.mocked(Linking.openURL).mockRejectedValueOnce(new Error("unhandled scheme"));
 
     await openWalletApp();
 
-    expect(Linking.openURL).toHaveBeenNthCalledWith(2, "wallet://");
+    expect(Linking.openURL).toHaveBeenNthCalledWith(2, "shoebox://");
     expect(Linking.openSettings).not.toHaveBeenCalled();
   });
 

@@ -1,26 +1,36 @@
+import React from "react";
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
 import { renderHook } from "@testing-library/react-native";
 import { Platform } from "react-native";
 
-jest.mock("react-redux", () => ({ useDispatch: jest.fn() }));
 jest.mock("./openWalletApp", () => ({ openWalletApp: jest.fn(() => Promise.resolve()) }));
 
-import { useDispatch } from "react-redux";
 import { CARD_ONBOARDING_ADD_TO_WALLET_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
+import { payCardOnboardingWidgetSlice, selectHasAddedCardToWallet } from "../../state";
 import { openWalletApp } from "./openWalletApp";
 import { useAddToWalletInstructionsViewModel } from "./useAddToWalletInstructionsViewModel";
 
-const dispatch = jest.fn();
-
 function renderViewModel(onDone = jest.fn()) {
-  return renderHook(() => useAddToWalletInstructionsViewModel({ onDone }), {
-    wrapper: I18nWrapper,
+  const store = configureStore({
+    reducer: { payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer },
   });
+
+  return {
+    store,
+    ...renderHook(() => useAddToWalletInstructionsViewModel({ onDone }), {
+      wrapper: ({ children }) => (
+        <Provider store={store}>
+          <I18nWrapper>{children}</I18nWrapper>
+        </Provider>
+      ),
+    }),
+  };
 }
 
 describe("useAddToWalletInstructionsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(useDispatch).mockReturnValue(dispatch);
     Platform.OS = "ios";
   });
 
@@ -47,11 +57,11 @@ describe("useAddToWalletInstructionsViewModel", () => {
 
   it("dispatches, tells the host it is done, and opens the wallet when the CTA is pressed", () => {
     const onDone = jest.fn();
-    const { result } = renderViewModel(onDone);
+    const { store, result } = renderViewModel(onDone);
 
     result.current.onPressCta();
 
-    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(selectHasAddedCardToWallet(store.getState())).toBe(true);
     expect(onDone).toHaveBeenCalledTimes(1);
     expect(openWalletApp).toHaveBeenCalledTimes(1);
   });
