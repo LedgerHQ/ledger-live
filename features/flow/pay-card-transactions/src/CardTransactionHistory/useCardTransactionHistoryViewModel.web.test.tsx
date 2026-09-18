@@ -45,4 +45,24 @@ describe("useCardTransactionHistoryViewModel", () => {
 
     expect(displayState.groups.flatMap(({ items }) => items)).toHaveLength(page.length);
   });
+
+  it("should only expose transactions accepted by the host filter", async () => {
+    const page = mockPayCardTransactions();
+    server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
+
+    const { result } = renderHook(
+      () =>
+        useCardTransactionHistoryViewModel({
+          onRowClick,
+          filterTransaction: item => item.transaction.id === page[0]?.id,
+        }),
+      { wrapper: cardApiWrapper({ signedIn: true }) },
+    );
+
+    await waitFor(() => expect(result.current.displayState.kind).toBe("ready"));
+    const displayState = result.current.displayState;
+    if (displayState.kind !== "ready") throw new Error("expected ready displayState");
+
+    expect(displayState.groups.flatMap(({ items }) => items)).toHaveLength(1);
+  });
 });

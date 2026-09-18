@@ -7,6 +7,9 @@ import type { CardTransactionHistoryProps, CardTransactionHistoryViewProps } fro
 
 export function useCardTransactionHistoryViewModel({
   formatters,
+  filterTransaction,
+  columnSet,
+  assetCode,
   onRowClick,
   formatDay,
   onGoToPay,
@@ -15,7 +18,11 @@ export function useCardTransactionHistoryViewModel({
   Pick<CardTransactionHistoryViewProps, "onRowClick">): CardTransactionHistoryViewProps {
   const isSignedIn = useIsCardSignedIn();
   const { transactions, isLoading, isError } = useCardTransactionsViewModel();
-  const groups = useMemo(() => groupCardHistoryItems(transactions), [transactions]);
+  const filteredTransactions = useMemo(
+    () => (filterTransaction ? transactions.filter(filterTransaction) : transactions),
+    [filterTransaction, transactions],
+  );
+  const groups = useMemo(() => groupCardHistoryItems(filteredTransactions), [filteredTransactions]);
   const displayState = useMemo(
     () =>
       resolveCardTransactionHistoryUiState({
@@ -30,6 +37,8 @@ export function useCardTransactionHistoryViewModel({
   return {
     displayState,
     formatters,
+    columnSet,
+    assetCode,
     formatDay,
     onRowClick,
     onGoToPay,

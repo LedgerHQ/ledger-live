@@ -43,6 +43,16 @@ const CARD_TRANSACTIONS_RESOURCES = {
   en: {
     translation: {
       payTab: {
+        card: {
+          assets: {
+            history: {
+              columns: {
+                amount: "Amount",
+                value: "Value",
+              },
+            },
+          },
+        },
         cardTransactions: {
           categories: CATEGORY_LABELS,
           title: SECTION_TITLE,

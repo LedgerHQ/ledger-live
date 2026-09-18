@@ -5,6 +5,8 @@ import {
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
 } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import { ContactIdSchema, selectContactById, type Contact } from "@domain/entity-contact";
+import { baanxAssetLedgerId } from "@domain/entity-card-asset-mapping";
+import { useCurrenciesByIds } from "@features/platform-currencies";
 import { useFeature } from "@features/platform-feature-flags";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHideSmallValueTokenOperations } from "~/renderer/actions/settings";
@@ -27,6 +29,7 @@ import { track } from "~/renderer/analytics/segment";
 import { parseHistoryBackPath } from "../utils/historyLocationState";
 import { usePopNavigationBack } from "LLD/utils/usePopNavigationBack";
 import {
+  HISTORY_ASSET_SEARCH_PARAM,
   HISTORY_DUST_FILTER_THRESHOLD_USD,
   HISTORY_TAB_CARD,
   HISTORY_TAB_CRYPTO,
@@ -52,6 +55,8 @@ export type HistoryViewModel = {
   contact?: Contact;
   showHistoryTypeSwitcher: boolean;
   historyTab: HistoryTab;
+  /** Name of the Ledger currency the card asset resolves to, e.g. "USD Coin". */
+  cardAssetName?: string;
   onHistoryTabChange: (tab: HistoryTab) => void;
 };
 
@@ -63,11 +68,30 @@ export function useHistoryViewModel(): HistoryViewModel {
   const [searchParams, setSearchParams] = useSearchParams();
   const isPayTabEnabled = !!useFeature("lwdPayTab")?.enabled;
   const hasCryptoHistoryFilter = searchParams.has("accountIds") || searchParams.has("contactId");
-  const showHistoryTypeSwitcher = isPayTabEnabled && !hasCryptoHistoryFilter;
   const historyTab: HistoryTab =
-    showHistoryTypeSwitcher && searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD
+    isPayTabEnabled &&
+    !hasCryptoHistoryFilter &&
+    searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD
       ? HISTORY_TAB_CARD
       : HISTORY_TAB_CRYPTO;
+  // Scoped to one card asset: the crypto tab has no such scope, so the switcher would only lose it.
+  const cardAsset =
+    historyTab === HISTORY_TAB_CARD ? searchParams.get(HISTORY_ASSET_SEARCH_PARAM) : null;
+  const showHistoryTypeSwitcher = isPayTabEnabled && !hasCryptoHistoryFilter && cardAsset === null;
+  // The scope is the provider's `currency.network` pair; only the Ledger currency behind it has a
+  // name to show. A pair the catalog does not cover stays unnamed rather than showing the raw pair.
+  const [assetCurrency = "", maybeNetwork] = cardAsset?.split(".") ?? [];
+  const cardAssetLedgerId = cardAsset
+    ? baanxAssetLedgerId(assetCurrency, maybeNetwork || assetCurrency)
+    : undefined;
+  const cardAssetLedgerIds = useMemo(
+    () => (cardAssetLedgerId ? [cardAssetLedgerId] : []),
+    [cardAssetLedgerId],
+  );
+  const cardAssetCurrencies = useCurrenciesByIds(cardAssetLedgerIds);
+  const cardAssetName = cardAssetLedgerId
+    ? cardAssetCurrencies.get(cardAssetLedgerId)?.name
+    : undefined;
 
   useEffect(() => {
     return () => {
@@ -160,7 +184,8 @@ export function useHistoryViewModel(): HistoryViewModel {
   }, [hideSmallValueTokenOperations, setHideSmallValueTokenOperations, showDustFilterOption]);
 
   return {
-    showBackButton,
+    // Asset history is only reachable from the asset dialog, so back always has somewhere to pop to.
+    showBackButton: showBackButton || cardAsset !== null,
     navigateBack,
     table,
     parentRef,
@@ -177,6 +202,7 @@ export function useHistoryViewModel(): HistoryViewModel {
     contact,
     showHistoryTypeSwitcher,
     historyTab,
+    cardAssetName,
     onHistoryTabChange,
   };
 }

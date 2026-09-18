@@ -5,6 +5,7 @@ import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-t
 import { listenToCardApi } from "@support/msw-features-flow-pay-card";
 import { CARD_TRANSACTIONS_URL, cardApiWrapper } from "../__tests__/cardApiStore";
 import { CardTransactionHistory } from "./CardTransactionHistory.web";
+import { isCardTransactionFundedBy } from "../logic/isCardTransactionFundedBy";
 
 const server = listenToCardApi();
 
@@ -31,5 +32,26 @@ describe("CardTransactionHistory", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Funding sources" }));
 
     expect(screen.queryByTestId("card-transaction-detail-dialog")).not.toBeInTheDocument();
+  });
+
+  it("shows only one asset with value and amount columns", async () => {
+    server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(mockPayCardTransactions())));
+
+    render(
+      <CardTransactionHistory
+        filterTransaction={item => isCardTransactionFundedBy(item, "btc", "bitcoin")}
+        assetCode="btc"
+        columnSet="asset"
+      />,
+      { wrapper: cardApiWrapper({ signedIn: true }) },
+    );
+
+    expect(await screen.findByText("STARBUCKS")).toBeVisible();
+    expect(screen.queryByText("NETFLIX.COM")).not.toBeInTheDocument();
+    const transaction = screen.getByTestId("card-history-column-transaction");
+    const value = screen.getByTestId("card-history-column-value");
+    const amount = screen.getByTestId("card-history-column-amount");
+    expect(transaction.nextElementSibling).toBe(value);
+    expect(value.nextElementSibling).toBe(amount);
   });
 });

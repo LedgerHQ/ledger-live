@@ -4,6 +4,7 @@ import { useTranslation } from "@shared/i18n";
 import type { CardTransactionFormatters, CardTransactionItem } from "../../types";
 import {
   formatCardTransactionTime,
+  formatFundingSourceForAsset,
   formatFundingSources,
   formatMerchantName,
   formatSignedAmount,
@@ -23,6 +24,7 @@ function statusLabelToneFor(
 export function useHistoryRowViewModel(
   item: CardTransactionItem,
   formatters?: CardTransactionFormatters,
+  assetCode?: string,
 ): HistoryRowViewProps {
   const { t } = useTranslation();
   const { transaction, categoryLabel } = item;
@@ -34,6 +36,9 @@ export function useHistoryRowViewModel(
     const fundingSources = transaction.fundingSources;
     const fundingAll = formatFundingSources(fundingSources, formatters?.amount);
     const hasMultipleFundingSources = (fundingSources?.length ?? 0) > 1;
+    const cryptoAmount = assetCode
+      ? formatFundingSourceForAsset(fundingSources, assetCode, formatters?.amount)
+      : fundingAll;
 
     return {
       id: transaction.id,
@@ -52,6 +57,7 @@ export function useHistoryRowViewModel(
         ? t("payTab.cardTransactions.history.columns.fundingSources")
         : undefined,
       amount: formatSignedAmount(transaction, formatters?.amount),
+      cryptoAmount,
     };
-  }, [categoryLabel, formatters?.amount, t, transaction]);
+  }, [assetCode, categoryLabel, formatters?.amount, t, transaction]);
 }

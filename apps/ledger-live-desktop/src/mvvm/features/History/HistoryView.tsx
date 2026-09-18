@@ -28,6 +28,7 @@ export function HistoryView({
   contact,
   showHistoryTypeSwitcher,
   historyTab,
+  cardAssetName,
   onHistoryTabChange,
   cardHistoryViewModel,
 }: HistoryViewProps) {
@@ -50,6 +51,7 @@ export function HistoryView({
         dustFilterThreshold={dustFilterThreshold}
         onToggleHideSmallValueTokenOperations={onToggleHideSmallValueTokenOperations}
         contact={isCardTab ? undefined : contact}
+        assetName={cardAssetName}
       />
       {showHistoryTypeSwitcher ? (
         <HistoryTypeSwitcher selectedTab={historyTab} onTabChange={onHistoryTabChange} />

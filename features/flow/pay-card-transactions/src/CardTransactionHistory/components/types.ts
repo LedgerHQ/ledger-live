@@ -1,11 +1,14 @@
 import type { PayCardTransaction } from "@domain/api-card-management";
 import type { CardTransactionFormatters, CardTransactionItem } from "../../types";
+import type { CardTransactionHistoryColumnSet } from "../types";
 
 export type HistorySection = Readonly<{ day?: Date; data: readonly CardTransactionItem[] }>;
 
 export type HistoryRowProps = Readonly<{
   item: CardTransactionItem;
   formatters?: CardTransactionFormatters;
+  columnSet?: CardTransactionHistoryColumnSet;
+  assetCode?: string;
   onRowClick: (item: CardTransactionItem) => void;
 }>;
 
@@ -22,4 +25,5 @@ export type HistoryRowViewProps = Readonly<{
   fundingTooltip?: string;
   fundingTooltipAriaLabel?: string;
   amount: string;
+  cryptoAmount?: string;
 }>;

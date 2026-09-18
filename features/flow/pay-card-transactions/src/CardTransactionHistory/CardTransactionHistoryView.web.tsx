@@ -18,6 +18,8 @@ function createPayCta(
 export function CardTransactionHistoryView({
   displayState,
   formatters,
+  columnSet,
+  assetCode,
   formatDay,
   onRowClick,
   onGoToPay,
@@ -74,7 +76,7 @@ export function CardTransactionHistoryView({
         >
           <div className="shrink-0 overflow-x-auto overflow-y-hidden">
             <Table>
-              <HistoryTableHeader />
+              <HistoryTableHeader columnSet={columnSet} />
             </Table>
           </div>
           <div className="min-h-0 scrollbar-custom flex-1 overflow-auto scrollbar-gutter-auto">
@@ -82,6 +84,8 @@ export function CardTransactionHistoryView({
               <HistoryTableBody
                 groups={displayState.groups}
                 formatters={formatters}
+                columnSet={columnSet}
+                assetCode={assetCode}
                 formatDay={formatDay}
                 onRowClick={onRowClick}
               />
