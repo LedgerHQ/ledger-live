@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 4.21.0-next.3
+
+### Minor Changes
+
+- [#22188](https://github.com/LedgerHQ/ledger-live/pull/22188) [`22c8acd`](https://github.com/LedgerHQ/ledger-live/commit/22c8acd5b6c192b2190f7b66308cf3b8d0e1871e) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Correct the Send memo help text, which repeated the memo label and described memos as an exchange-only requirement. Currencies can now provide their own wording; Zcash describes its memo as optional and encrypted
+
+- [#22188](https://github.com/LedgerHQ/ledger-live/pull/22188) [`22c8acd`](https://github.com/LedgerHQ/ledger-live/commit/22c8acd5b6c192b2190f7b66308cf3b8d0e1871e) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Align the Zcash device-confirmation step with every other currency: the signature screen no longer shows the recipient or the amount, which are verified on the device
+
 ## 4.21.0-next.2
 
 ### Minor Changes

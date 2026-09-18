@@ -404,6 +404,7 @@
     "remove-dead-mobile-dependencies",
     "remove-rn-performance",
     "send-balance-type",
+    "send-memo-help-per-currency",
     "shared-analytics-flush-helpers",
     "shared-analytics-packages-scaffold",
     "shared-analytics-react-package",
@@ -424,6 +425,7 @@
     "web-tools-firmware-app-deployments",
     "witty-beacons-warn",
     "zcash-balance-type-send-step",
-    "zcash-shielded-send-screens"
+    "zcash-shielded-send-screens",
+    "zcash-simplified-signature-step"
   ]
 }
