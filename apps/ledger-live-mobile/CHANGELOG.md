@@ -1,5 +1,23 @@
 # live-mobile
 
+## 4.20.1
+
+### Patch Changes
+
+- [#22189](https://github.com/LedgerHQ/ledger-live/pull/22189) [`153959b`](https://github.com/LedgerHQ/ledger-live/commit/153959be64daf83b3cbbac4707c40258b8a00769) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Support Cardano firmware app v8.0.8 by bumping @cardano-foundation/ledgerjs-hw-app-cardano from 7.x to 8.0.0. The v7 host binding used an older APDU protocol incompatible with the rewritten v8 device app, breaking account scan, receive and signing flows on firmware 8.0.x. Also raise the Cardano nano app minVersion to 8.0.8 so users on an incompatible older app are prompted to update instead of hitting broken flows.
+
+- [#22198](https://github.com/LedgerHQ/ledger-live/pull/22198) [`b9c7dea`](https://github.com/LedgerHQ/ledger-live/commit/b9c7dea591b6e0292a4452d29253738c0c67e29a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Enforce the QR code pairing sequence on both sides of the handshake
+
+  The host and the candidate now run the pairing messages through an explicit single-use state
+  machine: each message is only accepted at the one point of the sequence where it is expected,
+  and the peer that initiated the handshake is bound for the whole session. Envelopes, keys and
+  decrypted bodies are validated before being acted upon, so a duplicate, out-of-order, foreign or
+  malformed message ends the session with a `QRCodeProtocolError`: Desktop then asks for a fresh
+  QR code, Mobile goes to its existing retry screen.
+
+- Updated dependencies [[`b9c7dea`](https://github.com/LedgerHQ/ledger-live/commit/b9c7dea591b6e0292a4452d29253738c0c67e29a)]:
+  - @ledgerhq/ledger-key-ring-protocol@0.21.3
+
 ## 4.20.1-hotfix.1
 
 ### Patch Changes
