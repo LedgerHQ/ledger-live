@@ -276,6 +276,18 @@ describe("ValidationError withholding an unsafe retry", () => {
     expect(screen.getByText("Retry")).toBeVisible();
   });
 
+  // A node that would not take the message took nothing: the request never entered the network.
+  it("offers Retry when the node never took the request", () => {
+    renderNeuron({
+      error: named("ICPNodeRefused"),
+      transaction: { type: "increase_dissolve_delay" },
+      signed: true,
+    });
+
+    expect(screen.getByText("Retry")).toBeVisible();
+    expect(screen.queryByTestId("icp-prevent-native-back")).toBeNull();
+  });
+
   it("offers Retry for a command that repeats harmlessly", () => {
     renderNeuron({
       error: named("ICPCallUnconfirmed"),

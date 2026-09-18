@@ -1782,6 +1782,10 @@
       "title": "Request not accepted",
       "description": "The Internet Computer rejected the request before it ran, so nothing changed. Please try again. {{reason}}"
     },
+    "ICPNodeRefused": {
+      "title": "Request not sent",
+      "description": "The Internet Computer did not take the request, so nothing was sent and nothing changed. Please try again. {{reason}}"
+    },
     "ICPCreateNeuronWarning": {
       "title": "This locks your ICP in a new neuron",
       "description": "The neuron starts with the shortest dissolve delay, which is too short to vote or earn rewards. Raise it from Manage Neurons, and expect to wait out the delay before the stake is spendable again."
