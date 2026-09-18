@@ -1,5 +1,4 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
 import { Box, Text, TileButton } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
@@ -40,7 +39,7 @@ function OverviewActions({
     <Box lx={{ gap: "s8" }}>
       <Box lx={{ flexDirection: "row", gap: "s8" }}>
         {reveal ? (
-          <View style={styles.action}>
+          <Box lx={{ flex: 1, minWidth: 0 }}>
             <TileButton
               icon={canHide ? EyeCross : Eye}
               isFull
@@ -50,20 +49,20 @@ function OverviewActions({
             >
               {viewLabel}
             </TileButton>
-          </View>
+          </Box>
         ) : null}
-        <View style={styles.action}>
+        <Box lx={{ flex: 1, minWidth: 0 }}>
           <FreezeAction
             status={freezeViewModel.status}
             isActionDisabled={freezeViewModel.isActionDisabled}
             onOpenConfirm={onFreezePress}
           />
-        </View>
-        <View style={styles.action}>
+        </Box>
+        <Box lx={{ flex: 1, minWidth: 0 }}>
           {moreViewModel ? (
             <MoreAction moreLabel={moreViewModel.moreLabel} onMorePress={onMorePress} />
           ) : null}
-        </View>
+        </Box>
       </Box>
       {reveal?.status === "failed" ? (
         <Text typography="body2">{t("payTab.card.numbers.failed")}</Text>
@@ -108,7 +107,3 @@ export function OverviewScene({
     </Box>
   );
 }
-
-const styles = StyleSheet.create({
-  action: { flex: 1, minWidth: 0 },
-});
