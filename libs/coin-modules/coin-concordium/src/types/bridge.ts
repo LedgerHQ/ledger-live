@@ -1,8 +1,10 @@
 import type {
   Account,
+  AccountLike,
   AccountRaw,
   CurrencyBridge,
   Operation,
+  TokenAccount,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -22,7 +24,7 @@ import type {
  * What this family puts on `Operation.extra`.
  *
  * `Operation` leaves `extra` as `unknown`, which cannot be read from without a
- * cast, so a renderer needs this type to see either field. Both are plain
+ * cast, so a consumer needs this type to reach either field. Both are plain
  * strings and survive the framework's own serialization, so no
  * `toOperationExtraRaw` hook is involved.
  */
@@ -34,15 +36,14 @@ export type ConcordiumOperationExtra = {
 export type ConcordiumOperation = Operation<ConcordiumOperationExtra>;
 
 /**
- * Reads the fields a renderer displays, keeping only what is safe to show.
+ * Reads `extra` into the fields that are safe to pass on.
  *
- * `extra` has been written to disk and read back by the time a renderer sees it,
- * so nothing about its shape is guaranteed. An object memo throws as a React
- * child, an empty one renders a titled row with nothing in it, and the reject
- * code becomes a translation key — so an unrecognised code has to be dropped
- * rather than looked up.
+ * `extra` has been written to disk and read back, so nothing about its shape is
+ * guaranteed. Only a non-empty string memo survives, and only a reject code
+ * this module recognises: callers interpolate the code, so an unrecognised one
+ * has to be dropped rather than handed through.
  *
- * Shared by both apps so the two cannot drift on what they consider displayable.
+ * Shared by every caller so none can differ on what it considers safe.
  */
 export function readOperationExtra(extra: unknown): ConcordiumOperationExtra {
   const fields = (typeof extra === "object" && extra !== null ? extra : {}) as Record<
@@ -107,6 +108,88 @@ export type ConcordiumTokenResources = {
   /** Reported before any list cause. Absent means the module never declared it, not `false`. */
   paused?: boolean;
 };
+
+/** The state to report for one token. */
+export type ConcordiumTokenNotice =
+  | "paused"
+  | "notAllowed"
+  | "denied"
+  | "unverified"
+  | "notPermitted";
+
+/**
+ * The `errors.*` entry whose copy each notice reuses.
+ *
+ * The send path raises the error of the same name, so both paths name the cause
+ * in the same words. Shared so the two apps cannot drift on which copy belongs
+ * to which state.
+ */
+export const CONCORDIUM_TOKEN_NOTICE_ERROR = {
+  paused: "ConcordiumTokenPaused",
+  notAllowed: "ConcordiumAccountNotAllowed",
+  denied: "ConcordiumAccountDenied",
+  unverified: "ConcordiumTokenRestrictionsUnverified",
+  notPermitted: "ConcordiumTokenTransferNotPermitted",
+} as const satisfies Record<ConcordiumTokenNotice, string>;
+
+/**
+ * Finds the state stored for one token.
+ *
+ * Keyed by `contractAddress`, as the send path keys it. `concordiumResources` is
+ * non-optional on the type but absent on accounts persisted before it existed.
+ */
+function tokenStateFor(
+  account: TokenAccount,
+  parentAccount: Account | null | undefined,
+): ConcordiumTokenResources | undefined {
+  return (parentAccount as ConcordiumAccount | null | undefined)?.concordiumResources?.tokens?.[
+    account.token.contractAddress
+  ];
+}
+
+/**
+ * Compile-time exhaustiveness without returning the off-union value at runtime:
+ * a new {@link PltTransferStatus} member stops satisfying `never` and fails the
+ * build here, while a corrupted store falls to the notice that names no cause.
+ */
+function unnamedRefusal(_unrecognised: never): "notPermitted" {
+  return "notPermitted";
+}
+
+/**
+ * Picks the one state to report for a token held by an account.
+ *
+ * Mirrors `validateTokenPolicy` branch for branch, so a caller reports the cause
+ * the send path would refuse on. Only `"allowed"` yields no notice; a value off
+ * the union does not read as permission.
+ *
+ * Returns undefined for an account that is not a token.
+ */
+export function tokenNoticeFor(
+  account: AccountLike,
+  parentAccount: Account | null | undefined,
+): ConcordiumTokenNotice | undefined {
+  if (account.type !== "TokenAccount") return undefined;
+
+  const state = tokenStateFor(account, parentAccount);
+  if (!state) return "unverified";
+  if (state.paused === true) return "paused";
+
+  switch (state.transferStatus) {
+    case "allowed":
+      return undefined;
+    case "unknown":
+      return "unverified";
+    case "notAllowed":
+      return "notAllowed";
+    case "denied":
+      return "denied";
+    case "blocked":
+      return "notPermitted";
+    default:
+      return unnamedRefusal(state.transferStatus);
+  }
+}
 
 /**
  * Every value is JSON-safe, so the runtime and raw shapes coincide; they are
