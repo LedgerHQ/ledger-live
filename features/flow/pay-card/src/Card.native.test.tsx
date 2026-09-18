@@ -32,6 +32,10 @@ jest.mock("@features/flow-pay-card-assets", () => ({
   useCardWalletsTotal: () => mockUseWalletsTotal(),
 }));
 
+jest.mock("@features/flow-pay-card-widget/native", () => ({
+  AddToWalletCtaWithBottomSheet: () => <View testID="card-add-to-wallet-cta" />,
+}));
+
 import { Card } from "./Card";
 
 function renderCard(card: React.ReactElement) {
