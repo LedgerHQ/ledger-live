@@ -19,8 +19,9 @@ Each app mounts a `<WalletSyncProvider>` near the root (LWD `renderer/Default.ts
 3. returns `{ visualPending, walletSyncError, onUserRefresh }` via context
    (`useWalletSyncUserState()`), consumed by the UI (refresh button, error badge).
 
-The loop only runs when the feature flag is on and `trustchain` + `memberCredentials` exist;
-the returned `unsubscribe` tears it down on unmount / dependency change.
+The loop only runs when the feature flag is on, `trustchain` + `memberCredentials` exist, wallet
+persistence is hydrated, and the persisted cursor is tagged for the active Trustchain environment.
+The returned `unsubscribe` tears it down on unmount / dependency change.
 
 ```mermaid
 flowchart TB
@@ -30,7 +31,7 @@ flowchart TB
     end
     subgraph redux["Redux store"]
         accounts["accounts (state.accounts[.active])"]
-        wallet["wallet slice<br/>accountNames · nonImportedAccountInfos<br/>walletSyncState { data, version } · recentAddresses"]
+        wallet["wallet slice<br/>accountNames · nonImportedAccountInfos<br/>walletSyncState { data, version, environment } · recentAddresses"]
     end
     subgraph loop["Watch loop (live-wallet)"]
         wl["createWalletSyncWatchLoop"]
@@ -82,6 +83,12 @@ UI via selectors; they are not part of the `Account` object itself.
 apiBaseUrl }`, where `name` is the user-set instance name and the URLs come from the feature
 flag's `environment` param. `useCloudSyncSDK` builds `new CloudSyncSDK({ slug: "live", schema:
 walletsync.schema, trustchainSdk, getCurrentVersion, saveNewUpdate })`.
+
+`trustchain.environment` is the active session environment. The optional environment on
+`walletSyncState` records only which backend produced that cursor. After wallet persistence is
+hydrated, the SDK layout effect reconciles both values: an untagged cursor adopts the active
+environment, a matching cursor is retained, and a tagged mismatch becomes
+`{ data: null, version: 0, environment }`. The watch loop is blocked until this completes.
 
 A `trustchainLifecycle` implementing the `onTrustchainRotation` hook is passed to the SDK so
 that, on a [key rotation](./02-trustchain-sdk.md#key-rotation-on-member-removal), the Cloud Sync

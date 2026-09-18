@@ -2,7 +2,7 @@ import { combineReducers, type Dispatch } from "@reduxjs/toolkit";
 import { accountNamesSlice, initFromUserData } from "@domain/entity-account-name";
 import { setContacts, type ContactsState } from "@domain/entity-contact";
 import { starredAccountsSlice, initStarredFromIds } from "@domain/entity-starred-account";
-import { walletSyncSlice, walletSyncUpdate, type WSState } from "@domain/entity-wallet-sync";
+import { importWalletSyncState, walletSyncSlice, type WSState } from "@domain/entity-wallet-sync";
 import {
   nonImportedAccountsSlice,
   setNonImportedAccounts,
@@ -74,7 +74,7 @@ export const importWalletState =
       dispatch(initStarredFromIds(payload.accountsData.starredAccountIds));
     }
     if (payload.walletSyncState !== undefined) {
-      dispatch(walletSyncUpdate(payload.walletSyncState));
+      dispatch(importWalletSyncState(payload.walletSyncState));
     }
     if (payload.nonImportedAccountInfos !== undefined) {
       dispatch(setNonImportedAccounts(payload.nonImportedAccountInfos));

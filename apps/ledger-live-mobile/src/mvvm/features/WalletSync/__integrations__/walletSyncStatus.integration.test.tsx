@@ -37,10 +37,14 @@ describe("WalletSyncStatus", () => {
           },
           trustchain: {
             ...state.trustchain,
-            trustchain: {
-              rootId: "rootId",
-              applicationPath: "applicationPath",
-              walletSyncEncryptionKey: "walletSyncEncryptionKey",
+            environment: "STAGING",
+            STAGING: {
+              trustchain: {
+                rootId: "rootId",
+                applicationPath: "applicationPath",
+                walletSyncEncryptionKey: "walletSyncEncryptionKey",
+              },
+              memberCredentials: null,
             },
           },
         }),

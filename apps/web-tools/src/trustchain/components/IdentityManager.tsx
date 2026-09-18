@@ -1,7 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { TrustchainSDKContext } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { TrustchainStore, getInitialStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  INITIAL_TRUSTCHAIN_STORE,
+  TrustchainStore,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 
 export function memberNameForPubKey(pubkey: string): string {
   return "debug-" + pubkey.slice(2, 8);
@@ -114,7 +117,7 @@ export function IdentityManager({
 
   const onSelectIdentity = useCallback(
     (pubkey?: string) => {
-      setState((pubkey && identities[pubkey]) || getInitialStore());
+      setState((pubkey && identities[pubkey]) || INITIAL_TRUSTCHAIN_STORE);
     },
     [identities, setState],
   );

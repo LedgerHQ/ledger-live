@@ -1,8 +1,12 @@
 import { readFile, writeFile } from "node:fs/promises";
 import invariant from "invariant";
+import {
+  TRUSTCHAIN_STORE_VERSION,
+  trustchainStorageKey,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { activateLedgerSync } from "../speculos";
 import { ledgerKeyRingProtocol, ledgerSync, restoreTrustchain } from "./cli";
-import { cloudSyncApiBaseUrl, trustchainApiBaseUrl } from "./environment";
+import { cloudSyncApiBaseUrl, ledgerSyncEnvironment, trustchainApiBaseUrl } from "./environment";
 import type { LedgerSyncAccountDescriptor } from "./testData";
 
 interface LedgerKeyRingProtocolArgs {
@@ -280,7 +284,8 @@ export class LedgerSyncCliHelper {
     const userdata = JSON.parse(await readFile(userdataPath, "utf-8"));
     userdata.data = {
       ...userdata.data,
-      trustchain: {
+      [trustchainStorageKey[ledgerSyncEnvironment]]: {
+        version: TRUSTCHAIN_STORE_VERSION,
         trustchain: { rootId, walletSyncEncryptionKey, applicationPath },
         memberCredentials: { pubkey: pubKey, privatekey: privateKey },
       },

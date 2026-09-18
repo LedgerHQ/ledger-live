@@ -61,9 +61,13 @@ const INITIAL_STATE = withFlagOverrides(
     },
     trustchain: {
       ...state.trustchain,
-      memberCredentials: {
-        privatekey: "mock-private-key",
-        pubkey: "mock-public-key",
+      environment: "STAGING",
+      STAGING: {
+        trustchain: null,
+        memberCredentials: {
+          privatekey: "mock-private-key",
+          pubkey: "mock-public-key",
+        },
       },
     },
   }),

@@ -12,12 +12,16 @@ export function useTrustchainDevToolProps(
   setUseProd?: (v: boolean) => void,
 ): TrustchainDevToolProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const trustchain = useSelector((s: any) => s.trustchain?.trustchain ?? null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const memberCredentials = useSelector((s: any) => s.trustchain?.memberCredentials ?? null);
+  const trustchainStore = useSelector((state: any) => {
+    const trustchainState = state.trustchain;
+    return trustchainState?.[trustchainState.environment ?? "PROD"] ?? null;
+  });
 
   return {
-    liveState: { trustchain, memberCredentials },
+    liveState: {
+      trustchain: trustchainStore?.trustchain ?? null,
+      memberCredentials: trustchainStore?.memberCredentials ?? null,
+    },
     createSdk,
     trustchainApiBaseUrl,
     useProd,

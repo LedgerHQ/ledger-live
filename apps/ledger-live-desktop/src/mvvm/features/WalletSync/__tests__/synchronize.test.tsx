@@ -41,11 +41,14 @@ describe("Synchronize flow", () => {
       initialState: {
         walletSync: walletSyncActivatedState,
         trustchain: {
-          trustchain: simpleTrustChain,
-          memberCredentials: {
-            pubkey: "pubkey",
-            privatekey: "privatekey",
+          PROD: {
+            trustchain: simpleTrustChain,
+            memberCredentials: {
+              pubkey: "pubkey",
+              privatekey: "privatekey",
+            },
           },
+          STAGING: null,
         },
       },
       userEventOptions: { advanceTimers: jest.advanceTimersByTime },

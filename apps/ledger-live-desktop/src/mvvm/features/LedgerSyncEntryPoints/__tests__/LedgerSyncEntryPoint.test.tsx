@@ -325,12 +325,15 @@ describe("LedgerSyncEntryPoint", () => {
         initialState: {
           ...INITIAL_STATE,
           trustchain: {
-            trustchain: {
-              rootId: "fake-root-id",
-              applicationPath: "0/0",
-              walletSyncEncryptionKey: "",
+            ...INITIAL_STATE.trustchain,
+            STAGING: {
+              trustchain: {
+                rootId: "fake-root-id",
+                applicationPath: "0/0",
+                walletSyncEncryptionKey: "",
+              },
+              memberCredentials: null,
             },
-            memberCredentials: null,
           },
         },
       });

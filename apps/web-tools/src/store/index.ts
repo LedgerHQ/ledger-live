@@ -6,15 +6,17 @@ import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { calApiExtra } from "@shared/api-services";
 import { getEnv } from "@shared/env";
 import {
-  trustchainHandlers,
   getInitialStore,
-  type TrustchainStore,
+  importTrustchainStoreState,
+  setLkrpEnvironment,
+  trustchainHandlers,
+  type TrustchainState,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 function trustchainReducer(
-  state: TrustchainStore = getInitialStore(),
+  state: TrustchainState = getInitialStore(),
   action: UnknownAction,
-): TrustchainStore {
+): TrustchainState {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handler = (trustchainHandlers as any)[action.type];
   return handler ? handler(state, action) : state;
@@ -40,6 +42,9 @@ export const store = configureStore({
       .prepend(sleepingListener.middleware)
       .concat(createFeatureFlagsMiddleware({ resolutionConfig: {} }), cryptoAssetsApi.middleware),
 });
+
+store.dispatch(importTrustchainStoreState());
+store.dispatch(setLkrpEnvironment("STAGING"));
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

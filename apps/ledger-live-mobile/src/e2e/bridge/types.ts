@@ -3,7 +3,7 @@ import { DescriptorEventType } from "@ledgerhq/hw-transport";
 import { AccountRaw, type PostOnboardingState } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BleState, SettingsState } from "~/reducers/types";
-import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import type { PersistedTrustchainState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Subject, Observable } from "rxjs";
 
 import { ConnectAppEvent } from "@ledgerhq/live-common/hw/connectApp";
@@ -85,7 +85,7 @@ export type MessageData =
         version: number;
       }[];
     }
-  | { type: "importTrustchain"; id: string; payload: TrustchainStore }
+  | { type: "importTrustchain"; id: string; payload: Partial<PersistedTrustchainState> }
   | { type: "importBle"; id: string; payload: BleState }
   | { type: "importPostOnboarding"; id: string; payload: Partial<PostOnboardingState> }
   | { type: "overrideFeatureFlags"; id: string; payload: PartialFeatures }

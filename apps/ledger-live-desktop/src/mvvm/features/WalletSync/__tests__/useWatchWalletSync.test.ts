@@ -15,10 +15,20 @@ const INITIAL_STATE = {
     instances: INSTANCES,
   },
   trustchain: {
-    trustchain: simpleTrustChain,
-    memberCredentials: {
-      pubkey: "currentInstance",
-      privatekey: "privatekey",
+    environment: "STAGING" as const,
+    PROD: null,
+    STAGING: {
+      trustchain: simpleTrustChain,
+      memberCredentials: {
+        pubkey: "currentInstance",
+        privatekey: "privatekey",
+      },
+    },
+  },
+  wallet: {
+    walletSync: {
+      walletSyncState: { data: null, version: 0, environment: "STAGING" as const },
+      isHydrated: true,
     },
   },
   ...withFlagOverrides(lldWalletSyncFeatureFlag),
@@ -55,6 +65,44 @@ describe("useWatchWalletSync", () => {
 
     expect(store.getState().featureFlags.overrides.lldWalletSync?.enabled).toBe(true);
     expect(result.current.visualPending).toBe(true);
+    expect(result.current.walletSyncError).toBe(null);
+  });
+
+  it("should not run ledger sync watch loop before wallet hydration", async () => {
+    const { result } = renderHook(() => useWatchWalletSync(), {
+      initialState: {
+        ...INITIAL_STATE,
+        wallet: {
+          walletSync: {
+            ...INITIAL_STATE.wallet.walletSync,
+            isHydrated: false,
+          },
+        },
+      },
+    });
+
+    expect(result.current.visualPending).toBe(false);
+    expect(result.current.walletSyncError).toBe(null);
+  });
+
+  it("should not run ledger sync watch loop with a cursor from another environment", async () => {
+    const { result } = renderHook(() => useWatchWalletSync(), {
+      initialState: {
+        ...INITIAL_STATE,
+        wallet: {
+          walletSync: {
+            ...INITIAL_STATE.wallet.walletSync,
+            walletSyncState: {
+              data: null,
+              version: 0,
+              environment: "PROD",
+            },
+          },
+        },
+      },
+    });
+
+    expect(result.current.visualPending).toBe(false);
     expect(result.current.walletSyncError).toBe(null);
   });
 

@@ -116,8 +116,12 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 
   // Written by LedgerSyncCliHelper.saveTrustchainToUserdata, so the app boots already a member
   // of the trustchain the CLI created and skips the in-app activation flow.
-  if (data.trustchain) {
-    postMessage({ type: "importTrustchain", id: uniqueId(), payload: data.trustchain });
+  if (data.trustchain || data.trustchainStaging) {
+    postMessage({
+      type: "importTrustchain",
+      id: uniqueId(),
+      payload: { PROD: data.trustchain, STAGING: data.trustchainStaging },
+    });
   }
 
   if (data.postOnboarding) {

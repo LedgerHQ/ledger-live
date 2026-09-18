@@ -7,6 +7,7 @@ import {
   setTrustchain,
   setMemberCredentials,
   resetTrustchainStore,
+  setLkrpEnvironment,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { DevTools, type DevToolsConfig } from "@devtools/shell";
@@ -86,13 +87,21 @@ export default function DevToolsPage() {
     [dispatch],
   );
 
+  const setUseProd = useCallback(
+    (useProd: boolean) => {
+      dispatch(setLkrpEnvironment(useProd ? "PROD" : "STAGING"));
+      prodToggle.setUseProd(useProd);
+    },
+    [dispatch, prodToggle],
+  );
+
   const trustchainProps = useTrustchainDevToolProps(
     createTrustchainSdk,
     prodToggle.trustchainApiBaseUrl,
     onTrustchainChange,
     onMemberCredentialsChange,
     prodToggle.useProd,
-    prodToggle.setUseProd,
+    setUseProd,
   );
 
   const cloudSyncProps = useCloudSyncDevToolProps(
@@ -100,7 +109,7 @@ export default function DevToolsPage() {
     prodToggle.cloudSyncApiBaseUrl,
     prodToggle.trustchainApiBaseUrl,
     prodToggle.useProd,
-    prodToggle.setUseProd,
+    setUseProd,
   );
 
   const config: DevToolsConfig = useMemo(

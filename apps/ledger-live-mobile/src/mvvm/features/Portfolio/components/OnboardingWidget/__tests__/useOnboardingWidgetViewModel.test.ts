@@ -90,7 +90,13 @@ describe("useOnboardingWidgetViewModel", () => {
     const { result } = renderHook(() => useOnboardingWidgetViewModel(), {
       overrideInitialState: s => ({
         ...s,
-        trustchain: { ...s.trustchain, trustchain: minimalTrustchain },
+        trustchain: {
+          ...s.trustchain,
+          PROD: {
+            trustchain: minimalTrustchain,
+            memberCredentials: null,
+          },
+        },
       }),
     });
 

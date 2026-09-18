@@ -65,6 +65,7 @@ type DatabaseValues = {
   postOnboarding: PostOnboarding;
   settings: Settings;
   trustchain: TrustchainStore;
+  trustchainStaging: TrustchainStore | null;
   wallet: ExportedWalletState;
   market: Market;
   marketBanner: MarketBanner;

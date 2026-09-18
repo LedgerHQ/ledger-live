@@ -48,10 +48,12 @@ describe("ManageInstances", () => {
         },
         trustchain: {
           ...state.trustchain,
-          trustchain,
-          memberCredentials: {
-            privatekey: "privatekey",
-            pubkey: "pubkey",
+          PROD: {
+            trustchain,
+            memberCredentials: {
+              privatekey: "privatekey",
+              pubkey: "pubkey",
+            },
           },
         },
       }),
@@ -88,10 +90,12 @@ describe("ManageInstances", () => {
         },
         trustchain: {
           ...state.trustchain,
-          trustchain,
-          memberCredentials: {
-            privatekey: "privatekey",
-            pubkey: "currentInstance",
+          PROD: {
+            trustchain,
+            memberCredentials: {
+              privatekey: "privatekey",
+              pubkey: "currentInstance",
+            },
           },
         },
       }),
@@ -140,10 +144,12 @@ describe("ManageInstances", () => {
         },
         trustchain: {
           ...state.trustchain,
-          trustchain,
-          memberCredentials: {
-            privatekey: "privatekey",
-            pubkey: "currentInstance",
+          PROD: {
+            trustchain,
+            memberCredentials: {
+              privatekey: "privatekey",
+              pubkey: "currentInstance",
+            },
           },
         },
       }),

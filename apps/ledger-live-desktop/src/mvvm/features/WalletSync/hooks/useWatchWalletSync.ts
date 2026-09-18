@@ -27,6 +27,7 @@ import {
   latestDistantVersionSelector,
 } from "~/renderer/reducers/wallet";
 import {
+  lkrpEnvironmentSelector,
   memberCredentialsSelector,
   resetTrustchainStore,
   trustchainSelector,
@@ -147,6 +148,13 @@ export function useWatchWalletSync(): WalletSyncUserState {
   const walletsync = useWalletsync();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
+  const trustchainEnvironment = useSelector(lkrpEnvironmentSelector);
+  const isWalletSyncStateHydrated = useSelector(
+    state => state.wallet.walletSync.isHydrated ?? false,
+  );
+  const cursorEnvironment = useSelector(
+    state => state.wallet.walletSync.walletSyncState.environment,
+  );
   const trustchainSdk = useTrustchainSdk();
   const walletSyncSdk = useCloudSyncSDK();
   const onTrustchainRefreshNeeded = useOnTrustchainRefreshNeeded(trustchainSdk, memberCredentials);
@@ -177,7 +185,13 @@ export function useWatchWalletSync(): WalletSyncUserState {
 
   // pull and push wallet sync loop
   useEffect(() => {
-    const canNotRunWatchLoop = !featureWalletSync?.enabled || !trustchain || !memberCredentials;
+    const canNotRunWatchLoop =
+      !featureWalletSync?.enabled ||
+      !trustchain ||
+      !memberCredentials ||
+      !isWalletSyncStateHydrated ||
+      !trustchainEnvironment ||
+      cursorEnvironment !== trustchainEnvironment;
     if (canNotRunWatchLoop) {
       onUserRefreshRef.current = noop;
       setVisualPending(false);
@@ -219,6 +233,9 @@ export function useWatchWalletSync(): WalletSyncUserState {
     walletSyncSdk,
     trustchain,
     memberCredentials,
+    isWalletSyncStateHydrated,
+    trustchainEnvironment,
+    cursorEnvironment,
     onTrustchainRefreshNeeded,
     saveUpdate,
     featureWalletSync,

@@ -14,10 +14,9 @@ import market, { MarketState } from "./market";
 import marketBanner, { MarketBannerState } from "./marketBanner";
 import wallet from "./wallet";
 import type { WalletState } from "./wallet";
-import { authEnvironmentReducer, type AuthEnvironmentState } from "@shared/auth";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
-import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { TrustchainState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@shared/env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import modularDialog, { ModularDialogState } from "./modularDialog";
@@ -81,7 +80,6 @@ export type State = LLDRTKApiState & {
   featureFlags: FeatureFlagsState;
   history: HistoryState;
   identities: IdentitiesState;
-  authEnvironment: AuthEnvironmentState;
   market: MarketState;
   marketBanner: MarketBannerState;
   modals: ModalsState;
@@ -90,7 +88,7 @@ export type State = LLDRTKApiState & {
   onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
   settings: SettingsState;
-  trustchain: TrustchainStore;
+  trustchain: TrustchainState;
   UI: UIState;
   wallet: WalletState;
   walletSync: WalletSyncState;
@@ -127,7 +125,6 @@ const appReducer = combineReducers({
   featureFlags,
   history,
   identities: identitiesSlice.reducer,
-  authEnvironment: authEnvironmentReducer,
   modals,
   modularDialog,
   sendFlow,

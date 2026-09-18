@@ -7,7 +7,7 @@ import pick from "lodash/pick";
 import fs from "fs/promises";
 import { getEnv } from "@shared/env";
 import { NoDBPathGiven, DBWrongPassword } from "../../errors";
-import { INITIAL_STATE as trustchainInitialState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { INITIAL_TRUSTCHAIN_STORE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   exportWalletState,
   initialState as walletInitialState,
@@ -60,6 +60,7 @@ const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "postOnboarding",
   "settings",
   "trustchain",
+  "trustchainStaging",
   "wallet",
   "market",
   "marketBanner",
@@ -156,15 +157,18 @@ async function reload() {
 const encryptedDataPaths = [
   ["app", "accounts"],
   ["app", "trustchain"],
+  ["app", "trustchainStaging"],
   ["app", "wallet"],
 ] as const;
 
 type EncryptedAppKeyPath = (typeof encryptedDataPaths)[number][1];
+const OPTIONAL_ENCRYPTED_PATHS: ReadonlySet<EncryptedAppKeyPath> = new Set(["trustchainStaging"]);
 
 // Empty payloads encrypted when password lock is enabled before any account exists.
 const ENCRYPTION_PATH_DEFAULTS: Record<EncryptedAppKeyPath, unknown> = {
   accounts: [],
-  trustchain: trustchainInitialState,
+  trustchain: INITIAL_TRUSTCHAIN_STORE,
+  trustchainStaging: null,
   wallet: exportWalletState({ wallet: walletInitialState, contacts: contactsInitialState }),
 };
 
@@ -177,7 +181,7 @@ for (const [, keyPath] of encryptedDataPaths) {
 function ensureEncryptedPathInMemory(ns: string, keyPath: EncryptedAppKeyPath): void {
   const memory = memoryNamespaces[ns]!;
   const current = get(memory, keyPath);
-  if (current === undefined || current === null) {
+  if ((current === undefined || current === null) && !OPTIONAL_ENCRYPTED_PATHS.has(keyPath)) {
     set(memory, keyPath, ENCRYPTION_PATH_DEFAULTS[keyPath]);
   }
 }
@@ -316,6 +320,11 @@ async function hasBeenDecrypted(): Promise<boolean> {
  */
 function buildAppNamespacePayload(memory: Record<string, unknown>): Record<string, unknown> {
   const payload = pick(memory, [...APP_NAMESPACE_ALLOWED_KEY_PATHS]) as Record<string, unknown>;
+  for (const keyPath of OPTIONAL_ENCRYPTED_PATHS) {
+    if (payload[keyPath] === undefined || payload[keyPath] === null) {
+      delete payload[keyPath];
+    }
+  }
   for (const [legacyKey, { replacedBy }] of Object.entries(APP_NAMESPACE_KEEP_LEGACY)) {
     if (payload[replacedBy] === undefined && memory[legacyKey] !== undefined) {
       payload[legacyKey] = memory[legacyKey];
@@ -347,7 +356,11 @@ async function saveToDisk(ns: string) {
         const encryptionKey = namespacedEncryptionKeys[keyPath];
         if (!encryptionKey) continue; // eslint-disable-line no-continue
         const val = get(clone, keyPath);
-        const payload = val ?? ENCRYPTION_PATH_DEFAULTS[keyPath as EncryptedAppKeyPath];
+        const encryptedKeyPath = keyPath as EncryptedAppKeyPath;
+        if ((val === undefined || val === null) && OPTIONAL_ENCRYPTED_PATHS.has(encryptedKeyPath)) {
+          continue;
+        }
+        const payload = val ?? ENCRYPTION_PATH_DEFAULTS[encryptedKeyPath];
         if (val === undefined || val === null) {
           set(memory, keyPath, payload);
         }

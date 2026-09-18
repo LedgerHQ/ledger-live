@@ -1,6 +1,6 @@
 import {
   getInitialStore,
-  TrustchainStore,
+  TrustchainState,
   trustchainHandlers,
   TrustchainHandlersPayloads,
   TrustchainHandlers,
@@ -8,6 +8,6 @@ import {
 import { handleActions } from "redux-actions";
 
 export default handleActions<
-  TrustchainStore,
+  TrustchainState,
   TrustchainHandlersPayloads[keyof TrustchainHandlersPayloads]
 >(trustchainHandlers as unknown as TrustchainHandlers<false>, getInitialStore());

@@ -27,7 +27,11 @@ import {
   type PersistedKnownDevicesState,
 } from "./reducers/knownDevices";
 import type { FeatureFlagsState } from "@shared/feature-flags";
-import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  trustchainStorageKey,
+  type LkrpEnvironment,
+  type TrustchainStore,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "~/reducers/wallet";
 import { type PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
@@ -328,12 +332,17 @@ export async function savePayCardState(obj: PayCardPersistedState): Promise<void
   await storage.save("payCard", obj);
 }
 
-export function getTrustchainState(): Promise<TrustchainStore> {
-  return storage.get("trustchain") as Promise<TrustchainStore>;
+export function getTrustchainState(
+  environment: LkrpEnvironment,
+): Promise<TrustchainStore | undefined> {
+  return storage.get(trustchainStorageKey[environment]) as Promise<TrustchainStore | undefined>;
 }
 
-export async function saveTrustchainState(obj: TrustchainStore): Promise<void> {
-  await storage.save("trustchain", obj);
+export async function saveTrustchainState(
+  environment: LkrpEnvironment,
+  obj: TrustchainStore,
+): Promise<void> {
+  await storage.save(trustchainStorageKey[environment], obj);
 }
 
 export async function getWalletExportState(): Promise<ExportedWalletState> {

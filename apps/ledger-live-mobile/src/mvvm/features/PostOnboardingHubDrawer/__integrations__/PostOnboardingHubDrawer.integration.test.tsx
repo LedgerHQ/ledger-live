@@ -73,10 +73,13 @@ function openedDrawerWithLedgerSyncState(state: State): State {
     ...openedDrawerState(state),
     trustchain: {
       ...state.trustchain,
-      trustchain: {
-        rootId: "rootId",
-        applicationPath: "applicationPath",
-        walletSyncEncryptionKey: "walletSyncEncryptionKey",
+      PROD: {
+        trustchain: {
+          rootId: "rootId",
+          applicationPath: "applicationPath",
+          walletSyncEncryptionKey: "walletSyncEncryptionKey",
+        },
+        memberCredentials: null,
       },
     },
   };

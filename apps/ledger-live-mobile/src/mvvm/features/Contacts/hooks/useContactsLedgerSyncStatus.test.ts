@@ -30,13 +30,16 @@ function renderContactsLedgerSyncStatus({
         ...s,
         trustchain: {
           ...s.trustchain,
-          trustchain: rootId
-            ? {
-                rootId,
-                applicationPath: "applicationPath",
-                walletSyncEncryptionKey: "walletSyncEncryptionKey",
-              }
-            : null,
+          PROD: {
+            trustchain: rootId
+              ? {
+                  rootId,
+                  applicationPath: "applicationPath",
+                  walletSyncEncryptionKey: "walletSyncEncryptionKey",
+                }
+              : null,
+            memberCredentials: null,
+          },
         },
       }),
     ),

@@ -51,8 +51,11 @@ jest.mock("../hooks/useTrustchainSdk", () => ({
 
 const initialState = {
   trustchain: {
-    trustchain: mockTrustchain,
-    memberCredentials: { pubkey: "pk", privatekey: "sk" },
+    PROD: {
+      trustchain: mockTrustchain,
+      memberCredentials: { pubkey: "pk", privatekey: "sk" },
+    },
+    STAGING: null,
   },
   settings: INITIAL_STATE_SETTINGS,
 };

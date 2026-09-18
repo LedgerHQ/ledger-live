@@ -23,8 +23,11 @@ jest.mock("../hooks/walletSync.hooks", () => ({
 
 const initialStateWithTrustchain = {
   trustchain: {
-    trustchain: simpleTrustChain,
-    memberCredentials: { pubkey: "pk", privatekey: "sk" },
+    PROD: {
+      trustchain: simpleTrustChain,
+      memberCredentials: { pubkey: "pk", privatekey: "sk" },
+    },
+    STAGING: null,
   },
 };
 

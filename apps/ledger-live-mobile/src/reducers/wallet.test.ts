@@ -1,5 +1,6 @@
 import { setContacts } from "@domain/entity-contact";
 import { mockContact, mockEmptyContacts } from "@domain/entity-contact/schema.mock";
+import { importWalletSyncState, type WSState } from "@domain/entity-wallet-sync";
 import {
   exportWalletState,
   importWalletState,
@@ -33,5 +34,36 @@ describe("wallet persistence", () => {
     importWalletState({ contacts: contacts.contacts })(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(setContacts(contacts.contacts));
+  });
+
+  it("restores the complete persisted Wallet Sync cursor", () => {
+    const dispatch = jest.fn();
+    const walletSyncState: WSState = {
+      data: { accounts: [] },
+      version: 3,
+      environment: "STAGING",
+    };
+
+    importWalletState({ walletSyncState })(dispatch);
+
+    expect(dispatch).toHaveBeenCalledWith(importWalletSyncState(walletSyncState));
+  });
+
+  it("exports cursor provenance without transient hydration state", () => {
+    const walletSyncState: WSState = {
+      data: { accounts: [] },
+      version: 3,
+      environment: "STAGING",
+    };
+    const exported = exportWalletState({
+      wallet: {
+        ...INITIAL_STATE,
+        walletSync: { walletSyncState, isHydrated: true },
+      },
+      contacts,
+    });
+
+    expect(exported.walletSyncState).toEqual(walletSyncState);
+    expect(exported).not.toHaveProperty("isHydrated");
   });
 });
