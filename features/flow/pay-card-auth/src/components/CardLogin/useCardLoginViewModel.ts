@@ -89,6 +89,7 @@ export function useCardLoginViewModel({
   oauthConfig,
   callback,
   onTrackEvent,
+  requestProtection,
 }: CardLoginViewModelParams): CardLoginViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch<CardLoginDispatch>();
@@ -137,15 +138,31 @@ export function useCardLoginViewModel({
       snapshot.value === "authError" ||
       snapshot.value === "userFetchError");
 
+  // Both ways to Baanx go through here: signing up and logging in alike need the app protected
+  // first, and a host that declines leaves the card where it was rather than carrying on.
+  const whenProtected = useCallback(
+    async () => !requestProtection || (await requestProtection()),
+    [requestProtection],
+  );
+
   const startLogin = useCallback(() => {
     setHasSignupFailed(false);
-    send({ type: "LOGIN" });
-  }, [send]);
+
+    void (async () => {
+      if (await whenProtected()) {
+        send({ type: "LOGIN" });
+      }
+    })();
+  }, [send, whenProtected]);
 
   const openSignup = useCallback(() => {
     setHasSignupFailed(false);
 
     void (async () => {
+      if (!(await whenProtected())) {
+        return;
+      }
+
       try {
         if (openHostedPage) {
           await openHostedPage(SIGNUP_PATH);
@@ -156,7 +173,7 @@ export function useCardLoginViewModel({
         setHasSignupFailed(true);
       }
     })();
-  }, [openHostedPage, openHostedLogin, oauthConfig]);
+  }, [openHostedPage, openHostedLogin, oauthConfig, whenProtected]);
 
   const trackCta = useCallback(
     (button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {

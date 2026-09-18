@@ -1656,6 +1656,28 @@
         "cta": "Got it"
       }
     },
+    "enableProtection": {
+      "biometrics": {
+        "title": "Enable {{biometricsType}}",
+        "description": "The crypto card requires {{biometricsType}}. You'll use it each time you open the app.",
+        "cta": "Enable {{biometricsType}}"
+      },
+      "password": {
+        "title": "Create a password",
+        "description": "The crypto card requires a password. You'll use it each time you open the app.",
+        "cta": "Create password"
+      }
+    },
+    "protectionEnabled": {
+      "biometrics": {
+        "title": "{{biometricsType}} enabled"
+      },
+      "password": {
+        "title": "Password created"
+      },
+      "description": "You can now sign up to get a card",
+      "cta": "Continue"
+    },
     "biometrics": {
       "title": "{{biometricsType}}",
       "desc": "Unlock the app with {{biometricsType}}.",

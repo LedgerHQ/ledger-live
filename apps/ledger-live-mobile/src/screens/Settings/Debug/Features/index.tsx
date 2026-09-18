@@ -15,6 +15,7 @@ import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/type
 import { FeatureToggle } from "@features/platform-feature-flags";
 import { InitialRange } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import InfoModal from "~/modals/Info";
+import { ProtectionPromptDebugRow } from "LLM/features/AppLock/components/ProtectionPromptDebugRow";
 
 const OS_UPDATE_BANNER_OPTIONS: { value: DebugOsUpdateBannerMode; label: string }[] = [
   { value: "off", label: "Off" },
@@ -35,6 +36,7 @@ export default function Features() {
   };
   return (
     <SettingsNavigationScrollView>
+      <ProtectionPromptDebugRow />
       <SettingsRow
         title="Start Tour"
         desc="Open Product Tour, Q2, and Q3 debug drawers"
