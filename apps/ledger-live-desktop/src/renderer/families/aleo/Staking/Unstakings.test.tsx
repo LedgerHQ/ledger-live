@@ -131,11 +131,14 @@ describe("Unstakings", () => {
   });
 
   // The source is the protocol, not a validator: the chain does not record which validator the
-  // funds left, so naming the currently bonded one would name the wrong validator outright.
-  it("names the currency as the source of the funds, not a validator", () => {
+  // funds left, so naming the currently bonded one would name the wrong validator outright. It
+  // is the unit that names the coin — the currency drags its network in, as "Aleo (Testnet)".
+  it("names the coin as the source of the funds, not a validator", () => {
+    mockUseAccountUnit.mockReturnValue({ code: "ALEO", name: "Aleo coin", magnitude: 6 });
+
     renderRow();
 
-    expect(screen.getByText(ALEO_CLAIMABLE_ACCOUNT.currency.name)).toBeVisible();
+    expect(screen.getByText("Aleo coin")).toBeVisible();
   });
 
   // The whole entry is what leaves the account, claimable part included. Showing the locked part

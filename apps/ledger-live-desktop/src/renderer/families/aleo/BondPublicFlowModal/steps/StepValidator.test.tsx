@@ -157,10 +157,50 @@ describe("Aleo bond StepValidatorFooter", () => {
     expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
   });
 
+  // The footer renders alongside the step, before the bridge has built the first transaction.
+  it("blocks Continue before there is a transaction to read a recipient off", () => {
+    setup(StepValidatorFooter, { transaction: null });
+
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+  });
+
   it("blocks Continue while the bridge is still preparing", () => {
     setup(StepValidatorFooter, { bridgePending: true });
 
     expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+  });
+
+  it.each([
+    ["the list failed to load", { error: new Error("boom") }],
+    ["the list has not arrived yet", { loading: true }],
+  ])("blocks Continue on the default recipient while %s", (_, state) => {
+    mockUseAleoValidators.mockReturnValue({
+      validators: [],
+      loading: false,
+      error: null,
+      refetch: jest.fn(),
+      ...state,
+    });
+
+    setup(StepValidatorFooter);
+
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
+  });
+
+  it("allows Continue for a bonded account topping up, even with no list", () => {
+    mockUseAleoValidators.mockReturnValue({
+      validators: [],
+      loading: false,
+      error: new Error("boom"),
+      refetch: jest.fn(),
+    });
+
+    setup(StepValidatorFooter, {
+      account: bondedTo(OTHER.address),
+      transaction: makeAleoTransaction({ mode: "bond_public", recipient: OTHER.address }),
+    });
+
+    expect(screen.getByRole("button", { name: "Continue" })).not.toBeDisabled();
   });
 
   it("blocks Continue on a recipient error", () => {

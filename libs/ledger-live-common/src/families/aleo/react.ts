@@ -610,8 +610,11 @@ export function useAleoValidators(currency: CryptoCurrency): UseAleoValidatorsRe
   });
   const hasNoData = currentData === undefined;
 
+  // RTK Query freezes what it caches, so a picker sorting in place would throw on `currentData`.
+  const validators = useMemo(() => (currentData ? [...currentData] : NO_VALIDATORS), [currentData]);
+
   return {
-    validators: currentData ?? NO_VALIDATORS,
+    validators,
     loading: hasNoData && isFetching,
     error: hasNoData && error instanceof Error ? error : null,
     refetch,

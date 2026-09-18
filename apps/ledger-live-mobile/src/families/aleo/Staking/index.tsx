@@ -112,8 +112,7 @@ function Staking({ account }: Readonly<{ account: AleoAccount }>) {
         <Flex mt={position.hasBonded ? 3 : 0}>
           <AccountSectionLabel name={t("aleo.stake.unstaking")} />
           <StakingRow
-            label={label}
-            loading={position.validatorsLoading}
+            label={unit.name}
             amount={
               <CurrencyUnitValue
                 unit={unit}

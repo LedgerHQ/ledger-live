@@ -124,11 +124,11 @@ const Unstakings = ({ account, position }: Props) => {
       <Wrapper>
         <Column strong>
           <Box mr={2}>
-            <FirstLetterIcon label={account.currency.name} />
+            <FirstLetterIcon label={unit.name} />
           </Box>
           <Box style={{ minWidth: 0 }}>
             <ToolTip content={t("aleo.stake.unstaking.sourceTooltip")}>
-              <Ellipsis>{account.currency.name}</Ellipsis>
+              <Ellipsis>{unit.name}</Ellipsis>
             </ToolTip>
           </Box>
         </Column>
