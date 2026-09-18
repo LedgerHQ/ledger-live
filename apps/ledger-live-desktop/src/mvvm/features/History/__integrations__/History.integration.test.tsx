@@ -407,10 +407,12 @@ describe("History integration", () => {
     expect(await screen.findByText("STARBUCKS")).toBeVisible();
     expect(screen.queryByText("NETFLIX.COM")).not.toBeInTheDocument();
     const transaction = screen.getByTestId("card-history-column-transaction");
-    const value = screen.getByTestId("card-history-column-value");
+    const cashback = screen.getByTestId("card-history-column-cashback");
+    const funding = screen.getByTestId("card-history-column-funding");
     const amount = screen.getByTestId("card-history-column-amount");
-    expect(transaction.nextElementSibling).toBe(value);
-    expect(value.nextElementSibling).toBe(amount);
+    expect(transaction.nextElementSibling).toBe(cashback);
+    expect(cashback.nextElementSibling).toBe(funding);
+    expect(funding.nextElementSibling).toBe(amount);
     expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
   });
 

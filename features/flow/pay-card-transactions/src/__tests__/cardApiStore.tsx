@@ -43,16 +43,6 @@ const CARD_TRANSACTIONS_RESOURCES = {
   en: {
     translation: {
       payTab: {
-        card: {
-          assets: {
-            history: {
-              columns: {
-                amount: "Amount",
-                value: "Value",
-              },
-            },
-          },
-        },
         cardTransactions: {
           categories: CATEGORY_LABELS,
           title: SECTION_TITLE,
@@ -63,6 +53,7 @@ const CARD_TRANSACTIONS_RESOURCES = {
             unknownDate: "Date unavailable",
             columns: {
               transaction: "Transaction",
+              cashback: "Cashback",
               fundingSources: "Funding sources",
               amount: "Amount",
             },

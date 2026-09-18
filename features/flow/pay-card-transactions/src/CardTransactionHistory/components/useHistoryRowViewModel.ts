@@ -4,7 +4,6 @@ import { useTranslation } from "@shared/i18n";
 import type { CardTransactionFormatters, CardTransactionItem } from "../../types";
 import {
   formatCardTransactionTime,
-  formatFundingSourceForAsset,
   formatFundingSources,
   formatMerchantName,
   formatSignedAmount,
@@ -12,6 +11,9 @@ import {
 import type { HistoryRowViewProps } from "./types";
 
 const UNSUCCESSFUL_STATUSES = new Set<PayCardTransaction["status"]>(["DECLINED", "REVERTED"]);
+
+// The provider does not send per-transaction cashback yet, so the column reads as no value.
+const NO_CASHBACK = "—";
 
 function statusLabelToneFor(
   status: PayCardTransaction["status"],
@@ -24,7 +26,6 @@ function statusLabelToneFor(
 export function useHistoryRowViewModel(
   item: CardTransactionItem,
   formatters?: CardTransactionFormatters,
-  assetCode?: string,
 ): HistoryRowViewProps {
   const { t } = useTranslation();
   const { transaction, categoryLabel } = item;
@@ -36,9 +37,6 @@ export function useHistoryRowViewModel(
     const fundingSources = transaction.fundingSources;
     const fundingAll = formatFundingSources(fundingSources, formatters?.amount);
     const hasMultipleFundingSources = (fundingSources?.length ?? 0) > 1;
-    const cryptoAmount = assetCode
-      ? formatFundingSourceForAsset(fundingSources, assetCode, formatters?.amount)
-      : fundingAll;
 
     return {
       id: transaction.id,
@@ -47,6 +45,7 @@ export function useHistoryRowViewModel(
       categoryLabel,
       status: transaction.status,
       time: timeLabel,
+      cashback: NO_CASHBACK,
       statusLabel: isUnsuccessful ? statusLabel : undefined,
       statusLabelTone: isUnsuccessful ? statusLabelToneFor(transaction.status) : undefined,
       fundingLabel: hasMultipleFundingSources
@@ -57,7 +56,6 @@ export function useHistoryRowViewModel(
         ? t("payTab.cardTransactions.history.columns.fundingSources")
         : undefined,
       amount: formatSignedAmount(transaction, formatters?.amount),
-      cryptoAmount,
     };
-  }, [assetCode, categoryLabel, formatters?.amount, t, transaction]);
+  }, [categoryLabel, formatters?.amount, t, transaction]);
 }

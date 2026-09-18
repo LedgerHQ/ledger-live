@@ -53,7 +53,5 @@ export function useCardHistoryViewModel(): CardHistoryViewModel {
     onTrackEvent,
     onGoToPay,
     filterTransaction,
-    assetCode: asset !== null ? assetCode : undefined,
-    columnSet: asset !== null ? "asset" : "card",
   };
 }

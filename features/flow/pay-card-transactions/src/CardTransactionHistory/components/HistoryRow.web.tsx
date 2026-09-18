@@ -15,15 +15,8 @@ import { StatusIcon } from "./StatusIcon";
 import { useHistoryRowViewModel } from "./useHistoryRowViewModel";
 import type { HistoryRowProps } from "./types";
 
-export function HistoryRow({
-  item,
-  formatters,
-  columnSet = "card",
-  assetCode,
-  onRowClick,
-}: HistoryRowProps) {
-  const row = useHistoryRowViewModel(item, formatters, assetCode);
-  const isAsset = columnSet === "asset";
+export function HistoryRow({ item, formatters, onRowClick }: HistoryRowProps) {
+  const row = useHistoryRowViewModel(item, formatters);
 
   return (
     <TableRow clickable onClick={() => onRowClick(item)} data-testid={`card-history-row-${row.id}`}>
@@ -47,44 +40,39 @@ export function HistoryRow({
           </TableCellContent>
         </TableCellItem>
       </TableCell>
-      {isAsset ? (
-        <TableCell align="end">
-          {row.cryptoAmount ? (
-            <TableCellItem align="end">
-              <TableCellContent>
-                <TableCellContentTitle>{row.cryptoAmount}</TableCellContentTitle>
-              </TableCellContent>
-            </TableCellItem>
-          ) : null}
-        </TableCell>
-      ) : (
-        <TableCell align="end">
-          {row.fundingLabel ? (
-            <TableCellItem align="end">
-              <TableCellContent>
-                <TableCellContentTitle className="inline-flex items-center justify-end gap-8">
-                  {row.fundingLabel}
-                  {row.fundingTooltip ? (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          type="button"
-                          className="inline-flex"
-                          aria-label={row.fundingTooltipAriaLabel}
-                          onClick={event => event.stopPropagation()}
-                        >
-                          <Information size={16} aria-hidden />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>{row.fundingTooltip}</TooltipContent>
-                    </Tooltip>
-                  ) : null}
-                </TableCellContentTitle>
-              </TableCellContent>
-            </TableCellItem>
-          ) : null}
-        </TableCell>
-      )}
+      <TableCell align="end">
+        <TableCellItem align="end">
+          <TableCellContent>
+            <TableCellContentTitle>{row.cashback}</TableCellContentTitle>
+          </TableCellContent>
+        </TableCellItem>
+      </TableCell>
+      <TableCell align="end">
+        {row.fundingLabel ? (
+          <TableCellItem align="end">
+            <TableCellContent>
+              <TableCellContentTitle className="inline-flex items-center justify-end gap-8">
+                {row.fundingLabel}
+                {row.fundingTooltip ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        className="inline-flex"
+                        aria-label={row.fundingTooltipAriaLabel}
+                        onClick={event => event.stopPropagation()}
+                      >
+                        <Information size={16} aria-hidden />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>{row.fundingTooltip}</TooltipContent>
+                  </Tooltip>
+                ) : null}
+              </TableCellContentTitle>
+            </TableCellContent>
+          </TableCellItem>
+        ) : null}
+      </TableCell>
       <TableCell align="end">
         <TableCellItem align="end">
           <TableCellContent>

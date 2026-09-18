@@ -8,8 +8,6 @@ import type { CardTransactionHistoryProps, CardTransactionHistoryViewProps } fro
 export function useCardTransactionHistoryViewModel({
   formatters,
   filterTransaction,
-  columnSet,
-  assetCode,
   onRowClick,
   formatDay,
   onGoToPay,
@@ -37,8 +35,6 @@ export function useCardTransactionHistoryViewModel({
   return {
     displayState,
     formatters,
-    columnSet,
-    assetCode,
     formatDay,
     onRowClick,
     onGoToPay,
