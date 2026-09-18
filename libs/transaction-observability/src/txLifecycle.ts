@@ -108,8 +108,6 @@ function failureClass(event: Extract<LogEvent, { status: "failure" }>): TxLifecy
     case ErrorCategory.Unknown:
       return "unknown";
   }
-
-  return "unknown";
 }
 
 export function toTxLifecyclePayload(
@@ -173,8 +171,13 @@ function earnApiBaseUrl(): string {
 
 const pendingLifecycle = new Map<string, TxLifecyclePayloadBase>();
 
-function lifecycleKey(payload: Pick<TxLifecyclePayloadBase, "path" | "platform">): string {
-  return `${payload.platform}:${payload.path}`;
+function lifecycleKey(
+  payload: Pick<TxLifecyclePayloadBase, "path" | "platform">,
+  manifestId?: string,
+): string {
+  return payload.path === "dapp"
+    ? `${payload.platform}:${payload.path}:${manifestId ?? "unknown"}`
+    : `${payload.platform}:${payload.path}`;
 }
 
 function lifecycleBase(payload: TxLifecyclePayload): TxLifecyclePayloadBase {
@@ -201,25 +204,7 @@ function sameLifecycleBase(left: TxLifecyclePayloadBase, right: TxLifecyclePaylo
   );
 }
 
-export function sendTxLifecycle(payload: TxLifecyclePayload): void {
-  const key = lifecycleKey(payload);
-  if (payload.event === "tx_intent") {
-    const next = lifecycleBase(payload);
-    const pending = pendingLifecycle.get(key);
-    if (pending && sameLifecycleBase(pending, next)) return;
-    if (pending?.path === "dapp" && pending.currency_family === "other") {
-      pendingLifecycle.set(key, next);
-      return;
-    }
-    if (pending) {
-      abandonPendingLifecycle(payload.platform, payload.path);
-    }
-    pendingLifecycle.set(key, next);
-  } else {
-    if (!pendingLifecycle.has(key)) return;
-    pendingLifecycle.delete(key);
-  }
-
+function postTxLifecycle(payload: TxLifecyclePayload): void {
   const baseUrl = earnApiBaseUrl();
   if (!baseUrl) return;
 
@@ -235,11 +220,12 @@ export function sendTxLifecycle(payload: TxLifecyclePayload): void {
   }
 }
 
-function abandonPendingLifecycle(platform: TxLifecyclePlatform, path: TxLifecyclePath): void {
-  const pending = pendingLifecycle.get(lifecycleKey({ platform, path }));
+function abandonPendingLifecycle(key: string): void {
+  const pending = pendingLifecycle.get(key);
   if (!pending) return;
 
-  sendTxLifecycle({
+  pendingLifecycle.delete(key);
+  postTxLifecycle({
     ...pending,
     event: "tx_terminal",
     outcome: "failure",
@@ -247,17 +233,50 @@ function abandonPendingLifecycle(platform: TxLifecyclePlatform, path: TxLifecycl
   });
 }
 
-export function abandonPendingDappTxLifecycle(platform: TxLifecyclePlatform): void {
-  abandonPendingLifecycle(platform, "dapp");
+export function sendTxLifecycle(payload: TxLifecyclePayload, manifestId?: string): void {
+  const key = lifecycleKey(payload, manifestId);
+  if (payload.event === "tx_intent") {
+    const next = lifecycleBase(payload);
+    const pending = pendingLifecycle.get(key);
+    const isDappPlaceholder = pending?.path === "dapp" && pending.currency_family === "other";
+
+    // A dApp sign observable may resubscribe without representing another user attempt.
+    if (pending?.path === "dapp" && sameLifecycleBase(pending, next)) return;
+
+    if (isDappPlaceholder) {
+      pendingLifecycle.set(key, next);
+    } else {
+      if (pending) abandonPendingLifecycle(key);
+      pendingLifecycle.set(key, next);
+    }
+  } else {
+    if (!pendingLifecycle.has(key)) return;
+    pendingLifecycle.delete(key);
+  }
+
+  postTxLifecycle(payload);
 }
 
-export function clearPendingDappTxLifecycle(platform: TxLifecyclePlatform): void {
-  pendingLifecycle.delete(lifecycleKey({ platform, path: "dapp" }));
+export function abandonPendingDappTxLifecycle(
+  platform: TxLifecyclePlatform,
+  manifestId: string,
+): void {
+  abandonPendingLifecycle(lifecycleKey({ platform, path: "dapp" }, manifestId));
+}
+
+export function clearPendingDappTxLifecycle(
+  platform: TxLifecyclePlatform,
+  manifestId: string,
+): void {
+  pendingLifecycle.delete(lifecycleKey({ platform, path: "dapp" }, manifestId));
 }
 
 export function clearPendingTxLifecycle(platform: TxLifecyclePlatform): void {
   pendingLifecycle.delete(lifecycleKey({ platform, path: "native" }));
-  pendingLifecycle.delete(lifecycleKey({ platform, path: "dapp" }));
+  const dappPrefix = `${platform}:dapp:`;
+  for (const key of pendingLifecycle.keys()) {
+    if (key.startsWith(dappPrefix)) pendingLifecycle.delete(key);
+  }
 }
 
 export function startDappTxLifecycle(
@@ -271,12 +290,15 @@ export function startDappTxLifecycle(
   // Every host sets this alongside the `LEDGER_CLIENT_VERSION` env read the sign events carry, so
   // the placeholder intent reports the same string as the terminal that closes it.
   const appVersion = readEnv("LEDGER_CLIENT_VERSION");
-  sendTxLifecycle({
-    schema_version: 1,
-    event: "tx_intent",
-    path: "dapp",
-    platform,
-    currency_family: "other",
-    ...(appVersion ? { app_version: appVersion } : {}),
-  });
+  sendTxLifecycle(
+    {
+      schema_version: 1,
+      event: "tx_intent",
+      path: "dapp",
+      platform,
+      currency_family: "other",
+      ...(appVersion ? { app_version: appVersion } : {}),
+    },
+    manifestId,
+  );
 }

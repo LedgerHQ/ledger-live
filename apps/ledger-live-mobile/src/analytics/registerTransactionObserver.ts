@@ -24,5 +24,11 @@ setTransactionObserver(event => {
     return;
   }
   const payload = toTxLifecyclePayload(event, "mobile");
-  if (payload) sendTxLifecycle(payload);
+  if (!payload) return;
+
+  if (event.manifestId) {
+    sendTxLifecycle(payload, event.manifestId);
+  } else {
+    sendTxLifecycle(payload);
+  }
 });

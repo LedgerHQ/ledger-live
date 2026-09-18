@@ -190,6 +190,67 @@ describe("wrapAccountBridge — transaction observability seam", () => {
     });
   });
 
+  test("signOperation: observability classification cannot prevent signing", async () => {
+    const signOperation = jest.fn().mockReturnValue(new Observable());
+    const bridge = makeBridge({ signOperation });
+    const wrapped = await wrapAccountBridge(bridge, "cardano");
+    const transaction = new Proxy(
+      {},
+      {
+        get() {
+          throw new Error("unsupported transaction shape");
+        },
+      },
+    );
+
+    expect(() =>
+      wrapped.signOperation({
+        account,
+        transaction: transaction as never,
+        deviceId: "device",
+      }),
+    ).not.toThrow();
+    expect(signOperation).toHaveBeenCalledTimes(1);
+    expect(events).toEqual([]);
+  });
+
+  test("signRawOperation: preserves dapp attribution and reports sign failures", async () => {
+    const error = Object.assign(new Error(""), { name: "UserRefusedOnDevice" });
+    const bridge = makeBridge({
+      signRawOperation: jest.fn().mockReturnValue(throwError(() => error)),
+    });
+    const wrapped = await wrapAccountBridge(bridge, "cardano");
+
+    await expect(
+      withLiveAppContext({ id: "stakekit" }, async () =>
+        lastValueFrom(
+          wrapped.signRawOperation({
+            account,
+            transaction: "{}",
+            deviceId: "device",
+          }),
+        ),
+      ),
+    ).rejects.toBe(error);
+
+    expect(events).toHaveLength(2);
+    expect(events[0]).toMatchObject({
+      status: "intent",
+      stage: TransactionStage.Sign,
+      manifestId: "stakekit",
+    });
+    expect(events[1]).toMatchObject({
+      status: "failure",
+      stage: TransactionStage.Sign,
+      manifestId: "stakekit",
+      errorCategory: ErrorCategory.UserDeviceRefused,
+    });
+    expect(toTxLifecyclePayload(events[0], "mobile")).toMatchObject({
+      event: "tx_intent",
+      path: "dapp",
+    });
+  });
+
   describe("sign-stage attribution from the live-app context", () => {
     // `withLiveAppContext` holds the manifest for the whole signing call, so the seam can name
     // the origin at a stage that has no `broadcastConfig`.

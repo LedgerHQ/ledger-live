@@ -26,12 +26,14 @@ export function LiveApp({ appId: propsAppId }: LiveAppProps) {
   const urlParams = location.state as {
     returnTo?: string;
     accountId?: string;
+    yieldId?: string;
     customDappUrl?: string;
     [key: string]: string | undefined;
   } | null;
   const customDappUrl = (location as { customDappUrl?: string }).customDappUrl;
   const appId = propsAppId || routeParams.appId;
-  useDappLifecycleMonitoring(appId);
+  const isStakeRedirect = Boolean(urlParams?.accountId || urlParams?.yieldId);
+  useDappLifecycleMonitoring(appId, isStakeRedirect);
   const returnTo = useMemo<string | undefined>(() => {
     const params = new URLSearchParams(search);
     return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;

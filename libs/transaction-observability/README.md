@@ -7,6 +7,9 @@ analytics vocabulary.
 Consumed by `@ledgerhq/live-common`'s account-bridge seam, and by the desktop and mobile apps
 which each register an observer at startup.
 
+The seam wraps every account bridge, not only Earn families. Event construction is therefore
+defensive: an unsupported transaction shape must never prevent the underlying sign operation.
+
 ## What this is for
 
 One event shape per intent or outcome, per stage, across every earn flow — so that failures are
@@ -61,6 +64,10 @@ its sign-stage `stake.createAccount` becomes a `DELEGATE` operation at broadcast
 
 `dataSource` on every event records which of the two produced it.
 
+`signRawOperation` has only an opaque serialized transaction, so it cannot derive an action or
+validator. It still emits a manifest-attributed intent/failure for allow-listed dApps; a later
+WalletAPI broadcast supplies the terminal outcome.
+
 ## Emission policy
 
 An event is only forwarded to analytics when a **staking action was derived**. Plain sends
@@ -93,13 +100,19 @@ to `/v1/tx/lifecycle`; it never forwards raw errors, signatures, addresses, amou
 or user/device/session identifiers. Its independent rollout switch is
 `earnTxLifecycleMonitoring`.
 
-The lifecycle transport keeps one pending attempt per platform and path. It suppresses unpaired
-or duplicate terminals, deduplicates equivalent sign resubscriptions, and closes an unfinished
-dApp attempt as `failure/abandoned` when its host WebView is torn down.
+The lifecycle transport keeps one native attempt per platform and one dApp attempt per platform
+and manifest. It suppresses unpaired or duplicate terminals, deduplicates equivalent dApp sign
+resubscriptions, and closes an unfinished dApp attempt as `failure/abandoned` when its own host
+WebView is torn down.
 
-For an allow-listed dApp, opening the Ledger-controlled platform route is the intent boundary.
-That placeholder uses `currency_family: "other"` because the route may not expose an asset; the
-first classified sign enriches pending local state without posting a second intent.
+For an allow-listed dApp, a Ledger-owned stake CTA redirect into the platform route is the intent
+boundary; opening the same manifest from Discover is not an attempt. The redirect placeholder uses
+`currency_family: "other"` because the route may not expose an asset. The first classified sign
+posts an enriched intent with the real family before the terminal, making per-family counters
+joinable while preserving pre-sign abandonment measurement.
+
+Hosts inject the resolved `stakePrograms.list` reader at boot, so remote-config additions are
+eligible immediately; the built-in redirect ids remain as compatibility fallbacks.
 
 One thing to know if you ever reach for it: the hosts' `track(event, properties, mandatory)`
 takes a third argument that bypasses the consent check and swaps in a reduced property set. It

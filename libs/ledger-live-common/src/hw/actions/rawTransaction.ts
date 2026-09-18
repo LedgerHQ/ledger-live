@@ -9,6 +9,7 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import type { Action, Device } from "./types";
 import type { AppRequest, AppState } from "./app";
 import { createAction as createAppAction } from "./app";
+import { withLiveAppContext } from "../../wallet-api/blindSigningContext";
 import type {
   Account,
   AccountLike,
@@ -160,19 +161,24 @@ export const createAction = (
       (async () => {
         const bridge = await getAccountBridge(mainAccount);
         if (cancelled) return;
-        sub = bridge
-          .signRawOperation({
+        const signRawOperation = () =>
+          bridge.signRawOperation({
             account: mainAccount,
             transaction,
             deviceId: device.deviceId,
             deviceModelId: device.modelId,
             broadcast,
-          })
+          });
+        const signRawOperationObservable = manifestId
+          ? await withLiveAppContext({ id: manifestId }, async () => signRawOperation())
+          : signRawOperation();
+        if (cancelled) return;
+        sub = signRawOperationObservable
           .pipe(
-            catchError(error =>
+            catchError(signingError =>
               of<{ type: "error"; error: Error }>({
                 type: "error",
-                error,
+                error: signingError,
               }),
             ),
             tap((e: Event) => log("actions-transaction-event", e.type, e)),
@@ -184,7 +190,16 @@ export const createAction = (
         cancelled = true;
         sub?.unsubscribe();
       };
-    }, [device, mainAccount, transaction, broadcast, opened, inWrongDeviceForAccount, error]);
+    }, [
+      device,
+      mainAccount,
+      transaction,
+      broadcast,
+      opened,
+      inWrongDeviceForAccount,
+      error,
+      manifestId,
+    ]);
     return {
       ...appState,
       ...state,

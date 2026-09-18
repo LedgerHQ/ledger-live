@@ -216,7 +216,7 @@ export function buildTransactionAbandonedEvent(
     error: Object.assign(new Error("Sign prompt dismissed"), { name: "UserModalDismissed" }),
     errorCategory: ErrorCategory.UserModalDismissed,
     abandoned: true,
-    operationalOnly: options.operationalOnly,
+    ...(options.operationalOnly !== undefined ? { operationalOnly: options.operationalOnly } : {}),
     ...common,
   };
 }

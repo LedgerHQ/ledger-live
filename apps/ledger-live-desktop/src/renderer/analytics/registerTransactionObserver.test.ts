@@ -88,6 +88,23 @@ describe("desktop transaction observer", () => {
     });
   });
 
+  it("forwards the manifest only as local dapp correlation context", () => {
+    emitTransactionEvent(
+      stakingEvent({
+        status: "intent",
+        stage: TransactionStage.Sign,
+        manifestId: "stakekit",
+        pathway: TransactionPathway.WalletApiSignAndBroadcast,
+      }),
+    );
+
+    expect(mockSendTxLifecycle).toHaveBeenCalledWith(
+      expect.objectContaining({ event: "tx_intent", path: "dapp" }),
+      "stakekit",
+    );
+    expect(mockSendTxLifecycle.mock.calls[0][0]).not.toHaveProperty("manifestId");
+  });
+
   it("keeps Segment independent when lifecycle monitoring is disabled", () => {
     lifecycleEnabled = false;
 

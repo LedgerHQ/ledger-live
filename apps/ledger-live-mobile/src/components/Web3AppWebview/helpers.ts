@@ -720,6 +720,8 @@ export function useUiHook({
             broadcast,
             appName: options?.hwAppId,
             dependencies: options?.dependencies,
+            manifestId: manifest.id,
+            manifestName: manifest.name,
             onSuccess,
             onError,
           },

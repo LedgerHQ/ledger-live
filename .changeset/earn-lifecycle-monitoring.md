@@ -6,4 +6,5 @@
 "live-mobile": minor
 ---
 
-Dispatch consent-independent Earn transaction lifecycle events for native staking and allow-listed dApps on Desktop and Mobile.
+Instrument the shared sign/broadcast bridge defensively and dispatch consent-independent Earn
+transaction lifecycle events for native staking and allow-listed dApps on Desktop and Mobile.

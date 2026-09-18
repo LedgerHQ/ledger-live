@@ -30,7 +30,8 @@ export function LiveApp({ route }: Props) {
   const dappUrl = customDappURL || customDappUrl;
   const manifest = useLiveAppManifest(appId, dappUrl);
 
-  useDappLifecycleMonitoring(appId);
+  const isStakeRedirect = Boolean(params.accountId || params.yieldId);
+  useDappLifecycleMonitoring(appId, isStakeRedirect);
 
   useEffect(() => {
     setParams({

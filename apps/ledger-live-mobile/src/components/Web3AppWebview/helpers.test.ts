@@ -251,6 +251,40 @@ describe("useUiHook - transaction.sign device-intent branching", () => {
   });
 });
 
+describe("useUiHook - transaction.signRaw attribution", () => {
+  it("forwards the manifest through the raw-sign navigator", () => {
+    const { result } = renderHook(() =>
+      useUiHook({
+        manifest: mockManifest,
+        requestDeviceIntentSign: jest.fn(),
+        requestDeviceIntentSignMessage: jest.fn(),
+      }),
+    );
+
+    result.current["transaction.signRaw"]!({
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      account: { id: "js:2:cosmos:cosmos1:", type: "Account" } as unknown as AccountLike,
+      parentAccount: undefined,
+      transaction: "{}",
+      broadcast: true,
+      options: { hwAppId: "Cosmos", dependencies: [] },
+      onSuccess: jest.fn(),
+      onError: jest.fn(),
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      NavigatorName.SignRawTransaction,
+      expect.objectContaining({
+        screen: ScreenName.SignRawTransactionSelectDevice,
+        params: expect.objectContaining({
+          manifestId: mockManifest.id,
+          manifestName: mockManifest.name,
+        }),
+      }),
+    );
+  });
+});
+
 describe("useUiHook - message.sign device-intent branching", () => {
   const mockRequestDeviceIntentSignMessage = jest.fn();
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

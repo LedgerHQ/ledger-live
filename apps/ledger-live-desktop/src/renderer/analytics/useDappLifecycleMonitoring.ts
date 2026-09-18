@@ -1,27 +1,31 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   abandonPendingDappTxLifecycle,
-  clearPendingTxLifecycle,
+  clearPendingDappTxLifecycle,
   startDappTxLifecycle,
 } from "@ledgerhq/transaction-observability";
+import { isEarnTxLifecycleMonitoringEnabled } from "./earnTxLifecycleFlag";
 
-export function useDappLifecycleMonitoring(manifestId: string | undefined): void {
+export function useDappLifecycleMonitoring(
+  manifestId: string | undefined,
+  isStakeRedirect: boolean,
+): void {
   const enabled = useFeature("earnTxLifecycleMonitoring")?.enabled ?? false;
-  const enabledRef = useRef(enabled);
-  enabledRef.current = enabled;
 
   useEffect(() => {
+    if (!manifestId || !isStakeRedirect) return;
+
     if (!enabled) {
-      clearPendingTxLifecycle("desktop");
+      clearPendingDappTxLifecycle("desktop", manifestId);
       return;
     }
 
     startDappTxLifecycle("desktop", manifestId);
     return () => {
-      if (enabledRef.current) {
-        abandonPendingDappTxLifecycle("desktop");
+      if (isEarnTxLifecycleMonitoringEnabled()) {
+        abandonPendingDappTxLifecycle("desktop", manifestId);
       }
     };
-  }, [enabled, manifestId]);
+  }, [enabled, isStakeRedirect, manifestId]);
 }

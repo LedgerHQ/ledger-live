@@ -29,6 +29,7 @@ import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
 import { resolveFamily } from "./zcashRouting";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
+import { log } from "@ledgerhq/logs";
 import { throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import {
@@ -243,6 +244,21 @@ function currentLiveAppManifestId(): string | undefined {
   return liveBlindSigningReporter.getContext().liveAppContext ?? undefined;
 }
 
+function buildAndEmitSignIntent(
+  attribution: Parameters<typeof buildSignCommonEvent>[0],
+): ReturnType<typeof buildSignCommonEvent> | null {
+  try {
+    const common = buildSignCommonEvent(attribution);
+    emitTransactionEvent(buildTransactionIntentEvent(common));
+    return common;
+  } catch (error) {
+    log("tx-observability", "Failed to build sign event", {
+      errorName: error instanceof Error ? error.name : "Unknown",
+    });
+    return null;
+  }
+}
+
 // Exported for unit testing the transaction-observability seam.
 export async function wrapAccountBridge<T extends TransactionCommon>(
   bridge: AccountBridge<T>,
@@ -276,14 +292,15 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
      */
     signOperation: (arg0: Parameters<typeof bridge.signOperation>[0]) => {
       const manifestId = currentLiveAppManifestId();
-      const common = buildSignCommonEvent({
+      const common = buildAndEmitSignIntent({
         account: arg0.account,
+        // The bridge signs the main account, so this stage cannot recover a TokenAccount id.
+        // Lifecycle counters join on currency_family, which remains identical at both stages.
         mainAccount: arg0.account,
         pathway: TransactionPathway.Unknown,
         manifestId,
         transaction: arg0.transaction,
       });
-      emitTransactionEvent(buildTransactionIntentEvent(common));
 
       try {
         return bridge.signOperation(arg0).pipe(
@@ -302,16 +319,49 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
             }
           }),
           catchError(error => {
-            emitTransactionEvent(
-              buildTransactionFailureEvent(common, { stage: TransactionStage.Sign, error }),
-            );
+            if (common) {
+              emitTransactionEvent(
+                buildTransactionFailureEvent(common, { stage: TransactionStage.Sign, error }),
+              );
+            }
             return throwError(() => error);
           }),
         );
       } catch (error) {
-        emitTransactionEvent(
-          buildTransactionFailureEvent(common, { stage: TransactionStage.Sign, error }),
+        if (common) {
+          emitTransactionEvent(
+            buildTransactionFailureEvent(common, { stage: TransactionStage.Sign, error }),
+          );
+        }
+        throw error;
+      }
+    },
+    signRawOperation: (arg0: Parameters<typeof bridge.signRawOperation>[0]) => {
+      const manifestId = currentLiveAppManifestId();
+      const common = buildAndEmitSignIntent({
+        account: arg0.account,
+        mainAccount: arg0.account,
+        pathway: TransactionPathway.Unknown,
+        manifestId,
+      });
+
+      try {
+        return bridge.signRawOperation(arg0).pipe(
+          catchError(error => {
+            if (common) {
+              emitTransactionEvent(
+                buildTransactionFailureEvent(common, { stage: TransactionStage.Sign, error }),
+              );
+            }
+            return throwError(() => error);
+          }),
         );
+      } catch (error) {
+        if (common) {
+          emitTransactionEvent(
+            buildTransactionFailureEvent(common, { stage: TransactionStage.Sign, error }),
+          );
+        }
         throw error;
       }
     },

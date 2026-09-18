@@ -27,7 +27,13 @@ setTransactionObserver(event => {
     return;
   }
   const payload = toTxLifecyclePayload(event, "desktop");
-  if (payload) sendTxLifecycle(payload);
+  if (!payload) return;
+
+  if (event.manifestId) {
+    sendTxLifecycle(payload, event.manifestId);
+  } else {
+    sendTxLifecycle(payload);
+  }
 });
 
 // Dev-only: makes the whole seam visible locally, across every staking route and coin.
