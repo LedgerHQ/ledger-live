@@ -36,6 +36,40 @@ describe("boundByTransaction", () => {
     ]);
   });
 
+  it("keeps the rows between a transaction and its furthest sibling, so the window stays contiguous", () => {
+    // Filtering the admitted hashes instead of extending the cut would return [h1, h2, h1] and
+    // drop h3 -- which is newer than the h1 row it kept, leaving a hole above the oldest retained
+    // operation that the next watermark never refetches.
+    expect(boundByTransaction([op("h1"), op("h2"), op("h3"), op("h1")], 2)).toEqual([
+      op("h1"),
+      op("h2"),
+      op("h3"),
+      op("h1"),
+    ]);
+  });
+
+  it("extends the cut again for a transaction the first extension pulled in", () => {
+    // h1's furthest row is index 3, so the cut moves there and admits h3 at index 2; h3's own
+    // furthest row is index 4, which pushes the cut once more. A single pass would stop short.
+    expect(boundByTransaction([op("h1"), op("h2"), op("h3"), op("h1"), op("h3")], 2)).toEqual([
+      op("h1"),
+      op("h2"),
+      op("h3"),
+      op("h1"),
+      op("h3"),
+    ]);
+  });
+
+  it("drops a transaction that begins past the cut even when the cut was extended", () => {
+    // The extension to h1's furthest row (index 2) admits nothing new, so h3 stays below the cut
+    // and is truncated from the tail rather than leaving a hole.
+    expect(boundByTransaction([op("h1"), op("h2"), op("h1"), op("h3"), op("h3")], 2)).toEqual([
+      op("h1"),
+      op("h2"),
+      op("h1"),
+    ]);
+  });
+
   it("never admits a transaction that starts past the bound, so the result stays contiguous", () => {
     // h3 is entirely below the cut: admitting it would leave a hole above the oldest retained
     // operation, which no later sync refetches -- worse than a short history.
