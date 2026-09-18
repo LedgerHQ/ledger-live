@@ -1,7 +1,8 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { cardManagementApi } from "@domain/api-card-management";
+import { DETAILS_IMAGE_CSS } from "../CardArtwork/cardColors";
 import type { CardDetailsProps, RevealStatus, RevealViewModel } from "../../types";
 
 type CardApiState = {
@@ -10,6 +11,8 @@ type CardApiState = {
 
 const useCardApiDispatch =
   useDispatch.withTypes<ThunkDispatch<CardApiState, unknown, UnknownAction>>();
+
+export const FLIP_MS = 500;
 
 export function useRevealViewModel({
   unlock,
@@ -26,9 +29,33 @@ export function useRevealViewModel({
     setStatus("idle");
   }, []);
 
+  const onImageLoad = useCallback(() => {
+    setStatus(current => {
+      if (current !== "loading") {
+        return current;
+      }
+      inFlight.current = false;
+      return "flipping";
+    });
+  }, []);
+
+  // CSS flip is 500ms and Reanimated has no transitionend — Hide waits for that settle.
+  useEffect(() => {
+    if (status === "flipping") {
+      const timer = setTimeout(() => setStatus("revealed"), FLIP_MS);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
+
   const onImageError = useCallback(() => {
-    setImageUrl(undefined);
-    setStatus("failed");
+    setStatus(current => {
+      if (current !== "loading" && current !== "flipping" && current !== "revealed") {
+        return current;
+      }
+      inFlight.current = false;
+      setImageUrl(undefined);
+      return "failed";
+    });
   }, []);
 
   const onReveal = useCallback(async () => {
@@ -42,6 +69,7 @@ export function useRevealViewModel({
     setStatus("loading");
     setImageUrl(undefined);
 
+    let waitForImage = false;
     try {
       const unlocked = await unlock?.();
       if (isStale()) {
@@ -53,13 +81,15 @@ export function useRevealViewModel({
       }
 
       const details = await dispatch(
-        cardManagementApi.endpoints.createCardDetailsToken.initiate(undefined, { track: false }),
+        cardManagementApi.endpoints.createCardDetailsToken.initiate(DETAILS_IMAGE_CSS, {
+          track: false,
+        }),
       ).unwrap();
       if (isStale()) {
         return;
       }
       setImageUrl(details.imageUrl);
-      setStatus("revealed");
+      waitForImage = true;
     } catch {
       if (isStale()) {
         return;
@@ -67,7 +97,7 @@ export function useRevealViewModel({
       setImageUrl(undefined);
       setStatus("failed");
     } finally {
-      if (!isStale()) {
+      if (!isStale() && !waitForImage) {
         inFlight.current = false;
       }
     }
@@ -79,10 +109,11 @@ export function useRevealViewModel({
 
   return {
     status,
-    isRevealed: status === "revealed" && Boolean(imageUrl),
+    isRevealed: status === "flipping" || status === "revealed",
     imageUrl,
     onReveal,
     onHide,
+    onImageLoad,
     onImageError,
   };
 }
