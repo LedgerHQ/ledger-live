@@ -20,6 +20,7 @@
     "@devtools/feature-flags": "workspace:*",
     "@devtools/env": "workspace:*",
     "@devtools/pay-card": "workspace:*",
+    "@devtools/mock-accounts": "workspace:*",
     "@devtools/trustchain": "workspace:*",
     "@devtools/cloud-sync": "workspace:*"
   },

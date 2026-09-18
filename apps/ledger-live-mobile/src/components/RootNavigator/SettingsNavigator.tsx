@@ -75,8 +75,6 @@ import DeveloperSettings, {
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import HelpButton from "~/screens/Settings/HelpButton";
 import OnboardingStepLanguage from "~/screens/Onboarding/steps/language";
-import { GenerateMockAccountSelectScreen } from "~/screens/Settings/Debug/Generators/GenerateMockAccountsSelect";
-import GenerateMockAccountsByType from "~/screens/Settings/Debug/Generators/GenerateMockAccountsByType";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "~/screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
@@ -404,20 +402,6 @@ export default function SettingsNavigator() {
         component={DebugInstallSetOfApps}
         options={{
           title: "Install set of apps",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugMockGenerateAccounts}
-        component={GenerateMockAccountSelectScreen}
-        options={{
-          title: "Generate mock accounts",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugMockGenerateAccountsByType}
-        component={GenerateMockAccountsByType}
-        options={{
-          title: "Generate accounts by type",
         }}
       />
       <Stack.Screen

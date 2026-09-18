@@ -1,4 +1,6 @@
 export { useFeatureFlagsToolProps } from "./useFeatureFlagsToolProps";
+export { useMockAccountsToolProps } from "./useMockAccountsToolProps";
+export type { UseMockAccountsToolPropsOptions } from "./useMockAccountsToolProps";
 export { usePayCardToolProps } from "./usePayCardToolProps";
 export type { UsePayCardToolPropsOptions } from "./usePayCardToolProps";
 export { useEnvDevToolProps } from "./useEnvDevToolProps";

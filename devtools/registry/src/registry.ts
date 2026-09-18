@@ -5,6 +5,7 @@ export const tools = {
   "feature-flags": platform.featureFlags,
   env: platform.env,
   "pay-card": walletXp.payCard,
+  "mock-accounts": walletXp.mockAccounts,
   trustchain: platform.trustchain,
   "cloud-sync": platform.cloudSync,
 } as const;
@@ -28,5 +29,6 @@ export type DevToolConfig =
   | { id: "feature-flags"; config: platform.FeatureFlagsToolProps }
   | { id: "env"; config: platform.EnvDevToolProps }
   | { id: "pay-card"; config: walletXp.PayCardToolProps }
+  | { id: "mock-accounts"; config: walletXp.MockAccountsToolProps }
   | { id: "trustchain"; config: platform.TrustchainDevToolProps }
   | { id: "cloud-sync"; config: platform.CloudSyncDevToolProps };

@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { Trustchain, MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import type { Account } from "@ledgerhq/types-live";
 import {
   useFeatureFlagsToolProps,
   usePayCardToolProps,
@@ -16,7 +17,13 @@ import {
   useProdToggle,
   useTrustchainDevToolProps,
   useCloudSyncDevToolProps,
+  useMockAccountsToolProps,
 } from "@devtools/bindings";
+import { initAccounts, replaceAccounts } from "~/renderer/actions/accounts";
+import {
+  initialState as liveWalletInitialState,
+  accountUserDataExportSelector,
+} from "~/renderer/reducers/wallet";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
@@ -81,11 +88,31 @@ export function useDevToolsScreenViewModel() {
     prodToggle.trustchainApiBaseUrl,
   );
 
+  const onApplyAccounts = useCallback(
+    (accounts: Account[]) => {
+      const pairs: [Account, ReturnType<typeof accountUserDataExportSelector>][] = accounts.map(
+        account => [account, accountUserDataExportSelector(liveWalletInitialState, { account })],
+      );
+      dispatch(initAccounts(pairs));
+    },
+    [dispatch],
+  );
+
+  const onClearAccounts = useCallback(() => {
+    dispatch(replaceAccounts([]));
+  }, [dispatch]);
+
+  const mockAccountsToolProps = useMockAccountsToolProps({
+    onApplyAccounts,
+    onClearAccounts,
+  });
+
   const config: DevToolsConfig = useMemo(
     () => [
       { id: "feature-flags", config: featureFlagsToolProps },
       { id: "env", config: envToolProps },
       { id: "pay-card", config: payCardToolProps },
+      { id: "mock-accounts", config: mockAccountsToolProps },
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
     ],
@@ -93,6 +120,7 @@ export function useDevToolsScreenViewModel() {
       featureFlagsToolProps,
       envToolProps,
       payCardToolProps,
+      mockAccountsToolProps,
       trustchainToolProps,
       cloudSyncToolProps,
     ],

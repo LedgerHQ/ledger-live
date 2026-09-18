@@ -2,29 +2,18 @@ import React, { useCallback } from "react";
 import { getEnv } from "@shared/env";
 import { Alert as Confirmation } from "react-native";
 import { Alert, Flex, IconsLegacy } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "~/context/hooks";
-import GenerateMockAccounts from "./GenerateMockAccounts";
-import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import ToggleServiceStatusIncident from "./ToggleServiceStatus";
 import SettingsRow from "~/components/SettingsRow";
 import { dangerouslyOverrideState } from "~/actions/settings";
 import { reboot } from "~/actions/appstate";
-import { ScreenName } from "~/const";
-import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 
 import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "~/reducers/settings";
-import { INITIAL_STATE as INITIAL_ACCOUNTS_STATE } from "~/reducers/accounts";
 import { INITIAL_STATE as INITIAL_BLE_STATE } from "~/reducers/ble";
 
 export default function Generators() {
   const dispatch = useDispatch();
-  const navigation =
-    useNavigation<
-      StackNavigatorNavigation<SettingsNavigatorStackParamList, ScreenName.DebugGenerators>
-    >();
 
   const onCallbackWithConfirmation = (callback: () => void) => {
     Confirmation.alert(
@@ -57,16 +46,6 @@ export default function Generators() {
     });
   }, [dispatch]);
 
-  const onWipeUsers = useCallback(() => {
-    onCallbackWithConfirmation(() => {
-      dispatch(
-        dangerouslyOverrideState({
-          accounts: INITIAL_ACCOUNTS_STATE,
-        }),
-      );
-    });
-  }, [dispatch]);
-
   const onWipeBLE = useCallback(() => {
     onCallbackWithConfirmation(() => {
       dispatch(
@@ -83,28 +62,6 @@ export default function Generators() {
 
   return (
     <SettingsNavigationScrollView>
-      <GenerateMockAccount
-        title="Accounts by currency"
-        desc="Select for which currencies you want to generate accounts"
-        iconLeft={<IconsLegacy.ClipboardListCheckMedium size={24} color="black" />}
-      />
-      <SettingsRow
-        title="Accounts by type"
-        desc="Generate accounts filtered by crypto/stablecoin/stocks/testnet"
-        iconLeft={<IconsLegacy.FiltersMedium size={24} color="black" />}
-        onPress={() => navigation.navigate(ScreenName.DebugMockGenerateAccountsByType)}
-      />
-      <GenerateMockAccounts
-        title="Accounts"
-        desc="Replace existing accounts with 10 mock accounts from random currencies."
-        count={10}
-      />
-      <GenerateMockAccounts
-        title="100 Accounts"
-        desc="Replace existing accounts with 100 mock accounts from random currencies."
-        count={100}
-      />
-
       {getEnv("MOCK") ? <ToggleServiceStatusIncident /> : null}
 
       <Flex p={6}>
@@ -125,12 +82,6 @@ export default function Generators() {
         desc="Restores all settings to their default values"
         iconLeft={<IconsLegacy.SettingsMedium size={24} color="black" />}
         onPress={onWipeSettings}
-      />
-      <SettingsRow
-        title="Accounts"
-        desc="Get rid of all the accounts"
-        iconLeft={<IconsLegacy.UserMedium size={24} color="black" />}
-        onPress={onWipeUsers}
       />
       <SettingsRow
         title="BLE devices"
