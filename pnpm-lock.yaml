@@ -7385,6 +7385,9 @@ importers:
       '@testing-library/react-native':
         specifier: 'catalog:'
         version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.5.0(@types/node@24.12.0))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -22673,11 +22676,6 @@ packages:
       react-native:
         optional: true
 
-  '@ledgerhq/device-contacts-kit@0.4.0':
-    resolution: {integrity: sha512-Mq6HaXlPi5d08s2RRmCABkIfLT7uoxc/JdoIo3e9IWayimoMfQb7UhgiTL5Dwck//oXrV+66ID6nkjiSu4Auzg==}
-    peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.9.0
-
   '@ledgerhq/device-contacts-kit@0.4.1':
     resolution: {integrity: sha512-eRC7B8cTeVS7eaNZyrVvSrHGHSiTusOYCrnxhYGn1Hg76KQehG7jk/vyGkk30qh5i/XrU8qQvCSIbADSq5J5jQ==}
     peerDependencies:
@@ -23379,6 +23377,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -37491,7 +37490,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -47995,16 +47993,6 @@ snapshots:
       react-dom: 19.1.4(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4)
 
-  '@ledgerhq/device-contacts-kit@0.4.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
-    dependencies:
-      '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      inversify: 7.5.1(reflect-metadata@0.2.2)
-      purify-ts: 2.1.0
-      reflect-metadata: 0.2.2
-      semver: 7.7.2
-      xstate: 5.19.2
-
   '@ledgerhq/device-contacts-kit@0.4.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
@@ -48102,7 +48090,7 @@ snapshots:
   '@ledgerhq/device-signer-kit-ethereum@1.18.0(@ledgerhq/context-module@2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/context-module': 2.5.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
-      '@ledgerhq/device-contacts-kit': 0.4.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-contacts-kit': 0.4.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
       '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
       ethers: 6.15.0
@@ -48117,7 +48105,7 @@ snapshots:
 
   '@ledgerhq/device-signer-kit-ethereum@1.18.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-contacts-kit': 0.4.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
+      '@ledgerhq/device-contacts-kit': 0.4.1(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.9.0(rxjs@7.8.2)
       '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.9.0(rxjs@7.8.2))
       ethers: 6.15.0
@@ -59788,7 +59776,7 @@ snapshots:
       serialize-error: 8.1.0
       shell-quote: 1.10.0
       signal-exit: 3.0.7
-      stream-json: 1.8.0
+      stream-json: 1.9.1
       strip-ansi: 6.0.1
       telnet-client: 1.2.8
       tmp: 0.2.7
@@ -59844,7 +59832,7 @@ snapshots:
       serialize-error: 8.1.0
       shell-quote: 1.10.0
       signal-exit: 3.0.7
-      stream-json: 1.8.0
+      stream-json: 1.9.1
       strip-ansi: 6.0.1
       telnet-client: 1.2.8
       tmp: 0.2.7
@@ -65384,9 +65372,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:

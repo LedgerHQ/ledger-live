@@ -1,5 +1,5 @@
 import { assetMappingKey } from "./assetKey";
-import { BAANX_ASSET_LEDGER_IDS, baanxAssetLedgerId } from "./baanxCatalog";
+import { BAANX_ASSET_LEDGER_IDS, baanxAssetLedgerId, isBaanxAssetCurrency } from "./baanxCatalog";
 
 describe("assetMappingKey", () => {
   it("joins the pair the provider names an asset with", () => {
@@ -64,5 +64,22 @@ describe("baanxAssetLedgerId", () => {
       BAANX_ASSET_LEDGER_IDS["usdt.ethereum"],
     );
     expect(BAANX_ASSET_LEDGER_IDS["eth.ethereum"]).toBe("ethereum");
+  });
+});
+
+describe("isBaanxAssetCurrency", () => {
+  it("reads the provider asset codes back from a Ledger id", () => {
+    expect(isBaanxAssetCurrency("ethereum/erc20/usd__coin", "USDC")).toBe(true);
+    expect(isBaanxAssetCurrency("ethereum", "eth")).toBe(true);
+    expect(isBaanxAssetCurrency("bitcoin", " BTC ")).toBe(true);
+  });
+
+  it("keeps a token apart from the chain it lives on", () => {
+    expect(isBaanxAssetCurrency("ethereum", "usdc")).toBe(false);
+    expect(isBaanxAssetCurrency("ethereum/erc20/usd__coin", "usdt")).toBe(false);
+  });
+
+  it("matches nothing for a Ledger id the catalog does not resolve to", () => {
+    expect(isBaanxAssetCurrency("polygon", "usdc")).toBe(false);
   });
 });

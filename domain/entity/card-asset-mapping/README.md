@@ -16,15 +16,22 @@ chain's USDC, so the pair is what a mapping has to be keyed on.
 ## Usage
 
 ```ts
-import { baanxAssetLedgerId } from "@domain/entity-card-asset-mapping";
+import { baanxAssetLedgerId, isBaanxAssetCurrency } from "@domain/entity-card-asset-mapping";
 
 baanxAssetLedgerId("usdc", "ethereum"); // "ethereum/erc20/usd__coin"
 baanxAssetLedgerId("btc", "bitcoin"); // "bitcoin"
 baanxAssetLedgerId("usdc", "polygon"); // undefined — not a pair the catalog covers
+
+isBaanxAssetCurrency("ethereum/erc20/usd__coin", "USDC"); // true
+isBaanxAssetCurrency("ethereum", "usdc"); // false — that is the chain, not the token
 ```
 
 `assetMappingKey(currency, network)` builds the `{currency}.{network}` id the catalog is keyed on,
 lowercased and trimmed.
+
+`isBaanxAssetCurrency(ledgerId, currency)` is the way back, for a caller holding a Ledger id and a
+provider asset code with no network beside it — a cached transaction's funding source, say. It reads
+the codes off the same table, so a new pair is still one line in one place.
 
 ## One catalog per provider
 

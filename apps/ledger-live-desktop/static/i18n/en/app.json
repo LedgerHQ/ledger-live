@@ -936,12 +936,6 @@
           "title": "You'll be redirected to Baanx",
           "description": "Withdraw funds from your Baanx account to your Ledger wallet address.",
           "continue": "Continue"
-        },
-        "history": {
-          "columns": {
-            "amount": "Amount",
-            "value": "Value"
-          }
         }
       },
       "reward": {
@@ -996,6 +990,7 @@
         "unknownDate": "Date unavailable",
         "columns": {
           "transaction": "Transaction",
+          "cashback": "Cashback",
           "fundingSources": "Funding sources",
           "amount": "Amount"
         },

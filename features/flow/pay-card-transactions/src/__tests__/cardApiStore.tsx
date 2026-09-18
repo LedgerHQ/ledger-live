@@ -53,6 +53,7 @@ const CARD_TRANSACTIONS_RESOURCES = {
             unknownDate: "Date unavailable",
             columns: {
               transaction: "Transaction",
+              cashback: "Cashback",
               fundingSources: "Funding sources",
               amount: "Amount",
             },

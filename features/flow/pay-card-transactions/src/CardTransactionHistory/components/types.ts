@@ -16,6 +16,7 @@ export type HistoryRowViewProps = Readonly<{
   categoryLabel: string;
   status: PayCardTransaction["status"];
   time: string;
+  cashback: string;
   statusLabel?: string;
   statusLabelTone?: "error" | "muted";
   fundingLabel?: string;
