@@ -13,7 +13,6 @@ import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { usePayCardAssets } from "./usePayCardAssets";
 import { useWipeHostedSessionOnSignInChange } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
-import { useUnlockForCardNumbers } from "./useUnlockForCardNumbers";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
 function readCallbackCode(state: unknown): string | undefined {
@@ -125,8 +124,6 @@ export function useCardViewModel(): CardViewModel {
     [oauthConfig, callback, openHostedLogin, openHostedPage, onTrackEvent],
   );
 
-  const { unlock, dialog: unlockDialog } = useUnlockForCardNumbers();
-
   const onShowMore = useCallback(() => {
     navigate(
       `/history?${HISTORY_TAB_SEARCH_PARAM}=${HISTORY_TAB_CARD}`,
@@ -140,8 +137,6 @@ export function useCardViewModel(): CardViewModel {
     formatters,
     assets,
     login,
-    unlock,
-    unlockDialog,
     onShowMore,
   };
 }

@@ -3,7 +3,7 @@ import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { cardManagementApi } from "@domain/api-card-management";
 import { DETAILS_IMAGE_CSS } from "../CardArtwork/cardColors";
-import type { CardDetailsProps, RevealStatus, RevealViewModel } from "../../types";
+import type { RevealStatus, RevealViewModel } from "../../types";
 
 type CardApiState = {
   [cardManagementApi.reducerPath]: ReturnType<typeof cardManagementApi.reducer>;
@@ -14,9 +14,7 @@ const useCardApiDispatch =
 
 export const FLIP_MS = 500;
 
-export function useRevealViewModel({
-  unlock,
-}: Pick<CardDetailsProps, "unlock">): RevealViewModel | null {
+export function useRevealViewModel(): RevealViewModel {
   const dispatch = useCardApiDispatch();
   const [status, setStatus] = useState<RevealStatus>("idle");
   const [imageUrl, setImageUrl] = useState<string>();
@@ -71,15 +69,6 @@ export function useRevealViewModel({
 
     let waitForImage = false;
     try {
-      const unlocked = await unlock?.();
-      if (isStale()) {
-        return;
-      }
-      if (!unlocked) {
-        setStatus("idle");
-        return;
-      }
-
       const details = await dispatch(
         cardManagementApi.endpoints.createCardDetailsToken.initiate(DETAILS_IMAGE_CSS, {
           track: false,
@@ -101,11 +90,7 @@ export function useRevealViewModel({
         inFlight.current = false;
       }
     }
-  }, [dispatch, unlock]);
-
-  if (!unlock) {
-    return null;
-  }
+  }, [dispatch]);
 
   return {
     status,

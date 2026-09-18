@@ -13,7 +13,6 @@ export function CardView({
   cardVisual,
   assets,
   formatters,
-  unlock,
   onShowMore,
 }: CardViewProps) {
   return (
@@ -22,7 +21,7 @@ export function CardView({
       {displayState === "signedIn" ? (
         <>
           <CardOnboardingWidget />
-          <CardDetails cardVisual={cardVisual} unlock={unlock} />
+          <CardDetails cardVisual={cardVisual} />
           <CardTransactions
             formatters={{
               amount: formatters?.transactionAmount,

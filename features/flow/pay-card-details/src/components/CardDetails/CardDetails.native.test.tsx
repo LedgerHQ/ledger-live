@@ -23,17 +23,11 @@ function Wrapper({ children }: PropsWithChildren) {
   );
 }
 
-function renderCardDetails({
-  unlock,
-  onTrackEvent = jest.fn(),
-}: {
-  unlock?: () => Promise<boolean>;
-  onTrackEvent?: jest.Mock;
-} = {}) {
+function renderCardDetails({ onTrackEvent = jest.fn() }: { onTrackEvent?: jest.Mock } = {}) {
   return {
     user: userEvent.setup(),
     onTrackEvent,
-    ...render(<CardDetails unlock={unlock} onTrackEvent={onTrackEvent} />, { wrapper: Wrapper }),
+    ...render(<CardDetails onTrackEvent={onTrackEvent} />, { wrapper: Wrapper }),
   };
 }
 
@@ -76,13 +70,13 @@ describe("CardDetails (native)", () => {
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
 
-    expect(screen.queryByText(CARD_COPY.numbersReveal)).not.toBeOnTheScreen();
+    expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
     expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
     expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 
-  it("should show the card numbers image after View when unlock succeeds", async () => {
-    const { user } = renderCardDetails({ unlock: () => Promise.resolve(true) });
+  it("should show the card numbers image after View", async () => {
+    const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
     await user.press(await screen.findByText(CARD_COPY.numbersReveal));
@@ -107,16 +101,6 @@ describe("CardDetails (native)", () => {
     expect(screen.queryByText(CARD_COPY.numbersReveal)).not.toBeOnTheScreen();
 
     await user.press(screen.getByText(CARD_COPY.numbersHide));
-
-    expect(screen.queryByLabelText(CARD_COPY.numbersImageAlt)).not.toBeOnTheScreen();
-    expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
-  });
-
-  it("should keep the card face when unlock is cancelled", async () => {
-    const { user } = renderCardDetails({ unlock: () => Promise.resolve(false) });
-
-    await user.press(screen.getByLabelText(CARD_COPY.details));
-    await user.press(await screen.findByText(CARD_COPY.numbersReveal));
 
     expect(screen.queryByLabelText(CARD_COPY.numbersImageAlt)).not.toBeOnTheScreen();
     expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();

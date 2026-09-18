@@ -14,7 +14,6 @@ export function useCardDetailsViewModel({
   formatters,
   onTrackEvent,
   onShowMore,
-  unlock,
 }: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -60,7 +59,6 @@ export function useCardDetailsViewModel({
       onTransactionPress,
       onShowMore,
       formatters,
-      unlock,
     },
     freeze: { viewModel: freezeViewModel },
     more: moreViewModel ? { viewModel: moreViewModel } : null,

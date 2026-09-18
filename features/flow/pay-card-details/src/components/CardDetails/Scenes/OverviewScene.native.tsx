@@ -15,10 +15,10 @@ import type { OverviewSceneProps } from "./types";
 
 type OverviewActionsProps = Omit<
   OverviewSceneProps,
-  "cardVisual" | "onTransactionPress" | "formatters" | "unlock"
+  "cardVisual" | "onTransactionPress" | "formatters"
 > &
   Readonly<{
-    reveal: RevealViewModel | null;
+    reveal: RevealViewModel;
   }>;
 
 function CardFace({ cardVisual }: Pick<OverviewSceneProps, "cardVisual">) {
@@ -33,25 +33,23 @@ function OverviewActions({
   reveal,
 }: OverviewActionsProps) {
   const { t } = useTranslation();
-  const canHide = reveal?.canHide ?? false;
+  const canHide = reveal.canHide;
   const viewLabel = canHide ? t("payTab.card.numbers.hide") : t("payTab.card.numbers.reveal");
 
   return (
     <Box lx={{ gap: "s8" }}>
       <Box lx={{ flexDirection: "row", gap: "s8" }}>
-        {reveal ? (
-          <Box lx={{ flex: 1, minWidth: "s0" }}>
-            <TileButton
-              icon={canHide ? EyeCross : Eye}
-              isFull
-              disabled={reveal.status === "loading" || reveal.status === "flipping"}
-              onPress={canHide ? reveal.onHide : reveal.onReveal}
-              accessibilityLabel={viewLabel}
-            >
-              {viewLabel}
-            </TileButton>
-          </Box>
-        ) : null}
+        <Box lx={{ flex: 1, minWidth: "s0" }}>
+          <TileButton
+            icon={canHide ? EyeCross : Eye}
+            isFull
+            disabled={reveal.status === "loading" || reveal.status === "flipping"}
+            onPress={canHide ? reveal.onHide : reveal.onReveal}
+            accessibilityLabel={viewLabel}
+          >
+            {viewLabel}
+          </TileButton>
+        </Box>
         <Box lx={{ flex: 1, minWidth: "s0" }}>
           <FreezeAction
             status={freezeViewModel.status}
@@ -65,7 +63,7 @@ function OverviewActions({
           ) : null}
         </Box>
       </Box>
-      {reveal?.status === "failed" ? (
+      {reveal.status === "failed" ? (
         <Text typography="body2">{t("payTab.card.numbers.failed")}</Text>
       ) : null}
     </Box>
@@ -82,9 +80,8 @@ export function OverviewScene({
   onTransactionPress,
   onShowMore,
   formatters,
-  unlock,
 }: OverviewSceneProps) {
-  const reveal = useRevealViewModel({ unlock });
+  const reveal = useRevealViewModel();
 
   return (
     <Box lx={{ gap: "s16" }} testID="card-details-overview">
