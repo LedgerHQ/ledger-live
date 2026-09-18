@@ -50,16 +50,21 @@ export const nodeWebUsbIdentifier: TransportIdentifier = "NODE-WEBUSB";
 
 /**
  * Stable identity for one enumerated USB device, used to scope a recorded access failure to the
- * device it belongs to. Bus address first because it distinguishes two identical Ledgers; the
- * descriptor ids are the fallback when a platform binding does not expose the address.
+ * device it belongs to, or `undefined` when this platform does not tell us where the device sits.
+ *
+ * Only the bus address distinguishes two identical Ledgers. Falling back to the descriptor ids
+ * alone would hand both the same key, so one device's success would clear the other's refusal:
+ * the very thing the key exists to prevent. Better to admit we cannot tell them apart.
  */
 function nativeUsbDeviceKey(native: {
   busNumber?: number;
   deviceAddress?: number;
   deviceDescriptor: { idVendor: number; idProduct: number };
-}): string {
+}): string | undefined {
+  const { busNumber, deviceAddress } = native;
+  if (busNumber === undefined || deviceAddress === undefined) return undefined;
   const { idVendor, idProduct } = native.deviceDescriptor;
-  return `${native.busNumber ?? "?"}:${native.deviceAddress ?? "?"}:${idVendor}:${idProduct}`;
+  return `${busNumber}:${deviceAddress}:${idVendor}:${idProduct}`;
 }
 
 type WebUsbDiscoveredInternal = TransportDiscoveredDevice & {
@@ -435,8 +440,10 @@ export class NodeWebUsbTransport implements Transport {
         throw e;
       }
       // This device opened, so its own earlier failure was transient: forget it. Keyed, so a second
-      // Ledger succeeding cannot clear the verdict for the one the host is blocking.
-      recordUsbAccessSuccess(deviceKey);
+      // Ledger succeeding cannot clear the verdict for the one the host is blocking. With no key
+      // we cannot prove which device this was, and guessing would clear the wrong verdict, so the
+      // failure stands until a connection-level success vouches for the link.
+      if (deviceKey !== undefined) recordUsbAccessSuccess(deviceKey);
       const interfaceNumber = getVendorInterfaceNumber(device);
       if (interfaceNumber === null) {
         continue;

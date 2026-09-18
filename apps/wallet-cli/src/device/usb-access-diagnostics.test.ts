@@ -142,6 +142,18 @@ describe("recordUsbAccessSuccess", () => {
     expect(readUsbAccessDiagnostics().failure).toBeUndefined();
   });
 
+  it("a keyed success does not clear a failure of unknown ownership", () => {
+    // The failure was recorded without a device key, so nothing proves this success belongs to it.
+    // Clearing anyway would let one Ledger speak for another on a platform that cannot tell them
+    // apart, which is the case the key exists to rule out.
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    recordUsbAccessFailure(new Error("LIBUSB_ERROR_ACCESS"));
+    recordUsbAccessSuccess("1:4:11415:20512");
+
+    expect(readUsbAccessDiagnostics().failure).toMatchObject({ kind: "access_denied" });
+  });
+
   it("a connection-level success vouches for the whole link", () => {
     // No device key: this is the post-setupConnection success, which proves USB works outright.
     recordScanCompleted();

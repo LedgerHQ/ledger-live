@@ -72,12 +72,15 @@ export function recordLedgerVendorSeen(): void {
  * `device` scopes the clear to the device that just succeeded. Without it, two Ledgers on the bus
  * let the second one's success erase the first one's refusal, reporting `unknown` for a host that
  * is genuinely blocking the device the user is waiting on. A success with no device key is a
- * connection-level success, which vouches for the whole link and clears regardless.
+ * connection-level success, which vouches for the whole link and clears regardless; callers that
+ * merely opened one device must pass its key, and must not call at all when they do not have one.
  */
 export function recordUsbAccessSuccess(device?: string): void {
   const { failure } = diagnostics;
   if (failure === undefined) return;
-  if (device !== undefined && failure.device !== undefined && failure.device !== device) return;
+  // A keyed success clears only the failure it can prove is its own. Anything looser lets one
+  // device speak for another, which is what the key is for.
+  if (device !== undefined && failure.device !== device) return;
   const { failure: _cleared, ...rest } = diagnostics;
   diagnostics = rest;
 }
