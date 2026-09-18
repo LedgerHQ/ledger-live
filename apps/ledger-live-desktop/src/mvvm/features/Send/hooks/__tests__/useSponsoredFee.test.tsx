@@ -147,7 +147,7 @@ describe("useSponsoredFee", () => {
     expect(estimateSponsoredFeeQuote).not.toHaveBeenCalled();
   });
 
-  it("flag on, tronify available but estimateSponsoredFeeQuote rejects: settles with no quote, no unhandled rejection", async () => {
+  it("flag on, tronify advertised but estimateSponsoredFeeQuote rejects: withdraws the option (unavailable), no unhandled rejection", async () => {
     const listFeeOptions = jest.fn().mockResolvedValue([{ id: "tronify", feeAsset: {} }]);
     const estimateSponsoredFeeQuote = jest.fn().mockRejectedValue(new Error("not eligible"));
     mockedGetSponsoredCoinApi.mockResolvedValue(
@@ -160,7 +160,8 @@ describe("useSponsoredFee", () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(result.current.available).toBe(true);
+    // A failed quote leaves no working Review path, so the option is withdrawn rather than shown.
+    expect(result.current.available).toBe(false);
     expect(result.current.quote).toBeNull();
   });
 });

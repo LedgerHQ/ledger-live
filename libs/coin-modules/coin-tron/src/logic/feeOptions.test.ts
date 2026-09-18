@@ -32,6 +32,12 @@ const mockLogger: Logger = jest.fn();
 const mockConfig = jest.fn<Promise<TronCoinConfig>, []>();
 const mockContext = { logger: mockLogger, config: mockConfig } as unknown as TronContext;
 
+const malformedProviderConfig = {
+  explorer: { url: "https://explorer" },
+  status: { type: "active" },
+  energyRent: { provider: "tronify", tronify: {} },
+} as unknown as TronCoinConfig;
+
 const sendTrc20 = (recipient = RECIPIENT): TransactionIntent<TronMemo, TronTxData> => ({
   intentType: "transaction",
   type: "send",
@@ -105,6 +111,12 @@ describe("listFeeOptions", () => {
   it("returns [standard] when Tronify is not activated in coin-config", async () => {
     mockConfig.mockResolvedValue(notActivatedConfig);
     await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
+    expect(mockEstimateFees).not.toHaveBeenCalled();
+  });
+
+  it("returns [standard] when the Tronify provider is present but under-configured", async () => {
+    mockGetCoinConfig.mockReturnValue(malformedProviderConfig);
+    await expect(listFeeOptions(sendTrc20())).resolves.toEqual([standardOption]);
     expect(mockEstimateFees).not.toHaveBeenCalled();
   });
 

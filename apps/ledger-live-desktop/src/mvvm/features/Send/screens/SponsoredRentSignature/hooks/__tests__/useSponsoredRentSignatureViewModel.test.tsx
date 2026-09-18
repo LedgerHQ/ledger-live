@@ -1,5 +1,4 @@
 import { renderHook, act } from "tests/testSetup";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import {
   useSponsoredRentSignatureViewModel,
   recoverDeviceSignature,
@@ -7,11 +6,6 @@ import {
 } from "../useSponsoredRentSignatureViewModel";
 
 const mockAccount = { id: "acc_tron", type: "Account", currency: { id: "tron" } };
-
-const mockGoToStep = jest.fn();
-jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
-  useFlowWizard: () => ({ navigation: { goToStep: mockGoToStep } }),
-}));
 
 jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowData: () => ({
@@ -160,31 +154,5 @@ describe("useSponsoredRentSignatureViewModel", () => {
 
     expect(mockSetContractDataFailure).not.toHaveBeenCalled();
     expect(mockStartRentPayment).not.toHaveBeenCalled();
-  });
-
-  it("navigates to SPONSORED_POLLING when the phase transitions to POLLING", () => {
-    mockSponsoredState.order = makeOrder();
-    const { rerender } = renderHook(() => useSponsoredRentSignatureViewModel());
-
-    mockSponsoredState = { ...mockSponsoredState, phase: "POLLING" };
-    rerender();
-
-    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.SPONSORED_POLLING);
-  });
-
-  it("navigates to SPONSORED_FAILURE when the phase transitions to FAILED", () => {
-    mockSponsoredState.order = makeOrder();
-    const { rerender } = renderHook(() => useSponsoredRentSignatureViewModel());
-
-    mockSponsoredState = { ...mockSponsoredState, phase: "FAILED", failureKind: "CONTRACT_DATA" };
-    rerender();
-
-    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.SPONSORED_FAILURE);
-  });
-
-  it("does not navigate while the phase stays RENT_SIGNING", () => {
-    renderHook(() => useSponsoredRentSignatureViewModel());
-
-    expect(mockGoToStep).not.toHaveBeenCalled();
   });
 });

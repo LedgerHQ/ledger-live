@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -18,7 +19,7 @@ import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-co
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
-import { useSendFlowData } from "./SendFlowContext";
+import { useSendFlowData, useSendFlowActions } from "./SendFlowContext";
 import { useSponsoredFee, type SponsoredFeeQuote } from "../hooks/useSponsoredFee";
 
 const SEAM_KIND = "local";
@@ -35,6 +36,10 @@ type SponsoredSendContextValue = Readonly<{
   selectStandard: () => void;
   /** True when the Tronify sponsored option is advertised for the current send intent. */
   available: boolean;
+  /** The current send intent has finished rebuilding (non-null). `available` is sticky across the
+   * async rebuild to avoid nudge flicker, so it alone can read true while `intent` is momentarily
+   * null; gate any route into rent-signing on this so craftRent never runs against a null intent. */
+  intentReady: boolean;
   quote: SponsoredFeeQuote | null;
   /** Sponsored savings already formatted in the user's countervalue currency, or null while no
    * quote is loaded. Formatted once here so the AMOUNT nudge and the FEE_PAYMENT selector share one
@@ -79,6 +84,7 @@ const SponsoredSendContext = createContext<SponsoredSendContextValue | null>(nul
  */
 export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNode }>) {
   const { state } = useSendFlowData();
+  const { transaction: transactionActions } = useSendFlowActions();
   const account = state.account.account;
   const parentAccount = state.account.parentAccount;
   const transaction = state.transaction.transaction;
@@ -100,6 +106,11 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       setIntent(null);
       return;
     }
+
+    // Identity-gate the intent: clear it up front on any transaction change so the previous intent
+    // never survives into the async rebuild window. Otherwise a quick edit + Review could enter
+    // sponsored signing (craftRent closes over `intent`) against the prior transaction's intent.
+    setIntent(null);
 
     (async () => {
       try {
@@ -148,8 +159,19 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
 
   const [selectedFeeOptionId, setSelectedFeeOptionId] = useState<SponsoredFeeOptionId>("standard");
 
-  const selectTronify = useCallback(() => setSelectedFeeOptionId("tronify"), []);
-  const selectStandard = useCallback(() => setSelectedFeeOptionId("standard"), []);
+  // Mark the transaction sponsored alongside the local selection: the generic signer copies
+  // `transaction.sponsored` into the optimistic operation, and `getPendingNativeSpent` skips the
+  // standard native fee only when that marker is true. Without it a successful sponsored send would
+  // phantom-lock a standard TRX fee on the parent account until the next sync. The marker is inert
+  // for crafting/estimation (coin-tron reads it nowhere), so toggling it has no fee side-effect.
+  const selectTronify = useCallback(() => {
+    setSelectedFeeOptionId("tronify");
+    transactionActions.updateTransaction(tx => ({ ...tx, sponsored: true }) as typeof tx);
+  }, [transactionActions]);
+  const selectStandard = useCallback(() => {
+    setSelectedFeeOptionId("standard");
+    transactionActions.updateTransaction(tx => ({ ...tx, sponsored: false }) as typeof tx);
+  }, [transactionActions]);
 
   // Single source of sponsored fee state: run once here so AMOUNT's nudge and the floating
   // FEE_PAYMENT selector both read the same result instead of each mounting their own instance
@@ -170,7 +192,9 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   const locale = useSelector(localeSelector);
   const savingsFiatFormatted = useMemo(
     () =>
-      savingsFiat
+      // `estimateTronifyFees` clamps savings to 0 when Tronify costs at least as much as the standard
+      // fee; a `BigNumber(0)` is still truthy, so gate on a positive value.
+      savingsFiat?.gt(0)
         ? formatCurrencyUnit(counterValueCurrency.units[0], savingsFiat, {
             showCode: true,
             disableRounding: true,
@@ -180,6 +204,40 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     [savingsFiat, counterValueCurrency, locale],
   );
 
+  // Revert to standard when the sponsored option stops being available (flag off, or availability lost
+  // after an account/details change) while Tronify is selected. Otherwise the `sponsored` marker stays
+  // true and the standard signature path skips locking the TRX fee — a phantom-unlocked fee on a send
+  // that is no longer sponsored.
+  useEffect(() => {
+    if (selectedFeeOptionId === "tronify" && (!flagEnabled || !available)) {
+      selectStandard();
+    }
+  }, [selectedFeeOptionId, flagEnabled, available, selectStandard]);
+
+  // Identity of every field the rent order is crafted from, EXCLUDING the `sponsored` fee-option
+  // marker — toggling the marker must not discard a crafted order. `useAllAmount` is part of it: a
+  // token max-send leaves `amount` at 0 while changing the real simulated amount, so omitting it would
+  // let a stale order survive a max toggle. Joined into one string so the reset effect's dep array
+  // holds a plain identifier, not a method call.
+  const rentIntentKey = [
+    account?.id,
+    parentAccount?.id,
+    transaction?.recipient,
+    transaction?.amount?.toString(),
+    transaction?.useAllAmount,
+    transaction?.subAccountId,
+  ].join("|");
+
+  // Reset the orchestration when that identity changes. Clearing `intent` alone leaves the reducer's
+  // order/phase/requestRef alive, so returning to Review lets the rent-signature screen skip craftRent
+  // and sign/pay the previous intent's payment tx. reset is read through a ref so the effect need not
+  // depend on `actions`, which is rebuilt whenever an order is crafted and would reset mid-flow.
+  const resetRef = useRef(actions.reset);
+  resetRef.current = actions.reset;
+  useEffect(() => {
+    resetRef.current();
+  }, [rentIntentKey]);
+
   const value = useMemo(
     () => ({
       state: sponsoredState,
@@ -188,6 +246,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       selectTronify,
       selectStandard,
       available,
+      intentReady: intent !== null,
       quote,
       savingsFiatFormatted,
       feeCurrencyTicker,
@@ -200,6 +259,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       selectTronify,
       selectStandard,
       available,
+      intent,
       quote,
       savingsFiatFormatted,
       feeCurrencyTicker,

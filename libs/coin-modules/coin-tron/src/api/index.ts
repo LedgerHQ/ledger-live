@@ -13,7 +13,7 @@ import {
   Block,
   AddressValidationCurrencyParameters,
 } from "@ledgerhq/coin-module-framework/api/index";
-import coinConfig, { type TronContext, type TronCoinConfig } from "../config";
+import { type TronContext, type TronCoinConfig } from "../config";
 import {
   broadcast,
   buildEnergyRentRequest,
@@ -40,6 +40,7 @@ import {
   awaitEnergyDelivery,
   broadcastEnergyRentTransaction,
   craftEnergyRentTransaction,
+  getEnergyProvider,
   getEnergyRentStatus,
 } from "../logic/energyRent";
 import type {
@@ -48,7 +49,6 @@ import type {
   EnergyRentSignedTransaction,
 } from "../logic/energyRent";
 import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
-import { EnergyRentProviderNotConfigured } from "../types/errors";
 import type { TronMemo, TronTxData } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
@@ -77,18 +77,16 @@ export function createApi() {
     // The Tronify sponsored flow (LIVE-32780) signs a pre-built payment tx; the generic raw-sign
     // path hands us its raw_data_hex here and re-crafting would be wrong, so we return it verbatim.
     //
-    // Gated on a configured energy-rent provider: that flow is the only legitimate source of
-    // externally-built Tron bytes, and an ungated pass-through would let any
-    // `genericSignRawOperation` caller get arbitrary bytes signed with the account key. Checked per
-    // call rather than at construction (which would let the method be omitted outright, so
-    // `supports()` read false) because `getCoinConfig()` throws when the config singleton is unset
-    // and `createApi()` is resolved lazily with no ordering guarantee against `setCoinConfig`.
+    // Gated on a configured AND SUPPORTED energy-rent provider: that flow is the only legitimate
+    // source of externally-built Tron bytes, and an ungated pass-through would let any
+    // `genericSignRawOperation` caller get arbitrary bytes signed with the account key. getEnergyProvider
+    // throws EnergyRentProviderNotConfigured for a missing OR unknown provider — remote config is
+    // unvalidated and could name an unsupported one, which must not leave raw-signing open. Checked per
+    // call rather than at construction (which would let the method be omitted, so `supports()` read
+    // false) because `getCoinConfig()` throws when the config singleton is unset and `createApi()`
+    // resolves lazily with no ordering guarantee against `setCoinConfig`.
     craftRawTransaction: async (_context, transaction, _sender, _publicKey, _sequence) => {
-      if (!coinConfig.getCoinConfig().energyRent) {
-        throw new EnergyRentProviderNotConfigured(
-          "Tron craftRawTransaction is reserved for the energy-rent payment flow, which is not configured",
-        );
-      }
+      getEnergyProvider();
       return craftRawTransaction(transaction);
     },
     craftTransaction: async (context, transactionIntent, options?) => {

@@ -1,11 +1,5 @@
 import { renderHook } from "tests/testSetup";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSponsoredFailureViewModel } from "../useSponsoredFailureViewModel";
-
-const mockGoToStep = jest.fn();
-jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
-  useFlowWizard: () => ({ navigation: { goToStep: mockGoToStep } }),
-}));
 
 const mockClose = jest.fn();
 jest.mock("../../../../context/SendFlowContext", () => ({
@@ -113,42 +107,5 @@ describe("useSponsoredFailureViewModel", () => {
     result.current.onCancel();
 
     expect(mockClose).toHaveBeenCalledTimes(1);
-  });
-
-  it("navigates to SPONSORED_RENT_SIGNATURE when the phase transitions to RENT_SIGNING", () => {
-    const { rerender } = renderHook(() => useSponsoredFailureViewModel());
-
-    mockSponsoredState = { phase: "RENT_SIGNING", failureKind: null, paymentTxId: null };
-    rerender();
-
-    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE);
-  });
-
-  it("navigates to SIGNATURE when the phase transitions to TRANSFER", () => {
-    const { rerender } = renderHook(() => useSponsoredFailureViewModel());
-
-    mockSponsoredState = { phase: "TRANSFER", failureKind: null, paymentTxId: null };
-    rerender();
-
-    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.SIGNATURE);
-  });
-
-  it("does not navigate while phase stays FAILED", () => {
-    const { rerender } = renderHook(() => useSponsoredFailureViewModel());
-
-    mockSponsoredState = { phase: "FAILED", failureKind: "TRANSFER", paymentTxId: null };
-    rerender();
-
-    expect(mockGoToStep).not.toHaveBeenCalled();
-  });
-
-  it("does not re-dispatch navigation on a same-phase re-render", () => {
-    const { rerender } = renderHook(() => useSponsoredFailureViewModel());
-
-    mockSponsoredState = { phase: "TRANSFER", failureKind: null, paymentTxId: null };
-    rerender();
-    rerender();
-
-    expect(mockGoToStep).toHaveBeenCalledTimes(1);
   });
 });

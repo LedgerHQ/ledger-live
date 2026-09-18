@@ -2,12 +2,11 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useRawTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
+import { isContractDataDisabledError } from "../../../utils/contractDataError";
 
 /**
  * Structural mirror of coin-tron's Tronify wire types (network/tronify/types.ts). Declared locally
@@ -45,17 +44,6 @@ export function recoverDeviceSignature(rawDataHex: string, combinedSignature: st
   return combinedSignature.slice(4 + rawDataHex.length);
 }
 
-/**
- * TRON has no named "contract data disabled" error (hw-app-trx only stubs status 0x6a80); match the
- * raw status code the same way the existing 0x6985 user-reject case is matched in hw/actions/transaction.ts.
- */
-function isContractDataDisabledError(error: Error): boolean {
-  return (
-    (error as { name?: string }).name === "TransportStatusError" &&
-    (error as { statusCode?: number }).statusCode === 0x6a80
-  );
-}
-
 export type SponsoredRentSignatureViewModel = Readonly<{
   isCrafting: boolean;
   craftingLabel: string;
@@ -73,12 +61,11 @@ export type SponsoredRentSignatureViewModel = Readonly<{
  * sponsored send. Crafts the energy-rent order on entry (if not already crafted), signs its
  * unsigned payment transaction via the generic raw-sign device path, and on signature hands the
  * rebuilt Tronify-signed payload to `startRentPayment` (never `useBroadcast` — Tronify broadcasts
- * TX-A). Navigation away from this step follows `state.phase` (POLLING/FAILED), driven by the
- * shared orchestration rather than this screen's own success/error branches.
+ * TX-A). Navigation away from this step is driven by `state.phase` through the shared
+ * useSponsoredPhaseNavigator, not this screen's own success/error branches.
  */
 export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureViewModel {
   const { t } = useTranslation();
-  const { navigation } = useFlowWizard<SendFlowStep>();
   const { state: sendFlowState } = useSendFlowData();
   const { state, actions } = useSponsoredSend();
 
@@ -144,21 +131,6 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
     },
     [order, actions],
   );
-
-  // Phase -> navigation: this screen owns RENT_SIGNING/IDLE; POLLING and FAILED (any failureKind,
-  // including CONTRACT_DATA) hand off to the sibling steps. Guarded so a re-render on the same
-  // phase never re-dispatches GO_TO_STEP.
-  const lastNavigatedPhaseRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (state.phase === lastNavigatedPhaseRef.current) return;
-    if (state.phase === SPONSORED_PHASE.POLLING) {
-      lastNavigatedPhaseRef.current = state.phase;
-      navigation.goToStep(SEND_FLOW_STEP.SPONSORED_POLLING);
-    } else if (state.phase === SPONSORED_PHASE.FAILED) {
-      lastNavigatedPhaseRef.current = state.phase;
-      navigation.goToStep(SEND_FLOW_STEP.SPONSORED_FAILURE);
-    }
-  }, [state.phase, navigation]);
 
   const feeAmountLabel = order ? `${order.payCoinAmt} ${order.payCoinCode}` : null;
 

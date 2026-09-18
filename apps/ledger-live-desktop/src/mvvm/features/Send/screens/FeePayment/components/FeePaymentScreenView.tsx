@@ -44,7 +44,7 @@ export function FeePaymentScreenView({ options, disclaimer, onSelect }: FeePayme
           </ListItem>
         ))}
       </div>
-      <p className="m-0 body-3 text-muted">{disclaimer}</p>
+      {disclaimer ? <p className="m-0 body-3 text-muted">{disclaimer}</p> : null}
     </DialogBody>
   );
 }
