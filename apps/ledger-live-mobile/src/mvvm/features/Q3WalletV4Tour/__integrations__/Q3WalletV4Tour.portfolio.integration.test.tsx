@@ -20,16 +20,11 @@ const eligiblePortfolioState = withFlagOverrides(
 );
 
 function PortfolioScreenWithQ3Tour() {
-  const { isDrawerOpen, handleCloseDrawer, closeDrawer, onSlideChange } = useQ3WalletV4TourDrawer();
+  const { handleOpenDrawer: _handleOpenDrawer, ...drawer } = useQ3WalletV4TourDrawer();
 
   return (
     <View style={{ flex: 1 }} testID="q3-wallet-v4-tour-integration-portfolio">
-      <Q3WalletV4TourDrawer
-        isDrawerOpen={isDrawerOpen}
-        handleCloseDrawer={handleCloseDrawer}
-        closeDrawer={closeDrawer}
-        onSlideChange={onSlideChange}
-      />
+      <Q3WalletV4TourDrawer {...drawer} />
     </View>
   );
 }

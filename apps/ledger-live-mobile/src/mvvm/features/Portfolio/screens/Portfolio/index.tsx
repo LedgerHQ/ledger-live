@@ -86,6 +86,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     handleCloseDrawer: handleCloseQ3Drawer,
     closeDrawer: closeQ3Drawer,
     onSlideChange: onQ3SlideChange,
+    onHeaderClosePressed: onQ3HeaderClosePressed,
+    dismissDrawer: dismissQ3Drawer,
+    onContinueClick: onQ3ContinueClick,
   } = useQ3WalletV4TourDrawer();
 
   const data = useMemo(() => {
@@ -207,6 +210,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         handleCloseDrawer={handleCloseQ3Drawer}
         closeDrawer={closeQ3Drawer}
         onSlideChange={onQ3SlideChange}
+        onHeaderClosePressed={onQ3HeaderClosePressed}
+        dismissDrawer={dismissQ3Drawer}
+        onContinueClick={onQ3ContinueClick}
       />
       <ProductTourPortfolioMount />
       <AnalyticsConsentDrawer />

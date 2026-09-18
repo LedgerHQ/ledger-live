@@ -28,23 +28,21 @@ const SLIDES = [
 type Q3Variant = "q3_a" | "q3_b" | "q3_b2";
 
 const TestComponent = () => {
-  const { isDrawerOpen, handleOpenDrawer, handleCloseDrawer, closeDrawer, onSlideChange } =
-    useQ3WalletV4TourDrawerViewModel();
+  const { handleOpenDrawer, dismissDrawer, ...drawer } = useQ3WalletV4TourDrawerViewModel();
 
   return (
     <>
       <Button onPress={handleOpenDrawer} title="Open Drawer" />
-      <Q3WalletV4TourDrawer
-        isDrawerOpen={isDrawerOpen}
-        handleCloseDrawer={handleCloseDrawer}
-        closeDrawer={closeDrawer}
-        onSlideChange={onSlideChange}
-      />
+      <Button onPress={dismissDrawer} title="Dismiss Drawer" />
+      <Q3WalletV4TourDrawer dismissDrawer={dismissDrawer} {...drawer} />
     </>
   );
 };
 
 describe("Q3WalletV4TourDrawer integration", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   function renderTestComponent({
     hasSeenTour = false,
     variant = "q3_a",
@@ -99,10 +97,14 @@ describe("Q3WalletV4TourDrawer integration", () => {
     await user.press(screen.getByRole("button", { name: "Take a look" }));
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "Next",
-      page: "Q3 Wallet V4 Tour",
-      card: 1,
+      button: "continue",
+      page: "Q3 Tour",
+      contentId: "q3-tour",
+      step: 1,
+      stepName: SLIDES[0].title,
+      totalSteps: 4,
       variant: "q3_b2",
+      ctaPosition: "primary",
     });
   });
 
@@ -121,13 +123,74 @@ describe("Q3WalletV4TourDrawer integration", () => {
     expect(firstSlideTitle).not.toBeOnTheScreen();
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "Got it",
-      page: "Q3 Wallet V4 Tour",
+      button: "continue",
+      page: "Q3 Tour",
+      contentId: "q3-tour",
+      step: 1,
+      stepName: SLIDES[0].title,
+      totalSteps: 4,
+      variant: "q3_a",
+      ctaPosition: "primary",
+    });
+    expect(track).toHaveBeenCalledWith("tour_completed", {
+      page: "Q3 Tour",
+      contentId: "q3-tour",
+      step: 1,
+      stepName: SLIDES[0].title,
+      totalSteps: 4,
       variant: "q3_a",
     });
 
     await user.press(screen.getByText("Open Drawer"));
     expect(screen.queryByText(SLIDES[0].title)).not.toBeOnTheScreen();
+  });
+
+  it("should track close and skip drawer_dismissed when the header close is pressed", async () => {
+    const { user, resizeScreenWidth } = renderTestComponent();
+
+    await user.press(screen.getByText("Open Drawer"));
+    resizeScreenWidth();
+    await waitFor(() => expect(screen.getByText(SLIDES[0].title)).toBeOnTheScreen());
+
+    await user.press(screen.getByTestId("bottom-sheet-header-close-button"));
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "close",
+      page: "Q3 Tour",
+      contentId: "q3-tour",
+      step: 1,
+      stepName: SLIDES[0].title,
+      totalSteps: 4,
+      variant: "q3_a",
+    });
+    expect(track).not.toHaveBeenCalledWith(
+      "drawer_dismissed",
+      expect.objectContaining({ page: "Q3 Tour" }),
+    );
+  });
+
+  it("should track drawer_dismissed when the sheet is dismissed", async () => {
+    const { user, resizeScreenWidth } = renderTestComponent();
+
+    await user.press(screen.getByText("Open Drawer"));
+    resizeScreenWidth();
+    await waitFor(() => expect(screen.getByText(SLIDES[0].title)).toBeOnTheScreen());
+
+    await user.press(screen.getByText("Dismiss Drawer"));
+
+    expect(track).toHaveBeenCalledWith("drawer_dismissed", {
+      drawer: "Q3 Tour",
+      page: "Q3 Tour",
+      contentId: "q3-tour",
+      step: 1,
+      stepName: SLIDES[0].title,
+      totalSteps: 4,
+      variant: "q3_a",
+    });
+    expect(track).not.toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "close", page: "Q3 Tour" }),
+    );
   });
 
   it("should not open the drawer when the user has already seen the tour", async () => {

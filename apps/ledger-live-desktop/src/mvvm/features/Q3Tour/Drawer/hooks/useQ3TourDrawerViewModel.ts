@@ -12,6 +12,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { setHasSeenQ3Tour } from "~/renderer/actions/settings";
 import { isQ3ReleaseTourEnabled } from "LLD/features/Q2Tour/releaseTourGate";
+import { getQ3TourStepName } from "../../analytics/const";
 import { createQ3TourAnalytics } from "../../analytics/q3TourCarouselAnalytics";
 import { getQ3TourConfig, resolveQ3TourVariant } from "../const";
 
@@ -50,6 +51,7 @@ export const useQ3TourDrawerViewModel = (
     shouldAutoOpen: isOnPortfolioPage && hasCompletedOnboarding,
     slides: tour.slides,
     analytics,
+    getStepName: getQ3TourStepName,
   });
 
   return { ...drawer, tour };

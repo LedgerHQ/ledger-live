@@ -9,6 +9,7 @@ type UseReleaseTourDrawerViewModelParams = {
   readonly shouldAutoOpen?: boolean;
   readonly slides: readonly ReleaseTourSlide[];
   readonly analytics: ReleaseTourAnalytics;
+  readonly getStepName?: (titleKey: string) => string;
 };
 
 export const useReleaseTourDrawerViewModel = ({
@@ -18,6 +19,7 @@ export const useReleaseTourDrawerViewModel = ({
   shouldAutoOpen = false,
   slides,
   analytics,
+  getStepName,
 }: UseReleaseTourDrawerViewModelParams): ReleaseTourDrawerViewModel => {
   const { t } = useTranslation();
   const currentIndexRef = useRef(0);
@@ -28,9 +30,13 @@ export const useReleaseTourDrawerViewModel = ({
   const getContext = useCallback(
     (slideIndex: number) => {
       const slide = slides[slideIndex];
-      return slide ? analytics.getContext(slideIndex, t(slide.titleKey)) : undefined;
+      if (!slide) {
+        return undefined;
+      }
+      const stepName = getStepName?.(slide.titleKey) ?? t(slide.titleKey);
+      return analytics.getContext(slideIndex, stepName);
     },
-    [analytics, slides, t],
+    [analytics, getStepName, slides, t],
   );
 
   const handleCloseDialog = useCallback(() => {
