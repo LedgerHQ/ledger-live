@@ -272,9 +272,10 @@ export class ICPCallRejected extends Error {
   }
 }
 
-// The node answered a submission with a 4xx (carried as `status`): it never took the message, so
-// nothing ran. Distinct from a dropped connection, a 202 or a 5xx, after which the message may
-// still execute.
+// The node answered a call with a 4xx (carried as `status`, its text as `reason`): it never took the
+// message, so nothing ran. Distinct from a dropped connection, a 202 or a 5xx, after which the
+// message may still execute. Only a call earns this: a refused read_state says nothing about the
+// call it polls, and is treated as no answer.
 export class ICPNodeRefused extends Error {
   override name = "ICPNodeRefused";
   [key: string]: unknown;

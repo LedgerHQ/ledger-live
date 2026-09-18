@@ -149,6 +149,31 @@ describe("readReplyFromCanister", () => {
     );
     expect(out && new TextDecoder().decode(out)).toBe("POLLED");
   }, 10000);
+
+  // A read the node refuses — expired along with the call whose expiry it carries, or rate-limited
+  // — says nothing about the call, so the poll goes on rather than reporting the call refused.
+  it("keeps polling when a read of the call's status is refused", async () => {
+    (Certificate.create as jest.Mock).mockResolvedValue(certWith("replied", encStr("LATE")));
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValueOnce({ status: 202, arrayBuffer: async () => new ArrayBuffer(0) }) // /call
+      .mockResolvedValueOnce({ status: 429, text: async () => "rate limited" }) // read_state
+      .mockResolvedValue({
+        status: 200,
+        arrayBuffer: async () => Cbor.encode({ certificate: new Uint8Array([2]) }), // read_state
+      });
+    (global as unknown as { fetch: unknown }).fetch = fetchMock;
+
+    const out = await readReplyFromCanister(
+      Buffer.from("00", "hex"),
+      Buffer.from("01", "hex"),
+      CANISTER,
+      REQ_ID_HEX,
+    );
+
+    expect(out && new TextDecoder().decode(out)).toBe("LATE");
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  }, 10000);
 });
 
 describe("decodeManageNeuronReply", () => {

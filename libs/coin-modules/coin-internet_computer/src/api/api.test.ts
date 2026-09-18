@@ -11,6 +11,8 @@ const answering = (status: number, text = "") => {
 };
 
 const submit = () => broadcastTxn(Buffer.from("00", "hex"), "ryjl3-tyaaa-aaaaa-aaaba-cai", "call");
+const poll = () =>
+  broadcastTxn(Buffer.from("00", "hex"), "ryjl3-tyaaa-aaaaa-aaaba-cai", "read_state");
 
 describe("broadcastTxn answers", () => {
   const originalFetch = global.fetch;
@@ -41,7 +43,17 @@ describe("broadcastTxn answers", () => {
     const attempt = submit();
     await expect(attempt).rejects.toThrow(ICPNodeRefused);
     await expect(attempt).rejects.toThrow(/ingress expiry/);
-    await expect(attempt).rejects.toMatchObject({ status: 403 });
+    await expect(attempt).rejects.toMatchObject({
+      status: 403,
+      reason: "ingress expiry too far in the past",
+    });
+  });
+
+  // A refused read says nothing about the call it asks after, which was taken already. Reported as
+  // a refusal it would read as "nothing ran" — and earn a retry — for a call that may be running.
+  it("returns null when the node would not take a read of the call's status", async () => {
+    answering(400, "ingress expiry too far in the past");
+    await expect(poll()).resolves.toBeNull();
   });
 });
 

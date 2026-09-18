@@ -116,8 +116,10 @@ export const fetchBlockHeight = async (): Promise<BigNumber> => {
  * `null` is not a failure. A 202 means the node took the call but had no certificate for it within
  * its window; a 5xx that the answer was lost, the call possibly not. Either way the call can still
  * execute, and only a read of its status can say — the caller polls where it holds a signed
- * read-state envelope, and reports the outcome unknown where it does not. A 4xx is the one answer
- * that settles it: the node never took the message.
+ * read-state envelope, and reports the outcome unknown where it does not. A 4xx to a call is the
+ * one answer that settles it: the node never took the message. A 4xx to a read_state settles
+ * nothing — the call it asks after was taken already, and the read itself may have expired (it
+ * carries the call's expiry) or been rate-limited — so it counts as no answer, and the poll goes on.
  */
 export const broadcastTxn = async (
   payload: Buffer,
@@ -139,9 +141,11 @@ export const broadcastTxn = async (
     const body = await res.arrayBuffer();
     return body.byteLength > 0 ? new Uint8Array(body) : null;
   }
-  if (res.status >= 400 && res.status < 500) {
-    throw new ICPNodeRefused(`Failed to broadcast transaction: ${await res.text()}`, {
+  if (type === "call" && res.status >= 400 && res.status < 500) {
+    const reason = redactPrincipals(await res.text());
+    throw new ICPNodeRefused(`Failed to broadcast transaction: ${reason}`, {
       status: res.status,
+      reason,
     });
   }
   return null;
