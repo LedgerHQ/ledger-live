@@ -20,7 +20,15 @@ const refetchUser = jest.fn();
 const refetchCardStatus = jest.fn();
 const refetchWallets = jest.fn();
 
-function setupMocks({ hasAddedCardToWallet = false, verified = false } = {}) {
+function setupMocks({
+  hasAddedCardToWallet = false,
+  verified = false,
+  cardAddedToDigitalWallet,
+}: {
+  hasAddedCardToWallet?: boolean;
+  verified?: boolean;
+  cardAddedToDigitalWallet?: boolean;
+} = {}) {
   jest.mocked(useGetUserQuery).mockReturnValue({
     refetch: refetchUser,
     data: { verificationState: verified ? "VERIFIED" : "PENDING" },
@@ -30,7 +38,7 @@ function setupMocks({ hasAddedCardToWallet = false, verified = false } = {}) {
 
   jest.mocked(useGetCardStatusQuery).mockReturnValue({
     refetch: refetchCardStatus,
-    data: undefined,
+    data: cardAddedToDigitalWallet === undefined ? undefined : { cardAddedToDigitalWallet },
     isFetching: false,
     isError: false,
   } as unknown as ReturnType<typeof useGetCardStatusQuery>);
@@ -117,5 +125,27 @@ describe("useCardOnboardingStatus (native)", () => {
     const { result } = renderHook(() => useCardOnboardingStatus());
 
     expect(result.current.data.completedCount).toBe(2);
+  });
+
+  it.each([
+    [true, false],
+    [false, true],
+  ])(
+    "takes the provider's answer for the phone wallet step over the device's: %s",
+    (cardAddedToDigitalWallet, hasAddedCardToWallet) => {
+      setupMocks({ cardAddedToDigitalWallet, hasAddedCardToWallet });
+      const { result } = renderHook(() => useCardOnboardingStatus());
+
+      const walletStep = result.current.data.steps.find(({ id }) => id === "apple-google-pay");
+      expect(walletStep?.isDone).toBe(cardAddedToDigitalWallet);
+    },
+  );
+
+  it("falls back to the device for a tenant that does not answer for the flag", () => {
+    setupMocks({ hasAddedCardToWallet: true });
+    const { result } = renderHook(() => useCardOnboardingStatus());
+
+    const walletStep = result.current.data.steps.find(({ id }) => id === "apple-google-pay");
+    expect(walletStep?.isDone).toBe(true);
   });
 });
