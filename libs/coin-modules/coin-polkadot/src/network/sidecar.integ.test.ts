@@ -49,6 +49,7 @@ const CURRENCY_CONFIGS = {
       sidecar: { url: "https://polkadot-westend-rest-api.coin.ledger.com/v1/rc" },
       node: { url: "https://polkadot-westend-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_westend" },
+      assetHub: { nodeUrl: "https://polkadot-westend-asset-hub-fullnodes.api.live.ledger.com" },
     },
     testAddress: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
   },

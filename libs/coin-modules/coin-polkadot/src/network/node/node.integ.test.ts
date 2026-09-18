@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { ApiPromise, HttpProvider } from "@polkadot/api";
-import getApiPromise from "./apiPromise";
+import getApiPromise, { getStakingApiPromise } from "./apiPromise";
 import { fetchValidators } from "./validators";
 
 jest.mock("./apiPromise");
@@ -11,6 +11,7 @@ describe("fetchValidators", () => {
     provider = new HttpProvider("https://polkadot-rpc.publicnode.com");
     const api = await ApiPromise.create({ provider: provider as any, noInitWarn: true });
     (getApiPromise as jest.Mock).mockResolvedValue(api);
+    (getStakingApiPromise as jest.Mock).mockResolvedValue(api);
   });
 
   it("should not exceed 40 RPC API calls to fetch all validators", async () => {

@@ -19,6 +19,13 @@ export type PolkadotConfig = {
   staking?: {
     electionStatusThreshold: number;
   };
+  /**
+   * Dedicated node for staking-pallet storage reads, used when the currency's own node no
+   * longer exposes `api.query.staking` (e.g. Westend's staking pallet migrated to its Asset Hub).
+   */
+  assetHub?: {
+    nodeUrl: string;
+  };
 };
 
 export type PolkadotCoinConfig = CurrencyConfig & PolkadotConfig;

@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { IUnlocking, SidecarStakingInfo } from "../types";
-import getApiPromise from "./apiPromise";
+import { getStakingApiPromise } from "./apiPromise";
 
 // Required to leverage PolkadotJS *type augmentation*
 // (https://polkadot.js.org/docs/api/FAQ#since-upgrading-to-the-7x-series-typescript-augmentation-is-missing)
@@ -18,11 +18,12 @@ export const fetchStakingInfo = async (
   addr: string,
   currency?: CryptoCurrency,
 ): Promise<SidecarStakingInfo> => {
-  const api = await getApiPromise(currency);
+  const api = await getStakingApiPromise(currency);
   const hash = await api.rpc.chain.getFinalizedHead();
   const historicApi = await api.at(hash);
 
-  if (currency?.id === "assethub_polkadot" && !historicApi.query.staking)
+  // Staking pallet storage may be unavailable on the chain we're querying.
+  if (!historicApi.query.staking)
     return {
       staking: { unlocking: [] },
       numSlashingSpans: 0,
