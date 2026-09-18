@@ -17,8 +17,14 @@ function wipeHostedSessionForManifest(manifest: LiveAppManifest): Promise<void> 
 }
 
 /** The provider webview must open on a wiped session, never on the one the wipe still holds. */
-export function whenHostedSessionWiped(): Promise<void> {
-  return hostedSessionWipe;
+export async function whenHostedSessionWiped(): Promise<void> {
+  // A sign-in change during the wait queues a later batch, and that one must settle here too.
+  let awaited: Promise<void> | undefined;
+
+  while (awaited !== hostedSessionWipe) {
+    awaited = hostedSessionWipe;
+    await awaited;
+  }
 }
 
 export function useWipeHostedSession(): void {

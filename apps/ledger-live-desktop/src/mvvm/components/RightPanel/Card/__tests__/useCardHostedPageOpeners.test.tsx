@@ -4,6 +4,7 @@ import { act } from "@testing-library/react";
 import { getEnvDefault, setEnv } from "@shared/env";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useCardHostedPageOpeners } from "../useCardHostedPageOpeners";
+import { payCardAuthSlice } from "@features/flow-pay-card-auth/state";
 import { useWipeHostedSession } from "../useWipeHostedSession";
 
 const mockNavigate = jest.fn();
@@ -170,6 +171,10 @@ describe("useCardHostedPageOpeners", () => {
   });
 
   describe("the wipe of the pay tab entry", () => {
+    afterEach(() => {
+      mockedInvoke.mockReset();
+    });
+
     it("holds the navigation back until the wipe of every manifest has settled", async () => {
       const settleWipes: ((value: unknown) => void)[] = [];
       mockedInvoke.mockImplementationOnce(() => new Promise(resolve => settleWipes.push(resolve)));
@@ -184,6 +189,35 @@ describe("useCardHostedPageOpeners", () => {
 
       settleWipes[0](undefined);
       settleWipes[1](undefined);
+      await act(async () => {
+        await opening;
+      });
+
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    it("waits for the later wipe that a sign-in change queues during that wait", async () => {
+      const settleWipes: ((value: unknown) => void)[] = [];
+      mockedInvoke.mockImplementation(() => new Promise(resolve => settleWipes.push(resolve)));
+      const { result, store } = renderOpenersWithWipe();
+
+      const opening = result.current.openHostedPage("/topup");
+
+      act(() => {
+        store.dispatch(payCardAuthSlice.actions.setSignedIn(true));
+      });
+      expect(settleWipes).toHaveLength(4);
+
+      settleWipes[0](undefined);
+      settleWipes[1](undefined);
+      await act(async () => {
+        await new Promise(resolve => setImmediate(resolve));
+      });
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+
+      settleWipes[2](undefined);
+      settleWipes[3](undefined);
       await act(async () => {
         await opening;
       });
