@@ -46,16 +46,12 @@ describe("useCardTransactionHistoryViewModel", () => {
     expect(displayState.groups.flatMap(({ items }) => items)).toHaveLength(page.length);
   });
 
-  it("should only expose transactions accepted by the host filter", async () => {
+  it("should only expose the transactions the scoped asset funded", async () => {
     const page = mockPayCardTransactions();
     server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
 
     const { result } = renderHook(
-      () =>
-        useCardTransactionHistoryViewModel({
-          onRowClick,
-          filterTransaction: item => item.transaction.id === page[0]?.id,
-        }),
+      () => useCardTransactionHistoryViewModel({ onRowClick, asset: "btc.bitcoin" }),
       { wrapper: cardApiWrapper({ signedIn: true }) },
     );
 
@@ -63,6 +59,22 @@ describe("useCardTransactionHistoryViewModel", () => {
     const displayState = result.current.displayState;
     if (displayState.kind !== "ready") throw new Error("expected ready displayState");
 
-    expect(displayState.groups.flatMap(({ items }) => items)).toHaveLength(1);
+    const items = displayState.groups.flatMap(({ items }) => items);
+    expect(items.length).toBeGreaterThan(0);
+    expect(items.length).toBeLessThan(page.length);
+    for (const item of items) {
+      expect(item.transaction.fundingSources?.map(source => source.currency)).toContain("btc");
+    }
+  });
+
+  it("should expose nothing when the scoped asset is not one the catalog covers", async () => {
+    server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(mockPayCardTransactions())));
+
+    const { result } = renderHook(
+      () => useCardTransactionHistoryViewModel({ onRowClick, asset: "nope.nowhere" }),
+      { wrapper: cardApiWrapper({ signedIn: true }) },
+    );
+
+    await waitFor(() => expect(result.current.displayState.kind).toBe("empty"));
   });
 });

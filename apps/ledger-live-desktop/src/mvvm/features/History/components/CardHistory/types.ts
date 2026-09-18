@@ -1,13 +1,10 @@
-import type {
-  CardTransactionFormatters,
-  CardTransactionItem,
-} from "@features/flow-pay-card-transactions";
+import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 
 export type CardHistoryViewModel = Readonly<{
   formatters: CardTransactionFormatters;
   formatDay: (date: Date) => string;
   onTrackEvent: (event: string, params: Record<string, unknown>) => void;
   onGoToPay: () => void;
-  /** Set when the history is scoped to one card asset. */
-  filterTransaction?: (item: CardTransactionItem) => boolean;
+  /** Provider pair of the card asset the history is scoped to, e.g. `usdc.ethereum`. */
+  asset?: string;
 }>;

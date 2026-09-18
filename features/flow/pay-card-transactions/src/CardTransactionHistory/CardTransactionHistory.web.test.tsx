@@ -6,7 +6,6 @@ import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-t
 import { listenToCardApi } from "@support/msw-features-flow-pay-card";
 import { CARD_TRANSACTIONS_URL, cardApiWrapper } from "../__tests__/cardApiStore";
 import { CardTransactionHistory } from "./CardTransactionHistory.web";
-import { isCardTransactionFundedBy } from "../logic/isCardTransactionFundedBy";
 
 const server = listenToCardApi();
 
@@ -54,12 +53,9 @@ describe("CardTransactionHistory", () => {
   it("should keep the same columns when history is filtered by asset", async () => {
     server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(mockPayCardTransactions())));
 
-    render(
-      <CardTransactionHistory
-        filterTransaction={item => isCardTransactionFundedBy(item, "btc", "bitcoin")}
-      />,
-      { wrapper: cardApiWrapper({ signedIn: true }) },
-    );
+    render(<CardTransactionHistory asset="btc.bitcoin" />, {
+      wrapper: cardApiWrapper({ signedIn: true }),
+    });
 
     expect(await screen.findByText("STARBUCKS")).toBeVisible();
     expect(screen.queryByText("NETFLIX.COM")).not.toBeInTheDocument();
