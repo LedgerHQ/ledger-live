@@ -1,3 +1,4 @@
+import type { BiometricsKind } from "@features/platform-app-lock";
 import type React from "react";
 
 export type UnlockOutcome = "unlocked" | "incorrect" | "failed";
@@ -29,6 +30,7 @@ export type UnlockViewProps = UnlockViewModel &
     isAwaitingBiometrics?: boolean;
     isForgotPasswordOpen?: boolean;
     isAppActive?: boolean;
+    biometricsKind?: BiometricsKind;
     logo?: React.ReactNode;
     topInset?: number;
     bottomInset?: number;
