@@ -57,10 +57,10 @@ catalog:
   "@ledgerhq/live-network": 3.1.0
   "@ledgerhq/live-promise": 0.4.0
   "@ledgerhq/psbtv2": 0.6.0
-  "@ledgerhq/lumen-design-core": 0.1.28
-  "@ledgerhq/lumen-ui-react": 0.1.58
-  "@ledgerhq/lumen-ui-rnative": 0.1.61
-  "@ledgerhq/lumen-utils-shared": 0.1.12
+  "@ledgerhq/lumen-design-core": 0.1.29
+  "@ledgerhq/lumen-ui-react": 0.1.59
+  "@ledgerhq/lumen-ui-rnative": 0.1.62
+  "@ledgerhq/lumen-utils-shared": 0.1.13
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.15.3
   "@ledgerhq/wallet-api-client-react": 1.4.34

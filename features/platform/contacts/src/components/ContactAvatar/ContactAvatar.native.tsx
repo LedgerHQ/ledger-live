@@ -1,7 +1,7 @@
 import React from "react";
 import {
   Avatar,
-  resolveAvatarColor,
+  useResolveAvatarColor,
   type AvatarProps as LumenAvatarProps,
 } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactId } from "@domain/entity-contact";
@@ -25,6 +25,7 @@ export function ContactAvatar({
   testId,
 }: ContactAvatarProps): React.JSX.Element {
   const resolvedTestID = testId ?? `contacts-avatar-${contactId}`;
+  const avatarFallbackColor = useResolveAvatarColor(contactId);
 
   if (isMe) {
     return (
@@ -44,7 +45,7 @@ export function ContactAvatar({
       size={size}
       alt={name}
       fallbackText={getContactAvatarInitials(name)}
-      fallbackColor={resolveAvatarColor(contactId)}
+      fallbackColor={avatarFallbackColor}
     />
   );
 }
