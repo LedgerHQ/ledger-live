@@ -59,24 +59,38 @@ jest.mock("@features/flow-pay-card-transactions", () => ({
   }),
 }));
 
-jest.mock("@features/flow-pay-card-wallets", () => ({
-  useCardLinkedWallets: () => ({
-    wallets: [
-      {
-        id: "w-usdc",
-        balance: "4000",
-        currency: "usdc",
-        network: "ethereum",
-        ledgerId: "ethereum/erc20/usd__coin",
-        ledgerCurrency: USDC,
-      },
-    ],
-    isLoading: false,
-    isFetching: false,
-    isError: false,
-    refetch: jest.fn(),
-  }),
-}));
+jest.mock("@features/flow-pay-card-wallets", () => {
+  const { CryptoOrTokenCurrencySchema } = jest.requireActual("@domain/entity-currency");
+  const ledgerCurrency = CryptoOrTokenCurrencySchema.parse({
+    type: "TokenCurrency",
+    id: "ethereum/erc20/usd__coin",
+    parentCurrencyId: "ethereum",
+    contractAddress: "0x0000000000000000000000000000000000000000",
+    tokenType: "erc20",
+    name: "USD Coin",
+    ticker: "USDC",
+    units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+  });
+
+  return {
+    useCardLinkedWallets: () => ({
+      wallets: [
+        {
+          id: "w-usdc",
+          balance: "4000",
+          currency: "usdc",
+          network: "ethereum",
+          ledgerId: "ethereum/erc20/usd__coin",
+          ledgerCurrency,
+        },
+      ],
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+      refetch: jest.fn(),
+    }),
+  };
+});
 
 const USDC = CryptoOrTokenCurrencySchema.parse({
   type: "TokenCurrency",
