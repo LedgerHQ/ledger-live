@@ -10,6 +10,7 @@ import type { CardDetailsProps, CardDetailsViewProps } from "../../types";
 
 export function useCardDetailsViewModel({
   cardVisual,
+  assets,
   formatters,
   onTrackEvent,
   onShowMore,
@@ -50,6 +51,7 @@ export function useCardDetailsViewModel({
     route,
     overview: {
       cardVisual,
+      assets,
       freezeViewModel,
       moreViewModel,
       onFreezePress,

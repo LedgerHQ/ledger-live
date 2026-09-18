@@ -38,6 +38,7 @@ function OverviewActions({
 
 export function OverviewScene({
   cardVisual,
+  assets,
   freezeViewModel,
   moreViewModel,
   onFreezePress,
@@ -56,6 +57,8 @@ export function OverviewScene({
         onFreezePress={onFreezePress}
         onMorePress={onMorePress}
       />
+
+      {assets}
 
       <CardTransactions
         formatters={formatters}

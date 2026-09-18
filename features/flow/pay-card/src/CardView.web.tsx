@@ -3,6 +3,7 @@ import { CardLogin } from "@features/flow-pay-card-auth";
 import { CardArtwork, CardDetails } from "@features/flow-pay-card-details";
 import { CardTransactions } from "@features/flow-pay-card-transactions";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
+import { CardAssets } from "./CardAssets";
 import type { CardViewProps } from "./Card.types";
 
 export function CardView({
@@ -10,6 +11,7 @@ export function CardView({
   login,
   displayState,
   cardVisual,
+  assets,
   formatters,
   unlock,
   onShowMore,
@@ -29,6 +31,7 @@ export function CardView({
             onTrackEvent={login.onTrackEvent}
             onShowMore={onShowMore}
           />
+          {assets ? <CardAssets {...assets} /> : null}
         </>
       ) : (
         <>

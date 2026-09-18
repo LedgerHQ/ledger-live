@@ -1,4 +1,5 @@
 import React, { type PropsWithChildren } from "react";
+import { View } from "react-native";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import {
   cardApiWrapper,
@@ -40,6 +41,20 @@ describe("CardDetails (native)", () => {
     renderCardDetails();
 
     expect(screen.getByLabelText(CARD_COPY.placeholder).props.disabled).toBe(true);
+  });
+
+  it("should list the assets the host passes inside the sheet, under the card actions", async () => {
+    const user = userEvent.setup();
+    render(<CardDetails onTrackEvent={jest.fn()} assets={<View testID="card-assets" />} />, {
+      wrapper: Wrapper,
+    });
+
+    // The Pay tab shows the card face alone: the list belongs to the sheet the design draws.
+    expect(screen.queryByTestId("card-assets")).toBeNull();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+
+    expect(await screen.findByTestId("card-assets")).toBeVisible();
   });
 
   it("should keep the details sheet content hidden when Details has not been pressed", () => {

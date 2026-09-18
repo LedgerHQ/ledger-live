@@ -33,6 +33,7 @@
     "@features/flow-pay-card-transactions": "workspace:^",
     "@features/flow-pay-card-wallets": "workspace:^",
     "@features/flow-pay-card-widget": "workspace:^",
+    "@ledgerhq/crypto-icons": "catalog:",
     "@shared/i18n": "workspace:*"
   },
   "devDependencies": {
