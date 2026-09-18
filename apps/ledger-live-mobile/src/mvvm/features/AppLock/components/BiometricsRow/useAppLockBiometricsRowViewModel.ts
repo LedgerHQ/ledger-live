@@ -1,13 +1,10 @@
-import {
-  getBiometricsAvailability,
-  selectBiometricsEnabled,
-  type BiometricsAvailability,
-} from "@features/platform-app-lock";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { selectBiometricsEnabled, type BiometricsAvailability } from "@features/platform-app-lock";
+import { useCallback, useMemo, useState } from "react";
 import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
+import { useBiometricsAvailability } from "../../hooks/useBiometricsAvailability";
 import { useBiometricsSetup } from "../../hooks/useBiometricsSetup";
 
 export type AppLockBiometricsRowViewModel = Readonly<{
@@ -21,25 +18,8 @@ function useAppLockBiometricsRowViewModel(): AppLockBiometricsRowViewModel {
   const { t } = useTranslation();
   const isEnabled = useSelector(selectBiometricsEnabled);
   const { enable, disable } = useBiometricsSetup();
-  const [availability, setAvailability] = useState<BiometricsAvailability | undefined>(undefined);
+  const availability = useBiometricsAvailability();
   const [isPending, setIsPending] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    getBiometricsAvailability()
-      // A rejection would otherwise leave this undefined for good, hiding the row with no trace.
-      .catch(() => ({ status: "unavailable" }) as const)
-      .then(next => {
-        if (!cancelled) {
-          setAvailability(next);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const biometricsName = useMemo(
     () =>

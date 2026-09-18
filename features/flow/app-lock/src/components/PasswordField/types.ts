@@ -1,3 +1,4 @@
+import type { BiometricsKind } from "@features/platform-app-lock";
 import type React from "react";
 import type { TextInput } from "react-native";
 
@@ -11,5 +12,6 @@ export type PasswordFieldProps = Readonly<{
   canReveal?: boolean;
   onSubmitEditing?: () => void;
   onBiometrics?: () => void;
+  biometricsKind?: BiometricsKind;
   testID?: string;
 }>;

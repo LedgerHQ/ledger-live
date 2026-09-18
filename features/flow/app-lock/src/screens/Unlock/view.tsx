@@ -22,6 +22,7 @@ export function UnlockView({
   isAwaitingBiometrics = false,
   isForgotPasswordOpen = false,
   isAppActive = true,
+  biometricsKind,
   logo,
   topInset = 0,
   bottomInset = 0,
@@ -108,6 +109,7 @@ export function UnlockView({
         autoFocus
         onSubmitEditing={onUnlock}
         onBiometrics={canRetryBiometrics ? onRetryBiometrics : undefined}
+        biometricsKind={biometricsKind}
         testID="app-lock-unlock-field"
       />
 

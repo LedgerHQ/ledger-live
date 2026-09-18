@@ -8,9 +8,11 @@ import {
   selectBiometricsEnabled,
   selectHasPassword,
   unlockApp,
+  type BiometricsKind,
 } from "@features/platform-app-lock";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
+import { useBiometricsAvailability } from "../../hooks/useBiometricsAvailability";
 import { useBiometricUnlock } from "../../hooks/useBiometricUnlock";
 import { useIsAppActive } from "../../hooks/useIsAppActive";
 import { useKeyboardInset } from "../../hooks/useKeyboardInset";
@@ -23,6 +25,7 @@ type UnlockScreenViewModel = UnlockViewModel &
     onForgotPasswordClose: () => void;
     isAwaitingBiometrics: boolean;
     isAppActive: boolean;
+    biometricsKind: BiometricsKind | undefined;
     keyboardHeight: number;
   }>;
 
@@ -31,6 +34,8 @@ function useUnlockScreenViewModel(): UnlockScreenViewModel {
   const hasPassword = useSelector(selectHasPassword);
   const biometricsEnabled = useSelector(selectBiometricsEnabled);
   const { runBiometricUnlock } = useBiometricUnlock();
+  const biometrics = useBiometricsAvailability();
+  const biometricsKind = biometrics?.status === "available" ? biometrics.kind : undefined;
   const isAppActive = useIsAppActive();
   const keyboardHeight = useKeyboardInset();
   const [hasFailed, setHasFailed] = useState(false);
@@ -100,6 +105,7 @@ function useUnlockScreenViewModel(): UnlockScreenViewModel {
     onForgotPasswordClose,
     isAwaitingBiometrics,
     isAppActive,
+    biometricsKind,
     keyboardHeight,
   };
 }

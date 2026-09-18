@@ -1,9 +1,10 @@
 import { PASSWORD_MAX_LENGTH } from "@features/platform-app-lock";
 import { useTranslation } from "@shared/i18n";
 import { TextInput } from "@ledgerhq/lumen-ui-rnative";
-import { CursorTouch, Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import React, { useCallback, useState } from "react";
 import { Pressable } from "react-native";
+import { biometricsSymbol } from "./internals/biometricsSymbol";
 import type { PasswordFieldProps } from "./types";
 
 export function PasswordField({
@@ -16,12 +17,14 @@ export function PasswordField({
   inputRef,
   onSubmitEditing,
   onBiometrics,
+  biometricsKind,
   testID,
 }: PasswordFieldProps): React.JSX.Element {
   const { t } = useTranslation();
   const [isRevealed, setIsRevealed] = useState(false);
   const toggleReveal = useCallback(() => setIsRevealed(revealed => !revealed), []);
   const RevealIcon = isRevealed ? EyeCross : Eye;
+  const BiometricsIcon = biometricsSymbol(biometricsKind);
 
   let suffix: React.ReactNode;
   if (onBiometrics) {
@@ -32,7 +35,7 @@ export function PasswordField({
         onPress={onBiometrics}
         testID={testID ? `${testID}-biometrics` : undefined}
       >
-        <CursorTouch size={20} />
+        <BiometricsIcon size={20} />
       </Pressable>
     );
   } else if (canReveal) {
