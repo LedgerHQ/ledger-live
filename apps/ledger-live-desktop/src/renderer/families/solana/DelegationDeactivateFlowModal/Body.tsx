@@ -1,3 +1,4 @@
+import { undelegateTransaction } from "@ledgerhq/live-common/families/solana/transactions";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { requireStakePositionId } from "@ledgerhq/live-common/families/solana/logic";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -91,12 +92,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     const { account, stakeWithMeta } = params;
     assertStakingResources(account);
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
-      model: {
-        kind: "stake.undelegate",
-        uiState: {
-          stakeAccAddr: requireStakePositionId(stakeWithMeta.stake),
-        },
-      },
+      ...undelegateTransaction(requireStakePositionId(stakeWithMeta.stake)),
     });
     return {
       account,

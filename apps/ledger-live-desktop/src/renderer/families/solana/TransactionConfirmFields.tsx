@@ -1,3 +1,7 @@
+import {
+  getTransactionTransferFee,
+  isTokenTransferTransaction,
+} from "@ledgerhq/live-common/families/solana/transactions";
 import invariant from "invariant";
 import React, { useMemo } from "react";
 import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDeviceTransactionConfig";
@@ -37,10 +41,7 @@ const Title: TitleComponent = props => {
     }
   }, [fields]);
 
-  if (
-    transaction.model.commandDescriptor?.command.kind === "token.transfer" &&
-    device.modelId === DeviceModelId.nanoS
-  ) {
+  if (isTokenTransferTransaction(transaction) && device.modelId === DeviceModelId.nanoS) {
     return (
       <Box flexDirection="column" alignItems="center" gap={4} mb={4} justifyContent="center">
         <ConfirmTitle title={undefined} typeTransaction={typeTransaction} {...props} />
@@ -58,14 +59,9 @@ const Title: TitleComponent = props => {
 
 const TokenTransferFeeField = ({ account, transaction, field }: SolanaFieldComponentProps) => {
   invariant(transaction.family === "solana", "expect solana transaction");
-  invariant(
-    transaction.model.commandDescriptor?.command.kind === "token.transfer",
-    "expect token.transfer transaction",
-  );
-  invariant(
-    transaction.model.commandDescriptor.command.extensions?.transferFee !== undefined,
-    "expect token.transfer transaction with transfer fee extension",
-  );
+  invariant(isTokenTransferTransaction(transaction), "expect token.transfer transaction");
+  const transferFee = getTransactionTransferFee(transaction);
+  invariant(transferFee, "expect token.transfer transaction with transfer fee extension");
   const unit = useAccountUnit(account);
 
   return (
@@ -73,7 +69,7 @@ const TokenTransferFeeField = ({ account, transaction, field }: SolanaFieldCompo
       <FormattedVal
         color={"neutral.c80"}
         unit={unit}
-        val={transaction.model.commandDescriptor.command.extensions.transferFee.transferFee}
+        val={transferFee.transferFee}
         fontSize={3}
         inline
         showCode
