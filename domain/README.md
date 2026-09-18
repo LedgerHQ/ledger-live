@@ -1,8 +1,8 @@
 # domain/
 
-> Part of the [DDD monorepo architecture](../docs/ddd-monorepo-architecture.md).
+> Part of the [monorepo architecture](../docs/monorepo-architecture.md).
 
-Business domain packages — the foundation of the DDD layout.
+Business domain packages — the foundation of the monorepo layers.
 
 ## Layers
 

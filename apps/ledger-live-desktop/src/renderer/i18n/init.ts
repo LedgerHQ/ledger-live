@@ -18,8 +18,8 @@ const config: InitOptions = {
 };
 
 // An explicit instance, never the i18next global singleton: it is what lets `@shared/i18n` hand
-// one engine to the DDD packages, and what will let a future module-federation remote own its own
-// without namespaces clobbering each other.
+// one engine to `features/*` and `domain/*`, and what will let a future module-federation remote
+// own its own without namespaces clobbering each other.
 const i18n = createInstance();
 
 i18n.use(initReactI18next).init(config);

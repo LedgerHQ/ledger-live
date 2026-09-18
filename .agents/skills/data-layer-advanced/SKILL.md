@@ -1,13 +1,13 @@
 ---
-name: ddd-data-layer-advanced
+name: data-layer-advanced
 description: Structure a Ledger Wallet data layer where one API response serves several entities. Use when creating or reviewing cross-entity domain/api orchestration with RTK Query, createAsyncThunk, or both, including response validation and tests spanning multiple domain/entity packages.
 ---
 
-# DDD Data Layer: Multiple Entities
+# Data Layer: Multiple Entities
 
-Apply only when one API response maps to several autonomous entities. Use `ddd-types-state-mocks` for the rules inside each entity package.
+Apply only when one API response maps to several autonomous entities. Use `types-state-mocks` for the rules inside each entity package.
 
-Source: [Data Layer Advanced Use Case](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6112641121/Guideline+Monorepo+DDD+Re-architecture+Data+Layer+Advanced+Use+Case)
+Source: [Data Layer Advanced Use Case](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6112641121)
 
 ## Split Ownership
 

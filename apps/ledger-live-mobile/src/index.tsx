@@ -377,8 +377,8 @@ export default class Root extends Component {
                 <TermsAndConditionMigrateLegacyData />
                 <QueuedBottomSheetsProvider>
                   {/* Two providers, one instance: `I18nextProvider` serves the app's own
-                    react-i18next call sites, `I18nProvider` serves the DDD packages through
-                    `@shared/i18n`. */}
+                    react-i18next call sites, `I18nProvider` serves `features/*` and `domain/*`
+                    through `@shared/i18n`. */}
                   <LinkingProviderWrapper>
                     <I18nextProvider i18n={i18n}>
                       <I18nProvider i18n={i18n}>

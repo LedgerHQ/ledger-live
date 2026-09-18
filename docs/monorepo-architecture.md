@@ -1,8 +1,8 @@
-# Monorepo DDD Re-architecture
+# Monorepo architecture
 
 > **Status: default.** This is where new code goes. `libs/` is [legacy](#legacy-libs): maintained, not grown.
 
-Source of truth: [Confluence — Guideline Monorepo DDD Re-architecture](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117)
+Source of truth: [Confluence — Monorepo architecture guideline](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117)
 
 ---
 

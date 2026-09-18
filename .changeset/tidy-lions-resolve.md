@@ -16,7 +16,7 @@ These packages keep `.web.*` and `.native.*` sources side by side but typechecke
 in a single program, so `tsc` resolved suffix-free imports without knowing which
 platform it was checking. Each package now carries a solution-style `tsconfig.json`
 that owns no files and references one project per platform it targets, as described in
-`docs/tsconfig-in-ddd.md`. The web project sets `moduleSuffixes: [".web", ""]` and
+`docs/tsconfig.md`. The web project sets `moduleSuffixes: [".web", ""]` and
 excludes the native sources, the native project does the reverse and also excludes the
 unsuffixed web barrel, and `typecheck` runs both passes. `@features/flow-large-screen-upsell`
 is web-only and gets a web project on its own.

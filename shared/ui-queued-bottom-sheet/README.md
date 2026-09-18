@@ -4,7 +4,7 @@ Shared queue-aware Lumen bottom sheet for React Native. Provides a single global
 
 `QueuedBottomSheet` is the new Lumen-based component. The legacy `QueuedDrawer` (Flex/`react-native-modal`) stays in the app under `apps/ledger-live-mobile/src/mvvm/components/QueuedDrawer/` and is not part of this package.
 
-Extracted so DDD feature packages can consume a queued bottom sheet within the micro-frontend boundary, instead of using Lumen `BottomSheet` directly or reaching into the app.
+Extracted so feature packages can consume a queued bottom sheet within the micro-frontend boundary, instead of using Lumen `BottomSheet` directly or reaching into the app.
 
 ## Package layout
 

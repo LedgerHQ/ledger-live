@@ -127,7 +127,7 @@ const App = ({ store, initialCountervalues }: Props) => {
   return (
     <LiveStyleSheetManager>
       {/* Two providers, one instance: `I18nextProvider` serves the app's own react-i18next call
-          sites, `I18nProvider` serves the DDD packages through `@shared/i18n`. */}
+          sites, `I18nProvider` serves `features/*` and `domain/*` through `@shared/i18n`. */}
       <I18nextProvider i18n={i18n}>
         <I18nProvider i18n={i18n}>
           <Provider store={store}>

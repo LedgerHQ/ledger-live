@@ -6,7 +6,7 @@ Workspace packages get **inferred tags** from their path (and a few well-known p
 
 | Tag | Meaning |
 | --- | --- |
-| `scope:libs` | Under `libs/` — the [legacy](./ddd-monorepo-architecture.md#legacy-libs) side of the repo |
+| `scope:libs` | Under `libs/` — the [legacy](./monorepo-architecture.md#legacy-libs) side of the repo |
 | `scope:libs-non-ui` | Under `libs/` but not `libs/ui/` |
 | `scope:libs-ui` | Under `libs/ui/` |
 | `scope:libs-ledgerjs` | Under `libs/ledgerjs/` |

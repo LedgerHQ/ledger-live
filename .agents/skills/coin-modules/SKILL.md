@@ -9,7 +9,7 @@ Each blockchain family lives in its own package under `libs/coin-modules/coin-<f
 Package name: `@ledgerhq/coin-<family>`
 
 Coin modules are one of the few things that still belong in legacy `libs/`: they migrate to
-[LedgerHQ/coin-modules](https://github.com/LedgerHQ/coin-modules), not to the DDD layers.
+[LedgerHQ/coin-modules](https://github.com/LedgerHQ/coin-modules), not to the monorepo layers.
 
 Do not create a new coin-module if it fits the ecosystem of an existing one.  
 No packages other than coin-modules are allowed in `libs/coin-modules/`.

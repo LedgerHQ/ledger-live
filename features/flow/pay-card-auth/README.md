@@ -144,7 +144,7 @@ import { CardLoginView } from "./CardLoginView";
 
 ## Structure
 
-This package follows the [Structure & Flow ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117/Guideline+Monorepo+DDD+Re-architecture+Structure+Flow). Add optional directories only when the flow needs them; do not keep empty scaffolding.
+This package follows the [Structure & Flow ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117). Add optional directories only when the flow needs them; do not keep empty scaffolding.
 
 ```text
 pay-card-auth/
