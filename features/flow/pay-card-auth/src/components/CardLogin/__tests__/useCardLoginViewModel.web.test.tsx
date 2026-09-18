@@ -88,12 +88,40 @@ describe("mapSnapshotToViewModel", () => {
     ).toBe(true);
   });
 
-  it.each(["hydrating", "ready"] as const)("offers nothing in %s", value => {
-    // `hydrating` is still reading the stored session, so a CTA here would flash for a holder who
-    // turns out to be signed in; `ready` means they already are, and `More` holds the screen.
+  it("offers nothing in ready", () => {
+    // `ready` means the holder is signed in already, and `More` holds the screen.
     expect(
-      mapSnapshotToViewModel(value, null, copy, onLoginPress, onAlreadyHaveCardPress, intro),
+      mapSnapshotToViewModel("ready", null, copy, onLoginPress, onAlreadyHaveCardPress, intro),
     ).toBeNull();
+  });
+
+  it.each([
+    "hydrating",
+    "validatingCallback",
+    "exchangingCode",
+    "persistingSession",
+    "authenticated",
+    "fetchingUser",
+  ] as const)("asks for the skeleton in %s", value => {
+    expect(
+      mapSnapshotToViewModel(value, null, copy, onLoginPress, onAlreadyHaveCardPress, intro)
+        ?.isResolving,
+    ).toBe(true);
+  });
+
+  it.each([
+    "idle",
+    "preparingAttempt",
+    "awaitingHostedLogin",
+    "awaitingCallback",
+    "clearingAttempt",
+    "authError",
+    "userFetchError",
+  ] as const)("asks for no skeleton in %s", value => {
+    expect(
+      mapSnapshotToViewModel(value, null, copy, onLoginPress, onAlreadyHaveCardPress, intro)
+        ?.isResolving,
+    ).toBe(false);
   });
 
   it("shows no panel while there is no error", () => {
@@ -116,6 +144,7 @@ describe("mapSnapshotToViewModel", () => {
       description: "Please try again.",
       ctaLabel: "Try again",
       onRetry: jest.fn(),
+      onDismiss: jest.fn(),
     };
 
     const login = mapSnapshotToViewModel(
@@ -811,6 +840,47 @@ describe("useCardLoginViewModel errors", () => {
     await waitFor(() =>
       expect(result.current?.error?.title).toBe(ERROR_MESSAGES.fetch_user_failed.title),
     );
+  });
+
+  it("puts the login back on offer when the panel of a machine error is dismissed", async () => {
+    mockPorts.saveAttempt.mockRejectedValueOnce(new Error("no store"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.pkce_failed.title),
+    );
+
+    act(() => result.current?.error?.onDismiss());
+
+    await waitFor(() => expect(result.current?.error).toBeNull());
+    expect(result.current?.isLoading).toBe(false);
+    expect(mockPorts.createAttempt).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the stored session when the panel of a failed user load is dismissed", async () => {
+    mockPorts.hasSession.mockResolvedValue(true);
+    mockPorts.getUser.mockRejectedValueOnce({ status: "FETCH_ERROR" });
+    const { result } = renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.fetch_user_failed.title),
+    );
+
+    act(() => result.current?.error?.onDismiss());
+
+    await waitFor(() => expect(result.current?.error).toBeNull());
+    expect(mockPorts.clearSession).not.toHaveBeenCalled();
+    expect(mockPorts.getUser).toHaveBeenCalledTimes(1);
   });
 
   it("retries only the card fetch from the panel of a failed user load", async () => {

@@ -31,6 +31,15 @@ const INTRO_ROWS: readonly { icon: CardLoginIntroRowIcon; key: string }[] = [
   { icon: "LedgerLogo", key: "topUp" },
 ];
 
+const SESSION_RESOLVING_STATES: readonly CardLoginStateValue[] = [
+  "hydrating",
+  "validatingCallback",
+  "exchangingCode",
+  "persistingSession",
+  "authenticated",
+  "fetchingUser",
+];
+
 const INTRO_ACTIONS: readonly { id: CardLoginIntroActionId; appearance: "base" | "gray" }[] = [
   { id: "createAccount", appearance: "base" },
   { id: "logIn", appearance: "gray" },
@@ -61,15 +70,14 @@ export function mapSnapshotToViewModel(
   onAlreadyHaveCardPress: () => void,
   intro: CardLoginIntroViewProps,
 ): CardLoginViewModel {
-  // Nothing to offer yet. `hydrating` is still reading the stored session, so a login CTA here would
-  // flash for a holder who turns out to be signed in; `ready` means they already are, and `More`
-  // holds the screen.
-  if (value === "hydrating" || value === "ready") {
+  // Nothing to offer: `ready` means the holder is signed in already, and `More` holds the screen.
+  if (value === "ready") {
     return null;
   }
 
   return {
     ...copy,
+    isResolving: SESSION_RESOLVING_STATES.includes(value),
     // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
     isLoading:
       value !== "idle" &&
@@ -271,6 +279,15 @@ export function useCardLoginViewModel({
     send({ type: "RETRY" });
   }, [hasSignupFailed, send]);
 
+  const onDismiss = useCallback(() => {
+    if (hasSignupFailed) {
+      setHasSignupFailed(false);
+      return;
+    }
+
+    send({ type: "DISMISS" });
+  }, [hasSignupFailed, send]);
+
   const error = useMemo<CardAuthErrorCopy | null>(() => {
     if (!errorKind) {
       return null;
@@ -285,8 +302,9 @@ export function useCardLoginViewModel({
         }`,
       ),
       onRetry,
+      onDismiss,
     };
-  }, [errorKind, t, onRetry]);
+  }, [errorKind, t, onRetry, onDismiss]);
 
   return mapSnapshotToViewModel(
     snapshot.value,

@@ -6,4 +6,4 @@
 "live-mobile": patch
 ---
 
-feat(pay-card): show a retryable panel for every login error
+feat(pay-card): show every login error in a sheet, and a skeleton while the session resolves

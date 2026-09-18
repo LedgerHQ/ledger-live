@@ -1,5 +1,4 @@
-import type { ComponentProps, ReactNode } from "react";
-import type { InfoState } from "@shared/ui-info-state";
+import type { ReactNode } from "react";
 import type {
   CardLoginOauthConfig,
   OpenCardHostedPage,
@@ -66,29 +65,27 @@ export type CardLoginCopy = Readonly<{
   alreadyHaveCardLabel: string | null;
 }>;
 
-/** The spot icon each platform hands the panel, from its own Lumen symbols. */
-export type CardAuthErrorIcon = Extract<
-  ComponentProps<typeof InfoState>,
-  { preset: "spot" }
->["spotProps"]["icon"];
-
-/** What the panel says. The icon is the view's to supply, because its type is per platform. */
+/** What the panel says. The spot icon is the view's to supply, because its type is per platform. */
 export type CardAuthErrorCopy = Readonly<{
   title: string;
   description: string;
   ctaLabel: string;
   onRetry: () => void;
+  /** The panel closes without acting. The login goes back on offer, and nothing starts. */
+  onDismiss: () => void;
 }>;
 
-export type CardAuthErrorProps = CardAuthErrorCopy & {
-  readonly icon: CardAuthErrorIcon;
-  readonly children?: ReactNode;
-};
+/** `null` keeps the sheet mounted and closed, so it can animate when an error does arrive. */
+export type CardAuthErrorProps = Readonly<{
+  error: CardAuthErrorCopy | null;
+}>;
 
 export type CardLoginViewProps = CardLoginCopy & {
   /** True while the machine works. The login action is not pressable then. */
   readonly isLoading: boolean;
-  /** Set when the panel owns the screen. It replaces the login block and the caller's children. */
+  /** True while the flow reads or renews the session, which a skeleton stands in for. */
+  readonly isResolving: boolean;
+  /** Set when an error holds the panel. It opens over the login block, and hides nothing. */
   readonly error: CardAuthErrorCopy | null;
   readonly onLoginPress: () => void;
   readonly onAlreadyHaveCardPress: () => void;

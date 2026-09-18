@@ -1,15 +1,7 @@
 import React from "react";
-import { View } from "react-native";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { CardLoginView } from "../CardLoginView.native";
-import type { CardLoginIntroViewProps } from "../types";
-
-jest.mock("@shared/ui-queued-bottom-sheet", () => ({
-  ...jest.requireActual("@shared/ui-queued-bottom-sheet"),
-  QueuedBottomSheet: ({ children, testID }: { children: React.ReactNode; testID?: string }) => (
-    <View testID={testID}>{children}</View>
-  ),
-}));
+import type { CardAuthErrorCopy, CardLoginIntroViewProps } from "../types";
 
 const intro: CardLoginIntroViewProps = {
   isOpen: false,
@@ -21,12 +13,24 @@ const intro: CardLoginIntroViewProps = {
   onClose: jest.fn(),
 };
 
+function buildError(overrides: Partial<CardAuthErrorCopy> = {}): CardAuthErrorCopy {
+  return {
+    title: "Login could not start",
+    description: "Please try again.",
+    ctaLabel: "Try again",
+    onRetry: jest.fn(),
+    onDismiss: jest.fn(),
+    ...overrides,
+  };
+}
+
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   title: "Crypto Card",
   headline: "Get your crypto card",
   description: "Log in to access your card",
   loginLabel: "Login",
   isLoading: false,
+  isResolving: false,
   error: null,
   onLoginPress: jest.fn(),
   intro,
@@ -34,6 +38,10 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
 
 function renderCardLoginView(props: Partial<React.ComponentProps<typeof CardLoginView>> = {}) {
   return render(<CardLoginView {...defaultProps} {...props} />);
+}
+
+function isSheetOpen() {
+  return screen.getByTestId("card-auth-error-sheet").props.accessibilityState.expanded;
 }
 
 describe("CardLoginView (Native)", () => {
@@ -68,33 +76,42 @@ describe("CardLoginView (Native)", () => {
     expect(onLoginPress).toHaveBeenCalledTimes(1);
   });
 
-  it("should replace the login block with the error panel", () => {
-    renderCardLoginView({
-      error: {
-        title: "Login could not start",
-        description: "Please try again.",
-        ctaLabel: "Try again",
-        onRetry: jest.fn(),
-      },
-    });
+  it("should keep the error sheet closed while there is no error", () => {
+    renderCardLoginView();
 
-    expect(screen.getByText("Login could not start")).toBeTruthy();
-    expect(screen.queryByLabelText("Login")).toBeNull();
+    expect(isSheetOpen()).toBe(false);
   });
 
-  it("should call onRetry when the panel action is pressed", () => {
+  it("should open the error sheet over the login block, and hide nothing", () => {
+    renderCardLoginView({ error: buildError() });
+
+    expect(isSheetOpen()).toBe(true);
+    expect(screen.getByText("Login could not start")).toBeTruthy();
+    expect(screen.getByLabelText("Login")).toBeTruthy();
+  });
+
+  it("should call onRetry when the sheet action is pressed", () => {
     const onRetry = jest.fn();
-    renderCardLoginView({
-      error: {
-        title: "Login could not start",
-        description: "Please try again.",
-        ctaLabel: "Try again",
-        onRetry,
-      },
-    });
+    renderCardLoginView({ error: buildError({ onRetry }) });
 
     fireEvent.press(screen.getByTestId("card-auth-error-cta"));
 
     expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("should call onDismiss when the sheet is closed", () => {
+    const onDismiss = jest.fn();
+    renderCardLoginView({ error: buildError({ onDismiss }) });
+
+    fireEvent.press(screen.getByTestId("card-auth-error-sheet-dismiss"));
+
+    expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("should show a skeleton in place of the login block while the session resolves", () => {
+    renderCardLoginView({ isResolving: true });
+
+    expect(screen.getByTestId("card-login-skeleton")).toBeTruthy();
+    expect(screen.queryByLabelText("Login")).toBeNull();
   });
 });

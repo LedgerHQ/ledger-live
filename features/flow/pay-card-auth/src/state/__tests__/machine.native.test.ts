@@ -489,6 +489,25 @@ describe("cardLoginMachine login", () => {
     expect(actor.getSnapshot().context.errorKind).toBeNull();
     expect(ports.createAttempt).toHaveBeenCalledTimes(1);
   });
+
+  it("puts the login back on offer when the user dismisses the panel, and starts nothing", async () => {
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      openHostedLogin: jest.fn(async () => {
+        throw new Error("no browser");
+      }),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+    actor.send({ type: "LOGIN" });
+    await settledAt(actor, "authError");
+
+    actor.send({ type: "DISMISS" });
+
+    await settledAt(actor, "idle");
+    expect(actor.getSnapshot().context.errorKind).toBeNull();
+    expect(ports.createAttempt).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("cardLoginMachine intro flag", () => {
@@ -741,6 +760,21 @@ describe("cardLoginMachine failures", () => {
     actor.send({ type: "RETRY" });
 
     expect(actor.getSnapshot().context.errorKind).toBeNull();
+  });
+
+  it("keeps the stored session when the user dismisses the panel", async () => {
+    const getUser = jest.fn(async () => Promise.reject({ status: "FETCH_ERROR" }));
+    const ports = stubPorts({ hasSession: jest.fn(async () => true), getUser });
+
+    const actor = start(ports);
+    await settledAt(actor, "userFetchError");
+
+    actor.send({ type: "DISMISS" });
+
+    await settledAt(actor, "idle");
+    expect(actor.getSnapshot().context.errorKind).toBeNull();
+    expect(ports.clearSession).not.toHaveBeenCalled();
+    expect(getUser).toHaveBeenCalledTimes(1);
   });
 
   it("keeps the signed-out flag unpublished while the card fails to load", async () => {
