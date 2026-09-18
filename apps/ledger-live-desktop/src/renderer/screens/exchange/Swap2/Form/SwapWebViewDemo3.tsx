@@ -14,11 +14,8 @@ import {
   convertToNonAtomicUnit,
   getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
-import {
-  accountToWalletAPIAccount,
-  getAccountIdFromWalletAccountId,
-} from "@ledgerhq/live-common/wallet-api/converters";
-import { Account, AccountLike, TokenAccount, SwapOperation } from "@ledgerhq/types-live";
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { Account, TokenAccount, SwapOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -60,6 +57,7 @@ import {
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { useSwapDefaultAccounts } from "./useSwapDefaultAccounts";
+import { buildSwapWebViewHash, type SwapLocationState } from "./buildSwapWebViewHash";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@features/platform-feature-flags";
@@ -109,23 +107,6 @@ export type SwapWebProps = {
   initialState?: SwapLocationState;
 };
 
-type TokenParams = {
-  fromTokenId?: string;
-  toTokenId?: string;
-};
-
-type SwapLocationState = {
-  defaultAccount?: AccountLike;
-  defaultParentAccount?: Account;
-  defaultAccountId?: string | { fromAccountId?: string; toAccountId?: string };
-  defaultParentAccountId?: string;
-  defaultCurrency?: { id?: string; fromCurrencyId?: string; toCurrencyId?: string };
-  defaultAmountFrom?: string;
-  from?: string;
-  defaultToken?: TokenParams;
-  affiliate?: string;
-};
-
 const isSwapLocationState = (value: unknown): value is SwapLocationState =>
   typeof value === "object" && value !== null;
 
@@ -141,11 +122,6 @@ const SwapWebAppWrapper = styled.div`
   width: 100%;
   flex: 1;
 `;
-
-// remove the account id from the from path
-function simplifyFromPath(path: string): string {
-  return path.replace(/^\/account.*/, "/account/{id}");
-}
 
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const SWAP_USER_IP = getEnv("SWAP_USER_IP");
@@ -487,70 +463,33 @@ const SwapWebView = ({
     [customPTXHandlers],
   );
 
-  const hashString = useMemo(() => {
-    // Recompute wallet-API ids when possible; otherwise keep raw deeplink ids.
-    const fromAccountIdForUrl = resolvedDefaultFromAccount
-      ? accountToWalletAPIAccount(
-          walletState.accountNames,
+  const hashString = useMemo(
+    () =>
+      buildSwapWebViewHash({
+        state,
+        defaultAccounts: {
+          rawFromAccountId,
+          rawToAccountId,
           resolvedDefaultFromAccount,
           resolvedDefaultFromParentAccount,
-        ).id
-      : rawFromAccountId;
-    const toAccountIdForUrl = resolvedDefaultToAccount
-      ? accountToWalletAPIAccount(
-          walletState.accountNames,
           resolvedDefaultToAccount,
           resolvedDefaultToParentAccount,
-        ).id
-      : rawToAccountId;
-
-    const params = new URLSearchParams({
-      ...(isOffline ? { isOffline: "true" } : {}),
-      ...(fromAccountIdForUrl ? { fromAccountId: fromAccountIdForUrl } : {}),
-      ...(toAccountIdForUrl
-        ? {
-            toAccountId: toAccountIdForUrl,
-            amountFrom: state?.defaultAmountFrom || "",
-          }
-        : {}),
-      ...(state?.from
-        ? {
-            fromPath: simplifyFromPath(state?.from),
-          }
-        : {}),
-      ...(state?.defaultToken?.fromTokenId ? { fromTokenId: state.defaultToken.fromTokenId } : {}),
-      ...(state?.defaultToken?.toTokenId ? { toTokenId: state.defaultToken.toTokenId } : {}),
-      ...(state?.defaultToken ? { amountFrom: state?.defaultAmountFrom || "" } : {}),
-      ...(state?.defaultCurrency?.toCurrencyId || state?.defaultCurrency?.id
-        ? { toCurrencyId: state!.defaultCurrency!.toCurrencyId ?? state!.defaultCurrency!.id }
-        : {}),
-      ...(state?.defaultCurrency?.fromCurrencyId
-        ? { fromCurrencyId: state.defaultCurrency.fromCurrencyId }
-        : {}),
-      ...(state?.defaultAmountFrom
-        ? {
-            amountFrom: state.defaultAmountFrom,
-          }
-        : {}),
-      ...(state?.affiliate
-        ? {
-            affiliate: state.affiliate,
-          }
-        : {}),
-    }).toString();
-
-    return params;
-  }, [
-    isOffline,
-    rawFromAccountId,
-    rawToAccountId,
-    resolvedDefaultFromAccount,
-    resolvedDefaultFromParentAccount,
-    resolvedDefaultToAccount,
-    resolvedDefaultToParentAccount,
-    state,
-    walletState.accountNames,
-  ]);
+        },
+        accountNames: walletState.accountNames,
+        isOffline,
+      }),
+    [
+      isOffline,
+      rawFromAccountId,
+      rawToAccountId,
+      resolvedDefaultFromAccount,
+      resolvedDefaultFromParentAccount,
+      resolvedDefaultToAccount,
+      resolvedDefaultToParentAccount,
+      state,
+      walletState.accountNames,
+    ],
+  );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
     logger.critical(error);

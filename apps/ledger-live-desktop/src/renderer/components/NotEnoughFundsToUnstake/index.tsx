@@ -12,6 +12,7 @@ import { useNavigate, useLocation } from "react-router";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import { openModal } from "~/renderer/actions/modals";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 
 const NotEnoughFundsToUnstake = ({
   account,
@@ -72,11 +73,11 @@ const NotEnoughFundsToUnstake = ({
       ...swapDefaultTrack,
     });
     navigate("/swap", {
-      state: {
+      state: buildSwapNavigationState({
         defaultCurrency: currency,
-        defaultAccountId: account.id,
-        from: location.pathname,
-      },
+        fromPath: location.pathname,
+        account,
+      }),
     });
     onClose();
   }, [

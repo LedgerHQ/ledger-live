@@ -23,6 +23,8 @@ import {
 import { isReceiveDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { useSelector } from "~/context/hooks";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 
 const useText = (
   entryPoint: "noFunds" | "getFunds",
@@ -80,6 +82,14 @@ export default function NoFunds({ route }: Readonly<Props>) {
     return currency && swapAvailableIds.includes(currency.id);
   }, [currency, swapAvailableIds]);
 
+  // `custom.getFunds` synthesises a token account when the user holds none yet: it is absent
+  // from the store, so the Swap live app cannot match its id. Pre-fill the asset instead.
+  const accounts = useSelector(flattenAccountsSelector);
+  const isAccountInStore = useMemo(
+    () => accounts.some(a => a.id === account.id),
+    [accounts, account.id],
+  );
+
   const page = usePageNameFromRoute();
   const onNavigate = useCallback(
     (name: string, options?: object) => {
@@ -120,8 +130,16 @@ export default function NoFunds({ route }: Readonly<Props>) {
     });
     navigateToSwapTab({
       navigation: navigation as unknown as NativeStackNavigationProp<BaseNavigatorStackParamList>,
+      params: {
+        defaultCurrency: currency,
+        fromPath: page,
+        ...(isAccountInStore && {
+          defaultAccount: account,
+          defaultParentAccount: parentAccount,
+        }),
+      },
     });
-  }, [navigation, page]);
+  }, [account, currency, isAccountInStore, navigation, page, parentAccount]);
 
   const onBuy = useCallback(() => {
     track("button_clicked", {
