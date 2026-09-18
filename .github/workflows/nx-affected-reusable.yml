@@ -77,6 +77,15 @@ jobs:
         if: ${{ env.IS_SMARTLING != 'true' }}
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
+      # Node and pnpm come from mise.toml, so the versions this job runs cannot drift from the
+      # ones the repo pins. This also writes nx.cache-config.json.
+      - name: Setup the caches
+        if: ${{ env.IS_SMARTLING != 'true' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+
       # Before the install so every package is fetched through JFrog, not public npm.
       - name: JFrog npm auth
         if: ${{ env.IS_SMARTLING != 'true' }}
@@ -109,14 +118,9 @@ jobs:
             core.exportVariable("base_branch", newBaseBranch);
             core.setOutput("base_ref", "origin/" + newBaseBranch);
 
-      # No Node or pnpm setup: the runner image already provides both.
       - name: Install dev dependencies for root workspace
         if: ${{ env.IS_SMARTLING != 'true' }}
         run: pnpm i --frozen-lockfile -D -F "ledger-live" --ignore-scripts
-
-      - name: Setup nx config
-        if: ${{ env.IS_SMARTLING != 'true' }}
-        run: pnpm nx:write-cache-config
 
       - name: Get affected packages and paths
         id: nx-affected
