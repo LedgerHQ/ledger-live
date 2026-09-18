@@ -1,5 +1,5 @@
 import { MAINNET_GOVERNANCE_CANISTER_ID, MAINNET_LEDGER_CANISTER_ID } from "../consts";
-import { ICPCallUnconfirmed, ICPNeuronsNotRead } from "../errors";
+import { ICPCallUnconfirmed, ICPNeuronsNotRead, ICPStakeNotRefreshed } from "../errors";
 import { broadcast } from "./broadcast";
 
 jest.mock("../api");
@@ -59,6 +59,63 @@ describe("broadcast routing", () => {
         }),
       ),
     ).rejects.toThrow(ICPCallUnconfirmed);
+  });
+
+  // Past the settled transfer nothing is a failed transaction: the ICP has left the account whatever
+  // the claim did. A failure with no verdict — the connection dropped, a certificate that did not
+  // verify — is reported as unconfirmed, as an exhausted poll is, so the app files the stake rather
+  // than offering it again.
+  it("reports a claim that failed without a verdict as unconfirmed, keeping the cause", async () => {
+    const dropped = new TypeError("Network request failed");
+    (api.claimOrRefreshNeuronFromAccount as jest.Mock).mockRejectedValueOnce(dropped);
+
+    const attempt = broadcast(
+      signed({
+        encodedSignedCallBlob: "aa",
+        transferRequestIdHex: "bb",
+        methodName: "create_neuron",
+        stakeNonce: "42",
+      }),
+    );
+
+    await expect(attempt).rejects.toThrow(ICPCallUnconfirmed);
+    await expect(attempt).rejects.toMatchObject({ cause: dropped });
+  });
+
+  // A refusal is a verdict, and says more than "unknown": it passes through untouched.
+  it("passes a refused claim through as the stake left unclaimed", async () => {
+    (api.claimOrRefreshNeuronFromAccount as jest.Mock).mockRejectedValueOnce(
+      new ICPStakeNotRefreshed("denied", { reason: "denied" }),
+    );
+
+    await expect(
+      broadcast(
+        signed({
+          encodedSignedCallBlob: "aa",
+          transferRequestIdHex: "bb",
+          methodName: "create_neuron",
+          stakeNonce: "42",
+        }),
+      ),
+    ).rejects.toThrow(ICPStakeNotRefreshed);
+  });
+
+  // The transfer itself failing is the one failure that stays generic: nothing moved.
+  it("leaves a failure of the transfer itself as it is", async () => {
+    (api.ensureTransferCallAccepted as jest.Mock).mockRejectedValueOnce(new Error("TxTooOld"));
+
+    const attempt = broadcast(
+      signed({
+        encodedSignedCallBlob: "aa",
+        transferRequestIdHex: "bb",
+        methodName: "create_neuron",
+        stakeNonce: "42",
+      }),
+    );
+
+    await expect(attempt).rejects.toThrow("TxTooOld");
+    await expect(attempt).rejects.not.toBeInstanceOf(ICPCallUnconfirmed);
+    expect(api.claimOrRefreshNeuronFromAccount).not.toHaveBeenCalled();
   });
 
   it("submits a governance command to the governance canister and decodes the reply", async () => {

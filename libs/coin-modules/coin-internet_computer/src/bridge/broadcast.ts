@@ -11,7 +11,7 @@ import {
 } from "../api";
 import { toNeuronsData } from "../common-logic/neuron";
 import { MAINNET_GOVERNANCE_CANISTER_ID, MAINNET_LEDGER_CANISTER_ID } from "../consts";
-import { ICPCallUnconfirmed, ICPNeuronsNotRead } from "../errors";
+import { ICPCallUnconfirmed, ICPNeuronsNotRead, ICPStakeNotRefreshed } from "../errors";
 import { derivePrincipalFromPubkey } from "../logic/crypto";
 import { TRANSFER_TYPES, Transaction } from "../types";
 
@@ -48,6 +48,36 @@ const isGovernanceRawData = (data: unknown): data is GovernanceRawData =>
   typeof (data as GovernanceRawData).requestId === "string" &&
   typeof (data as GovernanceRawData).methodName === "string";
 
+/**
+ * Claim or refresh the neuron behind a transfer that has already settled, returning its id.
+ *
+ * From here on nothing is a failed transaction: the ICP has left the account whatever the claim
+ * did. A claim governance or the network refused says so itself (ICPStakeNotRefreshed). Anything
+ * else that fails on the way to a verdict — the connection dropped, a certificate that did not
+ * verify, a reply that would not decode — leaves the outcome unknown, which is what an exhausted
+ * poll already reports and what ICPCallUnconfirmed means; the failure rides along as `cause`. Left
+ * generic, the app would take it for a transfer that never happened and offer the stake again.
+ */
+const claimSettledTransfer = async (
+  xpub: string | undefined,
+  stakeNonce: string | undefined,
+): Promise<bigint> => {
+  try {
+    invariant(xpub, "[ICP](broadcast) Account xpub is required to claim the neuron");
+    invariant(stakeNonce, "[ICP](broadcast) Stake nonce is required to claim the neuron");
+    const controller = derivePrincipalFromPubkey(xpub);
+    const neuronId = await claimOrRefreshNeuronFromAccount(controller, BigInt(stakeNonce));
+    // The transfer settled but the claim couldn't be confirmed: don't report the composite staking
+    // op as successful. The transfer is in history and the nonce is recoverable, so the neuron can
+    // be claimed/refreshed later (idempotent) — but this attempt is unconfirmed, not done.
+    if (neuronId === undefined) throw new ICPCallUnconfirmed();
+    return neuronId;
+  } catch (error) {
+    if (error instanceof ICPStakeNotRefreshed || error instanceof ICPCallUnconfirmed) throw error;
+    throw new ICPCallUnconfirmed("ICPCallUnconfirmed", { cause: error });
+  }
+};
+
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   account,
   signedOperation: { operation, rawData },
@@ -66,17 +96,7 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
 
     // Creation and top-up complete by claiming/refreshing the neuron from the settled transfer.
     if (NEURON_TRANSFER_TYPES.has(rawData.methodName)) {
-      invariant(account.xpub, "[ICP](broadcast) Account xpub is required to claim the neuron");
-      invariant(rawData.stakeNonce, "[ICP](broadcast) Stake nonce is required to claim the neuron");
-      const controller = derivePrincipalFromPubkey(account.xpub);
-      const neuronId = await claimOrRefreshNeuronFromAccount(
-        controller,
-        BigInt(rawData.stakeNonce),
-      );
-      // The transfer settled but the claim couldn't be confirmed: don't report the composite staking
-      // op as successful. The transfer is in history and the nonce is recoverable, so the neuron can
-      // be claimed/refreshed later (idempotent) — but this attempt is unconfirmed, not done.
-      if (neuronId === undefined) throw new ICPCallUnconfirmed();
+      const neuronId = await claimSettledTransfer(account.xpub, rawData.stakeNonce);
       if (rawData.methodName === "create_neuron") {
         return {
           ...operation,

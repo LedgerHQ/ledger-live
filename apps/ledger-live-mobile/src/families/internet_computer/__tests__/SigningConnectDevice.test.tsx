@@ -90,9 +90,9 @@ describe("ICP signing screen, broadcast failures", () => {
     },
   );
 
-  // The ledger refusing the transfer arrives as a plain Error, and nothing has moved. A claim the
-  // network rejected does not reach here as one for a stake: the coin module reports it as
-  // ICPStakeNotRefreshed, the transfer having settled first.
+  // The ledger refusing the transfer arrives as a plain Error, and nothing has moved. Nothing that
+  // fails past the settled transfer reaches here as one: the coin module reports it as
+  // ICPStakeNotRefreshed or ICPCallUnconfirmed (broadcast.ts).
   it("records nothing when the ledger refused the transfer", async () => {
     broadcastResult = () => Promise.reject(new Error('{"InsufficientFunds":{"balance":"0"}}'));
 

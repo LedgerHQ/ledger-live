@@ -2,4 +2,4 @@
 "@ledgerhq/coin-internet_computer": patch
 ---
 
-Report an Internet Computer stake whose claim call the network rejected as a settled transfer left unclaimed, not as a call that never ran, so the app does not offer to stake it again
+Report every failure after an Internet Computer stake transfer has settled as such — a refused claim as the stake left unclaimed, anything without a verdict as unconfirmed — never as a failed transaction, so the app does not offer to stake it again

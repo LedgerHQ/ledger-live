@@ -198,7 +198,9 @@ export class ICPStakeMemoNotRecoverable extends Error {
   }
 }
 
-// A governance call was submitted but no terminal status was observed; its outcome is unknown.
+// A call was submitted but its outcome is unknown: no terminal status was observed, or — for the
+// claim behind a settled stake transfer — the attempt failed before one could be read, in which
+// case `cause` carries that failure.
 export class ICPCallUnconfirmed extends Error {
   override name = "ICPCallUnconfirmed";
   [key: string]: unknown;

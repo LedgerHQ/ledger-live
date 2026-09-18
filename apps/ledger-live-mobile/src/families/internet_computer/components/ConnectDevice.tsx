@@ -43,10 +43,10 @@ type Props = (
 
 /**
  * What the broadcast throws for a stake whose transfer settled but whose claim did not follow: the
- * claim was refused, or no reply ever came. Either way the ICP has left the account. A governance
- * call raises the same "unconfirmed" with nothing transferred, and is typed NONE, which the fold
- * skips. Matched by name because that is all the screen gets: a connection dropped during the
- * claim arrives as a plain Error this cannot place.
+ * claim was refused, or its outcome is unknown — no reply, or a failure on the way to one, which
+ * the coin module folds into the same name (broadcast.ts). Either way the ICP has left the
+ * account, so a plain Error here means the transfer itself failed. A governance call raises the
+ * same "unconfirmed" with nothing transferred, and is typed NONE, which the fold skips.
  */
 const TRANSFER_SETTLED = new Set(["ICPCallUnconfirmed", "ICPStakeNotRefreshed"]);
 
