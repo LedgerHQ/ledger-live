@@ -134,6 +134,7 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     expect(store.getState().wallet.walletSync.walletSyncState).toEqual({
       data: { accounts: descriptorsFor([accountA, accountB]) },
       version: 10,
+      environment: "PROD",
     });
   });
 
@@ -200,6 +201,7 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
       expect(store.getState().wallet.walletSync.walletSyncState).toEqual({
         data: null,
         version: 0,
+        environment: "PROD",
       });
     });
 
@@ -251,16 +253,54 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
       accounts: descriptorsFor([accountA, accountB]),
     });
   });
+
+  it("should reset a cursor from another environment before the first PROD pull", async () => {
+    /**
+     * GIVEN
+     * - Local wallet: accounts [A, B].
+     * - Cached distant state: STAGING version 7, accounts [A, B].
+     * - PROD backend: no data.
+     *
+     * WHEN the Wallet Sync loop runs.
+     *
+     * THEN the stale cursor is reset and the first PROD pull uses version 0.
+     */
+    endpoints.pull.mockReturnValue(HttpResponse.json({ status: "no-data" }));
+    endpoints.push.mockReturnValue(HttpResponse.json({ status: "updated" }));
+
+    const { result, store } = renderWalletSync({
+      localAccounts: [accountA, accountB],
+      cachedDistantAccounts: [accountA, accountB],
+      cursorVersion: 7,
+      cursorEnvironment: "STAGING",
+    });
+
+    await waitFor(() => {
+      expect(endpoints.push).toHaveBeenCalledTimes(1);
+      expect(store.getState().wallet.walletSync.walletSyncState.version).toBe(1);
+    });
+
+    expect(endpoints.pull).toHaveBeenCalledTimes(1);
+    expectPullVersion("0");
+    expect(result.current.walletSyncError).toBeNull();
+    expect(store.getState().wallet.walletSync.walletSyncState.environment).toBe("PROD");
+    expect(store.getState().accounts.active.map(account => account.id)).toEqual([
+      accountA.id,
+      accountB.id,
+    ]);
+  });
 });
 
 function renderWalletSync({
   localAccounts,
   cachedDistantAccounts,
   cursorVersion,
+  cursorEnvironment = "PROD",
 }: {
   localAccounts: Account[];
   cachedDistantAccounts: Account[] | null;
   cursorVersion: number;
+  cursorEnvironment?: "PROD" | "STAGING";
 }) {
   return renderHook(() => useWatchWalletSync(), {
     overrideInitialState: withFlagOverrides(
@@ -298,7 +338,9 @@ function renderWalletSync({
                   ? null
                   : { accounts: descriptorsFor(cachedDistantAccounts) },
               version: cursorVersion,
+              environment: cursorEnvironment,
             },
+            isHydrated: true,
           },
         },
         settings: {

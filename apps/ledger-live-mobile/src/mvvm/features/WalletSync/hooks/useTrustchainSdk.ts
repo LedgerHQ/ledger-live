@@ -6,11 +6,12 @@ import {
   setLkrpEnvironment,
   type LkrpEnvironment,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { reconcileWalletSyncState } from "@domain/entity-wallet-sync";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { useStore } from "~/context/hooks";
+import { useSelector, useStore } from "~/context/hooks";
 import { useInstanceName } from "./useInstanceName";
 
 let sdkInstance: TrustchainSDK | null = null;
@@ -32,11 +33,20 @@ export function useTrustchainSdk() {
   }, [trustchainApiBaseUrl, instanceName]);
 
   const store = useStore();
+  const isWalletSyncStateHydrated = useSelector(
+    state => state.wallet.walletSync.isHydrated ?? false,
+  );
+  const lkrpEnvironment = useSelector(lkrpEnvironmentSelector);
 
   useLayoutEffect(() => {
-    if (lkrpEnvironmentSelector(store.getState()) || !instanceEnvironment) return;
-    store.dispatch(setLkrpEnvironment(instanceEnvironment));
-  }, [store]);
+    if (!instanceEnvironment) return;
+    if (!lkrpEnvironment) {
+      store.dispatch(setLkrpEnvironment(instanceEnvironment));
+    }
+    if (isWalletSyncStateHydrated) {
+      store.dispatch(reconcileWalletSyncState(instanceEnvironment));
+    }
+  }, [isWalletSyncStateHydrated, lkrpEnvironment, store]);
 
   if (sdkInstance === null) {
     sdkInstance = getSdk(isMockEnv, defaultContext, withDevice);

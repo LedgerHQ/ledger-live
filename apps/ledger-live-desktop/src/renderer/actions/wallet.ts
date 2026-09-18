@@ -1,4 +1,5 @@
 import { importWalletState, setAccountStarred } from "~/renderer/reducers/wallet";
+import { setWalletSyncStateHydrated } from "@domain/entity-wallet-sync";
 import { getKey } from "../storage";
 import { ThunkResult } from "./types";
 
@@ -13,4 +14,5 @@ export const fetchWallet =
       // we don't throw in this case, only accounts is used as password check safeguard
       dispatch(importWalletState(data));
     }
+    dispatch(setWalletSyncStateHydrated());
   };

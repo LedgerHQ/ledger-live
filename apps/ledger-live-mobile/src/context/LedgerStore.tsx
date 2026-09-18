@@ -52,6 +52,7 @@ import { importMarket } from "~/actions/market";
 import { importMarketListConfig } from "~/reducers/market";
 import { importMarketBannerState } from "~/reducers/marketBanner";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { setWalletSyncStateHydrated } from "@domain/entity-wallet-sync";
 import { importWalletState } from "~/reducers/wallet";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import { initHistory } from "~/reducers/history";
@@ -221,6 +222,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       if (walletStore) {
         importWalletState(walletStore)(store.dispatch);
       }
+      store.dispatch(setWalletSyncStateHydrated());
 
       if (protect) {
         store.dispatch(updateProtectData(protect.data));

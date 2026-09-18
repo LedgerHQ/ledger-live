@@ -30,6 +30,13 @@ const INITIAL_STATE = withFlagOverrides(
       ...state.settings,
       readOnlyModeEnabled: false,
     },
+    wallet: {
+      ...state.wallet,
+      walletSync: {
+        walletSyncState: { data: null, version: 0, environment: "STAGING" },
+        isHydrated: true,
+      },
+    },
   }),
 );
 
@@ -64,6 +71,52 @@ describe("useWatchWalletSync", () => {
 
     expect(store?.getState()?.featureFlags.overrides.llmWalletSync?.enabled).toBe(true);
     expect(result.current.visualPending).toBe(true);
+    expect(result.current.walletSyncError).toBe(null);
+  });
+
+  it("should not run ledger sync watch loop before wallet hydration", async () => {
+    const { result } = renderHook(() => useWatchWalletSync(), {
+      overrideInitialState: state => {
+        const base = INITIAL_STATE(state);
+        return {
+          ...base,
+          wallet: {
+            ...base.wallet,
+            walletSync: {
+              ...base.wallet.walletSync,
+              isHydrated: false,
+            },
+          },
+        };
+      },
+    });
+
+    expect(result.current.visualPending).toBe(false);
+    expect(result.current.walletSyncError).toBe(null);
+  });
+
+  it("should not run ledger sync watch loop with a cursor from another environment", async () => {
+    const { result } = renderHook(() => useWatchWalletSync(), {
+      overrideInitialState: state => {
+        const base = INITIAL_STATE(state);
+        return {
+          ...base,
+          wallet: {
+            ...base.wallet,
+            walletSync: {
+              ...base.wallet.walletSync,
+              walletSyncState: {
+                data: null,
+                version: 0,
+                environment: "PROD",
+              },
+            },
+          },
+        };
+      },
+    });
+
+    expect(result.current.visualPending).toBe(false);
     expect(result.current.walletSyncError).toBe(null);
   });
 

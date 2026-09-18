@@ -369,6 +369,7 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: walletStateExportShouldDiffer,
     lense: exportWalletState,
+    saveAtStart: true,
   });
 
   useDBSaveEffect({
