@@ -29,11 +29,11 @@ export type CardDetailsProps = Readonly<{
   formatters?: CardTransactionFormatters;
   onTrackEvent?: CardTrackEvent;
   onShowMore?: () => void;
+  onTopUp?: () => void;
 }>;
 
 export type CardDetailsViewProps = CardDetailsProps &
   Readonly<{
-    placeholderLabel: string;
     detailsLabel: string;
     isSheetOpen: boolean;
     scene: CardDetailsSceneProps;
@@ -45,6 +45,7 @@ export type CardDetailsViewProps = CardDetailsProps &
 export type CardDetailsSheetProps = Readonly<{
   isOpen: boolean;
   scene: CardDetailsSceneProps;
+  onTopUp?: () => void;
   onClose: () => void;
   /** Returns to the overview from a scene the registry gives a back button. */
   onBack: () => void;

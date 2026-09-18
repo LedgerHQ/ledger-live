@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Button, LinearGradient } from "@ledgerhq/lumen-ui-rnative";
 import { CardArtwork } from "../CardArtwork/CardArtwork";
 import { CardVisual } from "../CardVisual/CardVisual";
+import { CardTopUpButton } from "../CardTopUp";
 import { CardDetailsSheet } from "./CardDetailsSheet";
 import { CARD_FADE } from "../CardArtwork/cardColors";
 import type { CardDetailsViewProps } from "../../types";
@@ -15,10 +16,10 @@ const CARD_FADE_STOPS = [
 
 export function CardDetailsView({
   cardVisual,
-  placeholderLabel,
   detailsLabel,
   isSheetOpen,
   scene,
+  onTopUp,
   onDetailsPress,
   onSheetClose,
   onSceneBack,
@@ -44,16 +45,9 @@ export function CardDetailsView({
           lx={{ flexDirection: "row", gap: "s8", padding: "s16", position: "absolute" }}
           style={{ bottom: 0, left: 0, right: 0 }}
         >
-          <Button
-            appearance="base"
-            size="lg"
-            isFull
-            disabled
-            lx={{ flex: 1 }}
-            accessibilityLabel={placeholderLabel}
-          >
-            {placeholderLabel}
-          </Button>
+          <Box lx={{ flex: 1 }}>
+            <CardTopUpButton onTopUp={onTopUp} />
+          </Box>
           <Button
             appearance="gray"
             size="lg"
@@ -70,6 +64,7 @@ export function CardDetailsView({
       <CardDetailsSheet
         isOpen={isSheetOpen}
         scene={scene}
+        onTopUp={onTopUp}
         onClose={onSheetClose}
         onBack={onSceneBack}
       />

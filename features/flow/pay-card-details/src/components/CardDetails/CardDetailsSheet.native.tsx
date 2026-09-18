@@ -1,11 +1,18 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { BottomSheetHeader, BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { CardTopUpButton } from "../CardTopUp";
 import { CardDetailsScene } from "./Scenes/CardDetailsScene";
 import { CARD_DETAILS_SCENES } from "./Scenes/registry";
 import type { CardDetailsSheetProps } from "../../types";
 
-export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetailsSheetProps) {
+export function CardDetailsSheet({
+  isOpen,
+  scene,
+  onTopUp,
+  onClose,
+  onBack,
+}: CardDetailsSheetProps) {
   const dismissed = useRef(false);
   const isPending = scene.freeze.viewModel.confirmState === "pending";
   const { sizing, hasBackButton } = CARD_DETAILS_SCENES[scene.route.name];
@@ -45,12 +52,19 @@ export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetails
       testID="card-details-sheet"
     >
       {isOpen ? (
-        <BottomSheetScrollView>
-          <Box lx={{ paddingBottom: "s24" }}>
-            <BottomSheetHeader density="compact" spacing />
-            <CardDetailsScene {...scene} />
-          </Box>
-        </BottomSheetScrollView>
+        <>
+          <BottomSheetScrollView>
+            <Box lx={{ paddingBottom: "s24" }}>
+              <BottomSheetHeader density="compact" spacing />
+              <CardDetailsScene {...scene} />
+            </Box>
+          </BottomSheetScrollView>
+          {scene.route.name === "overview" ? (
+            <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s24" }}>
+              <CardTopUpButton onTopUp={onTopUp} />
+            </Box>
+          ) : null}
+        </>
       ) : null}
     </QueuedBottomSheet>
   );
