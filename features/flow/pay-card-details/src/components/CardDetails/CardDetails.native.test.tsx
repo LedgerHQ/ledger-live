@@ -40,11 +40,17 @@ function Wrapper({ children }: PropsWithChildren) {
   );
 }
 
-function renderCardDetails({ onTrackEvent = jest.fn() }: { onTrackEvent?: jest.Mock } = {}) {
+function renderCardDetails({
+  onTrackEvent = jest.fn(),
+  onTopUp,
+}: {
+  onTrackEvent?: jest.Mock;
+  onTopUp?: () => void;
+} = {}) {
   return {
     user: userEvent.setup(),
     onTrackEvent,
-    ...render(<CardDetails onTrackEvent={onTrackEvent} />, { wrapper: Wrapper }),
+    ...render(<CardDetails onTrackEvent={onTrackEvent} onTopUp={onTopUp} />, { wrapper: Wrapper }),
   };
 }
 
@@ -95,16 +101,35 @@ describe("CardDetails (native)", () => {
   });
 
   it("should show the preview actions when the card details screen renders", () => {
-    renderCardDetails();
+    renderCardDetails({ onTopUp: jest.fn() });
 
-    expect(screen.getByLabelText(CARD_COPY.placeholder)).toBeVisible();
+    expect(screen.getByLabelText(CARD_COPY.topUp)).toBeVisible();
     expect(screen.getByLabelText(CARD_COPY.details)).toBeVisible();
   });
 
-  it("should keep the placeholder action disabled when the card preview is shown", () => {
+  it("should show no top up action when the host wires none", () => {
     renderCardDetails();
 
-    expect(screen.getByLabelText(CARD_COPY.placeholder).props.disabled).toBe(true);
+    expect(screen.queryByLabelText(CARD_COPY.topUp)).toBeNull();
+    expect(screen.getByLabelText(CARD_COPY.details)).toBeVisible();
+  });
+
+  it("should open the top up from the card face", async () => {
+    const onTopUp = jest.fn();
+    const { user } = renderCardDetails({ onTopUp });
+
+    await user.press(screen.getByLabelText(CARD_COPY.topUp));
+
+    expect(onTopUp).toHaveBeenCalledTimes(1);
+  });
+
+  it("should offer the top up again at the bottom of the details sheet", async () => {
+    const { user } = renderCardDetails({ onTopUp: jest.fn() });
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+
+    expect(await screen.findByText(CARD_COPY.freeze)).toBeVisible();
+    expect(screen.getAllByLabelText(CARD_COPY.topUp)).toHaveLength(2);
   });
 
   it("should carry the same balance on the sheet's card face as on the tab's", async () => {

@@ -21,6 +21,7 @@ type PayTabViewProps = {
   readonly login: CardProps["login"];
   readonly cardAssets: CardProps["assets"];
   readonly cardFormatters: CardProps["formatters"];
+  readonly onTopUp: () => Promise<void>;
   readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
@@ -38,6 +39,7 @@ export function PayTabView({
   login,
   cardAssets,
   cardFormatters,
+  onTopUp,
   balance,
   actionTiles,
   contacts,
@@ -64,6 +66,7 @@ export function PayTabView({
             login={login}
             assets={cardAssets}
             formatters={cardFormatters}
+            onTopUp={onTopUp}
             onShowMore={onShowMore}
           />
           <FeatureTour {...featureTour} />
