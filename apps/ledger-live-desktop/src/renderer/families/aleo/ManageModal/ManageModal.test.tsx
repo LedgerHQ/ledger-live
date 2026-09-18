@@ -15,20 +15,7 @@ import ManageModal from "./ManageModal";
 
 jest.mock("@ledgerhq/crypto-icons", () => ({ CryptoIcon: jest.fn() }));
 
-// Tippy renders its content lazily on hover, which jsdom makes unreliable. The rows only ever
-// need the right message wired to the right reason, so expose that on the wrapper instead.
-jest.mock("~/renderer/components/Tooltip", () => ({
-  __esModule: true,
-  default: ({
-    content,
-    enabled,
-    children,
-  }: {
-    content: React.ReactNode;
-    enabled?: boolean;
-    children?: React.ReactNode;
-  }) => <div data-tooltip={enabled ? String(content) : undefined}>{children}</div>,
-}));
+jest.mock("~/renderer/components/Tooltip", () => require("../__mocks__/tooltip.mock"));
 
 /** The message the row would show, or "" when it offers none. */
 const tooltipFor = (testId: string) =>

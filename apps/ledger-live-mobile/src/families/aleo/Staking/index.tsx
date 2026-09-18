@@ -23,7 +23,7 @@ import StatusIcon from "./StatusIcon";
 import StakedDrawer from "./StakedDrawer";
 import UnstakingDrawer from "./UnstakingDrawer";
 import { useUnbondingState } from "./useUnbondingState";
-import { getUnbondingStatusLabel } from "./utils";
+import { getUnbondingStatusLabel, getValidatorLabel } from "./utils";
 
 type OpenDrawer = "staked" | "unstaking" | null;
 
@@ -35,7 +35,7 @@ function Staking({ account }: Readonly<{ account: AleoAccount }>) {
   const [openDrawer, setOpenDrawer] = useState<OpenDrawer>(null);
 
   const unit = useAccountUnit(account);
-  const label = position.validatorLabel || t("aleo.stake.fallbackValidator");
+  const label = getValidatorLabel(t, position);
 
   const onCloseDrawer = useCallback(() => setOpenDrawer(null), []);
   const onOpenStaked = useCallback(() => setOpenDrawer("staked"), []);

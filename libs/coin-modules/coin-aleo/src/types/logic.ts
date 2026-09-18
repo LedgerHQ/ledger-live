@@ -71,6 +71,7 @@ export type AleoUnbondingDisplayState = {
   isCountingDown: boolean;
   isSettling: boolean;
   blocksLeft: number | null;
+  currentHeight: number;
 };
 
 export type AleoStakingPosition = {

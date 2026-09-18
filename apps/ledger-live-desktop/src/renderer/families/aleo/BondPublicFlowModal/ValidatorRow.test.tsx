@@ -4,6 +4,7 @@ import type { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
 import { openURL } from "~/renderer/linking";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { ALEO_MAIN_ACCOUNT } from "../__mocks__/account.mock";
+import { ALEO_VALIDATOR_ADDRESS, aleoValidator } from "../__mocks__/validator.mock";
 import AleoValidatorRow from "./ValidatorRow";
 
 jest.mock("~/renderer/linking", () => ({
@@ -14,21 +15,11 @@ jest.mock("~/renderer/linking", () => ({
 
 const mockOpenURL = jest.mocked(openURL);
 
-const VALIDATOR = {
-  address: "aleo1q3vx8pet0h7739hx5xlekfxh9kus6qdlxhx9qdkxhh9rnva8q5gsskve3t",
-  name: "Figment",
-  stakeMicrocredits: 63_051_013_000_000,
-  isOpen: true,
-  isUnbonding: false,
-  commissionPercent: 10,
-  estimatedYearlyRewardsRate: 0.062,
-} as AleoValidator;
-
 function setup(overrides: Partial<AleoValidator> = {}, props: { locked?: boolean } = {}) {
   const onSelect = jest.fn();
   const utils = render(
     <AleoValidatorRow
-      validator={{ ...VALIDATOR, ...overrides } as AleoValidator}
+      validator={aleoValidator(overrides)}
       currency={ALEO_MAIN_ACCOUNT.currency}
       selected={false}
       locked={props.locked ?? false}
@@ -46,13 +37,13 @@ describe("AleoValidatorRow — subtitle", () => {
   it("shows the yearly rate alongside the commission", () => {
     setup();
 
-    expect(screen.getByText("6.2% est. · 10% commission")).toBeInTheDocument();
+    expect(screen.getByText("6.2% est. · 5% commission")).toBeInTheDocument();
   });
 
   it("falls back to the commission alone when no rate is known", () => {
     setup({ estimatedYearlyRewardsRate: undefined });
 
-    expect(screen.getByText("10% commission")).toBeInTheDocument();
+    expect(screen.getByText("5% commission")).toBeInTheDocument();
   });
 
   // Unbonding outranks the others: the chain rejects the bond outright, so the reason the
@@ -85,7 +76,7 @@ describe("AleoValidatorRow — selection", () => {
 
     await userEvent.click(row());
 
-    expect(onSelect).toHaveBeenCalledWith(VALIDATOR.address);
+    expect(onSelect).toHaveBeenCalledWith(ALEO_VALIDATOR_ADDRESS);
   });
 
   it("does not select a validator that cannot take stake", async () => {
@@ -110,6 +101,6 @@ describe("AleoValidatorRow — selection", () => {
 
     await userEvent.click(screen.getByText("Figment"));
 
-    expect(mockOpenURL).toHaveBeenCalledWith(expect.stringContaining(VALIDATOR.address));
+    expect(mockOpenURL).toHaveBeenCalledWith(expect.stringContaining(ALEO_VALIDATOR_ADDRESS));
   });
 });

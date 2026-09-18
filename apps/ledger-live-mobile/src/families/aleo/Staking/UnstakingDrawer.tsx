@@ -11,7 +11,7 @@ import DelegationDrawer, { type Action, type FieldType } from "~/components/Dele
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { makeValidatorImage } from "./ValidatorImage";
 import { useValidatorFields } from "./useValidatorFields";
-import { getUnbondingStatusLabel } from "./utils";
+import { getUnbondingStatusLabel, getValidatorLabel } from "./utils";
 
 /** Claim arrives with its own flow in LIVE-32812. */
 const NO_ACTIONS: Action[] = [];
@@ -28,7 +28,7 @@ export default function UnstakingDrawer({ account, position, unbonding, isOpen, 
   const { t } = useTranslation();
   const unit = useAccountUnit(account);
   const { unbondingBalance, unbondingHeight, claimableBalance } = position;
-  const label = position.validatorLabel || t("aleo.stake.fallbackValidator");
+  const label = getValidatorLabel(t, position);
 
   const validatorFields = useValidatorFields(account, position);
   const ValidatorImage = useMemo(() => makeValidatorImage(label), [label]);

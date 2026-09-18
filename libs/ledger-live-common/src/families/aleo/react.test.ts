@@ -2079,21 +2079,40 @@ describe("useAleoStakingPosition", () => {
       expect(result.current.estimatedRate).toBe(0);
     });
 
-    it("blames no one while the committee is still loading", () => {
+    // The label is a name or nothing. Coalescing it to the bonded address would hand every view a
+    // string that looks like a name, leaving each of them to detect the address a second time.
+    it("leaves the label empty for a validator the committee does not name", async () => {
+      jest.mocked(getValidators).mockResolvedValue([]);
+
+      const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
+
+      await waitFor(() => expect(result.current.nonEarningReason).toBe("leftCommittee"));
+      expect(result.current.validatorLabel).toBeNull();
+      expect(result.current.bondedValidator).toBe(VALIDATOR_ADDRESS);
+    });
+
+    // `nonEarningReason` and `estimatedRate` are both `undefined` here because nothing is known,
+    // not because the position is healthy — so the list's own state has to travel with them.
+    it("blames no one while the committee is still loading, and says it is loading", () => {
       jest.mocked(getValidators).mockReturnValue(new Promise(() => {}));
 
       const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
 
       expect(result.current.nonEarningReason).toBeUndefined();
+      expect(result.current.validatorsLoading).toBe(true);
+      expect(result.current.validatorsError).toBeNull();
     });
 
-    it("blames no one when the committee could not be fetched at all", async () => {
-      jest.mocked(getValidators).mockRejectedValue(new Error("offline"));
+    it("blames no one when the committee could not be fetched at all, and reports the error", async () => {
+      const error = new Error("offline");
+      jest.mocked(getValidators).mockRejectedValue(error);
 
       const { result } = bondedPosition(new BigNumber(MIN_DELEGATOR_STAKE_MICROCREDITS));
 
       await act(async () => {});
       expect(result.current.nonEarningReason).toBeUndefined();
+      expect(result.current.validatorsLoading).toBe(false);
+      expect(result.current.validatorsError).toBe(error);
     });
 
     it("reports the fetch as loading so views can skeleton instead of guessing", () => {

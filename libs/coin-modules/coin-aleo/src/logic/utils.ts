@@ -1053,7 +1053,7 @@ export function getUnbondingDisplayState({
   const blocksLeft = unbondingHeight !== null ? Math.max(0, unbondingHeight - currentHeight) : null;
   const isSettling = !isClaimable && blocksLeft === 0;
 
-  return { isClaimable, isCountingDown, isSettling, blocksLeft };
+  return { isClaimable, isCountingDown, isSettling, blocksLeft, currentHeight };
 }
 
 /**

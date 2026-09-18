@@ -15,8 +15,7 @@ export function useValidatorFields(
 ): FieldType[] {
   const { t } = useTranslation();
   const { bondedValidator, validatorLabel, validatorsLoading } = position;
-  const labelIsAddressFallback = !validatorLabel || validatorLabel === bondedValidator;
-  const name = labelIsAddressFallback ? null : validatorLabel;
+  const name = validatorLabel || null;
 
   const explorerUrl =
     bondedValidator &&
