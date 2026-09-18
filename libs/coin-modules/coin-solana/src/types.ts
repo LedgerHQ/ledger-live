@@ -11,6 +11,7 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import type { TxData } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import { TokenAccountState } from "./network/chain/account/token";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
@@ -29,6 +30,7 @@ export type TokenCreateATACommand = {
   owner: string;
   mint: string;
   associatedTokenAccountAddress: string;
+  tokenProgram?: SolanaTokenProgram;
 };
 
 export type TokenCreateApproveCommand = {
@@ -361,3 +363,11 @@ export type SolanaExtraDeviceTransactionField = {
   type: "solana.token.transferFee";
   label: string;
 };
+
+/** A partner-built transaction: the intent's `type`, `recipient` and `amount` then describe nothing. */
+export interface SolanaTxData extends TxData {
+  type: "solana";
+  raw?: string;
+  templateId?: string;
+  stakeAccountSeed?: string;
+}
