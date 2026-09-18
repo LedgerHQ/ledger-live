@@ -1,22 +1,37 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "@shared/i18n";
 import { Android, Apple } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { getWalletPlatform } from "../getWalletPlatform.native";
 import { markCardAddedToWallet } from "../../state";
-import { openWalletApp } from "./openWalletApp";
+import { openGoogleWalletStore, openWalletApp } from "./openWalletApp";
 
 type WalletPlatformIcon = typeof Apple;
 
 const WALLET_CTA_ICON: Record<"Apple" | "Android", WalletPlatformIcon> = { Apple, Android };
 
-export type AddToWalletInstructionsViewProps = {
+type InstructionsScene = {
+  readonly scene: "instructions";
   readonly title: string;
   readonly steps: readonly string[];
   readonly ctaLabel: string;
   readonly ctaIcon: WalletPlatformIcon;
   readonly onPressCta: () => Promise<void>;
+  readonly isPending: boolean;
 };
+
+type ErrorScene = {
+  readonly scene: "error";
+  readonly title: string;
+  readonly description: string;
+  readonly actionLabel: string;
+  readonly backLabel: string;
+  readonly onPressAction: () => Promise<void>;
+  readonly onBack: () => void;
+  readonly isPending: boolean;
+};
+
+export type AddToWalletInstructionsViewProps = InstructionsScene | ErrorScene;
 
 type Params = {
   onDone: () => void;
@@ -27,19 +42,49 @@ export function useAddToWalletInstructionsViewModel({
 }: Params): AddToWalletInstructionsViewProps {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const [scene, setScene] = useState<"instructions" | "error">("instructions");
+  const [isPending, setIsPending] = useState(false);
 
   const { i18nKey, icon } = getWalletPlatform();
   const ctaIcon = WALLET_CTA_ICON[icon];
 
-  const onPressCta = useCallback(async () => {
-    // Leaves the instructions on screen when the wallet cannot be reached, so they stay actionable.
-    if (!(await openWalletApp())) return;
+  const openWallet = useCallback(async () => {
+    setIsPending(true);
+    const opened = await openWalletApp();
+    setIsPending(false);
+
+    if (!opened) {
+      setScene("error");
+      return;
+    }
 
     dispatch(markCardAddedToWallet());
     onDone();
   }, [dispatch, onDone]);
 
+  const openStore = useCallback(async () => {
+    setIsPending(true);
+    await openGoogleWalletStore();
+    setIsPending(false);
+  }, []);
+
+  const showInstructions = useCallback(() => setScene("instructions"), []);
+
+  if (scene === "error") {
+    return {
+      scene,
+      title: t(`payTab.cardOnboarding.addToWallet.${i18nKey}.error.title`),
+      description: t(`payTab.cardOnboarding.addToWallet.${i18nKey}.error.description`),
+      actionLabel: t(`payTab.cardOnboarding.addToWallet.${i18nKey}.error.action`),
+      backLabel: t("payTab.cardOnboarding.addToWallet.error.back"),
+      onPressAction: i18nKey === "android" ? openStore : openWallet,
+      onBack: showInstructions,
+      isPending,
+    };
+  }
+
   return {
+    scene,
     title: t(`payTab.cardOnboarding.addToWallet.${i18nKey}.title`),
     steps: [
       t(`payTab.cardOnboarding.addToWallet.${i18nKey}.step1`),
@@ -48,6 +93,7 @@ export function useAddToWalletInstructionsViewModel({
     ],
     ctaLabel: t(`payTab.cardOnboarding.addToWallet.${i18nKey}.cta`),
     ctaIcon,
-    onPressCta,
+    onPressCta: openWallet,
+    isPending,
   };
 }
