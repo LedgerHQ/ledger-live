@@ -17,6 +17,13 @@ jest.mock("@features/platform-app-lock", () => ({
 const { hasPasswordVerifier, hasBiometricsMarker, clearStoredPassword, checkPassword } =
   jest.requireMock("@features/platform-app-lock");
 
+const dismissAll = jest.fn();
+
+jest.mock("@gorhom/bottom-sheet", () => ({
+  ...jest.requireActual("@gorhom/bottom-sheet"),
+  useBottomSheetModal: () => ({ dismiss: jest.fn(), dismissAll }),
+}));
+
 jest.mock("../adapters/installMarker", () => ({
   hasKnownInstall: jest.fn(),
   writeInstallMarker: jest.fn(async () => undefined),
@@ -89,6 +96,23 @@ describe("the app lock gate", () => {
     expect(await screen.findByTestId(UNLOCK_SCREEN)).toBeVisible();
     expect(screen.getByText(APP_CONTENT, { includeHiddenElements: true })).toBeTruthy();
     expect(screen.queryByText(APP_CONTENT)).toBeNull();
+  });
+
+  it("sends away the sheets the app left open, which sit above the lock's own overlay", async () => {
+    hasPasswordVerifier.mockResolvedValue(true);
+
+    renderGate();
+
+    await screen.findByTestId(UNLOCK_SCREEN);
+
+    expect(dismissAll).toHaveBeenCalled();
+  });
+
+  it("leaves the sheets alone while the app is open", async () => {
+    renderGate();
+
+    expect(await screen.findByText(APP_CONTENT)).toBeVisible();
+    expect(dismissAll).not.toHaveBeenCalled();
   });
 
   it("locks an app protected by biometrics alone, read back at boot", async () => {

@@ -1,10 +1,11 @@
-import { isShowingSplash, UnlockView } from "@features/flow-app-lock";
+import { ForgotPasswordSheet, isShowingSplash, UnlockView } from "@features/flow-app-lock";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Logos } from "@ledgerhq/native-ui";
 import React from "react";
 import { useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BottomSheetInfoGradient } from "LLM/components/BottomSheetGradient";
 import StyleProvider from "~/StyleProvider";
 import useUnlockScreenViewModel from "./useUnlockScreenViewModel";
 
@@ -47,6 +48,13 @@ function UnlockScreenContent(): React.JSX.Element {
         }
         topInset={insets.top}
         bottomInset={insets.bottom}
+      />
+
+      <ForgotPasswordSheet
+        isOpen={viewModel.isForgotPasswordOpen}
+        onClose={viewModel.onForgotPasswordClose}
+        bottomInset={insets.bottom}
+        backgroundComponent={BottomSheetInfoGradient}
       />
     </Box>
   );
