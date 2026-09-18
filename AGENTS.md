@@ -8,6 +8,8 @@ We are working towards consistency across all those packages but each workspace 
 
 ## Where to add new code
 
+New code goes in the [DDD layers](./docs/ddd-monorepo-architecture.md) — `shared/`, `domain/`, `features/`, `apps/`. `libs/` is legacy: maintained, not grown.
+
 When creating a new package, follow [docs/new-library.md](./docs/new-library.md) guidelines.
 
 ## Repo Commands
