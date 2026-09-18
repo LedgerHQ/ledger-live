@@ -19,6 +19,9 @@ permissions:
 jobs:
   determine-affected:
     name: "Affected"
+    permissions:
+      contents: read
+      id-token: write
     uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
     with:
       head_branch: ${{ github.event.merge_group.head_ref }}
