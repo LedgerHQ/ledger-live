@@ -270,3 +270,75 @@ export async function buildSigner(): Promise<BitcoinSigner> {
     },
   };
 }
+
+/**
+ * Software signer for the **generic-adapter** strategy — native SegWit (P2WPKH / bech32) only, to
+ * keep PSBT signing simple (no redeem script). It plays the role of the device on the Alpaca path:
+ * the generic `signOperation` calls `signTransaction(path, unsignedPSBT)`, and we return a
+ * partially-signed PSBT that coin-bitcoin's `combine` finalizes.
+ */
+export type GenericBitcoinSigner = {
+  getAddress: (path: string) => Promise<{ address: string; publicKey: string }>;
+  getXpub: (accountPath: string) => Promise<string>;
+  signTransaction: (path: string, unsignedPsbtBase64: string) => Promise<string>;
+};
+
+const REGTEST = bitcoin.networks.regtest;
+const stripM = (path: string): string => path.replace(/^m\//, "");
+const p2wpkhScript = (pubkey: Buffer): Buffer =>
+  bitcoin.payments.p2wpkh({ pubkey, network: REGTEST }).output!;
+
+export async function buildGenericSigner(
+  mnemonic: string = generateMnemonic(),
+): Promise<{ signer: GenericBitcoinSigner; mnemonic: string }> {
+  const seed = await mnemonicToSeed(mnemonic);
+  const bip32 = BIP32Factory(eccWrapper);
+  const root = bip32.fromSeed(seed, REGTEST);
+
+  const signer: GenericBitcoinSigner = {
+    getAddress: async (path: string) => {
+      const node = root.derivePath(stripM(path));
+      const address = bitcoin.payments.p2wpkh({
+        pubkey: node.publicKey,
+        network: REGTEST,
+      }).address!;
+      return { address, publicKey: Buffer.from(node.publicKey).toString("hex") };
+    },
+
+    getXpub: async (accountPath: string) =>
+      root.derivePath(stripM(accountPath)).neutered().toBase58(),
+
+    // The account walk crafts a PSBT whose inputs come from several derived addresses. We only get
+    // the account-leaf `path` here, so for each input we scan the receive (0) and change (1) chains
+    // and match the derived P2WPKH script against the input's witnessUtxo, then sign with that key.
+    signTransaction: async (path: string, unsignedPsbtBase64: string) => {
+      const accountPath = stripM(path).split("/").slice(0, 3).join("/"); // purpose'/coin'/account'
+      const accountNode = root.derivePath(accountPath);
+      const psbt = bitcoin.Psbt.fromBase64(unsignedPsbtBase64, { network: REGTEST });
+
+      const GAP = 40;
+      for (let i = 0; i < psbt.inputCount; i++) {
+        const script = psbt.data.inputs[i]?.witnessUtxo?.script;
+        if (!script) {
+          throw new Error(`generic signer: input ${i} has no witnessUtxo (native segwit expected)`);
+        }
+        let signed = false;
+        for (let chain = 0; chain <= 1 && !signed; chain++) {
+          for (let index = 0; index < GAP; index++) {
+            const child = accountNode.derive(chain).derive(index);
+            if (Buffer.compare(p2wpkhScript(Buffer.from(child.publicKey)), script) === 0) {
+              psbt.signInput(i, child);
+              signed = true;
+              break;
+            }
+          }
+        }
+        if (!signed) throw new Error(`generic signer: no HD key matched input ${i}`);
+      }
+      // Not finalized — coin-bitcoin's `combine` finalizes and extracts the raw tx.
+      return psbt.toBase64();
+    },
+  };
+
+  return { signer, mnemonic };
+}

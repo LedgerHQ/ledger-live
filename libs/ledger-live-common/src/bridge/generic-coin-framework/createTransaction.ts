@@ -155,6 +155,15 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         memoValue: null,
         nonce: new BigNumber(0),
       };
+    case "bitcoin":
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+      };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }
