@@ -395,7 +395,7 @@ describe("History integration", () => {
     );
 
     render(<History />, {
-      initialRoute: "/history?tab=card&asset=btc.bitcoin",
+      initialRoute: "/history?tab=card&asset=bitcoin",
       initialState: {
         accounts: [BTC_ACCOUNT],
         settings: AFTER_ONBOARDING_STATE,

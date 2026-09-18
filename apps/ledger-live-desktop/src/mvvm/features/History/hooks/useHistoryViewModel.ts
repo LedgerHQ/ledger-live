@@ -5,7 +5,6 @@ import {
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
 } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import { ContactIdSchema, selectContactById, type Contact } from "@domain/entity-contact";
-import { baanxAssetLedgerId } from "@domain/entity-card-asset-mapping";
 import { useCurrenciesByIds } from "@features/platform-currencies";
 import { useFeature } from "@features/platform-feature-flags";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -75,15 +74,10 @@ export function useHistoryViewModel(): HistoryViewModel {
       ? HISTORY_TAB_CARD
       : HISTORY_TAB_CRYPTO;
   // Scoped to one card asset: the crypto tab has no such scope, so the switcher would only lose it.
-  const cardAsset =
+  const cardAssetLedgerId =
     historyTab === HISTORY_TAB_CARD ? searchParams.get(HISTORY_ASSET_SEARCH_PARAM) : null;
-  const showHistoryTypeSwitcher = isPayTabEnabled && !hasCryptoHistoryFilter && cardAsset === null;
-  // The scope is the provider's `currency.network` pair; only the Ledger currency behind it has a
-  // name to show. A pair the catalog does not cover stays unnamed rather than showing the raw pair.
-  const [assetCurrency = "", maybeNetwork] = cardAsset?.split(".") ?? [];
-  const cardAssetLedgerId = cardAsset
-    ? baanxAssetLedgerId(assetCurrency, maybeNetwork || assetCurrency)
-    : undefined;
+  const showHistoryTypeSwitcher =
+    isPayTabEnabled && !hasCryptoHistoryFilter && cardAssetLedgerId === null;
   const cardAssetLedgerIds = useMemo(
     () => (cardAssetLedgerId ? [cardAssetLedgerId] : []),
     [cardAssetLedgerId],
@@ -185,7 +179,7 @@ export function useHistoryViewModel(): HistoryViewModel {
 
   return {
     // Asset history is only reachable from the asset dialog, so back always has somewhere to pop to.
-    showBackButton: showBackButton || cardAsset !== null,
+    showBackButton: showBackButton || cardAssetLedgerId !== null,
     navigateBack,
     table,
     parentRef,

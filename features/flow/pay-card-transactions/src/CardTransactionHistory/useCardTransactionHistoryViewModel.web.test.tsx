@@ -51,7 +51,7 @@ describe("useCardTransactionHistoryViewModel", () => {
     server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
 
     const { result } = renderHook(
-      () => useCardTransactionHistoryViewModel({ onRowClick, asset: "btc.bitcoin" }),
+      () => useCardTransactionHistoryViewModel({ onRowClick, asset: "bitcoin" }),
       { wrapper: cardApiWrapper({ signedIn: true }) },
     );
 
@@ -71,7 +71,7 @@ describe("useCardTransactionHistoryViewModel", () => {
     server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(mockPayCardTransactions())));
 
     const { result } = renderHook(
-      () => useCardTransactionHistoryViewModel({ onRowClick, asset: "nope.nowhere" }),
+      () => useCardTransactionHistoryViewModel({ onRowClick, asset: "nowhere/erc20/nope" }),
       { wrapper: cardApiWrapper({ signedIn: true }) },
     );
 

@@ -4,7 +4,7 @@ import type { CardTransactionHistoryUiState } from "./cardTransactionHistoryUiSt
 
 export type CardTransactionHistoryProps = Readonly<{
   formatters?: CardTransactionFormatters;
-  /** Scopes the history to the transactions one card asset funded, e.g. `usdc.ethereum`. */
+  /** Ledger currency id of the card asset to scope the history to, e.g. `bitcoin`. */
   asset?: string;
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
   formatDay?: (date: Date) => string;

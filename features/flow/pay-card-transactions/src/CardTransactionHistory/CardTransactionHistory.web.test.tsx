@@ -53,7 +53,7 @@ describe("CardTransactionHistory", () => {
   it("should keep the same columns when history is filtered by asset", async () => {
     server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(mockPayCardTransactions())));
 
-    render(<CardTransactionHistory asset="btc.bitcoin" />, {
+    render(<CardTransactionHistory asset="bitcoin" />, {
       wrapper: cardApiWrapper({ signedIn: true }),
     });
 
