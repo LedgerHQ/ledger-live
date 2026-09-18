@@ -30,6 +30,10 @@ export function deviceWithScreenTags(): string[] {
   return SCREEN_DEVICE_TAGS;
 }
 
+export function deviceWithButtonTags(): string[] {
+  return BUTTON_DEVICE_TAGS;
+}
+
 function currencyTags(currencyId: string): string[] {
   const family = getFamilyByCurrencyId(currencyId);
   return [`@${currencyId}`, ...(family ? [`@family-${family}`] : [])];
