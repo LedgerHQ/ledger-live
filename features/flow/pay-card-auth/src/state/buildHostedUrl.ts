@@ -17,3 +17,9 @@ export function buildHostedUrl(baseUrl: string | undefined, path: string): strin
 
   return url.toString();
 }
+
+const TOP_UP_PATH = "/topup";
+
+export function buildTopUpPath(usAppId?: string | null): string {
+  return usAppId ? `${TOP_UP_PATH}?${new URLSearchParams({ app_id: usAppId })}` : TOP_UP_PATH;
+}

@@ -15,6 +15,7 @@ export const CARD_COPY = {
   errorDescription: "Something went wrong. Please try again.",
   retry: "Try again",
   placeholder: "Coming soon",
+  topUp: "Top up",
   details: "Details",
   numbersReveal: "View",
   numbersHide: "Hide",
@@ -75,6 +76,7 @@ export const CARD_RESOURCES = {
           unfreeze: CARD_COPY.unfreeze,
           goBack: CARD_COPY.goBack,
           placeholder: CARD_COPY.placeholder,
+          topUp: CARD_COPY.topUp,
           details: CARD_COPY.details,
           freezeConfirm: {
             title: CARD_COPY.freezeTitle,

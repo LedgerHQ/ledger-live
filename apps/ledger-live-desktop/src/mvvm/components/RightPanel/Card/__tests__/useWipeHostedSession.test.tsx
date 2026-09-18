@@ -4,7 +4,7 @@ import { act } from "@testing-library/react";
 import { renderHook } from "tests/testSetup";
 import { payCardAuthSlice } from "@features/flow-pay-card-auth/state";
 import type { ReduxStore } from "~/state-manager/configureStore";
-import { useWipeHostedSessionOnSignInChange } from "../useWipeHostedSession";
+import { useWipeHostedSession } from "../useWipeHostedSession";
 
 jest.mock("electron", () => ({
   ipcRenderer: {
@@ -51,14 +51,22 @@ function expectBothManifestsWiped() {
   expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [HOSTED_MANIFEST.url]);
 }
 
-describe("useWipeHostedSessionOnSignInChange", () => {
+describe("useWipeHostedSession", () => {
   beforeEach(() => {
     mockedInvoke.mockClear();
     manifestsFrom(CATALOG);
   });
 
-  it("ends the provider session on each manifest the env names", () => {
-    const { store } = renderHook(() => useWipeHostedSessionOnSignInChange());
+  it("ends the provider session on each manifest the env names, on the entry of the pay tab", () => {
+    renderHook(() => useWipeHostedSession());
+
+    expectBothManifestsWiped();
+    expect(mockedInvoke).toHaveBeenCalledTimes(2);
+  });
+
+  it("ends it again on the sign in", () => {
+    const { store } = renderHook(() => useWipeHostedSession());
+    mockedInvoke.mockClear();
 
     signIn(store, true);
 
@@ -67,7 +75,8 @@ describe("useWipeHostedSessionOnSignInChange", () => {
   });
 
   it("ends it again on the logout", () => {
-    const { store } = renderHook(() => useWipeHostedSessionOnSignInChange());
+    const { store } = renderHook(() => useWipeHostedSession());
+    mockedInvoke.mockClear();
 
     signIn(store, true);
     signIn(store, false);
@@ -75,27 +84,31 @@ describe("useWipeHostedSessionOnSignInChange", () => {
     expect(mockedInvoke).toHaveBeenCalledTimes(4);
   });
 
-  it("leaves the session alone while the login runs", () => {
-    renderHook(() => useWipeHostedSessionOnSignInChange());
+  it("ends it once more on every later entry of the pay tab", () => {
+    const first = renderHook(() => useWipeHostedSession());
 
-    expect(mockedInvoke).not.toHaveBeenCalled();
+    first.unmount();
+    mockedInvoke.mockClear();
+    renderHook(() => useWipeHostedSession());
+
+    expectBothManifestsWiped();
+    expect(mockedInvoke).toHaveBeenCalledTimes(2);
   });
 
   it("asks for nothing while the catalog holds no manifest", () => {
     manifestsFrom({});
 
-    const { store } = renderHook(() => useWipeHostedSessionOnSignInChange());
+    const { store } = renderHook(() => useWipeHostedSession());
 
     signIn(store, true);
 
     expect(mockedInvoke).not.toHaveBeenCalled();
   });
 
-  it("still wipes once the manifests resolve, for a sign-in seen while they had not", () => {
+  it("still wipes once the manifests resolve, for an entry seen while they had not", () => {
     manifestsFrom({});
-    const { store, rerender } = renderHook(() => useWipeHostedSessionOnSignInChange());
+    const { rerender } = renderHook(() => useWipeHostedSession());
 
-    signIn(store, true);
     expect(mockedInvoke).not.toHaveBeenCalled();
 
     manifestsFrom(CATALOG);
@@ -104,20 +117,21 @@ describe("useWipeHostedSessionOnSignInChange", () => {
     expectBothManifestsWiped();
   });
 
-  it("waits for the second manifest, rather than spending the wipe on the first", () => {
+  it("wipes the manifest that resolved first, and the other one as soon as it follows", () => {
     manifestsFrom({});
-    const { store, rerender } = renderHook(() => useWipeHostedSessionOnSignInChange());
-
-    signIn(store, true);
+    const { rerender } = renderHook(() => useWipeHostedSession());
 
     manifestsFrom({ [LOGIN_ID]: LOGIN_MANIFEST });
     rerender();
-    expect(mockedInvoke).not.toHaveBeenCalled();
+
+    expect(mockedInvoke).toHaveBeenCalledWith("clearCardHostedSessionData", [LOGIN_MANIFEST.url]);
+    expect(mockedInvoke).toHaveBeenCalledTimes(1);
 
     manifestsFrom(CATALOG);
     rerender();
 
     expectBothManifestsWiped();
+    expect(mockedInvoke).toHaveBeenCalledTimes(2);
   });
 
   it("still wipes once the manifests resolve, after a toggle that netted no change", () => {
@@ -125,7 +139,7 @@ describe("useWipeHostedSessionOnSignInChange", () => {
     // isSignedIn value the hook started with. A wipe still has to fire: the brief signed-in window
     // may have set cookies or minted tokens at the provider.
     manifestsFrom({});
-    const { store, rerender } = renderHook(() => useWipeHostedSessionOnSignInChange());
+    const { store, rerender } = renderHook(() => useWipeHostedSession());
 
     signIn(store, true);
     signIn(store, false);
