@@ -11,7 +11,14 @@
 import type { Spinner } from "yocto-spinner";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { CliProcessExitError } from "./cli-process-exit-error";
-import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
+import {
+  type DeviceState,
+  DEVICE_STATE_WIRE_CODES,
+  isTerminalDeviceState,
+  renderDeviceState,
+  usbLikelyCauseOf,
+} from "./device/device-state";
+import { agentHintFor, userHintFor, WALLET_CLI_SKILL_DOCS_URL } from "./device/usb-timeout-hints";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
@@ -279,6 +286,13 @@ class HumanCommandOutput implements CommandOutput {
       writeStderr(displayText + "\n");
     }
     this._activeSpin = null;
+    // The structured diagnosis (likely_cause, agent_hint) is long and agent-oriented, so the human
+    // gets one line plus a pointer rather than the whole envelope (LIVE-31394). Timeouts only: the
+    // other diagnosable state, `disconnected`, already renders a message that names the whole fix
+    // ("Plug in, unlock, retry"), so the pointer would send the reader to JSON for nothing.
+    if (err.state.code === "timeout") {
+      writeStderr(colors.dim("    see --output json for diagnostic details") + "\n");
+    }
     throw new CliProcessExitError(err.exitCode);
   }
 
@@ -651,14 +665,45 @@ class JsonCommandOutput implements CommandOutput {
         ok: false,
         error: {
           command: this._ctx.command,
-          code: e.state.code,
+          code: DEVICE_STATE_WIRE_CODES[e.state.code],
           message,
+          ...JsonCommandOutput._usbDiagnosticFields(e.state),
         },
       };
     }
     return {
       ok: false,
       error: { command: this._ctx.command, message: HumanFormatter.formatError(e) },
+    };
+  }
+
+  /**
+   * `likely_cause` / `agent_hint` / `user_hint` / `docs` for a USB failure (LIVE-31394).
+   *
+   * `docs` is a field of its own, not only the URL embedded in `agent_hint`, so the link is
+   * machine-readable on every USB failure — including the causes where `agent_hint` is omitted.
+   * That is what acceptance criterion #2 ("the error JSON includes a stable docs link") asks for.
+   *
+   * Keyed off `usbLikelyCauseOf`, not off `code === "timeout"`: an unplugged device is published as
+   * `disconnected` (exit 3) and is the commonest USB failure there is, so gating on the timeout
+   * code alone would omit the diagnosis from exactly the case the agent skill tells agents to read
+   * it for. A rejection or a wrong-app error carries no attribution and so gets no fields, which
+   * keeps consumers from learning to read them where they say nothing.
+   *
+   * `agent_hint` is present whenever the cause is host-side, without sniffing for an agent: its
+   * text is conditional ("If you are running this through … a sandboxed agent"), so it reads
+   * correctly for a human too, and an agent whose environment we do not recognise — the case that
+   * most needs the bypass instruction — still receives it.
+   */
+  private static _usbDiagnosticFields(state: DeviceState): Record<string, unknown> {
+    const likelyCause = usbLikelyCauseOf(state);
+    if (likelyCause === undefined) return {};
+    const agentHint = agentHintFor(likelyCause);
+    return {
+      likely_cause: likelyCause,
+      ...(agentHint === undefined ? {} : { agent_hint: agentHint }),
+      user_hint: userHintFor(likelyCause),
+      docs: WALLET_CLI_SKILL_DOCS_URL,
     };
   }
 
@@ -692,9 +737,21 @@ class JsonCommandOutput implements CommandOutput {
       command: this._ctx.command,
       network: this._ctx.network,
       ...(this._ctx.account == null ? {} : { account: this._ctx.account }),
-      state,
+      state: JsonCommandOutput._wireDeviceState(state),
       message,
     });
+  }
+
+  /**
+   * The state as published in a progress event. Mapped explicitly rather than spread, so a field
+   * added to `DeviceState` cannot leak in camelCase next to the error envelope's snake_case
+   * equivalent — `likelyCause` / `likely_cause` would otherwise be two spellings of one field in
+   * the same stream.
+   */
+  private static _wireDeviceState(state: DeviceState): Record<string, unknown> {
+    if (state.code !== "timeout" && state.code !== "disconnected") return { ...state };
+    const { likelyCause, ...rest } = state;
+    return { ...rest, ...(likelyCause === undefined ? {} : { likely_cause: likelyCause }) };
   }
 
   spin(_text: string): null {

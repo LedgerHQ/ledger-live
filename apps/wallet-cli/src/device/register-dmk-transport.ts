@@ -11,6 +11,7 @@ import {
   withWalletCliDeviceInterruptScope,
 } from "./interrupt-scope";
 import { restoreTerminalCursor } from "../shared/ui";
+import { resetUsbAccessDiagnostics } from "./usb-access-diagnostics";
 
 /** Device id passed to live-common `withDevice` / bridge methods for the first USB Ledger (DMK node WebUSB). */
 export const WALLET_CLI_DMK_DEVICE_ID = "wallet-cli-dmk";
@@ -48,6 +49,21 @@ let _testTransport: WalletCliDmkTransport | null = null;
 class InitialSessionBusyError extends Error {
   constructor() {
     super(INITIAL_SESSION_BUSY_MESSAGE);
+  }
+}
+
+/**
+ * Discovery produced no usable device. Carries the underlying failure as `cause` so
+ * `classifyDeviceError` can tell "no Ledger is plugged in" from "the host refused access to the
+ * Ledger that is plugged in" — a distinction the previous bare `Error` threw away (LIVE-31394).
+ *
+ * The cause is read: `resolveUsbTimeoutLikelyCause` classifies the whole `cause` chain when the
+ * transport recorded no failure of its own, which is the case for anything raised above it here.
+ */
+export class DeviceDiscoveryFailedError extends Error {
+  constructor(cause?: unknown) {
+    super(NO_LEDGER_DEVICE_FOUND_MESSAGE, cause === undefined ? undefined : { cause });
+    this.name = "DeviceDiscoveryFailedError";
   }
 }
 
@@ -172,12 +188,12 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
       filter((list: DiscoveredDevice[]) => list.length > 0),
       timeout(CONNECT_TIMEOUT_MS),
     ),
-  ).catch(() => {
-    throw new Error(NO_LEDGER_DEVICE_FOUND_MESSAGE);
+  ).catch((cause: unknown) => {
+    throw new DeviceDiscoveryFailedError(cause);
   });
   const device = discovered[0];
   if (!device) {
-    throw new Error(NO_LEDGER_DEVICE_FOUND_MESSAGE);
+    throw new DeviceDiscoveryFailedError();
   }
   const sessionId = await dmk.connect({
     device,
@@ -206,6 +222,7 @@ async function resetPersistentDmkAfterFailedOpen(kit: WalletCliDmk): Promise<voi
 }
 
 async function createWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
+  resetUsbAccessDiagnostics();
   const kit = await getOrCreatePersistentDmk();
   try {
     const sessionId = await connectFirstUsbDevice(kit.dmk);

@@ -113,7 +113,9 @@ describe("genuine-check command (mock DMK)", () => {
       ok: false,
       error: {
         command: "genuine-check",
-        code: "timeout",
+        // Published as the stable identifier the agent skill documents (LIVE-31394); the internal
+        // state code stays "timeout".
+        code: "USB_TIMEOUT",
       },
     });
   });

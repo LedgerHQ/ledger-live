@@ -38,8 +38,28 @@ import {
   RECONNECT_DEVICE_TIMEOUT_MS,
   WINDOWS_WEBUSB_DISCOVERY_POLL_INTERVAL_MS,
 } from "./node-webusb-constants";
+import {
+  recordLedgerVendorSeen,
+  recordScanCompleted,
+  recordUsbAccessFailure,
+  recordUsbAccessSuccess,
+} from "../usb-access-diagnostics";
 
 export const nodeWebUsbIdentifier: TransportIdentifier = "NODE-WEBUSB";
+
+/**
+ * Stable identity for one enumerated USB device, used to scope a recorded access failure to the
+ * device it belongs to. Bus address first because it distinguishes two identical Ledgers; the
+ * descriptor ids are the fallback when a platform binding does not expose the address.
+ */
+function nativeUsbDeviceKey(native: {
+  busNumber?: number;
+  deviceAddress?: number;
+  deviceDescriptor: { idVendor: number; idProduct: number };
+}): string {
+  const { idVendor, idProduct } = native.deviceDescriptor;
+  return `${native.busNumber ?? "?"}:${native.deviceAddress ?? "?"}:${idVendor}:${idProduct}`;
+}
 
 type WebUsbDiscoveredInternal = TransportDiscoveredDevice & {
   webUsbDevice: WebUSBDevice;
@@ -378,11 +398,39 @@ export class NodeWebUsbTransport implements Transport {
 
   private async scanLedgerWebUsbDevices(): Promise<ScannedWebUsbDevice[]> {
     const collected: ScannedWebUsbDevice[] = [];
-    for (const native of this._platformBindings.getDeviceList()) {
+    let natives: ReturnType<NodeWebUsbTransportPlatform["getDeviceList"]>;
+    try {
+      natives = this._platformBindings.getDeviceList();
+    } catch (e) {
+      // Enumeration itself failed, so we cannot claim to have looked — leaving `scanCompleted`
+      // false keeps this out of the `device_not_present` branch, which would misreport a
+      // plugged-in device as absent (LIVE-31394).
+      recordUsbAccessFailure(e);
+      throw e;
+    }
+    // We looked. This is what lets "looked and saw no Ledger" be told apart from "never looked".
+    recordScanCompleted();
+    for (const native of natives) {
       if (native.deviceDescriptor.idVendor !== LEDGER_VENDOR_ID) {
         continue;
       }
-      const device = await this._platformBindings.createWebUsbDevice(native);
+      // The OS enumerated a Ledger. Recorded before we try to open it, so a later failure can be
+      // attributed to the host refusing access rather than to a missing device (LIVE-31394).
+      recordLedgerVendorSeen();
+      const deviceKey = nativeUsbDeviceKey(native);
+      let device: WebUSBDevice;
+      try {
+        device = await this._platformBindings.createWebUsbDevice(native);
+      } catch (e) {
+        // Building the WebUSB wrapper has to open the device to read its descriptors, so this is
+        // where a sandbox or a missing udev rule first bites. Keep the throw — the caller's catch
+        // still turns a failed scan into "no devices" — but leave the reason behind.
+        recordUsbAccessFailure(e, deviceKey);
+        throw e;
+      }
+      // This device opened, so its own earlier failure was transient: forget it. Keyed, so a second
+      // Ledger succeeding cannot clear the verdict for the one the host is blocking.
+      recordUsbAccessSuccess(deviceKey);
       const interfaceNumber = getVendorInterfaceNumber(device);
       if (interfaceNumber === null) {
         continue;
@@ -642,8 +690,10 @@ export class NodeWebUsbTransport implements Transport {
 
     try {
       await setupConnection;
+      recordUsbAccessSuccess();
     } catch (e) {
       this._deviceApduSendersByConnectionMachine.delete(machine);
+      recordUsbAccessFailure(e);
       this._logger.error("Error while setting up device connection", { data: { error: e } });
       return Left(new OpeningConnectionError(e));
     } finally {
