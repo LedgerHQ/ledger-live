@@ -23,8 +23,11 @@ import { CardAssets } from "@features/flow-pay-card-assets";
 />;
 ```
 
-Public API is the container and `CardAssetsProps`. The orchestrator
-([`@features/flow-pay-card`](../pay-card/README.md)) mounts this when the host passes `assets`.
+Public API is the container, `CardAssetsProps`, and `useCardWalletsTotal`. The orchestrator
+([`@features/flow-pay-card`](../pay-card/README.md)) mounts this when the host passes `assets`, and
+reads `useCardWalletsTotal(assets, isSignedIn)` for the balance on the card face: the provider
+answers no total, so it sums what the same wallets query already carries. A wallet nothing could
+price adds nothing to it.
 
 ## Dialogs and history
 

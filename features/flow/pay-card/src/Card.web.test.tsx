@@ -7,12 +7,14 @@ import { CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
 
 let mockStatus: PayCardAuthStatus = "unknown";
 let receivedDetailsFormatters: CardTransactionFormatters | undefined;
+const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError: false }));
 let receivedTransactionFormatters: CardTransactionFormatters | undefined;
 let receivedTransactionTracker: CardProps["login"]["onTrackEvent"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
   useCardAuthStatus: () => mockStatus,
+  useIsCardSignedIn: () => mockStatus === "signedIn",
 }));
 
 jest.mock("@features/flow-pay-card-details", () => ({
@@ -22,11 +24,16 @@ jest.mock("@features/flow-pay-card-details", () => ({
     cardVisual,
     formatters,
   }: {
-    cardVisual?: unknown;
+    cardVisual?: { balance: number };
     formatters?: CardTransactionFormatters;
   }) => {
     receivedDetailsFormatters = formatters;
-    return <div data-testid={cardVisual ? "card-details-with-visual" : "card-details"} />;
+    return (
+      <div
+        data-testid={cardVisual ? "card-details-with-visual" : "card-details"}
+        data-balance={cardVisual?.balance}
+      />
+    );
   },
 }));
 
@@ -36,6 +43,7 @@ jest.mock("@features/flow-pay-card-widget", () => ({
 
 jest.mock("@features/flow-pay-card-assets", () => ({
   CardAssets: () => <div data-testid="card-assets" />,
+  useCardWalletsTotal: () => mockUseWalletsTotal(),
 }));
 
 jest.mock("@features/flow-pay-card-transactions", () => ({
@@ -150,11 +158,72 @@ describe("Card (web)", () => {
     });
 
     it("hands the card visual to the details block once the host provides a formatter", () => {
-      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          formatters={formatters}
+          assets={{
+            currencies: new Map(),
+            priceWallet: () => null,
+            formatCountervalue: String,
+          }}
+        />,
+      );
 
       expect(screen.getByTestId("card-details-with-visual")).toBeVisible();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
+    });
+
+    it("shows what the funding wallets are worth on the card face", () => {
+      mockUseWalletsTotal.mockReturnValue({ total: 2500, isLoading: false, isError: false });
+
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          formatters={formatters}
+          assets={{
+            currencies: new Map(),
+            priceWallet: () => null,
+            formatCountervalue: String,
+          }}
+        />,
+      );
+
+      // The summed worth of the wallets, as the assets package priced them.
+      expect(screen.getByTestId("card-details-with-visual")).toHaveAttribute(
+        "data-balance",
+        "2500",
+      );
+    });
+
+    it("shows the bare artwork rather than a zero when the wallets could not be read", () => {
+      mockUseWalletsTotal.mockReturnValue({ total: 0, isLoading: false, isError: true });
+
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          formatters={formatters}
+          assets={{
+            currencies: new Map(),
+            priceWallet: () => null,
+            formatCountervalue: String,
+          }}
+        />,
+      );
+
+      // A formatted zero would read as a real balance; the Assets list is what reports the failure.
+      expect(screen.getByTestId("card-details")).toBeVisible();
+      expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
+    });
+
+    it("shows the bare artwork for a host that lists no assets to sum", () => {
+      mockUseWalletsTotal.mockReturnValue({ total: 0, isLoading: false, isError: false });
+
+      renderCard(<Card login={{ oauthConfig }} formatters={formatters} />);
+
+      expect(screen.getByTestId("card-details")).toBeVisible();
+      expect(screen.queryByTestId("card-details-with-visual")).not.toBeInTheDocument();
     });
 
     it("hands the transaction formatters to the transactions list", () => {

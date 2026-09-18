@@ -10394,6 +10394,7 @@
       }
     },
     "card": {
+      "balanceLabel": "Balance",
       "assets": {
         "title": "Assets",
         "empty": "No assets yet",
