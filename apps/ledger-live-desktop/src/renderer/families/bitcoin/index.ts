@@ -13,7 +13,6 @@ import AccountBodyHeader from "./AccountBodyHeader";
 import PostBroadcastEffect from "./ZcashPostBroadcastSync";
 import { ZcashAmountStepSync } from "./ZcashAmountStepSync";
 import { ZcashSyncNotice } from "./ZcashSyncNotice";
-import { ZcashTransactionConfirm } from "./ZcashTransactionConfirm";
 import { getAccountRecipientAddresses } from "./getAccountRecipientAddresses";
 import { BitcoinFamily } from "./types";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
@@ -37,7 +36,6 @@ const family: BitcoinFamily = {
   SendStepAboveRecipientInput,
   SendModalTitle,
   SendRecipientNotice: ZcashSyncNotice,
-  SendDeviceSignatureRequested: ZcashTransactionConfirm,
   getAccountRecipientAddresses,
   accountHeaderManageActions,
   AccountBalanceSummaryFooter,
