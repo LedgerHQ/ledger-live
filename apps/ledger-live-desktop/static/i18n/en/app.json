@@ -9822,7 +9822,7 @@
         "unknown": "Status unavailable"
       },
       "stakedBalance": "Staked",
-      "stakedBalanceTooltip": "Balance that is bonded to a validator and earning rewards",
+      "stakedBalanceTooltip": "Balance that is bonded to a validator. The status column says whether it is earning.",
       "unstakingBalance": "Unstaking",
       "unstakingBalanceTooltip": "Balance that is unbonding and not yet claimable",
       "claimableBalance": "Claimable",
@@ -9850,10 +9850,10 @@
       "claimableAtTooltip": "Claimable at block {{height}} (current block: {{current}})",
       "blocksRemaining_one": "~{{count}} block left",
       "blocksRemaining_other": "~{{count}} blocks left",
+      "bondPendingTooltip": "A stake has been sent and is waiting to be confirmed. Aleo holds one staked position per account, so staking is unavailable until it has gone through.",
       "emptyState": {
         "description": "You can earn rewards by staking your {{name}}.",
-        "earnRewards": "Earn rewards",
-        "bondPendingTooltip": "A stake has been sent and is waiting to be confirmed. Aleo holds one staked position per account, so staking is unavailable until it has gone through."
+        "earnRewards": "Earn rewards"
       }
     },
     "operations": {

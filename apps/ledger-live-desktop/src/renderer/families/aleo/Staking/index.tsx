@@ -88,7 +88,7 @@ const Staking = ({ account }: { account: AleoAccount }) => {
               </Text>
             </Box>
             <Box>
-              <ToolTip content={bondPending ? t("aleo.stake.emptyState.bondPendingTooltip") : null}>
+              <ToolTip content={bondPending ? t("aleo.stake.bondPendingTooltip") : null}>
                 <Button primary small disabled={bondPending} onClick={onEarnRewards}>
                   <Box horizontal flow={1} alignItems="center">
                     <IconChartLine size={12} />

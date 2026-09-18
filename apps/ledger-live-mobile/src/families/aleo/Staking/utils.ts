@@ -16,6 +16,19 @@ export function getUnbondingStatusLabel(
     : "-";
 }
 
+/**
+ * `validatorLabel` carries the committee's name for the validator and nothing else, so it is empty
+ * both for a validator the list does not name and for one that is not in the list at all. The
+ * address is what the account itself holds and what the device shows, so it reads better in the
+ * name slot than a generic "Aleo" — which is kept only for a position with no validator to name.
+ */
+export function getValidatorLabel(
+  t: TFunction<"translation">,
+  { validatorLabel, bondedValidator }: AleoStakingPositionView,
+): string {
+  return validatorLabel || bondedValidator || t("aleo.stake.fallbackValidator");
+}
+
 export function getStakedStatusLabel(
   t: TFunction<"translation">,
   position: AleoStakingPositionView,

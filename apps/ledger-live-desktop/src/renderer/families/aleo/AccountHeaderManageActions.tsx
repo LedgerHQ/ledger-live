@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+import { hasPendingOperationType } from "@ledgerhq/live-common/families/aleo/utils";
 import { openModal } from "~/renderer/actions/modals";
 import IconTransfer from "~/renderer/icons/Transfer";
 import IconCoins from "~/renderer/icons/Coins";
@@ -22,6 +23,12 @@ const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({
   const isStakingEnabled = !!getAleoCurrencyConfig(mainAccount.currency)?.enableStaking;
   const showStakingAction = isStakingEnabled && account.type === "Account";
 
+  // Aleo holds one bonded position per account: a second bond sent while one is pending is a fee
+  // spent on a transaction the chain will reject. Once the position is synced this action leads to
+  // the manage modal instead, which has its own guards, so only the bond route is closed here.
+  const hasBondedPosition = !!(mainAccount as AleoAccount).aleoResources?.bondedValidator;
+  const isBondPending = !hasBondedPosition && hasPendingOperationType(mainAccount, "BOND");
+
   const onClick = () => {
     dispatch(openModal(AleoCustomModal.SELF_TRANSFER, { account, parentAccount }));
   };
@@ -31,8 +38,6 @@ const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({
       dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account: mainAccount }));
       return;
     }
-
-    const hasBondedPosition = !!(mainAccount as AleoAccount).aleoResources?.bondedValidator;
 
     dispatch(
       openModal(hasBondedPosition ? AleoCustomModal.MANAGE : AleoCustomModal.BOND_PUBLIC, {
@@ -59,6 +64,8 @@ const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({
             key: "AleoBond",
             onClick: onManage,
             icon: IconCoins,
+            disabled: isBondPending,
+            tooltip: isBondPending ? t("aleo.stake.bondPendingTooltip") : undefined,
             label: t("aleo.manage.headerAction"),
             event: "button_clicked2",
             eventProperties: { button: "aleo-manage" },

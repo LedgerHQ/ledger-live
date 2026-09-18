@@ -154,7 +154,7 @@ describe("StakingSection", () => {
       expect(earnButton()).toBeDisabled();
       expect(screen.getByTestId("tooltip")).toHaveAttribute(
         "data-tooltip",
-        i18n.t("aleo.stake.emptyState.bondPendingTooltip"),
+        i18n.t("aleo.stake.bondPendingTooltip"),
       );
     });
   });

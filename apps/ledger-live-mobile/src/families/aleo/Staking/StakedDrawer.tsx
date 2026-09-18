@@ -16,7 +16,7 @@ import DelegateIcon from "~/icons/Delegate";
 import { rgba } from "~/colors";
 import { makeValidatorImage } from "./ValidatorImage";
 import { useValidatorFields } from "./useValidatorFields";
-import { getStakedStatusLabel } from "./utils";
+import { getStakedStatusLabel, getValidatorLabel } from "./utils";
 
 function BondIcon(props: Readonly<IconProps>) {
   const { colors } = useTheme();
@@ -38,17 +38,11 @@ type Props = Readonly<{
 
 export default function StakedDrawer({ account, position, isOpen, onClose, onBond }: Props) {
   const { t } = useTranslation();
-  const {
-    bondedBalance,
-    validatorLabel,
-    nonEarningReason,
-    estimatedRate,
-    pendingKind,
-    validatorsLoading,
-  } = position;
+  const { bondedBalance, nonEarningReason, estimatedRate, pendingKind, validatorsLoading } =
+    position;
 
   const validatorFields = useValidatorFields(account, position);
-  const label = validatorLabel || t("aleo.stake.fallbackValidator");
+  const label = getValidatorLabel(t, position);
   const ValidatorImage = useMemo(() => makeValidatorImage(label), [label]);
 
   const actions = useMemo<Action[]>(
