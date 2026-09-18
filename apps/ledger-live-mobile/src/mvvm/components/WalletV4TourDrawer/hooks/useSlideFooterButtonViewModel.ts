@@ -6,11 +6,13 @@ import { track } from "~/analytics";
 import { withOptionalVariant } from "../analytics";
 import type { WalletV4Tour } from "../types";
 
-type UseSlideFooterButtonViewModelParams = Pick<WalletV4Tour, "copy" | "page" | "variant">;
+type UseSlideFooterButtonViewModelParams = Pick<WalletV4Tour, "copy" | "page" | "variant"> & {
+  readonly onContinueClick?: (slideIndex: number, isLastSlide: boolean) => void;
+};
 
 export const useSlideFooterButtonViewModel = (
   onComplete: () => void,
-  { copy, page, variant }: UseSlideFooterButtonViewModelParams,
+  { copy, page, variant, onContinueClick }: UseSlideFooterButtonViewModelParams,
 ) => {
   const { t } = useTranslation();
   const { totalSlides, currentIndex, goToNext, scrollProgressSharedValue } = useSlidesContext();
@@ -25,33 +27,41 @@ export const useSlideFooterButtonViewModel = (
   const doneLabel = t(copy.doneKey);
 
   const goNext = useCallback(() => {
+    if (onContinueClick) {
+      onContinueClick(currentIndex, false);
+    } else {
+      track(
+        "button_clicked",
+        withOptionalVariant(
+          {
+            button: "Next",
+            page,
+            card: currentIndex + 1,
+          },
+          variant,
+        ),
+      );
+    }
     goToNext();
-    track(
-      "button_clicked",
-      withOptionalVariant(
-        {
-          button: "Next",
-          page,
-          card: currentIndex + 1,
-        },
-        variant,
-      ),
-    );
-  }, [currentIndex, goToNext, page, variant]);
+  }, [currentIndex, goToNext, onContinueClick, page, variant]);
 
   const complete = useCallback(() => {
+    if (onContinueClick) {
+      onContinueClick(currentIndex, true);
+    } else {
+      track(
+        "button_clicked",
+        withOptionalVariant(
+          {
+            button: "Got it",
+            page,
+          },
+          variant,
+        ),
+      );
+    }
     onComplete();
-    track(
-      "button_clicked",
-      withOptionalVariant(
-        {
-          button: "Got it",
-          page,
-        },
-        variant,
-      ),
-    );
-  }, [onComplete, page, variant]);
+  }, [currentIndex, onComplete, onContinueClick, page, variant]);
 
   const continueStyle = useAnimatedStyle(
     () => ({

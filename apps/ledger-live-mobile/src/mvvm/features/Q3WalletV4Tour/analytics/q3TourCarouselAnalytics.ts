@@ -1,31 +1,28 @@
-import { track, trackPage } from "~/renderer/analytics/segment";
-import type { ReleaseTourAnalytics, ReleaseTourAnalyticsContext } from "./types";
+import { screen, track } from "~/analytics";
+import type {
+  WalletV4TourAnalytics,
+  WalletV4TourAnalyticsContext,
+} from "LLM/components/WalletV4TourDrawer";
+import type { Q3TourVariant } from "../Drawer/const";
+import { PAGE_TRACKING_Q3_WALLET_V4_TOUR, Q3_TOUR_CONTENT_ID } from "./const";
 
 type CtaPosition = "primary" | "secondary";
-
-type CreateReleaseTourAnalyticsParams = {
-  readonly page: string;
-  readonly contentId: string;
-  readonly totalSteps: number;
-  readonly variant?: string;
-  readonly ctaPosition?: CtaPosition;
-};
 
 const withVariant = <T extends object>(properties: T, variant?: string) =>
   variant === undefined ? properties : { ...properties, variant };
 
-export const createReleaseTourAnalytics = ({
-  page,
-  contentId,
-  totalSteps,
-  variant,
-  ctaPosition = "secondary",
-}: CreateReleaseTourAnalyticsParams): ReleaseTourAnalytics => {
-  const getContext = (slideIndex: number, stepName: string): ReleaseTourAnalyticsContext =>
+export const createQ3WalletV4TourAnalytics = (
+  totalSteps: number,
+  variant: Q3TourVariant,
+): WalletV4TourAnalytics => {
+  const page = PAGE_TRACKING_Q3_WALLET_V4_TOUR;
+  const ctaPosition: CtaPosition = "primary";
+
+  const getContext = (slideIndex: number, stepName: string): WalletV4TourAnalyticsContext =>
     withVariant(
       {
         page,
-        contentId,
+        contentId: Q3_TOUR_CONTENT_ID,
         step: slideIndex + 1,
         stepName,
         totalSteps,
@@ -33,7 +30,7 @@ export const createReleaseTourAnalytics = ({
       variant,
     );
 
-  const getPageProperties = (context: ReleaseTourAnalyticsContext) =>
+  const getPageProperties = (context: WalletV4TourAnalyticsContext) =>
     withVariant(
       {
         name: page,
@@ -45,7 +42,7 @@ export const createReleaseTourAnalytics = ({
       context.variant,
     );
 
-  const getInteractionProperties = (context: ReleaseTourAnalyticsContext) =>
+  const getInteractionProperties = (context: WalletV4TourAnalyticsContext) =>
     withVariant(
       {
         page: context.page,
@@ -57,19 +54,21 @@ export const createReleaseTourAnalytics = ({
       context.variant,
     );
 
-  const trackStepPage = (context: ReleaseTourAnalyticsContext): void => {
-    trackPage(page, undefined, getPageProperties(context), true, false);
+  const trackStepPage = (context: WalletV4TourAnalyticsContext): void => {
+    screen(page, undefined, getPageProperties(context), true, false);
+  };
+
+  const trackContinueClick = (context: WalletV4TourAnalyticsContext): void => {
+    track("button_clicked", {
+      button: "continue",
+      ...getInteractionProperties(context),
+      ctaPosition,
+    });
   };
 
   return {
     getContext,
-    trackContinueClick: context => {
-      track("button_clicked", {
-        button: "continue",
-        ...getInteractionProperties(context),
-        ctaPosition,
-      });
-    },
+    trackContinueClick,
     trackCloseClick: context => {
       track("button_clicked", {
         button: "close",
@@ -83,6 +82,7 @@ export const createReleaseTourAnalytics = ({
       });
     },
     trackCompleted: context => {
+      trackContinueClick(context);
       track("tour_completed", getInteractionProperties(context));
     },
     trackInitialStep: trackStepPage,

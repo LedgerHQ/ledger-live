@@ -51,4 +51,7 @@ export interface WalletV4TourDrawerViewModel {
   readonly handleCloseDrawer: () => void;
   readonly closeDrawer: () => void;
   readonly onSlideChange: (index: number) => void;
+  readonly onHeaderClosePressed?: () => void;
+  readonly dismissDrawer?: () => void;
+  readonly onContinueClick?: (slideIndex: number, isLastSlide: boolean) => void;
 }
