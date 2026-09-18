@@ -28,7 +28,7 @@ describe("buildSwapNavigationState", () => {
     expect(state.defaultToken).toEqual({ toTokenId: usdcToken.id });
   });
 
-  it("does not set toTokenId for a token currency when an account is provided", () => {
+  it("still sets toTokenId for a token currency when an account is provided", () => {
     const ethAccount = genAccount("eth-1", { currency: ethereum });
     const tokenAccount = genTokenAccount(0, ethAccount, usdcToken);
 
@@ -39,7 +39,8 @@ describe("buildSwapNavigationState", () => {
       parentAccount: ethAccount,
     });
 
-    expect(state.defaultToken).toBeUndefined();
+    // Without it the Swap live app has no token to pre-fill, even though the account resolves.
+    expect(state.defaultToken).toEqual({ toTokenId: usdcToken.id });
   });
 
   it("includes defaultAccountId when account is provided", () => {

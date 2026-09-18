@@ -519,7 +519,9 @@ const SwapWebView = ({
           }
         : {}),
       ...(state?.defaultToken?.fromTokenId ? { fromTokenId: state.defaultToken.fromTokenId } : {}),
-      ...(state?.defaultToken?.toTokenId ? { toTokenId: state.defaultToken.toTokenId } : {}),
+      ...(state?.defaultToken?.toTokenId
+        ? { toTokenId: state.defaultToken.toTokenId, toToken: state.defaultToken.toTokenId }
+        : {}),
       ...(state?.defaultToken ? { amountFrom: state?.defaultAmountFrom || "" } : {}),
       ...(state?.defaultCurrency?.toCurrencyId || state?.defaultCurrency?.id
         ? { toCurrencyId: state!.defaultCurrency!.toCurrencyId ?? state!.defaultCurrency!.id }
