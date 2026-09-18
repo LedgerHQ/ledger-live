@@ -1,11 +1,12 @@
 import { selectBiometricsEnabled, type BiometricsAvailability } from "@features/platform-app-lock";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { useBiometricsAvailability } from "../../hooks/useBiometricsAvailability";
 import { useBiometricsSetup } from "../../hooks/useBiometricsSetup";
+import { useBiometricsTypeLabel } from "../../hooks/useBiometricsTypeLabel";
 
 export type AppLockBiometricsRowViewModel = Readonly<{
   availability: BiometricsAvailability | undefined;
@@ -21,12 +22,8 @@ function useAppLockBiometricsRowViewModel(): AppLockBiometricsRowViewModel {
   const availability = useBiometricsAvailability();
   const [isPending, setIsPending] = useState(false);
 
-  const biometricsName = useMemo(
-    () =>
-      availability?.status === "available"
-        ? t([`auth.enableBiometrics.${availability.kind.toLowerCase()}`, availability.kind])
-        : "",
-    [availability, t],
+  const biometricsName = useBiometricsTypeLabel(
+    availability?.status === "available" ? availability.kind : undefined,
   );
 
   const promptLabels = useCallback(
