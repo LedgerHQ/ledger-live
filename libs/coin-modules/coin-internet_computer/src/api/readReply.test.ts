@@ -1,13 +1,14 @@
 import { Cbor, Certificate } from "@dfinity/agent";
-import { ICPStakeNotRefreshed } from "../errors";
+import { ICPCallRejected, ICPStakeNotRefreshed } from "../errors";
 import { IDL } from "@dfinity/candid";
 import { Principal } from "@dfinity/principal";
 import {
   claimOrRefreshNeuronFromAccount,
   decodeListNeuronsReply,
   decodeManageNeuronReply,
-  ensureTransferCallAccepted,
   readReplyFromCanister,
+  readTransferOutcome,
+  throwIfLedgerTransferRefused,
 } from "./api";
 import { getCanisterIdlFunc, governanceIdlFactory, ledgerIdlFactory } from "../network/candid";
 
@@ -150,6 +151,29 @@ describe("readReplyFromCanister", () => {
     expect(out && new TextDecoder().decode(out)).toBe("POLLED");
   }, 10000);
 
+  // The node answers 200 for a call it turned away before replication, with the rejection in place
+  // of a certificate. Nothing ran; polling for a status such a call will never have only delays
+  // saying so, and then says "outcome unknown" instead.
+  it("reports a call refused before replication as rejected, without polling", async () => {
+    const fetchMock = respondingWith({
+      status: "non_replicated_rejection",
+      reject_code: 3,
+      reject_message: "boom",
+      error_code: "IC0406",
+    });
+
+    const attempt = readReplyFromCanister(
+      Buffer.from("00", "hex"),
+      Buffer.from("01", "hex"),
+      CANISTER,
+      REQ_ID_HEX,
+    );
+
+    await expect(attempt).rejects.toThrow(ICPCallRejected);
+    await expect(attempt).rejects.toMatchObject({ reason: "boom" });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   // A read the node refuses — expired along with the call whose expiry it carries, or rate-limited
   // — says nothing about the call, so the poll goes on rather than reporting the call refused.
   it("keeps polling when a read of the call's status is refused", async () => {
@@ -289,24 +313,87 @@ describe("claimOrRefreshNeuronFromAccount", () => {
   });
 });
 
-describe("ensureTransferCallAccepted", () => {
-  // A synchronous /call response certifying the transfer request has a terminal reply.
-  const syncReplied = () =>
-    new Uint8Array(Cbor.encode({ status: "replied", certificate: new Uint8Array([1]) }));
+// A synchronous /call response certifying the transfer request has a terminal status.
+const syncReplied = () =>
+  new Uint8Array(Cbor.encode({ status: "replied", certificate: new Uint8Array([1]) }));
 
+describe("readTransferOutcome", () => {
   afterEach(() => jest.clearAllMocks());
 
-  it("resolves when the certified ledger transfer reply is Ok", async () => {
+  it("returns the ledger's verdict from a certified reply", async () => {
     (Certificate.create as jest.Mock).mockResolvedValue(
       certWith("replied", encodeLedgerReply({ Ok: 42n })),
     );
-    await expect(ensureTransferCallAccepted(syncReplied(), REQ_ID_HEX)).resolves.toBeUndefined();
+    await expect(readTransferOutcome(syncReplied(), REQ_ID_HEX)).resolves.toEqual({ Ok: 42n });
   });
 
-  it("throws when the certified ledger transfer reply is an Err", async () => {
+  it("returns a refusal the ledger replied with, for the caller to report", async () => {
     (Certificate.create as jest.Mock).mockResolvedValue(
       certWith("replied", encodeLedgerReply({ Err: { TxTooOld: { allowed_window_nanos: 1n } } })),
     );
-    await expect(ensureTransferCallAccepted(syncReplied(), REQ_ID_HEX)).rejects.toThrow(/TxTooOld/);
+    await expect(readTransferOutcome(syncReplied(), REQ_ID_HEX)).resolves.toEqual({
+      Err: { TxTooOld: { allowed_window_nanos: 1n } },
+    });
+  });
+
+  // A certificate marking the call `rejected` says the transfer never ran. It used to surface as a
+  // reply that could not be found — a failure with no name, so no retry for a stake that never
+  // happened.
+  it("reports a certified rejection as a rejected call", async () => {
+    (Certificate.create as jest.Mock).mockResolvedValue(certWith("rejected"));
+
+    const attempt = readTransferOutcome(syncReplied(), REQ_ID_HEX);
+
+    await expect(attempt).rejects.toThrow(ICPCallRejected);
+    await expect(attempt).rejects.toMatchObject({ reason: "boom" });
+  });
+
+  it("reports a call refused before replication as a rejected call", async () => {
+    const refused = new Uint8Array(
+      Cbor.encode({
+        status: "non_replicated_rejection",
+        reject_code: 3,
+        reject_message: "boom",
+        error_code: "IC0406",
+      }),
+    );
+
+    const attempt = readTransferOutcome(refused, REQ_ID_HEX);
+
+    await expect(attempt).rejects.toThrow(ICPCallRejected);
+    await expect(attempt).rejects.toMatchObject({ reason: "boom" });
+    expect(Certificate.create).not.toHaveBeenCalled();
+  });
+
+  // Not a verdict: the certificate says the call is still in flight, or its reply is gone, so
+  // nothing here can say what the ledger did. Left nameless for the caller to classify.
+  it("fails plainly when the certified status is not terminal", async () => {
+    (Certificate.create as jest.Mock).mockResolvedValue(certWith("processing"));
+
+    const attempt = readTransferOutcome(syncReplied(), REQ_ID_HEX);
+
+    await expect(attempt).rejects.toThrow(/Reply status not found/);
+    await expect(attempt).rejects.not.toBeInstanceOf(ICPCallRejected);
+  });
+
+  it("fails plainly when the certificate does not verify", async () => {
+    (Certificate.create as jest.Mock).mockRejectedValue(new Error("Invalid certificate"));
+
+    const attempt = readTransferOutcome(syncReplied(), REQ_ID_HEX);
+
+    await expect(attempt).rejects.toThrow(/Invalid certificate/);
+    await expect(attempt).rejects.not.toBeInstanceOf(ICPCallRejected);
+  });
+});
+
+describe("throwIfLedgerTransferRefused", () => {
+  it("throws the ledger's reason when it refused the transfer", () => {
+    expect(() =>
+      throwIfLedgerTransferRefused({ Err: { TxTooOld: { allowed_window_nanos: 1n } } }),
+    ).toThrow(/TxTooOld/);
+  });
+
+  it("does nothing when the transfer went through", () => {
+    expect(() => throwIfLedgerTransferRefused({ Ok: 42n })).not.toThrow();
   });
 });

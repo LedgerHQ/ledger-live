@@ -6,12 +6,15 @@ import {
   claimOrRefreshNeuronFromAccount,
   decodeListNeuronsReply,
   decodeManageNeuronReply,
-  ensureTransferCallAccepted,
   readReplyFromCanister,
+  readTransferOutcome,
+  throwIfLedgerTransferRefused,
 } from "../api";
+import type { LedgerTransferOutcome } from "../api";
 import { toNeuronsData } from "../common-logic/neuron";
 import { MAINNET_GOVERNANCE_CANISTER_ID, MAINNET_LEDGER_CANISTER_ID } from "../consts";
 import {
+  ICPCallRejected,
   ICPCallUnconfirmed,
   ICPNeuronsNotRead,
   ICPNodeRefused,
@@ -53,35 +56,45 @@ const isGovernanceRawData = (data: unknown): data is GovernanceRawData =>
   typeof (data as GovernanceRawData).requestId === "string" &&
   typeof (data as GovernanceRawData).methodName === "string";
 
+// An error that already says what became of the transfer — the node never took it, the replica did
+// not run it, or the outcome is unknown and reported as such — as opposed to one that says only
+// that this attempt to find out failed.
+const isVerdict = (error: unknown): boolean =>
+  error instanceof ICPNodeRefused ||
+  error instanceof ICPCallRejected ||
+  error instanceof ICPCallUnconfirmed;
+
 /**
  * Submit the signed ledger transfer and check that the ledger accepted it.
  *
- * Only a certified answer settles the question either way. Without one — the node answered 202 or
- * 5xx, or the connection dropped — the transfer may still go through, and reporting a failure makes
- * the account read as though nothing moved. For a neuron transfer that means offering the stake
- * again with a fresh nonce: a second neuron, not a claim of the first. So it is reported as
- * unconfirmed, and the app records the stake until a sync says. A plain send keeps the failure it
- * has always reported; its flow is not this module's to change. A refusal settles it the other way
- * — the node never took the message — and stays a failure for both.
+ * Only a certified answer that can be read settles the question either way. Without one — the node
+ * answered 202 or 5xx, the connection dropped, or what came back would not decode or verify — the
+ * transfer may still go through, and reporting a failure makes the account read as though nothing
+ * moved. For a neuron transfer that means offering the stake again with a fresh nonce: a second
+ * neuron, not a claim of the first. So it is reported as unconfirmed, and the app records the stake
+ * until a sync says. A plain send keeps the failure it has always reported; its flow is not this
+ * module's to change. A refusal settles it the other way — the node never took the message, the
+ * replica did not run it, or the ledger itself refused the transfer — and stays a failure for both.
  */
 const submitTransfer = async (rawData: TransferRawData): Promise<void> => {
   const neuronTransfer = NEURON_TRANSFER_TYPES.has(rawData.methodName);
-  let callResponse: Uint8Array | null;
+  let outcome: LedgerTransferOutcome;
   try {
-    callResponse = await broadcastTxn(
+    const callResponse = await broadcastTxn(
       Buffer.from(rawData.encodedSignedCallBlob, "hex"),
       MAINNET_LEDGER_CANISTER_ID,
       "call",
     );
+    if (!callResponse) {
+      if (neuronTransfer) throw new ICPCallUnconfirmed();
+      throw new Error("Failed to broadcast transaction: the node returned no certificate");
+    }
+    outcome = await readTransferOutcome(callResponse, rawData.transferRequestIdHex);
   } catch (error) {
-    if (!neuronTransfer || error instanceof ICPNodeRefused) throw error;
+    if (!neuronTransfer || isVerdict(error)) throw error;
     throw new ICPCallUnconfirmed("ICPCallUnconfirmed", { cause: error });
   }
-  if (!callResponse) {
-    if (neuronTransfer) throw new ICPCallUnconfirmed();
-    throw new Error("Failed to broadcast transaction: the node returned no certificate");
-  }
-  await ensureTransferCallAccepted(callResponse, rawData.transferRequestIdHex);
+  throwIfLedgerTransferRefused(outcome);
 };
 
 /**

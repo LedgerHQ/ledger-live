@@ -57,20 +57,6 @@ function requestIdFromHex(hex: string): RequestId {
   return copy.buffer as RequestId;
 }
 
-function throwIfLedgerTransferReplyIsErr(replyBuf: ArrayBuffer) {
-  const transferIdlFunc = getCanisterIdlFunc(ledgerIdlFactory, "transfer");
-  const decoded = decodeCanisterIdlFunc<[{ Err?: unknown; Ok?: unknown }]>(
-    transferIdlFunc,
-    replyBuf,
-  );
-
-  const out = decoded[0];
-  if (out.Err) {
-    const message = JSON.stringify(out.Err, (_, v) => (typeof v === "bigint" ? v.toString() : v));
-    throw new Error(message);
-  }
-}
-
 // The IC root key is the trust anchor for BLS certificate verification. On mainnet the agent embeds
 // the well-known key (@dfinity/agent's IC_ROOT_KEY); only a local replica fetches it — from the replica
 // itself, which is the trust boundary for local dev. It is deliberately NOT fetched from the boundary
@@ -149,36 +135,6 @@ export const broadcastTxn = async (
     });
   }
   return null;
-};
-
-export const ensureTransferCallAccepted = async (
-  syncCallResponse: Uint8Array,
-  transferRequestIdHex: string,
-) => {
-  const requestId = requestIdFromHex(transferRequestIdHex);
-  const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
-  const top = Cbor.decode<{
-    status?: string;
-    certificate?: ArrayBuffer | Uint8Array;
-  }>(toArrayBuffer(syncCallResponse));
-
-  invariant(
-    top.status === "replied" && top.certificate,
-    "[ICP](ensureTransferCallAccepted) Decoding failed",
-  );
-
-  const rootKey = await getRootKey();
-  const cert = await Certificate.create({
-    certificate: toArrayBuffer(top.certificate),
-    rootKey,
-    canisterId,
-    maxAgeInMinutes: 100,
-  });
-  const replyBuf = lookupResultToBuffer(cert.lookup(["request_status", requestId, "reply"]));
-
-  invariant(replyBuf, "[ICP](ensureTransferCallAccepted) Reply status not found");
-
-  throwIfLedgerTransferReplyIsErr(replyBuf);
 };
 
 export const fetchBalance = async (address: string): Promise<BigNumber> => {
@@ -291,6 +247,23 @@ const terminalReply = async (
     : null;
 };
 
+// What the synchronous /call answers with when it answers at all: a certificate for the request's
+// status, or — for a call the node turned away before replication — the rejection itself.
+interface SyncCallBody {
+  status?: string;
+  certificate?: ArrayBuffer | Uint8Array;
+  reject_message?: string;
+}
+
+// A call refused before replication never ran, exactly like one a certificate marks `rejected`, and
+// is reported the same way. Left unrecognized it reads as a call with no certificate yet, and gets
+// polled for a status it will never have — then reported as an outcome unknown.
+const throwIfRejectedBeforeReplication = (body: SyncCallBody): void => {
+  if (body.status !== "non_replicated_rejection") return;
+  const reason = redactPrincipals(body.reject_message ?? "");
+  throw new ICPCallRejected(`[ICP] call rejected: ${reason || "unknown"}`, { reason });
+};
+
 /**
  * Submit a signed update call and return its reply. The v3 `/call` endpoint may answer synchronously
  * with the terminal certificate, or with none at all; otherwise we poll the signed read-state
@@ -310,9 +283,8 @@ export const readReplyFromCanister = async (
 
   const callRes = await broadcastTxn(callBlob, canisterIdStr, "call");
   if (callRes) {
-    const top = Cbor.decode<{ status?: string; certificate?: ArrayBuffer | Uint8Array }>(
-      toArrayBuffer(callRes),
-    );
+    const top = Cbor.decode<SyncCallBody>(toArrayBuffer(callRes));
+    throwIfRejectedBeforeReplication(top);
     if (top.certificate) {
       const reply = await terminalReply(top.certificate, canisterId, requestId, rootKey);
       if (reply) return reply;
@@ -334,6 +306,50 @@ export const readReplyFromCanister = async (
     if (reply) return reply;
   }
   return null;
+};
+
+/** The ledger's reply to a transfer: the block it landed in, or the refusal it explains. */
+export interface LedgerTransferOutcome {
+  Ok?: unknown;
+  Err?: unknown;
+}
+
+/**
+ * Read the ledger's verdict on a transfer out of what the synchronous call answered with.
+ *
+ * Throws ICPCallRejected when that answer says the call never ran — the node turned it away before
+ * replication, or the replica rejected it — and a plain error when it cannot be read: a body that
+ * does not decode, a certificate that does not verify, a status that is not terminal. Whether an
+ * unreadable answer is a failure or an outcome unknown is the caller's to say; it knows what the
+ * transfer was for.
+ */
+export const readTransferOutcome = async (
+  syncCallResponse: Uint8Array,
+  transferRequestIdHex: string,
+): Promise<LedgerTransferOutcome> => {
+  const requestId = requestIdFromHex(transferRequestIdHex);
+  const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
+  const top = Cbor.decode<SyncCallBody>(toArrayBuffer(syncCallResponse));
+  throwIfRejectedBeforeReplication(top);
+  invariant(
+    top.status === "replied" && top.certificate,
+    "[ICP](readTransferOutcome) Decoding failed",
+  );
+
+  const reply = await terminalReply(top.certificate, canisterId, requestId, await getRootKey());
+  invariant(reply, "[ICP](readTransferOutcome) Reply status not found");
+
+  const transferIdlFunc = getCanisterIdlFunc(ledgerIdlFactory, "transfer");
+  const [outcome] = decodeCanisterIdlFunc<[LedgerTransferOutcome]>(transferIdlFunc, reply);
+  return outcome;
+};
+
+/** The ledger ran the transfer and refused it: nothing moved, and the message carries its reason. */
+export const throwIfLedgerTransferRefused = (outcome: LedgerTransferOutcome): void => {
+  if (!outcome.Err) return;
+  throw new Error(
+    JSON.stringify(outcome.Err, (_, v) => (typeof v === "bigint" ? v.toString() : v)),
+  );
 };
 
 /**

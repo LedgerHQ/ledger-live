@@ -261,8 +261,9 @@ export class ICPGovernanceRejected extends Error {
   }
 }
 
-// The replica rejected the ingress message, so the call never executed. Distinct from
-// ICPGovernanceRejected: nothing ran, and from ICPCallUnconfirmed: the outcome is known.
+// The replica rejected the ingress message, or the node turned it away before replication: the
+// call never executed. Distinct from ICPGovernanceRejected: nothing ran, and from
+// ICPCallUnconfirmed: the outcome is known.
 export class ICPCallRejected extends Error {
   override name = "ICPCallRejected";
   [key: string]: unknown;

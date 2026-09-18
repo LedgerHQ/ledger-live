@@ -1,5 +1,6 @@
 import { MAINNET_GOVERNANCE_CANISTER_ID, MAINNET_LEDGER_CANISTER_ID } from "../consts";
 import {
+  ICPCallRejected,
   ICPCallUnconfirmed,
   ICPNeuronsNotRead,
   ICPNodeRefused,
@@ -26,7 +27,7 @@ describe("broadcast routing", () => {
     jest.clearAllMocks();
     (derivePrincipalFromPubkey as jest.Mock).mockReturnValue({ __principal: true });
     (api.broadcastTxn as jest.Mock).mockResolvedValue(new Uint8Array());
-    (api.ensureTransferCallAccepted as jest.Mock).mockResolvedValue(undefined);
+    (api.readTransferOutcome as jest.Mock).mockResolvedValue({ Ok: 1n });
     (api.readReplyFromCanister as jest.Mock).mockResolvedValue(new ArrayBuffer(0));
   });
 
@@ -122,7 +123,7 @@ describe("broadcast routing", () => {
         }),
       ),
     ).rejects.toThrow(ICPCallUnconfirmed);
-    expect(api.ensureTransferCallAccepted).not.toHaveBeenCalled();
+    expect(api.readTransferOutcome).not.toHaveBeenCalled();
     expect(api.claimOrRefreshNeuronFromAccount).not.toHaveBeenCalled();
   });
 
@@ -160,6 +161,56 @@ describe("broadcast routing", () => {
     ).rejects.toThrow(ICPNodeRefused);
   });
 
+  // The node answered, but with something that could not be read as a verdict — a certificate that
+  // did not verify, a body that did not decode. The transfer may have gone through all the same.
+  it("reports a neuron transfer whose answer could not be read as unconfirmed, keeping the cause", async () => {
+    const unreadable = new Error("Invalid certificate");
+    (api.readTransferOutcome as jest.Mock).mockRejectedValueOnce(unreadable);
+
+    const attempt = broadcast(
+      signed({
+        encodedSignedCallBlob: "aa",
+        transferRequestIdHex: "bb",
+        methodName: "create_neuron",
+        stakeNonce: "42",
+      }),
+    );
+
+    await expect(attempt).rejects.toThrow(ICPCallUnconfirmed);
+    await expect(attempt).rejects.toMatchObject({ cause: unreadable });
+    expect(api.claimOrRefreshNeuronFromAccount).not.toHaveBeenCalled();
+  });
+
+  // A certified rejection is a verdict: the transfer never ran, so a retry stakes once.
+  it("passes a rejection of a neuron transfer through", async () => {
+    (api.readTransferOutcome as jest.Mock).mockRejectedValueOnce(
+      new ICPCallRejected("[ICP] call rejected: boom", { reason: "boom" }),
+    );
+
+    await expect(
+      broadcast(
+        signed({
+          encodedSignedCallBlob: "aa",
+          transferRequestIdHex: "bb",
+          methodName: "create_neuron",
+          stakeNonce: "42",
+        }),
+      ),
+    ).rejects.toThrow(ICPCallRejected);
+    expect(api.claimOrRefreshNeuronFromAccount).not.toHaveBeenCalled();
+  });
+
+  it("keeps a plain send whose answer could not be read a failure", async () => {
+    (api.readTransferOutcome as jest.Mock).mockRejectedValueOnce(new Error("Invalid certificate"));
+
+    const attempt = broadcast(
+      signed({ encodedSignedCallBlob: "aa", transferRequestIdHex: "bb", methodName: "send" }),
+    );
+
+    await expect(attempt).rejects.toThrow(/Invalid certificate/);
+    await expect(attempt).rejects.not.toBeInstanceOf(ICPCallUnconfirmed);
+  });
+
   // A plain send has no stake to record and a flow of its own: it keeps reporting a failure.
   it("keeps a plain send the node took without certifying a failure", async () => {
     (api.broadcastTxn as jest.Mock).mockResolvedValueOnce(null);
@@ -172,9 +223,11 @@ describe("broadcast routing", () => {
     await expect(attempt).rejects.not.toBeInstanceOf(ICPCallUnconfirmed);
   });
 
-  // The transfer itself failing is the one failure that stays generic: nothing moved.
-  it("leaves a failure of the transfer itself as it is", async () => {
-    (api.ensureTransferCallAccepted as jest.Mock).mockRejectedValueOnce(new Error("TxTooOld"));
+  // The ledger refusing the transfer is the one failure that stays generic: nothing moved.
+  it("leaves a refusal by the ledger as it is", async () => {
+    (api.throwIfLedgerTransferRefused as jest.Mock).mockImplementationOnce(() => {
+      throw new Error("TxTooOld");
+    });
 
     const attempt = broadcast(
       signed({

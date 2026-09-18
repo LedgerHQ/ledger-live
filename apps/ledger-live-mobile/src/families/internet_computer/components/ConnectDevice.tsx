@@ -45,9 +45,9 @@ type Props = (
  * What the broadcast throws for a stake whose ICP may have left the account with no neuron to show
  * for it: the transfer went out without a certified answer, or settled and the claim then failed —
  * refused, or with its outcome unknown. The coin module folds every such failure into these two
- * names (broadcast.ts), so anything else here means the transfer itself was refused, by the node
- * or by the ledger. A governance call raises the same "unconfirmed" with nothing transferred, and
- * is typed NONE, which the fold skips.
+ * names (broadcast.ts), so anything else here means the transfer itself was refused, by the node,
+ * the replica or the ledger. A governance call raises the same "unconfirmed" with nothing
+ * transferred, and is typed NONE, which the fold skips.
  */
 const STAKE_UNRESOLVED = new Set(["ICPCallUnconfirmed", "ICPStakeNotRefreshed"]);
 
