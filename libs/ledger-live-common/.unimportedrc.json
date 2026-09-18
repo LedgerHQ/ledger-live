@@ -606,6 +606,7 @@
     "src/families/sui/setup.ts",
     "src/families/tezos/descriptor/index.ts",
     "src/families/tezos/getAddress.ts",
+    "src/families/tezos/positionUid.ts",
     "src/families/tezos/react.ts",
     "src/families/tezos/setup.ts",
     "src/families/ton/descriptor/index.ts",
