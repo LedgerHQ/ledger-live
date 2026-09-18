@@ -2858,7 +2858,7 @@
     },
     "tagHelp": {
       "inputLabel": "Enter {{memoLabel}}",
-      "description": "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} memo may result in a loss of funds."
+      "description": "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} may result in a loss of funds."
     },
     "networkFeesInFiat": "Network fees in {{currency}}",
     "feesAmount": "Fees amount ({{unit}})",
@@ -7034,6 +7034,9 @@
     },
     "xrp": {
       "memo": "Tag"
+    },
+    "zcash": {
+      "memoTooltip": "A {{memoLabel}} is optional when sending {{currency}}. It is encrypted and only the recipient can read it. Some exchanges require one to identify your transaction."
     }
   },
   "errors": {
@@ -9639,9 +9642,6 @@
           "toPublic": "Self transfer to public balance",
           "unavailable": "Your private address will be available once Shielded is enabled for your account.",
           "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
-        },
-        "confirm": {
-          "privateTransaction": "Private transaction — verify amount on your device"
         }
       },
       "state": {

@@ -137,6 +137,7 @@ export function SendHeader() {
               {showMemoValueInput ? (
                 <MemoValueInput
                   currencyId={currencyId}
+                  currencyTicker={state.account.currency?.ticker}
                   value={memo.value}
                   maxLength={uiConfig.memoMaxLength}
                   memoType={uiConfig.memoType}
@@ -164,6 +165,7 @@ export function SendHeader() {
     t,
     showMemoControls,
     currencyId,
+    state.account.currency?.ticker,
     hasMemoTypeOptions,
     memoTypeOptions,
     memo.type,
