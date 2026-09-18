@@ -2,7 +2,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
 import { log } from "@ledgerhq/logs";
-import { bakers } from "@ledgerhq/coin-tezos/network/index";
+import { bakers } from "@ledgerhq/coin-tezos/network";
 import type { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
 import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import {
@@ -10,7 +10,7 @@ import {
   isFinalizablePosition,
   isStakePosition,
   isUnstakingPosition,
-} from "@ledgerhq/coin-tezos/logic/positionUid";
+} from "./positionUid";
 import { isTezosAccount } from "./types";
 import type { Baker, Delegation, StakingPosition } from "./types";
 import { getAccountDelegationSync, loadAccountDelegation } from "./bakers";
