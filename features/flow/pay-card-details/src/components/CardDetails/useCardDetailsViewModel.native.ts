@@ -35,6 +35,10 @@ export function useCardDetailsViewModel({
     goTo({ name: "transaction", transaction });
   };
 
+  const onAddToWalletPress = () => {
+    goTo({ name: "addToWallet" });
+  };
+
   const openSheet = () => {
     goBack();
     setIsSheetOpen(true);
@@ -57,11 +61,13 @@ export function useCardDetailsViewModel({
       onFreezePress,
       onMorePress,
       onTransactionPress,
+      onAddToWalletPress,
       onShowMore,
       formatters,
     },
     freeze: { viewModel: freezeViewModel },
     more: moreViewModel ? { viewModel: moreViewModel } : null,
+    addToWallet: { onDone: goBack },
     transaction:
       route.name === "transaction" ? { transaction: route.transaction, formatters } : null,
   };

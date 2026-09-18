@@ -21,6 +21,7 @@
   "dependencies": {
     "@domain/api-card-management": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:*",
+    "@features/flow-pay-card-widget": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:*"
   },

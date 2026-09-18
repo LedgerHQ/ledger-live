@@ -5,6 +5,7 @@ export type CardDetailsRoute =
   | { name: "overview" }
   | { name: "freeze" }
   | { name: "more" }
+  | { name: "addToWallet" }
   | { name: "transaction"; transaction: PayCardTransaction };
 
 export type CardDetailsNavigation = Readonly<{

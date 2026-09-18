@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { BottomSheetHeader, BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
+import { AddToWalletCta } from "@features/flow-pay-card-widget/native";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { CardDetailsScene } from "./Scenes/CardDetailsScene";
 import { CARD_DETAILS_SCENES } from "./Scenes/registry";
@@ -8,6 +9,7 @@ import type { CardDetailsSheetProps } from "../../types";
 export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetailsSheetProps) {
   const dismissed = useRef(false);
   const isPending = scene.freeze.viewModel.confirmState === "pending";
+  const isOverview = scene.route.name === "overview";
   const { sizing, hasBackButton } = CARD_DETAILS_SCENES[scene.route.name];
   const canGoBack = hasBackButton && !isPending;
   const sizingProps =
@@ -42,6 +44,9 @@ export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetails
       hasBackButton={canGoBack}
       onBack={canGoBack ? onBack : undefined}
       {...sizingProps}
+      footer={
+        isOpen && isOverview ? <AddToWalletCta onPress={scene.overview.onAddToWalletPress} /> : null
+      }
       testID="card-details-sheet"
     >
       {isOpen ? (

@@ -4,6 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupServer } from "msw/node";
 import { cardManagementApi } from "@domain/api-card-management";
 import { payCardAuthSlice, type PayCardAuthState } from "@features/flow-pay-card-auth/state";
+import { payCardOnboardingWidgetSlice } from "@features/flow-pay-card-widget/state";
 import { cardApi, cardApiExtra } from "@shared/api-services";
 
 export const CARD_API_BASE_URL = "https://card.test";
@@ -13,6 +14,8 @@ export function makeCardApiStore({ signedIn = false }: { signedIn?: boolean } = 
     reducer: {
       [cardManagementApi.reducerPath]: cardManagementApi.reducer,
       payCardAuth: payCardAuthSlice.reducer,
+      // The card screens embed the onboarding widget's add-to-wallet CTA, which reads this slice.
+      payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
     },
     preloadedState: {
       payCardAuth: {
