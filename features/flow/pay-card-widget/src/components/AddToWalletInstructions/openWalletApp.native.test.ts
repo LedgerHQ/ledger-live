@@ -1,39 +1,56 @@
-import { Linking, Platform } from "react-native";
+import { Linking, NativeModules, Platform } from "react-native";
 import { openWalletApp } from "./openWalletApp";
+
+const originalAppleWalletModule = NativeModules.AppleWalletModule;
+const mockOpenPaymentSetup = jest.fn<Promise<void>, []>();
 
 describe("openWalletApp", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockOpenPaymentSetup.mockResolvedValue(undefined);
+    NativeModules.AppleWalletModule = { openPaymentSetup: mockOpenPaymentSetup };
     jest.mocked(Linking.openURL).mockResolvedValue(undefined);
     jest.mocked(Linking.sendIntent).mockResolvedValue(undefined);
     jest.mocked(Linking.openSettings).mockResolvedValue(undefined);
     Platform.OS = "ios";
   });
 
-  it("opens Apple Wallet on iOS", async () => {
-    await openWalletApp();
+  afterAll(() => {
+    NativeModules.AppleWalletModule = originalAppleWalletModule;
+  });
 
-    expect(Linking.openURL).toHaveBeenCalledTimes(1);
-    expect(Linking.openURL).toHaveBeenCalledWith("wallet://");
+  it("opens Apple Wallet payment setup on iOS", async () => {
+    await expect(openWalletApp()).resolves.toBe(true);
+
+    expect(mockOpenPaymentSetup).toHaveBeenCalledTimes(1);
+    expect(Linking.openURL).not.toHaveBeenCalled();
     expect(Linking.openSettings).not.toHaveBeenCalled();
   });
 
-  it("tries the older Apple Wallet scheme when the current one is unhandled", async () => {
-    jest.mocked(Linking.openURL).mockRejectedValueOnce(new Error("unhandled scheme"));
+  it("reports failure without opening unrelated settings when Apple Pay is unavailable", async () => {
+    mockOpenPaymentSetup.mockRejectedValueOnce(new Error("Apple Pay unavailable"));
 
-    await openWalletApp();
+    await expect(openWalletApp()).resolves.toBe(false);
 
-    expect(Linking.openURL).toHaveBeenNthCalledWith(2, "shoebox://");
+    expect(Linking.openURL).not.toHaveBeenCalled();
+    expect(Linking.openSettings).not.toHaveBeenCalled();
+  });
+
+  it("reports failure when the native bridge is unavailable", async () => {
+    NativeModules.AppleWalletModule = undefined;
+
+    await expect(openWalletApp()).resolves.toBe(false);
+
     expect(Linking.openSettings).not.toHaveBeenCalled();
   });
 
   it("never sends an Android intent on iOS, where it is not implemented", async () => {
-    jest.mocked(Linking.openURL).mockRejectedValue(new Error("unhandled scheme"));
+    mockOpenPaymentSetup.mockRejectedValue(new Error("Apple Pay unavailable"));
 
     await openWalletApp();
 
     expect(Linking.sendIntent).not.toHaveBeenCalled();
-    expect(Linking.openSettings).toHaveBeenCalledTimes(1);
+    expect(Linking.openSettings).not.toHaveBeenCalled();
   });
 
   it("opens Google Wallet on Android", async () => {
@@ -68,9 +85,9 @@ describe("openWalletApp", () => {
   });
 
   it("resolves instead of throwing when every entry point fails", async () => {
-    jest.mocked(Linking.openURL).mockRejectedValue(new Error("no wallet app"));
+    mockOpenPaymentSetup.mockRejectedValue(new Error("Apple Pay unavailable"));
     jest.mocked(Linking.openSettings).mockRejectedValue(new Error("no settings"));
 
-    await expect(openWalletApp()).resolves.toBeUndefined();
+    await expect(openWalletApp()).resolves.toBe(false);
   });
 });
