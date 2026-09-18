@@ -7,7 +7,7 @@ import { hexToU8a } from "@polkadot/util";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import coinConfig from "../config";
-import { signExtrinsic } from "../logic";
+import { signExtrinsic } from "../logic/signTransaction";
 import polkadotAPI from "../network";
 import type { PolkadotAccount, PolkadotSigner, Transaction } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
