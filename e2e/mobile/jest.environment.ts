@@ -119,11 +119,6 @@ async function captureFailureDiagnostics(mergedFeatureFlags?: OptionalFeatureMap
     );
   logs = "";
 
-  await withTimeout(
-    captureNativeViewHierarchy(),
-    SLOW_DIAGNOSTIC_TIMEOUT_MS,
-    "captureNativeViewHierarchy",
-  );
   console.info("Failure diagnostics capture completed");
 }
 
