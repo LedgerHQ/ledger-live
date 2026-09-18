@@ -2,7 +2,7 @@
 
 > Part of the [DDD monorepo architecture](../docs/ddd-monorepo-architecture.md).
 
-Feature packages shared across desktop and mobile apps — part of the emerging DDD layout. See [docs/new-library.md](../docs/new-library.md) for where to put new code and the full package checklist.
+Feature packages shared across desktop and mobile apps — part of the DDD layout. See [docs/new-library.md](../docs/new-library.md) for where to put new code and the full package checklist.
 
 ## Layers
 
