@@ -116,6 +116,44 @@ describe("craftTransaction", () => {
     expect(result).toBe("extendedRawDataHex");
   });
 
+  it("should craft a TRC10 transaction with the numeric asset id as tokenAddress", async () => {
+    // Regression (LIVE-37706): the TransferAssetContract `asset_name` is the hex of `tokenAddress`,
+    // which must be the numeric TRC10 asset id, not the issuer address. The send flow derives
+    // assetReference from the token via `getAssetFromToken`; feeding the issuer address here crafts
+    // an asset_name for a non-existent asset and the transfer fails.
+    const transactionIntent: TronIntent = {
+      intentType: "transaction",
+      type: "send",
+      asset: {
+        type: "trc10",
+        assetReference: "1002000",
+      },
+      recipient: "recipient",
+      sender: "sender",
+      amount: BigInt(1000),
+      data: { type: "tron" },
+    };
+
+    (decode58Check as jest.Mock).mockImplementation(address => address);
+    (craftStandardTransaction as jest.Mock).mockResolvedValue({
+      raw_data_hex: "extendedRawDataHex",
+    });
+
+    const { transaction: result } = await craftTransaction(mockConfig, transactionIntent);
+
+    expect(craftStandardTransaction).toHaveBeenCalledWith(mockConfig, {
+      tokenAddress: "1002000",
+      recipientAddress: "recipient",
+      senderAddress: "sender",
+      amount: new BigNumber(1000),
+      isTransferAsset: true,
+      memo: undefined,
+      expiration: undefined,
+    });
+    expect(craftTrc20Transaction).not.toHaveBeenCalled();
+    expect(result).toBe("extendedRawDataHex");
+  });
+
   it("should craft a native TRX transaction when custom fees are 0", async () => {
     const transactionIntent: TronIntent = {
       intentType: "transaction",
