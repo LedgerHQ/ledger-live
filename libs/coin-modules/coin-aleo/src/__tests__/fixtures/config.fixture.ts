@@ -31,6 +31,8 @@ export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinCon
     enableStaking: false,
     useEncryptedProve: false,
     recordPickingStrategy: "manual",
+    liveBlockHeightPollMs: 10_000,
+    maxUnbondingSyncAttempts: 3,
     status: { type: "active" },
   };
 };
@@ -54,5 +56,7 @@ export const getTestnetIntegConfig = (overrides?: Partial<AleoCoinConfig>): Aleo
   enableStaking: false,
   useEncryptedProve: false,
   recordPickingStrategy: "manual",
+  liveBlockHeightPollMs: 10_000,
+  maxUnbondingSyncAttempts: 3,
   ...overrides,
 });
