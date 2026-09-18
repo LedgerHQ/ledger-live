@@ -1,5 +1,18 @@
 # @ledgerhq/live-wallet
 
+## 0.21.3-hotfix.0
+
+### Patch Changes
+
+- [#22198](https://github.com/LedgerHQ/ledger-live/pull/22198) [`b9c7dea`](https://github.com/LedgerHQ/ledger-live/commit/b9c7dea591b6e0292a4452d29253738c0c67e29a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Enforce the QR code pairing sequence on both sides of the handshake
+
+  The host and the candidate now run the pairing messages through an explicit single-use state
+  machine: each message is only accepted at the one point of the sequence where it is expected,
+  and the peer that initiated the handshake is bound for the whole session. Envelopes, keys and
+  decrypted bodies are validated before being acted upon, so a duplicate, out-of-order, foreign or
+  malformed message ends the session with a `QRCodeProtocolError`: Desktop then asks for a fresh
+  QR code, Mobile goes to its existing retry screen.
+
 ## 0.21.2
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/live-e2e-shared
 
+## 0.11.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b9c7dea`](https://github.com/LedgerHQ/ledger-live/commit/b9c7dea591b6e0292a4452d29253738c0c67e29a)]:
+  - @ledgerhq/ledger-key-ring-protocol@0.21.3-hotfix.0
+
 ## 0.11.0
 
 ### Minor Changes
