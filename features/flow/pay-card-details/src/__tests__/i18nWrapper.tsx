@@ -14,7 +14,6 @@ export const CARD_COPY = {
   unfreezeErrorTitle: "Unfreeze failed",
   errorDescription: "Something went wrong. Please try again.",
   retry: "Try again",
-  placeholder: "Coming soon",
   topUp: "Top up",
   details: "Details",
   numbersReveal: "View",
@@ -75,7 +74,6 @@ export const CARD_RESOURCES = {
           freeze: CARD_COPY.freeze,
           unfreeze: CARD_COPY.unfreeze,
           goBack: CARD_COPY.goBack,
-          placeholder: CARD_COPY.placeholder,
           topUp: CARD_COPY.topUp,
           details: CARD_COPY.details,
           freezeConfirm: {

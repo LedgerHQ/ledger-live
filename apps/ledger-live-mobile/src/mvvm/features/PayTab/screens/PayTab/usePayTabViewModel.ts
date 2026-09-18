@@ -1,6 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  buildHostedUrl,
+  buildTopUpPath,
+  openHostedLoginInSecureBrowser,
+} from "@features/flow-pay-card-auth";
+import { readCardUsEnv } from "@features/platform-card";
 import useEnv from "@features/platform-env";
 import { useContactsFeature } from "@features/platform-contacts";
 import type { ScreenName } from "~/const";
@@ -40,6 +46,7 @@ export function usePayTabViewModel() {
   const clientId = useEnv("CARD_BAANX_CLIENT_KEY");
   const hostedUiUrl = useEnv("CARD_BAANX_HOSTED_UI");
   const redirectUri = useEnv("CARD_OAUTH_REDIRECT_URI");
+  const usAppId = useEnv("CARD_BAANX_US_APP_ID");
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
   const oauthConfig: CardProps["login"]["oauthConfig"] = useMemo(
@@ -62,6 +69,17 @@ export function usePayTabViewModel() {
         : null,
     [params?.code, params?.app_id],
   );
+
+  const onTopUp = useCallback(async () => {
+    try {
+      const isUsCardHolder = await readCardUsEnv(usAppId);
+      const topUpUrl = buildHostedUrl(hostedUiUrl, buildTopUpPath(isUsCardHolder ? usAppId : null));
+
+      await openHostedLoginInSecureBrowser(topUpUrl, PAY_TAB_DEEP_LINK);
+    } catch {
+      console.warn("[card] the top up page did not open");
+    }
+  }, [hostedUiUrl, usAppId]);
 
   const login: CardProps["login"] = useMemo(
     () => ({ oauthConfig, callback, onTrackEvent: balance.onTrackEvent }),
@@ -95,6 +113,7 @@ export function usePayTabViewModel() {
     login,
     cardAssets,
     cardFormatters,
+    onTopUp,
     featureTour,
     balance,
     actionTiles,

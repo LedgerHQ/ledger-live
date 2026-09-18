@@ -15,6 +15,7 @@ export function CardView({
   assets,
   formatters,
   onShowMore,
+  onTopUp,
 }: CardViewProps) {
   return (
     <Box lx={{ flex: 1, gap: "s16" }}>
@@ -25,7 +26,7 @@ export function CardView({
               <SubheaderTitle>{title}</SubheaderTitle>
             </SubheaderRow>
           </Subheader>
-          <CardOnboardingWidget />
+          <CardOnboardingWidget onTopUp={onTopUp} />
           <CardDetails
             cardVisual={cardVisual}
             assets={assets ? <CardAssets {...assets} /> : null}
@@ -35,6 +36,7 @@ export function CardView({
             }}
             onTrackEvent={login.onTrackEvent}
             onShowMore={onShowMore}
+            onTopUp={onTopUp}
           />
           <Box lx={{ marginHorizontal: "s16" }}>
             <AddToWalletCtaWithBottomSheet appearance="base" />
