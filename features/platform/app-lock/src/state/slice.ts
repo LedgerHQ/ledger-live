@@ -28,13 +28,17 @@ export const appLockSlice = createSlice({
       releaseLockIfUnprotected(state);
     },
     // Ignored once hydrated: a read that resolves after a setup must not undo it.
-    hydrateAppLock: (state, action: PayloadAction<boolean>) => {
+    hydrateAppLock: (
+      state,
+      action: PayloadAction<Readonly<{ hasPassword: boolean; biometricsEnabled: boolean }>>,
+    ) => {
       if (state.isHydrated) {
         return;
       }
 
       state.isHydrated = true;
-      state.hasPassword = action.payload;
+      state.hasPassword = action.payload.hasPassword;
+      state.biometricsEnabled = action.payload.biometricsEnabled;
     },
     setBiometricsEnabled: (state, action: PayloadAction<boolean>) => {
       state.biometricsEnabled = action.payload;

@@ -26,6 +26,7 @@
     "@reduxjs/toolkit": "catalog:",
     "@shared/password-verifier": "workspace:*",
     "buffer": "catalog:",
+    "react-native-biometrics": "catalog:",
     "react-native-fast-crypto": "catalog:",
     "react-native-keychain": "catalog:",
     "zod": "catalog:"

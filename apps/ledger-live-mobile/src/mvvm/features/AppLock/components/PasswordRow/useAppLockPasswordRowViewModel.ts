@@ -5,13 +5,13 @@ import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 
-export type PasswordRowViewModel = Readonly<{
+export type AppLockPasswordRowViewModel = Readonly<{
   isHydrated: boolean;
   hasPassword: boolean;
   onValueChange: (enabled: boolean) => void;
 }>;
 
-function usePasswordRowViewModel(): PasswordRowViewModel {
+function useAppLockPasswordRowViewModel(): AppLockPasswordRowViewModel {
   const { navigate } = useNavigation();
   const isHydrated = useSelector(selectIsHydrated);
   const hasPassword = useSelector(selectHasPassword);
@@ -32,4 +32,4 @@ function usePasswordRowViewModel(): PasswordRowViewModel {
   return { isHydrated, hasPassword, onValueChange };
 }
 
-export default usePasswordRowViewModel;
+export default useAppLockPasswordRowViewModel;

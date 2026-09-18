@@ -2,19 +2,20 @@ import { resolveAppLockScheme } from "./scheme";
 
 describe("resolveAppLockScheme", () => {
   it("is revamped while the flag is on", () => {
-    expect(resolveAppLockScheme({ hasStoredVerifier: false, isRevampEnabled: true })).toBe(
+    expect(resolveAppLockScheme({ hasStoredProtection: false, isRevampEnabled: true })).toBe(
       "revamped",
     );
   });
 
-  it("stays revamped for a stored verifier once the flag goes off", () => {
-    expect(resolveAppLockScheme({ hasStoredVerifier: true, isRevampEnabled: false })).toBe(
+  // The rollback case: the alternative is an app that ignores a protection its user set.
+  it("stays revamped for stored protection once the flag goes off", () => {
+    expect(resolveAppLockScheme({ hasStoredProtection: true, isRevampEnabled: false })).toBe(
       "revamped",
     );
   });
 
   it("is legacy only when neither holds", () => {
-    expect(resolveAppLockScheme({ hasStoredVerifier: false, isRevampEnabled: false })).toBe(
+    expect(resolveAppLockScheme({ hasStoredProtection: false, isRevampEnabled: false })).toBe(
       "legacy",
     );
   });
