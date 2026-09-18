@@ -102,10 +102,9 @@ describe("NoFundsStakeModal", () => {
     it("pre-fills the token instead of the account when the token account is absent from the store", () => {
       const syntheticUsdcAccount = makeEmptyTokenAccount(ETH_ACCOUNT, usdcToken);
 
-      render(
-        <NoFundsStakeModal account={syntheticUsdcAccount} parentAccount={ETH_ACCOUNT} />,
-        { initialState: modalOpenState },
-      );
+      render(<NoFundsStakeModal account={syntheticUsdcAccount} parentAccount={ETH_ACCOUNT} />, {
+        initialState: modalOpenState,
+      });
 
       fireEvent.click(screen.getByText("Swap"));
 
