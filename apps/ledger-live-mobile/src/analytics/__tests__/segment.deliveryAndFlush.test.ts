@@ -236,7 +236,7 @@ describe("segment analytics delivery", () => {
       ]);
     });
 
-    it("should log track as failed and not throw when the Segment client rejects", async () => {
+    it("should log track as failed_tracking and not throw when the Segment client rejects", async () => {
       await startWithTracking();
       mockTrack.mockRejectedValueOnce(new Error("sdk down"));
 
@@ -245,12 +245,12 @@ describe("segment analytics delivery", () => {
       expect(logged).toEqual([
         expect.objectContaining({
           eventName: "TestEvent",
-          deliveryStatus: "failed",
+          deliveryStatus: "failed_tracking",
         }),
       ]);
     });
 
-    it("should log screen as failed and not throw when the Segment client rejects", async () => {
+    it("should log screen as failed_tracking and not throw when the Segment client rejects", async () => {
       await startWithTracking();
       mockTrack.mockRejectedValueOnce(new Error("sdk down"));
 
@@ -259,7 +259,7 @@ describe("segment analytics delivery", () => {
       expect(logged).toEqual([
         expect.objectContaining({
           eventName: "Page Portfolio Detail",
-          deliveryStatus: "failed",
+          deliveryStatus: "failed_tracking",
         }),
       ]);
     });
