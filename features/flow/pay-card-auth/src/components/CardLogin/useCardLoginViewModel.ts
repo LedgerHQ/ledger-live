@@ -34,14 +34,14 @@ const INTRO_ROWS: readonly { icon: CardLoginIntroRowIcon; key: string }[] = [
   { icon: "LedgerLogo", key: "topUp" },
 ];
 
-const SESSION_RESOLVING_STATES: readonly CardLoginStateValue[] = [
+const SESSION_RESOLVING_STATES: ReadonlySet<CardLoginStateValue> = new Set([
   "hydrating",
   "validatingCallback",
   "exchangingCode",
   "persistingSession",
   "authenticated",
   "fetchingUser",
-];
+]);
 
 const INTRO_ACTIONS: readonly { id: CardLoginIntroActionId; appearance: "base" | "gray" }[] = [
   { id: "createAccount", appearance: "base" },
@@ -80,7 +80,7 @@ export function mapSnapshotToViewModel(
 
   return {
     ...copy,
-    isResolving: SESSION_RESOLVING_STATES.includes(value),
+    isResolving: SESSION_RESOLVING_STATES.has(value),
     // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
     isLoading:
       value !== "idle" &&
