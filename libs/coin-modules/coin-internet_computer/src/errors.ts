@@ -176,8 +176,9 @@ export class ICPTopUpBelowMinimumStake extends Error {
   }
 }
 
-// The stake transfer settled, but governance refused to claim or refresh the neuron from it: the
-// ICP sits in the neuron's account, unclaimed. `reason` carries the canister's own text.
+// The stake transfer settled, but the neuron was not claimed or refreshed from it — governance
+// refused, or the claim call itself was rejected: the ICP sits in the neuron's account, unclaimed.
+// `reason` carries the network's own text.
 export class ICPStakeNotRefreshed extends Error {
   override name = "ICPStakeNotRefreshed";
   [key: string]: unknown;
@@ -197,7 +198,9 @@ export class ICPStakeMemoNotRecoverable extends Error {
   }
 }
 
-// A governance call was submitted but no terminal status was observed; its outcome is unknown.
+// A call was submitted but its outcome is unknown: no terminal status was observed, or — for a stake
+// transfer, or the claim behind one — the attempt failed before one could be read, in which case
+// `cause` carries that failure.
 export class ICPCallUnconfirmed extends Error {
   override name = "ICPCallUnconfirmed";
   [key: string]: unknown;
@@ -258,13 +261,27 @@ export class ICPGovernanceRejected extends Error {
   }
 }
 
-// The replica rejected the ingress message, so the call never executed. Distinct from
-// ICPGovernanceRejected: nothing ran, and from ICPCallUnconfirmed: the outcome is known.
+// The replica rejected the ingress message, or the node turned it away before replication: the
+// call never executed. Distinct from ICPGovernanceRejected: nothing ran, and from
+// ICPCallUnconfirmed: the outcome is known.
 export class ICPCallRejected extends Error {
   override name = "ICPCallRejected";
   [key: string]: unknown;
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "ICPCallRejected");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+// The node answered a call with a 4xx (carried as `status`, its text as `reason`): it never took the
+// message, so nothing ran. Distinct from a dropped connection, a 202 or a 5xx, after which the
+// message may still execute. Only a call earns this: a refused read_state says nothing about the
+// call it polls, and is treated as no answer.
+export class ICPNodeRefused extends Error {
+  override name = "ICPNodeRefused";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ICPNodeRefused");
     if (fields) Object.assign(this, fields);
   }
 }

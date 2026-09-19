@@ -49,29 +49,26 @@ describe("internet_computer accountActions.getMainActions", () => {
   });
 
   it("routes Stake into the staking flow when the balance can afford a neuron", () => {
-    const [stake, ...rest] = callMainActions(makeAccount({ spendableBalance: ENOUGH_TO_STAKE }), {
+    const [stake] = callMainActions(makeAccount({ spendableBalance: ENOUGH_TO_STAKE }), {
       enabled: true,
     });
 
     expect(stake.id).toBe("stake");
-    expect(rest).toHaveLength(0);
     expect(stake.navigationParams?.[0]).toBe(NavigatorName.InternetComputerStakingFlow);
     expect(screenOf(stake)).toBe(ScreenName.InternetComputerStakingStarted);
   });
 
   it("routes Stake to NoFundsFlow when the balance is below the minimum", () => {
-    const [stake, ...rest] = callMainActions(
-      makeAccount({ spendableBalance: NOT_ENOUGH_TO_STAKE }),
-      { enabled: true },
-    );
+    const [stake] = callMainActions(makeAccount({ spendableBalance: NOT_ENOUGH_TO_STAKE }), {
+      enabled: true,
+    });
 
     expect(stake.id).toBe("stake");
-    expect(rest).toHaveLength(0);
     expect(stake.navigationParams?.[0]).toBe(NavigatorName.NoFundsFlow);
     expect(screenOf(stake)).toBe(ScreenName.NoFunds);
   });
 
-  it("adds Manage Neurons once the account has neurons (Stake still first)", () => {
+  it("offers Manage Neurons after Stake once staking is enabled", () => {
     const actions = callMainActions(
       makeAccount({
         spendableBalance: ENOUGH_TO_STAKE,
@@ -85,7 +82,25 @@ describe("internet_computer accountActions.getMainActions", () => {
     expect(screenOf(actions[1])).toBe(ScreenName.InternetComputerNeuronList);
   });
 
-  it("shows Manage alongside a NoFunds-routed Stake when neurons exist but balance is too low", () => {
+  // The two sit side by side in the action row, and every other family's staking action uses
+  // CoinsMedium — sharing it made the pair indistinguishable at a glance.
+  it("gives the two staking actions different icons", () => {
+    const actions = callMainActions(makeAccount({ spendableBalance: ENOUGH_TO_STAKE }), {
+      enabled: true,
+    });
+
+    expect(actions[0].Icon).not.toBe(actions[1].Icon);
+  });
+
+  it("offers Manage Neurons before any neuron exists, since Sync lives inside it", () => {
+    const actions = callMainActions(makeAccount({ neurons: { fullNeurons: [] } }), {
+      enabled: true,
+    });
+
+    expect(actions.map(a => a.id)).toEqual(["stake", "manage-neurons"]);
+  });
+
+  it("shows Manage alongside a NoFunds-routed Stake when the balance is too low", () => {
     const actions = callMainActions(
       makeAccount({
         spendableBalance: NOT_ENOUGH_TO_STAKE,
