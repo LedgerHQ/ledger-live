@@ -31,7 +31,8 @@ const trc20Token = {
 const trc10Token = {
   id: "tron/trc10/1002000",
   tokenType: "trc10",
-  contractAddress: "1002000",
+  // CAL stores the issuer address here, not the numeric asset id, which lives in `id`.
+  contractAddress: "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
   name: "BitTorrent",
   units: [{ name: "BTT", code: "BTT", magnitude: 6 }],
 } as unknown as TokenCurrency;

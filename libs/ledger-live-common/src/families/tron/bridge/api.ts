@@ -54,9 +54,14 @@ export async function getTokenFromAsset(
 }
 
 export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo {
+  // A TRC10 transfer is crafted with the numeric asset id (encoded into the TransferAssetContract
+  // `asset_name`), which CAL carries only in `token.id` (`<currency>/trc10/<id>`) — `contractAddress`
+  // holds the issuer address. TRC20 is keyed by its contract address. Mirrors getTokenFromAsset.
+  const assetReference =
+    token.tokenType === "trc10" ? token.id.split("/")[2] : token.contractAddress;
   return {
     type: token.tokenType,
-    assetReference: token.contractAddress,
+    assetReference,
     assetOwner: owner,
     name: token.name,
     unit: token.units[0],

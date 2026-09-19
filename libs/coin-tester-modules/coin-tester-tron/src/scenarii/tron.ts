@@ -446,7 +446,7 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
     await delegateBandwidth(funder, recipient.address, DELEGATED_SUN);
     [witnessAddress] = await listWitnessAddresses();
 
-    trc10Token = makeTrc10Token(trc10);
+    trc10Token = makeTrc10Token(trc10, funder.address);
     trc20Token = makeTrc20Token(trc20);
     registerTronTokensInMockStore(trc10Token, trc20Token);
 
