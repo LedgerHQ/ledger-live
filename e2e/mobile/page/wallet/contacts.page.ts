@@ -63,13 +63,15 @@ export default class ContactsPage {
   }
 
   @Step("Expect the Add contact form fully visible")
-  async expectAddContactContentFullyVisible() {
-    await waitForFullyVisibleById(this.addContactContentId);
+  async expectAddContactContentFullyVisible(visibilityPercentage = 100) {
+    await detoxExpect(getElementById(this.addContactContentId)).toBeVisible(visibilityPercentage);
   }
 
   @Step("Expect the Add contact save action fully visible")
-  async expectAddContactSaveFullyVisible() {
-    await waitForFullyVisibleById(this.addContactSaveButtonId);
+  async expectAddContactSaveFullyVisible(visibilityPercentage = 100) {
+    await detoxExpect(getElementById(this.addContactSaveButtonId)).toBeVisible(
+      visibilityPercentage,
+    );
   }
 
   @Step("Save the contact")
