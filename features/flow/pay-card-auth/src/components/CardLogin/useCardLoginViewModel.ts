@@ -10,6 +10,7 @@ import { cardLoginMachine } from "../../state/machine";
 import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors";
 import { selectIsSignedIn } from "../../state/selectors";
 import type {
+  CardAuthErrorCopy,
   CardLoginCopy,
   CardLoginIntroActionId,
   CardLoginIntroRowIcon,
@@ -28,6 +29,15 @@ const INTRO_ROWS: readonly { icon: CardLoginIntroRowIcon; key: string }[] = [
   { icon: "CoinsAddPlus", key: "cashback" },
   { icon: "CreditCard", key: "virtualCard" },
   { icon: "LedgerLogo", key: "topUp" },
+];
+
+const SESSION_RESOLVING_STATES: readonly CardLoginStateValue[] = [
+  "hydrating",
+  "validatingCallback",
+  "exchangingCode",
+  "persistingSession",
+  "authenticated",
+  "fetchingUser",
 ];
 
 const INTRO_ACTIONS: readonly { id: CardLoginIntroActionId; appearance: "base" | "gray" }[] = [
@@ -54,28 +64,27 @@ const TRACK_BUTTON = {
  */
 export function mapSnapshotToViewModel(
   value: CardLoginStateValue,
-  errorMessage: string | null,
+  error: CardAuthErrorCopy | null,
   copy: CardLoginCopy,
   onLoginPress: () => void,
   onAlreadyHaveCardPress: () => void,
   intro: CardLoginIntroViewProps,
 ): CardLoginViewModel {
-  // Nothing to offer yet. `hydrating` is still reading the stored session, so a login CTA here would
-  // flash for a holder who turns out to be signed in; `ready` means they already are, and `More`
-  // holds the screen.
-  if (value === "hydrating" || value === "ready") {
+  // Nothing to offer: `ready` means the holder is signed in already, and `More` holds the screen.
+  if (value === "ready") {
     return null;
   }
 
   return {
     ...copy,
+    isResolving: SESSION_RESOLVING_STATES.includes(value),
     // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
     isLoading:
       value !== "idle" &&
       value !== "authError" &&
       value !== "userFetchError" &&
       value !== "awaitingCallback",
-    errorMessage,
+    error,
     onLoginPress,
     onAlreadyHaveCardPress,
     intro,
@@ -131,11 +140,7 @@ export function useCardLoginViewModel({
     }
   }, [isSignedIn, snapshot.value, send]);
 
-  const isIntroOpen =
-    isIntroRequested &&
-    (snapshot.value === "idle" ||
-      snapshot.value === "authError" ||
-      snapshot.value === "userFetchError");
+  const isIntroOpen = isIntroRequested && snapshot.value === "idle";
 
   const startLogin = useCallback(() => {
     setHasSignupFailed(false);
@@ -258,13 +263,52 @@ export function useCardLoginViewModel({
     [isIntroOpen, t, introRows, introActions, onIntroActionPress, onIntroClose],
   );
 
+  const isMachineErrorState = snapshot.value === "authError" || snapshot.value === "userFetchError";
+  const machineErrorKind = isMachineErrorState ? snapshot.context.errorKind : null;
+
   const errorKind: PayCardLoginErrorKind | null = hasSignupFailed
     ? "browser_open_failed"
-    : snapshot.context.errorKind;
+    : machineErrorKind;
+
+  const onRetry = useCallback(() => {
+    if (hasSignupFailed) {
+      setHasSignupFailed(false);
+      return;
+    }
+
+    send({ type: "RETRY" });
+  }, [hasSignupFailed, send]);
+
+  const onDismiss = useCallback(() => {
+    if (hasSignupFailed) {
+      setHasSignupFailed(false);
+      return;
+    }
+
+    send({ type: "DISMISS" });
+  }, [hasSignupFailed, send]);
+
+  const error = useMemo<CardAuthErrorCopy | null>(() => {
+    if (!errorKind) {
+      return null;
+    }
+
+    return {
+      title: t(`${LOGIN_KEY_PREFIX}.errors.${errorKind}.title`),
+      description: t(`${LOGIN_KEY_PREFIX}.errors.${errorKind}.description`),
+      ctaLabel: t(
+        `${LOGIN_KEY_PREFIX}.errors.${
+          errorKind === "fetch_user_failed" ? "retryUser" : "retryLogin"
+        }`,
+      ),
+      onRetry,
+      onDismiss,
+    };
+  }, [errorKind, t, onRetry, onDismiss]);
 
   return mapSnapshotToViewModel(
     snapshot.value,
-    errorKind ? t(`${LOGIN_KEY_PREFIX}.errors.${errorKind}`) : null,
+    error,
     copy,
     onLoginPress,
     onAlreadyHaveCardPress,

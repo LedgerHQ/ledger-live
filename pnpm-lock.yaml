@@ -7065,6 +7065,9 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
+      '@shared/ui-info-state':
+        specifier: workspace:*
+        version: link:../../../shared/ui-info-state
       '@shared/ui-queued-bottom-sheet':
         specifier: workspace:*
         version: link:../../../shared/ui-queued-bottom-sheet

@@ -42,8 +42,9 @@ export function CardView({
         </>
       ) : (
         <>
-          <CardLogin key={login.oauthConfig.apiUrl} {...login} />
-          <CardArtwork />
+          <CardLogin key={login.oauthConfig.apiUrl} {...login}>
+            <CardArtwork />
+          </CardLogin>
         </>
       )}
     </Box>

@@ -88,18 +88,46 @@ describe("mapSnapshotToViewModel", () => {
     ).toBe(true);
   });
 
-  it.each(["hydrating", "ready"] as const)("offers nothing in %s", value => {
-    // `hydrating` is still reading the stored session, so a CTA here would flash for a holder who
-    // turns out to be signed in; `ready` means they already are, and `More` holds the screen.
+  it("offers nothing in ready", () => {
+    // `ready` means the holder is signed in already, and `More` holds the screen.
     expect(
-      mapSnapshotToViewModel(value, null, copy, onLoginPress, onAlreadyHaveCardPress, intro),
+      mapSnapshotToViewModel("ready", null, copy, onLoginPress, onAlreadyHaveCardPress, intro),
     ).toBeNull();
   });
 
-  it("shows no message while there is no error", () => {
+  it.each([
+    "hydrating",
+    "validatingCallback",
+    "exchangingCode",
+    "persistingSession",
+    "authenticated",
+    "fetchingUser",
+  ] as const)("asks for the skeleton in %s", value => {
+    expect(
+      mapSnapshotToViewModel(value, null, copy, onLoginPress, onAlreadyHaveCardPress, intro)
+        ?.isResolving,
+    ).toBe(true);
+  });
+
+  it.each([
+    "idle",
+    "preparingAttempt",
+    "awaitingHostedLogin",
+    "awaitingCallback",
+    "clearingAttempt",
+    "authError",
+    "userFetchError",
+  ] as const)("asks for no skeleton in %s", value => {
+    expect(
+      mapSnapshotToViewModel(value, null, copy, onLoginPress, onAlreadyHaveCardPress, intro)
+        ?.isResolving,
+    ).toBe(false);
+  });
+
+  it("shows no panel while there is no error", () => {
     expect(
       mapSnapshotToViewModel("idle", null, copy, onLoginPress, onAlreadyHaveCardPress, intro)
-        ?.errorMessage,
+        ?.error,
     ).toBeNull();
   });
 
@@ -110,17 +138,25 @@ describe("mapSnapshotToViewModel", () => {
     ).toBe(intro);
   });
 
-  it("shows the message it was handed", () => {
+  it("hands the panel copy straight through", () => {
+    const error = {
+      title: "The login page could not open",
+      description: "Please try again.",
+      ctaLabel: "Try again",
+      onRetry: jest.fn(),
+      onDismiss: jest.fn(),
+    };
+
     const login = mapSnapshotToViewModel(
       "authError",
-      "The login page could not open. Please try again.",
+      error,
       copy,
       onLoginPress,
       onAlreadyHaveCardPress,
       intro,
     );
 
-    expect(login?.errorMessage).toBe("The login page could not open. Please try again.");
+    expect(login?.error).toBe(error);
   });
 });
 
@@ -395,9 +431,22 @@ describe("useCardLoginViewModel intro", () => {
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
 
-    await waitFor(() =>
-      expect(result.current?.errorMessage).toBe("The login page could not open. Please try again."),
-    );
+    await waitFor(() => expect(result.current?.error?.title).toBe("The login page could not open"));
+  });
+
+  it("puts the login back on offer from the signup panel, and starts nothing", async () => {
+    const openHostedPage = jest.fn().mockRejectedValue(new Error("no manifest"));
+    const { result } = await renderIdleLogin(store, "both", undefined, openHostedPage);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+    await waitFor(() => expect(result.current?.error).not.toBeNull());
+
+    act(() => result.current?.error?.onRetry());
+
+    await waitFor(() => expect(result.current?.error).toBeNull());
+    expect(openHostedPage).toHaveBeenCalledTimes(1);
+    expect(mockPorts.createAttempt).not.toHaveBeenCalled();
   });
 
   it("reports a browser that refuses the signup page", async () => {
@@ -407,7 +456,7 @@ describe("useCardLoginViewModel intro", () => {
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
 
-    await waitFor(() => expect(result.current?.errorMessage).not.toBeNull());
+    await waitFor(() => expect(result.current?.error).not.toBeNull());
   });
 
   it("clears the signup error when the login starts", async () => {
@@ -416,12 +465,12 @@ describe("useCardLoginViewModel intro", () => {
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("createAccount"));
-    await waitFor(() => expect(result.current?.errorMessage).not.toBeNull());
+    await waitFor(() => expect(result.current?.error).not.toBeNull());
 
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("logIn"));
 
-    await waitFor(() => expect(result.current?.errorMessage).toBeNull());
+    await waitFor(() => expect(result.current?.error).toBeNull());
   });
 
   it("drops a second action press, so one press starts one login", async () => {
@@ -662,7 +711,52 @@ describe("useCardLoginViewModel errors", () => {
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("logIn"));
 
-    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.pkce_failed));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.pkce_failed.title),
+    );
+  });
+
+  it("holds the panel back until the cleanup after a failed step has finished", async () => {
+    let finishCleanup = () => {};
+    mockPorts.clearAttempt.mockReturnValueOnce(
+      new Promise<void>(resolve => {
+        finishCleanup = resolve;
+      }),
+    );
+    mockPorts.saveAttempt.mockRejectedValueOnce(new Error("no store"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+
+    await waitFor(() => expect(mockPorts.clearAttempt).toHaveBeenCalled());
+    expect(result.current?.error).toBeNull();
+
+    await act(async () => {
+      finishCleanup();
+    });
+
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.pkce_failed.title),
+    );
+  });
+
+  it("puts the login back on offer from the panel of a machine error, and starts nothing", async () => {
+    mockPorts.saveAttempt.mockRejectedValueOnce(new Error("no store"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.pkce_failed.title),
+    );
+    expect(result.current?.error?.ctaLabel).toBe(ERROR_MESSAGES.retryLogin);
+
+    act(() => result.current?.error?.onRetry());
+
+    await waitFor(() => expect(result.current?.error).toBeNull());
+    expect(result.current?.isLoading).toBe(false);
+    expect(mockPorts.createAttempt).toHaveBeenCalledTimes(1);
   });
 
   it("shows the translated message for browser_open_failed", async () => {
@@ -673,7 +767,7 @@ describe("useCardLoginViewModel errors", () => {
     act(() => result.current?.intro.onActionPress("logIn"));
 
     await waitFor(() =>
-      expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.browser_open_failed),
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.browser_open_failed.title),
     );
   });
 
@@ -689,7 +783,9 @@ describe("useCardLoginViewModel errors", () => {
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("logIn"));
 
-    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.exchange_failed));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.exchange_failed.title),
+    );
   });
 
   it("shows the translated message for persist_failed", async () => {
@@ -704,7 +800,9 @@ describe("useCardLoginViewModel errors", () => {
     act(() => result.current?.onLoginPress());
     act(() => result.current?.intro.onActionPress("logIn"));
 
-    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.persist_failed));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.persist_failed.title),
+    );
   });
 
   it("shows the translated message for missing_attempt", async () => {
@@ -721,7 +819,9 @@ describe("useCardLoginViewModel errors", () => {
       { wrapper: withProviders(store) },
     );
 
-    await waitFor(() => expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.missing_attempt));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.missing_attempt.title),
+    );
   });
 
   it("shows the translated message for fetch_user_failed", async () => {
@@ -738,7 +838,72 @@ describe("useCardLoginViewModel errors", () => {
     );
 
     await waitFor(() =>
-      expect(result.current?.errorMessage).toBe(ERROR_MESSAGES.fetch_user_failed),
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.fetch_user_failed.title),
     );
+  });
+
+  it("puts the login back on offer when the panel of a machine error is dismissed", async () => {
+    mockPorts.saveAttempt.mockRejectedValueOnce(new Error("no store"));
+    const { result } = await renderIdleLogin(store);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.pkce_failed.title),
+    );
+
+    act(() => result.current?.error?.onDismiss());
+
+    await waitFor(() => expect(result.current?.error).toBeNull());
+    expect(result.current?.isLoading).toBe(false);
+    expect(mockPorts.createAttempt).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the stored session when the panel of a failed user load is dismissed", async () => {
+    mockPorts.hasSession.mockResolvedValue(true);
+    mockPorts.getUser.mockRejectedValueOnce({ status: "FETCH_ERROR" });
+    const { result } = renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.fetch_user_failed.title),
+    );
+
+    act(() => result.current?.error?.onDismiss());
+
+    await waitFor(() => expect(result.current?.error).toBeNull());
+    expect(mockPorts.clearSession).not.toHaveBeenCalled();
+    expect(mockPorts.getUser).toHaveBeenCalledTimes(1);
+  });
+
+  it("retries only the card fetch from the panel of a failed user load", async () => {
+    mockPorts.hasSession.mockResolvedValue(true);
+    mockPorts.getUser.mockRejectedValueOnce({ status: "FETCH_ERROR" });
+    const { result } = renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() =>
+      expect(result.current?.error?.title).toBe(ERROR_MESSAGES.fetch_user_failed.title),
+    );
+    expect(result.current?.error?.ctaLabel).toBe(ERROR_MESSAGES.retryUser);
+
+    act(() => result.current?.error?.onRetry());
+
+    await waitFor(() => expect(mockPorts.getUser).toHaveBeenCalledTimes(2));
+    expect(mockPorts.createAttempt).not.toHaveBeenCalled();
   });
 });
