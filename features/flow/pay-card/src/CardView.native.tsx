@@ -45,11 +45,9 @@ export function CardView({
           <AddToWalletCtaWithBottomSheet appearance="base" />
         </>
       ) : (
-        <>
-          <CardLogin key={login.oauthConfig.apiUrl} {...login}>
-            <CardArtwork />
-          </CardLogin>
-        </>
+        <CardLogin key={login.oauthConfig.apiUrl} {...login}>
+          <CardArtwork />
+        </CardLogin>
       )}
     </Box>
   );

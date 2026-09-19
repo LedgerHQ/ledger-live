@@ -49,11 +49,9 @@ export function CardView({
           />
         </>
       ) : (
-        <>
-          <CardLogin key={login.oauthConfig.apiUrl} {...login}>
-            <CardArtwork />
-          </CardLogin>
-        </>
+        <CardLogin key={login.oauthConfig.apiUrl} {...login}>
+          <CardArtwork />
+        </CardLogin>
       )}
       <p
         className={
