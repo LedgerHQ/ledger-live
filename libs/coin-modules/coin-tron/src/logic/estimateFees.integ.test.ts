@@ -130,9 +130,9 @@ describe("estimateFees [integ]", () => {
   });
 });
 
-// estimateTronifyFees integ tests require a live Tronify provider wired into coinConfig, which
-// is not available in standard CI. The Tronify code path is fully covered by unit tests in
-// estimateFees.test.ts. Enable this block locally by pointing coinConfig at a real provider.
+// estimateTronifyFees integ tests require a live Tronify provider wired into `config.energyRent`,
+// which is not available in standard CI. The Tronify code path is fully covered by unit tests in
+// estimateFees.test.ts. Enable this block locally by pointing `mockConfig.energyRent` at a real provider.
 describe.skip("estimateTronifyFees [integ — requires live Tronify provider]", () => {
   it("returns value < originalValue for a USDT TRC-20 transfer with a cheap energy window", async () => {
     const intent = sendIntent({ asset: { type: "trc20", assetReference: USDT_CONTRACT } });

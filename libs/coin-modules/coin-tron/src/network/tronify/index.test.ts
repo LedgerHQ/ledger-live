@@ -1,6 +1,6 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import network from "@ledgerhq/live-network";
-import coinConfig from "../../config";
+import type { TronCoinConfig } from "../../config";
 import { EnergyRentProviderNotConfigured } from "../../types/errors";
 import { addTronRentRecord, myPayOrder, queryPreorderInfo, uploadHash } from "./index";
 import type { TronifyEnergyOrderParams } from "./types";
@@ -14,12 +14,11 @@ const mockLogger: Logger = jest.fn();
 const TRONIFY_URL = "https://open.tronify.io";
 const SOURCE_FLAG = "ledgerLive";
 
-const setConfig = (tronify?: { url: string; sourceFlag: string }) =>
-  coinConfig.setCoinConfig(() => ({
-    status: { type: "active" },
-    explorer: { url: "https://tron.coin.ledger.com" },
-    energyRent: tronify ? { provider: "tronify", tronify } : undefined,
-  }));
+const buildConfig = (tronify?: { url: string; sourceFlag: string }): TronCoinConfig => ({
+  status: { type: "active" },
+  explorer: { url: "https://tron.coin.ledger.com" },
+  energyRent: tronify ? { provider: "tronify", tronify } : undefined,
+});
 
 const envelope = <T>(data: T, resCode = 100, resMsg = "Success") => ({
   data: { resCode, resMsg, data },
@@ -36,14 +35,16 @@ const orderParams: TronifyEnergyOrderParams = {
 };
 
 describe("tronify network client", () => {
+  let config: TronCoinConfig;
+
   beforeEach(() => {
     mockedNetwork.mockReset();
-    setConfig({ url: TRONIFY_URL, sourceFlag: SOURCE_FLAG });
+    config = buildConfig({ url: TRONIFY_URL, sourceFlag: SOURCE_FLAG });
   });
 
   it("rejects with EnergyRentProviderNotConfigured when energyRent is absent", async () => {
-    setConfig(undefined);
-    await expect(queryPreorderInfo(mockLogger, orderParams)).rejects.toBeInstanceOf(
+    config = buildConfig(undefined);
+    await expect(queryPreorderInfo(mockLogger, config, orderParams)).rejects.toBeInstanceOf(
       EnergyRentProviderNotConfigured,
     );
   });
@@ -51,16 +52,13 @@ describe("tronify network client", () => {
   // The config type requires `tronify` alongside the provider id, but coin-config reaches us as
   // unvalidated remote JSON — hence the runtime guard this covers.
   it("rejects with EnergyRentProviderNotConfigured when remote config omits the tronify settings", async () => {
-    coinConfig.setCoinConfig(
-      () =>
-        ({
-          status: { type: "active" },
-          explorer: { url: "https://tron.coin.ledger.com" },
-          energyRent: { provider: "tronify" },
-        }) as never,
-    );
+    config = {
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: { provider: "tronify" },
+    } as never;
 
-    await expect(queryPreorderInfo(mockLogger, orderParams)).rejects.toBeInstanceOf(
+    await expect(queryPreorderInfo(mockLogger, config, orderParams)).rejects.toBeInstanceOf(
       EnergyRentProviderNotConfigured,
     );
   });
@@ -70,7 +68,7 @@ describe("tronify network client", () => {
       const data = { payCoinCode: "USDT", payCoinAmt: "3.12" };
       mockedNetwork.mockResolvedValueOnce(envelope(data) as never);
 
-      const result = await queryPreorderInfo(mockLogger, orderParams);
+      const result = await queryPreorderInfo(mockLogger, config, orderParams);
 
       expect(result).toEqual(data);
       expect(mockedNetwork).toHaveBeenCalledWith(
@@ -92,7 +90,7 @@ describe("tronify network client", () => {
         envelope({}, 132, "pledgeNum cannot be less than 15000") as never,
       );
 
-      await expect(queryPreorderInfo(mockLogger, orderParams)).rejects.toMatchObject({
+      await expect(queryPreorderInfo(mockLogger, config, orderParams)).rejects.toMatchObject({
         name: "TronifyApiError",
         resCode: 132,
       });
@@ -109,7 +107,7 @@ describe("tronify network client", () => {
       };
       mockedNetwork.mockResolvedValueOnce(envelope(data) as never);
 
-      const result = await addTronRentRecord(mockLogger, orderParams);
+      const result = await addTronRentRecord(mockLogger, config, orderParams);
 
       expect(result).toEqual(data);
       expect(mockedNetwork).toHaveBeenCalledWith(
@@ -129,7 +127,7 @@ describe("tronify network client", () => {
         signature: ["sig"],
       };
 
-      await uploadHash(mockLogger, { orderId: "order-1", fromHash: "abc", signedData });
+      await uploadHash(mockLogger, config, { orderId: "order-1", fromHash: "abc", signedData });
 
       const body = mockedNetwork.mock.calls[0][0].data as Record<string, unknown>;
       expect(body).toEqual({ orderId: "order-1", fromHash: "abc", signedData });
@@ -141,7 +139,12 @@ describe("tronify network client", () => {
     it("POSTs to mypayorder with the payer address and the sourceFlag", async () => {
       mockedNetwork.mockResolvedValueOnce(envelope({ data: [], pagination: {} }) as never);
 
-      await myPayOrder(mockLogger, { fromAddress: "TKgh", orderType: "2", page: 1, pageSize: 50 });
+      await myPayOrder(mockLogger, config, {
+        fromAddress: "TKgh",
+        orderType: "2",
+        page: 1,
+        pageSize: 50,
+      });
 
       expect(mockedNetwork).toHaveBeenCalledWith(
         expect.objectContaining({

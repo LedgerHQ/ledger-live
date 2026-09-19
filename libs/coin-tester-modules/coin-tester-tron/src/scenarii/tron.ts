@@ -3,7 +3,6 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
-import tronCoinConfig from "@ledgerhq/coin-tron/config";
 import { DEFAULT_TRC20_FEES_LIMIT } from "@ledgerhq/coin-tron/network";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
@@ -454,7 +453,6 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
       status: { type: "active" as const },
       explorer: { url: TRON_LOCAL_RPC },
     };
-    tronCoinConfig.setCoinConfig(() => localConfig);
     LiveConfig.setConfig({
       config_currency_tron: { type: "object", default: localConfig },
     });

@@ -1,4 +1,5 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
+import type { TronCoinConfig } from "../../config";
 import type {
   TronifyUnsignedTransaction,
   TronifySignedTransaction,
@@ -63,13 +64,26 @@ export type EnergyRentSignedTransaction = TronifySignedTransaction;
  */
 export interface EnergyProvider {
   id: EnergyProviderId;
-  getQuote(logger: Logger, request: EnergyRentRequest): Promise<EnergyRentQuote>;
-  createOrder(logger: Logger, request: EnergyRentRequest): Promise<EnergyRentOrder>;
+  getQuote(
+    logger: Logger,
+    config: TronCoinConfig,
+    request: EnergyRentRequest,
+  ): Promise<EnergyRentQuote>;
+  createOrder(
+    logger: Logger,
+    config: TronCoinConfig,
+    request: EnergyRentRequest,
+  ): Promise<EnergyRentOrder>;
   submitPayment(
     logger: Logger,
+    config: TronCoinConfig,
     payment: { orderId: string; signedTransaction: EnergyRentSignedTransaction },
   ): Promise<void>;
-  getOrderStatus(logger: Logger, order: EnergyRentOrderRef): Promise<EnergyRentStatus>;
+  getOrderStatus(
+    logger: Logger,
+    config: TronCoinConfig,
+    order: EnergyRentOrderRef,
+  ): Promise<EnergyRentStatus>;
 }
 
 /** Identifies an order to look up. The payer address is required to scope the provider query. */

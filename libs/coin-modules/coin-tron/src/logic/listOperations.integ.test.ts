@@ -1,6 +1,6 @@
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import coinConfig, { type TronCoinConfig } from "../config";
+import type { TronCoinConfig } from "../config";
 import { getBlock } from "../network";
 import { listOperations, ListOperationsOptions } from "./listOperations";
 
@@ -12,10 +12,6 @@ const config: TronCoinConfig = {
 };
 
 describe("listOperations", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => config);
-  });
-
   describe("Pagination", () => {
     const testingAccount = "TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L";
 
