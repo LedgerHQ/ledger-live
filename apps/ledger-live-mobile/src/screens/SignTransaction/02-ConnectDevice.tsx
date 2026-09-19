@@ -35,7 +35,7 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
-  const { appName, dependencies, onSuccess } = route.params;
+  const { appName, dependencies, manifestId, manifestName, onSuccess } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = useAccountBridge(account, parentAccount);
   const { transaction, status } = useBridgeTransaction(bridge, () => ({
@@ -82,6 +82,8 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
       account,
       parentAccount,
       appName,
+      manifestId,
+      manifestName,
       // Force transaction as the types from useBridgeTransaction
       // cannot infer the presence of transaction from the optionalInit
       // Probably something we could improve in the hook types above
@@ -95,6 +97,8 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
       account,
       appName,
       connectAppDependencies,
+      manifestId,
+      manifestName,
       parentAccount,
       status,
       swapSpeculosBypass,

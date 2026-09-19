@@ -66,7 +66,12 @@ import { useTrackFundsReceived } from "LLM/features/Analytics/hooks/useTrackFund
 import { updateIdentify } from "./analytics";
 import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
+import { setEarnTxLifecycleFlagReader } from "~/analytics/earnTxLifecycleFlag";
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
+import {
+  clearPendingTxLifecycle,
+  setStakeProgramAppsReader,
+} from "@ledgerhq/transaction-observability";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -126,6 +131,19 @@ setAnalyticsFeatureFlagMethod(
     typeof setAnalyticsFeatureFlagMethod
   >[0],
 );
+const readEarnTxLifecycleFlag = () =>
+  selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false;
+setEarnTxLifecycleFlagReader(readEarnTxLifecycleFlag);
+setStakeProgramAppsReader(
+  () => selectFeature(store.getState(), "stakePrograms")?.params?.list ?? [],
+);
+
+let wasEarnTxLifecycleEnabled = readEarnTxLifecycleFlag();
+store.subscribe(() => {
+  const enabled = readEarnTxLifecycleFlag();
+  if (wasEarnTxLifecycleEnabled && !enabled) clearPendingTxLifecycle("mobile");
+  wasEarnTxLifecycleEnabled = enabled;
+});
 
 const styles = StyleSheet.create({
   root: {

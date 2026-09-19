@@ -1,4 +1,11 @@
-import { setTransactionObserver, toSegmentTrackEvent } from "@ledgerhq/transaction-observability";
+import {
+  clearPendingTxLifecycle,
+  sendTxLifecycle,
+  setTransactionObserver,
+  toSegmentTrackEvent,
+  toTxLifecyclePayload,
+} from "@ledgerhq/transaction-observability";
+import { isEarnTxLifecycleMonitoringEnabled } from "./earnTxLifecycleFlag";
 import { track } from "./segment";
 
 /**
@@ -9,4 +16,19 @@ import { track } from "./segment";
 setTransactionObserver(event => {
   const mapped = toSegmentTrackEvent(event);
   if (mapped) track(mapped.event, mapped.properties);
+});
+
+setTransactionObserver(event => {
+  if (!isEarnTxLifecycleMonitoringEnabled()) {
+    clearPendingTxLifecycle("mobile");
+    return;
+  }
+  const payload = toTxLifecyclePayload(event, "mobile");
+  if (!payload) return;
+
+  if (event.manifestId) {
+    sendTxLifecycle(payload, event.manifestId);
+  } else {
+    sendTxLifecycle(payload);
+  }
 });

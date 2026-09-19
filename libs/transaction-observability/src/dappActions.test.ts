@@ -5,7 +5,12 @@ import { rememberSignContext } from "./signContext";
 import { TransactionPathway, type LogEvent } from "./logEvent";
 import { toSegmentTrackEvent } from "./segmentEvent";
 import { deriveDappAction, readDappFunction } from "./dappActions";
-import { isStakingApp, stakingMethodOf } from "./stakingApps";
+import {
+  isEarnMonitoringApp,
+  isStakingApp,
+  setStakeProgramAppsReader,
+  stakingMethodOf,
+} from "./stakingApps";
 import type { TransactionLike } from "./transactionShape";
 
 // Real selectors, so the map is checked against the vocabulary it actually meets.
@@ -94,6 +99,29 @@ describe("the dApp selector vocabulary", () => {
       signEvent({ account: sei, transaction: { family: "evm", mode: "stake" } })
         .earnTransactionType,
     ).toBe("delegate");
+  });
+});
+
+describe("Earn lifecycle manifest guards", () => {
+  afterEach(() => setStakeProgramAppsReader(null));
+
+  it.each(["stakekit", "kiln-widget"])(
+    "admits the stakePrograms redirect %s without changing Segment's provider gate",
+    manifestId => {
+      expect(isEarnMonitoringApp(manifestId)).toBe(true);
+      expect(isStakingApp(manifestId)).toBe(false);
+    },
+  );
+
+  it("rejects unrelated live apps", () => {
+    expect(isEarnMonitoringApp("generic-dapp")).toBe(false);
+  });
+
+  it("admits stake programs added through remote config", () => {
+    setStakeProgramAppsReader(() => ["future-stake-app"]);
+
+    expect(isEarnMonitoringApp("future-stake-app")).toBe(true);
+    expect(isStakingApp("future-stake-app")).toBe(false);
   });
 });
 

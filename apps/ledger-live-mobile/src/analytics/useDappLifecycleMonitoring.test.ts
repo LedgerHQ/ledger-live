@@ -1,0 +1,66 @@
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
+import {
+  abandonPendingDappTxLifecycle,
+  clearPendingDappTxLifecycle,
+  startDappTxLifecycle,
+} from "@ledgerhq/transaction-observability";
+import { useDappLifecycleMonitoring } from "./useDappLifecycleMonitoring";
+import { setEarnTxLifecycleFlagReader } from "./earnTxLifecycleFlag";
+
+jest.mock("@ledgerhq/transaction-observability", () => ({
+  ...jest.requireActual("@ledgerhq/transaction-observability"),
+  startDappTxLifecycle: jest.fn(),
+  abandonPendingDappTxLifecycle: jest.fn(),
+  clearPendingDappTxLifecycle: jest.fn(),
+}));
+
+const mockStart = jest.mocked(startDappTxLifecycle);
+const mockAbandon = jest.mocked(abandonPendingDappTxLifecycle);
+const mockClear = jest.mocked(clearPendingDappTxLifecycle);
+let lifecycleEnabled = true;
+
+describe("useDappLifecycleMonitoring", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    lifecycleEnabled = true;
+    setEarnTxLifecycleFlagReader(() => lifecycleEnabled);
+  });
+  afterEach(() => setEarnTxLifecycleFlagReader(null));
+
+  it("starts and abandons a mobile dapp lifecycle", () => {
+    const { unmount } = renderHook(() => useDappLifecycleMonitoring("kiln-widget", true), {
+      overrideInitialState: withFlagOverrides({ earnTxLifecycleMonitoring: { enabled: true } }),
+    });
+
+    expect(mockStart).toHaveBeenCalledWith("mobile", "kiln-widget");
+
+    unmount();
+
+    expect(mockAbandon).toHaveBeenCalledWith("mobile", "kiln-widget");
+  });
+
+  it("does not emit and clears pending state when disabled", () => {
+    lifecycleEnabled = false;
+    const { unmount } = renderHook(() => useDappLifecycleMonitoring("kiln-widget", true), {
+      overrideInitialState: withFlagOverrides({ earnTxLifecycleMonitoring: { enabled: false } }),
+    });
+
+    expect(mockStart).not.toHaveBeenCalled();
+    expect(mockClear).toHaveBeenCalledWith("mobile", "kiln-widget");
+
+    unmount();
+
+    expect(mockAbandon).not.toHaveBeenCalled();
+  });
+
+  it("ignores a catalog open that is not a stake redirect", () => {
+    const { unmount } = renderHook(() => useDappLifecycleMonitoring("kiln-widget", false), {
+      overrideInitialState: withFlagOverrides({ earnTxLifecycleMonitoring: { enabled: true } }),
+    });
+
+    expect(mockStart).not.toHaveBeenCalled();
+    expect(mockClear).not.toHaveBeenCalled();
+    unmount();
+    expect(mockAbandon).not.toHaveBeenCalled();
+  });
+});

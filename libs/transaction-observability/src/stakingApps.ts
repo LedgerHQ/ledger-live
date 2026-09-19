@@ -18,9 +18,9 @@ export type StakingMethod = "liquid" | "pooling" | "restaking" | "dedicated";
  * `kiln-staking` serves both a pooled and a dedicated product, separated only by a
  * `queryParams.focus` the bridge never sees, so its method comes from the contract instead.
  *
- * Kept in code rather than fetched: this gates emission, and a gate must not depend on a
- * network call. `stakingApps.integration.test.ts` fails when the API gains an active app that
- * is missing here.
+ * Provider apps stay in code: `stakingApps.integration.test.ts` fails when the API gains an
+ * active app that is missing here. Stake-program redirects are different: their source of truth
+ * is remote config, so hosts inject a synchronous reader for the already-resolved Redux value.
  */
 const STAKING_LIVE_APPS: Record<string, StakingMethod | undefined> = {
   lido: "liquid",
@@ -34,18 +34,45 @@ const STAKING_LIVE_APPS: Record<string, StakingMethod | undefined> = {
   "kiln-staking": undefined,
 };
 
+const STAKE_PROGRAM_APPS = new Set(["kiln-widget", "stakekit"]);
+type StakeProgramAppsReader = () => readonly string[];
+let readStakeProgramApps: StakeProgramAppsReader | null = null;
+
+/**
+ * Injects the host's resolved remote-config list. The built-in entries keep older hosts safe;
+ * injected entries let operators add a stake program without waiting for a client release.
+ */
+export function setStakeProgramAppsReader(reader: StakeProgramAppsReader | null): void {
+  readStakeProgramApps = reader;
+}
+
+function isConfiguredStakeProgram(manifestId: string): boolean {
+  try {
+    return readStakeProgramApps?.().includes(manifestId) ?? false;
+  } catch {
+    return false;
+  }
+}
+
 // Own keys only. `in` and a bare index also answer for `toString` and `constructor`, which
 // would open the gate for a manifest of that name and report a function as the method.
 function entry(manifestId: string | undefined): StakingMethod | undefined | null {
   if (manifestId === undefined) return null;
-  return Object.prototype.hasOwnProperty.call(STAKING_LIVE_APPS, manifestId)
-    ? STAKING_LIVE_APPS[manifestId]
-    : null;
+  return Object.hasOwn(STAKING_LIVE_APPS, manifestId) ? STAKING_LIVE_APPS[manifestId] : null;
 }
 
 /** Whether a manifest's transactions belong in the earn funnel. */
 export function isStakingApp(manifestId: string | undefined): boolean {
   return entry(manifestId) !== null;
+}
+
+/** Whether a manifest belongs to either an Earn provider or a stakePrograms redirect. */
+export function isEarnMonitoringApp(manifestId: string | undefined): boolean {
+  return (
+    isStakingApp(manifestId) ||
+    (manifestId !== undefined &&
+      (STAKE_PROGRAM_APPS.has(manifestId) || isConfiguredStakeProgram(manifestId)))
+  );
 }
 
 /** How the app stakes, when its manifest alone is enough to say. */

@@ -7,12 +7,15 @@ analytics vocabulary.
 Consumed by `@ledgerhq/live-common`'s account-bridge seam, and by the desktop and mobile apps
 which each register an observer at startup.
 
+The seam wraps every account bridge, not only Earn families. Event construction is therefore
+defensive: an unsupported transaction shape must never prevent the underlying sign operation.
+
 ## What this is for
 
-One event shape per outcome, per stage, across every earn flow — so that failures are countable
-two ways: **how many** at each stage, and **of what kind**. Both halves have to hold for the
-numbers to mean anything, which is why so much of this package is classification rather than
-plumbing:
+One event shape per intent or outcome, per stage, across every earn flow — so that failures are
+countable two ways: **how many** at each stage, and **of what kind**. Both halves have to hold
+for the numbers to mean anything, which is why so much of this package is classification rather
+than plumbing:
 
 - an outcome that cannot be attributed to a stage inflates or deflates a step of the funnel
 - an outcome whose cause collapses into `unknown` is counted but not actionable
@@ -61,6 +64,10 @@ its sign-stage `stake.createAccount` becomes a `DELEGATE` operation at broadcast
 
 `dataSource` on every event records which of the two produced it.
 
+`signRawOperation` has only an opaque serialized transaction, so it cannot derive an action or
+validator. It still emits a manifest-attributed intent/failure for allow-listed dApps; a later
+WalletAPI broadcast supplies the terminal outcome.
+
 ## Emission policy
 
 An event is only forwarded to analytics when a **staking action was derived**. Plain sends
@@ -81,14 +88,31 @@ That is deliberate rather than an oversight, because there is no single gate to 
 |---|---|
 | Segment / Mixpanel | the analytics opt-in (`trackingEnabled`) |
 | Datadog | the crash/error-reporting opt-in, plus its own feature flag |
+| Earn lifecycle monitoring | operational monitoring policy; no analytics opt-in |
 | a dev console logger | nothing — it never leaves the process |
 
 Those are **different user choices**. Someone can accept crash reporting and decline analytics,
 or the reverse, so a Datadog sink must not assume the Segment sink's gate.
 
-Today both transmitting observers forward through their host's `track`, whose first statement is
-the analytics-consent check, so consent is enforced without either observer implementing it.
-A future sink that talks to a service directly has to do its own check.
+The Segment observer forwards through its host's `track`, whose first statement is the
+analytics-consent check. The separate Earn lifecycle observer posts a count-only payload directly
+to `/v1/tx/lifecycle`; it never forwards raw errors, signatures, addresses, amounts, account ids,
+or user/device/session identifiers. Its independent rollout switch is
+`earnTxLifecycleMonitoring`.
+
+The lifecycle transport keeps one native attempt per platform and one dApp attempt per platform
+and manifest. It suppresses unpaired or duplicate terminals, deduplicates equivalent dApp sign
+resubscriptions, and closes an unfinished dApp attempt as `failure/abandoned` when its own host
+WebView is torn down.
+
+For an allow-listed dApp, a Ledger-owned stake CTA redirect into the platform route is the intent
+boundary; opening the same manifest from Discover is not an attempt. The redirect placeholder uses
+`currency_family: "other"` because the route may not expose an asset. The first classified sign
+posts an enriched intent with the real family before the terminal, making per-family counters
+joinable while preserving pre-sign abandonment measurement.
+
+Hosts inject the resolved `stakePrograms.list` reader at boot, so remote-config additions are
+eligible immediately; the built-in redirect ids remain as compatibility fallbacks.
 
 One thing to know if you ever reach for it: the hosts' `track(event, properties, mandatory)`
 takes a third argument that bypasses the consent check and swaps in a reduced property set. It

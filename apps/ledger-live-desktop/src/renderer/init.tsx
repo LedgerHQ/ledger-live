@@ -83,7 +83,12 @@ import {
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { installLiveConfigProvider } from "~/firebase/remoteConfig";
 import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
+import { setEarnTxLifecycleFlagReader } from "~/renderer/analytics/earnTxLifecycleFlag";
 import { initHistory } from "~/renderer/reducers/history";
+import {
+  clearPendingTxLifecycle,
+  setStakeProgramAppsReader,
+} from "@ledgerhq/transaction-observability";
 
 const rootNode = document.getElementById("react-root");
 
@@ -157,6 +162,19 @@ async function init() {
       typeof setAnalyticsFeatureFlagMethod
     >[0],
   );
+  const readEarnTxLifecycleFlag = () =>
+    selectFeature(store.getState(), "earnTxLifecycleMonitoring")?.enabled ?? false;
+  setEarnTxLifecycleFlagReader(readEarnTxLifecycleFlag);
+  setStakeProgramAppsReader(
+    () => selectFeature(store.getState(), "stakePrograms")?.params?.list ?? [],
+  );
+
+  let wasEarnTxLifecycleEnabled = readEarnTxLifecycleFlag();
+  store.subscribe(() => {
+    const enabled = readEarnTxLifecycleFlag();
+    if (wasEarnTxLifecycleEnabled && !enabled) clearPendingTxLifecycle("desktop");
+    wasEarnTxLifecycleEnabled = enabled;
+  });
 
   // Hydrate persisted crypto assets tokens from app.json
   // Cross-caching is automatic: tokens are cached under both ID and address lookups

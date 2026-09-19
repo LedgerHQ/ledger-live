@@ -4,7 +4,12 @@
  * would otherwise fail silently in production rather than in CI.
  */
 const track = jest.fn();
+const mockSendTxLifecycle = jest.fn();
 jest.mock("./segment", () => ({ track: (...args: unknown[]) => track(...args) }));
+jest.mock("@ledgerhq/transaction-observability", () => ({
+  ...jest.requireActual("@ledgerhq/transaction-observability"),
+  sendTxLifecycle: (...args: unknown[]) => mockSendTxLifecycle(...args),
+}));
 
 import {
   emitTransactionEvent,
@@ -14,8 +19,11 @@ import {
   type LogEvent,
 } from "@ledgerhq/transaction-observability";
 
-// Importing the module is what registers the observer. It must come after the mock above.
+import { setEarnTxLifecycleFlagReader } from "./earnTxLifecycleFlag";
+
 import "./registerTransactionObserver";
+
+let lifecycleEnabled = true;
 
 const stakingEvent = (over: Partial<Record<string, unknown>> = {}) =>
   ({
@@ -38,9 +46,15 @@ const stakingEvent = (over: Partial<Record<string, unknown>> = {}) =>
 describe("desktop transaction observer", () => {
   beforeEach(() => {
     track.mockClear();
+    mockSendTxLifecycle.mockClear();
+    lifecycleEnabled = true;
+    setEarnTxLifecycleFlagReader(() => lifecycleEnabled);
     jest.spyOn(console, "log").mockImplementation(() => {});
   });
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => {
+    setEarnTxLifecycleFlagReader(null);
+    jest.restoreAllMocks();
+  });
 
   it("forwards a staking outcome to Segment", () => {
     emitTransactionEvent(stakingEvent());
@@ -55,6 +69,49 @@ describe("desktop transaction observer", () => {
       input_currency: "ada",
       network: "cardano",
     });
+  });
+
+  it("dispatches a minimal desktop lifecycle event outside Segment", () => {
+    emitTransactionEvent(stakingEvent({ status: "intent", stage: TransactionStage.Sign }));
+    emitTransactionEvent(stakingEvent());
+
+    expect(mockSendTxLifecycle).toHaveBeenLastCalledWith({
+      schema_version: 1,
+      event: "tx_terminal",
+      path: "native",
+      platform: "desktop",
+      currency_family: "other",
+      currency_id: "cardano",
+      network: "cardano",
+      app_version: "llc/test",
+      outcome: "success",
+    });
+  });
+
+  it("forwards the manifest only as local dapp correlation context", () => {
+    emitTransactionEvent(
+      stakingEvent({
+        status: "intent",
+        stage: TransactionStage.Sign,
+        manifestId: "stakekit",
+        pathway: TransactionPathway.WalletApiSignAndBroadcast,
+      }),
+    );
+
+    expect(mockSendTxLifecycle).toHaveBeenCalledWith(
+      expect.objectContaining({ event: "tx_intent", path: "dapp" }),
+      "stakekit",
+    );
+    expect(mockSendTxLifecycle.mock.calls[0][0]).not.toHaveProperty("manifestId");
+  });
+
+  it("keeps Segment independent when lifecycle monitoring is disabled", () => {
+    lifecycleEnabled = false;
+
+    emitTransactionEvent(stakingEvent());
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(mockSendTxLifecycle).not.toHaveBeenCalled();
   });
 
   /**
@@ -72,11 +129,13 @@ describe("desktop transaction observer", () => {
     emitTransactionEvent(stakingEvent({ earnTransactionType: undefined }));
 
     expect(track).not.toHaveBeenCalled();
+    expect(mockSendTxLifecycle).not.toHaveBeenCalled();
   });
 
   it("sends nothing for the Earn live-app, which emits these events itself", () => {
     emitTransactionEvent(stakingEvent({ manifestId: "earn" }));
 
     expect(track).not.toHaveBeenCalled();
+    expect(mockSendTxLifecycle).not.toHaveBeenCalled();
   });
 });
