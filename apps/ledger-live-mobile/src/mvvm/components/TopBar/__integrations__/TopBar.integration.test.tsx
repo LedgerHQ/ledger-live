@@ -9,6 +9,7 @@ import { TopBar } from "../index";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const/navigation";
 import { useSyncIndicator } from "../hooks/useSyncIndicator";
+import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
 
 const mockNavigate = jest.fn();
 
@@ -18,11 +19,20 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 jest.mock("../hooks/useSyncIndicator");
+jest.mock("LLM/hooks/usePortfolioBalance");
 jest.mock("../components/SyncErrorBottomSheet", () => ({
   SyncErrorBottomSheet: () => null,
 }));
 
 const mockedUseSyncIndicator = jest.mocked(useSyncIndicator);
+const mockedUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
+
+// useTopBarViewModel reads the shared portfolio-balance context; stub the fields
+// it uses — the real hook requires the app-root PortfolioBalanceProvider.
+mockedUsePortfolioBalance.mockReturnValue({
+  triggerRefresh: jest.fn(),
+  isBridgeSyncPending: false,
+} as unknown as ReturnType<typeof usePortfolioBalanceModule.usePortfolioBalance>);
 
 const defaultSyncState = {
   hasAccounts: false,
