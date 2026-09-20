@@ -15,7 +15,6 @@ describe("Receive - import a currency", () => {
   (isSmokeTestRun ? it.skip : it)(
     "Should access to receive after importing a cryptocurrency on a selected network",
     async () => {
-      await app.modularDrawer.performSearchByTicker(Currency.POL.ticker);
       await app.modularDrawer.selectCurrencyByTicker(Currency.POL.ticker);
       await app.modularDrawer.selectNetwork(Currency.POL.name);
       await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
