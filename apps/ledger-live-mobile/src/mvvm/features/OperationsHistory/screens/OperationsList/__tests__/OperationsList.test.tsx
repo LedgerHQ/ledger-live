@@ -81,7 +81,7 @@ describe("OperationsList", () => {
     mockSetOptions.mockClear();
   });
 
-  it("tracks the OperationsList screen on focus", () => {
+  it("should track the OperationsList screen when it receives focus", () => {
     render(<MockNavigator />);
     expect(screen).toHaveBeenCalledWith(
       undefined,
@@ -94,7 +94,7 @@ describe("OperationsList", () => {
     );
   });
 
-  it("does not register the transaction history options menu when the dust filter feature flag is disabled", () => {
+  it("should not register the options menu when dust filtering is disabled", () => {
     renderOperationsListWithNavigation({ setOptions: mockSetOptions });
 
     expect(mockSetOptions).toHaveBeenCalledWith(
@@ -106,7 +106,7 @@ describe("OperationsList", () => {
     );
   });
 
-  it("registers the transaction history options menu in the navigation bar when the dust filter feature flag is enabled", () => {
+  it("should register the options menu when dust filtering is enabled", () => {
     renderOperationsListWithNavigation(
       { setOptions: mockSetOptions },
       {
@@ -127,7 +127,7 @@ describe("OperationsList", () => {
     );
   });
 
-  it("shows card history without crypto-only controls when the Card tab is selected", async () => {
+  it("should show Card history without crypto controls when Card is selected", async () => {
     const { getByTestId, queryByTestId, user } = renderOperationsListWithNavigation(
       { setOptions: mockSetOptions, dispatch: jest.fn() },
       {
@@ -149,8 +149,8 @@ describe("OperationsList", () => {
       page: "OperationsList",
     });
     expect(getByTestId("card-history-signed-out-state")).toBeVisible();
-    expect(queryByTestId("operations-list-section-list")).toBeNull();
-    expect(queryByTestId("bottom-fade-gradient")).toBeNull();
+    expect(queryByTestId("operations-list-section-list")).not.toBeOnTheScreen();
+    expect(queryByTestId("bottom-fade-gradient")).not.toBeOnTheScreen();
     await waitFor(() =>
       expect(mockSetOptions).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -162,18 +162,76 @@ describe("OperationsList", () => {
     );
   });
 
+  it("should scope the existing Card history when an asset is provided", async () => {
+    const route = {
+      ...operationsListRoute,
+      params: { historyTab: "card", asset: "usdc" },
+    } as OperationsListProps["route"];
+
+    const { getByTestId, queryByTestId } = render(
+      <OperationsList
+        route={route}
+        navigation={
+          {
+            setOptions: mockSetOptions,
+            dispatch: jest.fn(),
+          } as unknown as OperationsListProps["navigation"]
+        }
+      />,
+      {
+        overrideInitialState: withFlagOverrides({
+          lwmPayTab: { enabled: true },
+        }),
+      },
+    );
+
+    await waitFor(() =>
+      expect(mockSetOptions).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          lumenNavBar: expect.objectContaining({
+            description: "Card · USDC",
+            navBarDescriptionProps: { testID: "card-history-asset-scope" },
+          }),
+        }),
+      ),
+    );
+    expect(getByTestId("card-history-signed-out-state")).toBeVisible();
+    expect(queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
+  });
+
+  it("should show scoped Card history when navigation updates an existing history screen", async () => {
+    const navigation = {
+      setOptions: mockSetOptions,
+      dispatch: jest.fn(),
+    } as unknown as OperationsListProps["navigation"];
+    const view = render(<OperationsList route={operationsListRoute} navigation={navigation} />, {
+      overrideInitialState: withFlagOverrides({
+        lwmPayTab: { enabled: true },
+      }),
+    });
+    const cardRoute = {
+      ...operationsListRoute,
+      params: { historyTab: "card", asset: "usdc" },
+    } as OperationsListProps["route"];
+
+    view.rerender(<OperationsList route={cardRoute} navigation={navigation} />);
+
+    await waitFor(() => expect(view.getByTestId("card-history-signed-out-state")).toBeVisible());
+    expect(view.queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
+  });
+
   describe("when the list is empty", () => {
-    it("renders the empty state", () => {
+    it("should render the empty state when no operations exist", () => {
       const { getByTestId } = render(<MockNavigator />);
       expect(getByTestId("operations-empty-state")).toBeVisible();
     });
 
-    it("blocks the swipe", () => {
+    it("should block scrolling when no operations exist", () => {
       const { getByTestId } = render(<MockNavigator />);
       expect(getByTestId("operations-list-section-list")).toHaveProp("scrollEnabled", false);
     });
 
-    it("doesn't render the bottom fade gradient", () => {
+    it("should hide the bottom fade when no operations exist", () => {
       const { queryByTestId } = render(<MockNavigator />);
       expect(queryByTestId("bottom-fade-gradient")).not.toBeVisible();
     });
@@ -181,9 +239,11 @@ describe("OperationsList", () => {
 
   describe("when the list is not empty", () => {
     const renderWithOperations = () =>
-      render(<MockNavigator />, { overrideInitialState: stateWithAccountsAndOperations });
+      render(<MockNavigator />, {
+        overrideInitialState: stateWithAccountsAndOperations,
+      });
 
-    it("renders the list with correct components", () => {
+    it("should render the operation list when operations exist", () => {
       const { getByTestId, queryByTestId, getAllByTestId } = renderWithOperations();
       expect(getByTestId("operations-list-section-list")).toBeVisible();
       expect(queryByTestId("operations-empty-state")).not.toBeVisible();
@@ -191,12 +251,12 @@ describe("OperationsList", () => {
       expect(getAllByTestId("operations-section-header")).toHaveLength(2);
     });
 
-    it("renders five items", () => {
+    it("should render every operation when operations exist", () => {
       const { getAllByTestId } = renderWithOperations();
       expect(getAllByTestId("operations-list-item")).toHaveLength(5);
     });
 
-    it("triggers analytics and navigation when an item is pressed", async () => {
+    it("should track and navigate when an operation is pressed", async () => {
       mockNavigate.mockClear();
       const { queryAllByTestId, user } = renderWithOperations();
       const operationItems = queryAllByTestId("operations-list-item");

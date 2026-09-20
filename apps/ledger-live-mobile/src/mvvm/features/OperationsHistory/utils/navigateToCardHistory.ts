@@ -4,9 +4,10 @@ import { HISTORY_TAB_CARD } from "LLM/features/OperationsHistory/constants";
 
 export function navigateToCardHistory(
   navigation: Pick<NavigationProp<ParamListBase>, "navigate">,
+  asset?: string,
 ): void {
   navigation.navigate(NavigatorName.OperationsHistory, {
     screen: ScreenName.OperationsList,
-    params: { historyTab: HISTORY_TAB_CARD },
+    params: { historyTab: HISTORY_TAB_CARD, ...(asset ? { asset } : {}) },
   });
 }

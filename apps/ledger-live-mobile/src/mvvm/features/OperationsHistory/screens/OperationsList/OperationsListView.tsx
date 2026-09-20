@@ -21,6 +21,7 @@ import type { OperationsListSection, OperationsListViewModel } from "./useOperat
 type OperationsListViewProps = Readonly<{
   viewModel: OperationsListViewModel;
   cardHistoryViewModel: CardHistoryViewModel;
+  cardAsset?: string;
   bottomInset: number;
 }>;
 
@@ -31,6 +32,7 @@ function keyExtractor(item: Operation) {
 export function OperationsListView({
   viewModel,
   cardHistoryViewModel,
+  cardAsset,
   bottomInset,
 }: OperationsListViewProps) {
   const {
@@ -52,7 +54,7 @@ export function OperationsListView({
     historyTab,
     onHistoryTabChange,
   } = viewModel;
-  const isCardTab = showHistoryTypeSwitcher && historyTab === HISTORY_TAB_CARD;
+  const isCardTab = historyTab === HISTORY_TAB_CARD;
 
   const listContentStyle = useMemo(
     () => ({
@@ -111,6 +113,7 @@ export function OperationsListView({
       ) : null}
       {isCardTab ? (
         <CardTransactionHistory
+          asset={cardAsset}
           formatters={cardHistoryViewModel.formatters}
           formatDay={cardHistoryViewModel.formatDay}
           onTrackEvent={cardHistoryViewModel.onTrackEvent}
@@ -155,4 +158,8 @@ const rootStyle: LumenViewStyle = {
 };
 
 const listStyle = { flex: 1 } as const;
-const contentContainerStyle = { flexGrow: 1, paddingHorizontal: 16, paddingTop: 8 } as const;
+const contentContainerStyle = {
+  flexGrow: 1,
+  paddingHorizontal: 16,
+  paddingTop: 8,
+} as const;

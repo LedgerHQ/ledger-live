@@ -7,6 +7,11 @@ import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { Account } from "@ledgerhq/types-live";
 import { track } from "~/analytics";
 import type { State } from "~/reducers/types";
+import {
+  HISTORY_TAB_CARD,
+  HISTORY_TAB_CRYPTO,
+  type HistoryTab,
+} from "LLM/features/OperationsHistory/constants";
 import { useOperationsListViewModel } from "../useOperationsListViewModel";
 
 // ─── Hook behaviours — mock needed because useOperationsV1 uses selectors ───
@@ -24,6 +29,13 @@ jest.mock("@ledgerhq/live-countervalues/logic", () => ({
 
 const mockedCalculate = jest.mocked(calculate);
 const mockedTrack = jest.mocked(track);
+
+type HistoryRouteParams = { historyTab: HistoryTab; asset?: string };
+
+const renderHistoryTabVM = (params: HistoryRouteParams) =>
+  renderHook(() => useOperationsListViewModel(undefined, params.historyTab, params.asset), {
+    overrideInitialState: withFlagOverrides({ lwmPayTab: { enabled: true } }),
+  });
 
 describe("useOperationsListViewModel", () => {
   beforeEach(() => {
@@ -297,6 +309,34 @@ describe("useOperationsListViewModel", () => {
       expect(filter({} as never, usdc)).toBe(true);
       expect(filter({} as never, matic)).toBe(false);
       expect(filter({} as never, ethTree)).toBe(false);
+    });
+  });
+
+  describe("history tab selection", () => {
+    it("shows Card history when an asset scope arrives after the user picked Crypto", () => {
+      const params: HistoryRouteParams = { historyTab: HISTORY_TAB_CARD };
+      const { result, rerender } = renderHistoryTabVM(params);
+
+      act(() => result.current.onHistoryTabChange(HISTORY_TAB_CRYPTO));
+      expect(result.current.historyTab).toBe(HISTORY_TAB_CRYPTO);
+
+      // Tapping an asset row on the Pay tab reuses the mounted history screen: only the params change.
+      params.asset = "usdc";
+      rerender(undefined);
+
+      expect(result.current.historyTab).toBe(HISTORY_TAB_CARD);
+      expect(result.current.showHistoryTypeSwitcher).toBe(false);
+    });
+
+    it("keeps the Crypto pick while no asset scopes the route", () => {
+      const params: HistoryRouteParams = { historyTab: HISTORY_TAB_CARD };
+      const { result, rerender } = renderHistoryTabVM(params);
+
+      act(() => result.current.onHistoryTabChange(HISTORY_TAB_CRYPTO));
+      rerender(undefined);
+
+      expect(result.current.historyTab).toBe(HISTORY_TAB_CRYPTO);
+      expect(result.current.showHistoryTypeSwitcher).toBe(true);
     });
   });
 
