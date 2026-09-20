@@ -131,7 +131,26 @@ export function useCardViewModel(): CardViewModel {
     );
   }, [navigate, pathname]);
 
-  const assets = usePayCardAssets();
+  const onShowAssetHistory = useCallback<
+    NonNullable<NonNullable<CardViewModel["assets"]>["onShowHistory"]>
+  >(
+    asset => {
+      // Only the asset code travels: History resolves the display name from it, so the URL cannot
+      // carry a name that contradicts the one the asset row shows.
+      const searchParams = new URLSearchParams({
+        [HISTORY_TAB_SEARCH_PARAM]: HISTORY_TAB_CARD,
+        asset: asset.currency,
+      });
+      navigate(`/history?${searchParams}`, buildNavigationBackState("historyBackPath", pathname));
+    },
+    [navigate, pathname],
+  );
+
+  const payCardAssets = usePayCardAssets();
+  const assets = useMemo(
+    () => ({ ...payCardAssets, onShowHistory: onShowAssetHistory }),
+    [onShowAssetHistory, payCardAssets],
+  );
 
   return {
     formatters,

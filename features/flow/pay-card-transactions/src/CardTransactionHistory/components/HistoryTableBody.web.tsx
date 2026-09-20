@@ -5,7 +5,7 @@ import type { CardHistoryDayGroup } from "../groupCardHistoryItems";
 import { DayHeader } from "./DayHeader";
 import { HistoryRow } from "./HistoryRow";
 
-const COLUMN_COUNT = 3;
+const COLUMN_COUNT = 4;
 
 type HistoryTableBodyProps = Readonly<{
   groups: readonly CardHistoryDayGroup[];

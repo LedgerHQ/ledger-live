@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { cleanup, render, screen, waitFor, within, withFlagOverrides } from "tests/testSetup";
+import { http, HttpResponse, server } from "tests/server";
 import { useLocation, useNavigate } from "react-router";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { track } from "~/renderer/analytics/segment";
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { bitcoinCurrency, ethereumCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
@@ -381,10 +383,34 @@ describe("History integration", () => {
   it("should show the signed-out card history when the card tab is selected", async () => {
     renderHistoryWithPayTab("/history?tab=card");
 
+    expect(screen.getByTestId("history-card-scope")).toHaveTextContent("Card");
     expect(await screen.findByTestId("card-history-signed-out-state")).toBeVisible();
     expect(screen.getByText("Log in to see your card transactions")).toBeVisible();
     expect(screen.queryByTestId("history-table-body")).not.toBeInTheDocument();
     expect(screen.getByTestId("history-actions-menu-button")).toBeVisible();
+  });
+
+  it("should scope card history to the asset query param", async () => {
+    server.use(
+      http.get("*/v1/card/transactions", () => HttpResponse.json(mockPayCardTransactions())),
+    );
+
+    render(<History />, {
+      initialRoute: "/history?tab=card&asset=btc",
+      initialState: {
+        accounts: [BTC_ACCOUNT],
+        settings: AFTER_ONBOARDING_STATE,
+        payCardAuth: { hasCard: true, status: "signedIn" },
+        ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
+      },
+    });
+
+    expect(screen.getByText("Card · Bitcoin")).toBeVisible();
+    expect(await screen.findByText("STARBUCKS")).toBeVisible();
+    expect(screen.getByText("ATM WITHDRAWAL")).toBeVisible();
+    expect(screen.queryByText("NETFLIX.COM")).not.toBeInTheDocument();
+    expect(screen.getByText("Cashback")).toBeVisible();
+    expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
   });
 
   it("should switch from crypto history to signed-out card history", async () => {

@@ -18,6 +18,7 @@ export type HistoryRowViewProps = Readonly<{
   time: string;
   statusLabel?: string;
   statusLabelTone?: "error" | "muted";
+  cashback: string;
   fundingLabel?: string;
   fundingTooltip?: string;
   fundingTooltipAriaLabel?: string;

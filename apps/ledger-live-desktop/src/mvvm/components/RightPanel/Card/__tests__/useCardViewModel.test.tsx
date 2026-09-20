@@ -89,4 +89,26 @@ describe("useCardViewModel", () => {
       state: { historyBackPath: "/paytab" },
     });
   });
+
+  it("opens card history scoped to the selected asset", () => {
+    const { result } = renderCardViewModel(null);
+
+    act(() =>
+      result.current.assets?.onShowHistory?.({
+        id: "wallet-usdc",
+        currency: "usdc",
+        network: "ethereum",
+        name: "USD Coin",
+        ticker: "USDC",
+        ledgerId: "ethereum/erc20/usd__coin",
+        cryptoAmount: "125 USDC",
+        countervalue: "$125.00",
+        countervalueAmount: 125,
+      }),
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith("/history?tab=card&asset=usdc", {
+      state: { historyBackPath: "/paytab" },
+    });
+  });
 });
