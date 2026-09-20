@@ -25,12 +25,14 @@ APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # ZcashFfiBridge, so the two Clang modules do not collide (see the podspec).
 IOS_DEST="$APP_DIR/ios/ZcashFfiBridge"
 ANDROID_JNI_DEST="$APP_DIR/android/app/src/main/jniLibs"
-ANDROID_HEADER_DEST="$APP_DIR/android/app/src/main/cpp/include"
+# No header destination: Android no longer compiles anything against the C
+# ABI. The engine exports its own JNI entry points, so Gradle just packages the
+# prebuilt .so out of jniLibs.
 
 ABIS=(arm64-v8a armeabi-v7a x86_64 x86)
 
 if [[ "${1:-}" == "--clean" ]]; then
-  rm -rf "$IOS_DEST/ZcashFfiMobile.xcframework" "$ANDROID_HEADER_DEST"
+  rm -rf "$IOS_DEST/ZcashFfiMobile.xcframework"
   for abi in "${ABIS[@]}"; do
     rm -f "$ANDROID_JNI_DEST/$abi/libzcash_ffi_mobile.so"
   done
@@ -67,12 +69,9 @@ else
 fi
 
 # ── Android ──────────────────────────────────────────────────────────────────
-# The JNI shim includes the same header the Rust crate publishes, so the C ABI
-# has exactly one source of truth.
+# Copying the .so into jniLibs is the whole integration: Gradle packages that
+# directory automatically, with no CMake, NDK or build-file change in the app.
 if [[ -d "$DIST/android" ]]; then
-  mkdir -p "$ANDROID_HEADER_DEST"
-  cp "$HEADER" "$ANDROID_HEADER_DEST/"
-
   for abi in "${ABIS[@]}"; do
     lib="$DIST/android/$abi/libzcash_ffi_mobile.so"
     if [[ -f "$lib" ]]; then

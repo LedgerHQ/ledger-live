@@ -6,9 +6,18 @@ import { NativeModules } from "react-native";
 // load in a React Native bundle, so mobile reaches the same Rust code through
 // this binding instead.
 //
-// The native module is absent when the app was built without those artifacts
-// (see `scripts/sync-zcash-ffi.sh`), which is why every export here tolerates
-// its absence instead of assuming a linked library.
+// Availability differs by platform, so treat a `ZCASH_FFI_UNAVAILABLE`
+// rejection as the only reliable answer:
+//
+//   iOS     - the pod is skipped entirely when the XCFramework is absent, so
+//             the native module does not exist at all.
+//   Android - the module is always registered, because probing at
+//             registration time would load the library during bridge
+//             initialisation on every launch. A build without the engine
+//             rejects on the first call instead.
+//
+// `isZcashFfiAvailable` is therefore a cheap negative check, never a promise
+// that a call will succeed.
 
 /** Status codes returned by the C ABI, surfaced as the rejection `code`. */
 export const ZCASH_FFI_ERROR_CODES = [
@@ -63,7 +72,14 @@ export type ZcashThreadProbe = {
 
 const nativeModule: ZcashFfiNativeModule | null = NativeModules.ZcashFfiModule ?? null;
 
-/** Whether this build links the native library. */
+/**
+ * Whether the native module is registered at all.
+ *
+ * `false` means a call cannot succeed. `true` does **not** mean it will: on
+ * Android the module registers before the library is loaded (see the note at
+ * the top of this file), so a build without the engine still answers `true`
+ * here and rejects with `ZCASH_FFI_UNAVAILABLE` on the first call.
+ */
 export function isZcashFfiAvailable(): boolean {
   return nativeModule !== null;
 }

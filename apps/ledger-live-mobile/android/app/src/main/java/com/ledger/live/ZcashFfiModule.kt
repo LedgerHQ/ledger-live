@@ -15,12 +15,21 @@ import kotlinx.coroutines.launch
  * The engine is the Rust crate `zcash-ffi-mobile` from
  * LedgerHQ/ledger-zcash-utils -- the same code desktop loads as a Node addon,
  * which cannot run inside a React Native bundle. It arrives as a prebuilt
- * per-ABI `.so` fetched by `scripts/sync-zcash-ffi.sh`, reached through the JNI
- * shim in `src/main/cpp` (Kotlin cannot call a C ABI directly).
+ * per-ABI `libzcash_ffi_mobile.so` fetched by `scripts/sync-zcash-ffi.sh` and
+ * dropped in `jniLibs`, which Gradle packages with no build configuration of
+ * its own.
  *
- * Register this module only when [isLibraryAvailable] is true: a build without
- * the artifacts has no library to load, and the JS layer is written to treat an
- * absent module as "engine unavailable".
+ * The library carries its own JNI entry points: it exports `JNI_OnLoad`, and
+ * the JVM calls that on load to receive the method table backing the
+ * `external fun`s below. There is no C++ shim, no CMake and no NDK in this
+ * app's build -- deliberately, because React Native owns the app module's one
+ * `externalNativeBuild` slot and taking it broke `libappmodules.so`.
+ *
+ * This module is registered unconditionally. It must be: probing availability
+ * at registration time would load the library during bridge initialisation on
+ * every launch, whether or not anything Zcash is used. A build without the
+ * engine answers [CODE_UNAVAILABLE] on first call instead, which is what the
+ * JS layer already reads as "engine unavailable".
  */
 class ZcashFfiModule(
     reactContext: ReactApplicationContext,
@@ -44,24 +53,27 @@ class ZcashFfiModule(
     @ReactMethod
     fun deriveOrchardAddress(ufvk: String, promise: Promise) {
         coroutineScope.launch {
-            // The C ABI reports a status alongside the string, and JNI has no
-            // out parameters -- hence the one-element array (see
-            // src/main/cpp/zcash_ffi_jni.cpp).
+            if (!libraryLoaded) {
+                promise.reject(CODE_UNAVAILABLE, MESSAGE_UNAVAILABLE)
+                return@launch
+            }
+
+            // The engine reports a status alongside the string, and JNI has no
+            // out parameters -- hence the one-element array.
             val status = IntArray(1)
 
             val value =
                 try {
                     nativeDeriveOrchardAddress(ufvk, status)
                 } catch (error: UnsatisfiedLinkError) {
-                    // The library vanished between registration and this call.
-                    promise.reject(CODE_UNAVAILABLE, "The Zcash native library is not loaded")
+                    // The library loaded but the method table did not register.
+                    promise.reject(CODE_UNAVAILABLE, MESSAGE_UNAVAILABLE)
                     return@launch
                 }
 
             when {
                 value == null ->
-                    // ZCASH_ERR_NULL_ARG, which a non-null Kotlin String cannot cause.
-                    promise.reject(errorCode(status[0]), "Zcash FFI rejected a null argument")
+                    promise.reject(errorCode(status[0]), "Zcash FFI returned no value")
                 status[0] == ZCASH_OK -> promise.resolve(value)
                 // On a failure the string carries the message, not an address.
                 else -> promise.reject(errorCode(status[0]), value)
@@ -69,7 +81,48 @@ class ZcashFfiModule(
         }
     }
 
+    /**
+     * Runs the threading probe and resolves with its JSON result.
+     *
+     * Diagnostic only, and the reason it exists on Android at all: every
+     * parallelism figure we hold was measured on iOS. Read it as "does Rayon
+     * get a real thread pool on this device", never as a sync-throughput
+     * number -- the workload is repeated address derivation, not block scanning.
+     */
+    @ReactMethod
+    fun threadProbe(ufvk: String, iterations: Int, promise: Promise) {
+        coroutineScope.launch {
+            if (!libraryLoaded) {
+                promise.reject(CODE_UNAVAILABLE, MESSAGE_UNAVAILABLE)
+                return@launch
+            }
+
+            val status = IntArray(1)
+
+            val value =
+                try {
+                    nativeThreadProbe(ufvk, iterations, status)
+                } catch (error: UnsatisfiedLinkError) {
+                    promise.reject(CODE_UNAVAILABLE, MESSAGE_UNAVAILABLE)
+                    return@launch
+                }
+
+            when {
+                value == null ->
+                    promise.reject(errorCode(status[0]), "Zcash FFI returned no value")
+                status[0] == ZCASH_OK -> promise.resolve(value)
+                else -> promise.reject(errorCode(status[0]), value)
+            }
+        }
+    }
+
     private external fun nativeDeriveOrchardAddress(ufvk: String, outStatus: IntArray): String?
+
+    private external fun nativeThreadProbe(
+        ufvk: String,
+        iterations: Int,
+        outStatus: IntArray
+    ): String?
 
     companion object {
         const val NAME = "ZcashFfiModule"
@@ -77,30 +130,32 @@ class ZcashFfiModule(
         private const val ZCASH_OK = 0
 
         private const val CODE_UNAVAILABLE = "ZCASH_FFI_UNAVAILABLE"
+        private const val MESSAGE_UNAVAILABLE = "The Zcash native library is not loaded"
 
         /**
-         * Loaded once per process. `false` means the build carries no engine --
-         * see `scripts/sync-zcash-ffi.sh`.
+         * Loaded on first use, never at startup -- see the class doc.
+         *
+         * `false` means this build carries no engine (see
+         * `scripts/sync-zcash-ffi.sh`), or that `JNI_OnLoad` refused to
+         * register its methods, which is indistinguishable from the caller's
+         * point of view and handled the same way.
          */
         private val libraryLoaded: Boolean by lazy {
             try {
-                System.loadLibrary("zcash_ffi_jni")
+                System.loadLibrary("zcash_ffi_mobile")
                 true
             } catch (error: UnsatisfiedLinkError) {
                 false
             }
         }
 
-        /** Whether this build can serve derivation at all. */
-        fun isLibraryAvailable(): Boolean = libraryLoaded
-
         /**
-         * Maps a C-ABI status to the rejection code the JS layer switches on.
+         * Maps an engine status to the rejection code the JS layer switches on.
          *
          * Mirrors the `ZCASH_*` constants in `zcash_ffi_mobile.h`, which is the
-         * source of truth. Spelled out rather than derived, so a status the
-         * header adds later surfaces as `ZCASH_FFI_UNKNOWN` instead of a
-         * silently wrong label.
+         * source of truth. Spelled out rather than derived, so a status added
+         * there later surfaces as `ZCASH_FFI_UNKNOWN` instead of a silently
+         * wrong label.
          */
         private fun errorCode(status: Int): String =
             when (status) {
