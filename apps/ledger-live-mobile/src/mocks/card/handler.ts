@@ -4,7 +4,10 @@ import {
   MOCK_CARD_ACCESS_TOKEN_PREFIX,
 } from "@domain/api-card-management/mock/card-session";
 import { mockPayCardDetailsToken } from "@domain/api-card-management/mock/card-details-token";
-import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
+import {
+  mockPayCardTransactions,
+  readPayCardTransactionsMock,
+} from "@domain/api-card-management/mock/card-transactions";
 import {
   mockPayCardStatus,
   mockPayCardUser,
@@ -14,6 +17,7 @@ import {
   mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
   mockPayCardRewardWallet,
+  readPayCardWalletsMock,
 } from "@domain/api-card-management/mock/card-wallets";
 import { createCardMockState } from "./state";
 
@@ -142,9 +146,16 @@ const handlers = [
     return HttpResponse.json(MOCK_CARD_STATUS);
   }),
 
-  http.get("*/v1/card/transactions", ({ request }) =>
-    isMockCardRequest(request) ? HttpResponse.json(mockPayCardTransactions()) : passthrough(),
-  ),
+  http.get("*/v1/card/transactions", ({ request }) => {
+    const devtoolTransactions = readPayCardTransactionsMock();
+    if (devtoolTransactions !== undefined) {
+      return HttpResponse.json(devtoolTransactions);
+    }
+
+    return isMockCardRequest(request)
+      ? HttpResponse.json(mockPayCardTransactions())
+      : passthrough();
+  }),
 
   // The image the token points at is not mocked here: RN loads it through native networking, which
   // these interceptors never see. It stays unread until LWM grows its own reveal UI.
@@ -153,6 +164,11 @@ const handlers = [
   ),
 
   http.get("*/v1/wallet/internal", ({ request }) => {
+    const devtoolWallets = readPayCardWalletsMock();
+    if (devtoolWallets !== undefined) {
+      return HttpResponse.json(devtoolWallets);
+    }
+
     const { walletFunded } = readCardOnboardingStatusMock();
     if (walletFunded !== undefined) {
       return HttpResponse.json(mockPayCardInternalWallets(walletFunded));
@@ -166,6 +182,10 @@ const handlers = [
   }),
 
   http.get("*/v1/wallet/internal/card_linked", ({ request }) => {
+    if (readPayCardWalletsMock() !== undefined) {
+      return HttpResponse.json(mockPayCardLinkedWallets());
+    }
+
     const { walletFunded } = readCardOnboardingStatusMock();
 
     return walletFunded === undefined && !isMockCardRequest(request)

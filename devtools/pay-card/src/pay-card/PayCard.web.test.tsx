@@ -3,7 +3,13 @@ import PayCard from "./PayCard";
 import type { PayCardToolProps } from "../types";
 
 const baanxWallets = [
-  { id: "w-usdc", balance: "125.40", currency: "usdc", address: "0xusdc", addressMemo: null },
+  {
+    id: "w-usdc",
+    balance: "125.40",
+    currency: "usdc",
+    address: "0xusdc",
+    addressMemo: null,
+  },
 ];
 
 // The second link has no Baanx wallet behind it, which is what the join has to show.
@@ -16,7 +22,13 @@ const linkedWallets = [
     priority: 0,
     ledgerId: "ethereum/erc20/usd__coin",
   },
-  { id: "w-sol", address: "sol-addr", currency: "sol", network: "solana", priority: 1 },
+  {
+    id: "w-sol",
+    address: "sol-addr",
+    currency: "sol",
+    network: "solana",
+    priority: 1,
+  },
 ];
 
 const combinedWallets = [
@@ -78,8 +90,25 @@ function buildProps(): PayCardToolProps {
       combinedWallets: [],
       isFetching: false,
       errors: [],
+      mock: {
+        available: true,
+        isOverridden: false,
+        fill: jest.fn(),
+        empty: jest.fn(),
+        fund: jest.fn(),
+        clear: jest.fn(),
+      },
       load: jest.fn(),
       refresh: jest.fn(),
+    },
+    transactions: {
+      available: true,
+      isOverridden: false,
+      count: 0,
+      fill: jest.fn(),
+      empty: jest.fn(),
+      receive: jest.fn(),
+      clear: jest.fn(),
     },
     currencyMapping: [{ key: "usdc.ethereum", ledgerId: "ethereum/erc20/usd__coin" }],
     hasSeenFeatureTour: false,
@@ -218,7 +247,12 @@ describe("PayCard (web)", () => {
     render(
       <PayCard
         {...props}
-        balance={{ ...props.balance, baanxWallets, linkedWallets, combinedWallets }}
+        balance={{
+          ...props.balance,
+          baanxWallets,
+          linkedWallets,
+          combinedWallets,
+        }}
       />,
     );
 

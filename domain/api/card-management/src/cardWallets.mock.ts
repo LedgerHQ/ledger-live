@@ -43,6 +43,10 @@ const MOCK_WALLETS = [
 
 const MOCK_REWARD_WALLET_ID = "44444444-4444-4444-8444-444444444444";
 
+export type PayCardMockWalletAsset = "usdc" | "btc" | "sol";
+
+let internalWalletsOverride: readonly PayCardInternalWallet[] | undefined;
+
 /** The join keys balances to linked wallets by id, so both answers describe the same wallets. */
 export function mockPayCardInternalWallets(funded: boolean): readonly PayCardInternalWallet[] {
   return MOCK_WALLETS.map(({ id, addressId, currency, address, balance }) => ({
@@ -74,4 +78,37 @@ export function mockPayCardRewardWallet(): PayCardRewardWallet {
     currency: "usdc",
     isWithdrawable: true,
   };
+}
+
+/** An explicit devtool answer. `undefined` leaves both wallet endpoints under normal handling. */
+export function readPayCardWalletsMock(): readonly PayCardInternalWallet[] | undefined {
+  return internalWalletsOverride;
+}
+
+/** Gives every linked asset the representative balance already defined by this shared fixture. */
+export function fillPayCardWalletsMock(): void {
+  internalWalletsOverride = mockPayCardInternalWallets(true);
+}
+
+/** Keeps all linked assets visible while setting their balances to zero. */
+export function emptyPayCardWalletsMock(): void {
+  internalWalletsOverride = mockPayCardInternalWallets(false);
+}
+
+/** Funds one asset with its fixture amount and leaves the other linked assets unchanged. */
+export function fundPayCardWalletMock(asset: PayCardMockWalletAsset): void {
+  const funded = mockPayCardInternalWallets(true);
+  const current = internalWalletsOverride ?? mockPayCardInternalWallets(false);
+
+  internalWalletsOverride = current.map(wallet => {
+    if (wallet.currency.toLowerCase() !== asset) return wallet;
+
+    const fixtureWallet = funded.find(candidate => candidate.id === wallet.id);
+    return fixtureWallet ?? wallet;
+  });
+}
+
+/** Hands both wallet endpoints back to the provider or mock session. */
+export function clearPayCardWalletsMock(): void {
+  internalWalletsOverride = undefined;
 }

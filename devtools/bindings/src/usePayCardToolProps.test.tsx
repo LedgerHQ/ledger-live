@@ -22,17 +22,49 @@ import {
   readCardOnboardingStatusMock,
 } from "@domain/api-card-management/mock/card-onboarding-status";
 import { cardManagementApi } from "@domain/api-card-management";
+import {
+  clearPayCardTransactionsMock,
+  readPayCardTransactionsMock,
+} from "@domain/api-card-management/mock/card-transactions";
+import {
+  clearPayCardWalletsMock,
+  readPayCardWalletsMock,
+} from "@domain/api-card-management/mock/card-wallets";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 
 const LINKED_WALLETS = [
-  { id: "w-usdc", address: "0xusdc", currency: "usdc", network: "ethereum", priority: 0 },
-  { id: "w-bxx", address: "0xbxx", currency: "bxx", network: "ethereum", priority: 1 },
+  {
+    id: "w-usdc",
+    address: "0xusdc",
+    currency: "usdc",
+    network: "ethereum",
+    priority: 0,
+  },
+  {
+    id: "w-bxx",
+    address: "0xbxx",
+    currency: "bxx",
+    network: "ethereum",
+    priority: 1,
+  },
 ];
 
 const INTERNAL_WALLETS = [
-  { id: "w-usdc", balance: "125.40", currency: "usdc", address: "0xusdc", addressMemo: null },
-  { id: "w-bxx", balance: "5.00", currency: "bxx", address: "0xbxx", addressMemo: null },
+  {
+    id: "w-usdc",
+    balance: "125.40",
+    currency: "usdc",
+    address: "0xusdc",
+    addressMemo: null,
+  },
+  {
+    id: "w-bxx",
+    balance: "5.00",
+    currency: "bxx",
+    address: "0xbxx",
+    addressMemo: null,
+  },
 ];
 
 /** Seeds both wallet reads: one asset the catalog covers, one it does not. */
@@ -92,18 +124,64 @@ describe("usePayCardToolProps", () => {
   let store: ReturnType<typeof buildStore>;
 
   beforeEach(() => {
+    clearPayCardTransactionsMock();
+    clearPayCardWalletsMock();
     store = buildStore();
   });
 
   it("exposes default flag values", () => {
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     expect(result.current.flags.payTabEnabled).toBe(false);
     expect(result.current.flags.ptxCardEnabled).toBe(false);
   });
 
+  it("builds asset-scoped transaction history through the shared endpoint mock", () => {
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
+
+    act(() => {
+      result.current.transactions.empty();
+      result.current.transactions.receive("eth");
+    });
+
+    expect(readPayCardTransactionsMock()).toHaveLength(1);
+    expect(
+      readPayCardTransactionsMock()?.[0]?.fundingSources?.map(source => source.currency),
+    ).toEqual(["eth"]);
+    expect(result.current.transactions).toMatchObject({
+      isOverridden: true,
+      count: 1,
+    });
+  });
+
+  it("funds one linked asset through the shared wallet mock", () => {
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
+
+    act(() => {
+      result.current.balance.mock.empty();
+      result.current.balance.mock.fund("usdc");
+    });
+
+    expect(
+      readPayCardWalletsMock()?.map(wallet => [wallet.currency, Number(wallet.balance) > 0]),
+    ).toEqual([
+      ["usdc", true],
+      ["btc", false],
+      ["sol", false],
+    ]);
+    expect(result.current.balance.mock.isOverridden).toBe(true);
+  });
+
   it("setPayTabEnabled overrides lwdPayTab on web", () => {
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     act(() => {
       result.current.flags.setPayTabEnabled(true);
@@ -129,7 +207,9 @@ describe("usePayCardToolProps", () => {
   });
 
   it("setCardParam updates params.card on lwdPayTab on web", () => {
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     act(() => {
       result.current.flags.setPayTabEnabled(true);
@@ -161,7 +241,9 @@ describe("usePayCardToolProps", () => {
   });
 
   it("setPtxCardEnabled overrides ptxCard", () => {
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     act(() => {
       result.current.flags.setPtxCardEnabled(true);
@@ -173,7 +255,9 @@ describe("usePayCardToolProps", () => {
 
   it("reports no balance until the screen asks for one", () => {
     const store = buildStore();
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     expect(result.current.balance).toMatchObject({
       baanxWallets: [],
@@ -186,7 +270,9 @@ describe("usePayCardToolProps", () => {
 
   it("starts reading the wallets when the screen opens", () => {
     const store = buildStore();
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     act(() => result.current.balance.load());
 
@@ -218,7 +304,9 @@ describe("usePayCardToolProps", () => {
   it("leaves the Ledger currency off a row the catalog does not cover", async () => {
     const store = buildStore();
     await act(() => seedWallets(store));
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     act(() => result.current.balance.load());
     await waitFor(() => expect(result.current.balance.combinedWallets).toHaveLength(2));
@@ -231,7 +319,9 @@ describe("usePayCardToolProps", () => {
 
   it("reads the wallets on a refresh, even as the first thing the screen does", () => {
     const store = buildStore();
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     // Refresh both requests them and refetches, so it stands on its own: pressing it before the
     // first read has landed must not leave the screen with nothing.
@@ -242,7 +332,9 @@ describe("usePayCardToolProps", () => {
 
   it("hands the tool the whole asset catalog, in key order", () => {
     const store = buildStore();
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     const { currencyMapping } = result.current;
     const keys = currencyMapping.map(({ key }) => key);
@@ -259,7 +351,9 @@ describe("usePayCardToolProps", () => {
   it("exposes hasSeenFeatureTour from the payCard slice", () => {
     store.dispatch(markPayCardFeatureTourSeen());
 
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     expect(result.current.hasSeenFeatureTour).toBe(true);
   });
@@ -267,7 +361,9 @@ describe("usePayCardToolProps", () => {
   it("exposes hasSeenLoginIntro from the payCard slice", () => {
     store.dispatch(markPayCardLoginIntroSeen());
 
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     expect(result.current.hasSeenLoginIntro).toBe(true);
   });
@@ -275,7 +371,9 @@ describe("usePayCardToolProps", () => {
   it("resetPayCardFeatureTourSeen clears the seen flag", () => {
     store.dispatch(markPayCardFeatureTourSeen());
 
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     act(() => {
       result.current.resetPayCardFeatureTourSeen();
@@ -288,7 +386,9 @@ describe("usePayCardToolProps", () => {
   it("exposes hasSeenReceiveVerifyHint from the request verify hint slice", () => {
     store.dispatch(markReceiveVerifyHintSeen());
 
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     expect(result.current.hasSeenReceiveVerifyHint).toBe(true);
   });
@@ -296,7 +396,9 @@ describe("usePayCardToolProps", () => {
   it("resetReceiveVerifyHintSeen clears the seen flag", () => {
     store.dispatch(markReceiveVerifyHintSeen());
 
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     act(() => {
       result.current.resetReceiveVerifyHintSeen();
@@ -309,7 +411,9 @@ describe("usePayCardToolProps", () => {
   it("resetPayCardLoginIntroSeen clears the seen flag", () => {
     store.dispatch(markPayCardLoginIntroSeen());
 
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     act(() => {
       result.current.resetPayCardLoginIntroSeen();
@@ -323,7 +427,9 @@ describe("usePayCardToolProps", () => {
     store.dispatch(markPayCardFeatureTourSeen());
     store.dispatch(markPayCardLoginIntroSeen());
 
-    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+    const { result } = renderHook(() => usePayCardToolProps(), {
+      wrapper: withStore(store),
+    });
 
     act(() => {
       result.current.resetPayCardLoginIntroSeen();
@@ -346,7 +452,9 @@ describe("usePayCardToolProps", () => {
     it("reads the status on either host, once the screen asks for it", async () => {
       const store = buildStore();
       // No platform: the desktop tool, which is where the read used to be skipped outright.
-      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+      const { result } = renderHook(() => usePayCardToolProps(), {
+        wrapper: withStore(store),
+      });
 
       // Nothing is asked for until the screen opens, so DevTools does not send a session anywhere.
       expect(result.current.cardOnboarding.isFetching).toBe(false);
@@ -358,7 +466,9 @@ describe("usePayCardToolProps", () => {
 
     it("sets the answer behind a step rather than the step itself", () => {
       const store = buildStore();
-      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+      const { result } = renderHook(() => usePayCardToolProps(), {
+        wrapper: withStore(store),
+      });
 
       act(() => {
         result.current.cardOnboarding.setStepDone("top-up-card", true);
@@ -373,7 +483,9 @@ describe("usePayCardToolProps", () => {
 
     it("keeps the phone wallet step on the device, because no endpoint answers it", () => {
       const store = buildStore();
-      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+      const { result } = renderHook(() => usePayCardToolProps(), {
+        wrapper: withStore(store),
+      });
 
       act(() => {
         result.current.cardOnboarding.setStepDone("apple-google-pay", true);
@@ -385,7 +497,9 @@ describe("usePayCardToolProps", () => {
 
     it("ignores a step nothing answers, so the purchase step cannot be forced", () => {
       const store = buildStore();
-      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+      const { result } = renderHook(() => usePayCardToolProps(), {
+        wrapper: withStore(store),
+      });
 
       act(() => {
         result.current.cardOnboarding.setStepDone("first-purchase", true);
@@ -396,7 +510,9 @@ describe("usePayCardToolProps", () => {
 
     it("hands every endpoint back to the provider", () => {
       const store = buildStore();
-      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+      const { result } = renderHook(() => usePayCardToolProps(), {
+        wrapper: withStore(store),
+      });
 
       act(() => {
         result.current.cardOnboarding.setStepDone("create-account", true);
@@ -411,7 +527,9 @@ describe("usePayCardToolProps", () => {
 
     it("offers no toggle at all while the host intercepts nothing", () => {
       const store = buildStore();
-      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+      const { result } = renderHook(() => usePayCardToolProps(), {
+        wrapper: withStore(store),
+      });
 
       expect(result.current.cardOnboarding.isMockingEnabled).toBe(false);
       // Every step this project lists is answered by a request: the phone wallet step, which is
@@ -422,7 +540,9 @@ describe("usePayCardToolProps", () => {
     it("offers one per endpoint-answered step once the host intercepts requests", () => {
       process.env.MSW_ENABLED = "true";
       const store = buildStore();
-      const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+      const { result } = renderHook(() => usePayCardToolProps(), {
+        wrapper: withStore(store),
+      });
 
       expect(result.current.cardOnboarding.isMockingEnabled).toBe(true);
       const togglable = result.current.cardOnboarding.steps
