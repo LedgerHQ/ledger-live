@@ -1,4 +1,7 @@
 ---
+"@devtools/bindings": patch
+"@devtools/pay-card": patch
+"@domain/api-card-management": patch
 "live-mobile": patch
 ---
 
