@@ -5,12 +5,19 @@ import {
 } from "./schema";
 import { transformPayCardLinkedWallets } from "./transforms";
 import {
+  clearPayCardWalletsMock,
+  emptyPayCardWalletsMock,
+  fillPayCardWalletsMock,
+  fundPayCardWalletMock,
   mockPayCardInternalWallets,
   mockPayCardLinkedWallets,
   mockPayCardRewardWallet,
+  readPayCardWalletsMock,
 } from "./cardWallets.mock";
 
 describe("the mocked wallet responses", () => {
+  afterEach(clearPayCardWalletsMock);
+
   it("answers as the provider is parsed, or the query would reject them", () => {
     expect(
       PayCardInternalWalletsResponseSchema.safeParse(mockPayCardInternalWallets(true)).success,
@@ -73,5 +80,28 @@ describe("the mocked wallet responses", () => {
     const linkedIds = new Set(mockPayCardLinkedWallets().map(({ id }) => id));
 
     expect(linkedIds.has(mockPayCardRewardWallet().id)).toBe(false);
+  });
+
+  it("switches between funded, empty and provider wallet answers", () => {
+    fillPayCardWalletsMock();
+    expect(readPayCardWalletsMock()?.every(wallet => Number(wallet.balance) > 0)).toBe(true);
+
+    emptyPayCardWalletsMock();
+    expect(readPayCardWalletsMock()?.every(wallet => Number(wallet.balance) === 0)).toBe(true);
+
+    clearPayCardWalletsMock();
+    expect(readPayCardWalletsMock()).toBeUndefined();
+  });
+
+  it("can fund one linked asset without funding its neighbours", () => {
+    fundPayCardWalletMock("btc");
+
+    expect(
+      readPayCardWalletsMock()?.map(wallet => [wallet.currency, Number(wallet.balance) > 0]),
+    ).toEqual([
+      ["usdc", false],
+      ["btc", true],
+      ["sol", false],
+    ]);
   });
 });

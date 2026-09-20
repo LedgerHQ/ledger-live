@@ -1,6 +1,11 @@
 import { PAY_CARD_TRANSACTION_CATEGORIES } from "./schema";
 import type { PayCardTransaction } from "./types";
 
+export type PayCardMockTransactionAsset = "usdc" | "btc" | "eth";
+
+let transactionOverride: PayCardTransaction[] | undefined;
+let receivedTransactionSerial = 0;
+
 export const documentedPayCardTransaction = {
   id: "100a99cf-f4d3-4fa1-9be9-2e9828b20ebb",
   cardId: "1234537292209260487",
@@ -173,4 +178,56 @@ export function mockPayCardTransactions() {
       cashback: UNEARNED_STATUSES.has(status) ? undefined : mockCashback(payment.fiatAmount),
     };
   });
+}
+
+/** An explicit devtool answer. `undefined` leaves the endpoint under its normal handler. */
+export function readPayCardTransactionsMock(): readonly PayCardTransaction[] | undefined {
+  return transactionOverride;
+}
+
+/** Shows the complete fixture set, including statuses, cashback and mixed funding sources. */
+export function fillPayCardTransactionsMock(): void {
+  transactionOverride = mockPayCardTransactions();
+}
+
+/** Holds the endpoint at an empty list for empty-state QA. */
+export function emptyPayCardTransactionsMock(): void {
+  transactionOverride = [];
+}
+
+/**
+ * Adds one newest transaction funded only by the selected asset.
+ *
+ * Starting from the provider state intentionally creates a one-item list: "Receive" can therefore
+ * build a QA history one transaction at a time without first loading the full fixture set.
+ */
+export function receivePayCardTransactionMock(asset: PayCardMockTransactionAsset): void {
+  const template = mockPayCardTransactions().find(transaction =>
+    transaction.fundingSources.some(source => source.currency.toLowerCase() === asset),
+  );
+
+  if (!template) return;
+
+  receivedTransactionSerial += 1;
+  const serial = receivedTransactionSerial;
+  const received = {
+    ...template,
+    id: `devtool-${asset}-${serial}`,
+    transactionId: `devtool-${asset}-${serial}`,
+    dateTime: new Date().toISOString(),
+    fundingSources: template.fundingSources
+      .filter(source => source.currency.toLowerCase() === asset)
+      .map(source => ({
+        ...source,
+        id: `devtool-${asset}-source-${serial}`,
+        dateTime: new Date().toISOString(),
+      })),
+  };
+
+  transactionOverride = [received, ...(transactionOverride ?? [])];
+}
+
+/** Hands the endpoint back to its normal provider/mock-session behavior. */
+export function clearPayCardTransactionsMock(): void {
+  transactionOverride = undefined;
 }
