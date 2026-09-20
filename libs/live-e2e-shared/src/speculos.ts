@@ -929,12 +929,18 @@ export const activateContractData = withDeviceController(({ getButtonsController
 /** Every app's idle screen reads "<app> is ready", so this matches without naming the app. */
 const IDLE_SCREEN_LABEL = "is ready";
 
+const TOUCH_SETTLE_MS = 1_000;
+
 /**
  * Turns on the Ethereum app's "Blind signing" setting, without which the app answers `6a80` to
- * calldata it cannot describe. Reads the toggle before pressing it, and ends back on the idle
- * screen where a review can arrive.
+ * calldata it cannot describe, and ends back on the app's home screen where a review can arrive.
  *
- * Menu verified against Ethereum 1.22.3 on nanos+ 1.6.1.
+ * A button device reports the setting's state as text and so is only pressed when it is off. A
+ * touch device renders the switch as a graphic with no such text, so the tap is unconditional and
+ * calling this twice on one container would turn the setting back off; every caller gets a fresh
+ * container, whose NVRAM starts with it disabled.
+ *
+ * Menu verified against Ethereum 1.22.3 on nanos+ 1.6.1, flex, stax and nanoGen5.
  */
 export const enableBlindSigning = withDeviceController(({ getButtonsController }) => async () => {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
@@ -943,15 +949,17 @@ export const enableBlindSigning = withDeviceController(({ getButtonsController }
   if (isTouchDevice()) {
     await goToSettings();
     await waitFor(DeviceLabels.BLIND_SIGNING);
-
-    if (!(await isEnabled())) {
-      const toggle = getDeviceCoordinates("settingsToggle1");
-      await pressAndRelease(DeviceLabels.SETTINGS_TOGGLE_1, toggle.x, toggle.y);
-    }
-
+    // The switch sits in a fixed column to the right of its row, and Blind signing is not the
+    // first row, so take the column from the toggle coordinates and the row from the label.
+    const { x } = getDeviceCoordinates("settingsToggle1");
+    const { y } = await getDeviceLabelCoordinates(DeviceLabels.BLIND_SIGNING, speculosApiPort);
+    await pressAndRelease(DeviceLabels.BLIND_SIGNING, x, y);
+    // A tap landing during the switch animation is dropped.
+    await sleep(TOUCH_SETTLE_MS);
     const back = getDeviceCoordinates("arrowBack");
     await pressAndRelease(DeviceLabels.BACK, back.x, back.y);
-    await waitFor(IDLE_SCREEN_LABEL);
+    // Touch home reads "<app> ... Quit app", never the Nano's "<app> is ready".
+    await waitFor(DeviceLabels.QUIT_APP);
     return;
   }
 
