@@ -68,6 +68,7 @@ function createDetoxURLBlacklistRegex(): string {
     ".*speculos.*ldg-tech.com.*",
     ".*optimism.*",
     ".*speculos.ledgerlabs.net.*",
+    ".*fullnodes.api.live.ledger.com.*",
   ];
 
   return `\\("${patterns.join('","')}"\\)`;
