@@ -1,7 +1,14 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { MoreRow } from "./MoreRow";
-import type { MoreSheetProps } from "../types";
+import type { MoreRow as MoreRowModel } from "../types";
+
+type MoreSheetProps = Readonly<{
+  isOpen: boolean;
+  title: string;
+  rows: readonly MoreRowModel[];
+  onClose: () => void;
+}>;
 
 export function MoreSheet({ isOpen, title, rows, onClose }: MoreSheetProps) {
   const dismissed = useRef(false);

@@ -5,15 +5,20 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { BAANX_LEDGER_CURRENCY_IDS } from "@domain/entity-card-asset-mapping";
 import { useCurrenciesByIds } from "@features/platform-currencies";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
+import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import { useSelector } from "~/context/hooks";
+import { useLocale } from "~/context/Locale";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { addExtraSessionTrackingPairs, useCalculateCountervalueCallback } from "~/actions/general";
+import { formatCardTransactionAmount } from "LLM/features/OperationsHistory/utils/formatCardTransactionAmount";
+import { useCountervalueFormatter } from "./useCountervalueFormatter";
 import { useFiatFormatter } from "./useFiatFormatter";
 
 const NO_IDS: readonly string[] = [];
 
 export function usePayCardAssets(): CardAssetsProps {
+  const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
   // Nothing to price until the card is signed in, and the lookups and the polled pairs would be
@@ -50,9 +55,17 @@ export function usePayCardAssets(): CardAssetsProps {
   );
 
   const formatCountervalue = useFiatFormatter();
+  const formatBalance = useCountervalueFormatter();
+  const formatters = useMemo<CardTransactionFormatters>(
+    () => ({
+      amount: (value, currency, kind) =>
+        formatCardTransactionAmount({ value, currency, kind, locale }),
+    }),
+    [locale],
+  );
 
   return useMemo(
-    () => ({ currencies, priceWallet, formatCountervalue }),
-    [currencies, priceWallet, formatCountervalue],
+    () => ({ currencies, priceWallet, formatCountervalue, formatBalance, formatters }),
+    [currencies, priceWallet, formatCountervalue, formatBalance, formatters],
   );
 }

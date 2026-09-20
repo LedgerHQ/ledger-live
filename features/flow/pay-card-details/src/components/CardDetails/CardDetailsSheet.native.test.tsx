@@ -9,10 +9,13 @@ import {
 } from "@support/msw-features-flow-pay-card";
 import { ADD_TO_WALLET_COPY, CARD_COPY, I18nWrapper, MORE_COPY } from "../../__tests__/i18nWrapper";
 import { buildMoreViewProps } from "../More/fixtures";
-import type { CardDetailsRoute } from "./Scenes/navigation";
-import type { CardDetailsSceneProps } from "./Scenes/types";
+import type { CardDetailsRoute, CardDetailsSceneProps } from "./Scenes/types";
 import type { ConfirmState, FreezeViewModel } from "../../types";
 import { CardDetailsSheet } from "./CardDetailsSheet";
+
+jest.mock("@features/flow-pay-card-auth", () => ({
+  useIsCardSignedIn: () => true,
+}));
 
 listenToCardApi(signedInCardApiHandlers);
 
@@ -49,7 +52,9 @@ function buildScene({ route, confirmState }: SheetOverrides): CardDetailsScenePr
 
   return {
     route: route ?? { name: "overview" },
+    header: {},
     overview: {
+      assetsViewModel: null,
       freezeViewModel: viewModel,
       moreViewModel: more,
       onFreezePress: jest.fn(),
@@ -61,6 +66,10 @@ function buildScene({ route, confirmState }: SheetOverrides): CardDetailsScenePr
     more: { viewModel: more },
     addToWallet: { onDone: onAddToWalletDone },
     transaction: route?.name === "transaction" ? { transaction: route.transaction } : null,
+    assetDetails: null,
+    assetWithdraw: null,
+    assetsManage: null,
+    assetTransaction: null,
   };
 }
 
@@ -231,7 +240,10 @@ describe("CardDetailsSheet (native)", () => {
   });
 
   it("should ignore dismiss while freeze is pending", async () => {
-    const { onClose, pressDismiss } = renderSheet({ confirmState: "pending" });
+    const { onClose, pressDismiss } = renderSheet({
+      route: { name: "freeze" },
+      confirmState: "pending",
+    });
 
     await pressDismiss();
 

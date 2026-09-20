@@ -4,7 +4,6 @@ import { CardLogin } from "@features/flow-pay-card-auth";
 import { CardArtwork, CardDetails } from "@features/flow-pay-card-details";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import { AddToWalletCtaWithBottomSheet } from "@features/flow-pay-card-widget/native";
-import { CardAssets } from "@features/flow-pay-card-assets";
 import type { CardViewProps } from "./Card.types";
 
 export function CardView({
@@ -28,7 +27,7 @@ export function CardView({
           <CardOnboardingWidget />
           <CardDetails
             cardVisual={cardVisual}
-            assets={assets ? <CardAssets {...assets} /> : null}
+            assets={assets}
             formatters={{
               amount: formatters?.transactionAmount,
               date: formatters?.transactionDate,

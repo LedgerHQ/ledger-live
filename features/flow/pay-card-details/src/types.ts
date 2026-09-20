@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { PayCardStatus } from "@domain/api-card-management";
+import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
 import type { CardDetailsSceneProps } from "./components/CardDetails/Scenes/types";
@@ -23,8 +24,8 @@ export type CardVisualViewProps = CardVisualProps &
 export type CardDetailsProps = Readonly<{
   /** Balance overlay for the card face, or `undefined` to show the bare artwork. */
   cardVisual?: CardVisualProps;
-  /** Native only: what the sheet lists between the card actions and the transactions. */
-  assets?: ReactNode;
+  /** Native only: funding assets shown and navigated inside the card details drawer. */
+  assets?: CardAssetsProps;
   /** Formats the reward wallet amount, and, natively, the transactions the overview lists. */
   formatters?: CardTransactionFormatters;
   onTrackEvent?: CardTrackEvent;

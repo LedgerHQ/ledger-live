@@ -1,6 +1,7 @@
 export * from "./CardTransactions";
 export * from "./CardTransactions/components/CategoryIcon";
 export * from "./CardTransactions/components/Detail";
+export * from "./CardTransactions/components/ListItem";
 export * from "./CardTransactions/components/ListItem/formatCardTransactionItem";
 export * from "./CardTransactionHistory/CardTransactionHistory.native";
 export * from "./CardTransactionHistory/types";

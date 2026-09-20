@@ -17,23 +17,27 @@ import type {
 
 const KEY_PREFIX = "payTab.card.assets";
 const RECENT_TRANSACTIONS_SHOWN = 3;
+const EMPTY_CURRENCIES = new Map();
+const NO_PRICE: CardAssetsProps["priceWallet"] = () => null;
+const NO_COUNTERVALUE: CardAssetsProps["formatCountervalue"] = () => "";
 
 export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
   const ticker = currency.toUpperCase();
   return balance === null ? ticker : `${balance} ${ticker}`;
 }
 
-export function useCardAssetsViewModel({
-  currencies,
-  priceWallet,
-  formatCountervalue,
-  formatBalance,
-  formatters,
-  onTopUp,
-  onWithdraw,
-  onShowHistory,
-  onAddAsset,
-}: CardAssetsProps): CardAssetsViewModel {
+export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewModel {
+  const {
+    currencies = EMPTY_CURRENCIES,
+    priceWallet = NO_PRICE,
+    formatCountervalue = NO_COUNTERVALUE,
+    formatBalance,
+    formatters,
+    onTopUp,
+    onWithdraw,
+    onShowHistory,
+    onAddAsset,
+  } = props ?? {};
   const { t } = useTranslation();
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
@@ -187,7 +191,7 @@ export function useCardAssetsViewModel({
 
   return useMemo(
     () => ({
-      isVisible: isSignedIn,
+      isVisible: props !== undefined && isSignedIn,
       status,
       rows,
       dialogState,
@@ -216,6 +220,7 @@ export function useCardAssetsViewModel({
       reorderingAssetId,
     }),
     [
+      props,
       isSignedIn,
       t,
       status,

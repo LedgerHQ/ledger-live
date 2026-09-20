@@ -29,13 +29,12 @@ These scenes replace each other within that sheet so they do not compete for the
 bottom-sheet queue. Selecting a transaction also emits the injected tracking-plan
 `transaction_clicked` event.
 
-Each scene is a self-contained screen. The view model owns a single current `route` and drives it
-through a small navigation contract (`goTo` / `goBack`, in `Scenes/navigation.ts`); the
-sheet is a dumb shell that only renders the route it is given, sizing itself and showing its header
-back button from `Scenes/registry.ts`.
-Navigation is classic (one scene at a time, back to overview) but the same contract is deliberately
-thin: adding a scene (transactions, assets) is a new route plus a tile that calls `goTo`, and the
-scenes can later be mounted in a stack or as full pages without being rewritten.
+Each scene is a self-contained screen. The view model owns a single current `route` (the union in
+`Scenes/types.ts`) and the back step each scene takes; the sheet is a dumb shell that only renders
+the route it is given, sizing itself and showing its header back button from that route.
+Navigation is classic (one scene at a time, back to overview) but deliberately thin: adding a scene
+(transactions, assets) is a new route plus a tile that selects it, and the scenes can later be
+mounted in a stack or as full pages without being rewritten.
 
 ```tsx
 import { CardDetails } from "@features/flow-pay-card-details";
@@ -115,8 +114,7 @@ pay-card-details/
     │   │   ├── CardDetailsView.native.tsx     # Overlay actions on the card face + fade
     │   │   ├── CardDetailsSheet.native.tsx    # Adaptive sheet navigation and lifecycle
     │   │   ├── Scenes/                        # Self-contained sheet scenes (screens)
-    │   │   │   ├── navigation.ts              # Route union + goTo / goBack contract
-    │   │   │   ├── registry.native.ts         # Per-scene sheet sizing and back button
+    │   │   │   ├── types.ts                   # Route union + per-scene props
     │   │   │   ├── CardDetailsScene.native.tsx # Router: renders the current route
     │   │   │   ├── OverviewScene.native.tsx   # Card face + composable actions row
     │   │   │   ├── TransactionScene.native.tsx
@@ -129,6 +127,7 @@ pay-card-details/
     │   │   └── CardFlip.web.tsx               # Flip the card face to the PAN/CVV image
     │   ├── Reveal/
     │   │   ├── Reveal.web.tsx                 # View / Hide tile
+    │   │   ├── detailsImageCss.ts             # Card-face theming sent with the token request
     │   │   └── useRevealViewModel.ts          # Unlock, mint the token, hold the image URL
     │   ├── Freeze/
     │   │   ├── Freeze.web.tsx                 # Tile + confirmation, wired to the view model
