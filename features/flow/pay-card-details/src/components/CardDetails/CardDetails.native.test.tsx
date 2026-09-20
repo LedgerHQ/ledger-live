@@ -149,6 +149,7 @@ describe("CardDetails (native)", () => {
     await user.press(screen.getByLabelText(CARD_COPY.details));
     await user.press(await screen.findByText("USD Coin"));
 
+    // BottomSheetHeader exposes these strings only as props in the native Jest renderer.
     expect(
       screen.UNSAFE_getByProps({
         title: "USD Coin",
@@ -229,7 +230,6 @@ describe("CardDetails (native)", () => {
     expect(screen.getByText("Withdraw")).toBeVisible();
     expect(screen.queryByText("You'll be redirected to Baanx")).not.toBeOnTheScreen();
     expect(screen.queryByTestId("card-details-overview")).not.toBeOnTheScreen();
-    // The header still carries the asset it stepped back to, not an empty title slot.
     expect(screen.UNSAFE_getByProps({ title: "USD Coin", description: "USDC" })).toBeTruthy();
 
     await user.press(screen.getByTestId("card-details-sheet-back"));
