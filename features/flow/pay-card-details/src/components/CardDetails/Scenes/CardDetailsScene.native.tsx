@@ -38,7 +38,6 @@ export function CardDetailsScene({
         <CardAssetDetailsDrawer
           asset={assetDetails.viewModel.selectedAsset}
           transactions={assetDetails.viewModel.selectedAssetTransactions}
-          copy={assetDetails.viewModel.dialogCopy}
           formatBalance={assetDetails.viewModel.formatBalance}
           formatters={assetDetails.viewModel.formatters}
           onTopUp={assetDetails.viewModel.onTopUpPress}
@@ -49,10 +48,7 @@ export function CardDetailsScene({
       ) : null;
     case "assetWithdraw":
       return assetWithdraw ? (
-        <CardAssetDetailsWithdrawDrawer
-          copy={assetWithdraw.dialogCopy}
-          onContinue={assetWithdraw.onWithdrawContinue}
-        />
+        <CardAssetDetailsWithdrawDrawer onContinue={assetWithdraw.onWithdrawContinue} />
       ) : null;
     case "assetsManage":
       return assetsManage ? (

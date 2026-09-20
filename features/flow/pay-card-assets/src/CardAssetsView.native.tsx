@@ -30,11 +30,7 @@ function AssetRow({
   onPress,
 }: Readonly<{ row: CardAssetRow; onPress: (row: CardAssetRow) => void }>) {
   return (
-    <ListItem
-      testID={`card-asset-${row.id}`}
-      lx={{ backgroundColor: "surface", borderRadius: "md" }}
-      onPress={() => onPress(row)}
-    >
+    <ListItem lx={{ backgroundColor: "surface", borderRadius: "md" }} onPress={() => onPress(row)}>
       <ListItemLeading>
         <CryptoIcon ledgerId={row.ledgerId} ticker={row.ticker} size={ICON_SIZE} shape="circle" />
         <ListItemContent>
@@ -44,9 +40,7 @@ function AssetRow({
       </ListItemLeading>
       <ListItemTrailing>
         <ListItemContent lx={{ alignItems: "flex-end" }}>
-          <ListItemTitle testID={`card-asset-countervalue-${row.id}`}>
-            {row.countervalue ?? COUNTERVALUE_PLACEHOLDER}
-          </ListItemTitle>
+          <ListItemTitle>{row.countervalue ?? COUNTERVALUE_PLACEHOLDER}</ListItemTitle>
           <ListItemDescription>{row.cryptoAmount}</ListItemDescription>
         </ListItemContent>
       </ListItemTrailing>
@@ -76,7 +70,7 @@ function AssetsBody({ status, rows, onAssetPress }: AssetsBodyProps) {
 
   if (status === "loading") {
     return (
-      <Box testID="card-assets-loading-state">
+      <Box>
         <Skeleton component="list-item" />
         <Skeleton component="list-item" />
         <Skeleton component="list-item" />
@@ -108,13 +102,13 @@ export function CardAssetsView({
   if (!isVisible) return null;
 
   return (
-    <Box lx={{ gap: "s12" }} testID="card-assets">
+    <Box lx={{ gap: "s12" }}>
       <Subheader>
         <SubheaderRow>
           <SubheaderTitle>{title}</SubheaderTitle>
           <Tooltip>
             <TooltipTrigger asChild>
-              <SubheaderInfo accessibilityLabel={infoLabel} testID="card-assets-info" />
+              <SubheaderInfo accessibilityLabel={infoLabel} />
             </TooltipTrigger>
             <TooltipContent
               title={title}
@@ -126,13 +120,7 @@ export function CardAssetsView({
             />
           </Tooltip>
           <Box lx={{ flex: 1, alignItems: "flex-end" }}>
-            <Link
-              appearance="accent"
-              size="sm"
-              underline={false}
-              onPress={onManagePress}
-              testID="card-assets-manage"
-            >
+            <Link appearance="accent" size="sm" underline={false} onPress={onManagePress}>
               {manageLabel}
             </Link>
           </Box>

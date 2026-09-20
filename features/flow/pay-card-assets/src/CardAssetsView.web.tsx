@@ -31,11 +31,7 @@ function AssetRow({
   onPress,
 }: Readonly<{ row: CardAssetRow; onPress: (row: CardAssetRow) => void }>) {
   return (
-    <ListItem
-      className="bg-surface py-8"
-      data-testid={`card-asset-${row.id}`}
-      onClick={() => onPress(row)}
-    >
+    <ListItem className="bg-surface py-8" onClick={() => onPress(row)}>
       <ListItemLeading>
         <CryptoIcon ledgerId={row.ledgerId} ticker={row.ticker} size={ICON_SIZE} shape="circle" />
         <ListItemContent>
@@ -45,9 +41,7 @@ function AssetRow({
       </ListItemLeading>
       <ListItemTrailing>
         <ListItemContent className="items-end text-end">
-          <ListItemTitle data-testid={`card-asset-countervalue-${row.id}`}>
-            {row.countervalue ?? COUNTERVALUE_PLACEHOLDER}
-          </ListItemTitle>
+          <ListItemTitle>{row.countervalue ?? COUNTERVALUE_PLACEHOLDER}</ListItemTitle>
           <ListItemDescription>{row.cryptoAmount}</ListItemDescription>
         </ListItemContent>
       </ListItemTrailing>
@@ -67,7 +61,7 @@ function AssetsBody({ status, rows, onAssetPress }: AssetsBodyProps) {
   }
   if (status === "loading") {
     return (
-      <div className="flex flex-col" data-testid="card-assets-loading-state">
+      <div className="flex flex-col">
         <Skeleton component="list-item" />
         <Skeleton component="list-item" />
         <Skeleton component="list-item" />
@@ -93,7 +87,6 @@ export function CardAssetsView({
   selectedAssetTransactions,
   formatBalance,
   formatters,
-  dialogCopy,
   onAssetPress,
   onDialogClose,
   onTopUpPress,
@@ -115,7 +108,7 @@ export function CardAssetsView({
 
   return (
     <>
-      <section aria-label={title} className="flex flex-col gap-12" data-testid="card-assets">
+      <section aria-label={title} className="flex flex-col gap-12">
         <Subheader>
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -141,7 +134,6 @@ export function CardAssetsView({
         isOpen={dialogState === "details"}
         asset={selectedAsset}
         transactions={selectedAssetTransactions}
-        copy={dialogCopy}
         formatBalance={formatBalance}
         formatters={formatters}
         onClose={onDialogClose}
@@ -151,7 +143,6 @@ export function CardAssetsView({
       />
       <CardAssetDetailsWithdrawDialog
         isOpen={dialogState === "withdraw"}
-        copy={dialogCopy}
         onClose={onWithdrawClose}
         onContinue={onWithdrawContinue}
       />

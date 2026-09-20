@@ -61,7 +61,6 @@ export function useCardDetailsViewModel({
 
   const onAssetHistoryPress = () => {
     assetsViewModel.onShowHistoryPress();
-    goBack();
   };
 
   const onAssetWithdrawContinue = () => {

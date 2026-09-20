@@ -89,7 +89,6 @@ function SheetContent({ scene }: Readonly<{ scene: CardDetailsSceneProps }>) {
       <Box lx={{ paddingBottom: "s24" }}>
         <BottomSheetHeader
           density="compact"
-          spacing
           title={scene.header.title}
           description={scene.header.description}
         />

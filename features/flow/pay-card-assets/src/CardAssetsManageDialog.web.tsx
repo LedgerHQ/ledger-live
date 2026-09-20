@@ -9,16 +9,13 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
 import { CardAssetsManageRow } from "./CardAssetsManageRow.web";
-import type { CardAssetRow } from "./types";
+import type { CardAssetsManageContentProps } from "./types";
 
-type CardAssetsManageDialogProps = Readonly<{
-  isOpen: boolean;
-  rows: readonly CardAssetRow[];
-  onClose: () => void;
-  onAddAsset?: () => void;
-  onReorder: (draggedId: string, targetId: string) => Promise<void>;
-  reorderingAssetId: string | null;
-}>;
+type CardAssetsManageDialogProps = CardAssetsManageContentProps &
+  Readonly<{
+    isOpen: boolean;
+    onClose: () => void;
+  }>;
 
 export function CardAssetsManageDialog({
   isOpen,
@@ -30,20 +27,15 @@ export function CardAssetsManageDialog({
 }: CardAssetsManageDialogProps) {
   const { t } = useTranslation();
   const [draggedId, setDraggedId] = useState<string | null>(null);
+  const title = t("payTab.card.assets.manageDialog.title");
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()} height="fixed">
-      <DialogContent
-        className="max-w-480"
-        data-testid="card-assets-manage-dialog"
-        aria-describedby={undefined}
-      >
+      <DialogContent className="max-w-480" aria-describedby={undefined}>
         <DialogHeader onClose={onClose} className="!mb-0" />
         <DialogBody className="flex min-h-0 flex-1 flex-col gap-24 overflow-hidden pb-24">
           <div className="flex shrink-0 flex-col gap-8 text-start">
-            <h2 className="heading-3-semi-bold text-base">
-              {t("payTab.card.assets.manageDialog.title")}
-            </h2>
+            <h2 className="heading-3-semi-bold text-base">{title}</h2>
             <p className="body-2 text-muted">{t("payTab.card.assets.manageDialog.description")}</p>
           </div>
           <div className="min-h-0 overflow-x-hidden overflow-y-auto rounded-md bg-surface px-12">

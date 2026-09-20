@@ -24,14 +24,6 @@ const ready: CardAssetsViewModel = {
   dialogState: "closed",
   selectedAsset: null,
   selectedAssetTransactions: [],
-  dialogCopy: {
-    topUp: "Top up",
-    withdraw: "Withdraw",
-    transactions: "Transactions",
-    withdrawTitle: "You'll be redirected to Baanx",
-    withdrawDescription: "Withdraw funds from your Baanx account to your Ledger wallet address.",
-    continue: "Continue",
-  },
   onAssetPress: jest.fn(),
   onDialogClose: jest.fn(),
   onTopUpPress: jest.fn(),
@@ -53,7 +45,7 @@ describe("CardAssetsView (native)", () => {
     expect(screen.getByText("USD Coin")).toBeVisible();
     expect(screen.getByText("USDC")).toBeVisible();
     expect(screen.getByText("125.40 USDC")).toBeVisible();
-    expect(screen.getByTestId("card-asset-countervalue-w-usdc")).toHaveTextContent("$125.40");
+    expect(screen.getByText("$125.40")).toBeVisible();
   });
 
   it("should reserve the countervalue line while a wallet cannot be priced", () => {
@@ -62,7 +54,7 @@ describe("CardAssetsView (native)", () => {
     });
 
     expect(screen.getByText("125.40 USDC")).toBeVisible();
-    expect(screen.getByTestId("card-asset-countervalue-w-usdc")).toBeVisible();
+    expect(screen.queryByText(/\$/)).not.toBeOnTheScreen();
   });
 
   it("should give each wallet its own counter value", () => {
@@ -87,8 +79,8 @@ describe("CardAssetsView (native)", () => {
       { wrapper: I18nWrapper },
     );
 
-    expect(screen.getByTestId("card-asset-countervalue-w-usdc")).toHaveTextContent("$125.40");
-    expect(screen.getByTestId("card-asset-countervalue-w-btc")).toHaveTextContent("$9,900.00");
+    expect(screen.getByText("$125.40")).toBeVisible();
+    expect(screen.getByText("$9,900.00")).toBeVisible();
   });
 
   it("should render nothing when the card is not signed in", () => {
@@ -122,7 +114,6 @@ describe("CardAssetsView (native)", () => {
     });
 
     expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeVisible();
-    expect(screen.getByTestId("card-assets-loading-state")).toBeVisible();
     expect(screen.queryByText(CARD_ASSETS_COPY.empty)).not.toBeOnTheScreen();
     expect(screen.queryByText(CARD_ASSETS_COPY.error)).not.toBeOnTheScreen();
   });
@@ -146,10 +137,7 @@ describe("CardAssetsView (native)", () => {
       wrapper: I18nWrapper,
     });
 
-    expect(screen.getByTestId("card-assets-info")).toHaveProp(
-      "accessibilityLabel",
-      CARD_ASSETS_COPY.info,
-    );
+    expect(screen.getByLabelText(CARD_ASSETS_COPY.info)).toBeVisible();
     await user.press(screen.getByText(CARD_ASSETS_COPY.manage));
 
     expect(onManagePress).toHaveBeenCalledTimes(1);

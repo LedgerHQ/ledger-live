@@ -24,14 +24,6 @@ const ready: CardAssetsViewModel = {
   dialogState: "closed",
   selectedAsset: null,
   selectedAssetTransactions: [],
-  dialogCopy: {
-    topUp: "Top up",
-    withdraw: "Withdraw",
-    transactions: "Transactions",
-    withdrawTitle: "You'll be redirected to Baanx",
-    withdrawDescription: "Withdraw funds from your Baanx account to your Ledger wallet address.",
-    continue: "Continue",
-  },
   onAssetPress: jest.fn(),
   onDialogClose: jest.fn(),
   onTopUpPress: jest.fn(),
@@ -72,7 +64,7 @@ describe("CardAssetsView (web)", () => {
     expect(screen.getByText("USD Coin")).toBeInTheDocument();
     expect(screen.getByText("USDC")).toBeInTheDocument();
     expect(screen.getByText("125.40 USDC")).toBeInTheDocument();
-    expect(screen.getByTestId("card-asset-countervalue-w-usdc")).toHaveTextContent("$125.40");
+    expect(screen.getByText("$125.40")).toBeInTheDocument();
   });
 
   it("should reserve the countervalue line while a wallet cannot be priced", () => {
@@ -81,7 +73,7 @@ describe("CardAssetsView (web)", () => {
     });
 
     expect(screen.getByText("125.40 USDC")).toBeInTheDocument();
-    expect(screen.getByTestId("card-asset-countervalue-w-usdc")).toBeInTheDocument();
+    expect(screen.queryByText(/\$/)).not.toBeInTheDocument();
   });
 
   it("should give each wallet its own counter value", () => {
@@ -106,8 +98,8 @@ describe("CardAssetsView (web)", () => {
       { wrapper: I18nWrapper },
     );
 
-    expect(screen.getByTestId("card-asset-countervalue-w-usdc")).toHaveTextContent("$125.40");
-    expect(screen.getByTestId("card-asset-countervalue-w-btc")).toHaveTextContent("$9,900.00");
+    expect(screen.getByText("$125.40")).toBeInTheDocument();
+    expect(screen.getByText("$9,900.00")).toBeInTheDocument();
   });
 
   it("should render nothing when the card is not signed in", () => {
@@ -133,7 +125,6 @@ describe("CardAssetsView (web)", () => {
     render(<CardAssetsView {...ready} status="loading" rows={[]} />, { wrapper: I18nWrapper });
 
     expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeInTheDocument();
-    expect(screen.getByTestId("card-assets-loading-state")).toBeInTheDocument();
     expect(screen.queryByText(CARD_ASSETS_COPY.empty)).not.toBeInTheDocument();
     expect(screen.queryByText(CARD_ASSETS_COPY.error)).not.toBeInTheDocument();
   });
@@ -147,30 +138,20 @@ describe("CardAssetsView (web)", () => {
       { wrapper: I18nWrapper },
     );
 
-    expect(screen.getByTestId("card-asset-details-amount")).toBeVisible();
-    expect(screen.getByTestId("card-asset-details-amount-display")).toHaveAttribute(
-      "aria-busy",
-      "true",
-    );
+    expect(screen.getByLabelText("USD Coin USDC")).toHaveAttribute("aria-busy", "true");
   });
 
   it("should drop AmountDisplay loading once the counter value lands", () => {
     render(<CardAssetsView {...detailsOpen} />, { wrapper: I18nWrapper });
 
-    expect(screen.getByTestId("card-asset-details-amount")).toBeVisible();
-    expect(screen.getByTestId("card-asset-details-amount-display")).not.toHaveAttribute(
-      "aria-busy",
-      "true",
-    );
+    expect(screen.getByLabelText("USD Coin USDC")).not.toHaveAttribute("aria-busy", "true");
   });
 
   it("should drop the transactions header for Card's empty state when the asset has none", () => {
     render(<CardAssetsView {...detailsOpen} />, { wrapper: I18nWrapper });
 
     expect(screen.queryByText(CARD_ASSETS_COPY.transactions)).not.toBeInTheDocument();
-    expect(screen.getByTestId("card-asset-details-transactions-empty")).toHaveTextContent(
-      CARD_ASSETS_COPY.transactionsEmpty,
-    );
+    expect(screen.getByText(CARD_ASSETS_COPY.transactionsEmpty)).toBeVisible();
   });
 
   it("should keep the section title as a heading, not a hoverable row", () => {

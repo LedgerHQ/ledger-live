@@ -2,8 +2,8 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { CardAssetDetailsDrawer } from "../CardAssetDetailsDrawer.native";
 import { CardAssetDetailsWithdrawDrawer } from "../CardAssetDetailsWithdrawDrawer.native";
-import { I18nWrapper } from "./i18nWrapper";
-import type { CardAssetDialogCopy, CardAssetRow } from "../types";
+import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
+import type { CardAssetRow } from "../types";
 
 const asset: CardAssetRow = {
   id: "w-usdc",
@@ -17,15 +17,6 @@ const asset: CardAssetRow = {
   countervalueAmount: 125.4,
 };
 
-const copy: CardAssetDialogCopy = {
-  topUp: "Top up",
-  withdraw: "Withdraw",
-  transactions: "Transactions",
-  withdrawTitle: "Continue to Baanx",
-  withdrawDescription: "Withdraw funds to a Ledger account.",
-  continue: "Continue",
-};
-
 describe("Card asset drawers (native)", () => {
   it("should forward asset actions when details are open", () => {
     const onTopUp = jest.fn();
@@ -33,7 +24,6 @@ describe("Card asset drawers (native)", () => {
     render(
       <CardAssetDetailsDrawer
         asset={asset}
-        copy={copy}
         onTopUp={onTopUp}
         onWithdraw={onWithdraw}
         onShowHistory={jest.fn()}
@@ -42,8 +32,8 @@ describe("Card asset drawers (native)", () => {
       { wrapper: I18nWrapper },
     );
 
-    fireEvent.press(screen.getByText(copy.topUp));
-    fireEvent.press(screen.getByText(copy.withdraw));
+    fireEvent.press(screen.getByText(CARD_ASSETS_COPY.topUp));
+    fireEvent.press(screen.getByText(CARD_ASSETS_COPY.withdraw));
 
     expect(onTopUp).toHaveBeenCalledTimes(1);
     expect(onWithdraw).toHaveBeenCalledTimes(1);
@@ -51,11 +41,11 @@ describe("Card asset drawers (native)", () => {
 
   it("should continue withdrawal when confirmation is pressed", () => {
     const onContinue = jest.fn();
-    render(<CardAssetDetailsWithdrawDrawer copy={copy} onContinue={onContinue} />, {
+    render(<CardAssetDetailsWithdrawDrawer onContinue={onContinue} />, {
       wrapper: I18nWrapper,
     });
 
-    fireEvent.press(screen.getByText(copy.continue));
+    fireEvent.press(screen.getByText(CARD_ASSETS_COPY.continue));
 
     expect(onContinue).toHaveBeenCalledTimes(1);
   });

@@ -16,9 +16,9 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowDown, CreditCard, Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
-import type { CardAssetDialogCopy, CardAssetRow, CardAssetsViewModel } from "./types";
+import type { CardAssetDetailsContentProps } from "./types";
 
-const LOADING_FORMATTER: NonNullable<CardAssetsViewModel["formatBalance"]> = () => ({
+const LOADING_FORMATTER: NonNullable<CardAssetDetailsContentProps["formatBalance"]> = () => ({
   integerPart: "0",
   decimalPart: "00",
   currencyText: "",
@@ -26,22 +26,14 @@ const LOADING_FORMATTER: NonNullable<CardAssetsViewModel["formatBalance"]> = () 
   currencyPosition: "start",
 });
 
-type CardAssetDetailsDrawerProps = Readonly<{
-  asset: CardAssetRow;
-  transactions?: readonly CardTransactionItem[];
-  copy: CardAssetDialogCopy;
-  formatBalance?: CardAssetsViewModel["formatBalance"];
-  formatters?: CardAssetsViewModel["formatters"];
-  onTopUp: () => void;
-  onWithdraw: () => void;
-  onShowHistory: () => void;
-  onTransactionPress: (transaction: CardTransactionItem) => void;
-}>;
+type CardAssetDetailsDrawerProps = CardAssetDetailsContentProps &
+  Readonly<{
+    onTransactionPress: (transaction: CardTransactionItem) => void;
+  }>;
 
 export function CardAssetDetailsDrawer({
   asset,
   transactions = [],
-  copy,
   formatBalance,
   formatters,
   onTopUp,
@@ -53,32 +45,32 @@ export function CardAssetDetailsDrawer({
   const isAmountLoading = asset.countervalueAmount === null || !formatBalance;
 
   return (
-    <Box lx={{ gap: "s24", paddingBottom: "s24" }} testID="card-asset-details-drawer">
+    <Box lx={{ gap: "s24", paddingBottom: "s24" }}>
       <Box
         lx={{
           alignItems: "center",
           justifyContent: "center",
           paddingVertical: "s48",
         }}
-        testID="card-asset-details-amount"
       >
         <AmountDisplay
           value={asset.countervalueAmount ?? 0}
           formatter={formatBalance ?? LOADING_FORMATTER}
           loading={isAmountLoading}
           size="md"
-          testID="card-asset-details-amount-display"
+          accessibilityLabel={`${asset.name} ${asset.ticker}`}
+          accessibilityState={{ busy: isAmountLoading }}
         />
       </Box>
       <Box lx={{ flexDirection: "row", gap: "s8" }}>
         <Box lx={{ flex: 1, minWidth: "s0" }}>
           <TileButton icon={Plus} onPress={onTopUp} isFull>
-            {copy.topUp}
+            {t("payTab.card.assets.details.topUp")}
           </TileButton>
         </Box>
         <Box lx={{ flex: 1, minWidth: "s0" }}>
           <TileButton icon={ArrowDown} onPress={onWithdraw} isFull>
-            {copy.withdraw}
+            {t("payTab.card.assets.details.withdraw")}
           </TileButton>
         </Box>
       </Box>
@@ -86,7 +78,7 @@ export function CardAssetDetailsDrawer({
         <Box lx={{ gap: "s8" }}>
           <Subheader>
             <SubheaderRow onPress={onShowHistory}>
-              <SubheaderTitle>{copy.transactions}</SubheaderTitle>
+              <SubheaderTitle>{t("payTab.card.assets.details.transactions")}</SubheaderTitle>
               <SubheaderShowMore />
             </SubheaderRow>
           </Subheader>
@@ -102,10 +94,7 @@ export function CardAssetDetailsDrawer({
           </Box>
         </Box>
       ) : (
-        <Box
-          lx={{ alignItems: "center", gap: "s24", paddingVertical: "s24" }}
-          testID="card-asset-details-transactions-empty"
-        >
+        <Box lx={{ alignItems: "center", gap: "s24", paddingVertical: "s24" }}>
           <Spot appearance="icon" icon={CreditCard} size={72} />
           <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
             {t("payTab.cardTransactions.history.empty.title")}

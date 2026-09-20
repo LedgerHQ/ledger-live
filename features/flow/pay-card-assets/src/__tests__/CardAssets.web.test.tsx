@@ -136,7 +136,7 @@ describe("CardAssets (web)", () => {
     mockUnwrapUpdate.mockResolvedValue({ success: true });
   });
 
-  function renderCardAssets(onAddAsset?: () => void) {
+  const renderCardAssets = (onAddAsset?: () => void) => {
     render(
       <CardAssets
         currencies={new Map([[USDC.id, USDC]])}
@@ -147,15 +147,15 @@ describe("CardAssets (web)", () => {
       />,
       { wrapper: I18nWrapper },
     );
-  }
+  };
 
   it("should show what the asset is worth on top of its details", async () => {
     const user = userEvent.setup();
     renderCardAssets();
 
-    await user.click(screen.getByTestId("card-asset-w-usdc"));
+    await user.click(screen.getByText("USD Coin"));
 
-    expect(await screen.findByTestId("card-asset-details-amount")).toBeVisible();
+    expect(await screen.findByLabelText("USD Coin USDC")).toBeVisible();
   });
 
   it("should keep AmountDisplay loading when the host has no balance formatter", async () => {
@@ -169,25 +169,20 @@ describe("CardAssets (web)", () => {
       { wrapper: I18nWrapper },
     );
 
-    await user.click(screen.getByTestId("card-asset-w-usdc"));
+    await user.click(screen.getByText("USD Coin"));
 
-    expect(await screen.findByTestId("card-asset-details-dialog")).toBeVisible();
-    expect(screen.getByTestId("card-asset-details-amount")).toBeVisible();
-    expect(screen.getByTestId("card-asset-details-amount-display")).toHaveAttribute(
-      "aria-busy",
-      "true",
-    );
+    expect(screen.getByLabelText("USD Coin USDC")).toHaveAttribute("aria-busy", "true");
   });
 
   it("should show summary-style rows when an asset is selected", async () => {
     const user = userEvent.setup();
     renderCardAssets();
 
-    await user.click(screen.getByTestId("card-asset-w-usdc"));
+    await user.click(screen.getByText("USD Coin"));
 
-    expect(await screen.findByTestId("card-transactions-item-uniqlo-usdc")).toBeVisible();
-    expect(screen.queryByTestId("card-asset-details-transactions-empty")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("card-transactions-item-dentist-eth")).not.toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: /Uniqlo/ })).toBeVisible();
+    expect(screen.queryByText(CARD_ASSETS_COPY.transactionsEmpty)).not.toBeInTheDocument();
+    expect(screen.queryByText("Dentist")).not.toBeInTheDocument();
     expect(screen.getByText("-324.43 USD")).toBeVisible();
     expect(screen.getByText("-324.4332 USDC")).toBeVisible();
   });
@@ -196,10 +191,12 @@ describe("CardAssets (web)", () => {
     const user = userEvent.setup();
     renderCardAssets();
 
-    await user.click(screen.getByTestId("card-asset-w-usdc"));
-    await user.click(await screen.findByTestId("card-transactions-item-uniqlo-usdc"));
+    await user.click(screen.getByText("USD Coin"));
+    await user.click(await screen.findByRole("button", { name: /Uniqlo/ }));
 
-    expect(await screen.findByTestId("card-transaction-detail-dialog")).toBeVisible();
+    expect(await screen.findByText(/Uniqlo/)).toBeVisible();
+    expect(screen.queryByRole("button", { name: /Uniqlo/ })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("USD Coin")).not.toBeInTheDocument();
   });
 
   it("should ask the host for asset history when Transactions is pressed", async () => {
@@ -215,29 +212,28 @@ describe("CardAssets (web)", () => {
       { wrapper: I18nWrapper },
     );
 
-    await user.click(screen.getByTestId("card-asset-w-usdc"));
+    await user.click(screen.getByText("USD Coin"));
     await user.click(screen.getByText(CARD_ASSETS_COPY.transactions));
 
     expect(onShowHistory).toHaveBeenCalledWith(expect.objectContaining({ id: "w-usdc" }));
-    expect(screen.queryByTestId("card-asset-transaction-history")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("USD Coin USDC")).toBeVisible();
   });
 
   it("should return to asset details when the withdraw dialog closes", async () => {
     const user = userEvent.setup();
     renderCardAssets();
 
-    await user.click(screen.getByTestId("card-asset-w-usdc"));
+    await user.click(screen.getByText("USD Coin"));
     await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.withdraw }));
 
-    expect(screen.getByTestId("card-asset-withdraw-dialog")).toBeVisible();
     expect(screen.getByText(CARD_ASSETS_COPY.withdrawTitle)).toBeVisible();
 
     await user.click(screen.getByRole("button", { name: /close/i }));
 
     await waitFor(() =>
-      expect(screen.queryByTestId("card-asset-withdraw-dialog")).not.toBeInTheDocument(),
+      expect(screen.queryByText(CARD_ASSETS_COPY.withdrawTitle)).not.toBeInTheDocument(),
     );
-    expect(await screen.findByTestId("card-asset-details-dialog")).toBeVisible();
+    expect(await screen.findByLabelText("USD Coin USDC")).toBeVisible();
   });
 
   it("should open the manage dialog with linked assets", async () => {
@@ -246,14 +242,11 @@ describe("CardAssets (web)", () => {
 
     await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
 
-    const dialog = screen.getByTestId("card-assets-manage-dialog");
+    expect(screen.getByRole("heading", { name: CARD_ASSETS_COPY.manageDialogTitle })).toBeVisible();
+    expect(screen.getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
+    expect(screen.getAllByText("USD Coin")).toHaveLength(2);
     expect(
-      within(dialog).getByRole("heading", { name: CARD_ASSETS_COPY.manageDialogTitle }),
-    ).toBeVisible();
-    expect(within(dialog).getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
-    expect(within(dialog).getByText("USD Coin")).toBeVisible();
-    expect(
-      within(dialog).queryByRole("button", { name: CARD_ASSETS_COPY.addAsset }),
+      screen.queryByRole("button", { name: CARD_ASSETS_COPY.addAsset }),
     ).not.toBeInTheDocument();
   });
 
@@ -296,9 +289,9 @@ describe("CardAssets (web)", () => {
     await user.click(screen.getByRole("button", { name: /close/i }));
 
     await waitFor(() =>
-      expect(screen.queryByTestId("card-assets-manage-dialog")).not.toBeInTheDocument(),
+      expect(screen.queryByText(CARD_ASSETS_COPY.manageDialogTitle)).not.toBeInTheDocument(),
     );
-    expect(screen.getByTestId("card-assets")).toBeVisible();
+    expect(screen.getByRole("region", { name: CARD_ASSETS_COPY.title })).toBeVisible();
   });
 
   it("should ask the host to add an asset", async () => {

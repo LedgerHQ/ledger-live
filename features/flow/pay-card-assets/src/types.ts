@@ -3,7 +3,7 @@ import type {
   CardTransactionFormatters,
   CardTransactionItem,
 } from "@features/flow-pay-card-transactions";
-import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
+import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
 
 export type CardAssetRow = Readonly<{
   id: string;
@@ -47,13 +47,25 @@ export type CardAssetsProps = Readonly<{
 
 export type CardAssetDialogState = "closed" | "details" | "withdraw" | "manage";
 
-export type CardAssetDialogCopy = Readonly<{
-  topUp: string;
-  withdraw: string;
-  transactions: string;
-  withdrawTitle: string;
-  withdrawDescription: string;
-  continue: string;
+export type CardAssetDetailsContentProps = Readonly<{
+  asset: CardAssetRow;
+  transactions?: readonly CardTransactionItem[];
+  formatBalance?: (value: number) => FormattedValue;
+  formatters?: CardTransactionFormatters;
+  onTopUp: () => void;
+  onWithdraw: () => void;
+  onShowHistory: () => void;
+}>;
+
+export type CardAssetWithdrawContentProps = Readonly<{
+  onContinue: () => void;
+}>;
+
+export type CardAssetsManageContentProps = Readonly<{
+  rows: readonly CardAssetRow[];
+  onAddAsset?: () => void;
+  onReorder: (draggedId: string, targetId: string) => Promise<void>;
+  reorderingAssetId: string | null;
 }>;
 
 export type CardAssetsViewModel = Readonly<{
@@ -65,7 +77,6 @@ export type CardAssetsViewModel = Readonly<{
   selectedAssetTransactions: readonly CardTransactionItem[];
   formatBalance?: (value: number) => FormattedValue;
   formatters?: CardTransactionFormatters;
-  dialogCopy: CardAssetDialogCopy;
   onAssetPress: (asset: CardAssetRow) => void;
   onDialogClose: () => void;
   onTopUpPress: () => void;

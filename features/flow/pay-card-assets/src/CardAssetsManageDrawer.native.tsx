@@ -9,12 +9,9 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
-import type { CardAssetRow } from "./types";
+import type { CardAssetsManageContentProps } from "./types";
 
-type CardAssetsManageDrawerProps = Readonly<{
-  rows: readonly CardAssetRow[];
-  onAddAsset?: () => void;
-}>;
+type CardAssetsManageDrawerProps = Pick<CardAssetsManageContentProps, "rows" | "onAddAsset">;
 
 export function CardAssetsManageDrawer({ rows, onAddAsset }: CardAssetsManageDrawerProps) {
   const { t } = useTranslation();

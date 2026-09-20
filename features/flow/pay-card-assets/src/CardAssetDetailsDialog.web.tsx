@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   CardTransactionDetail,
   ListItem as CardTransactionListItem,
-  type CardTransactionFormatters,
   type CardTransactionItem,
 } from "@features/flow-pay-card-transactions";
 import {
@@ -21,7 +20,7 @@ import {
 import { ArrowDown, CreditCard, Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
-import type { CardAssetDialogCopy, CardAssetRow } from "./types";
+import type { CardAssetDetailsContentProps, CardAssetRow } from "./types";
 
 const LOADING_FORMATTER: (value: number) => FormattedValue = () => ({
   integerPart: "0",
@@ -31,25 +30,17 @@ const LOADING_FORMATTER: (value: number) => FormattedValue = () => ({
   currencyPosition: "start",
 });
 
-type CardAssetDetailsDialogProps = Readonly<{
-  isOpen: boolean;
-  asset: CardAssetRow | null;
-  /** The asset's last few transactions. Empty drops the section for Card's empty state. */
-  transactions?: readonly CardTransactionItem[];
-  copy: CardAssetDialogCopy;
-  formatBalance?: (value: number) => FormattedValue;
-  formatters?: CardTransactionFormatters;
-  onClose: () => void;
-  onTopUp: () => void;
-  onWithdraw: () => void;
-  onShowHistory: () => void;
-}>;
+type CardAssetDetailsDialogProps = Omit<CardAssetDetailsContentProps, "asset"> &
+  Readonly<{
+    isOpen: boolean;
+    asset: CardAssetRow | null;
+    onClose: () => void;
+  }>;
 
 export function CardAssetDetailsDialog({
   isOpen,
   asset,
   transactions = [],
-  copy,
   formatBalance,
   formatters,
   onClose,
@@ -70,11 +61,7 @@ export function CardAssetDetailsDialog({
         onOpenChange={open => !open && onClose()}
         height="fixed"
       >
-        <DialogContent
-          className="bg-canvas-sheet p-0"
-          data-testid="card-asset-details-dialog"
-          aria-describedby={undefined}
-        >
+        <DialogContent className="bg-canvas-sheet p-0" aria-describedby={undefined}>
           {asset ? (
             <>
               <DialogHeader
@@ -85,29 +72,31 @@ export function CardAssetDetailsDialog({
               />
               {/* `DialogBody` pairs its own `pb-24` with a `-mb-24`, so 48 here nets the 24px. */}
               <DialogBody className="flex flex-col gap-24 pb-48">
-                <div className="flex justify-center py-24" data-testid="card-asset-details-amount">
+                <div className="flex justify-center py-24">
                   <AmountDisplay
                     value={asset.countervalueAmount ?? 0}
                     formatter={formatBalance ?? LOADING_FORMATTER}
                     loading={isAmountLoading}
                     animate
-                    data-testid="card-asset-details-amount-display"
+                    aria-label={`${asset.name} ${asset.ticker}`}
                     aria-busy={isAmountLoading}
                   />
                 </div>
                 <div className="flex gap-8">
                   <TileButton icon={Plus} onClick={onTopUp} isFull>
-                    {copy.topUp}
+                    {t("payTab.card.assets.details.topUp")}
                   </TileButton>
                   <TileButton icon={ArrowDown} onClick={onWithdraw} isFull>
-                    {copy.withdraw}
+                    {t("payTab.card.assets.details.withdraw")}
                   </TileButton>
                 </div>
                 {transactions.length > 0 ? (
                   <div className="flex flex-col gap-8">
                     <Subheader>
                       <SubheaderRow onClick={onShowHistory}>
-                        <SubheaderTitle>{copy.transactions}</SubheaderTitle>
+                        <SubheaderTitle>
+                          {t("payTab.card.assets.details.transactions")}
+                        </SubheaderTitle>
                         <SubheaderShowMore />
                       </SubheaderRow>
                     </Subheader>
@@ -123,10 +112,7 @@ export function CardAssetDetailsDialog({
                     </div>
                   </div>
                 ) : (
-                  <div
-                    className="flex flex-col items-center gap-24 py-24 text-center"
-                    data-testid="card-asset-details-transactions-empty"
-                  >
+                  <div className="flex flex-col items-center gap-24 py-24 text-center">
                     <Spot appearance="icon" icon={CreditCard} size={72} />
                     <p className="heading-4-semi-bold text-base">
                       {t("payTab.cardTransactions.history.empty.title")}

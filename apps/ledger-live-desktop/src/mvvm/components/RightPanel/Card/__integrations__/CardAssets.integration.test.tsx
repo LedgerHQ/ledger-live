@@ -78,7 +78,7 @@ describe("Card assets", () => {
     render(<Card />, { initialState: signedIn, initialCountervalues: initialCountervaluesMock });
 
     // The seeded rate is 30257.43 USD for bitcoin, so half a coin is a little over 15,128.
-    expect(await screen.findByTestId("card-asset-countervalue-w-btc")).toHaveTextContent("15,12");
+    expect(await screen.findByText(/15,12/)).toBeVisible();
   });
 
   it("shows what the asset is worth on top of the details the row opens", async () => {
@@ -87,8 +87,8 @@ describe("Card assets", () => {
       initialCountervalues: initialCountervaluesMock,
     });
 
-    await user.click(await screen.findByTestId("card-asset-w-btc"));
+    await user.click(await screen.findByText("Bitcoin"));
 
-    expect(await screen.findByTestId("card-asset-details-amount")).toBeVisible();
+    expect(await screen.findByLabelText("Bitcoin BTC")).toBeVisible();
   });
 });

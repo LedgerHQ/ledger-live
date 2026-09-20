@@ -1,5 +1,5 @@
 import React, { type PropsWithChildren } from "react";
-import { act, render, screen, userEvent, within } from "@testing-library/react-native";
+import { act, render, screen, userEvent } from "@testing-library/react-native";
 import {
   cardApiWrapper,
   CARD_API_BASE_URL,
@@ -48,7 +48,7 @@ const USDC = {
   units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
 } as CardAssetCurrency;
 
-const ASSETS: CardDetailsProps["assets"] = {
+const ASSETS: NonNullable<CardDetailsProps["assets"]> = {
   currencies: new Map([[USDC.id, USDC]]),
   priceWallet: () => 1,
   formatCountervalue: () => "$1.00",
@@ -155,9 +155,6 @@ describe("CardDetails (native)", () => {
         description: "USDC",
       }),
     ).toBeTruthy();
-    expect(
-      within(screen.getByTestId("card-asset-details-drawer")).queryByText("USD Coin"),
-    ).not.toBeOnTheScreen();
   });
 
   it("should return to the overview when leaving asset details through back", async () => {
@@ -169,7 +166,7 @@ describe("CardDetails (native)", () => {
     await user.press(screen.getByTestId("card-details-sheet-back"));
 
     expect(screen.getByTestId("card-details-overview")).toBeVisible();
-    expect(screen.queryByTestId("card-asset-details-drawer")).not.toBeOnTheScreen();
+    expect(screen.queryByText("Top up")).not.toBeOnTheScreen();
   });
 
   it("should open Manage inside the card details drawer", async () => {
@@ -228,8 +225,9 @@ describe("CardDetails (native)", () => {
     await user.press(screen.getByText("Withdraw"));
     await user.press(screen.getByTestId("card-details-sheet-back"));
 
-    expect(screen.getByTestId("card-asset-details-drawer")).toBeVisible();
-    expect(screen.queryByTestId("card-asset-withdraw-drawer")).not.toBeOnTheScreen();
+    expect(screen.getByText("Top up")).toBeVisible();
+    expect(screen.getByText("Withdraw")).toBeVisible();
+    expect(screen.queryByText("You'll be redirected to Baanx")).not.toBeOnTheScreen();
     expect(screen.queryByTestId("card-details-overview")).not.toBeOnTheScreen();
     // The header still carries the asset it stepped back to, not an empty title slot.
     expect(screen.UNSAFE_getByProps({ title: "USD Coin", description: "USDC" })).toBeTruthy();

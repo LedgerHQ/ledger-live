@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import { useUpdateCardWalletPrioritiesMutation } from "@domain/api-card-management";
-import { useTranslation } from "@shared/i18n";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import {
   isCardTransactionFundedBy,
@@ -15,7 +14,6 @@ import type {
   CardAssetsViewModel,
 } from "./types";
 
-const KEY_PREFIX = "payTab.card.assets";
 const RECENT_TRANSACTIONS_SHOWN = 3;
 const EMPTY_CURRENCIES = new Map();
 const NO_PRICE: CardAssetsProps["priceWallet"] = () => null;
@@ -38,7 +36,6 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     onShowHistory,
     onAddAsset,
   } = props ?? {};
-  const { t } = useTranslation();
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [assetOrder, setAssetOrder] = useState<readonly string[]>([]);
@@ -102,12 +99,10 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     [selectedAsset, transactions],
   );
 
-  const status = useMemo<CardAssetsStatus>(() => {
-    if (isLoading) return "loading";
-    if (isError) return "error";
-    if (rows.length === 0) return "empty";
-    return "ready";
-  }, [isLoading, isError, rows.length]);
+  let status: CardAssetsStatus = "ready";
+  if (isLoading) status = "loading";
+  else if (isError) status = "error";
+  else if (rows.length === 0) status = "empty";
 
   const onAssetPress = useCallback((asset: CardAssetRow) => {
     setSelectedAssetId(asset.id);
@@ -132,11 +127,9 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     setDialogState("details");
   }, []);
 
-  // History is a host route, not a dialog: hand the asset over and leave the dialogs closed.
   const onShowHistoryPress = useCallback(() => {
     if (selectedAsset) onShowHistory?.(selectedAsset);
-    onDialogClose();
-  }, [onDialogClose, onShowHistory, selectedAsset]);
+  }, [onShowHistory, selectedAsset]);
 
   const onWithdrawContinue = useCallback(() => {
     if (selectedAsset) onWithdraw?.(selectedAsset);
@@ -200,14 +193,6 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       selectedAssetTransactions,
       formatBalance,
       formatters,
-      dialogCopy: {
-        topUp: t(`${KEY_PREFIX}.details.topUp`),
-        withdraw: t(`${KEY_PREFIX}.details.withdraw`),
-        transactions: t(`${KEY_PREFIX}.details.transactions`),
-        withdrawTitle: t(`${KEY_PREFIX}.withdraw.title`),
-        withdrawDescription: t(`${KEY_PREFIX}.withdraw.description`),
-        continue: t(`${KEY_PREFIX}.withdraw.continue`),
-      },
       onAssetPress,
       onDialogClose,
       onTopUpPress,
@@ -223,7 +208,6 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     [
       props,
       isSignedIn,
-      t,
       status,
       rows,
       dialogState,
