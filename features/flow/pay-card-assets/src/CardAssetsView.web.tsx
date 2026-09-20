@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Link,
   ListItem,
   ListItemContent,
   ListItemDescription,
@@ -18,6 +19,7 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { useTranslation } from "@shared/i18n";
 import { CardAssetDetailsDialog } from "./CardAssetDetailsDialog.web";
 import { CardAssetDetailsWithdrawDialog } from "./CardAssetDetailsWithdrawDialog.web";
+import { CardAssetsManageDialog } from "./CardAssetsManageDialog.web";
 import type { CardAssetRow, CardAssetsViewModel } from "./types";
 
 const ICON_SIZE = 48;
@@ -99,10 +101,13 @@ export function CardAssetsView({
   onWithdrawClose,
   onShowHistoryPress,
   onWithdrawContinue,
+  onManagePress,
+  onAddAssetPress,
 }: CardAssetsViewModel) {
   const { t } = useTranslation();
   const title = t("payTab.card.assets.title");
   const infoLabel = t("payTab.card.assets.info");
+  const manageLabel = t("payTab.card.assets.manage");
 
   if (!isVisible) return null;
 
@@ -110,14 +115,21 @@ export function CardAssetsView({
     <>
       <section aria-label={title} className="flex flex-col gap-12" data-testid="card-assets">
         <Subheader>
-          <div className="flex items-center gap-4">
-            <SubheaderTitle as="h2">{title}</SubheaderTitle>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <SubheaderInfo aria-label={infoLabel} />
-              </TooltipTrigger>
-              <TooltipContent>{infoLabel}</TooltipContent>
-            </Tooltip>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <SubheaderTitle as="h2">{title}</SubheaderTitle>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <SubheaderInfo aria-label={infoLabel} />
+                </TooltipTrigger>
+                <TooltipContent>{infoLabel}</TooltipContent>
+              </Tooltip>
+            </div>
+            <Link appearance="accent" underline={false} size="sm" asChild>
+              <button type="button" onClick={onManagePress}>
+                {manageLabel}
+              </button>
+            </Link>
           </div>
         </Subheader>
 
@@ -140,6 +152,12 @@ export function CardAssetsView({
         copy={dialogCopy}
         onClose={onWithdrawClose}
         onContinue={onWithdrawContinue}
+      />
+      <CardAssetsManageDialog
+        isOpen={dialogState === "manage"}
+        rows={rows}
+        onClose={onDialogClose}
+        onAddAsset={onAddAssetPress}
       />
     </>
   );

@@ -1,5 +1,6 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { CardAssetsView } from "../CardAssetsView.web";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 import type { CardAssetsViewModel } from "../types";
@@ -38,6 +39,8 @@ const ready: CardAssetsViewModel = {
   onWithdrawClose: jest.fn(),
   onShowHistoryPress: jest.fn(),
   onWithdrawContinue: jest.fn(),
+  onManagePress: jest.fn(),
+  onAddAssetPress: jest.fn(),
 };
 
 const formatBalance = (value: number) => ({
@@ -180,5 +183,15 @@ describe("CardAssetsView (web)", () => {
 
     expect(screen.getByLabelText(CARD_ASSETS_COPY.info)).toBeVisible();
     expect(screen.getByRole("tooltip")).toHaveTextContent(CARD_ASSETS_COPY.info);
+  });
+
+  it("should ask the host to manage assets when Manage is pressed", async () => {
+    const user = userEvent.setup();
+    const onManagePress = jest.fn();
+    render(<CardAssetsView {...ready} onManagePress={onManagePress} />, { wrapper: I18nWrapper });
+
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
+
+    expect(onManagePress).toHaveBeenCalledTimes(1);
   });
 });

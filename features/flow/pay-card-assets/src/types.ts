@@ -40,9 +40,10 @@ export type CardAssetsProps = Readonly<{
   onTopUp?: (asset: CardAssetRow) => void;
   onWithdraw?: (asset: CardAssetRow) => void;
   onShowHistory?: (asset: CardAssetRow) => void;
+  onAddAsset?: () => void;
 }>;
 
-export type CardAssetDialogState = "closed" | "details" | "withdraw";
+export type CardAssetDialogState = "closed" | "details" | "withdraw" | "manage";
 
 export type CardAssetDialogCopy = Readonly<{
   topUp: string;
@@ -71,4 +72,6 @@ export type CardAssetsViewModel = Readonly<{
   onWithdrawClose: () => void;
   onShowHistoryPress: () => void;
   onWithdrawContinue: () => void;
+  onManagePress: () => void;
+  onAddAssetPress: () => void;
 }>;

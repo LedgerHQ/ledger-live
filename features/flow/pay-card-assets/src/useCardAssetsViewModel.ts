@@ -31,6 +31,7 @@ export function useCardAssetsViewModel({
   onTopUp,
   onWithdraw,
   onShowHistory,
+  onAddAsset,
 }: CardAssetsProps): CardAssetsViewModel {
   const { t } = useTranslation();
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
@@ -120,6 +121,14 @@ export function useCardAssetsViewModel({
     onDialogClose();
   }, [onDialogClose, onWithdraw, selectedAsset]);
 
+  const onManagePress = useCallback(() => {
+    setDialogState("manage");
+  }, []);
+
+  const onAddAssetPress = useCallback(() => {
+    onAddAsset?.();
+  }, [onAddAsset]);
+
   return useMemo(
     () => ({
       isVisible: isSignedIn,
@@ -145,6 +154,8 @@ export function useCardAssetsViewModel({
       onWithdrawClose,
       onShowHistoryPress,
       onWithdrawContinue,
+      onManagePress,
+      onAddAssetPress,
     }),
     [
       isSignedIn,
@@ -163,6 +174,8 @@ export function useCardAssetsViewModel({
       onWithdrawClose,
       onShowHistoryPress,
       onWithdrawContinue,
+      onManagePress,
+      onAddAssetPress,
     ],
   );
 }

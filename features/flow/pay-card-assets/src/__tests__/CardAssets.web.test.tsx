@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 import { CardAssets } from "../CardAssets";
@@ -113,13 +113,14 @@ const formatBalance = (value: number) => ({
 });
 
 describe("CardAssets (web)", () => {
-  function renderCardAssets() {
+  function renderCardAssets(onAddAsset?: () => void) {
     render(
       <CardAssets
         currencies={new Map([[USDC.id, USDC]])}
         priceWallet={() => 4000}
         formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
         formatBalance={formatBalance}
+        onAddAsset={onAddAsset}
       />,
       { wrapper: I18nWrapper },
     );
@@ -214,5 +215,44 @@ describe("CardAssets (web)", () => {
       expect(screen.queryByTestId("card-asset-withdraw-dialog")).not.toBeInTheDocument(),
     );
     expect(await screen.findByTestId("card-asset-details-dialog")).toBeVisible();
+  });
+
+  it("should open the manage dialog with linked assets", async () => {
+    const user = userEvent.setup();
+    renderCardAssets();
+
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
+
+    const dialog = screen.getByTestId("card-assets-manage-dialog");
+    expect(
+      within(dialog).getByRole("heading", { name: CARD_ASSETS_COPY.manageDialogTitle }),
+    ).toBeVisible();
+    expect(within(dialog).getByText(CARD_ASSETS_COPY.manageDialogDescription)).toBeVisible();
+    expect(within(dialog).getByText("USD Coin")).toBeVisible();
+    expect(within(dialog).getByRole("button", { name: CARD_ASSETS_COPY.addAsset })).toBeVisible();
+  });
+
+  it("should return to the asset list when the manage dialog closes", async () => {
+    const user = userEvent.setup();
+    renderCardAssets();
+
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
+    await user.click(screen.getByRole("button", { name: /close/i }));
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("card-assets-manage-dialog")).not.toBeInTheDocument(),
+    );
+    expect(screen.getByTestId("card-assets")).toBeVisible();
+  });
+
+  it("should ask the host to add an asset", async () => {
+    const user = userEvent.setup();
+    const onAddAsset = jest.fn();
+    renderCardAssets(onAddAsset);
+
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.manage }));
+    await user.click(screen.getByRole("button", { name: CARD_ASSETS_COPY.addAsset }));
+
+    expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
 });

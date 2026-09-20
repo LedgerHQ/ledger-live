@@ -202,4 +202,30 @@ describe("useCardAssetsViewModel", () => {
 
     expect(result.current.selectedAsset?.cryptoAmount).toBe("250.80 USDC");
   });
+
+  it("should open the manage dialog when manage is pressed", () => {
+    const { result } = renderViewModel();
+
+    act(() => result.current.onManagePress());
+
+    expect(result.current.dialogState).toBe("manage");
+  });
+
+  it("should hand add asset through to the host", () => {
+    const onAddAsset = jest.fn();
+    const { result } = renderHook(
+      () =>
+        useCardAssetsViewModel({
+          currencies: CURRENCIES,
+          priceWallet,
+          formatCountervalue,
+          onAddAsset,
+        }),
+      { wrapper: I18nWrapper },
+    );
+
+    act(() => result.current.onAddAssetPress());
+
+    expect(onAddAsset).toHaveBeenCalledTimes(1);
+  });
 });
