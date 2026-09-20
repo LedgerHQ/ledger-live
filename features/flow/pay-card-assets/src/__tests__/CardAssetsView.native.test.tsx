@@ -7,6 +7,36 @@ import { CardAssetsView } from "../CardAssetsView.native";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 import type { CardAssetsViewModel } from "../types";
 
+jest.mock("@ledgerhq/lumen-ui-rnative", () => {
+  const ReactActual = require("react");
+  const actual = jest.requireActual("@ledgerhq/lumen-ui-rnative");
+  return new Proxy(actual, {
+    get(target, prop) {
+      if (prop === "TooltipContent") {
+        return function TooltipContent({
+          title,
+          content,
+          children,
+          ...props
+        }: {
+          title?: string;
+          content?: React.ReactNode;
+          children?: React.ReactNode;
+        }) {
+          return ReactActual.createElement(
+            "TooltipContent",
+            props,
+            title === undefined ? null : ReactActual.createElement("Text", undefined, title),
+            content,
+            children,
+          );
+        };
+      }
+      return Reflect.get(target, prop);
+    },
+  });
+});
+
 const usdc = {
   id: "w-usdc",
   currency: "usdc",
@@ -51,7 +81,7 @@ describe("CardAssetsView (native)", () => {
   it("should name each wallet and show what it holds and what that is worth", () => {
     render(<CardAssetsView {...ready} />, { wrapper: I18nWrapper });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeVisible();
+    expect(screen.getAllByText(CARD_ASSETS_COPY.title)[0]).toBeVisible();
     expect(screen.getByText("USD Coin")).toBeVisible();
     expect(screen.getByText("USDC")).toBeVisible();
     expect(screen.getByText("125.40 USDC")).toBeVisible();
@@ -123,7 +153,7 @@ describe("CardAssetsView (native)", () => {
       wrapper: I18nWrapper,
     });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeVisible();
+    expect(screen.getAllByText(CARD_ASSETS_COPY.title)[0]).toBeVisible();
     expect(screen.getByTestId("card-assets-loading-state")).toBeVisible();
     expect(screen.queryByText(CARD_ASSETS_COPY.empty)).not.toBeOnTheScreen();
     expect(screen.queryByText(CARD_ASSETS_COPY.error)).not.toBeOnTheScreen();
@@ -204,7 +234,7 @@ describe("CardAssetsView (native)", () => {
     expect(onWithdrawContinue).toHaveBeenCalledTimes(1);
   });
 
-  it("should use the native tooltip and ask the view model to manage assets", () => {
+  it("should use the native tooltip heading and content, and ask the view model to manage assets", () => {
     const onManagePress = jest.fn();
     render(<CardAssetsView {...ready} onManagePress={onManagePress} />, {
       wrapper: I18nWrapper,
@@ -214,6 +244,8 @@ describe("CardAssetsView (native)", () => {
       "accessibilityLabel",
       CARD_ASSETS_COPY.info,
     );
+    expect(screen.getByText(CARD_ASSETS_COPY.info)).toBeVisible();
+    expect(screen.getAllByText(CARD_ASSETS_COPY.title)).toHaveLength(2);
 
     fireEvent.press(screen.getByTestId("card-assets-manage"));
 

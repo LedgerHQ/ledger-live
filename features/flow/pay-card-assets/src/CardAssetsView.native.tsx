@@ -117,6 +117,7 @@ export function CardAssetsView({
               <SubheaderInfo accessibilityLabel={infoLabel} testID="card-assets-info" />
             </TooltipTrigger>
             <TooltipContent
+              title={title}
               content={
                 <Text typography="body1" lx={{ color: "base" }}>
                   {infoLabel}
