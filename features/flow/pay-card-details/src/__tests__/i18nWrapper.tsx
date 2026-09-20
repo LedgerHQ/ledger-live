@@ -110,6 +110,29 @@ export const CARD_RESOURCES = {
             title: CARD_COPY.reward,
           },
           addToWallet: ADD_TO_WALLET_COPY.entry,
+          assets: {
+            title: "Assets",
+            info: "These assets fund your card.",
+            manage: "Manage",
+            empty: "No assets yet",
+            error: "Couldn't load assets",
+            details: {
+              topUp: "Top up",
+              withdraw: "Withdraw",
+              transactions: "Transactions",
+            },
+            withdraw: {
+              title: "You'll be redirected to Baanx",
+              description: "Withdraw funds from your Baanx account to your Ledger wallet address.",
+              continue: "Continue",
+            },
+            manageDialog: {
+              title: "Manage assets",
+              description: "Set the order your assets are charged in.",
+              addAssetCaption: "You'll be redirected to Baanx's page to add asset.",
+              addAsset: "Add asset",
+            },
+          },
         },
         cardOnboarding: {
           addToWallet: {
@@ -127,7 +150,14 @@ export const CARD_RESOURCES = {
           title: MORE_COPY.title,
           rows: MORE_COPY.rows,
         },
-        cardTransactions: CARD_TRANSACTIONS_COPY,
+        cardTransactions: {
+          ...CARD_TRANSACTIONS_COPY,
+          history: {
+            empty: {
+              title: "No card transactions yet",
+            },
+          },
+        },
       },
     },
   },
