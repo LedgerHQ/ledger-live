@@ -155,13 +155,8 @@ export default class CommonPage {
   /**
    * Retries a Detox sync toggle: a just-abandoned withTimeout action can leave the bridge with a
    * phantom in-flight request that this call collides with.
-   * @param swallow When true, logs and gives up after exhausting retries instead of throwing.
    */
-  private async retryDetoxSync(
-    action: () => Promise<void>,
-    label: string,
-    swallow: boolean,
-  ): Promise<void> {
+  private async retryDetoxSync(action: () => Promise<void>, label: string): Promise<void> {
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         await action();
@@ -169,9 +164,7 @@ export default class CommonPage {
       } catch (error) {
         const message = sanitizeError(error).message;
         if (attempt === 3) {
-          if (!swallow) throw error;
-          log.error(`${label} failed after ${attempt} attempts, giving up: ${message}`);
-          return;
+          log.error(`${label} failed (attempt ${attempt}/3), error: ${message}`);
         }
         log.warn(`${label} failed (attempt ${attempt}/3), retrying: ${message}`);
         await delay(1_000);
@@ -184,15 +177,11 @@ export default class CommonPage {
   }
 
   async disableSynchronization() {
-    await this.retryDetoxSync(
-      () => device.disableSynchronization(),
-      "disableSynchronization",
-      false,
-    );
+    await this.retryDetoxSync(() => device.disableSynchronization(), "disableSynchronization");
   }
 
   async enableSynchronization() {
-    await this.retryDetoxSync(() => device.enableSynchronization(), "enableSynchronization", true);
+    await this.retryDetoxSync(() => device.enableSynchronization(), "enableSynchronization");
   }
 
   @Step("Press on see all operations button")
