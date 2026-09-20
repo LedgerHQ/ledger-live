@@ -40,7 +40,10 @@ function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
  * @param timeoutMs     Timeout budget in milliseconds.
  * @throws              If the timeout elapses first, or if actionPromise itself rejects.
  */
-async function withHardTimeout<T>(actionPromise: Promise<T>, timeoutMs = 8_000): Promise<T> {
+async function withHardTimeout<T>(
+  actionPromise: Promise<T>,
+  timeoutMs = TIMEOUT.xxlarge,
+): Promise<T> {
   // actionPromise can't actually be cancelled if the deadline fires first; a no-op catch here
   // stops its eventual settlement from surfacing as an unhandled rejection later.
   actionPromise.catch(() => {});
@@ -68,6 +71,10 @@ async function withHardTimeout<T>(actionPromise: Promise<T>, timeoutMs = 8_000):
   } finally {
     clearTimeout(timer);
   }
+}
+
+function unwrapScriptResult(raw: unknown): unknown {
+  return raw != null && typeof raw === "object" && "result" in raw ? raw.result : raw;
 }
 
 const scroller = new PageScroller();
@@ -488,7 +495,7 @@ export const WebElementHelpers = {
         ),
       [childrenCssSelector],
     );
-    const texts: string[] = JSON.parse(raw);
+    const texts: string[] = JSON.parse(String(unwrapScriptResult(raw)));
     return texts.filter(Boolean);
   },
 
@@ -556,7 +563,12 @@ export const WebElementHelpers = {
     options?: { index?: number; testIdSuffix?: string },
     timeout = TIMEOUT.xxlarge,
   ): Promise<void> {
-    await withHardTimeout(WebElementHelpers.getWebElementByTestId(id, options).tap(), timeout);
+    const webElement = await WebElementHelpers.waitWebElementByTestId(id, {
+      timeout,
+      index: options?.index,
+      throwOnTimeout: true,
+    });
+    await WebElementHelpers.tapWebElementByElement(webElement!, timeout);
   },
 
   async tapWebElementByElement(
@@ -567,8 +579,12 @@ export const WebElementHelpers = {
   },
 
   async typeTextByWebTestId(id: string, text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
+    const webElement = await WebElementHelpers.waitWebElementByTestId(id, {
+      timeout,
+      throwOnTimeout: true,
+    });
     await withHardTimeout(
-      WebElementHelpers.getWebElementByTestId(id).runScript(
+      webElement!.runScript(
         (el: HTMLInputElement, val: string) => {
           const setValue = Object.getOwnPropertyDescriptor(
             HTMLInputElement.prototype,
@@ -592,10 +608,7 @@ export const WebElementHelpers = {
       DEFAULT_WEB_ELEMENT_INTERVAL,
     );
 
-    if (raw != null && typeof raw === "object" && "result" in raw) {
-      return String(raw["result"]);
-    }
-    return String(raw);
+    return String(unwrapScriptResult(raw));
   },
 
   async scrollToWebElement(webElement: WebElement) {
@@ -677,8 +690,7 @@ export const WebElementHelpers = {
           ).length;
           return JSON.stringify({ height, textLength, contentElements });
         });
-        const json =
-          raw != null && typeof raw === "object" && "result" in raw ? raw["result"] : raw;
+        const json = unwrapScriptResult(raw);
         try {
           snapshot = JSON.parse(String(json));
         } catch {
@@ -755,24 +767,21 @@ export const WebElementHelpers = {
     timeout = TIMEOUT.xxlarge,
     options?: { index?: number },
   ): Promise<void> {
-    const start = Date.now();
-    let lastErr: Error | undefined;
-
-    while (Date.now() - start < timeout) {
-      try {
-        const webElement = WebElementHelpers.getWebElementByTestId(id, options);
-        const isEnabled = await WebElementHelpers.isWebElementEnabled(webElement);
+    const webElement = await WebElementHelpers.waitWebElementByTestId(id, {
+      index: options?.index,
+      timeout,
+      throwOnTimeout: true,
+    });
+    return retryUntilTimeout(
+      async () => {
+        const isEnabled = await WebElementHelpers.isWebElementEnabled(webElement!, timeout);
         if (isEnabled) {
           return;
         }
-      } catch (e) {
-        lastErr = e instanceof Error ? e : new Error(String(e));
-      }
-      await delay(INTERVAL.medium);
-    }
-
-    throw new Error(
-      `Web element '${id}' did not become enabled within ${timeout}ms: ${lastErr?.message}`,
+      },
+      timeout,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
+      { messageOnError: `Web element '${id}' did not become enabled within ${timeout}ms` },
     );
   },
 };
