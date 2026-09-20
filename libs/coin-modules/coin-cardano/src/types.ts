@@ -219,6 +219,7 @@ export type CardanoLikeNetworkParameters = {
   shelleySlotsPerEpoch: number;
   addressPrefix: string;
   poolIdPrefix: string;
+  dRepIdPrefix: string;
 };
 
 /**

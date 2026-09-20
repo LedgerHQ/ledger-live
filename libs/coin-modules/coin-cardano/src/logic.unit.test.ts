@@ -8,6 +8,7 @@ import {
   computeAdaBalance,
   findVoteDelegation,
   getRewardAddress,
+  getBech32DRepId,
 } from "./logic";
 import { CardanoAccount, CardanoOutput } from "./types";
 
@@ -242,5 +243,25 @@ describe("findVoteDelegation", () => {
       },
     } as any;
     expect(findVoteDelegation(tx, stakeKey, networkId)).toEqual("customDRepHex");
+  });
+});
+
+describe("getBech32DRepId", () => {
+  const dRepHex = "22c8a0059bdc196a48589617c30ceca2b55c0a901975419088348bdcd2";
+  const expectedBech32 = "drep1yty2qpvmmsvk5jzcjctuxr8v5264cz5sr965ryygxj9ae5seg7gah";
+
+  it("should encode a DRep ID hex to bech32 for mainnet (cardano)", () => {
+    expect(getBech32DRepId(dRepHex, "cardano")).toBe(expectedBech32);
+  });
+
+  it("should encode a DRep ID hex to bech32 for testnet (cardano_testnet)", () => {
+    // Both networks share the same 'drep' prefix, so the output is identical
+    expect(getBech32DRepId(dRepHex, "cardano_testnet")).toBe(expectedBech32);
+  });
+
+  it("should throw for an unknown network", () => {
+    expect(() => getBech32DRepId(dRepHex, "unknown_network")).toThrow(
+      "No network parameters set for unknown_network",
+    );
   });
 });

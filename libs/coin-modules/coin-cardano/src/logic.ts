@@ -411,6 +411,13 @@ export function getBech32PoolId(poolId: string, networkName: string): string {
   return encoded;
 }
 
+export function getBech32DRepId(dRepId: string, networkName: string): string {
+  const networkParams = getNetworkParameters(networkName);
+  const words = bech32.toWords(Buffer.from(dRepId, "hex"));
+  const encoded = bech32.encode(networkParams.dRepIdPrefix, words, 1000);
+  return encoded;
+}
+
 export function isValidNumString(value: unknown): boolean {
   if (typeof value !== "string" && typeof value !== "number") return false;
   if (isNaN(Number(value))) return false;

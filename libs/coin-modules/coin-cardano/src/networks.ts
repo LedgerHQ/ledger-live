@@ -13,6 +13,7 @@ export const getNetworkParameters = (networkName: string): CardanoLikeNetworkPar
       shelleySlotsPerEpoch: 432000,
       addressPrefix: "addr",
       poolIdPrefix: "pool",
+      dRepIdPrefix: "drep",
     };
   } else if (networkName === "cardano_testnet") {
     return {
@@ -26,6 +27,7 @@ export const getNetworkParameters = (networkName: string): CardanoLikeNetworkPar
       shelleySlotsPerEpoch: 432000,
       addressPrefix: "addr_test",
       poolIdPrefix: "pool",
+      dRepIdPrefix: "drep",
     };
   }
 
