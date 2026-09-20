@@ -13,6 +13,7 @@ const SCENE_ENTER_MS = 180;
 export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetailsSheetProps) {
   const dismissed = useRef(false);
   const [hasOpened, setHasOpened] = useState(isOpen);
+  const [session, setSession] = useState(0);
   const isPending =
     scene.route.name === "freeze" && scene.freeze.viewModel.confirmState === "pending";
   const isOverview = scene.route.name === "overview";
@@ -47,10 +48,18 @@ export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetails
     setHasOpened(true);
   }, []);
 
+  // The scene outlives `isOpen` so it is still there to animate out, and goes away once the sheet
+  // is hidden: revealed card numbers live in the scene's state and must not come back with it.
+  const handleHidden = useCallback(() => {
+    setHasOpened(false);
+    setSession(current => current + 1);
+  }, []);
+
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onOpened={handleOpened}
+      onModalHide={handleHidden}
       onClose={handleClose}
       noCloseButton={isPending}
       preventBackdropClick={isPending}
@@ -66,7 +75,7 @@ export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetails
       }
       testID="card-details-sheet"
     >
-      {hasOpened || isOpen ? <SheetContent scene={scene} /> : null}
+      {hasOpened || isOpen ? <SheetContent key={session} scene={scene} /> : null}
     </QueuedBottomSheet>
   );
 }
