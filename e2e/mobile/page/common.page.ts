@@ -1,6 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { removeSpeculosAndDeregisterKnownSpeculos } from "@e2e/utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { delay, isIos, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { device, log } from "detox";
@@ -193,6 +194,20 @@ export default class CommonPage {
 
   async enableSynchronization() {
     await this.retryDetoxSync(() => device.enableSynchronization(), "enableSynchronization", true);
+  }
+
+  // DOT's WS RPC connection keeps the JS looper intermittently busy, which stalls a synchronized tap.
+  async withSynchronizationDisabledForDOT<T>(
+    currencyId: string | undefined,
+    action: () => Promise<T>,
+  ): Promise<T> {
+    if (currencyId !== Currency.DOT.id) return action();
+    await this.disableSynchronization();
+    try {
+      return await action();
+    } finally {
+      await this.enableSynchronization();
+    }
   }
 
   @Step("Press on see all operations button")
