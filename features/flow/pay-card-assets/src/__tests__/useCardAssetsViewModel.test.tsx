@@ -1,7 +1,7 @@
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import type { CardLinkedWalletBalance } from "@features/flow-pay-card-wallets";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
-import { I18nWrapper, CARD_ASSETS_COPY } from "./i18nWrapper";
+import { I18nWrapper } from "./i18nWrapper";
 import { formatCardAssetCryptoAmount, useCardAssetsViewModel } from "../useCardAssetsViewModel";
 
 const mockUseIsCardSignedIn = jest.fn();
@@ -100,7 +100,6 @@ describe("useCardAssetsViewModel", () => {
     expect(result.current).toMatchObject({
       isVisible: true,
       status: "loading",
-      title: CARD_ASSETS_COPY.title,
     });
   });
 
@@ -111,7 +110,6 @@ describe("useCardAssetsViewModel", () => {
 
     expect(result.current).toMatchObject({
       status: "error",
-      errorLabel: CARD_ASSETS_COPY.error,
     });
   });
 
@@ -121,7 +119,6 @@ describe("useCardAssetsViewModel", () => {
     expect(result.current).toMatchObject({
       status: "empty",
       rows: [],
-      emptyLabel: CARD_ASSETS_COPY.empty,
     });
   });
 
@@ -171,5 +168,38 @@ describe("useCardAssetsViewModel", () => {
     ]);
     expect(priceWallet).toHaveBeenCalledWith(USDC, "125.40");
     expect(priceWallet).toHaveBeenCalledTimes(1);
+  });
+
+  it("should refresh the selected asset when its wallet balance changes", () => {
+    stubWallets({
+      wallets: [
+        {
+          id: "w-usdc",
+          balance: "125.40",
+          currency: "usdc",
+          network: "ethereum",
+          ledgerId: "ethereum/erc20/usd__coin",
+          ledgerCurrency: USDC,
+        },
+      ],
+    });
+    const { result, rerender } = renderViewModel();
+
+    act(() => result.current.onAssetPress(result.current.rows[0]));
+    stubWallets({
+      wallets: [
+        {
+          id: "w-usdc",
+          balance: "250.80",
+          currency: "usdc",
+          network: "ethereum",
+          ledgerId: "ethereum/erc20/usd__coin",
+          ledgerCurrency: USDC,
+        },
+      ],
+    });
+    rerender();
+
+    expect(result.current.selectedAsset?.cryptoAmount).toBe("250.80 USDC");
   });
 });

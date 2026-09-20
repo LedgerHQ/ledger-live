@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { CardAssetsView } from "../CardAssetsView.native";
-import { CARD_ASSETS_COPY } from "./i18nWrapper";
+import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 import type { CardAssetsViewModel } from "../types";
 
 const usdc = {
@@ -18,11 +18,8 @@ const usdc = {
 
 const ready: CardAssetsViewModel = {
   isVisible: true,
-  title: CARD_ASSETS_COPY.title,
   status: "ready",
   rows: [usdc],
-  emptyLabel: CARD_ASSETS_COPY.empty,
-  errorLabel: CARD_ASSETS_COPY.error,
   dialogState: "closed",
   selectedAsset: null,
   selectedAssetTransactions: [],
@@ -45,7 +42,7 @@ const ready: CardAssetsViewModel = {
 
 describe("CardAssetsView (native)", () => {
   it("should name each wallet and show what it holds and what that is worth", () => {
-    render(<CardAssetsView {...ready} />);
+    render(<CardAssetsView {...ready} />, { wrapper: I18nWrapper });
 
     expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeTruthy();
     expect(screen.getByText("USD Coin")).toBeTruthy();
@@ -54,11 +51,13 @@ describe("CardAssetsView (native)", () => {
     expect(screen.getByTestId("card-asset-countervalue-w-usdc")).toHaveTextContent("$125.40");
   });
 
-  it("should show no counter value for a wallet nothing could price", () => {
-    render(<CardAssetsView {...ready} rows={[{ ...usdc, countervalue: null }]} />);
+  it("should reserve the countervalue line while a wallet cannot be priced", () => {
+    render(<CardAssetsView {...ready} rows={[{ ...usdc, countervalue: null }]} />, {
+      wrapper: I18nWrapper,
+    });
 
     expect(screen.getByText("125.40 USDC")).toBeTruthy();
-    expect(screen.queryByTestId("card-asset-countervalue-w-usdc")).toBeNull();
+    expect(screen.getByTestId("card-asset-countervalue-w-usdc")).toBeTruthy();
   });
 
   it("should give each wallet its own counter value", () => {
@@ -80,6 +79,7 @@ describe("CardAssetsView (native)", () => {
           },
         ]}
       />,
+      { wrapper: I18nWrapper },
     );
 
     expect(screen.getByTestId("card-asset-countervalue-w-usdc")).toHaveTextContent("$125.40");
@@ -87,28 +87,29 @@ describe("CardAssetsView (native)", () => {
   });
 
   it("should render nothing when the card is not signed in", () => {
-    render(<CardAssetsView {...ready} isVisible={false} />);
+    render(<CardAssetsView {...ready} isVisible={false} />, { wrapper: I18nWrapper });
 
     expect(screen.queryByText(CARD_ASSETS_COPY.title)).toBeNull();
   });
 
   it("should say so when the read failed", () => {
-    render(<CardAssetsView {...ready} status="error" />);
+    render(<CardAssetsView {...ready} status="error" />, { wrapper: I18nWrapper });
 
     expect(screen.getByText(CARD_ASSETS_COPY.error)).toBeTruthy();
     expect(screen.queryByText("125.40 USDC")).toBeNull();
   });
 
   it("should say so when the card has no wallets", () => {
-    render(<CardAssetsView {...ready} status="empty" rows={[]} />);
+    render(<CardAssetsView {...ready} status="empty" rows={[]} />, { wrapper: I18nWrapper });
 
     expect(screen.getByText(CARD_ASSETS_COPY.empty)).toBeTruthy();
   });
 
-  it("should show the title alone while the wallets are still loading", () => {
-    render(<CardAssetsView {...ready} status="loading" rows={[]} />);
+  it("should show a skeleton list while the wallets are still loading", () => {
+    render(<CardAssetsView {...ready} status="loading" rows={[]} />, { wrapper: I18nWrapper });
 
     expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeTruthy();
+    expect(screen.getByTestId("card-assets-loading-state")).toBeTruthy();
     expect(screen.queryByText(CARD_ASSETS_COPY.empty)).toBeNull();
     expect(screen.queryByText(CARD_ASSETS_COPY.error)).toBeNull();
   });

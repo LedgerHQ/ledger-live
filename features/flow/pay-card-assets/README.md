@@ -34,7 +34,9 @@ price adds nothing to it.
 Tapping a row opens `CardAssetDetailsDialog`; "Withdraw" opens `CardAssetDetailsWithdrawDialog` on
 top of it, and closing the withdraw dialog returns to the details one.
 
-The details dialog previews the asset's last 3 transactions and leaves the section out when empty.
+The details dialog previews the asset's last 3 transactions. With none, it drops the Transactions
+header and shows Card's empty state instead — the contacts layout, a `CreditCard` `Spot` above
+`payTab.cardTransactions.history.empty.title` ("No card transactions yet").
 There is no server-side asset filter: the view model filters the fetched list with
 `isCardTransactionFundedBy` from
 [`@features/flow-pay-card-transactions`](../pay-card-transactions/README.md), the one predicate the

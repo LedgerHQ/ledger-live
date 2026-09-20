@@ -7,15 +7,18 @@ import {
   ListItemLeading,
   ListItemTitle,
   ListItemTrailing,
+  Skeleton,
   Subheader,
   SubheaderRow,
   SubheaderTitle,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
+import { useTranslation } from "@shared/i18n";
 import type { CardAssetRow, CardAssetsViewModel } from "./types";
 
 const ICON_SIZE = 48;
+const COUNTERVALUE_PLACEHOLDER = "\u00a0";
 
 function AssetRow({ row }: Readonly<{ row: CardAssetRow }>) {
   return (
@@ -32,11 +35,9 @@ function AssetRow({ row }: Readonly<{ row: CardAssetRow }>) {
       </ListItemLeading>
       <ListItemTrailing>
         <ListItemContent lx={{ alignItems: "flex-end" }}>
-          {row.countervalue === null ? null : (
-            <ListItemTitle testID={`card-asset-countervalue-${row.id}`}>
-              {row.countervalue}
-            </ListItemTitle>
-          )}
+          <ListItemTitle testID={`card-asset-countervalue-${row.id}`}>
+            {row.countervalue ?? COUNTERVALUE_PLACEHOLDER}
+          </ListItemTitle>
           <ListItemDescription>{row.cryptoAmount}</ListItemDescription>
         </ListItemContent>
       </ListItemTrailing>
@@ -44,15 +45,14 @@ function AssetRow({ row }: Readonly<{ row: CardAssetRow }>) {
   );
 }
 
-type AssetsBodyProps = Readonly<
-  Pick<CardAssetsViewModel, "status" | "rows" | "emptyLabel" | "errorLabel">
->;
+type AssetsBodyProps = Readonly<Pick<CardAssetsViewModel, "status" | "rows">>;
 
-function AssetsBody({ status, rows, emptyLabel, errorLabel }: AssetsBodyProps) {
+function AssetsBody({ status, rows }: AssetsBodyProps) {
+  const { t } = useTranslation();
   if (status === "error") {
     return (
       <Text typography="body2" lx={{ color: "muted" }}>
-        {errorLabel}
+        {t("payTab.card.assets.error")}
       </Text>
     );
   }
@@ -60,12 +60,21 @@ function AssetsBody({ status, rows, emptyLabel, errorLabel }: AssetsBodyProps) {
   if (status === "empty") {
     return (
       <Text typography="body2" lx={{ color: "muted" }}>
-        {emptyLabel}
+        {t("payTab.card.assets.empty")}
       </Text>
     );
   }
 
-  // A loading read lists nothing yet, so the title stands alone until the wallets land.
+  if (status === "loading") {
+    return (
+      <Box testID="card-assets-loading-state">
+        <Skeleton component="list-item" />
+        <Skeleton component="list-item" />
+        <Skeleton component="list-item" />
+      </Box>
+    );
+  }
+
   return (
     <Box lx={{ gap: "s8" }}>
       {rows.map(row => (
@@ -75,14 +84,10 @@ function AssetsBody({ status, rows, emptyLabel, errorLabel }: AssetsBodyProps) {
   );
 }
 
-export function CardAssetsView({
-  isVisible,
-  title,
-  status,
-  rows,
-  emptyLabel,
-  errorLabel,
-}: CardAssetsViewModel) {
+export function CardAssetsView({ isVisible, status, rows }: CardAssetsViewModel) {
+  const { t } = useTranslation();
+  const title = t("payTab.card.assets.title");
+
   if (!isVisible) return null;
 
   return (
@@ -93,7 +98,7 @@ export function CardAssetsView({
         </SubheaderRow>
       </Subheader>
 
-      <AssetsBody status={status} rows={rows} emptyLabel={emptyLabel} errorLabel={errorLabel} />
+      <AssetsBody status={status} rows={rows} />
     </Box>
   );
 }

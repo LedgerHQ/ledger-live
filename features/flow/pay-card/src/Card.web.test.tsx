@@ -155,6 +155,22 @@ describe("Card (web)", () => {
       expect(screen.getByTestId("card-transactions")).toBeVisible();
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-assets")).not.toBeInTheDocument();
+    });
+
+    it("shows the assets list as soon as the host provides the section", () => {
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          assets={{
+            currencies: new Map(),
+            priceWallet: () => null,
+            formatCountervalue: String,
+          }}
+        />,
+      );
+
+      expect(screen.getByTestId("card-assets")).toBeVisible();
     });
 
     it("hands the card visual to the details block once the host provides a formatter", () => {

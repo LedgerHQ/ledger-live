@@ -9,6 +9,7 @@ import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useFiatFormatter } from "LLD/hooks/useFiatFormatter";
+import { useCountervalueFormatter } from "LLD/hooks/useCountervalueFormatter";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
 
@@ -42,9 +43,11 @@ export function usePayCardAssets(): CardAssetsProps {
   );
 
   const formatCountervalue = useFiatFormatter();
+  // The details dialog's AmountDisplay takes fragments, not the string the list rows show.
+  const formatBalance = useCountervalueFormatter();
 
   return useMemo(
-    () => ({ currencies, priceWallet, formatCountervalue }),
-    [currencies, priceWallet, formatCountervalue],
+    () => ({ currencies, priceWallet, formatCountervalue, formatBalance }),
+    [currencies, priceWallet, formatCountervalue, formatBalance],
   );
 }
