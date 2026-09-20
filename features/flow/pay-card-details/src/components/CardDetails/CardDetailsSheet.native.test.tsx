@@ -14,9 +14,15 @@ import type { CardDetailsSceneProps } from "./Scenes/types";
 import type { ConfirmState, FreezeViewModel } from "../../types";
 import { CardDetailsSheet } from "./CardDetailsSheet";
 
-jest.mock("@features/flow-pay-card-auth", () => ({
-  useIsCardSignedIn: () => true,
-}));
+jest.mock("@features/flow-pay-card-assets", () => {
+  const { View } = jest.requireActual("react-native");
+  return {
+    CardAssetDetailsDrawer: () => <View testID="card-asset-details-drawer" />,
+    CardAssetDetailsWithdrawDrawer: () => <View testID="card-asset-withdraw-drawer" />,
+    CardAssetTransactionDetailDrawer: () => <View testID="card-asset-transaction-detail-drawer" />,
+    CardAssetsManageDrawer: () => <View testID="card-assets-manage-drawer" />,
+  };
+});
 
 listenToCardApi(signedInCardApiHandlers);
 
@@ -113,6 +119,14 @@ describe("CardDetailsSheet (native)", () => {
     expect(screen.queryByText(CARD_COPY.freeze)).toBeNull();
   });
 
+  it("should keep mounted content ready while a previously opened sheet closes", () => {
+    const { goTo } = renderSheet({ route: { name: "more" } });
+
+    goTo({ isOpen: false, route: { name: "overview" } });
+
+    expect(screen.getByTestId("card-details-overview")).toBeVisible();
+  });
+
   it("should report the open flag when the sheet is open", () => {
     renderSheet();
 
@@ -201,7 +215,9 @@ describe("CardDetailsSheet (native)", () => {
   });
 
   it("should offer a way back to the overview from more", async () => {
-    const { onBack, onClose, pressBack } = renderSheet({ route: { name: "more" } });
+    const { onBack, onClose, pressBack } = renderSheet({
+      route: { name: "more" },
+    });
 
     await pressBack();
 
