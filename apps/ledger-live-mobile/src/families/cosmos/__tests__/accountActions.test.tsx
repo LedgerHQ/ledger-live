@@ -5,7 +5,7 @@ import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types"
 import * as config from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { ScreenName } from "~/const";
-import cosmosAccountActions from "./accountActions";
+import cosmosAccountActions from "../accountActions";
 
 const parentRoute = {
   key: "k",
