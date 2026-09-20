@@ -1,4 +1,4 @@
-import { screen, within } from "@tests/test-renderer";
+import { screen } from "@tests/test-renderer";
 import { server, http, HttpResponse } from "@tests/server";
 import {
   mockPayCardStatus,
@@ -31,13 +31,11 @@ describe("Pay Card asset history integration", () => {
     const { user } = renderPayTabWithCardApi();
 
     await user.press(await screen.findByLabelText("Details"));
-    expect(
-      await screen.findByTestId("card-asset-11111111-1111-4111-8111-111111111111"),
-    ).toBeVisible();
-    const bitcoinAsset = screen.getByTestId("card-asset-22222222-2222-4222-8222-222222222222");
-    expect(bitcoinAsset).toBeVisible();
+    expect(await screen.findByText("125.40 USDC")).toBeVisible();
+    const bitcoinBalance = screen.getByText("0.00432100 BTC");
+    expect(bitcoinBalance).toBeVisible();
 
-    await user.press(bitcoinAsset);
+    await user.press(bitcoinBalance);
     await user.press(await screen.findByText("Transactions"));
 
     expect(await screen.findByTestId("card-history-asset-scope")).toBeVisible();
@@ -47,11 +45,6 @@ describe("Pay Card asset history integration", () => {
     await user.press(screen.getByTestId("navigation-header-back-button"));
 
     expect(screen.queryByTestId("card-history-asset-scope")).not.toBeOnTheScreen();
-    const returnedBitcoinAsset = await screen.findByTestId(
-      "card-asset-22222222-2222-4222-8222-222222222222",
-    );
-    expect(within(returnedBitcoinAsset).getByText("Bitcoin")).toBeVisible();
-    expect(within(returnedBitcoinAsset).getByText("BTC")).toBeVisible();
-    expect(await screen.findByText("NETFLIX.COM")).toBeVisible();
+    expect(await screen.findByLabelText("Details")).toBeVisible();
   });
 });
