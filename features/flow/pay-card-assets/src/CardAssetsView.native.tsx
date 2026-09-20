@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Box,
+  Link,
   ListItem,
   ListItemContent,
   ListItemDescription,
@@ -9,9 +10,13 @@ import {
   ListItemTrailing,
   Skeleton,
   Subheader,
+  SubheaderInfo,
   SubheaderRow,
   SubheaderTitle,
   Text,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@ledgerhq/lumen-ui-rnative";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { useTranslation } from "@shared/i18n";
@@ -88,9 +93,17 @@ function AssetsBody({ status, rows, onAssetPress }: AssetsBodyProps) {
   );
 }
 
-export function CardAssetsView({ isVisible, status, rows, onAssetPress }: CardAssetsViewModel) {
+export function CardAssetsView({
+  isVisible,
+  status,
+  rows,
+  onAssetPress,
+  onManagePress,
+}: CardAssetsViewModel) {
   const { t } = useTranslation();
   const title = t("payTab.card.assets.title");
+  const infoLabel = t("payTab.card.assets.info");
+  const manageLabel = t("payTab.card.assets.manage");
 
   if (!isVisible) return null;
 
@@ -99,6 +112,29 @@ export function CardAssetsView({ isVisible, status, rows, onAssetPress }: CardAs
       <Subheader>
         <SubheaderRow>
           <SubheaderTitle>{title}</SubheaderTitle>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <SubheaderInfo accessibilityLabel={infoLabel} testID="card-assets-info" />
+            </TooltipTrigger>
+            <TooltipContent
+              content={
+                <Text typography="body1" lx={{ color: "base" }}>
+                  {infoLabel}
+                </Text>
+              }
+            />
+          </Tooltip>
+          <Box lx={{ flex: 1, alignItems: "flex-end" }}>
+            <Link
+              appearance="accent"
+              size="sm"
+              underline={false}
+              onPress={onManagePress}
+              testID="card-assets-manage"
+            >
+              {manageLabel}
+            </Link>
+          </Box>
         </SubheaderRow>
       </Subheader>
 
