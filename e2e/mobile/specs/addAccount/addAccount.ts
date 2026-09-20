@@ -28,7 +28,6 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
     it(`[${currency.testLabel}] - Add account`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
-      await app.modularDrawer.performSearchByTicker(currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
       await app.modularDrawer.selectNetworkIfAsked(currency.name);
 

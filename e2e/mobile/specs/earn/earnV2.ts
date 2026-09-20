@@ -320,7 +320,6 @@ export function runInlineAddAccountTest(account: Account, tmsLinks: string[], ta
       await app.earnV2Dashboard.clickIceColdStartEarnCTA();
       await app.earnV2Dashboard.verifyModularAssetDrawerVisible();
 
-      await app.modularDrawer.performSearchByTicker(account.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
       await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
       await app.addAccount.addAccountAtIndex(`${account.currency.name} 1`, account.currency.id, 0);
