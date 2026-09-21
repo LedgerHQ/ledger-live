@@ -191,6 +191,19 @@ describe("CardDetails (native)", () => {
     expect(screen.getByTestId("card-asset-w-usdc")).toBeVisible();
   });
 
+  it("should show the host add asset action through the native manage view", async () => {
+    const user = userEvent.setup();
+    render(<CardDetails assets={assets} />, { wrapper: Wrapper });
+    const viewModel = mockUseCardAssetsViewModel.mock.results[0]?.value as CardAssetsViewModel;
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByTestId("card-assets-manage"));
+
+    expect(screen.getByTestId("card-assets-add")).toBeVisible();
+    await user.press(screen.getByTestId("card-assets-add"));
+    expect(viewModel.onAddAssetPress).toHaveBeenCalledTimes(1);
+  });
+
   it("should return to the assets overview when asset details goes back", async () => {
     const user = userEvent.setup();
     render(<CardDetails assets={assets} />, { wrapper: Wrapper });

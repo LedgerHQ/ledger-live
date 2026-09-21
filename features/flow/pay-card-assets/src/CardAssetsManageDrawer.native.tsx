@@ -51,7 +51,7 @@ export function CardAssetsManageDrawer({ rows, onAddAsset }: CardAssetsManageDra
           <Text typography="body4" lx={{ color: "muted", textAlign: "center" }}>
             {t("payTab.card.assets.manageDialog.addAssetCaption")}
           </Text>
-          <Button appearance="base" size="lg" isFull onPress={onAddAsset}>
+          <Button appearance="base" size="lg" isFull onPress={onAddAsset} testID="card-assets-add">
             {t("payTab.card.assets.manageDialog.addAsset")}
           </Button>
         </Box>
