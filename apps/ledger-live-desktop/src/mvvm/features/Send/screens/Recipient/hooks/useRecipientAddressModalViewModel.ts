@@ -207,28 +207,16 @@ export function useRecipientAddressModalViewModel({
       if (hasMemo && !hasFilledMemo) {
         if (doNotAskAgainSkipMemo) {
           const memo = { value: "", type: "NO_MEMO" };
-          if (contactId) {
-            onAddressSelected(address, ensName, true, memo, contactId);
-          } else {
-            onAddressSelected(address, ensName, true, memo);
-          }
+          onAddressSelected(address, ensName, true, memo, contactId);
           return;
         }
 
-        if (contactId) {
-          onAddressSelected(address, ensName, undefined, undefined, contactId);
-        } else {
-          onAddressSelected(address, ensName);
-        }
+        onAddressSelected(address, ensName, undefined, undefined, contactId);
         navigation.goToStep(SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION);
         return;
       }
 
-      if (contactId) {
-        onAddressSelected(address, ensName, true, undefined, contactId);
-      } else {
-        onAddressSelected(address, ensName, true);
-      }
+      onAddressSelected(address, ensName, true, undefined, contactId);
     },
     [
       doNotAskAgainSkipMemo,
