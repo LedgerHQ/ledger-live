@@ -9130,7 +9130,11 @@
     "opted_in" : {
       "title" : "查看更多。更安全地签署",
       "description" : "升级即享 {{discount}}% 折扣。",
-      "cta" : "升级 Ledger 设备"
+      "cta" : "升级 Ledger 设备",
+      "nanoS" : {
+        "title" : "Ledger Nano S 升级计划",
+        "description" : "解锁全新 OS 操作系统和安全功能。享受 {{discount}}% 优惠。"
+      }
     },
     "opted_out" : {
       "title" : "更加安全。更强掌控",
@@ -9140,7 +9144,11 @@
     "profile" : {
       "title" : "升级您的设备",
       "description" : "屏幕更大，安全性更高。享 {{discount}}% 折扣。",
-      "cta" : "探索"
+      "cta" : "探索",
+      "nanoS" : {
+        "title" : "Ledger Nano S 升级计划",
+        "description" : "解锁全新 OS 操作系统和安全功能。享受 {{discount}}% 优惠。"
+      }
     }
   },
   "largeScreenUpsellModal" : {
