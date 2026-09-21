@@ -9130,7 +9130,11 @@
     "opted_in" : {
       "title" : "Daha iyi görerek imzalayın",
       "description" : "Model yükseltin ve %{{discount}} indirim kazanın.",
-      "cta" : "Ledger modelimi yükselt"
+      "cta" : "Ledger modelimi yükselt",
+      "nanoS" : {
+        "title" : "Ledger Nano S Model Yükseltme Programı",
+        "description" : "Yeni işletim sistemine ve güvenlik özelliklerine erişin. %{{discount}} indirimden faydalanın."
+      }
     },
     "opted_out" : {
       "title" : "Daha fazla güvenlik ve kontrol",
@@ -9140,7 +9144,11 @@
     "profile" : {
       "title" : "Cihazınızı Yükseltin",
       "description" : "Daha büyük ekran, daha iyi güvenlik. %{{discount}} indirimi kaçırmayın.",
-      "cta" : "Keşfet"
+      "cta" : "Keşfet",
+      "nanoS" : {
+        "title" : "Ledger Nano S Model Yükseltme Programı",
+        "description" : "Yeni işletim sistemine ve güvenlik özelliklerine erişin. %{{discount}} indirimden faydalanın."
+      }
     }
   },
   "largeScreenUpsellModal" : {
