@@ -1,4 +1,5 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { isCoinModuleRegistered } from "../coin-modules/registry";
 
 // Which module serves a Zcash account: the standalone @ledgerhq/coin-zcash, or
 // coin-bitcoin's Zcash chain-adapter.
@@ -43,7 +44,13 @@ export function resolveFamily(currency: CryptoCurrency): string {
  * routing a save through coin-bitcoin drops what the load restored -- and with `MOCK=true`
  * it drops the transparent `bitcoinResources` too, since coin-bitcoin's mock bridge
  * declares no assign hooks at all.
+ *
+ * Hosts that register a reduced set of coin modules (wallet-cli registers bitcoin, evm and
+ * solana only) have no `zcash` family to route to, so they fall back to `currency.family`
+ * and keep coin-bitcoin's adapter instead of failing with `CurrencyNotSupported`. Unlike the
+ * feature flag, the registry is populated at host startup before any account is
+ * deserialized, so this stays a safe thing to read here.
  */
 export function resolveSerializationFamily(currency: CryptoCurrency): string {
-  return isZcash(currency) ? "zcash" : currency.family;
+  return isZcash(currency) && isCoinModuleRegistered("zcash") ? "zcash" : currency.family;
 }

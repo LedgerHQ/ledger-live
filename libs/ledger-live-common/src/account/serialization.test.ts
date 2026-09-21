@@ -1,6 +1,10 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { setZcashShieldedEnabled } from "../bridge/zcashRouting";
+import { clearBridgeCache } from "../bridge/impl";
+import { coinModuleLoaders } from "../coin-modules/loaders";
+import { registerCoinModules, resetCoinModulesForTests } from "../coin-modules/registry";
+import { registerAllCoins } from "../coin-modules/load-all-coins";
 import { toAccountRaw, fromAccountRaw } from "./serialization";
 import { setWalletAPIVersion } from "../wallet-api/version";
 import { WALLET_API_VERSION } from "../wallet-api/constants";
@@ -137,6 +141,28 @@ describe("serialization", () => {
         lastSyncError: null,
       });
       expect(reserializedRaw.bitcoinResources).toEqual(initialRaw.bitcoinResources);
+    });
+
+    // wallet-cli registers bitcoin, evm and solana only, so there is no "zcash" family to
+    // route to; the account has to keep coin-bitcoin's adapter rather than fail resolution.
+    describe("on a host without the standalone zcash module", () => {
+      beforeEach(() => {
+        resetCoinModulesForTests();
+        registerCoinModules(coinModuleLoaders.filter(l => l.family === "bitcoin"));
+        clearBridgeCache();
+      });
+
+      afterEach(() => {
+        resetCoinModulesForTests();
+        registerAllCoins();
+        clearBridgeCache();
+      });
+
+      test("deserializes through the bitcoin family instead of throwing", async () => {
+        const account: any = await fromAccountRaw(zcashAccountRaw());
+
+        expect(account.currency.id).toBe("zcash");
+      });
     });
   });
 });
