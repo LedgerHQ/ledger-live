@@ -294,6 +294,16 @@ describe("CardDetails (native)", () => {
     expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 
+  it("should open add-to-wallet instructions from the details footer", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByTestId("pay-card-add-to-wallet-cta-entry"));
+
+    expect(await screen.findByTestId("card-details-add-to-wallet-content")).toBeVisible();
+    expect(screen.getByText(ADD_TO_WALLET_COPY.title)).toBeVisible();
+  });
+
   it("should show the card numbers image after View", async () => {
     const { user } = renderCardDetails();
 

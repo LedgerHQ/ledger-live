@@ -7,7 +7,7 @@ import {
   listenToCardApi,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
-import { CARD_COPY, I18nWrapper, MORE_COPY } from "../../__tests__/i18nWrapper";
+import { ADD_TO_WALLET_COPY, CARD_COPY, I18nWrapper, MORE_COPY } from "../../__tests__/i18nWrapper";
 import { buildMoreViewProps } from "../More/fixtures";
 import type { CardDetailsRoute, CardDetailsSceneProps } from "./Scenes/types";
 import type { ConfirmState, FreezeViewModel } from "../../types";
@@ -42,6 +42,9 @@ type SheetOverrides = Readonly<{
   confirmState?: ConfirmState;
 }>;
 
+const onAddToWalletPress = jest.fn();
+const onAddToWalletDone = jest.fn();
+
 function buildScene({ route, confirmState }: SheetOverrides): CardDetailsSceneProps {
   const viewModel: FreezeViewModel = {
     status: "ACTIVE",
@@ -63,11 +66,11 @@ function buildScene({ route, confirmState }: SheetOverrides): CardDetailsScenePr
       onFreezePress: jest.fn(),
       onMorePress: jest.fn(),
       onTransactionPress: jest.fn(),
-      onAddToWalletPress: jest.fn(),
+      onAddToWalletPress,
     },
     freeze: { viewModel },
     more: { viewModel: more },
-    addToWallet: { onDone: jest.fn() },
+    addToWallet: { onDone: onAddToWalletDone },
     transaction: route?.name === "transaction" ? { transaction: route.transaction } : null,
     assetDetails: null,
     assetWithdraw: null,
@@ -96,6 +99,8 @@ function renderSheet(overrides: SheetOverrides = {}) {
     onBack,
     pressDismiss: () => user.press(screen.getByTestId("card-details-sheet-dismiss")),
     pressBack: () => user.press(screen.getByTestId("card-details-sheet-back")),
+    pressAddToWallet: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta-entry")),
+    pressAddToWalletDone: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta")),
     goTo: (next: SheetOverrides) => view.rerender(sheet(next)),
   };
 }
@@ -133,6 +138,40 @@ describe("CardDetailsSheet (native)", () => {
     expect(screen.getByLabelText("Visa")).toBeVisible();
     expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
     expect(screen.getByLabelText(MORE_COPY.tile)).toBeVisible();
+  });
+
+  it("should show the add-to-wallet CTA only on the overview", () => {
+    const { goTo } = renderSheet();
+
+    expect(screen.getByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
+
+    goTo({ route: { name: "transaction", transaction } });
+
+    expect(screen.queryByTestId("pay-card-add-to-wallet-cta-entry")).not.toBeOnTheScreen();
+  });
+
+  it("should open the add-to-wallet scene from the overview CTA", async () => {
+    const { pressAddToWallet } = renderSheet();
+
+    await pressAddToWallet();
+
+    expect(onAddToWalletPress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should show add-to-wallet instructions with working back and done actions", async () => {
+    const { onBack, pressBack, pressAddToWalletDone } = renderSheet({
+      route: { name: "addToWallet" },
+    });
+
+    expect(screen.getByTestId("card-details-add-to-wallet-content")).toBeVisible();
+    expect(screen.getByText(ADD_TO_WALLET_COPY.title)).toBeVisible();
+    expect(screen.getByText(ADD_TO_WALLET_COPY.step1)).toBeVisible();
+
+    await pressAddToWalletDone();
+    await pressBack();
+
+    expect(onAddToWalletDone).toHaveBeenCalledTimes(1);
+    expect(onBack).toHaveBeenCalledTimes(1);
   });
 
   it("should show the scene the route selects, not one derived from the view models", () => {
