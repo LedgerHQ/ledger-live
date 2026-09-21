@@ -1236,6 +1236,9 @@ importers:
       '@segment/analytics-next':
         specifier: 1.84.1
         version: 1.84.1
+      '@shared/analytics':
+        specifier: workspace:*
+        version: link:../../shared/analytics
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../shared/api-services
