@@ -2799,7 +2799,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "{{memoLabel}} gir",
-      "description" : "Bir kripto para borsasına {{currency}} gönderirken bir {{memoLabel}} bilgisi gerekir. Bu, işlemin alıcısını tespit etmek için kullanılan bir özelliktir. {{memoLabel}} memosunun eklenmediği durumlarda fonlar kaybolabilir."
+      "description" : "Bir kripto para borsasına {{currency}} gönderirken bir {{memoLabel}} bilgisi gerekir. Bu, işlemin alıcısını tespit etmek için kullanılan bir özelliktir. {{memoLabel}} memo’sunun eklenmediği durumlarda fonlar kaybolabilir."
     },
     "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
     "feesAmount" : "Ücret tutarı ({{unit}})",
@@ -2878,7 +2878,7 @@
       }
     },
     "balanceType" : {
-      "title" : "Select balance",
+      "title" : "Bakiye seçin",
       "transparent" : {
         "title" : "Açık bakiye",
         "subtitle" : "Şeffaf"
@@ -2886,7 +2886,7 @@
       "shielded" : {
         "title" : "Gizli bakiye",
         "subtitle" : "Korumalı",
-        "pendingNoticeTitle" : "Funds maturing",
+        "pendingNoticeTitle" : "Vadesi dolmak üzere olan bakiye",
         "pendingNotice" : "Bazı korumalı notlar hâlâ vade ödülü üretme sürecinde olduğundan henüz harcanamayabilir"
       },
       "zeroBalance" : {
@@ -6939,6 +6939,9 @@
     },
     "xrp" : {
       "memo" : "Etiket"
+    },
+    "zcash" : {
+      "memoTooltip" : "{{currency}} gönderirken {{memoLabel}} isteğe bağlıdır. Şifrelenmiştir ve yalnızca alıcı okuyabilir. Bazı borsalar, işleminizi tanımlamak için bir tane gerektirir."
     }
   },
   "errors" : {
@@ -7497,12 +7500,12 @@
       "title" : "Bu tutar tek bir işlemde gönderilemeyecek kadar büyük; daha küçük tutarlarla göndermeyi deneyin"
     },
     "ZcashShieldedKeyMissing" : {
-      "title" : "Activate your private balance first",
-      "description" : "This transfer needs the viewing key from your device. Activate your private balance to enable it."
+      "title" : "Önce gizli bakiyenizi etkinleştirin",
+      "description" : "Bu transfer için cihazınızdaki görüntüleme anahtarı gerekir. Bunu etkinleştirmek için gizli bakiyenizi etkinleştirin."
     },
     "ZcashNotesNotYetSpendable" : {
-      "title" : "These funds are not spendable yet",
-      "description" : "Please try again in a few minutes"
+      "title" : "Bu bakiye henüz harcanabilir durumda değil",
+      "description" : "Lütfen birkaç dakika sonra tekrar deneyin"
     },
     "InvalidNonce" : {
       "title" : "Nonce gerekiyor"
@@ -9503,9 +9506,6 @@
           "toPublic" : "Kendi açık bakiyenize transer",
           "unavailable" : "Hesabınız için Koruma özelliği etkinleştirildiğinde gizli adresiniz kullanılabilir olacaktır.",
           "privacyWarning" : "Bu işlem, korumalı fonlarınızı, hesabınızın herkes tarafından görülebilen açık adresiyle ilişkilendirir. Harici bir gizli adrese gönderim yapmak ise bu fonların birbiriyle ilişkisiz kalmasını sağlar."
-        },
-        "confirm" : {
-          "privateTransaction" : "Gizli işlem – tutarı cihazınızda doğrulayın"
         }
       },
       "state" : {
