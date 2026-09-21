@@ -1,4 +1,5 @@
 import React from "react";
+import { AddToWalletScene } from "./AddToWalletScene";
 import { FreezeScene } from "./FreezeScene";
 import { MoreScene } from "./MoreScene";
 import { OverviewScene } from "./OverviewScene";
@@ -10,6 +11,7 @@ export function CardDetailsScene({
   overview,
   freeze,
   more,
+  addToWallet,
   transaction,
 }: CardDetailsSceneProps) {
   switch (route.name) {
@@ -17,6 +19,8 @@ export function CardDetailsScene({
       return <FreezeScene {...freeze} />;
     case "more":
       return more ? <MoreScene {...more} /> : null;
+    case "addToWallet":
+      return <AddToWalletScene {...addToWallet} />;
     case "transaction":
       return transaction ? <TransactionScene {...transaction} /> : null;
     case "overview":

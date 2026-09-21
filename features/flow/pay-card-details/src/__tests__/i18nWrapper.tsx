@@ -23,6 +23,15 @@ export const CARD_COPY = {
   reward: "Total cashback",
 } as const;
 
+export const ADD_TO_WALLET_COPY = {
+  entry: "Add to {{wallet}} Pay",
+  title: "Add to Apple Pay",
+  step1: "Go to Apple Wallet app and tap add (+)",
+  step2: "Select Debit or Credit Card",
+  step3: "Follow the instructions",
+  cta: "Go to Apple Wallet",
+} as const;
+
 export const MORE_COPY = {
   tile: "More",
   title: "More",
@@ -99,6 +108,18 @@ export const CARD_RESOURCES = {
           },
           reward: {
             title: CARD_COPY.reward,
+          },
+          addToWallet: ADD_TO_WALLET_COPY.entry,
+        },
+        cardOnboarding: {
+          addToWallet: {
+            ios: {
+              title: ADD_TO_WALLET_COPY.title,
+              step1: ADD_TO_WALLET_COPY.step1,
+              step2: ADD_TO_WALLET_COPY.step2,
+              step3: ADD_TO_WALLET_COPY.step3,
+              cta: ADD_TO_WALLET_COPY.cta,
+            },
           },
         },
         cardMore: {
