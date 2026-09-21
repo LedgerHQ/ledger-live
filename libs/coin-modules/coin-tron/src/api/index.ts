@@ -40,6 +40,7 @@ import {
   awaitEnergyDelivery,
   broadcastEnergyRentTransaction,
   craftEnergyRentTransaction,
+  getEnergyProvider,
   getEnergyRentStatus,
 } from "../logic/energyRent";
 import type {
@@ -48,7 +49,6 @@ import type {
   EnergyRentSignedTransaction,
 } from "../logic/energyRent";
 import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
-import { EnergyRentProviderNotConfigured } from "../types/errors";
 import type { TronMemo, TronTxData } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
@@ -77,18 +77,16 @@ export function createApi() {
     // The Tronify sponsored flow (LIVE-32780) signs a pre-built payment tx; the generic raw-sign
     // path hands us its raw_data_hex here and re-crafting would be wrong, so we return it verbatim.
     //
-    // Gated on a configured energy-rent provider: that flow is the only legitimate source of
-    // externally-built Tron bytes, and an ungated pass-through would let any
-    // `genericSignRawOperation` caller get arbitrary bytes signed with the account key. Checked per
-    // call rather than at construction (which would let the method be omitted outright, so
-    // `supports()` read false) because `getCoinConfig()` throws when the config singleton is unset
-    // and `createApi()` is resolved lazily with no ordering guarantee against `setCoinConfig`.
+    // Gated on a configured AND SUPPORTED energy-rent provider: that flow is the only legitimate
+    // source of externally-built Tron bytes, and an ungated pass-through would let any
+    // `genericSignRawOperation` caller get arbitrary bytes signed with the account key. getEnergyProvider
+    // throws EnergyRentProviderNotConfigured for a missing OR unknown provider — remote config is
+    // unvalidated and could name an unsupported one, which must not leave raw-signing open. Checked per
+    // call rather than at construction (which would let the method be omitted, so `supports()` read
+    // false) because `getCoinConfig()` throws when the config singleton is unset and `createApi()`
+    // resolves lazily with no ordering guarantee against `setCoinConfig`.
     craftRawTransaction: async (_context, transaction, _sender, _publicKey, _sequence) => {
-      if (!coinConfig.getCoinConfig().energyRent) {
-        throw new EnergyRentProviderNotConfigured(
-          "Tron craftRawTransaction is reserved for the energy-rent payment flow, which is not configured",
-        );
-      }
+      getEnergyProvider();
       return craftRawTransaction(transaction);
     },
     craftTransaction: async (context, transactionIntent, options?) => {
@@ -175,9 +173,18 @@ export function createApi() {
  * seam is self-contained for the app's sponsored fee picker; both delegate to the same logic layer.
  */
 export function createSponsoredSendApi() {
+  // The app consumes this seam without a framework Context (useSponsoredFee can't build one), so
+  // synthesize the Context the logic layer now requires: config from the coin-config singleton (the
+  // same source listFeeOptions/estimateTronifyFees already read) and a no-op logger — coin-tron is
+  // dropping @ledgerhq/logs (PR #21897) and there is no injected sink on this path, so app-side
+  // quote/nudge diagnostics are dropped here while the real send still logs through the framework path.
+  const context: TronContext = {
+    logger: () => {},
+    config: async () => coinConfig.getCoinConfig(),
+  };
   return {
     listFeeOptions: (intent: TransactionIntent<TronMemo, TronTxData>) =>
-      listFeeOptionsLogic(intent),
+      listFeeOptionsLogic(context, intent),
     // Context-free savings quote for the app-side fee nudge (no framework Context to build one).
     estimateSponsoredFeeQuote: (intent: TransactionIntent<TronMemo, TronTxData>) =>
       estimateSponsoredFeeQuote(intent),
@@ -185,16 +192,17 @@ export function createSponsoredSendApi() {
     // without estimating energy or reading coin-config itself.
     buildEnergyRentRequest: (intent: TransactionIntent<TronMemo, TronTxData>) =>
       buildEnergyRentRequest(intent),
-    craftEnergyRentTransaction: (request: EnergyRentRequest) => craftEnergyRentTransaction(request),
+    craftEnergyRentTransaction: (request: EnergyRentRequest) =>
+      craftEnergyRentTransaction(context.logger, request),
     submitEnergyRentPayment: (payment: {
       orderId: string;
       signedTransaction: EnergyRentSignedTransaction;
-    }) => broadcastEnergyRentTransaction(payment),
-    getEnergyRentStatus: (ref: EnergyRentOrderRef) => getEnergyRentStatus(ref),
+    }) => broadcastEnergyRentTransaction(context.logger, payment),
+    getEnergyRentStatus: (ref: EnergyRentOrderRef) => getEnergyRentStatus(context.logger, ref),
     awaitEnergyDelivery: (
       ref: EnergyRentOrderRef,
       opts?: { intervalMs?: number; timeoutMs?: number; paymentTxId?: string },
-    ) => awaitEnergyDelivery(ref, opts),
+    ) => awaitEnergyDelivery(context.logger, ref, opts),
   };
 }
 

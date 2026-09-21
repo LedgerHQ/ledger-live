@@ -25,7 +25,11 @@ jest.mock("../../../../context/SendFlowTrackingContext", () => ({
   useSendFlowTracking: () => ({ recipientType: null }),
 }));
 
-let mockSponsoredSend: { selectedFeeOptionId: "standard" | "tronify"; available: boolean };
+let mockSponsoredSend: {
+  selectedFeeOptionId: "standard" | "tronify";
+  available: boolean;
+  intentReady: boolean;
+};
 jest.mock("../../../../context/SponsoredSendContext", () => ({
   useSponsoredSend: () => mockSponsoredSend,
 }));
@@ -36,7 +40,7 @@ describe("useAmountScreen onReview routing", () => {
   });
 
   it("goes to SIGNATURE when the standard fee option is selected", () => {
-    mockSponsoredSend = { selectedFeeOptionId: "standard", available: true };
+    mockSponsoredSend = { selectedFeeOptionId: "standard", available: true, intentReady: true };
 
     const { result } = renderHook(() => useAmountScreen());
     act(() => {
@@ -47,7 +51,7 @@ describe("useAmountScreen onReview routing", () => {
   });
 
   it("goes to SPONSORED_RENT_SIGNATURE when tronify is selected and available", () => {
-    mockSponsoredSend = { selectedFeeOptionId: "tronify", available: true };
+    mockSponsoredSend = { selectedFeeOptionId: "tronify", available: true, intentReady: true };
 
     const { result } = renderHook(() => useAmountScreen());
     act(() => {
@@ -58,7 +62,7 @@ describe("useAmountScreen onReview routing", () => {
   });
 
   it("falls back to SIGNATURE when tronify is selected but unavailable", () => {
-    mockSponsoredSend = { selectedFeeOptionId: "tronify", available: false };
+    mockSponsoredSend = { selectedFeeOptionId: "tronify", available: false, intentReady: true };
 
     const { result } = renderHook(() => useAmountScreen());
     act(() => {
@@ -66,5 +70,16 @@ describe("useAmountScreen onReview routing", () => {
     });
 
     expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.SIGNATURE);
+  });
+
+  it("does not navigate when tronify is available but the intent is not yet rebuilt", () => {
+    mockSponsoredSend = { selectedFeeOptionId: "tronify", available: true, intentReady: false };
+
+    const { result } = renderHook(() => useAmountScreen());
+    act(() => {
+      result.current.onReview();
+    });
+
+    expect(mockGoToStep).not.toHaveBeenCalled();
   });
 });

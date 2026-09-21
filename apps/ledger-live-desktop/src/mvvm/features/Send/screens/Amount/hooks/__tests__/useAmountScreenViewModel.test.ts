@@ -533,5 +533,78 @@ describe("useAmountScreenViewModel", () => {
       expect(result.current.sponsoredFeeError).toBeNull();
       expect(result.current.reviewDisabled).toBe(false);
     });
+
+    function withGasLimitError(spendableBalance: BigNumber) {
+      const { account, transaction } = buildAffordableParams(spendableBalance);
+      const status = {
+        errors: { gasLimit: createNamedError("NotEnoughGas") },
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(1),
+        totalSpent: new BigNumber(1),
+      } as unknown as TransactionStatus;
+      return { account, transaction, status };
+    }
+
+    it("still surfaces the NotEnoughGas amount message on the standard path", () => {
+      const { account, transaction, status } = withGasLimitError(new BigNumber(1_000_000));
+
+      mockedUseSponsoredSend.mockReturnValue({
+        selectedFeeOptionId: "standard",
+        available: true,
+        quote: null,
+      } as never);
+
+      const { result } = renderViewModel(account, transaction, status);
+
+      expect(result.current.amountMessage).toMatchObject({ type: "error", text: "NotEnoughGas" });
+    });
+
+    it("filters the waived NotEnoughGas from the amount message on the sponsored path", () => {
+      const { account, transaction, status } = withGasLimitError(new BigNumber(1_000_000));
+
+      mockedUseSponsoredSend.mockReturnValue({
+        selectedFeeOptionId: "tronify",
+        available: true,
+        intentReady: true,
+        quote: { value: 1_000n, originalValue: 1_500n, savings: 500n },
+      } as never);
+
+      const { result } = renderViewModel(account, transaction, status);
+
+      expect(result.current.amountMessage).toBeNull();
+    });
+
+    it("keeps Review loading while the Tronify quote is still fetching (available sticky, no quote)", () => {
+      const { account, transaction, status } = buildAffordableParams(new BigNumber(1_000_000));
+
+      mockedUseSponsoredSend.mockReturnValue({
+        selectedFeeOptionId: "tronify",
+        available: true,
+        intentReady: true,
+        quote: null,
+        feeLoading: true,
+      } as never);
+
+      const { result } = renderViewModel(account, transaction, status);
+
+      expect(result.current.reviewLoading).toBe(true);
+    });
+
+    it("stops Review loading once the Tronify quote is present", () => {
+      const { account, transaction, status } = buildAffordableParams(new BigNumber(1_000_000));
+
+      mockedUseSponsoredSend.mockReturnValue({
+        selectedFeeOptionId: "tronify",
+        available: true,
+        intentReady: true,
+        quote: { value: 1_000n, originalValue: 1_500n, savings: 500n },
+        feeLoading: false,
+      } as never);
+
+      const { result } = renderViewModel(account, transaction, status);
+
+      expect(result.current.reviewLoading).toBe(false);
+    });
   });
 });

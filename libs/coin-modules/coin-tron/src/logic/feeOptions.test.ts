@@ -1,6 +1,6 @@
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import { type TronCoinConfig, type TronContext } from "../config";
+import coinConfig, { type TronCoinConfig, type TronContext } from "../config";
 import type { TronMemo, TronTxData } from "../types";
 import { STANDARD_FEE_OPTION_ID, TRONIFY_FEE_OPTION_ID } from "./constants";
 import { estimateFees } from "./estimateFees";
@@ -29,8 +29,20 @@ const notActivatedConfig = {
 } as unknown as TronCoinConfig;
 
 const mockLogger: Logger = jest.fn();
-const mockConfig = jest.fn<Promise<TronCoinConfig>, []>();
-const mockContext = { logger: mockLogger, config: mockConfig } as unknown as TronContext;
+// listFeeOptions reads config from two seams that must agree — context.config() (feeds estimateFees)
+// and the coinConfig singleton getEnergyProvider/getTronifyConfig read — so drive both from the real
+// singleton (as production does, where context.config === getCoinConfig).
+const setConfig = (config: TronCoinConfig) => coinConfig.setCoinConfig(() => config);
+const mockContext = {
+  logger: mockLogger,
+  config: async () => coinConfig.getCoinConfig(),
+} as unknown as TronContext;
+
+const malformedProviderConfig = {
+  explorer: { url: "https://explorer" },
+  status: { type: "active" },
+  energyRent: { provider: "tronify", tronify: {} },
+} as unknown as TronCoinConfig;
 
 const sendTrc20 = (recipient = RECIPIENT): TransactionIntent<TronMemo, TronTxData> => ({
   intentType: "transaction",
@@ -76,7 +88,7 @@ const tronifyOption = {
 describe("listFeeOptions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockConfig.mockResolvedValue(activatedConfig);
+    setConfig(activatedConfig);
     mockEstimateFees.mockResolvedValue(fee(1_000_000n));
   });
 
@@ -103,7 +115,13 @@ describe("listFeeOptions", () => {
   });
 
   it("returns [standard] when Tronify is not activated in coin-config", async () => {
-    mockConfig.mockResolvedValue(notActivatedConfig);
+    setConfig(notActivatedConfig);
+    await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
+    expect(mockEstimateFees).not.toHaveBeenCalled();
+  });
+
+  it("returns [standard] when the Tronify provider is present but under-configured", async () => {
+    setConfig(malformedProviderConfig);
     await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
     expect(mockEstimateFees).not.toHaveBeenCalled();
   });
@@ -141,7 +159,9 @@ describe("listFeeOptions", () => {
   });
 
   it("degrades to [standard] (never throws) when the coin-config read throws", async () => {
-    mockConfig.mockRejectedValue(new Error("no coin-config set"));
+    coinConfig.setCoinConfig(() => {
+      throw new Error("no coin-config set");
+    });
     await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
     expect(mockEstimateFees).not.toHaveBeenCalled();
   });

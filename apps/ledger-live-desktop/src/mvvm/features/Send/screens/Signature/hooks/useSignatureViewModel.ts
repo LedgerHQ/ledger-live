@@ -18,6 +18,7 @@ import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
+import { isContractDataDisabledError } from "../../../utils/contractDataError";
 import { selectIsBuyDeviceOpen } from "LLD/features/BuyDevice/buyDeviceDialog";
 import { hasOnboardedDeviceSelector, mevProtectionSelector } from "~/renderer/reducers/settings";
 import { broadcastLogger } from "~/datadog/logs";
@@ -91,8 +92,18 @@ export function useSignatureViewModel() {
         } else {
           // The rent is already paid, so a TX-C failure must land on SPONSORED_FAILURE rather than
           // the generic confirmation, which would read as though the rent died with the transfer.
-          sponsoredActions.onTransferError(error ?? new Error("Sponsored transfer failed"));
-          navigation.goToStep(SEND_FLOW_STEP.SPONSORED_FAILURE);
+          // Both dispatches move the phase to FAILED; the shared useSponsoredPhaseNavigator routes to
+          // SPONSORED_FAILURE, so this only reports the outcome and stops.
+          const failure = error ?? new Error("Sponsored transfer failed");
+          // A TX-C TRC-20 transfer is itself a contract-data signing op: a 0x6a80 refusal must be
+          // recorded as CONTRACT_DATA (its failure copy guides enabling contract data / blind
+          // signing) rather than a generic transfer failure. Retry resumes at TRANSFER either way,
+          // since the delegation already succeeded.
+          if (isContractDataDisabledError(failure)) {
+            sponsoredActions.setContractDataFailure(failure);
+          } else {
+            sponsoredActions.onTransferError(failure);
+          }
           return;
         }
       }

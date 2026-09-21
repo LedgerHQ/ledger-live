@@ -20,10 +20,19 @@ const ENERGY_ORDER_DEFAULTS = {
   tradeType: "fastTrade",
 } as const;
 
-function getTronifyConfig(): TronifyProviderConfig {
+/**
+ * The single "Tronify is actually configured" accessor. Remote coin-config is unvalidated, so the
+ * provider name alone is not proof of configuration: require the fields every request needs (url,
+ * sourceFlag) rather than mere presence, or an empty `tronify: {}` would slip through here and later
+ * build requests against an `undefined` URL. Also the gate `getEnergyProvider` uses before opening
+ * raw-signing (craftRawTransaction).
+ */
+export function getTronifyConfig(): TronifyProviderConfig {
   const tronify = coinConfig.getCoinConfig().energyRent?.tronify;
-  if (!tronify) {
-    throw new EnergyRentProviderNotConfigured("Tronify provider is not configured in coin-config");
+  if (!tronify?.url || !tronify.sourceFlag) {
+    throw new EnergyRentProviderNotConfigured(
+      "Tronify provider url/sourceFlag is missing in coin-config",
+    );
   }
   return tronify;
 }

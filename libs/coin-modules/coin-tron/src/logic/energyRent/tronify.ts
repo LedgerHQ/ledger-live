@@ -4,7 +4,12 @@ import {
   queryPreorderInfo,
   uploadHash,
 } from "../../network/tronify";
-import type { TronifyEnergyOrderParams, TronifyOrderStatus } from "../../network/tronify/types";
+import type {
+  AddTronRentRecordData,
+  TronifyEnergyOrderParams,
+  TronifyOrderStatus,
+} from "../../network/tronify/types";
+import { TronifyApiError } from "../../types/errors";
 import type { EnergyProvider, EnergyRentRequest, EnergyRentStatus } from "./types";
 
 type TronifyDuration = Pick<TronifyEnergyOrderParams, "pledgeDay" | "pledgeHour" | "pledgeMinute">;
@@ -38,6 +43,33 @@ const ALL_ORDERS = "2";
 // A just-created order is among the most recent, so a single page suffices in practice.
 const ORDER_LOOKUP_PAGE_SIZE = 50;
 
+/**
+ * Validate the order Tronify returns carries what the two-signature flow must consume: an orderId,
+ * and a payment transaction with the raw bytes to sign (`raw_data_hex`, even-length hex), the `txID`
+ * submitted as `fromHash` to `uploadHash`, and the `raw_data` object — `submitPayment` forwards the
+ * whole `{ ...tx, signature }` as Tronify's `signedData`, whose wire contract requires `raw_data`.
+ * These fields arrive unvalidated from the provider; fail here so a partial payload surfaces as a
+ * retryable craft failure rather than reaching the device or submitting an undefined hash.
+ */
+function assertSignableOrder(data: AddTronRentRecordData): void {
+  const tx = data.transaction;
+  const validHex =
+    typeof tx?.raw_data_hex === "string" && /^([0-9a-fA-F]{2})+$/.test(tx.raw_data_hex);
+  const validTxId = typeof tx?.txID === "string" && tx.txID.length > 0;
+  const validRawData = typeof tx?.raw_data === "object" && tx.raw_data !== null;
+  if (
+    typeof data.orderId !== "string" ||
+    data.orderId.length === 0 ||
+    !validHex ||
+    !validTxId ||
+    !validRawData
+  ) {
+    throw new TronifyApiError(
+      "Tronify returned an energy-rent order missing a signable transaction",
+    );
+  }
+}
+
 function toOrderParams(request: EnergyRentRequest): TronifyEnergyOrderParams {
   return {
     fromAddress: request.payerAddress,
@@ -70,6 +102,7 @@ export const tronifyProvider: EnergyProvider = {
 
   async createOrder(logger, request) {
     const data = await addTronRentRecord(logger, toOrderParams(request));
+    assertSignableOrder(data);
     return {
       orderId: data.orderId,
       transaction: data.transaction,
