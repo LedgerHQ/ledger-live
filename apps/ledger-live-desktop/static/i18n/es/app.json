@@ -899,6 +899,7 @@
     },
     "card" : {
       "title" : "Tarjeta cripto",
+      "topUp" : "Recargar",
       "balanceLabel" : "Saldo",
       "freeze" : "Inmovilizar",
       "unfreeze" : "Desinmovilizar",
@@ -918,11 +919,49 @@
         "description" : "Algo ha salido mal. Inténtalo de nuevo.",
         "retry" : "Intentar de nuevo"
       },
+      "assets" : {
+        "title" : "Activos",
+        "empty" : "Aún no hay activos",
+        "error" : "No se pudieron cargar los activos",
+        "info" : "These assets fund your card. Set the order they're charged in, or add more.",
+        "manage" : "Manage",
+        "manageDialog" : {
+          "title" : "Manage assets",
+          "description" : "Drag to set your funding order. If one asset runs low, the next one is used automatically.",
+          "addAssetCaption" : "You'll be redirected to Baanx's page to add asset.",
+          "addAsset" : "Add asset"
+        },
+        "details" : {
+          "topUp" : "Recargar",
+          "withdraw" : "Retirar",
+          "transactions" : "Transacciones"
+        },
+        "withdraw" : {
+          "title" : "Se te redirigirá a Baanx",
+          "description" : "Retira fondos de tu cuenta de Baanx a la dirección de tu wallet Ledger.",
+          "continue" : "Continuar"
+        },
+        "history" : {
+          "columns" : {
+            "amount" : "Importe",
+            "value" : "Valor"
+          }
+        }
+      },
+      "reward" : {
+        "title" : "Total de devoluciones"
+      },
       "numbers" : {
         "reveal" : "Ver",
         "hide" : "Ocultar",
         "failed" : "No se pudieron cargar los números de tarjeta",
-        "imageAlt" : "Números de tarjeta"
+        "imageAlt" : "Números de tarjeta",
+        "unlockTitle" : "Ingresa tu contraseña",
+        "passwordRequired" : "Contraseña requerida",
+        "passwordMismatch" : "Las contraseñas no coinciden",
+        "passwordIncorrect" : "Contraseña incorrecta",
+        "passwordUnavailable" : "No fue posible comprobar tu contraseña",
+        "passwordCreateFailed" : "No fue posible establecer la contraseña"
       }
     },
     "cardTransactions" : {
@@ -954,6 +993,31 @@
           "DECLINED" : "Rechazada",
           "REVERTED" : "Revertida"
         }
+      },
+      "history" : {
+        "today" : "Hoy",
+        "yesterday" : "Ayer",
+        "unknownDate" : "Fecha no disponible",
+        "columns" : {
+          "transaction" : "Transacción",
+          "cashback" : "Cashback",
+          "fundingSources" : "Origen de fondos",
+          "amount" : "Importe"
+        },
+        "paidWithAssets" : "Pagado con {{count}} activos",
+        "goToPay" : "Ir a Pay",
+        "signedOut" : {
+          "title" : "Inicia sesión para ver las transacciones de la tarjeta",
+          "description" : "La actividad de la tarjeta aparecerá aquí una vez que inicies sesión."
+        },
+        "empty" : {
+          "title" : "Aún no hay transacciones con tarjeta",
+          "description" : "Vuelve más tarde para ver las transacciones con tarjeta."
+        },
+        "error" : {
+          "title" : "No fue posible cargar las transacciones con tarjeta",
+          "description" : "Comprueba la conexión e inténtalo de nuevo."
+        }
       }
     },
     "cardOnboarding" : {
@@ -965,6 +1029,28 @@
         "title" : "Completa tu tarjeta",
         "stepComplete" : "Completado",
         "gotIt" : "Entendido"
+      },
+      "steps" : {
+        "createAccount" : {
+          "title" : "Crea tu cuenta",
+          "description" : "Verifica tu identidad para comenzar"
+        },
+        "chooseCardType" : {
+          "title" : "Elige el tipo de tarjeta",
+          "description" : "Elige entre virtual y física"
+        },
+        "topUpCard" : {
+          "title" : "Recarga la tarjeta",
+          "description" : "Añade fondos con USDC, USDT, BTC o más"
+        },
+        "firstPurchase" : {
+          "title" : "Realiza tu primera compra",
+          "description" : "Paga online o en tiendas"
+        },
+        "appleGooglePay" : {
+          "title" : "Añadir a Apple/Google Pay",
+          "description" : "Paga con el teléfono en tiendas"
+        }
       }
     },
     "contacts" : {
@@ -2069,6 +2155,13 @@
     "details" : "Detalles de {{ currency }}",
     "multipleAddresses" : "¿Por qué hay múltiples direcciones?",
     "extra" : {
+      "pltReject" : {
+        "title" : "Motivo",
+        "nonExistentToken" : "Este token no existe en Concordium.",
+        "recipientNotFound" : "La cuenta del receptor no existe en Concordium.",
+        "insufficientBalance" : "La cuenta no tenía suficiente cantidad del token.",
+        "rejected" : "Concordium rechazó esta operación."
+      },
       "frozenAmount" : "Importe inmovilizado",
       "unfreezeAmount" : "Desinmovilizar importe",
       "votes" : "Votos ({{number}})",
@@ -7918,7 +8011,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "Esta cuenta no puede enviar este token",
-      "description" : "El emisor del token restringe quién puede enviarlo, y esta cuenta no está autorizada. Ponte en contacto con el emisor del token para obtener acceso."
+      "description" : "El emisor del token restringe quién puede enviarlo. Ponte en contacto con el emisor del token para obtener más detalles."
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "Esta cuenta no ha sido aprobada para enviar este token",
+      "description" : "El emisor del token mantiene una lista de remitentes aprobados, y esta cuenta no está en ella. La aprobación la gestiona el emisor, no Ledger."
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "Esta cuenta tiene restringido el envío de este token",
+      "description" : "El emisor del token ha restringido esta cuenta. Ponte en contacto con el emisor para obtener más detalles."
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "No fue posible verificar las restricciones del token",
@@ -8171,6 +8272,30 @@
     },
     "AleoApiConfigurationResetError" : {
       "title" : "Se ha restablecido la configuración del escáner de registros. Sincroniza tu cuenta de nuevo."
+    },
+    "AleoNoClaimableUnbondedFunds" : {
+      "title" : "Todavía no hay ALEO desvinculados que reclamar",
+      "description" : "Es posible reclamar los ALEO desvinculados una vez transcurrido su periodo de desvinculación. Vuelva una vez que se haya procesado."
+    },
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "Ya tienes una puesta en participación con {{bondedValidator}}. Quita de participación antes de cambiar de validador.",
+      "description" : "Aleo permite un validador por cuenta. Quita de participación en {{bondedValidator}} antes de poner en participación en otro lugar."
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "Debes poner en participación al menos {{minAmount}} a la vez.",
+      "description" : "La cantidad mínima de puesta en participación es {{minAmount}}."
+    },
+    "AleoClosedValidator" : {
+      "title" : "Este validador no acepta nuevos delegadores.",
+      "description" : "Este validador no acepta nuevos delegadores. Elige un validador abierto para continuar."
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "La puesta en participación requiere un total de al menos {{minAmount}}.",
+      "description" : "Debes tener al menos {{minAmount}} en puesta en participación en total."
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "Este validador se está desvinculando.",
+      "description" : "Este validador está retirando su propia participación, por lo que la red rechaza toda nueva participación en él. Elige otro validador para continuar."
     },
     "BackupAppDataError" : {
       "title" : "Error al hacer la copia de respaldo de datos de la aplicación"
@@ -9130,7 +9255,11 @@
     "opted_in" : {
       "title" : "Más datos. Firma de forma más segura",
       "description" : "Renueva y obtén un {{discount}}% de descuento.",
-      "cta" : "Renovar mi Ledger"
+      "cta" : "Renovar mi Ledger",
+      "nanoS" : {
+        "title" : "Programa de renovación del Ledger Nano S",
+        "description" : "Desbloquea nuevas características de seguridad y del SO. Obtén un {{discount}}% de descuento."
+      }
     },
     "opted_out" : {
       "title" : "Más seguridad. Más control",
@@ -9140,7 +9269,11 @@
     "profile" : {
       "title" : "Renueva tu dispositivo",
       "description" : "Pantalla más grande, mayor seguridad. Disfruta de un {{discount}}%.",
-      "cta" : "Explorar"
+      "cta" : "Explorar",
+      "nanoS" : {
+        "title" : "Programa de renovación del Ledger Nano S",
+        "description" : "Desbloquea nuevas características de seguridad y del SO. Obtén un {{discount}}% de descuento."
+      }
     }
   },
   "largeScreenUpsellModal" : {
@@ -9229,6 +9362,7 @@
     "unsupportedNetworkTooltip" : "La red {{network}} no es compatible todavía.",
     "notAvailableYet" : "No disponible todavía",
     "selectAccount" : "Seleccionar cuenta",
+    "selectAccountToPayFrom" : "Selecciona la cuenta desde la cual pagar",
     "selectAccountPerpsTitle" : "Selecciona una cuenta de Hyperliquid",
     "selectAccountPerpsDescription" : "Selecciona una cuenta en la que desees depositar fondos para realizar tus operaciones",
     "selectAccountPerpsEmptyDescription" : "Para aportar fondos a tus perpetuos, necesitas una cuenta de Hyperliquid. Agrega una para continuar.",
@@ -9662,10 +9796,70 @@
         "lastSync" : "Última sincronización: {{date}}"
       }
     },
+    "stake" : {
+      "table" : {
+        "header" : "Puesta en participación",
+        "status" : "Estado",
+        "validator" : "Validador",
+        "amount" : "Importe",
+        "staked" : "En participación",
+        "rate" : "Tasa de recompensa est.",
+        "completion" : "Finalización",
+        "source" : "Origen",
+        "estimatedRate" : "{{rate}}% est.",
+        "unknownValidator" : "Validador desconocido",
+        "manage" : "Administrar"
+      },
+      "status" : {
+        "earningTooltip" : "Esta posición está ganando recompensas.",
+        "unknown" : "Estado no disponible"
+      },
+      "stakedBalance" : "En participación",
+      "stakedBalanceTooltip" : "Saldo vinculado a un validador. La columna de estado indica si está generando rendimientos.",
+      "unstakingBalance" : "Quitando de participación",
+      "unstakingBalanceTooltip" : "Saldo en proceso de desvinculación que aún no se puede reclamar",
+      "claimableBalance" : "Reclamable",
+      "claimableBalanceTooltip" : "Saldo que ha finalizado la desvinculación y se puede reclamar para devolverlo al saldo disponible",
+      "nonEarning" : {
+        "fullCommission" : "Este validador cobra el 100% de comisión, por lo que no te quedarás con nada.",
+        "overConcentrated" : "Este validador posee más del 25% de todo los ALEO puestos en participación. El protocolo no paga nada por encima de ese límite, por lo que no ganas nada.",
+        "leftCommittee" : "Este validador ya no pertenece al comité, por lo que su participación no genera rendimientos. Quita de participación y vincula a otro validador para empezar a ganar de nuevo.",
+        "ownStakeBelowMinimum" : "La participación total con este validador está por debajo del mínimo de 10.000 ALEO, por lo que no genera rendimientos. Aumenta tu participación para volver a generar rendimientos."
+      },
+      "unstaking" : {
+        "header" : "Quitando de participación",
+        "headerTooltip" : "Los ALEO desvinculados pasan a ser reclamables una vez que la cadena alcance la altura de bloque de desvinculación.",
+        "sourceTooltip" : "Los ALEO desvinculados quedan retenidos por el protocolo hasta que se puedan reclamar, no por un validador. La cadena no registra de qué validador provienen.",
+        "pendingTooltip" : "Aún desvinculándose - aún no reclamable.",
+        "claimableTooltip" : "La desvinculación se ha completado. Puedes reclamar estos fondos.",
+        "settling" : "Almost there...",
+        "settlingTooltip" : "El periodo de desvinculación ha finalizado. Actualizando el saldo - la reclamación estará disponible en un momento.",
+        "claimPending" : "Claiming...",
+        "claimPendingTooltip" : "Tu reclamación se ha enviado y está esperando a ser confirmada. Estos fondos llegarán a tu saldo disponible en breve.",
+        "unbondPending" : "Unstaking...",
+        "unbondPendingTooltip" : "Se ha enviado una operación de quitar de participación y está esperando a ser confirmada. Modifica esta misma posición de desvinculación, por lo que la reclamación no estará disponible hasta que se haya procesado."
+      },
+      "claim" : "Reclamar",
+      "claimableAtTooltip" : "Reclamable en el bloque {{height}} (bloque actual: {{current}})",
+      "blocksRemaining_one" : "~{{count}} bloque restante",
+      "blocksRemaining_other" : "Quedan ~{{count}} bloques",
+      "bondPendingTooltip" : "Se ha enviado una puesta en participación y está esperando a ser confirmada. Aleo tiene una sola posición en puesta en participación por cuenta, por lo que la puesta en participación no estará disponible hasta que se haya procesado.",
+      "emptyState" : {
+        "description" : "Puedes ganar recompensas mediante la puesta en participación de tus {{name}}.",
+        "earnRewards" : "Ganar recompensas"
+      }
+    },
     "operations" : {
       "type" : {
         "public" : "Pública",
         "private" : "Privada"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "Validador",
+        "bondedAmount" : "Cantidad en participación",
+        "unbondedAmount" : "Cantidad quitada de participación"
       }
     },
     "send" : {
@@ -9683,6 +9877,9 @@
         "errorTitle" : "La sincronización privada ha fallado.",
         "errorDesc" : "Algo salió mal, por favor inténtalo de nuevo"
       }
+    },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "Reclamar"
     },
     "bond" : {
       "flow" : {
@@ -9727,7 +9924,6 @@
     "manage" : {
       "headerAction" : "Earn",
       "title" : "Gestionar la puesta en participación",
-      "comingSoonTooltip" : "Próximamente",
       "bond" : {
         "title" : "Vincular",
         "description" : "Vincula tus ALEO a un validador para obtener recompensas."
@@ -9740,7 +9936,10 @@
         "title" : "Reclamar",
         "description" : "Reclama tus ALEO vinculados para regresarlos a tu saldo disponible."
       },
-      "unbondPendingTooltip" : "Una operación de quitar de participación está esperando a ser confirmada. Aleo realiza un seguimiento de una sola posición de desvinculación a la vez, por lo que la desvinculación no estará disponible hasta que se haya procesado."
+      "unbondPendingTooltip" : "Una operación de quita de participación está esperando a ser confirmada. Aleo realiza un seguimiento de una sola posición de desvinculación a la vez, por lo que la desvinculación y la reclamación no estarán disponibles hasta que se haya procesado.",
+      "claimPendingTooltip" : "Una reclamación está esperando a ser confirmada. Aleo realiza un seguimiento de una sola posición de desvinculación a la vez, por lo que la desvinculación y la reclamación no estarán disponibles hasta que se haya procesado.",
+      "stillUnbondingTooltip" : "Tus ALEO desvinculados aún están en su período de desvinculación. Puedes reclamarlos una vez que haya transcurrido el período.",
+      "nothingToClaimTooltip" : "No tienes ALEO desvinculados para reclamar. Desvincula primero parte de tu participación."
     },
     "unbond" : {
       "flow" : {
@@ -9765,6 +9964,30 @@
           }
         }
       }
+    },
+    "claim" : {
+      "flow" : {
+        "title" : "Reclamar ALEO",
+        "steps" : {
+          "summary" : {
+            "title" : "Resumen",
+            "info" : "Esto devuelve a su cuenta todos los ALEO cuyo periodo de desvinculación haya transcurrido.",
+            "claimableAmountLabel" : "Cantidad reclamable"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Reclamación enviada",
+              "text" : "Se ha transmitido tu reclamación.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción de desvinculación se firmó, pero no se pudo transmitir."
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9772,26 +9995,6 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "Error al actualizar. Intentar de nuevo",
     "installAndRelaunch" : "Nueva actualización. Instalar y reiniciar"
-  },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "Una visión más clara de tu portfolio",
-        "description" : "Consulta tu saldo total de un vistazo y pulsa \"Hoy\" para profundizar."
-      },
-      "navigation" : {
-        "title" : "Accede a las acciones clave más rápido",
-        "description" : "Accede al instante a las acciones de Recibir, Comprar, Vender y Enviar."
-      },
-      "actions" : {
-        "title" : "Observa las tendencias del mercado al instante",
-        "description" : "Visualiza rápidamente las tendencias actuales directamente en tu portfolio para pasar de los datos a la acción."
-      }
-    },
-    "cta" : {
-      "continue" : "Continuar",
-      "explore" : "Explorar mi nuevo portfolio"
-    }
   },
   "q2Tour" : {
     "slides" : {
@@ -9890,6 +10093,8 @@
   },
   "history" : {
     "title" : "Historial de transacciones",
+    "cardScope" : "Card",
+    "cardAssetScope" : "Card · {{assetName}}",
     "pending" : "Transacción pendiente",
     "pending_other" : "Transacciones pendientes",
     "columns" : {
@@ -9905,6 +10110,11 @@
     "emptyState" : {
       "title" : "Aún no hay transacciones",
       "description" : "Intenta más tarde para ver tus transacciones."
+    },
+    "tabs" : {
+      "crypto" : "Cripto",
+      "card" : "Tarjeta",
+      "accessibilityLabel" : "Tipo de historial de transacciones"
     },
     "actionsBar" : {
       "csv" : "Exportar",
