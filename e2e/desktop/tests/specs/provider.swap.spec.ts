@@ -127,7 +127,7 @@ test.describe("Swap - landing page", () => {
     `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
-      annotation: { type: "TMS", description: "B2CQA-2918, B2CQA-2327" },
+      annotation: { type: "TMS", description: "B2CQA-2918, B2CQA-2327, B2CQA-4295" },
     },
     async ({ app }) => {
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);

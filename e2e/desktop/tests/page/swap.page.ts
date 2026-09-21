@@ -98,6 +98,20 @@ export class SwapPage extends WebViewAppPage {
     this.page.getByTestId(`swap-history-to-amount-${swapId}`);
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
 
+  // Landing page (no active quote) - Trending Assets / Stablecoins panel
+  private readonly topGainersContainer = "top-gainers-container";
+  private readonly topGainersInfoIcon = "top-gainers-info-icon";
+  private readonly topGainersTooltipContent = "top-gainers-tooltip-content";
+  private readonly topGainersDateTrigger = "top-gainers-date-select-trigger";
+  private readonly topGainersItemsSelector = '[data-testid^="top-gainers-item-"]';
+  private readonly topGainersDateOptionsSelector =
+    '[data-testid^="top-gainers-date-option-"]';
+  private readonly topStablecoinsContainer = "top-stablecoins-container";
+  private readonly topStablecoinsInfoIcon = "top-stablecoins-info-icon";
+  private readonly topStablecoinsTooltipContent = "top-stablecoins-tooltip-content";
+  private readonly topStablecoinsItemsSelector =
+    '[data-testid^="top-stablecoins-item-"]';
+
   private async waitForSelectorPopulated(webview: Page, testId: string, timeout: number) {
     await webview.waitForFunction(
       selectorTestId => {
@@ -601,6 +615,80 @@ export class SwapPage extends WebViewAppPage {
     // Quotes are confirmed loaded once the best-offer info icon (rendered next
     // to the "Best Offer" title in the quotes list) is visible.
     await expect(webview.getByTestId(this.bestValueInfoIcon)).toBeVisible();
+  }
+
+  // Not a critical panel, so every check here is soft: a regression should
+  // surface in the report without blocking the swap flow the test cares about.
+  @step("Check landing page Trending Assets and Stablecoins panel")
+  async checkLandingPageTrendingAssets() {
+    const webview = await this.getWebView();
+
+    const topGainersRows = webview.locator(this.topGainersItemsSelector);
+    await this.softExpect(async soft => {
+      await soft(webview.getByTestId(this.topGainersContainer)).toBeVisible();
+      await soft(webview.getByTestId(this.topGainersContainer)).toContainText(
+        "Trending Assets",
+      );
+      await soft(topGainersRows).toHaveCount(5);
+    });
+    const topGainersTexts = await topGainersRows.allTextContents();
+    await this.softExpect(async soft => {
+      for (const text of topGainersTexts) {
+        soft(text).toMatch(/-?\d+(\.\d+)?%$/);
+      }
+    });
+
+    const dateTrigger = webview.getByTestId(this.topGainersDateTrigger);
+    const dateOptions = webview.locator(this.topGainersDateOptionsSelector);
+    await this.softExpect(async soft => {
+      await soft(dateTrigger).toBeVisible();
+    });
+    const initialDateLabel = await dateTrigger.textContent();
+    await dateTrigger.click();
+    await this.softExpect(async soft => {
+      await soft(dateOptions).toHaveCount(4);
+    });
+    const dateOptionTexts = await dateOptions.allTextContents();
+    await this.softExpect(async soft => {
+      for (const label of ["1D", "1W", "1M", "1Y"]) {
+        soft(dateOptionTexts).toContain(label);
+      }
+    });
+    const nextDateOption = dateOptions
+      .filter({ hasNotText: initialDateLabel ?? "" })
+      .first();
+    await nextDateOption.click();
+    await this.softExpect(async soft => {
+      await soft(dateTrigger).not.toContainText(initialDateLabel ?? "");
+      await soft(topGainersRows).toHaveCount(5);
+    });
+
+    await webview.getByTestId(this.topGainersInfoIcon).hover();
+    await this.softExpect(async soft => {
+      await soft(webview.getByTestId(this.topGainersTooltipContent)).toBeVisible();
+    });
+
+    const topStablecoinsRows = webview.locator(this.topStablecoinsItemsSelector);
+    await this.softExpect(async soft => {
+      await soft(webview.getByTestId(this.topStablecoinsContainer)).toBeVisible();
+      await soft(webview.getByTestId(this.topStablecoinsContainer)).toContainText(
+        "Stablecoins",
+      );
+      await soft(topStablecoinsRows).toHaveCount(2);
+    });
+    const topStablecoinsTexts = await topStablecoinsRows.allTextContents();
+    await this.softExpect(async soft => {
+      for (const text of topStablecoinsTexts) {
+        soft(text).toMatch(/\d+\.\d{2}% APY$/);
+      }
+    });
+
+    await webview.getByTestId(this.topStablecoinsInfoIcon).hover();
+    await this.softExpect(async soft => {
+      await soft(
+        webview.getByTestId(this.topStablecoinsTooltipContent),
+      ).toBeVisible();
+    });
   }
 
   @step("Go and wait for Swap app to be ready")
