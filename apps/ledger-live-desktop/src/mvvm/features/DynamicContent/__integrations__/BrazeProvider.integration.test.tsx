@@ -34,6 +34,10 @@ type BrazeLifecycle = ReturnType<typeof useBraze>;
 const defaultLifecycle: BrazeLifecycle = {
   prepareForIdentityTransition: () => {},
   refreshContentCards: resolvedRefresh,
+  lastFetchedCards: null,
+  eligibilityEvaluations: [],
+  eligibilityContext: { hasFunds: false, isOnboarded: false, hasStax: false },
+  injectDebugContentCard: () => {},
 };
 
 const desktopCard = {
@@ -695,6 +699,224 @@ describe("BrazeProvider", () => {
       store.dispatch(saveSettings({ hasCompletedOnboarding: true }));
     });
     expect(store.getState().dynamicContent.desktopCards).toEqual([]);
+    unmount();
+  });
+
+  it("should expose eligibility context matching onboarding, Stax, and funded accounts", async () => {
+    let lifecycle = defaultLifecycle;
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <RefreshConsumer
+          onReady={value => {
+            lifecycle = value;
+          }}
+        />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(lifecycle.eligibilityContext).toEqual({
+      hasFunds: false,
+      isOnboarded: false,
+      hasStax: false,
+    });
+
+    await act(async () => {
+      store.dispatch(
+        saveSettings({
+          hasCompletedOnboarding: true,
+          devicesModelList: [DeviceModelId.stax],
+        }),
+      );
+      store.dispatch(
+        replaceAccounts([
+          genAccount("funded-eth", {
+            currency: getCryptoCurrencyById("ethereum"),
+            operationsSize: 1,
+          }),
+        ]),
+      );
+    });
+
+    expect(lifecycle.eligibilityContext).toEqual({
+      hasFunds: true,
+      isOnboarded: true,
+      hasStax: true,
+    });
+    unmount();
+  });
+
+  it("should expose blockedBy evaluations for unmet requiredStates without publishing the card", async () => {
+    let lifecycle = defaultLifecycle;
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <RefreshConsumer
+          onReady={value => {
+            lifecycle = value;
+          }}
+        />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const onContentCardsUpdated = mockedSubscribeToContentCardsUpdates.mock.calls[0][0];
+    await act(async () => {
+      onContentCardsUpdated(
+        mockContentCards([
+          {
+            id: "portfolio-blocked",
+            extras: {
+              location: LocationContentCard.Portfolio,
+              platform: Platform.Desktop,
+              requiredStates: "hasStax",
+            },
+          },
+          {
+            id: "action-blocked",
+            extras: {
+              location: LocationContentCard.Action,
+              platform: Platform.Desktop,
+              requiredStates: "hasStax",
+            },
+          },
+          {
+            id: "gam-blocked",
+            extras: {
+              location: LocationContentCard.GenericAwarenessModal,
+              platform: Platform.Desktop,
+              requiredStates: "hasStax",
+            },
+          },
+          {
+            id: "notification-blocked",
+            extras: {
+              location: LocationContentCard.NotificationCenter,
+              platform: Platform.Desktop,
+              requiredStates: "hasStax",
+            },
+          },
+        ]),
+      );
+    });
+
+    expect(lifecycle.lastFetchedCards).toHaveLength(4);
+    expect(lifecycle.eligibilityEvaluations).toEqual(
+      expect.arrayContaining([
+        {
+          id: "portfolio-blocked",
+          requiredStates: ["hasStax"],
+          result: { eligible: false, blockedBy: "hasStax", reason: "unmet-state" },
+        },
+      ]),
+    );
+    expect(store.getState().dynamicContent.portfolioCards).toEqual([]);
+    expect(store.getState().dynamicContent.actionCards).toEqual([]);
+    expect(store.getState().genericAwarenessModal.contentCards).toEqual([]);
+    expect(store.getState().dynamicContent.notificationsCards).toEqual([]);
+    unmount();
+  });
+
+  it("should filter an injected debug card with requiredStates the same as a Braze fetch", async () => {
+    let lifecycle = defaultLifecycle;
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <RefreshConsumer
+          onReady={value => {
+            lifecycle = value;
+          }}
+        />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const refreshCountBeforeInject = mockedRequestContentCardsRefresh.mock.calls.length;
+    await act(async () => {
+      lifecycle.injectDebugContentCard({
+        id: "debug-stax",
+        extras: {
+          location: LocationContentCard.Portfolio,
+          requiredStates: "hasStax",
+          title: "Debug Stax",
+        },
+      });
+    });
+
+    expect(lifecycle.eligibilityEvaluations).toEqual([
+      {
+        id: "debug-stax",
+        requiredStates: ["hasStax"],
+        result: { eligible: false, blockedBy: "hasStax", reason: "unmet-state" },
+      },
+    ]);
+    expect(store.getState().dynamicContent.portfolioCards).toEqual([]);
+    expect(mockedRequestContentCardsRefresh).toHaveBeenCalledTimes(refreshCountBeforeInject);
+
+    await act(async () => {
+      store.dispatch(saveSettings({ devicesModelList: [DeviceModelId.stax] }));
+    });
+
+    expect(store.getState().dynamicContent.portfolioCards).toEqual([
+      expect.objectContaining({ id: "debug-stax" }),
+    ]);
+    expect(lifecycle.eligibilityEvaluations[0]?.result).toEqual({ eligible: true });
+    expect(mockedRequestContentCardsRefresh).toHaveBeenCalledTimes(refreshCountBeforeInject);
+    unmount();
+  });
+
+  it("should not re-publish an injected debug fetch after dummy identity clears the cache", async () => {
+    let lifecycle = defaultLifecycle;
+    const { store, unmount } = renderProvider(
+      <BrazeProvider>
+        <RefreshConsumer
+          onReady={value => {
+            lifecycle = value;
+          }}
+        />
+      </BrazeProvider>,
+      { isTrackedUser: true },
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      lifecycle.injectDebugContentCard({
+        id: "debug-onboard",
+        extras: {
+          location: LocationContentCard.Portfolio,
+          requiredStates: "isOnboarded",
+          title: "Debug onboard",
+        },
+      });
+    });
+
+    await act(async () => {
+      store.dispatch(identitiesSlice.actions.importFromLegacy({ userId: DUMMY_ID_STR }));
+    });
+
+    expect(lifecycle.lastFetchedCards).toBeNull();
+    expect(lifecycle.eligibilityEvaluations).toEqual([]);
+    expect(store.getState().dynamicContent.desktopCards).toEqual([]);
+
+    await act(async () => {
+      store.dispatch(saveSettings({ hasCompletedOnboarding: true }));
+    });
+
+    expect(store.getState().dynamicContent.desktopCards).toEqual([]);
+    expect(lifecycle.lastFetchedCards).toBeNull();
     unmount();
   });
 });
