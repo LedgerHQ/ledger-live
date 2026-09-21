@@ -11,6 +11,7 @@ type Props = {
   onClose: () => void;
   onboardingCompleted: boolean;
   handleGotIt: () => void;
+  onTopUp?: () => void;
 };
 
 export function CardOnboardingDialog(props: Readonly<Props>) {

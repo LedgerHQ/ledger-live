@@ -899,6 +899,7 @@
     },
     "card": {
       "title": "Crypto card",
+      "topUp": "Top up",
       "balanceLabel": "Balance",
       "freeze": "Freeze",
       "unfreeze": "Unfreeze",

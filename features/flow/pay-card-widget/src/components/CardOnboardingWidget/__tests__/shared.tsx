@@ -45,6 +45,11 @@ export function createRenderWidget(render: RenderWidget) {
   return function renderWidget({
     hasCompletedOnboarding = false,
     hasAddedCardToWallet = false,
+    onTopUp,
+  }: {
+    hasCompletedOnboarding?: boolean;
+    hasAddedCardToWallet?: boolean;
+    onTopUp?: () => void;
   } = {}) {
     const store = configureStore({
       reducer: { payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer },
@@ -56,6 +61,6 @@ export function createRenderWidget(render: RenderWidget) {
       </Provider>
     );
 
-    return { ...render(<CardOnboardingWidget />, { wrapper }), store };
+    return { ...render(<CardOnboardingWidget onTopUp={onTopUp} />, { wrapper }), store };
   };
 }

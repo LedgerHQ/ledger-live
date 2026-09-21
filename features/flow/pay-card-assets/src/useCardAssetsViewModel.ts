@@ -121,7 +121,8 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
 
   const onTopUpPress = useCallback(() => {
     if (selectedAsset) onTopUp?.(selectedAsset);
-  }, [onTopUp, selectedAsset]);
+    onDialogClose();
+  }, [onDialogClose, onTopUp, selectedAsset]);
 
   const onWithdrawPress = useCallback(() => {
     setDialogState("withdraw");

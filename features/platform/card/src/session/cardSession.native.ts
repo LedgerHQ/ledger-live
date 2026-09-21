@@ -6,6 +6,7 @@ export const {
   cardSession,
   setCardProviderAppId,
   isCardUsEnv,
+  readCardUsEnv,
   getCardSessionToken,
   readCardSession,
   isCardSessionCurrent,

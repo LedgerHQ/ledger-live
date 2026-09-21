@@ -5,4 +5,5 @@ export interface CardViewModel {
   readonly assets: PayCardProps["assets"];
   readonly login: PayCardProps["login"];
   readonly onShowMore: () => void;
+  readonly onTopUp: () => Promise<void>;
 }

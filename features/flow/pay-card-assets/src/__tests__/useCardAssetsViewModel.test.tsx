@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import type { CardLinkedWalletBalance } from "@features/flow-pay-card-wallets";
 import { CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
+import type { CardAssetsProps } from "../types";
 import { I18nWrapper } from "./i18nWrapper";
 import { formatCardAssetCryptoAmount, useCardAssetsViewModel } from "../useCardAssetsViewModel";
 
@@ -62,9 +63,15 @@ const CURRENCIES = new Map([["ethereum/erc20/usd__coin", USDC]]);
 const priceWallet = jest.fn(() => 12540);
 const formatCountervalue = jest.fn((value: number) => `$${value}`);
 
-function renderViewModel() {
+function renderViewModel(overrides: Partial<CardAssetsProps> = {}) {
   return renderHook(
-    () => useCardAssetsViewModel({ currencies: CURRENCIES, priceWallet, formatCountervalue }),
+    () =>
+      useCardAssetsViewModel({
+        currencies: CURRENCIES,
+        priceWallet,
+        formatCountervalue,
+        ...overrides,
+      }),
     { wrapper: I18nWrapper },
   );
 }
@@ -283,5 +290,31 @@ describe("useCardAssetsViewModel", () => {
     act(() => result.current.onAddAssetPress());
 
     expect(onAddAsset).toHaveBeenCalledTimes(1);
+  });
+
+  it("should hand the selected asset to the host top up and close the dialog", () => {
+    stubWallets({
+      wallets: [
+        {
+          id: "w-usdc",
+          balance: "125.40",
+          currency: "usdc",
+          network: "ethereum",
+          ledgerId: "ethereum/erc20/usd__coin",
+          ledgerCurrency: USDC,
+        },
+      ],
+    });
+    const onTopUp = jest.fn();
+
+    const { result } = renderViewModel({ onTopUp });
+
+    act(() => result.current.onAssetPress(result.current.rows[0]));
+    expect(result.current.dialogState).toBe("details");
+
+    act(() => result.current.onTopUpPress());
+
+    expect(onTopUp).toHaveBeenCalledWith(expect.objectContaining({ currency: "usdc" }));
+    expect(result.current.dialogState).toBe("closed");
   });
 });
