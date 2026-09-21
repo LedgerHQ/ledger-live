@@ -85,7 +85,7 @@ describe("useTrustchainSdk", () => {
       initialState: withFlagOverrides({
         lldWalletSync: {
           enabled: true,
-          params: { environment: "PROD", watchConfig: {}, learnMoreLink: "" },
+          params: { watchConfig: {}, learnMoreLink: "" },
         },
       }),
     });
@@ -106,7 +106,7 @@ describe("useTrustchainSdk", () => {
       initialState: withFlagOverrides({
         lldWalletSync: {
           enabled: true,
-          params: { environment: "STAGING", watchConfig: {}, learnMoreLink: "" },
+          params: { watchConfig: {}, learnMoreLink: "" },
         },
       }),
     });

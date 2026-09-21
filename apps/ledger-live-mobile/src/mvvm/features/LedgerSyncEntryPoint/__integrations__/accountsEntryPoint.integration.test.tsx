@@ -14,7 +14,6 @@ const getInitialState = withFlagOverrides(
     llmWalletSync: {
       enabled: true,
       params: {
-        environment: "STAGING",
         watchConfig: {},
       },
     },
@@ -94,7 +93,6 @@ const getInitialStateWithOptimisation = withFlagOverrides(
     llmWalletSync: {
       enabled: true,
       params: {
-        environment: "STAGING",
         watchConfig: {},
       },
     },

@@ -16,7 +16,6 @@ describe("AddAccount", () => {
           llmWalletSync: {
             enabled: true,
             params: {
-              environment: "STAGING",
               watchConfig: {
                 pollingInterval: 10000,
                 initialTimeout: 5000,

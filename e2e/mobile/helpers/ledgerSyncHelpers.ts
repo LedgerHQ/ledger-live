@@ -11,7 +11,6 @@ export const LEDGER_SYNC_FEATURE_FLAGS: PartialFeatures = {
   llmWalletSync: {
     enabled: true,
     params: {
-      environment: ledgerSyncEnvironment,
       watchConfig: {
         pollingInterval: 2_000,
         initialTimeout: 500,

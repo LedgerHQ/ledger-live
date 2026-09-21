@@ -57,7 +57,7 @@ describe("readCachedFlags", () => {
       feature_llm_wallet_sync: value(
         JSON.stringify({
           enabled: true,
-          params: { environment: "PROD", watchConfig: {}, learnMoreLink: "" },
+          params: { watchConfig: {}, learnMoreLink: "" },
         }),
       ),
     });
@@ -67,7 +67,7 @@ describe("readCachedFlags", () => {
     await expect(readCachedFlags()).resolves.toEqual({
       llmWalletSync: {
         enabled: true,
-        params: { environment: "PROD", watchConfig: {}, learnMoreLink: "" },
+        params: { watchConfig: {}, learnMoreLink: "" },
       },
     });
     expect(mockFetchAndActivate).not.toHaveBeenCalled();

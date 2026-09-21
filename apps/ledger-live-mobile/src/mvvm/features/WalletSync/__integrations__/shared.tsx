@@ -63,7 +63,6 @@ export const INITIAL_TEST = withFlagOverrides(
     llmWalletSync: {
       enabled: true,
       params: {
-        environment: "STAGING",
         watchConfig: {},
         learnMoreLink: "https://www.ledger.com",
       },

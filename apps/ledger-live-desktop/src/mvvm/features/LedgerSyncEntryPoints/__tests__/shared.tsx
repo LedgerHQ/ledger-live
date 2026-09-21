@@ -19,7 +19,6 @@ export const INITIAL_STATE = {
     lldWalletSync: {
       enabled: true,
       params: {
-        environment: "STAGING" as const,
         watchConfig: {},
       },
     },

@@ -162,7 +162,7 @@ describe("LedgerSyncEntryPoint", () => {
           ...withFlagOverrides({
             lldWalletSync: {
               enabled: true,
-              params: { environment: "STAGING" as const, watchConfig: {} },
+              params: { watchConfig: {} },
             },
             lldLedgerSyncEntryPoints: { enabled: true, params: { postOnboarding: false } },
           }),
@@ -199,7 +199,7 @@ describe("LedgerSyncEntryPoint", () => {
       ...withFlagOverrides({
         lldWalletSync: {
           enabled: true,
-          params: { environment: "STAGING" as const, watchConfig: {} },
+          params: { watchConfig: {} },
         },
         lldLedgerSyncEntryPoints: {
           enabled: true,
