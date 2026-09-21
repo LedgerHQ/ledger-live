@@ -37,16 +37,6 @@ function Tag({ label, children, ...props }) {
   );
 }
 
-function TooltipContent({ title, content, children, ...props }) {
-  return React.createElement(
-    "TooltipContent",
-    { ...props, title },
-    title === undefined ? null : React.createElement("Text", undefined, title),
-    content,
-    wrapTextChildren(children),
-  );
-}
-
 // Generic Lumen (native) stub: every named export becomes a host element named after the
 // component (e.g. Text -> "Text"), so React Native Testing Library text queries still work.
 // Hooks (`use*`) return a mutable ref stub. Redirected here via moduleNameMapper — no
@@ -63,7 +53,7 @@ function makeComponent(prop) {
 }
 
 module.exports = new Proxy(
-  { __esModule: true, Banner, Tag, TooltipContent },
+  { __esModule: true, Banner, Tag },
   {
     get(target, prop) {
       if (prop in target) return target[prop];
