@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { screen, waitFor, within } from "@tests/test-renderer";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-balance/state";
@@ -541,6 +541,30 @@ describe("PayTab integration", () => {
 
       expect(screen.getByText("Rosa")).toBeVisible();
       expect(screen.queryByText("Yana")).not.toBeOnTheScreen();
+    });
+
+    it("should show no results and dismiss the keyboard before opening a searched contact", async () => {
+      const yana = mockContactWithAddress({ id: "contact-yana", name: "Yana" });
+      const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
+      const { user } = renderPayTab({
+        contacts: [mockMeContact(), yana],
+        contactsEnabled: true,
+      });
+
+      await user.press(await screen.findByRole("button", { name: "New" }));
+      const input = await screen.findByPlaceholderText("Enter contact");
+
+      await user.type(input, "Nobody");
+      expect(await screen.findByTestId("contacts-search-no-results")).toBeVisible();
+      expect(screen.getByText("No contact found")).toBeVisible();
+
+      await user.clear(input);
+      await user.type(input, "Yana");
+      await user.press(screen.getByText("Yana"));
+
+      expect(dismissKeyboard).toHaveBeenCalled();
+      expect(await screen.findByText("Select Yana's address")).toBeVisible();
+      dismissKeyboard.mockRestore();
     });
 
     it("should open the select-contact screen from New when there is no one else to pay", async () => {

@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FlashList, type ListRenderItemInfo } from "@shopify/flash-list";
 import type { Contact } from "@domain/entity-contact";
 import { ContactAddressPicker } from "@features/flow-pay-contact";
-import { ContactsCompactRow } from "@features/flow-contacts-list";
+import { ContactsCompactRow, ContactsSearchNoResults } from "@features/flow-contacts-list/native";
 import {
   AddressInput,
   NavBar,
@@ -31,6 +31,7 @@ export function PayTabSelectContactView({
   clearSearch,
   contacts,
   showEmptyContactsState,
+  showSearchNoResults,
   handleBack,
   handleContactSelect,
   contactAddressPicker,
@@ -91,6 +92,8 @@ export function PayTabSelectContactView({
       <View style={styles.body}>
         {showEmptyContactsState ? (
           <RecipientEmptyContactsState />
+        ) : showSearchNoResults ? (
+          <ContactsSearchNoResults message={t("contacts.searchNoResults")} />
         ) : (
           <FlashList
             testID="pay-select-contact-list"
