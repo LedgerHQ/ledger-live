@@ -681,8 +681,10 @@ export class SwapPage extends WebViewAppPage {
 
     await webview.getByTestId(this.topGainersInfoIcon).hover();
     await this.softExpect(async soft => {
-      // Radix mirrors tooltip content into a hidden a11y node; take the visible one.
-      await soft(webview.getByTestId(this.topGainersTooltipContent).first()).toBeVisible();
+      // Radix mirrors tooltip content into a hidden a11y node; select the visible one.
+      await soft(
+        webview.locator(`[data-testid="${this.topGainersTooltipContent}"]:visible`),
+      ).toBeVisible();
     });
   }
 
@@ -707,9 +709,9 @@ export class SwapPage extends WebViewAppPage {
 
     await webview.getByTestId(this.topStablecoinsInfoIcon).hover();
     await this.softExpect(async soft => {
-      // Radix mirrors tooltip content into a hidden a11y node; take the visible one.
+      // Radix mirrors tooltip content into a hidden a11y node; select the visible one.
       await soft(
-        webview.getByTestId(this.topStablecoinsTooltipContent).first(),
+        webview.locator(`[data-testid="${this.topStablecoinsTooltipContent}"]:visible`),
       ).toBeVisible();
     });
   }
