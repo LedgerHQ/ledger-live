@@ -66,11 +66,8 @@ export function useOperationsListViewModel(
   // Without an asset scope, a deep link or stale param must not reach the Card API outside the
   // Pay tab, nor on account-scoped routes where card history has no meaning.
   const canShowCardHistory = Boolean(cardAsset) || (isPayTabEnabled && !accountIds?.length);
-  const historyTab =
-    requestedHistoryTab === HISTORY_TAB_CARD && !canShowCardHistory
-      ? HISTORY_TAB_CRYPTO
-      : requestedHistoryTab;
-  const isCardTab = historyTab === HISTORY_TAB_CARD;
+  const isCardTab = requestedHistoryTab === HISTORY_TAB_CARD && canShowCardHistory;
+  const historyTab: HistoryTab = isCardTab ? HISTORY_TAB_CARD : HISTORY_TAB_CRYPTO;
   const showHistoryTypeSwitcher = isPayTabEnabled && !accountIds?.length && !cardAsset;
   const { isEnabled: isDustFilterFeatureEnabled } = useDustFilteringFeature("mobile");
   const userHideSmallValueTokenOperations = useSelector(
