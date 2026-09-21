@@ -12,6 +12,7 @@ const LNS_UNSUPPORTED_CURRENCIES = new Set([
   Currency.VET.id,
   Currency.HBAR.id,
   Currency.ALEO.id,
+  Currency.ZEC.id,
 ]);
 
 export function shouldSkipLNSTag(currencyId: string): boolean {

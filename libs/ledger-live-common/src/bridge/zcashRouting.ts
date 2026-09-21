@@ -27,3 +27,15 @@ export const isZcashShieldedEnabled = (): boolean => shieldedEnabled;
 export function resolveFamily(currency: CryptoCurrency): string {
   return currency.id === "zcash" && isZcashShieldedEnabled() ? "zcash" : currency.family;
 }
+
+/**
+ * Bridge family whose raw<->live assign hooks read `currency`'s persisted account data.
+ * Always `zcash` for Zcash, whatever the flag says, for two reasons: coin-zcash's hooks
+ * round-trip coin-bitcoin's transparent shape as well as the shielded `privateInfo`
+ * coin-bitcoin knows nothing about, so they are the safe reader in either routing state;
+ * and accounts are deserialized at app startup, before the host app has mirrored the flag
+ * here, so a flag-gated answer would read `false` and silently drop `privateInfo`.
+ */
+export function resolveSerializationFamily(currency: CryptoCurrency): string {
+  return currency.id === "zcash" ? "zcash" : currency.family;
+}

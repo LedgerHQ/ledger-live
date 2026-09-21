@@ -1,0 +1,170 @@
+{
+  "data": {
+    "PLAYWRIGHT_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2042-01-01"
+      }
+    },
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "counterValue": "USD",
+      "language": "en",
+      "locale": "en-US",
+      "theme": null,
+      "region": null,
+      "orderAccounts": "balance|desc",
+      "countervalueFirst": false,
+      "autoLockTimeout": 10,
+      "selectedTimeRange": "month",
+      "currenciesSettings": {},
+      "pairExchanges": {},
+      "developerMode": false,
+      "loaded": true,
+      "shareAnalytics": true,
+      "sentryLogs": true,
+      "lastUsedVersion": "99.99.99",
+      "dismissedBanners": [],
+      "accountsViewMode": "list",
+      "nftsViewMode": "list",
+      "showAccountsHelperBanner": true,
+      "hideEmptyTokenAccounts": false,
+      "filterTokenOperationsZeroAmount": true,
+      "sidebarCollapsed": false,
+      "discreetMode": false,
+      "preferredDeviceModel": "nanoX",
+      "hasInstalledApps": true,
+      "lastSeenDevice": {
+        "modelId": "nanoX",
+        "deviceInfo": {
+          "version": "2.2.2",
+          "mcuVersion": "2.30",
+          "seVersion": "2.2.2",
+          "majMin": "2.2",
+          "providerName": null,
+          "targetId": 855638020,
+          "hasDevFirmware": false,
+          "seTargetId": 855638020,
+          "isOSU": false,
+          "isBootloader": false,
+          "isRecoveryMode": false,
+          "managerAllowed": false,
+          "pinValidated": true,
+          "onboarded": true,
+          "bootloaderVersion": "1.16",
+          "hardwareVersion": 0,
+          "languageId": 1
+        },
+        "apps": []
+      },
+      "devicesModelList": ["nanoX"],
+      "lastSeenCustomImage": {
+        "hex": "",
+        "hash": ""
+      },
+      "blacklistedTokenIds": [],
+      "swapAcceptedProviders": [],
+      "supportedCounterValues": [],
+      "onboardingRelaunched": false,
+      "hasAnsweredRecommendedBanner": false,
+      "hasAnsweredLanguageAvailable": false,
+      "starredMarketCoins": [],
+      "overriddenFeatureFlags": {},
+      "featureFlagsButtonVisible": false,
+      "marketCounterCurrency": null,
+      "customImageBackup": null,
+      "postOnboardingActionCompleted": [],
+      "notifications": {
+        "areNotificationsAllowed": false
+      }
+    },
+    "user": {
+      "id": "zcash-e2e-test-user"
+    },
+    "announcements": {
+      "announcements": [],
+      "seenIds": [],
+      "lastUpdateTime": 1695123863229
+    },
+    "accounts": [
+      {
+        "data": {
+          "id": "mock:1:zcash:zcash_1:",
+          "seedIdentifier": "mock",
+          "name": "Zcash 1",
+          "starred": false,
+          "used": true,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "t1transparent",
+          "freshAddressPath": "44'/133'/0'/0/0",
+          "blockHeight": 3450000,
+          "creationDate": "2024-01-01T00:00:00.000Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "zcash",
+          "unitMagnitude": 8,
+          "lastSyncDate": "2024-01-16T00:00:00.000Z",
+          "balance": "7000000",
+          "spendableBalance": "7000000",
+          "xpub": "D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C3",
+          "bitcoinResources": {
+            "utxos": [
+              [
+                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                0,
+                3449990,
+                "t1transparent",
+                "5000000",
+                0,
+                0
+              ]
+            ]
+          },
+          "privateInfo": {
+            "saplingBalance": "0",
+            "orchardBalance": "0",
+            "ironwoodBalance": "2000000",
+            "syncState": "complete",
+            "progress": 1,
+            "estimatedTimeRemaining": { "hours": 0, "minutes": 0 },
+            "ufvk": "uview1test",
+            "birthday": null,
+            "shieldedAddress": "u1shielded",
+            "lastSyncTimestamp": 1700000000000,
+            "lastProcessedBlock": 3450000,
+            "transactions": [
+              {
+                "id": "tx-0",
+                "hex": "",
+                "blockHeight": 3449900,
+                "blockHash": "0000000000000000000000000000000000000000000000000000000000000000",
+                "timestamp": 1699990000,
+                "fee": "1000",
+                "decryptedData": {
+                  "orchard_outputs": [],
+                  "sapling_outputs": [],
+                  "ironwood_outputs": [
+                    {
+                      "memo": "",
+                      "transfer_type": "incoming",
+                      "amount": "2000000",
+                      "nullifier": "0000000000000000000000000000000000000000000000000000000000000000",
+                      "rho": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+                      "rseed": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+                      "cmx": "1111111111111111111111111111111111111111111111111111111111111111",
+                      "position": "0",
+                      "recipient": "22222222222222222222222222222222222222222222222222222222222222222222222222222222222222"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "swapHistory": []
+        },
+        "version": 1
+      }
+    ]
+  }
+}

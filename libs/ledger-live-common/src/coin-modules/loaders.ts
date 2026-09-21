@@ -460,5 +460,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-zcash/deviceTransactionConfig").then(m => m.default),
     loadBridgeExtensions: () => import("../families/zcash/bridgeExtensions").then(m => m.default),
+    loadMockBridge: () => import("../families/zcash/bridge/mock").then(m => m.default),
   },
 ];

@@ -22,6 +22,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import { getAccountBridge } from "../bridge";
 import { getAccountBridgeByFamily } from "../bridge/impl";
+import { resolveSerializationFamily } from "../bridge/zcashRouting";
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -66,7 +67,10 @@ export const fromOperationRaw = async (
 
 export async function fromAccountRaw(rawAccount: AccountRaw): Promise<Account> {
   const currency = getCryptoCurrencyById(rawAccount.currencyId);
-  const bridge = await getAccountBridgeByFamily(currency.family, rawAccount.id);
+  const bridge = await getAccountBridgeByFamily(
+    resolveSerializationFamily(currency),
+    rawAccount.id,
+  );
 
   return await commonFromAccountRaw(rawAccount, {
     assignFromAccountRaw: bridge.assignFromAccountRaw,

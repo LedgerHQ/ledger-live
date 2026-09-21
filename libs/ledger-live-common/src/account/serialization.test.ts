@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { setZcashShieldedEnabled } from "../bridge/zcashRouting";
 import { toAccountRaw, fromAccountRaw } from "./serialization";
 import { setWalletAPIVersion } from "../wallet-api/version";
 import { WALLET_API_VERSION } from "../wallet-api/constants";
@@ -62,5 +63,55 @@ describe("serialization", () => {
 
     const deserializedAcc: any = await fromAccountRaw(accRaw);
     expect(deserializedAcc.readiness).toBeUndefined();
+  });
+
+  // Zcash declares `family: "bitcoin"`, and coin-bitcoin's hooks know nothing about the
+  // shielded `privateInfo`. Reading it back therefore has to go through coin-zcash even
+  // with the shielded flag off: accounts are deserialized at startup, before the host app
+  // mirrors the flag, so a flag-gated reader would drop the viewing key on every boot.
+  test("zcash privateInfo survives deserialization with the shielded flag off", async () => {
+    setZcashShieldedEnabled(false);
+
+    const accRaw: any = {
+      id: "mock:1:zcash:zcash_1:",
+      seedIdentifier: "mock",
+      derivationMode: "",
+      index: 0,
+      freshAddress: "t1transparent",
+      freshAddressPath: "44'/133'/0'/0/0",
+      name: "Zcash 1",
+      balance: "7000000",
+      spendableBalance: "7000000",
+      blockHeight: 3450000,
+      currencyId: "zcash",
+      unitMagnitude: 8,
+      operations: [],
+      operationsCount: 0,
+      pendingOperations: [],
+      lastSyncDate: "",
+      creationDate: new Date().toISOString(),
+      bitcoinResources: {
+        utxos: [["aaaa", 0, 3449990, "t1transparent", "5000000", 0, 0]],
+      },
+      privateInfo: {
+        saplingBalance: "0",
+        orchardBalance: "0",
+        ironwoodBalance: "2000000",
+        syncState: "complete",
+        progress: 1,
+        estimatedTimeRemaining: { hours: 0, minutes: 0 },
+        ufvk: "uview1test",
+        birthday: null,
+        shieldedAddress: "u1shielded",
+        lastSyncTimestamp: 1700000000000,
+        lastProcessedBlock: 3450000,
+        transactions: [],
+      },
+    };
+
+    const deserializedAcc: any = await fromAccountRaw(accRaw);
+
+    expect(deserializedAcc.privateInfo?.ufvk).toBe("uview1test");
+    expect(deserializedAcc.bitcoinResources?.utxos).toHaveLength(1);
   });
 });
