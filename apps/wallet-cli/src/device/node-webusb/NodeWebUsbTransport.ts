@@ -38,8 +38,32 @@ import {
   RECONNECT_DEVICE_TIMEOUT_MS,
   WINDOWS_WEBUSB_DISCOVERY_POLL_INTERVAL_MS,
 } from "./node-webusb-constants";
+import {
+  recordLedgerVendorSeen,
+  recordScanCompleted,
+  recordUsbAccessFailure,
+  recordUsbAccessSuccess,
+  resetUsbAccessDiagnostics,
+} from "../usb-access-diagnostics";
 
 export const nodeWebUsbIdentifier: TransportIdentifier = "NODE-WEBUSB";
+
+/**
+ * Scopes a recorded access failure to the device it belongs to, or `undefined` when this platform
+ * does not say where the device sits. Only the bus address distinguishes two identical Ledgers, so
+ * there is no falling back to the descriptor ids alone: that would hand both the same key and let
+ * one device's success clear the other's refusal, the very thing the key exists to prevent.
+ */
+function nativeUsbDeviceKey(native: {
+  busNumber?: number;
+  deviceAddress?: number;
+  deviceDescriptor: { idVendor: number; idProduct: number };
+}): string | undefined {
+  const { busNumber, deviceAddress } = native;
+  if (busNumber === undefined || deviceAddress === undefined) return undefined;
+  const { idVendor, idProduct } = native.deviceDescriptor;
+  return `${busNumber}:${deviceAddress}:${idVendor}:${idProduct}`;
+}
 
 type WebUsbDiscoveredInternal = TransportDiscoveredDevice & {
   webUsbDevice: WebUSBDevice;
@@ -378,11 +402,41 @@ export class NodeWebUsbTransport implements Transport {
 
   private async scanLedgerWebUsbDevices(): Promise<ScannedWebUsbDevice[]> {
     const collected: ScannedWebUsbDevice[] = [];
-    for (const native of this._platformBindings.getDeviceList()) {
+    // Scan facts describe one scan, not the process: discovery rescans on every attach, detach and
+    // poll tick. Without this a Ledger seen once stays "seen" forever, so unplugging it makes the
+    // next empty scan `unknown` instead of `device_not_present`.
+    resetUsbAccessDiagnostics();
+    let natives: ReturnType<NodeWebUsbTransportPlatform["getDeviceList"]>;
+    try {
+      natives = this._platformBindings.getDeviceList();
+    } catch (e) {
+      // Enumeration itself failed, so we cannot claim to have looked. Leaving `scanCompleted`
+      // false keeps this out of the `device_not_present` branch (LIVE-31394).
+      recordUsbAccessFailure(e);
+      throw e;
+    }
+    recordScanCompleted();
+    for (const native of natives) {
       if (native.deviceDescriptor.idVendor !== LEDGER_VENDOR_ID) {
         continue;
       }
-      const device = await this._platformBindings.createWebUsbDevice(native);
+      // Recorded before we try to open it, so a later failure can be attributed to the host
+      // refusing access rather than to a missing device (LIVE-31394).
+      recordLedgerVendorSeen();
+      const deviceKey = nativeUsbDeviceKey(native);
+      let device: WebUSBDevice;
+      try {
+        device = await this._platformBindings.createWebUsbDevice(native);
+      } catch (e) {
+        // Building the WebUSB wrapper has to open the device to read its descriptors, so this is
+        // where a sandbox or a missing udev rule first bites. The throw stands — the caller turns
+        // a failed scan into "no devices" — but the reason is left behind.
+        recordUsbAccessFailure(e, deviceKey);
+        throw e;
+      }
+      // This device opened, so its own earlier failure was transient. With no key we cannot prove
+      // which device this was, and guessing would clear the wrong verdict.
+      if (deviceKey !== undefined) recordUsbAccessSuccess(deviceKey);
       const interfaceNumber = getVendorInterfaceNumber(device);
       if (interfaceNumber === null) {
         continue;
@@ -642,8 +696,10 @@ export class NodeWebUsbTransport implements Transport {
 
     try {
       await setupConnection;
+      recordUsbAccessSuccess();
     } catch (e) {
       this._deviceApduSendersByConnectionMachine.delete(machine);
+      recordUsbAccessFailure(e);
       this._logger.error("Error while setting up device connection", { data: { error: e } });
       return Left(new OpeningConnectionError(e));
     } finally {
