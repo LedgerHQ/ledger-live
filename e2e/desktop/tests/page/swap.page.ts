@@ -645,7 +645,7 @@ export class SwapPage extends WebViewAppPage {
     const topGainersTexts = await topGainersRows.allTextContents();
     await this.softExpect(async soft => {
       for (const text of topGainersTexts) {
-        soft(text).toMatch(/-?\d+(\.\d+)?%$/);
+        soft(text).toMatch(/-?\d{1,10}\.\d{2}%$/);
       }
     });
 
@@ -690,7 +690,7 @@ export class SwapPage extends WebViewAppPage {
     const topStablecoinsTexts = await topStablecoinsRows.allTextContents();
     await this.softExpect(async soft => {
       for (const text of topStablecoinsTexts) {
-        soft(text).toMatch(/\d+\.\d{2}% APY$/);
+        soft(text).toMatch(/\d{1,10}\.\d{2}% APY$/);
       }
     });
 
