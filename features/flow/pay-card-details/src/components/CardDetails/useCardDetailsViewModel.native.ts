@@ -6,8 +6,7 @@ import { transactionClickedProperties } from "@features/flow-pay-card-transactio
 import { useTranslation } from "@shared/i18n";
 import { useFreezeCardViewModel } from "../Freeze/useFreezeCardViewModel";
 import { useMoreViewModel } from "../More/useMoreViewModel";
-import { useCardDetailsNavigation } from "./Scenes/navigation";
-import type { CardDetailsSceneProps } from "./Scenes/types";
+import type { CardDetailsRoute, CardDetailsSceneProps } from "./Scenes/types";
 import type { CardDetailsProps, CardDetailsViewProps } from "../../types";
 
 export function useCardDetailsViewModel({
@@ -21,42 +20,43 @@ export function useCardDetailsViewModel({
 }: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const { route, goTo, goBack } = useCardDetailsNavigation();
+  const [route, setRoute] = useState<CardDetailsRoute>({ name: "overview" });
+  const goBack = () => setRoute({ name: "overview" });
   const assetsViewModel = useCardAssetsViewModel(assets);
   const freezeViewModel = useFreezeCardViewModel(goBack);
   const moreViewModel = useMoreViewModel(cardSettingsActions);
 
   const onFreezePress = () => {
     freezeViewModel.onOpenConfirm();
-    goTo({ name: "freeze" });
+    setRoute({ name: "freeze" });
   };
 
   const onMorePress = () => {
-    goTo({ name: "more" });
+    setRoute({ name: "more" });
   };
 
   const onTransactionPress = (transaction: PayCardTransaction) => {
     onTrackEvent?.("transaction_clicked", transactionClickedProperties(transaction));
-    goTo({ name: "transaction", transaction });
+    setRoute({ name: "transaction", transaction });
   };
 
   const onAssetPress = (asset: CardAssetRow) => {
     assetsViewModel.onAssetPress(asset);
-    goTo({ name: "assetDetails" });
+    setRoute({ name: "assetDetails" });
   };
 
   const onManageAssetsPress = () => {
     assetsViewModel.onManagePress();
-    goTo({ name: "assetsManage" });
+    setRoute({ name: "assetsManage" });
   };
 
   const onAssetWithdrawPress = () => {
     assetsViewModel.onWithdrawPress();
-    goTo({ name: "assetWithdraw" });
+    setRoute({ name: "assetWithdraw" });
   };
 
   const onAssetTransactionPress = (transaction: CardTransactionItem) => {
-    goTo({ name: "assetTransaction", transaction });
+    setRoute({ name: "assetTransaction", transaction });
   };
 
   const onAssetHistoryPress = () => {
@@ -67,10 +67,6 @@ export function useCardDetailsViewModel({
   const onAssetWithdrawContinue = () => {
     assetsViewModel.onWithdrawContinue();
     goBack();
-  };
-
-  const onAddToWalletPress = () => {
-    goTo({ name: "addToWallet" });
   };
 
   const openSheet = () => {
@@ -88,12 +84,12 @@ export function useCardDetailsViewModel({
 
   const onSceneBack = () => {
     if (route.name === "assetWithdraw") {
-      goTo({ name: "assetDetails" });
+      setRoute({ name: "assetDetails" });
       return;
     }
 
     if (route.name === "assetTransaction") {
-      goTo({ name: "assetDetails" });
+      setRoute({ name: "assetDetails" });
       return;
     }
 
@@ -134,13 +130,11 @@ export function useCardDetailsViewModel({
       onFreezePress,
       onMorePress,
       onTransactionPress,
-      onAddToWalletPress,
       onShowMore,
       formatters,
     },
     freeze: { viewModel: freezeViewModel },
     more: moreViewModel ? { viewModel: moreViewModel } : null,
-    addToWallet: { onDone: goBack },
     transaction:
       route.name === "transaction" ? { transaction: route.transaction, formatters } : null,
     assetDetails:
