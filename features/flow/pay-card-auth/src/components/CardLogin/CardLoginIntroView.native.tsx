@@ -15,6 +15,8 @@ import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 
 const FILL_STYLE = { flex: 1 } as const;
 
+const HERO_ASPECT_RATIO = 1028 / 576;
+
 const ROW_ICONS: Record<CardLoginIntroRowIcon, typeof CreditCard> = {
   CoinsAddPlus,
   CreditCard,
@@ -47,7 +49,12 @@ export function CardLoginIntroView({
           >
             <Box lx={{ gap: "s16" }}>
               <Box
-                lx={{ width: "full", height: "s192", borderRadius: "xl", overflow: "hidden" }}
+                lx={{
+                  width: "full",
+                  aspectRatio: HERO_ASPECT_RATIO,
+                  borderRadius: "xl",
+                  overflow: "hidden",
+                }}
                 testID="pay-card-login-intro-hero"
               >
                 <Image

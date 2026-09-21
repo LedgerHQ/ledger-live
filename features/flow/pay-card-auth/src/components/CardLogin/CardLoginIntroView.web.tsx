@@ -66,7 +66,7 @@ export function CardLoginIntroView({
             <img
               src={heroImage}
               alt=""
-              className="h-[192px] w-full rounded-xl object-cover"
+              className="aspect-1028/576 w-full rounded-xl object-cover"
               data-testid="pay-card-login-intro-hero"
               draggable={false}
             />
