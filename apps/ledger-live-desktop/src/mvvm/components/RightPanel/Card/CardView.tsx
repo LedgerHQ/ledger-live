@@ -8,7 +8,7 @@ export interface CardViewProps {
 }
 
 export const CardView = ({ viewModel }: CardViewProps) => {
-  const { formatters, assets, login, onShowMore, onTopUp } = viewModel;
+  const { formatters, assets, login, onShowMore, onTopUp, cardSettingsActions } = viewModel;
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden pb-32">
@@ -20,6 +20,7 @@ export const CardView = ({ viewModel }: CardViewProps) => {
             formatters={formatters}
             onShowMore={onShowMore}
             onTopUp={onTopUp}
+            cardSettingsActions={cardSettingsActions}
           />
         </div>
       </PayCardContainer>

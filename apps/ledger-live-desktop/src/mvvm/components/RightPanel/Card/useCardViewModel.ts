@@ -1,9 +1,15 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { buildTopUpPath } from "@features/flow-pay-card-auth";
+import {
+  buildTopUpPath,
+  buildAccessBaanxPath,
+  MANAGE_PIN_PATH,
+  openHostedPageSafely,
+} from "@features/flow-pay-card-auth";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import { readCardUsEnv } from "@features/platform-card";
 import useEnv from "@features/platform-env";
+import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
@@ -12,6 +18,8 @@ import logger from "~/renderer/logger";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { HISTORY_TAB_CARD, HISTORY_TAB_SEARCH_PARAM } from "LLD/features/History/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { usePayCardAssets } from "./usePayCardAssets";
@@ -175,11 +183,39 @@ export function useCardViewModel(): CardViewModel {
     [onShowAssetHistory, openTopUpPage, payCardAssets],
   );
 
+  const onManagePin = useCallback(
+    () =>
+      openHostedPageSafely(openHostedPage, MANAGE_PIN_PATH, error =>
+        logger.warn("[card] manage pin page did not open", error),
+      ),
+    [openHostedPage],
+  );
+
+  const onAccessBaanx = useCallback(async () => {
+    const isUsCardHolder = await readCardUsEnv(usAppId);
+
+    await openHostedPageSafely(
+      openHostedPage,
+      buildAccessBaanxPath(isUsCardHolder ? usAppId : null),
+      error => logger.warn("[card] baanx page did not open", error),
+    );
+  }, [openHostedPage, usAppId]);
+
+  const onHelp = useCallback(() => {
+    openURL(urls.cardHelpCenter);
+  }, []);
+
+  const cardSettingsActions: CardSettingsActions = useMemo(
+    () => ({ onManagePin, onAccessBaanx, onHelp }),
+    [onManagePin, onAccessBaanx, onHelp],
+  );
+
   return {
     formatters,
     assets,
     login,
     onShowMore,
     onTopUp,
+    cardSettingsActions,
   };
 }
