@@ -118,8 +118,10 @@ when that derivation misses a real entry point:
   (`devtools/env`, and `devtools/feature-flags` / `devtools/pay-card`, which have no `exports` at
   all). Name `src/index.native.ts` in the native config.
 - a platform file is reachable only through resolution. `devtools/bindings` pairs
-  `usePayCardAuthProps.ts` with a `.web.ts` override and no `.native` twin, and knip resolves the
-  unsuffixed sibling first, so the web config names `src/usePayCardAuthProps.web.ts`.
+  `isMockSessionSupported.ts` with a `.native.ts` override and no `.web` twin, and knip resolves
+  the unsuffixed sibling first, so the native config names `src/isMockSessionSupported.native.ts`.
+  Such an entry goes stale when the override is deleted; knip then reports *Refine entry pattern
+  (no match)*, so treat that hint as "the pair is gone, drop the entry".
 
 ### `additionalProjectExcludes` is for an *unsuffixed* barrel
 
