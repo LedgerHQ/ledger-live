@@ -4,6 +4,13 @@ import { randomUUID } from "node:crypto";
 const CONTACT_NAME_FORMAT_SAMPLE = "O Neil Zoe";
 
 /**
+ * Distant `me.name` for an empty Me contact.
+ *
+ * @see [DEFAULT_ME_CONTACT_NAME](../../../domain/entity/contact/src/constants.ts)
+ */
+const SEEDED_ME_CONTACT_NAME = "Me";
+
+/**
  * Valid contact name, unique per call — duplicates are rejected on save.
  *
  * @see [ContactNamePattern](../../../domain/entity/contact/src/schema.ts) for the accepted format.
@@ -46,4 +53,47 @@ export function buildSeededContacts(seeds: readonly ContactSeed[]) {
       device: { blockchainFamily: "e2e", chainId: "0", hmacRest: NOT_A_PROOF },
     })),
   }));
+}
+
+/** Ten distinct names in storage order, not UI order — the list must sort them alphabetically. */
+export const SEEDED_CONTACT_NAMES = [
+  "Hugo",
+  "Alice",
+  "Jules",
+  "Clara",
+  "Iris",
+  "Elena",
+  "Benoit",
+  "Farah",
+  "Diana",
+  "Grace",
+] as const;
+
+export type LedgerSyncContactGroupDescriptor = {
+  id: string;
+  name: string;
+};
+
+export function createSeededContactGroups(): LedgerSyncContactGroupDescriptor[] {
+  return SEEDED_CONTACT_NAMES.map(name => ({
+    id: `e2e-contact-${name.toLowerCase()}`,
+    name,
+  }));
+}
+
+export function createSeededContactsDocument(
+  contactGroups: readonly LedgerSyncContactGroupDescriptor[],
+) {
+  return {
+    accounts: [],
+    accountNames: {},
+    contacts: {
+      me: { name: SEEDED_ME_CONTACT_NAME, addresses: [] },
+      contactGroups: contactGroups.map(({ id, name }) => ({
+        id,
+        name,
+        addresses: [],
+      })),
+    },
+  };
 }

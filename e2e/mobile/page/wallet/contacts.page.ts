@@ -9,6 +9,7 @@ export default class ContactsPage {
   detail = new ContactDetailPage();
 
   addContactContentId = "contacts-add-contact-content";
+  searchInputId = "contacts-search-input";
 
   contactsContent = () => getElementById("contacts-content");
   meName = () => getElementById("contacts-me-name");
@@ -17,7 +18,9 @@ export default class ContactsPage {
   addContactRow = () => getElementById("contacts-add-contact-row");
   addContactNameInput = () => getElementById("contacts-add-contact-name-input");
   addContactSaveButton = () => getElementById("contacts-add-contact-save");
+  searchInput = () => getElementById(this.searchInputId);
   savedContactName = (name: string) => getElementByIdAndText(this.savedContactNameRegExp, name);
+  savedContactNameAtIndex = (index: number) => getElementById(this.savedContactNameRegExp, index);
   savedContactRow = (rowId: string) => getElementById(rowId);
   savedContactRowName = (rowId: string) => getElementById(`${rowId}-name`);
   savedContactAddressCount = (rowId: string) => getElementById(`${rowId}-address-count`);
@@ -30,6 +33,11 @@ export default class ContactsPage {
   @Step("Expect Me contact displayed")
   async expectMeContactDisplayed() {
     await detoxExpect(this.meName()).toHaveText(ME_CONTACT_DISPLAY_NAME);
+  }
+
+  @Step("Expect Me contact hidden")
+  async expectMeContactHidden() {
+    await detoxExpect(this.meName()).not.toExist();
   }
 
   @Step("Expect Me contact address count to show {{0}}")
@@ -61,6 +69,31 @@ export default class ContactsPage {
   @Step("Expect contact {{0}} displayed")
   async expectSavedContactDisplayed(name: string) {
     await detoxExpect(this.savedContactName(name)).toBeVisible();
+  }
+
+  @Step("Expect contact {{0}} not displayed")
+  async expectSavedContactNotDisplayed(name: string) {
+    await detoxExpect(this.savedContactName(name)).not.toExist();
+  }
+
+  @Step("Expect saved contacts in order")
+  async expectSavedContactsInOrder(names: readonly string[]) {
+    for (const [index, name] of names.entries()) {
+      await detoxExpect(this.savedContactNameAtIndex(index)).toHaveText(name);
+    }
+  }
+
+  @Step("Search contacts for {{0}}")
+  async search(query: string) {
+    await waitForElementById(this.searchInputId);
+    await typeTextByElement(this.searchInput(), query);
+  }
+
+  @Step("Clear the contacts search")
+  async clearSearch() {
+    await waitForElementById(this.searchInputId);
+    await tapByElement(this.searchInput());
+    await clearTextByElement(this.searchInput());
   }
 
   @Step("Expect contact {{0}} address count to show {{1}}")
