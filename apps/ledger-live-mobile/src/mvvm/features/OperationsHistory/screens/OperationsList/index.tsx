@@ -7,7 +7,6 @@ import { ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
-import { HISTORY_TAB_CARD } from "LLM/features/OperationsHistory/constants";
 import { OperationsListView } from "./OperationsListView";
 import { OperationsHistoryOptionsTrailing } from "./components/OperationsHistoryOptionsTrailing";
 import { useCardHistoryViewModel } from "./components/useCardHistoryViewModel";
@@ -33,8 +32,7 @@ export default function OperationsList({ route, navigation }: Props) {
     : undefined;
   const viewModel = useOperationsListViewModel(accountIds, route.params?.historyTab, cardAsset);
   const cardHistoryViewModel = useCardHistoryViewModel(navigation);
-  const isCardTab = viewModel.historyTab === HISTORY_TAB_CARD;
-  const showDustFilter = viewModel.isDustFilterFeatureEnabled && !isCardTab;
+  const showDustFilter = viewModel.isDustFilterFeatureEnabled && !viewModel.isCardTab;
 
   const renderTrailing = useCallback(
     (_props: NativeStackHeaderRightProps) => (

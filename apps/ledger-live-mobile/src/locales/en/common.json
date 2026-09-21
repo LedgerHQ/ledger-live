@@ -3276,6 +3276,7 @@
     }
   },
   "history": {
+    "cardAssetScope": "Card · {{assetName}}",
     "tabs": {
       "crypto": "Crypto",
       "card": "Card",

@@ -7,7 +7,6 @@ import { CardArtwork } from "@features/flow-pay-card-details";
 import { CardTransactionHistory } from "@features/flow-pay-card-transactions";
 import { TrackScreen } from "~/analytics";
 import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
-import { HISTORY_TAB_CARD } from "LLM/features/OperationsHistory/constants";
 import { HistoryTypeSwitcher } from "./components/HistoryTypeSwitcher";
 import { OperationsEmptyState } from "./components/OperationsEmptyState";
 import { OperationsHistoryOptionsSheet } from "./components/OperationsHistoryOptionsSheet";
@@ -52,9 +51,9 @@ export function OperationsListView({
     onToggleHideSmallValueTokenOperations,
     showHistoryTypeSwitcher,
     historyTab,
+    isCardTab,
     onHistoryTabChange,
   } = viewModel;
-  const isCardTab = historyTab === HISTORY_TAB_CARD;
 
   const listContentStyle = useMemo(
     () => ({

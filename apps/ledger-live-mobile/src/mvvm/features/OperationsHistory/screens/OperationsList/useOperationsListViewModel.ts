@@ -61,8 +61,16 @@ export function useOperationsListViewModel(
       : initialHistoryTab;
   // Only card history is ever asset scoped, and the switcher is hidden then: the route has to win
   // over an earlier switcher pick, or the same screen instance would keep showing crypto.
-  const historyTab = cardAsset ? HISTORY_TAB_CARD : selectedHistoryTab;
+  const requestedHistoryTab = cardAsset ? HISTORY_TAB_CARD : selectedHistoryTab;
   const isPayTabEnabled = !!useFeature("lwmPayTab")?.enabled;
+  // Without an asset scope, a deep link or stale param must not reach the Card API outside the
+  // Pay tab, nor on account-scoped routes where card history has no meaning.
+  const canShowCardHistory = Boolean(cardAsset) || (isPayTabEnabled && !accountIds?.length);
+  const historyTab =
+    requestedHistoryTab === HISTORY_TAB_CARD && !canShowCardHistory
+      ? HISTORY_TAB_CRYPTO
+      : requestedHistoryTab;
+  const isCardTab = historyTab === HISTORY_TAB_CARD;
   const showHistoryTypeSwitcher = isPayTabEnabled && !accountIds?.length && !cardAsset;
   const { isEnabled: isDustFilterFeatureEnabled } = useDustFilteringFeature("mobile");
   const userHideSmallValueTokenOperations = useSelector(
@@ -230,6 +238,7 @@ export function useOperationsListViewModel(
     onToggleHideSmallValueTokenOperations,
     showHistoryTypeSwitcher,
     historyTab,
+    isCardTab,
     onHistoryTabChange,
   };
 }
