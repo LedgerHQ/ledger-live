@@ -1,8 +1,7 @@
-import type { ComponentProps } from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { DiscoverDB, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
-import WebView from "react-native-webview";
+import WebView, { WebViewProps } from "react-native-webview";
 
 export type WebviewProps = {
   manifest: LiveAppManifest;
@@ -16,7 +15,7 @@ export type WebviewProps = {
   onWalletApiTransactionBroadcast?: () => void;
   onAccountRequestCancel?: () => void;
   onAccountRequestSuccess?: () => void;
-  onScroll?: ComponentProps<typeof WebView>["onScroll"];
+  onScroll?: WebViewProps["onScroll"];
   Loader?: () => React.JSX.Element;
 };
 
@@ -29,7 +28,7 @@ export type WebviewState = {
   isAppUnavailable: boolean;
 };
 
-export type WebviewAPI = Pick<WebView, "reload" | "goBack" | "goForward"> & {
+export type WebviewAPI = Pick<WebView<object>, "reload" | "goBack" | "goForward"> & {
   loadURL: (url: string) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   notify: (method: `event.${string}`, params: any) => void;

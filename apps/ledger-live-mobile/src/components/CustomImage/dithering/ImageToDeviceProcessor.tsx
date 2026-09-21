@@ -49,7 +49,7 @@ export default class ImageProcessor extends React.Component<Props> {
    * the parent using a ref.
    */
 
-  webViewRef: WebView | null = null;
+  webViewRef: WebView<object> | null = null;
 
   componentDidUpdate(prevProps: Props) {
     if (

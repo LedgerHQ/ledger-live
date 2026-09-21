@@ -304,7 +304,6 @@
       "detox@20.51.3": "patches/detox@20.51.3.patch",
       "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch",
       "@taquito/http-utils": "patches/@taquito__http-utils.patch",
-      "react-native-webview@13.16.0": "patches/react-native-webview@13.16.0.patch",
       "@testing-library/react-native@13.3.3": "patches/@testing-library__react-native@13.3.3.patch",
       "styled-components@6.1.19": "patches/styled-components@6.1.19.patch",
       "react-native@0.81.6": "patches/react-native@0.81.6.patch",
