@@ -28,7 +28,9 @@ export function getRecipientHeaderPresentation({
   const address = recipient?.address;
   const matchedContact =
     isContactsFeatureEnabled && address && currencyId
-      ? findMatchedContact(contacts, address, currencyId)
+      ? findMatchedContact(contacts, address, currencyId, undefined, {
+          preferredContactId: recipient.contactId,
+        })
       : undefined;
 
   if (!matchedContact) {

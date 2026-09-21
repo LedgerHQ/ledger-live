@@ -62,6 +62,8 @@ export type Memo = { value: string; type?: string };
 export type RecipientData = Readonly<{
   address?: string;
   ensName?: string;
+  /** Contact explicitly selected for this recipient; disambiguates duplicate saved addresses. */
+  contactId?: string;
   /** Overrides address/ensName display. Clear when address or ensName changes unless setting a new label. */
   displayLabel?: string;
   /**
