@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { ipcRenderer } from "electron";
 import { useSelector, useStore } from "LLD/hooks/redux";
 import { EnvName, getEnv } from "@shared/env";
 import {
@@ -41,6 +42,25 @@ export const ConnectEnvsToDatadog = () => {
   const lldDatadog = isLldDatadogFeature(rawLldDatadog) ? rawLldDatadog : null;
   const [datadogInitialized, setDatadogInitialized] = useState(false);
   const initInFlightRef = useRef(false);
+
+  useEffect(() => {
+    // The main process can't resolve the "lldDatadog" feature flag itself (no Firebase
+    // Remote Config access there), so mirror it over IPC; see main/index.ts. Also persisted,
+    // so a boot where the renderer dies before this fires still has last boot's value.
+    const enabled = !!lldDatadog?.enabled;
+    ipcRenderer.send("lldDatadogFlagChanged", enabled);
+    // Bypasses storage.ts's 1s debounce: a renderer crash in that window would otherwise leave
+    // the persisted cold-boot gate stale.
+    ipcRenderer
+      .invoke("setKey", { ns: "app", keyPath: "lldDatadogEnabled", value: enabled })
+      .catch(() => {});
+  }, [lldDatadog?.enabled]);
+
+  useEffect(() => {
+    // settings persistence is debounced 1s; mirror crashReporting immediately so an opt-out
+    // can't still be captured by main for up to a second after the user turns it off.
+    ipcRenderer.send("crashReportingChanged", !!crashReporting);
+  }, [crashReporting]);
 
   useEffect(() => {
     if (!lldDatadog?.enabled || !crashReporting || !isDatadogAvailable() || datadogInitialized)

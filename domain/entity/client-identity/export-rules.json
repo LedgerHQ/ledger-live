@@ -41,7 +41,8 @@
     "exportDatadogIdForRumUser": [
       "apps/ledger-live-desktop/src/datadog/renderer.ts",
       "apps/ledger-live-mobile/src/index.tsx"
-    ]
+    ],
+    "exportDatadogIdForElectronMain": ["apps/ledger-live-desktop/src/datadog/main.ts"]
   },
   "domain/entity/client-identity/src/persistence.ts": {
     "exportIdentitiesForPersistence": [

@@ -53,7 +53,6 @@ export type Settings = ReturnType<typeof settingsStoreSelector>;
 export type Market = ReturnType<typeof marketStoreSelector>;
 export type MarketBanner = ReturnType<typeof marketBannerStoreSelector>;
 export type KnownDevices = ReturnType<typeof knownDevicesStoreSelector>;
-export type PayCard = PayCardPersistedState;
 
 export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
 
@@ -73,6 +72,7 @@ type DatabaseValues = {
   featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;
   coinConfigOverrides: { overrides: Record<string, unknown> };
   identities: PersistedIdentities;
+  lldDatadogEnabled: boolean;
   history: { lastSeenOperationDate: string | null };
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
@@ -82,7 +82,7 @@ type DatabaseValues = {
     lastScreen: string;
   };
   largeScreenUpsellModal: RestorableLargeScreenUpsellModalState;
-  payCard: PayCard;
+  payCard: PayCardPersistedState;
 };
 
 // Infers the type seen from the user side (non-raw).

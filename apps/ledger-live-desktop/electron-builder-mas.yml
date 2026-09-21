@@ -32,6 +32,7 @@ mas:
 
 files:
   - .webpack/**/*
+  - "!.webpack/node_modules/**"
   - "!.webpack/**/*.js.map"
   - "node_modules/@ledgerhq/zcash-utils/**/*"
   - from: "dist/node_modules"
@@ -54,6 +55,11 @@ files:
       - "!**/build/**/*"
       - "**/build/**/*.{js,cjs,mjs}"
       - "**/*.node"
+  - from: ".webpack/node_modules"
+    to: "node_modules"
+    filter:
+      - "**/*"
+      - "!**/*.js.map"
   - "!node_modules"
 
 buildDependenciesFromSource: false
@@ -61,3 +67,4 @@ npmRebuild: false
 
 asarUnpack:
   - "node_modules/@ledgerhq/zcash-utils/**/*"
+  - "node_modules/@datadog/electron-sdk/**/*.node"

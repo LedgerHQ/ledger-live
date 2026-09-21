@@ -1,4 +1,5 @@
 import React from "react";
+import { ipcRenderer } from "electron";
 import { render, withFlagOverrides } from "tests/testSetup";
 import { ConnectEnvsToDatadog } from "./ConnectEnvsToDatadog";
 
@@ -87,5 +88,33 @@ describe("ConnectEnvsToDatadog", () => {
     expect(shouldSend()).toBe(true);
     store.dispatch({ type: "SAVE_SETTINGS", payload: { crashReporting: false } });
     expect(shouldSend()).toBe(false);
+  });
+
+  it("persists the resolved lldDatadog flag (bypassing the debounce) so main can read it back on the next cold boot", () => {
+    render(<ConnectEnvsToDatadog />, {
+      initialState: {
+        ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
+        settings: { crashReporting: false },
+      },
+    });
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith("setKey", {
+      ns: "app",
+      keyPath: "lldDatadogEnabled",
+      value: true,
+    });
+  });
+
+  it("mirrors crashReporting to main immediately, bypassing the settings persistence debounce", async () => {
+    const { store } = render(<ConnectEnvsToDatadog />, {
+      initialState: {
+        ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
+        settings: { crashReporting: true },
+      },
+    });
+    expect(ipcRenderer.send).toHaveBeenCalledWith("crashReportingChanged", true);
+    jest.mocked(ipcRenderer.send).mockClear();
+    store.dispatch({ type: "SAVE_SETTINGS", payload: { crashReporting: false } });
+    await new Promise(r => setImmediate(r));
+    expect(ipcRenderer.send).toHaveBeenCalledWith("crashReportingChanged", false);
   });
 });

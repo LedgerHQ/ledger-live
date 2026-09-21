@@ -63,6 +63,35 @@ describe("datadog anonymizer", () => {
     });
   });
 
+  describe("main process (browser) path freshness", () => {
+    const originalType = process.type;
+
+    afterEach(() => {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      (process as { type?: string }).type = originalType;
+      jest.dontMock("electron");
+    });
+
+    it("re-reads app.getPath on every call instead of caching it at module load, so app.setPath (e.g. the legacy migration) after load is picked up", () => {
+      process.env.LEDGER_CONFIG_DIRECTORY = "";
+      process.env.HOME_DIRECTORY = "";
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      (process as { type?: string }).type = "browser";
+      let userDataPath = "/tmp/pre-migration";
+      jest.doMock("electron", () => ({
+        app: {
+          getPath: jest.fn((name: string) => (name === "userData" ? userDataPath : "/tmp/home")),
+        },
+      }));
+      const anonymizer = require("~/datadog/anonymizer").default;
+
+      expect(anonymizer.filepath("/tmp/pre-migration/log.txt")).toBe("$USER_DATA/log.txt");
+
+      userDataPath = "/tmp/post-migration"; // simulates setUserDataPath() running after module load
+      expect(anonymizer.filepath("/tmp/post-migration/log.txt")).toBe("$USER_DATA/log.txt");
+    });
+  });
+
   describe("filepathRecursiveReplacer", () => {
     beforeEach(() => {
       process.env.LEDGER_CONFIG_DIRECTORY = "/tmp/config";

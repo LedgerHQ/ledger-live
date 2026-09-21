@@ -1,12 +1,10 @@
-let configDir = (() => {
-  const { LEDGER_CONFIG_DIRECTORY } = process.env;
-  if (LEDGER_CONFIG_DIRECTORY) return LEDGER_CONFIG_DIRECTORY;
-  if (process.type === "browser") {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const electron = require("electron");
-    return electron.app.getPath("userData");
-  }
+const { LEDGER_CONFIG_DIRECTORY, HOME_DIRECTORY } = process.env;
 
+// Cache for the renderer only: it can't call app.getPath synchronously, so fetch once over IPC.
+let cachedRendererConfigDir = "";
+let cachedRendererHomeDir = "";
+
+if (!LEDGER_CONFIG_DIRECTORY && process.type !== "browser") {
   // we load in async the user data. there is a short period where this will be "" but then it becomes the real path
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const electron = require("electron");
@@ -15,22 +13,13 @@ let configDir = (() => {
     const promise = ipc.invoke("getPathUserData");
     if (promise != null && typeof promise.then === "function") {
       promise.then((path: string) => {
-        configDir = path;
+        cachedRendererConfigDir = path;
       });
     }
   }
-  return "";
-})();
+}
 
-let homeDir = (() => {
-  const { HOME_DIRECTORY } = process.env;
-  if (HOME_DIRECTORY) return HOME_DIRECTORY;
-  if (process.type === "browser") {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const electron = require("electron");
-    return electron.app.getPath("home");
-  }
-
+if (!HOME_DIRECTORY && process.type !== "browser") {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const electron = require("electron");
   const ipc = electron?.ipcRenderer ?? electron?.default?.ipcRenderer;
@@ -38,14 +27,36 @@ let homeDir = (() => {
     const promise = ipc.invoke("getPathHome");
     if (promise != null && typeof promise.then === "function") {
       promise.then((path: string) => {
-        homeDir = path;
+        cachedRendererHomeDir = path;
       });
     }
   }
-  return "";
-})();
+}
+
+// Resolved fresh on every call in the main process (a cheap sync Electron call), rather than
+// cached at module load, since app.setPath() (e.g. the legacy "Ledger Live" migration) can
+// change it after this module first loads.
+function getConfigDir(): string {
+  if (LEDGER_CONFIG_DIRECTORY) return LEDGER_CONFIG_DIRECTORY;
+  if (process.type === "browser") {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    return require("electron").app.getPath("userData");
+  }
+  return cachedRendererConfigDir;
+}
+
+function getHomeDir(): string {
+  if (HOME_DIRECTORY) return HOME_DIRECTORY;
+  if (process.type === "browser") {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    return require("electron").app.getPath("home");
+  }
+  return cachedRendererHomeDir;
+}
 
 function filepathReplace(path: string): string {
+  const configDir = getConfigDir();
+  const homeDir = getHomeDir();
   // all the paths the app will use. we replace them to anonymize
   const basePaths = {
     $USER_DATA: configDir,
