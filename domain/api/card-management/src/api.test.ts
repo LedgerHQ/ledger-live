@@ -12,6 +12,7 @@ import {
   useFreezeCardMutation,
   useGetCardLinkedWalletsQuery,
   useLinkWalletToCardMutation,
+  useUnlinkWalletFromCardMutation,
   useUpdateCardWalletPrioritiesMutation,
   useCreateCardDetailsTokenMutation,
   useCreateCardPinTokenMutation,
@@ -117,7 +118,7 @@ const makeStore = (sessionToken: string | null = null, overrides: Partial<CardAp
       }).concat(cardApi.middleware),
   });
 
-function expectSessionRequest(method: "GET" | "POST" | "PUT", path: string) {
+function expectSessionRequest(method: "GET" | "POST" | "PUT" | "DELETE", path: string) {
   const sent = provider.sent();
 
   expect(sent.method).toBe(method);
@@ -151,6 +152,7 @@ describe("cardManagementApi configuration", () => {
       "orderCard",
       "refreshSession",
       "unfreezeCard",
+      "unlinkWalletFromCard",
       "updateCardWalletPriorities",
     ]);
   });
@@ -211,6 +213,8 @@ describe("cardManagementApi configuration", () => {
     expect(useGetCardLinkedWalletsQuery).toBeDefined();
     expect(cardManagementApi.endpoints.linkWalletToCard).toBeDefined();
     expect(useLinkWalletToCardMutation).toBeDefined();
+    expect(cardManagementApi.endpoints.unlinkWalletFromCard).toBeDefined();
+    expect(useUnlinkWalletFromCardMutation).toBeDefined();
     expect(cardManagementApi.endpoints.updateCardWalletPriorities).toBeDefined();
     expect(useUpdateCardWalletPrioritiesMutation).toBeDefined();
     expect(cardManagementApi.endpoints.getRewardWallet).toBeDefined();
@@ -1471,6 +1475,90 @@ describe("cardManagementApi requests", () => {
 
       const result = await store.dispatch(
         cardManagementApi.endpoints.linkWalletToCard.initiate({ addressId }),
+      );
+      await flushPendingRequests();
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests().length).toBe(before + 1);
+    });
+  });
+
+  describe("unlinkWalletFromCard", () => {
+    const LINKED_WALLETS_PATH = "/v1/wallet/internal/card_linked";
+
+    const addressId = "0x0a4b21fa733e9aeaddbf070302a85c559de13c4c";
+
+    it("unlinks the wallet the caller named", async () => {
+      provider.delete(LINKED_WALLETS_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.unlinkWalletFromCard.initiate({ addressId }),
+      );
+
+      expectSessionRequest("DELETE", LINKED_WALLETS_PATH);
+      expect(JSON.parse(provider.sent().body)).toEqual({ addressId });
+      expect(result.data).toEqual({ success: true });
+    });
+
+    it("rejects a request that names no wallet, and sends nothing", async () => {
+      provider.delete(LINKED_WALLETS_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.unlinkWalletFromCard.initiate({ addressId: "" }),
+      );
+
+      expect(result.error).toBeDefined();
+      expect(provider.requests()).toEqual([]);
+    });
+
+    it("reads the linked wallets again once a wallet is unlinked", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.delete(LINKED_WALLETS_PATH, () => jsonResponse({ success: true }));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      await store.dispatch(
+        cardManagementApi.endpoints.unlinkWalletFromCard.initiate({ addressId }),
+      );
+      await flushPendingRequests();
+
+      // The DELETE, then exactly one re-read: the answer is only `{ success: true }`.
+      expect(provider.requests().length).toBe(before + 2);
+    });
+
+    it("keeps the linked wallets cached when the provider refuses with success:false", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.delete(LINKED_WALLETS_PATH, () => jsonResponse({ success: false }));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.unlinkWalletFromCard.initiate({ addressId }),
+      );
+      await flushPendingRequests();
+
+      // A 200 is not an error, so the flag is the answer — and it says nothing was unlinked.
+      expect(result.error).toBeUndefined();
+      expect(result.data).toEqual({ success: false });
+      expect(provider.requests().length).toBe(before + 1);
+    });
+
+    it("keeps the linked wallets cached when the unlink fails", async () => {
+      provider.get(LINKED_WALLETS_PATH, () => jsonResponse(linkedWallets));
+      provider.delete(LINKED_WALLETS_PATH, () => errorResponse(422, "unlink refused"));
+
+      const store = makeStore("session-token");
+      await store.dispatch(cardManagementApi.endpoints.getCardLinkedWallets.initiate()).unwrap();
+      const before = provider.requests().length;
+
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.unlinkWalletFromCard.initiate({ addressId }),
       );
       await flushPendingRequests();
 

@@ -303,6 +303,24 @@ export const cardManagementApi = cardApi
       }),
 
       /**
+       * Drops one custodial wallet as a funding source.
+       *
+       * Answers a `success` flag, which a caller has to read: a refusal arrives as
+       * `success: false` on a 200 rather than as an error.
+       */
+      unlinkWalletFromCard: build.mutation<PayCardLinkWalletResult, PayCardLinkWalletRequest>({
+        query: request => ({
+          url: "/v1/wallet/internal/card_linked",
+          method: "DELETE",
+          body: request,
+        }),
+        argSchema: PayCardLinkWalletRequestSchema,
+        responseSchema: PayCardLinkWalletResponseSchema,
+        // Same reasoning as the link above: only a dropped link invalidates.
+        invalidatesTags: result => (result?.success ? ["CardLinkedWallets"] : []),
+      }),
+
+      /**
        * Rewrites the order the linked wallets are charged in.
        *
        * Takes every linked wallet, not the ones being moved: the provider expects a priority for
@@ -361,6 +379,7 @@ export const {
   useGetRewardWalletQuery,
   useGetCardLinkedWalletsQuery,
   useLinkWalletToCardMutation,
+  useUnlinkWalletFromCardMutation,
   useUpdateCardWalletPrioritiesMutation,
 } = cardManagementApi;
 
