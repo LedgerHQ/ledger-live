@@ -4,8 +4,8 @@ import getTrustchainApi, {
   StatusAPIResponse as TrustchainStatus,
 } from "@ledgerhq/ledger-key-ring-protocol/api";
 import { getCloudSyncApi, StatusAPIResponse as CloudSyncStatus } from "@shared/cloud-sync";
-import { useFeature } from "@features/platform-feature-flags";
 import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
+import { walletSyncEnvironment } from "~/config/walletSync";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -14,10 +14,8 @@ export function useLedgerSyncInfo() {
   const trustchain = useSelector(trustchainSelector);
   const walletState = useSelector(walletSelector);
 
-  const featureWalletSync = useFeature("lldWalletSync");
-  const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
+  const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } =
+    getWalletSyncEnvironmentParams(walletSyncEnvironment);
   const QUERIES = [
     {
       queryKey: [QueryKey.fetchTrustchainStatus],

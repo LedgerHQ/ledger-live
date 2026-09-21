@@ -6,13 +6,13 @@ import getTrustchainApi, {
 import { getCloudSyncApi, StatusAPIResponse as CloudSyncStatus } from "@shared/cloud-sync";
 import { useFeature } from "@features/platform-feature-flags";
 import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
+import { walletSyncEnvironment } from "~/config/walletSync";
 
 export function useLedgerSyncStatus() {
   const featureWalletSync = useFeature("llmWalletSync");
   const isWalletSyncEnabled = featureWalletSync?.enabled === true;
-  const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
+  const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } =
+    getWalletSyncEnvironmentParams(walletSyncEnvironment);
   const QUERIES = [
     {
       queryKey: [QueryKey.fetchTrustchainStatus],

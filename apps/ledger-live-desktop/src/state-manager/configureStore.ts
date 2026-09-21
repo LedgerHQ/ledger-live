@@ -2,7 +2,7 @@ import { configureStore, type Middleware, type ThunkDispatch } from "@reduxjs/to
 import { UnknownAction } from "redux";
 import { AuthSDK } from "@ledgerhq/auth";
 import { getEnv } from "@shared/env";
-import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
+import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
@@ -44,6 +44,7 @@ import {
   fetchRemoteFlags as defaultFetchRemoteFlags,
   readCachedFlags as defaultReadCachedFlags,
 } from "~/firebase/remoteConfig";
+import { walletSyncEnvironment } from "~/config/walletSync";
 import { sleepingListener } from "./sleepingListener";
 /**
  * Reports only the failures that actually degrade the session. A warm failure is routine: the
@@ -128,10 +129,9 @@ const customCreateStore = ({
                 authProvider: new AuthSDK(
                   {
                     clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
-                    keycloakBaseUrl(): string | null {
-                      const environment = authEnvironmentSelector(store.getState());
-                      return environment && getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`);
-                    },
+                    keycloakBaseUrl: getEnv(
+                      `LEDGER_AUTH_KEYCLOAK_BASE_URL_${walletSyncEnvironment}`,
+                    ),
                     keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
                     disablePkce: true,
                   },

@@ -15,8 +15,8 @@ import { useTrustchainSdk } from "./useTrustchainSdk";
 import { Options, Steps } from "../types/Activation";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import { useFeature } from "@features/platform-feature-flags";
 import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
+import { walletSyncEnvironment } from "~/config/walletSync";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
 import { useInstanceName } from "./useInstanceName";
@@ -36,10 +36,7 @@ export function useQRCodeHost({ currentOption }: Props) {
   const sdk = useTrustchainSdk();
   const dispatch = useDispatch();
 
-  const featureWalletSync = useFeature("llmWalletSync");
-  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
+  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(walletSyncEnvironment);
   const memberName = useInstanceName();
 
   const [url, setUrl] = useState<string | null>(null);

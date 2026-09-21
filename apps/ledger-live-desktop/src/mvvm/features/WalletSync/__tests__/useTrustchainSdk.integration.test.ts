@@ -1,18 +1,19 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { getEnv, setEnv } from "@shared/env";
-import { selectRemoteFlagsReady } from "@shared/feature-flags";
+import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
 import type { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 
 jest.mock("../hooks/useInstanceName", () => ({
   useInstanceName: () => "Desktop instance",
 }));
 
-const PROD_URL = getEnv("TRUSTCHAIN_API_PROD");
-const STAGING_URL = getEnv("TRUSTCHAIN_API_STAGING");
+const PROD_URL = getWalletSyncEnvironmentParams("PROD").trustchainApiBaseUrl;
+const STAGING_URL = getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl;
 const originalMockEnv = getEnv("MOCK");
+const originalWalletSyncEnvironment = process.env.WALLET_SYNC_ENVIRONMENT;
 const reactModule = jest.requireActual<typeof import("react")>("react");
 const reactReduxModule = jest.requireActual<typeof import("react-redux")>("react-redux");
 
@@ -58,6 +59,7 @@ describe("useTrustchainSdk", () => {
     jest.doMock("react", () => reactModule);
     jest.doMock("react-redux", () => reactReduxModule);
     setEnv("MOCK", "");
+    process.env.WALLET_SYNC_ENVIRONMENT = "PROD";
   });
 
   afterEach(() => {
@@ -65,6 +67,11 @@ describe("useTrustchainSdk", () => {
     jest.useRealTimers();
     server.resetHandlers();
     setEnv("MOCK", originalMockEnv);
+    if (originalWalletSyncEnvironment === undefined) {
+      delete process.env.WALLET_SYNC_ENVIRONMENT;
+    } else {
+      process.env.WALLET_SYNC_ENVIRONMENT = originalWalletSyncEnvironment;
+    }
   });
 
   afterAll(() => {
@@ -92,6 +99,7 @@ describe("useTrustchainSdk", () => {
   });
 
   it("should throw TrustchainEjected when the SDK uses the wrong environment", async () => {
+    process.env.WALLET_SYNC_ENVIRONMENT = "STAGING";
     const { useTrustchainSdk } = await import("../hooks/useTrustchainSdk");
 
     const { result } = renderHook(() => useTrustchainSdk(), {
@@ -111,32 +119,11 @@ describe("useTrustchainSdk", () => {
     });
   });
 
-  it("should use PROD when the feature flag has not been set yet", async () => {
+  it("should use PROD when walletSyncEnvironment is not set", async () => {
+    delete process.env.WALLET_SYNC_ENVIRONMENT;
     const { useTrustchainSdk } = await import("../hooks/useTrustchainSdk");
 
     const { result } = renderHook(() => useTrustchainSdk());
-
-    await expect(
-      result.current.withAuth(trustchain, MEMBER_CREDENTIALS, async () => true, "no-cache", true),
-    ).resolves.toBe(true);
-  });
-
-  it("should use PROD when remote feature flags fail at startup", async () => {
-    const createStore = (await import("~/state-manager/configureStore")).default;
-    const { useTrustchainSdk } = await import("../hooks/useTrustchainSdk");
-
-    jest.useFakeTimers();
-    const fetchRemoteFlags = jest.fn().mockRejectedValue(new Error("network down"));
-    const store = createStore({ fetchRemoteFlags });
-
-    await waitFor(() => {
-      expect(selectRemoteFlagsReady(store.getState())).toBe(true);
-    });
-
-    const { result } = renderHook(() => useTrustchainSdk(), { store });
-
-    jest.clearAllTimers();
-    jest.useRealTimers();
 
     await expect(
       result.current.withAuth(trustchain, MEMBER_CREDENTIALS, async () => true, "no-cache", true),

@@ -1,13 +1,20 @@
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
-import { WalletAuthMissingBaseUrlError } from "@ledgerhq/auth";
-import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
-import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import type { AuthProvider } from "@shared/auth";
+import { setMemberCredentials, setTrustchain } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { setOverride } from "@shared/feature-flags";
+
+let mockWalletSyncEnvironment: "PROD" | "STAGING" = "PROD";
+
+jest.mock("~/config/walletSync", () => ({
+  get walletSyncEnvironment() {
+    return mockWalletSyncEnvironment;
+  },
+}));
 
 jest.mock("@react-native-community/netinfo", () => ({
   addEventListener: jest.fn(() => jest.fn()),
@@ -102,6 +109,7 @@ describe("mobile store", () => {
       jest.resetModules();
       jest.clearAllMocks();
       server.resetHandlers();
+      mockWalletSyncEnvironment = "PROD";
 
       // Use the post-reset instance so configureStore reads these environment values.
       const { setEnv } = require("@shared/env") as typeof import("@shared/env");
@@ -128,7 +136,7 @@ describe("mobile store", () => {
       expect(endpoints.stagingKeycloakAuth).not.toHaveBeenCalled();
     });
 
-    it("should retry authentication after the environment becomes available", async () => {
+    it("should use the production Keycloak URL immediately", async () => {
       endpoints.prodKeycloakAuth.mockImplementation(() =>
         HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
       );
@@ -142,20 +150,7 @@ describe("mobile store", () => {
 
       const { store } = require("./configureStore");
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
-
-      await expect(
-        dispatchThunk(store, (_dispatch, _getState, extra) =>
-          extra.authProvider.withToken({ queryFn }),
-        ),
-      ).rejects.toMatchObject({ name: WalletAuthMissingBaseUrlError.name });
-
-      store.dispatch(setAuthEnvironment("PROD"));
-      store.dispatch(
-        importTrustchainStoreState({
-          trustchain: null,
-          memberCredentials: MEMBER_CREDENTIALS,
-        }),
-      );
+      store.dispatch(setMemberCredentials(MEMBER_CREDENTIALS));
 
       await dispatchThunk(store, (_dispatch, _getState, extra) =>
         extra.authProvider.withToken({ queryFn }),
@@ -167,7 +162,8 @@ describe("mobile store", () => {
       expect(endpoints.prodKeycloakAuth).toHaveBeenCalledTimes(1);
     });
 
-    it("should use the staging Keycloak URL for a staging Trustchain SDK", async () => {
+    it("should use the staging Keycloak URL for staging process configuration", async () => {
+      mockWalletSyncEnvironment = "STAGING";
       endpoints.stagingKeycloakAuth.mockImplementation(() =>
         HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
       );
@@ -180,14 +176,8 @@ describe("mobile store", () => {
       );
 
       const { store } = require("./configureStore");
-      store.dispatch(setAuthEnvironment("STAGING"));
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
-      store.dispatch(
-        importTrustchainStoreState({
-          trustchain: null,
-          memberCredentials: MEMBER_CREDENTIALS,
-        }),
-      );
+      store.dispatch(setMemberCredentials(MEMBER_CREDENTIALS));
 
       await dispatchThunk(store, async (_dispatch, _getState, extra) =>
         extra.authProvider.withToken({
@@ -212,16 +202,13 @@ describe("mobile store", () => {
       );
 
       const { store } = require("./configureStore");
-      store.dispatch(setAuthEnvironment("PROD"));
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
+      store.dispatch(setMemberCredentials(MEMBER_CREDENTIALS));
       store.dispatch(
-        importTrustchainStoreState({
-          trustchain: {
-            rootId: TRUSTCHAIN_ID,
-            walletSyncEncryptionKey: "wallet-sync-encryption-key",
-            applicationPath: "m/0'/16'/0'",
-          },
-          memberCredentials: MEMBER_CREDENTIALS,
+        setTrustchain({
+          rootId: TRUSTCHAIN_ID,
+          walletSyncEncryptionKey: "wallet-sync-encryption-key",
+          applicationPath: "m/0'/16'/0'",
         }),
       );
 

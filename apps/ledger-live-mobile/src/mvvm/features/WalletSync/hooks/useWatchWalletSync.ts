@@ -4,6 +4,7 @@ import noop from "lodash/noop";
 import { CloudSyncSDK } from "@shared/cloud-sync";
 import {
   createWalletSyncWatchLoop,
+  getWalletSyncEnvironmentParams,
   liveSlug,
   makeSaveNewUpdate,
   makeLocalIncrementalUpdate,
@@ -39,7 +40,7 @@ import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { bridgeCache } from "~/bridge/cache";
 import { replaceAccounts } from "~/actions/accounts";
 import { useFeature } from "@features/platform-feature-flags";
-import { getWalletSyncEnvironmentParams } from "@features/platform-wallet-sync";
+import { walletSyncEnvironment } from "~/config/walletSync";
 import logger from "~/logger";
 
 type DistantState = DistantDocument;
@@ -95,10 +96,7 @@ async function save(
 }
 
 export function useCloudSyncSDK(): CloudSyncSDK<DistantState> {
-  const featureWalletSync = useFeature("llmWalletSync");
-  const { cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
+  const { cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(walletSyncEnvironment);
   const trustchainSdk = useTrustchainSdk();
   const walletsync = useWalletsync();
   const getState = useGetState();
