@@ -1,22 +1,9 @@
 import type { PayCardTransaction } from "@domain/api-card-management";
 import type { CardAssetsViewModel } from "@features/flow-pay-card-assets";
-import type {
-  CardTransactionFormatters,
-  CardTransactionItem,
-} from "@features/flow-pay-card-transactions";
+import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { CardVisualProps, FreezeViewModel } from "../../../types";
 import type { MoreViewModel, MoreViewProps } from "../../More/types";
-
-export type CardDetailsRoute =
-  | { name: "overview" }
-  | { name: "freeze" }
-  | { name: "more" }
-  | { name: "addToWallet" }
-  | { name: "transaction"; transaction: PayCardTransaction }
-  | { name: "assetDetails" }
-  | { name: "assetWithdraw" }
-  | { name: "assetsManage" }
-  | { name: "assetTransaction"; transaction: CardTransactionItem };
+import type { CardDetailsRoute } from "./navigation";
 
 export type OverviewSceneProps = Readonly<{
   cardVisual?: CardVisualProps;
@@ -50,16 +37,6 @@ export type AddToWalletSceneProps = Readonly<{
 
 export type AssetDetailsSceneProps = Readonly<{
   viewModel: CardAssetsViewModel;
-  onTransactionPress: (transaction: CardTransactionItem) => void;
-}>;
-
-export type AssetsManageSceneProps = Readonly<{
-  viewModel: CardAssetsViewModel;
-}>;
-
-export type AssetTransactionSceneProps = Readonly<{
-  transaction: CardTransactionItem;
-  formatters?: CardTransactionFormatters;
 }>;
 
 /** What the sheet chrome shows between the back and close buttons for the current scene. */
@@ -78,6 +55,4 @@ export type CardDetailsSceneProps = Readonly<{
   transaction: TransactionSceneProps | null;
   assetDetails: AssetDetailsSceneProps | null;
   assetWithdraw: CardAssetsViewModel | null;
-  assetsManage: AssetsManageSceneProps | null;
-  assetTransaction: AssetTransactionSceneProps | null;
 }>;

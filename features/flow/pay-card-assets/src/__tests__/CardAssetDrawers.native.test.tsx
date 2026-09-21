@@ -2,7 +2,6 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { CardAssetDetailsDrawer } from "../CardAssetDetailsDrawer.native";
 import { CardAssetDetailsWithdrawDrawer } from "../CardAssetDetailsWithdrawDrawer.native";
-import { CardAssetsManageDrawer } from "../CardAssetsManageDrawer.native";
 import { I18nWrapper } from "./i18nWrapper";
 import type { CardAssetDialogCopy, CardAssetRow } from "../types";
 
@@ -59,17 +58,5 @@ describe("Card asset drawers (native)", () => {
     fireEvent.press(screen.getByText(copy.continue));
 
     expect(onContinue).toHaveBeenCalledTimes(1);
-  });
-
-  it("should add an asset when the manage action is pressed", () => {
-    const onAddAsset = jest.fn();
-    render(<CardAssetsManageDrawer rows={[asset]} onAddAsset={onAddAsset} />, {
-      wrapper: I18nWrapper,
-    });
-
-    expect(screen.getByText(asset.name)).toBeVisible();
-    fireEvent.press(screen.getByText("Add asset"));
-
-    expect(onAddAsset).toHaveBeenCalledTimes(1);
   });
 });

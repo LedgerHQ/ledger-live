@@ -52,7 +52,6 @@ describe("QueuedBottomSheetMock", () => {
     ["header-close", "onHeaderClosePressed"],
     ["backdrop", "onBackdropPress"],
     ["back", "onBack"],
-    ["hidden", "onModalHide"],
   ] as const)("presses %s to call %s", (control, handlerName) => {
     const handler = jest.fn();
     render(

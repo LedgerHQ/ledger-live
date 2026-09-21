@@ -35,7 +35,7 @@ type CardAssetDetailsDrawerProps = Readonly<{
   onTopUp: () => void;
   onWithdraw: () => void;
   onShowHistory: () => void;
-  onTransactionPress: (transaction: CardTransactionItem) => void;
+  onTransactionPress?: (transaction: CardTransactionItem) => void;
 }>;
 
 export function CardAssetDetailsDrawer({
@@ -96,7 +96,7 @@ export function CardAssetDetailsDrawer({
                 key={item.transaction.id}
                 item={item}
                 formatters={formatters}
-                onPress={() => onTransactionPress(item)}
+                onPress={onTransactionPress ? () => onTransactionPress(item) : undefined}
               />
             ))}
           </Box>

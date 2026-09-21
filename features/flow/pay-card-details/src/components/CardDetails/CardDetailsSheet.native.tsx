@@ -1,34 +1,22 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import Animated, { FadeIn } from "react-native-reanimated";
+import React, { useCallback, useEffect, useRef } from "react";
 import { BottomSheetHeader, BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { AddToWalletCta } from "@features/flow-pay-card-widget/native";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { CardDetailsScene } from "./Scenes/CardDetailsScene";
+import { CARD_DETAILS_SCENES } from "./Scenes/registry";
 import type { CardDetailsSheetProps } from "../../types";
-import type { CardDetailsSceneProps } from "./Scenes/types";
-
-/** Long enough to read as a transition between scenes, short enough not to delay a tap. */
-const SCENE_ENTER_MS = 180;
 
 export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetailsSheetProps) {
   const dismissed = useRef(false);
-  const [hasOpened, setHasOpened] = useState(isOpen);
-  const [session, setSession] = useState(0);
   const isPending =
     scene.route.name === "freeze" && scene.freeze.viewModel.confirmState === "pending";
   const isOverview = scene.route.name === "overview";
-  const canGoBack = scene.route.name !== "overview" && scene.route.name !== "freeze" && !isPending;
-  const usesFullHeight =
-    scene.route.name === "overview" ||
-    scene.route.name === "transaction" ||
-    scene.route.name === "assetDetails" ||
-    scene.route.name === "assetTransaction";
-  const sizingProps = usesFullHeight
-    ? ({ snapPoints: "fullWithOffset" } as const)
-    : ({
-        enableDynamicSizing: true,
-        maxDynamicContentSize: "fullWithOffset",
-      } as const);
+  const { sizing, hasBackButton } = CARD_DETAILS_SCENES[scene.route.name];
+  const canGoBack = hasBackButton && !isPending;
+  const sizingProps =
+    sizing === "full"
+      ? ({ snapPoints: "fullWithOffset" } as const)
+      : ({ enableDynamicSizing: true, maxDynamicContentSize: "fullWithOffset" } as const);
 
   useEffect(() => {
     if (isOpen) {
@@ -44,22 +32,9 @@ export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetails
     onClose();
   }, [isPending, onClose]);
 
-  const handleOpened = useCallback(() => {
-    setHasOpened(true);
-  }, []);
-
-  // The scene outlives `isOpen` so it is still there to animate out, and goes away once the sheet
-  // is hidden: revealed card numbers live in the scene's state and must not come back with it.
-  const handleHidden = useCallback(() => {
-    setHasOpened(false);
-    setSession(current => current + 1);
-  }, []);
-
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
-      onOpened={handleOpened}
-      onModalHide={handleHidden}
       onClose={handleClose}
       noCloseButton={isPending}
       preventBackdropClick={isPending}
@@ -75,28 +50,19 @@ export function CardDetailsSheet({ isOpen, scene, onClose, onBack }: CardDetails
       }
       testID="card-details-sheet"
     >
-      {hasOpened || isOpen ? <SheetContent key={session} scene={scene} /> : null}
+      {isOpen ? (
+        <BottomSheetScrollView>
+          <Box lx={{ paddingBottom: "s24" }}>
+            <BottomSheetHeader
+              density="compact"
+              spacing
+              title={scene.header.title}
+              description={scene.header.description}
+            />
+            <CardDetailsScene {...scene} />
+          </Box>
+        </BottomSheetScrollView>
+      ) : null}
     </QueuedBottomSheet>
-  );
-}
-
-function SheetContent({ scene }: Readonly<{ scene: CardDetailsSceneProps }>) {
-  return (
-    <BottomSheetScrollView>
-      <Box lx={{ paddingBottom: "s24" }}>
-        <BottomSheetHeader
-          density="compact"
-          spacing
-          title={scene.header.title}
-          description={scene.header.description}
-        />
-        {/* Keyed on the route so every scene change plays the fade rather than swapping in place.
-            It wraps the whole scene, so a scene's own call to action transitions with its content
-            instead of snapping into place on its own. */}
-        <Animated.View key={scene.route.name} entering={FadeIn.duration(SCENE_ENTER_MS)}>
-          <CardDetailsScene {...scene} />
-        </Animated.View>
-      </Box>
-    </BottomSheetScrollView>
   );
 }

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { cardManagementApi } from "@domain/api-card-management";
-import { DETAILS_IMAGE_CSS } from "./detailsImageCss";
+import { DETAILS_IMAGE_CSS } from "../CardArtwork/cardColors";
 import type { RevealStatus, RevealViewModel } from "../../types";
 
 type CardApiState = {

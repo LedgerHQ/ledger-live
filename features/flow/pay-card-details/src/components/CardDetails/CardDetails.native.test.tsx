@@ -40,25 +40,6 @@ function Wrapper({ children }: PropsWithChildren) {
   );
 }
 
-async function revealCardNumbers(user: ReturnType<typeof userEvent.setup>) {
-  await user.press(await screen.findByText(CARD_COPY.numbersReveal));
-
-  const image = await screen.findByLabelText(CARD_COPY.numbersImageAlt, {
-    includeHiddenElements: true,
-  });
-  jest.useFakeTimers();
-  try {
-    await act(() => {
-      image.props.onLoad();
-    });
-    act(() => {
-      jest.advanceTimersByTime(FLIP_MS);
-    });
-  } finally {
-    jest.useRealTimers();
-  }
-}
-
 function renderCardDetails({ onTrackEvent = jest.fn() }: { onTrackEvent?: jest.Mock } = {}) {
   return {
     user: userEvent.setup(),
@@ -218,7 +199,22 @@ describe("CardDetails (native)", () => {
     const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
-    await revealCardNumbers(user);
+    await user.press(await screen.findByText(CARD_COPY.numbersReveal));
+
+    const image = await screen.findByLabelText(CARD_COPY.numbersImageAlt, {
+      includeHiddenElements: true,
+    });
+    jest.useFakeTimers();
+    try {
+      await act(() => {
+        image.props.onLoad();
+      });
+      act(() => {
+        jest.advanceTimersByTime(FLIP_MS);
+      });
+    } finally {
+      jest.useRealTimers();
+    }
 
     expect(screen.getByLabelText(CARD_COPY.numbersImageAlt)).toBeVisible();
     expect(screen.getByText(CARD_COPY.numbersHide)).toBeVisible();
@@ -227,30 +223,6 @@ describe("CardDetails (native)", () => {
     await user.press(screen.getByText(CARD_COPY.numbersHide));
 
     expect(screen.queryByLabelText(CARD_COPY.numbersImageAlt)).not.toBeOnTheScreen();
-    expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
-  });
-
-  it("should show no card numbers when the sheet is reopened after a reveal", async () => {
-    const { user } = renderCardDetails();
-
-    await user.press(screen.getByLabelText(CARD_COPY.details));
-    await revealCardNumbers(user);
-    expect(screen.getByLabelText(CARD_COPY.numbersImageAlt)).toBeVisible();
-
-    await user.press(screen.getByTestId("card-details-sheet-dismiss"));
-    expect(
-      screen.queryByLabelText(CARD_COPY.numbersImageAlt, { includeHiddenElements: true }),
-    ).toBeOnTheScreen();
-    await user.press(screen.getByTestId("card-details-sheet-hidden"));
-    expect(
-      screen.queryByLabelText(CARD_COPY.numbersImageAlt, { includeHiddenElements: true }),
-    ).not.toBeOnTheScreen();
-
-    await user.press(screen.getByLabelText(CARD_COPY.details));
-
-    expect(
-      screen.queryByLabelText(CARD_COPY.numbersImageAlt, { includeHiddenElements: true }),
-    ).not.toBeOnTheScreen();
     expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
   });
 

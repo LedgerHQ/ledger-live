@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { PayCardStatus } from "@domain/api-card-management";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
@@ -111,5 +112,5 @@ export type RevealTileProps = Pick<RevealViewModel, "status" | "canHide" | "onRe
 
 export type CardFlipProps = Readonly<{
   reveal: Pick<RevealViewModel, "isRevealed" | "imageUrl" | "onImageLoad" | "onImageError"> | null;
-  cardFace: React.ReactNode;
+  cardFace: ReactNode;
 }>;
