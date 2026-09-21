@@ -1,5 +1,9 @@
 import type { CardLoginProps } from "@features/flow-pay-card-auth";
-import type { CardVisualProps, FormattedValue } from "@features/flow-pay-card-details";
+import type {
+  CardSettingsActions,
+  CardVisualProps,
+  FormattedValue,
+} from "@features/flow-pay-card-details";
 import type {
   FormatCardTransactionAmount,
   FormatCardTransactionDate,
@@ -20,6 +24,7 @@ export type CardProps = {
   readonly formatters?: CardFormatters;
   readonly onShowMore?: () => void;
   readonly onTopUp?: () => void;
+  readonly cardSettingsActions?: CardSettingsActions;
 };
 
 /**
@@ -42,4 +47,5 @@ export type CardViewProps = {
   readonly formatters?: CardFormatters;
   readonly onShowMore?: () => void;
   readonly onTopUp?: () => void;
+  readonly cardSettingsActions?: CardSettingsActions;
 };

@@ -10,6 +10,7 @@ let receivedDetailsFormatters: CardTransactionFormatters | undefined;
 const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError: false }));
 let receivedTransactionFormatters: CardTransactionFormatters | undefined;
 let receivedTransactionTracker: CardProps["login"]["onTrackEvent"];
+let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <div data-testid="card-login" />,
@@ -23,11 +24,14 @@ jest.mock("@features/flow-pay-card-details", () => ({
   CardDetails: ({
     cardVisual,
     formatters,
+    cardSettingsActions,
   }: {
     cardVisual?: { balance: number };
     formatters?: CardTransactionFormatters;
+    cardSettingsActions?: CardProps["cardSettingsActions"];
   }) => {
     receivedDetailsFormatters = formatters;
+    receivedCardSettingsActions = cardSettingsActions;
     return (
       <div
         data-testid={cardVisual ? "card-details-with-visual" : "card-details"}
@@ -99,6 +103,7 @@ describe("Card (web)", () => {
     receivedDetailsFormatters = undefined;
     receivedTransactionFormatters = undefined;
     receivedTransactionTracker = undefined;
+    receivedCardSettingsActions = undefined;
   });
 
   it("always shows the card title", () => {
@@ -295,6 +300,18 @@ describe("Card (web)", () => {
       renderCard(<Card login={{ oauthConfig }} />);
 
       expect(screen.queryByTestId("card-top-up")).not.toBeInTheDocument();
+    });
+
+    it("hands the settings actions to the details block", () => {
+      const cardSettingsActions: CardProps["cardSettingsActions"] = {
+        onManagePin: jest.fn(),
+        onAccessBaanx: jest.fn(),
+        onHelp: jest.fn(),
+      };
+
+      renderCard(<Card login={{ oauthConfig }} cardSettingsActions={cardSettingsActions} />);
+
+      expect(receivedCardSettingsActions).toEqual(cardSettingsActions);
     });
   });
 });

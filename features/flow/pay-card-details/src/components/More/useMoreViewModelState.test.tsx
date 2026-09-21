@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
 import { useMoreViewModel } from "./useMoreViewModel";
+import type { CardSettingsActions } from "./types";
 
 jest.mock("@domain/api-card-management", () => ({ useGetUserQuery: jest.fn() }));
 jest.mock("@features/flow-pay-card-auth/hooks", () => ({
@@ -18,7 +19,10 @@ type Setup = {
   hasUser?: boolean;
 };
 
-function renderWith({ isSignedIn = true, hasUser = true }: Setup = {}) {
+function renderWith(
+  { isSignedIn = true, hasUser = true }: Setup = {},
+  actions: CardSettingsActions = {},
+) {
   const logout = jest.fn();
 
   jest.mocked(useCardLogout).mockReturnValue(logout);
@@ -27,7 +31,9 @@ function renderWith({ isSignedIn = true, hasUser = true }: Setup = {}) {
     data: hasUser ? user : undefined,
   } as unknown as ReturnType<typeof useGetUserQuery>);
 
-  const { result, rerender } = renderHook(() => useMoreViewModel(), { wrapper: I18nWrapper });
+  const { result, rerender } = renderHook(() => useMoreViewModel(actions), {
+    wrapper: I18nWrapper,
+  });
 
   const signIn = (signedIn: boolean) =>
     act(() => {
@@ -123,5 +129,28 @@ describe("useMoreViewModel", () => {
     signIn(true);
 
     expect(result.current?.isSheetOpen).toBe(false);
+  });
+
+  it("calls the host action wired to each redirect row", () => {
+    const onManagePin = jest.fn();
+    const onAccessBaanx = jest.fn();
+    const onHelp = jest.fn();
+    const { result } = renderWith({}, { onManagePin, onAccessBaanx, onHelp });
+
+    act(() => result.current?.rows.find(row => row.id === "managePin")?.onPress());
+    act(() => result.current?.rows.find(row => row.id === "accessBaanx")?.onPress());
+    act(() => result.current?.rows.find(row => row.id === "help")?.onPress());
+
+    expect(onManagePin).toHaveBeenCalledTimes(1);
+    expect(onAccessBaanx).toHaveBeenCalledTimes(1);
+    expect(onHelp).toHaveBeenCalledTimes(1);
+  });
+
+  it("presses a redirect row safely when the host wired none", () => {
+    const { result } = renderWith();
+
+    expect(() =>
+      act(() => result.current?.rows.find(row => row.id === "managePin")?.onPress()),
+    ).not.toThrow();
   });
 });

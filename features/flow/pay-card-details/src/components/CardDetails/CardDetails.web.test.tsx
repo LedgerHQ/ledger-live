@@ -57,4 +57,27 @@ describe("CardDetails (web)", () => {
     expect(screen.getByRole("button", { name: CARD_COPY.numbersHide })).toBeVisible();
     expect(screen.queryByRole("button", { name: CARD_COPY.numbersReveal })).not.toBeInTheDocument();
   });
+
+  it("wires the host's redirect actions to the More sheet's rows, with a single More tile", async () => {
+    const onManagePin = jest.fn();
+    const onAccessBaanx = jest.fn();
+    const onHelp = jest.fn();
+
+    renderWeb(
+      <Wrapper>
+        <CardDetails cardSettingsActions={{ onManagePin, onAccessBaanx, onHelp }} />
+      </Wrapper>,
+    );
+
+    const moreTiles = await screen.findAllByRole("button", { name: MORE_COPY.tile });
+    expect(moreTiles).toHaveLength(1);
+
+    const user = userEvent.setup();
+    await user.click(moreTiles[0]);
+    await user.click(await screen.findByRole("button", { name: MORE_COPY.rows.managePin }));
+
+    expect(onManagePin).toHaveBeenCalledTimes(1);
+    expect(onAccessBaanx).not.toHaveBeenCalled();
+    expect(onHelp).not.toHaveBeenCalled();
+  });
 });

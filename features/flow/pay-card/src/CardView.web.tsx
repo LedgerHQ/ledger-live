@@ -15,6 +15,7 @@ export function CardView({
   formatters,
   onShowMore,
   onTopUp,
+  cardSettingsActions,
 }: CardViewProps) {
   return (
     <section aria-label={title} className="flex min-h-full flex-col gap-16">
@@ -25,6 +26,7 @@ export function CardView({
           <CardDetails
             cardVisual={cardVisual}
             formatters={{ amount: formatters?.transactionAmount }}
+            cardSettingsActions={cardSettingsActions}
           />
           {assets ? (
             <div className="mt-8">
