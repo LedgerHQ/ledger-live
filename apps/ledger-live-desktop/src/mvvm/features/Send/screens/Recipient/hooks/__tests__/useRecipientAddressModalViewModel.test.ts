@@ -597,7 +597,7 @@ describe("useRecipientAddressModalViewModel", () => {
       ],
     });
 
-    const { result } = renderHook(() =>
+    const { result, rerender } = renderHook(() =>
       useRecipientAddressModalViewModel({
         account: mockAccount,
         currency: mockAccount.currency,
@@ -610,9 +610,16 @@ describe("useRecipientAddressModalViewModel", () => {
     expect(selectContact).toHaveBeenCalledWith(contact);
     expect(onAddressSelected).not.toHaveBeenCalled();
 
+    mockedUseRecipientContactSelection.mockReturnValue({
+      selectedContact: contact,
+      selectContact,
+      clearSelectedContact,
+    });
+    rerender();
+
     act(() => result.current.handleContactAddressSelect(contact.addresses[1], 2));
     expect(clearSelectedContact).toHaveBeenCalledTimes(1);
-    expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined, true, undefined, undefined);
+    expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined, true, undefined, contact.id);
     expect(setRecipientResolution).toHaveBeenCalledWith("contact address match", "contact");
   });
 
