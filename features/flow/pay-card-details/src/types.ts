@@ -100,7 +100,7 @@ export type FreezeViewModel = ConfirmSheetProps &
     onOpenConfirm: () => void;
   }>;
 
-export type RevealStatus = "idle" | "loading" | "flipping" | "revealed" | "failed";
+export type RevealStatus = "idle" | "loading" | "revealed" | "failed";
 
 export type RevealViewModel = Readonly<{
   status: RevealStatus;

@@ -44,7 +44,7 @@ function OverviewActions({
           <TileButton
             icon={canHide ? EyeCross : Eye}
             isFull
-            disabled={reveal.status === "loading" || reveal.status === "flipping"}
+            disabled={reveal.status === "loading"}
             onPress={canHide ? reveal.onHide : reveal.onReveal}
             accessibilityLabel={viewLabel}
           >

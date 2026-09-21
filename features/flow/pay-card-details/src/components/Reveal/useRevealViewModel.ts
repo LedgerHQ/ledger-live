@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { cardManagementApi } from "@domain/api-card-management";
@@ -11,8 +11,6 @@ type CardApiState = {
 
 const useCardApiDispatch =
   useDispatch.withTypes<ThunkDispatch<CardApiState, unknown, UnknownAction>>();
-
-export const FLIP_MS = 500;
 
 export function useRevealViewModel(): RevealViewModel {
   const dispatch = useCardApiDispatch();
@@ -33,21 +31,13 @@ export function useRevealViewModel(): RevealViewModel {
         return current;
       }
       inFlight.current = false;
-      return "flipping";
+      return "revealed";
     });
   }, []);
 
-  // CSS flip is 500ms and Reanimated has no transitionend — Hide waits for that settle.
-  useEffect(() => {
-    if (status === "flipping") {
-      const timer = setTimeout(() => setStatus("revealed"), FLIP_MS);
-      return () => clearTimeout(timer);
-    }
-  }, [status]);
-
   const onImageError = useCallback(() => {
     setStatus(current => {
-      if (current !== "loading" && current !== "flipping" && current !== "revealed") {
+      if (current !== "loading" && current !== "revealed") {
         return current;
       }
       inFlight.current = false;
@@ -94,7 +84,7 @@ export function useRevealViewModel(): RevealViewModel {
 
   return {
     status,
-    isRevealed: status === "flipping" || status === "revealed",
+    isRevealed: status === "revealed",
     canHide: status === "revealed",
     imageUrl,
     onReveal,

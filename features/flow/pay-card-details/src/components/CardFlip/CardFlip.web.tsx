@@ -18,7 +18,7 @@ export function CardFlip({ reveal, cardFace }: CardFlipProps) {
     <div data-testid="card-flip" className="[perspective:1000px]">
       <div
         className={cn(
-          "relative h-[195px] w-full transition-transform duration-500 [transform-style:preserve-3d] motion-reduce:transition-none",
+          "relative h-[195px] w-full transition-transform duration-300 [transform-style:preserve-3d] motion-reduce:transition-none",
           isRevealed ? "[transform:rotateY(180deg)]" : "[transform:rotateY(0deg)]",
         )}
         data-testid="card-flip-face"

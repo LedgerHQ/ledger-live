@@ -4,12 +4,11 @@ import Animated from "react-native-reanimated";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
 import { CARD_FACE_BORDER, CARD_GRADIENT_END } from "../CardArtwork/cardColors";
-import { FLIP_MS } from "../Reveal/useRevealViewModel";
 import type { CardFlipProps } from "../../types";
 
 const FLIP_TRANSITION = {
   transitionProperty: "transform",
-  transitionDuration: FLIP_MS,
+  transitionDuration: 300,
   transitionTimingFunction: "ease-in-out",
 } as const;
 
