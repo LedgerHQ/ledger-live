@@ -15,6 +15,7 @@ export function CardView({
   formatters,
   onShowMore,
   onTopUp,
+  cardSettingsActions,
 }: CardViewProps) {
   return (
     <Box lx={{ flex: 1, gap: "s16" }}>
@@ -36,6 +37,7 @@ export function CardView({
             onTrackEvent={login.onTrackEvent}
             onShowMore={onShowMore}
             onTopUp={onTopUp}
+            cardSettingsActions={cardSettingsActions}
           />
           <Box lx={{ marginHorizontal: "s16" }}>
             <AddToWalletCtaWithBottomSheet appearance="base" />

@@ -16,13 +16,14 @@ export function useCardDetailsViewModel({
   onTrackEvent,
   onShowMore,
   onTopUp,
+  cardSettingsActions,
 }: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { route, goTo, goBack } = useCardDetailsNavigation();
   const assetsViewModel = useCardAssetsViewModel(assets);
   const freezeViewModel = useFreezeCardViewModel(goBack);
-  const moreViewModel = useMoreViewModel();
+  const moreViewModel = useMoreViewModel(cardSettingsActions);
 
   const onFreezePress = () => {
     freezeViewModel.onOpenConfirm();

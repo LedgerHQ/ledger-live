@@ -10,6 +10,7 @@ export function useCardViewModel({
   formatters,
   onShowMore,
   onTopUp,
+  cardSettingsActions,
 }: CardProps): CardViewProps {
   const { t } = useTranslation();
   const status = useCardAuthStatus();
@@ -41,5 +42,6 @@ export function useCardViewModel({
     formatters,
     onShowMore,
     onTopUp,
+    cardSettingsActions,
   };
 }

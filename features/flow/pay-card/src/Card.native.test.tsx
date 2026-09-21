@@ -7,6 +7,7 @@ import { I18nWrapper } from "./__tests__/i18nWrapper";
 
 const mockUseCardAuthStatus = jest.fn<PayCardAuthStatus, []>();
 const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError: false }));
+let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <View testID="card-login" />,
@@ -15,12 +16,23 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <View testID="card-artwork" />,
-  CardDetails: ({ cardVisual, assets }: { cardVisual?: unknown; assets?: unknown }) => (
-    <View
-      testID={cardVisual ? "card-details-with-visual" : "card-details"}
-      accessibilityLabel={assets ? "details-with-assets" : "details-without-assets"}
-    />
-  ),
+  CardDetails: ({
+    cardVisual,
+    assets,
+    cardSettingsActions,
+  }: {
+    cardVisual?: unknown;
+    assets?: unknown;
+    cardSettingsActions?: CardProps["cardSettingsActions"];
+  }) => {
+    receivedCardSettingsActions = cardSettingsActions;
+    return (
+      <View
+        testID={cardVisual ? "card-details-with-visual" : "card-details"}
+        accessibilityLabel={assets ? "details-with-assets" : "details-without-assets"}
+      />
+    );
+  },
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
@@ -64,6 +76,7 @@ describe("Card (native)", () => {
 
   beforeEach(() => {
     mockUseCardAuthStatus.mockReturnValue("unknown");
+    receivedCardSettingsActions = undefined;
   });
 
   describe("while resolving the session", () => {
@@ -151,6 +164,18 @@ describe("Card (native)", () => {
       renderCard(<Card login={{ oauthConfig }} />);
 
       expect(screen.getByLabelText("details-without-assets")).toBeTruthy();
+    });
+
+    it("hands the settings actions to the details block", () => {
+      const cardSettingsActions: CardProps["cardSettingsActions"] = {
+        onManagePin: jest.fn(),
+        onAccessBaanx: jest.fn(),
+        onHelp: jest.fn(),
+      };
+
+      renderCard(<Card login={{ oauthConfig }} cardSettingsActions={cardSettingsActions} />);
+
+      expect(receivedCardSettingsActions).toEqual(cardSettingsActions);
     });
   });
 });
