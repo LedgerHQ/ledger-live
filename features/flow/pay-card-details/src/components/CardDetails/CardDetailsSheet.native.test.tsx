@@ -69,6 +69,7 @@ function buildScene({ route, confirmState }: SheetOverrides): CardDetailsScenePr
     transaction: route?.name === "transaction" ? { transaction: route.transaction } : null,
     assetDetails: null,
     assetWithdraw: null,
+    assetsManage: null,
   };
 }
 

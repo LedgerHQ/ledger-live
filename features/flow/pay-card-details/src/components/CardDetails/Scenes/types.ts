@@ -39,6 +39,10 @@ export type AssetDetailsSceneProps = Readonly<{
   viewModel: CardAssetsViewModel;
 }>;
 
+export type AssetsManageSceneProps = Readonly<{
+  viewModel: CardAssetsViewModel;
+}>;
+
 /** What the sheet chrome shows between the back and close buttons for the current scene. */
 export type CardDetailsSceneHeader = Readonly<{
   title?: string;
@@ -55,4 +59,5 @@ export type CardDetailsSceneProps = Readonly<{
   transaction: TransactionSceneProps | null;
   assetDetails: AssetDetailsSceneProps | null;
   assetWithdraw: CardAssetsViewModel | null;
+  assetsManage: AssetsManageSceneProps | null;
 }>;
