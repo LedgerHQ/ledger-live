@@ -14,4 +14,5 @@ export const CARD_DETAILS_SCENES: Record<
   assetDetails: { sizing: "full", hasBackButton: true },
   assetWithdraw: { sizing: "dynamic", hasBackButton: true },
   assetsManage: { sizing: "full", hasBackButton: true },
+  assetTransaction: { sizing: "full", hasBackButton: true },
 };

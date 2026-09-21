@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { PayCardTransaction } from "@domain/api-card-management";
+import type { CardTransactionItem } from "@features/flow-pay-card-transactions";
 
 export type CardDetailsRoute =
   | { name: "overview" }
@@ -9,7 +10,8 @@ export type CardDetailsRoute =
   | { name: "transaction"; transaction: PayCardTransaction }
   | { name: "assetDetails" }
   | { name: "assetWithdraw" }
-  | { name: "assetsManage" };
+  | { name: "assetsManage" }
+  | { name: "assetTransaction"; transaction: CardTransactionItem };
 
 export type CardDetailsNavigation = Readonly<{
   route: CardDetailsRoute;
