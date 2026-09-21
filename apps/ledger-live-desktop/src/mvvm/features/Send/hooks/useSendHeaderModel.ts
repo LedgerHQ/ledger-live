@@ -320,8 +320,8 @@ export function useSendHeaderModel({
       recipientSearch.setValue(prefillValue);
     }
 
-    handleBack();
-  }, [handleBack, isAmountStep, recipientSearch, state.recipient]);
+    navigation.goToStep(SEND_FLOW_STEP.RECIPIENT);
+  }, [isAmountStep, navigation, recipientSearch, state.recipient]);
 
   const showScanner = isScannerOpen && isRecipientStep;
 

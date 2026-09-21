@@ -37,6 +37,26 @@ describe("getRecipientHeaderPresentation", () => {
     ).toBe("Benoit Jean");
   });
 
+  it("should prefer the explicitly selected contact when an address is saved more than once", () => {
+    const duplicateContact = {
+      ...contacts[0],
+      id: "contact-alice",
+      name: "Alice",
+      addresses: [{ ...contacts[0].addresses[0], id: "address-2" }],
+    };
+
+    expect(
+      getRecipientHeaderPresentation({
+        ...baseArgs,
+        contacts: [...contacts, duplicateContact],
+        recipient: { address: ADDRESS, contactId: "contact-alice" },
+      }),
+    ).toEqual({
+      label: "Alice",
+      contact: { id: "contact-alice", name: "Alice" },
+    });
+  });
+
   it("should fall back to the formatted address when no contact matches", () => {
     expect(getRecipientHeaderPresentation({ ...baseArgs, contacts: [] })).toEqual({
       label: FORMATTED_ADDRESS,

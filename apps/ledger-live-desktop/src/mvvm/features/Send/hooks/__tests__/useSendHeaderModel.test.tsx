@@ -484,6 +484,18 @@ describe("useSendHeaderModel", () => {
     });
   });
 
+  it("opens recipient search from a Pay-launched amount step without closing", () => {
+    const { goToStep, goToPreviousStep } = mockNavigation({ canGoBack: false });
+    const { close } = mockActions();
+
+    renderHook();
+    act(() => latestVM?.handleRecipientInputClick());
+
+    expect(goToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
+    expect(goToPreviousStep).not.toHaveBeenCalled();
+    expect(close).not.toHaveBeenCalled();
+  });
+
   describe("handleBack — floating steps (history-based)", () => {
     it("calls goToPreviousStep when on CUSTOM_FEES step and canGoBack()", () => {
       const { goToStep, goToPreviousStep } = mockNavigation();

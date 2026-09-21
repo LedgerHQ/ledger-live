@@ -18,6 +18,7 @@ type ContactAddress = Readonly<{
 
 type FindMatchedContactOptions = Readonly<{
   matchName?: boolean;
+  preferredContactId?: string;
 }>;
 
 export function findMatchedContact(
@@ -31,9 +32,11 @@ export function findMatchedContact(
   const recipientNetworkId = resolveRecipientNetworkId(currencyId);
   const normalizedRecipient = recipient.trim().toLowerCase();
 
-  const sortedContacts = [...contacts].sort(
-    (left, right) => Number(left.isMe) - Number(right.isMe),
-  );
+  const sortedContacts = [...contacts].sort((left, right) => {
+    if (left.id === options?.preferredContactId) return -1;
+    if (right.id === options?.preferredContactId) return 1;
+    return Number(left.isMe) - Number(right.isMe);
+  });
 
   for (const contact of sortedContacts) {
     if (!Array.isArray(contact.addresses)) {

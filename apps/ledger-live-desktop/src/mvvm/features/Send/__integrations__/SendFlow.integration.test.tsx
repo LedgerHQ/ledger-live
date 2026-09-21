@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
+import { fireEvent } from "tests/testSetup";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
+import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import {
   createBitcoinAccount,
   createEthereumAccount,
@@ -155,6 +156,78 @@ describe("Send Flow Integration", () => {
 
       await user.click(screen.getByTestId("contacts-compact-row-contact-vincent"));
       expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+    });
+
+    it("shows Me first when it has an address on the recipient network", async () => {
+      setMockContacts([
+        mockContact({
+          id: "contact-vincent",
+          name: "Vincent",
+          addresses: [mockContactAddress({ currencyId: "ethereum" })],
+        }),
+        mockMeContact({
+          addresses: [
+            mockContactAddress({
+              id: "address-me-eth",
+              currencyId: "ethereum",
+              address: VALID_EVM_RECIPIENT,
+            }),
+          ],
+        }),
+      ]);
+      renderSendFlow(ethereumAccount);
+
+      const rows = await screen.findAllByTestId(/contacts-compact-row-/);
+      expect(rows[0]).toHaveAttribute("data-testid", "contacts-compact-row-contact-me");
+      expect(rows[1]).toHaveAttribute("data-testid", "contacts-compact-row-contact-vincent");
+    });
+
+    it("replaces the Pay contact shown in the recipient bar after selecting another contact", async () => {
+      const contacts = [
+        mockContact({
+          id: "contact-alice",
+          name: "Alice",
+          addresses: [
+            mockContactAddress({
+              id: "address-alice",
+              currencyId: "ethereum",
+              address: VALID_EVM_RECIPIENT,
+            }),
+          ],
+        }),
+        mockContact({
+          id: "contact-bob",
+          name: "Bob",
+          addresses: [
+            mockContactAddress({
+              id: "address-bob",
+              currencyId: "ethereum",
+              address: VALID_EVM_RECIPIENT,
+            }),
+          ],
+        }),
+      ];
+      setMockContacts(contacts);
+      const { user } = renderSendFlow(
+        ethereumAccount,
+        {
+          recipient: VALID_EVM_RECIPIENT,
+          skipRecipientStep: true,
+          source: "Pay",
+        },
+        contacts,
+      );
+
+      expect(await screen.findByDisplayValue("Alice")).toBeVisible();
+      await user.click(screen.getByTestId("send-edit-recipient-button"));
+      fireEvent.change(await screen.findByTestId("send-recipient-input"), {
+        target: { value: "" },
+      });
+      await user.click(await screen.findByTestId("contacts-compact-row-contact-bob"));
+
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+      expect(await screen.findByDisplayValue("Bob")).toBeVisible();
+      expect(screen.queryByDisplayValue("Alice")).not.toBeInTheDocument();
     });
 
     it("opens address selection when a contact has several addresses on the recipient network", async () => {

@@ -444,7 +444,13 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("0xusdt", undefined, true);
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "0xusdt",
+      undefined,
+      true,
+      undefined,
+      contact.id,
+    );
   });
 
   it("shows a contact choice instead of resolving the first address when a searched contact has several addresses", () => {
@@ -543,7 +549,7 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("0x123", undefined, true);
+    expect(onAddressSelected).toHaveBeenCalledWith("0x123", undefined, true, undefined, contact.id);
     expect(selectContact).not.toHaveBeenCalled();
   });
 
@@ -565,7 +571,13 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("0x123", undefined);
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "0x123",
+      undefined,
+      undefined,
+      undefined,
+      contact.id,
+    );
     expect(goToStep).toHaveBeenCalledWith("SKIP_MEMO_CONFIRMATION");
   });
 
@@ -630,7 +642,13 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleContactAddressSelect(contact.addresses[1], 2));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined);
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "0x456",
+      undefined,
+      undefined,
+      undefined,
+      contact.id,
+    );
     expect(goToStep).toHaveBeenCalledWith("SKIP_MEMO_CONFIRMATION");
   });
 

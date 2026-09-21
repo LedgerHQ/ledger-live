@@ -40,6 +40,7 @@ type UseRecipientAddressModalViewModelProps = Readonly<{
     ensName?: string,
     goToNextStep?: boolean,
     memo?: Memo,
+    contactId?: string,
   ) => void;
   recipientSupportsDomain: boolean;
 }>;
@@ -198,23 +199,36 @@ export function useRecipientAddressModalViewModel({
   }, [recipientSearch.value, state.recipient?.address, state.recipient?.ensName]);
 
   const continueWithAddress = useCallback(
-    (address: string, ensName?: string) => {
+    (address: string, ensName?: string, contactId?: string) => {
       // A family notice can block advancing (e.g. Zcash shielded sync not complete).
       // Refuse to navigate so a private send can't reach amount/signature early.
       if (isFamilyRecipientBlocked) return;
 
       if (hasMemo && !hasFilledMemo) {
         if (doNotAskAgainSkipMemo) {
-          onAddressSelected(address, ensName, true, { value: "", type: "NO_MEMO" });
+          const memo = { value: "", type: "NO_MEMO" };
+          if (contactId) {
+            onAddressSelected(address, ensName, true, memo, contactId);
+          } else {
+            onAddressSelected(address, ensName, true, memo);
+          }
           return;
         }
 
-        onAddressSelected(address, ensName);
+        if (contactId) {
+          onAddressSelected(address, ensName, undefined, undefined, contactId);
+        } else {
+          onAddressSelected(address, ensName);
+        }
         navigation.goToStep(SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION);
         return;
       }
 
-      onAddressSelected(address, ensName, true);
+      if (contactId) {
+        onAddressSelected(address, ensName, true, undefined, contactId);
+      } else {
+        onAddressSelected(address, ensName, true);
+      }
     },
     [
       doNotAskAgainSkipMemo,
@@ -256,7 +270,7 @@ export function useRecipientAddressModalViewModel({
           contact.isMe ? "my account" : "contact name match",
           contact.isMe ? "my account" : "contact",
         );
-        continueWithAddress(address.address);
+        continueWithAddress(address.address, undefined, contact.id);
         return;
       }
 
@@ -291,13 +305,14 @@ export function useRecipientAddressModalViewModel({
         selectedContact?.isMe ? "my account" : "contact address match",
         selectedContact?.isMe ? "my account" : "contact",
       );
-      continueWithAddress(address.address);
+      continueWithAddress(address.address, undefined, selectedContact?.id);
     },
     [
       clearSelectedContact,
       continueWithAddress,
       mainAccount.currency.id,
       selectedContact?.isMe,
+      selectedContact?.id,
       sendFlowTrackingProperties,
       setRecipientResolution,
     ],
