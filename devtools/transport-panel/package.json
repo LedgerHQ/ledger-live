@@ -25,9 +25,9 @@
     "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
     "coverage:web": "jest --config jest.config.js --coverage",
     "coverage:native": "jest --config jest.native.config.js --coverage",
-    "lint": "lint-devtools src",
+    "lint": "oxlint src",
     "unimported": "pnpm knip --directory ../.. -c devtools/transport-panel/knip.web.config.mjs -W devtools/transport-panel --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/transport-panel/knip.native.config.mjs -W devtools/transport-panel --tsConfig tsconfig.native.json",
-    "lint:fix": "lint-devtools src --fix"
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@devtools/transport": "workspace:*"
@@ -76,7 +76,6 @@
     "clsx": "catalog:",
     "tailwind-merge": "catalog:",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-devtools": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   },
   "peerDependencies": {

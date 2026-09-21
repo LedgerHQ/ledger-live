@@ -24,9 +24,10 @@ Give `support/` one naming axis, the layer, and apply it to oxlint, oxfmt and ts
   consumes `ts-features-flow` + `lint-features-flow` + `jest-features-flow`. The tool segment is
   `ts` / `lint` / `fmt` / `jest`, never the vendor's name. Platform is not an axis: a layer preset
   exposes `.`, `./web` and `./native` subpaths, and lint needs none.
-- A migrated package carries **no lint or format config file**. Each lint preset ships a `bin` that
-  pnpm links into the consumer, and that bin runs the tool with `-c` against the preset's own config,
-  which also disables upward config discovery. Deviations go on the command line.
+- Rules reach a package through one **layer config** per layer that names the preset, which oxlint
+  finds by walking up. That is how the editor extension resolves rules too, so the editor and CI
+  agree by construction. Consumers keep a plain `oxlint src` script and depend on nothing.
+  Deviations go on the command line, for example `-A no-console`.
 - `lint-rules` merges into `lint-base`, so one package holds the custom oxlint plugin and the
   baseline rules. The preset resolves its plugin from its own `import.meta.url`, which is what stops
   a `jsPlugins` path from having to be repeated in every consumer config.

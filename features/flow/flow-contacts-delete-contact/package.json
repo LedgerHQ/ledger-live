@@ -21,8 +21,8 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-delete-contact/knip.web.config.mjs -W features/flow/flow-contacts-delete-contact --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-delete-contact/knip.native.config.mjs -W features/flow/flow-contacts-delete-contact --tsConfig tsconfig.native.json",
-    "lint": "lint-features-flow src",
-    "lint:fix": "lint-features-flow src --fix"
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
@@ -52,7 +52,6 @@
     "@reduxjs/toolkit": "catalog:",
     "@support/fmt-base": "workspace:*",
     "@support/jest-features-flow": "workspace:*",
-    "@support/lint-features-flow": "workspace:*",
     "@support/ts-features-flow": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

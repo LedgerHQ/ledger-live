@@ -27,7 +27,6 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
-    "@support/lint-libs": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
@@ -37,8 +36,8 @@
     "prando": "6"
   },
   "scripts": {
-    "lint": "lint-libs ./src",
-    "lint:fix": "lint-libs ./src --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "typecheck": "tsc --noEmit --customConditions node",
     "watch": "tsc --noEmit --watch --customConditions node",
     "test": "jest",

@@ -4,7 +4,12 @@
   "private": true,
   "type": "module",
   "description": "Lint preset for tools/* packages",
-  "exports": { ".": "./oxlint.config.mts", "./package.json": "./package.json" },
-  "bin": { "lint-tools": "./bin/lint-tools.mjs" },
-  "devDependencies": { "@support/lint-base": "workspace:*", "oxlint": "catalog:" }
+  "exports": {
+    ".": "./oxlint.config.mts",
+    "./package.json": "./package.json",
+    "./oxlint.config": "./oxlint.config.mts"
+  },
+  "devDependencies": {
+    "oxlint": "catalog:"
+  }
 }

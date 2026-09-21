@@ -22,8 +22,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "lint": "lint-features-platform src",
-    "lint:fix": "lint-features-platform src --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
     "format": "fmt-base src",
     "format:check": "fmt-base src --check"
   },
@@ -54,7 +54,6 @@
     "styled-components": "catalog:",
     "typescript": "catalog:",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-features-platform": "workspace:*",
     "@support/ts-features-platform": "workspace:*"
   }
 }

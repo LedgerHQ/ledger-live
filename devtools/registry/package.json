@@ -13,9 +13,9 @@
     "reformat": "nx g @ledgerhq/generators:reformat-devtool-registry && oxfmt src",
     "typecheck": "tsc --noEmit",
     "coverage": "echo \"no tests in @devtools/registry\"",
-    "lint": "lint-devtools src",
+    "lint": "oxlint src",
     "unimported": "pnpm knip --directory ../.. -W devtools/registry",
-    "lint:fix": "lint-devtools src --fix"
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "zod": "catalog:",
@@ -34,7 +34,6 @@
     "typescript": "catalog:",
     "@ledgerhq/generators": "workspace:*",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-devtools": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   }
 }

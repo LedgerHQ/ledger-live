@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 // The lint-side counterpart of validate-tsconfig-presets.mts.
 //
-// A layer that has moved onto a `@support/lint-*` preset must not drift back: no package may carry
-// its own oxlint or oxfmt config file, and its `lint` / `format` scripts must go through the preset
-// bin rather than calling the tool directly. Both failures are silent — a stray `.oxlintrc.json` is
-// picked up by oxlint's upward discovery and quietly replaces the preset.
+// Rules are shared through a layer config that oxlint finds by walking up, which is the same way
+// the editor extension resolves them. Three ways that can silently break:
+//
+//   - a layer loses its config, and every package under it falls back to oxlint's built-in
+//     defaults without anything failing;
+//   - a package grows its own config, which then shadows the layer for that package only;
+//   - a package depends on a `@support/lint-*` preset directly, which is unnecessary (the layer
+//     config resolves it from the workspace root) and leaks into published manifests.
 //
 //   node tools/scripts/validate-lint-presets.mjs
 
@@ -14,85 +18,49 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
-// Layers that have been migrated, and the preset bin their packages must call.
-const MIGRATED = {
-  "domain/entity": "lint-domain",
-  "domain/api": "lint-domain",
+// Layer directory -> the preset its config must name.
+const LAYERS = {
+  domain: "lint-domain",
   shared: "lint-shared",
   "features/flow": "lint-features-flow",
   "features/platform": "lint-features-platform",
   devtools: "lint-devtools",
   support: "lint-support",
+  tools: "lint-tools",
+  libs: "lint-libs",
 };
-const CONFIG_FILES = [".oxlintrc.json", ".oxlintrc.jsonc", ".oxfmtrc.json", ".oxfmtrc.jsonc"];
-// The presets themselves, and jest-only fixture packages, have no TypeScript of their own to lint.
-const EXEMPT = /^support\/(lint-|ts-|fmt-|jest-)/;
 
+// Sub-trees under a migrated layer that legitimately keep their own config, because their rule
+// vocabulary is genuinely different. Each is a preset of its own waiting to be written.
+const OWN_CONFIG_ALLOWED = new Set([
+  "libs/coin-modules",
+  "libs/coin-modules/coin-bitcoin",
+  "libs/coin-tester",
+  "libs/coin-tester-modules",
+  "libs/ledger-live-common",
+  "libs/ledger-services",
+  "libs/ledgerjs/packages",
+  "libs/ui",
+  "libs/wallet-btc",
+]);
+
+const CONFIG_FILES = [".oxlintrc.json", ".oxlintrc.jsonc"];
 const problems = [];
 
-for (const [layer, bin] of Object.entries(MIGRATED)) {
-  const layerDir = join(repoRoot, layer);
-  if (!existsSync(layerDir)) continue;
-
-  for (const config of CONFIG_FILES) {
-    if (existsSync(join(layerDir, config))) {
-      problems.push(`${layer}/${config}: layer-level config; fold it into @support/${bin}`);
-    }
+for (const [layer, preset] of Object.entries(LAYERS)) {
+  const config = join(repoRoot, layer, "oxlint.config.mts");
+  if (!existsSync(config)) {
+    problems.push(
+      `${layer}/oxlint.config.mts is missing; every package below it falls back to oxlint's defaults`,
+    );
+    continue;
   }
-
-  for (const entry of readdirSync(layerDir)) {
-    const rel = `${layer}/${entry}`;
-    const dir = join(layerDir, entry);
-    if (!existsSync(join(dir, "package.json"))) continue;
-
-    for (const config of CONFIG_FILES) {
-      if (existsSync(join(dir, config))) {
-        problems.push(
-          `${rel}/${config}: migrated packages carry no lint config; @support/${bin} is the config`,
-        );
-      }
-    }
-
-    if (EXEMPT.test(rel)) continue;
-    let pkg;
-    try {
-      pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
-    } catch {
-      continue;
-    }
-    const scripts = pkg.scripts ?? {};
-    const devDeps = pkg.devDependencies ?? {};
-
-    for (const name of ["lint", "lint:fix"]) {
-      const script = scripts[name];
-      if (!script) continue;
-      if (/(^|\s)oxlint(\s|$)/.test(script)) {
-        problems.push(`${rel}: scripts.${name} calls oxlint directly; use \`${bin}\``);
-      }
-    }
-    for (const name of ["format", "format:check"]) {
-      const script = scripts[name];
-      if (!script) continue;
-      if (/(^|\s)oxfmt(\s|$)/.test(script)) {
-        problems.push(`${rel}: scripts.${name} calls oxfmt directly; use \`fmt-base\``);
-      }
-    }
-    if (scripts.lint && !devDeps[`@support/${bin}`]) {
-      problems.push(
-        `${rel}: scripts.lint uses \`${bin}\` but @support/${bin} is not a devDependency`,
-      );
-    }
-    if (scripts.format && !devDeps["@support/fmt-base"]) {
-      problems.push(
-        `${rel}: scripts.format uses \`fmt-base\` but @support/fmt-base is not a devDependency`,
-      );
-    }
+  const body = readFileSync(config, "utf8");
+  if (!body.includes(`@support/${preset}/oxlint.config`)) {
+    problems.push(`${layer}/oxlint.config.mts does not name @support/${preset}/oxlint.config`);
   }
 }
 
-// A package whose script goes through a preset bin passes `-c`, which disables config discovery.
-// Any tool config still sitting next to it is dead weight that silently stops being applied, so it
-// is worth reporting wherever it appears, not only inside the layers listed above.
 function walk(dir) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
@@ -102,25 +70,35 @@ function walk(dir) {
       continue;
     }
     if (entry.name !== "package.json") continue;
+
+    const rel = relative(repoRoot, dir).split("\\").join("/");
     let pkg;
     try {
       pkg = JSON.parse(readFileSync(abs, "utf8"));
     } catch {
       continue;
     }
-    const scripts = pkg.scripts ?? {};
-    const viaLint = /^lint-[\w-]+(\s|$)/.test(scripts.lint ?? "");
-    const viaFmt = /^fmt-[\w-]+(\s|$)/.test(scripts.format ?? "");
-    const rel = relative(repoRoot, dir) || ".";
-    for (const [config, active] of [
-      [".oxlintrc.json", viaLint],
-      [".oxfmtrc.json", viaFmt],
-    ]) {
-      if (active && existsSync(join(dir, config))) {
-        problems.push(
-          `${rel}/${config}: dead config - the script passes -c, so this file is ignored`,
-        );
+
+    const layer = Object.keys(LAYERS).find(l => rel === l || rel.startsWith(`${l}/`));
+    if (layer) {
+      for (const config of CONFIG_FILES) {
+        if (!existsSync(join(dir, config))) continue;
+        const shadowed = [...OWN_CONFIG_ALLOWED].some(a => rel === a || rel.startsWith(`${a}/`));
+        if (!shadowed) {
+          problems.push(
+            `${rel}/${config} shadows the ${layer} layer config for this package alone`,
+          );
+        }
       }
+    }
+
+    const direct = Object.keys(pkg.devDependencies ?? {}).filter(d =>
+      d.startsWith("@support/lint-"),
+    );
+    if (direct.length > 0 && !rel.startsWith("support/")) {
+      problems.push(
+        `${rel}: depends on ${direct.join(", ")}; the layer config resolves presets from the workspace root`,
+      );
     }
   }
 }
@@ -145,4 +123,4 @@ if (problems.length > 0) {
   for (const p of problems) process.stderr.write(`  - ${p}\n`);
   process.exit(1);
 }
-process.stdout.write("lint presets: all migrated layers conform\n");
+process.stdout.write("lint presets: every migrated layer resolves through its layer config\n");

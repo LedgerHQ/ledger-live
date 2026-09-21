@@ -63,35 +63,42 @@ oxlint configuration.
 
 ## How a consumer uses them
 
-A migrated package carries **no lint or format config file at all**. Each lint preset ships a `bin`
-that pnpm links into the consumer's `node_modules/.bin`, and that bin runs oxlint with `-c` pointing
-at the preset's own config:
+Rules reach a package through a **layer config**, one file per layer, that names the preset:
+
+```ts
+// features/flow/oxlint.config.mts
+export { default } from "@support/lint-features-flow/oxlint.config";
+```
+
+oxlint finds it by walking up from the file being linted. That is also how the editor extension
+resolves rules, so what you see while typing is what CI runs. A consumer therefore keeps the plain
+script it always had and needs no dependency on the preset:
 
 ```jsonc
 {
-  "scripts": {
-    "lint": "lint-features-flow src",
-    "lint:fix": "lint-features-flow src --fix",
-    "format": "fmt-base src",
-    "format:check": "fmt-base src --check"
-  },
-  "devDependencies": {
-    "@support/lint-features-flow": "workspace:*",
-    "@support/fmt-base": "workspace:*"
-  }
+  "scripts": { "lint": "oxlint src", "lint:fix": "oxlint src --fix" }
 }
 ```
 
-A one-rule deviation goes on the command line rather than into a new config file, e.g.
-`lint-libs ./src -A no-console`. Extra format excludes use oxfmt's `!` positionals, e.g.
-`fmt-base src '!src/generated/**'`.
+> [!IMPORTANT]
+> A preset must **not** be invoked through a `bin` with `oxlint -c`. It works on the command line
+> and leaves the editor blind: with no config to walk up to, the extension falls back to oxlint's
+> built-in defaults. Measured on this repository, that was 96 rules in the editor against 219 in
+> CI, in every migrated package.
 
-tsconfig still needs a file per package, because that is how TypeScript is told where the preset is:
+A one-rule deviation goes on the command line rather than into a new config file, for example
+`oxlint ./src -A no-console` or `oxlint ./src -D import/no-cycle`. A package that needs more than
+that should get its own layer.
+
+Formatting still goes through a bin, because oxfmt has no config discovery to hook into:
+`fmt-base src`, with extra excludes as `!` positionals such as `fmt-base src '!src/generated/**'`.
+
+tsconfig needs a file per package, because that is how TypeScript is told where the preset is:
 
 ```jsonc
 // tsconfig.json
 { "extends": "@support/ts-features-flow", "references": [{ "path": "./tsconfig.web.json" }] }
-// tsconfig.web.json — package root first, platform layer over it
+// tsconfig.web.json - package root first, platform layer over it
 { "extends": ["./tsconfig.json", "@support/ts-features-flow/web"] }
 ```
 
@@ -99,7 +106,8 @@ Order matters: the platform layer must come **last** so its `moduleSuffixes`, `i
 `exclude` win, and the package's own root must come **first** so its deviations survive.
 
 `tools/scripts/validate-lint-presets.mjs` and `tools/scripts/validate-tsconfig-presets.mts` enforce
-both shapes in CI.
+both shapes in CI. The lint one fails if a layer loses its config, if a package grows one that
+shadows the layer, or if a package depends on a preset directly.
 
 ## Adding a package
 

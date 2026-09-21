@@ -15,8 +15,8 @@
   },
   "sideEffects": false,
   "scripts": {
-    "lint": "lint-shared src",
-    "lint:fix": "lint-shared src --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
     "format": "fmt-base ./src",
     "format:check": "fmt-base ./src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
@@ -47,7 +47,6 @@
     "@react-navigation/native": "catalog:",
     "@support/fmt-base": "workspace:*",
     "@support/jest-shared": "workspace:*",
-    "@support/lint-shared": "workspace:*",
     "@support/ts-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

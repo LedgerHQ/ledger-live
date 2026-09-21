@@ -30,8 +30,8 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "lint-libs ./src",
-    "lint:fix": "lint-libs ./src --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "format": "fmt-base ./src",
     "format:check": "fmt-base ./src --check"
   },
@@ -41,7 +41,6 @@
   },
   "devDependencies": {
     "@support/fmt-base": "workspace:*",
-    "@support/lint-libs": "workspace:*",
     "@types/node": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"

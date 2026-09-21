@@ -17,9 +17,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "lint": "lint-devtools src",
+    "lint": "oxlint src",
     "unimported": "pnpm knip --directory ../.. -c devtools/bindings/knip.web.config.mjs -W devtools/bindings --tsConfig tsconfig.json && pnpm knip --directory ../.. -c devtools/bindings/knip.native.config.mjs -W devtools/bindings --tsConfig tsconfig.json",
-    "lint:fix": "lint-devtools src --fix"
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@devtools/env": "workspace:*",
@@ -61,7 +61,6 @@
     "react-redux": "catalog:",
     "typescript": "catalog:",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-devtools": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   }
 }

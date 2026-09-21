@@ -21,8 +21,8 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/flow/large-screen-upsell",
-    "lint": "lint-features-flow src",
-    "lint:fix": "lint-features-flow src --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
     "format": "fmt-base src",
     "format:check": "fmt-base src --check"
   },
@@ -51,7 +51,6 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-features-flow": "workspace:*",
     "@support/ts-features-flow": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

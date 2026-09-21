@@ -28,7 +28,6 @@
     "@rspack/cli": "catalog:",
     "@rspack/core": "catalog:",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-libs": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/events": "^3.0.3",
@@ -43,8 +42,8 @@
   "scripts": {
     "clean": "rimraf lib",
     "build": "pnpm run clean && rspack build -c rspack.config.mjs && tsc -p tsconfig.build.json --emitDeclarationOnly && node scripts/build-umd-json.mjs",
-    "lint": "lint-libs ./src",
-    "lint:fix": "lint-libs ./src --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "format": "fmt-base ./src",
     "format:check": "fmt-base ./src --check",
     "test": "jest",

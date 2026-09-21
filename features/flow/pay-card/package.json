@@ -18,8 +18,8 @@
     "format": "fmt-base src",
     "format:check": "fmt-base src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
-    "lint": "lint-features-flow src && pnpm lint:tailwind",
-    "lint:fix": "lint-features-flow src --fix && pnpm lint:tailwind",
+    "lint": "oxlint src && pnpm lint:tailwind",
+    "lint:fix": "oxlint src --fix && pnpm lint:tailwind",
     "lint:tailwind": "eslint --no-eslintrc -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -56,7 +56,6 @@
     "react-test-renderer": "catalog:",
     "typescript": "catalog:",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-features-flow": "workspace:*",
     "@support/ts-features-flow": "workspace:*"
   },
   "peerDependencies": {

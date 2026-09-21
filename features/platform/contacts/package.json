@@ -27,8 +27,8 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -c features/platform/contacts/knip.web.config.mjs -W features/platform/contacts --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/contacts/knip.native.config.mjs -W features/platform/contacts --tsConfig tsconfig.native.json",
-    "lint": "lint-features-platform src",
-    "lint:fix": "lint-features-platform src --fix"
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
@@ -69,7 +69,6 @@
     "@reduxjs/toolkit": "catalog:",
     "@support/fmt-base": "workspace:*",
     "@support/jest-features-flow": "workspace:*",
-    "@support/lint-features-platform": "workspace:*",
     "@support/ts-features-platform": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

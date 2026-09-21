@@ -12,9 +12,9 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
-    "lint": "lint-devtools src",
+    "lint": "oxlint src",
     "unimported": "pnpm knip --directory ../.. -W devtools/wire",
-    "lint:fix": "lint-devtools src --fix"
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "@devtools/protocols": "workspace:*",
@@ -28,7 +28,6 @@
     "jest": "catalog:",
     "typescript": "catalog:",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-devtools": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   }
 }

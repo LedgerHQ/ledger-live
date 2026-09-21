@@ -27,8 +27,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "lint": "lint-shared src",
-    "lint:fix": "lint-shared src --fix"
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
     "uuid": "8.3.2"
@@ -60,7 +60,6 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/fmt-base": "workspace:*",
     "@support/jest-shared": "workspace:*",
-    "@support/lint-shared": "workspace:*",
     "@support/ts-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

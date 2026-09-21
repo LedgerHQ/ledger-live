@@ -13,8 +13,8 @@
   "scripts": {
     "test": "node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
-    "lint": "lint-support src",
-    "lint:fix": "lint-support src --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
     "format": "fmt-base src",
     "format:check": "fmt-base src --check"
   },
@@ -23,7 +23,6 @@
     "@jest/test-result": "catalog:",
     "@playwright/test": "catalog:",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-support": "workspace:*",
     "@types/node": "catalog:",
     "jest": "catalog:",
     "typescript": "catalog:"

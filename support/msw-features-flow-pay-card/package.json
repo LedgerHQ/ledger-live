@@ -13,9 +13,9 @@
   "scripts": {
     "format": "fmt-base src",
     "format:check": "fmt-base src --check",
-    "lint": "lint-support src",
+    "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
-    "lint:fix": "lint-support src --fix",
+    "lint:fix": "oxlint src --fix",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -32,7 +32,6 @@
   },
   "devDependencies": {
     "@support/fmt-base": "workspace:*",
-    "@support/lint-support": "workspace:*",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",

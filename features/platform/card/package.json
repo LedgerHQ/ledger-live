@@ -20,8 +20,8 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/platform/card",
-    "lint": "lint-features-platform src",
-    "lint:fix": "lint-features-platform src --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
     "format": "fmt-base src",
     "format:check": "fmt-base src --check"
   },
@@ -35,7 +35,6 @@
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-features-platform": "workspace:*",
     "@support/ts-features-platform": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

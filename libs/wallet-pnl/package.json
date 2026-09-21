@@ -52,8 +52,7 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "@support/fmt-base": "workspace:*",
-    "@support/lint-libs": "workspace:*"
+    "@support/fmt-base": "workspace:*"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -61,8 +60,8 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "lint-libs ./src",
-    "lint:fix": "lint-libs ./src --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "format": "fmt-base ./src",
     "format:check": "fmt-base ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",

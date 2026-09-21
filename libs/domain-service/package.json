@@ -64,8 +64,8 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "lint-libs ./src",
-    "lint:fix": "lint-libs ./src --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "format": "fmt-base ./src",
     "format:check": "fmt-base ./src --check",
     "test": "cross-env TZ=America/New_York jest",
@@ -83,7 +83,6 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-libs": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

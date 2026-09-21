@@ -12,9 +12,9 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
     "coverage": "jest --config jest.config.js --coverage",
-    "lint": "lint-devtools src",
+    "lint": "oxlint src",
     "unimported": "pnpm knip --directory ../.. -W devtools/transport",
-    "lint:fix": "lint-devtools src --fix"
+    "lint:fix": "oxlint src --fix"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -24,7 +24,6 @@
     "jest": "catalog:",
     "typescript": "catalog:",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-devtools": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   }
 }

@@ -6,12 +6,9 @@
   "description": "Baseline oxlint preset and the repo's custom oxlint JS plugin",
   "exports": {
     ".": "./oxlint.config.mts",
-    "./runner": "./runner.mjs",
     "./src/*": "./src/*",
-    "./package.json": "./package.json"
-  },
-  "bin": {
-    "lint-base": "./bin/lint-base.mjs"
+    "./package.json": "./package.json",
+    "./oxlint.config": "./oxlint.config.mts"
   },
   "sideEffects": false,
   "devDependencies": {

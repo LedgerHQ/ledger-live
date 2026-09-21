@@ -26,8 +26,8 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "lint-libs ./src",
-    "lint:fix": "lint-libs ./src --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "test": "jest",
     "coverage": "jest --coverage",
     "unimported": "unimported"
@@ -41,8 +41,7 @@
     "jest": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
-    "ts-node": "^10.4.0",
-    "@support/lint-libs": "workspace:*"
+    "ts-node": "^10.4.0"
   },
   "exports": {
     ".": {

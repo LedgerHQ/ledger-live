@@ -22,8 +22,8 @@
     "build": "tsc --project tsconfig.prod.json",
     "watch": "tsc --watch --project tsconfig.prod.json",
     "watch:es": "pnpm watch",
-    "lint": "lint-libs ./src",
-    "lint:fix": "lint-libs ./src --fix",
+    "lint": "oxlint ./src",
+    "lint:fix": "oxlint ./src --fix",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
     "coverage": "jest --coverage",
@@ -45,7 +45,6 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/lint-libs": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

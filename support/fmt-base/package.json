@@ -6,7 +6,8 @@
   "description": "The repo's single oxfmt preset",
   "exports": {
     ".": "./oxfmt.config.mts",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./oxfmt.config": "./oxfmt.config.mts"
   },
   "bin": {
     "fmt-base": "./bin/fmt-base.mjs"

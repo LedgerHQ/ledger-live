@@ -7,8 +7,8 @@
   "private": true,
   "scripts": {
     "build": "rslib build",
-    "lint": "lint-tools ./",
-    "lint:fix": "lint-tools ./ --fix",
+    "lint": "oxlint ./",
+    "lint:fix": "oxlint ./ --fix",
     "format": "fmt-base . '!**/build/**'",
     "format:check": "fmt-base . '!**/build/**' --check"
   },
@@ -17,7 +17,6 @@
     "@actions/github": "6.0.0",
     "@aws-sdk/client-s3": "3.540.0",
     "@rslib/core": "catalog:",
-    "@support/fmt-base": "workspace:*",
-    "@support/lint-tools": "workspace:*"
+    "@support/fmt-base": "workspace:*"
   }
 }

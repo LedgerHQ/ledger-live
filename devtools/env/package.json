@@ -18,9 +18,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "lint": "lint-devtools src",
+    "lint": "oxlint src",
     "unimported": "pnpm knip --directory ../.. -c devtools/env/knip.web.config.mjs -W devtools/env --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/env/knip.native.config.mjs -W devtools/env --tsConfig tsconfig.native.json",
-    "lint:fix": "lint-devtools src --fix"
+    "lint:fix": "oxlint src --fix"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -44,7 +44,6 @@
     "react-native": "catalog:",
     "typescript": "catalog:",
     "@support/fmt-base": "workspace:*",
-    "@support/lint-devtools": "workspace:*",
     "@support/ts-devtools": "workspace:*"
   }
 }

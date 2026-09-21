@@ -6,13 +6,10 @@
   "description": "Lint preset for shared/* packages",
   "exports": {
     ".": "./oxlint.config.mts",
-    "./package.json": "./package.json"
-  },
-  "bin": {
-    "lint-shared": "./bin/lint-shared.mjs"
+    "./package.json": "./package.json",
+    "./oxlint.config": "./oxlint.config.mts"
   },
   "devDependencies": {
-    "@support/lint-base": "workspace:*",
     "oxlint": "catalog:"
   }
 }

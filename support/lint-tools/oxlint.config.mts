@@ -7,6 +7,7 @@ import base from "@support/lint-base";
 export default defineConfig({
   extends: [base],
   env: { node: true },
+  ignorePatterns: ["**/build/**"],
   rules: {
     // These are build and release scripts. The console is their output, not a slip.
     "eslint/no-console": "off",
