@@ -79,8 +79,11 @@ import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalSt
 import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
-import { AuthorizationStatus, type FirebaseMessagingTypes } from "@react-native-firebase/messaging";
-import { getNotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
+import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import {
+  getNotificationPermissionStatus,
+  type AuthorizationStatusType,
+} from "~/logic/getNotificationPermissionStatus";
 import { isDatadogEnabled } from "~/datadog";
 import { DdLogs } from "@datadog/mobile-react-native";
 import { shouldIncludeSegmentIdentity } from "./segmentIdentity";
@@ -95,10 +98,8 @@ let storeInstance: MaybeAppStore; // is the redux store. it's also used as a fla
 let segmentClient: SegmentClient | undefined;
 let analyticsFeatureFlagMethod: null | (<T extends FeatureId>(key: T) => Features[T] | null);
 
-let cachedOsPermissionStatus: FirebaseMessagingTypes.AuthorizationStatus | undefined;
-let osPermissionRefreshPromise: Promise<
-  FirebaseMessagingTypes.AuthorizationStatus | undefined
-> | null = null;
+let cachedOsPermissionStatus: AuthorizationStatusType | undefined;
+let osPermissionRefreshPromise: Promise<AuthorizationStatusType | undefined> | null = null;
 let appStateSubscription: NativeEventSubscription | undefined;
 let hasWarnedNoSegmentClient = false;
 
@@ -109,9 +110,7 @@ const warnOnceNoSegmentClient = (eventName: string, kind: "track" | "screen") =>
   DdLogs.warn("analytics_event_skipped_no_client", { kind, eventName });
 };
 
-const refreshOsPermissionStatus = (): Promise<
-  FirebaseMessagingTypes.AuthorizationStatus | undefined
-> => {
+const refreshOsPermissionStatus = (): Promise<AuthorizationStatusType | undefined> => {
   if (osPermissionRefreshPromise) return osPermissionRefreshPromise;
   osPermissionRefreshPromise = (async () => {
     try {
@@ -129,7 +128,7 @@ const refreshOsPermissionStatus = (): Promise<
 // Resolves with the cached value without a native call in steady state; while a refresh is
 // in-flight (right after the app comes back to the foreground) it awaits that single refresh so
 // events tracked in that window still get the up-to-date value instead of a stale one.
-const getOsPermissionStatus = (): Promise<FirebaseMessagingTypes.AuthorizationStatus | undefined> =>
+const getOsPermissionStatus = (): Promise<AuthorizationStatusType | undefined> =>
   osPermissionRefreshPromise ?? Promise.resolve(cachedOsPermissionStatus);
 
 export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
