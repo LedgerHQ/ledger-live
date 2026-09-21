@@ -17,6 +17,7 @@ import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import type { FeatureTourProps } from "@features/flow-pay-feature-tour";
 import { navigateToCardHistory } from "LLM/features/OperationsHistory/utils/navigateToCardHistory";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
+import { useAppProtectionPrompt } from "LLM/features/AppLock/AppProtectionPrompt";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
 import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
@@ -60,6 +61,8 @@ export function usePayTabViewModel() {
     [apiUrl, clientId, hostedUiUrl, redirectUri],
   );
 
+  const { requestProtection } = useAppProtectionPrompt();
+
   // The OAuth redirect, when the deep link brought one. PKCE ties the code to the verifier on disk,
   // so nothing else has to be echoed back, but the app id names the provider tenant to route on.
   const callback: CardProps["login"]["callback"] = useMemo(
@@ -82,8 +85,8 @@ export function usePayTabViewModel() {
   }, [hostedUiUrl, usAppId]);
 
   const login: CardProps["login"] = useMemo(
-    () => ({ oauthConfig, callback, onTrackEvent: balance.onTrackEvent }),
-    [oauthConfig, callback, balance.onTrackEvent],
+    () => ({ oauthConfig, callback, onTrackEvent: balance.onTrackEvent, requestProtection }),
+    [oauthConfig, callback, balance.onTrackEvent, requestProtection],
   );
 
   const onShowMore = useCallback(() => {

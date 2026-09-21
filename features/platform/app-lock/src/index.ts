@@ -4,6 +4,7 @@ export * from "./state/authenticationType";
 export * from "./state/slice";
 export * from "./state/selectors";
 export * from "./appState";
+export * from "./biometricsType";
 export * from "./biometricsTypes";
 export * from "./errors";
 export * from "./password";
