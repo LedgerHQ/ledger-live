@@ -12,7 +12,7 @@ import {
   revealCardDetailsFailureHandler,
   revealCardDetailsHandler,
 } from "@support/msw-features-flow-pay-card";
-import { FLIP_MS, useRevealViewModel } from "./useRevealViewModel";
+import { useRevealViewModel } from "./useRevealViewModel";
 
 const server = listenToCardApi();
 
@@ -50,22 +50,10 @@ async function renderRevealed() {
     await rendered.reveal().onReveal();
   });
   await waitFor(() => expect(rendered.reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
-  finishFlip(rendered.reveal);
+  act(() => {
+    rendered.reveal().onImageLoad();
+  });
   return rendered;
-}
-
-function finishFlip(reveal: () => { onImageLoad: () => void }) {
-  jest.useFakeTimers();
-  try {
-    act(() => {
-      reveal().onImageLoad();
-    });
-    act(() => {
-      jest.advanceTimersByTime(FLIP_MS);
-    });
-  } finally {
-    jest.useRealTimers();
-  }
 }
 
 describe("useRevealViewModel", () => {
@@ -84,21 +72,8 @@ describe("useRevealViewModel", () => {
       reveal().onImageLoad();
     });
 
-    expect(reveal().status).toBe("flipping");
-    expect(reveal().isRevealed).toBe(true);
-  });
-
-  it("shows Hide after the flip finishes", async () => {
-    const { reveal } = renderReveal();
-
-    await act(async () => {
-      await reveal().onReveal();
-    });
-    await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
-
-    expect(reveal().status).toBe("loading");
-    finishFlip(reveal);
     expect(reveal().status).toBe("revealed");
+    expect(reveal().isRevealed).toBe(true);
     expect(reveal().canHide).toBe(true);
   });
 
@@ -134,7 +109,9 @@ describe("useRevealViewModel", () => {
     });
 
     await waitFor(() => expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL));
-    finishFlip(reveal);
+    act(() => {
+      reveal().onImageLoad();
+    });
     expect(reveal().status).toBe("revealed");
     expect(reveal().imageUrl).toBe(CARD_DETAILS_IMAGE_URL);
   });

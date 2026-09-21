@@ -8,6 +8,14 @@ import { Card } from "../Card";
 const CARD_DETAILS_TOKEN_URL = `${getEnv("CARD_BAANX_API_URL")}/v1/card/details/token`;
 const signedIn = { payCardAuth: { hasCard: true, status: "signedIn" as const } };
 
+async function finishCardNumbersReveal() {
+  const image = await screen.findByRole("img", { name: "Card numbers", hidden: true });
+  await act(async () => {
+    image.dispatchEvent(new Event("load"));
+  });
+  expect(screen.getByRole("img", { name: "Card numbers" })).toBeVisible();
+}
+
 describe("Card numbers", () => {
   beforeEach(() => {
     server.use(
@@ -19,40 +27,14 @@ describe("Card numbers", () => {
     const { user } = render(<Card />, { initialState: signedIn });
 
     await user.click(await screen.findByRole("button", { name: "View" }));
-
-    const image = await screen.findByRole("img", { name: "Card numbers", hidden: true });
-    jest.useFakeTimers();
-    try {
-      await act(async () => {
-        image.dispatchEvent(new Event("load"));
-      });
-      act(() => {
-        jest.advanceTimersByTime(500);
-      });
-    } finally {
-      jest.useRealTimers();
-    }
-
-    expect(screen.getByRole("img", { name: "Card numbers" })).toBeVisible();
+    await finishCardNumbersReveal();
   });
 
   it("should hide the card numbers again once the user clicks Hide", async () => {
     const { user } = render(<Card />, { initialState: signedIn });
 
     await user.click(await screen.findByRole("button", { name: "View" }));
-    const image = await screen.findByRole("img", { name: "Card numbers", hidden: true });
-    jest.useFakeTimers();
-    try {
-      await act(async () => {
-        image.dispatchEvent(new Event("load"));
-      });
-      act(() => {
-        jest.advanceTimersByTime(500);
-      });
-    } finally {
-      jest.useRealTimers();
-    }
-    expect(await screen.findByRole("img", { name: "Card numbers" })).toBeVisible();
+    await finishCardNumbersReveal();
 
     await user.click(screen.getByRole("button", { name: "Hide" }));
 

@@ -12,7 +12,7 @@ export function Reveal({ status, canHide, onReveal, onHide }: RevealTileProps) {
       <TileButton
         icon={Eye}
         onClick={canHide ? onHide : onReveal}
-        disabled={status === "loading" || status === "flipping"}
+        disabled={status === "loading"}
         isFull
       >
         {canHide ? t("payTab.card.numbers.hide") : t("payTab.card.numbers.reveal")}

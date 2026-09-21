@@ -8,7 +8,6 @@ import {
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
 import { ADD_TO_WALLET_COPY, CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
-import { FLIP_MS } from "../Reveal/useRevealViewModel";
 import { CardDetails } from "./CardDetails";
 import type { CardVisualProps } from "../../types";
 
@@ -118,17 +117,9 @@ describe("CardDetails (native)", () => {
     const image = await screen.findByLabelText(CARD_COPY.numbersImageAlt, {
       includeHiddenElements: true,
     });
-    jest.useFakeTimers();
-    try {
-      await act(() => {
-        image.props.onLoad();
-      });
-      act(() => {
-        jest.advanceTimersByTime(FLIP_MS);
-      });
-    } finally {
-      jest.useRealTimers();
-    }
+    await act(() => {
+      image.props.onLoad();
+    });
 
     expect(screen.getByLabelText(CARD_COPY.numbersImageAlt)).toBeVisible();
     expect(screen.getByText(CARD_COPY.numbersHide)).toBeVisible();
