@@ -1439,8 +1439,8 @@
       "title" : "จำนวนคริปโตมากเกินกว่าที่ UTXO รองรับ"
     },
     "CurrencyRegionRestrictedError" : {
-      "title" : "{{currencyName}} is not available in your region",
-      "description" : "Access to {{currencyName}} is restricted in your region."
+      "title" : "ไม่สามารถใช้งาน {{currencyName}} ได้ในประเทศของคุณ",
+      "description" : "มีการจำกัดการเข้าถึง {{currencyName}} ในประเทศของคุณ"
     }
   },
   "crash" : {
@@ -1613,11 +1613,11 @@
       "cta" : "ยืนยัน"
     },
     "deactivatePassword" : {
-      "title" : "Deactivate password",
-      "description" : "Enter your password to deactivate it.",
-      "wrongPassword" : "Incorrect password",
-      "failed" : "We couldn't deactivate your password. Please try again.",
-      "cta" : "Confirm"
+      "title" : "ปิดใช้งานรหัสผ่าน",
+      "description" : "ป้อนรหัสผ่านของคุณเพื่อปิดใช้งาน",
+      "wrongPassword" : "รหัสผ่านไม่ถูกต้อง",
+      "failed" : "เราไม่สามารถปิดใช้งานรหัสผ่านของคุณได้ โปรดลองอีกครั้ง",
+      "cta" : "ยืนยัน"
     }
   },
   "auth" : {
@@ -2988,9 +2988,9 @@
     }
   },
   "perpsAccountBanner" : {
-    "title" : "About Hyperliquid account",
-    "description" : "This account is related to Perpetual trading. Transactional actions are not supported for this account",
-    "cta" : "Open Perps"
+    "title" : "เกี่ยวกับบัญชี Hyperliquid",
+    "description" : "บัญชีนี้เกี่ยวข้องกับการเทรดสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perpetuals) ไม่สามารถดำเนินการธุรกรรมด้วยบัญชีนี้ได้",
+    "cta" : "เปิดสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps)"
   },
   "portfolio" : {
     "totalBalance" : "ยอดคงเหลือทั้งหมด",
@@ -10367,7 +10367,7 @@
       }
     },
     "cardTransactions" : {
-      "title" : "Transactions",
+      "title" : "ธุรกรรม",
       "categories" : {
         "SUBSCRIPTIONS" : "การสมัครสมาชิก",
         "FOOD" : "อาหาร",
@@ -10379,21 +10379,21 @@
         "MISC" : "อื่น ๆ"
       },
       "detail" : {
-        "amount" : "Amount",
-        "status" : "Status",
-        "card" : "Card",
-        "cardInfo" : "The last four digits of the card used for this payment.",
-        "fundingSource" : "Funding source",
-        "transactionId" : "Transaction ID",
-        "copyTransactionId" : "Copy transaction ID",
-        "today" : "Today {{time}}",
-        "yesterday" : "Yesterday {{time}}",
+        "amount" : "จำนวน",
+        "status" : "สถานะ",
+        "card" : "บัตร",
+        "cardInfo" : "หมายเลข 4 ตัวสุดท้ายของบัตรที่ใช้จ่ายธุรกรรมนี้",
+        "fundingSource" : "แหล่งเงินทุน",
+        "transactionId" : "ID ธุรกรรม",
+        "copyTransactionId" : "คัดลอก ID ธุรกรรม",
+        "today" : "วันนี้ตอน {{time}}",
+        "yesterday" : "เมื่อวานตอน {{time}}",
         "dateTime" : "{{date}} {{time}}",
         "statusValues" : {
-          "CONFIRMED" : "Confirmed",
-          "PENDING" : "Pending",
-          "DECLINED" : "Declined",
-          "REVERTED" : "Reverted"
+          "CONFIRMED" : "ยืนยันแล้ว",
+          "PENDING" : "รอดำเนินการ",
+          "DECLINED" : "ไม่สำเร็จ",
+          "REVERTED" : "ยกเลิก"
         }
       }
     },
@@ -10484,12 +10484,12 @@
     "cardLogin" : {
       "title" : "บัตรคริปโต",
       "beforeIntro" : {
-        "title" : "Get your crypto card",
+        "title" : "สมัครบัตรคริปโต",
         "description" : "รับเครดิตเงินคืน 1% ทุกครั้งที่ใช้จ่าย",
         "action" : "สมัครบัตร"
       },
       "afterIntro" : {
-        "title" : "Log in to access your Card",
+        "title" : "เข้าสู่ระบบเพื่อดูข้อมูลบัตรของคุณ",
         "description" : "เข้าสู่ระบบเพื่อดูข้อมูลบัตรของคุณ",
         "action" : "เข้าสู่ระบบ"
       },
@@ -10852,7 +10852,7 @@
       "invalidLabel" : "ห้ามใช้อักขระพิเศษ",
       "duplicateLabel" : "มีการใช้ชื่อนี้กับที่อยู่คริปโตอื่นแล้ว",
       "labelTooLong" : "ชื่อที่อยู่คริปโตนี้ยาวเกินไป",
-      "privacyPolicy" : "Learn more about Ledger's Privacy Policy."
+      "privacyPolicy" : "เรียนรู้เพิ่มเติมเกี่ยวกับนโยบายความเป็นส่วนตัวของ Ledger"
     },
     "addAddressReview" : {
       "title" : "ตรวจสอบที่อยู่คริปโต",
