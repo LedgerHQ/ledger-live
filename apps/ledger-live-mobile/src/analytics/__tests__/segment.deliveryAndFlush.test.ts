@@ -8,6 +8,7 @@ import * as segment from "../segment";
 import type { LoggableEvent } from "../segment";
 
 jest.unmock("../segment");
+jest.unmock("@shared/analytics");
 
 jest.mock("@datadog/mobile-react-native", () => ({
   ...jest.requireActual("@datadog/mobile-react-native"),

@@ -3,7 +3,8 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import { render, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { screen, track } from "~/analytics";
+import { track } from "~/analytics";
+import { trackPage } from "@shared/analytics";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
 import type { State } from "~/reducers/types";
 import { ScreenName } from "~/const/navigation";
@@ -100,14 +101,9 @@ describe("OperationsList", () => {
 
   it("tracks the OperationsList screen on focus", () => {
     render(<MockNavigator />);
-    expect(screen).toHaveBeenCalledWith(
-      undefined,
-      "OperationsList",
-      { has_pending_operations: false },
-      true,
-      true,
-      false,
-      false,
+    expect(trackPage).toHaveBeenCalledWith(
+      { category: undefined, name: "OperationsList", props: { has_pending_operations: false } },
+      { updateRoutes: true, refreshSource: true, avoidDuplicates: false, mandatory: false },
     );
   });
 
