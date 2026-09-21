@@ -570,17 +570,22 @@ describe("PayTab integration", () => {
     });
 
     it("should show no results and dismiss the keyboard before opening a searched contact", async () => {
+      const payee = mockContact({
+        id: "contact-payee-15",
+        name: "Payee 15",
+        addresses: [mockContactAddress({ currencyId: "algorand" })],
+      });
       const yana = mockContactWithAddress({ id: "contact-yana", name: "Yana" });
       const dismissKeyboard = jest.spyOn(Keyboard, "dismiss");
       const { user } = renderPayTab({
-        contacts: [mockMeContact(), yana],
+        contacts: [mockMeContact(), payee, yana],
         contactsEnabled: true,
       });
 
       await user.press(await screen.findByRole("button", { name: "New" }));
       const input = await screen.findByPlaceholderText("Enter contact");
 
-      await user.type(input, "Nobody");
+      await user.type(input, "Payee 15");
       expect(await screen.findByTestId("contacts-search-no-results")).toBeVisible();
       expect(screen.getByText("No contact found")).toBeVisible();
 

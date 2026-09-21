@@ -49,7 +49,7 @@ describe("filterContactsByNetwork", () => {
     expect(filterContactsByNetwork(contacts, "ethereum/erc20/usd_coin")).toEqual(contacts);
   });
 
-  it("excludes the personal contact", () => {
+  it("keeps the personal contact when it has an address on the recipient network", () => {
     const contacts = [
       {
         id: "contact-me",
@@ -58,6 +58,6 @@ describe("filterContactsByNetwork", () => {
       },
     ];
 
-    expect(filterContactsByNetwork(contacts, "ethereum")).toEqual([]);
+    expect(filterContactsByNetwork(contacts, "ethereum")).toEqual(contacts);
   });
 });

@@ -30,6 +30,7 @@ import { useRecipientContactSelection } from "../../../context/RecipientContactS
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { getRecipientResolution } from "../../../utils/contactTracking";
+import { placeMeFirst } from "@features/flow-pay-contact";
 
 type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
@@ -88,7 +89,7 @@ export function useRecipientAddressModalViewModel({
   });
 
   const contactsOnNetwork = useMemo(
-    () => filterContactsByNetwork(contacts, currency.id),
+    () => placeMeFirst(filterContactsByNetwork(contacts, currency.id)),
     [contacts, currency.id],
   );
 

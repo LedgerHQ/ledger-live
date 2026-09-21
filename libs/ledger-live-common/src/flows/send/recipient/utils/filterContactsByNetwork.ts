@@ -12,10 +12,6 @@ export function filterContactsByNetwork<TContact extends ContactWithAddresses>(
   const networkId = resolveRecipientNetworkId(currencyId);
 
   return contacts.reduce<TContact[]>((matchingContacts, contact) => {
-    if (contact.isMe) {
-      return matchingContacts;
-    }
-
     const addresses = contact.addresses.filter(
       address => resolveRecipientNetworkId(address.currencyId) === networkId,
     );

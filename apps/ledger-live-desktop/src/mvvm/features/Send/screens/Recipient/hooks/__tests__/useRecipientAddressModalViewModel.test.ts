@@ -409,8 +409,13 @@ describe("useRecipientAddressModalViewModel", () => {
       }),
     );
 
-    expect(result.current.contactsOnNetwork).toHaveLength(1);
+    expect(result.current.contactsOnNetwork).toHaveLength(2);
     expect(result.current.contactsOnNetwork[0]).toMatchObject({
+      id: "contact-me",
+      isMe: true,
+      addresses: [{ id: "address-me" }],
+    });
+    expect(result.current.contactsOnNetwork[1]).toMatchObject({
       id: "contact-alice",
       addresses: [{ id: "address-eth" }, { id: "address-usdc" }],
     });
