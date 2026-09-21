@@ -1,4 +1,10 @@
-import { getRemoteConfig } from "@react-native-firebase/remote-config";
+import {
+  getRemoteConfig,
+  activate,
+  fetchAndActivate,
+  getAll,
+  getValue,
+} from "@react-native-firebase/remote-config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
 import { formatDefaultFeatures } from "@features/platform-feature-flags";
@@ -14,7 +20,7 @@ const rc = getRemoteConfig();
 // the Redux slice. Install at module init (store creation) so they resolve before first read.
 LiveConfig.setProvider(
   new FirebaseRemoteConfigProvider({
-    getValue: (key: string) => rc.getValue(key),
+    getValue: (key: string) => getValue(rc, key),
   }),
 );
 
@@ -28,23 +34,25 @@ const subscribers = new Set<Subscriber>();
  * {@link fetchRemoteFlags} so the first fetch always honors defaults even when
  * the middleware fires immediately at store creation.
  *
- * Also the barrier {@link readCachedFlags} relies on: both calls resolve with native
- * constants, which is what hydrates the JS-side value map from the activated config the
- * platform SDK holds on disk.
+ * `rc.settings` / `rc.defaultConfig` are plain property setters in the v25 modular API
+ * (the old `setConfigSettings()` / `setDefaults()` promises are gone) — they apply
+ * synchronously and fire the native update in the background, so there is nothing left to
+ * await from them directly. `activate()` is what {@link readCachedFlags} relies on as the
+ * barrier instead: it doesn't hit the network, and resolving it hydrates the JS-side value
+ * map from whatever config the platform SDK already has activated on disk.
  *
  * One-shot on success only. A rejected promise left in the memo would be handed to every
  * later caller, so a single transient native error would keep both readers off the SDK for
- * the rest of the session. Both calls are idempotent, so dropping the memo lets the next one
- * retry. The pre-migration setup latched the same way, through `skip: !initResult.isSuccess`
- * on a mutation fired once, but it cost only freshness back then: reads still went through
- * the SDK and its on-disk config.
+ * the rest of the session. Dropping the memo lets the next call retry.
  */
 function setup(): Promise<void> {
   if (!setupPromise) {
-    const pending = Promise.all([
-      rc.setConfigSettings({ minimumFetchIntervalMillis: 0 }),
-      rc.setDefaults(formatDefaultFeatures(FEATURE_FLAGS_DEFAULTS)),
-    ]).then(() => undefined);
+    rc.settings = {
+      fetchTimeoutMillis: rc.settings.fetchTimeoutMillis,
+      minimumFetchIntervalMillis: 0,
+    };
+    rc.defaultConfig = formatDefaultFeatures(FEATURE_FLAGS_DEFAULTS);
+    const pending = activate(rc).then(() => undefined);
     setupPromise = pending;
     pending.catch(() => {
       if (setupPromise === pending) setupPromise = null;
@@ -79,10 +87,10 @@ export function subscribeToRemoteFlags(callback: Subscriber): () => void {
  * network access. Wired into `createFeatureFlagsMiddleware` as `readCachedFlags` so boot
  * resolves on the last values the backend actually sent instead of on compiled defaults.
  *
- * Deliberately awaits {@link setup} rather than `rc.ensureInitialized()`: on Android the
+ * Deliberately awaits {@link setup} rather than `ensureInitialized(rc)`: on Android the
  * latter performs a blocking `fetchAndActivate` internally, which would put this read back on
- * the network and defeat the point. `setup` is enough, both of its calls return native
- * constants and hydrate the JS-side value map from disk.
+ * the network and defeat the point. `setup`'s `activate()` call is enough, it returns native
+ * constants and hydrates the JS-side value map from disk without fetching.
  *
  * Never throws: an unreadable cache is not an error, it just means there is nothing to prime
  * from, so the caller falls through to the network.
@@ -90,7 +98,7 @@ export function subscribeToRemoteFlags(callback: Subscriber): () => void {
 export async function readCachedFlags(): Promise<PartialFeatures> {
   try {
     await setup();
-    return parseFirebaseFeatures(rc.getAll());
+    return parseFirebaseFeatures(getAll(rc));
   } catch {
     return {};
   }
@@ -107,8 +115,8 @@ export async function readCachedFlags(): Promise<PartialFeatures> {
  */
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   await setup();
-  await rc.fetchAndActivate();
-  const flags = parseFirebaseFeatures(rc.getAll());
+  await fetchAndActivate(rc);
+  const flags = parseFirebaseFeatures(getAll(rc));
   const fetchedAt = Date.now();
   lastFetchedAt = fetchedAt;
   subscribers.forEach(callback => callback({ fetchedAt }));
