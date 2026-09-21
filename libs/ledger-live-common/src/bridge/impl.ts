@@ -50,11 +50,19 @@ import {
 // Casper shipped on the old bridge before LIVE-35912; seedIdentifier format changed
 // (raw pubkey → tagged address). sameAccountIdentity's freshAddress fallback handles
 // re-scans, but id-keyed settings (account name, etc.) reset on the first rescan.
+//
+// config_near_generic_bridge defaults to false: NEAR ships the generic route dormant so QA can
+// run the non-regression pass by enabling the key remotely, and it stays the kill switch once
+// the default is flipped (LIVE-36413).
+const genericBridgeConfigKeys: Record<string, string> = {
+  casper: "config_casper_generic_bridge",
+  near: "config_near_generic_bridge",
+};
+
 function shouldUseGenericCoinFrameworkBridge(family: string) {
-  return (
-    isGenericCoinFrameworkFamily(family) &&
-    (family !== "casper" || LiveConfig.getValueByKey("config_casper_generic_bridge"))
-  );
+  if (!isGenericCoinFrameworkFamily(family)) return false;
+  const configKey = genericBridgeConfigKeys[family];
+  return !configKey || Boolean(LiveConfig.getValueByKey(configKey));
 }
 
 const currencyBridgePromiseCache: Record<string, Promise<CurrencyBridge>> = {};
