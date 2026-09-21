@@ -899,6 +899,7 @@
     },
     "card" : {
       "title" : "크립토 카드",
+      "topUp" : "Top up",
       "balanceLabel" : "잔액",
       "freeze" : "동결",
       "unfreeze" : "동결 해제",
@@ -918,11 +919,49 @@
         "description" : "문제가 발생했습니다. 다시 시도하세요.",
         "retry" : "다시 시도하세요"
       },
+      "assets" : {
+        "title" : "Assets",
+        "empty" : "No assets yet",
+        "error" : "Couldn't load assets",
+        "info" : "These assets fund your card. Set the order they're charged in, or add more.",
+        "manage" : "Manage",
+        "manageDialog" : {
+          "title" : "Manage assets",
+          "description" : "Drag to set your funding order. If one asset runs low, the next one is used automatically.",
+          "addAssetCaption" : "You'll be redirected to Baanx's page to add asset.",
+          "addAsset" : "Add asset"
+        },
+        "details" : {
+          "topUp" : "Top up",
+          "withdraw" : "Withdraw",
+          "transactions" : "Transactions"
+        },
+        "withdraw" : {
+          "title" : "You'll be redirected to Baanx",
+          "description" : "Withdraw funds from your Baanx account to your Ledger wallet address.",
+          "continue" : "Continue"
+        },
+        "history" : {
+          "columns" : {
+            "amount" : "Amount",
+            "value" : "Value"
+          }
+        }
+      },
+      "reward" : {
+        "title" : "Total cashback"
+      },
       "numbers" : {
         "reveal" : "보기",
         "hide" : "숨기기",
         "failed" : "카드 번호를 불러올 수 없습니다",
-        "imageAlt" : "카드 번호"
+        "imageAlt" : "카드 번호",
+        "unlockTitle" : "패스워드를 입력하세요",
+        "passwordRequired" : "패스워드가 필요합니다",
+        "passwordMismatch" : "패스워드가 일치하지 않습니다",
+        "passwordIncorrect" : "잘못된 패스워드",
+        "passwordUnavailable" : "패스워드를 확인할 수 없습니다",
+        "passwordCreateFailed" : "패스워드를 설정하지 못했습니다"
       }
     },
     "cardTransactions" : {
@@ -954,6 +993,31 @@
           "DECLINED" : "거절됨",
           "REVERTED" : "실행 취소"
         }
+      },
+      "history" : {
+        "today" : "오늘",
+        "yesterday" : "어제",
+        "unknownDate" : "날짜 정보 없음",
+        "columns" : {
+          "transaction" : "트랜잭션",
+          "cashback" : "Cashback",
+          "fundingSources" : "사용 자산",
+          "amount" : "수량"
+        },
+        "paidWithAssets" : "{{count}}개 자산으로 결제",
+        "goToPay" : "결제 화면으로 이동",
+        "signedOut" : {
+          "title" : "로그인하여 카드 결제 내역을 확인하세요.",
+          "description" : "로그인하면 이곳에 카드 사용 내역이 표시됩니다."
+        },
+        "empty" : {
+          "title" : "아직 카드 결제 내역이 없습니다.",
+          "description" : "결제 내역이 생기면 이곳에 표시됩니다."
+        },
+        "error" : {
+          "title" : "카드 결제 내역을 불러올 수 없습니다.",
+          "description" : "네트워크 연결 상태를 확인하고 다시 시도하세요."
+        }
       }
     },
     "cardOnboarding" : {
@@ -965,6 +1029,28 @@
         "title" : "카드 설정을 완료하세요",
         "stepComplete" : "완료",
         "gotIt" : "확인"
+      },
+      "steps" : {
+        "createAccount" : {
+          "title" : "계정 만들기",
+          "description" : "시작하려면 본인 인증을 완료하세요."
+        },
+        "chooseCardType" : {
+          "title" : "카드 종류 선택",
+          "description" : "가상 카드와 실물 카드 중 하나를 선택해 주세요."
+        },
+        "topUpCard" : {
+          "title" : "카드 충전하기",
+          "description" : "USDC, USDT, BTC 등 다양한 자산으로 충전할 수 있습니다."
+        },
+        "firstPurchase" : {
+          "title" : "첫 결제하기",
+          "description" : "온라인 및 오프라인 매장에서 결제해 보세요."
+        },
+        "appleGooglePay" : {
+          "title" : "Apple/Google Pay에 추가하기",
+          "description" : "오프라인 매장에서 스마트폰으로 간편하게 결제해 보세요."
+        }
       }
     },
     "contacts" : {
@@ -2069,6 +2155,13 @@
     "details" : "{{ currency }} 세부정보",
     "multipleAddresses" : "왜 주소가 여러 개인가요?",
     "extra" : {
+      "pltReject" : {
+        "title" : "실패 사유",
+        "nonExistentToken" : "Concordium 네트워크에 존재하지 않는 토큰입니다.",
+        "recipientNotFound" : "Concordium에 수령인 계정이 존재하지 않습니다.",
+        "insufficientBalance" : "계정 토큰 잔액이 부족합니다.",
+        "rejected" : "Concordium에서 해당 작업을 거부했습니다."
+      },
       "frozenAmount" : "동결 금액",
       "unfreezeAmount" : "동결 해제 금액",
       "votes" : "투표 ({{number}})",
@@ -7918,7 +8011,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "이 토큰을 전송할 수 없는 계정입니다",
-      "description" : "토큰 발행자가 전송 가능 대상을 제한하고 있으며, 이 계정에는 권한이 없습니다. 액세스 권한에 대해서는 토큰 발행자에게 문의하세요."
+      "description" : "토큰 발행자가 전송 권한을 제한하고 있습니다. 자세한 내용은 토큰 발행자에게 문의하세요."
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "이 계정에는 해당 토큰을 전송할 권한(승인)이 없습니다",
+      "description" : "토큰 발행자가 승인된 발신자 목록을 관리하고 있으며, 이 계정은 해당 목록에 없습니다. 승인 권한은 Ledger가 아닌 토큰 발행자에게 있습니다."
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "승인 권한은 Ledger가 아닌 토큰 발행자에게 있습니다",
+      "description" : "토큰 발행자가 제한한 계정입니다. 자세한 내용은 발행자에게 문의하세요."
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "토큰 관련 제한 사항을 확인할 수 없습니다",
@@ -8171,6 +8272,30 @@
     },
     "AleoApiConfigurationResetError" : {
       "title" : "레코드 스캐너 설정이 초기화되었습니다. 계정을 다시 동기화하세요."
+    },
+    "AleoNoClaimableUnbondedFunds" : {
+      "title" : "아직 수령할 수 있는 ALEO가 없습니다.",
+      "description" : "언본딩 대기 기간이 지나야 ALEO를 수령할 수 있습니다. 대기 기간 종료 후 다시 확인하세요."
+    },
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "이미 {{bondedValidator}}에 스테이킹 중입니다. 검증인을 변경하려면 먼저 스테이킹을 해제하세요.",
+      "description" : "Aleo는 계정당 하나의 검증인만 허용합니다. 다른 곳에 스테이킹하려면 먼저 {{bondedValidator}}에서 스테이킹을 해제하세요."
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "한 번에 {{minAmount}} 이상 스테이킹해야 합니다.",
+      "description" : "최소 스테이킹 수량은 {{minAmount}}입니다."
+    },
+    "AleoClosedValidator" : {
+      "title" : "이 검증인은 신규 위임자를 받지 않습니다.",
+      "description" : "이 검증인은 신규 위임자를 받지 않습니다. 계속하려면 스테이킹이 가능한 다른 검증인을 선택하세요."
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "스테이킹하려면 총 최소 {{minAmount}}이 필요합니다.",
+      "description" : "총 스테이킹 수량이 최소 {{minAmount}} 이상이어야 합니다."
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "이 검증인은 언본딩 중입니다.",
+      "description" : "해당 검증인이 자신의 자산을 회수하고 있어 신규 스테이킹이 제한된 상태입니다. 다른 검증인을 선택해 주세요."
     },
     "BackupAppDataError" : {
       "title" : "앱 데이터 백업 중 오류가 발생했습니다"
@@ -9130,7 +9255,11 @@
     "opted_in" : {
       "title" : "더 명확하게, 더 안전하게",
       "description" : "업그레이드 시 {{discount}}% 할인",
-      "cta" : "내 Ledger 업그레이드"
+      "cta" : "내 Ledger 업그레이드",
+      "nanoS" : {
+        "title" : "Ledger Nano S 업그레이드 프로그램",
+        "description" : "새로운 OS와 보안 기능, {{discount}}% 할인까지!"
+      }
     },
     "opted_out" : {
       "title" : "더 안전하게, 더 자유롭게",
@@ -9140,7 +9269,11 @@
     "profile" : {
       "title" : "장치 업그레이드",
       "description" : "더 큰 화면, 더 강력한 보안. {{discount}}% 혜택까지.",
-      "cta" : "탐색"
+      "cta" : "탐색",
+      "nanoS" : {
+        "title" : "Ledger Nano S 업그레이드 프로그램",
+        "description" : "새로운 OS와 보안 기능, {{discount}}% 할인까지!"
+      }
     }
   },
   "largeScreenUpsellModal" : {
@@ -9229,6 +9362,7 @@
     "unsupportedNetworkTooltip" : "{{network}} 네트워크는 아직 지원되지 않습니다",
     "notAvailableYet" : "지원 예정",
     "selectAccount" : "계정 선택",
+    "selectAccountToPayFrom" : "출금 계정 선택",
     "selectAccountPerpsTitle" : "Hyperliquid 계정 선택",
     "selectAccountPerpsDescription" : "거래를 시작하려면 입금 계좌를 선택해 주세요",
     "selectAccountPerpsEmptyDescription" : "무기한 선물 거래 자금을 입금하려면 Hyperliquid 계정이 필요합니다. 먼저 계정을 추가하세요.",
@@ -9662,10 +9796,70 @@
         "lastSync" : "마지막 동기화: {{date}}"
       }
     },
+    "stake" : {
+      "table" : {
+        "header" : "Staking",
+        "status" : "Status",
+        "validator" : "Validator",
+        "amount" : "Amount",
+        "staked" : "Staked",
+        "rate" : "Est. rewards rate",
+        "completion" : "Completion",
+        "source" : "Source",
+        "estimatedRate" : "{{rate}}% est.",
+        "unknownValidator" : "Unknown validator",
+        "manage" : "Manage"
+      },
+      "status" : {
+        "earningTooltip" : "This position is earning rewards.",
+        "unknown" : "Status unavailable"
+      },
+      "stakedBalance" : "Staked",
+      "stakedBalanceTooltip" : "Balance that is bonded to a validator. The status column says whether it is earning.",
+      "unstakingBalance" : "Unstaking",
+      "unstakingBalanceTooltip" : "Balance that is unbonding and not yet claimable",
+      "claimableBalance" : "Claimable",
+      "claimableBalanceTooltip" : "Balance that has finished unbonding and can be claimed back to your available balance",
+      "nonEarning" : {
+        "fullCommission" : "This validator takes 100% commission, so you keep nothing.",
+        "overConcentrated" : "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so you earn nothing.",
+        "leftCommittee" : "This validator is no longer in the committee, so your stake earns nothing. Unstake and bond to another validator to start earning again.",
+        "ownStakeBelowMinimum" : "Your total stake with this validator is below the 10,000 ALEO minimum, so it earns nothing. Add to your stake to start earning again."
+      },
+      "unstaking" : {
+        "header" : "Unstaking",
+        "headerTooltip" : "Unbonded ALEO becomes claimable once the chain reaches the unbonding block height.",
+        "sourceTooltip" : "Unbonded ALEO is held by the protocol until it is claimable, not by a validator. The chain does not record which validator it came from.",
+        "pendingTooltip" : "Still unbonding - not yet claimable.",
+        "claimableTooltip" : "Unbonding is complete. You can claim these funds.",
+        "settling" : "Almost there...",
+        "settlingTooltip" : "The unbonding period is over. Refreshing your balance - the claim will be available in a moment.",
+        "claimPending" : "Claiming...",
+        "claimPendingTooltip" : "Your claim has been sent and is waiting to be confirmed. These funds will land in your available balance shortly.",
+        "unbondPending" : "Unstaking...",
+        "unbondPendingTooltip" : "An unstake has been sent and is waiting to be confirmed. It changes this same unbonding position, so claiming is unavailable until it has gone through."
+      },
+      "claim" : "Claim",
+      "claimableAtTooltip" : "Claimable at block {{height}} (current block: {{current}})",
+      "blocksRemaining_one" : "~{{count}} block left",
+      "blocksRemaining_other" : "~{{count}} blocks left",
+      "bondPendingTooltip" : "A stake has been sent and is waiting to be confirmed. Aleo holds one staked position per account, so staking is unavailable until it has gone through.",
+      "emptyState" : {
+        "description" : "You can earn rewards by staking your {{name}}.",
+        "earnRewards" : "Earn rewards"
+      }
+    },
     "operations" : {
       "type" : {
         "public" : "공개",
         "private" : "비공개"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "검증인",
+        "bondedAmount" : "스테이킹 수량",
+        "unbondedAmount" : "스테이킹 해제 수량"
       }
     },
     "send" : {
@@ -9683,6 +9877,9 @@
         "errorTitle" : "비공개 수량 동기화 실패",
         "errorDesc" : "문제가 발생했습니다. 잠시 후 다시 시도하세요"
       }
+    },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "수령"
     },
     "bond" : {
       "flow" : {
@@ -9727,7 +9924,6 @@
     "manage" : {
       "headerAction" : "수익 창출",
       "title" : "스테이킹 관리",
-      "comingSoonTooltip" : "곧 공개 예정",
       "bond" : {
         "title" : "본딩",
         "description" : "ALEO를 검증인에게 본딩하고 보상을 받으세요."
@@ -9740,7 +9936,10 @@
         "title" : "수령",
         "description" : "본딩 해제된 ALEO를 사용 가능한 잔액으로 가져옵니다."
       },
-      "unbondPendingTooltip" : "언스테이킹 승인 대기 중. Aleo는 한 번에 하나의 언본딩 포지션만 추적하므로, 현재 진행 중인 작업이 완료될 때까지 추가 언본딩을 진행할 수 없습니다."
+      "unbondPendingTooltip" : "언스테이킹 승인 대기 중. Aleo 네트워크는 한 번에 하나의 작업만 처리할 수 있어, 현재 진행 중인 작업이 완료될 때까지 추가 언본딩이나 수령 절차가 제한됩니다.",
+      "claimPendingTooltip" : "수령 승인 대기 중. Aleo 네트워크는 한 번에 하나의 작업만 처리할 수 있어, 현재 진행 중인 작업이 완료될 때까지 추가 언본딩이나 수령 절차가 제한됩니다.",
+      "stillUnbondingTooltip" : "아직 언본딩 대기 기간이 종료되지 않았습니다. 이 기간이 지나면 ALEO를 수령할 수 있습니다.",
+      "nothingToClaimTooltip" : "수령할 수 있는 ALEO가 없습니다. 먼저 스테이킹된 자산을 언본딩하세요."
     },
     "unbond" : {
       "flow" : {
@@ -9765,6 +9964,30 @@
           }
         }
       }
+    },
+    "claim" : {
+      "flow" : {
+        "title" : "ALEO 수령하기",
+        "steps" : {
+          "summary" : {
+            "title" : "요약",
+            "info" : "언본딩 대기 기간이 종료된 모든 ALEO를 내 지갑으로 가져옵니다.",
+            "claimableAmountLabel" : "수령 가능 수량"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "수령 요청 완료",
+              "text" : "수령 요청이 네트워크에 전송되었습니다.",
+              "cta" : "상세 내역 보기"
+            },
+            "broadcastError" : "수령 트랜잭션 서명은 완료되었으나, 네트워크로 전송하지 못했습니다."
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9772,26 +9995,6 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "업데이트 중 오류가 발생했습니다. 다시 시도하세요",
     "installAndRelaunch" : "새로운 업데이트. 설치하고 다시 시작하기"
-  },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "내 포트폴리오 한눈에 보기",
-        "description" : "전체 잔액을 한눈에 확인하고, \"오늘(Today)\" 탭에서 자세한 내용을 살펴보세요."
-      },
-      "navigation" : {
-        "title" : "핵심 기능을 더 빠르게",
-        "description" : "받기, 매수, 매도 및 전송 기능을 빠르게 이용해 보세요."
-      },
-      "actions" : {
-        "title" : "즉각적인 시장 트렌드 확인",
-        "description" : "포트폴리오에서 시장 동향을 빠르게 확인하고, 인사이트를 바탕으로 빠르게 대응하세요."
-      }
-    },
-    "cta" : {
-      "continue" : "계속",
-      "explore" : "새로워진 포트폴리오 살펴보기"
-    }
   },
   "q2Tour" : {
     "slides" : {
@@ -9890,6 +10093,8 @@
   },
   "history" : {
     "title" : "거래 내역",
+    "cardScope" : "Card",
+    "cardAssetScope" : "Card · {{assetName}}",
     "pending" : "보류 중인 트랜잭션",
     "pending_other" : "보류 중인 트랜잭션",
     "columns" : {
@@ -9905,6 +10110,11 @@
     "emptyState" : {
       "title" : "아직 트랜잭션 내역이 없습니다",
       "description" : "트랜잭션 내역을 확인하려면 나중에 다시 방문하세요."
+    },
+    "tabs" : {
+      "crypto" : "암호화폐",
+      "card" : "카드",
+      "accessibilityLabel" : "트랜잭션 내역 유형"
     },
     "actionsBar" : {
       "csv" : "내보내기",
