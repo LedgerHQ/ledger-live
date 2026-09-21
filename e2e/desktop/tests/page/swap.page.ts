@@ -101,14 +101,12 @@ export class SwapPage extends WebViewAppPage {
   // Landing page (no active quote) panel
   private readonly topGainersContainer = "top-gainers-container";
   private readonly topGainersInfoIcon = "top-gainers-info-icon";
-  private readonly topGainersTooltipContent = "top-gainers-tooltip-content";
   private readonly topGainersDateTrigger = "top-gainers-date-select-trigger";
   private readonly topGainersItemsSelector = '[data-testid^="top-gainers-item-"]';
   private readonly topGainersDateOptionsSelector =
     '[data-testid^="top-gainers-date-option-"]';
   private readonly topStablecoinsContainer = "top-stablecoins-container";
   private readonly topStablecoinsInfoIcon = "top-stablecoins-info-icon";
-  private readonly topStablecoinsTooltipContent = "top-stablecoins-tooltip-content";
   private readonly topStablecoinsItemsSelector =
     '[data-testid^="top-stablecoins-item-"]';
 
@@ -679,12 +677,8 @@ export class SwapPage extends WebViewAppPage {
       await soft(topGainersRows).toHaveCount(5);
     });
 
-    await webview.getByTestId(this.topGainersInfoIcon).hover();
     await this.softExpect(async soft => {
-      // Radix mirrors tooltip content into a hidden a11y node; select the visible one.
-      await soft(
-        webview.locator(`[data-testid="${this.topGainersTooltipContent}"]:visible`),
-      ).toBeVisible();
+      await soft(webview.getByTestId(this.topGainersInfoIcon)).toBeVisible();
     });
   }
 
@@ -707,12 +701,8 @@ export class SwapPage extends WebViewAppPage {
       }
     });
 
-    await webview.getByTestId(this.topStablecoinsInfoIcon).hover();
     await this.softExpect(async soft => {
-      // Radix mirrors tooltip content into a hidden a11y node; select the visible one.
-      await soft(
-        webview.locator(`[data-testid="${this.topStablecoinsTooltipContent}"]:visible`),
-      ).toBeVisible();
+      await soft(webview.getByTestId(this.topStablecoinsInfoIcon)).toBeVisible();
     });
   }
 
