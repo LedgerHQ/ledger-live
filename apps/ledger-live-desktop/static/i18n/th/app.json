@@ -899,6 +899,7 @@
     },
     "card" : {
       "title" : "บัตรคริปโต",
+      "topUp" : "Top up",
       "balanceLabel" : "ยอดคงเหลือในบัญชี",
       "freeze" : "ระงับบัตรชั่วคราว",
       "unfreeze" : "ยกเลิกการระงับบัตร",
@@ -918,11 +919,49 @@
         "description" : "มีบางอย่างผิดปกติ โปรดลองอีกครั้ง",
         "retry" : "ลองอีกครั้ง"
       },
+      "assets" : {
+        "title" : "Assets",
+        "empty" : "No assets yet",
+        "error" : "Couldn't load assets",
+        "info" : "These assets fund your card. Set the order they're charged in, or add more.",
+        "manage" : "Manage",
+        "manageDialog" : {
+          "title" : "Manage assets",
+          "description" : "Drag to set your funding order. If one asset runs low, the next one is used automatically.",
+          "addAssetCaption" : "You'll be redirected to Baanx's page to add asset.",
+          "addAsset" : "Add asset"
+        },
+        "details" : {
+          "topUp" : "Top up",
+          "withdraw" : "Withdraw",
+          "transactions" : "Transactions"
+        },
+        "withdraw" : {
+          "title" : "You'll be redirected to Baanx",
+          "description" : "Withdraw funds from your Baanx account to your Ledger wallet address.",
+          "continue" : "Continue"
+        },
+        "history" : {
+          "columns" : {
+            "amount" : "Amount",
+            "value" : "Value"
+          }
+        }
+      },
+      "reward" : {
+        "title" : "Total cashback"
+      },
       "numbers" : {
         "reveal" : "ดูหมายเลขบัตร",
         "hide" : "ซ่อนหมายเลขบัตร",
         "failed" : "โหลดหมายเลขบัตรไม่ได้",
-        "imageAlt" : "หมายเลขบัตร"
+        "imageAlt" : "หมายเลขบัตร",
+        "unlockTitle" : "ป้อนรหัสผ่านของคุณ",
+        "passwordRequired" : "ต้องระบุรหัสผ่าน",
+        "passwordMismatch" : "รหัสผ่านไม่ตรงกัน",
+        "passwordIncorrect" : "รหัสผ่านไม่ถูกต้อง",
+        "passwordUnavailable" : "ไม่สามารถตรวจสอบรหัสผ่านของคุณได้",
+        "passwordCreateFailed" : "ไม่สามารถตั้งค่ารหัสผ่านของคุณได้"
       }
     },
     "cardTransactions" : {
@@ -954,6 +993,31 @@
           "DECLINED" : "ไม่สำเร็จ",
           "REVERTED" : "ยกเลิก"
         }
+      },
+      "history" : {
+        "today" : "วันนี้",
+        "yesterday" : "เมื่อวาน",
+        "unknownDate" : "ไม่มีวันที่ให้แสดง",
+        "columns" : {
+          "transaction" : "ธุรกรรม",
+          "cashback" : "Cashback",
+          "fundingSources" : "แหล่งเงินทุน",
+          "amount" : "จำนวน"
+        },
+        "paidWithAssets" : "ชำระด้วยสินทรัพย์ {{count}} รายการ",
+        "goToPay" : "ไปที่ 'จ่ายเงิน'",
+        "signedOut" : {
+          "title" : "เข้าสู่ระบบเพื่อดูธุรกรรมผ่านบัตรของคุณ",
+          "description" : "ประวัติธุรกรรมจะแสดงที่นี่เมื่อคุณเข้าสู่ระบบ"
+        },
+        "empty" : {
+          "title" : "ยังไม่มีธุรกรรมผ่านบัตร",
+          "description" : "โปรดกลับมาดูธุรกรรมผ่านบัตรของคุณในภายหลัง"
+        },
+        "error" : {
+          "title" : "โหลดธุรกรรมผ่านบัตรไม่ได้",
+          "description" : "ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง"
+        }
       }
     },
     "cardOnboarding" : {
@@ -965,6 +1029,28 @@
         "title" : "ตั้งค่าบัตรของคุณให้เสร็จสิ้น",
         "stepComplete" : "เสร็จเรียบร้อยแล้ว",
         "gotIt" : "เข้าใจแล้ว"
+      },
+      "steps" : {
+        "createAccount" : {
+          "title" : "สร้างบัญชีของคุณ",
+          "description" : "ตรวจสอบตัวตนของคุณเพื่อเริ่มใช้งาน"
+        },
+        "chooseCardType" : {
+          "title" : "เลือกประเภทบัตรของคุณ",
+          "description" : "เลือกได้ระหว่างบัตรเสมือนหรือบัตรจริง"
+        },
+        "topUpCard" : {
+          "title" : "เติมเงินในบัตรของคุณ",
+          "description" : "เติมเงินด้วย USDC, USDT, BTC หรืออื่น ๆ"
+        },
+        "firstPurchase" : {
+          "title" : "ทำการซื้อครั้งแรก",
+          "description" : "จ่ายเงินออนไลน์หรือในร้านค้า"
+        },
+        "appleGooglePay" : {
+          "title" : "เพิ่มบัตรเข้าไปใน Apple หรือ Google Pay",
+          "description" : "ใช้จ่ายผ่านโทรศัพท์ของคุณในร้านค้า"
+        }
       }
     },
     "contacts" : {
@@ -2069,6 +2155,13 @@
     "details" : "รายละเอียด {{ currency }}",
     "multipleAddresses" : "ทำไมต้องหลาย Address",
     "extra" : {
+      "pltReject" : {
+        "title" : "สาเหตุ",
+        "nonExistentToken" : "ไม่มีโทเคนนี้บน Concordium",
+        "recipientNotFound" : "ไม่มีบัญชีผู้รับนี้บน Concordium",
+        "insufficientBalance" : "บัญชีนี้มีโทเคนไม่เพียงพอ",
+        "rejected" : "Concordium ปฏิเสธการดำเนินการนี้"
+      },
       "frozenAmount" : "จำนวนที่ถูก Freeze",
       "unfreezeAmount" : "จำนวนที่ Unfreeze",
       "votes" : "({{number}}) โหวต",
@@ -7918,7 +8011,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "บัญชีนี้ไม่สามารถส่งโทเคนนี้ได้",
-      "description" : "ผู้ออกโทเคนได้จำกัดสิทธิ์ว่าใครสามารถส่งได้บ้าง และบัญชีนี้ไม่ได้รับอนุญาตให้ทำเช่นนั้น กรุณาติดต่อผู้ออกโทเคนเพื่อขอสิทธิ์"
+      "description" : "ผู้ออกโทเคนมีการจำกัดสิทธิ์ว่าใครสามารถส่งได้บ้าง กรุณาติดต่อผู้ออกโทเคนเพื่อขอรายละเอียด"
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "บัญชีนี้ยังไม่ได้รับการอนุมัติให้ส่งโทเคนนี้ได้",
+      "description" : "ผู้ออกโทเคนมีอำนาจอนุมัติผู้ที่จะสามารถส่งได้ และบัญชีนี้ไม่อยู่ในรายชื่อดังกล่าว การอนุมัติทั้งหมดได้รับการจัดการโดยผู้ออกโทเคน ไม่ใช่โดย Ledger"
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "บัญชีนี้ไม่สามารถส่งโทเคนนี้ได้",
+      "description" : "ผู้ออกโทเคนได้จำกัดบัญชีนี้ กรุณาติดต่อผู้ออกโทเคนเพื่อขอรายละเอียดเพิ่มเติม"
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "ไม่สามารถทำการยืนยันข้อจำกัดของโทเคนนี้ได้",
@@ -8171,6 +8272,30 @@
     },
     "AleoApiConfigurationResetError" : {
       "title" : "การตั้งค่าตัวสแกนบันทึกถูกรีเซ็ตแล้ว โปรดซิงค์บัญชีของคุณใหม่อีกครั้ง"
+    },
+    "AleoNoClaimableUnbondedFunds" : {
+      "title" : "ยังไม่มี ALEO ที่ไม่มีการผูกมัดที่เคลมได้",
+      "description" : "จะสามารถเคลม ALEO ที่ไม่มีการผูกมัดเมื่อสิ้นสุดระยะเวลาผูกมัดแล้ว โปรดกลับมาอีกครั้งหลังจากพ้นระยะเวลาผูกมัดแล้ว"
+    },
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "มีการสเตคกิ้งกับ {{bondedValidator}} อยู่แล้ว ยกเลิกการสเตคก่อนทำการเปลี่ยนผู้ตรวจสอบ",
+      "description" : "Aleo อนุญาตให้มีผู้ตรวจสอบหนึ่งรายต่อหนึ่งบัญชี กรุณายกเลิกการสเตคกับ {{bondedValidator}} ก่อนที่จะทำการสเตคกับที่อื่น"
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "คุณต้องสเตคอย่างน้อย {{minAmount}} ในแต่ละครั้ง",
+      "description" : "จำนวนสเตคกิ้งขั้นต่ำคือ {{minAmount}}"
+    },
+    "AleoClosedValidator" : {
+      "title" : "ผู้ตรวจสอบรายนี้ไม่รับผู้สเตครายใหม่",
+      "description" : "ผู้ตรวจสอบรายนี้ไม่รับผู้สเตครายใหม่ เลือกผู้ตรวจสอบรายอื่นเพื่อดำเนินการต่อ"
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "การสเตคกิ้งต้องมียอดรวมอย่างน้อย {{minAmount}}",
+      "description" : "คุณต้องมียอดสเตครวมอย่างน้อย {{minAmount}}"
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "ผู้ตรวจสอบนี้อยู่ระหว่างการยกเลิกการผูกมัด",
+      "description" : "ผู้ตรวจสอบรายนี้กำลังถอนสเตคของตัวเอง เครือข่ายจึงปฏิเสธสเตคใหม่ที่ส่งไปยังผู้ตรวจสอบรายนี้ เลือกผู้ตรวจสอบรายอื่นเพื่อดำเนินการต่อ"
     },
     "BackupAppDataError" : {
       "title" : "เกิดข้อผิดพลาดระหว่างการสำรองข้อมูลแอป"
@@ -9130,7 +9255,11 @@
     "opted_in" : {
       "title" : "ดูเพิ่มเติม ลงนามได้ปลอดภัยยิ่งขึ้น",
       "description" : "อัปเกรดพร้อมรับส่วนลด {{discount}}%",
-      "cta" : "อัปเกรด My Ledger"
+      "cta" : "อัปเกรด My Ledger",
+      "nanoS" : {
+        "title" : "โปรแกรมอัปเกรด Ledger Nano S",
+        "description" : "อัปเกรดวันนี้เพื่อรับ OS และฟีเจอร์ความปลอดภัยใหม่ ๆ พร้อมรับส่วนลด {{discount}}%"
+      }
     },
     "opted_out" : {
       "title" : "ความปลอดภัยที่มากขึ้น ควบคุมได้มากขึ้น",
@@ -9140,7 +9269,11 @@
     "profile" : {
       "title" : "อัปเกรดอุปกรณ์ของคุณ",
       "description" : "หน้าจอใหญ่ขึ้น ความปลอดภัยมากขึ้น พร้อมส่วนลด {{discount}}%",
-      "cta" : "สำรวจ"
+      "cta" : "สำรวจ",
+      "nanoS" : {
+        "title" : "โปรแกรมอัปเกรด Ledger Nano S",
+        "description" : "อัปเกรดวันนี้เพื่อรับ OS และฟีเจอร์ความปลอดภัยใหม่ ๆ พร้อมรับส่วนลด {{discount}}%"
+      }
     }
   },
   "largeScreenUpsellModal" : {
@@ -9229,6 +9362,7 @@
     "unsupportedNetworkTooltip" : "ขณะนี้ยังไม่รองรับเครือข่าย {{network}}",
     "notAvailableYet" : "ยังไม่พร้อมใช้งาน",
     "selectAccount" : "เลือกบัญชี",
+    "selectAccountToPayFrom" : "เลือกบัญชีที่จะใช้ชำระเงิน",
     "selectAccountPerpsTitle" : "เลือกบัญชี Hyperliquid",
     "selectAccountPerpsDescription" : "เลือกบัญชีที่คุณต้องการฝากเงินทุนเพื่อทำการซื้อขาย",
     "selectAccountPerpsEmptyDescription" : "หากต้องการเติมเงินทุนสำหรับสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps) คุณต้องมีบัญชี Hyperliquid เพิ่มบัญชีเพื่อดำเนินการต่อ",
@@ -9662,10 +9796,70 @@
         "lastSync" : "ซิงค์ล่าสุด: {{date}}"
       }
     },
+    "stake" : {
+      "table" : {
+        "header" : "Staking",
+        "status" : "Status",
+        "validator" : "Validator",
+        "amount" : "Amount",
+        "staked" : "Staked",
+        "rate" : "Est. rewards rate",
+        "completion" : "Completion",
+        "source" : "Source",
+        "estimatedRate" : "{{rate}}% est.",
+        "unknownValidator" : "Unknown validator",
+        "manage" : "Manage"
+      },
+      "status" : {
+        "earningTooltip" : "This position is earning rewards.",
+        "unknown" : "Status unavailable"
+      },
+      "stakedBalance" : "Staked",
+      "stakedBalanceTooltip" : "Balance that is bonded to a validator. The status column says whether it is earning.",
+      "unstakingBalance" : "Unstaking",
+      "unstakingBalanceTooltip" : "Balance that is unbonding and not yet claimable",
+      "claimableBalance" : "Claimable",
+      "claimableBalanceTooltip" : "Balance that has finished unbonding and can be claimed back to your available balance",
+      "nonEarning" : {
+        "fullCommission" : "This validator takes 100% commission, so you keep nothing.",
+        "overConcentrated" : "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so you earn nothing.",
+        "leftCommittee" : "This validator is no longer in the committee, so your stake earns nothing. Unstake and bond to another validator to start earning again.",
+        "ownStakeBelowMinimum" : "Your total stake with this validator is below the 10,000 ALEO minimum, so it earns nothing. Add to your stake to start earning again."
+      },
+      "unstaking" : {
+        "header" : "Unstaking",
+        "headerTooltip" : "Unbonded ALEO becomes claimable once the chain reaches the unbonding block height.",
+        "sourceTooltip" : "Unbonded ALEO is held by the protocol until it is claimable, not by a validator. The chain does not record which validator it came from.",
+        "pendingTooltip" : "Still unbonding - not yet claimable.",
+        "claimableTooltip" : "Unbonding is complete. You can claim these funds.",
+        "settling" : "Almost there...",
+        "settlingTooltip" : "The unbonding period is over. Refreshing your balance - the claim will be available in a moment.",
+        "claimPending" : "Claiming...",
+        "claimPendingTooltip" : "Your claim has been sent and is waiting to be confirmed. These funds will land in your available balance shortly.",
+        "unbondPending" : "Unstaking...",
+        "unbondPendingTooltip" : "An unstake has been sent and is waiting to be confirmed. It changes this same unbonding position, so claiming is unavailable until it has gone through."
+      },
+      "claim" : "Claim",
+      "claimableAtTooltip" : "Claimable at block {{height}} (current block: {{current}})",
+      "blocksRemaining_one" : "~{{count}} block left",
+      "blocksRemaining_other" : "~{{count}} blocks left",
+      "bondPendingTooltip" : "A stake has been sent and is waiting to be confirmed. Aleo holds one staked position per account, so staking is unavailable until it has gone through.",
+      "emptyState" : {
+        "description" : "You can earn rewards by staking your {{name}}.",
+        "earnRewards" : "Earn rewards"
+      }
+    },
     "operations" : {
       "type" : {
         "public" : "สาธารณะ",
         "private" : "ส่วนตัว"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "ผู้ตรวจสอบ",
+        "bondedAmount" : "จำนวนที่สเตคแล้ว",
+        "unbondedAmount" : "จำนวนที่ยกเลิกการสเตคแล้ว"
       }
     },
     "send" : {
@@ -9683,6 +9877,9 @@
         "errorTitle" : "การซิงค์ข้อมูลแบบส่วนตัวล้มเหลว",
         "errorDesc" : "มีบางอย่างผิดพลาด โปรดลองอีกครั้ง"
       }
+    },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "เคลม"
     },
     "bond" : {
       "flow" : {
@@ -9727,7 +9924,6 @@
     "manage" : {
       "headerAction" : "สร้างรายได้",
       "title" : "จัดการสเตคกิ้ง",
-      "comingSoonTooltip" : "เร็ว ๆ นี้",
       "bond" : {
         "title" : "ผูกมัด",
         "description" : "ผูกมัด ALEO ของคุณกับผู้ตรวจสอบเพื่อรับรางวัล"
@@ -9740,7 +9936,10 @@
         "title" : "เรียกคืน",
         "description" : "เรียกคืน ALEO ของคุณที่เลิกผูกมัดแล้วกลับเข้ายอดคงเหลือที่พร้อมใช้งาน"
       },
-      "unbondPendingTooltip" : "มีการยกเลิกสเตคที่กำลังรอการยืนยันอยู่ในขณะนี้ เนื่องจาก Aleo สามารถติดตามการยกเลิกสเตคได้เพียงครั้งละหนึ่งรายการเท่านั้น การยกเลิกสเตคเพิ่มเติมจึงไม่สามารถทำได้จนกว่ารายการนี้จะเสร็จสิ้น"
+      "unbondPendingTooltip" : "มีการยกเลิกสเตคที่กำลังรอการยืนยันอยู่ในขณะนี้ เนื่องจาก Aleo สามารถติดตามการยกเลิกการผูกมัดได้ครั้งละหนึ่งรายการเท่านั้น การยกเลิกการผูกมัดและการเคลมจึงไม่สามารถทำได้จนกว่ารายการนี้จะเสร็จสิ้น",
+      "claimPendingTooltip" : "มีการเคลมที่กำลังรอการยืนยันอยู่ในขณะนี้ เนื่องจาก Aleo สามารถติดตามการยกเลิกการผูกมัดได้ครั้งละหนึ่งรายการเท่านั้น การยกเลิกการผูกมัดและการเคลมจึงไม่สามารถทำได้จนกว่ารายการนี้จะเสร็จสิ้น",
+      "stillUnbondingTooltip" : "ALEO ที่ไม่มีการผูกมัดของคุณยังคงอยู่ในระยะเวลาการยกเลิกการผูกมัด คุณสามารถเคลมได้เมื่อสิ้นสุดระยะเวลาดังกล่าว",
+      "nothingToClaimTooltip" : "คุณไม่มี ALEO ที่ไม่มีการผูกมัดให้เคลม ยกเลิกการผูกมัดสเตคบางส่วนของคุณก่อน"
     },
     "unbond" : {
       "flow" : {
@@ -9765,6 +9964,30 @@
           }
         }
       }
+    },
+    "claim" : {
+      "flow" : {
+        "title" : "เคลม ALEO",
+        "steps" : {
+          "summary" : {
+            "title" : "สรุป",
+            "info" : "การดำเนินการนี้จะทำการเคลม ALEO ทั้งหมดที่สิ้นสุดระยะเวลาผูกมัดแล้วกลับคืนไปที่บัญชีของคุณ",
+            "claimableAmountLabel" : "จำนวนที่สามารถเคลมได้"
+          },
+          "connectDevice" : {
+            "title" : "อุปกรณ์"
+          },
+          "confirmation" : {
+            "title" : "การยืนยัน",
+            "success" : {
+              "title" : "ส่งคำขอเคลมแล้ว",
+              "text" : "เผยแพร่คำขอเคลมของคุณแล้ว",
+              "cta" : "ดูรายละเอียด"
+            },
+            "broadcastError" : "ธุรกรรมการยกเลิกสเตคของคุณได้รับการลงนามเสร็จสมบูรณ์แล้ว แต่ระบบยังไม่สามารถทำการเผยแพร่ธุรกรรมนี้ได้ในขณะนี้"
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9772,26 +9995,6 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "เกิดข้อผิดพลาดระหว่างการอัปเดต ลองอีกครั้ง",
     "installAndRelaunch" : "มีอัปเดตใหม่ ติดตั้งและเปิดอีกครั้ง"
-  },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "เห็นภาพพอร์ตการลงทุนชัดเจนขึ้น",
-        "description" : "ดูมูลค่าสินทรัพย์ทั้งหมดได้ทันที และแตะ “วันนี้” เพื่อดูรายละเอียดเพิ่มเติม"
-      },
-      "navigation" : {
-        "title" : "ใช้งานฟังก์ชันหลักได้ง่ายขึ้น",
-        "description" : "ซื้อ, ขาย, รับ และส่งได้ทันที"
-      },
-      "actions" : {
-        "title" : "วิเคราะห์แนวโน้มตลาดแบบเรียลไทม์",
-        "description" : "ตรวจสอบสินทรัพย์ที่กำลังเป็นกระแสได้อย่างรวดเร็ว และนำข้อมูลเชิงลึกไปสู่การลงทุน"
-      }
-    },
-    "cta" : {
-      "continue" : "ดำเนินการต่อ",
-      "explore" : "สำรวจพอร์ตการลงทุนใหม่ของฉัน"
-    }
   },
   "q2Tour" : {
     "slides" : {
@@ -9890,6 +10093,8 @@
   },
   "history" : {
     "title" : "ประวัติธุรกรรม",
+    "cardScope" : "Card",
+    "cardAssetScope" : "Card · {{assetName}}",
     "pending" : "ธุรกรรมที่ค้างอยู่",
     "pending_other" : "ธุรกรรมที่ค้างอยู่",
     "columns" : {
@@ -9905,6 +10110,11 @@
     "emptyState" : {
       "title" : "ยังไม่มีธุรกรรม",
       "description" : "โปรดกลับมาดูธุรกรรมของคุณในภายหลัง"
+    },
+    "tabs" : {
+      "crypto" : "คริปโต",
+      "card" : "บัตร",
+      "accessibilityLabel" : "ประเภทของประวัติธุรกรรม"
     },
     "actionsBar" : {
       "csv" : "ส่งออก",
