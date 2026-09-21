@@ -899,6 +899,7 @@
     },
     "card" : {
       "title" : "Krypto-Karte",
+      "topUp" : "Aufladen",
       "balanceLabel" : "Saldo",
       "freeze" : "Sperren",
       "unfreeze" : "Entsperren",
@@ -918,11 +919,49 @@
         "description" : "Ein Problem ist aufgetreten. Bitte versuche es erneut.",
         "retry" : "Wiederholen"
       },
+      "assets" : {
+        "title" : "Assets",
+        "empty" : "Noch keine Assets",
+        "error" : "Es konnten keine Assets geladen werden",
+        "info" : "Diese Assets bilden das Guthaben deiner Karte. Lege die Reihenfolge fest, in der sie belastet werden, oder füge weitere hinzu.",
+        "manage" : "Verwalten",
+        "manageDialog" : {
+          "title" : "Assets verwalten",
+          "description" : "Ziehen, um deine Deckungsreihenfolge festzulegen. Wenn ein Asset knapp wird, wird das nächste automatisch verwendet.",
+          "addAssetCaption" : "Du wirst auf die Seite von Baanx weitergeleitet, um Assets hinzuzufügen.",
+          "addAsset" : "Wert hinzufügen"
+        },
+        "details" : {
+          "topUp" : "Aufladen",
+          "withdraw" : "Abheben",
+          "transactions" : "Transaktionen"
+        },
+        "withdraw" : {
+          "title" : "Du wirst zu Baanx weitergeleitet",
+          "description" : "Hebe Guthaben von deinem Baanx-Konto auf deine Ledger Wallet-Adresse ab.",
+          "continue" : "Weiter"
+        },
+        "history" : {
+          "columns" : {
+            "amount" : "Betrag",
+            "value" : "Wert"
+          }
+        }
+      },
+      "reward" : {
+        "title" : "Gesamt-Cashback"
+      },
       "numbers" : {
         "reveal" : "Anzeigen",
         "hide" : "Ausblenden",
         "failed" : "Es konnten keine Kartennummern geladen werden",
-        "imageAlt" : "Kartennummern"
+        "imageAlt" : "Kartennummern",
+        "unlockTitle" : "Gib dein Passwort ein",
+        "passwordRequired" : "Passwort erforderlich",
+        "passwordMismatch" : "Passwörter stimmen nicht überein",
+        "passwordIncorrect" : "Falsches Passwort",
+        "passwordUnavailable" : "Dein Passwort konnte nicht überprüft werden",
+        "passwordCreateFailed" : "Dein Passwort konnte nicht eingerichtet werden"
       }
     },
     "cardTransactions" : {
@@ -954,6 +993,31 @@
           "DECLINED" : "Abgelehnt",
           "REVERTED" : "Rückgängig gemacht"
         }
+      },
+      "history" : {
+        "today" : "Heute",
+        "yesterday" : "Gestern",
+        "unknownDate" : "Datum nicht verfügbar",
+        "columns" : {
+          "transaction" : "Transaktion",
+          "cashback" : "Cashback",
+          "fundingSources" : "Finanzierungsquelle",
+          "amount" : "Betrag"
+        },
+        "paidWithAssets" : "Bezahlt mit {{count}} Assets",
+        "goToPay" : "Gehe zu Pay",
+        "signedOut" : {
+          "title" : "Logge dich ein, um deine Kartentransaktionen zu sehen",
+          "description" : "Deine Kartenaktivität wird hier angezeigt, sobald du eingeloggt bist."
+        },
+        "empty" : {
+          "title" : "Noch keine Kartentransaktionen",
+          "description" : "Komm später wieder, um deine Kartentransaktionen zu sehen."
+        },
+        "error" : {
+          "title" : "Es konnten keine Kartentransaktionen geladen werden",
+          "description" : "Prüfe deine Verbindung und versuche es noch einmal."
+        }
       }
     },
     "cardOnboarding" : {
@@ -965,6 +1029,28 @@
         "title" : "Deine Karte vervollständigen",
         "stepComplete" : "Abgeschlossen",
         "gotIt" : "Verstanden"
+      },
+      "steps" : {
+        "createAccount" : {
+          "title" : "Konto erstellen",
+          "description" : "Bestätige deine Identität, um zu beginnen"
+        },
+        "chooseCardType" : {
+          "title" : "Wähle deinen Kartentyp",
+          "description" : "Wähle zwischen virtuell und physisch"
+        },
+        "topUpCard" : {
+          "title" : "Lade deine Karte auf",
+          "description" : "Füge Guthaben mit USDC, USDT, BTC oder mehr hinzu"
+        },
+        "firstPurchase" : {
+          "title" : "Tätige deinen ersten Kauf",
+          "description" : "Zahle online oder im Store"
+        },
+        "appleGooglePay" : {
+          "title" : "Zu Apple/Google Pay hinzufügen",
+          "description" : "Mit deinem Telefon im Store bezahlen"
+        }
       }
     },
     "contacts" : {
@@ -2069,6 +2155,13 @@
     "details" : "{{ currency }} Details",
     "multipleAddresses" : "Warum mehrere Adressen?",
     "extra" : {
+      "pltReject" : {
+        "title" : "Grund",
+        "nonExistentToken" : "Dieses Token existiert nicht auf Concordium.",
+        "recipientNotFound" : "Das Empfängerkonto existiert nicht auf Concordium.",
+        "insufficientBalance" : "Das Konto enthielt nicht genügend Token.",
+        "rejected" : "Concordium hat diesen Vorgang abgelehnt."
+      },
       "frozenAmount" : "Eingefrorener Betrag",
       "unfreezeAmount" : "Betrag entsperren",
       "votes" : "Abstimmungen ({{number}})",
@@ -7918,7 +8011,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "Dieses Konto kann dieses Token nicht senden",
-      "description" : "Der Token-Herausgeber schränkt ein, wer diesen senden darf, und dieses Konto ist nicht zugelassen. Kontaktiere den Token-Herausgeber, um Zugriff zu erhalten."
+      "description" : "Der Token-Herausgeber schränkt ein, wer diesen senden darf. Kontaktiere den Token-Herausgeber für Details."
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "Dieses Konto wurde nicht für das Senden dieses Tokens freigegeben.",
+      "description" : "Der Token-Herausgeber führt eine Liste zugelassener Absender, und dieses Konto befindet sich nicht darauf. Die Genehmigung wird vom Herausgeber verwaltet, nicht von Ledger."
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "Dieses Konto ist für das Senden dieses Tokens eingeschränkt",
+      "description" : "Der Token-Herausgeber hat dieses Konto eingeschränkt. Kontaktiere den Herausgeber für Details."
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "Token-Beschränkungen konnten nicht bestätigt werden",
@@ -8171,6 +8272,30 @@
     },
     "AleoApiConfigurationResetError" : {
       "title" : "Die Scannerkonfiguration wurde zurückgesetzt. Bitte synchronisiere dein Konto erneut."
+    },
+    "AleoNoClaimableUnbondedFunds" : {
+      "title" : "Noch keine getrennten ALEO zum Beanspruchen",
+      "description" : "Entbundene ALEO werden beanspruchbar, sobald ihre Entbindungsfrist abgelaufen ist. Komm wieder, sobald dies geschehen ist."
+    },
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "Du betreibst bereits Staking mit {{bondedValidator}}. Staken beenden, bevor du den Validator wechselst.",
+      "description" : "Aleo erlaubt einen Validator pro Konto. Beende das Staking von {{bondedValidator}}, bevor du an anderer Stelle stakest."
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "Du musst jeweils mindestens {{minAmount}} staken.",
+      "description" : "Der Mindestbetrag für das Staking beträgt {{minAmount}}."
+    },
+    "AleoClosedValidator" : {
+      "title" : "Dieser Validator akzeptiert keine neuen Delegatoren.",
+      "description" : "Dieser Validator akzeptiert keine neuen Delegatoren. Wähle einen offenen Validator, um fortzufahren."
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "Staking erfordert insgesamt mindestens {{minAmount}}.",
+      "description" : "Du musst insgesamt mindestens {{minAmount}} im Staking haben."
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "Dieser Validator befindet sich im Unbonding.",
+      "description" : "Dieser Validator zieht seinen eigenen Stake ab, daher lehnt das Netzwerk neuen Stake an ihn ab. Wähle einen anderen Validator, um fortzufahren."
     },
     "BackupAppDataError" : {
       "title" : "Fehler beim Erstellen der Sicherheitskopie der App-Daten"
@@ -9130,7 +9255,11 @@
     "opted_in" : {
       "title" : "Mehr anzeigen. Sicherer signieren",
       "description" : "Upgrade und {{discount}}% Rabatt erhalten.",
-      "cta" : "Ledger-Upgrade durchführen"
+      "cta" : "Ledger-Upgrade durchführen",
+      "nanoS" : {
+        "title" : "Ledger Nano S Upgrade-Programm",
+        "description" : "Schalte neue Betriebssystem- und Sicherheitsfunktionen frei. Sichere dir {{discount}}% Rabatt."
+      }
     },
     "opted_out" : {
       "title" : "Mehr Sicherheit. Mehr Kontrolle",
@@ -9140,7 +9269,11 @@
     "profile" : {
       "title" : "Upgrade deines Geräts",
       "description" : "Größerer Bildschirm, bessere Sicherheit. Sichere dir {{discount}}%.",
-      "cta" : "Entdecken"
+      "cta" : "Entdecken",
+      "nanoS" : {
+        "title" : "Ledger Nano S Upgrade-Programm",
+        "description" : "Schalte neue Betriebssystem- und Sicherheitsfunktionen frei. Sichere dir {{discount}}% Rabatt."
+      }
     }
   },
   "largeScreenUpsellModal" : {
@@ -9229,6 +9362,7 @@
     "unsupportedNetworkTooltip" : "Das {{network}}-Netzwerk wird noch nicht unterstützt.",
     "notAvailableYet" : "Noch nicht verfügbar",
     "selectAccount" : "Konto auswählen",
+    "selectAccountToPayFrom" : "Wähle das Konto aus, von dem du bezahlen möchtest",
     "selectAccountPerpsTitle" : "Hyperliquid-Konto auswählen",
     "selectAccountPerpsDescription" : "Wähle ein Konto aus, auf das du Guthaben einzahlen möchtest, um deine Trades zu platzieren.",
     "selectAccountPerpsEmptyDescription" : "Um deine Perps mit Guthaben aufzuladen, benötigst du ein Hyperliquid-Konto. Füge eines hinzu, um fortzufahren.",
@@ -9662,10 +9796,70 @@
         "lastSync" : "Letzte Synchronisierung: {{date}}"
       }
     },
+    "stake" : {
+      "table" : {
+        "header" : "Staking",
+        "status" : "Status",
+        "validator" : "Validator",
+        "amount" : "Betrag",
+        "staked" : "Gestaked",
+        "rate" : "Geschätzter Rewards-Kurs",
+        "completion" : "Abschluss",
+        "source" : "Quelle",
+        "estimatedRate" : "{{rate}}% geschätzt",
+        "unknownValidator" : "Unbekannter Validator",
+        "manage" : "Verwalten"
+      },
+      "status" : {
+        "earningTooltip" : "Diese Position erzielt Rewards.",
+        "unknown" : "Status nicht verfügbar"
+      },
+      "stakedBalance" : "Gestaked",
+      "stakedBalanceTooltip" : "Kontostand, der an einen Validator verbunden ist. Die Statusspalte zeigt an, ob Rewards erzielt werden.",
+      "unstakingBalance" : "Unstaking",
+      "unstakingBalanceTooltip" : "Kontostand, der getrennt wird und noch nicht beanspruchbar ist",
+      "claimableBalance" : "Beanspruchbar",
+      "claimableBalanceTooltip" : "Guthaben, dessen Bindungsaufhebung abgeschlossen ist und das deinem verfügbaren Guthaben wieder gutgeschrieben werden kann",
+      "nonEarning" : {
+        "fullCommission" : "Dieser Validator verlangt 100 % Provision, sodass du nichts erhältst",
+        "overConcentrated" : "Dieser Validator hält mehr als 25 % aller ALEO im Staking. Das Protokoll zahlt ihm über dieser Obergrenze nichts, sodass du nichts verdienst.",
+        "leftCommittee" : "Dieser Validator ist nicht mehr im Komitee, sodass dein Stake keine Rewards erzielt. Staken beenden und an einen anderen Validator binden, um wieder Rewards zu verdienen.",
+        "ownStakeBelowMinimum" : "Dein Gesamt-Stake bei diesem Validator liegt unter dem Minimum von 10.000 ALEO, sodass er keine Rewards erzielt. Stocke deinen Stake auf, um wieder Rewards zu verdienen."
+      },
+      "unstaking" : {
+        "header" : "Unstaking",
+        "headerTooltip" : "Entbundene ALEO werden beanspruchbar, sobald die Chain die Entbindungs-Blockhöhe erreicht.",
+        "sourceTooltip" : "Entbundene ALEO werden bis zur Beanspruchbarkeit vom Protokoll gehalten, nicht von einem Validator. Die Chain zeichnet nicht auf, von welchem Validator es stammte.",
+        "pendingTooltip" : "Wird noch entbunden – noch nicht beanspruchbar.",
+        "claimableTooltip" : "Die Entbindung ist abgeschlossen. Du kannst dieses Guthaben beanspruchen.",
+        "settling" : "Fast geschafft ...",
+        "settlingTooltip" : "Der Entbindungszeitraum ist abgelaufen. Dein Kontostand wird aktualisiert – der Claim ist in Kürze verfügbar.",
+        "claimPending" : "Wird beansprucht ...",
+        "claimPendingTooltip" : "Dein Claim wurde gesendet und wartet auf die Bestätigung. Dieses Guthaben wird in Kürze auf deinem verfügbaren Kontostand eingehen.",
+        "unbondPending" : "Unstaking ...",
+        "unbondPendingTooltip" : "Das Staken beenden wurde gesendet und wartet auf die Bestätigung. Dies ändert dieselbe Position zum Entbinden, daher ist das Beanspruchen nicht verfügbar, bis der Vorgang abgeschlossen wurde."
+      },
+      "claim" : "Beanspruchen",
+      "claimableAtTooltip" : "Beanspruchbar bei Block {{height}} (aktueller Block: {{current}})",
+      "blocksRemaining_one" : "~{{count}} Block verbleibend",
+      "blocksRemaining_other" : "~{{count}} Blöcke verbleibend",
+      "bondPendingTooltip" : "Ein Stake wurde gesendet und wartet auf die Bestätigung. Aleo hält eine Staking-Position pro Konto, daher ist das Staking nicht verfügbar, bis dieser Vorgang abgeschlossen wurde.",
+      "emptyState" : {
+        "description" : "Du kannst durch das Staking deines {{name}} Rewards verdienen.",
+        "earnRewards" : "Rewards verdienen"
+      }
+    },
     "operations" : {
       "type" : {
         "public" : "Öffentlich",
         "private" : "Privat"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "Validator",
+        "bondedAmount" : "Gestaketer Betrag",
+        "unbondedAmount" : "Ungestaketer Betrag"
       }
     },
     "send" : {
@@ -9683,6 +9877,9 @@
         "errorTitle" : "Private Synchronisierung fehlgeschlagen.",
         "errorDesc" : "Etwas ist schiefgelaufen, bitte versuche es noch einmal."
       }
+    },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "Beanspruchen"
     },
     "bond" : {
       "flow" : {
@@ -9727,7 +9924,6 @@
     "manage" : {
       "headerAction" : "Verdienen",
       "title" : "Staking verwalten",
-      "comingSoonTooltip" : "Bald verfügbar",
       "bond" : {
         "title" : "Binden",
         "description" : "Binde dein ALEO an einen Validator, um Rewards zu erhalten."
@@ -9740,7 +9936,10 @@
         "title" : "Beanspruchen",
         "description" : "Fordere deine nicht gebundenen ALEO auf deinen verfügbaren Kontostand zurück."
       },
-      "unbondPendingTooltip" : "Ein Unstake wartet auf die Bestätigung. Aleo verfolgt jeweils nur eine Position zum Entbinden, daher ist das Entbinden nicht verfügbar, bis diese abgeschlossen wurde."
+      "unbondPendingTooltip" : "Ein Unstake wartet auf die Bestätigung. Aleo verfolgt jeweils nur eine Position zum Entbinden, daher sind sowohl das Entbinden als auch das Beanspruchen nicht verfügbar, bis diese abgeschlossen wurde.",
+      "claimPendingTooltip" : "Ein Claim wartet auf die Bestätigung. Aleo verfolgt jeweils nur eine Position zum Trennen, daher sind sowohl das Trennen als auch das Beanspruchen nicht verfügbar, bis diese abgeschlossen wurde.",
+      "stillUnbondingTooltip" : "Deine getrennte ALEO befinden sich noch in der Entbindungsfrist. Du kannst es einfordern, sobald die Frist abgelaufen ist.",
+      "nothingToClaimTooltip" : "Du hast keine getrennte ALEO zum Beanspruchen. Hebe zuerst die Bindung eines Teils deines Stakes auf."
     },
     "unbond" : {
       "flow" : {
@@ -9765,6 +9964,30 @@
           }
         }
       }
+    },
+    "claim" : {
+      "flow" : {
+        "title" : "ALEO beanspruchen",
+        "steps" : {
+          "summary" : {
+            "title" : "Zusammenfassung",
+            "info" : "Dies fordert alle ALEO, deren Unbonding-Phase abgelaufen ist, zurück auf dein Konto.",
+            "claimableAmountLabel" : "Beanspruchbarer Betrag"
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Antrag eingereicht",
+              "text" : "Dein Anspruch wurde übertragen.",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Deine Entbindungs-Transaktion wurde signiert, konnte aber nicht übertragen werden."
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9772,26 +9995,6 @@
     "downloadProgress" : "{{progress}} %",
     "errorTryAgain" : "Fehler beim Update. Wiederholen",
     "installAndRelaunch" : "Neues Update. Installieren und neu starten"
-  },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "Ein besserer Überblick über dein Portfolio",
-        "description" : "Zeige dein Gesamtguthaben auf einen Blick an und tippe auf „Heute“, um weitere Details einzusehen."
-      },
-      "navigation" : {
-        "title" : "Wichtige Funktionen im schnellen Zugriff",
-        "description" : "Greife sofort auf die Funktionen Empfangen, Kaufen, Verkaufen und Senden zu."
-      },
-      "actions" : {
-        "title" : "Marktentwicklungen in Echtzeit verfolgen",
-        "description" : "Du kannst aktuelle Trends direkt in deinem Portfolio einsehen und Erkenntnisse sofort in Handeln umsetzen."
-      }
-    },
-    "cta" : {
-      "continue" : "Weiter",
-      "explore" : "Mein neues Portfolio entdecken"
-    }
   },
   "q2Tour" : {
     "slides" : {
@@ -9890,6 +10093,8 @@
   },
   "history" : {
     "title" : "Transaktionsverlauf",
+    "cardScope" : "Karte",
+    "cardAssetScope" : "Karte · {{assetName}}",
     "pending" : "Schwebende Transaktion",
     "pending_other" : "Schwebende Transaktionen",
     "columns" : {
@@ -9905,6 +10110,11 @@
     "emptyState" : {
       "title" : "Noch keine Transaktionen",
       "description" : "Komme später zurück, um deine Transaktionen zu sehen."
+    },
+    "tabs" : {
+      "crypto" : "Krypto",
+      "card" : "Karte",
+      "accessibilityLabel" : "Typ des Transaktionsverlaufs"
     },
     "actionsBar" : {
       "csv" : "Exportieren",
