@@ -1,17 +1,32 @@
 import React from "react";
-import { Text } from "react-native";
+import { Pressable, Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { act, render, screen } from "@tests/test-renderer";
+import { openHostedLoginInSecureBrowser } from "@features/flow-pay-card-auth";
+import { readCardUsEnv } from "@features/platform-card";
+import { act, render, screen, fireEvent, waitFor } from "@tests/test-renderer";
 import { getEnv, getEnvDefault, setEnv } from "@shared/env";
 import { ScreenName } from "~/const";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import type { PayTabNavigatorParamList } from "../../types";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
+jest.mock("@features/flow-pay-card-auth", () => ({
+  ...jest.requireActual("@features/flow-pay-card-auth"),
+  openHostedLoginInSecureBrowser: jest.fn(() => Promise.resolve({ type: "dismissed" })),
+}));
+
+jest.mock("@features/platform-card", () => ({
+  ...jest.requireActual("@features/platform-card"),
+  readCardUsEnv: jest.fn(),
+}));
+
 const Stack = createNativeStackNavigator<PayTabNavigatorParamList>();
 
+const mockedOpenSecureBrowser = jest.mocked(openHostedLoginInSecureBrowser);
+const mockedReadCardUsEnv = jest.mocked(readCardUsEnv);
+
 function PayTabViewModelProbe() {
-  const { login } = usePayTabViewModel();
+  const { login, onTopUp } = usePayTabViewModel();
   const { oauthConfig, callback } = login;
 
   return (
@@ -22,6 +37,7 @@ function PayTabViewModelProbe() {
       <Text testID="oauth-redirect">{oauthConfig.redirectUri}</Text>
       <Text testID="oauth-deeplink">{oauthConfig.deepLink}</Text>
       <Text testID="oauth-callback">{JSON.stringify(callback)}</Text>
+      <Pressable testID="top-up" onPress={onTopUp} />
     </>
   );
 }
@@ -39,10 +55,16 @@ function renderViewModel(params?: PayTabNavigatorParamList[typeof ScreenName.Pay
 }
 
 describe("usePayTabViewModel", () => {
+  beforeEach(() => {
+    mockedOpenSecureBrowser.mockClear();
+    mockedReadCardUsEnv.mockResolvedValue(false);
+  });
+
   afterEach(() => {
     setEnv("CARD_BAANX_API_URL", getEnvDefault("CARD_BAANX_API_URL"));
     setEnv("CARD_BAANX_CLIENT_KEY", getEnvDefault("CARD_BAANX_CLIENT_KEY"));
     setEnv("CARD_BAANX_HOSTED_UI", getEnvDefault("CARD_BAANX_HOSTED_UI"));
+    setEnv("CARD_BAANX_US_APP_ID", getEnvDefault("CARD_BAANX_US_APP_ID"));
   });
 
   it("should expose the OAuth client configuration", () => {
@@ -72,6 +94,36 @@ describe("usePayTabViewModel", () => {
     expect(screen.getByTestId("oauth-api-url")).toHaveTextContent("https://card.staging.test");
     expect(screen.getByTestId("oauth-client-id")).toHaveTextContent("staging-client-key");
     expect(screen.getByTestId("oauth-hosted-ui")).toHaveTextContent("https://hosted.staging.test");
+  });
+
+  it("should open the top up page of the hosted UI in the secure browser", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    renderViewModel();
+
+    fireEvent.press(screen.getByTestId("top-up"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/topup",
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
+  });
+
+  it("should name the US app on the top up page for a US card holder", async () => {
+    setEnv("CARD_BAANX_HOSTED_UI", "https://hosted.test");
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    renderViewModel();
+
+    fireEvent.press(screen.getByTestId("top-up"));
+
+    await waitFor(() =>
+      expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(
+        "https://hosted.test/topup?app_id=LEDGERUS",
+        PAY_TAB_DEEP_LINK,
+      ),
+    );
   });
 
   it("should hand the login flow the redirect the deep link carried", () => {

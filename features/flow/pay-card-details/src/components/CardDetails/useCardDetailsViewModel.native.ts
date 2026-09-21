@@ -15,6 +15,7 @@ export function useCardDetailsViewModel({
   formatters,
   onTrackEvent,
   onShowMore,
+  onTopUp,
 }: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -131,10 +132,10 @@ export function useCardDetailsViewModel({
 
   return {
     cardVisual,
-    placeholderLabel: t("payTab.card.placeholder"),
     detailsLabel: t("payTab.card.details"),
     isSheetOpen,
     scene,
+    onTopUp,
     onDetailsPress: openSheet,
     onSheetClose: closeSheet,
     onSceneBack,

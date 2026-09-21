@@ -10420,7 +10420,7 @@
         }
       },
       "title": "Crypto card",
-      "placeholder": "Coming soon",
+      "topUp": "Top up",
       "details": "Details",
       "addToWallet": "Add to {{wallet}} Pay",
       "freeze": "Freeze",
