@@ -899,6 +899,7 @@
     },
     "card" : {
       "title" : "Cartão cripto",
+      "topUp" : "Recarregar",
       "balanceLabel" : "Saldo",
       "freeze" : "Congelar",
       "unfreeze" : "Descongelar",
@@ -918,11 +919,49 @@
         "description" : "Algo deu errado. Tente novamente.",
         "retry" : "Tentar novamente"
       },
+      "assets" : {
+        "title" : "Ativos",
+        "empty" : "Nenhum ativo ainda",
+        "error" : "Não foi possível carregar os ativos",
+        "info" : "Estes ativos fornecem fundos para o seu cartão. Defina a ordem em que eles são cobrados ou adicione mais.",
+        "manage" : "Gerenciar",
+        "manageDialog" : {
+          "title" : "Gerenciar Ativos",
+          "description" : "Arraste para organizar a ordem de financiamento. Se um ativo estiver com saldo baixo, o próximo será usado automaticamente.",
+          "addAssetCaption" : "Você será redirecionado à página da Baanx para adicionar ativos.",
+          "addAsset" : "Adicionar Ativo"
+        },
+        "details" : {
+          "topUp" : "Recarregar",
+          "withdraw" : "Sacar",
+          "transactions" : "Transações"
+        },
+        "withdraw" : {
+          "title" : "Você será redirecionado para a Baanx",
+          "description" : "Sacar fundos da sua conta Baanx para o endereço da sua carteira Ledger.",
+          "continue" : "Continuar"
+        },
+        "history" : {
+          "columns" : {
+            "amount" : "Quantia",
+            "value" : "Valor"
+          }
+        }
+      },
+      "reward" : {
+        "title" : "Cashback total"
+      },
       "numbers" : {
         "reveal" : "Ver",
         "hide" : "Ocultar",
         "failed" : "Não foi possível carregar os números do cartão",
-        "imageAlt" : "Números do cartão"
+        "imageAlt" : "Números do cartão",
+        "unlockTitle" : "Insira sua senha",
+        "passwordRequired" : "Senha necessária",
+        "passwordMismatch" : "As senhas não correspondem",
+        "passwordIncorrect" : "Senha incorreta",
+        "passwordUnavailable" : "Não foi possível verificar sua senha",
+        "passwordCreateFailed" : "Não foi possível definir sua senha"
       }
     },
     "cardTransactions" : {
@@ -954,6 +993,31 @@
           "DECLINED" : "Recusado",
           "REVERTED" : "Revertido"
         }
+      },
+      "history" : {
+        "today" : "Hoje",
+        "yesterday" : "Ontem",
+        "unknownDate" : "Data indisponível",
+        "columns" : {
+          "transaction" : "Transação",
+          "cashback" : "Cashback",
+          "fundingSources" : "Fonte de recursos",
+          "amount" : "Quantia"
+        },
+        "paidWithAssets" : "Pago com {{count}} ativos",
+        "goToPay" : "Ir para Pay",
+        "signedOut" : {
+          "title" : "Faça login para ver as transações do seu cartão",
+          "description" : "A atividade do seu cartão aparecerá aqui assim que você fizer login."
+        },
+        "empty" : {
+          "title" : "Nenhuma transação com cartão ainda",
+          "description" : "Volte mais tarde para ver as transações do seu cartão."
+        },
+        "error" : {
+          "title" : "Não foi possível carregar as transações do cartão",
+          "description" : "Verifique sua conexão e tente novamente."
+        }
       }
     },
     "cardOnboarding" : {
@@ -965,6 +1029,28 @@
         "title" : "Concluir seu cartão",
         "stepComplete" : "Concluído",
         "gotIt" : "Entendi"
+      },
+      "steps" : {
+        "createAccount" : {
+          "title" : "Crie sua conta",
+          "description" : "Verifique sua identidade para começar"
+        },
+        "chooseCardType" : {
+          "title" : "Escolha o seu tipo de cartão",
+          "description" : "Escolha entre virtual e físico"
+        },
+        "topUpCard" : {
+          "title" : "Recarregue seu cartão",
+          "description" : "Adicione fundos usando USDC, USDT, BTC ou mais"
+        },
+        "firstPurchase" : {
+          "title" : "Faça sua primeira compra",
+          "description" : "Pague online ou na loja"
+        },
+        "appleGooglePay" : {
+          "title" : "Adicionar ao Apple/Google Pay",
+          "description" : "Pague com seu smartphone em lojas"
+        }
       }
     },
     "contacts" : {
@@ -2069,6 +2155,13 @@
     "details" : "Detalhes de {{ currency }}",
     "multipleAddresses" : "Por que múltiplos endereços?",
     "extra" : {
+      "pltReject" : {
+        "title" : "Motivo",
+        "nonExistentToken" : "Este token não existe na Concordium.",
+        "recipientNotFound" : "A conta do destinatário não existe na Concordium.",
+        "insufficientBalance" : "A conta não possuía saldo suficiente do token.",
+        "rejected" : "A Concordium recusou esta operação."
+      },
       "frozenAmount" : "Quantia Congelada",
       "unfreezeAmount" : "Descongelar Quantia",
       "votes" : "Votos ({{number}})",
@@ -2799,7 +2892,7 @@
     },
     "tagHelp" : {
       "inputLabel" : "Inserir {{memoLabel}}",
-      "description" : "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} may result in a loss of funds."
+      "description" : "Uma {{memoLabel}} é necessária ao enviar {{currency}} para uma corretora de criptomoedas. É um recurso usado para identificar o recipiente da transação. Caso não inclua a memo {{memoLabel}}, os fundos podem ser perdidos."
     },
     "networkFeesInFiat" : "Taxas de rede em {{currency}}",
     "feesAmount" : "Quantia da taxa ({{unit}})",
@@ -6941,7 +7034,7 @@
       "memo" : "Etiqueta"
     },
     "zcash" : {
-      "memoTooltip" : "A {{memoLabel}} is optional when sending {{currency}}. It is encrypted and only the recipient can read it. Some exchanges require one to identify your transaction."
+      "memoTooltip" : "O {{memoLabel}} é opcional ao enviar {{currency}}. Ela é criptografada e apenas o destinatário pode lê-la. Algumas corretoras exigem uma para identificar sua transação."
     }
   },
   "errors" : {
@@ -7501,7 +7594,7 @@
     },
     "ZcashShieldedKeyMissing" : {
       "title" : "Ative seu saldo privado primeiro",
-      "description" : "Esta transferência precisa da chave de visualização do seu dispositivo. Ative seu saldo privado para habilitá-lo."
+      "description" : "Esta transferência precisa da chave de visualização do seu dispositivo. Ative seu saldo privado para habilitá-la."
     },
     "ZcashNotesNotYetSpendable" : {
       "title" : "Esses fundos ainda não podem ser gastos",
@@ -7918,7 +8011,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "Esta conta não pode enviar este token",
-      "description" : "O emissor do token restringe quem pode enviá-lo, e esta conta não tem permissão. Entre em contato com o emissor do token para obter acesso."
+      "description" : "O emissor do token restringe quem pode enviá-lo. Entre em contato com o emissor do token para obter detalhes."
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "Esta conta não foi aprovada para enviar este token",
+      "description" : "O emissor do token possui uma lista de remetentes aprovados e esta conta não consta lá. A aprovação é gerenciada pelo emissor, não pela Ledger."
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "Esta conta está impedida de enviar este token",
+      "description" : "O emissor do token restringiu esta conta. Entre em contato com o emissor para obter detalhes."
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "Não foi possível verificar as restrições do token",
@@ -8171,6 +8272,30 @@
     },
     "AleoApiConfigurationResetError" : {
       "title" : "A configuração da varredura de registro foi redefinida. Sincronize sua conta novamente."
+    },
+    "AleoNoClaimableUnbondedFunds" : {
+      "title" : "Ainda não há ALEO desvinculado para ser reivindicado",
+      "description" : "O ALEO desvinculado torna-se reivindicável quando o período de desvinculação terminar. Volte quando terminar."
+    },
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "Já fazendo staking com {{bondedValidator}}. Desaplicar antes de mudar de validador.",
+      "description" : "A Aleo permite um validador por conta. Desaplique de {{bondedValidator}} antes de fazer staking em outro lugar."
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "Você deve fazer staking de pelo menos {{minAmount}} por vez.",
+      "description" : "A quantia mínima de staking é {{minAmount}}."
+    },
+    "AleoClosedValidator" : {
+      "title" : "Este validador não está aceitando novos delegadores.",
+      "description" : "Este validador não está aceitando novos delegadores. Escolha um validador aberto para continuar."
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "O staking requer um total de pelo menos {{minAmount}}.",
+      "description" : "Você deve ter pelo menos {{minAmount}} aplicado no total."
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "Este validador está se desvinculando.",
+      "description" : "Este validador está sacando a sua própria aplicação, por isso a rede rejeita novas aplicações para ele. Escolha outro validador para continuar."
     },
     "BackupAppDataError" : {
       "title" : "Erro durante o backup dos dados do aplicativo"
@@ -9130,7 +9255,11 @@
     "opted_in" : {
       "title" : "Mais clareza. Mais segurança",
       "description" : "Faça o upgrade e ganhe {{discount}}% de desconto.",
-      "cta" : "Atualizar minha Ledger"
+      "cta" : "Atualizar minha Ledger",
+      "nanoS" : {
+        "title" : "Programa de Upgrade da Ledger Nano S",
+        "description" : "Acesse o novo OS e mais recursos de segurança. Tenha {{discount}}% de desconto."
+      }
     },
     "opted_out" : {
       "title" : "Mais proteção. Mais controle",
@@ -9140,7 +9269,11 @@
     "profile" : {
       "title" : "Faça o upgrade do seu dispositivo",
       "description" : "Tela maior, melhor segurança. Aproveite {{discount}}%.",
-      "cta" : "Descobrir"
+      "cta" : "Descobrir",
+      "nanoS" : {
+        "title" : "Programa de Upgrade da Ledger Nano S",
+        "description" : "Acesse o novo OS e mais recursos de segurança. Tenha {{discount}}% de desconto."
+      }
     }
   },
   "largeScreenUpsellModal" : {
@@ -9229,6 +9362,7 @@
     "unsupportedNetworkTooltip" : "A rede {{network}} ainda não é compatível",
     "notAvailableYet" : "Ainda não disponível",
     "selectAccount" : "Selecionar conta",
+    "selectAccountToPayFrom" : "Selecione a conta para realizar o pagamento",
     "selectAccountPerpsTitle" : "Selecionar conta Hyperliquid",
     "selectAccountPerpsDescription" : "Selecione uma conta na qual deseja depositar fundos para realizar suas negociações",
     "selectAccountPerpsEmptyDescription" : "Para adicionar fundos aos seus perpétuos, é necessária uma conta Hyperliquid. Adicione uma para continuar.",
@@ -9662,10 +9796,70 @@
         "lastSync" : "Última sincronização: {{date}}"
       }
     },
+    "stake" : {
+      "table" : {
+        "header" : "Staking",
+        "status" : "Status",
+        "validator" : "Validador",
+        "amount" : "Quantia",
+        "staked" : "Aplicado",
+        "rate" : "Taxa est. de recompensas",
+        "completion" : "Conclusão",
+        "source" : "Fonte",
+        "estimatedRate" : "{{rate}}% est.",
+        "unknownValidator" : "Validador desconhecido",
+        "manage" : "Gerenciar"
+      },
+      "status" : {
+        "earningTooltip" : "Esta posição está gerando recompensas.",
+        "unknown" : "Status indisponível"
+      },
+      "stakedBalance" : "Aplicado",
+      "stakedBalanceTooltip" : "Saldo que está vinculado a um validador. A coluna de status indica se está gerando recompensas.",
+      "unstakingBalance" : "Desaplicando",
+      "unstakingBalanceTooltip" : "Saldo em processo de desvinculação e ainda não resgatável",
+      "claimableBalance" : "Resgatável",
+      "claimableBalanceTooltip" : "Saldo que concluiu a desvinculação e pode ser resgatado de volta para seu saldo disponível",
+      "nonEarning" : {
+        "fullCommission" : "Este validador cobra 100% de comissão, então você não fica com nada.",
+        "overConcentrated" : "Este validador detém mais de 25% de todo o ALEO em staking. O protocolo não paga nada a ele acima desse limite, então você não ganha nada.",
+        "leftCommittee" : "Este validador não está mais no comitê, por isso sua aplicação não rende nada. Desaplique e vincule a outro validador para começar a render novamente.",
+        "ownStakeBelowMinimum" : "Sua aplicação total com este validador está abaixo do mínimo de 10.000 ALEO, portanto, não gera recompensas. Adicione à sua aplicação para começar a ganhar recompensas novamente."
+      },
+      "unstaking" : {
+        "header" : "Desaplicando",
+        "headerTooltip" : "O ALEO desvinculado se torna resgatável assim que a cadeia atingir a altura do bloco de desvinculação.",
+        "sourceTooltip" : "O ALEO desvinculado é mantido pelo protocolo até que possa ser reivindicado, não por um validador. A cadeia não registra de qual validador veio.",
+        "pendingTooltip" : "Ainda em desvinculação — ainda não resgatável.",
+        "claimableTooltip" : "A desvinculação está concluída. Você pode resgatar estes fundos.",
+        "settling" : "Quase lá…",
+        "settlingTooltip" : "O período de desvinculação terminou. Atualizando seu saldo — o resgate estará disponível em instantes.",
+        "claimPending" : "Resgatando…",
+        "claimPendingTooltip" : "Seu resgate foi enviado e está aguardando confirmação. Esses fundos chegarão ao seu saldo disponível em breve.",
+        "unbondPending" : "Desdelegando…",
+        "unbondPendingTooltip" : "Uma desaplicação foi enviada e está aguardando confirmação. Isso altera essa mesma posição de desvinculação, portanto, o resgate fica indisponível até que seja concluído."
+      },
+      "claim" : "Resgatar",
+      "claimableAtTooltip" : "Resgatável no bloco {{height}} (bloco atual: {{current}})",
+      "blocksRemaining_one" : "~{{count}} bloco restante",
+      "blocksRemaining_other" : "~{{count}} blocos restantes",
+      "bondPendingTooltip" : "Uma aplicação foi enviada e está aguardando confirmação. A Aleo mantém uma posição de staking por conta, portanto, o staking fica indisponível até que seja concluído.",
+      "emptyState" : {
+        "description" : "Você pode ganhar recompensas ao fazer staking de seu {{name}}.",
+        "earnRewards" : "Ganhe Recompensas"
+      }
+    },
     "operations" : {
       "type" : {
         "public" : "Pública",
         "private" : "Privada"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "Validador",
+        "bondedAmount" : "Quantia aplicada",
+        "unbondedAmount" : "Quantia desaplicada"
       }
     },
     "send" : {
@@ -9683,6 +9877,9 @@
         "errorTitle" : "Falha na sincronização privada.",
         "errorDesc" : "Algo deu errado, tente novamente."
       }
+    },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "Resgatar"
     },
     "bond" : {
       "flow" : {
@@ -9727,7 +9924,6 @@
     "manage" : {
       "headerAction" : "Ganhar",
       "title" : "Gerenciar staking",
-      "comingSoonTooltip" : "Em breve.",
       "bond" : {
         "title" : "Vincular",
         "description" : "Vincule seu ALEO a um validador para ganhar recompensas."
@@ -9740,7 +9936,10 @@
         "title" : "Resgatar",
         "description" : "Resgate seu ALEO desvinculado de volta para o seu saldo disponível."
       },
-      "unbondPendingTooltip" : "Uma desaplicação está aguardando confirmação. A Aleo rastreia uma posição de desvinculação por vez, portanto, a desvinculação fica indisponível até que seja concluída."
+      "unbondPendingTooltip" : "Uma desaplicação está aguardando confirmação. A Aleo rastreia uma posição de desvinculação por vez, portanto, a desvinculação e o resgate ficam indisponíveis até que ela seja concluída.",
+      "claimPendingTooltip" : "Um resgate está aguardando confirmação. A Aleo rastreia uma posição de desvinculação por vez, portanto, a desvinculação e o resgate ficam indisponíveis até que ela seja concluída.",
+      "stillUnbondingTooltip" : "Seu ALEO desvinculado ainda está no período de desvinculação. Você pode reivindicá-lo assim que o período terminar.",
+      "nothingToClaimTooltip" : "Você não tem ALEO desvinculado para reivindicar. Desvincule parte de sua aplicação primeiro."
     },
     "unbond" : {
       "flow" : {
@@ -9765,6 +9964,30 @@
           }
         }
       }
+    },
+    "claim" : {
+      "flow" : {
+        "title" : "Resgatar ALEO",
+        "steps" : {
+          "summary" : {
+            "title" : "Resumo",
+            "info" : "Isso recupera para sua conta todo o ALEO cujo período de desvinculação tenha terminado.",
+            "claimableAmountLabel" : "Quantia reivindicável"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Solicitação enviada",
+              "text" : "Sua reivindicação foi transmitida.",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação de desvinculação foi assinada, mas não pôde ser transmitida."
+          }
+        }
+      }
     }
   },
   "updater" : {
@@ -9772,26 +9995,6 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "Erro durante a atualização. Tentar novamente",
     "installAndRelaunch" : "Nova atualização. Instalar e reiniciar"
-  },
-  "walletV4Tour" : {
-    "slides" : {
-      "portfolio" : {
-        "title" : "Uma visão mais clara do seu portfólio",
-        "description" : "Veja seu saldo total na hora e toque em “Hoje” para explorar mais a fundo."
-      },
-      "navigation" : {
-        "title" : "Acesse as ações principais mais rapidamente",
-        "description" : "Acesse as ações de receber, comprar, vender e enviar na hora."
-      },
-      "actions" : {
-        "title" : "Veja as tendências do mercado instantaneamente",
-        "description" : "Acompanhe o que está em alta no seu portfólio e transforme insights em ação."
-      }
-    },
-    "cta" : {
-      "continue" : "Continuar",
-      "explore" : "Explorar meu novo portfólio"
-    }
   },
   "q2Tour" : {
     "slides" : {
@@ -9890,6 +10093,8 @@
   },
   "history" : {
     "title" : "Histórico de transações",
+    "cardScope" : "Cartão",
+    "cardAssetScope" : "Cartão · {{assetName}}",
     "pending" : "Transação pendente",
     "pending_other" : "Transações pendentes",
     "columns" : {
@@ -9905,6 +10110,11 @@
     "emptyState" : {
       "title" : "Ainda nenhuma transação",
       "description" : "Volte mais tarde para ver suas transações."
+    },
+    "tabs" : {
+      "crypto" : "Cripto",
+      "card" : "Cartão",
+      "accessibilityLabel" : "Tipo de histórico de transações"
     },
     "actionsBar" : {
       "csv" : "Exportar",
