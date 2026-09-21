@@ -129,6 +129,26 @@
     "ldmkEnabled" : "已启用 LDMK 传输"
   },
   "errors" : {
+    "AleoAlreadyBondedElsewhere" : {
+      "title" : "已在 {{bondedValidator}} 进行质押。更换验证者前解除质押。",
+      "description" : "Aleo 允许每个账户拥有一位验证者。在其他地方进行质押前，请先从 {{bondedValidator}} 解除质押。"
+    },
+    "AleoBondAmountTooLow" : {
+      "title" : "您每次必须至少质押 {{minAmount}}。",
+      "description" : "最低质押数额为 {{minAmount}}。"
+    },
+    "AleoClosedValidator" : {
+      "title" : "该验证者不接受新的委托人。",
+      "description" : "该验证者不接受新的委托人。选择一个开放的验证者以继续。"
+    },
+    "AleoStakeAmountTooLow" : {
+      "title" : "质押需要总计至少 {{minAmount}}。",
+      "description" : "您总共必须质押至少 {{minAmount}}。"
+    },
+    "AleoUnbondingValidator" : {
+      "title" : "该验证者正在解绑。",
+      "description" : "该验证者正在撤回其自身质押，因此网络拒绝向其进行新的质押。选择其他验证者以继续。"
+    },
     "ZcashMemoTooLong" : {
       "title" : "Memo 备注不能超过 {{maxBytes}} 字节"
     },
@@ -244,7 +264,15 @@
     },
     "ConcordiumTokenTransferNotPermitted" : {
       "title" : "该账户无法发送此代币",
-      "description" : "代币发行方限制了谁可以发送该代币，且此账户未获许可。请联系代币发行方以获取访问权限。"
+      "description" : "代币发行方限制了谁可以发送该代币。请联系代币发行方以获取详细信息。"
+    },
+    "ConcordiumAccountNotAllowed" : {
+      "title" : "该账户尚未获得发送此代币的授权",
+      "description" : "代币发行方保留了已批准的发送方列表，且此账户不在该列表中。审批由发行方管理，而非 Ledger。"
+    },
+    "ConcordiumAccountDenied" : {
+      "title" : "该账户被限制发送此代币",
+      "description" : "代币发行方已限制此账户。请联系发行方以了解详情。"
     },
     "ConcordiumTokenRestrictionsUnverified" : {
       "title" : "无法验证代币限制",
@@ -1425,6 +1453,9 @@
     "AccountCreationFeeWarning" : {
       "title" : "此交易将产生 {{fee}} 的账户创建费"
     },
+    "AmountRequired" : {
+      "title" : "输入数额以继续。"
+    },
     "AmountTooSmall" : {
       "title" : "此交易的最低数额要求为 {{amount}}"
     },
@@ -1611,6 +1642,49 @@
       "mismatch" : "密码不匹配",
       "saveFailed" : "无法保存您的密码。请再次尝试。",
       "cta" : "确认"
+    },
+    "unlock" : {
+      "wrongPassword" : "密码错误",
+      "forgotPassword" : "忘记了密码？",
+      "retryBiometrics" : "使用生物识别",
+      "unlockCta" : "Unlock Ledger Wallet",
+      "failed" : "无法验证您的密码。请重试。",
+      "cta" : "确认",
+      "biometricsPrompt" : "解锁 Ledger Wallet",
+      "forgotPasswordSheet" : {
+        "title" : "忘记密码",
+        "description" : "若您遗失密码，请重新安装该应用程序并恢复您的钱包。",
+        "cta" : "知道了"
+      }
+    },
+    "enableProtection" : {
+      "biometrics" : {
+        "title" : "启用 {{biometricsType}}",
+        "description" : "该加密货币卡需要 {{biometricsType}}。每次打开该应用程序时，您都将使用。",
+        "cta" : "启用 {{biometricsType}}"
+      },
+      "password" : {
+        "title" : "创建密码",
+        "description" : "加密货币卡需要密码。每次打开该应用程序时，您都将使用。",
+        "cta" : "创建密码"
+      }
+    },
+    "protectionEnabled" : {
+      "biometrics" : {
+        "title" : "{{biometricsType}} 已启用"
+      },
+      "password" : {
+        "title" : "密码已创建"
+      },
+      "description" : "您现在可以注册以获取卡",
+      "cta" : "继续"
+    },
+    "biometrics" : {
+      "title" : "{{biometricsType}}",
+      "desc" : "使用 {{biometricsType}} 解锁应用程序。",
+      "prompt" : "确认 {{biometricsType}} 以将其用于解锁",
+      "disablePrompt" : "确认 {{biometricsType}} 以停止将其用于解锁",
+      "useDeviceCredential" : "使用 PIN 识别码"
     },
     "deactivatePassword" : {
       "title" : "停用密码",
@@ -3201,6 +3275,13 @@
       "UPDATE_ACCOUNT" : "已更新的账户"
     }
   },
+  "history" : {
+    "tabs" : {
+      "crypto" : "加密货币",
+      "card" : "卡",
+      "accessibilityLabel" : "交易历史类型"
+    }
+  },
   "operationsList" : {
     "to" : "到",
     "from" : "从",
@@ -3240,6 +3321,13 @@
     },
     "details" : "{{ currency }} 详情",
     "extra" : {
+      "pltReject" : {
+        "title" : "原因",
+        "nonExistentToken" : "Concordium 上不存在该代币。",
+        "recipientNotFound" : "Concordium 上不存在该接收者账户。",
+        "insufficientBalance" : "该账户未持有足够的代币。",
+        "rejected" : "Concordium 拒绝了此操作。"
+      },
       "transferId" : "转账 ID（备忘标签）",
       "resource" : "资源",
       "validator" : "验证者",
@@ -4099,6 +4187,7 @@
         "copyAdress" : "复制地址",
         "addressCopied" : "地址已复制！",
         "addressVerified" : "地址已核实",
+        "qrCode" : "您的接收地址二维码",
         "verifyAddress" : "核实您的地址",
         "adviceVerify" : "我们始终建议您使用 Ledger 设备核实地址",
         "sendWarning" : "仅从 {{network}} 网络发送代币。从其他网络发送可能会导致您的代币永久丢失。",
@@ -4743,11 +4832,11 @@
         "walletNotExist" : "钱包不存在"
       },
       "skipMemo" : {
-        "title" : "跳过添加标签 {{tag}}？",
-        "warning" : "如果接收方要求备忘标签 {{tag}}，您的资产可能会丢失。",
-        "notRequired" : "接收方不需要备忘标签 {{tag}}？",
-        "confirm" : "是，跳过",
-        "neverAskAgain" : "不再显示此警告"
+        "title" : "您要在没有备忘标签 {{tag}} 的情况下发送吗？",
+        "description" : "如果接收方要求备忘标签 {{tag}}，您的资产可能会丢失。",
+        "confirm" : "是的，在没有备忘标签 {{tag}} 的情况下发送",
+        "cancel" : "不，返回",
+        "neverAskAgain" : "不再询问"
       },
       "tagHelp" : {
         "title" : "什么是备忘标签 {{tag}}？",
@@ -10273,27 +10362,6 @@
       "iHaveACard" : "我有一张卡"
     }
   },
-  "walletV4Tour" : {
-    "title" : "探索您的全新资产组合",
-    "slides" : {
-      "portfolio" : {
-        "title" : "更清楚地展示您的资产组合",
-        "description" : "一目了然地查看您的总余额，点按“今天”可深入了解。"
-      },
-      "navigation" : {
-        "title" : "更快访问关键操作功能",
-        "description" : "快速访问互换、转账和买入功能。“赚取”和您的\"卡\"位于底部导航栏。"
-      },
-      "actions" : {
-        "title" : "快速查看市场趋势",
-        "description" : "快速查看您资产组合中的热门趋势，并从洞察转向行动。"
-      }
-    },
-    "cta" : {
-      "continue" : "下一步",
-      "explore" : "探索我的全新资产组合"
-    }
-  },
   "mainNavigation" : {
     "home" : "首页",
     "swap" : "互换",
@@ -10344,9 +10412,34 @@
       }
     },
     "card" : {
+      "balanceLabel" : "余额",
+      "assets" : {
+        "title" : "资产",
+        "empty" : "暂无资产",
+        "error" : "无法加载资产",
+        "info" : "这些资产为您的卡提供资金。设置其扣款顺序，或添加更多。",
+        "manage" : "管理",
+        "manageDialog" : {
+          "title" : "管理资产",
+          "description" : "您的资产按扣款顺序排列。如果某一资产余额不足，将自动使用下一资产。",
+          "addAssetCaption" : "您将被重定向至 Baanx 页面以添加资产。",
+          "addAsset" : "添加资产"
+        },
+        "details" : {
+          "topUp" : "充值",
+          "withdraw" : "提取",
+          "transactions" : "交易"
+        },
+        "withdraw" : {
+          "title" : "您将被重定向至 Baanx",
+          "description" : "将资金从您的 Baanx 账户提取到您的 Ledger 钱包地址。",
+          "continue" : "继续"
+        }
+      },
       "title" : "加密货币卡",
-      "placeholder" : "敬请期待",
+      "topUp" : "充值",
       "details" : "详情",
+      "addToWallet" : "添加到 {{wallet}} Pay",
       "freeze" : "冻结",
       "unfreeze" : "解冻",
       "goBack" : "返回",
@@ -10364,6 +10457,15 @@
       "confirmError" : {
         "description" : "出错了。请重试。",
         "retry" : "重试"
+      },
+      "numbers" : {
+        "reveal" : "查看",
+        "hide" : "隐藏",
+        "failed" : "无法加载卡号",
+        "imageAlt" : "卡号"
+      },
+      "reward" : {
+        "title" : "返现总额"
       }
     },
     "cardTransactions" : {
@@ -10394,6 +10496,30 @@
           "PENDING" : "待处理",
           "DECLINED" : "已拒绝",
           "REVERTED" : "已撤销"
+        }
+      },
+      "history" : {
+        "today" : "今天",
+        "yesterday" : "昨天",
+        "unknownDate" : "日期不可用",
+        "columns" : {
+          "transaction" : "交易",
+          "fundingSources" : "资金来源",
+          "amount" : "数额"
+        },
+        "paidWithAssets" : "已使用 {{count}} 种资产支付",
+        "goToPay" : "前往支付",
+        "signedOut" : {
+          "title" : "登录后查看卡片交易记录",
+          "description" : "登录后，您的卡片交易记录将显示在此处。"
+        },
+        "empty" : {
+          "title" : "暂无卡片交易记录",
+          "description" : "请稍后再来查看您的卡片交易记录。"
+        },
+        "error" : {
+          "title" : "无法加载卡片交易记录",
+          "description" : "请检查您的连接并重试。"
         }
       }
     },
@@ -10554,9 +10680,56 @@
         "stepComplete" : "完成",
         "gotIt" : "知道了"
       },
-      "walletStep" : {
-        "title" : "添加到 Apple/Google Pay",
-        "description" : "在店内使用您的手机支付"
+      "steps" : {
+        "createAccount" : {
+          "title" : "创建账户",
+          "description" : "验证您的身份即可开始"
+        },
+        "chooseCardType" : {
+          "title" : "选择您的卡类型",
+          "description" : "选择虚拟卡或实体卡"
+        },
+        "topUpCard" : {
+          "title" : "为您的卡充值",
+          "description" : "使用 USDC、USDT、BTC 或更多币种添加资金"
+        },
+        "firstPurchase" : {
+          "title" : "完成您的首次购买",
+          "description" : "进行线上或店内支付"
+        },
+        "appleGooglePay" : {
+          "title" : "添加到 {{wallet}} Pay",
+          "description" : "在店内使用您的手机支付"
+        }
+      },
+      "addToWallet" : {
+        "ios" : {
+          "title" : "添加到 Apple Pay",
+          "step1" : "前往 Apple Wallet 应用程序并点按“添加” (+)",
+          "step2" : "选择借记卡或信用卡",
+          "step3" : "请按照说明操作",
+          "cta" : "前往 Apple Wallet",
+          "error" : {
+            "title" : "无法打开 Apple Wallet",
+            "description" : "请确保 Apple Pay 在此设备上可用，然后重试。",
+            "action" : "重试"
+          }
+        },
+        "android" : {
+          "title" : "添加到 Google Pay",
+          "step1" : "前往 Google Wallet 应用程序并点按“添加”。",
+          "step2" : "选择付款卡，然后选择新信用卡或借记卡。",
+          "step3" : "请按照说明操作。",
+          "cta" : "前往 Google Wallet",
+          "error" : {
+            "title" : "无法打开 Google Wallet",
+            "description" : "Google Wallet 可能未安装或已被禁用。",
+            "action" : "打开 Google Play"
+          }
+        },
+        "error" : {
+          "back" : "返回说明"
+        }
       }
     }
   },
@@ -10707,6 +10880,79 @@
     "accountActions" : {
       "publicToPrivate" : "转换"
     },
+    "bond" : {
+      "stepperHeader" : {
+        "validator" : "选择验证者",
+        "stepRange" : "{{currentStep}}/{{totalSteps}}",
+        "amount" : "数额",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备"
+      },
+      "selectValidator" : {
+        "fetchError" : "加载验证者失败。请重试。",
+        "metadataError" : "无法加载验证者元数据。您仍可追加质押。",
+        "lockedHint" : "Aleo 允许每个账户拥有一个验证者。您可以增加在此验证者中的质押，或先解除质押以选择其他验证者。",
+        "closed" : "验证者已关闭新质押",
+        "unbonding" : "验证者正在解除绑定",
+        "totalStake" : "质押总额",
+        "rateAndCommission" : "预计 {{rate}}%· {{commission}}% 佣金",
+        "commissionOnly" : "{{commission}}% 佣金",
+        "earnsNothing" : "验证者未赚取奖励"
+      },
+      "amount" : {
+        "available" : "可用",
+        "max" : "最大值",
+        "stakingAlert" : "您在此验证者中的总质押量必须达到至少 <minimum/> 才能赚取奖励。只有公开 ALEO 可以被质押——如果您想进行质押，请先将您的私密余额转换为公开余额。",
+        "minimumLabel" : "最低绑定数额",
+        "minimumTopUp" : "至少添加 <missing/>，以达到赚取奖励所需的 <total/> 总质押量。",
+        "belowMinimum" : "您的公开余额还差 <missing/> 即可达到 <minimum/> 最低绑定数额。在质押前，请充值您的公开余额。",
+        "changeValidator" : "选择其他验证者"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "绑定已提交",
+          "description" : "您的绑定交易正在 Aleo 网络上处理。"
+        }
+      }
+    },
+    "stake" : {
+      "sectionTitle" : "Staking",
+      "staked" : "Staked",
+      "unstaking" : "Unstaking",
+      "claimable" : "Claimable",
+      "estimatedRate" : "{{rate}}% est.",
+      "fallbackValidator" : "Aleo",
+      "status" : {
+        "earning" : "Earning rewards",
+        "unknown" : "Status unavailable"
+      },
+      "nonEarning" : {
+        "fullCommission" : "This validator takes 100% commission, so you keep nothing.",
+        "overConcentrated" : "This validator holds more than 25% of all staked ALEO. The protocol pays it nothing above that cap, so you earn nothing.",
+        "leftCommittee" : "This validator is no longer in the committee, so your stake earns nothing. Unstake and bond to another validator to start earning again.",
+        "ownStakeBelowMinimum" : "Your stake is below the 10,000 ALEO minimum, so it earns nothing. Add to it to start earning again."
+      },
+      "emptyState" : {
+        "description" : "You can earn rewards by staking your {{name}}.",
+        "cta" : "Earn rewards",
+        "bondPending" : "一笔质押已发送，正在等待确认。Aleo 每个账户仅持有一个质押仓位，因此在当前质押完成前，质押功能不可用。"
+      },
+      "unstakingRow" : {
+        "settling" : "即将完成…",
+        "claimPending" : "正在领取…",
+        "unbondPending" : "正在解除质押…",
+        "blocksRemaining_one" : "~{{count}} block left",
+        "blocksRemaining_other" : "~{{count}} blocks left"
+      }
+    },
+    "manage" : {
+      "bond" : "Bond",
+      "status" : "Status",
+      "estimatedRate" : "Est. rewards rate",
+      "unbondPendingInfo" : "An unstake is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "claimPendingInfo" : "A claim is waiting to be confirmed. Aleo tracks one unbonding position at a time, so unbonding and claiming are both unavailable until it has gone through.",
+      "unlockBlock" : "Unlocks at block"
+    },
     "send" : {
       "balanceSelection" : {
         "title" : "选择余额",
@@ -10751,6 +10997,10 @@
     },
     "balancesSection" : "余额类型",
     "info" : {
+      "available" : {
+        "title" : "Available balance",
+        "description" : "The balance you can spend right now: transparent funds plus any private records already synced. Staked and unstaking amounts are not included."
+      },
       "transparent" : {
         "title" : "透明余额",
         "description" : "Aleo 网络上公开可见的余额。该数额可以直接发送或接收，且对任何人可见。"
@@ -10758,6 +11008,18 @@
       "private" : {
         "title" : "私密余额",
         "description" : "Aleo 网络上屏蔽隐藏的余额。此余额仅对您可见，并且需要为隐私交易生成证明。"
+      },
+      "staked" : {
+        "title" : "Staked",
+        "description" : "The amount currently bonded to a validator. It earns rewards but cannot be spent until you unstake it and the unbonding period ends."
+      },
+      "unstaking" : {
+        "title" : "Unstaking",
+        "description" : "The amount you have unstaked that is still locked. It stops earning rewards immediately and becomes claimable once the unbonding period ends."
+      },
+      "claimable" : {
+        "title" : "Claimable",
+        "description" : "The unstaked amount whose unbonding period has ended. Claim it to move it back to your available balance."
       }
     },
     "account" : {
