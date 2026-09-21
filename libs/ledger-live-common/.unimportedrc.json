@@ -800,6 +800,7 @@
     "src/families/multiversx/config.ts",
     "src/families/near/accountRawAssign.ts",
     "src/families/near/bridge/api.ts",
+    "src/families/near/bridgeExtensions.ts",
     "src/families/near/coinModuleApi.ts",
     "src/families/near/config.ts",
     "src/families/polkadot/config.ts",
