@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { PayCardTransaction } from "@domain/api-card-management";
 import { useCardAssetsViewModel, type CardAssetRow } from "@features/flow-pay-card-assets";
 import type { CardTransactionItem } from "@features/flow-pay-card-transactions";
+import { transactionClickedProperties } from "@features/flow-pay-card-transactions";
 import { getWalletPlatform } from "@features/flow-pay-card-widget/native";
 import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
@@ -20,7 +21,7 @@ export function useCardDetailsViewModel({
   cardSettingsActions,
 }: CardDetailsProps): CardDetailsViewProps {
   const { t } = useTranslation();
-  const { trackButtonClicked } = usePayAnalyticsContext();
+  const { trackButtonClicked, trackTransactionClicked } = usePayAnalyticsContext();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { route, goTo, goBack } = useCardDetailsNavigation();
   const assetsViewModel = useCardAssetsViewModel(assets);
@@ -37,6 +38,7 @@ export function useCardDetailsViewModel({
   };
 
   const onTransactionPress = (transaction: PayCardTransaction) => {
+    trackTransactionClicked(transactionClickedProperties(transaction));
     goTo({ name: "transaction", transaction });
   };
 
