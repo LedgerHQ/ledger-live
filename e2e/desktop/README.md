@@ -55,6 +55,8 @@ pnpm build:cli
 pnpm desktop build:testing
 ```
 
+`build:testing` and the E2E helpers target the STAGING Wallet Sync environment automatically.
+
 > 🔹 Run this whenever the source code changes.
 
 Install Playwright dependencies:

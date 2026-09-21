@@ -59,6 +59,8 @@ pnpm mobile e2e:build -c ios.sim.debug
 > `build-e2e-deps` is an nx target that builds the mobile libs (`^build`) and
 > `@ledgerhq/live-cli` together. It replaces the separate `pnpm build:llm:deps`
 > and `pnpm build:cli` steps and is the same command CI runs before mobile E2E.
+> Detox builds read the STAGING Wallet Sync environment from `.env.mock`; Node E2E helpers default
+> `process.env.WALLET_SYNC_ENVIRONMENT` to the same target.
 
 > **Why release for Android?** Android debug builds are broken locally due to a known
 > Detox/Espresso reflection bug (`NoSuchFieldException: eventInjector`). Only release
