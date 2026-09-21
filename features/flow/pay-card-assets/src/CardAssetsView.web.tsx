@@ -6,16 +6,23 @@ import {
   ListItemLeading,
   ListItemTitle,
   ListItemTrailing,
+  Skeleton,
   Subheader,
-  SubheaderRow,
+  SubheaderInfo,
   SubheaderTitle,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { useTranslation } from "@shared/i18n";
 import { CardAssetDetailsDialog } from "./CardAssetDetailsDialog.web";
 import { CardAssetDetailsWithdrawDialog } from "./CardAssetDetailsWithdrawDialog.web";
 import type { CardAssetRow, CardAssetsViewModel } from "./types";
 
 const ICON_SIZE = 48;
+// Non-breaking space: a plain space collapses and the reserved line loses its height.
+const COUNTERVALUE_PLACEHOLDER = "\u00a0";
 
 function AssetRow({
   row,
@@ -23,7 +30,7 @@ function AssetRow({
 }: Readonly<{ row: CardAssetRow; onPress: (row: CardAssetRow) => void }>) {
   return (
     <ListItem
-      className="bg-surface"
+      className="bg-surface py-8"
       data-testid={`card-asset-${row.id}`}
       onClick={() => onPress(row)}
     >
@@ -36,11 +43,9 @@ function AssetRow({
       </ListItemLeading>
       <ListItemTrailing>
         <ListItemContent className="items-end text-end">
-          {row.countervalue === null ? null : (
-            <ListItemTitle data-testid={`card-asset-countervalue-${row.id}`}>
-              {row.countervalue}
-            </ListItemTitle>
-          )}
+          <ListItemTitle data-testid={`card-asset-countervalue-${row.id}`}>
+            {row.countervalue ?? COUNTERVALUE_PLACEHOLDER}
+          </ListItemTitle>
           <ListItemDescription>{row.cryptoAmount}</ListItemDescription>
         </ListItemContent>
       </ListItemTrailing>
@@ -48,15 +53,26 @@ function AssetRow({
   );
 }
 
-type AssetsBodyProps = Readonly<
-  Pick<CardAssetsViewModel, "status" | "rows" | "emptyLabel" | "errorLabel" | "onAssetPress">
->;
+type AssetsBodyProps = Readonly<Pick<CardAssetsViewModel, "status" | "rows" | "onAssetPress">>;
 
-function AssetsBody({ status, rows, emptyLabel, errorLabel, onAssetPress }: AssetsBodyProps) {
-  if (status === "error") return <p className="body-2 text-muted">{errorLabel}</p>;
-  if (status === "empty") return <p className="body-2 text-muted">{emptyLabel}</p>;
+function AssetsBody({ status, rows, onAssetPress }: AssetsBodyProps) {
+  const { t } = useTranslation();
+  if (status === "error") {
+    return <p className="body-2 text-muted">{t("payTab.card.assets.error")}</p>;
+  }
+  if (status === "empty") {
+    return <p className="body-2 text-muted">{t("payTab.card.assets.empty")}</p>;
+  }
+  if (status === "loading") {
+    return (
+      <div className="flex flex-col" data-testid="card-assets-loading-state">
+        <Skeleton component="list-item" />
+        <Skeleton component="list-item" />
+        <Skeleton component="list-item" />
+      </div>
+    );
+  }
 
-  // A loading read lists nothing yet, so the title stands alone until the wallets land.
   return (
     <div className="flex flex-col gap-8">
       {rows.map(row => (
@@ -68,11 +84,8 @@ function AssetsBody({ status, rows, emptyLabel, errorLabel, onAssetPress }: Asse
 
 export function CardAssetsView({
   isVisible,
-  title,
   status,
   rows,
-  emptyLabel,
-  errorLabel,
   dialogState,
   selectedAsset,
   selectedAssetTransactions,
@@ -87,24 +100,28 @@ export function CardAssetsView({
   onShowHistoryPress,
   onWithdrawContinue,
 }: CardAssetsViewModel) {
+  const { t } = useTranslation();
+  const title = t("payTab.card.assets.title");
+  const infoLabel = t("payTab.card.assets.info");
+
   if (!isVisible) return null;
 
   return (
     <>
       <section aria-label={title} className="flex flex-col gap-12" data-testid="card-assets">
         <Subheader>
-          <SubheaderRow>
-            <SubheaderTitle>{title}</SubheaderTitle>
-          </SubheaderRow>
+          <div className="flex items-center gap-4">
+            <SubheaderTitle as="h2">{title}</SubheaderTitle>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SubheaderInfo aria-label={infoLabel} />
+              </TooltipTrigger>
+              <TooltipContent>{infoLabel}</TooltipContent>
+            </Tooltip>
+          </div>
         </Subheader>
 
-        <AssetsBody
-          status={status}
-          rows={rows}
-          emptyLabel={emptyLabel}
-          errorLabel={errorLabel}
-          onAssetPress={onAssetPress}
-        />
+        <AssetsBody status={status} rows={rows} onAssetPress={onAssetPress} />
       </section>
       <CardAssetDetailsDialog
         isOpen={dialogState === "details"}

@@ -104,8 +104,38 @@ const USDC = CryptoOrTokenCurrencySchema.parse({
   units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
 });
 
+const formatBalance = (value: number) => ({
+  integerPart: String(Math.trunc(value)),
+  decimalPart: "00",
+  currencyText: "$",
+  decimalSeparator: "." as const,
+  currencyPosition: "start" as const,
+});
+
 describe("CardAssets (web)", () => {
   function renderCardAssets() {
+    render(
+      <CardAssets
+        currencies={new Map([[USDC.id, USDC]])}
+        priceWallet={() => 4000}
+        formatCountervalue={value => `$${value.toLocaleString("en-US")}.00`}
+        formatBalance={formatBalance}
+      />,
+      { wrapper: I18nWrapper },
+    );
+  }
+
+  it("should show what the asset is worth on top of its details", async () => {
+    const user = userEvent.setup();
+    renderCardAssets();
+
+    await user.click(screen.getByTestId("card-asset-w-usdc"));
+
+    expect(await screen.findByTestId("card-asset-details-amount")).toBeVisible();
+  });
+
+  it("should keep AmountDisplay loading when the host has no balance formatter", async () => {
+    const user = userEvent.setup();
     render(
       <CardAssets
         currencies={new Map([[USDC.id, USDC]])}
@@ -114,7 +144,16 @@ describe("CardAssets (web)", () => {
       />,
       { wrapper: I18nWrapper },
     );
-  }
+
+    await user.click(screen.getByTestId("card-asset-w-usdc"));
+
+    expect(await screen.findByTestId("card-asset-details-dialog")).toBeVisible();
+    expect(screen.getByTestId("card-asset-details-amount")).toBeVisible();
+    expect(screen.getByTestId("card-asset-details-amount-display")).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
+  });
 
   it("should show summary-style rows when an asset is selected", async () => {
     const user = userEvent.setup();
@@ -123,6 +162,7 @@ describe("CardAssets (web)", () => {
     await user.click(screen.getByTestId("card-asset-w-usdc"));
 
     expect(await screen.findByTestId("card-transactions-item-uniqlo-usdc")).toBeVisible();
+    expect(screen.queryByTestId("card-asset-details-transactions-empty")).not.toBeInTheDocument();
     expect(screen.queryByTestId("card-transactions-item-dentist-eth")).not.toBeInTheDocument();
     expect(screen.getByText("-324.43 USD")).toBeVisible();
     expect(screen.getByText("-324.4332 USDC")).toBeVisible();

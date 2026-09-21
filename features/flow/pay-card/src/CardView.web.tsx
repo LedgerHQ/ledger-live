@@ -25,6 +25,11 @@ export function CardView({
             cardVisual={cardVisual}
             formatters={{ amount: formatters?.transactionAmount }}
           />
+          {assets ? (
+            <div className="mt-8">
+              <CardAssets {...assets} />
+            </div>
+          ) : null}
           <CardTransactions
             formatters={{
               amount: formatters?.transactionAmount,
@@ -33,7 +38,6 @@ export function CardView({
             onTrackEvent={login.onTrackEvent}
             onShowMore={onShowMore}
           />
-          {assets ? <CardAssets {...assets} /> : null}
         </>
       ) : (
         <>

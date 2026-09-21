@@ -3,11 +3,13 @@ import { I18nTestProvider } from "@shared/i18n/testing";
 
 export const CARD_ASSETS_COPY = {
   title: "Assets",
+  info: "These assets fund your card. Set the order they're charged in, or add more.",
   empty: "No assets yet",
   error: "Couldn't load assets",
   topUp: "Top up",
   withdraw: "Withdraw",
   transactions: "Transactions",
+  transactionsEmpty: "No card transactions yet",
   withdrawTitle: "You'll be redirected to Baanx",
   withdrawDescription: "Withdraw funds from your Baanx account to your Ledger wallet address.",
   continue: "Continue",
@@ -20,6 +22,7 @@ export const CARD_ASSETS_RESOURCES = {
         card: {
           assets: {
             title: CARD_ASSETS_COPY.title,
+            info: CARD_ASSETS_COPY.info,
             empty: CARD_ASSETS_COPY.empty,
             error: CARD_ASSETS_COPY.error,
             details: {
@@ -37,6 +40,9 @@ export const CARD_ASSETS_RESOURCES = {
         cardTransactions: {
           categories: { MISC: "Other" },
           history: {
+            empty: {
+              title: CARD_ASSETS_COPY.transactionsEmpty,
+            },
             columns: {
               transaction: "Transaction",
               fundingSources: "Cashback",

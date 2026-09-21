@@ -34,21 +34,9 @@ export function useCardAssetsViewModel({
 }: CardAssetsProps): CardAssetsViewModel {
   const { t } = useTranslation();
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
-  const [selectedAsset, setSelectedAsset] = useState<CardAssetRow | null>(null);
+  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const isSignedIn = useIsCardSignedIn();
   const { transactions } = useCardTransactionsViewModel();
-  const selectedAssetTransactions = useMemo(
-    () =>
-      selectedAsset?.ledgerId
-        ? transactions
-            .filter(item =>
-              isCardTransactionFundedBy(item, selectedAsset.currency, selectedAsset.network),
-            )
-            .sort((a, b) => b.transaction.dateTime.localeCompare(a.transaction.dateTime))
-            .slice(0, RECENT_TRANSACTIONS_SHOWN)
-        : [],
-    [selectedAsset, transactions],
-  );
   const { wallets, isLoading, isError } = useCardLinkedWallets({
     currencies,
     skip: !isSignedIn,
@@ -75,6 +63,23 @@ export function useCardAssetsViewModel({
     [wallets, priceWallet, formatCountervalue],
   );
 
+  const selectedAsset = useMemo(
+    () => rows.find(asset => asset.id === selectedAssetId) ?? null,
+    [rows, selectedAssetId],
+  );
+  const selectedAssetTransactions = useMemo(
+    () =>
+      selectedAsset?.ledgerId
+        ? transactions
+            .filter(item =>
+              isCardTransactionFundedBy(item, selectedAsset.currency, selectedAsset.network),
+            )
+            .sort((a, b) => b.transaction.dateTime.localeCompare(a.transaction.dateTime))
+            .slice(0, RECENT_TRANSACTIONS_SHOWN)
+        : [],
+    [selectedAsset, transactions],
+  );
+
   const status = useMemo<CardAssetsStatus>(() => {
     if (isLoading) return "loading";
     if (isError) return "error";
@@ -83,13 +88,13 @@ export function useCardAssetsViewModel({
   }, [isLoading, isError, rows.length]);
 
   const onAssetPress = useCallback((asset: CardAssetRow) => {
-    setSelectedAsset(asset);
+    setSelectedAssetId(asset.id);
     setDialogState("details");
   }, []);
 
   const onDialogClose = useCallback(() => {
     setDialogState("closed");
-    setSelectedAsset(null);
+    setSelectedAssetId(null);
   }, []);
 
   const onTopUpPress = useCallback(() => {
@@ -118,11 +123,8 @@ export function useCardAssetsViewModel({
   return useMemo(
     () => ({
       isVisible: isSignedIn,
-      title: t(`${KEY_PREFIX}.title`),
       status,
       rows,
-      emptyLabel: t(`${KEY_PREFIX}.empty`),
-      errorLabel: t(`${KEY_PREFIX}.error`),
       dialogState,
       selectedAsset,
       selectedAssetTransactions,

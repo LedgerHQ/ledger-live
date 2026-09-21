@@ -55,11 +55,8 @@ export type CardAssetDialogCopy = Readonly<{
 
 export type CardAssetsViewModel = Readonly<{
   isVisible: boolean;
-  title: string;
   status: CardAssetsStatus;
   rows: readonly CardAssetRow[];
-  emptyLabel: string;
-  errorLabel: string;
   dialogState: CardAssetDialogState;
   selectedAsset: CardAssetRow | null;
   selectedAssetTransactions: readonly CardTransactionItem[];
