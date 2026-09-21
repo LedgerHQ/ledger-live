@@ -15,7 +15,6 @@ import {
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { track } from "~/renderer/analytics/segment";
 import { getModularDialogStepHeading } from "./hooks/getModularDialogStepHeading";
-import { shouldAwaitAccountAutoSkip } from "./hooks/shouldAwaitAccountAutoSkip";
 import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";
 import { useModularDialogNavigation } from "./hooks/useModularDialogNavigation";
 import { useModularDialogRemoteData } from "./hooks/useModularDialogRemoteData";
@@ -72,6 +71,7 @@ export function useModularDialogFlowViewModel({ onClose }: UseModularDialogFlowV
     handleBack,
     loadNext,
     assetsSorted,
+    accountAutoSkipState,
   } = useModularDialogRemoteData({
     currentStep,
     goToStep,
@@ -82,13 +82,12 @@ export function useModularDialogFlowViewModel({ onClose }: UseModularDialogFlowV
     dialogConfiguration,
   );
   const hasAccounts = useHasAccountsForAsset(selectedAsset);
-  const isAwaitingAutoSkip = shouldAwaitAccountAutoSkip({
-    areCurrenciesFiltered,
-    currencyIds,
-    currentStep,
-    hasError: errorInfo?.hasError,
-    assetsSorted,
-  });
+  const isAwaitingAutoSkip =
+    Boolean(areCurrenciesFiltered) &&
+    currencyIds?.length === 1 &&
+    currentStep === MODULAR_DIALOG_STEP.ASSET_SELECTION &&
+    !errorInfo?.hasError &&
+    accountAutoSkipState !== "unavailable";
   const displayStep = isAwaitingAutoSkip ? MODULAR_DIALOG_STEP.ACCOUNT_SELECTION : currentStep;
 
   const accountSelectionDescription =

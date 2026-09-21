@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { getAssetByCurrency } from "../utils/getAssetByCurrency";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { ModularDialogStep } from "../types";
 import { useModularDialogAnalytics } from "../analytics/useModularDialogAnalytics";
 import { MODULAR_DIALOG_PAGE_NAME } from "../analytics/modularDialog.types";
@@ -15,20 +16,24 @@ import {
   modularDialogSearchedSelector,
   modularDialogFlowSelector,
   modularDialogSelectableNetworkIdsSelector,
+  modularDialogAreCurrenciesFilteredSelector,
 } from "~/renderer/reducers/modularDialog";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+
+export type AccountAutoSkipState = "loading" | "ready" | "unavailable";
 
 type Props = {
   assets: AssetData[] | undefined;
-  sortedCryptoCurrencies: CryptoOrTokenCurrency[];
+  loadingStatus: LoadingStatus | undefined;
   setNetworksToDisplay: (networks?: CryptoOrTokenCurrency[]) => void;
   goToStep: (nextStep: ModularDialogStep) => void;
 };
 
 export function useModularDialogFlowState({
   assets,
-  sortedCryptoCurrencies,
+  loadingStatus,
   setNetworksToDisplay,
   goToStep,
 }: Props) {
@@ -38,6 +43,7 @@ export function useModularDialogFlowState({
   const searchedValue = useSelector(modularDialogSearchedSelector);
   const currencyIds = useSelector(modularDialogCurrenciesSelector);
   const selectableNetworkIds = useSelector(modularDialogSelectableNetworkIdsSelector);
+  const areCurrenciesFiltered = useSelector(modularDialogAreCurrenciesFilteredSelector);
   const onAssetSelected = useSelector(modularDialogOnAssetSelectedSelector);
   const onAccountSelected = useSelector(modularDialogOnAccountSelectedSelector);
 
@@ -191,27 +197,49 @@ export function useModularDialogFlowState({
     ],
   );
 
-  useEffect(() => {
-    if (assets?.length === 1 && searchedValue === undefined && !selectedAsset) {
-      const assetItem = assets[0];
+  const autoSelectableCurrency = useMemo(() => {
+    if (searchedValue !== undefined || selectedAsset) return undefined;
 
-      if (assetItem.networks.length > 0) {
-        const currency = assetItem.networks[0];
-
-        handleAssetSelected(currency);
-      }
+    if (assets?.length === 1) {
+      return assets[0].networks.find(
+        network => isAcceptedCurrency(network) && isSelectableNetwork(network),
+      );
     }
+
+    if (assets?.length === 0 && areCurrenciesFiltered && currencyIds?.length === 1) {
+      const currency = findCryptoCurrencyById(currencyIds[0]);
+
+      return currency && isAcceptedCurrency(currency) && isSelectableNetwork(currency)
+        ? currency
+        : undefined;
+    }
+
+    return undefined;
   }, [
-    sortedCryptoCurrencies,
-    goToStep,
-    handleAssetSelected,
-    selectedAsset,
-    searchedValue,
+    areCurrenciesFiltered,
     assets,
     currencyIds,
+    isAcceptedCurrency,
+    isSelectableNetwork,
+    searchedValue,
+    selectedAsset,
   ]);
 
+  const accountAutoSkipState: AccountAutoSkipState =
+    loadingStatus === LoadingStatus.Pending
+      ? "loading"
+      : autoSelectableCurrency
+        ? "ready"
+        : "unavailable";
+
+  useEffect(() => {
+    if (accountAutoSkipState !== "ready" || !autoSelectableCurrency) return;
+
+    handleAssetSelected(autoSelectableCurrency);
+  }, [accountAutoSkipState, autoSelectableCurrency, handleAssetSelected]);
+
   return {
+    accountAutoSkipState,
     selectedAsset,
     setSelectedAsset,
     selectedNetwork,

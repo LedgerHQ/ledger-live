@@ -6,18 +6,23 @@ import {
 } from "../../../__mocks__/useSelectAssetFlow.mock";
 import { useModularDialogFlowState } from "../useModularDialogFlowState";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
-  useAcceptedCurrency: () => () => true,
+  useAcceptedCurrency: () => mockIsAcceptedCurrency,
 }));
+
+const mockIsAcceptedCurrency = jest.fn((_currency: CryptoOrTokenCurrency) => true);
 
 const mockGoToStep = jest.fn();
 const mockSetNetworksToDisplay = jest.fn();
 const mockOnAssetSelected = jest.fn();
+const mockOnAccountSelected = jest.fn();
 
 const defaultProps = {
   assets: [],
-  sortedCryptoCurrencies: [bitcoinCurrency, ethereumCurrency],
+  loadingStatus: LoadingStatus.Success,
   setNetworksToDisplay: mockSetNetworksToDisplay,
   goToStep: mockGoToStep,
 };
@@ -49,6 +54,7 @@ const assetsWithNetworks: AssetData[] = [
 describe("useModularDialogFlowState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsAcceptedCurrency.mockImplementation(() => true);
   });
 
   it("should initialize with default state", () => {
@@ -88,6 +94,84 @@ describe("useModularDialogFlowState", () => {
     });
     expect(mockSetNetworksToDisplay).toHaveBeenCalledWith(filtered);
     expect(mockGoToStep).toHaveBeenCalledWith("NETWORK_SELECTION");
+  });
+
+  const scopedCurrencyState = (currencyId: string) => ({
+    initialState: {
+      modularDialog: {
+        isOpen: true,
+        dialogParams: {
+          currencies: [currencyId],
+          areCurrenciesFiltered: true,
+          onAccountSelected: mockOnAccountSelected,
+        },
+      },
+    },
+  });
+
+  it.each(["cronos", "coreum", "assethub_polkadot"])(
+    "should select the account of the scoped %s currency when the catalog has no asset for it",
+    currencyId => {
+      const { result } = renderHook(
+        () => useModularDialogFlowState({ ...defaultProps, assets: [] }),
+        scopedCurrencyState(currencyId),
+      );
+
+      expect(result.current.selectedAsset?.id).toBe(currencyId);
+      expect(result.current.selectedNetwork?.id).toBe(currencyId);
+      expect(mockGoToStep).toHaveBeenCalledWith("ACCOUNT_SELECTION");
+    },
+  );
+
+  it("should expose no skip target while the catalog request is still in flight", () => {
+    const { result } = renderHook(
+      () =>
+        useModularDialogFlowState({
+          ...defaultProps,
+          assets: undefined,
+          loadingStatus: LoadingStatus.Pending,
+        }),
+      scopedCurrencyState("cronos"),
+    );
+
+    expect(result.current.accountAutoSkipState).toBe("loading");
+    expect(result.current.selectedAsset).toBeUndefined();
+    expect(mockGoToStep).not.toHaveBeenCalled();
+  });
+
+  it("should expose no skip target for a currency the flow does not accept", () => {
+    mockIsAcceptedCurrency.mockImplementation(currency => currency.id !== "coreum");
+
+    const { result } = renderHook(
+      () => useModularDialogFlowState({ ...defaultProps, assets: [] }),
+      scopedCurrencyState("coreum"),
+    );
+
+    expect(result.current.accountAutoSkipState).toBe("unavailable");
+    expect(result.current.selectedAsset).toBeUndefined();
+    expect(mockGoToStep).not.toHaveBeenCalledWith("ACCOUNT_SELECTION");
+  });
+
+  it("should expose no skip target when the single catalog asset has no acceptable network", () => {
+    mockIsAcceptedCurrency.mockImplementation(currency => currency.id !== bitcoinCurrency.id);
+
+    const { result } = renderHook(
+      () => useModularDialogFlowState({ ...defaultProps, assets: [assetsWithNetworks[1]] }),
+      scopedCurrencyState(bitcoinCurrency.id),
+    );
+
+    expect(result.current.accountAutoSkipState).toBe("unavailable");
+    expect(mockGoToStep).not.toHaveBeenCalledWith("ACCOUNT_SELECTION");
+  });
+
+  it("should skip to the account step when the single catalog asset is selectable", () => {
+    const { result } = renderHook(
+      () => useModularDialogFlowState({ ...defaultProps, assets: [assetsWithNetworks[1]] }),
+      scopedCurrencyState(bitcoinCurrency.id),
+    );
+
+    expect(result.current.selectedAsset?.id).toBe(bitcoinCurrency.id);
+    expect(mockGoToStep).toHaveBeenCalledWith("ACCOUNT_SELECTION");
   });
 
   it("should reject ineligible selections while allowing an eligible network", () => {

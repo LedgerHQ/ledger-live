@@ -43,9 +43,10 @@ export function useModularDialogRemoteData({
     handleAssetSelected,
     goBackToAssetSelection,
     goBackToNetworkSelection,
+    accountAutoSkipState,
   } = useModularDialogFlowState({
     assets: assetsSorted,
-    sortedCryptoCurrencies,
+    loadingStatus,
     setNetworksToDisplay,
     goToStep,
   });
@@ -78,5 +79,6 @@ export function useModularDialogRemoteData({
     goBackToNetworkSelection,
     loadNext,
     assetsSorted,
+    accountAutoSkipState,
   };
 }

@@ -1,4 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import React from "react";
 import * as reduxHooks from "LLD/hooks/redux";
 import { act, render, screen, waitFor } from "tests/testSetup";
@@ -29,6 +30,7 @@ import {
 } from "../../__tests__/shared";
 import ModularDialogFlowManager from "../ModularDialogFlowManager";
 import ModularDialogRoot from "../ModularDialogRoot";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
 jest.mock("~/renderer/drawers/Provider", () => ({
@@ -50,7 +52,10 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () =>
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
 }));
 
-const mockUseAcceptedCurrency = jest.fn(() => () => true);
+type CurrencyPredicate = (currency: CryptoOrTokenCurrency) => boolean;
+
+const acceptAllCurrencies: CurrencyPredicate = () => true;
+const mockUseAcceptedCurrency = jest.fn((): CurrencyPredicate => acceptAllCurrencies);
 
 // Helper to get the back button from DialogHeader (uses aria-label since DialogHeader doesn't expose test-id)
 const getBackButton = () => {
@@ -59,9 +64,13 @@ const getBackButton = () => {
 
 beforeEach(() => {
   mockDomMeasurements();
+  mockUseAcceptedCurrency.mockImplementation(() => acceptAllCurrencies);
 });
 
 const mockCurrencies = currencies.map(currency => currency.id);
+
+const cronosCurrency = getCryptoCurrencyById("cronos");
+const CRONOS_ACCOUNT = genAccount("cronos-1", { currency: cronosCurrency });
 
 const defaultModularDialogState = {
   isOpen: true,
@@ -169,6 +178,67 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     expect(screen.getByTestId("modular-dialog-screen-ACCOUNT_SELECTION")).toBeVisible();
     expect(await screen.findByText(/ethereum 2/i)).toBeVisible();
     expect(screen.queryByText(/select asset/i)).not.toBeInTheDocument();
+  });
+
+  it("should settle on the account list for a currency the assets catalog does not carry", async () => {
+    render(<ModularDialogFlowManager />, {
+      ...INITIAL_STATE,
+      initialState: {
+        accounts: [CRONOS_ACCOUNT],
+        modularDialog: createFilteredModularDialogState([cronosCurrency.id]),
+      },
+    });
+
+    expect(await screen.findByText(/cronos \d/i)).toBeVisible();
+    expect(screen.queryByTestId("modular-dialog-skeleton")).not.toBeInTheDocument();
+    expect(screen.queryByText(/no assets found/i)).not.toBeInTheDocument();
+  });
+
+  it("should offer the add account path when no account exists for an uncatalogued currency", async () => {
+    render(<ModularDialogFlowManager />, {
+      ...INITIAL_STATE,
+      initialState: {
+        accounts: [ETH_ACCOUNT],
+        modularDialog: createFilteredModularDialogState([cronosCurrency.id]),
+      },
+    });
+
+    expect(await screen.findByText(/add account/i)).toBeVisible();
+    expect(screen.queryByTestId("modular-dialog-skeleton")).not.toBeInTheDocument();
+    expect(screen.queryByText(/ethereum \d/i)).not.toBeInTheDocument();
+  });
+
+  it("should show the empty asset state when the only catalog asset cannot be selected", async () => {
+    mockUseAcceptedCurrency.mockImplementation(
+      () => currency => currency.id !== ethereumCurrency.id,
+    );
+
+    render(<ModularDialogFlowManager />, {
+      ...INITIAL_STATE,
+      initialState: {
+        accounts: [ETH_ACCOUNT],
+        modularDialog: createFilteredModularDialogState([ethereumCurrency.id]),
+      },
+    });
+
+    expect(await screen.findByText(/no assets found/i)).toBeVisible();
+    expect(screen.queryByTestId("modular-dialog-skeleton")).not.toBeInTheDocument();
+  });
+
+  it("should show the empty asset state when an unsupported currency is missing from the catalog", async () => {
+    mockUseAcceptedCurrency.mockImplementation(() => currency => currency.id !== cronosCurrency.id);
+
+    render(<ModularDialogFlowManager />, {
+      ...INITIAL_STATE,
+      initialState: {
+        accounts: [CRONOS_ACCOUNT],
+        modularDialog: createFilteredModularDialogState([cronosCurrency.id]),
+      },
+    });
+
+    expect(await screen.findByText(/no assets found/i)).toBeVisible();
+    expect(screen.queryByTestId("modular-dialog-skeleton")).not.toBeInTheDocument();
+    expect(screen.queryByText(/cronos \d/i)).not.toBeInTheDocument();
   });
 
   it("should show list placeholders while a single currency is still loading", async () => {
