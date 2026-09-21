@@ -10484,12 +10484,12 @@
     "cardLogin" : {
       "title" : "Cartão cripto",
       "beforeIntro" : {
-        "title" : "Get your crypto card",
+        "title" : "Obtenha seu cartão cripto",
         "description" : "Receba 1% de cashback sempre que gastar",
         "action" : "Obter cartão"
       },
       "afterIntro" : {
-        "title" : "Log in to access your Card",
+        "title" : "Faça login para acessar seu cartão",
         "description" : "Faça login para acessar seu cartão",
         "action" : "Login"
       },
