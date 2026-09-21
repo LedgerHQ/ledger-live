@@ -96,8 +96,8 @@ describe("My Wallet LNS upsell profile banner", () => {
   it("should replace Explore with the compact banner for nanoS when the profile placement is enabled", async () => {
     await renderMyWalletProfile();
 
-    expect(screen.getByText("Upgrade your Device")).toBeVisible();
-    expect(screen.getByText("Bigger screen, better security. Enjoy 20%.")).toBeVisible();
+    expect(screen.getByText("Ledger Nano S Upgrade Program")).toBeVisible();
+    expect(screen.getByText("Unlock new OS and security features. Get 20% off.")).toBeVisible();
     expect(screen.getByRole("button", { name: "Explore" })).toBeVisible();
     expect(screen.queryByText("Explore all Ledger devices")).toBeNull();
   });
@@ -106,28 +106,28 @@ describe("My Wallet LNS upsell profile banner", () => {
     await renderMyWalletProfile({ devicesModelList: [DeviceModelId.stax] });
 
     expect(screen.getByText("Explore all Ledger devices")).toBeVisible();
-    expect(screen.queryByText("Upgrade your Device")).toBeNull();
+    expect(screen.queryByText("Ledger Nano S Upgrade Program")).toBeNull();
   });
 
   it("should keep Explore when a nanoS is paired with a large-screen device", async () => {
     await renderMyWalletProfile({ devicesModelList: [DeviceModelId.nanoS, DeviceModelId.stax] });
 
     expect(screen.getByText("Explore all Ledger devices")).toBeVisible();
-    expect(screen.queryByText("Upgrade your Device")).toBeNull();
+    expect(screen.queryByText("Ledger Nano S Upgrade Program")).toBeNull();
   });
 
   it("should keep Explore when the feature flag is off", async () => {
     await renderMyWalletProfile({ ffEnabled: false });
 
     expect(screen.getByText("Explore all Ledger devices")).toBeVisible();
-    expect(screen.queryByText("Upgrade your Device")).toBeNull();
+    expect(screen.queryByText("Ledger Nano S Upgrade Program")).toBeNull();
   });
 
   it("should keep Explore when banners.profile is off", async () => {
     await renderMyWalletProfile({ profileBannerEnabled: false });
 
     expect(screen.getByText("Explore all Ledger devices")).toBeVisible();
-    expect(screen.queryByText("Upgrade your Device")).toBeNull();
+    expect(screen.queryByText("Ledger Nano S Upgrade Program")).toBeNull();
   });
 
   it("should show the compact banner when personalized recommendations are off", async () => {
