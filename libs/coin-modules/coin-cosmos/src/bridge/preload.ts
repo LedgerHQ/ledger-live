@@ -34,7 +34,15 @@ export const hydrate = (
   if (!data || typeof data !== "object") return;
   const { config, validators } = data;
 
-  if (!config || typeof config !== "object" || !config.lcd || !config.minGasPrice) return;
+  // `minGasPrice` is legitimately 0 on a fee-less chain, so test that it is a usable number
+  // rather than that it is truthy.
+  if (
+    !config ||
+    typeof config !== "object" ||
+    !config.lcd ||
+    typeof config.minGasPrice !== "number"
+  )
+    return;
   const relatedImpl = cryptoFactory(currency.id);
   relatedImpl.lcd = config.lcd;
   relatedImpl.minGasPrice = config.minGasPrice;
